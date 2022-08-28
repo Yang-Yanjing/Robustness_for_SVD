@@ -1,0 +1,166 @@
+func	1:0	34:0	0	static int	rtmp_uncompress_swfplayer
+params	1:36	0:0	1	
+param	1:37	1:53	2	uint8_t *	in_data
+param	1:55	1:70	2	int64_t	in_size
+param	2:37	2:55	2	uint8_t * *	out_data
+param	2:57	2:74	2	int64_t *	out_size
+stmnts	0:0	33:14	1	
+decl	4:4	4:23	2	z_stream	zs
+op	4:16	0:0	2	=
+water	4:18	0:0	2	{
+water	4:20	0:0	2	0
+water	4:22	0:0	2	}
+decl	5:4	5:13	2	void	*ptr
+decl	6:4	6:12	2	int	size
+decl	7:4	7:15	2	int	ret
+op	7:12	0:0	2	=
+water	7:14	0:0	2	0
+water	8:4	0:0	2	zs
+op	8:6	0:0	2	.
+water	8:7	0:0	2	avail_in
+op	8:16	0:0	2	=
+water	8:18	0:0	2	in_size
+water	8:25	0:0	2	;
+water	9:4	0:0	2	zs
+op	9:6	0:0	2	.
+water	9:7	0:0	2	next_in
+op	9:16	0:0	2	=
+water	9:18	0:0	2	in_data
+water	9:25	0:0	2	;
+water	10:4	0:0	2	ret
+op	10:8	0:0	2	=
+call	10:10	10:25	2	inflateInit
+arg	10:22	10:25	3	&zs
+op	10:22	0:0	4	&
+water	10:23	0:0	4	zs
+water	10:26	0:0	2	;
+if	11:4	12:30	2	(ret != Z_OK)
+cond	11:8	11:15	3	ret != Z_OK
+water	11:8	0:0	4	ret
+op	11:12	0:0	4	!=
+water	11:15	0:0	4	Z_OK
+stmts	12:8	12:30	3	
+return	12:8	12:30	4	AVERROR_UNKNOWN
+water	12:15	0:0	5	AVERROR_UNKNOWN
+do	13:4	30:4	2	(zs . avail_out == 0)
+cond	30:13	30:29	3	zs . avail_out == 0
+water	30:13	0:0	4	zs
+op	30:15	0:0	4	.
+water	30:16	0:0	4	avail_out
+op	30:26	0:0	4	==
+water	30:29	0:0	4	0
+stmts	13:7	30:4	3	
+water	13:7	0:0	4	{
+decl	14:8	14:30	4	uint8_t	tmp_buf[16384]
+water	15:8	0:0	4	zs
+op	15:10	0:0	4	.
+water	15:11	0:0	4	avail_out
+op	15:21	0:0	4	=
+op	15:23	0:0	4	sizeof
+water	15:29	0:0	4	(
+water	15:30	0:0	4	tmp_buf
+water	15:37	0:0	4	)
+water	15:38	0:0	4	;
+water	16:8	0:0	4	zs
+op	16:10	0:0	4	.
+water	16:11	0:0	4	next_out
+op	16:21	0:0	4	=
+water	16:23	0:0	4	tmp_buf
+water	16:30	0:0	4	;
+water	17:8	0:0	4	ret
+op	17:12	0:0	4	=
+call	17:14	17:37	4	inflate
+arg	17:22	17:25	5	&zs
+op	17:22	0:0	6	&
+water	17:23	0:0	6	zs
+arg	17:27	17:37	5	Z_NO_FLUSH
+water	17:27	0:0	6	Z_NO_FLUSH
+water	17:38	0:0	4	;
+if	18:8	21:8	4	(ret != Z_OK && ret != Z_STREAM_END)
+cond	18:12	18:34	5	ret != Z_OK && ret != Z_STREAM_END
+water	18:12	0:0	6	ret
+op	18:16	0:0	6	!=
+water	18:19	0:0	6	Z_OK
+op	18:24	0:0	6	&&
+water	18:27	0:0	6	ret
+op	18:31	0:0	6	!=
+water	18:34	0:0	6	Z_STREAM_END
+stmts	18:48	21:8	5	
+water	18:48	0:0	6	{
+water	19:12	0:0	6	ret
+op	19:16	0:0	6	=
+water	19:18	0:0	6	AVERROR_UNKNOWN
+water	19:33	0:0	6	;
+goto	20:12	20:21	6	fail
+water	20:17	0:0	7	fail
+water	21:8	0:0	6	}
+water	22:8	0:0	4	size
+op	22:13	0:0	4	=
+op	22:15	0:0	4	sizeof
+water	22:21	0:0	4	(
+water	22:22	0:0	4	tmp_buf
+water	22:29	0:0	4	)
+op	22:31	0:0	4	-
+water	22:33	0:0	4	zs
+op	22:35	0:0	4	.
+water	22:36	0:0	4	avail_out
+water	22:45	0:0	4	;
+if	23:8	26:8	4	(! ( ptr =av_realloc (* out_data ,* out_size + size ) ))
+cond	23:12	23:59	5	! ( ptr =av_realloc (* out_data ,* out_size + size ) )
+op	23:12	0:0	6	!
+water	23:13	0:0	6	(
+water	23:14	0:0	6	ptr
+op	23:18	0:0	6	=
+call	23:20	23:58	6	av_realloc
+arg	23:31	23:40	7	*out_data
+op	23:31	0:0	8	*
+water	23:32	0:0	8	out_data
+arg	23:42	23:58	7	*out_size+size
+op	23:42	0:0	8	*
+water	23:43	0:0	8	out_size
+op	23:52	0:0	8	+
+water	23:54	0:0	8	size
+water	23:59	0:0	6	)
+stmts	23:62	26:8	5	
+water	23:62	0:0	6	{
+water	24:12	0:0	6	ret
+op	24:16	0:0	6	=
+call	24:18	24:32	6	AVERROR
+arg	24:26	24:32	7	ENOMEM
+water	24:26	0:0	8	ENOMEM
+water	24:33	0:0	6	;
+goto	25:12	25:21	6	fail
+water	25:17	0:0	7	fail
+water	26:8	0:0	6	}
+op	27:8	0:0	4	*
+water	27:9	0:0	4	out_data
+op	27:18	0:0	4	=
+water	27:20	0:0	4	ptr
+water	27:23	0:0	4	;
+call	28:8	28:51	4	memcpy
+arg	28:15	28:36	5	*out_data+*out_size
+op	28:15	0:0	6	*
+water	28:16	0:0	6	out_data
+op	28:25	0:0	6	+
+op	28:27	0:0	6	*
+water	28:28	0:0	6	out_size
+arg	28:38	28:45	5	tmp_buf
+water	28:38	0:0	6	tmp_buf
+arg	28:47	28:51	5	size
+water	28:47	0:0	6	size
+water	28:52	0:0	4	;
+op	29:8	0:0	4	*
+water	29:9	0:0	4	out_size
+op	29:18	0:0	4	+=
+water	29:21	0:0	4	size
+water	29:25	0:0	4	;
+water	30:4	0:0	4	}
+water	30:31	0:0	2	;
+label	31:0	31:4	2	fail :
+call	32:4	32:18	2	inflateEnd
+arg	32:15	32:18	3	&zs
+op	32:15	0:0	4	&
+water	32:16	0:0	4	zs
+water	32:19	0:0	2	;
+return	33:4	33:14	2	ret
+water	33:11	0:0	3	ret

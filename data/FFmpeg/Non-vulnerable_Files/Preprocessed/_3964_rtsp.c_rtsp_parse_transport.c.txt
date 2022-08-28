@@ -1,0 +1,744 @@
+func	1:0	116:0	0	static void	rtsp_parse_transport
+params	1:32	0:0	1	
+param	1:33	1:57	2	RTSPMessageHeader *	reply
+param	1:59	1:72	2	const char *	p
+stmnts	0:0	115:4	1	
+decl	3:4	3:31	2	char	transport_protocol[16]
+decl	4:4	4:20	2	char	profile[16]
+decl	5:4	5:28	2	char	lower_transport[16]
+decl	6:4	6:22	2	char	parameter[16]
+decl	7:4	7:26	2	RTSPTransportField	*th
+decl	8:4	8:17	2	char	buf[256]
+water	9:4	0:0	2	reply
+op	9:9	0:0	2	->
+water	9:11	0:0	2	nb_transports
+op	9:25	0:0	2	=
+water	9:27	0:0	2	0
+water	9:28	0:0	2	;
+for	10:4	115:4	2	(;;)
+forinit	10:9	10:9	3	;
+water	10:9	0:0	4	;
+cond	0:0	0:0	3	
+forexpr	0:0	0:0	3	
+stmts	10:13	115:4	3	
+water	10:13	0:0	4	{
+water	11:8	0:0	4	p
+op	11:10	0:0	4	+=
+call	11:13	11:34	4	strspn
+arg	11:20	11:21	5	p
+water	11:20	0:0	6	p
+arg	11:23	11:34	5	SPACE_CHARS
+water	11:23	0:0	6	SPACE_CHARS
+water	11:35	0:0	4	;
+if	12:8	13:17	4	(* p == '\0')
+cond	12:12	12:18	5	* p == '\0'
+op	12:12	0:0	6	*
+water	12:13	0:0	6	p
+op	12:15	0:0	6	==
+water	12:18	0:0	6	'\0'
+stmts	13:12	13:17	5	
+break	13:12	13:17	6	
+water	14:8	0:0	4	th
+op	14:11	0:0	4	=
+op	14:13	0:0	4	&
+water	14:14	0:0	4	reply
+op	14:19	0:0	4	->
+water	14:21	0:0	4	transports
+op	14:31	0:0	4	[
+water	14:32	0:0	4	reply
+op	14:37	0:0	4	->
+water	14:39	0:0	4	nb_transports
+op	14:52	0:0	4	]
+water	14:53	0:0	4	;
+call	15:8	16:28	4	get_word_sep
+arg	15:21	15:39	5	transport_protocol
+water	15:21	0:0	6	transport_protocol
+arg	15:41	15:67	5	sizeof(transport_protocol)
+op	15:41	0:0	6	sizeof
+water	15:47	0:0	6	(
+water	15:48	0:0	6	transport_protocol
+water	15:66	0:0	6	)
+arg	16:21	16:24	5	"/"
+water	16:21	0:0	6	"/"
+arg	16:26	16:28	5	&p
+op	16:26	0:0	6	&
+water	16:27	0:0	6	p
+water	16:29	0:0	4	;
+if	17:8	26:8	4	(!av_strcasecmp (transport_protocol ,"rtp" ))
+cond	17:12	17:53	5	!av_strcasecmp (transport_protocol ,"rtp" )
+op	17:12	0:0	6	!
+call	17:13	17:53	6	av_strcasecmp
+arg	17:28	17:46	7	transport_protocol
+water	17:28	0:0	8	transport_protocol
+arg	17:48	17:53	7	"rtp"
+water	17:48	0:0	8	"rtp"
+stmts	17:56	26:8	5	
+water	17:56	0:0	6	{
+call	18:12	18:60	6	get_word_sep
+arg	18:25	18:32	7	profile
+water	18:25	0:0	8	profile
+arg	18:34	18:49	7	sizeof(profile)
+op	18:34	0:0	8	sizeof
+water	18:40	0:0	8	(
+water	18:41	0:0	8	profile
+water	18:48	0:0	8	)
+arg	18:51	18:56	7	"/;,"
+water	18:51	0:0	8	"/;,"
+arg	18:58	18:60	7	&p
+op	18:58	0:0	8	&
+water	18:59	0:0	8	p
+water	18:61	0:0	6	;
+water	19:12	0:0	6	lower_transport
+op	19:27	0:0	6	[
+water	19:28	0:0	6	0
+op	19:29	0:0	6	]
+op	19:31	0:0	6	=
+water	19:33	0:0	6	'\0'
+water	19:37	0:0	6	;
+if	21:12	24:12	6	(* p == '/')
+cond	21:16	21:22	7	* p == '/'
+op	21:16	0:0	8	*
+water	21:17	0:0	8	p
+op	21:19	0:0	8	==
+water	21:22	0:0	8	'/'
+stmts	21:27	24:12	7	
+water	21:27	0:0	8	{
+call	22:16	23:37	8	get_word_sep
+arg	22:29	22:44	9	lower_transport
+water	22:29	0:0	10	lower_transport
+arg	22:46	22:69	9	sizeof(lower_transport)
+op	22:46	0:0	10	sizeof
+water	22:52	0:0	10	(
+water	22:53	0:0	10	lower_transport
+water	22:68	0:0	10	)
+arg	23:29	23:33	9	";,"
+water	23:29	0:0	10	";,"
+arg	23:35	23:37	9	&p
+op	23:35	0:0	10	&
+water	23:36	0:0	10	p
+water	23:38	0:0	8	;
+water	24:12	0:0	8	}
+water	25:12	0:0	6	th
+op	25:14	0:0	6	->
+water	25:16	0:0	6	transport
+op	25:26	0:0	6	=
+water	25:28	0:0	6	RTSP_TRANSPORT_RTP
+water	25:46	0:0	6	;
+water	26:8	0:0	6	}
+else	26:10	32:8	4
+stmts	26:15	32:8	5	
+if	26:15	32:8	6	(!av_strcasecmp (transport_protocol ,"x-pn-tng" ) || !av_strcasecmp (transport_protocol ,"x-real-rdt" ))
+cond	26:19	27:67	7	!av_strcasecmp (transport_protocol ,"x-pn-tng" ) || !av_strcasecmp (transport_protocol ,"x-real-rdt" )
+op	26:19	0:0	8	!
+call	26:20	26:65	8	av_strcasecmp
+arg	26:35	26:53	9	transport_protocol
+water	26:35	0:0	10	transport_protocol
+arg	26:55	26:65	9	"x-pn-tng"
+water	26:55	0:0	10	"x-pn-tng"
+op	26:67	0:0	8	||
+op	27:19	0:0	8	!
+call	27:20	27:67	8	av_strcasecmp
+arg	27:35	27:53	9	transport_protocol
+water	27:35	0:0	10	transport_protocol
+arg	27:55	27:67	9	"x-real-rdt"
+water	27:55	0:0	10	"x-real-rdt"
+stmts	27:70	32:8	7	
+water	27:70	0:0	8	{
+call	29:12	29:76	8	get_word_sep
+arg	29:25	29:40	9	lower_transport
+water	29:25	0:0	10	lower_transport
+arg	29:42	29:65	9	sizeof(lower_transport)
+op	29:42	0:0	10	sizeof
+water	29:48	0:0	10	(
+water	29:49	0:0	10	lower_transport
+water	29:64	0:0	10	)
+arg	29:67	29:72	9	"/;,"
+water	29:67	0:0	10	"/;,"
+arg	29:74	29:76	9	&p
+op	29:74	0:0	10	&
+water	29:75	0:0	10	p
+water	29:77	0:0	8	;
+water	30:12	0:0	8	profile
+op	30:19	0:0	8	[
+water	30:20	0:0	8	0
+op	30:21	0:0	8	]
+op	30:23	0:0	8	=
+water	30:25	0:0	8	'\0'
+water	30:29	0:0	8	;
+water	31:12	0:0	8	th
+op	31:14	0:0	8	->
+water	31:16	0:0	8	transport
+op	31:26	0:0	8	=
+water	31:28	0:0	8	RTSP_TRANSPORT_RDT
+water	31:46	0:0	8	;
+water	32:8	0:0	8	}
+else	32:10	41:8	4
+stmts	32:15	41:8	5	
+if	32:15	41:8	6	(!av_strcasecmp (transport_protocol ,"raw" ))
+cond	32:19	32:59	7	!av_strcasecmp (transport_protocol ,"raw" )
+op	32:19	0:0	8	!
+call	32:20	32:59	8	av_strcasecmp
+arg	32:34	32:52	9	transport_protocol
+water	32:34	0:0	10	transport_protocol
+arg	32:54	32:59	9	"raw"
+water	32:54	0:0	10	"raw"
+stmts	32:62	41:8	7	
+water	32:62	0:0	8	{
+call	33:12	33:60	8	get_word_sep
+arg	33:25	33:32	9	profile
+water	33:25	0:0	10	profile
+arg	33:34	33:49	9	sizeof(profile)
+op	33:34	0:0	10	sizeof
+water	33:40	0:0	10	(
+water	33:41	0:0	10	profile
+water	33:48	0:0	10	)
+arg	33:51	33:56	9	"/;,"
+water	33:51	0:0	10	"/;,"
+arg	33:58	33:60	9	&p
+op	33:58	0:0	10	&
+water	33:59	0:0	10	p
+water	33:61	0:0	8	;
+water	34:12	0:0	8	lower_transport
+op	34:27	0:0	8	[
+water	34:28	0:0	8	0
+op	34:29	0:0	8	]
+op	34:31	0:0	8	=
+water	34:33	0:0	8	'\0'
+water	34:37	0:0	8	;
+if	36:12	39:12	8	(* p == '/')
+cond	36:16	36:22	9	* p == '/'
+op	36:16	0:0	10	*
+water	36:17	0:0	10	p
+op	36:19	0:0	10	==
+water	36:22	0:0	10	'/'
+stmts	36:27	39:12	9	
+water	36:27	0:0	10	{
+call	37:16	38:37	10	get_word_sep
+arg	37:29	37:44	11	lower_transport
+water	37:29	0:0	12	lower_transport
+arg	37:46	37:69	11	sizeof(lower_transport)
+op	37:46	0:0	12	sizeof
+water	37:52	0:0	12	(
+water	37:53	0:0	12	lower_transport
+water	37:68	0:0	12	)
+arg	38:29	38:33	11	";,"
+water	38:29	0:0	12	";,"
+arg	38:35	38:37	11	&p
+op	38:35	0:0	12	&
+water	38:36	0:0	12	p
+water	38:38	0:0	10	;
+water	39:12	0:0	10	}
+water	40:12	0:0	8	th
+op	40:14	0:0	8	->
+water	40:16	0:0	8	transport
+op	40:26	0:0	8	=
+water	40:28	0:0	8	RTSP_TRANSPORT_RAW
+water	40:46	0:0	8	;
+water	41:8	0:0	8	}
+if	42:8	43:58	4	(!av_strcasecmp (lower_transport ,"TCP" ))
+cond	42:12	42:49	5	!av_strcasecmp (lower_transport ,"TCP" )
+op	42:12	0:0	6	!
+call	42:13	42:49	6	av_strcasecmp
+arg	42:27	42:42	7	lower_transport
+water	42:27	0:0	8	lower_transport
+arg	42:44	42:49	7	"TCP"
+water	42:44	0:0	8	"TCP"
+stmts	43:12	43:58	5	
+water	43:12	0:0	6	th
+op	43:14	0:0	6	->
+water	43:16	0:0	6	lower_transport
+op	43:32	0:0	6	=
+water	43:34	0:0	6	RTSP_LOWER_TRANSPORT_TCP
+water	43:58	0:0	6	;
+else	44:8	45:58	4
+stmts	45:12	45:58	5	
+water	45:12	0:0	6	th
+op	45:14	0:0	6	->
+water	45:16	0:0	6	lower_transport
+op	45:32	0:0	6	=
+water	45:34	0:0	6	RTSP_LOWER_TRANSPORT_UDP
+water	45:58	0:0	6	;
+if	46:8	47:15	4	(* p == ';')
+cond	46:12	46:18	5	* p == ';'
+op	46:12	0:0	6	*
+water	46:13	0:0	6	p
+op	46:15	0:0	6	==
+water	46:18	0:0	6	';'
+stmts	47:12	47:15	5	
+water	47:12	0:0	6	p
+op	47:13	0:0	6	++
+water	47:15	0:0	6	;
+while	49:8	109:8	4	(* p != '\0' && * p != ',')
+cond	49:15	49:35	5	* p != '\0' && * p != ','
+op	49:15	0:0	6	*
+water	49:16	0:0	6	p
+op	49:18	0:0	6	!=
+water	49:21	0:0	6	'\0'
+op	49:26	0:0	6	&&
+op	49:29	0:0	6	*
+water	49:30	0:0	6	p
+op	49:32	0:0	6	!=
+water	49:35	0:0	6	','
+stmts	49:40	109:8	5	
+water	49:40	0:0	6	{
+call	50:12	50:64	6	get_word_sep
+arg	50:25	50:34	7	parameter
+water	50:25	0:0	8	parameter
+arg	50:36	50:53	7	sizeof(parameter)
+op	50:36	0:0	8	sizeof
+water	50:42	0:0	8	(
+water	50:43	0:0	8	parameter
+water	50:52	0:0	8	)
+arg	50:55	50:60	7	"=;,"
+water	50:55	0:0	8	"=;,"
+arg	50:62	50:64	7	&p
+op	50:62	0:0	8	&
+water	50:63	0:0	8	p
+water	50:65	0:0	6	;
+if	51:12	56:12	6	(!strcmp (parameter ,"port" ))
+cond	51:16	51:41	7	!strcmp (parameter ,"port" )
+op	51:16	0:0	8	!
+call	51:17	51:41	8	strcmp
+arg	51:24	51:33	9	parameter
+water	51:24	0:0	10	parameter
+arg	51:35	51:41	9	"port"
+water	51:35	0:0	10	"port"
+stmts	51:44	56:12	7	
+water	51:44	0:0	8	{
+if	52:16	55:16	8	(* p == '=')
+cond	52:20	52:26	9	* p == '='
+op	52:20	0:0	10	*
+water	52:21	0:0	10	p
+op	52:23	0:0	10	==
+water	52:26	0:0	10	'='
+stmts	52:31	55:16	9	
+water	52:31	0:0	10	{
+water	53:20	0:0	10	p
+op	53:21	0:0	10	++
+water	53:23	0:0	10	;
+call	54:20	54:69	10	rtsp_parse_range
+arg	54:37	54:50	11	&th->port_min
+op	54:37	0:0	12	&
+water	54:38	0:0	12	th
+op	54:40	0:0	12	->
+water	54:42	0:0	12	port_min
+arg	54:52	54:65	11	&th->port_max
+op	54:52	0:0	12	&
+water	54:53	0:0	12	th
+op	54:55	0:0	12	->
+water	54:57	0:0	12	port_max
+arg	54:67	54:69	11	&p
+op	54:67	0:0	12	&
+water	54:68	0:0	12	p
+water	54:70	0:0	10	;
+water	55:16	0:0	10	}
+water	56:12	0:0	8	}
+else	56:14	62:12	6
+stmts	56:19	62:12	7	
+if	56:19	62:12	8	(!strcmp (parameter ,"client_port" ))
+cond	56:23	56:55	9	!strcmp (parameter ,"client_port" )
+op	56:23	0:0	10	!
+call	56:24	56:55	10	strcmp
+arg	56:31	56:40	11	parameter
+water	56:31	0:0	12	parameter
+arg	56:42	56:55	11	"client_port"
+water	56:42	0:0	12	"client_port"
+stmts	56:58	62:12	9	
+water	56:58	0:0	10	{
+if	57:16	61:16	10	(* p == '=')
+cond	57:20	57:26	11	* p == '='
+op	57:20	0:0	12	*
+water	57:21	0:0	12	p
+op	57:23	0:0	12	==
+water	57:26	0:0	12	'='
+stmts	57:31	61:16	11	
+water	57:31	0:0	12	{
+water	58:20	0:0	12	p
+op	58:21	0:0	12	++
+water	58:23	0:0	12	;
+call	59:20	60:61	12	rtsp_parse_range
+arg	59:37	59:57	13	&th->client_port_min
+op	59:37	0:0	14	&
+water	59:38	0:0	14	th
+op	59:40	0:0	14	->
+water	59:42	0:0	14	client_port_min
+arg	60:37	60:57	13	&th->client_port_max
+op	60:37	0:0	14	&
+water	60:38	0:0	14	th
+op	60:40	0:0	14	->
+water	60:42	0:0	14	client_port_max
+arg	60:59	60:61	13	&p
+op	60:59	0:0	14	&
+water	60:60	0:0	14	p
+water	60:62	0:0	12	;
+water	61:16	0:0	12	}
+water	62:12	0:0	10	}
+else	62:14	68:12	6
+stmts	62:19	68:12	7	
+if	62:19	68:12	8	(!strcmp (parameter ,"server_port" ))
+cond	62:23	62:55	9	!strcmp (parameter ,"server_port" )
+op	62:23	0:0	10	!
+call	62:24	62:55	10	strcmp
+arg	62:31	62:40	11	parameter
+water	62:31	0:0	12	parameter
+arg	62:42	62:55	11	"server_port"
+water	62:42	0:0	12	"server_port"
+stmts	62:58	68:12	9	
+water	62:58	0:0	10	{
+if	63:16	67:16	10	(* p == '=')
+cond	63:20	63:26	11	* p == '='
+op	63:20	0:0	12	*
+water	63:21	0:0	12	p
+op	63:23	0:0	12	==
+water	63:26	0:0	12	'='
+stmts	63:31	67:16	11	
+water	63:31	0:0	12	{
+water	64:20	0:0	12	p
+op	64:21	0:0	12	++
+water	64:23	0:0	12	;
+call	65:20	66:61	12	rtsp_parse_range
+arg	65:37	65:57	13	&th->server_port_min
+op	65:37	0:0	14	&
+water	65:38	0:0	14	th
+op	65:40	0:0	14	->
+water	65:42	0:0	14	server_port_min
+arg	66:37	66:57	13	&th->server_port_max
+op	66:37	0:0	14	&
+water	66:38	0:0	14	th
+op	66:40	0:0	14	->
+water	66:42	0:0	14	server_port_max
+arg	66:59	66:61	13	&p
+op	66:59	0:0	14	&
+water	66:60	0:0	14	p
+water	66:62	0:0	12	;
+water	67:16	0:0	12	}
+water	68:12	0:0	10	}
+else	68:14	74:12	6
+stmts	68:19	74:12	7	
+if	68:19	74:12	8	(!strcmp (parameter ,"interleaved" ))
+cond	68:23	68:55	9	!strcmp (parameter ,"interleaved" )
+op	68:23	0:0	10	!
+call	68:24	68:55	10	strcmp
+arg	68:31	68:40	11	parameter
+water	68:31	0:0	12	parameter
+arg	68:42	68:55	11	"interleaved"
+water	68:42	0:0	12	"interleaved"
+stmts	68:58	74:12	9	
+water	68:58	0:0	10	{
+if	69:16	73:16	10	(* p == '=')
+cond	69:20	69:26	11	* p == '='
+op	69:20	0:0	12	*
+water	69:21	0:0	12	p
+op	69:23	0:0	12	==
+water	69:26	0:0	12	'='
+stmts	69:31	73:16	11	
+water	69:31	0:0	12	{
+water	70:20	0:0	12	p
+op	70:21	0:0	12	++
+water	70:23	0:0	12	;
+call	71:20	72:61	12	rtsp_parse_range
+arg	71:37	71:57	13	&th->interleaved_min
+op	71:37	0:0	14	&
+water	71:38	0:0	14	th
+op	71:40	0:0	14	->
+water	71:42	0:0	14	interleaved_min
+arg	72:37	72:57	13	&th->interleaved_max
+op	72:37	0:0	14	&
+water	72:38	0:0	14	th
+op	72:40	0:0	14	->
+water	72:42	0:0	14	interleaved_max
+arg	72:59	72:61	13	&p
+op	72:59	0:0	14	&
+water	72:60	0:0	14	p
+water	72:62	0:0	12	;
+water	73:16	0:0	12	}
+water	74:12	0:0	10	}
+else	74:14	77:12	6
+stmts	74:19	77:12	7	
+if	74:19	77:12	8	(!strcmp (parameter ,"multicast" ))
+cond	74:23	74:53	9	!strcmp (parameter ,"multicast" )
+op	74:23	0:0	10	!
+call	74:24	74:53	10	strcmp
+arg	74:31	74:40	11	parameter
+water	74:31	0:0	12	parameter
+arg	74:42	74:53	11	"multicast"
+water	74:42	0:0	12	"multicast"
+stmts	74:56	77:12	9	
+water	74:56	0:0	10	{
+if	75:16	76:76	10	(th -> lower_transport == RTSP_LOWER_TRANSPORT_UDP)
+cond	75:20	75:43	11	th -> lower_transport == RTSP_LOWER_TRANSPORT_UDP
+water	75:20	0:0	12	th
+op	75:22	0:0	12	->
+water	75:24	0:0	12	lower_transport
+op	75:40	0:0	12	==
+water	75:43	0:0	12	RTSP_LOWER_TRANSPORT_UDP
+stmts	76:20	76:76	11	
+water	76:20	0:0	12	th
+op	76:22	0:0	12	->
+water	76:24	0:0	12	lower_transport
+op	76:40	0:0	12	=
+water	76:42	0:0	12	RTSP_LOWER_TRANSPORT_UDP_MULTICAST
+water	76:76	0:0	12	;
+water	77:12	0:0	10	}
+else	77:14	84:12	6
+stmts	77:19	84:12	7	
+if	77:19	84:12	8	(!strcmp (parameter ,"ttl" ))
+cond	77:23	77:47	9	!strcmp (parameter ,"ttl" )
+op	77:23	0:0	10	!
+call	77:24	77:47	10	strcmp
+arg	77:31	77:40	11	parameter
+water	77:31	0:0	12	parameter
+arg	77:42	77:47	11	"ttl"
+water	77:42	0:0	12	"ttl"
+stmts	77:50	84:12	9	
+water	77:50	0:0	10	{
+if	78:16	83:16	10	(* p == '=')
+cond	78:20	78:26	11	* p == '='
+op	78:20	0:0	12	*
+water	78:21	0:0	12	p
+op	78:23	0:0	12	==
+water	78:26	0:0	12	'='
+stmts	78:31	83:16	11	
+water	78:31	0:0	12	{
+decl	79:20	79:29	12	char	*end
+water	80:20	0:0	12	p
+op	80:21	0:0	12	++
+water	80:23	0:0	12	;
+water	81:20	0:0	12	th
+op	81:22	0:0	12	->
+water	81:24	0:0	12	ttl
+op	81:28	0:0	12	=
+call	81:30	81:48	12	strtol
+arg	81:37	81:38	13	p
+water	81:37	0:0	14	p
+arg	81:40	81:44	13	&end
+op	81:40	0:0	14	&
+water	81:41	0:0	14	end
+arg	81:46	81:48	13	10
+water	81:46	0:0	14	10
+water	81:49	0:0	12	;
+water	82:20	0:0	12	p
+op	82:22	0:0	12	=
+water	82:24	0:0	12	end
+water	82:27	0:0	12	;
+water	83:16	0:0	12	}
+water	84:12	0:0	10	}
+else	84:14	90:12	6
+stmts	84:19	90:12	7	
+if	84:19	90:12	8	(!strcmp (parameter ,"destination" ))
+cond	84:23	84:55	9	!strcmp (parameter ,"destination" )
+op	84:23	0:0	10	!
+call	84:24	84:55	10	strcmp
+arg	84:31	84:40	11	parameter
+water	84:31	0:0	12	parameter
+arg	84:42	84:55	11	"destination"
+water	84:42	0:0	12	"destination"
+stmts	84:58	90:12	9	
+water	84:58	0:0	10	{
+if	85:16	89:16	10	(* p == '=')
+cond	85:20	85:26	11	* p == '='
+op	85:20	0:0	12	*
+water	85:21	0:0	12	p
+op	85:23	0:0	12	==
+water	85:26	0:0	12	'='
+stmts	85:31	89:16	11	
+water	85:31	0:0	12	{
+water	86:20	0:0	12	p
+op	86:21	0:0	12	++
+water	86:23	0:0	12	;
+call	87:20	87:59	12	get_word_sep
+arg	87:33	87:36	13	buf
+water	87:33	0:0	14	buf
+arg	87:38	87:49	13	sizeof(buf)
+op	87:38	0:0	14	sizeof
+water	87:44	0:0	14	(
+water	87:45	0:0	14	buf
+water	87:48	0:0	14	)
+arg	87:51	87:55	13	";,"
+water	87:51	0:0	14	";,"
+arg	87:57	87:59	13	&p
+op	87:57	0:0	14	&
+water	87:58	0:0	14	p
+water	87:60	0:0	12	;
+call	88:20	88:54	12	get_sockaddr
+arg	88:33	88:36	13	buf
+water	88:33	0:0	14	buf
+arg	88:38	88:54	13	&th->destination
+op	88:38	0:0	14	&
+water	88:39	0:0	14	th
+op	88:41	0:0	14	->
+water	88:43	0:0	14	destination
+water	88:55	0:0	12	;
+water	89:16	0:0	12	}
+water	90:12	0:0	10	}
+else	90:14	96:12	6
+stmts	90:19	96:12	7	
+if	90:19	96:12	8	(!strcmp (parameter ,"source" ))
+cond	90:23	90:50	9	!strcmp (parameter ,"source" )
+op	90:23	0:0	10	!
+call	90:24	90:50	10	strcmp
+arg	90:31	90:40	11	parameter
+water	90:31	0:0	12	parameter
+arg	90:42	90:50	11	"source"
+water	90:42	0:0	12	"source"
+stmts	90:53	96:12	9	
+water	90:53	0:0	10	{
+if	91:16	95:16	10	(* p == '=')
+cond	91:20	91:26	11	* p == '='
+op	91:20	0:0	12	*
+water	91:21	0:0	12	p
+op	91:23	0:0	12	==
+water	91:26	0:0	12	'='
+stmts	91:31	95:16	11	
+water	91:31	0:0	12	{
+water	92:20	0:0	12	p
+op	92:21	0:0	12	++
+water	92:23	0:0	12	;
+call	93:20	93:59	12	get_word_sep
+arg	93:33	93:36	13	buf
+water	93:33	0:0	14	buf
+arg	93:38	93:49	13	sizeof(buf)
+op	93:38	0:0	14	sizeof
+water	93:44	0:0	14	(
+water	93:45	0:0	14	buf
+water	93:48	0:0	14	)
+arg	93:51	93:55	13	";,"
+water	93:51	0:0	14	";,"
+arg	93:57	93:59	13	&p
+op	93:57	0:0	14	&
+water	93:58	0:0	14	p
+water	93:60	0:0	12	;
+call	94:20	94:66	12	av_strlcpy
+arg	94:31	94:41	13	th->source
+water	94:31	0:0	14	th
+op	94:33	0:0	14	->
+water	94:35	0:0	14	source
+arg	94:43	94:46	13	buf
+water	94:43	0:0	14	buf
+arg	94:48	94:66	13	sizeof(th->source)
+op	94:48	0:0	14	sizeof
+water	94:54	0:0	14	(
+water	94:55	0:0	14	th
+op	94:57	0:0	14	->
+water	94:59	0:0	14	source
+water	94:65	0:0	14	)
+water	94:67	0:0	12	;
+water	95:16	0:0	12	}
+water	96:12	0:0	10	}
+else	96:14	104:12	6
+stmts	96:19	104:12	7	
+if	96:19	104:12	8	(!strcmp (parameter ,"mode" ))
+cond	96:23	96:48	9	!strcmp (parameter ,"mode" )
+op	96:23	0:0	10	!
+call	96:24	96:48	10	strcmp
+arg	96:31	96:40	11	parameter
+water	96:31	0:0	12	parameter
+arg	96:42	96:48	11	"mode"
+water	96:42	0:0	12	"mode"
+stmts	96:51	104:12	9	
+water	96:51	0:0	10	{
+if	97:16	103:16	10	(* p == '=')
+cond	97:20	97:26	11	* p == '='
+op	97:20	0:0	12	*
+water	97:21	0:0	12	p
+op	97:23	0:0	12	==
+water	97:26	0:0	12	'='
+stmts	97:31	103:16	11	
+water	97:31	0:0	12	{
+water	98:20	0:0	12	p
+op	98:21	0:0	12	++
+water	98:23	0:0	12	;
+call	99:20	99:60	12	get_word_sep
+arg	99:33	99:36	13	buf
+water	99:33	0:0	14	buf
+arg	99:38	99:49	13	sizeof(buf)
+op	99:38	0:0	14	sizeof
+water	99:44	0:0	14	(
+water	99:45	0:0	14	buf
+water	99:48	0:0	14	)
+arg	99:51	99:56	13	";, "
+water	99:51	0:0	14	";, "
+arg	99:58	99:60	13	&p
+op	99:58	0:0	14	&
+water	99:59	0:0	14	p
+water	99:61	0:0	12	;
+if	100:20	102:43	12	(!strcmp (buf ,"record" ) || !strcmp (buf ,"receive" ))
+cond	100:24	101:46	13	!strcmp (buf ,"record" ) || !strcmp (buf ,"receive" )
+op	100:24	0:0	14	!
+call	100:25	100:45	14	strcmp
+arg	100:32	100:35	15	buf
+water	100:32	0:0	16	buf
+arg	100:37	100:45	15	"record"
+water	100:37	0:0	16	"record"
+op	100:47	0:0	14	||
+op	101:24	0:0	14	!
+call	101:25	101:46	14	strcmp
+arg	101:32	101:35	15	buf
+water	101:32	0:0	16	buf
+arg	101:37	101:46	15	"receive"
+water	101:37	0:0	16	"receive"
+stmts	102:24	102:43	13	
+water	102:24	0:0	14	th
+op	102:26	0:0	14	->
+water	102:28	0:0	14	mode_record
+op	102:40	0:0	14	=
+water	102:42	0:0	14	1
+water	102:43	0:0	14	;
+water	103:16	0:0	12	}
+water	104:12	0:0	10	}
+while	105:12	106:19	6	(* p != ';' && * p != '\0' && * p != ',')
+cond	105:19	105:52	7	* p != ';' && * p != '\0' && * p != ','
+op	105:19	0:0	8	*
+water	105:20	0:0	8	p
+op	105:22	0:0	8	!=
+water	105:25	0:0	8	';'
+op	105:29	0:0	8	&&
+op	105:32	0:0	8	*
+water	105:33	0:0	8	p
+op	105:35	0:0	8	!=
+water	105:38	0:0	8	'\0'
+op	105:43	0:0	8	&&
+op	105:46	0:0	8	*
+water	105:47	0:0	8	p
+op	105:49	0:0	8	!=
+water	105:52	0:0	8	','
+stmts	106:16	106:19	7	
+water	106:16	0:0	8	p
+op	106:17	0:0	8	++
+water	106:19	0:0	8	;
+if	107:12	108:19	6	(* p == ';')
+cond	107:16	107:22	7	* p == ';'
+op	107:16	0:0	8	*
+water	107:17	0:0	8	p
+op	107:19	0:0	8	==
+water	107:22	0:0	8	';'
+stmts	108:16	108:19	7	
+water	108:16	0:0	8	p
+op	108:17	0:0	8	++
+water	108:19	0:0	8	;
+water	109:8	0:0	6	}
+if	110:8	111:15	4	(* p == ',')
+cond	110:12	110:18	5	* p == ','
+op	110:12	0:0	6	*
+water	110:13	0:0	6	p
+op	110:15	0:0	6	==
+water	110:18	0:0	6	','
+stmts	111:12	111:15	5	
+water	111:12	0:0	6	p
+op	111:13	0:0	6	++
+water	111:15	0:0	6	;
+water	112:8	0:0	4	reply
+op	112:13	0:0	4	->
+water	112:15	0:0	4	nb_transports
+op	112:28	0:0	4	++
+water	112:30	0:0	4	;
+if	113:8	114:17	4	(reply -> nb_transports >= RTSP_MAX_TRANSPORTS)
+cond	113:12	113:36	5	reply -> nb_transports >= RTSP_MAX_TRANSPORTS
+water	113:12	0:0	6	reply
+op	113:17	0:0	6	->
+water	113:19	0:0	6	nb_transports
+op	113:33	0:0	6	>=
+water	113:36	0:0	6	RTSP_MAX_TRANSPORTS
+stmts	114:12	114:17	5	
+break	114:12	114:17	6	
+water	115:4	0:0	4	}

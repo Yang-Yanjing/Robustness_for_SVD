@@ -1,0 +1,561 @@
+func	1:0	79:0	0	static int	mpeg1_decode_sequence
+params	1:32	0:0	1	
+param	1:33	1:54	2	AVCodecContext *	avctx
+param	2:33	2:51	2	const uint8_t *	buf
+param	2:53	2:65	2	int	buf_size
+stmnts	0:0	78:12	1	
+decl	4:4	4:40	2	Mpeg1Context	*s1
+op	4:22	0:0	2	=
+water	4:24	0:0	2	avctx
+op	4:29	0:0	2	->
+water	4:31	0:0	2	priv_data
+decl	5:4	5:41	2	MpegEncContext	*s
+op	5:22	0:0	2	=
+op	5:24	0:0	2	&
+water	5:25	0:0	2	s1
+op	5:27	0:0	2	->
+water	5:29	0:0	2	mpeg_enc_ctx
+decl	6:4	6:21	2	int	width
+water	6:13	0:0	2	,
+decl	6:4	6:21	2	int	height
+decl	7:4	7:15	2	int	i
+water	7:9	0:0	2	,
+decl	7:4	7:15	2	int	v
+water	7:12	0:0	2	,
+decl	7:4	7:15	2	int	j
+call	8:4	8:43	2	init_get_bits
+arg	8:18	8:24	3	&s->gb
+op	8:18	0:0	4	&
+water	8:19	0:0	4	s
+op	8:20	0:0	4	->
+water	8:22	0:0	4	gb
+arg	8:26	8:29	3	buf
+water	8:26	0:0	4	buf
+arg	8:31	8:43	3	buf_size*8
+water	8:31	0:0	4	buf_size
+op	8:40	0:0	4	*
+water	8:42	0:0	4	8
+water	8:44	0:0	2	;
+water	9:4	0:0	2	width
+op	9:11	0:0	2	=
+call	9:13	9:32	2	get_bits
+arg	9:22	9:28	3	&s->gb
+op	9:22	0:0	4	&
+water	9:23	0:0	4	s
+op	9:24	0:0	4	->
+water	9:26	0:0	4	gb
+arg	9:30	9:32	3	12
+water	9:30	0:0	4	12
+water	9:33	0:0	2	;
+water	10:4	0:0	2	height
+op	10:11	0:0	2	=
+call	10:13	10:32	2	get_bits
+arg	10:22	10:28	3	&s->gb
+op	10:22	0:0	4	&
+water	10:23	0:0	4	s
+op	10:24	0:0	4	->
+water	10:26	0:0	4	gb
+arg	10:30	10:32	3	12
+water	10:30	0:0	4	12
+water	10:33	0:0	2	;
+if	11:4	16:4	2	(width == 0 || height == 0)
+cond	11:8	11:32	3	width == 0 || height == 0
+water	11:8	0:0	4	width
+op	11:14	0:0	4	==
+water	11:17	0:0	4	0
+op	11:19	0:0	4	||
+water	11:22	0:0	4	height
+op	11:29	0:0	4	==
+water	11:32	0:0	4	0
+stmts	11:35	16:4	3	
+water	11:35	0:0	4	{
+call	12:8	13:61	4	av_log
+arg	12:15	12:20	5	avctx
+water	12:15	0:0	6	avctx
+arg	12:22	12:36	5	AV_LOG_WARNING
+water	12:22	0:0	6	AV_LOG_WARNING
+arg	13:15	13:61	5	"Invalid horizontal or vertical size value.\n"
+water	13:15	0:0	6	"Invalid horizontal or vertical size value.\n"
+water	13:62	0:0	4	;
+if	14:8	15:38	4	(avctx -> err_recognition & ( AV_EF_BITSTREAM | AV_EF_COMPLIANT ))
+cond	14:12	14:71	5	avctx -> err_recognition & ( AV_EF_BITSTREAM | AV_EF_COMPLIANT )
+water	14:12	0:0	6	avctx
+op	14:17	0:0	6	->
+water	14:19	0:0	6	err_recognition
+op	14:35	0:0	6	&
+water	14:37	0:0	6	(
+water	14:38	0:0	6	AV_EF_BITSTREAM
+op	14:54	0:0	6	|
+water	14:56	0:0	6	AV_EF_COMPLIANT
+water	14:71	0:0	6	)
+stmts	15:12	15:38	5	
+return	15:12	15:38	6	AVERROR_INVALIDDATA
+water	15:19	0:0	7	AVERROR_INVALIDDATA
+water	16:4	0:0	4	}
+water	17:4	0:0	2	s
+op	17:5	0:0	2	->
+water	17:7	0:0	2	aspect_ratio_info
+op	17:25	0:0	2	=
+call	17:27	17:45	2	get_bits
+arg	17:36	17:42	3	&s->gb
+op	17:36	0:0	4	&
+water	17:37	0:0	4	s
+op	17:38	0:0	4	->
+water	17:40	0:0	4	gb
+arg	17:44	17:45	3	4
+water	17:44	0:0	4	4
+water	17:46	0:0	2	;
+if	18:4	22:4	2	(s -> aspect_ratio_info == 0)
+cond	18:8	18:32	3	s -> aspect_ratio_info == 0
+water	18:8	0:0	4	s
+op	18:9	0:0	4	->
+water	18:11	0:0	4	aspect_ratio_info
+op	18:29	0:0	4	==
+water	18:32	0:0	4	0
+stmts	18:35	22:4	3	
+water	18:35	0:0	4	{
+call	19:8	19:74	4	av_log
+arg	19:15	19:20	5	avctx
+water	19:15	0:0	6	avctx
+arg	19:22	19:34	5	AV_LOG_ERROR
+water	19:22	0:0	6	AV_LOG_ERROR
+arg	19:36	19:74	5	"aspect ratio has forbidden 0 value\n"
+water	19:36	0:0	6	"aspect ratio has forbidden 0 value\n"
+water	19:75	0:0	4	;
+if	20:8	21:38	4	(avctx -> err_recognition & ( AV_EF_BITSTREAM | AV_EF_COMPLIANT ))
+cond	20:12	20:71	5	avctx -> err_recognition & ( AV_EF_BITSTREAM | AV_EF_COMPLIANT )
+water	20:12	0:0	6	avctx
+op	20:17	0:0	6	->
+water	20:19	0:0	6	err_recognition
+op	20:35	0:0	6	&
+water	20:37	0:0	6	(
+water	20:38	0:0	6	AV_EF_BITSTREAM
+op	20:54	0:0	6	|
+water	20:56	0:0	6	AV_EF_COMPLIANT
+water	20:71	0:0	6	)
+stmts	21:12	21:38	5	
+return	21:12	21:38	6	AVERROR_INVALIDDATA
+water	21:19	0:0	7	AVERROR_INVALIDDATA
+water	22:4	0:0	4	}
+water	23:4	0:0	2	s
+op	23:5	0:0	2	->
+water	23:7	0:0	2	frame_rate_index
+op	23:24	0:0	2	=
+call	23:26	23:44	2	get_bits
+arg	23:35	23:41	3	&s->gb
+op	23:35	0:0	4	&
+water	23:36	0:0	4	s
+op	23:37	0:0	4	->
+water	23:39	0:0	4	gb
+arg	23:43	23:44	3	4
+water	23:43	0:0	4	4
+water	23:45	0:0	2	;
+if	24:4	28:4	2	(s -> frame_rate_index == 0 || s -> frame_rate_index > 13)
+cond	24:8	24:58	3	s -> frame_rate_index == 0 || s -> frame_rate_index > 13
+water	24:8	0:0	4	s
+op	24:9	0:0	4	->
+water	24:11	0:0	4	frame_rate_index
+op	24:28	0:0	4	==
+water	24:31	0:0	4	0
+op	24:33	0:0	4	||
+water	24:36	0:0	4	s
+op	24:37	0:0	4	->
+water	24:39	0:0	4	frame_rate_index
+op	24:56	0:0	4	>
+water	24:58	0:0	4	13
+stmts	24:62	28:4	3	
+water	24:62	0:0	4	{
+call	25:8	26:70	4	av_log
+arg	25:15	25:20	5	avctx
+water	25:15	0:0	6	avctx
+arg	25:22	25:36	5	AV_LOG_WARNING
+water	25:22	0:0	6	AV_LOG_WARNING
+arg	26:15	26:49	5	"frame_rate_index %d is invalid\n"
+water	26:15	0:0	6	"frame_rate_index %d is invalid\n"
+arg	26:51	26:70	5	s->frame_rate_index
+water	26:51	0:0	6	s
+op	26:52	0:0	6	->
+water	26:54	0:0	6	frame_rate_index
+water	26:71	0:0	4	;
+water	27:8	0:0	4	s
+op	27:9	0:0	4	->
+water	27:11	0:0	4	frame_rate_index
+op	27:28	0:0	4	=
+water	27:30	0:0	4	1
+water	27:31	0:0	4	;
+water	28:4	0:0	4	}
+water	29:4	0:0	2	s
+op	29:5	0:0	2	->
+water	29:7	0:0	2	bit_rate
+op	29:16	0:0	2	=
+call	29:18	29:37	2	get_bits
+arg	29:27	29:33	3	&s->gb
+op	29:27	0:0	4	&
+water	29:28	0:0	4	s
+op	29:29	0:0	4	->
+water	29:31	0:0	4	gb
+arg	29:35	29:37	3	18
+water	29:35	0:0	4	18
+op	29:39	0:0	2	*
+water	29:41	0:0	2	400
+water	29:44	0:0	2	LL
+water	29:46	0:0	2	;
+if	30:4	32:4	2	(check_marker (& s -> gb ,"in sequence header" ) == 0)
+cond	30:8	30:54	3	check_marker (& s -> gb ,"in sequence header" ) == 0
+call	30:8	30:49	4	check_marker
+arg	30:21	30:27	5	&s->gb
+op	30:21	0:0	6	&
+water	30:22	0:0	6	s
+op	30:23	0:0	6	->
+water	30:25	0:0	6	gb
+arg	30:29	30:49	5	"in sequence header"
+water	30:29	0:0	6	"in sequence header"
+op	30:51	0:0	4	==
+water	30:54	0:0	4	0
+stmts	30:57	32:4	3	
+water	30:57	0:0	4	{
+return	31:8	31:34	4	AVERROR_INVALIDDATA
+water	31:15	0:0	5	AVERROR_INVALIDDATA
+water	32:4	0:0	4	}
+water	33:4	0:0	2	s
+op	33:5	0:0	2	->
+water	33:7	0:0	2	avctx
+op	33:12	0:0	2	->
+water	33:14	0:0	2	rc_buffer_size
+op	33:29	0:0	2	=
+call	33:31	33:50	2	get_bits
+arg	33:40	33:46	3	&s->gb
+op	33:40	0:0	4	&
+water	33:41	0:0	4	s
+op	33:42	0:0	4	->
+water	33:44	0:0	4	gb
+arg	33:48	33:50	3	10
+water	33:48	0:0	4	10
+op	33:52	0:0	2	*
+water	33:54	0:0	2	1024
+op	33:59	0:0	2	*
+water	33:61	0:0	2	16
+water	33:63	0:0	2	;
+call	34:4	34:23	2	skip_bits
+arg	34:14	34:20	3	&s->gb
+op	34:14	0:0	4	&
+water	34:15	0:0	4	s
+op	34:16	0:0	4	->
+water	34:18	0:0	4	gb
+arg	34:22	34:23	3	1
+water	34:22	0:0	4	1
+water	34:24	0:0	2	;
+if	36:4	38:4	2	(get_bits1 (& s -> gb ))
+cond	36:8	36:24	3	get_bits1 (& s -> gb )
+call	36:8	36:24	4	get_bits1
+arg	36:18	36:24	5	&s->gb
+op	36:18	0:0	6	&
+water	36:19	0:0	6	s
+op	36:20	0:0	6	->
+water	36:22	0:0	6	gb
+stmts	36:27	38:4	3	
+water	36:27	0:0	4	{
+call	37:8	37:65	4	load_matrix
+arg	37:20	37:21	5	s
+water	37:20	0:0	6	s
+arg	37:23	37:45	5	s->chroma_intra_matrix
+water	37:23	0:0	6	s
+op	37:24	0:0	6	->
+water	37:26	0:0	6	chroma_intra_matrix
+arg	37:47	37:62	5	s->intra_matrix
+water	37:47	0:0	6	s
+op	37:48	0:0	6	->
+water	37:50	0:0	6	intra_matrix
+arg	37:64	37:65	5	1
+water	37:64	0:0	6	1
+water	37:66	0:0	4	;
+water	38:4	0:0	4	}
+else	38:6	45:4	2
+stmts	38:11	45:4	3	
+water	38:11	0:0	4	{
+for	39:8	44:8	4	(i = 0 ;i < 64;i ++)
+forinit	39:13	39:18	5	i = 0 ;
+water	39:13	0:0	6	i
+op	39:15	0:0	6	=
+water	39:17	0:0	6	0
+water	39:18	0:0	6	;
+cond	39:20	39:24	5	i < 64
+water	39:20	0:0	6	i
+op	39:22	0:0	6	<
+water	39:24	0:0	6	64
+forexpr	39:28	39:29	5	i ++
+water	39:28	0:0	6	i
+op	39:29	0:0	6	++
+stmts	39:33	44:8	5	
+water	39:33	0:0	6	{
+water	40:12	0:0	6	j
+op	40:14	0:0	6	=
+water	40:16	0:0	6	s
+op	40:17	0:0	6	->
+water	40:19	0:0	6	idsp
+op	40:23	0:0	6	.
+water	40:24	0:0	6	idct_permutation
+op	40:40	0:0	6	[
+water	40:41	0:0	6	i
+op	40:42	0:0	6	]
+water	40:43	0:0	6	;
+water	41:12	0:0	6	v
+op	41:14	0:0	6	=
+water	41:16	0:0	6	ff_mpeg1_default_intra_matrix
+op	41:45	0:0	6	[
+water	41:46	0:0	6	i
+op	41:47	0:0	6	]
+water	41:48	0:0	6	;
+water	42:12	0:0	6	s
+op	42:13	0:0	6	->
+water	42:15	0:0	6	intra_matrix
+op	42:27	0:0	6	[
+water	42:28	0:0	6	j
+op	42:29	0:0	6	]
+op	42:38	0:0	6	=
+water	42:40	0:0	6	v
+water	42:41	0:0	6	;
+water	43:12	0:0	6	s
+op	43:13	0:0	6	->
+water	43:15	0:0	6	chroma_intra_matrix
+op	43:34	0:0	6	[
+water	43:35	0:0	6	j
+op	43:36	0:0	6	]
+op	43:38	0:0	6	=
+water	43:40	0:0	6	v
+water	43:41	0:0	6	;
+water	44:8	0:0	6	}
+water	45:4	0:0	4	}
+if	46:4	48:4	2	(get_bits1 (& s -> gb ))
+cond	46:8	46:24	3	get_bits1 (& s -> gb )
+call	46:8	46:24	4	get_bits1
+arg	46:18	46:24	5	&s->gb
+op	46:18	0:0	6	&
+water	46:19	0:0	6	s
+op	46:20	0:0	6	->
+water	46:22	0:0	6	gb
+stmts	46:27	48:4	3	
+water	46:27	0:0	4	{
+call	47:8	47:65	4	load_matrix
+arg	47:20	47:21	5	s
+water	47:20	0:0	6	s
+arg	47:23	47:45	5	s->chroma_inter_matrix
+water	47:23	0:0	6	s
+op	47:24	0:0	6	->
+water	47:26	0:0	6	chroma_inter_matrix
+arg	47:47	47:62	5	s->inter_matrix
+water	47:47	0:0	6	s
+op	47:48	0:0	6	->
+water	47:50	0:0	6	inter_matrix
+arg	47:64	47:65	5	0
+water	47:64	0:0	6	0
+water	47:66	0:0	4	;
+water	48:4	0:0	4	}
+else	48:6	55:4	2
+stmts	48:11	55:4	3	
+water	48:11	0:0	4	{
+for	49:8	54:8	4	(i = 0 ;i < 64;i ++)
+forinit	49:13	49:18	5	i = 0 ;
+water	49:13	0:0	6	i
+op	49:15	0:0	6	=
+water	49:17	0:0	6	0
+water	49:18	0:0	6	;
+cond	49:20	49:24	5	i < 64
+water	49:20	0:0	6	i
+op	49:22	0:0	6	<
+water	49:24	0:0	6	64
+forexpr	49:28	49:29	5	i ++
+water	49:28	0:0	6	i
+op	49:29	0:0	6	++
+stmts	49:33	54:8	5	
+water	49:33	0:0	6	{
+decl	50:12	50:47	6	int	j
+op	50:18	0:0	6	=
+water	50:20	0:0	6	s
+op	50:21	0:0	6	->
+water	50:23	0:0	6	idsp
+op	50:27	0:0	6	.
+water	50:28	0:0	6	idct_permutation
+op	50:44	0:0	6	[
+water	50:45	0:0	6	i
+op	50:46	0:0	6	]
+water	51:12	0:0	6	v
+op	51:14	0:0	6	=
+water	51:16	0:0	6	ff_mpeg1_default_non_intra_matrix
+op	51:49	0:0	6	[
+water	51:50	0:0	6	i
+op	51:51	0:0	6	]
+water	51:52	0:0	6	;
+water	52:12	0:0	6	s
+op	52:13	0:0	6	->
+water	52:15	0:0	6	inter_matrix
+op	52:27	0:0	6	[
+water	52:28	0:0	6	j
+op	52:29	0:0	6	]
+op	52:38	0:0	6	=
+water	52:40	0:0	6	v
+water	52:41	0:0	6	;
+water	53:12	0:0	6	s
+op	53:13	0:0	6	->
+water	53:15	0:0	6	chroma_inter_matrix
+op	53:34	0:0	6	[
+water	53:35	0:0	6	j
+op	53:36	0:0	6	]
+op	53:38	0:0	6	=
+water	53:40	0:0	6	v
+water	53:41	0:0	6	;
+water	54:8	0:0	6	}
+water	55:4	0:0	4	}
+if	56:4	59:4	2	(show_bits (& s -> gb ,23 ) != 0)
+cond	56:8	56:33	3	show_bits (& s -> gb ,23 ) != 0
+call	56:8	56:28	4	show_bits
+arg	56:18	56:24	5	&s->gb
+op	56:18	0:0	6	&
+water	56:19	0:0	6	s
+op	56:20	0:0	6	->
+water	56:22	0:0	6	gb
+arg	56:26	56:28	5	23
+water	56:26	0:0	6	23
+op	56:30	0:0	4	!=
+water	56:33	0:0	4	0
+stmts	56:36	59:4	3	
+water	56:36	0:0	4	{
+call	57:8	57:66	4	av_log
+arg	57:15	57:23	5	s->avctx
+water	57:15	0:0	6	s
+op	57:16	0:0	6	->
+water	57:18	0:0	6	avctx
+arg	57:25	57:37	5	AV_LOG_ERROR
+water	57:25	0:0	6	AV_LOG_ERROR
+arg	57:39	57:66	5	"sequence header damaged\n"
+water	57:39	0:0	6	"sequence header damaged\n"
+water	57:67	0:0	4	;
+return	58:8	58:34	4	AVERROR_INVALIDDATA
+water	58:15	0:0	5	AVERROR_INVALIDDATA
+water	59:4	0:0	4	}
+water	60:4	0:0	2	s
+op	60:5	0:0	2	->
+water	60:7	0:0	2	width
+op	60:14	0:0	2	=
+water	60:16	0:0	2	width
+water	60:21	0:0	2	;
+water	61:4	0:0	2	s
+op	61:5	0:0	2	->
+water	61:7	0:0	2	height
+op	61:14	0:0	2	=
+water	61:16	0:0	2	height
+water	61:22	0:0	2	;
+water	63:4	0:0	2	s
+op	63:5	0:0	2	->
+water	63:7	0:0	2	progressive_sequence
+op	63:28	0:0	2	=
+water	63:30	0:0	2	1
+water	63:31	0:0	2	;
+water	64:4	0:0	2	s
+op	64:5	0:0	2	->
+water	64:7	0:0	2	progressive_frame
+op	64:28	0:0	2	=
+water	64:30	0:0	2	1
+water	64:31	0:0	2	;
+water	65:4	0:0	2	s
+op	65:5	0:0	2	->
+water	65:7	0:0	2	picture_structure
+op	65:28	0:0	2	=
+water	65:30	0:0	2	PICT_FRAME
+water	65:40	0:0	2	;
+water	66:4	0:0	2	s
+op	66:5	0:0	2	->
+water	66:7	0:0	2	first_field
+op	66:28	0:0	2	=
+water	66:30	0:0	2	0
+water	66:31	0:0	2	;
+water	67:4	0:0	2	s
+op	67:5	0:0	2	->
+water	67:7	0:0	2	frame_pred_frame_dct
+op	67:28	0:0	2	=
+water	67:30	0:0	2	1
+water	67:31	0:0	2	;
+water	68:4	0:0	2	s
+op	68:5	0:0	2	->
+water	68:7	0:0	2	chroma_format
+op	68:28	0:0	2	=
+water	68:30	0:0	2	1
+water	68:31	0:0	2	;
+water	69:4	0:0	2	s
+op	69:5	0:0	2	->
+water	69:7	0:0	2	codec_id
+op	69:28	0:0	2	=
+water	70:4	0:0	2	s
+op	70:5	0:0	2	->
+water	70:7	0:0	2	avctx
+op	70:12	0:0	2	->
+water	70:14	0:0	2	codec_id
+op	70:28	0:0	2	=
+water	70:30	0:0	2	AV_CODEC_ID_MPEG1VIDEO
+water	70:52	0:0	2	;
+water	71:4	0:0	2	s
+op	71:5	0:0	2	->
+water	71:7	0:0	2	out_format
+op	71:28	0:0	2	=
+water	71:30	0:0	2	FMT_MPEG1
+water	71:39	0:0	2	;
+water	72:4	0:0	2	s
+op	72:5	0:0	2	->
+water	72:7	0:0	2	swap_uv
+op	72:28	0:0	2	=
+water	72:30	0:0	2	0
+water	72:31	0:0	2	;
+if	73:4	74:24	2	(s -> avctx -> flags & AV_CODEC_FLAG_LOW_DELAY)
+cond	73:8	73:26	3	s -> avctx -> flags & AV_CODEC_FLAG_LOW_DELAY
+water	73:8	0:0	4	s
+op	73:9	0:0	4	->
+water	73:11	0:0	4	avctx
+op	73:16	0:0	4	->
+water	73:18	0:0	4	flags
+op	73:24	0:0	4	&
+water	73:26	0:0	4	AV_CODEC_FLAG_LOW_DELAY
+stmts	74:8	74:24	3	
+water	74:8	0:0	4	s
+op	74:9	0:0	4	->
+water	74:11	0:0	4	low_delay
+op	74:21	0:0	4	=
+water	74:23	0:0	4	1
+water	74:24	0:0	4	;
+if	75:4	77:75	2	(s -> avctx -> debug & FF_DEBUG_PICT_INFO)
+cond	75:8	75:26	3	s -> avctx -> debug & FF_DEBUG_PICT_INFO
+water	75:8	0:0	4	s
+op	75:9	0:0	4	->
+water	75:11	0:0	4	avctx
+op	75:16	0:0	4	->
+water	75:18	0:0	4	debug
+op	75:24	0:0	4	&
+water	75:26	0:0	4	FF_DEBUG_PICT_INFO
+stmts	76:8	77:75	3	
+call	76:8	77:74	4	av_log
+arg	76:15	76:23	5	s->avctx
+water	76:15	0:0	6	s
+op	76:16	0:0	6	->
+water	76:18	0:0	6	avctx
+arg	76:25	76:37	5	AV_LOG_DEBUG
+water	76:25	0:0	6	AV_LOG_DEBUG
+arg	76:39	76:100	5	"vbv buffer: %d, bitrate:%"PRId64", aspect_ratio_info: %d \n"
+water	76:39	0:0	6	"vbv buffer: %d, bitrate:%"
+water	76:66	0:0	6	PRId64
+water	76:72	0:0	6	", aspect_ratio_info: %d \n"
+arg	77:15	77:39	5	s->avctx->rc_buffer_size
+water	77:15	0:0	6	s
+op	77:16	0:0	6	->
+water	77:18	0:0	6	avctx
+op	77:23	0:0	6	->
+water	77:25	0:0	6	rc_buffer_size
+arg	77:41	77:52	5	s->bit_rate
+water	77:41	0:0	6	s
+op	77:42	0:0	6	->
+water	77:44	0:0	6	bit_rate
+arg	77:54	77:74	5	s->aspect_ratio_info
+water	77:54	0:0	6	s
+op	77:55	0:0	6	->
+water	77:57	0:0	6	aspect_ratio_info
+water	77:75	0:0	4	;
+return	78:4	78:12	2	0
+water	78:11	0:0	3	0

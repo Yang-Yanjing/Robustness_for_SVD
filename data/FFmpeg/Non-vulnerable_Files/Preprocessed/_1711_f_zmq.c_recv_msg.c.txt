@@ -1,0 +1,151 @@
+func	1:0	29:0	0	static int	recv_msg
+params	1:19	0:0	1	
+param	1:20	1:40	2	AVFilterContext *	ctx
+param	1:42	1:52	2	char * *	buf
+param	1:54	1:67	2	int *	buf_size
+stmnts	0:0	28:14	1	
+decl	3:4	3:31	2	ZMQContext	*zmq
+op	3:20	0:0	2	=
+water	3:22	0:0	2	ctx
+op	3:25	0:0	2	->
+water	3:27	0:0	2	priv
+decl	4:4	4:17	2	zmq_msg_t	msg
+decl	5:4	5:15	2	int	ret
+op	5:12	0:0	2	=
+water	5:14	0:0	2	0
+if	6:4	10:4	2	(zmq_msg_init (& msg ) == - 1)
+cond	6:8	6:31	3	zmq_msg_init (& msg ) == - 1
+call	6:8	6:25	4	zmq_msg_init
+arg	6:21	6:25	5	&msg
+op	6:21	0:0	6	&
+water	6:22	0:0	6	msg
+op	6:27	0:0	4	==
+op	6:30	0:0	4	-
+water	6:31	0:0	4	1
+stmts	6:34	10:4	3	
+water	6:34	0:0	4	{
+call	7:8	8:80	4	av_log
+arg	7:15	7:18	5	ctx
+water	7:15	0:0	6	ctx
+arg	7:20	7:34	5	AV_LOG_WARNING
+water	7:20	0:0	6	AV_LOG_WARNING
+arg	8:15	8:59	5	"Could not initialize receive message: %s\n"
+water	8:15	0:0	6	"Could not initialize receive message: %s\n"
+arg	8:61	8:80	5	zmq_strerror(errno)
+call	8:61	8:79	6	zmq_strerror
+arg	8:74	8:79	7	errno
+water	8:74	0:0	8	errno
+water	8:81	0:0	4	;
+return	9:8	9:31	4	AVERROR_EXTERNAL
+water	9:15	0:0	5	AVERROR_EXTERNAL
+water	10:4	0:0	4	}
+if	11:4	17:4	2	(zmq_msg_recv (& msg ,zmq -> responder ,ZMQ_DONTWAIT ) == - 1)
+cond	11:8	11:61	3	zmq_msg_recv (& msg ,zmq -> responder ,ZMQ_DONTWAIT ) == - 1
+call	11:8	11:55	4	zmq_msg_recv
+arg	11:21	11:25	5	&msg
+op	11:21	0:0	6	&
+water	11:22	0:0	6	msg
+arg	11:27	11:41	5	zmq->responder
+water	11:27	0:0	6	zmq
+op	11:30	0:0	6	->
+water	11:32	0:0	6	responder
+arg	11:43	11:55	5	ZMQ_DONTWAIT
+water	11:43	0:0	6	ZMQ_DONTWAIT
+op	11:57	0:0	4	==
+op	11:60	0:0	4	-
+water	11:61	0:0	4	1
+stmts	11:64	17:4	3	
+water	11:64	0:0	4	{
+if	12:8	14:74	4	(errno != EAGAIN)
+cond	12:12	12:21	5	errno != EAGAIN
+water	12:12	0:0	6	errno
+op	12:18	0:0	6	!=
+water	12:21	0:0	6	EAGAIN
+stmts	13:12	14:74	5	
+call	13:12	14:73	6	av_log
+arg	13:19	13:22	7	ctx
+water	13:19	0:0	8	ctx
+arg	13:24	13:38	7	AV_LOG_WARNING
+water	13:24	0:0	8	AV_LOG_WARNING
+arg	14:19	14:52	7	"Could not receive message: %s\n"
+water	14:19	0:0	8	"Could not receive message: %s\n"
+arg	14:54	14:73	7	zmq_strerror(errno)
+call	14:54	14:72	8	zmq_strerror
+arg	14:67	14:72	9	errno
+water	14:67	0:0	10	errno
+water	14:74	0:0	6	;
+water	15:8	0:0	4	ret
+op	15:12	0:0	4	=
+water	15:14	0:0	4	AVERROR_EXTERNAL
+water	15:30	0:0	4	;
+goto	16:8	16:16	4	end
+water	16:13	0:0	5	end
+water	17:4	0:0	4	}
+op	18:4	0:0	2	*
+water	18:5	0:0	2	buf_size
+op	18:14	0:0	2	=
+call	18:16	18:33	2	zmq_msg_size
+arg	18:29	18:33	3	&msg
+op	18:29	0:0	4	&
+water	18:30	0:0	4	msg
+op	18:35	0:0	2	+
+water	18:37	0:0	2	1
+water	18:38	0:0	2	;
+op	19:4	0:0	2	*
+water	19:5	0:0	2	buf
+op	19:9	0:0	2	=
+call	19:11	19:30	2	av_malloc
+arg	19:21	19:30	3	*buf_size
+op	19:21	0:0	4	*
+water	19:22	0:0	4	buf_size
+water	19:31	0:0	2	;
+if	20:4	23:4	2	(! * buf)
+cond	20:8	20:10	3	! * buf
+op	20:8	0:0	4	!
+op	20:9	0:0	4	*
+water	20:10	0:0	4	buf
+stmts	20:15	23:4	3	
+water	20:15	0:0	4	{
+water	21:8	0:0	4	ret
+op	21:12	0:0	4	=
+call	21:14	21:28	4	AVERROR
+arg	21:22	21:28	5	ENOMEM
+water	21:22	0:0	6	ENOMEM
+water	21:29	0:0	4	;
+goto	22:8	22:16	4	end
+water	22:13	0:0	5	end
+water	23:4	0:0	4	}
+call	24:4	24:46	2	memcpy
+arg	24:11	24:15	3	*buf
+op	24:11	0:0	4	*
+water	24:12	0:0	4	buf
+arg	24:17	24:35	3	zmq_msg_data(&msg)
+call	24:17	24:34	4	zmq_msg_data
+arg	24:30	24:34	5	&msg
+op	24:30	0:0	6	&
+water	24:31	0:0	6	msg
+arg	24:37	24:46	3	*buf_size
+op	24:37	0:0	4	*
+water	24:38	0:0	4	buf_size
+water	24:47	0:0	2	;
+water	25:4	0:0	2	(
+op	25:5	0:0	2	*
+water	25:6	0:0	2	buf
+water	25:9	0:0	2	)
+op	25:10	0:0	2	[
+op	25:11	0:0	2	*
+water	25:12	0:0	2	buf_size
+op	25:20	0:0	2	-
+water	25:21	0:0	2	1
+op	25:22	0:0	2	]
+op	25:24	0:0	2	=
+water	25:26	0:0	2	0
+water	25:27	0:0	2	;
+label	26:0	26:3	2	end :
+call	27:4	27:22	2	zmq_msg_close
+arg	27:18	27:22	3	&msg
+op	27:18	0:0	4	&
+water	27:19	0:0	4	msg
+water	27:23	0:0	2	;
+return	28:4	28:14	2	ret
+water	28:11	0:0	3	ret

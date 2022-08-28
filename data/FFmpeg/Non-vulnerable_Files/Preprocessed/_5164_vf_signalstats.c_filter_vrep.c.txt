@@ -1,0 +1,198 @@
+func	1:0	29:0	0	static int	filter_vrep
+params	1:22	0:0	1	
+param	1:23	1:43	2	AVFilterContext *	ctx
+param	1:45	1:54	2	void *	arg
+param	1:56	1:65	2	int	jobnr
+param	1:67	1:78	2	int	nb_jobs
+stmnts	0:0	28:20	1	
+decl	3:4	3:24	2	ThreadData	*td
+op	3:19	0:0	2	=
+water	3:21	0:0	2	arg
+decl	4:4	4:43	2	const SignalstatsContext	*s
+op	4:32	0:0	2	=
+water	4:34	0:0	2	ctx
+op	4:37	0:0	2	->
+water	4:39	0:0	2	priv
+decl	5:4	5:30	2	const AVFrame	*in
+op	5:22	0:0	2	=
+water	5:24	0:0	2	td
+op	5:26	0:0	2	->
+water	5:28	0:0	2	in
+decl	6:4	6:26	2	AVFrame	*out
+op	6:17	0:0	2	=
+water	6:19	0:0	2	td
+op	6:21	0:0	2	->
+water	6:23	0:0	2	out
+decl	7:4	7:27	2	const int	w
+op	7:16	0:0	2	=
+water	7:18	0:0	2	in
+op	7:20	0:0	2	->
+water	7:22	0:0	2	width
+decl	8:4	8:28	2	const int	h
+op	8:16	0:0	2	=
+water	8:18	0:0	2	in
+op	8:20	0:0	2	->
+water	8:22	0:0	2	height
+decl	9:4	9:53	2	const int	slice_start
+op	9:26	0:0	2	=
+water	9:28	0:0	2	(
+water	9:29	0:0	2	h
+op	9:31	0:0	2	*
+water	9:34	0:0	2	jobnr
+water	9:42	0:0	2	)
+op	9:44	0:0	2	/
+water	9:46	0:0	2	nb_jobs
+decl	10:4	10:53	2	const int	slice_end
+op	10:26	0:0	2	=
+water	10:28	0:0	2	(
+water	10:29	0:0	2	h
+op	10:31	0:0	2	*
+water	10:33	0:0	2	(
+water	10:34	0:0	2	jobnr
+op	10:39	0:0	2	+
+water	10:40	0:0	2	1
+water	10:41	0:0	2	)
+water	10:42	0:0	2	)
+op	10:44	0:0	2	/
+water	10:46	0:0	2	nb_jobs
+decl	11:4	11:34	2	const uint8_t	*p
+op	11:21	0:0	2	=
+water	11:23	0:0	2	in
+op	11:25	0:0	2	->
+water	11:27	0:0	2	data
+op	11:31	0:0	2	[
+water	11:32	0:0	2	0
+op	11:33	0:0	2	]
+decl	12:4	12:34	2	const int	lw
+op	12:17	0:0	2	=
+water	12:19	0:0	2	in
+op	12:21	0:0	2	->
+water	12:23	0:0	2	linesize
+op	12:31	0:0	2	[
+water	12:32	0:0	2	0
+op	12:33	0:0	2	]
+decl	13:4	13:23	2	int	x
+water	13:9	0:0	2	,
+decl	13:4	13:23	2	int	y
+water	13:12	0:0	2	,
+decl	13:4	13:23	2	int	score
+op	13:20	0:0	2	=
+water	13:22	0:0	2	0
+for	14:4	27:4	2	(y = slice_start ;y < slice_end;y ++)
+forinit	14:9	14:24	3	y = slice_start ;
+water	14:9	0:0	4	y
+op	14:11	0:0	4	=
+water	14:13	0:0	4	slice_start
+water	14:24	0:0	4	;
+cond	14:26	14:30	3	y < slice_end
+water	14:26	0:0	4	y
+op	14:28	0:0	4	<
+water	14:30	0:0	4	slice_end
+forexpr	14:41	14:42	3	y ++
+water	14:41	0:0	4	y
+op	14:42	0:0	4	++
+stmts	14:46	27:4	3	
+water	14:46	0:0	4	{
+decl	15:8	15:46	4	const int	y2lw
+op	15:23	0:0	4	=
+water	15:25	0:0	4	(
+water	15:26	0:0	4	y
+op	15:28	0:0	4	-
+water	15:30	0:0	4	VREP_START
+water	15:40	0:0	4	)
+op	15:42	0:0	4	*
+water	15:44	0:0	4	lw
+decl	16:8	16:46	4	const int	ylw
+op	16:23	0:0	4	=
+water	16:26	0:0	4	y
+op	16:42	0:0	4	*
+water	16:44	0:0	4	lw
+decl	17:8	17:29	4	int	filt
+water	17:16	0:0	4	,
+decl	17:8	17:29	4	int	totdiff
+op	17:26	0:0	4	=
+water	17:28	0:0	4	0
+if	18:8	19:20	4	(y < VREP_START)
+cond	18:12	18:16	5	y < VREP_START
+water	18:12	0:0	6	y
+op	18:14	0:0	6	<
+water	18:16	0:0	6	VREP_START
+stmts	19:12	19:20	5	
+continue	19:12	19:20	6	
+for	20:8	21:52	4	(x = 0 ;x < w;x ++)
+forinit	20:13	20:18	5	x = 0 ;
+water	20:13	0:0	6	x
+op	20:15	0:0	6	=
+water	20:17	0:0	6	0
+water	20:18	0:0	6	;
+cond	20:20	20:24	5	x < w
+water	20:20	0:0	6	x
+op	20:22	0:0	6	<
+water	20:24	0:0	6	w
+forexpr	20:27	20:28	5	x ++
+water	20:27	0:0	6	x
+op	20:28	0:0	6	++
+stmts	21:12	21:52	5	
+water	21:12	0:0	6	totdiff
+op	21:20	0:0	6	+=
+call	21:23	21:51	6	abs
+arg	21:27	21:51	7	p[y2lw+x]-p[ylw+x]
+water	21:27	0:0	8	p
+op	21:28	0:0	8	[
+water	21:29	0:0	8	y2lw
+op	21:34	0:0	8	+
+water	21:36	0:0	8	x
+op	21:37	0:0	8	]
+op	21:39	0:0	8	-
+water	21:41	0:0	8	p
+op	21:42	0:0	8	[
+water	21:43	0:0	8	ylw
+op	21:47	0:0	8	+
+water	21:49	0:0	8	x
+op	21:50	0:0	8	]
+water	21:52	0:0	6	;
+water	22:8	0:0	4	filt
+op	22:13	0:0	4	=
+water	22:15	0:0	4	totdiff
+op	22:23	0:0	4	<
+water	22:25	0:0	4	w
+water	22:26	0:0	4	;
+water	23:8	0:0	4	score
+op	23:14	0:0	4	+=
+water	23:17	0:0	4	filt
+water	23:21	0:0	4	;
+if	24:8	26:40	4	(filt && out)
+cond	24:12	24:20	5	filt && out
+water	24:12	0:0	6	filt
+op	24:17	0:0	6	&&
+water	24:20	0:0	6	out
+stmts	25:12	26:40	5	
+for	25:12	26:40	6	(x = 0 ;x < w;x ++)
+forinit	25:17	25:22	7	x = 0 ;
+water	25:17	0:0	8	x
+op	25:19	0:0	8	=
+water	25:21	0:0	8	0
+water	25:22	0:0	8	;
+cond	25:24	25:28	7	x < w
+water	25:24	0:0	8	x
+op	25:26	0:0	8	<
+water	25:28	0:0	8	w
+forexpr	25:31	25:32	7	x ++
+water	25:31	0:0	8	x
+op	25:32	0:0	8	++
+stmts	26:16	26:40	7	
+call	26:16	26:39	8	burn_frame
+arg	26:27	26:28	9	s
+water	26:27	0:0	10	s
+arg	26:30	26:33	9	out
+water	26:30	0:0	10	out
+arg	26:35	26:36	9	x
+water	26:35	0:0	10	x
+arg	26:38	26:39	9	y
+water	26:38	0:0	10	y
+water	26:40	0:0	8	;
+water	27:4	0:0	4	}
+return	28:4	28:20	2	score*w
+water	28:11	0:0	3	score
+op	28:17	0:0	3	*
+water	28:19	0:0	3	w

@@ -1,0 +1,368 @@
+func	1:8	59:0	0	int	ff_sndio_open
+params	1:25	0:0	1	
+param	1:26	1:45	2	AVFormatContext *	s1
+param	1:47	1:60	2	int	is_output
+param	2:26	2:50	2	const char *	audio_device
+stmnts	0:0	58:23	1	
+decl	4:4	4:32	2	SndioData	*s
+op	4:17	0:0	2	=
+water	4:19	0:0	2	s1
+op	4:21	0:0	2	->
+water	4:23	0:0	2	priv_data
+decl	5:4	5:23	2	struct sio_hdl	*hdl
+decl	6:4	6:22	2	struct sio_par	par
+water	7:4	0:0	2	hdl
+op	7:8	0:0	2	=
+call	7:10	7:66	2	sio_open
+arg	7:19	7:31	3	audio_device
+water	7:19	0:0	4	audio_device
+arg	7:33	7:63	3	is_output?SIO_PLAY:SIO_REC
+water	7:33	0:0	4	is_output
+water	7:43	0:0	4	?
+water	7:45	0:0	4	SIO_PLAY
+water	7:54	0:0	4	:
+water	7:56	0:0	4	SIO_REC
+arg	7:65	7:66	3	0
+water	7:65	0:0	4	0
+water	7:67	0:0	2	;
+if	8:4	11:4	2	(! hdl)
+cond	8:8	8:9	3	! hdl
+op	8:8	0:0	4	!
+water	8:9	0:0	4	hdl
+stmts	8:14	11:4	3	
+water	8:14	0:0	4	{
+call	9:8	9:64	4	av_log
+arg	9:15	9:17	5	s1
+water	9:15	0:0	6	s1
+arg	9:19	9:31	5	AV_LOG_ERROR
+water	9:19	0:0	6	AV_LOG_ERROR
+arg	9:33	9:64	5	"Could not open sndio device\n"
+water	9:33	0:0	6	"Could not open sndio device\n"
+water	9:65	0:0	4	;
+return	10:8	10:27	4	AVERROR(EIO)
+call	10:15	10:26	5	AVERROR
+arg	10:23	10:26	6	EIO
+water	10:23	0:0	7	EIO
+water	11:4	0:0	4	}
+call	12:4	12:20	2	sio_initpar
+arg	12:16	12:20	3	&par
+op	12:16	0:0	4	&
+water	12:17	0:0	4	par
+water	12:21	0:0	2	;
+water	13:4	0:0	2	par
+op	13:7	0:0	2	.
+water	13:8	0:0	2	bits
+op	13:13	0:0	2	=
+water	13:15	0:0	2	16
+water	13:17	0:0	2	;
+water	14:4	0:0	2	par
+op	14:7	0:0	2	.
+water	14:8	0:0	2	sig
+op	14:13	0:0	2	=
+water	14:15	0:0	2	1
+water	14:16	0:0	2	;
+water	15:4	0:0	2	par
+op	15:7	0:0	2	.
+water	15:8	0:0	2	le
+op	15:13	0:0	2	=
+water	15:15	0:0	2	SIO_LE_NATIVE
+water	15:28	0:0	2	;
+if	16:4	17:31	2	(is_output)
+cond	16:8	16:8	3	is_output
+water	16:8	0:0	4	is_output
+stmts	17:8	17:31	3	
+water	17:8	0:0	4	par
+op	17:11	0:0	4	.
+water	17:12	0:0	4	pchan
+op	17:18	0:0	4	=
+water	17:20	0:0	4	s
+op	17:21	0:0	4	->
+water	17:23	0:0	4	channels
+water	17:31	0:0	4	;
+else	18:4	19:31	2
+stmts	19:8	19:31	3	
+water	19:8	0:0	4	par
+op	19:11	0:0	4	.
+water	19:12	0:0	4	rchan
+op	19:18	0:0	4	=
+water	19:20	0:0	4	s
+op	19:21	0:0	4	->
+water	19:23	0:0	4	channels
+water	19:31	0:0	4	;
+water	20:4	0:0	2	par
+op	20:7	0:0	2	.
+water	20:8	0:0	2	rate
+op	20:13	0:0	2	=
+water	20:15	0:0	2	s
+op	20:16	0:0	2	->
+water	20:18	0:0	2	sample_rate
+water	20:29	0:0	2	;
+if	21:4	25:4	2	(!sio_setpar (hdl ,& par ) || !sio_getpar (hdl ,& par ))
+cond	21:8	21:55	3	!sio_setpar (hdl ,& par ) || !sio_getpar (hdl ,& par )
+op	21:8	0:0	4	!
+call	21:9	21:29	4	sio_setpar
+arg	21:20	21:23	5	hdl
+water	21:20	0:0	6	hdl
+arg	21:25	21:29	5	&par
+op	21:25	0:0	6	&
+water	21:26	0:0	6	par
+op	21:31	0:0	4	||
+op	21:34	0:0	4	!
+call	21:35	21:55	4	sio_getpar
+arg	21:46	21:49	5	hdl
+water	21:46	0:0	6	hdl
+arg	21:51	21:55	5	&par
+op	21:51	0:0	6	&
+water	21:52	0:0	6	par
+stmts	21:58	25:4	3	
+water	21:58	0:0	4	{
+call	22:8	23:76	4	av_log
+arg	22:15	22:17	5	s1
+water	22:15	0:0	6	s1
+arg	22:19	22:31	5	AV_LOG_ERROR
+water	22:19	0:0	6	AV_LOG_ERROR
+arg	22:33	23:47	5	"Impossible to set sndio parameters, ""channels: %d sample rate: %d\n"
+water	22:33	0:0	6	"Impossible to set sndio parameters, "
+water	23:15	0:0	6	"channels: %d sample rate: %d\n"
+arg	23:49	23:60	5	s->channels
+water	23:49	0:0	6	s
+op	23:50	0:0	6	->
+water	23:52	0:0	6	channels
+arg	23:62	23:76	5	s->sample_rate
+water	23:62	0:0	6	s
+op	23:63	0:0	6	->
+water	23:65	0:0	6	sample_rate
+water	23:77	0:0	4	;
+goto	24:8	24:17	4	fail
+water	24:13	0:0	5	fail
+water	25:4	0:0	4	}
+if	26:4	33:4	2	(par . bits != 16 || par . sig != 1 || ( is_output && ( par . pchan != s -> channels ) ) || ( ! is_output && ( par . rchan != s -> channels ) ) || ( par . rate != s -> sample_rate ))
+cond	26:8	29:35	3	par . bits != 16 || par . sig != 1 || ( is_output && ( par . pchan != s -> channels ) ) || ( ! is_output && ( par . rchan != s -> channels ) ) || ( par . rate != s -> sample_rate )
+water	26:8	0:0	4	par
+op	26:11	0:0	4	.
+water	26:12	0:0	4	bits
+op	26:17	0:0	4	!=
+water	26:20	0:0	4	16
+op	26:23	0:0	4	||
+water	26:26	0:0	4	par
+op	26:29	0:0	4	.
+water	26:30	0:0	4	sig
+op	26:34	0:0	4	!=
+water	26:37	0:0	4	1
+op	26:39	0:0	4	||
+water	27:8	0:0	4	(
+water	27:9	0:0	4	is_output
+op	27:20	0:0	4	&&
+water	27:23	0:0	4	(
+water	27:24	0:0	4	par
+op	27:27	0:0	4	.
+water	27:28	0:0	4	pchan
+op	27:34	0:0	4	!=
+water	27:37	0:0	4	s
+op	27:38	0:0	4	->
+water	27:40	0:0	4	channels
+water	27:48	0:0	4	)
+water	27:49	0:0	4	)
+op	27:51	0:0	4	||
+water	28:8	0:0	4	(
+op	28:9	0:0	4	!
+water	28:10	0:0	4	is_output
+op	28:20	0:0	4	&&
+water	28:23	0:0	4	(
+water	28:24	0:0	4	par
+op	28:27	0:0	4	.
+water	28:28	0:0	4	rchan
+op	28:34	0:0	4	!=
+water	28:37	0:0	4	s
+op	28:38	0:0	4	->
+water	28:40	0:0	4	channels
+water	28:48	0:0	4	)
+water	28:49	0:0	4	)
+op	28:51	0:0	4	||
+water	29:8	0:0	4	(
+water	29:9	0:0	4	par
+op	29:12	0:0	4	.
+water	29:13	0:0	4	rate
+op	29:18	0:0	4	!=
+water	29:21	0:0	4	s
+op	29:22	0:0	4	->
+water	29:24	0:0	4	sample_rate
+water	29:35	0:0	4	)
+stmts	29:38	33:4	3	
+water	29:38	0:0	4	{
+call	30:8	31:76	4	av_log
+arg	30:15	30:17	5	s1
+water	30:15	0:0	6	s1
+arg	30:19	30:31	5	AV_LOG_ERROR
+water	30:19	0:0	6	AV_LOG_ERROR
+arg	30:33	31:47	5	"Could not set appropriate sndio parameters, ""channels: %d sample rate: %d\n"
+water	30:33	0:0	6	"Could not set appropriate sndio parameters, "
+water	31:15	0:0	6	"channels: %d sample rate: %d\n"
+arg	31:49	31:60	5	s->channels
+water	31:49	0:0	6	s
+op	31:50	0:0	6	->
+water	31:52	0:0	6	channels
+arg	31:62	31:76	5	s->sample_rate
+water	31:62	0:0	6	s
+op	31:63	0:0	6	->
+water	31:65	0:0	6	sample_rate
+water	31:77	0:0	4	;
+goto	32:8	32:17	4	fail
+water	32:13	0:0	5	fail
+water	33:4	0:0	4	}
+water	34:4	0:0	2	s
+op	34:5	0:0	2	->
+water	34:7	0:0	2	buffer_size
+op	34:19	0:0	2	=
+water	34:21	0:0	2	par
+op	34:24	0:0	2	.
+water	34:25	0:0	2	round
+op	34:31	0:0	2	*
+water	34:33	0:0	2	par
+op	34:36	0:0	2	.
+water	34:37	0:0	2	bps
+op	34:41	0:0	2	*
+water	35:21	0:0	2	(
+water	35:22	0:0	2	is_output
+water	35:32	0:0	2	?
+water	35:34	0:0	2	par
+op	35:37	0:0	2	.
+water	35:38	0:0	2	pchan
+water	35:44	0:0	2	:
+water	35:46	0:0	2	par
+op	35:49	0:0	2	.
+water	35:50	0:0	2	rchan
+water	35:55	0:0	2	)
+water	35:56	0:0	2	;
+if	36:4	42:4	2	(is_output)
+cond	36:8	36:8	3	is_output
+water	36:8	0:0	4	is_output
+stmts	36:19	42:4	3	
+water	36:19	0:0	4	{
+water	37:8	0:0	4	s
+op	37:9	0:0	4	->
+water	37:11	0:0	4	buffer
+op	37:18	0:0	4	=
+call	37:20	37:44	4	av_malloc
+arg	37:30	37:44	5	s->buffer_size
+water	37:30	0:0	6	s
+op	37:31	0:0	6	->
+water	37:33	0:0	6	buffer_size
+water	37:45	0:0	4	;
+if	38:8	41:8	4	(! s -> buffer)
+cond	38:12	38:16	5	! s -> buffer
+op	38:12	0:0	6	!
+water	38:13	0:0	6	s
+op	38:14	0:0	6	->
+water	38:16	0:0	6	buffer
+stmts	38:24	41:8	5	
+water	38:24	0:0	6	{
+call	39:12	39:66	6	av_log
+arg	39:19	39:21	7	s1
+water	39:19	0:0	8	s1
+arg	39:23	39:35	7	AV_LOG_ERROR
+water	39:23	0:0	8	AV_LOG_ERROR
+arg	39:37	39:66	7	"Could not allocate buffer\n"
+water	39:37	0:0	8	"Could not allocate buffer\n"
+water	39:67	0:0	6	;
+goto	40:12	40:21	6	fail
+water	40:17	0:0	7	fail
+water	41:8	0:0	6	}
+water	42:4	0:0	4	}
+water	43:4	0:0	2	s
+op	43:5	0:0	2	->
+water	43:7	0:0	2	codec_id
+op	43:19	0:0	2	=
+water	43:21	0:0	2	par
+op	43:24	0:0	2	.
+water	43:25	0:0	2	le
+water	43:28	0:0	2	?
+water	43:30	0:0	2	AV_CODEC_ID_PCM_S16LE
+water	43:52	0:0	2	:
+water	43:54	0:0	2	AV_CODEC_ID_PCM_S16BE
+water	43:75	0:0	2	;
+water	44:4	0:0	2	s
+op	44:5	0:0	2	->
+water	44:7	0:0	2	channels
+op	44:19	0:0	2	=
+water	44:21	0:0	2	is_output
+water	44:31	0:0	2	?
+water	44:33	0:0	2	par
+op	44:36	0:0	2	.
+water	44:37	0:0	2	pchan
+water	44:43	0:0	2	:
+water	44:45	0:0	2	par
+op	44:48	0:0	2	.
+water	44:49	0:0	2	rchan
+water	44:54	0:0	2	;
+water	45:4	0:0	2	s
+op	45:5	0:0	2	->
+water	45:7	0:0	2	sample_rate
+op	45:19	0:0	2	=
+water	45:21	0:0	2	par
+op	45:24	0:0	2	.
+water	45:25	0:0	2	rate
+water	45:29	0:0	2	;
+water	46:4	0:0	2	s
+op	46:5	0:0	2	->
+water	46:7	0:0	2	bps
+op	46:19	0:0	2	=
+water	46:21	0:0	2	par
+op	46:24	0:0	2	.
+water	46:25	0:0	2	bps
+water	46:28	0:0	2	;
+call	47:4	47:29	2	sio_onmove
+arg	47:15	47:18	3	hdl
+water	47:15	0:0	4	hdl
+arg	47:20	47:26	3	movecb
+water	47:20	0:0	4	movecb
+arg	47:28	47:29	3	s
+water	47:28	0:0	4	s
+water	47:30	0:0	2	;
+if	48:4	51:4	2	(!sio_start (hdl ))
+cond	48:8	48:22	3	!sio_start (hdl )
+op	48:8	0:0	4	!
+call	48:9	48:22	4	sio_start
+arg	48:19	48:22	5	hdl
+water	48:19	0:0	6	hdl
+stmts	48:25	51:4	3	
+water	48:25	0:0	4	{
+call	49:8	49:58	4	av_log
+arg	49:15	49:17	5	s1
+water	49:15	0:0	6	s1
+arg	49:19	49:31	5	AV_LOG_ERROR
+water	49:19	0:0	6	AV_LOG_ERROR
+arg	49:33	49:58	5	"Could not start sndio\n"
+water	49:33	0:0	6	"Could not start sndio\n"
+water	49:59	0:0	4	;
+goto	50:8	50:17	4	fail
+water	50:13	0:0	5	fail
+water	51:4	0:0	4	}
+water	52:4	0:0	2	s
+op	52:5	0:0	2	->
+water	52:7	0:0	2	hdl
+op	52:11	0:0	2	=
+water	52:13	0:0	2	hdl
+water	52:16	0:0	2	;
+return	53:4	53:12	2	0
+water	53:11	0:0	3	0
+label	54:0	54:4	2	fail :
+call	55:4	55:23	2	av_freep
+arg	55:13	55:23	3	&s->buffer
+op	55:13	0:0	4	&
+water	55:14	0:0	4	s
+op	55:15	0:0	4	->
+water	55:17	0:0	4	buffer
+water	55:24	0:0	2	;
+if	56:4	57:22	2	(hdl)
+cond	56:8	56:8	3	hdl
+water	56:8	0:0	4	hdl
+stmts	57:8	57:22	3	
+call	57:8	57:21	4	sio_close
+arg	57:18	57:21	5	hdl
+water	57:18	0:0	6	hdl
+water	57:22	0:0	4	;
+return	58:4	58:23	2	AVERROR(EIO)
+call	58:11	58:22	3	AVERROR
+arg	58:19	58:22	4	EIO
+water	58:19	0:0	5	EIO

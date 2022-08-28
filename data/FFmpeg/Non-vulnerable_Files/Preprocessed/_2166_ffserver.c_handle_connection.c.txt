@@ -1,0 +1,810 @@
+func	1:0	168:0	0	static int	handle_connection
+params	1:28	0:0	1	
+param	1:29	1:43	2	HTTPContext *	c
+stmnts	0:0	167:13	1	
+decl	3:4	3:16	2	int	len
+water	3:11	0:0	2	,
+decl	3:4	3:16	2	int	ret
+decl	4:4	4:16	2	uint8_t	*ptr
+switch	5:4	163:4	2	(c -> state)
+cond	5:11	5:14	3	c -> state
+water	5:11	0:0	4	c
+op	5:12	0:0	4	->
+water	5:14	0:0	4	state
+stmts	5:21	163:4	3	
+water	5:21	0:0	4	{
+label	6:4	6:31	4	case HTTPSTATE_WAIT_REQUEST :
+label	7:4	7:31	4	case RTSPSTATE_WAIT_REQUEST :
+if	9:8	10:21	4	(( c -> timeout - cur_time ) < 0)
+cond	9:12	9:38	5	( c -> timeout - cur_time ) < 0
+water	9:12	0:0	6	(
+water	9:13	0:0	6	c
+op	9:14	0:0	6	->
+water	9:16	0:0	6	timeout
+op	9:24	0:0	6	-
+water	9:26	0:0	6	cur_time
+water	9:34	0:0	6	)
+op	9:36	0:0	6	<
+water	9:38	0:0	6	0
+stmts	10:12	10:21	5	
+return	10:12	10:21	6	-1
+op	10:19	0:0	7	-
+water	10:20	0:0	7	1
+if	11:8	12:21	4	(c -> poll_entry -> revents & ( POLLERR | POLLHUP ))
+cond	11:12	11:55	5	c -> poll_entry -> revents & ( POLLERR | POLLHUP )
+water	11:12	0:0	6	c
+op	11:13	0:0	6	->
+water	11:15	0:0	6	poll_entry
+op	11:25	0:0	6	->
+water	11:27	0:0	6	revents
+op	11:35	0:0	6	&
+water	11:37	0:0	6	(
+water	11:38	0:0	6	POLLERR
+op	11:46	0:0	6	|
+water	11:48	0:0	6	POLLHUP
+water	11:55	0:0	6	)
+stmts	12:12	12:21	5	
+return	12:12	12:21	6	-1
+op	12:19	0:0	7	-
+water	12:20	0:0	7	1
+if	14:8	15:20	4	(! ( c -> poll_entry -> revents & POLLIN ))
+cond	14:12	14:45	5	! ( c -> poll_entry -> revents & POLLIN )
+op	14:12	0:0	6	!
+water	14:13	0:0	6	(
+water	14:14	0:0	6	c
+op	14:15	0:0	6	->
+water	14:17	0:0	6	poll_entry
+op	14:27	0:0	6	->
+water	14:29	0:0	6	revents
+op	14:37	0:0	6	&
+water	14:39	0:0	6	POLLIN
+water	14:45	0:0	6	)
+stmts	15:12	15:20	5	
+return	15:12	15:20	6	0
+water	15:19	0:0	7	0
+label	17:4	17:13	4	read_loop :
+if	18:8	19:21	4	(! ( len =recv (c -> fd ,c -> buffer_ptr ,1 ,0 ) ))
+cond	18:12	18:52	5	! ( len =recv (c -> fd ,c -> buffer_ptr ,1 ,0 ) )
+op	18:12	0:0	6	!
+water	18:13	0:0	6	(
+water	18:14	0:0	6	len
+op	18:18	0:0	6	=
+call	18:20	18:51	6	recv
+arg	18:25	18:30	7	c->fd
+water	18:25	0:0	8	c
+op	18:26	0:0	8	->
+water	18:28	0:0	8	fd
+arg	18:32	18:45	7	c->buffer_ptr
+water	18:32	0:0	8	c
+op	18:33	0:0	8	->
+water	18:35	0:0	8	buffer_ptr
+arg	18:47	18:48	7	1
+water	18:47	0:0	8	1
+arg	18:50	18:51	7	0
+water	18:50	0:0	8	0
+water	18:52	0:0	6	)
+stmts	19:12	19:21	5	
+return	19:12	19:21	6	-1
+op	19:19	0:0	7	-
+water	19:20	0:0	7	1
+if	20:8	25:8	4	(len < 0)
+cond	20:12	20:18	5	len < 0
+water	20:12	0:0	6	len
+op	20:16	0:0	6	<
+water	20:18	0:0	6	0
+stmts	20:21	25:8	5	
+water	20:21	0:0	6	{
+if	21:12	23:25	6	(ff_neterrno ( ) !=AVERROR (EAGAIN ) &&ff_neterrno ( ) !=AVERROR (EINTR ))
+cond	21:16	22:46	7	ff_neterrno ( ) !=AVERROR (EAGAIN ) &&ff_neterrno ( ) !=AVERROR (EINTR )
+call	21:16	21:28	8	ff_neterrno
+op	21:30	0:0	8	!=
+call	21:33	21:47	8	AVERROR
+arg	21:41	21:47	9	EAGAIN
+water	21:41	0:0	10	EAGAIN
+op	21:49	0:0	8	&&
+call	22:16	22:28	8	ff_neterrno
+op	22:30	0:0	8	!=
+call	22:33	22:46	8	AVERROR
+arg	22:41	22:46	9	EINTR
+water	22:41	0:0	10	EINTR
+stmts	23:16	23:25	7	
+return	23:16	23:25	8	-1
+op	23:23	0:0	9	-
+water	23:24	0:0	9	1
+break	24:12	24:17	6	
+water	25:8	0:0	6	}
+water	27:8	0:0	4	c
+op	27:9	0:0	4	->
+water	27:11	0:0	4	buffer_ptr
+op	27:22	0:0	4	+=
+water	27:25	0:0	4	len
+water	27:28	0:0	4	;
+water	28:8	0:0	4	ptr
+op	28:12	0:0	4	=
+water	28:14	0:0	4	c
+op	28:15	0:0	4	->
+water	28:17	0:0	4	buffer_ptr
+water	28:27	0:0	4	;
+if	29:8	38:8	4	(( ptr >= c -> buffer + 2 && !memcmp (ptr - 2 ,"\n\n" ,2 ) ) || ( ptr >= c -> buffer + 4 && !memcmp (ptr - 4 ,"\r\n\r\n" ,4 ) ))
+cond	29:12	30:66	5	( ptr >= c -> buffer + 2 && !memcmp (ptr - 2 ,"\n\n" ,2 ) ) || ( ptr >= c -> buffer + 4 && !memcmp (ptr - 4 ,"\r\n\r\n" ,4 ) )
+water	29:12	0:0	6	(
+water	29:13	0:0	6	ptr
+op	29:17	0:0	6	>=
+water	29:20	0:0	6	c
+op	29:21	0:0	6	->
+water	29:23	0:0	6	buffer
+op	29:30	0:0	6	+
+water	29:32	0:0	6	2
+op	29:34	0:0	6	&&
+op	29:37	0:0	6	!
+call	29:38	29:61	6	memcmp
+arg	29:45	29:50	7	ptr-2
+water	29:45	0:0	8	ptr
+op	29:48	0:0	8	-
+water	29:49	0:0	8	2
+arg	29:52	29:58	7	"\n\n"
+water	29:52	0:0	8	"\n\n"
+arg	29:60	29:61	7	2
+water	29:60	0:0	8	2
+water	29:62	0:0	6	)
+op	29:64	0:0	6	||
+water	30:12	0:0	6	(
+water	30:13	0:0	6	ptr
+op	30:17	0:0	6	>=
+water	30:20	0:0	6	c
+op	30:21	0:0	6	->
+water	30:23	0:0	6	buffer
+op	30:30	0:0	6	+
+water	30:32	0:0	6	4
+op	30:34	0:0	6	&&
+op	30:37	0:0	6	!
+call	30:38	30:65	6	memcmp
+arg	30:45	30:50	7	ptr-4
+water	30:45	0:0	8	ptr
+op	30:48	0:0	8	-
+water	30:49	0:0	8	4
+arg	30:52	30:62	7	"\r\n\r\n"
+water	30:52	0:0	8	"\r\n\r\n"
+arg	30:64	30:65	7	4
+water	30:64	0:0	8	4
+water	30:66	0:0	6	)
+stmts	30:69	38:8	5	
+water	30:69	0:0	6	{
+if	32:12	33:43	6	(c -> state == HTTPSTATE_WAIT_REQUEST)
+cond	32:16	32:28	7	c -> state == HTTPSTATE_WAIT_REQUEST
+water	32:16	0:0	8	c
+op	32:17	0:0	8	->
+water	32:19	0:0	8	state
+op	32:25	0:0	8	==
+water	32:28	0:0	8	HTTPSTATE_WAIT_REQUEST
+stmts	33:16	33:43	7	
+water	33:16	0:0	8	ret
+op	33:20	0:0	8	=
+call	33:22	33:42	8	http_parse_request
+arg	33:41	33:42	9	c
+water	33:41	0:0	10	c
+water	33:43	0:0	8	;
+else	34:12	35:43	6
+stmts	35:16	35:43	7	
+water	35:16	0:0	8	ret
+op	35:20	0:0	8	=
+call	35:22	35:42	8	rtsp_parse_request
+arg	35:41	35:42	9	c
+water	35:41	0:0	10	c
+water	35:43	0:0	8	;
+if	36:12	37:25	6	(ret < 0)
+cond	36:16	36:22	7	ret < 0
+water	36:16	0:0	8	ret
+op	36:20	0:0	8	<
+water	36:22	0:0	8	0
+stmts	37:16	37:25	7	
+return	37:16	37:25	8	-1
+op	37:23	0:0	9	-
+water	37:24	0:0	9	1
+water	38:8	0:0	6	}
+else	38:10	41:8	4
+stmts	38:15	41:8	5	
+if	38:15	41:8	6	(ptr >= c -> buffer_end)
+cond	38:19	38:29	7	ptr >= c -> buffer_end
+water	38:19	0:0	8	ptr
+op	38:23	0:0	8	>=
+water	38:26	0:0	8	c
+op	38:27	0:0	8	->
+water	38:29	0:0	8	buffer_end
+stmts	38:41	41:8	7	
+water	38:41	0:0	8	{
+return	40:12	40:21	8	-1
+op	40:19	0:0	9	-
+water	40:20	0:0	9	1
+water	41:8	0:0	8	}
+else	41:10	41:29	4
+stmts	41:15	41:29	5	
+goto	41:15	41:29	6	read_loop
+water	41:20	0:0	7	read_loop
+break	42:8	42:13	4	
+label	43:4	43:30	4	case HTTPSTATE_SEND_HEADER :
+if	44:8	45:21	4	(c -> poll_entry -> revents & ( POLLERR | POLLHUP ))
+cond	44:12	44:55	5	c -> poll_entry -> revents & ( POLLERR | POLLHUP )
+water	44:12	0:0	6	c
+op	44:13	0:0	6	->
+water	44:15	0:0	6	poll_entry
+op	44:25	0:0	6	->
+water	44:27	0:0	6	revents
+op	44:35	0:0	6	&
+water	44:37	0:0	6	(
+water	44:38	0:0	6	POLLERR
+op	44:46	0:0	6	|
+water	44:48	0:0	6	POLLHUP
+water	44:55	0:0	6	)
+stmts	45:12	45:21	5	
+return	45:12	45:21	6	-1
+op	45:19	0:0	7	-
+water	45:20	0:0	7	1
+if	47:8	48:20	4	(! ( c -> poll_entry -> revents & POLLOUT ))
+cond	47:12	47:46	5	! ( c -> poll_entry -> revents & POLLOUT )
+op	47:12	0:0	6	!
+water	47:13	0:0	6	(
+water	47:14	0:0	6	c
+op	47:15	0:0	6	->
+water	47:17	0:0	6	poll_entry
+op	47:27	0:0	6	->
+water	47:29	0:0	6	revents
+op	47:37	0:0	6	&
+water	47:39	0:0	6	POLLOUT
+water	47:46	0:0	6	)
+stmts	48:12	48:20	5	
+return	48:12	48:20	6	0
+water	48:19	0:0	7	0
+water	49:8	0:0	4	len
+op	49:12	0:0	4	=
+call	49:14	49:73	4	send
+arg	49:19	49:24	5	c->fd
+water	49:19	0:0	6	c
+op	49:20	0:0	6	->
+water	49:22	0:0	6	fd
+arg	49:26	49:39	5	c->buffer_ptr
+water	49:26	0:0	6	c
+op	49:27	0:0	6	->
+water	49:29	0:0	6	buffer_ptr
+arg	49:41	49:70	5	c->buffer_end-c->buffer_ptr
+water	49:41	0:0	6	c
+op	49:42	0:0	6	->
+water	49:44	0:0	6	buffer_end
+op	49:55	0:0	6	-
+water	49:57	0:0	6	c
+op	49:58	0:0	6	->
+water	49:60	0:0	6	buffer_ptr
+arg	49:72	49:73	5	0
+water	49:72	0:0	6	0
+water	49:74	0:0	4	;
+if	50:8	56:8	4	(len < 0)
+cond	50:12	50:18	5	len < 0
+water	50:12	0:0	6	len
+op	50:16	0:0	6	<
+water	50:18	0:0	6	0
+stmts	50:21	56:8	5	
+water	50:21	0:0	6	{
+if	51:12	54:12	6	(ff_neterrno ( ) !=AVERROR (EAGAIN ) &&ff_neterrno ( ) !=AVERROR (EINTR ))
+cond	51:16	52:46	7	ff_neterrno ( ) !=AVERROR (EAGAIN ) &&ff_neterrno ( ) !=AVERROR (EINTR )
+call	51:16	51:28	8	ff_neterrno
+op	51:30	0:0	8	!=
+call	51:33	51:47	8	AVERROR
+arg	51:41	51:47	9	EAGAIN
+water	51:41	0:0	10	EAGAIN
+op	51:49	0:0	8	&&
+call	52:16	52:28	8	ff_neterrno
+op	52:30	0:0	8	!=
+call	52:33	52:46	8	AVERROR
+arg	52:41	52:46	9	EINTR
+water	52:41	0:0	10	EINTR
+stmts	52:49	54:12	7	
+water	52:49	0:0	8	{
+goto	53:16	53:37	8	close_connection
+water	53:21	0:0	9	close_connection
+water	54:12	0:0	8	}
+break	55:12	55:17	6	
+water	56:8	0:0	6	}
+water	57:8	0:0	4	c
+op	57:9	0:0	4	->
+water	57:11	0:0	4	buffer_ptr
+op	57:22	0:0	4	+=
+water	57:25	0:0	4	len
+water	57:28	0:0	4	;
+if	58:8	59:42	4	(c -> stream)
+cond	58:12	58:15	5	c -> stream
+water	58:12	0:0	6	c
+op	58:13	0:0	6	->
+water	58:15	0:0	6	stream
+stmts	59:12	59:42	5	
+water	59:12	0:0	6	c
+op	59:13	0:0	6	->
+water	59:15	0:0	6	stream
+op	59:21	0:0	6	->
+water	59:23	0:0	6	bytes_served
+op	59:36	0:0	6	+=
+water	59:39	0:0	6	len
+water	59:42	0:0	6	;
+water	60:8	0:0	4	c
+op	60:9	0:0	4	->
+water	60:11	0:0	4	data_count
+op	60:22	0:0	4	+=
+water	60:25	0:0	4	len
+water	60:28	0:0	4	;
+if	61:8	70:8	4	(c -> buffer_ptr >= c -> buffer_end)
+cond	61:12	61:32	5	c -> buffer_ptr >= c -> buffer_end
+water	61:12	0:0	6	c
+op	61:13	0:0	6	->
+water	61:15	0:0	6	buffer_ptr
+op	61:26	0:0	6	>=
+water	61:29	0:0	6	c
+op	61:30	0:0	6	->
+water	61:32	0:0	6	buffer_end
+stmts	61:44	70:8	5	
+water	61:44	0:0	6	{
+call	62:12	62:34	6	av_freep
+arg	62:21	62:34	7	&c->pb_buffer
+op	62:21	0:0	8	&
+water	62:22	0:0	8	c
+op	62:23	0:0	8	->
+water	62:25	0:0	8	pb_buffer
+water	62:35	0:0	6	;
+if	64:12	65:25	6	(c -> http_error)
+cond	64:16	64:19	7	c -> http_error
+water	64:16	0:0	8	c
+op	64:17	0:0	8	->
+water	64:19	0:0	8	http_error
+stmts	65:16	65:25	7	
+return	65:16	65:25	8	-1
+op	65:23	0:0	9	-
+water	65:24	0:0	9	1
+water	68:12	0:0	6	c
+op	68:13	0:0	6	->
+water	68:15	0:0	6	state
+op	68:21	0:0	6	=
+water	68:23	0:0	6	HTTPSTATE_SEND_DATA_HEADER
+water	68:49	0:0	6	;
+water	69:12	0:0	6	c
+op	69:13	0:0	6	->
+water	69:15	0:0	6	buffer_ptr
+op	69:26	0:0	6	=
+water	69:28	0:0	6	c
+op	69:29	0:0	6	->
+water	69:31	0:0	6	buffer_end
+op	69:42	0:0	6	=
+water	69:44	0:0	6	c
+op	69:45	0:0	6	->
+water	69:47	0:0	6	buffer
+water	69:53	0:0	6	;
+water	70:8	0:0	6	}
+break	71:8	71:13	4	
+label	72:4	72:28	4	case HTTPSTATE_SEND_DATA :
+label	73:4	73:35	4	case HTTPSTATE_SEND_DATA_HEADER :
+label	74:4	74:36	4	case HTTPSTATE_SEND_DATA_TRAILER :
+if	78:8	84:8	4	(! c -> is_packetized)
+cond	78:12	78:16	5	! c -> is_packetized
+op	78:12	0:0	6	!
+water	78:13	0:0	6	c
+op	78:14	0:0	6	->
+water	78:16	0:0	6	is_packetized
+stmts	78:31	84:8	5	
+water	78:31	0:0	6	{
+if	79:12	80:25	6	(c -> poll_entry -> revents & ( POLLERR | POLLHUP ))
+cond	79:16	79:59	7	c -> poll_entry -> revents & ( POLLERR | POLLHUP )
+water	79:16	0:0	8	c
+op	79:17	0:0	8	->
+water	79:19	0:0	8	poll_entry
+op	79:29	0:0	8	->
+water	79:31	0:0	8	revents
+op	79:39	0:0	8	&
+water	79:41	0:0	8	(
+water	79:42	0:0	8	POLLERR
+op	79:50	0:0	8	|
+water	79:52	0:0	8	POLLHUP
+water	79:59	0:0	8	)
+stmts	80:16	80:25	7	
+return	80:16	80:25	8	-1
+op	80:23	0:0	9	-
+water	80:24	0:0	9	1
+if	82:12	83:24	6	(! ( c -> poll_entry -> revents & POLLOUT ))
+cond	82:16	82:50	7	! ( c -> poll_entry -> revents & POLLOUT )
+op	82:16	0:0	8	!
+water	82:17	0:0	8	(
+water	82:18	0:0	8	c
+op	82:19	0:0	8	->
+water	82:21	0:0	8	poll_entry
+op	82:31	0:0	8	->
+water	82:33	0:0	8	revents
+op	82:41	0:0	8	&
+water	82:43	0:0	8	POLLOUT
+water	82:50	0:0	8	)
+stmts	83:16	83:24	7	
+return	83:16	83:24	8	0
+water	83:23	0:0	9	0
+water	84:8	0:0	6	}
+if	85:8	86:21	4	(http_send_data (c ) < 0)
+cond	85:12	85:32	5	http_send_data (c ) < 0
+call	85:12	85:28	6	http_send_data
+arg	85:27	85:28	7	c
+water	85:27	0:0	8	c
+op	85:30	0:0	6	<
+water	85:32	0:0	6	0
+stmts	86:12	86:21	5	
+return	86:12	86:21	6	-1
+op	86:19	0:0	7	-
+water	86:20	0:0	7	1
+if	88:8	89:21	4	(c -> state == HTTPSTATE_SEND_DATA_TRAILER)
+cond	88:12	88:24	5	c -> state == HTTPSTATE_SEND_DATA_TRAILER
+water	88:12	0:0	6	c
+op	88:13	0:0	6	->
+water	88:15	0:0	6	state
+op	88:21	0:0	6	==
+water	88:24	0:0	6	HTTPSTATE_SEND_DATA_TRAILER
+stmts	89:12	89:21	5	
+return	89:12	89:21	6	-1
+op	89:19	0:0	7	-
+water	89:20	0:0	7	1
+if	91:8	93:8	4	(c -> stream -> single_frame && c -> data_count > c -> cur_frame_bytes && c -> cur_frame_bytes > 0)
+cond	91:12	91:98	5	c -> stream -> single_frame && c -> data_count > c -> cur_frame_bytes && c -> cur_frame_bytes > 0
+water	91:12	0:0	6	c
+op	91:13	0:0	6	->
+water	91:15	0:0	6	stream
+op	91:21	0:0	6	->
+water	91:23	0:0	6	single_frame
+op	91:36	0:0	6	&&
+water	91:39	0:0	6	c
+op	91:40	0:0	6	->
+water	91:42	0:0	6	data_count
+op	91:53	0:0	6	>
+water	91:55	0:0	6	c
+op	91:56	0:0	6	->
+water	91:58	0:0	6	cur_frame_bytes
+op	91:74	0:0	6	&&
+water	91:77	0:0	6	c
+op	91:78	0:0	6	->
+water	91:80	0:0	6	cur_frame_bytes
+op	91:96	0:0	6	>
+water	91:98	0:0	6	0
+stmts	91:101	93:8	5	
+water	91:101	0:0	6	{
+call	92:12	92:30	6	close_connection
+arg	92:29	92:30	7	c
+water	92:29	0:0	8	c
+water	92:31	0:0	6	;
+water	93:8	0:0	6	}
+break	94:8	94:13	4	
+label	95:4	95:31	4	case HTTPSTATE_RECEIVE_DATA :
+if	97:8	98:21	4	(c -> poll_entry -> revents & ( POLLERR | POLLHUP ))
+cond	97:12	97:55	5	c -> poll_entry -> revents & ( POLLERR | POLLHUP )
+water	97:12	0:0	6	c
+op	97:13	0:0	6	->
+water	97:15	0:0	6	poll_entry
+op	97:25	0:0	6	->
+water	97:27	0:0	6	revents
+op	97:35	0:0	6	&
+water	97:37	0:0	6	(
+water	97:38	0:0	6	POLLERR
+op	97:46	0:0	6	|
+water	97:48	0:0	6	POLLHUP
+water	97:55	0:0	6	)
+stmts	98:12	98:21	5	
+return	98:12	98:21	6	-1
+op	98:19	0:0	7	-
+water	98:20	0:0	7	1
+if	99:8	100:20	4	(! ( c -> poll_entry -> revents & POLLIN ))
+cond	99:12	99:45	5	! ( c -> poll_entry -> revents & POLLIN )
+op	99:12	0:0	6	!
+water	99:13	0:0	6	(
+water	99:14	0:0	6	c
+op	99:15	0:0	6	->
+water	99:17	0:0	6	poll_entry
+op	99:27	0:0	6	->
+water	99:29	0:0	6	revents
+op	99:37	0:0	6	&
+water	99:39	0:0	6	POLLIN
+water	99:45	0:0	6	)
+stmts	100:12	100:20	5	
+return	100:12	100:20	6	0
+water	100:19	0:0	7	0
+if	101:8	102:21	4	(http_receive_data (c ) < 0)
+cond	101:12	101:35	5	http_receive_data (c ) < 0
+call	101:12	101:31	6	http_receive_data
+arg	101:30	101:31	7	c
+water	101:30	0:0	8	c
+op	101:33	0:0	6	<
+water	101:35	0:0	6	0
+stmts	102:12	102:21	5	
+return	102:12	102:21	6	-1
+op	102:19	0:0	7	-
+water	102:20	0:0	7	1
+break	103:8	103:13	4	
+label	104:4	104:28	4	case HTTPSTATE_WAIT_FEED :
+if	106:8	107:21	4	(c -> poll_entry -> revents & ( POLLIN | POLLERR | POLLHUP ))
+cond	106:12	106:64	5	c -> poll_entry -> revents & ( POLLIN | POLLERR | POLLHUP )
+water	106:12	0:0	6	c
+op	106:13	0:0	6	->
+water	106:15	0:0	6	poll_entry
+op	106:25	0:0	6	->
+water	106:27	0:0	6	revents
+op	106:35	0:0	6	&
+water	106:37	0:0	6	(
+water	106:38	0:0	6	POLLIN
+op	106:45	0:0	6	|
+water	106:47	0:0	6	POLLERR
+op	106:55	0:0	6	|
+water	106:57	0:0	6	POLLHUP
+water	106:64	0:0	6	)
+stmts	107:12	107:21	5	
+return	107:12	107:21	6	-1
+op	107:19	0:0	7	-
+water	107:20	0:0	7	1
+break	109:8	109:13	4	
+label	110:4	110:29	4	case RTSPSTATE_SEND_REPLY :
+if	111:8	112:33	4	(c -> poll_entry -> revents & ( POLLERR | POLLHUP ))
+cond	111:12	111:55	5	c -> poll_entry -> revents & ( POLLERR | POLLHUP )
+water	111:12	0:0	6	c
+op	111:13	0:0	6	->
+water	111:15	0:0	6	poll_entry
+op	111:25	0:0	6	->
+water	111:27	0:0	6	revents
+op	111:35	0:0	6	&
+water	111:37	0:0	6	(
+water	111:38	0:0	6	POLLERR
+op	111:46	0:0	6	|
+water	111:48	0:0	6	POLLHUP
+water	111:55	0:0	6	)
+stmts	112:12	112:33	5	
+goto	112:12	112:33	6	close_connection
+water	112:17	0:0	7	close_connection
+if	114:8	115:20	4	(! ( c -> poll_entry -> revents & POLLOUT ))
+cond	114:12	114:46	5	! ( c -> poll_entry -> revents & POLLOUT )
+op	114:12	0:0	6	!
+water	114:13	0:0	6	(
+water	114:14	0:0	6	c
+op	114:15	0:0	6	->
+water	114:17	0:0	6	poll_entry
+op	114:27	0:0	6	->
+water	114:29	0:0	6	revents
+op	114:37	0:0	6	&
+water	114:39	0:0	6	POLLOUT
+water	114:46	0:0	6	)
+stmts	115:12	115:20	5	
+return	115:12	115:20	6	0
+water	115:19	0:0	7	0
+water	116:8	0:0	4	len
+op	116:12	0:0	4	=
+call	116:14	116:73	4	send
+arg	116:19	116:24	5	c->fd
+water	116:19	0:0	6	c
+op	116:20	0:0	6	->
+water	116:22	0:0	6	fd
+arg	116:26	116:39	5	c->buffer_ptr
+water	116:26	0:0	6	c
+op	116:27	0:0	6	->
+water	116:29	0:0	6	buffer_ptr
+arg	116:41	116:70	5	c->buffer_end-c->buffer_ptr
+water	116:41	0:0	6	c
+op	116:42	0:0	6	->
+water	116:44	0:0	6	buffer_end
+op	116:55	0:0	6	-
+water	116:57	0:0	6	c
+op	116:58	0:0	6	->
+water	116:60	0:0	6	buffer_ptr
+arg	116:72	116:73	5	0
+water	116:72	0:0	6	0
+water	116:74	0:0	4	;
+if	117:8	123:8	4	(len < 0)
+cond	117:12	117:18	5	len < 0
+water	117:12	0:0	6	len
+op	117:16	0:0	6	<
+water	117:18	0:0	6	0
+stmts	117:21	123:8	5	
+water	117:21	0:0	6	{
+if	118:12	121:12	6	(ff_neterrno ( ) !=AVERROR (EAGAIN ) &&ff_neterrno ( ) !=AVERROR (EINTR ))
+cond	118:16	119:46	7	ff_neterrno ( ) !=AVERROR (EAGAIN ) &&ff_neterrno ( ) !=AVERROR (EINTR )
+call	118:16	118:28	8	ff_neterrno
+op	118:30	0:0	8	!=
+call	118:33	118:47	8	AVERROR
+arg	118:41	118:47	9	EAGAIN
+water	118:41	0:0	10	EAGAIN
+op	118:49	0:0	8	&&
+call	119:16	119:28	8	ff_neterrno
+op	119:30	0:0	8	!=
+call	119:33	119:46	8	AVERROR
+arg	119:41	119:46	9	EINTR
+water	119:41	0:0	10	EINTR
+stmts	119:49	121:12	7	
+water	119:49	0:0	8	{
+goto	120:16	120:37	8	close_connection
+water	120:21	0:0	9	close_connection
+water	121:12	0:0	8	}
+break	122:12	122:17	6	
+water	123:8	0:0	6	}
+water	124:8	0:0	4	c
+op	124:9	0:0	4	->
+water	124:11	0:0	4	buffer_ptr
+op	124:22	0:0	4	+=
+water	124:25	0:0	4	len
+water	124:28	0:0	4	;
+water	125:8	0:0	4	c
+op	125:9	0:0	4	->
+water	125:11	0:0	4	data_count
+op	125:22	0:0	4	+=
+water	125:25	0:0	4	len
+water	125:28	0:0	4	;
+if	126:8	130:8	4	(c -> buffer_ptr >= c -> buffer_end)
+cond	126:12	126:32	5	c -> buffer_ptr >= c -> buffer_end
+water	126:12	0:0	6	c
+op	126:13	0:0	6	->
+water	126:15	0:0	6	buffer_ptr
+op	126:26	0:0	6	>=
+water	126:29	0:0	6	c
+op	126:30	0:0	6	->
+water	126:32	0:0	6	buffer_end
+stmts	126:44	130:8	5	
+water	126:44	0:0	6	{
+call	128:12	128:34	6	av_freep
+arg	128:21	128:34	7	&c->pb_buffer
+op	128:21	0:0	8	&
+water	128:22	0:0	8	c
+op	128:23	0:0	8	->
+water	128:25	0:0	8	pb_buffer
+water	128:35	0:0	6	;
+call	129:12	129:35	6	start_wait_request
+arg	129:31	129:32	7	c
+water	129:31	0:0	8	c
+arg	129:34	129:35	7	1
+water	129:34	0:0	8	1
+water	129:36	0:0	6	;
+water	130:8	0:0	6	}
+break	131:8	131:13	4	
+label	132:4	132:30	4	case RTSPSTATE_SEND_PACKET :
+if	133:8	136:8	4	(c -> poll_entry -> revents & ( POLLERR | POLLHUP ))
+cond	133:12	133:55	5	c -> poll_entry -> revents & ( POLLERR | POLLHUP )
+water	133:12	0:0	6	c
+op	133:13	0:0	6	->
+water	133:15	0:0	6	poll_entry
+op	133:25	0:0	6	->
+water	133:27	0:0	6	revents
+op	133:35	0:0	6	&
+water	133:37	0:0	6	(
+water	133:38	0:0	6	POLLERR
+op	133:46	0:0	6	|
+water	133:48	0:0	6	POLLHUP
+water	133:55	0:0	6	)
+stmts	133:58	136:8	5	
+water	133:58	0:0	6	{
+call	134:12	134:38	6	av_freep
+arg	134:21	134:38	7	&c->packet_buffer
+op	134:21	0:0	8	&
+water	134:22	0:0	8	c
+op	134:23	0:0	8	->
+water	134:25	0:0	8	packet_buffer
+water	134:39	0:0	6	;
+return	135:12	135:21	6	-1
+op	135:19	0:0	7	-
+water	135:20	0:0	7	1
+water	136:8	0:0	6	}
+if	138:8	139:20	4	(! ( c -> poll_entry -> revents & POLLOUT ))
+cond	138:12	138:46	5	! ( c -> poll_entry -> revents & POLLOUT )
+op	138:12	0:0	6	!
+water	138:13	0:0	6	(
+water	138:14	0:0	6	c
+op	138:15	0:0	6	->
+water	138:17	0:0	6	poll_entry
+op	138:27	0:0	6	->
+water	138:29	0:0	6	revents
+op	138:37	0:0	6	&
+water	138:39	0:0	6	POLLOUT
+water	138:46	0:0	6	)
+stmts	139:12	139:20	5	
+return	139:12	139:20	6	0
+water	139:19	0:0	7	0
+water	140:8	0:0	4	len
+op	140:12	0:0	4	=
+call	140:14	141:66	4	send
+arg	140:19	140:24	5	c->fd
+water	140:19	0:0	6	c
+op	140:20	0:0	6	->
+water	140:22	0:0	6	fd
+arg	140:26	140:46	5	c->packet_buffer_ptr
+water	140:26	0:0	6	c
+op	140:27	0:0	6	->
+water	140:29	0:0	6	packet_buffer_ptr
+arg	141:20	141:63	5	c->packet_buffer_end-c->packet_buffer_ptr
+water	141:20	0:0	6	c
+op	141:21	0:0	6	->
+water	141:23	0:0	6	packet_buffer_end
+op	141:41	0:0	6	-
+water	141:43	0:0	6	c
+op	141:44	0:0	6	->
+water	141:46	0:0	6	packet_buffer_ptr
+arg	141:65	141:66	5	0
+water	141:65	0:0	6	0
+water	141:67	0:0	4	;
+if	142:8	150:8	4	(len < 0)
+cond	142:12	142:18	5	len < 0
+water	142:12	0:0	6	len
+op	142:16	0:0	6	<
+water	142:18	0:0	6	0
+stmts	142:21	150:8	5	
+water	142:21	0:0	6	{
+if	143:12	148:12	6	(ff_neterrno ( ) !=AVERROR (EAGAIN ) &&ff_neterrno ( ) !=AVERROR (EINTR ))
+cond	143:16	144:46	7	ff_neterrno ( ) !=AVERROR (EAGAIN ) &&ff_neterrno ( ) !=AVERROR (EINTR )
+call	143:16	143:28	8	ff_neterrno
+op	143:30	0:0	8	!=
+call	143:33	143:47	8	AVERROR
+arg	143:41	143:47	9	EAGAIN
+water	143:41	0:0	10	EAGAIN
+op	143:49	0:0	8	&&
+call	144:16	144:28	8	ff_neterrno
+op	144:30	0:0	8	!=
+call	144:33	144:46	8	AVERROR
+arg	144:41	144:46	9	EINTR
+water	144:41	0:0	10	EINTR
+stmts	144:49	148:12	7	
+water	144:49	0:0	8	{
+call	146:16	146:42	8	av_freep
+arg	146:25	146:42	9	&c->packet_buffer
+op	146:25	0:0	10	&
+water	146:26	0:0	10	c
+op	146:27	0:0	10	->
+water	146:29	0:0	10	packet_buffer
+water	146:43	0:0	8	;
+return	147:16	147:25	8	-1
+op	147:23	0:0	9	-
+water	147:24	0:0	9	1
+water	148:12	0:0	8	}
+break	149:12	149:17	6	
+water	150:8	0:0	6	}
+water	151:8	0:0	4	c
+op	151:9	0:0	4	->
+water	151:11	0:0	4	packet_buffer_ptr
+op	151:29	0:0	4	+=
+water	151:32	0:0	4	len
+water	151:35	0:0	4	;
+if	152:8	156:8	4	(c -> packet_buffer_ptr >= c -> packet_buffer_end)
+cond	152:12	152:39	5	c -> packet_buffer_ptr >= c -> packet_buffer_end
+water	152:12	0:0	6	c
+op	152:13	0:0	6	->
+water	152:15	0:0	6	packet_buffer_ptr
+op	152:33	0:0	6	>=
+water	152:36	0:0	6	c
+op	152:37	0:0	6	->
+water	152:39	0:0	6	packet_buffer_end
+stmts	152:58	156:8	5	
+water	152:58	0:0	6	{
+call	154:12	154:38	6	av_freep
+arg	154:21	154:38	7	&c->packet_buffer
+op	154:21	0:0	8	&
+water	154:22	0:0	8	c
+op	154:23	0:0	8	->
+water	154:25	0:0	8	packet_buffer
+water	154:39	0:0	6	;
+water	155:12	0:0	6	c
+op	155:13	0:0	6	->
+water	155:15	0:0	6	state
+op	155:21	0:0	6	=
+water	155:23	0:0	6	RTSPSTATE_WAIT_REQUEST
+water	155:45	0:0	6	;
+water	156:8	0:0	6	}
+break	157:8	157:13	4	
+label	158:4	158:24	4	case HTTPSTATE_READY :
+break	160:8	160:13	4	
+label	161:4	161:11	4	default :
+return	162:8	162:17	4	-1
+op	162:15	0:0	5	-
+water	162:16	0:0	5	1
+water	163:4	0:0	4	}
+return	164:4	164:12	2	0
+water	164:11	0:0	3	0
+label	165:0	165:16	2	close_connection :
+call	166:4	166:26	2	av_freep
+arg	166:13	166:26	3	&c->pb_buffer
+op	166:13	0:0	4	&
+water	166:14	0:0	4	c
+op	166:15	0:0	4	->
+water	166:17	0:0	4	pb_buffer
+water	166:27	0:0	2	;
+return	167:4	167:13	2	-1
+op	167:11	0:0	3	-
+water	167:12	0:0	3	1

@@ -1,0 +1,144 @@
+func	1:0	24:0	0	static int	filter_frame
+params	1:23	0:0	1	
+param	1:24	1:44	2	AVFilterLink *	inlink
+param	1:46	1:64	2	AVFrame *	insamples
+stmnts	0:0	23:12	1	
+decl	3:4	3:38	2	AVFilterContext	*ctx
+op	3:25	0:0	2	=
+water	3:27	0:0	2	inlink
+op	3:33	0:0	2	->
+water	3:35	0:0	2	dst
+decl	4:4	4:33	2	ASNSContext	*asns
+op	4:22	0:0	2	=
+water	4:24	0:0	2	ctx
+op	4:27	0:0	2	->
+water	4:29	0:0	2	priv
+decl	5:4	5:43	2	AVFilterLink	*outlink
+op	5:26	0:0	2	=
+water	5:28	0:0	2	ctx
+op	5:31	0:0	2	->
+water	5:33	0:0	2	outputs
+op	5:40	0:0	2	[
+water	5:41	0:0	2	0
+op	5:42	0:0	2	]
+decl	6:4	6:11	2	int	ret
+decl	7:4	7:42	2	int	nb_samples
+op	7:19	0:0	2	=
+water	7:21	0:0	2	insamples
+op	7:30	0:0	2	->
+water	7:32	0:0	2	nb_samples
+if	8:4	16:4	2	(av_audio_fifo_space (asns -> fifo ) < nb_samples)
+cond	8:8	8:42	3	av_audio_fifo_space (asns -> fifo ) < nb_samples
+call	8:8	8:38	4	av_audio_fifo_space
+arg	8:28	8:38	5	asns->fifo
+water	8:28	0:0	6	asns
+op	8:32	0:0	6	->
+water	8:34	0:0	6	fifo
+op	8:40	0:0	4	<
+water	8:42	0:0	4	nb_samples
+stmts	8:54	16:4	3	
+water	8:54	0:0	4	{
+call	9:8	9:96	4	av_log
+arg	9:15	9:18	5	ctx
+water	9:15	0:0	6	ctx
+arg	9:20	9:32	5	AV_LOG_DEBUG
+water	9:20	0:0	6	AV_LOG_DEBUG
+arg	9:34	9:84	5	"No space for %d samples, stretching audio fifo\n"
+water	9:34	0:0	6	"No space for %d samples, stretching audio fifo\n"
+arg	9:86	9:96	5	nb_samples
+water	9:86	0:0	6	nb_samples
+water	9:97	0:0	4	;
+water	10:8	0:0	4	ret
+op	10:12	0:0	4	=
+call	10:14	10:91	4	av_audio_fifo_realloc
+arg	10:36	10:46	5	asns->fifo
+water	10:36	0:0	6	asns
+op	10:40	0:0	6	->
+water	10:42	0:0	6	fifo
+arg	10:48	10:91	5	av_audio_fifo_size(asns->fifo)+nb_samples
+call	10:48	10:77	6	av_audio_fifo_size
+arg	10:67	10:77	7	asns->fifo
+water	10:67	0:0	8	asns
+op	10:71	0:0	8	->
+water	10:73	0:0	8	fifo
+op	10:79	0:0	6	+
+water	10:81	0:0	6	nb_samples
+water	10:92	0:0	4	;
+if	11:8	15:8	4	(ret < 0)
+cond	11:12	11:18	5	ret < 0
+water	11:12	0:0	6	ret
+op	11:16	0:0	6	<
+water	11:18	0:0	6	0
+stmts	11:21	15:8	5	
+water	11:21	0:0	6	{
+call	12:12	13:85	6	av_log
+arg	12:19	12:22	7	ctx
+water	12:19	0:0	8	ctx
+arg	12:24	12:36	7	AV_LOG_ERROR
+water	12:24	0:0	8	AV_LOG_ERROR
+arg	13:19	13:73	7	"Stretching audio fifo failed, discarded %d samples\n"
+water	13:19	0:0	8	"Stretching audio fifo failed, discarded %d samples\n"
+arg	13:75	13:85	7	nb_samples
+water	13:75	0:0	8	nb_samples
+water	13:86	0:0	6	;
+return	14:12	14:21	6	-1
+op	14:19	0:0	7	-
+water	14:20	0:0	7	1
+water	15:8	0:0	6	}
+water	16:4	0:0	4	}
+call	17:4	17:81	2	av_audio_fifo_write
+arg	17:24	17:34	3	asns->fifo
+water	17:24	0:0	4	asns
+op	17:28	0:0	4	->
+water	17:30	0:0	4	fifo
+arg	17:36	17:69	3	(void**)insamples->extended_data
+water	17:36	0:0	4	(
+water	17:37	0:0	4	void
+op	17:42	0:0	4	*
+op	17:43	0:0	4	*
+water	17:44	0:0	4	)
+water	17:45	0:0	4	insamples
+op	17:54	0:0	4	->
+water	17:56	0:0	4	extended_data
+arg	17:71	17:81	3	nb_samples
+water	17:71	0:0	4	nb_samples
+water	17:82	0:0	2	;
+if	18:4	19:43	2	(asns -> next_out_pts == AV_NOPTS_VALUE)
+cond	18:8	18:30	3	asns -> next_out_pts == AV_NOPTS_VALUE
+water	18:8	0:0	4	asns
+op	18:12	0:0	4	->
+water	18:14	0:0	4	next_out_pts
+op	18:27	0:0	4	==
+water	18:30	0:0	4	AV_NOPTS_VALUE
+stmts	19:8	19:43	3	
+water	19:8	0:0	4	asns
+op	19:12	0:0	4	->
+water	19:14	0:0	4	next_out_pts
+op	19:27	0:0	4	=
+water	19:29	0:0	4	insamples
+op	19:38	0:0	4	->
+water	19:40	0:0	4	pts
+water	19:43	0:0	4	;
+call	20:4	20:28	2	av_frame_free
+arg	20:18	20:28	3	&insamples
+op	20:18	0:0	4	&
+water	20:19	0:0	4	insamples
+water	20:29	0:0	2	;
+while	21:4	22:29	2	(av_audio_fifo_size (asns -> fifo ) >= asns -> nb_out_samples)
+cond	21:11	21:51	3	av_audio_fifo_size (asns -> fifo ) >= asns -> nb_out_samples
+call	21:11	21:40	4	av_audio_fifo_size
+arg	21:30	21:40	5	asns->fifo
+water	21:30	0:0	6	asns
+op	21:34	0:0	6	->
+water	21:36	0:0	6	fifo
+op	21:42	0:0	4	>=
+water	21:45	0:0	4	asns
+op	21:49	0:0	4	->
+water	21:51	0:0	4	nb_out_samples
+stmts	22:8	22:29	3	
+call	22:8	22:28	4	push_samples
+arg	22:21	22:28	5	outlink
+water	22:21	0:0	6	outlink
+water	22:29	0:0	4	;
+return	23:4	23:12	2	0
+water	23:11	0:0	3	0

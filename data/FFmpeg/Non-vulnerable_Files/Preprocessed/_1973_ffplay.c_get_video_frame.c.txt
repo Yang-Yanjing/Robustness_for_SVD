@@ -1,0 +1,166 @@
+func	1:0	26:0	0	static int	get_video_frame
+params	1:26	0:0	1	
+param	1:27	1:41	2	VideoState *	is
+param	1:43	1:57	2	AVFrame *	frame
+stmnts	0:0	25:22	1	
+decl	3:4	3:19	2	int	got_picture
+if	4:4	5:17	2	(( got_picture =decoder_decode_frame (& is -> viddec ,frame ,NULL ) ) < 0)
+cond	4:8	4:73	3	( got_picture =decoder_decode_frame (& is -> viddec ,frame ,NULL ) ) < 0
+water	4:8	0:0	4	(
+water	4:9	0:0	4	got_picture
+op	4:21	0:0	4	=
+call	4:23	4:68	4	decoder_decode_frame
+arg	4:44	4:55	5	&is->viddec
+op	4:44	0:0	6	&
+water	4:45	0:0	6	is
+op	4:47	0:0	6	->
+water	4:49	0:0	6	viddec
+arg	4:57	4:62	5	frame
+water	4:57	0:0	6	frame
+arg	4:64	4:68	5	NULL
+water	4:64	0:0	6	NULL
+water	4:69	0:0	4	)
+op	4:71	0:0	4	<
+water	4:73	0:0	4	0
+stmts	5:8	5:17	3	
+return	5:8	5:17	4	-1
+op	5:15	0:0	5	-
+water	5:16	0:0	5	1
+if	6:4	24:4	2	(got_picture)
+cond	6:8	6:8	3	got_picture
+water	6:8	0:0	4	got_picture
+stmts	6:21	24:4	3	
+water	6:21	0:0	4	{
+decl	7:8	7:25	4	double	dpts
+op	7:20	0:0	4	=
+water	7:22	0:0	4	NAN
+if	8:8	9:63	4	(frame -> pts != AV_NOPTS_VALUE)
+cond	8:12	8:26	5	frame -> pts != AV_NOPTS_VALUE
+water	8:12	0:0	6	frame
+op	8:17	0:0	6	->
+water	8:19	0:0	6	pts
+op	8:23	0:0	6	!=
+water	8:26	0:0	6	AV_NOPTS_VALUE
+stmts	9:12	9:63	5	
+water	9:12	0:0	6	dpts
+op	9:17	0:0	6	=
+call	9:19	9:49	6	av_q2d
+arg	9:26	9:49	7	is->video_st->time_base
+water	9:26	0:0	8	is
+op	9:28	0:0	8	->
+water	9:30	0:0	8	video_st
+op	9:38	0:0	8	->
+water	9:40	0:0	8	time_base
+op	9:51	0:0	6	*
+water	9:53	0:0	6	frame
+op	9:58	0:0	6	->
+water	9:60	0:0	6	pts
+water	9:63	0:0	6	;
+water	10:8	0:0	4	frame
+op	10:13	0:0	4	->
+water	10:15	0:0	4	sample_aspect_ratio
+op	10:35	0:0	4	=
+call	10:37	10:93	4	av_guess_sample_aspect_ratio
+arg	10:66	10:72	5	is->ic
+water	10:66	0:0	6	is
+op	10:68	0:0	6	->
+water	10:70	0:0	6	ic
+arg	10:74	10:86	5	is->video_st
+water	10:74	0:0	6	is
+op	10:76	0:0	6	->
+water	10:78	0:0	6	video_st
+arg	10:88	10:93	5	frame
+water	10:88	0:0	6	frame
+water	10:94	0:0	4	;
+if	11:8	23:8	4	(framedrop > 0 || ( framedrop &&get_master_sync_type (is ) != AV_SYNC_VIDEO_MASTER ))
+cond	11:12	11:89	5	framedrop > 0 || ( framedrop &&get_master_sync_type (is ) != AV_SYNC_VIDEO_MASTER )
+water	11:12	0:0	6	framedrop
+op	11:21	0:0	6	>
+water	11:22	0:0	6	0
+op	11:24	0:0	6	||
+water	11:27	0:0	6	(
+water	11:28	0:0	6	framedrop
+op	11:38	0:0	6	&&
+call	11:41	11:64	6	get_master_sync_type
+arg	11:62	11:64	7	is
+water	11:62	0:0	8	is
+op	11:66	0:0	6	!=
+water	11:69	0:0	6	AV_SYNC_VIDEO_MASTER
+water	11:89	0:0	6	)
+stmts	11:92	23:8	5	
+water	11:92	0:0	6	{
+if	12:12	22:12	6	(frame -> pts != AV_NOPTS_VALUE)
+cond	12:16	12:30	7	frame -> pts != AV_NOPTS_VALUE
+water	12:16	0:0	8	frame
+op	12:21	0:0	8	->
+water	12:23	0:0	8	pts
+op	12:27	0:0	8	!=
+water	12:30	0:0	8	AV_NOPTS_VALUE
+stmts	12:46	22:12	7	
+water	12:46	0:0	8	{
+decl	13:16	13:57	8	double	diff
+op	13:28	0:0	8	=
+water	13:30	0:0	8	dpts
+op	13:35	0:0	8	-
+call	13:37	13:56	9	get_master_clock
+arg	13:54	13:56	10	is
+water	13:54	0:0	11	is
+if	14:16	21:16	8	(!isnan (diff ) &&fabs (diff ) < AV_NOSYNC_THRESHOLD && diff - is -> frame_last_filter_delay < 0 && is -> viddec . pkt_serial == is -> vidclk . serial && is -> videoq . nb_packets)
+cond	14:20	17:31	9	!isnan (diff ) &&fabs (diff ) < AV_NOSYNC_THRESHOLD && diff - is -> frame_last_filter_delay < 0 && is -> viddec . pkt_serial == is -> vidclk . serial && is -> videoq . nb_packets
+op	14:20	0:0	10	!
+call	14:21	14:31	10	isnan
+arg	14:27	14:31	11	diff
+water	14:27	0:0	12	diff
+op	14:33	0:0	10	&&
+call	14:36	14:45	10	fabs
+arg	14:41	14:45	11	diff
+water	14:41	0:0	12	diff
+op	14:47	0:0	10	<
+water	14:49	0:0	10	AV_NOSYNC_THRESHOLD
+op	14:69	0:0	10	&&
+water	15:20	0:0	10	diff
+op	15:25	0:0	10	-
+water	15:27	0:0	10	is
+op	15:29	0:0	10	->
+water	15:31	0:0	10	frame_last_filter_delay
+op	15:55	0:0	10	<
+water	15:57	0:0	10	0
+op	15:59	0:0	10	&&
+water	16:20	0:0	10	is
+op	16:22	0:0	10	->
+water	16:24	0:0	10	viddec
+op	16:30	0:0	10	.
+water	16:31	0:0	10	pkt_serial
+op	16:42	0:0	10	==
+water	16:45	0:0	10	is
+op	16:47	0:0	10	->
+water	16:49	0:0	10	vidclk
+op	16:55	0:0	10	.
+water	16:56	0:0	10	serial
+op	16:63	0:0	10	&&
+water	17:20	0:0	10	is
+op	17:22	0:0	10	->
+water	17:24	0:0	10	videoq
+op	17:30	0:0	10	.
+water	17:31	0:0	10	nb_packets
+stmts	17:43	21:16	9	
+water	17:43	0:0	10	{
+water	18:20	0:0	10	is
+op	18:22	0:0	10	->
+water	18:24	0:0	10	frame_drops_early
+op	18:41	0:0	10	++
+water	18:43	0:0	10	;
+call	19:20	19:40	10	av_frame_unref
+arg	19:35	19:40	11	frame
+water	19:35	0:0	12	frame
+water	19:41	0:0	10	;
+water	20:20	0:0	10	got_picture
+op	20:32	0:0	10	=
+water	20:34	0:0	10	0
+water	20:35	0:0	10	;
+water	21:16	0:0	10	}
+water	22:12	0:0	8	}
+water	23:8	0:0	6	}
+water	24:4	0:0	4	}
+return	25:4	25:22	2	got_picture
+water	25:11	0:0	3	got_picture

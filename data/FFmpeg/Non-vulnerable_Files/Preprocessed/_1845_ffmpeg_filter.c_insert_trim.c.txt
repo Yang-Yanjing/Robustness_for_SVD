@@ -1,0 +1,216 @@
+func	1:0	43:0	0	static int	insert_trim
+params	1:22	0:0	1	
+param	1:23	1:41	2	int64_t	start_time
+param	1:43	1:59	2	int64_t	duration
+param	2:23	2:52	2	AVFilterContext * *	last_filter
+param	2:54	2:66	2	int *	pad_idx
+param	3:23	3:46	2	const char *	filter_name
+stmnts	0:0	42:12	1	
+decl	5:4	5:48	2	AVFilterGraph	*graph
+op	5:25	0:0	2	=
+water	5:27	0:0	2	(
+op	5:28	0:0	2	*
+water	5:29	0:0	2	last_filter
+water	5:40	0:0	2	)
+op	5:41	0:0	2	->
+water	5:43	0:0	2	graph
+decl	6:4	6:24	2	AVFilterContext	*ctx
+decl	7:4	7:24	2	const AVFilter	*trim
+decl	8:4	8:88	2	enum AVMediaType	type
+op	8:26	0:0	2	=
+call	8:28	8:87	3	avfilter_pad_get_type
+arg	8:50	8:77	4	(*last_filter)->output_pads
+water	8:50	0:0	5	(
+op	8:51	0:0	5	*
+water	8:52	0:0	5	last_filter
+water	8:63	0:0	5	)
+op	8:64	0:0	5	->
+water	8:66	0:0	5	output_pads
+arg	8:79	8:87	4	*pad_idx
+op	8:79	0:0	5	*
+water	8:80	0:0	5	pad_idx
+decl	9:4	9:70	2	const char	*name
+op	9:21	0:0	2	=
+water	9:23	0:0	2	(
+water	9:24	0:0	2	type
+op	9:29	0:0	2	==
+water	9:32	0:0	2	AVMEDIA_TYPE_VIDEO
+water	9:50	0:0	2	)
+water	9:52	0:0	2	?
+water	9:54	0:0	2	"trim"
+water	9:61	0:0	2	:
+water	9:63	0:0	2	"atrim"
+decl	10:4	10:15	2	int	ret
+op	10:12	0:0	2	=
+water	10:14	0:0	2	0
+if	11:4	12:16	2	(duration == INT64_MAX && start_time == AV_NOPTS_VALUE)
+cond	11:8	11:47	3	duration == INT64_MAX && start_time == AV_NOPTS_VALUE
+water	11:8	0:0	4	duration
+op	11:17	0:0	4	==
+water	11:20	0:0	4	INT64_MAX
+op	11:30	0:0	4	&&
+water	11:33	0:0	4	start_time
+op	11:44	0:0	4	==
+water	11:47	0:0	4	AV_NOPTS_VALUE
+stmts	12:8	12:16	3	
+return	12:8	12:16	4	0
+water	12:15	0:0	5	0
+water	13:4	0:0	2	trim
+op	13:9	0:0	2	=
+call	13:11	13:36	2	avfilter_get_by_name
+arg	13:32	13:36	3	name
+water	13:32	0:0	4	name
+water	13:37	0:0	2	;
+if	14:4	18:4	2	(! trim)
+cond	14:8	14:9	3	! trim
+op	14:8	0:0	4	!
+water	14:9	0:0	4	trim
+stmts	14:15	18:4	3	
+water	14:15	0:0	4	{
+call	15:8	16:40	4	av_log
+arg	15:15	15:19	5	NULL
+water	15:15	0:0	6	NULL
+arg	15:21	15:33	5	AV_LOG_ERROR
+water	15:21	0:0	6	AV_LOG_ERROR
+arg	15:35	16:34	5	"%s filter not present, cannot limit ""recording time.\n"
+water	15:35	0:0	6	"%s filter not present, cannot limit "
+water	16:15	0:0	6	"recording time.\n"
+arg	16:36	16:40	5	name
+water	16:36	0:0	6	name
+water	16:41	0:0	4	;
+return	17:8	17:39	4	AVERROR_FILTER_NOT_FOUND
+water	17:15	0:0	5	AVERROR_FILTER_NOT_FOUND
+water	18:4	0:0	4	}
+water	19:4	0:0	2	ctx
+op	19:8	0:0	2	=
+call	19:10	19:62	2	avfilter_graph_alloc_filter
+arg	19:38	19:43	3	graph
+water	19:38	0:0	4	graph
+arg	19:45	19:49	3	trim
+water	19:45	0:0	4	trim
+arg	19:51	19:62	3	filter_name
+water	19:51	0:0	4	filter_name
+water	19:63	0:0	2	;
+if	20:4	21:30	2	(! ctx)
+cond	20:8	20:9	3	! ctx
+op	20:8	0:0	4	!
+water	20:9	0:0	4	ctx
+stmts	21:8	21:30	3	
+return	21:8	21:30	4	AVERROR(ENOMEM)
+call	21:15	21:29	5	AVERROR
+arg	21:23	21:29	6	ENOMEM
+water	21:23	0:0	7	ENOMEM
+if	22:4	25:4	2	(duration != INT64_MAX)
+cond	22:8	22:20	3	duration != INT64_MAX
+water	22:8	0:0	4	duration
+op	22:17	0:0	4	!=
+water	22:20	0:0	4	INT64_MAX
+stmts	22:31	25:4	3	
+water	22:31	0:0	4	{
+water	23:8	0:0	4	ret
+op	23:12	0:0	4	=
+call	23:14	24:54	4	av_opt_set_int
+arg	23:29	23:32	5	ctx
+water	23:29	0:0	6	ctx
+arg	23:34	23:45	5	"durationi"
+water	23:34	0:0	6	"durationi"
+arg	23:47	23:55	5	duration
+water	23:47	0:0	6	duration
+arg	24:32	24:54	5	AV_OPT_SEARCH_CHILDREN
+water	24:32	0:0	6	AV_OPT_SEARCH_CHILDREN
+water	24:55	0:0	4	;
+water	25:4	0:0	4	}
+if	26:4	29:4	2	(ret >= 0 && start_time != AV_NOPTS_VALUE)
+cond	26:8	26:34	3	ret >= 0 && start_time != AV_NOPTS_VALUE
+water	26:8	0:0	4	ret
+op	26:12	0:0	4	>=
+water	26:15	0:0	4	0
+op	26:17	0:0	4	&&
+water	26:20	0:0	4	start_time
+op	26:31	0:0	4	!=
+water	26:34	0:0	4	AV_NOPTS_VALUE
+stmts	26:50	29:4	3	
+water	26:50	0:0	4	{
+water	27:8	0:0	4	ret
+op	27:12	0:0	4	=
+call	27:14	28:54	4	av_opt_set_int
+arg	27:29	27:32	5	ctx
+water	27:29	0:0	6	ctx
+arg	27:34	27:42	5	"starti"
+water	27:34	0:0	6	"starti"
+arg	27:44	27:54	5	start_time
+water	27:44	0:0	6	start_time
+arg	28:32	28:54	5	AV_OPT_SEARCH_CHILDREN
+water	28:32	0:0	6	AV_OPT_SEARCH_CHILDREN
+water	28:55	0:0	4	;
+water	29:4	0:0	4	}
+if	30:4	33:4	2	(ret < 0)
+cond	30:8	30:14	3	ret < 0
+water	30:8	0:0	4	ret
+op	30:12	0:0	4	<
+water	30:14	0:0	4	0
+stmts	30:17	33:4	3	
+water	30:17	0:0	4	{
+call	31:8	31:73	4	av_log
+arg	31:15	31:18	5	ctx
+water	31:15	0:0	6	ctx
+arg	31:20	31:32	5	AV_LOG_ERROR
+water	31:20	0:0	6	AV_LOG_ERROR
+arg	31:34	31:67	5	"Error configuring the %s filter"
+water	31:34	0:0	6	"Error configuring the %s filter"
+arg	31:69	31:73	5	name
+water	31:69	0:0	6	name
+water	31:74	0:0	4	;
+return	32:8	32:18	4	ret
+water	32:15	0:0	5	ret
+water	33:4	0:0	4	}
+water	34:4	0:0	2	ret
+op	34:8	0:0	2	=
+call	34:10	34:37	2	avfilter_init_str
+arg	34:28	34:31	3	ctx
+water	34:28	0:0	4	ctx
+arg	34:33	34:37	3	NULL
+water	34:33	0:0	4	NULL
+water	34:38	0:0	2	;
+if	35:4	36:18	2	(ret < 0)
+cond	35:8	35:14	3	ret < 0
+water	35:8	0:0	4	ret
+op	35:12	0:0	4	<
+water	35:14	0:0	4	0
+stmts	36:8	36:18	3	
+return	36:8	36:18	4	ret
+water	36:15	0:0	5	ret
+water	37:4	0:0	2	ret
+op	37:8	0:0	2	=
+call	37:10	37:54	2	avfilter_link
+arg	37:24	37:36	3	*last_filter
+op	37:24	0:0	4	*
+water	37:25	0:0	4	last_filter
+arg	37:38	37:46	3	*pad_idx
+op	37:38	0:0	4	*
+water	37:39	0:0	4	pad_idx
+arg	37:48	37:51	3	ctx
+water	37:48	0:0	4	ctx
+arg	37:53	37:54	3	0
+water	37:53	0:0	4	0
+water	37:55	0:0	2	;
+if	38:4	39:18	2	(ret < 0)
+cond	38:8	38:14	3	ret < 0
+water	38:8	0:0	4	ret
+op	38:12	0:0	4	<
+water	38:14	0:0	4	0
+stmts	39:8	39:18	3	
+return	39:8	39:18	4	ret
+water	39:15	0:0	5	ret
+op	40:4	0:0	2	*
+water	40:5	0:0	2	last_filter
+op	40:17	0:0	2	=
+water	40:19	0:0	2	ctx
+water	40:22	0:0	2	;
+op	41:4	0:0	2	*
+water	41:5	0:0	2	pad_idx
+op	41:17	0:0	2	=
+water	41:19	0:0	2	0
+water	41:20	0:0	2	;
+return	42:4	42:12	2	0
+water	42:11	0:0	3	0

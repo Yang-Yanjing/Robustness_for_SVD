@@ -1,0 +1,416 @@
+func	1:0	72:0	0	static void	do_subtitle_out
+params	1:27	0:0	1	
+param	1:28	1:42	2	OutputFile *	of
+param	2:28	2:45	2	OutputStream *	ost
+param	3:28	3:43	2	AVSubtitle *	sub
+stmnts	0:0	71:4	1	
+decl	5:4	5:43	2	int	subtitle_out_max_size
+op	5:30	0:0	2	=
+water	5:32	0:0	2	1024
+op	5:37	0:0	2	*
+water	5:39	0:0	2	1024
+decl	6:4	6:32	2	int	subtitle_out_size
+water	6:25	0:0	2	,
+decl	6:4	6:32	2	int	nb
+water	6:29	0:0	2	,
+decl	6:4	6:32	2	int	i
+decl	7:4	7:23	2	AVCodecContext	*enc
+decl	8:4	8:16	2	AVPacket	pkt
+decl	9:4	9:15	2	int64_t	pts
+if	10:4	15:4	2	(sub -> pts == AV_NOPTS_VALUE)
+cond	10:8	10:20	3	sub -> pts == AV_NOPTS_VALUE
+water	10:8	0:0	4	sub
+op	10:11	0:0	4	->
+water	10:13	0:0	4	pts
+op	10:17	0:0	4	==
+water	10:20	0:0	4	AV_NOPTS_VALUE
+stmts	10:36	15:4	3	
+water	10:36	0:0	4	{
+call	11:8	11:71	4	av_log
+arg	11:15	11:19	5	NULL
+water	11:15	0:0	6	NULL
+arg	11:21	11:33	5	AV_LOG_ERROR
+water	11:21	0:0	6	AV_LOG_ERROR
+arg	11:35	11:71	5	"Subtitle packets must have a pts\n"
+water	11:35	0:0	6	"Subtitle packets must have a pts\n"
+water	11:72	0:0	4	;
+if	12:8	13:27	4	(exit_on_error)
+cond	12:12	12:12	5	exit_on_error
+water	12:12	0:0	6	exit_on_error
+stmts	13:12	13:27	5	
+call	13:12	13:26	6	exit_program
+arg	13:25	13:26	7	1
+water	13:25	0:0	8	1
+water	13:27	0:0	6	;
+return	14:8	14:14	4	
+water	15:4	0:0	4	}
+water	16:4	0:0	2	enc
+op	16:8	0:0	2	=
+water	16:10	0:0	2	ost
+op	16:13	0:0	2	->
+water	16:15	0:0	2	enc_ctx
+water	16:22	0:0	2	;
+if	17:4	23:4	2	(! subtitle_out)
+cond	17:8	17:9	3	! subtitle_out
+op	17:8	0:0	4	!
+water	17:9	0:0	4	subtitle_out
+stmts	17:23	23:4	3	
+water	17:23	0:0	4	{
+water	18:8	0:0	4	subtitle_out
+op	18:21	0:0	4	=
+call	18:23	18:54	4	av_malloc
+arg	18:33	18:54	5	subtitle_out_max_size
+water	18:33	0:0	6	subtitle_out_max_size
+water	18:55	0:0	4	;
+if	19:8	22:8	4	(! subtitle_out)
+cond	19:12	19:13	5	! subtitle_out
+op	19:12	0:0	6	!
+water	19:13	0:0	6	subtitle_out
+stmts	19:27	22:8	5	
+water	19:27	0:0	6	{
+call	20:12	20:74	6	av_log
+arg	20:19	20:23	7	NULL
+water	20:19	0:0	8	NULL
+arg	20:25	20:37	7	AV_LOG_FATAL
+water	20:25	0:0	8	AV_LOG_FATAL
+arg	20:39	20:74	7	"Failed to allocate subtitle_out\n"
+water	20:39	0:0	8	"Failed to allocate subtitle_out\n"
+water	20:75	0:0	6	;
+call	21:12	21:26	6	exit_program
+arg	21:25	21:26	7	1
+water	21:25	0:0	8	1
+water	21:27	0:0	6	;
+water	22:8	0:0	6	}
+water	23:4	0:0	4	}
+if	27:4	28:14	2	(enc -> codec_id == AV_CODEC_ID_DVB_SUBTITLE)
+cond	27:8	27:25	3	enc -> codec_id == AV_CODEC_ID_DVB_SUBTITLE
+water	27:8	0:0	4	enc
+op	27:11	0:0	4	->
+water	27:13	0:0	4	codec_id
+op	27:22	0:0	4	==
+water	27:25	0:0	4	AV_CODEC_ID_DVB_SUBTITLE
+stmts	28:8	28:14	3	
+water	28:8	0:0	4	nb
+op	28:11	0:0	4	=
+water	28:13	0:0	4	2
+water	28:14	0:0	4	;
+else	29:4	30:14	2
+stmts	30:8	30:14	3	
+water	30:8	0:0	4	nb
+op	30:11	0:0	4	=
+water	30:13	0:0	4	1
+water	30:14	0:0	4	;
+water	32:4	0:0	2	pts
+op	32:8	0:0	2	=
+water	32:10	0:0	2	sub
+op	32:13	0:0	2	->
+water	32:15	0:0	2	pts
+water	32:18	0:0	2	;
+if	33:4	34:56	2	(output_files [ ost -> file_index ] -> start_time != AV_NOPTS_VALUE)
+cond	33:8	33:53	3	output_files [ ost -> file_index ] -> start_time != AV_NOPTS_VALUE
+water	33:8	0:0	4	output_files
+op	33:20	0:0	4	[
+water	33:21	0:0	4	ost
+op	33:24	0:0	4	->
+water	33:26	0:0	4	file_index
+op	33:36	0:0	4	]
+op	33:37	0:0	4	->
+water	33:39	0:0	4	start_time
+op	33:50	0:0	4	!=
+water	33:53	0:0	4	AV_NOPTS_VALUE
+stmts	34:8	34:56	3	
+water	34:8	0:0	4	pts
+op	34:12	0:0	4	-=
+water	34:15	0:0	4	output_files
+op	34:27	0:0	4	[
+water	34:28	0:0	4	ost
+op	34:31	0:0	4	->
+water	34:33	0:0	4	file_index
+op	34:43	0:0	4	]
+op	34:44	0:0	4	->
+water	34:46	0:0	4	start_time
+water	34:56	0:0	4	;
+for	35:4	71:4	2	(i = 0 ;i < nb;i ++)
+forinit	35:9	35:14	3	i = 0 ;
+water	35:9	0:0	4	i
+op	35:11	0:0	4	=
+water	35:13	0:0	4	0
+water	35:14	0:0	4	;
+cond	35:16	35:20	3	i < nb
+water	35:16	0:0	4	i
+op	35:18	0:0	4	<
+water	35:20	0:0	4	nb
+forexpr	35:24	35:25	3	i ++
+water	35:24	0:0	4	i
+op	35:25	0:0	4	++
+stmts	35:29	71:4	3	
+water	35:29	0:0	4	{
+water	36:8	0:0	4	unsigned
+water	36:17	0:0	4	save_num_rects
+op	36:32	0:0	4	=
+water	36:34	0:0	4	sub
+op	36:37	0:0	4	->
+water	36:39	0:0	4	num_rects
+water	36:48	0:0	4	;
+water	37:8	0:0	4	ost
+op	37:11	0:0	4	->
+water	37:13	0:0	4	sync_opts
+op	37:23	0:0	4	=
+call	37:25	37:73	4	av_rescale_q
+arg	37:38	37:41	5	pts
+water	37:38	0:0	6	pts
+arg	37:43	37:57	5	AV_TIME_BASE_Q
+water	37:43	0:0	6	AV_TIME_BASE_Q
+arg	37:59	37:73	5	enc->time_base
+water	37:59	0:0	6	enc
+op	37:62	0:0	6	->
+water	37:64	0:0	6	time_base
+water	37:74	0:0	4	;
+if	38:8	39:18	4	(!check_recording_time (ost ))
+cond	38:12	38:37	5	!check_recording_time (ost )
+op	38:12	0:0	6	!
+call	38:13	38:37	6	check_recording_time
+arg	38:34	38:37	7	ost
+water	38:34	0:0	8	ost
+stmts	39:12	39:18	5	
+return	39:12	39:18	6	
+water	40:8	0:0	4	sub
+op	40:11	0:0	4	->
+water	40:13	0:0	4	pts
+op	40:17	0:0	4	=
+water	40:19	0:0	4	pts
+water	40:22	0:0	4	;
+water	42:8	0:0	4	sub
+op	42:11	0:0	4	->
+water	42:13	0:0	4	pts
+op	42:31	0:0	4	+=
+call	42:34	42:111	4	av_rescale_q
+arg	42:47	42:70	5	sub->start_display_time
+water	42:47	0:0	6	sub
+op	42:50	0:0	6	->
+water	42:52	0:0	6	start_display_time
+arg	42:72	42:95	5	(AVRational){1,1000}
+water	42:72	0:0	6	(
+water	42:73	0:0	6	AVRational
+water	42:83	0:0	6	)
+water	42:84	0:0	6	{
+water	42:86	0:0	6	1
+water	42:87	0:0	6	,
+water	42:89	0:0	6	1000
+water	42:94	0:0	6	}
+arg	42:97	42:111	5	AV_TIME_BASE_Q
+water	42:97	0:0	6	AV_TIME_BASE_Q
+water	42:112	0:0	4	;
+water	43:8	0:0	4	sub
+op	43:11	0:0	4	->
+water	43:13	0:0	4	end_display_time
+op	43:31	0:0	4	-=
+water	43:34	0:0	4	sub
+op	43:37	0:0	4	->
+water	43:39	0:0	4	start_display_time
+water	43:57	0:0	4	;
+water	44:8	0:0	4	sub
+op	44:11	0:0	4	->
+water	44:13	0:0	4	start_display_time
+op	44:32	0:0	4	=
+water	44:34	0:0	4	0
+water	44:35	0:0	4	;
+if	45:8	46:30	4	(i == 1)
+cond	45:12	45:17	5	i == 1
+water	45:12	0:0	6	i
+op	45:14	0:0	6	==
+water	45:17	0:0	6	1
+stmts	46:12	46:30	5	
+water	46:12	0:0	6	sub
+op	46:15	0:0	6	->
+water	46:17	0:0	6	num_rects
+op	46:27	0:0	6	=
+water	46:29	0:0	6	0
+water	46:30	0:0	6	;
+water	47:8	0:0	4	ost
+op	47:11	0:0	4	->
+water	47:13	0:0	4	frames_encoded
+op	47:27	0:0	4	++
+water	47:29	0:0	4	;
+water	48:8	0:0	4	subtitle_out_size
+op	48:26	0:0	4	=
+call	48:28	49:78	4	avcodec_encode_subtitle
+arg	48:52	48:55	5	enc
+water	48:52	0:0	6	enc
+arg	48:57	48:69	5	subtitle_out
+water	48:57	0:0	6	subtitle_out
+arg	49:52	49:73	5	subtitle_out_max_size
+water	49:52	0:0	6	subtitle_out_max_size
+arg	49:75	49:78	5	sub
+water	49:75	0:0	6	sub
+water	49:79	0:0	4	;
+if	50:8	51:43	4	(i == 1)
+cond	50:12	50:17	5	i == 1
+water	50:12	0:0	6	i
+op	50:14	0:0	6	==
+water	50:17	0:0	6	1
+stmts	51:12	51:43	5	
+water	51:12	0:0	6	sub
+op	51:15	0:0	6	->
+water	51:17	0:0	6	num_rects
+op	51:27	0:0	6	=
+water	51:29	0:0	6	save_num_rects
+water	51:43	0:0	6	;
+if	52:8	55:8	4	(subtitle_out_size < 0)
+cond	52:12	52:32	5	subtitle_out_size < 0
+water	52:12	0:0	6	subtitle_out_size
+op	52:30	0:0	6	<
+water	52:32	0:0	6	0
+stmts	52:35	55:8	5	
+water	52:35	0:0	6	{
+call	53:12	53:67	6	av_log
+arg	53:19	53:23	7	NULL
+water	53:19	0:0	8	NULL
+arg	53:25	53:37	7	AV_LOG_FATAL
+water	53:25	0:0	8	AV_LOG_FATAL
+arg	53:39	53:67	7	"Subtitle encoding failed\n"
+water	53:39	0:0	8	"Subtitle encoding failed\n"
+water	53:68	0:0	6	;
+call	54:12	54:26	6	exit_program
+arg	54:25	54:26	7	1
+water	54:25	0:0	8	1
+water	54:27	0:0	6	;
+water	55:8	0:0	6	}
+call	56:8	56:27	4	av_init_packet
+arg	56:23	56:27	5	&pkt
+op	56:23	0:0	6	&
+water	56:24	0:0	6	pkt
+water	56:28	0:0	4	;
+water	57:8	0:0	4	pkt
+op	57:11	0:0	4	.
+water	57:12	0:0	4	data
+op	57:17	0:0	4	=
+water	57:19	0:0	4	subtitle_out
+water	57:31	0:0	4	;
+water	58:8	0:0	4	pkt
+op	58:11	0:0	4	.
+water	58:12	0:0	4	size
+op	58:17	0:0	4	=
+water	58:19	0:0	4	subtitle_out_size
+water	58:36	0:0	4	;
+water	59:8	0:0	4	pkt
+op	59:11	0:0	4	.
+water	59:12	0:0	4	pts
+op	59:17	0:0	4	=
+call	59:19	59:75	4	av_rescale_q
+arg	59:32	59:40	5	sub->pts
+water	59:32	0:0	6	sub
+op	59:35	0:0	6	->
+water	59:37	0:0	6	pts
+arg	59:42	59:56	5	AV_TIME_BASE_Q
+water	59:42	0:0	6	AV_TIME_BASE_Q
+arg	59:58	59:75	5	ost->mux_timebase
+water	59:58	0:0	6	ost
+op	59:61	0:0	6	->
+water	59:63	0:0	6	mux_timebase
+water	59:76	0:0	4	;
+water	60:8	0:0	4	pkt
+op	60:11	0:0	4	.
+water	60:12	0:0	4	duration
+op	60:21	0:0	4	=
+call	60:23	60:101	4	av_rescale_q
+arg	60:36	60:57	5	sub->end_display_time
+water	60:36	0:0	6	sub
+op	60:39	0:0	6	->
+water	60:41	0:0	6	end_display_time
+arg	60:59	60:82	5	(AVRational){1,1000}
+water	60:59	0:0	6	(
+water	60:60	0:0	6	AVRational
+water	60:70	0:0	6	)
+water	60:71	0:0	6	{
+water	60:73	0:0	6	1
+water	60:74	0:0	6	,
+water	60:76	0:0	6	1000
+water	60:81	0:0	6	}
+arg	60:84	60:101	5	ost->mux_timebase
+water	60:84	0:0	6	ost
+op	60:87	0:0	6	->
+water	60:89	0:0	6	mux_timebase
+water	60:102	0:0	4	;
+if	61:8	68:8	4	(enc -> codec_id == AV_CODEC_ID_DVB_SUBTITLE)
+cond	61:12	61:29	5	enc -> codec_id == AV_CODEC_ID_DVB_SUBTITLE
+water	61:12	0:0	6	enc
+op	61:15	0:0	6	->
+water	61:17	0:0	6	codec_id
+op	61:26	0:0	6	==
+water	61:29	0:0	6	AV_CODEC_ID_DVB_SUBTITLE
+stmts	61:55	68:8	5	
+water	61:55	0:0	6	{
+if	64:12	65:108	6	(i == 0)
+cond	64:16	64:21	7	i == 0
+water	64:16	0:0	8	i
+op	64:18	0:0	8	==
+water	64:21	0:0	8	0
+stmts	65:16	65:108	7	
+water	65:16	0:0	8	pkt
+op	65:19	0:0	8	.
+water	65:20	0:0	8	pts
+op	65:24	0:0	8	+=
+call	65:27	65:107	8	av_rescale_q
+arg	65:40	65:63	9	sub->start_display_time
+water	65:40	0:0	10	sub
+op	65:43	0:0	10	->
+water	65:45	0:0	10	start_display_time
+arg	65:65	65:88	9	(AVRational){1,1000}
+water	65:65	0:0	10	(
+water	65:66	0:0	10	AVRational
+water	65:76	0:0	10	)
+water	65:77	0:0	10	{
+water	65:79	0:0	10	1
+water	65:80	0:0	10	,
+water	65:82	0:0	10	1000
+water	65:87	0:0	10	}
+arg	65:90	65:107	9	ost->mux_timebase
+water	65:90	0:0	10	ost
+op	65:93	0:0	10	->
+water	65:95	0:0	10	mux_timebase
+water	65:108	0:0	8	;
+else	66:12	67:106	6
+stmts	67:16	67:106	7	
+water	67:16	0:0	8	pkt
+op	67:19	0:0	8	.
+water	67:20	0:0	8	pts
+op	67:24	0:0	8	+=
+call	67:27	67:105	8	av_rescale_q
+arg	67:40	67:61	9	sub->end_display_time
+water	67:40	0:0	10	sub
+op	67:43	0:0	10	->
+water	67:45	0:0	10	end_display_time
+arg	67:63	67:86	9	(AVRational){1,1000}
+water	67:63	0:0	10	(
+water	67:64	0:0	10	AVRational
+water	67:74	0:0	10	)
+water	67:75	0:0	10	{
+water	67:77	0:0	10	1
+water	67:78	0:0	10	,
+water	67:80	0:0	10	1000
+water	67:85	0:0	10	}
+arg	67:88	67:105	9	ost->mux_timebase
+water	67:88	0:0	10	ost
+op	67:91	0:0	10	->
+water	67:93	0:0	10	mux_timebase
+water	67:106	0:0	8	;
+water	68:8	0:0	6	}
+water	69:8	0:0	4	pkt
+op	69:11	0:0	4	.
+water	69:12	0:0	4	dts
+op	69:16	0:0	4	=
+water	69:18	0:0	4	pkt
+op	69:21	0:0	4	.
+water	69:22	0:0	4	pts
+water	69:25	0:0	4	;
+call	70:8	70:35	4	output_packet
+arg	70:22	70:24	5	of
+water	70:22	0:0	6	of
+arg	70:26	70:30	5	&pkt
+op	70:26	0:0	6	&
+water	70:27	0:0	6	pkt
+arg	70:32	70:35	5	ost
+water	70:32	0:0	6	ost
+water	70:36	0:0	4	;
+water	71:4	0:0	4	}

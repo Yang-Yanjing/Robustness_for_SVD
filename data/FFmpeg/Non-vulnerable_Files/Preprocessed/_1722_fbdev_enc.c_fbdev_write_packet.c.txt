@@ -1,0 +1,412 @@
+func	1:0	68:0	0	static int	fbdev_write_packet
+params	1:29	0:0	1	
+param	1:30	1:48	2	AVFormatContext *	h
+param	1:50	1:63	2	AVPacket *	pkt
+stmnts	0:0	67:12	1	
+decl	3:4	3:38	2	FBDevContext	*fbdev
+op	3:24	0:0	2	=
+water	3:26	0:0	2	h
+op	3:27	0:0	2	->
+water	3:29	0:0	2	priv_data
+decl	4:4	4:23	2	uint8_t	*pin
+water	4:16	0:0	2	,
+decl	4:4	4:23	2	uint8_t	*pout
+decl	5:4	5:33	2	enum AVPixelFormat	fb_pix_fmt
+decl	6:4	6:19	2	int	disp_height
+decl	7:4	7:21	2	int	bytes_to_copy
+decl	8:4	8:52	2	AVCodecContext	*codec_ctx
+op	8:30	0:0	2	=
+water	8:32	0:0	2	h
+op	8:33	0:0	2	->
+water	8:35	0:0	2	streams
+op	8:42	0:0	2	[
+water	8:43	0:0	2	0
+op	8:44	0:0	2	]
+op	8:45	0:0	2	->
+water	8:47	0:0	2	codec
+decl	9:4	9:57	2	enum AVPixelFormat	video_pix_fmt
+op	9:37	0:0	2	=
+water	9:39	0:0	2	codec_ctx
+op	9:48	0:0	2	->
+water	9:50	0:0	2	pix_fmt
+decl	10:4	10:38	2	int	video_width
+op	10:20	0:0	2	=
+water	10:22	0:0	2	codec_ctx
+op	10:31	0:0	2	->
+water	10:33	0:0	2	width
+decl	11:4	11:40	2	int	video_height
+op	11:21	0:0	2	=
+water	11:23	0:0	2	codec_ctx
+op	11:32	0:0	2	->
+water	11:34	0:0	2	height
+decl	12:4	12:71	2	int	bytes_per_pixel
+op	12:24	0:0	2	=
+water	12:26	0:0	2	(
+water	12:27	0:0	2	(
+water	12:28	0:0	2	codec_ctx
+op	12:37	0:0	2	->
+water	12:39	0:0	2	bits_per_coded_sample
+op	12:61	0:0	2	+
+water	12:63	0:0	2	7
+water	12:64	0:0	2	)
+op	12:66	0:0	2	>>
+water	12:69	0:0	2	3
+water	12:70	0:0	2	)
+decl	13:4	13:53	2	int	src_line_size
+op	13:22	0:0	2	=
+water	13:24	0:0	2	video_width
+op	13:36	0:0	2	*
+water	13:38	0:0	2	bytes_per_pixel
+decl	14:4	14:9	2	int	i
+if	15:4	17:82	2	(ioctl (fbdev -> fd ,FBIOGET_VSCREENINFO ,& fbdev -> varinfo ) < 0)
+cond	15:8	15:65	3	ioctl (fbdev -> fd ,FBIOGET_VSCREENINFO ,& fbdev -> varinfo ) < 0
+call	15:8	15:61	4	ioctl
+arg	15:14	15:23	5	fbdev->fd
+water	15:14	0:0	6	fbdev
+op	15:19	0:0	6	->
+water	15:21	0:0	6	fd
+arg	15:25	15:44	5	FBIOGET_VSCREENINFO
+water	15:25	0:0	6	FBIOGET_VSCREENINFO
+arg	15:46	15:61	5	&fbdev->varinfo
+op	15:46	0:0	6	&
+water	15:47	0:0	6	fbdev
+op	15:52	0:0	6	->
+water	15:54	0:0	6	varinfo
+op	15:63	0:0	4	<
+water	15:65	0:0	4	0
+stmts	16:8	17:82	3	
+call	16:8	17:81	4	av_log
+arg	16:15	16:16	5	h
+water	16:15	0:0	6	h
+arg	16:18	16:32	5	AV_LOG_WARNING
+water	16:18	0:0	6	AV_LOG_WARNING
+arg	17:15	17:53	5	"Error refreshing variable info: %s\n"
+water	17:15	0:0	6	"Error refreshing variable info: %s\n"
+arg	17:55	17:81	5	av_err2str(AVERROR(errno))
+call	17:55	17:80	6	av_err2str
+arg	17:66	17:80	7	AVERROR(errno)
+call	17:66	17:79	8	AVERROR
+arg	17:74	17:79	9	errno
+water	17:74	0:0	10	errno
+water	17:82	0:0	4	;
+water	18:4	0:0	2	fb_pix_fmt
+op	18:15	0:0	2	=
+call	18:17	18:62	2	ff_get_pixfmt_from_fb_varinfo
+arg	18:47	18:62	3	&fbdev->varinfo
+op	18:47	0:0	4	&
+water	18:48	0:0	4	fbdev
+op	18:53	0:0	4	->
+water	18:55	0:0	4	varinfo
+water	18:63	0:0	2	;
+if	19:4	23:4	2	(fb_pix_fmt != video_pix_fmt)
+cond	19:8	19:22	3	fb_pix_fmt != video_pix_fmt
+water	19:8	0:0	4	fb_pix_fmt
+op	19:19	0:0	4	!=
+water	19:22	0:0	4	video_pix_fmt
+stmts	19:37	23:4	3	
+water	19:37	0:0	4	{
+call	20:8	21:82	4	av_log
+arg	20:15	20:16	5	h
+water	20:15	0:0	6	h
+arg	20:18	20:30	5	AV_LOG_ERROR
+water	20:18	0:0	6	AV_LOG_ERROR
+arg	20:32	20:76	5	"Pixel format %s is not supported, use %s\n"
+water	20:32	0:0	6	"Pixel format %s is not supported, use %s\n"
+arg	21:15	21:49	5	av_get_pix_fmt_name(video_pix_fmt)
+call	21:15	21:48	6	av_get_pix_fmt_name
+arg	21:35	21:48	7	video_pix_fmt
+water	21:35	0:0	8	video_pix_fmt
+arg	21:51	21:82	5	av_get_pix_fmt_name(fb_pix_fmt)
+call	21:51	21:81	6	av_get_pix_fmt_name
+arg	21:71	21:81	7	fb_pix_fmt
+water	21:71	0:0	8	fb_pix_fmt
+water	21:83	0:0	4	;
+return	22:8	22:30	4	AVERROR(EINVAL)
+call	22:15	22:29	5	AVERROR
+arg	22:23	22:29	6	EINVAL
+water	22:23	0:0	7	EINVAL
+water	23:4	0:0	4	}
+water	24:4	0:0	2	disp_height
+op	24:16	0:0	2	=
+call	24:18	24:57	2	FFMIN
+arg	24:24	24:43	3	fbdev->varinfo.yres
+water	24:24	0:0	4	fbdev
+op	24:29	0:0	4	->
+water	24:31	0:0	4	varinfo
+op	24:38	0:0	4	.
+water	24:39	0:0	4	yres
+arg	24:45	24:57	3	video_height
+water	24:45	0:0	4	video_height
+water	24:58	0:0	2	;
+water	25:4	0:0	2	bytes_to_copy
+op	25:18	0:0	2	=
+call	25:20	25:58	2	FFMIN
+arg	25:26	25:45	3	fbdev->varinfo.xres
+water	25:26	0:0	4	fbdev
+op	25:31	0:0	4	->
+water	25:33	0:0	4	varinfo
+op	25:40	0:0	4	.
+water	25:41	0:0	4	xres
+arg	25:47	25:58	3	video_width
+water	25:47	0:0	4	video_width
+op	25:60	0:0	2	*
+water	25:62	0:0	2	bytes_per_pixel
+water	25:77	0:0	2	;
+water	26:4	0:0	2	pin
+op	26:9	0:0	2	=
+water	26:11	0:0	2	pkt
+op	26:14	0:0	2	->
+water	26:16	0:0	2	data
+water	26:20	0:0	2	;
+water	27:4	0:0	2	pout
+op	27:9	0:0	2	=
+water	27:11	0:0	2	fbdev
+op	27:16	0:0	2	->
+water	27:18	0:0	2	data
+op	27:23	0:0	2	+
+water	28:11	0:0	2	bytes_per_pixel
+op	28:27	0:0	2	*
+water	28:29	0:0	2	fbdev
+op	28:34	0:0	2	->
+water	28:36	0:0	2	varinfo
+op	28:43	0:0	2	.
+water	28:44	0:0	2	xoffset
+op	28:52	0:0	2	+
+water	29:11	0:0	2	fbdev
+op	29:16	0:0	2	->
+water	29:18	0:0	2	varinfo
+op	29:25	0:0	2	.
+water	29:26	0:0	2	yoffset
+op	29:34	0:0	2	*
+water	29:36	0:0	2	fbdev
+op	29:41	0:0	2	->
+water	29:43	0:0	2	fixinfo
+op	29:50	0:0	2	.
+water	29:51	0:0	2	line_length
+water	29:62	0:0	2	;
+if	30:4	45:4	2	(fbdev -> xoffset)
+cond	30:8	30:15	3	fbdev -> xoffset
+water	30:8	0:0	4	fbdev
+op	30:13	0:0	4	->
+water	30:15	0:0	4	xoffset
+stmts	30:24	45:4	3	
+water	30:24	0:0	4	{
+if	31:8	36:8	4	(fbdev -> xoffset < 0)
+cond	31:12	31:29	5	fbdev -> xoffset < 0
+water	31:12	0:0	6	fbdev
+op	31:17	0:0	6	->
+water	31:19	0:0	6	xoffset
+op	31:27	0:0	6	<
+water	31:29	0:0	6	0
+stmts	31:32	36:8	5	
+water	31:32	0:0	6	{
+if	32:12	33:24	6	(- fbdev -> xoffset >= video_width)
+cond	32:16	32:35	7	- fbdev -> xoffset >= video_width
+op	32:16	0:0	8	-
+water	32:17	0:0	8	fbdev
+op	32:22	0:0	8	->
+water	32:24	0:0	8	xoffset
+op	32:32	0:0	8	>=
+water	32:35	0:0	8	video_width
+stmts	33:16	33:24	7	
+return	33:16	33:24	8	0
+water	33:23	0:0	9	0
+water	34:12	0:0	6	bytes_to_copy
+op	34:26	0:0	6	+=
+water	34:29	0:0	6	fbdev
+op	34:34	0:0	6	->
+water	34:36	0:0	6	xoffset
+op	34:44	0:0	6	*
+water	34:46	0:0	6	bytes_per_pixel
+water	34:61	0:0	6	;
+water	35:12	0:0	6	pin
+op	35:16	0:0	6	-=
+water	35:19	0:0	6	fbdev
+op	35:24	0:0	6	->
+water	35:26	0:0	6	xoffset
+op	35:34	0:0	6	*
+water	35:36	0:0	6	bytes_per_pixel
+water	35:51	0:0	6	;
+water	36:8	0:0	6	}
+else	36:10	44:8	4
+stmts	36:15	44:8	5	
+water	36:15	0:0	6	{
+decl	37:12	37:75	6	int	diff
+op	37:21	0:0	6	=
+water	37:23	0:0	6	(
+water	37:24	0:0	6	video_width
+op	37:36	0:0	6	+
+water	37:38	0:0	6	fbdev
+op	37:43	0:0	6	->
+water	37:45	0:0	6	xoffset
+water	37:52	0:0	6	)
+op	37:54	0:0	6	-
+water	37:56	0:0	6	fbdev
+op	37:61	0:0	6	->
+water	37:63	0:0	6	varinfo
+op	37:70	0:0	6	.
+water	37:71	0:0	6	xres
+if	38:12	42:12	6	(diff > 0)
+cond	38:16	38:23	7	diff > 0
+water	38:16	0:0	8	diff
+op	38:21	0:0	8	>
+water	38:23	0:0	8	0
+stmts	38:26	42:12	7	
+water	38:26	0:0	8	{
+if	39:16	40:28	8	(diff >= video_width)
+cond	39:20	39:28	9	diff >= video_width
+water	39:20	0:0	10	diff
+op	39:25	0:0	10	>=
+water	39:28	0:0	10	video_width
+stmts	40:20	40:28	9	
+return	40:20	40:28	10	0
+water	40:27	0:0	11	0
+water	41:16	0:0	8	bytes_to_copy
+op	41:30	0:0	8	-=
+water	41:33	0:0	8	diff
+op	41:38	0:0	8	*
+water	41:40	0:0	8	bytes_per_pixel
+water	41:55	0:0	8	;
+water	42:12	0:0	8	}
+water	43:12	0:0	6	pout
+op	43:17	0:0	6	+=
+water	43:20	0:0	6	bytes_per_pixel
+op	43:36	0:0	6	*
+water	43:38	0:0	6	fbdev
+op	43:43	0:0	6	->
+water	43:45	0:0	6	xoffset
+water	43:52	0:0	6	;
+water	44:8	0:0	6	}
+water	45:4	0:0	4	}
+if	46:4	61:4	2	(fbdev -> yoffset)
+cond	46:8	46:15	3	fbdev -> yoffset
+water	46:8	0:0	4	fbdev
+op	46:13	0:0	4	->
+water	46:15	0:0	4	yoffset
+stmts	46:24	61:4	3	
+water	46:24	0:0	4	{
+if	47:8	52:8	4	(fbdev -> yoffset < 0)
+cond	47:12	47:29	5	fbdev -> yoffset < 0
+water	47:12	0:0	6	fbdev
+op	47:17	0:0	6	->
+water	47:19	0:0	6	yoffset
+op	47:27	0:0	6	<
+water	47:29	0:0	6	0
+stmts	47:32	52:8	5	
+water	47:32	0:0	6	{
+if	48:12	49:24	6	(- fbdev -> yoffset >= video_height)
+cond	48:16	48:35	7	- fbdev -> yoffset >= video_height
+op	48:16	0:0	8	-
+water	48:17	0:0	8	fbdev
+op	48:22	0:0	8	->
+water	48:24	0:0	8	yoffset
+op	48:32	0:0	8	>=
+water	48:35	0:0	8	video_height
+stmts	49:16	49:24	7	
+return	49:16	49:24	8	0
+water	49:23	0:0	9	0
+water	50:12	0:0	6	disp_height
+op	50:24	0:0	6	+=
+water	50:27	0:0	6	fbdev
+op	50:32	0:0	6	->
+water	50:34	0:0	6	yoffset
+water	50:41	0:0	6	;
+water	51:12	0:0	6	pin
+op	51:16	0:0	6	-=
+water	51:19	0:0	6	fbdev
+op	51:24	0:0	6	->
+water	51:26	0:0	6	yoffset
+op	51:34	0:0	6	*
+water	51:36	0:0	6	src_line_size
+water	51:49	0:0	6	;
+water	52:8	0:0	6	}
+else	52:10	60:8	4
+stmts	52:15	60:8	5	
+water	52:15	0:0	6	{
+decl	53:12	53:76	6	int	diff
+op	53:21	0:0	6	=
+water	53:23	0:0	6	(
+water	53:24	0:0	6	video_height
+op	53:37	0:0	6	+
+water	53:39	0:0	6	fbdev
+op	53:44	0:0	6	->
+water	53:46	0:0	6	yoffset
+water	53:53	0:0	6	)
+op	53:55	0:0	6	-
+water	53:57	0:0	6	fbdev
+op	53:62	0:0	6	->
+water	53:64	0:0	6	varinfo
+op	53:71	0:0	6	.
+water	53:72	0:0	6	yres
+if	54:12	58:12	6	(diff > 0)
+cond	54:16	54:23	7	diff > 0
+water	54:16	0:0	8	diff
+op	54:21	0:0	8	>
+water	54:23	0:0	8	0
+stmts	54:26	58:12	7	
+water	54:26	0:0	8	{
+if	55:16	56:28	8	(diff >= video_height)
+cond	55:20	55:28	9	diff >= video_height
+water	55:20	0:0	10	diff
+op	55:25	0:0	10	>=
+water	55:28	0:0	10	video_height
+stmts	56:20	56:28	9	
+return	56:20	56:28	10	0
+water	56:27	0:0	11	0
+water	57:16	0:0	8	disp_height
+op	57:28	0:0	8	-=
+water	57:31	0:0	8	diff
+water	57:35	0:0	8	;
+water	58:12	0:0	8	}
+water	59:12	0:0	6	pout
+op	59:17	0:0	6	+=
+water	59:20	0:0	6	fbdev
+op	59:25	0:0	6	->
+water	59:27	0:0	6	yoffset
+op	59:35	0:0	6	*
+water	59:37	0:0	6	fbdev
+op	59:42	0:0	6	->
+water	59:44	0:0	6	fixinfo
+op	59:51	0:0	6	.
+water	59:52	0:0	6	line_length
+water	59:63	0:0	6	;
+water	60:8	0:0	6	}
+water	61:4	0:0	4	}
+for	62:4	66:4	2	(i = 0 ;i < disp_height;i ++)
+forinit	62:9	62:14	3	i = 0 ;
+water	62:9	0:0	4	i
+op	62:11	0:0	4	=
+water	62:13	0:0	4	0
+water	62:14	0:0	4	;
+cond	62:16	62:20	3	i < disp_height
+water	62:16	0:0	4	i
+op	62:18	0:0	4	<
+water	62:20	0:0	4	disp_height
+forexpr	62:33	62:34	3	i ++
+water	62:33	0:0	4	i
+op	62:34	0:0	4	++
+stmts	62:38	66:4	3	
+water	62:38	0:0	4	{
+call	63:8	63:39	4	memcpy
+arg	63:15	63:19	5	pout
+water	63:15	0:0	6	pout
+arg	63:21	63:24	5	pin
+water	63:21	0:0	6	pin
+arg	63:26	63:39	5	bytes_to_copy
+water	63:26	0:0	6	bytes_to_copy
+water	63:40	0:0	4	;
+water	64:8	0:0	4	pout
+op	64:13	0:0	4	+=
+water	64:16	0:0	4	fbdev
+op	64:21	0:0	4	->
+water	64:23	0:0	4	fixinfo
+op	64:30	0:0	4	.
+water	64:31	0:0	4	line_length
+water	64:42	0:0	4	;
+water	65:8	0:0	4	pin
+op	65:13	0:0	4	+=
+water	65:16	0:0	4	src_line_size
+water	65:29	0:0	4	;
+water	66:4	0:0	4	}
+return	67:4	67:12	2	0
+water	67:11	0:0	3	0

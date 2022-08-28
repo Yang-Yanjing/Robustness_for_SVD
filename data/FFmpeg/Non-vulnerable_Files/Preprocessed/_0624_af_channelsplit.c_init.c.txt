@@ -1,0 +1,116 @@
+func	2:15	23:0	0	int	init
+params	2:23	0:0	1	
+param	2:24	2:44	2	AVFilterContext *	ctx
+stmnts	0:0	22:14	1	
+decl	4:4	4:38	2	ChannelSplitContext	*s
+op	4:27	0:0	2	=
+water	4:29	0:0	2	ctx
+op	4:32	0:0	2	->
+water	4:34	0:0	2	priv
+decl	5:4	5:19	2	int	nb_channels
+decl	6:4	6:18	2	int	ret
+op	6:12	0:0	2	=
+water	6:14	0:0	2	0
+water	6:15	0:0	2	,
+decl	6:4	6:18	2	int	i
+if	7:4	12:4	2	(! ( s -> channel_layout =av_get_channel_layout (s -> channel_layout_str ) ))
+cond	7:8	7:74	3	! ( s -> channel_layout =av_get_channel_layout (s -> channel_layout_str ) )
+op	7:8	0:0	4	!
+water	7:9	0:0	4	(
+water	7:10	0:0	4	s
+op	7:11	0:0	4	->
+water	7:13	0:0	4	channel_layout
+op	7:28	0:0	4	=
+call	7:30	7:73	4	av_get_channel_layout
+arg	7:52	7:73	5	s->channel_layout_str
+water	7:52	0:0	6	s
+op	7:53	0:0	6	->
+water	7:55	0:0	6	channel_layout_str
+water	7:74	0:0	4	)
+stmts	7:77	12:4	3	
+water	7:77	0:0	4	{
+call	8:8	9:36	4	av_log
+arg	8:15	8:18	5	ctx
+water	8:15	0:0	6	ctx
+arg	8:20	8:32	5	AV_LOG_ERROR
+water	8:20	0:0	6	AV_LOG_ERROR
+arg	8:34	8:72	5	"Error parsing channel layout '%s'.\n"
+water	8:34	0:0	6	"Error parsing channel layout '%s'.\n"
+arg	9:15	9:36	5	s->channel_layout_str
+water	9:15	0:0	6	s
+op	9:16	0:0	6	->
+water	9:18	0:0	6	channel_layout_str
+water	9:37	0:0	4	;
+water	10:8	0:0	4	ret
+op	10:12	0:0	4	=
+call	10:14	10:28	4	AVERROR
+arg	10:22	10:28	5	EINVAL
+water	10:22	0:0	6	EINVAL
+water	10:29	0:0	4	;
+goto	11:8	11:17	4	fail
+water	11:13	0:0	5	fail
+water	12:4	0:0	4	}
+water	13:4	0:0	2	nb_channels
+op	13:16	0:0	2	=
+call	13:18	13:69	2	av_get_channel_layout_nb_channels
+arg	13:52	13:69	3	s->channel_layout
+water	13:52	0:0	4	s
+op	13:53	0:0	4	->
+water	13:55	0:0	4	channel_layout
+water	13:70	0:0	2	;
+for	14:4	20:4	2	(i = 0 ;i < nb_channels;i ++)
+forinit	14:9	14:14	3	i = 0 ;
+water	14:9	0:0	4	i
+op	14:11	0:0	4	=
+water	14:13	0:0	4	0
+water	14:14	0:0	4	;
+cond	14:16	14:20	3	i < nb_channels
+water	14:16	0:0	4	i
+op	14:18	0:0	4	<
+water	14:20	0:0	4	nb_channels
+forexpr	14:33	14:34	3	i ++
+water	14:33	0:0	4	i
+op	14:34	0:0	4	++
+stmts	14:38	20:4	3	
+water	14:38	0:0	4	{
+decl	15:8	15:82	4	uint64_t	channel
+op	15:25	0:0	4	=
+call	15:27	15:81	5	av_channel_layout_extract_channel
+arg	15:61	15:78	6	s->channel_layout
+water	15:61	0:0	7	s
+op	15:62	0:0	7	->
+water	15:64	0:0	7	channel_layout
+arg	15:80	15:81	6	i
+water	15:80	0:0	7	i
+decl	16:8	16:32	4	AVFilterPad	pad
+op	16:25	0:0	4	=
+water	16:27	0:0	4	{
+water	16:29	0:0	4	0
+water	16:31	0:0	4	}
+water	17:8	0:0	4	pad
+op	17:11	0:0	4	.
+water	17:12	0:0	4	type
+op	17:17	0:0	4	=
+water	17:19	0:0	4	AVMEDIA_TYPE_AUDIO
+water	17:37	0:0	4	;
+water	18:8	0:0	4	pad
+op	18:11	0:0	4	.
+water	18:12	0:0	4	name
+op	18:17	0:0	4	=
+call	18:19	18:46	4	av_get_channel_name
+arg	18:39	18:46	5	channel
+water	18:39	0:0	6	channel
+water	18:47	0:0	4	;
+call	19:8	19:37	4	ff_insert_outpad
+arg	19:25	19:28	5	ctx
+water	19:25	0:0	6	ctx
+arg	19:30	19:31	5	i
+water	19:30	0:0	6	i
+arg	19:33	19:37	5	&pad
+op	19:33	0:0	6	&
+water	19:34	0:0	6	pad
+water	19:38	0:0	4	;
+water	20:4	0:0	4	}
+label	21:0	21:4	2	fail :
+return	22:4	22:14	2	ret
+water	22:11	0:0	3	ret

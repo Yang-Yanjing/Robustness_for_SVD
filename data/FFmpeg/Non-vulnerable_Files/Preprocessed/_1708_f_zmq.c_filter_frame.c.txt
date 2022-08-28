@@ -1,0 +1,269 @@
+func	1:0	49:0	0	static int	filter_frame
+params	1:23	0:0	1	
+param	1:24	1:44	2	AVFilterLink *	inlink
+param	1:46	1:58	2	AVFrame *	ref
+stmnts	0:0	48:48	1	
+decl	3:4	3:38	2	AVFilterContext	*ctx
+op	3:25	0:0	2	=
+water	3:27	0:0	2	inlink
+op	3:33	0:0	2	->
+water	3:35	0:0	2	dst
+decl	4:4	4:31	2	ZMQContext	*zmq
+op	4:20	0:0	2	=
+water	4:22	0:0	2	ctx
+op	4:25	0:0	2	->
+water	4:27	0:0	2	priv
+while	5:4	47:4	2	(1)
+cond	5:11	5:11	3	1
+water	5:11	0:0	4	1
+stmts	5:14	47:4	3	
+water	5:14	0:0	4	{
+decl	6:8	6:26	4	char	cmd_buf[1024]
+decl	7:8	7:33	4	char	*recv_buf
+water	7:22	0:0	4	,
+decl	7:8	7:33	4	char	*send_buf
+decl	8:8	8:25	4	int	recv_buf_size
+decl	9:8	9:25	4	Command	cmd
+op	9:20	0:0	4	=
+water	9:22	0:0	4	{
+water	9:23	0:0	4	0
+water	9:24	0:0	4	}
+decl	10:8	10:15	4	int	ret
+if	12:8	13:17	4	(recv_msg (ctx ,& recv_buf ,& recv_buf_size ) < 0)
+cond	12:12	12:55	5	recv_msg (ctx ,& recv_buf ,& recv_buf_size ) < 0
+call	12:12	12:51	6	recv_msg
+arg	12:21	12:24	7	ctx
+water	12:21	0:0	8	ctx
+arg	12:26	12:35	7	&recv_buf
+op	12:26	0:0	8	&
+water	12:27	0:0	8	recv_buf
+arg	12:37	12:51	7	&recv_buf_size
+op	12:37	0:0	8	&
+water	12:38	0:0	8	recv_buf_size
+op	12:53	0:0	6	<
+water	12:55	0:0	6	0
+stmts	13:12	13:17	5	
+break	13:12	13:17	6	
+water	14:8	0:0	4	zmq
+op	14:11	0:0	4	->
+water	14:13	0:0	4	command_count
+op	14:26	0:0	4	++
+water	14:28	0:0	4	;
+if	16:8	19:8	4	(parse_command (& cmd ,recv_buf ,ctx ) < 0)
+cond	16:12	16:49	5	parse_command (& cmd ,recv_buf ,ctx ) < 0
+call	16:12	16:45	6	parse_command
+arg	16:26	16:30	7	&cmd
+op	16:26	0:0	8	&
+water	16:27	0:0	8	cmd
+arg	16:32	16:40	7	recv_buf
+water	16:32	0:0	8	recv_buf
+arg	16:42	16:45	7	ctx
+water	16:42	0:0	8	ctx
+op	16:47	0:0	6	<
+water	16:49	0:0	6	0
+stmts	16:52	19:8	5	
+water	16:52	0:0	6	{
+call	17:12	17:89	6	av_log
+arg	17:19	17:22	7	ctx
+water	17:19	0:0	8	ctx
+arg	17:24	17:36	7	AV_LOG_ERROR
+water	17:24	0:0	8	AV_LOG_ERROR
+arg	17:38	17:69	7	"Could not parse command #%d\n"
+water	17:38	0:0	8	"Could not parse command #%d\n"
+arg	17:71	17:89	7	zmq->command_count
+water	17:71	0:0	8	zmq
+op	17:74	0:0	8	->
+water	17:76	0:0	8	command_count
+water	17:90	0:0	6	;
+goto	18:12	18:20	6	end
+water	18:17	0:0	7	end
+water	19:8	0:0	6	}
+call	21:8	23:67	4	av_log
+arg	21:15	21:18	5	ctx
+water	21:15	0:0	6	ctx
+arg	21:20	21:34	5	AV_LOG_VERBOSE
+water	21:20	0:0	6	AV_LOG_VERBOSE
+arg	22:15	22:69	5	"Processing command #%d target:%s command:%s arg:%s\n"
+water	22:15	0:0	6	"Processing command #%d target:%s command:%s arg:%s\n"
+arg	23:15	23:33	5	zmq->command_count
+water	23:15	0:0	6	zmq
+op	23:18	0:0	6	->
+water	23:20	0:0	6	command_count
+arg	23:35	23:45	5	cmd.target
+water	23:35	0:0	6	cmd
+op	23:38	0:0	6	.
+water	23:39	0:0	6	target
+arg	23:47	23:58	5	cmd.command
+water	23:47	0:0	6	cmd
+op	23:50	0:0	6	.
+water	23:51	0:0	6	command
+arg	23:60	23:67	5	cmd.arg
+water	23:60	0:0	6	cmd
+op	23:63	0:0	6	.
+water	23:64	0:0	6	arg
+water	23:68	0:0	4	;
+water	24:8	0:0	4	ret
+op	24:12	0:0	4	=
+call	24:14	27:63	4	avfilter_graph_send_command
+arg	24:42	24:55	5	inlink->graph
+water	24:42	0:0	6	inlink
+op	24:48	0:0	6	->
+water	24:50	0:0	6	graph
+arg	25:42	25:52	5	cmd.target
+water	25:42	0:0	6	cmd
+op	25:45	0:0	6	.
+water	25:46	0:0	6	target
+arg	25:54	25:65	5	cmd.command
+water	25:54	0:0	6	cmd
+op	25:57	0:0	6	.
+water	25:58	0:0	6	command
+arg	25:67	25:74	5	cmd.arg
+water	25:67	0:0	6	cmd
+op	25:70	0:0	6	.
+water	25:71	0:0	6	arg
+arg	26:42	26:49	5	cmd_buf
+water	26:42	0:0	6	cmd_buf
+arg	26:51	26:66	5	sizeof(cmd_buf)
+op	26:51	0:0	6	sizeof
+water	26:57	0:0	6	(
+water	26:58	0:0	6	cmd_buf
+water	26:65	0:0	6	)
+arg	27:42	27:63	5	AVFILTER_CMD_FLAG_ONE
+water	27:42	0:0	6	AVFILTER_CMD_FLAG_ONE
+water	27:64	0:0	4	;
+water	28:8	0:0	4	send_buf
+op	28:17	0:0	4	=
+call	28:19	29:85	4	av_asprintf
+arg	28:31	28:42	5	"%d %s%s%s"
+water	28:31	0:0	6	"%d %s%s%s"
+arg	29:31	29:35	5	-ret
+op	29:31	0:0	6	-
+water	29:32	0:0	6	ret
+arg	29:37	29:52	5	av_err2str(ret)
+call	29:37	29:51	6	av_err2str
+arg	29:48	29:51	7	ret
+water	29:48	0:0	8	ret
+arg	29:54	29:76	5	cmd_buf[0]?"\n":""
+water	29:54	0:0	6	cmd_buf
+op	29:61	0:0	6	[
+water	29:62	0:0	6	0
+op	29:63	0:0	6	]
+water	29:65	0:0	6	?
+water	29:67	0:0	6	"\n"
+water	29:72	0:0	6	:
+water	29:74	0:0	6	""
+arg	29:78	29:85	5	cmd_buf
+water	29:78	0:0	6	cmd_buf
+water	29:86	0:0	4	;
+if	30:8	33:8	4	(! send_buf)
+cond	30:12	30:13	5	! send_buf
+op	30:12	0:0	6	!
+water	30:13	0:0	6	send_buf
+stmts	30:23	33:8	5	
+water	30:23	0:0	6	{
+water	31:12	0:0	6	ret
+op	31:16	0:0	6	=
+call	31:18	31:32	6	AVERROR
+arg	31:26	31:32	7	ENOMEM
+water	31:26	0:0	8	ENOMEM
+water	31:33	0:0	6	;
+goto	32:12	32:20	6	end
+water	32:17	0:0	7	end
+water	33:8	0:0	6	}
+call	34:8	36:43	4	av_log
+arg	34:15	34:18	5	ctx
+water	34:15	0:0	6	ctx
+arg	34:20	34:34	5	AV_LOG_VERBOSE
+water	34:20	0:0	6	AV_LOG_VERBOSE
+arg	35:15	35:61	5	"Sending command reply for command #%d:\n%s\n"
+water	35:15	0:0	6	"Sending command reply for command #%d:\n%s\n"
+arg	36:15	36:33	5	zmq->command_count
+water	36:15	0:0	6	zmq
+op	36:18	0:0	6	->
+water	36:20	0:0	6	command_count
+arg	36:35	36:43	5	send_buf
+water	36:35	0:0	6	send_buf
+water	36:44	0:0	4	;
+if	37:8	39:57	4	(zmq_send (zmq -> responder ,send_buf ,strlen (send_buf ) ,0 ) == - 1)
+cond	37:12	37:72	5	zmq_send (zmq -> responder ,send_buf ,strlen (send_buf ) ,0 ) == - 1
+call	37:12	37:66	6	zmq_send
+arg	37:21	37:35	7	zmq->responder
+water	37:21	0:0	8	zmq
+op	37:24	0:0	8	->
+water	37:26	0:0	8	responder
+arg	37:37	37:45	7	send_buf
+water	37:37	0:0	8	send_buf
+arg	37:47	37:63	7	strlen(send_buf)
+call	37:47	37:62	8	strlen
+arg	37:54	37:62	9	send_buf
+water	37:54	0:0	10	send_buf
+arg	37:65	37:66	7	0
+water	37:65	0:0	8	0
+op	37:68	0:0	6	==
+op	37:71	0:0	6	-
+water	37:72	0:0	6	1
+stmts	38:12	39:57	5	
+call	38:12	39:56	6	av_log
+arg	38:19	38:22	7	ctx
+water	38:19	0:0	8	ctx
+arg	38:24	38:36	7	AV_LOG_ERROR
+water	38:24	0:0	8	AV_LOG_ERROR
+arg	38:38	38:82	7	"Failed to send reply for command #%d: %s\n"
+water	38:38	0:0	8	"Failed to send reply for command #%d: %s\n"
+arg	39:19	39:37	7	zmq->command_count
+water	39:19	0:0	8	zmq
+op	39:22	0:0	8	->
+water	39:24	0:0	8	command_count
+arg	39:39	39:56	7	zmq_strerror(ret)
+call	39:39	39:55	8	zmq_strerror
+arg	39:52	39:55	9	ret
+water	39:52	0:0	10	ret
+water	39:57	0:0	6	;
+label	40:4	40:7	4	end :
+call	41:8	41:26	4	av_freep
+arg	41:17	41:26	5	&send_buf
+op	41:17	0:0	6	&
+water	41:18	0:0	6	send_buf
+water	41:27	0:0	4	;
+call	42:8	42:26	4	av_freep
+arg	42:17	42:26	5	&recv_buf
+op	42:17	0:0	6	&
+water	42:18	0:0	6	recv_buf
+water	42:27	0:0	4	;
+water	43:8	0:0	4	recv_buf_size
+op	43:22	0:0	4	=
+water	43:24	0:0	4	0
+water	43:25	0:0	4	;
+call	44:8	44:28	4	av_freep
+arg	44:17	44:28	5	&cmd.target
+op	44:17	0:0	6	&
+water	44:18	0:0	6	cmd
+op	44:21	0:0	6	.
+water	44:22	0:0	6	target
+water	44:29	0:0	4	;
+call	45:8	45:29	4	av_freep
+arg	45:17	45:29	5	&cmd.command
+op	45:17	0:0	6	&
+water	45:18	0:0	6	cmd
+op	45:21	0:0	6	.
+water	45:22	0:0	6	command
+water	45:30	0:0	4	;
+call	46:8	46:25	4	av_freep
+arg	46:17	46:25	5	&cmd.arg
+op	46:17	0:0	6	&
+water	46:18	0:0	6	cmd
+op	46:21	0:0	6	.
+water	46:22	0:0	6	arg
+water	46:26	0:0	4	;
+water	47:4	0:0	4	}
+return	48:4	48:48	2	ff_filter_frame(ctx->outputs[0],ref)
+call	48:11	48:47	3	ff_filter_frame
+arg	48:27	48:42	4	ctx->outputs[0]
+water	48:27	0:0	5	ctx
+op	48:30	0:0	5	->
+water	48:32	0:0	5	outputs
+op	48:39	0:0	5	[
+water	48:40	0:0	5	0
+op	48:41	0:0	5	]
+arg	48:44	48:47	4	ref
+water	48:44	0:0	5	ref

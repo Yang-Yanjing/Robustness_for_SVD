@@ -1,0 +1,217 @@
+func	1:0	40:0	0	int	av_opencl_buffer_write_image
+params	1:32	0:0	1	
+param	1:33	1:50	2	cl_mem	dst_cl_buf
+param	1:52	1:73	2	size_t	cl_buffer_size
+param	1:75	1:92	2	int	dst_cl_offset
+param	2:33	2:51	2	uint8_t * *	src_data
+param	2:53	2:68	2	int *	plane_size
+param	2:70	2:83	2	int	plane_num
+stmnts	0:0	39:12	1	
+decl	4:4	4:26	2	int	i
+water	4:9	0:0	2	,
+decl	4:4	4:26	2	int	buffer_size
+op	4:23	0:0	2	=
+water	4:25	0:0	2	0
+decl	5:4	5:17	2	uint8_t	*temp
+decl	6:4	6:17	2	cl_int	status
+decl	7:4	7:16	2	void	*mapped
+if	8:4	10:4	2	(( unsigned int ) plane_num > 8)
+cond	8:8	8:34	3	( unsigned int ) plane_num > 8
+water	8:8	0:0	4	(
+water	8:9	0:0	4	unsigned
+water	8:18	0:0	4	int
+water	8:21	0:0	4	)
+water	8:22	0:0	4	plane_num
+op	8:32	0:0	4	>
+water	8:34	0:0	4	8
+stmts	8:37	10:4	3	
+water	8:37	0:0	4	{
+return	9:8	9:30	4	AVERROR(EINVAL)
+call	9:15	9:29	5	AVERROR
+arg	9:23	9:29	6	EINVAL
+water	9:23	0:0	7	EINVAL
+water	10:4	0:0	4	}
+for	11:4	13:4	2	(i = 0 ;i < plane_num;i ++)
+forinit	11:9	11:14	3	i = 0 ;
+water	11:9	0:0	4	i
+op	11:11	0:0	4	=
+water	11:13	0:0	4	0
+water	11:14	0:0	4	;
+cond	11:15	11:19	3	i < plane_num
+water	11:15	0:0	4	i
+op	11:17	0:0	4	<
+water	11:19	0:0	4	plane_num
+forexpr	11:29	11:30	3	i ++
+water	11:29	0:0	4	i
+op	11:30	0:0	4	++
+stmts	11:34	13:4	3	
+water	11:34	0:0	4	{
+water	12:8	0:0	4	buffer_size
+op	12:20	0:0	4	+=
+water	12:23	0:0	4	plane_size
+op	12:33	0:0	4	[
+water	12:34	0:0	4	i
+op	12:35	0:0	4	]
+water	12:36	0:0	4	;
+water	13:4	0:0	4	}
+if	14:4	18:4	2	(buffer_size > cl_buffer_size)
+cond	14:8	14:22	3	buffer_size > cl_buffer_size
+water	14:8	0:0	4	buffer_size
+op	14:20	0:0	4	>
+water	14:22	0:0	4	cl_buffer_size
+stmts	14:38	18:4	3	
+water	14:38	0:0	4	{
+call	15:8	16:72	4	av_log
+arg	15:15	15:26	5	&opencl_ctx
+op	15:15	0:0	6	&
+water	15:16	0:0	6	opencl_ctx
+arg	15:28	15:40	5	AV_LOG_ERROR
+water	15:28	0:0	6	AV_LOG_ERROR
+arg	16:15	16:72	5	"Cannot write image to OpenCL buffer: buffer too small\n"
+water	16:15	0:0	6	"Cannot write image to OpenCL buffer: buffer too small\n"
+water	16:73	0:0	4	;
+return	17:8	17:30	4	AVERROR(EINVAL)
+call	17:15	17:29	5	AVERROR
+arg	17:23	17:29	6	EINVAL
+water	17:23	0:0	7	EINVAL
+water	18:4	0:0	4	}
+water	19:4	0:0	2	mapped
+op	19:11	0:0	2	=
+call	19:13	21:54	2	clEnqueueMapBuffer
+arg	19:32	19:56	3	opencl_ctx.command_queue
+water	19:32	0:0	4	opencl_ctx
+op	19:42	0:0	4	.
+water	19:43	0:0	4	command_queue
+arg	19:58	19:68	3	dst_cl_buf
+water	19:58	0:0	4	dst_cl_buf
+arg	20:32	20:39	3	CL_TRUE
+water	20:32	0:0	4	CL_TRUE
+arg	20:41	20:53	3	CL_MAP_WRITE
+water	20:41	0:0	4	CL_MAP_WRITE
+arg	20:55	20:56	3	0
+water	20:55	0:0	4	0
+arg	20:58	20:85	3	buffer_size+dst_cl_offset
+water	20:58	0:0	4	buffer_size
+op	20:70	0:0	4	+
+water	20:72	0:0	4	dst_cl_offset
+arg	21:32	21:33	3	0
+water	21:32	0:0	4	0
+arg	21:35	21:39	3	NULL
+water	21:35	0:0	4	NULL
+arg	21:41	21:45	3	NULL
+water	21:41	0:0	4	NULL
+arg	21:47	21:54	3	&status
+op	21:47	0:0	4	&
+water	21:48	0:0	4	status
+water	21:55	0:0	2	;
+if	22:4	26:4	2	(status != CL_SUCCESS)
+cond	22:8	22:18	3	status != CL_SUCCESS
+water	22:8	0:0	4	status
+op	22:15	0:0	4	!=
+water	22:18	0:0	4	CL_SUCCESS
+stmts	22:30	26:4	3	
+water	22:30	0:0	4	{
+call	23:8	24:76	4	av_log
+arg	23:15	23:26	5	&opencl_ctx
+op	23:15	0:0	6	&
+water	23:16	0:0	6	opencl_ctx
+arg	23:28	23:40	5	AV_LOG_ERROR
+water	23:28	0:0	6	AV_LOG_ERROR
+arg	24:15	24:50	5	"Could not map OpenCL buffer: %s\n"
+water	24:15	0:0	6	"Could not map OpenCL buffer: %s\n"
+arg	24:52	24:76	5	av_opencl_errstr(status)
+call	24:52	24:75	6	av_opencl_errstr
+arg	24:69	24:75	7	status
+water	24:69	0:0	8	status
+water	24:77	0:0	4	;
+return	25:8	25:31	4	AVERROR_EXTERNAL
+water	25:15	0:0	5	AVERROR_EXTERNAL
+water	26:4	0:0	4	}
+water	27:4	0:0	2	temp
+op	27:9	0:0	2	=
+water	27:11	0:0	2	mapped
+water	27:17	0:0	2	;
+water	28:4	0:0	2	temp
+op	28:9	0:0	2	+=
+water	28:12	0:0	2	dst_cl_offset
+water	28:25	0:0	2	;
+for	29:4	32:4	2	(i = 0 ;i < plane_num;i ++)
+forinit	29:9	29:14	3	i = 0 ;
+water	29:9	0:0	4	i
+op	29:11	0:0	4	=
+water	29:13	0:0	4	0
+water	29:14	0:0	4	;
+cond	29:16	29:20	3	i < plane_num
+water	29:16	0:0	4	i
+op	29:18	0:0	4	<
+water	29:20	0:0	4	plane_num
+forexpr	29:31	29:32	3	i ++
+water	29:31	0:0	4	i
+op	29:32	0:0	4	++
+stmts	29:36	32:4	3	
+water	29:36	0:0	4	{
+call	30:8	30:47	4	memcpy
+arg	30:15	30:19	5	temp
+water	30:15	0:0	6	temp
+arg	30:21	30:32	5	src_data[i]
+water	30:21	0:0	6	src_data
+op	30:29	0:0	6	[
+water	30:30	0:0	6	i
+op	30:31	0:0	6	]
+arg	30:34	30:47	5	plane_size[i]
+water	30:34	0:0	6	plane_size
+op	30:44	0:0	6	[
+water	30:45	0:0	6	i
+op	30:46	0:0	6	]
+water	30:48	0:0	4	;
+water	31:8	0:0	4	temp
+op	31:13	0:0	4	+=
+water	31:16	0:0	4	plane_size
+op	31:26	0:0	4	[
+water	31:27	0:0	4	i
+op	31:28	0:0	4	]
+water	31:29	0:0	4	;
+water	32:4	0:0	4	}
+water	33:4	0:0	2	status
+op	33:11	0:0	2	=
+call	33:13	33:96	2	clEnqueueUnmapMemObject
+arg	33:37	33:61	3	opencl_ctx.command_queue
+water	33:37	0:0	4	opencl_ctx
+op	33:47	0:0	4	.
+water	33:48	0:0	4	command_queue
+arg	33:63	33:73	3	dst_cl_buf
+water	33:63	0:0	4	dst_cl_buf
+arg	33:75	33:81	3	mapped
+water	33:75	0:0	4	mapped
+arg	33:83	33:84	3	0
+water	33:83	0:0	4	0
+arg	33:86	33:90	3	NULL
+water	33:86	0:0	4	NULL
+arg	33:92	33:96	3	NULL
+water	33:92	0:0	4	NULL
+water	33:97	0:0	2	;
+if	34:4	38:4	2	(status != CL_SUCCESS)
+cond	34:8	34:18	3	status != CL_SUCCESS
+water	34:8	0:0	4	status
+op	34:15	0:0	4	!=
+water	34:18	0:0	4	CL_SUCCESS
+stmts	34:30	38:4	3	
+water	34:30	0:0	4	{
+call	35:8	36:78	4	av_log
+arg	35:15	35:26	5	&opencl_ctx
+op	35:15	0:0	6	&
+water	35:16	0:0	6	opencl_ctx
+arg	35:28	35:40	5	AV_LOG_ERROR
+water	35:28	0:0	6	AV_LOG_ERROR
+arg	36:15	36:52	5	"Could not unmap OpenCL buffer: %s\n"
+water	36:15	0:0	6	"Could not unmap OpenCL buffer: %s\n"
+arg	36:54	36:78	5	av_opencl_errstr(status)
+call	36:54	36:77	6	av_opencl_errstr
+arg	36:71	36:77	7	status
+water	36:71	0:0	8	status
+water	36:79	0:0	4	;
+return	37:8	37:31	4	AVERROR_EXTERNAL
+water	37:15	0:0	5	AVERROR_EXTERNAL
+water	38:4	0:0	4	}
+return	39:4	39:12	2	0
+water	39:11	0:0	3	0

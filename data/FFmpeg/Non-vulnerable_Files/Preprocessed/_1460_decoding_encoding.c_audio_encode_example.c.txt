@@ -1,0 +1,616 @@
+func	1:0	118:0	0	static void	audio_encode_example
+params	1:32	0:0	1	
+param	1:33	1:53	2	const char *	filename
+stmnts	0:0	117:14	1	
+decl	3:4	3:18	2	AVCodec	*codec
+decl	4:4	4:27	2	AVCodecContext	*c
+op	4:21	0:0	2	=
+water	4:23	0:0	2	NULL
+decl	5:4	5:18	2	AVFrame	*frame
+decl	6:4	6:16	2	AVPacket	pkt
+decl	7:4	7:32	2	int	i
+water	7:9	0:0	2	,
+decl	7:4	7:32	2	int	j
+water	7:12	0:0	2	,
+decl	7:4	7:32	2	int	k
+water	7:15	0:0	2	,
+decl	7:4	7:32	2	int	ret
+water	7:20	0:0	2	,
+decl	7:4	7:32	2	int	got_output
+decl	8:4	8:19	2	int	buffer_size
+decl	9:4	9:11	2	FILE	*f
+decl	10:4	10:21	2	uint16_t	*samples
+decl	11:4	11:18	2	float	t
+water	11:11	0:0	2	,
+decl	11:4	11:18	2	float	tincr
+call	12:4	12:45	2	printf
+arg	12:11	12:35	3	"Encode audio file %s\n"
+water	12:11	0:0	4	"Encode audio file %s\n"
+arg	12:37	12:45	3	filename
+water	12:37	0:0	4	filename
+water	12:46	0:0	2	;
+water	14:4	0:0	2	codec
+op	14:10	0:0	2	=
+call	14:12	14:48	2	avcodec_find_encoder
+arg	14:33	14:48	3	AV_CODEC_ID_MP2
+water	14:33	0:0	4	AV_CODEC_ID_MP2
+water	14:49	0:0	2	;
+if	15:4	18:4	2	(! codec)
+cond	15:8	15:9	3	! codec
+op	15:8	0:0	4	!
+water	15:9	0:0	4	codec
+stmts	15:16	18:4	3	
+water	15:16	0:0	4	{
+call	16:8	16:43	4	fprintf
+arg	16:16	16:22	5	stderr
+water	16:16	0:0	6	stderr
+arg	16:24	16:43	5	"Codec not found\n"
+water	16:24	0:0	6	"Codec not found\n"
+water	16:44	0:0	4	;
+call	17:8	17:14	4	exit
+arg	17:13	17:14	5	1
+water	17:13	0:0	6	1
+water	17:15	0:0	4	;
+water	18:4	0:0	4	}
+water	19:4	0:0	2	c
+op	19:6	0:0	2	=
+call	19:8	19:36	2	avcodec_alloc_context3
+arg	19:31	19:36	3	codec
+water	19:31	0:0	4	codec
+water	19:37	0:0	2	;
+if	20:4	23:4	2	(! c)
+cond	20:8	20:9	3	! c
+op	20:8	0:0	4	!
+water	20:9	0:0	4	c
+stmts	20:12	23:4	3	
+water	20:12	0:0	4	{
+call	21:8	21:66	4	fprintf
+arg	21:16	21:22	5	stderr
+water	21:16	0:0	6	stderr
+arg	21:24	21:66	5	"Could not allocate audio codec context\n"
+water	21:24	0:0	6	"Could not allocate audio codec context\n"
+water	21:67	0:0	4	;
+call	22:8	22:14	4	exit
+arg	22:13	22:14	5	1
+water	22:13	0:0	6	1
+water	22:15	0:0	4	;
+water	23:4	0:0	4	}
+water	25:4	0:0	2	c
+op	25:5	0:0	2	->
+water	25:7	0:0	2	bit_rate
+op	25:16	0:0	2	=
+water	25:18	0:0	2	64000
+water	25:23	0:0	2	;
+water	27:4	0:0	2	c
+op	27:5	0:0	2	->
+water	27:7	0:0	2	sample_fmt
+op	27:18	0:0	2	=
+water	27:20	0:0	2	AV_SAMPLE_FMT_S16
+water	27:37	0:0	2	;
+if	28:4	32:4	2	(!check_sample_fmt (codec ,c -> sample_fmt ))
+cond	28:8	28:46	3	!check_sample_fmt (codec ,c -> sample_fmt )
+op	28:8	0:0	4	!
+call	28:9	28:46	4	check_sample_fmt
+arg	28:26	28:31	5	codec
+water	28:26	0:0	6	codec
+arg	28:33	28:46	5	c->sample_fmt
+water	28:33	0:0	6	c
+op	28:34	0:0	6	->
+water	28:36	0:0	6	sample_fmt
+stmts	28:49	32:4	3	
+water	28:49	0:0	4	{
+call	29:8	30:53	4	fprintf
+arg	29:16	29:22	5	stderr
+water	29:16	0:0	6	stderr
+arg	29:24	29:67	5	"Encoder does not support sample format %s"
+water	29:24	0:0	6	"Encoder does not support sample format %s"
+arg	30:16	30:53	5	av_get_sample_fmt_name(c->sample_fmt)
+call	30:16	30:52	6	av_get_sample_fmt_name
+arg	30:39	30:52	7	c->sample_fmt
+water	30:39	0:0	8	c
+op	30:40	0:0	8	->
+water	30:42	0:0	8	sample_fmt
+water	30:54	0:0	4	;
+call	31:8	31:14	4	exit
+arg	31:13	31:14	5	1
+water	31:13	0:0	6	1
+water	31:15	0:0	4	;
+water	32:4	0:0	4	}
+water	34:4	0:0	2	c
+op	34:5	0:0	2	->
+water	34:7	0:0	2	sample_rate
+op	34:22	0:0	2	=
+call	34:24	34:48	2	select_sample_rate
+arg	34:43	34:48	3	codec
+water	34:43	0:0	4	codec
+water	34:49	0:0	2	;
+water	35:4	0:0	2	c
+op	35:5	0:0	2	->
+water	35:7	0:0	2	channel_layout
+op	35:22	0:0	2	=
+call	35:24	35:51	2	select_channel_layout
+arg	35:46	35:51	3	codec
+water	35:46	0:0	4	codec
+water	35:52	0:0	2	;
+water	36:4	0:0	2	c
+op	36:5	0:0	2	->
+water	36:7	0:0	2	channels
+op	36:22	0:0	2	=
+call	36:24	36:75	2	av_get_channel_layout_nb_channels
+arg	36:58	36:75	3	c->channel_layout
+water	36:58	0:0	4	c
+op	36:59	0:0	4	->
+water	36:61	0:0	4	channel_layout
+water	36:76	0:0	2	;
+if	38:4	41:4	2	(avcodec_open2 (c ,codec ,NULL ) < 0)
+cond	38:8	38:40	3	avcodec_open2 (c ,codec ,NULL ) < 0
+call	38:8	38:36	4	avcodec_open2
+arg	38:22	38:23	5	c
+water	38:22	0:0	6	c
+arg	38:25	38:30	5	codec
+water	38:25	0:0	6	codec
+arg	38:32	38:36	5	NULL
+water	38:32	0:0	6	NULL
+op	38:38	0:0	4	<
+water	38:40	0:0	4	0
+stmts	38:43	41:4	3	
+water	38:43	0:0	4	{
+call	39:8	39:48	4	fprintf
+arg	39:16	39:22	5	stderr
+water	39:16	0:0	6	stderr
+arg	39:24	39:48	5	"Could not open codec\n"
+water	39:24	0:0	6	"Could not open codec\n"
+water	39:49	0:0	4	;
+call	40:8	40:14	4	exit
+arg	40:13	40:14	5	1
+water	40:13	0:0	6	1
+water	40:15	0:0	4	;
+water	41:4	0:0	4	}
+water	42:4	0:0	2	f
+op	42:6	0:0	2	=
+call	42:8	42:28	2	fopen
+arg	42:14	42:22	3	filename
+water	42:14	0:0	4	filename
+arg	42:24	42:28	3	"wb"
+water	42:24	0:0	4	"wb"
+water	42:29	0:0	2	;
+if	43:4	46:4	2	(! f)
+cond	43:8	43:9	3	! f
+op	43:8	0:0	4	!
+water	43:9	0:0	4	f
+stmts	43:12	46:4	3	
+water	43:12	0:0	4	{
+call	44:8	44:55	4	fprintf
+arg	44:16	44:22	5	stderr
+water	44:16	0:0	6	stderr
+arg	44:24	44:45	5	"Could not open %s\n"
+water	44:24	0:0	6	"Could not open %s\n"
+arg	44:47	44:55	5	filename
+water	44:47	0:0	6	filename
+water	44:56	0:0	4	;
+call	45:8	45:14	4	exit
+arg	45:13	45:14	5	1
+water	45:13	0:0	6	1
+water	45:15	0:0	4	;
+water	46:4	0:0	4	}
+water	48:4	0:0	2	frame
+op	48:10	0:0	2	=
+call	48:12	48:27	2	av_frame_alloc
+water	48:28	0:0	2	;
+if	49:4	52:4	2	(! frame)
+cond	49:8	49:9	3	! frame
+op	49:8	0:0	4	!
+water	49:9	0:0	4	frame
+stmts	49:16	52:4	3	
+water	49:16	0:0	4	{
+call	50:8	50:58	4	fprintf
+arg	50:16	50:22	5	stderr
+water	50:16	0:0	6	stderr
+arg	50:24	50:58	5	"Could not allocate audio frame\n"
+water	50:24	0:0	6	"Could not allocate audio frame\n"
+water	50:59	0:0	4	;
+call	51:8	51:14	4	exit
+arg	51:13	51:14	5	1
+water	51:13	0:0	6	1
+water	51:15	0:0	4	;
+water	52:4	0:0	4	}
+water	53:4	0:0	2	frame
+op	53:9	0:0	2	->
+water	53:11	0:0	2	nb_samples
+op	53:26	0:0	2	=
+water	53:28	0:0	2	c
+op	53:29	0:0	2	->
+water	53:31	0:0	2	frame_size
+water	53:41	0:0	2	;
+water	54:4	0:0	2	frame
+op	54:9	0:0	2	->
+water	54:11	0:0	2	format
+op	54:26	0:0	2	=
+water	54:28	0:0	2	c
+op	54:29	0:0	2	->
+water	54:31	0:0	2	sample_fmt
+water	54:41	0:0	2	;
+water	55:4	0:0	2	frame
+op	55:9	0:0	2	->
+water	55:11	0:0	2	channel_layout
+op	55:26	0:0	2	=
+water	55:28	0:0	2	c
+op	55:29	0:0	2	->
+water	55:31	0:0	2	channel_layout
+water	55:45	0:0	2	;
+water	58:4	0:0	2	buffer_size
+op	58:16	0:0	2	=
+call	58:18	59:61	2	av_samples_get_buffer_size
+arg	58:45	58:49	3	NULL
+water	58:45	0:0	4	NULL
+arg	58:51	58:62	3	c->channels
+water	58:51	0:0	4	c
+op	58:52	0:0	4	->
+water	58:54	0:0	4	channels
+arg	58:64	58:77	3	c->frame_size
+water	58:64	0:0	4	c
+op	58:65	0:0	4	->
+water	58:67	0:0	4	frame_size
+arg	59:45	59:58	3	c->sample_fmt
+water	59:45	0:0	4	c
+op	59:46	0:0	4	->
+water	59:48	0:0	4	sample_fmt
+arg	59:60	59:61	3	0
+water	59:60	0:0	4	0
+water	59:62	0:0	2	;
+if	60:4	63:4	2	(buffer_size < 0)
+cond	60:8	60:22	3	buffer_size < 0
+water	60:8	0:0	4	buffer_size
+op	60:20	0:0	4	<
+water	60:22	0:0	4	0
+stmts	60:25	63:4	3	
+water	60:25	0:0	4	{
+call	61:8	61:60	4	fprintf
+arg	61:16	61:22	5	stderr
+water	61:16	0:0	6	stderr
+arg	61:24	61:60	5	"Could not get sample buffer size\n"
+water	61:24	0:0	6	"Could not get sample buffer size\n"
+water	61:61	0:0	4	;
+call	62:8	62:14	4	exit
+arg	62:13	62:14	5	1
+water	62:13	0:0	6	1
+water	62:15	0:0	4	;
+water	63:4	0:0	4	}
+water	64:4	0:0	2	samples
+op	64:12	0:0	2	=
+call	64:14	64:35	2	av_malloc
+arg	64:24	64:35	3	buffer_size
+water	64:24	0:0	4	buffer_size
+water	64:36	0:0	2	;
+if	65:4	69:4	2	(! samples)
+cond	65:8	65:9	3	! samples
+op	65:8	0:0	4	!
+water	65:9	0:0	4	samples
+stmts	65:18	69:4	3	
+water	65:18	0:0	4	{
+call	66:8	67:27	4	fprintf
+arg	66:16	66:22	5	stderr
+water	66:16	0:0	6	stderr
+arg	66:24	66:74	5	"Could not allocate %d bytes for samples buffer\n"
+water	66:24	0:0	6	"Could not allocate %d bytes for samples buffer\n"
+arg	67:16	67:27	5	buffer_size
+water	67:16	0:0	6	buffer_size
+water	67:28	0:0	4	;
+call	68:8	68:14	4	exit
+arg	68:13	68:14	5	1
+water	68:13	0:0	6	1
+water	68:15	0:0	4	;
+water	69:4	0:0	4	}
+water	71:4	0:0	2	ret
+op	71:8	0:0	2	=
+call	71:10	72:74	2	avcodec_fill_audio_frame
+arg	71:35	71:40	3	frame
+water	71:35	0:0	4	frame
+arg	71:42	71:53	3	c->channels
+water	71:42	0:0	4	c
+op	71:43	0:0	4	->
+water	71:45	0:0	4	channels
+arg	71:55	71:68	3	c->sample_fmt
+water	71:55	0:0	4	c
+op	71:56	0:0	4	->
+water	71:58	0:0	4	sample_fmt
+arg	72:35	72:58	3	(constuint8_t*)samples
+water	72:35	0:0	4	(
+water	72:36	0:0	4	const
+water	72:42	0:0	4	uint8_t
+op	72:49	0:0	4	*
+water	72:50	0:0	4	)
+water	72:51	0:0	4	samples
+arg	72:60	72:71	3	buffer_size
+water	72:60	0:0	4	buffer_size
+arg	72:73	72:74	3	0
+water	72:73	0:0	4	0
+water	72:75	0:0	2	;
+if	73:4	76:4	2	(ret < 0)
+cond	73:8	73:14	3	ret < 0
+water	73:8	0:0	4	ret
+op	73:12	0:0	4	<
+water	73:14	0:0	4	0
+stmts	73:17	76:4	3	
+water	73:17	0:0	4	{
+call	74:8	74:55	4	fprintf
+arg	74:16	74:22	5	stderr
+water	74:16	0:0	6	stderr
+arg	74:24	74:55	5	"Could not setup audio frame\n"
+water	74:24	0:0	6	"Could not setup audio frame\n"
+water	74:56	0:0	4	;
+call	75:8	75:14	4	exit
+arg	75:13	75:14	5	1
+water	75:13	0:0	6	1
+water	75:15	0:0	4	;
+water	76:4	0:0	4	}
+water	78:4	0:0	2	t
+op	78:6	0:0	2	=
+water	78:8	0:0	2	0
+water	78:9	0:0	2	;
+water	79:4	0:0	2	tincr
+op	79:10	0:0	2	=
+water	79:12	0:0	2	2
+op	79:14	0:0	2	*
+water	79:16	0:0	2	M_PI
+op	79:21	0:0	2	*
+water	79:23	0:0	2	440
+op	79:26	0:0	2	.
+water	79:27	0:0	2	0
+op	79:29	0:0	2	/
+water	79:31	0:0	2	c
+op	79:32	0:0	2	->
+water	79:34	0:0	2	sample_rate
+water	79:45	0:0	2	;
+for	80:4	100:4	2	(i = 0 ;i < 200;i ++)
+forinit	80:9	80:14	3	i = 0 ;
+water	80:9	0:0	4	i
+op	80:11	0:0	4	=
+water	80:13	0:0	4	0
+water	80:14	0:0	4	;
+cond	80:16	80:20	3	i < 200
+water	80:16	0:0	4	i
+op	80:18	0:0	4	<
+water	80:20	0:0	4	200
+forexpr	80:25	80:26	3	i ++
+water	80:25	0:0	4	i
+op	80:26	0:0	4	++
+stmts	80:30	100:4	3	
+water	80:30	0:0	4	{
+call	81:8	81:27	4	av_init_packet
+arg	81:23	81:27	5	&pkt
+op	81:23	0:0	6	&
+water	81:24	0:0	6	pkt
+water	81:28	0:0	4	;
+water	82:8	0:0	4	pkt
+op	82:11	0:0	4	.
+water	82:12	0:0	4	data
+op	82:17	0:0	4	=
+water	82:19	0:0	4	NULL
+water	82:23	0:0	4	;
+water	83:8	0:0	4	pkt
+op	83:11	0:0	4	.
+water	83:12	0:0	4	size
+op	83:17	0:0	4	=
+water	83:19	0:0	4	0
+water	83:20	0:0	4	;
+for	84:8	89:8	4	(j = 0 ;j < c -> frame_size;j ++)
+forinit	84:13	84:18	5	j = 0 ;
+water	84:13	0:0	6	j
+op	84:15	0:0	6	=
+water	84:17	0:0	6	0
+water	84:18	0:0	6	;
+cond	84:20	84:27	5	j < c -> frame_size
+water	84:20	0:0	6	j
+op	84:22	0:0	6	<
+water	84:24	0:0	6	c
+op	84:25	0:0	6	->
+water	84:27	0:0	6	frame_size
+forexpr	84:39	84:40	5	j ++
+water	84:39	0:0	6	j
+op	84:40	0:0	6	++
+stmts	84:44	89:8	5	
+water	84:44	0:0	6	{
+water	85:12	0:0	6	samples
+op	85:19	0:0	6	[
+water	85:20	0:0	6	2
+op	85:21	0:0	6	*
+water	85:22	0:0	6	j
+op	85:23	0:0	6	]
+op	85:25	0:0	6	=
+call	85:27	85:47	6	(int)
+arg	85:33	85:47	7	sin(t)*10000
+call	85:33	85:38	8	sin
+arg	85:37	85:38	9	t
+water	85:37	0:0	10	t
+op	85:40	0:0	8	*
+water	85:42	0:0	8	10000
+water	85:48	0:0	6	;
+for	86:12	87:47	6	(k = 1 ;k < c -> channels;k ++)
+forinit	86:17	86:22	7	k = 1 ;
+water	86:17	0:0	8	k
+op	86:19	0:0	8	=
+water	86:21	0:0	8	1
+water	86:22	0:0	8	;
+cond	86:24	86:31	7	k < c -> channels
+water	86:24	0:0	8	k
+op	86:26	0:0	8	<
+water	86:28	0:0	8	c
+op	86:29	0:0	8	->
+water	86:31	0:0	8	channels
+forexpr	86:41	86:42	7	k ++
+water	86:41	0:0	8	k
+op	86:42	0:0	8	++
+stmts	87:16	87:47	7	
+water	87:16	0:0	8	samples
+op	87:23	0:0	8	[
+water	87:24	0:0	8	2
+op	87:25	0:0	8	*
+water	87:26	0:0	8	j
+op	87:28	0:0	8	+
+water	87:30	0:0	8	k
+op	87:31	0:0	8	]
+op	87:33	0:0	8	=
+water	87:35	0:0	8	samples
+op	87:42	0:0	8	[
+water	87:43	0:0	8	2
+op	87:44	0:0	8	*
+water	87:45	0:0	8	j
+op	87:46	0:0	8	]
+water	87:47	0:0	8	;
+water	88:12	0:0	6	t
+op	88:14	0:0	6	+=
+water	88:17	0:0	6	tincr
+water	88:22	0:0	6	;
+water	89:8	0:0	6	}
+water	91:8	0:0	4	ret
+op	91:12	0:0	4	=
+call	91:14	91:63	4	avcodec_encode_audio2
+arg	91:36	91:37	5	c
+water	91:36	0:0	6	c
+arg	91:39	91:43	5	&pkt
+op	91:39	0:0	6	&
+water	91:40	0:0	6	pkt
+arg	91:45	91:50	5	frame
+water	91:45	0:0	6	frame
+arg	91:52	91:63	5	&got_output
+op	91:52	0:0	6	&
+water	91:53	0:0	6	got_output
+water	91:64	0:0	4	;
+if	92:8	95:8	4	(ret < 0)
+cond	92:12	92:18	5	ret < 0
+water	92:12	0:0	6	ret
+op	92:16	0:0	6	<
+water	92:18	0:0	6	0
+stmts	92:21	95:8	5	
+water	92:21	0:0	6	{
+call	93:12	93:58	6	fprintf
+arg	93:20	93:26	7	stderr
+water	93:20	0:0	8	stderr
+arg	93:28	93:58	7	"Error encoding audio frame\n"
+water	93:28	0:0	8	"Error encoding audio frame\n"
+water	93:59	0:0	6	;
+call	94:12	94:18	6	exit
+arg	94:17	94:18	7	1
+water	94:17	0:0	8	1
+water	94:19	0:0	6	;
+water	95:8	0:0	6	}
+if	96:8	99:8	4	(got_output)
+cond	96:12	96:12	5	got_output
+water	96:12	0:0	6	got_output
+stmts	96:24	99:8	5	
+water	96:24	0:0	6	{
+call	97:12	97:43	6	fwrite
+arg	97:19	97:27	7	pkt.data
+water	97:19	0:0	8	pkt
+op	97:22	0:0	8	.
+water	97:23	0:0	8	data
+arg	97:29	97:30	7	1
+water	97:29	0:0	8	1
+arg	97:32	97:40	7	pkt.size
+water	97:32	0:0	8	pkt
+op	97:35	0:0	8	.
+water	97:36	0:0	8	size
+arg	97:42	97:43	7	f
+water	97:42	0:0	8	f
+water	97:44	0:0	6	;
+call	98:12	98:31	6	av_free_packet
+arg	98:27	98:31	7	&pkt
+op	98:27	0:0	8	&
+water	98:28	0:0	8	pkt
+water	98:32	0:0	6	;
+water	99:8	0:0	6	}
+water	100:4	0:0	4	}
+for	102:4	112:4	2	(got_output = 1 ;got_output;i ++)
+forinit	102:9	102:23	3	got_output = 1 ;
+water	102:9	0:0	4	got_output
+op	102:20	0:0	4	=
+water	102:22	0:0	4	1
+water	102:23	0:0	4	;
+cond	102:25	102:25	3	got_output
+water	102:25	0:0	4	got_output
+forexpr	102:37	102:38	3	i ++
+water	102:37	0:0	4	i
+op	102:38	0:0	4	++
+stmts	102:42	112:4	3	
+water	102:42	0:0	4	{
+water	103:8	0:0	4	ret
+op	103:12	0:0	4	=
+call	103:14	103:62	4	avcodec_encode_audio2
+arg	103:36	103:37	5	c
+water	103:36	0:0	6	c
+arg	103:39	103:43	5	&pkt
+op	103:39	0:0	6	&
+water	103:40	0:0	6	pkt
+arg	103:45	103:49	5	NULL
+water	103:45	0:0	6	NULL
+arg	103:51	103:62	5	&got_output
+op	103:51	0:0	6	&
+water	103:52	0:0	6	got_output
+water	103:63	0:0	4	;
+if	104:8	107:8	4	(ret < 0)
+cond	104:12	104:18	5	ret < 0
+water	104:12	0:0	6	ret
+op	104:16	0:0	6	<
+water	104:18	0:0	6	0
+stmts	104:21	107:8	5	
+water	104:21	0:0	6	{
+call	105:12	105:52	6	fprintf
+arg	105:20	105:26	7	stderr
+water	105:20	0:0	8	stderr
+arg	105:28	105:52	7	"Error encoding frame\n"
+water	105:28	0:0	8	"Error encoding frame\n"
+water	105:53	0:0	6	;
+call	106:12	106:18	6	exit
+arg	106:17	106:18	7	1
+water	106:17	0:0	8	1
+water	106:19	0:0	6	;
+water	107:8	0:0	6	}
+if	108:8	111:8	4	(got_output)
+cond	108:12	108:12	5	got_output
+water	108:12	0:0	6	got_output
+stmts	108:24	111:8	5	
+water	108:24	0:0	6	{
+call	109:12	109:43	6	fwrite
+arg	109:19	109:27	7	pkt.data
+water	109:19	0:0	8	pkt
+op	109:22	0:0	8	.
+water	109:23	0:0	8	data
+arg	109:29	109:30	7	1
+water	109:29	0:0	8	1
+arg	109:32	109:40	7	pkt.size
+water	109:32	0:0	8	pkt
+op	109:35	0:0	8	.
+water	109:36	0:0	8	size
+arg	109:42	109:43	7	f
+water	109:42	0:0	8	f
+water	109:44	0:0	6	;
+call	110:12	110:31	6	av_free_packet
+arg	110:27	110:31	7	&pkt
+op	110:27	0:0	8	&
+water	110:28	0:0	8	pkt
+water	110:32	0:0	6	;
+water	111:8	0:0	6	}
+water	112:4	0:0	4	}
+call	113:4	113:12	2	fclose
+arg	113:11	113:12	3	f
+water	113:11	0:0	4	f
+water	113:13	0:0	2	;
+call	114:4	114:21	2	av_freep
+arg	114:13	114:21	3	&samples
+op	114:13	0:0	4	&
+water	114:14	0:0	4	samples
+water	114:22	0:0	2	;
+call	115:4	115:24	2	av_frame_free
+arg	115:18	115:24	3	&frame
+op	115:18	0:0	4	&
+water	115:19	0:0	4	frame
+water	115:25	0:0	2	;
+call	116:4	116:19	2	avcodec_close
+arg	116:18	116:19	3	c
+water	116:18	0:0	4	c
+water	116:20	0:0	2	;
+call	117:4	117:13	2	av_free
+arg	117:12	117:13	3	c
+water	117:12	0:0	4	c
+water	117:14	0:0	2	;

@@ -1,0 +1,204 @@
+func	1:0	21:0	0	static void	windowing_and_mdct_ltp
+params	1:34	0:0	1	
+param	1:35	1:49	2	AACContext *	ac
+param	1:51	1:64	2	INTFLOAT *	out
+param	2:35	2:47	2	INTFLOAT *	in
+param	2:49	2:77	2	IndividualChannelStream *	ics
+stmnts	0:0	20:50	1	
+decl	4:4	4:118	2	const INTFLOAT	*lwindow
+op	4:33	0:0	2	=
+water	4:35	0:0	2	ics
+op	4:38	0:0	2	->
+water	4:40	0:0	2	use_kb_window
+op	4:53	0:0	2	[
+water	4:54	0:0	2	0
+op	4:55	0:0	2	]
+water	4:57	0:0	2	?
+call	4:59	4:90	3	AAC_RENAME
+arg	4:70	4:90	4	ff_aac_kbd_long_1024
+water	4:70	0:0	5	ff_aac_kbd_long_1024
+water	4:92	0:0	2	:
+call	4:94	4:117	3	AAC_RENAME
+arg	4:105	4:117	4	ff_sine_1024
+water	4:105	0:0	5	ff_sine_1024
+decl	5:4	5:117	2	const INTFLOAT	*swindow
+op	5:33	0:0	2	=
+water	5:35	0:0	2	ics
+op	5:38	0:0	2	->
+water	5:40	0:0	2	use_kb_window
+op	5:53	0:0	2	[
+water	5:54	0:0	2	0
+op	5:55	0:0	2	]
+water	5:57	0:0	2	?
+call	5:59	5:90	3	AAC_RENAME
+arg	5:70	5:90	4	ff_aac_kbd_short_128
+water	5:70	0:0	5	ff_aac_kbd_short_128
+water	5:92	0:0	2	:
+call	5:94	5:116	3	AAC_RENAME
+arg	5:105	5:116	4	ff_sine_128
+water	5:105	0:0	5	ff_sine_128
+decl	6:4	6:118	2	const INTFLOAT	*lwindow_prev
+op	6:33	0:0	2	=
+water	6:35	0:0	2	ics
+op	6:38	0:0	2	->
+water	6:40	0:0	2	use_kb_window
+op	6:53	0:0	2	[
+water	6:54	0:0	2	1
+op	6:55	0:0	2	]
+water	6:57	0:0	2	?
+call	6:59	6:90	3	AAC_RENAME
+arg	6:70	6:90	4	ff_aac_kbd_long_1024
+water	6:70	0:0	5	ff_aac_kbd_long_1024
+water	6:92	0:0	2	:
+call	6:94	6:117	3	AAC_RENAME
+arg	6:105	6:117	4	ff_sine_1024
+water	6:105	0:0	5	ff_sine_1024
+decl	7:4	7:117	2	const INTFLOAT	*swindow_prev
+op	7:33	0:0	2	=
+water	7:35	0:0	2	ics
+op	7:38	0:0	2	->
+water	7:40	0:0	2	use_kb_window
+op	7:53	0:0	2	[
+water	7:54	0:0	2	1
+op	7:55	0:0	2	]
+water	7:57	0:0	2	?
+call	7:59	7:90	3	AAC_RENAME
+arg	7:70	7:90	4	ff_aac_kbd_short_128
+water	7:70	0:0	5	ff_aac_kbd_short_128
+water	7:92	0:0	2	:
+call	7:94	7:116	3	AAC_RENAME
+arg	7:105	7:116	4	ff_sine_128
+water	7:105	0:0	5	ff_sine_128
+if	8:4	10:4	2	(ics -> window_sequence [ 0 ] != LONG_STOP_SEQUENCE)
+cond	8:8	8:35	3	ics -> window_sequence [ 0 ] != LONG_STOP_SEQUENCE
+water	8:8	0:0	4	ics
+op	8:11	0:0	4	->
+water	8:13	0:0	4	window_sequence
+op	8:28	0:0	4	[
+water	8:29	0:0	4	0
+op	8:30	0:0	4	]
+op	8:32	0:0	4	!=
+water	8:35	0:0	4	LONG_STOP_SEQUENCE
+stmts	8:55	10:4	3	
+water	8:55	0:0	4	{
+call	9:8	9:56	4	ac->fdsp->vector_fmul
+arg	9:30	9:32	5	in
+water	9:30	0:0	6	in
+arg	9:34	9:36	5	in
+water	9:34	0:0	6	in
+arg	9:38	9:50	5	lwindow_prev
+water	9:38	0:0	6	lwindow_prev
+arg	9:52	9:56	5	1024
+water	9:52	0:0	6	1024
+water	9:57	0:0	4	;
+water	10:4	0:0	4	}
+else	10:6	13:4	2
+stmts	10:11	13:4	3	
+water	10:11	0:0	4	{
+call	11:8	11:39	4	memset
+arg	11:15	11:17	5	in
+water	11:15	0:0	6	in
+arg	11:19	11:20	5	0
+water	11:19	0:0	6	0
+arg	11:22	11:39	5	448*sizeof(*in)
+water	11:22	0:0	6	448
+op	11:26	0:0	6	*
+op	11:28	0:0	6	sizeof
+water	11:34	0:0	6	(
+op	11:35	0:0	6	*
+water	11:36	0:0	6	in
+water	11:38	0:0	6	)
+water	11:40	0:0	4	;
+call	12:8	12:67	4	ac->fdsp->vector_fmul
+arg	12:30	12:38	5	in+448
+water	12:30	0:0	6	in
+op	12:33	0:0	6	+
+water	12:35	0:0	6	448
+arg	12:40	12:48	5	in+448
+water	12:40	0:0	6	in
+op	12:43	0:0	6	+
+water	12:45	0:0	6	448
+arg	12:50	12:62	5	swindow_prev
+water	12:50	0:0	6	swindow_prev
+arg	12:64	12:67	5	128
+water	12:64	0:0	6	128
+water	12:68	0:0	4	;
+water	13:4	0:0	4	}
+if	14:4	16:4	2	(ics -> window_sequence [ 0 ] != LONG_START_SEQUENCE)
+cond	14:8	14:35	3	ics -> window_sequence [ 0 ] != LONG_START_SEQUENCE
+water	14:8	0:0	4	ics
+op	14:11	0:0	4	->
+water	14:13	0:0	4	window_sequence
+op	14:28	0:0	4	[
+water	14:29	0:0	4	0
+op	14:30	0:0	4	]
+op	14:32	0:0	4	!=
+water	14:35	0:0	4	LONG_START_SEQUENCE
+stmts	14:56	16:4	3	
+water	14:56	0:0	4	{
+call	15:8	15:73	4	ac->fdsp->vector_fmul_reverse
+arg	15:38	15:47	5	in+1024
+water	15:38	0:0	6	in
+op	15:41	0:0	6	+
+water	15:43	0:0	6	1024
+arg	15:49	15:58	5	in+1024
+water	15:49	0:0	6	in
+op	15:52	0:0	6	+
+water	15:54	0:0	6	1024
+arg	15:60	15:67	5	lwindow
+water	15:60	0:0	6	lwindow
+arg	15:69	15:73	5	1024
+water	15:69	0:0	6	1024
+water	15:74	0:0	4	;
+water	16:4	0:0	4	}
+else	16:6	19:4	2
+stmts	16:11	19:4	3	
+water	16:11	0:0	4	{
+call	17:8	17:84	4	ac->fdsp->vector_fmul_reverse
+arg	17:38	17:53	5	in+1024+448
+water	17:38	0:0	6	in
+op	17:41	0:0	6	+
+water	17:43	0:0	6	1024
+op	17:48	0:0	6	+
+water	17:50	0:0	6	448
+arg	17:55	17:70	5	in+1024+448
+water	17:55	0:0	6	in
+op	17:58	0:0	6	+
+water	17:60	0:0	6	1024
+op	17:65	0:0	6	+
+water	17:67	0:0	6	448
+arg	17:72	17:79	5	swindow
+water	17:72	0:0	6	swindow
+arg	17:81	17:84	5	128
+water	17:81	0:0	6	128
+water	17:85	0:0	4	;
+call	18:8	18:52	4	memset
+arg	18:15	18:30	5	in+1024+576
+water	18:15	0:0	6	in
+op	18:18	0:0	6	+
+water	18:20	0:0	6	1024
+op	18:25	0:0	6	+
+water	18:27	0:0	6	576
+arg	18:32	18:33	5	0
+water	18:32	0:0	6	0
+arg	18:35	18:52	5	448*sizeof(*in)
+water	18:35	0:0	6	448
+op	18:39	0:0	6	*
+op	18:41	0:0	6	sizeof
+water	18:47	0:0	6	(
+op	18:48	0:0	6	*
+water	18:49	0:0	6	in
+water	18:51	0:0	6	)
+water	18:53	0:0	4	;
+water	19:4	0:0	4	}
+call	20:4	20:49	2	ac->mdct_ltp.mdct_calc
+arg	20:27	20:40	3	&ac->mdct_ltp
+op	20:27	0:0	4	&
+water	20:28	0:0	4	ac
+op	20:30	0:0	4	->
+water	20:32	0:0	4	mdct_ltp
+arg	20:42	20:45	3	out
+water	20:42	0:0	4	out
+arg	20:47	20:49	3	in
+water	20:47	0:0	4	in
+water	20:50	0:0	2	;

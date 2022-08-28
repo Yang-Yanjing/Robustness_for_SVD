@@ -1,0 +1,1421 @@
+func	1:0	153:0	0	static void	psy_3gpp_analyze_channel
+params	1:36	0:0	1	
+param	1:37	1:54	2	FFPsyContext *	ctx
+param	1:56	1:67	2	int	channel
+param	2:37	2:55	2	const float *	coefs
+param	2:57	2:82	2	const FFPsyWindowInfo *	wi
+stmnts	0:0	152:56	1	
+decl	4:4	4:63	2	AacPsyContext	*pctx
+op	4:24	0:0	2	=
+water	4:26	0:0	2	(
+water	4:27	0:0	2	AacPsyContext
+op	4:40	0:0	2	*
+water	4:41	0:0	2	)
+water	4:43	0:0	2	ctx
+op	4:46	0:0	2	->
+water	4:48	0:0	2	model_priv_data
+decl	5:4	5:44	2	AacPsyChannel	*pch
+op	5:24	0:0	2	=
+op	5:26	0:0	2	&
+water	5:27	0:0	2	pctx
+op	5:31	0:0	2	->
+water	5:33	0:0	2	ch
+op	5:35	0:0	2	[
+water	5:36	0:0	2	channel
+op	5:43	0:0	2	]
+decl	6:4	6:15	2	int	i
+water	6:9	0:0	2	,
+decl	6:4	6:15	2	int	w
+water	6:12	0:0	2	,
+decl	6:4	6:15	2	int	g
+decl	7:4	7:82	2	float	desired_bits
+water	7:22	0:0	2	,
+decl	7:4	7:82	2	float	desired_pe
+water	7:34	0:0	2	,
+decl	7:4	7:82	2	float	delta_pe
+water	7:44	0:0	2	,
+decl	7:4	7:82	2	float	reduction
+op	7:55	0:0	2	=
+water	7:57	0:0	2	NAN
+water	7:60	0:0	2	,
+decl	7:4	7:82	2	float	spread_en[128]
+op	7:77	0:0	2	=
+water	7:79	0:0	2	{
+water	7:80	0:0	2	0
+water	7:81	0:0	2	}
+decl	8:4	8:56	2	float	a
+op	8:12	0:0	2	=
+water	8:14	0:0	2	0
+op	8:15	0:0	2	.
+water	8:16	0:0	2	0
+water	8:17	0:0	2	f
+water	8:18	0:0	2	,
+decl	8:4	8:56	2	float	active_lines
+op	8:33	0:0	2	=
+water	8:35	0:0	2	0
+op	8:36	0:0	2	.
+water	8:37	0:0	2	0
+water	8:38	0:0	2	f
+water	8:39	0:0	2	,
+decl	8:4	8:56	2	float	norm_fac
+op	8:50	0:0	2	=
+water	8:52	0:0	2	0
+op	8:53	0:0	2	.
+water	8:54	0:0	2	0
+water	8:55	0:0	2	f
+decl	9:4	9:112	2	float	pe
+op	9:13	0:0	2	=
+water	9:15	0:0	2	pctx
+op	9:19	0:0	2	->
+water	9:21	0:0	2	chan_bitrate
+op	9:34	0:0	2	>
+water	9:36	0:0	2	32000
+water	9:42	0:0	2	?
+water	9:44	0:0	2	0
+op	9:45	0:0	2	.
+water	9:46	0:0	2	0
+water	9:47	0:0	2	f
+water	9:49	0:0	2	:
+call	9:51	9:111	3	FFMAX
+arg	9:57	9:62	4	50.0f
+water	9:57	0:0	5	50
+op	9:59	0:0	5	.
+water	9:60	0:0	5	0
+water	9:61	0:0	5	f
+arg	9:64	9:111	4	100.0f-pctx->chan_bitrate*100.0f/32000.0f
+water	9:64	0:0	5	100
+op	9:67	0:0	5	.
+water	9:68	0:0	5	0
+water	9:69	0:0	5	f
+op	9:71	0:0	5	-
+water	9:73	0:0	5	pctx
+op	9:77	0:0	5	->
+water	9:79	0:0	5	chan_bitrate
+op	9:92	0:0	5	*
+water	9:94	0:0	5	100
+op	9:97	0:0	5	.
+water	9:98	0:0	5	0
+water	9:99	0:0	5	f
+op	9:101	0:0	5	/
+water	9:103	0:0	5	32000
+op	9:108	0:0	5	.
+water	9:109	0:0	5	0
+water	9:110	0:0	5	f
+decl	10:4	10:69	2	const int	num_bands
+op	10:31	0:0	2	=
+water	10:33	0:0	2	ctx
+op	10:36	0:0	2	->
+water	10:38	0:0	2	num_bands
+op	10:47	0:0	2	[
+water	10:48	0:0	2	wi
+op	10:50	0:0	2	->
+water	10:52	0:0	2	num_windows
+op	10:64	0:0	2	==
+water	10:67	0:0	2	8
+op	10:68	0:0	2	]
+decl	11:4	11:65	2	const uint8_t	*band_sizes
+op	11:31	0:0	2	=
+water	11:33	0:0	2	ctx
+op	11:36	0:0	2	->
+water	11:38	0:0	2	bands
+op	11:43	0:0	2	[
+water	11:44	0:0	2	wi
+op	11:46	0:0	2	->
+water	11:48	0:0	2	num_windows
+op	11:60	0:0	2	==
+water	11:63	0:0	2	8
+op	11:64	0:0	2	]
+decl	12:4	12:69	2	AacPsyCoeffs	*coeffs
+op	12:31	0:0	2	=
+water	12:33	0:0	2	pctx
+op	12:37	0:0	2	->
+water	12:39	0:0	2	psy_coef
+op	12:47	0:0	2	[
+water	12:48	0:0	2	wi
+op	12:50	0:0	2	->
+water	12:52	0:0	2	num_windows
+op	12:64	0:0	2	==
+water	12:67	0:0	2	8
+op	12:68	0:0	2	]
+decl	13:4	13:100	2	const float	avoid_hole_thr
+op	13:31	0:0	2	=
+water	13:33	0:0	2	wi
+op	13:35	0:0	2	->
+water	13:37	0:0	2	num_windows
+op	13:49	0:0	2	==
+water	13:52	0:0	2	8
+water	13:54	0:0	2	?
+water	13:56	0:0	2	PSY_3GPP_AH_THR_SHORT
+water	13:78	0:0	2	:
+water	13:80	0:0	2	PSY_3GPP_AH_THR_LONG
+call	15:4	15:55	2	calc_thr_3gpp
+arg	15:18	15:20	3	wi
+water	15:18	0:0	4	wi
+arg	15:22	15:31	3	num_bands
+water	15:22	0:0	4	num_bands
+arg	15:33	15:36	3	pch
+water	15:33	0:0	4	pch
+arg	15:38	15:48	3	band_sizes
+water	15:38	0:0	4	band_sizes
+arg	15:50	15:55	3	coefs
+water	15:50	0:0	4	coefs
+water	15:56	0:0	2	;
+for	17:4	47:4	2	(w = 0 ;w < wi -> num_windows * 16;w += 16)
+forinit	17:9	17:14	3	w = 0 ;
+water	17:9	0:0	4	w
+op	17:11	0:0	4	=
+water	17:13	0:0	4	0
+water	17:14	0:0	4	;
+cond	17:16	17:36	3	w < wi -> num_windows * 16
+water	17:16	0:0	4	w
+op	17:18	0:0	4	<
+water	17:20	0:0	4	wi
+op	17:22	0:0	4	->
+water	17:24	0:0	4	num_windows
+op	17:35	0:0	4	*
+water	17:36	0:0	4	16
+forexpr	17:40	17:45	3	w += 16
+water	17:40	0:0	4	w
+op	17:42	0:0	4	+=
+water	17:45	0:0	4	16
+stmts	17:49	47:4	3	
+water	17:49	0:0	4	{
+decl	18:8	18:41	4	AacPsyBand	*bands
+op	18:26	0:0	4	=
+op	18:28	0:0	4	&
+water	18:29	0:0	4	pch
+op	18:32	0:0	4	->
+water	18:34	0:0	4	band
+op	18:38	0:0	4	[
+water	18:39	0:0	4	w
+op	18:40	0:0	4	]
+water	20:8	0:0	4	spread_en
+op	20:17	0:0	4	[
+water	20:18	0:0	4	0
+op	20:19	0:0	4	]
+op	20:21	0:0	4	=
+water	20:23	0:0	4	bands
+op	20:28	0:0	4	[
+water	20:29	0:0	4	0
+op	20:30	0:0	4	]
+op	20:31	0:0	4	.
+water	20:32	0:0	4	energy
+water	20:38	0:0	4	;
+for	21:8	24:8	4	(g = 1 ;g < num_bands;g ++)
+forinit	21:13	21:18	5	g = 1 ;
+water	21:13	0:0	6	g
+op	21:15	0:0	6	=
+water	21:17	0:0	6	1
+water	21:18	0:0	6	;
+cond	21:20	21:24	5	g < num_bands
+water	21:20	0:0	6	g
+op	21:22	0:0	6	<
+water	21:24	0:0	6	num_bands
+forexpr	21:35	21:36	5	g ++
+water	21:35	0:0	6	g
+op	21:36	0:0	6	++
+stmts	21:40	24:8	5	
+water	21:40	0:0	6	{
+water	22:12	0:0	6	bands
+op	22:17	0:0	6	[
+water	22:18	0:0	6	g
+op	22:19	0:0	6	]
+op	22:20	0:0	6	.
+water	22:21	0:0	6	thr
+op	22:27	0:0	6	=
+call	22:29	22:91	6	FFMAX
+arg	22:35	22:47	7	bands[g].thr
+water	22:35	0:0	8	bands
+op	22:40	0:0	8	[
+water	22:41	0:0	8	g
+op	22:42	0:0	8	]
+op	22:43	0:0	8	.
+water	22:44	0:0	8	thr
+arg	22:52	22:91	7	bands[g-1].thr*coeffs[g].spread_hi[0]
+water	22:52	0:0	8	bands
+op	22:57	0:0	8	[
+water	22:58	0:0	8	g
+op	22:59	0:0	8	-
+water	22:60	0:0	8	1
+op	22:61	0:0	8	]
+op	22:62	0:0	8	.
+water	22:63	0:0	8	thr
+op	22:67	0:0	8	*
+water	22:69	0:0	8	coeffs
+op	22:75	0:0	8	[
+water	22:76	0:0	8	g
+op	22:77	0:0	8	]
+op	22:78	0:0	8	.
+water	22:79	0:0	8	spread_hi
+op	22:88	0:0	8	[
+water	22:89	0:0	8	0
+op	22:90	0:0	8	]
+water	22:92	0:0	6	;
+water	23:12	0:0	6	spread_en
+op	23:21	0:0	6	[
+water	23:22	0:0	6	w
+op	23:23	0:0	6	+
+water	23:24	0:0	6	g
+op	23:25	0:0	6	]
+op	23:27	0:0	6	=
+call	23:29	23:93	6	FFMAX
+arg	23:35	23:50	7	bands[g].energy
+water	23:35	0:0	8	bands
+op	23:40	0:0	8	[
+water	23:41	0:0	8	g
+op	23:42	0:0	8	]
+op	23:43	0:0	8	.
+water	23:44	0:0	8	energy
+arg	23:52	23:93	7	spread_en[w+g-1]*coeffs[g].spread_hi[1]
+water	23:52	0:0	8	spread_en
+op	23:61	0:0	8	[
+water	23:62	0:0	8	w
+op	23:63	0:0	8	+
+water	23:64	0:0	8	g
+op	23:65	0:0	8	-
+water	23:66	0:0	8	1
+op	23:67	0:0	8	]
+op	23:69	0:0	8	*
+water	23:71	0:0	8	coeffs
+op	23:77	0:0	8	[
+water	23:78	0:0	8	g
+op	23:79	0:0	8	]
+op	23:80	0:0	8	.
+water	23:81	0:0	8	spread_hi
+op	23:90	0:0	8	[
+water	23:91	0:0	8	1
+op	23:92	0:0	8	]
+water	23:94	0:0	6	;
+water	24:8	0:0	6	}
+for	25:8	28:8	4	(g = num_bands - 2 ;g >= 0;g --)
+forinit	25:13	25:30	5	g = num_bands - 2 ;
+water	25:13	0:0	6	g
+op	25:15	0:0	6	=
+water	25:17	0:0	6	num_bands
+op	25:27	0:0	6	-
+water	25:29	0:0	6	2
+water	25:30	0:0	6	;
+cond	25:32	25:37	5	g >= 0
+water	25:32	0:0	6	g
+op	25:34	0:0	6	>=
+water	25:37	0:0	6	0
+forexpr	25:40	25:41	5	g --
+water	25:40	0:0	6	g
+op	25:41	0:0	6	--
+stmts	25:45	28:8	5	
+water	25:45	0:0	6	{
+water	26:12	0:0	6	bands
+op	26:17	0:0	6	[
+water	26:18	0:0	6	g
+op	26:19	0:0	6	]
+op	26:20	0:0	6	.
+water	26:21	0:0	6	thr
+op	26:27	0:0	6	=
+call	26:29	26:91	6	FFMAX
+arg	26:35	26:47	7	bands[g].thr
+water	26:35	0:0	8	bands
+op	26:40	0:0	8	[
+water	26:41	0:0	8	g
+op	26:42	0:0	8	]
+op	26:43	0:0	8	.
+water	26:44	0:0	8	thr
+arg	26:51	26:91	7	bands[g+1].thr*coeffs[g].spread_low[0]
+water	26:51	0:0	8	bands
+op	26:56	0:0	8	[
+water	26:57	0:0	8	g
+op	26:58	0:0	8	+
+water	26:59	0:0	8	1
+op	26:60	0:0	8	]
+op	26:61	0:0	8	.
+water	26:62	0:0	8	thr
+op	26:66	0:0	8	*
+water	26:68	0:0	8	coeffs
+op	26:74	0:0	8	[
+water	26:75	0:0	8	g
+op	26:76	0:0	8	]
+op	26:77	0:0	8	.
+water	26:78	0:0	8	spread_low
+op	26:88	0:0	8	[
+water	26:89	0:0	8	0
+op	26:90	0:0	8	]
+water	26:92	0:0	6	;
+water	27:12	0:0	6	spread_en
+op	27:21	0:0	6	[
+water	27:22	0:0	6	w
+op	27:23	0:0	6	+
+water	27:24	0:0	6	g
+op	27:25	0:0	6	]
+op	27:27	0:0	6	=
+call	27:29	27:93	6	FFMAX
+arg	27:35	27:49	7	spread_en[w+g]
+water	27:35	0:0	8	spread_en
+op	27:44	0:0	8	[
+water	27:45	0:0	8	w
+op	27:46	0:0	8	+
+water	27:47	0:0	8	g
+op	27:48	0:0	8	]
+arg	27:51	27:93	7	spread_en[w+g+1]*coeffs[g].spread_low[1]
+water	27:51	0:0	8	spread_en
+op	27:60	0:0	8	[
+water	27:61	0:0	8	w
+op	27:62	0:0	8	+
+water	27:63	0:0	8	g
+op	27:64	0:0	8	+
+water	27:65	0:0	8	1
+op	27:66	0:0	8	]
+op	27:68	0:0	8	*
+water	27:70	0:0	8	coeffs
+op	27:76	0:0	8	[
+water	27:77	0:0	8	g
+op	27:78	0:0	8	]
+op	27:79	0:0	8	.
+water	27:80	0:0	8	spread_low
+op	27:90	0:0	8	[
+water	27:91	0:0	8	1
+op	27:92	0:0	8	]
+water	27:94	0:0	6	;
+water	28:8	0:0	6	}
+for	30:8	46:8	4	(g = 0 ;g < num_bands;g ++)
+forinit	30:13	30:18	5	g = 0 ;
+water	30:13	0:0	6	g
+op	30:15	0:0	6	=
+water	30:17	0:0	6	0
+water	30:18	0:0	6	;
+cond	30:20	30:24	5	g < num_bands
+water	30:20	0:0	6	g
+op	30:22	0:0	6	<
+water	30:24	0:0	6	num_bands
+forexpr	30:35	30:36	5	g ++
+water	30:35	0:0	6	g
+op	30:36	0:0	6	++
+stmts	30:40	46:8	5	
+water	30:40	0:0	6	{
+decl	31:12	31:40	6	AacPsyBand	*band
+op	31:29	0:0	6	=
+op	31:31	0:0	6	&
+water	31:32	0:0	6	bands
+op	31:37	0:0	6	[
+water	31:38	0:0	6	g
+op	31:39	0:0	6	]
+water	32:12	0:0	6	band
+op	32:16	0:0	6	->
+water	32:18	0:0	6	thr_quiet
+op	32:28	0:0	6	=
+water	32:30	0:0	6	band
+op	32:34	0:0	6	->
+water	32:36	0:0	6	thr
+op	32:40	0:0	6	=
+call	32:42	32:72	6	FFMAX
+arg	32:48	32:57	7	band->thr
+water	32:48	0:0	8	band
+op	32:52	0:0	8	->
+water	32:54	0:0	8	thr
+arg	32:59	32:72	7	coeffs[g].ath
+water	32:59	0:0	8	coeffs
+op	32:65	0:0	8	[
+water	32:66	0:0	8	g
+op	32:67	0:0	8	]
+op	32:68	0:0	8	.
+water	32:69	0:0	8	ath
+water	32:73	0:0	6	;
+if	34:12	36:81	6	(! ( wi -> window_type [ 0 ] == LONG_STOP_SEQUENCE || ( wi -> window_type [ 1 ] == LONG_START_SEQUENCE && ! w ) ))
+cond	34:16	34:111	7	! ( wi -> window_type [ 0 ] == LONG_STOP_SEQUENCE || ( wi -> window_type [ 1 ] == LONG_START_SEQUENCE && ! w ) )
+op	34:16	0:0	8	!
+water	34:17	0:0	8	(
+water	34:18	0:0	8	wi
+op	34:20	0:0	8	->
+water	34:22	0:0	8	window_type
+op	34:33	0:0	8	[
+water	34:34	0:0	8	0
+op	34:35	0:0	8	]
+op	34:37	0:0	8	==
+water	34:40	0:0	8	LONG_STOP_SEQUENCE
+op	34:59	0:0	8	||
+water	34:62	0:0	8	(
+water	34:63	0:0	8	wi
+op	34:65	0:0	8	->
+water	34:67	0:0	8	window_type
+op	34:78	0:0	8	[
+water	34:79	0:0	8	1
+op	34:80	0:0	8	]
+op	34:82	0:0	8	==
+water	34:85	0:0	8	LONG_START_SEQUENCE
+op	34:105	0:0	8	&&
+op	34:108	0:0	8	!
+water	34:109	0:0	8	w
+water	34:110	0:0	8	)
+water	34:111	0:0	8	)
+stmts	35:16	36:81	7	
+water	35:16	0:0	8	band
+op	35:20	0:0	8	->
+water	35:22	0:0	8	thr
+op	35:26	0:0	8	=
+call	35:28	36:80	8	FFMAX
+arg	35:34	35:59	9	PSY_3GPP_RPEMIN*band->thr
+water	35:34	0:0	10	PSY_3GPP_RPEMIN
+op	35:49	0:0	10	*
+water	35:50	0:0	10	band
+op	35:54	0:0	10	->
+water	35:56	0:0	10	thr
+arg	35:61	36:80	9	FFMIN(band->thr,PSY_3GPP_RPELEV*pch->prev_band[w+g].thr_quiet)
+call	35:61	36:79	10	FFMIN
+arg	35:67	35:76	11	band->thr
+water	35:67	0:0	12	band
+op	35:71	0:0	12	->
+water	35:73	0:0	12	thr
+arg	36:34	36:79	11	PSY_3GPP_RPELEV*pch->prev_band[w+g].thr_quiet
+water	36:34	0:0	12	PSY_3GPP_RPELEV
+op	36:49	0:0	12	*
+water	36:50	0:0	12	pch
+op	36:53	0:0	12	->
+water	36:55	0:0	12	prev_band
+op	36:64	0:0	12	[
+water	36:65	0:0	12	w
+op	36:66	0:0	12	+
+water	36:67	0:0	12	g
+op	36:68	0:0	12	]
+op	36:69	0:0	12	.
+water	36:70	0:0	12	thr_quiet
+water	36:81	0:0	8	;
+water	38:12	0:0	6	pe
+op	38:15	0:0	6	+=
+call	38:18	38:35	6	calc_pe_3gpp
+arg	38:31	38:35	7	band
+water	38:31	0:0	8	band
+water	38:36	0:0	6	;
+water	39:12	0:0	6	a
+op	39:15	0:0	6	+=
+water	39:18	0:0	6	band
+op	39:22	0:0	6	->
+water	39:24	0:0	6	pe_const
+water	39:32	0:0	6	;
+water	40:12	0:0	6	active_lines
+op	40:25	0:0	6	+=
+water	40:28	0:0	6	band
+op	40:32	0:0	6	->
+water	40:34	0:0	6	active_lines
+water	40:46	0:0	6	;
+if	42:12	43:52	6	(spread_en [ w + g ] * avoid_hole_thr > band -> energy || coeffs [ g ] . min_snr > 1 . 0 f)
+cond	42:16	42:89	7	spread_en [ w + g ] * avoid_hole_thr > band -> energy || coeffs [ g ] . min_snr > 1 . 0 f
+water	42:16	0:0	8	spread_en
+op	42:25	0:0	8	[
+water	42:26	0:0	8	w
+op	42:27	0:0	8	+
+water	42:28	0:0	8	g
+op	42:29	0:0	8	]
+op	42:31	0:0	8	*
+water	42:33	0:0	8	avoid_hole_thr
+op	42:48	0:0	8	>
+water	42:50	0:0	8	band
+op	42:54	0:0	8	->
+water	42:56	0:0	8	energy
+op	42:63	0:0	8	||
+water	42:66	0:0	8	coeffs
+op	42:72	0:0	8	[
+water	42:73	0:0	8	g
+op	42:74	0:0	8	]
+op	42:75	0:0	8	.
+water	42:76	0:0	8	min_snr
+op	42:84	0:0	8	>
+water	42:86	0:0	8	1
+op	42:87	0:0	8	.
+water	42:88	0:0	8	0
+water	42:89	0:0	8	f
+stmts	43:16	43:52	7	
+water	43:16	0:0	8	band
+op	43:20	0:0	8	->
+water	43:22	0:0	8	avoid_holes
+op	43:34	0:0	8	=
+water	43:36	0:0	8	PSY_3GPP_AH_NONE
+water	43:52	0:0	8	;
+else	44:12	45:56	6
+stmts	45:16	45:56	7	
+water	45:16	0:0	8	band
+op	45:20	0:0	8	->
+water	45:22	0:0	8	avoid_holes
+op	45:34	0:0	8	=
+water	45:36	0:0	8	PSY_3GPP_AH_INACTIVE
+water	45:56	0:0	8	;
+water	46:8	0:0	6	}
+water	47:4	0:0	4	}
+water	49:4	0:0	2	ctx
+op	49:7	0:0	2	->
+water	49:9	0:0	2	ch
+op	49:11	0:0	2	[
+water	49:12	0:0	2	channel
+op	49:19	0:0	2	]
+op	49:20	0:0	2	.
+water	49:21	0:0	2	entropy
+op	49:29	0:0	2	=
+water	49:31	0:0	2	pe
+water	49:33	0:0	2	;
+water	50:4	0:0	2	desired_bits
+op	50:17	0:0	2	=
+call	50:19	50:101	2	calc_bit_demand
+arg	50:35	50:39	3	pctx
+water	50:35	0:0	4	pctx
+arg	50:41	50:43	3	pe
+water	50:41	0:0	4	pe
+arg	50:45	50:61	3	ctx->bitres.bits
+water	50:45	0:0	4	ctx
+op	50:48	0:0	4	->
+water	50:50	0:0	4	bitres
+op	50:56	0:0	4	.
+water	50:57	0:0	4	bits
+arg	50:63	50:79	3	ctx->bitres.size
+water	50:63	0:0	4	ctx
+op	50:66	0:0	4	->
+water	50:68	0:0	4	bitres
+op	50:74	0:0	4	.
+water	50:75	0:0	4	size
+arg	50:81	50:101	3	wi->num_windows==8
+water	50:81	0:0	4	wi
+op	50:83	0:0	4	->
+water	50:85	0:0	4	num_windows
+op	50:97	0:0	4	==
+water	50:100	0:0	4	8
+water	50:102	0:0	2	;
+water	51:4	0:0	2	desired_pe
+op	51:15	0:0	2	=
+call	51:17	51:49	2	PSY_3GPP_BITS_TO_PE
+arg	51:37	51:49	3	desired_bits
+water	51:37	0:0	4	desired_bits
+water	51:50	0:0	2	;
+if	56:4	58:44	2	(ctx -> bitres . bits > 0)
+cond	56:8	56:27	3	ctx -> bitres . bits > 0
+water	56:8	0:0	4	ctx
+op	56:11	0:0	4	->
+water	56:13	0:0	4	bitres
+op	56:19	0:0	4	.
+water	56:20	0:0	4	bits
+op	56:25	0:0	4	>
+water	56:27	0:0	4	0
+stmts	57:8	58:44	3	
+water	57:8	0:0	4	desired_pe
+op	57:19	0:0	4	*=
+call	57:22	58:43	4	av_clipf
+arg	57:31	57:88	5	pctx->pe.previous/PSY_3GPP_BITS_TO_PE(ctx->bitres.bits)
+water	57:31	0:0	6	pctx
+op	57:35	0:0	6	->
+water	57:37	0:0	6	pe
+op	57:39	0:0	6	.
+water	57:40	0:0	6	previous
+op	57:49	0:0	6	/
+call	57:51	57:87	6	PSY_3GPP_BITS_TO_PE
+arg	57:71	57:87	7	ctx->bitres.bits
+water	57:71	0:0	8	ctx
+op	57:74	0:0	8	->
+water	57:76	0:0	8	bitres
+op	57:82	0:0	8	.
+water	57:83	0:0	8	bits
+arg	58:31	58:36	5	0.85f
+water	58:31	0:0	6	0
+op	58:32	0:0	6	.
+water	58:33	0:0	6	85
+water	58:35	0:0	6	f
+arg	58:38	58:43	5	1.15f
+water	58:38	0:0	6	1
+op	58:39	0:0	6	.
+water	58:40	0:0	6	15
+water	58:42	0:0	6	f
+water	58:44	0:0	4	;
+water	59:4	0:0	2	pctx
+op	59:8	0:0	2	->
+water	59:10	0:0	2	pe
+op	59:12	0:0	2	.
+water	59:13	0:0	2	previous
+op	59:22	0:0	2	=
+call	59:24	59:56	2	PSY_3GPP_BITS_TO_PE
+arg	59:44	59:56	3	desired_bits
+water	59:44	0:0	4	desired_bits
+water	59:57	0:0	2	;
+if	60:4	142:4	2	(desired_pe < pe)
+cond	60:8	60:21	3	desired_pe < pe
+water	60:8	0:0	4	desired_pe
+op	60:19	0:0	4	<
+water	60:21	0:0	4	pe
+stmts	60:25	142:4	3	
+water	60:25	0:0	4	{
+for	62:8	75:8	4	(w = 0 ;w < wi -> num_windows * 16;w += 16)
+forinit	62:13	62:18	5	w = 0 ;
+water	62:13	0:0	6	w
+op	62:15	0:0	6	=
+water	62:17	0:0	6	0
+water	62:18	0:0	6	;
+cond	62:20	62:40	5	w < wi -> num_windows * 16
+water	62:20	0:0	6	w
+op	62:22	0:0	6	<
+water	62:24	0:0	6	wi
+op	62:26	0:0	6	->
+water	62:28	0:0	6	num_windows
+op	62:39	0:0	6	*
+water	62:40	0:0	6	16
+forexpr	62:44	62:49	5	w += 16
+water	62:44	0:0	6	w
+op	62:46	0:0	6	+=
+water	62:49	0:0	6	16
+stmts	62:53	75:8	5	
+water	62:53	0:0	6	{
+water	63:12	0:0	6	reduction
+op	63:22	0:0	6	=
+call	63:24	63:75	6	calc_reduction_3gpp
+arg	63:44	63:45	7	a
+water	63:44	0:0	8	a
+arg	63:47	63:57	7	desired_pe
+water	63:47	0:0	8	desired_pe
+arg	63:59	63:61	7	pe
+water	63:59	0:0	8	pe
+arg	63:63	63:75	7	active_lines
+water	63:63	0:0	8	active_lines
+water	63:76	0:0	6	;
+water	64:12	0:0	6	pe
+op	64:15	0:0	6	=
+water	64:17	0:0	6	0
+op	64:18	0:0	6	.
+water	64:19	0:0	6	0
+water	64:20	0:0	6	f
+water	64:21	0:0	6	;
+water	65:12	0:0	6	a
+op	65:15	0:0	6	=
+water	65:17	0:0	6	0
+op	65:18	0:0	6	.
+water	65:19	0:0	6	0
+water	65:20	0:0	6	f
+water	65:21	0:0	6	;
+water	66:12	0:0	6	active_lines
+op	66:25	0:0	6	=
+water	66:27	0:0	6	0
+op	66:28	0:0	6	.
+water	66:29	0:0	6	0
+water	66:30	0:0	6	f
+water	66:31	0:0	6	;
+for	67:12	74:12	6	(g = 0 ;g < num_bands;g ++)
+forinit	67:17	67:22	7	g = 0 ;
+water	67:17	0:0	8	g
+op	67:19	0:0	8	=
+water	67:21	0:0	8	0
+water	67:22	0:0	8	;
+cond	67:24	67:28	7	g < num_bands
+water	67:24	0:0	8	g
+op	67:26	0:0	8	<
+water	67:28	0:0	8	num_bands
+forexpr	67:39	67:40	7	g ++
+water	67:39	0:0	8	g
+op	67:40	0:0	8	++
+stmts	67:44	74:12	7	
+water	67:44	0:0	8	{
+decl	68:16	68:50	8	AacPsyBand	*band
+op	68:33	0:0	8	=
+op	68:35	0:0	8	&
+water	68:36	0:0	8	pch
+op	68:39	0:0	8	->
+water	68:41	0:0	8	band
+op	68:45	0:0	8	[
+water	68:46	0:0	8	w
+op	68:47	0:0	8	+
+water	68:48	0:0	8	g
+op	68:49	0:0	8	]
+water	69:16	0:0	8	band
+op	69:20	0:0	8	->
+water	69:22	0:0	8	thr
+op	69:26	0:0	8	=
+call	69:28	69:84	8	calc_reduced_thr_3gpp
+arg	69:50	69:54	9	band
+water	69:50	0:0	10	band
+arg	69:56	69:73	9	coeffs[g].min_snr
+water	69:56	0:0	10	coeffs
+op	69:62	0:0	10	[
+water	69:63	0:0	10	g
+op	69:64	0:0	10	]
+op	69:65	0:0	10	.
+water	69:66	0:0	10	min_snr
+arg	69:75	69:84	9	reduction
+water	69:75	0:0	10	reduction
+water	69:85	0:0	8	;
+water	71:16	0:0	8	pe
+op	71:19	0:0	8	+=
+call	71:22	71:39	8	calc_pe_3gpp
+arg	71:35	71:39	9	band
+water	71:35	0:0	10	band
+water	71:40	0:0	8	;
+water	72:16	0:0	8	a
+op	72:19	0:0	8	+=
+water	72:22	0:0	8	band
+op	72:26	0:0	8	->
+water	72:28	0:0	8	pe_const
+water	72:36	0:0	8	;
+water	73:16	0:0	8	active_lines
+op	73:29	0:0	8	+=
+water	73:32	0:0	8	band
+op	73:36	0:0	8	->
+water	73:38	0:0	8	active_lines
+water	73:50	0:0	8	;
+water	74:12	0:0	8	}
+water	75:8	0:0	6	}
+for	77:8	110:8	4	(i = 0 ;i < 2;i ++)
+forinit	77:13	77:18	5	i = 0 ;
+water	77:13	0:0	6	i
+op	77:15	0:0	6	=
+water	77:17	0:0	6	0
+water	77:18	0:0	6	;
+cond	77:20	77:24	5	i < 2
+water	77:20	0:0	6	i
+op	77:22	0:0	6	<
+water	77:24	0:0	6	2
+forexpr	77:27	77:28	5	i ++
+water	77:27	0:0	6	i
+op	77:28	0:0	6	++
+stmts	77:32	110:8	5	
+water	77:32	0:0	6	{
+decl	78:12	78:51	6	float	pe_no_ah
+op	78:27	0:0	6	=
+water	78:29	0:0	6	0
+op	78:30	0:0	6	.
+water	78:31	0:0	6	0
+water	78:32	0:0	6	f
+water	78:33	0:0	6	,
+decl	78:12	78:51	6	float	desired_pe_no_ah
+water	79:12	0:0	6	active_lines
+op	79:25	0:0	6	=
+water	79:27	0:0	6	a
+op	79:29	0:0	6	=
+water	79:31	0:0	6	0
+op	79:32	0:0	6	.
+water	79:33	0:0	6	0
+water	79:34	0:0	6	f
+water	79:35	0:0	6	;
+for	80:12	89:12	6	(w = 0 ;w < wi -> num_windows * 16;w += 16)
+forinit	80:17	80:22	7	w = 0 ;
+water	80:17	0:0	8	w
+op	80:19	0:0	8	=
+water	80:21	0:0	8	0
+water	80:22	0:0	8	;
+cond	80:24	80:44	7	w < wi -> num_windows * 16
+water	80:24	0:0	8	w
+op	80:26	0:0	8	<
+water	80:28	0:0	8	wi
+op	80:30	0:0	8	->
+water	80:32	0:0	8	num_windows
+op	80:43	0:0	8	*
+water	80:44	0:0	8	16
+forexpr	80:48	80:53	7	w += 16
+water	80:48	0:0	8	w
+op	80:50	0:0	8	+=
+water	80:53	0:0	8	16
+stmts	80:57	89:12	7	
+water	80:57	0:0	8	{
+for	81:16	88:16	8	(g = 0 ;g < num_bands;g ++)
+forinit	81:21	81:26	9	g = 0 ;
+water	81:21	0:0	10	g
+op	81:23	0:0	10	=
+water	81:25	0:0	10	0
+water	81:26	0:0	10	;
+cond	81:28	81:32	9	g < num_bands
+water	81:28	0:0	10	g
+op	81:30	0:0	10	<
+water	81:32	0:0	10	num_bands
+forexpr	81:43	81:44	9	g ++
+water	81:43	0:0	10	g
+op	81:44	0:0	10	++
+stmts	81:48	88:16	9	
+water	81:48	0:0	10	{
+decl	82:20	82:54	10	AacPsyBand	*band
+op	82:37	0:0	10	=
+op	82:39	0:0	10	&
+water	82:40	0:0	10	pch
+op	82:43	0:0	10	->
+water	82:45	0:0	10	band
+op	82:49	0:0	10	[
+water	82:50	0:0	10	w
+op	82:51	0:0	10	+
+water	82:52	0:0	10	g
+op	82:53	0:0	10	]
+if	83:20	87:20	10	(band -> avoid_holes != PSY_3GPP_AH_ACTIVE)
+cond	83:24	83:45	11	band -> avoid_holes != PSY_3GPP_AH_ACTIVE
+water	83:24	0:0	12	band
+op	83:28	0:0	12	->
+water	83:30	0:0	12	avoid_holes
+op	83:42	0:0	12	!=
+water	83:45	0:0	12	PSY_3GPP_AH_ACTIVE
+stmts	83:65	87:20	11	
+water	83:65	0:0	12	{
+water	84:24	0:0	12	pe_no_ah
+op	84:33	0:0	12	+=
+water	84:36	0:0	12	band
+op	84:40	0:0	12	->
+water	84:42	0:0	12	pe
+water	84:44	0:0	12	;
+water	85:24	0:0	12	a
+op	85:33	0:0	12	+=
+water	85:36	0:0	12	band
+op	85:40	0:0	12	->
+water	85:42	0:0	12	pe_const
+water	85:50	0:0	12	;
+water	86:24	0:0	12	active_lines
+op	86:37	0:0	12	+=
+water	86:40	0:0	12	band
+op	86:44	0:0	12	->
+water	86:46	0:0	12	active_lines
+water	86:58	0:0	12	;
+water	87:20	0:0	12	}
+water	88:16	0:0	10	}
+water	89:12	0:0	8	}
+water	90:12	0:0	6	desired_pe_no_ah
+op	90:29	0:0	6	=
+call	90:31	90:71	6	FFMAX
+arg	90:37	90:65	7	desired_pe-(pe-pe_no_ah)
+water	90:37	0:0	8	desired_pe
+op	90:48	0:0	8	-
+water	90:50	0:0	8	(
+water	90:51	0:0	8	pe
+op	90:54	0:0	8	-
+water	90:56	0:0	8	pe_no_ah
+water	90:64	0:0	8	)
+arg	90:67	90:71	7	0.0f
+water	90:67	0:0	8	0
+op	90:68	0:0	8	.
+water	90:69	0:0	8	0
+water	90:70	0:0	8	f
+water	90:72	0:0	6	;
+if	91:12	92:92	6	(active_lines > 0 . 0 f)
+cond	91:16	91:34	7	active_lines > 0 . 0 f
+water	91:16	0:0	8	active_lines
+op	91:29	0:0	8	>
+water	91:31	0:0	8	0
+op	91:32	0:0	8	.
+water	91:33	0:0	8	0
+water	91:34	0:0	8	f
+stmts	92:16	92:92	7	
+water	92:16	0:0	8	reduction
+op	92:26	0:0	8	=
+call	92:28	92:91	8	calc_reduction_3gpp
+arg	92:48	92:49	9	a
+water	92:48	0:0	10	a
+arg	92:51	92:67	9	desired_pe_no_ah
+water	92:51	0:0	10	desired_pe_no_ah
+arg	92:69	92:77	9	pe_no_ah
+water	92:69	0:0	10	pe_no_ah
+arg	92:79	92:91	9	active_lines
+water	92:79	0:0	10	active_lines
+water	92:92	0:0	8	;
+water	93:12	0:0	6	pe
+op	93:15	0:0	6	=
+water	93:17	0:0	6	0
+op	93:18	0:0	6	.
+water	93:19	0:0	6	0
+water	93:20	0:0	6	f
+water	93:21	0:0	6	;
+for	94:12	106:12	6	(w = 0 ;w < wi -> num_windows * 16;w += 16)
+forinit	94:17	94:22	7	w = 0 ;
+water	94:17	0:0	8	w
+op	94:19	0:0	8	=
+water	94:21	0:0	8	0
+water	94:22	0:0	8	;
+cond	94:24	94:44	7	w < wi -> num_windows * 16
+water	94:24	0:0	8	w
+op	94:26	0:0	8	<
+water	94:28	0:0	8	wi
+op	94:30	0:0	8	->
+water	94:32	0:0	8	num_windows
+op	94:43	0:0	8	*
+water	94:44	0:0	8	16
+forexpr	94:48	94:53	7	w += 16
+water	94:48	0:0	8	w
+op	94:50	0:0	8	+=
+water	94:53	0:0	8	16
+stmts	94:57	106:12	7	
+water	94:57	0:0	8	{
+for	95:16	105:16	8	(g = 0 ;g < num_bands;g ++)
+forinit	95:21	95:26	9	g = 0 ;
+water	95:21	0:0	10	g
+op	95:23	0:0	10	=
+water	95:25	0:0	10	0
+water	95:26	0:0	10	;
+cond	95:28	95:32	9	g < num_bands
+water	95:28	0:0	10	g
+op	95:30	0:0	10	<
+water	95:32	0:0	10	num_bands
+forexpr	95:43	95:44	9	g ++
+water	95:43	0:0	10	g
+op	95:44	0:0	10	++
+stmts	95:48	105:16	9	
+water	95:48	0:0	10	{
+decl	96:20	96:54	10	AacPsyBand	*band
+op	96:37	0:0	10	=
+op	96:39	0:0	10	&
+water	96:40	0:0	10	pch
+op	96:43	0:0	10	->
+water	96:45	0:0	10	band
+op	96:49	0:0	10	[
+water	96:50	0:0	10	w
+op	96:51	0:0	10	+
+water	96:52	0:0	10	g
+op	96:53	0:0	10	]
+if	97:20	98:93	10	(active_lines > 0 . 0 f)
+cond	97:24	97:42	11	active_lines > 0 . 0 f
+water	97:24	0:0	12	active_lines
+op	97:37	0:0	12	>
+water	97:39	0:0	12	0
+op	97:40	0:0	12	.
+water	97:41	0:0	12	0
+water	97:42	0:0	12	f
+stmts	98:24	98:93	11	
+water	98:24	0:0	12	band
+op	98:28	0:0	12	->
+water	98:30	0:0	12	thr
+op	98:34	0:0	12	=
+call	98:36	98:92	12	calc_reduced_thr_3gpp
+arg	98:58	98:62	13	band
+water	98:58	0:0	14	band
+arg	98:64	98:81	13	coeffs[g].min_snr
+water	98:64	0:0	14	coeffs
+op	98:70	0:0	14	[
+water	98:71	0:0	14	g
+op	98:72	0:0	14	]
+op	98:73	0:0	14	.
+water	98:74	0:0	14	min_snr
+arg	98:83	98:92	13	reduction
+water	98:83	0:0	14	reduction
+water	98:93	0:0	12	;
+water	99:20	0:0	10	pe
+op	99:23	0:0	10	+=
+call	99:26	99:43	10	calc_pe_3gpp
+arg	99:39	99:43	11	band
+water	99:39	0:0	12	band
+water	99:44	0:0	10	;
+if	100:20	101:71	10	(band -> thr > 0 . 0 f)
+cond	100:24	100:39	11	band -> thr > 0 . 0 f
+water	100:24	0:0	12	band
+op	100:28	0:0	12	->
+water	100:30	0:0	12	thr
+op	100:34	0:0	12	>
+water	100:36	0:0	12	0
+op	100:37	0:0	12	.
+water	100:38	0:0	12	0
+water	100:39	0:0	12	f
+stmts	101:24	101:71	11	
+water	101:24	0:0	12	band
+op	101:28	0:0	12	->
+water	101:30	0:0	12	norm_fac
+op	101:39	0:0	12	=
+water	101:41	0:0	12	band
+op	101:45	0:0	12	->
+water	101:47	0:0	12	active_lines
+op	101:60	0:0	12	/
+water	101:62	0:0	12	band
+op	101:66	0:0	12	->
+water	101:68	0:0	12	thr
+water	101:71	0:0	12	;
+else	102:20	103:45	10
+stmts	103:24	103:45	11	
+water	103:24	0:0	12	band
+op	103:28	0:0	12	->
+water	103:30	0:0	12	norm_fac
+op	103:39	0:0	12	=
+water	103:41	0:0	12	0
+op	103:42	0:0	12	.
+water	103:43	0:0	12	0
+water	103:44	0:0	12	f
+water	103:45	0:0	12	;
+water	104:20	0:0	10	norm_fac
+op	104:29	0:0	10	+=
+water	104:32	0:0	10	band
+op	104:36	0:0	10	->
+water	104:38	0:0	10	norm_fac
+water	104:46	0:0	10	;
+water	105:16	0:0	10	}
+water	106:12	0:0	8	}
+water	107:12	0:0	6	delta_pe
+op	107:21	0:0	6	=
+water	107:23	0:0	6	desired_pe
+op	107:34	0:0	6	-
+water	107:36	0:0	6	pe
+water	107:38	0:0	6	;
+if	108:12	109:21	6	(fabs (delta_pe ) > 0 . 05 f * desired_pe)
+cond	108:16	108:41	7	fabs (delta_pe ) > 0 . 05 f * desired_pe
+call	108:16	108:29	8	fabs
+arg	108:21	108:29	9	delta_pe
+water	108:21	0:0	10	delta_pe
+op	108:31	0:0	8	>
+water	108:33	0:0	8	0
+op	108:34	0:0	8	.
+water	108:35	0:0	8	05
+water	108:37	0:0	8	f
+op	108:39	0:0	8	*
+water	108:41	0:0	8	desired_pe
+stmts	109:16	109:21	7	
+break	109:16	109:21	8	
+water	110:8	0:0	6	}
+if	111:8	127:8	4	(pe < 1 . 15 f * desired_pe)
+cond	111:12	111:25	5	pe < 1 . 15 f * desired_pe
+water	111:12	0:0	6	pe
+op	111:15	0:0	6	<
+water	111:17	0:0	6	1
+op	111:18	0:0	6	.
+water	111:19	0:0	6	15
+water	111:21	0:0	6	f
+op	111:23	0:0	6	*
+water	111:25	0:0	6	desired_pe
+stmts	111:37	127:8	5	
+water	111:37	0:0	6	{
+water	113:12	0:0	6	norm_fac
+op	113:21	0:0	6	=
+water	113:23	0:0	6	1
+op	113:24	0:0	6	.
+water	113:25	0:0	6	0
+water	113:26	0:0	6	f
+op	113:28	0:0	6	/
+water	113:30	0:0	6	norm_fac
+water	113:38	0:0	6	;
+for	114:12	126:12	6	(w = 0 ;w < wi -> num_windows * 16;w += 16)
+forinit	114:17	114:22	7	w = 0 ;
+water	114:17	0:0	8	w
+op	114:19	0:0	8	=
+water	114:21	0:0	8	0
+water	114:22	0:0	8	;
+cond	114:24	114:44	7	w < wi -> num_windows * 16
+water	114:24	0:0	8	w
+op	114:26	0:0	8	<
+water	114:28	0:0	8	wi
+op	114:30	0:0	8	->
+water	114:32	0:0	8	num_windows
+op	114:43	0:0	8	*
+water	114:44	0:0	8	16
+forexpr	114:48	114:53	7	w += 16
+water	114:48	0:0	8	w
+op	114:50	0:0	8	+=
+water	114:53	0:0	8	16
+stmts	114:57	126:12	7	
+water	114:57	0:0	8	{
+for	115:16	125:16	8	(g = 0 ;g < num_bands;g ++)
+forinit	115:21	115:26	9	g = 0 ;
+water	115:21	0:0	10	g
+op	115:23	0:0	10	=
+water	115:25	0:0	10	0
+water	115:26	0:0	10	;
+cond	115:28	115:32	9	g < num_bands
+water	115:28	0:0	10	g
+op	115:30	0:0	10	<
+water	115:32	0:0	10	num_bands
+forexpr	115:43	115:44	9	g ++
+water	115:43	0:0	10	g
+op	115:44	0:0	10	++
+stmts	115:48	125:16	9	
+water	115:48	0:0	10	{
+decl	116:20	116:54	10	AacPsyBand	*band
+op	116:37	0:0	10	=
+op	116:39	0:0	10	&
+water	116:40	0:0	10	pch
+op	116:43	0:0	10	->
+water	116:45	0:0	10	band
+op	116:49	0:0	10	[
+water	116:50	0:0	10	w
+op	116:51	0:0	10	+
+water	116:52	0:0	10	g
+op	116:53	0:0	10	]
+if	117:20	124:20	10	(band -> active_lines > 0 . 5 f)
+cond	117:24	117:48	11	band -> active_lines > 0 . 5 f
+water	117:24	0:0	12	band
+op	117:28	0:0	12	->
+water	117:30	0:0	12	active_lines
+op	117:43	0:0	12	>
+water	117:45	0:0	12	0
+op	117:46	0:0	12	.
+water	117:47	0:0	12	5
+water	117:48	0:0	12	f
+stmts	117:51	124:20	11	
+water	117:51	0:0	12	{
+decl	118:24	118:81	12	float	delta_sfb_pe
+op	118:43	0:0	12	=
+water	118:45	0:0	12	band
+op	118:49	0:0	12	->
+water	118:51	0:0	12	norm_fac
+op	118:60	0:0	12	*
+water	118:62	0:0	12	norm_fac
+op	118:71	0:0	12	*
+water	118:73	0:0	12	delta_pe
+decl	119:24	119:45	12	float	thr
+op	119:34	0:0	12	=
+water	119:36	0:0	12	band
+op	119:40	0:0	12	->
+water	119:42	0:0	12	thr
+water	120:24	0:0	12	thr
+op	120:28	0:0	12	*=
+call	120:31	120:70	12	exp2f
+arg	120:37	120:70	13	delta_sfb_pe/band->active_lines
+water	120:37	0:0	14	delta_sfb_pe
+op	120:50	0:0	14	/
+water	120:52	0:0	14	band
+op	120:56	0:0	14	->
+water	120:58	0:0	14	active_lines
+water	120:71	0:0	12	;
+if	121:24	122:84	12	(thr > coeffs [ g ] . min_snr * band -> energy && band -> avoid_holes == PSY_3GPP_AH_INACTIVE)
+cond	121:28	121:91	13	thr > coeffs [ g ] . min_snr * band -> energy && band -> avoid_holes == PSY_3GPP_AH_INACTIVE
+water	121:28	0:0	14	thr
+op	121:32	0:0	14	>
+water	121:34	0:0	14	coeffs
+op	121:40	0:0	14	[
+water	121:41	0:0	14	g
+op	121:42	0:0	14	]
+op	121:43	0:0	14	.
+water	121:44	0:0	14	min_snr
+op	121:52	0:0	14	*
+water	121:54	0:0	14	band
+op	121:58	0:0	14	->
+water	121:60	0:0	14	energy
+op	121:67	0:0	14	&&
+water	121:70	0:0	14	band
+op	121:74	0:0	14	->
+water	121:76	0:0	14	avoid_holes
+op	121:88	0:0	14	==
+water	121:91	0:0	14	PSY_3GPP_AH_INACTIVE
+stmts	122:28	122:84	13	
+water	122:28	0:0	14	thr
+op	122:32	0:0	14	=
+call	122:34	122:83	14	FFMAX
+arg	122:40	122:49	15	band->thr
+water	122:40	0:0	16	band
+op	122:44	0:0	16	->
+water	122:46	0:0	16	thr
+arg	122:51	122:83	15	coeffs[g].min_snr*band->energy
+water	122:51	0:0	16	coeffs
+op	122:57	0:0	16	[
+water	122:58	0:0	16	g
+op	122:59	0:0	16	]
+op	122:60	0:0	16	.
+water	122:61	0:0	16	min_snr
+op	122:69	0:0	16	*
+water	122:71	0:0	16	band
+op	122:75	0:0	16	->
+water	122:77	0:0	16	energy
+water	122:84	0:0	14	;
+water	123:24	0:0	12	band
+op	123:28	0:0	12	->
+water	123:30	0:0	12	thr
+op	123:34	0:0	12	=
+water	123:36	0:0	12	thr
+water	123:39	0:0	12	;
+water	124:20	0:0	12	}
+water	125:16	0:0	10	}
+water	126:12	0:0	8	}
+water	127:8	0:0	6	}
+else	127:10	141:8	4
+stmts	127:15	141:8	5	
+water	127:15	0:0	6	{
+water	129:12	0:0	6	g
+op	129:14	0:0	6	=
+water	129:16	0:0	6	num_bands
+water	129:25	0:0	6	;
+while	130:12	139:12	6	(pe > desired_pe && g --)
+cond	130:19	130:39	7	pe > desired_pe && g --
+water	130:19	0:0	8	pe
+op	130:22	0:0	8	>
+water	130:24	0:0	8	desired_pe
+op	130:35	0:0	8	&&
+water	130:38	0:0	8	g
+op	130:39	0:0	8	--
+stmts	130:43	139:12	7	
+water	130:43	0:0	8	{
+for	131:16	138:16	8	(w = 0 ;w < wi -> num_windows * 16;w += 16)
+forinit	131:21	131:26	9	w = 0 ;
+water	131:21	0:0	10	w
+op	131:23	0:0	10	=
+water	131:25	0:0	10	0
+water	131:26	0:0	10	;
+cond	131:28	131:48	9	w < wi -> num_windows * 16
+water	131:28	0:0	10	w
+op	131:30	0:0	10	<
+water	131:32	0:0	10	wi
+op	131:34	0:0	10	->
+water	131:36	0:0	10	num_windows
+op	131:47	0:0	10	*
+water	131:48	0:0	10	16
+forexpr	131:52	131:56	9	w += 16
+water	131:52	0:0	10	w
+op	131:53	0:0	10	+=
+water	131:56	0:0	10	16
+stmts	131:60	138:16	9	
+water	131:60	0:0	10	{
+decl	132:20	132:54	10	AacPsyBand	*band
+op	132:37	0:0	10	=
+op	132:39	0:0	10	&
+water	132:40	0:0	10	pch
+op	132:43	0:0	10	->
+water	132:45	0:0	10	band
+op	132:49	0:0	10	[
+water	132:50	0:0	10	w
+op	132:51	0:0	10	+
+water	132:52	0:0	10	g
+op	132:53	0:0	10	]
+if	133:20	137:20	10	(band -> avoid_holes != PSY_3GPP_AH_NONE && coeffs [ g ] . min_snr < PSY_SNR_1DB)
+cond	133:24	133:85	11	band -> avoid_holes != PSY_3GPP_AH_NONE && coeffs [ g ] . min_snr < PSY_SNR_1DB
+water	133:24	0:0	12	band
+op	133:28	0:0	12	->
+water	133:30	0:0	12	avoid_holes
+op	133:42	0:0	12	!=
+water	133:45	0:0	12	PSY_3GPP_AH_NONE
+op	133:62	0:0	12	&&
+water	133:65	0:0	12	coeffs
+op	133:71	0:0	12	[
+water	133:72	0:0	12	g
+op	133:73	0:0	12	]
+op	133:74	0:0	12	.
+water	133:75	0:0	12	min_snr
+op	133:83	0:0	12	<
+water	133:85	0:0	12	PSY_SNR_1DB
+stmts	133:98	137:20	11	
+water	133:98	0:0	12	{
+water	134:24	0:0	12	coeffs
+op	134:30	0:0	12	[
+water	134:31	0:0	12	g
+op	134:32	0:0	12	]
+op	134:33	0:0	12	.
+water	134:34	0:0	12	min_snr
+op	134:42	0:0	12	=
+water	134:44	0:0	12	PSY_SNR_1DB
+water	134:55	0:0	12	;
+water	135:24	0:0	12	band
+op	135:28	0:0	12	->
+water	135:30	0:0	12	thr
+op	135:34	0:0	12	=
+water	135:36	0:0	12	band
+op	135:40	0:0	12	->
+water	135:42	0:0	12	energy
+op	135:49	0:0	12	*
+water	135:51	0:0	12	PSY_SNR_1DB
+water	135:62	0:0	12	;
+water	136:24	0:0	12	pe
+op	136:27	0:0	12	+=
+water	136:30	0:0	12	band
+op	136:34	0:0	12	->
+water	136:36	0:0	12	active_lines
+op	136:49	0:0	12	*
+water	136:51	0:0	12	1
+op	136:52	0:0	12	.
+water	136:53	0:0	12	5
+water	136:54	0:0	12	f
+op	136:56	0:0	12	-
+water	136:58	0:0	12	band
+op	136:62	0:0	12	->
+water	136:64	0:0	12	pe
+water	136:66	0:0	12	;
+water	137:20	0:0	12	}
+water	138:16	0:0	10	}
+water	139:12	0:0	8	}
+water	141:8	0:0	6	}
+water	142:4	0:0	4	}
+for	143:4	151:4	2	(w = 0 ;w < wi -> num_windows * 16;w += 16)
+forinit	143:9	143:14	3	w = 0 ;
+water	143:9	0:0	4	w
+op	143:11	0:0	4	=
+water	143:13	0:0	4	0
+water	143:14	0:0	4	;
+cond	143:16	143:36	3	w < wi -> num_windows * 16
+water	143:16	0:0	4	w
+op	143:18	0:0	4	<
+water	143:20	0:0	4	wi
+op	143:22	0:0	4	->
+water	143:24	0:0	4	num_windows
+op	143:35	0:0	4	*
+water	143:36	0:0	4	16
+forexpr	143:40	143:45	3	w += 16
+water	143:40	0:0	4	w
+op	143:42	0:0	4	+=
+water	143:45	0:0	4	16
+stmts	143:49	151:4	3	
+water	143:49	0:0	4	{
+for	144:8	150:8	4	(g = 0 ;g < num_bands;g ++)
+forinit	144:13	144:18	5	g = 0 ;
+water	144:13	0:0	6	g
+op	144:15	0:0	6	=
+water	144:17	0:0	6	0
+water	144:18	0:0	6	;
+cond	144:20	144:24	5	g < num_bands
+water	144:20	0:0	6	g
+op	144:22	0:0	6	<
+water	144:24	0:0	6	num_bands
+forexpr	144:35	144:36	5	g ++
+water	144:35	0:0	6	g
+op	144:36	0:0	6	++
+stmts	144:40	150:8	5	
+water	144:40	0:0	6	{
+decl	145:12	145:50	6	AacPsyBand	*band
+op	145:33	0:0	6	=
+op	145:35	0:0	6	&
+water	145:36	0:0	6	pch
+op	145:39	0:0	6	->
+water	145:41	0:0	6	band
+op	145:45	0:0	6	[
+water	145:46	0:0	6	w
+op	145:47	0:0	6	+
+water	145:48	0:0	6	g
+op	145:49	0:0	6	]
+decl	146:12	146:67	6	FFPsyBand	*psy_band
+op	146:33	0:0	6	=
+op	146:35	0:0	6	&
+water	146:36	0:0	6	ctx
+op	146:39	0:0	6	->
+water	146:41	0:0	6	ch
+op	146:43	0:0	6	[
+water	146:44	0:0	6	channel
+op	146:51	0:0	6	]
+op	146:52	0:0	6	.
+water	146:53	0:0	6	psy_bands
+op	146:62	0:0	6	[
+water	146:63	0:0	6	w
+op	146:64	0:0	6	+
+water	146:65	0:0	6	g
+op	146:66	0:0	6	]
+water	147:12	0:0	6	psy_band
+op	147:20	0:0	6	->
+water	147:22	0:0	6	threshold
+op	147:32	0:0	6	=
+water	147:34	0:0	6	band
+op	147:38	0:0	6	->
+water	147:40	0:0	6	thr
+water	147:43	0:0	6	;
+water	148:12	0:0	6	psy_band
+op	148:20	0:0	6	->
+water	148:22	0:0	6	energy
+op	148:32	0:0	6	=
+water	148:34	0:0	6	band
+op	148:38	0:0	6	->
+water	148:40	0:0	6	energy
+water	148:46	0:0	6	;
+water	149:12	0:0	6	psy_band
+op	149:20	0:0	6	->
+water	149:22	0:0	6	spread
+op	149:32	0:0	6	=
+water	149:34	0:0	6	band
+op	149:38	0:0	6	->
+water	149:40	0:0	6	active_lines
+op	149:53	0:0	6	*
+water	149:55	0:0	6	2
+op	149:56	0:0	6	.
+water	149:57	0:0	6	0
+water	149:58	0:0	6	f
+op	149:60	0:0	6	/
+water	149:62	0:0	6	band_sizes
+op	149:72	0:0	6	[
+water	149:73	0:0	6	g
+op	149:74	0:0	6	]
+water	149:75	0:0	6	;
+water	150:8	0:0	6	}
+water	151:4	0:0	4	}
+call	152:4	152:55	2	memcpy
+arg	152:11	152:25	3	pch->prev_band
+water	152:11	0:0	4	pch
+op	152:14	0:0	4	->
+water	152:16	0:0	4	prev_band
+arg	152:27	152:36	3	pch->band
+water	152:27	0:0	4	pch
+op	152:30	0:0	4	->
+water	152:32	0:0	4	band
+arg	152:38	152:55	3	sizeof(pch->band)
+op	152:38	0:0	4	sizeof
+water	152:44	0:0	4	(
+water	152:45	0:0	4	pch
+op	152:48	0:0	4	->
+water	152:50	0:0	4	band
+water	152:54	0:0	4	)
+water	152:56	0:0	2	;

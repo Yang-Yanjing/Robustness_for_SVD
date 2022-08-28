@@ -1,0 +1,131 @@
+func	1:0	24:0	0	static int	mxf_read_primer_pack
+params	1:31	0:0	1	
+param	1:32	1:41	2	void *	arg
+param	1:43	1:58	2	AVIOContext *	pb
+param	1:60	1:67	2	int	tag
+param	1:69	1:77	2	int	size
+param	1:79	1:86	2	UID	uid
+param	1:88	1:106	2	int64_t	klv_offset
+stmnts	0:0	23:12	1	
+decl	3:4	3:25	2	MXFContext	*mxf
+op	3:20	0:0	2	=
+water	3:22	0:0	2	arg
+decl	4:4	4:32	2	int	item_num
+op	4:17	0:0	2	=
+call	4:19	4:31	3	avio_rb32
+arg	4:29	4:31	4	pb
+water	4:29	0:0	5	pb
+decl	5:4	5:32	2	int	item_len
+op	5:17	0:0	2	=
+call	5:19	5:31	3	avio_rb32
+arg	5:29	5:31	4	pb
+water	5:29	0:0	5	pb
+if	6:4	9:4	2	(item_len != 18)
+cond	6:8	6:20	3	item_len != 18
+water	6:8	0:0	4	item_len
+op	6:17	0:0	4	!=
+water	6:20	0:0	4	18
+stmts	6:24	9:4	3	
+water	6:24	0:0	4	{
+call	7:8	7:72	4	avpriv_request_sample
+arg	7:30	7:32	5	pb
+water	7:30	0:0	6	pb
+arg	7:34	7:62	5	"Primer pack item length %d"
+water	7:34	0:0	6	"Primer pack item length %d"
+arg	7:64	7:72	5	item_len
+water	7:64	0:0	6	item_len
+water	7:73	0:0	4	;
+return	8:8	8:35	4	AVERROR_PATCHWELCOME
+water	8:15	0:0	5	AVERROR_PATCHWELCOME
+water	9:4	0:0	4	}
+if	10:4	13:4	2	(item_num > 65536)
+cond	10:8	10:19	3	item_num > 65536
+water	10:8	0:0	4	item_num
+op	10:17	0:0	4	>
+water	10:19	0:0	4	65536
+stmts	10:26	13:4	3	
+water	10:26	0:0	4	{
+call	11:8	11:76	4	av_log
+arg	11:15	11:22	5	mxf->fc
+water	11:15	0:0	6	mxf
+op	11:18	0:0	6	->
+water	11:20	0:0	6	fc
+arg	11:24	11:36	5	AV_LOG_ERROR
+water	11:24	0:0	6	AV_LOG_ERROR
+arg	11:38	11:66	5	"item_num %d is too large\n"
+water	11:38	0:0	6	"item_num %d is too large\n"
+arg	11:68	11:76	5	item_num
+water	11:68	0:0	6	item_num
+water	11:77	0:0	4	;
+return	12:8	12:34	4	AVERROR_INVALIDDATA
+water	12:15	0:0	5	AVERROR_INVALIDDATA
+water	13:4	0:0	4	}
+if	14:4	15:66	2	(mxf -> local_tags)
+cond	14:8	14:13	3	mxf -> local_tags
+water	14:8	0:0	4	mxf
+op	14:11	0:0	4	->
+water	14:13	0:0	4	local_tags
+stmts	15:8	15:66	3	
+call	15:8	15:65	4	av_log
+arg	15:15	15:22	5	mxf->fc
+water	15:15	0:0	6	mxf
+op	15:18	0:0	6	->
+water	15:20	0:0	6	fc
+arg	15:24	15:38	5	AV_LOG_VERBOSE
+water	15:24	0:0	6	AV_LOG_VERBOSE
+arg	15:40	15:65	5	"Multiple primer packs\n"
+water	15:40	0:0	6	"Multiple primer packs\n"
+water	15:66	0:0	4	;
+call	16:4	16:27	2	av_free
+arg	16:12	16:27	3	mxf->local_tags
+water	16:12	0:0	4	mxf
+op	16:15	0:0	4	->
+water	16:17	0:0	4	local_tags
+water	16:28	0:0	2	;
+water	17:4	0:0	2	mxf
+op	17:7	0:0	2	->
+water	17:9	0:0	2	local_tags_count
+op	17:26	0:0	2	=
+water	17:28	0:0	2	0
+water	17:29	0:0	2	;
+water	18:4	0:0	2	mxf
+op	18:7	0:0	2	->
+water	18:9	0:0	2	local_tags
+op	18:20	0:0	2	=
+call	18:22	18:50	2	av_calloc
+arg	18:32	18:40	3	item_num
+water	18:32	0:0	4	item_num
+arg	18:42	18:50	3	item_len
+water	18:42	0:0	4	item_len
+water	18:51	0:0	2	;
+if	19:4	20:30	2	(! mxf -> local_tags)
+cond	19:8	19:14	3	! mxf -> local_tags
+op	19:8	0:0	4	!
+water	19:9	0:0	4	mxf
+op	19:12	0:0	4	->
+water	19:14	0:0	4	local_tags
+stmts	20:8	20:30	3	
+return	20:8	20:30	4	AVERROR(ENOMEM)
+call	20:15	20:29	5	AVERROR
+arg	20:23	20:29	6	ENOMEM
+water	20:23	0:0	7	ENOMEM
+water	21:4	0:0	2	mxf
+op	21:7	0:0	2	->
+water	21:9	0:0	2	local_tags_count
+op	21:26	0:0	2	=
+water	21:28	0:0	2	item_num
+water	21:36	0:0	2	;
+call	22:4	22:52	2	avio_read
+arg	22:14	22:16	3	pb
+water	22:14	0:0	4	pb
+arg	22:18	22:33	3	mxf->local_tags
+water	22:18	0:0	4	mxf
+op	22:21	0:0	4	->
+water	22:23	0:0	4	local_tags
+arg	22:35	22:52	3	item_num*item_len
+water	22:35	0:0	4	item_num
+op	22:43	0:0	4	*
+water	22:44	0:0	4	item_len
+water	22:53	0:0	2	;
+return	23:4	23:12	2	0
+water	23:11	0:0	3	0

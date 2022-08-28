@@ -1,0 +1,137 @@
+func	1:0	18:0	0	static int	sbg_read_packet
+params	1:26	0:0	1	
+param	1:27	1:47	2	AVFormatContext *	avf
+param	1:49	1:65	2	AVPacket *	packet
+stmnts	0:0	17:23	1	
+decl	3:4	3:22	2	int64_t	ts
+water	3:14	0:0	2	,
+decl	3:4	3:22	2	int64_t	end_ts
+water	4:4	0:0	2	ts
+op	4:7	0:0	2	=
+water	4:9	0:0	2	avf
+op	4:12	0:0	2	->
+water	4:14	0:0	2	streams
+op	4:21	0:0	2	[
+water	4:22	0:0	2	0
+op	4:23	0:0	2	]
+op	4:24	0:0	2	->
+water	4:26	0:0	2	cur_dts
+water	4:33	0:0	2	;
+water	5:4	0:0	2	end_ts
+op	5:11	0:0	2	=
+water	5:13	0:0	2	ts
+op	5:16	0:0	2	+
+water	5:18	0:0	2	avf
+op	5:21	0:0	2	->
+water	5:23	0:0	2	streams
+op	5:30	0:0	2	[
+water	5:31	0:0	2	0
+op	5:32	0:0	2	]
+op	5:33	0:0	2	->
+water	5:35	0:0	2	codec
+op	5:40	0:0	2	->
+water	5:42	0:0	2	frame_size
+water	5:52	0:0	2	;
+if	6:4	8:30	2	(avf -> streams [ 0 ] -> duration != AV_NOPTS_VALUE)
+cond	6:8	6:37	3	avf -> streams [ 0 ] -> duration != AV_NOPTS_VALUE
+water	6:8	0:0	4	avf
+op	6:11	0:0	4	->
+water	6:13	0:0	4	streams
+op	6:20	0:0	4	[
+water	6:21	0:0	4	0
+op	6:22	0:0	4	]
+op	6:23	0:0	4	->
+water	6:25	0:0	4	duration
+op	6:34	0:0	4	!=
+water	6:37	0:0	4	AV_NOPTS_VALUE
+stmts	7:8	8:30	3	
+water	7:8	0:0	4	end_ts
+op	7:15	0:0	4	=
+call	7:17	8:29	4	FFMIN
+arg	7:23	7:78	5	avf->streams[0]->start_time+avf->streams[0]->duration
+water	7:23	0:0	6	avf
+op	7:26	0:0	6	->
+water	7:28	0:0	6	streams
+op	7:35	0:0	6	[
+water	7:36	0:0	6	0
+op	7:37	0:0	6	]
+op	7:38	0:0	6	->
+water	7:40	0:0	6	start_time
+op	7:51	0:0	6	+
+water	7:53	0:0	6	avf
+op	7:56	0:0	6	->
+water	7:58	0:0	6	streams
+op	7:65	0:0	6	[
+water	7:66	0:0	6	0
+op	7:67	0:0	6	]
+op	7:68	0:0	6	->
+water	7:70	0:0	6	duration
+arg	8:23	8:29	5	end_ts
+water	8:23	0:0	6	end_ts
+water	8:30	0:0	4	;
+if	9:4	10:26	2	(end_ts <= ts)
+cond	9:8	9:18	3	end_ts <= ts
+water	9:8	0:0	4	end_ts
+op	9:15	0:0	4	<=
+water	9:18	0:0	4	ts
+stmts	10:8	10:26	3	
+return	10:8	10:26	4	AVERROR_EOF
+water	10:15	0:0	5	AVERROR_EOF
+if	11:4	12:30	2	(av_new_packet (packet ,12 ) < 0)
+cond	11:8	11:36	3	av_new_packet (packet ,12 ) < 0
+call	11:8	11:32	4	av_new_packet
+arg	11:22	11:28	5	packet
+water	11:22	0:0	6	packet
+arg	11:30	11:32	5	12
+water	11:30	0:0	6	12
+op	11:34	0:0	4	<
+water	11:36	0:0	4	0
+stmts	12:8	12:30	3	
+return	12:8	12:30	4	AVERROR(ENOMEM)
+call	12:15	12:29	5	AVERROR
+arg	12:23	12:29	6	ENOMEM
+water	12:23	0:0	7	ENOMEM
+water	13:4	0:0	2	packet
+op	13:10	0:0	2	->
+water	13:12	0:0	2	dts
+op	13:16	0:0	2	=
+water	13:18	0:0	2	packet
+op	13:24	0:0	2	->
+water	13:26	0:0	2	pts
+op	13:30	0:0	2	=
+water	13:32	0:0	2	ts
+water	13:34	0:0	2	;
+water	14:4	0:0	2	packet
+op	14:10	0:0	2	->
+water	14:12	0:0	2	duration
+op	14:21	0:0	2	=
+water	14:23	0:0	2	end_ts
+op	14:30	0:0	2	-
+water	14:32	0:0	2	ts
+water	14:34	0:0	2	;
+call	15:4	15:32	2	AV_WL64
+arg	15:12	15:28	3	packet->data+0
+water	15:12	0:0	4	packet
+op	15:18	0:0	4	->
+water	15:20	0:0	4	data
+op	15:25	0:0	4	+
+water	15:27	0:0	4	0
+arg	15:30	15:32	3	ts
+water	15:30	0:0	4	ts
+water	15:33	0:0	2	;
+call	16:4	16:46	2	AV_WL32
+arg	16:12	16:28	3	packet->data+8
+water	16:12	0:0	4	packet
+op	16:18	0:0	4	->
+water	16:20	0:0	4	data
+op	16:25	0:0	4	+
+water	16:27	0:0	4	8
+arg	16:30	16:46	3	packet->duration
+water	16:30	0:0	4	packet
+op	16:36	0:0	4	->
+water	16:38	0:0	4	duration
+water	16:47	0:0	2	;
+return	17:4	17:23	2	packet->size
+water	17:11	0:0	3	packet
+op	17:17	0:0	3	->
+water	17:19	0:0	3	size

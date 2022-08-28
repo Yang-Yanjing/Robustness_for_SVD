@@ -1,0 +1,139 @@
+func	1:0	27:0	0	enum AVPixelFormat	choose_pixel_fmt
+params	1:35	0:0	1	
+param	1:36	1:48	2	AVStream *	st
+param	1:50	1:73	2	AVCodecContext *	enc_ctx
+param	1:75	1:89	2	AVCodec *	codec
+param	1:91	1:116	2	enum AVPixelFormat	target
+stmnts	3:4	26:17	1	
+if	3:4	25:4	2	(codec && codec -> pix_fmts)
+cond	3:8	3:24	3	codec && codec -> pix_fmts
+water	3:8	0:0	4	codec
+op	3:14	0:0	4	&&
+water	3:17	0:0	4	codec
+op	3:22	0:0	4	->
+water	3:24	0:0	4	pix_fmts
+stmts	3:34	25:4	3	
+water	3:34	0:0	4	{
+decl	4:8	4:53	4	const enum AVPixelFormat	*p
+op	4:36	0:0	4	=
+water	4:38	0:0	4	codec
+op	4:43	0:0	4	->
+water	4:45	0:0	4	pix_fmts
+decl	5:8	5:68	4	const AVPixFmtDescriptor	*desc
+op	5:39	0:0	4	=
+call	5:41	5:67	5	av_pix_fmt_desc_get
+arg	5:61	5:67	6	target
+water	5:61	0:0	7	target
+decl	6:8	6:63	4	int	has_alpha
+op	6:22	0:0	4	=
+water	6:24	0:0	4	desc
+water	6:29	0:0	4	?
+water	6:31	0:0	4	desc
+op	6:35	0:0	4	->
+water	6:37	0:0	4	nb_components
+op	6:51	0:0	4	%
+water	6:53	0:0	4	2
+op	6:55	0:0	4	==
+water	6:58	0:0	4	0
+water	6:60	0:0	4	:
+water	6:62	0:0	4	0
+decl	7:8	7:48	4	enum AVPixelFormat	best
+op	7:31	0:0	4	=
+water	7:33	0:0	4	AV_PIX_FMT_NONE
+if	8:8	10:8	4	(enc_ctx -> strict_std_compliance <= FF_COMPLIANCE_UNOFFICIAL)
+cond	8:12	8:46	5	enc_ctx -> strict_std_compliance <= FF_COMPLIANCE_UNOFFICIAL
+water	8:12	0:0	6	enc_ctx
+op	8:19	0:0	6	->
+water	8:21	0:0	6	strict_std_compliance
+op	8:43	0:0	6	<=
+water	8:46	0:0	6	FF_COMPLIANCE_UNOFFICIAL
+stmts	8:72	10:8	5	
+water	8:72	0:0	6	{
+water	9:12	0:0	6	p
+op	9:14	0:0	6	=
+call	9:16	9:71	6	get_compliance_unofficial_pix_fmts
+arg	9:51	9:68	7	enc_ctx->codec_id
+water	9:51	0:0	8	enc_ctx
+op	9:58	0:0	8	->
+water	9:60	0:0	8	codec_id
+arg	9:70	9:71	7	p
+water	9:70	0:0	8	p
+water	9:72	0:0	6	;
+water	10:8	0:0	6	}
+for	11:8	15:8	4	(;* p != AV_PIX_FMT_NONE;p ++)
+forinit	11:13	11:13	5	;
+water	11:13	0:0	6	;
+cond	11:15	11:21	5	* p != AV_PIX_FMT_NONE
+op	11:15	0:0	6	*
+water	11:16	0:0	6	p
+op	11:18	0:0	6	!=
+water	11:21	0:0	6	AV_PIX_FMT_NONE
+forexpr	11:38	11:39	5	p ++
+water	11:38	0:0	6	p
+op	11:39	0:0	6	++
+stmts	11:43	15:8	5	
+water	11:43	0:0	6	{
+water	12:12	0:0	6	best
+op	12:16	0:0	6	=
+call	12:18	12:82	6	avcodec_find_best_pix_fmt_of_2
+arg	12:49	12:53	7	best
+water	12:49	0:0	8	best
+arg	12:55	12:57	7	*p
+op	12:55	0:0	8	*
+water	12:56	0:0	8	p
+arg	12:59	12:65	7	target
+water	12:59	0:0	8	target
+arg	12:67	12:76	7	has_alpha
+water	12:67	0:0	8	has_alpha
+arg	12:78	12:82	7	NULL
+water	12:78	0:0	8	NULL
+water	12:83	0:0	6	;
+if	13:12	14:21	6	(* p == target)
+cond	13:16	13:22	7	* p == target
+op	13:16	0:0	8	*
+water	13:17	0:0	8	p
+op	13:19	0:0	8	==
+water	13:22	0:0	8	target
+stmts	14:16	14:21	7	
+break	14:16	14:21	8	
+water	15:8	0:0	6	}
+if	16:8	24:8	4	(* p == AV_PIX_FMT_NONE)
+cond	16:12	16:18	5	* p == AV_PIX_FMT_NONE
+op	16:12	0:0	6	*
+water	16:13	0:0	6	p
+op	16:15	0:0	6	==
+water	16:18	0:0	6	AV_PIX_FMT_NONE
+stmts	16:35	24:8	5	
+water	16:35	0:0	6	{
+if	17:12	22:49	6	(target != AV_PIX_FMT_NONE)
+cond	17:16	17:26	7	target != AV_PIX_FMT_NONE
+water	17:16	0:0	8	target
+op	17:23	0:0	8	!=
+water	17:26	0:0	8	AV_PIX_FMT_NONE
+stmts	18:16	22:49	7	
+call	18:16	22:48	8	av_log
+arg	18:23	18:27	9	NULL
+water	18:23	0:0	10	NULL
+arg	18:29	18:43	9	AV_LOG_WARNING
+water	18:29	0:0	10	AV_LOG_WARNING
+arg	19:23	19:100	9	"Incompatible pixel format '%s' for codec '%s', auto-selecting format '%s'\n"
+water	19:23	0:0	10	"Incompatible pixel format '%s' for codec '%s', auto-selecting format '%s'\n"
+arg	20:23	20:50	9	av_get_pix_fmt_name(target)
+call	20:23	20:49	10	av_get_pix_fmt_name
+arg	20:43	20:49	11	target
+water	20:43	0:0	12	target
+arg	21:23	21:34	9	codec->name
+water	21:23	0:0	10	codec
+op	21:28	0:0	10	->
+water	21:30	0:0	10	name
+arg	22:23	22:48	9	av_get_pix_fmt_name(best)
+call	22:23	22:47	10	av_get_pix_fmt_name
+arg	22:43	22:47	11	best
+water	22:43	0:0	12	best
+water	22:49	0:0	8	;
+return	23:12	23:23	6	best
+water	23:19	0:0	7	best
+water	24:8	0:0	6	}
+water	25:4	0:0	4	}
+return	26:4	26:17	2	target
+water	26:11	0:0	3	target

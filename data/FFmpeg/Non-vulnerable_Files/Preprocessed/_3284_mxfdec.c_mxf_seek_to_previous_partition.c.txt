@@ -1,0 +1,185 @@
+func	1:0	38:0	0	static int	mxf_seek_to_previous_partition
+params	1:41	0:0	1	
+param	1:42	1:57	2	MXFContext *	mxf
+stmnts	0:0	37:12	1	
+decl	3:4	3:33	2	AVIOContext	*pb
+op	3:20	0:0	2	=
+water	3:22	0:0	2	mxf
+op	3:25	0:0	2	->
+water	3:27	0:0	2	fc
+op	3:29	0:0	2	->
+water	3:31	0:0	2	pb
+decl	4:4	4:17	2	KLVPacket	klv
+decl	5:4	5:33	2	int64_t	current_partition_ofs
+decl	6:4	6:11	2	int	ret
+if	7:4	9:16	2	(! mxf -> current_partition || mxf -> run_in + mxf -> current_partition -> previous_partition <= mxf -> last_forward_tell)
+cond	7:8	8:73	3	! mxf -> current_partition || mxf -> run_in + mxf -> current_partition -> previous_partition <= mxf -> last_forward_tell
+op	7:8	0:0	4	!
+water	7:9	0:0	4	mxf
+op	7:12	0:0	4	->
+water	7:14	0:0	4	current_partition
+op	7:32	0:0	4	||
+water	8:8	0:0	4	mxf
+op	8:11	0:0	4	->
+water	8:13	0:0	4	run_in
+op	8:20	0:0	4	+
+water	8:22	0:0	4	mxf
+op	8:25	0:0	4	->
+water	8:27	0:0	4	current_partition
+op	8:44	0:0	4	->
+water	8:46	0:0	4	previous_partition
+op	8:65	0:0	4	<=
+water	8:68	0:0	4	mxf
+op	8:71	0:0	4	->
+water	8:73	0:0	4	last_forward_tell
+stmts	9:8	9:16	3	
+return	9:8	9:16	4	0
+water	9:15	0:0	5	0
+water	11:4	0:0	2	current_partition_ofs
+op	11:26	0:0	2	=
+water	11:28	0:0	2	mxf
+op	11:31	0:0	2	->
+water	11:33	0:0	2	current_partition
+op	11:50	0:0	2	->
+water	11:52	0:0	2	pack_ofs
+water	11:60	0:0	2	;
+call	12:4	12:84	2	avio_seek
+arg	12:14	12:16	3	pb
+water	12:14	0:0	4	pb
+arg	12:18	12:74	3	mxf->run_in+mxf->current_partition->previous_partition
+water	12:18	0:0	4	mxf
+op	12:21	0:0	4	->
+water	12:23	0:0	4	run_in
+op	12:30	0:0	4	+
+water	12:32	0:0	4	mxf
+op	12:35	0:0	4	->
+water	12:37	0:0	4	current_partition
+op	12:54	0:0	4	->
+water	12:56	0:0	4	previous_partition
+arg	12:76	12:84	3	SEEK_SET
+water	12:76	0:0	4	SEEK_SET
+water	12:85	0:0	2	;
+water	13:4	0:0	2	mxf
+op	13:7	0:0	2	->
+water	13:9	0:0	2	current_partition
+op	13:27	0:0	2	=
+water	13:29	0:0	2	NULL
+water	13:33	0:0	2	;
+call	14:4	14:67	2	av_log
+arg	14:11	14:18	3	mxf->fc
+water	14:11	0:0	4	mxf
+op	14:14	0:0	4	->
+water	14:16	0:0	4	fc
+arg	14:20	14:32	3	AV_LOG_TRACE
+water	14:20	0:0	4	AV_LOG_TRACE
+arg	14:34	14:67	3	"seeking to previous partition\n"
+water	14:34	0:0	4	"seeking to previous partition\n"
+water	14:68	0:0	2	;
+if	18:4	21:4	2	(( ret =klv_read_packet (& klv ,pb ) ) < 0)
+cond	18:8	18:44	3	( ret =klv_read_packet (& klv ,pb ) ) < 0
+water	18:8	0:0	4	(
+water	18:9	0:0	4	ret
+op	18:13	0:0	4	=
+call	18:15	18:39	4	klv_read_packet
+arg	18:31	18:35	5	&klv
+op	18:31	0:0	6	&
+water	18:32	0:0	6	klv
+arg	18:37	18:39	5	pb
+water	18:37	0:0	6	pb
+water	18:40	0:0	4	)
+op	18:42	0:0	4	<
+water	18:44	0:0	4	0
+stmts	18:47	21:4	3	
+water	18:47	0:0	4	{
+call	19:8	19:74	4	av_log
+arg	19:15	19:22	5	mxf->fc
+water	19:15	0:0	6	mxf
+op	19:18	0:0	6	->
+water	19:20	0:0	6	fc
+arg	19:24	19:36	5	AV_LOG_ERROR
+water	19:24	0:0	6	AV_LOG_ERROR
+arg	19:38	19:74	5	"failed to read PartitionPack KLV\n"
+water	19:38	0:0	6	"failed to read PartitionPack KLV\n"
+water	19:75	0:0	4	;
+return	20:8	20:18	4	ret
+water	20:15	0:0	5	ret
+water	21:4	0:0	4	}
+if	22:4	25:4	2	(!mxf_is_partition_pack_key (klv . key ))
+cond	22:8	22:42	3	!mxf_is_partition_pack_key (klv . key )
+op	22:8	0:0	4	!
+call	22:9	22:42	4	mxf_is_partition_pack_key
+arg	22:35	22:42	5	klv.key
+water	22:35	0:0	6	klv
+op	22:38	0:0	6	.
+water	22:39	0:0	6	key
+stmts	22:45	25:4	3	
+water	22:45	0:0	4	{
+call	23:8	23:107	4	av_log
+arg	23:15	23:22	5	mxf->fc
+water	23:15	0:0	6	mxf
+op	23:18	0:0	6	->
+water	23:20	0:0	6	fc
+arg	23:24	23:36	5	AV_LOG_ERROR
+water	23:24	0:0	6	AV_LOG_ERROR
+arg	23:38	23:95	5	"PreviousPartition @ %"PRIx64" isn't a PartitionPack\n"
+water	23:38	0:0	6	"PreviousPartition @ %"
+water	23:62	0:0	6	PRIx64
+water	23:69	0:0	6	" isn't a PartitionPack\n"
+arg	23:97	23:107	5	klv.offset
+water	23:97	0:0	6	klv
+op	23:100	0:0	6	.
+water	23:101	0:0	6	offset
+water	23:108	0:0	4	;
+return	24:8	24:34	4	AVERROR_INVALIDDATA
+water	24:15	0:0	5	AVERROR_INVALIDDATA
+water	25:4	0:0	4	}
+if	30:4	34:4	2	(klv . offset >= current_partition_ofs)
+cond	30:8	30:22	3	klv . offset >= current_partition_ofs
+water	30:8	0:0	4	klv
+op	30:11	0:0	4	.
+water	30:12	0:0	4	offset
+op	30:19	0:0	4	>=
+water	30:22	0:0	4	current_partition_ofs
+stmts	30:45	34:4	3	
+water	30:45	0:0	4	{
+call	31:8	32:77	4	av_log
+arg	31:15	31:22	5	mxf->fc
+water	31:15	0:0	6	mxf
+op	31:18	0:0	6	->
+water	31:20	0:0	6	fc
+arg	31:24	31:36	5	AV_LOG_ERROR
+water	31:24	0:0	6	AV_LOG_ERROR
+arg	31:38	32:54	5	"PreviousPartition for PartitionPack @ %"PRIx64" indirectly points to itself\n"
+water	31:38	0:0	6	"PreviousPartition for PartitionPack @ %"
+water	32:15	0:0	6	PRIx64
+water	32:22	0:0	6	" indirectly points to itself\n"
+arg	32:56	32:77	5	current_partition_ofs
+water	32:56	0:0	6	current_partition_ofs
+water	32:78	0:0	4	;
+return	33:8	33:34	4	AVERROR_INVALIDDATA
+water	33:15	0:0	5	AVERROR_INVALIDDATA
+water	34:4	0:0	4	}
+if	35:4	36:18	2	(( ret =mxf_parse_klv (mxf ,klv ,mxf_read_partition_pack ,0 ,0 ) ) < 0)
+cond	35:8	35:73	3	( ret =mxf_parse_klv (mxf ,klv ,mxf_read_partition_pack ,0 ,0 ) ) < 0
+water	35:8	0:0	4	(
+water	35:9	0:0	4	ret
+op	35:13	0:0	4	=
+call	35:15	35:68	4	mxf_parse_klv
+arg	35:29	35:32	5	mxf
+water	35:29	0:0	6	mxf
+arg	35:34	35:37	5	klv
+water	35:34	0:0	6	klv
+arg	35:39	35:62	5	mxf_read_partition_pack
+water	35:39	0:0	6	mxf_read_partition_pack
+arg	35:64	35:65	5	0
+water	35:64	0:0	6	0
+arg	35:67	35:68	5	0
+water	35:67	0:0	6	0
+water	35:69	0:0	4	)
+op	35:71	0:0	4	<
+water	35:73	0:0	4	0
+stmts	36:8	36:18	3	
+return	36:8	36:18	4	ret
+water	36:15	0:0	5	ret
+return	37:4	37:12	2	1
+water	37:11	0:0	3	1

@@ -1,0 +1,12 @@
+static av_always_inline void
+yuv2plane1_16_c_template(const int32_t *src, uint16_t *dest, int dstW,
+                         int big_endian, int output_bits)
+{
+    int i;
+    int shift = 3;
+    av_assert0(output_bits == 16);
+    for (i = 0; i < dstW; i++) {
+        int val = src[i] + (1 << (shift - 1));
+        output_pixel(&dest[i], val, 0, uint);
+    }
+}

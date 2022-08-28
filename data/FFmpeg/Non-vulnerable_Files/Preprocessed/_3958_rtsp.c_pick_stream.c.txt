@@ -1,0 +1,234 @@
+func	1:0	43:0	0	static int	pick_stream
+params	1:22	0:0	1	
+param	1:23	1:41	2	AVFormatContext *	s
+param	1:43	1:63	2	RTSPStream * *	rtsp_st
+param	2:23	2:41	2	const uint8_t *	buf
+param	2:43	2:50	2	int	len
+stmnts	0:0	42:26	1	
+decl	4:4	4:32	2	RTSPState	*rt
+op	4:18	0:0	2	=
+water	4:20	0:0	2	s
+op	4:21	0:0	2	->
+water	4:23	0:0	2	priv_data
+decl	5:4	5:9	2	int	i
+if	6:4	7:18	2	(len < 0)
+cond	6:8	6:14	3	len < 0
+water	6:8	0:0	4	len
+op	6:12	0:0	4	<
+water	6:14	0:0	4	0
+stmts	7:8	7:18	3	
+return	7:8	7:18	4	len
+water	7:15	0:0	5	len
+if	8:4	11:4	2	(rt -> nb_rtsp_streams == 1)
+cond	8:8	8:31	3	rt -> nb_rtsp_streams == 1
+water	8:8	0:0	4	rt
+op	8:10	0:0	4	->
+water	8:12	0:0	4	nb_rtsp_streams
+op	8:28	0:0	4	==
+water	8:31	0:0	4	1
+stmts	8:34	11:4	3	
+water	8:34	0:0	4	{
+op	9:8	0:0	4	*
+water	9:9	0:0	4	rtsp_st
+op	9:17	0:0	4	=
+water	9:19	0:0	4	rt
+op	9:21	0:0	4	->
+water	9:23	0:0	4	rtsp_streams
+op	9:35	0:0	4	[
+water	9:36	0:0	4	0
+op	9:37	0:0	4	]
+water	9:38	0:0	4	;
+return	10:8	10:18	4	len
+water	10:15	0:0	5	len
+water	11:4	0:0	4	}
+if	12:4	40:4	2	(len >= 8 && rt -> transport == RTSP_TRANSPORT_RTP)
+cond	12:8	12:37	3	len >= 8 && rt -> transport == RTSP_TRANSPORT_RTP
+water	12:8	0:0	4	len
+op	12:12	0:0	4	>=
+water	12:15	0:0	4	8
+op	12:17	0:0	4	&&
+water	12:20	0:0	4	rt
+op	12:22	0:0	4	->
+water	12:24	0:0	4	transport
+op	12:34	0:0	4	==
+water	12:37	0:0	4	RTSP_TRANSPORT_RTP
+stmts	12:57	40:4	3	
+water	12:57	0:0	4	{
+if	13:8	32:8	4	(RTP_PT_IS_RTCP (rt -> recvbuf [ 1 ] ))
+cond	13:12	13:41	5	RTP_PT_IS_RTCP (rt -> recvbuf [ 1 ] )
+call	13:12	13:41	6	RTP_PT_IS_RTCP
+arg	13:27	13:41	7	rt->recvbuf[1]
+water	13:27	0:0	8	rt
+op	13:29	0:0	8	->
+water	13:31	0:0	8	recvbuf
+op	13:38	0:0	8	[
+water	13:39	0:0	8	1
+op	13:40	0:0	8	]
+stmts	13:44	32:8	5	
+water	13:44	0:0	6	{
+decl	14:12	14:27	6	int	no_ssrc
+op	14:24	0:0	6	=
+water	14:26	0:0	6	0
+for	15:12	25:12	6	(i = 0 ;i < rt -> nb_rtsp_streams;i ++)
+forinit	15:17	15:22	7	i = 0 ;
+water	15:17	0:0	8	i
+op	15:19	0:0	8	=
+water	15:21	0:0	8	0
+water	15:22	0:0	8	;
+cond	15:24	15:32	7	i < rt -> nb_rtsp_streams
+water	15:24	0:0	8	i
+op	15:26	0:0	8	<
+water	15:28	0:0	8	rt
+op	15:30	0:0	8	->
+water	15:32	0:0	8	nb_rtsp_streams
+forexpr	15:49	15:50	7	i ++
+water	15:49	0:0	8	i
+op	15:50	0:0	8	++
+stmts	15:54	25:12	7	
+water	15:54	0:0	8	{
+decl	16:16	16:77	8	RTPDemuxContext	*rtpctx
+op	16:40	0:0	8	=
+water	16:42	0:0	8	rt
+op	16:44	0:0	8	->
+water	16:46	0:0	8	rtsp_streams
+op	16:58	0:0	8	[
+water	16:59	0:0	8	i
+op	16:60	0:0	8	]
+op	16:61	0:0	8	->
+water	16:63	0:0	8	transport_priv
+if	17:16	18:28	8	(! rtpctx)
+cond	17:20	17:21	9	! rtpctx
+op	17:20	0:0	10	!
+water	17:21	0:0	10	rtpctx
+stmts	18:20	18:28	9	
+continue	18:20	18:28	10	
+if	19:16	22:16	8	(rtpctx -> ssrc ==AV_RB32 (& buf [ 4 ] ))
+cond	19:20	19:51	9	rtpctx -> ssrc ==AV_RB32 (& buf [ 4 ] )
+water	19:20	0:0	10	rtpctx
+op	19:26	0:0	10	->
+water	19:28	0:0	10	ssrc
+op	19:33	0:0	10	==
+call	19:36	19:51	10	AV_RB32
+arg	19:44	19:51	11	&buf[4]
+op	19:44	0:0	12	&
+water	19:45	0:0	12	buf
+op	19:48	0:0	12	[
+water	19:49	0:0	12	4
+op	19:50	0:0	12	]
+stmts	19:54	22:16	9	
+water	19:54	0:0	10	{
+op	20:20	0:0	10	*
+water	20:21	0:0	10	rtsp_st
+op	20:29	0:0	10	=
+water	20:31	0:0	10	rt
+op	20:33	0:0	10	->
+water	20:35	0:0	10	rtsp_streams
+op	20:47	0:0	10	[
+water	20:48	0:0	10	i
+op	20:49	0:0	10	]
+water	20:50	0:0	10	;
+return	21:20	21:30	10	len
+water	21:27	0:0	11	len
+water	22:16	0:0	10	}
+if	23:16	24:31	8	(! rtpctx -> ssrc)
+cond	23:20	23:29	9	! rtpctx -> ssrc
+op	23:20	0:0	10	!
+water	23:21	0:0	10	rtpctx
+op	23:27	0:0	10	->
+water	23:29	0:0	10	ssrc
+stmts	24:20	24:31	9	
+water	24:20	0:0	10	no_ssrc
+op	24:28	0:0	10	=
+water	24:30	0:0	10	1
+water	24:31	0:0	10	;
+water	25:12	0:0	8	}
+if	26:12	31:12	6	(no_ssrc)
+cond	26:16	26:16	7	no_ssrc
+water	26:16	0:0	8	no_ssrc
+stmts	26:25	31:12	7	
+water	26:25	0:0	8	{
+call	27:16	29:38	8	av_log
+arg	27:23	27:24	9	s
+water	27:23	0:0	10	s
+arg	27:26	27:40	9	AV_LOG_WARNING
+water	27:26	0:0	10	AV_LOG_WARNING
+arg	28:23	29:38	9	"Unable to pick stream for packet - SSRC not known for ""all streams\n"
+water	28:23	0:0	10	"Unable to pick stream for packet - SSRC not known for "
+water	29:23	0:0	10	"all streams\n"
+water	29:39	0:0	8	;
+return	30:16	30:38	8	AVERROR(EAGAIN)
+call	30:23	30:37	9	AVERROR
+arg	30:31	30:37	10	EAGAIN
+water	30:31	0:0	11	EAGAIN
+water	31:12	0:0	8	}
+water	32:8	0:0	6	}
+else	32:10	39:8	4
+stmts	32:15	39:8	5	
+water	32:15	0:0	6	{
+for	33:12	38:12	6	(i = 0 ;i < rt -> nb_rtsp_streams;i ++)
+forinit	33:17	33:22	7	i = 0 ;
+water	33:17	0:0	8	i
+op	33:19	0:0	8	=
+water	33:21	0:0	8	0
+water	33:22	0:0	8	;
+cond	33:24	33:32	7	i < rt -> nb_rtsp_streams
+water	33:24	0:0	8	i
+op	33:26	0:0	8	<
+water	33:28	0:0	8	rt
+op	33:30	0:0	8	->
+water	33:32	0:0	8	nb_rtsp_streams
+forexpr	33:49	33:50	7	i ++
+water	33:49	0:0	8	i
+op	33:50	0:0	8	++
+stmts	33:54	38:12	7	
+water	33:54	0:0	8	{
+if	34:16	37:16	8	(( buf [ 1 ] & 0 x7f ) == rt -> rtsp_streams [ i ] -> sdp_payload_type)
+cond	34:20	34:60	9	( buf [ 1 ] & 0 x7f ) == rt -> rtsp_streams [ i ] -> sdp_payload_type
+water	34:20	0:0	10	(
+water	34:21	0:0	10	buf
+op	34:24	0:0	10	[
+water	34:25	0:0	10	1
+op	34:26	0:0	10	]
+op	34:28	0:0	10	&
+water	34:30	0:0	10	0
+water	34:31	0:0	10	x7f
+water	34:34	0:0	10	)
+op	34:36	0:0	10	==
+water	34:39	0:0	10	rt
+op	34:41	0:0	10	->
+water	34:43	0:0	10	rtsp_streams
+op	34:55	0:0	10	[
+water	34:56	0:0	10	i
+op	34:57	0:0	10	]
+op	34:58	0:0	10	->
+water	34:60	0:0	10	sdp_payload_type
+stmts	34:78	37:16	9	
+water	34:78	0:0	10	{
+op	35:20	0:0	10	*
+water	35:21	0:0	10	rtsp_st
+op	35:29	0:0	10	=
+water	35:31	0:0	10	rt
+op	35:33	0:0	10	->
+water	35:35	0:0	10	rtsp_streams
+op	35:47	0:0	10	[
+water	35:48	0:0	10	i
+op	35:49	0:0	10	]
+water	35:50	0:0	10	;
+return	36:20	36:30	10	len
+water	36:27	0:0	11	len
+water	37:16	0:0	10	}
+water	38:12	0:0	8	}
+water	39:8	0:0	6	}
+water	40:4	0:0	4	}
+call	41:4	41:66	2	av_log
+arg	41:11	41:12	3	s
+water	41:11	0:0	4	s
+arg	41:14	41:28	3	AV_LOG_WARNING
+water	41:14	0:0	4	AV_LOG_WARNING
+arg	41:30	41:66	3	"Unable to pick stream for packet\n"
+water	41:30	0:0	4	"Unable to pick stream for packet\n"
+water	41:67	0:0	2	;
+return	42:4	42:26	2	AVERROR(EAGAIN)
+call	42:11	42:25	3	AVERROR
+arg	42:19	42:25	4	EAGAIN
+water	42:19	0:0	5	EAGAIN

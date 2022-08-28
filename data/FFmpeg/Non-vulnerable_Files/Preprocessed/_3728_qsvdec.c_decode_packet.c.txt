@@ -1,0 +1,403 @@
+func	1:0	71:0	0	static int	decode_packet
+params	1:24	0:0	1	
+param	1:25	1:46	2	DecodeContext *	decode
+param	1:48	1:75	2	AVCodecContext *	decoder_ctx
+param	2:25	2:39	2	AVFrame *	frame
+param	2:41	2:54	2	AVPacket *	pkt
+param	3:25	3:48	2	AVIOContext *	output_ctx
+stmnts	0:0	70:12	1	
+decl	5:4	5:15	2	int	ret
+op	5:12	0:0	2	=
+water	5:14	0:0	2	0
+decl	6:4	6:21	2	int	got_frame
+op	6:18	0:0	2	=
+water	6:20	0:0	2	1
+while	7:4	69:4	2	(pkt -> size > 0 || ( ! pkt -> data && got_frame ))
+cond	7:11	7:52	3	pkt -> size > 0 || ( ! pkt -> data && got_frame )
+water	7:11	0:0	4	pkt
+op	7:14	0:0	4	->
+water	7:16	0:0	4	size
+op	7:21	0:0	4	>
+water	7:23	0:0	4	0
+op	7:25	0:0	4	||
+water	7:28	0:0	4	(
+op	7:29	0:0	4	!
+water	7:30	0:0	4	pkt
+op	7:33	0:0	4	->
+water	7:35	0:0	4	data
+op	7:40	0:0	4	&&
+water	7:43	0:0	4	got_frame
+water	7:52	0:0	4	)
+stmts	7:55	69:4	3	
+water	7:55	0:0	4	{
+water	8:8	0:0	4	ret
+op	8:12	0:0	4	=
+call	8:14	8:71	4	avcodec_decode_video2
+arg	8:36	8:47	5	decoder_ctx
+water	8:36	0:0	6	decoder_ctx
+arg	8:49	8:54	5	frame
+water	8:49	0:0	6	frame
+arg	8:56	8:66	5	&got_frame
+op	8:56	0:0	6	&
+water	8:57	0:0	6	got_frame
+arg	8:68	8:71	5	pkt
+water	8:68	0:0	6	pkt
+water	8:72	0:0	4	;
+if	9:8	12:8	4	(ret < 0)
+cond	9:12	9:18	5	ret < 0
+water	9:12	0:0	6	ret
+op	9:16	0:0	6	<
+water	9:18	0:0	6	0
+stmts	9:21	12:8	5	
+water	9:21	0:0	6	{
+call	10:12	10:53	6	fprintf
+arg	10:20	10:26	7	stderr
+water	10:20	0:0	8	stderr
+arg	10:28	10:53	7	"Error during decoding\n"
+water	10:28	0:0	8	"Error during decoding\n"
+water	10:54	0:0	6	;
+return	11:12	11:22	6	ret
+water	11:19	0:0	7	ret
+water	12:8	0:0	6	}
+water	13:8	0:0	4	pkt
+op	13:11	0:0	4	->
+water	13:13	0:0	4	data
+op	13:18	0:0	4	+=
+water	13:21	0:0	4	ret
+water	13:24	0:0	4	;
+water	14:8	0:0	4	pkt
+op	14:11	0:0	4	->
+water	14:13	0:0	4	size
+op	14:18	0:0	4	-=
+water	14:21	0:0	4	ret
+water	14:24	0:0	4	;
+if	18:8	68:8	4	(got_frame)
+cond	18:12	18:12	5	got_frame
+water	18:12	0:0	6	got_frame
+stmts	18:23	68:8	5	
+water	18:23	0:0	6	{
+decl	19:12	19:70	6	mfxFrameSurface1	*surf
+op	19:35	0:0	6	=
+water	19:37	0:0	6	(
+water	19:38	0:0	6	mfxFrameSurface1
+op	19:54	0:0	6	*
+water	19:55	0:0	6	)
+water	19:56	0:0	6	frame
+op	19:61	0:0	6	->
+water	19:63	0:0	6	data
+op	19:67	0:0	6	[
+water	19:68	0:0	6	3
+op	19:69	0:0	6	]
+decl	20:12	20:68	6	VASurfaceID	surface
+op	20:35	0:0	6	=
+op	20:37	0:0	6	*
+water	20:38	0:0	6	(
+water	20:39	0:0	6	VASurfaceID
+op	20:50	0:0	6	*
+water	20:51	0:0	6	)
+water	20:52	0:0	6	surf
+op	20:56	0:0	6	->
+water	20:58	0:0	6	Data
+op	20:62	0:0	6	.
+water	20:63	0:0	6	MemId
+decl	21:12	26:13	6	VAImageFormat	img_fmt
+op	21:34	0:0	6	=
+water	21:36	0:0	6	{
+op	22:16	0:0	6	.
+water	22:17	0:0	6	fourcc
+op	22:32	0:0	6	=
+water	22:34	0:0	6	VA_FOURCC_NV12
+water	22:48	0:0	6	,
+op	23:16	0:0	6	.
+water	23:17	0:0	6	byte_order
+op	23:32	0:0	6	=
+water	23:34	0:0	6	VA_LSB_FIRST
+water	23:46	0:0	6	,
+op	24:16	0:0	6	.
+water	24:17	0:0	6	bits_per_pixel
+op	24:32	0:0	6	=
+water	24:34	0:0	6	8
+water	24:35	0:0	6	,
+op	25:16	0:0	6	.
+water	25:17	0:0	6	depth
+op	25:32	0:0	6	=
+water	25:34	0:0	6	8
+water	25:35	0:0	6	,
+water	26:12	0:0	6	}
+decl	27:12	27:23	6	VAImage	img
+decl	28:12	28:24	6	VAStatus	err
+decl	29:12	29:25	6	uint8_t	*data
+decl	30:12	30:20	6	int	i
+water	30:17	0:0	6	,
+decl	30:12	30:20	6	int	j
+water	31:12	0:0	6	img
+op	31:15	0:0	6	.
+water	31:16	0:0	6	buf
+op	31:25	0:0	6	=
+water	31:27	0:0	6	VA_INVALID_ID
+water	31:40	0:0	6	;
+water	32:12	0:0	6	img
+op	32:15	0:0	6	.
+water	32:16	0:0	6	image_id
+op	32:25	0:0	6	=
+water	32:27	0:0	6	VA_INVALID_ID
+water	32:40	0:0	6	;
+water	33:12	0:0	6	err
+op	33:16	0:0	6	=
+call	33:18	34:65	6	vaCreateImage
+arg	33:32	33:46	7	decode->va_dpy
+water	33:32	0:0	8	decode
+op	33:38	0:0	8	->
+water	33:40	0:0	8	va_dpy
+arg	33:48	33:56	7	&img_fmt
+op	33:48	0:0	8	&
+water	33:49	0:0	8	img_fmt
+arg	34:32	34:44	7	frame->width
+water	34:32	0:0	8	frame
+op	34:37	0:0	8	->
+water	34:39	0:0	8	width
+arg	34:46	34:59	7	frame->height
+water	34:46	0:0	8	frame
+op	34:51	0:0	8	->
+water	34:53	0:0	8	height
+arg	34:61	34:65	7	&img
+op	34:61	0:0	8	&
+water	34:62	0:0	8	img
+water	34:66	0:0	6	;
+if	35:12	40:12	6	(err != VA_STATUS_SUCCESS)
+cond	35:16	35:23	7	err != VA_STATUS_SUCCESS
+water	35:16	0:0	8	err
+op	35:20	0:0	8	!=
+water	35:23	0:0	8	VA_STATUS_SUCCESS
+stmts	35:42	40:12	7	
+water	35:42	0:0	8	{
+call	36:16	37:39	8	fprintf
+arg	36:24	36:30	9	stderr
+water	36:24	0:0	10	stderr
+arg	36:32	36:63	9	"Error creating an image: %s\n"
+water	36:32	0:0	10	"Error creating an image: %s\n"
+arg	37:24	37:39	9	vaErrorStr(err)
+call	37:24	37:38	10	vaErrorStr
+arg	37:35	37:38	11	err
+water	37:35	0:0	12	err
+water	37:40	0:0	8	;
+water	38:16	0:0	8	ret
+op	38:20	0:0	8	=
+water	38:22	0:0	8	AVERROR_UNKNOWN
+water	38:37	0:0	8	;
+goto	39:16	39:25	8	fail
+water	39:21	0:0	9	fail
+water	40:12	0:0	8	}
+water	41:12	0:0	6	err
+op	41:16	0:0	6	=
+call	41:18	43:41	6	vaGetImage
+arg	41:29	41:43	7	decode->va_dpy
+water	41:29	0:0	8	decode
+op	41:35	0:0	8	->
+water	41:37	0:0	8	va_dpy
+arg	41:45	41:52	7	surface
+water	41:45	0:0	8	surface
+arg	41:54	41:55	7	0
+water	41:54	0:0	8	0
+arg	41:57	41:58	7	0
+water	41:57	0:0	8	0
+arg	42:29	42:41	7	frame->width
+water	42:29	0:0	8	frame
+op	42:34	0:0	8	->
+water	42:36	0:0	8	width
+arg	42:43	42:56	7	frame->height
+water	42:43	0:0	8	frame
+op	42:48	0:0	8	->
+water	42:50	0:0	8	height
+arg	43:29	43:41	7	img.image_id
+water	43:29	0:0	8	img
+op	43:32	0:0	8	.
+water	43:33	0:0	8	image_id
+water	43:42	0:0	6	;
+if	44:12	49:12	6	(err != VA_STATUS_SUCCESS)
+cond	44:16	44:23	7	err != VA_STATUS_SUCCESS
+water	44:16	0:0	8	err
+op	44:20	0:0	8	!=
+water	44:23	0:0	8	VA_STATUS_SUCCESS
+stmts	44:42	49:12	7	
+water	44:42	0:0	8	{
+call	45:16	46:39	8	fprintf
+arg	45:24	45:30	9	stderr
+water	45:24	0:0	10	stderr
+arg	45:32	45:62	9	"Error getting an image: %s\n"
+water	45:32	0:0	10	"Error getting an image: %s\n"
+arg	46:24	46:39	9	vaErrorStr(err)
+call	46:24	46:38	10	vaErrorStr
+arg	46:35	46:38	11	err
+water	46:35	0:0	12	err
+water	46:40	0:0	8	;
+water	47:16	0:0	8	ret
+op	47:20	0:0	8	=
+water	47:22	0:0	8	AVERROR_UNKNOWN
+water	47:37	0:0	8	;
+goto	48:16	48:25	8	fail
+water	48:21	0:0	9	fail
+water	49:12	0:0	8	}
+water	50:12	0:0	6	err
+op	50:16	0:0	6	=
+call	50:18	50:68	6	vaMapBuffer
+arg	50:30	50:44	7	decode->va_dpy
+water	50:30	0:0	8	decode
+op	50:36	0:0	8	->
+water	50:38	0:0	8	va_dpy
+arg	50:46	50:53	7	img.buf
+water	50:46	0:0	8	img
+op	50:49	0:0	8	.
+water	50:50	0:0	8	buf
+arg	50:55	50:68	7	(void**)&data
+water	50:55	0:0	8	(
+water	50:56	0:0	8	void
+op	50:60	0:0	8	*
+op	50:61	0:0	8	*
+water	50:62	0:0	8	)
+op	50:63	0:0	8	&
+water	50:64	0:0	8	data
+water	50:69	0:0	6	;
+if	51:12	56:12	6	(err != VA_STATUS_SUCCESS)
+cond	51:16	51:23	7	err != VA_STATUS_SUCCESS
+water	51:16	0:0	8	err
+op	51:20	0:0	8	!=
+water	51:23	0:0	8	VA_STATUS_SUCCESS
+stmts	51:42	56:12	7	
+water	51:42	0:0	8	{
+call	52:16	53:39	8	fprintf
+arg	52:24	52:30	9	stderr
+water	52:24	0:0	10	stderr
+arg	52:32	52:70	9	"Error mapping the image buffer: %s\n"
+water	52:32	0:0	10	"Error mapping the image buffer: %s\n"
+arg	53:24	53:39	9	vaErrorStr(err)
+call	53:24	53:38	10	vaErrorStr
+arg	53:35	53:38	11	err
+water	53:35	0:0	12	err
+water	53:40	0:0	8	;
+water	54:16	0:0	8	ret
+op	54:20	0:0	8	=
+water	54:22	0:0	8	AVERROR_UNKNOWN
+water	54:37	0:0	8	;
+goto	55:16	55:25	8	fail
+water	55:21	0:0	9	fail
+water	56:12	0:0	8	}
+for	57:12	59:97	6	(i = 0 ;i < img . num_planes;i ++)
+forinit	57:17	57:22	7	i = 0 ;
+water	57:17	0:0	8	i
+op	57:19	0:0	8	=
+water	57:21	0:0	8	0
+water	57:22	0:0	8	;
+cond	57:24	57:32	7	i < img . num_planes
+water	57:24	0:0	8	i
+op	57:26	0:0	8	<
+water	57:28	0:0	8	img
+op	57:31	0:0	8	.
+water	57:32	0:0	8	num_planes
+forexpr	57:44	57:45	7	i ++
+water	57:44	0:0	8	i
+op	57:45	0:0	8	++
+stmts	58:16	59:97	7	
+for	58:16	59:97	8	(j = 0 ;j < ( img . height >> ( i > 0 ) );j ++)
+forinit	58:21	58:26	9	j = 0 ;
+water	58:21	0:0	10	j
+op	58:23	0:0	10	=
+water	58:25	0:0	10	0
+water	58:26	0:0	10	;
+cond	58:28	58:54	9	j < ( img . height >> ( i > 0 ) )
+water	58:28	0:0	10	j
+op	58:30	0:0	10	<
+water	58:32	0:0	10	(
+water	58:33	0:0	10	img
+op	58:36	0:0	10	.
+water	58:37	0:0	10	height
+op	58:44	0:0	10	>>
+water	58:47	0:0	10	(
+water	58:48	0:0	10	i
+op	58:50	0:0	10	>
+water	58:52	0:0	10	0
+water	58:53	0:0	10	)
+water	58:54	0:0	10	)
+forexpr	58:57	58:58	9	j ++
+water	58:57	0:0	10	j
+op	58:58	0:0	10	++
+stmts	59:20	59:97	9	
+call	59:20	59:96	10	avio_write
+arg	59:31	59:41	11	output_ctx
+water	59:31	0:0	12	output_ctx
+arg	59:43	59:85	11	data+img.offsets[i]+j*img.pitches[i]
+water	59:43	0:0	12	data
+op	59:48	0:0	12	+
+water	59:50	0:0	12	img
+op	59:53	0:0	12	.
+water	59:54	0:0	12	offsets
+op	59:61	0:0	12	[
+water	59:62	0:0	12	i
+op	59:63	0:0	12	]
+op	59:65	0:0	12	+
+water	59:67	0:0	12	j
+op	59:69	0:0	12	*
+water	59:71	0:0	12	img
+op	59:74	0:0	12	.
+water	59:75	0:0	12	pitches
+op	59:82	0:0	12	[
+water	59:83	0:0	12	i
+op	59:84	0:0	12	]
+arg	59:87	59:96	11	img.width
+water	59:87	0:0	12	img
+op	59:90	0:0	12	.
+water	59:91	0:0	12	width
+water	59:97	0:0	10	;
+label	60:0	60:4	6	fail :
+if	61:12	62:54	6	(img . buf != VA_INVALID_ID)
+cond	61:16	61:27	7	img . buf != VA_INVALID_ID
+water	61:16	0:0	8	img
+op	61:19	0:0	8	.
+water	61:20	0:0	8	buf
+op	61:24	0:0	8	!=
+water	61:27	0:0	8	VA_INVALID_ID
+stmts	62:16	62:54	7	
+call	62:16	62:53	8	vaUnmapBuffer
+arg	62:30	62:44	9	decode->va_dpy
+water	62:30	0:0	10	decode
+op	62:36	0:0	10	->
+water	62:38	0:0	10	va_dpy
+arg	62:46	62:53	9	img.buf
+water	62:46	0:0	10	img
+op	62:49	0:0	10	.
+water	62:50	0:0	10	buf
+water	62:54	0:0	8	;
+if	63:12	64:60	6	(img . image_id != VA_INVALID_ID)
+cond	63:16	63:32	7	img . image_id != VA_INVALID_ID
+water	63:16	0:0	8	img
+op	63:19	0:0	8	.
+water	63:20	0:0	8	image_id
+op	63:29	0:0	8	!=
+water	63:32	0:0	8	VA_INVALID_ID
+stmts	64:16	64:60	7	
+call	64:16	64:59	8	vaDestroyImage
+arg	64:31	64:45	9	decode->va_dpy
+water	64:31	0:0	10	decode
+op	64:37	0:0	10	->
+water	64:39	0:0	10	va_dpy
+arg	64:47	64:59	9	img.image_id
+water	64:47	0:0	10	img
+op	64:50	0:0	10	.
+water	64:51	0:0	10	image_id
+water	64:60	0:0	8	;
+call	65:12	65:32	6	av_frame_unref
+arg	65:27	65:32	7	frame
+water	65:27	0:0	8	frame
+water	65:33	0:0	6	;
+if	66:12	67:26	6	(ret < 0)
+cond	66:16	66:22	7	ret < 0
+water	66:16	0:0	8	ret
+op	66:20	0:0	8	<
+water	66:22	0:0	8	0
+stmts	67:16	67:26	7	
+return	67:16	67:26	8	ret
+water	67:23	0:0	9	ret
+water	68:8	0:0	6	}
+water	69:4	0:0	4	}
+return	70:4	70:12	2	0
+water	70:11	0:0	3	0

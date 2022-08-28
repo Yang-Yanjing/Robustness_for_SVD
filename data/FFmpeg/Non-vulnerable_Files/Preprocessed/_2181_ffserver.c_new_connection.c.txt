@@ -1,0 +1,187 @@
+func	1:0	42:0	0	static void	new_connection
+params	1:26	0:0	1	
+param	1:27	1:40	2	int	server_fd
+param	1:42	1:53	2	int	is_rtsp
+stmnts	0:0	41:19	1	
+decl	3:4	3:32	2	struct sockaddr_in	from_addr
+decl	4:4	4:17	2	socklen_t	len
+decl	5:4	5:10	2	int	fd
+decl	6:4	6:25	2	HTTPContext	*c
+op	6:19	0:0	2	=
+water	6:21	0:0	2	NULL
+water	7:4	0:0	2	len
+op	7:8	0:0	2	=
+op	7:10	0:0	2	sizeof
+water	7:16	0:0	2	(
+water	7:17	0:0	2	from_addr
+water	7:26	0:0	2	)
+water	7:27	0:0	2	;
+water	8:4	0:0	2	fd
+op	8:7	0:0	2	=
+call	8:9	9:20	2	accept
+arg	8:16	8:25	3	server_fd
+water	8:16	0:0	4	server_fd
+arg	8:27	8:56	3	(structsockaddr*)&from_addr
+water	8:27	0:0	4	(
+water	8:28	0:0	4	struct
+water	8:35	0:0	4	sockaddr
+op	8:44	0:0	4	*
+water	8:45	0:0	4	)
+op	8:46	0:0	4	&
+water	8:47	0:0	4	from_addr
+arg	9:16	9:20	3	&len
+op	9:16	0:0	4	&
+water	9:17	0:0	4	len
+water	9:21	0:0	2	;
+if	10:4	13:4	2	(fd < 0)
+cond	10:8	10:13	3	fd < 0
+water	10:8	0:0	4	fd
+op	10:11	0:0	4	<
+water	10:13	0:0	4	0
+stmts	10:16	13:4	3	
+water	10:16	0:0	4	{
+call	11:8	11:60	4	http_log
+arg	11:17	11:43	5	"error during accept %s\n"
+water	11:17	0:0	6	"error during accept %s\n"
+arg	11:45	11:60	5	strerror(errno)
+call	11:45	11:59	6	strerror
+arg	11:54	11:59	7	errno
+water	11:54	0:0	8	errno
+water	11:61	0:0	4	;
+return	12:8	12:14	4	
+water	13:4	0:0	4	}
+if	14:4	15:67	2	(ff_socket_nonblock (fd ,1 ) < 0)
+cond	14:8	14:36	3	ff_socket_nonblock (fd ,1 ) < 0
+call	14:8	14:32	4	ff_socket_nonblock
+arg	14:27	14:29	5	fd
+water	14:27	0:0	6	fd
+arg	14:31	14:32	5	1
+water	14:31	0:0	6	1
+op	14:34	0:0	4	<
+water	14:36	0:0	4	0
+stmts	15:8	15:67	3	
+call	15:8	15:66	4	av_log
+arg	15:15	15:19	5	NULL
+water	15:15	0:0	6	NULL
+arg	15:21	15:35	5	AV_LOG_WARNING
+water	15:21	0:0	6	AV_LOG_WARNING
+arg	15:37	15:66	5	"ff_socket_nonblock failed\n"
+water	15:37	0:0	6	"ff_socket_nonblock failed\n"
+water	15:67	0:0	4	;
+if	16:4	19:4	2	(nb_connections >= config . nb_max_connections)
+cond	16:8	16:33	3	nb_connections >= config . nb_max_connections
+water	16:8	0:0	4	nb_connections
+op	16:23	0:0	4	>=
+water	16:26	0:0	4	config
+op	16:32	0:0	4	.
+water	16:33	0:0	4	nb_max_connections
+stmts	16:53	19:4	3	
+water	16:53	0:0	4	{
+call	17:8	17:35	4	http_send_too_busy_reply
+arg	17:33	17:35	5	fd
+water	17:33	0:0	6	fd
+water	17:36	0:0	4	;
+goto	18:8	18:17	4	fail
+water	18:13	0:0	5	fail
+water	19:4	0:0	4	}
+water	21:4	0:0	2	c
+op	21:6	0:0	2	=
+call	21:8	21:38	2	av_mallocz
+arg	21:19	21:38	3	sizeof(HTTPContext)
+op	21:19	0:0	4	sizeof
+water	21:25	0:0	4	(
+water	21:26	0:0	4	HTTPContext
+water	21:37	0:0	4	)
+water	21:39	0:0	2	;
+if	22:4	23:17	2	(! c)
+cond	22:8	22:9	3	! c
+op	22:8	0:0	4	!
+water	22:9	0:0	4	c
+stmts	23:8	23:17	3	
+goto	23:8	23:17	4	fail
+water	23:13	0:0	5	fail
+water	24:4	0:0	2	c
+op	24:5	0:0	2	->
+water	24:7	0:0	2	fd
+op	24:10	0:0	2	=
+water	24:12	0:0	2	fd
+water	24:14	0:0	2	;
+water	25:4	0:0	2	c
+op	25:5	0:0	2	->
+water	25:7	0:0	2	poll_entry
+op	25:18	0:0	2	=
+water	25:20	0:0	2	NULL
+water	25:24	0:0	2	;
+water	26:4	0:0	2	c
+op	26:5	0:0	2	->
+water	26:7	0:0	2	from_addr
+op	26:17	0:0	2	=
+water	26:19	0:0	2	from_addr
+water	26:28	0:0	2	;
+water	27:4	0:0	2	c
+op	27:5	0:0	2	->
+water	27:7	0:0	2	buffer_size
+op	27:19	0:0	2	=
+water	27:21	0:0	2	IOBUFFER_INIT_SIZE
+water	27:39	0:0	2	;
+water	28:4	0:0	2	c
+op	28:5	0:0	2	->
+water	28:7	0:0	2	buffer
+op	28:14	0:0	2	=
+call	28:16	28:40	2	av_malloc
+arg	28:26	28:40	3	c->buffer_size
+water	28:26	0:0	4	c
+op	28:27	0:0	4	->
+water	28:29	0:0	4	buffer_size
+water	28:41	0:0	2	;
+if	29:4	30:17	2	(! c -> buffer)
+cond	29:8	29:12	3	! c -> buffer
+op	29:8	0:0	4	!
+water	29:9	0:0	4	c
+op	29:10	0:0	4	->
+water	29:12	0:0	4	buffer
+stmts	30:8	30:17	3	
+goto	30:8	30:17	4	fail
+water	30:13	0:0	5	fail
+water	31:4	0:0	2	c
+op	31:5	0:0	2	->
+water	31:7	0:0	2	next
+op	31:12	0:0	2	=
+water	31:14	0:0	2	first_http_ctx
+water	31:28	0:0	2	;
+water	32:4	0:0	2	first_http_ctx
+op	32:19	0:0	2	=
+water	32:21	0:0	2	c
+water	32:22	0:0	2	;
+water	33:4	0:0	2	nb_connections
+op	33:18	0:0	2	++
+water	33:20	0:0	2	;
+call	34:4	34:33	2	start_wait_request
+arg	34:23	34:24	3	c
+water	34:23	0:0	4	c
+arg	34:26	34:33	3	is_rtsp
+water	34:26	0:0	4	is_rtsp
+water	34:34	0:0	2	;
+return	35:4	35:10	2	
+label	36:1	36:5	2	fail :
+if	37:4	40:4	2	(c)
+cond	37:8	37:8	3	c
+water	37:8	0:0	4	c
+stmts	37:11	40:4	3	
+water	37:11	0:0	4	{
+call	38:8	38:27	4	av_freep
+arg	38:17	38:27	5	&c->buffer
+op	38:17	0:0	6	&
+water	38:18	0:0	6	c
+op	38:19	0:0	6	->
+water	38:21	0:0	6	buffer
+water	38:28	0:0	4	;
+call	39:8	39:17	4	av_free
+arg	39:16	39:17	5	c
+water	39:16	0:0	6	c
+water	39:18	0:0	4	;
+water	40:4	0:0	4	}
+call	41:4	41:18	2	closesocket
+arg	41:16	41:18	3	fd
+water	41:16	0:0	4	fd
+water	41:19	0:0	2	;

@@ -1,0 +1,343 @@
+func	1:0	49:0	0	static int	get_audio_buffer
+params	1:27	0:0	1	
+param	1:28	1:42	2	AVFrame *	frame
+param	1:44	1:53	2	int	align
+stmnts	0:0	48:12	1	
+decl	3:4	3:16	2	int	channels
+decl	4:4	4:57	2	int	planar
+op	4:17	0:0	2	=
+call	4:19	4:56	3	av_sample_fmt_is_planar
+arg	4:43	4:56	4	frame->format
+water	4:43	0:0	5	frame
+op	4:48	0:0	5	->
+water	4:50	0:0	5	format
+decl	5:4	5:14	2	int	planes
+decl	6:4	6:14	2	int	ret
+water	6:11	0:0	2	,
+decl	6:4	6:14	2	int	i
+if	7:4	8:82	2	(! frame -> channels)
+cond	7:8	7:16	3	! frame -> channels
+op	7:8	0:0	4	!
+water	7:9	0:0	4	frame
+op	7:14	0:0	4	->
+water	7:16	0:0	4	channels
+stmts	8:8	8:82	3	
+water	8:8	0:0	4	frame
+op	8:13	0:0	4	->
+water	8:15	0:0	4	channels
+op	8:24	0:0	4	=
+call	8:26	8:81	4	av_get_channel_layout_nb_channels
+arg	8:60	8:81	5	frame->channel_layout
+water	8:60	0:0	6	frame
+op	8:65	0:0	6	->
+water	8:67	0:0	6	channel_layout
+water	8:82	0:0	4	;
+water	9:4	0:0	2	channels
+op	9:13	0:0	2	=
+water	9:15	0:0	2	frame
+op	9:20	0:0	2	->
+water	9:22	0:0	2	channels
+water	9:30	0:0	2	;
+water	10:4	0:0	2	planes
+op	10:11	0:0	2	=
+water	10:13	0:0	2	planar
+water	10:20	0:0	2	?
+water	10:22	0:0	2	channels
+water	10:31	0:0	2	:
+water	10:33	0:0	2	1
+water	10:34	0:0	2	;
+call	11:4	11:36	2	CHECK_CHANNELS_CONSISTENCY
+arg	11:31	11:36	3	frame
+water	11:31	0:0	4	frame
+water	11:37	0:0	2	;
+if	12:4	18:4	2	(! frame -> linesize [ 0 ])
+cond	12:8	12:26	3	! frame -> linesize [ 0 ]
+op	12:8	0:0	4	!
+water	12:9	0:0	4	frame
+op	12:14	0:0	4	->
+water	12:16	0:0	4	linesize
+op	12:24	0:0	4	[
+water	12:25	0:0	4	0
+op	12:26	0:0	4	]
+stmts	12:29	18:4	3	
+water	12:29	0:0	4	{
+water	13:8	0:0	4	ret
+op	13:12	0:0	4	=
+call	13:14	15:46	4	av_samples_get_buffer_size
+arg	13:41	13:60	5	&frame->linesize[0]
+op	13:41	0:0	6	&
+water	13:42	0:0	6	frame
+op	13:47	0:0	6	->
+water	13:49	0:0	6	linesize
+op	13:57	0:0	6	[
+water	13:58	0:0	6	0
+op	13:59	0:0	6	]
+arg	13:62	13:70	5	channels
+water	13:62	0:0	6	channels
+arg	14:41	14:58	5	frame->nb_samples
+water	14:41	0:0	6	frame
+op	14:46	0:0	6	->
+water	14:48	0:0	6	nb_samples
+arg	14:60	14:73	5	frame->format
+water	14:60	0:0	6	frame
+op	14:65	0:0	6	->
+water	14:67	0:0	6	format
+arg	15:41	15:46	5	align
+water	15:41	0:0	6	align
+water	15:47	0:0	4	;
+if	16:8	17:22	4	(ret < 0)
+cond	16:12	16:18	5	ret < 0
+water	16:12	0:0	6	ret
+op	16:16	0:0	6	<
+water	16:18	0:0	6	0
+stmts	17:12	17:22	5	
+return	17:12	17:22	6	ret
+water	17:19	0:0	7	ret
+water	18:4	0:0	4	}
+if	19:4	30:4	2	(planes > AV_NUM_DATA_POINTERS)
+cond	19:8	19:17	3	planes > AV_NUM_DATA_POINTERS
+water	19:8	0:0	4	planes
+op	19:15	0:0	4	>
+water	19:17	0:0	4	AV_NUM_DATA_POINTERS
+stmts	19:39	30:4	3	
+water	19:39	0:0	4	{
+water	20:8	0:0	4	frame
+op	20:13	0:0	4	->
+water	20:15	0:0	4	extended_data
+op	20:29	0:0	4	=
+call	20:31	21:71	4	av_mallocz_array
+arg	20:48	20:54	5	planes
+water	20:48	0:0	6	planes
+arg	21:42	21:71	5	sizeof(*frame->extended_data)
+op	21:42	0:0	6	sizeof
+water	21:48	0:0	6	(
+op	21:49	0:0	6	*
+water	21:50	0:0	6	frame
+op	21:55	0:0	6	->
+water	21:57	0:0	6	extended_data
+water	21:70	0:0	6	)
+water	21:72	0:0	4	;
+water	22:8	0:0	4	frame
+op	22:13	0:0	4	->
+water	22:15	0:0	4	extended_buf
+op	22:29	0:0	4	=
+call	22:31	23:70	4	av_mallocz_array
+arg	22:48	22:79	5	(planes-AV_NUM_DATA_POINTERS)
+water	22:48	0:0	6	(
+water	22:49	0:0	6	planes
+op	22:56	0:0	6	-
+water	22:58	0:0	6	AV_NUM_DATA_POINTERS
+water	22:78	0:0	6	)
+arg	23:42	23:70	5	sizeof(*frame->extended_buf)
+op	23:42	0:0	6	sizeof
+water	23:48	0:0	6	(
+op	23:49	0:0	6	*
+water	23:50	0:0	6	frame
+op	23:55	0:0	6	->
+water	23:57	0:0	6	extended_buf
+water	23:69	0:0	6	)
+water	23:71	0:0	4	;
+if	24:8	28:8	4	(! frame -> extended_data || ! frame -> extended_buf)
+cond	24:12	24:45	5	! frame -> extended_data || ! frame -> extended_buf
+op	24:12	0:0	6	!
+water	24:13	0:0	6	frame
+op	24:18	0:0	6	->
+water	24:20	0:0	6	extended_data
+op	24:34	0:0	6	||
+op	24:37	0:0	6	!
+water	24:38	0:0	6	frame
+op	24:43	0:0	6	->
+water	24:45	0:0	6	extended_buf
+stmts	24:59	28:8	5	
+water	24:59	0:0	6	{
+call	25:12	25:42	6	av_freep
+arg	25:21	25:42	7	&frame->extended_data
+op	25:21	0:0	8	&
+water	25:22	0:0	8	frame
+op	25:27	0:0	8	->
+water	25:29	0:0	8	extended_data
+water	25:43	0:0	6	;
+call	26:12	26:41	6	av_freep
+arg	26:21	26:41	7	&frame->extended_buf
+op	26:21	0:0	8	&
+water	26:22	0:0	8	frame
+op	26:27	0:0	8	->
+water	26:29	0:0	8	extended_buf
+water	26:42	0:0	6	;
+return	27:12	27:34	6	AVERROR(ENOMEM)
+call	27:19	27:33	7	AVERROR
+arg	27:27	27:33	8	ENOMEM
+water	27:27	0:0	9	ENOMEM
+water	28:8	0:0	6	}
+water	29:8	0:0	4	frame
+op	29:13	0:0	4	->
+water	29:15	0:0	4	nb_extended_buf
+op	29:31	0:0	4	=
+water	29:33	0:0	4	planes
+op	29:40	0:0	4	-
+water	29:42	0:0	4	AV_NUM_DATA_POINTERS
+water	29:62	0:0	4	;
+water	30:4	0:0	4	}
+else	30:6	31:42	2
+stmts	31:8	31:42	3	
+water	31:8	0:0	4	frame
+op	31:13	0:0	4	->
+water	31:15	0:0	4	extended_data
+op	31:29	0:0	4	=
+water	31:31	0:0	4	frame
+op	31:36	0:0	4	->
+water	31:38	0:0	4	data
+water	31:42	0:0	4	;
+for	32:4	39:4	2	(i = 0 ;i <FFMIN (planes ,AV_NUM_DATA_POINTERS );i ++)
+forinit	32:9	32:14	3	i = 0 ;
+water	32:9	0:0	4	i
+op	32:11	0:0	4	=
+water	32:13	0:0	4	0
+water	32:14	0:0	4	;
+cond	32:16	32:54	3	i <FFMIN (planes ,AV_NUM_DATA_POINTERS )
+water	32:16	0:0	4	i
+op	32:18	0:0	4	<
+call	32:20	32:54	4	FFMIN
+arg	32:26	32:32	5	planes
+water	32:26	0:0	6	planes
+arg	32:34	32:54	5	AV_NUM_DATA_POINTERS
+water	32:34	0:0	6	AV_NUM_DATA_POINTERS
+forexpr	32:57	32:58	3	i ++
+water	32:57	0:0	4	i
+op	32:58	0:0	4	++
+stmts	32:62	39:4	3	
+water	32:62	0:0	4	{
+water	33:8	0:0	4	frame
+op	33:13	0:0	4	->
+water	33:15	0:0	4	buf
+op	33:18	0:0	4	[
+water	33:19	0:0	4	i
+op	33:20	0:0	4	]
+op	33:22	0:0	4	=
+call	33:24	33:58	4	av_buffer_alloc
+arg	33:40	33:58	5	frame->linesize[0]
+water	33:40	0:0	6	frame
+op	33:45	0:0	6	->
+water	33:47	0:0	6	linesize
+op	33:55	0:0	6	[
+water	33:56	0:0	6	0
+op	33:57	0:0	6	]
+water	33:59	0:0	4	;
+if	34:8	37:8	4	(! frame -> buf [ i ])
+cond	34:12	34:25	5	! frame -> buf [ i ]
+op	34:12	0:0	6	!
+water	34:13	0:0	6	frame
+op	34:18	0:0	6	->
+water	34:20	0:0	6	buf
+op	34:23	0:0	6	[
+water	34:24	0:0	6	i
+op	34:25	0:0	6	]
+stmts	34:28	37:8	5	
+water	34:28	0:0	6	{
+call	35:12	35:32	6	av_frame_unref
+arg	35:27	35:32	7	frame
+water	35:27	0:0	8	frame
+water	35:33	0:0	6	;
+return	36:12	36:34	6	AVERROR(ENOMEM)
+call	36:19	36:33	7	AVERROR
+arg	36:27	36:33	8	ENOMEM
+water	36:27	0:0	9	ENOMEM
+water	37:8	0:0	6	}
+water	38:8	0:0	4	frame
+op	38:13	0:0	4	->
+water	38:15	0:0	4	extended_data
+op	38:28	0:0	4	[
+water	38:29	0:0	4	i
+op	38:30	0:0	4	]
+op	38:32	0:0	4	=
+water	38:34	0:0	4	frame
+op	38:39	0:0	4	->
+water	38:41	0:0	4	data
+op	38:45	0:0	4	[
+water	38:46	0:0	4	i
+op	38:47	0:0	4	]
+op	38:49	0:0	4	=
+water	38:51	0:0	4	frame
+op	38:56	0:0	4	->
+water	38:58	0:0	4	buf
+op	38:61	0:0	4	[
+water	38:62	0:0	4	i
+op	38:63	0:0	4	]
+op	38:64	0:0	4	->
+water	38:66	0:0	4	data
+water	38:70	0:0	4	;
+water	39:4	0:0	4	}
+for	40:4	47:4	2	(i = 0 ;i < planes - AV_NUM_DATA_POINTERS;i ++)
+forinit	40:9	40:14	3	i = 0 ;
+water	40:9	0:0	4	i
+op	40:11	0:0	4	=
+water	40:13	0:0	4	0
+water	40:14	0:0	4	;
+cond	40:16	40:29	3	i < planes - AV_NUM_DATA_POINTERS
+water	40:16	0:0	4	i
+op	40:18	0:0	4	<
+water	40:20	0:0	4	planes
+op	40:27	0:0	4	-
+water	40:29	0:0	4	AV_NUM_DATA_POINTERS
+forexpr	40:51	40:52	3	i ++
+water	40:51	0:0	4	i
+op	40:52	0:0	4	++
+stmts	40:56	47:4	3	
+water	40:56	0:0	4	{
+water	41:8	0:0	4	frame
+op	41:13	0:0	4	->
+water	41:15	0:0	4	extended_buf
+op	41:27	0:0	4	[
+water	41:28	0:0	4	i
+op	41:29	0:0	4	]
+op	41:31	0:0	4	=
+call	41:33	41:67	4	av_buffer_alloc
+arg	41:49	41:67	5	frame->linesize[0]
+water	41:49	0:0	6	frame
+op	41:54	0:0	6	->
+water	41:56	0:0	6	linesize
+op	41:64	0:0	6	[
+water	41:65	0:0	6	0
+op	41:66	0:0	6	]
+water	41:68	0:0	4	;
+if	42:8	45:8	4	(! frame -> extended_buf [ i ])
+cond	42:12	42:34	5	! frame -> extended_buf [ i ]
+op	42:12	0:0	6	!
+water	42:13	0:0	6	frame
+op	42:18	0:0	6	->
+water	42:20	0:0	6	extended_buf
+op	42:32	0:0	6	[
+water	42:33	0:0	6	i
+op	42:34	0:0	6	]
+stmts	42:37	45:8	5	
+water	42:37	0:0	6	{
+call	43:12	43:32	6	av_frame_unref
+arg	43:27	43:32	7	frame
+water	43:27	0:0	8	frame
+water	43:33	0:0	6	;
+return	44:12	44:34	6	AVERROR(ENOMEM)
+call	44:19	44:33	7	AVERROR
+arg	44:27	44:33	8	ENOMEM
+water	44:27	0:0	9	ENOMEM
+water	45:8	0:0	6	}
+water	46:8	0:0	4	frame
+op	46:13	0:0	4	->
+water	46:15	0:0	4	extended_data
+op	46:28	0:0	4	[
+water	46:29	0:0	4	i
+op	46:31	0:0	4	+
+water	46:33	0:0	4	AV_NUM_DATA_POINTERS
+op	46:53	0:0	4	]
+op	46:55	0:0	4	=
+water	46:57	0:0	4	frame
+op	46:62	0:0	4	->
+water	46:64	0:0	4	extended_buf
+op	46:76	0:0	4	[
+water	46:77	0:0	4	i
+op	46:78	0:0	4	]
+op	46:79	0:0	4	->
+water	46:81	0:0	4	data
+water	46:85	0:0	4	;
+water	47:4	0:0	4	}
+return	48:4	48:12	2	0
+water	48:11	0:0	3	0

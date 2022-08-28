@@ -1,0 +1,669 @@
+func	1:0	75:0	0	static void	video_image_display
+params	1:31	0:0	1	
+param	1:32	1:46	2	VideoState *	is
+stmnts	0:0	74:4	1	
+decl	3:4	3:13	2	Frame	*vp
+decl	4:4	4:20	2	Frame	*sp
+op	4:14	0:0	2	=
+water	4:16	0:0	2	NULL
+decl	5:4	5:17	2	SDL_Rect	rect
+water	6:4	0:0	2	vp
+op	6:7	0:0	2	=
+call	6:9	6:41	2	frame_queue_peek_last
+arg	6:31	6:41	3	&is->pictq
+op	6:31	0:0	4	&
+water	6:32	0:0	4	is
+op	6:34	0:0	4	->
+water	6:36	0:0	4	pictq
+water	6:42	0:0	2	;
+if	7:4	46:4	2	(is -> subtitle_st)
+cond	7:8	7:12	3	is -> subtitle_st
+water	7:8	0:0	4	is
+op	7:10	0:0	4	->
+water	7:12	0:0	4	subtitle_st
+stmts	7:25	46:4	3	
+water	7:25	0:0	4	{
+if	8:8	45:8	4	(frame_queue_nb_remaining (& is -> subpq ) > 0)
+cond	8:12	8:51	5	frame_queue_nb_remaining (& is -> subpq ) > 0
+call	8:12	8:47	6	frame_queue_nb_remaining
+arg	8:37	8:47	7	&is->subpq
+op	8:37	0:0	8	&
+water	8:38	0:0	8	is
+op	8:40	0:0	8	->
+water	8:42	0:0	8	subpq
+op	8:49	0:0	6	>
+water	8:51	0:0	6	0
+stmts	8:54	45:8	5	
+water	8:54	0:0	6	{
+water	9:12	0:0	6	sp
+op	9:15	0:0	6	=
+call	9:17	9:44	6	frame_queue_peek
+arg	9:34	9:44	7	&is->subpq
+op	9:34	0:0	8	&
+water	9:35	0:0	8	is
+op	9:37	0:0	8	->
+water	9:39	0:0	8	subpq
+water	9:45	0:0	6	;
+if	10:12	43:12	6	(vp -> pts >= sp -> pts + ( ( float ) sp -> sub . start_display_time / 1000 ))
+cond	10:16	10:79	7	vp -> pts >= sp -> pts + ( ( float ) sp -> sub . start_display_time / 1000 )
+water	10:16	0:0	8	vp
+op	10:18	0:0	8	->
+water	10:20	0:0	8	pts
+op	10:24	0:0	8	>=
+water	10:27	0:0	8	sp
+op	10:29	0:0	8	->
+water	10:31	0:0	8	pts
+op	10:35	0:0	8	+
+water	10:37	0:0	8	(
+water	10:38	0:0	8	(
+water	10:39	0:0	8	float
+water	10:44	0:0	8	)
+water	10:46	0:0	8	sp
+op	10:48	0:0	8	->
+water	10:50	0:0	8	sub
+op	10:53	0:0	8	.
+water	10:54	0:0	8	start_display_time
+op	10:73	0:0	8	/
+water	10:75	0:0	8	1000
+water	10:79	0:0	8	)
+stmts	10:82	43:12	7	
+water	10:82	0:0	8	{
+if	11:16	42:16	8	(! sp -> uploaded)
+cond	11:20	11:25	9	! sp -> uploaded
+op	11:20	0:0	10	!
+water	11:21	0:0	10	sp
+op	11:23	0:0	10	->
+water	11:25	0:0	10	uploaded
+stmts	11:35	42:16	9	
+water	11:35	0:0	10	{
+decl	12:20	12:38	10	uint8_t	*pixels[4]
+decl	13:20	13:32	10	int	pitch[4]
+decl	14:20	14:25	10	int	i
+if	15:20	18:20	10	(! sp -> width || ! sp -> height)
+cond	15:24	15:43	11	! sp -> width || ! sp -> height
+op	15:24	0:0	12	!
+water	15:25	0:0	12	sp
+op	15:27	0:0	12	->
+water	15:29	0:0	12	width
+op	15:35	0:0	12	||
+op	15:38	0:0	12	!
+water	15:39	0:0	12	sp
+op	15:41	0:0	12	->
+water	15:43	0:0	12	height
+stmts	15:51	18:20	11	
+water	15:51	0:0	12	{
+water	16:24	0:0	12	sp
+op	16:26	0:0	12	->
+water	16:28	0:0	12	width
+op	16:34	0:0	12	=
+water	16:36	0:0	12	vp
+op	16:38	0:0	12	->
+water	16:40	0:0	12	width
+water	16:45	0:0	12	;
+water	17:24	0:0	12	sp
+op	17:26	0:0	12	->
+water	17:28	0:0	12	height
+op	17:35	0:0	12	=
+water	17:37	0:0	12	vp
+op	17:39	0:0	12	->
+water	17:41	0:0	12	height
+water	17:47	0:0	12	;
+water	18:20	0:0	12	}
+if	19:20	20:30	10	(realloc_texture (& is -> sub_texture ,SDL_PIXELFORMAT_ARGB8888 ,sp -> width ,sp -> height ,SDL_BLENDMODE_BLEND ,1 ) < 0)
+cond	19:24	19:133	11	realloc_texture (& is -> sub_texture ,SDL_PIXELFORMAT_ARGB8888 ,sp -> width ,sp -> height ,SDL_BLENDMODE_BLEND ,1 ) < 0
+call	19:24	19:129	12	realloc_texture
+arg	19:40	19:56	13	&is->sub_texture
+op	19:40	0:0	14	&
+water	19:41	0:0	14	is
+op	19:43	0:0	14	->
+water	19:45	0:0	14	sub_texture
+arg	19:58	19:82	13	SDL_PIXELFORMAT_ARGB8888
+water	19:58	0:0	14	SDL_PIXELFORMAT_ARGB8888
+arg	19:84	19:93	13	sp->width
+water	19:84	0:0	14	sp
+op	19:86	0:0	14	->
+water	19:88	0:0	14	width
+arg	19:95	19:105	13	sp->height
+water	19:95	0:0	14	sp
+op	19:97	0:0	14	->
+water	19:99	0:0	14	height
+arg	19:107	19:126	13	SDL_BLENDMODE_BLEND
+water	19:107	0:0	14	SDL_BLENDMODE_BLEND
+arg	19:128	19:129	13	1
+water	19:128	0:0	14	1
+op	19:131	0:0	12	<
+water	19:133	0:0	12	0
+stmts	20:24	20:30	11	
+return	20:24	20:30	12	
+for	21:20	40:20	10	(i = 0 ;i < sp -> sub . num_rects;i ++)
+forinit	21:25	21:30	11	i = 0 ;
+water	21:25	0:0	12	i
+op	21:27	0:0	12	=
+water	21:29	0:0	12	0
+water	21:30	0:0	12	;
+cond	21:32	21:44	11	i < sp -> sub . num_rects
+water	21:32	0:0	12	i
+op	21:34	0:0	12	<
+water	21:36	0:0	12	sp
+op	21:38	0:0	12	->
+water	21:40	0:0	12	sub
+op	21:43	0:0	12	.
+water	21:44	0:0	12	num_rects
+forexpr	21:55	21:56	11	i ++
+water	21:55	0:0	12	i
+op	21:56	0:0	12	++
+stmts	21:60	40:20	11	
+water	21:60	0:0	12	{
+decl	22:24	22:67	12	AVSubtitleRect	*sub_rect
+op	22:49	0:0	12	=
+water	22:51	0:0	12	sp
+op	22:53	0:0	12	->
+water	22:55	0:0	12	sub
+op	22:58	0:0	12	.
+water	22:59	0:0	12	rects
+op	22:64	0:0	12	[
+water	22:65	0:0	12	i
+op	22:66	0:0	12	]
+water	23:24	0:0	12	sub_rect
+op	23:32	0:0	12	->
+water	23:34	0:0	12	x
+op	23:36	0:0	12	=
+call	23:38	23:72	12	av_clip
+arg	23:46	23:57	13	sub_rect->x
+water	23:46	0:0	14	sub_rect
+op	23:54	0:0	14	->
+water	23:56	0:0	14	x
+arg	23:59	23:60	13	0
+water	23:59	0:0	14	0
+arg	23:62	23:72	13	sp->width
+water	23:62	0:0	14	sp
+op	23:64	0:0	14	->
+water	23:66	0:0	14	width
+water	23:73	0:0	12	;
+water	24:24	0:0	12	sub_rect
+op	24:32	0:0	12	->
+water	24:34	0:0	12	y
+op	24:36	0:0	12	=
+call	24:38	24:72	12	av_clip
+arg	24:46	24:57	13	sub_rect->y
+water	24:46	0:0	14	sub_rect
+op	24:54	0:0	14	->
+water	24:56	0:0	14	y
+arg	24:59	24:60	13	0
+water	24:59	0:0	14	0
+arg	24:62	24:72	13	sp->height
+water	24:62	0:0	14	sp
+op	24:64	0:0	14	->
+water	24:66	0:0	14	height
+water	24:73	0:0	12	;
+water	25:24	0:0	12	sub_rect
+op	25:32	0:0	12	->
+water	25:34	0:0	12	w
+op	25:36	0:0	12	=
+call	25:38	25:86	12	av_clip
+arg	25:46	25:57	13	sub_rect->w
+water	25:46	0:0	14	sub_rect
+op	25:54	0:0	14	->
+water	25:56	0:0	14	w
+arg	25:59	25:60	13	0
+water	25:59	0:0	14	0
+arg	25:62	25:86	13	sp->width-sub_rect->x
+water	25:62	0:0	14	sp
+op	25:64	0:0	14	->
+water	25:66	0:0	14	width
+op	25:73	0:0	14	-
+water	25:75	0:0	14	sub_rect
+op	25:83	0:0	14	->
+water	25:85	0:0	14	x
+water	25:87	0:0	12	;
+water	26:24	0:0	12	sub_rect
+op	26:32	0:0	12	->
+water	26:34	0:0	12	h
+op	26:36	0:0	12	=
+call	26:38	26:86	12	av_clip
+arg	26:46	26:57	13	sub_rect->h
+water	26:46	0:0	14	sub_rect
+op	26:54	0:0	14	->
+water	26:56	0:0	14	h
+arg	26:59	26:60	13	0
+water	26:59	0:0	14	0
+arg	26:62	26:86	13	sp->height-sub_rect->y
+water	26:62	0:0	14	sp
+op	26:64	0:0	14	->
+water	26:66	0:0	14	height
+op	26:73	0:0	14	-
+water	26:75	0:0	14	sub_rect
+op	26:83	0:0	14	->
+water	26:85	0:0	14	y
+water	26:87	0:0	12	;
+water	27:24	0:0	12	is
+op	27:26	0:0	12	->
+water	27:28	0:0	12	sub_convert_ctx
+op	27:44	0:0	12	=
+call	27:46	30:47	12	sws_getCachedContext
+arg	27:67	27:86	13	is->sub_convert_ctx
+water	27:67	0:0	14	is
+op	27:69	0:0	14	->
+water	27:71	0:0	14	sub_convert_ctx
+arg	28:28	28:39	13	sub_rect->w
+water	28:28	0:0	14	sub_rect
+op	28:36	0:0	14	->
+water	28:38	0:0	14	w
+arg	28:41	28:52	13	sub_rect->h
+water	28:41	0:0	14	sub_rect
+op	28:49	0:0	14	->
+water	28:51	0:0	14	h
+arg	28:54	28:69	13	AV_PIX_FMT_PAL8
+water	28:54	0:0	14	AV_PIX_FMT_PAL8
+arg	29:28	29:39	13	sub_rect->w
+water	29:28	0:0	14	sub_rect
+op	29:36	0:0	14	->
+water	29:38	0:0	14	w
+arg	29:41	29:52	13	sub_rect->h
+water	29:41	0:0	14	sub_rect
+op	29:49	0:0	14	->
+water	29:51	0:0	14	h
+arg	29:54	29:69	13	AV_PIX_FMT_BGRA
+water	29:54	0:0	14	AV_PIX_FMT_BGRA
+arg	30:28	30:29	13	0
+water	30:28	0:0	14	0
+arg	30:31	30:35	13	NULL
+water	30:31	0:0	14	NULL
+arg	30:37	30:41	13	NULL
+water	30:37	0:0	14	NULL
+arg	30:43	30:47	13	NULL
+water	30:43	0:0	14	NULL
+water	30:48	0:0	12	;
+if	31:24	34:24	12	(! is -> sub_convert_ctx)
+cond	31:28	31:33	13	! is -> sub_convert_ctx
+op	31:28	0:0	14	!
+water	31:29	0:0	14	is
+op	31:31	0:0	14	->
+water	31:33	0:0	14	sub_convert_ctx
+stmts	31:50	34:24	13	
+water	31:50	0:0	14	{
+call	32:28	32:99	14	av_log
+arg	32:35	32:39	15	NULL
+water	32:35	0:0	16	NULL
+arg	32:41	32:53	15	AV_LOG_FATAL
+water	32:41	0:0	16	AV_LOG_FATAL
+arg	32:55	32:99	15	"Cannot initialize the conversion context\n"
+water	32:55	0:0	16	"Cannot initialize the conversion context\n"
+water	32:100	0:0	14	;
+return	33:28	33:34	14	
+water	34:24	0:0	14	}
+if	35:24	39:24	12	(!SDL_LockTexture (is -> sub_texture ,( SDL_Rect * ) sub_rect ,( void * * ) pixels ,pitch ))
+cond	35:28	35:106	13	!SDL_LockTexture (is -> sub_texture ,( SDL_Rect * ) sub_rect ,( void * * ) pixels ,pitch )
+op	35:28	0:0	14	!
+call	35:29	35:106	14	SDL_LockTexture
+arg	35:45	35:60	15	is->sub_texture
+water	35:45	0:0	16	is
+op	35:47	0:0	16	->
+water	35:49	0:0	16	sub_texture
+arg	35:62	35:82	15	(SDL_Rect*)sub_rect
+water	35:62	0:0	16	(
+water	35:63	0:0	16	SDL_Rect
+op	35:72	0:0	16	*
+water	35:73	0:0	16	)
+water	35:74	0:0	16	sub_rect
+arg	35:84	35:99	15	(void**)pixels
+water	35:84	0:0	16	(
+water	35:85	0:0	16	void
+op	35:90	0:0	16	*
+op	35:91	0:0	16	*
+water	35:92	0:0	16	)
+water	35:93	0:0	16	pixels
+arg	35:101	35:106	15	pitch
+water	35:101	0:0	16	pitch
+stmts	35:109	39:24	13	
+water	35:109	0:0	14	{
+call	36:28	37:67	14	sws_scale
+arg	36:38	36:57	15	is->sub_convert_ctx
+water	36:38	0:0	16	is
+op	36:40	0:0	16	->
+water	36:42	0:0	16	sub_convert_ctx
+arg	36:59	36:98	15	(constuint8_t*const*)sub_rect->data
+water	36:59	0:0	16	(
+water	36:60	0:0	16	const
+water	36:66	0:0	16	uint8_t
+op	36:74	0:0	16	*
+water	36:76	0:0	16	const
+op	36:82	0:0	16	*
+water	36:83	0:0	16	)
+water	36:84	0:0	16	sub_rect
+op	36:92	0:0	16	->
+water	36:94	0:0	16	data
+arg	36:100	36:118	15	sub_rect->linesize
+water	36:100	0:0	16	sub_rect
+op	36:108	0:0	16	->
+water	36:110	0:0	16	linesize
+arg	37:38	37:39	15	0
+water	37:38	0:0	16	0
+arg	37:41	37:52	15	sub_rect->h
+water	37:41	0:0	16	sub_rect
+op	37:49	0:0	16	->
+water	37:51	0:0	16	h
+arg	37:54	37:60	15	pixels
+water	37:54	0:0	16	pixels
+arg	37:62	37:67	15	pitch
+water	37:62	0:0	16	pitch
+water	37:68	0:0	14	;
+call	38:28	38:61	14	SDL_UnlockTexture
+arg	38:46	38:61	15	is->sub_texture
+water	38:46	0:0	16	is
+op	38:48	0:0	16	->
+water	38:50	0:0	16	sub_texture
+water	38:62	0:0	14	;
+water	39:24	0:0	14	}
+water	40:20	0:0	12	}
+water	41:20	0:0	10	sp
+op	41:22	0:0	10	->
+water	41:24	0:0	10	uploaded
+op	41:33	0:0	10	=
+water	41:35	0:0	10	1
+water	41:36	0:0	10	;
+water	42:16	0:0	10	}
+water	43:12	0:0	8	}
+else	43:14	44:25	6
+stmts	44:16	44:25	7	
+water	44:16	0:0	8	sp
+op	44:19	0:0	8	=
+water	44:21	0:0	8	NULL
+water	44:25	0:0	8	;
+water	45:8	0:0	6	}
+water	46:4	0:0	4	}
+call	47:4	47:108	2	calculate_display_rect
+arg	47:27	47:32	3	&rect
+op	47:27	0:0	4	&
+water	47:28	0:0	4	rect
+arg	47:34	47:43	3	is->xleft
+water	47:34	0:0	4	is
+op	47:36	0:0	4	->
+water	47:38	0:0	4	xleft
+arg	47:45	47:53	3	is->ytop
+water	47:45	0:0	4	is
+op	47:47	0:0	4	->
+water	47:49	0:0	4	ytop
+arg	47:55	47:64	3	is->width
+water	47:55	0:0	4	is
+op	47:57	0:0	4	->
+water	47:59	0:0	4	width
+arg	47:66	47:76	3	is->height
+water	47:66	0:0	4	is
+op	47:68	0:0	4	->
+water	47:70	0:0	4	height
+arg	47:78	47:87	3	vp->width
+water	47:78	0:0	4	vp
+op	47:80	0:0	4	->
+water	47:82	0:0	4	width
+arg	47:89	47:99	3	vp->height
+water	47:89	0:0	4	vp
+op	47:91	0:0	4	->
+water	47:93	0:0	4	height
+arg	47:101	47:108	3	vp->sar
+water	47:101	0:0	4	vp
+op	47:103	0:0	4	->
+water	47:105	0:0	4	sar
+water	47:109	0:0	2	;
+if	48:4	56:4	2	(! vp -> uploaded)
+cond	48:8	48:13	3	! vp -> uploaded
+op	48:8	0:0	4	!
+water	48:9	0:0	4	vp
+op	48:11	0:0	4	->
+water	48:13	0:0	4	uploaded
+stmts	48:23	56:4	3	
+water	48:23	0:0	4	{
+decl	49:8	49:115	4	int	sdl_pix_fmt
+op	49:24	0:0	4	=
+water	49:26	0:0	4	vp
+op	49:28	0:0	4	->
+water	49:30	0:0	4	frame
+op	49:35	0:0	4	->
+water	49:37	0:0	4	format
+op	49:44	0:0	4	==
+water	49:47	0:0	4	AV_PIX_FMT_YUV420P
+water	49:66	0:0	4	?
+water	49:68	0:0	4	SDL_PIXELFORMAT_YV12
+water	49:89	0:0	4	:
+water	49:91	0:0	4	SDL_PIXELFORMAT_ARGB8888
+if	50:8	51:18	4	(realloc_texture (& is -> vid_texture ,sdl_pix_fmt ,vp -> frame -> width ,vp -> frame -> height ,SDL_BLENDMODE_NONE ,0 ) < 0)
+cond	50:12	50:121	5	realloc_texture (& is -> vid_texture ,sdl_pix_fmt ,vp -> frame -> width ,vp -> frame -> height ,SDL_BLENDMODE_NONE ,0 ) < 0
+call	50:12	50:117	6	realloc_texture
+arg	50:28	50:44	7	&is->vid_texture
+op	50:28	0:0	8	&
+water	50:29	0:0	8	is
+op	50:31	0:0	8	->
+water	50:33	0:0	8	vid_texture
+arg	50:46	50:57	7	sdl_pix_fmt
+water	50:46	0:0	8	sdl_pix_fmt
+arg	50:59	50:75	7	vp->frame->width
+water	50:59	0:0	8	vp
+op	50:61	0:0	8	->
+water	50:63	0:0	8	frame
+op	50:68	0:0	8	->
+water	50:70	0:0	8	width
+arg	50:77	50:94	7	vp->frame->height
+water	50:77	0:0	8	vp
+op	50:79	0:0	8	->
+water	50:81	0:0	8	frame
+op	50:86	0:0	8	->
+water	50:88	0:0	8	height
+arg	50:96	50:114	7	SDL_BLENDMODE_NONE
+water	50:96	0:0	8	SDL_BLENDMODE_NONE
+arg	50:116	50:117	7	0
+water	50:116	0:0	8	0
+op	50:119	0:0	6	<
+water	50:121	0:0	6	0
+stmts	51:12	51:18	5	
+return	51:12	51:18	6	
+if	52:8	53:18	4	(upload_texture (is -> vid_texture ,vp -> frame ,& is -> img_convert_ctx ) < 0)
+cond	52:12	52:79	5	upload_texture (is -> vid_texture ,vp -> frame ,& is -> img_convert_ctx ) < 0
+call	52:12	52:75	6	upload_texture
+arg	52:27	52:42	7	is->vid_texture
+water	52:27	0:0	8	is
+op	52:29	0:0	8	->
+water	52:31	0:0	8	vid_texture
+arg	52:44	52:53	7	vp->frame
+water	52:44	0:0	8	vp
+op	52:46	0:0	8	->
+water	52:48	0:0	8	frame
+arg	52:55	52:75	7	&is->img_convert_ctx
+op	52:55	0:0	8	&
+water	52:56	0:0	8	is
+op	52:58	0:0	8	->
+water	52:60	0:0	8	img_convert_ctx
+op	52:77	0:0	6	<
+water	52:79	0:0	6	0
+stmts	53:12	53:18	5	
+return	53:12	53:18	6	
+water	54:8	0:0	4	vp
+op	54:10	0:0	4	->
+water	54:12	0:0	4	uploaded
+op	54:21	0:0	4	=
+water	54:23	0:0	4	1
+water	54:24	0:0	4	;
+water	55:8	0:0	4	vp
+op	55:10	0:0	4	->
+water	55:12	0:0	4	flip_v
+op	55:19	0:0	4	=
+water	55:21	0:0	4	vp
+op	55:23	0:0	4	->
+water	55:25	0:0	4	frame
+op	55:30	0:0	4	->
+water	55:32	0:0	4	linesize
+op	55:40	0:0	4	[
+water	55:41	0:0	4	0
+op	55:42	0:0	4	]
+op	55:44	0:0	4	<
+water	55:46	0:0	4	0
+water	55:47	0:0	4	;
+water	56:4	0:0	4	}
+call	57:4	57:104	2	SDL_RenderCopyEx
+arg	57:21	57:29	3	renderer
+water	57:21	0:0	4	renderer
+arg	57:31	57:46	3	is->vid_texture
+water	57:31	0:0	4	is
+op	57:33	0:0	4	->
+water	57:35	0:0	4	vid_texture
+arg	57:48	57:52	3	NULL
+water	57:48	0:0	4	NULL
+arg	57:54	57:59	3	&rect
+op	57:54	0:0	4	&
+water	57:55	0:0	4	rect
+arg	57:61	57:62	3	0
+water	57:61	0:0	4	0
+arg	57:64	57:68	3	NULL
+water	57:64	0:0	4	NULL
+arg	57:70	57:104	3	vp->flip_v?SDL_FLIP_VERTICAL:0
+water	57:70	0:0	4	vp
+op	57:72	0:0	4	->
+water	57:74	0:0	4	flip_v
+water	57:81	0:0	4	?
+water	57:83	0:0	4	SDL_FLIP_VERTICAL
+water	57:101	0:0	4	:
+water	57:103	0:0	4	0
+water	57:105	0:0	2	;
+if	58:4	74:4	2	(sp)
+cond	58:8	58:8	3	sp
+water	58:8	0:0	4	sp
+stmts	58:12	74:4	3	
+water	58:12	0:0	4	{
+call	60:8	60:61	4	SDL_RenderCopy
+arg	60:23	60:31	5	renderer
+water	60:23	0:0	6	renderer
+arg	60:33	60:48	5	is->sub_texture
+water	60:33	0:0	6	is
+op	60:35	0:0	6	->
+water	60:37	0:0	6	sub_texture
+arg	60:50	60:54	5	NULL
+water	60:50	0:0	6	NULL
+arg	60:56	60:61	5	&rect
+op	60:56	0:0	6	&
+water	60:57	0:0	6	rect
+water	60:62	0:0	4	;
+decl	62:8	62:13	4	int	i
+decl	63:8	63:58	4	double	xratio
+op	63:22	0:0	4	=
+water	63:24	0:0	4	(
+water	63:25	0:0	4	double
+water	63:31	0:0	4	)
+water	63:32	0:0	4	rect
+op	63:36	0:0	4	.
+water	63:37	0:0	4	w
+op	63:39	0:0	4	/
+water	63:41	0:0	4	(
+water	63:42	0:0	4	double
+water	63:48	0:0	4	)
+water	63:49	0:0	4	sp
+op	63:51	0:0	4	->
+water	63:53	0:0	4	width
+decl	64:8	64:59	4	double	yratio
+op	64:22	0:0	4	=
+water	64:24	0:0	4	(
+water	64:25	0:0	4	double
+water	64:31	0:0	4	)
+water	64:32	0:0	4	rect
+op	64:36	0:0	4	.
+water	64:37	0:0	4	h
+op	64:39	0:0	4	/
+water	64:41	0:0	4	(
+water	64:42	0:0	4	double
+water	64:48	0:0	4	)
+water	64:49	0:0	4	sp
+op	64:51	0:0	4	->
+water	64:53	0:0	4	height
+for	65:8	72:8	4	(i = 0 ;i < sp -> sub . num_rects;i ++)
+forinit	65:13	65:18	5	i = 0 ;
+water	65:13	0:0	6	i
+op	65:15	0:0	6	=
+water	65:17	0:0	6	0
+water	65:18	0:0	6	;
+cond	65:20	65:32	5	i < sp -> sub . num_rects
+water	65:20	0:0	6	i
+op	65:22	0:0	6	<
+water	65:24	0:0	6	sp
+op	65:26	0:0	6	->
+water	65:28	0:0	6	sub
+op	65:31	0:0	6	.
+water	65:32	0:0	6	num_rects
+forexpr	65:43	65:44	5	i ++
+water	65:43	0:0	6	i
+op	65:44	0:0	6	++
+stmts	65:48	72:8	5	
+water	65:48	0:0	6	{
+decl	66:12	66:60	6	SDL_Rect	*sub_rect
+op	66:31	0:0	6	=
+water	66:33	0:0	6	(
+water	66:34	0:0	6	SDL_Rect
+op	66:42	0:0	6	*
+water	66:43	0:0	6	)
+water	66:44	0:0	6	sp
+op	66:46	0:0	6	->
+water	66:48	0:0	6	sub
+op	66:51	0:0	6	.
+water	66:52	0:0	6	rects
+op	66:57	0:0	6	[
+water	66:58	0:0	6	i
+op	66:59	0:0	6	]
+decl	67:12	70:57	6	SDL_Rect	target
+op	67:28	0:0	6	=
+water	67:30	0:0	6	{
+op	67:31	0:0	6	.
+water	67:32	0:0	6	x
+op	67:34	0:0	6	=
+water	67:36	0:0	6	rect
+op	67:40	0:0	6	.
+water	67:41	0:0	6	x
+op	67:43	0:0	6	+
+water	67:45	0:0	6	sub_rect
+op	67:53	0:0	6	->
+water	67:55	0:0	6	x
+op	67:57	0:0	6	*
+water	67:59	0:0	6	xratio
+water	67:65	0:0	6	,
+op	68:31	0:0	6	.
+water	68:32	0:0	6	y
+op	68:34	0:0	6	=
+water	68:36	0:0	6	rect
+op	68:40	0:0	6	.
+water	68:41	0:0	6	y
+op	68:43	0:0	6	+
+water	68:45	0:0	6	sub_rect
+op	68:53	0:0	6	->
+water	68:55	0:0	6	y
+op	68:57	0:0	6	*
+water	68:59	0:0	6	yratio
+water	68:65	0:0	6	,
+op	69:31	0:0	6	.
+water	69:32	0:0	6	w
+op	69:34	0:0	6	=
+water	69:36	0:0	6	sub_rect
+op	69:44	0:0	6	->
+water	69:46	0:0	6	w
+op	69:48	0:0	6	*
+water	69:50	0:0	6	xratio
+water	69:56	0:0	6	,
+op	70:31	0:0	6	.
+water	70:32	0:0	6	h
+op	70:34	0:0	6	=
+water	70:36	0:0	6	sub_rect
+op	70:44	0:0	6	->
+water	70:46	0:0	6	h
+op	70:48	0:0	6	*
+water	70:50	0:0	6	yratio
+water	70:56	0:0	6	}
+call	71:12	71:71	6	SDL_RenderCopy
+arg	71:27	71:35	7	renderer
+water	71:27	0:0	8	renderer
+arg	71:37	71:52	7	is->sub_texture
+water	71:37	0:0	8	is
+op	71:39	0:0	8	->
+water	71:41	0:0	8	sub_texture
+arg	71:54	71:62	7	sub_rect
+water	71:54	0:0	8	sub_rect
+arg	71:64	71:71	7	&target
+op	71:64	0:0	8	&
+water	71:65	0:0	8	target
+water	71:72	0:0	6	;
+water	72:8	0:0	6	}
+water	74:4	0:0	4	}

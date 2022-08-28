@@ -1,0 +1,405 @@
+func	1:0	75:0	0	static int	filter_frame
+params	1:23	0:0	1	
+param	1:24	1:44	2	AVFilterLink *	inlink
+param	1:46	1:60	2	AVFrame *	frame
+stmnts	0:0	74:40	1	
+decl	3:4	3:44	2	AVFilterContext	*ctx
+op	3:31	0:0	2	=
+water	3:33	0:0	2	inlink
+op	3:39	0:0	2	->
+water	3:41	0:0	2	dst
+decl	4:4	4:42	2	FieldOrderContext	*s
+op	4:31	0:0	2	=
+water	4:33	0:0	2	ctx
+op	4:36	0:0	2	->
+water	4:38	0:0	2	priv
+decl	5:4	5:48	2	AVFilterLink	*outlink
+op	5:31	0:0	2	=
+water	5:33	0:0	2	ctx
+op	5:36	0:0	2	->
+water	5:38	0:0	2	outputs
+op	5:45	0:0	2	[
+water	5:46	0:0	2	0
+op	5:47	0:0	2	]
+decl	6:4	6:63	2	int	h
+water	6:9	0:0	2	,
+decl	6:4	6:63	2	int	plane
+water	6:16	0:0	2	,
+decl	6:4	6:63	2	int	src_line_step
+water	6:31	0:0	2	,
+decl	6:4	6:63	2	int	dst_line_step
+water	6:46	0:0	2	,
+decl	6:4	6:63	2	int	line_size
+water	6:57	0:0	2	,
+decl	6:4	6:63	2	int	line
+decl	7:4	7:22	2	uint8_t	*dst
+water	7:16	0:0	2	,
+decl	7:4	7:22	2	uint8_t	*src
+decl	8:4	8:16	2	AVFrame	*out
+if	9:4	16:4	2	(! frame -> interlaced_frame || frame -> top_field_first == s -> dst_tff)
+cond	9:8	10:37	3	! frame -> interlaced_frame || frame -> top_field_first == s -> dst_tff
+op	9:8	0:0	4	!
+water	9:9	0:0	4	frame
+op	9:14	0:0	4	->
+water	9:16	0:0	4	interlaced_frame
+op	9:33	0:0	4	||
+water	10:8	0:0	4	frame
+op	10:13	0:0	4	->
+water	10:15	0:0	4	top_field_first
+op	10:31	0:0	4	==
+water	10:34	0:0	4	s
+op	10:35	0:0	4	->
+water	10:37	0:0	4	dst_tff
+stmts	10:46	16:4	3	
+water	10:46	0:0	4	{
+call	11:8	14:66	4	av_log
+arg	11:15	11:18	5	ctx
+water	11:15	0:0	6	ctx
+arg	11:20	11:34	5	AV_LOG_VERBOSE
+water	11:20	0:0	6	AV_LOG_VERBOSE
+arg	12:15	12:31	5	"Skipping %s.\n"
+water	12:15	0:0	6	"Skipping %s.\n"
+arg	13:15	14:66	5	frame->interlaced_frame?"frame with same field order":"progressive frame"
+water	13:15	0:0	6	frame
+op	13:20	0:0	6	->
+water	13:22	0:0	6	interlaced_frame
+water	13:39	0:0	6	?
+water	14:15	0:0	6	"frame with same field order"
+water	14:45	0:0	6	:
+water	14:47	0:0	6	"progressive frame"
+water	14:67	0:0	4	;
+return	15:8	15:46	4	ff_filter_frame(outlink,frame)
+call	15:15	15:45	5	ff_filter_frame
+arg	15:31	15:38	6	outlink
+water	15:31	0:0	7	outlink
+arg	15:40	15:45	6	frame
+water	15:40	0:0	7	frame
+water	16:4	0:0	4	}
+if	17:4	19:4	2	(av_frame_is_writable (frame ))
+cond	17:8	17:34	3	av_frame_is_writable (frame )
+call	17:8	17:34	4	av_frame_is_writable
+arg	17:29	17:34	5	frame
+water	17:29	0:0	6	frame
+stmts	17:37	19:4	3	
+water	17:37	0:0	4	{
+water	18:8	0:0	4	out
+op	18:12	0:0	4	=
+water	18:14	0:0	4	frame
+water	18:19	0:0	4	;
+water	19:4	0:0	4	}
+else	19:6	26:4	2
+stmts	19:11	26:4	3	
+water	19:11	0:0	4	{
+water	20:8	0:0	4	out
+op	20:12	0:0	4	=
+call	20:14	20:65	4	ff_get_video_buffer
+arg	20:34	20:41	5	outlink
+water	20:34	0:0	6	outlink
+arg	20:43	20:53	5	outlink->w
+water	20:43	0:0	6	outlink
+op	20:50	0:0	6	->
+water	20:52	0:0	6	w
+arg	20:55	20:65	5	outlink->h
+water	20:55	0:0	6	outlink
+op	20:62	0:0	6	->
+water	20:64	0:0	6	h
+water	20:66	0:0	4	;
+if	21:8	24:8	4	(! out)
+cond	21:12	21:13	5	! out
+op	21:12	0:0	6	!
+water	21:13	0:0	6	out
+stmts	21:18	24:8	5	
+water	21:18	0:0	6	{
+call	22:12	22:32	6	av_frame_free
+arg	22:26	22:32	7	&frame
+op	22:26	0:0	8	&
+water	22:27	0:0	8	frame
+water	22:33	0:0	6	;
+return	23:12	23:34	6	AVERROR(ENOMEM)
+call	23:19	23:33	7	AVERROR
+arg	23:27	23:33	8	ENOMEM
+water	23:27	0:0	9	ENOMEM
+water	24:8	0:0	6	}
+call	25:8	25:38	4	av_frame_copy_props
+arg	25:28	25:31	5	out
+water	25:28	0:0	6	out
+arg	25:33	25:38	5	frame
+water	25:33	0:0	6	frame
+water	25:39	0:0	4	;
+water	26:4	0:0	4	}
+call	27:4	29:38	2	av_log
+arg	27:11	27:14	3	ctx
+water	27:11	0:0	4	ctx
+arg	27:16	27:28	3	AV_LOG_TRACE
+water	27:16	0:0	4	AV_LOG_TRACE
+arg	28:12	28:45	3	"picture will move %s one line\n"
+water	28:12	0:0	4	"picture will move %s one line\n"
+arg	29:12	29:38	3	s->dst_tff?"up":"down"
+water	29:12	0:0	4	s
+op	29:13	0:0	4	->
+water	29:15	0:0	4	dst_tff
+water	29:23	0:0	4	?
+water	29:25	0:0	4	"up"
+water	29:30	0:0	4	:
+water	29:32	0:0	4	"down"
+water	29:39	0:0	2	;
+water	30:4	0:0	2	h
+op	30:6	0:0	2	=
+water	30:8	0:0	2	frame
+op	30:13	0:0	2	->
+water	30:15	0:0	2	height
+water	30:21	0:0	2	;
+for	31:4	70:4	2	(plane = 0 ;plane < 4 && frame -> data [ plane ] && frame -> linesize [ plane ];plane ++)
+forinit	31:9	31:18	3	plane = 0 ;
+water	31:9	0:0	4	plane
+op	31:15	0:0	4	=
+water	31:17	0:0	4	0
+water	31:18	0:0	4	;
+cond	31:20	31:76	3	plane < 4 && frame -> data [ plane ] && frame -> linesize [ plane ]
+water	31:20	0:0	4	plane
+op	31:26	0:0	4	<
+water	31:28	0:0	4	4
+op	31:30	0:0	4	&&
+water	31:33	0:0	4	frame
+op	31:38	0:0	4	->
+water	31:40	0:0	4	data
+op	31:44	0:0	4	[
+water	31:45	0:0	4	plane
+op	31:50	0:0	4	]
+op	31:52	0:0	4	&&
+water	31:55	0:0	4	frame
+op	31:60	0:0	4	->
+water	31:62	0:0	4	linesize
+op	31:70	0:0	4	[
+water	31:71	0:0	4	plane
+op	31:76	0:0	4	]
+forexpr	31:79	31:84	3	plane ++
+water	31:79	0:0	4	plane
+op	31:84	0:0	4	++
+stmts	31:88	70:4	3	
+water	31:88	0:0	4	{
+water	32:8	0:0	4	dst_line_step
+op	32:22	0:0	4	=
+water	32:24	0:0	4	out
+op	32:27	0:0	4	->
+water	32:29	0:0	4	linesize
+op	32:37	0:0	4	[
+water	32:38	0:0	4	plane
+op	32:43	0:0	4	]
+water	32:44	0:0	4	;
+water	33:8	0:0	4	src_line_step
+op	33:22	0:0	4	=
+water	33:24	0:0	4	frame
+op	33:29	0:0	4	->
+water	33:31	0:0	4	linesize
+op	33:39	0:0	4	[
+water	33:40	0:0	4	plane
+op	33:45	0:0	4	]
+water	33:46	0:0	4	;
+water	34:8	0:0	4	line_size
+op	34:18	0:0	4	=
+water	34:20	0:0	4	s
+op	34:21	0:0	4	->
+water	34:23	0:0	4	line_size
+op	34:32	0:0	4	[
+water	34:33	0:0	4	plane
+op	34:38	0:0	4	]
+water	34:39	0:0	4	;
+water	35:8	0:0	4	dst
+op	35:12	0:0	4	=
+water	35:14	0:0	4	out
+op	35:17	0:0	4	->
+water	35:19	0:0	4	data
+op	35:23	0:0	4	[
+water	35:24	0:0	4	plane
+op	35:29	0:0	4	]
+water	35:30	0:0	4	;
+water	36:8	0:0	4	src
+op	36:12	0:0	4	=
+water	36:14	0:0	4	frame
+op	36:19	0:0	4	->
+water	36:21	0:0	4	data
+op	36:25	0:0	4	[
+water	36:26	0:0	4	plane
+op	36:31	0:0	4	]
+water	36:32	0:0	4	;
+if	37:8	52:8	4	(s -> dst_tff)
+cond	37:12	37:15	5	s -> dst_tff
+water	37:12	0:0	6	s
+op	37:13	0:0	6	->
+water	37:15	0:0	6	dst_tff
+stmts	37:24	52:8	5	
+water	37:24	0:0	6	{
+for	43:12	51:12	6	(line = 0 ;line < h;line ++)
+forinit	43:17	43:25	7	line = 0 ;
+water	43:17	0:0	8	line
+op	43:22	0:0	8	=
+water	43:24	0:0	8	0
+water	43:25	0:0	8	;
+cond	43:27	43:34	7	line < h
+water	43:27	0:0	8	line
+op	43:32	0:0	8	<
+water	43:34	0:0	8	h
+forexpr	43:37	43:41	7	line ++
+water	43:37	0:0	8	line
+op	43:41	0:0	8	++
+stmts	43:45	51:12	7	
+water	43:45	0:0	8	{
+if	44:16	46:16	8	(1 + line < frame -> height)
+cond	44:20	44:38	9	1 + line < frame -> height
+water	44:20	0:0	10	1
+op	44:22	0:0	10	+
+water	44:24	0:0	10	line
+op	44:29	0:0	10	<
+water	44:31	0:0	10	frame
+op	44:36	0:0	10	->
+water	44:38	0:0	10	height
+stmts	44:46	46:16	9	
+water	44:46	0:0	10	{
+call	45:20	45:62	10	memcpy
+arg	45:27	45:30	11	dst
+water	45:27	0:0	12	dst
+arg	45:32	45:51	11	src+src_line_step
+water	45:32	0:0	12	src
+op	45:36	0:0	12	+
+water	45:38	0:0	12	src_line_step
+arg	45:53	45:62	11	line_size
+water	45:53	0:0	12	line_size
+water	45:63	0:0	10	;
+water	46:16	0:0	10	}
+else	46:18	48:16	8
+stmts	46:23	48:16	9	
+water	46:23	0:0	10	{
+call	47:20	47:66	10	memcpy
+arg	47:27	47:30	11	dst
+water	47:27	0:0	12	dst
+arg	47:32	47:55	11	src-2*src_line_step
+water	47:32	0:0	12	src
+op	47:36	0:0	12	-
+water	47:38	0:0	12	2
+op	47:40	0:0	12	*
+water	47:42	0:0	12	src_line_step
+arg	47:57	47:66	11	line_size
+water	47:57	0:0	12	line_size
+water	47:67	0:0	10	;
+water	48:16	0:0	10	}
+water	49:16	0:0	8	dst
+op	49:20	0:0	8	+=
+water	49:23	0:0	8	dst_line_step
+water	49:36	0:0	8	;
+water	50:16	0:0	8	src
+op	50:20	0:0	8	+=
+water	50:23	0:0	8	src_line_step
+water	50:36	0:0	8	;
+water	51:12	0:0	8	}
+water	52:8	0:0	6	}
+else	52:10	69:8	4
+stmts	52:15	69:8	5	
+water	52:15	0:0	6	{
+water	58:12	0:0	6	dst
+op	58:16	0:0	6	+=
+water	58:19	0:0	6	(
+water	58:20	0:0	6	h
+op	58:22	0:0	6	-
+water	58:24	0:0	6	1
+water	58:25	0:0	6	)
+op	58:27	0:0	6	*
+water	58:29	0:0	6	dst_line_step
+water	58:42	0:0	6	;
+water	59:12	0:0	6	src
+op	59:16	0:0	6	+=
+water	59:19	0:0	6	(
+water	59:20	0:0	6	h
+op	59:22	0:0	6	-
+water	59:24	0:0	6	1
+water	59:25	0:0	6	)
+op	59:27	0:0	6	*
+water	59:29	0:0	6	src_line_step
+water	59:42	0:0	6	;
+for	60:12	68:12	6	(line = h - 1 ;line >= 0;line --)
+forinit	60:17	60:29	7	line = h - 1 ;
+water	60:17	0:0	8	line
+op	60:22	0:0	8	=
+water	60:24	0:0	8	h
+op	60:26	0:0	8	-
+water	60:28	0:0	8	1
+water	60:29	0:0	8	;
+cond	60:31	60:39	7	line >= 0
+water	60:31	0:0	8	line
+op	60:36	0:0	8	>=
+water	60:39	0:0	8	0
+forexpr	60:43	60:47	7	line --
+water	60:43	0:0	8	line
+op	60:47	0:0	8	--
+stmts	60:51	68:12	7	
+water	60:51	0:0	8	{
+if	61:16	63:16	8	(line > 0)
+cond	61:20	61:27	9	line > 0
+water	61:20	0:0	10	line
+op	61:25	0:0	10	>
+water	61:27	0:0	10	0
+stmts	61:30	63:16	9	
+water	61:30	0:0	10	{
+call	62:20	62:62	10	memcpy
+arg	62:27	62:30	11	dst
+water	62:27	0:0	12	dst
+arg	62:32	62:51	11	src-src_line_step
+water	62:32	0:0	12	src
+op	62:36	0:0	12	-
+water	62:38	0:0	12	src_line_step
+arg	62:53	62:62	11	line_size
+water	62:53	0:0	12	line_size
+water	62:63	0:0	10	;
+water	63:16	0:0	10	}
+else	63:18	65:16	8
+stmts	63:23	65:16	9	
+water	63:23	0:0	10	{
+call	64:20	64:66	10	memcpy
+arg	64:27	64:30	11	dst
+water	64:27	0:0	12	dst
+arg	64:32	64:55	11	src+2*src_line_step
+water	64:32	0:0	12	src
+op	64:36	0:0	12	+
+water	64:38	0:0	12	2
+op	64:40	0:0	12	*
+water	64:42	0:0	12	src_line_step
+arg	64:57	64:66	11	line_size
+water	64:57	0:0	12	line_size
+water	64:67	0:0	10	;
+water	65:16	0:0	10	}
+water	66:16	0:0	8	dst
+op	66:20	0:0	8	-=
+water	66:23	0:0	8	dst_line_step
+water	66:36	0:0	8	;
+water	67:16	0:0	8	src
+op	67:20	0:0	8	-=
+water	67:23	0:0	8	src_line_step
+water	67:36	0:0	8	;
+water	68:12	0:0	8	}
+water	69:8	0:0	6	}
+water	70:4	0:0	4	}
+water	71:4	0:0	2	out
+op	71:7	0:0	2	->
+water	71:9	0:0	2	top_field_first
+op	71:25	0:0	2	=
+water	71:27	0:0	2	s
+op	71:28	0:0	2	->
+water	71:30	0:0	2	dst_tff
+water	71:37	0:0	2	;
+if	72:4	73:29	2	(frame != out)
+cond	72:8	72:17	3	frame != out
+water	72:8	0:0	4	frame
+op	72:14	0:0	4	!=
+water	72:17	0:0	4	out
+stmts	73:8	73:29	3	
+call	73:8	73:28	4	av_frame_free
+arg	73:22	73:28	5	&frame
+op	73:22	0:0	6	&
+water	73:23	0:0	6	frame
+water	73:29	0:0	4	;
+return	74:4	74:40	2	ff_filter_frame(outlink,out)
+call	74:11	74:39	3	ff_filter_frame
+arg	74:27	74:34	4	outlink
+water	74:27	0:0	5	outlink
+arg	74:36	74:39	4	out
+water	74:36	0:0	5	out

@@ -1,0 +1,131 @@
+func	1:0	21:0	0	static int	nut_write_trailer
+params	1:28	0:0	1	
+param	1:29	1:47	2	AVFormatContext *	s
+stmnts	0:0	20:12	1	
+decl	3:4	3:34	2	NUTContext	*nut
+op	3:20	0:0	2	=
+water	3:22	0:0	2	s
+op	3:23	0:0	2	->
+water	3:25	0:0	2	priv_data
+decl	4:4	4:36	2	AVIOContext	*bc
+op	4:20	0:0	2	=
+water	4:22	0:0	2	s
+op	4:23	0:0	2	->
+water	4:25	0:0	2	pb
+water	4:27	0:0	2	,
+decl	4:4	4:36	2	AVIOContext	*dyn_bc
+decl	5:4	5:14	2	int	i
+water	5:9	0:0	2	,
+decl	5:4	5:14	2	int	ret
+while	6:4	7:28	2	(nut -> header_count < 3)
+cond	6:11	6:31	3	nut -> header_count < 3
+water	6:11	0:0	4	nut
+op	6:14	0:0	4	->
+water	6:16	0:0	4	header_count
+op	6:29	0:0	4	<
+water	6:31	0:0	4	3
+stmts	7:8	7:28	3	
+call	7:8	7:27	4	write_headers
+arg	7:22	7:23	5	s
+water	7:22	0:0	6	s
+arg	7:25	7:27	5	bc
+water	7:25	0:0	6	bc
+water	7:28	0:0	4	;
+water	8:4	0:0	2	ret
+op	8:8	0:0	2	=
+call	8:10	8:35	2	avio_open_dyn_buf
+arg	8:28	8:35	3	&dyn_bc
+op	8:28	0:0	4	&
+water	8:29	0:0	4	dyn_bc
+water	8:36	0:0	2	;
+if	9:4	13:4	2	(ret >= 0 && nut -> sp_count)
+cond	9:8	9:25	3	ret >= 0 && nut -> sp_count
+water	9:8	0:0	4	ret
+op	9:12	0:0	4	>=
+water	9:15	0:0	4	0
+op	9:17	0:0	4	&&
+water	9:20	0:0	4	nut
+op	9:23	0:0	4	->
+water	9:25	0:0	4	sp_count
+stmts	9:35	13:4	3	
+water	9:35	0:0	4	{
+call	10:8	10:35	4	av_assert1
+arg	10:19	10:35	5	nut->write_index
+water	10:19	0:0	6	nut
+op	10:22	0:0	6	->
+water	10:24	0:0	6	write_index
+water	10:36	0:0	4	;
+call	11:8	11:31	4	write_index
+arg	11:20	11:23	5	nut
+water	11:20	0:0	6	nut
+arg	11:25	11:31	5	dyn_bc
+water	11:25	0:0	6	dyn_bc
+water	11:32	0:0	4	;
+call	12:8	12:54	4	put_packet
+arg	12:19	12:22	5	nut
+water	12:19	0:0	6	nut
+arg	12:24	12:26	5	bc
+water	12:24	0:0	6	bc
+arg	12:28	12:34	5	dyn_bc
+water	12:28	0:0	6	dyn_bc
+arg	12:36	12:37	5	1
+water	12:36	0:0	6	1
+arg	12:39	12:54	5	INDEX_STARTCODE
+water	12:39	0:0	6	INDEX_STARTCODE
+water	12:55	0:0	4	;
+water	13:4	0:0	4	}
+call	14:4	14:22	2	ff_nut_free_sp
+arg	14:19	14:22	3	nut
+water	14:19	0:0	4	nut
+water	14:23	0:0	2	;
+for	15:4	16:46	2	(i = 0 ;i < s -> nb_streams;i ++)
+forinit	15:9	15:12	3	i = 0 ;
+water	15:9	0:0	4	i
+op	15:10	0:0	4	=
+water	15:11	0:0	4	0
+water	15:12	0:0	4	;
+cond	15:14	15:19	3	i < s -> nb_streams
+water	15:14	0:0	4	i
+op	15:15	0:0	4	<
+water	15:16	0:0	4	s
+op	15:17	0:0	4	->
+water	15:19	0:0	4	nb_streams
+forexpr	15:31	15:32	3	i ++
+water	15:31	0:0	4	i
+op	15:32	0:0	4	++
+stmts	16:8	16:46	3	
+call	16:8	16:45	4	av_freep
+arg	16:17	16:45	5	&nut->stream[i].keyframe_pts
+op	16:17	0:0	6	&
+water	16:18	0:0	6	nut
+op	16:21	0:0	6	->
+water	16:23	0:0	6	stream
+op	16:29	0:0	6	[
+water	16:30	0:0	6	i
+op	16:31	0:0	6	]
+op	16:32	0:0	6	.
+water	16:33	0:0	6	keyframe_pts
+water	16:46	0:0	4	;
+call	17:4	17:25	2	av_freep
+arg	17:13	17:25	3	&nut->stream
+op	17:13	0:0	4	&
+water	17:14	0:0	4	nut
+op	17:17	0:0	4	->
+water	17:19	0:0	4	stream
+water	17:26	0:0	2	;
+call	18:4	18:26	2	av_freep
+arg	18:13	18:26	3	&nut->chapter
+op	18:13	0:0	4	&
+water	18:14	0:0	4	nut
+op	18:17	0:0	4	->
+water	18:19	0:0	4	chapter
+water	18:27	0:0	2	;
+call	19:4	19:28	2	av_freep
+arg	19:13	19:28	3	&nut->time_base
+op	19:13	0:0	4	&
+water	19:14	0:0	4	nut
+op	19:17	0:0	4	->
+water	19:19	0:0	4	time_base
+water	19:29	0:0	2	;
+return	20:4	20:12	2	0
+water	20:11	0:0	3	0

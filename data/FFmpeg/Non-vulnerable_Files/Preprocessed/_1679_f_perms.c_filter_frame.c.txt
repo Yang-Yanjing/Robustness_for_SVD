@@ -1,0 +1,195 @@
+func	1:0	31:0	0	static int	filter_frame
+params	1:23	0:0	1	
+param	1:24	1:44	2	AVFilterLink *	inlink
+param	1:46	1:60	2	AVFrame *	frame
+stmnts	0:0	30:14	1	
+decl	3:4	3:11	2	int	ret
+decl	4:4	4:38	2	AVFilterContext	*ctx
+op	4:25	0:0	2	=
+water	4:27	0:0	2	inlink
+op	4:33	0:0	2	->
+water	4:35	0:0	2	dst
+decl	5:4	5:35	2	PermsContext	*perms
+op	5:24	0:0	2	=
+water	5:26	0:0	2	ctx
+op	5:29	0:0	2	->
+water	5:31	0:0	2	priv
+decl	6:4	6:24	2	AVFrame	*out
+op	6:17	0:0	2	=
+water	6:19	0:0	2	frame
+decl	7:4	7:61	2	enum perm	in_perm
+op	7:22	0:0	2	=
+call	7:24	7:50	3	av_frame_is_writable
+arg	7:45	7:50	4	frame
+water	7:45	0:0	5	frame
+water	7:52	0:0	2	?
+water	7:54	0:0	2	RW
+water	7:57	0:0	2	:
+water	7:59	0:0	2	RO
+decl	8:4	8:22	2	enum perm	out_perm
+switch	9:4	15:4	2	(perms -> mode)
+cond	9:12	9:19	3	perms -> mode
+water	9:12	0:0	4	perms
+op	9:17	0:0	4	->
+water	9:19	0:0	4	mode
+stmts	9:25	15:4	3	
+water	9:25	0:0	4	{
+label	10:4	10:20	4	case MODE_TOGGLE :
+water	10:24	0:0	4	out_perm
+op	10:33	0:0	4	=
+water	10:35	0:0	4	in_perm
+op	10:43	0:0	4	==
+water	10:46	0:0	4	RO
+water	10:49	0:0	4	?
+water	10:51	0:0	4	RW
+water	10:54	0:0	4	:
+water	10:56	0:0	4	RO
+water	10:58	0:0	4	;
+break	10:76	10:81	4	
+label	11:4	11:20	4	case MODE_RANDOM :
+water	11:24	0:0	4	out_perm
+op	11:33	0:0	4	=
+call	11:35	11:57	4	av_lfg_get
+arg	11:46	11:57	5	&perms->lfg
+op	11:46	0:0	6	&
+water	11:47	0:0	6	perms
+op	11:52	0:0	6	->
+water	11:54	0:0	6	lfg
+op	11:59	0:0	4	&
+water	11:61	0:0	4	1
+water	11:63	0:0	4	?
+water	11:65	0:0	4	RW
+water	11:68	0:0	4	:
+water	11:70	0:0	4	RO
+water	11:72	0:0	4	;
+break	11:76	11:81	4	
+label	12:4	12:16	4	case MODE_RO :
+water	12:24	0:0	4	out_perm
+op	12:33	0:0	4	=
+water	12:35	0:0	4	RO
+water	12:37	0:0	4	;
+break	12:76	12:81	4	
+label	13:4	13:16	4	case MODE_RW :
+water	13:24	0:0	4	out_perm
+op	13:33	0:0	4	=
+water	13:35	0:0	4	RW
+water	13:37	0:0	4	;
+break	13:76	13:81	4	
+label	14:4	14:11	4	default :
+water	14:24	0:0	4	out_perm
+op	14:33	0:0	4	=
+water	14:35	0:0	4	in_perm
+water	14:42	0:0	4	;
+break	14:76	14:81	4	
+water	15:4	0:0	4	}
+call	16:4	18:48	2	av_log
+arg	16:11	16:14	3	ctx
+water	16:11	0:0	4	ctx
+arg	16:16	16:30	3	AV_LOG_VERBOSE
+water	16:16	0:0	4	AV_LOG_VERBOSE
+arg	16:32	16:46	3	"%s -> %s%s\n"
+water	16:32	0:0	4	"%s -> %s%s\n"
+arg	17:11	17:28	3	perm_str[in_perm]
+water	17:11	0:0	4	perm_str
+op	17:19	0:0	4	[
+water	17:20	0:0	4	in_perm
+op	17:27	0:0	4	]
+arg	17:30	17:48	3	perm_str[out_perm]
+water	17:30	0:0	4	perm_str
+op	17:38	0:0	4	[
+water	17:39	0:0	4	out_perm
+op	17:47	0:0	4	]
+arg	18:11	18:48	3	in_perm==out_perm?" (no-op)":""
+water	18:11	0:0	4	in_perm
+op	18:19	0:0	4	==
+water	18:22	0:0	4	out_perm
+water	18:31	0:0	4	?
+water	18:33	0:0	4	" (no-op)"
+water	18:44	0:0	4	:
+water	18:46	0:0	4	""
+water	18:49	0:0	2	;
+if	19:4	22:4	2	(in_perm == RO && out_perm == RW)
+cond	19:8	19:37	3	in_perm == RO && out_perm == RW
+water	19:8	0:0	4	in_perm
+op	19:16	0:0	4	==
+water	19:19	0:0	4	RO
+op	19:22	0:0	4	&&
+water	19:25	0:0	4	out_perm
+op	19:34	0:0	4	==
+water	19:37	0:0	4	RW
+stmts	19:41	22:4	3	
+water	19:41	0:0	4	{
+if	20:8	21:22	4	(( ret =av_frame_make_writable (frame ) ) < 0)
+cond	20:12	20:52	5	( ret =av_frame_make_writable (frame ) ) < 0
+water	20:12	0:0	6	(
+water	20:13	0:0	6	ret
+op	20:17	0:0	6	=
+call	20:19	20:47	6	av_frame_make_writable
+arg	20:42	20:47	7	frame
+water	20:42	0:0	8	frame
+water	20:48	0:0	6	)
+op	20:50	0:0	6	<
+water	20:52	0:0	6	0
+stmts	21:12	21:22	5	
+return	21:12	21:22	6	ret
+water	21:19	0:0	7	ret
+water	22:4	0:0	4	}
+else	22:6	26:4	2
+stmts	22:11	26:4	3	
+if	22:11	26:4	4	(in_perm == RW && out_perm == RO)
+cond	22:15	22:44	5	in_perm == RW && out_perm == RO
+water	22:15	0:0	6	in_perm
+op	22:23	0:0	6	==
+water	22:26	0:0	6	RW
+op	22:29	0:0	6	&&
+water	22:32	0:0	6	out_perm
+op	22:41	0:0	6	==
+water	22:44	0:0	6	RO
+stmts	22:48	26:4	5	
+water	22:48	0:0	6	{
+water	23:8	0:0	6	out
+op	23:12	0:0	6	=
+call	23:14	23:34	6	av_frame_clone
+arg	23:29	23:34	7	frame
+water	23:29	0:0	8	frame
+water	23:35	0:0	6	;
+if	24:8	25:34	6	(! out)
+cond	24:12	24:13	7	! out
+op	24:12	0:0	8	!
+water	24:13	0:0	8	out
+stmts	25:12	25:34	7	
+return	25:12	25:34	8	AVERROR(ENOMEM)
+call	25:19	25:33	9	AVERROR
+arg	25:27	25:33	10	ENOMEM
+water	25:27	0:0	11	ENOMEM
+water	26:4	0:0	6	}
+water	27:4	0:0	2	ret
+op	27:8	0:0	2	=
+call	27:10	27:46	2	ff_filter_frame
+arg	27:26	27:41	3	ctx->outputs[0]
+water	27:26	0:0	4	ctx
+op	27:29	0:0	4	->
+water	27:31	0:0	4	outputs
+op	27:38	0:0	4	[
+water	27:39	0:0	4	0
+op	27:40	0:0	4	]
+arg	27:43	27:46	3	out
+water	27:43	0:0	4	out
+water	27:47	0:0	2	;
+if	28:4	29:29	2	(in_perm == RW && out_perm == RO)
+cond	28:8	28:37	3	in_perm == RW && out_perm == RO
+water	28:8	0:0	4	in_perm
+op	28:16	0:0	4	==
+water	28:19	0:0	4	RW
+op	28:22	0:0	4	&&
+water	28:25	0:0	4	out_perm
+op	28:34	0:0	4	==
+water	28:37	0:0	4	RO
+stmts	29:8	29:29	3	
+call	29:8	29:28	4	av_frame_free
+arg	29:22	29:28	5	&frame
+op	29:22	0:0	6	&
+water	29:23	0:0	6	frame
+water	29:29	0:0	4	;
+return	30:4	30:14	2	ret
+water	30:11	0:0	3	ret

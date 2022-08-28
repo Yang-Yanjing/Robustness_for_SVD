@@ -1,0 +1,516 @@
+func	1:0	72:0	0	static int	matroska_read_seek
+params	1:29	0:0	1	
+param	1:30	1:48	2	AVFormatContext *	s
+param	1:50	1:66	2	int	stream_index
+param	2:30	2:47	2	int64_t	timestamp
+param	2:49	2:58	2	int	flags
+stmnts	0:0	71:13	1	
+decl	4:4	4:49	2	MatroskaDemuxContext	*matroska
+op	4:35	0:0	2	=
+water	4:37	0:0	2	s
+op	4:38	0:0	2	->
+water	4:40	0:0	2	priv_data
+decl	5:4	5:32	2	MatroskaTrack	*tracks
+op	5:26	0:0	2	=
+water	5:28	0:0	2	NULL
+decl	6:4	6:43	2	AVStream	*st
+op	6:17	0:0	2	=
+water	6:19	0:0	2	s
+op	6:20	0:0	2	->
+water	6:22	0:0	2	streams
+op	6:29	0:0	2	[
+water	6:30	0:0	2	stream_index
+op	6:42	0:0	2	]
+decl	7:4	7:38	2	int	i
+water	7:9	0:0	2	,
+decl	7:4	7:38	2	int	index
+water	7:16	0:0	2	,
+decl	7:4	7:38	2	int	index_sub
+water	7:27	0:0	2	,
+decl	7:4	7:38	2	int	index_min
+if	9:4	12:4	2	(matroska -> cues_parsing_deferred > 0)
+cond	9:8	9:42	3	matroska -> cues_parsing_deferred > 0
+water	9:8	0:0	4	matroska
+op	9:16	0:0	4	->
+water	9:18	0:0	4	cues_parsing_deferred
+op	9:40	0:0	4	>
+water	9:42	0:0	4	0
+stmts	9:45	12:4	3	
+water	9:45	0:0	4	{
+water	10:8	0:0	4	matroska
+op	10:16	0:0	4	->
+water	10:18	0:0	4	cues_parsing_deferred
+op	10:40	0:0	4	=
+water	10:42	0:0	4	0
+water	10:43	0:0	4	;
+call	11:8	11:36	4	matroska_parse_cues
+arg	11:28	11:36	5	matroska
+water	11:28	0:0	6	matroska
+water	11:37	0:0	4	;
+water	12:4	0:0	4	}
+if	13:4	14:16	2	(! st -> nb_index_entries)
+cond	13:8	13:13	3	! st -> nb_index_entries
+op	13:8	0:0	4	!
+water	13:9	0:0	4	st
+op	13:11	0:0	4	->
+water	13:13	0:0	4	nb_index_entries
+stmts	14:8	14:16	3	
+goto	14:8	14:16	4	err
+water	14:13	0:0	5	err
+water	15:4	0:0	2	timestamp
+op	15:14	0:0	2	=
+call	15:16	15:63	2	FFMAX
+arg	15:22	15:31	3	timestamp
+water	15:22	0:0	4	timestamp
+arg	15:33	15:63	3	st->index_entries[0].timestamp
+water	15:33	0:0	4	st
+op	15:35	0:0	4	->
+water	15:37	0:0	4	index_entries
+op	15:50	0:0	4	[
+water	15:51	0:0	4	0
+op	15:52	0:0	4	]
+op	15:53	0:0	4	.
+water	15:54	0:0	4	timestamp
+water	15:64	0:0	2	;
+if	16:4	25:4	2	(( index =av_index_search_timestamp (st ,timestamp ,flags ) ) < 0 || index == st -> nb_index_entries - 1)
+cond	16:8	16:105	3	( index =av_index_search_timestamp (st ,timestamp ,flags ) ) < 0 || index == st -> nb_index_entries - 1
+water	16:8	0:0	4	(
+water	16:9	0:0	4	index
+op	16:15	0:0	4	=
+call	16:17	16:63	4	av_index_search_timestamp
+arg	16:43	16:45	5	st
+water	16:43	0:0	6	st
+arg	16:47	16:56	5	timestamp
+water	16:47	0:0	6	timestamp
+arg	16:58	16:63	5	flags
+water	16:58	0:0	6	flags
+water	16:64	0:0	4	)
+op	16:66	0:0	4	<
+water	16:68	0:0	4	0
+op	16:70	0:0	4	||
+water	16:73	0:0	4	index
+op	16:79	0:0	4	==
+water	16:82	0:0	4	st
+op	16:84	0:0	4	->
+water	16:86	0:0	4	nb_index_entries
+op	16:103	0:0	4	-
+water	16:105	0:0	4	1
+stmts	16:108	25:4	3	
+water	16:108	0:0	4	{
+call	17:8	18:26	4	avio_seek
+arg	17:18	17:23	5	s->pb
+water	17:18	0:0	6	s
+op	17:19	0:0	6	->
+water	17:21	0:0	6	pb
+arg	17:25	17:72	5	st->index_entries[st->nb_index_entries-1].pos
+water	17:25	0:0	6	st
+op	17:27	0:0	6	->
+water	17:29	0:0	6	index_entries
+op	17:42	0:0	6	[
+water	17:43	0:0	6	st
+op	17:45	0:0	6	->
+water	17:47	0:0	6	nb_index_entries
+op	17:64	0:0	6	-
+water	17:66	0:0	6	1
+op	17:67	0:0	6	]
+op	17:68	0:0	6	.
+water	17:69	0:0	6	pos
+arg	18:18	18:26	5	SEEK_SET
+water	18:18	0:0	6	SEEK_SET
+water	18:27	0:0	4	;
+water	19:8	0:0	4	matroska
+op	19:16	0:0	4	->
+water	19:18	0:0	4	current_id
+op	19:29	0:0	4	=
+water	19:31	0:0	4	0
+water	19:32	0:0	4	;
+while	20:8	24:8	4	(( index =av_index_search_timestamp (st ,timestamp ,flags ) ) < 0 || index == st -> nb_index_entries - 1)
+cond	20:15	20:112	5	( index =av_index_search_timestamp (st ,timestamp ,flags ) ) < 0 || index == st -> nb_index_entries - 1
+water	20:15	0:0	6	(
+water	20:16	0:0	6	index
+op	20:22	0:0	6	=
+call	20:24	20:70	6	av_index_search_timestamp
+arg	20:50	20:52	7	st
+water	20:50	0:0	8	st
+arg	20:54	20:63	7	timestamp
+water	20:54	0:0	8	timestamp
+arg	20:65	20:70	7	flags
+water	20:65	0:0	8	flags
+water	20:71	0:0	6	)
+op	20:73	0:0	6	<
+water	20:75	0:0	6	0
+op	20:77	0:0	6	||
+water	20:80	0:0	6	index
+op	20:86	0:0	6	==
+water	20:89	0:0	6	st
+op	20:91	0:0	6	->
+water	20:93	0:0	6	nb_index_entries
+op	20:110	0:0	6	-
+water	20:112	0:0	6	1
+stmts	20:115	24:8	5	
+water	20:115	0:0	6	{
+call	21:12	21:41	6	matroska_clear_queue
+arg	21:33	21:41	7	matroska
+water	21:33	0:0	8	matroska
+water	21:42	0:0	6	;
+if	22:12	23:21	6	(matroska_parse_cluster (matroska ) < 0)
+cond	22:16	22:51	7	matroska_parse_cluster (matroska ) < 0
+call	22:16	22:47	8	matroska_parse_cluster
+arg	22:39	22:47	9	matroska
+water	22:39	0:0	10	matroska
+op	22:49	0:0	8	<
+water	22:51	0:0	8	0
+stmts	23:16	23:21	7	
+break	23:16	23:21	8	
+water	24:8	0:0	6	}
+water	25:4	0:0	4	}
+call	26:4	26:33	2	matroska_clear_queue
+arg	26:25	26:33	3	matroska
+water	26:25	0:0	4	matroska
+water	26:34	0:0	2	;
+if	27:4	28:16	2	(index < 0 || ( matroska -> cues_parsing_deferred < 0 && index == st -> nb_index_entries - 1 ))
+cond	27:8	27:94	3	index < 0 || ( matroska -> cues_parsing_deferred < 0 && index == st -> nb_index_entries - 1 )
+water	27:8	0:0	4	index
+op	27:14	0:0	4	<
+water	27:16	0:0	4	0
+op	27:18	0:0	4	||
+water	27:21	0:0	4	(
+water	27:22	0:0	4	matroska
+op	27:30	0:0	4	->
+water	27:32	0:0	4	cues_parsing_deferred
+op	27:54	0:0	4	<
+water	27:56	0:0	4	0
+op	27:58	0:0	4	&&
+water	27:61	0:0	4	index
+op	27:67	0:0	4	==
+water	27:70	0:0	4	st
+op	27:72	0:0	4	->
+water	27:74	0:0	4	nb_index_entries
+op	27:91	0:0	4	-
+water	27:93	0:0	4	1
+water	27:94	0:0	4	)
+stmts	28:8	28:16	3	
+goto	28:8	28:16	4	err
+water	28:13	0:0	5	err
+water	29:4	0:0	2	index_min
+op	29:14	0:0	2	=
+water	29:16	0:0	2	index
+water	29:21	0:0	2	;
+water	30:4	0:0	2	tracks
+op	30:11	0:0	2	=
+water	30:13	0:0	2	matroska
+op	30:21	0:0	2	->
+water	30:23	0:0	2	tracks
+op	30:29	0:0	2	.
+water	30:30	0:0	2	elem
+water	30:34	0:0	2	;
+for	31:4	47:4	2	(i = 0 ;i < matroska -> tracks . nb_elem;i ++)
+forinit	31:9	31:14	3	i = 0 ;
+water	31:9	0:0	4	i
+op	31:11	0:0	4	=
+water	31:13	0:0	4	0
+water	31:14	0:0	4	;
+cond	31:16	31:37	3	i < matroska -> tracks . nb_elem
+water	31:16	0:0	4	i
+op	31:18	0:0	4	<
+water	31:20	0:0	4	matroska
+op	31:28	0:0	4	->
+water	31:30	0:0	4	tracks
+op	31:36	0:0	4	.
+water	31:37	0:0	4	nb_elem
+forexpr	31:46	31:47	3	i ++
+water	31:46	0:0	4	i
+op	31:47	0:0	4	++
+stmts	31:51	47:4	3	
+water	31:51	0:0	4	{
+water	32:8	0:0	4	tracks
+op	32:14	0:0	4	[
+water	32:15	0:0	4	i
+op	32:16	0:0	4	]
+op	32:17	0:0	4	.
+water	32:18	0:0	4	audio
+op	32:23	0:0	4	.
+water	32:24	0:0	4	pkt_cnt
+op	32:39	0:0	4	=
+water	32:41	0:0	4	0
+water	32:42	0:0	4	;
+water	33:8	0:0	4	tracks
+op	33:14	0:0	4	[
+water	33:15	0:0	4	i
+op	33:16	0:0	4	]
+op	33:17	0:0	4	.
+water	33:18	0:0	4	audio
+op	33:23	0:0	4	.
+water	33:24	0:0	4	sub_packet_cnt
+op	33:39	0:0	4	=
+water	33:41	0:0	4	0
+water	33:42	0:0	4	;
+water	34:8	0:0	4	tracks
+op	34:14	0:0	4	[
+water	34:15	0:0	4	i
+op	34:16	0:0	4	]
+op	34:17	0:0	4	.
+water	34:18	0:0	4	audio
+op	34:23	0:0	4	.
+water	34:24	0:0	4	buf_timecode
+op	34:39	0:0	4	=
+water	34:41	0:0	4	AV_NOPTS_VALUE
+water	34:55	0:0	4	;
+water	35:8	0:0	4	tracks
+op	35:14	0:0	4	[
+water	35:15	0:0	4	i
+op	35:16	0:0	4	]
+op	35:17	0:0	4	.
+water	35:18	0:0	4	end_timecode
+op	35:39	0:0	4	=
+water	35:41	0:0	4	0
+water	35:42	0:0	4	;
+if	36:8	46:8	4	(tracks [ i ] . type == MATROSKA_TRACK_TYPE_SUBTITLE && tracks [ i ] . stream -> discard != AVDISCARD_ALL)
+cond	36:12	37:41	5	tracks [ i ] . type == MATROSKA_TRACK_TYPE_SUBTITLE && tracks [ i ] . stream -> discard != AVDISCARD_ALL
+water	36:12	0:0	6	tracks
+op	36:18	0:0	6	[
+water	36:19	0:0	6	i
+op	36:20	0:0	6	]
+op	36:21	0:0	6	.
+water	36:22	0:0	6	type
+op	36:27	0:0	6	==
+water	36:30	0:0	6	MATROSKA_TRACK_TYPE_SUBTITLE
+op	36:59	0:0	6	&&
+water	37:12	0:0	6	tracks
+op	37:18	0:0	6	[
+water	37:19	0:0	6	i
+op	37:20	0:0	6	]
+op	37:21	0:0	6	.
+water	37:22	0:0	6	stream
+op	37:28	0:0	6	->
+water	37:30	0:0	6	discard
+op	37:38	0:0	6	!=
+water	37:41	0:0	6	AVDISCARD_ALL
+stmts	37:56	46:8	5	
+water	37:56	0:0	6	{
+water	38:12	0:0	6	index_sub
+op	38:22	0:0	6	=
+call	38:24	40:36	6	av_index_search_timestamp
+arg	39:16	39:32	7	tracks[i].stream
+water	39:16	0:0	8	tracks
+op	39:22	0:0	8	[
+water	39:23	0:0	8	i
+op	39:24	0:0	8	]
+op	39:25	0:0	8	.
+water	39:26	0:0	8	stream
+arg	39:34	39:68	7	st->index_entries[index].timestamp
+water	39:34	0:0	8	st
+op	39:36	0:0	8	->
+water	39:38	0:0	8	index_entries
+op	39:51	0:0	8	[
+water	39:52	0:0	8	index
+op	39:57	0:0	8	]
+op	39:58	0:0	8	.
+water	39:59	0:0	8	timestamp
+arg	40:16	40:36	7	AVSEEK_FLAG_BACKWARD
+water	40:16	0:0	8	AVSEEK_FLAG_BACKWARD
+water	40:37	0:0	6	;
+while	41:12	45:27	6	(index_sub >= 0 && index_min > 0 && tracks [ i ] . stream -> index_entries [ index_sub ] . pos < st -> index_entries [ index_min ] . pos && st -> index_entries [ index ] . timestamp - tracks [ i ] . stream -> index_entries [ index_sub ] . timestamp < 30000000000 / matroska -> time_scale)
+cond	41:19	44:134	7	index_sub >= 0 && index_min > 0 && tracks [ i ] . stream -> index_entries [ index_sub ] . pos < st -> index_entries [ index_min ] . pos && st -> index_entries [ index ] . timestamp - tracks [ i ] . stream -> index_entries [ index_sub ] . timestamp < 30000000000 / matroska -> time_scale
+water	41:19	0:0	8	index_sub
+op	41:29	0:0	8	>=
+water	41:32	0:0	8	0
+op	41:34	0:0	8	&&
+water	42:18	0:0	8	index_min
+op	42:28	0:0	8	>
+water	42:30	0:0	8	0
+op	42:32	0:0	8	&&
+water	43:18	0:0	8	tracks
+op	43:24	0:0	8	[
+water	43:25	0:0	8	i
+op	43:26	0:0	8	]
+op	43:27	0:0	8	.
+water	43:28	0:0	8	stream
+op	43:34	0:0	8	->
+water	43:36	0:0	8	index_entries
+op	43:49	0:0	8	[
+water	43:50	0:0	8	index_sub
+op	43:59	0:0	8	]
+op	43:60	0:0	8	.
+water	43:61	0:0	8	pos
+op	43:65	0:0	8	<
+water	43:67	0:0	8	st
+op	43:69	0:0	8	->
+water	43:71	0:0	8	index_entries
+op	43:84	0:0	8	[
+water	43:85	0:0	8	index_min
+op	43:94	0:0	8	]
+op	43:95	0:0	8	.
+water	43:96	0:0	8	pos
+op	43:100	0:0	8	&&
+water	44:18	0:0	8	st
+op	44:20	0:0	8	->
+water	44:22	0:0	8	index_entries
+op	44:35	0:0	8	[
+water	44:36	0:0	8	index
+op	44:41	0:0	8	]
+op	44:42	0:0	8	.
+water	44:43	0:0	8	timestamp
+op	44:53	0:0	8	-
+water	44:55	0:0	8	tracks
+op	44:61	0:0	8	[
+water	44:62	0:0	8	i
+op	44:63	0:0	8	]
+op	44:64	0:0	8	.
+water	44:65	0:0	8	stream
+op	44:71	0:0	8	->
+water	44:73	0:0	8	index_entries
+op	44:86	0:0	8	[
+water	44:87	0:0	8	index_sub
+op	44:96	0:0	8	]
+op	44:97	0:0	8	.
+water	44:98	0:0	8	timestamp
+op	44:108	0:0	8	<
+water	44:110	0:0	8	30000000000
+op	44:122	0:0	8	/
+water	44:124	0:0	8	matroska
+op	44:132	0:0	8	->
+water	44:134	0:0	8	time_scale
+stmts	45:16	45:27	7	
+water	45:16	0:0	8	index_min
+op	45:25	0:0	8	--
+water	45:27	0:0	8	;
+water	46:8	0:0	6	}
+water	47:4	0:0	4	}
+call	48:4	48:63	2	avio_seek
+arg	48:14	48:19	3	s->pb
+water	48:14	0:0	4	s
+op	48:15	0:0	4	->
+water	48:17	0:0	4	pb
+arg	48:21	48:53	3	st->index_entries[index_min].pos
+water	48:21	0:0	4	st
+op	48:23	0:0	4	->
+water	48:25	0:0	4	index_entries
+op	48:38	0:0	4	[
+water	48:39	0:0	4	index_min
+op	48:48	0:0	4	]
+op	48:49	0:0	4	.
+water	48:50	0:0	4	pos
+arg	48:55	48:63	3	SEEK_SET
+water	48:55	0:0	4	SEEK_SET
+water	48:64	0:0	2	;
+water	49:4	0:0	2	matroska
+op	49:12	0:0	2	->
+water	49:14	0:0	2	current_id
+op	49:31	0:0	2	=
+water	49:33	0:0	2	0
+water	49:34	0:0	2	;
+if	50:4	53:4	2	(flags & AVSEEK_FLAG_ANY)
+cond	50:8	50:16	3	flags & AVSEEK_FLAG_ANY
+water	50:8	0:0	4	flags
+op	50:14	0:0	4	&
+water	50:16	0:0	4	AVSEEK_FLAG_ANY
+stmts	50:33	53:4	3	
+water	50:33	0:0	4	{
+water	51:8	0:0	4	st
+op	51:10	0:0	4	->
+water	51:12	0:0	4	skip_to_keyframe
+op	51:29	0:0	4	=
+water	51:31	0:0	4	0
+water	51:32	0:0	4	;
+water	52:8	0:0	4	matroska
+op	52:16	0:0	4	->
+water	52:18	0:0	4	skip_to_timecode
+op	52:35	0:0	4	=
+water	52:37	0:0	4	timestamp
+water	52:46	0:0	4	;
+water	53:4	0:0	4	}
+else	53:6	56:4	2
+stmts	53:11	56:4	3	
+water	53:11	0:0	4	{
+water	54:8	0:0	4	st
+op	54:10	0:0	4	->
+water	54:12	0:0	4	skip_to_keyframe
+op	54:29	0:0	4	=
+water	54:31	0:0	4	1
+water	54:32	0:0	4	;
+water	55:8	0:0	4	matroska
+op	55:16	0:0	4	->
+water	55:18	0:0	4	skip_to_timecode
+op	55:35	0:0	4	=
+water	55:37	0:0	4	st
+op	55:39	0:0	4	->
+water	55:41	0:0	4	index_entries
+op	55:54	0:0	4	[
+water	55:55	0:0	4	index
+op	55:60	0:0	4	]
+op	55:61	0:0	4	.
+water	55:62	0:0	4	timestamp
+water	55:71	0:0	4	;
+water	56:4	0:0	4	}
+water	57:4	0:0	2	matroska
+op	57:12	0:0	2	->
+water	57:14	0:0	2	skip_to_keyframe
+op	57:31	0:0	2	=
+water	57:33	0:0	2	1
+water	57:34	0:0	2	;
+water	58:4	0:0	2	matroska
+op	58:12	0:0	2	->
+water	58:14	0:0	2	done
+op	58:31	0:0	2	=
+water	58:33	0:0	2	0
+water	58:34	0:0	2	;
+water	59:4	0:0	2	matroska
+op	59:12	0:0	2	->
+water	59:14	0:0	2	num_levels
+op	59:31	0:0	2	=
+water	59:33	0:0	2	0
+water	59:34	0:0	2	;
+call	60:4	60:63	2	ff_update_cur_dts
+arg	60:22	60:23	3	s
+water	60:22	0:0	4	s
+arg	60:25	60:27	3	st
+water	60:25	0:0	4	st
+arg	60:29	60:63	3	st->index_entries[index].timestamp
+water	60:29	0:0	4	st
+op	60:31	0:0	4	->
+water	60:33	0:0	4	index_entries
+op	60:46	0:0	4	[
+water	60:47	0:0	4	index
+op	60:52	0:0	4	]
+op	60:53	0:0	4	.
+water	60:54	0:0	4	timestamp
+water	60:64	0:0	2	;
+return	61:4	61:12	2	0
+water	61:11	0:0	3	0
+label	62:0	62:3	2	err :
+call	65:4	65:33	2	matroska_clear_queue
+arg	65:25	65:33	3	matroska
+water	65:25	0:0	4	matroska
+water	65:34	0:0	2	;
+water	66:4	0:0	2	matroska
+op	66:12	0:0	2	->
+water	66:14	0:0	2	current_id
+op	66:25	0:0	2	=
+water	66:27	0:0	2	0
+water	66:28	0:0	2	;
+water	67:4	0:0	2	st
+op	67:6	0:0	2	->
+water	67:8	0:0	2	skip_to_keyframe
+op	67:25	0:0	2	=
+water	68:4	0:0	2	matroska
+op	68:12	0:0	2	->
+water	68:14	0:0	2	skip_to_keyframe
+op	68:31	0:0	2	=
+water	68:33	0:0	2	0
+water	68:34	0:0	2	;
+water	69:4	0:0	2	matroska
+op	69:12	0:0	2	->
+water	69:14	0:0	2	done
+op	69:19	0:0	2	=
+water	69:21	0:0	2	0
+water	69:22	0:0	2	;
+water	70:4	0:0	2	matroska
+op	70:12	0:0	2	->
+water	70:14	0:0	2	num_levels
+op	70:25	0:0	2	=
+water	70:27	0:0	2	0
+water	70:28	0:0	2	;
+return	71:4	71:13	2	-1
+op	71:11	0:0	3	-
+water	71:12	0:0	3	1

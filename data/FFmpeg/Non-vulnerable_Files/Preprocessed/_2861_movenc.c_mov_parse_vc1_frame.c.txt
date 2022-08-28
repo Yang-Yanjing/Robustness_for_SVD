@@ -1,0 +1,372 @@
+func	1:0	59:0	0	static void	mov_parse_vc1_frame
+params	1:31	0:0	1	
+param	1:32	1:45	2	AVPacket *	pkt
+param	1:47	1:60	2	MOVTrack *	trk
+stmnts	0:0	58:4	1	
+decl	3:4	3:61	2	const uint8_t	*start
+water	3:24	0:0	2	,
+decl	3:4	3:61	2	const uint8_t	*next
+water	3:31	0:0	2	,
+decl	3:4	3:61	2	const uint8_t	*end
+op	3:38	0:0	2	=
+water	3:40	0:0	2	pkt
+op	3:43	0:0	2	->
+water	3:45	0:0	2	data
+op	3:50	0:0	2	+
+water	3:52	0:0	2	pkt
+op	3:55	0:0	2	->
+water	3:57	0:0	2	size
+decl	4:4	4:26	2	int	seq
+op	4:12	0:0	2	=
+water	4:14	0:0	2	0
+water	4:15	0:0	2	,
+decl	4:4	4:26	2	int	entry
+op	4:23	0:0	2	=
+water	4:25	0:0	2	0
+decl	5:4	5:42	2	int	key
+op	5:12	0:0	2	=
+water	5:14	0:0	2	pkt
+op	5:17	0:0	2	->
+water	5:19	0:0	2	flags
+op	5:25	0:0	2	&
+water	5:27	0:0	2	AV_PKT_FLAG_KEY
+water	6:4	0:0	2	start
+op	6:10	0:0	2	=
+call	6:12	6:43	2	find_next_marker
+arg	6:29	6:38	3	pkt->data
+water	6:29	0:0	4	pkt
+op	6:32	0:0	4	->
+water	6:34	0:0	4	data
+arg	6:40	6:43	3	end
+water	6:40	0:0	4	end
+water	6:44	0:0	2	;
+for	7:4	20:4	2	(next = start ;next < end;start = next)
+forinit	7:9	7:21	3	next = start ;
+water	7:9	0:0	4	next
+op	7:14	0:0	4	=
+water	7:16	0:0	4	start
+water	7:21	0:0	4	;
+cond	7:23	7:30	3	next < end
+water	7:23	0:0	4	next
+op	7:28	0:0	4	<
+water	7:30	0:0	4	end
+forexpr	7:35	7:43	3	start = next
+water	7:35	0:0	4	start
+op	7:41	0:0	4	=
+water	7:43	0:0	4	next
+stmts	7:49	20:4	3	
+water	7:49	0:0	4	{
+water	8:8	0:0	4	next
+op	8:13	0:0	4	=
+call	8:15	8:46	4	find_next_marker
+arg	8:32	8:41	5	start+4
+water	8:32	0:0	6	start
+op	8:38	0:0	6	+
+water	8:40	0:0	6	4
+arg	8:43	8:46	5	end
+water	8:43	0:0	6	end
+water	8:47	0:0	4	;
+switch	9:8	19:8	4	(AV_RB32 (start ))
+cond	9:16	9:29	5	AV_RB32 (start )
+call	9:16	9:29	6	AV_RB32
+arg	9:24	9:29	7	start
+water	9:24	0:0	8	start
+stmts	9:32	19:8	5	
+water	9:32	0:0	6	{
+label	10:8	10:28	6	case VC1_CODE_SEQHDR :
+water	11:12	0:0	6	seq
+op	11:16	0:0	6	=
+water	11:18	0:0	6	1
+water	11:19	0:0	6	;
+break	12:12	12:17	6	
+label	13:8	13:32	6	case VC1_CODE_ENTRYPOINT :
+water	14:12	0:0	6	entry
+op	14:18	0:0	6	=
+water	14:20	0:0	6	1
+water	14:21	0:0	6	;
+break	15:12	15:17	6	
+label	16:8	16:27	6	case VC1_CODE_SLICE :
+water	17:12	0:0	6	trk
+op	17:15	0:0	6	->
+water	17:17	0:0	6	vc1_info
+op	17:25	0:0	6	.
+water	17:26	0:0	6	slices
+op	17:33	0:0	6	=
+water	17:35	0:0	6	1
+water	17:36	0:0	6	;
+break	18:12	18:17	6	
+water	19:8	0:0	6	}
+water	20:4	0:0	4	}
+if	21:4	22:44	2	(! trk -> entry && trk -> vc1_info . first_packet_seen)
+cond	21:8	21:37	3	! trk -> entry && trk -> vc1_info . first_packet_seen
+op	21:8	0:0	4	!
+water	21:9	0:0	4	trk
+op	21:12	0:0	4	->
+water	21:14	0:0	4	entry
+op	21:20	0:0	4	&&
+water	21:23	0:0	4	trk
+op	21:26	0:0	4	->
+water	21:28	0:0	4	vc1_info
+op	21:36	0:0	4	.
+water	21:37	0:0	4	first_packet_seen
+stmts	22:8	22:44	3	
+water	22:8	0:0	4	trk
+op	22:11	0:0	4	->
+water	22:13	0:0	4	vc1_info
+op	22:21	0:0	4	.
+water	22:22	0:0	4	first_frag_written
+op	22:41	0:0	4	=
+water	22:43	0:0	4	1
+water	22:44	0:0	4	;
+if	23:4	28:4	2	(! trk -> entry && ! trk -> vc1_info . first_frag_written)
+cond	23:8	23:38	3	! trk -> entry && ! trk -> vc1_info . first_frag_written
+op	23:8	0:0	4	!
+water	23:9	0:0	4	trk
+op	23:12	0:0	4	->
+water	23:14	0:0	4	entry
+op	23:20	0:0	4	&&
+op	23:23	0:0	4	!
+water	23:24	0:0	4	trk
+op	23:27	0:0	4	->
+water	23:29	0:0	4	vc1_info
+op	23:37	0:0	4	.
+water	23:38	0:0	4	first_frag_written
+stmts	23:58	28:4	3	
+water	23:58	0:0	4	{
+water	25:8	0:0	4	trk
+op	25:11	0:0	4	->
+water	25:13	0:0	4	vc1_info
+op	25:21	0:0	4	.
+water	25:22	0:0	4	first_packet_seq
+op	25:41	0:0	4	=
+water	25:43	0:0	4	seq
+water	25:46	0:0	4	;
+water	26:8	0:0	4	trk
+op	26:11	0:0	4	->
+water	26:13	0:0	4	vc1_info
+op	26:21	0:0	4	.
+water	26:22	0:0	4	first_packet_entry
+op	26:41	0:0	4	=
+water	26:43	0:0	4	entry
+water	26:48	0:0	4	;
+water	27:8	0:0	4	trk
+op	27:11	0:0	4	->
+water	27:13	0:0	4	vc1_info
+op	27:21	0:0	4	.
+water	27:22	0:0	4	first_packet_seen
+op	27:41	0:0	4	=
+water	27:43	0:0	4	1
+water	27:44	0:0	4	;
+water	28:4	0:0	4	}
+else	28:6	48:4	2
+stmts	28:11	48:4	3	
+if	28:11	48:4	4	(( seq && ! trk -> vc1_info . packet_seq ) || ( entry && ! trk -> vc1_info . packet_entry ))
+cond	28:15	29:52	5	( seq && ! trk -> vc1_info . packet_seq ) || ( entry && ! trk -> vc1_info . packet_entry )
+water	28:15	0:0	6	(
+water	28:16	0:0	6	seq
+op	28:20	0:0	6	&&
+op	28:23	0:0	6	!
+water	28:24	0:0	6	trk
+op	28:27	0:0	6	->
+water	28:29	0:0	6	vc1_info
+op	28:37	0:0	6	.
+water	28:38	0:0	6	packet_seq
+water	28:48	0:0	6	)
+op	28:50	0:0	6	||
+water	29:15	0:0	6	(
+water	29:16	0:0	6	entry
+op	29:22	0:0	6	&&
+op	29:25	0:0	6	!
+water	29:26	0:0	6	trk
+op	29:29	0:0	6	->
+water	29:31	0:0	6	vc1_info
+op	29:39	0:0	6	.
+water	29:40	0:0	6	packet_entry
+water	29:52	0:0	6	)
+stmts	29:55	48:4	5	
+water	29:55	0:0	6	{
+decl	30:8	30:13	6	int	i
+for	31:8	32:53	6	(i = 0 ;i < trk -> entry;i ++)
+forinit	31:13	31:18	7	i = 0 ;
+water	31:13	0:0	8	i
+op	31:15	0:0	8	=
+water	31:17	0:0	8	0
+water	31:18	0:0	8	;
+cond	31:20	31:29	7	i < trk -> entry
+water	31:20	0:0	8	i
+op	31:22	0:0	8	<
+water	31:24	0:0	8	trk
+op	31:27	0:0	8	->
+water	31:29	0:0	8	entry
+forexpr	31:36	31:37	7	i ++
+water	31:36	0:0	8	i
+op	31:37	0:0	8	++
+stmts	32:12	32:53	7	
+water	32:12	0:0	8	trk
+op	32:15	0:0	8	->
+water	32:17	0:0	8	cluster
+op	32:24	0:0	8	[
+water	32:25	0:0	8	i
+op	32:26	0:0	8	]
+op	32:27	0:0	8	.
+water	32:28	0:0	8	flags
+op	32:34	0:0	8	&=
+water	32:37	0:0	8	~MOV_SYNC_SAMPLE
+water	32:53	0:0	8	;
+water	33:8	0:0	6	trk
+op	33:11	0:0	6	->
+water	33:13	0:0	6	has_keyframes
+op	33:27	0:0	6	=
+water	33:29	0:0	6	0
+water	33:30	0:0	6	;
+if	34:8	35:40	6	(seq)
+cond	34:12	34:12	7	seq
+water	34:12	0:0	8	seq
+stmts	35:12	35:40	7	
+water	35:12	0:0	8	trk
+op	35:15	0:0	8	->
+water	35:17	0:0	8	vc1_info
+op	35:25	0:0	8	.
+water	35:26	0:0	8	packet_seq
+op	35:37	0:0	8	=
+water	35:39	0:0	8	1
+water	35:40	0:0	8	;
+if	36:8	37:42	6	(entry)
+cond	36:12	36:12	7	entry
+water	36:12	0:0	8	entry
+stmts	37:12	37:42	7	
+water	37:12	0:0	8	trk
+op	37:15	0:0	8	->
+water	37:17	0:0	8	vc1_info
+op	37:25	0:0	8	.
+water	37:26	0:0	8	packet_entry
+op	37:39	0:0	8	=
+water	37:41	0:0	8	1
+water	37:42	0:0	8	;
+if	38:8	47:8	6	(! trk -> vc1_info . first_frag_written)
+cond	38:12	38:27	7	! trk -> vc1_info . first_frag_written
+op	38:12	0:0	8	!
+water	38:13	0:0	8	trk
+op	38:16	0:0	8	->
+water	38:18	0:0	8	vc1_info
+op	38:26	0:0	8	.
+water	38:27	0:0	8	first_frag_written
+stmts	38:47	47:8	7	
+water	38:47	0:0	8	{
+if	40:12	46:12	8	(( ! seq || trk -> vc1_info . first_packet_seq ) && ( ! entry || trk -> vc1_info . first_packet_entry ))
+cond	40:16	41:59	9	( ! seq || trk -> vc1_info . first_packet_seq ) && ( ! entry || trk -> vc1_info . first_packet_entry )
+water	40:16	0:0	10	(
+op	40:17	0:0	10	!
+water	40:18	0:0	10	seq
+op	40:24	0:0	10	||
+water	40:27	0:0	10	trk
+op	40:30	0:0	10	->
+water	40:32	0:0	10	vc1_info
+op	40:40	0:0	10	.
+water	40:41	0:0	10	first_packet_seq
+water	40:57	0:0	10	)
+op	40:59	0:0	10	&&
+water	41:16	0:0	10	(
+op	41:17	0:0	10	!
+water	41:18	0:0	10	entry
+op	41:24	0:0	10	||
+water	41:27	0:0	10	trk
+op	41:30	0:0	10	->
+water	41:32	0:0	10	vc1_info
+op	41:40	0:0	10	.
+water	41:41	0:0	10	first_packet_entry
+water	41:59	0:0	10	)
+stmts	41:62	46:12	9	
+water	41:62	0:0	10	{
+water	44:16	0:0	10	trk
+op	44:19	0:0	10	->
+water	44:21	0:0	10	cluster
+op	44:28	0:0	10	[
+water	44:29	0:0	10	0
+op	44:30	0:0	10	]
+op	44:31	0:0	10	.
+water	44:32	0:0	10	flags
+op	44:38	0:0	10	|=
+water	44:41	0:0	10	MOV_SYNC_SAMPLE
+water	44:56	0:0	10	;
+water	45:16	0:0	10	trk
+op	45:19	0:0	10	->
+water	45:21	0:0	10	has_keyframes
+op	45:35	0:0	10	=
+water	45:37	0:0	10	1
+water	45:38	0:0	10	;
+water	46:12	0:0	10	}
+water	47:8	0:0	8	}
+water	48:4	0:0	6	}
+if	49:4	50:26	2	(trk -> vc1_info . packet_seq && trk -> vc1_info . packet_entry)
+cond	49:8	49:50	3	trk -> vc1_info . packet_seq && trk -> vc1_info . packet_entry
+water	49:8	0:0	4	trk
+op	49:11	0:0	4	->
+water	49:13	0:0	4	vc1_info
+op	49:21	0:0	4	.
+water	49:22	0:0	4	packet_seq
+op	49:33	0:0	4	&&
+water	49:36	0:0	4	trk
+op	49:39	0:0	4	->
+water	49:41	0:0	4	vc1_info
+op	49:49	0:0	4	.
+water	49:50	0:0	4	packet_entry
+stmts	50:8	50:26	3	
+water	50:8	0:0	4	key
+op	50:12	0:0	4	=
+water	50:14	0:0	4	seq
+op	50:18	0:0	4	&&
+water	50:21	0:0	4	entry
+water	50:26	0:0	4	;
+else	51:4	52:17	2
+stmts	51:9	52:17	3	
+if	51:9	52:17	4	(trk -> vc1_info . packet_seq)
+cond	51:13	51:27	5	trk -> vc1_info . packet_seq
+water	51:13	0:0	6	trk
+op	51:16	0:0	6	->
+water	51:18	0:0	6	vc1_info
+op	51:26	0:0	6	.
+water	51:27	0:0	6	packet_seq
+stmts	52:8	52:17	5	
+water	52:8	0:0	6	key
+op	52:12	0:0	6	=
+water	52:14	0:0	6	seq
+water	52:17	0:0	6	;
+else	53:4	54:19	2
+stmts	53:9	54:19	3	
+if	53:9	54:19	4	(trk -> vc1_info . packet_entry)
+cond	53:13	53:27	5	trk -> vc1_info . packet_entry
+water	53:13	0:0	6	trk
+op	53:16	0:0	6	->
+water	53:18	0:0	6	vc1_info
+op	53:26	0:0	6	.
+water	53:27	0:0	6	packet_entry
+stmts	54:8	54:19	5	
+water	54:8	0:0	6	key
+op	54:12	0:0	6	=
+water	54:14	0:0	6	entry
+water	54:19	0:0	6	;
+if	55:4	58:4	2	(key)
+cond	55:8	55:8	3	key
+water	55:8	0:0	4	key
+stmts	55:13	58:4	3	
+water	55:13	0:0	4	{
+water	56:8	0:0	4	trk
+op	56:11	0:0	4	->
+water	56:13	0:0	4	cluster
+op	56:20	0:0	4	[
+water	56:21	0:0	4	trk
+op	56:24	0:0	4	->
+water	56:26	0:0	4	entry
+op	56:31	0:0	4	]
+op	56:32	0:0	4	.
+water	56:33	0:0	4	flags
+op	56:39	0:0	4	|=
+water	56:42	0:0	4	MOV_SYNC_SAMPLE
+water	56:57	0:0	4	;
+water	57:8	0:0	4	trk
+op	57:11	0:0	4	->
+water	57:13	0:0	4	has_keyframes
+op	57:26	0:0	4	++
+water	57:28	0:0	4	;
+water	58:4	0:0	4	}

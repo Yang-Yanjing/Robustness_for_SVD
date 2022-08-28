@@ -1,0 +1,391 @@
+func	1:0	47:0	0	static void	apply_tns
+params	1:21	0:0	1	
+param	1:22	1:41	2	INTFLOAT	coef[1024]
+param	1:43	1:68	2	TemporalNoiseShaping *	tns
+param	2:22	2:50	2	IndividualChannelStream *	ics
+param	2:52	2:62	2	int	decode
+stmnts	0:0	46:4	1	
+decl	4:4	4:59	2	const int	mmm
+op	4:18	0:0	2	=
+call	4:20	4:58	3	FFMIN
+arg	4:26	4:44	4	ics->tns_max_bands
+water	4:26	0:0	5	ics
+op	4:29	0:0	5	->
+water	4:31	0:0	5	tns_max_bands
+arg	4:46	4:58	4	ics->max_sfb
+water	4:46	0:0	5	ics
+op	4:49	0:0	5	->
+water	4:51	0:0	5	max_sfb
+decl	5:4	5:21	2	int	w
+water	5:9	0:0	2	,
+decl	5:4	5:21	2	int	filt
+water	5:15	0:0	2	,
+decl	5:4	5:21	2	int	m
+water	5:18	0:0	2	,
+decl	5:4	5:21	2	int	i
+decl	6:4	6:49	2	int	bottom
+water	6:14	0:0	2	,
+decl	6:4	6:49	2	int	top
+water	6:19	0:0	2	,
+decl	6:4	6:49	2	int	order
+water	6:26	0:0	2	,
+decl	6:4	6:49	2	int	start
+water	6:33	0:0	2	,
+decl	6:4	6:49	2	int	end
+water	6:38	0:0	2	,
+decl	6:4	6:49	2	int	size
+water	6:44	0:0	2	,
+decl	6:4	6:49	2	int	inc
+decl	7:4	7:31	2	INTFLOAT	lpc[TNS_MAX_ORDER]
+decl	8:4	8:33	2	INTFLOAT	tmp[TNS_MAX_ORDER+1]
+for	9:4	46:4	2	(w = 0 ;w < ics -> num_windows;w ++)
+forinit	9:9	9:14	3	w = 0 ;
+water	9:9	0:0	4	w
+op	9:11	0:0	4	=
+water	9:13	0:0	4	0
+water	9:14	0:0	4	;
+cond	9:16	9:25	3	w < ics -> num_windows
+water	9:16	0:0	4	w
+op	9:18	0:0	4	<
+water	9:20	0:0	4	ics
+op	9:23	0:0	4	->
+water	9:25	0:0	4	num_windows
+forexpr	9:38	9:39	3	w ++
+water	9:38	0:0	4	w
+op	9:39	0:0	4	++
+stmts	9:43	46:4	3	
+water	9:43	0:0	4	{
+water	10:8	0:0	4	bottom
+op	10:15	0:0	4	=
+water	10:17	0:0	4	ics
+op	10:20	0:0	4	->
+water	10:22	0:0	4	num_swb
+water	10:29	0:0	4	;
+for	11:8	45:8	4	(filt = 0 ;filt < tns -> n_filt [ w ];filt ++)
+forinit	11:13	11:21	5	filt = 0 ;
+water	11:13	0:0	6	filt
+op	11:18	0:0	6	=
+water	11:20	0:0	6	0
+water	11:21	0:0	6	;
+cond	11:23	11:43	5	filt < tns -> n_filt [ w ]
+water	11:23	0:0	6	filt
+op	11:28	0:0	6	<
+water	11:30	0:0	6	tns
+op	11:33	0:0	6	->
+water	11:35	0:0	6	n_filt
+op	11:41	0:0	6	[
+water	11:42	0:0	6	w
+op	11:43	0:0	6	]
+forexpr	11:46	11:50	5	filt ++
+water	11:46	0:0	6	filt
+op	11:50	0:0	6	++
+stmts	11:54	45:8	5	
+water	11:54	0:0	6	{
+water	12:12	0:0	6	top
+op	12:19	0:0	6	=
+water	12:21	0:0	6	bottom
+water	12:27	0:0	6	;
+water	13:12	0:0	6	bottom
+op	13:19	0:0	6	=
+call	13:21	13:56	6	FFMAX
+arg	13:27	13:28	7	0
+water	13:27	0:0	8	0
+arg	13:30	13:56	7	top-tns->length[w][filt]
+water	13:30	0:0	8	top
+op	13:34	0:0	8	-
+water	13:36	0:0	8	tns
+op	13:39	0:0	8	->
+water	13:41	0:0	8	length
+op	13:47	0:0	8	[
+water	13:48	0:0	8	w
+op	13:49	0:0	8	]
+op	13:50	0:0	8	[
+water	13:51	0:0	8	filt
+op	13:55	0:0	8	]
+water	13:57	0:0	6	;
+water	14:12	0:0	6	order
+op	14:19	0:0	6	=
+water	14:21	0:0	6	tns
+op	14:24	0:0	6	->
+water	14:26	0:0	6	order
+op	14:31	0:0	6	[
+water	14:32	0:0	6	w
+op	14:33	0:0	6	]
+op	14:34	0:0	6	[
+water	14:35	0:0	6	filt
+op	14:39	0:0	6	]
+water	14:40	0:0	6	;
+if	15:12	16:24	6	(order == 0)
+cond	15:16	15:25	7	order == 0
+water	15:16	0:0	8	order
+op	15:22	0:0	8	==
+water	15:25	0:0	8	0
+stmts	16:16	16:24	7	
+continue	16:16	16:24	8	
+call	18:12	18:40	6	AAC_RENAME
+arg	18:23	18:40	7	compute_lpc_coefs
+water	18:23	0:0	8	compute_lpc_coefs
+water	18:41	0:0	6	(
+water	18:42	0:0	6	tns
+op	18:45	0:0	6	->
+water	18:47	0:0	6	coef
+op	18:51	0:0	6	[
+water	18:52	0:0	6	w
+op	18:53	0:0	6	]
+op	18:54	0:0	6	[
+water	18:55	0:0	6	filt
+op	18:59	0:0	6	]
+water	18:60	0:0	6	,
+water	18:62	0:0	6	order
+water	18:67	0:0	6	,
+water	18:69	0:0	6	lpc
+water	18:72	0:0	6	,
+water	18:74	0:0	6	0
+water	18:75	0:0	6	,
+water	18:77	0:0	6	0
+water	18:78	0:0	6	,
+water	18:80	0:0	6	0
+water	18:81	0:0	6	)
+water	18:82	0:0	6	;
+water	19:12	0:0	6	start
+op	19:18	0:0	6	=
+water	19:20	0:0	6	ics
+op	19:23	0:0	6	->
+water	19:25	0:0	6	swb_offset
+op	19:35	0:0	6	[
+call	19:36	19:53	6	FFMIN
+arg	19:42	19:48	7	bottom
+water	19:42	0:0	8	bottom
+arg	19:50	19:53	7	mmm
+water	19:50	0:0	8	mmm
+op	19:54	0:0	6	]
+water	19:55	0:0	6	;
+water	20:12	0:0	6	end
+op	20:18	0:0	6	=
+water	20:20	0:0	6	ics
+op	20:23	0:0	6	->
+water	20:25	0:0	6	swb_offset
+op	20:35	0:0	6	[
+call	20:36	20:53	6	FFMIN
+arg	20:45	20:48	7	top
+water	20:45	0:0	8	top
+arg	20:50	20:53	7	mmm
+water	20:50	0:0	8	mmm
+op	20:54	0:0	6	]
+water	20:55	0:0	6	;
+if	21:12	22:24	6	(( size = end - start ) <= 0)
+cond	21:16	21:40	7	( size = end - start ) <= 0
+water	21:16	0:0	8	(
+water	21:17	0:0	8	size
+op	21:22	0:0	8	=
+water	21:24	0:0	8	end
+op	21:28	0:0	8	-
+water	21:30	0:0	8	start
+water	21:35	0:0	8	)
+op	21:37	0:0	8	<=
+water	21:40	0:0	8	0
+stmts	22:16	22:24	7	
+continue	22:16	22:24	8	
+if	23:12	26:12	6	(tns -> direction [ w ] [ filt ])
+cond	23:16	23:38	7	tns -> direction [ w ] [ filt ]
+water	23:16	0:0	8	tns
+op	23:19	0:0	8	->
+water	23:21	0:0	8	direction
+op	23:30	0:0	8	[
+water	23:31	0:0	8	w
+op	23:32	0:0	8	]
+op	23:33	0:0	8	[
+water	23:34	0:0	8	filt
+op	23:38	0:0	8	]
+stmts	23:41	26:12	7	
+water	23:41	0:0	8	{
+water	24:16	0:0	8	inc
+op	24:20	0:0	8	=
+op	24:22	0:0	8	-
+water	24:23	0:0	8	1
+water	24:24	0:0	8	;
+water	25:16	0:0	8	start
+op	25:22	0:0	8	=
+water	25:24	0:0	8	end
+op	25:28	0:0	8	-
+water	25:30	0:0	8	1
+water	25:31	0:0	8	;
+water	26:12	0:0	8	}
+else	26:14	28:12	6
+stmts	26:19	28:12	7	
+water	26:19	0:0	8	{
+water	27:16	0:0	8	inc
+op	27:20	0:0	8	=
+water	27:22	0:0	8	1
+water	27:23	0:0	8	;
+water	28:12	0:0	8	}
+water	29:12	0:0	6	start
+op	29:18	0:0	6	+=
+water	29:21	0:0	6	w
+op	29:23	0:0	6	*
+water	29:25	0:0	6	128
+water	29:28	0:0	6	;
+if	30:12	35:12	6	(decode)
+cond	30:16	30:16	7	decode
+water	30:16	0:0	8	decode
+stmts	30:24	35:12	7	
+water	30:24	0:0	8	{
+for	32:16	34:83	8	(m = 0 ;m < size;m ++ , start += inc)
+forinit	32:21	32:26	9	m = 0 ;
+water	32:21	0:0	10	m
+op	32:23	0:0	10	=
+water	32:25	0:0	10	0
+water	32:26	0:0	10	;
+cond	32:28	32:32	9	m < size
+water	32:28	0:0	10	m
+op	32:30	0:0	10	<
+water	32:32	0:0	10	size
+forexpr	32:38	32:52	9	m ++ , start += inc
+water	32:38	0:0	10	m
+op	32:39	0:0	10	++
+water	32:41	0:0	10	,
+water	32:43	0:0	10	start
+op	32:49	0:0	10	+=
+water	32:52	0:0	10	inc
+stmts	33:20	34:83	9	
+for	33:20	34:83	10	(i = 1 ;i <=FFMIN (m ,order );i ++)
+forinit	33:25	33:30	11	i = 1 ;
+water	33:25	0:0	12	i
+op	33:27	0:0	12	=
+water	33:29	0:0	12	1
+water	33:30	0:0	12	;
+cond	33:32	33:51	11	i <=FFMIN (m ,order )
+water	33:32	0:0	12	i
+op	33:34	0:0	12	<=
+call	33:37	33:51	12	FFMIN
+arg	33:43	33:44	13	m
+water	33:43	0:0	14	m
+arg	33:46	33:51	13	order
+water	33:46	0:0	14	order
+forexpr	33:54	33:55	11	i ++
+water	33:54	0:0	12	i
+op	33:55	0:0	12	++
+stmts	34:24	34:83	11	
+water	34:24	0:0	12	coef
+op	34:28	0:0	12	[
+water	34:29	0:0	12	start
+op	34:34	0:0	12	]
+op	34:36	0:0	12	-=
+call	34:39	34:82	12	AAC_MUL26
+arg	34:49	34:70	13	coef[start-i*inc]
+water	34:49	0:0	14	coef
+op	34:53	0:0	14	[
+water	34:54	0:0	14	start
+op	34:60	0:0	14	-
+water	34:62	0:0	14	i
+op	34:64	0:0	14	*
+water	34:66	0:0	14	inc
+op	34:69	0:0	14	]
+arg	34:72	34:82	13	lpc[i-1]
+water	34:72	0:0	14	lpc
+op	34:75	0:0	14	[
+water	34:76	0:0	14	i
+op	34:78	0:0	14	-
+water	34:80	0:0	14	1
+op	34:81	0:0	14	]
+water	34:83	0:0	12	;
+water	35:12	0:0	8	}
+else	35:14	44:12	6
+stmts	35:19	44:12	7	
+water	35:19	0:0	8	{
+for	37:16	43:16	8	(m = 0 ;m < size;m ++ , start += inc)
+forinit	37:21	37:26	9	m = 0 ;
+water	37:21	0:0	10	m
+op	37:23	0:0	10	=
+water	37:25	0:0	10	0
+water	37:26	0:0	10	;
+cond	37:28	37:32	9	m < size
+water	37:28	0:0	10	m
+op	37:30	0:0	10	<
+water	37:32	0:0	10	size
+forexpr	37:38	37:52	9	m ++ , start += inc
+water	37:38	0:0	10	m
+op	37:39	0:0	10	++
+water	37:41	0:0	10	,
+water	37:43	0:0	10	start
+op	37:49	0:0	10	+=
+water	37:52	0:0	10	inc
+stmts	37:57	43:16	9	
+water	37:57	0:0	10	{
+water	38:20	0:0	10	tmp
+op	38:23	0:0	10	[
+water	38:24	0:0	10	0
+op	38:25	0:0	10	]
+op	38:27	0:0	10	=
+water	38:29	0:0	10	coef
+op	38:33	0:0	10	[
+water	38:34	0:0	10	start
+op	38:39	0:0	10	]
+water	38:40	0:0	10	;
+for	39:20	40:68	10	(i = 1 ;i <=FFMIN (m ,order );i ++)
+forinit	39:25	39:30	11	i = 1 ;
+water	39:25	0:0	12	i
+op	39:27	0:0	12	=
+water	39:29	0:0	12	1
+water	39:30	0:0	12	;
+cond	39:32	39:51	11	i <=FFMIN (m ,order )
+water	39:32	0:0	12	i
+op	39:34	0:0	12	<=
+call	39:37	39:51	12	FFMIN
+arg	39:43	39:44	13	m
+water	39:43	0:0	14	m
+arg	39:46	39:51	13	order
+water	39:46	0:0	14	order
+forexpr	39:54	39:55	11	i ++
+water	39:54	0:0	12	i
+op	39:55	0:0	12	++
+stmts	40:24	40:68	11	
+water	40:24	0:0	12	coef
+op	40:28	0:0	12	[
+water	40:29	0:0	12	start
+op	40:34	0:0	12	]
+op	40:36	0:0	12	+=
+call	40:39	40:67	12	AAC_MUL26
+arg	40:49	40:55	13	tmp[i]
+water	40:49	0:0	14	tmp
+op	40:52	0:0	14	[
+water	40:53	0:0	14	i
+op	40:54	0:0	14	]
+arg	40:57	40:67	13	lpc[i-1]
+water	40:57	0:0	14	lpc
+op	40:60	0:0	14	[
+water	40:61	0:0	14	i
+op	40:63	0:0	14	-
+water	40:65	0:0	14	1
+op	40:66	0:0	14	]
+water	40:68	0:0	12	;
+for	41:20	42:43	10	(i = order ;i > 0;i --)
+forinit	41:25	41:34	11	i = order ;
+water	41:25	0:0	12	i
+op	41:27	0:0	12	=
+water	41:29	0:0	12	order
+water	41:34	0:0	12	;
+cond	41:36	41:40	11	i > 0
+water	41:36	0:0	12	i
+op	41:38	0:0	12	>
+water	41:40	0:0	12	0
+forexpr	41:43	41:44	11	i --
+water	41:43	0:0	12	i
+op	41:44	0:0	12	--
+stmts	42:24	42:43	11	
+water	42:24	0:0	12	tmp
+op	42:27	0:0	12	[
+water	42:28	0:0	12	i
+op	42:29	0:0	12	]
+op	42:31	0:0	12	=
+water	42:33	0:0	12	tmp
+op	42:36	0:0	12	[
+water	42:37	0:0	12	i
+op	42:39	0:0	12	-
+water	42:41	0:0	12	1
+op	42:42	0:0	12	]
+water	42:43	0:0	12	;
+water	43:16	0:0	10	}
+water	44:12	0:0	8	}
+water	45:8	0:0	6	}
+water	46:4	0:0	4	}

@@ -1,0 +1,1504 @@
+func	1:0	266:0	0	static int	flush_packet
+params	1:23	0:0	1	
+param	1:24	1:44	2	AVFormatContext *	ctx
+param	1:46	1:62	2	int	stream_index
+param	2:24	2:35	2	int64_t	pts
+param	2:37	2:48	2	int64_t	dts
+param	2:50	2:61	2	int64_t	scr
+param	2:63	2:79	2	int	trailer_size
+stmnts	0:0	265:39	1	
+decl	4:4	4:39	2	MpegMuxContext	*s
+op	4:23	0:0	2	=
+water	4:25	0:0	2	ctx
+op	4:28	0:0	2	->
+water	4:30	0:0	2	priv_data
+decl	5:4	5:62	2	StreamInfo	*stream
+op	5:23	0:0	2	=
+water	5:25	0:0	2	ctx
+op	5:28	0:0	2	->
+water	5:30	0:0	2	streams
+op	5:37	0:0	2	[
+water	5:38	0:0	2	stream_index
+op	5:50	0:0	2	]
+op	5:51	0:0	2	->
+water	5:53	0:0	2	priv_data
+decl	6:4	6:20	2	uint8_t	*buf_ptr
+decl	7:4	7:71	2	int	size
+water	7:12	0:0	2	,
+decl	7:4	7:71	2	int	payload_size
+water	7:26	0:0	2	,
+decl	7:4	7:71	2	int	startcode
+water	7:37	0:0	2	,
+decl	7:4	7:71	2	int	id
+water	7:41	0:0	2	,
+decl	7:4	7:71	2	int	stuffing_size
+water	7:56	0:0	2	,
+decl	7:4	7:71	2	int	i
+water	7:59	0:0	2	,
+decl	7:4	7:71	2	int	header_len
+decl	8:4	8:19	2	int	packet_size
+decl	9:4	9:23	2	uint8_t	buffer[128]
+decl	10:4	10:28	2	int	zero_trail_bytes
+op	10:25	0:0	2	=
+water	10:27	0:0	2	0
+decl	11:4	11:28	2	int	pad_packet_bytes
+op	11:25	0:0	2	=
+water	11:27	0:0	2	0
+decl	12:4	12:17	2	int	pes_flags
+decl	14:4	14:24	2	int	general_pack
+op	14:21	0:0	2	=
+water	14:23	0:0	2	0
+decl	15:4	15:17	2	int	nb_frames
+water	16:4	0:0	2	id
+op	16:7	0:0	2	=
+water	16:9	0:0	2	stream
+op	16:15	0:0	2	->
+water	16:17	0:0	2	id
+water	16:19	0:0	2	;
+call	17:4	17:76	2	av_log
+arg	17:11	17:14	3	ctx
+water	17:11	0:0	4	ctx
+arg	17:16	17:28	3	AV_LOG_TRACE
+water	17:16	0:0	4	AV_LOG_TRACE
+arg	17:30	17:57	3	"packet ID=%2x PTS=%0.3f\n"
+water	17:30	0:0	4	"packet ID=%2x PTS=%0.3f\n"
+arg	17:59	17:61	3	id
+water	17:59	0:0	4	id
+arg	17:63	17:76	3	pts/90000.0
+water	17:63	0:0	4	pts
+op	17:67	0:0	4	/
+water	17:69	0:0	4	90000
+op	17:74	0:0	4	.
+water	17:75	0:0	4	0
+water	17:77	0:0	2	;
+water	18:4	0:0	2	buf_ptr
+op	18:12	0:0	2	=
+water	18:14	0:0	2	buffer
+water	18:20	0:0	2	;
+if	19:4	78:4	2	(( s -> packet_number % s -> pack_header_freq ) == 0 || s -> last_scr != scr)
+cond	19:8	19:72	3	( s -> packet_number % s -> pack_header_freq ) == 0 || s -> last_scr != scr
+water	19:8	0:0	4	(
+water	19:9	0:0	4	s
+op	19:10	0:0	4	->
+water	19:12	0:0	4	packet_number
+op	19:26	0:0	4	%
+water	19:28	0:0	4	s
+op	19:29	0:0	4	->
+water	19:31	0:0	4	pack_header_freq
+water	19:47	0:0	4	)
+op	19:49	0:0	4	==
+water	19:52	0:0	4	0
+op	19:54	0:0	4	||
+water	19:57	0:0	4	s
+op	19:58	0:0	4	->
+water	19:60	0:0	4	last_scr
+op	19:69	0:0	4	!=
+water	19:72	0:0	4	scr
+stmts	19:77	78:4	3	
+water	19:77	0:0	4	{
+water	21:8	0:0	4	size
+op	21:20	0:0	4	=
+call	21:22	21:55	4	put_pack_header
+arg	21:38	21:41	5	ctx
+water	21:38	0:0	6	ctx
+arg	21:43	21:50	5	buf_ptr
+water	21:43	0:0	6	buf_ptr
+arg	21:52	21:55	5	scr
+water	21:52	0:0	6	scr
+water	21:56	0:0	4	;
+water	22:8	0:0	4	buf_ptr
+op	22:19	0:0	4	+=
+water	22:22	0:0	4	size
+water	22:26	0:0	4	;
+water	23:8	0:0	4	s
+op	23:9	0:0	4	->
+water	23:11	0:0	4	last_scr
+op	23:20	0:0	4	=
+water	23:22	0:0	4	scr
+water	23:25	0:0	4	;
+if	24:8	32:8	4	(s -> is_vcd)
+cond	24:12	24:15	5	s -> is_vcd
+water	24:12	0:0	6	s
+op	24:13	0:0	6	->
+water	24:15	0:0	6	is_vcd
+stmts	24:23	32:8	5	
+water	24:23	0:0	6	{
+if	28:12	31:12	6	(stream -> packet_number == 0)
+cond	28:16	28:41	7	stream -> packet_number == 0
+water	28:16	0:0	8	stream
+op	28:22	0:0	8	->
+water	28:24	0:0	8	packet_number
+op	28:38	0:0	8	==
+water	28:41	0:0	8	0
+stmts	28:44	31:12	7	
+water	28:44	0:0	8	{
+water	29:16	0:0	8	size
+op	29:25	0:0	8	=
+call	29:27	29:61	8	put_system_header
+arg	29:45	29:48	9	ctx
+water	29:45	0:0	10	ctx
+arg	29:50	29:57	9	buf_ptr
+water	29:50	0:0	10	buf_ptr
+arg	29:59	29:61	9	id
+water	29:59	0:0	10	id
+water	29:62	0:0	8	;
+water	30:16	0:0	8	buf_ptr
+op	30:24	0:0	8	+=
+water	30:27	0:0	8	size
+water	30:31	0:0	8	;
+water	31:12	0:0	8	}
+water	32:8	0:0	6	}
+else	32:10	72:8	4
+stmts	32:15	72:8	5	
+if	32:15	72:8	6	(s -> is_dvd)
+cond	32:19	32:22	7	s -> is_dvd
+water	32:19	0:0	8	s
+op	32:20	0:0	8	->
+water	32:22	0:0	8	is_dvd
+stmts	32:30	72:8	7	
+water	32:30	0:0	8	{
+if	33:12	71:12	8	(stream -> align_iframe || s -> packet_number == 0)
+cond	33:16	33:60	9	stream -> align_iframe || s -> packet_number == 0
+water	33:16	0:0	10	stream
+op	33:22	0:0	10	->
+water	33:24	0:0	10	align_iframe
+op	33:37	0:0	10	||
+water	33:40	0:0	10	s
+op	33:41	0:0	10	->
+water	33:43	0:0	10	packet_number
+op	33:57	0:0	10	==
+water	33:60	0:0	10	0
+stmts	33:63	71:12	9	
+water	33:63	0:0	10	{
+decl	34:16	34:66	10	int	PES_bytes_to_fill
+op	34:38	0:0	10	=
+water	34:40	0:0	10	s
+op	34:41	0:0	10	->
+water	34:43	0:0	10	packet_size
+op	34:55	0:0	10	-
+water	34:57	0:0	10	size
+op	34:62	0:0	10	-
+water	34:64	0:0	10	10
+if	35:16	40:16	10	(pts != AV_NOPTS_VALUE)
+cond	35:20	35:27	11	pts != AV_NOPTS_VALUE
+water	35:20	0:0	12	pts
+op	35:24	0:0	12	!=
+water	35:27	0:0	12	AV_NOPTS_VALUE
+stmts	35:43	40:16	11	
+water	35:43	0:0	12	{
+if	36:20	37:50	12	(dts != pts)
+cond	36:24	36:31	13	dts != pts
+water	36:24	0:0	14	dts
+op	36:28	0:0	14	!=
+water	36:31	0:0	14	pts
+stmts	37:24	37:50	13	
+water	37:24	0:0	14	PES_bytes_to_fill
+op	37:42	0:0	14	-=
+water	37:45	0:0	14	5
+op	37:47	0:0	14	+
+water	37:49	0:0	14	5
+water	37:50	0:0	14	;
+else	38:20	39:46	12
+stmts	39:24	39:46	13	
+water	39:24	0:0	14	PES_bytes_to_fill
+op	39:42	0:0	14	-=
+water	39:45	0:0	14	5
+water	39:46	0:0	14	;
+water	40:16	0:0	12	}
+if	41:16	67:16	10	(stream -> bytes_to_iframe == 0 || s -> packet_number == 0)
+cond	41:20	41:72	11	stream -> bytes_to_iframe == 0 || s -> packet_number == 0
+water	41:20	0:0	12	stream
+op	41:26	0:0	12	->
+water	41:28	0:0	12	bytes_to_iframe
+op	41:44	0:0	12	==
+water	41:47	0:0	12	0
+op	41:49	0:0	12	||
+water	41:52	0:0	12	s
+op	41:53	0:0	12	->
+water	41:55	0:0	12	packet_number
+op	41:69	0:0	12	==
+water	41:72	0:0	12	0
+stmts	41:75	67:16	11	
+water	41:75	0:0	12	{
+water	42:20	0:0	12	size
+op	42:29	0:0	12	=
+call	42:31	42:64	12	put_system_header
+arg	42:49	42:52	13	ctx
+water	42:49	0:0	14	ctx
+arg	42:54	42:61	13	buf_ptr
+water	42:54	0:0	14	buf_ptr
+arg	42:63	42:64	13	0
+water	42:63	0:0	14	0
+water	42:65	0:0	12	;
+water	43:20	0:0	12	buf_ptr
+op	43:28	0:0	12	+=
+water	43:31	0:0	12	size
+water	43:35	0:0	12	;
+water	44:20	0:0	12	size
+op	44:29	0:0	12	=
+water	44:31	0:0	12	buf_ptr
+op	44:39	0:0	12	-
+water	44:41	0:0	12	buffer
+water	44:47	0:0	12	;
+call	45:20	45:52	12	avio_write
+arg	45:31	45:38	13	ctx->pb
+water	45:31	0:0	14	ctx
+op	45:34	0:0	14	->
+water	45:36	0:0	14	pb
+arg	45:40	45:46	13	buffer
+water	45:40	0:0	14	buffer
+arg	45:48	45:52	13	size
+water	45:48	0:0	14	size
+water	45:53	0:0	12	;
+call	46:20	46:55	12	avio_wb32
+arg	46:30	46:37	13	ctx->pb
+water	46:30	0:0	14	ctx
+op	46:33	0:0	14	->
+water	46:35	0:0	14	pb
+arg	46:39	46:55	13	PRIVATE_STREAM_2
+water	46:39	0:0	14	PRIVATE_STREAM_2
+water	46:56	0:0	12	;
+call	47:20	47:45	12	avio_wb16
+arg	47:30	47:37	13	ctx->pb
+water	47:30	0:0	14	ctx
+op	47:33	0:0	14	->
+water	47:35	0:0	14	pb
+arg	47:39	47:45	13	0x03d4
+water	47:39	0:0	14	0
+water	47:40	0:0	14	x03d4
+water	47:46	0:0	12	;
+call	48:20	48:41	12	avio_w8
+arg	48:28	48:35	13	ctx->pb
+water	48:28	0:0	14	ctx
+op	48:31	0:0	14	->
+water	48:33	0:0	14	pb
+arg	48:37	48:41	13	0x00
+water	48:37	0:0	14	0
+water	48:38	0:0	14	x00
+water	48:42	0:0	12	;
+for	49:20	50:46	12	(i = 0 ;i < 979;i ++)
+forinit	49:25	49:30	13	i = 0 ;
+water	49:25	0:0	14	i
+op	49:27	0:0	14	=
+water	49:29	0:0	14	0
+water	49:30	0:0	14	;
+cond	49:32	49:36	13	i < 979
+water	49:32	0:0	14	i
+op	49:34	0:0	14	<
+water	49:36	0:0	14	979
+forexpr	49:41	49:42	13	i ++
+water	49:41	0:0	14	i
+op	49:42	0:0	14	++
+stmts	50:24	50:46	13	
+call	50:24	50:45	14	avio_w8
+arg	50:32	50:39	15	ctx->pb
+water	50:32	0:0	16	ctx
+op	50:35	0:0	16	->
+water	50:37	0:0	16	pb
+arg	50:41	50:45	15	0x00
+water	50:41	0:0	16	0
+water	50:42	0:0	16	x00
+water	50:46	0:0	14	;
+call	51:20	51:55	12	avio_wb32
+arg	51:30	51:37	13	ctx->pb
+water	51:30	0:0	14	ctx
+op	51:33	0:0	14	->
+water	51:35	0:0	14	pb
+arg	51:39	51:55	13	PRIVATE_STREAM_2
+water	51:39	0:0	14	PRIVATE_STREAM_2
+water	51:56	0:0	12	;
+call	52:20	52:45	12	avio_wb16
+arg	52:30	52:37	13	ctx->pb
+water	52:30	0:0	14	ctx
+op	52:33	0:0	14	->
+water	52:35	0:0	14	pb
+arg	52:39	52:45	13	0x03fa
+water	52:39	0:0	14	0
+water	52:40	0:0	14	x03fa
+water	52:46	0:0	12	;
+call	53:20	53:41	12	avio_w8
+arg	53:28	53:35	13	ctx->pb
+water	53:28	0:0	14	ctx
+op	53:31	0:0	14	->
+water	53:33	0:0	14	pb
+arg	53:37	53:41	13	0x01
+water	53:37	0:0	14	0
+water	53:38	0:0	14	x01
+water	53:42	0:0	12	;
+for	54:20	55:46	12	(i = 0 ;i < 1017;i ++)
+forinit	54:25	54:30	13	i = 0 ;
+water	54:25	0:0	14	i
+op	54:27	0:0	14	=
+water	54:29	0:0	14	0
+water	54:30	0:0	14	;
+cond	54:32	54:36	13	i < 1017
+water	54:32	0:0	14	i
+op	54:34	0:0	14	<
+water	54:36	0:0	14	1017
+forexpr	54:42	54:43	13	i ++
+water	54:42	0:0	14	i
+op	54:43	0:0	14	++
+stmts	55:24	55:46	13	
+call	55:24	55:45	14	avio_w8
+arg	55:32	55:39	15	ctx->pb
+water	55:32	0:0	16	ctx
+op	55:35	0:0	16	->
+water	55:37	0:0	16	pb
+arg	55:41	55:45	15	0x00
+water	55:41	0:0	16	0
+water	55:42	0:0	16	x00
+water	55:46	0:0	14	;
+call	56:20	56:41	12	memset
+arg	56:27	56:33	13	buffer
+water	56:27	0:0	14	buffer
+arg	56:35	56:36	13	0
+water	56:35	0:0	14	0
+arg	56:38	56:41	13	128
+water	56:38	0:0	14	128
+water	56:42	0:0	12	;
+water	57:20	0:0	12	buf_ptr
+op	57:28	0:0	12	=
+water	57:30	0:0	12	buffer
+water	57:36	0:0	12	;
+water	58:20	0:0	12	s
+op	58:21	0:0	12	->
+water	58:23	0:0	12	packet_number
+op	58:36	0:0	12	++
+water	58:38	0:0	12	;
+water	59:20	0:0	12	stream
+op	59:26	0:0	12	->
+water	59:28	0:0	12	align_iframe
+op	59:41	0:0	12	=
+water	59:43	0:0	12	0
+water	59:44	0:0	12	;
+water	61:20	0:0	12	scr
+op	61:31	0:0	12	+=
+water	61:34	0:0	12	s
+op	61:35	0:0	12	->
+water	61:37	0:0	12	packet_size
+op	61:49	0:0	12	*
+water	61:51	0:0	12	90000
+water	61:56	0:0	12	LL
+op	61:59	0:0	12	/
+water	62:34	0:0	12	(
+water	62:35	0:0	12	s
+op	62:36	0:0	12	->
+water	62:38	0:0	12	mux_rate
+op	62:47	0:0	12	*
+water	62:49	0:0	12	50
+water	62:51	0:0	12	LL
+water	62:53	0:0	12	)
+water	62:54	0:0	12	;
+water	63:20	0:0	12	size
+op	63:32	0:0	12	=
+call	63:34	63:67	12	put_pack_header
+arg	63:50	63:53	13	ctx
+water	63:50	0:0	14	ctx
+arg	63:55	63:62	13	buf_ptr
+water	63:55	0:0	14	buf_ptr
+arg	63:64	63:67	13	scr
+water	63:64	0:0	14	scr
+water	63:68	0:0	12	;
+water	64:20	0:0	12	s
+op	64:21	0:0	12	->
+water	64:23	0:0	12	last_scr
+op	64:32	0:0	12	=
+water	64:34	0:0	12	scr
+water	64:37	0:0	12	;
+water	65:20	0:0	12	buf_ptr
+op	65:31	0:0	12	+=
+water	65:34	0:0	12	size
+water	65:38	0:0	12	;
+water	67:16	0:0	12	}
+else	67:18	70:16	10
+stmts	67:23	70:16	11	
+if	67:23	70:16	12	(stream -> bytes_to_iframe < PES_bytes_to_fill)
+cond	67:27	67:53	13	stream -> bytes_to_iframe < PES_bytes_to_fill
+water	67:27	0:0	14	stream
+op	67:33	0:0	14	->
+water	67:35	0:0	14	bytes_to_iframe
+op	67:51	0:0	14	<
+water	67:53	0:0	14	PES_bytes_to_fill
+stmts	67:72	70:16	13	
+water	67:72	0:0	14	{
+water	68:20	0:0	14	pad_packet_bytes
+op	68:37	0:0	14	=
+water	68:39	0:0	14	PES_bytes_to_fill
+op	68:57	0:0	14	-
+water	69:39	0:0	14	stream
+op	69:45	0:0	14	->
+water	69:47	0:0	14	bytes_to_iframe
+water	69:62	0:0	14	;
+water	70:16	0:0	14	}
+water	71:12	0:0	10	}
+water	72:8	0:0	8	}
+else	72:10	77:8	4
+stmts	72:15	77:8	5	
+water	72:15	0:0	6	{
+if	73:12	76:12	6	(( s -> packet_number % s -> system_header_freq ) == 0)
+cond	73:16	73:62	7	( s -> packet_number % s -> system_header_freq ) == 0
+water	73:16	0:0	8	(
+water	73:17	0:0	8	s
+op	73:18	0:0	8	->
+water	73:20	0:0	8	packet_number
+op	73:34	0:0	8	%
+water	73:36	0:0	8	s
+op	73:37	0:0	8	->
+water	73:39	0:0	8	system_header_freq
+water	73:57	0:0	8	)
+op	73:59	0:0	8	==
+water	73:62	0:0	8	0
+stmts	73:65	76:12	7	
+water	73:65	0:0	8	{
+water	74:16	0:0	8	size
+op	74:25	0:0	8	=
+call	74:27	74:60	8	put_system_header
+arg	74:45	74:48	9	ctx
+water	74:45	0:0	10	ctx
+arg	74:50	74:57	9	buf_ptr
+water	74:50	0:0	10	buf_ptr
+arg	74:59	74:60	9	0
+water	74:59	0:0	10	0
+water	74:61	0:0	8	;
+water	75:16	0:0	8	buf_ptr
+op	75:24	0:0	8	+=
+water	75:27	0:0	8	size
+water	75:31	0:0	8	;
+water	76:12	0:0	8	}
+water	77:8	0:0	6	}
+water	78:4	0:0	4	}
+water	79:4	0:0	2	size
+op	79:9	0:0	2	=
+water	79:11	0:0	2	buf_ptr
+op	79:19	0:0	2	-
+water	79:21	0:0	2	buffer
+water	79:27	0:0	2	;
+call	80:4	80:36	2	avio_write
+arg	80:15	80:22	3	ctx->pb
+water	80:15	0:0	4	ctx
+op	80:18	0:0	4	->
+water	80:20	0:0	4	pb
+arg	80:24	80:30	3	buffer
+water	80:24	0:0	4	buffer
+arg	80:32	80:36	3	size
+water	80:32	0:0	4	size
+water	80:37	0:0	2	;
+water	81:4	0:0	2	packet_size
+op	81:16	0:0	2	=
+water	81:18	0:0	2	s
+op	81:19	0:0	2	->
+water	81:21	0:0	2	packet_size
+op	81:33	0:0	2	-
+water	81:35	0:0	2	size
+water	81:39	0:0	2	;
+if	82:4	85:30	2	(s -> is_vcd && ( id & 0 xe0 ) == AUDIO_ID)
+cond	82:8	82:36	3	s -> is_vcd && ( id & 0 xe0 ) == AUDIO_ID
+water	82:8	0:0	4	s
+op	82:9	0:0	4	->
+water	82:11	0:0	4	is_vcd
+op	82:18	0:0	4	&&
+water	82:21	0:0	4	(
+water	82:22	0:0	4	id
+op	82:25	0:0	4	&
+water	82:27	0:0	4	0
+water	82:28	0:0	4	xe0
+water	82:31	0:0	4	)
+op	82:33	0:0	4	==
+water	82:36	0:0	4	AUDIO_ID
+stmts	85:8	85:30	3	
+water	85:8	0:0	4	zero_trail_bytes
+op	85:25	0:0	4	+=
+water	85:28	0:0	4	20
+water	85:30	0:0	4	;
+if	86:4	98:4	2	(( s -> is_vcd && stream -> packet_number == 0 ) || ( s -> is_svcd && s -> packet_number == 0 ))
+cond	86:8	87:44	3	( s -> is_vcd && stream -> packet_number == 0 ) || ( s -> is_svcd && s -> packet_number == 0 )
+water	86:8	0:0	4	(
+water	86:9	0:0	4	s
+op	86:10	0:0	4	->
+water	86:12	0:0	4	is_vcd
+op	86:19	0:0	4	&&
+water	86:22	0:0	4	stream
+op	86:28	0:0	4	->
+water	86:30	0:0	4	packet_number
+op	86:44	0:0	4	==
+water	86:47	0:0	4	0
+water	86:48	0:0	4	)
+op	86:50	0:0	4	||
+water	87:8	0:0	4	(
+water	87:9	0:0	4	s
+op	87:10	0:0	4	->
+water	87:12	0:0	4	is_svcd
+op	87:20	0:0	4	&&
+water	87:23	0:0	4	s
+op	87:24	0:0	4	->
+water	87:26	0:0	4	packet_number
+op	87:40	0:0	4	==
+water	87:43	0:0	4	0
+water	87:44	0:0	4	)
+stmts	87:47	98:4	3	
+water	87:47	0:0	4	{
+if	94:8	96:28	4	(s -> is_svcd)
+cond	94:12	94:15	5	s -> is_svcd
+water	94:12	0:0	6	s
+op	94:13	0:0	6	->
+water	94:15	0:0	6	is_svcd
+stmts	96:12	96:28	5	
+water	96:12	0:0	6	general_pack
+op	96:25	0:0	6	=
+water	96:27	0:0	6	1
+water	96:28	0:0	6	;
+water	97:8	0:0	4	pad_packet_bytes
+op	97:25	0:0	4	=
+water	97:27	0:0	4	packet_size
+op	97:39	0:0	4	-
+water	97:41	0:0	4	zero_trail_bytes
+water	97:57	0:0	4	;
+water	98:4	0:0	4	}
+water	99:4	0:0	2	packet_size
+op	99:16	0:0	2	-=
+water	99:19	0:0	2	pad_packet_bytes
+op	99:36	0:0	2	+
+water	99:38	0:0	2	zero_trail_bytes
+water	99:54	0:0	2	;
+if	100:4	250:4	2	(packet_size > 0)
+cond	100:8	100:22	3	packet_size > 0
+water	100:8	0:0	4	packet_size
+op	100:20	0:0	4	>
+water	100:22	0:0	4	0
+stmts	100:25	250:4	3	
+water	100:25	0:0	4	{
+water	102:8	0:0	4	packet_size
+op	102:20	0:0	4	-=
+water	102:23	0:0	4	6
+water	102:24	0:0	4	;
+if	104:8	109:8	4	(s -> is_mpeg2)
+cond	104:12	104:15	5	s -> is_mpeg2
+water	104:12	0:0	6	s
+op	104:13	0:0	6	->
+water	104:15	0:0	6	is_mpeg2
+stmts	104:25	109:8	5	
+water	104:25	0:0	6	{
+water	105:12	0:0	6	header_len
+op	105:23	0:0	6	=
+water	105:25	0:0	6	3
+water	105:26	0:0	6	;
+if	106:12	107:31	6	(stream -> packet_number == 0)
+cond	106:16	106:41	7	stream -> packet_number == 0
+water	106:16	0:0	8	stream
+op	106:22	0:0	8	->
+water	106:24	0:0	8	packet_number
+op	106:38	0:0	8	==
+water	106:41	0:0	8	0
+stmts	107:16	107:31	7	
+water	107:16	0:0	8	header_len
+op	107:27	0:0	8	+=
+water	107:30	0:0	8	3
+water	107:31	0:0	8	;
+water	108:12	0:0	6	header_len
+op	108:23	0:0	6	+=
+water	108:26	0:0	6	1
+water	108:27	0:0	6	;
+water	109:8	0:0	6	}
+else	109:10	111:8	4
+stmts	109:15	111:8	5	
+water	109:15	0:0	6	{
+water	110:12	0:0	6	header_len
+op	110:23	0:0	6	=
+water	110:25	0:0	6	0
+water	110:26	0:0	6	;
+water	111:8	0:0	6	}
+if	112:8	117:8	4	(pts != AV_NOPTS_VALUE)
+cond	112:12	112:19	5	pts != AV_NOPTS_VALUE
+water	112:12	0:0	6	pts
+op	112:16	0:0	6	!=
+water	112:19	0:0	6	AV_NOPTS_VALUE
+stmts	112:35	117:8	5	
+water	112:35	0:0	6	{
+if	113:12	114:35	6	(dts != pts)
+cond	113:16	113:23	7	dts != pts
+water	113:16	0:0	8	dts
+op	113:20	0:0	8	!=
+water	113:23	0:0	8	pts
+stmts	114:16	114:35	7	
+water	114:16	0:0	8	header_len
+op	114:27	0:0	8	+=
+water	114:30	0:0	8	5
+op	114:32	0:0	8	+
+water	114:34	0:0	8	5
+water	114:35	0:0	8	;
+else	115:12	116:31	6
+stmts	116:16	116:31	7	
+water	116:16	0:0	8	header_len
+op	116:27	0:0	8	+=
+water	116:30	0:0	8	5
+water	116:31	0:0	8	;
+water	117:8	0:0	6	}
+else	117:10	120:8	4
+stmts	117:15	120:8	5	
+water	117:15	0:0	6	{
+if	118:12	119:28	6	(! s -> is_mpeg2)
+cond	118:16	118:20	7	! s -> is_mpeg2
+op	118:16	0:0	8	!
+water	118:17	0:0	8	s
+op	118:18	0:0	8	->
+water	118:20	0:0	8	is_mpeg2
+stmts	119:16	119:28	7	
+water	119:16	0:0	8	header_len
+op	119:26	0:0	8	++
+water	119:28	0:0	8	;
+water	120:8	0:0	6	}
+water	121:8	0:0	4	payload_size
+op	121:21	0:0	4	=
+water	121:23	0:0	4	packet_size
+op	121:35	0:0	4	-
+water	121:37	0:0	4	header_len
+water	121:47	0:0	4	;
+if	122:8	130:8	4	(id < 0 xc0)
+cond	122:12	122:18	5	id < 0 xc0
+water	122:12	0:0	6	id
+op	122:15	0:0	6	<
+water	122:17	0:0	6	0
+water	122:18	0:0	6	xc0
+stmts	122:23	130:8	5	
+water	122:23	0:0	6	{
+water	123:12	0:0	6	startcode
+op	123:26	0:0	6	=
+water	123:28	0:0	6	PRIVATE_STREAM_1
+water	123:44	0:0	6	;
+water	124:12	0:0	6	payload_size
+op	124:25	0:0	6	-=
+water	124:28	0:0	6	1
+water	124:29	0:0	6	;
+if	125:12	129:12	6	(id >= 0 x40)
+cond	125:16	125:23	7	id >= 0 x40
+water	125:16	0:0	8	id
+op	125:19	0:0	8	>=
+water	125:22	0:0	8	0
+water	125:23	0:0	8	x40
+stmts	125:28	129:12	7	
+water	125:28	0:0	8	{
+water	126:16	0:0	8	payload_size
+op	126:29	0:0	8	-=
+water	126:32	0:0	8	3
+water	126:33	0:0	8	;
+if	127:16	128:37	8	(id >= 0 xa0)
+cond	127:20	127:27	9	id >= 0 xa0
+water	127:20	0:0	10	id
+op	127:23	0:0	10	>=
+water	127:26	0:0	10	0
+water	127:27	0:0	10	xa0
+stmts	128:20	128:37	9	
+water	128:20	0:0	10	payload_size
+op	128:33	0:0	10	-=
+water	128:36	0:0	10	3
+water	128:37	0:0	10	;
+water	129:12	0:0	8	}
+water	130:8	0:0	6	}
+else	130:10	132:8	4
+stmts	130:15	132:8	5	
+water	130:15	0:0	6	{
+water	131:12	0:0	6	startcode
+op	131:22	0:0	6	=
+water	131:24	0:0	6	0
+water	131:25	0:0	6	x100
+op	131:30	0:0	6	+
+water	131:32	0:0	6	id
+water	131:34	0:0	6	;
+water	132:8	0:0	6	}
+water	133:8	0:0	4	stuffing_size
+op	133:22	0:0	4	=
+water	133:24	0:0	4	payload_size
+op	133:37	0:0	4	-
+call	133:39	133:64	4	av_fifo_size
+arg	133:52	133:64	5	stream->fifo
+water	133:52	0:0	6	stream
+op	133:58	0:0	6	->
+water	133:60	0:0	6	fifo
+water	133:65	0:0	4	;
+if	135:8	153:8	4	(payload_size <= trailer_size && pts != AV_NOPTS_VALUE)
+cond	135:12	135:51	5	payload_size <= trailer_size && pts != AV_NOPTS_VALUE
+water	135:12	0:0	6	payload_size
+op	135:25	0:0	6	<=
+water	135:28	0:0	6	trailer_size
+op	135:41	0:0	6	&&
+water	135:44	0:0	6	pts
+op	135:48	0:0	6	!=
+water	135:51	0:0	6	AV_NOPTS_VALUE
+stmts	135:67	153:8	5	
+water	135:67	0:0	6	{
+decl	136:12	136:33	6	int	timestamp_len
+op	136:30	0:0	6	=
+water	136:32	0:0	6	0
+if	137:12	138:34	6	(dts != pts)
+cond	137:16	137:23	7	dts != pts
+water	137:16	0:0	8	dts
+op	137:20	0:0	8	!=
+water	137:23	0:0	8	pts
+stmts	138:16	138:34	7	
+water	138:16	0:0	8	timestamp_len
+op	138:30	0:0	8	+=
+water	138:33	0:0	8	5
+water	138:34	0:0	8	;
+if	139:12	140:52	6	(pts != AV_NOPTS_VALUE)
+cond	139:16	139:23	7	pts != AV_NOPTS_VALUE
+water	139:16	0:0	8	pts
+op	139:20	0:0	8	!=
+water	139:23	0:0	8	AV_NOPTS_VALUE
+stmts	140:16	140:52	7	
+water	140:16	0:0	8	timestamp_len
+op	140:30	0:0	8	+=
+water	140:33	0:0	8	s
+op	140:34	0:0	8	->
+water	140:36	0:0	8	is_mpeg2
+water	140:45	0:0	8	?
+water	140:47	0:0	8	5
+water	140:49	0:0	8	:
+water	140:51	0:0	8	4
+water	140:52	0:0	8	;
+water	141:12	0:0	6	pts
+op	141:24	0:0	6	=
+water	142:12	0:0	6	dts
+op	142:24	0:0	6	=
+water	142:26	0:0	6	AV_NOPTS_VALUE
+water	142:40	0:0	6	;
+water	143:12	0:0	6	header_len
+op	143:23	0:0	6	-=
+water	143:26	0:0	6	timestamp_len
+water	143:39	0:0	6	;
+if	144:12	147:12	6	(s -> is_dvd && stream -> align_iframe)
+cond	144:16	144:37	7	s -> is_dvd && stream -> align_iframe
+water	144:16	0:0	8	s
+op	144:17	0:0	8	->
+water	144:19	0:0	8	is_dvd
+op	144:26	0:0	8	&&
+water	144:29	0:0	8	stream
+op	144:35	0:0	8	->
+water	144:37	0:0	8	align_iframe
+stmts	144:51	147:12	7	
+water	144:51	0:0	8	{
+water	145:16	0:0	8	pad_packet_bytes
+op	145:33	0:0	8	+=
+water	145:36	0:0	8	timestamp_len
+water	145:49	0:0	8	;
+water	146:16	0:0	8	packet_size
+op	146:33	0:0	8	-=
+water	146:36	0:0	8	timestamp_len
+water	146:49	0:0	8	;
+water	147:12	0:0	8	}
+else	147:14	149:12	6
+stmts	147:19	149:12	7	
+water	147:19	0:0	8	{
+water	148:16	0:0	8	payload_size
+op	148:29	0:0	8	+=
+water	148:32	0:0	8	timestamp_len
+water	148:45	0:0	8	;
+water	149:12	0:0	8	}
+water	150:12	0:0	6	stuffing_size
+op	150:26	0:0	6	+=
+water	150:29	0:0	6	timestamp_len
+water	150:42	0:0	6	;
+if	151:12	152:60	6	(payload_size > trailer_size)
+cond	151:16	151:31	7	payload_size > trailer_size
+water	151:16	0:0	8	payload_size
+op	151:29	0:0	8	>
+water	151:31	0:0	8	trailer_size
+stmts	152:16	152:60	7	
+water	152:16	0:0	8	stuffing_size
+op	152:30	0:0	8	+=
+water	152:33	0:0	8	payload_size
+op	152:46	0:0	8	-
+water	152:48	0:0	8	trailer_size
+water	152:60	0:0	8	;
+water	153:8	0:0	6	}
+if	155:8	163:8	4	(pad_packet_bytes > 0 && pad_packet_bytes <= 7)
+cond	155:12	155:56	5	pad_packet_bytes > 0 && pad_packet_bytes <= 7
+water	155:12	0:0	6	pad_packet_bytes
+op	155:29	0:0	6	>
+water	155:31	0:0	6	0
+op	155:33	0:0	6	&&
+water	155:36	0:0	6	pad_packet_bytes
+op	155:53	0:0	6	<=
+water	155:56	0:0	6	7
+stmts	155:59	163:8	5	
+water	155:59	0:0	6	{
+water	156:12	0:0	6	packet_size
+op	156:25	0:0	6	+=
+water	156:28	0:0	6	pad_packet_bytes
+water	156:44	0:0	6	;
+water	157:12	0:0	6	payload_size
+op	157:25	0:0	6	+=
+water	157:28	0:0	6	pad_packet_bytes
+water	157:44	0:0	6	;
+if	158:12	159:48	6	(stuffing_size < 0)
+cond	158:16	158:32	7	stuffing_size < 0
+water	158:16	0:0	8	stuffing_size
+op	158:30	0:0	8	<
+water	158:32	0:0	8	0
+stmts	159:16	159:48	7	
+water	159:16	0:0	8	stuffing_size
+op	159:30	0:0	8	=
+water	159:32	0:0	8	pad_packet_bytes
+water	159:48	0:0	8	;
+else	160:12	161:49	6
+stmts	161:16	161:49	7	
+water	161:16	0:0	8	stuffing_size
+op	161:30	0:0	8	+=
+water	161:33	0:0	8	pad_packet_bytes
+water	161:49	0:0	8	;
+water	162:12	0:0	6	pad_packet_bytes
+op	162:29	0:0	6	=
+water	162:31	0:0	6	0
+water	162:32	0:0	6	;
+water	163:8	0:0	6	}
+if	164:8	165:29	4	(stuffing_size < 0)
+cond	164:12	164:28	5	stuffing_size < 0
+water	164:12	0:0	6	stuffing_size
+op	164:26	0:0	6	<
+water	164:28	0:0	6	0
+stmts	165:12	165:29	5	
+water	165:12	0:0	6	stuffing_size
+op	165:26	0:0	6	=
+water	165:28	0:0	6	0
+water	165:29	0:0	6	;
+if	166:8	169:8	4	(startcode == PRIVATE_STREAM_1 && id >= 0 xa0)
+cond	166:12	166:52	5	startcode == PRIVATE_STREAM_1 && id >= 0 xa0
+water	166:12	0:0	6	startcode
+op	166:22	0:0	6	==
+water	166:25	0:0	6	PRIVATE_STREAM_1
+op	166:42	0:0	6	&&
+water	166:45	0:0	6	id
+op	166:48	0:0	6	>=
+water	166:51	0:0	6	0
+water	166:52	0:0	6	xa0
+stmts	166:57	169:8	5	
+water	166:57	0:0	6	{
+if	167:12	168:66	6	(payload_size <av_fifo_size (stream -> fifo ))
+cond	167:16	167:56	7	payload_size <av_fifo_size (stream -> fifo )
+water	167:16	0:0	8	payload_size
+op	167:29	0:0	8	<
+call	167:31	167:56	8	av_fifo_size
+arg	167:44	167:56	9	stream->fifo
+water	167:44	0:0	10	stream
+op	167:50	0:0	10	->
+water	167:52	0:0	10	fifo
+stmts	168:16	168:66	7	
+water	168:16	0:0	8	stuffing_size
+op	168:30	0:0	8	+=
+water	168:33	0:0	8	payload_size
+op	168:46	0:0	8	%
+water	168:48	0:0	8	stream
+op	168:54	0:0	8	->
+water	168:56	0:0	8	lpcm_align
+water	168:66	0:0	8	;
+water	169:8	0:0	6	}
+if	170:8	175:8	4	(stuffing_size > 16)
+cond	170:12	170:28	5	stuffing_size > 16
+water	170:12	0:0	6	stuffing_size
+op	170:26	0:0	6	>
+water	170:28	0:0	6	16
+stmts	170:32	175:8	5	
+water	170:32	0:0	6	{
+water	171:12	0:0	6	pad_packet_bytes
+op	171:29	0:0	6	+=
+water	171:32	0:0	6	stuffing_size
+water	171:45	0:0	6	;
+water	172:12	0:0	6	packet_size
+op	172:29	0:0	6	-=
+water	172:32	0:0	6	stuffing_size
+water	172:45	0:0	6	;
+water	173:12	0:0	6	payload_size
+op	173:29	0:0	6	-=
+water	173:32	0:0	6	stuffing_size
+water	173:45	0:0	6	;
+water	174:12	0:0	6	stuffing_size
+op	174:30	0:0	6	=
+water	174:32	0:0	6	0
+water	174:33	0:0	6	;
+water	175:8	0:0	6	}
+water	176:8	0:0	4	nb_frames
+op	176:18	0:0	4	=
+call	176:20	176:75	4	get_nb_frames
+arg	176:34	176:37	5	ctx
+water	176:34	0:0	6	ctx
+arg	176:39	176:45	5	stream
+water	176:39	0:0	6	stream
+arg	176:47	176:75	5	payload_size-stuffing_size
+water	176:47	0:0	6	payload_size
+op	176:60	0:0	6	-
+water	176:62	0:0	6	stuffing_size
+water	176:76	0:0	4	;
+call	177:8	177:36	4	avio_wb32
+arg	177:18	177:25	5	ctx->pb
+water	177:18	0:0	6	ctx
+op	177:21	0:0	6	->
+water	177:23	0:0	6	pb
+arg	177:27	177:36	5	startcode
+water	177:27	0:0	6	startcode
+water	177:37	0:0	4	;
+call	178:8	178:38	4	avio_wb16
+arg	178:18	178:25	5	ctx->pb
+water	178:18	0:0	6	ctx
+op	178:21	0:0	6	->
+water	178:23	0:0	6	pb
+arg	178:27	178:38	5	packet_size
+water	178:27	0:0	6	packet_size
+water	178:39	0:0	4	;
+if	179:8	181:38	4	(! s -> is_mpeg2)
+cond	179:12	179:16	5	! s -> is_mpeg2
+op	179:12	0:0	6	!
+water	179:13	0:0	6	s
+op	179:14	0:0	6	->
+water	179:16	0:0	6	is_mpeg2
+stmts	180:12	181:38	5	
+for	180:12	181:38	6	(i = 0 ;i < stuffing_size;i ++)
+forinit	180:17	180:22	7	i = 0 ;
+water	180:17	0:0	8	i
+op	180:19	0:0	8	=
+water	180:21	0:0	8	0
+water	180:22	0:0	8	;
+cond	180:24	180:28	7	i < stuffing_size
+water	180:24	0:0	8	i
+op	180:26	0:0	8	<
+water	180:28	0:0	8	stuffing_size
+forexpr	180:43	180:44	7	i ++
+water	180:43	0:0	8	i
+op	180:44	0:0	8	++
+stmts	181:16	181:38	7	
+call	181:16	181:37	8	avio_w8
+arg	181:24	181:31	9	ctx->pb
+water	181:24	0:0	10	ctx
+op	181:27	0:0	10	->
+water	181:29	0:0	10	pb
+arg	181:33	181:37	9	0xff
+water	181:33	0:0	10	0
+water	181:34	0:0	10	xff
+water	181:38	0:0	8	;
+if	182:8	210:8	4	(s -> is_mpeg2)
+cond	182:12	182:15	5	s -> is_mpeg2
+water	182:12	0:0	6	s
+op	182:13	0:0	6	->
+water	182:15	0:0	6	is_mpeg2
+stmts	182:25	210:8	5	
+water	182:25	0:0	6	{
+call	183:12	183:33	6	avio_w8
+arg	183:20	183:27	7	ctx->pb
+water	183:20	0:0	8	ctx
+op	183:23	0:0	8	->
+water	183:25	0:0	8	pb
+arg	183:29	183:33	7	0x80
+water	183:29	0:0	8	0
+water	183:30	0:0	8	x80
+water	183:34	0:0	6	;
+water	184:12	0:0	6	pes_flags
+op	184:22	0:0	6	=
+water	184:24	0:0	6	0
+water	184:25	0:0	6	;
+if	185:12	189:12	6	(pts != AV_NOPTS_VALUE)
+cond	185:16	185:23	7	pts != AV_NOPTS_VALUE
+water	185:16	0:0	8	pts
+op	185:20	0:0	8	!=
+water	185:23	0:0	8	AV_NOPTS_VALUE
+stmts	185:39	189:12	7	
+water	185:39	0:0	8	{
+water	186:16	0:0	8	pes_flags
+op	186:26	0:0	8	|=
+water	186:29	0:0	8	0
+water	186:30	0:0	8	x80
+water	186:33	0:0	8	;
+if	187:16	188:37	8	(dts != pts)
+cond	187:20	187:27	9	dts != pts
+water	187:20	0:0	10	dts
+op	187:24	0:0	10	!=
+water	187:27	0:0	10	pts
+stmts	188:20	188:37	9	
+water	188:20	0:0	10	pes_flags
+op	188:30	0:0	10	|=
+water	188:33	0:0	10	0
+water	188:34	0:0	10	x40
+water	188:37	0:0	10	;
+water	189:12	0:0	8	}
+if	194:12	195:33	6	(stream -> packet_number == 0)
+cond	194:16	194:41	7	stream -> packet_number == 0
+water	194:16	0:0	8	stream
+op	194:22	0:0	8	->
+water	194:24	0:0	8	packet_number
+op	194:38	0:0	8	==
+water	194:41	0:0	8	0
+stmts	195:16	195:33	7	
+water	195:16	0:0	8	pes_flags
+op	195:26	0:0	8	|=
+water	195:29	0:0	8	0
+water	195:30	0:0	8	x01
+water	195:33	0:0	8	;
+call	196:12	196:38	6	avio_w8
+arg	196:20	196:27	7	ctx->pb
+water	196:20	0:0	8	ctx
+op	196:23	0:0	8	->
+water	196:25	0:0	8	pb
+arg	196:29	196:38	7	pes_flags
+water	196:29	0:0	8	pes_flags
+water	196:39	0:0	6	;
+call	197:12	197:59	6	avio_w8
+arg	197:20	197:27	7	ctx->pb
+water	197:20	0:0	8	ctx
+op	197:23	0:0	8	->
+water	197:25	0:0	8	pb
+arg	197:29	197:59	7	header_len-3+stuffing_size
+water	197:29	0:0	8	header_len
+op	197:40	0:0	8	-
+water	197:42	0:0	8	3
+op	197:44	0:0	8	+
+water	197:46	0:0	8	stuffing_size
+water	197:60	0:0	6	;
+if	198:12	199:77	6	(pes_flags & 0 x80)
+cond	198:16	198:29	7	pes_flags & 0 x80
+water	198:16	0:0	8	pes_flags
+op	198:26	0:0	8	&
+water	198:28	0:0	8	0
+water	198:29	0:0	8	x80
+stmts	199:16	199:77	7	
+call	199:16	199:76	8	put_timestamp
+arg	199:30	199:37	9	ctx->pb
+water	199:30	0:0	10	ctx
+op	199:33	0:0	10	->
+water	199:35	0:0	10	pb
+arg	199:39	199:71	9	(pes_flags&0x40)?0x03:0x02
+water	199:39	0:0	10	(
+water	199:40	0:0	10	pes_flags
+op	199:50	0:0	10	&
+water	199:52	0:0	10	0
+water	199:53	0:0	10	x40
+water	199:56	0:0	10	)
+water	199:58	0:0	10	?
+water	199:60	0:0	10	0
+water	199:61	0:0	10	x03
+water	199:65	0:0	10	:
+water	199:67	0:0	10	0
+water	199:68	0:0	10	x02
+arg	199:73	199:76	9	pts
+water	199:73	0:0	10	pts
+water	199:77	0:0	8	;
+if	200:12	201:49	6	(pes_flags & 0 x40)
+cond	200:16	200:29	7	pes_flags & 0 x40
+water	200:16	0:0	8	pes_flags
+op	200:26	0:0	8	&
+water	200:28	0:0	8	0
+water	200:29	0:0	8	x40
+stmts	201:16	201:49	7	
+call	201:16	201:48	8	put_timestamp
+arg	201:30	201:37	9	ctx->pb
+water	201:30	0:0	10	ctx
+op	201:33	0:0	10	->
+water	201:35	0:0	10	pb
+arg	201:39	201:43	9	0x01
+water	201:39	0:0	10	0
+water	201:40	0:0	10	x01
+arg	201:45	201:48	9	dts
+water	201:45	0:0	10	dts
+water	201:49	0:0	8	;
+if	202:12	209:12	6	(pes_flags & 0 x01)
+cond	202:16	202:29	7	pes_flags & 0 x01
+water	202:16	0:0	8	pes_flags
+op	202:26	0:0	8	&
+water	202:28	0:0	8	0
+water	202:29	0:0	8	x01
+stmts	202:34	209:12	7	
+water	202:34	0:0	8	{
+call	203:16	203:37	8	avio_w8
+arg	203:24	203:31	9	ctx->pb
+water	203:24	0:0	10	ctx
+op	203:27	0:0	10	->
+water	203:29	0:0	10	pb
+arg	203:33	203:37	9	0x10
+water	203:33	0:0	10	0
+water	203:34	0:0	10	x10
+water	203:38	0:0	8	;
+if	205:16	206:78	8	(( id & 0 xe0 ) == AUDIO_ID)
+cond	205:20	205:35	9	( id & 0 xe0 ) == AUDIO_ID
+water	205:20	0:0	10	(
+water	205:21	0:0	10	id
+op	205:24	0:0	10	&
+water	205:26	0:0	10	0
+water	205:27	0:0	10	xe0
+water	205:30	0:0	10	)
+op	205:32	0:0	10	==
+water	205:35	0:0	10	AUDIO_ID
+stmts	206:20	206:78	9	
+call	206:20	206:77	10	avio_wb16
+arg	206:30	206:37	11	ctx->pb
+water	206:30	0:0	12	ctx
+op	206:33	0:0	12	->
+water	206:35	0:0	12	pb
+arg	206:39	206:77	11	0x4000|stream->max_buffer_size/128
+water	206:39	0:0	12	0
+water	206:40	0:0	12	x4000
+op	206:46	0:0	12	|
+water	206:48	0:0	12	stream
+op	206:54	0:0	12	->
+water	206:56	0:0	12	max_buffer_size
+op	206:72	0:0	12	/
+water	206:74	0:0	12	128
+water	206:78	0:0	10	;
+else	207:16	208:79	8
+stmts	208:20	208:79	9	
+call	208:20	208:78	10	avio_wb16
+arg	208:30	208:37	11	ctx->pb
+water	208:30	0:0	12	ctx
+op	208:33	0:0	12	->
+water	208:35	0:0	12	pb
+arg	208:39	208:78	11	0x6000|stream->max_buffer_size/1024
+water	208:39	0:0	12	0
+water	208:40	0:0	12	x6000
+op	208:46	0:0	12	|
+water	208:48	0:0	12	stream
+op	208:54	0:0	12	->
+water	208:56	0:0	12	max_buffer_size
+op	208:72	0:0	12	/
+water	208:74	0:0	12	1024
+water	208:79	0:0	10	;
+water	209:12	0:0	8	}
+water	210:8	0:0	6	}
+else	210:10	221:8	4
+stmts	210:15	221:8	5	
+water	210:15	0:0	6	{
+if	211:12	218:12	6	(pts != AV_NOPTS_VALUE)
+cond	211:16	211:23	7	pts != AV_NOPTS_VALUE
+water	211:16	0:0	8	pts
+op	211:20	0:0	8	!=
+water	211:23	0:0	8	AV_NOPTS_VALUE
+stmts	211:39	218:12	7	
+water	211:39	0:0	8	{
+if	212:16	215:16	8	(dts != pts)
+cond	212:20	212:27	9	dts != pts
+water	212:20	0:0	10	dts
+op	212:24	0:0	10	!=
+water	212:27	0:0	10	pts
+stmts	212:32	215:16	9	
+water	212:32	0:0	10	{
+call	213:20	213:52	10	put_timestamp
+arg	213:34	213:41	11	ctx->pb
+water	213:34	0:0	12	ctx
+op	213:37	0:0	12	->
+water	213:39	0:0	12	pb
+arg	213:43	213:47	11	0x03
+water	213:43	0:0	12	0
+water	213:44	0:0	12	x03
+arg	213:49	213:52	11	pts
+water	213:49	0:0	12	pts
+water	213:53	0:0	10	;
+call	214:20	214:52	10	put_timestamp
+arg	214:34	214:41	11	ctx->pb
+water	214:34	0:0	12	ctx
+op	214:37	0:0	12	->
+water	214:39	0:0	12	pb
+arg	214:43	214:47	11	0x01
+water	214:43	0:0	12	0
+water	214:44	0:0	12	x01
+arg	214:49	214:52	11	dts
+water	214:49	0:0	12	dts
+water	214:53	0:0	10	;
+water	215:16	0:0	10	}
+else	215:18	217:16	8
+stmts	215:23	217:16	9	
+water	215:23	0:0	10	{
+call	216:20	216:52	10	put_timestamp
+arg	216:34	216:41	11	ctx->pb
+water	216:34	0:0	12	ctx
+op	216:37	0:0	12	->
+water	216:39	0:0	12	pb
+arg	216:43	216:47	11	0x02
+water	216:43	0:0	12	0
+water	216:44	0:0	12	x02
+arg	216:49	216:52	11	pts
+water	216:49	0:0	12	pts
+water	216:53	0:0	10	;
+water	217:16	0:0	10	}
+water	218:12	0:0	8	}
+else	218:14	220:12	6
+stmts	218:19	220:12	7	
+water	218:19	0:0	8	{
+call	219:16	219:37	8	avio_w8
+arg	219:24	219:31	9	ctx->pb
+water	219:24	0:0	10	ctx
+op	219:27	0:0	10	->
+water	219:29	0:0	10	pb
+arg	219:33	219:37	9	0x0f
+water	219:33	0:0	10	0
+water	219:34	0:0	10	x0f
+water	219:38	0:0	8	;
+water	220:12	0:0	8	}
+water	221:8	0:0	6	}
+if	222:8	228:8	4	(s -> is_mpeg2)
+cond	222:12	222:15	5	s -> is_mpeg2
+water	222:12	0:0	6	s
+op	222:13	0:0	6	->
+water	222:15	0:0	6	is_mpeg2
+stmts	222:25	228:8	5	
+water	222:25	0:0	6	{
+call	225:12	225:33	6	avio_w8
+arg	225:20	225:27	7	ctx->pb
+water	225:20	0:0	8	ctx
+op	225:23	0:0	8	->
+water	225:25	0:0	8	pb
+arg	225:29	225:33	7	0xff
+water	225:29	0:0	8	0
+water	225:30	0:0	8	xff
+water	225:34	0:0	6	;
+for	226:12	227:38	6	(i = 0 ;i < stuffing_size;i ++)
+forinit	226:17	226:22	7	i = 0 ;
+water	226:17	0:0	8	i
+op	226:19	0:0	8	=
+water	226:21	0:0	8	0
+water	226:22	0:0	8	;
+cond	226:24	226:28	7	i < stuffing_size
+water	226:24	0:0	8	i
+op	226:26	0:0	8	<
+water	226:28	0:0	8	stuffing_size
+forexpr	226:43	226:44	7	i ++
+water	226:43	0:0	8	i
+op	226:44	0:0	8	++
+stmts	227:16	227:38	7	
+call	227:16	227:37	8	avio_w8
+arg	227:24	227:31	9	ctx->pb
+water	227:24	0:0	10	ctx
+op	227:27	0:0	10	->
+water	227:29	0:0	10	pb
+arg	227:33	227:37	9	0xff
+water	227:33	0:0	10	0
+water	227:34	0:0	10	xff
+water	227:38	0:0	8	;
+water	228:8	0:0	6	}
+if	229:8	243:8	4	(startcode == PRIVATE_STREAM_1)
+cond	229:12	229:25	5	startcode == PRIVATE_STREAM_1
+water	229:12	0:0	6	startcode
+op	229:22	0:0	6	==
+water	229:25	0:0	6	PRIVATE_STREAM_1
+stmts	229:43	243:8	5	
+water	229:43	0:0	6	{
+call	230:12	230:31	6	avio_w8
+arg	230:20	230:27	7	ctx->pb
+water	230:20	0:0	8	ctx
+op	230:23	0:0	8	->
+water	230:25	0:0	8	pb
+arg	230:29	230:31	7	id
+water	230:29	0:0	8	id
+water	230:32	0:0	6	;
+if	231:12	238:12	6	(id >= 0 xa0)
+cond	231:16	231:23	7	id >= 0 xa0
+water	231:16	0:0	8	id
+op	231:19	0:0	8	>=
+water	231:22	0:0	8	0
+water	231:23	0:0	8	xa0
+stmts	231:28	238:12	7	
+water	231:28	0:0	8	{
+call	233:16	233:34	8	avio_w8
+arg	233:24	233:31	9	ctx->pb
+water	233:24	0:0	10	ctx
+op	233:27	0:0	10	->
+water	233:29	0:0	10	pb
+arg	233:33	233:34	9	7
+water	233:33	0:0	10	7
+water	233:35	0:0	8	;
+call	234:16	234:36	8	avio_wb16
+arg	234:26	234:33	9	ctx->pb
+water	234:26	0:0	10	ctx
+op	234:29	0:0	10	->
+water	234:31	0:0	10	pb
+arg	234:35	234:36	9	4
+water	234:35	0:0	10	4
+water	234:37	0:0	8	;
+call	235:16	235:55	8	avio_w8
+arg	235:24	235:31	9	ctx->pb
+water	235:24	0:0	10	ctx
+op	235:27	0:0	10	->
+water	235:29	0:0	10	pb
+arg	235:33	235:55	9	stream->lpcm_header[0]
+water	235:33	0:0	10	stream
+op	235:39	0:0	10	->
+water	235:41	0:0	10	lpcm_header
+op	235:52	0:0	10	[
+water	235:53	0:0	10	0
+op	235:54	0:0	10	]
+water	235:56	0:0	8	;
+call	236:16	236:55	8	avio_w8
+arg	236:24	236:31	9	ctx->pb
+water	236:24	0:0	10	ctx
+op	236:27	0:0	10	->
+water	236:29	0:0	10	pb
+arg	236:33	236:55	9	stream->lpcm_header[1]
+water	236:33	0:0	10	stream
+op	236:39	0:0	10	->
+water	236:41	0:0	10	lpcm_header
+op	236:52	0:0	10	[
+water	236:53	0:0	10	1
+op	236:54	0:0	10	]
+water	236:56	0:0	8	;
+call	237:16	237:55	8	avio_w8
+arg	237:24	237:31	9	ctx->pb
+water	237:24	0:0	10	ctx
+op	237:27	0:0	10	->
+water	237:29	0:0	10	pb
+arg	237:33	237:55	9	stream->lpcm_header[2]
+water	237:33	0:0	10	stream
+op	237:39	0:0	10	->
+water	237:41	0:0	10	lpcm_header
+op	237:52	0:0	10	[
+water	237:53	0:0	10	2
+op	237:54	0:0	10	]
+water	237:56	0:0	8	;
+water	238:12	0:0	8	}
+else	238:14	242:12	6
+stmts	238:19	242:12	7	
+if	238:19	242:12	8	(id >= 0 x40)
+cond	238:23	238:30	9	id >= 0 x40
+water	238:23	0:0	10	id
+op	238:26	0:0	10	>=
+water	238:29	0:0	10	0
+water	238:30	0:0	10	x40
+stmts	238:35	242:12	9	
+water	238:35	0:0	10	{
+call	240:16	240:42	10	avio_w8
+arg	240:24	240:31	11	ctx->pb
+water	240:24	0:0	12	ctx
+op	240:27	0:0	12	->
+water	240:29	0:0	12	pb
+arg	240:33	240:42	11	nb_frames
+water	240:33	0:0	12	nb_frames
+water	240:43	0:0	10	;
+call	241:16	241:51	10	avio_wb16
+arg	241:26	241:33	11	ctx->pb
+water	241:26	0:0	12	ctx
+op	241:29	0:0	12	->
+water	241:31	0:0	12	pb
+arg	241:35	241:51	11	trailer_size+1
+water	241:35	0:0	12	trailer_size
+op	241:48	0:0	12	+
+water	241:50	0:0	12	1
+water	241:52	0:0	10	;
+water	242:12	0:0	10	}
+water	243:8	0:0	6	}
+call	245:8	245:77	4	av_assert0
+arg	245:19	245:77	5	payload_size-stuffing_size<=av_fifo_size(stream->fifo)
+water	245:19	0:0	6	payload_size
+op	245:32	0:0	6	-
+water	245:34	0:0	6	stuffing_size
+op	245:48	0:0	6	<=
+call	245:51	245:76	6	av_fifo_size
+arg	245:64	245:76	7	stream->fifo
+water	245:64	0:0	8	stream
+op	245:70	0:0	8	->
+water	245:72	0:0	8	fifo
+water	245:78	0:0	4	;
+call	246:8	248:68	4	av_fifo_generic_read
+arg	246:29	246:41	5	stream->fifo
+water	246:29	0:0	6	stream
+op	246:35	0:0	6	->
+water	246:37	0:0	6	fifo
+arg	246:43	246:50	5	ctx->pb
+water	246:43	0:0	6	ctx
+op	246:46	0:0	6	->
+water	246:48	0:0	6	pb
+arg	247:29	247:57	5	payload_size-stuffing_size
+water	247:29	0:0	6	payload_size
+op	247:42	0:0	6	-
+water	247:44	0:0	6	stuffing_size
+arg	248:29	248:68	5	(void(*)(void*,void*,int))avio_write
+water	248:29	0:0	6	(
+call	248:30	248:37	6	void
+arg	248:36	248:37	7	*
+op	248:36	0:0	8	*
+water	248:38	0:0	6	(
+water	248:39	0:0	6	void
+op	248:43	0:0	6	*
+water	248:44	0:0	6	,
+water	248:46	0:0	6	void
+op	248:50	0:0	6	*
+water	248:51	0:0	6	,
+water	248:53	0:0	6	int
+water	248:56	0:0	6	)
+water	248:57	0:0	6	)
+water	248:58	0:0	6	avio_write
+water	248:69	0:0	4	;
+water	249:8	0:0	4	stream
+op	249:14	0:0	4	->
+water	249:16	0:0	4	bytes_to_iframe
+op	249:32	0:0	4	-=
+water	249:35	0:0	4	payload_size
+op	249:48	0:0	4	-
+water	249:50	0:0	4	stuffing_size
+water	249:63	0:0	4	;
+water	250:4	0:0	4	}
+else	250:6	253:4	2
+stmts	250:11	253:4	3	
+water	250:11	0:0	4	{
+water	251:8	0:0	4	payload_size
+op	251:22	0:0	4	=
+water	252:8	0:0	4	stuffing_size
+op	252:22	0:0	4	=
+water	252:24	0:0	4	0
+water	252:25	0:0	4	;
+water	253:4	0:0	4	}
+if	254:4	255:58	2	(pad_packet_bytes > 0)
+cond	254:8	254:27	3	pad_packet_bytes > 0
+water	254:8	0:0	4	pad_packet_bytes
+op	254:25	0:0	4	>
+water	254:27	0:0	4	0
+stmts	255:8	255:58	3	
+call	255:8	255:57	4	put_padding_packet
+arg	255:27	255:30	5	ctx
+water	255:27	0:0	6	ctx
+arg	255:32	255:39	5	ctx->pb
+water	255:32	0:0	6	ctx
+op	255:35	0:0	6	->
+water	255:37	0:0	6	pb
+arg	255:41	255:57	5	pad_packet_bytes
+water	255:41	0:0	6	pad_packet_bytes
+water	255:58	0:0	4	;
+for	256:4	257:30	2	(i = 0 ;i < zero_trail_bytes;i ++)
+forinit	256:9	256:14	3	i = 0 ;
+water	256:9	0:0	4	i
+op	256:11	0:0	4	=
+water	256:13	0:0	4	0
+water	256:14	0:0	4	;
+cond	256:16	256:20	3	i < zero_trail_bytes
+water	256:16	0:0	4	i
+op	256:18	0:0	4	<
+water	256:20	0:0	4	zero_trail_bytes
+forexpr	256:38	256:39	3	i ++
+water	256:38	0:0	4	i
+op	256:39	0:0	4	++
+stmts	257:8	257:30	3	
+call	257:8	257:29	4	avio_w8
+arg	257:16	257:23	5	ctx->pb
+water	257:16	0:0	6	ctx
+op	257:19	0:0	6	->
+water	257:21	0:0	6	pb
+arg	257:25	257:29	5	0x00
+water	257:25	0:0	6	0
+water	257:26	0:0	6	x00
+water	257:30	0:0	4	;
+call	258:4	258:22	2	avio_flush
+arg	258:15	258:22	3	ctx->pb
+water	258:15	0:0	4	ctx
+op	258:18	0:0	4	->
+water	258:20	0:0	4	pb
+water	258:23	0:0	2	;
+water	259:4	0:0	2	s
+op	259:5	0:0	2	->
+water	259:7	0:0	2	packet_number
+op	259:20	0:0	2	++
+water	259:22	0:0	2	;
+if	263:4	264:31	2	(! general_pack)
+cond	263:8	263:9	3	! general_pack
+op	263:8	0:0	4	!
+water	263:9	0:0	4	general_pack
+stmts	264:8	264:31	3	
+water	264:8	0:0	4	stream
+op	264:14	0:0	4	->
+water	264:16	0:0	4	packet_number
+op	264:29	0:0	4	++
+water	264:31	0:0	4	;
+return	265:4	265:39	2	payload_size-stuffing_size
+water	265:11	0:0	3	payload_size
+op	265:24	0:0	3	-
+water	265:26	0:0	3	stuffing_size

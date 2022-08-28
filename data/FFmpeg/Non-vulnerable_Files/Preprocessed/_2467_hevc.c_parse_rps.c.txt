@@ -1,0 +1,185 @@
+func	1:0	56:0	0	static int	parse_rps
+params	1:20	0:0	1	
+param	1:21	1:38	2	GetBitContext *	gb
+param	1:40	1:60	2	unsigned int	rps_idx
+param	2:21	2:41	2	unsigned int	num_rps
+param	3:21	3:74	2	unsigned int	num_delta_pocs[MAX_SHORT_TERM_RPS_COUNT]
+stmnts	0:0	55:12	1	
+decl	5:4	5:18	2	unsigned int	i
+if	6:4	40:4	2	(rps_idx &&get_bits1 (gb ))
+cond	6:8	6:31	3	rps_idx &&get_bits1 (gb )
+water	6:8	0:0	4	rps_idx
+op	6:16	0:0	4	&&
+call	6:19	6:31	4	get_bits1
+arg	6:29	6:31	5	gb
+water	6:29	0:0	6	gb
+stmts	6:34	40:4	3	
+water	6:34	0:0	4	{
+if	8:8	9:38	4	(rps_idx >= num_rps)
+cond	8:12	8:23	5	rps_idx >= num_rps
+water	8:12	0:0	6	rps_idx
+op	8:20	0:0	6	>=
+water	8:23	0:0	6	num_rps
+stmts	9:12	9:38	5	
+return	9:12	9:38	6	AVERROR_INVALIDDATA
+water	9:19	0:0	7	AVERROR_INVALIDDATA
+call	10:8	10:29	4	skip_bits1
+arg	10:27	10:29	5	gb
+water	10:27	0:0	6	gb
+water	10:30	0:0	4	;
+call	11:8	11:29	4	get_ue_golomb_long
+arg	11:27	11:29	5	gb
+water	11:27	0:0	6	gb
+water	11:30	0:0	4	;
+water	12:8	0:0	4	num_delta_pocs
+op	12:22	0:0	4	[
+water	12:23	0:0	4	rps_idx
+op	12:30	0:0	4	]
+op	12:32	0:0	4	=
+water	12:34	0:0	4	0
+water	12:35	0:0	4	;
+for	32:8	39:8	4	(i = 0 ;i <= num_delta_pocs [ rps_idx - 1 ];i ++)
+forinit	32:13	32:18	5	i = 0 ;
+water	32:13	0:0	6	i
+op	32:15	0:0	6	=
+water	32:17	0:0	6	0
+water	32:18	0:0	6	;
+cond	32:20	32:51	5	i <= num_delta_pocs [ rps_idx - 1 ]
+water	32:20	0:0	6	i
+op	32:22	0:0	6	<=
+water	32:25	0:0	6	num_delta_pocs
+op	32:39	0:0	6	[
+water	32:40	0:0	6	rps_idx
+op	32:48	0:0	6	-
+water	32:50	0:0	6	1
+op	32:51	0:0	6	]
+forexpr	32:54	32:55	5	i ++
+water	32:54	0:0	6	i
+op	32:55	0:0	6	++
+stmts	32:59	39:8	5	
+water	32:59	0:0	6	{
+decl	33:12	33:38	6	uint8_t	use_delta_flag
+op	33:35	0:0	6	=
+water	33:37	0:0	6	0
+decl	34:12	34:57	6	uint8_t	used_by_curr_pic_flag
+op	34:42	0:0	6	=
+call	34:44	34:56	7	get_bits1
+arg	34:54	34:56	8	gb
+water	34:54	0:0	9	gb
+if	35:12	36:46	6	(! used_by_curr_pic_flag)
+cond	35:16	35:17	7	! used_by_curr_pic_flag
+op	35:16	0:0	8	!
+water	35:17	0:0	8	used_by_curr_pic_flag
+stmts	36:16	36:46	7	
+water	36:16	0:0	8	use_delta_flag
+op	36:31	0:0	8	=
+call	36:33	36:45	8	get_bits1
+arg	36:43	36:45	9	gb
+water	36:43	0:0	10	gb
+water	36:46	0:0	8	;
+if	37:12	38:41	6	(used_by_curr_pic_flag || use_delta_flag)
+cond	37:16	37:41	7	used_by_curr_pic_flag || use_delta_flag
+water	37:16	0:0	8	used_by_curr_pic_flag
+op	37:38	0:0	8	||
+water	37:41	0:0	8	use_delta_flag
+stmts	38:16	38:41	7	
+water	38:16	0:0	8	num_delta_pocs
+op	38:30	0:0	8	[
+water	38:31	0:0	8	rps_idx
+op	38:38	0:0	8	]
+op	38:39	0:0	8	++
+water	38:41	0:0	8	;
+water	39:8	0:0	6	}
+water	40:4	0:0	4	}
+else	40:6	54:4	2
+stmts	40:11	54:4	3	
+water	40:11	0:0	4	{
+decl	41:8	41:63	4	unsigned int	num_negative_pics
+op	41:39	0:0	4	=
+call	41:41	41:62	5	get_ue_golomb_long
+arg	41:60	41:62	6	gb
+water	41:60	0:0	7	gb
+decl	42:8	42:63	4	unsigned int	num_positive_pics
+op	42:39	0:0	4	=
+call	42:41	42:62	5	get_ue_golomb_long
+arg	42:60	42:62	6	gb
+water	42:60	0:0	7	gb
+if	43:8	44:38	4	(( num_positive_pics + ( uint64_t ) num_negative_pics ) * 2 >get_bits_left (gb ))
+cond	43:12	43:84	5	( num_positive_pics + ( uint64_t ) num_negative_pics ) * 2 >get_bits_left (gb )
+water	43:12	0:0	6	(
+water	43:13	0:0	6	num_positive_pics
+op	43:31	0:0	6	+
+water	43:33	0:0	6	(
+water	43:34	0:0	6	uint64_t
+water	43:42	0:0	6	)
+water	43:43	0:0	6	num_negative_pics
+water	43:60	0:0	6	)
+op	43:62	0:0	6	*
+water	43:64	0:0	6	2
+op	43:66	0:0	6	>
+call	43:68	43:84	6	get_bits_left
+arg	43:82	43:84	7	gb
+water	43:82	0:0	8	gb
+stmts	44:12	44:38	5	
+return	44:12	44:38	6	AVERROR_INVALIDDATA
+water	44:19	0:0	7	AVERROR_INVALIDDATA
+water	45:8	0:0	4	num_delta_pocs
+op	45:22	0:0	4	[
+water	45:23	0:0	4	rps_idx
+op	45:30	0:0	4	]
+op	45:32	0:0	4	=
+water	45:34	0:0	4	num_negative_pics
+op	45:52	0:0	4	+
+water	45:54	0:0	4	num_positive_pics
+water	45:71	0:0	4	;
+for	46:8	49:8	4	(i = 0 ;i < num_negative_pics;i ++)
+forinit	46:13	46:18	5	i = 0 ;
+water	46:13	0:0	6	i
+op	46:15	0:0	6	=
+water	46:17	0:0	6	0
+water	46:18	0:0	6	;
+cond	46:20	46:24	5	i < num_negative_pics
+water	46:20	0:0	6	i
+op	46:22	0:0	6	<
+water	46:24	0:0	6	num_negative_pics
+forexpr	46:43	46:44	5	i ++
+water	46:43	0:0	6	i
+op	46:44	0:0	6	++
+stmts	46:48	49:8	5	
+water	46:48	0:0	6	{
+call	47:12	47:33	6	get_ue_golomb_long
+arg	47:31	47:33	7	gb
+water	47:31	0:0	8	gb
+water	47:34	0:0	6	;
+call	48:12	48:33	6	skip_bits1
+arg	48:31	48:33	7	gb
+water	48:31	0:0	8	gb
+water	48:34	0:0	6	;
+water	49:8	0:0	6	}
+for	50:8	53:8	4	(i = 0 ;i < num_positive_pics;i ++)
+forinit	50:13	50:18	5	i = 0 ;
+water	50:13	0:0	6	i
+op	50:15	0:0	6	=
+water	50:17	0:0	6	0
+water	50:18	0:0	6	;
+cond	50:20	50:24	5	i < num_positive_pics
+water	50:20	0:0	6	i
+op	50:22	0:0	6	<
+water	50:24	0:0	6	num_positive_pics
+forexpr	50:43	50:44	5	i ++
+water	50:43	0:0	6	i
+op	50:44	0:0	6	++
+stmts	50:48	53:8	5	
+water	50:48	0:0	6	{
+call	51:12	51:33	6	get_ue_golomb_long
+arg	51:31	51:33	7	gb
+water	51:31	0:0	8	gb
+water	51:34	0:0	6	;
+call	52:12	52:33	6	skip_bits1
+arg	52:31	52:33	7	gb
+water	52:31	0:0	8	gb
+water	52:34	0:0	6	;
+water	53:8	0:0	6	}
+water	54:4	0:0	4	}
+return	55:4	55:12	2	0
+water	55:11	0:0	3	0

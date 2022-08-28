@@ -1,0 +1,375 @@
+func	1:0	61:0	0	static int	gdigrab_read_packet
+params	1:30	0:0	1	
+param	1:31	1:50	2	AVFormatContext *	s1
+param	1:52	1:65	2	AVPacket *	pkt
+stmnts	0:0	60:53	1	
+decl	3:4	3:43	2	struct gdigrab	*gdigrab
+op	3:28	0:0	2	=
+water	3:30	0:0	2	s1
+op	3:32	0:0	2	->
+water	3:34	0:0	2	priv_data
+decl	4:4	4:45	2	HDC	dest_hdc
+op	4:26	0:0	2	=
+water	4:28	0:0	2	gdigrab
+op	4:35	0:0	2	->
+water	4:37	0:0	2	dest_hdc
+decl	5:4	5:47	2	HDC	source_hdc
+op	5:26	0:0	2	=
+water	5:28	0:0	2	gdigrab
+op	5:35	0:0	2	->
+water	5:37	0:0	2	source_hdc
+decl	6:4	6:46	2	RECT	clip_rect
+op	6:26	0:0	2	=
+water	6:28	0:0	2	gdigrab
+op	6:35	0:0	2	->
+water	6:37	0:0	2	clip_rect
+decl	7:4	7:46	2	AVRational	time_base
+op	7:26	0:0	2	=
+water	7:28	0:0	2	gdigrab
+op	7:35	0:0	2	->
+water	7:37	0:0	2	time_base
+decl	8:4	8:47	2	int64_t	time_frame
+op	8:26	0:0	2	=
+water	8:28	0:0	2	gdigrab
+op	8:35	0:0	2	->
+water	8:37	0:0	2	time_frame
+decl	9:4	9:24	2	BITMAPFILEHEADER	bfh
+decl	10:4	10:62	2	int	file_size
+op	10:18	0:0	2	=
+water	10:20	0:0	2	gdigrab
+op	10:27	0:0	2	->
+water	10:29	0:0	2	header_size
+op	10:41	0:0	2	+
+water	10:43	0:0	2	gdigrab
+op	10:50	0:0	2	->
+water	10:52	0:0	2	frame_size
+decl	11:4	11:26	2	int64_t	curtime
+water	11:19	0:0	2	,
+decl	11:4	11:26	2	int64_t	delay
+water	13:4	0:0	2	time_frame
+op	13:15	0:0	2	+=
+call	13:18	13:33	2	INT64_C
+arg	13:26	13:33	3	1000000
+water	13:26	0:0	4	1000000
+water	13:34	0:0	2	;
+if	15:4	16:46	2	(gdigrab -> show_region)
+cond	15:8	15:17	3	gdigrab -> show_region
+water	15:8	0:0	4	gdigrab
+op	15:15	0:0	4	->
+water	15:17	0:0	4	show_region
+stmts	16:8	16:46	3	
+call	16:8	16:45	4	gdigrab_region_wnd_update
+arg	16:34	16:36	5	s1
+water	16:34	0:0	6	s1
+arg	16:38	16:45	5	gdigrab
+water	16:38	0:0	6	gdigrab
+water	16:46	0:0	4	;
+for	18:4	32:4	2	(;;)
+forinit	18:9	18:9	3	;
+water	18:9	0:0	4	;
+cond	0:0	0:0	3	
+forexpr	0:0	0:0	3	
+stmts	18:13	32:4	3	
+water	18:13	0:0	4	{
+water	19:8	0:0	4	curtime
+op	19:16	0:0	4	=
+call	19:18	19:29	4	av_gettime
+water	19:30	0:0	4	;
+water	20:8	0:0	4	delay
+op	20:14	0:0	4	=
+water	20:16	0:0	4	time_frame
+call	20:27	20:45	4	*av_q2d
+arg	20:36	20:45	5	time_base
+water	20:36	0:0	6	time_base
+op	20:47	0:0	4	-
+water	20:49	0:0	4	curtime
+water	20:56	0:0	4	;
+if	21:8	26:8	4	(delay <= 0)
+cond	21:12	21:21	5	delay <= 0
+water	21:12	0:0	6	delay
+op	21:18	0:0	6	<=
+water	21:21	0:0	6	0
+stmts	21:24	26:8	5	
+water	21:24	0:0	6	{
+if	22:12	24:12	6	(delay <INT64_C (- 1000000 )* av_q2d (time_base ))
+cond	22:16	22:60	7	delay <INT64_C (- 1000000 )* av_q2d (time_base )
+water	22:16	0:0	8	delay
+op	22:22	0:0	8	<
+call	22:24	22:40	8	INT64_C
+arg	22:32	22:40	9	-1000000
+op	22:32	0:0	10	-
+water	22:33	0:0	10	1000000
+call	22:42	22:60	8	*av_q2d
+arg	22:51	22:60	9	time_base
+water	22:51	0:0	10	time_base
+stmts	22:63	24:12	7	
+water	22:63	0:0	8	{
+water	23:16	0:0	8	time_frame
+op	23:27	0:0	8	+=
+call	23:30	23:45	8	INT64_C
+arg	23:38	23:45	9	1000000
+water	23:38	0:0	10	1000000
+water	23:46	0:0	8	;
+water	24:12	0:0	8	}
+break	25:12	25:17	6	
+water	26:8	0:0	6	}
+if	27:8	29:8	4	(s1 -> flags & AVFMT_FLAG_NONBLOCK)
+cond	27:12	27:24	5	s1 -> flags & AVFMT_FLAG_NONBLOCK
+water	27:12	0:0	6	s1
+op	27:14	0:0	6	->
+water	27:16	0:0	6	flags
+op	27:22	0:0	6	&
+water	27:24	0:0	6	AVFMT_FLAG_NONBLOCK
+stmts	27:45	29:8	5	
+water	27:45	0:0	6	{
+return	28:12	28:34	6	AVERROR(EAGAIN)
+call	28:19	28:33	7	AVERROR
+arg	28:27	28:33	8	EAGAIN
+water	28:27	0:0	9	EAGAIN
+water	29:8	0:0	6	}
+else	29:10	31:8	4
+stmts	29:15	31:8	5	
+water	29:15	0:0	6	{
+call	30:12	30:27	6	av_usleep
+arg	30:22	30:27	7	delay
+water	30:22	0:0	8	delay
+water	30:28	0:0	6	;
+water	31:8	0:0	6	}
+water	32:4	0:0	4	}
+if	33:4	34:30	2	(av_new_packet (pkt ,file_size ) < 0)
+cond	33:8	33:40	3	av_new_packet (pkt ,file_size ) < 0
+call	33:8	33:36	4	av_new_packet
+arg	33:22	33:25	5	pkt
+water	33:22	0:0	6	pkt
+arg	33:27	33:36	5	file_size
+water	33:27	0:0	6	file_size
+op	33:38	0:0	4	<
+water	33:40	0:0	4	0
+stmts	34:8	34:30	3	
+return	34:8	34:30	4	AVERROR(ENOMEM)
+call	34:15	34:29	5	AVERROR
+arg	34:23	34:29	6	ENOMEM
+water	34:23	0:0	7	ENOMEM
+water	35:4	0:0	2	pkt
+op	35:7	0:0	2	->
+water	35:9	0:0	2	pts
+op	35:13	0:0	2	=
+water	35:15	0:0	2	curtime
+water	35:22	0:0	2	;
+if	37:4	44:4	2	(!BitBlt (dest_hdc ,0 ,0 ,clip_rect . right - clip_rect . left ,clip_rect . bottom - clip_rect . top ,source_hdc ,clip_rect . left ,clip_rect . top ,SRCCOPY | CAPTUREBLT ))
+cond	37:8	41:67	3	!BitBlt (dest_hdc ,0 ,0 ,clip_rect . right - clip_rect . left ,clip_rect . bottom - clip_rect . top ,source_hdc ,clip_rect . left ,clip_rect . top ,SRCCOPY | CAPTUREBLT )
+op	37:8	0:0	4	!
+call	37:9	41:67	4	BitBlt
+arg	37:16	37:24	5	dest_hdc
+water	37:16	0:0	6	dest_hdc
+arg	37:26	37:27	5	0
+water	37:26	0:0	6	0
+arg	37:29	37:30	5	0
+water	37:29	0:0	6	0
+arg	38:16	38:48	5	clip_rect.right-clip_rect.left
+water	38:16	0:0	6	clip_rect
+op	38:25	0:0	6	.
+water	38:26	0:0	6	right
+op	38:32	0:0	6	-
+water	38:34	0:0	6	clip_rect
+op	38:43	0:0	6	.
+water	38:44	0:0	6	left
+arg	39:16	39:48	5	clip_rect.bottom-clip_rect.top
+water	39:16	0:0	6	clip_rect
+op	39:25	0:0	6	.
+water	39:26	0:0	6	bottom
+op	39:33	0:0	6	-
+water	39:35	0:0	6	clip_rect
+op	39:44	0:0	6	.
+water	39:45	0:0	6	top
+arg	40:16	40:26	5	source_hdc
+water	40:16	0:0	6	source_hdc
+arg	41:16	41:30	5	clip_rect.left
+water	41:16	0:0	6	clip_rect
+op	41:25	0:0	6	.
+water	41:26	0:0	6	left
+arg	41:32	41:45	5	clip_rect.top
+water	41:32	0:0	6	clip_rect
+op	41:41	0:0	6	.
+water	41:42	0:0	6	top
+arg	41:47	41:67	5	SRCCOPY|CAPTUREBLT
+water	41:47	0:0	6	SRCCOPY
+op	41:55	0:0	6	|
+water	41:57	0:0	6	CAPTUREBLT
+stmts	41:70	44:4	3	
+water	41:70	0:0	4	{
+call	42:8	42:49	4	WIN32_API_ERROR
+arg	42:24	42:49	5	"Failed to capture image"
+water	42:24	0:0	6	"Failed to capture image"
+water	42:50	0:0	4	;
+return	43:8	43:27	4	AVERROR(EIO)
+call	43:15	43:26	5	AVERROR
+arg	43:23	43:26	6	EIO
+water	43:23	0:0	7	EIO
+water	44:4	0:0	4	}
+if	45:4	46:40	2	(gdigrab -> draw_mouse)
+cond	45:8	45:17	3	gdigrab -> draw_mouse
+water	45:8	0:0	4	gdigrab
+op	45:15	0:0	4	->
+water	45:17	0:0	4	draw_mouse
+stmts	46:8	46:40	3	
+call	46:8	46:39	4	paint_mouse_pointer
+arg	46:28	46:30	5	s1
+water	46:28	0:0	6	s1
+arg	46:32	46:39	5	gdigrab
+water	46:32	0:0	6	gdigrab
+water	46:40	0:0	4	;
+water	48:4	0:0	2	bfh
+op	48:7	0:0	2	.
+water	48:8	0:0	2	bfType
+op	48:15	0:0	2	=
+water	48:17	0:0	2	0
+water	48:18	0:0	2	x4d42
+water	48:23	0:0	2	;
+water	49:4	0:0	2	bfh
+op	49:7	0:0	2	.
+water	49:8	0:0	2	bfSize
+op	49:15	0:0	2	=
+water	49:17	0:0	2	file_size
+water	49:26	0:0	2	;
+water	50:4	0:0	2	bfh
+op	50:7	0:0	2	.
+water	50:8	0:0	2	bfReserved1
+op	50:20	0:0	2	=
+water	50:22	0:0	2	0
+water	50:23	0:0	2	;
+water	51:4	0:0	2	bfh
+op	51:7	0:0	2	.
+water	51:8	0:0	2	bfReserved2
+op	51:20	0:0	2	=
+water	51:22	0:0	2	0
+water	51:23	0:0	2	;
+water	52:4	0:0	2	bfh
+op	52:7	0:0	2	.
+water	52:8	0:0	2	bfOffBits
+op	52:18	0:0	2	=
+water	52:20	0:0	2	gdigrab
+op	52:27	0:0	2	->
+water	52:29	0:0	2	header_size
+water	52:40	0:0	2	;
+call	53:4	53:39	2	memcpy
+arg	53:11	53:20	3	pkt->data
+water	53:11	0:0	4	pkt
+op	53:14	0:0	4	->
+water	53:16	0:0	4	data
+arg	53:22	53:26	3	&bfh
+op	53:22	0:0	4	&
+water	53:23	0:0	4	bfh
+arg	53:28	53:39	3	sizeof(bfh)
+op	53:28	0:0	4	sizeof
+water	53:34	0:0	4	(
+water	53:35	0:0	4	bfh
+water	53:38	0:0	4	)
+water	53:40	0:0	2	;
+call	54:4	54:91	2	memcpy
+arg	54:11	54:34	3	pkt->data+sizeof(bfh)
+water	54:11	0:0	4	pkt
+op	54:14	0:0	4	->
+water	54:16	0:0	4	data
+op	54:21	0:0	4	+
+op	54:23	0:0	4	sizeof
+water	54:29	0:0	4	(
+water	54:30	0:0	4	bfh
+water	54:33	0:0	4	)
+arg	54:36	54:59	3	&gdigrab->bmi.bmiHeader
+op	54:36	0:0	4	&
+water	54:37	0:0	4	gdigrab
+op	54:44	0:0	4	->
+water	54:46	0:0	4	bmi
+op	54:49	0:0	4	.
+water	54:50	0:0	4	bmiHeader
+arg	54:61	54:91	3	sizeof(gdigrab->bmi.bmiHeader)
+op	54:61	0:0	4	sizeof
+water	54:67	0:0	4	(
+water	54:68	0:0	4	gdigrab
+op	54:75	0:0	4	->
+water	54:77	0:0	4	bmi
+op	54:80	0:0	4	.
+water	54:81	0:0	4	bmiHeader
+water	54:90	0:0	4	)
+water	54:92	0:0	2	;
+if	55:4	57:87	2	(gdigrab -> bmi . bmiHeader . biBitCount <= 8)
+cond	55:8	55:45	3	gdigrab -> bmi . bmiHeader . biBitCount <= 8
+water	55:8	0:0	4	gdigrab
+op	55:15	0:0	4	->
+water	55:17	0:0	4	bmi
+op	55:20	0:0	4	.
+water	55:21	0:0	4	bmiHeader
+op	55:30	0:0	4	.
+water	55:31	0:0	4	biBitCount
+op	55:42	0:0	4	<=
+water	55:45	0:0	4	8
+stmts	56:8	57:87	3	
+call	56:8	57:86	4	GetDIBColorTable
+arg	56:25	56:33	5	dest_hdc
+water	56:25	0:0	6	dest_hdc
+arg	56:35	56:36	5	0
+water	56:35	0:0	6	0
+arg	56:38	56:76	5	1<<gdigrab->bmi.bmiHeader.biBitCount
+water	56:38	0:0	6	1
+op	56:40	0:0	6	<<
+water	56:43	0:0	6	gdigrab
+op	56:50	0:0	6	->
+water	56:52	0:0	6	bmi
+op	56:55	0:0	6	.
+water	56:56	0:0	6	bmiHeader
+op	56:65	0:0	6	.
+water	56:66	0:0	6	biBitCount
+arg	57:16	57:86	5	(RGBQUAD*)(pkt->data+sizeof(bfh)+sizeof(gdigrab->bmi.bmiHeader))
+call	57:16	57:85	6	(RGBQUAD*)
+arg	57:29	57:85	7	pkt->data+sizeof(bfh)+sizeof(gdigrab->bmi.bmiHeader)
+water	57:29	0:0	8	pkt
+op	57:32	0:0	8	->
+water	57:34	0:0	8	data
+op	57:39	0:0	8	+
+op	57:41	0:0	8	sizeof
+water	57:47	0:0	8	(
+water	57:48	0:0	8	bfh
+water	57:51	0:0	8	)
+op	57:53	0:0	8	+
+op	57:55	0:0	8	sizeof
+water	57:61	0:0	8	(
+water	57:62	0:0	8	gdigrab
+op	57:69	0:0	8	->
+water	57:71	0:0	8	bmi
+op	57:74	0:0	8	.
+water	57:75	0:0	8	bmiHeader
+water	57:84	0:0	8	)
+water	57:87	0:0	4	;
+call	58:4	58:81	2	memcpy
+arg	58:11	58:43	3	pkt->data+gdigrab->header_size
+water	58:11	0:0	4	pkt
+op	58:14	0:0	4	->
+water	58:16	0:0	4	data
+op	58:21	0:0	4	+
+water	58:23	0:0	4	gdigrab
+op	58:30	0:0	4	->
+water	58:32	0:0	4	header_size
+arg	58:45	58:60	3	gdigrab->buffer
+water	58:45	0:0	4	gdigrab
+op	58:52	0:0	4	->
+water	58:54	0:0	4	buffer
+arg	58:62	58:81	3	gdigrab->frame_size
+water	58:62	0:0	4	gdigrab
+op	58:69	0:0	4	->
+water	58:71	0:0	4	frame_size
+water	58:82	0:0	2	;
+water	59:4	0:0	2	gdigrab
+op	59:11	0:0	2	->
+water	59:13	0:0	2	time_frame
+op	59:24	0:0	2	=
+water	59:26	0:0	2	time_frame
+water	59:36	0:0	2	;
+return	60:4	60:53	2	gdigrab->header_size+gdigrab->frame_size
+water	60:11	0:0	3	gdigrab
+op	60:18	0:0	3	->
+water	60:20	0:0	3	header_size
+op	60:32	0:0	3	+
+water	60:34	0:0	3	gdigrab
+op	60:41	0:0	3	->
+water	60:43	0:0	3	frame_size

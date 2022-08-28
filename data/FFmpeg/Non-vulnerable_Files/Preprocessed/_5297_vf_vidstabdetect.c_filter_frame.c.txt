@@ -1,0 +1,178 @@
+func	1:0	28:0	0	static int	filter_frame
+params	1:23	0:0	1	
+param	1:24	1:44	2	AVFilterLink *	inlink
+param	1:46	1:57	2	AVFrame *	in
+stmnts	0:0	27:39	1	
+decl	3:4	3:38	2	AVFilterContext	*ctx
+op	3:25	0:0	2	=
+water	3:27	0:0	2	inlink
+op	3:33	0:0	2	->
+water	3:35	0:0	2	dst
+decl	4:4	4:28	2	StabData	*sd
+op	4:17	0:0	2	=
+water	4:19	0:0	2	ctx
+op	4:22	0:0	2	->
+water	4:24	0:0	2	priv
+decl	5:4	5:34	2	VSMotionDetect	*md
+op	5:23	0:0	2	=
+op	5:25	0:0	2	&
+water	5:26	0:0	2	(
+water	5:27	0:0	2	sd
+op	5:29	0:0	2	->
+water	5:31	0:0	2	md
+water	5:33	0:0	2	)
+decl	6:4	6:29	2	LocalMotions	localmotions
+decl	7:4	7:51	2	AVFilterLink	*outlink
+op	7:26	0:0	2	=
+water	7:28	0:0	2	inlink
+op	7:34	0:0	2	->
+water	7:36	0:0	2	dst
+op	7:39	0:0	2	->
+water	7:41	0:0	2	outputs
+op	7:48	0:0	2	[
+water	7:49	0:0	2	0
+op	7:50	0:0	2	]
+decl	8:4	8:17	2	VSFrame	frame
+decl	9:4	9:13	2	int	plane
+if	10:4	11:34	2	(sd -> conf . show > 0 && !av_frame_is_writable (in ))
+cond	10:8	10:53	3	sd -> conf . show > 0 && !av_frame_is_writable (in )
+water	10:8	0:0	4	sd
+op	10:10	0:0	4	->
+water	10:12	0:0	4	conf
+op	10:16	0:0	4	.
+water	10:17	0:0	4	show
+op	10:22	0:0	4	>
+water	10:24	0:0	4	0
+op	10:26	0:0	4	&&
+op	10:29	0:0	4	!
+call	10:30	10:53	4	av_frame_is_writable
+arg	10:51	10:53	5	in
+water	10:51	0:0	6	in
+stmts	11:8	11:34	3	
+call	11:8	11:33	4	av_frame_make_writable
+arg	11:31	11:33	5	in
+water	11:31	0:0	6	in
+water	11:34	0:0	4	;
+for	12:4	15:4	2	(plane = 0 ;plane < md -> fi . planes;plane ++)
+forinit	12:9	12:18	3	plane = 0 ;
+water	12:9	0:0	4	plane
+op	12:15	0:0	4	=
+water	12:17	0:0	4	0
+water	12:18	0:0	4	;
+cond	12:20	12:35	3	plane < md -> fi . planes
+water	12:20	0:0	4	plane
+op	12:26	0:0	4	<
+water	12:28	0:0	4	md
+op	12:30	0:0	4	->
+water	12:32	0:0	4	fi
+op	12:34	0:0	4	.
+water	12:35	0:0	4	planes
+forexpr	12:43	12:48	3	plane ++
+water	12:43	0:0	4	plane
+op	12:48	0:0	4	++
+stmts	12:52	15:4	3	
+water	12:52	0:0	4	{
+water	13:8	0:0	4	frame
+op	13:13	0:0	4	.
+water	13:14	0:0	4	data
+op	13:18	0:0	4	[
+water	13:19	0:0	4	plane
+op	13:24	0:0	4	]
+op	13:26	0:0	4	=
+water	13:28	0:0	4	in
+op	13:30	0:0	4	->
+water	13:32	0:0	4	data
+op	13:36	0:0	4	[
+water	13:37	0:0	4	plane
+op	13:42	0:0	4	]
+water	13:43	0:0	4	;
+water	14:8	0:0	4	frame
+op	14:13	0:0	4	.
+water	14:14	0:0	4	linesize
+op	14:22	0:0	4	[
+water	14:23	0:0	4	plane
+op	14:28	0:0	4	]
+op	14:30	0:0	4	=
+water	14:32	0:0	4	in
+op	14:34	0:0	4	->
+water	14:36	0:0	4	linesize
+op	14:44	0:0	4	[
+water	14:45	0:0	4	plane
+op	14:50	0:0	4	]
+water	14:51	0:0	4	;
+water	15:4	0:0	4	}
+if	16:4	19:4	2	(vsMotionDetection (md ,& localmotions ,& frame ) != VS_OK)
+cond	16:8	16:56	3	vsMotionDetection (md ,& localmotions ,& frame ) != VS_OK
+call	16:8	16:51	4	vsMotionDetection
+arg	16:26	16:28	5	md
+water	16:26	0:0	6	md
+arg	16:30	16:43	5	&localmotions
+op	16:30	0:0	6	&
+water	16:31	0:0	6	localmotions
+arg	16:45	16:51	5	&frame
+op	16:45	0:0	6	&
+water	16:46	0:0	6	frame
+op	16:53	0:0	4	!=
+water	16:56	0:0	4	VS_OK
+stmts	16:63	19:4	3	
+water	16:63	0:0	4	{
+call	17:8	17:59	4	av_log
+arg	17:15	17:18	5	ctx
+water	17:15	0:0	6	ctx
+arg	17:20	17:32	5	AV_LOG_ERROR
+water	17:20	0:0	6	AV_LOG_ERROR
+arg	17:34	17:59	5	"motion detection failed"
+water	17:34	0:0	6	"motion detection failed"
+water	17:60	0:0	4	;
+return	18:8	18:40	4	AVERROR(AVERROR_EXTERNAL)
+call	18:15	18:39	5	AVERROR
+arg	18:23	18:39	6	AVERROR_EXTERNAL
+water	18:23	0:0	7	AVERROR_EXTERNAL
+water	19:4	0:0	4	}
+else	19:6	26:4	2
+stmts	19:11	26:4	3	
+water	19:11	0:0	4	{
+if	20:8	24:8	4	(vsWriteToFile (md ,sd -> f ,& localmotions ) != VS_OK)
+cond	20:12	20:55	5	vsWriteToFile (md ,sd -> f ,& localmotions ) != VS_OK
+call	20:12	20:50	6	vsWriteToFile
+arg	20:26	20:28	7	md
+water	20:26	0:0	8	md
+arg	20:30	20:35	7	sd->f
+water	20:30	0:0	8	sd
+op	20:32	0:0	8	->
+water	20:34	0:0	8	f
+arg	20:37	20:50	7	&localmotions
+op	20:37	0:0	8	&
+water	20:38	0:0	8	localmotions
+op	20:52	0:0	6	!=
+water	20:55	0:0	6	VS_OK
+stmts	20:62	24:8	5	
+water	20:62	0:0	6	{
+decl	21:12	21:36	6	int	ret
+op	21:20	0:0	6	=
+call	21:22	21:35	7	AVERROR
+arg	21:30	21:35	8	errno
+water	21:30	0:0	9	errno
+call	22:12	22:70	6	av_log
+arg	22:19	22:22	7	ctx
+water	22:19	0:0	8	ctx
+arg	22:24	22:36	7	AV_LOG_ERROR
+water	22:24	0:0	8	AV_LOG_ERROR
+arg	22:38	22:70	7	"cannot write to transform file"
+water	22:38	0:0	8	"cannot write to transform file"
+water	22:71	0:0	6	;
+return	23:12	23:22	6	ret
+water	23:19	0:0	7	ret
+water	24:8	0:0	6	}
+call	25:8	25:35	4	vs_vector_del
+arg	25:22	25:35	5	&localmotions
+op	25:22	0:0	6	&
+water	25:23	0:0	6	localmotions
+water	25:36	0:0	4	;
+water	26:4	0:0	4	}
+return	27:4	27:39	2	ff_filter_frame(outlink,in)
+call	27:11	27:38	3	ff_filter_frame
+arg	27:27	27:34	4	outlink
+water	27:27	0:0	5	outlink
+arg	27:36	27:38	4	in
+water	27:36	0:0	5	in

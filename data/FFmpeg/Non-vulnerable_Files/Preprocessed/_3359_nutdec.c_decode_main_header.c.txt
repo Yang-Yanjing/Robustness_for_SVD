@@ -1,0 +1,999 @@
+func	1:0	149:0	0	static int	decode_main_header
+params	1:29	0:0	1	
+param	1:30	1:45	2	NUTContext *	nut
+stmnts	0:0	148:14	1	
+decl	3:4	3:33	2	AVFormatContext	*s
+op	3:23	0:0	2	=
+water	3:25	0:0	2	nut
+op	3:28	0:0	2	->
+water	3:30	0:0	2	avf
+decl	4:4	4:30	2	AVIOContext	*bc
+op	4:23	0:0	2	=
+water	4:25	0:0	2	s
+op	4:26	0:0	2	->
+water	4:28	0:0	2	pb
+decl	5:4	5:21	2	uint64_t	tmp
+water	5:16	0:0	2	,
+decl	5:4	5:21	2	uint64_t	end
+decl	6:4	6:29	2	unsigned int	stream_count
+decl	7:4	7:24	2	int	i
+water	7:9	0:0	2	,
+decl	7:4	7:24	2	int	j
+water	7:12	0:0	2	,
+decl	7:4	7:24	2	int	count
+water	7:19	0:0	2	,
+decl	7:4	7:24	2	int	ret
+decl	8:4	8:69	2	int	tmp_stream
+water	8:18	0:0	2	,
+decl	8:4	8:69	2	int	tmp_mul
+water	8:27	0:0	2	,
+decl	8:4	8:69	2	int	tmp_pts
+water	8:36	0:0	2	,
+decl	8:4	8:69	2	int	tmp_size
+water	8:46	0:0	2	,
+decl	8:4	8:69	2	int	tmp_res
+water	8:55	0:0	2	,
+decl	8:4	8:69	2	int	tmp_head_idx
+water	9:4	0:0	2	end
+op	9:9	0:0	2	=
+call	9:11	9:54	2	get_packetheader
+arg	9:28	9:31	3	nut
+water	9:28	0:0	4	nut
+arg	9:33	9:35	3	bc
+water	9:33	0:0	4	bc
+arg	9:37	9:38	3	1
+water	9:37	0:0	4	1
+arg	9:40	9:54	3	MAIN_STARTCODE
+water	9:40	0:0	4	MAIN_STARTCODE
+water	9:55	0:0	2	;
+water	10:4	0:0	2	end
+op	10:8	0:0	2	+=
+call	10:11	10:23	2	avio_tell
+arg	10:21	10:23	3	bc
+water	10:21	0:0	4	bc
+water	10:24	0:0	2	;
+water	11:4	0:0	2	nut
+op	11:7	0:0	2	->
+water	11:9	0:0	2	version
+op	11:17	0:0	2	=
+call	11:19	11:38	2	ffio_read_varlen
+arg	11:36	11:38	3	bc
+water	11:36	0:0	4	bc
+water	11:39	0:0	2	;
+if	12:4	17:4	2	(nut -> version < NUT_MIN_VERSION && nut -> version > NUT_MAX_VERSION)
+cond	12:8	13:23	3	nut -> version < NUT_MIN_VERSION && nut -> version > NUT_MAX_VERSION
+water	12:8	0:0	4	nut
+op	12:11	0:0	4	->
+water	12:13	0:0	4	version
+op	12:21	0:0	4	<
+water	12:23	0:0	4	NUT_MIN_VERSION
+op	12:39	0:0	4	&&
+water	13:8	0:0	4	nut
+op	13:11	0:0	4	->
+water	13:13	0:0	4	version
+op	13:21	0:0	4	>
+water	13:23	0:0	4	NUT_MAX_VERSION
+stmts	13:40	17:4	3	
+water	13:40	0:0	4	{
+call	14:8	15:27	4	av_log
+arg	14:15	14:16	5	s
+water	14:15	0:0	6	s
+arg	14:18	14:30	5	AV_LOG_ERROR
+water	14:18	0:0	6	AV_LOG_ERROR
+arg	14:32	14:61	5	"Version %d not supported.\n"
+water	14:32	0:0	6	"Version %d not supported.\n"
+arg	15:15	15:27	5	nut->version
+water	15:15	0:0	6	nut
+op	15:18	0:0	6	->
+water	15:20	0:0	6	version
+water	15:28	0:0	4	;
+return	16:8	16:30	4	AVERROR(ENOSYS)
+call	16:15	16:29	5	AVERROR
+arg	16:23	16:29	6	ENOSYS
+water	16:23	0:0	7	ENOSYS
+water	17:4	0:0	4	}
+if	18:4	19:49	2	(nut -> version > 3)
+cond	18:8	18:23	3	nut -> version > 3
+water	18:8	0:0	4	nut
+op	18:11	0:0	4	->
+water	18:13	0:0	4	version
+op	18:21	0:0	4	>
+water	18:23	0:0	4	3
+stmts	19:8	19:49	3	
+water	19:8	0:0	4	nut
+op	19:11	0:0	4	->
+water	19:13	0:0	4	minor_version
+op	19:27	0:0	4	=
+call	19:29	19:48	4	ffio_read_varlen
+arg	19:46	19:48	5	bc
+water	19:46	0:0	6	bc
+water	19:49	0:0	4	;
+call	20:4	20:57	2	GET_V
+arg	20:10	20:22	3	stream_count
+water	20:10	0:0	4	stream_count
+arg	20:24	20:57	3	tmp>0&&tmp<=NUT_MAX_STREAMS
+water	20:24	0:0	4	tmp
+op	20:28	0:0	4	>
+water	20:30	0:0	4	0
+op	20:32	0:0	4	&&
+water	20:35	0:0	4	tmp
+op	20:39	0:0	4	<=
+water	20:42	0:0	4	NUT_MAX_STREAMS
+water	20:58	0:0	2	;
+water	21:4	0:0	2	nut
+op	21:7	0:0	2	->
+water	21:9	0:0	2	max_distance
+op	21:22	0:0	2	=
+call	21:24	21:43	2	ffio_read_varlen
+arg	21:41	21:43	3	bc
+water	21:41	0:0	4	bc
+water	21:44	0:0	2	;
+if	22:4	25:4	2	(nut -> max_distance > 65536)
+cond	22:8	22:28	3	nut -> max_distance > 65536
+water	22:8	0:0	4	nut
+op	22:11	0:0	4	->
+water	22:13	0:0	4	max_distance
+op	22:26	0:0	4	>
+water	22:28	0:0	4	65536
+stmts	22:35	25:4	3	
+water	22:35	0:0	4	{
+call	23:8	23:70	4	av_log
+arg	23:15	23:16	5	s
+water	23:15	0:0	6	s
+arg	23:18	23:30	5	AV_LOG_DEBUG
+water	23:18	0:0	6	AV_LOG_DEBUG
+arg	23:32	23:51	5	"max_distance %d\n"
+water	23:32	0:0	6	"max_distance %d\n"
+arg	23:53	23:70	5	nut->max_distance
+water	23:53	0:0	6	nut
+op	23:56	0:0	6	->
+water	23:58	0:0	6	max_distance
+water	23:71	0:0	4	;
+water	24:8	0:0	4	nut
+op	24:11	0:0	4	->
+water	24:13	0:0	4	max_distance
+op	24:26	0:0	4	=
+water	24:28	0:0	4	65536
+water	24:33	0:0	4	;
+water	25:4	0:0	4	}
+call	26:4	26:77	2	GET_V
+arg	26:10	26:30	3	nut->time_base_count
+water	26:10	0:0	4	nut
+op	26:13	0:0	4	->
+water	26:15	0:0	4	time_base_count
+arg	26:32	26:77	3	tmp>0&&tmp<INT_MAX/sizeof(AVRational)
+water	26:32	0:0	4	tmp
+op	26:36	0:0	4	>
+water	26:38	0:0	4	0
+op	26:40	0:0	4	&&
+water	26:43	0:0	4	tmp
+op	26:47	0:0	4	<
+water	26:49	0:0	4	INT_MAX
+op	26:57	0:0	4	/
+op	26:59	0:0	4	sizeof
+water	26:65	0:0	4	(
+water	26:66	0:0	4	AVRational
+water	26:76	0:0	4	)
+water	26:78	0:0	2	;
+water	27:4	0:0	2	nut
+op	27:7	0:0	2	->
+water	27:9	0:0	2	time_base
+op	27:19	0:0	2	=
+call	27:21	27:77	2	av_malloc_array
+arg	27:37	27:57	3	nut->time_base_count
+water	27:37	0:0	4	nut
+op	27:40	0:0	4	->
+water	27:42	0:0	4	time_base_count
+arg	27:59	27:77	3	sizeof(AVRational)
+op	27:59	0:0	4	sizeof
+water	27:65	0:0	4	(
+water	27:66	0:0	4	AVRational
+water	27:76	0:0	4	)
+water	27:78	0:0	2	;
+if	28:4	29:30	2	(! nut -> time_base)
+cond	28:8	28:14	3	! nut -> time_base
+op	28:8	0:0	4	!
+water	28:9	0:0	4	nut
+op	28:12	0:0	4	->
+water	28:14	0:0	4	time_base
+stmts	29:8	29:30	3	
+return	29:8	29:30	4	AVERROR(ENOMEM)
+call	29:15	29:29	5	AVERROR
+arg	29:23	29:29	6	ENOMEM
+water	29:23	0:0	7	ENOMEM
+for	30:4	38:4	2	(i = 0 ;i < nut -> time_base_count;i ++)
+forinit	30:9	30:14	3	i = 0 ;
+water	30:9	0:0	4	i
+op	30:11	0:0	4	=
+water	30:13	0:0	4	0
+water	30:14	0:0	4	;
+cond	30:16	30:25	3	i < nut -> time_base_count
+water	30:16	0:0	4	i
+op	30:18	0:0	4	<
+water	30:20	0:0	4	nut
+op	30:23	0:0	4	->
+water	30:25	0:0	4	time_base_count
+forexpr	30:42	30:43	3	i ++
+water	30:42	0:0	4	i
+op	30:43	0:0	4	++
+stmts	30:47	38:4	3	
+water	30:47	0:0	4	{
+call	31:8	31:66	4	GET_V
+arg	31:14	31:35	5	nut->time_base[i].num
+water	31:14	0:0	6	nut
+op	31:17	0:0	6	->
+water	31:19	0:0	6	time_base
+op	31:28	0:0	6	[
+water	31:29	0:0	6	i
+op	31:30	0:0	6	]
+op	31:31	0:0	6	.
+water	31:32	0:0	6	num
+arg	31:37	31:66	5	tmp>0&&tmp<(1ULL<<31)
+water	31:37	0:0	6	tmp
+op	31:41	0:0	6	>
+water	31:43	0:0	6	0
+op	31:45	0:0	6	&&
+water	31:48	0:0	6	tmp
+op	31:52	0:0	6	<
+water	31:54	0:0	6	(
+water	31:55	0:0	6	1
+water	31:56	0:0	6	ULL
+op	31:60	0:0	6	<<
+water	31:63	0:0	6	31
+water	31:65	0:0	6	)
+water	31:67	0:0	4	;
+call	32:8	32:66	4	GET_V
+arg	32:14	32:35	5	nut->time_base[i].den
+water	32:14	0:0	6	nut
+op	32:17	0:0	6	->
+water	32:19	0:0	6	time_base
+op	32:28	0:0	6	[
+water	32:29	0:0	6	i
+op	32:30	0:0	6	]
+op	32:31	0:0	6	.
+water	32:32	0:0	6	den
+arg	32:37	32:66	5	tmp>0&&tmp<(1ULL<<31)
+water	32:37	0:0	6	tmp
+op	32:41	0:0	6	>
+water	32:43	0:0	6	0
+op	32:45	0:0	6	&&
+water	32:48	0:0	6	tmp
+op	32:52	0:0	6	<
+water	32:54	0:0	6	(
+water	32:55	0:0	6	1
+water	32:56	0:0	6	ULL
+op	32:60	0:0	6	<<
+water	32:63	0:0	6	31
+water	32:65	0:0	6	)
+water	32:67	0:0	4	;
+if	33:8	37:8	4	(av_gcd (nut -> time_base [ i ] . num ,nut -> time_base [ i ] . den ) != 1)
+cond	33:12	33:68	5	av_gcd (nut -> time_base [ i ] . num ,nut -> time_base [ i ] . den ) != 1
+call	33:12	33:63	6	av_gcd
+arg	33:19	33:40	7	nut->time_base[i].num
+water	33:19	0:0	8	nut
+op	33:22	0:0	8	->
+water	33:24	0:0	8	time_base
+op	33:33	0:0	8	[
+water	33:34	0:0	8	i
+op	33:35	0:0	8	]
+op	33:36	0:0	8	.
+water	33:37	0:0	8	num
+arg	33:42	33:63	7	nut->time_base[i].den
+water	33:42	0:0	8	nut
+op	33:45	0:0	8	->
+water	33:47	0:0	8	time_base
+op	33:56	0:0	8	[
+water	33:57	0:0	8	i
+op	33:58	0:0	8	]
+op	33:59	0:0	8	.
+water	33:60	0:0	8	den
+op	33:65	0:0	6	!=
+water	33:68	0:0	6	1
+stmts	33:71	37:8	5	
+water	33:71	0:0	6	{
+call	34:12	34:57	6	av_log
+arg	34:19	34:20	7	s
+water	34:19	0:0	8	s
+arg	34:22	34:34	7	AV_LOG_ERROR
+water	34:22	0:0	8	AV_LOG_ERROR
+arg	34:36	34:57	7	"time base invalid\n"
+water	34:36	0:0	8	"time base invalid\n"
+water	34:58	0:0	6	;
+water	35:12	0:0	6	ret
+op	35:16	0:0	6	=
+water	35:18	0:0	6	AVERROR_INVALIDDATA
+water	35:37	0:0	6	;
+goto	36:12	36:21	6	fail
+water	36:17	0:0	7	fail
+water	37:8	0:0	6	}
+water	38:4	0:0	4	}
+water	39:4	0:0	2	tmp_pts
+op	39:17	0:0	2	=
+water	39:19	0:0	2	0
+water	39:20	0:0	2	;
+water	40:4	0:0	2	tmp_mul
+op	40:17	0:0	2	=
+water	40:19	0:0	2	1
+water	40:20	0:0	2	;
+water	41:4	0:0	2	tmp_stream
+op	41:17	0:0	2	=
+water	41:19	0:0	2	0
+water	41:20	0:0	2	;
+water	42:4	0:0	2	tmp_head_idx
+op	42:17	0:0	2	=
+water	42:19	0:0	2	0
+water	42:20	0:0	2	;
+for	43:4	100:4	2	(i = 0 ;i < 256;)
+forinit	43:9	43:14	3	i = 0 ;
+water	43:9	0:0	4	i
+op	43:11	0:0	4	=
+water	43:13	0:0	4	0
+water	43:14	0:0	4	;
+cond	43:16	43:20	3	i < 256
+water	43:16	0:0	4	i
+op	43:18	0:0	4	<
+water	43:20	0:0	4	256
+forexpr	0:0	0:0	3	
+stmts	43:26	100:4	3	
+water	43:26	0:0	4	{
+decl	44:8	44:45	4	int	tmp_flags
+op	44:23	0:0	4	=
+call	44:25	44:44	5	ffio_read_varlen
+arg	44:42	44:44	6	bc
+water	44:42	0:0	7	bc
+decl	45:8	45:45	4	int	tmp_fields
+op	45:23	0:0	4	=
+call	45:25	45:44	5	ffio_read_varlen
+arg	45:42	45:44	6	bc
+water	45:42	0:0	7	bc
+if	46:8	47:31	4	(tmp_fields > 0)
+cond	46:12	46:25	5	tmp_fields > 0
+water	46:12	0:0	6	tmp_fields
+op	46:23	0:0	6	>
+water	46:25	0:0	6	0
+stmts	47:12	47:31	5	
+water	47:12	0:0	6	tmp_pts
+op	47:20	0:0	6	=
+call	47:22	47:30	6	get_s
+arg	47:28	47:30	7	bc
+water	47:28	0:0	8	bc
+water	47:31	0:0	6	;
+if	48:8	49:42	4	(tmp_fields > 1)
+cond	48:12	48:25	5	tmp_fields > 1
+water	48:12	0:0	6	tmp_fields
+op	48:23	0:0	6	>
+water	48:25	0:0	6	1
+stmts	49:12	49:42	5	
+water	49:12	0:0	6	tmp_mul
+op	49:20	0:0	6	=
+call	49:22	49:41	6	ffio_read_varlen
+arg	49:39	49:41	7	bc
+water	49:39	0:0	8	bc
+water	49:42	0:0	6	;
+if	50:8	51:45	4	(tmp_fields > 2)
+cond	50:12	50:25	5	tmp_fields > 2
+water	50:12	0:0	6	tmp_fields
+op	50:23	0:0	6	>
+water	50:25	0:0	6	2
+stmts	51:12	51:45	5	
+water	51:12	0:0	6	tmp_stream
+op	51:23	0:0	6	=
+call	51:25	51:44	6	ffio_read_varlen
+arg	51:42	51:44	7	bc
+water	51:42	0:0	8	bc
+water	51:45	0:0	6	;
+if	52:8	53:43	4	(tmp_fields > 3)
+cond	52:12	52:25	5	tmp_fields > 3
+water	52:12	0:0	6	tmp_fields
+op	52:23	0:0	6	>
+water	52:25	0:0	6	3
+stmts	53:12	53:43	5	
+water	53:12	0:0	6	tmp_size
+op	53:21	0:0	6	=
+call	53:23	53:42	6	ffio_read_varlen
+arg	53:40	53:42	7	bc
+water	53:40	0:0	8	bc
+water	53:43	0:0	6	;
+else	54:8	55:24	4
+stmts	55:12	55:24	5	
+water	55:12	0:0	6	tmp_size
+op	55:21	0:0	6	=
+water	55:23	0:0	6	0
+water	55:24	0:0	6	;
+if	56:8	57:42	4	(tmp_fields > 4)
+cond	56:12	56:25	5	tmp_fields > 4
+water	56:12	0:0	6	tmp_fields
+op	56:23	0:0	6	>
+water	56:25	0:0	6	4
+stmts	57:12	57:42	5	
+water	57:12	0:0	6	tmp_res
+op	57:20	0:0	6	=
+call	57:22	57:41	6	ffio_read_varlen
+arg	57:39	57:41	7	bc
+water	57:39	0:0	8	bc
+water	57:42	0:0	6	;
+else	58:8	59:23	4
+stmts	59:12	59:23	5	
+water	59:12	0:0	6	tmp_res
+op	59:20	0:0	6	=
+water	59:22	0:0	6	0
+water	59:23	0:0	6	;
+if	60:8	61:40	4	(tmp_fields > 5)
+cond	60:12	60:25	5	tmp_fields > 5
+water	60:12	0:0	6	tmp_fields
+op	60:23	0:0	6	>
+water	60:25	0:0	6	5
+stmts	61:12	61:40	5	
+water	61:12	0:0	6	count
+op	61:18	0:0	6	=
+call	61:20	61:39	6	ffio_read_varlen
+arg	61:37	61:39	7	bc
+water	61:37	0:0	8	bc
+water	61:40	0:0	6	;
+else	62:8	63:38	4
+stmts	63:12	63:38	5	
+water	63:12	0:0	6	count
+op	63:18	0:0	6	=
+water	63:20	0:0	6	tmp_mul
+op	63:28	0:0	6	-
+water	63:30	0:0	6	tmp_size
+water	63:38	0:0	6	;
+if	64:8	65:21	4	(tmp_fields > 6)
+cond	64:12	64:25	5	tmp_fields > 6
+water	64:12	0:0	6	tmp_fields
+op	64:23	0:0	6	>
+water	64:25	0:0	6	6
+stmts	65:12	65:21	5	
+call	65:12	65:20	6	get_s
+arg	65:18	65:20	7	bc
+water	65:18	0:0	8	bc
+water	65:21	0:0	6	;
+if	66:8	67:47	4	(tmp_fields > 7)
+cond	66:12	66:25	5	tmp_fields > 7
+water	66:12	0:0	6	tmp_fields
+op	66:23	0:0	6	>
+water	66:25	0:0	6	7
+stmts	67:12	67:47	5	
+water	67:12	0:0	6	tmp_head_idx
+op	67:25	0:0	6	=
+call	67:27	67:46	6	ffio_read_varlen
+arg	67:44	67:46	7	bc
+water	67:44	0:0	8	bc
+water	67:47	0:0	6	;
+while	68:8	75:8	4	(tmp_fields -- > 8)
+cond	68:15	68:30	5	tmp_fields -- > 8
+water	68:15	0:0	6	tmp_fields
+op	68:25	0:0	6	--
+op	68:28	0:0	6	>
+water	68:30	0:0	6	8
+stmts	68:33	75:8	5	
+water	68:33	0:0	6	{
+if	69:12	73:12	6	(bc -> eof_reached)
+cond	69:16	69:20	7	bc -> eof_reached
+water	69:16	0:0	8	bc
+op	69:18	0:0	8	->
+water	69:20	0:0	8	eof_reached
+stmts	69:33	73:12	7	
+water	69:33	0:0	8	{
+call	70:16	70:82	8	av_log
+arg	70:23	70:24	9	s
+water	70:23	0:0	10	s
+arg	70:26	70:38	9	AV_LOG_ERROR
+water	70:26	0:0	10	AV_LOG_ERROR
+arg	70:40	70:82	9	"reached EOF while decoding main header\n"
+water	70:40	0:0	10	"reached EOF while decoding main header\n"
+water	70:83	0:0	8	;
+water	71:16	0:0	8	ret
+op	71:20	0:0	8	=
+water	71:22	0:0	8	AVERROR_INVALIDDATA
+water	71:41	0:0	8	;
+goto	72:16	72:25	8	fail
+water	72:21	0:0	9	fail
+water	73:12	0:0	8	}
+call	74:12	74:31	6	ffio_read_varlen
+arg	74:29	74:31	7	bc
+water	74:29	0:0	8	bc
+water	74:32	0:0	6	;
+water	75:8	0:0	6	}
+if	76:8	80:8	4	(count <= 0 || count > 256 - ( i <= 'N' ) - i)
+cond	76:12	76:53	5	count <= 0 || count > 256 - ( i <= 'N' ) - i
+water	76:12	0:0	6	count
+op	76:18	0:0	6	<=
+water	76:21	0:0	6	0
+op	76:23	0:0	6	||
+water	76:26	0:0	6	count
+op	76:32	0:0	6	>
+water	76:34	0:0	6	256
+op	76:38	0:0	6	-
+water	76:40	0:0	6	(
+water	76:41	0:0	6	i
+op	76:43	0:0	6	<=
+water	76:46	0:0	6	'N'
+water	76:49	0:0	6	)
+op	76:51	0:0	6	-
+water	76:53	0:0	6	i
+stmts	76:56	80:8	5	
+water	76:56	0:0	6	{
+call	77:12	77:72	6	av_log
+arg	77:19	77:20	7	s
+water	77:19	0:0	8	s
+arg	77:22	77:34	7	AV_LOG_ERROR
+water	77:22	0:0	8	AV_LOG_ERROR
+arg	77:36	77:62	7	"illegal count %d at %d\n"
+water	77:36	0:0	8	"illegal count %d at %d\n"
+arg	77:64	77:69	7	count
+water	77:64	0:0	8	count
+arg	77:71	77:72	7	i
+water	77:71	0:0	8	i
+water	77:73	0:0	6	;
+water	78:12	0:0	6	ret
+op	78:16	0:0	6	=
+water	78:18	0:0	6	AVERROR_INVALIDDATA
+water	78:37	0:0	6	;
+goto	79:12	79:21	6	fail
+water	79:17	0:0	7	fail
+water	80:8	0:0	6	}
+if	81:8	85:8	4	(tmp_stream >= stream_count)
+cond	81:12	81:26	5	tmp_stream >= stream_count
+water	81:12	0:0	6	tmp_stream
+op	81:23	0:0	6	>=
+water	81:26	0:0	6	stream_count
+stmts	81:40	85:8	5	
+water	81:40	0:0	6	{
+call	82:12	82:61	6	av_log
+arg	82:19	82:20	7	s
+water	82:19	0:0	8	s
+arg	82:22	82:34	7	AV_LOG_ERROR
+water	82:22	0:0	8	AV_LOG_ERROR
+arg	82:36	82:61	7	"illegal stream number\n"
+water	82:36	0:0	8	"illegal stream number\n"
+water	82:62	0:0	6	;
+water	83:12	0:0	6	ret
+op	83:16	0:0	6	=
+water	83:18	0:0	6	AVERROR_INVALIDDATA
+water	83:37	0:0	6	;
+goto	84:12	84:21	6	fail
+water	84:17	0:0	7	fail
+water	85:8	0:0	6	}
+for	86:8	99:8	4	(j = 0 ;j < count;j ++ , i ++)
+forinit	86:13	86:18	5	j = 0 ;
+water	86:13	0:0	6	j
+op	86:15	0:0	6	=
+water	86:17	0:0	6	0
+water	86:18	0:0	6	;
+cond	86:20	86:24	5	j < count
+water	86:20	0:0	6	j
+op	86:22	0:0	6	<
+water	86:24	0:0	6	count
+forexpr	86:31	86:37	5	j ++ , i ++
+water	86:31	0:0	6	j
+op	86:32	0:0	6	++
+water	86:34	0:0	6	,
+water	86:36	0:0	6	i
+op	86:37	0:0	6	++
+stmts	86:41	99:8	5	
+water	86:41	0:0	6	{
+if	87:12	91:12	6	(i == 'N')
+cond	87:16	87:21	7	i == 'N'
+water	87:16	0:0	8	i
+op	87:18	0:0	8	==
+water	87:21	0:0	8	'N'
+stmts	87:26	91:12	7	
+water	87:26	0:0	8	{
+water	88:16	0:0	8	nut
+op	88:19	0:0	8	->
+water	88:21	0:0	8	frame_code
+op	88:31	0:0	8	[
+water	88:32	0:0	8	i
+op	88:33	0:0	8	]
+op	88:34	0:0	8	.
+water	88:35	0:0	8	flags
+op	88:41	0:0	8	=
+water	88:43	0:0	8	FLAG_INVALID
+water	88:55	0:0	8	;
+water	89:16	0:0	8	j
+op	89:17	0:0	8	--
+water	89:19	0:0	8	;
+continue	90:16	90:24	8	
+water	91:12	0:0	8	}
+water	92:12	0:0	6	nut
+op	92:15	0:0	6	->
+water	92:17	0:0	6	frame_code
+op	92:27	0:0	6	[
+water	92:28	0:0	6	i
+op	92:29	0:0	6	]
+op	92:30	0:0	6	.
+water	92:31	0:0	6	flags
+op	92:46	0:0	6	=
+water	92:48	0:0	6	tmp_flags
+water	92:57	0:0	6	;
+water	93:12	0:0	6	nut
+op	93:15	0:0	6	->
+water	93:17	0:0	6	frame_code
+op	93:27	0:0	6	[
+water	93:28	0:0	6	i
+op	93:29	0:0	6	]
+op	93:30	0:0	6	.
+water	93:31	0:0	6	pts_delta
+op	93:46	0:0	6	=
+water	93:48	0:0	6	tmp_pts
+water	93:55	0:0	6	;
+water	94:12	0:0	6	nut
+op	94:15	0:0	6	->
+water	94:17	0:0	6	frame_code
+op	94:27	0:0	6	[
+water	94:28	0:0	6	i
+op	94:29	0:0	6	]
+op	94:30	0:0	6	.
+water	94:31	0:0	6	stream_id
+op	94:46	0:0	6	=
+water	94:48	0:0	6	tmp_stream
+water	94:58	0:0	6	;
+water	95:12	0:0	6	nut
+op	95:15	0:0	6	->
+water	95:17	0:0	6	frame_code
+op	95:27	0:0	6	[
+water	95:28	0:0	6	i
+op	95:29	0:0	6	]
+op	95:30	0:0	6	.
+water	95:31	0:0	6	size_mul
+op	95:46	0:0	6	=
+water	95:48	0:0	6	tmp_mul
+water	95:55	0:0	6	;
+water	96:12	0:0	6	nut
+op	96:15	0:0	6	->
+water	96:17	0:0	6	frame_code
+op	96:27	0:0	6	[
+water	96:28	0:0	6	i
+op	96:29	0:0	6	]
+op	96:30	0:0	6	.
+water	96:31	0:0	6	size_lsb
+op	96:46	0:0	6	=
+water	96:48	0:0	6	tmp_size
+op	96:57	0:0	6	+
+water	96:59	0:0	6	j
+water	96:60	0:0	6	;
+water	97:12	0:0	6	nut
+op	97:15	0:0	6	->
+water	97:17	0:0	6	frame_code
+op	97:27	0:0	6	[
+water	97:28	0:0	6	i
+op	97:29	0:0	6	]
+op	97:30	0:0	6	.
+water	97:31	0:0	6	reserved_count
+op	97:46	0:0	6	=
+water	97:48	0:0	6	tmp_res
+water	97:55	0:0	6	;
+water	98:12	0:0	6	nut
+op	98:15	0:0	6	->
+water	98:17	0:0	6	frame_code
+op	98:27	0:0	6	[
+water	98:28	0:0	6	i
+op	98:29	0:0	6	]
+op	98:30	0:0	6	.
+water	98:31	0:0	6	header_idx
+op	98:46	0:0	6	=
+water	98:48	0:0	6	tmp_head_idx
+water	98:60	0:0	6	;
+water	99:8	0:0	6	}
+water	100:4	0:0	4	}
+call	101:4	101:57	2	av_assert0
+arg	101:15	101:57	3	nut->frame_code['N'].flags==FLAG_INVALID
+water	101:15	0:0	4	nut
+op	101:18	0:0	4	->
+water	101:20	0:0	4	frame_code
+op	101:30	0:0	4	[
+water	101:31	0:0	4	'N'
+op	101:34	0:0	4	]
+op	101:35	0:0	4	.
+water	101:36	0:0	4	flags
+op	101:42	0:0	4	==
+water	101:45	0:0	4	FLAG_INVALID
+water	101:58	0:0	2	;
+if	102:4	124:4	2	(end >avio_tell (bc ) + 4)
+cond	102:8	102:30	3	end >avio_tell (bc ) + 4
+water	102:8	0:0	4	end
+op	102:12	0:0	4	>
+call	102:14	102:26	4	avio_tell
+arg	102:24	102:26	5	bc
+water	102:24	0:0	6	bc
+op	102:28	0:0	4	+
+water	102:30	0:0	4	4
+stmts	102:33	124:4	3	
+water	102:33	0:0	4	{
+decl	103:8	103:22	4	int	rem
+op	103:16	0:0	4	=
+water	103:18	0:0	4	1024
+call	104:8	104:43	4	GET_V
+arg	104:14	104:31	5	nut->header_count
+water	104:14	0:0	6	nut
+op	104:17	0:0	6	->
+water	104:19	0:0	6	header_count
+arg	104:33	104:43	5	tmp<128U
+water	104:33	0:0	6	tmp
+op	104:37	0:0	6	<
+water	104:39	0:0	6	128
+water	104:42	0:0	6	U
+water	104:44	0:0	4	;
+water	105:8	0:0	4	nut
+op	105:11	0:0	4	->
+water	105:13	0:0	4	header_count
+op	105:25	0:0	4	++
+water	105:27	0:0	4	;
+for	106:8	122:8	4	(i = 1 ;i < nut -> header_count;i ++)
+forinit	106:13	106:18	5	i = 1 ;
+water	106:13	0:0	6	i
+op	106:15	0:0	6	=
+water	106:17	0:0	6	1
+water	106:18	0:0	6	;
+cond	106:20	106:29	5	i < nut -> header_count
+water	106:20	0:0	6	i
+op	106:22	0:0	6	<
+water	106:24	0:0	6	nut
+op	106:27	0:0	6	->
+water	106:29	0:0	6	header_count
+forexpr	106:43	106:44	5	i ++
+water	106:43	0:0	6	i
+op	106:44	0:0	6	++
+stmts	106:48	122:8	5	
+water	106:48	0:0	6	{
+decl	107:12	107:24	6	uint8_t	*hdr
+call	108:12	108:58	6	GET_V
+arg	108:18	108:36	7	nut->header_len[i]
+water	108:18	0:0	8	nut
+op	108:21	0:0	8	->
+water	108:23	0:0	8	header_len
+op	108:33	0:0	8	[
+water	108:34	0:0	8	i
+op	108:35	0:0	8	]
+arg	108:38	108:58	7	tmp>0&&tmp<256
+water	108:38	0:0	8	tmp
+op	108:42	0:0	8	>
+water	108:44	0:0	8	0
+op	108:46	0:0	8	&&
+water	108:49	0:0	8	tmp
+op	108:53	0:0	8	<
+water	108:55	0:0	8	256
+water	108:59	0:0	6	;
+water	109:12	0:0	6	rem
+op	109:16	0:0	6	-=
+water	109:19	0:0	6	nut
+op	109:22	0:0	6	->
+water	109:24	0:0	6	header_len
+op	109:34	0:0	6	[
+water	109:35	0:0	6	i
+op	109:36	0:0	6	]
+water	109:37	0:0	6	;
+if	110:12	114:12	6	(rem < 0)
+cond	110:16	110:22	7	rem < 0
+water	110:16	0:0	8	rem
+op	110:20	0:0	8	<
+water	110:22	0:0	8	0
+stmts	110:25	114:12	7	
+water	110:25	0:0	8	{
+call	111:16	111:66	8	av_log
+arg	111:23	111:24	9	s
+water	111:23	0:0	10	s
+arg	111:26	111:38	9	AV_LOG_ERROR
+water	111:26	0:0	10	AV_LOG_ERROR
+arg	111:40	111:66	9	"invalid elision header\n"
+water	111:40	0:0	10	"invalid elision header\n"
+water	111:67	0:0	8	;
+water	112:16	0:0	8	ret
+op	112:20	0:0	8	=
+water	112:22	0:0	8	AVERROR_INVALIDDATA
+water	112:41	0:0	8	;
+goto	113:16	113:25	8	fail
+water	113:21	0:0	9	fail
+water	114:12	0:0	8	}
+water	115:12	0:0	6	hdr
+op	115:16	0:0	6	=
+call	115:18	115:46	6	av_malloc
+arg	115:28	115:46	7	nut->header_len[i]
+water	115:28	0:0	8	nut
+op	115:31	0:0	8	->
+water	115:33	0:0	8	header_len
+op	115:43	0:0	8	[
+water	115:44	0:0	8	i
+op	115:45	0:0	8	]
+water	115:47	0:0	6	;
+if	116:12	119:12	6	(! hdr)
+cond	116:16	116:17	7	! hdr
+op	116:16	0:0	8	!
+water	116:17	0:0	8	hdr
+stmts	116:22	119:12	7	
+water	116:22	0:0	8	{
+water	117:16	0:0	8	ret
+op	117:20	0:0	8	=
+call	117:22	117:36	8	AVERROR
+arg	117:30	117:36	9	ENOMEM
+water	117:30	0:0	10	ENOMEM
+water	117:37	0:0	8	;
+goto	118:16	118:25	8	fail
+water	118:21	0:0	9	fail
+water	119:12	0:0	8	}
+call	120:12	120:49	6	avio_read
+arg	120:22	120:24	7	bc
+water	120:22	0:0	8	bc
+arg	120:26	120:29	7	hdr
+water	120:26	0:0	8	hdr
+arg	120:31	120:49	7	nut->header_len[i]
+water	120:31	0:0	8	nut
+op	120:34	0:0	8	->
+water	120:36	0:0	8	header_len
+op	120:46	0:0	8	[
+water	120:47	0:0	8	i
+op	120:48	0:0	8	]
+water	120:50	0:0	6	;
+water	121:12	0:0	6	nut
+op	121:15	0:0	6	->
+water	121:17	0:0	6	header
+op	121:23	0:0	6	[
+water	121:24	0:0	6	i
+op	121:25	0:0	6	]
+op	121:27	0:0	6	=
+water	121:29	0:0	6	hdr
+water	121:32	0:0	6	;
+water	122:8	0:0	6	}
+call	123:8	123:42	4	av_assert0
+arg	123:19	123:42	5	nut->header_len[0]==0
+water	123:19	0:0	6	nut
+op	123:22	0:0	6	->
+water	123:24	0:0	6	header_len
+op	123:34	0:0	6	[
+water	123:35	0:0	6	0
+op	123:36	0:0	6	]
+op	123:38	0:0	6	==
+water	123:41	0:0	6	0
+water	123:43	0:0	4	;
+water	124:4	0:0	4	}
+if	126:4	128:4	2	(nut -> version > 3 && end >avio_tell (bc ) + 4)
+cond	126:8	126:50	3	nut -> version > 3 && end >avio_tell (bc ) + 4
+water	126:8	0:0	4	nut
+op	126:11	0:0	4	->
+water	126:13	0:0	4	version
+op	126:21	0:0	4	>
+water	126:23	0:0	4	3
+op	126:25	0:0	4	&&
+water	126:28	0:0	4	end
+op	126:32	0:0	4	>
+call	126:34	126:46	4	avio_tell
+arg	126:44	126:46	5	bc
+water	126:44	0:0	6	bc
+op	126:48	0:0	4	+
+water	126:50	0:0	4	4
+stmts	126:53	128:4	3	
+water	126:53	0:0	4	{
+water	127:8	0:0	4	nut
+op	127:11	0:0	4	->
+water	127:13	0:0	4	flags
+op	127:19	0:0	4	=
+call	127:21	127:40	4	ffio_read_varlen
+arg	127:38	127:40	5	bc
+water	127:38	0:0	6	bc
+water	127:41	0:0	4	;
+water	128:4	0:0	4	}
+if	129:4	133:4	2	(skip_reserved (bc ,end ) ||ffio_get_checksum (bc ))
+cond	129:8	129:54	3	skip_reserved (bc ,end ) ||ffio_get_checksum (bc )
+call	129:8	129:29	4	skip_reserved
+arg	129:22	129:24	5	bc
+water	129:22	0:0	6	bc
+arg	129:26	129:29	5	end
+water	129:26	0:0	6	end
+op	129:31	0:0	4	||
+call	129:34	129:54	4	ffio_get_checksum
+arg	129:52	129:54	5	bc
+water	129:52	0:0	6	bc
+stmts	129:57	133:4	3	
+water	129:57	0:0	4	{
+call	130:8	130:65	4	av_log
+arg	130:15	130:16	5	s
+water	130:15	0:0	6	s
+arg	130:18	130:30	5	AV_LOG_ERROR
+water	130:18	0:0	6	AV_LOG_ERROR
+arg	130:32	130:65	5	"main header checksum mismatch\n"
+water	130:32	0:0	6	"main header checksum mismatch\n"
+water	130:66	0:0	4	;
+water	131:8	0:0	4	ret
+op	131:12	0:0	4	=
+water	131:14	0:0	4	AVERROR_INVALIDDATA
+water	131:33	0:0	4	;
+goto	132:8	132:17	4	fail
+water	132:13	0:0	5	fail
+water	133:4	0:0	4	}
+water	134:4	0:0	2	nut
+op	134:7	0:0	2	->
+water	134:9	0:0	2	stream
+op	134:16	0:0	2	=
+call	134:18	134:63	2	av_calloc
+arg	134:28	134:40	3	stream_count
+water	134:28	0:0	4	stream_count
+arg	134:42	134:63	3	sizeof(StreamContext)
+op	134:42	0:0	4	sizeof
+water	134:48	0:0	4	(
+water	134:49	0:0	4	StreamContext
+water	134:62	0:0	4	)
+water	134:64	0:0	2	;
+if	135:4	138:4	2	(! nut -> stream)
+cond	135:8	135:14	3	! nut -> stream
+op	135:8	0:0	4	!
+water	135:9	0:0	4	nut
+op	135:12	0:0	4	->
+water	135:14	0:0	4	stream
+stmts	135:22	138:4	3	
+water	135:22	0:0	4	{
+water	136:8	0:0	4	ret
+op	136:12	0:0	4	=
+call	136:14	136:28	4	AVERROR
+arg	136:22	136:28	5	ENOMEM
+water	136:22	0:0	6	ENOMEM
+water	136:29	0:0	4	;
+goto	137:8	137:17	4	fail
+water	137:13	0:0	5	fail
+water	138:4	0:0	4	}
+for	139:4	140:36	2	(i = 0 ;i < stream_count;i ++)
+forinit	139:9	139:14	3	i = 0 ;
+water	139:9	0:0	4	i
+op	139:11	0:0	4	=
+water	139:13	0:0	4	0
+water	139:14	0:0	4	;
+cond	139:16	139:20	3	i < stream_count
+water	139:16	0:0	4	i
+op	139:18	0:0	4	<
+water	139:20	0:0	4	stream_count
+forexpr	139:34	139:35	3	i ++
+water	139:34	0:0	4	i
+op	139:35	0:0	4	++
+stmts	140:8	140:36	3	
+call	140:8	140:35	4	avformat_new_stream
+arg	140:28	140:29	5	s
+water	140:28	0:0	6	s
+arg	140:31	140:35	5	NULL
+water	140:31	0:0	6	NULL
+water	140:36	0:0	4	;
+return	141:4	141:12	2	0
+water	141:11	0:0	3	0
+label	142:0	142:4	2	fail :
+call	143:4	143:28	2	av_freep
+arg	143:13	143:28	3	&nut->time_base
+op	143:13	0:0	4	&
+water	143:14	0:0	4	nut
+op	143:17	0:0	4	->
+water	143:19	0:0	4	time_base
+water	143:29	0:0	2	;
+for	144:4	146:4	2	(i = 1 ;i < nut -> header_count;i ++)
+forinit	144:9	144:14	3	i = 1 ;
+water	144:9	0:0	4	i
+op	144:11	0:0	4	=
+water	144:13	0:0	4	1
+water	144:14	0:0	4	;
+cond	144:16	144:25	3	i < nut -> header_count
+water	144:16	0:0	4	i
+op	144:18	0:0	4	<
+water	144:20	0:0	4	nut
+op	144:23	0:0	4	->
+water	144:25	0:0	4	header_count
+forexpr	144:39	144:40	3	i ++
+water	144:39	0:0	4	i
+op	144:40	0:0	4	++
+stmts	144:44	146:4	3	
+water	144:44	0:0	4	{
+call	145:8	145:32	4	av_freep
+arg	145:17	145:32	5	&nut->header[i]
+op	145:17	0:0	6	&
+water	145:18	0:0	6	nut
+op	145:21	0:0	6	->
+water	145:23	0:0	6	header
+op	145:29	0:0	6	[
+water	145:30	0:0	6	i
+op	145:31	0:0	6	]
+water	145:33	0:0	4	;
+water	146:4	0:0	4	}
+water	147:4	0:0	2	nut
+op	147:7	0:0	2	->
+water	147:9	0:0	2	header_count
+op	147:22	0:0	2	=
+water	147:24	0:0	2	0
+water	147:25	0:0	2	;
+return	148:4	148:14	2	ret
+water	148:11	0:0	3	ret

@@ -1,0 +1,535 @@
+func	1:0	65:0	0	static int	config_output
+params	1:24	0:0	1	
+param	1:25	1:46	2	AVFilterLink *	outlink
+stmnts	0:0	64:12	1	
+decl	3:4	3:39	2	AVFilterContext	*ctx
+op	3:25	0:0	2	=
+water	3:27	0:0	2	outlink
+op	3:34	0:0	2	->
+water	3:36	0:0	2	src
+decl	4:4	4:41	2	AVFilterLink	*inlink
+op	4:25	0:0	2	=
+water	4:27	0:0	2	ctx
+op	4:30	0:0	2	->
+water	4:32	0:0	2	inputs
+op	4:38	0:0	2	[
+water	4:39	0:0	2	0
+op	4:40	0:0	2	]
+decl	5:4	5:35	2	ShowFreqsContext	*s
+op	5:24	0:0	2	=
+water	5:26	0:0	2	ctx
+op	5:29	0:0	2	->
+water	5:31	0:0	2	priv
+decl	6:4	6:17	2	float	overlap
+decl	7:4	7:9	2	int	i
+water	8:4	0:0	2	s
+op	8:5	0:0	2	->
+water	8:7	0:0	2	nb_freq
+op	8:15	0:0	2	=
+water	8:17	0:0	2	1
+op	8:19	0:0	2	<<
+water	8:22	0:0	2	(
+water	8:23	0:0	2	s
+op	8:24	0:0	2	->
+water	8:26	0:0	2	fft_bits
+op	8:35	0:0	2	-
+water	8:37	0:0	2	1
+water	8:38	0:0	2	)
+water	8:39	0:0	2	;
+water	9:4	0:0	2	s
+op	9:5	0:0	2	->
+water	9:7	0:0	2	win_size
+op	9:16	0:0	2	=
+water	9:18	0:0	2	s
+op	9:19	0:0	2	->
+water	9:21	0:0	2	nb_freq
+op	9:29	0:0	2	<<
+water	9:32	0:0	2	1
+water	9:33	0:0	2	;
+call	10:4	10:30	2	av_audio_fifo_free
+arg	10:23	10:30	3	s->fifo
+water	10:23	0:0	4	s
+op	10:24	0:0	4	->
+water	10:26	0:0	4	fifo
+water	10:31	0:0	2	;
+call	11:4	11:21	2	av_fft_end
+arg	11:15	11:21	3	s->fft
+water	11:15	0:0	4	s
+op	11:16	0:0	4	->
+water	11:18	0:0	4	fft
+water	11:22	0:0	2	;
+water	12:4	0:0	2	s
+op	12:5	0:0	2	->
+water	12:7	0:0	2	fft
+op	12:11	0:0	2	=
+call	12:13	12:39	2	av_fft_init
+arg	12:25	12:36	3	s->fft_bits
+water	12:25	0:0	4	s
+op	12:26	0:0	4	->
+water	12:28	0:0	4	fft_bits
+arg	12:38	12:39	3	0
+water	12:38	0:0	4	0
+water	12:40	0:0	2	;
+if	13:4	17:4	2	(! s -> fft)
+cond	13:8	13:12	3	! s -> fft
+op	13:8	0:0	4	!
+water	13:9	0:0	4	s
+op	13:10	0:0	4	->
+water	13:12	0:0	4	fft
+stmts	13:17	17:4	3	
+water	13:17	0:0	4	{
+call	14:8	15:53	4	av_log
+arg	14:15	14:18	5	ctx
+water	14:15	0:0	6	ctx
+arg	14:20	14:32	5	AV_LOG_ERROR
+water	14:20	0:0	6	AV_LOG_ERROR
+arg	14:34	15:53	5	"Unable to create FFT context. ""The window size might be too high.\n"
+water	14:34	0:0	6	"Unable to create FFT context. "
+water	15:15	0:0	6	"The window size might be too high.\n"
+water	15:54	0:0	4	;
+return	16:8	16:30	4	AVERROR(ENOMEM)
+call	16:15	16:29	5	AVERROR
+arg	16:23	16:29	6	ENOMEM
+water	16:23	0:0	7	ENOMEM
+water	17:4	0:0	4	}
+for	21:4	24:4	2	(i = 0 ;i < s -> nb_channels;i ++)
+forinit	21:9	21:14	3	i = 0 ;
+water	21:9	0:0	4	i
+op	21:11	0:0	4	=
+water	21:13	0:0	4	0
+water	21:14	0:0	4	;
+cond	21:16	21:23	3	i < s -> nb_channels
+water	21:16	0:0	4	i
+op	21:18	0:0	4	<
+water	21:20	0:0	4	s
+op	21:21	0:0	4	->
+water	21:23	0:0	4	nb_channels
+forexpr	21:36	21:37	3	i ++
+water	21:36	0:0	4	i
+op	21:37	0:0	4	++
+stmts	21:41	24:4	3	
+water	21:41	0:0	4	{
+call	22:8	22:32	4	av_freep
+arg	22:17	22:32	5	&s->fft_data[i]
+op	22:17	0:0	6	&
+water	22:18	0:0	6	s
+op	22:19	0:0	6	->
+water	22:21	0:0	6	fft_data
+op	22:29	0:0	6	[
+water	22:30	0:0	6	i
+op	22:31	0:0	6	]
+water	22:33	0:0	4	;
+call	23:8	23:32	4	av_freep
+arg	23:17	23:32	5	&s->avg_data[i]
+op	23:17	0:0	6	&
+water	23:18	0:0	6	s
+op	23:19	0:0	6	->
+water	23:21	0:0	6	avg_data
+op	23:29	0:0	6	[
+water	23:30	0:0	6	i
+op	23:31	0:0	6	]
+water	23:33	0:0	4	;
+water	24:4	0:0	4	}
+call	25:4	25:25	2	av_freep
+arg	25:13	25:25	3	&s->fft_data
+op	25:13	0:0	4	&
+water	25:14	0:0	4	s
+op	25:15	0:0	4	->
+water	25:17	0:0	4	fft_data
+water	25:26	0:0	2	;
+call	26:4	26:25	2	av_freep
+arg	26:13	26:25	3	&s->avg_data
+op	26:13	0:0	4	&
+water	26:14	0:0	4	s
+op	26:15	0:0	4	->
+water	26:17	0:0	4	avg_data
+water	26:26	0:0	2	;
+water	27:4	0:0	2	s
+op	27:5	0:0	2	->
+water	27:7	0:0	2	nb_channels
+op	27:19	0:0	2	=
+water	27:21	0:0	2	inlink
+op	27:27	0:0	2	->
+water	27:29	0:0	2	channels
+water	27:37	0:0	2	;
+water	28:4	0:0	2	s
+op	28:5	0:0	2	->
+water	28:7	0:0	2	fft_data
+op	28:16	0:0	2	=
+call	28:18	28:64	2	av_calloc
+arg	28:28	28:42	3	s->nb_channels
+water	28:28	0:0	4	s
+op	28:29	0:0	4	->
+water	28:31	0:0	4	nb_channels
+arg	28:44	28:64	3	sizeof(*s->fft_data)
+op	28:44	0:0	4	sizeof
+water	28:50	0:0	4	(
+op	28:51	0:0	4	*
+water	28:52	0:0	4	s
+op	28:53	0:0	4	->
+water	28:55	0:0	4	fft_data
+water	28:63	0:0	4	)
+water	28:65	0:0	2	;
+if	29:4	30:30	2	(! s -> fft_data)
+cond	29:8	29:12	3	! s -> fft_data
+op	29:8	0:0	4	!
+water	29:9	0:0	4	s
+op	29:10	0:0	4	->
+water	29:12	0:0	4	fft_data
+stmts	30:8	30:30	3	
+return	30:8	30:30	4	AVERROR(ENOMEM)
+call	30:15	30:29	5	AVERROR
+arg	30:23	30:29	6	ENOMEM
+water	30:23	0:0	7	ENOMEM
+water	31:4	0:0	2	s
+op	31:5	0:0	2	->
+water	31:7	0:0	2	avg_data
+op	31:16	0:0	2	=
+call	31:18	31:64	2	av_calloc
+arg	31:28	31:42	3	s->nb_channels
+water	31:28	0:0	4	s
+op	31:29	0:0	4	->
+water	31:31	0:0	4	nb_channels
+arg	31:44	31:64	3	sizeof(*s->avg_data)
+op	31:44	0:0	4	sizeof
+water	31:50	0:0	4	(
+op	31:51	0:0	4	*
+water	31:52	0:0	4	s
+op	31:53	0:0	4	->
+water	31:55	0:0	4	avg_data
+water	31:63	0:0	4	)
+water	31:65	0:0	2	;
+if	32:4	33:30	2	(! s -> fft_data)
+cond	32:8	32:12	3	! s -> fft_data
+op	32:8	0:0	4	!
+water	32:9	0:0	4	s
+op	32:10	0:0	4	->
+water	32:12	0:0	4	fft_data
+stmts	33:8	33:30	3	
+return	33:8	33:30	4	AVERROR(ENOMEM)
+call	33:15	33:29	5	AVERROR
+arg	33:23	33:29	6	ENOMEM
+water	33:23	0:0	7	ENOMEM
+for	34:4	39:4	2	(i = 0 ;i < s -> nb_channels;i ++)
+forinit	34:9	34:14	3	i = 0 ;
+water	34:9	0:0	4	i
+op	34:11	0:0	4	=
+water	34:13	0:0	4	0
+water	34:14	0:0	4	;
+cond	34:16	34:23	3	i < s -> nb_channels
+water	34:16	0:0	4	i
+op	34:18	0:0	4	<
+water	34:20	0:0	4	s
+op	34:21	0:0	4	->
+water	34:23	0:0	4	nb_channels
+forexpr	34:36	34:37	3	i ++
+water	34:36	0:0	4	i
+op	34:37	0:0	4	++
+stmts	34:41	39:4	3	
+water	34:41	0:0	4	{
+water	35:8	0:0	4	s
+op	35:9	0:0	4	->
+water	35:11	0:0	4	fft_data
+op	35:19	0:0	4	[
+water	35:20	0:0	4	i
+op	35:21	0:0	4	]
+op	35:23	0:0	4	=
+call	35:25	35:69	4	av_calloc
+arg	35:35	35:46	5	s->win_size
+water	35:35	0:0	6	s
+op	35:36	0:0	6	->
+water	35:38	0:0	6	win_size
+arg	35:48	35:69	5	sizeof(**s->fft_data)
+op	35:48	0:0	6	sizeof
+water	35:54	0:0	6	(
+op	35:55	0:0	6	*
+op	35:56	0:0	6	*
+water	35:57	0:0	6	s
+op	35:58	0:0	6	->
+water	35:60	0:0	6	fft_data
+water	35:68	0:0	6	)
+water	35:70	0:0	4	;
+water	36:8	0:0	4	s
+op	36:9	0:0	4	->
+water	36:11	0:0	4	avg_data
+op	36:19	0:0	4	[
+water	36:20	0:0	4	i
+op	36:21	0:0	4	]
+op	36:23	0:0	4	=
+call	36:25	36:68	4	av_calloc
+arg	36:35	36:45	5	s->nb_freq
+water	36:35	0:0	6	s
+op	36:36	0:0	6	->
+water	36:38	0:0	6	nb_freq
+arg	36:47	36:68	5	sizeof(**s->avg_data)
+op	36:47	0:0	6	sizeof
+water	36:53	0:0	6	(
+op	36:54	0:0	6	*
+op	36:55	0:0	6	*
+water	36:56	0:0	6	s
+op	36:57	0:0	6	->
+water	36:59	0:0	6	avg_data
+water	36:67	0:0	6	)
+water	36:69	0:0	4	;
+if	37:8	38:34	4	(! s -> fft_data [ i ] || ! s -> avg_data [ i ])
+cond	37:12	37:45	5	! s -> fft_data [ i ] || ! s -> avg_data [ i ]
+op	37:12	0:0	6	!
+water	37:13	0:0	6	s
+op	37:14	0:0	6	->
+water	37:16	0:0	6	fft_data
+op	37:24	0:0	6	[
+water	37:25	0:0	6	i
+op	37:26	0:0	6	]
+op	37:28	0:0	6	||
+op	37:31	0:0	6	!
+water	37:32	0:0	6	s
+op	37:33	0:0	6	->
+water	37:35	0:0	6	avg_data
+op	37:43	0:0	6	[
+water	37:44	0:0	6	i
+op	37:45	0:0	6	]
+stmts	38:12	38:34	5	
+return	38:12	38:34	6	AVERROR(ENOMEM)
+call	38:19	38:33	7	AVERROR
+arg	38:27	38:33	8	ENOMEM
+water	38:27	0:0	9	ENOMEM
+water	39:4	0:0	4	}
+water	41:4	0:0	2	s
+op	41:5	0:0	2	->
+water	41:7	0:0	2	window_func_lut
+op	41:23	0:0	2	=
+call	41:25	42:65	2	av_realloc_f
+arg	41:38	41:56	3	s->window_func_lut
+water	41:38	0:0	4	s
+op	41:39	0:0	4	->
+water	41:41	0:0	4	window_func_lut
+arg	41:58	41:69	3	s->win_size
+water	41:58	0:0	4	s
+op	41:59	0:0	4	->
+water	41:61	0:0	4	win_size
+arg	42:38	42:65	3	sizeof(*s->window_func_lut)
+op	42:38	0:0	4	sizeof
+water	42:44	0:0	4	(
+op	42:45	0:0	4	*
+water	42:46	0:0	4	s
+op	42:47	0:0	4	->
+water	42:49	0:0	4	window_func_lut
+water	42:64	0:0	4	)
+water	42:66	0:0	2	;
+if	43:4	44:30	2	(! s -> window_func_lut)
+cond	43:8	43:12	3	! s -> window_func_lut
+op	43:8	0:0	4	!
+water	43:9	0:0	4	s
+op	43:10	0:0	4	->
+water	43:12	0:0	4	window_func_lut
+stmts	44:8	44:30	3	
+return	44:8	44:30	4	AVERROR(ENOMEM)
+call	44:15	44:29	5	AVERROR
+arg	44:23	44:29	6	ENOMEM
+water	44:23	0:0	7	ENOMEM
+call	45:4	45:79	2	generate_window_func
+arg	45:25	45:43	3	s->window_func_lut
+water	45:25	0:0	4	s
+op	45:26	0:0	4	->
+water	45:28	0:0	4	window_func_lut
+arg	45:45	45:56	3	s->win_size
+water	45:45	0:0	4	s
+op	45:46	0:0	4	->
+water	45:48	0:0	4	win_size
+arg	45:58	45:69	3	s->win_func
+water	45:58	0:0	4	s
+op	45:59	0:0	4	->
+water	45:61	0:0	4	win_func
+arg	45:71	45:79	3	&overlap
+op	45:71	0:0	4	&
+water	45:72	0:0	4	overlap
+water	45:80	0:0	2	;
+if	46:4	47:28	2	(s -> overlap == 1 .)
+cond	46:8	46:23	3	s -> overlap == 1 .
+water	46:8	0:0	4	s
+op	46:9	0:0	4	->
+water	46:11	0:0	4	overlap
+op	46:19	0:0	4	==
+water	46:22	0:0	4	1
+op	46:23	0:0	4	.
+stmts	47:8	47:28	3	
+water	47:8	0:0	4	s
+op	47:9	0:0	4	->
+water	47:11	0:0	4	overlap
+op	47:19	0:0	4	=
+water	47:21	0:0	4	overlap
+water	47:28	0:0	4	;
+water	48:4	0:0	2	s
+op	48:5	0:0	2	->
+water	48:7	0:0	2	skip_samples
+op	48:20	0:0	2	=
+water	48:22	0:0	2	(
+water	48:23	0:0	2	1
+op	48:24	0:0	2	.
+op	48:26	0:0	2	-
+water	48:28	0:0	2	s
+op	48:29	0:0	2	->
+water	48:31	0:0	2	overlap
+water	48:38	0:0	2	)
+op	48:40	0:0	2	*
+water	48:42	0:0	2	s
+op	48:43	0:0	2	->
+water	48:45	0:0	2	win_size
+water	48:53	0:0	2	;
+if	49:4	52:4	2	(s -> skip_samples < 1)
+cond	49:8	49:26	3	s -> skip_samples < 1
+water	49:8	0:0	4	s
+op	49:9	0:0	4	->
+water	49:11	0:0	4	skip_samples
+op	49:24	0:0	4	<
+water	49:26	0:0	4	1
+stmts	49:29	52:4	3	
+water	49:29	0:0	4	{
+call	50:8	50:68	4	av_log
+arg	50:15	50:18	5	ctx
+water	50:15	0:0	6	ctx
+arg	50:20	50:32	5	AV_LOG_ERROR
+water	50:20	0:0	6	AV_LOG_ERROR
+arg	50:34	50:56	5	"overlap %f too big\n"
+water	50:34	0:0	6	"overlap %f too big\n"
+arg	50:58	50:68	5	s->overlap
+water	50:58	0:0	6	s
+op	50:59	0:0	6	->
+water	50:61	0:0	6	overlap
+water	50:69	0:0	4	;
+return	51:8	51:30	4	AVERROR(EINVAL)
+call	51:15	51:29	5	AVERROR
+arg	51:23	51:29	6	EINVAL
+water	51:23	0:0	7	EINVAL
+water	52:4	0:0	4	}
+for	53:4	55:4	2	(s -> scale = 0 , i = 0 ;i < s -> win_size;i ++)
+forinit	53:9	53:28	3	s -> scale = 0 , i = 0 ;
+water	53:9	0:0	4	s
+op	53:10	0:0	4	->
+water	53:12	0:0	4	scale
+op	53:18	0:0	4	=
+water	53:20	0:0	4	0
+water	53:21	0:0	4	,
+water	53:23	0:0	4	i
+op	53:25	0:0	4	=
+water	53:27	0:0	4	0
+water	53:28	0:0	4	;
+cond	53:30	53:37	3	i < s -> win_size
+water	53:30	0:0	4	i
+op	53:32	0:0	4	<
+water	53:34	0:0	4	s
+op	53:35	0:0	4	->
+water	53:37	0:0	4	win_size
+forexpr	53:47	53:48	3	i ++
+water	53:47	0:0	4	i
+op	53:48	0:0	4	++
+stmts	53:52	55:4	3	
+water	53:52	0:0	4	{
+water	54:8	0:0	4	s
+op	54:9	0:0	4	->
+water	54:11	0:0	4	scale
+op	54:17	0:0	4	+=
+water	54:20	0:0	4	s
+op	54:21	0:0	4	->
+water	54:23	0:0	4	window_func_lut
+op	54:38	0:0	4	[
+water	54:39	0:0	4	i
+op	54:40	0:0	4	]
+op	54:42	0:0	4	*
+water	54:44	0:0	4	s
+op	54:45	0:0	4	->
+water	54:47	0:0	4	window_func_lut
+op	54:62	0:0	4	[
+water	54:63	0:0	4	i
+op	54:64	0:0	4	]
+water	54:65	0:0	4	;
+water	55:4	0:0	4	}
+water	56:4	0:0	2	outlink
+op	56:11	0:0	2	->
+water	56:13	0:0	2	flags
+op	56:19	0:0	2	|=
+water	56:22	0:0	2	FF_LINK_FLAG_REQUEST_LOOP
+water	56:47	0:0	2	;
+water	57:4	0:0	2	outlink
+op	57:11	0:0	2	->
+water	57:13	0:0	2	frame_rate
+op	57:24	0:0	2	=
+call	57:26	57:86	2	av_make_q
+arg	57:36	57:55	3	inlink->sample_rate
+water	57:36	0:0	4	inlink
+op	57:42	0:0	4	->
+water	57:44	0:0	4	sample_rate
+arg	57:57	57:86	3	s->win_size*(1.-s->overlap)
+water	57:57	0:0	4	s
+op	57:58	0:0	4	->
+water	57:60	0:0	4	win_size
+op	57:69	0:0	4	*
+water	57:71	0:0	4	(
+water	57:72	0:0	4	1
+op	57:73	0:0	4	.
+op	57:74	0:0	4	-
+water	57:75	0:0	4	s
+op	57:76	0:0	4	->
+water	57:78	0:0	4	overlap
+water	57:85	0:0	4	)
+water	57:87	0:0	2	;
+water	58:4	0:0	2	outlink
+op	58:11	0:0	2	->
+water	58:13	0:0	2	sample_aspect_ratio
+op	58:33	0:0	2	=
+water	58:35	0:0	2	(
+water	58:36	0:0	2	AVRational
+water	58:46	0:0	2	)
+water	58:47	0:0	2	{
+water	58:48	0:0	2	1
+water	58:49	0:0	2	,
+water	58:50	0:0	2	1
+water	58:51	0:0	2	}
+water	58:52	0:0	2	;
+water	59:4	0:0	2	outlink
+op	59:11	0:0	2	->
+water	59:13	0:0	2	w
+op	59:15	0:0	2	=
+water	59:17	0:0	2	s
+op	59:18	0:0	2	->
+water	59:20	0:0	2	w
+water	59:21	0:0	2	;
+water	60:4	0:0	2	outlink
+op	60:11	0:0	2	->
+water	60:13	0:0	2	h
+op	60:15	0:0	2	=
+water	60:17	0:0	2	s
+op	60:18	0:0	2	->
+water	60:20	0:0	2	h
+water	60:21	0:0	2	;
+water	61:4	0:0	2	s
+op	61:5	0:0	2	->
+water	61:7	0:0	2	fifo
+op	61:12	0:0	2	=
+call	61:14	61:79	2	av_audio_fifo_alloc
+arg	61:34	61:48	3	inlink->format
+water	61:34	0:0	4	inlink
+op	61:40	0:0	4	->
+water	61:42	0:0	4	format
+arg	61:50	61:66	3	inlink->channels
+water	61:50	0:0	4	inlink
+op	61:56	0:0	4	->
+water	61:58	0:0	4	channels
+arg	61:68	61:79	3	s->win_size
+water	61:68	0:0	4	s
+op	61:69	0:0	4	->
+water	61:71	0:0	4	win_size
+water	61:80	0:0	2	;
+if	62:4	63:30	2	(! s -> fifo)
+cond	62:8	62:12	3	! s -> fifo
+op	62:8	0:0	4	!
+water	62:9	0:0	4	s
+op	62:10	0:0	4	->
+water	62:12	0:0	4	fifo
+stmts	63:8	63:30	3	
+return	63:8	63:30	4	AVERROR(ENOMEM)
+call	63:15	63:29	5	AVERROR
+arg	63:23	63:29	6	ENOMEM
+water	63:23	0:0	7	ENOMEM
+return	64:4	64:12	2	0
+water	64:11	0:0	3	0

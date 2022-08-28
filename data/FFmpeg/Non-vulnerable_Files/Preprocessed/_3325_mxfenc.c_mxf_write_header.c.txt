@@ -1,0 +1,1394 @@
+func	1:0	170:0	0	static int	mxf_write_header
+params	1:27	0:0	1	
+param	1:28	1:46	2	AVFormatContext *	s
+stmnts	0:0	169:12	1	
+decl	3:4	3:34	2	MXFContext	*mxf
+op	3:20	0:0	2	=
+water	3:22	0:0	2	s
+op	3:23	0:0	2	->
+water	3:25	0:0	2	priv_data
+decl	4:4	4:14	2	int	i
+water	4:9	0:0	2	,
+decl	4:4	4:14	2	int	ret
+decl	5:4	5:68	2	uint8_t	present[FF_ARRAY_ELEMS(mxf_essence_container_uls)]
+op	5:63	0:0	2	=
+water	5:65	0:0	2	{
+water	5:66	0:0	2	0
+water	5:67	0:0	2	}
+decl	6:4	6:40	2	const MXFSamplesPerFrame	*spf
+op	6:34	0:0	2	=
+water	6:36	0:0	2	NULL
+decl	7:4	7:24	2	AVDictionaryEntry	*t
+decl	8:4	8:25	2	int64_t	timestamp
+op	8:22	0:0	2	=
+water	8:24	0:0	2	0
+if	9:4	10:17	2	(! s -> nb_streams)
+cond	9:8	9:12	3	! s -> nb_streams
+op	9:8	0:0	4	!
+water	9:9	0:0	4	s
+op	9:10	0:0	4	->
+water	9:12	0:0	4	nb_streams
+stmts	10:8	10:17	3	
+return	10:8	10:17	4	-1
+op	10:15	0:0	5	-
+water	10:16	0:0	5	1
+if	11:4	14:4	2	(s -> oformat == & ff_mxf_opatom_muxer && s -> nb_streams != 1)
+cond	11:8	11:62	3	s -> oformat == & ff_mxf_opatom_muxer && s -> nb_streams != 1
+water	11:8	0:0	4	s
+op	11:9	0:0	4	->
+water	11:11	0:0	4	oformat
+op	11:19	0:0	4	==
+op	11:22	0:0	4	&
+water	11:23	0:0	4	ff_mxf_opatom_muxer
+op	11:43	0:0	4	&&
+water	11:46	0:0	4	s
+op	11:47	0:0	4	->
+water	11:49	0:0	4	nb_streams
+op	11:60	0:0	4	!=
+water	11:62	0:0	4	1
+stmts	11:64	14:4	3	
+water	11:64	0:0	4	{
+call	12:8	12:83	4	av_log
+arg	12:15	12:16	5	s
+water	12:15	0:0	6	s
+arg	12:18	12:30	5	AV_LOG_ERROR
+water	12:18	0:0	6	AV_LOG_ERROR
+arg	12:32	12:83	5	"there must be exactly one stream for mxf opatom\n"
+water	12:32	0:0	6	"there must be exactly one stream for mxf opatom\n"
+water	12:84	0:0	4	;
+return	13:8	13:17	4	-1
+op	13:15	0:0	5	-
+water	13:16	0:0	5	1
+water	14:4	0:0	4	}
+for	15:4	138:4	2	(i = 0 ;i < s -> nb_streams;i ++)
+forinit	15:9	15:14	3	i = 0 ;
+water	15:9	0:0	4	i
+op	15:11	0:0	4	=
+water	15:13	0:0	4	0
+water	15:14	0:0	4	;
+cond	15:16	15:23	3	i < s -> nb_streams
+water	15:16	0:0	4	i
+op	15:18	0:0	4	<
+water	15:20	0:0	4	s
+op	15:21	0:0	4	->
+water	15:23	0:0	4	nb_streams
+forexpr	15:35	15:36	3	i ++
+water	15:35	0:0	4	i
+op	15:36	0:0	4	++
+stmts	15:40	138:4	3	
+water	15:40	0:0	4	{
+decl	16:8	16:36	4	AVStream	*st
+op	16:21	0:0	4	=
+water	16:23	0:0	4	s
+op	16:24	0:0	4	->
+water	16:26	0:0	4	streams
+op	16:33	0:0	4	[
+water	16:34	0:0	4	i
+op	16:35	0:0	4	]
+decl	17:8	17:54	4	MXFStreamContext	*sc
+op	17:29	0:0	4	=
+call	17:31	17:53	5	av_mallocz
+arg	17:42	17:53	6	sizeof(*sc)
+op	17:42	0:0	7	sizeof
+water	17:48	0:0	7	(
+op	17:49	0:0	7	*
+water	17:50	0:0	7	sc
+water	17:52	0:0	7	)
+if	18:8	19:34	4	(! sc)
+cond	18:12	18:13	5	! sc
+op	18:12	0:0	6	!
+water	18:13	0:0	6	sc
+stmts	19:12	19:34	5	
+return	19:12	19:34	6	AVERROR(ENOMEM)
+call	19:19	19:33	7	AVERROR
+arg	19:27	19:33	8	ENOMEM
+water	19:27	0:0	9	ENOMEM
+water	20:8	0:0	4	st
+op	20:10	0:0	4	->
+water	20:12	0:0	4	priv_data
+op	20:22	0:0	4	=
+water	20:24	0:0	4	sc
+water	20:26	0:0	4	;
+if	21:8	24:8	4	(( ( i == 0 ) ^ ( st -> codec -> codec_type == AVMEDIA_TYPE_VIDEO ) ) && s -> oformat != & ff_mxf_opatom_muxer)
+cond	21:12	21:89	5	( ( i == 0 ) ^ ( st -> codec -> codec_type == AVMEDIA_TYPE_VIDEO ) ) && s -> oformat != & ff_mxf_opatom_muxer
+water	21:12	0:0	6	(
+water	21:13	0:0	6	(
+water	21:14	0:0	6	i
+op	21:16	0:0	6	==
+water	21:19	0:0	6	0
+water	21:20	0:0	6	)
+op	21:22	0:0	6	^
+water	21:24	0:0	6	(
+water	21:25	0:0	6	st
+op	21:27	0:0	6	->
+water	21:29	0:0	6	codec
+op	21:34	0:0	6	->
+water	21:36	0:0	6	codec_type
+op	21:47	0:0	6	==
+water	21:50	0:0	6	AVMEDIA_TYPE_VIDEO
+water	21:68	0:0	6	)
+water	21:69	0:0	6	)
+op	21:71	0:0	6	&&
+water	21:74	0:0	6	s
+op	21:75	0:0	6	->
+water	21:77	0:0	6	oformat
+op	21:85	0:0	6	!=
+op	21:88	0:0	6	&
+water	21:89	0:0	6	ff_mxf_opatom_muxer
+stmts	21:110	24:8	5	
+water	21:110	0:0	6	{
+call	22:12	22:107	6	av_log
+arg	22:19	22:20	7	s
+water	22:19	0:0	8	s
+arg	22:22	22:34	7	AV_LOG_ERROR
+water	22:22	0:0	8	AV_LOG_ERROR
+arg	22:36	22:107	7	"there must be exactly one video stream and it must be the first one\n"
+water	22:36	0:0	8	"there must be exactly one video stream and it must be the first one\n"
+water	22:108	0:0	6	;
+return	23:12	23:21	6	-1
+op	23:19	0:0	7	-
+water	23:20	0:0	7	1
+water	24:8	0:0	6	}
+if	25:8	81:8	4	(st -> codec -> codec_type == AVMEDIA_TYPE_VIDEO)
+cond	25:12	25:37	5	st -> codec -> codec_type == AVMEDIA_TYPE_VIDEO
+water	25:12	0:0	6	st
+op	25:14	0:0	6	->
+water	25:16	0:0	6	codec
+op	25:21	0:0	6	->
+water	25:23	0:0	6	codec_type
+op	25:34	0:0	6	==
+water	25:37	0:0	6	AVMEDIA_TYPE_VIDEO
+stmts	25:57	81:8	5	
+water	25:57	0:0	6	{
+decl	26:12	26:88	6	const AVPixFmtDescriptor	*pix_desc
+op	26:47	0:0	6	=
+call	26:49	26:87	7	av_pix_fmt_desc_get
+arg	26:69	26:87	8	st->codec->pix_fmt
+water	26:69	0:0	9	st
+op	26:71	0:0	9	->
+water	26:73	0:0	9	codec
+op	26:78	0:0	9	->
+water	26:80	0:0	9	pix_fmt
+decl	28:12	28:48	6	AVRational	rate
+water	28:27	0:0	6	,
+decl	28:12	28:48	6	AVRational	tbc
+op	28:33	0:0	6	=
+water	28:35	0:0	6	st
+op	28:37	0:0	6	->
+water	28:39	0:0	6	time_base
+water	30:12	0:0	6	sc
+op	30:14	0:0	6	->
+water	30:16	0:0	6	component_depth
+op	30:32	0:0	6	=
+water	30:34	0:0	6	8
+water	30:35	0:0	6	;
+water	31:12	0:0	6	sc
+op	31:14	0:0	6	->
+water	31:16	0:0	6	h_chroma_sub_sample
+op	31:36	0:0	6	=
+water	31:38	0:0	6	2
+water	31:39	0:0	6	;
+water	32:12	0:0	6	sc
+op	32:14	0:0	6	->
+water	32:16	0:0	6	color_siting
+op	32:29	0:0	6	=
+water	32:31	0:0	6	0
+water	32:32	0:0	6	xFF
+water	32:35	0:0	6	;
+if	33:12	36:12	6	(pix_desc)
+cond	33:16	33:16	7	pix_desc
+water	33:16	0:0	8	pix_desc
+stmts	33:26	36:12	7	
+water	33:26	0:0	8	{
+water	34:16	0:0	8	sc
+op	34:18	0:0	8	->
+water	34:20	0:0	8	component_depth
+op	34:40	0:0	8	=
+water	34:42	0:0	8	pix_desc
+op	34:50	0:0	8	->
+water	34:52	0:0	8	comp
+op	34:56	0:0	8	[
+water	34:57	0:0	8	0
+op	34:58	0:0	8	]
+op	34:59	0:0	8	.
+water	34:60	0:0	8	depth_minus1
+op	34:73	0:0	8	+
+water	34:75	0:0	8	1
+water	34:76	0:0	8	;
+water	35:16	0:0	8	sc
+op	35:18	0:0	8	->
+water	35:20	0:0	8	h_chroma_sub_sample
+op	35:40	0:0	8	=
+water	35:42	0:0	8	1
+op	35:44	0:0	8	<<
+water	35:47	0:0	8	pix_desc
+op	35:55	0:0	8	->
+water	35:57	0:0	8	log2_chroma_w
+water	35:70	0:0	8	;
+water	36:12	0:0	8	}
+switch	37:12	42:12	6	(ff_choose_chroma_location (s ,st ))
+cond	37:20	37:51	7	ff_choose_chroma_location (s ,st )
+call	37:20	37:51	8	ff_choose_chroma_location
+arg	37:46	37:47	9	s
+water	37:46	0:0	10	s
+arg	37:49	37:51	9	st
+water	37:49	0:0	10	st
+stmts	37:54	42:12	7	
+water	37:54	0:0	8	{
+label	38:12	38:37	8	case AVCHROMA_LOC_TOPLEFT :
+water	38:39	0:0	8	sc
+op	38:41	0:0	8	->
+water	38:43	0:0	8	color_siting
+op	38:56	0:0	8	=
+water	38:58	0:0	8	0
+water	38:59	0:0	8	;
+break	38:61	38:66	8	
+label	39:12	39:34	8	case AVCHROMA_LOC_LEFT :
+water	39:39	0:0	8	sc
+op	39:41	0:0	8	->
+water	39:43	0:0	8	color_siting
+op	39:56	0:0	8	=
+water	39:58	0:0	8	6
+water	39:59	0:0	8	;
+break	39:61	39:66	8	
+label	40:12	40:33	8	case AVCHROMA_LOC_TOP :
+water	40:39	0:0	8	sc
+op	40:41	0:0	8	->
+water	40:43	0:0	8	color_siting
+op	40:56	0:0	8	=
+water	40:58	0:0	8	1
+water	40:59	0:0	8	;
+break	40:61	40:66	8	
+label	41:12	41:36	8	case AVCHROMA_LOC_CENTER :
+water	41:39	0:0	8	sc
+op	41:41	0:0	8	->
+water	41:43	0:0	8	color_siting
+op	41:56	0:0	8	=
+water	41:58	0:0	8	3
+water	41:59	0:0	8	;
+break	41:61	41:66	8	
+water	42:12	0:0	8	}
+water	43:12	0:0	6	mxf
+op	43:15	0:0	6	->
+water	43:17	0:0	6	timecode_base
+op	43:31	0:0	6	=
+water	43:33	0:0	6	(
+water	43:34	0:0	6	tbc
+op	43:37	0:0	6	.
+water	43:38	0:0	6	den
+op	43:42	0:0	6	+
+water	43:44	0:0	6	tbc
+op	43:47	0:0	6	.
+water	43:48	0:0	6	num
+op	43:51	0:0	6	/
+water	43:52	0:0	6	2
+water	43:53	0:0	6	)
+op	43:55	0:0	6	/
+water	43:57	0:0	6	tbc
+op	43:60	0:0	6	.
+water	43:61	0:0	6	num
+water	43:64	0:0	6	;
+water	44:12	0:0	6	spf
+op	44:16	0:0	6	=
+call	44:18	44:53	6	ff_mxf_get_samples_per_frame
+arg	44:47	44:48	7	s
+water	44:47	0:0	8	s
+arg	44:50	44:53	7	tbc
+water	44:50	0:0	8	tbc
+water	44:54	0:0	6	;
+if	45:12	49:12	6	(! spf)
+cond	45:16	45:17	7	! spf
+op	45:16	0:0	8	!
+water	45:17	0:0	8	spf
+stmts	45:22	49:12	7	
+water	45:22	0:0	8	{
+call	46:16	47:39	8	av_log
+arg	46:23	46:24	9	s
+water	46:23	0:0	10	s
+arg	46:26	46:38	9	AV_LOG_ERROR
+water	46:26	0:0	10	AV_LOG_ERROR
+arg	46:40	46:78	9	"Unsupported video frame rate %d/%d\n"
+water	46:40	0:0	10	"Unsupported video frame rate %d/%d\n"
+arg	47:23	47:30	9	tbc.den
+water	47:23	0:0	10	tbc
+op	47:26	0:0	10	.
+water	47:27	0:0	10	den
+arg	47:32	47:39	9	tbc.num
+water	47:32	0:0	10	tbc
+op	47:35	0:0	10	.
+water	47:36	0:0	10	num
+water	47:40	0:0	8	;
+return	48:16	48:38	8	AVERROR(EINVAL)
+call	48:23	48:37	9	AVERROR
+arg	48:31	48:37	10	EINVAL
+water	48:31	0:0	11	EINVAL
+water	49:12	0:0	8	}
+water	50:12	0:0	6	mxf
+op	50:15	0:0	6	->
+water	50:17	0:0	6	time_base
+op	50:27	0:0	6	=
+water	50:29	0:0	6	spf
+op	50:32	0:0	6	->
+water	50:34	0:0	6	time_base
+water	50:43	0:0	6	;
+water	51:12	0:0	6	rate
+op	51:17	0:0	6	=
+call	51:19	51:42	6	av_inv_q
+arg	51:28	51:42	7	mxf->time_base
+water	51:28	0:0	8	mxf
+op	51:31	0:0	8	->
+water	51:33	0:0	8	time_base
+water	51:43	0:0	6	;
+call	52:12	52:78	6	avpriv_set_pts_info
+arg	52:32	52:34	7	st
+water	52:32	0:0	8	st
+arg	52:36	52:38	7	64
+water	52:36	0:0	8	64
+arg	52:40	52:58	7	mxf->time_base.num
+water	52:40	0:0	8	mxf
+op	52:43	0:0	8	->
+water	52:45	0:0	8	time_base
+op	52:54	0:0	8	.
+water	52:55	0:0	8	num
+arg	52:60	52:78	7	mxf->time_base.den
+water	52:60	0:0	8	mxf
+op	52:63	0:0	8	->
+water	52:65	0:0	8	time_base
+op	52:74	0:0	8	.
+water	52:75	0:0	8	den
+water	52:79	0:0	6	;
+if	53:12	54:26	6	(( ret =mxf_init_timecode (s ,st ,rate ) ) < 0)
+cond	53:15	53:56	7	( ret =mxf_init_timecode (s ,st ,rate ) ) < 0
+water	53:15	0:0	8	(
+water	53:16	0:0	8	ret
+op	53:20	0:0	8	=
+call	53:22	53:51	8	mxf_init_timecode
+arg	53:40	53:41	9	s
+water	53:40	0:0	10	s
+arg	53:43	53:45	9	st
+water	53:43	0:0	10	st
+arg	53:47	53:51	9	rate
+water	53:47	0:0	10	rate
+water	53:52	0:0	8	)
+op	53:54	0:0	8	<
+water	53:56	0:0	8	0
+stmts	54:16	54:26	7	
+return	54:16	54:26	8	ret
+water	54:23	0:0	9	ret
+water	55:12	0:0	6	sc
+op	55:14	0:0	6	->
+water	55:16	0:0	6	video_bit_rate
+op	55:31	0:0	6	=
+water	55:33	0:0	6	st
+op	55:35	0:0	6	->
+water	55:37	0:0	6	codec
+op	55:42	0:0	6	->
+water	55:44	0:0	6	bit_rate
+water	55:53	0:0	6	?
+water	55:55	0:0	6	st
+op	55:57	0:0	6	->
+water	55:59	0:0	6	codec
+op	55:64	0:0	6	->
+water	55:66	0:0	6	bit_rate
+water	55:75	0:0	6	:
+water	55:77	0:0	6	st
+op	55:79	0:0	6	->
+water	55:81	0:0	6	codec
+op	55:86	0:0	6	->
+water	55:88	0:0	6	rc_max_rate
+water	55:99	0:0	6	;
+if	56:12	78:12	6	(s -> oformat == & ff_mxf_d10_muxer)
+cond	56:16	56:31	7	s -> oformat == & ff_mxf_d10_muxer
+water	56:16	0:0	8	s
+op	56:17	0:0	8	->
+water	56:19	0:0	8	oformat
+op	56:27	0:0	8	==
+op	56:30	0:0	8	&
+water	56:31	0:0	8	ff_mxf_d10_muxer
+stmts	56:49	78:12	7	
+water	56:49	0:0	8	{
+if	57:16	59:16	8	(( sc -> video_bit_rate == 50000000 ) && ( mxf -> time_base . den == 25 ))
+cond	57:20	57:81	9	( sc -> video_bit_rate == 50000000 ) && ( mxf -> time_base . den == 25 )
+water	57:20	0:0	10	(
+water	57:21	0:0	10	sc
+op	57:23	0:0	10	->
+water	57:25	0:0	10	video_bit_rate
+op	57:40	0:0	10	==
+water	57:43	0:0	10	50000000
+water	57:51	0:0	10	)
+op	57:53	0:0	10	&&
+water	57:56	0:0	10	(
+water	57:57	0:0	10	mxf
+op	57:60	0:0	10	->
+water	57:62	0:0	10	time_base
+op	57:71	0:0	10	.
+water	57:72	0:0	10	den
+op	57:76	0:0	10	==
+water	57:79	0:0	10	25
+water	57:81	0:0	10	)
+stmts	57:84	59:16	9	
+water	57:84	0:0	10	{
+water	58:20	0:0	10	sc
+op	58:22	0:0	10	->
+water	58:24	0:0	10	index
+op	58:30	0:0	10	=
+water	58:32	0:0	10	3
+water	58:33	0:0	10	;
+water	59:16	0:0	10	}
+else	59:18	61:16	8
+stmts	59:23	61:16	9	
+if	59:23	61:16	10	(( sc -> video_bit_rate == 49999840 || sc -> video_bit_rate == 50000000 ) && ( mxf -> time_base . den != 25 ))
+cond	59:27	59:122	11	( sc -> video_bit_rate == 49999840 || sc -> video_bit_rate == 50000000 ) && ( mxf -> time_base . den != 25 )
+water	59:27	0:0	12	(
+water	59:28	0:0	12	sc
+op	59:30	0:0	12	->
+water	59:32	0:0	12	video_bit_rate
+op	59:47	0:0	12	==
+water	59:50	0:0	12	49999840
+op	59:59	0:0	12	||
+water	59:62	0:0	12	sc
+op	59:64	0:0	12	->
+water	59:66	0:0	12	video_bit_rate
+op	59:81	0:0	12	==
+water	59:84	0:0	12	50000000
+water	59:92	0:0	12	)
+op	59:94	0:0	12	&&
+water	59:97	0:0	12	(
+water	59:98	0:0	12	mxf
+op	59:101	0:0	12	->
+water	59:103	0:0	12	time_base
+op	59:112	0:0	12	.
+water	59:113	0:0	12	den
+op	59:117	0:0	12	!=
+water	59:120	0:0	12	25
+water	59:122	0:0	12	)
+stmts	59:125	61:16	11	
+water	59:125	0:0	12	{
+water	60:20	0:0	12	sc
+op	60:22	0:0	12	->
+water	60:24	0:0	12	index
+op	60:30	0:0	12	=
+water	60:32	0:0	12	5
+water	60:33	0:0	12	;
+water	61:16	0:0	12	}
+else	61:18	64:16	8
+stmts	61:23	64:16	9	
+if	61:23	64:16	10	(sc -> video_bit_rate == 40000000)
+cond	61:27	61:49	11	sc -> video_bit_rate == 40000000
+water	61:27	0:0	12	sc
+op	61:29	0:0	12	->
+water	61:31	0:0	12	video_bit_rate
+op	61:46	0:0	12	==
+water	61:49	0:0	12	40000000
+stmts	61:59	64:16	11	
+water	61:59	0:0	12	{
+if	62:20	62:63	12	(mxf -> time_base . den == 25)
+cond	62:24	62:46	13	mxf -> time_base . den == 25
+water	62:24	0:0	14	mxf
+op	62:27	0:0	14	->
+water	62:29	0:0	14	time_base
+op	62:38	0:0	14	.
+water	62:39	0:0	14	den
+op	62:43	0:0	14	==
+water	62:46	0:0	14	25
+stmts	62:50	62:63	13	
+water	62:50	0:0	14	sc
+op	62:52	0:0	14	->
+water	62:54	0:0	14	index
+op	62:60	0:0	14	=
+water	62:62	0:0	14	7
+water	62:63	0:0	14	;
+else	63:20	63:63	12
+stmts	63:50	63:63	13	
+water	63:50	0:0	14	sc
+op	63:52	0:0	14	->
+water	63:54	0:0	14	index
+op	63:60	0:0	14	=
+water	63:62	0:0	14	9
+water	63:63	0:0	14	;
+water	64:16	0:0	12	}
+else	64:18	67:16	8
+stmts	64:23	67:16	9	
+if	64:23	67:16	10	(sc -> video_bit_rate == 30000000)
+cond	64:27	64:49	11	sc -> video_bit_rate == 30000000
+water	64:27	0:0	12	sc
+op	64:29	0:0	12	->
+water	64:31	0:0	12	video_bit_rate
+op	64:46	0:0	12	==
+water	64:49	0:0	12	30000000
+stmts	64:59	67:16	11	
+water	64:59	0:0	12	{
+if	65:20	65:64	12	(mxf -> time_base . den == 25)
+cond	65:24	65:46	13	mxf -> time_base . den == 25
+water	65:24	0:0	14	mxf
+op	65:27	0:0	14	->
+water	65:29	0:0	14	time_base
+op	65:38	0:0	14	.
+water	65:39	0:0	14	den
+op	65:43	0:0	14	==
+water	65:46	0:0	14	25
+stmts	65:50	65:64	13	
+water	65:50	0:0	14	sc
+op	65:52	0:0	14	->
+water	65:54	0:0	14	index
+op	65:60	0:0	14	=
+water	65:62	0:0	14	11
+water	65:64	0:0	14	;
+else	66:20	66:64	12
+stmts	66:50	66:64	13	
+water	66:50	0:0	14	sc
+op	66:52	0:0	14	->
+water	66:54	0:0	14	index
+op	66:60	0:0	14	=
+water	66:62	0:0	14	13
+water	66:64	0:0	14	;
+water	67:16	0:0	12	}
+else	67:18	70:16	8
+stmts	67:23	70:16	9	
+water	67:23	0:0	10	{
+call	68:20	68:91	10	av_log
+arg	68:27	68:28	11	s
+water	68:27	0:0	12	s
+arg	68:30	68:42	11	AV_LOG_ERROR
+water	68:30	0:0	12	AV_LOG_ERROR
+arg	68:44	68:91	11	"error MXF D-10 only support 30/40/50 mbit/s\n"
+water	68:44	0:0	12	"error MXF D-10 only support 30/40/50 mbit/s\n"
+water	68:92	0:0	10	;
+return	69:20	69:29	10	-1
+op	69:27	0:0	11	-
+water	69:28	0:0	11	1
+water	70:16	0:0	10	}
+water	71:16	0:0	8	mxf
+op	71:19	0:0	8	->
+water	71:21	0:0	8	edit_unit_byte_count
+op	71:42	0:0	8	=
+water	71:44	0:0	8	KAG_SIZE
+water	71:52	0:0	8	;
+water	72:16	0:0	8	mxf
+op	72:19	0:0	8	->
+water	72:21	0:0	8	edit_unit_byte_count
+op	72:42	0:0	8	+=
+water	72:45	0:0	8	16
+op	72:48	0:0	8	+
+water	72:50	0:0	8	4
+op	72:52	0:0	8	+
+water	72:54	0:0	8	(
+water	72:55	0:0	8	uint64_t
+water	72:63	0:0	8	)
+water	72:64	0:0	8	sc
+op	72:66	0:0	8	->
+water	72:68	0:0	8	video_bit_rate
+op	72:83	0:0	8	*
+water	73:20	0:0	8	mxf
+op	73:23	0:0	8	->
+water	73:25	0:0	8	time_base
+op	73:34	0:0	8	.
+water	73:35	0:0	8	num
+op	73:39	0:0	8	/
+water	73:41	0:0	8	(
+water	73:42	0:0	8	8
+op	73:43	0:0	8	*
+water	73:44	0:0	8	mxf
+op	73:47	0:0	8	->
+water	73:49	0:0	8	time_base
+op	73:58	0:0	8	.
+water	73:59	0:0	8	den
+water	73:62	0:0	8	)
+water	73:63	0:0	8	;
+water	74:16	0:0	8	mxf
+op	74:19	0:0	8	->
+water	74:21	0:0	8	edit_unit_byte_count
+op	74:42	0:0	8	+=
+call	74:45	74:84	8	klv_fill_size
+arg	74:59	74:84	9	mxf->edit_unit_byte_count
+water	74:59	0:0	10	mxf
+op	74:62	0:0	10	->
+water	74:64	0:0	10	edit_unit_byte_count
+water	74:85	0:0	8	;
+water	75:16	0:0	8	mxf
+op	75:19	0:0	8	->
+water	75:21	0:0	8	edit_unit_byte_count
+op	75:42	0:0	8	+=
+water	75:45	0:0	8	16
+op	75:48	0:0	8	+
+water	75:50	0:0	8	4
+op	75:52	0:0	8	+
+water	75:54	0:0	8	4
+op	75:56	0:0	8	+
+water	75:58	0:0	8	spf
+op	75:61	0:0	8	->
+water	75:63	0:0	8	samples_per_frame
+op	75:80	0:0	8	[
+water	75:81	0:0	8	0
+op	75:82	0:0	8	]
+op	75:83	0:0	8	*
+water	75:84	0:0	8	8
+op	75:85	0:0	8	*
+water	75:86	0:0	8	4
+water	75:87	0:0	8	;
+water	76:16	0:0	8	mxf
+op	76:19	0:0	8	->
+water	76:21	0:0	8	edit_unit_byte_count
+op	76:42	0:0	8	+=
+call	76:45	76:84	8	klv_fill_size
+arg	76:59	76:84	9	mxf->edit_unit_byte_count
+water	76:59	0:0	10	mxf
+op	76:62	0:0	10	->
+water	76:64	0:0	10	edit_unit_byte_count
+water	76:85	0:0	8	;
+water	77:16	0:0	8	sc
+op	77:18	0:0	8	->
+water	77:20	0:0	8	signal_standard
+op	77:36	0:0	8	=
+water	77:38	0:0	8	1
+water	77:39	0:0	8	;
+water	78:12	0:0	8	}
+if	79:12	80:58	6	(mxf -> signal_standard >= 0)
+cond	79:16	79:40	7	mxf -> signal_standard >= 0
+water	79:16	0:0	8	mxf
+op	79:19	0:0	8	->
+water	79:21	0:0	8	signal_standard
+op	79:37	0:0	8	>=
+water	79:40	0:0	8	0
+stmts	80:16	80:58	7	
+water	80:16	0:0	8	sc
+op	80:18	0:0	8	->
+water	80:20	0:0	8	signal_standard
+op	80:36	0:0	8	=
+water	80:38	0:0	8	mxf
+op	80:41	0:0	8	->
+water	80:43	0:0	8	signal_standard
+water	80:58	0:0	8	;
+water	81:8	0:0	6	}
+else	81:10	122:8	4
+stmts	81:15	122:8	5	
+if	81:15	122:8	6	(st -> codec -> codec_type == AVMEDIA_TYPE_AUDIO)
+cond	81:19	81:44	7	st -> codec -> codec_type == AVMEDIA_TYPE_AUDIO
+water	81:19	0:0	8	st
+op	81:21	0:0	8	->
+water	81:23	0:0	8	codec
+op	81:28	0:0	8	->
+water	81:30	0:0	8	codec_type
+op	81:41	0:0	8	==
+water	81:44	0:0	8	AVMEDIA_TYPE_AUDIO
+stmts	81:64	122:8	7	
+water	81:64	0:0	8	{
+if	82:12	85:12	8	(st -> codec -> sample_rate != 48000)
+cond	82:16	82:42	9	st -> codec -> sample_rate != 48000
+water	82:16	0:0	10	st
+op	82:18	0:0	10	->
+water	82:20	0:0	10	codec
+op	82:25	0:0	10	->
+water	82:27	0:0	10	sample_rate
+op	82:39	0:0	10	!=
+water	82:42	0:0	10	48000
+stmts	82:49	85:12	9	
+water	82:49	0:0	10	{
+call	83:16	83:69	10	av_log
+arg	83:23	83:24	11	s
+water	83:23	0:0	12	s
+arg	83:26	83:38	11	AV_LOG_ERROR
+water	83:26	0:0	12	AV_LOG_ERROR
+arg	83:40	83:69	11	"only 48khz is implemented\n"
+water	83:40	0:0	12	"only 48khz is implemented\n"
+water	83:70	0:0	10	;
+return	84:16	84:25	10	-1
+op	84:23	0:0	11	-
+water	84:24	0:0	11	1
+water	85:12	0:0	10	}
+call	86:12	86:65	8	avpriv_set_pts_info
+arg	86:32	86:34	9	st
+water	86:32	0:0	10	st
+arg	86:36	86:38	9	64
+water	86:36	0:0	10	64
+arg	86:40	86:41	9	1
+water	86:40	0:0	10	1
+arg	86:43	86:65	9	st->codec->sample_rate
+water	86:43	0:0	10	st
+op	86:45	0:0	10	->
+water	86:47	0:0	10	codec
+op	86:52	0:0	10	->
+water	86:54	0:0	10	sample_rate
+water	86:66	0:0	8	;
+if	87:12	97:12	8	(s -> oformat == & ff_mxf_d10_muxer)
+cond	87:16	87:31	9	s -> oformat == & ff_mxf_d10_muxer
+water	87:16	0:0	10	s
+op	87:17	0:0	10	->
+water	87:19	0:0	10	oformat
+op	87:27	0:0	10	==
+op	87:30	0:0	10	&
+water	87:31	0:0	10	ff_mxf_d10_muxer
+stmts	87:49	97:12	9	
+water	87:49	0:0	10	{
+if	88:16	91:16	10	(st -> index != 1)
+cond	88:20	88:33	11	st -> index != 1
+water	88:20	0:0	12	st
+op	88:22	0:0	12	->
+water	88:24	0:0	12	index
+op	88:30	0:0	12	!=
+water	88:33	0:0	12	1
+stmts	88:36	91:16	11	
+water	88:36	0:0	12	{
+call	89:20	89:85	12	av_log
+arg	89:27	89:28	13	s
+water	89:27	0:0	14	s
+arg	89:30	89:42	13	AV_LOG_ERROR
+water	89:30	0:0	14	AV_LOG_ERROR
+arg	89:44	89:85	13	"MXF D-10 only support one audio track\n"
+water	89:44	0:0	14	"MXF D-10 only support one audio track\n"
+water	89:86	0:0	12	;
+return	90:20	90:29	12	-1
+op	90:27	0:0	13	-
+water	90:28	0:0	13	1
+water	91:16	0:0	12	}
+if	92:16	95:16	10	(st -> codec -> codec_id != AV_CODEC_ID_PCM_S16LE && st -> codec -> codec_id != AV_CODEC_ID_PCM_S24LE)
+cond	92:20	93:43	11	st -> codec -> codec_id != AV_CODEC_ID_PCM_S16LE && st -> codec -> codec_id != AV_CODEC_ID_PCM_S24LE
+water	92:20	0:0	12	st
+op	92:22	0:0	12	->
+water	92:24	0:0	12	codec
+op	92:29	0:0	12	->
+water	92:31	0:0	12	codec_id
+op	92:40	0:0	12	!=
+water	92:43	0:0	12	AV_CODEC_ID_PCM_S16LE
+op	92:65	0:0	12	&&
+water	93:20	0:0	12	st
+op	93:22	0:0	12	->
+water	93:24	0:0	12	codec
+op	93:29	0:0	12	->
+water	93:31	0:0	12	codec_id
+op	93:40	0:0	12	!=
+water	93:43	0:0	12	AV_CODEC_ID_PCM_S24LE
+stmts	93:66	95:16	11	
+water	93:66	0:0	12	{
+call	94:20	94:92	12	av_log
+arg	94:27	94:28	13	s
+water	94:27	0:0	14	s
+arg	94:30	94:42	13	AV_LOG_ERROR
+water	94:30	0:0	14	AV_LOG_ERROR
+arg	94:44	94:92	13	"MXF D-10 only support 16 or 24 bits le audio\n"
+water	94:44	0:0	14	"MXF D-10 only support 16 or 24 bits le audio\n"
+water	94:93	0:0	12	;
+water	95:16	0:0	12	}
+water	96:16	0:0	10	sc
+op	96:18	0:0	10	->
+water	96:20	0:0	10	index
+op	96:26	0:0	10	=
+water	96:28	0:0	10	(
+water	96:29	0:0	10	(
+water	96:30	0:0	10	MXFStreamContext
+op	96:46	0:0	10	*
+water	96:47	0:0	10	)
+water	96:48	0:0	10	s
+op	96:49	0:0	10	->
+water	96:51	0:0	10	streams
+op	96:58	0:0	10	[
+water	96:59	0:0	10	0
+op	96:60	0:0	10	]
+op	96:61	0:0	10	->
+water	96:63	0:0	10	priv_data
+water	96:72	0:0	10	)
+op	96:73	0:0	10	->
+water	96:75	0:0	10	index
+op	96:81	0:0	10	+
+water	96:83	0:0	10	1
+water	96:84	0:0	10	;
+water	97:12	0:0	10	}
+else	97:14	119:12	8
+stmts	97:19	119:12	9	
+if	97:19	119:12	10	(s -> oformat == & ff_mxf_opatom_muxer)
+cond	97:23	97:38	11	s -> oformat == & ff_mxf_opatom_muxer
+water	97:23	0:0	12	s
+op	97:24	0:0	12	->
+water	97:26	0:0	12	oformat
+op	97:34	0:0	12	==
+op	97:37	0:0	12	&
+water	97:38	0:0	12	ff_mxf_opatom_muxer
+stmts	97:59	119:12	11	
+water	97:59	0:0	12	{
+decl	98:16	98:63	12	AVRational	tbc
+op	98:31	0:0	12	=
+call	98:33	98:62	13	av_inv_q
+arg	98:42	98:62	14	mxf->audio_edit_rate
+water	98:42	0:0	15	mxf
+op	98:45	0:0	15	->
+water	98:47	0:0	15	audio_edit_rate
+if	99:16	103:16	12	(st -> codec -> codec_id != AV_CODEC_ID_PCM_S16LE && st -> codec -> codec_id != AV_CODEC_ID_PCM_S24LE)
+cond	99:20	100:43	13	st -> codec -> codec_id != AV_CODEC_ID_PCM_S16LE && st -> codec -> codec_id != AV_CODEC_ID_PCM_S24LE
+water	99:20	0:0	14	st
+op	99:22	0:0	14	->
+water	99:24	0:0	14	codec
+op	99:29	0:0	14	->
+water	99:31	0:0	14	codec_id
+op	99:40	0:0	14	!=
+water	99:43	0:0	14	AV_CODEC_ID_PCM_S16LE
+op	99:65	0:0	14	&&
+water	100:20	0:0	14	st
+op	100:22	0:0	14	->
+water	100:24	0:0	14	codec
+op	100:29	0:0	14	->
+water	100:31	0:0	14	codec_id
+op	100:40	0:0	14	!=
+water	100:43	0:0	14	AV_CODEC_ID_PCM_S24LE
+stmts	100:66	103:16	13	
+water	100:66	0:0	14	{
+call	101:20	101:105	14	av_log
+arg	101:27	101:28	15	s
+water	101:27	0:0	16	s
+arg	101:30	101:42	15	AV_LOG_ERROR
+water	101:30	0:0	16	AV_LOG_ERROR
+arg	101:44	101:105	15	"Only pcm_s16le and pcm_s24le audio codecs are implemented\n"
+water	101:44	0:0	16	"Only pcm_s16le and pcm_s24le audio codecs are implemented\n"
+water	101:106	0:0	14	;
+return	102:20	102:47	14	AVERROR_PATCHWELCOME
+water	102:27	0:0	15	AVERROR_PATCHWELCOME
+water	103:16	0:0	14	}
+if	104:16	107:16	12	(st -> codec -> channels != 1)
+cond	104:20	104:43	13	st -> codec -> channels != 1
+water	104:20	0:0	14	st
+op	104:22	0:0	14	->
+water	104:24	0:0	14	codec
+op	104:29	0:0	14	->
+water	104:31	0:0	14	channels
+op	104:40	0:0	14	!=
+water	104:43	0:0	14	1
+stmts	104:46	107:16	13	
+water	104:46	0:0	14	{
+call	105:20	105:93	14	av_log
+arg	105:27	105:28	15	s
+water	105:27	0:0	16	s
+arg	105:30	105:42	15	AV_LOG_ERROR
+water	105:30	0:0	16	AV_LOG_ERROR
+arg	105:44	105:93	15	"MXF OPAtom only supports single channel audio\n"
+water	105:44	0:0	16	"MXF OPAtom only supports single channel audio\n"
+water	105:94	0:0	14	;
+return	106:20	106:42	14	AVERROR(EINVAL)
+call	106:27	106:41	15	AVERROR
+arg	106:35	106:41	16	EINVAL
+water	106:35	0:0	17	EINVAL
+water	107:16	0:0	14	}
+water	108:16	0:0	12	spf
+op	108:20	0:0	12	=
+call	108:22	108:57	12	ff_mxf_get_samples_per_frame
+arg	108:51	108:52	13	s
+water	108:51	0:0	14	s
+arg	108:54	108:57	13	tbc
+water	108:54	0:0	14	tbc
+water	108:58	0:0	12	;
+if	109:16	112:16	12	(! spf)
+cond	109:20	109:21	13	! spf
+op	109:20	0:0	14	!
+water	109:21	0:0	14	spf
+stmts	109:25	112:16	13	
+water	109:25	0:0	14	{
+call	110:20	110:103	14	av_log
+arg	110:27	110:28	15	s
+water	110:27	0:0	16	s
+arg	110:30	110:42	15	AV_LOG_ERROR
+water	110:30	0:0	16	AV_LOG_ERROR
+arg	110:44	110:85	15	"Unsupported timecode frame rate %d/%d\n"
+water	110:44	0:0	16	"Unsupported timecode frame rate %d/%d\n"
+arg	110:87	110:94	15	tbc.den
+water	110:87	0:0	16	tbc
+op	110:90	0:0	16	.
+water	110:91	0:0	16	den
+arg	110:96	110:103	15	tbc.num
+water	110:96	0:0	16	tbc
+op	110:99	0:0	16	.
+water	110:100	0:0	16	num
+water	110:104	0:0	14	;
+return	111:20	111:42	14	AVERROR(EINVAL)
+call	111:27	111:41	15	AVERROR
+arg	111:35	111:41	16	EINVAL
+water	111:35	0:0	17	EINVAL
+water	112:16	0:0	14	}
+water	113:16	0:0	12	mxf
+op	113:19	0:0	12	->
+water	113:21	0:0	12	time_base
+op	113:31	0:0	12	=
+water	113:33	0:0	12	st
+op	113:35	0:0	12	->
+water	113:37	0:0	12	time_base
+water	113:46	0:0	12	;
+if	114:16	115:30	12	(( ret =mxf_init_timecode (s ,st ,av_inv_q (spf -> time_base ) ) ) < 0)
+cond	114:19	114:80	13	( ret =mxf_init_timecode (s ,st ,av_inv_q (spf -> time_base ) ) ) < 0
+water	114:19	0:0	14	(
+water	114:20	0:0	14	ret
+op	114:24	0:0	14	=
+call	114:26	114:75	14	mxf_init_timecode
+arg	114:44	114:45	15	s
+water	114:44	0:0	16	s
+arg	114:47	114:49	15	st
+water	114:47	0:0	16	st
+arg	114:51	114:75	15	av_inv_q(spf->time_base)
+call	114:51	114:74	16	av_inv_q
+arg	114:60	114:74	17	spf->time_base
+water	114:60	0:0	18	spf
+op	114:63	0:0	18	->
+water	114:65	0:0	18	time_base
+water	114:76	0:0	14	)
+op	114:78	0:0	14	<
+water	114:80	0:0	14	0
+stmts	115:20	115:30	13	
+return	115:20	115:30	14	ret
+water	115:27	0:0	15	ret
+water	116:16	0:0	12	mxf
+op	116:19	0:0	12	->
+water	116:21	0:0	12	timecode_base
+op	116:35	0:0	12	=
+water	116:37	0:0	12	(
+water	116:38	0:0	12	tbc
+op	116:41	0:0	12	.
+water	116:42	0:0	12	den
+op	116:46	0:0	12	+
+water	116:48	0:0	12	tbc
+op	116:51	0:0	12	.
+water	116:52	0:0	12	num
+op	116:55	0:0	12	/
+water	116:56	0:0	12	2
+water	116:57	0:0	12	)
+op	116:59	0:0	12	/
+water	116:61	0:0	12	tbc
+op	116:64	0:0	12	.
+water	116:65	0:0	12	num
+water	116:68	0:0	12	;
+water	117:16	0:0	12	mxf
+op	117:19	0:0	12	->
+water	117:21	0:0	12	edit_unit_byte_count
+op	117:42	0:0	12	=
+water	117:44	0:0	12	(
+call	117:45	117:87	12	av_get_bits_per_sample
+arg	117:68	117:87	13	st->codec->codec_id
+water	117:68	0:0	14	st
+op	117:70	0:0	14	->
+water	117:72	0:0	14	codec
+op	117:77	0:0	14	->
+water	117:79	0:0	14	codec_id
+op	117:89	0:0	12	*
+water	117:91	0:0	12	st
+op	117:93	0:0	12	->
+water	117:95	0:0	12	codec
+op	117:100	0:0	12	->
+water	117:102	0:0	12	channels
+water	117:110	0:0	12	)
+op	117:112	0:0	12	>>
+water	117:115	0:0	12	3
+water	117:116	0:0	12	;
+water	118:16	0:0	12	sc
+op	118:18	0:0	12	->
+water	118:20	0:0	12	index
+op	118:26	0:0	12	=
+water	118:28	0:0	12	2
+water	118:29	0:0	12	;
+water	119:12	0:0	12	}
+else	119:14	121:12	8
+stmts	119:19	121:12	9	
+water	119:19	0:0	10	{
+water	120:16	0:0	10	mxf
+op	120:19	0:0	10	->
+water	120:21	0:0	10	slice_count
+op	120:33	0:0	10	=
+water	120:35	0:0	10	1
+water	120:36	0:0	10	;
+water	121:12	0:0	10	}
+water	122:8	0:0	8	}
+if	123:8	130:8	4	(! sc -> index)
+cond	123:12	123:17	5	! sc -> index
+op	123:12	0:0	6	!
+water	123:13	0:0	6	sc
+op	123:15	0:0	6	->
+water	123:17	0:0	6	index
+stmts	123:24	130:8	5	
+water	123:24	0:0	6	{
+water	124:12	0:0	6	sc
+op	124:14	0:0	6	->
+water	124:16	0:0	6	index
+op	124:22	0:0	6	=
+call	124:24	124:78	6	mxf_get_essence_container_ul_index
+arg	124:59	124:78	7	st->codec->codec_id
+water	124:59	0:0	8	st
+op	124:61	0:0	8	->
+water	124:63	0:0	8	codec
+op	124:68	0:0	8	->
+water	124:70	0:0	8	codec_id
+water	124:79	0:0	6	;
+if	125:12	129:12	6	(sc -> index == - 1)
+cond	125:16	125:30	7	sc -> index == - 1
+water	125:16	0:0	8	sc
+op	125:18	0:0	8	->
+water	125:20	0:0	8	index
+op	125:26	0:0	8	==
+op	125:29	0:0	8	-
+water	125:30	0:0	8	1
+stmts	125:33	129:12	7	
+water	125:33	0:0	8	{
+call	126:16	127:72	8	av_log
+arg	126:23	126:24	9	s
+water	126:23	0:0	10	s
+arg	126:26	126:38	9	AV_LOG_ERROR
+water	126:26	0:0	10	AV_LOG_ERROR
+arg	126:40	127:69	9	"track %d: could not find essence container ul, ""codec not currently supported in container\n"
+water	126:40	0:0	10	"track %d: could not find essence container ul, "
+water	127:23	0:0	10	"codec not currently supported in container\n"
+arg	127:71	127:72	9	i
+water	127:71	0:0	10	i
+water	127:73	0:0	8	;
+return	128:16	128:25	8	-1
+op	128:23	0:0	9	-
+water	128:24	0:0	9	1
+water	129:12	0:0	8	}
+water	130:8	0:0	6	}
+water	131:8	0:0	4	sc
+op	131:10	0:0	4	->
+water	131:12	0:0	4	codec_ul
+op	131:21	0:0	4	=
+op	131:23	0:0	4	&
+water	131:24	0:0	4	mxf_essence_container_uls
+op	131:49	0:0	4	[
+water	131:50	0:0	4	sc
+op	131:52	0:0	4	->
+water	131:54	0:0	4	index
+op	131:59	0:0	4	]
+op	131:60	0:0	4	.
+water	131:61	0:0	4	codec_ul
+water	131:69	0:0	4	;
+call	132:8	132:97	4	memcpy
+arg	132:15	132:44	5	sc->track_essence_element_key
+water	132:15	0:0	6	sc
+op	132:17	0:0	6	->
+water	132:19	0:0	6	track_essence_element_key
+arg	132:46	132:93	5	mxf_essence_container_uls[sc->index].element_ul
+water	132:46	0:0	6	mxf_essence_container_uls
+op	132:71	0:0	6	[
+water	132:72	0:0	6	sc
+op	132:74	0:0	6	->
+water	132:76	0:0	6	index
+op	132:81	0:0	6	]
+op	132:82	0:0	6	.
+water	132:83	0:0	6	element_ul
+arg	132:95	132:97	5	15
+water	132:95	0:0	6	15
+water	132:98	0:0	4	;
+water	133:8	0:0	4	sc
+op	133:10	0:0	4	->
+water	133:12	0:0	4	track_essence_element_key
+op	133:37	0:0	4	[
+water	133:38	0:0	4	15
+op	133:40	0:0	4	]
+op	133:42	0:0	4	=
+water	133:44	0:0	4	present
+op	133:51	0:0	4	[
+water	133:52	0:0	4	sc
+op	133:54	0:0	4	->
+water	133:56	0:0	4	index
+op	133:61	0:0	4	]
+water	133:62	0:0	4	;
+call	134:8	134:79	4	PRINT_KEY
+arg	134:18	134:19	5	s
+water	134:18	0:0	6	s
+arg	134:21	134:48	5	"track essence element key"
+water	134:21	0:0	6	"track essence element key"
+arg	134:50	134:79	5	sc->track_essence_element_key
+water	134:50	0:0	6	sc
+op	134:52	0:0	6	->
+water	134:54	0:0	6	track_essence_element_key
+water	134:80	0:0	4	;
+if	135:8	136:42	4	(! present [ sc -> index ])
+cond	135:12	135:30	5	! present [ sc -> index ]
+op	135:12	0:0	6	!
+water	135:13	0:0	6	present
+op	135:20	0:0	6	[
+water	135:21	0:0	6	sc
+op	135:23	0:0	6	->
+water	135:25	0:0	6	index
+op	135:30	0:0	6	]
+stmts	136:12	136:42	5	
+water	136:12	0:0	6	mxf
+op	136:15	0:0	6	->
+water	136:17	0:0	6	essence_container_count
+op	136:40	0:0	6	++
+water	136:42	0:0	6	;
+water	137:8	0:0	4	present
+op	137:15	0:0	4	[
+water	137:16	0:0	4	sc
+op	137:18	0:0	4	->
+water	137:20	0:0	4	index
+op	137:25	0:0	4	]
+op	137:26	0:0	4	++
+water	137:28	0:0	4	;
+water	138:4	0:0	4	}
+if	139:4	141:4	2	(s -> oformat == & ff_mxf_d10_muxer || s -> oformat == & ff_mxf_opatom_muxer)
+cond	139:8	139:58	3	s -> oformat == & ff_mxf_d10_muxer || s -> oformat == & ff_mxf_opatom_muxer
+water	139:8	0:0	4	s
+op	139:9	0:0	4	->
+water	139:11	0:0	4	oformat
+op	139:19	0:0	4	==
+op	139:22	0:0	4	&
+water	139:23	0:0	4	ff_mxf_d10_muxer
+op	139:40	0:0	4	||
+water	139:43	0:0	4	s
+op	139:44	0:0	4	->
+water	139:46	0:0	4	oformat
+op	139:54	0:0	4	==
+op	139:57	0:0	4	&
+water	139:58	0:0	4	ff_mxf_opatom_muxer
+stmts	139:79	141:4	3	
+water	139:79	0:0	4	{
+water	140:8	0:0	4	mxf
+op	140:11	0:0	4	->
+water	140:13	0:0	4	essence_container_count
+op	140:37	0:0	4	=
+water	140:39	0:0	4	1
+water	140:40	0:0	4	;
+water	141:4	0:0	4	}
+if	142:4	143:23	2	(! ( s -> flags & AVFMT_FLAG_BITEXACT ))
+cond	142:8	142:40	3	! ( s -> flags & AVFMT_FLAG_BITEXACT )
+op	142:8	0:0	4	!
+water	142:9	0:0	4	(
+water	142:10	0:0	4	s
+op	142:11	0:0	4	->
+water	142:13	0:0	4	flags
+op	142:19	0:0	4	&
+water	142:21	0:0	4	AVFMT_FLAG_BITEXACT
+water	142:40	0:0	4	)
+stmts	143:8	143:23	3	
+call	143:8	143:22	4	mxf_gen_umid
+arg	143:21	143:22	5	s
+water	143:21	0:0	6	s
+water	143:23	0:0	4	;
+for	144:4	152:4	2	(i = 0 ;i < s -> nb_streams;i ++)
+forinit	144:9	144:14	3	i = 0 ;
+water	144:9	0:0	4	i
+op	144:11	0:0	4	=
+water	144:13	0:0	4	0
+water	144:14	0:0	4	;
+cond	144:16	144:23	3	i < s -> nb_streams
+water	144:16	0:0	4	i
+op	144:18	0:0	4	<
+water	144:20	0:0	4	s
+op	144:21	0:0	4	->
+water	144:23	0:0	4	nb_streams
+forexpr	144:35	144:36	3	i ++
+water	144:35	0:0	4	i
+op	144:36	0:0	4	++
+stmts	144:40	152:4	3	
+water	144:40	0:0	4	{
+decl	145:8	145:55	4	MXFStreamContext	*sc
+op	145:29	0:0	4	=
+water	145:31	0:0	4	s
+op	145:32	0:0	4	->
+water	145:34	0:0	4	streams
+op	145:41	0:0	4	[
+water	145:42	0:0	4	i
+op	145:43	0:0	4	]
+op	145:44	0:0	4	->
+water	145:46	0:0	4	priv_data
+water	147:8	0:0	4	sc
+op	147:10	0:0	4	->
+water	147:12	0:0	4	track_essence_element_key
+op	147:37	0:0	4	[
+water	147:38	0:0	4	13
+op	147:40	0:0	4	]
+op	147:42	0:0	4	=
+water	147:44	0:0	4	present
+op	147:51	0:0	4	[
+water	147:52	0:0	4	sc
+op	147:54	0:0	4	->
+water	147:56	0:0	4	index
+op	147:61	0:0	4	]
+water	147:62	0:0	4	;
+if	148:8	149:80	4	(!memcmp (sc -> track_essence_element_key ,mxf_essence_container_uls [ 15 ] . element_ul ,13 ))
+cond	148:12	148:95	5	!memcmp (sc -> track_essence_element_key ,mxf_essence_container_uls [ 15 ] . element_ul ,13 )
+op	148:12	0:0	6	!
+call	148:13	148:95	6	memcmp
+arg	148:20	148:49	7	sc->track_essence_element_key
+water	148:20	0:0	8	sc
+op	148:22	0:0	8	->
+water	148:24	0:0	8	track_essence_element_key
+arg	148:51	148:91	7	mxf_essence_container_uls[15].element_ul
+water	148:51	0:0	8	mxf_essence_container_uls
+op	148:76	0:0	8	[
+water	148:77	0:0	8	15
+op	148:79	0:0	8	]
+op	148:80	0:0	8	.
+water	148:81	0:0	8	element_ul
+arg	148:93	148:95	7	13
+water	148:93	0:0	8	13
+stmts	149:12	149:80	5	
+water	149:12	0:0	6	sc
+op	149:14	0:0	6	->
+water	149:16	0:0	6	order
+op	149:22	0:0	6	=
+water	149:24	0:0	6	(
+water	149:25	0:0	6	0
+water	149:26	0:0	6	x15
+op	149:30	0:0	6	<<
+water	149:33	0:0	6	24
+water	149:35	0:0	6	)
+op	149:37	0:0	6	|
+call	149:39	149:79	6	AV_RB32
+arg	149:47	149:79	7	sc->track_essence_element_key+13
+water	149:47	0:0	8	sc
+op	149:49	0:0	8	->
+water	149:51	0:0	8	track_essence_element_key
+op	149:76	0:0	8	+
+water	149:77	0:0	8	13
+water	149:80	0:0	6	;
+else	150:8	151:65	4
+stmts	151:12	151:65	5	
+water	151:12	0:0	6	sc
+op	151:14	0:0	6	->
+water	151:16	0:0	6	order
+op	151:22	0:0	6	=
+call	151:24	151:64	6	AV_RB32
+arg	151:32	151:64	7	sc->track_essence_element_key+12
+water	151:32	0:0	8	sc
+op	151:34	0:0	8	->
+water	151:36	0:0	8	track_essence_element_key
+op	151:61	0:0	8	+
+water	151:62	0:0	8	12
+water	151:65	0:0	6	;
+water	152:4	0:0	4	}
+if	153:4	154:53	2	(t =av_dict_get (s -> metadata ,"creation_time" ,NULL ,0 ))
+cond	153:8	153:61	3	t =av_dict_get (s -> metadata ,"creation_time" ,NULL ,0 )
+water	153:8	0:0	4	t
+op	153:10	0:0	4	=
+call	153:12	153:61	4	av_dict_get
+arg	153:24	153:35	5	s->metadata
+water	153:24	0:0	6	s
+op	153:25	0:0	6	->
+water	153:27	0:0	6	metadata
+arg	153:37	153:52	5	"creation_time"
+water	153:37	0:0	6	"creation_time"
+arg	153:54	153:58	5	NULL
+water	153:54	0:0	6	NULL
+arg	153:60	153:61	5	0
+water	153:60	0:0	6	0
+stmts	154:8	154:53	3	
+water	154:8	0:0	4	timestamp
+op	154:18	0:0	4	=
+call	154:20	154:52	4	ff_iso8601_to_unix_time
+arg	154:44	154:52	5	t->value
+water	154:44	0:0	6	t
+op	154:45	0:0	6	->
+water	154:47	0:0	6	value
+water	154:53	0:0	4	;
+if	155:4	156:55	2	(timestamp)
+cond	155:8	155:8	3	timestamp
+water	155:8	0:0	4	timestamp
+stmts	156:8	156:55	3	
+water	156:8	0:0	4	mxf
+op	156:11	0:0	4	->
+water	156:13	0:0	4	timestamp
+op	156:23	0:0	4	=
+call	156:25	156:54	4	mxf_parse_timestamp
+arg	156:45	156:54	5	timestamp
+water	156:45	0:0	6	timestamp
+water	156:55	0:0	4	;
+water	157:4	0:0	2	mxf
+op	157:7	0:0	2	->
+water	157:9	0:0	2	duration
+op	157:18	0:0	2	=
+op	157:20	0:0	2	-
+water	157:21	0:0	2	1
+water	157:22	0:0	2	;
+water	158:4	0:0	2	mxf
+op	158:7	0:0	2	->
+water	158:9	0:0	2	timecode_track
+op	158:24	0:0	2	=
+call	158:26	158:65	2	av_mallocz
+arg	158:37	158:65	3	sizeof(*mxf->timecode_track)
+op	158:37	0:0	4	sizeof
+water	158:43	0:0	4	(
+op	158:44	0:0	4	*
+water	158:45	0:0	4	mxf
+op	158:48	0:0	4	->
+water	158:50	0:0	4	timecode_track
+water	158:64	0:0	4	)
+water	158:66	0:0	2	;
+if	159:4	160:30	2	(! mxf -> timecode_track)
+cond	159:8	159:14	3	! mxf -> timecode_track
+op	159:8	0:0	4	!
+water	159:9	0:0	4	mxf
+op	159:12	0:0	4	->
+water	159:14	0:0	4	timecode_track
+stmts	160:8	160:30	3	
+return	160:8	160:30	4	AVERROR(ENOMEM)
+call	160:15	160:29	5	AVERROR
+arg	160:23	160:29	6	ENOMEM
+water	160:23	0:0	7	ENOMEM
+water	161:4	0:0	2	mxf
+op	161:7	0:0	2	->
+water	161:9	0:0	2	timecode_track
+op	161:23	0:0	2	->
+water	161:25	0:0	2	priv_data
+op	161:35	0:0	2	=
+call	161:37	161:72	2	av_mallocz
+arg	161:48	161:72	3	sizeof(MXFStreamContext)
+op	161:48	0:0	4	sizeof
+water	161:54	0:0	4	(
+water	161:55	0:0	4	MXFStreamContext
+water	161:71	0:0	4	)
+water	161:73	0:0	2	;
+if	162:4	163:30	2	(! mxf -> timecode_track -> priv_data)
+cond	162:8	162:30	3	! mxf -> timecode_track -> priv_data
+op	162:8	0:0	4	!
+water	162:9	0:0	4	mxf
+op	162:12	0:0	4	->
+water	162:14	0:0	4	timecode_track
+op	162:28	0:0	4	->
+water	162:30	0:0	4	priv_data
+stmts	163:8	163:30	3	
+return	163:8	163:30	4	AVERROR(ENOMEM)
+call	163:15	163:29	5	AVERROR
+arg	163:23	163:29	6	ENOMEM
+water	163:23	0:0	7	ENOMEM
+water	164:4	0:0	2	mxf
+op	164:7	0:0	2	->
+water	164:9	0:0	2	timecode_track
+op	164:23	0:0	2	->
+water	164:25	0:0	2	index
+op	164:31	0:0	2	=
+op	164:33	0:0	2	-
+water	164:34	0:0	2	1
+water	164:35	0:0	2	;
+if	165:4	166:68	2	(! spf)
+cond	165:8	165:9	3	! spf
+op	165:8	0:0	4	!
+water	165:9	0:0	4	spf
+stmts	166:8	166:68	3	
+water	166:8	0:0	4	spf
+op	166:12	0:0	4	=
+call	166:14	166:67	4	ff_mxf_get_samples_per_frame
+arg	166:43	166:44	5	s
+water	166:43	0:0	6	s
+arg	166:46	166:67	5	(AVRational){1,25}
+water	166:46	0:0	6	(
+water	166:47	0:0	6	AVRational
+water	166:57	0:0	6	)
+water	166:58	0:0	6	{
+water	166:60	0:0	6	1
+water	166:61	0:0	6	,
+water	166:63	0:0	6	25
+water	166:66	0:0	6	}
+water	166:68	0:0	4	;
+if	167:4	168:17	2	(ff_audio_interleave_init (s ,spf -> samples_per_frame ,mxf -> time_base ) < 0)
+cond	167:8	167:78	3	ff_audio_interleave_init (s ,spf -> samples_per_frame ,mxf -> time_base ) < 0
+call	167:8	167:74	4	ff_audio_interleave_init
+arg	167:33	167:34	5	s
+water	167:33	0:0	6	s
+arg	167:36	167:58	5	spf->samples_per_frame
+water	167:36	0:0	6	spf
+op	167:39	0:0	6	->
+water	167:41	0:0	6	samples_per_frame
+arg	167:60	167:74	5	mxf->time_base
+water	167:60	0:0	6	mxf
+op	167:63	0:0	6	->
+water	167:65	0:0	6	time_base
+op	167:76	0:0	4	<
+water	167:78	0:0	4	0
+stmts	168:8	168:17	3	
+return	168:8	168:17	4	-1
+op	168:15	0:0	5	-
+water	168:16	0:0	5	1
+return	169:4	169:12	2	0
+water	169:11	0:0	3	0

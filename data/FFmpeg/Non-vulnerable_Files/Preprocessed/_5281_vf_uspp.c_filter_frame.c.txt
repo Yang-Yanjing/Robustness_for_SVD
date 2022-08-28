@@ -1,0 +1,413 @@
+func	1:0	68:0	0	static int	filter_frame
+params	1:23	0:0	1	
+param	1:24	1:44	2	AVFilterLink *	inlink
+param	1:46	1:57	2	AVFrame *	in
+stmnts	0:0	67:40	1	
+decl	3:4	3:38	2	AVFilterContext	*ctx
+op	3:25	0:0	2	=
+water	3:27	0:0	2	inlink
+op	3:33	0:0	2	->
+water	3:35	0:0	2	dst
+decl	4:4	4:33	2	USPPContext	*uspp
+op	4:22	0:0	2	=
+water	4:24	0:0	2	ctx
+op	4:27	0:0	2	->
+water	4:29	0:0	2	priv
+decl	5:4	5:43	2	AVFilterLink	*outlink
+op	5:26	0:0	2	=
+water	5:28	0:0	2	ctx
+op	5:31	0:0	2	->
+water	5:33	0:0	2	outputs
+op	5:40	0:0	2	[
+water	5:41	0:0	2	0
+op	5:42	0:0	2	]
+decl	6:4	6:21	2	AVFrame	*out
+op	6:17	0:0	2	=
+water	6:19	0:0	2	in
+decl	7:4	7:21	2	int	qp_stride
+op	7:18	0:0	2	=
+water	7:20	0:0	2	0
+decl	8:4	8:28	2	uint8_t	*qp_table
+op	8:22	0:0	2	=
+water	8:24	0:0	2	NULL
+if	13:4	37:4	2	(! uspp -> qp)
+cond	13:8	13:15	3	! uspp -> qp
+op	13:8	0:0	4	!
+water	13:9	0:0	4	uspp
+op	13:13	0:0	4	->
+water	13:15	0:0	4	qp
+stmts	13:19	37:4	3	
+water	13:19	0:0	4	{
+water	14:8	0:0	4	qp_table
+op	14:17	0:0	4	=
+call	14:19	14:75	4	av_frame_get_qp_table
+arg	14:41	14:43	5	in
+water	14:41	0:0	6	in
+arg	14:45	14:55	5	&qp_stride
+op	14:45	0:0	6	&
+water	14:46	0:0	6	qp_stride
+arg	14:57	14:75	5	&uspp->qscale_type
+op	14:57	0:0	6	&
+water	14:58	0:0	6	uspp
+op	14:62	0:0	6	->
+water	14:64	0:0	6	qscale_type
+water	14:76	0:0	4	;
+if	15:8	36:8	4	(qp_table && ! uspp -> use_bframe_qp && in -> pict_type != AV_PICTURE_TYPE_B)
+cond	15:12	15:65	5	qp_table && ! uspp -> use_bframe_qp && in -> pict_type != AV_PICTURE_TYPE_B
+water	15:12	0:0	6	qp_table
+op	15:21	0:0	6	&&
+op	15:24	0:0	6	!
+water	15:25	0:0	6	uspp
+op	15:29	0:0	6	->
+water	15:31	0:0	6	use_bframe_qp
+op	15:45	0:0	6	&&
+water	15:48	0:0	6	in
+op	15:50	0:0	6	->
+water	15:52	0:0	6	pict_type
+op	15:62	0:0	6	!=
+water	15:65	0:0	6	AV_PICTURE_TYPE_B
+stmts	15:84	36:8	5	
+water	15:84	0:0	6	{
+decl	16:12	16:20	6	int	w
+water	16:17	0:0	6	,
+decl	16:12	16:20	6	int	h
+if	19:12	22:12	6	(! qp_stride)
+cond	19:16	19:17	7	! qp_stride
+op	19:16	0:0	8	!
+water	19:17	0:0	8	qp_stride
+stmts	19:28	22:12	7	
+water	19:28	0:0	8	{
+water	20:16	0:0	8	w
+op	20:18	0:0	8	=
+call	20:20	20:47	8	FF_CEIL_RSHIFT
+arg	20:35	20:44	9	inlink->w
+water	20:35	0:0	10	inlink
+op	20:41	0:0	10	->
+water	20:43	0:0	10	w
+arg	20:46	20:47	9	4
+water	20:46	0:0	10	4
+water	20:48	0:0	8	;
+water	21:16	0:0	8	h
+op	21:18	0:0	8	=
+water	21:20	0:0	8	1
+water	21:21	0:0	8	;
+water	22:12	0:0	8	}
+else	22:14	25:12	6
+stmts	22:19	25:12	7	
+water	22:19	0:0	8	{
+water	23:16	0:0	8	w
+op	23:18	0:0	8	=
+water	23:20	0:0	8	qp_stride
+water	23:29	0:0	8	;
+water	24:16	0:0	8	h
+op	24:18	0:0	8	=
+call	24:20	24:47	8	FF_CEIL_RSHIFT
+arg	24:35	24:44	9	inlink->h
+water	24:35	0:0	10	inlink
+op	24:41	0:0	10	->
+water	24:43	0:0	10	h
+arg	24:46	24:47	9	4
+water	24:46	0:0	10	4
+water	24:48	0:0	8	;
+water	25:12	0:0	8	}
+if	26:12	33:12	6	(w * h > uspp -> non_b_qp_alloc_size)
+cond	26:16	26:30	7	w * h > uspp -> non_b_qp_alloc_size
+water	26:16	0:0	8	w
+op	26:18	0:0	8	*
+water	26:20	0:0	8	h
+op	26:22	0:0	8	>
+water	26:24	0:0	8	uspp
+op	26:28	0:0	8	->
+water	26:30	0:0	8	non_b_qp_alloc_size
+stmts	26:51	33:12	7	
+water	26:51	0:0	8	{
+decl	27:16	27:72	8	int	ret
+op	27:24	0:0	8	=
+call	27:26	27:71	9	av_reallocp_array
+arg	27:44	27:65	10	&uspp->non_b_qp_table
+op	27:44	0:0	11	&
+water	27:45	0:0	11	uspp
+op	27:49	0:0	11	->
+water	27:51	0:0	11	non_b_qp_table
+arg	27:67	27:68	10	w
+water	27:67	0:0	11	w
+arg	27:70	27:71	10	h
+water	27:70	0:0	11	h
+if	28:16	31:16	8	(ret < 0)
+cond	28:20	28:26	9	ret < 0
+water	28:20	0:0	10	ret
+op	28:24	0:0	10	<
+water	28:26	0:0	10	0
+stmts	28:29	31:16	9	
+water	28:29	0:0	10	{
+water	29:20	0:0	10	uspp
+op	29:24	0:0	10	->
+water	29:26	0:0	10	non_b_qp_alloc_size
+op	29:46	0:0	10	=
+water	29:48	0:0	10	0
+water	29:49	0:0	10	;
+return	30:20	30:30	10	ret
+water	30:27	0:0	11	ret
+water	31:16	0:0	10	}
+water	32:16	0:0	8	uspp
+op	32:20	0:0	8	->
+water	32:22	0:0	8	non_b_qp_alloc_size
+op	32:42	0:0	8	=
+water	32:44	0:0	8	w
+op	32:46	0:0	8	*
+water	32:48	0:0	8	h
+water	32:49	0:0	8	;
+water	33:12	0:0	8	}
+call	34:12	34:57	6	av_assert0
+arg	34:23	34:57	7	w*h<=uspp->non_b_qp_alloc_size
+water	34:23	0:0	8	w
+op	34:25	0:0	8	*
+water	34:27	0:0	8	h
+op	34:29	0:0	8	<=
+water	34:32	0:0	8	uspp
+op	34:36	0:0	8	->
+water	34:38	0:0	8	non_b_qp_alloc_size
+water	34:58	0:0	6	;
+call	35:12	35:56	6	memcpy
+arg	35:19	35:39	7	uspp->non_b_qp_table
+water	35:19	0:0	8	uspp
+op	35:23	0:0	8	->
+water	35:25	0:0	8	non_b_qp_table
+arg	35:41	35:49	7	qp_table
+water	35:41	0:0	8	qp_table
+arg	35:51	35:56	7	w*h
+water	35:51	0:0	8	w
+op	35:53	0:0	8	*
+water	35:55	0:0	8	h
+water	35:57	0:0	6	;
+water	36:8	0:0	6	}
+water	37:4	0:0	4	}
+if	38:4	59:4	2	(uspp -> log2_count && ! ctx -> is_disabled)
+cond	38:8	38:34	3	uspp -> log2_count && ! ctx -> is_disabled
+water	38:8	0:0	4	uspp
+op	38:12	0:0	4	->
+water	38:14	0:0	4	log2_count
+op	38:25	0:0	4	&&
+op	38:28	0:0	4	!
+water	38:29	0:0	4	ctx
+op	38:32	0:0	4	->
+water	38:34	0:0	4	is_disabled
+stmts	38:47	59:4	3	
+water	38:47	0:0	4	{
+if	39:8	40:43	4	(! uspp -> use_bframe_qp && uspp -> non_b_qp_table)
+cond	39:12	39:42	5	! uspp -> use_bframe_qp && uspp -> non_b_qp_table
+op	39:12	0:0	6	!
+water	39:13	0:0	6	uspp
+op	39:17	0:0	6	->
+water	39:19	0:0	6	use_bframe_qp
+op	39:33	0:0	6	&&
+water	39:36	0:0	6	uspp
+op	39:40	0:0	6	->
+water	39:42	0:0	6	non_b_qp_table
+stmts	40:12	40:43	5	
+water	40:12	0:0	6	qp_table
+op	40:21	0:0	6	=
+water	40:23	0:0	6	uspp
+op	40:27	0:0	6	->
+water	40:29	0:0	6	non_b_qp_table
+water	40:43	0:0	6	;
+if	41:8	58:8	4	(qp_table || uspp -> qp)
+cond	41:12	41:30	5	qp_table || uspp -> qp
+water	41:12	0:0	6	qp_table
+op	41:21	0:0	6	||
+water	41:24	0:0	6	uspp
+op	41:28	0:0	6	->
+water	41:30	0:0	6	qp
+stmts	41:34	58:8	5	
+water	41:34	0:0	6	{
+if	44:12	55:12	6	(!av_frame_is_writable (in ) || ( inlink -> w & 7 ) || ( inlink -> h & 7 ))
+cond	44:16	44:78	7	!av_frame_is_writable (in ) || ( inlink -> w & 7 ) || ( inlink -> h & 7 )
+op	44:16	0:0	8	!
+call	44:17	44:40	8	av_frame_is_writable
+arg	44:38	44:40	9	in
+water	44:38	0:0	10	in
+op	44:42	0:0	8	||
+water	44:45	0:0	8	(
+water	44:46	0:0	8	inlink
+op	44:52	0:0	8	->
+water	44:54	0:0	8	w
+op	44:56	0:0	8	&
+water	44:58	0:0	8	7
+water	44:59	0:0	8	)
+op	44:61	0:0	8	||
+water	44:64	0:0	8	(
+water	44:65	0:0	8	inlink
+op	44:71	0:0	8	->
+water	44:73	0:0	8	h
+op	44:75	0:0	8	&
+water	44:77	0:0	8	7
+water	44:78	0:0	8	)
+stmts	44:81	55:12	7	
+water	44:81	0:0	8	{
+decl	45:16	45:59	8	const int	aligned_w
+op	45:36	0:0	8	=
+call	45:38	45:58	9	FFALIGN
+arg	45:46	45:55	10	inlink->w
+water	45:46	0:0	11	inlink
+op	45:52	0:0	11	->
+water	45:54	0:0	11	w
+arg	45:57	45:58	10	8
+water	45:57	0:0	11	8
+decl	46:16	46:59	8	const int	aligned_h
+op	46:36	0:0	8	=
+call	46:38	46:58	9	FFALIGN
+arg	46:46	46:55	10	inlink->h
+water	46:46	0:0	11	inlink
+op	46:52	0:0	11	->
+water	46:54	0:0	11	h
+arg	46:57	46:58	10	8
+water	46:57	0:0	11	8
+water	47:16	0:0	8	out
+op	47:20	0:0	8	=
+call	47:22	47:71	8	ff_get_video_buffer
+arg	47:42	47:49	9	outlink
+water	47:42	0:0	10	outlink
+arg	47:51	47:60	9	aligned_w
+water	47:51	0:0	10	aligned_w
+arg	47:62	47:71	9	aligned_h
+water	47:62	0:0	10	aligned_h
+water	47:72	0:0	8	;
+if	48:16	51:16	8	(! out)
+cond	48:20	48:21	9	! out
+op	48:20	0:0	10	!
+water	48:21	0:0	10	out
+stmts	48:26	51:16	9	
+water	48:26	0:0	10	{
+call	49:20	49:37	10	av_frame_free
+arg	49:34	49:37	11	&in
+op	49:34	0:0	12	&
+water	49:35	0:0	12	in
+water	49:38	0:0	10	;
+return	50:20	50:42	10	AVERROR(ENOMEM)
+call	50:27	50:41	11	AVERROR
+arg	50:35	50:41	12	ENOMEM
+water	50:35	0:0	13	ENOMEM
+water	51:16	0:0	10	}
+call	52:16	52:43	8	av_frame_copy_props
+arg	52:36	52:39	9	out
+water	52:36	0:0	10	out
+arg	52:41	52:43	9	in
+water	52:41	0:0	10	in
+water	52:44	0:0	8	;
+water	53:16	0:0	8	out
+op	53:19	0:0	8	->
+water	53:21	0:0	8	width
+op	53:28	0:0	8	=
+water	53:30	0:0	8	in
+op	53:32	0:0	8	->
+water	53:34	0:0	8	width
+water	53:39	0:0	8	;
+water	54:16	0:0	8	out
+op	54:19	0:0	8	->
+water	54:21	0:0	8	height
+op	54:28	0:0	8	=
+water	54:30	0:0	8	in
+op	54:32	0:0	8	->
+water	54:34	0:0	8	height
+water	54:40	0:0	8	;
+water	55:12	0:0	8	}
+call	56:12	57:60	6	filter
+arg	56:19	56:23	7	uspp
+water	56:19	0:0	8	uspp
+arg	56:25	56:34	7	out->data
+water	56:25	0:0	8	out
+op	56:28	0:0	8	->
+water	56:30	0:0	8	data
+arg	56:36	56:44	7	in->data
+water	56:36	0:0	8	in
+op	56:38	0:0	8	->
+water	56:40	0:0	8	data
+arg	56:46	56:59	7	out->linesize
+water	56:46	0:0	8	out
+op	56:49	0:0	8	->
+water	56:51	0:0	8	linesize
+arg	56:61	56:73	7	in->linesize
+water	56:61	0:0	8	in
+op	56:63	0:0	8	->
+water	56:65	0:0	8	linesize
+arg	57:19	57:28	7	inlink->w
+water	57:19	0:0	8	inlink
+op	57:25	0:0	8	->
+water	57:27	0:0	8	w
+arg	57:30	57:39	7	inlink->h
+water	57:30	0:0	8	inlink
+op	57:36	0:0	8	->
+water	57:38	0:0	8	h
+arg	57:41	57:49	7	qp_table
+water	57:41	0:0	8	qp_table
+arg	57:51	57:60	7	qp_stride
+water	57:51	0:0	8	qp_stride
+water	57:61	0:0	6	;
+water	58:8	0:0	6	}
+water	59:4	0:0	4	}
+if	60:4	66:4	2	(in != out)
+cond	60:8	60:14	3	in != out
+water	60:8	0:0	4	in
+op	60:11	0:0	4	!=
+water	60:14	0:0	4	out
+stmts	60:19	66:4	3	
+water	60:19	0:0	4	{
+if	61:8	64:53	4	(in -> data [ 3 ])
+cond	61:12	61:22	5	in -> data [ 3 ]
+water	61:12	0:0	6	in
+op	61:14	0:0	6	->
+water	61:16	0:0	6	data
+op	61:20	0:0	6	[
+water	61:21	0:0	6	3
+op	61:22	0:0	6	]
+stmts	62:12	64:53	5	
+call	62:12	64:52	6	av_image_copy_plane
+arg	62:32	62:44	7	out->data[3]
+water	62:32	0:0	8	out
+op	62:35	0:0	8	->
+water	62:37	0:0	8	data
+op	62:41	0:0	8	[
+water	62:42	0:0	8	3
+op	62:43	0:0	8	]
+arg	62:46	62:62	7	out->linesize[3]
+water	62:46	0:0	8	out
+op	62:49	0:0	8	->
+water	62:51	0:0	8	linesize
+op	62:59	0:0	8	[
+water	62:60	0:0	8	3
+op	62:61	0:0	8	]
+arg	63:32	63:44	7	in->data[3]
+water	63:32	0:0	8	in
+op	63:35	0:0	8	->
+water	63:37	0:0	8	data
+op	63:41	0:0	8	[
+water	63:42	0:0	8	3
+op	63:43	0:0	8	]
+arg	63:46	63:62	7	in->linesize[3]
+water	63:46	0:0	8	in
+op	63:49	0:0	8	->
+water	63:51	0:0	8	linesize
+op	63:59	0:0	8	[
+water	63:60	0:0	8	3
+op	63:61	0:0	8	]
+arg	64:32	64:41	7	inlink->w
+water	64:32	0:0	8	inlink
+op	64:38	0:0	8	->
+water	64:40	0:0	8	w
+arg	64:43	64:52	7	inlink->h
+water	64:43	0:0	8	inlink
+op	64:49	0:0	8	->
+water	64:51	0:0	8	h
+water	64:53	0:0	6	;
+call	65:8	65:25	4	av_frame_free
+arg	65:22	65:25	5	&in
+op	65:22	0:0	6	&
+water	65:23	0:0	6	in
+water	65:26	0:0	4	;
+water	66:4	0:0	4	}
+return	67:4	67:40	2	ff_filter_frame(outlink,out)
+call	67:11	67:39	3	ff_filter_frame
+arg	67:27	67:34	4	outlink
+water	67:27	0:0	5	outlink
+arg	67:36	67:39	4	out
+water	67:36	0:0	5	out

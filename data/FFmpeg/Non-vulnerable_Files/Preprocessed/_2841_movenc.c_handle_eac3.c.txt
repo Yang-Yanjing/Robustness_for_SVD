@@ -1,0 +1,707 @@
+func	1:0	107:0	0	static int	handle_eac3
+params	1:22	0:0	1	
+param	1:23	1:41	2	MOVMuxContext *	mov
+param	1:43	1:56	2	AVPacket *	pkt
+param	1:58	1:73	2	MOVTrack *	track
+stmnts	0:0	106:20	1	
+decl	3:4	3:21	2	GetBitContext	gbc
+decl	4:4	4:34	2	AC3HeaderInfo	tmp
+water	4:21	0:0	2	,
+decl	4:4	4:34	2	AC3HeaderInfo	*hdr
+op	4:28	0:0	2	=
+op	4:30	0:0	2	&
+water	4:31	0:0	2	tmp
+decl	5:4	5:26	2	struct eac3_info	*info
+decl	6:4	6:18	2	int	num_blocks
+if	7:4	8:30	2	(! track -> eac3_priv && ! ( track -> eac3_priv =av_mallocz (sizeof ( * info ) ) ))
+cond	7:8	7:75	3	! track -> eac3_priv && ! ( track -> eac3_priv =av_mallocz (sizeof ( * info ) ) )
+op	7:8	0:0	4	!
+water	7:9	0:0	4	track
+op	7:14	0:0	4	->
+water	7:16	0:0	4	eac3_priv
+op	7:26	0:0	4	&&
+op	7:29	0:0	4	!
+water	7:30	0:0	4	(
+water	7:31	0:0	4	track
+op	7:36	0:0	4	->
+water	7:38	0:0	4	eac3_priv
+op	7:48	0:0	4	=
+call	7:50	7:74	4	av_mallocz
+arg	7:61	7:74	5	sizeof(*info)
+op	7:61	0:0	6	sizeof
+water	7:67	0:0	6	(
+op	7:68	0:0	6	*
+water	7:69	0:0	6	info
+water	7:73	0:0	6	)
+water	7:75	0:0	4	)
+stmts	8:8	8:30	3	
+return	8:8	8:30	4	AVERROR(ENOMEM)
+call	8:15	8:29	5	AVERROR
+arg	8:23	8:29	6	ENOMEM
+water	8:23	0:0	7	ENOMEM
+water	9:4	0:0	2	info
+op	9:9	0:0	2	=
+water	9:11	0:0	2	track
+op	9:16	0:0	2	->
+water	9:18	0:0	2	eac3_priv
+water	9:27	0:0	2	;
+call	10:4	10:48	2	init_get_bits
+arg	10:18	10:22	3	&gbc
+op	10:18	0:0	4	&
+water	10:19	0:0	4	gbc
+arg	10:24	10:33	3	pkt->data
+water	10:24	0:0	4	pkt
+op	10:27	0:0	4	->
+water	10:29	0:0	4	data
+arg	10:35	10:48	3	pkt->size*8
+water	10:35	0:0	4	pkt
+op	10:38	0:0	4	->
+water	10:40	0:0	4	size
+op	10:45	0:0	4	*
+water	10:47	0:0	4	8
+water	10:49	0:0	2	;
+if	11:4	18:4	2	(avpriv_ac3_parse_header2 (& gbc ,& hdr ) < 0)
+cond	11:8	11:47	3	avpriv_ac3_parse_header2 (& gbc ,& hdr ) < 0
+call	11:8	11:43	4	avpriv_ac3_parse_header2
+arg	11:33	11:37	5	&gbc
+op	11:33	0:0	6	&
+water	11:34	0:0	6	gbc
+arg	11:39	11:43	5	&hdr
+op	11:39	0:0	6	&
+water	11:40	0:0	6	hdr
+op	11:45	0:0	4	<
+water	11:47	0:0	4	0
+stmts	11:50	18:4	3	
+water	11:50	0:0	4	{
+if	13:8	16:8	4	(! track -> entry)
+cond	13:12	13:20	5	! track -> entry
+op	13:12	0:0	6	!
+water	13:13	0:0	6	track
+op	13:18	0:0	6	->
+water	13:20	0:0	6	entry
+stmts	13:27	16:8	5	
+water	13:27	0:0	6	{
+call	14:12	14:92	6	av_log
+arg	14:19	14:22	7	mov
+water	14:19	0:0	8	mov
+arg	14:24	14:38	7	AV_LOG_WARNING
+water	14:24	0:0	8	AV_LOG_WARNING
+arg	14:40	14:92	7	"Dropping invalid packet from start of the stream\n"
+water	14:40	0:0	8	"Dropping invalid packet from start of the stream\n"
+water	14:93	0:0	6	;
+return	15:12	15:20	6	0
+water	15:19	0:0	7	0
+water	16:8	0:0	6	}
+return	17:8	17:34	4	AVERROR_INVALIDDATA
+water	17:15	0:0	5	AVERROR_INVALIDDATA
+water	18:4	0:0	4	}
+water	19:4	0:0	2	info
+op	19:8	0:0	2	->
+water	19:10	0:0	2	data_rate
+op	19:20	0:0	2	=
+call	19:22	19:65	2	FFMAX
+arg	19:28	19:43	3	info->data_rate
+water	19:28	0:0	4	info
+op	19:32	0:0	4	->
+water	19:34	0:0	4	data_rate
+arg	19:45	19:65	3	hdr->bit_rate/1000
+water	19:45	0:0	4	hdr
+op	19:48	0:0	4	->
+water	19:50	0:0	4	bit_rate
+op	19:59	0:0	4	/
+water	19:61	0:0	4	1000
+water	19:66	0:0	2	;
+water	20:4	0:0	2	num_blocks
+op	20:15	0:0	2	=
+water	20:17	0:0	2	hdr
+op	20:20	0:0	2	->
+water	20:22	0:0	2	num_blocks
+water	20:32	0:0	2	;
+if	21:4	77:4	2	(! info -> ec3_done)
+cond	21:8	21:15	3	! info -> ec3_done
+op	21:8	0:0	4	!
+water	21:9	0:0	4	info
+op	21:13	0:0	4	->
+water	21:15	0:0	4	ec3_done
+stmts	21:25	77:4	3	
+water	21:25	0:0	4	{
+if	23:8	24:34	4	(hdr -> bitstream_id <= 10 && hdr -> substreamid != 0)
+cond	23:12	23:59	5	hdr -> bitstream_id <= 10 && hdr -> substreamid != 0
+water	23:12	0:0	6	hdr
+op	23:15	0:0	6	->
+water	23:17	0:0	6	bitstream_id
+op	23:30	0:0	6	<=
+water	23:33	0:0	6	10
+op	23:36	0:0	6	&&
+water	23:39	0:0	6	hdr
+op	23:42	0:0	6	->
+water	23:44	0:0	6	substreamid
+op	23:56	0:0	6	!=
+water	23:59	0:0	6	0
+stmts	24:12	24:34	5	
+return	24:12	24:34	6	AVERROR(EINVAL)
+call	24:19	24:33	7	AVERROR
+arg	24:27	24:33	8	EINVAL
+water	24:27	0:0	9	EINVAL
+if	27:8	40:8	4	(hdr -> frame_type == EAC3_FRAME_TYPE_INDEPENDENT)
+cond	27:12	27:31	5	hdr -> frame_type == EAC3_FRAME_TYPE_INDEPENDENT
+water	27:12	0:0	6	hdr
+op	27:15	0:0	6	->
+water	27:17	0:0	6	frame_type
+op	27:28	0:0	6	==
+water	27:31	0:0	6	EAC3_FRAME_TYPE_INDEPENDENT
+stmts	27:60	40:8	5	
+water	27:60	0:0	6	{
+if	29:12	30:38	6	(hdr -> substreamid > info -> num_ind_sub + 1)
+cond	29:16	29:55	7	hdr -> substreamid > info -> num_ind_sub + 1
+water	29:16	0:0	8	hdr
+op	29:19	0:0	8	->
+water	29:21	0:0	8	substreamid
+op	29:33	0:0	8	>
+water	29:35	0:0	8	info
+op	29:39	0:0	8	->
+water	29:41	0:0	8	num_ind_sub
+op	29:53	0:0	8	+
+water	29:55	0:0	8	1
+stmts	30:16	30:38	7	
+return	30:16	30:38	8	AVERROR(EINVAL)
+call	30:23	30:37	9	AVERROR
+arg	30:31	30:37	10	EINVAL
+water	30:31	0:0	11	EINVAL
+if	31:12	35:12	6	(hdr -> substreamid == info -> num_ind_sub + 1)
+cond	31:16	31:56	7	hdr -> substreamid == info -> num_ind_sub + 1
+water	31:16	0:0	8	hdr
+op	31:19	0:0	8	->
+water	31:21	0:0	8	substreamid
+op	31:33	0:0	8	==
+water	31:36	0:0	8	info
+op	31:40	0:0	8	->
+water	31:42	0:0	8	num_ind_sub
+op	31:54	0:0	8	+
+water	31:56	0:0	8	1
+stmts	31:59	35:12	7	
+water	31:59	0:0	8	{
+call	33:16	33:83	8	avpriv_request_sample
+arg	33:38	33:48	9	track->enc
+water	33:38	0:0	10	track
+op	33:43	0:0	10	->
+water	33:45	0:0	10	enc
+arg	33:50	33:83	9	"Multiple independent substreams"
+water	33:50	0:0	10	"Multiple independent substreams"
+water	33:84	0:0	8	;
+return	34:16	34:43	8	AVERROR_PATCHWELCOME
+water	34:23	0:0	9	AVERROR_PATCHWELCOME
+water	35:12	0:0	8	}
+else	35:14	39:12	6
+stmts	35:19	39:12	7	
+if	35:19	39:12	8	(hdr -> substreamid < info -> num_ind_sub || hdr -> substreamid == 0 && info -> substream [ 0 ] . bsid)
+cond	35:23	36:67	9	hdr -> substreamid < info -> num_ind_sub || hdr -> substreamid == 0 && info -> substream [ 0 ] . bsid
+water	35:23	0:0	10	hdr
+op	35:26	0:0	10	->
+water	35:28	0:0	10	substreamid
+op	35:40	0:0	10	<
+water	35:42	0:0	10	info
+op	35:46	0:0	10	->
+water	35:48	0:0	10	num_ind_sub
+op	35:60	0:0	10	||
+water	36:23	0:0	10	hdr
+op	36:26	0:0	10	->
+water	36:28	0:0	10	substreamid
+op	36:40	0:0	10	==
+water	36:43	0:0	10	0
+op	36:45	0:0	10	&&
+water	36:48	0:0	10	info
+op	36:52	0:0	10	->
+water	36:54	0:0	10	substream
+op	36:63	0:0	10	[
+water	36:64	0:0	10	0
+op	36:65	0:0	10	]
+op	36:66	0:0	10	.
+water	36:67	0:0	10	bsid
+stmts	36:73	39:12	9	
+water	36:73	0:0	10	{
+water	37:16	0:0	10	info
+op	37:20	0:0	10	->
+water	37:22	0:0	10	ec3_done
+op	37:31	0:0	10	=
+water	37:33	0:0	10	1
+water	37:34	0:0	10	;
+goto	38:16	38:32	10	concatenate
+water	38:21	0:0	11	concatenate
+water	39:12	0:0	10	}
+water	40:8	0:0	6	}
+water	42:8	0:0	4	info
+op	42:12	0:0	4	->
+water	42:14	0:0	4	substream
+op	42:23	0:0	4	[
+water	42:24	0:0	4	hdr
+op	42:27	0:0	4	->
+water	42:29	0:0	4	substreamid
+op	42:40	0:0	4	]
+op	42:41	0:0	4	.
+water	42:42	0:0	4	fscod
+op	42:48	0:0	4	=
+water	42:50	0:0	4	hdr
+op	42:53	0:0	4	->
+water	42:55	0:0	4	sr_code
+water	42:62	0:0	4	;
+water	43:8	0:0	4	info
+op	43:12	0:0	4	->
+water	43:14	0:0	4	substream
+op	43:23	0:0	4	[
+water	43:24	0:0	4	hdr
+op	43:27	0:0	4	->
+water	43:29	0:0	4	substreamid
+op	43:40	0:0	4	]
+op	43:41	0:0	4	.
+water	43:42	0:0	4	bsid
+op	43:48	0:0	4	=
+water	43:50	0:0	4	hdr
+op	43:53	0:0	4	->
+water	43:55	0:0	4	bitstream_id
+water	43:67	0:0	4	;
+water	44:8	0:0	4	info
+op	44:12	0:0	4	->
+water	44:14	0:0	4	substream
+op	44:23	0:0	4	[
+water	44:24	0:0	4	hdr
+op	44:27	0:0	4	->
+water	44:29	0:0	4	substreamid
+op	44:40	0:0	4	]
+op	44:41	0:0	4	.
+water	44:42	0:0	4	bsmod
+op	44:48	0:0	4	=
+water	44:50	0:0	4	hdr
+op	44:53	0:0	4	->
+water	44:55	0:0	4	bitstream_mode
+water	44:69	0:0	4	;
+water	45:8	0:0	4	info
+op	45:12	0:0	4	->
+water	45:14	0:0	4	substream
+op	45:23	0:0	4	[
+water	45:24	0:0	4	hdr
+op	45:27	0:0	4	->
+water	45:29	0:0	4	substreamid
+op	45:40	0:0	4	]
+op	45:41	0:0	4	.
+water	45:42	0:0	4	acmod
+op	45:48	0:0	4	=
+water	45:50	0:0	4	hdr
+op	45:53	0:0	4	->
+water	45:55	0:0	4	channel_mode
+water	45:67	0:0	4	;
+water	46:8	0:0	4	info
+op	46:12	0:0	4	->
+water	46:14	0:0	4	substream
+op	46:23	0:0	4	[
+water	46:24	0:0	4	hdr
+op	46:27	0:0	4	->
+water	46:29	0:0	4	substreamid
+op	46:40	0:0	4	]
+op	46:41	0:0	4	.
+water	46:42	0:0	4	lfeon
+op	46:48	0:0	4	=
+water	46:50	0:0	4	hdr
+op	46:53	0:0	4	->
+water	46:55	0:0	4	lfe_on
+water	46:61	0:0	4	;
+if	48:8	76:8	4	(pkt -> size != hdr -> frame_size)
+cond	48:12	48:30	5	pkt -> size != hdr -> frame_size
+water	48:12	0:0	6	pkt
+op	48:15	0:0	6	->
+water	48:17	0:0	6	size
+op	48:22	0:0	6	!=
+water	48:25	0:0	6	hdr
+op	48:28	0:0	6	->
+water	48:30	0:0	6	frame_size
+stmts	48:42	76:8	5	
+water	48:42	0:0	6	{
+decl	49:12	49:44	6	int	cumul_size
+op	49:27	0:0	6	=
+water	49:29	0:0	6	hdr
+op	49:32	0:0	6	->
+water	49:34	0:0	6	frame_size
+decl	50:12	50:41	6	int	parent
+op	50:23	0:0	6	=
+water	50:25	0:0	6	hdr
+op	50:28	0:0	6	->
+water	50:30	0:0	6	substreamid
+while	51:12	75:12	6	(cumul_size != pkt -> size)
+cond	51:19	51:38	7	cumul_size != pkt -> size
+water	51:19	0:0	8	cumul_size
+op	51:30	0:0	8	!=
+water	51:33	0:0	8	pkt
+op	51:36	0:0	8	->
+water	51:38	0:0	8	size
+stmts	51:44	75:12	7	
+water	51:44	0:0	8	{
+decl	52:16	52:21	8	int	i
+call	53:16	53:88	8	init_get_bits
+arg	53:30	53:34	9	&gbc
+op	53:30	0:0	10	&
+water	53:31	0:0	10	gbc
+arg	53:36	53:58	9	pkt->data+cumul_size
+water	53:36	0:0	10	pkt
+op	53:39	0:0	10	->
+water	53:41	0:0	10	data
+op	53:46	0:0	10	+
+water	53:48	0:0	10	cumul_size
+arg	53:60	53:88	9	(pkt->size-cumul_size)*8
+water	53:60	0:0	10	(
+water	53:61	0:0	10	pkt
+op	53:64	0:0	10	->
+water	53:66	0:0	10	size
+op	53:71	0:0	10	-
+water	53:73	0:0	10	cumul_size
+water	53:83	0:0	10	)
+op	53:85	0:0	10	*
+water	53:87	0:0	10	8
+water	53:89	0:0	8	;
+if	54:16	55:46	8	(avpriv_ac3_parse_header2 (& gbc ,& hdr ) < 0)
+cond	54:20	54:59	9	avpriv_ac3_parse_header2 (& gbc ,& hdr ) < 0
+call	54:20	54:55	10	avpriv_ac3_parse_header2
+arg	54:45	54:49	11	&gbc
+op	54:45	0:0	12	&
+water	54:46	0:0	12	gbc
+arg	54:51	54:55	11	&hdr
+op	54:51	0:0	12	&
+water	54:52	0:0	12	hdr
+op	54:57	0:0	10	<
+water	54:59	0:0	10	0
+stmts	55:20	55:46	9	
+return	55:20	55:46	10	AVERROR_INVALIDDATA
+water	55:27	0:0	11	AVERROR_INVALIDDATA
+if	56:16	57:42	8	(hdr -> frame_type != EAC3_FRAME_TYPE_DEPENDENT)
+cond	56:20	56:39	9	hdr -> frame_type != EAC3_FRAME_TYPE_DEPENDENT
+water	56:20	0:0	10	hdr
+op	56:23	0:0	10	->
+water	56:25	0:0	10	frame_type
+op	56:36	0:0	10	!=
+water	56:39	0:0	10	EAC3_FRAME_TYPE_DEPENDENT
+stmts	57:20	57:42	9	
+return	57:20	57:42	10	AVERROR(EINVAL)
+call	57:27	57:41	11	AVERROR
+arg	57:35	57:41	12	EINVAL
+water	57:35	0:0	13	EINVAL
+water	58:16	0:0	8	cumul_size
+op	58:27	0:0	8	+=
+water	58:30	0:0	8	hdr
+op	58:33	0:0	8	->
+water	58:35	0:0	8	frame_size
+water	58:45	0:0	8	;
+water	59:16	0:0	8	info
+op	59:20	0:0	8	->
+water	59:22	0:0	8	substream
+op	59:31	0:0	8	[
+water	59:32	0:0	8	parent
+op	59:38	0:0	8	]
+op	59:39	0:0	8	.
+water	59:40	0:0	8	num_dep_sub
+op	59:51	0:0	8	++
+water	59:53	0:0	8	;
+call	62:16	62:33	8	skip_bits
+arg	62:26	62:30	9	&gbc
+op	62:26	0:0	10	&
+water	62:27	0:0	10	gbc
+arg	62:32	62:33	9	5
+water	62:32	0:0	10	5
+water	62:34	0:0	8	;
+for	64:16	69:16	8	(i = 0 ;i < ( hdr -> channel_mode ? 1 : 2 );i ++)
+forinit	64:21	64:26	9	i = 0 ;
+water	64:21	0:0	10	i
+op	64:23	0:0	10	=
+water	64:25	0:0	10	0
+water	64:26	0:0	10	;
+cond	64:28	64:58	9	i < ( hdr -> channel_mode ? 1 : 2 )
+water	64:28	0:0	10	i
+op	64:30	0:0	10	<
+water	64:32	0:0	10	(
+water	64:33	0:0	10	hdr
+op	64:36	0:0	10	->
+water	64:38	0:0	10	channel_mode
+water	64:51	0:0	10	?
+water	64:53	0:0	10	1
+water	64:55	0:0	10	:
+water	64:57	0:0	10	2
+water	64:58	0:0	10	)
+forexpr	64:61	64:62	9	i ++
+water	64:61	0:0	10	i
+op	64:62	0:0	10	++
+stmts	64:66	69:16	9	
+water	64:66	0:0	10	{
+call	65:20	65:37	10	skip_bits
+arg	65:30	65:34	11	&gbc
+op	65:30	0:0	12	&
+water	65:31	0:0	12	gbc
+arg	65:36	65:37	11	5
+water	65:36	0:0	12	5
+water	65:38	0:0	10	;
+if	66:20	68:20	10	(get_bits1 (& gbc ))
+cond	66:24	66:38	11	get_bits1 (& gbc )
+call	66:24	66:38	12	get_bits1
+arg	66:34	66:38	13	&gbc
+op	66:34	0:0	14	&
+water	66:35	0:0	14	gbc
+stmts	66:41	68:20	11	
+water	66:41	0:0	12	{
+call	67:24	67:41	12	skip_bits
+arg	67:34	67:38	13	&gbc
+op	67:34	0:0	14	&
+water	67:35	0:0	14	gbc
+arg	67:40	67:41	13	8
+water	67:40	0:0	14	8
+water	67:42	0:0	12	;
+water	68:20	0:0	12	}
+water	69:16	0:0	10	}
+if	71:16	72:88	8	(get_bits1 (& gbc ))
+cond	71:20	71:34	9	get_bits1 (& gbc )
+call	71:20	71:34	10	get_bits1
+arg	71:30	71:34	11	&gbc
+op	71:30	0:0	12	&
+water	71:31	0:0	12	gbc
+stmts	72:20	72:88	9	
+water	72:20	0:0	10	info
+op	72:24	0:0	10	->
+water	72:26	0:0	10	substream
+op	72:35	0:0	10	[
+water	72:36	0:0	10	parent
+op	72:42	0:0	10	]
+op	72:43	0:0	10	.
+water	72:44	0:0	10	chan_loc
+op	72:53	0:0	10	|=
+water	72:56	0:0	10	(
+call	72:57	72:74	10	get_bits
+arg	72:66	72:70	11	&gbc
+op	72:66	0:0	12	&
+water	72:67	0:0	12	gbc
+arg	72:72	72:74	11	16
+water	72:72	0:0	12	16
+op	72:76	0:0	10	>>
+water	72:79	0:0	10	5
+water	72:80	0:0	10	)
+op	72:82	0:0	10	&
+water	72:84	0:0	10	0
+water	72:85	0:0	10	x1f
+water	72:88	0:0	10	;
+else	73:16	74:73	8
+stmts	74:20	74:73	9	
+water	74:20	0:0	10	info
+op	74:24	0:0	10	->
+water	74:26	0:0	10	substream
+op	74:35	0:0	10	[
+water	74:36	0:0	10	parent
+op	74:42	0:0	10	]
+op	74:43	0:0	10	.
+water	74:44	0:0	10	chan_loc
+op	74:53	0:0	10	|=
+water	74:56	0:0	10	hdr
+op	74:59	0:0	10	->
+water	74:61	0:0	10	channel_mode
+water	74:73	0:0	10	;
+water	75:12	0:0	8	}
+water	76:8	0:0	6	}
+water	77:4	0:0	4	}
+label	78:0	78:11	2	concatenate :
+if	79:4	80:24	2	(! info -> num_blocks && num_blocks == 6)
+cond	79:8	79:43	3	! info -> num_blocks && num_blocks == 6
+op	79:8	0:0	4	!
+water	79:9	0:0	4	info
+op	79:13	0:0	4	->
+water	79:15	0:0	4	num_blocks
+op	79:26	0:0	4	&&
+water	79:29	0:0	4	num_blocks
+op	79:40	0:0	4	==
+water	79:43	0:0	4	6
+stmts	80:8	80:24	3	
+return	80:8	80:24	4	pkt->size
+water	80:15	0:0	5	pkt
+op	80:18	0:0	5	->
+water	80:20	0:0	5	size
+else	81:4	82:34	2
+stmts	81:9	82:34	3	
+if	81:9	82:34	4	(info -> num_blocks + num_blocks > 6)
+cond	81:13	81:45	5	info -> num_blocks + num_blocks > 6
+water	81:13	0:0	6	info
+op	81:17	0:0	6	->
+water	81:19	0:0	6	num_blocks
+op	81:30	0:0	6	+
+water	81:32	0:0	6	num_blocks
+op	81:43	0:0	6	>
+water	81:45	0:0	6	6
+stmts	82:8	82:34	5	
+return	82:8	82:34	6	AVERROR_INVALIDDATA
+water	82:15	0:0	7	AVERROR_INVALIDDATA
+if	83:4	89:4	2	(! info -> num_blocks)
+cond	83:8	83:15	3	! info -> num_blocks
+op	83:8	0:0	4	!
+water	83:9	0:0	4	info
+op	83:13	0:0	4	->
+water	83:15	0:0	4	num_blocks
+stmts	83:27	89:4	3	
+water	83:27	0:0	4	{
+decl	84:8	84:15	4	int	ret
+if	85:8	86:22	4	(( ret =av_copy_packet (& info -> pkt ,pkt ) ) < 0)
+cond	85:12	85:54	5	( ret =av_copy_packet (& info -> pkt ,pkt ) ) < 0
+water	85:12	0:0	6	(
+water	85:13	0:0	6	ret
+op	85:17	0:0	6	=
+call	85:19	85:49	6	av_copy_packet
+arg	85:34	85:44	7	&info->pkt
+op	85:34	0:0	8	&
+water	85:35	0:0	8	info
+op	85:39	0:0	8	->
+water	85:41	0:0	8	pkt
+arg	85:46	85:49	7	pkt
+water	85:46	0:0	8	pkt
+water	85:50	0:0	6	)
+op	85:52	0:0	6	<
+water	85:54	0:0	6	0
+stmts	86:12	86:22	5	
+return	86:12	86:22	6	ret
+water	86:19	0:0	7	ret
+water	87:8	0:0	4	info
+op	87:12	0:0	4	->
+water	87:14	0:0	4	num_blocks
+op	87:25	0:0	4	=
+water	87:27	0:0	4	num_blocks
+water	87:37	0:0	4	;
+return	88:8	88:16	4	0
+water	88:15	0:0	5	0
+water	89:4	0:0	4	}
+else	89:6	105:4	2
+stmts	89:11	105:4	3	
+water	89:11	0:0	4	{
+decl	90:8	90:15	4	int	ret
+if	91:8	92:22	4	(( ret =av_grow_packet (& info -> pkt ,pkt -> size ) ) < 0)
+cond	91:12	91:60	5	( ret =av_grow_packet (& info -> pkt ,pkt -> size ) ) < 0
+water	91:12	0:0	6	(
+water	91:13	0:0	6	ret
+op	91:17	0:0	6	=
+call	91:19	91:55	6	av_grow_packet
+arg	91:34	91:44	7	&info->pkt
+op	91:34	0:0	8	&
+water	91:35	0:0	8	info
+op	91:39	0:0	8	->
+water	91:41	0:0	8	pkt
+arg	91:46	91:55	7	pkt->size
+water	91:46	0:0	8	pkt
+op	91:49	0:0	8	->
+water	91:51	0:0	8	size
+water	91:56	0:0	6	)
+op	91:58	0:0	6	<
+water	91:60	0:0	6	0
+stmts	92:12	92:22	5	
+return	92:12	92:22	6	ret
+water	92:19	0:0	7	ret
+call	93:8	93:80	4	memcpy
+arg	93:15	93:58	5	info->pkt.data+info->pkt.size-pkt->size
+water	93:15	0:0	6	info
+op	93:19	0:0	6	->
+water	93:21	0:0	6	pkt
+op	93:24	0:0	6	.
+water	93:25	0:0	6	data
+op	93:30	0:0	6	+
+water	93:32	0:0	6	info
+op	93:36	0:0	6	->
+water	93:38	0:0	6	pkt
+op	93:41	0:0	6	.
+water	93:42	0:0	6	size
+op	93:47	0:0	6	-
+water	93:49	0:0	6	pkt
+op	93:52	0:0	6	->
+water	93:54	0:0	6	size
+arg	93:60	93:69	5	pkt->data
+water	93:60	0:0	6	pkt
+op	93:63	0:0	6	->
+water	93:65	0:0	6	data
+arg	93:71	93:80	5	pkt->size
+water	93:71	0:0	6	pkt
+op	93:74	0:0	6	->
+water	93:76	0:0	6	size
+water	93:81	0:0	4	;
+water	94:8	0:0	4	info
+op	94:12	0:0	4	->
+water	94:14	0:0	4	num_blocks
+op	94:25	0:0	4	+=
+water	94:28	0:0	4	num_blocks
+water	94:38	0:0	4	;
+water	95:8	0:0	4	info
+op	95:12	0:0	4	->
+water	95:14	0:0	4	pkt
+op	95:17	0:0	4	.
+water	95:18	0:0	4	duration
+op	95:27	0:0	4	+=
+water	95:30	0:0	4	pkt
+op	95:33	0:0	4	->
+water	95:35	0:0	4	duration
+water	95:43	0:0	4	;
+if	96:8	97:22	4	(( ret =av_copy_packet_side_data (& info -> pkt ,pkt ) ) < 0)
+cond	96:12	96:64	5	( ret =av_copy_packet_side_data (& info -> pkt ,pkt ) ) < 0
+water	96:12	0:0	6	(
+water	96:13	0:0	6	ret
+op	96:17	0:0	6	=
+call	96:19	96:59	6	av_copy_packet_side_data
+arg	96:44	96:54	7	&info->pkt
+op	96:44	0:0	8	&
+water	96:45	0:0	8	info
+op	96:49	0:0	8	->
+water	96:51	0:0	8	pkt
+arg	96:56	96:59	7	pkt
+water	96:56	0:0	8	pkt
+water	96:60	0:0	6	)
+op	96:62	0:0	6	<
+water	96:64	0:0	6	0
+stmts	97:12	97:22	5	
+return	97:12	97:22	6	ret
+water	97:19	0:0	7	ret
+if	98:8	99:20	4	(info -> num_blocks != 6)
+cond	98:12	98:32	5	info -> num_blocks != 6
+water	98:12	0:0	6	info
+op	98:16	0:0	6	->
+water	98:18	0:0	6	num_blocks
+op	98:29	0:0	6	!=
+water	98:32	0:0	6	6
+stmts	99:12	99:20	5	
+return	99:12	99:20	6	0
+water	99:19	0:0	7	0
+call	100:8	100:26	4	av_free_packet
+arg	100:23	100:26	5	pkt
+water	100:23	0:0	6	pkt
+water	100:27	0:0	4	;
+if	101:8	102:22	4	(( ret =av_copy_packet (pkt ,& info -> pkt ) ) < 0)
+cond	101:12	101:54	5	( ret =av_copy_packet (pkt ,& info -> pkt ) ) < 0
+water	101:12	0:0	6	(
+water	101:13	0:0	6	ret
+op	101:17	0:0	6	=
+call	101:19	101:49	6	av_copy_packet
+arg	101:34	101:37	7	pkt
+water	101:34	0:0	8	pkt
+arg	101:39	101:49	7	&info->pkt
+op	101:39	0:0	8	&
+water	101:40	0:0	8	info
+op	101:44	0:0	8	->
+water	101:46	0:0	8	pkt
+water	101:50	0:0	6	)
+op	101:52	0:0	6	<
+water	101:54	0:0	6	0
+stmts	102:12	102:22	5	
+return	102:12	102:22	6	ret
+water	102:19	0:0	7	ret
+call	103:8	103:33	4	av_free_packet
+arg	103:23	103:33	5	&info->pkt
+op	103:23	0:0	6	&
+water	103:24	0:0	6	info
+op	103:28	0:0	6	->
+water	103:30	0:0	6	pkt
+water	103:34	0:0	4	;
+water	104:8	0:0	4	info
+op	104:12	0:0	4	->
+water	104:14	0:0	4	num_blocks
+op	104:25	0:0	4	=
+water	104:27	0:0	4	0
+water	104:28	0:0	4	;
+water	105:4	0:0	4	}
+return	106:4	106:20	2	pkt->size
+water	106:11	0:0	3	pkt
+op	106:14	0:0	3	->
+water	106:16	0:0	3	size

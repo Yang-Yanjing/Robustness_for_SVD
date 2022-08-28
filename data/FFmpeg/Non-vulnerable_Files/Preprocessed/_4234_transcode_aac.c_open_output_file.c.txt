@@ -1,0 +1,355 @@
+func	1:0	77:0	0	static int	open_output_file
+params	1:27	0:0	1	
+param	1:28	1:48	2	const char *	filename
+param	2:28	2:63	2	AVCodecContext *	input_codec_context
+param	3:28	3:67	2	AVFormatContext * *	output_format_context
+param	4:28	4:65	2	AVCodecContext * *	output_codec_context
+stmnts	0:0	76:43	1	
+decl	6:4	6:41	2	AVIOContext	*output_io_context
+op	6:35	0:0	2	=
+water	6:37	0:0	2	NULL
+decl	7:4	7:41	2	AVStream	*stream
+op	7:35	0:0	2	=
+water	7:37	0:0	2	NULL
+decl	8:4	8:41	2	AVCodec	*output_codec
+op	8:35	0:0	2	=
+water	8:37	0:0	2	NULL
+decl	9:4	9:13	2	int	error
+if	11:4	16:4	2	(( error =avio_open (& output_io_context ,filename ,AVIO_FLAG_WRITE ) ) < 0)
+cond	11:8	12:47	3	( error =avio_open (& output_io_context ,filename ,AVIO_FLAG_WRITE ) ) < 0
+water	11:8	0:0	4	(
+water	11:9	0:0	4	error
+op	11:15	0:0	4	=
+call	11:17	12:42	4	avio_open
+arg	11:27	11:45	5	&output_io_context
+op	11:27	0:0	6	&
+water	11:28	0:0	6	output_io_context
+arg	11:47	11:55	5	filename
+water	11:47	0:0	6	filename
+arg	12:27	12:42	5	AVIO_FLAG_WRITE
+water	12:27	0:0	6	AVIO_FLAG_WRITE
+water	12:43	0:0	4	)
+op	12:45	0:0	4	<
+water	12:47	0:0	4	0
+stmts	12:50	16:4	3	
+water	12:50	0:0	4	{
+call	13:8	14:47	4	fprintf
+arg	13:16	13:22	5	stderr
+water	13:16	0:0	6	stderr
+arg	13:24	13:72	5	"Could not open output file '%s' (error '%s')\n"
+water	13:24	0:0	6	"Could not open output file '%s' (error '%s')\n"
+arg	14:16	14:24	5	filename
+water	14:16	0:0	6	filename
+arg	14:26	14:47	5	get_error_text(error)
+call	14:26	14:46	6	get_error_text
+arg	14:41	14:46	7	error
+water	14:41	0:0	8	error
+water	14:48	0:0	4	;
+return	15:8	15:20	4	error
+water	15:15	0:0	5	error
+water	16:4	0:0	4	}
+if	18:4	21:4	2	(! ( * output_format_context =avformat_alloc_context ( ) ))
+cond	18:8	18:59	3	! ( * output_format_context =avformat_alloc_context ( ) )
+op	18:8	0:0	4	!
+water	18:9	0:0	4	(
+op	18:10	0:0	4	*
+water	18:11	0:0	4	output_format_context
+op	18:33	0:0	4	=
+call	18:35	18:58	4	avformat_alloc_context
+water	18:59	0:0	4	)
+stmts	18:62	21:4	3	
+water	18:62	0:0	4	{
+call	19:8	19:68	4	fprintf
+arg	19:16	19:22	5	stderr
+water	19:16	0:0	6	stderr
+arg	19:24	19:68	5	"Could not allocate output format context\n"
+water	19:24	0:0	6	"Could not allocate output format context\n"
+water	19:69	0:0	4	;
+return	20:8	20:30	4	AVERROR(ENOMEM)
+call	20:15	20:29	5	AVERROR
+arg	20:23	20:29	6	ENOMEM
+water	20:23	0:0	7	ENOMEM
+water	21:4	0:0	4	}
+water	23:4	0:0	2	(
+op	23:5	0:0	2	*
+water	23:6	0:0	2	output_format_context
+water	23:27	0:0	2	)
+op	23:28	0:0	2	->
+water	23:30	0:0	2	pb
+op	23:33	0:0	2	=
+water	23:35	0:0	2	output_io_context
+water	23:52	0:0	2	;
+if	25:4	29:4	2	(! ( ( * output_format_context ) -> oformat =av_guess_format (NULL ,filename ,NULL ) ))
+cond	25:8	26:67	3	! ( ( * output_format_context ) -> oformat =av_guess_format (NULL ,filename ,NULL ) )
+op	25:8	0:0	4	!
+water	25:9	0:0	4	(
+water	25:10	0:0	4	(
+op	25:11	0:0	4	*
+water	25:12	0:0	4	output_format_context
+water	25:33	0:0	4	)
+op	25:34	0:0	4	->
+water	25:36	0:0	4	oformat
+op	25:44	0:0	4	=
+call	25:46	26:66	4	av_guess_format
+arg	25:62	25:66	5	NULL
+water	25:62	0:0	6	NULL
+arg	25:68	25:76	5	filename
+water	25:68	0:0	6	filename
+arg	26:62	26:66	5	NULL
+water	26:62	0:0	6	NULL
+water	26:67	0:0	4	)
+stmts	26:70	29:4	3	
+water	26:70	0:0	4	{
+call	27:8	27:61	4	fprintf
+arg	27:16	27:22	5	stderr
+water	27:16	0:0	6	stderr
+arg	27:24	27:61	5	"Could not find output file format\n"
+water	27:24	0:0	6	"Could not find output file format\n"
+water	27:62	0:0	4	;
+goto	28:8	28:20	4	cleanup
+water	28:13	0:0	5	cleanup
+water	29:4	0:0	4	}
+call	30:4	31:57	2	av_strlcpy
+arg	30:15	30:49	3	(*output_format_context)->filename
+water	30:15	0:0	4	(
+op	30:16	0:0	4	*
+water	30:17	0:0	4	output_format_context
+water	30:38	0:0	4	)
+op	30:39	0:0	4	->
+water	30:41	0:0	4	filename
+arg	30:51	30:59	3	filename
+water	30:51	0:0	4	filename
+arg	31:15	31:57	3	sizeof((*output_format_context)->filename)
+op	31:15	0:0	4	sizeof
+water	31:21	0:0	4	(
+water	31:22	0:0	4	(
+op	31:23	0:0	4	*
+water	31:24	0:0	4	output_format_context
+water	31:45	0:0	4	)
+op	31:46	0:0	4	->
+water	31:48	0:0	4	filename
+water	31:56	0:0	4	)
+water	31:58	0:0	2	;
+if	33:4	36:4	2	(! ( output_codec =avcodec_find_encoder (AV_CODEC_ID_AAC ) ))
+cond	33:8	33:62	3	! ( output_codec =avcodec_find_encoder (AV_CODEC_ID_AAC ) )
+op	33:8	0:0	4	!
+water	33:9	0:0	4	(
+water	33:10	0:0	4	output_codec
+op	33:23	0:0	4	=
+call	33:25	33:61	4	avcodec_find_encoder
+arg	33:46	33:61	5	AV_CODEC_ID_AAC
+water	33:46	0:0	6	AV_CODEC_ID_AAC
+water	33:62	0:0	4	)
+stmts	33:65	36:4	3	
+water	33:65	0:0	4	{
+call	34:8	34:58	4	fprintf
+arg	34:16	34:22	5	stderr
+water	34:16	0:0	6	stderr
+arg	34:24	34:58	5	"Could not find an AAC encoder.\n"
+water	34:24	0:0	6	"Could not find an AAC encoder.\n"
+water	34:59	0:0	4	;
+goto	35:8	35:20	4	cleanup
+water	35:13	0:0	5	cleanup
+water	36:4	0:0	4	}
+if	38:4	42:4	2	(! ( stream =avformat_new_stream (* output_format_context ,output_codec ) ))
+cond	38:8	38:76	3	! ( stream =avformat_new_stream (* output_format_context ,output_codec ) )
+op	38:8	0:0	4	!
+water	38:9	0:0	4	(
+water	38:10	0:0	4	stream
+op	38:17	0:0	4	=
+call	38:19	38:75	4	avformat_new_stream
+arg	38:39	38:61	5	*output_format_context
+op	38:39	0:0	6	*
+water	38:40	0:0	6	output_format_context
+arg	38:63	38:75	5	output_codec
+water	38:63	0:0	6	output_codec
+water	38:76	0:0	4	)
+stmts	38:79	42:4	3	
+water	38:79	0:0	4	{
+call	39:8	39:55	4	fprintf
+arg	39:16	39:22	5	stderr
+water	39:16	0:0	6	stderr
+arg	39:24	39:55	5	"Could not create new stream\n"
+water	39:24	0:0	6	"Could not create new stream\n"
+water	39:56	0:0	4	;
+water	40:8	0:0	4	error
+op	40:14	0:0	4	=
+call	40:16	40:30	4	AVERROR
+arg	40:24	40:30	5	ENOMEM
+water	40:24	0:0	6	ENOMEM
+water	40:31	0:0	4	;
+goto	41:8	41:20	4	cleanup
+water	41:13	0:0	5	cleanup
+water	42:4	0:0	4	}
+op	44:4	0:0	2	*
+water	44:5	0:0	2	output_codec_context
+op	44:26	0:0	2	=
+water	44:28	0:0	2	stream
+op	44:34	0:0	2	->
+water	44:36	0:0	2	codec
+water	44:41	0:0	2	;
+water	49:4	0:0	2	(
+op	49:5	0:0	2	*
+water	49:6	0:0	2	output_codec_context
+water	49:26	0:0	2	)
+op	49:27	0:0	2	->
+water	49:29	0:0	2	channels
+op	49:44	0:0	2	=
+water	49:46	0:0	2	OUTPUT_CHANNELS
+water	49:61	0:0	2	;
+water	50:4	0:0	2	(
+op	50:5	0:0	2	*
+water	50:6	0:0	2	output_codec_context
+water	50:26	0:0	2	)
+op	50:27	0:0	2	->
+water	50:29	0:0	2	channel_layout
+op	50:44	0:0	2	=
+call	50:46	50:91	2	av_get_default_channel_layout
+arg	50:76	50:91	3	OUTPUT_CHANNELS
+water	50:76	0:0	4	OUTPUT_CHANNELS
+water	50:92	0:0	2	;
+water	51:4	0:0	2	(
+op	51:5	0:0	2	*
+water	51:6	0:0	2	output_codec_context
+water	51:26	0:0	2	)
+op	51:27	0:0	2	->
+water	51:29	0:0	2	sample_rate
+op	51:44	0:0	2	=
+water	51:46	0:0	2	input_codec_context
+op	51:65	0:0	2	->
+water	51:67	0:0	2	sample_rate
+water	51:78	0:0	2	;
+water	52:4	0:0	2	(
+op	52:5	0:0	2	*
+water	52:6	0:0	2	output_codec_context
+water	52:26	0:0	2	)
+op	52:27	0:0	2	->
+water	52:29	0:0	2	sample_fmt
+op	52:44	0:0	2	=
+water	52:46	0:0	2	output_codec
+op	52:58	0:0	2	->
+water	52:60	0:0	2	sample_fmts
+op	52:71	0:0	2	[
+water	52:72	0:0	2	0
+op	52:73	0:0	2	]
+water	52:74	0:0	2	;
+water	53:4	0:0	2	(
+op	53:5	0:0	2	*
+water	53:6	0:0	2	output_codec_context
+water	53:26	0:0	2	)
+op	53:27	0:0	2	->
+water	53:29	0:0	2	bit_rate
+op	53:44	0:0	2	=
+water	53:46	0:0	2	OUTPUT_BIT_RATE
+water	53:61	0:0	2	;
+water	55:4	0:0	2	(
+op	55:5	0:0	2	*
+water	55:6	0:0	2	output_codec_context
+water	55:26	0:0	2	)
+op	55:27	0:0	2	->
+water	55:29	0:0	2	strict_std_compliance
+op	55:51	0:0	2	=
+water	55:53	0:0	2	FF_COMPLIANCE_EXPERIMENTAL
+water	55:79	0:0	2	;
+water	57:4	0:0	2	stream
+op	57:10	0:0	2	->
+water	57:12	0:0	2	time_base
+op	57:21	0:0	2	.
+water	57:22	0:0	2	den
+op	57:26	0:0	2	=
+water	57:28	0:0	2	input_codec_context
+op	57:47	0:0	2	->
+water	57:49	0:0	2	sample_rate
+water	57:60	0:0	2	;
+water	58:4	0:0	2	stream
+op	58:10	0:0	2	->
+water	58:12	0:0	2	time_base
+op	58:21	0:0	2	.
+water	58:22	0:0	2	num
+op	58:26	0:0	2	=
+water	58:28	0:0	2	1
+water	58:29	0:0	2	;
+if	63:4	64:69	2	(( * output_format_context ) -> oformat -> flags & AVFMT_GLOBALHEADER)
+cond	63:8	63:51	3	( * output_format_context ) -> oformat -> flags & AVFMT_GLOBALHEADER
+water	63:8	0:0	4	(
+op	63:9	0:0	4	*
+water	63:10	0:0	4	output_format_context
+water	63:31	0:0	4	)
+op	63:32	0:0	4	->
+water	63:34	0:0	4	oformat
+op	63:41	0:0	4	->
+water	63:43	0:0	4	flags
+op	63:49	0:0	4	&
+water	63:51	0:0	4	AVFMT_GLOBALHEADER
+stmts	64:8	64:69	3	
+water	64:8	0:0	4	(
+op	64:9	0:0	4	*
+water	64:10	0:0	4	output_codec_context
+water	64:30	0:0	4	)
+op	64:31	0:0	4	->
+water	64:33	0:0	4	flags
+op	64:39	0:0	4	|=
+water	64:42	0:0	4	AV_CODEC_FLAG_GLOBAL_HEADER
+water	64:69	0:0	4	;
+if	66:4	70:4	2	(( error =avcodec_open2 (* output_codec_context ,output_codec ,NULL ) ) < 0)
+cond	66:8	66:77	3	( error =avcodec_open2 (* output_codec_context ,output_codec ,NULL ) ) < 0
+water	66:8	0:0	4	(
+water	66:9	0:0	4	error
+op	66:15	0:0	4	=
+call	66:17	66:72	4	avcodec_open2
+arg	66:31	66:52	5	*output_codec_context
+op	66:31	0:0	6	*
+water	66:32	0:0	6	output_codec_context
+arg	66:54	66:66	5	output_codec
+water	66:54	0:0	6	output_codec
+arg	66:68	66:72	5	NULL
+water	66:68	0:0	6	NULL
+water	66:73	0:0	4	)
+op	66:75	0:0	4	<
+water	66:77	0:0	4	0
+stmts	66:80	70:4	3	
+water	66:80	0:0	4	{
+call	67:8	68:37	4	fprintf
+arg	67:16	67:22	5	stderr
+water	67:16	0:0	6	stderr
+arg	67:24	67:68	5	"Could not open output codec (error '%s')\n"
+water	67:24	0:0	6	"Could not open output codec (error '%s')\n"
+arg	68:16	68:37	5	get_error_text(error)
+call	68:16	68:36	6	get_error_text
+arg	68:31	68:36	7	error
+water	68:31	0:0	8	error
+water	68:38	0:0	4	;
+goto	69:8	69:20	4	cleanup
+water	69:13	0:0	5	cleanup
+water	70:4	0:0	4	}
+return	71:4	71:12	2	0
+water	71:11	0:0	3	0
+label	72:0	72:7	2	cleanup :
+call	73:4	73:45	2	avio_closep
+arg	73:16	73:45	3	&(*output_format_context)->pb
+op	73:16	0:0	4	&
+water	73:17	0:0	4	(
+op	73:18	0:0	4	*
+water	73:19	0:0	4	output_format_context
+water	73:40	0:0	4	)
+op	73:41	0:0	4	->
+water	73:43	0:0	4	pb
+water	73:46	0:0	2	;
+call	74:4	74:48	2	avformat_free_context
+arg	74:26	74:48	3	*output_format_context
+op	74:26	0:0	4	*
+water	74:27	0:0	4	output_format_context
+water	74:49	0:0	2	;
+op	75:4	0:0	2	*
+water	75:5	0:0	2	output_format_context
+op	75:27	0:0	2	=
+water	75:29	0:0	2	NULL
+water	75:33	0:0	2	;
+return	76:4	76:43	2	error<0?error:AVERROR_EXIT
+water	76:11	0:0	3	error
+op	76:17	0:0	3	<
+water	76:19	0:0	3	0
+water	76:21	0:0	3	?
+water	76:23	0:0	3	error
+water	76:29	0:0	3	:
+water	76:31	0:0	3	AVERROR_EXIT

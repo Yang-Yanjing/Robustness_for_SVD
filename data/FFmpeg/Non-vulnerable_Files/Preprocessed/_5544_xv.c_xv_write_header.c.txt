@@ -1,0 +1,799 @@
+func	1:0	111:0	0	static int	xv_write_header
+params	1:26	0:0	1	
+param	1:27	1:45	2	AVFormatContext *	s
+stmnts	0:0	110:14	1	
+decl	3:4	3:32	2	XVContext	*xv
+op	3:18	0:0	2	=
+water	3:20	0:0	2	s
+op	3:21	0:0	2	->
+water	3:23	0:0	2	priv_data
+decl	4:4	4:29	2	unsigned int	num_adaptors
+decl	5:4	5:21	2	XvAdaptorInfo	*ai
+decl	6:4	6:27	2	XvImageFormatValues	*fv
+decl	7:4	7:18	2	XColor	fgcolor
+decl	8:4	8:34	2	XWindowAttributes	window_attrs
+decl	9:4	9:36	2	int	num_formats
+op	9:20	0:0	2	=
+water	9:22	0:0	2	0
+water	9:23	0:0	2	,
+decl	9:4	9:36	2	int	j
+water	9:26	0:0	2	,
+decl	9:4	9:36	2	int	tag
+water	9:31	0:0	2	,
+decl	9:4	9:36	2	int	ret
+decl	10:4	10:49	2	AVCodecContext	*encctx
+op	10:27	0:0	2	=
+water	10:29	0:0	2	s
+op	10:30	0:0	2	->
+water	10:32	0:0	2	streams
+op	10:39	0:0	2	[
+water	10:40	0:0	2	0
+op	10:41	0:0	2	]
+op	10:42	0:0	2	->
+water	10:44	0:0	2	codec
+if	11:4	16:4	2	(s -> nb_streams > 1 || encctx -> codec_type != AVMEDIA_TYPE_VIDEO || encctx -> codec_id != AV_CODEC_ID_RAWVIDEO)
+cond	11:11	13:33	3	s -> nb_streams > 1 || encctx -> codec_type != AVMEDIA_TYPE_VIDEO || encctx -> codec_id != AV_CODEC_ID_RAWVIDEO
+water	11:11	0:0	4	s
+op	11:12	0:0	4	->
+water	11:14	0:0	4	nb_streams
+op	11:25	0:0	4	>
+water	11:27	0:0	4	1
+op	12:8	0:0	4	||
+water	12:11	0:0	4	encctx
+op	12:17	0:0	4	->
+water	12:19	0:0	4	codec_type
+op	12:30	0:0	4	!=
+water	12:33	0:0	4	AVMEDIA_TYPE_VIDEO
+op	13:8	0:0	4	||
+water	13:11	0:0	4	encctx
+op	13:17	0:0	4	->
+water	13:19	0:0	4	codec_id
+op	13:30	0:0	4	!=
+water	13:33	0:0	4	AV_CODEC_ID_RAWVIDEO
+stmts	13:55	16:4	3	
+water	13:55	0:0	4	{
+call	14:8	14:69	4	av_log
+arg	14:15	14:16	5	s
+water	14:15	0:0	6	s
+arg	14:18	14:30	5	AV_LOG_ERROR
+water	14:18	0:0	6	AV_LOG_ERROR
+arg	14:32	14:69	5	"Only supports one rawvideo stream\n"
+water	14:32	0:0	6	"Only supports one rawvideo stream\n"
+water	14:70	0:0	4	;
+return	15:8	15:30	4	AVERROR(EINVAL)
+call	15:15	15:29	5	AVERROR
+arg	15:23	15:29	6	EINVAL
+water	15:23	0:0	7	EINVAL
+water	16:4	0:0	4	}
+if	17:4	22:4	2	(! ( tag =xv_get_tag_from_format (encctx -> pix_fmt ) ))
+cond	17:8	17:55	3	! ( tag =xv_get_tag_from_format (encctx -> pix_fmt ) )
+op	17:8	0:0	4	!
+water	17:9	0:0	4	(
+water	17:10	0:0	4	tag
+op	17:14	0:0	4	=
+call	17:16	17:54	4	xv_get_tag_from_format
+arg	17:39	17:54	5	encctx->pix_fmt
+water	17:39	0:0	6	encctx
+op	17:45	0:0	6	->
+water	17:47	0:0	6	pix_fmt
+water	17:55	0:0	4	)
+stmts	17:58	22:4	3	
+water	17:58	0:0	4	{
+call	18:8	20:51	4	av_log
+arg	18:15	18:16	5	s
+water	18:15	0:0	6	s
+arg	18:18	18:30	5	AV_LOG_ERROR
+water	18:18	0:0	6	AV_LOG_ERROR
+arg	19:15	19:104	5	"Unsupported pixel format '%s', only yuv420p, uyvy422, yuyv422 are currently supported\n"
+water	19:15	0:0	6	"Unsupported pixel format '%s', only yuv420p, uyvy422, yuyv422 are currently supported\n"
+arg	20:15	20:51	5	av_get_pix_fmt_name(encctx->pix_fmt)
+call	20:15	20:50	6	av_get_pix_fmt_name
+arg	20:35	20:50	7	encctx->pix_fmt
+water	20:35	0:0	8	encctx
+op	20:41	0:0	8	->
+water	20:43	0:0	8	pix_fmt
+water	20:52	0:0	4	;
+return	21:8	21:35	4	AVERROR_PATCHWELCOME
+water	21:15	0:0	5	AVERROR_PATCHWELCOME
+water	22:4	0:0	4	}
+water	23:4	0:0	2	xv
+op	23:6	0:0	2	->
+water	23:8	0:0	2	image_format
+op	23:21	0:0	2	=
+water	23:23	0:0	2	encctx
+op	23:29	0:0	2	->
+water	23:31	0:0	2	pix_fmt
+water	23:38	0:0	2	;
+water	24:4	0:0	2	xv
+op	24:6	0:0	2	->
+water	24:8	0:0	2	display
+op	24:16	0:0	2	=
+call	24:18	24:47	2	XOpenDisplay
+arg	24:31	24:47	3	xv->display_name
+water	24:31	0:0	4	xv
+op	24:33	0:0	4	->
+water	24:35	0:0	4	display_name
+water	24:48	0:0	2	;
+if	25:4	28:4	2	(! xv -> display)
+cond	25:8	25:13	3	! xv -> display
+op	25:8	0:0	4	!
+water	25:9	0:0	4	xv
+op	25:11	0:0	4	->
+water	25:13	0:0	4	display
+stmts	25:22	28:4	3	
+water	25:22	0:0	4	{
+call	26:8	26:89	4	av_log
+arg	26:15	26:16	5	s
+water	26:15	0:0	6	s
+arg	26:18	26:30	5	AV_LOG_ERROR
+water	26:18	0:0	6	AV_LOG_ERROR
+arg	26:32	26:71	5	"Could not open the X11 display '%s'\n"
+water	26:32	0:0	6	"Could not open the X11 display '%s'\n"
+arg	26:73	26:89	5	xv->display_name
+water	26:73	0:0	6	xv
+op	26:75	0:0	6	->
+water	26:77	0:0	6	display_name
+water	26:90	0:0	4	;
+return	27:8	27:30	4	AVERROR(EINVAL)
+call	27:15	27:29	5	AVERROR
+arg	27:23	27:29	6	EINVAL
+water	27:23	0:0	7	EINVAL
+water	28:4	0:0	4	}
+water	29:4	0:0	2	xv
+op	29:6	0:0	2	->
+water	29:8	0:0	2	image_width
+op	29:21	0:0	2	=
+water	29:23	0:0	2	encctx
+op	29:29	0:0	2	->
+water	29:31	0:0	2	width
+water	29:36	0:0	2	;
+water	30:4	0:0	2	xv
+op	30:6	0:0	2	->
+water	30:8	0:0	2	image_height
+op	30:21	0:0	2	=
+water	30:23	0:0	2	encctx
+op	30:29	0:0	2	->
+water	30:31	0:0	2	height
+water	30:37	0:0	2	;
+if	31:4	41:4	2	(! xv -> window_width && ! xv -> window_height)
+cond	31:8	31:34	3	! xv -> window_width && ! xv -> window_height
+op	31:8	0:0	4	!
+water	31:9	0:0	4	xv
+op	31:11	0:0	4	->
+water	31:13	0:0	4	window_width
+op	31:26	0:0	4	&&
+op	31:29	0:0	4	!
+water	31:30	0:0	4	xv
+op	31:32	0:0	4	->
+water	31:34	0:0	4	window_height
+stmts	31:49	41:4	3	
+water	31:49	0:0	4	{
+decl	32:8	32:52	4	AVRational	sar
+op	32:23	0:0	4	=
+water	32:25	0:0	4	encctx
+op	32:31	0:0	4	->
+water	32:33	0:0	4	sample_aspect_ratio
+water	33:8	0:0	4	xv
+op	33:10	0:0	4	->
+water	33:12	0:0	4	window_width
+op	33:26	0:0	4	=
+water	33:28	0:0	4	encctx
+op	33:34	0:0	4	->
+water	33:36	0:0	4	width
+water	33:41	0:0	4	;
+water	34:8	0:0	4	xv
+op	34:10	0:0	4	->
+water	34:12	0:0	4	window_height
+op	34:26	0:0	4	=
+water	34:28	0:0	4	encctx
+op	34:34	0:0	4	->
+water	34:36	0:0	4	height
+water	34:42	0:0	4	;
+if	35:8	40:8	4	(sar . num)
+cond	35:12	35:16	5	sar . num
+water	35:12	0:0	6	sar
+op	35:15	0:0	6	.
+water	35:16	0:0	6	num
+stmts	35:21	40:8	5	
+water	35:21	0:0	6	{
+if	36:12	37:81	6	(sar . num > sar . den)
+cond	36:16	36:30	7	sar . num > sar . den
+water	36:16	0:0	8	sar
+op	36:19	0:0	8	.
+water	36:20	0:0	8	num
+op	36:24	0:0	8	>
+water	36:26	0:0	8	sar
+op	36:29	0:0	8	.
+water	36:30	0:0	8	den
+stmts	37:16	37:81	7	
+water	37:16	0:0	8	xv
+op	37:18	0:0	8	->
+water	37:20	0:0	8	window_width
+op	37:33	0:0	8	=
+call	37:35	37:80	8	av_rescale
+arg	37:46	37:62	9	xv->window_width
+water	37:46	0:0	10	xv
+op	37:48	0:0	10	->
+water	37:50	0:0	10	window_width
+arg	37:64	37:71	9	sar.num
+water	37:64	0:0	10	sar
+op	37:67	0:0	10	.
+water	37:68	0:0	10	num
+arg	37:73	37:80	9	sar.den
+water	37:73	0:0	10	sar
+op	37:76	0:0	10	.
+water	37:77	0:0	10	den
+water	37:81	0:0	8	;
+if	38:12	39:83	6	(sar . num < sar . den)
+cond	38:16	38:30	7	sar . num < sar . den
+water	38:16	0:0	8	sar
+op	38:19	0:0	8	.
+water	38:20	0:0	8	num
+op	38:24	0:0	8	<
+water	38:26	0:0	8	sar
+op	38:29	0:0	8	.
+water	38:30	0:0	8	den
+stmts	39:16	39:83	7	
+water	39:16	0:0	8	xv
+op	39:18	0:0	8	->
+water	39:20	0:0	8	window_height
+op	39:34	0:0	8	=
+call	39:36	39:82	8	av_rescale
+arg	39:47	39:64	9	xv->window_height
+water	39:47	0:0	10	xv
+op	39:49	0:0	10	->
+water	39:51	0:0	10	window_height
+arg	39:66	39:73	9	sar.den
+water	39:66	0:0	10	sar
+op	39:69	0:0	10	.
+water	39:70	0:0	10	den
+arg	39:75	39:82	9	sar.num
+water	39:75	0:0	10	sar
+op	39:78	0:0	10	.
+water	39:79	0:0	10	num
+water	39:83	0:0	8	;
+water	40:8	0:0	6	}
+water	41:4	0:0	4	}
+if	42:4	57:4	2	(! xv -> window_id)
+cond	42:8	42:13	3	! xv -> window_id
+op	42:8	0:0	4	!
+water	42:9	0:0	4	xv
+op	42:11	0:0	4	->
+water	42:13	0:0	4	window_id
+stmts	42:24	57:4	3	
+water	42:24	0:0	4	{
+water	43:8	0:0	4	xv
+op	43:10	0:0	4	->
+water	43:12	0:0	4	window
+op	43:19	0:0	4	=
+call	43:21	46:48	4	XCreateSimpleWindow
+arg	43:41	43:52	5	xv->display
+water	43:41	0:0	6	xv
+op	43:43	0:0	6	->
+water	43:45	0:0	6	display
+arg	43:54	43:84	5	DefaultRootWindow(xv->display)
+call	43:54	43:83	6	DefaultRootWindow
+arg	43:72	43:83	7	xv->display
+water	43:72	0:0	8	xv
+op	43:74	0:0	8	->
+water	43:76	0:0	8	display
+arg	44:41	44:53	5	xv->window_x
+water	44:41	0:0	6	xv
+op	44:43	0:0	6	->
+water	44:45	0:0	6	window_x
+arg	44:55	44:67	5	xv->window_y
+water	44:55	0:0	6	xv
+op	44:57	0:0	6	->
+water	44:59	0:0	6	window_y
+arg	45:41	45:57	5	xv->window_width
+water	45:41	0:0	6	xv
+op	45:43	0:0	6	->
+water	45:45	0:0	6	window_width
+arg	45:59	45:76	5	xv->window_height
+water	45:59	0:0	6	xv
+op	45:61	0:0	6	->
+water	45:63	0:0	6	window_height
+arg	46:41	46:42	5	0
+water	46:41	0:0	6	0
+arg	46:44	46:45	5	0
+water	46:44	0:0	6	0
+arg	46:47	46:48	5	0
+water	46:47	0:0	6	0
+water	46:49	0:0	4	;
+if	47:8	52:8	4	(! xv -> window_title)
+cond	47:12	47:17	5	! xv -> window_title
+op	47:12	0:0	6	!
+water	47:13	0:0	6	xv
+op	47:15	0:0	6	->
+water	47:17	0:0	6	window_title
+stmts	47:31	52:8	5	
+water	47:31	0:0	6	{
+if	48:12	51:12	6	(! ( xv -> window_title =av_strdup (s -> filename ) ))
+cond	48:16	48:59	7	! ( xv -> window_title =av_strdup (s -> filename ) )
+op	48:16	0:0	8	!
+water	48:17	0:0	8	(
+water	48:18	0:0	8	xv
+op	48:20	0:0	8	->
+water	48:22	0:0	8	window_title
+op	48:35	0:0	8	=
+call	48:37	48:58	8	av_strdup
+arg	48:47	48:58	9	s->filename
+water	48:47	0:0	10	s
+op	48:48	0:0	10	->
+water	48:50	0:0	10	filename
+water	48:59	0:0	8	)
+stmts	48:62	51:12	7	
+water	48:62	0:0	8	{
+water	49:16	0:0	8	ret
+op	49:20	0:0	8	=
+call	49:22	49:36	8	AVERROR
+arg	49:30	49:36	9	ENOMEM
+water	49:30	0:0	10	ENOMEM
+water	49:37	0:0	8	;
+goto	50:16	50:25	8	fail
+water	50:21	0:0	9	fail
+water	51:12	0:0	8	}
+water	52:8	0:0	6	}
+call	53:8	53:60	4	XStoreName
+arg	53:19	53:30	5	xv->display
+water	53:19	0:0	6	xv
+op	53:21	0:0	6	->
+water	53:23	0:0	6	display
+arg	53:32	53:42	5	xv->window
+water	53:32	0:0	6	xv
+op	53:34	0:0	6	->
+water	53:36	0:0	6	window
+arg	53:44	53:60	5	xv->window_title
+water	53:44	0:0	6	xv
+op	53:46	0:0	6	->
+water	53:48	0:0	6	window_title
+water	53:61	0:0	4	;
+water	54:8	0:0	4	xv
+op	54:10	0:0	4	->
+water	54:12	0:0	4	wm_delete_message
+op	54:30	0:0	4	=
+call	54:32	54:82	4	XInternAtom
+arg	54:44	54:55	5	xv->display
+water	54:44	0:0	6	xv
+op	54:46	0:0	6	->
+water	54:48	0:0	6	display
+arg	54:57	54:75	5	"WM_DELETE_WINDOW"
+water	54:57	0:0	6	"WM_DELETE_WINDOW"
+arg	54:77	54:82	5	False
+water	54:77	0:0	6	False
+water	54:83	0:0	4	;
+call	55:8	55:74	4	XSetWMProtocols
+arg	55:24	55:35	5	xv->display
+water	55:24	0:0	6	xv
+op	55:26	0:0	6	->
+water	55:28	0:0	6	display
+arg	55:37	55:47	5	xv->window
+water	55:37	0:0	6	xv
+op	55:39	0:0	6	->
+water	55:41	0:0	6	window
+arg	55:49	55:71	5	&xv->wm_delete_message
+op	55:49	0:0	6	&
+water	55:50	0:0	6	xv
+op	55:52	0:0	6	->
+water	55:54	0:0	6	wm_delete_message
+arg	55:73	55:74	5	1
+water	55:73	0:0	6	1
+water	55:75	0:0	4	;
+call	56:8	56:42	4	XMapWindow
+arg	56:19	56:30	5	xv->display
+water	56:19	0:0	6	xv
+op	56:21	0:0	6	->
+water	56:23	0:0	6	display
+arg	56:32	56:42	5	xv->window
+water	56:32	0:0	6	xv
+op	56:34	0:0	6	->
+water	56:36	0:0	6	window
+water	56:43	0:0	4	;
+water	57:4	0:0	4	}
+else	57:6	58:34	2
+stmts	58:8	58:34	3	
+water	58:8	0:0	4	xv
+op	58:10	0:0	4	->
+water	58:12	0:0	4	window
+op	58:19	0:0	4	=
+water	58:21	0:0	4	xv
+op	58:23	0:0	4	->
+water	58:25	0:0	4	window_id
+water	58:34	0:0	4	;
+if	59:4	62:4	2	(XvQueryAdaptors (xv -> display ,DefaultRootWindow (xv -> display ) ,& num_adaptors ,& ai ) != Success)
+cond	59:8	59:92	3	XvQueryAdaptors (xv -> display ,DefaultRootWindow (xv -> display ) ,& num_adaptors ,& ai ) != Success
+call	59:8	59:87	4	XvQueryAdaptors
+arg	59:24	59:35	5	xv->display
+water	59:24	0:0	6	xv
+op	59:26	0:0	6	->
+water	59:28	0:0	6	display
+arg	59:37	59:67	5	DefaultRootWindow(xv->display)
+call	59:37	59:66	6	DefaultRootWindow
+arg	59:55	59:66	7	xv->display
+water	59:55	0:0	8	xv
+op	59:57	0:0	8	->
+water	59:59	0:0	8	display
+arg	59:69	59:82	5	&num_adaptors
+op	59:69	0:0	6	&
+water	59:70	0:0	6	num_adaptors
+arg	59:84	59:87	5	&ai
+op	59:84	0:0	6	&
+water	59:85	0:0	6	ai
+op	59:89	0:0	4	!=
+water	59:92	0:0	4	Success
+stmts	59:101	62:4	3	
+water	59:101	0:0	4	{
+water	60:8	0:0	4	ret
+op	60:12	0:0	4	=
+water	60:14	0:0	4	AVERROR_EXTERNAL
+water	60:30	0:0	4	;
+goto	61:8	61:17	4	fail
+water	61:13	0:0	5	fail
+water	62:4	0:0	4	}
+if	63:4	66:4	2	(! num_adaptors)
+cond	63:8	63:9	3	! num_adaptors
+op	63:8	0:0	4	!
+water	63:9	0:0	4	num_adaptors
+stmts	63:23	66:4	3	
+water	63:23	0:0	4	{
+call	64:8	64:63	4	av_log
+arg	64:15	64:16	5	s
+water	64:15	0:0	6	s
+arg	64:18	64:30	5	AV_LOG_ERROR
+water	64:18	0:0	6	AV_LOG_ERROR
+arg	64:32	64:63	5	"No X-Video adaptors present\n"
+water	64:32	0:0	6	"No X-Video adaptors present\n"
+water	64:64	0:0	4	;
+return	65:8	65:30	4	AVERROR(ENODEV)
+call	65:15	65:29	5	AVERROR
+arg	65:23	65:29	6	ENODEV
+water	65:23	0:0	7	ENODEV
+water	66:4	0:0	4	}
+water	67:4	0:0	2	xv
+op	67:6	0:0	2	->
+water	67:8	0:0	2	xv_port
+op	67:16	0:0	2	=
+water	67:18	0:0	2	ai
+op	67:20	0:0	2	[
+water	67:21	0:0	2	0
+op	67:22	0:0	2	]
+op	67:23	0:0	2	.
+water	67:24	0:0	2	base_id
+water	67:31	0:0	2	;
+call	68:4	68:24	2	XvFreeAdaptorInfo
+arg	68:22	68:24	3	ai
+water	68:22	0:0	4	ai
+water	68:25	0:0	2	;
+water	69:4	0:0	2	fv
+op	69:7	0:0	2	=
+call	69:9	69:66	2	XvListImageFormats
+arg	69:28	69:39	3	xv->display
+water	69:28	0:0	4	xv
+op	69:30	0:0	4	->
+water	69:32	0:0	4	display
+arg	69:41	69:52	3	xv->xv_port
+water	69:41	0:0	4	xv
+op	69:43	0:0	4	->
+water	69:45	0:0	4	xv_port
+arg	69:54	69:66	3	&num_formats
+op	69:54	0:0	4	&
+water	69:55	0:0	4	num_formats
+water	69:67	0:0	2	;
+if	70:4	73:4	2	(! fv)
+cond	70:8	70:9	3	! fv
+op	70:8	0:0	4	!
+water	70:9	0:0	4	fv
+stmts	70:13	73:4	3	
+water	70:13	0:0	4	{
+water	71:8	0:0	4	ret
+op	71:12	0:0	4	=
+water	71:14	0:0	4	AVERROR_EXTERNAL
+water	71:30	0:0	4	;
+goto	72:8	72:17	4	fail
+water	72:13	0:0	5	fail
+water	73:4	0:0	4	}
+for	74:4	78:4	2	(j = 0 ;j < num_formats;j ++)
+forinit	74:9	74:14	3	j = 0 ;
+water	74:9	0:0	4	j
+op	74:11	0:0	4	=
+water	74:13	0:0	4	0
+water	74:14	0:0	4	;
+cond	74:16	74:20	3	j < num_formats
+water	74:16	0:0	4	j
+op	74:18	0:0	4	<
+water	74:20	0:0	4	num_formats
+forexpr	74:33	74:34	3	j ++
+water	74:33	0:0	4	j
+op	74:34	0:0	4	++
+stmts	74:38	78:4	3	
+water	74:38	0:0	4	{
+if	75:8	77:8	4	(fv [ j ] . id == tag)
+cond	75:12	75:24	5	fv [ j ] . id == tag
+water	75:12	0:0	6	fv
+op	75:14	0:0	6	[
+water	75:15	0:0	6	j
+op	75:16	0:0	6	]
+op	75:17	0:0	6	.
+water	75:18	0:0	6	id
+op	75:21	0:0	6	==
+water	75:24	0:0	6	tag
+stmts	75:29	77:8	5	
+water	75:29	0:0	6	{
+break	76:12	76:17	6	
+water	77:8	0:0	6	}
+water	78:4	0:0	4	}
+call	79:4	79:12	2	XFree
+arg	79:10	79:12	3	fv
+water	79:10	0:0	4	fv
+water	79:13	0:0	2	;
+if	80:4	86:4	2	(j >= num_formats)
+cond	80:8	80:13	3	j >= num_formats
+water	80:8	0:0	4	j
+op	80:10	0:0	4	>=
+water	80:13	0:0	4	num_formats
+stmts	80:26	86:4	3	
+water	80:26	0:0	4	{
+call	81:8	83:51	4	av_log
+arg	81:15	81:16	5	s
+water	81:15	0:0	6	s
+arg	81:18	81:30	5	AV_LOG_ERROR
+water	81:18	0:0	6	AV_LOG_ERROR
+arg	82:15	82:68	5	"Device does not support pixel format %s, aborting\n"
+water	82:15	0:0	6	"Device does not support pixel format %s, aborting\n"
+arg	83:15	83:51	5	av_get_pix_fmt_name(encctx->pix_fmt)
+call	83:15	83:50	6	av_get_pix_fmt_name
+arg	83:35	83:50	7	encctx->pix_fmt
+water	83:35	0:0	8	encctx
+op	83:41	0:0	8	->
+water	83:43	0:0	8	pix_fmt
+water	83:52	0:0	4	;
+water	84:8	0:0	4	ret
+op	84:12	0:0	4	=
+call	84:14	84:28	4	AVERROR
+arg	84:22	84:28	5	EINVAL
+water	84:22	0:0	6	EINVAL
+water	84:29	0:0	4	;
+goto	85:8	85:17	4	fail
+water	85:13	0:0	5	fail
+water	86:4	0:0	4	}
+water	87:4	0:0	2	xv
+op	87:6	0:0	2	->
+water	87:8	0:0	2	gc
+op	87:11	0:0	2	=
+call	87:13	87:52	2	XCreateGC
+arg	87:23	87:34	3	xv->display
+water	87:23	0:0	4	xv
+op	87:25	0:0	4	->
+water	87:27	0:0	4	display
+arg	87:36	87:46	3	xv->window
+water	87:36	0:0	4	xv
+op	87:38	0:0	4	->
+water	87:40	0:0	4	window
+arg	87:48	87:49	3	0
+water	87:48	0:0	4	0
+arg	87:51	87:52	3	0
+water	87:51	0:0	4	0
+water	87:53	0:0	2	;
+water	88:4	0:0	2	xv
+op	88:6	0:0	2	->
+water	88:8	0:0	2	image_width
+op	88:21	0:0	2	=
+water	88:23	0:0	2	encctx
+op	88:29	0:0	2	->
+water	88:31	0:0	2	width
+water	88:36	0:0	2	;
+water	89:4	0:0	2	xv
+op	89:6	0:0	2	->
+water	89:8	0:0	2	image_height
+op	89:21	0:0	2	=
+water	89:23	0:0	2	encctx
+op	89:29	0:0	2	->
+water	89:31	0:0	2	height
+water	89:37	0:0	2	;
+water	90:4	0:0	2	xv
+op	90:6	0:0	2	->
+water	90:8	0:0	2	yuv_image
+op	90:18	0:0	2	=
+call	90:20	91:88	2	XvShmCreateImage
+arg	90:37	90:48	3	xv->display
+water	90:37	0:0	4	xv
+op	90:39	0:0	4	->
+water	90:41	0:0	4	display
+arg	90:50	90:61	3	xv->xv_port
+water	90:50	0:0	4	xv
+op	90:52	0:0	4	->
+water	90:54	0:0	4	xv_port
+arg	90:63	90:66	3	tag
+water	90:63	0:0	4	tag
+arg	90:68	90:69	3	0
+water	90:68	0:0	4	0
+arg	91:37	91:52	3	xv->image_width
+water	91:37	0:0	4	xv
+op	91:39	0:0	4	->
+water	91:41	0:0	4	image_width
+arg	91:54	91:70	3	xv->image_height
+water	91:54	0:0	4	xv
+op	91:56	0:0	4	->
+water	91:58	0:0	4	image_height
+arg	91:72	91:88	3	&xv->yuv_shminfo
+op	91:72	0:0	4	&
+water	91:73	0:0	4	xv
+op	91:75	0:0	4	->
+water	91:77	0:0	4	yuv_shminfo
+water	91:89	0:0	2	;
+water	92:4	0:0	2	xv
+op	92:6	0:0	2	->
+water	92:8	0:0	2	yuv_shminfo
+op	92:19	0:0	2	.
+water	92:20	0:0	2	shmid
+op	92:26	0:0	2	=
+call	92:28	93:51	2	shmget
+arg	92:35	92:46	3	IPC_PRIVATE
+water	92:35	0:0	4	IPC_PRIVATE
+arg	92:48	92:72	3	xv->yuv_image->data_size
+water	92:48	0:0	4	xv
+op	92:50	0:0	4	->
+water	92:52	0:0	4	yuv_image
+op	92:61	0:0	4	->
+water	92:63	0:0	4	data_size
+arg	93:35	93:51	3	IPC_CREAT|0777
+water	93:35	0:0	4	IPC_CREAT
+op	93:45	0:0	4	|
+water	93:47	0:0	4	0777
+water	93:52	0:0	2	;
+water	94:4	0:0	2	xv
+op	94:6	0:0	2	->
+water	94:8	0:0	2	yuv_shminfo
+op	94:19	0:0	2	.
+water	94:20	0:0	2	shmaddr
+op	94:28	0:0	2	=
+water	94:30	0:0	2	(
+water	94:31	0:0	2	char
+op	94:36	0:0	2	*
+water	94:37	0:0	2	)
+call	94:38	94:71	2	shmat
+arg	94:44	94:65	3	xv->yuv_shminfo.shmid
+water	94:44	0:0	4	xv
+op	94:46	0:0	4	->
+water	94:48	0:0	4	yuv_shminfo
+op	94:59	0:0	4	.
+water	94:60	0:0	4	shmid
+arg	94:67	94:68	3	0
+water	94:67	0:0	4	0
+arg	94:70	94:71	3	0
+water	94:70	0:0	4	0
+water	94:72	0:0	2	;
+water	95:4	0:0	2	xv
+op	95:6	0:0	2	->
+water	95:8	0:0	2	yuv_image
+op	95:17	0:0	2	->
+water	95:19	0:0	2	data
+op	95:24	0:0	2	=
+water	95:26	0:0	2	xv
+op	95:28	0:0	2	->
+water	95:30	0:0	2	yuv_shminfo
+op	95:41	0:0	2	.
+water	95:42	0:0	2	shmaddr
+water	95:49	0:0	2	;
+water	96:4	0:0	2	xv
+op	96:6	0:0	2	->
+water	96:8	0:0	2	yuv_shminfo
+op	96:19	0:0	2	.
+water	96:20	0:0	2	readOnly
+op	96:29	0:0	2	=
+water	96:31	0:0	2	False
+water	96:36	0:0	2	;
+call	97:4	97:44	2	XShmAttach
+arg	97:15	97:26	3	xv->display
+water	97:15	0:0	4	xv
+op	97:17	0:0	4	->
+water	97:19	0:0	4	display
+arg	97:28	97:44	3	&xv->yuv_shminfo
+op	97:28	0:0	4	&
+water	97:29	0:0	4	xv
+op	97:31	0:0	4	->
+water	97:33	0:0	4	yuv_shminfo
+water	97:45	0:0	2	;
+call	98:4	98:28	2	XSync
+arg	98:10	98:21	3	xv->display
+water	98:10	0:0	4	xv
+op	98:12	0:0	4	->
+water	98:14	0:0	4	display
+arg	98:23	98:28	3	False
+water	98:23	0:0	4	False
+water	98:29	0:0	2	;
+call	99:4	99:45	2	shmctl
+arg	99:11	99:32	3	xv->yuv_shminfo.shmid
+water	99:11	0:0	4	xv
+op	99:13	0:0	4	->
+water	99:15	0:0	4	yuv_shminfo
+op	99:26	0:0	4	.
+water	99:27	0:0	4	shmid
+arg	99:34	99:42	3	IPC_RMID
+water	99:34	0:0	4	IPC_RMID
+arg	99:44	99:45	3	0
+water	99:44	0:0	4	0
+water	99:46	0:0	2	;
+call	100:4	100:63	2	XGetWindowAttributes
+arg	100:25	100:36	3	xv->display
+water	100:25	0:0	4	xv
+op	100:27	0:0	4	->
+water	100:29	0:0	4	display
+arg	100:38	100:48	3	xv->window
+water	100:38	0:0	4	xv
+op	100:40	0:0	4	->
+water	100:42	0:0	4	window
+arg	100:50	100:63	3	&window_attrs
+op	100:50	0:0	4	&
+water	100:51	0:0	4	window_attrs
+water	100:64	0:0	2	;
+water	101:4	0:0	2	fgcolor
+op	101:11	0:0	2	.
+water	101:12	0:0	2	red
+op	101:16	0:0	2	=
+water	101:18	0:0	2	fgcolor
+op	101:25	0:0	2	.
+water	101:26	0:0	2	green
+op	101:32	0:0	2	=
+water	101:34	0:0	2	fgcolor
+op	101:41	0:0	2	.
+water	101:42	0:0	2	blue
+op	101:47	0:0	2	=
+water	101:49	0:0	2	0
+water	101:50	0:0	2	;
+water	102:4	0:0	2	fgcolor
+op	102:11	0:0	2	.
+water	102:12	0:0	2	flags
+op	102:18	0:0	2	=
+water	102:20	0:0	2	DoRed
+op	102:26	0:0	2	|
+water	102:28	0:0	2	DoGreen
+op	102:36	0:0	2	|
+water	102:38	0:0	2	DoBlue
+water	102:44	0:0	2	;
+call	103:4	103:60	2	XAllocColor
+arg	103:16	103:27	3	xv->display
+water	103:16	0:0	4	xv
+op	103:18	0:0	4	->
+water	103:20	0:0	4	display
+arg	103:29	103:50	3	window_attrs.colormap
+water	103:29	0:0	4	window_attrs
+op	103:41	0:0	4	.
+water	103:42	0:0	4	colormap
+arg	103:52	103:60	3	&fgcolor
+op	103:52	0:0	4	&
+water	103:53	0:0	4	fgcolor
+water	103:61	0:0	2	;
+call	104:4	104:53	2	XSetForeground
+arg	104:19	104:30	3	xv->display
+water	104:19	0:0	4	xv
+op	104:21	0:0	4	->
+water	104:23	0:0	4	display
+arg	104:32	104:38	3	xv->gc
+water	104:32	0:0	4	xv
+op	104:34	0:0	4	->
+water	104:36	0:0	4	gc
+arg	104:40	104:53	3	fgcolor.pixel
+water	104:40	0:0	4	fgcolor
+op	104:47	0:0	4	.
+water	104:48	0:0	4	pixel
+water	104:54	0:0	2	;
+water	106:4	0:0	2	xv
+op	106:6	0:0	2	->
+water	106:8	0:0	2	window_width
+op	106:21	0:0	2	=
+water	106:23	0:0	2	xv
+op	106:25	0:0	2	->
+water	106:27	0:0	2	window_height
+op	106:41	0:0	2	=
+water	106:43	0:0	2	0
+water	106:44	0:0	2	;
+return	107:4	107:12	2	0
+water	107:11	0:0	3	0
+label	108:2	108:6	2	fail :
+call	109:4	109:22	2	xv_write_trailer
+arg	109:21	109:22	3	s
+water	109:21	0:0	4	s
+water	109:23	0:0	2	;
+return	110:4	110:14	2	ret
+water	110:11	0:0	3	ret

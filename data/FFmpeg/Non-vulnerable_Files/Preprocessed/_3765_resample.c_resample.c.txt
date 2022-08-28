@@ -1,0 +1,392 @@
+func	1:0	65:0	0	static int	resample
+params	1:19	0:0	1	
+param	1:20	1:38	2	ResampleContext *	c
+param	1:40	1:49	2	void *	dst
+param	1:51	1:66	2	const void *	src
+param	2:20	2:33	2	int *	consumed
+param	2:35	2:47	2	int	src_size
+param	2:49	2:61	2	int	dst_size
+param	2:63	2:77	2	int	update_ctx
+param	3:20	3:41	2	int	nearest_neighbour
+stmnts	0:0	64:20	1	
+decl	5:4	5:17	2	int	dst_index
+decl	6:4	6:33	2	unsigned int	index
+op	6:23	0:0	2	=
+water	6:25	0:0	2	c
+op	6:26	0:0	2	->
+water	6:28	0:0	2	index
+decl	7:4	7:31	2	int	frac
+op	7:22	0:0	2	=
+water	7:24	0:0	2	c
+op	7:25	0:0	2	->
+water	7:27	0:0	2	frac
+decl	8:4	8:49	2	int	dst_incr_frac
+op	8:22	0:0	2	=
+water	8:24	0:0	2	c
+op	8:25	0:0	2	->
+water	8:27	0:0	2	dst_incr
+op	8:36	0:0	2	%
+water	8:38	0:0	2	c
+op	8:39	0:0	2	->
+water	8:41	0:0	2	src_incr
+decl	9:4	9:49	2	int	dst_incr
+op	9:22	0:0	2	=
+water	9:24	0:0	2	c
+op	9:25	0:0	2	->
+water	9:27	0:0	2	dst_incr
+op	9:36	0:0	2	/
+water	9:38	0:0	2	c
+op	9:39	0:0	2	->
+water	9:41	0:0	2	src_incr
+decl	10:4	10:56	2	int	compensation_distance
+op	10:30	0:0	2	=
+water	10:32	0:0	2	c
+op	10:33	0:0	2	->
+water	10:35	0:0	2	compensation_distance
+if	11:4	12:30	2	(! dst != ! src)
+cond	11:8	11:17	3	! dst != ! src
+op	11:8	0:0	4	!
+water	11:9	0:0	4	dst
+op	11:13	0:0	4	!=
+op	11:16	0:0	4	!
+water	11:17	0:0	4	src
+stmts	12:8	12:30	3	
+return	12:8	12:30	4	AVERROR(EINVAL)
+call	12:15	12:29	5	AVERROR
+arg	12:23	12:29	6	EINVAL
+water	12:23	0:0	7	EINVAL
+if	13:4	30:4	2	(nearest_neighbour)
+cond	13:8	13:8	3	nearest_neighbour
+water	13:8	0:0	4	nearest_neighbour
+stmts	13:27	30:4	3	
+water	13:27	0:0	4	{
+decl	14:8	14:49	4	uint64_t	index2
+op	14:24	0:0	4	=
+water	14:26	0:0	4	(
+water	14:27	0:0	4	(
+water	14:28	0:0	4	uint64_t
+water	14:36	0:0	4	)
+water	14:37	0:0	4	index
+water	14:42	0:0	4	)
+op	14:44	0:0	4	<<
+water	14:47	0:0	4	32
+decl	15:8	15:64	4	int64_t	incr
+op	15:23	0:0	4	=
+water	15:25	0:0	4	(
+water	15:26	0:0	4	1
+water	15:27	0:0	4	LL
+op	15:30	0:0	4	<<
+water	15:33	0:0	4	32
+water	15:35	0:0	4	)
+op	15:37	0:0	4	*
+water	15:39	0:0	4	c
+op	15:40	0:0	4	->
+water	15:42	0:0	4	dst_incr
+op	15:51	0:0	4	/
+water	15:53	0:0	4	c
+op	15:54	0:0	4	->
+water	15:56	0:0	4	src_incr
+water	16:8	0:0	4	dst_size
+op	16:23	0:0	4	=
+call	16:25	18:42	4	FFMIN
+arg	16:31	16:39	5	dst_size
+water	16:31	0:0	6	dst_size
+arg	17:31	18:42	5	(src_size-1-index)*(int64_t)c->src_incr/c->dst_incr
+water	17:31	0:0	6	(
+water	17:32	0:0	6	src_size
+op	17:40	0:0	6	-
+water	17:41	0:0	6	1
+op	17:42	0:0	6	-
+water	17:43	0:0	6	index
+water	17:48	0:0	6	)
+op	17:50	0:0	6	*
+water	17:52	0:0	6	(
+water	17:53	0:0	6	int64_t
+water	17:60	0:0	6	)
+water	17:61	0:0	6	c
+op	17:62	0:0	6	->
+water	17:64	0:0	6	src_incr
+op	17:73	0:0	6	/
+water	18:31	0:0	6	c
+op	18:32	0:0	6	->
+water	18:34	0:0	6	dst_incr
+water	18:43	0:0	4	;
+if	19:8	24:8	4	(dst)
+cond	19:12	19:12	5	dst
+water	19:12	0:0	6	dst
+stmts	19:17	24:8	5	
+water	19:17	0:0	6	{
+for	20:12	23:12	6	(dst_index = 0 ;dst_index < dst_size;dst_index ++)
+forinit	20:16	20:29	7	dst_index = 0 ;
+water	20:16	0:0	8	dst_index
+op	20:26	0:0	8	=
+water	20:28	0:0	8	0
+water	20:29	0:0	8	;
+cond	20:31	20:43	7	dst_index < dst_size
+water	20:31	0:0	8	dst_index
+op	20:41	0:0	8	<
+water	20:43	0:0	8	dst_size
+forexpr	20:53	20:62	7	dst_index ++
+water	20:53	0:0	8	dst_index
+op	20:62	0:0	8	++
+stmts	20:66	23:12	7	
+water	20:66	0:0	8	{
+call	21:16	21:69	8	c->resample_nearest
+arg	21:36	21:39	9	dst
+water	21:36	0:0	10	dst
+arg	21:41	21:50	9	dst_index
+water	21:41	0:0	10	dst_index
+arg	21:52	21:55	9	src
+water	21:52	0:0	10	src
+arg	21:57	21:69	9	index2>>32
+water	21:57	0:0	10	index2
+op	21:64	0:0	10	>>
+water	21:67	0:0	10	32
+water	21:70	0:0	8	;
+water	22:16	0:0	8	index2
+op	22:23	0:0	8	+=
+water	22:26	0:0	8	incr
+water	22:30	0:0	8	;
+water	23:12	0:0	8	}
+water	24:8	0:0	6	}
+else	24:10	26:8	4
+stmts	24:15	26:8	5	
+water	24:15	0:0	6	{
+water	25:12	0:0	6	dst_index
+op	25:22	0:0	6	=
+water	25:24	0:0	6	dst_size
+water	25:32	0:0	6	;
+water	26:8	0:0	6	}
+water	27:8	0:0	4	index
+op	27:14	0:0	4	+=
+water	27:17	0:0	4	dst_index
+op	27:27	0:0	4	*
+water	27:29	0:0	4	dst_incr
+water	27:37	0:0	4	;
+water	28:8	0:0	4	index
+op	28:14	0:0	4	+=
+water	28:17	0:0	4	(
+water	28:18	0:0	4	frac
+op	28:23	0:0	4	+
+water	28:25	0:0	4	dst_index
+op	28:35	0:0	4	*
+water	28:37	0:0	4	(
+water	28:38	0:0	4	int64_t
+water	28:45	0:0	4	)
+water	28:46	0:0	4	dst_incr_frac
+water	28:59	0:0	4	)
+op	28:61	0:0	4	/
+water	28:63	0:0	4	c
+op	28:64	0:0	4	->
+water	28:66	0:0	4	src_incr
+water	28:74	0:0	4	;
+water	29:8	0:0	4	frac
+op	29:15	0:0	4	=
+water	29:17	0:0	4	(
+water	29:18	0:0	4	frac
+op	29:23	0:0	4	+
+water	29:25	0:0	4	dst_index
+op	29:35	0:0	4	*
+water	29:37	0:0	4	(
+water	29:38	0:0	4	int64_t
+water	29:45	0:0	4	)
+water	29:46	0:0	4	dst_incr_frac
+water	29:59	0:0	4	)
+op	29:61	0:0	4	%
+water	29:63	0:0	4	c
+op	29:64	0:0	4	->
+water	29:66	0:0	4	src_incr
+water	29:74	0:0	4	;
+water	30:4	0:0	4	}
+else	30:6	49:4	2
+stmts	30:11	49:4	3	
+water	30:11	0:0	4	{
+for	31:8	48:8	4	(dst_index = 0 ;dst_index < dst_size;dst_index ++)
+forinit	31:13	31:26	5	dst_index = 0 ;
+water	31:13	0:0	6	dst_index
+op	31:23	0:0	6	=
+water	31:25	0:0	6	0
+water	31:26	0:0	6	;
+cond	31:28	31:40	5	dst_index < dst_size
+water	31:28	0:0	6	dst_index
+op	31:38	0:0	6	<
+water	31:40	0:0	6	dst_size
+forexpr	31:50	31:59	5	dst_index ++
+water	31:50	0:0	6	dst_index
+op	31:59	0:0	6	++
+stmts	31:63	48:8	5	
+water	31:63	0:0	6	{
+decl	32:12	32:54	6	int	sample_index
+op	32:29	0:0	6	=
+water	32:31	0:0	6	index
+op	32:37	0:0	6	>>
+water	32:40	0:0	6	c
+op	32:41	0:0	6	->
+water	32:43	0:0	6	phase_shift
+if	33:12	34:21	6	(sample_index + c -> filter_length > src_size)
+cond	33:16	33:50	7	sample_index + c -> filter_length > src_size
+water	33:16	0:0	8	sample_index
+op	33:29	0:0	8	+
+water	33:31	0:0	8	c
+op	33:32	0:0	8	->
+water	33:34	0:0	8	filter_length
+op	33:48	0:0	8	>
+water	33:50	0:0	8	src_size
+stmts	34:16	34:21	7	
+break	34:16	34:21	8	
+if	35:12	36:68	6	(dst)
+cond	35:16	35:16	7	dst
+water	35:16	0:0	8	dst
+stmts	36:16	36:68	7	
+call	36:16	36:67	8	c->resample_one
+arg	36:32	36:33	9	c
+water	36:32	0:0	10	c
+arg	36:35	36:38	9	dst
+water	36:35	0:0	10	dst
+arg	36:40	36:49	9	dst_index
+water	36:40	0:0	10	dst_index
+arg	36:51	36:54	9	src
+water	36:51	0:0	10	src
+arg	36:56	36:61	9	index
+water	36:56	0:0	10	index
+arg	36:63	36:67	9	frac
+water	36:63	0:0	10	frac
+water	36:68	0:0	8	;
+water	37:12	0:0	6	frac
+op	37:18	0:0	6	+=
+water	37:21	0:0	6	dst_incr_frac
+water	37:34	0:0	6	;
+water	38:12	0:0	6	index
+op	38:18	0:0	6	+=
+water	38:21	0:0	6	dst_incr
+water	38:29	0:0	6	;
+if	39:12	42:12	6	(frac >= c -> src_incr)
+cond	39:16	39:27	7	frac >= c -> src_incr
+water	39:16	0:0	8	frac
+op	39:21	0:0	8	>=
+water	39:24	0:0	8	c
+op	39:25	0:0	8	->
+water	39:27	0:0	8	src_incr
+stmts	39:37	42:12	7	
+water	39:37	0:0	8	{
+water	40:16	0:0	8	frac
+op	40:21	0:0	8	-=
+water	40:24	0:0	8	c
+op	40:25	0:0	8	->
+water	40:27	0:0	8	src_incr
+water	40:35	0:0	8	;
+water	41:16	0:0	8	index
+op	41:21	0:0	8	++
+water	41:23	0:0	8	;
+water	42:12	0:0	8	}
+if	43:12	47:12	6	(dst_index + 1 == compensation_distance)
+cond	43:16	43:33	7	dst_index + 1 == compensation_distance
+water	43:16	0:0	8	dst_index
+op	43:26	0:0	8	+
+water	43:28	0:0	8	1
+op	43:30	0:0	8	==
+water	43:33	0:0	8	compensation_distance
+stmts	43:56	47:12	7	
+water	43:56	0:0	8	{
+water	44:16	0:0	8	compensation_distance
+op	44:38	0:0	8	=
+water	44:40	0:0	8	0
+water	44:41	0:0	8	;
+water	45:16	0:0	8	dst_incr_frac
+op	45:30	0:0	8	=
+water	45:32	0:0	8	c
+op	45:33	0:0	8	->
+water	45:35	0:0	8	ideal_dst_incr
+op	45:50	0:0	8	%
+water	45:52	0:0	8	c
+op	45:53	0:0	8	->
+water	45:55	0:0	8	src_incr
+water	45:63	0:0	8	;
+water	46:16	0:0	8	dst_incr
+op	46:30	0:0	8	=
+water	46:32	0:0	8	c
+op	46:33	0:0	8	->
+water	46:35	0:0	8	ideal_dst_incr
+op	46:50	0:0	8	/
+water	46:52	0:0	8	c
+op	46:53	0:0	8	->
+water	46:55	0:0	8	src_incr
+water	46:63	0:0	8	;
+water	47:12	0:0	8	}
+water	48:8	0:0	6	}
+water	49:4	0:0	4	}
+if	50:4	51:43	2	(consumed)
+cond	50:8	50:8	3	consumed
+water	50:8	0:0	4	consumed
+stmts	51:8	51:43	3	
+op	51:8	0:0	4	*
+water	51:9	0:0	4	consumed
+op	51:18	0:0	4	=
+water	51:20	0:0	4	index
+op	51:26	0:0	4	>>
+water	51:29	0:0	4	c
+op	51:30	0:0	4	->
+water	51:32	0:0	4	phase_shift
+water	51:43	0:0	4	;
+if	52:4	63:4	2	(update_ctx)
+cond	52:8	52:8	3	update_ctx
+water	52:8	0:0	4	update_ctx
+stmts	52:20	63:4	3	
+water	52:20	0:0	4	{
+water	53:8	0:0	4	index
+op	53:14	0:0	4	&=
+water	53:17	0:0	4	c
+op	53:18	0:0	4	->
+water	53:20	0:0	4	phase_mask
+water	53:30	0:0	4	;
+if	54:8	58:8	4	(compensation_distance)
+cond	54:12	54:12	5	compensation_distance
+water	54:12	0:0	6	compensation_distance
+stmts	54:35	58:8	5	
+water	54:35	0:0	6	{
+water	55:12	0:0	6	compensation_distance
+op	55:34	0:0	6	-=
+water	55:37	0:0	6	dst_index
+water	55:46	0:0	6	;
+if	56:12	57:34	6	(compensation_distance <= 0)
+cond	56:16	56:41	7	compensation_distance <= 0
+water	56:16	0:0	8	compensation_distance
+op	56:38	0:0	8	<=
+water	56:41	0:0	8	0
+stmts	57:16	57:34	7	
+return	57:16	57:34	8	AVERROR_BUG
+water	57:23	0:0	9	AVERROR_BUG
+water	58:8	0:0	6	}
+water	59:8	0:0	4	c
+op	59:9	0:0	4	->
+water	59:11	0:0	4	frac
+op	59:20	0:0	4	=
+water	59:22	0:0	4	frac
+water	59:26	0:0	4	;
+water	60:8	0:0	4	c
+op	60:9	0:0	4	->
+water	60:11	0:0	4	index
+op	60:20	0:0	4	=
+water	60:22	0:0	4	index
+water	60:27	0:0	4	;
+water	61:8	0:0	4	c
+op	61:9	0:0	4	->
+water	61:11	0:0	4	dst_incr
+op	61:20	0:0	4	=
+water	61:22	0:0	4	dst_incr_frac
+op	61:36	0:0	4	+
+water	61:38	0:0	4	c
+op	61:39	0:0	4	->
+water	61:41	0:0	4	src_incr
+op	61:49	0:0	4	*
+water	61:50	0:0	4	dst_incr
+water	61:58	0:0	4	;
+water	62:8	0:0	4	c
+op	62:9	0:0	4	->
+water	62:11	0:0	4	compensation_distance
+op	62:33	0:0	4	=
+water	62:35	0:0	4	compensation_distance
+water	62:56	0:0	4	;
+water	63:4	0:0	4	}
+return	64:4	64:20	2	dst_index
+water	64:11	0:0	3	dst_index

@@ -1,0 +1,235 @@
+func	1:0	42:0	0	static int	write_video_frame
+params	1:28	0:0	1	
+param	1:29	1:48	2	AVFormatContext *	oc
+param	1:50	1:67	2	OutputStream *	ost
+stmnts	0:0	41:40	1	
+decl	3:4	3:11	2	int	ret
+decl	4:4	4:21	2	AVCodecContext	*c
+decl	5:4	5:18	2	AVFrame	*frame
+decl	6:4	6:22	2	int	got_packet
+op	6:19	0:0	2	=
+water	6:21	0:0	2	0
+water	7:4	0:0	2	c
+op	7:6	0:0	2	=
+water	7:8	0:0	2	ost
+op	7:11	0:0	2	->
+water	7:13	0:0	2	st
+op	7:15	0:0	2	->
+water	7:17	0:0	2	codec
+water	7:22	0:0	2	;
+water	8:4	0:0	2	frame
+op	8:10	0:0	2	=
+call	8:12	8:31	2	get_video_frame
+arg	8:28	8:31	3	ost
+water	8:28	0:0	4	ost
+water	8:32	0:0	2	;
+if	9:4	22:4	2	(oc -> oformat -> flags & AVFMT_RAWPICTURE)
+cond	9:8	9:29	3	oc -> oformat -> flags & AVFMT_RAWPICTURE
+water	9:8	0:0	4	oc
+op	9:10	0:0	4	->
+water	9:12	0:0	4	oformat
+op	9:19	0:0	4	->
+water	9:21	0:0	4	flags
+op	9:27	0:0	4	&
+water	9:29	0:0	4	AVFMT_RAWPICTURE
+stmts	9:47	22:4	3	
+water	9:47	0:0	4	{
+decl	11:8	11:20	4	AVPacket	pkt
+call	12:8	12:27	4	av_init_packet
+arg	12:23	12:27	5	&pkt
+op	12:23	0:0	6	&
+water	12:24	0:0	6	pkt
+water	12:28	0:0	4	;
+if	13:8	14:20	4	(! frame)
+cond	13:12	13:13	5	! frame
+op	13:12	0:0	6	!
+water	13:13	0:0	6	frame
+stmts	14:12	14:20	5	
+return	14:12	14:20	6	1
+water	14:19	0:0	7	1
+water	15:8	0:0	4	pkt
+op	15:11	0:0	4	.
+water	15:12	0:0	4	flags
+op	15:25	0:0	4	|=
+water	15:28	0:0	4	AV_PKT_FLAG_KEY
+water	15:43	0:0	4	;
+water	16:8	0:0	4	pkt
+op	16:11	0:0	4	.
+water	16:12	0:0	4	stream_index
+op	16:26	0:0	4	=
+water	16:28	0:0	4	ost
+op	16:31	0:0	4	->
+water	16:33	0:0	4	st
+op	16:35	0:0	4	->
+water	16:37	0:0	4	index
+water	16:42	0:0	4	;
+water	17:8	0:0	4	pkt
+op	17:11	0:0	4	.
+water	17:12	0:0	4	data
+op	17:26	0:0	4	=
+water	17:28	0:0	4	(
+water	17:29	0:0	4	uint8_t
+op	17:37	0:0	4	*
+water	17:38	0:0	4	)
+water	17:39	0:0	4	frame
+water	17:44	0:0	4	;
+water	18:8	0:0	4	pkt
+op	18:11	0:0	4	.
+water	18:12	0:0	4	size
+op	18:26	0:0	4	=
+op	18:28	0:0	4	sizeof
+water	18:34	0:0	4	(
+water	18:35	0:0	4	AVPicture
+water	18:44	0:0	4	)
+water	18:45	0:0	4	;
+water	19:8	0:0	4	pkt
+op	19:11	0:0	4	.
+water	19:12	0:0	4	pts
+op	19:16	0:0	4	=
+water	19:18	0:0	4	pkt
+op	19:21	0:0	4	.
+water	19:22	0:0	4	dts
+op	19:26	0:0	4	=
+water	19:28	0:0	4	frame
+op	19:33	0:0	4	->
+water	19:35	0:0	4	pts
+water	19:38	0:0	4	;
+call	20:8	20:67	4	av_packet_rescale_ts
+arg	20:29	20:33	5	&pkt
+op	20:29	0:0	6	&
+water	20:30	0:0	6	pkt
+arg	20:35	20:47	5	c->time_base
+water	20:35	0:0	6	c
+op	20:36	0:0	6	->
+water	20:38	0:0	6	time_base
+arg	20:49	20:67	5	ost->st->time_base
+water	20:49	0:0	6	ost
+op	20:52	0:0	6	->
+water	20:54	0:0	6	st
+op	20:56	0:0	6	->
+water	20:58	0:0	6	time_base
+water	20:68	0:0	4	;
+water	21:8	0:0	4	ret
+op	21:12	0:0	4	=
+call	21:14	21:49	4	av_interleaved_write_frame
+arg	21:41	21:43	5	oc
+water	21:41	0:0	6	oc
+arg	21:45	21:49	5	&pkt
+op	21:45	0:0	6	&
+water	21:46	0:0	6	pkt
+water	21:50	0:0	4	;
+water	22:4	0:0	4	}
+else	22:6	36:4	2
+stmts	22:11	36:4	3	
+water	22:11	0:0	4	{
+decl	23:8	23:28	4	AVPacket	pkt
+op	23:21	0:0	4	=
+water	23:23	0:0	4	{
+water	23:25	0:0	4	0
+water	23:27	0:0	4	}
+call	24:8	24:27	4	av_init_packet
+arg	24:23	24:27	5	&pkt
+op	24:23	0:0	6	&
+water	24:24	0:0	6	pkt
+water	24:28	0:0	4	;
+water	26:8	0:0	4	ret
+op	26:12	0:0	4	=
+call	26:14	26:63	4	avcodec_encode_video2
+arg	26:36	26:37	5	c
+water	26:36	0:0	6	c
+arg	26:39	26:43	5	&pkt
+op	26:39	0:0	6	&
+water	26:40	0:0	6	pkt
+arg	26:45	26:50	5	frame
+water	26:45	0:0	6	frame
+arg	26:52	26:63	5	&got_packet
+op	26:52	0:0	6	&
+water	26:53	0:0	6	got_packet
+water	26:64	0:0	4	;
+if	27:8	30:8	4	(ret < 0)
+cond	27:12	27:18	5	ret < 0
+water	27:12	0:0	6	ret
+op	27:16	0:0	6	<
+water	27:18	0:0	6	0
+stmts	27:21	30:8	5	
+water	27:21	0:0	6	{
+call	28:12	28:79	6	fprintf
+arg	28:20	28:26	7	stderr
+water	28:20	0:0	8	stderr
+arg	28:28	28:62	7	"Error encoding video frame: %s\n"
+water	28:28	0:0	8	"Error encoding video frame: %s\n"
+arg	28:64	28:79	7	av_err2str(ret)
+call	28:64	28:78	8	av_err2str
+arg	28:75	28:78	9	ret
+water	28:75	0:0	10	ret
+water	28:80	0:0	6	;
+call	29:12	29:18	6	exit
+arg	29:17	29:18	7	1
+water	29:17	0:0	8	1
+water	29:19	0:0	6	;
+water	30:8	0:0	6	}
+if	31:8	33:8	4	(got_packet)
+cond	31:12	31:12	5	got_packet
+water	31:12	0:0	6	got_packet
+stmts	31:24	33:8	5	
+water	31:24	0:0	6	{
+water	32:12	0:0	6	ret
+op	32:16	0:0	6	=
+call	32:18	32:62	6	write_frame
+arg	32:30	32:32	7	oc
+water	32:30	0:0	8	oc
+arg	32:34	32:47	7	&c->time_base
+op	32:34	0:0	8	&
+water	32:35	0:0	8	c
+op	32:36	0:0	8	->
+water	32:38	0:0	8	time_base
+arg	32:49	32:56	7	ost->st
+water	32:49	0:0	8	ost
+op	32:52	0:0	8	->
+water	32:54	0:0	8	st
+arg	32:58	32:62	7	&pkt
+op	32:58	0:0	8	&
+water	32:59	0:0	8	pkt
+water	32:63	0:0	6	;
+water	33:8	0:0	6	}
+else	33:10	35:8	4
+stmts	33:15	35:8	5	
+water	33:15	0:0	6	{
+water	34:12	0:0	6	ret
+op	34:16	0:0	6	=
+water	34:18	0:0	6	0
+water	34:19	0:0	6	;
+water	35:8	0:0	6	}
+water	36:4	0:0	4	}
+if	37:4	40:4	2	(ret < 0)
+cond	37:8	37:14	3	ret < 0
+water	37:8	0:0	4	ret
+op	37:12	0:0	4	<
+water	37:14	0:0	4	0
+stmts	37:17	40:4	3	
+water	37:17	0:0	4	{
+call	38:8	38:80	4	fprintf
+arg	38:16	38:22	5	stderr
+water	38:16	0:0	6	stderr
+arg	38:24	38:63	5	"Error while writing video frame: %s\n"
+water	38:24	0:0	6	"Error while writing video frame: %s\n"
+arg	38:65	38:80	5	av_err2str(ret)
+call	38:65	38:79	6	av_err2str
+arg	38:76	38:79	7	ret
+water	38:76	0:0	8	ret
+water	38:81	0:0	4	;
+call	39:8	39:14	4	exit
+arg	39:13	39:14	5	1
+water	39:13	0:0	6	1
+water	39:15	0:0	4	;
+water	40:4	0:0	4	}
+return	41:4	41:40	2	(frame||got_packet)?0:1
+water	41:11	0:0	3	(
+water	41:12	0:0	3	frame
+op	41:18	0:0	3	||
+water	41:21	0:0	3	got_packet
+water	41:31	0:0	3	)
+water	41:33	0:0	3	?
+water	41:35	0:0	3	0
+water	41:37	0:0	3	:
+water	41:39	0:0	3	1

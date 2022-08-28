@@ -1,0 +1,729 @@
+func	1:0	117:0	0	static int	read_sm_data
+params	1:23	0:0	1	
+param	1:24	1:42	2	AVFormatContext *	s
+param	1:44	1:59	2	AVIOContext *	bc
+param	1:61	1:74	2	AVPacket *	pkt
+param	1:76	1:87	2	int	is_meta
+param	1:89	1:103	2	int64_t	maxpos
+stmnts	0:0	116:12	1	
+decl	3:4	3:36	2	int	count
+op	3:14	0:0	2	=
+call	3:16	3:35	3	ffio_read_varlen
+arg	3:33	3:35	4	bc
+water	3:33	0:0	5	bc
+decl	4:4	4:22	2	int	skip_start
+op	4:19	0:0	2	=
+water	4:21	0:0	2	0
+decl	5:4	5:20	2	int	skip_end
+op	5:17	0:0	2	=
+water	5:19	0:0	2	0
+decl	6:4	6:20	2	int	channels
+op	6:17	0:0	2	=
+water	6:19	0:0	2	0
+decl	7:4	7:30	2	int64_t	channel_layout
+op	7:27	0:0	2	=
+water	7:29	0:0	2	0
+decl	8:4	8:23	2	int	sample_rate
+op	8:20	0:0	2	=
+water	8:22	0:0	2	0
+decl	9:4	9:17	2	int	width
+op	9:14	0:0	2	=
+water	9:16	0:0	2	0
+decl	10:4	10:18	2	int	height
+op	10:15	0:0	2	=
+water	10:17	0:0	2	0
+decl	11:4	11:14	2	int	i
+water	11:9	0:0	2	,
+decl	11:4	11:14	2	int	ret
+for	12:4	85:4	2	(i = 0 ;i < count;i ++)
+forinit	12:9	12:12	3	i = 0 ;
+water	12:9	0:0	4	i
+op	12:10	0:0	4	=
+water	12:11	0:0	4	0
+water	12:12	0:0	4	;
+cond	12:14	12:16	3	i < count
+water	12:14	0:0	4	i
+op	12:15	0:0	4	<
+water	12:16	0:0	4	count
+forexpr	12:23	12:24	3	i ++
+water	12:23	0:0	4	i
+op	12:24	0:0	4	++
+stmts	12:28	85:4	3	
+water	12:28	0:0	4	{
+decl	13:8	13:56	4	uint8_t	name[256]
+water	13:25	0:0	4	,
+decl	13:8	13:56	4	uint8_t	str_value[256]
+water	13:41	0:0	4	,
+decl	13:8	13:56	4	uint8_t	type_str[256]
+decl	14:8	14:17	4	int	value
+if	15:8	16:38	4	(avio_tell (bc ) >= maxpos)
+cond	15:12	15:29	5	avio_tell (bc ) >= maxpos
+call	15:12	15:24	6	avio_tell
+arg	15:22	15:24	7	bc
+water	15:22	0:0	8	bc
+op	15:26	0:0	6	>=
+water	15:29	0:0	6	maxpos
+stmts	16:12	16:38	5	
+return	16:12	16:38	6	AVERROR_INVALIDDATA
+water	16:19	0:0	7	AVERROR_INVALIDDATA
+water	17:8	0:0	4	ret
+op	17:12	0:0	4	=
+call	17:14	17:44	4	get_str
+arg	17:22	17:24	5	bc
+water	17:22	0:0	6	bc
+arg	17:26	17:30	5	name
+water	17:26	0:0	6	name
+arg	17:32	17:44	5	sizeof(name)
+op	17:32	0:0	6	sizeof
+water	17:38	0:0	6	(
+water	17:39	0:0	6	name
+water	17:43	0:0	6	)
+water	17:45	0:0	4	;
+if	18:8	21:8	4	(ret < 0)
+cond	18:12	18:18	5	ret < 0
+water	18:12	0:0	6	ret
+op	18:16	0:0	6	<
+water	18:18	0:0	6	0
+stmts	18:21	21:8	5	
+water	18:21	0:0	6	{
+call	19:12	19:76	6	av_log
+arg	19:19	19:20	7	s
+water	19:19	0:0	8	s
+arg	19:22	19:34	7	AV_LOG_ERROR
+water	19:22	0:0	8	AV_LOG_ERROR
+arg	19:36	19:76	7	"get_str failed while reading sm data\n"
+water	19:36	0:0	8	"get_str failed while reading sm data\n"
+water	19:77	0:0	6	;
+return	20:12	20:22	6	ret
+water	20:19	0:0	7	ret
+water	21:8	0:0	6	}
+water	22:8	0:0	4	value
+op	22:14	0:0	4	=
+call	22:16	22:24	4	get_s
+arg	22:22	22:24	5	bc
+water	22:22	0:0	6	bc
+water	22:25	0:0	4	;
+if	23:8	30:8	4	(value == - 1)
+cond	23:12	23:22	5	value == - 1
+water	23:12	0:0	6	value
+op	23:18	0:0	6	==
+op	23:21	0:0	6	-
+water	23:22	0:0	6	1
+stmts	23:25	30:8	5	
+water	23:25	0:0	6	{
+water	24:12	0:0	6	ret
+op	24:16	0:0	6	=
+call	24:18	24:58	6	get_str
+arg	24:26	24:28	7	bc
+water	24:26	0:0	8	bc
+arg	24:30	24:39	7	str_value
+water	24:30	0:0	8	str_value
+arg	24:41	24:58	7	sizeof(str_value)
+op	24:41	0:0	8	sizeof
+water	24:47	0:0	8	(
+water	24:48	0:0	8	str_value
+water	24:57	0:0	8	)
+water	24:59	0:0	6	;
+if	25:12	28:12	6	(ret < 0)
+cond	25:16	25:22	7	ret < 0
+water	25:16	0:0	8	ret
+op	25:20	0:0	8	<
+water	25:22	0:0	8	0
+stmts	25:25	28:12	7	
+water	25:25	0:0	8	{
+call	26:16	26:80	8	av_log
+arg	26:23	26:24	9	s
+water	26:23	0:0	10	s
+arg	26:26	26:38	9	AV_LOG_ERROR
+water	26:26	0:0	10	AV_LOG_ERROR
+arg	26:40	26:80	9	"get_str failed while reading sm data\n"
+water	26:40	0:0	10	"get_str failed while reading sm data\n"
+water	26:81	0:0	8	;
+return	27:16	27:26	8	ret
+water	27:23	0:0	9	ret
+water	28:12	0:0	8	}
+call	29:12	29:81	6	av_log
+arg	29:19	29:20	7	s
+water	29:19	0:0	8	s
+arg	29:22	29:36	7	AV_LOG_WARNING
+water	29:22	0:0	8	AV_LOG_WARNING
+arg	29:38	29:64	7	"Unknown string %s / %s\n"
+water	29:38	0:0	8	"Unknown string %s / %s\n"
+arg	29:66	29:70	7	name
+water	29:66	0:0	8	name
+arg	29:72	29:81	7	str_value
+water	29:72	0:0	8	str_value
+water	29:82	0:0	6	;
+water	30:8	0:0	6	}
+else	30:10	62:8	4
+stmts	30:15	62:8	5	
+if	30:15	62:8	6	(value == - 2)
+cond	30:19	30:29	7	value == - 2
+water	30:19	0:0	8	value
+op	30:25	0:0	8	==
+op	30:28	0:0	8	-
+water	30:29	0:0	8	2
+stmts	30:32	62:8	7	
+water	30:32	0:0	8	{
+decl	31:12	31:31	8	uint8_t	*dst
+op	31:25	0:0	8	=
+water	31:27	0:0	8	NULL
+decl	32:12	32:34	8	int64_t	v64
+water	32:23	0:0	8	,
+decl	32:12	32:34	8	int64_t	value_len
+water	33:12	0:0	8	ret
+op	33:16	0:0	8	=
+call	33:18	33:56	8	get_str
+arg	33:26	33:28	9	bc
+water	33:26	0:0	10	bc
+arg	33:30	33:38	9	type_str
+water	33:30	0:0	10	type_str
+arg	33:40	33:56	9	sizeof(type_str)
+op	33:40	0:0	10	sizeof
+water	33:46	0:0	10	(
+water	33:47	0:0	10	type_str
+water	33:55	0:0	10	)
+water	33:57	0:0	8	;
+if	34:12	37:12	8	(ret < 0)
+cond	34:16	34:22	9	ret < 0
+water	34:16	0:0	10	ret
+op	34:20	0:0	10	<
+water	34:22	0:0	10	0
+stmts	34:25	37:12	9	
+water	34:25	0:0	10	{
+call	35:16	35:80	10	av_log
+arg	35:23	35:24	11	s
+water	35:23	0:0	12	s
+arg	35:26	35:38	11	AV_LOG_ERROR
+water	35:26	0:0	12	AV_LOG_ERROR
+arg	35:40	35:80	11	"get_str failed while reading sm data\n"
+water	35:40	0:0	12	"get_str failed while reading sm data\n"
+water	35:81	0:0	10	;
+return	36:16	36:26	10	ret
+water	36:23	0:0	11	ret
+water	37:12	0:0	10	}
+water	38:12	0:0	8	value_len
+op	38:22	0:0	8	=
+call	38:24	38:43	8	ffio_read_varlen
+arg	38:41	38:43	9	bc
+water	38:41	0:0	10	bc
+water	38:44	0:0	8	;
+if	39:12	40:42	8	(avio_tell (bc ) + value_len >= maxpos)
+cond	39:16	39:45	9	avio_tell (bc ) + value_len >= maxpos
+call	39:16	39:28	10	avio_tell
+arg	39:26	39:28	11	bc
+water	39:26	0:0	12	bc
+op	39:30	0:0	10	+
+water	39:32	0:0	10	value_len
+op	39:42	0:0	10	>=
+water	39:45	0:0	10	maxpos
+stmts	40:16	40:42	9	
+return	40:16	40:42	10	AVERROR_INVALIDDATA
+water	40:23	0:0	11	AVERROR_INVALIDDATA
+if	41:12	43:12	8	(!strcmp (name ,"Palette" ))
+cond	41:16	41:39	9	!strcmp (name ,"Palette" )
+op	41:16	0:0	10	!
+call	41:17	41:39	10	strcmp
+arg	41:24	41:28	11	name
+water	41:24	0:0	12	name
+arg	41:30	41:39	11	"Palette"
+water	41:30	0:0	12	"Palette"
+stmts	41:42	43:12	9	
+water	41:42	0:0	10	{
+water	42:16	0:0	10	dst
+op	42:20	0:0	10	=
+call	42:22	42:81	10	av_packet_new_side_data
+arg	42:46	42:49	11	pkt
+water	42:46	0:0	12	pkt
+arg	42:51	42:70	11	AV_PKT_DATA_PALETTE
+water	42:51	0:0	12	AV_PKT_DATA_PALETTE
+arg	42:72	42:81	11	value_len
+water	42:72	0:0	12	value_len
+water	42:82	0:0	10	;
+water	43:12	0:0	10	}
+else	43:14	45:12	8
+stmts	43:19	45:12	9	
+if	43:19	45:12	10	(!strcmp (name ,"Extradata" ))
+cond	43:23	43:48	11	!strcmp (name ,"Extradata" )
+op	43:23	0:0	12	!
+call	43:24	43:48	12	strcmp
+arg	43:31	43:35	13	name
+water	43:31	0:0	14	name
+arg	43:37	43:48	13	"Extradata"
+water	43:37	0:0	14	"Extradata"
+stmts	43:51	45:12	11	
+water	43:51	0:0	12	{
+water	44:16	0:0	12	dst
+op	44:20	0:0	12	=
+call	44:22	44:87	12	av_packet_new_side_data
+arg	44:46	44:49	13	pkt
+water	44:46	0:0	14	pkt
+arg	44:51	44:76	13	AV_PKT_DATA_NEW_EXTRADATA
+water	44:51	0:0	14	AV_PKT_DATA_NEW_EXTRADATA
+arg	44:78	44:87	13	value_len
+water	44:78	0:0	14	value_len
+water	44:88	0:0	12	;
+water	45:12	0:0	12	}
+else	45:14	51:12	8
+stmts	45:19	51:12	9	
+if	45:19	51:12	10	(sscanf (name ,"CodecSpecificSide%" SCNd64 "" ,& v64 ) == 1)
+cond	45:23	45:75	11	sscanf (name ,"CodecSpecificSide%" SCNd64 "" ,& v64 ) == 1
+call	45:23	45:70	12	sscanf
+arg	45:30	45:34	13	name
+water	45:30	0:0	14	name
+arg	45:36	45:64	13	"CodecSpecificSide%"SCNd64""
+water	45:36	0:0	14	"CodecSpecificSide%"
+water	45:56	0:0	14	SCNd64
+water	45:62	0:0	14	""
+arg	45:66	45:70	13	&v64
+op	45:66	0:0	14	&
+water	45:67	0:0	14	v64
+op	45:72	0:0	12	==
+water	45:75	0:0	12	1
+stmts	45:78	51:12	11	
+water	45:78	0:0	12	{
+water	46:16	0:0	12	dst
+op	46:20	0:0	12	=
+call	46:22	46:102	12	av_packet_new_side_data
+arg	46:46	46:49	13	pkt
+water	46:46	0:0	14	pkt
+arg	46:51	46:87	13	AV_PKT_DATA_MATROSKA_BLOCKADDITIONAL
+water	46:51	0:0	14	AV_PKT_DATA_MATROSKA_BLOCKADDITIONAL
+arg	46:89	46:102	13	value_len+8
+water	46:89	0:0	14	value_len
+op	46:99	0:0	14	+
+water	46:101	0:0	14	8
+water	46:103	0:0	12	;
+if	47:16	48:42	12	(! dst)
+cond	47:19	47:20	13	! dst
+op	47:19	0:0	14	!
+water	47:20	0:0	14	dst
+stmts	48:20	48:42	13	
+return	48:20	48:42	14	AVERROR(ENOMEM)
+call	48:27	48:41	15	AVERROR
+arg	48:35	48:41	16	ENOMEM
+water	48:35	0:0	17	ENOMEM
+call	49:16	49:32	12	AV_WB64
+arg	49:24	49:27	13	dst
+water	49:24	0:0	14	dst
+arg	49:29	49:32	13	v64
+water	49:29	0:0	14	v64
+water	49:33	0:0	12	;
+water	50:16	0:0	12	dst
+op	50:20	0:0	12	+=
+water	50:23	0:0	12	8
+water	50:24	0:0	12	;
+water	51:12	0:0	12	}
+else	51:14	54:12	8
+stmts	51:19	54:12	9	
+if	51:19	54:12	10	(!strcmp (name ,"ChannelLayout" ) && value_len == 8)
+cond	51:23	51:70	11	!strcmp (name ,"ChannelLayout" ) && value_len == 8
+op	51:23	0:0	12	!
+call	51:24	51:52	12	strcmp
+arg	51:31	51:35	13	name
+water	51:31	0:0	14	name
+arg	51:37	51:52	13	"ChannelLayout"
+water	51:37	0:0	14	"ChannelLayout"
+op	51:54	0:0	12	&&
+water	51:57	0:0	12	value_len
+op	51:67	0:0	12	==
+water	51:70	0:0	12	8
+stmts	51:73	54:12	11	
+water	51:73	0:0	12	{
+water	52:16	0:0	12	channel_layout
+op	52:31	0:0	12	=
+call	52:33	52:45	12	avio_rl64
+arg	52:43	52:45	13	bc
+water	52:43	0:0	14	bc
+water	52:46	0:0	12	;
+continue	53:16	53:24	12	
+water	54:12	0:0	12	}
+else	54:14	58:12	8
+stmts	54:19	58:12	9	
+water	54:19	0:0	10	{
+call	55:16	55:82	10	av_log
+arg	55:23	55:24	11	s
+water	55:23	0:0	12	s
+arg	55:26	55:40	11	AV_LOG_WARNING
+water	55:26	0:0	12	AV_LOG_WARNING
+arg	55:42	55:66	11	"Unknown data %s / %s\n"
+water	55:42	0:0	12	"Unknown data %s / %s\n"
+arg	55:68	55:72	11	name
+water	55:68	0:0	12	name
+arg	55:74	55:82	11	type_str
+water	55:74	0:0	12	type_str
+water	55:83	0:0	10	;
+call	56:16	56:39	10	avio_skip
+arg	56:26	56:28	11	bc
+water	56:26	0:0	12	bc
+arg	56:30	56:39	11	value_len
+water	56:30	0:0	12	value_len
+water	56:40	0:0	10	;
+continue	57:16	57:24	10	
+water	58:12	0:0	10	}
+if	59:12	60:38	8	(! dst)
+cond	59:15	59:16	9	! dst
+op	59:15	0:0	10	!
+water	59:16	0:0	10	dst
+stmts	60:16	60:38	9	
+return	60:16	60:38	10	AVERROR(ENOMEM)
+call	60:23	60:37	11	AVERROR
+arg	60:31	60:37	12	ENOMEM
+water	60:31	0:0	13	ENOMEM
+call	61:12	61:40	8	avio_read
+arg	61:22	61:24	9	bc
+water	61:22	0:0	10	bc
+arg	61:26	61:29	9	dst
+water	61:26	0:0	10	dst
+arg	61:31	61:40	9	value_len
+water	61:31	0:0	10	value_len
+water	61:41	0:0	8	;
+water	62:8	0:0	8	}
+else	62:10	64:8	4
+stmts	62:15	64:8	5	
+if	62:15	64:8	6	(value == - 3)
+cond	62:19	62:29	7	value == - 3
+water	62:19	0:0	8	value
+op	62:25	0:0	8	==
+op	62:28	0:0	8	-
+water	62:29	0:0	8	3
+stmts	62:32	64:8	7	
+water	62:32	0:0	8	{
+water	63:12	0:0	8	value
+op	63:18	0:0	8	=
+call	63:20	63:28	8	get_s
+arg	63:26	63:28	9	bc
+water	63:26	0:0	10	bc
+water	63:29	0:0	8	;
+water	64:8	0:0	8	}
+else	64:10	66:8	4
+stmts	64:15	66:8	5	
+if	64:15	66:8	6	(value == - 4)
+cond	64:19	64:29	7	value == - 4
+water	64:19	0:0	8	value
+op	64:25	0:0	8	==
+op	64:28	0:0	8	-
+water	64:29	0:0	8	4
+stmts	64:32	66:8	7	
+water	64:32	0:0	8	{
+water	65:12	0:0	8	value
+op	65:18	0:0	8	=
+call	65:20	65:39	8	ffio_read_varlen
+arg	65:37	65:39	9	bc
+water	65:37	0:0	10	bc
+water	65:40	0:0	8	;
+water	66:8	0:0	8	}
+else	66:10	68:8	4
+stmts	66:15	68:8	5	
+if	66:15	68:8	6	(value < - 4)
+cond	66:19	66:28	7	value < - 4
+water	66:19	0:0	8	value
+op	66:25	0:0	8	<
+op	66:27	0:0	8	-
+water	66:28	0:0	8	4
+stmts	66:31	68:8	7	
+water	66:31	0:0	8	{
+call	67:12	67:20	8	get_s
+arg	67:18	67:20	9	bc
+water	67:18	0:0	10	bc
+water	67:21	0:0	8	;
+water	68:8	0:0	8	}
+else	68:10	84:8	4
+stmts	68:15	84:8	5	
+water	68:15	0:0	6	{
+if	69:12	71:12	6	(!strcmp (name ,"SkipStart" ))
+cond	69:16	69:41	7	!strcmp (name ,"SkipStart" )
+op	69:16	0:0	8	!
+call	69:17	69:41	8	strcmp
+arg	69:24	69:28	9	name
+water	69:24	0:0	10	name
+arg	69:30	69:41	9	"SkipStart"
+water	69:30	0:0	10	"SkipStart"
+stmts	69:44	71:12	7	
+water	69:44	0:0	8	{
+water	70:16	0:0	8	skip_start
+op	70:27	0:0	8	=
+water	70:29	0:0	8	value
+water	70:34	0:0	8	;
+water	71:12	0:0	8	}
+else	71:14	73:12	6
+stmts	71:19	73:12	7	
+if	71:19	73:12	8	(!strcmp (name ,"SkipEnd" ))
+cond	71:23	71:46	9	!strcmp (name ,"SkipEnd" )
+op	71:23	0:0	10	!
+call	71:24	71:46	10	strcmp
+arg	71:31	71:35	11	name
+water	71:31	0:0	12	name
+arg	71:37	71:46	11	"SkipEnd"
+water	71:37	0:0	12	"SkipEnd"
+stmts	71:49	73:12	9	
+water	71:49	0:0	10	{
+water	72:16	0:0	10	skip_end
+op	72:25	0:0	10	=
+water	72:27	0:0	10	value
+water	72:32	0:0	10	;
+water	73:12	0:0	10	}
+else	73:14	75:12	6
+stmts	73:19	75:12	7	
+if	73:19	75:12	8	(!strcmp (name ,"Channels" ))
+cond	73:23	73:47	9	!strcmp (name ,"Channels" )
+op	73:23	0:0	10	!
+call	73:24	73:47	10	strcmp
+arg	73:31	73:35	11	name
+water	73:31	0:0	12	name
+arg	73:37	73:47	11	"Channels"
+water	73:37	0:0	12	"Channels"
+stmts	73:50	75:12	9	
+water	73:50	0:0	10	{
+water	74:16	0:0	10	channels
+op	74:25	0:0	10	=
+water	74:27	0:0	10	value
+water	74:32	0:0	10	;
+water	75:12	0:0	10	}
+else	75:14	77:12	6
+stmts	75:19	77:12	7	
+if	75:19	77:12	8	(!strcmp (name ,"SampleRate" ))
+cond	75:23	75:49	9	!strcmp (name ,"SampleRate" )
+op	75:23	0:0	10	!
+call	75:24	75:49	10	strcmp
+arg	75:31	75:35	11	name
+water	75:31	0:0	12	name
+arg	75:37	75:49	11	"SampleRate"
+water	75:37	0:0	12	"SampleRate"
+stmts	75:52	77:12	9	
+water	75:52	0:0	10	{
+water	76:16	0:0	10	sample_rate
+op	76:28	0:0	10	=
+water	76:30	0:0	10	value
+water	76:35	0:0	10	;
+water	77:12	0:0	10	}
+else	77:14	79:12	6
+stmts	77:19	79:12	7	
+if	77:19	79:12	8	(!strcmp (name ,"Width" ))
+cond	77:23	77:44	9	!strcmp (name ,"Width" )
+op	77:23	0:0	10	!
+call	77:24	77:44	10	strcmp
+arg	77:31	77:35	11	name
+water	77:31	0:0	12	name
+arg	77:37	77:44	11	"Width"
+water	77:37	0:0	12	"Width"
+stmts	77:47	79:12	9	
+water	77:47	0:0	10	{
+water	78:16	0:0	10	width
+op	78:22	0:0	10	=
+water	78:24	0:0	10	value
+water	78:29	0:0	10	;
+water	79:12	0:0	10	}
+else	79:14	81:12	6
+stmts	79:19	81:12	7	
+if	79:19	81:12	8	(!strcmp (name ,"Height" ))
+cond	79:23	79:45	9	!strcmp (name ,"Height" )
+op	79:23	0:0	10	!
+call	79:24	79:45	10	strcmp
+arg	79:31	79:35	11	name
+water	79:31	0:0	12	name
+arg	79:37	79:45	11	"Height"
+water	79:37	0:0	12	"Height"
+stmts	79:48	81:12	9	
+water	79:48	0:0	10	{
+water	80:16	0:0	10	height
+op	80:23	0:0	10	=
+water	80:25	0:0	10	value
+water	80:30	0:0	10	;
+water	81:12	0:0	10	}
+else	81:14	83:12	6
+stmts	81:19	83:12	7	
+water	81:19	0:0	8	{
+call	82:16	82:70	8	av_log
+arg	82:23	82:24	9	s
+water	82:23	0:0	10	s
+arg	82:26	82:40	9	AV_LOG_WARNING
+water	82:26	0:0	10	AV_LOG_WARNING
+arg	82:42	82:64	9	"Unknown integer %s\n"
+water	82:42	0:0	10	"Unknown integer %s\n"
+arg	82:66	82:70	9	name
+water	82:66	0:0	10	name
+water	82:71	0:0	8	;
+water	83:12	0:0	8	}
+water	84:8	0:0	6	}
+water	85:4	0:0	4	}
+if	86:4	106:4	2	(channels || channel_layout || sample_rate || width || height)
+cond	86:8	86:62	3	channels || channel_layout || sample_rate || width || height
+water	86:8	0:0	4	channels
+op	86:17	0:0	4	||
+water	86:20	0:0	4	channel_layout
+op	86:35	0:0	4	||
+water	86:38	0:0	4	sample_rate
+op	86:50	0:0	4	||
+water	86:53	0:0	4	width
+op	86:59	0:0	4	||
+water	86:62	0:0	4	height
+stmts	86:70	106:4	3	
+water	86:70	0:0	4	{
+decl	87:8	87:81	4	uint8_t	*dst
+op	87:21	0:0	4	=
+call	87:23	87:80	5	av_packet_new_side_data
+arg	87:47	87:50	6	pkt
+water	87:47	0:0	7	pkt
+arg	87:52	87:76	6	AV_PKT_DATA_PARAM_CHANGE
+water	87:52	0:0	7	AV_PKT_DATA_PARAM_CHANGE
+arg	87:78	87:80	6	28
+water	87:78	0:0	7	28
+if	88:8	89:34	4	(! dst)
+cond	88:12	88:13	5	! dst
+op	88:12	0:0	6	!
+water	88:13	0:0	6	dst
+stmts	89:12	89:34	5	
+return	89:12	89:34	6	AVERROR(ENOMEM)
+call	89:19	89:33	7	AVERROR
+arg	89:27	89:33	8	ENOMEM
+water	89:27	0:0	9	ENOMEM
+call	90:8	95:27	4	bytestream_put_le32
+arg	90:28	90:32	5	&dst
+op	90:28	0:0	6	&
+water	90:29	0:0	6	dst
+arg	91:28	95:27	5	AV_SIDE_DATA_PARAM_CHANGE_CHANNEL_COUNT*(!!channels)+AV_SIDE_DATA_PARAM_CHANGE_CHANNEL_LAYOUT*(!!channel_layout)+AV_SIDE_DATA_PARAM_CHANGE_SAMPLE_RATE*(!!sample_rate)+AV_SIDE_DATA_PARAM_CHANGE_DIMENSIONS*(!!(width|height))
+water	91:28	0:0	6	AV_SIDE_DATA_PARAM_CHANGE_CHANNEL_COUNT
+op	91:67	0:0	6	*
+water	91:68	0:0	6	(
+op	91:69	0:0	6	!
+op	91:70	0:0	6	!
+water	91:71	0:0	6	channels
+water	91:79	0:0	6	)
+op	91:81	0:0	6	+
+water	92:28	0:0	6	AV_SIDE_DATA_PARAM_CHANGE_CHANNEL_LAYOUT
+op	92:68	0:0	6	*
+water	92:69	0:0	6	(
+op	92:70	0:0	6	!
+op	92:71	0:0	6	!
+water	92:72	0:0	6	channel_layout
+water	92:86	0:0	6	)
+op	92:88	0:0	6	+
+water	93:28	0:0	6	AV_SIDE_DATA_PARAM_CHANGE_SAMPLE_RATE
+op	93:65	0:0	6	*
+water	93:66	0:0	6	(
+op	93:67	0:0	6	!
+op	93:68	0:0	6	!
+water	93:69	0:0	6	sample_rate
+water	93:80	0:0	6	)
+op	93:82	0:0	6	+
+water	94:28	0:0	6	AV_SIDE_DATA_PARAM_CHANGE_DIMENSIONS
+op	94:64	0:0	6	*
+water	94:65	0:0	6	(
+op	94:66	0:0	6	!
+op	94:67	0:0	6	!
+water	94:68	0:0	6	(
+water	94:69	0:0	6	width
+op	94:74	0:0	6	|
+water	94:75	0:0	6	height
+water	94:81	0:0	6	)
+water	94:82	0:0	6	)
+water	95:28	0:0	4	;
+if	96:8	97:47	4	(channels)
+cond	96:12	96:12	5	channels
+water	96:12	0:0	6	channels
+stmts	97:12	97:47	5	
+call	97:12	97:46	6	bytestream_put_le32
+arg	97:32	97:36	7	&dst
+op	97:32	0:0	8	&
+water	97:33	0:0	8	dst
+arg	97:38	97:46	7	channels
+water	97:38	0:0	8	channels
+water	97:47	0:0	6	;
+if	98:8	99:53	4	(channel_layout)
+cond	98:12	98:12	5	channel_layout
+water	98:12	0:0	6	channel_layout
+stmts	99:12	99:53	5	
+call	99:12	99:52	6	bytestream_put_le64
+arg	99:32	99:36	7	&dst
+op	99:32	0:0	8	&
+water	99:33	0:0	8	dst
+arg	99:38	99:52	7	channel_layout
+water	99:38	0:0	8	channel_layout
+water	99:53	0:0	6	;
+if	100:8	101:50	4	(sample_rate)
+cond	100:12	100:12	5	sample_rate
+water	100:12	0:0	6	sample_rate
+stmts	101:12	101:50	5	
+call	101:12	101:49	6	bytestream_put_le32
+arg	101:32	101:36	7	&dst
+op	101:32	0:0	8	&
+water	101:33	0:0	8	dst
+arg	101:38	101:49	7	sample_rate
+water	101:38	0:0	8	sample_rate
+water	101:50	0:0	6	;
+if	102:8	105:8	4	(width || height)
+cond	102:12	102:21	5	width || height
+water	102:12	0:0	6	width
+op	102:18	0:0	6	||
+water	102:21	0:0	6	height
+stmts	102:28	105:8	5	
+water	102:28	0:0	6	{
+call	103:12	103:43	6	bytestream_put_le32
+arg	103:32	103:36	7	&dst
+op	103:32	0:0	8	&
+water	103:33	0:0	8	dst
+arg	103:38	103:43	7	width
+water	103:38	0:0	8	width
+water	103:44	0:0	6	;
+call	104:12	104:44	6	bytestream_put_le32
+arg	104:32	104:36	7	&dst
+op	104:32	0:0	8	&
+water	104:33	0:0	8	dst
+arg	104:38	104:44	7	height
+water	104:38	0:0	8	height
+water	104:45	0:0	6	;
+water	105:8	0:0	6	}
+water	106:4	0:0	4	}
+if	107:4	113:4	2	(skip_start || skip_end)
+cond	107:8	107:22	3	skip_start || skip_end
+water	107:8	0:0	4	skip_start
+op	107:19	0:0	4	||
+water	107:22	0:0	4	skip_end
+stmts	107:32	113:4	3	
+water	107:32	0:0	4	{
+decl	108:8	108:81	4	uint8_t	*dst
+op	108:21	0:0	4	=
+call	108:23	108:80	5	av_packet_new_side_data
+arg	108:47	108:50	6	pkt
+water	108:47	0:0	7	pkt
+arg	108:52	108:76	6	AV_PKT_DATA_SKIP_SAMPLES
+water	108:52	0:0	7	AV_PKT_DATA_SKIP_SAMPLES
+arg	108:78	108:80	6	10
+water	108:78	0:0	7	10
+if	109:8	110:34	4	(! dst)
+cond	109:12	109:13	5	! dst
+op	109:12	0:0	6	!
+water	109:13	0:0	6	dst
+stmts	110:12	110:34	5	
+return	110:12	110:34	6	AVERROR(ENOMEM)
+call	110:19	110:33	7	AVERROR
+arg	110:27	110:33	8	ENOMEM
+water	110:27	0:0	9	ENOMEM
+call	111:8	111:31	4	AV_WL32
+arg	111:16	111:19	5	dst
+water	111:16	0:0	6	dst
+arg	111:21	111:31	5	skip_start
+water	111:21	0:0	6	skip_start
+water	111:32	0:0	4	;
+call	112:8	112:31	4	AV_WL32
+arg	112:16	112:21	5	dst+4
+water	112:16	0:0	6	dst
+op	112:19	0:0	6	+
+water	112:20	0:0	6	4
+arg	112:23	112:31	5	skip_end
+water	112:23	0:0	6	skip_end
+water	112:32	0:0	4	;
+water	113:4	0:0	4	}
+if	114:4	115:34	2	(avio_tell (bc ) >= maxpos)
+cond	114:8	114:25	3	avio_tell (bc ) >= maxpos
+call	114:8	114:20	4	avio_tell
+arg	114:18	114:20	5	bc
+water	114:18	0:0	6	bc
+op	114:22	0:0	4	>=
+water	114:25	0:0	4	maxpos
+stmts	115:8	115:34	3	
+return	115:8	115:34	4	AVERROR_INVALIDDATA
+water	115:15	0:0	5	AVERROR_INVALIDDATA
+return	116:4	116:12	2	0
+water	116:11	0:0	3	0

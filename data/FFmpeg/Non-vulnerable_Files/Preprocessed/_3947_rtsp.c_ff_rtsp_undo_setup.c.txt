@@ -1,0 +1,176 @@
+func	1:0	31:0	0	void	ff_rtsp_undo_setup
+params	1:23	0:0	1	
+param	1:24	1:42	2	AVFormatContext *	s
+param	1:44	1:60	2	int	send_packets
+stmnts	0:0	30:4	1	
+decl	3:4	3:32	2	RTSPState	*rt
+op	3:18	0:0	2	=
+water	3:20	0:0	2	s
+op	3:21	0:0	2	->
+water	3:23	0:0	2	priv_data
+decl	4:4	4:9	2	int	i
+for	5:4	30:4	2	(i = 0 ;i < rt -> nb_rtsp_streams;i ++)
+forinit	5:9	5:14	3	i = 0 ;
+water	5:9	0:0	4	i
+op	5:11	0:0	4	=
+water	5:13	0:0	4	0
+water	5:14	0:0	4	;
+cond	5:16	5:24	3	i < rt -> nb_rtsp_streams
+water	5:16	0:0	4	i
+op	5:18	0:0	4	<
+water	5:20	0:0	4	rt
+op	5:22	0:0	4	->
+water	5:24	0:0	4	nb_rtsp_streams
+forexpr	5:41	5:42	3	i ++
+water	5:41	0:0	4	i
+op	5:42	0:0	4	++
+stmts	5:46	30:4	3	
+water	5:46	0:0	4	{
+decl	6:8	6:49	4	RTSPStream	*rtsp_st
+op	6:28	0:0	4	=
+water	6:30	0:0	4	rt
+op	6:32	0:0	4	->
+water	6:34	0:0	4	rtsp_streams
+op	6:46	0:0	4	[
+water	6:47	0:0	4	i
+op	6:48	0:0	4	]
+if	7:8	8:20	4	(! rtsp_st)
+cond	7:12	7:13	5	! rtsp_st
+op	7:12	0:0	6	!
+water	7:13	0:0	6	rtsp_st
+stmts	8:12	8:20	5	
+continue	8:12	8:20	6	
+if	9:8	25:8	4	(rtsp_st -> transport_priv)
+cond	9:12	9:21	5	rtsp_st -> transport_priv
+water	9:12	0:0	6	rtsp_st
+op	9:19	0:0	6	->
+water	9:21	0:0	6	transport_priv
+stmts	9:37	25:8	5	
+water	9:37	0:0	6	{
+if	10:12	21:12	6	(s -> oformat)
+cond	10:16	10:19	7	s -> oformat
+water	10:16	0:0	8	s
+op	10:17	0:0	8	->
+water	10:19	0:0	8	oformat
+stmts	10:28	21:12	7	
+water	10:28	0:0	8	{
+decl	11:16	11:65	8	AVFormatContext	*rtpctx
+op	11:40	0:0	8	=
+water	11:42	0:0	8	rtsp_st
+op	11:49	0:0	8	->
+water	11:51	0:0	8	transport_priv
+call	12:16	12:39	8	av_write_trailer
+arg	12:33	12:39	9	rtpctx
+water	12:33	0:0	10	rtpctx
+water	12:40	0:0	8	;
+if	13:16	17:16	8	(rt -> lower_transport == RTSP_LOWER_TRANSPORT_TCP)
+cond	13:20	13:43	9	rt -> lower_transport == RTSP_LOWER_TRANSPORT_TCP
+water	13:20	0:0	10	rt
+op	13:22	0:0	10	->
+water	13:24	0:0	10	lower_transport
+op	13:40	0:0	10	==
+water	13:43	0:0	10	RTSP_LOWER_TRANSPORT_TCP
+stmts	13:69	17:16	9	
+water	13:69	0:0	10	{
+if	14:20	15:60	10	(CONFIG_RTSP_MUXER && rtpctx -> pb && send_packets)
+cond	14:24	14:59	11	CONFIG_RTSP_MUXER && rtpctx -> pb && send_packets
+water	14:24	0:0	12	CONFIG_RTSP_MUXER
+op	14:42	0:0	12	&&
+water	14:45	0:0	12	rtpctx
+op	14:51	0:0	12	->
+water	14:53	0:0	12	pb
+op	14:56	0:0	12	&&
+water	14:59	0:0	12	send_packets
+stmts	15:24	15:60	11	
+call	15:24	15:59	12	ff_rtsp_tcp_write_packet
+arg	15:49	15:50	13	s
+water	15:49	0:0	14	s
+arg	15:52	15:59	13	rtsp_st
+water	15:52	0:0	14	rtsp_st
+water	15:60	0:0	12	;
+call	16:20	16:49	10	ffio_free_dyn_buf
+arg	16:38	16:49	11	&rtpctx->pb
+op	16:38	0:0	12	&
+water	16:39	0:0	12	rtpctx
+op	16:45	0:0	12	->
+water	16:47	0:0	12	pb
+water	16:50	0:0	10	;
+water	17:16	0:0	10	}
+else	17:18	19:16	8
+stmts	17:23	19:16	9	
+water	17:23	0:0	10	{
+call	18:20	18:43	10	avio_closep
+arg	18:32	18:43	11	&rtpctx->pb
+op	18:32	0:0	12	&
+water	18:33	0:0	12	rtpctx
+op	18:39	0:0	12	->
+water	18:41	0:0	12	pb
+water	18:44	0:0	10	;
+water	19:16	0:0	10	}
+call	20:16	20:44	8	avformat_free_context
+arg	20:38	20:44	9	rtpctx
+water	20:38	0:0	10	rtpctx
+water	20:45	0:0	8	;
+water	21:12	0:0	8	}
+else	21:14	22:59	6
+stmts	21:19	22:59	7	
+if	21:19	22:59	8	(CONFIG_RTPDEC && rt -> transport == RTSP_TRANSPORT_RDT)
+cond	21:23	21:57	9	CONFIG_RTPDEC && rt -> transport == RTSP_TRANSPORT_RDT
+water	21:23	0:0	10	CONFIG_RTPDEC
+op	21:37	0:0	10	&&
+water	21:40	0:0	10	rt
+op	21:42	0:0	10	->
+water	21:44	0:0	10	transport
+op	21:54	0:0	10	==
+water	21:57	0:0	10	RTSP_TRANSPORT_RDT
+stmts	22:16	22:59	9	
+call	22:16	22:58	10	ff_rdt_parse_close
+arg	22:35	22:58	11	rtsp_st->transport_priv
+water	22:35	0:0	12	rtsp_st
+op	22:42	0:0	12	->
+water	22:44	0:0	12	transport_priv
+water	22:59	0:0	10	;
+else	23:12	24:59	6
+stmts	23:17	24:59	7	
+if	23:17	24:59	8	(CONFIG_RTPDEC && rt -> transport == RTSP_TRANSPORT_RTP)
+cond	23:21	23:55	9	CONFIG_RTPDEC && rt -> transport == RTSP_TRANSPORT_RTP
+water	23:21	0:0	10	CONFIG_RTPDEC
+op	23:35	0:0	10	&&
+water	23:38	0:0	10	rt
+op	23:40	0:0	10	->
+water	23:42	0:0	10	transport
+op	23:52	0:0	10	==
+water	23:55	0:0	10	RTSP_TRANSPORT_RTP
+stmts	24:16	24:59	9	
+call	24:16	24:58	10	ff_rtp_parse_close
+arg	24:35	24:58	11	rtsp_st->transport_priv
+water	24:35	0:0	12	rtsp_st
+op	24:42	0:0	12	->
+water	24:44	0:0	12	transport_priv
+water	24:59	0:0	10	;
+water	25:8	0:0	6	}
+water	26:8	0:0	4	rtsp_st
+op	26:15	0:0	4	->
+water	26:17	0:0	4	transport_priv
+op	26:32	0:0	4	=
+water	26:34	0:0	4	NULL
+water	26:38	0:0	4	;
+if	27:8	28:44	4	(rtsp_st -> rtp_handle)
+cond	27:12	27:21	5	rtsp_st -> rtp_handle
+water	27:12	0:0	6	rtsp_st
+op	27:19	0:0	6	->
+water	27:21	0:0	6	rtp_handle
+stmts	28:12	28:44	5	
+call	28:12	28:43	6	ffurl_close
+arg	28:24	28:43	7	rtsp_st->rtp_handle
+water	28:24	0:0	8	rtsp_st
+op	28:31	0:0	8	->
+water	28:33	0:0	8	rtp_handle
+water	28:44	0:0	6	;
+water	29:8	0:0	4	rtsp_st
+op	29:15	0:0	4	->
+water	29:17	0:0	4	rtp_handle
+op	29:28	0:0	4	=
+water	29:30	0:0	4	NULL
+water	29:34	0:0	4	;
+water	30:4	0:0	4	}

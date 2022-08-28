@@ -1,0 +1,284 @@
+func	1:0	44:0	0	static inline void	copy_picture_field
+params	2:23	0:0	1	
+param	2:24	2:53	2	TInterlaceContext *	tinterlace
+param	3:24	3:39	2	uint8_t *	dst[4]
+param	3:41	3:60	2	int	dst_linesize[4]
+param	4:24	4:45	2	const uint8_t *	src[4]
+param	4:47	4:66	2	int	src_linesize[4]
+param	5:24	5:49	2	enum AVPixelFormat	format
+param	5:51	5:56	2	int	w
+param	5:58	5:67	2	int	src_h
+param	6:24	6:37	2	int	src_field
+param	6:39	6:53	2	int	interleave
+param	6:55	6:68	2	int	dst_field
+param	7:24	7:33	2	int	flags
+stmnts	0:0	43:4	1	
+decl	9:4	9:64	2	const AVPixFmtDescriptor	*desc
+op	9:35	0:0	2	=
+call	9:37	9:63	3	av_pix_fmt_desc_get
+arg	9:57	9:63	4	format
+water	9:57	0:0	5	format
+decl	10:4	10:34	2	int	hsub
+op	10:13	0:0	2	=
+water	10:15	0:0	2	desc
+op	10:19	0:0	2	->
+water	10:21	0:0	2	log2_chroma_w
+decl	11:4	11:41	2	int	plane
+water	11:13	0:0	2	,
+decl	11:4	11:41	2	int	vsub
+op	11:20	0:0	2	=
+water	11:22	0:0	2	desc
+op	11:26	0:0	2	->
+water	11:28	0:0	2	log2_chroma_h
+decl	12:4	12:54	2	int	k
+op	12:10	0:0	2	=
+water	12:12	0:0	2	src_field
+op	12:22	0:0	2	==
+water	12:25	0:0	2	FIELD_UPPER_AND_LOWER
+water	12:47	0:0	2	?
+water	12:49	0:0	2	1
+water	12:51	0:0	2	:
+water	12:53	0:0	2	2
+decl	13:4	13:9	2	int	h
+for	14:4	43:4	2	(plane = 0 ;plane < desc -> nb_components;plane ++)
+forinit	14:9	14:18	3	plane = 0 ;
+water	14:9	0:0	4	plane
+op	14:15	0:0	4	=
+water	14:17	0:0	4	0
+water	14:18	0:0	4	;
+cond	14:20	14:34	3	plane < desc -> nb_components
+water	14:20	0:0	4	plane
+op	14:26	0:0	4	<
+water	14:28	0:0	4	desc
+op	14:32	0:0	4	->
+water	14:34	0:0	4	nb_components
+forexpr	14:49	14:54	3	plane ++
+water	14:49	0:0	4	plane
+op	14:54	0:0	4	++
+stmts	14:58	43:4	3	
+water	14:58	0:0	4	{
+decl	15:8	15:82	4	int	lines
+op	15:18	0:0	4	=
+water	15:20	0:0	4	plane
+op	15:26	0:0	4	==
+water	15:29	0:0	4	1
+op	15:31	0:0	4	||
+water	15:34	0:0	4	plane
+op	15:40	0:0	4	==
+water	15:43	0:0	4	2
+water	15:45	0:0	4	?
+call	15:47	15:73	5	FF_CEIL_RSHIFT
+arg	15:62	15:67	6	src_h
+water	15:62	0:0	7	src_h
+arg	15:69	15:73	6	vsub
+water	15:69	0:0	7	vsub
+water	15:75	0:0	4	:
+water	15:77	0:0	4	src_h
+decl	16:8	16:78	4	int	cols
+op	16:18	0:0	4	=
+water	16:20	0:0	4	plane
+op	16:26	0:0	4	==
+water	16:29	0:0	4	1
+op	16:31	0:0	4	||
+water	16:34	0:0	4	plane
+op	16:40	0:0	4	==
+water	16:43	0:0	4	2
+water	16:45	0:0	4	?
+call	16:47	16:73	5	FF_CEIL_RSHIFT
+arg	16:66	16:67	6	w
+water	16:66	0:0	7	w
+arg	16:69	16:73	6	hsub
+water	16:69	0:0	7	hsub
+water	16:75	0:0	4	:
+water	16:77	0:0	4	w
+decl	17:8	17:34	4	uint8_t	*dstp
+op	17:22	0:0	4	=
+water	17:24	0:0	4	dst
+op	17:27	0:0	4	[
+water	17:28	0:0	4	plane
+op	17:33	0:0	4	]
+decl	18:8	18:40	4	const uint8_t	*srcp
+op	18:28	0:0	4	=
+water	18:30	0:0	4	src
+op	18:33	0:0	4	[
+water	18:34	0:0	4	plane
+op	18:39	0:0	4	]
+water	19:8	0:0	4	lines
+op	19:14	0:0	4	=
+water	19:16	0:0	4	(
+water	19:17	0:0	4	lines
+op	19:23	0:0	4	+
+water	19:25	0:0	4	(
+water	19:26	0:0	4	src_field
+op	19:36	0:0	4	==
+water	19:39	0:0	4	FIELD_UPPER
+water	19:50	0:0	4	)
+water	19:51	0:0	4	)
+op	19:53	0:0	4	/
+water	19:55	0:0	4	k
+water	19:56	0:0	4	;
+if	20:8	21:39	4	(src_field == FIELD_LOWER)
+cond	20:12	20:25	5	src_field == FIELD_LOWER
+water	20:12	0:0	6	src_field
+op	20:22	0:0	6	==
+water	20:25	0:0	6	FIELD_LOWER
+stmts	21:12	21:39	5	
+water	21:12	0:0	6	srcp
+op	21:17	0:0	6	+=
+water	21:20	0:0	6	src_linesize
+op	21:32	0:0	6	[
+water	21:33	0:0	6	plane
+op	21:38	0:0	6	]
+water	21:39	0:0	6	;
+if	22:8	23:39	4	(interleave && dst_field == FIELD_LOWER)
+cond	22:12	22:39	5	interleave && dst_field == FIELD_LOWER
+water	22:12	0:0	6	interleave
+op	22:23	0:0	6	&&
+water	22:26	0:0	6	dst_field
+op	22:36	0:0	6	==
+water	22:39	0:0	6	FIELD_LOWER
+stmts	23:12	23:39	5	
+water	23:12	0:0	6	dstp
+op	23:17	0:0	6	+=
+water	23:20	0:0	6	dst_linesize
+op	23:32	0:0	6	[
+water	23:33	0:0	6	plane
+op	23:38	0:0	6	]
+water	23:39	0:0	6	;
+if	24:8	39:8	4	(flags & TINTERLACE_FLAG_VLPF)
+cond	24:12	24:20	5	flags & TINTERLACE_FLAG_VLPF
+water	24:12	0:0	6	flags
+op	24:18	0:0	6	&
+water	24:20	0:0	6	TINTERLACE_FLAG_VLPF
+stmts	24:42	39:8	5	
+water	24:42	0:0	6	{
+decl	28:12	28:55	6	int	srcp_linesize
+op	28:30	0:0	6	=
+water	28:32	0:0	6	src_linesize
+op	28:44	0:0	6	[
+water	28:45	0:0	6	plane
+op	28:50	0:0	6	]
+op	28:52	0:0	6	*
+water	28:54	0:0	6	k
+decl	29:12	29:74	6	int	dstp_linesize
+op	29:30	0:0	6	=
+water	29:32	0:0	6	dst_linesize
+op	29:44	0:0	6	[
+water	29:45	0:0	6	plane
+op	29:50	0:0	6	]
+op	29:52	0:0	6	*
+water	29:54	0:0	6	(
+water	29:55	0:0	6	interleave
+water	29:66	0:0	6	?
+water	29:68	0:0	6	2
+water	29:70	0:0	6	:
+water	29:72	0:0	6	1
+water	29:73	0:0	6	)
+for	30:12	38:12	6	(h = lines ;h > 0;h --)
+forinit	30:17	30:26	7	h = lines ;
+water	30:17	0:0	8	h
+op	30:19	0:0	8	=
+water	30:21	0:0	8	lines
+water	30:26	0:0	8	;
+cond	30:28	30:32	7	h > 0
+water	30:28	0:0	8	h
+op	30:30	0:0	8	>
+water	30:32	0:0	8	0
+forexpr	30:35	30:36	7	h --
+water	30:35	0:0	8	h
+op	30:36	0:0	8	--
+stmts	30:40	38:12	7	
+water	30:40	0:0	8	{
+decl	31:16	31:70	8	const uint8_t	*srcp_above
+op	31:42	0:0	8	=
+water	31:44	0:0	8	srcp
+op	31:49	0:0	8	-
+water	31:51	0:0	8	src_linesize
+op	31:63	0:0	8	[
+water	31:64	0:0	8	plane
+op	31:69	0:0	8	]
+decl	32:16	32:70	8	const uint8_t	*srcp_below
+op	32:42	0:0	8	=
+water	32:44	0:0	8	srcp
+op	32:49	0:0	8	+
+water	32:51	0:0	8	src_linesize
+op	32:63	0:0	8	[
+water	32:64	0:0	8	plane
+op	32:69	0:0	8	]
+if	33:16	33:49	8	(h == lines)
+cond	33:20	33:25	9	h == lines
+water	33:20	0:0	10	h
+op	33:22	0:0	10	==
+water	33:25	0:0	10	lines
+stmts	33:32	33:49	9	
+water	33:32	0:0	10	srcp_above
+op	33:43	0:0	10	=
+water	33:45	0:0	10	srcp
+water	33:49	0:0	10	;
+if	34:16	34:45	8	(h == 1)
+cond	34:20	34:25	9	h == 1
+water	34:20	0:0	10	h
+op	34:22	0:0	10	==
+water	34:25	0:0	10	1
+stmts	34:28	34:45	9	
+water	34:28	0:0	10	srcp_below
+op	34:39	0:0	10	=
+water	34:41	0:0	10	srcp
+water	34:45	0:0	10	;
+call	35:16	35:81	8	tinterlace->lowpass_line
+arg	35:41	35:45	9	dstp
+water	35:41	0:0	10	dstp
+arg	35:47	35:51	9	cols
+water	35:47	0:0	10	cols
+arg	35:53	35:57	9	srcp
+water	35:53	0:0	10	srcp
+arg	35:59	35:69	9	srcp_above
+water	35:59	0:0	10	srcp_above
+arg	35:71	35:81	9	srcp_below
+water	35:71	0:0	10	srcp_below
+water	35:82	0:0	8	;
+water	36:16	0:0	8	dstp
+op	36:21	0:0	8	+=
+water	36:24	0:0	8	dstp_linesize
+water	36:37	0:0	8	;
+water	37:16	0:0	8	srcp
+op	37:21	0:0	8	+=
+water	37:24	0:0	8	srcp_linesize
+water	37:37	0:0	8	;
+water	38:12	0:0	8	}
+water	39:8	0:0	6	}
+else	39:10	42:8	4
+stmts	39:15	42:8	5	
+water	39:15	0:0	6	{
+call	40:12	41:72	6	av_image_copy_plane
+arg	40:32	40:36	7	dstp
+water	40:32	0:0	8	dstp
+arg	40:38	40:80	7	dst_linesize[plane]*(interleave?2:1)
+water	40:38	0:0	8	dst_linesize
+op	40:50	0:0	8	[
+water	40:51	0:0	8	plane
+op	40:56	0:0	8	]
+op	40:58	0:0	8	*
+water	40:60	0:0	8	(
+water	40:61	0:0	8	interleave
+water	40:72	0:0	8	?
+water	40:74	0:0	8	2
+water	40:76	0:0	8	:
+water	40:78	0:0	8	1
+water	40:79	0:0	8	)
+arg	41:32	41:36	7	srcp
+water	41:32	0:0	8	srcp
+arg	41:38	41:59	7	src_linesize[plane]*k
+water	41:38	0:0	8	src_linesize
+op	41:50	0:0	8	[
+water	41:51	0:0	8	plane
+op	41:56	0:0	8	]
+op	41:57	0:0	8	*
+water	41:58	0:0	8	k
+arg	41:61	41:65	7	cols
+water	41:61	0:0	8	cols
+arg	41:67	41:72	7	lines
+water	41:67	0:0	8	lines
+water	41:73	0:0	6	;
+water	42:8	0:0	6	}
+water	43:4	0:0	4	}

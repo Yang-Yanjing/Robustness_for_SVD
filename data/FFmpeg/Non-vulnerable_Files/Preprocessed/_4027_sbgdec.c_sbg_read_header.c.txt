@@ -1,0 +1,369 @@
+func	1:15	59:0	0	int	sbg_read_header
+params	1:34	0:0	1	
+param	1:35	1:55	2	AVFormatContext *	avf
+stmnts	0:0	58:12	1	
+decl	3:4	3:44	2	struct sbg_demuxer	*sbg
+op	3:28	0:0	2	=
+water	3:30	0:0	2	avf
+op	3:33	0:0	2	->
+water	3:35	0:0	2	priv_data
+decl	4:4	4:9	2	int	r
+decl	5:4	5:20	2	char	*buf
+op	5:14	0:0	2	=
+water	5:16	0:0	2	NULL
+decl	6:4	6:36	2	struct sbg_script	script
+op	6:29	0:0	2	=
+water	6:31	0:0	2	{
+water	6:33	0:0	2	0
+water	6:35	0:0	2	}
+decl	7:4	7:16	2	AVStream	*st
+decl	8:4	8:37	2	struct ws_intervals	inter
+op	8:30	0:0	2	=
+water	8:32	0:0	2	{
+water	8:34	0:0	2	0
+water	8:36	0:0	2	}
+water	9:4	0:0	2	r
+op	9:6	0:0	2	=
+call	9:8	9:57	2	read_whole_file
+arg	9:24	9:31	3	avf->pb
+water	9:24	0:0	4	avf
+op	9:27	0:0	4	->
+water	9:29	0:0	4	pb
+arg	9:33	9:51	3	sbg->max_file_size
+water	9:33	0:0	4	sbg
+op	9:36	0:0	4	->
+water	9:38	0:0	4	max_file_size
+arg	9:53	9:57	3	&buf
+op	9:53	0:0	4	&
+water	9:54	0:0	4	buf
+water	9:58	0:0	2	;
+if	10:4	11:17	2	(r < 0)
+cond	10:8	10:12	3	r < 0
+water	10:8	0:0	4	r
+op	10:10	0:0	4	<
+water	10:12	0:0	4	0
+stmts	11:8	11:17	3	
+goto	11:8	11:17	4	fail
+water	11:13	0:0	5	fail
+water	12:4	0:0	2	r
+op	12:6	0:0	2	=
+call	12:8	12:41	2	parse_script
+arg	12:21	12:24	3	avf
+water	12:21	0:0	4	avf
+arg	12:26	12:29	3	buf
+water	12:26	0:0	4	buf
+arg	12:31	12:32	3	r
+water	12:31	0:0	4	r
+arg	12:34	12:41	3	&script
+op	12:34	0:0	4	&
+water	12:35	0:0	4	script
+water	12:42	0:0	2	;
+if	13:4	14:17	2	(r < 0)
+cond	13:8	13:12	3	r < 0
+water	13:8	0:0	4	r
+op	13:10	0:0	4	<
+water	13:12	0:0	4	0
+stmts	14:8	14:17	3	
+goto	14:8	14:17	4	fail
+water	14:13	0:0	5	fail
+if	15:4	16:45	2	(! sbg -> sample_rate)
+cond	15:8	15:14	3	! sbg -> sample_rate
+op	15:8	0:0	4	!
+water	15:9	0:0	4	sbg
+op	15:12	0:0	4	->
+water	15:14	0:0	4	sample_rate
+stmts	16:8	16:45	3	
+water	16:8	0:0	4	sbg
+op	16:11	0:0	4	->
+water	16:13	0:0	4	sample_rate
+op	16:25	0:0	4	=
+water	16:27	0:0	4	script
+op	16:33	0:0	4	.
+water	16:34	0:0	4	sample_rate
+water	16:45	0:0	4	;
+else	17:4	18:45	2
+stmts	18:8	18:45	3	
+water	18:8	0:0	4	script
+op	18:14	0:0	4	.
+water	18:15	0:0	4	sample_rate
+op	18:27	0:0	4	=
+water	18:29	0:0	4	sbg
+op	18:32	0:0	4	->
+water	18:34	0:0	4	sample_rate
+water	18:45	0:0	4	;
+if	19:4	20:57	2	(! sbg -> frame_size)
+cond	19:8	19:14	3	! sbg -> frame_size
+op	19:8	0:0	4	!
+water	19:9	0:0	4	sbg
+op	19:12	0:0	4	->
+water	19:14	0:0	4	frame_size
+stmts	20:8	20:57	3	
+water	20:8	0:0	4	sbg
+op	20:11	0:0	4	->
+water	20:13	0:0	4	frame_size
+op	20:24	0:0	4	=
+call	20:26	20:56	4	FFMAX
+arg	20:32	20:33	5	1
+water	20:32	0:0	6	1
+arg	20:35	20:56	5	sbg->sample_rate/10
+water	20:35	0:0	6	sbg
+op	20:38	0:0	6	->
+water	20:40	0:0	6	sample_rate
+op	20:52	0:0	6	/
+water	20:54	0:0	6	10
+water	20:57	0:0	4	;
+if	21:4	23:66	2	(script . opt_mix)
+cond	21:8	21:15	3	script . opt_mix
+water	21:8	0:0	4	script
+op	21:14	0:0	4	.
+water	21:15	0:0	4	opt_mix
+stmts	22:8	23:66	3	
+call	22:8	23:65	4	av_log
+arg	22:15	22:18	5	avf
+water	22:15	0:0	6	avf
+arg	22:20	22:34	5	AV_LOG_WARNING
+water	22:20	0:0	6	AV_LOG_WARNING
+arg	22:36	23:65	5	"Mix feature not implemented: ""-m is ignored and mix channels will be silent.\n"
+water	22:36	0:0	6	"Mix feature not implemented: "
+water	23:15	0:0	6	"-m is ignored and mix channels will be silent.\n"
+water	23:66	0:0	4	;
+water	24:4	0:0	2	r
+op	24:6	0:0	2	=
+call	24:8	24:34	2	expand_script
+arg	24:22	24:25	3	avf
+water	24:22	0:0	4	avf
+arg	24:27	24:34	3	&script
+op	24:27	0:0	4	&
+water	24:28	0:0	4	script
+water	24:35	0:0	2	;
+if	25:4	26:17	2	(r < 0)
+cond	25:8	25:12	3	r < 0
+water	25:8	0:0	4	r
+op	25:10	0:0	4	<
+water	25:12	0:0	4	0
+stmts	26:8	26:17	3	
+goto	26:8	26:17	4	fail
+water	26:13	0:0	5	fail
+call	27:4	27:17	2	av_freep
+arg	27:13	27:17	3	&buf
+op	27:13	0:0	4	&
+water	27:14	0:0	4	buf
+water	27:18	0:0	2	;
+water	28:4	0:0	2	r
+op	28:6	0:0	2	=
+call	28:8	28:65	2	generate_intervals
+arg	28:27	28:30	3	avf
+water	28:27	0:0	4	avf
+arg	28:32	28:39	3	&script
+op	28:32	0:0	4	&
+water	28:33	0:0	4	script
+arg	28:41	28:57	3	sbg->sample_rate
+water	28:41	0:0	4	sbg
+op	28:44	0:0	4	->
+water	28:46	0:0	4	sample_rate
+arg	28:59	28:65	3	&inter
+op	28:59	0:0	4	&
+water	28:60	0:0	4	inter
+water	28:66	0:0	2	;
+if	29:4	30:17	2	(r < 0)
+cond	29:8	29:12	3	r < 0
+water	29:8	0:0	4	r
+op	29:10	0:0	4	<
+water	29:12	0:0	4	0
+stmts	30:8	30:17	3	
+goto	30:8	30:17	4	fail
+water	30:13	0:0	5	fail
+water	31:4	0:0	2	st
+op	31:7	0:0	2	=
+call	31:9	31:38	2	avformat_new_stream
+arg	31:29	31:32	3	avf
+water	31:29	0:0	4	avf
+arg	31:34	31:38	3	NULL
+water	31:34	0:0	4	NULL
+water	31:39	0:0	2	;
+if	32:4	33:30	2	(! st)
+cond	32:8	32:9	3	! st
+op	32:8	0:0	4	!
+water	32:9	0:0	4	st
+stmts	33:8	33:30	3	
+return	33:8	33:30	4	AVERROR(ENOMEM)
+call	33:15	33:29	5	AVERROR
+arg	33:23	33:29	6	ENOMEM
+water	33:23	0:0	7	ENOMEM
+water	34:4	0:0	2	st
+op	34:6	0:0	2	->
+water	34:8	0:0	2	codec
+op	34:13	0:0	2	->
+water	34:15	0:0	2	codec_type
+op	34:30	0:0	2	=
+water	34:32	0:0	2	AVMEDIA_TYPE_AUDIO
+water	34:50	0:0	2	;
+water	35:4	0:0	2	st
+op	35:6	0:0	2	->
+water	35:8	0:0	2	codec
+op	35:13	0:0	2	->
+water	35:15	0:0	2	codec_id
+op	35:30	0:0	2	=
+water	35:32	0:0	2	AV_CODEC_ID_FFWAVESYNTH
+water	35:55	0:0	2	;
+water	36:4	0:0	2	st
+op	36:6	0:0	2	->
+water	36:8	0:0	2	codec
+op	36:13	0:0	2	->
+water	36:15	0:0	2	channels
+op	36:30	0:0	2	=
+water	36:32	0:0	2	2
+water	36:33	0:0	2	;
+water	37:4	0:0	2	st
+op	37:6	0:0	2	->
+water	37:8	0:0	2	codec
+op	37:13	0:0	2	->
+water	37:15	0:0	2	channel_layout
+op	37:30	0:0	2	=
+water	37:32	0:0	2	AV_CH_LAYOUT_STEREO
+water	37:51	0:0	2	;
+water	38:4	0:0	2	st
+op	38:6	0:0	2	->
+water	38:8	0:0	2	codec
+op	38:13	0:0	2	->
+water	38:15	0:0	2	sample_rate
+op	38:30	0:0	2	=
+water	38:32	0:0	2	sbg
+op	38:35	0:0	2	->
+water	38:37	0:0	2	sample_rate
+water	38:48	0:0	2	;
+water	39:4	0:0	2	st
+op	39:6	0:0	2	->
+water	39:8	0:0	2	codec
+op	39:13	0:0	2	->
+water	39:15	0:0	2	frame_size
+op	39:30	0:0	2	=
+water	39:32	0:0	2	sbg
+op	39:35	0:0	2	->
+water	39:37	0:0	2	frame_size
+water	39:47	0:0	2	;
+call	40:4	40:57	2	avpriv_set_pts_info
+arg	40:24	40:26	3	st
+water	40:24	0:0	4	st
+arg	40:28	40:30	3	64
+water	40:28	0:0	4	64
+arg	40:32	40:33	3	1
+water	40:32	0:0	4	1
+arg	40:35	40:57	3	st->codec->sample_rate
+water	40:35	0:0	4	st
+op	40:37	0:0	4	->
+water	40:39	0:0	4	codec
+op	40:44	0:0	4	->
+water	40:46	0:0	4	sample_rate
+water	40:58	0:0	2	;
+water	41:4	0:0	2	st
+op	41:6	0:0	2	->
+water	41:8	0:0	2	probe_packets
+op	41:22	0:0	2	=
+water	41:24	0:0	2	0
+water	41:25	0:0	2	;
+water	42:4	0:0	2	st
+op	42:6	0:0	2	->
+water	42:8	0:0	2	start_time
+op	42:22	0:0	2	=
+call	42:24	43:65	2	av_rescale
+arg	42:35	42:50	3	script.start_ts
+water	42:35	0:0	4	script
+op	42:41	0:0	4	.
+water	42:42	0:0	4	start_ts
+arg	43:35	43:51	3	sbg->sample_rate
+water	43:35	0:0	4	sbg
+op	43:38	0:0	4	->
+water	43:40	0:0	4	sample_rate
+arg	43:53	43:65	3	AV_TIME_BASE
+water	43:53	0:0	4	AV_TIME_BASE
+water	43:66	0:0	2	;
+water	44:4	0:0	2	st
+op	44:6	0:0	2	->
+water	44:8	0:0	2	duration
+op	44:22	0:0	2	=
+water	44:24	0:0	2	script
+op	44:30	0:0	2	.
+water	44:31	0:0	2	end_ts
+op	44:38	0:0	2	==
+water	44:41	0:0	2	AV_NOPTS_VALUE
+water	44:56	0:0	2	?
+water	44:58	0:0	2	AV_NOPTS_VALUE
+water	44:73	0:0	2	:
+call	45:24	46:65	2	av_rescale
+arg	45:35	45:66	3	script.end_ts-script.start_ts
+water	45:35	0:0	4	script
+op	45:41	0:0	4	.
+water	45:42	0:0	4	end_ts
+op	45:49	0:0	4	-
+water	45:51	0:0	4	script
+op	45:57	0:0	4	.
+water	45:58	0:0	4	start_ts
+arg	46:35	46:51	3	sbg->sample_rate
+water	46:35	0:0	4	sbg
+op	46:38	0:0	4	->
+water	46:40	0:0	4	sample_rate
+arg	46:53	46:65	3	AV_TIME_BASE
+water	46:53	0:0	4	AV_TIME_BASE
+water	46:66	0:0	2	;
+water	47:4	0:0	2	st
+op	47:6	0:0	2	->
+water	47:8	0:0	2	cur_dts
+op	47:22	0:0	2	=
+water	47:24	0:0	2	st
+op	47:26	0:0	2	->
+water	47:28	0:0	2	start_time
+water	47:38	0:0	2	;
+water	48:4	0:0	2	r
+op	48:6	0:0	2	=
+call	48:8	48:51	2	encode_intervals
+arg	48:25	48:32	3	&script
+op	48:25	0:0	4	&
+water	48:26	0:0	4	script
+arg	48:34	48:43	3	st->codec
+water	48:34	0:0	4	st
+op	48:36	0:0	4	->
+water	48:38	0:0	4	codec
+arg	48:45	48:51	3	&inter
+op	48:45	0:0	4	&
+water	48:46	0:0	4	inter
+water	48:52	0:0	2	;
+if	49:4	50:17	2	(r < 0)
+cond	49:8	49:12	3	r < 0
+water	49:8	0:0	4	r
+op	49:10	0:0	4	<
+water	49:12	0:0	4	0
+stmts	50:8	50:17	3	
+goto	50:8	50:17	4	fail
+water	50:13	0:0	5	fail
+call	51:4	51:23	2	av_free
+arg	51:12	51:23	3	inter.inter
+water	51:12	0:0	4	inter
+op	51:17	0:0	4	.
+water	51:18	0:0	4	inter
+water	51:24	0:0	2	;
+call	52:4	52:23	2	free_script
+arg	52:16	52:23	3	&script
+op	52:16	0:0	4	&
+water	52:17	0:0	4	script
+water	52:24	0:0	2	;
+return	53:4	53:12	2	0
+water	53:11	0:0	3	0
+label	54:0	54:4	2	fail :
+call	55:4	55:23	2	av_free
+arg	55:12	55:23	3	inter.inter
+water	55:12	0:0	4	inter
+op	55:17	0:0	4	.
+water	55:18	0:0	4	inter
+water	55:24	0:0	2	;
+call	56:4	56:23	2	free_script
+arg	56:16	56:23	3	&script
+op	56:16	0:0	4	&
+water	56:17	0:0	4	script
+water	56:24	0:0	2	;
+call	57:4	57:15	2	av_free
+arg	57:12	57:15	3	buf
+water	57:12	0:0	4	buf
+water	57:16	0:0	2	;
+return	58:4	58:12	2	r
+water	58:11	0:0	3	r

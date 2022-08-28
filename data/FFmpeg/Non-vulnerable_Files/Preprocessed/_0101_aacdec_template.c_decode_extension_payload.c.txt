@@ -1,0 +1,366 @@
+func	1:0	49:0	0	static int	decode_extension_payload
+params	1:35	0:0	1	
+param	1:36	1:50	2	AACContext *	ac
+param	1:52	1:69	2	GetBitContext *	gb
+param	1:71	1:78	2	int	cnt
+param	2:36	2:55	2	ChannelElement *	che
+param	2:57	2:88	2	enum RawDataBlockType	elem_type
+stmnts	0:0	48:14	1	
+decl	4:4	4:20	2	int	crc_flag
+op	4:17	0:0	2	=
+water	4:19	0:0	2	0
+decl	5:4	5:17	2	int	res
+op	5:12	0:0	2	=
+water	5:14	0:0	2	cnt
+decl	6:4	6:30	2	int	type
+op	6:13	0:0	2	=
+call	6:15	6:29	3	get_bits
+arg	6:24	6:26	4	gb
+water	6:24	0:0	5	gb
+arg	6:28	6:29	4	4
+water	6:28	0:0	5	4
+if	7:4	8:81	2	(ac -> avctx -> debug & FF_DEBUG_STARTCODE)
+cond	7:8	7:27	3	ac -> avctx -> debug & FF_DEBUG_STARTCODE
+water	7:8	0:0	4	ac
+op	7:10	0:0	4	->
+water	7:12	0:0	4	avctx
+op	7:17	0:0	4	->
+water	7:19	0:0	4	debug
+op	7:25	0:0	4	&
+water	7:27	0:0	4	FF_DEBUG_STARTCODE
+stmts	8:8	8:81	3	
+call	8:8	8:80	4	av_log
+arg	8:15	8:24	5	ac->avctx
+water	8:15	0:0	6	ac
+op	8:17	0:0	6	->
+water	8:19	0:0	6	avctx
+arg	8:26	8:38	5	AV_LOG_DEBUG
+water	8:26	0:0	6	AV_LOG_DEBUG
+arg	8:40	8:69	5	"extension type: %d len:%d\n"
+water	8:40	0:0	6	"extension type: %d len:%d\n"
+arg	8:71	8:75	5	type
+water	8:71	0:0	6	type
+arg	8:77	8:80	5	cnt
+water	8:77	0:0	6	cnt
+water	8:81	0:0	4	;
+switch	9:4	47:4	2	(type)
+cond	9:12	9:12	3	type
+water	9:12	0:0	4	type
+stmts	9:18	47:4	3	
+water	9:18	0:0	4	{
+label	10:4	10:25	4	case EXT_SBR_DATA_CRC :
+water	11:8	0:0	4	crc_flag
+op	11:16	0:0	4	++
+water	11:18	0:0	4	;
+label	12:4	12:21	4	case EXT_SBR_DATA :
+if	13:8	16:8	4	(! che)
+cond	13:12	13:13	5	! che
+op	13:12	0:0	6	!
+water	13:13	0:0	6	che
+stmts	13:18	16:8	5	
+water	13:18	0:0	6	{
+call	14:12	14:95	6	av_log
+arg	14:19	14:28	7	ac->avctx
+water	14:19	0:0	8	ac
+op	14:21	0:0	8	->
+water	14:23	0:0	8	avctx
+arg	14:30	14:42	7	AV_LOG_ERROR
+water	14:30	0:0	8	AV_LOG_ERROR
+arg	14:44	14:95	7	"SBR was found before the first channel element.\n"
+water	14:44	0:0	8	"SBR was found before the first channel element.\n"
+water	14:96	0:0	6	;
+return	15:12	15:22	6	res
+water	15:19	0:0	7	res
+water	16:8	0:0	6	}
+else	16:10	20:8	4
+stmts	16:15	20:8	5	
+if	16:15	20:8	6	(! ac -> oc [ 1 ] . m4ac . sbr)
+cond	16:19	16:35	7	! ac -> oc [ 1 ] . m4ac . sbr
+op	16:19	0:0	8	!
+water	16:20	0:0	8	ac
+op	16:22	0:0	8	->
+water	16:24	0:0	8	oc
+op	16:26	0:0	8	[
+water	16:27	0:0	8	1
+op	16:28	0:0	8	]
+op	16:29	0:0	8	.
+water	16:30	0:0	8	m4ac
+op	16:34	0:0	8	.
+water	16:35	0:0	8	sbr
+stmts	16:40	20:8	7	
+water	16:40	0:0	8	{
+call	17:12	17:110	8	av_log
+arg	17:19	17:28	9	ac->avctx
+water	17:19	0:0	10	ac
+op	17:21	0:0	10	->
+water	17:23	0:0	10	avctx
+arg	17:30	17:42	9	AV_LOG_ERROR
+water	17:30	0:0	10	AV_LOG_ERROR
+arg	17:44	17:110	9	"SBR signaled to be not-present but was found in the bitstream.\n"
+water	17:44	0:0	10	"SBR signaled to be not-present but was found in the bitstream.\n"
+water	17:111	0:0	8	;
+call	18:12	18:42	8	skip_bits_long
+arg	18:27	18:29	9	gb
+water	18:27	0:0	10	gb
+arg	18:31	18:42	9	8*cnt-4
+water	18:31	0:0	10	8
+op	18:33	0:0	10	*
+water	18:35	0:0	10	cnt
+op	18:39	0:0	10	-
+water	18:41	0:0	10	4
+water	18:43	0:0	8	;
+return	19:12	19:22	8	res
+water	19:19	0:0	9	res
+water	20:8	0:0	8	}
+else	20:10	24:8	4
+stmts	20:15	24:8	5	
+if	20:15	24:8	6	(ac -> oc [ 1 ] . m4ac . sbr == - 1 && ac -> oc [ 1 ] . status == OC_LOCKED)
+cond	20:19	20:67	7	ac -> oc [ 1 ] . m4ac . sbr == - 1 && ac -> oc [ 1 ] . status == OC_LOCKED
+water	20:19	0:0	8	ac
+op	20:21	0:0	8	->
+water	20:23	0:0	8	oc
+op	20:25	0:0	8	[
+water	20:26	0:0	8	1
+op	20:27	0:0	8	]
+op	20:28	0:0	8	.
+water	20:29	0:0	8	m4ac
+op	20:33	0:0	8	.
+water	20:34	0:0	8	sbr
+op	20:38	0:0	8	==
+op	20:41	0:0	8	-
+water	20:42	0:0	8	1
+op	20:44	0:0	8	&&
+water	20:47	0:0	8	ac
+op	20:49	0:0	8	->
+water	20:51	0:0	8	oc
+op	20:53	0:0	8	[
+water	20:54	0:0	8	1
+op	20:55	0:0	8	]
+op	20:56	0:0	8	.
+water	20:57	0:0	8	status
+op	20:64	0:0	8	==
+water	20:67	0:0	8	OC_LOCKED
+stmts	20:78	24:8	7	
+water	20:78	0:0	8	{
+call	21:12	21:117	8	av_log
+arg	21:19	21:28	9	ac->avctx
+water	21:19	0:0	10	ac
+op	21:21	0:0	10	->
+water	21:23	0:0	10	avctx
+arg	21:30	21:42	9	AV_LOG_ERROR
+water	21:30	0:0	10	AV_LOG_ERROR
+arg	21:44	21:117	9	"Implicit SBR was found with a first occurrence after the first frame.\n"
+water	21:44	0:0	10	"Implicit SBR was found with a first occurrence after the first frame.\n"
+water	21:118	0:0	8	;
+call	22:12	22:42	8	skip_bits_long
+arg	22:27	22:29	9	gb
+water	22:27	0:0	10	gb
+arg	22:31	22:42	9	8*cnt-4
+water	22:31	0:0	10	8
+op	22:33	0:0	10	*
+water	22:35	0:0	10	cnt
+op	22:39	0:0	10	-
+water	22:41	0:0	10	4
+water	22:43	0:0	8	;
+return	23:12	23:22	8	res
+water	23:19	0:0	9	res
+water	24:8	0:0	8	}
+else	24:10	30:8	4
+stmts	24:15	30:8	5	
+if	24:15	30:8	6	(ac -> oc [ 1 ] . m4ac . ps == - 1 && ac -> oc [ 1 ] . status < OC_LOCKED && ac -> avctx -> channels == 1)
+cond	24:19	24:101	7	ac -> oc [ 1 ] . m4ac . ps == - 1 && ac -> oc [ 1 ] . status < OC_LOCKED && ac -> avctx -> channels == 1
+water	24:19	0:0	8	ac
+op	24:21	0:0	8	->
+water	24:23	0:0	8	oc
+op	24:25	0:0	8	[
+water	24:26	0:0	8	1
+op	24:27	0:0	8	]
+op	24:28	0:0	8	.
+water	24:29	0:0	8	m4ac
+op	24:33	0:0	8	.
+water	24:34	0:0	8	ps
+op	24:37	0:0	8	==
+op	24:40	0:0	8	-
+water	24:41	0:0	8	1
+op	24:43	0:0	8	&&
+water	24:46	0:0	8	ac
+op	24:48	0:0	8	->
+water	24:50	0:0	8	oc
+op	24:52	0:0	8	[
+water	24:53	0:0	8	1
+op	24:54	0:0	8	]
+op	24:55	0:0	8	.
+water	24:56	0:0	8	status
+op	24:63	0:0	8	<
+water	24:65	0:0	8	OC_LOCKED
+op	24:75	0:0	8	&&
+water	24:78	0:0	8	ac
+op	24:80	0:0	8	->
+water	24:82	0:0	8	avctx
+op	24:87	0:0	8	->
+water	24:89	0:0	8	channels
+op	24:98	0:0	8	==
+water	24:101	0:0	8	1
+stmts	24:104	30:8	7	
+water	24:104	0:0	8	{
+water	25:12	0:0	8	ac
+op	25:14	0:0	8	->
+water	25:16	0:0	8	oc
+op	25:18	0:0	8	[
+water	25:19	0:0	8	1
+op	25:20	0:0	8	]
+op	25:21	0:0	8	.
+water	25:22	0:0	8	m4ac
+op	25:26	0:0	8	.
+water	25:27	0:0	8	sbr
+op	25:31	0:0	8	=
+water	25:33	0:0	8	1
+water	25:34	0:0	8	;
+water	26:12	0:0	8	ac
+op	26:14	0:0	8	->
+water	26:16	0:0	8	oc
+op	26:18	0:0	8	[
+water	26:19	0:0	8	1
+op	26:20	0:0	8	]
+op	26:21	0:0	8	.
+water	26:22	0:0	8	m4ac
+op	26:26	0:0	8	.
+water	26:27	0:0	8	ps
+op	26:30	0:0	8	=
+water	26:32	0:0	8	1
+water	26:33	0:0	8	;
+water	27:12	0:0	8	ac
+op	27:14	0:0	8	->
+water	27:16	0:0	8	avctx
+op	27:21	0:0	8	->
+water	27:23	0:0	8	profile
+op	27:31	0:0	8	=
+water	27:33	0:0	8	FF_PROFILE_AAC_HE_V2
+water	27:53	0:0	8	;
+call	28:12	29:48	8	output_configure
+arg	28:29	28:31	9	ac
+water	28:29	0:0	10	ac
+arg	28:33	28:53	9	ac->oc[1].layout_map
+water	28:33	0:0	10	ac
+op	28:35	0:0	10	->
+water	28:37	0:0	10	oc
+op	28:39	0:0	10	[
+water	28:40	0:0	10	1
+op	28:41	0:0	10	]
+op	28:42	0:0	10	.
+water	28:43	0:0	10	layout_map
+arg	28:55	28:80	9	ac->oc[1].layout_map_tags
+water	28:55	0:0	10	ac
+op	28:57	0:0	10	->
+water	28:59	0:0	10	oc
+op	28:61	0:0	10	[
+water	28:62	0:0	10	1
+op	28:63	0:0	10	]
+op	28:64	0:0	10	.
+water	28:65	0:0	10	layout_map_tags
+arg	29:29	29:45	9	ac->oc[1].status
+water	29:29	0:0	10	ac
+op	29:31	0:0	10	->
+water	29:33	0:0	10	oc
+op	29:35	0:0	10	[
+water	29:36	0:0	10	1
+op	29:37	0:0	10	]
+op	29:38	0:0	10	.
+water	29:39	0:0	10	status
+arg	29:47	29:48	9	1
+water	29:47	0:0	10	1
+water	29:49	0:0	8	;
+water	30:8	0:0	8	}
+else	30:10	33:8	4
+stmts	30:15	33:8	5	
+water	30:15	0:0	6	{
+water	31:12	0:0	6	ac
+op	31:14	0:0	6	->
+water	31:16	0:0	6	oc
+op	31:18	0:0	6	[
+water	31:19	0:0	6	1
+op	31:20	0:0	6	]
+op	31:21	0:0	6	.
+water	31:22	0:0	6	m4ac
+op	31:26	0:0	6	.
+water	31:27	0:0	6	sbr
+op	31:31	0:0	6	=
+water	31:33	0:0	6	1
+water	31:34	0:0	6	;
+water	32:12	0:0	6	ac
+op	32:14	0:0	6	->
+water	32:16	0:0	6	avctx
+op	32:21	0:0	6	->
+water	32:23	0:0	6	profile
+op	32:31	0:0	6	=
+water	32:33	0:0	6	FF_PROFILE_AAC_HE
+water	32:50	0:0	6	;
+water	33:8	0:0	6	}
+water	34:8	0:0	4	res
+op	34:12	0:0	4	=
+call	34:14	34:48	4	AAC_RENAME
+arg	34:25	34:48	5	ff_decode_sbr_extension
+water	34:25	0:0	6	ff_decode_sbr_extension
+water	34:49	0:0	4	(
+water	34:50	0:0	4	ac
+water	34:52	0:0	4	,
+op	34:54	0:0	4	&
+water	34:55	0:0	4	che
+op	34:58	0:0	4	->
+water	34:60	0:0	4	sbr
+water	34:63	0:0	4	,
+water	34:65	0:0	4	gb
+water	34:67	0:0	4	,
+water	34:69	0:0	4	crc_flag
+water	34:77	0:0	4	,
+water	34:79	0:0	4	cnt
+water	34:82	0:0	4	,
+water	34:84	0:0	4	elem_type
+water	34:93	0:0	4	)
+water	34:94	0:0	4	;
+break	35:8	35:13	4	
+label	36:4	36:26	4	case EXT_DYNAMIC_RANGE :
+water	37:8	0:0	4	res
+op	37:12	0:0	4	=
+call	37:14	37:51	4	decode_dynamic_range
+arg	37:35	37:47	5	&ac->che_drc
+op	37:35	0:0	6	&
+water	37:36	0:0	6	ac
+op	37:38	0:0	6	->
+water	37:40	0:0	6	che_drc
+arg	37:49	37:51	5	gb
+water	37:49	0:0	6	gb
+water	37:52	0:0	4	;
+break	38:8	38:13	4	
+label	39:4	39:17	4	case EXT_FILL :
+call	40:8	40:39	4	decode_fill
+arg	40:20	40:22	5	ac
+water	40:20	0:0	6	ac
+arg	40:24	40:26	5	gb
+water	40:24	0:0	6	gb
+arg	40:28	40:39	5	8*cnt-4
+water	40:28	0:0	6	8
+op	40:30	0:0	6	*
+water	40:32	0:0	6	cnt
+op	40:36	0:0	6	-
+water	40:38	0:0	6	4
+water	40:40	0:0	4	;
+break	41:8	41:13	4	
+label	42:4	42:22	4	case EXT_FILL_DATA :
+label	43:4	43:25	4	case EXT_DATA_ELEMENT :
+label	44:4	44:11	4	default :
+call	45:8	45:38	4	skip_bits_long
+arg	45:23	45:25	5	gb
+water	45:23	0:0	6	gb
+arg	45:27	45:38	5	8*cnt-4
+water	45:27	0:0	6	8
+op	45:29	0:0	6	*
+water	45:31	0:0	6	cnt
+op	45:35	0:0	6	-
+water	45:37	0:0	6	4
+water	45:39	0:0	4	;
+break	46:8	46:13	4	
+water	47:4	0:0	4	}
+water	47:5	0:0	2	;
+return	48:4	48:14	2	res
+water	48:11	0:0	3	res

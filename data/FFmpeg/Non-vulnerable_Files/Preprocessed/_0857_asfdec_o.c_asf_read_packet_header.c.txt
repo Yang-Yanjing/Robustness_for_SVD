@@ -1,0 +1,163 @@
+func	1:0	32:0	0	static int	asf_read_packet_header
+params	1:33	0:0	1	
+param	1:34	1:52	2	AVFormatContext *	s
+stmnts	0:0	31:12	1	
+decl	3:4	3:34	2	ASFContext	*asf
+op	3:20	0:0	2	=
+water	3:22	0:0	2	s
+op	3:23	0:0	2	->
+water	3:25	0:0	2	priv_data
+decl	4:4	4:27	2	AVIOContext	*pb
+op	4:20	0:0	2	=
+water	4:22	0:0	2	s
+op	4:23	0:0	2	->
+water	4:25	0:0	2	pb
+decl	5:4	5:17	2	uint64_t	size
+water	6:4	0:0	2	uint32_t
+water	6:13	0:0	2	av_unused
+water	6:23	0:0	2	seq
+water	6:26	0:0	2	;
+decl	7:4	7:51	2	unsigned char	error_flags
+water	7:29	0:0	2	,
+decl	7:4	7:51	2	unsigned char	len_flags
+water	7:40	0:0	2	,
+decl	7:4	7:51	2	unsigned char	pay_flags
+water	8:4	0:0	2	asf
+op	8:7	0:0	2	->
+water	8:9	0:0	2	packet_offset
+op	8:23	0:0	2	=
+call	8:25	8:37	2	avio_tell
+arg	8:35	8:37	3	pb
+water	8:35	0:0	4	pb
+water	8:38	0:0	2	;
+water	9:4	0:0	2	error_flags
+op	9:16	0:0	2	=
+call	9:18	9:28	2	avio_r8
+arg	9:26	9:28	3	pb
+water	9:26	0:0	4	pb
+water	9:29	0:0	2	;
+if	10:4	16:4	2	(error_flags & ASF_PACKET_FLAG_ERROR_CORRECTION_PRESENT)
+cond	10:8	10:22	3	error_flags & ASF_PACKET_FLAG_ERROR_CORRECTION_PRESENT
+water	10:8	0:0	4	error_flags
+op	10:20	0:0	4	&
+water	10:22	0:0	4	ASF_PACKET_FLAG_ERROR_CORRECTION_PRESENT
+stmts	10:64	16:4	3	
+water	10:64	0:0	4	{
+if	11:8	14:8	4	(! ( error_flags & ASF_ERROR_CORRECTION_LENGTH_TYPE ))
+cond	11:12	11:60	5	! ( error_flags & ASF_ERROR_CORRECTION_LENGTH_TYPE )
+op	11:12	0:0	6	!
+water	11:13	0:0	6	(
+water	11:14	0:0	6	error_flags
+op	11:26	0:0	6	&
+water	11:28	0:0	6	ASF_ERROR_CORRECTION_LENGTH_TYPE
+water	11:60	0:0	6	)
+stmts	11:63	14:8	5	
+water	11:63	0:0	6	{
+water	12:12	0:0	6	size
+op	12:17	0:0	6	=
+water	12:19	0:0	6	error_flags
+op	12:31	0:0	6	&
+water	12:33	0:0	6	ASF_PACKET_ERROR_CORRECTION_DATA_SIZE
+water	12:70	0:0	6	;
+call	13:12	13:30	6	avio_skip
+arg	13:22	13:24	7	pb
+water	13:22	0:0	8	pb
+arg	13:26	13:30	7	size
+water	13:26	0:0	8	size
+water	13:31	0:0	6	;
+water	14:8	0:0	6	}
+water	15:8	0:0	4	len_flags
+op	15:24	0:0	4	=
+call	15:26	15:36	4	avio_r8
+arg	15:34	15:36	5	pb
+water	15:34	0:0	6	pb
+water	15:37	0:0	4	;
+water	16:4	0:0	4	}
+else	16:6	17:31	2
+stmts	17:8	17:31	3	
+water	17:8	0:0	4	len_flags
+op	17:18	0:0	4	=
+water	17:20	0:0	4	error_flags
+water	17:31	0:0	4	;
+water	18:4	0:0	2	asf
+op	18:7	0:0	2	->
+water	18:9	0:0	2	prop_flags
+op	18:20	0:0	2	=
+call	18:22	18:32	2	avio_r8
+arg	18:30	18:32	3	pb
+water	18:30	0:0	4	pb
+water	18:33	0:0	2	;
+call	19:4	20:73	2	READ_LEN
+arg	19:13	19:62	3	len_flags&ASF_PPI_MASK_PACKET_LENGTH_FIELD_SIZE
+water	19:13	0:0	4	len_flags
+op	19:23	0:0	4	&
+water	19:25	0:0	4	ASF_PPI_MASK_PACKET_LENGTH_FIELD_SIZE
+arg	20:13	20:46	3	ASF_PPI_FLAG_PACKET_LENGTH_FIELD_
+water	20:13	0:0	4	ASF_PPI_FLAG_PACKET_LENGTH_FIELD_
+arg	20:48	20:73	3	asf->packet_size_internal
+water	20:48	0:0	4	asf
+op	20:51	0:0	4	->
+water	20:53	0:0	4	packet_size_internal
+water	20:74	0:0	2	;
+call	21:4	22:46	2	READ_LEN
+arg	21:13	21:57	3	len_flags&ASF_PPI_MASK_SEQUENCE_FIELD_SIZE
+water	21:13	0:0	4	len_flags
+op	21:23	0:0	4	&
+water	21:25	0:0	4	ASF_PPI_MASK_SEQUENCE_FIELD_SIZE
+arg	22:13	22:41	3	ASF_PPI_FLAG_SEQUENCE_FIELD_
+water	22:13	0:0	4	ASF_PPI_FLAG_SEQUENCE_FIELD_
+arg	22:43	22:46	3	seq
+water	22:43	0:0	4	seq
+water	22:47	0:0	2	;
+call	23:4	24:62	2	READ_LEN
+arg	23:13	23:63	3	len_flags&ASF_PPI_MASK_PADDING_LENGTH_FIELD_SIZE
+water	23:13	0:0	4	len_flags
+op	23:23	0:0	4	&
+water	23:25	0:0	4	ASF_PPI_MASK_PADDING_LENGTH_FIELD_SIZE
+arg	24:13	24:47	3	ASF_PPI_FLAG_PADDING_LENGTH_FIELD_
+water	24:13	0:0	4	ASF_PPI_FLAG_PADDING_LENGTH_FIELD_
+arg	24:49	24:62	3	asf->pad_len
+water	24:49	0:0	4	asf
+op	24:52	0:0	4	->
+water	24:54	0:0	4	pad_len
+water	24:63	0:0	2	;
+water	25:4	0:0	2	asf
+op	25:7	0:0	2	->
+water	25:9	0:0	2	send_time
+op	25:19	0:0	2	=
+call	25:21	25:33	2	avio_rl32
+arg	25:31	25:33	3	pb
+water	25:31	0:0	4	pb
+water	25:34	0:0	2	;
+call	26:4	26:19	2	avio_skip
+arg	26:14	26:16	3	pb
+water	26:14	0:0	4	pb
+arg	26:18	26:19	3	2
+water	26:18	0:0	4	2
+water	26:20	0:0	2	;
+if	27:4	30:4	2	(len_flags & ASF_PPI_FLAG_MULTIPLE_PAYLOADS_PRESENT)
+cond	27:8	27:20	3	len_flags & ASF_PPI_FLAG_MULTIPLE_PAYLOADS_PRESENT
+water	27:8	0:0	4	len_flags
+op	27:18	0:0	4	&
+water	27:20	0:0	4	ASF_PPI_FLAG_MULTIPLE_PAYLOADS_PRESENT
+stmts	27:60	30:4	3	
+water	27:60	0:0	4	{
+water	28:8	0:0	4	pay_flags
+op	28:18	0:0	4	=
+call	28:20	28:30	4	avio_r8
+arg	28:28	28:30	5	pb
+water	28:28	0:0	6	pb
+water	28:31	0:0	4	;
+water	29:8	0:0	4	asf
+op	29:11	0:0	4	->
+water	29:13	0:0	4	nb_mult_left
+op	29:26	0:0	4	=
+water	29:28	0:0	4	(
+water	29:29	0:0	4	pay_flags
+op	29:39	0:0	4	&
+water	29:41	0:0	4	ASF_NUM_OF_PAYLOADS
+water	29:60	0:0	4	)
+water	29:61	0:0	4	;
+water	30:4	0:0	4	}
+return	31:4	31:12	2	0
+water	31:11	0:0	3	0

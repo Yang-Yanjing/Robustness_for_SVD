@@ -1,0 +1,533 @@
+func	1:0	86:0	0	static int	mkv_write_trailer
+params	1:28	0:0	1	
+param	1:29	1:47	2	AVFormatContext *	s
+stmnts	0:0	85:12	1	
+decl	3:4	3:42	2	MatroskaMuxContext	*mkv
+op	3:28	0:0	2	=
+water	3:30	0:0	2	s
+op	3:31	0:0	2	->
+water	3:33	0:0	2	priv_data
+decl	4:4	4:27	2	AVIOContext	*pb
+op	4:20	0:0	2	=
+water	4:22	0:0	2	s
+op	4:23	0:0	2	->
+water	4:25	0:0	2	pb
+decl	5:4	5:31	2	int64_t	currentpos
+water	5:22	0:0	2	,
+decl	5:4	5:31	2	int64_t	cuespos
+decl	6:4	6:11	2	int	ret
+if	8:4	16:4	2	(mkv -> cur_audio_pkt . size > 0)
+cond	8:8	8:34	3	mkv -> cur_audio_pkt . size > 0
+water	8:8	0:0	4	mkv
+op	8:11	0:0	4	->
+water	8:13	0:0	4	cur_audio_pkt
+op	8:26	0:0	4	.
+water	8:27	0:0	4	size
+op	8:32	0:0	4	>
+water	8:34	0:0	4	0
+stmts	8:37	16:4	3	
+water	8:37	0:0	4	{
+water	9:8	0:0	4	ret
+op	9:12	0:0	4	=
+call	9:14	9:65	4	mkv_write_packet_internal
+arg	9:40	9:41	5	s
+water	9:40	0:0	6	s
+arg	9:43	9:62	5	&mkv->cur_audio_pkt
+op	9:43	0:0	6	&
+water	9:44	0:0	6	mkv
+op	9:47	0:0	6	->
+water	9:49	0:0	6	cur_audio_pkt
+arg	9:64	9:65	5	0
+water	9:64	0:0	6	0
+water	9:66	0:0	4	;
+call	10:8	10:42	4	av_free_packet
+arg	10:23	10:42	5	&mkv->cur_audio_pkt
+op	10:23	0:0	6	&
+water	10:24	0:0	6	mkv
+op	10:27	0:0	6	->
+water	10:29	0:0	6	cur_audio_pkt
+water	10:43	0:0	4	;
+if	11:8	15:8	4	(ret < 0)
+cond	11:12	11:18	5	ret < 0
+water	11:12	0:0	6	ret
+op	11:16	0:0	6	<
+water	11:18	0:0	6	0
+stmts	11:21	15:8	5	
+water	11:21	0:0	6	{
+call	12:12	13:70	6	av_log
+arg	12:19	12:20	7	s
+water	12:19	0:0	8	s
+arg	12:22	12:34	7	AV_LOG_ERROR
+water	12:22	0:0	8	AV_LOG_ERROR
+arg	13:19	13:65	7	"Could not write cached audio packet ret:%d\n"
+water	13:19	0:0	8	"Could not write cached audio packet ret:%d\n"
+arg	13:67	13:70	7	ret
+water	13:67	0:0	8	ret
+water	13:71	0:0	6	;
+return	14:12	14:22	6	ret
+water	14:19	0:0	7	ret
+water	15:8	0:0	6	}
+water	16:4	0:0	4	}
+if	17:4	20:4	2	(mkv -> dyn_bc)
+cond	17:8	17:13	3	mkv -> dyn_bc
+water	17:8	0:0	4	mkv
+op	17:11	0:0	4	->
+water	17:13	0:0	4	dyn_bc
+stmts	17:21	20:4	3	
+water	17:21	0:0	4	{
+call	18:8	18:49	4	end_ebml_master
+arg	18:24	18:35	5	mkv->dyn_bc
+water	18:24	0:0	6	mkv
+op	18:27	0:0	6	->
+water	18:29	0:0	6	dyn_bc
+arg	18:37	18:49	5	mkv->cluster
+water	18:37	0:0	6	mkv
+op	18:40	0:0	6	->
+water	18:42	0:0	6	cluster
+water	18:50	0:0	4	;
+call	19:8	19:26	4	mkv_flush_dynbuf
+arg	19:25	19:26	5	s
+water	19:25	0:0	6	s
+water	19:27	0:0	4	;
+water	20:4	0:0	4	}
+else	20:6	22:4	2
+stmts	20:11	22:4	3	
+if	20:11	22:4	4	(mkv -> cluster_pos != - 1)
+cond	20:15	20:36	5	mkv -> cluster_pos != - 1
+water	20:15	0:0	6	mkv
+op	20:18	0:0	6	->
+water	20:20	0:0	6	cluster_pos
+op	20:32	0:0	6	!=
+op	20:35	0:0	6	-
+water	20:36	0:0	6	1
+stmts	20:39	22:4	5	
+water	20:39	0:0	6	{
+call	21:8	21:40	6	end_ebml_master
+arg	21:24	21:26	7	pb
+water	21:24	0:0	8	pb
+arg	21:28	21:40	7	mkv->cluster
+water	21:28	0:0	8	mkv
+op	21:31	0:0	8	->
+water	21:33	0:0	8	cluster
+water	21:41	0:0	6	;
+water	22:4	0:0	6	}
+if	23:4	27:4	2	(mkv -> mode != MODE_WEBM)
+cond	23:8	23:21	3	mkv -> mode != MODE_WEBM
+water	23:8	0:0	4	mkv
+op	23:11	0:0	4	->
+water	23:13	0:0	4	mode
+op	23:18	0:0	4	!=
+water	23:21	0:0	4	MODE_WEBM
+stmts	23:32	27:4	3	
+water	23:32	0:0	4	{
+water	24:8	0:0	4	ret
+op	24:12	0:0	4	=
+call	24:14	24:34	4	mkv_write_chapters
+arg	24:33	24:34	5	s
+water	24:33	0:0	6	s
+water	24:35	0:0	4	;
+if	25:8	26:22	4	(ret < 0)
+cond	25:12	25:18	5	ret < 0
+water	25:12	0:0	6	ret
+op	25:16	0:0	6	<
+water	25:18	0:0	6	0
+stmts	26:12	26:22	5	
+return	26:12	26:22	6	ret
+water	26:19	0:0	7	ret
+water	27:4	0:0	4	}
+if	28:4	80:4	2	(pb -> seekable)
+cond	28:8	28:12	3	pb -> seekable
+water	28:8	0:0	4	pb
+op	28:10	0:0	4	->
+water	28:12	0:0	4	seekable
+stmts	28:22	80:4	3	
+water	28:22	0:0	4	{
+if	29:8	54:8	4	(mkv -> cues -> num_entries)
+cond	29:12	29:23	5	mkv -> cues -> num_entries
+water	29:12	0:0	6	mkv
+op	29:15	0:0	6	->
+water	29:17	0:0	6	cues
+op	29:21	0:0	6	->
+water	29:23	0:0	6	num_entries
+stmts	29:36	54:8	5	
+water	29:36	0:0	6	{
+if	30:12	47:12	6	(mkv -> reserve_cues_space)
+cond	30:16	30:21	7	mkv -> reserve_cues_space
+water	30:16	0:0	8	mkv
+op	30:19	0:0	8	->
+water	30:21	0:0	8	reserve_cues_space
+stmts	30:41	47:12	7	
+water	30:41	0:0	8	{
+decl	31:16	31:32	8	int64_t	cues_end
+water	32:16	0:0	8	currentpos
+op	32:27	0:0	8	=
+call	32:29	32:41	8	avio_tell
+arg	32:39	32:41	9	pb
+water	32:39	0:0	10	pb
+water	32:42	0:0	8	;
+call	33:16	33:53	8	avio_seek
+arg	33:26	33:28	9	pb
+water	33:26	0:0	10	pb
+arg	33:30	33:43	9	mkv->cues_pos
+water	33:30	0:0	10	mkv
+op	33:33	0:0	10	->
+water	33:35	0:0	10	cues_pos
+arg	33:45	33:53	9	SEEK_SET
+water	33:45	0:0	10	SEEK_SET
+water	33:54	0:0	8	;
+water	34:16	0:0	8	cuespos
+op	34:25	0:0	8	=
+call	34:27	34:82	8	mkv_write_cues
+arg	34:42	34:43	9	s
+water	34:42	0:0	10	s
+arg	34:45	34:54	9	mkv->cues
+water	34:45	0:0	10	mkv
+op	34:48	0:0	10	->
+water	34:50	0:0	10	cues
+arg	34:56	34:67	9	mkv->tracks
+water	34:56	0:0	10	mkv
+op	34:59	0:0	10	->
+water	34:61	0:0	10	tracks
+arg	34:69	34:82	9	s->nb_streams
+water	34:69	0:0	10	s
+op	34:70	0:0	10	->
+water	34:72	0:0	10	nb_streams
+water	34:83	0:0	8	;
+water	35:16	0:0	8	cues_end
+op	35:25	0:0	8	=
+call	35:27	35:39	8	avio_tell
+arg	35:37	35:39	9	pb
+water	35:37	0:0	10	pb
+water	35:40	0:0	8	;
+if	36:16	42:16	8	(cues_end > cuespos + mkv -> reserve_cues_space)
+cond	36:20	36:46	9	cues_end > cuespos + mkv -> reserve_cues_space
+water	36:20	0:0	10	cues_end
+op	36:29	0:0	10	>
+water	36:31	0:0	10	cuespos
+op	36:39	0:0	10	+
+water	36:41	0:0	10	mkv
+op	36:44	0:0	10	->
+water	36:46	0:0	10	reserve_cues_space
+stmts	36:66	42:16	9	
+water	36:66	0:0	10	{
+call	37:20	40:70	10	av_log
+arg	37:27	37:28	11	s
+water	37:27	0:0	12	s
+arg	37:30	37:42	11	AV_LOG_ERROR
+water	37:30	0:0	12	AV_LOG_ERROR
+arg	38:27	39:53	11	"Insufficient space reserved for cues: %d ""(needed: %"PRId64").\n"
+water	38:27	0:0	12	"Insufficient space reserved for cues: %d "
+water	39:27	0:0	12	"(needed: %"
+water	39:40	0:0	12	PRId64
+water	39:47	0:0	12	").\n"
+arg	40:27	40:50	11	mkv->reserve_cues_space
+water	40:27	0:0	12	mkv
+op	40:30	0:0	12	->
+water	40:32	0:0	12	reserve_cues_space
+arg	40:52	40:70	11	cues_end-cuespos
+water	40:52	0:0	12	cues_end
+op	40:61	0:0	12	-
+water	40:63	0:0	12	cuespos
+water	40:71	0:0	10	;
+return	41:20	41:42	10	AVERROR(EINVAL)
+call	41:27	41:41	11	AVERROR
+arg	41:35	41:41	12	EINVAL
+water	41:35	0:0	13	EINVAL
+water	42:16	0:0	10	}
+if	43:16	45:55	8	(cues_end < cuespos + mkv -> reserve_cues_space)
+cond	43:20	43:46	9	cues_end < cuespos + mkv -> reserve_cues_space
+water	43:20	0:0	10	cues_end
+op	43:29	0:0	10	<
+water	43:31	0:0	10	cuespos
+op	43:39	0:0	10	+
+water	43:41	0:0	10	mkv
+op	43:44	0:0	10	->
+water	43:46	0:0	10	reserve_cues_space
+stmts	44:20	45:55	9	
+call	44:20	45:54	10	put_ebml_void
+arg	44:34	44:36	11	pb
+water	44:34	0:0	12	pb
+arg	44:38	45:54	11	mkv->reserve_cues_space-(cues_end-cuespos)
+water	44:38	0:0	12	mkv
+op	44:41	0:0	12	->
+water	44:43	0:0	12	reserve_cues_space
+op	44:62	0:0	12	-
+water	45:34	0:0	12	(
+water	45:35	0:0	12	cues_end
+op	45:44	0:0	12	-
+water	45:46	0:0	12	cuespos
+water	45:53	0:0	12	)
+water	45:55	0:0	10	;
+call	46:16	46:50	8	avio_seek
+arg	46:26	46:28	9	pb
+water	46:26	0:0	10	pb
+arg	46:30	46:40	9	currentpos
+water	46:30	0:0	10	currentpos
+arg	46:42	46:50	9	SEEK_SET
+water	46:42	0:0	10	SEEK_SET
+water	46:51	0:0	8	;
+water	47:12	0:0	8	}
+else	47:14	49:12	6
+stmts	47:19	49:12	7	
+water	47:19	0:0	8	{
+water	48:16	0:0	8	cuespos
+op	48:24	0:0	8	=
+call	48:26	48:81	8	mkv_write_cues
+arg	48:41	48:42	9	s
+water	48:41	0:0	10	s
+arg	48:44	48:53	9	mkv->cues
+water	48:44	0:0	10	mkv
+op	48:47	0:0	10	->
+water	48:49	0:0	10	cues
+arg	48:55	48:66	9	mkv->tracks
+water	48:55	0:0	10	mkv
+op	48:58	0:0	10	->
+water	48:60	0:0	10	tracks
+arg	48:68	48:81	9	s->nb_streams
+water	48:68	0:0	10	s
+op	48:69	0:0	10	->
+water	48:71	0:0	10	nb_streams
+water	48:82	0:0	8	;
+water	49:12	0:0	8	}
+water	50:12	0:0	6	ret
+op	50:16	0:0	6	=
+call	50:18	51:48	6	mkv_add_seekhead_entry
+arg	50:41	50:59	7	mkv->main_seekhead
+water	50:41	0:0	8	mkv
+op	50:44	0:0	8	->
+water	50:46	0:0	8	main_seekhead
+arg	50:61	50:77	7	MATROSKA_ID_CUES
+water	50:61	0:0	8	MATROSKA_ID_CUES
+arg	51:41	51:48	7	cuespos
+water	51:41	0:0	8	cuespos
+water	51:49	0:0	6	;
+if	52:12	53:26	6	(ret < 0)
+cond	52:16	52:22	7	ret < 0
+water	52:16	0:0	8	ret
+op	52:20	0:0	8	<
+water	52:22	0:0	8	0
+stmts	53:16	53:26	7	
+return	53:16	53:26	8	ret
+water	53:23	0:0	9	ret
+water	54:8	0:0	6	}
+call	55:8	55:34	4	mkv_write_seekhead
+arg	55:27	55:29	5	pb
+water	55:27	0:0	6	pb
+arg	55:31	55:34	5	mkv
+water	55:31	0:0	6	mkv
+water	55:35	0:0	4	;
+call	57:8	57:77	4	av_log
+arg	57:15	57:16	5	s
+water	57:15	0:0	6	s
+arg	57:18	57:30	5	AV_LOG_DEBUG
+water	57:18	0:0	6	AV_LOG_DEBUG
+arg	57:32	57:62	5	"end duration = %"PRIu64"\n"
+water	57:32	0:0	6	"end duration = %"
+water	57:51	0:0	6	PRIu64
+water	57:58	0:0	6	"\n"
+arg	57:64	57:77	5	mkv->duration
+water	57:64	0:0	6	mkv
+op	57:67	0:0	6	->
+water	57:69	0:0	6	duration
+water	57:78	0:0	4	;
+water	58:8	0:0	4	currentpos
+op	58:19	0:0	4	=
+call	58:21	58:33	4	avio_tell
+arg	58:31	58:33	5	pb
+water	58:31	0:0	6	pb
+water	58:34	0:0	4	;
+call	59:8	59:52	4	avio_seek
+arg	59:18	59:20	5	pb
+water	59:18	0:0	6	pb
+arg	59:22	59:42	5	mkv->duration_offset
+water	59:22	0:0	6	mkv
+op	59:25	0:0	6	->
+water	59:27	0:0	6	duration_offset
+arg	59:44	59:52	5	SEEK_SET
+water	59:44	0:0	6	SEEK_SET
+water	59:53	0:0	4	;
+call	60:8	60:62	4	put_ebml_float
+arg	60:23	60:25	5	pb
+water	60:23	0:0	6	pb
+arg	60:27	60:47	5	MATROSKA_ID_DURATION
+water	60:27	0:0	6	MATROSKA_ID_DURATION
+arg	60:49	60:62	5	mkv->duration
+water	60:49	0:0	6	mkv
+op	60:52	0:0	6	->
+water	60:54	0:0	6	duration
+water	60:63	0:0	4	;
+if	62:8	78:8	4	(mkv -> stream_durations)
+cond	62:12	62:17	5	mkv -> stream_durations
+water	62:12	0:0	6	mkv
+op	62:15	0:0	6	->
+water	62:17	0:0	6	stream_durations
+stmts	62:35	78:8	5	
+water	62:35	0:0	6	{
+decl	63:12	63:17	6	int	i
+for	64:12	77:12	6	(i = 0 ;i < s -> nb_streams;++ i)
+forinit	64:17	64:22	7	i = 0 ;
+water	64:17	0:0	8	i
+op	64:19	0:0	8	=
+water	64:21	0:0	8	0
+water	64:22	0:0	8	;
+cond	64:24	64:31	7	i < s -> nb_streams
+water	64:24	0:0	8	i
+op	64:26	0:0	8	<
+water	64:28	0:0	8	s
+op	64:29	0:0	8	->
+water	64:31	0:0	8	nb_streams
+forexpr	64:43	64:45	7	++ i
+op	64:43	0:0	8	++
+water	64:45	0:0	8	i
+stmts	64:48	77:12	7	
+water	64:48	0:0	8	{
+decl	65:16	65:44	8	AVStream	*st
+op	65:29	0:0	8	=
+water	65:31	0:0	8	s
+op	65:32	0:0	8	->
+water	65:34	0:0	8	streams
+op	65:41	0:0	8	[
+water	65:42	0:0	8	i
+op	65:43	0:0	8	]
+decl	66:16	66:86	8	double	duration_sec
+op	66:36	0:0	8	=
+water	66:38	0:0	8	mkv
+op	66:41	0:0	8	->
+water	66:43	0:0	8	stream_durations
+op	66:59	0:0	8	[
+water	66:60	0:0	8	i
+op	66:61	0:0	8	]
+call	66:63	66:85	9	*av_q2d
+arg	66:72	66:85	10	st->time_base
+water	66:72	0:0	11	st
+op	66:74	0:0	11	->
+water	66:76	0:0	11	time_base
+decl	67:16	67:45	8	char	duration_string[20]
+op	67:41	0:0	8	=
+water	67:43	0:0	8	""
+call	68:16	69:47	8	av_log
+arg	68:23	68:24	9	s
+water	68:23	0:0	10	s
+arg	68:26	68:38	9	AV_LOG_DEBUG
+water	68:26	0:0	10	AV_LOG_DEBUG
+arg	68:40	68:80	9	"stream %d end duration = %"PRIu64"\n"
+water	68:40	0:0	10	"stream %d end duration = %"
+water	68:69	0:0	10	PRIu64
+water	68:76	0:0	10	"\n"
+arg	68:82	68:83	9	i
+water	68:82	0:0	10	i
+arg	69:23	69:47	9	mkv->stream_durations[i]
+water	69:23	0:0	10	mkv
+op	69:26	0:0	10	->
+water	69:28	0:0	10	stream_durations
+op	69:44	0:0	10	[
+water	69:45	0:0	10	i
+op	69:46	0:0	10	]
+water	69:48	0:0	8	;
+if	70:16	76:16	8	(! mkv -> is_live && mkv -> stream_duration_offsets [ i ] > 0)
+cond	70:20	70:71	9	! mkv -> is_live && mkv -> stream_duration_offsets [ i ] > 0
+op	70:20	0:0	10	!
+water	70:21	0:0	10	mkv
+op	70:24	0:0	10	->
+water	70:26	0:0	10	is_live
+op	70:34	0:0	10	&&
+water	70:37	0:0	10	mkv
+op	70:40	0:0	10	->
+water	70:42	0:0	10	stream_duration_offsets
+op	70:65	0:0	10	[
+water	70:66	0:0	10	i
+op	70:67	0:0	10	]
+op	70:69	0:0	10	>
+water	70:71	0:0	10	0
+stmts	70:74	76:16	9	
+water	70:74	0:0	10	{
+call	71:20	71:75	10	avio_seek
+arg	71:30	71:32	11	pb
+water	71:30	0:0	12	pb
+arg	71:34	71:65	11	mkv->stream_duration_offsets[i]
+water	71:34	0:0	12	mkv
+op	71:37	0:0	12	->
+water	71:39	0:0	12	stream_duration_offsets
+op	71:62	0:0	12	[
+water	71:63	0:0	12	i
+op	71:64	0:0	12	]
+arg	71:67	71:75	11	SEEK_SET
+water	71:67	0:0	12	SEEK_SET
+water	71:76	0:0	10	;
+call	72:20	74:51	10	snprintf
+arg	72:29	72:44	11	duration_string
+water	72:29	0:0	12	duration_string
+arg	72:46	72:48	11	20
+water	72:46	0:0	12	20
+arg	72:50	72:69	11	"%02d:%02d:%012.9f"
+water	72:50	0:0	12	"%02d:%02d:%012.9f"
+arg	73:29	73:54	11	(int)duration_sec/3600
+water	73:29	0:0	12	(
+water	73:30	0:0	12	int
+water	73:33	0:0	12	)
+water	73:35	0:0	12	duration_sec
+op	73:48	0:0	12	/
+water	73:50	0:0	12	3600
+arg	73:56	73:86	11	((int)duration_sec/60)%60
+water	73:56	0:0	12	(
+water	73:57	0:0	12	(
+water	73:58	0:0	12	int
+water	73:61	0:0	12	)
+water	73:63	0:0	12	duration_sec
+op	73:76	0:0	12	/
+water	73:78	0:0	12	60
+water	73:80	0:0	12	)
+op	73:82	0:0	12	%
+water	73:84	0:0	12	60
+arg	74:29	74:51	11	fmod(duration_sec,60)
+call	74:29	74:50	12	fmod
+arg	74:34	74:46	13	duration_sec
+water	74:34	0:0	14	duration_sec
+arg	74:48	74:50	13	60
+water	74:48	0:0	14	60
+water	74:52	0:0	10	;
+call	75:20	75:82	10	put_ebml_binary
+arg	75:36	75:38	11	pb
+water	75:36	0:0	12	pb
+arg	75:40	75:61	11	MATROSKA_ID_TAGSTRING
+water	75:40	0:0	12	MATROSKA_ID_TAGSTRING
+arg	75:63	75:78	11	duration_string
+water	75:63	0:0	12	duration_string
+arg	75:80	75:82	11	20
+water	75:80	0:0	12	20
+water	75:83	0:0	10	;
+water	76:16	0:0	10	}
+water	77:12	0:0	8	}
+water	78:8	0:0	6	}
+call	79:8	79:42	4	avio_seek
+arg	79:18	79:20	5	pb
+water	79:18	0:0	6	pb
+arg	79:22	79:32	5	currentpos
+water	79:22	0:0	6	currentpos
+arg	79:34	79:42	5	SEEK_SET
+water	79:34	0:0	6	SEEK_SET
+water	79:43	0:0	4	;
+water	80:4	0:0	4	}
+if	81:4	83:4	2	(! mkv -> is_live)
+cond	81:8	81:14	3	! mkv -> is_live
+op	81:8	0:0	4	!
+water	81:9	0:0	4	mkv
+op	81:12	0:0	4	->
+water	81:14	0:0	4	is_live
+stmts	81:23	83:4	3	
+water	81:23	0:0	4	{
+call	82:8	82:40	4	end_ebml_master
+arg	82:24	82:26	5	pb
+water	82:24	0:0	6	pb
+arg	82:28	82:40	5	mkv->segment
+water	82:28	0:0	6	mkv
+op	82:31	0:0	6	->
+water	82:33	0:0	6	segment
+water	82:41	0:0	4	;
+water	83:4	0:0	4	}
+call	84:4	84:16	2	mkv_free
+arg	84:13	84:16	3	mkv
+water	84:13	0:0	4	mkv
+water	84:17	0:0	2	;
+return	85:4	85:12	2	0
+water	85:11	0:0	3	0

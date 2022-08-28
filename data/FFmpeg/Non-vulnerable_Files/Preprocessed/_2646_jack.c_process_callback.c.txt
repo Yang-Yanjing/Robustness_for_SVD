@@ -1,0 +1,283 @@
+func	1:0	48:0	0	static int	process_callback
+params	1:27	0:0	1	
+param	1:28	1:50	2	jack_nframes_t	nframes
+param	1:52	1:61	2	void *	arg
+stmnts	0:0	47:12	1	
+decl	5:4	5:12	2	int	i
+water	5:9	0:0	2	,
+decl	5:4	5:12	2	int	j
+decl	6:4	6:24	2	JackData	*self
+op	6:19	0:0	2	=
+water	6:21	0:0	2	arg
+decl	7:4	7:18	2	float	*buffer
+decl	8:4	8:39	2	jack_nframes_t	latency
+water	8:26	0:0	2	,
+decl	8:4	8:39	2	jack_nframes_t	cycle_delay
+decl	9:4	9:16	2	AVPacket	pkt
+decl	10:4	10:19	2	float	*pkt_data
+decl	11:4	11:21	2	double	cycle_time
+if	12:4	13:16	2	(! self -> client)
+cond	12:8	12:15	3	! self -> client
+op	12:8	0:0	4	!
+water	12:9	0:0	4	self
+op	12:13	0:0	4	->
+water	12:15	0:0	4	client
+stmts	13:8	13:16	3	
+return	13:8	13:16	4	0
+water	13:15	0:0	5	0
+water	15:4	0:0	2	cycle_delay
+op	15:16	0:0	2	=
+call	15:18	15:60	2	jack_frames_since_cycle_start
+arg	15:48	15:60	3	self->client
+water	15:48	0:0	4	self
+op	15:52	0:0	4	->
+water	15:54	0:0	4	client
+water	15:61	0:0	2	;
+water	17:4	0:0	2	cycle_time
+op	17:15	0:0	2	=
+call	17:17	19:55	2	ff_timefilter_update
+arg	17:38	17:54	3	self->timefilter
+water	17:38	0:0	4	self
+op	17:42	0:0	4	->
+water	17:44	0:0	4	timefilter
+arg	18:38	18:105	3	av_gettime()/1000000.0-(double)cycle_delay/self->sample_rate
+call	18:38	18:49	4	av_gettime
+op	18:51	0:0	4	/
+water	18:53	0:0	4	1000000
+op	18:60	0:0	4	.
+water	18:61	0:0	4	0
+op	18:63	0:0	4	-
+water	18:65	0:0	4	(
+water	18:66	0:0	4	double
+water	18:72	0:0	4	)
+water	18:74	0:0	4	cycle_delay
+op	18:86	0:0	4	/
+water	18:88	0:0	4	self
+op	18:92	0:0	4	->
+water	18:94	0:0	4	sample_rate
+arg	19:38	19:55	3	self->buffer_size
+water	19:38	0:0	4	self
+op	19:42	0:0	4	->
+water	19:44	0:0	4	buffer_size
+water	19:56	0:0	2	;
+if	21:4	24:4	2	((av_fifo_size (self -> new_pkts ) < sizeof ( pkt ) ) || (av_fifo_space (self -> filled_pkts ) < sizeof ( pkt ) ))
+cond	21:8	21:103	3	(av_fifo_size (self -> new_pkts ) < sizeof ( pkt ) ) || (av_fifo_space (self -> filled_pkts ) < sizeof ( pkt ) )
+water	21:8	0:0	4	(
+call	21:9	21:36	4	av_fifo_size
+arg	21:22	21:36	5	self->new_pkts
+water	21:22	0:0	6	self
+op	21:26	0:0	6	->
+water	21:28	0:0	6	new_pkts
+op	21:38	0:0	4	<
+op	21:40	0:0	4	sizeof
+water	21:46	0:0	4	(
+water	21:47	0:0	4	pkt
+water	21:50	0:0	4	)
+water	21:51	0:0	4	)
+op	21:53	0:0	4	||
+water	21:56	0:0	4	(
+call	21:57	21:88	4	av_fifo_space
+arg	21:71	21:88	5	self->filled_pkts
+water	21:71	0:0	6	self
+op	21:75	0:0	6	->
+water	21:77	0:0	6	filled_pkts
+op	21:90	0:0	4	<
+op	21:92	0:0	4	sizeof
+water	21:98	0:0	4	(
+water	21:99	0:0	4	pkt
+water	21:102	0:0	4	)
+water	21:103	0:0	4	)
+stmts	21:106	24:4	3	
+water	21:106	0:0	4	{
+water	22:8	0:0	4	self
+op	22:12	0:0	4	->
+water	22:14	0:0	4	pkt_xrun
+op	22:23	0:0	4	=
+water	22:25	0:0	4	1
+water	22:26	0:0	4	;
+return	23:8	23:16	4	0
+water	23:15	0:0	5	0
+water	24:4	0:0	4	}
+call	26:4	26:64	2	av_fifo_generic_read
+arg	26:25	26:39	3	self->new_pkts
+water	26:25	0:0	4	self
+op	26:29	0:0	4	->
+water	26:31	0:0	4	new_pkts
+arg	26:41	26:45	3	&pkt
+op	26:41	0:0	4	&
+water	26:42	0:0	4	pkt
+arg	26:47	26:58	3	sizeof(pkt)
+op	26:47	0:0	4	sizeof
+water	26:53	0:0	4	(
+water	26:54	0:0	4	pkt
+water	26:57	0:0	4	)
+arg	26:60	26:64	3	NULL
+water	26:60	0:0	4	NULL
+water	26:65	0:0	2	;
+water	27:4	0:0	2	pkt_data
+op	27:14	0:0	2	=
+water	27:16	0:0	2	(
+water	27:17	0:0	2	float
+op	27:23	0:0	2	*
+water	27:24	0:0	2	)
+water	27:26	0:0	2	pkt
+op	27:29	0:0	2	.
+water	27:30	0:0	2	data
+water	27:34	0:0	2	;
+water	28:4	0:0	2	latency
+op	28:14	0:0	2	=
+water	28:16	0:0	2	0
+water	28:17	0:0	2	;
+for	30:4	41:4	2	(i = 0 ;i < self -> nports;i ++)
+forinit	30:9	30:14	3	i = 0 ;
+water	30:9	0:0	4	i
+op	30:11	0:0	4	=
+water	30:13	0:0	4	0
+water	30:14	0:0	4	;
+cond	30:16	30:26	3	i < self -> nports
+water	30:16	0:0	4	i
+op	30:18	0:0	4	<
+water	30:20	0:0	4	self
+op	30:24	0:0	4	->
+water	30:26	0:0	4	nports
+forexpr	30:34	30:35	3	i ++
+water	30:34	0:0	4	i
+op	30:35	0:0	4	++
+stmts	30:39	41:4	3	
+water	30:39	0:0	4	{
+decl	32:8	32:34	4	jack_latency_range_t	range
+call	33:8	33:78	4	jack_port_get_latency_range
+arg	33:36	33:50	5	self->ports[i]
+water	33:36	0:0	6	self
+op	33:40	0:0	6	->
+water	33:42	0:0	6	ports
+op	33:47	0:0	6	[
+water	33:48	0:0	6	i
+op	33:49	0:0	6	]
+arg	33:52	33:70	5	JackCaptureLatency
+water	33:52	0:0	6	JackCaptureLatency
+arg	33:72	33:78	5	&range
+op	33:72	0:0	6	&
+water	33:73	0:0	6	range
+water	33:79	0:0	4	;
+water	34:8	0:0	4	latency
+op	34:16	0:0	4	+=
+water	34:19	0:0	4	range
+op	34:24	0:0	4	.
+water	34:25	0:0	4	max
+water	34:28	0:0	4	;
+water	36:8	0:0	4	latency
+op	36:16	0:0	4	+=
+call	36:19	36:75	4	jack_port_get_total_latency
+arg	36:47	36:59	5	self->client
+water	36:47	0:0	6	self
+op	36:51	0:0	6	->
+water	36:53	0:0	6	client
+arg	36:61	36:75	5	self->ports[i]
+water	36:61	0:0	6	self
+op	36:65	0:0	6	->
+water	36:67	0:0	6	ports
+op	36:72	0:0	6	[
+water	36:73	0:0	6	i
+op	36:74	0:0	6	]
+water	36:76	0:0	4	;
+water	38:8	0:0	4	buffer
+op	38:15	0:0	4	=
+call	38:17	38:71	4	jack_port_get_buffer
+arg	38:38	38:52	5	self->ports[i]
+water	38:38	0:0	6	self
+op	38:42	0:0	6	->
+water	38:44	0:0	6	ports
+op	38:49	0:0	6	[
+water	38:50	0:0	6	i
+op	38:51	0:0	6	]
+arg	38:54	38:71	5	self->buffer_size
+water	38:54	0:0	6	self
+op	38:58	0:0	6	->
+water	38:60	0:0	6	buffer_size
+water	38:72	0:0	4	;
+for	39:8	40:54	4	(j = 0 ;j < self -> buffer_size;j ++)
+forinit	39:13	39:18	5	j = 0 ;
+water	39:13	0:0	6	j
+op	39:15	0:0	6	=
+water	39:17	0:0	6	0
+water	39:18	0:0	6	;
+cond	39:20	39:30	5	j < self -> buffer_size
+water	39:20	0:0	6	j
+op	39:22	0:0	6	<
+water	39:24	0:0	6	self
+op	39:28	0:0	6	->
+water	39:30	0:0	6	buffer_size
+forexpr	39:43	39:44	5	j ++
+water	39:43	0:0	6	j
+op	39:44	0:0	6	++
+stmts	40:12	40:54	5	
+water	40:12	0:0	6	pkt_data
+op	40:20	0:0	6	[
+water	40:21	0:0	6	j
+op	40:23	0:0	6	*
+water	40:25	0:0	6	self
+op	40:29	0:0	6	->
+water	40:31	0:0	6	nports
+op	40:38	0:0	6	+
+water	40:40	0:0	6	i
+op	40:41	0:0	6	]
+op	40:43	0:0	6	=
+water	40:45	0:0	6	buffer
+op	40:51	0:0	6	[
+water	40:52	0:0	6	j
+op	40:53	0:0	6	]
+water	40:54	0:0	6	;
+water	41:4	0:0	4	}
+water	43:4	0:0	2	pkt
+op	43:7	0:0	2	.
+water	43:8	0:0	2	pts
+op	43:12	0:0	2	=
+water	43:14	0:0	2	(
+water	43:15	0:0	2	cycle_time
+op	43:26	0:0	2	-
+water	43:28	0:0	2	(
+water	43:29	0:0	2	double
+water	43:35	0:0	2	)
+water	43:37	0:0	2	latency
+op	43:45	0:0	2	/
+water	43:47	0:0	2	(
+water	43:48	0:0	2	self
+op	43:52	0:0	2	->
+water	43:54	0:0	2	nports
+op	43:61	0:0	2	*
+water	43:63	0:0	2	self
+op	43:67	0:0	2	->
+water	43:69	0:0	2	sample_rate
+water	43:80	0:0	2	)
+water	43:81	0:0	2	)
+op	43:83	0:0	2	*
+water	43:85	0:0	2	1000000
+op	43:92	0:0	2	.
+water	43:93	0:0	2	0
+water	43:94	0:0	2	;
+call	45:4	45:68	2	av_fifo_generic_write
+arg	45:26	45:43	3	self->filled_pkts
+water	45:26	0:0	4	self
+op	45:30	0:0	4	->
+water	45:32	0:0	4	filled_pkts
+arg	45:45	45:49	3	&pkt
+op	45:45	0:0	4	&
+water	45:46	0:0	4	pkt
+arg	45:51	45:62	3	sizeof(pkt)
+op	45:51	0:0	4	sizeof
+water	45:57	0:0	4	(
+water	45:58	0:0	4	pkt
+water	45:61	0:0	4	)
+arg	45:64	45:68	3	NULL
+water	45:64	0:0	4	NULL
+water	45:69	0:0	2	;
+call	46:4	46:32	2	sem_post
+arg	46:13	46:32	3	&self->packet_count
+op	46:13	0:0	4	&
+water	46:14	0:0	4	self
+op	46:18	0:0	4	->
+water	46:20	0:0	4	packet_count
+water	46:33	0:0	2	;
+return	47:4	47:12	2	0
+water	47:11	0:0	3	0

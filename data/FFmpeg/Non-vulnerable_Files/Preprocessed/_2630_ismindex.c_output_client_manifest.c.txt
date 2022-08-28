@@ -1,0 +1,488 @@
+func	1:0	81:0	0	static void	output_client_manifest
+params	1:34	0:0	1	
+param	1:35	1:56	2	struct Tracks *	tracks
+param	1:58	1:78	2	const char *	basename
+param	2:35	2:60	2	const char *	output_prefix
+param	2:62	2:71	2	int	split
+stmnts	0:0	80:15	1	
+decl	4:4	4:23	2	char	filename[1000]
+decl	5:4	5:13	2	FILE	*out
+decl	6:4	6:12	2	int	i
+water	6:9	0:0	2	,
+decl	6:4	6:12	2	int	j
+if	7:4	8:73	2	(split)
+cond	7:8	7:8	3	split
+water	7:8	0:0	4	split
+stmts	8:8	8:73	3	
+call	8:8	8:72	4	snprintf
+arg	8:17	8:25	5	filename
+water	8:17	0:0	6	filename
+arg	8:27	8:43	5	sizeof(filename)
+op	8:27	0:0	6	sizeof
+water	8:33	0:0	6	(
+water	8:34	0:0	6	filename
+water	8:42	0:0	6	)
+arg	8:45	8:57	5	"%sManifest"
+water	8:45	0:0	6	"%sManifest"
+arg	8:59	8:72	5	output_prefix
+water	8:59	0:0	6	output_prefix
+water	8:73	0:0	4	;
+else	9:4	10:82	2
+stmts	10:8	10:82	3	
+call	10:8	10:81	4	snprintf
+arg	10:17	10:25	5	filename
+water	10:17	0:0	6	filename
+arg	10:27	10:43	5	sizeof(filename)
+op	10:27	0:0	6	sizeof
+water	10:33	0:0	6	(
+water	10:34	0:0	6	filename
+water	10:42	0:0	6	)
+arg	10:45	10:56	5	"%s%s.ismc"
+water	10:45	0:0	6	"%s%s.ismc"
+arg	10:58	10:71	5	output_prefix
+water	10:58	0:0	6	output_prefix
+arg	10:73	10:81	5	basename
+water	10:73	0:0	6	basename
+water	10:82	0:0	4	;
+water	11:4	0:0	2	out
+op	11:8	0:0	2	=
+call	11:10	11:29	2	fopen
+arg	11:16	11:24	3	filename
+water	11:16	0:0	4	filename
+arg	11:26	11:29	3	"w"
+water	11:26	0:0	4	"w"
+water	11:30	0:0	2	;
+if	12:4	15:4	2	(! out)
+cond	12:8	12:9	3	! out
+op	12:8	0:0	4	!
+water	12:9	0:0	4	out
+stmts	12:14	15:4	3	
+water	12:14	0:0	4	{
+call	13:8	13:23	4	perror
+arg	13:15	13:23	5	filename
+water	13:15	0:0	6	filename
+water	13:24	0:0	4	;
+return	14:8	14:14	4	
+water	15:4	0:0	4	}
+call	16:4	16:63	2	fprintf
+arg	16:12	16:15	3	out
+water	16:12	0:0	4	out
+arg	16:17	16:63	3	"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+water	16:17	0:0	4	"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+water	16:64	0:0	2	;
+call	17:4	18:68	2	fprintf
+arg	17:12	17:15	3	out
+water	17:12	0:0	4	out
+arg	17:17	18:45	3	"<SmoothStreamingMedia MajorVersion=\"2\" MinorVersion=\"0\" ""Duration=\"%"PRId64"\">\n"
+water	17:17	0:0	4	"<SmoothStreamingMedia MajorVersion=\"2\" MinorVersion=\"0\" "
+water	18:17	0:0	4	"Duration=\"%"
+water	18:31	0:0	4	PRId64
+water	18:38	0:0	4	"\">\n"
+arg	18:47	18:68	3	tracks->duration*10
+water	18:47	0:0	4	tracks
+op	18:53	0:0	4	->
+water	18:55	0:0	4	duration
+op	18:64	0:0	4	*
+water	18:66	0:0	4	10
+water	18:69	0:0	2	;
+if	19:4	47:4	2	(tracks -> video_track >= 0)
+cond	19:8	19:31	3	tracks -> video_track >= 0
+water	19:8	0:0	4	tracks
+op	19:14	0:0	4	->
+water	19:16	0:0	4	video_track
+op	19:28	0:0	4	>=
+water	19:31	0:0	4	0
+stmts	19:34	47:4	3	
+water	19:34	0:0	4	{
+decl	20:8	20:65	4	struct Track	*track
+op	20:28	0:0	4	=
+water	20:30	0:0	4	tracks
+op	20:36	0:0	4	->
+water	20:38	0:0	4	tracks
+op	20:44	0:0	4	[
+water	20:45	0:0	4	tracks
+op	20:51	0:0	4	->
+water	20:53	0:0	4	video_track
+op	20:64	0:0	4	]
+decl	21:8	21:41	4	struct Track	*first_track
+op	21:34	0:0	4	=
+water	21:36	0:0	4	track
+decl	22:8	22:21	4	int	index
+op	22:18	0:0	4	=
+water	22:20	0:0	4	0
+call	23:8	27:54	4	fprintf
+arg	23:16	23:19	5	out
+water	23:16	0:0	6	out
+arg	24:16	26:83	5	"\t<StreamIndex Type=\"video\" QualityLevels=\"%d\" ""Chunks=\"%d\" ""Url=\"QualityLevels({bitrate})/Fragments(video={start time})\">\n"
+water	24:16	0:0	6	"\t<StreamIndex Type=\"video\" QualityLevels=\"%d\" "
+water	25:16	0:0	6	"Chunks=\"%d\" "
+water	26:16	0:0	6	"Url=\"QualityLevels({bitrate})/Fragments(video={start time})\">\n"
+arg	27:16	27:39	5	tracks->nb_video_tracks
+water	27:16	0:0	6	tracks
+op	27:22	0:0	6	->
+water	27:24	0:0	6	nb_video_tracks
+arg	27:41	27:54	5	track->chunks
+water	27:41	0:0	6	track
+op	27:46	0:0	6	->
+water	27:48	0:0	6	chunks
+water	27:55	0:0	4	;
+for	28:8	44:8	4	(i = 0 ;i < tracks -> nb_tracks;i ++)
+forinit	28:13	28:18	5	i = 0 ;
+water	28:13	0:0	6	i
+op	28:15	0:0	6	=
+water	28:17	0:0	6	0
+water	28:18	0:0	6	;
+cond	28:20	28:32	5	i < tracks -> nb_tracks
+water	28:20	0:0	6	i
+op	28:22	0:0	6	<
+water	28:24	0:0	6	tracks
+op	28:30	0:0	6	->
+water	28:32	0:0	6	nb_tracks
+forexpr	28:43	28:44	5	i ++
+water	28:43	0:0	6	i
+op	28:44	0:0	6	++
+stmts	28:48	44:8	5	
+water	28:48	0:0	6	{
+water	29:12	0:0	6	track
+op	29:18	0:0	6	=
+water	29:20	0:0	6	tracks
+op	29:26	0:0	6	->
+water	29:28	0:0	6	tracks
+op	29:34	0:0	6	[
+water	29:35	0:0	6	i
+op	29:36	0:0	6	]
+water	29:37	0:0	6	;
+if	30:12	31:24	6	(! track -> is_video)
+cond	30:16	30:24	7	! track -> is_video
+op	30:16	0:0	8	!
+water	30:17	0:0	8	track
+op	30:22	0:0	8	->
+water	30:24	0:0	8	is_video
+stmts	31:16	31:24	7	
+continue	31:16	31:24	8	
+call	32:12	36:85	6	fprintf
+arg	32:20	32:23	7	out
+water	32:20	0:0	8	out
+arg	33:20	35:41	7	"\t\t<QualityLevel Index=\"%d\" Bitrate=\"%d\" ""FourCC=\"%s\" MaxWidth=\"%d\" MaxHeight=\"%d\" ""CodecPrivateData=\""
+water	33:20	0:0	8	"\t\t<QualityLevel Index=\"%d\" Bitrate=\"%d\" "
+water	34:20	0:0	8	"FourCC=\"%s\" MaxWidth=\"%d\" MaxHeight=\"%d\" "
+water	35:20	0:0	8	"CodecPrivateData=\""
+arg	36:20	36:25	7	index
+water	36:20	0:0	8	index
+arg	36:27	36:41	7	track->bitrate
+water	36:27	0:0	8	track
+op	36:32	0:0	8	->
+water	36:34	0:0	8	bitrate
+arg	36:43	36:56	7	track->fourcc
+water	36:43	0:0	8	track
+op	36:48	0:0	8	->
+water	36:50	0:0	8	fourcc
+arg	36:58	36:70	7	track->width
+water	36:58	0:0	8	track
+op	36:63	0:0	8	->
+water	36:65	0:0	8	width
+arg	36:72	36:85	7	track->height
+water	36:72	0:0	8	track
+op	36:77	0:0	8	->
+water	36:79	0:0	8	height
+water	36:86	0:0	6	;
+for	37:12	38:61	6	(j = 0 ;j < track -> codec_private_size;j ++)
+forinit	37:17	37:22	7	j = 0 ;
+water	37:17	0:0	8	j
+op	37:19	0:0	8	=
+water	37:21	0:0	8	0
+water	37:22	0:0	8	;
+cond	37:24	37:35	7	j < track -> codec_private_size
+water	37:24	0:0	8	j
+op	37:26	0:0	8	<
+water	37:28	0:0	8	track
+op	37:33	0:0	8	->
+water	37:35	0:0	8	codec_private_size
+forexpr	37:55	37:56	7	j ++
+water	37:55	0:0	8	j
+op	37:56	0:0	8	++
+stmts	38:16	38:61	7	
+call	38:16	38:60	8	fprintf
+arg	38:24	38:27	9	out
+water	38:24	0:0	10	out
+arg	38:29	38:35	9	"%02X"
+water	38:29	0:0	10	"%02X"
+arg	38:37	38:60	9	track->codec_private[j]
+water	38:37	0:0	10	track
+op	38:42	0:0	10	->
+water	38:44	0:0	10	codec_private
+op	38:57	0:0	10	[
+water	38:58	0:0	10	j
+op	38:59	0:0	10	]
+water	38:61	0:0	8	;
+call	39:12	39:34	6	fprintf
+arg	39:20	39:23	7	out
+water	39:20	0:0	8	out
+arg	39:25	39:34	7	"\" />\n"
+water	39:25	0:0	8	"\" />\n"
+water	39:35	0:0	6	;
+water	40:12	0:0	6	index
+op	40:17	0:0	6	++
+water	40:19	0:0	6	;
+if	41:12	43:131	6	(track -> chunks != first_track -> chunks)
+cond	41:16	41:46	7	track -> chunks != first_track -> chunks
+water	41:16	0:0	8	track
+op	41:21	0:0	8	->
+water	41:23	0:0	8	chunks
+op	41:30	0:0	8	!=
+water	41:33	0:0	8	first_track
+op	41:44	0:0	8	->
+water	41:46	0:0	8	chunks
+stmts	42:16	43:131	7	
+call	42:16	43:130	8	fprintf
+arg	42:24	42:30	9	stderr
+water	42:24	0:0	10	stderr
+arg	42:32	42:122	9	"Mismatched number of video chunks in %s (id: %d, chunks %d) and %s (id: %d, chunks %d)\n"
+water	42:32	0:0	10	"Mismatched number of video chunks in %s (id: %d, chunks %d) and %s (id: %d, chunks %d)\n"
+arg	43:24	43:35	9	track->name
+water	43:24	0:0	10	track
+op	43:29	0:0	10	->
+water	43:31	0:0	10	name
+arg	43:37	43:52	9	track->track_id
+water	43:37	0:0	10	track
+op	43:42	0:0	10	->
+water	43:44	0:0	10	track_id
+arg	43:54	43:67	9	track->chunks
+water	43:54	0:0	10	track
+op	43:59	0:0	10	->
+water	43:61	0:0	10	chunks
+arg	43:69	43:86	9	first_track->name
+water	43:69	0:0	10	first_track
+op	43:80	0:0	10	->
+water	43:82	0:0	10	name
+arg	43:88	43:109	9	first_track->track_id
+water	43:88	0:0	10	first_track
+op	43:99	0:0	10	->
+water	43:101	0:0	10	track_id
+arg	43:111	43:130	9	first_track->chunks
+water	43:111	0:0	10	first_track
+op	43:122	0:0	10	->
+water	43:124	0:0	10	chunks
+water	43:131	0:0	8	;
+water	44:8	0:0	6	}
+call	45:8	45:68	4	print_track_chunks
+arg	45:27	45:30	5	out
+water	45:27	0:0	6	out
+arg	45:32	45:38	5	tracks
+water	45:32	0:0	6	tracks
+arg	45:40	45:59	5	tracks->video_track
+water	45:40	0:0	6	tracks
+op	45:46	0:0	6	->
+water	45:48	0:0	6	video_track
+arg	45:61	45:68	5	"video"
+water	45:61	0:0	6	"video"
+water	45:69	0:0	4	;
+call	46:8	46:41	4	fprintf
+arg	46:16	46:19	5	out
+water	46:16	0:0	6	out
+arg	46:21	46:41	5	"\t</StreamIndex>\n"
+water	46:21	0:0	6	"\t</StreamIndex>\n"
+water	46:42	0:0	4	;
+water	47:4	0:0	4	}
+if	48:4	78:4	2	(tracks -> audio_track >= 0)
+cond	48:8	48:31	3	tracks -> audio_track >= 0
+water	48:8	0:0	4	tracks
+op	48:14	0:0	4	->
+water	48:16	0:0	4	audio_track
+op	48:28	0:0	4	>=
+water	48:31	0:0	4	0
+stmts	48:34	78:4	3	
+water	48:34	0:0	4	{
+decl	49:8	49:65	4	struct Track	*track
+op	49:28	0:0	4	=
+water	49:30	0:0	4	tracks
+op	49:36	0:0	4	->
+water	49:38	0:0	4	tracks
+op	49:44	0:0	4	[
+water	49:45	0:0	4	tracks
+op	49:51	0:0	4	->
+water	49:53	0:0	4	audio_track
+op	49:64	0:0	4	]
+decl	50:8	50:41	4	struct Track	*first_track
+op	50:34	0:0	4	=
+water	50:36	0:0	4	track
+decl	51:8	51:21	4	int	index
+op	51:18	0:0	4	=
+water	51:20	0:0	4	0
+call	52:8	56:54	4	fprintf
+arg	52:16	52:19	5	out
+water	52:16	0:0	6	out
+arg	53:16	55:83	5	"\t<StreamIndex Type=\"audio\" QualityLevels=\"%d\" ""Chunks=\"%d\" ""Url=\"QualityLevels({bitrate})/Fragments(audio={start time})\">\n"
+water	53:16	0:0	6	"\t<StreamIndex Type=\"audio\" QualityLevels=\"%d\" "
+water	54:16	0:0	6	"Chunks=\"%d\" "
+water	55:16	0:0	6	"Url=\"QualityLevels({bitrate})/Fragments(audio={start time})\">\n"
+arg	56:16	56:39	5	tracks->nb_audio_tracks
+water	56:16	0:0	6	tracks
+op	56:22	0:0	6	->
+water	56:24	0:0	6	nb_audio_tracks
+arg	56:41	56:54	5	track->chunks
+water	56:41	0:0	6	track
+op	56:46	0:0	6	->
+water	56:48	0:0	6	chunks
+water	56:55	0:0	4	;
+for	57:8	75:8	4	(i = 0 ;i < tracks -> nb_tracks;i ++)
+forinit	57:13	57:18	5	i = 0 ;
+water	57:13	0:0	6	i
+op	57:15	0:0	6	=
+water	57:17	0:0	6	0
+water	57:18	0:0	6	;
+cond	57:20	57:32	5	i < tracks -> nb_tracks
+water	57:20	0:0	6	i
+op	57:22	0:0	6	<
+water	57:24	0:0	6	tracks
+op	57:30	0:0	6	->
+water	57:32	0:0	6	nb_tracks
+forexpr	57:43	57:44	5	i ++
+water	57:43	0:0	6	i
+op	57:44	0:0	6	++
+stmts	57:48	75:8	5	
+water	57:48	0:0	6	{
+water	58:12	0:0	6	track
+op	58:18	0:0	6	=
+water	58:20	0:0	6	tracks
+op	58:26	0:0	6	->
+water	58:28	0:0	6	tracks
+op	58:34	0:0	6	[
+water	58:35	0:0	6	i
+op	58:36	0:0	6	]
+water	58:37	0:0	6	;
+if	59:12	60:24	6	(! track -> is_audio)
+cond	59:16	59:24	7	! track -> is_audio
+op	59:16	0:0	8	!
+water	59:17	0:0	8	track
+op	59:22	0:0	8	->
+water	59:24	0:0	8	is_audio
+stmts	60:16	60:24	7	
+continue	60:16	60:24	8	
+call	61:12	67:65	6	fprintf
+arg	61:20	61:23	7	out
+water	61:20	0:0	8	out
+arg	62:20	65:57	7	"\t\t<QualityLevel Index=\"%d\" Bitrate=\"%d\" ""FourCC=\"%s\" SamplingRate=\"%d\" Channels=\"%d\" ""BitsPerSample=\"16\" PacketSize=\"%d\" ""AudioTag=\"%d\" CodecPrivateData=\""
+water	62:20	0:0	8	"\t\t<QualityLevel Index=\"%d\" Bitrate=\"%d\" "
+water	63:20	0:0	8	"FourCC=\"%s\" SamplingRate=\"%d\" Channels=\"%d\" "
+water	64:20	0:0	8	"BitsPerSample=\"16\" PacketSize=\"%d\" "
+water	65:20	0:0	8	"AudioTag=\"%d\" CodecPrivateData=\""
+arg	66:20	66:25	7	index
+water	66:20	0:0	8	index
+arg	66:27	66:41	7	track->bitrate
+water	66:27	0:0	8	track
+op	66:32	0:0	8	->
+water	66:34	0:0	8	bitrate
+arg	66:43	66:56	7	track->fourcc
+water	66:43	0:0	8	track
+op	66:48	0:0	8	->
+water	66:50	0:0	8	fourcc
+arg	66:58	66:76	7	track->sample_rate
+water	66:58	0:0	8	track
+op	66:63	0:0	8	->
+water	66:65	0:0	8	sample_rate
+arg	67:20	67:35	7	track->channels
+water	67:20	0:0	8	track
+op	67:25	0:0	8	->
+water	67:27	0:0	8	channels
+arg	67:37	67:53	7	track->blocksize
+water	67:37	0:0	8	track
+op	67:42	0:0	8	->
+water	67:44	0:0	8	blocksize
+arg	67:55	67:65	7	track->tag
+water	67:55	0:0	8	track
+op	67:60	0:0	8	->
+water	67:62	0:0	8	tag
+water	67:66	0:0	6	;
+for	68:12	69:61	6	(j = 0 ;j < track -> codec_private_size;j ++)
+forinit	68:17	68:22	7	j = 0 ;
+water	68:17	0:0	8	j
+op	68:19	0:0	8	=
+water	68:21	0:0	8	0
+water	68:22	0:0	8	;
+cond	68:24	68:35	7	j < track -> codec_private_size
+water	68:24	0:0	8	j
+op	68:26	0:0	8	<
+water	68:28	0:0	8	track
+op	68:33	0:0	8	->
+water	68:35	0:0	8	codec_private_size
+forexpr	68:55	68:56	7	j ++
+water	68:55	0:0	8	j
+op	68:56	0:0	8	++
+stmts	69:16	69:61	7	
+call	69:16	69:60	8	fprintf
+arg	69:24	69:27	9	out
+water	69:24	0:0	10	out
+arg	69:29	69:35	9	"%02X"
+water	69:29	0:0	10	"%02X"
+arg	69:37	69:60	9	track->codec_private[j]
+water	69:37	0:0	10	track
+op	69:42	0:0	10	->
+water	69:44	0:0	10	codec_private
+op	69:57	0:0	10	[
+water	69:58	0:0	10	j
+op	69:59	0:0	10	]
+water	69:61	0:0	8	;
+call	70:12	70:34	6	fprintf
+arg	70:20	70:23	7	out
+water	70:20	0:0	8	out
+arg	70:25	70:34	7	"\" />\n"
+water	70:25	0:0	8	"\" />\n"
+water	70:35	0:0	6	;
+water	71:12	0:0	6	index
+op	71:17	0:0	6	++
+water	71:19	0:0	6	;
+if	72:12	74:55	6	(track -> chunks != first_track -> chunks)
+cond	72:16	72:46	7	track -> chunks != first_track -> chunks
+water	72:16	0:0	8	track
+op	72:21	0:0	8	->
+water	72:23	0:0	8	chunks
+op	72:30	0:0	8	!=
+water	72:33	0:0	8	first_track
+op	72:44	0:0	8	->
+water	72:46	0:0	8	chunks
+stmts	73:16	74:55	7	
+call	73:16	74:54	8	fprintf
+arg	73:24	73:30	9	stderr
+water	73:24	0:0	10	stderr
+arg	73:32	73:82	9	"Mismatched number of audio chunks in %s and %s\n"
+water	73:32	0:0	10	"Mismatched number of audio chunks in %s and %s\n"
+arg	74:24	74:35	9	track->name
+water	74:24	0:0	10	track
+op	74:29	0:0	10	->
+water	74:31	0:0	10	name
+arg	74:37	74:54	9	first_track->name
+water	74:37	0:0	10	first_track
+op	74:48	0:0	10	->
+water	74:50	0:0	10	name
+water	74:55	0:0	8	;
+water	75:8	0:0	6	}
+call	76:8	76:68	4	print_track_chunks
+arg	76:27	76:30	5	out
+water	76:27	0:0	6	out
+arg	76:32	76:38	5	tracks
+water	76:32	0:0	6	tracks
+arg	76:40	76:59	5	tracks->audio_track
+water	76:40	0:0	6	tracks
+op	76:46	0:0	6	->
+water	76:48	0:0	6	audio_track
+arg	76:61	76:68	5	"audio"
+water	76:61	0:0	6	"audio"
+water	76:69	0:0	4	;
+call	77:8	77:41	4	fprintf
+arg	77:16	77:19	5	out
+water	77:16	0:0	6	out
+arg	77:21	77:41	5	"\t</StreamIndex>\n"
+water	77:21	0:0	6	"\t</StreamIndex>\n"
+water	77:42	0:0	4	;
+water	78:4	0:0	4	}
+call	79:4	79:44	2	fprintf
+arg	79:12	79:15	3	out
+water	79:12	0:0	4	out
+arg	79:17	79:44	3	"</SmoothStreamingMedia>\n"
+water	79:17	0:0	4	"</SmoothStreamingMedia>\n"
+water	79:45	0:0	2	;
+call	80:4	80:14	2	fclose
+arg	80:11	80:14	3	out
+water	80:11	0:0	4	out
+water	80:15	0:0	2	;

@@ -1,0 +1,126 @@
+func	1:0	21:0	0	static int	filter_frame
+params	1:23	0:0	1	
+param	1:24	1:44	2	AVFilterLink *	inlink
+param	1:46	1:62	2	AVFrame *	samples
+stmnts	0:0	20:60	1	
+decl	3:4	3:38	2	AVFilterContext	*ctx
+op	3:25	0:0	2	=
+water	3:27	0:0	2	inlink
+op	3:33	0:0	2	->
+water	3:35	0:0	2	dst
+decl	4:4	4:36	2	VolDetectContext	*vd
+op	4:25	0:0	2	=
+water	4:27	0:0	2	ctx
+op	4:30	0:0	2	->
+water	4:32	0:0	2	priv
+decl	5:4	5:45	2	int64_t	layout
+op	5:20	0:0	2	=
+water	5:22	0:0	2	samples
+op	5:29	0:0	2	->
+water	5:31	0:0	2	channel_layout
+decl	6:4	6:41	2	int	nb_samples
+op	6:20	0:0	2	=
+water	6:22	0:0	2	samples
+op	6:29	0:0	2	->
+water	6:31	0:0	2	nb_samples
+decl	7:4	7:63	2	int	nb_channels
+op	7:20	0:0	2	=
+call	7:22	7:62	3	av_get_channel_layout_nb_channels
+arg	7:56	7:62	4	layout
+water	7:56	0:0	5	layout
+decl	8:4	8:33	2	int	nb_planes
+op	8:20	0:0	2	=
+water	8:22	0:0	2	nb_channels
+decl	9:4	9:16	2	int	plane
+water	9:13	0:0	2	,
+decl	9:4	9:16	2	int	i
+decl	10:4	10:16	2	int16_t	*pcm
+if	11:4	14:4	2	(!av_sample_fmt_is_planar (samples -> format ))
+cond	11:8	11:48	3	!av_sample_fmt_is_planar (samples -> format )
+op	11:8	0:0	4	!
+call	11:9	11:48	4	av_sample_fmt_is_planar
+arg	11:33	11:48	5	samples->format
+water	11:33	0:0	6	samples
+op	11:40	0:0	6	->
+water	11:42	0:0	6	format
+stmts	11:51	14:4	3	
+water	11:51	0:0	4	{
+water	12:8	0:0	4	nb_samples
+op	12:19	0:0	4	*=
+water	12:22	0:0	4	nb_channels
+water	12:33	0:0	4	;
+water	13:8	0:0	4	nb_planes
+op	13:18	0:0	4	=
+water	13:20	0:0	4	1
+water	13:21	0:0	4	;
+water	14:4	0:0	4	}
+for	15:4	19:4	2	(plane = 0 ;plane < nb_planes;plane ++)
+forinit	15:9	15:18	3	plane = 0 ;
+water	15:9	0:0	4	plane
+op	15:15	0:0	4	=
+water	15:17	0:0	4	0
+water	15:18	0:0	4	;
+cond	15:20	15:28	3	plane < nb_planes
+water	15:20	0:0	4	plane
+op	15:26	0:0	4	<
+water	15:28	0:0	4	nb_planes
+forexpr	15:39	15:44	3	plane ++
+water	15:39	0:0	4	plane
+op	15:44	0:0	4	++
+stmts	15:48	19:4	3	
+water	15:48	0:0	4	{
+water	16:8	0:0	4	pcm
+op	16:12	0:0	4	=
+water	16:14	0:0	4	(
+water	16:15	0:0	4	int16_t
+op	16:23	0:0	4	*
+water	16:24	0:0	4	)
+water	16:25	0:0	4	samples
+op	16:32	0:0	4	->
+water	16:34	0:0	4	extended_data
+op	16:47	0:0	4	[
+water	16:48	0:0	4	plane
+op	16:53	0:0	4	]
+water	16:54	0:0	4	;
+for	17:8	18:44	4	(i = 0 ;i < nb_samples;i ++)
+forinit	17:13	17:18	5	i = 0 ;
+water	17:13	0:0	6	i
+op	17:15	0:0	6	=
+water	17:17	0:0	6	0
+water	17:18	0:0	6	;
+cond	17:20	17:24	5	i < nb_samples
+water	17:20	0:0	6	i
+op	17:22	0:0	6	<
+water	17:24	0:0	6	nb_samples
+forexpr	17:36	17:37	5	i ++
+water	17:36	0:0	6	i
+op	17:37	0:0	6	++
+stmts	18:12	18:44	5	
+water	18:12	0:0	6	vd
+op	18:14	0:0	6	->
+water	18:16	0:0	6	histogram
+op	18:25	0:0	6	[
+water	18:26	0:0	6	pcm
+op	18:29	0:0	6	[
+water	18:30	0:0	6	i
+op	18:31	0:0	6	]
+op	18:33	0:0	6	+
+water	18:35	0:0	6	0
+water	18:36	0:0	6	x8000
+op	18:41	0:0	6	]
+op	18:42	0:0	6	++
+water	18:44	0:0	6	;
+water	19:4	0:0	4	}
+return	20:4	20:60	2	ff_filter_frame(inlink->dst->outputs[0],samples)
+call	20:11	20:59	3	ff_filter_frame
+arg	20:27	20:50	4	inlink->dst->outputs[0]
+water	20:27	0:0	5	inlink
+op	20:33	0:0	5	->
+water	20:35	0:0	5	dst
+op	20:38	0:0	5	->
+water	20:40	0:0	5	outputs
+op	20:47	0:0	5	[
+water	20:48	0:0	5	0
+op	20:49	0:0	5	]
+arg	20:52	20:59	4	samples
+water	20:52	0:0	5	samples

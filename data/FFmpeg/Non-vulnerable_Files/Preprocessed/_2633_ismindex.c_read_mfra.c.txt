@@ -1,0 +1,185 @@
+func	1:0	37:0	0	static int	read_mfra
+params	1:20	0:0	1	
+param	1:21	1:42	2	struct Tracks *	tracks
+param	1:44	1:59	2	int	start_index
+param	2:21	2:37	2	const char *	file
+param	2:39	2:48	2	int	split
+param	2:50	2:58	2	int	ismf
+param	3:21	3:41	2	const char *	basename
+param	3:43	3:68	2	const char *	output_prefix
+stmnts	0:0	36:14	1	
+decl	5:4	5:15	2	int	err
+op	5:12	0:0	2	=
+water	5:14	0:0	2	0
+decl	6:4	6:28	2	const char	*err_str
+op	6:24	0:0	2	=
+water	6:26	0:0	2	""
+decl	7:4	7:25	2	AVIOContext	*f
+op	7:19	0:0	2	=
+water	7:21	0:0	2	NULL
+decl	8:4	8:21	2	int32_t	mfra_size
+if	9:4	10:17	2	(( err =avio_open2 (& f ,file ,AVIO_FLAG_READ ,NULL ,NULL ) ) < 0)
+cond	9:8	9:67	3	( err =avio_open2 (& f ,file ,AVIO_FLAG_READ ,NULL ,NULL ) ) < 0
+water	9:8	0:0	4	(
+water	9:9	0:0	4	err
+op	9:13	0:0	4	=
+call	9:15	9:62	4	avio_open2
+arg	9:26	9:28	5	&f
+op	9:26	0:0	6	&
+water	9:27	0:0	6	f
+arg	9:30	9:34	5	file
+water	9:30	0:0	6	file
+arg	9:36	9:50	5	AVIO_FLAG_READ
+water	9:36	0:0	6	AVIO_FLAG_READ
+arg	9:52	9:56	5	NULL
+water	9:52	0:0	6	NULL
+arg	9:58	9:62	5	NULL
+water	9:58	0:0	6	NULL
+water	9:63	0:0	4	)
+op	9:65	0:0	4	<
+water	9:67	0:0	4	0
+stmts	10:8	10:17	3	
+goto	10:8	10:17	4	fail
+water	10:13	0:0	5	fail
+call	11:4	11:43	2	avio_seek
+arg	11:14	11:15	3	f
+water	11:14	0:0	4	f
+arg	11:17	11:33	3	avio_size(f)-4
+call	11:17	11:28	4	avio_size
+arg	11:27	11:28	5	f
+water	11:27	0:0	6	f
+op	11:30	0:0	4	-
+water	11:32	0:0	4	4
+arg	11:35	11:43	3	SEEK_SET
+water	11:35	0:0	4	SEEK_SET
+water	11:44	0:0	2	;
+water	12:4	0:0	2	mfra_size
+op	12:14	0:0	2	=
+call	12:16	12:27	2	avio_rb32
+arg	12:26	12:27	3	f
+water	12:26	0:0	4	f
+water	12:28	0:0	2	;
+call	13:4	13:37	2	avio_seek
+arg	13:14	13:15	3	f
+water	13:14	0:0	4	f
+arg	13:17	13:27	3	-mfra_size
+op	13:17	0:0	4	-
+water	13:18	0:0	4	mfra_size
+arg	13:29	13:37	3	SEEK_CUR
+water	13:29	0:0	4	SEEK_CUR
+water	13:38	0:0	2	;
+if	14:4	18:4	2	(avio_rb32 (f ) != mfra_size)
+cond	14:8	14:24	3	avio_rb32 (f ) != mfra_size
+call	14:8	14:19	4	avio_rb32
+arg	14:18	14:19	5	f
+water	14:18	0:0	6	f
+op	14:21	0:0	4	!=
+water	14:24	0:0	4	mfra_size
+stmts	14:35	18:4	3	
+water	14:35	0:0	4	{
+water	15:8	0:0	4	err
+op	15:12	0:0	4	=
+water	15:14	0:0	4	AVERROR_INVALIDDATA
+water	15:33	0:0	4	;
+water	16:8	0:0	4	err_str
+op	16:16	0:0	4	=
+water	16:18	0:0	4	"mfra size mismatch"
+water	16:38	0:0	4	;
+goto	17:8	17:17	4	fail
+water	17:13	0:0	5	fail
+water	18:4	0:0	4	}
+if	19:4	23:4	2	(avio_rb32 (f ) !=MKBETAG ('m' ,'f' ,'r' ,'a' ))
+cond	19:8	19:50	3	avio_rb32 (f ) !=MKBETAG ('m' ,'f' ,'r' ,'a' )
+call	19:8	19:19	4	avio_rb32
+arg	19:18	19:19	5	f
+water	19:18	0:0	6	f
+op	19:21	0:0	4	!=
+call	19:24	19:50	4	MKBETAG
+arg	19:32	19:35	5	'm'
+water	19:32	0:0	6	'm'
+arg	19:37	19:40	5	'f'
+water	19:37	0:0	6	'f'
+arg	19:42	19:45	5	'r'
+water	19:42	0:0	6	'r'
+arg	19:47	19:50	5	'a'
+water	19:47	0:0	6	'a'
+stmts	19:53	23:4	3	
+water	19:53	0:0	4	{
+water	20:8	0:0	4	err
+op	20:12	0:0	4	=
+water	20:14	0:0	4	AVERROR_INVALIDDATA
+water	20:33	0:0	4	;
+water	21:8	0:0	4	err_str
+op	21:16	0:0	4	=
+water	21:18	0:0	4	"mfra tag mismatch"
+water	21:37	0:0	4	;
+goto	22:8	22:17	4	fail
+water	22:13	0:0	5	fail
+water	23:4	0:0	4	}
+while	24:4	26:4	2	(!read_tfra (tracks ,start_index ,f ))
+cond	24:11	24:44	3	!read_tfra (tracks ,start_index ,f )
+op	24:11	0:0	4	!
+call	24:12	24:44	4	read_tfra
+arg	24:22	24:28	5	tracks
+water	24:22	0:0	6	tracks
+arg	24:30	24:41	5	start_index
+water	24:30	0:0	6	start_index
+arg	24:43	24:44	5	f
+water	24:43	0:0	6	f
+stmts	24:47	26:4	3	
+water	24:47	0:0	4	{
+water	0:0	0:0	4	STATEMENTS
+water	26:4	0:0	4	}
+if	27:4	29:44	2	(split || ismf)
+cond	27:8	27:17	3	split || ismf
+water	27:8	0:0	4	split
+op	27:14	0:0	4	||
+water	27:17	0:0	4	ismf
+stmts	28:8	29:44	3	
+water	28:8	0:0	4	err
+op	28:12	0:0	4	=
+call	28:14	29:43	4	write_fragments
+arg	28:30	28:36	5	tracks
+water	28:30	0:0	6	tracks
+arg	28:38	28:49	5	start_index
+water	28:38	0:0	6	start_index
+arg	28:51	28:52	5	f
+water	28:51	0:0	6	f
+arg	28:54	28:62	5	basename
+water	28:54	0:0	6	basename
+arg	28:64	28:69	5	split
+water	28:64	0:0	6	split
+arg	28:71	28:75	5	ismf
+water	28:71	0:0	6	ismf
+arg	29:30	29:43	5	output_prefix
+water	29:30	0:0	6	output_prefix
+water	29:44	0:0	4	;
+water	30:4	0:0	2	err_str
+op	30:12	0:0	2	=
+water	30:14	0:0	2	"error in write_fragments"
+water	30:40	0:0	2	;
+label	31:0	31:4	2	fail :
+if	32:4	33:21	2	(f)
+cond	32:8	32:8	3	f
+water	32:8	0:0	4	f
+stmts	33:8	33:21	3	
+call	33:8	33:20	4	avio_close
+arg	33:19	33:20	5	f
+water	33:19	0:0	6	f
+water	33:21	0:0	4	;
+if	34:4	35:83	2	(err)
+cond	34:8	34:8	3	err
+water	34:8	0:0	4	err
+stmts	35:8	35:83	3	
+call	35:8	35:82	4	fprintf
+arg	35:16	35:22	5	stderr
+water	35:16	0:0	6	stderr
+arg	35:24	35:67	5	"Unable to read the MFRA atom in %s (%s)\n"
+water	35:24	0:0	6	"Unable to read the MFRA atom in %s (%s)\n"
+arg	35:69	35:73	5	file
+water	35:69	0:0	6	file
+arg	35:75	35:82	5	err_str
+water	35:75	0:0	6	err_str
+water	35:83	0:0	4	;
+return	36:4	36:14	2	err
+water	36:11	0:0	3	err

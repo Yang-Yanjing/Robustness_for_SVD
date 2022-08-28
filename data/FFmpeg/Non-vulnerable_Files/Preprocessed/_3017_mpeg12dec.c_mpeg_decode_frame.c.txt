@@ -1,0 +1,309 @@
+func	1:0	51:0	0	static int	mpeg_decode_frame
+params	1:28	0:0	1	
+param	1:29	1:50	2	AVCodecContext *	avctx
+param	1:52	1:62	2	void *	data
+param	2:29	2:44	2	int *	got_output
+param	2:46	2:61	2	AVPacket *	avpkt
+stmnts	0:0	50:14	1	
+decl	4:4	4:36	2	const uint8_t	*buf
+op	4:23	0:0	2	=
+water	4:25	0:0	2	avpkt
+op	4:30	0:0	2	->
+water	4:32	0:0	2	data
+decl	5:4	5:11	2	int	ret
+decl	6:4	6:30	2	int	buf_size
+op	6:17	0:0	2	=
+water	6:19	0:0	2	avpkt
+op	6:24	0:0	2	->
+water	6:26	0:0	2	size
+decl	7:4	7:38	2	Mpeg1Context	*s
+op	7:20	0:0	2	=
+water	7:22	0:0	2	avctx
+op	7:27	0:0	2	->
+water	7:29	0:0	2	priv_data
+decl	8:4	8:27	2	AVFrame	*picture
+op	8:21	0:0	2	=
+water	8:23	0:0	2	data
+decl	9:4	9:41	2	MpegEncContext	*s2
+op	9:23	0:0	2	=
+op	9:25	0:0	2	&
+water	9:26	0:0	2	s
+op	9:27	0:0	2	->
+water	9:29	0:0	2	mpeg_enc_ctx
+if	10:4	20:4	2	(buf_size == 0 || ( buf_size == 4 &&AV_RB32 (buf ) == SEQ_END_CODE ))
+cond	10:8	10:71	3	buf_size == 0 || ( buf_size == 4 &&AV_RB32 (buf ) == SEQ_END_CODE )
+water	10:8	0:0	4	buf_size
+op	10:17	0:0	4	==
+water	10:20	0:0	4	0
+op	10:22	0:0	4	||
+water	10:25	0:0	4	(
+water	10:26	0:0	4	buf_size
+op	10:35	0:0	4	==
+water	10:38	0:0	4	4
+op	10:40	0:0	4	&&
+call	10:43	10:54	4	AV_RB32
+arg	10:51	10:54	5	buf
+water	10:51	0:0	6	buf
+op	10:56	0:0	4	==
+water	10:59	0:0	4	SEQ_END_CODE
+water	10:71	0:0	4	)
+stmts	10:74	20:4	3	
+water	10:74	0:0	4	{
+if	12:8	18:8	4	(s2 -> low_delay == 0 && s2 -> next_picture_ptr)
+cond	12:12	12:38	5	s2 -> low_delay == 0 && s2 -> next_picture_ptr
+water	12:12	0:0	6	s2
+op	12:14	0:0	6	->
+water	12:16	0:0	6	low_delay
+op	12:26	0:0	6	==
+water	12:29	0:0	6	0
+op	12:31	0:0	6	&&
+water	12:34	0:0	6	s2
+op	12:36	0:0	6	->
+water	12:38	0:0	6	next_picture_ptr
+stmts	12:56	18:8	5	
+water	12:56	0:0	6	{
+decl	13:12	13:68	6	int	ret
+op	13:20	0:0	6	=
+call	13:22	13:67	7	av_frame_ref
+arg	13:35	13:42	8	picture
+water	13:35	0:0	9	picture
+arg	13:44	13:67	8	s2->next_picture_ptr->f
+water	13:44	0:0	9	s2
+op	13:46	0:0	9	->
+water	13:48	0:0	9	next_picture_ptr
+op	13:64	0:0	9	->
+water	13:66	0:0	9	f
+if	14:12	15:26	6	(ret < 0)
+cond	14:16	14:22	7	ret < 0
+water	14:16	0:0	8	ret
+op	14:20	0:0	8	<
+water	14:22	0:0	8	0
+stmts	15:16	15:26	7	
+return	15:16	15:26	8	ret
+water	15:23	0:0	9	ret
+water	16:12	0:0	6	s2
+op	16:14	0:0	6	->
+water	16:16	0:0	6	next_picture_ptr
+op	16:33	0:0	6	=
+water	16:35	0:0	6	NULL
+water	16:39	0:0	6	;
+op	17:12	0:0	6	*
+water	17:13	0:0	6	got_output
+op	17:24	0:0	6	=
+water	17:26	0:0	6	1
+water	17:27	0:0	6	;
+water	18:8	0:0	6	}
+return	19:8	19:23	4	buf_size
+water	19:15	0:0	5	buf_size
+water	20:4	0:0	4	}
+if	21:4	27:4	2	(s2 -> avctx -> flags & AV_CODEC_FLAG_TRUNCATED)
+cond	21:8	21:27	3	s2 -> avctx -> flags & AV_CODEC_FLAG_TRUNCATED
+water	21:8	0:0	4	s2
+op	21:10	0:0	4	->
+water	21:12	0:0	4	avctx
+op	21:17	0:0	4	->
+water	21:19	0:0	4	flags
+op	21:25	0:0	4	&
+water	21:27	0:0	4	AV_CODEC_FLAG_TRUNCATED
+stmts	21:52	27:4	3	
+water	21:52	0:0	4	{
+decl	22:8	23:58	4	int	next
+op	22:17	0:0	4	=
+call	22:19	23:57	5	ff_mpeg1_find_frame_end
+arg	22:43	22:61	6	&s2->parse_context
+op	22:43	0:0	7	&
+water	22:44	0:0	7	s2
+op	22:46	0:0	7	->
+water	22:48	0:0	7	parse_context
+arg	22:63	22:66	6	buf
+water	22:63	0:0	7	buf
+arg	23:43	23:51	6	buf_size
+water	23:43	0:0	7	buf_size
+arg	23:53	23:57	6	NULL
+water	23:53	0:0	7	NULL
+if	24:8	26:27	4	(ff_combine_frame (& s2 -> parse_context ,next ,( const uint8_t * * ) & buf ,& buf_size ) < 0)
+cond	24:12	25:67	5	ff_combine_frame (& s2 -> parse_context ,next ,( const uint8_t * * ) & buf ,& buf_size ) < 0
+call	24:12	25:63	6	ff_combine_frame
+arg	24:29	24:47	7	&s2->parse_context
+op	24:29	0:0	8	&
+water	24:30	0:0	8	s2
+op	24:32	0:0	8	->
+water	24:34	0:0	8	parse_context
+arg	24:49	24:53	7	next
+water	24:49	0:0	8	next
+arg	25:29	25:52	7	(constuint8_t**)&buf
+water	25:29	0:0	8	(
+water	25:30	0:0	8	const
+water	25:36	0:0	8	uint8_t
+op	25:44	0:0	8	*
+op	25:45	0:0	8	*
+water	25:46	0:0	8	)
+op	25:48	0:0	8	&
+water	25:49	0:0	8	buf
+arg	25:54	25:63	7	&buf_size
+op	25:54	0:0	8	&
+water	25:55	0:0	8	buf_size
+op	25:65	0:0	6	<
+water	25:67	0:0	6	0
+stmts	26:12	26:27	5	
+return	26:12	26:27	6	buf_size
+water	26:19	0:0	7	buf_size
+water	27:4	0:0	4	}
+water	28:4	0:0	2	s2
+op	28:6	0:0	2	->
+water	28:8	0:0	2	codec_tag
+op	28:18	0:0	2	=
+call	28:20	28:52	2	avpriv_toupper4
+arg	28:36	28:52	3	avctx->codec_tag
+water	28:36	0:0	4	avctx
+op	28:41	0:0	4	->
+water	28:43	0:0	4	codec_tag
+water	28:53	0:0	2	;
+if	29:4	32:33	2	(s -> mpeg_enc_ctx_allocated == 0 && ( s2 -> codec_tag ==AV_RL32 ("VCR2" ) || s2 -> codec_tag ==AV_RL32 ("BW10" ) ))
+cond	29:8	31:42	3	s -> mpeg_enc_ctx_allocated == 0 && ( s2 -> codec_tag ==AV_RL32 ("VCR2" ) || s2 -> codec_tag ==AV_RL32 ("BW10" ) )
+water	29:8	0:0	4	s
+op	29:9	0:0	4	->
+water	29:11	0:0	4	mpeg_enc_ctx_allocated
+op	29:34	0:0	4	==
+water	29:37	0:0	4	0
+op	29:39	0:0	4	&&
+water	29:42	0:0	4	(
+water	29:46	0:0	4	s2
+op	29:48	0:0	4	->
+water	29:50	0:0	4	codec_tag
+op	29:60	0:0	4	==
+call	29:63	29:77	4	AV_RL32
+arg	29:71	29:77	5	"VCR2"
+water	29:71	0:0	6	"VCR2"
+op	30:43	0:0	4	||
+water	30:46	0:0	4	s2
+op	30:48	0:0	4	->
+water	30:50	0:0	4	codec_tag
+op	30:60	0:0	4	==
+call	30:63	30:77	4	AV_RL32
+arg	30:71	30:77	5	"BW10"
+water	30:71	0:0	6	"BW10"
+water	31:42	0:0	4	)
+stmts	32:8	32:33	3	
+call	32:8	32:32	4	vcr2_init_sequence
+arg	32:27	32:32	5	avctx
+water	32:27	0:0	6	avctx
+water	32:33	0:0	4	;
+water	33:4	0:0	2	s
+op	33:5	0:0	2	->
+water	33:7	0:0	2	slice_count
+op	33:19	0:0	2	=
+water	33:21	0:0	2	0
+water	33:22	0:0	2	;
+if	34:4	46:4	2	(avctx -> extradata && ! s -> extradata_decoded)
+cond	34:8	34:32	3	avctx -> extradata && ! s -> extradata_decoded
+water	34:8	0:0	4	avctx
+op	34:13	0:0	4	->
+water	34:15	0:0	4	extradata
+op	34:25	0:0	4	&&
+op	34:28	0:0	4	!
+water	34:29	0:0	4	s
+op	34:30	0:0	4	->
+water	34:32	0:0	4	extradata_decoded
+stmts	34:51	46:4	3	
+water	34:51	0:0	4	{
+water	35:8	0:0	4	ret
+op	35:12	0:0	4	=
+call	35:14	36:67	4	decode_chunks
+arg	35:28	35:33	5	avctx
+water	35:28	0:0	6	avctx
+arg	35:35	35:42	5	picture
+water	35:35	0:0	6	picture
+arg	35:44	35:54	5	got_output
+water	35:44	0:0	6	got_output
+arg	36:28	36:44	5	avctx->extradata
+water	36:28	0:0	6	avctx
+op	36:33	0:0	6	->
+water	36:35	0:0	6	extradata
+arg	36:46	36:67	5	avctx->extradata_size
+water	36:46	0:0	6	avctx
+op	36:51	0:0	6	->
+water	36:53	0:0	6	extradata_size
+water	36:68	0:0	4	;
+if	37:8	40:8	4	(* got_output)
+cond	37:12	37:13	5	* got_output
+op	37:12	0:0	6	*
+water	37:13	0:0	6	got_output
+stmts	37:25	40:8	5	
+water	37:25	0:0	6	{
+call	38:12	38:64	6	av_log
+arg	38:19	38:24	7	avctx
+water	38:19	0:0	8	avctx
+arg	38:26	38:38	7	AV_LOG_ERROR
+water	38:26	0:0	8	AV_LOG_ERROR
+arg	38:40	38:64	7	"picture in extradata\n"
+water	38:40	0:0	8	"picture in extradata\n"
+water	38:65	0:0	6	;
+op	39:12	0:0	6	*
+water	39:13	0:0	6	got_output
+op	39:24	0:0	6	=
+water	39:26	0:0	6	0
+water	39:27	0:0	6	;
+water	40:8	0:0	6	}
+water	41:8	0:0	4	s
+op	41:9	0:0	4	->
+water	41:11	0:0	4	extradata_decoded
+op	41:29	0:0	4	=
+water	41:31	0:0	4	1
+water	41:32	0:0	4	;
+if	42:8	45:8	4	(ret < 0 && ( avctx -> err_recognition & AV_EF_EXPLODE ))
+cond	42:12	42:62	5	ret < 0 && ( avctx -> err_recognition & AV_EF_EXPLODE )
+water	42:12	0:0	6	ret
+op	42:16	0:0	6	<
+water	42:18	0:0	6	0
+op	42:20	0:0	6	&&
+water	42:23	0:0	6	(
+water	42:24	0:0	6	avctx
+op	42:29	0:0	6	->
+water	42:31	0:0	6	err_recognition
+op	42:47	0:0	6	&
+water	42:49	0:0	6	AV_EF_EXPLODE
+water	42:62	0:0	6	)
+stmts	42:65	45:8	5	
+water	42:65	0:0	6	{
+water	43:12	0:0	6	s2
+op	43:14	0:0	6	->
+water	43:16	0:0	6	current_picture_ptr
+op	43:36	0:0	6	=
+water	43:38	0:0	6	NULL
+water	43:42	0:0	6	;
+return	44:12	44:22	6	ret
+water	44:19	0:0	7	ret
+water	45:8	0:0	6	}
+water	46:4	0:0	4	}
+water	47:4	0:0	2	ret
+op	47:8	0:0	2	=
+call	47:10	47:65	2	decode_chunks
+arg	47:24	47:29	3	avctx
+water	47:24	0:0	4	avctx
+arg	47:31	47:38	3	picture
+water	47:31	0:0	4	picture
+arg	47:40	47:50	3	got_output
+water	47:40	0:0	4	got_output
+arg	47:52	47:55	3	buf
+water	47:52	0:0	4	buf
+arg	47:57	47:65	3	buf_size
+water	47:57	0:0	4	buf_size
+water	47:66	0:0	2	;
+if	48:4	49:38	2	(ret < 0 || * got_output)
+cond	48:8	48:18	3	ret < 0 || * got_output
+water	48:8	0:0	4	ret
+op	48:11	0:0	4	<
+water	48:12	0:0	4	0
+op	48:14	0:0	4	||
+op	48:17	0:0	4	*
+water	48:18	0:0	4	got_output
+stmts	49:8	49:38	3	
+water	49:8	0:0	4	s2
+op	49:10	0:0	4	->
+water	49:12	0:0	4	current_picture_ptr
+op	49:32	0:0	4	=
+water	49:34	0:0	4	NULL
+water	49:38	0:0	4	;
+return	50:4	50:14	2	ret
+water	50:11	0:0	3	ret

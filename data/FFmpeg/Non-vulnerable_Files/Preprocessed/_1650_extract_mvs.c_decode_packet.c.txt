@@ -1,0 +1,169 @@
+decl	1:7	1:32	0	int	video_frame_count
+op	1:29	0:0	0	=
+water	1:31	0:0	0	0
+func	2:0	30:0	0	static int	decode_packet
+params	2:24	0:0	1	
+param	2:25	2:39	2	int *	got_frame
+param	2:41	2:51	2	int	cached
+stmnts	0:0	29:18	1	
+decl	4:4	4:26	2	int	decoded
+op	4:16	0:0	2	=
+water	4:18	0:0	2	pkt
+op	4:21	0:0	2	.
+water	4:22	0:0	2	size
+op	5:4	0:0	2	*
+water	5:5	0:0	2	got_frame
+op	5:15	0:0	2	=
+water	5:17	0:0	2	0
+water	5:18	0:0	2	;
+if	6:4	28:4	2	(pkt . stream_index == video_stream_idx)
+cond	6:8	6:28	3	pkt . stream_index == video_stream_idx
+water	6:8	0:0	4	pkt
+op	6:11	0:0	4	.
+water	6:12	0:0	4	stream_index
+op	6:25	0:0	4	==
+water	6:28	0:0	4	video_stream_idx
+stmts	6:46	28:4	3	
+water	6:46	0:0	4	{
+decl	7:8	7:78	4	int	ret
+op	7:16	0:0	4	=
+call	7:18	7:77	5	avcodec_decode_video2
+arg	7:40	7:53	6	video_dec_ctx
+water	7:40	0:0	7	video_dec_ctx
+arg	7:55	7:60	6	frame
+water	7:55	0:0	7	frame
+arg	7:62	7:71	6	got_frame
+water	7:62	0:0	7	got_frame
+arg	7:73	7:77	6	&pkt
+op	7:73	0:0	7	&
+water	7:74	0:0	7	pkt
+if	8:8	11:8	4	(ret < 0)
+cond	8:12	8:18	5	ret < 0
+water	8:12	0:0	6	ret
+op	8:16	0:0	6	<
+water	8:18	0:0	6	0
+stmts	8:21	11:8	5	
+water	8:21	0:0	6	{
+call	9:12	9:80	6	fprintf
+arg	9:20	9:26	7	stderr
+water	9:20	0:0	8	stderr
+arg	9:28	9:63	7	"Error decoding video frame (%s)\n"
+water	9:28	0:0	8	"Error decoding video frame (%s)\n"
+arg	9:65	9:80	7	av_err2str(ret)
+call	9:65	9:79	8	av_err2str
+arg	9:76	9:79	9	ret
+water	9:76	0:0	10	ret
+water	9:81	0:0	6	;
+return	10:12	10:22	6	ret
+water	10:19	0:0	7	ret
+water	11:8	0:0	6	}
+if	12:8	27:8	4	(* got_frame)
+cond	12:12	12:13	5	* got_frame
+op	12:12	0:0	6	*
+water	12:13	0:0	6	got_frame
+stmts	12:24	27:8	5	
+water	12:24	0:0	6	{
+decl	13:12	13:17	6	int	i
+decl	14:12	14:31	6	AVFrameSideData	*sd
+water	15:12	0:0	6	video_frame_count
+op	15:29	0:0	6	++
+water	15:31	0:0	6	;
+water	16:12	0:0	6	sd
+op	16:15	0:0	6	=
+call	16:17	16:75	6	av_frame_get_side_data
+arg	16:40	16:45	7	frame
+water	16:40	0:0	8	frame
+arg	16:47	16:75	7	AV_FRAME_DATA_MOTION_VECTORS
+water	16:47	0:0	8	AV_FRAME_DATA_MOTION_VECTORS
+water	16:76	0:0	6	;
+if	17:12	26:12	6	(sd)
+cond	17:16	17:16	7	sd
+water	17:16	0:0	8	sd
+stmts	17:20	26:12	7	
+water	17:20	0:0	8	{
+decl	18:16	18:76	8	const AVMotionVector	*mvs
+op	18:42	0:0	8	=
+water	18:44	0:0	8	(
+water	18:45	0:0	8	const
+water	18:51	0:0	8	AVMotionVector
+op	18:66	0:0	8	*
+water	18:67	0:0	8	)
+water	18:68	0:0	8	sd
+op	18:70	0:0	8	->
+water	18:72	0:0	8	data
+for	19:16	25:16	8	(i = 0 ;i < sd -> size / sizeof ( * mvs );i ++)
+forinit	19:21	19:26	9	i = 0 ;
+water	19:21	0:0	10	i
+op	19:23	0:0	10	=
+water	19:25	0:0	10	0
+water	19:26	0:0	10	;
+cond	19:28	19:54	9	i < sd -> size / sizeof ( * mvs )
+water	19:28	0:0	10	i
+op	19:30	0:0	10	<
+water	19:32	0:0	10	sd
+op	19:34	0:0	10	->
+water	19:36	0:0	10	size
+op	19:41	0:0	10	/
+op	19:43	0:0	10	sizeof
+water	19:49	0:0	10	(
+op	19:50	0:0	10	*
+water	19:51	0:0	10	mvs
+water	19:54	0:0	10	)
+forexpr	19:57	19:58	9	i ++
+water	19:57	0:0	10	i
+op	19:58	0:0	10	++
+stmts	19:62	25:16	9	
+water	19:62	0:0	10	{
+decl	20:20	20:54	10	const AVMotionVector	*mv
+op	20:45	0:0	10	=
+op	20:47	0:0	10	&
+water	20:48	0:0	10	mvs
+op	20:51	0:0	10	[
+water	20:52	0:0	10	i
+op	20:53	0:0	10	]
+call	21:20	24:58	10	printf
+arg	21:27	21:73	11	"%d,%2d,%2d,%2d,%4d,%4d,%4d,%4d,0x%"PRIx64"\n"
+water	21:27	0:0	12	"%d,%2d,%2d,%2d,%4d,%4d,%4d,%4d,0x%"
+water	21:63	0:0	12	PRIx64
+water	21:69	0:0	12	"\n"
+arg	22:27	22:44	11	video_frame_count
+water	22:27	0:0	12	video_frame_count
+arg	22:46	22:56	11	mv->source
+water	22:46	0:0	12	mv
+op	22:48	0:0	12	->
+water	22:50	0:0	12	source
+arg	23:27	23:32	11	mv->w
+water	23:27	0:0	12	mv
+op	23:29	0:0	12	->
+water	23:31	0:0	12	w
+arg	23:34	23:39	11	mv->h
+water	23:34	0:0	12	mv
+op	23:36	0:0	12	->
+water	23:38	0:0	12	h
+arg	23:41	23:50	11	mv->src_x
+water	23:41	0:0	12	mv
+op	23:43	0:0	12	->
+water	23:45	0:0	12	src_x
+arg	23:52	23:61	11	mv->src_y
+water	23:52	0:0	12	mv
+op	23:54	0:0	12	->
+water	23:56	0:0	12	src_y
+arg	24:27	24:36	11	mv->dst_x
+water	24:27	0:0	12	mv
+op	24:29	0:0	12	->
+water	24:31	0:0	12	dst_x
+arg	24:38	24:47	11	mv->dst_y
+water	24:38	0:0	12	mv
+op	24:40	0:0	12	->
+water	24:42	0:0	12	dst_y
+arg	24:49	24:58	11	mv->flags
+water	24:49	0:0	12	mv
+op	24:51	0:0	12	->
+water	24:53	0:0	12	flags
+water	24:59	0:0	10	;
+water	25:16	0:0	10	}
+water	26:12	0:0	8	}
+water	27:8	0:0	6	}
+water	28:4	0:0	4	}
+return	29:4	29:18	2	decoded
+water	29:11	0:0	3	decoded

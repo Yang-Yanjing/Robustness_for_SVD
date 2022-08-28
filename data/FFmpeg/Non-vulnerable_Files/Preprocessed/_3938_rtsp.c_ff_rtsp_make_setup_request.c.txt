@@ -1,0 +1,1287 @@
+func	1:0	214:0	0	int	ff_rtsp_make_setup_request
+params	1:30	0:0	1	
+param	1:31	1:49	2	AVFormatContext *	s
+param	1:51	1:67	2	const char *	host
+param	1:69	1:77	2	int	port
+param	2:30	2:49	2	int	lower_transport
+param	2:51	2:77	2	const char *	real_challenge
+stmnts	0:0	213:14	1	
+decl	4:4	4:32	2	RTSPState	*rt
+op	4:18	0:0	2	=
+water	4:20	0:0	2	s
+op	4:21	0:0	2	->
+water	4:23	0:0	2	priv_data
+decl	5:4	5:52	2	int	rtx
+op	5:12	0:0	2	=
+water	5:14	0:0	2	0
+water	5:15	0:0	2	,
+decl	5:4	5:52	2	int	j
+water	5:18	0:0	2	,
+decl	5:4	5:52	2	int	i
+water	5:21	0:0	2	,
+decl	5:4	5:52	2	int	err
+water	5:26	0:0	2	,
+decl	5:4	5:52	2	int	interleave
+op	5:39	0:0	2	=
+water	5:41	0:0	2	0
+water	5:42	0:0	2	,
+decl	5:4	5:52	2	int	port_off
+decl	6:4	6:23	2	RTSPStream	*rtsp_st
+decl	7:4	7:46	2	RTSPMessageHeader	reply1
+water	7:28	0:0	2	,
+decl	7:4	7:46	2	RTSPMessageHeader	*reply
+op	7:37	0:0	2	=
+op	7:39	0:0	2	&
+water	7:40	0:0	2	reply1
+decl	8:4	8:18	2	char	cmd[2048]
+decl	9:4	9:26	2	const char	*trans_pref
+if	10:4	11:31	2	(rt -> transport == RTSP_TRANSPORT_RDT)
+cond	10:8	10:25	3	rt -> transport == RTSP_TRANSPORT_RDT
+water	10:8	0:0	4	rt
+op	10:10	0:0	4	->
+water	10:12	0:0	4	transport
+op	10:22	0:0	4	==
+water	10:25	0:0	4	RTSP_TRANSPORT_RDT
+stmts	11:8	11:31	3	
+water	11:8	0:0	4	trans_pref
+op	11:19	0:0	4	=
+water	11:21	0:0	4	"x-pn-tng"
+water	11:31	0:0	4	;
+else	12:4	13:30	2
+stmts	12:9	13:30	3	
+if	12:9	13:30	4	(rt -> transport == RTSP_TRANSPORT_RAW)
+cond	12:13	12:30	5	rt -> transport == RTSP_TRANSPORT_RAW
+water	12:13	0:0	6	rt
+op	12:15	0:0	6	->
+water	12:17	0:0	6	transport
+op	12:27	0:0	6	==
+water	12:30	0:0	6	RTSP_TRANSPORT_RAW
+stmts	13:8	13:30	5	
+water	13:8	0:0	6	trans_pref
+op	13:19	0:0	6	=
+water	13:21	0:0	6	"RAW/RAW"
+water	13:30	0:0	6	;
+else	14:4	15:30	2
+stmts	15:8	15:30	3	
+water	15:8	0:0	4	trans_pref
+op	15:19	0:0	4	=
+water	15:21	0:0	4	"RTP/AVP"
+water	15:30	0:0	4	;
+water	17:4	0:0	2	rt
+op	17:6	0:0	2	->
+water	17:8	0:0	2	timeout
+op	17:16	0:0	2	=
+water	17:18	0:0	2	60
+water	17:20	0:0	2	;
+water	21:4	0:0	2	port_off
+op	21:13	0:0	2	=
+call	21:15	21:34	2	av_get_random_seed
+op	21:36	0:0	2	%
+water	21:38	0:0	2	(
+water	21:39	0:0	2	(
+water	21:40	0:0	2	rt
+op	21:42	0:0	2	->
+water	21:44	0:0	2	rtp_port_max
+op	21:57	0:0	2	-
+water	21:59	0:0	2	rt
+op	21:61	0:0	2	->
+water	21:63	0:0	2	rtp_port_min
+water	21:75	0:0	2	)
+op	21:76	0:0	2	/
+water	21:77	0:0	2	2
+water	21:78	0:0	2	)
+water	21:79	0:0	2	;
+water	23:4	0:0	2	port_off
+op	23:13	0:0	2	-=
+water	23:16	0:0	2	port_off
+op	23:25	0:0	2	&
+water	23:27	0:0	2	0
+water	23:28	0:0	2	x01
+water	23:31	0:0	2	;
+for	24:4	205:4	2	(j = rt -> rtp_port_min + port_off , i = 0 ;i < rt -> nb_rtsp_streams;++ i)
+forinit	24:9	24:47	3	j = rt -> rtp_port_min + port_off , i = 0 ;
+water	24:9	0:0	4	j
+op	24:11	0:0	4	=
+water	24:13	0:0	4	rt
+op	24:15	0:0	4	->
+water	24:17	0:0	4	rtp_port_min
+op	24:30	0:0	4	+
+water	24:32	0:0	4	port_off
+water	24:40	0:0	4	,
+water	24:42	0:0	4	i
+op	24:44	0:0	4	=
+water	24:46	0:0	4	0
+water	24:47	0:0	4	;
+cond	24:49	24:57	3	i < rt -> nb_rtsp_streams
+water	24:49	0:0	4	i
+op	24:51	0:0	4	<
+water	24:53	0:0	4	rt
+op	24:55	0:0	4	->
+water	24:57	0:0	4	nb_rtsp_streams
+forexpr	24:74	24:76	3	++ i
+op	24:74	0:0	4	++
+water	24:76	0:0	4	i
+stmts	24:79	205:4	3	
+water	24:79	0:0	4	{
+decl	25:8	25:28	4	char	transport[2048]
+if	31:8	47:8	4	(lower_transport == RTSP_LOWER_TRANSPORT_UDP && rt -> server_type == RTSP_SERVER_WMS)
+cond	31:12	32:32	5	lower_transport == RTSP_LOWER_TRANSPORT_UDP && rt -> server_type == RTSP_SERVER_WMS
+water	31:12	0:0	6	lower_transport
+op	31:28	0:0	6	==
+water	31:31	0:0	6	RTSP_LOWER_TRANSPORT_UDP
+op	31:56	0:0	6	&&
+water	32:13	0:0	6	rt
+op	32:15	0:0	6	->
+water	32:17	0:0	6	server_type
+op	32:29	0:0	6	==
+water	32:32	0:0	6	RTSP_SERVER_WMS
+stmts	32:49	47:8	5	
+water	32:49	0:0	6	{
+if	33:12	45:12	6	(i == 0)
+cond	33:16	33:21	7	i == 0
+water	33:16	0:0	8	i
+op	33:18	0:0	8	==
+water	33:21	0:0	8	0
+stmts	33:24	45:12	7	
+water	33:24	0:0	8	{
+for	35:16	41:16	8	(rtx = 0 ;rtx < rt -> nb_rtsp_streams;rtx ++)
+forinit	35:21	35:28	9	rtx = 0 ;
+water	35:21	0:0	10	rtx
+op	35:25	0:0	10	=
+water	35:27	0:0	10	0
+water	35:28	0:0	10	;
+cond	35:30	35:40	9	rtx < rt -> nb_rtsp_streams
+water	35:30	0:0	10	rtx
+op	35:34	0:0	10	<
+water	35:36	0:0	10	rt
+op	35:38	0:0	10	->
+water	35:40	0:0	10	nb_rtsp_streams
+forexpr	35:57	35:60	9	rtx ++
+water	35:57	0:0	10	rtx
+op	35:60	0:0	10	++
+stmts	35:64	41:16	9	
+water	35:64	0:0	10	{
+decl	36:20	36:72	10	int	len
+op	36:28	0:0	10	=
+call	36:30	36:71	11	strlen
+arg	36:37	36:71	12	rt->rtsp_streams[rtx]->control_url
+water	36:37	0:0	13	rt
+op	36:39	0:0	13	->
+water	36:41	0:0	13	rtsp_streams
+op	36:53	0:0	13	[
+water	36:54	0:0	13	rtx
+op	36:57	0:0	13	]
+op	36:58	0:0	13	->
+water	36:60	0:0	13	control_url
+if	37:20	40:29	10	(len >= 4 && !strcmp (rt -> rtsp_streams [ rtx ] -> control_url + len - 4 ,"/rtx" ))
+cond	37:24	39:38	11	len >= 4 && !strcmp (rt -> rtsp_streams [ rtx ] -> control_url + len - 4 ,"/rtx" )
+water	37:24	0:0	12	len
+op	37:28	0:0	12	>=
+water	37:31	0:0	12	4
+op	37:33	0:0	12	&&
+op	38:24	0:0	12	!
+call	38:25	39:38	12	strcmp
+arg	38:32	38:76	13	rt->rtsp_streams[rtx]->control_url+len-4
+water	38:32	0:0	14	rt
+op	38:34	0:0	14	->
+water	38:36	0:0	14	rtsp_streams
+op	38:48	0:0	14	[
+water	38:49	0:0	14	rtx
+op	38:52	0:0	14	]
+op	38:53	0:0	14	->
+water	38:55	0:0	14	control_url
+op	38:67	0:0	14	+
+water	38:69	0:0	14	len
+op	38:73	0:0	14	-
+water	38:75	0:0	14	4
+arg	39:32	39:38	13	"/rtx"
+water	39:32	0:0	14	"/rtx"
+stmts	40:24	40:29	11	
+break	40:24	40:29	12	
+water	41:16	0:0	10	}
+if	42:16	43:29	8	(rtx == rt -> nb_rtsp_streams)
+cond	42:20	42:31	9	rtx == rt -> nb_rtsp_streams
+water	42:20	0:0	10	rtx
+op	42:24	0:0	10	==
+water	42:27	0:0	10	rt
+op	42:29	0:0	10	->
+water	42:31	0:0	10	nb_rtsp_streams
+stmts	43:20	43:29	9	
+return	43:20	43:29	10	-1
+op	43:27	0:0	11	-
+water	43:28	0:0	11	1
+water	44:16	0:0	8	rtsp_st
+op	44:24	0:0	8	=
+water	44:26	0:0	8	rt
+op	44:28	0:0	8	->
+water	44:30	0:0	8	rtsp_streams
+op	44:42	0:0	8	[
+water	44:43	0:0	8	rtx
+op	44:46	0:0	8	]
+water	44:47	0:0	8	;
+water	45:12	0:0	8	}
+else	45:14	46:63	6
+stmts	46:16	46:63	7	
+water	46:16	0:0	8	rtsp_st
+op	46:24	0:0	8	=
+water	46:26	0:0	8	rt
+op	46:28	0:0	8	->
+water	46:30	0:0	8	rtsp_streams
+op	46:42	0:0	8	[
+water	46:43	0:0	8	i
+op	46:45	0:0	8	>
+water	46:47	0:0	8	rtx
+water	46:51	0:0	8	?
+water	46:53	0:0	8	i
+water	46:55	0:0	8	:
+water	46:57	0:0	8	i
+op	46:59	0:0	8	-
+water	46:61	0:0	8	1
+op	46:62	0:0	8	]
+water	46:63	0:0	8	;
+water	47:8	0:0	6	}
+else	47:10	48:41	4
+stmts	48:12	48:41	5	
+water	48:12	0:0	6	rtsp_st
+op	48:20	0:0	6	=
+water	48:22	0:0	6	rt
+op	48:24	0:0	6	->
+water	48:26	0:0	6	rtsp_streams
+op	48:38	0:0	6	[
+water	48:39	0:0	6	i
+op	48:40	0:0	6	]
+water	48:41	0:0	6	;
+if	50:8	84:8	4	(lower_transport == RTSP_LOWER_TRANSPORT_UDP)
+cond	50:12	50:31	5	lower_transport == RTSP_LOWER_TRANSPORT_UDP
+water	50:12	0:0	6	lower_transport
+op	50:28	0:0	6	==
+water	50:31	0:0	6	RTSP_LOWER_TRANSPORT_UDP
+stmts	50:57	84:8	5	
+water	50:57	0:0	6	{
+decl	51:12	51:25	6	char	buf[256]
+if	52:12	55:12	6	(rt -> server_type == RTSP_SERVER_WMS && i > 1)
+cond	52:16	52:58	7	rt -> server_type == RTSP_SERVER_WMS && i > 1
+water	52:16	0:0	8	rt
+op	52:18	0:0	8	->
+water	52:20	0:0	8	server_type
+op	52:32	0:0	8	==
+water	52:35	0:0	8	RTSP_SERVER_WMS
+op	52:51	0:0	8	&&
+water	52:54	0:0	8	i
+op	52:56	0:0	8	>
+water	52:58	0:0	8	1
+stmts	52:61	55:12	7	
+water	52:61	0:0	8	{
+water	53:16	0:0	8	port
+op	53:21	0:0	8	=
+water	53:23	0:0	8	reply
+op	53:28	0:0	8	->
+water	53:30	0:0	8	transports
+op	53:40	0:0	8	[
+water	53:41	0:0	8	0
+op	53:42	0:0	8	]
+op	53:43	0:0	8	.
+water	53:44	0:0	8	client_port_min
+water	53:59	0:0	8	;
+goto	54:16	54:30	8	have_port
+water	54:21	0:0	9	have_port
+water	55:12	0:0	8	}
+while	57:12	68:12	6	(j <= rt -> rtp_port_max)
+cond	57:19	57:28	7	j <= rt -> rtp_port_max
+water	57:19	0:0	8	j
+op	57:21	0:0	8	<=
+water	57:24	0:0	8	rt
+op	57:26	0:0	8	->
+water	57:28	0:0	8	rtp_port_max
+stmts	57:42	68:12	7	
+water	57:42	0:0	8	{
+decl	58:16	58:52	8	AVDictionary	*opts
+op	58:35	0:0	8	=
+call	58:37	58:51	9	map_to_opts
+arg	58:49	58:51	10	rt
+water	58:49	0:0	11	rt
+call	59:16	60:46	8	ff_url_join
+arg	59:28	59:31	9	buf
+water	59:28	0:0	10	buf
+arg	59:33	59:44	9	sizeof(buf)
+op	59:33	0:0	10	sizeof
+water	59:39	0:0	10	(
+water	59:40	0:0	10	buf
+water	59:43	0:0	10	)
+arg	59:46	59:51	9	"rtp"
+water	59:46	0:0	10	"rtp"
+arg	59:53	59:57	9	NULL
+water	59:53	0:0	10	NULL
+arg	59:59	59:63	9	host
+water	59:59	0:0	10	host
+arg	59:65	59:67	9	-1
+op	59:65	0:0	10	-
+water	59:66	0:0	10	1
+arg	60:28	60:43	9	"?localport=%d"
+water	60:28	0:0	10	"?localport=%d"
+arg	60:45	60:46	9	j
+water	60:45	0:0	10	j
+water	60:47	0:0	8	;
+water	62:16	0:0	8	j
+op	62:18	0:0	8	+=
+water	62:21	0:0	8	2
+water	62:22	0:0	8	;
+water	63:16	0:0	8	err
+op	63:20	0:0	8	=
+call	63:22	64:62	8	ffurl_open
+arg	63:33	63:53	9	&rtsp_st->rtp_handle
+op	63:33	0:0	10	&
+water	63:34	0:0	10	rtsp_st
+op	63:41	0:0	10	->
+water	63:43	0:0	10	rtp_handle
+arg	63:55	63:58	9	buf
+water	63:55	0:0	10	buf
+arg	63:60	63:80	9	AVIO_FLAG_READ_WRITE
+water	63:60	0:0	10	AVIO_FLAG_READ_WRITE
+arg	64:33	64:55	9	&s->interrupt_callback
+op	64:33	0:0	10	&
+water	64:34	0:0	10	s
+op	64:35	0:0	10	->
+water	64:37	0:0	10	interrupt_callback
+arg	64:57	64:62	9	&opts
+op	64:57	0:0	10	&
+water	64:58	0:0	10	opts
+water	64:63	0:0	8	;
+call	65:16	65:34	8	av_dict_free
+arg	65:29	65:34	9	&opts
+op	65:29	0:0	10	&
+water	65:30	0:0	10	opts
+water	65:35	0:0	8	;
+if	66:16	67:35	8	(! err)
+cond	66:20	66:21	9	! err
+op	66:20	0:0	10	!
+water	66:21	0:0	10	err
+stmts	67:20	67:35	9	
+goto	67:20	67:35	10	rtp_opened
+water	67:25	0:0	11	rtp_opened
+water	68:12	0:0	8	}
+call	69:12	69:72	6	av_log
+arg	69:19	69:20	7	s
+water	69:19	0:0	8	s
+arg	69:22	69:34	7	AV_LOG_ERROR
+water	69:22	0:0	8	AV_LOG_ERROR
+arg	69:36	69:72	7	"Unable to open an input RTP port\n"
+water	69:36	0:0	8	"Unable to open an input RTP port\n"
+water	69:73	0:0	6	;
+water	70:12	0:0	6	err
+op	70:16	0:0	6	=
+call	70:18	70:29	6	AVERROR
+arg	70:26	70:29	7	EIO
+water	70:26	0:0	8	EIO
+water	70:30	0:0	6	;
+goto	71:12	71:21	6	fail
+water	71:17	0:0	7	fail
+label	72:8	72:18	6	rtp_opened :
+water	73:12	0:0	6	port
+op	73:17	0:0	6	=
+call	73:19	73:64	6	ff_rtp_get_local_rtp_port
+arg	73:45	73:64	7	rtsp_st->rtp_handle
+water	73:45	0:0	8	rtsp_st
+op	73:52	0:0	8	->
+water	73:54	0:0	8	rtp_handle
+water	73:65	0:0	6	;
+label	74:8	74:17	6	have_port :
+call	75:12	76:42	6	snprintf
+arg	75:21	75:30	7	transport
+water	75:21	0:0	8	transport
+arg	75:32	75:53	7	sizeof(transport)-1
+op	75:32	0:0	8	sizeof
+water	75:38	0:0	8	(
+water	75:39	0:0	8	transport
+water	75:48	0:0	8	)
+op	75:50	0:0	8	-
+water	75:52	0:0	8	1
+arg	76:21	76:30	7	"%s/UDP;"
+water	76:21	0:0	8	"%s/UDP;"
+arg	76:32	76:42	7	trans_pref
+water	76:32	0:0	8	trans_pref
+water	76:43	0:0	6	;
+if	77:12	78:68	6	(rt -> server_type != RTSP_SERVER_REAL)
+cond	77:16	77:35	7	rt -> server_type != RTSP_SERVER_REAL
+water	77:16	0:0	8	rt
+op	77:18	0:0	8	->
+water	77:20	0:0	8	server_type
+op	77:32	0:0	8	!=
+water	77:35	0:0	8	RTSP_SERVER_REAL
+stmts	78:16	78:68	7	
+call	78:16	78:67	8	av_strlcat
+arg	78:27	78:36	9	transport
+water	78:27	0:0	10	transport
+arg	78:38	78:48	9	"unicast;"
+water	78:38	0:0	10	"unicast;"
+arg	78:50	78:67	9	sizeof(transport)
+op	78:50	0:0	10	sizeof
+water	78:56	0:0	10	(
+water	78:57	0:0	10	transport
+water	78:66	0:0	10	)
+water	78:68	0:0	8	;
+call	79:12	80:43	6	av_strlcatf
+arg	79:24	79:33	7	transport
+water	79:24	0:0	8	transport
+arg	79:35	79:52	7	sizeof(transport)
+op	79:35	0:0	8	sizeof
+water	79:41	0:0	8	(
+water	79:42	0:0	8	transport
+water	79:51	0:0	8	)
+arg	80:21	80:37	7	"client_port=%d"
+water	80:21	0:0	8	"client_port=%d"
+arg	80:39	80:43	7	port
+water	80:39	0:0	8	port
+water	80:44	0:0	6	;
+if	81:12	83:74	6	(rt -> transport == RTSP_TRANSPORT_RTP && ! ( rt -> server_type == RTSP_SERVER_WMS && i > 0 ))
+cond	81:16	82:61	7	rt -> transport == RTSP_TRANSPORT_RTP && ! ( rt -> server_type == RTSP_SERVER_WMS && i > 0 )
+water	81:16	0:0	8	rt
+op	81:18	0:0	8	->
+water	81:20	0:0	8	transport
+op	81:30	0:0	8	==
+water	81:33	0:0	8	RTSP_TRANSPORT_RTP
+op	81:52	0:0	8	&&
+op	82:16	0:0	8	!
+water	82:17	0:0	8	(
+water	82:18	0:0	8	rt
+op	82:20	0:0	8	->
+water	82:22	0:0	8	server_type
+op	82:34	0:0	8	==
+water	82:37	0:0	8	RTSP_SERVER_WMS
+op	82:53	0:0	8	&&
+water	82:56	0:0	8	i
+op	82:58	0:0	8	>
+water	82:60	0:0	8	0
+water	82:61	0:0	8	)
+stmts	83:16	83:74	7	
+call	83:16	83:73	8	av_strlcatf
+arg	83:28	83:37	9	transport
+water	83:28	0:0	10	transport
+arg	83:39	83:56	9	sizeof(transport)
+op	83:39	0:0	10	sizeof
+water	83:45	0:0	10	(
+water	83:46	0:0	10	transport
+water	83:55	0:0	10	)
+arg	83:58	83:63	9	"-%d"
+water	83:58	0:0	10	"-%d"
+arg	83:65	83:73	9	port+1
+water	83:65	0:0	10	port
+op	83:70	0:0	10	+
+water	83:72	0:0	10	1
+water	83:74	0:0	8	;
+water	84:8	0:0	6	}
+else	86:8	103:8	4
+stmts	86:13	103:8	5	
+if	86:13	103:8	6	(lower_transport == RTSP_LOWER_TRANSPORT_TCP)
+cond	86:17	86:36	7	lower_transport == RTSP_LOWER_TRANSPORT_TCP
+water	86:17	0:0	8	lower_transport
+op	86:33	0:0	8	==
+water	86:36	0:0	8	RTSP_LOWER_TRANSPORT_TCP
+stmts	86:62	103:8	7	
+water	86:62	0:0	8	{
+if	90:12	94:24	8	(rt -> server_type == RTSP_SERVER_WMS && ( rtsp_st -> stream_index < 0 || s -> streams [ rtsp_st -> stream_index ] -> codec -> codec_type == AVMEDIA_TYPE_DATA ))
+cond	90:16	93:37	9	rt -> server_type == RTSP_SERVER_WMS && ( rtsp_st -> stream_index < 0 || s -> streams [ rtsp_st -> stream_index ] -> codec -> codec_type == AVMEDIA_TYPE_DATA )
+water	90:16	0:0	10	rt
+op	90:18	0:0	10	->
+water	90:20	0:0	10	server_type
+op	90:32	0:0	10	==
+water	90:35	0:0	10	RTSP_SERVER_WMS
+op	90:51	0:0	10	&&
+water	91:16	0:0	10	(
+water	91:17	0:0	10	rtsp_st
+op	91:24	0:0	10	->
+water	91:26	0:0	10	stream_index
+op	91:39	0:0	10	<
+water	91:41	0:0	10	0
+op	91:43	0:0	10	||
+water	92:17	0:0	10	s
+op	92:18	0:0	10	->
+water	92:20	0:0	10	streams
+op	92:27	0:0	10	[
+water	92:28	0:0	10	rtsp_st
+op	92:35	0:0	10	->
+water	92:37	0:0	10	stream_index
+op	92:49	0:0	10	]
+op	92:50	0:0	10	->
+water	92:52	0:0	10	codec
+op	92:57	0:0	10	->
+water	92:59	0:0	10	codec_type
+op	92:70	0:0	10	==
+water	93:20	0:0	10	AVMEDIA_TYPE_DATA
+water	93:37	0:0	10	)
+stmts	94:16	94:24	9	
+continue	94:16	94:24	10	
+call	95:12	96:42	8	snprintf
+arg	95:21	95:30	9	transport
+water	95:21	0:0	10	transport
+arg	95:32	95:53	9	sizeof(transport)-1
+op	95:32	0:0	10	sizeof
+water	95:38	0:0	10	(
+water	95:39	0:0	10	transport
+water	95:48	0:0	10	)
+op	95:50	0:0	10	-
+water	95:52	0:0	10	1
+arg	96:21	96:30	9	"%s/TCP;"
+water	96:21	0:0	10	"%s/TCP;"
+arg	96:32	96:42	9	trans_pref
+water	96:32	0:0	10	trans_pref
+water	96:43	0:0	8	;
+if	97:12	98:68	8	(rt -> transport != RTSP_TRANSPORT_RDT)
+cond	97:16	97:33	9	rt -> transport != RTSP_TRANSPORT_RDT
+water	97:16	0:0	10	rt
+op	97:18	0:0	10	->
+water	97:20	0:0	10	transport
+op	97:30	0:0	10	!=
+water	97:33	0:0	10	RTSP_TRANSPORT_RDT
+stmts	98:16	98:68	9	
+call	98:16	98:67	10	av_strlcat
+arg	98:27	98:36	11	transport
+water	98:27	0:0	12	transport
+arg	98:38	98:48	11	"unicast;"
+water	98:38	0:0	12	"unicast;"
+arg	98:50	98:67	11	sizeof(transport)
+op	98:50	0:0	12	sizeof
+water	98:56	0:0	12	(
+water	98:57	0:0	12	transport
+water	98:66	0:0	12	)
+water	98:68	0:0	10	;
+call	99:12	101:50	8	av_strlcatf
+arg	99:24	99:33	9	transport
+water	99:24	0:0	10	transport
+arg	99:35	99:52	9	sizeof(transport)
+op	99:35	0:0	10	sizeof
+water	99:41	0:0	10	(
+water	99:42	0:0	10	transport
+water	99:51	0:0	10	)
+arg	100:24	100:43	9	"interleaved=%d-%d"
+water	100:24	0:0	10	"interleaved=%d-%d"
+arg	101:24	101:34	9	interleave
+water	101:24	0:0	10	interleave
+arg	101:36	101:50	9	interleave+1
+water	101:36	0:0	10	interleave
+op	101:47	0:0	10	+
+water	101:49	0:0	10	1
+water	101:51	0:0	8	;
+water	102:12	0:0	8	interleave
+op	102:23	0:0	8	+=
+water	102:26	0:0	8	2
+water	102:27	0:0	8	;
+water	103:8	0:0	8	}
+else	104:8	107:8	4
+stmts	104:13	107:8	5	
+if	104:13	107:8	6	(lower_transport == RTSP_LOWER_TRANSPORT_UDP_MULTICAST)
+cond	104:17	104:36	7	lower_transport == RTSP_LOWER_TRANSPORT_UDP_MULTICAST
+water	104:17	0:0	8	lower_transport
+op	104:33	0:0	8	==
+water	104:36	0:0	8	RTSP_LOWER_TRANSPORT_UDP_MULTICAST
+stmts	104:72	107:8	7	
+water	104:72	0:0	8	{
+call	105:12	106:51	8	snprintf
+arg	105:21	105:30	9	transport
+water	105:21	0:0	10	transport
+arg	105:32	105:53	9	sizeof(transport)-1
+op	105:32	0:0	10	sizeof
+water	105:38	0:0	10	(
+water	105:39	0:0	10	transport
+water	105:48	0:0	10	)
+op	105:50	0:0	10	-
+water	105:52	0:0	10	1
+arg	106:21	106:39	9	"%s/UDP;multicast"
+water	106:21	0:0	10	"%s/UDP;multicast"
+arg	106:41	106:51	9	trans_pref
+water	106:41	0:0	10	trans_pref
+water	106:52	0:0	8	;
+water	107:8	0:0	8	}
+if	108:8	110:8	4	(s -> oformat)
+cond	108:12	108:15	5	s -> oformat
+water	108:12	0:0	6	s
+op	108:13	0:0	6	->
+water	108:15	0:0	6	oformat
+stmts	108:24	110:8	5	
+water	108:24	0:0	6	{
+call	109:12	109:67	6	av_strlcat
+arg	109:23	109:32	7	transport
+water	109:23	0:0	8	transport
+arg	109:34	109:48	7	";mode=record"
+water	109:34	0:0	8	";mode=record"
+arg	109:50	109:67	7	sizeof(transport)
+op	109:50	0:0	8	sizeof
+water	109:56	0:0	8	(
+water	109:57	0:0	8	transport
+water	109:66	0:0	8	)
+water	109:68	0:0	6	;
+water	110:8	0:0	6	}
+else	110:10	112:66	4
+stmts	110:15	112:66	5	
+if	110:15	112:66	6	(rt -> server_type == RTSP_SERVER_REAL || rt -> server_type == RTSP_SERVER_WMS)
+cond	110:19	111:38	7	rt -> server_type == RTSP_SERVER_REAL || rt -> server_type == RTSP_SERVER_WMS
+water	110:19	0:0	8	rt
+op	110:21	0:0	8	->
+water	110:23	0:0	8	server_type
+op	110:35	0:0	8	==
+water	110:38	0:0	8	RTSP_SERVER_REAL
+op	110:55	0:0	8	||
+water	111:19	0:0	8	rt
+op	111:21	0:0	8	->
+water	111:23	0:0	8	server_type
+op	111:35	0:0	8	==
+water	111:38	0:0	8	RTSP_SERVER_WMS
+stmts	112:12	112:66	7	
+call	112:12	112:65	8	av_strlcat
+arg	112:23	112:32	9	transport
+water	112:23	0:0	10	transport
+arg	112:34	112:46	9	";mode=play"
+water	112:34	0:0	10	";mode=play"
+arg	112:48	112:65	9	sizeof(transport)
+op	112:48	0:0	10	sizeof
+water	112:54	0:0	10	(
+water	112:55	0:0	10	transport
+water	112:64	0:0	10	)
+water	112:66	0:0	8	;
+call	113:8	115:26	4	snprintf
+arg	113:17	113:20	5	cmd
+water	113:17	0:0	6	cmd
+arg	113:22	113:33	5	sizeof(cmd)
+op	113:22	0:0	6	sizeof
+water	113:28	0:0	6	(
+water	113:29	0:0	6	cmd
+water	113:32	0:0	6	)
+arg	114:17	114:36	5	"Transport: %s\r\n"
+water	114:17	0:0	6	"Transport: %s\r\n"
+arg	115:17	115:26	5	transport
+water	115:17	0:0	6	transport
+water	115:27	0:0	4	;
+if	116:8	117:65	4	(rt -> accept_dynamic_rate)
+cond	116:12	116:16	5	rt -> accept_dynamic_rate
+water	116:12	0:0	6	rt
+op	116:14	0:0	6	->
+water	116:16	0:0	6	accept_dynamic_rate
+stmts	117:12	117:65	5	
+call	117:12	117:64	6	av_strlcat
+arg	117:23	117:26	7	cmd
+water	117:23	0:0	8	cmd
+arg	117:28	117:51	7	"x-Dynamic-Rate: 0\r\n"
+water	117:28	0:0	8	"x-Dynamic-Rate: 0\r\n"
+arg	117:53	117:64	7	sizeof(cmd)
+op	117:53	0:0	8	sizeof
+water	117:59	0:0	8	(
+water	117:60	0:0	8	cmd
+water	117:63	0:0	8	)
+water	117:65	0:0	6	;
+if	118:8	126:8	4	(CONFIG_RTPDEC && i == 0 && rt -> server_type == RTSP_SERVER_REAL)
+cond	118:12	118:58	5	CONFIG_RTPDEC && i == 0 && rt -> server_type == RTSP_SERVER_REAL
+water	118:12	0:0	6	CONFIG_RTPDEC
+op	118:26	0:0	6	&&
+water	118:29	0:0	6	i
+op	118:31	0:0	6	==
+water	118:34	0:0	6	0
+op	118:36	0:0	6	&&
+water	118:39	0:0	6	rt
+op	118:41	0:0	6	->
+water	118:43	0:0	6	server_type
+op	118:55	0:0	6	==
+water	118:58	0:0	6	RTSP_SERVER_REAL
+stmts	118:76	126:8	5	
+water	118:76	0:0	6	{
+decl	119:12	119:43	6	char	real_res[41]
+water	119:29	0:0	6	,
+decl	119:12	119:43	6	char	real_csum[9]
+call	120:12	121:60	6	ff_rdt_calc_response_and_checksum
+arg	120:46	120:54	7	real_res
+water	120:46	0:0	8	real_res
+arg	120:56	120:65	7	real_csum
+water	120:56	0:0	8	real_csum
+arg	121:46	121:60	7	real_challenge
+water	121:46	0:0	8	real_challenge
+water	121:61	0:0	6	;
+call	122:12	125:59	6	av_strlcatf
+arg	122:24	122:27	7	cmd
+water	122:24	0:0	8	cmd
+arg	122:29	122:40	7	sizeof(cmd)
+op	122:29	0:0	8	sizeof
+water	122:35	0:0	8	(
+water	122:36	0:0	8	cmd
+water	122:39	0:0	8	)
+arg	123:24	124:55	7	"If-Match: %s\r\n""RealChallenge2: %s, sd=%s\r\n"
+water	123:24	0:0	8	"If-Match: %s\r\n"
+water	124:24	0:0	8	"RealChallenge2: %s, sd=%s\r\n"
+arg	125:24	125:38	7	rt->session_id
+water	125:24	0:0	8	rt
+op	125:26	0:0	8	->
+water	125:28	0:0	8	session_id
+arg	125:40	125:48	7	real_res
+water	125:40	0:0	8	real_res
+arg	125:50	125:59	7	real_csum
+water	125:50	0:0	8	real_csum
+water	125:60	0:0	6	;
+water	126:8	0:0	6	}
+call	127:8	127:75	4	ff_rtsp_send_cmd
+arg	127:25	127:26	5	s
+water	127:25	0:0	6	s
+arg	127:28	127:35	5	"SETUP"
+water	127:28	0:0	6	"SETUP"
+arg	127:37	127:57	5	rtsp_st->control_url
+water	127:37	0:0	6	rtsp_st
+op	127:44	0:0	6	->
+water	127:46	0:0	6	control_url
+arg	127:59	127:62	5	cmd
+water	127:59	0:0	6	cmd
+arg	127:64	127:69	5	reply
+water	127:64	0:0	6	reply
+arg	127:71	127:75	5	NULL
+water	127:71	0:0	6	NULL
+water	127:76	0:0	4	;
+if	128:8	131:8	4	(reply -> status_code == 461 && i == 0)
+cond	128:12	128:47	5	reply -> status_code == 461 && i == 0
+water	128:12	0:0	6	reply
+op	128:17	0:0	6	->
+water	128:19	0:0	6	status_code
+op	128:31	0:0	6	==
+water	128:34	0:0	6	461
+op	128:39	0:0	6	&&
+water	128:42	0:0	6	i
+op	128:44	0:0	6	==
+water	128:47	0:0	6	0
+stmts	128:50	131:8	5	
+water	128:50	0:0	6	{
+water	129:12	0:0	6	err
+op	129:16	0:0	6	=
+water	129:18	0:0	6	1
+water	129:19	0:0	6	;
+goto	130:12	130:21	6	fail
+water	130:17	0:0	7	fail
+water	131:8	0:0	6	}
+else	131:10	135:8	4
+stmts	131:15	135:8	5	
+if	131:15	135:8	6	(reply -> status_code != RTSP_STATUS_OK || reply -> nb_transports != 1)
+cond	131:19	132:43	7	reply -> status_code != RTSP_STATUS_OK || reply -> nb_transports != 1
+water	131:19	0:0	8	reply
+op	131:24	0:0	8	->
+water	131:26	0:0	8	status_code
+op	131:38	0:0	8	!=
+water	131:41	0:0	8	RTSP_STATUS_OK
+op	131:56	0:0	8	||
+water	132:19	0:0	8	reply
+op	132:24	0:0	8	->
+water	132:26	0:0	8	nb_transports
+op	132:40	0:0	8	!=
+water	132:43	0:0	8	1
+stmts	132:46	135:8	7	
+water	132:46	0:0	8	{
+water	133:12	0:0	8	err
+op	133:16	0:0	8	=
+call	133:18	133:73	8	ff_rtsp_averror
+arg	133:34	133:52	9	reply->status_code
+water	133:34	0:0	10	reply
+op	133:39	0:0	10	->
+water	133:41	0:0	10	status_code
+arg	133:54	133:73	9	AVERROR_INVALIDDATA
+water	133:54	0:0	10	AVERROR_INVALIDDATA
+water	133:74	0:0	8	;
+goto	134:12	134:21	8	fail
+water	134:17	0:0	9	fail
+water	135:8	0:0	8	}
+if	137:8	143:8	4	(i > 0)
+cond	137:12	137:16	5	i > 0
+water	137:12	0:0	6	i
+op	137:14	0:0	6	>
+water	137:16	0:0	6	0
+stmts	137:19	143:8	5	
+water	137:19	0:0	6	{
+if	138:12	142:12	6	(reply -> transports [ 0 ] . lower_transport != rt -> lower_transport || reply -> transports [ 0 ] . transport != rt -> transport)
+cond	138:16	139:54	7	reply -> transports [ 0 ] . lower_transport != rt -> lower_transport || reply -> transports [ 0 ] . transport != rt -> transport
+water	138:16	0:0	8	reply
+op	138:21	0:0	8	->
+water	138:23	0:0	8	transports
+op	138:33	0:0	8	[
+water	138:34	0:0	8	0
+op	138:35	0:0	8	]
+op	138:36	0:0	8	.
+water	138:37	0:0	8	lower_transport
+op	138:53	0:0	8	!=
+water	138:56	0:0	8	rt
+op	138:58	0:0	8	->
+water	138:60	0:0	8	lower_transport
+op	138:76	0:0	8	||
+water	139:16	0:0	8	reply
+op	139:21	0:0	8	->
+water	139:23	0:0	8	transports
+op	139:33	0:0	8	[
+water	139:34	0:0	8	0
+op	139:35	0:0	8	]
+op	139:36	0:0	8	.
+water	139:37	0:0	8	transport
+op	139:47	0:0	8	!=
+water	139:50	0:0	8	rt
+op	139:52	0:0	8	->
+water	139:54	0:0	8	transport
+stmts	139:65	142:12	7	
+water	139:65	0:0	8	{
+water	140:16	0:0	8	err
+op	140:20	0:0	8	=
+water	140:22	0:0	8	AVERROR_INVALIDDATA
+water	140:41	0:0	8	;
+goto	141:16	141:25	8	fail
+water	141:21	0:0	9	fail
+water	142:12	0:0	8	}
+water	143:8	0:0	6	}
+else	143:10	146:8	4
+stmts	143:15	146:8	5	
+water	143:15	0:0	6	{
+water	144:12	0:0	6	rt
+op	144:14	0:0	6	->
+water	144:16	0:0	6	lower_transport
+op	144:32	0:0	6	=
+water	144:34	0:0	6	reply
+op	144:39	0:0	6	->
+water	144:41	0:0	6	transports
+op	144:51	0:0	6	[
+water	144:52	0:0	6	0
+op	144:53	0:0	6	]
+op	144:54	0:0	6	.
+water	144:55	0:0	6	lower_transport
+water	144:70	0:0	6	;
+water	145:12	0:0	6	rt
+op	145:14	0:0	6	->
+water	145:16	0:0	6	transport
+op	145:26	0:0	6	=
+water	145:28	0:0	6	reply
+op	145:33	0:0	6	->
+water	145:35	0:0	6	transports
+op	145:45	0:0	6	[
+water	145:46	0:0	6	0
+op	145:47	0:0	6	]
+op	145:48	0:0	6	.
+water	145:49	0:0	6	transport
+water	145:58	0:0	6	;
+water	146:8	0:0	6	}
+if	149:8	153:8	4	(reply -> transports [ 0 ] . lower_transport != lower_transport)
+cond	149:12	149:52	5	reply -> transports [ 0 ] . lower_transport != lower_transport
+water	149:12	0:0	6	reply
+op	149:17	0:0	6	->
+water	149:19	0:0	6	transports
+op	149:29	0:0	6	[
+water	149:30	0:0	6	0
+op	149:31	0:0	6	]
+op	149:32	0:0	6	.
+water	149:33	0:0	6	lower_transport
+op	149:49	0:0	6	!=
+water	149:52	0:0	6	lower_transport
+stmts	149:69	153:8	5	
+water	149:69	0:0	6	{
+call	150:12	150:77	6	av_log
+arg	150:19	150:20	7	s
+water	150:19	0:0	8	s
+arg	150:22	150:34	7	AV_LOG_ERROR
+water	150:22	0:0	8	AV_LOG_ERROR
+arg	150:36	150:77	7	"Nonmatching transport in server reply\n"
+water	150:36	0:0	8	"Nonmatching transport in server reply\n"
+water	150:78	0:0	6	;
+water	151:12	0:0	6	err
+op	151:16	0:0	6	=
+water	151:18	0:0	6	AVERROR_INVALIDDATA
+water	151:37	0:0	6	;
+goto	152:12	152:21	6	fail
+water	152:17	0:0	7	fail
+water	153:8	0:0	6	}
+switch	154:8	202:8	4	(reply -> transports [ 0 ] . lower_transport)
+cond	154:15	154:36	5	reply -> transports [ 0 ] . lower_transport
+water	154:15	0:0	6	reply
+op	154:20	0:0	6	->
+water	154:22	0:0	6	transports
+op	154:32	0:0	6	[
+water	154:33	0:0	6	0
+op	154:34	0:0	6	]
+op	154:35	0:0	6	.
+water	154:36	0:0	6	lower_transport
+stmts	154:53	202:8	5	
+water	154:53	0:0	6	{
+label	155:8	155:37	6	case RTSP_LOWER_TRANSPORT_TCP :
+water	156:12	0:0	6	rtsp_st
+op	156:19	0:0	6	->
+water	156:21	0:0	6	interleaved_min
+op	156:37	0:0	6	=
+water	156:39	0:0	6	reply
+op	156:44	0:0	6	->
+water	156:46	0:0	6	transports
+op	156:56	0:0	6	[
+water	156:57	0:0	6	0
+op	156:58	0:0	6	]
+op	156:59	0:0	6	.
+water	156:60	0:0	6	interleaved_min
+water	156:75	0:0	6	;
+water	157:12	0:0	6	rtsp_st
+op	157:19	0:0	6	->
+water	157:21	0:0	6	interleaved_max
+op	157:37	0:0	6	=
+water	157:39	0:0	6	reply
+op	157:44	0:0	6	->
+water	157:46	0:0	6	transports
+op	157:56	0:0	6	[
+water	157:57	0:0	6	0
+op	157:58	0:0	6	]
+op	157:59	0:0	6	.
+water	157:60	0:0	6	interleaved_max
+water	157:75	0:0	6	;
+break	158:12	158:17	6	
+label	159:8	159:37	6	case RTSP_LOWER_TRANSPORT_UDP :
+water	159:39	0:0	6	{
+decl	160:12	160:44	6	char	url[1024]
+water	160:26	0:0	6	,
+decl	160:12	160:44	6	char	options[30]
+op	160:40	0:0	6	=
+water	160:42	0:0	6	""
+decl	161:12	161:35	6	const char	*peer
+op	161:29	0:0	6	=
+water	161:31	0:0	6	host
+if	162:12	163:66	6	(rt -> rtsp_flags & RTSP_FLAG_FILTER_SRC)
+cond	162:16	162:33	7	rt -> rtsp_flags & RTSP_FLAG_FILTER_SRC
+water	162:16	0:0	8	rt
+op	162:18	0:0	8	->
+water	162:20	0:0	8	rtsp_flags
+op	162:31	0:0	8	&
+water	162:33	0:0	8	RTSP_FLAG_FILTER_SRC
+stmts	163:16	163:66	7	
+call	163:16	163:65	8	av_strlcpy
+arg	163:27	163:34	9	options
+water	163:27	0:0	10	options
+arg	163:36	163:48	9	"?connect=1"
+water	163:36	0:0	10	"?connect=1"
+arg	163:50	163:65	9	sizeof(options)
+op	163:50	0:0	10	sizeof
+water	163:56	0:0	10	(
+water	163:57	0:0	10	options
+water	163:64	0:0	10	)
+water	163:66	0:0	8	;
+if	165:12	166:50	6	(reply -> transports [ 0 ] . source [ 0 ])
+cond	165:16	165:45	7	reply -> transports [ 0 ] . source [ 0 ]
+water	165:16	0:0	8	reply
+op	165:21	0:0	8	->
+water	165:23	0:0	8	transports
+op	165:33	0:0	8	[
+water	165:34	0:0	8	0
+op	165:35	0:0	8	]
+op	165:36	0:0	8	.
+water	165:37	0:0	8	source
+op	165:43	0:0	8	[
+water	165:44	0:0	8	0
+op	165:45	0:0	8	]
+stmts	166:16	166:50	7	
+water	166:16	0:0	8	peer
+op	166:21	0:0	8	=
+water	166:23	0:0	8	reply
+op	166:28	0:0	8	->
+water	166:30	0:0	8	transports
+op	166:40	0:0	8	[
+water	166:41	0:0	8	0
+op	166:42	0:0	8	]
+op	166:43	0:0	8	.
+water	166:44	0:0	8	source
+water	166:50	0:0	8	;
+call	167:12	168:75	6	ff_url_join
+arg	167:24	167:27	7	url
+water	167:24	0:0	8	url
+arg	167:29	167:40	7	sizeof(url)
+op	167:29	0:0	8	sizeof
+water	167:35	0:0	8	(
+water	167:36	0:0	8	url
+water	167:39	0:0	8	)
+arg	167:42	167:47	7	"rtp"
+water	167:42	0:0	8	"rtp"
+arg	167:49	167:53	7	NULL
+water	167:49	0:0	8	NULL
+arg	167:55	167:59	7	peer
+water	167:55	0:0	8	peer
+arg	168:24	168:60	7	reply->transports[0].server_port_min
+water	168:24	0:0	8	reply
+op	168:29	0:0	8	->
+water	168:31	0:0	8	transports
+op	168:41	0:0	8	[
+water	168:42	0:0	8	0
+op	168:43	0:0	8	]
+op	168:44	0:0	8	.
+water	168:45	0:0	8	server_port_min
+arg	168:62	168:66	7	"%s"
+water	168:62	0:0	8	"%s"
+arg	168:68	168:75	7	options
+water	168:68	0:0	8	options
+water	168:76	0:0	6	;
+if	169:12	173:12	6	(! ( rt -> server_type == RTSP_SERVER_WMS && i > 1 ) &&ff_rtp_set_remote_url (rtsp_st -> rtp_handle ,url ) < 0)
+cond	169:16	170:66	7	! ( rt -> server_type == RTSP_SERVER_WMS && i > 1 ) &&ff_rtp_set_remote_url (rtsp_st -> rtp_handle ,url ) < 0
+op	169:16	0:0	8	!
+water	169:17	0:0	8	(
+water	169:18	0:0	8	rt
+op	169:20	0:0	8	->
+water	169:22	0:0	8	server_type
+op	169:34	0:0	8	==
+water	169:37	0:0	8	RTSP_SERVER_WMS
+op	169:53	0:0	8	&&
+water	169:56	0:0	8	i
+op	169:58	0:0	8	>
+water	169:60	0:0	8	1
+water	169:61	0:0	8	)
+op	169:63	0:0	8	&&
+call	170:16	170:62	8	ff_rtp_set_remote_url
+arg	170:38	170:57	9	rtsp_st->rtp_handle
+water	170:38	0:0	10	rtsp_st
+op	170:45	0:0	10	->
+water	170:47	0:0	10	rtp_handle
+arg	170:59	170:62	9	url
+water	170:59	0:0	10	url
+op	170:64	0:0	8	<
+water	170:66	0:0	8	0
+stmts	170:69	173:12	7	
+water	170:69	0:0	8	{
+water	171:16	0:0	8	err
+op	171:20	0:0	8	=
+water	171:22	0:0	8	AVERROR_INVALIDDATA
+water	171:41	0:0	8	;
+goto	172:16	172:25	8	fail
+water	172:21	0:0	9	fail
+water	173:12	0:0	8	}
+break	174:12	174:17	6	
+water	175:8	0:0	6	}
+label	176:8	176:47	6	case RTSP_LOWER_TRANSPORT_UDP_MULTICAST :
+water	176:49	0:0	6	{
+decl	177:12	177:56	6	char	url[1024]
+water	177:26	0:0	6	,
+decl	177:12	177:56	6	char	namebuf[50]
+water	177:39	0:0	6	,
+decl	177:12	177:56	6	char	optbuf[20]
+op	177:52	0:0	6	=
+water	177:54	0:0	6	""
+decl	178:12	178:40	6	struct sockaddr_storage	addr
+decl	179:12	179:25	6	int	port
+water	179:20	0:0	6	,
+decl	179:12	179:25	6	int	ttl
+if	180:12	184:12	6	(reply -> transports [ 0 ] . destination . ss_family)
+cond	180:16	180:49	7	reply -> transports [ 0 ] . destination . ss_family
+water	180:16	0:0	8	reply
+op	180:21	0:0	8	->
+water	180:23	0:0	8	transports
+op	180:33	0:0	8	[
+water	180:34	0:0	8	0
+op	180:35	0:0	8	]
+op	180:36	0:0	8	.
+water	180:37	0:0	8	destination
+op	180:48	0:0	8	.
+water	180:49	0:0	8	ss_family
+stmts	180:60	184:12	7	
+water	180:60	0:0	8	{
+water	181:16	0:0	8	addr
+op	181:26	0:0	8	=
+water	181:28	0:0	8	reply
+op	181:33	0:0	8	->
+water	181:35	0:0	8	transports
+op	181:45	0:0	8	[
+water	181:46	0:0	8	0
+op	181:47	0:0	8	]
+op	181:48	0:0	8	.
+water	181:49	0:0	8	destination
+water	181:60	0:0	8	;
+water	182:16	0:0	8	port
+op	182:26	0:0	8	=
+water	182:28	0:0	8	reply
+op	182:33	0:0	8	->
+water	182:35	0:0	8	transports
+op	182:45	0:0	8	[
+water	182:46	0:0	8	0
+op	182:47	0:0	8	]
+op	182:48	0:0	8	.
+water	182:49	0:0	8	port_min
+water	182:57	0:0	8	;
+water	183:16	0:0	8	ttl
+op	183:26	0:0	8	=
+water	183:28	0:0	8	reply
+op	183:33	0:0	8	->
+water	183:35	0:0	8	transports
+op	183:45	0:0	8	[
+water	183:46	0:0	8	0
+op	183:47	0:0	8	]
+op	183:48	0:0	8	.
+water	183:49	0:0	8	ttl
+water	183:52	0:0	8	;
+water	184:12	0:0	8	}
+else	184:14	188:12	6
+stmts	184:19	188:12	7	
+water	184:19	0:0	8	{
+water	185:16	0:0	8	addr
+op	185:26	0:0	8	=
+water	185:28	0:0	8	rtsp_st
+op	185:35	0:0	8	->
+water	185:37	0:0	8	sdp_ip
+water	185:43	0:0	8	;
+water	186:16	0:0	8	port
+op	186:26	0:0	8	=
+water	186:28	0:0	8	rtsp_st
+op	186:35	0:0	8	->
+water	186:37	0:0	8	sdp_port
+water	186:45	0:0	8	;
+water	187:16	0:0	8	ttl
+op	187:26	0:0	8	=
+water	187:28	0:0	8	rtsp_st
+op	187:35	0:0	8	->
+water	187:37	0:0	8	sdp_ttl
+water	187:44	0:0	8	;
+water	188:12	0:0	8	}
+if	189:12	190:64	6	(ttl > 0)
+cond	189:16	189:22	7	ttl > 0
+water	189:16	0:0	8	ttl
+op	189:20	0:0	8	>
+water	189:22	0:0	8	0
+stmts	190:16	190:64	7	
+call	190:16	190:63	8	snprintf
+arg	190:25	190:31	9	optbuf
+water	190:25	0:0	10	optbuf
+arg	190:33	190:47	9	sizeof(optbuf)
+op	190:33	0:0	10	sizeof
+water	190:39	0:0	10	(
+water	190:40	0:0	10	optbuf
+water	190:46	0:0	10	)
+arg	190:49	190:58	9	"?ttl=%d"
+water	190:49	0:0	10	"?ttl=%d"
+arg	190:60	190:63	9	ttl
+water	190:60	0:0	10	ttl
+water	190:64	0:0	8	;
+call	191:12	192:73	6	getnameinfo
+arg	191:24	191:48	7	(structsockaddr*)&addr
+water	191:24	0:0	8	(
+water	191:25	0:0	8	struct
+water	191:32	0:0	8	sockaddr
+op	191:40	0:0	8	*
+water	191:41	0:0	8	)
+op	191:43	0:0	8	&
+water	191:44	0:0	8	addr
+arg	191:50	191:62	7	sizeof(addr)
+op	191:50	0:0	8	sizeof
+water	191:56	0:0	8	(
+water	191:57	0:0	8	addr
+water	191:61	0:0	8	)
+arg	192:24	192:31	7	namebuf
+water	192:24	0:0	8	namebuf
+arg	192:33	192:48	7	sizeof(namebuf)
+op	192:33	0:0	8	sizeof
+water	192:39	0:0	8	(
+water	192:40	0:0	8	namebuf
+water	192:47	0:0	8	)
+arg	192:50	192:54	7	NULL
+water	192:50	0:0	8	NULL
+arg	192:56	192:57	7	0
+water	192:56	0:0	8	0
+arg	192:59	192:73	7	NI_NUMERICHOST
+water	192:59	0:0	8	NI_NUMERICHOST
+water	192:74	0:0	6	;
+call	193:12	194:42	6	ff_url_join
+arg	193:24	193:27	7	url
+water	193:24	0:0	8	url
+arg	193:29	193:40	7	sizeof(url)
+op	193:29	0:0	8	sizeof
+water	193:35	0:0	8	(
+water	193:36	0:0	8	url
+water	193:39	0:0	8	)
+arg	193:42	193:47	7	"rtp"
+water	193:42	0:0	8	"rtp"
+arg	193:49	193:53	7	NULL
+water	193:49	0:0	8	NULL
+arg	193:55	193:62	7	namebuf
+water	193:55	0:0	8	namebuf
+arg	194:24	194:28	7	port
+water	194:24	0:0	8	port
+arg	194:30	194:34	7	"%s"
+water	194:30	0:0	8	"%s"
+arg	194:36	194:42	7	optbuf
+water	194:36	0:0	8	optbuf
+water	194:43	0:0	6	;
+if	195:12	199:12	6	(ffurl_open (& rtsp_st -> rtp_handle ,url ,AVIO_FLAG_READ_WRITE ,& s -> interrupt_callback ,NULL ) < 0)
+cond	195:16	196:59	7	ffurl_open (& rtsp_st -> rtp_handle ,url ,AVIO_FLAG_READ_WRITE ,& s -> interrupt_callback ,NULL ) < 0
+call	195:16	196:55	8	ffurl_open
+arg	195:27	195:47	9	&rtsp_st->rtp_handle
+op	195:27	0:0	10	&
+water	195:28	0:0	10	rtsp_st
+op	195:35	0:0	10	->
+water	195:37	0:0	10	rtp_handle
+arg	195:49	195:52	9	url
+water	195:49	0:0	10	url
+arg	195:54	195:74	9	AVIO_FLAG_READ_WRITE
+water	195:54	0:0	10	AVIO_FLAG_READ_WRITE
+arg	196:27	196:49	9	&s->interrupt_callback
+op	196:27	0:0	10	&
+water	196:28	0:0	10	s
+op	196:29	0:0	10	->
+water	196:31	0:0	10	interrupt_callback
+arg	196:51	196:55	9	NULL
+water	196:51	0:0	10	NULL
+op	196:57	0:0	8	<
+water	196:59	0:0	8	0
+stmts	196:62	199:12	7	
+water	196:62	0:0	8	{
+water	197:16	0:0	8	err
+op	197:20	0:0	8	=
+water	197:22	0:0	8	AVERROR_INVALIDDATA
+water	197:41	0:0	8	;
+goto	198:16	198:25	8	fail
+water	198:21	0:0	9	fail
+water	199:12	0:0	8	}
+break	200:12	200:17	6	
+water	201:8	0:0	6	}
+water	202:8	0:0	6	}
+if	203:8	204:21	4	(( err =ff_rtsp_open_transport_ctx (s ,rtsp_st ) ))
+cond	203:12	203:57	5	( err =ff_rtsp_open_transport_ctx (s ,rtsp_st ) )
+water	203:12	0:0	6	(
+water	203:13	0:0	6	err
+op	203:17	0:0	6	=
+call	203:19	203:56	6	ff_rtsp_open_transport_ctx
+arg	203:46	203:47	7	s
+water	203:46	0:0	8	s
+arg	203:49	203:56	7	rtsp_st
+water	203:49	0:0	8	rtsp_st
+water	203:57	0:0	6	)
+stmts	204:12	204:21	5	
+goto	204:12	204:21	6	fail
+water	204:17	0:0	7	fail
+water	205:4	0:0	4	}
+if	206:4	207:36	2	(rt -> nb_rtsp_streams && reply -> timeout > 0)
+cond	206:8	206:48	3	rt -> nb_rtsp_streams && reply -> timeout > 0
+water	206:8	0:0	4	rt
+op	206:10	0:0	4	->
+water	206:12	0:0	4	nb_rtsp_streams
+op	206:28	0:0	4	&&
+water	206:31	0:0	4	reply
+op	206:36	0:0	4	->
+water	206:38	0:0	4	timeout
+op	206:46	0:0	4	>
+water	206:48	0:0	4	0
+stmts	207:8	207:36	3	
+water	207:8	0:0	4	rt
+op	207:10	0:0	4	->
+water	207:12	0:0	4	timeout
+op	207:20	0:0	4	=
+water	207:22	0:0	4	reply
+op	207:27	0:0	4	->
+water	207:29	0:0	4	timeout
+water	207:36	0:0	4	;
+if	208:4	209:33	2	(rt -> server_type == RTSP_SERVER_REAL)
+cond	208:8	208:27	3	rt -> server_type == RTSP_SERVER_REAL
+water	208:8	0:0	4	rt
+op	208:10	0:0	4	->
+water	208:12	0:0	4	server_type
+op	208:24	0:0	4	==
+water	208:27	0:0	4	RTSP_SERVER_REAL
+stmts	209:8	209:33	3	
+water	209:8	0:0	4	rt
+op	209:10	0:0	4	->
+water	209:12	0:0	4	need_subscription
+op	209:30	0:0	4	=
+water	209:32	0:0	4	1
+water	209:33	0:0	4	;
+return	210:4	210:12	2	0
+water	210:11	0:0	3	0
+label	211:0	211:4	2	fail :
+call	212:4	212:27	2	ff_rtsp_undo_setup
+arg	212:23	212:24	3	s
+water	212:23	0:0	4	s
+arg	212:26	212:27	3	0
+water	212:26	0:0	4	0
+water	212:28	0:0	2	;
+return	213:4	213:14	2	err
+water	213:11	0:0	3	err

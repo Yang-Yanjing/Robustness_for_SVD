@@ -1,0 +1,132 @@
+func	1:0	14:0	0	static void	apply_window_and_mdct
+params	1:33	0:0	1	
+param	1:34	1:50	2	AACEncContext *	s
+param	1:52	1:77	2	SingleChannelElement *	sce
+param	2:34	2:46	2	float *	audio
+stmnts	0:0	13:59	1	
+decl	4:4	4:9	2	int	i
+decl	5:4	5:32	2	float	*output
+op	5:18	0:0	2	=
+water	5:20	0:0	2	sce
+op	5:23	0:0	2	->
+water	5:25	0:0	2	ret_buf
+water	6:4	0:0	2	apply_window
+op	6:16	0:0	2	[
+water	6:17	0:0	2	sce
+op	6:20	0:0	2	->
+water	6:22	0:0	2	ics
+op	6:25	0:0	2	.
+water	6:26	0:0	2	window_sequence
+op	6:41	0:0	2	[
+water	6:42	0:0	2	0
+op	6:43	0:0	2	]
+op	6:44	0:0	2	]
+water	6:45	0:0	2	(
+water	6:46	0:0	2	s
+op	6:47	0:0	2	->
+water	6:49	0:0	2	fdsp
+water	6:53	0:0	2	,
+water	6:55	0:0	2	sce
+water	6:58	0:0	2	,
+water	6:60	0:0	2	audio
+water	6:65	0:0	2	)
+water	6:66	0:0	2	;
+if	7:4	8:64	2	(sce -> ics . window_sequence [ 0 ] != EIGHT_SHORT_SEQUENCE)
+cond	7:8	7:39	3	sce -> ics . window_sequence [ 0 ] != EIGHT_SHORT_SEQUENCE
+water	7:8	0:0	4	sce
+op	7:11	0:0	4	->
+water	7:13	0:0	4	ics
+op	7:16	0:0	4	.
+water	7:17	0:0	4	window_sequence
+op	7:32	0:0	4	[
+water	7:33	0:0	4	0
+op	7:34	0:0	4	]
+op	7:36	0:0	4	!=
+water	7:39	0:0	4	EIGHT_SHORT_SEQUENCE
+stmts	8:8	8:64	3	
+call	8:8	8:63	4	s->mdct1024.mdct_calc
+arg	8:30	8:42	5	&s->mdct1024
+op	8:30	0:0	6	&
+water	8:31	0:0	6	s
+op	8:32	0:0	6	->
+water	8:34	0:0	6	mdct1024
+arg	8:44	8:55	5	sce->coeffs
+water	8:44	0:0	6	sce
+op	8:47	0:0	6	->
+water	8:49	0:0	6	coeffs
+arg	8:57	8:63	5	output
+water	8:57	0:0	6	output
+water	8:64	0:0	4	;
+else	9:4	11:76	2
+stmts	10:8	11:76	3	
+for	10:8	11:76	4	(i = 0 ;i < 1024;i += 128)
+forinit	10:13	10:18	5	i = 0 ;
+water	10:13	0:0	6	i
+op	10:15	0:0	6	=
+water	10:17	0:0	6	0
+water	10:18	0:0	6	;
+cond	10:20	10:24	5	i < 1024
+water	10:20	0:0	6	i
+op	10:22	0:0	6	<
+water	10:24	0:0	6	1024
+forexpr	10:30	10:35	5	i += 128
+water	10:30	0:0	6	i
+op	10:32	0:0	6	+=
+water	10:35	0:0	6	128
+stmts	11:12	11:76	5	
+call	11:12	11:75	6	s->mdct128.mdct_calc
+arg	11:33	11:44	7	&s->mdct128
+op	11:33	0:0	8	&
+water	11:34	0:0	8	s
+op	11:35	0:0	8	->
+water	11:37	0:0	8	mdct128
+arg	11:46	11:61	7	&sce->coeffs[i]
+op	11:46	0:0	8	&
+water	11:47	0:0	8	sce
+op	11:50	0:0	8	->
+water	11:52	0:0	8	coeffs
+op	11:58	0:0	8	[
+water	11:59	0:0	8	i
+op	11:60	0:0	8	]
+arg	11:63	11:75	7	output+i*2
+water	11:63	0:0	8	output
+op	11:70	0:0	8	+
+water	11:72	0:0	8	i
+op	11:73	0:0	8	*
+water	11:74	0:0	8	2
+water	11:76	0:0	6	;
+call	12:4	12:55	2	memcpy
+arg	12:11	12:16	3	audio
+water	12:11	0:0	4	audio
+arg	12:18	12:30	3	audio+1024
+water	12:18	0:0	4	audio
+op	12:24	0:0	4	+
+water	12:26	0:0	4	1024
+arg	12:32	12:55	3	sizeof(audio[0])*1024
+op	12:32	0:0	4	sizeof
+water	12:38	0:0	4	(
+water	12:39	0:0	4	audio
+op	12:44	0:0	4	[
+water	12:45	0:0	4	0
+op	12:46	0:0	4	]
+water	12:47	0:0	4	)
+op	12:49	0:0	4	*
+water	12:51	0:0	4	1024
+water	12:56	0:0	2	;
+call	13:4	13:58	2	memcpy
+arg	13:11	13:23	3	sce->pcoeffs
+water	13:11	0:0	4	sce
+op	13:14	0:0	4	->
+water	13:16	0:0	4	pcoeffs
+arg	13:25	13:36	3	sce->coeffs
+water	13:25	0:0	4	sce
+op	13:28	0:0	4	->
+water	13:30	0:0	4	coeffs
+arg	13:38	13:58	3	sizeof(sce->pcoeffs)
+op	13:38	0:0	4	sizeof
+water	13:44	0:0	4	(
+water	13:45	0:0	4	sce
+op	13:48	0:0	4	->
+water	13:50	0:0	4	pcoeffs
+water	13:57	0:0	4	)
+water	13:59	0:0	2	;

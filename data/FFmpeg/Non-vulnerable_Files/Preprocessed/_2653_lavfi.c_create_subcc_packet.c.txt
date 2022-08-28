@@ -1,0 +1,150 @@
+func	1:0	22:0	0	static int	create_subcc_packet
+params	1:30	0:0	1	
+param	1:31	1:53	2	AVFormatContext *	avctx
+param	1:55	1:69	2	AVFrame *	frame
+param	2:31	2:43	2	int	sink_idx
+stmnts	0:0	21:12	1	
+decl	4:4	4:42	2	LavfiContext	*lavfi
+op	4:24	0:0	2	=
+water	4:26	0:0	2	avctx
+op	4:31	0:0	2	->
+water	4:33	0:0	2	priv_data
+decl	5:4	5:23	2	AVFrameSideData	*sd
+decl	6:4	6:26	2	int	stream_idx
+water	6:18	0:0	2	,
+decl	6:4	6:26	2	int	i
+water	6:21	0:0	2	,
+decl	6:4	6:26	2	int	ret
+if	7:4	8:16	2	(( stream_idx = lavfi -> sink_stream_subcc_map [ sink_idx ] ) < 0)
+cond	7:8	7:64	3	( stream_idx = lavfi -> sink_stream_subcc_map [ sink_idx ] ) < 0
+water	7:8	0:0	4	(
+water	7:9	0:0	4	stream_idx
+op	7:20	0:0	4	=
+water	7:22	0:0	4	lavfi
+op	7:27	0:0	4	->
+water	7:29	0:0	4	sink_stream_subcc_map
+op	7:50	0:0	4	[
+water	7:51	0:0	4	sink_idx
+op	7:59	0:0	4	]
+water	7:60	0:0	4	)
+op	7:62	0:0	4	<
+water	7:64	0:0	4	0
+stmts	8:8	8:16	3	
+return	8:8	8:16	4	0
+water	8:15	0:0	5	0
+for	9:4	11:17	2	(i = 0 ;i < frame -> nb_side_data;i ++)
+forinit	9:9	9:14	3	i = 0 ;
+water	9:9	0:0	4	i
+op	9:11	0:0	4	=
+water	9:13	0:0	4	0
+water	9:14	0:0	4	;
+cond	9:16	9:27	3	i < frame -> nb_side_data
+water	9:16	0:0	4	i
+op	9:18	0:0	4	<
+water	9:20	0:0	4	frame
+op	9:25	0:0	4	->
+water	9:27	0:0	4	nb_side_data
+forexpr	9:41	9:42	3	i ++
+water	9:41	0:0	4	i
+op	9:42	0:0	4	++
+stmts	10:8	11:17	3	
+if	10:8	11:17	4	(frame -> side_data [ i ] -> type == AV_FRAME_DATA_A53_CC)
+cond	10:12	10:41	5	frame -> side_data [ i ] -> type == AV_FRAME_DATA_A53_CC
+water	10:12	0:0	6	frame
+op	10:17	0:0	6	->
+water	10:19	0:0	6	side_data
+op	10:28	0:0	6	[
+water	10:29	0:0	6	i
+op	10:30	0:0	6	]
+op	10:31	0:0	6	->
+water	10:33	0:0	6	type
+op	10:38	0:0	6	==
+water	10:41	0:0	6	AV_FRAME_DATA_A53_CC
+stmts	11:12	11:17	5	
+break	11:12	11:17	6	
+if	12:4	13:16	2	(i >= frame -> nb_side_data)
+cond	12:8	12:20	3	i >= frame -> nb_side_data
+water	12:8	0:0	4	i
+op	12:10	0:0	4	>=
+water	12:13	0:0	4	frame
+op	12:18	0:0	4	->
+water	12:20	0:0	4	nb_side_data
+stmts	13:8	13:16	3	
+return	13:8	13:16	4	0
+water	13:15	0:0	5	0
+water	14:4	0:0	2	sd
+op	14:7	0:0	2	=
+water	14:9	0:0	2	frame
+op	14:14	0:0	2	->
+water	14:16	0:0	2	side_data
+op	14:25	0:0	2	[
+water	14:26	0:0	2	i
+op	14:27	0:0	2	]
+water	14:28	0:0	2	;
+if	15:4	16:18	2	(( ret =av_new_packet (& lavfi -> subcc_packet ,sd -> size ) ) < 0)
+cond	15:8	15:64	3	( ret =av_new_packet (& lavfi -> subcc_packet ,sd -> size ) ) < 0
+water	15:8	0:0	4	(
+water	15:9	0:0	4	ret
+op	15:13	0:0	4	=
+call	15:15	15:59	4	av_new_packet
+arg	15:29	15:49	5	&lavfi->subcc_packet
+op	15:29	0:0	6	&
+water	15:30	0:0	6	lavfi
+op	15:35	0:0	6	->
+water	15:37	0:0	6	subcc_packet
+arg	15:51	15:59	5	sd->size
+water	15:51	0:0	6	sd
+op	15:53	0:0	6	->
+water	15:55	0:0	6	size
+water	15:60	0:0	4	)
+op	15:62	0:0	4	<
+water	15:64	0:0	4	0
+stmts	16:8	16:18	3	
+return	16:8	16:18	4	ret
+water	16:15	0:0	5	ret
+call	17:4	17:55	2	memcpy
+arg	17:11	17:35	3	lavfi->subcc_packet.data
+water	17:11	0:0	4	lavfi
+op	17:16	0:0	4	->
+water	17:18	0:0	4	subcc_packet
+op	17:30	0:0	4	.
+water	17:31	0:0	4	data
+arg	17:37	17:45	3	sd->data
+water	17:37	0:0	4	sd
+op	17:39	0:0	4	->
+water	17:41	0:0	4	data
+arg	17:47	17:55	3	sd->size
+water	17:47	0:0	4	sd
+op	17:49	0:0	4	->
+water	17:51	0:0	4	size
+water	17:56	0:0	2	;
+water	18:4	0:0	2	lavfi
+op	18:9	0:0	2	->
+water	18:11	0:0	2	subcc_packet
+op	18:23	0:0	2	.
+water	18:24	0:0	2	stream_index
+op	18:37	0:0	2	=
+water	18:39	0:0	2	stream_idx
+water	18:49	0:0	2	;
+water	19:4	0:0	2	lavfi
+op	19:9	0:0	2	->
+water	19:11	0:0	2	subcc_packet
+op	19:23	0:0	2	.
+water	19:24	0:0	2	pts
+op	19:28	0:0	2	=
+water	19:30	0:0	2	frame
+op	19:35	0:0	2	->
+water	19:37	0:0	2	pts
+water	19:40	0:0	2	;
+water	20:4	0:0	2	lavfi
+op	20:9	0:0	2	->
+water	20:11	0:0	2	subcc_packet
+op	20:23	0:0	2	.
+water	20:24	0:0	2	pos
+op	20:28	0:0	2	=
+call	20:30	20:56	2	av_frame_get_pkt_pos
+arg	20:51	20:56	3	frame
+water	20:51	0:0	4	frame
+water	20:57	0:0	2	;
+return	21:4	21:12	2	0
+water	21:11	0:0	3	0

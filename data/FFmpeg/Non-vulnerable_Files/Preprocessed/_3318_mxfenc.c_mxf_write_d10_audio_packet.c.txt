@@ -1,0 +1,194 @@
+func	1:0	28:0	0	static void	mxf_write_d10_audio_packet
+params	1:38	0:0	1	
+param	1:39	1:57	2	AVFormatContext *	s
+param	1:59	1:71	2	AVStream *	st
+param	1:73	1:86	2	AVPacket *	pkt
+stmnts	0:0	27:4	1	
+decl	3:4	3:34	2	MXFContext	*mxf
+op	3:20	0:0	2	=
+water	3:22	0:0	2	s
+op	3:23	0:0	2	->
+water	3:25	0:0	2	priv_data
+decl	4:4	4:27	2	AVIOContext	*pb
+op	4:20	0:0	2	=
+water	4:22	0:0	2	s
+op	4:23	0:0	2	->
+water	4:25	0:0	2	pb
+decl	5:4	5:55	2	int	frame_size
+op	5:19	0:0	2	=
+water	5:21	0:0	2	pkt
+op	5:24	0:0	2	->
+water	5:26	0:0	2	size
+op	5:31	0:0	2	/
+water	5:33	0:0	2	st
+op	5:35	0:0	2	->
+water	5:37	0:0	2	codec
+op	5:42	0:0	2	->
+water	5:44	0:0	2	block_align
+decl	6:4	6:32	2	uint8_t	*samples
+op	6:21	0:0	2	=
+water	6:23	0:0	2	pkt
+op	6:26	0:0	2	->
+water	6:28	0:0	2	data
+decl	7:4	7:40	2	uint8_t	*end
+op	7:17	0:0	2	=
+water	7:19	0:0	2	pkt
+op	7:22	0:0	2	->
+water	7:24	0:0	2	data
+op	7:29	0:0	2	+
+water	7:31	0:0	2	pkt
+op	7:34	0:0	2	->
+water	7:36	0:0	2	size
+decl	8:4	8:9	2	int	i
+call	9:4	9:49	2	klv_encode_ber4_length
+arg	9:27	9:29	3	pb
+water	9:27	0:0	4	pb
+arg	9:31	9:49	3	4+frame_size*4*8
+water	9:31	0:0	4	4
+op	9:33	0:0	4	+
+water	9:35	0:0	4	frame_size
+op	9:45	0:0	4	*
+water	9:46	0:0	4	4
+op	9:47	0:0	4	*
+water	9:48	0:0	4	8
+water	9:50	0:0	2	;
+call	10:4	10:76	2	avio_w8
+arg	10:12	10:14	3	pb
+water	10:12	0:0	4	pb
+arg	10:16	10:76	3	(frame_size==1920?0:(mxf->edit_units_count-1)%5+1)
+water	10:16	0:0	4	(
+water	10:17	0:0	4	frame_size
+op	10:28	0:0	4	==
+water	10:31	0:0	4	1920
+water	10:36	0:0	4	?
+water	10:38	0:0	4	0
+water	10:40	0:0	4	:
+water	10:42	0:0	4	(
+water	10:43	0:0	4	mxf
+op	10:46	0:0	4	->
+water	10:48	0:0	4	edit_units_count
+op	10:64	0:0	4	-
+water	10:65	0:0	4	1
+water	10:66	0:0	4	)
+op	10:68	0:0	4	%
+water	10:70	0:0	4	5
+op	10:72	0:0	4	+
+water	10:74	0:0	4	1
+water	10:75	0:0	4	)
+water	10:77	0:0	2	;
+call	11:4	11:28	2	avio_wl16
+arg	11:14	11:16	3	pb
+water	11:14	0:0	4	pb
+arg	11:18	11:28	3	frame_size
+water	11:18	0:0	4	frame_size
+water	11:29	0:0	2	;
+call	12:4	12:42	2	avio_w8
+arg	12:12	12:14	3	pb
+water	12:12	0:0	4	pb
+arg	12:16	12:42	3	(1<<st->codec->channels)-1
+water	12:16	0:0	4	(
+water	12:17	0:0	4	1
+op	12:18	0:0	4	<<
+water	12:20	0:0	4	st
+op	12:22	0:0	4	->
+water	12:24	0:0	4	codec
+op	12:29	0:0	4	->
+water	12:31	0:0	4	channels
+water	12:39	0:0	4	)
+op	12:40	0:0	4	-
+water	12:41	0:0	4	1
+water	12:43	0:0	2	;
+while	13:4	27:4	2	(samples < end)
+cond	13:11	13:21	3	samples < end
+water	13:11	0:0	4	samples
+op	13:19	0:0	4	<
+water	13:21	0:0	4	end
+stmts	13:26	27:4	3	
+water	13:26	0:0	4	{
+for	14:8	24:8	4	(i = 0 ;i < st -> codec -> channels;i ++)
+forinit	14:13	14:18	5	i = 0 ;
+water	14:13	0:0	6	i
+op	14:15	0:0	6	=
+water	14:17	0:0	6	0
+water	14:18	0:0	6	;
+cond	14:20	14:35	5	i < st -> codec -> channels
+water	14:20	0:0	6	i
+op	14:22	0:0	6	<
+water	14:24	0:0	6	st
+op	14:26	0:0	6	->
+water	14:28	0:0	6	codec
+op	14:33	0:0	6	->
+water	14:35	0:0	6	channels
+forexpr	14:45	14:46	5	i ++
+water	14:45	0:0	6	i
+op	14:46	0:0	6	++
+stmts	14:50	24:8	5	
+water	14:50	0:0	6	{
+decl	15:12	15:27	6	uint32_t	sample
+if	16:12	19:12	6	(st -> codec -> codec_id == AV_CODEC_ID_PCM_S24LE)
+cond	16:16	16:39	7	st -> codec -> codec_id == AV_CODEC_ID_PCM_S24LE
+water	16:16	0:0	8	st
+op	16:18	0:0	8	->
+water	16:20	0:0	8	codec
+op	16:25	0:0	8	->
+water	16:27	0:0	8	codec_id
+op	16:36	0:0	8	==
+water	16:39	0:0	8	AV_CODEC_ID_PCM_S24LE
+stmts	16:62	19:12	7	
+water	16:62	0:0	8	{
+water	17:16	0:0	8	sample
+op	17:23	0:0	8	=
+call	17:25	17:40	8	AV_RL24
+arg	17:33	17:40	9	samples
+water	17:33	0:0	10	samples
+op	17:41	0:0	8	<<
+water	17:44	0:0	8	4
+water	17:45	0:0	8	;
+water	18:16	0:0	8	samples
+op	18:24	0:0	8	+=
+water	18:27	0:0	8	3
+water	18:28	0:0	8	;
+water	19:12	0:0	8	}
+else	19:14	22:12	6
+stmts	19:19	22:12	7	
+water	19:19	0:0	8	{
+water	20:16	0:0	8	sample
+op	20:23	0:0	8	=
+call	20:25	20:40	8	AV_RL16
+arg	20:33	20:40	9	samples
+water	20:33	0:0	10	samples
+op	20:41	0:0	8	<<
+water	20:43	0:0	8	12
+water	20:45	0:0	8	;
+water	21:16	0:0	8	samples
+op	21:24	0:0	8	+=
+water	21:27	0:0	8	2
+water	21:28	0:0	8	;
+water	22:12	0:0	8	}
+call	23:12	23:36	6	avio_wl32
+arg	23:22	23:24	7	pb
+water	23:22	0:0	8	pb
+arg	23:26	23:36	7	sample|i
+water	23:26	0:0	8	sample
+op	23:33	0:0	8	|
+water	23:35	0:0	8	i
+water	23:37	0:0	6	;
+water	24:8	0:0	6	}
+for	25:8	26:28	4	(;i < 8;i ++)
+forinit	25:13	25:13	5	;
+water	25:13	0:0	6	;
+cond	25:15	25:19	5	i < 8
+water	25:15	0:0	6	i
+op	25:17	0:0	6	<
+water	25:19	0:0	6	8
+forexpr	25:22	25:23	5	i ++
+water	25:22	0:0	6	i
+op	25:23	0:0	6	++
+stmts	26:12	26:28	5	
+call	26:12	26:27	6	avio_wl32
+arg	26:22	26:24	7	pb
+water	26:22	0:0	8	pb
+arg	26:26	26:27	7	i
+water	26:26	0:0	8	i
+water	26:28	0:0	6	;
+water	27:4	0:0	4	}

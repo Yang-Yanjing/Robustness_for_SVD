@@ -1,0 +1,245 @@
+func	1:4	42:0	0	AC3_NAME	(encode_frame)
+params	1:26	0:0	1	
+param	1:27	1:48	2	AVCodecContext *	avctx
+param	1:50	1:65	2	AVPacket *	avpkt
+param	2:27	2:47	2	const AVFrame *	frame
+param	2:49	2:68	2	int *	got_packet_ptr
+stmnts	0:0	41:12	1	
+decl	4:4	4:42	2	AC3EncodeContext	*s
+op	4:24	0:0	2	=
+water	4:26	0:0	2	avctx
+op	4:31	0:0	2	->
+water	4:33	0:0	2	priv_data
+decl	5:4	5:11	2	int	ret
+if	6:4	10:4	2	(s -> options . allow_per_frame_metadata)
+cond	6:8	6:19	3	s -> options . allow_per_frame_metadata
+water	6:8	0:0	4	s
+op	6:9	0:0	4	->
+water	6:11	0:0	4	options
+op	6:18	0:0	4	.
+water	6:19	0:0	4	allow_per_frame_metadata
+stmts	6:45	10:4	3	
+water	6:45	0:0	4	{
+water	7:8	0:0	4	ret
+op	7:12	0:0	4	=
+call	7:14	7:40	4	ff_ac3_validate_metadata
+arg	7:39	7:40	5	s
+water	7:39	0:0	6	s
+water	7:41	0:0	4	;
+if	8:8	9:22	4	(ret)
+cond	8:12	8:12	5	ret
+water	8:12	0:0	6	ret
+stmts	9:12	9:22	5	
+return	9:12	9:22	6	ret
+water	9:19	0:0	7	ret
+water	10:4	0:0	4	}
+if	11:4	12:35	2	(s -> bit_alloc . sr_code == 1 || s -> eac3)
+cond	11:8	11:40	3	s -> bit_alloc . sr_code == 1 || s -> eac3
+water	11:8	0:0	4	s
+op	11:9	0:0	4	->
+water	11:11	0:0	4	bit_alloc
+op	11:20	0:0	4	.
+water	11:21	0:0	4	sr_code
+op	11:29	0:0	4	==
+water	11:32	0:0	4	1
+op	11:34	0:0	4	||
+water	11:37	0:0	4	s
+op	11:38	0:0	4	->
+water	11:40	0:0	4	eac3
+stmts	12:8	12:35	3	
+call	12:8	12:34	4	ff_ac3_adjust_frame_size
+arg	12:33	12:34	5	s
+water	12:33	0:0	6	s
+water	12:35	0:0	4	;
+call	13:4	13:61	2	copy_input_samples
+arg	13:23	13:24	3	s
+water	13:23	0:0	4	s
+arg	13:26	13:61	3	(SampleType**)frame->extended_data
+water	13:26	0:0	4	(
+water	13:27	0:0	4	SampleType
+op	13:38	0:0	4	*
+op	13:39	0:0	4	*
+water	13:40	0:0	4	)
+water	13:41	0:0	4	frame
+op	13:46	0:0	4	->
+water	13:48	0:0	4	extended_data
+water	13:62	0:0	2	;
+call	14:4	14:16	2	apply_mdct
+arg	14:15	14:16	3	s
+water	14:15	0:0	4	s
+water	14:17	0:0	2	;
+if	15:4	16:29	2	(s -> fixed_point)
+cond	15:8	15:11	3	s -> fixed_point
+water	15:8	0:0	4	s
+op	15:9	0:0	4	->
+water	15:11	0:0	4	fixed_point
+stmts	16:8	16:29	3	
+call	16:8	16:28	4	scale_coefficients
+arg	16:27	16:28	5	s
+water	16:27	0:0	6	s
+water	16:29	0:0	4	;
+call	17:4	18:65	2	clip_coefficients
+arg	17:22	17:30	3	&s->adsp
+op	17:22	0:0	4	&
+water	17:23	0:0	4	s
+op	17:24	0:0	4	->
+water	17:26	0:0	4	adsp
+arg	17:32	17:57	3	s->blocks[0].mdct_coef[1]
+water	17:32	0:0	4	s
+op	17:33	0:0	4	->
+water	17:35	0:0	4	blocks
+op	17:41	0:0	4	[
+water	17:42	0:0	4	0
+op	17:43	0:0	4	]
+op	17:44	0:0	4	.
+water	17:45	0:0	4	mdct_coef
+op	17:54	0:0	4	[
+water	17:55	0:0	4	1
+op	17:56	0:0	4	]
+arg	18:22	18:65	3	AC3_MAX_COEFS*s->num_blocks*s->channels
+water	18:22	0:0	4	AC3_MAX_COEFS
+op	18:36	0:0	4	*
+water	18:38	0:0	4	s
+op	18:39	0:0	4	->
+water	18:41	0:0	4	num_blocks
+op	18:52	0:0	4	*
+water	18:54	0:0	4	s
+op	18:55	0:0	4	->
+water	18:57	0:0	4	channels
+water	18:66	0:0	2	;
+water	19:4	0:0	2	s
+op	19:5	0:0	2	->
+water	19:7	0:0	2	cpl_on
+op	19:14	0:0	2	=
+water	19:16	0:0	2	s
+op	19:17	0:0	2	->
+water	19:19	0:0	2	cpl_enabled
+water	19:30	0:0	2	;
+call	20:4	20:38	2	ff_ac3_compute_coupling_strategy
+arg	20:37	20:38	3	s
+water	20:37	0:0	4	s
+water	20:39	0:0	2	;
+if	21:4	22:33	2	(s -> cpl_on)
+cond	21:8	21:11	3	s -> cpl_on
+water	21:8	0:0	4	s
+op	21:9	0:0	4	->
+water	21:11	0:0	4	cpl_on
+stmts	22:8	22:33	3	
+call	22:8	22:32	4	apply_channel_coupling
+arg	22:31	22:32	5	s
+water	22:31	0:0	6	s
+water	22:33	0:0	4	;
+call	23:4	23:34	2	compute_rematrixing_strategy
+arg	23:33	23:34	3	s
+water	23:33	0:0	4	s
+water	23:35	0:0	2	;
+if	24:4	25:29	2	(! s -> fixed_point)
+cond	24:8	24:12	3	! s -> fixed_point
+op	24:8	0:0	4	!
+water	24:9	0:0	4	s
+op	24:10	0:0	4	->
+water	24:12	0:0	4	fixed_point
+stmts	25:8	25:29	3	
+call	25:8	25:28	4	scale_coefficients
+arg	25:27	25:28	5	s
+water	25:27	0:0	6	s
+water	25:29	0:0	4	;
+call	26:4	26:30	2	ff_ac3_apply_rematrixing
+arg	26:29	26:30	3	s
+water	26:29	0:0	4	s
+water	26:31	0:0	2	;
+call	27:4	27:30	2	ff_ac3_process_exponents
+arg	27:29	27:30	3	s
+water	27:29	0:0	4	s
+water	27:31	0:0	2	;
+water	28:4	0:0	2	ret
+op	28:8	0:0	2	=
+call	28:10	28:41	2	ff_ac3_compute_bit_allocation
+arg	28:40	28:41	3	s
+water	28:40	0:0	4	s
+water	28:42	0:0	2	;
+if	29:4	32:4	2	(ret)
+cond	29:8	29:8	3	ret
+water	29:8	0:0	4	ret
+stmts	29:13	32:4	3	
+water	29:13	0:0	4	{
+call	30:8	30:90	4	av_log
+arg	30:15	30:20	5	avctx
+water	30:15	0:0	6	avctx
+arg	30:22	30:34	5	AV_LOG_ERROR
+water	30:22	0:0	6	AV_LOG_ERROR
+arg	30:36	30:90	5	"Bit allocation failed. Try increasing the bitrate.\n"
+water	30:36	0:0	6	"Bit allocation failed. Try increasing the bitrate.\n"
+water	30:91	0:0	4	;
+return	31:8	31:18	4	ret
+water	31:15	0:0	5	ret
+water	32:4	0:0	4	}
+call	33:4	33:28	2	ff_ac3_group_exponents
+arg	33:27	33:28	3	s
+water	33:27	0:0	4	s
+water	33:29	0:0	2	;
+call	34:4	34:31	2	ff_ac3_quantize_mantissas
+arg	34:30	34:31	3	s
+water	34:30	0:0	4	s
+water	34:32	0:0	2	;
+if	35:4	36:18	2	(( ret =ff_alloc_packet2 (avctx ,avpkt ,s -> frame_size ,0 ) ) < 0)
+cond	35:8	35:67	3	( ret =ff_alloc_packet2 (avctx ,avpkt ,s -> frame_size ,0 ) ) < 0
+water	35:8	0:0	4	(
+water	35:9	0:0	4	ret
+op	35:13	0:0	4	=
+call	35:15	35:62	4	ff_alloc_packet2
+arg	35:32	35:37	5	avctx
+water	35:32	0:0	6	avctx
+arg	35:39	35:44	5	avpkt
+water	35:39	0:0	6	avpkt
+arg	35:46	35:59	5	s->frame_size
+water	35:46	0:0	6	s
+op	35:47	0:0	6	->
+water	35:49	0:0	6	frame_size
+arg	35:61	35:62	5	0
+water	35:61	0:0	6	0
+water	35:63	0:0	4	)
+op	35:65	0:0	4	<
+water	35:67	0:0	4	0
+stmts	36:8	36:18	3	
+return	36:8	36:18	4	ret
+water	36:15	0:0	5	ret
+call	37:4	37:38	2	ff_ac3_output_frame
+arg	37:24	37:25	3	s
+water	37:24	0:0	4	s
+arg	37:27	37:38	3	avpkt->data
+water	37:27	0:0	4	avpkt
+op	37:32	0:0	4	->
+water	37:34	0:0	4	data
+water	37:39	0:0	2	;
+if	38:4	39:88	2	(frame -> pts != AV_NOPTS_VALUE)
+cond	38:8	38:22	3	frame -> pts != AV_NOPTS_VALUE
+water	38:8	0:0	4	frame
+op	38:13	0:0	4	->
+water	38:15	0:0	4	pts
+op	38:19	0:0	4	!=
+water	38:22	0:0	4	AV_NOPTS_VALUE
+stmts	39:8	39:88	3	
+water	39:8	0:0	4	avpkt
+op	39:13	0:0	4	->
+water	39:15	0:0	4	pts
+op	39:19	0:0	4	=
+water	39:21	0:0	4	frame
+op	39:26	0:0	4	->
+water	39:28	0:0	4	pts
+op	39:32	0:0	4	-
+call	39:34	39:87	4	ff_samples_to_time_base
+arg	39:58	39:63	5	avctx
+water	39:58	0:0	6	avctx
+arg	39:65	39:87	5	avctx->initial_padding
+water	39:65	0:0	6	avctx
+op	39:70	0:0	6	->
+water	39:72	0:0	6	initial_padding
+water	39:88	0:0	4	;
+op	40:4	0:0	2	*
+water	40:5	0:0	2	got_packet_ptr
+op	40:20	0:0	2	=
+water	40:22	0:0	2	1
+water	40:23	0:0	2	;
+return	41:4	41:12	2	0
+water	41:11	0:0	3	0

@@ -1,0 +1,453 @@
+func	1:0	58:0	0	static int	filter_frame
+params	1:23	0:0	1	
+param	1:24	1:44	2	AVFilterLink *	inlink
+param	1:46	1:57	2	AVFrame *	in
+stmnts	0:0	57:14	1	
+decl	3:4	3:38	2	AVFilterContext	*ctx
+op	3:25	0:0	2	=
+water	3:27	0:0	2	inlink
+op	3:33	0:0	2	->
+water	3:35	0:0	2	dst
+decl	4:4	4:43	2	AVFilterLink	*outlink
+op	4:26	0:0	2	=
+water	4:28	0:0	2	ctx
+op	4:31	0:0	2	->
+water	4:33	0:0	2	outputs
+op	4:40	0:0	2	[
+water	4:41	0:0	2	0
+op	4:42	0:0	2	]
+decl	5:4	5:28	2	QPContext	*s
+op	5:17	0:0	2	=
+water	5:19	0:0	2	ctx
+op	5:22	0:0	2	->
+water	5:24	0:0	2	priv
+decl	6:4	6:33	2	AVBufferRef	*out_qp_table_buf
+decl	7:4	7:23	2	AVFrame	*out
+op	7:17	0:0	2	=
+water	7:19	0:0	2	NULL
+decl	8:4	8:29	2	const int8_t	*in_qp_table
+decl	9:4	9:25	2	int	type
+water	9:12	0:0	2	,
+decl	9:4	9:25	2	int	stride
+water	9:20	0:0	2	,
+decl	9:4	9:25	2	int	ret
+if	10:4	11:43	2	(! s -> qp_expr_str || ctx -> is_disabled)
+cond	10:8	10:32	3	! s -> qp_expr_str || ctx -> is_disabled
+op	10:8	0:0	4	!
+water	10:9	0:0	4	s
+op	10:10	0:0	4	->
+water	10:12	0:0	4	qp_expr_str
+op	10:24	0:0	4	||
+water	10:27	0:0	4	ctx
+op	10:30	0:0	4	->
+water	10:32	0:0	4	is_disabled
+stmts	11:8	11:43	3	
+return	11:8	11:43	4	ff_filter_frame(outlink,in)
+call	11:15	11:42	5	ff_filter_frame
+arg	11:31	11:38	6	outlink
+water	11:31	0:0	7	outlink
+arg	11:40	11:42	6	in
+water	11:40	0:0	7	in
+water	12:4	0:0	2	out_qp_table_buf
+op	12:21	0:0	2	=
+call	12:23	12:56	2	av_buffer_alloc
+arg	12:39	12:56	3	s->h*s->qstride
+water	12:39	0:0	4	s
+op	12:40	0:0	4	->
+water	12:42	0:0	4	h
+op	12:44	0:0	4	*
+water	12:46	0:0	4	s
+op	12:47	0:0	4	->
+water	12:49	0:0	4	qstride
+water	12:57	0:0	2	;
+if	13:4	16:4	2	(! out_qp_table_buf)
+cond	13:8	13:9	3	! out_qp_table_buf
+op	13:8	0:0	4	!
+water	13:9	0:0	4	out_qp_table_buf
+stmts	13:27	16:4	3	
+water	13:27	0:0	4	{
+water	14:8	0:0	4	ret
+op	14:12	0:0	4	=
+call	14:14	14:28	4	AVERROR
+arg	14:22	14:28	5	ENOMEM
+water	14:22	0:0	6	ENOMEM
+water	14:29	0:0	4	;
+goto	15:8	15:17	4	fail
+water	15:13	0:0	5	fail
+water	16:4	0:0	4	}
+water	17:4	0:0	2	out
+op	17:8	0:0	2	=
+call	17:10	17:27	2	av_frame_clone
+arg	17:25	17:27	3	in
+water	17:25	0:0	4	in
+water	17:28	0:0	2	;
+if	18:4	22:4	2	(! out)
+cond	18:8	18:9	3	! out
+op	18:8	0:0	4	!
+water	18:9	0:0	4	out
+stmts	18:14	22:4	3	
+water	18:14	0:0	4	{
+call	19:8	19:41	4	av_buffer_unref
+arg	19:24	19:41	5	&out_qp_table_buf
+op	19:24	0:0	6	&
+water	19:25	0:0	6	out_qp_table_buf
+water	19:42	0:0	4	;
+water	20:8	0:0	4	ret
+op	20:12	0:0	4	=
+call	20:14	20:28	4	AVERROR
+arg	20:22	20:28	5	ENOMEM
+water	20:22	0:0	6	ENOMEM
+water	20:29	0:0	4	;
+goto	21:8	21:17	4	fail
+water	21:13	0:0	5	fail
+water	22:4	0:0	4	}
+water	23:4	0:0	2	in_qp_table
+op	23:16	0:0	2	=
+call	23:18	23:58	2	av_frame_get_qp_table
+arg	23:40	23:42	3	in
+water	23:40	0:0	4	in
+arg	23:44	23:51	3	&stride
+op	23:44	0:0	4	&
+water	23:45	0:0	4	stride
+arg	23:53	23:58	3	&type
+op	23:53	0:0	4	&
+water	23:54	0:0	4	type
+water	23:59	0:0	2	;
+call	24:4	24:65	2	av_frame_set_qp_table
+arg	24:26	24:29	3	out
+water	24:26	0:0	4	out
+arg	24:31	24:47	3	out_qp_table_buf
+water	24:31	0:0	4	out_qp_table_buf
+arg	24:49	24:59	3	s->qstride
+water	24:49	0:0	4	s
+op	24:50	0:0	4	->
+water	24:52	0:0	4	qstride
+arg	24:61	24:65	3	type
+water	24:61	0:0	4	type
+water	24:66	0:0	2	;
+if	25:4	40:4	2	(s -> evaluate_per_mb)
+cond	25:8	25:11	3	s -> evaluate_per_mb
+water	25:8	0:0	4	s
+op	25:9	0:0	4	->
+water	25:11	0:0	4	evaluate_per_mb
+stmts	25:28	40:4	3	
+water	25:28	0:0	4	{
+decl	26:8	26:16	4	int	y
+water	26:13	0:0	4	,
+decl	26:8	26:16	4	int	x
+for	27:8	39:12	4	(y = 0 ;y < s -> h;y ++)
+forinit	27:13	27:18	5	y = 0 ;
+water	27:13	0:0	6	y
+op	27:15	0:0	6	=
+water	27:17	0:0	6	0
+water	27:18	0:0	6	;
+cond	27:20	27:27	5	y < s -> h
+water	27:20	0:0	6	y
+op	27:22	0:0	6	<
+water	27:24	0:0	6	s
+op	27:25	0:0	6	->
+water	27:27	0:0	6	h
+forexpr	27:30	27:31	5	y ++
+water	27:30	0:0	6	y
+op	27:31	0:0	6	++
+stmts	28:12	39:12	5	
+for	28:12	39:12	6	(x = 0 ;x < s -> qstride;x ++)
+forinit	28:17	28:22	7	x = 0 ;
+water	28:17	0:0	8	x
+op	28:19	0:0	8	=
+water	28:21	0:0	8	0
+water	28:22	0:0	8	;
+cond	28:24	28:31	7	x < s -> qstride
+water	28:24	0:0	8	x
+op	28:26	0:0	8	<
+water	28:28	0:0	8	s
+op	28:29	0:0	8	->
+water	28:31	0:0	8	qstride
+forexpr	28:40	28:41	7	x ++
+water	28:40	0:0	8	x
+op	28:41	0:0	8	++
+stmts	28:45	39:12	7	
+water	28:45	0:0	8	{
+decl	29:16	29:72	8	int	qp
+op	29:23	0:0	8	=
+water	29:25	0:0	8	in_qp_table
+water	29:37	0:0	8	?
+water	29:39	0:0	8	in_qp_table
+op	29:50	0:0	8	[
+water	29:51	0:0	8	x
+op	29:53	0:0	8	+
+water	29:55	0:0	8	stride
+op	29:62	0:0	8	*
+water	29:64	0:0	8	y
+op	29:65	0:0	8	]
+water	29:67	0:0	8	:
+water	29:69	0:0	8	NAN
+decl	30:16	30:85	8	double	var_values[]
+op	30:36	0:0	8	=
+water	30:38	0:0	8	{
+op	30:40	0:0	8	!
+op	30:41	0:0	8	!
+water	30:42	0:0	8	in_qp_table
+water	30:53	0:0	8	,
+water	30:55	0:0	8	qp
+water	30:57	0:0	8	,
+water	30:59	0:0	8	x
+water	30:60	0:0	8	,
+water	30:62	0:0	8	y
+water	30:63	0:0	8	,
+water	30:65	0:0	8	s
+op	30:66	0:0	8	->
+water	30:68	0:0	8	qstride
+water	30:75	0:0	8	,
+water	30:77	0:0	8	s
+op	30:78	0:0	8	->
+water	30:80	0:0	8	h
+water	30:81	0:0	8	,
+water	30:83	0:0	8	0
+water	30:84	0:0	8	}
+water	31:16	0:0	8	static
+water	31:23	0:0	8	const
+water	31:29	0:0	8	char
+op	31:34	0:0	8	*
+water	31:35	0:0	8	var_names
+op	31:44	0:0	8	[
+op	31:45	0:0	8	]
+op	31:47	0:0	8	=
+water	31:49	0:0	8	{
+water	31:51	0:0	8	"known"
+water	31:58	0:0	8	,
+water	31:60	0:0	8	"qp"
+water	31:64	0:0	8	,
+water	31:66	0:0	8	"x"
+water	31:69	0:0	8	,
+water	31:71	0:0	8	"y"
+water	31:74	0:0	8	,
+water	31:76	0:0	8	"w"
+water	31:79	0:0	8	,
+water	31:81	0:0	8	"h"
+water	31:84	0:0	8	,
+water	31:86	0:0	8	NULL
+water	31:91	0:0	8	}
+water	31:92	0:0	8	;
+decl	32:16	32:31	8	double	temp_val
+water	33:16	0:0	8	ret
+op	33:20	0:0	8	=
+call	33:22	35:77	8	av_expr_parse_and_eval
+arg	33:45	33:54	9	&temp_val
+op	33:45	0:0	10	&
+water	33:46	0:0	10	temp_val
+arg	33:56	33:70	9	s->qp_expr_str
+water	33:56	0:0	10	s
+op	33:57	0:0	10	->
+water	33:59	0:0	10	qp_expr_str
+arg	34:44	34:53	9	var_names
+water	34:44	0:0	10	var_names
+arg	34:55	34:65	9	var_values
+water	34:55	0:0	10	var_values
+arg	35:44	35:48	9	NULL
+water	35:44	0:0	10	NULL
+arg	35:50	35:54	9	NULL
+water	35:50	0:0	10	NULL
+arg	35:56	35:60	9	NULL
+water	35:56	0:0	10	NULL
+arg	35:62	35:66	9	NULL
+water	35:62	0:0	10	NULL
+arg	35:68	35:69	9	0
+water	35:68	0:0	10	0
+arg	35:71	35:72	9	0
+water	35:71	0:0	10	0
+arg	35:74	35:77	9	ctx
+water	35:74	0:0	10	ctx
+water	35:78	0:0	8	;
+if	36:16	37:29	8	(ret < 0)
+cond	36:20	36:26	9	ret < 0
+water	36:20	0:0	10	ret
+op	36:24	0:0	10	<
+water	36:26	0:0	10	0
+stmts	37:20	37:29	9	
+goto	37:20	37:29	10	fail
+water	37:25	0:0	11	fail
+water	38:16	0:0	8	out_qp_table_buf
+op	38:32	0:0	8	->
+water	38:34	0:0	8	data
+op	38:38	0:0	8	[
+water	38:39	0:0	8	x
+op	38:41	0:0	8	+
+water	38:43	0:0	8	s
+op	38:44	0:0	8	->
+water	38:46	0:0	8	qstride
+op	38:54	0:0	8	*
+water	38:56	0:0	8	y
+op	38:57	0:0	8	]
+op	38:59	0:0	8	=
+call	38:61	38:76	8	lrintf
+arg	38:68	38:76	9	temp_val
+water	38:68	0:0	10	temp_val
+water	38:77	0:0	8	;
+water	39:12	0:0	8	}
+water	40:4	0:0	4	}
+else	40:6	46:4	2
+stmts	40:11	46:4	3	
+if	40:11	46:4	4	(in_qp_table)
+cond	40:15	40:15	5	in_qp_table
+water	40:15	0:0	6	in_qp_table
+stmts	40:28	46:4	5	
+water	40:28	0:0	6	{
+decl	41:8	41:16	6	int	y
+water	41:13	0:0	6	,
+decl	41:8	41:16	6	int	x
+for	42:8	45:58	6	(y = 0 ;y < s -> h;y ++)
+forinit	42:13	42:18	7	y = 0 ;
+water	42:13	0:0	8	y
+op	42:15	0:0	8	=
+water	42:17	0:0	8	0
+water	42:18	0:0	8	;
+cond	42:20	42:27	7	y < s -> h
+water	42:20	0:0	8	y
+op	42:22	0:0	8	<
+water	42:24	0:0	8	s
+op	42:25	0:0	8	->
+water	42:27	0:0	8	h
+forexpr	42:30	42:31	7	y ++
+water	42:30	0:0	8	y
+op	42:31	0:0	8	++
+stmts	43:12	45:58	7	
+for	43:12	45:58	8	(x = 0 ;x < s -> qstride;x ++)
+forinit	43:17	43:22	9	x = 0 ;
+water	43:17	0:0	10	x
+op	43:19	0:0	10	=
+water	43:21	0:0	10	0
+water	43:22	0:0	10	;
+cond	43:24	43:31	9	x < s -> qstride
+water	43:24	0:0	10	x
+op	43:26	0:0	10	<
+water	43:28	0:0	10	s
+op	43:29	0:0	10	->
+water	43:31	0:0	10	qstride
+forexpr	43:40	43:41	9	x ++
+water	43:40	0:0	10	x
+op	43:41	0:0	10	++
+stmts	44:16	45:58	9	
+water	44:16	0:0	10	out_qp_table_buf
+op	44:32	0:0	10	->
+water	44:34	0:0	10	data
+op	44:38	0:0	10	[
+water	44:39	0:0	10	x
+op	44:41	0:0	10	+
+water	44:43	0:0	10	s
+op	44:44	0:0	10	->
+water	44:46	0:0	10	qstride
+op	44:54	0:0	10	*
+water	44:56	0:0	10	y
+op	44:57	0:0	10	]
+op	44:59	0:0	10	=
+water	44:61	0:0	10	s
+op	44:62	0:0	10	->
+water	44:64	0:0	10	lut
+op	44:67	0:0	10	[
+water	44:68	0:0	10	129
+op	44:72	0:0	10	+
+water	45:20	0:0	10	(
+water	45:21	0:0	10	(
+water	45:22	0:0	10	int8_t
+water	45:28	0:0	10	)
+water	45:29	0:0	10	in_qp_table
+op	45:40	0:0	10	[
+water	45:41	0:0	10	x
+op	45:43	0:0	10	+
+water	45:45	0:0	10	stride
+op	45:52	0:0	10	*
+water	45:54	0:0	10	y
+op	45:55	0:0	10	]
+water	45:56	0:0	10	)
+op	45:57	0:0	10	]
+water	45:58	0:0	10	;
+water	46:4	0:0	6	}
+else	46:6	51:4	2
+stmts	46:11	51:4	3	
+water	46:11	0:0	4	{
+decl	47:8	47:32	4	int	y
+water	47:13	0:0	4	,
+decl	47:8	47:32	4	int	x
+water	47:16	0:0	4	,
+decl	47:8	47:32	4	int	qp
+op	47:21	0:0	4	=
+water	47:23	0:0	4	s
+op	47:24	0:0	4	->
+water	47:26	0:0	4	lut
+op	47:29	0:0	4	[
+water	47:30	0:0	4	0
+op	47:31	0:0	4	]
+for	48:8	50:63	4	(y = 0 ;y < s -> h;y ++)
+forinit	48:13	48:18	5	y = 0 ;
+water	48:13	0:0	6	y
+op	48:15	0:0	6	=
+water	48:17	0:0	6	0
+water	48:18	0:0	6	;
+cond	48:20	48:27	5	y < s -> h
+water	48:20	0:0	6	y
+op	48:22	0:0	6	<
+water	48:24	0:0	6	s
+op	48:25	0:0	6	->
+water	48:27	0:0	6	h
+forexpr	48:30	48:31	5	y ++
+water	48:30	0:0	6	y
+op	48:31	0:0	6	++
+stmts	49:12	50:63	5	
+for	49:12	50:63	6	(x = 0 ;x < s -> qstride;x ++)
+forinit	49:17	49:22	7	x = 0 ;
+water	49:17	0:0	8	x
+op	49:19	0:0	8	=
+water	49:21	0:0	8	0
+water	49:22	0:0	8	;
+cond	49:24	49:31	7	x < s -> qstride
+water	49:24	0:0	8	x
+op	49:26	0:0	8	<
+water	49:28	0:0	8	s
+op	49:29	0:0	8	->
+water	49:31	0:0	8	qstride
+forexpr	49:40	49:41	7	x ++
+water	49:40	0:0	8	x
+op	49:41	0:0	8	++
+stmts	50:16	50:63	7	
+water	50:16	0:0	8	out_qp_table_buf
+op	50:32	0:0	8	->
+water	50:34	0:0	8	data
+op	50:38	0:0	8	[
+water	50:39	0:0	8	x
+op	50:41	0:0	8	+
+water	50:43	0:0	8	s
+op	50:44	0:0	8	->
+water	50:46	0:0	8	qstride
+op	50:54	0:0	8	*
+water	50:56	0:0	8	y
+op	50:57	0:0	8	]
+op	50:59	0:0	8	=
+water	50:61	0:0	8	qp
+water	50:63	0:0	8	;
+water	51:4	0:0	4	}
+water	52:4	0:0	2	ret
+op	52:8	0:0	2	=
+call	52:10	52:38	2	ff_filter_frame
+arg	52:26	52:33	3	outlink
+water	52:26	0:0	4	outlink
+arg	52:35	52:38	3	out
+water	52:35	0:0	4	out
+water	52:39	0:0	2	;
+water	53:4	0:0	2	out
+op	53:8	0:0	2	=
+water	53:10	0:0	2	NULL
+water	53:14	0:0	2	;
+label	54:0	54:4	2	fail :
+call	55:4	55:21	2	av_frame_free
+arg	55:18	55:21	3	&in
+op	55:18	0:0	4	&
+water	55:19	0:0	4	in
+water	55:22	0:0	2	;
+call	56:4	56:22	2	av_frame_free
+arg	56:18	56:22	3	&out
+op	56:18	0:0	4	&
+water	56:19	0:0	4	out
+water	56:23	0:0	2	;
+return	57:4	57:14	2	ret
+water	57:11	0:0	3	ret

@@ -1,0 +1,617 @@
+func	1:0	104:0	0	static int	find_and_decode_index
+params	1:32	0:0	1	
+param	1:33	1:48	2	NUTContext *	nut
+stmnts	0:0	103:14	1	
+decl	3:4	3:33	2	AVFormatContext	*s
+op	3:23	0:0	2	=
+water	3:25	0:0	2	nut
+op	3:28	0:0	2	->
+water	3:30	0:0	2	avf
+decl	4:4	4:30	2	AVIOContext	*bc
+op	4:23	0:0	2	=
+water	4:25	0:0	2	s
+op	4:26	0:0	2	->
+water	4:28	0:0	2	pb
+decl	5:4	5:21	2	uint64_t	tmp
+water	5:16	0:0	2	,
+decl	5:4	5:21	2	uint64_t	end
+decl	6:4	6:29	2	int	i
+water	6:9	0:0	2	,
+decl	6:4	6:29	2	int	j
+water	6:12	0:0	2	,
+decl	6:4	6:29	2	int	syncpoint_count
+decl	7:4	7:36	2	int64_t	filesize
+op	7:21	0:0	2	=
+call	7:23	7:35	3	avio_size
+arg	7:33	7:35	4	bc
+water	7:33	0:0	5	bc
+decl	8:4	8:30	2	int64_t	*syncpoints
+op	8:24	0:0	2	=
+water	8:26	0:0	2	NULL
+decl	9:4	9:20	2	uint64_t	max_pts
+decl	10:4	10:31	2	int8_t	*has_keyframe
+op	10:25	0:0	2	=
+water	10:27	0:0	2	NULL
+decl	11:4	11:33	2	int	ret
+op	11:12	0:0	2	=
+water	11:14	0:0	2	AVERROR_INVALIDDATA
+if	12:4	13:17	2	(filesize <= 0)
+cond	12:7	12:19	3	filesize <= 0
+water	12:7	0:0	4	filesize
+op	12:16	0:0	4	<=
+water	12:19	0:0	4	0
+stmts	13:8	13:17	3	
+return	13:8	13:17	4	-1
+op	13:15	0:0	5	-
+water	13:16	0:0	5	1
+call	14:4	14:41	2	avio_seek
+arg	14:14	14:16	3	bc
+water	14:14	0:0	4	bc
+arg	14:18	14:31	3	filesize-12
+water	14:18	0:0	4	filesize
+op	14:27	0:0	4	-
+water	14:29	0:0	4	12
+arg	14:33	14:41	3	SEEK_SET
+water	14:33	0:0	4	SEEK_SET
+water	14:42	0:0	2	;
+call	15:4	15:52	2	avio_seek
+arg	15:14	15:16	3	bc
+water	15:14	0:0	4	bc
+arg	15:18	15:42	3	filesize-avio_rb64(bc)
+water	15:18	0:0	4	filesize
+op	15:27	0:0	4	-
+call	15:29	15:41	4	avio_rb64
+arg	15:39	15:41	5	bc
+water	15:39	0:0	6	bc
+arg	15:44	15:52	3	SEEK_SET
+water	15:44	0:0	4	SEEK_SET
+water	15:53	0:0	2	;
+if	16:4	21:4	2	(avio_rb64 (bc ) != INDEX_STARTCODE)
+cond	16:8	16:25	3	avio_rb64 (bc ) != INDEX_STARTCODE
+call	16:8	16:20	4	avio_rb64
+arg	16:18	16:20	5	bc
+water	16:18	0:0	6	bc
+op	16:22	0:0	4	!=
+water	16:25	0:0	4	INDEX_STARTCODE
+stmts	16:42	21:4	3	
+water	16:42	0:0	4	{
+call	17:8	17:55	4	av_log
+arg	17:15	17:16	5	s
+water	17:15	0:0	6	s
+arg	17:18	17:30	5	AV_LOG_ERROR
+water	17:18	0:0	6	AV_LOG_ERROR
+arg	17:32	17:55	5	"no index at the end\n"
+water	17:32	0:0	6	"no index at the end\n"
+water	17:56	0:0	4	;
+if	18:8	19:54	4	(s -> duration <= 0)
+cond	18:11	18:24	5	s -> duration <= 0
+water	18:11	0:0	6	s
+op	18:12	0:0	6	->
+water	18:14	0:0	6	duration
+op	18:22	0:0	6	<=
+water	18:24	0:0	6	0
+stmts	19:12	19:54	5	
+water	19:12	0:0	6	s
+op	19:13	0:0	6	->
+water	19:15	0:0	6	duration
+op	19:24	0:0	6	=
+call	19:26	19:53	6	find_duration
+arg	19:40	19:43	7	nut
+water	19:40	0:0	8	nut
+arg	19:45	19:53	7	filesize
+water	19:45	0:0	8	filesize
+water	19:54	0:0	6	;
+return	20:8	20:18	4	ret
+water	20:15	0:0	5	ret
+water	21:4	0:0	4	}
+water	22:4	0:0	2	end
+op	22:9	0:0	2	=
+call	22:11	22:55	2	get_packetheader
+arg	22:28	22:31	3	nut
+water	22:28	0:0	4	nut
+arg	22:33	22:35	3	bc
+water	22:33	0:0	4	bc
+arg	22:37	22:38	3	1
+water	22:37	0:0	4	1
+arg	22:40	22:55	3	INDEX_STARTCODE
+water	22:40	0:0	4	INDEX_STARTCODE
+water	22:56	0:0	2	;
+water	23:4	0:0	2	end
+op	23:8	0:0	2	+=
+call	23:11	23:23	2	avio_tell
+arg	23:21	23:23	3	bc
+water	23:21	0:0	4	bc
+water	23:24	0:0	2	;
+water	24:4	0:0	2	max_pts
+op	24:12	0:0	2	=
+call	24:14	24:33	2	ffio_read_varlen
+arg	24:31	24:33	3	bc
+water	24:31	0:0	4	bc
+water	24:34	0:0	2	;
+water	25:4	0:0	2	s
+op	25:5	0:0	2	->
+water	25:7	0:0	2	duration
+op	25:16	0:0	2	=
+call	25:18	27:45	2	av_rescale_q
+arg	25:31	25:61	3	max_pts/nut->time_base_count
+water	25:31	0:0	4	max_pts
+op	25:39	0:0	4	/
+water	25:41	0:0	4	nut
+op	25:44	0:0	4	->
+water	25:46	0:0	4	time_base_count
+arg	26:31	26:77	3	nut->time_base[max_pts%nut->time_base_count]
+water	26:31	0:0	4	nut
+op	26:34	0:0	4	->
+water	26:36	0:0	4	time_base
+op	26:45	0:0	4	[
+water	26:46	0:0	4	max_pts
+op	26:54	0:0	4	%
+water	26:56	0:0	4	nut
+op	26:59	0:0	4	->
+water	26:61	0:0	4	time_base_count
+op	26:76	0:0	4	]
+arg	27:31	27:45	3	AV_TIME_BASE_Q
+water	27:31	0:0	4	AV_TIME_BASE_Q
+water	27:46	0:0	2	;
+water	28:4	0:0	2	s
+op	28:5	0:0	2	->
+water	28:7	0:0	2	duration_estimation_method
+op	28:34	0:0	2	=
+water	28:36	0:0	2	AVFMT_DURATION_FROM_PTS
+water	28:59	0:0	2	;
+call	29:4	29:55	2	GET_V
+arg	29:10	29:25	3	syncpoint_count
+water	29:10	0:0	4	syncpoint_count
+arg	29:27	29:55	3	tmp<INT_MAX/8&&tmp>0
+water	29:27	0:0	4	tmp
+op	29:31	0:0	4	<
+water	29:33	0:0	4	INT_MAX
+op	29:41	0:0	4	/
+water	29:43	0:0	4	8
+op	29:45	0:0	4	&&
+water	29:48	0:0	4	tmp
+op	29:52	0:0	4	>
+water	29:54	0:0	4	0
+water	29:56	0:0	2	;
+water	30:4	0:0	2	syncpoints
+op	30:17	0:0	2	=
+call	30:19	30:67	2	av_malloc_array
+arg	30:35	30:50	3	syncpoint_count
+water	30:35	0:0	4	syncpoint_count
+arg	30:52	30:67	3	sizeof(int64_t)
+op	30:52	0:0	4	sizeof
+water	30:58	0:0	4	(
+water	30:59	0:0	4	int64_t
+water	30:66	0:0	4	)
+water	30:68	0:0	2	;
+water	31:4	0:0	2	has_keyframe
+op	31:17	0:0	2	=
+call	31:19	31:70	2	av_malloc_array
+arg	31:35	31:54	3	syncpoint_count+1
+water	31:35	0:0	4	syncpoint_count
+op	31:51	0:0	4	+
+water	31:53	0:0	4	1
+arg	31:56	31:70	3	sizeof(int8_t)
+op	31:56	0:0	4	sizeof
+water	31:62	0:0	4	(
+water	31:63	0:0	4	int8_t
+water	31:69	0:0	4	)
+water	31:71	0:0	2	;
+if	32:4	35:4	2	(! syncpoints || ! has_keyframe)
+cond	32:8	32:24	3	! syncpoints || ! has_keyframe
+op	32:8	0:0	4	!
+water	32:9	0:0	4	syncpoints
+op	32:20	0:0	4	||
+op	32:23	0:0	4	!
+water	32:24	0:0	4	has_keyframe
+stmts	32:38	35:4	3	
+water	32:38	0:0	4	{
+water	33:8	0:0	4	ret
+op	33:12	0:0	4	=
+call	33:14	33:28	4	AVERROR
+arg	33:22	33:28	5	ENOMEM
+water	33:22	0:0	6	ENOMEM
+water	33:29	0:0	4	;
+goto	34:8	34:17	4	fail
+water	34:13	0:0	5	fail
+water	35:4	0:0	4	}
+for	36:4	42:4	2	(i = 0 ;i < syncpoint_count;i ++)
+forinit	36:9	36:14	3	i = 0 ;
+water	36:9	0:0	4	i
+op	36:11	0:0	4	=
+water	36:13	0:0	4	0
+water	36:14	0:0	4	;
+cond	36:16	36:20	3	i < syncpoint_count
+water	36:16	0:0	4	i
+op	36:18	0:0	4	<
+water	36:20	0:0	4	syncpoint_count
+forexpr	36:37	36:38	3	i ++
+water	36:37	0:0	4	i
+op	36:38	0:0	4	++
+stmts	36:42	42:4	3	
+water	36:42	0:0	4	{
+water	37:8	0:0	4	syncpoints
+op	37:18	0:0	4	[
+water	37:19	0:0	4	i
+op	37:20	0:0	4	]
+op	37:22	0:0	4	=
+call	37:24	37:43	4	ffio_read_varlen
+arg	37:41	37:43	5	bc
+water	37:41	0:0	6	bc
+water	37:44	0:0	4	;
+if	38:8	39:21	4	(syncpoints [ i ] <= 0)
+cond	38:12	38:29	5	syncpoints [ i ] <= 0
+water	38:12	0:0	6	syncpoints
+op	38:22	0:0	6	[
+water	38:23	0:0	6	i
+op	38:24	0:0	6	]
+op	38:26	0:0	6	<=
+water	38:29	0:0	6	0
+stmts	39:12	39:21	5	
+goto	39:12	39:21	6	fail
+water	39:17	0:0	7	fail
+if	40:8	41:46	4	(i)
+cond	40:12	40:12	5	i
+water	40:12	0:0	6	i
+stmts	41:12	41:46	5	
+water	41:12	0:0	6	syncpoints
+op	41:22	0:0	6	[
+water	41:23	0:0	6	i
+op	41:24	0:0	6	]
+op	41:26	0:0	6	+=
+water	41:29	0:0	6	syncpoints
+op	41:39	0:0	6	[
+water	41:40	0:0	6	i
+op	41:42	0:0	6	-
+water	41:44	0:0	6	1
+op	41:45	0:0	6	]
+water	41:46	0:0	6	;
+water	42:4	0:0	4	}
+for	43:4	94:4	2	(i = 0 ;i < s -> nb_streams;i ++)
+forinit	43:9	43:14	3	i = 0 ;
+water	43:9	0:0	4	i
+op	43:11	0:0	4	=
+water	43:13	0:0	4	0
+water	43:14	0:0	4	;
+cond	43:16	43:23	3	i < s -> nb_streams
+water	43:16	0:0	4	i
+op	43:18	0:0	4	<
+water	43:20	0:0	4	s
+op	43:21	0:0	4	->
+water	43:23	0:0	4	nb_streams
+forexpr	43:35	43:36	3	i ++
+water	43:35	0:0	4	i
+op	43:36	0:0	4	++
+stmts	43:40	94:4	3	
+water	43:40	0:0	4	{
+decl	44:8	44:29	4	int64_t	last_pts
+op	44:25	0:0	4	=
+op	44:27	0:0	4	-
+water	44:28	0:0	4	1
+for	45:8	93:8	4	(j = 0 ;j < syncpoint_count;)
+forinit	45:13	45:18	5	j = 0 ;
+water	45:13	0:0	6	j
+op	45:15	0:0	6	=
+water	45:17	0:0	6	0
+water	45:18	0:0	6	;
+cond	45:20	45:24	5	j < syncpoint_count
+water	45:20	0:0	6	j
+op	45:22	0:0	6	<
+water	45:24	0:0	6	syncpoint_count
+forexpr	0:0	0:0	5	
+stmts	45:42	93:8	5	
+water	45:42	0:0	6	{
+decl	46:12	46:45	6	uint64_t	x
+op	46:23	0:0	6	=
+call	46:25	46:44	7	ffio_read_varlen
+arg	46:42	46:44	8	bc
+water	46:42	0:0	9	bc
+decl	47:12	47:30	6	int	type
+op	47:23	0:0	6	=
+water	47:25	0:0	6	x
+op	47:27	0:0	6	&
+water	47:29	0:0	6	1
+decl	48:12	48:26	6	int	n
+op	48:23	0:0	6	=
+water	48:25	0:0	6	j
+water	49:12	0:0	6	x
+op	49:14	0:0	6	>>=
+water	49:18	0:0	6	1
+water	49:19	0:0	6	;
+if	50:12	60:12	6	(type)
+cond	50:16	50:16	7	type
+water	50:16	0:0	8	type
+stmts	50:22	60:12	7	
+water	50:22	0:0	8	{
+decl	51:16	51:32	8	int	flag
+op	51:25	0:0	8	=
+water	51:27	0:0	8	x
+op	51:29	0:0	8	&
+water	51:31	0:0	8	1
+water	52:16	0:0	8	x
+op	52:18	0:0	8	>>=
+water	52:22	0:0	8	1
+water	52:23	0:0	8	;
+if	53:16	56:16	8	(n + x >= syncpoint_count + 1)
+cond	53:20	53:47	9	n + x >= syncpoint_count + 1
+water	53:20	0:0	10	n
+op	53:22	0:0	10	+
+water	53:24	0:0	10	x
+op	53:26	0:0	10	>=
+water	53:29	0:0	10	syncpoint_count
+op	53:45	0:0	10	+
+water	53:47	0:0	10	1
+stmts	53:50	56:16	9	
+water	53:50	0:0	10	{
+call	54:20	54:112	10	av_log
+arg	54:27	54:28	11	s
+water	54:27	0:0	12	s
+arg	54:30	54:42	11	AV_LOG_ERROR
+water	54:30	0:0	12	AV_LOG_ERROR
+arg	54:44	54:85	11	"index overflow A %d + %"PRIu64" >= %d\n"
+water	54:44	0:0	12	"index overflow A %d + %"
+water	54:69	0:0	12	PRIu64
+water	54:75	0:0	12	" >= %d\n"
+arg	54:87	54:88	11	n
+water	54:87	0:0	12	n
+arg	54:90	54:91	11	x
+water	54:90	0:0	12	x
+arg	54:93	54:112	11	syncpoint_count+1
+water	54:93	0:0	12	syncpoint_count
+op	54:109	0:0	12	+
+water	54:111	0:0	12	1
+water	54:113	0:0	10	;
+goto	55:20	55:29	10	fail
+water	55:25	0:0	11	fail
+water	56:16	0:0	10	}
+while	57:16	58:44	8	(x --)
+cond	57:23	57:24	9	x --
+water	57:23	0:0	10	x
+op	57:24	0:0	10	--
+stmts	58:20	58:44	9	
+water	58:20	0:0	10	has_keyframe
+op	58:32	0:0	10	[
+water	58:33	0:0	10	n
+op	58:34	0:0	10	++
+op	58:36	0:0	10	]
+op	58:38	0:0	10	=
+water	58:40	0:0	10	flag
+water	58:44	0:0	10	;
+water	59:16	0:0	8	has_keyframe
+op	59:28	0:0	8	[
+water	59:29	0:0	8	n
+op	59:30	0:0	8	++
+op	59:32	0:0	8	]
+op	59:34	0:0	8	=
+op	59:36	0:0	8	!
+water	59:37	0:0	8	flag
+water	59:41	0:0	8	;
+water	60:12	0:0	8	}
+else	60:14	73:12	6
+stmts	60:19	73:12	7	
+water	60:19	0:0	8	{
+if	61:16	64:16	8	(x <= 1)
+cond	61:20	61:25	9	x <= 1
+water	61:20	0:0	10	x
+op	61:22	0:0	10	<=
+water	61:25	0:0	10	1
+stmts	61:28	64:16	9	
+water	61:28	0:0	10	{
+call	62:20	62:80	10	av_log
+arg	62:27	62:28	11	s
+water	62:27	0:0	12	s
+arg	62:30	62:42	11	AV_LOG_ERROR
+water	62:30	0:0	12	AV_LOG_ERROR
+arg	62:44	62:77	11	"index: x %"PRIu64" is invalid\n"
+water	62:44	0:0	12	"index: x %"
+water	62:56	0:0	12	PRIu64
+water	62:62	0:0	12	" is invalid\n"
+arg	62:79	62:80	11	x
+water	62:79	0:0	12	x
+water	62:81	0:0	10	;
+goto	63:20	63:29	10	fail
+water	63:25	0:0	11	fail
+water	64:16	0:0	10	}
+while	65:16	72:16	8	(x != 1)
+cond	65:23	65:28	9	x != 1
+water	65:23	0:0	10	x
+op	65:25	0:0	10	!=
+water	65:28	0:0	10	1
+stmts	65:31	72:16	9	
+water	65:31	0:0	10	{
+if	66:20	69:20	10	(n >= syncpoint_count + 1)
+cond	66:24	66:47	11	n >= syncpoint_count + 1
+water	66:24	0:0	12	n
+op	66:26	0:0	12	>=
+water	66:29	0:0	12	syncpoint_count
+op	66:45	0:0	12	+
+water	66:47	0:0	12	1
+stmts	66:50	69:20	11	
+water	66:50	0:0	12	{
+call	67:24	67:68	12	av_log
+arg	67:31	67:32	13	s
+water	67:31	0:0	14	s
+arg	67:34	67:46	13	AV_LOG_ERROR
+water	67:34	0:0	14	AV_LOG_ERROR
+arg	67:48	67:68	13	"index overflow B\n"
+water	67:48	0:0	14	"index overflow B\n"
+water	67:69	0:0	12	;
+goto	68:24	68:33	12	fail
+water	68:29	0:0	13	fail
+water	69:20	0:0	12	}
+water	70:20	0:0	10	has_keyframe
+op	70:32	0:0	10	[
+water	70:33	0:0	10	n
+op	70:34	0:0	10	++
+op	70:36	0:0	10	]
+op	70:38	0:0	10	=
+water	70:40	0:0	10	x
+op	70:42	0:0	10	&
+water	70:44	0:0	10	1
+water	70:45	0:0	10	;
+water	71:20	0:0	10	x
+op	71:22	0:0	10	>>=
+water	71:26	0:0	10	1
+water	71:27	0:0	10	;
+water	72:16	0:0	10	}
+water	73:12	0:0	8	}
+if	74:12	77:12	6	(has_keyframe [ 0 ])
+cond	74:16	74:30	7	has_keyframe [ 0 ]
+water	74:16	0:0	8	has_keyframe
+op	74:28	0:0	8	[
+water	74:29	0:0	8	0
+op	74:30	0:0	8	]
+stmts	74:33	77:12	7	
+water	74:33	0:0	8	{
+call	75:16	75:84	8	av_log
+arg	75:23	75:24	9	s
+water	75:23	0:0	10	s
+arg	75:26	75:38	9	AV_LOG_ERROR
+water	75:26	0:0	10	AV_LOG_ERROR
+arg	75:40	75:84	9	"keyframe before first syncpoint in index\n"
+water	75:40	0:0	10	"keyframe before first syncpoint in index\n"
+water	75:85	0:0	8	;
+goto	76:16	76:25	8	fail
+water	76:21	0:0	9	fail
+water	77:12	0:0	8	}
+call	78:12	78:47	6	av_assert0
+arg	78:23	78:47	7	n<=syncpoint_count+1
+water	78:23	0:0	8	n
+op	78:25	0:0	8	<=
+water	78:28	0:0	8	syncpoint_count
+op	78:44	0:0	8	+
+water	78:46	0:0	8	1
+water	78:48	0:0	6	;
+for	79:12	92:12	6	(;j < n && j < syncpoint_count;j ++)
+forinit	79:17	79:17	7	;
+water	79:17	0:0	8	;
+cond	79:19	79:32	7	j < n && j < syncpoint_count
+water	79:19	0:0	8	j
+op	79:21	0:0	8	<
+water	79:23	0:0	8	n
+op	79:25	0:0	8	&&
+water	79:28	0:0	8	j
+op	79:30	0:0	8	<
+water	79:32	0:0	8	syncpoint_count
+forexpr	79:49	79:50	7	j ++
+water	79:49	0:0	8	j
+op	79:50	0:0	8	++
+stmts	79:54	92:12	7	
+water	79:54	0:0	8	{
+if	80:16	91:16	8	(has_keyframe [ j ])
+cond	80:20	80:34	9	has_keyframe [ j ]
+water	80:20	0:0	10	has_keyframe
+op	80:32	0:0	10	[
+water	80:33	0:0	10	j
+op	80:34	0:0	10	]
+stmts	80:37	91:16	9	
+water	80:37	0:0	10	{
+decl	81:20	81:56	10	uint64_t	B
+water	81:30	0:0	10	,
+decl	81:20	81:56	10	uint64_t	A
+op	81:34	0:0	10	=
+call	81:36	81:55	11	ffio_read_varlen
+arg	81:53	81:55	12	bc
+water	81:53	0:0	13	bc
+if	82:20	86:20	10	(! A)
+cond	82:24	82:25	11	! A
+op	82:24	0:0	12	!
+water	82:25	0:0	12	A
+stmts	82:28	86:20	11	
+water	82:28	0:0	12	{
+water	83:24	0:0	12	A
+op	83:26	0:0	12	=
+call	83:28	83:47	12	ffio_read_varlen
+arg	83:45	83:47	13	bc
+water	83:45	0:0	14	bc
+water	83:48	0:0	12	;
+water	84:24	0:0	12	B
+op	84:26	0:0	12	=
+call	84:28	84:47	12	ffio_read_varlen
+arg	84:45	84:47	13	bc
+water	84:45	0:0	14	bc
+water	84:48	0:0	12	;
+water	86:20	0:0	12	}
+else	86:22	87:29	10
+stmts	87:24	87:29	11	
+water	87:24	0:0	12	B
+op	87:26	0:0	12	=
+water	87:28	0:0	12	0
+water	87:29	0:0	12	;
+call	88:20	89:75	10	av_add_index_entry
+arg	88:39	88:52	11	s->streams[i]
+water	88:39	0:0	12	s
+op	88:40	0:0	12	->
+water	88:42	0:0	12	streams
+op	88:49	0:0	12	[
+water	88:50	0:0	12	i
+op	88:51	0:0	12	]
+arg	88:54	88:76	11	16*syncpoints[j-1]
+water	88:54	0:0	12	16
+op	88:57	0:0	12	*
+water	88:59	0:0	12	syncpoints
+op	88:69	0:0	12	[
+water	88:70	0:0	12	j
+op	88:72	0:0	12	-
+water	88:74	0:0	12	1
+op	88:75	0:0	12	]
+arg	89:39	89:51	11	last_pts+A
+water	89:39	0:0	12	last_pts
+op	89:48	0:0	12	+
+water	89:50	0:0	12	A
+arg	89:53	89:54	11	0
+water	89:53	0:0	12	0
+arg	89:56	89:57	11	0
+water	89:56	0:0	12	0
+arg	89:59	89:75	11	AVINDEX_KEYFRAME
+water	89:59	0:0	12	AVINDEX_KEYFRAME
+water	89:76	0:0	10	;
+water	90:20	0:0	10	last_pts
+op	90:29	0:0	10	+=
+water	90:32	0:0	10	A
+op	90:34	0:0	10	+
+water	90:36	0:0	10	B
+water	90:37	0:0	10	;
+water	91:16	0:0	10	}
+water	92:12	0:0	8	}
+water	93:8	0:0	6	}
+water	94:4	0:0	4	}
+if	95:4	98:4	2	(skip_reserved (bc ,end ) ||ffio_get_checksum (bc ))
+cond	95:8	95:54	3	skip_reserved (bc ,end ) ||ffio_get_checksum (bc )
+call	95:8	95:29	4	skip_reserved
+arg	95:22	95:24	5	bc
+water	95:22	0:0	6	bc
+arg	95:26	95:29	5	end
+water	95:26	0:0	6	end
+op	95:31	0:0	4	||
+call	95:34	95:54	4	ffio_get_checksum
+arg	95:52	95:54	5	bc
+water	95:52	0:0	6	bc
+stmts	95:57	98:4	3	
+water	95:57	0:0	4	{
+call	96:8	96:59	4	av_log
+arg	96:15	96:16	5	s
+water	96:15	0:0	6	s
+arg	96:18	96:30	5	AV_LOG_ERROR
+water	96:18	0:0	6	AV_LOG_ERROR
+arg	96:32	96:59	5	"index checksum mismatch\n"
+water	96:32	0:0	6	"index checksum mismatch\n"
+water	96:60	0:0	4	;
+goto	97:8	97:17	4	fail
+water	97:13	0:0	5	fail
+water	98:4	0:0	4	}
+water	99:4	0:0	2	ret
+op	99:8	0:0	2	=
+water	99:10	0:0	2	0
+water	99:11	0:0	2	;
+label	100:0	100:4	2	fail :
+call	101:4	101:22	2	av_free
+arg	101:12	101:22	3	syncpoints
+water	101:12	0:0	4	syncpoints
+water	101:23	0:0	2	;
+call	102:4	102:24	2	av_free
+arg	102:12	102:24	3	has_keyframe
+water	102:12	0:0	4	has_keyframe
+water	102:25	0:0	2	;
+return	103:4	103:14	2	ret
+water	103:11	0:0	3	ret

@@ -1,0 +1,907 @@
+func	1:0	149:0	0	static int	mov_flush_fragment
+params	1:29	0:0	1	
+param	1:30	1:48	2	AVFormatContext *	s
+stmnts	0:0	148:12	1	
+decl	3:4	3:37	2	MOVMuxContext	*mov
+op	3:23	0:0	2	=
+water	3:25	0:0	2	s
+op	3:26	0:0	2	->
+water	3:28	0:0	2	priv_data
+decl	4:4	4:27	2	int	i
+water	4:9	0:0	2	,
+decl	4:4	4:27	2	int	first_track
+op	4:23	0:0	2	=
+op	4:25	0:0	2	-
+water	4:26	0:0	2	1
+decl	5:4	5:25	2	int64_t	mdat_size
+op	5:22	0:0	2	=
+water	5:24	0:0	2	0
+decl	6:4	6:11	2	int	ret
+if	7:4	8:16	2	(! ( mov -> flags & FF_MOV_FLAG_FRAGMENT ))
+cond	7:8	7:43	3	! ( mov -> flags & FF_MOV_FLAG_FRAGMENT )
+op	7:8	0:0	4	!
+water	7:9	0:0	4	(
+water	7:10	0:0	4	mov
+op	7:13	0:0	4	->
+water	7:15	0:0	4	flags
+op	7:21	0:0	4	&
+water	7:23	0:0	4	FF_MOV_FLAG_FRAGMENT
+water	7:43	0:0	4	)
+stmts	8:8	8:16	3	
+return	8:8	8:16	4	0
+water	8:15	0:0	5	0
+for	9:4	34:4	2	(i = 0 ;i < mov -> nb_streams;i ++)
+forinit	9:9	9:14	3	i = 0 ;
+water	9:9	0:0	4	i
+op	9:11	0:0	4	=
+water	9:13	0:0	4	0
+water	9:14	0:0	4	;
+cond	9:16	9:25	3	i < mov -> nb_streams
+water	9:16	0:0	4	i
+op	9:18	0:0	4	<
+water	9:20	0:0	4	mov
+op	9:23	0:0	4	->
+water	9:25	0:0	4	nb_streams
+forexpr	9:37	9:38	3	i ++
+water	9:37	0:0	4	i
+op	9:38	0:0	4	++
+stmts	9:42	34:4	3	
+water	9:42	0:0	4	{
+decl	10:8	10:41	4	MOVTrack	*track
+op	10:24	0:0	4	=
+op	10:26	0:0	4	&
+water	10:27	0:0	4	mov
+op	10:30	0:0	4	->
+water	10:32	0:0	4	tracks
+op	10:38	0:0	4	[
+water	10:39	0:0	4	i
+op	10:40	0:0	4	]
+if	11:8	12:20	4	(track -> entry <= 1)
+cond	11:12	11:28	5	track -> entry <= 1
+water	11:12	0:0	6	track
+op	11:17	0:0	6	->
+water	11:19	0:0	6	entry
+op	11:25	0:0	6	<=
+water	11:28	0:0	6	1
+stmts	12:12	12:20	5	
+continue	12:12	12:20	6	
+if	19:8	20:20	4	(get_cluster_duration (track ,track -> entry - 1 ) != 0)
+cond	19:12	19:61	5	get_cluster_duration (track ,track -> entry - 1 ) != 0
+call	19:12	19:56	6	get_cluster_duration
+arg	19:33	19:38	7	track
+water	19:33	0:0	8	track
+arg	19:40	19:56	7	track->entry-1
+water	19:40	0:0	8	track
+op	19:45	0:0	8	->
+water	19:47	0:0	8	entry
+op	19:53	0:0	8	-
+water	19:55	0:0	8	1
+op	19:58	0:0	6	!=
+water	19:61	0:0	6	0
+stmts	20:12	20:20	5	
+continue	20:12	20:20	6	
+water	25:8	0:0	4	track
+op	25:13	0:0	4	->
+water	25:15	0:0	4	track_duration
+op	25:30	0:0	4	+=
+call	25:33	25:77	4	get_cluster_duration
+arg	25:54	25:59	5	track
+water	25:54	0:0	6	track
+arg	25:61	25:77	5	track->entry-2
+water	25:61	0:0	6	track
+op	25:66	0:0	6	->
+water	25:68	0:0	6	entry
+op	25:74	0:0	6	-
+water	25:76	0:0	6	2
+water	25:78	0:0	4	;
+water	26:8	0:0	4	track
+op	26:13	0:0	4	->
+water	26:15	0:0	4	end_pts
+op	26:30	0:0	4	+=
+call	26:33	26:77	4	get_cluster_duration
+arg	26:54	26:59	5	track
+water	26:54	0:0	6	track
+arg	26:61	26:77	5	track->entry-2
+water	26:61	0:0	6	track
+op	26:66	0:0	6	->
+water	26:68	0:0	6	entry
+op	26:74	0:0	6	-
+water	26:76	0:0	6	2
+water	26:78	0:0	4	;
+if	27:8	33:8	4	(! mov -> missing_duration_warned)
+cond	27:12	27:18	5	! mov -> missing_duration_warned
+op	27:12	0:0	6	!
+water	27:13	0:0	6	mov
+op	27:16	0:0	6	->
+water	27:18	0:0	6	missing_duration_warned
+stmts	27:43	33:8	5	
+water	27:43	0:0	6	{
+call	28:12	31:40	6	av_log
+arg	28:19	28:20	7	s
+water	28:19	0:0	8	s
+arg	28:22	28:36	7	AV_LOG_WARNING
+water	28:22	0:0	8	AV_LOG_WARNING
+arg	29:19	31:40	7	"Estimating the duration of the last packet in a ""fragment, consider setting the duration field in ""AVPacket instead.\n"
+water	29:19	0:0	8	"Estimating the duration of the last packet in a "
+water	30:19	0:0	8	"fragment, consider setting the duration field in "
+water	31:19	0:0	8	"AVPacket instead.\n"
+water	31:41	0:0	6	;
+water	32:12	0:0	6	mov
+op	32:15	0:0	6	->
+water	32:17	0:0	6	missing_duration_warned
+op	32:41	0:0	6	=
+water	32:43	0:0	6	1
+water	32:44	0:0	6	;
+water	33:8	0:0	6	}
+water	34:4	0:0	4	}
+if	35:4	78:4	2	(! mov -> moov_written)
+cond	35:8	35:14	3	! mov -> moov_written
+op	35:8	0:0	4	!
+water	35:9	0:0	4	mov
+op	35:12	0:0	4	->
+water	35:14	0:0	4	moov_written
+stmts	35:28	78:4	3	
+water	35:28	0:0	4	{
+decl	36:8	36:38	4	int64_t	pos
+op	36:20	0:0	4	=
+call	36:22	36:37	5	avio_tell
+arg	36:32	36:37	6	s->pb
+water	36:32	0:0	7	s
+op	36:33	0:0	7	->
+water	36:35	0:0	7	pb
+decl	37:8	37:20	4	uint8_t	*buf
+decl	38:8	38:31	4	int	buf_size
+water	38:20	0:0	4	,
+decl	38:8	38:31	4	int	moov_size
+for	39:8	41:21	4	(i = 0 ;i < mov -> nb_streams;i ++)
+forinit	39:13	39:18	5	i = 0 ;
+water	39:13	0:0	6	i
+op	39:15	0:0	6	=
+water	39:17	0:0	6	0
+water	39:18	0:0	6	;
+cond	39:20	39:29	5	i < mov -> nb_streams
+water	39:20	0:0	6	i
+op	39:22	0:0	6	<
+water	39:24	0:0	6	mov
+op	39:27	0:0	6	->
+water	39:29	0:0	6	nb_streams
+forexpr	39:41	39:42	5	i ++
+water	39:41	0:0	6	i
+op	39:42	0:0	6	++
+stmts	40:12	41:21	5	
+if	40:12	41:21	6	(! mov -> tracks [ i ] . entry)
+cond	40:16	40:32	7	! mov -> tracks [ i ] . entry
+op	40:16	0:0	8	!
+water	40:17	0:0	8	mov
+op	40:20	0:0	8	->
+water	40:22	0:0	8	tracks
+op	40:28	0:0	8	[
+water	40:29	0:0	8	i
+op	40:30	0:0	8	]
+op	40:31	0:0	8	.
+water	40:32	0:0	8	entry
+stmts	41:16	41:21	7	
+break	41:16	41:21	8	
+if	43:8	44:20	4	(i < mov -> nb_streams)
+cond	43:12	43:21	5	i < mov -> nb_streams
+water	43:12	0:0	6	i
+op	43:14	0:0	6	<
+water	43:16	0:0	6	mov
+op	43:19	0:0	6	->
+water	43:21	0:0	6	nb_streams
+stmts	44:12	44:20	5	
+return	44:12	44:20	6	0
+water	44:19	0:0	7	0
+water	45:8	0:0	4	moov_size
+op	45:18	0:0	4	=
+call	45:20	45:35	4	get_moov_size
+arg	45:34	45:35	5	s
+water	45:34	0:0	6	s
+water	45:36	0:0	4	;
+for	46:8	47:60	4	(i = 0 ;i < mov -> nb_streams;i ++)
+forinit	46:13	46:18	5	i = 0 ;
+water	46:13	0:0	6	i
+op	46:15	0:0	6	=
+water	46:17	0:0	6	0
+water	46:18	0:0	6	;
+cond	46:20	46:29	5	i < mov -> nb_streams
+water	46:20	0:0	6	i
+op	46:22	0:0	6	<
+water	46:24	0:0	6	mov
+op	46:27	0:0	6	->
+water	46:29	0:0	6	nb_streams
+forexpr	46:41	46:42	5	i ++
+water	46:41	0:0	6	i
+op	46:42	0:0	6	++
+stmts	47:12	47:60	5	
+water	47:12	0:0	6	mov
+op	47:15	0:0	6	->
+water	47:17	0:0	6	tracks
+op	47:23	0:0	6	[
+water	47:24	0:0	6	i
+op	47:25	0:0	6	]
+op	47:26	0:0	6	.
+water	47:27	0:0	6	data_offset
+op	47:39	0:0	6	=
+water	47:41	0:0	6	pos
+op	47:45	0:0	6	+
+water	47:47	0:0	6	moov_size
+op	47:57	0:0	6	+
+water	47:59	0:0	6	8
+water	47:60	0:0	6	;
+if	48:8	49:46	4	(mov -> flags & FF_MOV_FLAG_DELAY_MOOV)
+cond	48:12	48:25	5	mov -> flags & FF_MOV_FLAG_DELAY_MOOV
+water	48:12	0:0	6	mov
+op	48:15	0:0	6	->
+water	48:17	0:0	6	flags
+op	48:23	0:0	6	&
+water	48:25	0:0	6	FF_MOV_FLAG_DELAY_MOOV
+stmts	49:12	49:46	5	
+call	49:12	49:45	6	mov_write_identification
+arg	49:37	49:42	7	s->pb
+water	49:37	0:0	8	s
+op	49:38	0:0	8	->
+water	49:40	0:0	8	pb
+arg	49:44	49:45	7	s
+water	49:44	0:0	8	s
+water	49:46	0:0	6	;
+if	50:8	51:22	4	(( ret =mov_write_moov_tag (s -> pb ,mov ,s ) ) < 0)
+cond	50:12	50:56	5	( ret =mov_write_moov_tag (s -> pb ,mov ,s ) ) < 0
+water	50:12	0:0	6	(
+water	50:13	0:0	6	ret
+op	50:17	0:0	6	=
+call	50:19	50:51	6	mov_write_moov_tag
+arg	50:38	50:43	7	s->pb
+water	50:38	0:0	8	s
+op	50:39	0:0	8	->
+water	50:41	0:0	8	pb
+arg	50:45	50:48	7	mov
+water	50:45	0:0	8	mov
+arg	50:50	50:51	7	s
+water	50:50	0:0	8	s
+water	50:52	0:0	6	)
+op	50:54	0:0	6	<
+water	50:56	0:0	6	0
+stmts	51:12	51:22	5	
+return	51:12	51:22	6	ret
+water	51:19	0:0	7	ret
+if	52:8	58:8	4	(mov -> flags & FF_MOV_FLAG_DELAY_MOOV)
+cond	52:12	52:25	5	mov -> flags & FF_MOV_FLAG_DELAY_MOOV
+water	52:12	0:0	6	mov
+op	52:15	0:0	6	->
+water	52:17	0:0	6	flags
+op	52:23	0:0	6	&
+water	52:25	0:0	6	FF_MOV_FLAG_DELAY_MOOV
+stmts	52:49	58:8	5	
+water	52:49	0:0	6	{
+if	53:12	54:59	6	(mov -> flags & FF_MOV_FLAG_GLOBAL_SIDX)
+cond	53:16	53:29	7	mov -> flags & FF_MOV_FLAG_GLOBAL_SIDX
+water	53:16	0:0	8	mov
+op	53:19	0:0	8	->
+water	53:21	0:0	8	flags
+op	53:27	0:0	8	&
+water	53:29	0:0	8	FF_MOV_FLAG_GLOBAL_SIDX
+stmts	54:16	54:59	7	
+water	54:16	0:0	8	mov
+op	54:19	0:0	8	->
+water	54:21	0:0	8	reserved_header_pos
+op	54:41	0:0	8	=
+call	54:43	54:58	8	avio_tell
+arg	54:53	54:58	9	s->pb
+water	54:53	0:0	10	s
+op	54:54	0:0	10	->
+water	54:56	0:0	10	pb
+water	54:59	0:0	8	;
+call	55:12	55:28	6	avio_flush
+arg	55:23	55:28	7	s->pb
+water	55:23	0:0	8	s
+op	55:24	0:0	8	->
+water	55:26	0:0	8	pb
+water	55:29	0:0	6	;
+water	56:12	0:0	6	mov
+op	56:15	0:0	6	->
+water	56:17	0:0	6	moov_written
+op	56:30	0:0	6	=
+water	56:32	0:0	6	1
+water	56:33	0:0	6	;
+return	57:12	57:20	6	0
+water	57:19	0:0	7	0
+water	58:8	0:0	6	}
+water	59:8	0:0	4	buf_size
+op	59:17	0:0	4	=
+call	59:19	59:57	4	avio_close_dyn_buf
+arg	59:38	59:51	5	mov->mdat_buf
+water	59:38	0:0	6	mov
+op	59:41	0:0	6	->
+water	59:43	0:0	6	mdat_buf
+arg	59:53	59:57	5	&buf
+op	59:53	0:0	6	&
+water	59:54	0:0	6	buf
+water	59:58	0:0	4	;
+water	60:8	0:0	4	mov
+op	60:11	0:0	4	->
+water	60:13	0:0	4	mdat_buf
+op	60:22	0:0	4	=
+water	60:24	0:0	4	NULL
+water	60:28	0:0	4	;
+call	61:8	61:37	4	avio_wb32
+arg	61:18	61:23	5	s->pb
+water	61:18	0:0	6	s
+op	61:19	0:0	6	->
+water	61:21	0:0	6	pb
+arg	61:25	61:37	5	buf_size+8
+water	61:25	0:0	6	buf_size
+op	61:34	0:0	6	+
+water	61:36	0:0	6	8
+water	61:38	0:0	4	;
+call	62:8	62:34	4	ffio_wfourcc
+arg	62:21	62:26	5	s->pb
+water	62:21	0:0	6	s
+op	62:22	0:0	6	->
+water	62:24	0:0	6	pb
+arg	62:28	62:34	5	"mdat"
+water	62:28	0:0	6	"mdat"
+water	62:35	0:0	4	;
+call	63:8	63:39	4	avio_write
+arg	63:19	63:24	5	s->pb
+water	63:19	0:0	6	s
+op	63:20	0:0	6	->
+water	63:22	0:0	6	pb
+arg	63:26	63:29	5	buf
+water	63:26	0:0	6	buf
+arg	63:31	63:39	5	buf_size
+water	63:31	0:0	6	buf_size
+water	63:40	0:0	4	;
+call	64:8	64:19	4	av_free
+arg	64:16	64:19	5	buf
+water	64:16	0:0	6	buf
+water	64:20	0:0	4	;
+if	65:8	66:55	4	(mov -> flags & FF_MOV_FLAG_GLOBAL_SIDX)
+cond	65:12	65:25	5	mov -> flags & FF_MOV_FLAG_GLOBAL_SIDX
+water	65:12	0:0	6	mov
+op	65:15	0:0	6	->
+water	65:17	0:0	6	flags
+op	65:23	0:0	6	&
+water	65:25	0:0	6	FF_MOV_FLAG_GLOBAL_SIDX
+stmts	66:12	66:55	5	
+water	66:12	0:0	6	mov
+op	66:15	0:0	6	->
+water	66:17	0:0	6	reserved_header_pos
+op	66:37	0:0	6	=
+call	66:39	66:54	6	avio_tell
+arg	66:49	66:54	7	s->pb
+water	66:49	0:0	8	s
+op	66:50	0:0	8	->
+water	66:52	0:0	8	pb
+water	66:55	0:0	6	;
+water	67:8	0:0	4	mov
+op	67:11	0:0	4	->
+water	67:13	0:0	4	moov_written
+op	67:26	0:0	4	=
+water	67:28	0:0	4	1
+water	67:29	0:0	4	;
+water	68:8	0:0	4	mov
+op	68:11	0:0	4	->
+water	68:13	0:0	4	mdat_size
+op	68:23	0:0	4	=
+water	68:25	0:0	4	0
+water	68:26	0:0	4	;
+for	69:8	75:8	4	(i = 0 ;i < mov -> nb_streams;i ++)
+forinit	69:13	69:18	5	i = 0 ;
+water	69:13	0:0	6	i
+op	69:15	0:0	6	=
+water	69:17	0:0	6	0
+water	69:18	0:0	6	;
+cond	69:20	69:29	5	i < mov -> nb_streams
+water	69:20	0:0	6	i
+op	69:22	0:0	6	<
+water	69:24	0:0	6	mov
+op	69:27	0:0	6	->
+water	69:29	0:0	6	nb_streams
+forexpr	69:41	69:42	5	i ++
+water	69:41	0:0	6	i
+op	69:42	0:0	6	++
+stmts	69:46	75:8	5	
+water	69:46	0:0	6	{
+if	70:12	73:74	6	(mov -> tracks [ i ] . entry)
+cond	70:16	70:31	7	mov -> tracks [ i ] . entry
+water	70:16	0:0	8	mov
+op	70:19	0:0	8	->
+water	70:21	0:0	8	tracks
+op	70:27	0:0	8	[
+water	70:28	0:0	8	i
+op	70:29	0:0	8	]
+op	70:30	0:0	8	.
+water	70:31	0:0	8	entry
+stmts	71:16	73:74	7	
+water	71:16	0:0	8	mov
+op	71:19	0:0	8	->
+water	71:21	0:0	8	tracks
+op	71:27	0:0	8	[
+water	71:28	0:0	8	i
+op	71:29	0:0	8	]
+op	71:30	0:0	8	.
+water	71:31	0:0	8	frag_start
+op	71:42	0:0	8	+=
+water	71:45	0:0	8	mov
+op	71:48	0:0	8	->
+water	71:50	0:0	8	tracks
+op	71:56	0:0	8	[
+water	71:57	0:0	8	i
+op	71:58	0:0	8	]
+op	71:59	0:0	8	.
+water	71:60	0:0	8	start_dts
+op	71:70	0:0	8	+
+water	72:45	0:0	8	mov
+op	72:48	0:0	8	->
+water	72:50	0:0	8	tracks
+op	72:56	0:0	8	[
+water	72:57	0:0	8	i
+op	72:58	0:0	8	]
+op	72:59	0:0	8	.
+water	72:60	0:0	8	track_duration
+op	72:75	0:0	8	-
+water	73:45	0:0	8	mov
+op	73:48	0:0	8	->
+water	73:50	0:0	8	tracks
+op	73:56	0:0	8	[
+water	73:57	0:0	8	i
+op	73:58	0:0	8	]
+op	73:59	0:0	8	.
+water	73:60	0:0	8	cluster
+op	73:67	0:0	8	[
+water	73:68	0:0	8	0
+op	73:69	0:0	8	]
+op	73:70	0:0	8	.
+water	73:71	0:0	8	dts
+water	73:74	0:0	8	;
+water	74:12	0:0	6	mov
+op	74:15	0:0	6	->
+water	74:17	0:0	6	tracks
+op	74:23	0:0	6	[
+water	74:24	0:0	6	i
+op	74:25	0:0	6	]
+op	74:26	0:0	6	.
+water	74:27	0:0	6	entry
+op	74:33	0:0	6	=
+water	74:35	0:0	6	0
+water	74:36	0:0	6	;
+water	75:8	0:0	6	}
+call	76:8	76:24	4	avio_flush
+arg	76:19	76:24	5	s->pb
+water	76:19	0:0	6	s
+op	76:20	0:0	6	->
+water	76:22	0:0	6	pb
+water	76:25	0:0	4	;
+return	77:8	77:16	4	0
+water	77:15	0:0	5	0
+water	78:4	0:0	4	}
+if	79:4	89:4	2	(mov -> frag_interleave)
+cond	79:8	79:13	3	mov -> frag_interleave
+water	79:8	0:0	4	mov
+op	79:11	0:0	4	->
+water	79:13	0:0	4	frag_interleave
+stmts	79:30	89:4	3	
+water	79:30	0:0	4	{
+for	80:8	85:8	4	(i = 0 ;i < mov -> nb_streams;i ++)
+forinit	80:13	80:18	5	i = 0 ;
+water	80:13	0:0	6	i
+op	80:15	0:0	6	=
+water	80:17	0:0	6	0
+water	80:18	0:0	6	;
+cond	80:20	80:29	5	i < mov -> nb_streams
+water	80:20	0:0	6	i
+op	80:22	0:0	6	<
+water	80:24	0:0	6	mov
+op	80:27	0:0	6	->
+water	80:29	0:0	6	nb_streams
+forexpr	80:41	80:42	5	i ++
+water	80:41	0:0	6	i
+op	80:42	0:0	6	++
+stmts	80:46	85:8	5	
+water	80:46	0:0	6	{
+decl	81:12	81:45	6	MOVTrack	*track
+op	81:28	0:0	6	=
+op	81:30	0:0	6	&
+water	81:31	0:0	6	mov
+op	81:34	0:0	6	->
+water	81:36	0:0	6	tracks
+op	81:42	0:0	6	[
+water	81:43	0:0	6	i
+op	81:44	0:0	6	]
+decl	82:12	82:19	6	int	ret
+if	83:12	84:26	6	(( ret =mov_flush_fragment_interleaving (s ,track ) ) < 0)
+cond	83:16	83:68	7	( ret =mov_flush_fragment_interleaving (s ,track ) ) < 0
+water	83:16	0:0	8	(
+water	83:17	0:0	8	ret
+op	83:21	0:0	8	=
+call	83:23	83:63	8	mov_flush_fragment_interleaving
+arg	83:55	83:56	9	s
+water	83:55	0:0	10	s
+arg	83:58	83:63	9	track
+water	83:58	0:0	10	track
+water	83:64	0:0	8	)
+op	83:66	0:0	8	<
+water	83:68	0:0	8	0
+stmts	84:16	84:26	7	
+return	84:16	84:26	8	ret
+water	84:23	0:0	9	ret
+water	85:8	0:0	6	}
+if	86:8	87:20	4	(! mov -> mdat_buf)
+cond	86:12	86:18	5	! mov -> mdat_buf
+op	86:12	0:0	6	!
+water	86:13	0:0	6	mov
+op	86:16	0:0	6	->
+water	86:18	0:0	6	mdat_buf
+stmts	87:12	87:20	5	
+return	87:12	87:20	6	0
+water	87:19	0:0	7	0
+water	88:8	0:0	4	mdat_size
+op	88:18	0:0	4	=
+call	88:20	88:43	4	avio_tell
+arg	88:30	88:43	5	mov->mdat_buf
+water	88:30	0:0	6	mov
+op	88:33	0:0	6	->
+water	88:35	0:0	6	mdat_buf
+water	88:44	0:0	4	;
+water	89:4	0:0	4	}
+for	90:4	102:4	2	(i = 0 ;i < mov -> nb_streams;i ++)
+forinit	90:9	90:14	3	i = 0 ;
+water	90:9	0:0	4	i
+op	90:11	0:0	4	=
+water	90:13	0:0	4	0
+water	90:14	0:0	4	;
+cond	90:16	90:25	3	i < mov -> nb_streams
+water	90:16	0:0	4	i
+op	90:18	0:0	4	<
+water	90:20	0:0	4	mov
+op	90:23	0:0	4	->
+water	90:25	0:0	4	nb_streams
+forexpr	90:37	90:38	3	i ++
+water	90:37	0:0	4	i
+op	90:38	0:0	4	++
+stmts	90:42	102:4	3	
+water	90:42	0:0	4	{
+decl	91:8	91:41	4	MOVTrack	*track
+op	91:24	0:0	4	=
+op	91:26	0:0	4	&
+water	91:27	0:0	4	mov
+op	91:30	0:0	4	->
+water	91:32	0:0	4	tracks
+op	91:38	0:0	4	[
+water	91:39	0:0	4	i
+op	91:40	0:0	4	]
+if	92:8	93:34	4	(mov -> flags & FF_MOV_FLAG_SEPARATE_MOOF || mov -> frag_interleave)
+cond	92:12	92:59	5	mov -> flags & FF_MOV_FLAG_SEPARATE_MOOF || mov -> frag_interleave
+water	92:12	0:0	6	mov
+op	92:15	0:0	6	->
+water	92:17	0:0	6	flags
+op	92:23	0:0	6	&
+water	92:25	0:0	6	FF_MOV_FLAG_SEPARATE_MOOF
+op	92:51	0:0	6	||
+water	92:54	0:0	6	mov
+op	92:57	0:0	6	->
+water	92:59	0:0	6	frag_interleave
+stmts	93:12	93:34	5	
+water	93:12	0:0	6	track
+op	93:17	0:0	6	->
+water	93:19	0:0	6	data_offset
+op	93:31	0:0	6	=
+water	93:33	0:0	6	0
+water	93:34	0:0	6	;
+else	94:8	95:42	4
+stmts	95:12	95:42	5	
+water	95:12	0:0	6	track
+op	95:17	0:0	6	->
+water	95:19	0:0	6	data_offset
+op	95:31	0:0	6	=
+water	95:33	0:0	6	mdat_size
+water	95:42	0:0	6	;
+if	96:8	97:20	4	(! track -> entry)
+cond	96:12	96:20	5	! track -> entry
+op	96:12	0:0	6	!
+water	96:13	0:0	6	track
+op	96:18	0:0	6	->
+water	96:20	0:0	6	entry
+stmts	97:12	97:20	5	
+continue	97:12	97:20	6	
+if	98:8	99:51	4	(track -> mdat_buf)
+cond	98:12	98:19	5	track -> mdat_buf
+water	98:12	0:0	6	track
+op	98:17	0:0	6	->
+water	98:19	0:0	6	mdat_buf
+stmts	99:12	99:51	5	
+water	99:12	0:0	6	mdat_size
+op	99:22	0:0	6	+=
+call	99:25	99:50	6	avio_tell
+arg	99:35	99:50	7	track->mdat_buf
+water	99:35	0:0	8	track
+op	99:40	0:0	8	->
+water	99:42	0:0	8	mdat_buf
+water	99:51	0:0	6	;
+if	100:8	101:27	4	(first_track < 0)
+cond	100:12	100:26	5	first_track < 0
+water	100:12	0:0	6	first_track
+op	100:24	0:0	6	<
+water	100:26	0:0	6	0
+stmts	101:12	101:27	5	
+water	101:12	0:0	6	first_track
+op	101:24	0:0	6	=
+water	101:26	0:0	6	i
+water	101:27	0:0	6	;
+water	102:4	0:0	4	}
+if	103:4	104:16	2	(! mdat_size)
+cond	103:8	103:9	3	! mdat_size
+op	103:8	0:0	4	!
+water	103:9	0:0	4	mdat_size
+stmts	104:8	104:16	3	
+return	104:8	104:16	4	0
+water	104:15	0:0	5	0
+for	105:4	145:4	2	(i = 0 ;i < mov -> nb_streams;i ++)
+forinit	105:9	105:14	3	i = 0 ;
+water	105:9	0:0	4	i
+op	105:11	0:0	4	=
+water	105:13	0:0	4	0
+water	105:14	0:0	4	;
+cond	105:16	105:25	3	i < mov -> nb_streams
+water	105:16	0:0	4	i
+op	105:18	0:0	4	<
+water	105:20	0:0	4	mov
+op	105:23	0:0	4	->
+water	105:25	0:0	4	nb_streams
+forexpr	105:37	105:38	3	i ++
+water	105:37	0:0	4	i
+op	105:38	0:0	4	++
+stmts	105:42	145:4	3	
+water	105:42	0:0	4	{
+decl	106:8	106:41	4	MOVTrack	*track
+op	106:24	0:0	4	=
+op	106:26	0:0	4	&
+water	106:27	0:0	4	mov
+op	106:30	0:0	4	->
+water	106:32	0:0	4	tracks
+op	106:38	0:0	4	[
+water	106:39	0:0	4	i
+op	106:40	0:0	4	]
+decl	107:8	107:54	4	int	buf_size
+water	107:20	0:0	4	,
+decl	107:8	107:54	4	int	write_moof
+op	107:33	0:0	4	=
+water	107:35	0:0	4	1
+water	107:36	0:0	4	,
+decl	107:8	107:54	4	int	moof_tracks
+op	107:50	0:0	4	=
+op	107:52	0:0	4	-
+water	107:53	0:0	4	1
+decl	108:8	108:20	4	uint8_t	*buf
+decl	109:8	109:28	4	int64_t	duration
+op	109:25	0:0	4	=
+water	109:27	0:0	4	0
+if	110:8	112:44	4	(track -> entry)
+cond	110:12	110:19	5	track -> entry
+water	110:12	0:0	6	track
+op	110:17	0:0	6	->
+water	110:19	0:0	6	entry
+stmts	111:12	112:44	5	
+water	111:12	0:0	6	duration
+op	111:21	0:0	6	=
+water	111:23	0:0	6	track
+op	111:28	0:0	6	->
+water	111:30	0:0	6	start_dts
+op	111:40	0:0	6	+
+water	111:42	0:0	6	track
+op	111:47	0:0	6	->
+water	111:49	0:0	6	track_duration
+op	111:64	0:0	6	-
+water	112:23	0:0	6	track
+op	112:28	0:0	6	->
+water	112:30	0:0	6	cluster
+op	112:37	0:0	6	[
+water	112:38	0:0	6	0
+op	112:39	0:0	6	]
+op	112:40	0:0	6	.
+water	112:41	0:0	6	dts
+water	112:44	0:0	6	;
+if	113:8	118:8	4	(mov -> flags & FF_MOV_FLAG_SEPARATE_MOOF)
+cond	113:12	113:25	5	mov -> flags & FF_MOV_FLAG_SEPARATE_MOOF
+water	113:12	0:0	6	mov
+op	113:15	0:0	6	->
+water	113:17	0:0	6	flags
+op	113:23	0:0	6	&
+water	113:25	0:0	6	FF_MOV_FLAG_SEPARATE_MOOF
+stmts	113:52	118:8	5	
+water	113:52	0:0	6	{
+if	114:12	115:24	6	(! track -> mdat_buf)
+cond	114:16	114:24	7	! track -> mdat_buf
+op	114:16	0:0	8	!
+water	114:17	0:0	8	track
+op	114:22	0:0	8	->
+water	114:24	0:0	8	mdat_buf
+stmts	115:16	115:24	7	
+continue	115:16	115:24	8	
+water	116:12	0:0	6	mdat_size
+op	116:22	0:0	6	=
+call	116:24	116:49	6	avio_tell
+arg	116:34	116:49	7	track->mdat_buf
+water	116:34	0:0	8	track
+op	116:39	0:0	8	->
+water	116:41	0:0	8	mdat_buf
+water	116:50	0:0	6	;
+water	117:12	0:0	6	moof_tracks
+op	117:24	0:0	6	=
+water	117:26	0:0	6	i
+water	117:27	0:0	6	;
+water	118:8	0:0	6	}
+else	118:10	120:8	4
+stmts	118:15	120:8	5	
+water	118:15	0:0	6	{
+water	119:12	0:0	6	write_moof
+op	119:23	0:0	6	=
+water	119:25	0:0	6	i
+op	119:27	0:0	6	==
+water	119:30	0:0	6	first_track
+water	119:41	0:0	6	;
+water	120:8	0:0	6	}
+if	121:8	127:8	4	(write_moof)
+cond	121:12	121:12	5	write_moof
+water	121:12	0:0	6	write_moof
+stmts	121:24	127:8	5	
+water	121:24	0:0	6	{
+call	122:12	122:28	6	avio_flush
+arg	122:23	122:28	7	s->pb
+water	122:23	0:0	8	s
+op	122:24	0:0	8	->
+water	122:26	0:0	8	pb
+water	122:29	0:0	6	;
+call	123:12	123:65	6	mov_write_moof_tag
+arg	123:31	123:36	7	s->pb
+water	123:31	0:0	8	s
+op	123:32	0:0	8	->
+water	123:34	0:0	8	pb
+arg	123:38	123:41	7	mov
+water	123:38	0:0	8	mov
+arg	123:43	123:54	7	moof_tracks
+water	123:43	0:0	8	moof_tracks
+arg	123:56	123:65	7	mdat_size
+water	123:56	0:0	8	mdat_size
+water	123:66	0:0	6	;
+water	124:12	0:0	6	mov
+op	124:15	0:0	6	->
+water	124:17	0:0	6	fragments
+op	124:26	0:0	6	++
+water	124:28	0:0	6	;
+call	125:12	125:42	6	avio_wb32
+arg	125:22	125:27	7	s->pb
+water	125:22	0:0	8	s
+op	125:23	0:0	8	->
+water	125:25	0:0	8	pb
+arg	125:29	125:42	7	mdat_size+8
+water	125:29	0:0	8	mdat_size
+op	125:39	0:0	8	+
+water	125:41	0:0	8	8
+water	125:43	0:0	6	;
+call	126:12	126:38	6	ffio_wfourcc
+arg	126:25	126:30	7	s->pb
+water	126:25	0:0	8	s
+op	126:26	0:0	8	->
+water	126:28	0:0	8	pb
+arg	126:32	126:38	7	"mdat"
+water	126:32	0:0	8	"mdat"
+water	126:39	0:0	6	;
+water	127:8	0:0	6	}
+if	128:8	129:41	4	(track -> entry)
+cond	128:12	128:19	5	track -> entry
+water	128:12	0:0	6	track
+op	128:17	0:0	6	->
+water	128:19	0:0	6	entry
+stmts	129:12	129:41	5	
+water	129:12	0:0	6	track
+op	129:17	0:0	6	->
+water	129:19	0:0	6	frag_start
+op	129:30	0:0	6	+=
+water	129:33	0:0	6	duration
+water	129:41	0:0	6	;
+water	130:8	0:0	4	track
+op	130:13	0:0	4	->
+water	130:15	0:0	4	entry
+op	130:21	0:0	4	=
+water	130:23	0:0	4	0
+water	130:24	0:0	4	;
+water	131:8	0:0	4	track
+op	131:13	0:0	4	->
+water	131:15	0:0	4	entries_flushed
+op	131:31	0:0	4	=
+water	131:33	0:0	4	0
+water	131:34	0:0	4	;
+if	132:8	137:8	4	(! mov -> frag_interleave)
+cond	132:12	132:18	5	! mov -> frag_interleave
+op	132:12	0:0	6	!
+water	132:13	0:0	6	mov
+op	132:16	0:0	6	->
+water	132:18	0:0	6	frag_interleave
+stmts	132:35	137:8	5	
+water	132:35	0:0	6	{
+if	133:12	134:24	6	(! track -> mdat_buf)
+cond	133:16	133:24	7	! track -> mdat_buf
+op	133:16	0:0	8	!
+water	133:17	0:0	8	track
+op	133:22	0:0	8	->
+water	133:24	0:0	8	mdat_buf
+stmts	134:16	134:24	7	
+continue	134:16	134:24	8	
+water	135:12	0:0	6	buf_size
+op	135:21	0:0	6	=
+call	135:23	135:63	6	avio_close_dyn_buf
+arg	135:42	135:57	7	track->mdat_buf
+water	135:42	0:0	8	track
+op	135:47	0:0	8	->
+water	135:49	0:0	8	mdat_buf
+arg	135:59	135:63	7	&buf
+op	135:59	0:0	8	&
+water	135:60	0:0	8	buf
+water	135:64	0:0	6	;
+water	136:12	0:0	6	track
+op	136:17	0:0	6	->
+water	136:19	0:0	6	mdat_buf
+op	136:28	0:0	6	=
+water	136:30	0:0	6	NULL
+water	136:34	0:0	6	;
+water	137:8	0:0	6	}
+else	137:10	142:8	4
+stmts	137:15	142:8	5	
+water	137:15	0:0	6	{
+if	138:12	139:24	6	(! mov -> mdat_buf)
+cond	138:16	138:22	7	! mov -> mdat_buf
+op	138:16	0:0	8	!
+water	138:17	0:0	8	mov
+op	138:20	0:0	8	->
+water	138:22	0:0	8	mdat_buf
+stmts	139:16	139:24	7	
+continue	139:16	139:24	8	
+water	140:12	0:0	6	buf_size
+op	140:21	0:0	6	=
+call	140:23	140:61	6	avio_close_dyn_buf
+arg	140:42	140:55	7	mov->mdat_buf
+water	140:42	0:0	8	mov
+op	140:45	0:0	8	->
+water	140:47	0:0	8	mdat_buf
+arg	140:57	140:61	7	&buf
+op	140:57	0:0	8	&
+water	140:58	0:0	8	buf
+water	140:62	0:0	6	;
+water	141:12	0:0	6	mov
+op	141:15	0:0	6	->
+water	141:17	0:0	6	mdat_buf
+op	141:26	0:0	6	=
+water	141:28	0:0	6	NULL
+water	141:32	0:0	6	;
+water	142:8	0:0	6	}
+call	143:8	143:39	4	avio_write
+arg	143:19	143:24	5	s->pb
+water	143:19	0:0	6	s
+op	143:20	0:0	6	->
+water	143:22	0:0	6	pb
+arg	143:26	143:29	5	buf
+water	143:26	0:0	6	buf
+arg	143:31	143:39	5	buf_size
+water	143:31	0:0	6	buf_size
+water	143:40	0:0	4	;
+call	144:8	144:19	4	av_free
+arg	144:16	144:19	5	buf
+water	144:16	0:0	6	buf
+water	144:20	0:0	4	;
+water	145:4	0:0	4	}
+water	146:4	0:0	2	mov
+op	146:7	0:0	2	->
+water	146:9	0:0	2	mdat_size
+op	146:19	0:0	2	=
+water	146:21	0:0	2	0
+water	146:22	0:0	2	;
+call	147:4	147:20	2	avio_flush
+arg	147:15	147:20	3	s->pb
+water	147:15	0:0	4	s
+op	147:16	0:0	4	->
+water	147:18	0:0	4	pb
+water	147:21	0:0	2	;
+return	148:4	148:12	2	0
+water	148:11	0:0	3	0

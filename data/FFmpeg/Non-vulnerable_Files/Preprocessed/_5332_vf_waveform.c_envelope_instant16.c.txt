@@ -1,0 +1,358 @@
+func	1:0	49:0	0	static void	envelope_instant16
+params	1:30	0:0	1	
+param	1:31	1:49	2	WaveformContext *	s
+param	1:51	1:63	2	AVFrame *	out
+param	1:65	1:74	2	int	plane
+param	1:76	1:89	2	int	component
+stmnts	0:0	48:4	1	
+decl	3:4	3:57	2	const int	dst_linesize
+op	3:27	0:0	2	=
+water	3:29	0:0	2	out
+op	3:32	0:0	2	->
+water	3:34	0:0	2	linesize
+op	3:42	0:0	2	[
+water	3:43	0:0	2	component
+op	3:52	0:0	2	]
+op	3:54	0:0	2	/
+water	3:56	0:0	2	2
+decl	4:4	4:58	2	const int	bg
+op	4:17	0:0	2	=
+water	4:19	0:0	2	s
+op	4:20	0:0	2	->
+water	4:22	0:0	2	bg_color
+op	4:30	0:0	2	[
+water	4:31	0:0	2	component
+op	4:40	0:0	2	]
+op	4:42	0:0	2	*
+water	4:44	0:0	2	(
+water	4:45	0:0	2	s
+op	4:46	0:0	2	->
+water	4:48	0:0	2	max
+op	4:52	0:0	2	/
+water	4:54	0:0	2	256
+water	4:57	0:0	2	)
+decl	5:4	5:32	2	const int	limit
+op	5:20	0:0	2	=
+water	5:22	0:0	2	s
+op	5:23	0:0	2	->
+water	5:25	0:0	2	max
+op	5:29	0:0	2	-
+water	5:31	0:0	2	1
+decl	6:4	6:60	2	const int	is_chroma
+op	6:24	0:0	2	=
+water	6:26	0:0	2	(
+water	6:27	0:0	2	component
+op	6:37	0:0	2	==
+water	6:40	0:0	2	1
+op	6:42	0:0	2	||
+water	6:45	0:0	2	component
+op	6:55	0:0	2	==
+water	6:58	0:0	2	2
+water	6:59	0:0	2	)
+decl	7:4	7:64	2	const int	shift_w
+op	7:22	0:0	2	=
+water	7:24	0:0	2	(
+water	7:25	0:0	2	is_chroma
+water	7:35	0:0	2	?
+water	7:37	0:0	2	s
+op	7:38	0:0	2	->
+water	7:40	0:0	2	desc
+op	7:44	0:0	2	->
+water	7:46	0:0	2	log2_chroma_w
+water	7:60	0:0	2	:
+water	7:62	0:0	2	0
+water	7:63	0:0	2	)
+decl	8:4	8:64	2	const int	shift_h
+op	8:22	0:0	2	=
+water	8:24	0:0	2	(
+water	8:25	0:0	2	is_chroma
+water	8:35	0:0	2	?
+water	8:37	0:0	2	s
+op	8:38	0:0	2	->
+water	8:40	0:0	2	desc
+op	8:44	0:0	2	->
+water	8:46	0:0	2	log2_chroma_h
+water	8:60	0:0	2	:
+water	8:62	0:0	2	0
+water	8:63	0:0	2	)
+decl	9:4	9:58	2	const int	dst_h
+op	9:20	0:0	2	=
+call	9:22	9:57	3	FF_CEIL_RSHIFT
+arg	9:37	9:48	4	out->height
+water	9:37	0:0	5	out
+op	9:40	0:0	5	->
+water	9:42	0:0	5	height
+arg	9:50	9:57	4	shift_h
+water	9:50	0:0	5	shift_h
+decl	10:4	10:57	2	const int	dst_w
+op	10:20	0:0	2	=
+call	10:22	10:56	3	FF_CEIL_RSHIFT
+arg	10:37	10:47	4	out->width
+water	10:37	0:0	5	out
+op	10:40	0:0	5	->
+water	10:42	0:0	5	width
+arg	10:49	10:56	4	shift_w
+water	10:49	0:0	5	shift_w
+decl	11:4	11:38	2	const int	start
+op	11:20	0:0	2	=
+water	11:22	0:0	2	s
+op	11:23	0:0	2	->
+water	11:25	0:0	2	estart
+op	11:31	0:0	2	[
+water	11:32	0:0	2	plane
+op	11:37	0:0	2	]
+decl	12:4	12:34	2	const int	end
+op	12:18	0:0	2	=
+water	12:20	0:0	2	s
+op	12:21	0:0	2	->
+water	12:23	0:0	2	eend
+op	12:27	0:0	2	[
+water	12:28	0:0	2	plane
+op	12:33	0:0	2	]
+decl	13:4	13:17	2	uint16_t	*dst
+decl	14:4	14:12	2	int	x
+water	14:9	0:0	2	,
+decl	14:4	14:12	2	int	y
+if	15:4	32:4	2	(s -> mode)
+cond	15:8	15:11	3	s -> mode
+water	15:8	0:0	4	s
+op	15:9	0:0	4	->
+water	15:11	0:0	4	mode
+stmts	15:17	32:4	3	
+water	15:17	0:0	4	{
+for	16:8	31:8	4	(x = 0 ;x < dst_w;x ++)
+forinit	16:13	16:18	5	x = 0 ;
+water	16:13	0:0	6	x
+op	16:15	0:0	6	=
+water	16:17	0:0	6	0
+water	16:18	0:0	6	;
+cond	16:20	16:24	5	x < dst_w
+water	16:20	0:0	6	x
+op	16:22	0:0	6	<
+water	16:24	0:0	6	dst_w
+forexpr	16:31	16:32	5	x ++
+water	16:31	0:0	6	x
+op	16:32	0:0	6	++
+stmts	16:36	31:8	5	
+water	16:36	0:0	6	{
+for	17:12	23:12	6	(y = start ;y < end;y ++)
+forinit	17:17	17:26	7	y = start ;
+water	17:17	0:0	8	y
+op	17:19	0:0	8	=
+water	17:21	0:0	8	start
+water	17:26	0:0	8	;
+cond	17:28	17:32	7	y < end
+water	17:28	0:0	8	y
+op	17:30	0:0	8	<
+water	17:32	0:0	8	end
+forexpr	17:37	17:38	7	y ++
+water	17:37	0:0	8	y
+op	17:38	0:0	8	++
+stmts	17:42	23:12	7	
+water	17:42	0:0	8	{
+water	18:16	0:0	8	dst
+op	18:20	0:0	8	=
+water	18:22	0:0	8	(
+water	18:23	0:0	8	uint16_t
+op	18:32	0:0	8	*
+water	18:33	0:0	8	)
+water	18:34	0:0	8	out
+op	18:37	0:0	8	->
+water	18:39	0:0	8	data
+op	18:43	0:0	8	[
+water	18:44	0:0	8	component
+op	18:53	0:0	8	]
+op	18:55	0:0	8	+
+water	18:57	0:0	8	y
+op	18:59	0:0	8	*
+water	18:61	0:0	8	dst_linesize
+op	18:74	0:0	8	+
+water	18:76	0:0	8	x
+water	18:77	0:0	8	;
+if	19:16	22:16	8	(dst [ 0 ] != bg)
+cond	19:20	19:30	9	dst [ 0 ] != bg
+water	19:20	0:0	10	dst
+op	19:23	0:0	10	[
+water	19:24	0:0	10	0
+op	19:25	0:0	10	]
+op	19:27	0:0	10	!=
+water	19:30	0:0	10	bg
+stmts	19:34	22:16	9	
+water	19:34	0:0	10	{
+water	20:20	0:0	10	dst
+op	20:23	0:0	10	[
+water	20:24	0:0	10	0
+op	20:25	0:0	10	]
+op	20:27	0:0	10	=
+water	20:29	0:0	10	limit
+water	20:34	0:0	10	;
+break	21:20	21:25	10	
+water	22:16	0:0	10	}
+water	23:12	0:0	8	}
+for	24:12	30:12	6	(y = end - 1 ;y >= start;y --)
+forinit	24:17	24:28	7	y = end - 1 ;
+water	24:17	0:0	8	y
+op	24:19	0:0	8	=
+water	24:21	0:0	8	end
+op	24:25	0:0	8	-
+water	24:27	0:0	8	1
+water	24:28	0:0	8	;
+cond	24:30	24:35	7	y >= start
+water	24:30	0:0	8	y
+op	24:32	0:0	8	>=
+water	24:35	0:0	8	start
+forexpr	24:42	24:43	7	y --
+water	24:42	0:0	8	y
+op	24:43	0:0	8	--
+stmts	24:47	30:12	7	
+water	24:47	0:0	8	{
+water	25:16	0:0	8	dst
+op	25:20	0:0	8	=
+water	25:22	0:0	8	(
+water	25:23	0:0	8	uint16_t
+op	25:32	0:0	8	*
+water	25:33	0:0	8	)
+water	25:34	0:0	8	out
+op	25:37	0:0	8	->
+water	25:39	0:0	8	data
+op	25:43	0:0	8	[
+water	25:44	0:0	8	component
+op	25:53	0:0	8	]
+op	25:55	0:0	8	+
+water	25:57	0:0	8	y
+op	25:59	0:0	8	*
+water	25:61	0:0	8	dst_linesize
+op	25:74	0:0	8	+
+water	25:76	0:0	8	x
+water	25:77	0:0	8	;
+if	26:16	29:16	8	(dst [ 0 ] != bg)
+cond	26:20	26:30	9	dst [ 0 ] != bg
+water	26:20	0:0	10	dst
+op	26:23	0:0	10	[
+water	26:24	0:0	10	0
+op	26:25	0:0	10	]
+op	26:27	0:0	10	!=
+water	26:30	0:0	10	bg
+stmts	26:34	29:16	9	
+water	26:34	0:0	10	{
+water	27:20	0:0	10	dst
+op	27:23	0:0	10	[
+water	27:24	0:0	10	0
+op	27:25	0:0	10	]
+op	27:27	0:0	10	=
+water	27:29	0:0	10	limit
+water	27:34	0:0	10	;
+break	28:20	28:25	10	
+water	29:16	0:0	10	}
+water	30:12	0:0	8	}
+water	31:8	0:0	6	}
+water	32:4	0:0	4	}
+else	32:6	48:4	2
+stmts	32:11	48:4	3	
+water	32:11	0:0	4	{
+for	33:8	47:8	4	(y = 0 ;y < dst_h;y ++)
+forinit	33:13	33:18	5	y = 0 ;
+water	33:13	0:0	6	y
+op	33:15	0:0	6	=
+water	33:17	0:0	6	0
+water	33:18	0:0	6	;
+cond	33:20	33:24	5	y < dst_h
+water	33:20	0:0	6	y
+op	33:22	0:0	6	<
+water	33:24	0:0	6	dst_h
+forexpr	33:31	33:32	5	y ++
+water	33:31	0:0	6	y
+op	33:32	0:0	6	++
+stmts	33:36	47:8	5	
+water	33:36	0:0	6	{
+water	34:12	0:0	6	dst
+op	34:16	0:0	6	=
+water	34:18	0:0	6	(
+water	34:19	0:0	6	uint16_t
+op	34:28	0:0	6	*
+water	34:29	0:0	6	)
+water	34:30	0:0	6	out
+op	34:33	0:0	6	->
+water	34:35	0:0	6	data
+op	34:39	0:0	6	[
+water	34:40	0:0	6	component
+op	34:49	0:0	6	]
+op	34:51	0:0	6	+
+water	34:53	0:0	6	y
+op	34:55	0:0	6	*
+water	34:57	0:0	6	dst_linesize
+water	34:69	0:0	6	;
+for	35:12	40:12	6	(x = start ;x < end;x ++)
+forinit	35:17	35:26	7	x = start ;
+water	35:17	0:0	8	x
+op	35:19	0:0	8	=
+water	35:21	0:0	8	start
+water	35:26	0:0	8	;
+cond	35:28	35:32	7	x < end
+water	35:28	0:0	8	x
+op	35:30	0:0	8	<
+water	35:32	0:0	8	end
+forexpr	35:37	35:38	7	x ++
+water	35:37	0:0	8	x
+op	35:38	0:0	8	++
+stmts	35:42	40:12	7	
+water	35:42	0:0	8	{
+if	36:16	39:16	8	(dst [ x ] != bg)
+cond	36:20	36:30	9	dst [ x ] != bg
+water	36:20	0:0	10	dst
+op	36:23	0:0	10	[
+water	36:24	0:0	10	x
+op	36:25	0:0	10	]
+op	36:27	0:0	10	!=
+water	36:30	0:0	10	bg
+stmts	36:34	39:16	9	
+water	36:34	0:0	10	{
+water	37:20	0:0	10	dst
+op	37:23	0:0	10	[
+water	37:24	0:0	10	x
+op	37:25	0:0	10	]
+op	37:27	0:0	10	=
+water	37:29	0:0	10	limit
+water	37:34	0:0	10	;
+break	38:20	38:25	10	
+water	39:16	0:0	10	}
+water	40:12	0:0	8	}
+for	41:12	46:12	6	(x = end - 1 ;x >= start;x --)
+forinit	41:17	41:28	7	x = end - 1 ;
+water	41:17	0:0	8	x
+op	41:19	0:0	8	=
+water	41:21	0:0	8	end
+op	41:25	0:0	8	-
+water	41:27	0:0	8	1
+water	41:28	0:0	8	;
+cond	41:30	41:35	7	x >= start
+water	41:30	0:0	8	x
+op	41:32	0:0	8	>=
+water	41:35	0:0	8	start
+forexpr	41:42	41:43	7	x --
+water	41:42	0:0	8	x
+op	41:43	0:0	8	--
+stmts	41:47	46:12	7	
+water	41:47	0:0	8	{
+if	42:16	45:16	8	(dst [ x ] != bg)
+cond	42:20	42:30	9	dst [ x ] != bg
+water	42:20	0:0	10	dst
+op	42:23	0:0	10	[
+water	42:24	0:0	10	x
+op	42:25	0:0	10	]
+op	42:27	0:0	10	!=
+water	42:30	0:0	10	bg
+stmts	42:34	45:16	9	
+water	42:34	0:0	10	{
+water	43:20	0:0	10	dst
+op	43:23	0:0	10	[
+water	43:24	0:0	10	x
+op	43:25	0:0	10	]
+op	43:27	0:0	10	=
+water	43:29	0:0	10	limit
+water	43:34	0:0	10	;
+break	44:20	44:25	10	
+water	45:16	0:0	10	}
+water	46:12	0:0	8	}
+water	47:8	0:0	6	}
+water	48:4	0:0	4	}

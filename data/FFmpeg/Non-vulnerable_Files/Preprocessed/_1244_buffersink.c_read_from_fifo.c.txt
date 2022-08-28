@@ -1,0 +1,106 @@
+func	1:0	17:0	0	static int	read_from_fifo
+params	1:25	0:0	1	
+param	1:26	1:46	2	AVFilterContext *	ctx
+param	1:48	1:62	2	AVFrame *	frame
+param	2:26	2:40	2	int	nb_samples
+stmnts	0:0	16:12	1	
+decl	4:4	4:36	2	BufferSinkContext	*s
+op	4:25	0:0	2	=
+water	4:27	0:0	2	ctx
+op	4:30	0:0	2	->
+water	4:32	0:0	2	priv
+decl	5:4	5:41	2	AVFilterLink	*link
+op	5:25	0:0	2	=
+water	5:27	0:0	2	ctx
+op	5:30	0:0	2	->
+water	5:32	0:0	2	inputs
+op	5:38	0:0	2	[
+water	5:39	0:0	2	0
+op	5:40	0:0	2	]
+decl	6:4	6:16	2	AVFrame	*tmp
+if	7:4	8:30	2	(! ( tmp =ff_get_audio_buffer (link ,nb_samples ) ))
+cond	7:8	7:53	3	! ( tmp =ff_get_audio_buffer (link ,nb_samples ) )
+op	7:8	0:0	4	!
+water	7:9	0:0	4	(
+water	7:10	0:0	4	tmp
+op	7:14	0:0	4	=
+call	7:16	7:52	4	ff_get_audio_buffer
+arg	7:36	7:40	5	link
+water	7:36	0:0	6	link
+arg	7:42	7:52	5	nb_samples
+water	7:42	0:0	6	nb_samples
+water	7:53	0:0	4	)
+stmts	8:8	8:30	3	
+return	8:8	8:30	4	AVERROR(ENOMEM)
+call	8:15	8:29	5	AVERROR
+arg	8:23	8:29	6	ENOMEM
+water	8:23	0:0	7	ENOMEM
+call	9:4	9:76	2	av_audio_fifo_read
+arg	9:23	9:36	3	s->audio_fifo
+water	9:23	0:0	4	s
+op	9:24	0:0	4	->
+water	9:26	0:0	4	audio_fifo
+arg	9:38	9:64	3	(void**)tmp->extended_data
+water	9:38	0:0	4	(
+water	9:39	0:0	4	void
+op	9:43	0:0	4	*
+op	9:44	0:0	4	*
+water	9:45	0:0	4	)
+water	9:46	0:0	4	tmp
+op	9:49	0:0	4	->
+water	9:51	0:0	4	extended_data
+arg	9:66	9:76	3	nb_samples
+water	9:66	0:0	4	nb_samples
+water	9:77	0:0	2	;
+water	10:4	0:0	2	tmp
+op	10:7	0:0	2	->
+water	10:9	0:0	2	pts
+op	10:13	0:0	2	=
+water	10:15	0:0	2	s
+op	10:16	0:0	2	->
+water	10:18	0:0	2	next_pts
+water	10:26	0:0	2	;
+if	11:4	13:52	2	(s -> next_pts != AV_NOPTS_VALUE)
+cond	11:8	11:23	3	s -> next_pts != AV_NOPTS_VALUE
+water	11:8	0:0	4	s
+op	11:9	0:0	4	->
+water	11:11	0:0	4	next_pts
+op	11:20	0:0	4	!=
+water	11:23	0:0	4	AV_NOPTS_VALUE
+stmts	12:8	13:52	3	
+water	12:8	0:0	4	s
+op	12:9	0:0	4	->
+water	12:11	0:0	4	next_pts
+op	12:20	0:0	4	+=
+call	12:23	13:51	4	av_rescale_q
+arg	12:36	12:46	5	nb_samples
+water	12:36	0:0	6	nb_samples
+arg	12:48	12:82	5	(AVRational){1,link->sample_rate}
+water	12:48	0:0	6	(
+water	12:49	0:0	6	AVRational
+water	12:59	0:0	6	)
+water	12:60	0:0	6	{
+water	12:61	0:0	6	1
+water	12:62	0:0	6	,
+water	12:64	0:0	6	link
+op	12:68	0:0	6	->
+water	12:70	0:0	6	sample_rate
+water	12:81	0:0	6	}
+arg	13:36	13:51	5	link->time_base
+water	13:36	0:0	6	link
+op	13:40	0:0	6	->
+water	13:42	0:0	6	time_base
+water	13:52	0:0	4	;
+call	14:4	14:32	2	av_frame_move_ref
+arg	14:22	14:27	3	frame
+water	14:22	0:0	4	frame
+arg	14:29	14:32	3	tmp
+water	14:29	0:0	4	tmp
+water	14:33	0:0	2	;
+call	15:4	15:22	2	av_frame_free
+arg	15:18	15:22	3	&tmp
+op	15:18	0:0	4	&
+water	15:19	0:0	4	tmp
+water	15:23	0:0	2	;
+return	16:4	16:12	2	0
+water	16:11	0:0	3	0

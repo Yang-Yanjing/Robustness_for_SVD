@@ -1,0 +1,138 @@
+func	1:0	25:0	0	static int	audio_write_packet
+params	1:29	0:0	1	
+param	1:30	1:49	2	AVFormatContext *	s1
+param	1:51	1:64	2	AVPacket *	pkt
+stmnts	0:0	24:12	1	
+decl	3:4	3:35	2	OSSAudioData	*s
+op	3:20	0:0	2	=
+water	3:22	0:0	2	s1
+op	3:24	0:0	2	->
+water	3:26	0:0	2	priv_data
+decl	4:4	4:16	2	int	len
+water	4:11	0:0	2	,
+decl	4:4	4:16	2	int	ret
+decl	5:4	5:23	2	int	size
+op	5:12	0:0	2	=
+water	5:14	0:0	2	pkt
+op	5:17	0:0	2	->
+water	5:19	0:0	2	size
+decl	6:4	6:27	2	uint8_t	*buf
+op	6:16	0:0	2	=
+water	6:18	0:0	2	pkt
+op	6:21	0:0	2	->
+water	6:23	0:0	2	data
+while	7:4	23:4	2	(size > 0)
+cond	7:11	7:18	3	size > 0
+water	7:11	0:0	4	size
+op	7:16	0:0	4	>
+water	7:18	0:0	4	0
+stmts	7:21	23:4	3	
+water	7:21	0:0	4	{
+water	8:8	0:0	4	len
+op	8:12	0:0	4	=
+call	8:14	8:62	4	FFMIN
+arg	8:20	8:56	5	OSS_AUDIO_BLOCK_SIZE-s->buffer_ptr
+water	8:20	0:0	6	OSS_AUDIO_BLOCK_SIZE
+op	8:41	0:0	6	-
+water	8:43	0:0	6	s
+op	8:44	0:0	6	->
+water	8:46	0:0	6	buffer_ptr
+arg	8:58	8:62	5	size
+water	8:58	0:0	6	size
+water	8:63	0:0	4	;
+call	9:8	9:50	4	memcpy
+arg	9:15	9:40	5	s->buffer+s->buffer_ptr
+water	9:15	0:0	6	s
+op	9:16	0:0	6	->
+water	9:18	0:0	6	buffer
+op	9:25	0:0	6	+
+water	9:27	0:0	6	s
+op	9:28	0:0	6	->
+water	9:30	0:0	6	buffer_ptr
+arg	9:42	9:45	5	buf
+water	9:42	0:0	6	buf
+arg	9:47	9:50	5	len
+water	9:47	0:0	6	len
+water	9:51	0:0	4	;
+water	10:8	0:0	4	s
+op	10:9	0:0	4	->
+water	10:11	0:0	4	buffer_ptr
+op	10:22	0:0	4	+=
+water	10:25	0:0	4	len
+water	10:28	0:0	4	;
+if	11:8	20:8	4	(s -> buffer_ptr >= OSS_AUDIO_BLOCK_SIZE)
+cond	11:12	11:29	5	s -> buffer_ptr >= OSS_AUDIO_BLOCK_SIZE
+water	11:12	0:0	6	s
+op	11:13	0:0	6	->
+water	11:15	0:0	6	buffer_ptr
+op	11:26	0:0	6	>=
+water	11:29	0:0	6	OSS_AUDIO_BLOCK_SIZE
+stmts	11:51	20:8	5	
+water	11:51	0:0	6	{
+for	12:12	18:12	6	(;;)
+forinit	12:16	12:16	7	;
+water	12:16	0:0	8	;
+cond	0:0	0:0	7	
+forexpr	0:0	0:0	7	
+stmts	12:20	18:12	7	
+water	12:20	0:0	8	{
+water	13:16	0:0	8	ret
+op	13:20	0:0	8	=
+call	13:22	13:66	8	write
+arg	13:28	13:33	9	s->fd
+water	13:28	0:0	10	s
+op	13:29	0:0	10	->
+water	13:31	0:0	10	fd
+arg	13:35	13:44	9	s->buffer
+water	13:35	0:0	10	s
+op	13:36	0:0	10	->
+water	13:38	0:0	10	buffer
+arg	13:46	13:66	9	OSS_AUDIO_BLOCK_SIZE
+water	13:46	0:0	10	OSS_AUDIO_BLOCK_SIZE
+water	13:67	0:0	8	;
+if	14:16	15:25	8	(ret > 0)
+cond	14:20	14:26	9	ret > 0
+water	14:20	0:0	10	ret
+op	14:24	0:0	10	>
+water	14:26	0:0	10	0
+stmts	15:20	15:25	9	
+break	15:20	15:25	10	
+if	16:16	17:39	8	(ret < 0 && ( errno != EAGAIN && errno != EINTR ))
+cond	16:20	16:65	9	ret < 0 && ( errno != EAGAIN && errno != EINTR )
+water	16:20	0:0	10	ret
+op	16:24	0:0	10	<
+water	16:26	0:0	10	0
+op	16:28	0:0	10	&&
+water	16:31	0:0	10	(
+water	16:32	0:0	10	errno
+op	16:38	0:0	10	!=
+water	16:41	0:0	10	EAGAIN
+op	16:48	0:0	10	&&
+water	16:51	0:0	10	errno
+op	16:57	0:0	10	!=
+water	16:60	0:0	10	EINTR
+water	16:65	0:0	10	)
+stmts	17:20	17:39	9	
+return	17:20	17:39	10	AVERROR(EIO)
+call	17:27	17:38	11	AVERROR
+arg	17:35	17:38	12	EIO
+water	17:35	0:0	13	EIO
+water	18:12	0:0	8	}
+water	19:12	0:0	6	s
+op	19:13	0:0	6	->
+water	19:15	0:0	6	buffer_ptr
+op	19:26	0:0	6	=
+water	19:28	0:0	6	0
+water	19:29	0:0	6	;
+water	20:8	0:0	6	}
+water	21:8	0:0	4	buf
+op	21:12	0:0	4	+=
+water	21:15	0:0	4	len
+water	21:18	0:0	4	;
+water	22:8	0:0	4	size
+op	22:13	0:0	4	-=
+water	22:16	0:0	4	len
+water	22:19	0:0	4	;
+water	23:4	0:0	4	}
+return	24:4	24:12	2	0
+water	24:11	0:0	3	0

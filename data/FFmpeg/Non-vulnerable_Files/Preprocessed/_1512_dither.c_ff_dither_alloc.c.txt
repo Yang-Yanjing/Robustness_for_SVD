@@ -1,0 +1,437 @@
+func	1:0	83:0	0	DitherContext *	ff_dither_alloc
+params	1:30	0:0	1	
+param	1:31	1:58	2	AVAudioResampleContext *	avr
+param	2:31	2:58	2	enum AVSampleFormat	out_fmt
+param	3:31	3:57	2	enum AVSampleFormat	in_fmt
+param	4:31	4:43	2	int	channels
+param	4:45	4:60	2	int	sample_rate
+param	4:62	4:75	2	int	apply_map
+stmnts	0:0	82:15	1	
+decl	6:4	6:18	2	AVLFG	seed_gen
+decl	7:4	7:20	2	DitherContext	*c
+decl	8:4	8:10	2	int	ch
+if	9:4	14:4	2	(av_get_packed_sample_fmt (out_fmt ) != AV_SAMPLE_FMT_S16 ||av_get_bytes_per_sample (in_fmt ) <= 2)
+cond	9:8	10:43	3	av_get_packed_sample_fmt (out_fmt ) != AV_SAMPLE_FMT_S16 ||av_get_bytes_per_sample (in_fmt ) <= 2
+call	9:8	9:40	4	av_get_packed_sample_fmt
+arg	9:33	9:40	5	out_fmt
+water	9:33	0:0	6	out_fmt
+op	9:42	0:0	4	!=
+water	9:45	0:0	4	AV_SAMPLE_FMT_S16
+op	9:63	0:0	4	||
+call	10:8	10:38	4	av_get_bytes_per_sample
+arg	10:32	10:38	5	in_fmt
+water	10:32	0:0	6	in_fmt
+op	10:40	0:0	4	<=
+water	10:43	0:0	4	2
+stmts	10:46	14:4	3	
+water	10:46	0:0	4	{
+call	11:8	12:78	4	av_log
+arg	11:15	11:18	5	avr
+water	11:15	0:0	6	avr
+arg	11:20	11:32	5	AV_LOG_ERROR
+water	11:20	0:0	6	AV_LOG_ERROR
+arg	11:34	11:73	5	"dithering %s to %s is not supported\n"
+water	11:34	0:0	6	"dithering %s to %s is not supported\n"
+arg	12:15	12:45	5	av_get_sample_fmt_name(in_fmt)
+call	12:15	12:44	6	av_get_sample_fmt_name
+arg	12:38	12:44	7	in_fmt
+water	12:38	0:0	8	in_fmt
+arg	12:47	12:78	5	av_get_sample_fmt_name(out_fmt)
+call	12:47	12:77	6	av_get_sample_fmt_name
+arg	12:70	12:77	7	out_fmt
+water	12:70	0:0	8	out_fmt
+water	12:79	0:0	4	;
+return	13:8	13:19	4	NULL
+water	13:15	0:0	5	NULL
+water	14:4	0:0	4	}
+water	15:4	0:0	2	c
+op	15:6	0:0	2	=
+call	15:8	15:29	2	av_mallocz
+arg	15:19	15:29	3	sizeof(*c)
+op	15:19	0:0	4	sizeof
+water	15:25	0:0	4	(
+op	15:26	0:0	4	*
+water	15:27	0:0	4	c
+water	15:28	0:0	4	)
+water	15:30	0:0	2	;
+if	16:4	17:19	2	(! c)
+cond	16:8	16:9	3	! c
+op	16:8	0:0	4	!
+water	16:9	0:0	4	c
+stmts	17:8	17:19	3	
+return	17:8	17:19	4	NULL
+water	17:15	0:0	5	NULL
+water	18:4	0:0	2	c
+op	18:5	0:0	2	->
+water	18:7	0:0	2	apply_map
+op	18:17	0:0	2	=
+water	18:19	0:0	2	apply_map
+water	18:28	0:0	2	;
+if	19:4	20:42	2	(apply_map)
+cond	19:8	19:8	3	apply_map
+water	19:8	0:0	4	apply_map
+stmts	20:8	20:42	3	
+water	20:8	0:0	4	c
+op	20:9	0:0	4	->
+water	20:11	0:0	4	ch_map_info
+op	20:23	0:0	4	=
+op	20:25	0:0	4	&
+water	20:26	0:0	4	avr
+op	20:29	0:0	4	->
+water	20:31	0:0	4	ch_map_info
+water	20:42	0:0	4	;
+if	21:4	26:4	2	(avr -> dither_method == AV_RESAMPLE_DITHER_TRIANGULAR_NS && sample_rate != 48000 && sample_rate != 44100)
+cond	21:8	22:47	3	avr -> dither_method == AV_RESAMPLE_DITHER_TRIANGULAR_NS && sample_rate != 48000 && sample_rate != 44100
+water	21:8	0:0	4	avr
+op	21:11	0:0	4	->
+water	21:13	0:0	4	dither_method
+op	21:27	0:0	4	==
+water	21:30	0:0	4	AV_RESAMPLE_DITHER_TRIANGULAR_NS
+op	21:63	0:0	4	&&
+water	22:8	0:0	4	sample_rate
+op	22:20	0:0	4	!=
+water	22:23	0:0	4	48000
+op	22:29	0:0	4	&&
+water	22:32	0:0	4	sample_rate
+op	22:44	0:0	4	!=
+water	22:47	0:0	4	44100
+stmts	22:54	26:4	3	
+water	22:54	0:0	4	{
+call	23:8	24:73	4	av_log
+arg	23:15	23:18	5	avr
+water	23:15	0:0	6	avr
+arg	23:20	23:34	5	AV_LOG_WARNING
+water	23:20	0:0	6	AV_LOG_WARNING
+arg	23:36	24:73	5	"sample rate must be 48000 or 44100 Hz ""for triangular_ns dither. using triangular_hp instead.\n"
+water	23:36	0:0	6	"sample rate must be 48000 or 44100 Hz "
+water	24:15	0:0	6	"for triangular_ns dither. using triangular_hp instead.\n"
+water	24:74	0:0	4	;
+water	25:8	0:0	4	avr
+op	25:11	0:0	4	->
+water	25:13	0:0	4	dither_method
+op	25:27	0:0	4	=
+water	25:29	0:0	4	AV_RESAMPLE_DITHER_TRIANGULAR_HP
+water	25:61	0:0	4	;
+water	26:4	0:0	4	}
+water	27:4	0:0	2	c
+op	27:5	0:0	2	->
+water	27:7	0:0	2	method
+op	27:14	0:0	2	=
+water	27:16	0:0	2	avr
+op	27:19	0:0	2	->
+water	27:21	0:0	2	dither_method
+water	27:34	0:0	2	;
+call	28:4	28:35	2	dither_init
+arg	28:16	28:24	3	&c->ddsp
+op	28:16	0:0	4	&
+water	28:17	0:0	4	c
+op	28:18	0:0	4	->
+water	28:20	0:0	4	ddsp
+arg	28:26	28:35	3	c->method
+water	28:26	0:0	4	c
+op	28:27	0:0	4	->
+water	28:29	0:0	4	method
+water	28:36	0:0	2	;
+if	29:4	37:4	2	(c -> method == AV_RESAMPLE_DITHER_TRIANGULAR_NS)
+cond	29:8	29:21	3	c -> method == AV_RESAMPLE_DITHER_TRIANGULAR_NS
+water	29:8	0:0	4	c
+op	29:9	0:0	4	->
+water	29:11	0:0	4	method
+op	29:18	0:0	4	==
+water	29:21	0:0	4	AV_RESAMPLE_DITHER_TRIANGULAR_NS
+stmts	29:55	37:4	3	
+water	29:55	0:0	4	{
+if	30:8	33:8	4	(sample_rate == 48000)
+cond	30:12	30:27	5	sample_rate == 48000
+water	30:12	0:0	6	sample_rate
+op	30:24	0:0	6	==
+water	30:27	0:0	6	48000
+stmts	30:34	33:8	5	
+water	30:34	0:0	6	{
+water	31:12	0:0	6	c
+op	31:13	0:0	6	->
+water	31:15	0:0	6	ns_coef_b
+op	31:25	0:0	6	=
+water	31:27	0:0	6	ns_48_coef_b
+water	31:39	0:0	6	;
+water	32:12	0:0	6	c
+op	32:13	0:0	6	->
+water	32:15	0:0	6	ns_coef_a
+op	32:25	0:0	6	=
+water	32:27	0:0	6	ns_48_coef_a
+water	32:39	0:0	6	;
+water	33:8	0:0	6	}
+else	33:10	36:8	4
+stmts	33:15	36:8	5	
+water	33:15	0:0	6	{
+water	34:12	0:0	6	c
+op	34:13	0:0	6	->
+water	34:15	0:0	6	ns_coef_b
+op	34:25	0:0	6	=
+water	34:27	0:0	6	ns_44_coef_b
+water	34:39	0:0	6	;
+water	35:12	0:0	6	c
+op	35:13	0:0	6	->
+water	35:15	0:0	6	ns_coef_a
+op	35:25	0:0	6	=
+water	35:27	0:0	6	ns_44_coef_a
+water	35:39	0:0	6	;
+water	36:8	0:0	6	}
+water	37:4	0:0	4	}
+if	41:4	50:4	2	(out_fmt != AV_SAMPLE_FMT_S16P)
+cond	41:8	41:19	3	out_fmt != AV_SAMPLE_FMT_S16P
+water	41:8	0:0	4	out_fmt
+op	41:16	0:0	4	!=
+water	41:19	0:0	4	AV_SAMPLE_FMT_S16P
+stmts	41:39	50:4	3	
+water	41:39	0:0	4	{
+water	42:8	0:0	4	c
+op	42:9	0:0	4	->
+water	42:11	0:0	4	s16_data
+op	42:20	0:0	4	=
+call	42:22	43:61	4	ff_audio_data_alloc
+arg	42:42	42:50	5	channels
+water	42:42	0:0	6	channels
+arg	42:52	42:56	5	1024
+water	42:52	0:0	6	1024
+arg	42:58	42:76	5	AV_SAMPLE_FMT_S16P
+water	42:58	0:0	6	AV_SAMPLE_FMT_S16P
+arg	43:42	43:61	5	"dither s16 buffer"
+water	43:42	0:0	6	"dither s16 buffer"
+water	43:62	0:0	4	;
+if	44:8	45:21	4	(! c -> s16_data)
+cond	44:12	44:16	5	! c -> s16_data
+op	44:12	0:0	6	!
+water	44:13	0:0	6	c
+op	44:14	0:0	6	->
+water	44:16	0:0	6	s16_data
+stmts	45:12	45:21	5	
+goto	45:12	45:21	6	fail
+water	45:17	0:0	7	fail
+water	46:8	0:0	4	c
+op	46:9	0:0	4	->
+water	46:11	0:0	4	ac_out
+op	46:18	0:0	4	=
+call	46:20	47:67	4	ff_audio_convert_alloc
+arg	46:43	46:46	5	avr
+water	46:43	0:0	6	avr
+arg	46:48	46:55	5	out_fmt
+water	46:48	0:0	6	out_fmt
+arg	46:57	46:75	5	AV_SAMPLE_FMT_S16P
+water	46:57	0:0	6	AV_SAMPLE_FMT_S16P
+arg	47:43	47:51	5	channels
+water	47:43	0:0	6	channels
+arg	47:53	47:64	5	sample_rate
+water	47:53	0:0	6	sample_rate
+arg	47:66	47:67	5	0
+water	47:66	0:0	6	0
+water	47:68	0:0	4	;
+if	48:8	49:21	4	(! c -> ac_out)
+cond	48:12	48:16	5	! c -> ac_out
+op	48:12	0:0	6	!
+water	48:13	0:0	6	c
+op	48:14	0:0	6	->
+water	48:16	0:0	6	ac_out
+stmts	49:12	49:21	5	
+goto	49:12	49:21	6	fail
+water	49:17	0:0	7	fail
+water	50:4	0:0	4	}
+if	51:4	56:4	2	(in_fmt != AV_SAMPLE_FMT_FLTP || c -> apply_map)
+cond	51:8	51:43	3	in_fmt != AV_SAMPLE_FMT_FLTP || c -> apply_map
+water	51:8	0:0	4	in_fmt
+op	51:15	0:0	4	!=
+water	51:18	0:0	4	AV_SAMPLE_FMT_FLTP
+op	51:37	0:0	4	||
+water	51:40	0:0	4	c
+op	51:41	0:0	4	->
+water	51:43	0:0	4	apply_map
+stmts	51:54	56:4	3	
+water	51:54	0:0	4	{
+water	52:8	0:0	4	c
+op	52:9	0:0	4	->
+water	52:11	0:0	4	flt_data
+op	52:20	0:0	4	=
+call	52:22	53:61	4	ff_audio_data_alloc
+arg	52:42	52:50	5	channels
+water	52:42	0:0	6	channels
+arg	52:52	52:56	5	1024
+water	52:52	0:0	6	1024
+arg	52:58	52:76	5	AV_SAMPLE_FMT_FLTP
+water	52:58	0:0	6	AV_SAMPLE_FMT_FLTP
+arg	53:42	53:61	5	"dither flt buffer"
+water	53:42	0:0	6	"dither flt buffer"
+water	53:62	0:0	4	;
+if	54:8	55:21	4	(! c -> flt_data)
+cond	54:12	54:16	5	! c -> flt_data
+op	54:12	0:0	6	!
+water	54:13	0:0	6	c
+op	54:14	0:0	6	->
+water	54:16	0:0	6	flt_data
+stmts	55:12	55:21	5	
+goto	55:12	55:21	6	fail
+water	55:17	0:0	7	fail
+water	56:4	0:0	4	}
+if	57:4	62:4	2	(in_fmt != AV_SAMPLE_FMT_FLTP)
+cond	57:8	57:18	3	in_fmt != AV_SAMPLE_FMT_FLTP
+water	57:8	0:0	4	in_fmt
+op	57:15	0:0	4	!=
+water	57:18	0:0	4	AV_SAMPLE_FMT_FLTP
+stmts	57:38	62:4	3	
+water	57:38	0:0	4	{
+water	58:8	0:0	4	c
+op	58:9	0:0	4	->
+water	58:11	0:0	4	ac_in
+op	58:17	0:0	4	=
+call	58:19	59:77	4	ff_audio_convert_alloc
+arg	58:42	58:45	5	avr
+water	58:42	0:0	6	avr
+arg	58:47	58:65	5	AV_SAMPLE_FMT_FLTP
+water	58:47	0:0	6	AV_SAMPLE_FMT_FLTP
+arg	58:67	58:73	5	in_fmt
+water	58:67	0:0	6	in_fmt
+arg	59:42	59:50	5	channels
+water	59:42	0:0	6	channels
+arg	59:52	59:63	5	sample_rate
+water	59:52	0:0	6	sample_rate
+arg	59:65	59:77	5	c->apply_map
+water	59:65	0:0	6	c
+op	59:66	0:0	6	->
+water	59:68	0:0	6	apply_map
+water	59:78	0:0	4	;
+if	60:8	61:21	4	(! c -> ac_in)
+cond	60:12	60:16	5	! c -> ac_in
+op	60:12	0:0	6	!
+water	60:13	0:0	6	c
+op	60:14	0:0	6	->
+water	60:16	0:0	6	ac_in
+stmts	61:12	61:21	5	
+goto	61:12	61:21	6	fail
+water	61:17	0:0	7	fail
+water	62:4	0:0	4	}
+water	63:4	0:0	2	c
+op	63:5	0:0	2	->
+water	63:7	0:0	2	state
+op	63:13	0:0	2	=
+call	63:15	63:54	2	av_mallocz
+arg	63:26	63:54	3	channels*sizeof(*c->state)
+water	63:26	0:0	4	channels
+op	63:35	0:0	4	*
+op	63:37	0:0	4	sizeof
+water	63:43	0:0	4	(
+op	63:44	0:0	4	*
+water	63:45	0:0	4	c
+op	63:46	0:0	4	->
+water	63:48	0:0	4	state
+water	63:53	0:0	4	)
+water	63:55	0:0	2	;
+if	64:4	65:17	2	(! c -> state)
+cond	64:8	64:12	3	! c -> state
+op	64:8	0:0	4	!
+water	64:9	0:0	4	c
+op	64:10	0:0	4	->
+water	64:12	0:0	4	state
+stmts	65:8	65:17	3	
+goto	65:8	65:17	4	fail
+water	65:13	0:0	5	fail
+water	66:4	0:0	2	c
+op	66:5	0:0	2	->
+water	66:7	0:0	2	channels
+op	66:16	0:0	2	=
+water	66:18	0:0	2	channels
+water	66:26	0:0	2	;
+water	69:4	0:0	2	c
+op	69:5	0:0	2	->
+water	69:7	0:0	2	mute_dither_threshold
+op	69:29	0:0	2	=
+call	69:31	69:70	2	lrintf
+arg	69:38	69:70	3	sample_rate*MUTE_THRESHOLD_SEC
+water	69:38	0:0	4	sample_rate
+op	69:50	0:0	4	*
+water	69:52	0:0	4	MUTE_THRESHOLD_SEC
+water	69:71	0:0	2	;
+water	70:4	0:0	2	c
+op	70:5	0:0	2	->
+water	70:7	0:0	2	mute_reset_threshold
+op	70:29	0:0	2	=
+water	70:31	0:0	2	c
+op	70:32	0:0	2	->
+water	70:34	0:0	2	mute_dither_threshold
+op	70:56	0:0	2	*
+water	70:58	0:0	2	4
+water	70:59	0:0	2	;
+call	72:4	72:35	2	av_lfg_init
+arg	72:16	72:25	3	&seed_gen
+op	72:16	0:0	4	&
+water	72:17	0:0	4	seed_gen
+arg	72:27	72:35	3	0xC0FFEE
+water	72:27	0:0	4	0
+water	72:28	0:0	4	xC0FFEE
+water	72:36	0:0	2	;
+for	73:4	78:4	2	(ch = 0 ;ch < channels;ch ++)
+forinit	73:9	73:15	3	ch = 0 ;
+water	73:9	0:0	4	ch
+op	73:12	0:0	4	=
+water	73:14	0:0	4	0
+water	73:15	0:0	4	;
+cond	73:17	73:22	3	ch < channels
+water	73:17	0:0	4	ch
+op	73:20	0:0	4	<
+water	73:22	0:0	4	channels
+forexpr	73:32	73:34	3	ch ++
+water	73:32	0:0	4	ch
+op	73:34	0:0	4	++
+stmts	73:38	78:4	3	
+water	73:38	0:0	4	{
+decl	74:8	74:42	4	DitherState	*state
+op	74:27	0:0	4	=
+op	74:29	0:0	4	&
+water	74:30	0:0	4	c
+op	74:31	0:0	4	->
+water	74:33	0:0	4	state
+op	74:38	0:0	4	[
+water	74:39	0:0	4	ch
+op	74:41	0:0	4	]
+water	75:8	0:0	4	state
+op	75:13	0:0	4	->
+water	75:15	0:0	4	mute
+op	75:20	0:0	4	=
+water	75:22	0:0	4	c
+op	75:23	0:0	4	->
+water	75:25	0:0	4	mute_reset_threshold
+op	75:46	0:0	4	+
+water	75:48	0:0	4	1
+water	75:49	0:0	4	;
+water	76:8	0:0	4	state
+op	76:13	0:0	4	->
+water	76:15	0:0	4	seed
+op	76:20	0:0	4	=
+call	76:22	76:42	4	av_lfg_get
+arg	76:33	76:42	5	&seed_gen
+op	76:33	0:0	6	&
+water	76:34	0:0	6	seed_gen
+water	76:43	0:0	4	;
+call	77:8	77:69	4	generate_dither_noise
+arg	77:30	77:31	5	c
+water	77:30	0:0	6	c
+arg	77:33	77:38	5	state
+water	77:33	0:0	6	state
+arg	77:40	77:69	5	FFMAX(32768,sample_rate/2)
+call	77:40	77:68	6	FFMAX
+arg	77:46	77:51	7	32768
+water	77:46	0:0	8	32768
+arg	77:53	77:68	7	sample_rate/2
+water	77:53	0:0	8	sample_rate
+op	77:65	0:0	8	/
+water	77:67	0:0	8	2
+water	77:70	0:0	4	;
+water	78:4	0:0	4	}
+return	79:4	79:12	2	c
+water	79:11	0:0	3	c
+label	80:0	80:4	2	fail :
+call	81:4	81:21	2	ff_dither_free
+arg	81:19	81:21	3	&c
+op	81:19	0:0	4	&
+water	81:20	0:0	4	c
+water	81:22	0:0	2	;
+return	82:4	82:15	2	NULL
+water	82:11	0:0	3	NULL

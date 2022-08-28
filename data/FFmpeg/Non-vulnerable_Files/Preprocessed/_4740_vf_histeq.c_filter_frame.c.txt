@@ -1,0 +1,941 @@
+func	1:0	109:0	0	static int	filter_frame
+params	1:23	0:0	1	
+param	1:24	1:44	2	AVFilterLink *	inlink
+param	1:46	1:60	2	AVFrame *	inpic
+stmnts	0:0	108:43	1	
+decl	3:4	3:44	2	AVFilterContext	*ctx
+op	3:31	0:0	2	=
+water	3:33	0:0	2	inlink
+op	3:39	0:0	2	->
+water	3:41	0:0	2	dst
+decl	4:4	4:42	2	HisteqContext	*histeq
+op	4:31	0:0	2	=
+water	4:33	0:0	2	ctx
+op	4:36	0:0	2	->
+water	4:38	0:0	2	priv
+decl	5:4	5:48	2	AVFilterLink	*outlink
+op	5:31	0:0	2	=
+water	5:33	0:0	2	ctx
+op	5:36	0:0	2	->
+water	5:38	0:0	2	outputs
+op	5:45	0:0	2	[
+water	5:46	0:0	2	0
+op	5:47	0:0	2	]
+decl	6:4	6:44	2	int	strength
+op	6:18	0:0	2	=
+water	6:20	0:0	2	histeq
+op	6:26	0:0	2	->
+water	6:28	0:0	2	strength
+op	6:38	0:0	2	*
+water	6:40	0:0	2	1000
+decl	7:4	7:44	2	int	intensity
+op	7:18	0:0	2	=
+water	7:20	0:0	2	histeq
+op	7:26	0:0	2	->
+water	7:28	0:0	2	intensity
+op	7:38	0:0	2	*
+water	7:40	0:0	2	1000
+decl	8:4	8:50	2	int	x
+water	8:9	0:0	2	,
+decl	8:4	8:50	2	int	y
+water	8:12	0:0	2	,
+decl	8:4	8:50	2	int	i
+water	8:15	0:0	2	,
+decl	8:4	8:50	2	int	luthi
+water	8:22	0:0	2	,
+decl	8:4	8:50	2	int	lutlo
+water	8:29	0:0	2	,
+decl	8:4	8:50	2	int	lut
+water	8:34	0:0	2	,
+decl	8:4	8:50	2	int	luma
+water	8:40	0:0	2	,
+decl	8:4	8:50	2	int	oluma
+water	8:47	0:0	2	,
+decl	8:4	8:50	2	int	m
+decl	9:4	9:19	2	AVFrame	*outpic
+decl	10:4	10:30	2	unsigned int	r
+water	10:18	0:0	2	,
+decl	10:4	10:30	2	unsigned int	g
+water	10:21	0:0	2	,
+decl	10:4	10:30	2	unsigned int	b
+water	10:24	0:0	2	,
+decl	10:4	10:30	2	unsigned int	jran
+decl	11:4	11:22	2	uint8_t	*src
+water	11:16	0:0	2	,
+decl	11:4	11:22	2	uint8_t	*dst
+water	12:4	0:0	2	outpic
+op	12:11	0:0	2	=
+call	12:13	12:64	2	ff_get_video_buffer
+arg	12:33	12:40	3	outlink
+water	12:33	0:0	4	outlink
+arg	12:42	12:52	3	outlink->w
+water	12:42	0:0	4	outlink
+op	12:49	0:0	4	->
+water	12:51	0:0	4	w
+arg	12:54	12:64	3	outlink->h
+water	12:54	0:0	4	outlink
+op	12:61	0:0	4	->
+water	12:63	0:0	4	h
+water	12:65	0:0	2	;
+if	13:4	16:4	2	(! outpic)
+cond	13:8	13:9	3	! outpic
+op	13:8	0:0	4	!
+water	13:9	0:0	4	outpic
+stmts	13:17	16:4	3	
+water	13:17	0:0	4	{
+call	14:8	14:28	4	av_frame_free
+arg	14:22	14:28	5	&inpic
+op	14:22	0:0	6	&
+water	14:23	0:0	6	inpic
+water	14:29	0:0	4	;
+return	15:8	15:30	4	AVERROR(ENOMEM)
+call	15:15	15:29	5	AVERROR
+arg	15:23	15:29	6	ENOMEM
+water	15:23	0:0	7	ENOMEM
+water	16:4	0:0	4	}
+call	17:4	17:37	2	av_frame_copy_props
+arg	17:24	17:30	3	outpic
+water	17:24	0:0	4	outpic
+arg	17:32	17:37	3	inpic
+water	17:32	0:0	4	inpic
+water	17:38	0:0	2	;
+water	19:4	0:0	2	jran
+op	19:9	0:0	2	=
+water	19:11	0:0	2	LCG_SEED
+water	19:19	0:0	2	;
+call	22:4	22:64	2	memset
+arg	22:11	22:31	3	histeq->in_histogram
+water	22:11	0:0	4	histeq
+op	22:17	0:0	4	->
+water	22:19	0:0	4	in_histogram
+arg	22:33	22:34	3	0
+water	22:33	0:0	4	0
+arg	22:36	22:64	3	sizeof(histeq->in_histogram)
+op	22:36	0:0	4	sizeof
+water	22:42	0:0	4	(
+water	22:43	0:0	4	histeq
+op	22:49	0:0	4	->
+water	22:51	0:0	4	in_histogram
+water	22:63	0:0	4	)
+water	22:65	0:0	2	;
+water	23:4	0:0	2	src
+op	23:8	0:0	2	=
+water	23:10	0:0	2	inpic
+op	23:15	0:0	2	->
+water	23:17	0:0	2	data
+op	23:21	0:0	2	[
+water	23:22	0:0	2	0
+op	23:23	0:0	2	]
+water	23:24	0:0	2	;
+water	24:4	0:0	2	dst
+op	24:8	0:0	2	=
+water	24:10	0:0	2	outpic
+op	24:16	0:0	2	->
+water	24:18	0:0	2	data
+op	24:22	0:0	2	[
+water	24:23	0:0	2	0
+op	24:24	0:0	2	]
+water	24:25	0:0	2	;
+for	25:4	34:4	2	(y = 0 ;y < inlink -> h;y ++)
+forinit	25:9	25:14	3	y = 0 ;
+water	25:9	0:0	4	y
+op	25:11	0:0	4	=
+water	25:13	0:0	4	0
+water	25:14	0:0	4	;
+cond	25:16	25:28	3	y < inlink -> h
+water	25:16	0:0	4	y
+op	25:18	0:0	4	<
+water	25:20	0:0	4	inlink
+op	25:26	0:0	4	->
+water	25:28	0:0	4	h
+forexpr	25:31	25:32	3	y ++
+water	25:31	0:0	4	y
+op	25:32	0:0	4	++
+stmts	25:36	34:4	3	
+water	25:36	0:0	4	{
+for	26:8	31:8	4	(x = 0 ;x < inlink -> w * histeq -> bpp;x += histeq -> bpp)
+forinit	26:13	26:18	5	x = 0 ;
+water	26:13	0:0	6	x
+op	26:15	0:0	6	=
+water	26:17	0:0	6	0
+water	26:18	0:0	6	;
+cond	26:20	26:44	5	x < inlink -> w * histeq -> bpp
+water	26:20	0:0	6	x
+op	26:22	0:0	6	<
+water	26:24	0:0	6	inlink
+op	26:30	0:0	6	->
+water	26:32	0:0	6	w
+op	26:34	0:0	6	*
+water	26:36	0:0	6	histeq
+op	26:42	0:0	6	->
+water	26:44	0:0	6	bpp
+forexpr	26:49	26:62	5	x += histeq -> bpp
+water	26:49	0:0	6	x
+op	26:51	0:0	6	+=
+water	26:54	0:0	6	histeq
+op	26:60	0:0	6	->
+water	26:62	0:0	6	bpp
+stmts	26:67	31:8	5	
+water	26:67	0:0	6	{
+call	27:12	27:57	6	GET_RGB_VALUES
+arg	27:27	27:28	7	r
+water	27:27	0:0	8	r
+arg	27:30	27:31	7	g
+water	27:30	0:0	8	g
+arg	27:33	27:34	7	b
+water	27:33	0:0	8	b
+arg	27:36	27:39	7	src
+water	27:36	0:0	8	src
+arg	27:41	27:57	7	histeq->rgba_map
+water	27:41	0:0	8	histeq
+op	27:47	0:0	8	->
+water	27:49	0:0	8	rgba_map
+water	27:58	0:0	6	;
+water	28:12	0:0	6	luma
+op	28:17	0:0	6	=
+water	28:19	0:0	6	(
+water	28:20	0:0	6	55
+op	28:23	0:0	6	*
+water	28:25	0:0	6	r
+op	28:27	0:0	6	+
+water	28:29	0:0	6	182
+op	28:33	0:0	6	*
+water	28:35	0:0	6	g
+op	28:37	0:0	6	+
+water	28:39	0:0	6	19
+op	28:42	0:0	6	*
+water	28:44	0:0	6	b
+water	28:45	0:0	6	)
+op	28:47	0:0	6	>>
+water	28:50	0:0	6	8
+water	28:51	0:0	6	;
+water	29:12	0:0	6	dst
+op	29:15	0:0	6	[
+water	29:16	0:0	6	x
+op	29:18	0:0	6	+
+water	29:20	0:0	6	histeq
+op	29:26	0:0	6	->
+water	29:28	0:0	6	rgba_map
+op	29:36	0:0	6	[
+water	29:37	0:0	6	A
+op	29:38	0:0	6	]
+op	29:39	0:0	6	]
+op	29:41	0:0	6	=
+water	29:43	0:0	6	luma
+water	29:47	0:0	6	;
+water	30:12	0:0	6	histeq
+op	30:18	0:0	6	->
+water	30:20	0:0	6	in_histogram
+op	30:32	0:0	6	[
+water	30:33	0:0	6	luma
+op	30:37	0:0	6	]
+op	30:38	0:0	6	++
+water	30:40	0:0	6	;
+water	31:8	0:0	6	}
+water	32:8	0:0	4	src
+op	32:12	0:0	4	+=
+water	32:15	0:0	4	inpic
+op	32:20	0:0	4	->
+water	32:22	0:0	4	linesize
+op	32:30	0:0	4	[
+water	32:31	0:0	4	0
+op	32:32	0:0	4	]
+water	32:33	0:0	4	;
+water	33:8	0:0	4	dst
+op	33:12	0:0	4	+=
+water	33:15	0:0	4	outpic
+op	33:21	0:0	4	->
+water	33:23	0:0	4	linesize
+op	33:31	0:0	4	[
+water	33:32	0:0	4	0
+op	33:33	0:0	4	]
+water	33:34	0:0	4	;
+water	34:4	0:0	4	}
+for	36:4	37:64	2	(x = 0 ;x < 256;x ++)
+forinit	36:9	36:14	3	x = 0 ;
+water	36:9	0:0	4	x
+op	36:11	0:0	4	=
+water	36:13	0:0	4	0
+water	36:14	0:0	4	;
+cond	36:16	36:20	3	x < 256
+water	36:16	0:0	4	x
+op	36:18	0:0	4	<
+water	36:20	0:0	4	256
+forexpr	36:25	36:26	3	x ++
+water	36:25	0:0	4	x
+op	36:26	0:0	4	++
+stmts	37:8	37:64	3	
+call	37:8	37:63	4	ff_dlog
+arg	37:16	37:19	5	ctx
+water	37:16	0:0	6	ctx
+arg	37:21	37:35	5	"in[%d]: %u\n"
+water	37:21	0:0	6	"in[%d]: %u\n"
+arg	37:37	37:38	5	x
+water	37:37	0:0	6	x
+arg	37:40	37:63	5	histeq->in_histogram[x]
+water	37:40	0:0	6	histeq
+op	37:46	0:0	6	->
+water	37:48	0:0	6	in_histogram
+op	37:60	0:0	6	[
+water	37:61	0:0	6	x
+op	37:62	0:0	6	]
+water	37:64	0:0	4	;
+water	40:4	0:0	2	histeq
+op	40:10	0:0	2	->
+water	40:12	0:0	2	LUT
+op	40:15	0:0	2	[
+water	40:16	0:0	2	0
+op	40:17	0:0	2	]
+op	40:19	0:0	2	=
+water	40:21	0:0	2	histeq
+op	40:27	0:0	2	->
+water	40:29	0:0	2	in_histogram
+op	40:41	0:0	2	[
+water	40:42	0:0	2	0
+op	40:43	0:0	2	]
+water	40:44	0:0	2	;
+for	42:4	43:67	2	(x = 1 ;x < 256;x ++)
+forinit	42:9	42:14	3	x = 1 ;
+water	42:9	0:0	4	x
+op	42:11	0:0	4	=
+water	42:13	0:0	4	1
+water	42:14	0:0	4	;
+cond	42:16	42:20	3	x < 256
+water	42:16	0:0	4	x
+op	42:18	0:0	4	<
+water	42:20	0:0	4	256
+forexpr	42:25	42:26	3	x ++
+water	42:25	0:0	4	x
+op	42:26	0:0	4	++
+stmts	43:8	43:67	3	
+water	43:8	0:0	4	histeq
+op	43:14	0:0	4	->
+water	43:16	0:0	4	LUT
+op	43:19	0:0	4	[
+water	43:20	0:0	4	x
+op	43:21	0:0	4	]
+op	43:23	0:0	4	=
+water	43:25	0:0	4	histeq
+op	43:31	0:0	4	->
+water	43:33	0:0	4	LUT
+op	43:36	0:0	4	[
+water	43:37	0:0	4	x
+op	43:38	0:0	4	-
+water	43:39	0:0	4	1
+op	43:40	0:0	4	]
+op	43:42	0:0	4	+
+water	43:44	0:0	4	histeq
+op	43:50	0:0	4	->
+water	43:52	0:0	4	in_histogram
+op	43:64	0:0	4	[
+water	43:65	0:0	4	x
+op	43:66	0:0	4	]
+water	43:67	0:0	4	;
+for	45:4	46:79	2	(x = 0 ;x < 256;x ++)
+forinit	45:9	45:14	3	x = 0 ;
+water	45:9	0:0	4	x
+op	45:11	0:0	4	=
+water	45:13	0:0	4	0
+water	45:14	0:0	4	;
+cond	45:16	45:20	3	x < 256
+water	45:16	0:0	4	x
+op	45:18	0:0	4	<
+water	45:20	0:0	4	256
+forexpr	45:25	45:26	3	x ++
+water	45:25	0:0	4	x
+op	45:26	0:0	4	++
+stmts	46:8	46:79	3	
+water	46:8	0:0	4	histeq
+op	46:14	0:0	4	->
+water	46:16	0:0	4	LUT
+op	46:19	0:0	4	[
+water	46:20	0:0	4	x
+op	46:21	0:0	4	]
+op	46:23	0:0	4	=
+water	46:25	0:0	4	(
+water	46:26	0:0	4	histeq
+op	46:32	0:0	4	->
+water	46:34	0:0	4	LUT
+op	46:37	0:0	4	[
+water	46:38	0:0	4	x
+op	46:39	0:0	4	]
+op	46:41	0:0	4	*
+water	46:43	0:0	4	intensity
+water	46:52	0:0	4	)
+op	46:54	0:0	4	/
+water	46:56	0:0	4	(
+water	46:57	0:0	4	inlink
+op	46:63	0:0	4	->
+water	46:65	0:0	4	h
+op	46:67	0:0	4	*
+water	46:69	0:0	4	inlink
+op	46:75	0:0	4	->
+water	46:77	0:0	4	w
+water	46:78	0:0	4	)
+water	46:79	0:0	4	;
+for	49:4	51:58	2	(x = 0 ;x < 256;x ++)
+forinit	49:9	49:14	3	x = 0 ;
+water	49:9	0:0	4	x
+op	49:11	0:0	4	=
+water	49:13	0:0	4	0
+water	49:14	0:0	4	;
+cond	49:16	49:20	3	x < 256
+water	49:16	0:0	4	x
+op	49:18	0:0	4	<
+water	49:20	0:0	4	256
+forexpr	49:25	49:26	3	x ++
+water	49:25	0:0	4	x
+op	49:26	0:0	4	++
+stmts	50:8	51:58	3	
+water	50:8	0:0	4	histeq
+op	50:14	0:0	4	->
+water	50:16	0:0	4	LUT
+op	50:19	0:0	4	[
+water	50:20	0:0	4	x
+op	50:21	0:0	4	]
+op	50:23	0:0	4	=
+water	50:25	0:0	4	(
+water	50:26	0:0	4	strength
+op	50:35	0:0	4	*
+water	50:37	0:0	4	histeq
+op	50:43	0:0	4	->
+water	50:45	0:0	4	LUT
+op	50:48	0:0	4	[
+water	50:49	0:0	4	x
+op	50:50	0:0	4	]
+water	50:51	0:0	4	)
+op	50:53	0:0	4	/
+water	50:55	0:0	4	255
+op	50:59	0:0	4	+
+water	51:25	0:0	4	(
+water	51:26	0:0	4	(
+water	51:27	0:0	4	255
+op	51:31	0:0	4	-
+water	51:33	0:0	4	strength
+water	51:41	0:0	4	)
+op	51:43	0:0	4	*
+water	51:45	0:0	4	x
+water	51:46	0:0	4	)
+op	51:53	0:0	4	/
+water	51:55	0:0	4	255
+water	51:58	0:0	4	;
+call	53:4	53:66	2	memset
+arg	53:11	53:32	3	histeq->out_histogram
+water	53:11	0:0	4	histeq
+op	53:17	0:0	4	->
+water	53:19	0:0	4	out_histogram
+arg	53:34	53:35	3	0
+water	53:34	0:0	4	0
+arg	53:37	53:66	3	sizeof(histeq->out_histogram)
+op	53:37	0:0	4	sizeof
+water	53:43	0:0	4	(
+water	53:44	0:0	4	histeq
+op	53:50	0:0	4	->
+water	53:52	0:0	4	out_histogram
+water	53:65	0:0	4	)
+water	53:67	0:0	2	;
+water	54:4	0:0	2	src
+op	54:8	0:0	2	=
+water	54:10	0:0	2	inpic
+op	54:15	0:0	2	->
+water	54:17	0:0	2	data
+op	54:21	0:0	2	[
+water	54:22	0:0	2	0
+op	54:23	0:0	2	]
+water	54:24	0:0	2	;
+water	55:4	0:0	2	dst
+op	55:8	0:0	2	=
+water	55:10	0:0	2	outpic
+op	55:16	0:0	2	->
+water	55:18	0:0	2	data
+op	55:22	0:0	2	[
+water	55:23	0:0	2	0
+op	55:24	0:0	2	]
+water	55:25	0:0	2	;
+for	56:4	102:4	2	(y = 0 ;y < inlink -> h;y ++)
+forinit	56:9	56:14	3	y = 0 ;
+water	56:9	0:0	4	y
+op	56:11	0:0	4	=
+water	56:13	0:0	4	0
+water	56:14	0:0	4	;
+cond	56:16	56:28	3	y < inlink -> h
+water	56:16	0:0	4	y
+op	56:18	0:0	4	<
+water	56:20	0:0	4	inlink
+op	56:26	0:0	4	->
+water	56:28	0:0	4	h
+forexpr	56:31	56:32	3	y ++
+water	56:31	0:0	4	y
+op	56:32	0:0	4	++
+stmts	56:36	102:4	3	
+water	56:36	0:0	4	{
+for	57:8	99:8	4	(x = 0 ;x < inlink -> w * histeq -> bpp;x += histeq -> bpp)
+forinit	57:13	57:18	5	x = 0 ;
+water	57:13	0:0	6	x
+op	57:15	0:0	6	=
+water	57:17	0:0	6	0
+water	57:18	0:0	6	;
+cond	57:20	57:44	5	x < inlink -> w * histeq -> bpp
+water	57:20	0:0	6	x
+op	57:22	0:0	6	<
+water	57:24	0:0	6	inlink
+op	57:30	0:0	6	->
+water	57:32	0:0	6	w
+op	57:34	0:0	6	*
+water	57:36	0:0	6	histeq
+op	57:42	0:0	6	->
+water	57:44	0:0	6	bpp
+forexpr	57:49	57:62	5	x += histeq -> bpp
+water	57:49	0:0	6	x
+op	57:51	0:0	6	+=
+water	57:54	0:0	6	histeq
+op	57:60	0:0	6	->
+water	57:62	0:0	6	bpp
+stmts	57:67	99:8	5	
+water	57:67	0:0	6	{
+water	58:12	0:0	6	luma
+op	58:17	0:0	6	=
+water	58:19	0:0	6	dst
+op	58:22	0:0	6	[
+water	58:23	0:0	6	x
+op	58:25	0:0	6	+
+water	58:27	0:0	6	histeq
+op	58:33	0:0	6	->
+water	58:35	0:0	6	rgba_map
+op	58:43	0:0	6	[
+water	58:44	0:0	6	A
+op	58:45	0:0	6	]
+op	58:46	0:0	6	]
+water	58:47	0:0	6	;
+if	59:12	63:12	6	(luma == 0)
+cond	59:16	59:24	7	luma == 0
+water	59:16	0:0	8	luma
+op	59:21	0:0	8	==
+water	59:24	0:0	8	0
+stmts	59:27	63:12	7	
+water	59:27	0:0	8	{
+for	60:16	61:34	8	(i = 0 ;i < histeq -> bpp;++ i)
+forinit	60:21	60:26	9	i = 0 ;
+water	60:21	0:0	10	i
+op	60:23	0:0	10	=
+water	60:25	0:0	10	0
+water	60:26	0:0	10	;
+cond	60:28	60:40	9	i < histeq -> bpp
+water	60:28	0:0	10	i
+op	60:30	0:0	10	<
+water	60:32	0:0	10	histeq
+op	60:38	0:0	10	->
+water	60:40	0:0	10	bpp
+forexpr	60:45	60:47	9	++ i
+op	60:45	0:0	10	++
+water	60:47	0:0	10	i
+stmts	61:20	61:34	9	
+water	61:20	0:0	10	dst
+op	61:23	0:0	10	[
+water	61:24	0:0	10	x
+op	61:26	0:0	10	+
+water	61:28	0:0	10	i
+op	61:29	0:0	10	]
+op	61:31	0:0	10	=
+water	61:33	0:0	10	0
+water	61:34	0:0	10	;
+water	62:16	0:0	8	histeq
+op	62:22	0:0	8	->
+water	62:24	0:0	8	out_histogram
+op	62:37	0:0	8	[
+water	62:38	0:0	8	0
+op	62:39	0:0	8	]
+op	62:40	0:0	8	++
+water	62:42	0:0	8	;
+water	63:12	0:0	8	}
+else	63:14	98:12	6
+stmts	63:19	98:12	7	
+water	63:19	0:0	8	{
+water	64:16	0:0	8	lut
+op	64:20	0:0	8	=
+water	64:22	0:0	8	histeq
+op	64:28	0:0	8	->
+water	64:30	0:0	8	LUT
+op	64:33	0:0	8	[
+water	64:34	0:0	8	luma
+op	64:38	0:0	8	]
+water	64:39	0:0	8	;
+if	65:16	82:16	8	(histeq -> antibanding != HISTEQ_ANTIBANDING_NONE)
+cond	65:20	65:43	9	histeq -> antibanding != HISTEQ_ANTIBANDING_NONE
+water	65:20	0:0	10	histeq
+op	65:26	0:0	10	->
+water	65:28	0:0	10	antibanding
+op	65:40	0:0	10	!=
+water	65:43	0:0	10	HISTEQ_ANTIBANDING_NONE
+stmts	65:68	82:16	9	
+water	65:68	0:0	10	{
+if	66:20	70:20	10	(luma > 0)
+cond	66:24	66:31	11	luma > 0
+water	66:24	0:0	12	luma
+op	66:29	0:0	12	>
+water	66:31	0:0	12	0
+stmts	66:34	70:20	11	
+water	66:34	0:0	12	{
+water	67:24	0:0	12	lutlo
+op	67:30	0:0	12	=
+water	67:32	0:0	12	histeq
+op	67:38	0:0	12	->
+water	67:40	0:0	12	antibanding
+op	67:52	0:0	12	==
+water	67:55	0:0	12	HISTEQ_ANTIBANDING_WEAK
+water	67:79	0:0	12	?
+water	68:32	0:0	12	(
+water	68:33	0:0	12	histeq
+op	68:39	0:0	12	->
+water	68:41	0:0	12	LUT
+op	68:44	0:0	12	[
+water	68:45	0:0	12	luma
+op	68:49	0:0	12	]
+op	68:51	0:0	12	+
+water	68:53	0:0	12	histeq
+op	68:59	0:0	12	->
+water	68:61	0:0	12	LUT
+op	68:64	0:0	12	[
+water	68:65	0:0	12	luma
+op	68:70	0:0	12	-
+water	68:72	0:0	12	1
+op	68:73	0:0	12	]
+water	68:74	0:0	12	)
+op	68:76	0:0	12	/
+water	68:78	0:0	12	2
+water	68:80	0:0	12	:
+water	69:33	0:0	12	histeq
+op	69:39	0:0	12	->
+water	69:41	0:0	12	LUT
+op	69:44	0:0	12	[
+water	69:45	0:0	12	luma
+op	69:50	0:0	12	-
+water	69:52	0:0	12	1
+op	69:53	0:0	12	]
+water	69:54	0:0	12	;
+water	70:20	0:0	12	}
+else	70:22	71:35	10
+stmts	71:24	71:35	11	
+water	71:24	0:0	12	lutlo
+op	71:30	0:0	12	=
+water	71:32	0:0	12	lut
+water	71:35	0:0	12	;
+if	72:20	76:20	10	(luma < 255)
+cond	72:24	72:31	11	luma < 255
+water	72:24	0:0	12	luma
+op	72:29	0:0	12	<
+water	72:31	0:0	12	255
+stmts	72:36	76:20	11	
+water	72:36	0:0	12	{
+water	73:24	0:0	12	luthi
+op	73:30	0:0	12	=
+water	73:32	0:0	12	(
+water	73:33	0:0	12	histeq
+op	73:39	0:0	12	->
+water	73:41	0:0	12	antibanding
+op	73:53	0:0	12	==
+water	73:56	0:0	12	HISTEQ_ANTIBANDING_WEAK
+water	73:79	0:0	12	)
+water	73:81	0:0	12	?
+water	74:28	0:0	12	(
+water	74:29	0:0	12	histeq
+op	74:35	0:0	12	->
+water	74:37	0:0	12	LUT
+op	74:40	0:0	12	[
+water	74:41	0:0	12	luma
+op	74:45	0:0	12	]
+op	74:47	0:0	12	+
+water	74:49	0:0	12	histeq
+op	74:55	0:0	12	->
+water	74:57	0:0	12	LUT
+op	74:60	0:0	12	[
+water	74:61	0:0	12	luma
+op	74:66	0:0	12	+
+water	74:68	0:0	12	1
+op	74:69	0:0	12	]
+water	74:70	0:0	12	)
+op	74:72	0:0	12	/
+water	74:74	0:0	12	2
+water	74:76	0:0	12	:
+water	75:29	0:0	12	histeq
+op	75:35	0:0	12	->
+water	75:37	0:0	12	LUT
+op	75:40	0:0	12	[
+water	75:41	0:0	12	luma
+op	75:46	0:0	12	+
+water	75:48	0:0	12	1
+op	75:49	0:0	12	]
+water	75:50	0:0	12	;
+water	76:20	0:0	12	}
+else	76:22	77:35	10
+stmts	77:24	77:35	11	
+water	77:24	0:0	12	luthi
+op	77:30	0:0	12	=
+water	77:32	0:0	12	lut
+water	77:35	0:0	12	;
+if	78:20	81:20	10	(lutlo != luthi)
+cond	78:24	78:33	11	lutlo != luthi
+water	78:24	0:0	12	lutlo
+op	78:30	0:0	12	!=
+water	78:33	0:0	12	luthi
+stmts	78:40	81:20	11	
+water	78:40	0:0	12	{
+water	79:24	0:0	12	jran
+op	79:29	0:0	12	=
+call	79:31	79:39	12	LCG
+arg	79:35	79:39	13	jran
+water	79:35	0:0	14	jran
+water	79:40	0:0	12	;
+water	80:24	0:0	12	lut
+op	80:28	0:0	12	=
+water	80:30	0:0	12	lutlo
+op	80:36	0:0	12	+
+water	80:38	0:0	12	(
+water	80:39	0:0	12	(
+water	80:40	0:0	12	luthi
+op	80:46	0:0	12	-
+water	80:48	0:0	12	lutlo
+op	80:54	0:0	12	+
+water	80:56	0:0	12	1
+water	80:57	0:0	12	)
+op	80:59	0:0	12	*
+water	80:61	0:0	12	jran
+water	80:65	0:0	12	)
+op	80:67	0:0	12	/
+water	80:69	0:0	12	LCG_M
+water	80:74	0:0	12	;
+water	81:20	0:0	12	}
+water	82:16	0:0	10	}
+call	83:16	83:61	8	GET_RGB_VALUES
+arg	83:31	83:32	9	r
+water	83:31	0:0	10	r
+arg	83:34	83:35	9	g
+water	83:34	0:0	10	g
+arg	83:37	83:38	9	b
+water	83:37	0:0	10	b
+arg	83:40	83:43	9	src
+water	83:40	0:0	10	src
+arg	83:45	83:61	9	histeq->rgba_map
+water	83:45	0:0	10	histeq
+op	83:51	0:0	10	->
+water	83:53	0:0	10	rgba_map
+water	83:62	0:0	8	;
+if	84:16	88:16	8	(( ( m =FFMAX3 (r ,g ,b ) ) * lut ) / luma > 255)
+cond	84:20	84:59	9	( ( m =FFMAX3 (r ,g ,b ) ) * lut ) / luma > 255
+water	84:20	0:0	10	(
+water	84:21	0:0	10	(
+water	84:22	0:0	10	m
+op	84:24	0:0	10	=
+call	84:26	84:40	10	FFMAX3
+arg	84:33	84:34	11	r
+water	84:33	0:0	12	r
+arg	84:36	84:37	11	g
+water	84:36	0:0	12	g
+arg	84:39	84:40	11	b
+water	84:39	0:0	12	b
+water	84:41	0:0	10	)
+op	84:43	0:0	10	*
+water	84:45	0:0	10	lut
+water	84:48	0:0	10	)
+op	84:50	0:0	10	/
+water	84:52	0:0	10	luma
+op	84:57	0:0	10	>
+water	84:59	0:0	10	255
+stmts	84:64	88:16	9	
+water	84:64	0:0	10	{
+water	85:20	0:0	10	r
+op	85:22	0:0	10	=
+water	85:24	0:0	10	(
+water	85:25	0:0	10	r
+op	85:27	0:0	10	*
+water	85:29	0:0	10	255
+water	85:32	0:0	10	)
+op	85:34	0:0	10	/
+water	85:36	0:0	10	m
+water	85:37	0:0	10	;
+water	86:20	0:0	10	g
+op	86:22	0:0	10	=
+water	86:24	0:0	10	(
+water	86:25	0:0	10	g
+op	86:27	0:0	10	*
+water	86:29	0:0	10	255
+water	86:32	0:0	10	)
+op	86:34	0:0	10	/
+water	86:36	0:0	10	m
+water	86:37	0:0	10	;
+water	87:20	0:0	10	b
+op	87:22	0:0	10	=
+water	87:24	0:0	10	(
+water	87:25	0:0	10	b
+op	87:27	0:0	10	*
+water	87:29	0:0	10	255
+water	87:32	0:0	10	)
+op	87:34	0:0	10	/
+water	87:36	0:0	10	m
+water	87:37	0:0	10	;
+water	88:16	0:0	10	}
+else	88:18	92:16	8
+stmts	88:23	92:16	9	
+water	88:23	0:0	10	{
+water	89:20	0:0	10	r
+op	89:22	0:0	10	=
+water	89:24	0:0	10	(
+water	89:25	0:0	10	r
+op	89:27	0:0	10	*
+water	89:29	0:0	10	lut
+water	89:32	0:0	10	)
+op	89:34	0:0	10	/
+water	89:36	0:0	10	luma
+water	89:40	0:0	10	;
+water	90:20	0:0	10	g
+op	90:22	0:0	10	=
+water	90:24	0:0	10	(
+water	90:25	0:0	10	g
+op	90:27	0:0	10	*
+water	90:29	0:0	10	lut
+water	90:32	0:0	10	)
+op	90:34	0:0	10	/
+water	90:36	0:0	10	luma
+water	90:40	0:0	10	;
+water	91:20	0:0	10	b
+op	91:22	0:0	10	=
+water	91:24	0:0	10	(
+water	91:25	0:0	10	b
+op	91:27	0:0	10	*
+water	91:29	0:0	10	lut
+water	91:32	0:0	10	)
+op	91:34	0:0	10	/
+water	91:36	0:0	10	luma
+water	91:40	0:0	10	;
+water	92:16	0:0	10	}
+water	93:16	0:0	8	dst
+op	93:19	0:0	8	[
+water	93:20	0:0	8	x
+op	93:22	0:0	8	+
+water	93:24	0:0	8	histeq
+op	93:30	0:0	8	->
+water	93:32	0:0	8	rgba_map
+op	93:40	0:0	8	[
+water	93:41	0:0	8	R
+op	93:42	0:0	8	]
+op	93:43	0:0	8	]
+op	93:45	0:0	8	=
+water	93:47	0:0	8	r
+water	93:48	0:0	8	;
+water	94:16	0:0	8	dst
+op	94:19	0:0	8	[
+water	94:20	0:0	8	x
+op	94:22	0:0	8	+
+water	94:24	0:0	8	histeq
+op	94:30	0:0	8	->
+water	94:32	0:0	8	rgba_map
+op	94:40	0:0	8	[
+water	94:41	0:0	8	G
+op	94:42	0:0	8	]
+op	94:43	0:0	8	]
+op	94:45	0:0	8	=
+water	94:47	0:0	8	g
+water	94:48	0:0	8	;
+water	95:16	0:0	8	dst
+op	95:19	0:0	8	[
+water	95:20	0:0	8	x
+op	95:22	0:0	8	+
+water	95:24	0:0	8	histeq
+op	95:30	0:0	8	->
+water	95:32	0:0	8	rgba_map
+op	95:40	0:0	8	[
+water	95:41	0:0	8	B
+op	95:42	0:0	8	]
+op	95:43	0:0	8	]
+op	95:45	0:0	8	=
+water	95:47	0:0	8	b
+water	95:48	0:0	8	;
+water	96:16	0:0	8	oluma
+op	96:22	0:0	8	=
+call	96:24	96:70	8	av_clip_uint8
+arg	96:38	96:70	9	(55*r+182*g+19*b)>>8
+water	96:38	0:0	10	(
+water	96:39	0:0	10	55
+op	96:42	0:0	10	*
+water	96:44	0:0	10	r
+op	96:46	0:0	10	+
+water	96:48	0:0	10	182
+op	96:52	0:0	10	*
+water	96:54	0:0	10	g
+op	96:56	0:0	10	+
+water	96:58	0:0	10	19
+op	96:61	0:0	10	*
+water	96:63	0:0	10	b
+water	96:64	0:0	10	)
+op	96:66	0:0	10	>>
+water	96:69	0:0	10	8
+water	96:71	0:0	8	;
+water	97:16	0:0	8	histeq
+op	97:22	0:0	8	->
+water	97:24	0:0	8	out_histogram
+op	97:37	0:0	8	[
+water	97:38	0:0	8	oluma
+op	97:43	0:0	8	]
+op	97:44	0:0	8	++
+water	97:46	0:0	8	;
+water	98:12	0:0	8	}
+water	99:8	0:0	6	}
+water	100:8	0:0	4	src
+op	100:12	0:0	4	+=
+water	100:15	0:0	4	inpic
+op	100:20	0:0	4	->
+water	100:22	0:0	4	linesize
+op	100:30	0:0	4	[
+water	100:31	0:0	4	0
+op	100:32	0:0	4	]
+water	100:33	0:0	4	;
+water	101:8	0:0	4	dst
+op	101:12	0:0	4	+=
+water	101:15	0:0	4	outpic
+op	101:21	0:0	4	->
+water	101:23	0:0	4	linesize
+op	101:31	0:0	4	[
+water	101:32	0:0	4	0
+op	101:33	0:0	4	]
+water	101:34	0:0	4	;
+water	102:4	0:0	4	}
+for	104:4	105:66	2	(x = 0 ;x < 256;x ++)
+forinit	104:9	104:14	3	x = 0 ;
+water	104:9	0:0	4	x
+op	104:11	0:0	4	=
+water	104:13	0:0	4	0
+water	104:14	0:0	4	;
+cond	104:16	104:20	3	x < 256
+water	104:16	0:0	4	x
+op	104:18	0:0	4	<
+water	104:20	0:0	4	256
+forexpr	104:25	104:26	3	x ++
+water	104:25	0:0	4	x
+op	104:26	0:0	4	++
+stmts	105:8	105:66	3	
+call	105:8	105:65	4	ff_dlog
+arg	105:16	105:19	5	ctx
+water	105:16	0:0	6	ctx
+arg	105:21	105:36	5	"out[%d]: %u\n"
+water	105:21	0:0	6	"out[%d]: %u\n"
+arg	105:38	105:39	5	x
+water	105:38	0:0	6	x
+arg	105:41	105:65	5	histeq->out_histogram[x]
+water	105:41	0:0	6	histeq
+op	105:47	0:0	6	->
+water	105:49	0:0	6	out_histogram
+op	105:62	0:0	6	[
+water	105:63	0:0	6	x
+op	105:64	0:0	6	]
+water	105:66	0:0	4	;
+call	107:4	107:24	2	av_frame_free
+arg	107:18	107:24	3	&inpic
+op	107:18	0:0	4	&
+water	107:19	0:0	4	inpic
+water	107:25	0:0	2	;
+return	108:4	108:43	2	ff_filter_frame(outlink,outpic)
+call	108:11	108:42	3	ff_filter_frame
+arg	108:27	108:34	4	outlink
+water	108:27	0:0	5	outlink
+arg	108:36	108:42	4	outpic
+water	108:36	0:0	5	outpic

@@ -1,0 +1,641 @@
+func	1:0	97:0	0	int	ff_rm_read_mdpr_codecdata
+params	1:29	0:0	1	
+param	1:30	1:48	2	AVFormatContext *	s
+param	1:50	1:65	2	AVIOContext *	pb
+param	2:30	2:42	2	AVStream *	st
+param	2:44	2:57	2	RMStream *	rst
+param	3:30	3:58	2	unsigned int	codec_data_size
+param	3:60	3:79	2	const uint8_t *	mime
+stmnts	0:0	96:12	1	
+decl	5:4	5:18	2	unsigned int	v
+decl	6:4	6:12	2	int	size
+decl	7:4	7:21	2	int64_t	codec_pos
+decl	8:4	8:11	2	int	ret
+if	9:4	10:34	2	(codec_data_size > INT_MAX)
+cond	9:8	9:26	3	codec_data_size > INT_MAX
+water	9:8	0:0	4	codec_data_size
+op	9:24	0:0	4	>
+water	9:26	0:0	4	INT_MAX
+stmts	10:8	10:34	3	
+return	10:8	10:34	4	AVERROR_INVALIDDATA
+water	10:15	0:0	5	AVERROR_INVALIDDATA
+if	11:4	12:16	2	(codec_data_size == 0)
+cond	11:8	11:27	3	codec_data_size == 0
+water	11:8	0:0	4	codec_data_size
+op	11:24	0:0	4	==
+water	11:27	0:0	4	0
+stmts	12:8	12:16	3	
+return	12:8	12:16	4	0
+water	12:15	0:0	5	0
+call	13:4	13:39	2	avpriv_set_pts_info
+arg	13:24	13:26	3	st
+water	13:24	0:0	4	st
+arg	13:28	13:30	3	64
+water	13:28	0:0	4	64
+arg	13:32	13:33	3	1
+water	13:32	0:0	4	1
+arg	13:35	13:39	3	1000
+water	13:35	0:0	4	1000
+water	13:40	0:0	2	;
+water	14:4	0:0	2	codec_pos
+op	14:14	0:0	2	=
+call	14:16	14:28	2	avio_tell
+arg	14:26	14:28	3	pb
+water	14:26	0:0	4	pb
+water	14:29	0:0	2	;
+water	15:4	0:0	2	v
+op	15:6	0:0	2	=
+call	15:8	15:20	2	avio_rb32
+arg	15:18	15:20	3	pb
+water	15:18	0:0	4	pb
+water	15:21	0:0	2	;
+if	16:4	20:4	2	(v ==MKTAG (0 xfd ,'a' ,'r' ,'.' ))
+cond	16:8	16:38	3	v ==MKTAG (0 xfd ,'a' ,'r' ,'.' )
+water	16:8	0:0	4	v
+op	16:10	0:0	4	==
+call	16:13	16:38	4	MKTAG
+arg	16:19	16:23	5	0xfd
+water	16:19	0:0	6	0
+water	16:20	0:0	6	xfd
+arg	16:25	16:28	5	'a'
+water	16:25	0:0	6	'a'
+arg	16:30	16:33	5	'r'
+water	16:30	0:0	6	'r'
+arg	16:35	16:38	5	'.'
+water	16:35	0:0	6	'.'
+stmts	16:41	20:4	3	
+water	16:41	0:0	4	{
+if	18:8	19:21	4	(rm_read_audio_stream_info (s ,pb ,st ,rst ,0 ))
+cond	18:12	18:55	5	rm_read_audio_stream_info (s ,pb ,st ,rst ,0 )
+call	18:12	18:55	6	rm_read_audio_stream_info
+arg	18:38	18:39	7	s
+water	18:38	0:0	8	s
+arg	18:41	18:43	7	pb
+water	18:41	0:0	8	pb
+arg	18:45	18:47	7	st
+water	18:45	0:0	8	st
+arg	18:49	18:52	7	rst
+water	18:49	0:0	8	rst
+arg	18:54	18:55	7	0
+water	18:54	0:0	8	0
+stmts	19:12	19:21	5	
+return	19:12	19:21	6	-1
+op	19:19	0:0	7	-
+water	19:20	0:0	7	1
+water	20:4	0:0	4	}
+else	20:6	28:4	2
+stmts	20:11	28:4	3	
+if	20:11	28:4	4	(v ==MKBETAG ('L' ,'S' ,'D' ,':' ))
+cond	20:15	20:46	5	v ==MKBETAG ('L' ,'S' ,'D' ,':' )
+water	20:15	0:0	6	v
+op	20:17	0:0	6	==
+call	20:20	20:46	6	MKBETAG
+arg	20:28	20:31	7	'L'
+water	20:28	0:0	8	'L'
+arg	20:33	20:36	7	'S'
+water	20:33	0:0	8	'S'
+arg	20:38	20:41	7	'D'
+water	20:38	0:0	8	'D'
+arg	20:43	20:46	7	':'
+water	20:43	0:0	8	':'
+stmts	20:49	28:4	5	
+water	20:49	0:0	6	{
+call	21:8	21:34	6	avio_seek
+arg	21:18	21:20	7	pb
+water	21:18	0:0	8	pb
+arg	21:22	21:24	7	-4
+op	21:22	0:0	8	-
+water	21:23	0:0	8	4
+arg	21:26	21:34	7	SEEK_CUR
+water	21:26	0:0	8	SEEK_CUR
+water	21:35	0:0	6	;
+if	22:8	23:22	6	(( ret =rm_read_extradata (pb ,st -> codec ,codec_data_size ) ) < 0)
+cond	22:12	22:72	7	( ret =rm_read_extradata (pb ,st -> codec ,codec_data_size ) ) < 0
+water	22:12	0:0	8	(
+water	22:13	0:0	8	ret
+op	22:17	0:0	8	=
+call	22:19	22:67	8	rm_read_extradata
+arg	22:37	22:39	9	pb
+water	22:37	0:0	10	pb
+arg	22:41	22:50	9	st->codec
+water	22:41	0:0	10	st
+op	22:43	0:0	10	->
+water	22:45	0:0	10	codec
+arg	22:52	22:67	9	codec_data_size
+water	22:52	0:0	10	codec_data_size
+water	22:68	0:0	8	)
+op	22:70	0:0	8	<
+water	22:72	0:0	8	0
+stmts	23:12	23:22	7	
+return	23:12	23:22	8	ret
+water	23:19	0:0	9	ret
+water	24:8	0:0	6	st
+op	24:10	0:0	6	->
+water	24:12	0:0	6	codec
+op	24:17	0:0	6	->
+water	24:19	0:0	6	codec_type
+op	24:30	0:0	6	=
+water	24:32	0:0	6	AVMEDIA_TYPE_AUDIO
+water	24:50	0:0	6	;
+water	25:8	0:0	6	st
+op	25:10	0:0	6	->
+water	25:12	0:0	6	codec
+op	25:17	0:0	6	->
+water	25:19	0:0	6	codec_tag
+op	25:30	0:0	6	=
+call	25:32	25:60	6	AV_RL32
+arg	25:40	25:60	7	st->codec->extradata
+water	25:40	0:0	8	st
+op	25:42	0:0	8	->
+water	25:44	0:0	8	codec
+op	25:49	0:0	8	->
+water	25:51	0:0	8	extradata
+water	25:61	0:0	6	;
+water	26:8	0:0	6	st
+op	26:10	0:0	6	->
+water	26:12	0:0	6	codec
+op	26:17	0:0	6	->
+water	26:19	0:0	6	codec_id
+op	26:30	0:0	6	=
+call	26:32	27:68	6	ff_codec_get_id
+arg	26:48	26:64	7	ff_rm_codec_tags
+water	26:48	0:0	8	ff_rm_codec_tags
+arg	27:48	27:68	7	st->codec->codec_tag
+water	27:48	0:0	8	st
+op	27:50	0:0	8	->
+water	27:52	0:0	8	codec
+op	27:57	0:0	8	->
+water	27:59	0:0	8	codec_tag
+water	27:69	0:0	6	;
+water	28:4	0:0	6	}
+else	28:6	55:4	2
+stmts	28:11	55:4	3	
+if	28:11	55:4	4	(mime && !strcmp (mime ,"logical-fileinfo" ))
+cond	28:14	28:54	5	mime && !strcmp (mime ,"logical-fileinfo" )
+water	28:14	0:0	6	mime
+op	28:19	0:0	6	&&
+op	28:22	0:0	6	!
+call	28:23	28:54	6	strcmp
+arg	28:30	28:34	7	mime
+water	28:30	0:0	8	mime
+arg	28:36	28:54	7	"logical-fileinfo"
+water	28:36	0:0	8	"logical-fileinfo"
+stmts	28:56	55:4	5	
+water	28:56	0:0	6	{
+decl	29:8	29:55	6	int	stream_count
+water	29:24	0:0	6	,
+decl	29:8	29:55	6	int	rule_count
+water	29:36	0:0	6	,
+decl	29:8	29:55	6	int	property_count
+water	29:52	0:0	6	,
+decl	29:8	29:55	6	int	i
+call	30:8	30:28	6	ff_free_stream
+arg	30:23	30:24	7	s
+water	30:23	0:0	8	s
+arg	30:26	30:28	7	st
+water	30:26	0:0	8	st
+water	30:29	0:0	6	;
+if	31:8	34:8	6	(avio_rb16 (pb ) != 0)
+cond	31:12	31:29	7	avio_rb16 (pb ) != 0
+call	31:12	31:24	8	avio_rb16
+arg	31:22	31:24	9	pb
+water	31:22	0:0	10	pb
+op	31:26	0:0	8	!=
+water	31:29	0:0	8	0
+stmts	31:32	34:8	7	
+water	31:32	0:0	8	{
+call	32:12	32:61	8	av_log
+arg	32:19	32:20	9	s
+water	32:19	0:0	10	s
+arg	32:22	32:36	9	AV_LOG_WARNING
+water	32:22	0:0	10	AV_LOG_WARNING
+arg	32:38	32:61	9	"Unsupported version\n"
+water	32:38	0:0	10	"Unsupported version\n"
+water	32:62	0:0	8	;
+goto	33:12	33:21	8	skip
+water	33:17	0:0	9	skip
+water	34:8	0:0	8	}
+water	35:8	0:0	6	stream_count
+op	35:21	0:0	6	=
+call	35:23	35:35	6	avio_rb16
+arg	35:33	35:35	7	pb
+water	35:33	0:0	8	pb
+water	35:36	0:0	6	;
+call	36:8	36:36	6	avio_skip
+arg	36:18	36:20	7	pb
+water	36:18	0:0	8	pb
+arg	36:22	36:36	7	6*stream_count
+water	36:22	0:0	8	6
+op	36:23	0:0	8	*
+water	36:24	0:0	8	stream_count
+water	36:37	0:0	6	;
+water	37:8	0:0	6	rule_count
+op	37:19	0:0	6	=
+call	37:21	37:33	6	avio_rb16
+arg	37:31	37:33	7	pb
+water	37:31	0:0	8	pb
+water	37:34	0:0	6	;
+call	38:8	38:34	6	avio_skip
+arg	38:18	38:20	7	pb
+water	38:18	0:0	8	pb
+arg	38:22	38:34	7	2*rule_count
+water	38:22	0:0	8	2
+op	38:23	0:0	8	*
+water	38:24	0:0	8	rule_count
+water	38:35	0:0	6	;
+water	39:8	0:0	6	property_count
+op	39:23	0:0	6	=
+call	39:25	39:37	6	avio_rb16
+arg	39:35	39:37	7	pb
+water	39:35	0:0	8	pb
+water	39:38	0:0	6	;
+for	40:8	54:8	6	(i = 0 ;i < property_count;i ++)
+forinit	40:12	40:15	7	i = 0 ;
+water	40:12	0:0	8	i
+op	40:13	0:0	8	=
+water	40:14	0:0	8	0
+water	40:15	0:0	8	;
+cond	40:17	40:19	7	i < property_count
+water	40:17	0:0	8	i
+op	40:18	0:0	8	<
+water	40:19	0:0	8	property_count
+forexpr	40:35	40:36	7	i ++
+water	40:35	0:0	8	i
+op	40:36	0:0	8	++
+stmts	40:39	54:8	7	
+water	40:39	0:0	8	{
+decl	41:12	41:39	8	uint8_t	name[128]
+water	41:29	0:0	8	,
+decl	41:12	41:39	8	uint8_t	val[128]
+call	42:12	42:24	8	avio_rb32
+arg	42:22	42:24	9	pb
+water	42:22	0:0	10	pb
+water	42:25	0:0	8	;
+if	43:12	46:12	8	(avio_rb16 (pb ) != 0)
+cond	43:16	43:33	9	avio_rb16 (pb ) != 0
+call	43:16	43:28	10	avio_rb16
+arg	43:26	43:28	11	pb
+water	43:26	0:0	12	pb
+op	43:30	0:0	10	!=
+water	43:33	0:0	10	0
+stmts	43:36	46:12	9	
+water	43:36	0:0	10	{
+call	44:16	44:85	10	av_log
+arg	44:23	44:24	11	s
+water	44:23	0:0	12	s
+arg	44:26	44:40	11	AV_LOG_WARNING
+water	44:26	0:0	12	AV_LOG_WARNING
+arg	44:42	44:85	11	"Unsupported Name value property version\n"
+water	44:42	0:0	12	"Unsupported Name value property version\n"
+water	44:86	0:0	10	;
+goto	45:16	45:25	10	skip
+water	45:21	0:0	11	skip
+water	46:12	0:0	10	}
+call	47:12	47:43	8	get_str8
+arg	47:21	47:23	9	pb
+water	47:21	0:0	10	pb
+arg	47:25	47:29	9	name
+water	47:25	0:0	10	name
+arg	47:31	47:43	9	sizeof(name)
+op	47:31	0:0	10	sizeof
+water	47:37	0:0	10	(
+water	47:38	0:0	10	name
+water	47:42	0:0	10	)
+water	47:44	0:0	8	;
+switch	48:12	53:12	8	(avio_rb32 (pb ))
+cond	48:19	48:31	9	avio_rb32 (pb )
+call	48:19	48:31	10	avio_rb32
+arg	48:29	48:31	11	pb
+water	48:29	0:0	12	pb
+stmts	48:34	53:12	9	
+water	48:34	0:0	10	{
+label	49:12	49:18	10	case 2 :
+call	49:20	49:64	10	get_strl
+arg	49:29	49:31	11	pb
+water	49:29	0:0	12	pb
+arg	49:33	49:36	11	val
+water	49:33	0:0	12	val
+arg	49:38	49:49	11	sizeof(val)
+op	49:38	0:0	12	sizeof
+water	49:44	0:0	12	(
+water	49:45	0:0	12	val
+water	49:48	0:0	12	)
+arg	49:51	49:64	11	avio_rb16(pb)
+call	49:51	49:63	12	avio_rb16
+arg	49:61	49:63	13	pb
+water	49:61	0:0	14	pb
+water	49:65	0:0	10	;
+call	50:16	50:54	10	av_dict_set
+arg	50:28	50:40	11	&s->metadata
+op	50:28	0:0	12	&
+water	50:29	0:0	12	s
+op	50:30	0:0	12	->
+water	50:32	0:0	12	metadata
+arg	50:42	50:46	11	name
+water	50:42	0:0	12	name
+arg	50:48	50:51	11	val
+water	50:48	0:0	12	val
+arg	50:53	50:54	11	0
+water	50:53	0:0	12	0
+water	50:55	0:0	10	;
+break	51:16	51:21	10	
+label	52:12	52:19	10	default :
+call	52:21	52:48	10	avio_skip
+arg	52:31	52:33	11	pb
+water	52:31	0:0	12	pb
+arg	52:35	52:48	11	avio_rb16(pb)
+call	52:35	52:47	12	avio_rb16
+arg	52:45	52:47	13	pb
+water	52:45	0:0	14	pb
+water	52:49	0:0	10	;
+water	53:12	0:0	10	}
+water	54:8	0:0	8	}
+water	55:4	0:0	6	}
+else	55:6	87:4	2
+stmts	55:11	87:4	3	
+water	55:11	0:0	4	{
+decl	56:8	56:15	4	int	fps
+if	57:8	61:8	4	(avio_rl32 (pb ) !=MKTAG ('V' ,'I' ,'D' ,'O' ))
+cond	57:12	57:53	5	avio_rl32 (pb ) !=MKTAG ('V' ,'I' ,'D' ,'O' )
+call	57:12	57:24	6	avio_rl32
+arg	57:22	57:24	7	pb
+water	57:22	0:0	8	pb
+op	57:26	0:0	6	!=
+call	57:29	57:53	6	MKTAG
+arg	57:35	57:38	7	'V'
+water	57:35	0:0	8	'V'
+arg	57:40	57:43	7	'I'
+water	57:40	0:0	8	'I'
+arg	57:45	57:48	7	'D'
+water	57:45	0:0	8	'D'
+arg	57:50	57:53	7	'O'
+water	57:50	0:0	8	'O'
+stmts	57:56	61:8	5	
+water	57:56	0:0	6	{
+label	58:8	58:13	6	fail1 :
+call	59:12	59:73	6	av_log
+arg	59:19	59:20	7	s
+water	59:19	0:0	8	s
+arg	59:22	59:36	7	AV_LOG_WARNING
+water	59:22	0:0	8	AV_LOG_WARNING
+arg	59:38	59:70	7	"Unsupported stream type %08x\n"
+water	59:38	0:0	8	"Unsupported stream type %08x\n"
+arg	59:72	59:73	7	v
+water	59:72	0:0	8	v
+water	59:74	0:0	6	;
+goto	60:12	60:21	6	skip
+water	60:17	0:0	7	skip
+water	61:8	0:0	6	}
+water	62:8	0:0	4	st
+op	62:10	0:0	4	->
+water	62:12	0:0	4	codec
+op	62:17	0:0	4	->
+water	62:19	0:0	4	codec_tag
+op	62:29	0:0	4	=
+call	62:31	62:43	4	avio_rl32
+arg	62:41	62:43	5	pb
+water	62:41	0:0	6	pb
+water	62:44	0:0	4	;
+water	63:8	0:0	4	st
+op	63:10	0:0	4	->
+water	63:12	0:0	4	codec
+op	63:17	0:0	4	->
+water	63:19	0:0	4	codec_id
+op	63:29	0:0	4	=
+call	63:31	64:67	4	ff_codec_get_id
+arg	63:47	63:63	5	ff_rm_codec_tags
+water	63:47	0:0	6	ff_rm_codec_tags
+arg	64:47	64:67	5	st->codec->codec_tag
+water	64:47	0:0	6	st
+op	64:49	0:0	6	->
+water	64:51	0:0	6	codec
+op	64:56	0:0	6	->
+water	64:58	0:0	6	codec_tag
+water	64:68	0:0	4	;
+call	65:8	65:90	4	av_log
+arg	65:15	65:16	5	s
+water	65:15	0:0	6	s
+arg	65:18	65:30	5	AV_LOG_TRACE
+water	65:18	0:0	6	AV_LOG_TRACE
+arg	65:32	65:41	5	"%X %X\n"
+water	65:32	0:0	6	"%X %X\n"
+arg	65:43	65:63	5	st->codec->codec_tag
+water	65:43	0:0	6	st
+op	65:45	0:0	6	->
+water	65:47	0:0	6	codec
+op	65:52	0:0	6	->
+water	65:54	0:0	6	codec_tag
+arg	65:65	65:90	5	MKTAG('R','V','2','0')
+call	65:65	65:89	6	MKTAG
+arg	65:71	65:74	7	'R'
+water	65:71	0:0	8	'R'
+arg	65:76	65:79	7	'V'
+water	65:76	0:0	8	'V'
+arg	65:81	65:84	7	'2'
+water	65:81	0:0	8	'2'
+arg	65:86	65:89	7	'0'
+water	65:86	0:0	8	'0'
+water	65:91	0:0	4	;
+if	66:8	67:22	4	(st -> codec -> codec_id == AV_CODEC_ID_NONE)
+cond	66:12	66:35	5	st -> codec -> codec_id == AV_CODEC_ID_NONE
+water	66:12	0:0	6	st
+op	66:14	0:0	6	->
+water	66:16	0:0	6	codec
+op	66:21	0:0	6	->
+water	66:23	0:0	6	codec_id
+op	66:32	0:0	6	==
+water	66:35	0:0	6	AV_CODEC_ID_NONE
+stmts	67:12	67:22	5	
+goto	67:12	67:22	6	fail1
+water	67:17	0:0	7	fail1
+water	68:8	0:0	4	st
+op	68:10	0:0	4	->
+water	68:12	0:0	4	codec
+op	68:17	0:0	4	->
+water	68:19	0:0	4	width
+op	68:26	0:0	4	=
+call	68:28	68:40	4	avio_rb16
+arg	68:38	68:40	5	pb
+water	68:38	0:0	6	pb
+water	68:41	0:0	4	;
+water	69:8	0:0	4	st
+op	69:10	0:0	4	->
+water	69:12	0:0	4	codec
+op	69:17	0:0	4	->
+water	69:19	0:0	4	height
+op	69:26	0:0	4	=
+call	69:28	69:40	4	avio_rb16
+arg	69:38	69:40	5	pb
+water	69:38	0:0	6	pb
+water	69:41	0:0	4	;
+call	70:8	70:23	4	avio_skip
+arg	70:18	70:20	5	pb
+water	70:18	0:0	6	pb
+arg	70:22	70:23	5	2
+water	70:22	0:0	6	2
+water	70:24	0:0	4	;
+call	71:8	71:23	4	avio_skip
+arg	71:18	71:20	5	pb
+water	71:18	0:0	6	pb
+arg	71:22	71:23	5	4
+water	71:22	0:0	6	4
+water	71:24	0:0	4	;
+water	72:8	0:0	4	st
+op	72:10	0:0	4	->
+water	72:12	0:0	4	codec
+op	72:17	0:0	4	->
+water	72:19	0:0	4	codec_type
+op	72:30	0:0	4	=
+water	72:32	0:0	4	AVMEDIA_TYPE_VIDEO
+water	72:50	0:0	4	;
+water	73:8	0:0	4	st
+op	73:10	0:0	4	->
+water	73:12	0:0	4	need_parsing
+op	73:25	0:0	4	=
+water	73:27	0:0	4	AVSTREAM_PARSE_TIMESTAMPS
+water	73:52	0:0	4	;
+water	74:8	0:0	4	fps
+op	74:12	0:0	4	=
+call	74:14	74:26	4	avio_rb32
+arg	74:24	74:26	5	pb
+water	74:24	0:0	6	pb
+water	74:27	0:0	4	;
+if	75:8	76:22	4	(( ret =rm_read_extradata (pb ,st -> codec ,codec_data_size - (avio_tell (pb ) - codec_pos ) ) ) < 0)
+cond	75:12	75:102	5	( ret =rm_read_extradata (pb ,st -> codec ,codec_data_size - (avio_tell (pb ) - codec_pos ) ) ) < 0
+water	75:12	0:0	6	(
+water	75:13	0:0	6	ret
+op	75:17	0:0	6	=
+call	75:19	75:97	6	rm_read_extradata
+arg	75:37	75:39	7	pb
+water	75:37	0:0	8	pb
+arg	75:41	75:50	7	st->codec
+water	75:41	0:0	8	st
+op	75:43	0:0	8	->
+water	75:45	0:0	8	codec
+arg	75:52	75:97	7	codec_data_size-(avio_tell(pb)-codec_pos)
+water	75:52	0:0	8	codec_data_size
+op	75:68	0:0	8	-
+water	75:70	0:0	8	(
+call	75:71	75:83	8	avio_tell
+arg	75:81	75:83	9	pb
+water	75:81	0:0	10	pb
+op	75:85	0:0	8	-
+water	75:87	0:0	8	codec_pos
+water	75:96	0:0	8	)
+water	75:98	0:0	6	)
+op	75:100	0:0	6	<
+water	75:102	0:0	6	0
+stmts	76:12	76:22	5	
+return	76:12	76:22	6	ret
+water	76:19	0:0	7	ret
+if	77:8	83:8	4	(fps > 0)
+cond	77:12	77:18	5	fps > 0
+water	77:12	0:0	6	fps
+op	77:16	0:0	6	>
+water	77:18	0:0	6	0
+stmts	77:21	83:8	5	
+water	77:21	0:0	6	{
+call	78:12	79:49	6	av_reduce
+arg	78:22	78:45	7	&st->avg_frame_rate.den
+op	78:22	0:0	8	&
+water	78:23	0:0	8	st
+op	78:25	0:0	8	->
+water	78:27	0:0	8	avg_frame_rate
+op	78:41	0:0	8	.
+water	78:42	0:0	8	den
+arg	78:47	78:70	7	&st->avg_frame_rate.num
+op	78:47	0:0	8	&
+water	78:48	0:0	8	st
+op	78:50	0:0	8	->
+water	78:52	0:0	8	avg_frame_rate
+op	78:66	0:0	8	.
+water	78:67	0:0	8	num
+arg	79:22	79:29	7	0x10000
+water	79:22	0:0	8	0
+water	79:23	0:0	8	x10000
+arg	79:31	79:34	7	fps
+water	79:31	0:0	8	fps
+arg	79:36	79:49	7	(1<<30)-1
+water	79:36	0:0	8	(
+water	79:37	0:0	8	1
+op	79:39	0:0	8	<<
+water	79:42	0:0	8	30
+water	79:44	0:0	8	)
+op	79:46	0:0	8	-
+water	79:48	0:0	8	1
+water	79:50	0:0	6	;
+water	81:12	0:0	6	st
+op	81:14	0:0	6	->
+water	81:16	0:0	6	r_frame_rate
+op	81:29	0:0	6	=
+water	81:31	0:0	6	st
+op	81:33	0:0	6	->
+water	81:35	0:0	6	avg_frame_rate
+water	81:49	0:0	6	;
+water	83:8	0:0	6	}
+else	83:10	86:8	4
+stmts	83:15	86:8	5	
+if	83:15	86:8	6	(s -> error_recognition & AV_EF_EXPLODE)
+cond	83:19	83:42	7	s -> error_recognition & AV_EF_EXPLODE
+water	83:19	0:0	8	s
+op	83:20	0:0	8	->
+water	83:22	0:0	8	error_recognition
+op	83:40	0:0	8	&
+water	83:42	0:0	8	AV_EF_EXPLODE
+stmts	83:57	86:8	7	
+water	83:57	0:0	8	{
+call	84:12	84:57	8	av_log
+arg	84:19	84:20	9	s
+water	84:19	0:0	10	s
+arg	84:22	84:34	9	AV_LOG_ERROR
+water	84:22	0:0	10	AV_LOG_ERROR
+arg	84:36	84:57	9	"Invalid framerate\n"
+water	84:36	0:0	10	"Invalid framerate\n"
+water	84:58	0:0	8	;
+return	85:12	85:38	8	AVERROR_INVALIDDATA
+water	85:19	0:0	9	AVERROR_INVALIDDATA
+water	86:8	0:0	8	}
+water	87:4	0:0	4	}
+label	88:0	88:4	2	skip :
+water	90:4	0:0	2	size
+op	90:9	0:0	2	=
+call	90:11	90:23	2	avio_tell
+arg	90:21	90:23	3	pb
+water	90:21	0:0	4	pb
+op	90:25	0:0	2	-
+water	90:27	0:0	2	codec_pos
+water	90:36	0:0	2	;
+if	91:4	93:4	2	(codec_data_size >= size)
+cond	91:8	91:27	3	codec_data_size >= size
+water	91:8	0:0	4	codec_data_size
+op	91:24	0:0	4	>=
+water	91:27	0:0	4	size
+stmts	91:33	93:4	3	
+water	91:33	0:0	4	{
+call	92:8	92:44	4	avio_skip
+arg	92:18	92:20	5	pb
+water	92:18	0:0	6	pb
+arg	92:22	92:44	5	codec_data_size-size
+water	92:22	0:0	6	codec_data_size
+op	92:38	0:0	6	-
+water	92:40	0:0	6	size
+water	92:45	0:0	4	;
+water	93:4	0:0	4	}
+else	93:6	95:4	2
+stmts	93:11	95:4	3	
+water	93:11	0:0	4	{
+call	94:8	94:89	4	av_log
+arg	94:15	94:16	5	s
+water	94:15	0:0	6	s
+arg	94:18	94:32	5	AV_LOG_WARNING
+water	94:18	0:0	6	AV_LOG_WARNING
+arg	94:34	94:66	5	"codec_data_size %u < size %d\n"
+water	94:34	0:0	6	"codec_data_size %u < size %d\n"
+arg	94:68	94:83	5	codec_data_size
+water	94:68	0:0	6	codec_data_size
+arg	94:85	94:89	5	size
+water	94:85	0:0	6	size
+water	94:90	0:0	4	;
+water	95:4	0:0	4	}
+return	96:4	96:12	2	0
+water	96:11	0:0	3	0

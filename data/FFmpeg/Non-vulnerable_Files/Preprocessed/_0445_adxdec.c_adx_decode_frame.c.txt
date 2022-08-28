@@ -1,0 +1,356 @@
+func	1:0	66:0	0	static int	adx_decode_frame
+params	1:27	0:0	1	
+param	1:28	1:49	2	AVCodecContext *	avctx
+param	1:51	1:61	2	void *	data
+param	2:28	2:46	2	int *	got_frame_ptr
+param	2:48	2:63	2	AVPacket *	avpkt
+stmnts	0:0	65:28	1	
+decl	4:4	4:30	2	AVFrame	*frame
+op	4:24	0:0	2	=
+water	4:26	0:0	2	data
+decl	5:4	5:37	2	int	buf_size
+op	5:24	0:0	2	=
+water	5:26	0:0	2	avpkt
+op	5:31	0:0	2	->
+water	5:33	0:0	2	size
+decl	6:4	6:42	2	ADXContext	*c
+op	6:24	0:0	2	=
+water	6:26	0:0	2	avctx
+op	6:31	0:0	2	->
+water	6:33	0:0	2	priv_data
+decl	7:4	7:21	2	int16_t	**samples
+decl	8:4	8:22	2	int	samples_offset
+decl	9:4	9:37	2	const uint8_t	*buf
+op	9:24	0:0	2	=
+water	9:26	0:0	2	avpkt
+op	9:31	0:0	2	->
+water	9:33	0:0	2	data
+decl	10:4	10:46	2	const uint8_t	*buf_end
+op	10:27	0:0	2	=
+water	10:29	0:0	2	buf
+op	10:33	0:0	2	+
+water	10:35	0:0	2	avpkt
+op	10:40	0:0	2	->
+water	10:42	0:0	2	size
+decl	11:4	11:27	2	int	num_blocks
+water	11:18	0:0	2	,
+decl	11:4	11:27	2	int	ch
+water	11:22	0:0	2	,
+decl	11:4	11:27	2	int	ret
+if	12:4	15:4	2	(c -> eof)
+cond	12:8	12:11	3	c -> eof
+water	12:8	0:0	4	c
+op	12:9	0:0	4	->
+water	12:11	0:0	4	eof
+stmts	12:16	15:4	3	
+water	12:16	0:0	4	{
+op	13:8	0:0	4	*
+water	13:9	0:0	4	got_frame_ptr
+op	13:23	0:0	4	=
+water	13:25	0:0	4	0
+water	13:26	0:0	4	;
+return	14:8	14:23	4	buf_size
+water	14:15	0:0	5	buf_size
+water	15:4	0:0	4	}
+if	16:4	29:4	2	(! c -> header_parsed && buf_size >= 2 &&AV_RB16 (buf ) == 0 x8000)
+cond	16:8	16:63	3	! c -> header_parsed && buf_size >= 2 &&AV_RB16 (buf ) == 0 x8000
+op	16:8	0:0	4	!
+water	16:9	0:0	4	c
+op	16:10	0:0	4	->
+water	16:12	0:0	4	header_parsed
+op	16:26	0:0	4	&&
+water	16:29	0:0	4	buf_size
+op	16:38	0:0	4	>=
+water	16:41	0:0	4	2
+op	16:43	0:0	4	&&
+call	16:46	16:57	4	AV_RB16
+arg	16:54	16:57	5	buf
+water	16:54	0:0	6	buf
+op	16:59	0:0	4	==
+water	16:62	0:0	4	0
+water	16:63	0:0	4	x8000
+stmts	16:70	29:4	3	
+water	16:70	0:0	4	{
+decl	17:8	17:23	4	int	header_size
+if	18:8	22:8	4	(( ret =ff_adx_decode_header (avctx ,buf ,buf_size ,& header_size ,c -> coeff ) ) < 0)
+cond	18:12	19:53	5	( ret =ff_adx_decode_header (avctx ,buf ,buf_size ,& header_size ,c -> coeff ) ) < 0
+water	18:12	0:0	6	(
+water	18:13	0:0	6	ret
+op	18:17	0:0	6	=
+call	18:19	19:48	6	ff_adx_decode_header
+arg	18:40	18:45	7	avctx
+water	18:40	0:0	8	avctx
+arg	18:47	18:50	7	buf
+water	18:47	0:0	8	buf
+arg	18:52	18:60	7	buf_size
+water	18:52	0:0	8	buf_size
+arg	18:62	18:74	7	&header_size
+op	18:62	0:0	8	&
+water	18:63	0:0	8	header_size
+arg	19:40	19:48	7	c->coeff
+water	19:40	0:0	8	c
+op	19:41	0:0	8	->
+water	19:43	0:0	8	coeff
+water	19:49	0:0	6	)
+op	19:51	0:0	6	<
+water	19:53	0:0	6	0
+stmts	19:56	22:8	5	
+water	19:56	0:0	6	{
+call	20:12	20:68	6	av_log
+arg	20:19	20:24	7	avctx
+water	20:19	0:0	8	avctx
+arg	20:26	20:38	7	AV_LOG_ERROR
+water	20:26	0:0	8	AV_LOG_ERROR
+arg	20:40	20:68	7	"error parsing ADX header\n"
+water	20:40	0:0	8	"error parsing ADX header\n"
+water	20:69	0:0	6	;
+return	21:12	21:38	6	AVERROR_INVALIDDATA
+water	21:19	0:0	7	AVERROR_INVALIDDATA
+water	22:8	0:0	6	}
+water	23:8	0:0	4	c
+op	23:9	0:0	4	->
+water	23:11	0:0	4	channels
+op	23:25	0:0	4	=
+water	23:27	0:0	4	avctx
+op	23:32	0:0	4	->
+water	23:34	0:0	4	channels
+water	23:42	0:0	4	;
+water	24:8	0:0	4	c
+op	24:9	0:0	4	->
+water	24:11	0:0	4	header_parsed
+op	24:25	0:0	4	=
+water	24:27	0:0	4	1
+water	24:28	0:0	4	;
+if	25:8	26:38	4	(buf_size < header_size)
+cond	25:12	25:23	5	buf_size < header_size
+water	25:12	0:0	6	buf_size
+op	25:21	0:0	6	<
+water	25:23	0:0	6	header_size
+stmts	26:12	26:38	5	
+return	26:12	26:38	6	AVERROR_INVALIDDATA
+water	26:19	0:0	7	AVERROR_INVALIDDATA
+water	27:8	0:0	4	buf
+op	27:17	0:0	4	+=
+water	27:20	0:0	4	header_size
+water	27:31	0:0	4	;
+water	28:8	0:0	4	buf_size
+op	28:17	0:0	4	-=
+water	28:20	0:0	4	header_size
+water	28:31	0:0	4	;
+water	29:4	0:0	4	}
+if	30:4	31:34	2	(! c -> header_parsed)
+cond	30:8	30:12	3	! c -> header_parsed
+op	30:8	0:0	4	!
+water	30:9	0:0	4	c
+op	30:10	0:0	4	->
+water	30:12	0:0	4	header_parsed
+stmts	31:8	31:34	3	
+return	31:8	31:34	4	AVERROR_INVALIDDATA
+water	31:15	0:0	5	AVERROR_INVALIDDATA
+water	33:4	0:0	2	num_blocks
+op	33:15	0:0	2	=
+water	33:17	0:0	2	buf_size
+op	33:26	0:0	2	/
+water	33:28	0:0	2	(
+water	33:29	0:0	2	BLOCK_SIZE
+op	33:40	0:0	2	*
+water	33:42	0:0	2	c
+op	33:43	0:0	2	->
+water	33:45	0:0	2	channels
+water	33:53	0:0	2	)
+water	33:54	0:0	2	;
+if	36:4	43:4	2	(! num_blocks || buf_size % ( BLOCK_SIZE * avctx -> channels ))
+cond	36:8	36:63	3	! num_blocks || buf_size % ( BLOCK_SIZE * avctx -> channels )
+op	36:8	0:0	4	!
+water	36:9	0:0	4	num_blocks
+op	36:20	0:0	4	||
+water	36:23	0:0	4	buf_size
+op	36:32	0:0	4	%
+water	36:34	0:0	4	(
+water	36:35	0:0	4	BLOCK_SIZE
+op	36:46	0:0	4	*
+water	36:48	0:0	4	avctx
+op	36:53	0:0	4	->
+water	36:55	0:0	4	channels
+water	36:63	0:0	4	)
+stmts	36:66	43:4	3	
+water	36:66	0:0	4	{
+if	37:8	41:8	4	(buf_size >= 4 && (AV_RB16 (buf ) & 0 x8000 ))
+cond	37:12	37:51	5	buf_size >= 4 && (AV_RB16 (buf ) & 0 x8000 )
+water	37:12	0:0	6	buf_size
+op	37:21	0:0	6	>=
+water	37:24	0:0	6	4
+op	37:26	0:0	6	&&
+water	37:29	0:0	6	(
+call	37:30	37:41	6	AV_RB16
+arg	37:38	37:41	7	buf
+water	37:38	0:0	8	buf
+op	37:43	0:0	6	&
+water	37:45	0:0	6	0
+water	37:46	0:0	6	x8000
+water	37:51	0:0	6	)
+stmts	37:54	41:8	5	
+water	37:54	0:0	6	{
+water	38:12	0:0	6	c
+op	38:13	0:0	6	->
+water	38:15	0:0	6	eof
+op	38:19	0:0	6	=
+water	38:21	0:0	6	1
+water	38:22	0:0	6	;
+op	39:12	0:0	6	*
+water	39:13	0:0	6	got_frame_ptr
+op	39:27	0:0	6	=
+water	39:29	0:0	6	0
+water	39:30	0:0	6	;
+return	40:12	40:30	6	avpkt->size
+water	40:19	0:0	7	avpkt
+op	40:24	0:0	7	->
+water	40:26	0:0	7	size
+water	41:8	0:0	6	}
+return	42:8	42:34	4	AVERROR_INVALIDDATA
+water	42:15	0:0	5	AVERROR_INVALIDDATA
+water	43:4	0:0	4	}
+water	45:4	0:0	2	frame
+op	45:9	0:0	2	->
+water	45:11	0:0	2	nb_samples
+op	45:22	0:0	2	=
+water	45:24	0:0	2	num_blocks
+op	45:35	0:0	2	*
+water	45:37	0:0	2	BLOCK_SAMPLES
+water	45:50	0:0	2	;
+if	46:4	47:18	2	(( ret =ff_get_buffer (avctx ,frame ,0 ) ) < 0)
+cond	46:8	46:49	3	( ret =ff_get_buffer (avctx ,frame ,0 ) ) < 0
+water	46:8	0:0	4	(
+water	46:9	0:0	4	ret
+op	46:13	0:0	4	=
+call	46:15	46:44	4	ff_get_buffer
+arg	46:29	46:34	5	avctx
+water	46:29	0:0	6	avctx
+arg	46:36	46:41	5	frame
+water	46:36	0:0	6	frame
+arg	46:43	46:44	5	0
+water	46:43	0:0	6	0
+water	46:45	0:0	4	)
+op	46:47	0:0	4	<
+water	46:49	0:0	4	0
+stmts	47:8	47:18	3	
+return	47:8	47:18	4	ret
+water	47:15	0:0	5	ret
+water	48:4	0:0	2	samples
+op	48:12	0:0	2	=
+water	48:14	0:0	2	(
+water	48:15	0:0	2	int16_t
+op	48:23	0:0	2	*
+op	48:24	0:0	2	*
+water	48:25	0:0	2	)
+water	48:26	0:0	2	frame
+op	48:31	0:0	2	->
+water	48:33	0:0	2	extended_data
+water	48:46	0:0	2	;
+water	49:4	0:0	2	samples_offset
+op	49:19	0:0	2	=
+water	49:21	0:0	2	0
+water	49:22	0:0	2	;
+while	50:4	62:4	2	(num_blocks --)
+cond	50:11	50:21	3	num_blocks --
+water	50:11	0:0	4	num_blocks
+op	50:21	0:0	4	--
+stmts	50:25	62:4	3	
+water	50:25	0:0	4	{
+for	51:8	59:8	4	(ch = 0 ;ch < c -> channels;ch ++)
+forinit	51:13	51:19	5	ch = 0 ;
+water	51:13	0:0	6	ch
+op	51:16	0:0	6	=
+water	51:18	0:0	6	0
+water	51:19	0:0	6	;
+cond	51:21	51:29	5	ch < c -> channels
+water	51:21	0:0	6	ch
+op	51:24	0:0	6	<
+water	51:26	0:0	6	c
+op	51:27	0:0	6	->
+water	51:29	0:0	6	channels
+forexpr	51:39	51:41	5	ch ++
+water	51:39	0:0	6	ch
+op	51:41	0:0	6	++
+stmts	51:45	59:8	5	
+water	51:45	0:0	6	{
+if	52:12	56:12	6	(buf_end - buf < BLOCK_SIZE ||adx_decode (c ,samples [ ch ] ,samples_offset ,buf ,ch ))
+cond	52:16	52:96	7	buf_end - buf < BLOCK_SIZE ||adx_decode (c ,samples [ ch ] ,samples_offset ,buf ,ch )
+water	52:16	0:0	8	buf_end
+op	52:24	0:0	8	-
+water	52:26	0:0	8	buf
+op	52:30	0:0	8	<
+water	52:32	0:0	8	BLOCK_SIZE
+op	52:43	0:0	8	||
+call	52:46	52:96	8	adx_decode
+arg	52:57	52:58	9	c
+water	52:57	0:0	10	c
+arg	52:60	52:71	9	samples[ch]
+water	52:60	0:0	10	samples
+op	52:67	0:0	10	[
+water	52:68	0:0	10	ch
+op	52:70	0:0	10	]
+arg	52:73	52:87	9	samples_offset
+water	52:73	0:0	10	samples_offset
+arg	52:89	52:92	9	buf
+water	52:89	0:0	10	buf
+arg	52:94	52:96	9	ch
+water	52:94	0:0	10	ch
+stmts	52:99	56:12	7	
+water	52:99	0:0	8	{
+water	53:16	0:0	8	c
+op	53:17	0:0	8	->
+water	53:19	0:0	8	eof
+op	53:23	0:0	8	=
+water	53:25	0:0	8	1
+water	53:26	0:0	8	;
+water	54:16	0:0	8	buf
+op	54:20	0:0	8	=
+water	54:22	0:0	8	avpkt
+op	54:27	0:0	8	->
+water	54:29	0:0	8	data
+op	54:34	0:0	8	+
+water	54:36	0:0	8	avpkt
+op	54:41	0:0	8	->
+water	54:43	0:0	8	size
+water	54:47	0:0	8	;
+break	55:16	55:21	8	
+water	56:12	0:0	8	}
+water	57:12	0:0	6	buf_size
+op	57:21	0:0	6	-=
+water	57:24	0:0	6	BLOCK_SIZE
+water	57:34	0:0	6	;
+water	58:12	0:0	6	buf
+op	58:21	0:0	6	+=
+water	58:24	0:0	6	BLOCK_SIZE
+water	58:34	0:0	6	;
+water	59:8	0:0	6	}
+if	60:8	61:43	4	(! c -> eof)
+cond	60:12	60:16	5	! c -> eof
+op	60:12	0:0	6	!
+water	60:13	0:0	6	c
+op	60:14	0:0	6	->
+water	60:16	0:0	6	eof
+stmts	61:12	61:43	5	
+water	61:12	0:0	6	samples_offset
+op	61:27	0:0	6	+=
+water	61:30	0:0	6	BLOCK_SAMPLES
+water	61:43	0:0	6	;
+water	62:4	0:0	4	}
+water	63:4	0:0	2	frame
+op	63:9	0:0	2	->
+water	63:11	0:0	2	nb_samples
+op	63:22	0:0	2	=
+water	63:24	0:0	2	samples_offset
+water	63:38	0:0	2	;
+op	64:4	0:0	2	*
+water	64:5	0:0	2	got_frame_ptr
+op	64:19	0:0	2	=
+water	64:21	0:0	2	1
+water	64:22	0:0	2	;
+return	65:4	65:28	2	buf-avpkt->data
+water	65:11	0:0	3	buf
+op	65:15	0:0	3	-
+water	65:17	0:0	3	avpkt
+op	65:22	0:0	3	->
+water	65:24	0:0	3	data

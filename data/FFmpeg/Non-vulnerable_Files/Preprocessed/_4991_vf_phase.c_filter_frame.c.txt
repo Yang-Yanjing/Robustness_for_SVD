@@ -1,0 +1,288 @@
+func	1:0	44:0	0	static int	filter_frame
+params	1:23	0:0	1	
+param	1:24	1:44	2	AVFilterLink *	inlink
+param	1:46	1:57	2	AVFrame *	in
+stmnts	0:0	43:40	1	
+decl	3:4	3:38	2	AVFilterContext	*ctx
+op	3:25	0:0	2	=
+water	3:27	0:0	2	inlink
+op	3:33	0:0	2	->
+water	3:35	0:0	2	dst
+decl	4:4	4:43	2	AVFilterLink	*outlink
+op	4:26	0:0	2	=
+water	4:28	0:0	2	ctx
+op	4:31	0:0	2	->
+water	4:33	0:0	2	outputs
+op	4:40	0:0	2	[
+water	4:41	0:0	2	0
+op	4:42	0:0	2	]
+decl	5:4	5:31	2	PhaseContext	*s
+op	5:20	0:0	2	=
+water	5:22	0:0	2	ctx
+op	5:25	0:0	2	->
+water	5:27	0:0	2	priv
+decl	6:4	6:23	2	enum PhaseMode	mode
+decl	7:4	7:21	2	int	plane
+water	7:13	0:0	2	,
+decl	7:4	7:21	2	int	top
+water	7:18	0:0	2	,
+decl	7:4	7:21	2	int	y
+decl	8:4	8:16	2	AVFrame	*out
+if	9:4	16:4	2	(ctx -> is_disabled)
+cond	9:8	9:13	3	ctx -> is_disabled
+water	9:8	0:0	4	ctx
+op	9:11	0:0	4	->
+water	9:13	0:0	4	is_disabled
+stmts	9:26	16:4	3	
+water	9:26	0:0	4	{
+call	10:8	10:31	4	av_frame_free
+arg	10:22	10:31	5	&s->frame
+op	10:22	0:0	6	&
+water	10:23	0:0	6	s
+op	10:24	0:0	6	->
+water	10:26	0:0	6	frame
+water	10:32	0:0	4	;
+water	14:8	0:0	4	s
+op	14:9	0:0	4	->
+water	14:11	0:0	4	frame
+op	14:17	0:0	4	=
+call	14:19	14:36	4	av_frame_clone
+arg	14:34	14:36	5	in
+water	14:34	0:0	6	in
+water	14:37	0:0	4	;
+return	15:8	15:43	4	ff_filter_frame(outlink,in)
+call	15:15	15:42	5	ff_filter_frame
+arg	15:31	15:38	6	outlink
+water	15:31	0:0	7	outlink
+arg	15:40	15:42	6	in
+water	15:40	0:0	7	in
+water	16:4	0:0	4	}
+water	17:4	0:0	2	out
+op	17:8	0:0	2	=
+call	17:10	17:61	2	ff_get_video_buffer
+arg	17:30	17:37	3	outlink
+water	17:30	0:0	4	outlink
+arg	17:39	17:49	3	outlink->w
+water	17:39	0:0	4	outlink
+op	17:46	0:0	4	->
+water	17:48	0:0	4	w
+arg	17:51	17:61	3	outlink->h
+water	17:51	0:0	4	outlink
+op	17:58	0:0	4	->
+water	17:60	0:0	4	h
+water	17:62	0:0	2	;
+if	18:4	21:4	2	(! out)
+cond	18:8	18:9	3	! out
+op	18:8	0:0	4	!
+water	18:9	0:0	4	out
+stmts	18:14	21:4	3	
+water	18:14	0:0	4	{
+call	19:8	19:25	4	av_frame_free
+arg	19:22	19:25	5	&in
+op	19:22	0:0	6	&
+water	19:23	0:0	6	in
+water	19:26	0:0	4	;
+return	20:8	20:30	4	AVERROR(ENOMEM)
+call	20:15	20:29	5	AVERROR
+arg	20:23	20:29	6	ENOMEM
+water	20:23	0:0	7	ENOMEM
+water	21:4	0:0	4	}
+call	22:4	22:31	2	av_frame_copy_props
+arg	22:24	22:27	3	out
+water	22:24	0:0	4	out
+arg	22:29	22:31	3	in
+water	22:29	0:0	4	in
+water	22:32	0:0	2	;
+if	23:4	26:4	2	(! s -> frame)
+cond	23:8	23:12	3	! s -> frame
+op	23:8	0:0	4	!
+water	23:9	0:0	4	s
+op	23:10	0:0	4	->
+water	23:12	0:0	4	frame
+stmts	23:19	26:4	3	
+water	23:19	0:0	4	{
+water	24:8	0:0	4	s
+op	24:9	0:0	4	->
+water	24:11	0:0	4	frame
+op	24:17	0:0	4	=
+water	24:19	0:0	4	in
+water	24:21	0:0	4	;
+water	25:8	0:0	4	mode
+op	25:13	0:0	4	=
+water	25:15	0:0	4	PROGRESSIVE
+water	25:26	0:0	4	;
+water	26:4	0:0	4	}
+else	26:6	28:4	2
+stmts	26:11	28:4	3	
+water	26:11	0:0	4	{
+water	27:8	0:0	4	mode
+op	27:13	0:0	4	=
+call	27:15	27:55	4	analyze_plane
+arg	27:29	27:32	5	ctx
+water	27:29	0:0	6	ctx
+arg	27:34	27:41	5	s->mode
+water	27:34	0:0	6	s
+op	27:35	0:0	6	->
+water	27:37	0:0	6	mode
+arg	27:43	27:51	5	s->frame
+water	27:43	0:0	6	s
+op	27:44	0:0	6	->
+water	27:46	0:0	6	frame
+arg	27:53	27:55	5	in
+water	27:53	0:0	6	in
+water	27:56	0:0	4	;
+water	28:4	0:0	4	}
+for	29:4	39:4	2	(plane = 0 ;plane < s -> nb_planes;plane ++)
+forinit	29:9	29:18	3	plane = 0 ;
+water	29:9	0:0	4	plane
+op	29:15	0:0	4	=
+water	29:17	0:0	4	0
+water	29:18	0:0	4	;
+cond	29:20	29:31	3	plane < s -> nb_planes
+water	29:20	0:0	4	plane
+op	29:26	0:0	4	<
+water	29:28	0:0	4	s
+op	29:29	0:0	4	->
+water	29:31	0:0	4	nb_planes
+forexpr	29:42	29:47	3	plane ++
+water	29:42	0:0	4	plane
+op	29:47	0:0	4	++
+stmts	29:51	39:4	3	
+water	29:51	0:0	4	{
+decl	30:8	30:50	4	const uint8_t	*buf
+op	30:27	0:0	4	=
+water	30:29	0:0	4	s
+op	30:30	0:0	4	->
+water	30:32	0:0	4	frame
+op	30:37	0:0	4	->
+water	30:39	0:0	4	data
+op	30:43	0:0	4	[
+water	30:44	0:0	4	plane
+op	30:49	0:0	4	]
+decl	31:8	31:45	4	const uint8_t	*from
+op	31:28	0:0	4	=
+water	31:30	0:0	4	in
+op	31:32	0:0	4	->
+water	31:34	0:0	4	data
+op	31:38	0:0	4	[
+water	31:39	0:0	4	plane
+op	31:44	0:0	4	]
+decl	32:8	32:38	4	uint8_t	*to
+op	32:20	0:0	4	=
+water	32:22	0:0	4	out
+op	32:25	0:0	4	->
+water	32:27	0:0	4	data
+op	32:31	0:0	4	[
+water	32:32	0:0	4	plane
+op	32:37	0:0	4	]
+for	33:8	38:8	4	(y = 0 , top = 1 ;y < s -> planeheight [ plane ];y ++ , top ^= 1)
+forinit	33:13	33:27	5	y = 0 , top = 1 ;
+water	33:13	0:0	6	y
+op	33:15	0:0	6	=
+water	33:17	0:0	6	0
+water	33:18	0:0	6	,
+water	33:20	0:0	6	top
+op	33:24	0:0	6	=
+water	33:26	0:0	6	1
+water	33:27	0:0	6	;
+cond	33:29	33:53	5	y < s -> planeheight [ plane ]
+water	33:29	0:0	6	y
+op	33:31	0:0	6	<
+water	33:33	0:0	6	s
+op	33:34	0:0	6	->
+water	33:36	0:0	6	planeheight
+op	33:47	0:0	6	[
+water	33:48	0:0	6	plane
+op	33:53	0:0	6	]
+forexpr	33:56	33:68	5	y ++ , top ^= 1
+water	33:56	0:0	6	y
+op	33:57	0:0	6	++
+water	33:59	0:0	6	,
+water	33:61	0:0	6	top
+op	33:65	0:0	6	^=
+water	33:68	0:0	6	1
+stmts	33:71	38:8	5	
+water	33:71	0:0	6	{
+call	34:12	34:96	6	memcpy
+arg	34:19	34:21	7	to
+water	34:19	0:0	8	to
+arg	34:23	34:76	7	mode==(top?BOTTOM_FIRST:TOP_FIRST)?buf:from
+water	34:23	0:0	8	mode
+op	34:28	0:0	8	==
+water	34:31	0:0	8	(
+water	34:32	0:0	8	top
+water	34:36	0:0	8	?
+water	34:38	0:0	8	BOTTOM_FIRST
+water	34:51	0:0	8	:
+water	34:53	0:0	8	TOP_FIRST
+water	34:62	0:0	8	)
+water	34:64	0:0	8	?
+water	34:66	0:0	8	buf
+water	34:70	0:0	8	:
+water	34:72	0:0	8	from
+arg	34:78	34:96	7	s->linesize[plane]
+water	34:78	0:0	8	s
+op	34:79	0:0	8	->
+water	34:81	0:0	8	linesize
+op	34:89	0:0	8	[
+water	34:90	0:0	8	plane
+op	34:95	0:0	8	]
+water	34:97	0:0	6	;
+water	35:12	0:0	6	buf
+op	35:16	0:0	6	+=
+water	35:19	0:0	6	s
+op	35:20	0:0	6	->
+water	35:22	0:0	6	frame
+op	35:27	0:0	6	->
+water	35:29	0:0	6	linesize
+op	35:37	0:0	6	[
+water	35:38	0:0	6	plane
+op	35:43	0:0	6	]
+water	35:44	0:0	6	;
+water	36:12	0:0	6	from
+op	36:17	0:0	6	+=
+water	36:20	0:0	6	in
+op	36:22	0:0	6	->
+water	36:24	0:0	6	linesize
+op	36:32	0:0	6	[
+water	36:33	0:0	6	plane
+op	36:38	0:0	6	]
+water	36:39	0:0	6	;
+water	37:12	0:0	6	to
+op	37:15	0:0	6	+=
+water	37:18	0:0	6	out
+op	37:21	0:0	6	->
+water	37:23	0:0	6	linesize
+op	37:31	0:0	6	[
+water	37:32	0:0	6	plane
+op	37:37	0:0	6	]
+water	37:38	0:0	6	;
+water	38:8	0:0	6	}
+water	39:4	0:0	4	}
+if	40:4	41:32	2	(in != s -> frame)
+cond	40:8	40:17	3	in != s -> frame
+water	40:8	0:0	4	in
+op	40:11	0:0	4	!=
+water	40:14	0:0	4	s
+op	40:15	0:0	4	->
+water	40:17	0:0	4	frame
+stmts	41:8	41:32	3	
+call	41:8	41:31	4	av_frame_free
+arg	41:22	41:31	5	&s->frame
+op	41:22	0:0	6	&
+water	41:23	0:0	6	s
+op	41:24	0:0	6	->
+water	41:26	0:0	6	frame
+water	41:32	0:0	4	;
+water	42:4	0:0	2	s
+op	42:5	0:0	2	->
+water	42:7	0:0	2	frame
+op	42:13	0:0	2	=
+water	42:15	0:0	2	in
+water	42:17	0:0	2	;
+return	43:4	43:40	2	ff_filter_frame(outlink,out)
+call	43:11	43:39	3	ff_filter_frame
+arg	43:27	43:34	4	outlink
+water	43:27	0:0	5	outlink
+arg	43:36	43:39	4	out
+water	43:36	0:0	5	out

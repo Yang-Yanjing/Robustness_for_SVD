@@ -1,0 +1,164 @@
+func	1:0	21:0	0	static void	buffer_offset
+params	1:25	0:0	1	
+param	1:26	1:44	2	AVFilterLink *	link
+param	1:46	1:60	2	AVFrame *	frame
+param	2:26	2:36	2	int	offset
+stmnts	0:0	20:4	1	
+decl	4:4	4:77	2	int	nb_channels
+op	4:20	0:0	2	=
+call	4:22	4:76	3	av_get_channel_layout_nb_channels
+arg	4:56	4:76	4	link->channel_layout
+water	4:56	0:0	5	link
+op	4:60	0:0	5	->
+water	4:62	0:0	5	channel_layout
+decl	5:4	5:54	2	int	planar
+op	5:15	0:0	2	=
+call	5:17	5:53	3	av_sample_fmt_is_planar
+arg	5:41	5:53	4	link->format
+water	5:41	0:0	5	link
+op	5:45	0:0	5	->
+water	5:47	0:0	5	format
+decl	6:4	6:41	2	int	planes
+op	6:15	0:0	2	=
+water	6:17	0:0	2	planar
+water	6:24	0:0	2	?
+water	6:26	0:0	2	nb_channels
+water	6:38	0:0	2	:
+water	6:40	0:0	2	1
+decl	7:4	7:88	2	int	block_align
+op	7:20	0:0	2	=
+call	7:22	7:58	3	av_get_bytes_per_sample
+arg	7:46	7:58	4	link->format
+water	7:46	0:0	5	link
+op	7:50	0:0	5	->
+water	7:52	0:0	5	format
+op	7:60	0:0	2	*
+water	7:62	0:0	2	(
+water	7:63	0:0	2	planar
+water	7:70	0:0	2	?
+water	7:72	0:0	2	1
+water	7:74	0:0	2	:
+water	7:76	0:0	2	nb_channels
+water	7:87	0:0	2	)
+decl	8:4	8:9	2	int	i
+call	9:4	9:41	2	av_assert0
+arg	9:15	9:41	3	frame->nb_samples>offset
+water	9:15	0:0	4	frame
+op	9:20	0:0	4	->
+water	9:22	0:0	4	nb_samples
+op	9:33	0:0	4	>
+water	9:35	0:0	4	offset
+water	9:42	0:0	2	;
+for	10:4	11:55	2	(i = 0 ;i < planes;i ++)
+forinit	10:9	10:14	3	i = 0 ;
+water	10:9	0:0	4	i
+op	10:11	0:0	4	=
+water	10:13	0:0	4	0
+water	10:14	0:0	4	;
+cond	10:16	10:20	3	i < planes
+water	10:16	0:0	4	i
+op	10:18	0:0	4	<
+water	10:20	0:0	4	planes
+forexpr	10:28	10:29	3	i ++
+water	10:28	0:0	4	i
+op	10:29	0:0	4	++
+stmts	11:8	11:55	3	
+water	11:8	0:0	4	frame
+op	11:13	0:0	4	->
+water	11:15	0:0	4	extended_data
+op	11:28	0:0	4	[
+water	11:29	0:0	4	i
+op	11:30	0:0	4	]
+op	11:32	0:0	4	+=
+water	11:35	0:0	4	block_align
+op	11:47	0:0	4	*
+water	11:49	0:0	4	offset
+water	11:55	0:0	4	;
+if	12:4	14:81	2	(frame -> data != frame -> extended_data)
+cond	12:8	12:30	3	frame -> data != frame -> extended_data
+water	12:8	0:0	4	frame
+op	12:13	0:0	4	->
+water	12:15	0:0	4	data
+op	12:20	0:0	4	!=
+water	12:23	0:0	4	frame
+op	12:28	0:0	4	->
+water	12:30	0:0	4	extended_data
+stmts	13:8	14:81	3	
+call	13:8	14:80	4	memcpy
+arg	13:15	13:26	5	frame->data
+water	13:15	0:0	6	frame
+op	13:20	0:0	6	->
+water	13:22	0:0	6	data
+arg	13:28	13:48	5	frame->extended_data
+water	13:28	0:0	6	frame
+op	13:33	0:0	6	->
+water	13:35	0:0	6	extended_data
+arg	14:15	14:80	5	FFMIN(planes,FF_ARRAY_ELEMS(frame->data))*sizeof(*frame->data)
+call	14:15	14:56	6	FFMIN
+arg	14:21	14:27	7	planes
+water	14:21	0:0	8	planes
+arg	14:29	14:56	7	FF_ARRAY_ELEMS(frame->data)
+call	14:29	14:55	8	FF_ARRAY_ELEMS
+arg	14:44	14:55	9	frame->data
+water	14:44	0:0	10	frame
+op	14:49	0:0	10	->
+water	14:51	0:0	10	data
+op	14:58	0:0	6	*
+op	14:60	0:0	6	sizeof
+water	14:66	0:0	6	(
+op	14:67	0:0	6	*
+water	14:68	0:0	6	frame
+op	14:73	0:0	6	->
+water	14:75	0:0	6	data
+water	14:79	0:0	6	)
+water	14:81	0:0	4	;
+water	15:4	0:0	2	frame
+op	15:9	0:0	2	->
+water	15:11	0:0	2	linesize
+op	15:19	0:0	2	[
+water	15:20	0:0	2	0
+op	15:21	0:0	2	]
+op	15:23	0:0	2	-=
+water	15:26	0:0	2	block_align
+op	15:37	0:0	2	*
+water	15:38	0:0	2	offset
+water	15:44	0:0	2	;
+water	16:4	0:0	2	frame
+op	16:9	0:0	2	->
+water	16:11	0:0	2	nb_samples
+op	16:22	0:0	2	-=
+water	16:25	0:0	2	offset
+water	16:31	0:0	2	;
+if	17:4	20:4	2	(frame -> pts != AV_NOPTS_VALUE)
+cond	17:8	17:22	3	frame -> pts != AV_NOPTS_VALUE
+water	17:8	0:0	4	frame
+op	17:13	0:0	4	->
+water	17:15	0:0	4	pts
+op	17:19	0:0	4	!=
+water	17:22	0:0	4	AV_NOPTS_VALUE
+stmts	17:38	20:4	3	
+water	17:38	0:0	4	{
+water	18:8	0:0	4	frame
+op	18:13	0:0	4	->
+water	18:15	0:0	4	pts
+op	18:19	0:0	4	+=
+call	18:22	19:50	4	av_rescale_q
+arg	18:35	18:41	5	offset
+water	18:35	0:0	6	offset
+arg	18:43	18:77	5	(AVRational){1,link->sample_rate}
+water	18:43	0:0	6	(
+water	18:44	0:0	6	AVRational
+water	18:54	0:0	6	)
+water	18:55	0:0	6	{
+water	18:56	0:0	6	1
+water	18:57	0:0	6	,
+water	18:59	0:0	6	link
+op	18:63	0:0	6	->
+water	18:65	0:0	6	sample_rate
+water	18:76	0:0	6	}
+arg	19:35	19:50	5	link->time_base
+water	19:35	0:0	6	link
+op	19:39	0:0	6	->
+water	19:41	0:0	6	time_base
+water	19:51	0:0	4	;
+water	20:4	0:0	4	}

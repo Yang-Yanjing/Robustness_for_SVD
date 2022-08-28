@@ -1,0 +1,371 @@
+func	1:0	56:0	0	static int	aasc_decode_frame
+params	1:28	0:0	1	
+param	1:29	1:50	2	AVCodecContext *	avctx
+param	2:30	2:40	2	void *	data
+param	2:42	2:56	2	int *	got_frame
+param	3:30	3:45	2	AVPacket *	avpkt
+stmnts	0:0	55:22	1	
+decl	5:4	5:36	2	const uint8_t	*buf
+op	5:23	0:0	2	=
+water	5:25	0:0	2	avpkt
+op	5:30	0:0	2	->
+water	5:32	0:0	2	data
+decl	6:4	6:36	2	int	buf_size
+op	6:23	0:0	2	=
+water	6:25	0:0	2	avpkt
+op	6:30	0:0	2	->
+water	6:32	0:0	2	size
+decl	7:4	7:41	2	AascContext	*s
+op	7:23	0:0	2	=
+water	7:25	0:0	2	avctx
+op	7:30	0:0	2	->
+water	7:32	0:0	2	priv_data
+decl	8:4	8:36	2	int	compr
+water	8:13	0:0	2	,
+decl	8:4	8:36	2	int	i
+water	8:16	0:0	2	,
+decl	8:4	8:36	2	int	stride
+water	8:24	0:0	2	,
+decl	8:4	8:36	2	int	psize
+water	8:31	0:0	2	,
+decl	8:4	8:36	2	int	ret
+if	9:4	12:4	2	(buf_size < 4)
+cond	9:8	9:19	3	buf_size < 4
+water	9:8	0:0	4	buf_size
+op	9:17	0:0	4	<
+water	9:19	0:0	4	4
+stmts	9:22	12:4	3	
+water	9:22	0:0	4	{
+call	10:8	10:55	4	av_log
+arg	10:15	10:20	5	avctx
+water	10:15	0:0	6	avctx
+arg	10:22	10:34	5	AV_LOG_ERROR
+water	10:22	0:0	6	AV_LOG_ERROR
+arg	10:36	10:55	5	"frame too short\n"
+water	10:36	0:0	6	"frame too short\n"
+water	10:56	0:0	4	;
+return	11:8	11:34	4	AVERROR_INVALIDDATA
+water	11:15	0:0	5	AVERROR_INVALIDDATA
+water	12:4	0:0	4	}
+if	13:4	14:18	2	(( ret =ff_reget_buffer (avctx ,s -> frame ) ) < 0)
+cond	13:8	13:51	3	( ret =ff_reget_buffer (avctx ,s -> frame ) ) < 0
+water	13:8	0:0	4	(
+water	13:9	0:0	4	ret
+op	13:13	0:0	4	=
+call	13:15	13:46	4	ff_reget_buffer
+arg	13:31	13:36	5	avctx
+water	13:31	0:0	6	avctx
+arg	13:38	13:46	5	s->frame
+water	13:38	0:0	6	s
+op	13:39	0:0	6	->
+water	13:41	0:0	6	frame
+water	13:47	0:0	4	)
+op	13:49	0:0	4	<
+water	13:51	0:0	4	0
+stmts	14:8	14:18	3	
+return	14:8	14:18	4	ret
+water	14:15	0:0	5	ret
+water	15:4	0:0	2	compr
+op	15:14	0:0	2	=
+call	15:16	15:27	2	AV_RL32
+arg	15:24	15:27	3	buf
+water	15:24	0:0	4	buf
+water	15:28	0:0	2	;
+water	16:4	0:0	2	buf
+op	16:13	0:0	2	+=
+water	16:16	0:0	2	4
+water	16:17	0:0	2	;
+water	17:4	0:0	2	buf_size
+op	17:13	0:0	2	-=
+water	17:16	0:0	2	4
+water	17:17	0:0	2	;
+water	18:4	0:0	2	psize
+op	18:10	0:0	2	=
+water	18:12	0:0	2	avctx
+op	18:17	0:0	2	->
+water	18:19	0:0	2	bits_per_coded_sample
+op	18:41	0:0	2	/
+water	18:43	0:0	2	8
+water	18:44	0:0	2	;
+switch	19:4	48:4	2	(avctx -> codec_tag)
+cond	19:12	19:19	3	avctx -> codec_tag
+water	19:12	0:0	4	avctx
+op	19:17	0:0	4	->
+water	19:19	0:0	4	codec_tag
+stmts	19:30	48:4	3	
+water	19:30	0:0	4	{
+water	20:4	0:0	4	case
+call	20:9	20:33	4	MKTAG
+arg	20:15	20:18	5	'A'
+water	20:15	0:0	6	'A'
+arg	20:20	20:23	5	'A'
+water	20:20	0:0	6	'A'
+arg	20:25	20:28	5	'S'
+water	20:25	0:0	6	'S'
+arg	20:30	20:33	5	'4'
+water	20:30	0:0	6	'4'
+water	20:34	0:0	4	:
+call	21:8	21:54	4	bytestream2_init
+arg	21:25	21:31	5	&s->gb
+op	21:25	0:0	6	&
+water	21:26	0:0	6	s
+op	21:27	0:0	6	->
+water	21:29	0:0	6	gb
+arg	21:33	21:40	5	buf-4
+water	21:33	0:0	6	buf
+op	21:37	0:0	6	-
+water	21:39	0:0	6	4
+arg	21:42	21:54	5	buf_size+4
+water	21:42	0:0	6	buf_size
+op	21:51	0:0	6	+
+water	21:53	0:0	6	4
+water	21:55	0:0	4	;
+call	22:8	22:62	4	ff_msrle_decode
+arg	22:24	22:29	5	avctx
+water	22:24	0:0	6	avctx
+arg	22:31	22:51	5	(AVPicture*)s->frame
+water	22:31	0:0	6	(
+water	22:32	0:0	6	AVPicture
+op	22:41	0:0	6	*
+water	22:42	0:0	6	)
+water	22:43	0:0	6	s
+op	22:44	0:0	6	->
+water	22:46	0:0	6	frame
+arg	22:53	22:54	5	8
+water	22:53	0:0	6	8
+arg	22:56	22:62	5	&s->gb
+op	22:56	0:0	6	&
+water	22:57	0:0	6	s
+op	22:58	0:0	6	->
+water	22:60	0:0	6	gb
+water	22:63	0:0	4	;
+break	23:8	23:13	4	
+water	24:4	0:0	4	case
+call	24:9	24:33	4	MKTAG
+arg	24:15	24:18	5	'A'
+water	24:15	0:0	6	'A'
+arg	24:20	24:23	5	'A'
+water	24:20	0:0	6	'A'
+arg	24:25	24:28	5	'S'
+water	24:25	0:0	6	'S'
+arg	24:30	24:33	5	'C'
+water	24:30	0:0	6	'C'
+water	24:34	0:0	4	:
+water	25:4	0:0	4	switch
+water	25:11	0:0	4	(
+water	25:12	0:0	4	compr
+water	25:17	0:0	4	)
+water	25:19	0:0	4	{
+water	26:4	0:0	4	case
+water	26:9	0:0	4	0
+water	26:10	0:0	4	:
+water	27:8	0:0	4	stride
+op	27:15	0:0	4	=
+water	27:17	0:0	4	(
+water	27:18	0:0	4	avctx
+op	27:23	0:0	4	->
+water	27:25	0:0	4	width
+op	27:31	0:0	4	*
+water	27:33	0:0	4	psize
+op	27:39	0:0	4	+
+water	27:41	0:0	4	psize
+water	27:46	0:0	4	)
+op	27:48	0:0	4	&
+water	27:50	0:0	4	~psize
+water	27:56	0:0	4	;
+water	28:8	0:0	4	if
+water	28:11	0:0	4	(
+water	28:12	0:0	4	buf_size
+op	28:21	0:0	4	<
+water	28:23	0:0	4	stride
+op	28:30	0:0	4	*
+water	28:32	0:0	4	avctx
+op	28:37	0:0	4	->
+water	28:39	0:0	4	height
+water	28:45	0:0	4	)
+water	29:12	0:0	4	return
+water	29:19	0:0	4	AVERROR_INVALIDDATA
+water	29:38	0:0	4	;
+water	30:8	0:0	4	for
+water	30:12	0:0	4	(
+water	30:13	0:0	4	i
+op	30:15	0:0	4	=
+water	30:17	0:0	4	avctx
+op	30:22	0:0	4	->
+water	30:24	0:0	4	height
+op	30:31	0:0	4	-
+water	30:33	0:0	4	1
+water	30:34	0:0	4	;
+water	30:36	0:0	4	i
+op	30:38	0:0	4	>=
+water	30:41	0:0	4	0
+water	30:42	0:0	4	;
+water	30:44	0:0	4	i
+op	30:45	0:0	4	--
+water	30:47	0:0	4	)
+water	30:49	0:0	4	{
+call	31:12	31:91	4	memcpy
+arg	31:19	31:64	5	s->frame->data[0]+i*s->frame->linesize[0]
+water	31:19	0:0	6	s
+op	31:20	0:0	6	->
+water	31:22	0:0	6	frame
+op	31:27	0:0	6	->
+water	31:29	0:0	6	data
+op	31:33	0:0	6	[
+water	31:34	0:0	6	0
+op	31:35	0:0	6	]
+op	31:37	0:0	6	+
+water	31:39	0:0	6	i
+op	31:41	0:0	6	*
+water	31:43	0:0	6	s
+op	31:44	0:0	6	->
+water	31:46	0:0	6	frame
+op	31:51	0:0	6	->
+water	31:53	0:0	6	linesize
+op	31:61	0:0	6	[
+water	31:62	0:0	6	0
+op	31:63	0:0	6	]
+arg	31:66	31:69	5	buf
+water	31:66	0:0	6	buf
+arg	31:71	31:91	5	avctx->width*psize
+water	31:71	0:0	6	avctx
+op	31:76	0:0	6	->
+water	31:78	0:0	6	width
+op	31:84	0:0	6	*
+water	31:86	0:0	6	psize
+water	31:92	0:0	4	;
+water	32:12	0:0	4	buf
+op	32:16	0:0	4	+=
+water	32:19	0:0	4	stride
+water	32:25	0:0	4	;
+water	33:12	0:0	4	buf_size
+op	33:21	0:0	4	-=
+water	33:24	0:0	4	stride
+water	33:30	0:0	4	;
+water	34:8	0:0	4	}
+water	35:8	0:0	4	break
+water	35:13	0:0	4	;
+water	36:4	0:0	4	case
+water	36:9	0:0	4	1
+water	36:10	0:0	4	:
+call	37:8	37:46	4	bytestream2_init
+arg	37:25	37:31	5	&s->gb
+op	37:25	0:0	6	&
+water	37:26	0:0	6	s
+op	37:27	0:0	6	->
+water	37:29	0:0	6	gb
+arg	37:33	37:36	5	buf
+water	37:33	0:0	6	buf
+arg	37:38	37:46	5	buf_size
+water	37:38	0:0	6	buf_size
+water	37:47	0:0	4	;
+call	38:8	38:62	4	ff_msrle_decode
+arg	38:24	38:29	5	avctx
+water	38:24	0:0	6	avctx
+arg	38:31	38:51	5	(AVPicture*)s->frame
+water	38:31	0:0	6	(
+water	38:32	0:0	6	AVPicture
+op	38:41	0:0	6	*
+water	38:42	0:0	6	)
+water	38:43	0:0	6	s
+op	38:44	0:0	6	->
+water	38:46	0:0	6	frame
+arg	38:53	38:54	5	8
+water	38:53	0:0	6	8
+arg	38:56	38:62	5	&s->gb
+op	38:56	0:0	6	&
+water	38:57	0:0	6	s
+op	38:58	0:0	6	->
+water	38:60	0:0	6	gb
+water	38:63	0:0	4	;
+water	39:8	0:0	4	break
+water	39:13	0:0	4	;
+water	40:4	0:0	4	default
+water	40:11	0:0	4	:
+call	41:8	41:74	4	av_log
+arg	41:15	41:20	5	avctx
+water	41:15	0:0	6	avctx
+arg	41:22	41:34	5	AV_LOG_ERROR
+water	41:22	0:0	6	AV_LOG_ERROR
+arg	41:36	41:67	5	"Unknown compression type %d\n"
+water	41:36	0:0	6	"Unknown compression type %d\n"
+arg	41:69	41:74	5	compr
+water	41:69	0:0	6	compr
+water	41:75	0:0	4	;
+water	42:8	0:0	4	return
+water	42:15	0:0	4	AVERROR_INVALIDDATA
+water	42:34	0:0	4	;
+water	43:4	0:0	4	}
+water	44:8	0:0	4	break
+water	44:13	0:0	4	;
+label	45:4	45:11	4	default :
+call	46:8	46:76	4	av_log
+arg	46:15	46:20	5	avctx
+water	46:15	0:0	6	avctx
+arg	46:22	46:34	5	AV_LOG_ERROR
+water	46:22	0:0	6	AV_LOG_ERROR
+arg	46:36	46:58	5	"Unknown FourCC: %X\n"
+water	46:36	0:0	6	"Unknown FourCC: %X\n"
+arg	46:60	46:76	5	avctx->codec_tag
+water	46:60	0:0	6	avctx
+op	46:65	0:0	6	->
+water	46:67	0:0	6	codec_tag
+water	46:77	0:0	4	;
+return	47:8	47:17	4	-1
+op	47:15	0:0	5	-
+water	47:16	0:0	5	1
+water	48:4	0:0	4	}
+if	49:4	50:62	2	(avctx -> pix_fmt == AV_PIX_FMT_PAL8)
+cond	49:8	49:26	3	avctx -> pix_fmt == AV_PIX_FMT_PAL8
+water	49:8	0:0	4	avctx
+op	49:13	0:0	4	->
+water	49:15	0:0	4	pix_fmt
+op	49:23	0:0	4	==
+water	49:26	0:0	4	AV_PIX_FMT_PAL8
+stmts	50:8	50:62	3	
+call	50:8	50:61	4	memcpy
+arg	50:15	50:32	5	s->frame->data[1]
+water	50:15	0:0	6	s
+op	50:16	0:0	6	->
+water	50:18	0:0	6	frame
+op	50:23	0:0	6	->
+water	50:25	0:0	6	data
+op	50:29	0:0	6	[
+water	50:30	0:0	6	1
+op	50:31	0:0	6	]
+arg	50:34	50:44	5	s->palette
+water	50:34	0:0	6	s
+op	50:35	0:0	6	->
+water	50:37	0:0	6	palette
+arg	50:46	50:61	5	s->palette_size
+water	50:46	0:0	6	s
+op	50:47	0:0	6	->
+water	50:49	0:0	6	palette_size
+water	50:62	0:0	4	;
+op	51:4	0:0	2	*
+water	51:5	0:0	2	got_frame
+op	51:15	0:0	2	=
+water	51:17	0:0	2	1
+water	51:18	0:0	2	;
+if	52:4	53:18	2	(( ret =av_frame_ref (data ,s -> frame ) ) < 0)
+cond	52:8	52:47	3	( ret =av_frame_ref (data ,s -> frame ) ) < 0
+water	52:8	0:0	4	(
+water	52:9	0:0	4	ret
+op	52:13	0:0	4	=
+call	52:15	52:42	4	av_frame_ref
+arg	52:28	52:32	5	data
+water	52:28	0:0	6	data
+arg	52:34	52:42	5	s->frame
+water	52:34	0:0	6	s
+op	52:35	0:0	6	->
+water	52:37	0:0	6	frame
+water	52:43	0:0	4	)
+op	52:45	0:0	4	<
+water	52:47	0:0	4	0
+stmts	53:8	53:18	3	
+return	53:8	53:18	4	ret
+water	53:15	0:0	5	ret
+return	55:4	55:22	2	avpkt->size
+water	55:11	0:0	3	avpkt
+op	55:16	0:0	3	->
+water	55:18	0:0	3	size

@@ -1,0 +1,876 @@
+func	1:0	134:0	0	static int	get_device_list
+params	1:26	0:0	1	
+param	1:27	1:58	2	AVOpenCLDeviceList *	device_list
+stmnts	0:0	133:14	1	
+decl	3:4	3:17	2	cl_int	status
+decl	4:4	4:55	2	int	i
+water	4:9	0:0	2	,
+decl	4:4	4:55	2	int	j
+water	4:12	0:0	2	,
+decl	4:4	4:55	2	int	k
+water	4:15	0:0	2	,
+decl	4:4	4:55	2	int	device_num
+water	4:27	0:0	2	,
+decl	4:4	4:55	2	int	total_devices_num
+water	4:46	0:0	2	,
+decl	4:4	4:55	2	int	ret
+op	4:52	0:0	2	=
+water	4:54	0:0	2	0
+decl	5:4	5:20	2	int	*devices_num
+decl	6:4	6:39	2	cl_platform_id	*platform_ids
+op	6:33	0:0	2	=
+water	6:35	0:0	2	NULL
+decl	7:4	7:35	2	cl_device_id	*device_ids
+op	7:29	0:0	2	=
+water	7:31	0:0	2	NULL
+decl	8:4	8:42	2	AVOpenCLDeviceNode	*device_node
+op	8:36	0:0	2	=
+water	8:38	0:0	2	NULL
+decl	9:4	9:33	2	size_t	platform_name_size
+op	9:30	0:0	2	=
+water	9:32	0:0	2	0
+decl	10:4	10:31	2	size_t	device_name_size
+op	10:28	0:0	2	=
+water	10:30	0:0	2	0
+water	11:4	0:0	2	status
+op	11:11	0:0	2	=
+call	11:13	11:65	2	clGetPlatformIDs
+arg	11:30	11:31	3	0
+water	11:30	0:0	4	0
+arg	11:33	11:37	3	NULL
+water	11:33	0:0	4	NULL
+arg	11:39	11:65	3	&device_list->platform_num
+op	11:39	0:0	4	&
+water	11:40	0:0	4	device_list
+op	11:51	0:0	4	->
+water	11:53	0:0	4	platform_num
+water	11:66	0:0	2	;
+if	12:4	16:4	2	(status != CL_SUCCESS)
+cond	12:8	12:18	3	status != CL_SUCCESS
+water	12:8	0:0	4	status
+op	12:15	0:0	4	!=
+water	12:18	0:0	4	CL_SUCCESS
+stmts	12:30	16:4	3	
+water	12:30	0:0	4	{
+call	13:8	14:82	4	av_log
+arg	13:15	13:26	5	&opencl_ctx
+op	13:15	0:0	6	&
+water	13:16	0:0	6	opencl_ctx
+arg	13:28	13:40	5	AV_LOG_ERROR
+water	13:28	0:0	6	AV_LOG_ERROR
+arg	14:15	14:56	5	"Could not get OpenCL platform ids: %s\n"
+water	14:15	0:0	6	"Could not get OpenCL platform ids: %s\n"
+arg	14:58	14:82	5	av_opencl_errstr(status)
+call	14:58	14:81	6	av_opencl_errstr
+arg	14:75	14:81	7	status
+water	14:75	0:0	8	status
+water	14:83	0:0	4	;
+return	15:8	15:31	4	AVERROR_EXTERNAL
+water	15:15	0:0	5	AVERROR_EXTERNAL
+water	16:4	0:0	4	}
+water	17:4	0:0	2	platform_ids
+op	17:17	0:0	2	=
+call	17:19	17:85	2	av_mallocz_array
+arg	17:36	17:61	3	device_list->platform_num
+water	17:36	0:0	4	device_list
+op	17:47	0:0	4	->
+water	17:49	0:0	4	platform_num
+arg	17:63	17:85	3	sizeof(cl_platform_id)
+op	17:63	0:0	4	sizeof
+water	17:69	0:0	4	(
+water	17:70	0:0	4	cl_platform_id
+water	17:84	0:0	4	)
+water	17:86	0:0	2	;
+if	18:4	19:30	2	(! platform_ids)
+cond	18:8	18:9	3	! platform_ids
+op	18:8	0:0	4	!
+water	18:9	0:0	4	platform_ids
+stmts	19:8	19:30	3	
+return	19:8	19:30	4	AVERROR(ENOMEM)
+call	19:15	19:29	5	AVERROR
+arg	19:23	19:29	6	ENOMEM
+water	19:23	0:0	7	ENOMEM
+water	20:4	0:0	2	status
+op	20:11	0:0	2	=
+call	20:13	20:75	2	clGetPlatformIDs
+arg	20:30	20:55	3	device_list->platform_num
+water	20:30	0:0	4	device_list
+op	20:41	0:0	4	->
+water	20:43	0:0	4	platform_num
+arg	20:57	20:69	3	platform_ids
+water	20:57	0:0	4	platform_ids
+arg	20:71	20:75	3	NULL
+water	20:71	0:0	4	NULL
+water	20:76	0:0	2	;
+if	21:4	26:4	2	(status != CL_SUCCESS)
+cond	21:8	21:18	3	status != CL_SUCCESS
+water	21:8	0:0	4	status
+op	21:15	0:0	4	!=
+water	21:18	0:0	4	CL_SUCCESS
+stmts	21:30	26:4	3	
+water	21:30	0:0	4	{
+call	22:8	23:83	4	av_log
+arg	22:15	22:26	5	&opencl_ctx
+op	22:15	0:0	6	&
+water	22:16	0:0	6	opencl_ctx
+arg	22:28	22:40	5	AV_LOG_ERROR
+water	22:28	0:0	6	AV_LOG_ERROR
+arg	23:16	23:57	5	"Could not get OpenCL platform ids: %s\n"
+water	23:16	0:0	6	"Could not get OpenCL platform ids: %s\n"
+arg	23:59	23:83	5	av_opencl_errstr(status)
+call	23:59	23:82	6	av_opencl_errstr
+arg	23:76	23:82	7	status
+water	23:76	0:0	8	status
+water	23:84	0:0	4	;
+water	24:8	0:0	4	ret
+op	24:12	0:0	4	=
+water	24:14	0:0	4	AVERROR_EXTERNAL
+water	24:30	0:0	4	;
+goto	25:8	25:16	4	end
+water	25:13	0:0	5	end
+water	26:4	0:0	4	}
+water	27:4	0:0	2	device_list
+op	27:15	0:0	2	->
+water	27:17	0:0	2	platform_node
+op	27:31	0:0	2	=
+call	27:33	27:107	2	av_mallocz_array
+arg	27:50	27:75	3	device_list->platform_num
+water	27:50	0:0	4	device_list
+op	27:61	0:0	4	->
+water	27:63	0:0	4	platform_num
+arg	27:77	27:107	3	sizeof(AVOpenCLPlatformNode*)
+op	27:77	0:0	4	sizeof
+water	27:83	0:0	4	(
+water	27:84	0:0	4	AVOpenCLPlatformNode
+op	27:105	0:0	4	*
+water	27:106	0:0	4	)
+water	27:108	0:0	2	;
+if	28:4	31:4	2	(! device_list -> platform_node)
+cond	28:8	28:22	3	! device_list -> platform_node
+op	28:8	0:0	4	!
+water	28:9	0:0	4	device_list
+op	28:20	0:0	4	->
+water	28:22	0:0	4	platform_node
+stmts	28:37	31:4	3	
+water	28:37	0:0	4	{
+water	29:8	0:0	4	ret
+op	29:12	0:0	4	=
+call	29:14	29:28	4	AVERROR
+arg	29:22	29:28	5	ENOMEM
+water	29:22	0:0	6	ENOMEM
+water	29:29	0:0	4	;
+goto	30:8	30:16	4	end
+water	30:13	0:0	5	end
+water	31:4	0:0	4	}
+water	32:4	0:0	2	devices_num
+op	32:16	0:0	2	=
+call	32:18	32:70	2	av_mallocz
+arg	32:29	32:70	3	sizeof(int)*FF_ARRAY_ELEMS(device_type)
+op	32:29	0:0	4	sizeof
+water	32:35	0:0	4	(
+water	32:36	0:0	4	int
+water	32:39	0:0	4	)
+call	32:41	32:69	4	*FF_ARRAY_ELEMS
+arg	32:58	32:69	5	device_type
+water	32:58	0:0	6	device_type
+water	32:71	0:0	2	;
+if	33:4	36:4	2	(! devices_num)
+cond	33:8	33:9	3	! devices_num
+op	33:8	0:0	4	!
+water	33:9	0:0	4	devices_num
+stmts	33:22	36:4	3	
+water	33:22	0:0	4	{
+water	34:8	0:0	4	ret
+op	34:12	0:0	4	=
+call	34:14	34:28	4	AVERROR
+arg	34:22	34:28	5	ENOMEM
+water	34:22	0:0	6	ENOMEM
+water	34:29	0:0	4	;
+goto	35:8	35:16	4	end
+water	35:13	0:0	5	end
+water	36:4	0:0	4	}
+for	37:4	126:4	2	(i = 0 ;i < device_list -> platform_num;i ++)
+forinit	37:9	37:14	3	i = 0 ;
+water	37:9	0:0	4	i
+op	37:11	0:0	4	=
+water	37:13	0:0	4	0
+water	37:14	0:0	4	;
+cond	37:16	37:33	3	i < device_list -> platform_num
+water	37:16	0:0	4	i
+op	37:18	0:0	4	<
+water	37:20	0:0	4	device_list
+op	37:31	0:0	4	->
+water	37:33	0:0	4	platform_num
+forexpr	37:47	37:48	3	i ++
+water	37:47	0:0	4	i
+op	37:48	0:0	4	++
+stmts	37:52	126:4	3	
+water	37:52	0:0	4	{
+water	38:8	0:0	4	device_list
+op	38:19	0:0	4	->
+water	38:21	0:0	4	platform_node
+op	38:34	0:0	4	[
+water	38:35	0:0	4	i
+op	38:36	0:0	4	]
+op	38:38	0:0	4	=
+call	38:40	38:79	4	av_mallocz
+arg	38:51	38:79	5	sizeof(AVOpenCLPlatformNode)
+op	38:51	0:0	6	sizeof
+water	38:57	0:0	6	(
+water	38:58	0:0	6	AVOpenCLPlatformNode
+water	38:78	0:0	6	)
+water	38:80	0:0	4	;
+if	39:8	42:8	4	(! device_list -> platform_node [ i ])
+cond	39:12	39:41	5	! device_list -> platform_node [ i ]
+op	39:12	0:0	6	!
+water	39:13	0:0	6	device_list
+op	39:24	0:0	6	->
+water	39:26	0:0	6	platform_node
+op	39:39	0:0	6	[
+water	39:40	0:0	6	i
+op	39:41	0:0	6	]
+stmts	39:44	42:8	5	
+water	39:44	0:0	6	{
+water	40:12	0:0	6	ret
+op	40:16	0:0	6	=
+call	40:18	40:32	6	AVERROR
+arg	40:26	40:32	7	ENOMEM
+water	40:26	0:0	8	ENOMEM
+water	40:33	0:0	6	;
+goto	41:12	41:20	6	end
+water	41:17	0:0	7	end
+water	42:8	0:0	6	}
+water	43:8	0:0	4	device_list
+op	43:19	0:0	4	->
+water	43:21	0:0	4	platform_node
+op	43:34	0:0	4	[
+water	43:35	0:0	4	i
+op	43:36	0:0	4	]
+op	43:37	0:0	4	->
+water	43:39	0:0	4	platform_id
+op	43:51	0:0	4	=
+water	43:53	0:0	4	platform_ids
+op	43:65	0:0	4	[
+water	43:66	0:0	4	i
+op	43:67	0:0	4	]
+water	43:68	0:0	4	;
+water	44:8	0:0	4	status
+op	44:15	0:0	4	=
+call	44:17	45:63	4	clGetPlatformInfo
+arg	44:35	44:50	5	platform_ids[i]
+water	44:35	0:0	6	platform_ids
+op	44:47	0:0	6	[
+water	44:48	0:0	6	i
+op	44:49	0:0	6	]
+arg	44:52	44:70	5	CL_PLATFORM_VENDOR
+water	44:52	0:0	6	CL_PLATFORM_VENDOR
+arg	45:35	45:36	5	0
+water	45:35	0:0	6	0
+arg	45:38	45:42	5	NULL
+water	45:38	0:0	6	NULL
+arg	45:44	45:63	5	&platform_name_size
+op	45:44	0:0	6	&
+water	45:45	0:0	6	platform_name_size
+water	45:64	0:0	4	;
+if	46:8	49:8	4	(status != CL_SUCCESS)
+cond	46:12	46:22	5	status != CL_SUCCESS
+water	46:12	0:0	6	status
+op	46:19	0:0	6	!=
+water	46:22	0:0	6	CL_SUCCESS
+stmts	46:34	49:8	5	
+water	46:34	0:0	6	{
+call	47:12	48:89	6	av_log
+arg	47:19	47:30	7	&opencl_ctx
+op	47:19	0:0	8	&
+water	47:20	0:0	8	opencl_ctx
+arg	47:32	47:46	7	AV_LOG_WARNING
+water	47:32	0:0	8	AV_LOG_WARNING
+arg	48:20	48:63	7	"Could not get size of platform name: %s\n"
+water	48:20	0:0	8	"Could not get size of platform name: %s\n"
+arg	48:65	48:89	7	av_opencl_errstr(status)
+call	48:65	48:88	8	av_opencl_errstr
+arg	48:82	48:88	9	status
+water	48:82	0:0	10	status
+water	48:90	0:0	6	;
+water	49:8	0:0	6	}
+else	49:10	63:8	4
+stmts	49:15	63:8	5	
+water	49:15	0:0	6	{
+water	50:12	0:0	6	device_list
+op	50:23	0:0	6	->
+water	50:25	0:0	6	platform_node
+op	50:38	0:0	6	[
+water	50:39	0:0	6	i
+op	50:40	0:0	6	]
+op	50:41	0:0	6	->
+water	50:43	0:0	6	platform_name
+op	50:57	0:0	6	=
+call	50:59	50:102	6	av_malloc
+arg	50:69	50:102	7	platform_name_size*sizeof(char)
+water	50:69	0:0	8	platform_name_size
+op	50:88	0:0	8	*
+op	50:90	0:0	8	sizeof
+water	50:96	0:0	8	(
+water	50:97	0:0	8	char
+water	50:101	0:0	8	)
+water	50:103	0:0	6	;
+if	51:12	54:12	6	(! device_list -> platform_node [ i ] -> platform_name)
+cond	51:16	51:48	7	! device_list -> platform_node [ i ] -> platform_name
+op	51:16	0:0	8	!
+water	51:17	0:0	8	device_list
+op	51:28	0:0	8	->
+water	51:30	0:0	8	platform_node
+op	51:43	0:0	8	[
+water	51:44	0:0	8	i
+op	51:45	0:0	8	]
+op	51:46	0:0	8	->
+water	51:48	0:0	8	platform_name
+stmts	51:63	54:12	7	
+water	51:63	0:0	8	{
+call	52:16	53:99	8	av_log
+arg	52:23	52:34	9	&opencl_ctx
+op	52:23	0:0	10	&
+water	52:24	0:0	10	opencl_ctx
+arg	52:36	52:50	9	AV_LOG_WARNING
+water	52:36	0:0	10	AV_LOG_WARNING
+arg	53:24	53:73	9	"Could not allocate memory for device name: %s\n"
+water	53:24	0:0	10	"Could not allocate memory for device name: %s\n"
+arg	53:75	53:99	9	av_opencl_errstr(status)
+call	53:75	53:98	10	av_opencl_errstr
+arg	53:92	53:98	11	status
+water	53:92	0:0	12	status
+water	53:100	0:0	8	;
+water	54:12	0:0	8	}
+else	54:14	62:12	6
+stmts	54:19	62:12	7	
+water	54:19	0:0	8	{
+water	55:16	0:0	8	status
+op	55:23	0:0	8	=
+call	55:25	57:93	8	clGetPlatformInfo
+arg	55:43	55:58	9	platform_ids[i]
+water	55:43	0:0	10	platform_ids
+op	55:55	0:0	10	[
+water	55:56	0:0	10	i
+op	55:57	0:0	10	]
+arg	55:60	55:78	9	CL_PLATFORM_VENDOR
+water	55:60	0:0	10	CL_PLATFORM_VENDOR
+arg	56:43	56:76	9	platform_name_size*sizeof(char)
+water	56:43	0:0	10	platform_name_size
+op	56:62	0:0	10	*
+op	56:64	0:0	10	sizeof
+water	56:70	0:0	10	(
+water	56:71	0:0	10	char
+water	56:75	0:0	10	)
+arg	57:43	57:87	9	device_list->platform_node[i]->platform_name
+water	57:43	0:0	10	device_list
+op	57:54	0:0	10	->
+water	57:56	0:0	10	platform_node
+op	57:69	0:0	10	[
+water	57:70	0:0	10	i
+op	57:71	0:0	10	]
+op	57:72	0:0	10	->
+water	57:74	0:0	10	platform_name
+arg	57:89	57:93	9	NULL
+water	57:89	0:0	10	NULL
+water	57:94	0:0	8	;
+if	58:16	61:16	8	(status != CL_SUCCESS)
+cond	58:20	58:30	9	status != CL_SUCCESS
+water	58:20	0:0	10	status
+op	58:27	0:0	10	!=
+water	58:30	0:0	10	CL_SUCCESS
+stmts	58:42	61:16	9	
+water	58:42	0:0	10	{
+call	59:20	60:89	10	av_log
+arg	59:27	59:38	11	&opencl_ctx
+op	59:27	0:0	12	&
+water	59:28	0:0	12	opencl_ctx
+arg	59:40	59:54	11	AV_LOG_WARNING
+water	59:40	0:0	12	AV_LOG_WARNING
+arg	60:28	60:63	11	"Could not get platform name: %s\n"
+water	60:28	0:0	12	"Could not get platform name: %s\n"
+arg	60:65	60:89	11	av_opencl_errstr(status)
+call	60:65	60:88	12	av_opencl_errstr
+arg	60:82	60:88	13	status
+water	60:82	0:0	14	status
+water	60:90	0:0	10	;
+water	61:16	0:0	10	}
+water	62:12	0:0	8	}
+water	63:8	0:0	6	}
+water	64:8	0:0	4	total_devices_num
+op	64:26	0:0	4	=
+water	64:28	0:0	4	0
+water	64:29	0:0	4	;
+for	65:8	69:8	4	(j = 0 ;j <FF_ARRAY_ELEMS (device_type );j ++)
+forinit	65:13	65:18	5	j = 0 ;
+water	65:13	0:0	6	j
+op	65:15	0:0	6	=
+water	65:17	0:0	6	0
+water	65:18	0:0	6	;
+cond	65:20	65:50	5	j <FF_ARRAY_ELEMS (device_type )
+water	65:20	0:0	6	j
+op	65:22	0:0	6	<
+call	65:24	65:50	6	FF_ARRAY_ELEMS
+arg	65:39	65:50	7	device_type
+water	65:39	0:0	8	device_type
+forexpr	65:53	65:54	5	j ++
+water	65:53	0:0	6	j
+op	65:54	0:0	6	++
+stmts	65:58	69:8	5	
+water	65:58	0:0	6	{
+water	66:12	0:0	6	status
+op	66:19	0:0	6	=
+call	66:21	67:76	6	clGetDeviceIDs
+arg	66:36	66:78	7	device_list->platform_node[i]->platform_id
+water	66:36	0:0	8	device_list
+op	66:47	0:0	8	->
+water	66:49	0:0	8	platform_node
+op	66:62	0:0	8	[
+water	66:63	0:0	8	i
+op	66:64	0:0	8	]
+op	66:65	0:0	8	->
+water	66:67	0:0	8	platform_id
+arg	67:36	67:50	7	device_type[j]
+water	67:36	0:0	8	device_type
+op	67:47	0:0	8	[
+water	67:48	0:0	8	j
+op	67:49	0:0	8	]
+arg	67:52	67:53	7	0
+water	67:52	0:0	8	0
+arg	67:55	67:59	7	NULL
+water	67:55	0:0	8	NULL
+arg	67:61	67:76	7	&devices_num[j]
+op	67:61	0:0	8	&
+water	67:62	0:0	8	devices_num
+op	67:73	0:0	8	[
+water	67:74	0:0	8	j
+op	67:75	0:0	8	]
+water	67:77	0:0	6	;
+water	68:12	0:0	6	total_devices_num
+op	68:30	0:0	6	+=
+water	68:33	0:0	6	devices_num
+op	68:44	0:0	6	[
+water	68:45	0:0	6	j
+op	68:46	0:0	6	]
+water	68:47	0:0	6	;
+water	69:8	0:0	6	}
+water	70:8	0:0	4	device_list
+op	70:19	0:0	4	->
+water	70:21	0:0	4	platform_node
+op	70:34	0:0	4	[
+water	70:35	0:0	4	i
+op	70:36	0:0	4	]
+op	70:37	0:0	4	->
+water	70:39	0:0	4	device_node
+op	70:51	0:0	4	=
+call	70:53	70:117	4	av_mallocz_array
+arg	70:70	70:87	5	total_devices_num
+water	70:70	0:0	6	total_devices_num
+arg	70:89	70:117	5	sizeof(AVOpenCLDeviceNode*)
+op	70:89	0:0	6	sizeof
+water	70:95	0:0	6	(
+water	70:96	0:0	6	AVOpenCLDeviceNode
+op	70:115	0:0	6	*
+water	70:116	0:0	6	)
+water	70:118	0:0	4	;
+if	71:8	74:8	4	(! device_list -> platform_node [ i ] -> device_node)
+cond	71:12	71:44	5	! device_list -> platform_node [ i ] -> device_node
+op	71:12	0:0	6	!
+water	71:13	0:0	6	device_list
+op	71:24	0:0	6	->
+water	71:26	0:0	6	platform_node
+op	71:39	0:0	6	[
+water	71:40	0:0	6	i
+op	71:41	0:0	6	]
+op	71:42	0:0	6	->
+water	71:44	0:0	6	device_node
+stmts	71:57	74:8	5	
+water	71:57	0:0	6	{
+water	72:12	0:0	6	ret
+op	72:16	0:0	6	=
+call	72:18	72:32	6	AVERROR
+arg	72:26	72:32	7	ENOMEM
+water	72:26	0:0	8	ENOMEM
+water	72:33	0:0	6	;
+goto	73:12	73:20	6	end
+water	73:17	0:0	7	end
+water	74:8	0:0	6	}
+for	75:8	125:8	4	(j = 0 ;j <FF_ARRAY_ELEMS (device_type );j ++)
+forinit	75:13	75:18	5	j = 0 ;
+water	75:13	0:0	6	j
+op	75:15	0:0	6	=
+water	75:17	0:0	6	0
+water	75:18	0:0	6	;
+cond	75:20	75:50	5	j <FF_ARRAY_ELEMS (device_type )
+water	75:20	0:0	6	j
+op	75:22	0:0	6	<
+call	75:24	75:50	6	FF_ARRAY_ELEMS
+arg	75:39	75:50	7	device_type
+water	75:39	0:0	8	device_type
+forexpr	75:53	75:54	5	j ++
+water	75:53	0:0	6	j
+op	75:54	0:0	6	++
+stmts	75:58	125:8	5	
+water	75:58	0:0	6	{
+if	76:12	124:12	6	(devices_num [ j ])
+cond	76:16	76:29	7	devices_num [ j ]
+water	76:16	0:0	8	devices_num
+op	76:27	0:0	8	[
+water	76:28	0:0	8	j
+op	76:29	0:0	8	]
+stmts	76:32	124:12	7	
+water	76:32	0:0	8	{
+water	77:16	0:0	8	device_ids
+op	77:27	0:0	8	=
+call	77:29	77:82	8	av_mallocz_array
+arg	77:46	77:60	9	devices_num[j]
+water	77:46	0:0	10	devices_num
+op	77:57	0:0	10	[
+water	77:58	0:0	10	j
+op	77:59	0:0	10	]
+arg	77:62	77:82	9	sizeof(cl_device_id)
+op	77:62	0:0	10	sizeof
+water	77:68	0:0	10	(
+water	77:69	0:0	10	cl_device_id
+water	77:81	0:0	10	)
+water	77:83	0:0	8	;
+if	78:16	81:16	8	(! device_ids)
+cond	78:20	78:21	9	! device_ids
+op	78:20	0:0	10	!
+water	78:21	0:0	10	device_ids
+stmts	78:33	81:16	9	
+water	78:33	0:0	10	{
+water	79:20	0:0	10	ret
+op	79:24	0:0	10	=
+call	79:26	79:40	10	AVERROR
+arg	79:34	79:40	11	ENOMEM
+water	79:34	0:0	12	ENOMEM
+water	79:41	0:0	10	;
+goto	80:20	80:28	10	end
+water	80:25	0:0	11	end
+water	81:16	0:0	10	}
+water	82:16	0:0	8	status
+op	82:23	0:0	8	=
+call	82:25	83:72	8	clGetDeviceIDs
+arg	82:40	82:82	9	device_list->platform_node[i]->platform_id
+water	82:40	0:0	10	device_list
+op	82:51	0:0	10	->
+water	82:53	0:0	10	platform_node
+op	82:66	0:0	10	[
+water	82:67	0:0	10	i
+op	82:68	0:0	10	]
+op	82:69	0:0	10	->
+water	82:71	0:0	10	platform_id
+arg	82:84	82:98	9	device_type[j]
+water	82:84	0:0	10	device_type
+op	82:95	0:0	10	[
+water	82:96	0:0	10	j
+op	82:97	0:0	10	]
+arg	83:40	83:54	9	devices_num[j]
+water	83:40	0:0	10	devices_num
+op	83:51	0:0	10	[
+water	83:52	0:0	10	j
+op	83:53	0:0	10	]
+arg	83:56	83:66	9	device_ids
+water	83:56	0:0	10	device_ids
+arg	83:68	83:72	9	NULL
+water	83:68	0:0	10	NULL
+water	83:73	0:0	8	;
+if	84:16	89:16	8	(status != CL_SUCCESS)
+cond	84:20	84:30	9	status != CL_SUCCESS
+water	84:20	0:0	10	status
+op	84:27	0:0	10	!=
+water	84:30	0:0	10	CL_SUCCESS
+stmts	84:42	89:16	9	
+water	84:42	0:0	10	{
+call	85:20	86:86	10	av_log
+arg	85:27	85:38	11	&opencl_ctx
+op	85:27	0:0	12	&
+water	85:28	0:0	12	opencl_ctx
+arg	85:40	85:54	11	AV_LOG_WARNING
+water	85:40	0:0	12	AV_LOG_WARNING
+arg	86:28	86:60	11	"Could not get device ID: %s:\n"
+water	86:28	0:0	12	"Could not get device ID: %s:\n"
+arg	86:62	86:86	11	av_opencl_errstr(status)
+call	86:62	86:85	12	av_opencl_errstr
+arg	86:79	86:85	13	status
+water	86:79	0:0	14	status
+water	86:87	0:0	10	;
+call	87:20	87:40	10	av_freep
+arg	87:29	87:40	11	&device_ids
+op	87:29	0:0	12	&
+water	87:30	0:0	12	device_ids
+water	87:41	0:0	10	;
+continue	88:20	88:28	10	
+water	89:16	0:0	10	}
+for	90:16	122:16	8	(k = 0 ;k < devices_num [ j ];k ++)
+forinit	90:21	90:26	9	k = 0 ;
+water	90:21	0:0	10	k
+op	90:23	0:0	10	=
+water	90:25	0:0	10	0
+water	90:26	0:0	10	;
+cond	90:28	90:45	9	k < devices_num [ j ]
+water	90:28	0:0	10	k
+op	90:30	0:0	10	<
+water	90:32	0:0	10	devices_num
+op	90:43	0:0	10	[
+water	90:44	0:0	10	j
+op	90:45	0:0	10	]
+forexpr	90:48	90:49	9	k ++
+water	90:48	0:0	10	k
+op	90:49	0:0	10	++
+stmts	90:53	122:16	9	
+water	90:53	0:0	10	{
+water	91:20	0:0	10	device_num
+op	91:31	0:0	10	=
+water	91:33	0:0	10	device_list
+op	91:44	0:0	10	->
+water	91:46	0:0	10	platform_node
+op	91:59	0:0	10	[
+water	91:60	0:0	10	i
+op	91:61	0:0	10	]
+op	91:62	0:0	10	->
+water	91:64	0:0	10	device_num
+water	91:74	0:0	10	;
+water	92:20	0:0	10	device_list
+op	92:31	0:0	10	->
+water	92:33	0:0	10	platform_node
+op	92:46	0:0	10	[
+water	92:47	0:0	10	i
+op	92:48	0:0	10	]
+op	92:49	0:0	10	->
+water	92:51	0:0	10	device_node
+op	92:62	0:0	10	[
+water	92:63	0:0	10	device_num
+op	92:73	0:0	10	]
+op	92:75	0:0	10	=
+call	92:77	92:114	10	av_mallocz
+arg	92:88	92:114	11	sizeof(AVOpenCLDeviceNode)
+op	92:88	0:0	12	sizeof
+water	92:94	0:0	12	(
+water	92:95	0:0	12	AVOpenCLDeviceNode
+water	92:113	0:0	12	)
+water	92:115	0:0	10	;
+if	93:20	96:20	10	(! device_list -> platform_node [ i ] -> device_node [ device_num ])
+cond	93:24	93:78	11	! device_list -> platform_node [ i ] -> device_node [ device_num ]
+op	93:24	0:0	12	!
+water	93:25	0:0	12	device_list
+op	93:36	0:0	12	->
+water	93:38	0:0	12	platform_node
+op	93:51	0:0	12	[
+water	93:52	0:0	12	i
+op	93:53	0:0	12	]
+op	93:54	0:0	12	->
+water	93:56	0:0	12	device_node
+op	93:67	0:0	12	[
+water	93:68	0:0	12	device_num
+op	93:78	0:0	12	]
+stmts	93:81	96:20	11	
+water	93:81	0:0	12	{
+water	94:24	0:0	12	ret
+op	94:28	0:0	12	=
+call	94:30	94:44	12	AVERROR
+arg	94:38	94:44	13	ENOMEM
+water	94:38	0:0	14	ENOMEM
+water	94:45	0:0	12	;
+goto	95:24	95:32	12	end
+water	95:29	0:0	13	end
+water	96:20	0:0	12	}
+water	97:20	0:0	10	device_node
+op	97:32	0:0	10	=
+water	97:34	0:0	10	device_list
+op	97:45	0:0	10	->
+water	97:47	0:0	10	platform_node
+op	97:60	0:0	10	[
+water	97:61	0:0	10	i
+op	97:62	0:0	10	]
+op	97:63	0:0	10	->
+water	97:65	0:0	10	device_node
+op	97:76	0:0	10	[
+water	97:77	0:0	10	device_num
+op	97:87	0:0	10	]
+water	97:88	0:0	10	;
+water	98:20	0:0	10	device_node
+op	98:31	0:0	10	->
+water	98:33	0:0	10	device_id
+op	98:43	0:0	10	=
+water	98:45	0:0	10	device_ids
+op	98:55	0:0	10	[
+water	98:56	0:0	10	k
+op	98:57	0:0	10	]
+water	98:58	0:0	10	;
+water	99:20	0:0	10	device_node
+op	99:31	0:0	10	->
+water	99:33	0:0	10	device_type
+op	99:45	0:0	10	=
+water	99:47	0:0	10	device_type
+op	99:58	0:0	10	[
+water	99:59	0:0	10	j
+op	99:60	0:0	10	]
+water	99:61	0:0	10	;
+water	100:20	0:0	10	status
+op	100:27	0:0	10	=
+call	100:29	101:71	10	clGetDeviceInfo
+arg	100:45	100:67	11	device_node->device_id
+water	100:45	0:0	12	device_node
+op	100:56	0:0	12	->
+water	100:58	0:0	12	device_id
+arg	100:69	100:83	11	CL_DEVICE_NAME
+water	100:69	0:0	12	CL_DEVICE_NAME
+arg	101:45	101:46	11	0
+water	101:45	0:0	12	0
+arg	101:48	101:52	11	NULL
+water	101:48	0:0	12	NULL
+arg	101:54	101:71	11	&device_name_size
+op	101:54	0:0	12	&
+water	101:55	0:0	12	device_name_size
+water	101:72	0:0	10	;
+if	102:20	106:20	10	(status != CL_SUCCESS)
+cond	102:24	102:34	11	status != CL_SUCCESS
+water	102:24	0:0	12	status
+op	102:31	0:0	12	!=
+water	102:34	0:0	12	CL_SUCCESS
+stmts	102:46	106:20	11	
+water	102:46	0:0	12	{
+call	103:24	104:99	12	av_log
+arg	103:31	103:42	13	&opencl_ctx
+op	103:31	0:0	14	&
+water	103:32	0:0	14	opencl_ctx
+arg	103:44	103:58	13	AV_LOG_WARNING
+water	103:44	0:0	14	AV_LOG_WARNING
+arg	104:32	104:73	13	"Could not get size of device name: %s\n"
+water	104:32	0:0	14	"Could not get size of device name: %s\n"
+arg	104:75	104:99	13	av_opencl_errstr(status)
+call	104:75	104:98	14	av_opencl_errstr
+arg	104:92	104:98	15	status
+water	104:92	0:0	16	status
+water	104:100	0:0	12	;
+continue	105:24	105:32	12	
+water	106:20	0:0	12	}
+water	107:20	0:0	10	device_node
+op	107:31	0:0	10	->
+water	107:33	0:0	10	device_name
+op	107:45	0:0	10	=
+call	107:47	107:88	10	av_malloc
+arg	107:57	107:88	11	device_name_size*sizeof(char)
+water	107:57	0:0	12	device_name_size
+op	107:74	0:0	12	*
+op	107:76	0:0	12	sizeof
+water	107:82	0:0	12	(
+water	107:83	0:0	12	char
+water	107:87	0:0	12	)
+water	107:89	0:0	10	;
+if	108:20	112:20	10	(! device_node -> device_name)
+cond	108:24	108:38	11	! device_node -> device_name
+op	108:24	0:0	12	!
+water	108:25	0:0	12	device_node
+op	108:36	0:0	12	->
+water	108:38	0:0	12	device_name
+stmts	108:51	112:20	11	
+water	108:51	0:0	12	{
+call	109:24	110:107	12	av_log
+arg	109:31	109:42	13	&opencl_ctx
+op	109:31	0:0	14	&
+water	109:32	0:0	14	opencl_ctx
+arg	109:44	109:58	13	AV_LOG_WARNING
+water	109:44	0:0	14	AV_LOG_WARNING
+arg	110:32	110:81	13	"Could not allocate memory for device name: %s\n"
+water	110:32	0:0	14	"Could not allocate memory for device name: %s\n"
+arg	110:83	110:107	13	av_opencl_errstr(status)
+call	110:83	110:106	14	av_opencl_errstr
+arg	110:100	110:106	15	status
+water	110:100	0:0	16	status
+water	110:108	0:0	12	;
+continue	111:24	111:32	12	
+water	112:20	0:0	12	}
+water	113:20	0:0	10	status
+op	113:27	0:0	10	=
+call	113:29	115:75	10	clGetDeviceInfo
+arg	113:45	113:67	11	device_node->device_id
+water	113:45	0:0	12	device_node
+op	113:56	0:0	12	->
+water	113:58	0:0	12	device_id
+arg	113:69	113:83	11	CL_DEVICE_NAME
+water	113:69	0:0	12	CL_DEVICE_NAME
+arg	114:45	114:76	11	device_name_size*sizeof(char)
+water	114:45	0:0	12	device_name_size
+op	114:62	0:0	12	*
+op	114:64	0:0	12	sizeof
+water	114:70	0:0	12	(
+water	114:71	0:0	12	char
+water	114:75	0:0	12	)
+arg	115:45	115:69	11	device_node->device_name
+water	115:45	0:0	12	device_node
+op	115:56	0:0	12	->
+water	115:58	0:0	12	device_name
+arg	115:71	115:75	11	NULL
+water	115:71	0:0	12	NULL
+water	115:76	0:0	10	;
+if	116:20	120:20	10	(status != CL_SUCCESS)
+cond	116:24	116:34	11	status != CL_SUCCESS
+water	116:24	0:0	12	status
+op	116:31	0:0	12	!=
+water	116:34	0:0	12	CL_SUCCESS
+stmts	116:46	120:20	11	
+water	116:46	0:0	12	{
+call	117:24	118:91	12	av_log
+arg	117:31	117:42	13	&opencl_ctx
+op	117:31	0:0	14	&
+water	117:32	0:0	14	opencl_ctx
+arg	117:44	117:58	13	AV_LOG_WARNING
+water	117:44	0:0	14	AV_LOG_WARNING
+arg	118:32	118:65	13	"Could not get device name: %s\n"
+water	118:32	0:0	14	"Could not get device name: %s\n"
+arg	118:67	118:91	13	av_opencl_errstr(status)
+call	118:67	118:90	14	av_opencl_errstr
+arg	118:84	118:90	15	status
+water	118:84	0:0	16	status
+water	118:92	0:0	12	;
+continue	119:24	119:32	12	
+water	120:20	0:0	12	}
+water	121:20	0:0	10	device_list
+op	121:31	0:0	10	->
+water	121:33	0:0	10	platform_node
+op	121:46	0:0	10	[
+water	121:47	0:0	10	i
+op	121:48	0:0	10	]
+op	121:49	0:0	10	->
+water	121:51	0:0	10	device_num
+op	121:61	0:0	10	++
+water	121:63	0:0	10	;
+water	122:16	0:0	10	}
+call	123:16	123:36	8	av_freep
+arg	123:25	123:36	9	&device_ids
+op	123:25	0:0	10	&
+water	123:26	0:0	10	device_ids
+water	123:37	0:0	8	;
+water	124:12	0:0	8	}
+water	125:8	0:0	6	}
+water	126:4	0:0	4	}
+label	127:0	127:3	2	end :
+call	128:4	128:26	2	av_freep
+arg	128:13	128:26	3	&platform_ids
+op	128:13	0:0	4	&
+water	128:14	0:0	4	platform_ids
+water	128:27	0:0	2	;
+call	129:4	129:25	2	av_freep
+arg	129:13	129:25	3	&devices_num
+op	129:13	0:0	4	&
+water	129:14	0:0	4	devices_num
+water	129:26	0:0	2	;
+call	130:4	130:24	2	av_freep
+arg	130:13	130:24	3	&device_ids
+op	130:13	0:0	4	&
+water	130:14	0:0	4	device_ids
+water	130:25	0:0	2	;
+if	131:4	132:37	2	(ret < 0)
+cond	131:8	131:14	3	ret < 0
+water	131:8	0:0	4	ret
+op	131:12	0:0	4	<
+water	131:14	0:0	4	0
+stmts	132:8	132:37	3	
+call	132:8	132:36	4	free_device_list
+arg	132:25	132:36	5	device_list
+water	132:25	0:0	6	device_list
+water	132:37	0:0	4	;
+return	133:4	133:14	2	ret
+water	133:11	0:0	3	ret

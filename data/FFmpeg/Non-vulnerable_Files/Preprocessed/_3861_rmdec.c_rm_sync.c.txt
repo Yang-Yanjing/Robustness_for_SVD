@@ -1,0 +1,355 @@
+func	1:0	65:0	0	static int	rm_sync
+params	1:18	0:0	1	
+param	1:19	1:37	2	AVFormatContext *	s
+param	1:39	1:57	2	int64_t *	timestamp
+param	1:59	1:69	2	int *	flags
+param	1:71	1:88	2	int *	stream_index
+param	1:90	1:102	2	int64_t *	pos
+stmnts	0:0	64:13	1	
+decl	2:4	2:37	2	RMDemuxContext	*rm
+op	2:23	0:0	2	=
+water	2:25	0:0	2	s
+op	2:26	0:0	2	->
+water	2:28	0:0	2	priv_data
+decl	3:4	3:27	2	AVIOContext	*pb
+op	3:20	0:0	2	=
+water	3:22	0:0	2	s
+op	3:23	0:0	2	->
+water	3:25	0:0	2	pb
+decl	4:4	4:16	2	AVStream	*st
+decl	5:4	5:29	2	uint32_t	state
+op	5:18	0:0	2	=
+water	5:19	0:0	2	0
+water	5:20	0:0	2	xFFFFFFFF
+while	6:4	63:4	2	(!avio_feof (pb ))
+cond	6:10	6:23	3	!avio_feof (pb )
+op	6:10	0:0	4	!
+call	6:11	6:23	4	avio_feof
+arg	6:21	6:23	5	pb
+water	6:21	0:0	6	pb
+stmts	6:25	63:4	3	
+water	6:25	0:0	4	{
+decl	7:8	7:23	4	int	len
+water	7:15	0:0	4	,
+decl	7:8	7:23	4	int	num
+water	7:20	0:0	4	,
+decl	7:8	7:23	4	int	i
+decl	8:8	8:19	4	int	mlti_id
+op	9:8	0:0	4	*
+water	9:9	0:0	4	pos
+op	9:12	0:0	4	=
+call	9:14	9:26	4	avio_tell
+arg	9:24	9:26	5	pb
+water	9:24	0:0	6	pb
+op	9:28	0:0	4	-
+water	9:30	0:0	4	3
+water	9:31	0:0	4	;
+if	10:8	16:8	4	(rm -> remaining_len > 0)
+cond	10:11	10:31	5	rm -> remaining_len > 0
+water	10:11	0:0	6	rm
+op	10:13	0:0	6	->
+water	10:15	0:0	6	remaining_len
+op	10:29	0:0	6	>
+water	10:31	0:0	6	0
+stmts	10:33	16:8	5	
+water	10:33	0:0	6	{
+water	11:12	0:0	6	num
+op	11:15	0:0	6	=
+water	11:17	0:0	6	rm
+op	11:19	0:0	6	->
+water	11:21	0:0	6	current_stream
+water	11:35	0:0	6	;
+water	12:12	0:0	6	mlti_id
+op	12:20	0:0	6	=
+water	12:22	0:0	6	0
+water	12:23	0:0	6	;
+water	13:12	0:0	6	len
+op	13:15	0:0	6	=
+water	13:17	0:0	6	rm
+op	13:19	0:0	6	->
+water	13:21	0:0	6	remaining_len
+water	13:34	0:0	6	;
+op	14:12	0:0	6	*
+water	14:13	0:0	6	timestamp
+op	14:23	0:0	6	=
+water	14:25	0:0	6	AV_NOPTS_VALUE
+water	14:39	0:0	6	;
+op	15:12	0:0	6	*
+water	15:13	0:0	6	flags
+op	15:18	0:0	6	=
+water	15:20	0:0	6	0
+water	15:21	0:0	6	;
+water	16:8	0:0	6	}
+else	16:9	48:8	4
+stmts	16:13	48:8	5	
+water	16:13	0:0	6	{
+water	17:12	0:0	6	state
+op	17:17	0:0	6	=
+water	17:19	0:0	6	(
+water	17:20	0:0	6	state
+op	17:25	0:0	6	<<
+water	17:27	0:0	6	8
+water	17:28	0:0	6	)
+op	17:30	0:0	6	+
+call	17:32	17:42	6	avio_r8
+arg	17:40	17:42	7	pb
+water	17:40	0:0	8	pb
+water	17:43	0:0	6	;
+if	18:12	35:12	6	(state ==MKBETAG ('I' ,'N' ,'D' ,'X' ))
+cond	18:15	18:50	7	state ==MKBETAG ('I' ,'N' ,'D' ,'X' )
+water	18:15	0:0	8	state
+op	18:21	0:0	8	==
+call	18:24	18:50	8	MKBETAG
+arg	18:32	18:35	9	'I'
+water	18:32	0:0	10	'I'
+arg	18:37	18:40	9	'N'
+water	18:37	0:0	10	'N'
+arg	18:42	18:45	9	'D'
+water	18:42	0:0	10	'D'
+arg	18:47	18:50	9	'X'
+water	18:47	0:0	10	'X'
+stmts	18:52	35:12	7	
+water	18:52	0:0	8	{
+decl	19:16	19:40	8	int	n_pkts
+water	19:26	0:0	8	,
+decl	19:16	19:40	8	int	expected_len
+water	20:16	0:0	8	len
+op	20:20	0:0	8	=
+call	20:22	20:34	8	avio_rb32
+arg	20:32	20:34	9	pb
+water	20:32	0:0	10	pb
+water	20:35	0:0	8	;
+call	21:16	21:31	8	avio_skip
+arg	21:26	21:28	9	pb
+water	21:26	0:0	10	pb
+arg	21:30	21:31	9	2
+water	21:30	0:0	10	2
+water	21:32	0:0	8	;
+water	22:16	0:0	8	n_pkts
+op	22:23	0:0	8	=
+call	22:25	22:37	8	avio_rb32
+arg	22:35	22:37	9	pb
+water	22:35	0:0	10	pb
+water	22:38	0:0	8	;
+water	23:16	0:0	8	expected_len
+op	23:29	0:0	8	=
+water	23:31	0:0	8	20
+op	23:34	0:0	8	+
+water	23:36	0:0	8	n_pkts
+op	23:43	0:0	8	*
+water	23:45	0:0	8	14
+water	23:47	0:0	8	;
+if	24:16	26:38	8	(len == 20)
+cond	24:20	24:27	9	len == 20
+water	24:20	0:0	10	len
+op	24:24	0:0	10	==
+water	24:27	0:0	10	20
+stmts	26:20	26:38	9	
+water	26:20	0:0	10	len
+op	26:24	0:0	10	=
+water	26:26	0:0	10	expected_len
+water	26:38	0:0	10	;
+else	27:16	30:53	8
+stmts	27:21	30:53	9	
+if	27:21	30:53	10	(len != expected_len)
+cond	27:25	27:32	11	len != expected_len
+water	27:25	0:0	12	len
+op	27:29	0:0	12	!=
+water	27:32	0:0	12	expected_len
+stmts	28:20	30:53	11	
+call	28:20	30:52	12	av_log
+arg	28:27	28:28	13	s
+water	28:27	0:0	14	s
+arg	28:30	28:44	13	AV_LOG_WARNING
+water	28:30	0:0	14	AV_LOG_WARNING
+arg	29:27	29:78	13	"Index size %d (%d pkts) is wrong, should be %d.\n"
+water	29:27	0:0	14	"Index size %d (%d pkts) is wrong, should be %d.\n"
+arg	30:27	30:30	13	len
+water	30:27	0:0	14	len
+arg	30:32	30:38	13	n_pkts
+water	30:32	0:0	14	n_pkts
+arg	30:40	30:52	13	expected_len
+water	30:40	0:0	14	expected_len
+water	30:53	0:0	12	;
+water	31:16	0:0	8	len
+op	31:20	0:0	8	-=
+water	31:23	0:0	8	14
+water	31:25	0:0	8	;
+if	32:16	33:28	8	(len < 0)
+cond	32:19	32:23	9	len < 0
+water	32:19	0:0	10	len
+op	32:22	0:0	10	<
+water	32:23	0:0	10	0
+stmts	33:20	33:28	9	
+continue	33:20	33:28	10	
+goto	34:16	34:25	8	skip
+water	34:21	0:0	9	skip
+water	35:12	0:0	8	}
+else	35:14	38:12	6
+stmts	35:19	38:12	7	
+if	35:19	38:12	8	(state ==MKBETAG ('D' ,'A' ,'T' ,'A' ))
+cond	35:23	35:55	9	state ==MKBETAG ('D' ,'A' ,'T' ,'A' )
+water	35:23	0:0	10	state
+op	35:29	0:0	10	==
+call	35:32	35:55	10	MKBETAG
+arg	35:40	35:43	11	'D'
+water	35:40	0:0	12	'D'
+arg	35:44	35:47	11	'A'
+water	35:44	0:0	12	'A'
+arg	35:48	35:51	11	'T'
+water	35:48	0:0	12	'T'
+arg	35:52	35:55	11	'A'
+water	35:52	0:0	12	'A'
+stmts	35:58	38:12	9	
+water	35:58	0:0	10	{
+call	36:16	37:75	10	av_log
+arg	36:23	36:24	11	s
+water	36:23	0:0	12	s
+arg	36:26	36:40	11	AV_LOG_WARNING
+water	36:26	0:0	12	AV_LOG_WARNING
+arg	37:23	37:75	11	"DATA tag in middle of chunk, file may be broken.\n"
+water	37:23	0:0	12	"DATA tag in middle of chunk, file may be broken.\n"
+water	37:76	0:0	10	;
+water	38:12	0:0	10	}
+if	39:12	40:24	6	(state > ( unsigned ) 0 xFFFF || state <= 12)
+cond	39:15	39:52	7	state > ( unsigned ) 0 xFFFF || state <= 12
+water	39:15	0:0	8	state
+op	39:21	0:0	8	>
+water	39:23	0:0	8	(
+water	39:24	0:0	8	unsigned
+water	39:32	0:0	8	)
+water	39:33	0:0	8	0
+water	39:34	0:0	8	xFFFF
+op	39:40	0:0	8	||
+water	39:43	0:0	8	state
+op	39:49	0:0	8	<=
+water	39:52	0:0	8	12
+stmts	40:16	40:24	7	
+continue	40:16	40:24	8	
+water	41:12	0:0	6	len
+op	41:15	0:0	6	=
+water	41:16	0:0	6	state
+op	41:22	0:0	6	-
+water	41:24	0:0	6	12
+water	41:26	0:0	6	;
+water	42:12	0:0	6	state
+op	42:17	0:0	6	=
+water	42:19	0:0	6	0
+water	42:20	0:0	6	xFFFFFFFF
+water	42:29	0:0	6	;
+water	43:12	0:0	6	num
+op	43:16	0:0	6	=
+call	43:18	43:30	6	avio_rb16
+arg	43:28	43:30	7	pb
+water	43:28	0:0	8	pb
+water	43:31	0:0	6	;
+op	44:12	0:0	6	*
+water	44:13	0:0	6	timestamp
+op	44:23	0:0	6	=
+call	44:25	44:37	6	avio_rb32
+arg	44:35	44:37	7	pb
+water	44:35	0:0	8	pb
+water	44:38	0:0	6	;
+water	45:12	0:0	6	mlti_id
+op	45:20	0:0	6	=
+water	45:22	0:0	6	(
+call	45:23	45:33	6	avio_r8
+arg	45:31	45:33	7	pb
+water	45:31	0:0	8	pb
+op	45:34	0:0	6	>>
+water	45:36	0:0	6	1
+water	45:37	0:0	6	)
+op	45:38	0:0	6	-
+water	45:39	0:0	6	1
+op	45:40	0:0	6	<<
+water	45:42	0:0	6	16
+water	45:44	0:0	6	;
+water	46:12	0:0	6	mlti_id
+op	46:20	0:0	6	=
+call	46:22	46:38	6	FFMAX
+arg	46:28	46:35	7	mlti_id
+water	46:28	0:0	8	mlti_id
+arg	46:37	46:38	7	0
+water	46:37	0:0	8	0
+water	46:39	0:0	6	;
+op	47:12	0:0	6	*
+water	47:13	0:0	6	flags
+op	47:19	0:0	6	=
+call	47:21	47:31	6	avio_r8
+arg	47:29	47:31	7	pb
+water	47:29	0:0	8	pb
+water	47:32	0:0	6	;
+water	48:8	0:0	6	}
+for	49:8	53:8	4	(i = 0 ;i < s -> nb_streams;i ++)
+forinit	49:12	49:15	5	i = 0 ;
+water	49:12	0:0	6	i
+op	49:13	0:0	6	=
+water	49:14	0:0	6	0
+water	49:15	0:0	6	;
+cond	49:16	49:21	5	i < s -> nb_streams
+water	49:16	0:0	6	i
+op	49:17	0:0	6	<
+water	49:18	0:0	6	s
+op	49:19	0:0	6	->
+water	49:21	0:0	6	nb_streams
+forexpr	49:32	49:33	5	i ++
+water	49:32	0:0	6	i
+op	49:33	0:0	6	++
+stmts	49:37	53:8	5	
+water	49:37	0:0	6	{
+water	50:12	0:0	6	st
+op	50:15	0:0	6	=
+water	50:17	0:0	6	s
+op	50:18	0:0	6	->
+water	50:20	0:0	6	streams
+op	50:27	0:0	6	[
+water	50:28	0:0	6	i
+op	50:29	0:0	6	]
+water	50:30	0:0	6	;
+if	51:12	52:21	6	(mlti_id + num == st -> id)
+cond	51:16	51:37	7	mlti_id + num == st -> id
+water	51:16	0:0	8	mlti_id
+op	51:24	0:0	8	+
+water	51:26	0:0	8	num
+op	51:30	0:0	8	==
+water	51:33	0:0	8	st
+op	51:35	0:0	8	->
+water	51:37	0:0	8	id
+stmts	52:16	52:21	7	
+break	52:16	52:21	8	
+water	53:8	0:0	6	}
+if	54:8	60:8	4	(i == s -> nb_streams)
+cond	54:12	54:20	5	i == s -> nb_streams
+water	54:12	0:0	6	i
+op	54:14	0:0	6	==
+water	54:17	0:0	6	s
+op	54:18	0:0	6	->
+water	54:20	0:0	6	nb_streams
+stmts	54:32	60:8	5	
+water	54:32	0:0	6	{
+label	55:0	55:4	6	skip :
+call	57:12	57:29	6	avio_skip
+arg	57:22	57:24	7	pb
+water	57:22	0:0	8	pb
+arg	57:26	57:29	7	len
+water	57:26	0:0	8	len
+water	57:30	0:0	6	;
+water	58:12	0:0	6	rm
+op	58:14	0:0	6	->
+water	58:16	0:0	6	remaining_len
+op	58:30	0:0	6	=
+water	58:32	0:0	6	0
+water	58:33	0:0	6	;
+continue	59:12	59:20	6	
+water	60:8	0:0	6	}
+op	61:8	0:0	4	*
+water	61:9	0:0	4	stream_index
+op	61:21	0:0	4	=
+water	61:23	0:0	4	i
+water	61:24	0:0	4	;
+return	62:8	62:18	4	len
+water	62:15	0:0	5	len
+water	63:4	0:0	4	}
+return	64:4	64:13	2	-1
+op	64:11	0:0	3	-
+water	64:12	0:0	3	1

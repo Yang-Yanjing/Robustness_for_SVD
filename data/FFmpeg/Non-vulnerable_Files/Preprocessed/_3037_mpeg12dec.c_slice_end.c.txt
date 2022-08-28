@@ -1,0 +1,219 @@
+func	1:0	43:0	0	static int	slice_end
+params	1:20	0:0	1	
+param	1:21	1:42	2	AVCodecContext *	avctx
+param	1:44	1:57	2	AVFrame *	pict
+stmnts	0:0	42:4	1	
+decl	3:4	3:40	2	Mpeg1Context	*s1
+op	3:22	0:0	2	=
+water	3:24	0:0	2	avctx
+op	3:29	0:0	2	->
+water	3:31	0:0	2	priv_data
+decl	4:4	4:41	2	MpegEncContext	*s
+op	4:22	0:0	2	=
+op	4:24	0:0	2	&
+water	4:25	0:0	2	s1
+op	4:27	0:0	2	->
+water	4:29	0:0	2	mpeg_enc_ctx
+if	5:4	6:16	2	(! s1 -> mpeg_enc_ctx_allocated || ! s -> current_picture_ptr)
+cond	5:8	5:43	3	! s1 -> mpeg_enc_ctx_allocated || ! s -> current_picture_ptr
+op	5:8	0:0	4	!
+water	5:9	0:0	4	s1
+op	5:11	0:0	4	->
+water	5:13	0:0	4	mpeg_enc_ctx_allocated
+op	5:36	0:0	4	||
+op	5:39	0:0	4	!
+water	5:40	0:0	4	s
+op	5:41	0:0	4	->
+water	5:43	0:0	4	current_picture_ptr
+stmts	6:8	6:16	3	
+return	6:8	6:16	4	0
+water	6:15	0:0	5	0
+if	7:4	14:4	2	(s -> avctx -> hwaccel)
+cond	7:8	7:18	3	s -> avctx -> hwaccel
+water	7:8	0:0	4	s
+op	7:9	0:0	4	->
+water	7:11	0:0	4	avctx
+op	7:16	0:0	4	->
+water	7:18	0:0	4	hwaccel
+stmts	7:27	14:4	3	
+water	7:27	0:0	4	{
+decl	8:8	8:56	4	int	ret
+op	8:16	0:0	4	=
+call	8:18	8:55	5	s->avctx->hwaccel->end_frame
+arg	8:47	8:55	6	s->avctx
+water	8:47	0:0	7	s
+op	8:48	0:0	7	->
+water	8:50	0:0	7	avctx
+if	9:8	13:8	4	(ret < 0)
+cond	9:12	9:18	5	ret < 0
+water	9:12	0:0	6	ret
+op	9:16	0:0	6	<
+water	9:18	0:0	6	0
+stmts	9:21	13:8	5	
+water	9:21	0:0	6	{
+call	10:12	11:68	6	av_log
+arg	10:19	10:24	7	avctx
+water	10:19	0:0	8	avctx
+arg	10:26	10:38	7	AV_LOG_ERROR
+water	10:26	0:0	8	AV_LOG_ERROR
+arg	11:19	11:68	7	"hardware accelerator failed to decode picture\n"
+water	11:19	0:0	8	"hardware accelerator failed to decode picture\n"
+water	11:69	0:0	6	;
+return	12:12	12:22	6	ret
+water	12:19	0:0	7	ret
+water	13:8	0:0	6	}
+water	14:4	0:0	4	}
+if	16:4	40:4	2	(! s -> first_field && ! s1 -> first_slice)
+cond	16:9	16:33	3	! s -> first_field && ! s1 -> first_slice
+op	16:9	0:0	4	!
+water	16:10	0:0	4	s
+op	16:11	0:0	4	->
+water	16:13	0:0	4	first_field
+op	16:25	0:0	4	&&
+op	16:28	0:0	4	!
+water	16:29	0:0	4	s1
+op	16:31	0:0	4	->
+water	16:33	0:0	4	first_slice
+stmts	16:46	40:4	3	
+water	16:46	0:0	4	{
+call	18:8	18:30	4	ff_er_frame_end
+arg	18:24	18:30	5	&s->er
+op	18:24	0:0	6	&
+water	18:25	0:0	6	s
+op	18:26	0:0	6	->
+water	18:28	0:0	6	er
+water	18:31	0:0	4	;
+call	19:8	19:26	4	ff_mpv_frame_end
+arg	19:25	19:26	5	s
+water	19:25	0:0	6	s
+water	19:27	0:0	4	;
+if	20:8	26:8	4	(s -> pict_type == AV_PICTURE_TYPE_B || s -> low_delay)
+cond	20:12	20:52	5	s -> pict_type == AV_PICTURE_TYPE_B || s -> low_delay
+water	20:12	0:0	6	s
+op	20:13	0:0	6	->
+water	20:15	0:0	6	pict_type
+op	20:25	0:0	6	==
+water	20:28	0:0	6	AV_PICTURE_TYPE_B
+op	20:46	0:0	6	||
+water	20:49	0:0	6	s
+op	20:50	0:0	6	->
+water	20:52	0:0	6	low_delay
+stmts	20:63	26:8	5	
+water	20:63	0:0	6	{
+decl	21:12	21:67	6	int	ret
+op	21:20	0:0	6	=
+call	21:22	21:66	7	av_frame_ref
+arg	21:35	21:39	8	pict
+water	21:35	0:0	9	pict
+arg	21:41	21:66	8	s->current_picture_ptr->f
+water	21:41	0:0	9	s
+op	21:42	0:0	9	->
+water	21:44	0:0	9	current_picture_ptr
+op	21:63	0:0	9	->
+water	21:65	0:0	9	f
+if	22:12	23:26	6	(ret < 0)
+cond	22:16	22:22	7	ret < 0
+water	22:16	0:0	8	ret
+op	22:20	0:0	8	<
+water	22:22	0:0	8	0
+stmts	23:16	23:26	7	
+return	23:16	23:26	8	ret
+water	23:23	0:0	9	ret
+call	24:12	24:63	6	ff_print_debug_info
+arg	24:32	24:33	7	s
+water	24:32	0:0	8	s
+arg	24:35	24:57	7	s->current_picture_ptr
+water	24:35	0:0	8	s
+op	24:36	0:0	8	->
+water	24:38	0:0	8	current_picture_ptr
+arg	24:59	24:63	7	pict
+water	24:59	0:0	8	pict
+water	24:64	0:0	6	;
+call	25:12	25:88	6	ff_mpv_export_qp_table
+arg	25:35	25:36	7	s
+water	25:35	0:0	8	s
+arg	25:38	25:42	7	pict
+water	25:38	0:0	8	pict
+arg	25:44	25:66	7	s->current_picture_ptr
+water	25:44	0:0	8	s
+op	25:45	0:0	8	->
+water	25:47	0:0	8	current_picture_ptr
+arg	25:68	25:88	7	FF_QSCALE_TYPE_MPEG2
+water	25:68	0:0	8	FF_QSCALE_TYPE_MPEG2
+water	25:89	0:0	6	;
+water	26:8	0:0	6	}
+else	26:10	38:8	4
+stmts	26:15	38:8	5	
+water	26:15	0:0	6	{
+if	27:12	28:35	6	(avctx -> active_thread_type & FF_THREAD_FRAME)
+cond	27:16	27:44	7	avctx -> active_thread_type & FF_THREAD_FRAME
+water	27:16	0:0	8	avctx
+op	27:21	0:0	8	->
+water	27:23	0:0	8	active_thread_type
+op	27:42	0:0	8	&
+water	27:44	0:0	8	FF_THREAD_FRAME
+stmts	28:16	28:35	7	
+water	28:16	0:0	8	s
+op	28:17	0:0	8	->
+water	28:19	0:0	8	picture_number
+op	28:33	0:0	8	++
+water	28:35	0:0	8	;
+if	31:12	37:12	6	(s -> last_picture_ptr)
+cond	31:16	31:19	7	s -> last_picture_ptr
+water	31:16	0:0	8	s
+op	31:17	0:0	8	->
+water	31:19	0:0	8	last_picture_ptr
+stmts	31:37	37:12	7	
+water	31:37	0:0	8	{
+decl	32:16	32:68	8	int	ret
+op	32:24	0:0	8	=
+call	32:26	32:67	9	av_frame_ref
+arg	32:39	32:43	10	pict
+water	32:39	0:0	11	pict
+arg	32:45	32:67	10	s->last_picture_ptr->f
+water	32:45	0:0	11	s
+op	32:46	0:0	11	->
+water	32:48	0:0	11	last_picture_ptr
+op	32:64	0:0	11	->
+water	32:66	0:0	11	f
+if	33:16	34:30	8	(ret < 0)
+cond	33:20	33:26	9	ret < 0
+water	33:20	0:0	10	ret
+op	33:24	0:0	10	<
+water	33:26	0:0	10	0
+stmts	34:20	34:30	9	
+return	34:20	34:30	10	ret
+water	34:27	0:0	11	ret
+call	35:16	35:64	8	ff_print_debug_info
+arg	35:36	35:37	9	s
+water	35:36	0:0	10	s
+arg	35:39	35:58	9	s->last_picture_ptr
+water	35:39	0:0	10	s
+op	35:40	0:0	10	->
+water	35:42	0:0	10	last_picture_ptr
+arg	35:60	35:64	9	pict
+water	35:60	0:0	10	pict
+water	35:65	0:0	8	;
+call	36:16	36:89	8	ff_mpv_export_qp_table
+arg	36:39	36:40	9	s
+water	36:39	0:0	10	s
+arg	36:42	36:46	9	pict
+water	36:42	0:0	10	pict
+arg	36:48	36:67	9	s->last_picture_ptr
+water	36:48	0:0	10	s
+op	36:49	0:0	10	->
+water	36:51	0:0	10	last_picture_ptr
+arg	36:69	36:89	9	FF_QSCALE_TYPE_MPEG2
+water	36:69	0:0	10	FF_QSCALE_TYPE_MPEG2
+water	36:90	0:0	8	;
+water	37:12	0:0	8	}
+water	38:8	0:0	6	}
+return	39:8	39:16	4	1
+water	39:15	0:0	5	1
+water	40:4	0:0	4	}
+else	40:6	42:4	2
+stmts	40:11	42:4	3	
+water	40:11	0:0	4	{
+return	41:8	41:16	4	0
+water	41:15	0:0	5	0
+water	42:4	0:0	4	}

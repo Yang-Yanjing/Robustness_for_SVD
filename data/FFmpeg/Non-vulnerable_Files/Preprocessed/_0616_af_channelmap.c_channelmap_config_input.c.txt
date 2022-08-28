@@ -1,0 +1,170 @@
+func	1:0	32:0	0	static int	channelmap_config_input
+params	1:34	0:0	1	
+param	1:35	1:55	2	AVFilterLink *	inlink
+stmnts	0:0	31:14	1	
+decl	3:4	3:38	2	AVFilterContext	*ctx
+op	3:25	0:0	2	=
+water	3:27	0:0	2	inlink
+op	3:33	0:0	2	->
+water	3:35	0:0	2	dst
+decl	4:4	4:36	2	ChannelMapContext	*s
+op	4:25	0:0	2	=
+water	4:27	0:0	2	ctx
+op	4:30	0:0	2	->
+water	4:32	0:0	2	priv
+decl	5:4	5:79	2	int	nb_channels
+op	5:20	0:0	2	=
+call	5:22	5:78	3	av_get_channel_layout_nb_channels
+arg	5:56	5:78	4	inlink->channel_layout
+water	5:56	0:0	5	inlink
+op	5:62	0:0	5	->
+water	5:64	0:0	5	channel_layout
+decl	6:4	6:18	2	int	i
+water	6:9	0:0	2	,
+decl	6:4	6:18	2	int	err
+op	6:15	0:0	2	=
+water	6:17	0:0	2	0
+decl	7:4	7:28	2	const char	*channel_name
+decl	8:4	8:25	2	char	layout_name[256]
+for	9:4	30:4	2	(i = 0 ;i < s -> nch;i ++)
+forinit	9:9	9:14	3	i = 0 ;
+water	9:9	0:0	4	i
+op	9:11	0:0	4	=
+water	9:13	0:0	4	0
+water	9:14	0:0	4	;
+cond	9:16	9:23	3	i < s -> nch
+water	9:16	0:0	4	i
+op	9:18	0:0	4	<
+water	9:20	0:0	4	s
+op	9:21	0:0	4	->
+water	9:23	0:0	4	nch
+forexpr	9:28	9:29	3	i ++
+water	9:28	0:0	4	i
+op	9:29	0:0	4	++
+stmts	9:33	30:4	3	
+water	9:33	0:0	4	{
+decl	10:8	10:41	4	struct ChannelMap	*m
+op	10:29	0:0	4	=
+op	10:31	0:0	4	&
+water	10:32	0:0	4	s
+op	10:33	0:0	4	->
+water	10:35	0:0	4	map
+op	10:38	0:0	4	[
+water	10:39	0:0	4	i
+op	10:40	0:0	4	]
+if	11:8	14:8	4	(s -> mode == MAP_PAIR_STR_INT || s -> mode == MAP_PAIR_STR_STR)
+cond	11:12	11:54	5	s -> mode == MAP_PAIR_STR_INT || s -> mode == MAP_PAIR_STR_STR
+water	11:12	0:0	6	s
+op	11:13	0:0	6	->
+water	11:15	0:0	6	mode
+op	11:20	0:0	6	==
+water	11:23	0:0	6	MAP_PAIR_STR_INT
+op	11:40	0:0	6	||
+water	11:43	0:0	6	s
+op	11:44	0:0	6	->
+water	11:46	0:0	6	mode
+op	11:51	0:0	6	==
+water	11:54	0:0	6	MAP_PAIR_STR_STR
+stmts	11:72	14:8	5	
+water	11:72	0:0	6	{
+water	12:12	0:0	6	m
+op	12:13	0:0	6	->
+water	12:15	0:0	6	in_channel_idx
+op	12:30	0:0	6	=
+call	12:32	13:53	6	av_get_channel_layout_channel_index
+arg	13:16	13:38	7	inlink->channel_layout
+water	13:16	0:0	8	inlink
+op	13:22	0:0	8	->
+water	13:24	0:0	8	channel_layout
+arg	13:40	13:53	7	m->in_channel
+water	13:40	0:0	8	m
+op	13:41	0:0	8	->
+water	13:43	0:0	8	in_channel
+water	13:54	0:0	6	;
+water	14:8	0:0	6	}
+if	15:8	29:8	4	(m -> in_channel_idx < 0 || m -> in_channel_idx >= nb_channels)
+cond	15:12	15:58	5	m -> in_channel_idx < 0 || m -> in_channel_idx >= nb_channels
+water	15:12	0:0	6	m
+op	15:13	0:0	6	->
+water	15:15	0:0	6	in_channel_idx
+op	15:30	0:0	6	<
+water	15:32	0:0	6	0
+op	15:34	0:0	6	||
+water	15:37	0:0	6	m
+op	15:38	0:0	6	->
+water	15:40	0:0	6	in_channel_idx
+op	15:55	0:0	6	>=
+water	15:58	0:0	6	nb_channels
+stmts	15:71	29:8	5	
+water	15:71	0:0	6	{
+call	16:12	17:66	6	av_get_channel_layout_string
+arg	16:41	16:52	7	layout_name
+water	16:41	0:0	8	layout_name
+arg	16:54	16:73	7	sizeof(layout_name)
+op	16:54	0:0	8	sizeof
+water	16:60	0:0	8	(
+water	16:61	0:0	8	layout_name
+water	16:72	0:0	8	)
+arg	17:41	17:42	7	0
+water	17:41	0:0	8	0
+arg	17:44	17:66	7	inlink->channel_layout
+water	17:44	0:0	8	inlink
+op	17:50	0:0	8	->
+water	17:52	0:0	8	channel_layout
+water	17:67	0:0	6	;
+if	18:12	23:12	6	(m -> in_channel)
+cond	18:16	18:19	7	m -> in_channel
+water	18:16	0:0	8	m
+op	18:17	0:0	8	->
+water	18:19	0:0	8	in_channel
+stmts	18:31	23:12	7	
+water	18:31	0:0	8	{
+water	19:16	0:0	8	channel_name
+op	19:29	0:0	8	=
+call	19:31	19:64	8	av_get_channel_name
+arg	19:51	19:64	9	m->in_channel
+water	19:51	0:0	10	m
+op	19:52	0:0	10	->
+water	19:54	0:0	10	in_channel
+water	19:65	0:0	8	;
+call	20:16	22:48	8	av_log
+arg	20:23	20:26	9	ctx
+water	20:23	0:0	10	ctx
+arg	20:28	20:40	9	AV_LOG_ERROR
+water	20:28	0:0	10	AV_LOG_ERROR
+arg	21:23	21:82	9	"input channel '%s' not available from input layout '%s'\n"
+water	21:23	0:0	10	"input channel '%s' not available from input layout '%s'\n"
+arg	22:23	22:35	9	channel_name
+water	22:23	0:0	10	channel_name
+arg	22:37	22:48	9	layout_name
+water	22:37	0:0	10	layout_name
+water	22:49	0:0	8	;
+water	23:12	0:0	8	}
+else	23:14	27:12	6
+stmts	23:19	27:12	7	
+water	23:19	0:0	8	{
+call	24:16	26:53	8	av_log
+arg	24:23	24:26	9	ctx
+water	24:23	0:0	10	ctx
+arg	24:28	24:40	9	AV_LOG_ERROR
+water	24:28	0:0	10	AV_LOG_ERROR
+arg	25:23	25:81	9	"input channel #%d not available from input layout '%s'\n"
+water	25:23	0:0	10	"input channel #%d not available from input layout '%s'\n"
+arg	26:23	26:40	9	m->in_channel_idx
+water	26:23	0:0	10	m
+op	26:24	0:0	10	->
+water	26:26	0:0	10	in_channel_idx
+arg	26:42	26:53	9	layout_name
+water	26:42	0:0	10	layout_name
+water	26:54	0:0	8	;
+water	27:12	0:0	8	}
+water	28:12	0:0	6	err
+op	28:16	0:0	6	=
+call	28:18	28:32	6	AVERROR
+arg	28:26	28:32	7	EINVAL
+water	28:26	0:0	8	EINVAL
+water	28:33	0:0	6	;
+water	29:8	0:0	6	}
+water	30:4	0:0	4	}
+return	31:4	31:14	2	err
+water	31:11	0:0	3	err

@@ -1,0 +1,274 @@
+func	1:0	45:0	0	int	ff_audio_data_realloc
+params	1:25	0:0	1	
+param	1:26	1:38	2	AudioData *	a
+param	1:40	1:54	2	int	nb_samples
+stmnts	0:0	44:12	1	
+decl	3:4	3:40	2	int	ret
+water	3:11	0:0	2	,
+decl	3:4	3:40	2	int	new_buf_size
+water	3:25	0:0	2	,
+decl	3:4	3:40	2	int	plane_size
+water	3:37	0:0	2	,
+decl	3:4	3:40	2	int	p
+if	5:4	6:16	2	(a -> allocated_samples >= nb_samples)
+cond	5:8	5:32	3	a -> allocated_samples >= nb_samples
+water	5:8	0:0	4	a
+op	5:9	0:0	4	->
+water	5:11	0:0	4	allocated_samples
+op	5:29	0:0	4	>=
+water	5:32	0:0	4	nb_samples
+stmts	6:8	6:16	3	
+return	6:8	6:16	4	0
+water	6:15	0:0	5	0
+if	8:4	9:30	2	(a -> read_only || ! a -> allow_realloc)
+cond	8:8	8:28	3	a -> read_only || ! a -> allow_realloc
+water	8:8	0:0	4	a
+op	8:9	0:0	4	->
+water	8:11	0:0	4	read_only
+op	8:21	0:0	4	||
+op	8:24	0:0	4	!
+water	8:25	0:0	4	a
+op	8:26	0:0	4	->
+water	8:28	0:0	4	allow_realloc
+stmts	9:8	9:30	3	
+return	9:8	9:30	4	AVERROR(EINVAL)
+call	9:15	9:29	5	AVERROR
+arg	9:23	9:29	6	EINVAL
+water	9:23	0:0	7	EINVAL
+water	10:4	0:0	2	new_buf_size
+op	10:17	0:0	2	=
+call	10:19	12:62	2	av_samples_get_buffer_size
+arg	10:46	10:57	3	&plane_size
+op	10:46	0:0	4	&
+water	10:47	0:0	4	plane_size
+arg	11:46	11:67	3	a->allocated_channels
+water	11:46	0:0	4	a
+op	11:47	0:0	4	->
+water	11:49	0:0	4	allocated_channels
+arg	11:69	11:79	3	nb_samples
+water	11:69	0:0	4	nb_samples
+arg	12:46	12:59	3	a->sample_fmt
+water	12:46	0:0	4	a
+op	12:47	0:0	4	->
+water	12:49	0:0	4	sample_fmt
+arg	12:61	12:62	3	0
+water	12:61	0:0	4	0
+water	12:63	0:0	2	;
+if	13:4	14:27	2	(new_buf_size < 0)
+cond	13:8	13:23	3	new_buf_size < 0
+water	13:8	0:0	4	new_buf_size
+op	13:21	0:0	4	<
+water	13:23	0:0	4	0
+stmts	14:8	14:27	3	
+return	14:8	14:27	4	new_buf_size
+water	14:15	0:0	5	new_buf_size
+if	18:4	29:4	2	(a -> nb_samples > 0 && a -> is_planar)
+cond	18:8	18:32	3	a -> nb_samples > 0 && a -> is_planar
+water	18:8	0:0	4	a
+op	18:9	0:0	4	->
+water	18:11	0:0	4	nb_samples
+op	18:22	0:0	4	>
+water	18:24	0:0	4	0
+op	18:26	0:0	4	&&
+water	18:29	0:0	4	a
+op	18:30	0:0	4	->
+water	18:32	0:0	4	is_planar
+stmts	18:43	29:4	3	
+water	18:43	0:0	4	{
+decl	19:8	19:61	4	uint8_t	*new_data[AVRESAMPLE_MAX_CHANNELS]
+op	19:51	0:0	4	=
+water	19:53	0:0	4	{
+water	19:55	0:0	4	NULL
+water	19:60	0:0	4	}
+water	20:8	0:0	4	ret
+op	20:12	0:0	4	=
+call	20:14	21:59	4	av_samples_alloc
+arg	20:31	20:39	5	new_data
+water	20:31	0:0	6	new_data
+arg	20:41	20:52	5	&plane_size
+op	20:41	0:0	6	&
+water	20:42	0:0	6	plane_size
+arg	20:54	20:75	5	a->allocated_channels
+water	20:54	0:0	6	a
+op	20:55	0:0	6	->
+water	20:57	0:0	6	allocated_channels
+arg	21:31	21:41	5	nb_samples
+water	21:31	0:0	6	nb_samples
+arg	21:43	21:56	5	a->sample_fmt
+water	21:43	0:0	6	a
+op	21:44	0:0	6	->
+water	21:46	0:0	6	sample_fmt
+arg	21:58	21:59	5	0
+water	21:58	0:0	6	0
+water	21:60	0:0	4	;
+if	22:8	23:22	4	(ret < 0)
+cond	22:12	22:18	5	ret < 0
+water	22:12	0:0	6	ret
+op	22:16	0:0	6	<
+water	22:18	0:0	6	0
+stmts	23:12	23:22	5	
+return	23:12	23:22	6	ret
+water	23:19	0:0	7	ret
+for	24:8	25:70	4	(p = 0 ;p < a -> planes;p ++)
+forinit	24:13	24:18	5	p = 0 ;
+water	24:13	0:0	6	p
+op	24:15	0:0	6	=
+water	24:17	0:0	6	0
+water	24:18	0:0	6	;
+cond	24:20	24:27	5	p < a -> planes
+water	24:20	0:0	6	p
+op	24:22	0:0	6	<
+water	24:24	0:0	6	a
+op	24:25	0:0	6	->
+water	24:27	0:0	6	planes
+forexpr	24:35	24:36	5	p ++
+water	24:35	0:0	6	p
+op	24:36	0:0	6	++
+stmts	25:12	25:70	5	
+call	25:12	25:69	6	memcpy
+arg	25:19	25:30	7	new_data[p]
+water	25:19	0:0	8	new_data
+op	25:27	0:0	8	[
+water	25:28	0:0	8	p
+op	25:29	0:0	8	]
+arg	25:32	25:42	7	a->data[p]
+water	25:32	0:0	8	a
+op	25:33	0:0	8	->
+water	25:35	0:0	8	data
+op	25:39	0:0	8	[
+water	25:40	0:0	8	p
+op	25:41	0:0	8	]
+arg	25:44	25:69	7	a->nb_samples*a->stride
+water	25:44	0:0	8	a
+op	25:45	0:0	8	->
+water	25:47	0:0	8	nb_samples
+op	25:58	0:0	8	*
+water	25:60	0:0	8	a
+op	25:61	0:0	8	->
+water	25:63	0:0	8	stride
+water	25:70	0:0	6	;
+call	26:8	26:27	4	av_freep
+arg	26:17	26:27	5	&a->buffer
+op	26:17	0:0	6	&
+water	26:18	0:0	6	a
+op	26:19	0:0	6	->
+water	26:21	0:0	6	buffer
+water	26:28	0:0	4	;
+call	27:8	27:50	4	memcpy
+arg	27:15	27:22	5	a->data
+water	27:15	0:0	6	a
+op	27:16	0:0	6	->
+water	27:18	0:0	6	data
+arg	27:24	27:32	5	new_data
+water	27:24	0:0	6	new_data
+arg	27:34	27:50	5	sizeof(new_data)
+op	27:34	0:0	6	sizeof
+water	27:40	0:0	6	(
+water	27:41	0:0	6	new_data
+water	27:49	0:0	6	)
+water	27:51	0:0	4	;
+water	28:8	0:0	4	a
+op	28:9	0:0	4	->
+water	28:11	0:0	4	buffer
+op	28:18	0:0	4	=
+water	28:20	0:0	4	a
+op	28:21	0:0	4	->
+water	28:23	0:0	4	data
+op	28:27	0:0	4	[
+water	28:28	0:0	4	0
+op	28:29	0:0	4	]
+water	28:30	0:0	4	;
+water	29:4	0:0	4	}
+else	29:6	39:4	2
+stmts	29:11	39:4	3	
+water	29:11	0:0	4	{
+call	30:8	30:27	4	av_freep
+arg	30:17	30:27	5	&a->buffer
+op	30:17	0:0	6	&
+water	30:18	0:0	6	a
+op	30:19	0:0	6	->
+water	30:21	0:0	6	buffer
+water	30:28	0:0	4	;
+water	31:8	0:0	4	a
+op	31:9	0:0	4	->
+water	31:11	0:0	4	buffer
+op	31:18	0:0	4	=
+call	31:20	31:42	4	av_malloc
+arg	31:30	31:42	5	new_buf_size
+water	31:30	0:0	6	new_buf_size
+water	31:43	0:0	4	;
+if	32:8	33:34	4	(! a -> buffer)
+cond	32:12	32:16	5	! a -> buffer
+op	32:12	0:0	6	!
+water	32:13	0:0	6	a
+op	32:14	0:0	6	->
+water	32:16	0:0	6	buffer
+stmts	33:12	33:34	5	
+return	33:12	33:34	6	AVERROR(ENOMEM)
+call	33:19	33:33	7	AVERROR
+arg	33:27	33:33	8	ENOMEM
+water	33:27	0:0	9	ENOMEM
+water	34:8	0:0	4	ret
+op	34:12	0:0	4	=
+call	34:14	36:53	4	av_samples_fill_arrays
+arg	34:37	34:44	5	a->data
+water	34:37	0:0	6	a
+op	34:38	0:0	6	->
+water	34:40	0:0	6	data
+arg	34:46	34:57	5	&plane_size
+op	34:46	0:0	6	&
+water	34:47	0:0	6	plane_size
+arg	34:59	34:68	5	a->buffer
+water	34:59	0:0	6	a
+op	34:60	0:0	6	->
+water	34:62	0:0	6	buffer
+arg	35:37	35:58	5	a->allocated_channels
+water	35:37	0:0	6	a
+op	35:38	0:0	6	->
+water	35:40	0:0	6	allocated_channels
+arg	35:60	35:70	5	nb_samples
+water	35:60	0:0	6	nb_samples
+arg	36:37	36:50	5	a->sample_fmt
+water	36:37	0:0	6	a
+op	36:38	0:0	6	->
+water	36:40	0:0	6	sample_fmt
+arg	36:52	36:53	5	0
+water	36:52	0:0	6	0
+water	36:54	0:0	4	;
+if	37:8	38:22	4	(ret < 0)
+cond	37:12	37:18	5	ret < 0
+water	37:12	0:0	6	ret
+op	37:16	0:0	6	<
+water	37:18	0:0	6	0
+stmts	38:12	38:22	5	
+return	38:12	38:22	6	ret
+water	38:19	0:0	7	ret
+water	39:4	0:0	4	}
+water	40:4	0:0	2	a
+op	40:5	0:0	2	->
+water	40:7	0:0	2	buffer_size
+op	40:25	0:0	2	=
+water	40:27	0:0	2	new_buf_size
+water	40:39	0:0	2	;
+water	41:4	0:0	2	a
+op	41:5	0:0	2	->
+water	41:7	0:0	2	allocated_samples
+op	41:25	0:0	2	=
+water	41:27	0:0	2	nb_samples
+water	41:37	0:0	2	;
+call	42:4	42:24	2	calc_ptr_alignment
+arg	42:23	42:24	3	a
+water	42:23	0:0	4	a
+water	42:25	0:0	2	;
+water	43:4	0:0	2	a
+op	43:5	0:0	2	->
+water	43:7	0:0	2	samples_align
+op	43:21	0:0	2	=
+water	43:23	0:0	2	plane_size
+op	43:34	0:0	2	/
+water	43:36	0:0	2	a
+op	43:37	0:0	2	->
+water	43:39	0:0	2	stride
+water	43:45	0:0	2	;
+return	44:4	44:12	2	0
+water	44:11	0:0	3	0

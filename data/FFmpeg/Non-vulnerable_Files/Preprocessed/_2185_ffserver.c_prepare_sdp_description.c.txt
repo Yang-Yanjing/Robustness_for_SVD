@@ -1,0 +1,240 @@
+func	1:0	38:0	0	static int	prepare_sdp_description
+params	1:34	0:0	1	
+param	1:35	1:57	2	FFServerStream *	stream
+param	1:59	1:76	2	uint8_t * *	pbuffer
+param	2:35	2:55	2	struct in_addr	my_ip
+stmnts	0:0	37:56	1	
+decl	4:4	4:24	2	AVFormatContext	*avc
+decl	5:4	5:67	2	AVOutputFormat	*rtp_format
+op	5:31	0:0	2	=
+call	5:33	5:66	3	av_guess_format
+arg	5:49	5:54	4	"rtp"
+water	5:49	0:0	5	"rtp"
+arg	5:56	5:60	4	NULL
+water	5:56	0:0	5	NULL
+arg	5:62	5:66	4	NULL
+water	5:62	0:0	5	NULL
+decl	6:4	6:78	2	AVDictionaryEntry	*entry
+op	6:29	0:0	2	=
+call	6:31	6:77	3	av_dict_get
+arg	6:43	6:59	4	stream->metadata
+water	6:43	0:0	5	stream
+op	6:49	0:0	5	->
+water	6:51	0:0	5	metadata
+arg	6:61	6:68	4	"title"
+water	6:61	0:0	5	"title"
+arg	6:70	6:74	4	NULL
+water	6:70	0:0	5	NULL
+arg	6:76	6:77	4	0
+water	6:76	0:0	5	0
+decl	7:4	7:9	2	int	i
+op	8:4	0:0	2	*
+water	8:5	0:0	2	pbuffer
+op	8:13	0:0	2	=
+water	8:15	0:0	2	NULL
+water	8:19	0:0	2	;
+water	9:4	0:0	2	avc
+op	9:8	0:0	2	=
+call	9:11	9:34	2	avformat_alloc_context
+water	9:35	0:0	2	;
+if	10:4	11:17	2	(! avc || ! rtp_format)
+cond	10:8	10:17	3	! avc || ! rtp_format
+op	10:8	0:0	4	!
+water	10:9	0:0	4	avc
+op	10:13	0:0	4	||
+op	10:16	0:0	4	!
+water	10:17	0:0	4	rtp_format
+stmts	11:8	11:17	3	
+return	11:8	11:17	4	-1
+op	11:15	0:0	5	-
+water	11:16	0:0	5	1
+water	12:4	0:0	2	avc
+op	12:7	0:0	2	->
+water	12:9	0:0	2	oformat
+op	12:17	0:0	2	=
+water	12:19	0:0	2	rtp_format
+water	12:29	0:0	2	;
+call	13:4	14:52	2	av_dict_set
+arg	13:16	13:30	3	&avc->metadata
+op	13:16	0:0	4	&
+water	13:17	0:0	4	avc
+op	13:20	0:0	4	->
+water	13:22	0:0	4	metadata
+arg	13:32	13:39	3	"title"
+water	13:32	0:0	4	"title"
+arg	14:16	14:49	3	entry?entry->value:"No Title"
+water	14:16	0:0	4	entry
+water	14:22	0:0	4	?
+water	14:24	0:0	4	entry
+op	14:29	0:0	4	->
+water	14:31	0:0	4	value
+water	14:37	0:0	4	:
+water	14:39	0:0	4	"No Title"
+arg	14:51	14:52	3	0
+water	14:51	0:0	4	0
+water	14:53	0:0	2	;
+if	15:4	19:4	2	(stream -> is_multicast)
+cond	15:8	15:16	3	stream -> is_multicast
+water	15:8	0:0	4	stream
+op	15:14	0:0	4	->
+water	15:16	0:0	4	is_multicast
+stmts	15:30	19:4	3	
+water	15:30	0:0	4	{
+call	16:8	18:62	4	snprintf
+arg	16:17	16:30	5	avc->filename
+water	16:17	0:0	6	avc
+op	16:20	0:0	6	->
+water	16:22	0:0	6	filename
+arg	16:32	16:36	5	1024
+water	16:32	0:0	6	1024
+arg	16:38	16:70	5	"rtp://%s:%d?multicast=1?ttl=%d"
+water	16:38	0:0	6	"rtp://%s:%d?multicast=1?ttl=%d"
+arg	17:17	17:48	5	inet_ntoa(stream->multicast_ip)
+call	17:17	17:47	6	inet_ntoa
+arg	17:27	17:47	7	stream->multicast_ip
+water	17:27	0:0	8	stream
+op	17:33	0:0	8	->
+water	17:35	0:0	8	multicast_ip
+arg	18:17	18:39	5	stream->multicast_port
+water	18:17	0:0	6	stream
+op	18:23	0:0	6	->
+water	18:25	0:0	6	multicast_port
+arg	18:41	18:62	5	stream->multicast_ttl
+water	18:41	0:0	6	stream
+op	18:47	0:0	6	->
+water	18:49	0:0	6	multicast_ttl
+water	18:63	0:0	4	;
+water	19:4	0:0	4	}
+else	19:6	20:54	2
+stmts	20:8	20:54	3	
+call	20:8	20:53	4	snprintf
+arg	20:17	20:30	5	avc->filename
+water	20:17	0:0	6	avc
+op	20:20	0:0	6	->
+water	20:22	0:0	6	filename
+arg	20:32	20:36	5	1024
+water	20:32	0:0	6	1024
+arg	20:38	20:53	5	"rtp://0.0.0.0"
+water	20:38	0:0	6	"rtp://0.0.0.0"
+water	20:54	0:0	4	;
+for	21:4	27:4	2	(i = 0 ;i < stream -> nb_streams;i ++)
+forinit	21:8	21:13	3	i = 0 ;
+water	21:8	0:0	4	i
+op	21:10	0:0	4	=
+water	21:12	0:0	4	0
+water	21:13	0:0	4	;
+cond	21:15	21:27	3	i < stream -> nb_streams
+water	21:15	0:0	4	i
+op	21:17	0:0	4	<
+water	21:19	0:0	4	stream
+op	21:25	0:0	4	->
+water	21:27	0:0	4	nb_streams
+forexpr	21:39	21:40	3	i ++
+water	21:39	0:0	4	i
+op	21:40	0:0	4	++
+stmts	21:44	27:4	3	
+water	21:44	0:0	4	{
+decl	22:8	22:53	4	AVStream	*st
+op	22:21	0:0	4	=
+call	22:23	22:52	5	avformat_new_stream
+arg	22:43	22:46	6	avc
+water	22:43	0:0	7	avc
+arg	22:48	22:52	6	NULL
+water	22:48	0:0	7	NULL
+if	23:8	24:25	4	(! st)
+cond	23:12	23:13	5	! st
+op	23:12	0:0	6	!
+water	23:13	0:0	6	st
+stmts	24:12	24:25	5	
+goto	24:12	24:25	6	sdp_done
+water	24:17	0:0	7	sdp_done
+call	25:8	25:95	4	avcodec_parameters_from_context
+arg	25:40	25:68	5	stream->streams[i]->codecpar
+water	25:40	0:0	6	stream
+op	25:46	0:0	6	->
+water	25:48	0:0	6	streams
+op	25:55	0:0	6	[
+water	25:56	0:0	6	i
+op	25:57	0:0	6	]
+op	25:58	0:0	6	->
+water	25:60	0:0	6	codecpar
+arg	25:70	25:95	5	stream->streams[i]->codec
+water	25:70	0:0	6	stream
+op	25:76	0:0	6	->
+water	25:78	0:0	6	streams
+op	25:85	0:0	6	[
+water	25:86	0:0	6	i
+op	25:87	0:0	6	]
+op	25:88	0:0	6	->
+water	25:90	0:0	6	codec
+water	25:96	0:0	4	;
+call	26:8	26:45	4	unlayer_stream
+arg	26:23	26:25	5	st
+water	26:23	0:0	6	st
+arg	26:27	26:45	5	stream->streams[i]
+water	26:27	0:0	6	stream
+op	26:33	0:0	6	->
+water	26:35	0:0	6	streams
+op	26:42	0:0	6	[
+water	26:43	0:0	6	i
+op	26:44	0:0	6	]
+water	26:46	0:0	4	;
+water	27:4	0:0	4	}
+op	29:4	0:0	2	*
+water	29:5	0:0	2	pbuffer
+op	29:13	0:0	2	=
+call	29:15	29:38	2	av_mallocz
+arg	29:26	29:38	3	PBUFFER_SIZE
+water	29:26	0:0	4	PBUFFER_SIZE
+water	29:39	0:0	2	;
+if	30:4	31:21	2	(! * pbuffer)
+cond	30:8	30:10	3	! * pbuffer
+op	30:8	0:0	4	!
+op	30:9	0:0	4	*
+water	30:10	0:0	4	pbuffer
+stmts	31:8	31:21	3	
+goto	31:8	31:21	4	sdp_done
+water	31:13	0:0	5	sdp_done
+call	32:4	32:49	2	av_sdp_create
+arg	32:18	32:22	3	&avc
+op	32:18	0:0	4	&
+water	32:19	0:0	4	avc
+arg	32:24	32:25	3	1
+water	32:24	0:0	4	1
+arg	32:27	32:35	3	*pbuffer
+op	32:27	0:0	4	*
+water	32:28	0:0	4	pbuffer
+arg	32:37	32:49	3	PBUFFER_SIZE
+water	32:37	0:0	4	PBUFFER_SIZE
+water	32:50	0:0	2	;
+label	33:1	33:9	2	sdp_done :
+call	34:4	34:26	2	av_freep
+arg	34:13	34:26	3	&avc->streams
+op	34:13	0:0	4	&
+water	34:14	0:0	4	avc
+op	34:17	0:0	4	->
+water	34:19	0:0	4	streams
+water	34:27	0:0	2	;
+call	35:4	35:31	2	av_dict_free
+arg	35:17	35:31	3	&avc->metadata
+op	35:17	0:0	4	&
+water	35:18	0:0	4	avc
+op	35:21	0:0	4	->
+water	35:23	0:0	4	metadata
+water	35:32	0:0	2	;
+call	36:4	36:15	2	av_free
+arg	36:12	36:15	3	avc
+water	36:12	0:0	4	avc
+water	36:16	0:0	2	;
+return	37:4	37:56	2	*pbuffer?strlen(*pbuffer):AVERROR(ENOMEM)
+op	37:11	0:0	3	*
+water	37:12	0:0	3	pbuffer
+water	37:20	0:0	3	?
+call	37:22	37:37	3	strlen
+arg	37:29	37:37	4	*pbuffer
+op	37:29	0:0	5	*
+water	37:30	0:0	5	pbuffer
+water	37:39	0:0	3	:
+call	37:41	37:55	3	AVERROR
+arg	37:49	37:55	4	ENOMEM
+water	37:49	0:0	5	ENOMEM

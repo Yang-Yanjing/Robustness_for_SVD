@@ -1,0 +1,150 @@
+func	1:0	35:0	0	static FFServerIPAddressACL *	parse_dynamic_acl
+params	1:46	0:0	1	
+param	1:47	1:69	2	FFServerStream *	stream
+param	2:47	2:61	2	HTTPContext *	c
+stmnts	0:0	34:14	1	
+decl	4:4	4:11	2	FILE	*f
+decl	5:4	5:19	2	char	line[1024]
+decl	6:4	6:19	2	char	cmd[1024]
+decl	7:4	7:36	2	FFServerIPAddressACL	*acl
+op	7:30	0:0	2	=
+water	7:32	0:0	2	NULL
+decl	8:4	8:20	2	int	line_num
+op	8:17	0:0	2	=
+water	8:19	0:0	2	0
+decl	9:4	9:17	2	const char	*p
+water	10:4	0:0	2	f
+op	10:6	0:0	2	=
+call	10:8	10:38	2	fopen
+arg	10:14	10:33	3	stream->dynamic_acl
+water	10:14	0:0	4	stream
+op	10:20	0:0	4	->
+water	10:22	0:0	4	dynamic_acl
+arg	10:35	10:38	3	"r"
+water	10:35	0:0	4	"r"
+water	10:39	0:0	2	;
+if	11:4	14:4	2	(! f)
+cond	11:8	11:9	3	! f
+op	11:8	0:0	4	!
+water	11:9	0:0	4	f
+stmts	11:12	14:4	3	
+water	11:12	0:0	4	{
+call	12:8	12:34	4	perror
+arg	12:15	12:34	5	stream->dynamic_acl
+water	12:15	0:0	6	stream
+op	12:21	0:0	6	->
+water	12:23	0:0	6	dynamic_acl
+water	12:35	0:0	4	;
+return	13:8	13:19	4	NULL
+water	13:15	0:0	5	NULL
+water	14:4	0:0	4	}
+water	15:4	0:0	2	acl
+op	15:8	0:0	2	=
+call	15:10	15:49	2	av_mallocz
+arg	15:21	15:49	3	sizeof(FFServerIPAddressACL)
+op	15:21	0:0	4	sizeof
+water	15:27	0:0	4	(
+water	15:28	0:0	4	FFServerIPAddressACL
+water	15:48	0:0	4	)
+water	15:50	0:0	2	;
+if	16:4	19:4	2	(! acl)
+cond	16:8	16:9	3	! acl
+op	16:8	0:0	4	!
+water	16:9	0:0	4	acl
+stmts	16:14	19:4	3	
+water	16:14	0:0	4	{
+call	17:8	17:16	4	fclose
+arg	17:15	17:16	5	f
+water	17:15	0:0	6	f
+water	17:17	0:0	4	;
+return	18:8	18:19	4	NULL
+water	18:15	0:0	5	NULL
+water	19:4	0:0	4	}
+while	21:4	32:4	2	(fgets (line ,sizeof ( line ) ,f ))
+cond	21:11	21:38	3	fgets (line ,sizeof ( line ) ,f )
+call	21:11	21:38	4	fgets
+arg	21:17	21:21	5	line
+water	21:17	0:0	6	line
+arg	21:23	21:35	5	sizeof(line)
+op	21:23	0:0	6	sizeof
+water	21:29	0:0	6	(
+water	21:30	0:0	6	line
+water	21:34	0:0	6	)
+arg	21:37	21:38	5	f
+water	21:37	0:0	6	f
+stmts	21:41	32:4	3	
+water	21:41	0:0	4	{
+water	22:8	0:0	4	line_num
+op	22:16	0:0	4	++
+water	22:18	0:0	4	;
+water	23:8	0:0	4	p
+op	23:10	0:0	4	=
+water	23:12	0:0	4	line
+water	23:16	0:0	4	;
+while	24:8	25:15	4	(av_isspace (* p ))
+cond	24:15	24:28	5	av_isspace (* p )
+call	24:15	24:28	6	av_isspace
+arg	24:26	24:28	7	*p
+op	24:26	0:0	8	*
+water	24:27	0:0	8	p
+stmts	25:12	25:15	5	
+water	25:12	0:0	6	p
+op	25:13	0:0	6	++
+water	25:15	0:0	6	;
+if	26:8	27:20	4	(* p == '\0' || * p == '#')
+cond	26:12	26:32	5	* p == '\0' || * p == '#'
+op	26:12	0:0	6	*
+water	26:13	0:0	6	p
+op	26:15	0:0	6	==
+water	26:18	0:0	6	'\0'
+op	26:23	0:0	6	||
+op	26:26	0:0	6	*
+water	26:27	0:0	6	p
+op	26:29	0:0	6	==
+water	26:32	0:0	6	'#'
+stmts	27:12	27:20	5	
+continue	27:12	27:20	6	
+call	28:8	28:45	4	ffserver_get_arg
+arg	28:25	28:28	5	cmd
+water	28:25	0:0	6	cmd
+arg	28:30	28:41	5	sizeof(cmd)
+op	28:30	0:0	6	sizeof
+water	28:36	0:0	6	(
+water	28:37	0:0	6	cmd
+water	28:40	0:0	6	)
+arg	28:43	28:45	5	&p
+op	28:43	0:0	6	&
+water	28:44	0:0	6	p
+water	28:46	0:0	4	;
+if	29:8	31:44	4	(!av_strcasecmp (cmd ,"ACL" ))
+cond	29:12	29:37	5	!av_strcasecmp (cmd ,"ACL" )
+op	29:12	0:0	6	!
+call	29:13	29:37	6	av_strcasecmp
+arg	29:27	29:30	7	cmd
+water	29:27	0:0	8	cmd
+arg	29:32	29:37	7	"ACL"
+water	29:32	0:0	8	"ACL"
+stmts	30:12	31:44	5	
+call	30:12	31:43	6	ffserver_parse_acl_row
+arg	30:35	30:39	7	NULL
+water	30:35	0:0	8	NULL
+arg	30:41	30:45	7	NULL
+water	30:41	0:0	8	NULL
+arg	30:47	30:50	7	acl
+water	30:47	0:0	8	acl
+arg	30:52	30:53	7	p
+water	30:52	0:0	8	p
+arg	30:55	30:74	7	stream->dynamic_acl
+water	30:55	0:0	8	stream
+op	30:61	0:0	8	->
+water	30:63	0:0	8	dynamic_acl
+arg	31:35	31:43	7	line_num
+water	31:35	0:0	8	line_num
+water	31:44	0:0	6	;
+water	32:4	0:0	4	}
+call	33:4	33:12	2	fclose
+arg	33:11	33:12	3	f
+water	33:11	0:0	4	f
+water	33:13	0:0	2	;
+return	34:4	34:14	2	acl
+water	34:11	0:0	3	acl

@@ -1,0 +1,792 @@
+func	1:0	127:0	0	static int	v4l2_read_header
+params	1:27	0:0	1	
+param	1:28	1:48	2	AVFormatContext *	ctx
+stmnts	0:0	126:14	1	
+decl	3:4	3:41	2	struct video_data	*s
+op	3:25	0:0	2	=
+water	3:27	0:0	2	ctx
+op	3:30	0:0	2	->
+water	3:32	0:0	2	priv_data
+decl	4:4	4:16	2	AVStream	*st
+decl	5:4	5:15	2	int	res
+op	5:12	0:0	2	=
+water	5:14	0:0	2	0
+decl	6:4	6:27	2	uint32_t	desired_format
+decl	7:4	7:46	2	enum AVCodecID	codec_id
+op	7:28	0:0	2	=
+water	7:30	0:0	2	AV_CODEC_ID_NONE
+decl	8:4	8:48	2	enum AVPixelFormat	pix_fmt
+op	8:31	0:0	2	=
+water	8:33	0:0	2	AV_PIX_FMT_NONE
+decl	9:4	9:35	2	struct v4l2_input	input
+op	9:28	0:0	2	=
+water	9:30	0:0	2	{
+water	9:32	0:0	2	0
+water	9:34	0:0	2	}
+water	10:4	0:0	2	st
+op	10:7	0:0	2	=
+call	10:9	10:38	2	avformat_new_stream
+arg	10:29	10:32	3	ctx
+water	10:29	0:0	4	ctx
+arg	10:34	10:38	3	NULL
+water	10:34	0:0	4	NULL
+water	10:39	0:0	2	;
+if	11:4	12:30	2	(! st)
+cond	11:8	11:9	3	! st
+op	11:8	0:0	4	!
+water	11:9	0:0	4	st
+stmts	12:8	12:30	3	
+return	12:8	12:30	4	AVERROR(ENOMEM)
+call	12:15	12:29	5	AVERROR
+arg	12:23	12:29	6	ENOMEM
+water	12:23	0:0	7	ENOMEM
+if	16:4	17:47	2	(s -> use_libv4l2)
+cond	16:8	16:11	3	s -> use_libv4l2
+water	16:8	0:0	4	s
+op	16:9	0:0	4	->
+water	16:11	0:0	4	use_libv4l2
+stmts	17:8	17:47	3	
+water	17:8	0:0	4	v4l2_log_file
+op	17:22	0:0	4	=
+call	17:24	17:46	4	fopen
+arg	17:30	17:41	5	"/dev/null"
+water	17:30	0:0	6	"/dev/null"
+arg	17:43	17:46	5	"w"
+water	17:43	0:0	6	"w"
+water	17:47	0:0	4	;
+water	19:4	0:0	2	s
+op	19:5	0:0	2	->
+water	19:7	0:0	2	fd
+op	19:10	0:0	2	=
+call	19:12	19:27	2	device_open
+arg	19:24	19:27	3	ctx
+water	19:24	0:0	4	ctx
+water	19:28	0:0	2	;
+if	20:4	21:20	2	(s -> fd < 0)
+cond	20:8	20:16	3	s -> fd < 0
+water	20:8	0:0	4	s
+op	20:9	0:0	4	->
+water	20:11	0:0	4	fd
+op	20:14	0:0	4	<
+water	20:16	0:0	4	0
+stmts	21:8	21:20	3	
+return	21:8	21:20	4	s->fd
+water	21:15	0:0	5	s
+op	21:16	0:0	5	->
+water	21:18	0:0	5	fd
+if	22:4	30:4	2	(s -> channel != - 1)
+cond	22:8	22:23	3	s -> channel != - 1
+water	22:8	0:0	4	s
+op	22:9	0:0	4	->
+water	22:11	0:0	4	channel
+op	22:19	0:0	4	!=
+op	22:22	0:0	4	-
+water	22:23	0:0	4	1
+stmts	22:26	30:4	3	
+water	22:26	0:0	4	{
+call	24:8	24:77	4	av_log
+arg	24:15	24:18	5	ctx
+water	24:15	0:0	6	ctx
+arg	24:20	24:32	5	AV_LOG_DEBUG
+water	24:20	0:0	6	AV_LOG_DEBUG
+arg	24:34	24:65	5	"Selecting input_channel: %d\n"
+water	24:34	0:0	6	"Selecting input_channel: %d\n"
+arg	24:67	24:77	5	s->channel
+water	24:67	0:0	6	s
+op	24:68	0:0	6	->
+water	24:70	0:0	6	channel
+water	24:78	0:0	4	;
+if	25:8	29:8	4	(v4l2_ioctl (s -> fd ,VIDIOC_S_INPUT ,& s -> channel ) < 0)
+cond	25:12	25:61	5	v4l2_ioctl (s -> fd ,VIDIOC_S_INPUT ,& s -> channel ) < 0
+call	25:12	25:57	6	v4l2_ioctl
+arg	25:23	25:28	7	s->fd
+water	25:23	0:0	8	s
+op	25:24	0:0	8	->
+water	25:26	0:0	8	fd
+arg	25:30	25:44	7	VIDIOC_S_INPUT
+water	25:30	0:0	8	VIDIOC_S_INPUT
+arg	25:46	25:57	7	&s->channel
+op	25:46	0:0	8	&
+water	25:47	0:0	8	s
+op	25:48	0:0	8	->
+water	25:50	0:0	8	channel
+op	25:59	0:0	6	<
+water	25:61	0:0	6	0
+stmts	25:64	29:8	5	
+water	25:64	0:0	6	{
+water	26:12	0:0	6	res
+op	26:16	0:0	6	=
+call	26:18	26:31	6	AVERROR
+arg	26:26	26:31	7	errno
+water	26:26	0:0	8	errno
+water	26:32	0:0	6	;
+call	27:12	27:84	6	av_log
+arg	27:19	27:22	7	ctx
+water	27:19	0:0	8	ctx
+arg	27:24	27:36	7	AV_LOG_ERROR
+water	27:24	0:0	8	AV_LOG_ERROR
+arg	27:38	27:67	7	"ioctl(VIDIOC_S_INPUT): %s\n"
+water	27:38	0:0	8	"ioctl(VIDIOC_S_INPUT): %s\n"
+arg	27:69	27:84	7	av_err2str(res)
+call	27:69	27:83	8	av_err2str
+arg	27:80	27:83	9	res
+water	27:80	0:0	10	res
+water	27:85	0:0	6	;
+goto	28:12	28:21	6	fail
+water	28:17	0:0	7	fail
+water	29:8	0:0	6	}
+water	30:4	0:0	4	}
+else	30:6	37:4	2
+stmts	30:11	37:4	3	
+water	30:11	0:0	4	{
+if	32:8	36:8	4	(v4l2_ioctl (s -> fd ,VIDIOC_G_INPUT ,& s -> channel ) < 0)
+cond	32:12	32:61	5	v4l2_ioctl (s -> fd ,VIDIOC_G_INPUT ,& s -> channel ) < 0
+call	32:12	32:57	6	v4l2_ioctl
+arg	32:23	32:28	7	s->fd
+water	32:23	0:0	8	s
+op	32:24	0:0	8	->
+water	32:26	0:0	8	fd
+arg	32:30	32:44	7	VIDIOC_G_INPUT
+water	32:30	0:0	8	VIDIOC_G_INPUT
+arg	32:46	32:57	7	&s->channel
+op	32:46	0:0	8	&
+water	32:47	0:0	8	s
+op	32:48	0:0	8	->
+water	32:50	0:0	8	channel
+op	32:59	0:0	6	<
+water	32:61	0:0	6	0
+stmts	32:64	36:8	5	
+water	32:64	0:0	6	{
+water	33:12	0:0	6	res
+op	33:16	0:0	6	=
+call	33:18	33:31	6	AVERROR
+arg	33:26	33:31	7	errno
+water	33:26	0:0	8	errno
+water	33:32	0:0	6	;
+call	34:12	34:84	6	av_log
+arg	34:19	34:22	7	ctx
+water	34:19	0:0	8	ctx
+arg	34:24	34:36	7	AV_LOG_ERROR
+water	34:24	0:0	8	AV_LOG_ERROR
+arg	34:38	34:67	7	"ioctl(VIDIOC_G_INPUT): %s\n"
+water	34:38	0:0	8	"ioctl(VIDIOC_G_INPUT): %s\n"
+arg	34:69	34:84	7	av_err2str(res)
+call	34:69	34:83	8	av_err2str
+arg	34:80	34:83	9	res
+water	34:80	0:0	10	res
+water	34:85	0:0	6	;
+goto	35:12	35:21	6	fail
+water	35:17	0:0	7	fail
+water	36:8	0:0	6	}
+water	37:4	0:0	4	}
+water	39:4	0:0	2	input
+op	39:9	0:0	2	.
+water	39:10	0:0	2	index
+op	39:16	0:0	2	=
+water	39:18	0:0	2	s
+op	39:19	0:0	2	->
+water	39:21	0:0	2	channel
+water	39:28	0:0	2	;
+if	40:4	44:4	2	(v4l2_ioctl (s -> fd ,VIDIOC_ENUMINPUT ,& input ) < 0)
+cond	40:8	40:54	3	v4l2_ioctl (s -> fd ,VIDIOC_ENUMINPUT ,& input ) < 0
+call	40:8	40:50	4	v4l2_ioctl
+arg	40:19	40:24	5	s->fd
+water	40:19	0:0	6	s
+op	40:20	0:0	6	->
+water	40:22	0:0	6	fd
+arg	40:26	40:42	5	VIDIOC_ENUMINPUT
+water	40:26	0:0	6	VIDIOC_ENUMINPUT
+arg	40:44	40:50	5	&input
+op	40:44	0:0	6	&
+water	40:45	0:0	6	input
+op	40:52	0:0	4	<
+water	40:54	0:0	4	0
+stmts	40:57	44:4	3	
+water	40:57	0:0	4	{
+water	41:8	0:0	4	res
+op	41:12	0:0	4	=
+call	41:14	41:27	4	AVERROR
+arg	41:22	41:27	5	errno
+water	41:22	0:0	6	errno
+water	41:28	0:0	4	;
+call	42:8	42:82	4	av_log
+arg	42:15	42:18	5	ctx
+water	42:15	0:0	6	ctx
+arg	42:20	42:32	5	AV_LOG_ERROR
+water	42:20	0:0	6	AV_LOG_ERROR
+arg	42:34	42:65	5	"ioctl(VIDIOC_ENUMINPUT): %s\n"
+water	42:34	0:0	6	"ioctl(VIDIOC_ENUMINPUT): %s\n"
+arg	42:67	42:82	5	av_err2str(res)
+call	42:67	42:81	6	av_err2str
+arg	42:78	42:81	7	res
+water	42:78	0:0	8	res
+water	42:83	0:0	4	;
+goto	43:8	43:17	4	fail
+water	43:13	0:0	5	fail
+water	44:4	0:0	4	}
+water	45:4	0:0	2	s
+op	45:5	0:0	2	->
+water	45:7	0:0	2	std_id
+op	45:14	0:0	2	=
+water	45:16	0:0	2	input
+op	45:21	0:0	2	.
+water	45:22	0:0	2	std
+water	45:25	0:0	2	;
+call	46:4	47:54	2	av_log
+arg	46:11	46:14	3	ctx
+water	46:11	0:0	4	ctx
+arg	46:16	46:28	3	AV_LOG_DEBUG
+water	46:16	0:0	4	AV_LOG_DEBUG
+arg	46:30	46:97	3	"Current input_channel: %d, input_name: %s, input_std: %"PRIx64"\n"
+water	46:30	0:0	4	"Current input_channel: %d, input_name: %s, input_std: %"
+water	46:87	0:0	4	PRIx64
+water	46:93	0:0	4	"\n"
+arg	47:11	47:21	3	s->channel
+water	47:11	0:0	4	s
+op	47:12	0:0	4	->
+water	47:14	0:0	4	channel
+arg	47:23	47:33	3	input.name
+water	47:23	0:0	4	input
+op	47:28	0:0	4	.
+water	47:29	0:0	4	name
+arg	47:35	47:54	3	(uint64_t)input.std
+water	47:35	0:0	4	(
+water	47:36	0:0	4	uint64_t
+water	47:44	0:0	4	)
+water	47:45	0:0	4	input
+op	47:50	0:0	4	.
+water	47:51	0:0	4	std
+water	47:55	0:0	2	;
+if	48:4	52:4	2	(s -> list_format)
+cond	48:8	48:11	3	s -> list_format
+water	48:8	0:0	4	s
+op	48:9	0:0	4	->
+water	48:11	0:0	4	list_format
+stmts	48:24	52:4	3	
+water	48:24	0:0	4	{
+call	49:8	49:40	4	list_formats
+arg	49:21	49:24	5	ctx
+water	49:21	0:0	6	ctx
+arg	49:26	49:40	5	s->list_format
+water	49:26	0:0	6	s
+op	49:27	0:0	6	->
+water	49:29	0:0	6	list_format
+water	49:41	0:0	4	;
+water	50:8	0:0	4	res
+op	50:12	0:0	4	=
+water	50:14	0:0	4	AVERROR_EXIT
+water	50:26	0:0	4	;
+goto	51:8	51:17	4	fail
+water	51:13	0:0	5	fail
+water	52:4	0:0	4	}
+if	53:4	57:4	2	(s -> list_standard)
+cond	53:8	53:11	3	s -> list_standard
+water	53:8	0:0	4	s
+op	53:9	0:0	4	->
+water	53:11	0:0	4	list_standard
+stmts	53:26	57:4	3	
+water	53:26	0:0	4	{
+call	54:8	54:26	4	list_standards
+arg	54:23	54:26	5	ctx
+water	54:23	0:0	6	ctx
+water	54:27	0:0	4	;
+water	55:8	0:0	4	res
+op	55:12	0:0	4	=
+water	55:14	0:0	4	AVERROR_EXIT
+water	55:26	0:0	4	;
+goto	56:8	56:17	4	fail
+water	56:13	0:0	5	fail
+water	57:4	0:0	4	}
+call	58:4	58:42	2	avpriv_set_pts_info
+arg	58:24	58:26	3	st
+water	58:24	0:0	4	st
+arg	58:28	58:30	3	64
+water	58:28	0:0	4	64
+arg	58:32	58:33	3	1
+water	58:32	0:0	4	1
+arg	58:35	58:42	3	1000000
+water	58:35	0:0	4	1000000
+water	58:43	0:0	2	;
+if	59:4	70:4	2	(s -> pixel_format)
+cond	59:8	59:11	3	s -> pixel_format
+water	59:8	0:0	4	s
+op	59:9	0:0	4	->
+water	59:11	0:0	4	pixel_format
+stmts	59:25	70:4	3	
+water	59:25	0:0	4	{
+decl	60:8	60:70	4	AVCodec	*codec
+op	60:23	0:0	4	=
+call	60:25	60:69	5	avcodec_find_decoder_by_name
+arg	60:54	60:69	6	s->pixel_format
+water	60:54	0:0	7	s
+op	60:55	0:0	7	->
+water	60:57	0:0	7	pixel_format
+if	61:8	62:43	4	(codec)
+cond	61:12	61:12	5	codec
+water	61:12	0:0	6	codec
+stmts	62:12	62:43	5	
+water	62:12	0:0	6	ctx
+op	62:15	0:0	6	->
+water	62:17	0:0	6	video_codec_id
+op	62:32	0:0	6	=
+water	62:34	0:0	6	codec
+op	62:39	0:0	6	->
+water	62:41	0:0	6	id
+water	62:43	0:0	6	;
+water	63:8	0:0	4	pix_fmt
+op	63:16	0:0	4	=
+call	63:18	63:48	4	av_get_pix_fmt
+arg	63:33	63:48	5	s->pixel_format
+water	63:33	0:0	6	s
+op	63:34	0:0	6	->
+water	63:36	0:0	6	pixel_format
+water	63:49	0:0	4	;
+if	64:8	69:8	4	(pix_fmt == AV_PIX_FMT_NONE && ! codec)
+cond	64:12	64:43	5	pix_fmt == AV_PIX_FMT_NONE && ! codec
+water	64:12	0:0	6	pix_fmt
+op	64:20	0:0	6	==
+water	64:23	0:0	6	AV_PIX_FMT_NONE
+op	64:39	0:0	6	&&
+op	64:42	0:0	6	!
+water	64:43	0:0	6	codec
+stmts	64:50	69:8	5	
+water	64:50	0:0	6	{
+call	65:12	66:34	6	av_log
+arg	65:19	65:22	7	ctx
+water	65:19	0:0	8	ctx
+arg	65:24	65:36	7	AV_LOG_ERROR
+water	65:24	0:0	8	AV_LOG_ERROR
+arg	65:38	65:67	7	"No such input format: %s.\n"
+water	65:38	0:0	8	"No such input format: %s.\n"
+arg	66:19	66:34	7	s->pixel_format
+water	66:19	0:0	8	s
+op	66:20	0:0	8	->
+water	66:22	0:0	8	pixel_format
+water	66:35	0:0	6	;
+water	67:12	0:0	6	res
+op	67:16	0:0	6	=
+call	67:18	67:32	6	AVERROR
+arg	67:26	67:32	7	EINVAL
+water	67:26	0:0	8	EINVAL
+water	67:33	0:0	6	;
+goto	68:12	68:21	6	fail
+water	68:17	0:0	7	fail
+water	69:8	0:0	6	}
+water	70:4	0:0	4	}
+if	71:4	85:4	2	(! s -> width && ! s -> height)
+cond	71:8	71:25	3	! s -> width && ! s -> height
+op	71:8	0:0	4	!
+water	71:9	0:0	4	s
+op	71:10	0:0	4	->
+water	71:12	0:0	4	width
+op	71:18	0:0	4	&&
+op	71:21	0:0	4	!
+water	71:22	0:0	4	s
+op	71:23	0:0	4	->
+water	71:25	0:0	4	height
+stmts	71:33	85:4	3	
+water	71:33	0:0	4	{
+decl	72:8	72:72	4	struct v4l2_format	fmt
+op	72:31	0:0	4	=
+water	72:33	0:0	4	{
+op	72:35	0:0	4	.
+water	72:36	0:0	4	type
+op	72:41	0:0	4	=
+water	72:43	0:0	4	V4L2_BUF_TYPE_VIDEO_CAPTURE
+water	72:71	0:0	4	}
+call	73:8	74:65	4	av_log
+arg	73:15	73:18	5	ctx
+water	73:15	0:0	6	ctx
+arg	73:20	73:34	5	AV_LOG_VERBOSE
+water	73:20	0:0	6	AV_LOG_VERBOSE
+arg	74:15	74:65	5	"Querying the device for the current frame size\n"
+water	74:15	0:0	6	"Querying the device for the current frame size\n"
+water	74:66	0:0	4	;
+if	75:8	80:8	4	(v4l2_ioctl (s -> fd ,VIDIOC_G_FMT ,& fmt ) < 0)
+cond	75:12	75:52	5	v4l2_ioctl (s -> fd ,VIDIOC_G_FMT ,& fmt ) < 0
+call	75:12	75:48	6	v4l2_ioctl
+arg	75:23	75:28	7	s->fd
+water	75:23	0:0	8	s
+op	75:24	0:0	8	->
+water	75:26	0:0	8	fd
+arg	75:30	75:42	7	VIDIOC_G_FMT
+water	75:30	0:0	8	VIDIOC_G_FMT
+arg	75:44	75:48	7	&fmt
+op	75:44	0:0	8	&
+water	75:45	0:0	8	fmt
+op	75:50	0:0	6	<
+water	75:52	0:0	6	0
+stmts	75:55	80:8	5	
+water	75:55	0:0	6	{
+water	76:12	0:0	6	res
+op	76:16	0:0	6	=
+call	76:18	76:31	6	AVERROR
+arg	76:26	76:31	7	errno
+water	76:26	0:0	8	errno
+water	76:32	0:0	6	;
+call	77:12	78:34	6	av_log
+arg	77:19	77:22	7	ctx
+water	77:19	0:0	8	ctx
+arg	77:24	77:36	7	AV_LOG_ERROR
+water	77:24	0:0	8	AV_LOG_ERROR
+arg	77:38	77:65	7	"ioctl(VIDIOC_G_FMT): %s\n"
+water	77:38	0:0	8	"ioctl(VIDIOC_G_FMT): %s\n"
+arg	78:19	78:34	7	av_err2str(res)
+call	78:19	78:33	8	av_err2str
+arg	78:30	78:33	9	res
+water	78:30	0:0	10	res
+water	78:35	0:0	6	;
+goto	79:12	79:21	6	fail
+water	79:17	0:0	7	fail
+water	80:8	0:0	6	}
+water	81:8	0:0	4	s
+op	81:9	0:0	4	->
+water	81:11	0:0	4	width
+op	81:18	0:0	4	=
+water	81:20	0:0	4	fmt
+op	81:23	0:0	4	.
+water	81:24	0:0	4	fmt
+op	81:27	0:0	4	.
+water	81:28	0:0	4	pix
+op	81:31	0:0	4	.
+water	81:32	0:0	4	width
+water	81:37	0:0	4	;
+water	82:8	0:0	4	s
+op	82:9	0:0	4	->
+water	82:11	0:0	4	height
+op	82:18	0:0	4	=
+water	82:20	0:0	4	fmt
+op	82:23	0:0	4	.
+water	82:24	0:0	4	fmt
+op	82:27	0:0	4	.
+water	82:28	0:0	4	pix
+op	82:31	0:0	4	.
+water	82:32	0:0	4	height
+water	82:38	0:0	4	;
+call	83:8	84:67	4	av_log
+arg	83:15	83:18	5	ctx
+water	83:15	0:0	6	ctx
+arg	83:20	83:34	5	AV_LOG_VERBOSE
+water	83:20	0:0	6	AV_LOG_VERBOSE
+arg	84:15	84:46	5	"Setting frame size to %dx%d\n"
+water	84:15	0:0	6	"Setting frame size to %dx%d\n"
+arg	84:48	84:56	5	s->width
+water	84:48	0:0	6	s
+op	84:49	0:0	6	->
+water	84:51	0:0	6	width
+arg	84:58	84:67	5	s->height
+water	84:58	0:0	6	s
+op	84:59	0:0	6	->
+water	84:61	0:0	6	height
+water	84:68	0:0	4	;
+water	85:4	0:0	4	}
+water	86:4	0:0	2	res
+op	86:8	0:0	2	=
+call	86:10	86:89	2	device_try_init
+arg	86:26	86:29	3	ctx
+water	86:26	0:0	4	ctx
+arg	86:31	86:38	3	pix_fmt
+water	86:31	0:0	4	pix_fmt
+arg	86:40	86:49	3	&s->width
+op	86:40	0:0	4	&
+water	86:41	0:0	4	s
+op	86:42	0:0	4	->
+water	86:44	0:0	4	width
+arg	86:51	86:61	3	&s->height
+op	86:51	0:0	4	&
+water	86:52	0:0	4	s
+op	86:53	0:0	4	->
+water	86:55	0:0	4	height
+arg	86:63	86:78	3	&desired_format
+op	86:63	0:0	4	&
+water	86:64	0:0	4	desired_format
+arg	86:80	86:89	3	&codec_id
+op	86:80	0:0	4	&
+water	86:81	0:0	4	codec_id
+water	86:90	0:0	2	;
+if	87:4	88:17	2	(res < 0)
+cond	87:8	87:14	3	res < 0
+water	87:8	0:0	4	res
+op	87:12	0:0	4	<
+water	87:14	0:0	4	0
+stmts	88:8	88:17	3	
+goto	88:8	88:17	4	fail
+water	88:13	0:0	5	fail
+if	93:4	94:38	2	(codec_id != AV_CODEC_ID_NONE && ctx -> video_codec_id == AV_CODEC_ID_NONE)
+cond	93:8	93:63	3	codec_id != AV_CODEC_ID_NONE && ctx -> video_codec_id == AV_CODEC_ID_NONE
+water	93:8	0:0	4	codec_id
+op	93:17	0:0	4	!=
+water	93:20	0:0	4	AV_CODEC_ID_NONE
+op	93:37	0:0	4	&&
+water	93:40	0:0	4	ctx
+op	93:43	0:0	4	->
+water	93:45	0:0	4	video_codec_id
+op	93:60	0:0	4	==
+water	93:63	0:0	4	AV_CODEC_ID_NONE
+stmts	94:8	94:38	3	
+water	94:8	0:0	4	ctx
+op	94:11	0:0	4	->
+water	94:13	0:0	4	video_codec_id
+op	94:28	0:0	4	=
+water	94:30	0:0	4	codec_id
+water	94:38	0:0	4	;
+if	95:4	96:17	2	(( res =av_image_check_size (s -> width ,s -> height ,0 ,ctx ) ) < 0)
+cond	95:8	95:67	3	( res =av_image_check_size (s -> width ,s -> height ,0 ,ctx ) ) < 0
+water	95:8	0:0	4	(
+water	95:9	0:0	4	res
+op	95:13	0:0	4	=
+call	95:15	95:62	4	av_image_check_size
+arg	95:35	95:43	5	s->width
+water	95:35	0:0	6	s
+op	95:36	0:0	6	->
+water	95:38	0:0	6	width
+arg	95:45	95:54	5	s->height
+water	95:45	0:0	6	s
+op	95:46	0:0	6	->
+water	95:48	0:0	6	height
+arg	95:56	95:57	5	0
+water	95:56	0:0	6	0
+arg	95:59	95:62	5	ctx
+water	95:59	0:0	6	ctx
+water	95:63	0:0	4	)
+op	95:65	0:0	4	<
+water	95:67	0:0	4	0
+stmts	96:8	96:17	3	
+goto	96:8	96:17	4	fail
+water	96:13	0:0	5	fail
+water	97:4	0:0	2	s
+op	97:5	0:0	2	->
+water	97:7	0:0	2	pixelformat
+op	97:19	0:0	2	=
+water	97:21	0:0	2	desired_format
+water	97:35	0:0	2	;
+if	98:4	99:17	2	(( res =v4l2_set_parameters (ctx ) ) < 0)
+cond	98:8	98:43	3	( res =v4l2_set_parameters (ctx ) ) < 0
+water	98:8	0:0	4	(
+water	98:9	0:0	4	res
+op	98:13	0:0	4	=
+call	98:15	98:38	4	v4l2_set_parameters
+arg	98:35	98:38	5	ctx
+water	98:35	0:0	6	ctx
+water	98:39	0:0	4	)
+op	98:41	0:0	4	<
+water	98:43	0:0	4	0
+stmts	99:8	99:17	3	
+goto	99:8	99:17	4	fail
+water	99:13	0:0	5	fail
+water	100:4	0:0	2	st
+op	100:6	0:0	2	->
+water	100:8	0:0	2	codec
+op	100:13	0:0	2	->
+water	100:15	0:0	2	pix_fmt
+op	100:23	0:0	2	=
+call	100:25	100:63	2	ff_fmt_v4l2ff
+arg	100:39	100:53	3	desired_format
+water	100:39	0:0	4	desired_format
+arg	100:55	100:63	3	codec_id
+water	100:55	0:0	4	codec_id
+water	100:64	0:0	2	;
+water	101:4	0:0	2	s
+op	101:5	0:0	2	->
+water	101:7	0:0	2	frame_size
+op	101:18	0:0	2	=
+call	102:8	102:66	2	avpicture_get_size
+arg	102:27	102:45	3	st->codec->pix_fmt
+water	102:27	0:0	4	st
+op	102:29	0:0	4	->
+water	102:31	0:0	4	codec
+op	102:36	0:0	4	->
+water	102:38	0:0	4	pix_fmt
+arg	102:47	102:55	3	s->width
+water	102:47	0:0	4	s
+op	102:48	0:0	4	->
+water	102:50	0:0	4	width
+arg	102:57	102:66	3	s->height
+water	102:57	0:0	4	s
+op	102:58	0:0	4	->
+water	102:60	0:0	4	height
+water	102:67	0:0	2	;
+if	103:4	105:21	2	(( res =mmap_init (ctx ) ) || ( res =mmap_start (ctx ) ) < 0)
+cond	103:8	104:34	3	( res =mmap_init (ctx ) ) || ( res =mmap_start (ctx ) ) < 0
+water	103:8	0:0	4	(
+water	103:9	0:0	4	res
+op	103:13	0:0	4	=
+call	103:15	103:28	4	mmap_init
+arg	103:25	103:28	5	ctx
+water	103:25	0:0	6	ctx
+water	103:29	0:0	4	)
+op	103:31	0:0	4	||
+water	104:8	0:0	4	(
+water	104:9	0:0	4	res
+op	104:13	0:0	4	=
+call	104:15	104:29	4	mmap_start
+arg	104:26	104:29	5	ctx
+water	104:26	0:0	6	ctx
+water	104:30	0:0	4	)
+op	104:32	0:0	4	<
+water	104:34	0:0	4	0
+stmts	105:12	105:21	3	
+goto	105:12	105:21	4	fail
+water	105:17	0:0	5	fail
+water	106:4	0:0	2	s
+op	106:5	0:0	2	->
+water	106:7	0:0	2	top_field_first
+op	106:23	0:0	2	=
+call	106:25	106:38	2	first_field
+arg	106:37	106:38	3	s
+water	106:37	0:0	4	s
+water	106:39	0:0	2	;
+water	107:4	0:0	2	st
+op	107:6	0:0	2	->
+water	107:8	0:0	2	codec
+op	107:13	0:0	2	->
+water	107:15	0:0	2	codec_type
+op	107:26	0:0	2	=
+water	107:28	0:0	2	AVMEDIA_TYPE_VIDEO
+water	107:46	0:0	2	;
+water	108:4	0:0	2	st
+op	108:6	0:0	2	->
+water	108:8	0:0	2	codec
+op	108:13	0:0	2	->
+water	108:15	0:0	2	codec_id
+op	108:24	0:0	2	=
+water	108:26	0:0	2	codec_id
+water	108:34	0:0	2	;
+if	109:4	111:60	2	(codec_id == AV_CODEC_ID_RAWVIDEO)
+cond	109:8	109:20	3	codec_id == AV_CODEC_ID_RAWVIDEO
+water	109:8	0:0	4	codec_id
+op	109:17	0:0	4	==
+water	109:20	0:0	4	AV_CODEC_ID_RAWVIDEO
+stmts	110:8	111:60	3	
+water	110:8	0:0	4	st
+op	110:10	0:0	4	->
+water	110:12	0:0	4	codec
+op	110:17	0:0	4	->
+water	110:19	0:0	4	codec_tag
+op	110:29	0:0	4	=
+call	111:12	111:59	4	avcodec_pix_fmt_to_codec_tag
+arg	111:41	111:59	5	st->codec->pix_fmt
+water	111:41	0:0	6	st
+op	111:43	0:0	6	->
+water	111:45	0:0	6	codec
+op	111:50	0:0	6	->
+water	111:52	0:0	6	pix_fmt
+water	111:60	0:0	4	;
+else	112:4	114:4	2
+stmts	112:9	114:4	3	
+if	112:9	114:4	4	(codec_id == AV_CODEC_ID_H264)
+cond	112:13	112:25	5	codec_id == AV_CODEC_ID_H264
+water	112:13	0:0	6	codec_id
+op	112:22	0:0	6	==
+water	112:25	0:0	6	AV_CODEC_ID_H264
+stmts	112:43	114:4	5	
+water	112:43	0:0	6	{
+water	113:8	0:0	6	st
+op	113:10	0:0	6	->
+water	113:12	0:0	6	need_parsing
+op	113:25	0:0	6	=
+water	113:27	0:0	6	AVSTREAM_PARSE_FULL_ONCE
+water	113:51	0:0	6	;
+water	114:4	0:0	6	}
+if	115:4	116:56	2	(desired_format == V4L2_PIX_FMT_YVU420)
+cond	115:8	115:26	3	desired_format == V4L2_PIX_FMT_YVU420
+water	115:8	0:0	4	desired_format
+op	115:23	0:0	4	==
+water	115:26	0:0	4	V4L2_PIX_FMT_YVU420
+stmts	116:8	116:56	3	
+water	116:8	0:0	4	st
+op	116:10	0:0	4	->
+water	116:12	0:0	4	codec
+op	116:17	0:0	4	->
+water	116:19	0:0	4	codec_tag
+op	116:29	0:0	4	=
+call	116:31	116:55	4	MKTAG
+arg	116:37	116:40	5	'Y'
+water	116:37	0:0	6	'Y'
+arg	116:42	116:45	5	'V'
+water	116:42	0:0	6	'V'
+arg	116:47	116:50	5	'1'
+water	116:47	0:0	6	'1'
+arg	116:52	116:55	5	'2'
+water	116:52	0:0	6	'2'
+water	116:56	0:0	4	;
+else	117:4	118:56	2
+stmts	117:9	118:56	3	
+if	117:9	118:56	4	(desired_format == V4L2_PIX_FMT_YVU410)
+cond	117:13	117:31	5	desired_format == V4L2_PIX_FMT_YVU410
+water	117:13	0:0	6	desired_format
+op	117:28	0:0	6	==
+water	117:31	0:0	6	V4L2_PIX_FMT_YVU410
+stmts	118:8	118:56	5	
+water	118:8	0:0	6	st
+op	118:10	0:0	6	->
+water	118:12	0:0	6	codec
+op	118:17	0:0	6	->
+water	118:19	0:0	6	codec_tag
+op	118:29	0:0	6	=
+call	118:31	118:55	6	MKTAG
+arg	118:37	118:40	7	'Y'
+water	118:37	0:0	8	'Y'
+arg	118:42	118:45	7	'V'
+water	118:42	0:0	8	'V'
+arg	118:47	118:50	7	'U'
+water	118:47	0:0	8	'U'
+arg	118:52	118:55	7	'9'
+water	118:52	0:0	8	'9'
+water	118:56	0:0	6	;
+water	119:4	0:0	2	st
+op	119:6	0:0	2	->
+water	119:8	0:0	2	codec
+op	119:13	0:0	2	->
+water	119:15	0:0	2	width
+op	119:21	0:0	2	=
+water	119:23	0:0	2	s
+op	119:24	0:0	2	->
+water	119:26	0:0	2	width
+water	119:31	0:0	2	;
+water	120:4	0:0	2	st
+op	120:6	0:0	2	->
+water	120:8	0:0	2	codec
+op	120:13	0:0	2	->
+water	120:15	0:0	2	height
+op	120:22	0:0	2	=
+water	120:24	0:0	2	s
+op	120:25	0:0	2	->
+water	120:27	0:0	2	height
+water	120:33	0:0	2	;
+if	121:4	122:76	2	(st -> avg_frame_rate . den)
+cond	121:8	121:27	3	st -> avg_frame_rate . den
+water	121:8	0:0	4	st
+op	121:10	0:0	4	->
+water	121:12	0:0	4	avg_frame_rate
+op	121:26	0:0	4	.
+water	121:27	0:0	4	den
+stmts	122:8	122:76	3	
+water	122:8	0:0	4	st
+op	122:10	0:0	4	->
+water	122:12	0:0	4	codec
+op	122:17	0:0	4	->
+water	122:19	0:0	4	bit_rate
+op	122:28	0:0	4	=
+water	122:30	0:0	4	s
+op	122:31	0:0	4	->
+water	122:33	0:0	4	frame_size
+call	122:44	122:71	4	*av_q2d
+arg	122:53	122:71	5	st->avg_frame_rate
+water	122:53	0:0	6	st
+op	122:55	0:0	6	->
+water	122:57	0:0	6	avg_frame_rate
+op	122:73	0:0	4	*
+water	122:75	0:0	4	8
+water	122:76	0:0	4	;
+return	123:4	123:12	2	0
+water	123:11	0:0	3	0
+label	124:0	124:4	2	fail :
+call	125:4	125:20	2	v4l2_close
+arg	125:15	125:20	3	s->fd
+water	125:15	0:0	4	s
+op	125:16	0:0	4	->
+water	125:18	0:0	4	fd
+water	125:21	0:0	2	;
+return	126:4	126:14	2	res
+water	126:11	0:0	3	res

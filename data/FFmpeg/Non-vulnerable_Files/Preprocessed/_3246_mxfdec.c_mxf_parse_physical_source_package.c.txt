@@ -1,0 +1,323 @@
+func	1:0	49:0	0	static int	mxf_parse_physical_source_package
+params	1:44	0:0	1	
+param	1:45	1:60	2	MXFContext *	mxf
+param	1:62	1:84	2	MXFTrack *	source_track
+param	1:86	1:98	2	AVStream *	st
+stmnts	0:0	48:12	1	
+decl	3:4	3:39	2	MXFPackage	*physical_package
+op	3:33	0:0	2	=
+water	3:35	0:0	2	NULL
+decl	4:4	4:35	2	MXFTrack	*physical_track
+op	4:29	0:0	2	=
+water	4:31	0:0	2	NULL
+decl	5:4	5:45	2	MXFStructuralComponent	*sourceclip
+op	5:39	0:0	2	=
+water	5:41	0:0	2	NULL
+decl	6:4	6:39	2	MXFTimecodeComponent	*mxf_tc
+op	6:33	0:0	2	=
+water	6:35	0:0	2	NULL
+decl	7:4	7:15	2	int	i
+water	7:9	0:0	2	,
+decl	7:4	7:15	2	int	j
+water	7:12	0:0	2	,
+decl	7:4	7:15	2	int	k
+decl	8:4	8:17	2	AVTimecode	tc
+decl	9:4	9:13	2	int	flags
+decl	10:4	10:26	2	int64_t	start_position
+for	11:4	47:4	2	(i = 0 ;i < source_track -> sequence -> structural_components_count;i ++)
+forinit	11:9	11:14	3	i = 0 ;
+water	11:9	0:0	4	i
+op	11:11	0:0	4	=
+water	11:13	0:0	4	0
+water	11:14	0:0	4	;
+cond	11:16	11:44	3	i < source_track -> sequence -> structural_components_count
+water	11:16	0:0	4	i
+op	11:18	0:0	4	<
+water	11:20	0:0	4	source_track
+op	11:32	0:0	4	->
+water	11:34	0:0	4	sequence
+op	11:42	0:0	4	->
+water	11:44	0:0	4	structural_components_count
+forexpr	11:73	11:74	3	i ++
+water	11:73	0:0	4	i
+op	11:74	0:0	4	++
+stmts	11:78	47:4	3	
+water	11:78	0:0	4	{
+water	12:8	0:0	4	sourceclip
+op	12:19	0:0	4	=
+call	12:21	12:115	4	mxf_resolve_strong_ref
+arg	12:44	12:47	5	mxf
+water	12:44	0:0	6	mxf
+arg	12:49	12:103	5	&source_track->sequence->structural_components_refs[i]
+op	12:49	0:0	6	&
+water	12:50	0:0	6	source_track
+op	12:62	0:0	6	->
+water	12:64	0:0	6	sequence
+op	12:72	0:0	6	->
+water	12:74	0:0	6	structural_components_refs
+op	12:100	0:0	6	[
+water	12:101	0:0	6	i
+op	12:102	0:0	6	]
+arg	12:105	12:115	5	SourceClip
+water	12:105	0:0	6	SourceClip
+water	12:116	0:0	4	;
+if	13:8	14:20	4	(! sourceclip)
+cond	13:12	13:13	5	! sourceclip
+op	13:12	0:0	6	!
+water	13:13	0:0	6	sourceclip
+stmts	14:12	14:20	5	
+continue	14:12	14:20	6	
+if	15:8	16:17	4	(! ( physical_package =mxf_resolve_source_package (mxf ,sourceclip -> source_package_uid ) ))
+cond	15:12	15:96	5	! ( physical_package =mxf_resolve_source_package (mxf ,sourceclip -> source_package_uid ) )
+op	15:12	0:0	6	!
+water	15:13	0:0	6	(
+water	15:14	0:0	6	physical_package
+op	15:31	0:0	6	=
+call	15:33	15:95	6	mxf_resolve_source_package
+arg	15:60	15:63	7	mxf
+water	15:60	0:0	8	mxf
+arg	15:65	15:95	7	sourceclip->source_package_uid
+water	15:65	0:0	8	sourceclip
+op	15:75	0:0	8	->
+water	15:77	0:0	8	source_package_uid
+water	15:96	0:0	6	)
+stmts	16:12	16:17	5	
+break	16:12	16:17	6	
+call	17:8	17:74	4	mxf_add_umid_metadata
+arg	17:30	17:43	5	&st->metadata
+op	17:30	0:0	6	&
+water	17:31	0:0	6	st
+op	17:33	0:0	6	->
+water	17:35	0:0	6	metadata
+arg	17:45	17:56	5	"reel_umid"
+water	17:45	0:0	6	"reel_umid"
+arg	17:58	17:74	5	physical_package
+water	17:58	0:0	6	physical_package
+water	17:75	0:0	4	;
+if	19:8	20:78	4	(physical_package -> name && physical_package -> name [ 0 ])
+cond	19:12	19:62	5	physical_package -> name && physical_package -> name [ 0 ]
+water	19:12	0:0	6	physical_package
+op	19:28	0:0	6	->
+water	19:30	0:0	6	name
+op	19:35	0:0	6	&&
+water	19:38	0:0	6	physical_package
+op	19:54	0:0	6	->
+water	19:56	0:0	6	name
+op	19:60	0:0	6	[
+water	19:61	0:0	6	0
+op	19:62	0:0	6	]
+stmts	20:12	20:78	5	
+call	20:12	20:77	6	av_dict_set
+arg	20:24	20:37	7	&st->metadata
+op	20:24	0:0	8	&
+water	20:25	0:0	8	st
+op	20:27	0:0	8	->
+water	20:29	0:0	8	metadata
+arg	20:39	20:50	7	"reel_name"
+water	20:39	0:0	8	"reel_name"
+arg	20:52	20:74	7	physical_package->name
+water	20:52	0:0	8	physical_package
+op	20:68	0:0	8	->
+water	20:70	0:0	8	name
+arg	20:76	20:77	7	0
+water	20:76	0:0	8	0
+water	20:78	0:0	6	;
+for	24:8	46:8	4	(j = 0 ;j < physical_package -> tracks_count;j ++)
+forinit	24:13	24:18	5	j = 0 ;
+water	24:13	0:0	6	j
+op	24:15	0:0	6	=
+water	24:17	0:0	6	0
+water	24:18	0:0	6	;
+cond	24:20	24:42	5	j < physical_package -> tracks_count
+water	24:20	0:0	6	j
+op	24:22	0:0	6	<
+water	24:24	0:0	6	physical_package
+op	24:40	0:0	6	->
+water	24:42	0:0	6	tracks_count
+forexpr	24:56	24:57	5	j ++
+water	24:56	0:0	6	j
+op	24:57	0:0	6	++
+stmts	24:61	46:8	5	
+water	24:61	0:0	6	{
+if	25:12	28:12	6	(! ( physical_track =mxf_resolve_strong_ref (mxf ,& physical_package -> tracks_refs [ j ] ,Track ) ))
+cond	25:16	25:104	7	! ( physical_track =mxf_resolve_strong_ref (mxf ,& physical_package -> tracks_refs [ j ] ,Track ) )
+op	25:16	0:0	8	!
+water	25:17	0:0	8	(
+water	25:18	0:0	8	physical_track
+op	25:33	0:0	8	=
+call	25:35	25:103	8	mxf_resolve_strong_ref
+arg	25:58	25:61	9	mxf
+water	25:58	0:0	10	mxf
+arg	25:63	25:96	9	&physical_package->tracks_refs[j]
+op	25:63	0:0	10	&
+water	25:64	0:0	10	physical_package
+op	25:80	0:0	10	->
+water	25:82	0:0	10	tracks_refs
+op	25:93	0:0	10	[
+water	25:94	0:0	10	j
+op	25:95	0:0	10	]
+arg	25:98	25:103	9	Track
+water	25:98	0:0	10	Track
+water	25:104	0:0	8	)
+stmts	25:107	28:12	7	
+water	25:107	0:0	8	{
+call	26:16	26:91	8	av_log
+arg	26:23	26:30	9	mxf->fc
+water	26:23	0:0	10	mxf
+op	26:26	0:0	10	->
+water	26:28	0:0	10	fc
+arg	26:32	26:44	9	AV_LOG_ERROR
+water	26:32	0:0	10	AV_LOG_ERROR
+arg	26:46	26:91	9	"could not resolve source track strong ref\n"
+water	26:46	0:0	10	"could not resolve source track strong ref\n"
+water	26:92	0:0	8	;
+continue	27:16	27:24	8	
+water	28:12	0:0	8	}
+if	29:12	32:12	6	(! ( physical_track -> sequence =mxf_resolve_strong_ref (mxf ,& physical_track -> sequence_ref ,Sequence ) ))
+cond	29:16	29:113	7	! ( physical_track -> sequence =mxf_resolve_strong_ref (mxf ,& physical_track -> sequence_ref ,Sequence ) )
+op	29:16	0:0	8	!
+water	29:17	0:0	8	(
+water	29:18	0:0	8	physical_track
+op	29:32	0:0	8	->
+water	29:34	0:0	8	sequence
+op	29:43	0:0	8	=
+call	29:45	29:112	8	mxf_resolve_strong_ref
+arg	29:68	29:71	9	mxf
+water	29:68	0:0	10	mxf
+arg	29:73	29:102	9	&physical_track->sequence_ref
+op	29:73	0:0	10	&
+water	29:74	0:0	10	physical_track
+op	29:88	0:0	10	->
+water	29:90	0:0	10	sequence_ref
+arg	29:104	29:112	9	Sequence
+water	29:104	0:0	10	Sequence
+water	29:113	0:0	8	)
+stmts	29:116	32:12	7	
+water	29:116	0:0	8	{
+call	30:16	30:100	8	av_log
+arg	30:23	30:30	9	mxf->fc
+water	30:23	0:0	10	mxf
+op	30:26	0:0	10	->
+water	30:28	0:0	10	fc
+arg	30:32	30:44	9	AV_LOG_ERROR
+water	30:32	0:0	10	AV_LOG_ERROR
+arg	30:46	30:100	9	"could not resolve source track sequence strong ref\n"
+water	30:46	0:0	10	"could not resolve source track sequence strong ref\n"
+water	30:101	0:0	8	;
+continue	31:16	31:24	8	
+water	32:12	0:0	8	}
+for	33:12	45:12	6	(k = 0 ;k < physical_track -> sequence -> structural_components_count;k ++)
+forinit	33:17	33:22	7	k = 0 ;
+water	33:17	0:0	8	k
+op	33:19	0:0	8	=
+water	33:21	0:0	8	0
+water	33:22	0:0	8	;
+cond	33:24	33:54	7	k < physical_track -> sequence -> structural_components_count
+water	33:24	0:0	8	k
+op	33:26	0:0	8	<
+water	33:28	0:0	8	physical_track
+op	33:42	0:0	8	->
+water	33:44	0:0	8	sequence
+op	33:52	0:0	8	->
+water	33:54	0:0	8	structural_components_count
+forexpr	33:83	33:84	7	k ++
+water	33:83	0:0	8	k
+op	33:84	0:0	8	++
+stmts	33:88	45:12	7	
+water	33:88	0:0	8	{
+if	34:16	35:28	8	(! ( mxf_tc =mxf_resolve_timecode_component (mxf ,& physical_track -> sequence -> structural_components_refs [ k ] ) ))
+cond	34:20	34:124	9	! ( mxf_tc =mxf_resolve_timecode_component (mxf ,& physical_track -> sequence -> structural_components_refs [ k ] ) )
+op	34:20	0:0	10	!
+water	34:21	0:0	10	(
+water	34:22	0:0	10	mxf_tc
+op	34:29	0:0	10	=
+call	34:31	34:123	10	mxf_resolve_timecode_component
+arg	34:62	34:65	11	mxf
+water	34:62	0:0	12	mxf
+arg	34:67	34:123	11	&physical_track->sequence->structural_components_refs[k]
+op	34:67	0:0	12	&
+water	34:68	0:0	12	physical_track
+op	34:82	0:0	12	->
+water	34:84	0:0	12	sequence
+op	34:92	0:0	12	->
+water	34:94	0:0	12	structural_components_refs
+op	34:120	0:0	12	[
+water	34:121	0:0	12	k
+op	34:122	0:0	12	]
+water	34:124	0:0	10	)
+stmts	35:20	35:28	9	
+continue	35:20	35:28	10	
+water	36:16	0:0	8	flags
+op	36:22	0:0	8	=
+water	36:24	0:0	8	mxf_tc
+op	36:30	0:0	8	->
+water	36:32	0:0	8	drop_frame
+op	36:43	0:0	8	==
+water	36:46	0:0	8	1
+water	36:48	0:0	8	?
+water	36:50	0:0	8	AV_TIMECODE_FLAG_DROPFRAME
+water	36:77	0:0	8	:
+water	36:79	0:0	8	0
+water	36:80	0:0	8	;
+water	38:16	0:0	8	start_position
+op	38:31	0:0	8	=
+call	38:33	40:69	8	av_rescale_q
+arg	38:46	38:72	9	sourceclip->start_position
+water	38:46	0:0	10	sourceclip
+op	38:56	0:0	10	->
+water	38:58	0:0	10	start_position
+arg	39:46	39:71	9	physical_track->edit_rate
+water	39:46	0:0	10	physical_track
+op	39:60	0:0	10	->
+water	39:62	0:0	10	edit_rate
+arg	40:46	40:69	9	source_track->edit_rate
+water	40:46	0:0	10	source_track
+op	40:58	0:0	10	->
+water	40:60	0:0	10	edit_rate
+water	40:70	0:0	8	;
+if	41:16	44:16	8	(av_timecode_init (& tc ,mxf_tc -> rate ,flags ,start_position + mxf_tc -> start_frame ,mxf -> fc ) == 0)
+cond	41:20	41:113	9	av_timecode_init (& tc ,mxf_tc -> rate ,flags ,start_position + mxf_tc -> start_frame ,mxf -> fc ) == 0
+call	41:20	41:108	10	av_timecode_init
+arg	41:37	41:40	11	&tc
+op	41:37	0:0	12	&
+water	41:38	0:0	12	tc
+arg	41:42	41:54	11	mxf_tc->rate
+water	41:42	0:0	12	mxf_tc
+op	41:48	0:0	12	->
+water	41:50	0:0	12	rate
+arg	41:56	41:61	11	flags
+water	41:56	0:0	12	flags
+arg	41:63	41:99	11	start_position+mxf_tc->start_frame
+water	41:63	0:0	12	start_position
+op	41:78	0:0	12	+
+water	41:80	0:0	12	mxf_tc
+op	41:86	0:0	12	->
+water	41:88	0:0	12	start_frame
+arg	41:101	41:108	11	mxf->fc
+water	41:101	0:0	12	mxf
+op	41:104	0:0	12	->
+water	41:106	0:0	12	fc
+op	41:110	0:0	10	==
+water	41:113	0:0	10	0
+stmts	41:116	44:16	9	
+water	41:116	0:0	10	{
+call	42:20	42:76	10	mxf_add_timecode_metadata
+arg	42:46	42:59	11	&st->metadata
+op	42:46	0:0	12	&
+water	42:47	0:0	12	st
+op	42:49	0:0	12	->
+water	42:51	0:0	12	metadata
+arg	42:61	42:71	11	"timecode"
+water	42:61	0:0	12	"timecode"
+arg	42:73	42:76	11	&tc
+op	42:73	0:0	12	&
+water	42:74	0:0	12	tc
+water	42:77	0:0	10	;
+return	43:20	43:28	10	0
+water	43:27	0:0	11	0
+water	44:16	0:0	10	}
+water	45:12	0:0	8	}
+water	46:8	0:0	6	}
+water	47:4	0:0	4	}
+return	48:4	48:12	2	0
+water	48:11	0:0	3	0

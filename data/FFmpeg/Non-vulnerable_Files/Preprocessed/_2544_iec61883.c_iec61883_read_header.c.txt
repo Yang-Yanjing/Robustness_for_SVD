@@ -1,0 +1,786 @@
+func	1:0	137:0	0	static int	iec61883_read_header
+params	1:31	0:0	1	
+param	1:32	1:56	2	AVFormatContext *	context
+stmnts	0:0	136:23	1	
+decl	3:4	3:49	2	struct iec61883_data	*dv
+op	3:29	0:0	2	=
+water	3:31	0:0	2	context
+op	3:38	0:0	2	->
+water	3:40	0:0	2	priv_data
+decl	4:4	4:36	2	struct raw1394_portinfo	pinf[16]
+decl	5:4	5:29	2	rom1394_directory	rom_dir
+decl	6:4	6:16	2	char	*endptr
+decl	7:4	7:14	2	int	inport
+decl	8:4	8:16	2	int	nb_ports
+decl	9:4	9:17	2	int	port
+op	9:13	0:0	2	=
+op	9:15	0:0	2	-
+water	9:16	0:0	2	1
+decl	10:4	10:16	2	int	response
+decl	11:4	11:16	2	int	i
+water	11:9	0:0	2	,
+decl	11:4	11:16	2	int	j
+op	11:13	0:0	2	=
+water	11:15	0:0	2	0
+decl	12:4	12:21	2	uint64_t	guid
+op	12:18	0:0	2	=
+water	12:20	0:0	2	0
+water	13:4	0:0	2	dv
+op	13:6	0:0	2	->
+water	13:8	0:0	2	input_port
+op	13:19	0:0	2	=
+op	13:21	0:0	2	-
+water	13:22	0:0	2	1
+water	13:23	0:0	2	;
+water	14:4	0:0	2	dv
+op	14:6	0:0	2	->
+water	14:8	0:0	2	output_port
+op	14:20	0:0	2	=
+op	14:22	0:0	2	-
+water	14:23	0:0	2	1
+water	14:24	0:0	2	;
+water	15:4	0:0	2	dv
+op	15:6	0:0	2	->
+water	15:8	0:0	2	channel
+op	15:16	0:0	2	=
+op	15:18	0:0	2	-
+water	15:19	0:0	2	1
+water	15:20	0:0	2	;
+water	16:4	0:0	2	dv
+op	16:6	0:0	2	->
+water	16:8	0:0	2	raw1394
+op	16:16	0:0	2	=
+call	16:18	16:37	2	raw1394_new_handle
+water	16:38	0:0	2	;
+if	17:4	20:4	2	(! dv -> raw1394)
+cond	17:8	17:13	3	! dv -> raw1394
+op	17:8	0:0	4	!
+water	17:9	0:0	4	dv
+op	17:11	0:0	4	->
+water	17:13	0:0	4	raw1394
+stmts	17:22	20:4	3	
+water	17:22	0:0	4	{
+call	18:8	18:76	4	av_log
+arg	18:15	18:22	5	context
+water	18:15	0:0	6	context
+arg	18:24	18:36	5	AV_LOG_ERROR
+water	18:24	0:0	6	AV_LOG_ERROR
+arg	18:38	18:76	5	"Failed to open IEEE1394 interface.\n"
+water	18:38	0:0	6	"Failed to open IEEE1394 interface.\n"
+water	18:77	0:0	4	;
+return	19:8	19:27	4	AVERROR(EIO)
+call	19:15	19:26	5	AVERROR
+arg	19:23	19:26	6	EIO
+water	19:23	0:0	7	EIO
+water	20:4	0:0	4	}
+if	21:4	24:4	2	(( nb_ports =raw1394_get_port_info (dv -> raw1394 ,pinf ,16 ) ) < 0)
+cond	21:8	21:68	3	( nb_ports =raw1394_get_port_info (dv -> raw1394 ,pinf ,16 ) ) < 0
+water	21:8	0:0	4	(
+water	21:9	0:0	4	nb_ports
+op	21:18	0:0	4	=
+call	21:20	21:63	4	raw1394_get_port_info
+arg	21:42	21:53	5	dv->raw1394
+water	21:42	0:0	6	dv
+op	21:44	0:0	6	->
+water	21:46	0:0	6	raw1394
+arg	21:55	21:59	5	pinf
+water	21:55	0:0	6	pinf
+arg	21:61	21:63	5	16
+water	21:61	0:0	6	16
+water	21:64	0:0	4	)
+op	21:66	0:0	4	<
+water	21:68	0:0	4	0
+stmts	21:71	24:4	3	
+water	21:71	0:0	4	{
+call	22:8	22:81	4	av_log
+arg	22:15	22:22	5	context
+water	22:15	0:0	6	context
+arg	22:24	22:36	5	AV_LOG_ERROR
+water	22:24	0:0	6	AV_LOG_ERROR
+arg	22:38	22:81	5	"Failed to get number of IEEE1394 ports.\n"
+water	22:38	0:0	6	"Failed to get number of IEEE1394 ports.\n"
+water	22:82	0:0	4	;
+goto	23:8	23:17	4	fail
+water	23:13	0:0	5	fail
+water	24:4	0:0	4	}
+water	25:4	0:0	2	inport
+op	25:11	0:0	2	=
+call	25:13	25:50	2	strtol
+arg	25:20	25:37	3	context->filename
+water	25:20	0:0	4	context
+op	25:27	0:0	4	->
+water	25:29	0:0	4	filename
+arg	25:39	25:46	3	&endptr
+op	25:39	0:0	4	&
+water	25:40	0:0	4	endptr
+arg	25:48	25:50	3	10
+water	25:48	0:0	4	10
+water	25:51	0:0	2	;
+if	26:4	30:4	2	(endptr != context -> filename && * endptr == '\0')
+cond	26:8	26:50	3	endptr != context -> filename && * endptr == '\0'
+water	26:8	0:0	4	endptr
+op	26:15	0:0	4	!=
+water	26:18	0:0	4	context
+op	26:25	0:0	4	->
+water	26:27	0:0	4	filename
+op	26:36	0:0	4	&&
+op	26:39	0:0	4	*
+water	26:40	0:0	4	endptr
+op	26:47	0:0	4	==
+water	26:50	0:0	4	'\0'
+stmts	26:56	30:4	3	
+water	26:56	0:0	4	{
+call	27:8	27:76	4	av_log
+arg	27:15	27:22	5	context
+water	27:15	0:0	6	context
+arg	27:24	27:35	5	AV_LOG_INFO
+water	27:24	0:0	6	AV_LOG_INFO
+arg	27:37	27:68	5	"Selecting IEEE1394 port: %d\n"
+water	27:37	0:0	6	"Selecting IEEE1394 port: %d\n"
+arg	27:70	27:76	5	inport
+water	27:70	0:0	6	inport
+water	27:77	0:0	4	;
+water	28:8	0:0	4	j
+op	28:10	0:0	4	=
+water	28:12	0:0	4	inport
+water	28:18	0:0	4	;
+water	29:8	0:0	4	nb_ports
+op	29:17	0:0	4	=
+water	29:19	0:0	4	inport
+op	29:26	0:0	4	+
+water	29:28	0:0	4	1
+water	29:29	0:0	4	;
+water	30:4	0:0	4	}
+else	30:6	34:4	2
+stmts	30:11	34:4	3	
+if	30:11	34:4	4	(strcmp (context -> filename ,"auto" ))
+cond	30:15	30:47	5	strcmp (context -> filename ,"auto" )
+call	30:15	30:47	6	strcmp
+arg	30:22	30:39	7	context->filename
+water	30:22	0:0	8	context
+op	30:29	0:0	8	->
+water	30:31	0:0	8	filename
+arg	30:41	30:47	7	"auto"
+water	30:41	0:0	8	"auto"
+stmts	30:50	34:4	5	
+water	30:50	0:0	6	{
+call	31:8	32:86	6	av_log
+arg	31:15	31:22	7	context
+water	31:15	0:0	8	context
+arg	31:24	31:36	7	AV_LOG_ERROR
+water	31:24	0:0	8	AV_LOG_ERROR
+arg	31:38	32:67	7	"Invalid input \"%s\", you should specify ""\"auto\" for auto-detection, or the port number.\n"
+water	31:38	0:0	8	"Invalid input \"%s\", you should specify "
+water	32:15	0:0	8	"\"auto\" for auto-detection, or the port number.\n"
+arg	32:69	32:86	7	context->filename
+water	32:69	0:0	8	context
+op	32:76	0:0	8	->
+water	32:78	0:0	8	filename
+water	32:87	0:0	6	;
+goto	33:8	33:17	6	fail
+water	33:13	0:0	7	fail
+water	34:4	0:0	6	}
+if	35:4	41:4	2	(dv -> device_guid)
+cond	35:8	35:12	3	dv -> device_guid
+water	35:8	0:0	4	dv
+op	35:10	0:0	4	->
+water	35:12	0:0	4	device_guid
+stmts	35:25	41:4	3	
+water	35:25	0:0	4	{
+if	36:8	40:8	4	(sscanf (dv -> device_guid ,"%" SCNu64 ,& guid ) != 1)
+cond	36:12	36:57	5	sscanf (dv -> device_guid ,"%" SCNu64 ,& guid ) != 1
+call	36:12	36:52	6	sscanf
+arg	36:19	36:34	7	dv->device_guid
+water	36:19	0:0	8	dv
+op	36:21	0:0	8	->
+water	36:23	0:0	8	device_guid
+arg	36:36	36:45	7	"%"SCNu64
+water	36:36	0:0	8	"%"
+water	36:39	0:0	8	SCNu64
+arg	36:47	36:52	7	&guid
+op	36:47	0:0	8	&
+water	36:48	0:0	8	guid
+op	36:54	0:0	6	!=
+water	36:57	0:0	6	1
+stmts	36:60	40:8	5	
+water	36:60	0:0	6	{
+call	37:12	38:34	6	av_log
+arg	37:19	37:26	7	context
+water	37:19	0:0	8	context
+arg	37:28	37:39	7	AV_LOG_INFO
+water	37:28	0:0	8	AV_LOG_INFO
+arg	37:41	37:73	7	"Invalid dvguid parameter: %s\n"
+water	37:41	0:0	8	"Invalid dvguid parameter: %s\n"
+arg	38:19	38:34	7	dv->device_guid
+water	38:19	0:0	8	dv
+op	38:21	0:0	8	->
+water	38:23	0:0	8	device_guid
+water	38:35	0:0	6	;
+goto	39:12	39:21	6	fail
+water	39:17	0:0	7	fail
+water	40:8	0:0	6	}
+water	41:4	0:0	4	}
+for	42:4	71:4	2	(;j < nb_ports && port == - 1;++ j)
+forinit	42:9	42:9	3	;
+water	42:9	0:0	4	;
+cond	42:11	42:34	3	j < nb_ports && port == - 1
+water	42:11	0:0	4	j
+op	42:13	0:0	4	<
+water	42:15	0:0	4	nb_ports
+op	42:24	0:0	4	&&
+water	42:27	0:0	4	port
+op	42:31	0:0	4	==
+op	42:33	0:0	4	-
+water	42:34	0:0	4	1
+forexpr	42:37	42:39	3	++ j
+op	42:37	0:0	4	++
+water	42:39	0:0	4	j
+stmts	42:42	71:4	3	
+water	42:42	0:0	4	{
+call	43:8	43:42	4	raw1394_destroy_handle
+arg	43:31	43:42	5	dv->raw1394
+water	43:31	0:0	6	dv
+op	43:33	0:0	6	->
+water	43:35	0:0	6	raw1394
+water	43:43	0:0	4	;
+if	44:8	47:8	4	(! ( dv -> raw1394 =raw1394_new_handle_on_port (j ) ))
+cond	44:12	44:57	5	! ( dv -> raw1394 =raw1394_new_handle_on_port (j ) )
+op	44:12	0:0	6	!
+water	44:13	0:0	6	(
+water	44:14	0:0	6	dv
+op	44:16	0:0	6	->
+water	44:18	0:0	6	raw1394
+op	44:26	0:0	6	=
+call	44:28	44:56	6	raw1394_new_handle_on_port
+arg	44:55	44:56	7	j
+water	44:55	0:0	8	j
+water	44:57	0:0	6	)
+stmts	44:60	47:8	5	
+water	44:60	0:0	6	{
+call	45:12	45:75	6	av_log
+arg	45:19	45:26	7	context
+water	45:19	0:0	8	context
+arg	45:28	45:40	7	AV_LOG_ERROR
+water	45:28	0:0	8	AV_LOG_ERROR
+arg	45:42	45:75	7	"Failed setting IEEE1394 port.\n"
+water	45:42	0:0	8	"Failed setting IEEE1394 port.\n"
+water	45:76	0:0	6	;
+goto	46:12	46:21	6	fail
+water	46:17	0:0	7	fail
+water	47:8	0:0	6	}
+for	48:8	70:8	4	(i = 0 ;i <raw1394_get_nodecount (dv -> raw1394 );++ i)
+forinit	48:13	48:16	5	i = 0 ;
+water	48:13	0:0	6	i
+op	48:14	0:0	6	=
+water	48:15	0:0	6	0
+water	48:16	0:0	6	;
+cond	48:18	48:53	5	i <raw1394_get_nodecount (dv -> raw1394 )
+water	48:18	0:0	6	i
+op	48:19	0:0	6	<
+call	48:20	48:53	6	raw1394_get_nodecount
+arg	48:42	48:53	7	dv->raw1394
+water	48:42	0:0	8	dv
+op	48:44	0:0	8	->
+water	48:46	0:0	8	raw1394
+forexpr	48:56	48:58	5	++ i
+op	48:56	0:0	6	++
+water	48:58	0:0	6	i
+stmts	48:61	70:8	5	
+water	48:61	0:0	6	{
+if	50:12	56:12	6	(guid > 1)
+cond	50:16	50:23	7	guid > 1
+water	50:16	0:0	8	guid
+op	50:21	0:0	8	>
+water	50:23	0:0	8	1
+stmts	50:26	56:12	7	
+water	50:26	0:0	8	{
+if	51:16	55:16	8	(guid ==rom1394_get_guid (dv -> raw1394 ,i ))
+cond	51:20	51:59	9	guid ==rom1394_get_guid (dv -> raw1394 ,i )
+water	51:20	0:0	10	guid
+op	51:25	0:0	10	==
+call	51:28	51:59	10	rom1394_get_guid
+arg	51:45	51:56	11	dv->raw1394
+water	51:45	0:0	12	dv
+op	51:47	0:0	12	->
+water	51:49	0:0	12	raw1394
+arg	51:58	51:59	11	i
+water	51:58	0:0	12	i
+stmts	51:62	55:16	9	
+water	51:62	0:0	10	{
+water	52:20	0:0	10	dv
+op	52:22	0:0	10	->
+water	52:24	0:0	10	node
+op	52:29	0:0	10	=
+water	52:31	0:0	10	i
+water	52:32	0:0	10	;
+water	53:20	0:0	10	port
+op	53:25	0:0	10	=
+water	53:27	0:0	10	j
+water	53:28	0:0	10	;
+break	54:20	54:25	10	
+water	55:16	0:0	10	}
+water	56:12	0:0	8	}
+else	56:14	69:12	6
+stmts	56:19	69:12	7	
+water	56:19	0:0	8	{
+if	58:16	59:28	8	(rom1394_get_directory (dv -> raw1394 ,i ,& rom_dir ) < 0)
+cond	58:20	58:70	9	rom1394_get_directory (dv -> raw1394 ,i ,& rom_dir ) < 0
+call	58:20	58:66	10	rom1394_get_directory
+arg	58:42	58:53	11	dv->raw1394
+water	58:42	0:0	12	dv
+op	58:44	0:0	12	->
+water	58:46	0:0	12	raw1394
+arg	58:55	58:56	11	i
+water	58:55	0:0	12	i
+arg	58:58	58:66	11	&rom_dir
+op	58:58	0:0	12	&
+water	58:59	0:0	12	rom_dir
+op	58:68	0:0	10	<
+water	58:70	0:0	10	0
+stmts	59:20	59:28	9	
+continue	59:20	59:28	10	
+if	60:16	67:16	8	(( (rom1394_get_node_type (& rom_dir ) == ROM1394_NODE_TYPE_AVC ) &&avc1394_check_subunit_type (dv -> raw1394 ,i ,AVC1394_SUBUNIT_TYPE_VCR ) ) || ( rom_dir . unit_spec_id == MOTDCT_SPEC_ID ))
+cond	60:20	62:59	9	( (rom1394_get_node_type (& rom_dir ) == ROM1394_NODE_TYPE_AVC ) &&avc1394_check_subunit_type (dv -> raw1394 ,i ,AVC1394_SUBUNIT_TYPE_VCR ) ) || ( rom_dir . unit_spec_id == MOTDCT_SPEC_ID )
+water	60:20	0:0	10	(
+water	60:21	0:0	10	(
+call	60:22	60:52	10	rom1394_get_node_type
+arg	60:44	60:52	11	&rom_dir
+op	60:44	0:0	12	&
+water	60:45	0:0	12	rom_dir
+op	60:54	0:0	10	==
+water	60:57	0:0	10	ROM1394_NODE_TYPE_AVC
+water	60:78	0:0	10	)
+op	60:80	0:0	10	&&
+call	61:21	61:88	10	avc1394_check_subunit_type
+arg	61:48	61:59	11	dv->raw1394
+water	61:48	0:0	12	dv
+op	61:50	0:0	12	->
+water	61:52	0:0	12	raw1394
+arg	61:61	61:62	11	i
+water	61:61	0:0	12	i
+arg	61:64	61:88	11	AVC1394_SUBUNIT_TYPE_VCR
+water	61:64	0:0	12	AVC1394_SUBUNIT_TYPE_VCR
+water	61:89	0:0	10	)
+op	61:91	0:0	10	||
+water	62:20	0:0	10	(
+water	62:21	0:0	10	rom_dir
+op	62:28	0:0	10	.
+water	62:29	0:0	10	unit_spec_id
+op	62:42	0:0	10	==
+water	62:45	0:0	10	MOTDCT_SPEC_ID
+water	62:59	0:0	10	)
+stmts	62:62	67:16	9	
+water	62:62	0:0	10	{
+call	63:20	63:51	10	rom1394_free_directory
+arg	63:43	63:51	11	&rom_dir
+op	63:43	0:0	12	&
+water	63:44	0:0	12	rom_dir
+water	63:52	0:0	10	;
+water	64:20	0:0	10	dv
+op	64:22	0:0	10	->
+water	64:24	0:0	10	node
+op	64:29	0:0	10	=
+water	64:31	0:0	10	i
+water	64:32	0:0	10	;
+water	65:20	0:0	10	port
+op	65:25	0:0	10	=
+water	65:27	0:0	10	j
+water	65:28	0:0	10	;
+break	66:20	66:25	10	
+water	67:16	0:0	10	}
+call	68:16	68:47	8	rom1394_free_directory
+arg	68:39	68:47	9	&rom_dir
+op	68:39	0:0	10	&
+water	68:40	0:0	10	rom_dir
+water	68:48	0:0	8	;
+water	69:12	0:0	8	}
+water	70:8	0:0	6	}
+water	71:4	0:0	4	}
+if	72:4	75:4	2	(port == - 1)
+cond	72:8	72:17	3	port == - 1
+water	72:8	0:0	4	port
+op	72:13	0:0	4	==
+op	72:16	0:0	4	-
+water	72:17	0:0	4	1
+stmts	72:20	75:4	3	
+water	72:20	0:0	4	{
+call	73:8	73:64	4	av_log
+arg	73:15	73:22	5	context
+water	73:15	0:0	6	context
+arg	73:24	73:36	5	AV_LOG_ERROR
+water	73:24	0:0	6	AV_LOG_ERROR
+arg	73:38	73:64	5	"No AV/C devices found.\n"
+water	73:38	0:0	6	"No AV/C devices found.\n"
+water	73:65	0:0	4	;
+goto	74:8	74:17	4	fail
+water	74:13	0:0	5	fail
+water	75:4	0:0	4	}
+call	77:4	77:64	2	iec61883_cmp_normalize_output
+arg	77:34	77:45	3	dv->raw1394
+water	77:34	0:0	4	dv
+op	77:36	0:0	4	->
+water	77:38	0:0	4	raw1394
+arg	77:47	77:64	3	0xffc0|dv->node
+water	77:47	0:0	4	0
+water	77:48	0:0	4	xffc0
+op	77:54	0:0	4	|
+water	77:56	0:0	4	dv
+op	77:58	0:0	4	->
+water	77:60	0:0	4	node
+water	77:65	0:0	2	;
+if	79:4	89:4	2	(dv -> type == IEC61883_AUTO)
+cond	79:8	79:20	3	dv -> type == IEC61883_AUTO
+water	79:8	0:0	4	dv
+op	79:10	0:0	4	->
+water	79:12	0:0	4	type
+op	79:17	0:0	4	==
+water	79:20	0:0	4	IEC61883_AUTO
+stmts	79:35	89:4	3	
+water	79:35	0:0	4	{
+water	80:8	0:0	4	response
+op	80:17	0:0	4	=
+call	80:19	85:46	4	avc1394_transaction
+arg	80:39	80:50	5	dv->raw1394
+water	80:39	0:0	6	dv
+op	80:41	0:0	6	->
+water	80:43	0:0	6	raw1394
+arg	80:52	80:60	5	dv->node
+water	80:52	0:0	6	dv
+op	80:54	0:0	6	->
+water	80:56	0:0	6	node
+arg	81:39	85:43	5	AVC1394_CTYPE_STATUS|AVC1394_SUBUNIT_TYPE_TAPE_RECORDER|AVC1394_SUBUNIT_ID_0|AVC1394_VCR_COMMAND_OUTPUT_SIGNAL_MODE|0xFF
+water	81:39	0:0	6	AVC1394_CTYPE_STATUS
+op	81:60	0:0	6	|
+water	82:39	0:0	6	AVC1394_SUBUNIT_TYPE_TAPE_RECORDER
+op	82:74	0:0	6	|
+water	83:39	0:0	6	AVC1394_SUBUNIT_ID_0
+op	83:60	0:0	6	|
+water	84:39	0:0	6	AVC1394_VCR_COMMAND_OUTPUT_SIGNAL_MODE
+op	84:78	0:0	6	|
+water	85:39	0:0	6	0
+water	85:40	0:0	6	xFF
+arg	85:45	85:46	5	2
+water	85:45	0:0	6	2
+water	85:47	0:0	4	;
+water	86:8	0:0	4	response
+op	86:17	0:0	4	=
+call	86:19	86:48	4	AVC1394_GET_OPERAND0
+arg	86:40	86:48	5	response
+water	86:40	0:0	6	response
+water	86:49	0:0	4	;
+water	87:8	0:0	4	dv
+op	87:10	0:0	4	->
+water	87:12	0:0	4	type
+op	87:17	0:0	4	=
+water	87:19	0:0	4	(
+water	87:20	0:0	4	response
+op	87:29	0:0	4	==
+water	87:32	0:0	4	0
+water	87:33	0:0	4	x10
+op	87:37	0:0	4	||
+water	87:40	0:0	4	response
+op	87:49	0:0	4	==
+water	87:52	0:0	4	0
+water	87:53	0:0	4	x90
+op	87:57	0:0	4	||
+water	87:60	0:0	4	response
+op	87:69	0:0	4	==
+water	87:72	0:0	4	0
+water	87:73	0:0	4	x1A
+op	87:77	0:0	4	||
+water	87:80	0:0	4	response
+op	87:89	0:0	4	==
+water	87:92	0:0	4	0
+water	87:93	0:0	4	x9A
+water	87:96	0:0	4	)
+water	87:98	0:0	4	?
+water	88:12	0:0	4	IEC61883_HDV
+water	88:25	0:0	4	:
+water	88:27	0:0	4	IEC61883_DV
+water	88:38	0:0	4	;
+water	89:4	0:0	4	}
+water	91:4	0:0	2	dv
+op	91:6	0:0	2	->
+water	91:8	0:0	2	channel
+op	91:16	0:0	2	=
+call	91:18	93:70	2	iec61883_cmp_connect
+arg	91:39	91:50	3	dv->raw1394
+water	91:39	0:0	4	dv
+op	91:41	0:0	4	->
+water	91:43	0:0	4	raw1394
+arg	91:52	91:60	3	dv->node
+water	91:52	0:0	4	dv
+op	91:54	0:0	4	->
+water	91:56	0:0	4	node
+arg	91:62	91:78	3	&dv->output_port
+op	91:62	0:0	4	&
+water	91:63	0:0	4	dv
+op	91:65	0:0	4	->
+water	91:67	0:0	4	output_port
+arg	92:39	92:72	3	raw1394_get_local_id(dv->raw1394)
+call	92:39	92:71	4	raw1394_get_local_id
+arg	92:60	92:71	5	dv->raw1394
+water	92:60	0:0	6	dv
+op	92:62	0:0	6	->
+water	92:64	0:0	6	raw1394
+arg	93:39	93:54	3	&dv->input_port
+op	93:39	0:0	4	&
+water	93:40	0:0	4	dv
+op	93:42	0:0	4	->
+water	93:44	0:0	4	input_port
+arg	93:56	93:70	3	&dv->bandwidth
+op	93:56	0:0	4	&
+water	93:57	0:0	4	dv
+op	93:59	0:0	4	->
+water	93:61	0:0	4	bandwidth
+water	93:71	0:0	2	;
+if	94:4	95:24	2	(dv -> channel < 0)
+cond	94:8	94:22	3	dv -> channel < 0
+water	94:8	0:0	4	dv
+op	94:10	0:0	4	->
+water	94:12	0:0	4	channel
+op	94:20	0:0	4	<
+water	94:22	0:0	4	0
+stmts	95:8	95:24	3	
+water	95:8	0:0	4	dv
+op	95:10	0:0	4	->
+water	95:12	0:0	4	channel
+op	95:20	0:0	4	=
+water	95:22	0:0	4	63
+water	95:24	0:0	4	;
+if	96:4	97:29	2	(! dv -> max_packets)
+cond	96:8	96:13	3	! dv -> max_packets
+op	96:8	0:0	4	!
+water	96:9	0:0	4	dv
+op	96:11	0:0	4	->
+water	96:13	0:0	4	max_packets
+stmts	97:8	97:29	3	
+water	97:8	0:0	4	dv
+op	97:10	0:0	4	->
+water	97:12	0:0	4	max_packets
+op	97:24	0:0	4	=
+water	97:26	0:0	4	100
+water	97:29	0:0	4	;
+if	98:4	109:4	2	(CONFIG_MPEGTS_DEMUXER && dv -> type == IEC61883_HDV)
+cond	98:8	98:45	3	CONFIG_MPEGTS_DEMUXER && dv -> type == IEC61883_HDV
+water	98:8	0:0	4	CONFIG_MPEGTS_DEMUXER
+op	98:30	0:0	4	&&
+water	98:33	0:0	4	dv
+op	98:35	0:0	4	->
+water	98:37	0:0	4	type
+op	98:42	0:0	4	==
+water	98:45	0:0	4	IEC61883_HDV
+stmts	98:59	109:4	3	
+water	98:59	0:0	4	{
+call	100:8	100:41	4	avformat_new_stream
+arg	100:28	100:35	5	context
+water	100:28	0:0	6	context
+arg	100:37	100:41	5	NULL
+water	100:37	0:0	6	NULL
+water	100:42	0:0	4	;
+water	101:8	0:0	4	dv
+op	101:10	0:0	4	->
+water	101:12	0:0	4	mpeg_demux
+op	101:23	0:0	4	=
+call	101:25	101:57	4	avpriv_mpegts_parse_open
+arg	101:50	101:57	5	context
+water	101:50	0:0	6	context
+water	101:58	0:0	4	;
+if	102:8	103:21	4	(! dv -> mpeg_demux)
+cond	102:12	102:17	5	! dv -> mpeg_demux
+op	102:12	0:0	6	!
+water	102:13	0:0	6	dv
+op	102:15	0:0	6	->
+water	102:17	0:0	6	mpeg_demux
+stmts	103:12	103:21	5	
+goto	103:12	103:21	6	fail
+water	103:17	0:0	7	fail
+water	104:8	0:0	4	dv
+op	104:10	0:0	4	->
+water	104:12	0:0	4	parse_queue
+op	104:24	0:0	4	=
+water	104:26	0:0	4	iec61883_parse_queue_hdv
+water	104:50	0:0	4	;
+water	105:8	0:0	4	dv
+op	105:10	0:0	4	->
+water	105:12	0:0	4	iec61883_mpeg2
+op	105:27	0:0	4	=
+call	105:29	107:56	4	iec61883_mpeg2_recv_init
+arg	105:54	105:65	5	dv->raw1394
+water	105:54	0:0	6	dv
+op	105:56	0:0	6	->
+water	105:58	0:0	6	raw1394
+arg	106:54	106:94	5	(iec61883_mpeg2_recv_t)iec61883_callback
+water	106:54	0:0	6	(
+water	106:55	0:0	6	iec61883_mpeg2_recv_t
+water	106:76	0:0	6	)
+water	106:77	0:0	6	iec61883_callback
+arg	107:54	107:56	5	dv
+water	107:54	0:0	6	dv
+water	107:57	0:0	4	;
+water	108:8	0:0	4	dv
+op	108:10	0:0	4	->
+water	108:12	0:0	4	max_packets
+op	108:24	0:0	4	*=
+water	108:27	0:0	4	766
+water	108:30	0:0	4	;
+water	109:4	0:0	4	}
+else	109:6	116:4	2
+stmts	109:11	116:4	3	
+water	109:11	0:0	4	{
+water	111:8	0:0	4	dv
+op	111:10	0:0	4	->
+water	111:12	0:0	4	dv_demux
+op	111:21	0:0	4	=
+call	111:23	111:51	4	avpriv_dv_init_demux
+arg	111:44	111:51	5	context
+water	111:44	0:0	6	context
+water	111:52	0:0	4	;
+if	112:8	113:21	4	(! dv -> dv_demux)
+cond	112:12	112:17	5	! dv -> dv_demux
+op	112:12	0:0	6	!
+water	112:13	0:0	6	dv
+op	112:15	0:0	6	->
+water	112:17	0:0	6	dv_demux
+stmts	113:12	113:21	5	
+goto	113:12	113:21	6	fail
+water	113:17	0:0	7	fail
+water	114:8	0:0	4	dv
+op	114:10	0:0	4	->
+water	114:12	0:0	4	parse_queue
+op	114:24	0:0	4	=
+water	114:26	0:0	4	iec61883_parse_queue_dv
+water	114:49	0:0	4	;
+water	115:8	0:0	4	dv
+op	115:10	0:0	4	->
+water	115:12	0:0	4	iec61883_dv
+op	115:24	0:0	4	=
+call	115:26	115:80	4	iec61883_dv_fb_init
+arg	115:46	115:57	5	dv->raw1394
+water	115:46	0:0	6	dv
+op	115:48	0:0	6	->
+water	115:50	0:0	6	raw1394
+arg	115:59	115:76	5	iec61883_callback
+water	115:59	0:0	6	iec61883_callback
+arg	115:78	115:80	5	dv
+water	115:78	0:0	6	dv
+water	115:81	0:0	4	;
+water	116:4	0:0	4	}
+water	117:4	0:0	2	dv
+op	117:6	0:0	2	->
+water	117:8	0:0	2	raw1394_poll
+op	117:20	0:0	2	.
+water	117:21	0:0	2	fd
+op	117:24	0:0	2	=
+call	117:26	117:52	2	raw1394_get_fd
+arg	117:41	117:52	3	dv->raw1394
+water	117:41	0:0	4	dv
+op	117:43	0:0	4	->
+water	117:45	0:0	4	raw1394
+water	117:53	0:0	2	;
+water	118:4	0:0	2	dv
+op	118:6	0:0	2	->
+water	118:8	0:0	2	raw1394_poll
+op	118:20	0:0	2	.
+water	118:21	0:0	2	events
+op	118:28	0:0	2	=
+water	118:30	0:0	2	POLLIN
+op	118:37	0:0	2	|
+water	118:39	0:0	2	POLLERR
+op	118:47	0:0	2	|
+water	118:49	0:0	2	POLLHUP
+op	118:57	0:0	2	|
+water	118:59	0:0	2	POLLPRI
+water	118:66	0:0	2	;
+if	120:4	121:66	2	(dv -> type == IEC61883_HDV)
+cond	120:8	120:20	3	dv -> type == IEC61883_HDV
+water	120:8	0:0	4	dv
+op	120:10	0:0	4	->
+water	120:12	0:0	4	type
+op	120:17	0:0	4	==
+water	120:20	0:0	4	IEC61883_HDV
+stmts	121:8	121:66	3	
+call	121:8	121:65	4	iec61883_mpeg2_recv_start
+arg	121:34	121:52	5	dv->iec61883_mpeg2
+water	121:34	0:0	6	dv
+op	121:36	0:0	6	->
+water	121:38	0:0	6	iec61883_mpeg2
+arg	121:54	121:65	5	dv->channel
+water	121:54	0:0	6	dv
+op	121:56	0:0	6	->
+water	121:58	0:0	6	channel
+water	121:66	0:0	4	;
+else	122:4	123:58	2
+stmts	123:8	123:58	3	
+call	123:8	123:57	4	iec61883_dv_fb_start
+arg	123:29	123:44	5	dv->iec61883_dv
+water	123:29	0:0	6	dv
+op	123:31	0:0	6	->
+water	123:33	0:0	6	iec61883_dv
+arg	123:46	123:57	5	dv->channel
+water	123:46	0:0	6	dv
+op	123:48	0:0	6	->
+water	123:50	0:0	6	channel
+water	123:58	0:0	4	;
+water	125:4	0:0	2	dv
+op	125:6	0:0	2	->
+water	125:8	0:0	2	thread_loop
+op	125:20	0:0	2	=
+water	125:22	0:0	2	1
+water	125:23	0:0	2	;
+if	126:4	127:17	2	(pthread_mutex_init (& dv -> mutex ,NULL ))
+cond	126:8	126:43	3	pthread_mutex_init (& dv -> mutex ,NULL )
+call	126:8	126:43	4	pthread_mutex_init
+arg	126:27	126:37	5	&dv->mutex
+op	126:27	0:0	6	&
+water	126:28	0:0	6	dv
+op	126:30	0:0	6	->
+water	126:32	0:0	6	mutex
+arg	126:39	126:43	5	NULL
+water	126:39	0:0	6	NULL
+stmts	127:8	127:17	3	
+goto	127:8	127:17	4	fail
+water	127:13	0:0	5	fail
+if	128:4	129:17	2	(pthread_cond_init (& dv -> cond ,NULL ))
+cond	128:8	128:41	3	pthread_cond_init (& dv -> cond ,NULL )
+call	128:8	128:41	4	pthread_cond_init
+arg	128:26	128:35	5	&dv->cond
+op	128:26	0:0	6	&
+water	128:27	0:0	6	dv
+op	128:29	0:0	6	->
+water	128:31	0:0	6	cond
+arg	128:37	128:41	5	NULL
+water	128:37	0:0	6	NULL
+stmts	129:8	129:17	3	
+goto	129:8	129:17	4	fail
+water	129:13	0:0	5	fail
+if	130:4	131:17	2	(pthread_create (& dv -> receive_task_thread ,NULL ,iec61883_receive_task ,dv ))
+cond	130:8	130:80	3	pthread_create (& dv -> receive_task_thread ,NULL ,iec61883_receive_task ,dv )
+call	130:8	130:80	4	pthread_create
+arg	130:23	130:47	5	&dv->receive_task_thread
+op	130:23	0:0	6	&
+water	130:24	0:0	6	dv
+op	130:26	0:0	6	->
+water	130:28	0:0	6	receive_task_thread
+arg	130:49	130:53	5	NULL
+water	130:49	0:0	6	NULL
+arg	130:55	130:76	5	iec61883_receive_task
+water	130:55	0:0	6	iec61883_receive_task
+arg	130:78	130:80	5	dv
+water	130:78	0:0	6	dv
+stmts	131:8	131:17	3	
+goto	131:8	131:17	4	fail
+water	131:13	0:0	5	fail
+return	133:4	133:12	2	0
+water	133:11	0:0	3	0
+label	134:0	134:4	2	fail :
+call	135:4	135:38	2	raw1394_destroy_handle
+arg	135:27	135:38	3	dv->raw1394
+water	135:27	0:0	4	dv
+op	135:29	0:0	4	->
+water	135:31	0:0	4	raw1394
+water	135:39	0:0	2	;
+return	136:4	136:23	2	AVERROR(EIO)
+call	136:11	136:22	3	AVERROR
+arg	136:19	136:22	4	EIO
+water	136:19	0:0	5	EIO

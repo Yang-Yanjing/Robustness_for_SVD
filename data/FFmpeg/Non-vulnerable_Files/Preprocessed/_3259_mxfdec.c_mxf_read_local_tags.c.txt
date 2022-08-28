@@ -1,0 +1,355 @@
+func	1:0	53:0	0	static int	mxf_read_local_tags
+params	1:30	0:0	1	
+param	1:31	1:46	2	MXFContext *	mxf
+param	1:48	1:62	2	KLVPacket *	klv
+param	1:64	1:95	2	MXFMetadataReadFunc *	read_child
+param	1:97	1:109	2	int	ctx_size
+param	1:111	1:139	2	enum MXFMetadataSetType	type
+stmnts	0:0	52:56	1	
+decl	3:4	3:33	2	AVIOContext	*pb
+op	3:20	0:0	2	=
+water	3:22	0:0	2	mxf
+op	3:25	0:0	2	->
+water	3:27	0:0	2	fc
+op	3:29	0:0	2	->
+water	3:31	0:0	2	pb
+decl	4:4	4:63	2	MXFMetadataSet	*ctx
+op	4:24	0:0	2	=
+water	4:26	0:0	2	ctx_size
+water	4:35	0:0	2	?
+call	4:37	4:56	3	av_mallocz
+arg	4:48	4:56	4	ctx_size
+water	4:48	0:0	5	ctx_size
+water	4:58	0:0	2	:
+water	4:60	0:0	2	mxf
+decl	5:4	5:50	2	uint64_t	klv_end
+op	5:21	0:0	2	=
+call	5:23	5:35	3	avio_tell
+arg	5:33	5:35	4	pb
+water	5:33	0:0	5	pb
+op	5:37	0:0	2	+
+water	5:39	0:0	2	klv
+op	5:42	0:0	2	->
+water	5:44	0:0	2	length
+if	6:4	7:30	2	(! ctx)
+cond	6:8	6:9	3	! ctx
+op	6:8	0:0	4	!
+water	6:9	0:0	4	ctx
+stmts	7:8	7:30	3	
+return	7:8	7:30	4	AVERROR(ENOMEM)
+call	7:15	7:29	5	AVERROR
+arg	7:23	7:29	6	ENOMEM
+water	7:23	0:0	7	ENOMEM
+call	8:4	8:34	2	mxf_metadataset_init
+arg	8:25	8:28	3	ctx
+water	8:25	0:0	4	ctx
+arg	8:30	8:34	3	type
+water	8:30	0:0	4	type
+water	8:35	0:0	2	;
+while	9:4	50:4	2	(avio_tell (pb ) + 4 < klv_end && !avio_feof (pb ))
+cond	9:11	9:55	3	avio_tell (pb ) + 4 < klv_end && !avio_feof (pb )
+call	9:11	9:23	4	avio_tell
+arg	9:21	9:23	5	pb
+water	9:21	0:0	6	pb
+op	9:25	0:0	4	+
+water	9:27	0:0	4	4
+op	9:29	0:0	4	<
+water	9:31	0:0	4	klv_end
+op	9:39	0:0	4	&&
+op	9:42	0:0	4	!
+call	9:43	9:55	4	avio_feof
+arg	9:53	9:55	5	pb
+water	9:53	0:0	6	pb
+stmts	9:58	50:4	3	
+water	9:58	0:0	4	{
+decl	10:8	10:15	4	int	ret
+decl	11:8	11:31	4	int	tag
+op	11:16	0:0	4	=
+call	11:18	11:30	5	avio_rb16
+arg	11:28	11:30	6	pb
+water	11:28	0:0	7	pb
+decl	12:8	12:32	4	int	size
+op	12:17	0:0	4	=
+call	12:19	12:31	5	avio_rb16
+arg	12:29	12:31	6	pb
+water	12:29	0:0	7	pb
+decl	13:8	13:44	4	uint64_t	next
+op	13:22	0:0	4	=
+call	13:24	13:36	5	avio_tell
+arg	13:34	13:36	6	pb
+water	13:34	0:0	7	pb
+op	13:38	0:0	4	+
+water	13:40	0:0	4	size
+decl	14:8	14:21	4	UID	uid
+op	14:16	0:0	4	=
+water	14:18	0:0	4	{
+water	14:19	0:0	4	0
+water	14:20	0:0	4	}
+call	15:8	15:76	4	av_log
+arg	15:15	15:22	5	mxf->fc
+water	15:15	0:0	6	mxf
+op	15:18	0:0	6	->
+water	15:20	0:0	6	fc
+arg	15:24	15:36	5	AV_LOG_TRACE
+water	15:24	0:0	6	AV_LOG_TRACE
+arg	15:38	15:65	5	"local tag %#04x size %d\n"
+water	15:38	0:0	6	"local tag %#04x size %d\n"
+arg	15:67	15:70	5	tag
+water	15:67	0:0	6	tag
+arg	15:72	15:76	5	size
+water	15:72	0:0	6	size
+water	15:77	0:0	4	;
+if	16:8	19:8	4	(! size)
+cond	16:12	16:13	5	! size
+op	16:12	0:0	6	!
+water	16:13	0:0	6	size
+stmts	16:19	19:8	5	
+water	16:19	0:0	6	{
+call	17:12	17:78	6	av_log
+arg	17:19	17:26	7	mxf->fc
+water	17:19	0:0	8	mxf
+op	17:22	0:0	8	->
+water	17:24	0:0	8	fc
+arg	17:28	17:40	7	AV_LOG_ERROR
+water	17:28	0:0	8	AV_LOG_ERROR
+arg	17:42	17:73	7	"local tag %#04x with 0 size\n"
+water	17:42	0:0	8	"local tag %#04x with 0 size\n"
+arg	17:75	17:78	7	tag
+water	17:75	0:0	8	tag
+water	17:79	0:0	6	;
+continue	18:12	18:20	6	
+water	19:8	0:0	6	}
+if	20:8	30:8	4	(tag > 0 x7FFF)
+cond	20:12	20:19	5	tag > 0 x7FFF
+water	20:12	0:0	6	tag
+op	20:16	0:0	6	>
+water	20:18	0:0	6	0
+water	20:19	0:0	6	x7FFF
+stmts	20:26	30:8	5	
+water	20:26	0:0	6	{
+decl	21:12	21:17	6	int	i
+for	22:12	29:12	6	(i = 0 ;i < mxf -> local_tags_count;i ++)
+forinit	22:17	22:22	7	i = 0 ;
+water	22:17	0:0	8	i
+op	22:19	0:0	8	=
+water	22:21	0:0	8	0
+water	22:22	0:0	8	;
+cond	22:24	22:33	7	i < mxf -> local_tags_count
+water	22:24	0:0	8	i
+op	22:26	0:0	8	<
+water	22:28	0:0	8	mxf
+op	22:31	0:0	8	->
+water	22:33	0:0	8	local_tags_count
+forexpr	22:51	22:52	7	i ++
+water	22:51	0:0	8	i
+op	22:52	0:0	8	++
+stmts	22:56	29:12	7	
+water	22:56	0:0	8	{
+decl	23:16	23:61	8	int	local_tag
+op	23:30	0:0	8	=
+call	23:32	23:60	9	AV_RB16
+arg	23:40	23:60	10	mxf->local_tags+i*18
+water	23:40	0:0	11	mxf
+op	23:43	0:0	11	->
+water	23:45	0:0	11	local_tags
+op	23:55	0:0	11	+
+water	23:56	0:0	11	i
+op	23:57	0:0	11	*
+water	23:58	0:0	11	18
+if	24:16	28:16	8	(local_tag == tag)
+cond	24:20	24:33	9	local_tag == tag
+water	24:20	0:0	10	local_tag
+op	24:30	0:0	10	==
+water	24:33	0:0	10	tag
+stmts	24:38	28:16	9	
+water	24:38	0:0	10	{
+call	25:20	25:58	10	memcpy
+arg	25:27	25:30	11	uid
+water	25:27	0:0	12	uid
+arg	25:32	25:54	11	mxf->local_tags+i*18+2
+water	25:32	0:0	12	mxf
+op	25:35	0:0	12	->
+water	25:37	0:0	12	local_tags
+op	25:47	0:0	12	+
+water	25:48	0:0	12	i
+op	25:49	0:0	12	*
+water	25:50	0:0	12	18
+op	25:52	0:0	12	+
+water	25:53	0:0	12	2
+arg	25:56	25:58	11	16
+water	25:56	0:0	12	16
+water	25:59	0:0	10	;
+call	26:20	26:80	10	av_log
+arg	26:27	26:34	11	mxf->fc
+water	26:27	0:0	12	mxf
+op	26:30	0:0	12	->
+water	26:32	0:0	12	fc
+arg	26:36	26:48	11	AV_LOG_TRACE
+water	26:36	0:0	12	AV_LOG_TRACE
+arg	26:50	26:69	11	"local tag %#04x\n"
+water	26:50	0:0	12	"local tag %#04x\n"
+arg	26:71	26:80	11	local_tag
+water	26:71	0:0	12	local_tag
+water	26:81	0:0	10	;
+call	27:20	27:49	10	PRINT_KEY
+arg	27:30	27:37	11	mxf->fc
+water	27:30	0:0	12	mxf
+op	27:33	0:0	12	->
+water	27:35	0:0	12	fc
+arg	27:39	27:44	11	"uid"
+water	27:39	0:0	12	"uid"
+arg	27:46	27:49	11	uid
+water	27:46	0:0	12	uid
+water	27:50	0:0	10	;
+water	28:16	0:0	10	}
+water	29:12	0:0	8	}
+water	30:8	0:0	6	}
+if	31:8	33:8	4	(ctx_size && tag == 0 x3C0A)
+cond	31:12	31:32	5	ctx_size && tag == 0 x3C0A
+water	31:12	0:0	6	ctx_size
+op	31:21	0:0	6	&&
+water	31:24	0:0	6	tag
+op	31:28	0:0	6	==
+water	31:31	0:0	6	0
+water	31:32	0:0	6	x3C0A
+stmts	31:39	33:8	5	
+water	31:39	0:0	6	{
+call	32:12	32:38	6	avio_read
+arg	32:22	32:24	7	pb
+water	32:22	0:0	8	pb
+arg	32:26	32:34	7	ctx->uid
+water	32:26	0:0	8	ctx
+op	32:29	0:0	8	->
+water	32:31	0:0	8	uid
+arg	32:36	32:38	7	16
+water	32:36	0:0	8	16
+water	32:39	0:0	6	;
+water	33:8	0:0	6	}
+else	33:10	36:8	4
+stmts	33:15	36:8	5	
+if	33:15	36:8	6	(( ret =read_child (ctx ,pb ,tag ,size ,uid ,- 1 ) ) < 0)
+cond	33:19	33:69	7	( ret =read_child (ctx ,pb ,tag ,size ,uid ,- 1 ) ) < 0
+water	33:19	0:0	8	(
+water	33:20	0:0	8	ret
+op	33:24	0:0	8	=
+call	33:26	33:64	8	read_child
+arg	33:37	33:40	9	ctx
+water	33:37	0:0	10	ctx
+arg	33:42	33:44	9	pb
+water	33:42	0:0	10	pb
+arg	33:46	33:49	9	tag
+water	33:46	0:0	10	tag
+arg	33:51	33:55	9	size
+water	33:51	0:0	10	size
+arg	33:57	33:60	9	uid
+water	33:57	0:0	10	uid
+arg	33:62	33:64	9	-1
+op	33:62	0:0	10	-
+water	33:63	0:0	10	1
+water	33:65	0:0	8	)
+op	33:67	0:0	8	<
+water	33:69	0:0	8	0
+stmts	33:72	36:8	7	
+water	33:72	0:0	8	{
+call	34:12	34:49	8	mxf_free_metadataset
+arg	34:33	34:37	9	&ctx
+op	34:33	0:0	10	&
+water	34:34	0:0	10	ctx
+arg	34:39	34:49	9	!!ctx_size
+op	34:39	0:0	10	!
+op	34:40	0:0	10	!
+water	34:41	0:0	10	ctx_size
+water	34:50	0:0	8	;
+return	35:12	35:22	8	ret
+water	35:19	0:0	9	ret
+water	36:8	0:0	8	}
+if	39:8	48:8	4	(avio_tell (pb ) > klv_end)
+cond	39:12	39:28	5	avio_tell (pb ) > klv_end
+call	39:12	39:24	6	avio_tell
+arg	39:22	39:24	7	pb
+water	39:22	0:0	8	pb
+op	39:26	0:0	6	>
+water	39:28	0:0	6	klv_end
+stmts	39:37	48:8	5	
+water	39:37	0:0	6	{
+if	40:12	43:12	6	(ctx_size)
+cond	40:16	40:16	7	ctx_size
+water	40:16	0:0	8	ctx_size
+stmts	40:26	43:12	7	
+water	40:26	0:0	8	{
+water	41:16	0:0	8	ctx
+op	41:19	0:0	8	->
+water	41:21	0:0	8	type
+op	41:26	0:0	8	=
+water	41:28	0:0	8	type
+water	41:32	0:0	8	;
+call	42:16	42:53	8	mxf_free_metadataset
+arg	42:37	42:41	9	&ctx
+op	42:37	0:0	10	&
+water	42:38	0:0	10	ctx
+arg	42:43	42:53	9	!!ctx_size
+op	42:43	0:0	10	!
+op	42:44	0:0	10	!
+water	42:45	0:0	10	ctx_size
+water	42:54	0:0	8	;
+water	43:12	0:0	8	}
+call	44:12	46:35	6	av_log
+arg	44:19	44:26	7	mxf->fc
+water	44:19	0:0	8	mxf
+op	44:22	0:0	8	->
+water	44:24	0:0	8	fc
+arg	44:28	44:40	7	AV_LOG_ERROR
+water	44:28	0:0	8	AV_LOG_ERROR
+arg	45:19	45:81	7	"local tag %#04x extends past end of local set @ %#"PRIx64"\n"
+water	45:19	0:0	8	"local tag %#04x extends past end of local set @ %#"
+water	45:71	0:0	8	PRIx64
+water	45:77	0:0	8	"\n"
+arg	46:19	46:22	7	tag
+water	46:19	0:0	8	tag
+arg	46:24	46:35	7	klv->offset
+water	46:24	0:0	8	klv
+op	46:27	0:0	8	->
+water	46:29	0:0	8	offset
+water	46:36	0:0	6	;
+return	47:12	47:38	6	AVERROR_INVALIDDATA
+water	47:19	0:0	7	AVERROR_INVALIDDATA
+water	48:8	0:0	6	}
+else	48:10	49:41	4
+stmts	48:15	49:41	5	
+if	48:15	49:41	6	(avio_tell (pb ) <= next)
+cond	48:19	48:36	7	avio_tell (pb ) <= next
+call	48:19	48:31	8	avio_tell
+arg	48:29	48:31	9	pb
+water	48:29	0:0	10	pb
+op	48:33	0:0	8	<=
+water	48:36	0:0	8	next
+stmts	49:12	49:41	7	
+call	49:12	49:40	8	avio_seek
+arg	49:22	49:24	9	pb
+water	49:22	0:0	10	pb
+arg	49:26	49:30	9	next
+water	49:26	0:0	10	next
+arg	49:32	49:40	9	SEEK_SET
+water	49:32	0:0	10	SEEK_SET
+water	49:41	0:0	8	;
+water	50:4	0:0	4	}
+if	51:4	51:34	2	(ctx_size)
+cond	51:8	51:8	3	ctx_size
+water	51:8	0:0	4	ctx_size
+stmts	51:18	51:34	3	
+water	51:18	0:0	4	ctx
+op	51:21	0:0	4	->
+water	51:23	0:0	4	type
+op	51:28	0:0	4	=
+water	51:30	0:0	4	type
+water	51:34	0:0	4	;
+return	52:4	52:56	2	ctx_size?mxf_add_metadata_set(mxf,ctx):0
+water	52:11	0:0	3	ctx_size
+water	52:20	0:0	3	?
+call	52:22	52:51	3	mxf_add_metadata_set
+arg	52:43	52:46	4	mxf
+water	52:43	0:0	5	mxf
+arg	52:48	52:51	4	ctx
+water	52:48	0:0	5	ctx
+water	52:53	0:0	3	:
+water	52:55	0:0	3	0

@@ -1,0 +1,144 @@
+func	1:0	22:0	0	static void	seek_chapter
+params	1:24	0:0	1	
+param	1:25	1:39	2	VideoState *	is
+param	1:41	1:49	2	int	incr
+stmnts	0:0	21:55	1	
+decl	3:4	3:53	2	int64_t	pos
+op	3:16	0:0	2	=
+call	3:18	3:37	3	get_master_clock
+arg	3:35	3:37	4	is
+water	3:35	0:0	5	is
+op	3:39	0:0	2	*
+water	3:41	0:0	2	AV_TIME_BASE
+decl	4:4	4:9	2	int	i
+if	5:4	6:14	2	(! is -> ic -> nb_chapters)
+cond	5:8	5:17	3	! is -> ic -> nb_chapters
+op	5:8	0:0	4	!
+water	5:9	0:0	4	is
+op	5:11	0:0	4	->
+water	5:13	0:0	4	ic
+op	5:15	0:0	4	->
+water	5:17	0:0	4	nb_chapters
+stmts	6:8	6:14	3	
+return	6:8	6:14	4	
+for	8:4	14:4	2	(i = 0 ;i < is -> ic -> nb_chapters;i ++)
+forinit	8:9	8:14	3	i = 0 ;
+water	8:9	0:0	4	i
+op	8:11	0:0	4	=
+water	8:13	0:0	4	0
+water	8:14	0:0	4	;
+cond	8:16	8:28	3	i < is -> ic -> nb_chapters
+water	8:16	0:0	4	i
+op	8:18	0:0	4	<
+water	8:20	0:0	4	is
+op	8:22	0:0	4	->
+water	8:24	0:0	4	ic
+op	8:26	0:0	4	->
+water	8:28	0:0	4	nb_chapters
+forexpr	8:41	8:42	3	i ++
+water	8:41	0:0	4	i
+op	8:42	0:0	4	++
+stmts	8:46	14:4	3	
+water	8:46	0:0	4	{
+decl	9:8	9:43	4	AVChapter	*ch
+op	9:22	0:0	4	=
+water	9:24	0:0	4	is
+op	9:26	0:0	4	->
+water	9:28	0:0	4	ic
+op	9:30	0:0	4	->
+water	9:32	0:0	4	chapters
+op	9:40	0:0	4	[
+water	9:41	0:0	4	i
+op	9:42	0:0	4	]
+if	10:8	13:8	4	(av_compare_ts (pos ,AV_TIME_BASE_Q ,ch -> start ,ch -> time_base ) < 0)
+cond	10:12	10:75	5	av_compare_ts (pos ,AV_TIME_BASE_Q ,ch -> start ,ch -> time_base ) < 0
+call	10:12	10:71	6	av_compare_ts
+arg	10:26	10:29	7	pos
+water	10:26	0:0	8	pos
+arg	10:31	10:45	7	AV_TIME_BASE_Q
+water	10:31	0:0	8	AV_TIME_BASE_Q
+arg	10:47	10:56	7	ch->start
+water	10:47	0:0	8	ch
+op	10:49	0:0	8	->
+water	10:51	0:0	8	start
+arg	10:58	10:71	7	ch->time_base
+water	10:58	0:0	8	ch
+op	10:60	0:0	8	->
+water	10:62	0:0	8	time_base
+op	10:73	0:0	6	<
+water	10:75	0:0	6	0
+stmts	10:78	13:8	5	
+water	10:78	0:0	6	{
+water	11:12	0:0	6	i
+op	11:13	0:0	6	--
+water	11:15	0:0	6	;
+break	12:12	12:17	6	
+water	13:8	0:0	6	}
+water	14:4	0:0	4	}
+water	15:4	0:0	2	i
+op	15:6	0:0	2	+=
+water	15:9	0:0	2	incr
+water	15:13	0:0	2	;
+water	16:4	0:0	2	i
+op	16:6	0:0	2	=
+call	16:8	16:18	2	FFMAX
+arg	16:14	16:15	3	i
+water	16:14	0:0	4	i
+arg	16:17	16:18	3	0
+water	16:17	0:0	4	0
+water	16:19	0:0	2	;
+if	17:4	18:14	2	(i >= is -> ic -> nb_chapters)
+cond	17:8	17:21	3	i >= is -> ic -> nb_chapters
+water	17:8	0:0	4	i
+op	17:10	0:0	4	>=
+water	17:13	0:0	4	is
+op	17:15	0:0	4	->
+water	17:17	0:0	4	ic
+op	17:19	0:0	4	->
+water	17:21	0:0	4	nb_chapters
+stmts	18:8	18:14	3	
+return	18:8	18:14	4	
+call	19:4	19:62	2	av_log
+arg	19:11	19:15	3	NULL
+water	19:11	0:0	4	NULL
+arg	19:17	19:31	3	AV_LOG_VERBOSE
+water	19:17	0:0	4	AV_LOG_VERBOSE
+arg	19:33	19:59	3	"Seeking to chapter %d.\n"
+water	19:33	0:0	4	"Seeking to chapter %d.\n"
+arg	19:61	19:62	3	i
+water	19:61	0:0	4	i
+water	19:63	0:0	2	;
+call	20:4	21:54	2	stream_seek
+arg	20:16	20:18	3	is
+water	20:16	0:0	4	is
+arg	20:20	21:48	3	av_rescale_q(is->ic->chapters[i]->start,is->ic->chapters[i]->time_base,AV_TIME_BASE_Q)
+call	20:20	21:47	4	av_rescale_q
+arg	20:33	20:59	5	is->ic->chapters[i]->start
+water	20:33	0:0	6	is
+op	20:35	0:0	6	->
+water	20:37	0:0	6	ic
+op	20:39	0:0	6	->
+water	20:41	0:0	6	chapters
+op	20:49	0:0	6	[
+water	20:50	0:0	6	i
+op	20:51	0:0	6	]
+op	20:52	0:0	6	->
+water	20:54	0:0	6	start
+arg	20:61	20:91	5	is->ic->chapters[i]->time_base
+water	20:61	0:0	6	is
+op	20:63	0:0	6	->
+water	20:65	0:0	6	ic
+op	20:67	0:0	6	->
+water	20:69	0:0	6	chapters
+op	20:77	0:0	6	[
+water	20:78	0:0	6	i
+op	20:79	0:0	6	]
+op	20:80	0:0	6	->
+water	20:82	0:0	6	time_base
+arg	21:33	21:47	5	AV_TIME_BASE_Q
+water	21:33	0:0	6	AV_TIME_BASE_Q
+arg	21:50	21:51	3	0
+water	21:50	0:0	4	0
+arg	21:53	21:54	3	0
+water	21:53	0:0	4	0
+water	21:55	0:0	2	;

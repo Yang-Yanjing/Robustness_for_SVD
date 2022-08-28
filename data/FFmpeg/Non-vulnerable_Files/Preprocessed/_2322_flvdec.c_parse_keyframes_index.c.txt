@@ -1,0 +1,395 @@
+func	1:0	73:0	0	static int	parse_keyframes_index
+params	1:32	0:0	1	
+param	1:33	1:51	2	AVFormatContext *	s
+param	1:53	1:69	2	AVIOContext *	ioc
+param	2:33	2:50	2	AVStream *	vstream
+param	2:52	2:67	2	int64_t	max_pos
+stmnts	0:0	72:14	1	
+decl	4:4	4:40	2	FLVContext	*flv
+op	4:26	0:0	2	=
+water	4:28	0:0	2	s
+op	4:29	0:0	2	->
+water	4:31	0:0	2	priv_data
+decl	5:4	5:48	2	unsigned int	timeslen
+op	5:26	0:0	2	=
+water	5:28	0:0	2	0
+water	5:29	0:0	2	,
+decl	5:4	5:48	2	unsigned int	fileposlen
+op	5:42	0:0	2	=
+water	5:44	0:0	2	0
+water	5:45	0:0	2	,
+decl	5:4	5:48	2	unsigned int	i
+decl	6:4	6:21	2	char	str_val[256]
+decl	7:4	7:33	2	int64_t	*times
+op	7:27	0:0	2	=
+water	7:29	0:0	2	NULL
+decl	8:4	8:33	2	int64_t	*filepositions
+op	8:27	0:0	2	=
+water	8:29	0:0	2	NULL
+decl	9:4	9:44	2	int	ret
+op	9:27	0:0	2	=
+call	9:29	9:43	3	AVERROR
+arg	9:37	9:43	4	ENOSYS
+water	9:37	0:0	5	ENOSYS
+decl	10:4	10:43	2	int64_t	initial_pos
+op	10:27	0:0	2	=
+call	10:29	10:42	3	avio_tell
+arg	10:39	10:42	4	ioc
+water	10:39	0:0	5	ioc
+if	11:4	14:4	2	(vstream -> nb_index_entries > 0)
+cond	11:8	11:34	3	vstream -> nb_index_entries > 0
+water	11:8	0:0	4	vstream
+op	11:15	0:0	4	->
+water	11:17	0:0	4	nb_index_entries
+op	11:33	0:0	4	>
+water	11:34	0:0	4	0
+stmts	11:37	14:4	3	
+water	11:37	0:0	4	{
+call	12:8	12:62	4	av_log
+arg	12:15	12:16	5	s
+water	12:15	0:0	6	s
+arg	12:18	12:32	5	AV_LOG_WARNING
+water	12:18	0:0	6	AV_LOG_WARNING
+arg	12:34	12:62	5	"Skipping duplicate index\n"
+water	12:34	0:0	6	"Skipping duplicate index\n"
+water	12:63	0:0	4	;
+return	13:8	13:16	4	0
+water	13:15	0:0	5	0
+water	14:4	0:0	4	}
+if	15:4	16:16	2	(s -> flags & AVFMT_FLAG_IGNIDX)
+cond	15:8	15:19	3	s -> flags & AVFMT_FLAG_IGNIDX
+water	15:8	0:0	4	s
+op	15:9	0:0	4	->
+water	15:11	0:0	4	flags
+op	15:17	0:0	4	&
+water	15:19	0:0	4	AVFMT_FLAG_IGNIDX
+stmts	16:8	16:16	3	
+return	16:8	16:16	4	0
+water	16:15	0:0	5	0
+while	17:4	53:4	2	(avio_tell (ioc ) < max_pos - 2 &&amf_get_string (ioc ,str_val ,sizeof ( str_val ) ) > 0)
+cond	17:11	18:59	3	avio_tell (ioc ) < max_pos - 2 &&amf_get_string (ioc ,str_val ,sizeof ( str_val ) ) > 0
+call	17:11	17:24	4	avio_tell
+arg	17:21	17:24	5	ioc
+water	17:21	0:0	6	ioc
+op	17:26	0:0	4	<
+water	17:28	0:0	4	max_pos
+op	17:36	0:0	4	-
+water	17:38	0:0	4	2
+op	17:40	0:0	4	&&
+call	18:11	18:55	4	amf_get_string
+arg	18:26	18:29	5	ioc
+water	18:26	0:0	6	ioc
+arg	18:31	18:38	5	str_val
+water	18:31	0:0	6	str_val
+arg	18:40	18:55	5	sizeof(str_val)
+op	18:40	0:0	6	sizeof
+water	18:46	0:0	6	(
+water	18:47	0:0	6	str_val
+water	18:54	0:0	6	)
+op	18:57	0:0	4	>
+water	18:59	0:0	4	0
+stmts	18:62	53:4	3	
+water	18:62	0:0	4	{
+decl	19:8	19:31	4	int64_t	**current_array
+decl	20:8	20:29	4	unsigned int	arraylen
+if	22:8	23:17	4	(avio_r8 (ioc ) != AMF_DATA_TYPE_ARRAY)
+cond	22:12	22:28	5	avio_r8 (ioc ) != AMF_DATA_TYPE_ARRAY
+call	22:12	22:23	6	avio_r8
+arg	22:20	22:23	7	ioc
+water	22:20	0:0	8	ioc
+op	22:25	0:0	6	!=
+water	22:28	0:0	6	AMF_DATA_TYPE_ARRAY
+stmts	23:12	23:17	5	
+break	23:12	23:17	6	
+water	24:8	0:0	4	arraylen
+op	24:17	0:0	4	=
+call	24:19	24:32	4	avio_rb32
+arg	24:29	24:32	5	ioc
+water	24:29	0:0	6	ioc
+water	24:33	0:0	4	;
+if	25:8	26:17	4	(arraylen >> 28)
+cond	25:12	25:22	5	arraylen >> 28
+water	25:12	0:0	6	arraylen
+op	25:20	0:0	6	>>
+water	25:22	0:0	6	28
+stmts	26:12	26:17	5	
+break	26:12	26:17	6	
+if	27:8	30:8	4	(!strcmp (KEYFRAMES_TIMESTAMP_TAG ,str_val ) && ! times)
+cond	27:18	27:65	5	!strcmp (KEYFRAMES_TIMESTAMP_TAG ,str_val ) && ! times
+op	27:18	0:0	6	!
+call	27:19	27:59	6	strcmp
+arg	27:26	27:50	7	KEYFRAMES_TIMESTAMP_TAG
+water	27:26	0:0	8	KEYFRAMES_TIMESTAMP_TAG
+arg	27:52	27:59	7	str_val
+water	27:52	0:0	8	str_val
+op	27:61	0:0	6	&&
+op	27:64	0:0	6	!
+water	27:65	0:0	6	times
+stmts	27:72	30:8	5	
+water	27:72	0:0	6	{
+water	28:12	0:0	6	current_array
+op	28:26	0:0	6	=
+op	28:28	0:0	6	&
+water	28:29	0:0	6	times
+water	28:34	0:0	6	;
+water	29:12	0:0	6	timeslen
+op	29:26	0:0	6	=
+water	29:28	0:0	6	arraylen
+water	29:36	0:0	6	;
+water	30:8	0:0	6	}
+else	30:10	34:8	4
+stmts	30:15	34:8	5	
+if	30:15	34:8	6	(!strcmp (KEYFRAMES_BYTEOFFSET_TAG ,str_val ) && ! filepositions)
+cond	30:19	31:20	7	!strcmp (KEYFRAMES_BYTEOFFSET_TAG ,str_val ) && ! filepositions
+op	30:19	0:0	8	!
+call	30:20	30:60	8	strcmp
+arg	30:27	30:51	9	KEYFRAMES_BYTEOFFSET_TAG
+water	30:27	0:0	10	KEYFRAMES_BYTEOFFSET_TAG
+arg	30:53	30:60	9	str_val
+water	30:53	0:0	10	str_val
+op	30:62	0:0	8	&&
+op	31:19	0:0	8	!
+water	31:20	0:0	8	filepositions
+stmts	31:35	34:8	7	
+water	31:35	0:0	8	{
+water	32:12	0:0	8	current_array
+op	32:26	0:0	8	=
+op	32:28	0:0	8	&
+water	32:29	0:0	8	filepositions
+water	32:42	0:0	8	;
+water	33:12	0:0	8	fileposlen
+op	33:26	0:0	8	=
+water	33:28	0:0	8	arraylen
+water	33:36	0:0	8	;
+water	34:8	0:0	8	}
+else	34:10	37:17	4
+stmts	37:12	37:17	5	
+break	37:12	37:17	6	
+if	38:8	41:8	4	(! ( * current_array =av_mallocz (sizeof ( * * current_array ) * arraylen ) ))
+cond	38:12	38:77	5	! ( * current_array =av_mallocz (sizeof ( * * current_array ) * arraylen ) )
+op	38:12	0:0	6	!
+water	38:13	0:0	6	(
+op	38:14	0:0	6	*
+water	38:15	0:0	6	current_array
+op	38:29	0:0	6	=
+call	38:31	38:76	6	av_mallocz
+arg	38:42	38:76	7	sizeof(**current_array)*arraylen
+op	38:42	0:0	8	sizeof
+water	38:48	0:0	8	(
+op	38:49	0:0	8	*
+op	38:50	0:0	8	*
+water	38:51	0:0	8	current_array
+water	38:64	0:0	8	)
+op	38:66	0:0	8	*
+water	38:68	0:0	8	arraylen
+water	38:77	0:0	6	)
+stmts	38:80	41:8	5	
+water	38:80	0:0	6	{
+water	39:12	0:0	6	ret
+op	39:16	0:0	6	=
+call	39:18	39:32	6	AVERROR
+arg	39:26	39:32	7	ENOMEM
+water	39:26	0:0	8	ENOMEM
+water	39:33	0:0	6	;
+goto	40:12	40:23	6	finish
+water	40:17	0:0	7	finish
+water	41:8	0:0	6	}
+for	42:8	46:8	4	(i = 0 ;i < arraylen &&avio_tell (ioc ) < max_pos - 1;i ++)
+forinit	42:13	42:18	5	i = 0 ;
+water	42:13	0:0	6	i
+op	42:15	0:0	6	=
+water	42:17	0:0	6	0
+water	42:18	0:0	6	;
+cond	42:20	42:63	5	i < arraylen &&avio_tell (ioc ) < max_pos - 1
+water	42:20	0:0	6	i
+op	42:22	0:0	6	<
+water	42:24	0:0	6	arraylen
+op	42:33	0:0	6	&&
+call	42:36	42:49	6	avio_tell
+arg	42:46	42:49	7	ioc
+water	42:46	0:0	8	ioc
+op	42:51	0:0	6	<
+water	42:53	0:0	6	max_pos
+op	42:61	0:0	6	-
+water	42:63	0:0	6	1
+forexpr	42:66	42:67	5	i ++
+water	42:66	0:0	6	i
+op	42:67	0:0	6	++
+stmts	42:71	46:8	5	
+water	42:71	0:0	6	{
+if	43:12	44:28	6	(avio_r8 (ioc ) != AMF_DATA_TYPE_NUMBER)
+cond	43:16	43:32	7	avio_r8 (ioc ) != AMF_DATA_TYPE_NUMBER
+call	43:16	43:27	8	avio_r8
+arg	43:24	43:27	9	ioc
+water	43:24	0:0	10	ioc
+op	43:29	0:0	8	!=
+water	43:32	0:0	8	AMF_DATA_TYPE_NUMBER
+stmts	44:16	44:28	7	
+goto	44:16	44:28	8	invalid
+water	44:21	0:0	9	invalid
+water	45:12	0:0	6	current_array
+op	45:25	0:0	6	[
+water	45:26	0:0	6	0
+op	45:27	0:0	6	]
+op	45:28	0:0	6	[
+water	45:29	0:0	6	i
+op	45:30	0:0	6	]
+op	45:32	0:0	6	=
+call	45:34	45:62	6	av_int2double
+arg	45:48	45:62	7	avio_rb64(ioc)
+call	45:48	45:61	8	avio_rb64
+arg	45:58	45:61	9	ioc
+water	45:58	0:0	10	ioc
+water	45:63	0:0	6	;
+water	46:8	0:0	6	}
+if	47:8	52:8	4	(times && filepositions)
+cond	47:12	47:21	5	times && filepositions
+water	47:12	0:0	6	times
+op	47:18	0:0	6	&&
+water	47:21	0:0	6	filepositions
+stmts	47:36	52:8	5	
+water	47:36	0:0	6	{
+water	50:12	0:0	6	ret
+op	50:16	0:0	6	=
+water	50:18	0:0	6	0
+water	50:19	0:0	6	;
+break	51:12	51:17	6	
+water	52:8	0:0	6	}
+water	53:4	0:0	4	}
+if	54:4	64:4	2	(timeslen == fileposlen && fileposlen > 1 && max_pos <= filepositions [ 0 ])
+cond	54:8	54:76	3	timeslen == fileposlen && fileposlen > 1 && max_pos <= filepositions [ 0 ]
+water	54:8	0:0	4	timeslen
+op	54:17	0:0	4	==
+water	54:20	0:0	4	fileposlen
+op	54:31	0:0	4	&&
+water	54:34	0:0	4	fileposlen
+op	54:44	0:0	4	>
+water	54:45	0:0	4	1
+op	54:47	0:0	4	&&
+water	54:50	0:0	4	max_pos
+op	54:58	0:0	4	<=
+water	54:61	0:0	4	filepositions
+op	54:74	0:0	4	[
+water	54:75	0:0	4	0
+op	54:76	0:0	4	]
+stmts	54:79	64:4	3	
+water	54:79	0:0	4	{
+for	55:8	63:8	4	(i = 0 ;i < fileposlen;i ++)
+forinit	55:13	55:18	5	i = 0 ;
+water	55:13	0:0	6	i
+op	55:15	0:0	6	=
+water	55:17	0:0	6	0
+water	55:18	0:0	6	;
+cond	55:20	55:24	5	i < fileposlen
+water	55:20	0:0	6	i
+op	55:22	0:0	6	<
+water	55:24	0:0	6	fileposlen
+forexpr	55:36	55:37	5	i ++
+water	55:36	0:0	6	i
+op	55:37	0:0	6	++
+stmts	55:41	63:8	5	
+water	55:41	0:0	6	{
+call	56:12	57:53	6	av_add_index_entry
+arg	56:31	56:38	7	vstream
+water	56:31	0:0	8	vstream
+arg	56:40	56:56	7	filepositions[i]
+water	56:40	0:0	8	filepositions
+op	56:53	0:0	8	[
+water	56:54	0:0	8	i
+op	56:55	0:0	8	]
+arg	56:58	56:73	7	times[i]*1000
+water	56:58	0:0	8	times
+op	56:63	0:0	8	[
+water	56:64	0:0	8	i
+op	56:65	0:0	8	]
+op	56:67	0:0	8	*
+water	56:69	0:0	8	1000
+arg	57:31	57:32	7	0
+water	57:31	0:0	8	0
+arg	57:34	57:35	7	0
+water	57:34	0:0	8	0
+arg	57:37	57:53	7	AVINDEX_KEYFRAME
+water	57:37	0:0	8	AVINDEX_KEYFRAME
+water	57:54	0:0	6	;
+if	58:12	62:12	6	(i < 2)
+cond	58:16	58:20	7	i < 2
+water	58:16	0:0	8	i
+op	58:18	0:0	8	<
+water	58:20	0:0	8	2
+stmts	58:23	62:12	7	
+water	58:23	0:0	8	{
+water	59:16	0:0	8	flv
+op	59:19	0:0	8	->
+water	59:21	0:0	8	validate_index
+op	59:35	0:0	8	[
+water	59:36	0:0	8	i
+op	59:37	0:0	8	]
+op	59:38	0:0	8	.
+water	59:39	0:0	8	pos
+op	59:43	0:0	8	=
+water	59:45	0:0	8	filepositions
+op	59:58	0:0	8	[
+water	59:59	0:0	8	i
+op	59:60	0:0	8	]
+water	59:61	0:0	8	;
+water	60:16	0:0	8	flv
+op	60:19	0:0	8	->
+water	60:21	0:0	8	validate_index
+op	60:35	0:0	8	[
+water	60:36	0:0	8	i
+op	60:37	0:0	8	]
+op	60:38	0:0	8	.
+water	60:39	0:0	8	dts
+op	60:43	0:0	8	=
+water	60:45	0:0	8	times
+op	60:50	0:0	8	[
+water	60:51	0:0	8	i
+op	60:52	0:0	8	]
+op	60:54	0:0	8	*
+water	60:56	0:0	8	1000
+water	60:60	0:0	8	;
+water	61:16	0:0	8	flv
+op	61:19	0:0	8	->
+water	61:21	0:0	8	validate_count
+op	61:43	0:0	8	=
+water	61:45	0:0	8	i
+op	61:47	0:0	8	+
+water	61:49	0:0	8	1
+water	61:50	0:0	8	;
+water	62:12	0:0	8	}
+water	63:8	0:0	6	}
+water	64:4	0:0	4	}
+else	64:6	67:4	2
+stmts	64:11	67:4	3	
+water	64:11	0:0	4	{
+label	65:0	65:7	4	invalid :
+call	66:8	66:73	4	av_log
+arg	66:15	66:16	5	s
+water	66:15	0:0	6	s
+arg	66:18	66:32	5	AV_LOG_WARNING
+water	66:18	0:0	6	AV_LOG_WARNING
+arg	66:34	66:73	5	"Invalid keyframes object, skipping.\n"
+water	66:34	0:0	6	"Invalid keyframes object, skipping.\n"
+water	66:74	0:0	4	;
+water	67:4	0:0	4	}
+label	68:0	68:6	2	finish :
+call	69:4	69:19	2	av_freep
+arg	69:13	69:19	3	&times
+op	69:13	0:0	4	&
+water	69:14	0:0	4	times
+water	69:20	0:0	2	;
+call	70:4	70:27	2	av_freep
+arg	70:13	70:27	3	&filepositions
+op	70:13	0:0	4	&
+water	70:14	0:0	4	filepositions
+water	70:28	0:0	2	;
+call	71:4	71:40	2	avio_seek
+arg	71:14	71:17	3	ioc
+water	71:14	0:0	4	ioc
+arg	71:19	71:30	3	initial_pos
+water	71:19	0:0	4	initial_pos
+arg	71:32	71:40	3	SEEK_SET
+water	71:32	0:0	4	SEEK_SET
+water	71:41	0:0	2	;
+return	72:4	72:14	2	ret
+water	72:11	0:0	3	ret

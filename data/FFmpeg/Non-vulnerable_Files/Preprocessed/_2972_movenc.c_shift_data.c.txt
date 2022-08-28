@@ -1,0 +1,195 @@
+func	1:0	41:0	0	static int	shift_data
+params	1:21	0:0	1	
+param	1:22	1:40	2	AVFormatContext *	s
+stmnts	0:0	40:20	1	
+decl	3:4	3:26	2	int	ret
+op	3:12	0:0	2	=
+water	3:14	0:0	2	0
+water	3:15	0:0	2	,
+decl	3:4	3:26	2	int	moov_size
+decl	4:4	4:37	2	MOVMuxContext	*mov
+op	4:23	0:0	2	=
+water	4:25	0:0	2	s
+op	4:26	0:0	2	->
+water	4:28	0:0	2	priv_data
+decl	5:4	5:43	2	int64_t	pos
+water	5:15	0:0	2	,
+decl	5:4	5:43	2	int64_t	pos_end
+op	5:25	0:0	2	=
+call	5:27	5:42	3	avio_tell
+arg	5:37	5:42	4	s->pb
+water	5:37	0:0	5	s
+op	5:38	0:0	5	->
+water	5:40	0:0	5	pb
+decl	6:4	6:30	2	uint8_t	*buf
+water	6:16	0:0	2	,
+decl	6:4	6:30	2	uint8_t	*read_buf[2]
+decl	7:4	7:23	2	int	read_buf_id
+op	7:20	0:0	2	=
+water	7:22	0:0	2	0
+decl	8:4	8:20	2	int	read_size[2]
+decl	9:4	9:24	2	AVIOContext	*read_pb
+if	10:4	11:40	2	(mov -> flags & FF_MOV_FLAG_FRAGMENT)
+cond	10:8	10:21	3	mov -> flags & FF_MOV_FLAG_FRAGMENT
+water	10:8	0:0	4	mov
+op	10:11	0:0	4	->
+water	10:13	0:0	4	flags
+op	10:19	0:0	4	&
+water	10:21	0:0	4	FF_MOV_FLAG_FRAGMENT
+stmts	11:8	11:40	3	
+water	11:8	0:0	4	moov_size
+op	11:18	0:0	4	=
+call	11:20	11:39	4	compute_sidx_size
+arg	11:38	11:39	5	s
+water	11:38	0:0	6	s
+water	11:40	0:0	4	;
+else	12:4	13:40	2
+stmts	13:8	13:40	3	
+water	13:8	0:0	4	moov_size
+op	13:18	0:0	4	=
+call	13:20	13:39	4	compute_moov_size
+arg	13:38	13:39	5	s
+water	13:38	0:0	6	s
+water	13:40	0:0	4	;
+if	14:4	15:24	2	(moov_size < 0)
+cond	14:8	14:20	3	moov_size < 0
+water	14:8	0:0	4	moov_size
+op	14:18	0:0	4	<
+water	14:20	0:0	4	0
+stmts	15:8	15:24	3	
+return	15:8	15:24	4	moov_size
+water	15:15	0:0	5	moov_size
+water	16:4	0:0	2	buf
+op	16:8	0:0	2	=
+call	16:10	16:33	2	av_malloc
+arg	16:20	16:33	3	moov_size*2
+water	16:20	0:0	4	moov_size
+op	16:30	0:0	4	*
+water	16:32	0:0	4	2
+water	16:34	0:0	2	;
+if	17:4	18:30	2	(! buf)
+cond	17:8	17:9	3	! buf
+op	17:8	0:0	4	!
+water	17:9	0:0	4	buf
+stmts	18:8	18:30	3	
+return	18:8	18:30	4	AVERROR(ENOMEM)
+call	18:15	18:29	5	AVERROR
+arg	18:23	18:29	6	ENOMEM
+water	18:23	0:0	7	ENOMEM
+water	19:4	0:0	2	read_buf
+op	19:12	0:0	2	[
+water	19:13	0:0	2	0
+op	19:14	0:0	2	]
+op	19:16	0:0	2	=
+water	19:18	0:0	2	buf
+water	19:21	0:0	2	;
+water	20:4	0:0	2	read_buf
+op	20:12	0:0	2	[
+water	20:13	0:0	2	1
+op	20:14	0:0	2	]
+op	20:16	0:0	2	=
+water	20:18	0:0	2	buf
+op	20:22	0:0	2	+
+water	20:24	0:0	2	moov_size
+water	20:33	0:0	2	;
+call	24:4	24:20	2	avio_flush
+arg	24:15	24:20	3	s->pb
+water	24:15	0:0	4	s
+op	24:16	0:0	4	->
+water	24:18	0:0	4	pb
+water	24:21	0:0	2	;
+water	25:4	0:0	2	ret
+op	25:8	0:0	2	=
+call	25:10	25:57	2	avio_open
+arg	25:20	25:28	3	&read_pb
+op	25:20	0:0	4	&
+water	25:21	0:0	4	read_pb
+arg	25:30	25:41	3	s->filename
+water	25:30	0:0	4	s
+op	25:31	0:0	4	->
+water	25:33	0:0	4	filename
+arg	25:43	25:57	3	AVIO_FLAG_READ
+water	25:43	0:0	4	AVIO_FLAG_READ
+water	25:58	0:0	2	;
+if	26:4	30:4	2	(ret < 0)
+cond	26:8	26:14	3	ret < 0
+water	26:8	0:0	4	ret
+op	26:12	0:0	4	<
+water	26:14	0:0	4	0
+stmts	26:17	30:4	3	
+water	26:17	0:0	4	{
+call	27:8	28:59	4	av_log
+arg	27:15	27:16	5	s
+water	27:15	0:0	6	s
+arg	27:18	27:30	5	AV_LOG_ERROR
+water	27:18	0:0	6	AV_LOG_ERROR
+arg	27:32	28:46	5	"Unable to re-open %s output file for ""the second pass (faststart)\n"
+water	27:32	0:0	6	"Unable to re-open %s output file for "
+water	28:15	0:0	6	"the second pass (faststart)\n"
+arg	28:48	28:59	5	s->filename
+water	28:48	0:0	6	s
+op	28:49	0:0	6	->
+water	28:51	0:0	6	filename
+water	28:60	0:0	4	;
+goto	29:8	29:16	4	end
+water	29:13	0:0	5	end
+water	30:4	0:0	4	}
+water	33:4	0:0	2	pos_end
+op	33:12	0:0	2	=
+call	33:14	33:29	2	avio_tell
+arg	33:24	33:29	3	s->pb
+water	33:24	0:0	4	s
+op	33:25	0:0	4	->
+water	33:27	0:0	4	pb
+water	33:30	0:0	2	;
+call	34:4	34:67	2	avio_seek
+arg	34:14	34:19	3	s->pb
+water	34:14	0:0	4	s
+op	34:15	0:0	4	->
+water	34:17	0:0	4	pb
+arg	34:21	34:57	3	mov->reserved_header_pos+moov_size
+water	34:21	0:0	4	mov
+op	34:24	0:0	4	->
+water	34:26	0:0	4	reserved_header_pos
+op	34:46	0:0	4	+
+water	34:48	0:0	4	moov_size
+arg	34:59	34:67	3	SEEK_SET
+water	34:59	0:0	4	SEEK_SET
+water	34:68	0:0	2	;
+call	36:4	36:57	2	avio_seek
+arg	36:14	36:21	3	read_pb
+water	36:14	0:0	4	read_pb
+arg	36:23	36:47	3	mov->reserved_header_pos
+water	36:23	0:0	4	mov
+op	36:26	0:0	4	->
+water	36:28	0:0	4	reserved_header_pos
+arg	36:49	36:57	3	SEEK_SET
+water	36:49	0:0	4	SEEK_SET
+water	36:58	0:0	2	;
+water	37:4	0:0	2	pos
+op	37:8	0:0	2	=
+call	37:10	37:27	2	avio_tell
+arg	37:20	37:27	3	read_pb
+water	37:20	0:0	4	read_pb
+water	37:28	0:0	2	;
+water	39:4	0:0	2	read_size
+op	39:13	0:0	2	[
+water	39:14	0:0	2	read_buf_id
+op	39:25	0:0	2	]
+op	39:27	0:0	2	=
+call	39:29	39:80	2	avio_read
+arg	39:39	39:46	3	read_pb
+water	39:39	0:0	4	read_pb
+arg	39:48	39:69	3	read_buf[read_buf_id]
+water	39:48	0:0	4	read_buf
+op	39:56	0:0	4	[
+water	39:57	0:0	4	read_buf_id
+op	39:68	0:0	4	]
+arg	39:71	39:80	3	moov_size
+water	39:71	0:0	4	moov_size
+water	39:81	0:0	2	;
+water	40:4	0:0	2	read_buf_id
+op	40:16	0:0	2	^=
+water	40:19	0:0	2	1
+water	40:20	0:0	2	;
+decl	45:8	45:13	0	int	n

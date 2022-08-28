@@ -1,0 +1,209 @@
+func	1:0	41:0	0	static void	mxf_read_random_index_pack
+params	1:38	0:0	1	
+param	1:39	1:57	2	AVFormatContext *	s
+stmnts	0:0	40:43	1	
+decl	3:4	3:34	2	MXFContext	*mxf
+op	3:20	0:0	2	=
+water	3:22	0:0	2	s
+op	3:23	0:0	2	->
+water	3:25	0:0	2	priv_data
+decl	4:4	4:19	2	uint32_t	length
+decl	5:4	5:53	2	int64_t	file_size
+water	5:21	0:0	2	,
+decl	5:4	5:53	2	int64_t	max_rip_length
+water	5:37	0:0	2	,
+decl	5:4	5:53	2	int64_t	min_rip_length
+decl	6:4	6:17	2	KLVPacket	klv
+if	7:4	8:14	2	(! s -> pb -> seekable)
+cond	7:8	7:16	3	! s -> pb -> seekable
+op	7:8	0:0	4	!
+water	7:9	0:0	4	s
+op	7:10	0:0	4	->
+water	7:12	0:0	4	pb
+op	7:14	0:0	4	->
+water	7:16	0:0	4	seekable
+stmts	8:8	8:14	3	
+return	8:8	8:14	4	
+water	9:4	0:0	2	file_size
+op	9:14	0:0	2	=
+call	9:16	9:31	2	avio_size
+arg	9:26	9:31	3	s->pb
+water	9:26	0:0	4	s
+op	9:27	0:0	4	->
+water	9:29	0:0	4	pb
+water	9:32	0:0	2	;
+water	18:4	0:0	2	max_rip_length
+op	18:19	0:0	2	=
+water	18:21	0:0	2	(
+water	18:22	0:0	2	(
+water	18:23	0:0	2	file_size
+op	18:33	0:0	2	-
+water	18:35	0:0	2	mxf
+op	18:38	0:0	2	->
+water	18:40	0:0	2	run_in
+water	18:46	0:0	2	)
+op	18:48	0:0	2	/
+water	18:50	0:0	2	105
+water	18:53	0:0	2	)
+op	18:55	0:0	2	*
+water	18:57	0:0	2	12
+op	18:60	0:0	2	+
+water	18:62	0:0	2	28
+water	18:64	0:0	2	;
+water	19:4	0:0	2	max_rip_length
+op	19:19	0:0	2	=
+call	19:21	19:50	2	FFMIN
+arg	19:27	19:41	3	max_rip_length
+water	19:27	0:0	4	max_rip_length
+arg	19:43	19:50	3	INT_MAX
+water	19:43	0:0	4	INT_MAX
+water	19:51	0:0	2	;
+water	21:4	0:0	2	min_rip_length
+op	21:19	0:0	2	=
+water	21:21	0:0	2	16
+op	21:23	0:0	2	+
+water	21:24	0:0	2	1
+op	21:25	0:0	2	+
+water	21:26	0:0	2	24
+op	21:28	0:0	2	+
+water	21:29	0:0	2	4
+water	21:30	0:0	2	;
+call	23:4	23:44	2	avio_seek
+arg	23:14	23:19	3	s->pb
+water	23:14	0:0	4	s
+op	23:15	0:0	4	->
+water	23:17	0:0	4	pb
+arg	23:21	23:34	3	file_size-4
+water	23:21	0:0	4	file_size
+op	23:31	0:0	4	-
+water	23:33	0:0	4	4
+arg	23:36	23:44	3	SEEK_SET
+water	23:36	0:0	4	SEEK_SET
+water	23:45	0:0	2	;
+water	24:4	0:0	2	length
+op	24:11	0:0	2	=
+call	24:13	24:28	2	avio_rb32
+arg	24:23	24:28	3	s->pb
+water	24:23	0:0	4	s
+op	24:24	0:0	4	->
+water	24:26	0:0	4	pb
+water	24:29	0:0	2	;
+if	25:4	26:16	2	(length < min_rip_length || length > max_rip_length)
+cond	25:8	25:44	3	length < min_rip_length || length > max_rip_length
+water	25:8	0:0	4	length
+op	25:15	0:0	4	<
+water	25:17	0:0	4	min_rip_length
+op	25:32	0:0	4	||
+water	25:35	0:0	4	length
+op	25:42	0:0	4	>
+water	25:44	0:0	4	max_rip_length
+stmts	26:8	26:16	3	
+goto	26:8	26:16	4	end
+water	26:13	0:0	5	end
+call	27:4	27:49	2	avio_seek
+arg	27:14	27:19	3	s->pb
+water	27:14	0:0	4	s
+op	27:15	0:0	4	->
+water	27:17	0:0	4	pb
+arg	27:21	27:39	3	file_size-length
+water	27:21	0:0	4	file_size
+op	27:31	0:0	4	-
+water	27:33	0:0	4	length
+arg	27:41	27:49	3	SEEK_SET
+water	27:41	0:0	4	SEEK_SET
+water	27:50	0:0	2	;
+if	28:4	31:16	2	(klv_read_packet (& klv ,s -> pb ) < 0 || !IS_KLV_KEY (klv . key ,mxf_random_index_pack_key ) || klv . length != length - 20)
+cond	28:8	30:31	3	klv_read_packet (& klv ,s -> pb ) < 0 || !IS_KLV_KEY (klv . key ,mxf_random_index_pack_key ) || klv . length != length - 20
+call	28:8	28:35	4	klv_read_packet
+arg	28:24	28:28	5	&klv
+op	28:24	0:0	6	&
+water	28:25	0:0	6	klv
+arg	28:30	28:35	5	s->pb
+water	28:30	0:0	6	s
+op	28:31	0:0	6	->
+water	28:33	0:0	6	pb
+op	28:37	0:0	4	<
+water	28:39	0:0	4	0
+op	28:41	0:0	4	||
+op	29:8	0:0	4	!
+call	29:9	29:54	4	IS_KLV_KEY
+arg	29:20	29:27	5	klv.key
+water	29:20	0:0	6	klv
+op	29:23	0:0	6	.
+water	29:24	0:0	6	key
+arg	29:29	29:54	5	mxf_random_index_pack_key
+water	29:29	0:0	6	mxf_random_index_pack_key
+op	29:56	0:0	4	||
+water	30:8	0:0	4	klv
+op	30:11	0:0	4	.
+water	30:12	0:0	4	length
+op	30:19	0:0	4	!=
+water	30:22	0:0	4	length
+op	30:29	0:0	4	-
+water	30:31	0:0	4	20
+stmts	31:8	31:16	3	
+goto	31:8	31:16	4	end
+water	31:13	0:0	5	end
+call	32:4	32:36	2	avio_skip
+arg	32:14	32:19	3	s->pb
+water	32:14	0:0	4	s
+op	32:15	0:0	4	->
+water	32:17	0:0	4	pb
+arg	32:21	32:36	3	klv.length-12
+water	32:21	0:0	4	klv
+op	32:24	0:0	4	.
+water	32:25	0:0	4	length
+op	32:32	0:0	4	-
+water	32:34	0:0	4	12
+water	32:37	0:0	2	;
+water	33:4	0:0	2	mxf
+op	33:7	0:0	2	->
+water	33:9	0:0	2	footer_partition
+op	33:26	0:0	2	=
+call	33:28	33:43	2	avio_rb64
+arg	33:38	33:43	3	s->pb
+water	33:38	0:0	4	s
+op	33:39	0:0	4	->
+water	33:41	0:0	4	pb
+water	33:44	0:0	2	;
+if	35:4	38:4	2	(mxf -> run_in + mxf -> footer_partition >= file_size)
+cond	35:8	35:47	3	mxf -> run_in + mxf -> footer_partition >= file_size
+water	35:8	0:0	4	mxf
+op	35:11	0:0	4	->
+water	35:13	0:0	4	run_in
+op	35:20	0:0	4	+
+water	35:22	0:0	4	mxf
+op	35:25	0:0	4	->
+water	35:27	0:0	4	footer_partition
+op	35:44	0:0	4	>=
+water	35:47	0:0	4	file_size
+stmts	35:58	38:4	3	
+water	35:58	0:0	4	{
+call	36:8	36:75	4	av_log
+arg	36:15	36:16	5	s
+water	36:15	0:0	6	s
+arg	36:18	36:32	5	AV_LOG_WARNING
+water	36:18	0:0	6	AV_LOG_WARNING
+arg	36:34	36:75	5	"bad FooterPartition in RIP - ignoring\n"
+water	36:34	0:0	6	"bad FooterPartition in RIP - ignoring\n"
+water	36:76	0:0	4	;
+water	37:8	0:0	4	mxf
+op	37:11	0:0	4	->
+water	37:13	0:0	4	footer_partition
+op	37:30	0:0	4	=
+water	37:32	0:0	4	0
+water	37:33	0:0	4	;
+water	38:4	0:0	4	}
+label	39:0	39:3	2	end :
+call	40:4	40:42	2	avio_seek
+arg	40:14	40:19	3	s->pb
+water	40:14	0:0	4	s
+op	40:15	0:0	4	->
+water	40:17	0:0	4	pb
+arg	40:21	40:32	3	mxf->run_in
+water	40:21	0:0	4	mxf
+op	40:24	0:0	4	->
+water	40:26	0:0	4	run_in
+arg	40:34	40:42	3	SEEK_SET
+water	40:34	0:0	4	SEEK_SET
+water	40:43	0:0	2	;

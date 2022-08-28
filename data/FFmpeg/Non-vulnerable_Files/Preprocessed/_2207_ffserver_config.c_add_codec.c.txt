@@ -1,0 +1,776 @@
+func	1:0	136:0	0	static void	add_codec
+params	1:21	0:0	1	
+param	1:22	1:44	2	FFServerStream *	stream
+param	1:46	1:64	2	AVCodecContext *	av
+param	2:22	2:44	2	FFServerConfig *	config
+stmnts	0:0	135:46	1	
+decl	4:4	4:23	2	LayeredAVStream	*st
+decl	5:4	5:44	2	AVDictionary	**opts
+water	5:23	0:0	2	,
+decl	5:4	5:44	2	AVDictionary	*recommended
+op	5:38	0:0	2	=
+water	5:40	0:0	2	NULL
+decl	6:4	6:20	2	char	*enc_config
+if	7:4	8:14	2	(stream -> nb_streams >=FF_ARRAY_ELEMS (stream -> streams ))
+cond	7:7	7:59	3	stream -> nb_streams >=FF_ARRAY_ELEMS (stream -> streams )
+water	7:7	0:0	4	stream
+op	7:13	0:0	4	->
+water	7:15	0:0	4	nb_streams
+op	7:26	0:0	4	>=
+call	7:29	7:59	4	FF_ARRAY_ELEMS
+arg	7:44	7:59	5	stream->streams
+water	7:44	0:0	6	stream
+op	7:50	0:0	6	->
+water	7:52	0:0	6	streams
+stmts	8:8	8:14	3	
+return	8:8	8:14	4	
+water	9:4	0:0	2	opts
+op	9:9	0:0	2	=
+water	9:11	0:0	2	av
+op	9:13	0:0	2	->
+water	9:15	0:0	2	codec_type
+op	9:26	0:0	2	==
+water	9:29	0:0	2	AVMEDIA_TYPE_AUDIO
+water	9:48	0:0	2	?
+op	10:11	0:0	2	&
+water	10:12	0:0	2	config
+op	10:18	0:0	2	->
+water	10:20	0:0	2	audio_opts
+water	10:31	0:0	2	:
+op	10:33	0:0	2	&
+water	10:34	0:0	2	config
+op	10:40	0:0	2	->
+water	10:42	0:0	2	video_opts
+water	10:52	0:0	2	;
+call	11:4	11:39	2	av_dict_copy
+arg	11:17	11:29	3	&recommended
+op	11:17	0:0	4	&
+water	11:18	0:0	4	recommended
+arg	11:31	11:36	3	*opts
+op	11:31	0:0	4	*
+water	11:32	0:0	4	opts
+arg	11:38	11:39	3	0
+water	11:38	0:0	4	0
+water	11:40	0:0	2	;
+call	12:4	12:64	2	av_opt_set_dict2
+arg	12:21	12:34	3	av->priv_data
+water	12:21	0:0	4	av
+op	12:23	0:0	4	->
+water	12:25	0:0	4	priv_data
+arg	12:36	12:40	3	opts
+water	12:36	0:0	4	opts
+arg	12:42	12:64	3	AV_OPT_SEARCH_CHILDREN
+water	12:42	0:0	4	AV_OPT_SEARCH_CHILDREN
+water	12:65	0:0	2	;
+call	13:4	13:53	2	av_opt_set_dict2
+arg	13:21	13:23	3	av
+water	13:21	0:0	4	av
+arg	13:25	13:29	3	opts
+water	13:25	0:0	4	opts
+arg	13:31	13:53	3	AV_OPT_SEARCH_CHILDREN
+water	13:31	0:0	4	AV_OPT_SEARCH_CHILDREN
+water	13:54	0:0	2	;
+if	14:4	17:36	2	(av_dict_count (* opts ))
+cond	14:8	14:27	3	av_dict_count (* opts )
+call	14:8	14:27	4	av_dict_count
+arg	14:22	14:27	5	*opts
+op	14:22	0:0	6	*
+water	14:23	0:0	6	opts
+stmts	15:8	17:36	3	
+call	15:8	17:35	4	av_log
+arg	15:15	15:19	5	NULL
+water	15:15	0:0	6	NULL
+arg	15:21	15:35	5	AV_LOG_WARNING
+water	15:21	0:0	6	AV_LOG_WARNING
+arg	16:15	16:62	5	"Something is wrong, %d options are not set!\n"
+water	16:15	0:0	6	"Something is wrong, %d options are not set!\n"
+arg	17:15	17:35	5	av_dict_count(*opts)
+call	17:15	17:34	6	av_dict_count
+arg	17:29	17:34	7	*opts
+op	17:29	0:0	8	*
+water	17:30	0:0	8	opts
+water	17:36	0:0	4	;
+if	18:4	40:4	2	(! config -> stream_use_defaults)
+cond	18:8	18:17	3	! config -> stream_use_defaults
+op	18:8	0:0	4	!
+water	18:9	0:0	4	config
+op	18:15	0:0	4	->
+water	18:17	0:0	4	stream_use_defaults
+stmts	18:38	40:4	3	
+water	18:38	0:0	4	{
+switch	19:8	38:8	4	(av -> codec_type)
+cond	19:15	19:19	5	av -> codec_type
+water	19:15	0:0	6	av
+op	19:17	0:0	6	->
+water	19:19	0:0	6	codec_type
+stmts	19:31	38:8	5	
+water	19:31	0:0	6	{
+label	20:8	20:31	6	case AVMEDIA_TYPE_AUDIO :
+if	21:12	24:66	6	(av -> bit_rate == 0)
+cond	21:16	21:32	7	av -> bit_rate == 0
+water	21:16	0:0	8	av
+op	21:18	0:0	8	->
+water	21:20	0:0	8	bit_rate
+op	21:29	0:0	8	==
+water	21:32	0:0	8	0
+stmts	22:16	24:66	7	
+call	22:16	24:65	8	report_config_error
+arg	22:36	22:52	9	config->filename
+water	22:36	0:0	10	config
+op	22:42	0:0	10	->
+water	22:44	0:0	10	filename
+arg	22:54	22:70	9	config->line_num
+water	22:54	0:0	10	config
+op	22:60	0:0	10	->
+water	22:62	0:0	10	line_num
+arg	23:36	23:48	9	AV_LOG_ERROR
+water	23:36	0:0	10	AV_LOG_ERROR
+arg	23:50	23:65	9	&config->errors
+op	23:50	0:0	10	&
+water	23:51	0:0	10	config
+op	23:57	0:0	10	->
+water	23:59	0:0	10	errors
+arg	24:36	24:65	9	"audio bit rate is not set\n"
+water	24:36	0:0	10	"audio bit rate is not set\n"
+water	24:66	0:0	8	;
+if	25:12	28:69	6	(av -> sample_rate == 0)
+cond	25:16	25:35	7	av -> sample_rate == 0
+water	25:16	0:0	8	av
+op	25:18	0:0	8	->
+water	25:20	0:0	8	sample_rate
+op	25:32	0:0	8	==
+water	25:35	0:0	8	0
+stmts	26:16	28:69	7	
+call	26:16	28:68	8	report_config_error
+arg	26:36	26:52	9	config->filename
+water	26:36	0:0	10	config
+op	26:42	0:0	10	->
+water	26:44	0:0	10	filename
+arg	26:54	26:70	9	config->line_num
+water	26:54	0:0	10	config
+op	26:60	0:0	10	->
+water	26:62	0:0	10	line_num
+arg	27:36	27:48	9	AV_LOG_ERROR
+water	27:36	0:0	10	AV_LOG_ERROR
+arg	27:50	27:65	9	&config->errors
+op	27:50	0:0	10	&
+water	27:51	0:0	10	config
+op	27:57	0:0	10	->
+water	27:59	0:0	10	errors
+arg	28:36	28:68	9	"audio sample rate is not set\n"
+water	28:36	0:0	10	"audio sample rate is not set\n"
+water	28:69	0:0	8	;
+break	29:12	29:17	6	
+label	30:8	30:31	6	case AVMEDIA_TYPE_VIDEO :
+if	31:12	34:62	6	(av -> width == 0 || av -> height == 0)
+cond	31:16	31:48	7	av -> width == 0 || av -> height == 0
+water	31:16	0:0	8	av
+op	31:18	0:0	8	->
+water	31:20	0:0	8	width
+op	31:26	0:0	8	==
+water	31:29	0:0	8	0
+op	31:31	0:0	8	||
+water	31:34	0:0	8	av
+op	31:36	0:0	8	->
+water	31:38	0:0	8	height
+op	31:45	0:0	8	==
+water	31:48	0:0	8	0
+stmts	32:16	34:62	7	
+call	32:16	34:61	8	report_config_error
+arg	32:36	32:52	9	config->filename
+water	32:36	0:0	10	config
+op	32:42	0:0	10	->
+water	32:44	0:0	10	filename
+arg	32:54	32:70	9	config->line_num
+water	32:54	0:0	10	config
+op	32:60	0:0	10	->
+water	32:62	0:0	10	line_num
+arg	33:36	33:48	9	AV_LOG_ERROR
+water	33:36	0:0	10	AV_LOG_ERROR
+arg	33:50	33:65	9	&config->errors
+op	33:50	0:0	10	&
+water	33:51	0:0	10	config
+op	33:57	0:0	10	->
+water	33:59	0:0	10	errors
+arg	34:36	34:61	9	"video size is not set\n"
+water	34:36	0:0	10	"video size is not set\n"
+water	34:62	0:0	8	;
+break	35:12	35:17	6	
+label	36:8	36:15	6	default :
+call	37:12	37:24	6	av_assert0
+arg	37:23	37:24	7	0
+water	37:23	0:0	8	0
+water	37:25	0:0	6	;
+water	38:8	0:0	6	}
+goto	39:8	39:17	4	done
+water	39:13	0:0	5	done
+water	40:4	0:0	4	}
+switch	43:4	124:4	2	(av -> codec_type)
+cond	43:11	43:15	3	av -> codec_type
+water	43:11	0:0	4	av
+op	43:13	0:0	4	->
+water	43:15	0:0	4	codec_type
+stmts	43:27	124:4	3	
+water	43:27	0:0	4	{
+label	44:4	44:27	4	case AVMEDIA_TYPE_AUDIO :
+if	45:8	51:8	4	(!av_dict_get (recommended ,"b" ,NULL ,0 ))
+cond	45:12	45:50	5	!av_dict_get (recommended ,"b" ,NULL ,0 )
+op	45:12	0:0	6	!
+call	45:13	45:50	6	av_dict_get
+arg	45:25	45:36	7	recommended
+water	45:25	0:0	8	recommended
+arg	45:38	45:41	7	"b"
+water	45:38	0:0	8	"b"
+arg	45:43	45:47	7	NULL
+water	45:43	0:0	8	NULL
+arg	45:49	45:50	7	0
+water	45:49	0:0	8	0
+stmts	45:53	51:8	5	
+water	45:53	0:0	6	{
+water	46:12	0:0	6	av
+op	46:14	0:0	6	->
+water	46:16	0:0	6	bit_rate
+op	46:25	0:0	6	=
+water	46:27	0:0	6	64000
+water	46:32	0:0	6	;
+call	47:12	47:62	6	av_dict_set_int
+arg	47:28	47:40	7	&recommended
+op	47:28	0:0	8	&
+water	47:29	0:0	8	recommended
+arg	47:42	47:45	7	"b"
+water	47:42	0:0	8	"b"
+arg	47:47	47:59	7	av->bit_rate
+water	47:47	0:0	8	av
+op	47:49	0:0	8	->
+water	47:51	0:0	8	bit_rate
+arg	47:61	47:62	7	0
+water	47:61	0:0	8	0
+water	47:63	0:0	6	;
+call	48:12	50:32	6	WARNING
+arg	48:20	49:53	7	"Setting default value for audio bit rate = %d. ""Use NoDefaults to disable it.\n"
+water	48:20	0:0	8	"Setting default value for audio bit rate = %d. "
+water	49:20	0:0	8	"Use NoDefaults to disable it.\n"
+arg	50:20	50:32	7	av->bit_rate
+water	50:20	0:0	8	av
+op	50:22	0:0	8	->
+water	50:24	0:0	8	bit_rate
+water	50:33	0:0	6	;
+water	51:8	0:0	6	}
+if	52:8	58:8	4	(!av_dict_get (recommended ,"ar" ,NULL ,0 ))
+cond	52:12	52:51	5	!av_dict_get (recommended ,"ar" ,NULL ,0 )
+op	52:12	0:0	6	!
+call	52:13	52:51	6	av_dict_get
+arg	52:25	52:36	7	recommended
+water	52:25	0:0	8	recommended
+arg	52:38	52:42	7	"ar"
+water	52:38	0:0	8	"ar"
+arg	52:44	52:48	7	NULL
+water	52:44	0:0	8	NULL
+arg	52:50	52:51	7	0
+water	52:50	0:0	8	0
+stmts	52:54	58:8	5	
+water	52:54	0:0	6	{
+water	53:12	0:0	6	av
+op	53:14	0:0	6	->
+water	53:16	0:0	6	sample_rate
+op	53:28	0:0	6	=
+water	53:30	0:0	6	22050
+water	53:35	0:0	6	;
+call	54:12	54:66	6	av_dict_set_int
+arg	54:28	54:40	7	&recommended
+op	54:28	0:0	8	&
+water	54:29	0:0	8	recommended
+arg	54:42	54:46	7	"ar"
+water	54:42	0:0	8	"ar"
+arg	54:48	54:63	7	av->sample_rate
+water	54:48	0:0	8	av
+op	54:50	0:0	8	->
+water	54:52	0:0	8	sample_rate
+arg	54:65	54:66	7	0
+water	54:65	0:0	8	0
+water	54:67	0:0	6	;
+call	55:12	57:35	6	WARNING
+arg	55:20	56:53	7	"Setting default value for audio sample rate = %d. ""Use NoDefaults to disable it.\n"
+water	55:20	0:0	8	"Setting default value for audio sample rate = %d. "
+water	56:20	0:0	8	"Use NoDefaults to disable it.\n"
+arg	57:20	57:35	7	av->sample_rate
+water	57:20	0:0	8	av
+op	57:22	0:0	8	->
+water	57:24	0:0	8	sample_rate
+water	57:36	0:0	6	;
+water	58:8	0:0	6	}
+if	59:8	65:8	4	(!av_dict_get (recommended ,"ac" ,NULL ,0 ))
+cond	59:12	59:51	5	!av_dict_get (recommended ,"ac" ,NULL ,0 )
+op	59:12	0:0	6	!
+call	59:13	59:51	6	av_dict_get
+arg	59:25	59:36	7	recommended
+water	59:25	0:0	8	recommended
+arg	59:38	59:42	7	"ac"
+water	59:38	0:0	8	"ac"
+arg	59:44	59:48	7	NULL
+water	59:44	0:0	8	NULL
+arg	59:50	59:51	7	0
+water	59:50	0:0	8	0
+stmts	59:54	65:8	5	
+water	59:54	0:0	6	{
+water	60:12	0:0	6	av
+op	60:14	0:0	6	->
+water	60:16	0:0	6	channels
+op	60:25	0:0	6	=
+water	60:27	0:0	6	1
+water	60:28	0:0	6	;
+call	61:12	61:63	6	av_dict_set_int
+arg	61:28	61:40	7	&recommended
+op	61:28	0:0	8	&
+water	61:29	0:0	8	recommended
+arg	61:42	61:46	7	"ac"
+water	61:42	0:0	8	"ac"
+arg	61:48	61:60	7	av->channels
+water	61:48	0:0	8	av
+op	61:50	0:0	8	->
+water	61:52	0:0	8	channels
+arg	61:62	61:63	7	0
+water	61:62	0:0	8	0
+water	61:64	0:0	6	;
+call	62:12	64:32	6	WARNING
+arg	62:20	63:53	7	"Setting default value for audio channel count = %d. ""Use NoDefaults to disable it.\n"
+water	62:20	0:0	8	"Setting default value for audio channel count = %d. "
+water	63:20	0:0	8	"Use NoDefaults to disable it.\n"
+arg	64:20	64:32	7	av->channels
+water	64:20	0:0	8	av
+op	64:22	0:0	8	->
+water	64:24	0:0	8	channels
+water	64:33	0:0	6	;
+water	65:8	0:0	6	}
+break	66:8	66:13	4	
+label	67:4	67:27	4	case AVMEDIA_TYPE_VIDEO :
+if	68:8	74:8	4	(!av_dict_get (recommended ,"b" ,NULL ,0 ))
+cond	68:12	68:50	5	!av_dict_get (recommended ,"b" ,NULL ,0 )
+op	68:12	0:0	6	!
+call	68:13	68:50	6	av_dict_get
+arg	68:25	68:36	7	recommended
+water	68:25	0:0	8	recommended
+arg	68:38	68:41	7	"b"
+water	68:38	0:0	8	"b"
+arg	68:43	68:47	7	NULL
+water	68:43	0:0	8	NULL
+arg	68:49	68:50	7	0
+water	68:49	0:0	8	0
+stmts	68:53	74:8	5	
+water	68:53	0:0	6	{
+water	69:12	0:0	6	av
+op	69:14	0:0	6	->
+water	69:16	0:0	6	bit_rate
+op	69:25	0:0	6	=
+water	69:27	0:0	6	64000
+water	69:32	0:0	6	;
+call	70:12	70:62	6	av_dict_set_int
+arg	70:28	70:40	7	&recommended
+op	70:28	0:0	8	&
+water	70:29	0:0	8	recommended
+arg	70:42	70:45	7	"b"
+water	70:42	0:0	8	"b"
+arg	70:47	70:59	7	av->bit_rate
+water	70:47	0:0	8	av
+op	70:49	0:0	8	->
+water	70:51	0:0	8	bit_rate
+arg	70:61	70:62	7	0
+water	70:61	0:0	8	0
+water	70:63	0:0	6	;
+call	71:12	73:32	6	WARNING
+arg	71:20	72:53	7	"Setting default value for video bit rate = %d. ""Use NoDefaults to disable it.\n"
+water	71:20	0:0	8	"Setting default value for video bit rate = %d. "
+water	72:20	0:0	8	"Use NoDefaults to disable it.\n"
+arg	73:20	73:32	7	av->bit_rate
+water	73:20	0:0	8	av
+op	73:22	0:0	8	->
+water	73:24	0:0	8	bit_rate
+water	73:33	0:0	6	;
+water	74:8	0:0	6	}
+if	75:8	82:8	4	(!av_dict_get (recommended ,"time_base" ,NULL ,0 ))
+cond	75:12	75:58	5	!av_dict_get (recommended ,"time_base" ,NULL ,0 )
+op	75:12	0:0	6	!
+call	75:13	75:58	6	av_dict_get
+arg	75:25	75:36	7	recommended
+water	75:25	0:0	8	recommended
+arg	75:38	75:49	7	"time_base"
+water	75:38	0:0	8	"time_base"
+arg	75:51	75:55	7	NULL
+water	75:51	0:0	8	NULL
+arg	75:57	75:58	7	0
+water	75:57	0:0	8	0
+stmts	75:60	82:8	5	
+water	75:60	0:0	6	{
+water	76:12	0:0	6	av
+op	76:14	0:0	6	->
+water	76:16	0:0	6	time_base
+op	76:25	0:0	6	.
+water	76:26	0:0	6	den
+op	76:30	0:0	6	=
+water	76:32	0:0	6	5
+water	76:33	0:0	6	;
+water	77:12	0:0	6	av
+op	77:14	0:0	6	->
+water	77:16	0:0	6	time_base
+op	77:25	0:0	6	.
+water	77:26	0:0	6	num
+op	77:30	0:0	6	=
+water	77:32	0:0	6	1
+water	77:33	0:0	6	;
+call	78:12	78:59	6	av_dict_set
+arg	78:24	78:36	7	&recommended
+op	78:24	0:0	8	&
+water	78:25	0:0	8	recommended
+arg	78:38	78:49	7	"time_base"
+water	78:38	0:0	8	"time_base"
+arg	78:51	78:56	7	"1/5"
+water	78:51	0:0	8	"1/5"
+arg	78:58	78:59	7	0
+water	78:58	0:0	8	0
+water	78:60	0:0	6	;
+call	79:12	81:37	6	WARNING
+arg	79:20	80:53	7	"Setting default value for video frame rate = %d. ""Use NoDefaults to disable it.\n"
+water	79:20	0:0	8	"Setting default value for video frame rate = %d. "
+water	80:20	0:0	8	"Use NoDefaults to disable it.\n"
+arg	81:20	81:37	7	av->time_base.den
+water	81:20	0:0	8	av
+op	81:22	0:0	8	->
+water	81:24	0:0	8	time_base
+op	81:33	0:0	8	.
+water	81:34	0:0	8	den
+water	81:38	0:0	6	;
+water	82:8	0:0	6	}
+if	83:8	90:8	4	(!av_dict_get (recommended ,"video_size" ,NULL ,0 ))
+cond	83:12	83:59	5	!av_dict_get (recommended ,"video_size" ,NULL ,0 )
+op	83:12	0:0	6	!
+call	83:13	83:59	6	av_dict_get
+arg	83:25	83:36	7	recommended
+water	83:25	0:0	8	recommended
+arg	83:38	83:50	7	"video_size"
+water	83:38	0:0	8	"video_size"
+arg	83:52	83:56	7	NULL
+water	83:52	0:0	8	NULL
+arg	83:58	83:59	7	0
+water	83:58	0:0	8	0
+stmts	83:62	90:8	5	
+water	83:62	0:0	6	{
+water	84:12	0:0	6	av
+op	84:14	0:0	6	->
+water	84:16	0:0	6	width
+op	84:22	0:0	6	=
+water	84:24	0:0	6	160
+water	84:27	0:0	6	;
+water	85:12	0:0	6	av
+op	85:14	0:0	6	->
+water	85:16	0:0	6	height
+op	85:23	0:0	6	=
+water	85:25	0:0	6	128
+water	85:28	0:0	6	;
+call	86:12	86:64	6	av_dict_set
+arg	86:24	86:36	7	&recommended
+op	86:24	0:0	8	&
+water	86:25	0:0	8	recommended
+arg	86:38	86:50	7	"video_size"
+water	86:38	0:0	8	"video_size"
+arg	86:52	86:61	7	"160x128"
+water	86:52	0:0	8	"160x128"
+arg	86:63	86:64	7	0
+water	86:63	0:0	8	0
+water	86:65	0:0	6	;
+call	87:12	89:41	6	WARNING
+arg	87:20	88:53	7	"Setting default value for video size = %dx%d. ""Use NoDefaults to disable it.\n"
+water	87:20	0:0	8	"Setting default value for video size = %dx%d. "
+water	88:20	0:0	8	"Use NoDefaults to disable it.\n"
+arg	89:20	89:29	7	av->width
+water	89:20	0:0	8	av
+op	89:22	0:0	8	->
+water	89:24	0:0	8	width
+arg	89:31	89:41	7	av->height
+water	89:31	0:0	8	av
+op	89:33	0:0	8	->
+water	89:35	0:0	8	height
+water	89:42	0:0	6	;
+water	90:8	0:0	6	}
+if	92:8	99:8	4	(!av_dict_get (recommended ,"bt" ,NULL ,0 ))
+cond	92:12	92:51	5	!av_dict_get (recommended ,"bt" ,NULL ,0 )
+op	92:12	0:0	6	!
+call	92:13	92:51	6	av_dict_get
+arg	92:25	92:36	7	recommended
+water	92:25	0:0	8	recommended
+arg	92:38	92:42	7	"bt"
+water	92:38	0:0	8	"bt"
+arg	92:44	92:48	7	NULL
+water	92:44	0:0	8	NULL
+arg	92:50	92:51	7	0
+water	92:50	0:0	8	0
+stmts	92:54	99:8	5	
+water	92:54	0:0	6	{
+water	93:12	0:0	6	av
+op	93:14	0:0	6	->
+water	93:16	0:0	6	bit_rate_tolerance
+op	93:35	0:0	6	=
+call	93:37	94:79	6	FFMAX
+arg	93:43	93:59	7	av->bit_rate/4
+water	93:43	0:0	8	av
+op	93:45	0:0	8	->
+water	93:47	0:0	8	bit_rate
+op	93:56	0:0	8	/
+water	93:58	0:0	8	4
+arg	94:22	94:79	7	(int64_t)av->bit_rate*av->time_base.num/av->time_base.den
+water	94:22	0:0	8	(
+water	94:23	0:0	8	int64_t
+water	94:30	0:0	8	)
+water	94:31	0:0	8	av
+op	94:33	0:0	8	->
+water	94:35	0:0	8	bit_rate
+op	94:43	0:0	8	*
+water	94:44	0:0	8	av
+op	94:46	0:0	8	->
+water	94:48	0:0	8	time_base
+op	94:57	0:0	8	.
+water	94:58	0:0	8	num
+op	94:61	0:0	8	/
+water	94:62	0:0	8	av
+op	94:64	0:0	8	->
+water	94:66	0:0	8	time_base
+op	94:75	0:0	8	.
+water	94:76	0:0	8	den
+water	94:80	0:0	6	;
+call	95:12	95:73	6	av_dict_set_int
+arg	95:28	95:40	7	&recommended
+op	95:28	0:0	8	&
+water	95:29	0:0	8	recommended
+arg	95:42	95:46	7	"bt"
+water	95:42	0:0	8	"bt"
+arg	95:48	95:70	7	av->bit_rate_tolerance
+water	95:48	0:0	8	av
+op	95:50	0:0	8	->
+water	95:52	0:0	8	bit_rate_tolerance
+arg	95:72	95:73	7	0
+water	95:72	0:0	8	0
+water	95:74	0:0	6	;
+call	96:12	98:42	6	WARNING
+arg	96:20	97:53	7	"Setting default value for video bit rate tolerance = %d. ""Use NoDefaults to disable it.\n"
+water	96:20	0:0	8	"Setting default value for video bit rate tolerance = %d. "
+water	97:20	0:0	8	"Use NoDefaults to disable it.\n"
+arg	98:20	98:42	7	av->bit_rate_tolerance
+water	98:20	0:0	8	av
+op	98:22	0:0	8	->
+water	98:24	0:0	8	bit_rate_tolerance
+water	98:43	0:0	6	;
+water	99:8	0:0	6	}
+if	100:8	106:8	4	(!av_dict_get (recommended ,"rc_eq" ,NULL ,0 ))
+cond	100:12	100:54	5	!av_dict_get (recommended ,"rc_eq" ,NULL ,0 )
+op	100:12	0:0	6	!
+call	100:13	100:54	6	av_dict_get
+arg	100:25	100:36	7	recommended
+water	100:25	0:0	8	recommended
+arg	100:38	100:45	7	"rc_eq"
+water	100:38	0:0	8	"rc_eq"
+arg	100:47	100:51	7	NULL
+water	100:47	0:0	8	NULL
+arg	100:53	100:54	7	0
+water	100:53	0:0	8	0
+stmts	100:57	106:8	5	
+water	100:57	0:0	6	{
+water	101:12	0:0	6	av
+op	101:14	0:0	6	->
+water	101:16	0:0	6	rc_eq
+op	101:22	0:0	6	=
+call	101:24	101:45	6	av_strdup
+arg	101:34	101:45	7	"tex^qComp"
+water	101:34	0:0	8	"tex^qComp"
+water	101:46	0:0	6	;
+call	102:12	102:61	6	av_dict_set
+arg	102:24	102:36	7	&recommended
+op	102:24	0:0	8	&
+water	102:25	0:0	8	recommended
+arg	102:38	102:45	7	"rc_eq"
+water	102:38	0:0	8	"rc_eq"
+arg	102:47	102:58	7	"tex^qComp"
+water	102:47	0:0	8	"tex^qComp"
+arg	102:60	102:61	7	0
+water	102:60	0:0	8	0
+water	102:62	0:0	6	;
+call	103:12	105:29	6	WARNING
+arg	103:20	104:57	7	"Setting default value for video rate control equation = ""%s. Use NoDefaults to disable it.\n"
+water	103:20	0:0	8	"Setting default value for video rate control equation = "
+water	104:20	0:0	8	"%s. Use NoDefaults to disable it.\n"
+arg	105:20	105:29	7	av->rc_eq
+water	105:20	0:0	8	av
+op	105:22	0:0	8	->
+water	105:24	0:0	8	rc_eq
+water	105:30	0:0	6	;
+water	106:8	0:0	6	}
+if	107:8	113:8	4	(!av_dict_get (recommended ,"maxrate" ,NULL ,0 ))
+cond	107:12	107:56	5	!av_dict_get (recommended ,"maxrate" ,NULL ,0 )
+op	107:12	0:0	6	!
+call	107:13	107:56	6	av_dict_get
+arg	107:25	107:36	7	recommended
+water	107:25	0:0	8	recommended
+arg	107:38	107:47	7	"maxrate"
+water	107:38	0:0	8	"maxrate"
+arg	107:49	107:53	7	NULL
+water	107:49	0:0	8	NULL
+arg	107:55	107:56	7	0
+water	107:55	0:0	8	0
+stmts	107:59	113:8	5	
+water	107:59	0:0	6	{
+water	108:12	0:0	6	av
+op	108:14	0:0	6	->
+water	108:16	0:0	6	rc_max_rate
+op	108:28	0:0	6	=
+water	108:30	0:0	6	av
+op	108:32	0:0	6	->
+water	108:34	0:0	6	bit_rate
+op	108:43	0:0	6	*
+water	108:45	0:0	6	2
+water	108:46	0:0	6	;
+call	109:12	109:71	6	av_dict_set_int
+arg	109:28	109:40	7	&recommended
+op	109:28	0:0	8	&
+water	109:29	0:0	8	recommended
+arg	109:42	109:51	7	"maxrate"
+water	109:42	0:0	8	"maxrate"
+arg	109:53	109:68	7	av->rc_max_rate
+water	109:53	0:0	8	av
+op	109:55	0:0	8	->
+water	109:57	0:0	8	rc_max_rate
+arg	109:70	109:71	7	0
+water	109:70	0:0	8	0
+water	109:72	0:0	6	;
+call	110:12	112:35	6	WARNING
+arg	110:20	111:53	7	"Setting default value for video max rate = %d. ""Use NoDefaults to disable it.\n"
+water	110:20	0:0	8	"Setting default value for video max rate = %d. "
+water	111:20	0:0	8	"Use NoDefaults to disable it.\n"
+arg	112:20	112:35	7	av->rc_max_rate
+water	112:20	0:0	8	av
+op	112:22	0:0	8	->
+water	112:24	0:0	8	rc_max_rate
+water	112:36	0:0	6	;
+water	113:8	0:0	6	}
+if	114:8	120:8	4	(av -> rc_max_rate && !av_dict_get (recommended ,"bufsize" ,NULL ,0 ))
+cond	114:12	114:75	5	av -> rc_max_rate && !av_dict_get (recommended ,"bufsize" ,NULL ,0 )
+water	114:12	0:0	6	av
+op	114:14	0:0	6	->
+water	114:16	0:0	6	rc_max_rate
+op	114:28	0:0	6	&&
+op	114:31	0:0	6	!
+call	114:32	114:75	6	av_dict_get
+arg	114:44	114:55	7	recommended
+water	114:44	0:0	8	recommended
+arg	114:57	114:66	7	"bufsize"
+water	114:57	0:0	8	"bufsize"
+arg	114:68	114:72	7	NULL
+water	114:68	0:0	8	NULL
+arg	114:74	114:75	7	0
+water	114:74	0:0	8	0
+stmts	114:78	120:8	5	
+water	114:78	0:0	6	{
+water	115:12	0:0	6	av
+op	115:14	0:0	6	->
+water	115:16	0:0	6	rc_buffer_size
+op	115:31	0:0	6	=
+water	115:33	0:0	6	av
+op	115:35	0:0	6	->
+water	115:37	0:0	6	rc_max_rate
+water	115:48	0:0	6	;
+call	116:12	116:74	6	av_dict_set_int
+arg	116:28	116:40	7	&recommended
+op	116:28	0:0	8	&
+water	116:29	0:0	8	recommended
+arg	116:42	116:51	7	"bufsize"
+water	116:42	0:0	8	"bufsize"
+arg	116:53	116:71	7	av->rc_buffer_size
+water	116:53	0:0	8	av
+op	116:55	0:0	8	->
+water	116:57	0:0	8	rc_buffer_size
+arg	116:73	116:74	7	0
+water	116:73	0:0	8	0
+water	116:75	0:0	6	;
+call	117:12	119:38	6	WARNING
+arg	117:20	118:53	7	"Setting default value for video buffer size = %d. ""Use NoDefaults to disable it.\n"
+water	117:20	0:0	8	"Setting default value for video buffer size = %d. "
+water	118:20	0:0	8	"Use NoDefaults to disable it.\n"
+arg	119:20	119:38	7	av->rc_buffer_size
+water	119:20	0:0	8	av
+op	119:22	0:0	8	->
+water	119:24	0:0	8	rc_buffer_size
+water	119:39	0:0	6	;
+water	120:8	0:0	6	}
+break	121:8	121:13	4	
+label	122:4	122:11	4	default :
+call	123:8	123:14	4	abort
+water	123:15	0:0	4	;
+water	124:4	0:0	4	}
+label	125:0	125:4	2	done :
+water	126:4	0:0	2	st
+op	126:7	0:0	2	=
+call	126:9	126:31	2	av_mallocz
+arg	126:20	126:31	3	sizeof(*st)
+op	126:20	0:0	4	sizeof
+water	126:26	0:0	4	(
+op	126:27	0:0	4	*
+water	126:28	0:0	4	st
+water	126:30	0:0	4	)
+water	126:32	0:0	2	;
+if	127:4	128:14	2	(! st)
+cond	127:8	127:9	3	! st
+op	127:8	0:0	4	!
+water	127:9	0:0	4	st
+stmts	128:8	128:14	3	
+return	128:8	128:14	4	
+call	129:4	129:57	2	av_dict_get_string
+arg	129:23	129:34	3	recommended
+water	129:23	0:0	4	recommended
+arg	129:36	129:47	3	&enc_config
+op	129:36	0:0	4	&
+water	129:37	0:0	4	enc_config
+arg	129:49	129:52	3	'='
+water	129:49	0:0	4	'='
+arg	129:54	129:57	3	','
+water	129:54	0:0	4	','
+water	129:58	0:0	2	;
+call	130:4	130:29	2	av_dict_free
+arg	130:17	130:29	3	&recommended
+op	130:17	0:0	4	&
+water	130:18	0:0	4	recommended
+water	130:30	0:0	2	;
+water	131:4	0:0	2	st
+op	131:6	0:0	2	->
+water	131:8	0:0	2	recommended_encoder_configuration
+op	131:42	0:0	2	=
+water	131:44	0:0	2	enc_config
+water	131:54	0:0	2	;
+water	132:4	0:0	2	st
+op	132:6	0:0	2	->
+water	132:8	0:0	2	codec
+op	132:14	0:0	2	=
+water	132:16	0:0	2	av
+water	132:18	0:0	2	;
+water	133:4	0:0	2	st
+op	133:6	0:0	2	->
+water	133:8	0:0	2	codecpar
+op	133:17	0:0	2	=
+call	133:19	133:44	2	avcodec_parameters_alloc
+water	133:45	0:0	2	;
+call	134:4	134:52	2	avcodec_parameters_from_context
+arg	134:36	134:48	3	st->codecpar
+water	134:36	0:0	4	st
+op	134:38	0:0	4	->
+water	134:40	0:0	4	codecpar
+arg	134:50	134:52	3	av
+water	134:50	0:0	4	av
+water	134:53	0:0	2	;
+water	135:4	0:0	2	stream
+op	135:10	0:0	2	->
+water	135:12	0:0	2	streams
+op	135:19	0:0	2	[
+water	135:20	0:0	2	stream
+op	135:26	0:0	2	->
+water	135:28	0:0	2	nb_streams
+op	135:38	0:0	2	++
+op	135:40	0:0	2	]
+op	135:42	0:0	2	=
+water	135:44	0:0	2	st
+water	135:46	0:0	2	;

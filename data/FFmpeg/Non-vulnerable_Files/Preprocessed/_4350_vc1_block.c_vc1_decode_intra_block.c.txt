@@ -1,0 +1,1474 @@
+func	1:0	182:0	0	static int	vc1_decode_intra_block
+params	1:33	0:0	1	
+param	1:34	1:47	2	VC1Context *	v
+param	1:49	1:66	2	int16_t	block[64]
+param	1:68	1:73	2	int	n
+param	2:34	2:43	2	int	coded
+param	2:45	2:55	2	int	mquant
+param	2:57	2:70	2	int	codingset
+stmnts	0:0	181:12	1	
+decl	4:4	4:32	2	GetBitContext	*gb
+op	4:22	0:0	2	=
+op	4:24	0:0	2	&
+water	4:25	0:0	2	v
+op	4:26	0:0	2	->
+water	4:28	0:0	2	s
+op	4:29	0:0	2	.
+water	4:30	0:0	2	gb
+decl	5:4	5:29	2	MpegEncContext	*s
+op	5:22	0:0	2	=
+op	5:24	0:0	2	&
+water	5:25	0:0	2	v
+op	5:26	0:0	2	->
+water	5:28	0:0	2	s
+decl	6:4	6:23	2	int	dc_pred_dir
+op	6:20	0:0	2	=
+water	6:22	0:0	2	0
+decl	7:4	7:9	2	int	i
+decl	8:4	8:26	2	int16_t	*dc_val
+op	8:20	0:0	2	=
+water	8:22	0:0	2	NULL
+decl	9:4	9:29	2	int16_t	*ac_val
+water	9:19	0:0	2	,
+decl	9:4	9:29	2	int16_t	*ac_val2
+decl	10:4	10:14	2	int	dcdiff
+decl	11:4	11:49	2	int	mb_pos
+op	11:15	0:0	2	=
+water	11:17	0:0	2	s
+op	11:18	0:0	2	->
+water	11:20	0:0	2	mb_x
+op	11:25	0:0	2	+
+water	11:27	0:0	2	s
+op	11:28	0:0	2	->
+water	11:30	0:0	2	mb_y
+op	11:35	0:0	2	*
+water	11:37	0:0	2	s
+op	11:38	0:0	2	->
+water	11:40	0:0	2	mb_stride
+decl	12:4	12:50	2	int	a_avail
+op	12:16	0:0	2	=
+water	12:18	0:0	2	v
+op	12:19	0:0	2	->
+water	12:21	0:0	2	a_avail
+water	12:28	0:0	2	,
+decl	12:4	12:50	2	int	c_avail
+op	12:38	0:0	2	=
+water	12:40	0:0	2	v
+op	12:41	0:0	2	->
+water	12:43	0:0	2	c_avail
+decl	13:4	13:29	2	int	use_pred
+op	13:17	0:0	2	=
+water	13:19	0:0	2	s
+op	13:20	0:0	2	->
+water	13:22	0:0	2	ac_pred
+decl	14:4	14:13	2	int	scale
+decl	15:4	15:18	2	int	q1
+water	15:10	0:0	2	,
+decl	15:4	15:18	2	int	q2
+op	15:15	0:0	2	=
+water	15:17	0:0	2	0
+call	16:4	16:29	2	s->bdsp.clear_block
+arg	16:24	16:29	3	block
+water	16:24	0:0	4	block
+water	16:30	0:0	2	;
+water	18:4	0:0	2	mquant
+op	18:11	0:0	2	=
+call	18:13	18:37	2	av_clip_uintp2
+arg	18:28	18:34	3	mquant
+water	18:28	0:0	4	mquant
+arg	18:36	18:37	3	5
+water	18:36	0:0	4	5
+water	18:38	0:0	2	;
+water	20:4	0:0	2	s
+op	20:5	0:0	2	->
+water	20:7	0:0	2	y_dc_scale
+op	20:18	0:0	2	=
+water	20:20	0:0	2	s
+op	20:21	0:0	2	->
+water	20:23	0:0	2	y_dc_scale_table
+op	20:39	0:0	2	[
+water	20:40	0:0	2	mquant
+op	20:46	0:0	2	]
+water	20:47	0:0	2	;
+water	21:4	0:0	2	s
+op	21:5	0:0	2	->
+water	21:7	0:0	2	c_dc_scale
+op	21:18	0:0	2	=
+water	21:20	0:0	2	s
+op	21:21	0:0	2	->
+water	21:23	0:0	2	c_dc_scale_table
+op	21:39	0:0	2	[
+water	21:40	0:0	2	mquant
+op	21:46	0:0	2	]
+water	21:47	0:0	2	;
+if	23:4	25:4	2	(n < 4)
+cond	23:8	23:12	3	n < 4
+water	23:8	0:0	4	n
+op	23:10	0:0	4	<
+water	23:12	0:0	4	4
+stmts	23:15	25:4	3	
+water	23:15	0:0	4	{
+water	24:8	0:0	4	dcdiff
+op	24:15	0:0	4	=
+call	24:17	24:95	4	get_vlc2
+arg	24:26	24:32	5	&s->gb
+op	24:26	0:0	6	&
+water	24:27	0:0	6	s
+op	24:28	0:0	6	->
+water	24:30	0:0	6	gb
+arg	24:34	24:79	5	ff_msmp4_dc_luma_vlc[s->dc_table_index].table
+water	24:34	0:0	6	ff_msmp4_dc_luma_vlc
+op	24:54	0:0	6	[
+water	24:55	0:0	6	s
+op	24:56	0:0	6	->
+water	24:58	0:0	6	dc_table_index
+op	24:72	0:0	6	]
+op	24:73	0:0	6	.
+water	24:74	0:0	6	table
+arg	24:81	24:92	5	DC_VLC_BITS
+water	24:81	0:0	6	DC_VLC_BITS
+arg	24:94	24:95	5	3
+water	24:94	0:0	6	3
+water	24:96	0:0	4	;
+water	25:4	0:0	4	}
+else	25:6	27:4	2
+stmts	25:11	27:4	3	
+water	25:11	0:0	4	{
+water	26:8	0:0	4	dcdiff
+op	26:15	0:0	4	=
+call	26:17	26:97	4	get_vlc2
+arg	26:26	26:32	5	&s->gb
+op	26:26	0:0	6	&
+water	26:27	0:0	6	s
+op	26:28	0:0	6	->
+water	26:30	0:0	6	gb
+arg	26:34	26:81	5	ff_msmp4_dc_chroma_vlc[s->dc_table_index].table
+water	26:34	0:0	6	ff_msmp4_dc_chroma_vlc
+op	26:56	0:0	6	[
+water	26:57	0:0	6	s
+op	26:58	0:0	6	->
+water	26:60	0:0	6	dc_table_index
+op	26:74	0:0	6	]
+op	26:75	0:0	6	.
+water	26:76	0:0	6	table
+arg	26:83	26:94	5	DC_VLC_BITS
+water	26:83	0:0	6	DC_VLC_BITS
+arg	26:96	26:97	5	3
+water	26:96	0:0	6	3
+water	26:98	0:0	4	;
+water	27:4	0:0	4	}
+if	28:4	31:4	2	(dcdiff < 0)
+cond	28:8	28:17	3	dcdiff < 0
+water	28:8	0:0	4	dcdiff
+op	28:15	0:0	4	<
+water	28:17	0:0	4	0
+stmts	28:20	31:4	3	
+water	28:20	0:0	4	{
+call	29:8	29:57	4	av_log
+arg	29:15	29:23	5	s->avctx
+water	29:15	0:0	6	s
+op	29:16	0:0	6	->
+water	29:18	0:0	6	avctx
+arg	29:25	29:37	5	AV_LOG_ERROR
+water	29:25	0:0	6	AV_LOG_ERROR
+arg	29:39	29:57	5	"Illegal DC VLC\n"
+water	29:39	0:0	6	"Illegal DC VLC\n"
+water	29:58	0:0	4	;
+return	30:8	30:17	4	-1
+op	30:15	0:0	5	-
+water	30:16	0:0	5	1
+water	31:4	0:0	4	}
+if	32:4	42:4	2	(dcdiff)
+cond	32:8	32:8	3	dcdiff
+water	32:8	0:0	4	dcdiff
+stmts	32:16	42:4	3	
+water	32:16	0:0	4	{
+decl	33:8	33:67	4	const int	m
+op	33:20	0:0	4	=
+water	33:22	0:0	4	(
+water	33:23	0:0	4	mquant
+op	33:30	0:0	4	==
+water	33:33	0:0	4	1
+op	33:35	0:0	4	||
+water	33:38	0:0	4	mquant
+op	33:45	0:0	4	==
+water	33:48	0:0	4	2
+water	33:49	0:0	4	)
+water	33:51	0:0	4	?
+water	33:53	0:0	4	3
+op	33:55	0:0	4	-
+water	33:57	0:0	4	mquant
+water	33:64	0:0	4	:
+water	33:66	0:0	4	0
+if	34:8	36:8	4	(dcdiff == 119)
+cond	34:12	34:22	5	dcdiff == 119
+water	34:12	0:0	6	dcdiff
+op	34:19	0:0	6	==
+water	34:22	0:0	6	119
+stmts	34:28	36:8	5	
+water	34:28	0:0	6	{
+water	35:12	0:0	6	dcdiff
+op	35:19	0:0	6	=
+call	35:21	35:39	6	get_bits
+arg	35:30	35:32	7	gb
+water	35:30	0:0	8	gb
+arg	35:34	35:39	7	8+m
+water	35:34	0:0	8	8
+op	35:36	0:0	8	+
+water	35:38	0:0	8	m
+water	35:40	0:0	6	;
+water	36:8	0:0	6	}
+else	36:10	39:8	4
+stmts	36:15	39:8	5	
+water	36:15	0:0	6	{
+if	37:12	38:73	6	(m)
+cond	37:16	37:16	7	m
+water	37:16	0:0	8	m
+stmts	38:16	38:73	7	
+water	38:16	0:0	8	dcdiff
+op	38:23	0:0	8	=
+water	38:25	0:0	8	(
+water	38:26	0:0	8	dcdiff
+op	38:33	0:0	8	<<
+water	38:36	0:0	8	m
+water	38:37	0:0	8	)
+op	38:39	0:0	8	+
+call	38:41	38:55	8	get_bits
+arg	38:50	38:52	9	gb
+water	38:50	0:0	10	gb
+arg	38:54	38:55	9	m
+water	38:54	0:0	10	m
+op	38:57	0:0	8	-
+water	38:59	0:0	8	(
+water	38:60	0:0	8	(
+water	38:61	0:0	8	1
+op	38:63	0:0	8	<<
+water	38:66	0:0	8	m
+water	38:67	0:0	8	)
+op	38:69	0:0	8	-
+water	38:71	0:0	8	1
+water	38:72	0:0	8	)
+water	38:73	0:0	8	;
+water	39:8	0:0	6	}
+if	40:8	41:28	4	(get_bits1 (gb ))
+cond	40:12	40:24	5	get_bits1 (gb )
+call	40:12	40:24	6	get_bits1
+arg	40:22	40:24	7	gb
+water	40:22	0:0	8	gb
+stmts	41:12	41:28	5	
+water	41:12	0:0	6	dcdiff
+op	41:19	0:0	6	=
+op	41:21	0:0	6	-
+water	41:22	0:0	6	dcdiff
+water	41:28	0:0	6	;
+water	42:4	0:0	4	}
+water	44:4	0:0	2	dcdiff
+op	44:11	0:0	2	+=
+call	44:14	44:98	2	ff_vc1_pred_dc
+arg	44:29	44:34	3	&v->s
+op	44:29	0:0	4	&
+water	44:30	0:0	4	v
+op	44:31	0:0	4	->
+water	44:33	0:0	4	s
+arg	44:36	44:46	3	v->overlap
+water	44:36	0:0	4	v
+op	44:37	0:0	4	->
+water	44:39	0:0	4	overlap
+arg	44:48	44:54	3	mquant
+water	44:48	0:0	4	mquant
+arg	44:56	44:57	3	n
+water	44:56	0:0	4	n
+arg	44:59	44:66	3	a_avail
+water	44:59	0:0	4	a_avail
+arg	44:68	44:75	3	c_avail
+water	44:68	0:0	4	c_avail
+arg	44:77	44:84	3	&dc_val
+op	44:77	0:0	4	&
+water	44:78	0:0	4	dc_val
+arg	44:86	44:98	3	&dc_pred_dir
+op	44:86	0:0	4	&
+water	44:87	0:0	4	dc_pred_dir
+water	44:99	0:0	2	;
+op	45:4	0:0	2	*
+water	45:5	0:0	2	dc_val
+op	45:12	0:0	2	=
+water	45:14	0:0	2	dcdiff
+water	45:20	0:0	2	;
+if	47:4	49:4	2	(n < 4)
+cond	47:8	47:12	3	n < 4
+water	47:8	0:0	4	n
+op	47:10	0:0	4	<
+water	47:12	0:0	4	4
+stmts	47:15	49:4	3	
+water	47:15	0:0	4	{
+water	48:8	0:0	4	block
+op	48:13	0:0	4	[
+water	48:14	0:0	4	0
+op	48:15	0:0	4	]
+op	48:17	0:0	4	=
+water	48:19	0:0	4	dcdiff
+op	48:26	0:0	4	*
+water	48:28	0:0	4	s
+op	48:29	0:0	4	->
+water	48:31	0:0	4	y_dc_scale
+water	48:41	0:0	4	;
+water	49:4	0:0	4	}
+else	49:6	51:4	2
+stmts	49:11	51:4	3	
+water	49:11	0:0	4	{
+water	50:8	0:0	4	block
+op	50:13	0:0	4	[
+water	50:14	0:0	4	0
+op	50:15	0:0	4	]
+op	50:17	0:0	4	=
+water	50:19	0:0	4	dcdiff
+op	50:26	0:0	4	*
+water	50:28	0:0	4	s
+op	50:29	0:0	4	->
+water	50:31	0:0	4	c_dc_scale
+water	50:41	0:0	4	;
+water	51:4	0:0	4	}
+water	53:4	0:0	2	i
+op	53:6	0:0	2	=
+water	53:8	0:0	2	1
+water	53:9	0:0	2	;
+if	55:4	55:33	2	(! a_avail)
+cond	55:8	55:9	3	! a_avail
+op	55:8	0:0	4	!
+water	55:9	0:0	4	a_avail
+stmts	55:18	55:33	3	
+water	55:18	0:0	4	dc_pred_dir
+op	55:30	0:0	4	=
+water	55:32	0:0	4	1
+water	55:33	0:0	4	;
+if	56:4	56:33	2	(! c_avail)
+cond	56:8	56:9	3	! c_avail
+op	56:8	0:0	4	!
+water	56:9	0:0	4	c_avail
+stmts	56:18	56:33	3	
+water	56:18	0:0	4	dc_pred_dir
+op	56:30	0:0	4	=
+water	56:32	0:0	4	0
+water	56:33	0:0	4	;
+if	57:4	57:42	2	(! a_avail && ! c_avail)
+cond	57:8	57:21	3	! a_avail && ! c_avail
+op	57:8	0:0	4	!
+water	57:9	0:0	4	a_avail
+op	57:17	0:0	4	&&
+op	57:20	0:0	4	!
+water	57:21	0:0	4	c_avail
+stmts	57:30	57:42	3	
+water	57:30	0:0	4	use_pred
+op	57:39	0:0	4	=
+water	57:41	0:0	4	0
+water	57:42	0:0	4	;
+water	58:4	0:0	2	ac_val
+op	58:11	0:0	2	=
+water	58:13	0:0	2	s
+op	58:14	0:0	2	->
+water	58:16	0:0	2	ac_val
+op	58:22	0:0	2	[
+water	58:23	0:0	2	0
+op	58:24	0:0	2	]
+op	58:25	0:0	2	[
+water	58:26	0:0	2	0
+op	58:27	0:0	2	]
+op	58:29	0:0	2	+
+water	58:31	0:0	2	s
+op	58:32	0:0	2	->
+water	58:34	0:0	2	block_index
+op	58:45	0:0	2	[
+water	58:46	0:0	2	n
+op	58:47	0:0	2	]
+op	58:49	0:0	2	*
+water	58:51	0:0	2	16
+water	58:53	0:0	2	;
+water	59:4	0:0	2	ac_val2
+op	59:12	0:0	2	=
+water	59:14	0:0	2	ac_val
+water	59:20	0:0	2	;
+water	60:4	0:0	2	scale
+op	60:10	0:0	2	=
+water	60:12	0:0	2	mquant
+op	60:19	0:0	2	*
+water	60:21	0:0	2	2
+op	60:23	0:0	2	+
+water	60:25	0:0	2	v
+op	60:26	0:0	2	->
+water	60:28	0:0	2	halfpq
+water	60:34	0:0	2	;
+if	61:4	62:20	2	(dc_pred_dir)
+cond	61:8	61:8	3	dc_pred_dir
+water	61:8	0:0	4	dc_pred_dir
+stmts	62:8	62:20	3	
+water	62:8	0:0	4	ac_val
+op	62:15	0:0	4	-=
+water	62:18	0:0	4	16
+water	62:20	0:0	4	;
+else	63:4	64:39	2
+stmts	64:8	64:39	3	
+water	64:8	0:0	4	ac_val
+op	64:15	0:0	4	-=
+water	64:18	0:0	4	16
+op	64:21	0:0	4	*
+water	64:23	0:0	4	s
+op	64:24	0:0	4	->
+water	64:26	0:0	4	block_wrap
+op	64:36	0:0	4	[
+water	64:37	0:0	4	n
+op	64:38	0:0	4	]
+water	64:39	0:0	4	;
+water	65:4	0:0	2	q1
+op	65:7	0:0	2	=
+water	65:9	0:0	2	s
+op	65:10	0:0	2	->
+water	65:12	0:0	2	current_picture
+op	65:27	0:0	2	.
+water	65:28	0:0	2	qscale_table
+op	65:40	0:0	2	[
+water	65:41	0:0	2	mb_pos
+op	65:47	0:0	2	]
+water	65:48	0:0	2	;
+if	66:4	67:56	2	(dc_pred_dir && c_avail && mb_pos)
+cond	66:8	66:34	3	dc_pred_dir && c_avail && mb_pos
+water	66:8	0:0	4	dc_pred_dir
+op	66:20	0:0	4	&&
+water	66:23	0:0	4	c_avail
+op	66:31	0:0	4	&&
+water	66:34	0:0	4	mb_pos
+stmts	67:8	67:56	3	
+water	67:8	0:0	4	q2
+op	67:11	0:0	4	=
+water	67:13	0:0	4	s
+op	67:14	0:0	4	->
+water	67:16	0:0	4	current_picture
+op	67:31	0:0	4	.
+water	67:32	0:0	4	qscale_table
+op	67:44	0:0	4	[
+water	67:45	0:0	4	mb_pos
+op	67:52	0:0	4	-
+water	67:54	0:0	4	1
+op	67:55	0:0	4	]
+water	67:56	0:0	4	;
+if	68:4	69:67	2	(! dc_pred_dir && a_avail && mb_pos >= s -> mb_stride)
+cond	68:8	68:48	3	! dc_pred_dir && a_avail && mb_pos >= s -> mb_stride
+op	68:8	0:0	4	!
+water	68:9	0:0	4	dc_pred_dir
+op	68:21	0:0	4	&&
+water	68:24	0:0	4	a_avail
+op	68:32	0:0	4	&&
+water	68:35	0:0	4	mb_pos
+op	68:42	0:0	4	>=
+water	68:45	0:0	4	s
+op	68:46	0:0	4	->
+water	68:48	0:0	4	mb_stride
+stmts	69:8	69:67	3	
+water	69:8	0:0	4	q2
+op	69:11	0:0	4	=
+water	69:13	0:0	4	s
+op	69:14	0:0	4	->
+water	69:16	0:0	4	current_picture
+op	69:31	0:0	4	.
+water	69:32	0:0	4	qscale_table
+op	69:44	0:0	4	[
+water	69:45	0:0	4	mb_pos
+op	69:52	0:0	4	-
+water	69:54	0:0	4	s
+op	69:55	0:0	4	->
+water	69:57	0:0	4	mb_stride
+op	69:66	0:0	4	]
+water	69:67	0:0	4	;
+if	70:4	71:15	2	(dc_pred_dir && n == 1)
+cond	70:8	70:28	3	dc_pred_dir && n == 1
+water	70:8	0:0	4	dc_pred_dir
+op	70:20	0:0	4	&&
+water	70:23	0:0	4	n
+op	70:25	0:0	4	==
+water	70:28	0:0	4	1
+stmts	71:8	71:15	3	
+water	71:8	0:0	4	q2
+op	71:11	0:0	4	=
+water	71:13	0:0	4	q1
+water	71:15	0:0	4	;
+if	72:4	73:15	2	(! dc_pred_dir && n == 2)
+cond	72:8	72:29	3	! dc_pred_dir && n == 2
+op	72:8	0:0	4	!
+water	72:9	0:0	4	dc_pred_dir
+op	72:21	0:0	4	&&
+water	72:24	0:0	4	n
+op	72:26	0:0	4	==
+water	72:29	0:0	4	2
+stmts	73:8	73:15	3	
+water	73:8	0:0	4	q2
+op	73:11	0:0	4	=
+water	73:13	0:0	4	q1
+water	73:15	0:0	4	;
+if	74:4	74:23	2	(n == 3)
+cond	74:8	74:13	3	n == 3
+water	74:8	0:0	4	n
+op	74:10	0:0	4	==
+water	74:13	0:0	4	3
+stmts	74:16	74:23	3	
+water	74:16	0:0	4	q2
+op	74:19	0:0	4	=
+water	74:21	0:0	4	q1
+water	74:23	0:0	4	;
+if	75:4	134:4	2	(coded)
+cond	75:8	75:8	3	coded
+water	75:8	0:0	4	coded
+stmts	75:15	134:4	3	
+water	75:15	0:0	4	{
+decl	76:8	76:33	4	int	last
+op	76:17	0:0	4	=
+water	76:19	0:0	4	0
+water	76:20	0:0	4	,
+decl	76:8	76:33	4	int	skip
+water	76:26	0:0	4	,
+decl	76:8	76:33	4	int	value
+decl	77:8	77:13	4	int	k
+while	78:8	95:8	4	(! last)
+cond	78:15	78:16	5	! last
+op	78:15	0:0	6	!
+water	78:16	0:0	6	last
+stmts	78:22	95:8	5	
+water	78:22	0:0	6	{
+call	79:12	79:66	6	vc1_decode_ac_coeff
+arg	79:32	79:33	7	v
+water	79:32	0:0	8	v
+arg	79:35	79:40	7	&last
+op	79:35	0:0	8	&
+water	79:36	0:0	8	last
+arg	79:42	79:47	7	&skip
+op	79:42	0:0	8	&
+water	79:43	0:0	8	skip
+arg	79:49	79:55	7	&value
+op	79:49	0:0	8	&
+water	79:50	0:0	8	value
+arg	79:57	79:66	7	codingset
+water	79:57	0:0	8	codingset
+water	79:67	0:0	6	;
+water	80:12	0:0	6	i
+op	80:14	0:0	6	+=
+water	80:17	0:0	6	skip
+water	80:21	0:0	6	;
+if	81:12	82:21	6	(i > 63)
+cond	81:16	81:20	7	i > 63
+water	81:16	0:0	8	i
+op	81:18	0:0	8	>
+water	81:20	0:0	8	63
+stmts	82:16	82:21	7	
+break	82:16	82:21	8	
+if	83:12	84:48	6	(v -> fcm == PROGRESSIVE)
+cond	83:16	83:26	7	v -> fcm == PROGRESSIVE
+water	83:16	0:0	8	v
+op	83:17	0:0	8	->
+water	83:19	0:0	8	fcm
+op	83:23	0:0	8	==
+water	83:26	0:0	8	PROGRESSIVE
+stmts	84:16	84:48	7	
+water	84:16	0:0	8	block
+op	84:21	0:0	8	[
+water	84:22	0:0	8	v
+op	84:23	0:0	8	->
+water	84:25	0:0	8	zz_8x8
+op	84:31	0:0	8	[
+water	84:32	0:0	8	0
+op	84:33	0:0	8	]
+op	84:34	0:0	8	[
+water	84:35	0:0	8	i
+op	84:36	0:0	8	++
+op	84:38	0:0	8	]
+op	84:39	0:0	8	]
+op	84:41	0:0	8	=
+water	84:43	0:0	8	value
+water	84:48	0:0	8	;
+else	85:12	94:12	6
+stmts	85:17	94:12	7	
+water	85:17	0:0	8	{
+if	86:16	91:16	8	(use_pred && ( v -> fcm == ILACE_FRAME ))
+cond	86:20	86:54	9	use_pred && ( v -> fcm == ILACE_FRAME )
+water	86:20	0:0	10	use_pred
+op	86:29	0:0	10	&&
+water	86:32	0:0	10	(
+water	86:33	0:0	10	v
+op	86:34	0:0	10	->
+water	86:36	0:0	10	fcm
+op	86:40	0:0	10	==
+water	86:43	0:0	10	ILACE_FRAME
+water	86:54	0:0	10	)
+stmts	86:57	91:16	9	
+water	86:57	0:0	10	{
+if	87:20	88:56	10	(! dc_pred_dir)
+cond	87:24	87:25	11	! dc_pred_dir
+op	87:24	0:0	12	!
+water	87:25	0:0	12	dc_pred_dir
+stmts	88:24	88:56	11	
+water	88:24	0:0	12	block
+op	88:29	0:0	12	[
+water	88:30	0:0	12	v
+op	88:31	0:0	12	->
+water	88:33	0:0	12	zz_8x8
+op	88:39	0:0	12	[
+water	88:40	0:0	12	2
+op	88:41	0:0	12	]
+op	88:42	0:0	12	[
+water	88:43	0:0	12	i
+op	88:44	0:0	12	++
+op	88:46	0:0	12	]
+op	88:47	0:0	12	]
+op	88:49	0:0	12	=
+water	88:51	0:0	12	value
+water	88:56	0:0	12	;
+else	89:20	90:56	10
+stmts	90:24	90:56	11	
+water	90:24	0:0	12	block
+op	90:29	0:0	12	[
+water	90:30	0:0	12	v
+op	90:31	0:0	12	->
+water	90:33	0:0	12	zz_8x8
+op	90:39	0:0	12	[
+water	90:40	0:0	12	3
+op	90:41	0:0	12	]
+op	90:42	0:0	12	[
+water	90:43	0:0	12	i
+op	90:44	0:0	12	++
+op	90:46	0:0	12	]
+op	90:47	0:0	12	]
+op	90:49	0:0	12	=
+water	90:51	0:0	12	value
+water	90:56	0:0	12	;
+water	91:16	0:0	10	}
+else	91:18	93:16	8
+stmts	91:23	93:16	9	
+water	91:23	0:0	10	{
+water	92:20	0:0	10	block
+op	92:25	0:0	10	[
+water	92:26	0:0	10	v
+op	92:27	0:0	10	->
+water	92:29	0:0	10	zzi_8x8
+op	92:36	0:0	10	[
+water	92:37	0:0	10	i
+op	92:38	0:0	10	++
+op	92:40	0:0	10	]
+op	92:41	0:0	10	]
+op	92:43	0:0	10	=
+water	92:45	0:0	10	value
+water	92:50	0:0	10	;
+water	93:16	0:0	10	}
+water	94:12	0:0	8	}
+water	95:8	0:0	6	}
+if	97:8	120:8	4	(use_pred)
+cond	97:12	97:12	5	use_pred
+water	97:12	0:0	6	use_pred
+stmts	97:22	120:8	5	
+water	97:22	0:0	6	{
+if	99:12	111:12	6	(q2 && q1 != q2)
+cond	99:16	99:28	7	q2 && q1 != q2
+water	99:16	0:0	8	q2
+op	99:19	0:0	8	&&
+water	99:22	0:0	8	q1
+op	99:25	0:0	8	!=
+water	99:28	0:0	8	q2
+stmts	99:32	111:12	7	
+water	99:32	0:0	8	{
+water	100:16	0:0	8	q1
+op	100:19	0:0	8	=
+water	100:21	0:0	8	q1
+op	100:24	0:0	8	*
+water	100:26	0:0	8	2
+op	100:28	0:0	8	+
+water	100:30	0:0	8	(
+water	100:31	0:0	8	(
+water	100:32	0:0	8	q1
+op	100:35	0:0	8	==
+water	100:38	0:0	8	v
+op	100:39	0:0	8	->
+water	100:41	0:0	8	pq
+water	100:43	0:0	8	)
+water	100:45	0:0	8	?
+water	100:47	0:0	8	v
+op	100:48	0:0	8	->
+water	100:50	0:0	8	halfpq
+water	100:57	0:0	8	:
+water	100:59	0:0	8	0
+water	100:60	0:0	8	)
+op	100:62	0:0	8	-
+water	100:64	0:0	8	1
+water	100:65	0:0	8	;
+water	101:16	0:0	8	q2
+op	101:19	0:0	8	=
+water	101:21	0:0	8	q2
+op	101:24	0:0	8	*
+water	101:26	0:0	8	2
+op	101:28	0:0	8	+
+water	101:30	0:0	8	(
+water	101:31	0:0	8	(
+water	101:32	0:0	8	q2
+op	101:35	0:0	8	==
+water	101:38	0:0	8	v
+op	101:39	0:0	8	->
+water	101:41	0:0	8	pq
+water	101:43	0:0	8	)
+water	101:45	0:0	8	?
+water	101:47	0:0	8	v
+op	101:48	0:0	8	->
+water	101:50	0:0	8	halfpq
+water	101:57	0:0	8	:
+water	101:59	0:0	8	0
+water	101:60	0:0	8	)
+op	101:62	0:0	8	-
+water	101:64	0:0	8	1
+water	101:65	0:0	8	;
+if	102:16	103:46	8	(q1 < 1)
+cond	102:20	102:25	9	q1 < 1
+water	102:20	0:0	10	q1
+op	102:23	0:0	10	<
+water	102:25	0:0	10	1
+stmts	103:20	103:46	9	
+return	103:20	103:46	10	AVERROR_INVALIDDATA
+water	103:27	0:0	11	AVERROR_INVALIDDATA
+if	104:16	107:16	8	(dc_pred_dir)
+cond	104:20	104:20	9	dc_pred_dir
+water	104:20	0:0	10	dc_pred_dir
+stmts	104:33	107:16	9	
+water	104:33	0:0	10	{
+for	105:20	106:111	10	(k = 1 ;k < 8;k ++)
+forinit	105:25	105:30	11	k = 1 ;
+water	105:25	0:0	12	k
+op	105:27	0:0	12	=
+water	105:29	0:0	12	1
+water	105:30	0:0	12	;
+cond	105:32	105:36	11	k < 8
+water	105:32	0:0	12	k
+op	105:34	0:0	12	<
+water	105:36	0:0	12	8
+forexpr	105:39	105:40	11	k ++
+water	105:39	0:0	12	k
+op	105:40	0:0	12	++
+stmts	106:24	106:111	11	
+water	106:24	0:0	12	block
+op	106:29	0:0	12	[
+water	106:30	0:0	12	k
+op	106:32	0:0	12	<<
+water	106:35	0:0	12	v
+op	106:36	0:0	12	->
+water	106:38	0:0	12	left_blk_sh
+op	106:49	0:0	12	]
+op	106:51	0:0	12	+=
+water	106:54	0:0	12	(
+water	106:55	0:0	12	ac_val
+op	106:61	0:0	12	[
+water	106:62	0:0	12	k
+op	106:63	0:0	12	]
+op	106:65	0:0	12	*
+water	106:67	0:0	12	q2
+op	106:70	0:0	12	*
+water	106:72	0:0	12	ff_vc1_dqscale
+op	106:86	0:0	12	[
+water	106:87	0:0	12	q1
+op	106:90	0:0	12	-
+water	106:92	0:0	12	1
+op	106:93	0:0	12	]
+op	106:95	0:0	12	+
+water	106:97	0:0	12	0
+water	106:98	0:0	12	x20000
+water	106:104	0:0	12	)
+op	106:106	0:0	12	>>
+water	106:109	0:0	12	18
+water	106:111	0:0	12	;
+water	107:16	0:0	10	}
+else	107:18	110:16	8
+stmts	107:23	110:16	9	
+water	107:23	0:0	10	{
+for	108:20	109:114	10	(k = 1 ;k < 8;k ++)
+forinit	108:25	108:30	11	k = 1 ;
+water	108:25	0:0	12	k
+op	108:27	0:0	12	=
+water	108:29	0:0	12	1
+water	108:30	0:0	12	;
+cond	108:32	108:36	11	k < 8
+water	108:32	0:0	12	k
+op	108:34	0:0	12	<
+water	108:36	0:0	12	8
+forexpr	108:39	108:40	11	k ++
+water	108:39	0:0	12	k
+op	108:40	0:0	12	++
+stmts	109:24	109:114	11	
+water	109:24	0:0	12	block
+op	109:29	0:0	12	[
+water	109:30	0:0	12	k
+op	109:32	0:0	12	<<
+water	109:35	0:0	12	v
+op	109:36	0:0	12	->
+water	109:38	0:0	12	top_blk_sh
+op	109:48	0:0	12	]
+op	109:50	0:0	12	+=
+water	109:53	0:0	12	(
+water	109:54	0:0	12	ac_val
+op	109:60	0:0	12	[
+water	109:61	0:0	12	k
+op	109:63	0:0	12	+
+water	109:65	0:0	12	8
+op	109:66	0:0	12	]
+op	109:68	0:0	12	*
+water	109:70	0:0	12	q2
+op	109:73	0:0	12	*
+water	109:75	0:0	12	ff_vc1_dqscale
+op	109:89	0:0	12	[
+water	109:90	0:0	12	q1
+op	109:93	0:0	12	-
+water	109:95	0:0	12	1
+op	109:96	0:0	12	]
+op	109:98	0:0	12	+
+water	109:100	0:0	12	0
+water	109:101	0:0	12	x20000
+water	109:107	0:0	12	)
+op	109:109	0:0	12	>>
+water	109:112	0:0	12	18
+water	109:114	0:0	12	;
+water	110:16	0:0	10	}
+water	111:12	0:0	8	}
+else	111:14	119:12	6
+stmts	111:19	119:12	7	
+water	111:19	0:0	8	{
+if	112:16	115:16	8	(dc_pred_dir)
+cond	112:20	112:20	9	dc_pred_dir
+water	112:20	0:0	10	dc_pred_dir
+stmts	112:33	115:16	9	
+water	112:33	0:0	10	{
+for	113:20	114:63	10	(k = 1 ;k < 8;k ++)
+forinit	113:25	113:30	11	k = 1 ;
+water	113:25	0:0	12	k
+op	113:27	0:0	12	=
+water	113:29	0:0	12	1
+water	113:30	0:0	12	;
+cond	113:32	113:36	11	k < 8
+water	113:32	0:0	12	k
+op	113:34	0:0	12	<
+water	113:36	0:0	12	8
+forexpr	113:39	113:40	11	k ++
+water	113:39	0:0	12	k
+op	113:40	0:0	12	++
+stmts	114:24	114:63	11	
+water	114:24	0:0	12	block
+op	114:29	0:0	12	[
+water	114:30	0:0	12	k
+op	114:32	0:0	12	<<
+water	114:35	0:0	12	v
+op	114:36	0:0	12	->
+water	114:38	0:0	12	left_blk_sh
+op	114:49	0:0	12	]
+op	114:51	0:0	12	+=
+water	114:54	0:0	12	ac_val
+op	114:60	0:0	12	[
+water	114:61	0:0	12	k
+op	114:62	0:0	12	]
+water	114:63	0:0	12	;
+water	115:16	0:0	10	}
+else	115:18	118:16	8
+stmts	115:23	118:16	9	
+water	115:23	0:0	10	{
+for	116:20	117:66	10	(k = 1 ;k < 8;k ++)
+forinit	116:25	116:30	11	k = 1 ;
+water	116:25	0:0	12	k
+op	116:27	0:0	12	=
+water	116:29	0:0	12	1
+water	116:30	0:0	12	;
+cond	116:32	116:36	11	k < 8
+water	116:32	0:0	12	k
+op	116:34	0:0	12	<
+water	116:36	0:0	12	8
+forexpr	116:39	116:40	11	k ++
+water	116:39	0:0	12	k
+op	116:40	0:0	12	++
+stmts	117:24	117:66	11	
+water	117:24	0:0	12	block
+op	117:29	0:0	12	[
+water	117:30	0:0	12	k
+op	117:32	0:0	12	<<
+water	117:35	0:0	12	v
+op	117:36	0:0	12	->
+water	117:38	0:0	12	top_blk_sh
+op	117:48	0:0	12	]
+op	117:50	0:0	12	+=
+water	117:53	0:0	12	ac_val
+op	117:59	0:0	12	[
+water	117:60	0:0	12	k
+op	117:62	0:0	12	+
+water	117:64	0:0	12	8
+op	117:65	0:0	12	]
+water	117:66	0:0	12	;
+water	118:16	0:0	10	}
+water	119:12	0:0	8	}
+water	120:8	0:0	6	}
+for	122:8	125:8	4	(k = 1 ;k < 8;k ++)
+forinit	122:13	122:18	5	k = 1 ;
+water	122:13	0:0	6	k
+op	122:15	0:0	6	=
+water	122:17	0:0	6	1
+water	122:18	0:0	6	;
+cond	122:20	122:24	5	k < 8
+water	122:20	0:0	6	k
+op	122:22	0:0	6	<
+water	122:24	0:0	6	8
+forexpr	122:27	122:28	5	k ++
+water	122:27	0:0	6	k
+op	122:28	0:0	6	++
+stmts	122:32	125:8	5	
+water	122:32	0:0	6	{
+water	123:12	0:0	6	ac_val2
+op	123:19	0:0	6	[
+water	123:20	0:0	6	k
+op	123:25	0:0	6	]
+op	123:27	0:0	6	=
+water	123:29	0:0	6	block
+op	123:34	0:0	6	[
+water	123:35	0:0	6	k
+op	123:37	0:0	6	<<
+water	123:40	0:0	6	v
+op	123:41	0:0	6	->
+water	123:43	0:0	6	left_blk_sh
+op	123:54	0:0	6	]
+water	123:55	0:0	6	;
+water	124:12	0:0	6	ac_val2
+op	124:19	0:0	6	[
+water	124:20	0:0	6	k
+op	124:22	0:0	6	+
+water	124:24	0:0	6	8
+op	124:25	0:0	6	]
+op	124:27	0:0	6	=
+water	124:29	0:0	6	block
+op	124:34	0:0	6	[
+water	124:35	0:0	6	k
+op	124:37	0:0	6	<<
+water	124:40	0:0	6	v
+op	124:41	0:0	6	->
+water	124:43	0:0	6	top_blk_sh
+op	124:53	0:0	6	]
+water	124:54	0:0	6	;
+water	125:8	0:0	6	}
+for	127:8	132:12	4	(k = 1 ;k < 64;k ++)
+forinit	127:13	127:18	5	k = 1 ;
+water	127:13	0:0	6	k
+op	127:15	0:0	6	=
+water	127:17	0:0	6	1
+water	127:18	0:0	6	;
+cond	127:20	127:24	5	k < 64
+water	127:20	0:0	6	k
+op	127:22	0:0	6	<
+water	127:24	0:0	6	64
+forexpr	127:28	127:29	5	k ++
+water	127:28	0:0	6	k
+op	127:29	0:0	6	++
+stmts	128:12	132:12	5	
+if	128:12	132:12	6	(block [ k ])
+cond	128:16	128:23	7	block [ k ]
+water	128:16	0:0	8	block
+op	128:21	0:0	8	[
+water	128:22	0:0	8	k
+op	128:23	0:0	8	]
+stmts	128:26	132:12	7	
+water	128:26	0:0	8	{
+water	129:16	0:0	8	block
+op	129:21	0:0	8	[
+water	129:22	0:0	8	k
+op	129:23	0:0	8	]
+op	129:25	0:0	8	*=
+water	129:28	0:0	8	scale
+water	129:33	0:0	8	;
+if	130:16	131:65	8	(! v -> pquantizer)
+cond	130:20	130:24	9	! v -> pquantizer
+op	130:20	0:0	10	!
+water	130:21	0:0	10	v
+op	130:22	0:0	10	->
+water	130:24	0:0	10	pquantizer
+stmts	131:20	131:65	9	
+water	131:20	0:0	10	block
+op	131:25	0:0	10	[
+water	131:26	0:0	10	k
+op	131:27	0:0	10	]
+op	131:29	0:0	10	+=
+water	131:32	0:0	10	(
+water	131:33	0:0	10	block
+op	131:38	0:0	10	[
+water	131:39	0:0	10	k
+op	131:40	0:0	10	]
+op	131:42	0:0	10	<
+water	131:44	0:0	10	0
+water	131:45	0:0	10	)
+water	131:47	0:0	10	?
+op	131:49	0:0	10	-
+water	131:50	0:0	10	mquant
+water	131:57	0:0	10	:
+water	131:59	0:0	10	mquant
+water	131:65	0:0	10	;
+water	132:12	0:0	8	}
+if	133:8	133:28	4	(use_pred)
+cond	133:12	133:12	5	use_pred
+water	133:12	0:0	6	use_pred
+stmts	133:22	133:28	5	
+water	133:22	0:0	6	i
+op	133:24	0:0	6	=
+water	133:26	0:0	6	63
+water	133:28	0:0	6	;
+water	134:4	0:0	4	}
+else	134:6	179:4	2
+stmts	134:11	179:4	3	
+water	134:11	0:0	4	{
+decl	135:8	135:13	4	int	k
+call	136:8	136:33	4	memset
+arg	136:15	136:22	5	ac_val2
+water	136:15	0:0	6	ac_val2
+arg	136:24	136:25	5	0
+water	136:24	0:0	6	0
+arg	136:27	136:33	5	16*2
+water	136:27	0:0	6	16
+op	136:30	0:0	6	*
+water	136:32	0:0	6	2
+water	136:34	0:0	4	;
+if	137:8	149:8	4	(dc_pred_dir)
+cond	137:12	137:12	5	dc_pred_dir
+water	137:12	0:0	6	dc_pred_dir
+stmts	137:25	149:8	5	
+water	137:25	0:0	6	{
+if	138:12	148:12	6	(use_pred)
+cond	138:16	138:16	7	use_pred
+water	138:16	0:0	8	use_pred
+stmts	138:26	148:12	7	
+water	138:26	0:0	8	{
+call	139:16	139:45	8	memcpy
+arg	139:23	139:30	9	ac_val2
+water	139:23	0:0	10	ac_val2
+arg	139:32	139:38	9	ac_val
+water	139:32	0:0	10	ac_val
+arg	139:40	139:45	9	8*2
+water	139:40	0:0	10	8
+op	139:42	0:0	10	*
+water	139:44	0:0	10	2
+water	139:46	0:0	8	;
+if	140:16	147:16	8	(q2 && q1 != q2)
+cond	140:20	140:32	9	q2 && q1 != q2
+water	140:20	0:0	10	q2
+op	140:23	0:0	10	&&
+water	140:26	0:0	10	q1
+op	140:29	0:0	10	!=
+water	140:32	0:0	10	q2
+stmts	140:36	147:16	9	
+water	140:36	0:0	10	{
+water	141:20	0:0	10	q1
+op	141:23	0:0	10	=
+water	141:25	0:0	10	q1
+op	141:28	0:0	10	*
+water	141:30	0:0	10	2
+op	141:32	0:0	10	+
+water	141:34	0:0	10	(
+water	141:35	0:0	10	(
+water	141:36	0:0	10	q1
+op	141:39	0:0	10	==
+water	141:42	0:0	10	v
+op	141:43	0:0	10	->
+water	141:45	0:0	10	pq
+water	141:47	0:0	10	)
+water	141:49	0:0	10	?
+water	141:51	0:0	10	v
+op	141:52	0:0	10	->
+water	141:54	0:0	10	halfpq
+water	141:61	0:0	10	:
+water	141:63	0:0	10	0
+water	141:64	0:0	10	)
+op	141:66	0:0	10	-
+water	141:68	0:0	10	1
+water	141:69	0:0	10	;
+water	142:20	0:0	10	q2
+op	142:23	0:0	10	=
+water	142:25	0:0	10	q2
+op	142:28	0:0	10	*
+water	142:30	0:0	10	2
+op	142:32	0:0	10	+
+water	142:34	0:0	10	(
+water	142:35	0:0	10	(
+water	142:36	0:0	10	q2
+op	142:39	0:0	10	==
+water	142:42	0:0	10	v
+op	142:43	0:0	10	->
+water	142:45	0:0	10	pq
+water	142:47	0:0	10	)
+water	142:49	0:0	10	?
+water	142:51	0:0	10	v
+op	142:52	0:0	10	->
+water	142:54	0:0	10	halfpq
+water	142:61	0:0	10	:
+water	142:63	0:0	10	0
+water	142:64	0:0	10	)
+op	142:66	0:0	10	-
+water	142:68	0:0	10	1
+water	142:69	0:0	10	;
+if	143:20	144:50	10	(q1 < 1)
+cond	143:24	143:29	11	q1 < 1
+water	143:24	0:0	12	q1
+op	143:27	0:0	12	<
+water	143:29	0:0	12	1
+stmts	144:24	144:50	11	
+return	144:24	144:50	12	AVERROR_INVALIDDATA
+water	144:31	0:0	13	AVERROR_INVALIDDATA
+for	145:20	146:95	10	(k = 1 ;k < 8;k ++)
+forinit	145:25	145:30	11	k = 1 ;
+water	145:25	0:0	12	k
+op	145:27	0:0	12	=
+water	145:29	0:0	12	1
+water	145:30	0:0	12	;
+cond	145:32	145:36	11	k < 8
+water	145:32	0:0	12	k
+op	145:34	0:0	12	<
+water	145:36	0:0	12	8
+forexpr	145:39	145:40	11	k ++
+water	145:39	0:0	12	k
+op	145:40	0:0	12	++
+stmts	146:24	146:95	11	
+water	146:24	0:0	12	ac_val2
+op	146:31	0:0	12	[
+water	146:32	0:0	12	k
+op	146:33	0:0	12	]
+op	146:35	0:0	12	=
+water	146:37	0:0	12	(
+water	146:38	0:0	12	ac_val2
+op	146:45	0:0	12	[
+water	146:46	0:0	12	k
+op	146:47	0:0	12	]
+op	146:49	0:0	12	*
+water	146:51	0:0	12	q2
+op	146:54	0:0	12	*
+water	146:56	0:0	12	ff_vc1_dqscale
+op	146:70	0:0	12	[
+water	146:71	0:0	12	q1
+op	146:74	0:0	12	-
+water	146:76	0:0	12	1
+op	146:77	0:0	12	]
+op	146:79	0:0	12	+
+water	146:81	0:0	12	0
+water	146:82	0:0	12	x20000
+water	146:88	0:0	12	)
+op	146:90	0:0	12	>>
+water	146:93	0:0	12	18
+water	146:95	0:0	12	;
+water	147:16	0:0	10	}
+water	148:12	0:0	8	}
+water	149:8	0:0	6	}
+else	149:10	161:8	4
+stmts	149:15	161:8	5	
+water	149:15	0:0	6	{
+if	150:12	160:12	6	(use_pred)
+cond	150:16	150:16	7	use_pred
+water	150:16	0:0	8	use_pred
+stmts	150:26	160:12	7	
+water	150:26	0:0	8	{
+call	151:16	151:53	8	memcpy
+arg	151:23	151:34	9	ac_val2+8
+water	151:23	0:0	10	ac_val2
+op	151:31	0:0	10	+
+water	151:33	0:0	10	8
+arg	151:36	151:46	9	ac_val+8
+water	151:36	0:0	10	ac_val
+op	151:43	0:0	10	+
+water	151:45	0:0	10	8
+arg	151:48	151:53	9	8*2
+water	151:48	0:0	10	8
+op	151:50	0:0	10	*
+water	151:52	0:0	10	2
+water	151:54	0:0	8	;
+if	152:16	159:16	8	(q2 && q1 != q2)
+cond	152:20	152:32	9	q2 && q1 != q2
+water	152:20	0:0	10	q2
+op	152:23	0:0	10	&&
+water	152:26	0:0	10	q1
+op	152:29	0:0	10	!=
+water	152:32	0:0	10	q2
+stmts	152:36	159:16	9	
+water	152:36	0:0	10	{
+water	153:20	0:0	10	q1
+op	153:23	0:0	10	=
+water	153:25	0:0	10	q1
+op	153:28	0:0	10	*
+water	153:30	0:0	10	2
+op	153:32	0:0	10	+
+water	153:34	0:0	10	(
+water	153:35	0:0	10	(
+water	153:36	0:0	10	q1
+op	153:39	0:0	10	==
+water	153:42	0:0	10	v
+op	153:43	0:0	10	->
+water	153:45	0:0	10	pq
+water	153:47	0:0	10	)
+water	153:49	0:0	10	?
+water	153:51	0:0	10	v
+op	153:52	0:0	10	->
+water	153:54	0:0	10	halfpq
+water	153:61	0:0	10	:
+water	153:63	0:0	10	0
+water	153:64	0:0	10	)
+op	153:66	0:0	10	-
+water	153:68	0:0	10	1
+water	153:69	0:0	10	;
+water	154:20	0:0	10	q2
+op	154:23	0:0	10	=
+water	154:25	0:0	10	q2
+op	154:28	0:0	10	*
+water	154:30	0:0	10	2
+op	154:32	0:0	10	+
+water	154:34	0:0	10	(
+water	154:35	0:0	10	(
+water	154:36	0:0	10	q2
+op	154:39	0:0	10	==
+water	154:42	0:0	10	v
+op	154:43	0:0	10	->
+water	154:45	0:0	10	pq
+water	154:47	0:0	10	)
+water	154:49	0:0	10	?
+water	154:51	0:0	10	v
+op	154:52	0:0	10	->
+water	154:54	0:0	10	halfpq
+water	154:61	0:0	10	:
+water	154:63	0:0	10	0
+water	154:64	0:0	10	)
+op	154:66	0:0	10	-
+water	154:68	0:0	10	1
+water	154:69	0:0	10	;
+if	155:20	156:50	10	(q1 < 1)
+cond	155:24	155:29	11	q1 < 1
+water	155:24	0:0	12	q1
+op	155:27	0:0	12	<
+water	155:29	0:0	12	1
+stmts	156:24	156:50	11	
+return	156:24	156:50	12	AVERROR_INVALIDDATA
+water	156:31	0:0	13	AVERROR_INVALIDDATA
+for	157:20	158:103	10	(k = 1 ;k < 8;k ++)
+forinit	157:25	157:30	11	k = 1 ;
+water	157:25	0:0	12	k
+op	157:27	0:0	12	=
+water	157:29	0:0	12	1
+water	157:30	0:0	12	;
+cond	157:32	157:36	11	k < 8
+water	157:32	0:0	12	k
+op	157:34	0:0	12	<
+water	157:36	0:0	12	8
+forexpr	157:39	157:40	11	k ++
+water	157:39	0:0	12	k
+op	157:40	0:0	12	++
+stmts	158:24	158:103	11	
+water	158:24	0:0	12	ac_val2
+op	158:31	0:0	12	[
+water	158:32	0:0	12	k
+op	158:34	0:0	12	+
+water	158:36	0:0	12	8
+op	158:37	0:0	12	]
+op	158:39	0:0	12	=
+water	158:41	0:0	12	(
+water	158:42	0:0	12	ac_val2
+op	158:49	0:0	12	[
+water	158:50	0:0	12	k
+op	158:52	0:0	12	+
+water	158:54	0:0	12	8
+op	158:55	0:0	12	]
+op	158:57	0:0	12	*
+water	158:59	0:0	12	q2
+op	158:62	0:0	12	*
+water	158:64	0:0	12	ff_vc1_dqscale
+op	158:78	0:0	12	[
+water	158:79	0:0	12	q1
+op	158:82	0:0	12	-
+water	158:84	0:0	12	1
+op	158:85	0:0	12	]
+op	158:87	0:0	12	+
+water	158:89	0:0	12	0
+water	158:90	0:0	12	x20000
+water	158:96	0:0	12	)
+op	158:98	0:0	12	>>
+water	158:101	0:0	12	18
+water	158:103	0:0	12	;
+water	159:16	0:0	10	}
+water	160:12	0:0	8	}
+water	161:8	0:0	6	}
+if	163:8	178:8	4	(use_pred)
+cond	163:12	163:12	5	use_pred
+water	163:12	0:0	6	use_pred
+stmts	163:22	178:8	5	
+water	163:22	0:0	6	{
+if	164:12	170:12	6	(dc_pred_dir)
+cond	164:16	164:16	7	dc_pred_dir
+water	164:16	0:0	8	dc_pred_dir
+stmts	164:29	170:12	7	
+water	164:29	0:0	8	{
+for	165:16	169:16	8	(k = 1 ;k < 8;k ++)
+forinit	165:21	165:26	9	k = 1 ;
+water	165:21	0:0	10	k
+op	165:23	0:0	10	=
+water	165:25	0:0	10	1
+water	165:26	0:0	10	;
+cond	165:28	165:32	9	k < 8
+water	165:28	0:0	10	k
+op	165:30	0:0	10	<
+water	165:32	0:0	10	8
+forexpr	165:35	165:36	9	k ++
+water	165:35	0:0	10	k
+op	165:36	0:0	10	++
+stmts	165:40	169:16	9	
+water	165:40	0:0	10	{
+water	166:20	0:0	10	block
+op	166:25	0:0	10	[
+water	166:26	0:0	10	k
+op	166:28	0:0	10	<<
+water	166:31	0:0	10	v
+op	166:32	0:0	10	->
+water	166:34	0:0	10	left_blk_sh
+op	166:45	0:0	10	]
+op	166:47	0:0	10	=
+water	166:49	0:0	10	ac_val2
+op	166:56	0:0	10	[
+water	166:57	0:0	10	k
+op	166:58	0:0	10	]
+op	166:60	0:0	10	*
+water	166:62	0:0	10	scale
+water	166:67	0:0	10	;
+if	167:20	168:105	10	(! v -> pquantizer && block [ k << v -> left_blk_sh ])
+cond	167:24	167:67	11	! v -> pquantizer && block [ k << v -> left_blk_sh ]
+op	167:24	0:0	12	!
+water	167:25	0:0	12	v
+op	167:26	0:0	12	->
+water	167:28	0:0	12	pquantizer
+op	167:39	0:0	12	&&
+water	167:42	0:0	12	block
+op	167:47	0:0	12	[
+water	167:48	0:0	12	k
+op	167:50	0:0	12	<<
+water	167:53	0:0	12	v
+op	167:54	0:0	12	->
+water	167:56	0:0	12	left_blk_sh
+op	167:67	0:0	12	]
+stmts	168:24	168:105	11	
+water	168:24	0:0	12	block
+op	168:29	0:0	12	[
+water	168:30	0:0	12	k
+op	168:32	0:0	12	<<
+water	168:35	0:0	12	v
+op	168:36	0:0	12	->
+water	168:38	0:0	12	left_blk_sh
+op	168:49	0:0	12	]
+op	168:51	0:0	12	+=
+water	168:54	0:0	12	(
+water	168:55	0:0	12	block
+op	168:60	0:0	12	[
+water	168:61	0:0	12	k
+op	168:63	0:0	12	<<
+water	168:66	0:0	12	v
+op	168:67	0:0	12	->
+water	168:69	0:0	12	left_blk_sh
+op	168:80	0:0	12	]
+op	168:82	0:0	12	<
+water	168:84	0:0	12	0
+water	168:85	0:0	12	)
+water	168:87	0:0	12	?
+op	168:89	0:0	12	-
+water	168:90	0:0	12	mquant
+water	168:97	0:0	12	:
+water	168:99	0:0	12	mquant
+water	168:105	0:0	12	;
+water	169:16	0:0	10	}
+water	170:12	0:0	8	}
+else	170:14	176:12	6
+stmts	170:19	176:12	7	
+water	170:19	0:0	8	{
+for	171:16	175:16	8	(k = 1 ;k < 8;k ++)
+forinit	171:21	171:26	9	k = 1 ;
+water	171:21	0:0	10	k
+op	171:23	0:0	10	=
+water	171:25	0:0	10	1
+water	171:26	0:0	10	;
+cond	171:28	171:32	9	k < 8
+water	171:28	0:0	10	k
+op	171:30	0:0	10	<
+water	171:32	0:0	10	8
+forexpr	171:35	171:36	9	k ++
+water	171:35	0:0	10	k
+op	171:36	0:0	10	++
+stmts	171:40	175:16	9	
+water	171:40	0:0	10	{
+water	172:20	0:0	10	block
+op	172:25	0:0	10	[
+water	172:26	0:0	10	k
+op	172:28	0:0	10	<<
+water	172:31	0:0	10	v
+op	172:32	0:0	10	->
+water	172:34	0:0	10	top_blk_sh
+op	172:44	0:0	10	]
+op	172:46	0:0	10	=
+water	172:48	0:0	10	ac_val2
+op	172:55	0:0	10	[
+water	172:56	0:0	10	k
+op	172:58	0:0	10	+
+water	172:60	0:0	10	8
+op	172:61	0:0	10	]
+op	172:63	0:0	10	*
+water	172:65	0:0	10	scale
+water	172:70	0:0	10	;
+if	173:20	174:103	10	(! v -> pquantizer && block [ k << v -> top_blk_sh ])
+cond	173:24	173:66	11	! v -> pquantizer && block [ k << v -> top_blk_sh ]
+op	173:24	0:0	12	!
+water	173:25	0:0	12	v
+op	173:26	0:0	12	->
+water	173:28	0:0	12	pquantizer
+op	173:39	0:0	12	&&
+water	173:42	0:0	12	block
+op	173:47	0:0	12	[
+water	173:48	0:0	12	k
+op	173:50	0:0	12	<<
+water	173:53	0:0	12	v
+op	173:54	0:0	12	->
+water	173:56	0:0	12	top_blk_sh
+op	173:66	0:0	12	]
+stmts	174:24	174:103	11	
+water	174:24	0:0	12	block
+op	174:29	0:0	12	[
+water	174:30	0:0	12	k
+op	174:32	0:0	12	<<
+water	174:35	0:0	12	v
+op	174:36	0:0	12	->
+water	174:38	0:0	12	top_blk_sh
+op	174:48	0:0	12	]
+op	174:50	0:0	12	+=
+water	174:53	0:0	12	(
+water	174:54	0:0	12	block
+op	174:59	0:0	12	[
+water	174:60	0:0	12	k
+op	174:62	0:0	12	<<
+water	174:65	0:0	12	v
+op	174:66	0:0	12	->
+water	174:68	0:0	12	top_blk_sh
+op	174:78	0:0	12	]
+op	174:80	0:0	12	<
+water	174:82	0:0	12	0
+water	174:83	0:0	12	)
+water	174:85	0:0	12	?
+op	174:87	0:0	12	-
+water	174:88	0:0	12	mquant
+water	174:95	0:0	12	:
+water	174:97	0:0	12	mquant
+water	174:103	0:0	12	;
+water	175:16	0:0	10	}
+water	176:12	0:0	8	}
+water	177:12	0:0	6	i
+op	177:14	0:0	6	=
+water	177:16	0:0	6	63
+water	177:18	0:0	6	;
+water	178:8	0:0	6	}
+water	179:4	0:0	4	}
+water	180:4	0:0	2	s
+op	180:5	0:0	2	->
+water	180:7	0:0	2	block_last_index
+op	180:23	0:0	2	[
+water	180:24	0:0	2	n
+op	180:25	0:0	2	]
+op	180:27	0:0	2	=
+water	180:29	0:0	2	i
+water	180:30	0:0	2	;
+return	181:4	181:12	2	0
+water	181:11	0:0	3	0

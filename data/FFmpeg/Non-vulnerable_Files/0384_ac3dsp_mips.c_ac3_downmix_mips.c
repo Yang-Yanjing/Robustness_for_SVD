@@ -1,0 +1,116 @@
+static void ac3_downmix_mips(float **samples, float (*matrix)[2],
+                          int out_ch, int in_ch, int len)
+{
+    int i, j, i1, i2, i3;
+    float v0, v1, v2, v3;
+    float v4, v5, v6, v7;
+    float samples0, samples1, samples2, samples3, matrix_j, matrix_j2;
+    float *samples_p, *samples_sw, *matrix_p, **samples_x, **samples_end;
+    __asm__ volatile(
+        ".set   push                                                \n\t"
+        ".set   noreorder                                           \n\t"
+        "li     %[i1],          2                                   \n\t"
+        "sll    %[len],         2                                   \n\t"
+        "move   %[i],           $zero                               \n\t"
+        "sll    %[j],           %[in_ch],             " PTRLOG "    \n\t"
+        "bne    %[out_ch],      %[i1],                  3f          \n\t"   
+        " li    %[i2],          1                                   \n\t"
+        "2:                                                         \n\t"   
+        "move   %[matrix_p],    %[matrix]                           \n\t"
+        "move   %[samples_x],   %[samples]                          \n\t"
+        "mtc1   $zero,          %[v0]                               \n\t"
+        "mtc1   $zero,          %[v1]                               \n\t"
+        "mtc1   $zero,          %[v2]                               \n\t"
+        "mtc1   $zero,          %[v3]                               \n\t"
+        "mtc1   $zero,          %[v4]                               \n\t"
+        "mtc1   $zero,          %[v5]                               \n\t"
+        "mtc1   $zero,          %[v6]                               \n\t"
+        "mtc1   $zero,          %[v7]                               \n\t"
+        "addiu  %[i1],          %[i],                  4            \n\t"
+        "addiu  %[i2],          %[i],                  8            \n\t"
+        PTR_L " %[samples_p],   0(%[samples_x])                     \n\t"
+        "addiu  %[i3],          %[i],                  12           \n\t"
+        PTR_ADDU "%[samples_end],%[samples_x],         %[j]         \n\t"
+        "move   %[samples_sw],  %[samples_p]                        \n\t"
+        "1:                                                         \n\t"   
+        "lwc1   %[matrix_j],    0(%[matrix_p])                      \n\t"
+        "lwc1   %[matrix_j2],   4(%[matrix_p])                      \n\t"
+        "lwxc1  %[samples0],    %[i](%[samples_p])                  \n\t"
+        "lwxc1  %[samples1],    %[i1](%[samples_p])                 \n\t"
+        "lwxc1  %[samples2],    %[i2](%[samples_p])                 \n\t"
+        "lwxc1  %[samples3],    %[i3](%[samples_p])                 \n\t"
+        PTR_ADDIU "%[matrix_p], 8                                   \n\t"
+        PTR_ADDIU "%[samples_x]," PTRSIZE "                         \n\t"
+        "madd.s %[v0],          %[v0],  %[samples0],    %[matrix_j] \n\t"
+        "madd.s %[v1],          %[v1],  %[samples1],    %[matrix_j] \n\t"
+        "madd.s %[v2],          %[v2],  %[samples2],    %[matrix_j] \n\t"
+        "madd.s %[v3],          %[v3],  %[samples3],    %[matrix_j] \n\t"
+        "madd.s %[v4],          %[v4],  %[samples0],    %[matrix_j2]\n\t"
+        "madd.s %[v5],          %[v5],  %[samples1],    %[matrix_j2]\n\t"
+        "madd.s %[v6],          %[v6],  %[samples2],    %[matrix_j2]\n\t"
+        "madd.s %[v7],          %[v7],  %[samples3],    %[matrix_j2]\n\t"
+        "bne    %[samples_x],   %[samples_end],         1b          \n\t"
+        PTR_L " %[samples_p],   0(%[samples_x])                     \n\t"
+        PTR_L " %[samples_p],  " PTRSIZE "(%[samples])              \n\t"
+        "swxc1  %[v0],          %[i](%[samples_sw])                 \n\t"
+        "swxc1  %[v1],          %[i1](%[samples_sw])                \n\t"
+        "swxc1  %[v2],          %[i2](%[samples_sw])                \n\t"
+        "swxc1  %[v3],          %[i3](%[samples_sw])                \n\t"
+        "swxc1  %[v4],          %[i](%[samples_p])                  \n\t"
+        "addiu  %[i],           16                                  \n\t"
+        "swxc1  %[v5],          %[i1](%[samples_p])                 \n\t"
+        "swxc1  %[v6],          %[i2](%[samples_p])                 \n\t"
+        "bne    %[i],           %[len],                 2b          \n\t"
+        " swxc1 %[v7],          %[i3](%[samples_p])                 \n\t"
+        "3:                                                         \n\t"
+        "bne    %[out_ch],      %[i2],                  6f          \n\t"   
+        " nop                                                       \n\t"
+        "5:                                                         \n\t"   
+        "move   %[matrix_p],    %[matrix]                           \n\t"
+        "move   %[samples_x],   %[samples]                          \n\t"
+        "mtc1   $zero,          %[v0]                               \n\t"
+        "mtc1   $zero,          %[v1]                               \n\t"
+        "mtc1   $zero,          %[v2]                               \n\t"
+        "mtc1   $zero,          %[v3]                               \n\t"
+        "addiu  %[i1],          %[i],                  4            \n\t"
+        "addiu  %[i2],          %[i],                  8            \n\t"
+        PTR_L " %[samples_p],   0(%[samples_x])                     \n\t"
+        "addiu  %[i3],          %[i],                  12           \n\t"
+        PTR_ADDU "%[samples_end],%[samples_x],         %[j]         \n\t"
+        "move   %[samples_sw],  %[samples_p]                        \n\t"
+        "4:                                                         \n\t"   
+        "lwc1   %[matrix_j],    0(%[matrix_p])                      \n\t"
+        "lwxc1  %[samples0],    %[i](%[samples_p])                  \n\t"
+        "lwxc1  %[samples1],    %[i1](%[samples_p])                 \n\t"
+        "lwxc1  %[samples2],    %[i2](%[samples_p])                 \n\t"
+        "lwxc1  %[samples3],    %[i3](%[samples_p])                 \n\t"
+        PTR_ADDIU "%[matrix_p], 8                                   \n\t"
+        PTR_ADDIU "%[samples_x]," PTRSIZE "                         \n\t"
+        "madd.s %[v0],          %[v0],  %[samples0],    %[matrix_j] \n\t"
+        "madd.s %[v1],          %[v1],  %[samples1],    %[matrix_j] \n\t"
+        "madd.s %[v2],          %[v2],  %[samples2],    %[matrix_j] \n\t"
+        "madd.s %[v3],          %[v3],  %[samples3],    %[matrix_j] \n\t"
+        "bne    %[samples_x],   %[samples_end],         4b          \n\t"
+        PTR_L " %[samples_p],   0(%[samples_x])                     \n\t"
+        "swxc1  %[v0],          %[i](%[samples_sw])                 \n\t"
+        "addiu  %[i],           16                                  \n\t"
+        "swxc1  %[v1],          %[i1](%[samples_sw])                \n\t"
+        "swxc1  %[v2],          %[i2](%[samples_sw])                \n\t"
+        "bne    %[i],           %[len],                 5b          \n\t"
+        " swxc1 %[v3],          %[i3](%[samples_sw])                \n\t"
+        "6:                                                         \n\t"
+        ".set   pop"
+        :[samples_p]"=&r"(samples_p), [matrix_j]"=&f"(matrix_j), [matrix_j2]"=&f"(matrix_j2),
+         [samples0]"=&f"(samples0), [samples1]"=&f"(samples1),
+         [samples2]"=&f"(samples2), [samples3]"=&f"(samples3),
+         [v0]"=&f"(v0), [v1]"=&f"(v1), [v2]"=&f"(v2), [v3]"=&f"(v3),
+         [v4]"=&f"(v4), [v5]"=&f"(v5), [v6]"=&f"(v6), [v7]"=&f"(v7),
+         [samples_x]"=&r"(samples_x), [matrix_p]"=&r"(matrix_p),
+         [samples_end]"=&r"(samples_end), [samples_sw]"=&r"(samples_sw),
+         [i1]"=&r"(i1), [i2]"=&r"(i2), [i3]"=&r"(i3), [i]"=&r"(i),
+         [j]"=&r"(j), [len]"+r"(len)
+        :[samples]"r"(samples), [matrix]"r"(matrix),
+         [in_ch]"r"(in_ch), [out_ch]"r"(out_ch)
+        :"memory"
+    );
+}

@@ -1,0 +1,169 @@
+func	1:0	26:0	0	static int	mxf_get_d10_aes3_packet
+params	1:34	0:0	1	
+param	1:35	1:50	2	AVIOContext *	pb
+param	1:52	1:64	2	AVStream *	st
+param	1:66	1:79	2	AVPacket *	pkt
+param	1:81	1:95	2	int64_t	length
+stmnts	0:0	25:12	1	
+decl	3:4	3:36	2	const uint8_t	*buf_ptr
+water	3:26	0:0	2	,
+decl	3:4	3:36	2	const uint8_t	*end_ptr
+decl	4:4	4:21	2	uint8_t	*data_ptr
+decl	5:4	5:9	2	int	i
+if	6:4	7:34	2	(length > 61444)
+cond	6:8	6:17	3	length > 61444
+water	6:8	0:0	4	length
+op	6:15	0:0	4	>
+water	6:17	0:0	4	61444
+stmts	7:8	7:34	3	
+return	7:8	7:34	4	AVERROR_INVALIDDATA
+water	7:15	0:0	5	AVERROR_INVALIDDATA
+water	8:4	0:0	2	length
+op	8:11	0:0	2	=
+call	8:13	8:42	2	av_get_packet
+arg	8:27	8:29	3	pb
+water	8:27	0:0	4	pb
+arg	8:31	8:34	3	pkt
+water	8:31	0:0	4	pkt
+arg	8:36	8:42	3	length
+water	8:36	0:0	4	length
+water	8:43	0:0	2	;
+if	9:4	10:21	2	(length < 0)
+cond	9:8	9:17	3	length < 0
+water	9:8	0:0	4	length
+op	9:15	0:0	4	<
+water	9:17	0:0	4	0
+stmts	10:8	10:21	3	
+return	10:8	10:21	4	length
+water	10:15	0:0	5	length
+water	11:4	0:0	2	data_ptr
+op	11:13	0:0	2	=
+water	11:15	0:0	2	pkt
+op	11:18	0:0	2	->
+water	11:20	0:0	2	data
+water	11:24	0:0	2	;
+water	12:4	0:0	2	end_ptr
+op	12:12	0:0	2	=
+water	12:14	0:0	2	pkt
+op	12:17	0:0	2	->
+water	12:19	0:0	2	data
+op	12:24	0:0	2	+
+water	12:26	0:0	2	length
+water	12:32	0:0	2	;
+water	13:4	0:0	2	buf_ptr
+op	13:12	0:0	2	=
+water	13:14	0:0	2	pkt
+op	13:17	0:0	2	->
+water	13:19	0:0	2	data
+op	13:24	0:0	2	+
+water	13:26	0:0	2	4
+water	13:27	0:0	2	;
+for	14:4	23:4	2	(;end_ptr - buf_ptr >= st -> codec -> channels * 4;)
+forinit	14:9	14:9	3	;
+water	14:9	0:0	4	;
+cond	14:11	14:54	3	end_ptr - buf_ptr >= st -> codec -> channels * 4
+water	14:11	0:0	4	end_ptr
+op	14:19	0:0	4	-
+water	14:21	0:0	4	buf_ptr
+op	14:29	0:0	4	>=
+water	14:32	0:0	4	st
+op	14:34	0:0	4	->
+water	14:36	0:0	4	codec
+op	14:41	0:0	4	->
+water	14:43	0:0	4	channels
+op	14:52	0:0	4	*
+water	14:54	0:0	4	4
+forexpr	0:0	0:0	3	
+stmts	14:59	23:4	3	
+water	14:59	0:0	4	{
+for	15:8	21:8	4	(i = 0 ;i < st -> codec -> channels;i ++)
+forinit	15:13	15:18	5	i = 0 ;
+water	15:13	0:0	6	i
+op	15:15	0:0	6	=
+water	15:17	0:0	6	0
+water	15:18	0:0	6	;
+cond	15:20	15:35	5	i < st -> codec -> channels
+water	15:20	0:0	6	i
+op	15:22	0:0	6	<
+water	15:24	0:0	6	st
+op	15:26	0:0	6	->
+water	15:28	0:0	6	codec
+op	15:33	0:0	6	->
+water	15:35	0:0	6	channels
+forexpr	15:45	15:46	5	i ++
+water	15:45	0:0	6	i
+op	15:46	0:0	6	++
+stmts	15:50	21:8	5	
+water	15:50	0:0	6	{
+decl	16:12	16:59	6	uint32_t	sample
+op	16:28	0:0	6	=
+call	16:30	16:58	7	bytestream_get_le32
+arg	16:50	16:58	8	&buf_ptr
+op	16:50	0:0	9	&
+water	16:51	0:0	9	buf_ptr
+if	17:12	18:72	6	(st -> codec -> bits_per_coded_sample == 24)
+cond	17:16	17:52	7	st -> codec -> bits_per_coded_sample == 24
+water	17:16	0:0	8	st
+op	17:18	0:0	8	->
+water	17:20	0:0	8	codec
+op	17:25	0:0	8	->
+water	17:27	0:0	8	bits_per_coded_sample
+op	17:49	0:0	8	==
+water	17:52	0:0	8	24
+stmts	18:16	18:72	7	
+call	18:16	18:71	8	bytestream_put_le24
+arg	18:36	18:45	9	&data_ptr
+op	18:36	0:0	10	&
+water	18:37	0:0	10	data_ptr
+arg	18:47	18:71	9	(sample>>4)&0xffffff
+water	18:47	0:0	10	(
+water	18:48	0:0	10	sample
+op	18:55	0:0	10	>>
+water	18:58	0:0	10	4
+water	18:59	0:0	10	)
+op	18:61	0:0	10	&
+water	18:63	0:0	10	0
+water	18:64	0:0	10	xffffff
+water	18:72	0:0	8	;
+else	19:12	20:71	6
+stmts	20:16	20:71	7	
+call	20:16	20:70	8	bytestream_put_le16
+arg	20:36	20:45	9	&data_ptr
+op	20:36	0:0	10	&
+water	20:37	0:0	10	data_ptr
+arg	20:47	20:70	9	(sample>>12)&0xffff
+water	20:47	0:0	10	(
+water	20:48	0:0	10	sample
+op	20:55	0:0	10	>>
+water	20:58	0:0	10	12
+water	20:60	0:0	10	)
+op	20:62	0:0	10	&
+water	20:64	0:0	10	0
+water	20:65	0:0	10	xffff
+water	20:71	0:0	8	;
+water	21:8	0:0	6	}
+water	22:8	0:0	4	buf_ptr
+op	22:16	0:0	4	+=
+water	22:19	0:0	4	32
+op	22:22	0:0	4	-
+water	22:24	0:0	4	st
+op	22:26	0:0	4	->
+water	22:28	0:0	4	codec
+op	22:33	0:0	4	->
+water	22:35	0:0	4	channels
+op	22:43	0:0	4	*
+water	22:44	0:0	4	4
+water	22:45	0:0	4	;
+water	23:4	0:0	4	}
+call	24:4	24:46	2	av_shrink_packet
+arg	24:21	24:24	3	pkt
+water	24:21	0:0	4	pkt
+arg	24:26	24:46	3	data_ptr-pkt->data
+water	24:26	0:0	4	data_ptr
+op	24:35	0:0	4	-
+water	24:37	0:0	4	pkt
+op	24:40	0:0	4	->
+water	24:42	0:0	4	data
+water	24:47	0:0	2	;
+return	25:4	25:12	2	0
+water	25:11	0:0	3	0

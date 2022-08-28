@@ -1,0 +1,243 @@
+func	1:0	51:0	0	static int	handle_notify
+params	1:24	0:0	1	
+param	1:25	1:38	2	URLContext *	s
+param	1:40	1:55	2	RTMPPacket *	pkt
+stmnts	0:0	50:41	1	
+decl	3:4	3:35	2	RTMPContext	*rt
+op	3:21	0:0	2	=
+water	3:23	0:0	2	s
+op	3:24	0:0	2	->
+water	3:26	0:0	2	priv_data
+decl	4:4	4:29	2	uint8_t	commandbuffer[64]
+decl	5:4	5:23	2	char	statusmsg[128]
+decl	6:4	6:32	2	int	stringlen
+water	6:17	0:0	2	,
+decl	6:4	6:32	2	int	ret
+water	6:22	0:0	2	,
+decl	6:4	6:32	2	int	skip
+op	6:29	0:0	2	=
+water	6:31	0:0	2	0
+decl	7:4	7:22	2	GetByteContext	gbc
+call	8:4	8:47	2	bytestream2_init
+arg	8:21	8:25	3	&gbc
+op	8:21	0:0	4	&
+water	8:22	0:0	4	gbc
+arg	8:27	8:36	3	pkt->data
+water	8:27	0:0	4	pkt
+op	8:30	0:0	4	->
+water	8:32	0:0	4	data
+arg	8:38	8:47	3	pkt->size
+water	8:38	0:0	4	pkt
+op	8:41	0:0	4	->
+water	8:43	0:0	4	size
+water	8:48	0:0	2	;
+if	9:4	11:34	2	(ff_amf_read_string (& gbc ,commandbuffer ,sizeof ( commandbuffer ) ,& stringlen ))
+cond	9:8	10:37	3	ff_amf_read_string (& gbc ,commandbuffer ,sizeof ( commandbuffer ) ,& stringlen )
+call	9:8	10:37	4	ff_amf_read_string
+arg	9:27	9:31	5	&gbc
+op	9:27	0:0	6	&
+water	9:28	0:0	6	gbc
+arg	9:33	9:46	5	commandbuffer
+water	9:33	0:0	6	commandbuffer
+arg	9:48	9:69	5	sizeof(commandbuffer)
+op	9:48	0:0	6	sizeof
+water	9:54	0:0	6	(
+water	9:55	0:0	6	commandbuffer
+water	9:68	0:0	6	)
+arg	10:27	10:37	5	&stringlen
+op	10:27	0:0	6	&
+water	10:28	0:0	6	stringlen
+stmts	11:8	11:34	3	
+return	11:8	11:34	4	AVERROR_INVALIDDATA
+water	11:15	0:0	5	AVERROR_INVALIDDATA
+if	12:4	41:4	2	(!strcmp (commandbuffer ,"onMetaData" ))
+cond	12:8	12:43	3	!strcmp (commandbuffer ,"onMetaData" )
+op	12:8	0:0	4	!
+call	12:9	12:43	4	strcmp
+arg	12:16	12:29	5	commandbuffer
+water	12:16	0:0	6	commandbuffer
+arg	12:31	12:43	5	"onMetaData"
+water	12:31	0:0	6	"onMetaData"
+stmts	12:46	41:4	3	
+water	12:46	0:0	4	{
+if	14:8	40:8	4	(bytestream2_get_byte (& gbc ) == AMF_DATA_TYPE_MIXEDARRAY)
+cond	14:12	14:42	5	bytestream2_get_byte (& gbc ) == AMF_DATA_TYPE_MIXEDARRAY
+call	14:12	14:37	6	bytestream2_get_byte
+arg	14:33	14:37	7	&gbc
+op	14:33	0:0	8	&
+water	14:34	0:0	8	gbc
+op	14:39	0:0	6	==
+water	14:42	0:0	6	AMF_DATA_TYPE_MIXEDARRAY
+stmts	14:68	40:8	5	
+water	14:68	0:0	6	{
+water	17:12	0:0	6	rt
+op	17:14	0:0	6	->
+water	17:16	0:0	6	received_metadata
+op	17:34	0:0	6	=
+water	17:36	0:0	6	1
+water	17:37	0:0	6	;
+call	19:12	19:36	6	bytestream2_skip
+arg	19:29	19:33	7	&gbc
+op	19:29	0:0	8	&
+water	19:30	0:0	8	gbc
+arg	19:35	19:36	7	4
+water	19:35	0:0	8	4
+water	19:37	0:0	6	;
+while	20:12	37:12	6	(bytestream2_get_bytes_left (& gbc ) > 3)
+cond	20:19	20:54	7	bytestream2_get_bytes_left (& gbc ) > 3
+call	20:19	20:50	8	bytestream2_get_bytes_left
+arg	20:46	20:50	9	&gbc
+op	20:46	0:0	10	&
+water	20:47	0:0	10	gbc
+op	20:52	0:0	8	>
+water	20:54	0:0	8	3
+stmts	20:57	37:12	7	
+water	20:57	0:0	8	{
+if	21:16	23:46	8	(ff_amf_get_string (& gbc ,statusmsg ,sizeof ( statusmsg ) ,& stringlen ))
+cond	21:20	22:48	9	ff_amf_get_string (& gbc ,statusmsg ,sizeof ( statusmsg ) ,& stringlen )
+call	21:20	22:48	10	ff_amf_get_string
+arg	21:38	21:42	11	&gbc
+op	21:38	0:0	12	&
+water	21:39	0:0	12	gbc
+arg	21:44	21:53	11	statusmsg
+water	21:44	0:0	12	statusmsg
+arg	21:55	21:72	11	sizeof(statusmsg)
+op	21:55	0:0	12	sizeof
+water	21:61	0:0	12	(
+water	21:62	0:0	12	statusmsg
+water	21:71	0:0	12	)
+arg	22:38	22:48	11	&stringlen
+op	22:38	0:0	12	&
+water	22:39	0:0	12	stringlen
+stmts	23:20	23:46	9	
+return	23:20	23:46	10	AVERROR_INVALIDDATA
+water	23:27	0:0	11	AVERROR_INVALIDDATA
+water	25:16	0:0	8	stringlen
+op	25:26	0:0	8	=
+call	25:28	25:70	8	ff_amf_tag_size
+arg	25:44	25:54	9	gbc.buffer
+water	25:44	0:0	10	gbc
+op	25:47	0:0	10	.
+water	25:48	0:0	10	buffer
+arg	25:56	25:70	9	gbc.buffer_end
+water	25:56	0:0	10	gbc
+op	25:59	0:0	10	.
+water	25:60	0:0	10	buffer_end
+water	25:71	0:0	8	;
+if	26:16	27:46	8	(stringlen < 0)
+cond	26:20	26:32	9	stringlen < 0
+water	26:20	0:0	10	stringlen
+op	26:30	0:0	10	<
+water	26:32	0:0	10	0
+stmts	27:20	27:46	9	
+return	27:20	27:46	10	AVERROR_INVALIDDATA
+water	27:27	0:0	11	AVERROR_INVALIDDATA
+call	28:16	28:48	8	bytestream2_skip
+arg	28:33	28:37	9	&gbc
+op	28:33	0:0	10	&
+water	28:34	0:0	10	gbc
+arg	28:39	28:48	9	stringlen
+water	28:39	0:0	10	stringlen
+water	28:49	0:0	8	;
+if	31:16	33:16	8	(!strcmp (statusmsg ,"videocodecid" ))
+cond	31:20	31:53	9	!strcmp (statusmsg ,"videocodecid" )
+op	31:20	0:0	10	!
+call	31:21	31:53	10	strcmp
+arg	31:28	31:37	11	statusmsg
+water	31:28	0:0	12	statusmsg
+arg	31:39	31:53	11	"videocodecid"
+water	31:39	0:0	12	"videocodecid"
+stmts	31:56	33:16	9	
+water	31:56	0:0	10	{
+water	32:20	0:0	10	rt
+op	32:22	0:0	10	->
+water	32:24	0:0	10	has_video
+op	32:34	0:0	10	=
+water	32:36	0:0	10	1
+water	32:37	0:0	10	;
+water	33:16	0:0	10	}
+if	34:16	36:16	8	(!strcmp (statusmsg ,"audiocodecid" ))
+cond	34:20	34:53	9	!strcmp (statusmsg ,"audiocodecid" )
+op	34:20	0:0	10	!
+call	34:21	34:53	10	strcmp
+arg	34:28	34:37	11	statusmsg
+water	34:28	0:0	12	statusmsg
+arg	34:39	34:53	11	"audiocodecid"
+water	34:39	0:0	12	"audiocodecid"
+stmts	34:56	36:16	9	
+water	34:56	0:0	10	{
+water	35:20	0:0	10	rt
+op	35:22	0:0	10	->
+water	35:24	0:0	10	has_audio
+op	35:34	0:0	10	=
+water	35:36	0:0	10	1
+water	35:37	0:0	10	;
+water	36:16	0:0	10	}
+water	37:12	0:0	8	}
+if	38:12	39:42	6	(bytestream2_get_be24 (& gbc ) != AMF_END_OF_OBJECT)
+cond	38:16	38:46	7	bytestream2_get_be24 (& gbc ) != AMF_END_OF_OBJECT
+call	38:16	38:41	8	bytestream2_get_be24
+arg	38:37	38:41	9	&gbc
+op	38:37	0:0	10	&
+water	38:38	0:0	10	gbc
+op	38:43	0:0	8	!=
+water	38:46	0:0	8	AMF_END_OF_OBJECT
+stmts	39:16	39:42	7	
+return	39:16	39:42	8	AVERROR_INVALIDDATA
+water	39:23	0:0	9	AVERROR_INVALIDDATA
+water	40:8	0:0	6	}
+water	41:4	0:0	4	}
+if	43:4	49:4	2	(!strcmp (commandbuffer ,"@setDataFrame" ))
+cond	43:8	43:46	3	!strcmp (commandbuffer ,"@setDataFrame" )
+op	43:8	0:0	4	!
+call	43:9	43:46	4	strcmp
+arg	43:16	43:29	5	commandbuffer
+water	43:16	0:0	6	commandbuffer
+arg	43:31	43:46	5	"@setDataFrame"
+water	43:31	0:0	6	"@setDataFrame"
+stmts	43:49	49:4	3	
+water	43:49	0:0	4	{
+water	44:8	0:0	4	skip
+op	44:13	0:0	4	=
+water	44:15	0:0	4	gbc
+op	44:18	0:0	4	.
+water	44:19	0:0	4	buffer
+op	44:26	0:0	4	-
+water	44:28	0:0	4	pkt
+op	44:31	0:0	4	->
+water	44:33	0:0	4	data
+water	44:37	0:0	4	;
+water	45:8	0:0	4	ret
+op	45:12	0:0	4	=
+call	45:14	46:62	4	ff_amf_read_string
+arg	45:33	45:37	5	&gbc
+op	45:33	0:0	6	&
+water	45:34	0:0	6	gbc
+arg	45:39	45:48	5	statusmsg
+water	45:39	0:0	6	statusmsg
+arg	46:33	46:50	5	sizeof(statusmsg)
+op	46:33	0:0	6	sizeof
+water	46:39	0:0	6	(
+water	46:40	0:0	6	statusmsg
+water	46:49	0:0	6	)
+arg	46:52	46:62	5	&stringlen
+op	46:52	0:0	6	&
+water	46:53	0:0	6	stringlen
+water	46:63	0:0	4	;
+if	47:8	48:38	4	(ret < 0)
+cond	47:12	47:18	5	ret < 0
+water	47:12	0:0	6	ret
+op	47:16	0:0	6	<
+water	47:18	0:0	6	0
+stmts	48:12	48:38	5	
+return	48:12	48:38	6	AVERROR_INVALIDDATA
+water	48:19	0:0	7	AVERROR_INVALIDDATA
+water	49:4	0:0	4	}
+return	50:4	50:41	2	append_flv_data(rt,pkt,skip)
+call	50:11	50:40	3	append_flv_data
+arg	50:27	50:29	4	rt
+water	50:27	0:0	5	rt
+arg	50:31	50:34	4	pkt
+water	50:31	0:0	5	pkt
+arg	50:36	50:40	4	skip
+water	50:36	0:0	5	skip

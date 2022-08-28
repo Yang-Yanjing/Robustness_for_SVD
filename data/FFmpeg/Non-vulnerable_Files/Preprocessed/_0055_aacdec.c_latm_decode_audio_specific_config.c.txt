@@ -1,0 +1,286 @@
+func	1:0	49:0	0	static int	latm_decode_audio_specific_config
+params	1:44	0:0	1	
+param	1:45	1:72	2	struct LATMContext *	latmctx
+param	2:45	2:62	2	GetBitContext *	gb
+param	2:64	2:74	2	int	asclen
+stmnts	0:0	48:24	1	
+decl	4:4	4:45	2	AACContext	*ac
+op	4:26	0:0	2	=
+op	4:28	0:0	2	&
+water	4:29	0:0	2	latmctx
+op	4:36	0:0	2	->
+water	4:38	0:0	2	aac_ctx
+decl	5:4	5:37	2	AVCodecContext	*avctx
+op	5:26	0:0	2	=
+water	5:28	0:0	2	ac
+op	5:30	0:0	2	->
+water	5:32	0:0	2	avctx
+decl	6:4	6:33	2	MPEG4AudioConfig	m4ac
+op	6:26	0:0	2	=
+water	6:28	0:0	2	{
+water	6:30	0:0	2	0
+water	6:32	0:0	2	}
+decl	7:4	7:46	2	int	config_start_bit
+op	7:26	0:0	2	=
+call	7:28	7:45	3	get_bits_count
+arg	7:43	7:45	4	gb
+water	7:43	0:0	5	gb
+decl	8:4	8:29	2	int	sync_extension
+op	8:26	0:0	2	=
+water	8:28	0:0	2	0
+decl	9:4	9:28	2	int	bits_consumed
+water	9:21	0:0	2	,
+decl	9:4	9:28	2	int	esize
+if	10:4	13:4	2	(asclen)
+cond	10:8	10:8	3	asclen
+water	10:8	0:0	4	asclen
+stmts	10:16	13:4	3	
+water	10:16	0:0	4	{
+water	11:8	0:0	4	sync_extension
+op	11:23	0:0	4	=
+water	11:25	0:0	4	1
+water	11:26	0:0	4	;
+water	12:8	0:0	4	asclen
+op	12:23	0:0	4	=
+call	12:25	12:56	4	FFMIN
+arg	12:31	12:37	5	asclen
+water	12:31	0:0	6	asclen
+arg	12:39	12:56	5	get_bits_left(gb)
+call	12:39	12:55	6	get_bits_left
+arg	12:53	12:55	7	gb
+water	12:53	0:0	8	gb
+water	12:57	0:0	4	;
+water	13:4	0:0	4	}
+else	13:6	14:42	2
+stmts	14:8	14:42	3	
+water	14:8	0:0	4	asclen
+op	14:23	0:0	4	=
+call	14:25	14:41	4	get_bits_left
+arg	14:39	14:41	5	gb
+water	14:39	0:0	6	gb
+water	14:42	0:0	4	;
+if	15:4	19:4	2	(config_start_bit % 8)
+cond	15:8	15:27	3	config_start_bit % 8
+water	15:8	0:0	4	config_start_bit
+op	15:25	0:0	4	%
+water	15:27	0:0	4	8
+stmts	15:30	19:4	3	
+water	15:30	0:0	4	{
+call	16:8	17:70	4	avpriv_request_sample
+arg	16:30	16:52	5	latmctx->aac_ctx.avctx
+water	16:30	0:0	6	latmctx
+op	16:37	0:0	6	->
+water	16:39	0:0	6	aac_ctx
+op	16:46	0:0	6	.
+water	16:47	0:0	6	avctx
+arg	17:30	17:70	5	"Non-byte-aligned audio-specific config"
+water	17:30	0:0	6	"Non-byte-aligned audio-specific config"
+water	17:71	0:0	4	;
+return	18:8	18:35	4	AVERROR_PATCHWELCOME
+water	18:15	0:0	5	AVERROR_PATCHWELCOME
+water	19:4	0:0	4	}
+if	20:4	21:34	2	(asclen <= 0)
+cond	20:8	20:18	3	asclen <= 0
+water	20:8	0:0	4	asclen
+op	20:15	0:0	4	<=
+water	20:18	0:0	4	0
+stmts	21:8	21:34	3	
+return	21:8	21:34	4	AVERROR_INVALIDDATA
+water	21:15	0:0	5	AVERROR_INVALIDDATA
+water	22:4	0:0	2	bits_consumed
+op	22:18	0:0	2	=
+call	22:20	24:63	2	decode_audio_specific_config
+arg	22:49	22:53	3	NULL
+water	22:49	0:0	4	NULL
+arg	22:55	22:60	3	avctx
+water	22:55	0:0	4	avctx
+arg	22:62	22:67	3	&m4ac
+op	22:62	0:0	4	&
+water	22:63	0:0	4	m4ac
+arg	23:41	23:76	3	gb->buffer+(config_start_bit/8)
+water	23:41	0:0	4	gb
+op	23:43	0:0	4	->
+water	23:45	0:0	4	buffer
+op	23:52	0:0	4	+
+water	23:54	0:0	4	(
+water	23:55	0:0	4	config_start_bit
+op	23:72	0:0	4	/
+water	23:74	0:0	4	8
+water	23:75	0:0	4	)
+arg	24:41	24:47	3	asclen
+water	24:41	0:0	4	asclen
+arg	24:49	24:63	3	sync_extension
+water	24:49	0:0	4	sync_extension
+water	24:64	0:0	2	;
+if	25:4	26:34	2	(bits_consumed < 0)
+cond	25:8	25:24	3	bits_consumed < 0
+water	25:8	0:0	4	bits_consumed
+op	25:22	0:0	4	<
+water	25:24	0:0	4	0
+stmts	26:8	26:34	3	
+return	26:8	26:34	4	AVERROR_INVALIDDATA
+water	26:15	0:0	5	AVERROR_INVALIDDATA
+if	27:4	46:4	2	(! latmctx -> initialized || ac -> oc [ 1 ] . m4ac . sample_rate != m4ac . sample_rate || ac -> oc [ 1 ] . m4ac . chan_config != m4ac . chan_config)
+cond	27:8	29:43	3	! latmctx -> initialized || ac -> oc [ 1 ] . m4ac . sample_rate != m4ac . sample_rate || ac -> oc [ 1 ] . m4ac . chan_config != m4ac . chan_config
+op	27:8	0:0	4	!
+water	27:9	0:0	4	latmctx
+op	27:16	0:0	4	->
+water	27:18	0:0	4	initialized
+op	27:30	0:0	4	||
+water	28:8	0:0	4	ac
+op	28:10	0:0	4	->
+water	28:12	0:0	4	oc
+op	28:14	0:0	4	[
+water	28:15	0:0	4	1
+op	28:16	0:0	4	]
+op	28:17	0:0	4	.
+water	28:18	0:0	4	m4ac
+op	28:22	0:0	4	.
+water	28:23	0:0	4	sample_rate
+op	28:35	0:0	4	!=
+water	28:38	0:0	4	m4ac
+op	28:42	0:0	4	.
+water	28:43	0:0	4	sample_rate
+op	28:55	0:0	4	||
+water	29:8	0:0	4	ac
+op	29:10	0:0	4	->
+water	29:12	0:0	4	oc
+op	29:14	0:0	4	[
+water	29:15	0:0	4	1
+op	29:16	0:0	4	]
+op	29:17	0:0	4	.
+water	29:18	0:0	4	m4ac
+op	29:22	0:0	4	.
+water	29:23	0:0	4	chan_config
+op	29:35	0:0	4	!=
+water	29:38	0:0	4	m4ac
+op	29:42	0:0	4	.
+water	29:43	0:0	4	chan_config
+stmts	29:56	46:4	3	
+water	29:56	0:0	4	{
+if	30:8	32:8	4	(latmctx -> initialized)
+cond	30:11	30:20	5	latmctx -> initialized
+water	30:11	0:0	6	latmctx
+op	30:18	0:0	6	->
+water	30:20	0:0	6	initialized
+stmts	30:33	32:8	5	
+water	30:33	0:0	6	{
+call	31:12	31:63	6	av_log
+arg	31:19	31:24	7	avctx
+water	31:19	0:0	8	avctx
+arg	31:26	31:37	7	AV_LOG_INFO
+water	31:26	0:0	8	AV_LOG_INFO
+arg	31:39	31:63	7	"audio config changed\n"
+water	31:39	0:0	8	"audio config changed\n"
+water	31:64	0:0	6	;
+water	32:8	0:0	6	}
+else	32:10	34:8	4
+stmts	32:15	34:8	5	
+water	32:15	0:0	6	{
+call	33:12	33:64	6	av_log
+arg	33:19	33:24	7	avctx
+water	33:19	0:0	8	avctx
+arg	33:26	33:38	7	AV_LOG_DEBUG
+water	33:26	0:0	8	AV_LOG_DEBUG
+arg	33:40	33:64	7	"initializing latmctx\n"
+water	33:40	0:0	8	"initializing latmctx\n"
+water	33:65	0:0	6	;
+water	34:8	0:0	6	}
+water	35:8	0:0	4	latmctx
+op	35:15	0:0	4	->
+water	35:17	0:0	4	initialized
+op	35:29	0:0	4	=
+water	35:31	0:0	4	0
+water	35:32	0:0	4	;
+water	36:8	0:0	4	esize
+op	36:14	0:0	4	=
+water	36:16	0:0	4	(
+water	36:17	0:0	4	bits_consumed
+op	36:30	0:0	4	+
+water	36:31	0:0	4	7
+water	36:32	0:0	4	)
+op	36:34	0:0	4	/
+water	36:36	0:0	4	8
+water	36:37	0:0	4	;
+if	37:8	42:8	4	(avctx -> extradata_size < esize)
+cond	37:12	37:36	5	avctx -> extradata_size < esize
+water	37:12	0:0	6	avctx
+op	37:17	0:0	6	->
+water	37:19	0:0	6	extradata_size
+op	37:34	0:0	6	<
+water	37:36	0:0	6	esize
+stmts	37:43	42:8	5	
+water	37:43	0:0	6	{
+call	38:12	38:36	6	av_free
+arg	38:20	38:36	7	avctx->extradata
+water	38:20	0:0	8	avctx
+op	38:25	0:0	8	->
+water	38:27	0:0	8	extradata
+water	38:37	0:0	6	;
+water	39:12	0:0	6	avctx
+op	39:17	0:0	6	->
+water	39:19	0:0	6	extradata
+op	39:29	0:0	6	=
+call	39:31	39:77	6	av_malloc
+arg	39:41	39:77	7	esize+AV_INPUT_BUFFER_PADDING_SIZE
+water	39:41	0:0	8	esize
+op	39:47	0:0	8	+
+water	39:49	0:0	8	AV_INPUT_BUFFER_PADDING_SIZE
+water	39:78	0:0	6	;
+if	40:12	41:38	6	(! avctx -> extradata)
+cond	40:16	40:24	7	! avctx -> extradata
+op	40:16	0:0	8	!
+water	40:17	0:0	8	avctx
+op	40:22	0:0	8	->
+water	40:24	0:0	8	extradata
+stmts	41:16	41:38	7	
+return	41:16	41:38	8	AVERROR(ENOMEM)
+call	41:23	41:37	9	AVERROR
+arg	41:31	41:37	10	ENOMEM
+water	41:31	0:0	11	ENOMEM
+water	42:8	0:0	6	}
+water	43:8	0:0	4	avctx
+op	43:13	0:0	4	->
+water	43:15	0:0	4	extradata_size
+op	43:30	0:0	4	=
+water	43:32	0:0	4	esize
+water	43:37	0:0	4	;
+call	44:8	44:73	4	memcpy
+arg	44:15	44:31	5	avctx->extradata
+water	44:15	0:0	6	avctx
+op	44:20	0:0	6	->
+water	44:22	0:0	6	extradata
+arg	44:33	44:66	5	gb->buffer+(config_start_bit/8)
+water	44:33	0:0	6	gb
+op	44:35	0:0	6	->
+water	44:37	0:0	6	buffer
+op	44:44	0:0	6	+
+water	44:46	0:0	6	(
+water	44:47	0:0	6	config_start_bit
+op	44:63	0:0	6	/
+water	44:64	0:0	6	8
+water	44:65	0:0	6	)
+arg	44:68	44:73	5	esize
+water	44:68	0:0	6	esize
+water	44:74	0:0	4	;
+call	45:8	45:70	4	memset
+arg	45:15	45:37	5	avctx->extradata+esize
+water	45:15	0:0	6	avctx
+op	45:20	0:0	6	->
+water	45:22	0:0	6	extradata
+op	45:31	0:0	6	+
+water	45:32	0:0	6	esize
+arg	45:39	45:40	5	0
+water	45:39	0:0	6	0
+arg	45:42	45:70	5	AV_INPUT_BUFFER_PADDING_SIZE
+water	45:42	0:0	6	AV_INPUT_BUFFER_PADDING_SIZE
+water	45:71	0:0	4	;
+water	46:4	0:0	4	}
+call	47:4	47:36	2	skip_bits_long
+arg	47:19	47:21	3	gb
+water	47:19	0:0	4	gb
+arg	47:23	47:36	3	bits_consumed
+water	47:23	0:0	4	bits_consumed
+water	47:37	0:0	2	;
+return	48:4	48:24	2	bits_consumed
+water	48:11	0:0	3	bits_consumed

@@ -1,0 +1,102 @@
+func	1:0	24:0	0	static int	read_packet
+params	1:22	0:0	1	
+param	1:23	1:41	2	AVFormatContext *	s
+param	1:43	1:55	2	uint8_t *	buf
+param	1:57	1:76	2	int	raw_packet_size
+param	2:23	2:43	2	const uint8_t * *	data
+stmnts	0:0	23:12	1	
+decl	4:4	4:27	2	AVIOContext	*pb
+op	4:20	0:0	2	=
+water	4:22	0:0	2	s
+op	4:23	0:0	2	->
+water	4:25	0:0	2	pb
+decl	5:4	5:11	2	int	len
+for	6:4	22:4	2	(;;)
+forinit	6:9	6:9	3	;
+water	6:9	0:0	4	;
+cond	0:0	0:0	3	
+forexpr	0:0	0:0	3	
+stmts	6:13	22:4	3	
+water	6:13	0:0	4	{
+water	7:8	0:0	4	len
+op	7:12	0:0	4	=
+call	7:14	7:62	4	ffio_read_indirect
+arg	7:33	7:35	5	pb
+water	7:33	0:0	6	pb
+arg	7:37	7:40	5	buf
+water	7:37	0:0	6	buf
+arg	7:42	7:56	5	TS_PACKET_SIZE
+water	7:42	0:0	6	TS_PACKET_SIZE
+arg	7:58	7:62	5	data
+water	7:58	0:0	6	data
+water	7:63	0:0	4	;
+if	8:8	9:46	4	(len != TS_PACKET_SIZE)
+cond	8:12	8:19	5	len != TS_PACKET_SIZE
+water	8:12	0:0	6	len
+op	8:16	0:0	6	!=
+water	8:19	0:0	6	TS_PACKET_SIZE
+stmts	9:12	9:46	5	
+return	9:12	9:46	6	len<0?len:AVERROR_EOF
+water	9:19	0:0	7	len
+op	9:23	0:0	7	<
+water	9:25	0:0	7	0
+water	9:27	0:0	7	?
+water	9:29	0:0	7	len
+water	9:33	0:0	7	:
+water	9:35	0:0	7	AVERROR_EOF
+if	11:8	19:8	4	(( * data ) [ 0 ] != 0 x47)
+cond	11:12	11:27	5	( * data ) [ 0 ] != 0 x47
+water	11:12	0:0	6	(
+op	11:13	0:0	6	*
+water	11:14	0:0	6	data
+water	11:18	0:0	6	)
+op	11:19	0:0	6	[
+water	11:20	0:0	6	0
+op	11:21	0:0	6	]
+op	11:23	0:0	6	!=
+water	11:26	0:0	6	0
+water	11:27	0:0	6	x47
+stmts	11:32	19:8	5	
+water	11:32	0:0	6	{
+decl	13:12	13:40	6	uint64_t	pos
+op	13:25	0:0	6	=
+call	13:27	13:39	7	avio_tell
+arg	13:37	13:39	8	pb
+water	13:37	0:0	9	pb
+call	14:12	14:64	6	avio_seek
+arg	14:22	14:24	7	pb
+water	14:22	0:0	8	pb
+arg	14:26	14:54	7	-FFMIN(raw_packet_size,pos)
+op	14:26	0:0	8	-
+call	14:27	14:53	8	FFMIN
+arg	14:33	14:48	9	raw_packet_size
+water	14:33	0:0	10	raw_packet_size
+arg	14:50	14:53	9	pos
+water	14:50	0:0	10	pos
+arg	14:56	14:64	7	SEEK_CUR
+water	14:56	0:0	8	SEEK_CUR
+water	14:65	0:0	6	;
+if	15:12	16:38	6	(mpegts_resync (s ) < 0)
+cond	15:16	15:35	7	mpegts_resync (s ) < 0
+call	15:16	15:31	8	mpegts_resync
+arg	15:30	15:31	9	s
+water	15:30	0:0	10	s
+op	15:33	0:0	8	<
+water	15:35	0:0	8	0
+stmts	16:16	16:38	7	
+return	16:16	16:38	8	AVERROR(EAGAIN)
+call	16:23	16:37	9	AVERROR
+arg	16:31	16:37	10	EAGAIN
+water	16:31	0:0	11	EAGAIN
+else	17:12	18:24	6
+stmts	18:16	18:24	7	
+continue	18:16	18:24	8	
+water	19:8	0:0	6	}
+else	19:10	21:8	4
+stmts	19:15	21:8	5	
+water	19:15	0:0	6	{
+break	20:12	20:17	6	
+water	21:8	0:0	6	}
+water	22:4	0:0	4	}
+return	23:4	23:12	2	0
+water	23:11	0:0	3	0

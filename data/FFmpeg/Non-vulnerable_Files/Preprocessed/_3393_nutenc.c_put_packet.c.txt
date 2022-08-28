@@ -1,0 +1,102 @@
+func	2:0	20:0	0	static void	put_packet
+params	2:22	0:0	1	
+param	2:23	2:38	2	NUTContext *	nut
+param	2:40	2:55	2	AVIOContext *	bc
+param	2:57	2:76	2	AVIOContext *	dyn_bc
+param	3:23	3:45	2	int	calculate_checksum
+param	3:47	3:65	2	uint64_t	startcode
+stmnts	0:0	19:20	1	
+decl	5:4	5:27	2	uint8_t	*dyn_buf
+op	5:21	0:0	2	=
+water	5:23	0:0	2	NULL
+decl	6:4	6:59	2	int	dyn_size
+op	6:21	0:0	2	=
+call	6:23	6:58	3	avio_close_dyn_buf
+arg	6:42	6:48	4	dyn_bc
+water	6:42	0:0	5	dyn_bc
+arg	6:50	6:58	4	&dyn_buf
+op	6:50	0:0	5	&
+water	6:51	0:0	5	dyn_buf
+decl	7:4	7:56	2	int	forw_ptr
+op	7:21	0:0	2	=
+water	7:23	0:0	2	dyn_size
+op	7:32	0:0	2	+
+water	7:34	0:0	2	4
+op	7:36	0:0	2	*
+water	7:38	0:0	2	calculate_checksum
+if	8:4	9:56	2	(forw_ptr > 4096)
+cond	8:8	8:19	3	forw_ptr > 4096
+water	8:8	0:0	4	forw_ptr
+op	8:17	0:0	4	>
+water	8:19	0:0	4	4096
+stmts	9:8	9:56	3	
+call	9:8	9:55	4	ffio_init_checksum
+arg	9:27	9:29	5	bc
+water	9:27	0:0	6	bc
+arg	9:31	9:52	5	ff_crc04C11DB7_update
+water	9:31	0:0	6	ff_crc04C11DB7_update
+arg	9:54	9:55	5	0
+water	9:54	0:0	6	0
+water	9:56	0:0	4	;
+call	10:4	10:27	2	avio_wb64
+arg	10:14	10:16	3	bc
+water	10:14	0:0	4	bc
+arg	10:18	10:27	3	startcode
+water	10:18	0:0	4	startcode
+water	10:28	0:0	2	;
+call	11:4	11:25	2	ff_put_v
+arg	11:13	11:15	3	bc
+water	11:13	0:0	4	bc
+arg	11:17	11:25	3	forw_ptr
+water	11:17	0:0	4	forw_ptr
+water	11:26	0:0	2	;
+if	12:4	13:44	2	(forw_ptr > 4096)
+cond	12:8	12:19	3	forw_ptr > 4096
+water	12:8	0:0	4	forw_ptr
+op	12:17	0:0	4	>
+water	12:19	0:0	4	4096
+stmts	13:8	13:44	3	
+call	13:8	13:43	4	avio_wl32
+arg	13:18	13:20	5	bc
+water	13:18	0:0	6	bc
+arg	13:22	13:43	5	ffio_get_checksum(bc)
+call	13:22	13:42	6	ffio_get_checksum
+arg	13:40	13:42	7	bc
+water	13:40	0:0	8	bc
+water	13:44	0:0	4	;
+if	14:4	15:56	2	(calculate_checksum)
+cond	14:8	14:8	3	calculate_checksum
+water	14:8	0:0	4	calculate_checksum
+stmts	15:8	15:56	3	
+call	15:8	15:55	4	ffio_init_checksum
+arg	15:27	15:29	5	bc
+water	15:27	0:0	6	bc
+arg	15:31	15:52	5	ff_crc04C11DB7_update
+water	15:31	0:0	6	ff_crc04C11DB7_update
+arg	15:54	15:55	5	0
+water	15:54	0:0	6	0
+water	15:56	0:0	4	;
+call	16:4	16:36	2	avio_write
+arg	16:15	16:17	3	bc
+water	16:15	0:0	4	bc
+arg	16:19	16:26	3	dyn_buf
+water	16:19	0:0	4	dyn_buf
+arg	16:28	16:36	3	dyn_size
+water	16:28	0:0	4	dyn_size
+water	16:37	0:0	2	;
+if	17:4	18:44	2	(calculate_checksum)
+cond	17:8	17:8	3	calculate_checksum
+water	17:8	0:0	4	calculate_checksum
+stmts	18:8	18:44	3	
+call	18:8	18:43	4	avio_wl32
+arg	18:18	18:20	5	bc
+water	18:18	0:0	6	bc
+arg	18:22	18:43	5	ffio_get_checksum(bc)
+call	18:22	18:42	6	ffio_get_checksum
+arg	18:40	18:42	7	bc
+water	18:40	0:0	8	bc
+water	18:44	0:0	4	;
+call	19:4	19:19	2	av_free
+arg	19:12	19:19	3	dyn_buf
+water	19:12	0:0	4	dyn_buf
+water	19:20	0:0	2	;

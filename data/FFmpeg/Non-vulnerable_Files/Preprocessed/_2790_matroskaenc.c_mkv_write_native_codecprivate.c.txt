@@ -1,0 +1,168 @@
+func	1:0	38:0	0	static int	mkv_write_native_codecprivate
+params	1:40	0:0	1	
+param	1:41	1:59	2	AVFormatContext *	s
+param	2:41	2:62	2	AVCodecContext *	codec
+param	3:41	3:60	2	AVIOContext *	dyn_cp
+stmnts	5:4	37:12	1	
+switch	5:4	36:4	2	(codec -> codec_id)
+cond	5:12	5:19	3	codec -> codec_id
+water	5:12	0:0	4	codec
+op	5:17	0:0	4	->
+water	5:19	0:0	4	codec_id
+stmts	5:29	36:4	3	
+water	5:29	0:0	4	{
+label	6:4	6:27	4	case AV_CODEC_ID_VORBIS :
+label	7:4	7:27	4	case AV_CODEC_ID_THEORA :
+return	8:8	8:51	4	put_xiph_codecpriv(s,dyn_cp,codec)
+call	8:15	8:50	5	put_xiph_codecpriv
+arg	8:34	8:35	6	s
+water	8:34	0:0	7	s
+arg	8:37	8:43	6	dyn_cp
+water	8:37	0:0	7	dyn_cp
+arg	8:45	8:50	6	codec
+water	8:45	0:0	7	codec
+label	9:4	9:25	4	case AV_CODEC_ID_FLAC :
+return	10:8	10:51	4	put_flac_codecpriv(s,dyn_cp,codec)
+call	10:15	10:50	5	put_flac_codecpriv
+arg	10:34	10:35	6	s
+water	10:34	0:0	7	s
+arg	10:37	10:43	6	dyn_cp
+water	10:37	0:0	7	dyn_cp
+arg	10:45	10:50	6	codec
+water	10:45	0:0	7	codec
+label	11:4	11:28	4	case AV_CODEC_ID_WAVPACK :
+return	12:8	12:46	4	put_wv_codecpriv(dyn_cp,codec)
+call	12:15	12:45	5	put_wv_codecpriv
+arg	12:32	12:38	6	dyn_cp
+water	12:32	0:0	7	dyn_cp
+arg	12:40	12:45	6	codec
+water	12:40	0:0	7	codec
+label	13:4	13:25	4	case AV_CODEC_ID_H264 :
+return	14:8	15:56	4	ff_isom_write_avcc(dyn_cp,codec->extradata,codec->extradata_size)
+call	14:15	15:55	5	ff_isom_write_avcc
+arg	14:34	14:40	6	dyn_cp
+water	14:34	0:0	7	dyn_cp
+arg	14:42	14:58	6	codec->extradata
+water	14:42	0:0	7	codec
+op	14:47	0:0	7	->
+water	14:49	0:0	7	extradata
+arg	15:34	15:55	6	codec->extradata_size
+water	15:34	0:0	7	codec
+op	15:39	0:0	7	->
+water	15:41	0:0	7	extradata_size
+label	16:4	16:25	4	case AV_CODEC_ID_HEVC :
+call	17:8	18:51	4	ff_isom_write_hvcc
+arg	17:27	17:33	5	dyn_cp
+water	17:27	0:0	6	dyn_cp
+arg	17:35	17:51	5	codec->extradata
+water	17:35	0:0	6	codec
+op	17:40	0:0	6	->
+water	17:42	0:0	6	extradata
+arg	18:27	18:48	5	codec->extradata_size
+water	18:27	0:0	6	codec
+op	18:32	0:0	6	->
+water	18:34	0:0	6	extradata_size
+arg	18:50	18:51	5	0
+water	18:50	0:0	6	0
+water	18:52	0:0	4	;
+return	19:8	19:16	4	0
+water	19:15	0:0	5	0
+label	20:4	20:25	4	case AV_CODEC_ID_ALAC :
+if	21:8	26:8	4	(codec -> extradata_size < 36)
+cond	21:12	21:36	5	codec -> extradata_size < 36
+water	21:12	0:0	6	codec
+op	21:17	0:0	6	->
+water	21:19	0:0	6	extradata_size
+op	21:34	0:0	6	<
+water	21:36	0:0	6	36
+stmts	21:40	26:8	5	
+water	21:40	0:0	6	{
+call	22:12	24:36	6	av_log
+arg	22:19	22:20	7	s
+water	22:19	0:0	8	s
+arg	22:22	22:34	7	AV_LOG_ERROR
+water	22:22	0:0	8	AV_LOG_ERROR
+arg	23:19	24:36	7	"Invalid extradata found, ALAC expects a 36-byte ""QuickTime atom."
+water	23:19	0:0	8	"Invalid extradata found, ALAC expects a 36-byte "
+water	24:19	0:0	8	"QuickTime atom."
+water	24:37	0:0	6	;
+return	25:12	25:38	6	AVERROR_INVALIDDATA
+water	25:19	0:0	7	AVERROR_INVALIDDATA
+water	26:8	0:0	6	}
+else	26:10	28:50	4
+stmts	27:12	28:50	5	
+call	27:12	28:49	6	avio_write
+arg	27:23	27:29	7	dyn_cp
+water	27:23	0:0	8	dyn_cp
+arg	27:31	27:52	7	codec->extradata+12
+water	27:31	0:0	8	codec
+op	27:36	0:0	8	->
+water	27:38	0:0	8	extradata
+op	27:48	0:0	8	+
+water	27:50	0:0	8	12
+arg	28:23	28:49	7	codec->extradata_size-12
+water	28:23	0:0	8	codec
+op	28:28	0:0	8	->
+water	28:30	0:0	8	extradata_size
+op	28:45	0:0	8	-
+water	28:47	0:0	8	12
+water	28:50	0:0	6	;
+break	29:8	29:13	4	
+label	30:4	30:11	4	default :
+if	31:8	34:8	4	(codec -> codec_id == AV_CODEC_ID_PRORES &&ff_codec_get_id (ff_codec_movvideo_tags ,codec -> codec_tag ) == AV_CODEC_ID_PRORES)
+cond	31:12	32:73	5	codec -> codec_id == AV_CODEC_ID_PRORES &&ff_codec_get_id (ff_codec_movvideo_tags ,codec -> codec_tag ) == AV_CODEC_ID_PRORES
+water	31:12	0:0	6	codec
+op	31:17	0:0	6	->
+water	31:19	0:0	6	codec_id
+op	31:28	0:0	6	==
+water	31:31	0:0	6	AV_CODEC_ID_PRORES
+op	31:50	0:0	6	&&
+call	32:12	32:68	6	ff_codec_get_id
+arg	32:28	32:50	7	ff_codec_movvideo_tags
+water	32:28	0:0	8	ff_codec_movvideo_tags
+arg	32:52	32:68	7	codec->codec_tag
+water	32:52	0:0	8	codec
+op	32:57	0:0	8	->
+water	32:59	0:0	8	codec_tag
+op	32:70	0:0	6	==
+water	32:73	0:0	6	AV_CODEC_ID_PRORES
+stmts	32:93	34:8	5	
+water	32:93	0:0	6	{
+call	33:12	33:46	6	avio_wl32
+arg	33:22	33:28	7	dyn_cp
+water	33:22	0:0	8	dyn_cp
+arg	33:30	33:46	7	codec->codec_tag
+water	33:30	0:0	8	codec
+op	33:35	0:0	8	->
+water	33:37	0:0	8	codec_tag
+water	33:47	0:0	6	;
+water	34:8	0:0	6	}
+else	34:10	35:71	4
+stmts	34:15	35:71	5	
+if	34:15	35:71	6	(codec -> extradata_size && codec -> codec_id != AV_CODEC_ID_TTA)
+cond	34:19	34:63	7	codec -> extradata_size && codec -> codec_id != AV_CODEC_ID_TTA
+water	34:19	0:0	8	codec
+op	34:24	0:0	8	->
+water	34:26	0:0	8	extradata_size
+op	34:41	0:0	8	&&
+water	34:44	0:0	8	codec
+op	34:49	0:0	8	->
+water	34:51	0:0	8	codec_id
+op	34:60	0:0	8	!=
+water	34:63	0:0	8	AV_CODEC_ID_TTA
+stmts	35:12	35:71	7	
+call	35:12	35:70	8	avio_write
+arg	35:23	35:29	9	dyn_cp
+water	35:23	0:0	10	dyn_cp
+arg	35:31	35:47	9	codec->extradata
+water	35:31	0:0	10	codec
+op	35:36	0:0	10	->
+water	35:38	0:0	10	extradata
+arg	35:49	35:70	9	codec->extradata_size
+water	35:49	0:0	10	codec
+op	35:54	0:0	10	->
+water	35:56	0:0	10	extradata_size
+water	35:71	0:0	8	;
+water	36:4	0:0	4	}
+return	37:4	37:12	2	0
+water	37:11	0:0	3	0

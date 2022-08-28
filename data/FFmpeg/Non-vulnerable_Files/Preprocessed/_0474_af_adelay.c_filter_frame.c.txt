@@ -1,0 +1,187 @@
+func	1:0	25:0	0	static int	filter_frame
+params	1:23	0:0	1	
+param	1:24	1:44	2	AVFilterLink *	inlink
+param	1:46	1:60	2	AVFrame *	frame
+stmnts	0:0	24:54	1	
+decl	3:4	3:38	2	AVFilterContext	*ctx
+op	3:25	0:0	2	=
+water	3:27	0:0	2	inlink
+op	3:33	0:0	2	->
+water	3:35	0:0	2	dst
+decl	4:4	4:36	2	AudioDelayContext	*s
+op	4:25	0:0	2	=
+water	4:27	0:0	2	ctx
+op	4:30	0:0	2	->
+water	4:32	0:0	2	priv
+decl	5:4	5:22	2	AVFrame	*out_frame
+decl	6:4	6:9	2	int	i
+if	7:4	8:54	2	(ctx -> is_disabled || ! s -> delays)
+cond	7:8	7:32	3	ctx -> is_disabled || ! s -> delays
+water	7:8	0:0	4	ctx
+op	7:11	0:0	4	->
+water	7:13	0:0	4	is_disabled
+op	7:25	0:0	4	||
+op	7:28	0:0	4	!
+water	7:29	0:0	4	s
+op	7:30	0:0	4	->
+water	7:32	0:0	4	delays
+stmts	8:8	8:54	3	
+return	8:8	8:54	4	ff_filter_frame(ctx->outputs[0],frame)
+call	8:15	8:53	5	ff_filter_frame
+arg	8:31	8:46	6	ctx->outputs[0]
+water	8:31	0:0	7	ctx
+op	8:34	0:0	7	->
+water	8:36	0:0	7	outputs
+op	8:43	0:0	7	[
+water	8:44	0:0	7	0
+op	8:45	0:0	7	]
+arg	8:48	8:53	6	frame
+water	8:48	0:0	7	frame
+water	9:4	0:0	2	out_frame
+op	9:14	0:0	2	=
+call	9:16	9:61	2	ff_get_audio_buffer
+arg	9:36	9:42	3	inlink
+water	9:36	0:0	4	inlink
+arg	9:44	9:61	3	frame->nb_samples
+water	9:44	0:0	4	frame
+op	9:49	0:0	4	->
+water	9:51	0:0	4	nb_samples
+water	9:62	0:0	2	;
+if	10:4	11:30	2	(! out_frame)
+cond	10:8	10:9	3	! out_frame
+op	10:8	0:0	4	!
+water	10:9	0:0	4	out_frame
+stmts	11:8	11:30	3	
+return	11:8	11:30	4	AVERROR(ENOMEM)
+call	11:15	11:29	5	AVERROR
+arg	11:23	11:29	6	ENOMEM
+water	11:23	0:0	7	ENOMEM
+call	12:4	12:40	2	av_frame_copy_props
+arg	12:24	12:33	3	out_frame
+water	12:24	0:0	4	out_frame
+arg	12:35	12:40	3	frame
+water	12:35	0:0	4	frame
+water	12:41	0:0	2	;
+for	13:4	21:4	2	(i = 0 ;i < s -> nb_delays;i ++)
+forinit	13:9	13:14	3	i = 0 ;
+water	13:9	0:0	4	i
+op	13:11	0:0	4	=
+water	13:13	0:0	4	0
+water	13:14	0:0	4	;
+cond	13:16	13:23	3	i < s -> nb_delays
+water	13:16	0:0	4	i
+op	13:18	0:0	4	<
+water	13:20	0:0	4	s
+op	13:21	0:0	4	->
+water	13:23	0:0	4	nb_delays
+forexpr	13:34	13:35	3	i ++
+water	13:34	0:0	4	i
+op	13:35	0:0	4	++
+stmts	13:39	21:4	3	
+water	13:39	0:0	4	{
+decl	14:8	14:39	4	ChanDelay	*d
+op	14:21	0:0	4	=
+op	14:23	0:0	4	&
+water	14:24	0:0	4	s
+op	14:25	0:0	4	->
+water	14:27	0:0	4	chandelay
+op	14:36	0:0	4	[
+water	14:37	0:0	4	i
+op	14:38	0:0	4	]
+decl	15:8	15:52	4	const uint8_t	*src
+op	15:27	0:0	4	=
+water	15:29	0:0	4	frame
+op	15:34	0:0	4	->
+water	15:36	0:0	4	extended_data
+op	15:49	0:0	4	[
+water	15:50	0:0	4	i
+op	15:51	0:0	4	]
+decl	16:8	16:50	4	uint8_t	*dst
+op	16:21	0:0	4	=
+water	16:23	0:0	4	out_frame
+op	16:32	0:0	4	->
+water	16:34	0:0	4	extended_data
+op	16:47	0:0	4	[
+water	16:48	0:0	4	i
+op	16:49	0:0	4	]
+if	17:8	18:64	4	(! d -> delay)
+cond	17:12	17:16	5	! d -> delay
+op	17:12	0:0	6	!
+water	17:13	0:0	6	d
+op	17:14	0:0	6	->
+water	17:16	0:0	6	delay
+stmts	18:12	18:64	5	
+call	18:12	18:63	6	memcpy
+arg	18:19	18:22	7	dst
+water	18:19	0:0	8	dst
+arg	18:24	18:27	7	src
+water	18:24	0:0	8	src
+arg	18:29	18:63	7	frame->nb_samples*s->block_align
+water	18:29	0:0	8	frame
+op	18:34	0:0	8	->
+water	18:36	0:0	8	nb_samples
+op	18:47	0:0	8	*
+water	18:49	0:0	8	s
+op	18:50	0:0	8	->
+water	18:52	0:0	8	block_align
+water	18:64	0:0	6	;
+else	19:8	20:60	4
+stmts	20:12	20:60	5	
+call	20:12	20:59	6	s->delay_channel
+arg	20:29	20:30	7	d
+water	20:29	0:0	8	d
+arg	20:32	20:49	7	frame->nb_samples
+water	20:32	0:0	8	frame
+op	20:37	0:0	8	->
+water	20:39	0:0	8	nb_samples
+arg	20:51	20:54	7	src
+water	20:51	0:0	8	src
+arg	20:56	20:59	7	dst
+water	20:56	0:0	8	dst
+water	20:60	0:0	6	;
+water	21:4	0:0	4	}
+water	22:4	0:0	2	s
+op	22:5	0:0	2	->
+water	22:7	0:0	2	next_pts
+op	22:16	0:0	2	=
+water	22:18	0:0	2	frame
+op	22:23	0:0	2	->
+water	22:25	0:0	2	pts
+op	22:29	0:0	2	+
+call	22:31	22:118	2	av_rescale_q
+arg	22:44	22:61	3	frame->nb_samples
+water	22:44	0:0	4	frame
+op	22:49	0:0	4	->
+water	22:51	0:0	4	nb_samples
+arg	22:63	22:99	3	(AVRational){1,inlink->sample_rate}
+water	22:63	0:0	4	(
+water	22:64	0:0	4	AVRational
+water	22:74	0:0	4	)
+water	22:75	0:0	4	{
+water	22:76	0:0	4	1
+water	22:77	0:0	4	,
+water	22:79	0:0	4	inlink
+op	22:85	0:0	4	->
+water	22:87	0:0	4	sample_rate
+water	22:98	0:0	4	}
+arg	22:101	22:118	3	inlink->time_base
+water	22:101	0:0	4	inlink
+op	22:107	0:0	4	->
+water	22:109	0:0	4	time_base
+water	22:119	0:0	2	;
+call	23:4	23:24	2	av_frame_free
+arg	23:18	23:24	3	&frame
+op	23:18	0:0	4	&
+water	23:19	0:0	4	frame
+water	23:25	0:0	2	;
+return	24:4	24:54	2	ff_filter_frame(ctx->outputs[0],out_frame)
+call	24:11	24:53	3	ff_filter_frame
+arg	24:27	24:42	4	ctx->outputs[0]
+water	24:27	0:0	5	ctx
+op	24:30	0:0	5	->
+water	24:32	0:0	5	outputs
+op	24:39	0:0	5	[
+water	24:40	0:0	5	0
+op	24:41	0:0	5	]
+arg	24:44	24:53	4	out_frame
+water	24:44	0:0	5	out_frame

@@ -1,0 +1,175 @@
+func	1:15	30:0	0	CALLBACK	videostream_cb
+params	1:38	0:0	1	
+param	1:39	1:48	2	HWND	hwnd
+param	1:50	1:66	2	LPVIDEOHDR	vdhdr
+stmnts	0:0	29:16	1	
+decl	3:4	3:22	2	AVFormatContext	*s
+decl	4:4	4:23	2	struct vfw_ctx	*ctx
+decl	5:4	5:36	2	AVPacketList	**ppktl
+water	5:24	0:0	2	,
+decl	5:4	5:36	2	AVPacketList	*pktl_next
+water	6:4	0:0	2	s
+op	6:6	0:0	2	=
+water	6:8	0:0	2	(
+water	6:9	0:0	2	AVFormatContext
+op	6:25	0:0	2	*
+water	6:26	0:0	2	)
+call	6:28	6:64	2	GetWindowLongPtr
+arg	6:45	6:49	3	hwnd
+water	6:45	0:0	4	hwnd
+arg	6:51	6:64	3	GWLP_USERDATA
+water	6:51	0:0	4	GWLP_USERDATA
+water	6:65	0:0	2	;
+water	7:4	0:0	2	ctx
+op	7:8	0:0	2	=
+water	7:10	0:0	2	s
+op	7:11	0:0	2	->
+water	7:13	0:0	2	priv_data
+water	7:22	0:0	2	;
+call	8:4	8:26	2	dump_videohdr
+arg	8:18	8:19	3	s
+water	8:18	0:0	4	s
+arg	8:21	8:26	3	vdhdr
+water	8:21	0:0	4	vdhdr
+water	8:27	0:0	2	;
+if	9:4	10:20	2	(shall_we_drop (s ))
+cond	9:7	9:22	3	shall_we_drop (s )
+call	9:7	9:22	4	shall_we_drop
+arg	9:21	9:22	5	s
+water	9:21	0:0	6	s
+stmts	10:8	10:20	3	
+return	10:8	10:20	4	FALSE
+water	10:15	0:0	5	FALSE
+call	11:4	11:44	2	WaitForSingleObject
+arg	11:24	11:34	3	ctx->mutex
+water	11:24	0:0	4	ctx
+op	11:27	0:0	4	->
+water	11:29	0:0	4	mutex
+arg	11:36	11:44	3	INFINITE
+water	11:36	0:0	4	INFINITE
+water	11:45	0:0	2	;
+water	12:4	0:0	2	pktl_next
+op	12:14	0:0	2	=
+call	12:16	12:47	2	av_mallocz
+arg	12:27	12:47	3	sizeof(AVPacketList)
+op	12:27	0:0	4	sizeof
+water	12:33	0:0	4	(
+water	12:34	0:0	4	AVPacketList
+water	12:46	0:0	4	)
+water	12:48	0:0	2	;
+if	13:4	14:17	2	(! pktl_next)
+cond	13:7	13:8	3	! pktl_next
+op	13:7	0:0	4	!
+water	13:8	0:0	4	pktl_next
+stmts	14:8	14:17	3	
+goto	14:8	14:17	4	fail
+water	14:13	0:0	5	fail
+if	15:4	18:4	2	(av_new_packet (& pktl_next -> pkt ,vdhdr -> dwBytesUsed ) < 0)
+cond	15:7	15:60	3	av_new_packet (& pktl_next -> pkt ,vdhdr -> dwBytesUsed ) < 0
+call	15:7	15:56	4	av_new_packet
+arg	15:21	15:36	5	&pktl_next->pkt
+op	15:21	0:0	6	&
+water	15:22	0:0	6	pktl_next
+op	15:31	0:0	6	->
+water	15:33	0:0	6	pkt
+arg	15:38	15:56	5	vdhdr->dwBytesUsed
+water	15:38	0:0	6	vdhdr
+op	15:43	0:0	6	->
+water	15:45	0:0	6	dwBytesUsed
+op	15:58	0:0	4	<
+water	15:60	0:0	4	0
+stmts	15:63	18:4	3	
+water	15:63	0:0	4	{
+call	16:8	16:25	4	av_free
+arg	16:16	16:25	5	pktl_next
+water	16:16	0:0	6	pktl_next
+water	16:26	0:0	4	;
+goto	17:8	17:17	4	fail
+water	17:13	0:0	5	fail
+water	18:4	0:0	4	}
+water	19:4	0:0	2	pktl_next
+op	19:13	0:0	2	->
+water	19:15	0:0	2	pkt
+op	19:18	0:0	2	.
+water	19:19	0:0	2	pts
+op	19:23	0:0	2	=
+water	19:25	0:0	2	vdhdr
+op	19:30	0:0	2	->
+water	19:32	0:0	2	dwTimeCaptured
+water	19:46	0:0	2	;
+call	20:4	20:65	2	memcpy
+arg	20:11	20:30	3	pktl_next->pkt.data
+water	20:11	0:0	4	pktl_next
+op	20:20	0:0	4	->
+water	20:22	0:0	4	pkt
+op	20:25	0:0	4	.
+water	20:26	0:0	4	data
+arg	20:32	20:45	3	vdhdr->lpData
+water	20:32	0:0	4	vdhdr
+op	20:37	0:0	4	->
+water	20:39	0:0	4	lpData
+arg	20:47	20:65	3	vdhdr->dwBytesUsed
+water	20:47	0:0	4	vdhdr
+op	20:52	0:0	4	->
+water	20:54	0:0	4	dwBytesUsed
+water	20:66	0:0	2	;
+for	21:4	21:62	2	(ppktl = & ctx -> pktl ;* ppktl;ppktl = & ( * ppktl ) -> next)
+forinit	21:8	21:27	3	ppktl = & ctx -> pktl ;
+water	21:8	0:0	4	ppktl
+op	21:14	0:0	4	=
+op	21:16	0:0	4	&
+water	21:17	0:0	4	ctx
+op	21:20	0:0	4	->
+water	21:22	0:0	4	pktl
+water	21:27	0:0	4	;
+cond	21:29	21:30	3	* ppktl
+op	21:29	0:0	4	*
+water	21:30	0:0	4	ppktl
+forexpr	21:38	21:57	3	ppktl = & ( * ppktl ) -> next
+water	21:38	0:0	4	ppktl
+op	21:44	0:0	4	=
+op	21:46	0:0	4	&
+water	21:47	0:0	4	(
+op	21:48	0:0	4	*
+water	21:49	0:0	4	ppktl
+water	21:54	0:0	4	)
+op	21:55	0:0	4	->
+water	21:57	0:0	4	next
+stmts	21:62	21:62	3	
+water	21:62	0:0	4	;
+op	22:4	0:0	2	*
+water	22:5	0:0	2	ppktl
+op	22:11	0:0	2	=
+water	22:13	0:0	2	pktl_next
+water	22:22	0:0	2	;
+water	23:4	0:0	2	ctx
+op	23:7	0:0	2	->
+water	23:9	0:0	2	curbufsize
+op	23:20	0:0	2	+=
+water	23:23	0:0	2	vdhdr
+op	23:28	0:0	2	->
+water	23:30	0:0	2	dwBytesUsed
+water	23:41	0:0	2	;
+call	24:4	24:23	2	SetEvent
+arg	24:13	24:23	3	ctx->event
+water	24:13	0:0	4	ctx
+op	24:16	0:0	4	->
+water	24:18	0:0	4	event
+water	24:24	0:0	2	;
+call	25:4	25:27	2	ReleaseMutex
+arg	25:17	25:27	3	ctx->mutex
+water	25:17	0:0	4	ctx
+op	25:20	0:0	4	->
+water	25:22	0:0	4	mutex
+water	25:28	0:0	2	;
+return	26:4	26:15	2	TRUE
+water	26:11	0:0	3	TRUE
+label	27:0	27:4	2	fail :
+call	28:4	28:27	2	ReleaseMutex
+arg	28:17	28:27	3	ctx->mutex
+water	28:17	0:0	4	ctx
+op	28:20	0:0	4	->
+water	28:22	0:0	4	mutex
+water	28:28	0:0	2	;
+return	29:4	29:16	2	FALSE
+water	29:11	0:0	3	FALSE

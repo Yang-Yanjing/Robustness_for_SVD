@@ -1,0 +1,497 @@
+func	1:0	95:0	0	static int	mmap_read_frame
+params	1:26	0:0	1	
+param	1:27	1:47	2	AVFormatContext *	ctx
+param	1:49	1:62	2	AVPacket *	pkt
+stmnts	0:0	94:20	1	
+decl	3:4	3:41	2	struct video_data	*s
+op	3:25	0:0	2	=
+water	3:27	0:0	2	ctx
+op	3:30	0:0	2	->
+water	3:32	0:0	2	priv_data
+decl	4:4	7:5	2	struct v4l2_buffer	buf
+op	4:27	0:0	2	=
+water	4:29	0:0	2	{
+op	5:8	0:0	2	.
+water	5:9	0:0	2	type
+op	5:16	0:0	2	=
+water	5:18	0:0	2	V4L2_BUF_TYPE_VIDEO_CAPTURE
+water	5:45	0:0	2	,
+op	6:8	0:0	2	.
+water	6:9	0:0	2	memory
+op	6:16	0:0	2	=
+water	6:18	0:0	2	V4L2_MEMORY_MMAP
+water	7:4	0:0	2	}
+decl	8:4	8:11	2	int	res
+water	9:4	0:0	2	pkt
+op	9:7	0:0	2	->
+water	9:9	0:0	2	size
+op	9:14	0:0	2	=
+water	9:16	0:0	2	0
+water	9:17	0:0	2	;
+while	11:4	11:81	2	(( res =v4l2_ioctl (s -> fd ,VIDIOC_DQBUF ,& buf ) ) < 0 && ( errno == EINTR ))
+cond	11:11	11:79	3	( res =v4l2_ioctl (s -> fd ,VIDIOC_DQBUF ,& buf ) ) < 0 && ( errno == EINTR )
+water	11:11	0:0	4	(
+water	11:12	0:0	4	res
+op	11:16	0:0	4	=
+call	11:18	11:54	4	v4l2_ioctl
+arg	11:29	11:34	5	s->fd
+water	11:29	0:0	6	s
+op	11:30	0:0	6	->
+water	11:32	0:0	6	fd
+arg	11:36	11:48	5	VIDIOC_DQBUF
+water	11:36	0:0	6	VIDIOC_DQBUF
+arg	11:50	11:54	5	&buf
+op	11:50	0:0	6	&
+water	11:51	0:0	6	buf
+water	11:55	0:0	4	)
+op	11:57	0:0	4	<
+water	11:59	0:0	4	0
+op	11:61	0:0	4	&&
+water	11:64	0:0	4	(
+water	11:65	0:0	4	errno
+op	11:71	0:0	4	==
+water	11:74	0:0	4	EINTR
+water	11:79	0:0	4	)
+stmts	11:81	11:81	3	
+water	11:81	0:0	4	;
+if	12:4	19:4	2	(res < 0)
+cond	12:8	12:14	3	res < 0
+water	12:8	0:0	4	res
+op	12:12	0:0	4	<
+water	12:14	0:0	4	0
+stmts	12:17	19:4	3	
+water	12:17	0:0	4	{
+if	13:8	14:34	4	(errno == EAGAIN)
+cond	13:12	13:21	5	errno == EAGAIN
+water	13:12	0:0	6	errno
+op	13:18	0:0	6	==
+water	13:21	0:0	6	EAGAIN
+stmts	14:12	14:34	5	
+return	14:12	14:34	6	AVERROR(EAGAIN)
+call	14:19	14:33	7	AVERROR
+arg	14:27	14:33	8	EAGAIN
+water	14:27	0:0	9	EAGAIN
+water	15:8	0:0	4	res
+op	15:12	0:0	4	=
+call	15:14	15:27	4	AVERROR
+arg	15:22	15:27	5	errno
+water	15:22	0:0	6	errno
+water	15:28	0:0	4	;
+call	16:8	17:30	4	av_log
+arg	16:15	16:18	5	ctx
+water	16:15	0:0	6	ctx
+arg	16:20	16:32	5	AV_LOG_ERROR
+water	16:20	0:0	6	AV_LOG_ERROR
+arg	16:34	16:61	5	"ioctl(VIDIOC_DQBUF): %s\n"
+water	16:34	0:0	6	"ioctl(VIDIOC_DQBUF): %s\n"
+arg	17:15	17:30	5	av_err2str(res)
+call	17:15	17:29	6	av_err2str
+arg	17:26	17:29	7	res
+water	17:26	0:0	8	res
+water	17:31	0:0	4	;
+return	18:8	18:18	4	res
+water	18:15	0:0	5	res
+water	19:4	0:0	4	}
+if	20:4	23:4	2	(buf . index >= s -> buffers)
+cond	20:8	20:24	3	buf . index >= s -> buffers
+water	20:8	0:0	4	buf
+op	20:11	0:0	4	.
+water	20:12	0:0	4	index
+op	20:18	0:0	4	>=
+water	20:21	0:0	4	s
+op	20:22	0:0	4	->
+water	20:24	0:0	4	buffers
+stmts	20:33	23:4	3	
+water	20:33	0:0	4	{
+call	21:8	21:68	4	av_log
+arg	21:15	21:18	5	ctx
+water	21:15	0:0	6	ctx
+arg	21:20	21:32	5	AV_LOG_ERROR
+water	21:20	0:0	6	AV_LOG_ERROR
+arg	21:34	21:68	5	"Invalid buffer index received.\n"
+water	21:34	0:0	6	"Invalid buffer index received.\n"
+water	21:69	0:0	4	;
+return	22:8	22:30	4	AVERROR(EINVAL)
+call	22:15	22:29	5	AVERROR
+arg	22:23	22:29	6	EINVAL
+water	22:23	0:0	7	EINVAL
+water	23:4	0:0	4	}
+call	24:4	24:58	2	avpriv_atomic_int_add_and_fetch
+arg	24:36	24:54	3	&s->buffers_queued
+op	24:36	0:0	4	&
+water	24:37	0:0	4	s
+op	24:38	0:0	4	->
+water	24:40	0:0	4	buffers_queued
+arg	24:56	24:58	3	-1
+op	24:56	0:0	4	-
+water	24:57	0:0	4	1
+water	24:59	0:0	2	;
+call	26:4	26:61	2	av_assert0
+arg	26:15	26:61	3	avpriv_atomic_int_get(&s->buffers_queued)>=1
+call	26:15	26:55	4	avpriv_atomic_int_get
+arg	26:37	26:55	5	&s->buffers_queued
+op	26:37	0:0	6	&
+water	26:38	0:0	6	s
+op	26:39	0:0	6	->
+water	26:41	0:0	6	buffers_queued
+op	26:57	0:0	4	>=
+water	26:60	0:0	4	1
+water	26:62	0:0	2	;
+if	28:4	33:4	2	(buf . flags & V4L2_BUF_FLAG_ERROR)
+cond	28:8	28:20	3	buf . flags & V4L2_BUF_FLAG_ERROR
+water	28:8	0:0	4	buf
+op	28:11	0:0	4	.
+water	28:12	0:0	4	flags
+op	28:18	0:0	4	&
+water	28:20	0:0	4	V4L2_BUF_FLAG_ERROR
+stmts	28:41	33:4	3	
+water	28:41	0:0	4	{
+call	29:8	31:28	4	av_log
+arg	29:15	29:18	5	ctx
+water	29:15	0:0	6	ctx
+arg	29:20	29:34	5	AV_LOG_WARNING
+water	29:20	0:0	6	AV_LOG_WARNING
+arg	30:15	30:75	5	"Dequeued v4l2 buffer contains corrupted data (%d bytes).\n"
+water	30:15	0:0	6	"Dequeued v4l2 buffer contains corrupted data (%d bytes).\n"
+arg	31:15	31:28	5	buf.bytesused
+water	31:15	0:0	6	buf
+op	31:18	0:0	6	.
+water	31:19	0:0	6	bytesused
+water	31:29	0:0	4	;
+water	32:8	0:0	4	buf
+op	32:11	0:0	4	.
+water	32:12	0:0	4	bytesused
+op	32:22	0:0	4	=
+water	32:24	0:0	4	0
+water	32:25	0:0	4	;
+water	33:4	0:0	4	}
+else	33:6	47:4	2
+stmts	35:4	47:4	3	
+water	35:4	0:0	4	{
+if	38:8	39:41	4	(ctx -> video_codec_id == AV_CODEC_ID_CPIA)
+cond	38:12	38:35	5	ctx -> video_codec_id == AV_CODEC_ID_CPIA
+water	38:12	0:0	6	ctx
+op	38:15	0:0	6	->
+water	38:17	0:0	6	video_codec_id
+op	38:32	0:0	6	==
+water	38:35	0:0	6	AV_CODEC_ID_CPIA
+stmts	39:12	39:41	5	
+water	39:12	0:0	6	s
+op	39:13	0:0	6	->
+water	39:15	0:0	6	frame_size
+op	39:26	0:0	6	=
+water	39:28	0:0	6	buf
+op	39:31	0:0	6	.
+water	39:32	0:0	6	bytesused
+water	39:41	0:0	6	;
+if	40:8	46:8	4	(s -> frame_size > 0 && buf . bytesused != s -> frame_size)
+cond	40:12	40:53	5	s -> frame_size > 0 && buf . bytesused != s -> frame_size
+water	40:12	0:0	6	s
+op	40:13	0:0	6	->
+water	40:15	0:0	6	frame_size
+op	40:26	0:0	6	>
+water	40:28	0:0	6	0
+op	40:30	0:0	6	&&
+water	40:33	0:0	6	buf
+op	40:36	0:0	6	.
+water	40:37	0:0	6	bytesused
+op	40:47	0:0	6	!=
+water	40:50	0:0	6	s
+op	40:51	0:0	6	->
+water	40:53	0:0	6	frame_size
+stmts	40:65	46:8	5	
+water	40:65	0:0	6	{
+call	41:12	43:58	6	av_log
+arg	41:19	41:22	7	ctx
+water	41:19	0:0	8	ctx
+arg	41:24	41:36	7	AV_LOG_ERROR
+water	41:24	0:0	8	AV_LOG_ERROR
+arg	42:19	42:99	7	"Dequeued v4l2 buffer contains %d bytes, but %d were expected. Flags: 0x%08X.\n"
+water	42:19	0:0	8	"Dequeued v4l2 buffer contains %d bytes, but %d were expected. Flags: 0x%08X.\n"
+arg	43:19	43:32	7	buf.bytesused
+water	43:19	0:0	8	buf
+op	43:22	0:0	8	.
+water	43:23	0:0	8	bytesused
+arg	43:34	43:47	7	s->frame_size
+water	43:34	0:0	8	s
+op	43:35	0:0	8	->
+water	43:37	0:0	8	frame_size
+arg	43:49	43:58	7	buf.flags
+water	43:49	0:0	8	buf
+op	43:52	0:0	8	.
+water	43:53	0:0	8	flags
+water	43:59	0:0	6	;
+call	44:12	44:34	6	enqueue_buffer
+arg	44:27	44:28	7	s
+water	44:27	0:0	8	s
+arg	44:30	44:34	7	&buf
+op	44:30	0:0	8	&
+water	44:31	0:0	8	buf
+water	44:35	0:0	6	;
+return	45:12	45:38	6	AVERROR_INVALIDDATA
+water	45:19	0:0	7	AVERROR_INVALIDDATA
+water	46:8	0:0	6	}
+water	47:4	0:0	4	}
+if	49:4	63:4	2	(avpriv_atomic_int_get (& s -> buffers_queued ) ==FFMAX (s -> buffers / 8 ,1 ))
+cond	49:8	49:76	3	avpriv_atomic_int_get (& s -> buffers_queued ) ==FFMAX (s -> buffers / 8 ,1 )
+call	49:8	49:48	4	avpriv_atomic_int_get
+arg	49:30	49:48	5	&s->buffers_queued
+op	49:30	0:0	6	&
+water	49:31	0:0	6	s
+op	49:32	0:0	6	->
+water	49:34	0:0	6	buffers_queued
+op	49:50	0:0	4	==
+call	49:53	49:76	4	FFMAX
+arg	49:59	49:73	5	s->buffers/8
+water	49:59	0:0	6	s
+op	49:60	0:0	6	->
+water	49:62	0:0	6	buffers
+op	49:70	0:0	6	/
+water	49:72	0:0	6	8
+arg	49:75	49:76	5	1
+water	49:75	0:0	6	1
+stmts	49:79	63:4	3	
+water	49:79	0:0	4	{
+water	51:8	0:0	4	res
+op	51:12	0:0	4	=
+call	51:14	51:46	4	av_new_packet
+arg	51:28	51:31	5	pkt
+water	51:28	0:0	6	pkt
+arg	51:33	51:46	5	buf.bytesused
+water	51:33	0:0	6	buf
+op	51:36	0:0	6	.
+water	51:37	0:0	6	bytesused
+water	51:47	0:0	4	;
+if	52:8	56:8	4	(res < 0)
+cond	52:12	52:18	5	res < 0
+water	52:12	0:0	6	res
+op	52:16	0:0	6	<
+water	52:18	0:0	6	0
+stmts	52:21	56:8	5	
+water	52:21	0:0	6	{
+call	53:12	53:68	6	av_log
+arg	53:19	53:22	7	ctx
+water	53:19	0:0	8	ctx
+arg	53:24	53:36	7	AV_LOG_ERROR
+water	53:24	0:0	8	AV_LOG_ERROR
+arg	53:38	53:68	7	"Error allocating a packet.\n"
+water	53:38	0:0	8	"Error allocating a packet.\n"
+water	53:69	0:0	6	;
+call	54:12	54:34	6	enqueue_buffer
+arg	54:27	54:28	7	s
+water	54:27	0:0	8	s
+arg	54:30	54:34	7	&buf
+op	54:30	0:0	8	&
+water	54:31	0:0	8	buf
+water	54:35	0:0	6	;
+return	55:12	55:22	6	res
+water	55:19	0:0	7	res
+water	56:8	0:0	6	}
+call	57:8	57:64	4	memcpy
+arg	57:15	57:24	5	pkt->data
+water	57:15	0:0	6	pkt
+op	57:18	0:0	6	->
+water	57:20	0:0	6	data
+arg	57:26	57:49	5	s->buf_start[buf.index]
+water	57:26	0:0	6	s
+op	57:27	0:0	6	->
+water	57:29	0:0	6	buf_start
+op	57:38	0:0	6	[
+water	57:39	0:0	6	buf
+op	57:42	0:0	6	.
+water	57:43	0:0	6	index
+op	57:48	0:0	6	]
+arg	57:51	57:64	5	buf.bytesused
+water	57:51	0:0	6	buf
+op	57:54	0:0	6	.
+water	57:55	0:0	6	bytesused
+water	57:65	0:0	4	;
+water	58:8	0:0	4	res
+op	58:12	0:0	4	=
+call	58:14	58:36	4	enqueue_buffer
+arg	58:29	58:30	5	s
+water	58:29	0:0	6	s
+arg	58:32	58:36	5	&buf
+op	58:32	0:0	6	&
+water	58:33	0:0	6	buf
+water	58:37	0:0	4	;
+if	59:8	62:8	4	(res)
+cond	59:12	59:12	5	res
+water	59:12	0:0	6	res
+stmts	59:17	62:8	5	
+water	59:17	0:0	6	{
+call	60:12	60:30	6	av_free_packet
+arg	60:27	60:30	7	pkt
+water	60:27	0:0	8	pkt
+water	60:31	0:0	6	;
+return	61:12	61:22	6	res
+water	61:19	0:0	7	res
+water	62:8	0:0	6	}
+water	63:4	0:0	4	}
+else	63:6	91:4	2
+stmts	63:11	91:4	3	
+water	63:11	0:0	4	{
+decl	64:8	64:40	4	struct buff_data	*buf_descriptor
+water	65:8	0:0	4	pkt
+op	65:11	0:0	4	->
+water	65:13	0:0	4	data
+op	65:22	0:0	4	=
+water	65:24	0:0	4	s
+op	65:25	0:0	4	->
+water	65:27	0:0	4	buf_start
+op	65:36	0:0	4	[
+water	65:37	0:0	4	buf
+op	65:40	0:0	4	.
+water	65:41	0:0	4	index
+op	65:46	0:0	4	]
+water	65:47	0:0	4	;
+water	66:8	0:0	4	pkt
+op	66:11	0:0	4	->
+water	66:13	0:0	4	size
+op	66:22	0:0	4	=
+water	66:24	0:0	4	buf
+op	66:27	0:0	4	.
+water	66:28	0:0	4	bytesused
+water	66:37	0:0	4	;
+water	68:0	0:0	4	FF_DISABLE_DEPRECATION_WARNINGS
+water	69:8	0:0	4	pkt
+op	69:11	0:0	4	->
+water	69:13	0:0	4	destruct
+op	69:22	0:0	4	=
+water	69:24	0:0	4	dummy_release_buffer
+water	69:44	0:0	4	;
+decl	70:0	72:60	4	FF_ENABLE_DEPRECATION_WARNINGS	buf_descriptor
+op	72:23	0:0	4	=
+call	72:25	72:59	5	av_malloc
+arg	72:35	72:59	6	sizeof(structbuff_data)
+op	72:35	0:0	7	sizeof
+water	72:41	0:0	7	(
+water	72:42	0:0	7	struct
+water	72:49	0:0	7	buff_data
+water	72:58	0:0	7	)
+if	73:8	80:8	4	(! buf_descriptor)
+cond	73:12	73:13	5	! buf_descriptor
+op	73:12	0:0	6	!
+water	73:13	0:0	6	buf_descriptor
+stmts	73:29	80:8	5	
+water	73:29	0:0	6	{
+call	77:12	77:80	6	av_log
+arg	77:19	77:22	7	ctx
+water	77:19	0:0	8	ctx
+arg	77:24	77:36	7	AV_LOG_ERROR
+water	77:24	0:0	8	AV_LOG_ERROR
+arg	77:38	77:80	7	"Failed to allocate a buffer descriptor\n"
+water	77:38	0:0	8	"Failed to allocate a buffer descriptor\n"
+water	77:81	0:0	6	;
+call	78:12	78:34	6	enqueue_buffer
+arg	78:27	78:28	7	s
+water	78:27	0:0	8	s
+arg	78:30	78:34	7	&buf
+op	78:30	0:0	8	&
+water	78:31	0:0	8	buf
+water	78:35	0:0	6	;
+return	79:12	79:34	6	AVERROR(ENOMEM)
+call	79:19	79:33	7	AVERROR
+arg	79:27	79:33	8	ENOMEM
+water	79:27	0:0	9	ENOMEM
+water	80:8	0:0	6	}
+water	81:8	0:0	4	buf_descriptor
+op	81:22	0:0	4	->
+water	81:24	0:0	4	index
+op	81:30	0:0	4	=
+water	81:32	0:0	4	buf
+op	81:35	0:0	4	.
+water	81:36	0:0	4	index
+water	81:41	0:0	4	;
+water	82:8	0:0	4	buf_descriptor
+op	82:22	0:0	4	->
+water	82:24	0:0	4	s
+op	82:30	0:0	4	=
+water	82:32	0:0	4	s
+water	82:33	0:0	4	;
+water	83:8	0:0	4	pkt
+op	83:11	0:0	4	->
+water	83:13	0:0	4	buf
+op	83:17	0:0	4	=
+call	83:19	84:53	4	av_buffer_create
+arg	83:36	83:45	5	pkt->data
+water	83:36	0:0	6	pkt
+op	83:39	0:0	6	->
+water	83:41	0:0	6	data
+arg	83:47	83:56	5	pkt->size
+water	83:47	0:0	6	pkt
+op	83:50	0:0	6	->
+water	83:52	0:0	6	size
+arg	83:58	83:77	5	mmap_release_buffer
+water	83:58	0:0	6	mmap_release_buffer
+arg	84:36	84:50	5	buf_descriptor
+water	84:36	0:0	6	buf_descriptor
+arg	84:52	84:53	5	0
+water	84:52	0:0	6	0
+water	84:54	0:0	4	;
+if	85:8	90:8	4	(! pkt -> buf)
+cond	85:12	85:18	5	! pkt -> buf
+op	85:12	0:0	6	!
+water	85:13	0:0	6	pkt
+op	85:16	0:0	6	->
+water	85:18	0:0	6	buf
+stmts	85:23	90:8	5	
+water	85:23	0:0	6	{
+call	86:12	86:67	6	av_log
+arg	86:19	86:22	7	ctx
+water	86:19	0:0	8	ctx
+arg	86:24	86:36	7	AV_LOG_ERROR
+water	86:24	0:0	8	AV_LOG_ERROR
+arg	86:38	86:67	7	"Failed to create a buffer\n"
+water	86:38	0:0	8	"Failed to create a buffer\n"
+water	86:68	0:0	6	;
+call	87:12	87:34	6	enqueue_buffer
+arg	87:27	87:28	7	s
+water	87:27	0:0	8	s
+arg	87:30	87:34	7	&buf
+op	87:30	0:0	8	&
+water	87:31	0:0	8	buf
+water	87:35	0:0	6	;
+call	88:12	88:36	6	av_freep
+arg	88:21	88:36	7	&buf_descriptor
+op	88:21	0:0	8	&
+water	88:22	0:0	8	buf_descriptor
+water	88:37	0:0	6	;
+return	89:12	89:34	6	AVERROR(ENOMEM)
+call	89:19	89:33	7	AVERROR
+arg	89:27	89:33	8	ENOMEM
+water	89:27	0:0	9	ENOMEM
+water	90:8	0:0	6	}
+water	91:4	0:0	4	}
+water	92:4	0:0	2	pkt
+op	92:7	0:0	2	->
+water	92:9	0:0	2	pts
+op	92:13	0:0	2	=
+water	92:15	0:0	2	buf
+op	92:18	0:0	2	.
+water	92:19	0:0	2	timestamp
+op	92:28	0:0	2	.
+water	92:29	0:0	2	tv_sec
+call	92:36	92:53	2	*INT64_C
+arg	92:46	92:53	3	1000000
+water	92:46	0:0	4	1000000
+op	92:55	0:0	2	+
+water	92:57	0:0	2	buf
+op	92:60	0:0	2	.
+water	92:61	0:0	2	timestamp
+op	92:70	0:0	2	.
+water	92:71	0:0	2	tv_usec
+water	92:78	0:0	2	;
+call	93:4	93:36	2	convert_timestamp
+arg	93:22	93:25	3	ctx
+water	93:22	0:0	4	ctx
+arg	93:27	93:36	3	&pkt->pts
+op	93:27	0:0	4	&
+water	93:28	0:0	4	pkt
+op	93:31	0:0	4	->
+water	93:33	0:0	4	pts
+water	93:37	0:0	2	;
+return	94:4	94:20	2	pkt->size
+water	94:11	0:0	3	pkt
+op	94:14	0:0	3	->
+water	94:16	0:0	3	size

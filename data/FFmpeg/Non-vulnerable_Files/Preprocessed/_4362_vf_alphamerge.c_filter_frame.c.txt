@@ -1,0 +1,140 @@
+func	1:0	22:0	0	static int	filter_frame
+params	1:23	0:0	1	
+param	1:24	1:44	2	AVFilterLink *	inlink
+param	1:46	1:58	2	AVFrame *	buf
+stmnts	0:0	21:14	1	
+decl	3:4	3:38	2	AVFilterContext	*ctx
+op	3:25	0:0	2	=
+water	3:27	0:0	2	inlink
+op	3:33	0:0	2	->
+water	3:35	0:0	2	dst
+decl	4:4	4:40	2	AlphaMergeContext	*merge
+op	4:29	0:0	2	=
+water	4:31	0:0	2	ctx
+op	4:34	0:0	2	->
+water	4:36	0:0	2	priv
+decl	5:4	5:15	2	int	ret
+op	5:12	0:0	2	=
+water	5:14	0:0	2	0
+decl	6:4	6:45	2	int	is_alpha
+op	6:17	0:0	2	=
+water	6:19	0:0	2	(
+water	6:20	0:0	2	inlink
+op	6:27	0:0	2	==
+water	6:30	0:0	2	ctx
+op	6:33	0:0	2	->
+water	6:35	0:0	2	inputs
+op	6:41	0:0	2	[
+water	6:42	0:0	2	1
+op	6:43	0:0	2	]
+water	6:44	0:0	2	)
+decl	7:4	8:61	2	struct FFBufQueue	*queue
+op	7:29	0:0	2	=
+water	8:8	0:0	2	(
+water	8:9	0:0	2	is_alpha
+water	8:18	0:0	2	?
+op	8:20	0:0	2	&
+water	8:21	0:0	2	merge
+op	8:26	0:0	2	->
+water	8:28	0:0	2	queue_alpha
+water	8:40	0:0	2	:
+op	8:42	0:0	2	&
+water	8:43	0:0	2	merge
+op	8:48	0:0	2	->
+water	8:50	0:0	2	queue_main
+water	8:60	0:0	2	)
+call	9:4	9:35	2	ff_bufqueue_add
+arg	9:20	9:23	3	ctx
+water	9:20	0:0	4	ctx
+arg	9:25	9:30	3	queue
+water	9:25	0:0	4	queue
+arg	9:32	9:35	3	buf
+water	9:32	0:0	4	buf
+water	9:36	0:0	2	;
+do	10:4	20:4	2	(ret >= 0)
+cond	20:13	20:20	3	ret >= 0
+water	20:13	0:0	4	ret
+op	20:17	0:0	4	>=
+water	20:20	0:0	4	0
+stmts	10:7	20:4	3	
+water	10:7	0:0	4	{
+decl	11:8	11:37	4	AVFrame	*main_buf
+water	11:25	0:0	4	,
+decl	11:8	11:37	4	AVFrame	*alpha_buf
+if	12:8	13:60	4	(!ff_bufqueue_peek (& merge -> queue_main ,0 ) || !ff_bufqueue_peek (& merge -> queue_alpha ,0 ))
+cond	12:12	13:52	5	!ff_bufqueue_peek (& merge -> queue_main ,0 ) || !ff_bufqueue_peek (& merge -> queue_alpha ,0 )
+op	12:12	0:0	6	!
+call	12:13	12:51	6	ff_bufqueue_peek
+arg	12:30	12:48	7	&merge->queue_main
+op	12:30	0:0	8	&
+water	12:31	0:0	8	merge
+op	12:36	0:0	8	->
+water	12:38	0:0	8	queue_main
+arg	12:50	12:51	7	0
+water	12:50	0:0	8	0
+op	12:53	0:0	6	||
+op	13:12	0:0	6	!
+call	13:13	13:52	6	ff_bufqueue_peek
+arg	13:30	13:49	7	&merge->queue_alpha
+op	13:30	0:0	8	&
+water	13:31	0:0	8	merge
+op	13:36	0:0	8	->
+water	13:38	0:0	8	queue_alpha
+arg	13:51	13:52	7	0
+water	13:51	0:0	8	0
+stmts	13:55	13:60	5	
+break	13:55	13:60	6	
+water	14:8	0:0	4	main_buf
+op	14:17	0:0	4	=
+call	14:19	14:53	4	ff_bufqueue_get
+arg	14:35	14:53	5	&merge->queue_main
+op	14:35	0:0	6	&
+water	14:36	0:0	6	merge
+op	14:41	0:0	6	->
+water	14:43	0:0	6	queue_main
+water	14:54	0:0	4	;
+water	15:8	0:0	4	alpha_buf
+op	15:18	0:0	4	=
+call	15:20	15:55	4	ff_bufqueue_get
+arg	15:36	15:55	5	&merge->queue_alpha
+op	15:36	0:0	6	&
+water	15:37	0:0	6	merge
+op	15:42	0:0	6	->
+water	15:44	0:0	6	queue_alpha
+water	15:56	0:0	4	;
+water	16:8	0:0	4	merge
+op	16:13	0:0	4	->
+water	16:15	0:0	4	frame_requested
+op	16:31	0:0	4	=
+water	16:33	0:0	4	0
+water	16:34	0:0	4	;
+call	17:8	17:43	4	draw_frame
+arg	17:19	17:22	5	ctx
+water	17:19	0:0	6	ctx
+arg	17:24	17:32	5	main_buf
+water	17:24	0:0	6	main_buf
+arg	17:34	17:43	5	alpha_buf
+water	17:34	0:0	6	alpha_buf
+water	17:44	0:0	4	;
+water	18:8	0:0	4	ret
+op	18:12	0:0	4	=
+call	18:14	18:55	4	ff_filter_frame
+arg	18:30	18:45	5	ctx->outputs[0]
+water	18:30	0:0	6	ctx
+op	18:33	0:0	6	->
+water	18:35	0:0	6	outputs
+op	18:42	0:0	6	[
+water	18:43	0:0	6	0
+op	18:44	0:0	6	]
+arg	18:47	18:55	5	main_buf
+water	18:47	0:0	6	main_buf
+water	18:56	0:0	4	;
+call	19:8	19:32	4	av_frame_free
+arg	19:22	19:32	5	&alpha_buf
+op	19:22	0:0	6	&
+water	19:23	0:0	6	alpha_buf
+water	19:33	0:0	4	;
+water	20:4	0:0	4	}
+water	20:22	0:0	2	;
+return	21:4	21:14	2	ret
+water	21:11	0:0	3	ret

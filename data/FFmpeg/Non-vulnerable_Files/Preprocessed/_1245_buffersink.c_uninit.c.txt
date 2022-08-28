@@ -1,0 +1,70 @@
+func	1:15	14:0	0	void	uninit
+params	1:26	0:0	1	
+param	1:27	1:47	2	AVFilterContext *	ctx
+stmnts	0:0	13:4	1	
+decl	3:4	3:39	2	BufferSinkContext	*sink
+op	3:28	0:0	2	=
+water	3:30	0:0	2	ctx
+op	3:33	0:0	2	->
+water	3:35	0:0	2	priv
+decl	4:4	4:18	2	AVFrame	*frame
+if	5:4	6:44	2	(sink -> audio_fifo)
+cond	5:8	5:14	3	sink -> audio_fifo
+water	5:8	0:0	4	sink
+op	5:12	0:0	4	->
+water	5:14	0:0	4	audio_fifo
+stmts	6:8	6:44	3	
+call	6:8	6:43	4	av_audio_fifo_free
+arg	6:27	6:43	5	sink->audio_fifo
+water	6:27	0:0	6	sink
+op	6:31	0:0	6	->
+water	6:33	0:0	6	audio_fifo
+water	6:44	0:0	4	;
+if	7:4	13:4	2	(sink -> fifo)
+cond	7:8	7:14	3	sink -> fifo
+water	7:8	0:0	4	sink
+op	7:12	0:0	4	->
+water	7:14	0:0	4	fifo
+stmts	7:20	13:4	3	
+water	7:20	0:0	4	{
+while	8:8	11:8	4	(av_fifo_size (sink -> fifo ) >= FIFO_INIT_ELEMENT_SIZE)
+cond	8:15	8:43	5	av_fifo_size (sink -> fifo ) >= FIFO_INIT_ELEMENT_SIZE
+call	8:15	8:38	6	av_fifo_size
+arg	8:28	8:38	7	sink->fifo
+water	8:28	0:0	8	sink
+op	8:32	0:0	8	->
+water	8:34	0:0	8	fifo
+op	8:40	0:0	6	>=
+water	8:43	0:0	6	FIFO_INIT_ELEMENT_SIZE
+stmts	8:67	11:8	5	
+water	8:67	0:0	6	{
+call	9:12	9:72	6	av_fifo_generic_read
+arg	9:33	9:43	7	sink->fifo
+water	9:33	0:0	8	sink
+op	9:37	0:0	8	->
+water	9:39	0:0	8	fifo
+arg	9:45	9:51	7	&frame
+op	9:45	0:0	8	&
+water	9:46	0:0	8	frame
+arg	9:53	9:66	7	sizeof(frame)
+op	9:53	0:0	8	sizeof
+water	9:59	0:0	8	(
+water	9:60	0:0	8	frame
+water	9:65	0:0	8	)
+arg	9:68	9:72	7	NULL
+water	9:68	0:0	8	NULL
+water	9:73	0:0	6	;
+call	10:12	10:32	6	av_frame_free
+arg	10:26	10:32	7	&frame
+op	10:26	0:0	8	&
+water	10:27	0:0	8	frame
+water	10:33	0:0	6	;
+water	11:8	0:0	6	}
+call	12:8	12:33	4	av_fifo_freep
+arg	12:22	12:33	5	&sink->fifo
+op	12:22	0:0	6	&
+water	12:23	0:0	6	sink
+op	12:27	0:0	6	->
+water	12:29	0:0	6	fifo
+water	12:34	0:0	4	;
+water	13:4	0:0	4	}

@@ -1,0 +1,378 @@
+func	1:0	41:0	0	static int	filter_frame
+params	1:23	0:0	1	
+param	1:24	1:44	2	AVFilterLink *	inlink
+param	1:46	1:57	2	AVFrame *	in
+stmnts	0:0	40:40	1	
+decl	3:4	3:39	2	AVFilterContext	*ctx
+op	3:26	0:0	2	=
+water	3:28	0:0	2	inlink
+op	3:34	0:0	2	->
+water	3:36	0:0	2	dst
+decl	4:4	4:37	2	WaveformContext	*s
+op	4:26	0:0	2	=
+water	4:28	0:0	2	ctx
+op	4:31	0:0	2	->
+water	4:33	0:0	2	priv
+decl	5:4	5:43	2	AVFilterLink	*outlink
+op	5:26	0:0	2	=
+water	5:28	0:0	2	ctx
+op	5:31	0:0	2	->
+water	5:33	0:0	2	outputs
+op	5:40	0:0	2	[
+water	5:41	0:0	2	0
+op	5:42	0:0	2	]
+decl	6:4	6:16	2	AVFrame	*out
+decl	7:4	7:15	2	int	i
+water	7:9	0:0	2	,
+decl	7:4	7:15	2	int	j
+water	7:12	0:0	2	,
+decl	7:4	7:15	2	int	k
+water	8:4	0:0	2	out
+op	8:8	0:0	2	=
+call	8:10	8:61	2	ff_get_video_buffer
+arg	8:30	8:37	3	outlink
+water	8:30	0:0	4	outlink
+arg	8:39	8:49	3	outlink->w
+water	8:39	0:0	4	outlink
+op	8:46	0:0	4	->
+water	8:48	0:0	4	w
+arg	8:51	8:61	3	outlink->h
+water	8:51	0:0	4	outlink
+op	8:58	0:0	4	->
+water	8:60	0:0	4	h
+water	8:62	0:0	2	;
+if	9:4	12:4	2	(! out)
+cond	9:8	9:9	3	! out
+op	9:8	0:0	4	!
+water	9:9	0:0	4	out
+stmts	9:14	12:4	3	
+water	9:14	0:0	4	{
+call	10:8	10:25	4	av_frame_free
+arg	10:22	10:25	5	&in
+op	10:22	0:0	6	&
+water	10:23	0:0	6	in
+water	10:26	0:0	4	;
+return	11:8	11:30	4	AVERROR(ENOMEM)
+call	11:15	11:29	5	AVERROR
+arg	11:23	11:29	6	ENOMEM
+water	11:23	0:0	7	ENOMEM
+water	12:4	0:0	4	}
+water	13:4	0:0	2	out
+op	13:7	0:0	2	->
+water	13:9	0:0	2	pts
+op	13:13	0:0	2	=
+water	13:15	0:0	2	in
+op	13:17	0:0	2	->
+water	13:19	0:0	2	pts
+water	13:22	0:0	2	;
+for	14:4	32:4	2	(k = 0 ;k < s -> ncomp;k ++)
+forinit	14:9	14:14	3	k = 0 ;
+water	14:9	0:0	4	k
+op	14:11	0:0	4	=
+water	14:13	0:0	4	0
+water	14:14	0:0	4	;
+cond	14:16	14:23	3	k < s -> ncomp
+water	14:16	0:0	4	k
+op	14:18	0:0	4	<
+water	14:20	0:0	4	s
+op	14:21	0:0	4	->
+water	14:23	0:0	4	ncomp
+forexpr	14:30	14:31	3	k ++
+water	14:30	0:0	4	k
+op	14:31	0:0	4	++
+stmts	14:35	32:4	3	
+water	14:35	0:0	4	{
+decl	15:8	15:48	4	const int	is_chroma
+op	15:28	0:0	4	=
+water	15:30	0:0	4	(
+water	15:31	0:0	4	k
+op	15:33	0:0	4	==
+water	15:36	0:0	4	1
+op	15:38	0:0	4	||
+water	15:41	0:0	4	k
+op	15:43	0:0	4	==
+water	15:46	0:0	4	2
+water	15:47	0:0	4	)
+decl	16:8	16:94	4	const int	dst_h
+op	16:24	0:0	4	=
+call	16:26	16:93	5	FF_CEIL_RSHIFT
+arg	16:41	16:51	6	outlink->h
+water	16:41	0:0	7	outlink
+op	16:48	0:0	7	->
+water	16:50	0:0	7	h
+arg	16:53	16:93	6	(is_chroma?s->desc->log2_chroma_h:0)
+water	16:53	0:0	7	(
+water	16:54	0:0	7	is_chroma
+water	16:64	0:0	7	?
+water	16:66	0:0	7	s
+op	16:67	0:0	7	->
+water	16:69	0:0	7	desc
+op	16:73	0:0	7	->
+water	16:75	0:0	7	log2_chroma_h
+water	16:89	0:0	7	:
+water	16:91	0:0	7	0
+water	16:92	0:0	7	)
+decl	17:8	17:94	4	const int	dst_w
+op	17:24	0:0	4	=
+call	17:26	17:93	5	FF_CEIL_RSHIFT
+arg	17:41	17:51	6	outlink->w
+water	17:41	0:0	7	outlink
+op	17:48	0:0	7	->
+water	17:50	0:0	7	w
+arg	17:53	17:93	6	(is_chroma?s->desc->log2_chroma_w:0)
+water	17:53	0:0	7	(
+water	17:54	0:0	7	is_chroma
+water	17:64	0:0	7	?
+water	17:66	0:0	7	s
+op	17:67	0:0	7	->
+water	17:69	0:0	7	desc
+op	17:73	0:0	7	->
+water	17:75	0:0	7	log2_chroma_w
+water	17:89	0:0	7	:
+water	17:91	0:0	7	0
+water	17:92	0:0	7	)
+if	18:8	23:8	4	(s -> bits <= 8)
+cond	18:12	18:23	5	s -> bits <= 8
+water	18:12	0:0	6	s
+op	18:13	0:0	6	->
+water	18:15	0:0	6	bits
+op	18:20	0:0	6	<=
+water	18:23	0:0	6	8
+stmts	18:26	23:8	5	
+water	18:26	0:0	6	{
+for	19:12	22:45	6	(i = 0 ;i < dst_h;i ++)
+forinit	19:17	19:22	7	i = 0 ;
+water	19:17	0:0	8	i
+op	19:19	0:0	8	=
+water	19:21	0:0	8	0
+water	19:22	0:0	8	;
+cond	19:24	19:28	7	i < dst_h
+water	19:24	0:0	8	i
+op	19:26	0:0	8	<
+water	19:28	0:0	8	dst_h
+forexpr	19:36	19:37	7	i ++
+water	19:36	0:0	8	i
+op	19:37	0:0	8	++
+stmts	20:16	22:45	7	
+call	20:16	22:44	8	memset
+arg	20:23	21:64	9	out->data[s->desc->comp[k].plane]+i*out->linesize[s->desc->comp[k].plane]
+water	20:23	0:0	10	out
+op	20:26	0:0	10	->
+water	20:28	0:0	10	data
+op	20:32	0:0	10	[
+water	20:33	0:0	10	s
+op	20:34	0:0	10	->
+water	20:36	0:0	10	desc
+op	20:40	0:0	10	->
+water	20:42	0:0	10	comp
+op	20:46	0:0	10	[
+water	20:47	0:0	10	k
+op	20:48	0:0	10	]
+op	20:49	0:0	10	.
+water	20:50	0:0	10	plane
+op	20:55	0:0	10	]
+op	20:57	0:0	10	+
+water	21:23	0:0	10	i
+op	21:25	0:0	10	*
+water	21:27	0:0	10	out
+op	21:30	0:0	10	->
+water	21:32	0:0	10	linesize
+op	21:40	0:0	10	[
+water	21:41	0:0	10	s
+op	21:42	0:0	10	->
+water	21:44	0:0	10	desc
+op	21:48	0:0	10	->
+water	21:50	0:0	10	comp
+op	21:54	0:0	10	[
+water	21:55	0:0	10	k
+op	21:56	0:0	10	]
+op	21:57	0:0	10	.
+water	21:58	0:0	10	plane
+op	21:63	0:0	10	]
+arg	22:23	22:37	9	s->bg_color[k]
+water	22:23	0:0	10	s
+op	22:24	0:0	10	->
+water	22:26	0:0	10	bg_color
+op	22:34	0:0	10	[
+water	22:35	0:0	10	k
+op	22:36	0:0	10	]
+arg	22:39	22:44	9	dst_w
+water	22:39	0:0	10	dst_w
+water	22:45	0:0	8	;
+water	23:8	0:0	6	}
+else	23:10	31:8	4
+stmts	23:15	31:8	5	
+water	23:15	0:0	6	{
+decl	24:12	24:42	6	const int	mult
+op	24:27	0:0	6	=
+water	24:29	0:0	6	s
+op	24:30	0:0	6	->
+water	24:32	0:0	6	size
+op	24:37	0:0	6	/
+water	24:39	0:0	6	256
+decl	25:12	25:73	6	uint16_t	*dst
+op	25:26	0:0	6	=
+water	25:28	0:0	6	(
+water	25:29	0:0	6	uint16_t
+op	25:38	0:0	6	*
+water	25:39	0:0	6	)
+water	25:40	0:0	6	out
+op	25:43	0:0	6	->
+water	25:45	0:0	6	data
+op	25:49	0:0	6	[
+water	25:50	0:0	6	s
+op	25:51	0:0	6	->
+water	25:53	0:0	6	desc
+op	25:57	0:0	6	->
+water	25:59	0:0	6	comp
+op	25:63	0:0	6	[
+water	25:64	0:0	6	k
+op	25:65	0:0	6	]
+op	25:66	0:0	6	.
+water	25:67	0:0	6	plane
+op	25:72	0:0	6	]
+for	26:12	30:12	6	(i = 0 ;i < dst_h;i ++)
+forinit	26:17	26:22	7	i = 0 ;
+water	26:17	0:0	8	i
+op	26:19	0:0	8	=
+water	26:21	0:0	8	0
+water	26:22	0:0	8	;
+cond	26:24	26:28	7	i < dst_h
+water	26:24	0:0	8	i
+op	26:26	0:0	8	<
+water	26:28	0:0	8	dst_h
+forexpr	26:36	26:37	7	i ++
+water	26:36	0:0	8	i
+op	26:37	0:0	8	++
+stmts	26:41	30:12	7	
+water	26:41	0:0	8	{
+for	27:16	28:50	8	(j = 0 ;j < dst_w;j ++)
+forinit	27:21	27:26	9	j = 0 ;
+water	27:21	0:0	10	j
+op	27:23	0:0	10	=
+water	27:25	0:0	10	0
+water	27:26	0:0	10	;
+cond	27:28	27:32	9	j < dst_w
+water	27:28	0:0	10	j
+op	27:30	0:0	10	<
+water	27:32	0:0	10	dst_w
+forexpr	27:39	27:40	9	j ++
+water	27:39	0:0	10	j
+op	27:40	0:0	10	++
+stmts	28:20	28:50	9	
+water	28:20	0:0	10	dst
+op	28:23	0:0	10	[
+water	28:24	0:0	10	j
+op	28:25	0:0	10	]
+op	28:27	0:0	10	=
+water	28:29	0:0	10	s
+op	28:30	0:0	10	->
+water	28:32	0:0	10	bg_color
+op	28:40	0:0	10	[
+water	28:41	0:0	10	k
+op	28:42	0:0	10	]
+op	28:44	0:0	10	*
+water	28:46	0:0	10	mult
+water	28:50	0:0	10	;
+water	29:16	0:0	8	dst
+op	29:20	0:0	8	+=
+water	29:23	0:0	8	out
+op	29:26	0:0	8	->
+water	29:28	0:0	8	linesize
+op	29:36	0:0	8	[
+water	29:37	0:0	8	s
+op	29:38	0:0	8	->
+water	29:40	0:0	8	desc
+op	29:44	0:0	8	->
+water	29:46	0:0	8	comp
+op	29:50	0:0	8	[
+water	29:51	0:0	8	k
+op	29:52	0:0	8	]
+op	29:53	0:0	8	.
+water	29:54	0:0	8	plane
+op	29:59	0:0	8	]
+op	29:61	0:0	8	/
+water	29:63	0:0	8	2
+water	29:64	0:0	8	;
+water	30:12	0:0	8	}
+water	31:8	0:0	6	}
+water	32:4	0:0	4	}
+for	33:4	38:4	2	(k = 0 , i = 0 ;k < s -> ncomp;k ++)
+forinit	33:9	33:21	3	k = 0 , i = 0 ;
+water	33:9	0:0	4	k
+op	33:11	0:0	4	=
+water	33:13	0:0	4	0
+water	33:14	0:0	4	,
+water	33:16	0:0	4	i
+op	33:18	0:0	4	=
+water	33:20	0:0	4	0
+water	33:21	0:0	4	;
+cond	33:23	33:30	3	k < s -> ncomp
+water	33:23	0:0	4	k
+op	33:25	0:0	4	<
+water	33:27	0:0	4	s
+op	33:28	0:0	4	->
+water	33:30	0:0	4	ncomp
+forexpr	33:37	33:38	3	k ++
+water	33:37	0:0	4	k
+op	33:38	0:0	4	++
+stmts	33:42	38:4	3	
+water	33:42	0:0	4	{
+if	34:8	37:8	4	(( 1 << k ) & s -> pcomp)
+cond	34:12	34:26	5	( 1 << k ) & s -> pcomp
+water	34:12	0:0	6	(
+water	34:13	0:0	6	1
+op	34:15	0:0	6	<<
+water	34:18	0:0	6	k
+water	34:19	0:0	6	)
+op	34:21	0:0	6	&
+water	34:23	0:0	6	s
+op	34:24	0:0	6	->
+water	34:26	0:0	6	pcomp
+stmts	34:33	37:8	5	
+water	34:33	0:0	6	{
+decl	35:12	35:57	6	const int	offset
+op	35:29	0:0	6	=
+water	35:31	0:0	6	i
+op	35:32	0:0	6	++
+op	35:35	0:0	6	*
+water	35:37	0:0	6	s
+op	35:38	0:0	6	->
+water	35:40	0:0	6	size
+op	35:45	0:0	6	*
+water	35:47	0:0	6	s
+op	35:48	0:0	6	->
+water	35:50	0:0	6	display
+call	36:12	36:68	6	s->waveform
+arg	36:24	36:25	7	s
+water	36:24	0:0	8	s
+arg	36:27	36:29	7	in
+water	36:27	0:0	8	in
+arg	36:31	36:34	7	out
+water	36:31	0:0	8	out
+arg	36:36	36:37	7	k
+water	36:36	0:0	8	k
+arg	36:39	36:51	7	s->intensity
+water	36:39	0:0	8	s
+op	36:40	0:0	8	->
+water	36:42	0:0	8	intensity
+arg	36:53	36:59	7	offset
+water	36:53	0:0	8	offset
+arg	36:61	36:68	7	s->mode
+water	36:61	0:0	8	s
+op	36:62	0:0	8	->
+water	36:64	0:0	8	mode
+water	36:69	0:0	6	;
+water	37:8	0:0	6	}
+water	38:4	0:0	4	}
+call	39:4	39:21	2	av_frame_free
+arg	39:18	39:21	3	&in
+op	39:18	0:0	4	&
+water	39:19	0:0	4	in
+water	39:22	0:0	2	;
+return	40:4	40:40	2	ff_filter_frame(outlink,out)
+call	40:11	40:39	3	ff_filter_frame
+arg	40:27	40:34	4	outlink
+water	40:27	0:0	5	outlink
+arg	40:36	40:39	4	out
+water	40:36	0:0	5	out

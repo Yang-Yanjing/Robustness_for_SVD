@@ -1,0 +1,227 @@
+func	1:0	37:0	0	static int	mov_write_single_packet
+params	1:34	0:0	1	
+param	1:35	1:53	2	AVFormatContext *	s
+param	1:55	1:68	2	AVPacket *	pkt
+stmnts	0:0	36:42	1	
+decl	3:8	3:41	2	MOVMuxContext	*mov
+op	3:27	0:0	2	=
+water	3:29	0:0	2	s
+op	3:30	0:0	2	->
+water	3:32	0:0	2	priv_data
+decl	4:8	4:55	2	MOVTrack	*trk
+op	4:22	0:0	2	=
+op	4:24	0:0	2	&
+water	4:25	0:0	2	mov
+op	4:28	0:0	2	->
+water	4:30	0:0	2	tracks
+op	4:36	0:0	2	[
+water	4:37	0:0	2	pkt
+op	4:40	0:0	2	->
+water	4:42	0:0	2	stream_index
+op	4:54	0:0	2	]
+decl	5:8	5:38	2	AVCodecContext	*enc
+op	5:28	0:0	2	=
+water	5:30	0:0	2	trk
+op	5:33	0:0	2	->
+water	5:35	0:0	2	enc
+decl	6:8	6:33	2	int64_t	frag_duration
+op	6:30	0:0	2	=
+water	6:32	0:0	2	0
+decl	7:8	7:28	2	int	size
+op	7:17	0:0	2	=
+water	7:19	0:0	2	pkt
+op	7:22	0:0	2	->
+water	7:24	0:0	2	size
+if	8:8	9:20	2	(! pkt -> size)
+cond	8:12	8:18	3	! pkt -> size
+op	8:12	0:0	4	!
+water	8:13	0:0	4	pkt
+op	8:16	0:0	4	->
+water	8:18	0:0	4	size
+stmts	9:12	9:20	3	
+return	9:12	9:20	4	0
+water	9:19	0:0	5	0
+if	10:8	15:8	2	(mov -> flags & FF_MOV_FLAG_FRAG_DISCONT)
+cond	10:12	10:25	3	mov -> flags & FF_MOV_FLAG_FRAG_DISCONT
+water	10:12	0:0	4	mov
+op	10:15	0:0	4	->
+water	10:17	0:0	4	flags
+op	10:23	0:0	4	&
+water	10:25	0:0	4	FF_MOV_FLAG_FRAG_DISCONT
+stmts	10:51	15:8	3	
+water	10:51	0:0	4	{
+decl	11:12	11:17	4	int	i
+for	12:12	13:47	4	(i = 0 ;i < s -> nb_streams;i ++)
+forinit	12:17	12:22	5	i = 0 ;
+water	12:17	0:0	6	i
+op	12:19	0:0	6	=
+water	12:21	0:0	6	0
+water	12:22	0:0	6	;
+cond	12:24	12:31	5	i < s -> nb_streams
+water	12:24	0:0	6	i
+op	12:26	0:0	6	<
+water	12:28	0:0	6	s
+op	12:29	0:0	6	->
+water	12:31	0:0	6	nb_streams
+forexpr	12:43	12:44	5	i ++
+water	12:43	0:0	6	i
+op	12:44	0:0	6	++
+stmts	13:16	13:47	5	
+water	13:16	0:0	6	mov
+op	13:19	0:0	6	->
+water	13:21	0:0	6	tracks
+op	13:27	0:0	6	[
+water	13:28	0:0	6	i
+op	13:29	0:0	6	]
+op	13:30	0:0	6	.
+water	13:31	0:0	6	frag_discont
+op	13:44	0:0	6	=
+water	13:46	0:0	6	1
+water	13:47	0:0	6	;
+water	14:12	0:0	4	mov
+op	14:15	0:0	4	->
+water	14:17	0:0	4	flags
+op	14:23	0:0	4	&=
+water	14:26	0:0	4	~FF_MOV_FLAG_FRAG_DISCONT
+water	14:51	0:0	4	;
+water	15:8	0:0	4	}
+if	16:8	19:56	2	(trk -> entry && pkt -> stream_index < s -> nb_streams)
+cond	16:12	16:49	3	trk -> entry && pkt -> stream_index < s -> nb_streams
+water	16:12	0:0	4	trk
+op	16:15	0:0	4	->
+water	16:17	0:0	4	entry
+op	16:23	0:0	4	&&
+water	16:26	0:0	4	pkt
+op	16:29	0:0	4	->
+water	16:31	0:0	4	stream_index
+op	16:44	0:0	4	<
+water	16:46	0:0	4	s
+op	16:47	0:0	4	->
+water	16:49	0:0	4	nb_streams
+stmts	17:12	19:56	3	
+water	17:12	0:0	4	frag_duration
+op	17:26	0:0	4	=
+call	17:28	19:55	4	av_rescale_q
+arg	17:41	17:71	5	pkt->dts-trk->cluster[0].dts
+water	17:41	0:0	6	pkt
+op	17:44	0:0	6	->
+water	17:46	0:0	6	dts
+op	17:50	0:0	6	-
+water	17:52	0:0	6	trk
+op	17:55	0:0	6	->
+water	17:57	0:0	6	cluster
+op	17:64	0:0	6	[
+water	17:65	0:0	6	0
+op	17:66	0:0	6	]
+op	17:67	0:0	6	.
+water	17:68	0:0	6	dts
+arg	18:41	18:81	5	s->streams[pkt->stream_index]->time_base
+water	18:41	0:0	6	s
+op	18:42	0:0	6	->
+water	18:44	0:0	6	streams
+op	18:51	0:0	6	[
+water	18:52	0:0	6	pkt
+op	18:55	0:0	6	->
+water	18:57	0:0	6	stream_index
+op	18:69	0:0	6	]
+op	18:70	0:0	6	->
+water	18:72	0:0	6	time_base
+arg	19:41	19:55	5	AV_TIME_BASE_Q
+water	19:41	0:0	6	AV_TIME_BASE_Q
+water	19:56	0:0	4	;
+if	20:8	35:8	2	(( mov -> max_fragment_duration && frag_duration >= mov -> max_fragment_duration ) || ( mov -> max_fragment_size && mov -> mdat_size + size >= mov -> max_fragment_size ) || ( mov -> flags & FF_MOV_FLAG_FRAG_KEYFRAME && enc -> codec_type == AVMEDIA_TYPE_VIDEO && trk -> entry && pkt -> flags & AV_PKT_FLAG_KEY ))
+cond	20:12	25:56	3	( mov -> max_fragment_duration && frag_duration >= mov -> max_fragment_duration ) || ( mov -> max_fragment_size && mov -> mdat_size + size >= mov -> max_fragment_size ) || ( mov -> flags & FF_MOV_FLAG_FRAG_KEYFRAME && enc -> codec_type == AVMEDIA_TYPE_VIDEO && trk -> entry && pkt -> flags & AV_PKT_FLAG_KEY )
+water	20:12	0:0	4	(
+water	20:13	0:0	4	mov
+op	20:16	0:0	4	->
+water	20:18	0:0	4	max_fragment_duration
+op	20:40	0:0	4	&&
+water	21:13	0:0	4	frag_duration
+op	21:27	0:0	4	>=
+water	21:30	0:0	4	mov
+op	21:33	0:0	4	->
+water	21:35	0:0	4	max_fragment_duration
+water	21:56	0:0	4	)
+op	21:58	0:0	4	||
+water	22:13	0:0	4	(
+water	22:14	0:0	4	mov
+op	22:17	0:0	4	->
+water	22:19	0:0	4	max_fragment_size
+op	22:37	0:0	4	&&
+water	22:40	0:0	4	mov
+op	22:43	0:0	4	->
+water	22:45	0:0	4	mdat_size
+op	22:55	0:0	4	+
+water	22:57	0:0	4	size
+op	22:62	0:0	4	>=
+water	22:65	0:0	4	mov
+op	22:68	0:0	4	->
+water	22:70	0:0	4	max_fragment_size
+water	22:87	0:0	4	)
+op	22:89	0:0	4	||
+water	23:13	0:0	4	(
+water	23:14	0:0	4	mov
+op	23:17	0:0	4	->
+water	23:19	0:0	4	flags
+op	23:25	0:0	4	&
+water	23:27	0:0	4	FF_MOV_FLAG_FRAG_KEYFRAME
+op	23:53	0:0	4	&&
+water	24:14	0:0	4	enc
+op	24:17	0:0	4	->
+water	24:19	0:0	4	codec_type
+op	24:30	0:0	4	==
+water	24:33	0:0	4	AVMEDIA_TYPE_VIDEO
+op	24:52	0:0	4	&&
+water	25:14	0:0	4	trk
+op	25:17	0:0	4	->
+water	25:19	0:0	4	entry
+op	25:25	0:0	4	&&
+water	25:28	0:0	4	pkt
+op	25:31	0:0	4	->
+water	25:33	0:0	4	flags
+op	25:39	0:0	4	&
+water	25:41	0:0	4	AV_PKT_FLAG_KEY
+water	25:56	0:0	4	)
+stmts	25:59	35:8	3	
+water	25:59	0:0	4	{
+if	26:12	34:12	4	(frag_duration >= mov -> min_fragment_duration)
+cond	26:16	26:38	5	frag_duration >= mov -> min_fragment_duration
+water	26:16	0:0	6	frag_duration
+op	26:30	0:0	6	>=
+water	26:33	0:0	6	mov
+op	26:36	0:0	6	->
+water	26:38	0:0	6	min_fragment_duration
+stmts	26:61	34:12	5	
+water	26:61	0:0	6	{
+water	31:16	0:0	6	trk
+op	31:19	0:0	6	->
+water	31:21	0:0	6	track_duration
+op	31:36	0:0	6	=
+water	31:38	0:0	6	pkt
+op	31:41	0:0	6	->
+water	31:43	0:0	6	dts
+op	31:47	0:0	6	-
+water	31:49	0:0	6	trk
+op	31:52	0:0	6	->
+water	31:54	0:0	6	start_dts
+water	31:63	0:0	6	;
+water	32:16	0:0	6	trk
+op	32:19	0:0	6	->
+water	32:21	0:0	6	end_pts
+op	32:29	0:0	6	=
+water	32:31	0:0	6	pkt
+op	32:34	0:0	6	->
+water	32:36	0:0	6	pts
+water	32:39	0:0	6	;
+call	33:16	33:41	6	mov_auto_flush_fragment
+arg	33:40	33:41	7	s
+water	33:40	0:0	8	s
+water	33:42	0:0	6	;
+water	34:12	0:0	6	}
+water	35:8	0:0	4	}
+return	36:8	36:42	2	ff_mov_write_packet(s,pkt)
+call	36:15	36:41	3	ff_mov_write_packet
+arg	36:35	36:36	4	s
+water	36:35	0:0	5	s
+arg	36:38	36:41	4	pkt
+water	36:38	0:0	5	pkt

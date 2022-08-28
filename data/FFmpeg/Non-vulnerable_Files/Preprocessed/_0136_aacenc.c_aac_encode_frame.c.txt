@@ -1,0 +1,2021 @@
+func	1:0	232:0	0	static int	aac_encode_frame
+params	1:27	0:0	1	
+param	1:28	1:49	2	AVCodecContext *	avctx
+param	1:51	1:66	2	AVPacket *	avpkt
+param	2:28	2:48	2	const AVFrame *	frame
+param	2:50	2:69	2	int *	got_packet_ptr
+stmnts	0:0	231:12	1	
+decl	4:4	4:39	2	AACEncContext	*s
+op	4:21	0:0	2	=
+water	4:23	0:0	2	avctx
+op	4:28	0:0	2	->
+water	4:30	0:0	2	priv_data
+decl	5:4	5:65	2	float	**samples
+op	5:20	0:0	2	=
+water	5:22	0:0	2	s
+op	5:23	0:0	2	->
+water	5:25	0:0	2	planar_samples
+water	5:39	0:0	2	,
+decl	5:4	5:65	2	float	*samples2
+water	5:50	0:0	2	,
+decl	5:4	5:65	2	float	*la
+water	5:55	0:0	2	,
+decl	5:4	5:65	2	float	*overlap
+decl	6:4	6:23	2	ChannelElement	*cpe
+decl	7:4	7:29	2	SingleChannelElement	*sce
+decl	8:4	8:43	2	int	i
+water	8:9	0:0	2	,
+decl	8:4	8:43	2	int	ch
+water	8:13	0:0	2	,
+decl	8:4	8:43	2	int	w
+water	8:16	0:0	2	,
+decl	8:4	8:43	2	int	chans
+water	8:23	0:0	2	,
+decl	8:4	8:43	2	int	tag
+water	8:28	0:0	2	,
+decl	8:4	8:43	2	int	start_ch
+water	8:38	0:0	2	,
+decl	8:4	8:43	2	int	ret
+decl	9:4	9:61	2	int	ms_mode
+op	9:16	0:0	2	=
+water	9:18	0:0	2	0
+water	9:19	0:0	2	,
+decl	9:4	9:61	2	int	is_mode
+op	9:29	0:0	2	=
+water	9:31	0:0	2	0
+water	9:32	0:0	2	,
+decl	9:4	9:61	2	int	tns_mode
+op	9:43	0:0	2	=
+water	9:45	0:0	2	0
+water	9:46	0:0	2	,
+decl	9:4	9:61	2	int	pred_mode
+op	9:58	0:0	2	=
+water	9:60	0:0	2	0
+decl	10:4	10:26	2	int	chan_el_counter[4]
+decl	11:4	11:45	2	FFPsyWindowInfo	windows[AAC_MAX_CHANNELS]
+if	12:4	13:16	2	(s -> last_frame == 2)
+cond	12:8	12:25	3	s -> last_frame == 2
+water	12:8	0:0	4	s
+op	12:9	0:0	4	->
+water	12:11	0:0	4	last_frame
+op	12:22	0:0	4	==
+water	12:25	0:0	4	2
+stmts	13:8	13:16	3	
+return	13:8	13:16	4	0
+water	13:15	0:0	5	0
+if	15:4	18:4	2	(frame)
+cond	15:8	15:8	3	frame
+water	15:8	0:0	4	frame
+stmts	15:15	18:4	3	
+water	15:15	0:0	4	{
+if	16:8	17:22	4	(( ret =ff_af_queue_add (& s -> afq ,frame ) ) < 0)
+cond	16:12	16:54	5	( ret =ff_af_queue_add (& s -> afq ,frame ) ) < 0
+water	16:12	0:0	6	(
+water	16:13	0:0	6	ret
+op	16:17	0:0	6	=
+call	16:19	16:49	6	ff_af_queue_add
+arg	16:35	16:42	7	&s->afq
+op	16:35	0:0	8	&
+water	16:36	0:0	8	s
+op	16:37	0:0	8	->
+water	16:39	0:0	8	afq
+arg	16:44	16:49	7	frame
+water	16:44	0:0	8	frame
+water	16:50	0:0	6	)
+op	16:52	0:0	6	<
+water	16:54	0:0	6	0
+stmts	17:12	17:22	5	
+return	17:12	17:22	6	ret
+water	17:19	0:0	7	ret
+water	18:4	0:0	4	}
+call	19:4	19:31	2	copy_input_samples
+arg	19:23	19:24	3	s
+water	19:23	0:0	4	s
+arg	19:26	19:31	3	frame
+water	19:26	0:0	4	frame
+water	19:32	0:0	2	;
+if	20:4	21:67	2	(s -> psypp)
+cond	20:8	20:11	3	s -> psypp
+water	20:8	0:0	4	s
+op	20:9	0:0	4	->
+water	20:11	0:0	4	psypp
+stmts	21:8	21:67	3	
+call	21:8	21:66	4	ff_psy_preprocess
+arg	21:26	21:34	5	s->psypp
+water	21:26	0:0	6	s
+op	21:27	0:0	6	->
+water	21:29	0:0	6	psypp
+arg	21:36	21:53	5	s->planar_samples
+water	21:36	0:0	6	s
+op	21:37	0:0	6	->
+water	21:39	0:0	6	planar_samples
+arg	21:55	21:66	5	s->channels
+water	21:55	0:0	6	s
+op	21:56	0:0	6	->
+water	21:58	0:0	6	channels
+water	21:67	0:0	4	;
+if	22:4	23:16	2	(! avctx -> frame_number)
+cond	22:8	22:16	3	! avctx -> frame_number
+op	22:8	0:0	4	!
+water	22:9	0:0	4	avctx
+op	22:14	0:0	4	->
+water	22:16	0:0	4	frame_number
+stmts	23:8	23:16	3	
+return	23:8	23:16	4	0
+water	23:15	0:0	5	0
+water	24:4	0:0	2	start_ch
+op	24:13	0:0	2	=
+water	24:15	0:0	2	0
+water	24:16	0:0	2	;
+for	25:4	90:4	2	(i = 0 ;i < s -> chan_map [ 0 ];i ++)
+forinit	25:9	25:14	3	i = 0 ;
+water	25:9	0:0	4	i
+op	25:11	0:0	4	=
+water	25:13	0:0	4	0
+water	25:14	0:0	4	;
+cond	25:16	25:33	3	i < s -> chan_map [ 0 ]
+water	25:16	0:0	4	i
+op	25:18	0:0	4	<
+water	25:20	0:0	4	s
+op	25:21	0:0	4	->
+water	25:23	0:0	4	chan_map
+op	25:31	0:0	4	[
+water	25:32	0:0	4	0
+op	25:33	0:0	4	]
+forexpr	25:36	25:37	3	i ++
+water	25:36	0:0	4	i
+op	25:37	0:0	4	++
+stmts	25:41	90:4	3	
+water	25:41	0:0	4	{
+decl	26:8	26:48	4	FFPsyWindowInfo	*wi
+op	26:28	0:0	4	=
+water	26:30	0:0	4	windows
+op	26:38	0:0	4	+
+water	26:40	0:0	4	start_ch
+water	27:8	0:0	4	tag
+op	27:17	0:0	4	=
+water	27:19	0:0	4	s
+op	27:20	0:0	4	->
+water	27:22	0:0	4	chan_map
+op	27:30	0:0	4	[
+water	27:31	0:0	4	i
+op	27:32	0:0	4	+
+water	27:33	0:0	4	1
+op	27:34	0:0	4	]
+water	27:35	0:0	4	;
+water	28:8	0:0	4	chans
+op	28:17	0:0	4	=
+water	28:19	0:0	4	tag
+op	28:23	0:0	4	==
+water	28:26	0:0	4	TYPE_CPE
+water	28:35	0:0	4	?
+water	28:37	0:0	4	2
+water	28:39	0:0	4	:
+water	28:41	0:0	4	1
+water	28:42	0:0	4	;
+water	29:8	0:0	4	cpe
+op	29:17	0:0	4	=
+op	29:19	0:0	4	&
+water	29:20	0:0	4	s
+op	29:21	0:0	4	->
+water	29:23	0:0	4	cpe
+op	29:26	0:0	4	[
+water	29:27	0:0	4	i
+op	29:28	0:0	4	]
+water	29:29	0:0	4	;
+for	30:8	88:8	4	(ch = 0 ;ch < chans;ch ++)
+forinit	30:13	30:19	5	ch = 0 ;
+water	30:13	0:0	6	ch
+op	30:16	0:0	6	=
+water	30:18	0:0	6	0
+water	30:19	0:0	6	;
+cond	30:21	30:26	5	ch < chans
+water	30:21	0:0	6	ch
+op	30:24	0:0	6	<
+water	30:26	0:0	6	chans
+forexpr	30:33	30:35	5	ch ++
+water	30:33	0:0	6	ch
+op	30:35	0:0	6	++
+stmts	30:39	88:8	5	
+water	30:39	0:0	6	{
+decl	31:12	31:59	6	IndividualChannelStream	*ics
+op	31:41	0:0	6	=
+op	31:43	0:0	6	&
+water	31:44	0:0	6	cpe
+op	31:47	0:0	6	->
+water	31:49	0:0	6	ch
+op	31:51	0:0	6	[
+water	31:52	0:0	6	ch
+op	31:54	0:0	6	]
+op	31:55	0:0	6	.
+water	31:56	0:0	6	ics
+decl	32:12	32:43	6	int	cur_channel
+op	32:28	0:0	6	=
+water	32:30	0:0	6	start_ch
+op	32:39	0:0	6	+
+water	32:41	0:0	6	ch
+decl	33:12	33:39	6	float	clip_avoidance_factor
+water	34:12	0:0	6	overlap
+op	34:21	0:0	6	=
+op	34:23	0:0	6	&
+water	34:24	0:0	6	samples
+op	34:31	0:0	6	[
+water	34:32	0:0	6	cur_channel
+op	34:43	0:0	6	]
+op	34:44	0:0	6	[
+water	34:45	0:0	6	0
+op	34:46	0:0	6	]
+water	34:47	0:0	6	;
+water	35:12	0:0	6	samples2
+op	35:21	0:0	6	=
+water	35:23	0:0	6	overlap
+op	35:31	0:0	6	+
+water	35:33	0:0	6	1024
+water	35:37	0:0	6	;
+water	36:12	0:0	6	la
+op	36:21	0:0	6	=
+water	36:23	0:0	6	samples2
+op	36:32	0:0	6	+
+water	36:34	0:0	6	(
+water	36:35	0:0	6	448
+op	36:38	0:0	6	+
+water	36:39	0:0	6	64
+water	36:41	0:0	6	)
+water	36:42	0:0	6	;
+if	37:12	38:25	6	(! frame)
+cond	37:16	37:17	7	! frame
+op	37:16	0:0	8	!
+water	37:17	0:0	8	frame
+stmts	38:16	38:25	7	
+water	38:16	0:0	8	la
+op	38:19	0:0	8	=
+water	38:21	0:0	8	NULL
+water	38:25	0:0	8	;
+if	39:12	49:12	6	(tag == TYPE_LFE)
+cond	39:16	39:23	7	tag == TYPE_LFE
+water	39:16	0:0	8	tag
+op	39:20	0:0	8	==
+water	39:23	0:0	8	TYPE_LFE
+stmts	39:33	49:12	7	
+water	39:33	0:0	8	{
+water	40:16	0:0	8	wi
+op	40:18	0:0	8	[
+water	40:19	0:0	8	ch
+op	40:21	0:0	8	]
+op	40:22	0:0	8	.
+water	40:23	0:0	8	window_type
+op	40:34	0:0	8	[
+water	40:35	0:0	8	0
+op	40:36	0:0	8	]
+op	40:38	0:0	8	=
+water	40:40	0:0	8	ONLY_LONG_SEQUENCE
+water	40:58	0:0	8	;
+water	41:16	0:0	8	wi
+op	41:18	0:0	8	[
+water	41:19	0:0	8	ch
+op	41:21	0:0	8	]
+op	41:22	0:0	8	.
+water	41:23	0:0	8	window_shape
+op	41:38	0:0	8	=
+water	41:40	0:0	8	0
+water	41:41	0:0	8	;
+water	42:16	0:0	8	wi
+op	42:18	0:0	8	[
+water	42:19	0:0	8	ch
+op	42:21	0:0	8	]
+op	42:22	0:0	8	.
+water	42:23	0:0	8	num_windows
+op	42:38	0:0	8	=
+water	42:40	0:0	8	1
+water	42:41	0:0	8	;
+water	43:16	0:0	8	wi
+op	43:18	0:0	8	[
+water	43:19	0:0	8	ch
+op	43:21	0:0	8	]
+op	43:22	0:0	8	.
+water	43:23	0:0	8	grouping
+op	43:31	0:0	8	[
+water	43:32	0:0	8	0
+op	43:33	0:0	8	]
+op	43:38	0:0	8	=
+water	43:40	0:0	8	1
+water	43:41	0:0	8	;
+water	48:16	0:0	8	ics
+op	48:19	0:0	8	->
+water	48:21	0:0	8	num_swb
+op	48:29	0:0	8	=
+water	48:31	0:0	8	s
+op	48:32	0:0	8	->
+water	48:34	0:0	8	samplerate_index
+op	48:51	0:0	8	>=
+water	48:54	0:0	8	8
+water	48:56	0:0	8	?
+water	48:58	0:0	8	1
+water	48:60	0:0	8	:
+water	48:62	0:0	8	3
+water	48:63	0:0	8	;
+water	49:12	0:0	8	}
+else	49:14	52:12	6
+stmts	49:19	52:12	7	
+water	49:19	0:0	8	{
+water	50:16	0:0	8	wi
+op	50:18	0:0	8	[
+water	50:19	0:0	8	ch
+op	50:21	0:0	8	]
+op	50:23	0:0	8	=
+call	50:25	51:69	8	s->psy.model->window
+arg	50:46	50:53	9	&s->psy
+op	50:46	0:0	10	&
+water	50:47	0:0	10	s
+op	50:48	0:0	10	->
+water	50:50	0:0	10	psy
+arg	50:55	50:63	9	samples2
+water	50:55	0:0	10	samples2
+arg	50:65	50:67	9	la
+water	50:65	0:0	10	la
+arg	50:69	50:80	9	cur_channel
+water	50:69	0:0	10	cur_channel
+arg	51:46	51:69	9	ics->window_sequence[0]
+water	51:46	0:0	10	ics
+op	51:49	0:0	10	->
+water	51:51	0:0	10	window_sequence
+op	51:66	0:0	10	[
+water	51:67	0:0	10	0
+op	51:68	0:0	10	]
+water	51:70	0:0	8	;
+water	52:12	0:0	8	}
+water	53:12	0:0	6	ics
+op	53:15	0:0	6	->
+water	53:17	0:0	6	window_sequence
+op	53:32	0:0	6	[
+water	53:33	0:0	6	1
+op	53:34	0:0	6	]
+op	53:36	0:0	6	=
+water	53:38	0:0	6	ics
+op	53:41	0:0	6	->
+water	53:43	0:0	6	window_sequence
+op	53:58	0:0	6	[
+water	53:59	0:0	6	0
+op	53:60	0:0	6	]
+water	53:61	0:0	6	;
+water	54:12	0:0	6	ics
+op	54:15	0:0	6	->
+water	54:17	0:0	6	window_sequence
+op	54:32	0:0	6	[
+water	54:33	0:0	6	0
+op	54:34	0:0	6	]
+op	54:36	0:0	6	=
+water	54:38	0:0	6	wi
+op	54:40	0:0	6	[
+water	54:41	0:0	6	ch
+op	54:43	0:0	6	]
+op	54:44	0:0	6	.
+water	54:45	0:0	6	window_type
+op	54:56	0:0	6	[
+water	54:57	0:0	6	0
+op	54:58	0:0	6	]
+water	54:59	0:0	6	;
+water	55:12	0:0	6	ics
+op	55:15	0:0	6	->
+water	55:17	0:0	6	use_kb_window
+op	55:30	0:0	6	[
+water	55:31	0:0	6	1
+op	55:32	0:0	6	]
+op	55:36	0:0	6	=
+water	55:38	0:0	6	ics
+op	55:41	0:0	6	->
+water	55:43	0:0	6	use_kb_window
+op	55:56	0:0	6	[
+water	55:57	0:0	6	0
+op	55:58	0:0	6	]
+water	55:59	0:0	6	;
+water	56:12	0:0	6	ics
+op	56:15	0:0	6	->
+water	56:17	0:0	6	use_kb_window
+op	56:30	0:0	6	[
+water	56:31	0:0	6	0
+op	56:32	0:0	6	]
+op	56:36	0:0	6	=
+water	56:38	0:0	6	wi
+op	56:40	0:0	6	[
+water	56:41	0:0	6	ch
+op	56:43	0:0	6	]
+op	56:44	0:0	6	.
+water	56:45	0:0	6	window_shape
+water	56:57	0:0	6	;
+water	57:12	0:0	6	ics
+op	57:15	0:0	6	->
+water	57:17	0:0	6	num_windows
+op	57:36	0:0	6	=
+water	57:38	0:0	6	wi
+op	57:40	0:0	6	[
+water	57:41	0:0	6	ch
+op	57:43	0:0	6	]
+op	57:44	0:0	6	.
+water	57:45	0:0	6	num_windows
+water	57:56	0:0	6	;
+water	58:12	0:0	6	ics
+op	58:15	0:0	6	->
+water	58:17	0:0	6	swb_sizes
+op	58:36	0:0	6	=
+water	58:38	0:0	6	s
+op	58:39	0:0	6	->
+water	58:41	0:0	6	psy
+op	58:44	0:0	6	.
+water	58:45	0:0	6	bands
+op	58:54	0:0	6	[
+water	58:55	0:0	6	ics
+op	58:58	0:0	6	->
+water	58:60	0:0	6	num_windows
+op	58:72	0:0	6	==
+water	58:75	0:0	6	8
+op	58:76	0:0	6	]
+water	58:77	0:0	6	;
+water	59:12	0:0	6	ics
+op	59:15	0:0	6	->
+water	59:17	0:0	6	num_swb
+op	59:36	0:0	6	=
+water	59:38	0:0	6	tag
+op	59:42	0:0	6	==
+water	59:45	0:0	6	TYPE_LFE
+water	59:54	0:0	6	?
+water	59:56	0:0	6	ics
+op	59:59	0:0	6	->
+water	59:61	0:0	6	num_swb
+water	59:69	0:0	6	:
+water	59:71	0:0	6	s
+op	59:72	0:0	6	->
+water	59:74	0:0	6	psy
+op	59:77	0:0	6	.
+water	59:78	0:0	6	num_bands
+op	59:87	0:0	6	[
+water	59:88	0:0	6	ics
+op	59:91	0:0	6	->
+water	59:93	0:0	6	num_windows
+op	59:105	0:0	6	==
+water	59:108	0:0	6	8
+op	59:109	0:0	6	]
+water	59:110	0:0	6	;
+water	60:12	0:0	6	ics
+op	60:15	0:0	6	->
+water	60:17	0:0	6	swb_offset
+op	60:36	0:0	6	=
+water	60:38	0:0	6	wi
+op	60:40	0:0	6	[
+water	60:41	0:0	6	ch
+op	60:43	0:0	6	]
+op	60:44	0:0	6	.
+water	60:45	0:0	6	window_type
+op	60:56	0:0	6	[
+water	60:57	0:0	6	0
+op	60:58	0:0	6	]
+op	60:60	0:0	6	==
+water	60:63	0:0	6	EIGHT_SHORT_SEQUENCE
+water	60:84	0:0	6	?
+water	61:40	0:0	6	ff_swb_offset_128
+op	61:58	0:0	6	[
+water	61:59	0:0	6	s
+op	61:60	0:0	6	->
+water	61:62	0:0	6	samplerate_index
+op	61:78	0:0	6	]
+water	61:79	0:0	6	:
+water	62:40	0:0	6	ff_swb_offset_1024
+op	62:58	0:0	6	[
+water	62:59	0:0	6	s
+op	62:60	0:0	6	->
+water	62:62	0:0	6	samplerate_index
+op	62:78	0:0	6	]
+water	62:79	0:0	6	;
+water	63:12	0:0	6	ics
+op	63:15	0:0	6	->
+water	63:17	0:0	6	tns_max_bands
+op	63:36	0:0	6	=
+water	63:38	0:0	6	wi
+op	63:40	0:0	6	[
+water	63:41	0:0	6	ch
+op	63:43	0:0	6	]
+op	63:44	0:0	6	.
+water	63:45	0:0	6	window_type
+op	63:56	0:0	6	[
+water	63:57	0:0	6	0
+op	63:58	0:0	6	]
+op	63:60	0:0	6	==
+water	63:63	0:0	6	EIGHT_SHORT_SEQUENCE
+water	63:84	0:0	6	?
+water	64:40	0:0	6	ff_tns_max_bands_128
+op	64:61	0:0	6	[
+water	64:62	0:0	6	s
+op	64:63	0:0	6	->
+water	64:65	0:0	6	samplerate_index
+op	64:81	0:0	6	]
+water	64:82	0:0	6	:
+water	65:40	0:0	6	ff_tns_max_bands_1024
+op	65:61	0:0	6	[
+water	65:62	0:0	6	s
+op	65:63	0:0	6	->
+water	65:65	0:0	6	samplerate_index
+op	65:81	0:0	6	]
+water	65:82	0:0	6	;
+water	66:12	0:0	6	clip_avoidance_factor
+op	66:34	0:0	6	=
+water	66:36	0:0	6	0
+op	66:37	0:0	6	.
+water	66:38	0:0	6	0
+water	66:39	0:0	6	f
+water	66:40	0:0	6	;
+for	67:12	68:54	6	(w = 0 ;w < ics -> num_windows;w ++)
+forinit	67:17	67:22	7	w = 0 ;
+water	67:17	0:0	8	w
+op	67:19	0:0	8	=
+water	67:21	0:0	8	0
+water	67:22	0:0	8	;
+cond	67:24	67:33	7	w < ics -> num_windows
+water	67:24	0:0	8	w
+op	67:26	0:0	8	<
+water	67:28	0:0	8	ics
+op	67:31	0:0	8	->
+water	67:33	0:0	8	num_windows
+forexpr	67:46	67:47	7	w ++
+water	67:46	0:0	8	w
+op	67:47	0:0	8	++
+stmts	68:16	68:54	7	
+water	68:16	0:0	8	ics
+op	68:19	0:0	8	->
+water	68:21	0:0	8	group_len
+op	68:30	0:0	8	[
+water	68:31	0:0	8	w
+op	68:32	0:0	8	]
+op	68:34	0:0	8	=
+water	68:36	0:0	8	wi
+op	68:38	0:0	8	[
+water	68:39	0:0	8	ch
+op	68:41	0:0	8	]
+op	68:42	0:0	8	.
+water	68:43	0:0	8	grouping
+op	68:51	0:0	8	[
+water	68:52	0:0	8	w
+op	68:53	0:0	8	]
+water	68:54	0:0	8	;
+for	69:12	76:12	6	(w = 0 ;w < ics -> num_windows;w ++)
+forinit	69:17	69:22	7	w = 0 ;
+water	69:17	0:0	8	w
+op	69:19	0:0	8	=
+water	69:21	0:0	8	0
+water	69:22	0:0	8	;
+cond	69:24	69:33	7	w < ics -> num_windows
+water	69:24	0:0	8	w
+op	69:26	0:0	8	<
+water	69:28	0:0	8	ics
+op	69:31	0:0	8	->
+water	69:33	0:0	8	num_windows
+forexpr	69:46	69:47	7	w ++
+water	69:46	0:0	8	w
+op	69:47	0:0	8	++
+stmts	69:51	76:12	7	
+water	69:51	0:0	8	{
+if	70:16	73:16	8	(wi [ ch ] . clipping [ w ] > CLIP_AVOIDANCE_FACTOR)
+cond	70:20	70:41	9	wi [ ch ] . clipping [ w ] > CLIP_AVOIDANCE_FACTOR
+water	70:20	0:0	10	wi
+op	70:22	0:0	10	[
+water	70:23	0:0	10	ch
+op	70:25	0:0	10	]
+op	70:26	0:0	10	.
+water	70:27	0:0	10	clipping
+op	70:35	0:0	10	[
+water	70:36	0:0	10	w
+op	70:37	0:0	10	]
+op	70:39	0:0	10	>
+water	70:41	0:0	10	CLIP_AVOIDANCE_FACTOR
+stmts	70:64	73:16	9	
+water	70:64	0:0	10	{
+water	71:20	0:0	10	ics
+op	71:23	0:0	10	->
+water	71:25	0:0	10	window_clipping
+op	71:40	0:0	10	[
+water	71:41	0:0	10	w
+op	71:42	0:0	10	]
+op	71:44	0:0	10	=
+water	71:46	0:0	10	1
+water	71:47	0:0	10	;
+water	72:20	0:0	10	clip_avoidance_factor
+op	72:42	0:0	10	=
+call	72:44	72:91	10	FFMAX
+arg	72:50	72:71	11	clip_avoidance_factor
+water	72:50	0:0	12	clip_avoidance_factor
+arg	72:73	72:91	11	wi[ch].clipping[w]
+water	72:73	0:0	12	wi
+op	72:75	0:0	12	[
+water	72:76	0:0	12	ch
+op	72:78	0:0	12	]
+op	72:79	0:0	12	.
+water	72:80	0:0	12	clipping
+op	72:88	0:0	12	[
+water	72:89	0:0	12	w
+op	72:90	0:0	12	]
+water	72:92	0:0	10	;
+water	73:16	0:0	10	}
+else	73:18	75:16	8
+stmts	73:23	75:16	9	
+water	73:23	0:0	10	{
+water	74:20	0:0	10	ics
+op	74:23	0:0	10	->
+water	74:25	0:0	10	window_clipping
+op	74:40	0:0	10	[
+water	74:41	0:0	10	w
+op	74:42	0:0	10	]
+op	74:44	0:0	10	=
+water	74:46	0:0	10	0
+water	74:47	0:0	10	;
+water	75:16	0:0	10	}
+water	76:12	0:0	8	}
+if	77:12	79:12	6	(clip_avoidance_factor > CLIP_AVOIDANCE_FACTOR)
+cond	77:16	77:40	7	clip_avoidance_factor > CLIP_AVOIDANCE_FACTOR
+water	77:16	0:0	8	clip_avoidance_factor
+op	77:38	0:0	8	>
+water	77:40	0:0	8	CLIP_AVOIDANCE_FACTOR
+stmts	77:63	79:12	7	
+water	77:63	0:0	8	{
+water	78:16	0:0	8	ics
+op	78:19	0:0	8	->
+water	78:21	0:0	8	clip_avoidance_factor
+op	78:43	0:0	8	=
+water	78:45	0:0	8	CLIP_AVOIDANCE_FACTOR
+op	78:67	0:0	8	/
+water	78:69	0:0	8	clip_avoidance_factor
+water	78:90	0:0	8	;
+water	79:12	0:0	8	}
+else	79:14	81:12	6
+stmts	79:19	81:12	7	
+water	79:19	0:0	8	{
+water	80:16	0:0	8	ics
+op	80:19	0:0	8	->
+water	80:21	0:0	8	clip_avoidance_factor
+op	80:43	0:0	8	=
+water	80:45	0:0	8	1
+op	80:46	0:0	8	.
+water	80:47	0:0	8	0
+water	80:48	0:0	8	f
+water	80:49	0:0	8	;
+water	81:12	0:0	8	}
+call	82:12	82:58	6	apply_window_and_mdct
+arg	82:34	82:35	7	s
+water	82:34	0:0	8	s
+arg	82:37	82:49	7	&cpe->ch[ch]
+op	82:37	0:0	8	&
+water	82:38	0:0	8	cpe
+op	82:41	0:0	8	->
+water	82:43	0:0	8	ch
+op	82:45	0:0	8	[
+water	82:46	0:0	8	ch
+op	82:48	0:0	8	]
+arg	82:51	82:58	7	overlap
+water	82:51	0:0	8	overlap
+water	82:59	0:0	6	;
+if	83:12	86:12	6	(isnan (cpe -> ch -> coeffs [ 0 ] ))
+cond	83:16	83:40	7	isnan (cpe -> ch -> coeffs [ 0 ] )
+call	83:16	83:40	8	isnan
+arg	83:22	83:40	9	cpe->ch->coeffs[0]
+water	83:22	0:0	10	cpe
+op	83:25	0:0	10	->
+water	83:27	0:0	10	ch
+op	83:29	0:0	10	->
+water	83:31	0:0	10	coeffs
+op	83:37	0:0	10	[
+water	83:38	0:0	10	0
+op	83:39	0:0	10	]
+stmts	83:43	86:12	7	
+water	83:43	0:0	8	{
+call	84:16	84:66	8	av_log
+arg	84:23	84:28	9	avctx
+water	84:23	0:0	10	avctx
+arg	84:30	84:42	9	AV_LOG_ERROR
+water	84:30	0:0	10	AV_LOG_ERROR
+arg	84:44	84:66	9	"Input contains NaN\n"
+water	84:44	0:0	10	"Input contains NaN\n"
+water	84:67	0:0	8	;
+return	85:16	85:38	8	AVERROR(EINVAL)
+call	85:23	85:37	9	AVERROR
+arg	85:31	85:37	10	EINVAL
+water	85:31	0:0	11	EINVAL
+water	86:12	0:0	8	}
+call	87:12	87:42	6	avoid_clipping
+arg	87:27	87:28	7	s
+water	87:27	0:0	8	s
+arg	87:30	87:42	7	&cpe->ch[ch]
+op	87:30	0:0	8	&
+water	87:31	0:0	8	cpe
+op	87:34	0:0	8	->
+water	87:36	0:0	8	ch
+op	87:38	0:0	8	[
+water	87:39	0:0	8	ch
+op	87:41	0:0	8	]
+water	87:43	0:0	6	;
+water	88:8	0:0	6	}
+water	89:8	0:0	4	start_ch
+op	89:17	0:0	4	+=
+water	89:20	0:0	4	chans
+water	89:25	0:0	4	;
+water	90:4	0:0	4	}
+if	91:4	92:18	2	(( ret =ff_alloc_packet2 (avctx ,avpkt ,8192 * s -> channels ,0 ) ) < 0)
+cond	91:8	91:72	3	( ret =ff_alloc_packet2 (avctx ,avpkt ,8192 * s -> channels ,0 ) ) < 0
+water	91:8	0:0	4	(
+water	91:9	0:0	4	ret
+op	91:13	0:0	4	=
+call	91:15	91:67	4	ff_alloc_packet2
+arg	91:32	91:37	5	avctx
+water	91:32	0:0	6	avctx
+arg	91:39	91:44	5	avpkt
+water	91:39	0:0	6	avpkt
+arg	91:46	91:64	5	8192*s->channels
+water	91:46	0:0	6	8192
+op	91:51	0:0	6	*
+water	91:53	0:0	6	s
+op	91:54	0:0	6	->
+water	91:56	0:0	6	channels
+arg	91:66	91:67	5	0
+water	91:66	0:0	6	0
+water	91:68	0:0	4	)
+op	91:70	0:0	4	<
+water	91:72	0:0	4	0
+stmts	92:8	92:18	3	
+return	92:8	92:18	4	ret
+water	92:15	0:0	5	ret
+do	93:4	215:4	2	(1)
+cond	215:13	215:13	3	1
+water	215:13	0:0	4	1
+stmts	93:7	215:4	3	
+water	93:7	0:0	4	{
+decl	94:8	94:22	4	int	frame_bits
+call	95:8	95:54	4	init_put_bits
+arg	95:22	95:28	5	&s->pb
+op	95:22	0:0	6	&
+water	95:23	0:0	6	s
+op	95:24	0:0	6	->
+water	95:26	0:0	6	pb
+arg	95:30	95:41	5	avpkt->data
+water	95:30	0:0	6	avpkt
+op	95:35	0:0	6	->
+water	95:37	0:0	6	data
+arg	95:43	95:54	5	avpkt->size
+water	95:43	0:0	6	avpkt
+op	95:48	0:0	6	->
+water	95:50	0:0	6	size
+water	95:55	0:0	4	;
+if	96:8	97:51	4	(( avctx -> frame_number & 0 xFF ) == 1 && ! ( avctx -> flags & AV_CODEC_FLAG_BITEXACT ))
+cond	96:12	96:86	5	( avctx -> frame_number & 0 xFF ) == 1 && ! ( avctx -> flags & AV_CODEC_FLAG_BITEXACT )
+water	96:12	0:0	6	(
+water	96:13	0:0	6	avctx
+op	96:18	0:0	6	->
+water	96:20	0:0	6	frame_number
+op	96:33	0:0	6	&
+water	96:35	0:0	6	0
+water	96:36	0:0	6	xFF
+water	96:39	0:0	6	)
+op	96:40	0:0	6	==
+water	96:42	0:0	6	1
+op	96:44	0:0	6	&&
+op	96:47	0:0	6	!
+water	96:48	0:0	6	(
+water	96:49	0:0	6	avctx
+op	96:54	0:0	6	->
+water	96:56	0:0	6	flags
+op	96:62	0:0	6	&
+water	96:64	0:0	6	AV_CODEC_FLAG_BITEXACT
+water	96:86	0:0	6	)
+stmts	97:12	97:51	5	
+call	97:12	97:50	6	put_bitstream_info
+arg	97:31	97:32	7	s
+water	97:31	0:0	8	s
+arg	97:34	97:50	7	LIBAVCODEC_IDENT
+water	97:34	0:0	8	LIBAVCODEC_IDENT
+water	97:51	0:0	6	;
+water	98:8	0:0	4	start_ch
+op	98:17	0:0	4	=
+water	98:19	0:0	4	0
+water	98:20	0:0	4	;
+call	99:8	99:58	4	memset
+arg	99:15	99:30	5	chan_el_counter
+water	99:15	0:0	6	chan_el_counter
+arg	99:32	99:33	5	0
+water	99:32	0:0	6	0
+arg	99:35	99:58	5	sizeof(chan_el_counter)
+op	99:35	0:0	6	sizeof
+water	99:41	0:0	6	(
+water	99:42	0:0	6	chan_el_counter
+water	99:57	0:0	6	)
+water	99:59	0:0	4	;
+for	100:8	199:8	4	(i = 0 ;i < s -> chan_map [ 0 ];i ++)
+forinit	100:13	100:18	5	i = 0 ;
+water	100:13	0:0	6	i
+op	100:15	0:0	6	=
+water	100:17	0:0	6	0
+water	100:18	0:0	6	;
+cond	100:20	100:37	5	i < s -> chan_map [ 0 ]
+water	100:20	0:0	6	i
+op	100:22	0:0	6	<
+water	100:24	0:0	6	s
+op	100:25	0:0	6	->
+water	100:27	0:0	6	chan_map
+op	100:35	0:0	6	[
+water	100:36	0:0	6	0
+op	100:37	0:0	6	]
+forexpr	100:40	100:41	5	i ++
+water	100:40	0:0	6	i
+op	100:41	0:0	6	++
+stmts	100:45	199:8	5	
+water	100:45	0:0	6	{
+decl	101:12	101:52	6	FFPsyWindowInfo	*wi
+op	101:32	0:0	6	=
+water	101:34	0:0	6	windows
+op	101:42	0:0	6	+
+water	101:44	0:0	6	start_ch
+decl	102:12	102:34	6	const float	*coeffs[2]
+water	103:12	0:0	6	tag
+op	103:21	0:0	6	=
+water	103:23	0:0	6	s
+op	103:24	0:0	6	->
+water	103:26	0:0	6	chan_map
+op	103:34	0:0	6	[
+water	103:35	0:0	6	i
+op	103:36	0:0	6	+
+water	103:37	0:0	6	1
+op	103:38	0:0	6	]
+water	103:39	0:0	6	;
+water	104:12	0:0	6	chans
+op	104:21	0:0	6	=
+water	104:23	0:0	6	tag
+op	104:27	0:0	6	==
+water	104:30	0:0	6	TYPE_CPE
+water	104:39	0:0	6	?
+water	104:41	0:0	6	2
+water	104:43	0:0	6	:
+water	104:45	0:0	6	1
+water	104:46	0:0	6	;
+water	105:12	0:0	6	cpe
+op	105:21	0:0	6	=
+op	105:23	0:0	6	&
+water	105:24	0:0	6	s
+op	105:25	0:0	6	->
+water	105:27	0:0	6	cpe
+op	105:30	0:0	6	[
+water	105:31	0:0	6	i
+op	105:32	0:0	6	]
+water	105:33	0:0	6	;
+water	106:12	0:0	6	cpe
+op	106:15	0:0	6	->
+water	106:17	0:0	6	common_window
+op	106:31	0:0	6	=
+water	106:33	0:0	6	0
+water	106:34	0:0	6	;
+call	107:12	107:56	6	memset
+arg	107:19	107:31	7	cpe->is_mask
+water	107:19	0:0	8	cpe
+op	107:22	0:0	8	->
+water	107:24	0:0	8	is_mask
+arg	107:33	107:34	7	0
+water	107:33	0:0	8	0
+arg	107:36	107:56	7	sizeof(cpe->is_mask)
+op	107:36	0:0	8	sizeof
+water	107:42	0:0	8	(
+water	107:43	0:0	8	cpe
+op	107:46	0:0	8	->
+water	107:48	0:0	8	is_mask
+water	107:55	0:0	8	)
+water	107:57	0:0	6	;
+call	108:12	108:56	6	memset
+arg	108:19	108:31	7	cpe->ms_mask
+water	108:19	0:0	8	cpe
+op	108:22	0:0	8	->
+water	108:24	0:0	8	ms_mask
+arg	108:33	108:34	7	0
+water	108:33	0:0	8	0
+arg	108:36	108:56	7	sizeof(cpe->ms_mask)
+op	108:36	0:0	8	sizeof
+water	108:42	0:0	8	(
+water	108:43	0:0	8	cpe
+op	108:46	0:0	8	->
+water	108:48	0:0	8	ms_mask
+water	108:55	0:0	8	)
+water	108:57	0:0	6	;
+call	109:12	109:35	6	put_bits
+arg	109:21	109:27	7	&s->pb
+op	109:21	0:0	8	&
+water	109:22	0:0	8	s
+op	109:23	0:0	8	->
+water	109:25	0:0	8	pb
+arg	109:29	109:30	7	3
+water	109:29	0:0	8	3
+arg	109:32	109:35	7	tag
+water	109:32	0:0	8	tag
+water	109:36	0:0	6	;
+call	110:12	110:54	6	put_bits
+arg	110:21	110:27	7	&s->pb
+op	110:21	0:0	8	&
+water	110:22	0:0	8	s
+op	110:23	0:0	8	->
+water	110:25	0:0	8	pb
+arg	110:29	110:30	7	4
+water	110:29	0:0	8	4
+arg	110:32	110:54	7	chan_el_counter[tag]++
+water	110:32	0:0	8	chan_el_counter
+op	110:47	0:0	8	[
+water	110:48	0:0	8	tag
+op	110:51	0:0	8	]
+op	110:52	0:0	8	++
+water	110:55	0:0	6	;
+for	111:12	120:12	6	(ch = 0 ;ch < chans;ch ++)
+forinit	111:17	111:23	7	ch = 0 ;
+water	111:17	0:0	8	ch
+op	111:20	0:0	8	=
+water	111:22	0:0	8	0
+water	111:23	0:0	8	;
+cond	111:25	111:30	7	ch < chans
+water	111:25	0:0	8	ch
+op	111:28	0:0	8	<
+water	111:30	0:0	8	chans
+forexpr	111:37	111:39	7	ch ++
+water	111:37	0:0	8	ch
+op	111:39	0:0	8	++
+stmts	111:43	120:12	7	
+water	111:43	0:0	8	{
+water	112:16	0:0	8	sce
+op	112:20	0:0	8	=
+op	112:22	0:0	8	&
+water	112:23	0:0	8	cpe
+op	112:26	0:0	8	->
+water	112:28	0:0	8	ch
+op	112:30	0:0	8	[
+water	112:31	0:0	8	ch
+op	112:33	0:0	8	]
+water	112:34	0:0	8	;
+water	113:16	0:0	8	coeffs
+op	113:22	0:0	8	[
+water	113:23	0:0	8	ch
+op	113:25	0:0	8	]
+op	113:27	0:0	8	=
+water	113:29	0:0	8	sce
+op	113:32	0:0	8	->
+water	113:34	0:0	8	coeffs
+water	113:40	0:0	8	;
+water	114:16	0:0	8	sce
+op	114:19	0:0	8	->
+water	114:21	0:0	8	ics
+op	114:24	0:0	8	.
+water	114:25	0:0	8	predictor_present
+op	114:43	0:0	8	=
+water	114:45	0:0	8	0
+water	114:46	0:0	8	;
+call	115:16	115:85	8	memset
+arg	115:23	115:48	9	&sce->ics.prediction_used
+op	115:23	0:0	10	&
+water	115:24	0:0	10	sce
+op	115:27	0:0	10	->
+water	115:29	0:0	10	ics
+op	115:32	0:0	10	.
+water	115:33	0:0	10	prediction_used
+arg	115:50	115:51	9	0
+water	115:50	0:0	10	0
+arg	115:53	115:85	9	sizeof(sce->ics.prediction_used)
+op	115:53	0:0	10	sizeof
+water	115:59	0:0	10	(
+water	115:60	0:0	10	sce
+op	115:63	0:0	10	->
+water	115:65	0:0	10	ics
+op	115:68	0:0	10	.
+water	115:69	0:0	10	prediction_used
+water	115:84	0:0	10	)
+water	115:86	0:0	8	;
+call	116:16	116:65	8	memset
+arg	116:23	116:32	9	&sce->tns
+op	116:23	0:0	10	&
+water	116:24	0:0	10	sce
+op	116:27	0:0	10	->
+water	116:29	0:0	10	tns
+arg	116:34	116:35	9	0
+water	116:34	0:0	10	0
+arg	116:37	116:65	9	sizeof(TemporalNoiseShaping)
+op	116:37	0:0	10	sizeof
+water	116:43	0:0	10	(
+water	116:44	0:0	10	TemporalNoiseShaping
+water	116:64	0:0	10	)
+water	116:66	0:0	8	;
+for	117:16	119:45	8	(w = 0 ;w < 128;w ++)
+forinit	117:21	117:26	9	w = 0 ;
+water	117:21	0:0	10	w
+op	117:23	0:0	10	=
+water	117:25	0:0	10	0
+water	117:26	0:0	10	;
+cond	117:28	117:32	9	w < 128
+water	117:28	0:0	10	w
+op	117:30	0:0	10	<
+water	117:32	0:0	10	128
+forexpr	117:37	117:38	9	w ++
+water	117:37	0:0	10	w
+op	117:38	0:0	10	++
+stmts	118:20	119:45	9	
+if	118:20	119:45	10	(sce -> band_type [ w ] > RESERVED_BT)
+cond	118:24	118:44	11	sce -> band_type [ w ] > RESERVED_BT
+water	118:24	0:0	12	sce
+op	118:27	0:0	12	->
+water	118:29	0:0	12	band_type
+op	118:38	0:0	12	[
+water	118:39	0:0	12	w
+op	118:40	0:0	12	]
+op	118:42	0:0	12	>
+water	118:44	0:0	12	RESERVED_BT
+stmts	119:24	119:45	11	
+water	119:24	0:0	12	sce
+op	119:27	0:0	12	->
+water	119:29	0:0	12	band_type
+op	119:38	0:0	12	[
+water	119:39	0:0	12	w
+op	119:40	0:0	12	]
+op	119:42	0:0	12	=
+water	119:44	0:0	12	0
+water	119:45	0:0	12	;
+water	120:12	0:0	8	}
+call	121:12	121:63	6	s->psy.model->analyze
+arg	121:34	121:41	7	&s->psy
+op	121:34	0:0	8	&
+water	121:35	0:0	8	s
+op	121:36	0:0	8	->
+water	121:38	0:0	8	psy
+arg	121:43	121:51	7	start_ch
+water	121:43	0:0	8	start_ch
+arg	121:53	121:59	7	coeffs
+water	121:53	0:0	8	coeffs
+arg	121:61	121:63	7	wi
+water	121:61	0:0	8	wi
+water	121:64	0:0	6	;
+for	122:12	125:12	6	(ch = 0 ;ch < chans;ch ++)
+forinit	122:17	122:23	7	ch = 0 ;
+water	122:17	0:0	8	ch
+op	122:20	0:0	8	=
+water	122:22	0:0	8	0
+water	122:23	0:0	8	;
+cond	122:25	122:30	7	ch < chans
+water	122:25	0:0	8	ch
+op	122:28	0:0	8	<
+water	122:30	0:0	8	chans
+forexpr	122:37	122:39	7	ch ++
+water	122:37	0:0	8	ch
+op	122:39	0:0	8	++
+stmts	122:43	125:12	7	
+water	122:43	0:0	8	{
+water	123:16	0:0	8	s
+op	123:17	0:0	8	->
+water	123:19	0:0	8	cur_channel
+op	123:31	0:0	8	=
+water	123:33	0:0	8	start_ch
+op	123:42	0:0	8	+
+water	123:44	0:0	8	ch
+water	123:46	0:0	8	;
+call	124:16	124:81	8	s->coder->search_for_quantizers
+arg	124:48	124:53	9	avctx
+water	124:48	0:0	10	avctx
+arg	124:55	124:56	9	s
+water	124:55	0:0	10	s
+arg	124:58	124:70	9	&cpe->ch[ch]
+op	124:58	0:0	10	&
+water	124:59	0:0	10	cpe
+op	124:62	0:0	10	->
+water	124:64	0:0	10	ch
+op	124:66	0:0	10	[
+water	124:67	0:0	10	ch
+op	124:69	0:0	10	]
+arg	124:72	124:81	9	s->lambda
+water	124:72	0:0	10	s
+op	124:73	0:0	10	->
+water	124:75	0:0	10	lambda
+water	124:82	0:0	8	;
+water	125:12	0:0	8	}
+if	126:12	136:12	6	(chans > 1 && wi [ 0 ] . window_type [ 0 ] == wi [ 1 ] . window_type [ 0 ] && wi [ 0 ] . window_shape == wi [ 1 ] . window_shape)
+cond	126:16	128:49	7	chans > 1 && wi [ 0 ] . window_type [ 0 ] == wi [ 1 ] . window_type [ 0 ] && wi [ 0 ] . window_shape == wi [ 1 ] . window_shape
+water	126:16	0:0	8	chans
+op	126:22	0:0	8	>
+water	126:24	0:0	8	1
+op	127:16	0:0	8	&&
+water	127:19	0:0	8	wi
+op	127:21	0:0	8	[
+water	127:22	0:0	8	0
+op	127:23	0:0	8	]
+op	127:24	0:0	8	.
+water	127:25	0:0	8	window_type
+op	127:36	0:0	8	[
+water	127:37	0:0	8	0
+op	127:38	0:0	8	]
+op	127:40	0:0	8	==
+water	127:43	0:0	8	wi
+op	127:45	0:0	8	[
+water	127:46	0:0	8	1
+op	127:47	0:0	8	]
+op	127:48	0:0	8	.
+water	127:49	0:0	8	window_type
+op	127:60	0:0	8	[
+water	127:61	0:0	8	0
+op	127:62	0:0	8	]
+op	128:16	0:0	8	&&
+water	128:19	0:0	8	wi
+op	128:21	0:0	8	[
+water	128:22	0:0	8	0
+op	128:23	0:0	8	]
+op	128:24	0:0	8	.
+water	128:25	0:0	8	window_shape
+op	128:40	0:0	8	==
+water	128:43	0:0	8	wi
+op	128:45	0:0	8	[
+water	128:46	0:0	8	1
+op	128:47	0:0	8	]
+op	128:48	0:0	8	.
+water	128:49	0:0	8	window_shape
+stmts	128:63	136:12	7	
+water	128:63	0:0	8	{
+water	129:16	0:0	8	cpe
+op	129:19	0:0	8	->
+water	129:21	0:0	8	common_window
+op	129:35	0:0	8	=
+water	129:37	0:0	8	1
+water	129:38	0:0	8	;
+for	130:16	135:16	8	(w = 0 ;w < wi [ 0 ] . num_windows;w ++)
+forinit	130:21	130:26	9	w = 0 ;
+water	130:21	0:0	10	w
+op	130:23	0:0	10	=
+water	130:25	0:0	10	0
+water	130:26	0:0	10	;
+cond	130:28	130:38	9	w < wi [ 0 ] . num_windows
+water	130:28	0:0	10	w
+op	130:30	0:0	10	<
+water	130:32	0:0	10	wi
+op	130:34	0:0	10	[
+water	130:35	0:0	10	0
+op	130:36	0:0	10	]
+op	130:37	0:0	10	.
+water	130:38	0:0	10	num_windows
+forexpr	130:51	130:52	9	w ++
+water	130:51	0:0	10	w
+op	130:52	0:0	10	++
+stmts	130:56	135:16	9	
+water	130:56	0:0	10	{
+if	131:20	134:20	10	(wi [ 0 ] . grouping [ w ] != wi [ 1 ] . grouping [ w ])
+cond	131:24	131:61	11	wi [ 0 ] . grouping [ w ] != wi [ 1 ] . grouping [ w ]
+water	131:24	0:0	12	wi
+op	131:26	0:0	12	[
+water	131:27	0:0	12	0
+op	131:28	0:0	12	]
+op	131:29	0:0	12	.
+water	131:30	0:0	12	grouping
+op	131:38	0:0	12	[
+water	131:39	0:0	12	w
+op	131:40	0:0	12	]
+op	131:42	0:0	12	!=
+water	131:45	0:0	12	wi
+op	131:47	0:0	12	[
+water	131:48	0:0	12	1
+op	131:49	0:0	12	]
+op	131:50	0:0	12	.
+water	131:51	0:0	12	grouping
+op	131:59	0:0	12	[
+water	131:60	0:0	12	w
+op	131:61	0:0	12	]
+stmts	131:64	134:20	11	
+water	131:64	0:0	12	{
+water	132:24	0:0	12	cpe
+op	132:27	0:0	12	->
+water	132:29	0:0	12	common_window
+op	132:43	0:0	12	=
+water	132:45	0:0	12	0
+water	132:46	0:0	12	;
+break	133:24	133:29	12	
+water	134:20	0:0	12	}
+water	135:16	0:0	10	}
+water	136:12	0:0	8	}
+for	137:12	148:12	6	(ch = 0 ;ch < chans;ch ++)
+forinit	137:17	137:23	7	ch = 0 ;
+water	137:17	0:0	8	ch
+op	137:20	0:0	8	=
+water	137:22	0:0	8	0
+water	137:23	0:0	8	;
+cond	137:25	137:30	7	ch < chans
+water	137:25	0:0	8	ch
+op	137:28	0:0	8	<
+water	137:30	0:0	8	chans
+forexpr	137:37	137:39	7	ch ++
+water	137:37	0:0	8	ch
+op	137:39	0:0	8	++
+stmts	137:43	148:12	7	
+water	137:43	0:0	8	{
+water	138:16	0:0	8	sce
+op	138:20	0:0	8	=
+op	138:22	0:0	8	&
+water	138:23	0:0	8	cpe
+op	138:26	0:0	8	->
+water	138:28	0:0	8	ch
+op	138:30	0:0	8	[
+water	138:31	0:0	8	ch
+op	138:33	0:0	8	]
+water	138:34	0:0	8	;
+water	139:16	0:0	8	s
+op	139:17	0:0	8	->
+water	139:19	0:0	8	cur_channel
+op	139:31	0:0	8	=
+water	139:33	0:0	8	start_ch
+op	139:42	0:0	8	+
+water	139:44	0:0	8	ch
+water	139:46	0:0	8	;
+if	140:16	141:59	8	(s -> options . pns && s -> coder -> search_for_pns)
+cond	140:20	140:48	9	s -> options . pns && s -> coder -> search_for_pns
+water	140:20	0:0	10	s
+op	140:21	0:0	10	->
+water	140:23	0:0	10	options
+op	140:30	0:0	10	.
+water	140:31	0:0	10	pns
+op	140:35	0:0	10	&&
+water	140:38	0:0	10	s
+op	140:39	0:0	10	->
+water	140:41	0:0	10	coder
+op	140:46	0:0	10	->
+water	140:48	0:0	10	search_for_pns
+stmts	141:20	141:59	9	
+call	141:20	141:58	10	s->coder->search_for_pns
+arg	141:45	141:46	11	s
+water	141:45	0:0	12	s
+arg	141:48	141:53	11	avctx
+water	141:48	0:0	12	avctx
+arg	141:55	141:58	11	sce
+water	141:55	0:0	12	sce
+water	141:59	0:0	10	;
+if	142:16	143:52	8	(s -> options . tns && s -> coder -> search_for_tns)
+cond	142:20	142:48	9	s -> options . tns && s -> coder -> search_for_tns
+water	142:20	0:0	10	s
+op	142:21	0:0	10	->
+water	142:23	0:0	10	options
+op	142:30	0:0	10	.
+water	142:31	0:0	10	tns
+op	142:35	0:0	10	&&
+water	142:38	0:0	10	s
+op	142:39	0:0	10	->
+water	142:41	0:0	10	coder
+op	142:46	0:0	10	->
+water	142:48	0:0	10	search_for_tns
+stmts	143:20	143:52	9	
+call	143:20	143:51	10	s->coder->search_for_tns
+arg	143:45	143:46	11	s
+water	143:45	0:0	12	s
+arg	143:48	143:51	11	sce
+water	143:48	0:0	12	sce
+water	143:52	0:0	10	;
+if	144:16	145:52	8	(s -> options . tns && s -> coder -> apply_tns_filt)
+cond	144:20	144:48	9	s -> options . tns && s -> coder -> apply_tns_filt
+water	144:20	0:0	10	s
+op	144:21	0:0	10	->
+water	144:23	0:0	10	options
+op	144:30	0:0	10	.
+water	144:31	0:0	10	tns
+op	144:35	0:0	10	&&
+water	144:38	0:0	10	s
+op	144:39	0:0	10	->
+water	144:41	0:0	10	coder
+op	144:46	0:0	10	->
+water	144:48	0:0	10	apply_tns_filt
+stmts	145:20	145:52	9	
+call	145:20	145:51	10	s->coder->apply_tns_filt
+arg	145:45	145:46	11	s
+water	145:45	0:0	12	s
+arg	145:48	145:51	11	sce
+water	145:48	0:0	12	sce
+water	145:52	0:0	10	;
+if	146:16	147:32	8	(sce -> tns . present)
+cond	146:20	146:29	9	sce -> tns . present
+water	146:20	0:0	10	sce
+op	146:23	0:0	10	->
+water	146:25	0:0	10	tns
+op	146:28	0:0	10	.
+water	146:29	0:0	10	present
+stmts	147:20	147:32	9	
+water	147:20	0:0	10	tns_mode
+op	147:29	0:0	10	=
+water	147:31	0:0	10	1
+water	147:32	0:0	10	;
+water	148:12	0:0	8	}
+water	149:12	0:0	6	s
+op	149:13	0:0	6	->
+water	149:15	0:0	6	cur_channel
+op	149:27	0:0	6	=
+water	149:29	0:0	6	start_ch
+water	149:37	0:0	6	;
+if	150:12	155:12	6	(s -> options . intensity_stereo)
+cond	150:16	150:27	7	s -> options . intensity_stereo
+water	150:16	0:0	8	s
+op	150:17	0:0	8	->
+water	150:19	0:0	8	options
+op	150:26	0:0	8	.
+water	150:27	0:0	8	intensity_stereo
+stmts	150:45	155:12	7	
+water	150:45	0:0	8	{
+if	151:16	152:58	8	(s -> coder -> search_for_is)
+cond	151:20	151:30	9	s -> coder -> search_for_is
+water	151:20	0:0	10	s
+op	151:21	0:0	10	->
+water	151:23	0:0	10	coder
+op	151:28	0:0	10	->
+water	151:30	0:0	10	search_for_is
+stmts	152:20	152:58	9	
+call	152:20	152:57	10	s->coder->search_for_is
+arg	152:44	152:45	11	s
+water	152:44	0:0	12	s
+arg	152:47	152:52	11	avctx
+water	152:47	0:0	12	avctx
+arg	152:54	152:57	11	cpe
+water	152:54	0:0	12	cpe
+water	152:58	0:0	10	;
+if	153:16	153:45	8	(cpe -> is_mode)
+cond	153:20	153:25	9	cpe -> is_mode
+water	153:20	0:0	10	cpe
+op	153:23	0:0	10	->
+water	153:25	0:0	10	is_mode
+stmts	153:34	153:45	9	
+water	153:34	0:0	10	is_mode
+op	153:42	0:0	10	=
+water	153:44	0:0	10	1
+water	153:45	0:0	10	;
+call	154:16	154:42	8	apply_intensity_stereo
+arg	154:39	154:42	9	cpe
+water	154:39	0:0	10	cpe
+water	154:43	0:0	8	;
+water	155:12	0:0	8	}
+if	156:12	173:12	6	(s -> options . pred)
+cond	156:16	156:27	7	s -> options . pred
+water	156:16	0:0	8	s
+op	156:17	0:0	8	->
+water	156:19	0:0	8	options
+op	156:26	0:0	8	.
+water	156:27	0:0	8	pred
+stmts	156:33	173:12	7	
+water	156:33	0:0	8	{
+for	157:16	163:16	8	(ch = 0 ;ch < chans;ch ++)
+forinit	157:21	157:27	9	ch = 0 ;
+water	157:21	0:0	10	ch
+op	157:24	0:0	10	=
+water	157:26	0:0	10	0
+water	157:27	0:0	10	;
+cond	157:29	157:34	9	ch < chans
+water	157:29	0:0	10	ch
+op	157:32	0:0	10	<
+water	157:34	0:0	10	chans
+forexpr	157:41	157:43	9	ch ++
+water	157:41	0:0	10	ch
+op	157:43	0:0	10	++
+stmts	157:47	163:16	9	
+water	157:47	0:0	10	{
+water	158:20	0:0	10	sce
+op	158:24	0:0	10	=
+op	158:26	0:0	10	&
+water	158:27	0:0	10	cpe
+op	158:30	0:0	10	->
+water	158:32	0:0	10	ch
+op	158:34	0:0	10	[
+water	158:35	0:0	10	ch
+op	158:37	0:0	10	]
+water	158:38	0:0	10	;
+water	159:20	0:0	10	s
+op	159:21	0:0	10	->
+water	159:23	0:0	10	cur_channel
+op	159:35	0:0	10	=
+water	159:37	0:0	10	start_ch
+op	159:46	0:0	10	+
+water	159:48	0:0	10	ch
+water	159:50	0:0	10	;
+if	160:20	161:57	10	(s -> options . pred && s -> coder -> search_for_pred)
+cond	160:24	160:53	11	s -> options . pred && s -> coder -> search_for_pred
+water	160:24	0:0	12	s
+op	160:25	0:0	12	->
+water	160:27	0:0	12	options
+op	160:34	0:0	12	.
+water	160:35	0:0	12	pred
+op	160:40	0:0	12	&&
+water	160:43	0:0	12	s
+op	160:44	0:0	12	->
+water	160:46	0:0	12	coder
+op	160:51	0:0	12	->
+water	160:53	0:0	12	search_for_pred
+stmts	161:24	161:57	11	
+call	161:24	161:56	12	s->coder->search_for_pred
+arg	161:50	161:51	13	s
+water	161:50	0:0	14	s
+arg	161:53	161:56	13	sce
+water	161:53	0:0	14	sce
+water	161:57	0:0	12	;
+if	162:20	162:72	10	(cpe -> ch [ ch ] . ics . predictor_present)
+cond	162:24	162:40	11	cpe -> ch [ ch ] . ics . predictor_present
+water	162:24	0:0	12	cpe
+op	162:27	0:0	12	->
+water	162:29	0:0	12	ch
+op	162:31	0:0	12	[
+water	162:32	0:0	12	ch
+op	162:34	0:0	12	]
+op	162:35	0:0	12	.
+water	162:36	0:0	12	ics
+op	162:39	0:0	12	.
+water	162:40	0:0	12	predictor_present
+stmts	162:59	162:72	11	
+water	162:59	0:0	12	pred_mode
+op	162:69	0:0	12	=
+water	162:71	0:0	12	1
+water	162:72	0:0	12	;
+water	163:16	0:0	10	}
+if	164:16	165:62	8	(s -> coder -> adjust_common_prediction)
+cond	164:20	164:30	9	s -> coder -> adjust_common_prediction
+water	164:20	0:0	10	s
+op	164:21	0:0	10	->
+water	164:23	0:0	10	coder
+op	164:28	0:0	10	->
+water	164:30	0:0	10	adjust_common_prediction
+stmts	165:20	165:62	9	
+call	165:20	165:61	10	s->coder->adjust_common_prediction
+arg	165:55	165:56	11	s
+water	165:55	0:0	12	s
+arg	165:58	165:61	11	cpe
+water	165:58	0:0	12	cpe
+water	165:62	0:0	10	;
+for	166:16	171:16	8	(ch = 0 ;ch < chans;ch ++)
+forinit	166:21	166:27	9	ch = 0 ;
+water	166:21	0:0	10	ch
+op	166:24	0:0	10	=
+water	166:26	0:0	10	0
+water	166:27	0:0	10	;
+cond	166:29	166:34	9	ch < chans
+water	166:29	0:0	10	ch
+op	166:32	0:0	10	<
+water	166:34	0:0	10	chans
+forexpr	166:41	166:43	9	ch ++
+water	166:41	0:0	10	ch
+op	166:43	0:0	10	++
+stmts	166:47	171:16	9	
+water	166:47	0:0	10	{
+water	167:20	0:0	10	sce
+op	167:24	0:0	10	=
+op	167:26	0:0	10	&
+water	167:27	0:0	10	cpe
+op	167:30	0:0	10	->
+water	167:32	0:0	10	ch
+op	167:34	0:0	10	[
+water	167:35	0:0	10	ch
+op	167:37	0:0	10	]
+water	167:38	0:0	10	;
+water	168:20	0:0	10	s
+op	168:21	0:0	10	->
+water	168:23	0:0	10	cur_channel
+op	168:35	0:0	10	=
+water	168:37	0:0	10	start_ch
+op	168:46	0:0	10	+
+water	168:48	0:0	10	ch
+water	168:50	0:0	10	;
+if	169:20	170:57	10	(s -> options . pred && s -> coder -> apply_main_pred)
+cond	169:24	169:53	11	s -> options . pred && s -> coder -> apply_main_pred
+water	169:24	0:0	12	s
+op	169:25	0:0	12	->
+water	169:27	0:0	12	options
+op	169:34	0:0	12	.
+water	169:35	0:0	12	pred
+op	169:40	0:0	12	&&
+water	169:43	0:0	12	s
+op	169:44	0:0	12	->
+water	169:46	0:0	12	coder
+op	169:51	0:0	12	->
+water	169:53	0:0	12	apply_main_pred
+stmts	170:24	170:57	11	
+call	170:24	170:56	12	s->coder->apply_main_pred
+arg	170:50	170:51	13	s
+water	170:50	0:0	14	s
+arg	170:53	170:56	13	sce
+water	170:53	0:0	14	sce
+water	170:57	0:0	12	;
+water	171:16	0:0	10	}
+water	172:16	0:0	8	s
+op	172:17	0:0	8	->
+water	172:19	0:0	8	cur_channel
+op	172:31	0:0	8	=
+water	172:33	0:0	8	start_ch
+water	172:41	0:0	8	;
+water	173:12	0:0	8	}
+if	174:12	182:12	6	(s -> options . stereo_mode)
+cond	174:16	174:27	7	s -> options . stereo_mode
+water	174:16	0:0	8	s
+op	174:17	0:0	8	->
+water	174:19	0:0	8	options
+op	174:26	0:0	8	.
+water	174:27	0:0	8	stereo_mode
+stmts	174:40	182:12	7	
+water	174:40	0:0	8	{
+if	175:16	176:51	8	(s -> options . stereo_mode == - 1 && s -> coder -> search_for_ms)
+cond	175:20	175:62	9	s -> options . stereo_mode == - 1 && s -> coder -> search_for_ms
+water	175:20	0:0	10	s
+op	175:21	0:0	10	->
+water	175:23	0:0	10	options
+op	175:30	0:0	10	.
+water	175:31	0:0	10	stereo_mode
+op	175:43	0:0	10	==
+op	175:46	0:0	10	-
+water	175:47	0:0	10	1
+op	175:49	0:0	10	&&
+water	175:52	0:0	10	s
+op	175:53	0:0	10	->
+water	175:55	0:0	10	coder
+op	175:60	0:0	10	->
+water	175:62	0:0	10	search_for_ms
+stmts	176:20	176:51	9	
+call	176:20	176:50	10	s->coder->search_for_ms
+arg	176:44	176:45	11	s
+water	176:44	0:0	12	s
+arg	176:47	176:50	11	cpe
+water	176:47	0:0	12	cpe
+water	176:51	0:0	10	;
+else	177:16	178:65	8
+stmts	177:21	178:65	9	
+if	177:21	178:65	10	(cpe -> common_window)
+cond	177:25	177:30	11	cpe -> common_window
+water	177:25	0:0	12	cpe
+op	177:28	0:0	12	->
+water	177:30	0:0	12	common_window
+stmts	178:20	178:65	11	
+call	178:20	178:64	12	memset
+arg	178:27	178:39	13	cpe->ms_mask
+water	178:27	0:0	14	cpe
+op	178:30	0:0	14	->
+water	178:32	0:0	14	ms_mask
+arg	178:41	178:42	13	1
+water	178:41	0:0	14	1
+arg	178:44	178:64	13	sizeof(cpe->ms_mask)
+op	178:44	0:0	14	sizeof
+water	178:50	0:0	14	(
+water	178:51	0:0	14	cpe
+op	178:54	0:0	14	->
+water	178:56	0:0	14	ms_mask
+water	178:63	0:0	14	)
+water	178:65	0:0	12	;
+for	179:16	180:75	8	(w = 0 ;w < 128;w ++)
+forinit	179:21	179:26	9	w = 0 ;
+water	179:21	0:0	10	w
+op	179:23	0:0	10	=
+water	179:25	0:0	10	0
+water	179:26	0:0	10	;
+cond	179:28	179:32	9	w < 128
+water	179:28	0:0	10	w
+op	179:30	0:0	10	<
+water	179:32	0:0	10	128
+forexpr	179:37	179:38	9	w ++
+water	179:37	0:0	10	w
+op	179:38	0:0	10	++
+stmts	180:20	180:75	9	
+water	180:20	0:0	10	cpe
+op	180:23	0:0	10	->
+water	180:25	0:0	10	ms_mask
+op	180:32	0:0	10	[
+water	180:33	0:0	10	w
+op	180:34	0:0	10	]
+op	180:36	0:0	10	=
+water	180:38	0:0	10	cpe
+op	180:41	0:0	10	->
+water	180:43	0:0	10	is_mask
+op	180:50	0:0	10	[
+water	180:51	0:0	10	w
+op	180:52	0:0	10	]
+water	180:54	0:0	10	?
+water	180:56	0:0	10	0
+water	180:58	0:0	10	:
+water	180:60	0:0	10	cpe
+op	180:63	0:0	10	->
+water	180:65	0:0	10	ms_mask
+op	180:72	0:0	10	[
+water	180:73	0:0	10	w
+op	180:74	0:0	10	]
+water	180:75	0:0	10	;
+call	181:16	181:41	8	apply_mid_side_stereo
+arg	181:38	181:41	9	cpe
+water	181:38	0:0	10	cpe
+water	181:42	0:0	8	;
+water	182:12	0:0	8	}
+call	183:12	183:47	6	adjust_frame_information
+arg	183:37	183:40	7	cpe
+water	183:37	0:0	8	cpe
+arg	183:42	183:47	7	chans
+water	183:42	0:0	8	chans
+water	183:48	0:0	6	;
+if	184:12	193:12	6	(chans == 2)
+cond	184:16	184:25	7	chans == 2
+water	184:16	0:0	8	chans
+op	184:22	0:0	8	==
+water	184:25	0:0	8	2
+stmts	184:28	193:12	7	
+water	184:28	0:0	8	{
+call	185:16	185:54	8	put_bits
+arg	185:25	185:31	9	&s->pb
+op	185:25	0:0	10	&
+water	185:26	0:0	10	s
+op	185:27	0:0	10	->
+water	185:29	0:0	10	pb
+arg	185:33	185:34	9	1
+water	185:33	0:0	10	1
+arg	185:36	185:54	9	cpe->common_window
+water	185:36	0:0	10	cpe
+op	185:39	0:0	10	->
+water	185:41	0:0	10	common_window
+water	185:55	0:0	8	;
+if	186:16	192:16	8	(cpe -> common_window)
+cond	186:20	186:25	9	cpe -> common_window
+water	186:20	0:0	10	cpe
+op	186:23	0:0	10	->
+water	186:25	0:0	10	common_window
+stmts	186:40	192:16	9	
+water	186:40	0:0	10	{
+call	187:20	187:51	10	put_ics_info
+arg	187:33	187:34	11	s
+water	187:33	0:0	12	s
+arg	187:36	187:51	11	&cpe->ch[0].ics
+op	187:36	0:0	12	&
+water	187:37	0:0	12	cpe
+op	187:40	0:0	12	->
+water	187:42	0:0	12	ch
+op	187:44	0:0	12	[
+water	187:45	0:0	12	0
+op	187:46	0:0	12	]
+op	187:47	0:0	12	.
+water	187:48	0:0	12	ics
+water	187:52	0:0	10	;
+if	188:20	189:66	10	(s -> coder -> encode_main_pred)
+cond	188:24	188:34	11	s -> coder -> encode_main_pred
+water	188:24	0:0	12	s
+op	188:25	0:0	12	->
+water	188:27	0:0	12	coder
+op	188:32	0:0	12	->
+water	188:34	0:0	12	encode_main_pred
+stmts	189:24	189:66	11	
+call	189:24	189:65	12	s->coder->encode_main_pred
+arg	189:51	189:52	13	s
+water	189:51	0:0	14	s
+arg	189:54	189:65	13	&cpe->ch[0]
+op	189:54	0:0	14	&
+water	189:55	0:0	14	cpe
+op	189:58	0:0	14	->
+water	189:60	0:0	14	ch
+op	189:62	0:0	14	[
+water	189:63	0:0	14	0
+op	189:64	0:0	14	]
+water	189:66	0:0	12	;
+call	190:20	190:46	10	encode_ms_info
+arg	190:35	190:41	11	&s->pb
+op	190:35	0:0	12	&
+water	190:36	0:0	12	s
+op	190:37	0:0	12	->
+water	190:39	0:0	12	pb
+arg	190:43	190:46	11	cpe
+water	190:43	0:0	12	cpe
+water	190:47	0:0	10	;
+if	191:20	191:49	10	(cpe -> ms_mode)
+cond	191:24	191:29	11	cpe -> ms_mode
+water	191:24	0:0	12	cpe
+op	191:27	0:0	12	->
+water	191:29	0:0	12	ms_mode
+stmts	191:38	191:49	11	
+water	191:38	0:0	12	ms_mode
+op	191:46	0:0	12	=
+water	191:48	0:0	12	1
+water	191:49	0:0	12	;
+water	192:16	0:0	10	}
+water	193:12	0:0	8	}
+for	194:12	197:12	6	(ch = 0 ;ch < chans;ch ++)
+forinit	194:17	194:23	7	ch = 0 ;
+water	194:17	0:0	8	ch
+op	194:20	0:0	8	=
+water	194:22	0:0	8	0
+water	194:23	0:0	8	;
+cond	194:25	194:30	7	ch < chans
+water	194:25	0:0	8	ch
+op	194:28	0:0	8	<
+water	194:30	0:0	8	chans
+forexpr	194:37	194:39	7	ch ++
+water	194:37	0:0	8	ch
+op	194:39	0:0	8	++
+stmts	194:43	197:12	7	
+water	194:43	0:0	8	{
+water	195:16	0:0	8	s
+op	195:17	0:0	8	->
+water	195:19	0:0	8	cur_channel
+op	195:31	0:0	8	=
+water	195:33	0:0	8	start_ch
+op	195:42	0:0	8	+
+water	195:44	0:0	8	ch
+water	195:46	0:0	8	;
+call	196:16	196:84	8	encode_individual_channel
+arg	196:42	196:47	9	avctx
+water	196:42	0:0	10	avctx
+arg	196:49	196:50	9	s
+water	196:49	0:0	10	s
+arg	196:52	196:64	9	&cpe->ch[ch]
+op	196:52	0:0	10	&
+water	196:53	0:0	10	cpe
+op	196:56	0:0	10	->
+water	196:58	0:0	10	ch
+op	196:60	0:0	10	[
+water	196:61	0:0	10	ch
+op	196:63	0:0	10	]
+arg	196:66	196:84	9	cpe->common_window
+water	196:66	0:0	10	cpe
+op	196:69	0:0	10	->
+water	196:71	0:0	10	common_window
+water	196:85	0:0	8	;
+water	197:12	0:0	8	}
+water	198:12	0:0	6	start_ch
+op	198:21	0:0	6	+=
+water	198:24	0:0	6	chans
+water	198:29	0:0	6	;
+water	199:8	0:0	6	}
+water	200:8	0:0	4	frame_bits
+op	200:19	0:0	4	=
+call	200:21	200:42	4	put_bits_count
+arg	200:36	200:42	5	&s->pb
+op	200:36	0:0	6	&
+water	200:37	0:0	6	s
+op	200:38	0:0	6	->
+water	200:40	0:0	6	pb
+water	200:43	0:0	4	;
+if	201:8	204:8	4	(frame_bits <= 6144 * s -> channels - 3)
+cond	201:12	201:47	5	frame_bits <= 6144 * s -> channels - 3
+water	201:12	0:0	6	frame_bits
+op	201:23	0:0	6	<=
+water	201:26	0:0	6	6144
+op	201:31	0:0	6	*
+water	201:33	0:0	6	s
+op	201:34	0:0	6	->
+water	201:36	0:0	6	channels
+op	201:45	0:0	6	-
+water	201:47	0:0	6	3
+stmts	201:50	204:8	5	
+water	201:50	0:0	6	{
+water	202:12	0:0	6	s
+op	202:13	0:0	6	->
+water	202:15	0:0	6	psy
+op	202:18	0:0	6	.
+water	202:19	0:0	6	bitres
+op	202:25	0:0	6	.
+water	202:26	0:0	6	bits
+op	202:31	0:0	6	=
+water	202:33	0:0	6	frame_bits
+op	202:44	0:0	6	/
+water	202:46	0:0	6	s
+op	202:47	0:0	6	->
+water	202:49	0:0	6	channels
+water	202:57	0:0	6	;
+break	203:12	203:17	6	
+water	204:8	0:0	6	}
+if	205:8	213:8	4	(is_mode || ms_mode || tns_mode || pred_mode)
+cond	205:12	205:46	5	is_mode || ms_mode || tns_mode || pred_mode
+water	205:12	0:0	6	is_mode
+op	205:20	0:0	6	||
+water	205:23	0:0	6	ms_mode
+op	205:31	0:0	6	||
+water	205:34	0:0	6	tns_mode
+op	205:43	0:0	6	||
+water	205:46	0:0	6	pred_mode
+stmts	205:57	213:8	5	
+water	205:57	0:0	6	{
+for	206:12	212:12	6	(i = 0 ;i < s -> chan_map [ 0 ];i ++)
+forinit	206:17	206:22	7	i = 0 ;
+water	206:17	0:0	8	i
+op	206:19	0:0	8	=
+water	206:21	0:0	8	0
+water	206:22	0:0	8	;
+cond	206:24	206:41	7	i < s -> chan_map [ 0 ]
+water	206:24	0:0	8	i
+op	206:26	0:0	8	<
+water	206:28	0:0	8	s
+op	206:29	0:0	8	->
+water	206:31	0:0	8	chan_map
+op	206:39	0:0	8	[
+water	206:40	0:0	8	0
+op	206:41	0:0	8	]
+forexpr	206:44	206:45	7	i ++
+water	206:44	0:0	8	i
+op	206:45	0:0	8	++
+stmts	206:49	212:12	7	
+water	206:49	0:0	8	{
+water	208:16	0:0	8	chans
+op	208:22	0:0	8	=
+water	208:24	0:0	8	tag
+op	208:28	0:0	8	==
+water	208:31	0:0	8	TYPE_CPE
+water	208:40	0:0	8	?
+water	208:42	0:0	8	2
+water	208:44	0:0	8	:
+water	208:46	0:0	8	1
+water	208:47	0:0	8	;
+water	209:16	0:0	8	cpe
+op	209:20	0:0	8	=
+op	209:22	0:0	8	&
+water	209:23	0:0	8	s
+op	209:24	0:0	8	->
+water	209:26	0:0	8	cpe
+op	209:29	0:0	8	[
+water	209:30	0:0	8	i
+op	209:31	0:0	8	]
+water	209:32	0:0	8	;
+for	210:16	211:95	8	(ch = 0 ;ch < chans;ch ++)
+forinit	210:21	210:27	9	ch = 0 ;
+water	210:21	0:0	10	ch
+op	210:24	0:0	10	=
+water	210:26	0:0	10	0
+water	210:27	0:0	10	;
+cond	210:29	210:34	9	ch < chans
+water	210:29	0:0	10	ch
+op	210:32	0:0	10	<
+water	210:34	0:0	10	chans
+forexpr	210:41	210:43	9	ch ++
+water	210:41	0:0	10	ch
+op	210:43	0:0	10	++
+stmts	211:20	211:95	9	
+call	211:20	211:94	10	memcpy
+arg	211:27	211:45	11	cpe->ch[ch].coeffs
+water	211:27	0:0	12	cpe
+op	211:30	0:0	12	->
+water	211:32	0:0	12	ch
+op	211:34	0:0	12	[
+water	211:35	0:0	12	ch
+op	211:37	0:0	12	]
+op	211:38	0:0	12	.
+water	211:39	0:0	12	coeffs
+arg	211:47	211:66	11	cpe->ch[ch].pcoeffs
+water	211:47	0:0	12	cpe
+op	211:50	0:0	12	->
+water	211:52	0:0	12	ch
+op	211:54	0:0	12	[
+water	211:55	0:0	12	ch
+op	211:57	0:0	12	]
+op	211:58	0:0	12	.
+water	211:59	0:0	12	pcoeffs
+arg	211:68	211:94	11	sizeof(cpe->ch[ch].coeffs)
+op	211:68	0:0	12	sizeof
+water	211:74	0:0	12	(
+water	211:75	0:0	12	cpe
+op	211:78	0:0	12	->
+water	211:80	0:0	12	ch
+op	211:82	0:0	12	[
+water	211:83	0:0	12	ch
+op	211:85	0:0	12	]
+op	211:86	0:0	12	.
+water	211:87	0:0	12	coeffs
+water	211:93	0:0	12	)
+water	211:95	0:0	10	;
+water	212:12	0:0	8	}
+water	213:8	0:0	6	}
+water	214:8	0:0	4	s
+op	214:9	0:0	4	->
+water	214:11	0:0	4	lambda
+op	214:18	0:0	4	*=
+water	214:21	0:0	4	avctx
+op	214:26	0:0	4	->
+water	214:28	0:0	4	bit_rate
+op	214:37	0:0	4	*
+water	214:39	0:0	4	1024
+op	214:43	0:0	4	.
+water	214:44	0:0	4	0
+water	214:45	0:0	4	f
+op	214:47	0:0	4	/
+water	214:49	0:0	4	avctx
+op	214:54	0:0	4	->
+water	214:56	0:0	4	sample_rate
+op	214:68	0:0	4	/
+water	214:70	0:0	4	frame_bits
+water	214:80	0:0	4	;
+water	215:4	0:0	4	}
+water	215:15	0:0	2	;
+call	216:4	216:32	2	put_bits
+arg	216:13	216:19	3	&s->pb
+op	216:13	0:0	4	&
+water	216:14	0:0	4	s
+op	216:15	0:0	4	->
+water	216:17	0:0	4	pb
+arg	216:21	216:22	3	3
+water	216:21	0:0	4	3
+arg	216:24	216:32	3	TYPE_END
+water	216:24	0:0	4	TYPE_END
+water	216:33	0:0	2	;
+call	217:4	217:25	2	flush_put_bits
+arg	217:19	217:25	3	&s->pb
+op	217:19	0:0	4	&
+water	217:20	0:0	4	s
+op	217:21	0:0	4	->
+water	217:23	0:0	4	pb
+water	217:26	0:0	2	;
+water	218:4	0:0	2	avctx
+op	218:9	0:0	2	->
+water	218:11	0:0	2	frame_bits
+op	218:22	0:0	2	=
+call	218:24	218:45	2	put_bits_count
+arg	218:39	218:45	3	&s->pb
+op	218:39	0:0	4	&
+water	218:40	0:0	4	s
+op	218:41	0:0	4	->
+water	218:43	0:0	4	pb
+water	218:46	0:0	2	;
+if	220:4	224:4	2	(! ( avctx -> flags & AV_CODEC_FLAG_QSCALE ))
+cond	220:8	220:45	3	! ( avctx -> flags & AV_CODEC_FLAG_QSCALE )
+op	220:8	0:0	4	!
+water	220:9	0:0	4	(
+water	220:10	0:0	4	avctx
+op	220:15	0:0	4	->
+water	220:17	0:0	4	flags
+op	220:23	0:0	4	&
+water	220:25	0:0	4	AV_CODEC_FLAG_QSCALE
+water	220:45	0:0	4	)
+stmts	220:48	224:4	3	
+water	220:48	0:0	4	{
+decl	221:8	221:88	4	float	ratio
+op	221:20	0:0	4	=
+water	221:22	0:0	4	avctx
+op	221:27	0:0	4	->
+water	221:29	0:0	4	bit_rate
+op	221:38	0:0	4	*
+water	221:40	0:0	4	1024
+op	221:44	0:0	4	.
+water	221:45	0:0	4	0
+water	221:46	0:0	4	f
+op	221:48	0:0	4	/
+water	221:50	0:0	4	avctx
+op	221:55	0:0	4	->
+water	221:57	0:0	4	sample_rate
+op	221:69	0:0	4	/
+water	221:71	0:0	4	avctx
+op	221:76	0:0	4	->
+water	221:78	0:0	4	frame_bits
+water	222:8	0:0	4	s
+op	222:9	0:0	4	->
+water	222:11	0:0	4	lambda
+op	222:18	0:0	4	*=
+water	222:21	0:0	4	ratio
+water	222:26	0:0	4	;
+water	223:8	0:0	4	s
+op	223:9	0:0	4	->
+water	223:11	0:0	4	lambda
+op	223:18	0:0	4	=
+call	223:20	223:44	4	FFMIN
+arg	223:26	223:35	5	s->lambda
+water	223:26	0:0	6	s
+op	223:27	0:0	6	->
+water	223:29	0:0	6	lambda
+arg	223:37	223:44	5	65536.f
+water	223:37	0:0	6	65536
+op	223:42	0:0	6	.
+water	223:43	0:0	6	f
+water	223:45	0:0	4	;
+water	224:4	0:0	4	}
+if	225:4	226:23	2	(! frame)
+cond	225:8	225:9	3	! frame
+op	225:8	0:0	4	!
+water	225:9	0:0	4	frame
+stmts	226:8	226:23	3	
+water	226:8	0:0	4	s
+op	226:9	0:0	4	->
+water	226:11	0:0	4	last_frame
+op	226:21	0:0	4	++
+water	226:23	0:0	4	;
+call	227:4	228:39	2	ff_af_queue_remove
+arg	227:23	227:30	3	&s->afq
+op	227:23	0:0	4	&
+water	227:24	0:0	4	s
+op	227:25	0:0	4	->
+water	227:27	0:0	4	afq
+arg	227:32	227:49	3	avctx->frame_size
+water	227:32	0:0	4	avctx
+op	227:37	0:0	4	->
+water	227:39	0:0	4	frame_size
+arg	227:51	227:62	3	&avpkt->pts
+op	227:51	0:0	4	&
+water	227:52	0:0	4	avpkt
+op	227:57	0:0	4	->
+water	227:59	0:0	4	pts
+arg	228:23	228:39	3	&avpkt->duration
+op	228:23	0:0	4	&
+water	228:24	0:0	4	avpkt
+op	228:29	0:0	4	->
+water	228:31	0:0	4	duration
+water	228:40	0:0	2	;
+water	229:4	0:0	2	avpkt
+op	229:9	0:0	2	->
+water	229:11	0:0	2	size
+op	229:16	0:0	2	=
+call	229:18	229:39	2	put_bits_count
+arg	229:33	229:39	3	&s->pb
+op	229:33	0:0	4	&
+water	229:34	0:0	4	s
+op	229:35	0:0	4	->
+water	229:37	0:0	4	pb
+op	229:41	0:0	2	>>
+water	229:44	0:0	2	3
+water	229:45	0:0	2	;
+op	230:4	0:0	2	*
+water	230:5	0:0	2	got_packet_ptr
+op	230:20	0:0	2	=
+water	230:22	0:0	2	1
+water	230:23	0:0	2	;
+return	231:4	231:12	2	0
+water	231:11	0:0	3	0

@@ -1,0 +1,124 @@
+func	1:0	22:0	0	int	av_audio_fifo_write
+params	1:23	0:0	1	
+param	1:24	1:39	2	AVAudioFifo *	af
+param	1:41	1:52	2	void * *	data
+param	1:54	1:68	2	int	nb_samples
+stmnts	0:0	21:21	1	
+decl	3:4	3:20	2	int	i
+water	3:9	0:0	2	,
+decl	3:4	3:20	2	int	ret
+water	3:14	0:0	2	,
+decl	3:4	3:20	2	int	size
+if	5:4	13:4	2	(av_audio_fifo_space (af ) < nb_samples)
+cond	5:8	5:34	3	av_audio_fifo_space (af ) < nb_samples
+call	5:8	5:30	4	av_audio_fifo_space
+arg	5:28	5:30	5	af
+water	5:28	0:0	6	af
+op	5:32	0:0	4	<
+water	5:34	0:0	4	nb_samples
+stmts	5:46	13:4	3	
+water	5:46	0:0	4	{
+decl	6:8	6:49	4	int	current_size
+op	6:25	0:0	4	=
+call	6:27	6:48	5	av_audio_fifo_size
+arg	6:46	6:48	6	af
+water	6:46	0:0	7	af
+if	8:8	9:34	4	(INT_MAX / 2 - current_size < nb_samples)
+cond	8:12	8:41	5	INT_MAX / 2 - current_size < nb_samples
+water	8:12	0:0	6	INT_MAX
+op	8:20	0:0	6	/
+water	8:22	0:0	6	2
+op	8:24	0:0	6	-
+water	8:26	0:0	6	current_size
+op	8:39	0:0	6	<
+water	8:41	0:0	6	nb_samples
+stmts	9:12	9:34	5	
+return	9:12	9:34	6	AVERROR(EINVAL)
+call	9:19	9:33	7	AVERROR
+arg	9:27	9:33	8	EINVAL
+water	9:27	0:0	9	EINVAL
+if	11:8	12:22	4	(( ret =av_audio_fifo_realloc (af ,2 * ( current_size + nb_samples ) ) ) < 0)
+cond	11:12	11:81	5	( ret =av_audio_fifo_realloc (af ,2 * ( current_size + nb_samples ) ) ) < 0
+water	11:12	0:0	6	(
+water	11:13	0:0	6	ret
+op	11:17	0:0	6	=
+call	11:19	11:76	6	av_audio_fifo_realloc
+arg	11:41	11:43	7	af
+water	11:41	0:0	8	af
+arg	11:45	11:76	7	2*(current_size+nb_samples)
+water	11:45	0:0	8	2
+op	11:47	0:0	8	*
+water	11:49	0:0	8	(
+water	11:50	0:0	8	current_size
+op	11:63	0:0	8	+
+water	11:65	0:0	8	nb_samples
+water	11:75	0:0	8	)
+water	11:77	0:0	6	)
+op	11:79	0:0	6	<
+water	11:81	0:0	6	0
+stmts	12:12	12:22	5	
+return	12:12	12:22	6	ret
+water	12:19	0:0	7	ret
+water	13:4	0:0	4	}
+water	14:4	0:0	2	size
+op	14:9	0:0	2	=
+water	14:11	0:0	2	nb_samples
+op	14:22	0:0	2	*
+water	14:24	0:0	2	af
+op	14:26	0:0	2	->
+water	14:28	0:0	2	sample_size
+water	14:39	0:0	2	;
+for	15:4	19:4	2	(i = 0 ;i < af -> nb_buffers;i ++)
+forinit	15:9	15:14	3	i = 0 ;
+water	15:9	0:0	4	i
+op	15:11	0:0	4	=
+water	15:13	0:0	4	0
+water	15:14	0:0	4	;
+cond	15:16	15:24	3	i < af -> nb_buffers
+water	15:16	0:0	4	i
+op	15:18	0:0	4	<
+water	15:20	0:0	4	af
+op	15:22	0:0	4	->
+water	15:24	0:0	4	nb_buffers
+forexpr	15:36	15:37	3	i ++
+water	15:36	0:0	4	i
+op	15:37	0:0	4	++
+stmts	15:41	19:4	3	
+water	15:41	0:0	4	{
+water	16:8	0:0	4	ret
+op	16:12	0:0	4	=
+call	16:14	16:67	4	av_fifo_generic_write
+arg	16:36	16:46	5	af->buf[i]
+water	16:36	0:0	6	af
+op	16:38	0:0	6	->
+water	16:40	0:0	6	buf
+op	16:43	0:0	6	[
+water	16:44	0:0	6	i
+op	16:45	0:0	6	]
+arg	16:48	16:55	5	data[i]
+water	16:48	0:0	6	data
+op	16:52	0:0	6	[
+water	16:53	0:0	6	i
+op	16:54	0:0	6	]
+arg	16:57	16:61	5	size
+water	16:57	0:0	6	size
+arg	16:63	16:67	5	NULL
+water	16:63	0:0	6	NULL
+water	16:68	0:0	4	;
+if	17:8	18:30	4	(ret != size)
+cond	17:12	17:19	5	ret != size
+water	17:12	0:0	6	ret
+op	17:16	0:0	6	!=
+water	17:19	0:0	6	size
+stmts	18:12	18:30	5	
+return	18:12	18:30	6	AVERROR_BUG
+water	18:19	0:0	7	AVERROR_BUG
+water	19:4	0:0	4	}
+water	20:4	0:0	2	af
+op	20:6	0:0	2	->
+water	20:8	0:0	2	nb_samples
+op	20:19	0:0	2	+=
+water	20:22	0:0	2	nb_samples
+water	20:32	0:0	2	;
+return	21:4	21:21	2	nb_samples
+water	21:11	0:0	3	nb_samples

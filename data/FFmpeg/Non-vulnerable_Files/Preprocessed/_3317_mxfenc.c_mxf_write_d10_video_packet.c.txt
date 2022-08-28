@@ -1,0 +1,171 @@
+func	1:0	25:0	0	static void	mxf_write_d10_video_packet
+params	1:38	0:0	1	
+param	1:39	1:57	2	AVFormatContext *	s
+param	1:59	1:71	2	AVStream *	st
+param	1:73	1:86	2	AVPacket *	pkt
+stmnts	0:0	24:4	1	
+decl	3:4	3:34	2	MXFContext	*mxf
+op	3:20	0:0	2	=
+water	3:22	0:0	2	s
+op	3:23	0:0	2	->
+water	3:25	0:0	2	priv_data
+decl	4:4	4:27	2	AVIOContext	*pb
+op	4:20	0:0	2	=
+water	4:22	0:0	2	s
+op	4:23	0:0	2	->
+water	4:25	0:0	2	pb
+decl	5:4	5:40	2	MXFStreamContext	*sc
+op	5:25	0:0	2	=
+water	5:27	0:0	2	st
+op	5:29	0:0	2	->
+water	5:31	0:0	2	priv_data
+decl	6:4	7:30	2	int	packet_size
+op	6:20	0:0	2	=
+water	6:22	0:0	2	(
+water	6:23	0:0	2	uint64_t
+water	6:31	0:0	2	)
+water	6:32	0:0	2	sc
+op	6:34	0:0	2	->
+water	6:36	0:0	2	video_bit_rate
+op	6:50	0:0	2	*
+water	6:51	0:0	2	mxf
+op	6:54	0:0	2	->
+water	6:56	0:0	2	time_base
+op	6:65	0:0	2	.
+water	6:66	0:0	2	num
+op	6:70	0:0	2	/
+water	7:8	0:0	2	(
+water	7:9	0:0	2	8
+op	7:10	0:0	2	*
+water	7:11	0:0	2	mxf
+op	7:14	0:0	2	->
+water	7:16	0:0	2	time_base
+op	7:25	0:0	2	.
+water	7:26	0:0	2	den
+water	7:29	0:0	2	)
+decl	8:4	8:11	2	int	pad
+water	9:4	0:0	2	packet_size
+op	9:16	0:0	2	+=
+water	9:19	0:0	2	16
+op	9:22	0:0	2	+
+water	9:24	0:0	2	4
+water	9:25	0:0	2	;
+water	10:4	0:0	2	packet_size
+op	10:16	0:0	2	+=
+call	10:19	10:44	2	klv_fill_size
+arg	10:33	10:44	3	packet_size
+water	10:33	0:0	4	packet_size
+water	10:45	0:0	2	;
+call	11:4	11:40	2	klv_encode_ber4_length
+arg	11:27	11:29	3	pb
+water	11:27	0:0	4	pb
+arg	11:31	11:40	3	pkt->size
+water	11:31	0:0	4	pkt
+op	11:34	0:0	4	->
+water	11:36	0:0	4	size
+water	11:41	0:0	2	;
+call	12:4	12:39	2	avio_write
+arg	12:15	12:17	3	pb
+water	12:15	0:0	4	pb
+arg	12:19	12:28	3	pkt->data
+water	12:19	0:0	4	pkt
+op	12:22	0:0	4	->
+water	12:24	0:0	4	data
+arg	12:30	12:39	3	pkt->size
+water	12:30	0:0	4	pkt
+op	12:33	0:0	4	->
+water	12:35	0:0	4	size
+water	12:40	0:0	2	;
+water	14:4	0:0	2	pad
+op	14:8	0:0	2	=
+water	14:10	0:0	2	packet_size
+op	14:22	0:0	2	-
+water	14:24	0:0	2	pkt
+op	14:27	0:0	2	->
+water	14:29	0:0	2	size
+op	14:34	0:0	2	-
+water	14:36	0:0	2	16
+op	14:39	0:0	2	-
+water	14:41	0:0	2	4
+water	14:42	0:0	2	;
+if	15:4	21:4	2	(pad > 20)
+cond	15:8	15:14	3	pad > 20
+water	15:8	0:0	4	pad
+op	15:12	0:0	4	>
+water	15:14	0:0	4	20
+stmts	15:18	21:4	3	
+water	15:18	0:0	4	{
+call	16:8	16:42	4	avio_write
+arg	16:19	16:24	5	s->pb
+water	16:19	0:0	6	s
+op	16:20	0:0	6	->
+water	16:22	0:0	6	pb
+arg	16:26	16:38	5	klv_fill_key
+water	16:26	0:0	6	klv_fill_key
+arg	16:40	16:42	5	16
+water	16:40	0:0	6	16
+water	16:43	0:0	4	;
+water	17:8	0:0	4	pad
+op	17:12	0:0	4	-=
+water	17:15	0:0	4	16
+op	17:18	0:0	4	+
+water	17:20	0:0	4	4
+water	17:21	0:0	4	;
+call	18:8	18:41	4	klv_encode_ber4_length
+arg	18:31	18:36	5	s->pb
+water	18:31	0:0	6	s
+op	18:32	0:0	6	->
+water	18:34	0:0	6	pb
+arg	18:38	18:41	5	pad
+water	18:38	0:0	6	pad
+water	18:42	0:0	4	;
+call	19:8	19:31	4	ffio_fill
+arg	19:18	19:23	5	s->pb
+water	19:18	0:0	6	s
+op	19:19	0:0	6	->
+water	19:21	0:0	6	pb
+arg	19:25	19:26	5	0
+water	19:25	0:0	6	0
+arg	19:28	19:31	5	pad
+water	19:28	0:0	6	pad
+water	19:32	0:0	4	;
+call	20:8	20:53	4	av_assert1
+arg	20:19	20:53	5	!(avio_tell(s->pb)&(KAG_SIZE-1))
+op	20:19	0:0	6	!
+water	20:20	0:0	6	(
+call	20:21	20:36	6	avio_tell
+arg	20:31	20:36	7	s->pb
+water	20:31	0:0	8	s
+op	20:32	0:0	8	->
+water	20:34	0:0	8	pb
+op	20:38	0:0	6	&
+water	20:40	0:0	6	(
+water	20:41	0:0	6	KAG_SIZE
+op	20:49	0:0	6	-
+water	20:50	0:0	6	1
+water	20:51	0:0	6	)
+water	20:52	0:0	6	)
+water	20:54	0:0	4	;
+water	21:4	0:0	4	}
+else	21:6	24:4	2
+stmts	21:11	24:4	3	
+water	21:11	0:0	4	{
+call	22:8	22:67	4	av_log
+arg	22:15	22:16	5	s
+water	22:15	0:0	6	s
+arg	22:18	22:32	5	AV_LOG_WARNING
+water	22:18	0:0	6	AV_LOG_WARNING
+arg	22:34	22:67	5	"cannot fill d-10 video packet\n"
+water	22:34	0:0	6	"cannot fill d-10 video packet\n"
+water	22:68	0:0	4	;
+call	23:8	23:31	4	ffio_fill
+arg	23:18	23:23	5	s->pb
+water	23:18	0:0	6	s
+op	23:19	0:0	6	->
+water	23:21	0:0	6	pb
+arg	23:25	23:26	5	0
+water	23:25	0:0	6	0
+arg	23:28	23:31	5	pad
+water	23:28	0:0	6	pad
+water	23:32	0:0	4	;
+water	24:4	0:0	4	}

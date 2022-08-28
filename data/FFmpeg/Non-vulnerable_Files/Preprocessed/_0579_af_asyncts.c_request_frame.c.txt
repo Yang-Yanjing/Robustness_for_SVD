@@ -1,0 +1,158 @@
+func	1:0	29:0	0	static int	request_frame
+params	1:24	0:0	1	
+param	1:25	1:43	2	AVFilterLink *	link
+stmnts	0:0	28:14	1	
+decl	3:4	3:36	2	AVFilterContext	*ctx
+op	3:25	0:0	2	=
+water	3:27	0:0	2	link
+op	3:31	0:0	2	->
+water	3:33	0:0	2	src
+decl	4:4	4:36	2	ASyncContext	*s
+op	4:25	0:0	2	=
+water	4:27	0:0	2	ctx
+op	4:30	0:0	2	->
+water	4:32	0:0	2	priv
+decl	5:4	5:15	2	int	ret
+op	5:12	0:0	2	=
+water	5:14	0:0	2	0
+decl	6:4	6:18	2	int	nb_samples
+water	7:4	0:0	2	s
+op	7:5	0:0	2	->
+water	7:7	0:0	2	got_output
+op	7:18	0:0	2	=
+water	7:20	0:0	2	0
+water	7:21	0:0	2	;
+while	8:4	9:46	2	(ret >= 0 && ! s -> got_output)
+cond	8:11	8:27	3	ret >= 0 && ! s -> got_output
+water	8:11	0:0	4	ret
+op	8:15	0:0	4	>=
+water	8:18	0:0	4	0
+op	8:20	0:0	4	&&
+op	8:23	0:0	4	!
+water	8:24	0:0	4	s
+op	8:25	0:0	4	->
+water	8:27	0:0	4	got_output
+stmts	9:8	9:46	3	
+water	9:8	0:0	4	ret
+op	9:12	0:0	4	=
+call	9:14	9:45	4	ff_request_frame
+arg	9:31	9:45	5	ctx->inputs[0]
+water	9:31	0:0	6	ctx
+op	9:34	0:0	6	->
+water	9:36	0:0	6	inputs
+op	9:42	0:0	6	[
+water	9:43	0:0	6	0
+op	9:44	0:0	6	]
+water	9:46	0:0	4	;
+if	11:4	27:4	2	(ret == AVERROR_EOF)
+cond	11:8	11:15	3	ret == AVERROR_EOF
+water	11:8	0:0	4	ret
+op	11:12	0:0	4	==
+water	11:15	0:0	4	AVERROR_EOF
+stmts	11:28	27:4	3	
+water	11:28	0:0	4	{
+if	12:8	13:32	4	(s -> first_pts != AV_NOPTS_VALUE)
+cond	12:12	12:28	5	s -> first_pts != AV_NOPTS_VALUE
+water	12:12	0:0	6	s
+op	12:13	0:0	6	->
+water	12:15	0:0	6	first_pts
+op	12:25	0:0	6	!=
+water	12:28	0:0	6	AV_NOPTS_VALUE
+stmts	13:12	13:32	5	
+call	13:12	13:31	6	handle_trimming
+arg	13:28	13:31	7	ctx
+water	13:28	0:0	8	ctx
+water	13:32	0:0	6	;
+if	14:8	26:8	4	(nb_samples =get_delay (s ))
+cond	14:12	14:36	5	nb_samples =get_delay (s )
+water	14:12	0:0	6	nb_samples
+op	14:23	0:0	6	=
+call	14:25	14:36	6	get_delay
+arg	14:35	14:36	7	s
+water	14:35	0:0	8	s
+stmts	14:39	26:8	5	
+water	14:39	0:0	6	{
+decl	15:12	15:64	6	AVFrame	*buf
+op	15:25	0:0	6	=
+call	15:27	15:63	7	ff_get_audio_buffer
+arg	15:47	15:51	8	link
+water	15:47	0:0	9	link
+arg	15:53	15:63	8	nb_samples
+water	15:53	0:0	9	nb_samples
+if	16:12	17:38	6	(! buf)
+cond	16:16	16:17	7	! buf
+op	16:16	0:0	8	!
+water	16:17	0:0	8	buf
+stmts	17:16	17:38	7	
+return	17:16	17:38	8	AVERROR(ENOMEM)
+call	17:23	17:37	9	AVERROR
+arg	17:31	17:37	10	ENOMEM
+water	17:31	0:0	11	ENOMEM
+water	18:12	0:0	6	ret
+op	18:16	0:0	6	=
+call	18:18	19:77	6	avresample_convert
+arg	18:37	18:43	7	s->avr
+water	18:37	0:0	8	s
+op	18:38	0:0	8	->
+water	18:40	0:0	8	avr
+arg	18:45	18:63	7	buf->extended_data
+water	18:45	0:0	8	buf
+op	18:48	0:0	8	->
+water	18:50	0:0	8	extended_data
+arg	19:37	19:53	7	buf->linesize[0]
+water	19:37	0:0	8	buf
+op	19:40	0:0	8	->
+water	19:42	0:0	8	linesize
+op	19:50	0:0	8	[
+water	19:51	0:0	8	0
+op	19:52	0:0	8	]
+arg	19:55	19:65	7	nb_samples
+water	19:55	0:0	8	nb_samples
+arg	19:67	19:71	7	NULL
+water	19:67	0:0	8	NULL
+arg	19:73	19:74	7	0
+water	19:73	0:0	8	0
+arg	19:76	19:77	7	0
+water	19:76	0:0	8	0
+water	19:78	0:0	6	;
+if	20:12	23:12	6	(ret <= 0)
+cond	20:16	20:23	7	ret <= 0
+water	20:16	0:0	8	ret
+op	20:20	0:0	8	<=
+water	20:23	0:0	8	0
+stmts	20:26	23:12	7	
+water	20:26	0:0	8	{
+call	21:16	21:34	8	av_frame_free
+arg	21:30	21:34	9	&buf
+op	21:30	0:0	10	&
+water	21:31	0:0	10	buf
+water	21:35	0:0	8	;
+return	22:16	22:52	8	(ret<0)?ret:AVERROR_EOF
+water	22:23	0:0	9	(
+water	22:24	0:0	9	ret
+op	22:28	0:0	9	<
+water	22:30	0:0	9	0
+water	22:31	0:0	9	)
+water	22:33	0:0	9	?
+water	22:35	0:0	9	ret
+water	22:39	0:0	9	:
+water	22:41	0:0	9	AVERROR_EOF
+water	23:12	0:0	8	}
+water	24:12	0:0	6	buf
+op	24:15	0:0	6	->
+water	24:17	0:0	6	pts
+op	24:21	0:0	6	=
+water	24:23	0:0	6	s
+op	24:24	0:0	6	->
+water	24:26	0:0	6	pts
+water	24:29	0:0	6	;
+return	25:12	25:45	6	ff_filter_frame(link,buf)
+call	25:19	25:44	7	ff_filter_frame
+arg	25:35	25:39	8	link
+water	25:35	0:0	9	link
+arg	25:41	25:44	8	buf
+water	25:41	0:0	9	buf
+water	26:8	0:0	6	}
+water	27:4	0:0	4	}
+return	28:4	28:14	2	ret
+water	28:11	0:0	3	ret

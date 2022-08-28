@@ -1,0 +1,717 @@
+func	1:0	116:0	0	static int	matroska_parse_block
+params	1:31	0:0	1	
+param	1:32	1:62	2	MatroskaDemuxContext *	matroska
+param	1:64	1:77	2	uint8_t *	data
+param	2:32	2:40	2	int	size
+param	2:42	2:53	2	int64_t	pos
+param	2:55	2:76	2	uint64_t	cluster_time
+param	3:32	3:55	2	uint64_t	block_duration
+param	3:57	3:72	2	int	is_keyframe
+param	4:32	4:51	2	uint8_t *	additional
+param	4:53	4:75	2	uint64_t	additional_id
+param	4:77	4:96	2	int	additional_size
+param	5:32	5:51	2	int64_t	cluster_pos
+param	5:53	5:76	2	int64_t	discard_padding
+stmnts	0:0	115:14	1	
+decl	7:4	7:38	2	uint64_t	timecode
+op	7:22	0:0	2	=
+water	7:24	0:0	2	AV_NOPTS_VALUE
+decl	8:4	8:24	2	MatroskaTrack	*track
+decl	9:4	9:15	2	int	res
+op	9:12	0:0	2	=
+water	9:14	0:0	2	0
+decl	10:4	10:16	2	AVStream	*st
+decl	11:4	11:22	2	int16_t	block_time
+decl	12:4	12:30	2	uint32_t	*lace_size
+op	12:24	0:0	2	=
+water	12:26	0:0	2	NULL
+decl	13:4	13:27	2	int	n
+water	13:9	0:0	2	,
+decl	13:4	13:27	2	int	flags
+water	13:16	0:0	2	,
+decl	13:4	13:27	2	int	laces
+op	13:24	0:0	2	=
+water	13:26	0:0	2	0
+decl	14:4	14:16	2	uint64_t	num
+decl	15:4	15:34	2	int	trust_default_duration
+op	15:31	0:0	2	=
+water	15:33	0:0	2	1
+if	16:4	19:4	2	(( n =matroska_ebmlnum_uint (matroska ,data ,size ,& num ) ) < 0)
+cond	16:8	16:66	3	( n =matroska_ebmlnum_uint (matroska ,data ,size ,& num ) ) < 0
+water	16:8	0:0	4	(
+water	16:9	0:0	4	n
+op	16:11	0:0	4	=
+call	16:13	16:61	4	matroska_ebmlnum_uint
+arg	16:35	16:43	5	matroska
+water	16:35	0:0	6	matroska
+arg	16:45	16:49	5	data
+water	16:45	0:0	6	data
+arg	16:51	16:55	5	size
+water	16:51	0:0	6	size
+arg	16:57	16:61	5	&num
+op	16:57	0:0	6	&
+water	16:58	0:0	6	num
+water	16:62	0:0	4	)
+op	16:64	0:0	4	<
+water	16:66	0:0	4	0
+stmts	16:69	19:4	3	
+water	16:69	0:0	4	{
+call	17:8	17:69	4	av_log
+arg	17:15	17:28	5	matroska->ctx
+water	17:15	0:0	6	matroska
+op	17:23	0:0	6	->
+water	17:25	0:0	6	ctx
+arg	17:30	17:42	5	AV_LOG_ERROR
+water	17:30	0:0	6	AV_LOG_ERROR
+arg	17:44	17:69	5	"EBML block data error\n"
+water	17:44	0:0	6	"EBML block data error\n"
+water	17:70	0:0	4	;
+return	18:8	18:16	4	n
+water	18:15	0:0	5	n
+water	19:4	0:0	4	}
+water	20:4	0:0	2	data
+op	20:9	0:0	2	+=
+water	20:12	0:0	2	n
+water	20:13	0:0	2	;
+water	21:4	0:0	2	size
+op	21:9	0:0	2	-=
+water	21:12	0:0	2	n
+water	21:13	0:0	2	;
+water	22:4	0:0	2	track
+op	22:10	0:0	2	=
+call	22:12	22:52	2	matroska_find_track_by_num
+arg	22:39	22:47	3	matroska
+water	22:39	0:0	4	matroska
+arg	22:49	22:52	3	num
+water	22:49	0:0	4	num
+water	22:53	0:0	2	;
+if	23:4	27:4	2	(! track || ! track -> stream)
+cond	23:8	23:26	3	! track || ! track -> stream
+op	23:8	0:0	4	!
+water	23:9	0:0	4	track
+op	23:15	0:0	4	||
+op	23:18	0:0	4	!
+water	23:19	0:0	4	track
+op	23:24	0:0	4	->
+water	23:26	0:0	4	stream
+stmts	23:34	27:4	3	
+water	23:34	0:0	4	{
+call	24:8	25:65	4	av_log
+arg	24:15	24:28	5	matroska->ctx
+water	24:15	0:0	6	matroska
+op	24:23	0:0	6	->
+water	24:25	0:0	6	ctx
+arg	24:30	24:41	5	AV_LOG_INFO
+water	24:30	0:0	6	AV_LOG_INFO
+arg	25:15	25:54	5	"Invalid stream %"PRIu64" or size %u\n"
+water	25:15	0:0	6	"Invalid stream %"
+water	25:33	0:0	6	PRIu64
+water	25:39	0:0	6	" or size %u\n"
+arg	25:56	25:59	5	num
+water	25:56	0:0	6	num
+arg	25:61	25:65	5	size
+water	25:61	0:0	6	size
+water	25:66	0:0	4	;
+return	26:8	26:34	4	AVERROR_INVALIDDATA
+water	26:15	0:0	5	AVERROR_INVALIDDATA
+water	27:4	0:0	4	}
+else	27:6	28:16	2
+stmts	27:11	28:16	3	
+if	27:11	28:16	4	(size <= 3)
+cond	27:15	27:23	5	size <= 3
+water	27:15	0:0	6	size
+op	27:20	0:0	6	<=
+water	27:23	0:0	6	3
+stmts	28:8	28:16	5	
+return	28:8	28:16	6	0
+water	28:15	0:0	7	0
+water	29:4	0:0	2	st
+op	29:7	0:0	2	=
+water	29:9	0:0	2	track
+op	29:14	0:0	2	->
+water	29:16	0:0	2	stream
+water	29:22	0:0	2	;
+if	30:4	31:18	2	(st -> discard >= AVDISCARD_ALL)
+cond	30:8	30:23	3	st -> discard >= AVDISCARD_ALL
+water	30:8	0:0	4	st
+op	30:10	0:0	4	->
+water	30:12	0:0	4	discard
+op	30:20	0:0	4	>=
+water	30:23	0:0	4	AVDISCARD_ALL
+stmts	31:8	31:18	3	
+return	31:8	31:18	4	res
+water	31:15	0:0	5	res
+call	32:4	32:47	2	av_assert1
+arg	32:15	32:47	3	block_duration!=AV_NOPTS_VALUE
+water	32:15	0:0	4	block_duration
+op	32:30	0:0	4	!=
+water	32:33	0:0	4	AV_NOPTS_VALUE
+water	32:48	0:0	2	;
+water	33:4	0:0	2	block_time
+op	33:15	0:0	2	=
+call	33:17	33:46	2	sign_extend
+arg	33:29	33:42	3	AV_RB16(data)
+call	33:29	33:41	4	AV_RB16
+arg	33:37	33:41	5	data
+water	33:37	0:0	6	data
+arg	33:44	33:46	3	16
+water	33:44	0:0	4	16
+water	33:47	0:0	2	;
+water	34:4	0:0	2	data
+op	34:14	0:0	2	+=
+water	34:17	0:0	2	2
+water	34:18	0:0	2	;
+water	35:4	0:0	2	flags
+op	35:15	0:0	2	=
+op	35:17	0:0	2	*
+water	35:18	0:0	2	data
+op	35:22	0:0	2	++
+water	35:24	0:0	2	;
+water	36:4	0:0	2	size
+op	36:14	0:0	2	-=
+water	36:17	0:0	2	3
+water	36:18	0:0	2	;
+if	37:4	38:56	2	(is_keyframe == - 1)
+cond	37:8	37:24	3	is_keyframe == - 1
+water	37:8	0:0	4	is_keyframe
+op	37:20	0:0	4	==
+op	37:23	0:0	4	-
+water	37:24	0:0	4	1
+stmts	38:8	38:56	3	
+water	38:8	0:0	4	is_keyframe
+op	38:20	0:0	4	=
+water	38:22	0:0	4	flags
+op	38:28	0:0	4	&
+water	38:30	0:0	4	0
+water	38:31	0:0	4	x80
+water	38:35	0:0	4	?
+water	38:37	0:0	4	AV_PKT_FLAG_KEY
+water	38:53	0:0	4	:
+water	38:55	0:0	4	0
+water	38:56	0:0	4	;
+if	39:4	48:4	2	(cluster_time != ( uint64_t ) - 1 && ( block_time >= 0 || cluster_time >= - block_time ))
+cond	39:8	40:55	3	cluster_time != ( uint64_t ) - 1 && ( block_time >= 0 || cluster_time >= - block_time )
+water	39:8	0:0	4	cluster_time
+op	39:21	0:0	4	!=
+water	39:24	0:0	4	(
+water	39:25	0:0	4	uint64_t
+water	39:33	0:0	4	)
+op	39:35	0:0	4	-
+water	39:36	0:0	4	1
+op	39:38	0:0	4	&&
+water	40:8	0:0	4	(
+water	40:9	0:0	4	block_time
+op	40:20	0:0	4	>=
+water	40:23	0:0	4	0
+op	40:25	0:0	4	||
+water	40:28	0:0	4	cluster_time
+op	40:41	0:0	4	>=
+op	40:44	0:0	4	-
+water	40:45	0:0	4	block_time
+water	40:55	0:0	4	)
+stmts	40:58	48:4	3	
+water	40:58	0:0	4	{
+water	41:8	0:0	4	timecode
+op	41:17	0:0	4	=
+water	41:19	0:0	4	cluster_time
+op	41:32	0:0	4	+
+water	41:34	0:0	4	block_time
+op	41:45	0:0	4	-
+water	41:47	0:0	4	track
+op	41:52	0:0	4	->
+water	41:54	0:0	4	codec_delay
+water	41:65	0:0	4	;
+if	42:8	44:27	4	(track -> type == MATROSKA_TRACK_TYPE_SUBTITLE && timecode < track -> end_timecode)
+cond	42:12	43:30	5	track -> type == MATROSKA_TRACK_TYPE_SUBTITLE && timecode < track -> end_timecode
+water	42:12	0:0	6	track
+op	42:17	0:0	6	->
+water	42:19	0:0	6	type
+op	42:24	0:0	6	==
+water	42:27	0:0	6	MATROSKA_TRACK_TYPE_SUBTITLE
+op	42:56	0:0	6	&&
+water	43:12	0:0	6	timecode
+op	43:21	0:0	6	<
+water	43:23	0:0	6	track
+op	43:28	0:0	6	->
+water	43:30	0:0	6	end_timecode
+stmts	44:12	44:27	5	
+water	44:12	0:0	6	is_keyframe
+op	44:24	0:0	6	=
+water	44:26	0:0	6	0
+water	44:27	0:0	6	;
+if	45:8	47:48	4	(is_keyframe)
+cond	45:12	45:12	5	is_keyframe
+water	45:12	0:0	6	is_keyframe
+stmts	46:12	47:48	5	
+call	46:12	47:47	6	av_add_index_entry
+arg	46:31	46:33	7	st
+water	46:31	0:0	8	st
+arg	46:35	46:46	7	cluster_pos
+water	46:35	0:0	8	cluster_pos
+arg	46:48	46:56	7	timecode
+water	46:48	0:0	8	timecode
+arg	46:58	46:59	7	0
+water	46:58	0:0	8	0
+arg	46:61	46:62	7	0
+water	46:61	0:0	8	0
+arg	47:31	47:47	7	AVINDEX_KEYFRAME
+water	47:31	0:0	8	AVINDEX_KEYFRAME
+water	47:48	0:0	6	;
+water	48:4	0:0	4	}
+if	49:4	59:4	2	(matroska -> skip_to_keyframe && track -> type != MATROSKA_TRACK_TYPE_SUBTITLE)
+cond	49:8	50:23	3	matroska -> skip_to_keyframe && track -> type != MATROSKA_TRACK_TYPE_SUBTITLE
+water	49:8	0:0	4	matroska
+op	49:16	0:0	4	->
+water	49:18	0:0	4	skip_to_keyframe
+op	49:35	0:0	4	&&
+water	50:8	0:0	4	track
+op	50:13	0:0	4	->
+water	50:15	0:0	4	type
+op	50:20	0:0	4	!=
+water	50:23	0:0	4	MATROSKA_TRACK_TYPE_SUBTITLE
+stmts	50:53	59:4	3	
+water	50:53	0:0	4	{
+if	51:8	52:22	4	(timecode < matroska -> skip_to_timecode)
+cond	51:12	51:33	5	timecode < matroska -> skip_to_timecode
+water	51:12	0:0	6	timecode
+op	51:21	0:0	6	<
+water	51:23	0:0	6	matroska
+op	51:31	0:0	6	->
+water	51:33	0:0	6	skip_to_timecode
+stmts	52:12	52:22	5	
+return	52:12	52:22	6	res
+water	52:19	0:0	7	res
+if	53:8	54:42	4	(is_keyframe)
+cond	53:12	53:12	5	is_keyframe
+water	53:12	0:0	6	is_keyframe
+stmts	54:12	54:42	5	
+water	54:12	0:0	6	matroska
+op	54:20	0:0	6	->
+water	54:22	0:0	6	skip_to_keyframe
+op	54:39	0:0	6	=
+water	54:41	0:0	6	0
+water	54:42	0:0	6	;
+else	55:8	58:8	4
+stmts	55:13	58:8	5	
+if	55:13	58:8	6	(! st -> skip_to_keyframe)
+cond	55:17	55:22	7	! st -> skip_to_keyframe
+op	55:17	0:0	8	!
+water	55:18	0:0	8	st
+op	55:20	0:0	8	->
+water	55:22	0:0	8	skip_to_keyframe
+stmts	55:40	58:8	7	
+water	55:40	0:0	8	{
+call	56:12	56:99	8	av_log
+arg	56:19	56:32	9	matroska->ctx
+water	56:19	0:0	10	matroska
+op	56:27	0:0	10	->
+water	56:29	0:0	10	ctx
+arg	56:34	56:46	9	AV_LOG_ERROR
+water	56:34	0:0	10	AV_LOG_ERROR
+arg	56:48	56:99	9	"File is broken, keyframes not correctly marked!\n"
+water	56:48	0:0	10	"File is broken, keyframes not correctly marked!\n"
+water	56:100	0:0	8	;
+water	57:12	0:0	8	matroska
+op	57:20	0:0	8	->
+water	57:22	0:0	8	skip_to_keyframe
+op	57:39	0:0	8	=
+water	57:41	0:0	8	0
+water	57:42	0:0	8	;
+water	58:8	0:0	8	}
+water	59:4	0:0	4	}
+water	60:4	0:0	2	res
+op	60:8	0:0	2	=
+call	60:10	61:49	2	matroska_parse_laces
+arg	60:31	60:39	3	matroska
+water	60:31	0:0	4	matroska
+arg	60:41	60:46	3	&data
+op	60:41	0:0	4	&
+water	60:42	0:0	4	data
+arg	60:48	60:53	3	&size
+op	60:48	0:0	4	&
+water	60:49	0:0	4	size
+arg	60:55	60:74	3	(flags&0x06)>>1
+water	60:55	0:0	4	(
+water	60:56	0:0	4	flags
+op	60:62	0:0	4	&
+water	60:64	0:0	4	0
+water	60:65	0:0	4	x06
+water	60:68	0:0	4	)
+op	60:70	0:0	4	>>
+water	60:73	0:0	4	1
+arg	61:31	61:41	3	&lace_size
+op	61:31	0:0	4	&
+water	61:32	0:0	4	lace_size
+arg	61:43	61:49	3	&laces
+op	61:43	0:0	4	&
+water	61:44	0:0	4	laces
+water	61:50	0:0	2	;
+if	62:4	63:16	2	(res)
+cond	62:8	62:8	3	res
+water	62:8	0:0	4	res
+stmts	63:8	63:16	3	
+goto	63:8	63:16	4	end
+water	63:13	0:0	5	end
+if	64:4	70:4	2	(track -> audio . samplerate == 8000)
+cond	64:8	64:35	3	track -> audio . samplerate == 8000
+water	64:8	0:0	4	track
+op	64:13	0:0	4	->
+water	64:15	0:0	4	audio
+op	64:20	0:0	4	.
+water	64:21	0:0	4	samplerate
+op	64:32	0:0	4	==
+water	64:35	0:0	4	8000
+stmts	64:41	70:4	3	
+water	64:41	0:0	4	{
+if	66:8	69:8	4	(st -> codec -> codec_id == AV_CODEC_ID_AC3)
+cond	66:12	66:35	5	st -> codec -> codec_id == AV_CODEC_ID_AC3
+water	66:12	0:0	6	st
+op	66:14	0:0	6	->
+water	66:16	0:0	6	codec
+op	66:21	0:0	6	->
+water	66:23	0:0	6	codec_id
+op	66:32	0:0	6	==
+water	66:35	0:0	6	AV_CODEC_ID_AC3
+stmts	66:52	69:8	5	
+water	66:52	0:0	6	{
+if	67:12	68:42	6	(track -> audio . samplerate != st -> codec -> sample_rate || ! st -> codec -> frame_size)
+cond	67:16	67:81	7	track -> audio . samplerate != st -> codec -> sample_rate || ! st -> codec -> frame_size
+water	67:16	0:0	8	track
+op	67:21	0:0	8	->
+water	67:23	0:0	8	audio
+op	67:28	0:0	8	.
+water	67:29	0:0	8	samplerate
+op	67:40	0:0	8	!=
+water	67:43	0:0	8	st
+op	67:45	0:0	8	->
+water	67:47	0:0	8	codec
+op	67:52	0:0	8	->
+water	67:54	0:0	8	sample_rate
+op	67:66	0:0	8	||
+op	67:69	0:0	8	!
+water	67:70	0:0	8	st
+op	67:72	0:0	8	->
+water	67:74	0:0	8	codec
+op	67:79	0:0	8	->
+water	67:81	0:0	8	frame_size
+stmts	68:16	68:42	7	
+water	68:16	0:0	8	trust_default_duration
+op	68:39	0:0	8	=
+water	68:41	0:0	8	0
+water	68:42	0:0	8	;
+water	69:8	0:0	6	}
+water	70:4	0:0	4	}
+if	71:4	72:79	2	(! block_duration && trust_default_duration)
+cond	71:8	71:27	3	! block_duration && trust_default_duration
+op	71:8	0:0	4	!
+water	71:9	0:0	4	block_duration
+op	71:24	0:0	4	&&
+water	71:27	0:0	4	trust_default_duration
+stmts	72:8	72:79	3	
+water	72:8	0:0	4	block_duration
+op	72:23	0:0	4	=
+water	72:25	0:0	4	track
+op	72:30	0:0	4	->
+water	72:32	0:0	4	default_duration
+op	72:49	0:0	4	*
+water	72:51	0:0	4	laces
+op	72:57	0:0	4	/
+water	72:59	0:0	4	matroska
+op	72:67	0:0	4	->
+water	72:69	0:0	4	time_scale
+water	72:79	0:0	4	;
+if	73:4	75:65	2	(cluster_time != ( uint64_t ) - 1 && ( block_time >= 0 || cluster_time >= - block_time ))
+cond	73:8	73:87	3	cluster_time != ( uint64_t ) - 1 && ( block_time >= 0 || cluster_time >= - block_time )
+water	73:8	0:0	4	cluster_time
+op	73:21	0:0	4	!=
+water	73:24	0:0	4	(
+water	73:25	0:0	4	uint64_t
+water	73:33	0:0	4	)
+op	73:34	0:0	4	-
+water	73:35	0:0	4	1
+op	73:37	0:0	4	&&
+water	73:40	0:0	4	(
+water	73:41	0:0	4	block_time
+op	73:52	0:0	4	>=
+water	73:55	0:0	4	0
+op	73:57	0:0	4	||
+water	73:60	0:0	4	cluster_time
+op	73:73	0:0	4	>=
+op	73:76	0:0	4	-
+water	73:77	0:0	4	block_time
+water	73:87	0:0	4	)
+stmts	74:8	75:65	3	
+water	74:8	0:0	4	track
+op	74:13	0:0	4	->
+water	74:15	0:0	4	end_timecode
+op	74:28	0:0	4	=
+call	75:12	75:64	4	FFMAX
+arg	75:18	75:37	5	track->end_timecode
+water	75:18	0:0	6	track
+op	75:23	0:0	6	->
+water	75:25	0:0	6	end_timecode
+arg	75:39	75:64	5	timecode+block_duration
+water	75:39	0:0	6	timecode
+op	75:48	0:0	6	+
+water	75:50	0:0	6	block_duration
+water	75:65	0:0	4	;
+for	76:4	112:4	2	(n = 0 ;n < laces;n ++)
+forinit	76:9	76:14	3	n = 0 ;
+water	76:9	0:0	4	n
+op	76:11	0:0	4	=
+water	76:13	0:0	4	0
+water	76:14	0:0	4	;
+cond	76:16	76:20	3	n < laces
+water	76:16	0:0	4	n
+op	76:18	0:0	4	<
+water	76:20	0:0	4	laces
+forexpr	76:27	76:28	3	n ++
+water	76:27	0:0	4	n
+op	76:28	0:0	4	++
+stmts	76:32	112:4	3	
+water	76:32	0:0	4	{
+decl	77:8	77:87	4	int64_t	lace_duration
+op	77:30	0:0	4	=
+water	77:32	0:0	4	block_duration
+op	77:46	0:0	4	*
+water	77:47	0:0	4	(
+water	77:48	0:0	4	n
+op	77:49	0:0	4	+
+water	77:50	0:0	4	1
+water	77:51	0:0	4	)
+op	77:53	0:0	4	/
+water	77:55	0:0	4	laces
+op	77:61	0:0	4	-
+water	77:63	0:0	4	block_duration
+op	77:77	0:0	4	*
+water	77:78	0:0	4	n
+op	77:80	0:0	4	/
+water	77:82	0:0	4	laces
+if	78:8	81:8	4	(lace_size [ n ] > size)
+cond	78:12	78:27	5	lace_size [ n ] > size
+water	78:12	0:0	6	lace_size
+op	78:21	0:0	6	[
+water	78:22	0:0	6	n
+op	78:23	0:0	6	]
+op	78:25	0:0	6	>
+water	78:27	0:0	6	size
+stmts	78:33	81:8	5	
+water	78:33	0:0	6	{
+call	79:12	79:71	6	av_log
+arg	79:19	79:32	7	matroska->ctx
+water	79:19	0:0	8	matroska
+op	79:27	0:0	8	->
+water	79:29	0:0	8	ctx
+arg	79:34	79:46	7	AV_LOG_ERROR
+water	79:34	0:0	8	AV_LOG_ERROR
+arg	79:48	79:71	7	"Invalid packet size\n"
+water	79:48	0:0	8	"Invalid packet size\n"
+water	79:72	0:0	6	;
+break	80:12	80:17	6	
+water	81:8	0:0	6	}
+if	82:8	92:8	4	(( st -> codec -> codec_id == AV_CODEC_ID_RA_288 || st -> codec -> codec_id == AV_CODEC_ID_COOK || st -> codec -> codec_id == AV_CODEC_ID_SIPR || st -> codec -> codec_id == AV_CODEC_ID_ATRAC3 ) && st -> codec -> block_align && track -> audio . sub_packet_size)
+cond	82:12	86:51	5	( st -> codec -> codec_id == AV_CODEC_ID_RA_288 || st -> codec -> codec_id == AV_CODEC_ID_COOK || st -> codec -> codec_id == AV_CODEC_ID_SIPR || st -> codec -> codec_id == AV_CODEC_ID_ATRAC3 ) && st -> codec -> block_align && track -> audio . sub_packet_size
+water	82:12	0:0	6	(
+water	82:13	0:0	6	st
+op	82:15	0:0	6	->
+water	82:17	0:0	6	codec
+op	82:22	0:0	6	->
+water	82:24	0:0	6	codec_id
+op	82:33	0:0	6	==
+water	82:36	0:0	6	AV_CODEC_ID_RA_288
+op	82:55	0:0	6	||
+water	83:13	0:0	6	st
+op	83:15	0:0	6	->
+water	83:17	0:0	6	codec
+op	83:22	0:0	6	->
+water	83:24	0:0	6	codec_id
+op	83:33	0:0	6	==
+water	83:36	0:0	6	AV_CODEC_ID_COOK
+op	83:55	0:0	6	||
+water	84:13	0:0	6	st
+op	84:15	0:0	6	->
+water	84:17	0:0	6	codec
+op	84:22	0:0	6	->
+water	84:24	0:0	6	codec_id
+op	84:33	0:0	6	==
+water	84:36	0:0	6	AV_CODEC_ID_SIPR
+op	84:55	0:0	6	||
+water	85:13	0:0	6	st
+op	85:15	0:0	6	->
+water	85:17	0:0	6	codec
+op	85:22	0:0	6	->
+water	85:24	0:0	6	codec_id
+op	85:33	0:0	6	==
+water	85:36	0:0	6	AV_CODEC_ID_ATRAC3
+water	85:54	0:0	6	)
+op	85:56	0:0	6	&&
+water	86:12	0:0	6	st
+op	86:14	0:0	6	->
+water	86:16	0:0	6	codec
+op	86:21	0:0	6	->
+water	86:23	0:0	6	block_align
+op	86:35	0:0	6	&&
+water	86:38	0:0	6	track
+op	86:43	0:0	6	->
+water	86:45	0:0	6	audio
+op	86:50	0:0	6	.
+water	86:51	0:0	6	sub_packet_size
+stmts	86:68	92:8	5	
+water	86:68	0:0	6	{
+water	87:12	0:0	6	res
+op	87:16	0:0	6	=
+call	87:18	89:55	6	matroska_parse_rm_audio
+arg	87:42	87:50	7	matroska
+water	87:42	0:0	8	matroska
+arg	87:52	87:57	7	track
+water	87:52	0:0	8	track
+arg	87:59	87:61	7	st
+water	87:59	0:0	8	st
+arg	87:63	87:67	7	data
+water	87:63	0:0	8	data
+arg	88:42	88:54	7	lace_size[n]
+water	88:42	0:0	8	lace_size
+op	88:51	0:0	8	[
+water	88:52	0:0	8	n
+op	88:53	0:0	8	]
+arg	89:42	89:50	7	timecode
+water	89:42	0:0	8	timecode
+arg	89:52	89:55	7	pos
+water	89:52	0:0	8	pos
+water	89:56	0:0	6	;
+if	90:12	91:24	6	(res)
+cond	90:16	90:16	7	res
+water	90:16	0:0	8	res
+stmts	91:16	91:24	7	
+goto	91:16	91:24	8	end
+water	91:21	0:0	9	end
+water	92:8	0:0	6	}
+else	92:10	99:8	4
+stmts	92:15	99:8	5	
+if	92:15	99:8	6	(st -> codec -> codec_id == AV_CODEC_ID_WEBVTT)
+cond	92:19	92:42	7	st -> codec -> codec_id == AV_CODEC_ID_WEBVTT
+water	92:19	0:0	8	st
+op	92:21	0:0	8	->
+water	92:23	0:0	8	codec
+op	92:28	0:0	8	->
+water	92:30	0:0	8	codec_id
+op	92:39	0:0	8	==
+water	92:42	0:0	8	AV_CODEC_ID_WEBVTT
+stmts	92:62	99:8	7	
+water	92:62	0:0	8	{
+water	93:12	0:0	8	res
+op	93:16	0:0	8	=
+call	93:18	96:43	8	matroska_parse_webvtt
+arg	93:40	93:48	9	matroska
+water	93:40	0:0	10	matroska
+arg	93:50	93:55	9	track
+water	93:50	0:0	10	track
+arg	93:57	93:59	9	st
+water	93:57	0:0	10	st
+arg	94:40	94:44	9	data
+water	94:40	0:0	10	data
+arg	94:46	94:58	9	lace_size[n]
+water	94:46	0:0	10	lace_size
+op	94:55	0:0	10	[
+water	94:56	0:0	10	n
+op	94:57	0:0	10	]
+arg	95:40	95:48	9	timecode
+water	95:40	0:0	10	timecode
+arg	95:50	95:63	9	lace_duration
+water	95:50	0:0	10	lace_duration
+arg	96:40	96:43	9	pos
+water	96:40	0:0	10	pos
+water	96:44	0:0	8	;
+if	97:12	98:24	8	(res)
+cond	97:16	97:16	9	res
+water	97:16	0:0	10	res
+stmts	98:16	98:24	9	
+goto	98:16	98:24	10	end
+water	98:21	0:0	11	end
+water	99:8	0:0	8	}
+else	99:10	107:8	4
+stmts	99:15	107:8	5	
+water	99:15	0:0	6	{
+water	100:12	0:0	6	res
+op	100:16	0:0	6	=
+call	100:18	104:54	6	matroska_parse_frame
+arg	100:39	100:47	7	matroska
+water	100:39	0:0	8	matroska
+arg	100:49	100:54	7	track
+water	100:49	0:0	8	track
+arg	100:56	100:58	7	st
+water	100:56	0:0	8	st
+arg	100:60	100:64	7	data
+water	100:60	0:0	8	data
+arg	100:66	100:78	7	lace_size[n]
+water	100:66	0:0	8	lace_size
+op	100:75	0:0	8	[
+water	100:76	0:0	8	n
+op	100:77	0:0	8	]
+arg	101:39	101:47	7	timecode
+water	101:39	0:0	8	timecode
+arg	101:49	101:62	7	lace_duration
+water	101:49	0:0	8	lace_duration
+arg	101:64	101:67	7	pos
+water	101:64	0:0	8	pos
+arg	102:39	102:59	7	!n?is_keyframe:0
+op	102:39	0:0	8	!
+water	102:40	0:0	8	n
+water	102:42	0:0	8	?
+water	102:44	0:0	8	is_keyframe
+water	102:56	0:0	8	:
+water	102:58	0:0	8	0
+arg	103:39	103:49	7	additional
+water	103:39	0:0	8	additional
+arg	103:51	103:64	7	additional_id
+water	103:51	0:0	8	additional_id
+arg	103:66	103:81	7	additional_size
+water	103:66	0:0	8	additional_size
+arg	104:39	104:54	7	discard_padding
+water	104:39	0:0	8	discard_padding
+water	104:55	0:0	6	;
+if	105:12	106:24	6	(res)
+cond	105:16	105:16	7	res
+water	105:16	0:0	8	res
+stmts	106:16	106:24	7	
+goto	106:16	106:24	8	end
+water	106:21	0:0	9	end
+water	107:8	0:0	6	}
+if	108:8	109:80	4	(timecode != AV_NOPTS_VALUE)
+cond	108:12	108:24	5	timecode != AV_NOPTS_VALUE
+water	108:12	0:0	6	timecode
+op	108:21	0:0	6	!=
+water	108:24	0:0	6	AV_NOPTS_VALUE
+stmts	109:12	109:80	5	
+water	109:12	0:0	6	timecode
+op	109:21	0:0	6	=
+water	109:23	0:0	6	lace_duration
+water	109:37	0:0	6	?
+water	109:39	0:0	6	timecode
+op	109:48	0:0	6	+
+water	109:50	0:0	6	lace_duration
+water	109:64	0:0	6	:
+water	109:66	0:0	6	AV_NOPTS_VALUE
+water	109:80	0:0	6	;
+water	110:8	0:0	4	data
+op	110:13	0:0	4	+=
+water	110:16	0:0	4	lace_size
+op	110:25	0:0	4	[
+water	110:26	0:0	4	n
+op	110:27	0:0	4	]
+water	110:28	0:0	4	;
+water	111:8	0:0	4	size
+op	111:13	0:0	4	-=
+water	111:16	0:0	4	lace_size
+op	111:25	0:0	4	[
+water	111:26	0:0	4	n
+op	111:27	0:0	4	]
+water	111:28	0:0	4	;
+water	112:4	0:0	4	}
+label	113:0	113:3	2	end :
+call	114:4	114:21	2	av_free
+arg	114:12	114:21	3	lace_size
+water	114:12	0:0	4	lace_size
+water	114:22	0:0	2	;
+return	115:4	115:14	2	res
+water	115:11	0:0	3	res

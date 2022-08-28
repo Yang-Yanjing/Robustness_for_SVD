@@ -1,0 +1,177 @@
+func	1:0	30:0	0	static int	audio_read_packet
+params	1:28	0:0	1	
+param	1:29	1:48	2	AVFormatContext *	s1
+param	1:50	1:63	2	AVPacket *	pkt
+stmnts	0:0	29:12	1	
+decl	3:4	3:32	2	AlsaData	*s
+op	3:17	0:0	2	=
+water	3:19	0:0	2	s1
+op	3:21	0:0	2	->
+water	3:23	0:0	2	priv_data
+decl	4:4	4:11	2	int	res
+decl	5:4	5:15	2	int64_t	dts
+decl	6:4	6:31	2	snd_pcm_sframes_t	delay
+op	6:28	0:0	2	=
+water	6:30	0:0	2	0
+if	7:4	9:4	2	(av_new_packet (pkt ,s -> period_size * s -> frame_size ) < 0)
+cond	7:8	7:61	3	av_new_packet (pkt ,s -> period_size * s -> frame_size ) < 0
+call	7:8	7:57	4	av_new_packet
+arg	7:22	7:25	5	pkt
+water	7:22	0:0	6	pkt
+arg	7:27	7:57	5	s->period_size*s->frame_size
+water	7:27	0:0	6	s
+op	7:28	0:0	6	->
+water	7:30	0:0	6	period_size
+op	7:42	0:0	6	*
+water	7:44	0:0	6	s
+op	7:45	0:0	6	->
+water	7:47	0:0	6	frame_size
+op	7:59	0:0	4	<
+water	7:61	0:0	4	0
+stmts	7:64	9:4	3	
+water	7:64	0:0	4	{
+return	8:8	8:27	4	AVERROR(EIO)
+call	8:15	8:26	5	AVERROR
+arg	8:23	8:26	6	EIO
+water	8:23	0:0	7	EIO
+water	9:4	0:0	4	}
+while	10:4	22:4	2	(( res =snd_pcm_readi (s -> h ,pkt -> data ,s -> period_size ) ) < 0)
+cond	10:11	10:68	3	( res =snd_pcm_readi (s -> h ,pkt -> data ,s -> period_size ) ) < 0
+water	10:11	0:0	4	(
+water	10:12	0:0	4	res
+op	10:16	0:0	4	=
+call	10:18	10:63	4	snd_pcm_readi
+arg	10:32	10:36	5	s->h
+water	10:32	0:0	6	s
+op	10:33	0:0	6	->
+water	10:35	0:0	6	h
+arg	10:38	10:47	5	pkt->data
+water	10:38	0:0	6	pkt
+op	10:41	0:0	6	->
+water	10:43	0:0	6	data
+arg	10:49	10:63	5	s->period_size
+water	10:49	0:0	6	s
+op	10:50	0:0	6	->
+water	10:52	0:0	6	period_size
+water	10:64	0:0	4	)
+op	10:66	0:0	4	<
+water	10:68	0:0	4	0
+stmts	10:71	22:4	3	
+water	10:71	0:0	4	{
+if	11:8	14:8	4	(res == - EAGAIN)
+cond	11:12	11:20	5	res == - EAGAIN
+water	11:12	0:0	6	res
+op	11:16	0:0	6	==
+op	11:19	0:0	6	-
+water	11:20	0:0	6	EAGAIN
+stmts	11:28	14:8	5	
+water	11:28	0:0	6	{
+call	12:12	12:30	6	av_free_packet
+arg	12:27	12:30	7	pkt
+water	12:27	0:0	8	pkt
+water	12:31	0:0	6	;
+return	13:12	13:34	6	AVERROR(EAGAIN)
+call	13:19	13:33	7	AVERROR
+arg	13:27	13:33	8	EAGAIN
+water	13:27	0:0	9	EAGAIN
+water	14:8	0:0	6	}
+if	15:8	20:8	4	(ff_alsa_xrun_recover (s1 ,res ) < 0)
+cond	15:12	15:44	5	ff_alsa_xrun_recover (s1 ,res ) < 0
+call	15:12	15:40	6	ff_alsa_xrun_recover
+arg	15:33	15:35	7	s1
+water	15:33	0:0	8	s1
+arg	15:37	15:40	7	res
+water	15:37	0:0	8	res
+op	15:42	0:0	6	<
+water	15:44	0:0	6	0
+stmts	15:47	20:8	5	
+water	15:47	0:0	6	{
+call	16:12	17:36	6	av_log
+arg	16:19	16:21	7	s1
+water	16:19	0:0	8	s1
+arg	16:23	16:35	7	AV_LOG_ERROR
+water	16:23	0:0	8	AV_LOG_ERROR
+arg	16:37	16:60	7	"ALSA read error: %s\n"
+water	16:37	0:0	8	"ALSA read error: %s\n"
+arg	17:19	17:36	7	snd_strerror(res)
+call	17:19	17:35	8	snd_strerror
+arg	17:32	17:35	9	res
+water	17:32	0:0	10	res
+water	17:37	0:0	6	;
+call	18:12	18:30	6	av_free_packet
+arg	18:27	18:30	7	pkt
+water	18:27	0:0	8	pkt
+water	18:31	0:0	6	;
+return	19:12	19:31	6	AVERROR(EIO)
+call	19:19	19:30	7	AVERROR
+arg	19:27	19:30	8	EIO
+water	19:27	0:0	9	EIO
+water	20:8	0:0	6	}
+call	21:8	21:41	4	ff_timefilter_reset
+arg	21:28	21:41	5	s->timefilter
+water	21:28	0:0	6	s
+op	21:29	0:0	6	->
+water	21:31	0:0	6	timefilter
+water	21:42	0:0	4	;
+water	22:4	0:0	4	}
+water	23:4	0:0	2	dts
+op	23:8	0:0	2	=
+call	23:10	23:21	2	av_gettime
+water	23:22	0:0	2	;
+call	24:4	24:30	2	snd_pcm_delay
+arg	24:18	24:22	3	s->h
+water	24:18	0:0	4	s
+op	24:19	0:0	4	->
+water	24:21	0:0	4	h
+arg	24:24	24:30	3	&delay
+op	24:24	0:0	4	&
+water	24:25	0:0	4	delay
+water	24:31	0:0	2	;
+water	25:4	0:0	2	dts
+op	25:8	0:0	2	-=
+call	25:11	25:58	2	av_rescale
+arg	25:22	25:33	3	delay+res
+water	25:22	0:0	4	delay
+op	25:28	0:0	4	+
+water	25:30	0:0	4	res
+arg	25:35	25:42	3	1000000
+water	25:35	0:0	4	1000000
+arg	25:44	25:58	3	s->sample_rate
+water	25:44	0:0	4	s
+op	25:45	0:0	4	->
+water	25:47	0:0	4	sample_rate
+water	25:59	0:0	2	;
+water	26:4	0:0	2	pkt
+op	26:7	0:0	2	->
+water	26:9	0:0	2	pts
+op	26:13	0:0	2	=
+call	26:15	26:70	2	ff_timefilter_update
+arg	26:36	26:49	3	s->timefilter
+water	26:36	0:0	4	s
+op	26:37	0:0	4	->
+water	26:39	0:0	4	timefilter
+arg	26:51	26:54	3	dts
+water	26:51	0:0	4	dts
+arg	26:56	26:70	3	s->last_period
+water	26:56	0:0	4	s
+op	26:57	0:0	4	->
+water	26:59	0:0	4	last_period
+water	26:71	0:0	2	;
+water	27:4	0:0	2	s
+op	27:5	0:0	2	->
+water	27:7	0:0	2	last_period
+op	27:19	0:0	2	=
+water	27:21	0:0	2	res
+water	27:24	0:0	2	;
+water	28:4	0:0	2	pkt
+op	28:7	0:0	2	->
+water	28:9	0:0	2	size
+op	28:14	0:0	2	=
+water	28:16	0:0	2	res
+op	28:20	0:0	2	*
+water	28:22	0:0	2	s
+op	28:23	0:0	2	->
+water	28:25	0:0	2	frame_size
+water	28:35	0:0	2	;
+return	29:4	29:12	2	0
+water	29:11	0:0	3	0

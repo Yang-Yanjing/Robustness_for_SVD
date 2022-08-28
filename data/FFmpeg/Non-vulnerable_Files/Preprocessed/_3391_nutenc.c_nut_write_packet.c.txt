@@ -1,0 +1,1381 @@
+func	1:0	184:0	0	static int	nut_write_packet
+params	1:27	0:0	1	
+param	1:28	1:46	2	AVFormatContext *	s
+param	1:48	1:61	2	AVPacket *	pkt
+stmnts	0:0	183:14	1	
+decl	3:4	3:37	2	NUTContext	*nut
+op	3:23	0:0	2	=
+water	3:25	0:0	2	s
+op	3:26	0:0	2	->
+water	3:28	0:0	2	priv_data
+decl	4:4	4:56	2	StreamContext	*nus
+op	4:23	0:0	2	=
+op	4:25	0:0	2	&
+water	4:26	0:0	2	nut
+op	4:29	0:0	2	->
+water	4:31	0:0	2	stream
+op	4:37	0:0	2	[
+water	4:38	0:0	2	pkt
+op	4:41	0:0	2	->
+water	4:43	0:0	2	stream_index
+op	4:55	0:0	2	]
+decl	5:4	5:54	2	AVIOContext	*bc
+op	5:23	0:0	2	=
+water	5:25	0:0	2	s
+op	5:26	0:0	2	->
+water	5:28	0:0	2	pb
+water	5:30	0:0	2	,
+decl	5:4	5:54	2	AVIOContext	*dyn_bc
+water	5:39	0:0	2	,
+decl	5:4	5:54	2	AVIOContext	*sm_bc
+op	5:48	0:0	2	=
+water	5:50	0:0	2	NULL
+decl	6:4	6:17	2	FrameCode	*fc
+decl	7:4	7:21	2	int64_t	coded_pts
+decl	8:4	8:67	2	int	best_length
+water	8:19	0:0	2	,
+decl	8:4	8:67	2	int	frame_code
+water	8:31	0:0	2	,
+decl	8:4	8:67	2	int	flags
+water	8:38	0:0	2	,
+decl	8:4	8:67	2	int	needed_flags
+water	8:52	0:0	2	,
+decl	8:4	8:67	2	int	i
+water	8:55	0:0	2	,
+decl	8:4	8:67	2	int	header_idx
+decl	9:4	9:23	2	int	best_header_idx
+decl	10:4	10:52	2	int	key_frame
+op	10:18	0:0	2	=
+op	10:20	0:0	2	!
+op	10:21	0:0	2	!
+water	10:22	0:0	2	(
+water	10:23	0:0	2	pkt
+op	10:26	0:0	2	->
+water	10:28	0:0	2	flags
+op	10:34	0:0	2	&
+water	10:36	0:0	2	AV_PKT_FLAG_KEY
+water	10:51	0:0	2	)
+decl	11:4	11:21	2	int	store_sp
+op	11:18	0:0	2	=
+water	11:20	0:0	2	0
+decl	12:4	12:15	2	int	ret
+op	12:12	0:0	2	=
+water	12:14	0:0	2	0
+decl	13:4	13:19	2	int	sm_size
+op	13:16	0:0	2	=
+water	13:18	0:0	2	0
+decl	14:4	14:29	2	int	data_size
+op	14:18	0:0	2	=
+water	14:20	0:0	2	pkt
+op	14:23	0:0	2	->
+water	14:25	0:0	2	size
+decl	15:4	15:26	2	uint8_t	*sm_buf
+op	15:20	0:0	2	=
+water	15:22	0:0	2	NULL
+if	16:4	23:4	2	(pkt -> pts < 0)
+cond	16:8	16:19	3	pkt -> pts < 0
+water	16:8	0:0	4	pkt
+op	16:11	0:0	4	->
+water	16:13	0:0	4	pts
+op	16:17	0:0	4	<
+water	16:19	0:0	4	0
+stmts	16:22	23:4	3	
+water	16:22	0:0	4	{
+call	17:8	19:42	4	av_log
+arg	17:15	17:16	5	s
+water	17:15	0:0	6	s
+arg	17:18	17:30	5	AV_LOG_ERROR
+water	17:18	0:0	6	AV_LOG_ERROR
+arg	18:15	18:70	5	"Negative pts not supported stream %d, pts %"PRId64"\n"
+water	18:15	0:0	6	"Negative pts not supported stream %d, pts %"
+water	18:60	0:0	6	PRId64
+water	18:66	0:0	6	"\n"
+arg	19:15	19:32	5	pkt->stream_index
+water	19:15	0:0	6	pkt
+op	19:18	0:0	6	->
+water	19:20	0:0	6	stream_index
+arg	19:34	19:42	5	pkt->pts
+water	19:34	0:0	6	pkt
+op	19:37	0:0	6	->
+water	19:39	0:0	6	pts
+water	19:43	0:0	4	;
+if	20:8	21:70	4	(pkt -> pts == AV_NOPTS_VALUE)
+cond	20:12	20:24	5	pkt -> pts == AV_NOPTS_VALUE
+water	20:12	0:0	6	pkt
+op	20:15	0:0	6	->
+water	20:17	0:0	6	pts
+op	20:21	0:0	6	==
+water	20:24	0:0	6	AV_NOPTS_VALUE
+stmts	21:12	21:70	5	
+call	21:12	21:69	6	av_log
+arg	21:19	21:20	7	s
+water	21:19	0:0	8	s
+arg	21:22	21:34	7	AV_LOG_ERROR
+water	21:22	0:0	8	AV_LOG_ERROR
+arg	21:36	21:69	7	"Try to enable the genpts flag\n"
+water	21:36	0:0	8	"Try to enable the genpts flag\n"
+water	21:70	0:0	6	;
+return	22:8	22:30	4	AVERROR(EINVAL)
+call	22:15	22:29	5	AVERROR
+arg	22:23	22:29	6	EINVAL
+water	22:23	0:0	7	EINVAL
+water	23:4	0:0	4	}
+if	24:4	35:4	2	(pkt -> side_data_elems && nut -> version > 3)
+cond	24:8	24:47	3	pkt -> side_data_elems && nut -> version > 3
+water	24:8	0:0	4	pkt
+op	24:11	0:0	4	->
+water	24:13	0:0	4	side_data_elems
+op	24:29	0:0	4	&&
+water	24:32	0:0	4	nut
+op	24:35	0:0	4	->
+water	24:37	0:0	4	version
+op	24:45	0:0	4	>
+water	24:47	0:0	4	3
+stmts	24:50	35:4	3	
+water	24:50	0:0	4	{
+water	25:8	0:0	4	ret
+op	25:12	0:0	4	=
+call	25:14	25:38	4	avio_open_dyn_buf
+arg	25:32	25:38	5	&sm_bc
+op	25:32	0:0	6	&
+water	25:33	0:0	6	sm_bc
+water	25:39	0:0	4	;
+if	26:8	27:22	4	(ret < 0)
+cond	26:12	26:18	5	ret < 0
+water	26:12	0:0	6	ret
+op	26:16	0:0	6	<
+water	26:18	0:0	6	0
+stmts	27:12	27:22	5	
+return	27:12	27:22	6	ret
+water	27:19	0:0	7	ret
+water	28:8	0:0	4	ret
+op	28:12	0:0	4	=
+call	28:14	28:44	4	write_sm_data
+arg	28:28	28:29	5	s
+water	28:28	0:0	6	s
+arg	28:31	28:36	5	sm_bc
+water	28:31	0:0	6	sm_bc
+arg	28:38	28:41	5	pkt
+water	28:38	0:0	6	pkt
+arg	28:43	28:44	5	0
+water	28:43	0:0	6	0
+water	28:45	0:0	4	;
+if	29:8	30:49	4	(ret >= 0)
+cond	29:12	29:19	5	ret >= 0
+water	29:12	0:0	6	ret
+op	29:16	0:0	6	>=
+water	29:19	0:0	6	0
+stmts	30:12	30:49	5	
+water	30:12	0:0	6	ret
+op	30:16	0:0	6	=
+call	30:18	30:48	6	write_sm_data
+arg	30:32	30:33	7	s
+water	30:32	0:0	8	s
+arg	30:35	30:40	7	sm_bc
+water	30:35	0:0	8	sm_bc
+arg	30:42	30:45	7	pkt
+water	30:42	0:0	8	pkt
+arg	30:47	30:48	7	1
+water	30:47	0:0	8	1
+water	30:49	0:0	6	;
+water	31:8	0:0	4	sm_size
+op	31:16	0:0	4	=
+call	31:18	31:51	4	avio_close_dyn_buf
+arg	31:37	31:42	5	sm_bc
+water	31:37	0:0	6	sm_bc
+arg	31:44	31:51	5	&sm_buf
+op	31:44	0:0	6	&
+water	31:45	0:0	6	sm_buf
+water	31:52	0:0	4	;
+if	32:8	33:21	4	(ret < 0)
+cond	32:12	32:18	5	ret < 0
+water	32:12	0:0	6	ret
+op	32:16	0:0	6	<
+water	32:18	0:0	6	0
+stmts	33:12	33:21	5	
+goto	33:12	33:21	6	fail
+water	33:17	0:0	7	fail
+water	34:8	0:0	4	data_size
+op	34:18	0:0	4	+=
+water	34:21	0:0	4	sm_size
+water	34:28	0:0	4	;
+water	35:4	0:0	4	}
+if	36:4	37:28	2	(1 LL << ( 20 + 3 * nut -> header_count ) <=avio_tell (bc ))
+cond	36:8	36:59	3	1 LL << ( 20 + 3 * nut -> header_count ) <=avio_tell (bc )
+water	36:8	0:0	4	1
+water	36:9	0:0	4	LL
+op	36:12	0:0	4	<<
+water	36:15	0:0	4	(
+water	36:16	0:0	4	20
+op	36:19	0:0	4	+
+water	36:21	0:0	4	3
+op	36:23	0:0	4	*
+water	36:25	0:0	4	nut
+op	36:28	0:0	4	->
+water	36:30	0:0	4	header_count
+water	36:42	0:0	4	)
+op	36:44	0:0	4	<=
+call	36:47	36:59	4	avio_tell
+arg	36:57	36:59	5	bc
+water	36:57	0:0	6	bc
+stmts	37:8	37:28	3	
+call	37:8	37:27	4	write_headers
+arg	37:22	37:23	5	s
+water	37:22	0:0	6	s
+arg	37:25	37:27	5	bc
+water	37:25	0:0	6	bc
+water	37:28	0:0	4	;
+if	38:4	39:20	2	(key_frame && ! ( nus -> last_flags & FLAG_KEY ))
+cond	38:8	38:49	3	key_frame && ! ( nus -> last_flags & FLAG_KEY )
+water	38:8	0:0	4	key_frame
+op	38:18	0:0	4	&&
+op	38:21	0:0	4	!
+water	38:22	0:0	4	(
+water	38:23	0:0	4	nus
+op	38:26	0:0	4	->
+water	38:28	0:0	4	last_flags
+op	38:39	0:0	4	&
+water	38:41	0:0	4	FLAG_KEY
+water	38:49	0:0	4	)
+stmts	39:8	39:20	3	
+water	39:8	0:0	4	store_sp
+op	39:17	0:0	4	=
+water	39:19	0:0	4	1
+water	39:20	0:0	4	;
+if	40:4	41:20	2	(data_size + 30 +avio_tell (bc ) >= nut -> last_syncpoint_pos + nut -> max_distance)
+cond	40:8	40:74	3	data_size + 30 +avio_tell (bc ) >= nut -> last_syncpoint_pos + nut -> max_distance
+water	40:8	0:0	4	data_size
+op	40:18	0:0	4	+
+water	40:20	0:0	4	30
+op	40:24	0:0	4	+
+call	40:26	40:38	4	avio_tell
+arg	40:36	40:38	5	bc
+water	40:36	0:0	6	bc
+op	40:40	0:0	4	>=
+water	40:43	0:0	4	nut
+op	40:46	0:0	4	->
+water	40:48	0:0	4	last_syncpoint_pos
+op	40:67	0:0	4	+
+water	40:69	0:0	4	nut
+op	40:72	0:0	4	->
+water	40:74	0:0	4	max_distance
+stmts	41:8	41:20	3	
+water	41:8	0:0	4	store_sp
+op	41:17	0:0	4	=
+water	41:19	0:0	4	1
+water	41:20	0:0	4	;
+if	43:4	92:4	2	(store_sp && ( ! ( nut -> flags & NUT_PIPE ) || nut -> last_syncpoint_pos == INT_MIN ))
+cond	43:8	44:71	3	store_sp && ( ! ( nut -> flags & NUT_PIPE ) || nut -> last_syncpoint_pos == INT_MIN )
+water	43:8	0:0	4	store_sp
+op	43:17	0:0	4	&&
+water	44:8	0:0	4	(
+op	44:9	0:0	4	!
+water	44:10	0:0	4	(
+water	44:11	0:0	4	nut
+op	44:14	0:0	4	->
+water	44:16	0:0	4	flags
+op	44:22	0:0	4	&
+water	44:24	0:0	4	NUT_PIPE
+water	44:32	0:0	4	)
+op	44:34	0:0	4	||
+water	44:37	0:0	4	nut
+op	44:40	0:0	4	->
+water	44:42	0:0	4	last_syncpoint_pos
+op	44:61	0:0	4	==
+water	44:64	0:0	4	INT_MIN
+water	44:71	0:0	4	)
+stmts	44:74	92:4	3	
+water	44:74	0:0	4	{
+decl	45:8	45:34	4	int64_t	sp_pos
+op	45:23	0:0	4	=
+water	45:25	0:0	4	INT64_MAX
+call	46:8	46:54	4	ff_nut_reset_ts
+arg	46:24	46:27	5	nut
+water	46:24	0:0	6	nut
+arg	46:29	46:44	5	*nus->time_base
+op	46:29	0:0	6	*
+water	46:30	0:0	6	nus
+op	46:33	0:0	6	->
+water	46:35	0:0	6	time_base
+arg	46:46	46:54	5	pkt->dts
+water	46:46	0:0	6	pkt
+op	46:49	0:0	6	->
+water	46:51	0:0	6	dts
+water	46:55	0:0	4	;
+for	47:8	64:8	4	(i = 0 ;i < s -> nb_streams;i ++)
+forinit	47:13	47:18	5	i = 0 ;
+water	47:13	0:0	6	i
+op	47:15	0:0	6	=
+water	47:17	0:0	6	0
+water	47:18	0:0	6	;
+cond	47:20	47:27	5	i < s -> nb_streams
+water	47:20	0:0	6	i
+op	47:22	0:0	6	<
+water	47:24	0:0	6	s
+op	47:25	0:0	6	->
+water	47:27	0:0	6	nb_streams
+forexpr	47:39	47:40	5	i ++
+water	47:39	0:0	6	i
+op	47:40	0:0	6	++
+stmts	47:44	64:8	5	
+water	47:44	0:0	6	{
+decl	48:12	48:42	6	AVStream	*st
+op	48:27	0:0	6	=
+water	48:29	0:0	6	s
+op	48:30	0:0	6	->
+water	48:32	0:0	6	streams
+op	48:39	0:0	6	[
+water	48:40	0:0	6	i
+op	48:41	0:0	6	]
+decl	49:12	52:30	6	int64_t	dts_tb
+op	49:27	0:0	6	=
+call	49:29	52:29	7	av_rescale_rnd
+arg	49:44	49:52	8	pkt->dts
+water	49:44	0:0	9	pkt
+op	49:47	0:0	9	->
+water	49:49	0:0	9	dts
+arg	50:16	50:76	8	nus->time_base->num*(int64_t)nut->stream[i].time_base->den
+water	50:16	0:0	9	nus
+op	50:19	0:0	9	->
+water	50:21	0:0	9	time_base
+op	50:30	0:0	9	->
+water	50:32	0:0	9	num
+op	50:36	0:0	9	*
+water	50:38	0:0	9	(
+water	50:39	0:0	9	int64_t
+water	50:46	0:0	9	)
+water	50:47	0:0	9	nut
+op	50:50	0:0	9	->
+water	50:52	0:0	9	stream
+op	50:58	0:0	9	[
+water	50:59	0:0	9	i
+op	50:60	0:0	9	]
+op	50:61	0:0	9	.
+water	50:62	0:0	9	time_base
+op	50:71	0:0	9	->
+water	50:73	0:0	9	den
+arg	51:16	51:76	8	nus->time_base->den*(int64_t)nut->stream[i].time_base->num
+water	51:16	0:0	9	nus
+op	51:19	0:0	9	->
+water	51:21	0:0	9	time_base
+op	51:30	0:0	9	->
+water	51:32	0:0	9	den
+op	51:36	0:0	9	*
+water	51:38	0:0	9	(
+water	51:39	0:0	9	int64_t
+water	51:46	0:0	9	)
+water	51:47	0:0	9	nut
+op	51:50	0:0	9	->
+water	51:52	0:0	9	stream
+op	51:58	0:0	9	[
+water	51:59	0:0	9	i
+op	51:60	0:0	9	]
+op	51:61	0:0	9	.
+water	51:62	0:0	9	time_base
+op	51:71	0:0	9	->
+water	51:73	0:0	9	num
+arg	52:16	52:29	8	AV_ROUND_DOWN
+water	52:16	0:0	9	AV_ROUND_DOWN
+decl	53:12	54:71	6	int	index
+op	53:22	0:0	6	=
+call	53:24	54:70	7	av_index_search_timestamp
+arg	53:50	53:52	8	st
+water	53:50	0:0	9	st
+arg	53:54	53:60	8	dts_tb
+water	53:54	0:0	9	dts_tb
+arg	54:50	54:70	8	AVSEEK_FLAG_BACKWARD
+water	54:50	0:0	9	AVSEEK_FLAG_BACKWARD
+if	55:12	63:12	6	(index >= 0)
+cond	55:16	55:25	7	index >= 0
+water	55:16	0:0	8	index
+op	55:22	0:0	8	>=
+water	55:25	0:0	8	0
+stmts	55:28	63:12	7	
+water	55:28	0:0	8	{
+water	56:16	0:0	8	sp_pos
+op	56:23	0:0	8	=
+call	56:25	56:67	8	FFMIN
+arg	56:31	56:37	9	sp_pos
+water	56:31	0:0	10	sp_pos
+arg	56:39	56:67	9	st->index_entries[index].pos
+water	56:39	0:0	10	st
+op	56:41	0:0	10	->
+water	56:43	0:0	10	index_entries
+op	56:56	0:0	10	[
+water	56:57	0:0	10	index
+op	56:62	0:0	10	]
+op	56:63	0:0	10	.
+water	56:64	0:0	10	pos
+water	56:68	0:0	8	;
+if	57:16	62:16	8	(! nut -> write_index && 2 * index > st -> nb_index_entries)
+cond	57:20	57:55	9	! nut -> write_index && 2 * index > st -> nb_index_entries
+op	57:20	0:0	10	!
+water	57:21	0:0	10	nut
+op	57:24	0:0	10	->
+water	57:26	0:0	10	write_index
+op	57:38	0:0	10	&&
+water	57:41	0:0	10	2
+op	57:42	0:0	10	*
+water	57:43	0:0	10	index
+op	57:49	0:0	10	>
+water	57:51	0:0	10	st
+op	57:53	0:0	10	->
+water	57:55	0:0	10	nb_index_entries
+stmts	57:73	62:16	9	
+water	57:73	0:0	10	{
+call	58:20	60:87	10	memmove
+arg	58:28	58:45	11	st->index_entries
+water	58:28	0:0	12	st
+op	58:30	0:0	12	->
+water	58:32	0:0	12	index_entries
+arg	59:28	59:53	11	st->index_entries+index
+water	59:28	0:0	12	st
+op	59:30	0:0	12	->
+water	59:32	0:0	12	index_entries
+op	59:46	0:0	12	+
+water	59:48	0:0	12	index
+arg	60:28	60:87	11	sizeof(*st->index_entries)*(st->nb_index_entries-index)
+op	60:28	0:0	12	sizeof
+water	60:34	0:0	12	(
+op	60:35	0:0	12	*
+water	60:36	0:0	12	st
+op	60:38	0:0	12	->
+water	60:40	0:0	12	index_entries
+water	60:53	0:0	12	)
+op	60:55	0:0	12	*
+water	60:57	0:0	12	(
+water	60:58	0:0	12	st
+op	60:60	0:0	12	->
+water	60:62	0:0	12	nb_index_entries
+op	60:79	0:0	12	-
+water	60:81	0:0	12	index
+water	60:86	0:0	12	)
+water	60:88	0:0	10	;
+water	61:20	0:0	10	st
+op	61:22	0:0	10	->
+water	61:24	0:0	10	nb_index_entries
+op	61:41	0:0	10	-=
+water	61:45	0:0	10	index
+water	61:50	0:0	10	;
+water	62:16	0:0	10	}
+water	63:12	0:0	8	}
+water	64:8	0:0	6	}
+water	65:8	0:0	4	nut
+op	65:11	0:0	4	->
+water	65:13	0:0	4	last_syncpoint_pos
+op	65:32	0:0	4	=
+call	65:34	65:46	4	avio_tell
+arg	65:44	65:46	5	bc
+water	65:44	0:0	6	bc
+water	65:47	0:0	4	;
+water	66:8	0:0	4	ret
+op	66:32	0:0	4	=
+call	66:34	66:59	4	avio_open_dyn_buf
+arg	66:52	66:59	5	&dyn_bc
+op	66:52	0:0	6	&
+water	66:53	0:0	6	dyn_bc
+water	66:60	0:0	4	;
+if	67:8	68:21	4	(ret < 0)
+cond	67:12	67:18	5	ret < 0
+water	67:12	0:0	6	ret
+op	67:16	0:0	6	<
+water	67:18	0:0	6	0
+stmts	68:12	68:21	5	
+goto	68:12	68:21	6	fail
+water	68:17	0:0	7	fail
+call	69:8	69:52	4	put_tt
+arg	69:15	69:18	5	nut
+water	69:15	0:0	6	nut
+arg	69:20	69:34	5	nus->time_base
+water	69:20	0:0	6	nus
+op	69:23	0:0	6	->
+water	69:25	0:0	6	time_base
+arg	69:36	69:42	5	dyn_bc
+water	69:36	0:0	6	dyn_bc
+arg	69:44	69:52	5	pkt->dts
+water	69:44	0:0	6	pkt
+op	69:47	0:0	6	->
+water	69:49	0:0	6	dts
+water	69:53	0:0	4	;
+call	70:8	70:90	4	ff_put_v
+arg	70:17	70:23	5	dyn_bc
+water	70:17	0:0	6	dyn_bc
+arg	70:25	70:90	5	sp_pos!=INT64_MAX?(nut->last_syncpoint_pos-sp_pos)>>4:0
+water	70:25	0:0	6	sp_pos
+op	70:32	0:0	6	!=
+water	70:35	0:0	6	INT64_MAX
+water	70:45	0:0	6	?
+water	70:47	0:0	6	(
+water	70:48	0:0	6	nut
+op	70:51	0:0	6	->
+water	70:53	0:0	6	last_syncpoint_pos
+op	70:72	0:0	6	-
+water	70:74	0:0	6	sp_pos
+water	70:80	0:0	6	)
+op	70:82	0:0	6	>>
+water	70:85	0:0	6	4
+water	70:87	0:0	6	:
+water	70:89	0:0	6	0
+water	70:91	0:0	4	;
+if	71:8	74:8	4	(nut -> flags & NUT_BROADCAST)
+cond	71:12	71:25	5	nut -> flags & NUT_BROADCAST
+water	71:12	0:0	6	nut
+op	71:15	0:0	6	->
+water	71:17	0:0	6	flags
+op	71:23	0:0	6	&
+water	71:25	0:0	6	NUT_BROADCAST
+stmts	71:40	74:8	5	
+water	71:40	0:0	6	{
+call	72:12	73:78	6	put_tt
+arg	72:19	72:22	7	nut
+water	72:19	0:0	8	nut
+arg	72:24	72:38	7	nus->time_base
+water	72:24	0:0	8	nus
+op	72:27	0:0	8	->
+water	72:29	0:0	8	time_base
+arg	72:40	72:46	7	dyn_bc
+water	72:40	0:0	8	dyn_bc
+arg	73:19	73:78	7	av_rescale_q(av_gettime(),AV_TIME_BASE_Q,*nus->time_base)
+call	73:19	73:77	8	av_rescale_q
+arg	73:32	73:44	9	av_gettime()
+call	73:32	73:43	10	av_gettime
+arg	73:46	73:60	9	AV_TIME_BASE_Q
+water	73:46	0:0	10	AV_TIME_BASE_Q
+arg	73:62	73:77	9	*nus->time_base
+op	73:62	0:0	10	*
+water	73:63	0:0	10	nus
+op	73:66	0:0	10	->
+water	73:68	0:0	10	time_base
+water	73:79	0:0	6	;
+water	74:8	0:0	6	}
+call	75:8	75:58	4	put_packet
+arg	75:19	75:22	5	nut
+water	75:19	0:0	6	nut
+arg	75:24	75:26	5	bc
+water	75:24	0:0	6	bc
+arg	75:28	75:34	5	dyn_bc
+water	75:28	0:0	6	dyn_bc
+arg	75:36	75:37	5	1
+water	75:36	0:0	6	1
+arg	75:39	75:58	5	SYNCPOINT_STARTCODE
+water	75:39	0:0	6	SYNCPOINT_STARTCODE
+water	75:59	0:0	4	;
+if	76:8	91:8	4	(nut -> write_index)
+cond	76:12	76:17	5	nut -> write_index
+water	76:12	0:0	6	nut
+op	76:15	0:0	6	->
+water	76:17	0:0	6	write_index
+stmts	76:30	91:8	5	
+water	76:30	0:0	6	{
+if	77:8	78:21	6	(( ret =ff_nut_add_sp (nut ,nut -> last_syncpoint_pos ,0 ,pkt -> dts ) ) < 0)
+cond	77:12	77:80	7	( ret =ff_nut_add_sp (nut ,nut -> last_syncpoint_pos ,0 ,pkt -> dts ) ) < 0
+water	77:12	0:0	8	(
+water	77:13	0:0	8	ret
+op	77:17	0:0	8	=
+call	77:19	77:75	8	ff_nut_add_sp
+arg	77:33	77:36	9	nut
+water	77:33	0:0	10	nut
+arg	77:38	77:61	9	nut->last_syncpoint_pos
+water	77:38	0:0	10	nut
+op	77:41	0:0	10	->
+water	77:43	0:0	10	last_syncpoint_pos
+arg	77:63	77:65	9	0
+water	77:63	0:0	10	0
+arg	77:67	77:75	9	pkt->dts
+water	77:67	0:0	10	pkt
+op	77:70	0:0	10	->
+water	77:72	0:0	10	dts
+water	77:76	0:0	8	)
+op	77:78	0:0	8	<
+water	77:80	0:0	8	0
+stmts	78:12	78:21	7	
+goto	78:12	78:21	8	fail
+water	78:17	0:0	9	fail
+if	79:8	90:8	6	(( 1 ll << 60 ) % nut -> sp_count == 0)
+cond	79:12	79:41	7	( 1 ll << 60 ) % nut -> sp_count == 0
+water	79:12	0:0	8	(
+water	79:13	0:0	8	1
+water	79:14	0:0	8	ll
+op	79:16	0:0	8	<<
+water	79:18	0:0	8	60
+water	79:20	0:0	8	)
+op	79:22	0:0	8	%
+water	79:24	0:0	8	nut
+op	79:27	0:0	8	->
+water	79:29	0:0	8	sp_count
+op	79:38	0:0	8	==
+water	79:41	0:0	8	0
+stmts	80:12	90:8	7	
+for	80:12	90:8	8	(i = 0 ;i < s -> nb_streams;i ++)
+forinit	80:17	80:20	9	i = 0 ;
+water	80:17	0:0	10	i
+op	80:18	0:0	10	=
+water	80:19	0:0	10	0
+water	80:20	0:0	10	;
+cond	80:22	80:27	9	i < s -> nb_streams
+water	80:22	0:0	10	i
+op	80:23	0:0	10	<
+water	80:24	0:0	10	s
+op	80:25	0:0	10	->
+water	80:27	0:0	10	nb_streams
+forexpr	80:39	80:40	9	i ++
+water	80:39	0:0	10	i
+op	80:40	0:0	10	++
+stmts	80:44	90:8	9	
+water	80:44	0:0	10	{
+decl	81:16	81:21	10	int	j
+decl	82:16	82:52	10	StreamContext	*nus
+op	82:35	0:0	10	=
+op	82:37	0:0	10	&
+water	82:38	0:0	10	nut
+op	82:41	0:0	10	->
+water	82:43	0:0	10	stream
+op	82:49	0:0	10	[
+water	82:50	0:0	10	i
+op	82:51	0:0	10	]
+call	83:16	83:97	10	av_reallocp_array
+arg	83:34	83:52	11	&nus->keyframe_pts
+op	83:34	0:0	12	&
+water	83:35	0:0	12	nus
+op	83:38	0:0	12	->
+water	83:40	0:0	12	keyframe_pts
+arg	83:54	83:69	11	2*nut->sp_count
+water	83:54	0:0	12	2
+op	83:55	0:0	12	*
+water	83:56	0:0	12	nut
+op	83:59	0:0	12	->
+water	83:61	0:0	12	sp_count
+arg	83:71	83:97	11	sizeof(*nus->keyframe_pts)
+op	83:71	0:0	12	sizeof
+water	83:77	0:0	12	(
+op	83:78	0:0	12	*
+water	83:79	0:0	12	nus
+op	83:82	0:0	12	->
+water	83:84	0:0	12	keyframe_pts
+water	83:96	0:0	12	)
+water	83:98	0:0	10	;
+if	84:16	87:16	10	(! nus -> keyframe_pts)
+cond	84:20	84:26	11	! nus -> keyframe_pts
+op	84:20	0:0	12	!
+water	84:21	0:0	12	nus
+op	84:24	0:0	12	->
+water	84:26	0:0	12	keyframe_pts
+stmts	84:40	87:16	11	
+water	84:40	0:0	12	{
+water	85:20	0:0	12	ret
+op	85:24	0:0	12	=
+call	85:26	85:40	12	AVERROR
+arg	85:34	85:40	13	ENOMEM
+water	85:34	0:0	14	ENOMEM
+water	85:41	0:0	12	;
+goto	86:20	86:29	12	fail
+water	86:25	0:0	13	fail
+water	87:16	0:0	12	}
+for	88:16	89:57	10	(j = nut -> sp_count == 1 ? 0 : nut -> sp_count ;j < 2 * nut -> sp_count;j ++)
+forinit	88:21	88:61	11	j = nut -> sp_count == 1 ? 0 : nut -> sp_count ;
+water	88:21	0:0	12	j
+op	88:22	0:0	12	=
+water	88:23	0:0	12	nut
+op	88:26	0:0	12	->
+water	88:28	0:0	12	sp_count
+op	88:37	0:0	12	==
+water	88:40	0:0	12	1
+water	88:42	0:0	12	?
+water	88:44	0:0	12	0
+water	88:46	0:0	12	:
+water	88:48	0:0	12	nut
+op	88:51	0:0	12	->
+water	88:53	0:0	12	sp_count
+water	88:61	0:0	12	;
+cond	88:63	88:72	11	j < 2 * nut -> sp_count
+water	88:63	0:0	12	j
+op	88:64	0:0	12	<
+water	88:65	0:0	12	2
+op	88:66	0:0	12	*
+water	88:67	0:0	12	nut
+op	88:70	0:0	12	->
+water	88:72	0:0	12	sp_count
+forexpr	88:82	88:83	11	j ++
+water	88:82	0:0	12	j
+op	88:83	0:0	12	++
+stmts	89:20	89:57	11	
+water	89:20	0:0	12	nus
+op	89:23	0:0	12	->
+water	89:25	0:0	12	keyframe_pts
+op	89:37	0:0	12	[
+water	89:38	0:0	12	j
+op	89:39	0:0	12	]
+op	89:41	0:0	12	=
+water	89:43	0:0	12	AV_NOPTS_VALUE
+water	89:57	0:0	12	;
+water	90:8	0:0	10	}
+water	91:8	0:0	6	}
+water	92:4	0:0	4	}
+call	93:4	93:46	2	av_assert0
+arg	93:15	93:46	3	nus->last_pts!=AV_NOPTS_VALUE
+water	93:15	0:0	4	nus
+op	93:18	0:0	4	->
+water	93:20	0:0	4	last_pts
+op	93:29	0:0	4	!=
+water	93:32	0:0	4	AV_NOPTS_VALUE
+water	93:47	0:0	2	;
+water	94:4	0:0	2	coded_pts
+op	94:14	0:0	2	=
+water	94:16	0:0	2	pkt
+op	94:19	0:0	2	->
+water	94:21	0:0	2	pts
+op	94:25	0:0	2	&
+water	94:27	0:0	2	(
+water	94:28	0:0	2	(
+water	94:29	0:0	2	1
+op	94:31	0:0	2	<<
+water	94:34	0:0	2	nus
+op	94:37	0:0	2	->
+water	94:39	0:0	2	msb_pts_shift
+water	94:52	0:0	2	)
+op	94:54	0:0	2	-
+water	94:56	0:0	2	1
+water	94:57	0:0	2	)
+water	94:58	0:0	2	;
+if	95:4	96:56	2	(ff_lsb2full (nus ,coded_pts ) != pkt -> pts)
+cond	95:8	95:44	3	ff_lsb2full (nus ,coded_pts ) != pkt -> pts
+call	95:8	95:34	4	ff_lsb2full
+arg	95:20	95:23	5	nus
+water	95:20	0:0	6	nus
+arg	95:25	95:34	5	coded_pts
+water	95:25	0:0	6	coded_pts
+op	95:36	0:0	4	!=
+water	95:39	0:0	4	pkt
+op	95:42	0:0	4	->
+water	95:44	0:0	4	pts
+stmts	96:8	96:56	3	
+water	96:8	0:0	4	coded_pts
+op	96:18	0:0	4	=
+water	96:20	0:0	4	pkt
+op	96:23	0:0	4	->
+water	96:25	0:0	4	pts
+op	96:29	0:0	4	+
+water	96:31	0:0	4	(
+water	96:32	0:0	4	1
+op	96:34	0:0	4	<<
+water	96:37	0:0	4	nus
+op	96:40	0:0	4	->
+water	96:42	0:0	4	msb_pts_shift
+water	96:55	0:0	4	)
+water	96:56	0:0	4	;
+water	97:4	0:0	2	best_header_idx
+op	97:20	0:0	2	=
+call	97:22	97:51	2	find_best_header_idx
+arg	97:43	97:46	3	nut
+water	97:43	0:0	4	nut
+arg	97:48	97:51	3	pkt
+water	97:48	0:0	4	pkt
+water	97:52	0:0	2	;
+water	98:4	0:0	2	best_length
+op	98:16	0:0	2	=
+water	98:18	0:0	2	INT_MAX
+water	98:25	0:0	2	;
+water	99:4	0:0	2	frame_code
+op	99:16	0:0	2	=
+op	99:18	0:0	2	-
+water	99:19	0:0	2	1
+water	99:20	0:0	2	;
+for	100:4	141:4	2	(i = 0 ;i < 256;i ++)
+forinit	100:9	100:14	3	i = 0 ;
+water	100:9	0:0	4	i
+op	100:11	0:0	4	=
+water	100:13	0:0	4	0
+water	100:14	0:0	4	;
+cond	100:16	100:20	3	i < 256
+water	100:16	0:0	4	i
+op	100:18	0:0	4	<
+water	100:20	0:0	4	256
+forexpr	100:25	100:26	3	i ++
+water	100:25	0:0	4	i
+op	100:26	0:0	4	++
+stmts	100:30	141:4	3	
+water	100:30	0:0	4	{
+decl	101:8	101:25	4	int	length
+op	101:22	0:0	4	=
+water	101:24	0:0	4	0
+decl	102:8	102:43	4	FrameCode	*fc
+op	102:22	0:0	4	=
+op	102:24	0:0	4	&
+water	102:25	0:0	4	nut
+op	102:28	0:0	4	->
+water	102:30	0:0	4	frame_code
+op	102:40	0:0	4	[
+water	102:41	0:0	4	i
+op	102:42	0:0	4	]
+decl	103:8	103:33	4	int	flags
+op	103:22	0:0	4	=
+water	103:24	0:0	4	fc
+op	103:26	0:0	4	->
+water	103:28	0:0	4	flags
+if	104:8	105:20	4	(flags & FLAG_INVALID)
+cond	104:12	104:20	5	flags & FLAG_INVALID
+water	104:12	0:0	6	flags
+op	104:18	0:0	6	&
+water	104:20	0:0	6	FLAG_INVALID
+stmts	105:12	105:20	5	
+continue	105:12	105:20	6	
+water	106:8	0:0	4	needed_flags
+op	106:21	0:0	4	=
+call	106:23	106:57	4	get_needed_flags
+arg	106:40	106:43	5	nut
+water	106:40	0:0	6	nut
+arg	106:45	106:48	5	nus
+water	106:45	0:0	6	nus
+arg	106:50	106:52	5	fc
+water	106:50	0:0	6	fc
+arg	106:54	106:57	5	pkt
+water	106:54	0:0	6	pkt
+water	106:58	0:0	4	;
+if	107:8	110:8	4	(flags & FLAG_CODED)
+cond	107:12	107:20	5	flags & FLAG_CODED
+water	107:12	0:0	6	flags
+op	107:18	0:0	6	&
+water	107:20	0:0	6	FLAG_CODED
+stmts	107:32	110:8	5	
+water	107:32	0:0	6	{
+water	108:12	0:0	6	length
+op	108:18	0:0	6	++
+water	108:20	0:0	6	;
+water	109:12	0:0	6	flags
+op	109:18	0:0	6	=
+water	109:20	0:0	6	needed_flags
+water	109:32	0:0	6	;
+water	110:8	0:0	6	}
+if	111:8	112:20	4	(( flags & needed_flags ) != needed_flags)
+cond	111:12	111:38	5	( flags & needed_flags ) != needed_flags
+water	111:12	0:0	6	(
+water	111:13	0:0	6	flags
+op	111:19	0:0	6	&
+water	111:21	0:0	6	needed_flags
+water	111:33	0:0	6	)
+op	111:35	0:0	6	!=
+water	111:38	0:0	6	needed_flags
+stmts	112:12	112:20	5	
+continue	112:12	112:20	6	
+if	113:8	114:20	4	(( flags ^ needed_flags ) & FLAG_KEY)
+cond	113:12	113:37	5	( flags ^ needed_flags ) & FLAG_KEY
+water	113:12	0:0	6	(
+water	113:13	0:0	6	flags
+op	113:19	0:0	6	^
+water	113:21	0:0	6	needed_flags
+water	113:33	0:0	6	)
+op	113:35	0:0	6	&
+water	113:37	0:0	6	FLAG_KEY
+stmts	114:12	114:20	5	
+continue	114:12	114:20	6	
+if	115:8	116:56	4	(flags & FLAG_STREAM_ID)
+cond	115:12	115:20	5	flags & FLAG_STREAM_ID
+water	115:12	0:0	6	flags
+op	115:18	0:0	6	&
+water	115:20	0:0	6	FLAG_STREAM_ID
+stmts	116:12	116:56	5	
+water	116:12	0:0	6	length
+op	116:19	0:0	6	+=
+call	116:22	116:55	6	ff_get_v_length
+arg	116:38	116:55	7	pkt->stream_index
+water	116:38	0:0	8	pkt
+op	116:41	0:0	8	->
+water	116:43	0:0	8	stream_index
+water	116:56	0:0	6	;
+if	117:8	118:20	4	(data_size % fc -> size_mul != fc -> size_lsb)
+cond	117:12	117:44	5	data_size % fc -> size_mul != fc -> size_lsb
+water	117:12	0:0	6	data_size
+op	117:22	0:0	6	%
+water	117:24	0:0	6	fc
+op	117:26	0:0	6	->
+water	117:28	0:0	6	size_mul
+op	117:37	0:0	6	!=
+water	117:40	0:0	6	fc
+op	117:42	0:0	6	->
+water	117:44	0:0	6	size_lsb
+stmts	118:12	118:20	5	
+continue	118:12	118:20	6	
+if	119:8	120:63	4	(flags & FLAG_SIZE_MSB)
+cond	119:12	119:20	5	flags & FLAG_SIZE_MSB
+water	119:12	0:0	6	flags
+op	119:18	0:0	6	&
+water	119:20	0:0	6	FLAG_SIZE_MSB
+stmts	120:12	120:63	5	
+water	120:12	0:0	6	length
+op	120:19	0:0	6	+=
+call	120:22	120:62	6	ff_get_v_length
+arg	120:38	120:62	7	data_size/fc->size_mul
+water	120:38	0:0	8	data_size
+op	120:48	0:0	8	/
+water	120:50	0:0	8	fc
+op	120:52	0:0	8	->
+water	120:54	0:0	8	size_mul
+water	120:63	0:0	6	;
+if	121:8	122:23	4	(flags & FLAG_CHECKSUM)
+cond	121:12	121:20	5	flags & FLAG_CHECKSUM
+water	121:12	0:0	6	flags
+op	121:18	0:0	6	&
+water	121:20	0:0	6	FLAG_CHECKSUM
+stmts	122:12	122:23	5	
+water	122:12	0:0	6	length
+op	122:19	0:0	6	+=
+water	122:22	0:0	6	4
+water	122:23	0:0	6	;
+if	123:8	124:48	4	(flags & FLAG_CODED_PTS)
+cond	123:12	123:20	5	flags & FLAG_CODED_PTS
+water	123:12	0:0	6	flags
+op	123:18	0:0	6	&
+water	123:20	0:0	6	FLAG_CODED_PTS
+stmts	124:12	124:48	5	
+water	124:12	0:0	6	length
+op	124:19	0:0	6	+=
+call	124:22	124:47	6	ff_get_v_length
+arg	124:38	124:47	7	coded_pts
+water	124:38	0:0	8	coded_pts
+water	124:48	0:0	6	;
+if	125:8	128:8	4	(( flags & FLAG_CODED ) && nut -> header_len [ best_header_idx ] > nut -> header_len [ fc -> header_idx ] + 1)
+cond	125:15	126:84	5	( flags & FLAG_CODED ) && nut -> header_len [ best_header_idx ] > nut -> header_len [ fc -> header_idx ] + 1
+water	125:15	0:0	6	(
+water	125:16	0:0	6	flags
+op	125:22	0:0	6	&
+water	125:24	0:0	6	FLAG_CODED
+water	125:34	0:0	6	)
+op	126:12	0:0	6	&&
+water	126:15	0:0	6	nut
+op	126:18	0:0	6	->
+water	126:20	0:0	6	header_len
+op	126:30	0:0	6	[
+water	126:31	0:0	6	best_header_idx
+op	126:46	0:0	6	]
+op	126:48	0:0	6	>
+water	126:50	0:0	6	nut
+op	126:53	0:0	6	->
+water	126:55	0:0	6	header_len
+op	126:65	0:0	6	[
+water	126:66	0:0	6	fc
+op	126:68	0:0	6	->
+water	126:70	0:0	6	header_idx
+op	126:80	0:0	6	]
+op	126:82	0:0	6	+
+water	126:84	0:0	6	1
+stmts	126:87	128:8	5	
+water	126:87	0:0	6	{
+water	127:12	0:0	6	flags
+op	127:18	0:0	6	|=
+water	127:21	0:0	6	FLAG_HEADER_IDX
+water	127:36	0:0	6	;
+water	128:8	0:0	6	}
+if	129:8	131:8	4	(flags & FLAG_HEADER_IDX)
+cond	129:12	129:20	5	flags & FLAG_HEADER_IDX
+water	129:12	0:0	6	flags
+op	129:18	0:0	6	&
+water	129:20	0:0	6	FLAG_HEADER_IDX
+stmts	129:37	131:8	5	
+water	129:37	0:0	6	{
+water	130:12	0:0	6	length
+op	130:19	0:0	6	+=
+water	130:22	0:0	6	1
+op	130:24	0:0	6	-
+water	130:26	0:0	6	nut
+op	130:29	0:0	6	->
+water	130:31	0:0	6	header_len
+op	130:41	0:0	6	[
+water	130:42	0:0	6	best_header_idx
+op	130:57	0:0	6	]
+water	130:58	0:0	6	;
+water	131:8	0:0	6	}
+else	131:10	133:8	4
+stmts	131:15	133:8	5	
+water	131:15	0:0	6	{
+water	132:12	0:0	6	length
+op	132:19	0:0	6	-=
+water	132:22	0:0	6	nut
+op	132:25	0:0	6	->
+water	132:27	0:0	6	header_len
+op	132:37	0:0	6	[
+water	132:38	0:0	6	fc
+op	132:40	0:0	6	->
+water	132:42	0:0	6	header_idx
+op	132:52	0:0	6	]
+water	132:53	0:0	6	;
+water	133:8	0:0	6	}
+water	134:8	0:0	4	length
+op	134:15	0:0	4	*=
+water	134:18	0:0	4	4
+water	134:19	0:0	4	;
+water	135:8	0:0	4	length
+op	135:15	0:0	4	+=
+op	135:18	0:0	4	!
+water	135:19	0:0	4	(
+water	135:20	0:0	4	flags
+op	135:26	0:0	4	&
+water	135:28	0:0	4	FLAG_CODED_PTS
+water	135:42	0:0	4	)
+water	135:43	0:0	4	;
+water	136:8	0:0	4	length
+op	136:15	0:0	4	+=
+op	136:18	0:0	4	!
+water	136:19	0:0	4	(
+water	136:20	0:0	4	flags
+op	136:26	0:0	4	&
+water	136:28	0:0	4	FLAG_CHECKSUM
+water	136:41	0:0	4	)
+water	136:42	0:0	4	;
+if	137:8	140:8	4	(length < best_length)
+cond	137:12	137:21	5	length < best_length
+water	137:12	0:0	6	length
+op	137:19	0:0	6	<
+water	137:21	0:0	6	best_length
+stmts	137:34	140:8	5	
+water	137:34	0:0	6	{
+water	138:12	0:0	6	best_length
+op	138:24	0:0	6	=
+water	138:26	0:0	6	length
+water	138:32	0:0	6	;
+water	139:12	0:0	6	frame_code
+op	139:24	0:0	6	=
+water	139:26	0:0	6	i
+water	139:27	0:0	6	;
+water	140:8	0:0	6	}
+water	141:4	0:0	4	}
+call	142:4	142:31	2	av_assert0
+arg	142:15	142:31	3	frame_code!=-1
+water	142:15	0:0	4	frame_code
+op	142:26	0:0	4	!=
+op	142:29	0:0	4	-
+water	142:30	0:0	4	1
+water	142:32	0:0	2	;
+water	143:4	0:0	2	fc
+op	143:17	0:0	2	=
+op	143:19	0:0	2	&
+water	143:20	0:0	2	nut
+op	143:23	0:0	2	->
+water	143:25	0:0	2	frame_code
+op	143:35	0:0	2	[
+water	143:36	0:0	2	frame_code
+op	143:46	0:0	2	]
+water	143:47	0:0	2	;
+water	144:4	0:0	2	flags
+op	144:17	0:0	2	=
+water	144:19	0:0	2	fc
+op	144:21	0:0	2	->
+water	144:23	0:0	2	flags
+water	144:28	0:0	2	;
+water	145:4	0:0	2	needed_flags
+op	145:17	0:0	2	=
+call	145:19	145:53	2	get_needed_flags
+arg	145:36	145:39	3	nut
+water	145:36	0:0	4	nut
+arg	145:41	145:44	3	nus
+water	145:41	0:0	4	nus
+arg	145:46	145:48	3	fc
+water	145:46	0:0	4	fc
+arg	145:50	145:53	3	pkt
+water	145:50	0:0	4	pkt
+water	145:54	0:0	2	;
+water	146:4	0:0	2	header_idx
+op	146:17	0:0	2	=
+water	146:19	0:0	2	fc
+op	146:21	0:0	2	->
+water	146:23	0:0	2	header_idx
+water	146:33	0:0	2	;
+call	147:4	147:51	2	ffio_init_checksum
+arg	147:23	147:25	3	bc
+water	147:23	0:0	4	bc
+arg	147:27	147:48	3	ff_crc04C11DB7_update
+water	147:27	0:0	4	ff_crc04C11DB7_update
+arg	147:50	147:51	3	0
+water	147:50	0:0	4	0
+water	147:52	0:0	2	;
+call	148:4	148:26	2	avio_w8
+arg	148:12	148:14	3	bc
+water	148:12	0:0	4	bc
+arg	148:16	148:26	3	frame_code
+water	148:16	0:0	4	frame_code
+water	148:27	0:0	2	;
+if	149:4	152:4	2	(flags & FLAG_CODED)
+cond	149:8	149:16	3	flags & FLAG_CODED
+water	149:8	0:0	4	flags
+op	149:14	0:0	4	&
+water	149:16	0:0	4	FLAG_CODED
+stmts	149:28	152:4	3	
+water	149:28	0:0	4	{
+call	150:8	150:59	4	ff_put_v
+arg	150:17	150:19	5	bc
+water	150:17	0:0	6	bc
+arg	150:21	150:59	5	(flags^needed_flags)&~(FLAG_CODED)
+water	150:21	0:0	6	(
+water	150:22	0:0	6	flags
+op	150:28	0:0	6	^
+water	150:30	0:0	6	needed_flags
+water	150:42	0:0	6	)
+op	150:44	0:0	6	&
+op	150:46	0:0	6	~
+water	150:47	0:0	6	(
+water	150:48	0:0	6	FLAG_CODED
+water	150:58	0:0	6	)
+water	150:60	0:0	4	;
+water	151:8	0:0	4	flags
+op	151:14	0:0	4	=
+water	151:16	0:0	4	needed_flags
+water	151:28	0:0	4	;
+water	152:4	0:0	4	}
+if	153:4	153:64	2	(flags & FLAG_STREAM_ID)
+cond	153:8	153:16	3	flags & FLAG_STREAM_ID
+water	153:8	0:0	4	flags
+op	153:14	0:0	4	&
+water	153:16	0:0	4	FLAG_STREAM_ID
+stmts	153:33	153:64	3	
+call	153:33	153:63	4	ff_put_v
+arg	153:42	153:44	5	bc
+water	153:42	0:0	6	bc
+arg	153:46	153:63	5	pkt->stream_index
+water	153:46	0:0	6	pkt
+op	153:49	0:0	6	->
+water	153:51	0:0	6	stream_index
+water	153:64	0:0	4	;
+if	154:4	154:56	2	(flags & FLAG_CODED_PTS)
+cond	154:8	154:16	3	flags & FLAG_CODED_PTS
+water	154:8	0:0	4	flags
+op	154:14	0:0	4	&
+water	154:16	0:0	4	FLAG_CODED_PTS
+stmts	154:33	154:56	3	
+call	154:33	154:55	4	ff_put_v
+arg	154:42	154:44	5	bc
+water	154:42	0:0	6	bc
+arg	154:46	154:55	5	coded_pts
+water	154:46	0:0	6	coded_pts
+water	154:56	0:0	4	;
+if	155:4	155:71	2	(flags & FLAG_SIZE_MSB)
+cond	155:8	155:16	3	flags & FLAG_SIZE_MSB
+water	155:8	0:0	4	flags
+op	155:14	0:0	4	&
+water	155:16	0:0	4	FLAG_SIZE_MSB
+stmts	155:33	155:71	3	
+call	155:33	155:70	4	ff_put_v
+arg	155:42	155:44	5	bc
+water	155:42	0:0	6	bc
+arg	155:46	155:70	5	data_size/fc->size_mul
+water	155:46	0:0	6	data_size
+op	155:56	0:0	6	/
+water	155:58	0:0	6	fc
+op	155:60	0:0	6	->
+water	155:62	0:0	6	size_mul
+water	155:71	0:0	4	;
+if	156:4	156:75	2	(flags & FLAG_HEADER_IDX)
+cond	156:8	156:16	3	flags & FLAG_HEADER_IDX
+water	156:8	0:0	4	flags
+op	156:14	0:0	4	&
+water	156:16	0:0	4	FLAG_HEADER_IDX
+stmts	156:33	156:75	3	
+call	156:33	156:74	4	ff_put_v
+arg	156:42	156:44	5	bc
+water	156:42	0:0	6	bc
+arg	156:46	156:74	5	header_idx=best_header_idx
+water	156:46	0:0	6	header_idx
+op	156:57	0:0	6	=
+water	156:59	0:0	6	best_header_idx
+water	156:75	0:0	4	;
+if	157:4	157:69	2	(flags & FLAG_CHECKSUM)
+cond	157:8	157:16	3	flags & FLAG_CHECKSUM
+water	157:8	0:0	4	flags
+op	157:14	0:0	4	&
+water	157:16	0:0	4	FLAG_CHECKSUM
+stmts	157:33	157:69	3	
+call	157:33	157:68	4	avio_wl32
+arg	157:43	157:45	5	bc
+water	157:43	0:0	6	bc
+arg	157:47	157:68	5	ffio_get_checksum(bc)
+call	157:47	157:67	6	ffio_get_checksum
+arg	157:65	157:67	7	bc
+water	157:65	0:0	8	bc
+water	157:69	0:0	4	;
+else	158:4	158:54	2
+stmts	158:33	158:54	3	
+call	158:33	158:53	4	ffio_get_checksum
+arg	158:51	158:53	5	bc
+water	158:51	0:0	6	bc
+water	158:54	0:0	4	;
+if	159:4	161:4	2	(flags & FLAG_SM_DATA)
+cond	159:8	159:16	3	flags & FLAG_SM_DATA
+water	159:8	0:0	4	flags
+op	159:14	0:0	4	&
+water	159:16	0:0	4	FLAG_SM_DATA
+stmts	159:30	161:4	3	
+water	159:30	0:0	4	{
+call	160:8	160:38	4	avio_write
+arg	160:19	160:21	5	bc
+water	160:19	0:0	6	bc
+arg	160:23	160:29	5	sm_buf
+water	160:23	0:0	6	sm_buf
+arg	160:31	160:38	5	sm_size
+water	160:31	0:0	6	sm_size
+water	160:39	0:0	4	;
+water	161:4	0:0	4	}
+call	162:4	162:99	2	avio_write
+arg	162:15	162:17	3	bc
+water	162:15	0:0	4	bc
+arg	162:19	162:58	3	pkt->data+nut->header_len[header_idx]
+water	162:19	0:0	4	pkt
+op	162:22	0:0	4	->
+water	162:24	0:0	4	data
+op	162:29	0:0	4	+
+water	162:31	0:0	4	nut
+op	162:34	0:0	4	->
+water	162:36	0:0	4	header_len
+op	162:46	0:0	4	[
+water	162:47	0:0	4	header_idx
+op	162:57	0:0	4	]
+arg	162:60	162:99	3	pkt->size-nut->header_len[header_idx]
+water	162:60	0:0	4	pkt
+op	162:63	0:0	4	->
+water	162:65	0:0	4	size
+op	162:70	0:0	4	-
+water	162:72	0:0	4	nut
+op	162:75	0:0	4	->
+water	162:77	0:0	4	header_len
+op	162:87	0:0	4	[
+water	162:88	0:0	4	header_idx
+op	162:98	0:0	4	]
+water	162:100	0:0	2	;
+water	163:4	0:0	2	nus
+op	163:7	0:0	2	->
+water	163:9	0:0	2	last_flags
+op	163:20	0:0	2	=
+water	163:22	0:0	2	flags
+water	163:27	0:0	2	;
+water	164:4	0:0	2	nus
+op	164:7	0:0	2	->
+water	164:9	0:0	2	last_pts
+op	164:20	0:0	2	=
+water	164:22	0:0	2	pkt
+op	164:25	0:0	2	->
+water	164:27	0:0	2	pts
+water	164:30	0:0	2	;
+if	166:4	176:4	2	(flags & FLAG_KEY && ! ( nut -> flags & NUT_PIPE ))
+cond	166:8	166:51	3	flags & FLAG_KEY && ! ( nut -> flags & NUT_PIPE )
+water	166:8	0:0	4	flags
+op	166:14	0:0	4	&
+water	166:16	0:0	4	FLAG_KEY
+op	166:25	0:0	4	&&
+op	166:28	0:0	4	!
+water	166:29	0:0	4	(
+water	166:30	0:0	4	nut
+op	166:33	0:0	4	->
+water	166:35	0:0	4	flags
+op	166:41	0:0	4	&
+water	166:43	0:0	4	NUT_PIPE
+water	166:51	0:0	4	)
+stmts	166:54	176:4	3	
+water	166:54	0:0	4	{
+call	167:8	173:28	4	av_add_index_entry
+arg	168:12	168:41	5	s->streams[pkt->stream_index]
+water	168:12	0:0	6	s
+op	168:13	0:0	6	->
+water	168:15	0:0	6	streams
+op	168:22	0:0	6	[
+water	168:23	0:0	6	pkt
+op	168:26	0:0	6	->
+water	168:28	0:0	6	stream_index
+op	168:40	0:0	6	]
+arg	169:12	169:35	5	nut->last_syncpoint_pos
+water	169:12	0:0	6	nut
+op	169:15	0:0	6	->
+water	169:17	0:0	6	last_syncpoint_pos
+arg	170:12	170:20	5	pkt->pts
+water	170:12	0:0	6	pkt
+op	170:15	0:0	6	->
+water	170:17	0:0	6	pts
+arg	171:12	171:13	5	0
+water	171:12	0:0	6	0
+arg	172:12	172:13	5	0
+water	172:12	0:0	6	0
+arg	173:12	173:28	5	AVINDEX_KEYFRAME
+water	173:12	0:0	6	AVINDEX_KEYFRAME
+water	173:29	0:0	4	;
+if	174:8	175:55	4	(nus -> keyframe_pts && nus -> keyframe_pts [ nut -> sp_count ] == AV_NOPTS_VALUE)
+cond	174:12	174:69	5	nus -> keyframe_pts && nus -> keyframe_pts [ nut -> sp_count ] == AV_NOPTS_VALUE
+water	174:12	0:0	6	nus
+op	174:15	0:0	6	->
+water	174:17	0:0	6	keyframe_pts
+op	174:30	0:0	6	&&
+water	174:33	0:0	6	nus
+op	174:36	0:0	6	->
+water	174:38	0:0	6	keyframe_pts
+op	174:50	0:0	6	[
+water	174:51	0:0	6	nut
+op	174:54	0:0	6	->
+water	174:56	0:0	6	sp_count
+op	174:64	0:0	6	]
+op	174:66	0:0	6	==
+water	174:69	0:0	6	AV_NOPTS_VALUE
+stmts	175:12	175:55	5	
+water	175:12	0:0	6	nus
+op	175:15	0:0	6	->
+water	175:17	0:0	6	keyframe_pts
+op	175:29	0:0	6	[
+water	175:30	0:0	6	nut
+op	175:33	0:0	6	->
+water	175:35	0:0	6	sp_count
+op	175:43	0:0	6	]
+op	175:45	0:0	6	=
+water	175:47	0:0	6	pkt
+op	175:50	0:0	6	->
+water	175:52	0:0	6	pts
+water	175:55	0:0	6	;
+water	176:4	0:0	4	}
+if	177:4	180:4	2	(! nut -> max_pts_tb ||av_compare_ts (nut -> max_pts ,* nut -> max_pts_tb ,pkt -> pts ,* nus -> time_base ) < 0)
+cond	177:8	177:103	3	! nut -> max_pts_tb ||av_compare_ts (nut -> max_pts ,* nut -> max_pts_tb ,pkt -> pts ,* nus -> time_base ) < 0
+op	177:8	0:0	4	!
+water	177:9	0:0	4	nut
+op	177:12	0:0	4	->
+water	177:14	0:0	4	max_pts_tb
+op	177:25	0:0	4	||
+call	177:28	177:99	4	av_compare_ts
+arg	177:42	177:54	5	nut->max_pts
+water	177:42	0:0	6	nut
+op	177:45	0:0	6	->
+water	177:47	0:0	6	max_pts
+arg	177:56	177:72	5	*nut->max_pts_tb
+op	177:56	0:0	6	*
+water	177:57	0:0	6	nut
+op	177:60	0:0	6	->
+water	177:62	0:0	6	max_pts_tb
+arg	177:74	177:82	5	pkt->pts
+water	177:74	0:0	6	pkt
+op	177:77	0:0	6	->
+water	177:79	0:0	6	pts
+arg	177:84	177:99	5	*nus->time_base
+op	177:84	0:0	6	*
+water	177:85	0:0	6	nus
+op	177:88	0:0	6	->
+water	177:90	0:0	6	time_base
+op	177:101	0:0	4	<
+water	177:103	0:0	4	0
+stmts	177:106	180:4	3	
+water	177:106	0:0	4	{
+water	178:8	0:0	4	nut
+op	178:11	0:0	4	->
+water	178:13	0:0	4	max_pts
+op	178:21	0:0	4	=
+water	178:23	0:0	4	pkt
+op	178:26	0:0	4	->
+water	178:28	0:0	4	pts
+water	178:31	0:0	4	;
+water	179:8	0:0	4	nut
+op	179:11	0:0	4	->
+water	179:13	0:0	4	max_pts_tb
+op	179:24	0:0	4	=
+water	179:26	0:0	4	nus
+op	179:29	0:0	4	->
+water	179:31	0:0	4	time_base
+water	179:40	0:0	4	;
+water	180:4	0:0	4	}
+label	181:0	181:4	2	fail :
+call	182:4	182:20	2	av_freep
+arg	182:13	182:20	3	&sm_buf
+op	182:13	0:0	4	&
+water	182:14	0:0	4	sm_buf
+water	182:21	0:0	2	;
+return	183:4	183:14	2	ret
+water	183:11	0:0	3	ret

@@ -1,0 +1,140 @@
+func	1:0	24:0	0	static int	mxf_parse_klv
+params	1:24	0:0	1	
+param	1:25	1:40	2	MXFContext *	mxf
+param	1:42	1:55	2	KLVPacket	klv
+param	1:57	1:82	2	MXFMetadataReadFunc *	read
+param	2:37	2:49	2	int	ctx_size
+param	2:51	2:79	2	enum MXFMetadataSetType	type
+stmnts	0:0	23:12	1	
+decl	4:4	4:32	2	AVFormatContext	*s
+op	4:23	0:0	2	=
+water	4:25	0:0	2	mxf
+op	4:28	0:0	2	->
+water	4:30	0:0	2	fc
+decl	5:4	5:11	2	int	res
+if	6:4	8:4	2	(klv . key [ 5 ] == 0 x53)
+cond	6:8	6:23	3	klv . key [ 5 ] == 0 x53
+water	6:8	0:0	4	klv
+op	6:11	0:0	4	.
+water	6:12	0:0	4	key
+op	6:15	0:0	4	[
+water	6:16	0:0	4	5
+op	6:17	0:0	4	]
+op	6:19	0:0	4	==
+water	6:22	0:0	4	0
+water	6:23	0:0	4	x53
+stmts	6:28	8:4	3	
+water	6:28	0:0	4	{
+water	7:8	0:0	4	res
+op	7:12	0:0	4	=
+call	7:14	7:65	4	mxf_read_local_tags
+arg	7:34	7:37	5	mxf
+water	7:34	0:0	6	mxf
+arg	7:39	7:43	5	&klv
+op	7:39	0:0	6	&
+water	7:40	0:0	6	klv
+arg	7:45	7:49	5	read
+water	7:45	0:0	6	read
+arg	7:51	7:59	5	ctx_size
+water	7:51	0:0	6	ctx_size
+arg	7:61	7:65	5	type
+water	7:61	0:0	6	type
+water	7:66	0:0	4	;
+water	8:4	0:0	4	}
+else	8:6	18:4	2
+stmts	8:11	18:4	3	
+water	8:11	0:0	4	{
+decl	9:8	9:53	4	uint64_t	next
+op	9:22	0:0	4	=
+call	9:24	9:39	5	avio_tell
+arg	9:34	9:39	6	s->pb
+water	9:34	0:0	7	s
+op	9:35	0:0	7	->
+water	9:37	0:0	7	pb
+op	9:41	0:0	4	+
+water	9:43	0:0	4	klv
+op	9:46	0:0	4	.
+water	9:47	0:0	4	length
+water	10:8	0:0	4	res
+op	10:12	0:0	4	=
+call	10:14	10:65	4	read
+arg	10:19	10:22	5	mxf
+water	10:19	0:0	6	mxf
+arg	10:24	10:29	5	s->pb
+water	10:24	0:0	6	s
+op	10:25	0:0	6	->
+water	10:27	0:0	6	pb
+arg	10:31	10:32	5	0
+water	10:31	0:0	6	0
+arg	10:34	10:44	5	klv.length
+water	10:34	0:0	6	klv
+op	10:37	0:0	6	.
+water	10:38	0:0	6	length
+arg	10:46	10:53	5	klv.key
+water	10:46	0:0	6	klv
+op	10:49	0:0	6	.
+water	10:50	0:0	6	key
+arg	10:55	10:65	5	klv.offset
+water	10:55	0:0	6	klv
+op	10:58	0:0	6	.
+water	10:59	0:0	6	offset
+water	10:66	0:0	4	;
+if	12:8	16:8	4	(avio_tell (s -> pb ) > next)
+cond	12:12	12:31	5	avio_tell (s -> pb ) > next
+call	12:12	12:27	6	avio_tell
+arg	12:22	12:27	7	s->pb
+water	12:22	0:0	8	s
+op	12:23	0:0	8	->
+water	12:25	0:0	8	pb
+op	12:29	0:0	6	>
+water	12:31	0:0	6	next
+stmts	12:37	16:8	5	
+water	12:37	0:0	6	{
+call	13:12	14:29	6	av_log
+arg	13:19	13:20	7	s
+water	13:19	0:0	8	s
+arg	13:22	13:34	7	AV_LOG_ERROR
+water	13:22	0:0	8	AV_LOG_ERROR
+arg	13:36	13:73	7	"read past end of KLV @ %#"PRIx64"\n"
+water	13:36	0:0	8	"read past end of KLV @ %#"
+water	13:63	0:0	8	PRIx64
+water	13:69	0:0	8	"\n"
+arg	14:19	14:29	7	klv.offset
+water	14:19	0:0	8	klv
+op	14:22	0:0	8	.
+water	14:23	0:0	8	offset
+water	14:30	0:0	6	;
+return	15:12	15:38	6	AVERROR_INVALIDDATA
+water	15:19	0:0	7	AVERROR_INVALIDDATA
+water	16:8	0:0	6	}
+call	17:8	17:39	4	avio_seek
+arg	17:18	17:23	5	s->pb
+water	17:18	0:0	6	s
+op	17:19	0:0	6	->
+water	17:21	0:0	6	pb
+arg	17:25	17:29	5	next
+water	17:25	0:0	6	next
+arg	17:31	17:39	5	SEEK_SET
+water	17:31	0:0	6	SEEK_SET
+water	17:40	0:0	4	;
+water	18:4	0:0	4	}
+if	19:4	22:4	2	(res < 0)
+cond	19:8	19:14	3	res < 0
+water	19:8	0:0	4	res
+op	19:12	0:0	4	<
+water	19:14	0:0	4	0
+stmts	19:17	22:4	3	
+water	19:17	0:0	4	{
+call	20:8	20:65	4	av_log
+arg	20:15	20:16	5	s
+water	20:15	0:0	6	s
+arg	20:18	20:30	5	AV_LOG_ERROR
+water	20:18	0:0	6	AV_LOG_ERROR
+arg	20:32	20:65	5	"error reading header metadata\n"
+water	20:32	0:0	6	"error reading header metadata\n"
+water	20:66	0:0	4	;
+return	21:8	21:18	4	res
+water	21:15	0:0	5	res
+water	22:4	0:0	4	}
+return	23:4	23:12	2	0
+water	23:11	0:0	3	0

@@ -1,0 +1,85 @@
+func	1:0	14:0	0	static int	validate_acl_list
+params	1:28	0:0	1	
+param	1:29	1:57	2	FFServerIPAddressACL *	in_acl
+param	1:59	1:73	2	HTTPContext *	c
+stmnts	0:0	13:43	1	
+decl	3:4	3:54	2	enum FFServerIPAddressAction	last_action
+op	3:45	0:0	2	=
+water	3:47	0:0	2	IP_DENY
+decl	4:4	4:29	2	FFServerIPAddressACL	*acl
+decl	5:4	5:48	2	struct in_addr	*src
+op	5:24	0:0	2	=
+op	5:26	0:0	2	&
+water	5:27	0:0	2	c
+op	5:28	0:0	2	->
+water	5:30	0:0	2	from_addr
+op	5:39	0:0	2	.
+water	5:40	0:0	2	sin_addr
+decl	6:4	6:40	2	unsigned long	src_addr
+op	6:27	0:0	2	=
+water	6:29	0:0	2	src
+op	6:32	0:0	2	->
+water	6:34	0:0	2	s_addr
+for	7:4	11:4	2	(acl = in_acl ;acl;acl = acl -> next)
+forinit	7:9	7:21	3	acl = in_acl ;
+water	7:9	0:0	4	acl
+op	7:13	0:0	4	=
+water	7:15	0:0	4	in_acl
+water	7:21	0:0	4	;
+cond	7:23	7:23	3	acl
+water	7:23	0:0	4	acl
+forexpr	7:28	7:39	3	acl = acl -> next
+water	7:28	0:0	4	acl
+op	7:32	0:0	4	=
+water	7:34	0:0	4	acl
+op	7:37	0:0	4	->
+water	7:39	0:0	4	next
+stmts	7:45	11:4	3	
+water	7:45	0:0	4	{
+if	8:8	9:52	4	(src_addr >= acl -> first . s_addr && src_addr <= acl -> last . s_addr)
+cond	8:12	8:67	5	src_addr >= acl -> first . s_addr && src_addr <= acl -> last . s_addr
+water	8:12	0:0	6	src_addr
+op	8:21	0:0	6	>=
+water	8:24	0:0	6	acl
+op	8:27	0:0	6	->
+water	8:29	0:0	6	first
+op	8:34	0:0	6	.
+water	8:35	0:0	6	s_addr
+op	8:42	0:0	6	&&
+water	8:45	0:0	6	src_addr
+op	8:54	0:0	6	<=
+water	8:57	0:0	6	acl
+op	8:60	0:0	6	->
+water	8:62	0:0	6	last
+op	8:66	0:0	6	.
+water	8:67	0:0	6	s_addr
+stmts	9:12	9:52	5	
+return	9:12	9:52	6	(acl->action==IP_ALLOW)?1:0
+water	9:19	0:0	7	(
+water	9:20	0:0	7	acl
+op	9:23	0:0	7	->
+water	9:25	0:0	7	action
+op	9:32	0:0	7	==
+water	9:35	0:0	7	IP_ALLOW
+water	9:43	0:0	7	)
+water	9:45	0:0	7	?
+water	9:47	0:0	7	1
+water	9:49	0:0	7	:
+water	9:51	0:0	7	0
+water	10:8	0:0	4	last_action
+op	10:20	0:0	4	=
+water	10:22	0:0	4	acl
+op	10:25	0:0	4	->
+water	10:27	0:0	4	action
+water	10:33	0:0	4	;
+water	11:4	0:0	4	}
+return	13:4	13:43	2	(last_action==IP_DENY)?1:0
+water	13:11	0:0	3	(
+water	13:12	0:0	3	last_action
+op	13:24	0:0	3	==
+water	13:27	0:0	3	IP_DENY
+water	13:34	0:0	3	)
+water	13:36	0:0	3	?
+water	13:38	0:0	3	1
+water	13:40	0:0	3	:
+water	13:42	0:0	3	0

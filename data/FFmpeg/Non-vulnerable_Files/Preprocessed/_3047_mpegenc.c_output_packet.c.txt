@@ -1,0 +1,719 @@
+func	1:0	124:0	0	static int	output_packet
+params	1:24	0:0	1	
+param	1:25	1:45	2	AVFormatContext *	ctx
+param	1:47	1:56	2	int	flush
+stmnts	0:0	123:12	1	
+decl	3:4	3:38	2	MpegMuxContext	*s
+op	3:22	0:0	2	=
+water	3:24	0:0	2	ctx
+op	3:27	0:0	2	->
+water	3:29	0:0	2	priv_data
+decl	4:4	4:16	2	AVStream	*st
+decl	5:4	5:22	2	StreamInfo	*stream
+decl	6:4	6:49	2	int	i
+water	6:9	0:0	2	,
+decl	6:4	6:49	2	int	avail_space
+op	6:23	0:0	2	=
+water	6:25	0:0	2	0
+water	6:26	0:0	2	,
+decl	6:4	6:49	2	int	es_size
+water	6:35	0:0	2	,
+decl	6:4	6:49	2	int	trailer_size
+decl	7:4	7:19	2	int	best_i
+op	7:15	0:0	2	=
+op	7:17	0:0	2	-
+water	7:18	0:0	2	1
+decl	8:4	8:28	2	int	best_score
+op	8:19	0:0	2	=
+water	8:21	0:0	2	INT_MIN
+decl	9:4	9:30	2	int	ignore_constraints
+op	9:27	0:0	2	=
+water	9:29	0:0	2	0
+decl	10:4	10:24	2	int	ignore_delay
+op	10:21	0:0	2	=
+water	10:23	0:0	2	0
+decl	11:4	11:29	2	int64_t	scr
+op	11:16	0:0	2	=
+water	11:18	0:0	2	s
+op	11:19	0:0	2	->
+water	11:21	0:0	2	last_scr
+decl	12:4	12:32	2	PacketDesc	*timestamp_packet
+decl	13:4	13:77	2	const int64_t	max_delay
+op	13:28	0:0	2	=
+call	13:30	13:76	3	av_rescale
+arg	13:41	13:55	4	ctx->max_delay
+water	13:41	0:0	5	ctx
+op	13:44	0:0	5	->
+water	13:46	0:0	5	max_delay
+arg	13:57	13:62	4	90000
+water	13:57	0:0	5	90000
+arg	13:64	13:76	4	AV_TIME_BASE
+water	13:64	0:0	5	AV_TIME_BASE
+label	14:0	14:5	2	retry :
+for	15:4	42:4	2	(i = 0 ;i < ctx -> nb_streams;i ++)
+forinit	15:9	15:14	3	i = 0 ;
+water	15:9	0:0	4	i
+op	15:11	0:0	4	=
+water	15:13	0:0	4	0
+water	15:14	0:0	4	;
+cond	15:16	15:25	3	i < ctx -> nb_streams
+water	15:16	0:0	4	i
+op	15:18	0:0	4	<
+water	15:20	0:0	4	ctx
+op	15:23	0:0	4	->
+water	15:25	0:0	4	nb_streams
+forexpr	15:37	15:38	3	i ++
+water	15:37	0:0	4	i
+op	15:38	0:0	4	++
+stmts	15:42	42:4	3	
+water	15:42	0:0	4	{
+decl	16:8	16:38	4	AVStream	*st
+op	16:21	0:0	4	=
+water	16:23	0:0	4	ctx
+op	16:26	0:0	4	->
+water	16:28	0:0	4	streams
+op	16:35	0:0	4	[
+water	16:36	0:0	4	i
+op	16:37	0:0	4	]
+decl	17:8	17:42	4	StreamInfo	*stream
+op	17:27	0:0	4	=
+water	17:29	0:0	4	st
+op	17:31	0:0	4	->
+water	17:33	0:0	4	priv_data
+decl	18:8	18:57	4	const int	avail_data
+op	18:29	0:0	4	=
+call	18:31	18:56	5	av_fifo_size
+arg	18:44	18:56	6	stream->fifo
+water	18:44	0:0	7	stream
+op	18:50	0:0	7	->
+water	18:52	0:0	7	fifo
+decl	19:8	19:72	4	const int	space
+op	19:24	0:0	4	=
+water	19:26	0:0	4	stream
+op	19:32	0:0	4	->
+water	19:34	0:0	4	max_buffer_size
+op	19:50	0:0	4	-
+water	19:52	0:0	4	stream
+op	19:58	0:0	4	->
+water	19:60	0:0	4	buffer_index
+decl	20:8	20:64	4	int	rel_space
+op	20:22	0:0	4	=
+water	20:24	0:0	4	1024
+water	20:28	0:0	4	LL
+op	20:31	0:0	4	*
+water	20:33	0:0	4	space
+op	20:39	0:0	4	/
+water	20:41	0:0	4	stream
+op	20:47	0:0	4	->
+water	20:49	0:0	4	max_buffer_size
+decl	21:8	21:52	4	PacketDesc	*next_pkt
+op	21:29	0:0	4	=
+water	21:31	0:0	4	stream
+op	21:37	0:0	4	->
+water	21:39	0:0	4	premux_packet
+if	24:8	26:20	4	(s -> packet_size > avail_data && ! flush && st -> codec -> codec_type != AVMEDIA_TYPE_SUBTITLE)
+cond	24:12	25:40	5	s -> packet_size > avail_data && ! flush && st -> codec -> codec_type != AVMEDIA_TYPE_SUBTITLE
+water	24:12	0:0	6	s
+op	24:13	0:0	6	->
+water	24:15	0:0	6	packet_size
+op	24:27	0:0	6	>
+water	24:29	0:0	6	avail_data
+op	24:40	0:0	6	&&
+op	24:43	0:0	6	!
+water	24:44	0:0	6	flush
+op	25:12	0:0	6	&&
+water	25:15	0:0	6	st
+op	25:17	0:0	6	->
+water	25:19	0:0	6	codec
+op	25:24	0:0	6	->
+water	25:26	0:0	6	codec_type
+op	25:37	0:0	6	!=
+water	25:40	0:0	6	AVMEDIA_TYPE_SUBTITLE
+stmts	26:12	26:20	5	
+return	26:12	26:20	6	0
+water	26:19	0:0	7	0
+if	27:8	28:20	4	(avail_data == 0)
+cond	27:12	27:26	5	avail_data == 0
+water	27:12	0:0	6	avail_data
+op	27:23	0:0	6	==
+water	27:26	0:0	6	0
+stmts	28:12	28:20	5	
+continue	28:12	28:20	6	
+call	29:8	29:33	4	av_assert0
+arg	29:19	29:33	5	avail_data>0
+water	29:19	0:0	6	avail_data
+op	29:30	0:0	6	>
+water	29:32	0:0	6	0
+water	29:34	0:0	4	;
+if	30:8	31:20	4	(space < s -> packet_size && ! ignore_constraints)
+cond	30:12	30:39	5	space < s -> packet_size && ! ignore_constraints
+water	30:12	0:0	6	space
+op	30:18	0:0	6	<
+water	30:20	0:0	6	s
+op	30:21	0:0	6	->
+water	30:23	0:0	6	packet_size
+op	30:35	0:0	6	&&
+op	30:38	0:0	6	!
+water	30:39	0:0	6	ignore_constraints
+stmts	31:12	31:20	5	
+continue	31:12	31:20	6	
+if	32:8	33:20	4	(next_pkt && next_pkt -> dts - scr > max_delay && ! ignore_delay)
+cond	32:12	32:60	5	next_pkt && next_pkt -> dts - scr > max_delay && ! ignore_delay
+water	32:12	0:0	6	next_pkt
+op	32:21	0:0	6	&&
+water	32:24	0:0	6	next_pkt
+op	32:32	0:0	6	->
+water	32:34	0:0	6	dts
+op	32:38	0:0	6	-
+water	32:40	0:0	6	scr
+op	32:44	0:0	6	>
+water	32:46	0:0	6	max_delay
+op	32:56	0:0	6	&&
+op	32:59	0:0	6	!
+water	32:60	0:0	6	ignore_delay
+stmts	33:12	33:20	5	
+continue	33:12	33:20	6	
+if	34:8	36:30	4	(stream -> predecode_packet && stream -> predecode_packet -> size > stream -> buffer_index)
+cond	34:15	35:56	5	stream -> predecode_packet && stream -> predecode_packet -> size > stream -> buffer_index
+water	34:15	0:0	6	stream
+op	34:21	0:0	6	->
+water	34:23	0:0	6	predecode_packet
+op	35:12	0:0	6	&&
+water	35:15	0:0	6	stream
+op	35:21	0:0	6	->
+water	35:23	0:0	6	predecode_packet
+op	35:39	0:0	6	->
+water	35:41	0:0	6	size
+op	35:46	0:0	6	>
+water	35:48	0:0	6	stream
+op	35:54	0:0	6	->
+water	35:56	0:0	6	buffer_index
+stmts	36:12	36:30	5	
+water	36:12	0:0	6	rel_space
+op	36:22	0:0	6	+=
+water	36:25	0:0	6	1
+op	36:26	0:0	6	<<
+water	36:28	0:0	6	28
+water	36:30	0:0	6	;
+if	37:8	41:8	4	(rel_space > best_score)
+cond	37:12	37:24	5	rel_space > best_score
+water	37:12	0:0	6	rel_space
+op	37:22	0:0	6	>
+water	37:24	0:0	6	best_score
+stmts	37:36	41:8	5	
+water	37:36	0:0	6	{
+water	38:12	0:0	6	best_score
+op	38:24	0:0	6	=
+water	38:26	0:0	6	rel_space
+water	38:35	0:0	6	;
+water	39:12	0:0	6	best_i
+op	39:24	0:0	6	=
+water	39:26	0:0	6	i
+water	39:27	0:0	6	;
+water	40:12	0:0	6	avail_space
+op	40:24	0:0	6	=
+water	40:26	0:0	6	space
+water	40:31	0:0	6	;
+water	41:8	0:0	6	}
+water	42:4	0:0	4	}
+if	43:4	73:4	2	(best_i < 0)
+cond	43:8	43:17	3	best_i < 0
+water	43:8	0:0	4	best_i
+op	43:15	0:0	4	<
+water	43:17	0:0	4	0
+stmts	43:20	73:4	3	
+water	43:20	0:0	4	{
+decl	44:8	44:36	4	int64_t	best_dts
+op	44:25	0:0	4	=
+water	44:27	0:0	4	INT64_MAX
+decl	45:8	45:26	4	int	has_premux
+op	45:23	0:0	4	=
+water	45:25	0:0	4	0
+for	46:8	53:8	4	(i = 0 ;i < ctx -> nb_streams;i ++)
+forinit	46:13	46:18	5	i = 0 ;
+water	46:13	0:0	6	i
+op	46:15	0:0	6	=
+water	46:17	0:0	6	0
+water	46:18	0:0	6	;
+cond	46:20	46:29	5	i < ctx -> nb_streams
+water	46:20	0:0	6	i
+op	46:22	0:0	6	<
+water	46:24	0:0	6	ctx
+op	46:27	0:0	6	->
+water	46:29	0:0	6	nb_streams
+forexpr	46:41	46:42	5	i ++
+water	46:41	0:0	6	i
+op	46:42	0:0	6	++
+stmts	46:46	53:8	5	
+water	46:46	0:0	6	{
+decl	47:12	47:42	6	AVStream	*st
+op	47:25	0:0	6	=
+water	47:27	0:0	6	ctx
+op	47:30	0:0	6	->
+water	47:32	0:0	6	streams
+op	47:39	0:0	6	[
+water	47:40	0:0	6	i
+op	47:41	0:0	6	]
+decl	48:12	48:46	6	StreamInfo	*stream
+op	48:31	0:0	6	=
+water	48:33	0:0	6	st
+op	48:35	0:0	6	->
+water	48:37	0:0	6	priv_data
+decl	49:12	49:59	6	PacketDesc	*pkt_desc
+op	49:33	0:0	6	=
+water	49:35	0:0	6	stream
+op	49:41	0:0	6	->
+water	49:43	0:0	6	predecode_packet
+if	50:12	51:40	6	(pkt_desc && pkt_desc -> dts < best_dts)
+cond	50:16	50:44	7	pkt_desc && pkt_desc -> dts < best_dts
+water	50:16	0:0	8	pkt_desc
+op	50:25	0:0	8	&&
+water	50:28	0:0	8	pkt_desc
+op	50:36	0:0	8	->
+water	50:38	0:0	8	dts
+op	50:42	0:0	8	<
+water	50:44	0:0	8	best_dts
+stmts	51:16	51:40	7	
+water	51:16	0:0	8	best_dts
+op	51:25	0:0	8	=
+water	51:27	0:0	8	pkt_desc
+op	51:35	0:0	8	->
+water	51:37	0:0	8	dts
+water	51:40	0:0	8	;
+water	52:12	0:0	6	has_premux
+op	52:23	0:0	6	|=
+op	52:26	0:0	6	!
+op	52:27	0:0	6	!
+water	52:28	0:0	6	stream
+op	52:34	0:0	6	->
+water	52:36	0:0	6	premux_packet
+water	52:49	0:0	6	;
+water	53:8	0:0	6	}
+if	54:8	65:8	4	(best_dts < INT64_MAX)
+cond	54:12	54:23	5	best_dts < INT64_MAX
+water	54:12	0:0	6	best_dts
+op	54:21	0:0	6	<
+water	54:23	0:0	6	INT64_MAX
+stmts	54:34	65:8	5	
+water	54:34	0:0	6	{
+call	55:12	56:53	6	av_log
+arg	55:19	55:22	7	ctx
+water	55:19	0:0	8	ctx
+arg	55:24	55:36	7	AV_LOG_TRACE
+water	55:24	0:0	8	AV_LOG_TRACE
+arg	55:38	55:69	7	"bumping scr, scr:%f, dts:%f\n"
+water	55:38	0:0	8	"bumping scr, scr:%f, dts:%f\n"
+arg	56:20	56:33	7	scr/90000.0
+water	56:20	0:0	8	scr
+op	56:24	0:0	8	/
+water	56:26	0:0	8	90000
+op	56:31	0:0	8	.
+water	56:32	0:0	8	0
+arg	56:35	56:53	7	best_dts/90000.0
+water	56:35	0:0	8	best_dts
+op	56:44	0:0	8	/
+water	56:46	0:0	8	90000
+op	56:51	0:0	8	.
+water	56:52	0:0	8	0
+water	56:54	0:0	6	;
+if	57:12	61:12	6	(scr >= best_dts + 1 && ! ignore_constraints)
+cond	57:16	57:40	7	scr >= best_dts + 1 && ! ignore_constraints
+water	57:16	0:0	8	scr
+op	57:20	0:0	8	>=
+water	57:23	0:0	8	best_dts
+op	57:32	0:0	8	+
+water	57:34	0:0	8	1
+op	57:36	0:0	8	&&
+op	57:39	0:0	8	!
+water	57:40	0:0	8	ignore_constraints
+stmts	57:60	61:12	7	
+water	57:60	0:0	8	{
+call	58:16	59:74	8	av_log
+arg	58:23	58:26	9	ctx
+water	58:23	0:0	10	ctx
+arg	58:28	58:40	9	AV_LOG_ERROR
+water	58:28	0:0	10	AV_LOG_ERROR
+arg	59:20	59:74	9	"packet too large, ignoring buffer limits to mux it\n"
+water	59:20	0:0	10	"packet too large, ignoring buffer limits to mux it\n"
+water	59:75	0:0	8	;
+water	60:16	0:0	8	ignore_constraints
+op	60:35	0:0	8	=
+water	60:37	0:0	8	1
+water	60:38	0:0	8	;
+water	61:12	0:0	8	}
+water	62:12	0:0	6	scr
+op	62:16	0:0	6	=
+call	62:18	62:41	6	FFMAX
+arg	62:24	62:36	7	best_dts+1
+water	62:24	0:0	8	best_dts
+op	62:33	0:0	8	+
+water	62:35	0:0	8	1
+arg	62:38	62:41	7	scr
+water	62:38	0:0	8	scr
+water	62:42	0:0	6	;
+if	63:12	64:25	6	(remove_decoded_packets (ctx ,scr ) < 0)
+cond	63:16	63:51	7	remove_decoded_packets (ctx ,scr ) < 0
+call	63:16	63:47	8	remove_decoded_packets
+arg	63:39	63:42	9	ctx
+water	63:39	0:0	10	ctx
+arg	63:44	63:47	9	scr
+water	63:44	0:0	10	scr
+op	63:49	0:0	8	<
+water	63:51	0:0	8	0
+stmts	64:16	64:25	7	
+return	64:16	64:25	8	-1
+op	64:23	0:0	9	-
+water	64:24	0:0	9	1
+water	65:8	0:0	6	}
+else	65:10	70:8	4
+stmts	65:15	70:8	5	
+if	65:15	70:8	6	(has_premux && flush)
+cond	65:19	65:33	7	has_premux && flush
+water	65:19	0:0	8	has_premux
+op	65:30	0:0	8	&&
+water	65:33	0:0	8	flush
+stmts	65:40	70:8	7	
+water	65:40	0:0	8	{
+call	66:12	67:51	8	av_log
+arg	66:19	66:22	9	ctx
+water	66:19	0:0	10	ctx
+arg	66:24	66:36	9	AV_LOG_ERROR
+water	66:24	0:0	10	AV_LOG_ERROR
+arg	67:18	67:51	9	"delay too large, ignoring ...\n"
+water	67:18	0:0	10	"delay too large, ignoring ...\n"
+water	67:52	0:0	8	;
+water	68:12	0:0	8	ignore_delay
+op	68:25	0:0	8	=
+water	68:27	0:0	8	1
+water	68:28	0:0	8	;
+water	69:12	0:0	8	ignore_constraints
+op	69:31	0:0	8	=
+water	69:33	0:0	8	1
+water	69:34	0:0	8	;
+water	70:8	0:0	8	}
+else	70:10	71:20	4
+stmts	71:12	71:20	5	
+return	71:12	71:20	6	0
+water	71:19	0:0	7	0
+goto	72:8	72:18	4	retry
+water	72:13	0:0	5	retry
+water	73:4	0:0	4	}
+call	74:4	74:26	2	av_assert0
+arg	74:15	74:26	3	best_i>=0
+water	74:15	0:0	4	best_i
+op	74:22	0:0	4	>=
+water	74:25	0:0	4	0
+water	74:27	0:0	2	;
+water	75:4	0:0	2	st
+op	75:11	0:0	2	=
+water	75:13	0:0	2	ctx
+op	75:16	0:0	2	->
+water	75:18	0:0	2	streams
+op	75:25	0:0	2	[
+water	75:26	0:0	2	best_i
+op	75:32	0:0	2	]
+water	75:33	0:0	2	;
+water	76:4	0:0	2	stream
+op	76:11	0:0	2	=
+water	76:13	0:0	2	st
+op	76:15	0:0	2	->
+water	76:17	0:0	2	priv_data
+water	76:26	0:0	2	;
+call	77:4	77:45	2	av_assert0
+arg	77:15	77:45	3	av_fifo_size(stream->fifo)>0
+call	77:15	77:40	4	av_fifo_size
+arg	77:28	77:40	5	stream->fifo
+water	77:28	0:0	6	stream
+op	77:34	0:0	6	->
+water	77:36	0:0	6	fifo
+op	77:42	0:0	4	>
+water	77:44	0:0	4	0
+water	77:46	0:0	2	;
+call	78:4	78:66	2	av_assert0
+arg	78:15	78:66	3	avail_space>=s->packet_size||ignore_constraints
+water	78:15	0:0	4	avail_space
+op	78:27	0:0	4	>=
+water	78:30	0:0	4	s
+op	78:31	0:0	4	->
+water	78:33	0:0	4	packet_size
+op	78:45	0:0	4	||
+water	78:48	0:0	4	ignore_constraints
+water	78:67	0:0	2	;
+water	79:4	0:0	2	timestamp_packet
+op	79:21	0:0	2	=
+water	79:23	0:0	2	stream
+op	79:29	0:0	2	->
+water	79:31	0:0	2	premux_packet
+water	79:44	0:0	2	;
+if	80:4	82:4	2	(timestamp_packet -> unwritten_size == timestamp_packet -> size)
+cond	80:8	80:62	3	timestamp_packet -> unwritten_size == timestamp_packet -> size
+water	80:8	0:0	4	timestamp_packet
+op	80:24	0:0	4	->
+water	80:26	0:0	4	unwritten_size
+op	80:41	0:0	4	==
+water	80:44	0:0	4	timestamp_packet
+op	80:60	0:0	4	->
+water	80:62	0:0	4	size
+stmts	80:68	82:4	3	
+water	80:68	0:0	4	{
+water	81:8	0:0	4	trailer_size
+op	81:21	0:0	4	=
+water	81:23	0:0	4	0
+water	81:24	0:0	4	;
+water	82:4	0:0	4	}
+else	82:6	85:4	2
+stmts	82:11	85:4	3	
+water	82:11	0:0	4	{
+water	83:8	0:0	4	trailer_size
+op	83:25	0:0	4	=
+water	83:27	0:0	4	timestamp_packet
+op	83:43	0:0	4	->
+water	83:45	0:0	4	unwritten_size
+water	83:59	0:0	4	;
+water	84:8	0:0	4	timestamp_packet
+op	84:25	0:0	4	=
+water	84:27	0:0	4	timestamp_packet
+op	84:43	0:0	4	->
+water	84:45	0:0	4	next
+water	84:49	0:0	4	;
+water	85:4	0:0	4	}
+if	86:4	93:4	2	(timestamp_packet)
+cond	86:8	86:8	3	timestamp_packet
+water	86:8	0:0	4	timestamp_packet
+stmts	86:26	93:4	3	
+water	86:26	0:0	4	{
+call	87:8	90:37	4	av_log
+arg	87:15	87:18	5	ctx
+water	87:15	0:0	6	ctx
+arg	87:20	87:32	5	AV_LOG_TRACE
+water	87:20	0:0	6	AV_LOG_TRACE
+arg	87:34	87:68	5	"dts:%f pts:%f scr:%f stream:%d\n"
+water	87:34	0:0	6	"dts:%f pts:%f scr:%f stream:%d\n"
+arg	88:16	88:47	5	timestamp_packet->dts/90000.0
+water	88:16	0:0	6	timestamp_packet
+op	88:32	0:0	6	->
+water	88:34	0:0	6	dts
+op	88:38	0:0	6	/
+water	88:40	0:0	6	90000
+op	88:45	0:0	6	.
+water	88:46	0:0	6	0
+arg	89:16	89:47	5	timestamp_packet->pts/90000.0
+water	89:16	0:0	6	timestamp_packet
+op	89:32	0:0	6	->
+water	89:34	0:0	6	pts
+op	89:38	0:0	6	/
+water	89:40	0:0	6	90000
+op	89:45	0:0	6	.
+water	89:46	0:0	6	0
+arg	90:16	90:29	5	scr/90000.0
+water	90:16	0:0	6	scr
+op	90:20	0:0	6	/
+water	90:22	0:0	6	90000
+op	90:27	0:0	6	.
+water	90:28	0:0	6	0
+arg	90:31	90:37	5	best_i
+water	90:31	0:0	6	best_i
+water	90:38	0:0	4	;
+water	91:8	0:0	4	es_size
+op	91:16	0:0	4	=
+call	91:18	92:71	4	flush_packet
+arg	91:31	91:34	5	ctx
+water	91:31	0:0	6	ctx
+arg	91:36	91:42	5	best_i
+water	91:36	0:0	6	best_i
+arg	91:44	91:65	5	timestamp_packet->pts
+water	91:44	0:0	6	timestamp_packet
+op	91:60	0:0	6	->
+water	91:62	0:0	6	pts
+arg	92:31	92:52	5	timestamp_packet->dts
+water	92:31	0:0	6	timestamp_packet
+op	92:47	0:0	6	->
+water	92:49	0:0	6	dts
+arg	92:54	92:57	5	scr
+water	92:54	0:0	6	scr
+arg	92:59	92:71	5	trailer_size
+water	92:59	0:0	6	trailer_size
+water	92:72	0:0	4	;
+water	93:4	0:0	4	}
+else	93:6	97:4	2
+stmts	93:11	97:4	3	
+water	93:11	0:0	4	{
+call	94:8	94:61	4	av_assert0
+arg	94:19	94:61	5	av_fifo_size(stream->fifo)==trailer_size
+call	94:19	94:44	6	av_fifo_size
+arg	94:32	94:44	7	stream->fifo
+water	94:32	0:0	8	stream
+op	94:38	0:0	8	->
+water	94:40	0:0	8	fifo
+op	94:46	0:0	6	==
+water	94:49	0:0	6	trailer_size
+water	94:62	0:0	4	;
+water	95:8	0:0	4	es_size
+op	95:16	0:0	4	=
+call	95:18	96:43	4	flush_packet
+arg	95:31	95:34	5	ctx
+water	95:31	0:0	6	ctx
+arg	95:36	95:42	5	best_i
+water	95:36	0:0	6	best_i
+arg	95:44	95:58	5	AV_NOPTS_VALUE
+water	95:44	0:0	6	AV_NOPTS_VALUE
+arg	95:60	95:74	5	AV_NOPTS_VALUE
+water	95:60	0:0	6	AV_NOPTS_VALUE
+arg	95:76	95:79	5	scr
+water	95:76	0:0	6	scr
+arg	96:31	96:43	5	trailer_size
+water	96:31	0:0	6	trailer_size
+water	96:44	0:0	4	;
+water	97:4	0:0	4	}
+if	98:4	108:4	2	(s -> is_vcd)
+cond	98:8	98:11	3	s -> is_vcd
+water	98:8	0:0	4	s
+op	98:9	0:0	4	->
+water	98:11	0:0	4	is_vcd
+stmts	98:19	108:4	3	
+water	98:19	0:0	4	{
+decl	101:8	101:25	4	int	vcd_pad_bytes
+while	103:8	107:8	4	(( vcd_pad_bytes =get_vcd_padding_size (ctx ,stream -> premux_packet -> pts ) ) >= s -> packet_size)
+cond	103:15	103:93	5	( vcd_pad_bytes =get_vcd_padding_size (ctx ,stream -> premux_packet -> pts ) ) >= s -> packet_size
+water	103:15	0:0	6	(
+water	103:16	0:0	6	vcd_pad_bytes
+op	103:30	0:0	6	=
+call	103:32	103:84	6	get_vcd_padding_size
+arg	103:53	103:56	7	ctx
+water	103:53	0:0	8	ctx
+arg	103:58	103:84	7	stream->premux_packet->pts
+water	103:58	0:0	8	stream
+op	103:64	0:0	8	->
+water	103:66	0:0	8	premux_packet
+op	103:79	0:0	8	->
+water	103:81	0:0	8	pts
+water	103:85	0:0	6	)
+op	103:87	0:0	6	>=
+water	103:90	0:0	6	s
+op	103:91	0:0	6	->
+water	103:93	0:0	6	packet_size
+stmts	103:106	107:8	5	
+water	103:106	0:0	6	{
+call	104:12	104:38	6	put_vcd_padding_sector
+arg	104:35	104:38	7	ctx
+water	104:35	0:0	8	ctx
+water	104:39	0:0	6	;
+water	106:12	0:0	6	s
+op	106:13	0:0	6	->
+water	106:15	0:0	6	last_scr
+op	106:24	0:0	6	+=
+water	106:27	0:0	6	s
+op	106:28	0:0	6	->
+water	106:30	0:0	6	packet_size
+op	106:42	0:0	6	*
+water	106:44	0:0	6	90000
+water	106:49	0:0	6	LL
+op	106:52	0:0	6	/
+water	106:54	0:0	6	(
+water	106:55	0:0	6	s
+op	106:56	0:0	6	->
+water	106:58	0:0	6	mux_rate
+op	106:67	0:0	6	*
+water	106:69	0:0	6	50
+water	106:71	0:0	6	LL
+water	106:73	0:0	6	)
+water	106:74	0:0	6	;
+water	107:8	0:0	6	}
+water	108:4	0:0	4	}
+water	109:4	0:0	2	stream
+op	109:10	0:0	2	->
+water	109:12	0:0	2	buffer_index
+op	109:25	0:0	2	+=
+water	109:28	0:0	2	es_size
+water	109:35	0:0	2	;
+water	111:4	0:0	2	s
+op	111:5	0:0	2	->
+water	111:7	0:0	2	last_scr
+op	111:25	0:0	2	+=
+water	111:28	0:0	2	s
+op	111:29	0:0	2	->
+water	111:31	0:0	2	packet_size
+op	111:43	0:0	2	*
+water	111:45	0:0	2	90000
+water	111:50	0:0	2	LL
+op	111:53	0:0	2	/
+water	111:55	0:0	2	(
+water	111:56	0:0	2	s
+op	111:57	0:0	2	->
+water	111:59	0:0	2	mux_rate
+op	111:68	0:0	2	*
+water	111:70	0:0	2	50
+water	111:72	0:0	2	LL
+water	111:74	0:0	2	)
+water	111:75	0:0	2	;
+while	112:4	116:4	2	(stream -> premux_packet && stream -> premux_packet -> unwritten_size <= es_size)
+cond	112:11	113:52	3	stream -> premux_packet && stream -> premux_packet -> unwritten_size <= es_size
+water	112:11	0:0	4	stream
+op	112:17	0:0	4	->
+water	112:19	0:0	4	premux_packet
+op	112:33	0:0	4	&&
+water	113:11	0:0	4	stream
+op	113:17	0:0	4	->
+water	113:19	0:0	4	premux_packet
+op	113:32	0:0	4	->
+water	113:34	0:0	4	unwritten_size
+op	113:49	0:0	4	<=
+water	113:52	0:0	4	es_size
+stmts	113:61	116:4	3	
+water	113:61	0:0	4	{
+water	114:8	0:0	4	es_size
+op	114:29	0:0	4	-=
+water	114:32	0:0	4	stream
+op	114:38	0:0	4	->
+water	114:40	0:0	4	premux_packet
+op	114:53	0:0	4	->
+water	114:55	0:0	4	unwritten_size
+water	114:69	0:0	4	;
+water	115:8	0:0	4	stream
+op	115:14	0:0	4	->
+water	115:16	0:0	4	premux_packet
+op	115:30	0:0	4	=
+water	115:32	0:0	4	stream
+op	115:38	0:0	4	->
+water	115:40	0:0	4	premux_packet
+op	115:53	0:0	4	->
+water	115:55	0:0	4	next
+water	115:59	0:0	4	;
+water	116:4	0:0	4	}
+if	117:4	120:4	2	(es_size)
+cond	117:8	117:8	3	es_size
+water	117:8	0:0	4	es_size
+stmts	117:17	120:4	3	
+water	117:17	0:0	4	{
+call	118:8	118:40	4	av_assert0
+arg	118:19	118:40	5	stream->premux_packet
+water	118:19	0:0	6	stream
+op	118:25	0:0	6	->
+water	118:27	0:0	6	premux_packet
+water	118:41	0:0	4	;
+water	119:8	0:0	4	stream
+op	119:14	0:0	4	->
+water	119:16	0:0	4	premux_packet
+op	119:29	0:0	4	->
+water	119:31	0:0	4	unwritten_size
+op	119:46	0:0	4	-=
+water	119:49	0:0	4	es_size
+water	119:56	0:0	4	;
+water	120:4	0:0	4	}
+if	121:4	122:17	2	(remove_decoded_packets (ctx ,s -> last_scr ) < 0)
+cond	121:8	121:51	3	remove_decoded_packets (ctx ,s -> last_scr ) < 0
+call	121:8	121:47	4	remove_decoded_packets
+arg	121:31	121:34	5	ctx
+water	121:31	0:0	6	ctx
+arg	121:36	121:47	5	s->last_scr
+water	121:36	0:0	6	s
+op	121:37	0:0	6	->
+water	121:39	0:0	6	last_scr
+op	121:49	0:0	4	<
+water	121:51	0:0	4	0
+stmts	122:8	122:17	3	
+return	122:8	122:17	4	-1
+op	122:15	0:0	5	-
+water	122:16	0:0	5	1
+return	123:4	123:12	2	1
+water	123:11	0:0	3	1

@@ -1,0 +1,1469 @@
+func	1:0	250:0	0	static int	mpegts_push_data
+params	1:27	0:0	1	
+param	1:28	1:48	2	MpegTSFilter *	filter
+param	2:28	2:46	2	const uint8_t *	buf
+param	2:48	2:60	2	int	buf_size
+param	2:62	2:74	2	int	is_start
+param	3:28	3:39	2	int64_t	pos
+stmnts	0:0	249:12	1	
+decl	5:4	5:51	2	PESContext	*pes
+op	5:22	0:0	2	=
+water	5:24	0:0	2	filter
+op	5:30	0:0	2	->
+water	5:32	0:0	2	u
+op	5:33	0:0	2	.
+water	5:34	0:0	2	pes_filter
+op	5:44	0:0	2	.
+water	5:45	0:0	2	opaque
+decl	6:4	6:31	2	MpegTSContext	*ts
+op	6:22	0:0	2	=
+water	6:24	0:0	2	pes
+op	6:27	0:0	2	->
+water	6:29	0:0	2	ts
+decl	7:4	7:20	2	const uint8_t	*p
+decl	8:4	8:17	2	int	len
+water	8:11	0:0	2	,
+decl	8:4	8:17	2	int	code
+if	9:4	10:16	2	(! ts -> pkt)
+cond	9:8	9:13	3	! ts -> pkt
+op	9:8	0:0	4	!
+water	9:9	0:0	4	ts
+op	9:11	0:0	4	->
+water	9:13	0:0	4	pkt
+stmts	10:8	10:16	3	
+return	10:8	10:16	4	0
+water	10:15	0:0	5	0
+if	11:4	20:4	2	(is_start)
+cond	11:8	11:8	3	is_start
+water	11:8	0:0	4	is_start
+stmts	11:18	20:4	3	
+water	11:18	0:0	4	{
+if	12:8	15:8	4	(pes -> state == MPEGTS_PAYLOAD && pes -> data_index > 0)
+cond	12:12	12:62	5	pes -> state == MPEGTS_PAYLOAD && pes -> data_index > 0
+water	12:12	0:0	6	pes
+op	12:15	0:0	6	->
+water	12:17	0:0	6	state
+op	12:23	0:0	6	==
+water	12:26	0:0	6	MPEGTS_PAYLOAD
+op	12:41	0:0	6	&&
+water	12:44	0:0	6	pes
+op	12:47	0:0	6	->
+water	12:49	0:0	6	data_index
+op	12:60	0:0	6	>
+water	12:62	0:0	6	0
+stmts	12:65	15:8	5	
+water	12:65	0:0	6	{
+call	13:12	13:39	6	new_pes_packet
+arg	13:27	13:30	7	pes
+water	13:27	0:0	8	pes
+arg	13:32	13:39	7	ts->pkt
+water	13:32	0:0	8	ts
+op	13:34	0:0	8	->
+water	13:36	0:0	8	pkt
+water	13:40	0:0	6	;
+water	14:12	0:0	6	ts
+op	14:14	0:0	6	->
+water	14:16	0:0	6	stop_parse
+op	14:27	0:0	6	=
+water	14:29	0:0	6	1
+water	14:30	0:0	6	;
+water	15:8	0:0	6	}
+else	15:10	17:8	4
+stmts	15:15	17:8	5	
+water	15:15	0:0	6	{
+call	16:12	16:38	6	reset_pes_packet_state
+arg	16:35	16:38	7	pes
+water	16:35	0:0	8	pes
+water	16:39	0:0	6	;
+water	17:8	0:0	6	}
+water	18:8	0:0	4	pes
+op	18:11	0:0	4	->
+water	18:13	0:0	4	state
+op	18:27	0:0	4	=
+water	18:29	0:0	4	MPEGTS_HEADER
+water	18:42	0:0	4	;
+water	19:8	0:0	4	pes
+op	19:11	0:0	4	->
+water	19:13	0:0	4	ts_packet_pos
+op	19:27	0:0	4	=
+water	19:29	0:0	4	pos
+water	19:32	0:0	4	;
+water	20:4	0:0	4	}
+water	21:4	0:0	2	p
+op	21:6	0:0	2	=
+water	21:8	0:0	2	buf
+water	21:11	0:0	2	;
+while	22:4	248:4	2	(buf_size > 0)
+cond	22:11	22:22	3	buf_size > 0
+water	22:11	0:0	4	buf_size
+op	22:20	0:0	4	>
+water	22:22	0:0	4	0
+stmts	22:25	248:4	3	
+water	22:25	0:0	4	{
+switch	23:8	247:8	4	(pes -> state)
+cond	23:16	23:21	5	pes -> state
+water	23:16	0:0	6	pes
+op	23:19	0:0	6	->
+water	23:21	0:0	6	state
+stmts	23:28	247:8	5	
+water	23:28	0:0	6	{
+label	24:8	24:26	6	case MPEGTS_HEADER :
+water	25:12	0:0	6	len
+op	25:16	0:0	6	=
+water	25:18	0:0	6	PES_START_SIZE
+op	25:33	0:0	6	-
+water	25:35	0:0	6	pes
+op	25:38	0:0	6	->
+water	25:40	0:0	6	data_index
+water	25:50	0:0	6	;
+if	26:12	27:30	6	(len > buf_size)
+cond	26:16	26:22	7	len > buf_size
+water	26:16	0:0	8	len
+op	26:20	0:0	8	>
+water	26:22	0:0	8	buf_size
+stmts	27:16	27:30	7	
+water	27:16	0:0	8	len
+op	27:20	0:0	8	=
+water	27:22	0:0	8	buf_size
+water	27:30	0:0	8	;
+call	28:12	28:56	6	memcpy
+arg	28:19	28:48	7	pes->header+pes->data_index
+water	28:19	0:0	8	pes
+op	28:22	0:0	8	->
+water	28:24	0:0	8	header
+op	28:31	0:0	8	+
+water	28:33	0:0	8	pes
+op	28:36	0:0	8	->
+water	28:38	0:0	8	data_index
+arg	28:50	28:51	7	p
+water	28:50	0:0	8	p
+arg	28:53	28:56	7	len
+water	28:53	0:0	8	len
+water	28:57	0:0	6	;
+water	29:12	0:0	6	pes
+op	29:15	0:0	6	->
+water	29:17	0:0	6	data_index
+op	29:28	0:0	6	+=
+water	29:31	0:0	6	len
+water	29:34	0:0	6	;
+water	30:12	0:0	6	p
+op	30:14	0:0	6	+=
+water	30:17	0:0	6	len
+water	30:20	0:0	6	;
+water	31:12	0:0	6	buf_size
+op	31:21	0:0	6	-=
+water	31:24	0:0	6	len
+water	31:27	0:0	6	;
+if	32:12	90:12	6	(pes -> data_index == PES_START_SIZE)
+cond	32:16	32:35	7	pes -> data_index == PES_START_SIZE
+water	32:16	0:0	8	pes
+op	32:19	0:0	8	->
+water	32:21	0:0	8	data_index
+op	32:32	0:0	8	==
+water	32:35	0:0	8	PES_START_SIZE
+stmts	32:51	90:12	7	
+water	32:51	0:0	8	{
+if	35:16	83:16	8	(pes -> header [ 0 ] == 0 x00 && pes -> header [ 1 ] == 0 x00 && pes -> header [ 2 ] == 0 x01)
+cond	35:20	36:39	9	pes -> header [ 0 ] == 0 x00 && pes -> header [ 1 ] == 0 x00 && pes -> header [ 2 ] == 0 x01
+water	35:20	0:0	10	pes
+op	35:23	0:0	10	->
+water	35:25	0:0	10	header
+op	35:31	0:0	10	[
+water	35:32	0:0	10	0
+op	35:33	0:0	10	]
+op	35:35	0:0	10	==
+water	35:38	0:0	10	0
+water	35:39	0:0	10	x00
+op	35:43	0:0	10	&&
+water	35:46	0:0	10	pes
+op	35:49	0:0	10	->
+water	35:51	0:0	10	header
+op	35:57	0:0	10	[
+water	35:58	0:0	10	1
+op	35:59	0:0	10	]
+op	35:61	0:0	10	==
+water	35:64	0:0	10	0
+water	35:65	0:0	10	x00
+op	35:69	0:0	10	&&
+water	36:20	0:0	10	pes
+op	36:23	0:0	10	->
+water	36:25	0:0	10	header
+op	36:31	0:0	10	[
+water	36:32	0:0	10	2
+op	36:33	0:0	10	]
+op	36:35	0:0	10	==
+water	36:38	0:0	10	0
+water	36:39	0:0	10	x01
+stmts	36:44	83:16	9	
+water	36:44	0:0	10	{
+water	38:20	0:0	10	code
+op	38:25	0:0	10	=
+water	38:27	0:0	10	pes
+op	38:30	0:0	10	->
+water	38:32	0:0	10	header
+op	38:38	0:0	10	[
+water	38:39	0:0	10	3
+op	38:40	0:0	10	]
+op	38:42	0:0	10	|
+water	38:44	0:0	10	0
+water	38:45	0:0	10	x100
+water	38:49	0:0	10	;
+call	39:20	40:32	10	av_log
+arg	39:27	39:38	11	pes->stream
+water	39:27	0:0	12	pes
+op	39:30	0:0	12	->
+water	39:32	0:0	12	stream
+arg	39:40	39:52	11	AV_LOG_TRACE
+water	39:40	0:0	12	AV_LOG_TRACE
+arg	39:54	39:77	11	"pid=%x pes_code=%#x\n"
+water	39:54	0:0	12	"pid=%x pes_code=%#x\n"
+arg	39:79	39:87	11	pes->pid
+water	39:79	0:0	12	pes
+op	39:82	0:0	12	->
+water	39:84	0:0	12	pid
+arg	40:28	40:32	11	code
+water	40:28	0:0	12	code
+water	40:33	0:0	10	;
+if	41:20	45:33	10	(( pes -> st && pes -> st -> discard == AVDISCARD_ALL && ( ! pes -> sub_st || pes -> sub_st -> discard == AVDISCARD_ALL ) ) || code == 0 x1be)
+cond	41:24	44:33	11	( pes -> st && pes -> st -> discard == AVDISCARD_ALL && ( ! pes -> sub_st || pes -> sub_st -> discard == AVDISCARD_ALL ) ) || code == 0 x1be
+water	41:24	0:0	12	(
+water	41:25	0:0	12	pes
+op	41:28	0:0	12	->
+water	41:30	0:0	12	st
+op	41:33	0:0	12	&&
+water	41:36	0:0	12	pes
+op	41:39	0:0	12	->
+water	41:41	0:0	12	st
+op	41:43	0:0	12	->
+water	41:45	0:0	12	discard
+op	41:53	0:0	12	==
+water	41:56	0:0	12	AVDISCARD_ALL
+op	41:70	0:0	12	&&
+water	42:25	0:0	12	(
+op	42:26	0:0	12	!
+water	42:27	0:0	12	pes
+op	42:30	0:0	12	->
+water	42:32	0:0	12	sub_st
+op	42:39	0:0	12	||
+water	43:26	0:0	12	pes
+op	43:29	0:0	12	->
+water	43:31	0:0	12	sub_st
+op	43:37	0:0	12	->
+water	43:39	0:0	12	discard
+op	43:47	0:0	12	==
+water	43:50	0:0	12	AVDISCARD_ALL
+water	43:63	0:0	12	)
+water	43:64	0:0	12	)
+op	43:66	0:0	12	||
+water	44:24	0:0	12	code
+op	44:29	0:0	12	==
+water	44:32	0:0	12	0
+water	44:33	0:0	12	x1be
+stmts	45:24	45:33	11	
+goto	45:24	45:33	12	skip
+water	45:29	0:0	13	skip
+if	47:20	55:20	10	(! pes -> st)
+cond	47:24	47:30	11	! pes -> st
+op	47:24	0:0	12	!
+water	47:25	0:0	12	pes
+op	47:28	0:0	12	->
+water	47:30	0:0	12	st
+stmts	47:34	55:20	11	
+water	47:34	0:0	12	{
+if	48:24	49:37	12	(ts -> skip_changes)
+cond	48:28	48:32	13	ts -> skip_changes
+water	48:28	0:0	14	ts
+op	48:30	0:0	14	->
+water	48:32	0:0	14	skip_changes
+stmts	49:28	49:37	13	
+goto	49:28	49:37	14	skip
+water	49:33	0:0	15	skip
+water	50:24	0:0	12	pes
+op	50:27	0:0	12	->
+water	50:29	0:0	12	st
+op	50:32	0:0	12	=
+call	50:34	50:70	12	avformat_new_stream
+arg	50:54	50:64	13	ts->stream
+water	50:54	0:0	14	ts
+op	50:56	0:0	14	->
+water	50:58	0:0	14	stream
+arg	50:66	50:70	13	NULL
+water	50:66	0:0	14	NULL
+water	50:71	0:0	12	;
+if	51:24	52:50	12	(! pes -> st)
+cond	51:28	51:34	13	! pes -> st
+op	51:28	0:0	14	!
+water	51:29	0:0	14	pes
+op	51:32	0:0	14	->
+water	51:34	0:0	14	st
+stmts	52:28	52:50	13	
+return	52:28	52:50	14	AVERROR(ENOMEM)
+call	52:35	52:49	15	AVERROR
+arg	52:43	52:49	16	ENOMEM
+water	52:43	0:0	17	ENOMEM
+water	53:24	0:0	12	pes
+op	53:27	0:0	12	->
+water	53:29	0:0	12	st
+op	53:31	0:0	12	->
+water	53:33	0:0	12	id
+op	53:36	0:0	12	=
+water	53:38	0:0	12	pes
+op	53:41	0:0	12	->
+water	53:43	0:0	12	pid
+water	53:46	0:0	12	;
+call	54:24	54:65	12	mpegts_set_stream_info
+arg	54:47	54:54	13	pes->st
+water	54:47	0:0	14	pes
+op	54:50	0:0	14	->
+water	54:52	0:0	14	st
+arg	54:56	54:59	13	pes
+water	54:56	0:0	14	pes
+arg	54:61	54:62	13	0
+water	54:61	0:0	14	0
+arg	54:64	54:65	13	0
+water	54:64	0:0	14	0
+water	54:66	0:0	12	;
+water	55:20	0:0	12	}
+water	56:20	0:0	10	pes
+op	56:23	0:0	10	->
+water	56:25	0:0	10	total_size
+op	56:36	0:0	10	=
+call	56:38	56:61	10	AV_RB16
+arg	56:46	56:61	11	pes->header+4
+water	56:46	0:0	12	pes
+op	56:49	0:0	12	->
+water	56:51	0:0	12	header
+op	56:58	0:0	12	+
+water	56:60	0:0	12	4
+water	56:62	0:0	10	;
+if	59:20	60:57	10	(! pes -> total_size)
+cond	59:24	59:30	11	! pes -> total_size
+op	59:24	0:0	12	!
+water	59:25	0:0	12	pes
+op	59:28	0:0	12	->
+water	59:30	0:0	12	total_size
+stmts	60:24	60:57	11	
+water	60:24	0:0	12	pes
+op	60:27	0:0	12	->
+water	60:29	0:0	12	total_size
+op	60:40	0:0	12	=
+water	60:42	0:0	12	MAX_PES_PAYLOAD
+water	60:57	0:0	12	;
+water	62:20	0:0	10	pes
+op	62:23	0:0	10	->
+water	62:25	0:0	10	buffer
+op	62:32	0:0	10	=
+call	62:34	63:78	10	av_buffer_alloc
+arg	62:50	63:78	11	pes->total_size+AV_INPUT_BUFFER_PADDING_SIZE
+water	62:50	0:0	12	pes
+op	62:53	0:0	12	->
+water	62:55	0:0	12	total_size
+op	62:66	0:0	12	+
+water	63:50	0:0	12	AV_INPUT_BUFFER_PADDING_SIZE
+water	63:79	0:0	10	;
+if	64:20	65:46	10	(! pes -> buffer)
+cond	64:24	64:30	11	! pes -> buffer
+op	64:24	0:0	12	!
+water	64:25	0:0	12	pes
+op	64:28	0:0	12	->
+water	64:30	0:0	12	buffer
+stmts	65:24	65:46	11	
+return	65:24	65:46	12	AVERROR(ENOMEM)
+call	65:31	65:45	13	AVERROR
+arg	65:39	65:45	14	ENOMEM
+water	65:39	0:0	15	ENOMEM
+if	66:20	78:20	10	(code != 0 x1bc && code != 0 x1bf && code != 0 x1f0 && code != 0 x1f1 && code != 0 x1ff && code != 0 x1f2 && code != 0 x1f8)
+cond	66:24	69:33	11	code != 0 x1bc && code != 0 x1bf && code != 0 x1f0 && code != 0 x1f1 && code != 0 x1ff && code != 0 x1f2 && code != 0 x1f8
+water	66:24	0:0	12	code
+op	66:29	0:0	12	!=
+water	66:32	0:0	12	0
+water	66:33	0:0	12	x1bc
+op	66:38	0:0	12	&&
+water	66:41	0:0	12	code
+op	66:46	0:0	12	!=
+water	66:49	0:0	12	0
+water	66:50	0:0	12	x1bf
+op	66:55	0:0	12	&&
+water	67:24	0:0	12	code
+op	67:29	0:0	12	!=
+water	67:32	0:0	12	0
+water	67:33	0:0	12	x1f0
+op	67:38	0:0	12	&&
+water	67:41	0:0	12	code
+op	67:46	0:0	12	!=
+water	67:49	0:0	12	0
+water	67:50	0:0	12	x1f1
+op	67:55	0:0	12	&&
+water	68:24	0:0	12	code
+op	68:29	0:0	12	!=
+water	68:32	0:0	12	0
+water	68:33	0:0	12	x1ff
+op	68:38	0:0	12	&&
+water	68:41	0:0	12	code
+op	68:46	0:0	12	!=
+water	68:49	0:0	12	0
+water	68:50	0:0	12	x1f2
+op	68:55	0:0	12	&&
+water	69:24	0:0	12	code
+op	69:29	0:0	12	!=
+water	69:32	0:0	12	0
+water	69:33	0:0	12	x1f8
+stmts	69:39	78:20	11	
+water	69:39	0:0	12	{
+water	70:24	0:0	12	pes
+op	70:27	0:0	12	->
+water	70:29	0:0	12	state
+op	70:35	0:0	12	=
+water	70:37	0:0	12	MPEGTS_PESHEADER
+water	70:53	0:0	12	;
+if	71:24	77:24	12	(pes -> st -> codec -> codec_id == AV_CODEC_ID_NONE && ! pes -> st -> request_probe)
+cond	71:28	71:86	13	pes -> st -> codec -> codec_id == AV_CODEC_ID_NONE && ! pes -> st -> request_probe
+water	71:28	0:0	14	pes
+op	71:31	0:0	14	->
+water	71:33	0:0	14	st
+op	71:35	0:0	14	->
+water	71:37	0:0	14	codec
+op	71:42	0:0	14	->
+water	71:44	0:0	14	codec_id
+op	71:53	0:0	14	==
+water	71:56	0:0	14	AV_CODEC_ID_NONE
+op	71:73	0:0	14	&&
+op	71:76	0:0	14	!
+water	71:77	0:0	14	pes
+op	71:80	0:0	14	->
+water	71:82	0:0	14	st
+op	71:84	0:0	14	->
+water	71:86	0:0	14	request_probe
+stmts	71:101	77:24	13	
+water	71:101	0:0	14	{
+call	72:28	75:52	14	av_log
+arg	72:35	72:46	15	pes->stream
+water	72:35	0:0	16	pes
+op	72:38	0:0	16	->
+water	72:40	0:0	16	stream
+arg	72:48	72:60	15	AV_LOG_TRACE
+water	72:48	0:0	16	AV_LOG_TRACE
+arg	73:36	73:69	15	"pid=%x stream_type=%x probing\n"
+water	73:36	0:0	16	"pid=%x stream_type=%x probing\n"
+arg	74:36	74:44	15	pes->pid
+water	74:36	0:0	16	pes
+op	74:39	0:0	16	->
+water	74:41	0:0	16	pid
+arg	75:36	75:52	15	pes->stream_type
+water	75:36	0:0	16	pes
+op	75:39	0:0	16	->
+water	75:41	0:0	16	stream_type
+water	75:53	0:0	14	;
+water	76:28	0:0	14	pes
+op	76:31	0:0	14	->
+water	76:33	0:0	14	st
+op	76:35	0:0	14	->
+water	76:37	0:0	14	request_probe
+op	76:51	0:0	14	=
+water	76:53	0:0	14	1
+water	76:54	0:0	14	;
+water	77:24	0:0	14	}
+water	78:20	0:0	12	}
+else	78:22	82:20	10
+stmts	78:27	82:20	11	
+water	78:27	0:0	12	{
+water	79:24	0:0	12	pes
+op	79:27	0:0	12	->
+water	79:29	0:0	12	pes_header_size
+op	79:45	0:0	12	=
+water	79:47	0:0	12	6
+water	79:48	0:0	12	;
+water	80:24	0:0	12	pes
+op	80:27	0:0	12	->
+water	80:29	0:0	12	state
+op	80:40	0:0	12	=
+water	80:42	0:0	12	MPEGTS_PAYLOAD
+water	80:56	0:0	12	;
+water	81:24	0:0	12	pes
+op	81:27	0:0	12	->
+water	81:29	0:0	12	data_index
+op	81:40	0:0	12	=
+water	81:42	0:0	12	0
+water	81:43	0:0	12	;
+water	82:20	0:0	12	}
+water	83:16	0:0	10	}
+else	83:18	89:16	8
+stmts	83:23	89:16	9	
+water	83:23	0:0	10	{
+label	86:0	86:4	10	skip :
+water	87:20	0:0	10	pes
+op	87:23	0:0	10	->
+water	87:25	0:0	10	state
+op	87:31	0:0	10	=
+water	87:33	0:0	10	MPEGTS_SKIP
+water	87:44	0:0	10	;
+continue	88:20	88:28	10	
+water	89:16	0:0	10	}
+water	90:12	0:0	8	}
+break	91:12	91:17	6	
+label	94:8	94:29	6	case MPEGTS_PESHEADER :
+water	95:12	0:0	6	len
+op	95:16	0:0	6	=
+water	95:18	0:0	6	PES_HEADER_SIZE
+op	95:34	0:0	6	-
+water	95:36	0:0	6	pes
+op	95:39	0:0	6	->
+water	95:41	0:0	6	data_index
+water	95:51	0:0	6	;
+if	96:12	97:42	6	(len < 0)
+cond	96:16	96:22	7	len < 0
+water	96:16	0:0	8	len
+op	96:20	0:0	8	<
+water	96:22	0:0	8	0
+stmts	97:16	97:42	7	
+return	97:16	97:42	8	AVERROR_INVALIDDATA
+water	97:23	0:0	9	AVERROR_INVALIDDATA
+if	98:12	99:30	6	(len > buf_size)
+cond	98:16	98:22	7	len > buf_size
+water	98:16	0:0	8	len
+op	98:20	0:0	8	>
+water	98:22	0:0	8	buf_size
+stmts	99:16	99:30	7	
+water	99:16	0:0	8	len
+op	99:20	0:0	8	=
+water	99:22	0:0	8	buf_size
+water	99:30	0:0	8	;
+call	100:12	100:56	6	memcpy
+arg	100:19	100:48	7	pes->header+pes->data_index
+water	100:19	0:0	8	pes
+op	100:22	0:0	8	->
+water	100:24	0:0	8	header
+op	100:31	0:0	8	+
+water	100:33	0:0	8	pes
+op	100:36	0:0	8	->
+water	100:38	0:0	8	data_index
+arg	100:50	100:51	7	p
+water	100:50	0:0	8	p
+arg	100:53	100:56	7	len
+water	100:53	0:0	8	len
+water	100:57	0:0	6	;
+water	101:12	0:0	6	pes
+op	101:15	0:0	6	->
+water	101:17	0:0	6	data_index
+op	101:28	0:0	6	+=
+water	101:31	0:0	6	len
+water	101:34	0:0	6	;
+water	102:12	0:0	6	p
+op	102:14	0:0	6	+=
+water	102:17	0:0	6	len
+water	102:20	0:0	6	;
+water	103:12	0:0	6	buf_size
+op	103:21	0:0	6	-=
+water	103:24	0:0	6	len
+water	103:27	0:0	6	;
+if	104:12	107:12	6	(pes -> data_index == PES_HEADER_SIZE)
+cond	104:16	104:35	7	pes -> data_index == PES_HEADER_SIZE
+water	104:16	0:0	8	pes
+op	104:19	0:0	8	->
+water	104:21	0:0	8	data_index
+op	104:32	0:0	8	==
+water	104:35	0:0	8	PES_HEADER_SIZE
+stmts	104:52	107:12	7	
+water	104:52	0:0	8	{
+water	105:16	0:0	8	pes
+op	105:19	0:0	8	->
+water	105:21	0:0	8	pes_header_size
+op	105:37	0:0	8	=
+water	105:39	0:0	8	pes
+op	105:42	0:0	8	->
+water	105:44	0:0	8	header
+op	105:50	0:0	8	[
+water	105:51	0:0	8	8
+op	105:52	0:0	8	]
+op	105:54	0:0	8	+
+water	105:56	0:0	8	9
+water	105:57	0:0	8	;
+water	106:16	0:0	8	pes
+op	106:19	0:0	8	->
+water	106:21	0:0	8	state
+op	106:37	0:0	8	=
+water	106:39	0:0	8	MPEGTS_PESHEADER_FILL
+water	106:60	0:0	8	;
+water	107:12	0:0	8	}
+break	108:12	108:17	6	
+label	109:8	109:34	6	case MPEGTS_PESHEADER_FILL :
+water	110:12	0:0	6	len
+op	110:16	0:0	6	=
+water	110:18	0:0	6	pes
+op	110:21	0:0	6	->
+water	110:23	0:0	6	pes_header_size
+op	110:39	0:0	6	-
+water	110:41	0:0	6	pes
+op	110:44	0:0	6	->
+water	110:46	0:0	6	data_index
+water	110:56	0:0	6	;
+if	111:12	112:42	6	(len < 0)
+cond	111:16	111:22	7	len < 0
+water	111:16	0:0	8	len
+op	111:20	0:0	8	<
+water	111:22	0:0	8	0
+stmts	112:16	112:42	7	
+return	112:16	112:42	8	AVERROR_INVALIDDATA
+water	112:23	0:0	9	AVERROR_INVALIDDATA
+if	113:12	114:30	6	(len > buf_size)
+cond	113:16	113:22	7	len > buf_size
+water	113:16	0:0	8	len
+op	113:20	0:0	8	>
+water	113:22	0:0	8	buf_size
+stmts	114:16	114:30	7	
+water	114:16	0:0	8	len
+op	114:20	0:0	8	=
+water	114:22	0:0	8	buf_size
+water	114:30	0:0	8	;
+call	115:12	115:56	6	memcpy
+arg	115:19	115:48	7	pes->header+pes->data_index
+water	115:19	0:0	8	pes
+op	115:22	0:0	8	->
+water	115:24	0:0	8	header
+op	115:31	0:0	8	+
+water	115:33	0:0	8	pes
+op	115:36	0:0	8	->
+water	115:38	0:0	8	data_index
+arg	115:50	115:51	7	p
+water	115:50	0:0	8	p
+arg	115:53	115:56	7	len
+water	115:53	0:0	8	len
+water	115:57	0:0	6	;
+water	116:12	0:0	6	pes
+op	116:15	0:0	6	->
+water	116:17	0:0	6	data_index
+op	116:28	0:0	6	+=
+water	116:31	0:0	6	len
+water	116:34	0:0	6	;
+water	117:12	0:0	6	p
+op	117:14	0:0	6	+=
+water	117:17	0:0	6	len
+water	117:20	0:0	6	;
+water	118:12	0:0	6	buf_size
+op	118:21	0:0	6	-=
+water	118:24	0:0	6	len
+water	118:27	0:0	6	;
+if	119:12	210:12	6	(pes -> data_index == pes -> pes_header_size)
+cond	119:16	119:40	7	pes -> data_index == pes -> pes_header_size
+water	119:16	0:0	8	pes
+op	119:19	0:0	8	->
+water	119:21	0:0	8	data_index
+op	119:32	0:0	8	==
+water	119:35	0:0	8	pes
+op	119:38	0:0	8	->
+water	119:40	0:0	8	pes_header_size
+stmts	119:57	210:12	7	
+water	119:57	0:0	8	{
+decl	120:16	120:32	8	const uint8_t	*r
+decl	121:16	121:49	8	unsigned int	flags
+water	121:34	0:0	8	,
+decl	121:16	121:49	8	unsigned int	pes_ext
+water	121:43	0:0	8	,
+decl	121:16	121:49	8	unsigned int	skip
+water	122:16	0:0	8	flags
+op	122:22	0:0	8	=
+water	122:24	0:0	8	pes
+op	122:27	0:0	8	->
+water	122:29	0:0	8	header
+op	122:35	0:0	8	[
+water	122:36	0:0	8	7
+op	122:37	0:0	8	]
+water	122:38	0:0	8	;
+water	123:16	0:0	8	r
+op	123:18	0:0	8	=
+water	123:20	0:0	8	pes
+op	123:23	0:0	8	->
+water	123:25	0:0	8	header
+op	123:32	0:0	8	+
+water	123:34	0:0	8	9
+water	123:35	0:0	8	;
+water	124:16	0:0	8	pes
+op	124:19	0:0	8	->
+water	124:21	0:0	8	pts
+op	124:25	0:0	8	=
+water	124:27	0:0	8	AV_NOPTS_VALUE
+water	124:41	0:0	8	;
+water	125:16	0:0	8	pes
+op	125:19	0:0	8	->
+water	125:21	0:0	8	dts
+op	125:25	0:0	8	=
+water	125:27	0:0	8	AV_NOPTS_VALUE
+water	125:41	0:0	8	;
+if	126:16	129:16	8	(( flags & 0 xc0 ) == 0 x80)
+cond	126:20	126:39	9	( flags & 0 xc0 ) == 0 x80
+water	126:20	0:0	10	(
+water	126:21	0:0	10	flags
+op	126:27	0:0	10	&
+water	126:29	0:0	10	0
+water	126:30	0:0	10	xc0
+water	126:33	0:0	10	)
+op	126:35	0:0	10	==
+water	126:38	0:0	10	0
+water	126:39	0:0	10	x80
+stmts	126:44	129:16	9	
+water	126:44	0:0	10	{
+water	127:20	0:0	10	pes
+op	127:23	0:0	10	->
+water	127:25	0:0	10	dts
+op	127:29	0:0	10	=
+water	127:31	0:0	10	pes
+op	127:34	0:0	10	->
+water	127:36	0:0	10	pts
+op	127:40	0:0	10	=
+call	127:42	127:60	10	ff_parse_pes_pts
+arg	127:59	127:60	11	r
+water	127:59	0:0	12	r
+water	127:61	0:0	10	;
+water	128:20	0:0	10	r
+op	128:22	0:0	10	+=
+water	128:25	0:0	10	5
+water	128:26	0:0	10	;
+water	129:16	0:0	10	}
+else	129:18	134:16	8
+stmts	129:23	134:16	9	
+if	129:23	134:16	10	(( flags & 0 xc0 ) == 0 xc0)
+cond	129:27	129:46	11	( flags & 0 xc0 ) == 0 xc0
+water	129:27	0:0	12	(
+water	129:28	0:0	12	flags
+op	129:34	0:0	12	&
+water	129:36	0:0	12	0
+water	129:37	0:0	12	xc0
+water	129:40	0:0	12	)
+op	129:42	0:0	12	==
+water	129:45	0:0	12	0
+water	129:46	0:0	12	xc0
+stmts	129:51	134:16	11	
+water	129:51	0:0	12	{
+water	130:20	0:0	12	pes
+op	130:23	0:0	12	->
+water	130:25	0:0	12	pts
+op	130:29	0:0	12	=
+call	130:31	130:49	12	ff_parse_pes_pts
+arg	130:48	130:49	13	r
+water	130:48	0:0	14	r
+water	130:50	0:0	12	;
+water	131:20	0:0	12	r
+op	131:22	0:0	12	+=
+water	131:25	0:0	12	5
+water	131:26	0:0	12	;
+water	132:20	0:0	12	pes
+op	132:23	0:0	12	->
+water	132:25	0:0	12	dts
+op	132:29	0:0	12	=
+call	132:31	132:49	12	ff_parse_pes_pts
+arg	132:48	132:49	13	r
+water	132:48	0:0	14	r
+water	132:50	0:0	12	;
+water	133:20	0:0	12	r
+op	133:22	0:0	12	+=
+water	133:25	0:0	12	5
+water	133:26	0:0	12	;
+water	134:16	0:0	12	}
+water	135:16	0:0	8	pes
+op	135:19	0:0	8	->
+water	135:21	0:0	8	extended_stream_id
+op	135:40	0:0	8	=
+op	135:42	0:0	8	-
+water	135:43	0:0	8	1
+water	135:44	0:0	8	;
+if	136:16	148:16	8	(flags & 0 x01)
+cond	136:20	136:29	9	flags & 0 x01
+water	136:20	0:0	10	flags
+op	136:26	0:0	10	&
+water	136:28	0:0	10	0
+water	136:29	0:0	10	x01
+stmts	136:34	148:16	9	
+water	136:34	0:0	10	{
+water	137:20	0:0	10	pes_ext
+op	137:28	0:0	10	=
+op	137:30	0:0	10	*
+water	137:31	0:0	10	r
+op	137:32	0:0	10	++
+water	137:34	0:0	10	;
+water	139:20	0:0	10	skip
+op	139:26	0:0	10	=
+water	139:28	0:0	10	(
+water	139:29	0:0	10	pes_ext
+op	139:37	0:0	10	>>
+water	139:40	0:0	10	4
+water	139:41	0:0	10	)
+op	139:43	0:0	10	&
+water	139:45	0:0	10	0
+water	139:46	0:0	10	xb
+water	139:48	0:0	10	;
+water	140:20	0:0	10	skip
+op	140:25	0:0	10	+=
+water	140:28	0:0	10	skip
+op	140:33	0:0	10	&
+water	140:35	0:0	10	0
+water	140:36	0:0	10	x9
+water	140:38	0:0	10	;
+water	141:20	0:0	10	r
+op	141:25	0:0	10	+=
+water	141:28	0:0	10	skip
+water	141:32	0:0	10	;
+if	142:20	147:20	10	(( pes_ext & 0 x41 ) == 0 x01 && ( r + 2 ) <= ( pes -> header + pes -> pes_header_size ))
+cond	142:24	143:70	11	( pes_ext & 0 x41 ) == 0 x01 && ( r + 2 ) <= ( pes -> header + pes -> pes_header_size )
+water	142:24	0:0	12	(
+water	142:25	0:0	12	pes_ext
+op	142:33	0:0	12	&
+water	142:35	0:0	12	0
+water	142:36	0:0	12	x41
+water	142:39	0:0	12	)
+op	142:41	0:0	12	==
+water	142:44	0:0	12	0
+water	142:45	0:0	12	x01
+op	142:49	0:0	12	&&
+water	143:24	0:0	12	(
+water	143:25	0:0	12	r
+op	143:27	0:0	12	+
+water	143:29	0:0	12	2
+water	143:30	0:0	12	)
+op	143:32	0:0	12	<=
+water	143:35	0:0	12	(
+water	143:36	0:0	12	pes
+op	143:39	0:0	12	->
+water	143:41	0:0	12	header
+op	143:48	0:0	12	+
+water	143:50	0:0	12	pes
+op	143:53	0:0	12	->
+water	143:55	0:0	12	pes_header_size
+water	143:70	0:0	12	)
+stmts	143:73	147:20	11	
+water	143:73	0:0	12	{
+if	145:24	146:58	12	(( r [ 0 ] & 0 x7f ) > 0 && ( r [ 1 ] & 0 x80 ) == 0)
+cond	145:28	145:66	13	( r [ 0 ] & 0 x7f ) > 0 && ( r [ 1 ] & 0 x80 ) == 0
+water	145:28	0:0	14	(
+water	145:29	0:0	14	r
+op	145:30	0:0	14	[
+water	145:31	0:0	14	0
+op	145:32	0:0	14	]
+op	145:34	0:0	14	&
+water	145:36	0:0	14	0
+water	145:37	0:0	14	x7f
+water	145:40	0:0	14	)
+op	145:42	0:0	14	>
+water	145:44	0:0	14	0
+op	145:46	0:0	14	&&
+water	145:49	0:0	14	(
+water	145:50	0:0	14	r
+op	145:51	0:0	14	[
+water	145:52	0:0	14	1
+op	145:53	0:0	14	]
+op	145:55	0:0	14	&
+water	145:57	0:0	14	0
+water	145:58	0:0	14	x80
+water	145:61	0:0	14	)
+op	145:63	0:0	14	==
+water	145:66	0:0	14	0
+stmts	146:28	146:58	13	
+water	146:28	0:0	14	pes
+op	146:31	0:0	14	->
+water	146:33	0:0	14	extended_stream_id
+op	146:52	0:0	14	=
+water	146:54	0:0	14	r
+op	146:55	0:0	14	[
+water	146:56	0:0	14	1
+op	146:57	0:0	14	]
+water	146:58	0:0	14	;
+water	147:20	0:0	12	}
+water	148:16	0:0	10	}
+water	150:16	0:0	8	pes
+op	150:19	0:0	8	->
+water	150:21	0:0	8	state
+op	150:27	0:0	8	=
+water	150:29	0:0	8	MPEGTS_PAYLOAD
+water	150:43	0:0	8	;
+water	151:16	0:0	8	pes
+op	151:19	0:0	8	->
+water	151:21	0:0	8	data_index
+op	151:32	0:0	8	=
+water	151:34	0:0	8	0
+water	151:35	0:0	8	;
+if	152:16	158:16	8	(pes -> stream_type == 0 x12 && buf_size > 0)
+cond	152:20	152:59	9	pes -> stream_type == 0 x12 && buf_size > 0
+water	152:20	0:0	10	pes
+op	152:23	0:0	10	->
+water	152:25	0:0	10	stream_type
+op	152:37	0:0	10	==
+water	152:40	0:0	10	0
+water	152:41	0:0	10	x12
+op	152:45	0:0	10	&&
+water	152:48	0:0	10	buf_size
+op	152:57	0:0	10	>
+water	152:59	0:0	10	0
+stmts	152:62	158:16	9	
+water	152:62	0:0	10	{
+decl	153:20	154:66	10	int	sl_header_bytes
+op	153:40	0:0	10	=
+call	153:42	154:65	11	read_sl_header
+arg	153:57	153:60	12	pes
+water	153:57	0:0	13	pes
+arg	153:62	153:70	12	&pes->sl
+op	153:62	0:0	13	&
+water	153:63	0:0	13	pes
+op	153:66	0:0	13	->
+water	153:68	0:0	13	sl
+arg	153:72	153:73	12	p
+water	153:72	0:0	13	p
+arg	154:57	154:65	12	buf_size
+water	154:57	0:0	13	buf_size
+water	155:20	0:0	10	pes
+op	155:23	0:0	10	->
+water	155:25	0:0	10	pes_header_size
+op	155:41	0:0	10	+=
+water	155:44	0:0	10	sl_header_bytes
+water	155:59	0:0	10	;
+water	156:20	0:0	10	p
+op	156:22	0:0	10	+=
+water	156:25	0:0	10	sl_header_bytes
+water	156:40	0:0	10	;
+water	157:20	0:0	10	buf_size
+op	157:29	0:0	10	-=
+water	157:32	0:0	10	sl_header_bytes
+water	157:47	0:0	10	;
+water	158:16	0:0	10	}
+if	159:16	164:16	8	(pes -> stream_type == 0 x15 && buf_size >= 5)
+cond	159:20	159:60	9	pes -> stream_type == 0 x15 && buf_size >= 5
+water	159:20	0:0	10	pes
+op	159:23	0:0	10	->
+water	159:25	0:0	10	stream_type
+op	159:37	0:0	10	==
+water	159:40	0:0	10	0
+water	159:41	0:0	10	x15
+op	159:45	0:0	10	&&
+water	159:48	0:0	10	buf_size
+op	159:57	0:0	10	>=
+water	159:60	0:0	10	5
+stmts	159:63	164:16	9	
+water	159:63	0:0	10	{
+water	161:20	0:0	10	pes
+op	161:23	0:0	10	->
+water	161:25	0:0	10	pes_header_size
+op	161:41	0:0	10	+=
+water	161:44	0:0	10	5
+water	161:45	0:0	10	;
+water	162:20	0:0	10	p
+op	162:22	0:0	10	+=
+water	162:25	0:0	10	5
+water	162:26	0:0	10	;
+water	163:20	0:0	10	buf_size
+op	163:29	0:0	10	-=
+water	163:32	0:0	10	5
+water	163:33	0:0	10	;
+water	164:16	0:0	10	}
+if	165:16	209:16	8	(pes -> ts -> fix_teletext_pts && ( pes -> st -> codec -> codec_id == AV_CODEC_ID_DVB_TELETEXT || pes -> st -> codec -> codec_id == AV_CODEC_ID_DVB_SUBTITLE ))
+cond	165:23	167:79	9	pes -> ts -> fix_teletext_pts && ( pes -> st -> codec -> codec_id == AV_CODEC_ID_DVB_TELETEXT || pes -> st -> codec -> codec_id == AV_CODEC_ID_DVB_SUBTITLE )
+water	165:23	0:0	10	pes
+op	165:26	0:0	10	->
+water	165:28	0:0	10	ts
+op	165:30	0:0	10	->
+water	165:32	0:0	10	fix_teletext_pts
+op	166:20	0:0	10	&&
+water	166:23	0:0	10	(
+water	166:27	0:0	10	pes
+op	166:30	0:0	10	->
+water	166:32	0:0	10	st
+op	166:34	0:0	10	->
+water	166:36	0:0	10	codec
+op	166:41	0:0	10	->
+water	166:43	0:0	10	codec_id
+op	166:52	0:0	10	==
+water	166:55	0:0	10	AV_CODEC_ID_DVB_TELETEXT
+op	167:24	0:0	10	||
+water	167:27	0:0	10	pes
+op	167:30	0:0	10	->
+water	167:32	0:0	10	st
+op	167:34	0:0	10	->
+water	167:36	0:0	10	codec
+op	167:41	0:0	10	->
+water	167:43	0:0	10	codec_id
+op	167:52	0:0	10	==
+water	167:55	0:0	10	AV_CODEC_ID_DVB_SUBTITLE
+water	167:79	0:0	10	)
+stmts	168:22	209:16	9	
+water	168:22	0:0	10	{
+decl	169:20	169:39	10	AVProgram	*p
+op	169:33	0:0	10	=
+water	169:35	0:0	10	NULL
+while	170:20	208:20	10	(( p =av_find_program_from_stream (pes -> stream ,p ,pes -> st -> index ) ))
+cond	170:27	170:91	11	( p =av_find_program_from_stream (pes -> stream ,p ,pes -> st -> index ) )
+water	170:27	0:0	12	(
+water	170:28	0:0	12	p
+op	170:30	0:0	12	=
+call	170:32	170:90	12	av_find_program_from_stream
+arg	170:60	170:71	13	pes->stream
+water	170:60	0:0	14	pes
+op	170:63	0:0	14	->
+water	170:65	0:0	14	stream
+arg	170:73	170:74	13	p
+water	170:73	0:0	14	p
+arg	170:76	170:90	13	pes->st->index
+water	170:76	0:0	14	pes
+op	170:79	0:0	14	->
+water	170:81	0:0	14	st
+op	170:83	0:0	14	->
+water	170:85	0:0	14	index
+water	170:91	0:0	12	)
+stmts	170:94	208:20	11	
+water	170:94	0:0	12	{
+if	171:24	207:24	12	(p -> pcr_pid != - 1 && p -> discard != AVDISCARD_ALL)
+cond	171:28	171:62	13	p -> pcr_pid != - 1 && p -> discard != AVDISCARD_ALL
+water	171:28	0:0	14	p
+op	171:29	0:0	14	->
+water	171:31	0:0	14	pcr_pid
+op	171:39	0:0	14	!=
+op	171:42	0:0	14	-
+water	171:43	0:0	14	1
+op	171:45	0:0	14	&&
+water	171:48	0:0	14	p
+op	171:49	0:0	14	->
+water	171:51	0:0	14	discard
+op	171:59	0:0	14	!=
+water	171:62	0:0	14	AVDISCARD_ALL
+stmts	171:77	207:24	13	
+water	171:77	0:0	14	{
+decl	172:28	172:71	14	MpegTSFilter	*f
+op	172:44	0:0	14	=
+water	172:46	0:0	14	pes
+op	172:49	0:0	14	->
+water	172:51	0:0	14	ts
+op	172:53	0:0	14	->
+water	172:55	0:0	14	pids
+op	172:59	0:0	14	[
+water	172:60	0:0	14	p
+op	172:61	0:0	14	->
+water	172:63	0:0	14	pcr_pid
+op	172:70	0:0	14	]
+if	173:28	206:28	14	(f)
+cond	173:32	173:32	15	f
+water	173:32	0:0	16	f
+stmts	173:35	206:28	15	
+water	173:35	0:0	16	{
+decl	174:32	174:51	16	AVStream	*st
+op	174:45	0:0	16	=
+water	174:47	0:0	16	NULL
+if	175:32	179:32	16	(f -> type == MPEGTS_PES)
+cond	175:36	175:47	17	f -> type == MPEGTS_PES
+water	175:36	0:0	18	f
+op	175:37	0:0	18	->
+water	175:39	0:0	18	type
+op	175:44	0:0	18	==
+water	175:47	0:0	18	MPEGTS_PES
+stmts	175:59	179:32	17	
+water	175:59	0:0	18	{
+decl	176:36	176:79	18	PESContext	*pcrpes
+op	176:55	0:0	18	=
+water	176:57	0:0	18	f
+op	176:58	0:0	18	->
+water	176:60	0:0	18	u
+op	176:61	0:0	18	.
+water	176:62	0:0	18	pes_filter
+op	176:72	0:0	18	.
+water	176:73	0:0	18	opaque
+if	177:36	178:55	18	(pcrpes)
+cond	177:40	177:40	19	pcrpes
+water	177:40	0:0	20	pcrpes
+stmts	178:40	178:55	19	
+water	178:40	0:0	20	st
+op	178:43	0:0	20	=
+water	178:45	0:0	20	pcrpes
+op	178:51	0:0	20	->
+water	178:53	0:0	20	st
+water	178:55	0:0	20	;
+water	179:32	0:0	18	}
+else	179:34	186:32	16
+stmts	179:39	186:32	17	
+if	179:39	186:32	18	(f -> type == MPEGTS_PCR)
+cond	179:43	179:54	19	f -> type == MPEGTS_PCR
+water	179:43	0:0	20	f
+op	179:44	0:0	20	->
+water	179:46	0:0	20	type
+op	179:51	0:0	20	==
+water	179:54	0:0	20	MPEGTS_PCR
+stmts	179:66	186:32	19	
+water	179:66	0:0	20	{
+decl	180:36	180:41	20	int	i
+for	181:36	185:36	20	(i = 0 ;i < p -> nb_stream_indexes;i ++)
+forinit	181:41	181:46	21	i = 0 ;
+water	181:41	0:0	22	i
+op	181:43	0:0	22	=
+water	181:45	0:0	22	0
+water	181:46	0:0	22	;
+cond	181:48	181:55	21	i < p -> nb_stream_indexes
+water	181:48	0:0	22	i
+op	181:50	0:0	22	<
+water	181:52	0:0	22	p
+op	181:53	0:0	22	->
+water	181:55	0:0	22	nb_stream_indexes
+forexpr	181:74	181:75	21	i ++
+water	181:74	0:0	22	i
+op	181:75	0:0	22	++
+stmts	181:79	185:36	21	
+water	181:79	0:0	22	{
+decl	182:40	182:96	22	AVStream	*pst
+op	182:54	0:0	22	=
+water	182:56	0:0	22	pes
+op	182:59	0:0	22	->
+water	182:61	0:0	22	stream
+op	182:67	0:0	22	->
+water	182:69	0:0	22	streams
+op	182:76	0:0	22	[
+water	182:77	0:0	22	p
+op	182:78	0:0	22	->
+water	182:80	0:0	22	stream_index
+op	182:92	0:0	22	[
+water	182:93	0:0	22	i
+op	182:94	0:0	22	]
+op	182:95	0:0	22	]
+if	183:40	184:52	22	(pst -> codec -> codec_type == AVMEDIA_TYPE_VIDEO)
+cond	183:44	183:70	23	pst -> codec -> codec_type == AVMEDIA_TYPE_VIDEO
+water	183:44	0:0	24	pst
+op	183:47	0:0	24	->
+water	183:49	0:0	24	codec
+op	183:54	0:0	24	->
+water	183:56	0:0	24	codec_type
+op	183:67	0:0	24	==
+water	183:70	0:0	24	AVMEDIA_TYPE_VIDEO
+stmts	184:44	184:52	23	
+water	184:44	0:0	24	st
+op	184:47	0:0	24	=
+water	184:49	0:0	24	pst
+water	184:52	0:0	24	;
+water	185:36	0:0	22	}
+water	186:32	0:0	20	}
+if	187:32	205:32	16	(f -> last_pcr != - 1 && st && st -> discard != AVDISCARD_ALL)
+cond	187:36	187:78	17	f -> last_pcr != - 1 && st && st -> discard != AVDISCARD_ALL
+water	187:36	0:0	18	f
+op	187:37	0:0	18	->
+water	187:39	0:0	18	last_pcr
+op	187:48	0:0	18	!=
+op	187:51	0:0	18	-
+water	187:52	0:0	18	1
+op	187:54	0:0	18	&&
+water	187:57	0:0	18	st
+op	187:60	0:0	18	&&
+water	187:63	0:0	18	st
+op	187:65	0:0	18	->
+water	187:67	0:0	18	discard
+op	187:75	0:0	18	!=
+water	187:78	0:0	18	AVDISCARD_ALL
+stmts	187:93	205:32	17	
+water	187:93	0:0	18	{
+decl	192:36	192:67	18	int64_t	pcr
+op	192:48	0:0	18	=
+water	192:50	0:0	18	f
+op	192:51	0:0	18	->
+water	192:53	0:0	18	last_pcr
+op	192:62	0:0	18	/
+water	192:64	0:0	18	300
+water	193:36	0:0	18	pes
+op	193:39	0:0	18	->
+water	193:41	0:0	18	st
+op	193:43	0:0	18	->
+water	193:45	0:0	18	pts_wrap_reference
+op	193:64	0:0	18	=
+water	193:66	0:0	18	st
+op	193:68	0:0	18	->
+water	193:70	0:0	18	pts_wrap_reference
+water	193:88	0:0	18	;
+water	194:36	0:0	18	pes
+op	194:39	0:0	18	->
+water	194:41	0:0	18	st
+op	194:43	0:0	18	->
+water	194:45	0:0	18	pts_wrap_behavior
+op	194:63	0:0	18	=
+water	194:65	0:0	18	st
+op	194:67	0:0	18	->
+water	194:69	0:0	18	pts_wrap_behavior
+water	194:86	0:0	18	;
+if	195:36	197:36	18	(pes -> dts == AV_NOPTS_VALUE || pes -> dts < pcr)
+cond	195:40	195:81	19	pes -> dts == AV_NOPTS_VALUE || pes -> dts < pcr
+water	195:40	0:0	20	pes
+op	195:43	0:0	20	->
+water	195:45	0:0	20	dts
+op	195:49	0:0	20	==
+water	195:52	0:0	20	AV_NOPTS_VALUE
+op	195:67	0:0	20	||
+water	195:70	0:0	20	pes
+op	195:73	0:0	20	->
+water	195:75	0:0	20	dts
+op	195:79	0:0	20	<
+water	195:81	0:0	20	pcr
+stmts	195:86	197:36	19	
+water	195:86	0:0	20	{
+water	196:40	0:0	20	pes
+op	196:43	0:0	20	->
+water	196:45	0:0	20	pts
+op	196:49	0:0	20	=
+water	196:51	0:0	20	pes
+op	196:54	0:0	20	->
+water	196:56	0:0	20	dts
+op	196:60	0:0	20	=
+water	196:62	0:0	20	pcr
+water	196:65	0:0	20	;
+water	197:36	0:0	20	}
+else	197:38	200:36	18
+stmts	197:43	200:36	19	
+if	197:43	200:36	20	(pes -> st -> codec -> codec_id == AV_CODEC_ID_DVB_TELETEXT && pes -> dts > pcr + 3654 + 9000)
+cond	197:47	198:71	21	pes -> st -> codec -> codec_id == AV_CODEC_ID_DVB_TELETEXT && pes -> dts > pcr + 3654 + 9000
+water	197:47	0:0	22	pes
+op	197:50	0:0	22	->
+water	197:52	0:0	22	st
+op	197:54	0:0	22	->
+water	197:56	0:0	22	codec
+op	197:61	0:0	22	->
+water	197:63	0:0	22	codec_id
+op	197:72	0:0	22	==
+water	197:75	0:0	22	AV_CODEC_ID_DVB_TELETEXT
+op	197:100	0:0	22	&&
+water	198:47	0:0	22	pes
+op	198:50	0:0	22	->
+water	198:52	0:0	22	dts
+op	198:56	0:0	22	>
+water	198:58	0:0	22	pcr
+op	198:62	0:0	22	+
+water	198:64	0:0	22	3654
+op	198:69	0:0	22	+
+water	198:71	0:0	22	9000
+stmts	198:77	200:36	21	
+water	198:77	0:0	22	{
+water	199:40	0:0	22	pes
+op	199:43	0:0	22	->
+water	199:45	0:0	22	pts
+op	199:49	0:0	22	=
+water	199:51	0:0	22	pes
+op	199:54	0:0	22	->
+water	199:56	0:0	22	dts
+op	199:60	0:0	22	=
+water	199:62	0:0	22	pcr
+op	199:66	0:0	22	+
+water	199:68	0:0	22	3654
+op	199:73	0:0	22	+
+water	199:75	0:0	22	9000
+water	199:79	0:0	22	;
+water	200:36	0:0	22	}
+else	200:38	203:36	18
+stmts	200:43	203:36	19	
+if	200:43	203:36	20	(pes -> st -> codec -> codec_id == AV_CODEC_ID_DVB_SUBTITLE && pes -> dts > pcr + 10 * 90000)
+cond	200:47	201:67	21	pes -> st -> codec -> codec_id == AV_CODEC_ID_DVB_SUBTITLE && pes -> dts > pcr + 10 * 90000
+water	200:47	0:0	22	pes
+op	200:50	0:0	22	->
+water	200:52	0:0	22	st
+op	200:54	0:0	22	->
+water	200:56	0:0	22	codec
+op	200:61	0:0	22	->
+water	200:63	0:0	22	codec_id
+op	200:72	0:0	22	==
+water	200:75	0:0	22	AV_CODEC_ID_DVB_SUBTITLE
+op	200:100	0:0	22	&&
+water	201:47	0:0	22	pes
+op	201:50	0:0	22	->
+water	201:52	0:0	22	dts
+op	201:56	0:0	22	>
+water	201:58	0:0	22	pcr
+op	201:62	0:0	22	+
+water	201:64	0:0	22	10
+op	201:66	0:0	22	*
+water	201:67	0:0	22	90000
+stmts	201:74	203:36	21	
+water	201:74	0:0	22	{
+water	202:40	0:0	22	pes
+op	202:43	0:0	22	->
+water	202:45	0:0	22	pts
+op	202:49	0:0	22	=
+water	202:51	0:0	22	pes
+op	202:54	0:0	22	->
+water	202:56	0:0	22	dts
+op	202:60	0:0	22	=
+water	202:62	0:0	22	pcr
+op	202:66	0:0	22	+
+water	202:68	0:0	22	3654
+op	202:73	0:0	22	+
+water	202:75	0:0	22	9000
+water	202:79	0:0	22	;
+water	203:36	0:0	22	}
+break	204:36	204:41	18	
+water	205:32	0:0	18	}
+water	206:28	0:0	16	}
+water	207:24	0:0	14	}
+water	208:20	0:0	12	}
+water	209:16	0:0	10	}
+water	210:12	0:0	8	}
+break	211:12	211:17	6	
+label	212:8	212:27	6	case MPEGTS_PAYLOAD :
+if	213:12	241:12	6	(pes -> buffer)
+cond	213:16	213:21	7	pes -> buffer
+water	213:16	0:0	8	pes
+op	213:19	0:0	8	->
+water	213:21	0:0	8	buffer
+stmts	213:29	241:12	7	
+water	213:29	0:0	8	{
+if	214:16	223:16	8	(pes -> data_index > 0 && pes -> data_index + buf_size > pes -> total_size)
+cond	214:20	215:54	9	pes -> data_index > 0 && pes -> data_index + buf_size > pes -> total_size
+water	214:20	0:0	10	pes
+op	214:23	0:0	10	->
+water	214:25	0:0	10	data_index
+op	214:36	0:0	10	>
+water	214:38	0:0	10	0
+op	214:40	0:0	10	&&
+water	215:20	0:0	10	pes
+op	215:23	0:0	10	->
+water	215:25	0:0	10	data_index
+op	215:36	0:0	10	+
+water	215:38	0:0	10	buf_size
+op	215:47	0:0	10	>
+water	215:49	0:0	10	pes
+op	215:52	0:0	10	->
+water	215:54	0:0	10	total_size
+stmts	215:66	223:16	9	
+water	215:66	0:0	10	{
+call	216:20	216:47	10	new_pes_packet
+arg	216:35	216:38	11	pes
+water	216:35	0:0	12	pes
+arg	216:40	216:47	11	ts->pkt
+water	216:40	0:0	12	ts
+op	216:42	0:0	12	->
+water	216:44	0:0	12	pkt
+water	216:48	0:0	10	;
+water	217:20	0:0	10	pes
+op	217:23	0:0	10	->
+water	217:25	0:0	10	total_size
+op	217:36	0:0	10	=
+water	217:38	0:0	10	MAX_PES_PAYLOAD
+water	217:53	0:0	10	;
+water	218:20	0:0	10	pes
+op	218:23	0:0	10	->
+water	218:25	0:0	10	buffer
+op	218:32	0:0	10	=
+call	218:34	219:78	10	av_buffer_alloc
+arg	218:50	219:78	11	pes->total_size+AV_INPUT_BUFFER_PADDING_SIZE
+water	218:50	0:0	12	pes
+op	218:53	0:0	12	->
+water	218:55	0:0	12	total_size
+op	218:66	0:0	12	+
+water	219:50	0:0	12	AV_INPUT_BUFFER_PADDING_SIZE
+water	219:79	0:0	10	;
+if	220:20	221:46	10	(! pes -> buffer)
+cond	220:24	220:30	11	! pes -> buffer
+op	220:24	0:0	12	!
+water	220:25	0:0	12	pes
+op	220:28	0:0	12	->
+water	220:30	0:0	12	buffer
+stmts	221:24	221:46	11	
+return	221:24	221:46	12	AVERROR(ENOMEM)
+call	221:31	221:45	13	AVERROR
+arg	221:39	221:45	14	ENOMEM
+water	221:39	0:0	15	ENOMEM
+water	222:20	0:0	10	ts
+op	222:22	0:0	10	->
+water	222:24	0:0	10	stop_parse
+op	222:35	0:0	10	=
+water	222:37	0:0	10	1
+water	222:38	0:0	10	;
+water	223:16	0:0	10	}
+else	223:18	228:16	8
+stmts	223:23	228:16	9	
+if	223:23	228:16	10	(pes -> data_index == 0 && buf_size > pes -> total_size)
+cond	223:27	224:43	11	pes -> data_index == 0 && buf_size > pes -> total_size
+water	223:27	0:0	12	pes
+op	223:30	0:0	12	->
+water	223:32	0:0	12	data_index
+op	223:43	0:0	12	==
+water	223:46	0:0	12	0
+op	223:48	0:0	12	&&
+water	224:27	0:0	12	buf_size
+op	224:36	0:0	12	>
+water	224:38	0:0	12	pes
+op	224:41	0:0	12	->
+water	224:43	0:0	12	total_size
+stmts	224:55	228:16	11	
+water	224:55	0:0	12	{
+water	227:20	0:0	12	buf_size
+op	227:29	0:0	12	=
+water	227:31	0:0	12	pes
+op	227:34	0:0	12	->
+water	227:36	0:0	12	total_size
+water	227:46	0:0	12	;
+water	228:16	0:0	12	}
+call	229:16	229:71	8	memcpy
+arg	229:23	229:58	9	pes->buffer->data+pes->data_index
+water	229:23	0:0	10	pes
+op	229:26	0:0	10	->
+water	229:28	0:0	10	buffer
+op	229:34	0:0	10	->
+water	229:36	0:0	10	data
+op	229:41	0:0	10	+
+water	229:43	0:0	10	pes
+op	229:46	0:0	10	->
+water	229:48	0:0	10	data_index
+arg	229:60	229:61	9	p
+water	229:60	0:0	10	p
+arg	229:63	229:71	9	buf_size
+water	229:63	0:0	10	buf_size
+water	229:72	0:0	8	;
+water	230:16	0:0	8	pes
+op	230:19	0:0	8	->
+water	230:21	0:0	8	data_index
+op	230:32	0:0	8	+=
+water	230:35	0:0	8	buf_size
+water	230:43	0:0	8	;
+if	236:16	240:16	8	(! ts -> stop_parse && pes -> total_size < MAX_PES_PAYLOAD && pes -> pes_header_size + pes -> data_index == pes -> total_size + PES_START_SIZE)
+cond	236:20	237:80	9	! ts -> stop_parse && pes -> total_size < MAX_PES_PAYLOAD && pes -> pes_header_size + pes -> data_index == pes -> total_size + PES_START_SIZE
+op	236:20	0:0	10	!
+water	236:21	0:0	10	ts
+op	236:23	0:0	10	->
+water	236:25	0:0	10	stop_parse
+op	236:36	0:0	10	&&
+water	236:39	0:0	10	pes
+op	236:42	0:0	10	->
+water	236:44	0:0	10	total_size
+op	236:55	0:0	10	<
+water	236:57	0:0	10	MAX_PES_PAYLOAD
+op	236:73	0:0	10	&&
+water	237:20	0:0	10	pes
+op	237:23	0:0	10	->
+water	237:25	0:0	10	pes_header_size
+op	237:41	0:0	10	+
+water	237:43	0:0	10	pes
+op	237:46	0:0	10	->
+water	237:48	0:0	10	data_index
+op	237:59	0:0	10	==
+water	237:62	0:0	10	pes
+op	237:65	0:0	10	->
+water	237:67	0:0	10	total_size
+op	237:78	0:0	10	+
+water	237:80	0:0	10	PES_START_SIZE
+stmts	237:96	240:16	9	
+water	237:96	0:0	10	{
+water	238:20	0:0	10	ts
+op	238:22	0:0	10	->
+water	238:24	0:0	10	stop_parse
+op	238:35	0:0	10	=
+water	238:37	0:0	10	1
+water	238:38	0:0	10	;
+call	239:20	239:47	10	new_pes_packet
+arg	239:35	239:38	11	pes
+water	239:35	0:0	12	pes
+arg	239:40	239:47	11	ts->pkt
+water	239:40	0:0	12	ts
+op	239:42	0:0	12	->
+water	239:44	0:0	12	pkt
+water	239:48	0:0	10	;
+water	240:16	0:0	10	}
+water	241:12	0:0	8	}
+water	242:12	0:0	6	buf_size
+op	242:21	0:0	6	=
+water	242:23	0:0	6	0
+water	242:24	0:0	6	;
+break	243:12	243:17	6	
+label	244:8	244:24	6	case MPEGTS_SKIP :
+water	245:12	0:0	6	buf_size
+op	245:21	0:0	6	=
+water	245:23	0:0	6	0
+water	245:24	0:0	6	;
+break	246:12	246:17	6	
+water	247:8	0:0	6	}
+water	248:4	0:0	4	}
+return	249:4	249:12	2	0
+water	249:11	0:0	3	0

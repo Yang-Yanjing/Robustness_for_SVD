@@ -1,0 +1,384 @@
+func	1:0	82:0	0	static int	rtp_new_av_stream
+params	1:28	0:0	1	
+param	1:29	1:43	2	HTTPContext *	c
+param	2:29	2:45	2	int	stream_index
+param	2:47	2:76	2	struct sockaddr_in *	dest_addr
+param	3:29	3:48	2	HTTPContext *	rtsp_c
+stmnts	0:0	81:12	1	
+decl	5:4	5:24	2	AVFormatContext	*ctx
+decl	6:4	6:16	2	AVStream	*st
+decl	7:4	7:16	2	char	*ipaddr
+decl	8:4	8:24	2	URLContext	*h
+op	8:18	0:0	2	=
+water	8:20	0:0	2	NULL
+decl	9:4	9:22	2	uint8_t	*dummy_buf
+decl	10:4	10:23	2	int	max_packet_size
+decl	11:4	11:21	2	void	*st_internal
+water	13:4	0:0	2	ctx
+op	13:8	0:0	2	=
+call	13:10	13:33	2	avformat_alloc_context
+water	13:34	0:0	2	;
+if	14:4	15:17	2	(! ctx)
+cond	14:8	14:9	3	! ctx
+op	14:8	0:0	4	!
+water	14:9	0:0	4	ctx
+stmts	15:8	15:17	3	
+return	15:8	15:17	4	-1
+op	15:15	0:0	5	-
+water	15:16	0:0	5	1
+water	16:4	0:0	2	ctx
+op	16:7	0:0	2	->
+water	16:9	0:0	2	oformat
+op	16:17	0:0	2	=
+call	16:19	16:52	2	av_guess_format
+arg	16:35	16:40	3	"rtp"
+water	16:35	0:0	4	"rtp"
+arg	16:42	16:46	3	NULL
+water	16:42	0:0	4	NULL
+arg	16:48	16:52	3	NULL
+water	16:48	0:0	4	NULL
+water	16:53	0:0	2	;
+water	17:4	0:0	2	st
+op	17:7	0:0	2	=
+call	17:9	17:38	2	avformat_new_stream
+arg	17:29	17:32	3	ctx
+water	17:29	0:0	4	ctx
+arg	17:34	17:38	3	NULL
+water	17:34	0:0	4	NULL
+water	17:39	0:0	2	;
+if	18:4	19:17	2	(! st)
+cond	18:8	18:9	3	! st
+op	18:8	0:0	4	!
+water	18:9	0:0	4	st
+stmts	19:8	19:17	3	
+goto	19:8	19:17	4	fail
+water	19:13	0:0	5	fail
+water	20:4	0:0	2	st_internal
+op	20:16	0:0	2	=
+water	20:18	0:0	2	st
+op	20:20	0:0	2	->
+water	20:22	0:0	2	internal
+water	20:30	0:0	2	;
+if	21:4	23:60	2	(! c -> stream -> feed || c -> stream -> feed == c -> stream)
+cond	21:8	22:30	3	! c -> stream -> feed || c -> stream -> feed == c -> stream
+op	21:8	0:0	4	!
+water	21:9	0:0	4	c
+op	21:10	0:0	4	->
+water	21:12	0:0	4	stream
+op	21:18	0:0	4	->
+water	21:20	0:0	4	feed
+op	21:25	0:0	4	||
+water	22:8	0:0	4	c
+op	22:9	0:0	4	->
+water	22:11	0:0	4	stream
+op	22:17	0:0	4	->
+water	22:19	0:0	4	feed
+op	22:24	0:0	4	==
+water	22:27	0:0	4	c
+op	22:28	0:0	4	->
+water	22:30	0:0	4	stream
+stmts	23:8	23:60	3	
+call	23:8	23:59	4	unlayer_stream
+arg	23:23	23:25	5	st
+water	23:23	0:0	6	st
+arg	23:27	23:59	5	c->stream->streams[stream_index]
+water	23:27	0:0	6	c
+op	23:28	0:0	6	->
+water	23:30	0:0	6	stream
+op	23:36	0:0	6	->
+water	23:38	0:0	6	streams
+op	23:45	0:0	6	[
+water	23:46	0:0	6	stream_index
+op	23:58	0:0	6	]
+water	23:60	0:0	4	;
+else	24:4	26:79	2
+stmts	25:8	26:79	3	
+call	25:8	26:78	4	unlayer_stream
+arg	25:23	25:25	5	st
+water	25:23	0:0	6	st
+arg	26:15	26:78	5	c->stream->feed->streams[c->stream->feed_streams[stream_index]]
+water	26:15	0:0	6	c
+op	26:16	0:0	6	->
+water	26:18	0:0	6	stream
+op	26:24	0:0	6	->
+water	26:26	0:0	6	feed
+op	26:30	0:0	6	->
+water	26:32	0:0	6	streams
+op	26:39	0:0	6	[
+water	26:40	0:0	6	c
+op	26:41	0:0	6	->
+water	26:43	0:0	6	stream
+op	26:49	0:0	6	->
+water	26:51	0:0	6	feed_streams
+op	26:63	0:0	6	[
+water	26:64	0:0	6	stream_index
+op	26:76	0:0	6	]
+op	26:77	0:0	6	]
+water	26:79	0:0	4	;
+call	27:4	27:36	2	av_assert0
+arg	27:15	27:36	3	st->priv_data==NULL
+water	27:15	0:0	4	st
+op	27:17	0:0	4	->
+water	27:19	0:0	4	priv_data
+op	27:29	0:0	4	==
+water	27:32	0:0	4	NULL
+water	27:37	0:0	2	;
+call	28:4	28:42	2	av_assert0
+arg	28:15	28:42	3	st->internal==st_internal
+water	28:15	0:0	4	st
+op	28:17	0:0	4	->
+water	28:19	0:0	4	internal
+op	28:28	0:0	4	==
+water	28:31	0:0	4	st_internal
+water	28:43	0:0	2	;
+water	30:4	0:0	2	ipaddr
+op	30:11	0:0	2	=
+call	30:13	30:42	2	inet_ntoa
+arg	30:23	30:42	3	dest_addr->sin_addr
+water	30:23	0:0	4	dest_addr
+op	30:32	0:0	4	->
+water	30:34	0:0	4	sin_addr
+water	30:43	0:0	2	;
+switch	31:4	60:4	2	(c -> rtp_protocol)
+cond	31:11	31:14	3	c -> rtp_protocol
+water	31:11	0:0	4	c
+op	31:12	0:0	4	->
+water	31:14	0:0	4	rtp_protocol
+stmts	31:28	60:4	3	
+water	31:28	0:0	4	{
+label	32:4	32:33	4	case RTSP_LOWER_TRANSPORT_UDP :
+label	33:4	33:43	4	case RTSP_LOWER_TRANSPORT_UDP_MULTICAST :
+if	36:8	44:8	4	(c -> stream -> is_multicast)
+cond	36:12	36:23	5	c -> stream -> is_multicast
+water	36:12	0:0	6	c
+op	36:13	0:0	6	->
+water	36:15	0:0	6	stream
+op	36:21	0:0	6	->
+water	36:23	0:0	6	is_multicast
+stmts	36:37	44:8	5	
+water	36:37	0:0	6	{
+decl	37:12	37:19	6	int	ttl
+water	38:12	0:0	6	ttl
+op	38:16	0:0	6	=
+water	38:18	0:0	6	c
+op	38:19	0:0	6	->
+water	38:21	0:0	6	stream
+op	38:27	0:0	6	->
+water	38:29	0:0	6	multicast_ttl
+water	38:42	0:0	6	;
+if	39:12	40:24	6	(! ttl)
+cond	39:16	39:17	7	! ttl
+op	39:16	0:0	8	!
+water	39:17	0:0	8	ttl
+stmts	40:16	40:24	7	
+water	40:16	0:0	8	ttl
+op	40:20	0:0	8	=
+water	40:22	0:0	8	16
+water	40:24	0:0	8	;
+call	41:12	43:60	6	snprintf
+arg	41:21	41:34	7	ctx->filename
+water	41:21	0:0	8	ctx
+op	41:24	0:0	8	->
+water	41:26	0:0	8	filename
+arg	41:36	41:57	7	sizeof(ctx->filename)
+op	41:36	0:0	8	sizeof
+water	41:42	0:0	8	(
+water	41:43	0:0	8	ctx
+op	41:46	0:0	8	->
+water	41:48	0:0	8	filename
+water	41:56	0:0	8	)
+arg	42:21	42:53	7	"rtp://%s:%d?multicast=1&ttl=%d"
+water	42:21	0:0	8	"rtp://%s:%d?multicast=1&ttl=%d"
+arg	43:21	43:27	7	ipaddr
+water	43:21	0:0	8	ipaddr
+arg	43:29	43:55	7	ntohs(dest_addr->sin_port)
+call	43:29	43:54	8	ntohs
+arg	43:35	43:54	9	dest_addr->sin_port
+water	43:35	0:0	10	dest_addr
+op	43:44	0:0	10	->
+water	43:46	0:0	10	sin_port
+arg	43:57	43:60	7	ttl
+water	43:57	0:0	8	ttl
+water	43:61	0:0	6	;
+water	44:8	0:0	6	}
+else	44:10	47:8	4
+stmts	44:15	47:8	5	
+water	44:15	0:0	6	{
+call	45:12	46:70	6	snprintf
+arg	45:21	45:34	7	ctx->filename
+water	45:21	0:0	8	ctx
+op	45:24	0:0	8	->
+water	45:26	0:0	8	filename
+arg	45:36	45:57	7	sizeof(ctx->filename)
+op	45:36	0:0	8	sizeof
+water	45:42	0:0	8	(
+water	45:43	0:0	8	ctx
+op	45:46	0:0	8	->
+water	45:48	0:0	8	filename
+water	45:56	0:0	8	)
+arg	46:21	46:34	7	"rtp://%s:%d"
+water	46:21	0:0	8	"rtp://%s:%d"
+arg	46:36	46:42	7	ipaddr
+water	46:36	0:0	8	ipaddr
+arg	46:44	46:70	7	ntohs(dest_addr->sin_port)
+call	46:44	46:69	8	ntohs
+arg	46:50	46:69	9	dest_addr->sin_port
+water	46:50	0:0	10	dest_addr
+op	46:59	0:0	10	->
+water	46:61	0:0	10	sin_port
+water	46:71	0:0	6	;
+water	47:8	0:0	6	}
+if	48:8	49:21	4	(ffurl_open (& h ,ctx -> filename ,AVIO_FLAG_WRITE ,NULL ,NULL ) < 0)
+cond	48:12	48:73	5	ffurl_open (& h ,ctx -> filename ,AVIO_FLAG_WRITE ,NULL ,NULL ) < 0
+call	48:12	48:69	6	ffurl_open
+arg	48:23	48:25	7	&h
+op	48:23	0:0	8	&
+water	48:24	0:0	8	h
+arg	48:27	48:40	7	ctx->filename
+water	48:27	0:0	8	ctx
+op	48:30	0:0	8	->
+water	48:32	0:0	8	filename
+arg	48:42	48:57	7	AVIO_FLAG_WRITE
+water	48:42	0:0	8	AVIO_FLAG_WRITE
+arg	48:59	48:63	7	NULL
+water	48:59	0:0	8	NULL
+arg	48:65	48:69	7	NULL
+water	48:65	0:0	8	NULL
+op	48:71	0:0	6	<
+water	48:73	0:0	6	0
+stmts	49:12	49:21	5	
+goto	49:12	49:21	6	fail
+water	49:17	0:0	7	fail
+water	50:8	0:0	4	c
+op	50:9	0:0	4	->
+water	50:11	0:0	4	rtp_handles
+op	50:22	0:0	4	[
+water	50:23	0:0	4	stream_index
+op	50:35	0:0	4	]
+op	50:37	0:0	4	=
+water	50:39	0:0	4	h
+water	50:40	0:0	4	;
+water	51:8	0:0	4	max_packet_size
+op	51:24	0:0	4	=
+water	51:26	0:0	4	h
+op	51:27	0:0	4	->
+water	51:29	0:0	4	max_packet_size
+water	51:44	0:0	4	;
+break	52:8	52:13	4	
+label	53:4	53:33	4	case RTSP_LOWER_TRANSPORT_TCP :
+water	55:8	0:0	4	c
+op	55:9	0:0	4	->
+water	55:11	0:0	4	rtsp_c
+op	55:18	0:0	4	=
+water	55:20	0:0	4	rtsp_c
+water	55:26	0:0	4	;
+water	56:8	0:0	4	max_packet_size
+op	56:24	0:0	4	=
+water	56:26	0:0	4	RTSP_TCP_MAX_PACKET_SIZE
+water	56:50	0:0	4	;
+break	57:8	57:13	4	
+label	58:4	58:11	4	default :
+goto	59:8	59:17	4	fail
+water	59:13	0:0	5	fail
+water	60:4	0:0	4	}
+call	61:4	63:59	2	http_log
+arg	61:13	61:53	3	"%s:%d - - \"PLAY %s/streamid=%d %s\"\n"
+water	61:13	0:0	4	"%s:%d - - \"PLAY %s/streamid=%d %s\"\n"
+arg	62:13	62:19	3	ipaddr
+water	62:13	0:0	4	ipaddr
+arg	62:21	62:47	3	ntohs(dest_addr->sin_port)
+call	62:21	62:46	4	ntohs
+arg	62:27	62:46	5	dest_addr->sin_port
+water	62:27	0:0	6	dest_addr
+op	62:36	0:0	6	->
+water	62:38	0:0	6	sin_port
+arg	63:13	63:32	3	c->stream->filename
+water	63:13	0:0	4	c
+op	63:14	0:0	4	->
+water	63:16	0:0	4	stream
+op	63:22	0:0	4	->
+water	63:24	0:0	4	filename
+arg	63:34	63:46	3	stream_index
+water	63:34	0:0	4	stream_index
+arg	63:48	63:59	3	c->protocol
+water	63:48	0:0	4	c
+op	63:49	0:0	4	->
+water	63:51	0:0	4	protocol
+water	63:60	0:0	2	;
+if	66:4	68:17	2	(ffio_open_dyn_packet_buf (& ctx -> pb ,max_packet_size ) < 0)
+cond	66:8	66:62	3	ffio_open_dyn_packet_buf (& ctx -> pb ,max_packet_size ) < 0
+call	66:8	66:58	4	ffio_open_dyn_packet_buf
+arg	66:33	66:41	5	&ctx->pb
+op	66:33	0:0	6	&
+water	66:34	0:0	6	ctx
+op	66:37	0:0	6	->
+water	66:39	0:0	6	pb
+arg	66:43	66:58	5	max_packet_size
+water	66:43	0:0	6	max_packet_size
+op	66:60	0:0	4	<
+water	66:62	0:0	4	0
+stmts	68:8	68:17	3	
+goto	68:8	68:17	4	fail
+water	68:13	0:0	5	fail
+if	69:4	76:4	2	(avformat_write_header (ctx ,NULL ) < 0)
+cond	69:8	69:43	3	avformat_write_header (ctx ,NULL ) < 0
+call	69:8	69:39	4	avformat_write_header
+arg	69:30	69:33	5	ctx
+water	69:30	0:0	6	ctx
+arg	69:35	69:39	5	NULL
+water	69:35	0:0	6	NULL
+op	69:41	0:0	4	<
+water	69:43	0:0	4	0
+stmts	69:46	76:4	3	
+water	69:46	0:0	4	{
+label	70:4	70:8	4	fail :
+if	71:8	72:26	4	(h)
+cond	71:12	71:12	5	h
+water	71:12	0:0	6	h
+stmts	72:12	72:26	5	
+call	72:12	72:25	6	ffurl_close
+arg	72:24	72:25	7	h
+water	72:24	0:0	8	h
+water	72:26	0:0	6	;
+call	73:8	73:18	4	av_free
+arg	73:16	73:18	5	st
+water	73:16	0:0	6	st
+water	73:19	0:0	4	;
+call	74:8	74:19	4	av_free
+arg	74:16	74:19	5	ctx
+water	74:16	0:0	6	ctx
+water	74:20	0:0	4	;
+return	75:8	75:17	4	-1
+op	75:15	0:0	5	-
+water	75:16	0:0	5	1
+water	76:4	0:0	4	}
+call	77:4	77:42	2	avio_close_dyn_buf
+arg	77:23	77:30	3	ctx->pb
+water	77:23	0:0	4	ctx
+op	77:26	0:0	4	->
+water	77:28	0:0	4	pb
+arg	77:32	77:42	3	&dummy_buf
+op	77:32	0:0	4	&
+water	77:33	0:0	4	dummy_buf
+water	77:43	0:0	2	;
+water	78:4	0:0	2	ctx
+op	78:7	0:0	2	->
+water	78:9	0:0	2	pb
+op	78:12	0:0	2	=
+water	78:14	0:0	2	NULL
+water	78:18	0:0	2	;
+call	79:4	79:21	2	av_free
+arg	79:12	79:21	3	dummy_buf
+water	79:12	0:0	4	dummy_buf
+water	79:22	0:0	2	;
+water	80:4	0:0	2	c
+op	80:5	0:0	2	->
+water	80:7	0:0	2	rtp_ctx
+op	80:14	0:0	2	[
+water	80:15	0:0	2	stream_index
+op	80:27	0:0	2	]
+op	80:29	0:0	2	=
+water	80:31	0:0	2	ctx
+water	80:34	0:0	2	;
+return	81:4	81:12	2	0
+water	81:11	0:0	3	0

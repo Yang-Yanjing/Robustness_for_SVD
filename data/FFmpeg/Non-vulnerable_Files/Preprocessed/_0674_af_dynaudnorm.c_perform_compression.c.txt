@@ -1,0 +1,377 @@
+func	1:0	37:0	0	static void	perform_compression
+params	1:31	0:0	1	
+param	1:32	1:64	2	DynamicAudioNormalizerContext *	s
+param	1:66	1:80	2	AVFrame *	frame
+stmnts	0:0	36:4	1	
+decl	3:4	3:66	2	int	is_first_frame
+op	3:23	0:0	2	=
+call	3:25	3:65	3	cqueue_empty
+arg	3:38	3:65	4	s->gain_history_original[0]
+water	3:38	0:0	5	s
+op	3:39	0:0	5	->
+water	3:41	0:0	5	gain_history_original
+op	3:62	0:0	5	[
+water	3:63	0:0	5	0
+op	3:64	0:0	5	]
+decl	4:4	4:12	2	int	c
+water	4:9	0:0	2	,
+decl	4:4	4:12	2	int	i
+if	5:4	20:4	2	(s -> channels_coupled)
+cond	5:8	5:11	3	s -> channels_coupled
+water	5:8	0:0	4	s
+op	5:9	0:0	4	->
+water	5:11	0:0	4	channels_coupled
+stmts	5:29	20:4	3	
+water	5:29	0:0	4	{
+decl	6:8	6:77	4	const double	standard_deviation
+op	6:40	0:0	4	=
+call	6:42	6:76	5	compute_frame_std_dev
+arg	6:64	6:65	6	s
+water	6:64	0:0	7	s
+arg	6:67	6:72	6	frame
+water	6:67	0:0	7	frame
+arg	6:74	6:76	6	-1
+op	6:74	0:0	7	-
+water	6:75	0:0	7	1
+decl	7:8	7:93	4	const double	current_threshold
+op	7:40	0:0	4	=
+call	7:42	7:92	5	FFMIN
+arg	7:48	7:51	6	1.0
+water	7:48	0:0	7	1
+op	7:49	0:0	7	.
+water	7:50	0:0	7	0
+arg	7:53	7:92	6	s->compress_factor*standard_deviation
+water	7:53	0:0	7	s
+op	7:54	0:0	7	->
+water	7:56	0:0	7	compress_factor
+op	7:72	0:0	7	*
+water	7:74	0:0	7	standard_deviation
+decl	8:8	8:95	4	const double	prev_value
+op	8:32	0:0	4	=
+water	8:34	0:0	4	is_first_frame
+water	8:49	0:0	4	?
+water	8:51	0:0	4	current_threshold
+water	8:69	0:0	4	:
+water	8:71	0:0	4	s
+op	8:72	0:0	4	->
+water	8:74	0:0	4	compress_threshold
+op	8:92	0:0	4	[
+water	8:93	0:0	4	0
+op	8:94	0:0	4	]
+decl	9:8	9:53	4	double	prev_actual_thresh
+water	9:33	0:0	4	,
+decl	9:8	9:53	4	double	curr_actual_thresh
+water	10:8	0:0	4	s
+op	10:9	0:0	4	->
+water	10:11	0:0	4	compress_threshold
+op	10:29	0:0	4	[
+water	10:30	0:0	4	0
+op	10:31	0:0	4	]
+op	10:33	0:0	4	=
+water	10:35	0:0	4	is_first_frame
+water	10:50	0:0	4	?
+water	10:52	0:0	4	current_threshold
+water	10:70	0:0	4	:
+call	10:72	10:139	4	update_value
+arg	10:85	10:102	5	current_threshold
+water	10:85	0:0	6	current_threshold
+arg	10:104	10:128	5	s->compress_threshold[0]
+water	10:104	0:0	6	s
+op	10:105	0:0	6	->
+water	10:107	0:0	6	compress_threshold
+op	10:125	0:0	6	[
+water	10:126	0:0	6	0
+op	10:127	0:0	6	]
+arg	10:130	10:139	5	(1.0/3.0)
+water	10:130	0:0	6	(
+water	10:131	0:0	6	1
+op	10:132	0:0	6	.
+water	10:133	0:0	6	0
+op	10:134	0:0	6	/
+water	10:135	0:0	6	3
+op	10:136	0:0	6	.
+water	10:137	0:0	6	0
+water	10:138	0:0	6	)
+water	10:140	0:0	4	;
+water	11:8	0:0	4	prev_actual_thresh
+op	11:27	0:0	4	=
+call	11:29	11:61	4	setup_compress_thresh
+arg	11:51	11:61	5	prev_value
+water	11:51	0:0	6	prev_value
+water	11:62	0:0	4	;
+water	12:8	0:0	4	curr_actual_thresh
+op	12:27	0:0	4	=
+call	12:29	12:75	4	setup_compress_thresh
+arg	12:51	12:75	5	s->compress_threshold[0]
+water	12:51	0:0	6	s
+op	12:52	0:0	6	->
+water	12:54	0:0	6	compress_threshold
+op	12:72	0:0	6	[
+water	12:73	0:0	6	0
+op	12:74	0:0	6	]
+water	12:76	0:0	4	;
+for	13:8	19:8	4	(c = 0 ;c < s -> channels;c ++)
+forinit	13:13	13:18	5	c = 0 ;
+water	13:13	0:0	6	c
+op	13:15	0:0	6	=
+water	13:17	0:0	6	0
+water	13:18	0:0	6	;
+cond	13:20	13:27	5	c < s -> channels
+water	13:20	0:0	6	c
+op	13:22	0:0	6	<
+water	13:24	0:0	6	s
+op	13:25	0:0	6	->
+water	13:27	0:0	6	channels
+forexpr	13:37	13:38	5	c ++
+water	13:37	0:0	6	c
+op	13:38	0:0	6	++
+stmts	13:42	19:8	5	
+water	13:42	0:0	6	{
+water	14:12	0:0	6	double
+op	14:19	0:0	6	*
+water	14:20	0:0	6	const
+water	14:26	0:0	6	dst_ptr
+op	14:34	0:0	6	=
+water	14:36	0:0	6	(
+water	14:37	0:0	6	double
+op	14:44	0:0	6	*
+water	14:45	0:0	6	)
+water	14:46	0:0	6	frame
+op	14:51	0:0	6	->
+water	14:53	0:0	6	extended_data
+op	14:66	0:0	6	[
+water	14:67	0:0	6	c
+op	14:68	0:0	6	]
+water	14:69	0:0	6	;
+for	15:12	18:12	6	(i = 0 ;i < frame -> nb_samples;i ++)
+forinit	15:17	15:22	7	i = 0 ;
+water	15:17	0:0	8	i
+op	15:19	0:0	8	=
+water	15:21	0:0	8	0
+water	15:22	0:0	8	;
+cond	15:24	15:35	7	i < frame -> nb_samples
+water	15:24	0:0	8	i
+op	15:26	0:0	8	<
+water	15:28	0:0	8	frame
+op	15:33	0:0	8	->
+water	15:35	0:0	8	nb_samples
+forexpr	15:47	15:48	7	i ++
+water	15:47	0:0	8	i
+op	15:48	0:0	8	++
+stmts	15:52	18:12	7	
+water	15:52	0:0	8	{
+decl	16:16	16:107	8	const double	localThresh
+op	16:41	0:0	8	=
+call	16:43	16:106	9	fade
+arg	16:48	16:66	10	prev_actual_thresh
+water	16:48	0:0	11	prev_actual_thresh
+arg	16:68	16:86	10	curr_actual_thresh
+water	16:68	0:0	11	curr_actual_thresh
+arg	16:88	16:89	10	i
+water	16:88	0:0	11	i
+arg	16:91	16:106	10	s->fade_factors
+water	16:91	0:0	11	s
+op	16:92	0:0	11	->
+water	16:94	0:0	11	fade_factors
+water	17:16	0:0	8	dst_ptr
+op	17:23	0:0	8	[
+water	17:24	0:0	8	i
+op	17:25	0:0	8	]
+op	17:27	0:0	8	=
+call	17:29	17:86	8	copysign
+arg	17:38	17:74	9	bound(localThresh,fabs(dst_ptr[i]))
+call	17:38	17:73	10	bound
+arg	17:44	17:55	11	localThresh
+water	17:44	0:0	12	localThresh
+arg	17:57	17:73	11	fabs(dst_ptr[i])
+call	17:57	17:72	12	fabs
+arg	17:62	17:72	13	dst_ptr[i]
+water	17:62	0:0	14	dst_ptr
+op	17:69	0:0	14	[
+water	17:70	0:0	14	i
+op	17:71	0:0	14	]
+arg	17:76	17:86	9	dst_ptr[i]
+water	17:76	0:0	10	dst_ptr
+op	17:83	0:0	10	[
+water	17:84	0:0	10	i
+op	17:85	0:0	10	]
+water	17:87	0:0	8	;
+water	18:12	0:0	8	}
+water	19:8	0:0	6	}
+water	20:4	0:0	4	}
+else	20:6	36:4	2
+stmts	20:11	36:4	3	
+water	20:11	0:0	4	{
+for	21:8	35:8	4	(c = 0 ;c < s -> channels;c ++)
+forinit	21:13	21:18	5	c = 0 ;
+water	21:13	0:0	6	c
+op	21:15	0:0	6	=
+water	21:17	0:0	6	0
+water	21:18	0:0	6	;
+cond	21:20	21:27	5	c < s -> channels
+water	21:20	0:0	6	c
+op	21:22	0:0	6	<
+water	21:24	0:0	6	s
+op	21:25	0:0	6	->
+water	21:27	0:0	6	channels
+forexpr	21:37	21:38	5	c ++
+water	21:37	0:0	6	c
+op	21:38	0:0	6	++
+stmts	21:42	35:8	5	
+water	21:42	0:0	6	{
+decl	22:12	22:80	6	const double	standard_deviation
+op	22:44	0:0	6	=
+call	22:46	22:79	7	compute_frame_std_dev
+arg	22:68	22:69	8	s
+water	22:68	0:0	9	s
+arg	22:71	22:76	8	frame
+water	22:71	0:0	9	frame
+arg	22:78	22:79	8	c
+water	22:78	0:0	9	c
+decl	23:12	23:120	6	const double	current_threshold
+op	23:44	0:0	6	=
+call	23:46	23:119	7	setup_compress_thresh
+arg	23:68	23:119	8	FFMIN(1.0,s->compress_factor*standard_deviation)
+call	23:68	23:118	9	FFMIN
+arg	23:74	23:77	10	1.0
+water	23:74	0:0	11	1
+op	23:75	0:0	11	.
+water	23:76	0:0	11	0
+arg	23:79	23:118	10	s->compress_factor*standard_deviation
+water	23:79	0:0	11	s
+op	23:80	0:0	11	->
+water	23:82	0:0	11	compress_factor
+op	23:98	0:0	11	*
+water	23:100	0:0	11	standard_deviation
+decl	24:12	24:99	6	const double	prev_value
+op	24:36	0:0	6	=
+water	24:38	0:0	6	is_first_frame
+water	24:53	0:0	6	?
+water	24:55	0:0	6	current_threshold
+water	24:73	0:0	6	:
+water	24:75	0:0	6	s
+op	24:76	0:0	6	->
+water	24:78	0:0	6	compress_threshold
+op	24:96	0:0	6	[
+water	24:97	0:0	6	c
+op	24:98	0:0	6	]
+decl	25:12	25:57	6	double	prev_actual_thresh
+water	25:37	0:0	6	,
+decl	25:12	25:57	6	double	curr_actual_thresh
+decl	26:12	26:27	6	double	*dst_ptr
+water	27:12	0:0	6	s
+op	27:13	0:0	6	->
+water	27:15	0:0	6	compress_threshold
+op	27:33	0:0	6	[
+water	27:34	0:0	6	c
+op	27:35	0:0	6	]
+op	27:37	0:0	6	=
+water	27:39	0:0	6	is_first_frame
+water	27:54	0:0	6	?
+water	27:56	0:0	6	current_threshold
+water	27:74	0:0	6	:
+call	27:76	27:141	6	update_value
+arg	27:89	27:106	7	current_threshold
+water	27:89	0:0	8	current_threshold
+arg	27:108	27:132	7	s->compress_threshold[c]
+water	27:108	0:0	8	s
+op	27:109	0:0	8	->
+water	27:111	0:0	8	compress_threshold
+op	27:129	0:0	8	[
+water	27:130	0:0	8	c
+op	27:131	0:0	8	]
+arg	27:134	27:141	7	1.0/3.0
+water	27:134	0:0	8	1
+op	27:135	0:0	8	.
+water	27:136	0:0	8	0
+op	27:137	0:0	8	/
+water	27:138	0:0	8	3
+op	27:139	0:0	8	.
+water	27:140	0:0	8	0
+water	27:142	0:0	6	;
+water	28:12	0:0	6	prev_actual_thresh
+op	28:31	0:0	6	=
+call	28:33	28:65	6	setup_compress_thresh
+arg	28:55	28:65	7	prev_value
+water	28:55	0:0	8	prev_value
+water	28:66	0:0	6	;
+water	29:12	0:0	6	curr_actual_thresh
+op	29:31	0:0	6	=
+call	29:33	29:79	6	setup_compress_thresh
+arg	29:55	29:79	7	s->compress_threshold[c]
+water	29:55	0:0	8	s
+op	29:56	0:0	8	->
+water	29:58	0:0	8	compress_threshold
+op	29:76	0:0	8	[
+water	29:77	0:0	8	c
+op	29:78	0:0	8	]
+water	29:80	0:0	6	;
+water	30:12	0:0	6	dst_ptr
+op	30:20	0:0	6	=
+water	30:22	0:0	6	(
+water	30:23	0:0	6	double
+op	30:30	0:0	6	*
+water	30:31	0:0	6	)
+water	30:32	0:0	6	frame
+op	30:37	0:0	6	->
+water	30:39	0:0	6	extended_data
+op	30:52	0:0	6	[
+water	30:53	0:0	6	c
+op	30:54	0:0	6	]
+water	30:55	0:0	6	;
+for	31:12	34:12	6	(i = 0 ;i < frame -> nb_samples;i ++)
+forinit	31:17	31:22	7	i = 0 ;
+water	31:17	0:0	8	i
+op	31:19	0:0	8	=
+water	31:21	0:0	8	0
+water	31:22	0:0	8	;
+cond	31:24	31:35	7	i < frame -> nb_samples
+water	31:24	0:0	8	i
+op	31:26	0:0	8	<
+water	31:28	0:0	8	frame
+op	31:33	0:0	8	->
+water	31:35	0:0	8	nb_samples
+forexpr	31:47	31:48	7	i ++
+water	31:47	0:0	8	i
+op	31:48	0:0	8	++
+stmts	31:52	34:12	7	
+water	31:52	0:0	8	{
+decl	32:16	32:107	8	const double	localThresh
+op	32:41	0:0	8	=
+call	32:43	32:106	9	fade
+arg	32:48	32:66	10	prev_actual_thresh
+water	32:48	0:0	11	prev_actual_thresh
+arg	32:68	32:86	10	curr_actual_thresh
+water	32:68	0:0	11	curr_actual_thresh
+arg	32:88	32:89	10	i
+water	32:88	0:0	11	i
+arg	32:91	32:106	10	s->fade_factors
+water	32:91	0:0	11	s
+op	32:92	0:0	11	->
+water	32:94	0:0	11	fade_factors
+water	33:16	0:0	8	dst_ptr
+op	33:23	0:0	8	[
+water	33:24	0:0	8	i
+op	33:25	0:0	8	]
+op	33:27	0:0	8	=
+call	33:29	33:86	8	copysign
+arg	33:38	33:74	9	bound(localThresh,fabs(dst_ptr[i]))
+call	33:38	33:73	10	bound
+arg	33:44	33:55	11	localThresh
+water	33:44	0:0	12	localThresh
+arg	33:57	33:73	11	fabs(dst_ptr[i])
+call	33:57	33:72	12	fabs
+arg	33:62	33:72	13	dst_ptr[i]
+water	33:62	0:0	14	dst_ptr
+op	33:69	0:0	14	[
+water	33:70	0:0	14	i
+op	33:71	0:0	14	]
+arg	33:76	33:86	9	dst_ptr[i]
+water	33:76	0:0	10	dst_ptr
+op	33:83	0:0	10	[
+water	33:84	0:0	10	i
+op	33:85	0:0	10	]
+water	33:87	0:0	8	;
+water	34:12	0:0	8	}
+water	35:8	0:0	6	}
+water	36:4	0:0	4	}

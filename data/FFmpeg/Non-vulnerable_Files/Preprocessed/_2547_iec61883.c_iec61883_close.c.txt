@@ -1,0 +1,156 @@
+func	1:0	29:0	0	static int	iec61883_close
+params	1:25	0:0	1	
+param	1:26	1:50	2	AVFormatContext *	context
+stmnts	0:0	28:12	1	
+decl	3:4	3:49	2	struct iec61883_data	*dv
+op	3:29	0:0	2	=
+water	3:31	0:0	2	context
+op	3:38	0:0	2	->
+water	3:40	0:0	2	priv_data
+water	5:4	0:0	2	dv
+op	5:6	0:0	2	->
+water	5:8	0:0	2	thread_loop
+op	5:20	0:0	2	=
+water	5:22	0:0	2	0
+water	5:23	0:0	2	;
+call	6:4	6:46	2	pthread_join
+arg	6:17	6:40	3	dv->receive_task_thread
+water	6:17	0:0	4	dv
+op	6:19	0:0	4	->
+water	6:21	0:0	4	receive_task_thread
+arg	6:42	6:46	3	NULL
+water	6:42	0:0	4	NULL
+water	6:47	0:0	2	;
+call	7:4	7:34	2	pthread_cond_destroy
+arg	7:25	7:34	3	&dv->cond
+op	7:25	0:0	4	&
+water	7:26	0:0	4	dv
+op	7:28	0:0	4	->
+water	7:30	0:0	4	cond
+water	7:35	0:0	2	;
+call	8:4	8:36	2	pthread_mutex_destroy
+arg	8:26	8:36	3	&dv->mutex
+op	8:26	0:0	4	&
+water	8:27	0:0	4	dv
+op	8:29	0:0	4	->
+water	8:31	0:0	4	mutex
+water	8:37	0:0	2	;
+if	10:4	14:4	2	(CONFIG_MPEGTS_DEMUXER && dv -> type == IEC61883_HDV)
+cond	10:8	10:45	3	CONFIG_MPEGTS_DEMUXER && dv -> type == IEC61883_HDV
+water	10:8	0:0	4	CONFIG_MPEGTS_DEMUXER
+op	10:30	0:0	4	&&
+water	10:33	0:0	4	dv
+op	10:35	0:0	4	->
+water	10:37	0:0	4	type
+op	10:42	0:0	4	==
+water	10:45	0:0	4	IEC61883_HDV
+stmts	10:59	14:4	3	
+water	10:59	0:0	4	{
+call	11:8	11:51	4	iec61883_mpeg2_recv_stop
+arg	11:33	11:51	5	dv->iec61883_mpeg2
+water	11:33	0:0	6	dv
+op	11:35	0:0	6	->
+water	11:37	0:0	6	iec61883_mpeg2
+water	11:52	0:0	4	;
+call	12:8	12:47	4	iec61883_mpeg2_close
+arg	12:29	12:47	5	dv->iec61883_mpeg2
+water	12:29	0:0	6	dv
+op	12:31	0:0	6	->
+water	12:33	0:0	6	iec61883_mpeg2
+water	12:48	0:0	4	;
+call	13:8	13:48	4	avpriv_mpegts_parse_close
+arg	13:34	13:48	5	dv->mpeg_demux
+water	13:34	0:0	6	dv
+op	13:36	0:0	6	->
+water	13:38	0:0	6	mpeg_demux
+water	13:49	0:0	4	;
+water	14:4	0:0	4	}
+else	14:6	17:4	2
+stmts	14:11	17:4	3	
+water	14:11	0:0	4	{
+call	15:8	15:43	4	iec61883_dv_fb_stop
+arg	15:28	15:43	5	dv->iec61883_dv
+water	15:28	0:0	6	dv
+op	15:30	0:0	6	->
+water	15:32	0:0	6	iec61883_dv
+water	15:44	0:0	4	;
+call	16:8	16:44	4	iec61883_dv_fb_close
+arg	16:29	16:44	5	dv->iec61883_dv
+water	16:29	0:0	6	dv
+op	16:31	0:0	6	->
+water	16:33	0:0	6	iec61883_dv
+water	16:45	0:0	4	;
+water	17:4	0:0	4	}
+while	18:4	23:4	2	(dv -> queue_first)
+cond	18:11	18:15	3	dv -> queue_first
+water	18:11	0:0	4	dv
+op	18:13	0:0	4	->
+water	18:15	0:0	4	queue_first
+stmts	18:28	23:4	3	
+water	18:28	0:0	4	{
+decl	19:8	19:42	4	DVPacket	*packet
+op	19:25	0:0	4	=
+water	19:27	0:0	4	dv
+op	19:29	0:0	4	->
+water	19:31	0:0	4	queue_first
+water	20:8	0:0	4	dv
+op	20:10	0:0	4	->
+water	20:12	0:0	4	queue_first
+op	20:24	0:0	4	=
+water	20:26	0:0	4	packet
+op	20:32	0:0	4	->
+water	20:34	0:0	4	next
+water	20:38	0:0	4	;
+call	21:8	21:29	4	av_freep
+arg	21:17	21:29	5	&packet->buf
+op	21:17	0:0	6	&
+water	21:18	0:0	6	packet
+op	21:24	0:0	6	->
+water	21:26	0:0	6	buf
+water	21:30	0:0	4	;
+call	22:8	22:24	4	av_freep
+arg	22:17	22:24	5	&packet
+op	22:17	0:0	6	&
+water	22:18	0:0	6	packet
+water	22:25	0:0	4	;
+water	23:4	0:0	4	}
+call	24:4	26:70	2	iec61883_cmp_disconnect
+arg	24:28	24:39	3	dv->raw1394
+water	24:28	0:0	4	dv
+op	24:30	0:0	4	->
+water	24:32	0:0	4	raw1394
+arg	24:41	24:49	3	dv->node
+water	24:41	0:0	4	dv
+op	24:43	0:0	4	->
+water	24:45	0:0	4	node
+arg	24:51	24:66	3	dv->output_port
+water	24:51	0:0	4	dv
+op	24:53	0:0	4	->
+water	24:55	0:0	4	output_port
+arg	25:28	25:61	3	raw1394_get_local_id(dv->raw1394)
+call	25:28	25:60	4	raw1394_get_local_id
+arg	25:49	25:60	5	dv->raw1394
+water	25:49	0:0	6	dv
+op	25:51	0:0	6	->
+water	25:53	0:0	6	raw1394
+arg	26:28	26:42	3	dv->input_port
+water	26:28	0:0	4	dv
+op	26:30	0:0	4	->
+water	26:32	0:0	4	input_port
+arg	26:44	26:55	3	dv->channel
+water	26:44	0:0	4	dv
+op	26:46	0:0	4	->
+water	26:48	0:0	4	channel
+arg	26:57	26:70	3	dv->bandwidth
+water	26:57	0:0	4	dv
+op	26:59	0:0	4	->
+water	26:61	0:0	4	bandwidth
+water	26:71	0:0	2	;
+call	27:4	27:38	2	raw1394_destroy_handle
+arg	27:27	27:38	3	dv->raw1394
+water	27:27	0:0	4	dv
+op	27:29	0:0	4	->
+water	27:31	0:0	4	raw1394
+water	27:39	0:0	2	;
+return	28:4	28:12	2	0
+water	28:11	0:0	3	0

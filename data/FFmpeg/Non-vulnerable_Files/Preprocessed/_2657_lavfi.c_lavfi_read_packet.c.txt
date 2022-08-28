@@ -1,0 +1,618 @@
+func	1:0	94:0	0	static int	lavfi_read_packet
+params	1:28	0:0	1	
+param	1:29	1:51	2	AVFormatContext *	avctx
+param	1:53	1:66	2	AVPacket *	pkt
+stmnts	0:0	93:15	1	
+decl	3:4	3:42	2	LavfiContext	*lavfi
+op	3:24	0:0	2	=
+water	3:26	0:0	2	avctx
+op	3:31	0:0	2	->
+water	3:33	0:0	2	priv_data
+decl	4:4	4:28	2	double	min_pts
+op	4:19	0:0	2	=
+water	4:21	0:0	2	DBL_MAX
+decl	5:4	5:40	2	int	stream_idx
+water	5:18	0:0	2	,
+decl	5:4	5:40	2	int	min_pts_sink_idx
+op	5:37	0:0	2	=
+water	5:39	0:0	2	0
+decl	6:4	6:41	2	AVFrame	*frame
+op	6:19	0:0	2	=
+water	6:21	0:0	2	lavfi
+op	6:26	0:0	2	->
+water	6:28	0:0	2	decoded_frame
+decl	7:4	7:18	2	AVPicture	pict
+decl	8:4	8:32	2	AVDictionary	*frame_metadata
+decl	9:4	9:14	2	int	ret
+water	9:11	0:0	2	,
+decl	9:4	9:14	2	int	i
+decl	10:4	10:16	2	int	size
+op	10:13	0:0	2	=
+water	10:15	0:0	2	0
+if	11:4	17:4	2	(lavfi -> subcc_packet . size)
+cond	11:8	11:28	3	lavfi -> subcc_packet . size
+water	11:8	0:0	4	lavfi
+op	11:13	0:0	4	->
+water	11:15	0:0	4	subcc_packet
+op	11:27	0:0	4	.
+water	11:28	0:0	4	size
+stmts	11:34	17:4	3	
+water	11:34	0:0	4	{
+op	12:8	0:0	4	*
+water	12:9	0:0	4	pkt
+op	12:13	0:0	4	=
+water	12:15	0:0	4	lavfi
+op	12:20	0:0	4	->
+water	12:22	0:0	4	subcc_packet
+water	12:34	0:0	4	;
+call	13:8	13:43	4	av_init_packet
+arg	13:23	13:43	5	&lavfi->subcc_packet
+op	13:23	0:0	6	&
+water	13:24	0:0	6	lavfi
+op	13:29	0:0	6	->
+water	13:31	0:0	6	subcc_packet
+water	13:44	0:0	4	;
+water	14:8	0:0	4	lavfi
+op	14:13	0:0	4	->
+water	14:15	0:0	4	subcc_packet
+op	14:27	0:0	4	.
+water	14:28	0:0	4	size
+op	14:33	0:0	4	=
+water	14:35	0:0	4	0
+water	14:36	0:0	4	;
+water	15:8	0:0	4	lavfi
+op	15:13	0:0	4	->
+water	15:15	0:0	4	subcc_packet
+op	15:27	0:0	4	.
+water	15:28	0:0	4	data
+op	15:33	0:0	4	=
+water	15:35	0:0	4	NULL
+water	15:39	0:0	4	;
+return	16:8	16:24	4	pkt->size
+water	16:15	0:0	5	pkt
+op	16:18	0:0	5	->
+water	16:20	0:0	5	size
+water	17:4	0:0	4	}
+for	20:4	41:4	2	(i = 0 ;i < lavfi -> nb_sinks;i ++)
+forinit	20:9	20:14	3	i = 0 ;
+water	20:9	0:0	4	i
+op	20:11	0:0	4	=
+water	20:13	0:0	4	0
+water	20:14	0:0	4	;
+cond	20:16	20:27	3	i < lavfi -> nb_sinks
+water	20:16	0:0	4	i
+op	20:18	0:0	4	<
+water	20:20	0:0	4	lavfi
+op	20:25	0:0	4	->
+water	20:27	0:0	4	nb_sinks
+forexpr	20:37	20:38	3	i ++
+water	20:37	0:0	4	i
+op	20:38	0:0	4	++
+stmts	20:42	41:4	3	
+water	20:42	0:0	4	{
+decl	21:8	21:61	4	AVRational	tb
+op	21:22	0:0	4	=
+water	21:24	0:0	4	lavfi
+op	21:29	0:0	4	->
+water	21:31	0:0	4	sinks
+op	21:36	0:0	4	[
+water	21:37	0:0	4	i
+op	21:38	0:0	4	]
+op	21:39	0:0	4	->
+water	21:41	0:0	4	inputs
+op	21:47	0:0	4	[
+water	21:48	0:0	4	0
+op	21:49	0:0	4	]
+op	21:50	0:0	4	->
+water	21:52	0:0	4	time_base
+decl	22:8	22:16	4	double	d
+decl	23:8	23:15	4	int	ret
+if	24:8	25:20	4	(lavfi -> sink_eof [ i ])
+cond	24:12	24:29	5	lavfi -> sink_eof [ i ]
+water	24:12	0:0	6	lavfi
+op	24:17	0:0	6	->
+water	24:19	0:0	6	sink_eof
+op	24:27	0:0	6	[
+water	24:28	0:0	6	i
+op	24:29	0:0	6	]
+stmts	25:12	25:20	5	
+continue	25:12	25:20	6	
+water	26:8	0:0	4	ret
+op	26:12	0:0	4	=
+call	26:14	27:67	4	av_buffersink_get_frame_flags
+arg	26:44	26:59	5	lavfi->sinks[i]
+water	26:44	0:0	6	lavfi
+op	26:49	0:0	6	->
+water	26:51	0:0	6	sinks
+op	26:56	0:0	6	[
+water	26:57	0:0	6	i
+op	26:58	0:0	6	]
+arg	26:61	26:66	5	frame
+water	26:61	0:0	6	frame
+arg	27:44	27:67	5	AV_BUFFERSINK_FLAG_PEEK
+water	27:44	0:0	6	AV_BUFFERSINK_FLAG_PEEK
+water	27:68	0:0	4	;
+if	28:8	32:8	4	(ret == AVERROR_EOF)
+cond	28:12	28:19	5	ret == AVERROR_EOF
+water	28:12	0:0	6	ret
+op	28:16	0:0	6	==
+water	28:19	0:0	6	AVERROR_EOF
+stmts	28:32	32:8	5	
+water	28:32	0:0	6	{
+call	29:12	29:49	6	ff_dlog
+arg	29:20	29:25	7	avctx
+water	29:20	0:0	8	avctx
+arg	29:27	29:46	7	"EOF sink_idx:%d\n"
+water	29:27	0:0	8	"EOF sink_idx:%d\n"
+arg	29:48	29:49	7	i
+water	29:48	0:0	8	i
+water	29:50	0:0	6	;
+water	30:12	0:0	6	lavfi
+op	30:17	0:0	6	->
+water	30:19	0:0	6	sink_eof
+op	30:27	0:0	6	[
+water	30:28	0:0	6	i
+op	30:29	0:0	6	]
+op	30:31	0:0	6	=
+water	30:33	0:0	6	1
+water	30:34	0:0	6	;
+continue	31:12	31:20	6	
+water	32:8	0:0	6	}
+else	32:10	33:22	4
+stmts	32:15	33:22	5	
+if	32:15	33:22	6	(ret < 0)
+cond	32:19	32:25	7	ret < 0
+water	32:19	0:0	8	ret
+op	32:23	0:0	8	<
+water	32:25	0:0	8	0
+stmts	33:12	33:22	7	
+return	33:12	33:22	8	ret
+water	33:19	0:0	9	ret
+water	34:8	0:0	4	d
+op	34:10	0:0	4	=
+call	34:12	34:99	4	av_rescale_q_rnd
+arg	34:29	34:39	5	frame->pts
+water	34:29	0:0	6	frame
+op	34:34	0:0	6	->
+water	34:36	0:0	6	pts
+arg	34:41	34:43	5	tb
+water	34:41	0:0	6	tb
+arg	34:45	34:59	5	AV_TIME_BASE_Q
+water	34:45	0:0	6	AV_TIME_BASE_Q
+arg	34:61	34:99	5	AV_ROUND_NEAR_INF|AV_ROUND_PASS_MINMAX
+water	34:61	0:0	6	AV_ROUND_NEAR_INF
+op	34:78	0:0	6	|
+water	34:79	0:0	6	AV_ROUND_PASS_MINMAX
+water	34:100	0:0	4	;
+call	35:8	35:52	4	ff_dlog
+arg	35:16	35:21	5	avctx
+water	35:16	0:0	6	avctx
+arg	35:23	35:46	5	"sink_idx:%d time:%f\n"
+water	35:23	0:0	6	"sink_idx:%d time:%f\n"
+arg	35:48	35:49	5	i
+water	35:48	0:0	6	i
+arg	35:51	35:52	5	d
+water	35:51	0:0	6	d
+water	35:53	0:0	4	;
+call	36:8	36:28	4	av_frame_unref
+arg	36:23	36:28	5	frame
+water	36:23	0:0	6	frame
+water	36:29	0:0	4	;
+if	37:8	40:8	4	(d < min_pts)
+cond	37:12	37:16	5	d < min_pts
+water	37:12	0:0	6	d
+op	37:14	0:0	6	<
+water	37:16	0:0	6	min_pts
+stmts	37:25	40:8	5	
+water	37:25	0:0	6	{
+water	38:12	0:0	6	min_pts
+op	38:20	0:0	6	=
+water	38:22	0:0	6	d
+water	38:23	0:0	6	;
+water	39:12	0:0	6	min_pts_sink_idx
+op	39:29	0:0	6	=
+water	39:31	0:0	6	i
+water	39:32	0:0	6	;
+water	40:8	0:0	6	}
+water	41:4	0:0	4	}
+if	42:4	43:26	2	(min_pts == DBL_MAX)
+cond	42:8	42:19	3	min_pts == DBL_MAX
+water	42:8	0:0	4	min_pts
+op	42:16	0:0	4	==
+water	42:19	0:0	4	DBL_MAX
+stmts	43:8	43:26	3	
+return	43:8	43:26	4	AVERROR_EOF
+water	43:15	0:0	5	AVERROR_EOF
+call	44:4	44:60	2	ff_dlog
+arg	44:12	44:17	3	avctx
+water	44:12	0:0	4	avctx
+arg	44:19	44:42	3	"min_pts_sink_idx:%i\n"
+water	44:19	0:0	4	"min_pts_sink_idx:%i\n"
+arg	44:44	44:60	3	min_pts_sink_idx
+water	44:44	0:0	4	min_pts_sink_idx
+water	44:61	0:0	2	;
+call	45:4	45:74	2	av_buffersink_get_frame_flags
+arg	45:34	45:64	3	lavfi->sinks[min_pts_sink_idx]
+water	45:34	0:0	4	lavfi
+op	45:39	0:0	4	->
+water	45:41	0:0	4	sinks
+op	45:46	0:0	4	[
+water	45:47	0:0	4	min_pts_sink_idx
+op	45:63	0:0	4	]
+arg	45:66	45:71	3	frame
+water	45:66	0:0	4	frame
+arg	45:73	45:74	3	0
+water	45:73	0:0	4	0
+water	45:75	0:0	2	;
+water	46:4	0:0	2	stream_idx
+op	46:15	0:0	2	=
+water	46:17	0:0	2	lavfi
+op	46:22	0:0	2	->
+water	46:24	0:0	2	sink_stream_map
+op	46:39	0:0	2	[
+water	46:40	0:0	2	min_pts_sink_idx
+op	46:56	0:0	2	]
+water	46:57	0:0	2	;
+if	47:4	55:4	2	(frame -> width)
+cond	47:8	47:15	3	frame -> width
+water	47:8	0:0	4	frame
+op	47:13	0:0	4	->
+water	47:15	0:0	4	width
+stmts	47:23	55:4	3	
+water	47:23	0:0	4	{
+water	48:8	0:0	4	size
+op	48:13	0:0	4	=
+call	48:15	48:76	4	avpicture_get_size
+arg	48:34	48:47	5	frame->format
+water	48:34	0:0	6	frame
+op	48:39	0:0	6	->
+water	48:41	0:0	6	format
+arg	48:49	48:61	5	frame->width
+water	48:49	0:0	6	frame
+op	48:54	0:0	6	->
+water	48:56	0:0	6	width
+arg	48:63	48:76	5	frame->height
+water	48:63	0:0	6	frame
+op	48:68	0:0	6	->
+water	48:70	0:0	6	height
+water	48:77	0:0	4	;
+if	49:8	50:22	4	(( ret =av_new_packet (pkt ,size ) ) < 0)
+cond	49:12	49:47	5	( ret =av_new_packet (pkt ,size ) ) < 0
+water	49:12	0:0	6	(
+water	49:13	0:0	6	ret
+op	49:17	0:0	6	=
+call	49:19	49:42	6	av_new_packet
+arg	49:33	49:36	7	pkt
+water	49:33	0:0	8	pkt
+arg	49:38	49:42	7	size
+water	49:38	0:0	8	size
+water	49:43	0:0	6	)
+op	49:45	0:0	6	<
+water	49:47	0:0	6	0
+stmts	50:12	50:22	5	
+return	50:12	50:22	6	ret
+water	50:19	0:0	7	ret
+call	51:8	51:71	4	memcpy
+arg	51:15	51:24	5	pict.data
+water	51:15	0:0	6	pict
+op	51:19	0:0	6	.
+water	51:20	0:0	6	data
+arg	51:30	51:41	5	frame->data
+water	51:30	0:0	6	frame
+op	51:35	0:0	6	->
+water	51:37	0:0	6	data
+arg	51:47	51:71	5	4*sizeof(frame->data[0])
+water	51:47	0:0	6	4
+op	51:48	0:0	6	*
+op	51:49	0:0	6	sizeof
+water	51:55	0:0	6	(
+water	51:56	0:0	6	frame
+op	51:61	0:0	6	->
+water	51:63	0:0	6	data
+op	51:67	0:0	6	[
+water	51:68	0:0	6	0
+op	51:69	0:0	6	]
+water	51:70	0:0	6	)
+water	51:72	0:0	4	;
+call	52:8	52:75	4	memcpy
+arg	52:15	52:28	5	pict.linesize
+water	52:15	0:0	6	pict
+op	52:19	0:0	6	.
+water	52:20	0:0	6	linesize
+arg	52:30	52:45	5	frame->linesize
+water	52:30	0:0	6	frame
+op	52:35	0:0	6	->
+water	52:37	0:0	6	linesize
+arg	52:47	52:75	5	4*sizeof(frame->linesize[0])
+water	52:47	0:0	6	4
+op	52:48	0:0	6	*
+op	52:49	0:0	6	sizeof
+water	52:55	0:0	6	(
+water	52:56	0:0	6	frame
+op	52:61	0:0	6	->
+water	52:63	0:0	6	linesize
+op	52:71	0:0	6	[
+water	52:72	0:0	6	0
+op	52:73	0:0	6	]
+water	52:74	0:0	6	)
+water	52:76	0:0	4	;
+call	53:8	54:40	4	avpicture_layout
+arg	53:25	53:30	5	&pict
+op	53:25	0:0	6	&
+water	53:26	0:0	6	pict
+arg	53:32	53:45	5	frame->format
+water	53:32	0:0	6	frame
+op	53:37	0:0	6	->
+water	53:39	0:0	6	format
+arg	53:47	53:59	5	frame->width
+water	53:47	0:0	6	frame
+op	53:52	0:0	6	->
+water	53:54	0:0	6	width
+arg	53:61	53:74	5	frame->height
+water	53:61	0:0	6	frame
+op	53:66	0:0	6	->
+water	53:68	0:0	6	height
+arg	54:25	54:34	5	pkt->data
+water	54:25	0:0	6	pkt
+op	54:28	0:0	6	->
+water	54:30	0:0	6	data
+arg	54:36	54:40	5	size
+water	54:36	0:0	6	size
+water	54:41	0:0	4	;
+water	55:4	0:0	4	}
+else	55:6	61:4	2
+stmts	55:11	61:4	3	
+if	55:11	61:4	4	(av_frame_get_channels (frame ))
+cond	55:15	55:42	5	av_frame_get_channels (frame )
+call	55:15	55:42	6	av_frame_get_channels
+arg	55:37	55:42	7	frame
+water	55:37	0:0	8	frame
+stmts	55:46	61:4	5	
+water	55:46	0:0	6	{
+water	56:8	0:0	6	size
+op	56:13	0:0	6	=
+water	56:15	0:0	6	frame
+op	56:20	0:0	6	->
+water	56:22	0:0	6	nb_samples
+call	56:33	56:72	6	*av_get_bytes_per_sample
+arg	56:59	56:72	7	frame->format
+water	56:59	0:0	8	frame
+op	56:64	0:0	8	->
+water	56:66	0:0	8	format
+call	56:74	57:62	6	*av_frame_get_channels
+arg	57:57	57:62	7	frame
+water	57:57	0:0	8	frame
+water	57:63	0:0	6	;
+if	58:8	59:22	6	(( ret =av_new_packet (pkt ,size ) ) < 0)
+cond	58:12	58:47	7	( ret =av_new_packet (pkt ,size ) ) < 0
+water	58:12	0:0	8	(
+water	58:13	0:0	8	ret
+op	58:17	0:0	8	=
+call	58:19	58:42	8	av_new_packet
+arg	58:33	58:36	9	pkt
+water	58:33	0:0	10	pkt
+arg	58:38	58:42	9	size
+water	58:38	0:0	10	size
+water	58:43	0:0	8	)
+op	58:45	0:0	8	<
+water	58:47	0:0	8	0
+stmts	59:12	59:22	7	
+return	59:12	59:22	8	ret
+water	59:19	0:0	9	ret
+call	60:8	60:46	6	memcpy
+arg	60:15	60:24	7	pkt->data
+water	60:15	0:0	8	pkt
+op	60:18	0:0	8	->
+water	60:20	0:0	8	data
+arg	60:26	60:40	7	frame->data[0]
+water	60:26	0:0	8	frame
+op	60:31	0:0	8	->
+water	60:33	0:0	8	data
+op	60:37	0:0	8	[
+water	60:38	0:0	8	0
+op	60:39	0:0	8	]
+arg	60:42	60:46	7	size
+water	60:42	0:0	8	size
+water	60:47	0:0	6	;
+water	61:4	0:0	6	}
+water	62:4	0:0	2	frame_metadata
+op	62:19	0:0	2	=
+call	62:21	62:48	2	av_frame_get_metadata
+arg	62:43	62:48	3	frame
+water	62:43	0:0	4	frame
+water	62:49	0:0	2	;
+if	63:4	82:4	2	(frame_metadata)
+cond	63:8	63:8	3	frame_metadata
+water	63:8	0:0	4	frame_metadata
+stmts	63:24	82:4	3	
+water	63:24	0:0	4	{
+decl	64:8	64:25	4	uint8_t	*metadata
+decl	65:8	65:35	4	AVDictionaryEntry	*e
+op	65:29	0:0	4	=
+water	65:31	0:0	4	NULL
+decl	66:8	66:25	4	AVBPrint	meta_buf
+call	67:8	67:61	4	av_bprint_init
+arg	67:23	67:32	5	&meta_buf
+op	67:23	0:0	6	&
+water	67:24	0:0	6	meta_buf
+arg	67:34	67:35	5	0
+water	67:34	0:0	6	0
+arg	67:37	67:61	5	AV_BPRINT_SIZE_UNLIMITED
+water	67:37	0:0	6	AV_BPRINT_SIZE_UNLIMITED
+water	67:62	0:0	4	;
+while	68:8	73:8	4	(( e =av_dict_get (frame_metadata ,"" ,e ,AV_DICT_IGNORE_SUFFIX ) ))
+cond	68:15	68:77	5	( e =av_dict_get (frame_metadata ,"" ,e ,AV_DICT_IGNORE_SUFFIX ) )
+water	68:15	0:0	6	(
+water	68:16	0:0	6	e
+op	68:18	0:0	6	=
+call	68:20	68:76	6	av_dict_get
+arg	68:32	68:46	7	frame_metadata
+water	68:32	0:0	8	frame_metadata
+arg	68:48	68:50	7	""
+water	68:48	0:0	8	""
+arg	68:52	68:53	7	e
+water	68:52	0:0	8	e
+arg	68:55	68:76	7	AV_DICT_IGNORE_SUFFIX
+water	68:55	0:0	8	AV_DICT_IGNORE_SUFFIX
+water	68:77	0:0	6	)
+stmts	68:80	73:8	5	
+water	68:80	0:0	6	{
+call	69:12	69:46	6	av_bprintf
+arg	69:23	69:32	7	&meta_buf
+op	69:23	0:0	8	&
+water	69:24	0:0	8	meta_buf
+arg	69:34	69:38	7	"%s"
+water	69:34	0:0	8	"%s"
+arg	69:40	69:46	7	e->key
+water	69:40	0:0	8	e
+op	69:41	0:0	8	->
+water	69:43	0:0	8	key
+water	69:47	0:0	6	;
+call	70:12	70:46	6	av_bprint_chars
+arg	70:28	70:37	7	&meta_buf
+op	70:28	0:0	8	&
+water	70:29	0:0	8	meta_buf
+arg	70:39	70:43	7	'\0'
+water	70:39	0:0	8	'\0'
+arg	70:45	70:46	7	1
+water	70:45	0:0	8	1
+water	70:47	0:0	6	;
+call	71:12	71:48	6	av_bprintf
+arg	71:23	71:32	7	&meta_buf
+op	71:23	0:0	8	&
+water	71:24	0:0	8	meta_buf
+arg	71:34	71:38	7	"%s"
+water	71:34	0:0	8	"%s"
+arg	71:40	71:48	7	e->value
+water	71:40	0:0	8	e
+op	71:41	0:0	8	->
+water	71:43	0:0	8	value
+water	71:49	0:0	6	;
+call	72:12	72:46	6	av_bprint_chars
+arg	72:28	72:37	7	&meta_buf
+op	72:28	0:0	8	&
+water	72:29	0:0	8	meta_buf
+arg	72:39	72:43	7	'\0'
+water	72:39	0:0	8	'\0'
+arg	72:45	72:46	7	1
+water	72:45	0:0	8	1
+water	72:47	0:0	6	;
+water	73:8	0:0	6	}
+if	74:8	79:8	4	(!av_bprint_is_complete (& meta_buf ) || ! ( metadata =av_packet_new_side_data (pkt ,AV_PKT_DATA_STRINGS_METADATA ,meta_buf . len ) ))
+cond	74:12	76:62	5	!av_bprint_is_complete (& meta_buf ) || ! ( metadata =av_packet_new_side_data (pkt ,AV_PKT_DATA_STRINGS_METADATA ,meta_buf . len ) )
+op	74:12	0:0	6	!
+call	74:13	74:44	6	av_bprint_is_complete
+arg	74:35	74:44	7	&meta_buf
+op	74:35	0:0	8	&
+water	74:36	0:0	8	meta_buf
+op	74:46	0:0	6	||
+op	75:12	0:0	6	!
+water	75:13	0:0	6	(
+water	75:14	0:0	6	metadata
+op	75:23	0:0	6	=
+call	75:25	76:61	6	av_packet_new_side_data
+arg	75:49	75:52	7	pkt
+water	75:49	0:0	8	pkt
+arg	75:54	75:82	7	AV_PKT_DATA_STRINGS_METADATA
+water	75:54	0:0	8	AV_PKT_DATA_STRINGS_METADATA
+arg	76:49	76:61	7	meta_buf.len
+water	76:49	0:0	8	meta_buf
+op	76:57	0:0	8	.
+water	76:58	0:0	8	len
+water	76:62	0:0	6	)
+stmts	76:65	79:8	5	
+water	76:65	0:0	6	{
+call	77:12	77:46	6	av_bprint_finalize
+arg	77:31	77:40	7	&meta_buf
+op	77:31	0:0	8	&
+water	77:32	0:0	8	meta_buf
+arg	77:42	77:46	7	NULL
+water	77:42	0:0	8	NULL
+water	77:47	0:0	6	;
+return	78:12	78:34	6	AVERROR(ENOMEM)
+call	78:19	78:33	7	AVERROR
+arg	78:27	78:33	8	ENOMEM
+water	78:27	0:0	9	ENOMEM
+water	79:8	0:0	6	}
+call	80:8	80:51	4	memcpy
+arg	80:15	80:23	5	metadata
+water	80:15	0:0	6	metadata
+arg	80:25	80:37	5	meta_buf.str
+water	80:25	0:0	6	meta_buf
+op	80:33	0:0	6	.
+water	80:34	0:0	6	str
+arg	80:39	80:51	5	meta_buf.len
+water	80:39	0:0	6	meta_buf
+op	80:47	0:0	6	.
+water	80:48	0:0	6	len
+water	80:52	0:0	4	;
+call	81:8	81:42	4	av_bprint_finalize
+arg	81:27	81:36	5	&meta_buf
+op	81:27	0:0	6	&
+water	81:28	0:0	6	meta_buf
+arg	81:38	81:42	5	NULL
+water	81:38	0:0	6	NULL
+water	81:43	0:0	4	;
+water	82:4	0:0	4	}
+if	83:4	87:4	2	(( ret =create_subcc_packet (avctx ,frame ,min_pts_sink_idx ) ) < 0)
+cond	83:8	83:70	3	( ret =create_subcc_packet (avctx ,frame ,min_pts_sink_idx ) ) < 0
+water	83:8	0:0	4	(
+water	83:9	0:0	4	ret
+op	83:13	0:0	4	=
+call	83:15	83:65	4	create_subcc_packet
+arg	83:35	83:40	5	avctx
+water	83:35	0:0	6	avctx
+arg	83:42	83:47	5	frame
+water	83:42	0:0	6	frame
+arg	83:49	83:65	5	min_pts_sink_idx
+water	83:49	0:0	6	min_pts_sink_idx
+water	83:66	0:0	4	)
+op	83:68	0:0	4	<
+water	83:70	0:0	4	0
+stmts	83:73	87:4	3	
+water	83:73	0:0	4	{
+call	84:8	84:28	4	av_frame_unref
+arg	84:23	84:28	5	frame
+water	84:23	0:0	6	frame
+water	84:29	0:0	4	;
+call	85:8	85:27	4	av_packet_unref
+arg	85:24	85:27	5	pkt
+water	85:24	0:0	6	pkt
+water	85:28	0:0	4	;
+return	86:8	86:18	4	ret
+water	86:15	0:0	5	ret
+water	87:4	0:0	4	}
+water	88:4	0:0	2	pkt
+op	88:7	0:0	2	->
+water	88:9	0:0	2	stream_index
+op	88:22	0:0	2	=
+water	88:24	0:0	2	stream_idx
+water	88:34	0:0	2	;
+water	89:4	0:0	2	pkt
+op	89:7	0:0	2	->
+water	89:9	0:0	2	pts
+op	89:13	0:0	2	=
+water	89:15	0:0	2	frame
+op	89:20	0:0	2	->
+water	89:22	0:0	2	pts
+water	89:25	0:0	2	;
+water	90:4	0:0	2	pkt
+op	90:7	0:0	2	->
+water	90:9	0:0	2	pos
+op	90:13	0:0	2	=
+call	90:15	90:41	2	av_frame_get_pkt_pos
+arg	90:36	90:41	3	frame
+water	90:36	0:0	4	frame
+water	90:42	0:0	2	;
+water	91:4	0:0	2	pkt
+op	91:7	0:0	2	->
+water	91:9	0:0	2	size
+op	91:14	0:0	2	=
+water	91:16	0:0	2	size
+water	91:20	0:0	2	;
+call	92:4	92:24	2	av_frame_unref
+arg	92:19	92:24	3	frame
+water	92:19	0:0	4	frame
+water	92:25	0:0	2	;
+return	93:4	93:15	2	size
+water	93:11	0:0	3	size

@@ -1,0 +1,185 @@
+func	1:0	28:0	0	int	ff_rm_retrieve_cache
+params	2:21	0:0	1	
+param	2:22	2:40	2	AVFormatContext *	s
+param	2:42	2:57	2	AVIOContext *	pb
+param	3:22	3:34	2	AVStream *	st
+param	3:36	3:49	2	RMStream *	ast
+param	3:51	3:64	2	AVPacket *	pkt
+stmnts	0:0	27:28	1	
+decl	5:4	5:37	2	RMDemuxContext	*rm
+op	5:23	0:0	2	=
+water	5:25	0:0	2	s
+op	5:26	0:0	2	->
+water	5:28	0:0	2	priv_data
+call	6:4	6:37	2	av_assert0
+arg	6:16	6:37	3	rm->audio_pkt_cnt>0
+water	6:16	0:0	4	rm
+op	6:18	0:0	4	->
+water	6:20	0:0	4	audio_pkt_cnt
+op	6:34	0:0	4	>
+water	6:36	0:0	4	0
+water	6:38	0:0	2	;
+if	7:4	12:4	2	(ast -> deint_id == DEINT_ID_VBRF || ast -> deint_id == DEINT_ID_VBRS)
+cond	7:8	8:25	3	ast -> deint_id == DEINT_ID_VBRF || ast -> deint_id == DEINT_ID_VBRS
+water	7:8	0:0	4	ast
+op	7:11	0:0	4	->
+water	7:13	0:0	4	deint_id
+op	7:22	0:0	4	==
+water	7:25	0:0	4	DEINT_ID_VBRF
+op	7:39	0:0	4	||
+water	8:8	0:0	4	ast
+op	8:11	0:0	4	->
+water	8:13	0:0	4	deint_id
+op	8:22	0:0	4	==
+water	8:25	0:0	4	DEINT_ID_VBRS
+stmts	8:40	12:4	3	
+water	8:40	0:0	4	{
+decl	9:8	9:106	4	int	ret
+op	9:16	0:0	4	=
+call	9:18	9:105	5	av_get_packet
+arg	9:32	9:34	6	pb
+water	9:32	0:0	7	pb
+arg	9:36	9:39	6	pkt
+water	9:36	0:0	7	pkt
+arg	9:41	9:105	6	ast->sub_packet_lengths[ast->sub_packet_cnt-rm->audio_pkt_cnt]
+water	9:41	0:0	7	ast
+op	9:44	0:0	7	->
+water	9:46	0:0	7	sub_packet_lengths
+op	9:64	0:0	7	[
+water	9:65	0:0	7	ast
+op	9:68	0:0	7	->
+water	9:70	0:0	7	sub_packet_cnt
+op	9:85	0:0	7	-
+water	9:87	0:0	7	rm
+op	9:89	0:0	7	->
+water	9:91	0:0	7	audio_pkt_cnt
+op	9:104	0:0	7	]
+if	10:8	11:22	4	(ret < 0)
+cond	10:12	10:18	5	ret < 0
+water	10:12	0:0	6	ret
+op	10:16	0:0	6	<
+water	10:18	0:0	6	0
+stmts	11:12	11:22	5	
+return	11:12	11:22	6	ret
+water	11:19	0:0	7	ret
+water	12:4	0:0	4	}
+else	12:6	19:4	2
+stmts	12:11	19:4	3	
+water	12:11	0:0	4	{
+decl	13:8	13:60	4	int	ret
+op	13:16	0:0	4	=
+call	13:18	13:59	5	av_new_packet
+arg	13:32	13:35	6	pkt
+water	13:32	0:0	7	pkt
+arg	13:37	13:59	6	st->codec->block_align
+water	13:37	0:0	7	st
+op	13:39	0:0	7	->
+water	13:41	0:0	7	codec
+op	13:46	0:0	7	->
+water	13:48	0:0	7	block_align
+if	14:8	15:22	4	(ret < 0)
+cond	14:12	14:18	5	ret < 0
+water	14:12	0:0	6	ret
+op	14:16	0:0	6	<
+water	14:18	0:0	6	0
+stmts	15:12	15:22	5	
+return	15:12	15:22	6	ret
+water	15:19	0:0	7	ret
+call	16:8	18:37	4	memcpy
+arg	16:15	16:24	5	pkt->data
+water	16:15	0:0	6	pkt
+op	16:18	0:0	6	->
+water	16:20	0:0	6	data
+arg	16:26	17:102	5	ast->pkt.data+st->codec->block_align*(ast->sub_packet_h*ast->audio_framesize/st->codec->block_align-rm->audio_pkt_cnt)
+water	16:26	0:0	6	ast
+op	16:29	0:0	6	->
+water	16:31	0:0	6	pkt
+op	16:34	0:0	6	.
+water	16:35	0:0	6	data
+op	16:40	0:0	6	+
+water	16:42	0:0	6	st
+op	16:44	0:0	6	->
+water	16:46	0:0	6	codec
+op	16:51	0:0	6	->
+water	16:53	0:0	6	block_align
+op	16:65	0:0	6	*
+water	17:15	0:0	6	(
+water	17:16	0:0	6	ast
+op	17:19	0:0	6	->
+water	17:21	0:0	6	sub_packet_h
+op	17:34	0:0	6	*
+water	17:36	0:0	6	ast
+op	17:39	0:0	6	->
+water	17:41	0:0	6	audio_framesize
+op	17:57	0:0	6	/
+water	17:59	0:0	6	st
+op	17:61	0:0	6	->
+water	17:63	0:0	6	codec
+op	17:68	0:0	6	->
+water	17:70	0:0	6	block_align
+op	17:82	0:0	6	-
+water	17:84	0:0	6	rm
+op	17:86	0:0	6	->
+water	17:88	0:0	6	audio_pkt_cnt
+water	17:101	0:0	6	)
+arg	18:15	18:37	5	st->codec->block_align
+water	18:15	0:0	6	st
+op	18:17	0:0	6	->
+water	18:19	0:0	6	codec
+op	18:24	0:0	6	->
+water	18:26	0:0	6	block_align
+water	18:38	0:0	4	;
+water	19:4	0:0	4	}
+water	20:4	0:0	2	rm
+op	20:6	0:0	2	->
+water	20:8	0:0	2	audio_pkt_cnt
+op	20:21	0:0	2	--
+water	20:23	0:0	2	;
+if	21:4	24:4	2	(( pkt -> pts = ast -> audiotimestamp ) != AV_NOPTS_VALUE)
+cond	21:8	21:44	3	( pkt -> pts = ast -> audiotimestamp ) != AV_NOPTS_VALUE
+water	21:8	0:0	4	(
+water	21:9	0:0	4	pkt
+op	21:12	0:0	4	->
+water	21:14	0:0	4	pts
+op	21:18	0:0	4	=
+water	21:20	0:0	4	ast
+op	21:23	0:0	4	->
+water	21:25	0:0	4	audiotimestamp
+water	21:39	0:0	4	)
+op	21:41	0:0	4	!=
+water	21:44	0:0	4	AV_NOPTS_VALUE
+stmts	21:60	24:4	3	
+water	21:60	0:0	4	{
+water	22:8	0:0	4	ast
+op	22:11	0:0	4	->
+water	22:13	0:0	4	audiotimestamp
+op	22:28	0:0	4	=
+water	22:30	0:0	4	AV_NOPTS_VALUE
+water	22:44	0:0	4	;
+water	23:8	0:0	4	pkt
+op	23:11	0:0	4	->
+water	23:13	0:0	4	flags
+op	23:19	0:0	4	=
+water	23:21	0:0	4	AV_PKT_FLAG_KEY
+water	23:36	0:0	4	;
+water	24:4	0:0	4	}
+else	24:6	25:22	2
+stmts	25:8	25:22	3	
+water	25:8	0:0	4	pkt
+op	25:11	0:0	4	->
+water	25:13	0:0	4	flags
+op	25:19	0:0	4	=
+water	25:21	0:0	4	0
+water	25:22	0:0	4	;
+water	26:4	0:0	2	pkt
+op	26:7	0:0	2	->
+water	26:9	0:0	2	stream_index
+op	26:22	0:0	2	=
+water	26:24	0:0	2	st
+op	26:26	0:0	2	->
+water	26:28	0:0	2	index
+water	26:33	0:0	2	;
+return	27:4	27:28	2	rm->audio_pkt_cnt
+water	27:11	0:0	3	rm
+op	27:13	0:0	3	->
+water	27:15	0:0	3	audio_pkt_cnt

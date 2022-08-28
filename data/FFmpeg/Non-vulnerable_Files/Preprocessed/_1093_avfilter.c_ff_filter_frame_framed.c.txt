@@ -1,0 +1,511 @@
+func	1:0	85:0	0	static int	ff_filter_frame_framed
+params	1:33	0:0	1	
+param	1:34	1:52	2	AVFilterLink *	link
+param	1:54	1:68	2	AVFrame *	frame
+stmnts	3:4	84:14	1	
+call	3:4	3:22	2	int
+arg	3:9	3:22	3	*filter_frame
+op	3:9	0:0	4	*
+water	3:10	0:0	4	filter_frame
+water	3:23	0:0	2	(
+water	3:24	0:0	2	AVFilterLink
+op	3:37	0:0	2	*
+water	3:38	0:0	2	,
+water	3:40	0:0	2	AVFrame
+op	3:48	0:0	2	*
+water	3:49	0:0	2	)
+water	3:50	0:0	2	;
+decl	4:4	4:39	2	AVFilterContext	*dstctx
+op	4:28	0:0	2	=
+water	4:30	0:0	2	link
+op	4:34	0:0	2	->
+water	4:36	0:0	2	dst
+decl	5:4	5:35	2	AVFilterPad	*dst
+op	5:21	0:0	2	=
+water	5:23	0:0	2	link
+op	5:27	0:0	2	->
+water	5:29	0:0	2	dstpad
+decl	6:4	6:23	2	AVFrame	*out
+op	6:17	0:0	2	=
+water	6:19	0:0	2	NULL
+decl	7:4	7:11	2	int	ret
+decl	8:4	8:50	2	AVFilterCommand	*cmd
+op	8:24	0:0	2	=
+water	8:26	0:0	2	link
+op	8:30	0:0	2	->
+water	8:32	0:0	2	dst
+op	8:35	0:0	2	->
+water	8:37	0:0	2	command_queue
+decl	9:4	9:15	2	int64_t	pts
+if	10:4	13:4	2	(link -> closed)
+cond	10:8	10:14	3	link -> closed
+water	10:8	0:0	4	link
+op	10:12	0:0	4	->
+water	10:14	0:0	4	closed
+stmts	10:22	13:4	3	
+water	10:22	0:0	4	{
+call	11:8	11:28	4	av_frame_free
+arg	11:22	11:28	5	&frame
+op	11:22	0:0	6	&
+water	11:23	0:0	6	frame
+water	11:29	0:0	4	;
+return	12:8	12:26	4	AVERROR_EOF
+water	12:15	0:0	5	AVERROR_EOF
+water	13:4	0:0	4	}
+if	14:4	15:43	2	(! ( filter_frame = dst -> filter_frame ))
+cond	14:8	14:42	3	! ( filter_frame = dst -> filter_frame )
+op	14:8	0:0	4	!
+water	14:9	0:0	4	(
+water	14:10	0:0	4	filter_frame
+op	14:23	0:0	4	=
+water	14:25	0:0	4	dst
+op	14:28	0:0	4	->
+water	14:30	0:0	4	filter_frame
+water	14:42	0:0	4	)
+stmts	15:8	15:43	3	
+water	15:8	0:0	4	filter_frame
+op	15:21	0:0	4	=
+water	15:23	0:0	4	default_filter_frame
+water	15:43	0:0	4	;
+if	17:4	53:4	2	(dst -> needs_writable && !av_frame_is_writable (frame ))
+cond	17:8	17:58	3	dst -> needs_writable && !av_frame_is_writable (frame )
+water	17:8	0:0	4	dst
+op	17:11	0:0	4	->
+water	17:13	0:0	4	needs_writable
+op	17:28	0:0	4	&&
+op	17:31	0:0	4	!
+call	17:32	17:58	4	av_frame_is_writable
+arg	17:53	17:58	5	frame
+water	17:53	0:0	6	frame
+stmts	17:61	53:4	3	
+water	17:61	0:0	4	{
+call	18:8	18:69	4	av_log
+arg	18:15	18:24	5	link->dst
+water	18:15	0:0	6	link
+op	18:19	0:0	6	->
+water	18:21	0:0	6	dst
+arg	18:26	18:38	5	AV_LOG_DEBUG
+water	18:26	0:0	6	AV_LOG_DEBUG
+arg	18:40	18:69	5	"Copying data in avfilter.\n"
+water	18:40	0:0	6	"Copying data in avfilter.\n"
+water	18:70	0:0	4	;
+switch	19:8	29:8	4	(link -> type)
+cond	19:16	19:22	5	link -> type
+water	19:16	0:0	6	link
+op	19:20	0:0	6	->
+water	19:22	0:0	6	type
+stmts	19:28	29:8	5	
+water	19:28	0:0	6	{
+label	20:8	20:31	6	case AVMEDIA_TYPE_VIDEO :
+water	21:12	0:0	6	out
+op	21:16	0:0	6	=
+call	21:18	21:60	6	ff_get_video_buffer
+arg	21:38	21:42	7	link
+water	21:38	0:0	8	link
+arg	21:44	21:51	7	link->w
+water	21:44	0:0	8	link
+op	21:48	0:0	8	->
+water	21:50	0:0	8	w
+arg	21:53	21:60	7	link->h
+water	21:53	0:0	8	link
+op	21:57	0:0	8	->
+water	21:59	0:0	8	h
+water	21:61	0:0	6	;
+break	22:12	22:17	6	
+label	23:8	23:31	6	case AVMEDIA_TYPE_AUDIO :
+water	24:12	0:0	6	out
+op	24:16	0:0	6	=
+call	24:18	24:61	6	ff_get_audio_buffer
+arg	24:38	24:42	7	link
+water	24:38	0:0	8	link
+arg	24:44	24:61	7	frame->nb_samples
+water	24:44	0:0	8	frame
+op	24:49	0:0	8	->
+water	24:51	0:0	8	nb_samples
+water	24:62	0:0	6	;
+break	25:12	25:17	6	
+label	26:8	26:15	6	default :
+water	27:12	0:0	6	ret
+op	27:16	0:0	6	=
+call	27:18	27:32	6	AVERROR
+arg	27:26	27:32	7	EINVAL
+water	27:26	0:0	8	EINVAL
+water	27:33	0:0	6	;
+goto	28:12	28:21	6	fail
+water	28:17	0:0	7	fail
+water	29:8	0:0	6	}
+if	30:8	33:8	4	(! out)
+cond	30:12	30:13	5	! out
+op	30:12	0:0	6	!
+water	30:13	0:0	6	out
+stmts	30:18	33:8	5	
+water	30:18	0:0	6	{
+water	31:12	0:0	6	ret
+op	31:16	0:0	6	=
+call	31:18	31:32	6	AVERROR
+arg	31:26	31:32	7	ENOMEM
+water	31:26	0:0	8	ENOMEM
+water	31:33	0:0	6	;
+goto	32:12	32:21	6	fail
+water	32:17	0:0	7	fail
+water	33:8	0:0	6	}
+water	34:8	0:0	4	ret
+op	34:12	0:0	4	=
+call	34:14	34:44	4	av_frame_copy_props
+arg	34:34	34:37	5	out
+water	34:34	0:0	6	out
+arg	34:39	34:44	5	frame
+water	34:39	0:0	6	frame
+water	34:45	0:0	4	;
+if	35:8	36:21	4	(ret < 0)
+cond	35:12	35:18	5	ret < 0
+water	35:12	0:0	6	ret
+op	35:16	0:0	6	<
+water	35:18	0:0	6	0
+stmts	36:12	36:21	5	
+goto	36:12	36:21	6	fail
+water	36:17	0:0	7	fail
+switch	37:8	51:8	4	(link -> type)
+cond	37:16	37:22	5	link -> type
+water	37:16	0:0	6	link
+op	37:20	0:0	6	->
+water	37:22	0:0	6	type
+stmts	37:28	51:8	5	
+water	37:28	0:0	6	{
+label	38:8	38:31	6	case AVMEDIA_TYPE_VIDEO :
+call	39:12	40:68	6	av_image_copy
+arg	39:26	39:35	7	out->data
+water	39:26	0:0	8	out
+op	39:29	0:0	8	->
+water	39:31	0:0	8	data
+arg	39:37	39:50	7	out->linesize
+water	39:37	0:0	8	out
+op	39:40	0:0	8	->
+water	39:42	0:0	8	linesize
+arg	39:52	39:81	7	(constuint8_t**)frame->data
+water	39:52	0:0	8	(
+water	39:53	0:0	8	const
+water	39:59	0:0	8	uint8_t
+op	39:67	0:0	8	*
+op	39:68	0:0	8	*
+water	39:69	0:0	8	)
+water	39:70	0:0	8	frame
+op	39:75	0:0	8	->
+water	39:77	0:0	8	data
+arg	39:83	39:98	7	frame->linesize
+water	39:83	0:0	8	frame
+op	39:88	0:0	8	->
+water	39:90	0:0	8	linesize
+arg	40:26	40:39	7	frame->format
+water	40:26	0:0	8	frame
+op	40:31	0:0	8	->
+water	40:33	0:0	8	format
+arg	40:41	40:53	7	frame->width
+water	40:41	0:0	8	frame
+op	40:46	0:0	8	->
+water	40:48	0:0	8	width
+arg	40:55	40:68	7	frame->height
+water	40:55	0:0	8	frame
+op	40:60	0:0	8	->
+water	40:62	0:0	8	height
+water	40:69	0:0	6	;
+break	41:12	41:17	6	
+label	42:8	42:31	6	case AVMEDIA_TYPE_AUDIO :
+call	43:12	46:41	6	av_samples_copy
+arg	43:28	43:46	7	out->extended_data
+water	43:28	0:0	8	out
+op	43:31	0:0	8	->
+water	43:33	0:0	8	extended_data
+arg	43:48	43:68	7	frame->extended_data
+water	43:48	0:0	8	frame
+op	43:53	0:0	8	->
+water	43:55	0:0	8	extended_data
+arg	44:28	44:29	7	0
+water	44:28	0:0	8	0
+arg	44:31	44:32	7	0
+water	44:31	0:0	8	0
+arg	44:34	44:51	7	frame->nb_samples
+water	44:34	0:0	8	frame
+op	44:39	0:0	8	->
+water	44:41	0:0	8	nb_samples
+arg	45:28	45:84	7	av_get_channel_layout_nb_channels(frame->channel_layout)
+call	45:28	45:83	8	av_get_channel_layout_nb_channels
+arg	45:62	45:83	9	frame->channel_layout
+water	45:62	0:0	10	frame
+op	45:67	0:0	10	->
+water	45:69	0:0	10	channel_layout
+arg	46:28	46:41	7	frame->format
+water	46:28	0:0	8	frame
+op	46:33	0:0	8	->
+water	46:35	0:0	8	format
+water	46:42	0:0	6	;
+break	47:12	47:17	6	
+label	48:8	48:15	6	default :
+water	49:12	0:0	6	ret
+op	49:16	0:0	6	=
+call	49:18	49:32	6	AVERROR
+arg	49:26	49:32	7	EINVAL
+water	49:26	0:0	8	EINVAL
+water	49:33	0:0	6	;
+goto	50:12	50:21	6	fail
+water	50:17	0:0	7	fail
+water	51:8	0:0	6	}
+call	52:8	52:28	4	av_frame_free
+arg	52:22	52:28	5	&frame
+op	52:22	0:0	6	&
+water	52:23	0:0	6	frame
+water	52:29	0:0	4	;
+water	53:4	0:0	4	}
+else	53:6	54:19	2
+stmts	54:8	54:19	3	
+water	54:8	0:0	4	out
+op	54:12	0:0	4	=
+water	54:14	0:0	4	frame
+water	54:19	0:0	4	;
+while	55:4	62:4	2	(cmd && cmd -> time <= out -> pts* av_q2d (link -> time_base ))
+cond	55:10	55:63	3	cmd && cmd -> time <= out -> pts* av_q2d (link -> time_base )
+water	55:10	0:0	4	cmd
+op	55:14	0:0	4	&&
+water	55:17	0:0	4	cmd
+op	55:20	0:0	4	->
+water	55:22	0:0	4	time
+op	55:27	0:0	4	<=
+water	55:30	0:0	4	out
+op	55:33	0:0	4	->
+water	55:35	0:0	4	pts
+call	55:39	55:63	4	*av_q2d
+arg	55:48	55:63	5	link->time_base
+water	55:48	0:0	6	link
+op	55:52	0:0	6	->
+water	55:54	0:0	6	time_base
+stmts	55:65	62:4	3	
+water	55:65	0:0	4	{
+call	56:8	58:48	4	av_log
+arg	56:15	56:24	5	link->dst
+water	56:15	0:0	6	link
+op	56:19	0:0	6	->
+water	56:21	0:0	6	dst
+arg	56:26	56:38	5	AV_LOG_DEBUG
+water	56:26	0:0	6	AV_LOG_DEBUG
+arg	57:15	57:63	5	"Processing command time:%f command:%s arg:%s\n"
+water	57:15	0:0	6	"Processing command time:%f command:%s arg:%s\n"
+arg	58:15	58:24	5	cmd->time
+water	58:15	0:0	6	cmd
+op	58:18	0:0	6	->
+water	58:20	0:0	6	time
+arg	58:26	58:38	5	cmd->command
+water	58:26	0:0	6	cmd
+op	58:29	0:0	6	->
+water	58:31	0:0	6	command
+arg	58:40	58:48	5	cmd->arg
+water	58:40	0:0	6	cmd
+op	58:43	0:0	6	->
+water	58:45	0:0	6	arg
+water	58:49	0:0	4	;
+call	59:8	59:84	4	avfilter_process_command
+arg	59:33	59:42	5	link->dst
+water	59:33	0:0	6	link
+op	59:37	0:0	6	->
+water	59:39	0:0	6	dst
+arg	59:44	59:56	5	cmd->command
+water	59:44	0:0	6	cmd
+op	59:47	0:0	6	->
+water	59:49	0:0	6	command
+arg	59:58	59:66	5	cmd->arg
+water	59:58	0:0	6	cmd
+op	59:61	0:0	6	->
+water	59:63	0:0	6	arg
+arg	59:68	59:69	5	0
+water	59:68	0:0	6	0
+arg	59:71	59:72	5	0
+water	59:71	0:0	6	0
+arg	59:74	59:84	5	cmd->flags
+water	59:74	0:0	6	cmd
+op	59:77	0:0	6	->
+water	59:79	0:0	6	flags
+water	59:85	0:0	4	;
+call	60:8	60:38	4	ff_command_queue_pop
+arg	60:29	60:38	5	link->dst
+water	60:29	0:0	6	link
+op	60:33	0:0	6	->
+water	60:35	0:0	6	dst
+water	60:39	0:0	4	;
+water	61:8	0:0	4	cmd
+op	61:11	0:0	4	=
+water	61:13	0:0	4	link
+op	61:17	0:0	4	->
+water	61:19	0:0	4	dst
+op	61:22	0:0	4	->
+water	61:24	0:0	4	command_queue
+water	61:37	0:0	4	;
+water	62:4	0:0	4	}
+water	63:4	0:0	2	pts
+op	63:8	0:0	2	=
+water	63:10	0:0	2	out
+op	63:13	0:0	2	->
+water	63:15	0:0	2	pts
+water	63:18	0:0	2	;
+if	64:4	75:4	2	(dstctx -> enable_str)
+cond	64:8	64:16	3	dstctx -> enable_str
+water	64:8	0:0	4	dstctx
+op	64:14	0:0	4	->
+water	64:16	0:0	4	enable_str
+stmts	64:28	75:4	3	
+water	64:28	0:0	4	{
+decl	65:8	65:47	4	int64_t	pos
+op	65:20	0:0	4	=
+call	65:22	65:46	5	av_frame_get_pkt_pos
+arg	65:43	65:46	6	out
+water	65:43	0:0	7	out
+water	66:8	0:0	4	dstctx
+op	66:14	0:0	4	->
+water	66:16	0:0	4	var_values
+op	66:26	0:0	4	[
+water	66:27	0:0	4	VAR_N
+op	66:32	0:0	4	]
+op	66:34	0:0	4	=
+water	66:36	0:0	4	link
+op	66:40	0:0	4	->
+water	66:42	0:0	4	frame_count
+water	66:53	0:0	4	;
+water	67:8	0:0	4	dstctx
+op	67:14	0:0	4	->
+water	67:16	0:0	4	var_values
+op	67:26	0:0	4	[
+water	67:27	0:0	4	VAR_T
+op	67:32	0:0	4	]
+op	67:34	0:0	4	=
+water	67:36	0:0	4	pts
+op	67:40	0:0	4	==
+water	67:43	0:0	4	AV_NOPTS_VALUE
+water	67:58	0:0	4	?
+water	67:60	0:0	4	NAN
+water	67:64	0:0	4	:
+water	67:66	0:0	4	pts
+call	67:70	67:94	4	*av_q2d
+arg	67:79	67:94	5	link->time_base
+water	67:79	0:0	6	link
+op	67:83	0:0	6	->
+water	67:85	0:0	6	time_base
+water	67:95	0:0	4	;
+water	68:8	0:0	4	dstctx
+op	68:14	0:0	4	->
+water	68:16	0:0	4	var_values
+op	68:26	0:0	4	[
+water	68:27	0:0	4	VAR_W
+op	68:32	0:0	4	]
+op	68:34	0:0	4	=
+water	68:36	0:0	4	link
+op	68:40	0:0	4	->
+water	68:42	0:0	4	w
+water	68:43	0:0	4	;
+water	69:8	0:0	4	dstctx
+op	69:14	0:0	4	->
+water	69:16	0:0	4	var_values
+op	69:26	0:0	4	[
+water	69:27	0:0	4	VAR_H
+op	69:32	0:0	4	]
+op	69:34	0:0	4	=
+water	69:36	0:0	4	link
+op	69:40	0:0	4	->
+water	69:42	0:0	4	h
+water	69:43	0:0	4	;
+water	70:8	0:0	4	dstctx
+op	70:14	0:0	4	->
+water	70:16	0:0	4	var_values
+op	70:26	0:0	4	[
+water	70:27	0:0	4	VAR_POS
+op	70:34	0:0	4	]
+op	70:36	0:0	4	=
+water	70:38	0:0	4	pos
+op	70:42	0:0	4	==
+op	70:45	0:0	4	-
+water	70:46	0:0	4	1
+water	70:48	0:0	4	?
+water	70:50	0:0	4	NAN
+water	70:54	0:0	4	:
+water	70:56	0:0	4	pos
+water	70:59	0:0	4	;
+water	71:8	0:0	4	dstctx
+op	71:14	0:0	4	->
+water	71:16	0:0	4	is_disabled
+op	71:28	0:0	4	=
+call	71:30	71:89	4	fabs
+arg	71:35	71:89	5	av_expr_eval(dstctx->enable,dstctx->var_values,NULL)
+call	71:35	71:88	6	av_expr_eval
+arg	71:48	71:62	7	dstctx->enable
+water	71:48	0:0	8	dstctx
+op	71:54	0:0	8	->
+water	71:56	0:0	8	enable
+arg	71:64	71:82	7	dstctx->var_values
+water	71:64	0:0	8	dstctx
+op	71:70	0:0	8	->
+water	71:72	0:0	8	var_values
+arg	71:84	71:88	7	NULL
+water	71:84	0:0	8	NULL
+op	71:91	0:0	4	<
+water	71:93	0:0	4	0
+op	71:94	0:0	4	.
+water	71:95	0:0	4	5
+water	71:96	0:0	4	;
+if	72:8	74:47	4	(dstctx -> is_disabled && ( dstctx -> filter -> flags & AVFILTER_FLAG_SUPPORT_TIMELINE_GENERIC ))
+cond	72:12	73:75	5	dstctx -> is_disabled && ( dstctx -> filter -> flags & AVFILTER_FLAG_SUPPORT_TIMELINE_GENERIC )
+water	72:12	0:0	6	dstctx
+op	72:18	0:0	6	->
+water	72:20	0:0	6	is_disabled
+op	72:32	0:0	6	&&
+water	73:12	0:0	6	(
+water	73:13	0:0	6	dstctx
+op	73:19	0:0	6	->
+water	73:21	0:0	6	filter
+op	73:27	0:0	6	->
+water	73:29	0:0	6	flags
+op	73:35	0:0	6	&
+water	73:37	0:0	6	AVFILTER_FLAG_SUPPORT_TIMELINE_GENERIC
+water	73:75	0:0	6	)
+stmts	74:12	74:47	5	
+water	74:12	0:0	6	filter_frame
+op	74:25	0:0	6	=
+water	74:27	0:0	6	default_filter_frame
+water	74:47	0:0	6	;
+water	75:4	0:0	4	}
+water	76:4	0:0	2	ret
+op	76:8	0:0	2	=
+call	76:10	76:32	2	filter_frame
+arg	76:23	76:27	3	link
+water	76:23	0:0	4	link
+arg	76:29	76:32	3	out
+water	76:29	0:0	4	out
+water	76:33	0:0	2	;
+water	77:4	0:0	2	link
+op	77:8	0:0	2	->
+water	77:10	0:0	2	frame_count
+op	77:21	0:0	2	++
+water	77:23	0:0	2	;
+water	78:4	0:0	2	link
+op	78:8	0:0	2	->
+water	78:10	0:0	2	frame_requested
+op	78:26	0:0	2	=
+water	78:28	0:0	2	0
+water	78:29	0:0	2	;
+call	79:4	79:40	2	ff_update_link_current_pts
+arg	79:31	79:35	3	link
+water	79:31	0:0	4	link
+arg	79:37	79:40	3	pts
+water	79:37	0:0	4	pts
+water	79:41	0:0	2	;
+return	80:4	80:14	2	ret
+water	80:11	0:0	3	ret
+label	81:0	81:4	2	fail :
+call	82:4	82:22	2	av_frame_free
+arg	82:18	82:22	3	&out
+op	82:18	0:0	4	&
+water	82:19	0:0	4	out
+water	82:23	0:0	2	;
+call	83:4	83:24	2	av_frame_free
+arg	83:18	83:24	3	&frame
+op	83:18	0:0	4	&
+water	83:19	0:0	4	frame
+water	83:25	0:0	2	;
+return	84:4	84:14	2	ret
+water	84:11	0:0	3	ret

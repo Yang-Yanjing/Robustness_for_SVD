@@ -1,0 +1,469 @@
+func	1:0	80:0	0	static int	filter_frame
+params	1:23	0:0	1	
+param	1:24	1:44	2	AVFilterLink *	inlink
+param	1:46	1:58	2	AVFrame *	buf
+stmnts	0:0	79:14	1	
+decl	3:4	3:41	2	AVFilterContext	*ctx
+op	3:28	0:0	2	=
+water	3:30	0:0	2	inlink
+op	3:36	0:0	2	->
+water	3:38	0:0	2	dst
+decl	4:4	4:39	2	FPSContext	*s
+op	4:28	0:0	2	=
+water	4:30	0:0	2	ctx
+op	4:33	0:0	2	->
+water	4:35	0:0	2	priv
+decl	5:4	5:45	2	AVFilterLink	*outlink
+op	5:28	0:0	2	=
+water	5:30	0:0	2	ctx
+op	5:33	0:0	2	->
+water	5:35	0:0	2	outputs
+op	5:42	0:0	2	[
+water	5:43	0:0	2	0
+op	5:44	0:0	2	]
+decl	6:4	6:17	2	int64_t	delta
+decl	7:4	7:14	2	int	i
+water	7:9	0:0	2	,
+decl	7:4	7:14	2	int	ret
+water	8:4	0:0	2	s
+op	8:5	0:0	2	->
+water	8:7	0:0	2	frames_in
+op	8:16	0:0	2	++
+water	8:18	0:0	2	;
+if	10:4	33:4	2	(s -> first_pts == AV_NOPTS_VALUE)
+cond	10:8	10:24	3	s -> first_pts == AV_NOPTS_VALUE
+water	10:8	0:0	4	s
+op	10:9	0:0	4	->
+water	10:11	0:0	4	first_pts
+op	10:21	0:0	4	==
+water	10:24	0:0	4	AV_NOPTS_VALUE
+stmts	10:40	33:4	3	
+water	10:40	0:0	4	{
+if	11:8	26:8	4	(buf -> pts != AV_NOPTS_VALUE)
+cond	11:12	11:24	5	buf -> pts != AV_NOPTS_VALUE
+water	11:12	0:0	6	buf
+op	11:15	0:0	6	->
+water	11:17	0:0	6	pts
+op	11:21	0:0	6	!=
+water	11:24	0:0	6	AV_NOPTS_VALUE
+stmts	11:40	26:8	5	
+water	11:40	0:0	6	{
+water	12:12	0:0	6	ret
+op	12:16	0:0	6	=
+call	12:18	12:44	6	write_to_fifo
+arg	12:32	12:39	7	s->fifo
+water	12:32	0:0	8	s
+op	12:33	0:0	8	->
+water	12:35	0:0	8	fifo
+arg	12:41	12:44	7	buf
+water	12:41	0:0	8	buf
+water	12:45	0:0	6	;
+if	13:12	14:26	6	(ret < 0)
+cond	13:16	13:22	7	ret < 0
+water	13:16	0:0	8	ret
+op	13:20	0:0	8	<
+water	13:22	0:0	8	0
+stmts	14:16	14:26	7	
+return	14:16	14:26	8	ret
+water	14:23	0:0	9	ret
+if	15:12	23:12	6	(s -> start_time != DBL_MAX && s -> start_time != AV_NOPTS_VALUE)
+cond	15:16	15:61	7	s -> start_time != DBL_MAX && s -> start_time != AV_NOPTS_VALUE
+water	15:16	0:0	8	s
+op	15:17	0:0	8	->
+water	15:19	0:0	8	start_time
+op	15:30	0:0	8	!=
+water	15:33	0:0	8	DBL_MAX
+op	15:41	0:0	8	&&
+water	15:44	0:0	8	s
+op	15:45	0:0	8	->
+water	15:47	0:0	8	start_time
+op	15:58	0:0	8	!=
+water	15:61	0:0	8	AV_NOPTS_VALUE
+stmts	15:77	23:12	7	
+water	15:77	0:0	8	{
+decl	16:16	16:63	8	double	first_pts
+op	16:33	0:0	8	=
+water	16:35	0:0	8	s
+op	16:36	0:0	8	->
+water	16:38	0:0	8	start_time
+op	16:49	0:0	8	*
+water	16:51	0:0	8	AV_TIME_BASE
+water	17:16	0:0	8	first_pts
+op	17:26	0:0	8	=
+call	17:28	17:72	8	FFMIN
+arg	17:34	17:61	9	FFMAX(first_pts,INT64_MIN)
+call	17:34	17:60	10	FFMAX
+arg	17:40	17:49	11	first_pts
+water	17:40	0:0	12	first_pts
+arg	17:51	17:60	11	INT64_MIN
+water	17:51	0:0	12	INT64_MIN
+arg	17:63	17:72	9	INT64_MAX
+water	17:63	0:0	10	INT64_MAX
+water	17:73	0:0	8	;
+water	18:16	0:0	8	s
+op	18:17	0:0	8	->
+water	18:19	0:0	8	first_pts
+op	18:29	0:0	8	=
+call	18:31	19:70	8	av_rescale_q
+arg	18:44	18:53	9	first_pts
+water	18:44	0:0	10	first_pts
+arg	18:55	18:69	9	AV_TIME_BASE_Q
+water	18:55	0:0	10	AV_TIME_BASE_Q
+arg	19:53	19:70	9	inlink->time_base
+water	19:53	0:0	10	inlink
+op	19:59	0:0	10	->
+water	19:61	0:0	10	time_base
+water	19:71	0:0	8	;
+call	20:16	22:69	8	av_log
+arg	20:23	20:26	9	ctx
+water	20:23	0:0	10	ctx
+arg	20:28	20:42	9	AV_LOG_VERBOSE
+water	20:28	0:0	10	AV_LOG_VERBOSE
+arg	20:44	20:93	9	"Set first pts to (in:%"PRId64" out:%"PRId64")\n"
+water	20:44	0:0	10	"Set first pts to (in:%"
+water	20:68	0:0	10	PRId64
+water	20:74	0:0	10	" out:%"
+water	20:82	0:0	10	PRId64
+water	20:88	0:0	10	")\n"
+arg	21:23	21:35	9	s->first_pts
+water	21:23	0:0	10	s
+op	21:24	0:0	10	->
+water	21:26	0:0	10	first_pts
+arg	21:37	22:69	9	av_rescale_q(first_pts,AV_TIME_BASE_Q,outlink->time_base)
+call	21:37	22:68	10	av_rescale_q
+arg	21:50	21:59	11	first_pts
+water	21:50	0:0	12	first_pts
+arg	21:61	21:75	11	AV_TIME_BASE_Q
+water	21:61	0:0	12	AV_TIME_BASE_Q
+arg	22:50	22:68	11	outlink->time_base
+water	22:50	0:0	12	outlink
+op	22:57	0:0	12	->
+water	22:59	0:0	12	time_base
+water	22:70	0:0	8	;
+water	23:12	0:0	8	}
+else	23:14	25:12	6
+stmts	23:19	25:12	7	
+water	23:19	0:0	8	{
+water	24:16	0:0	8	s
+op	24:17	0:0	8	->
+water	24:19	0:0	8	first_pts
+op	24:29	0:0	8	=
+water	24:31	0:0	8	buf
+op	24:34	0:0	8	->
+water	24:36	0:0	8	pts
+water	24:39	0:0	8	;
+water	25:12	0:0	8	}
+water	26:8	0:0	6	}
+else	26:10	31:8	4
+stmts	26:15	31:8	5	
+water	26:15	0:0	6	{
+call	27:12	28:33	6	av_log
+arg	27:19	27:22	7	ctx
+water	27:19	0:0	8	ctx
+arg	27:24	27:38	7	AV_LOG_WARNING
+water	27:24	0:0	8	AV_LOG_WARNING
+arg	27:40	28:33	7	"Discarding initial frame(s) with no ""timestamp.\n"
+water	27:40	0:0	8	"Discarding initial frame(s) with no "
+water	28:19	0:0	8	"timestamp.\n"
+water	28:34	0:0	6	;
+call	29:12	29:30	6	av_frame_free
+arg	29:26	29:30	7	&buf
+op	29:26	0:0	8	&
+water	29:27	0:0	8	buf
+water	29:31	0:0	6	;
+water	30:12	0:0	6	s
+op	30:13	0:0	6	->
+water	30:15	0:0	6	drop
+op	30:19	0:0	6	++
+water	30:21	0:0	6	;
+water	31:8	0:0	6	}
+return	32:8	32:16	4	0
+water	32:15	0:0	5	0
+water	33:4	0:0	4	}
+if	35:4	37:4	2	(buf -> pts == AV_NOPTS_VALUE ||av_fifo_size (s -> fifo ) <= 0)
+cond	35:8	35:63	3	buf -> pts == AV_NOPTS_VALUE ||av_fifo_size (s -> fifo ) <= 0
+water	35:8	0:0	4	buf
+op	35:11	0:0	4	->
+water	35:13	0:0	4	pts
+op	35:17	0:0	4	==
+water	35:20	0:0	4	AV_NOPTS_VALUE
+op	35:35	0:0	4	||
+call	35:38	35:58	4	av_fifo_size
+arg	35:51	35:58	5	s->fifo
+water	35:51	0:0	6	s
+op	35:52	0:0	6	->
+water	35:54	0:0	6	fifo
+op	35:60	0:0	4	<=
+water	35:63	0:0	4	0
+stmts	35:66	37:4	3	
+water	35:66	0:0	4	{
+return	36:8	36:42	4	write_to_fifo(s->fifo,buf)
+call	36:15	36:41	5	write_to_fifo
+arg	36:29	36:36	6	s->fifo
+water	36:29	0:0	7	s
+op	36:30	0:0	7	->
+water	36:32	0:0	7	fifo
+arg	36:38	36:41	6	buf
+water	36:38	0:0	7	buf
+water	37:4	0:0	4	}
+water	39:4	0:0	2	delta
+op	39:10	0:0	2	=
+call	39:12	40:60	2	av_rescale_q_rnd
+arg	39:29	39:52	3	buf->pts-s->first_pts
+water	39:29	0:0	4	buf
+op	39:32	0:0	4	->
+water	39:34	0:0	4	pts
+op	39:38	0:0	4	-
+water	39:40	0:0	4	s
+op	39:41	0:0	4	->
+water	39:43	0:0	4	first_pts
+arg	39:54	39:71	3	inlink->time_base
+water	39:54	0:0	4	inlink
+op	39:60	0:0	4	->
+water	39:62	0:0	4	time_base
+arg	40:29	40:47	3	outlink->time_base
+water	40:29	0:0	4	outlink
+op	40:36	0:0	4	->
+water	40:38	0:0	4	time_base
+arg	40:49	40:60	3	s->rounding
+water	40:49	0:0	4	s
+op	40:50	0:0	4	->
+water	40:52	0:0	4	rounding
+op	40:62	0:0	2	-
+water	40:64	0:0	2	s
+op	40:65	0:0	2	->
+water	40:67	0:0	2	frames_out
+water	40:78	0:0	2	;
+if	41:4	49:4	2	(delta < 1)
+cond	41:8	41:16	3	delta < 1
+water	41:8	0:0	4	delta
+op	41:14	0:0	4	<
+water	41:16	0:0	4	1
+stmts	41:19	49:4	3	
+water	41:19	0:0	4	{
+decl	43:8	43:57	4	int	drop
+op	43:17	0:0	4	=
+call	43:19	43:39	5	av_fifo_size
+arg	43:32	43:39	6	s->fifo
+water	43:32	0:0	7	s
+op	43:33	0:0	7	->
+water	43:35	0:0	7	fifo
+op	43:40	0:0	4	/
+op	43:41	0:0	4	sizeof
+water	43:47	0:0	4	(
+water	43:48	0:0	4	AVFrame
+op	43:55	0:0	4	*
+water	43:56	0:0	4	)
+call	44:8	44:65	4	av_log
+arg	44:15	44:18	5	ctx
+water	44:15	0:0	6	ctx
+arg	44:20	44:32	5	AV_LOG_DEBUG
+water	44:20	0:0	6	AV_LOG_DEBUG
+arg	44:34	44:59	5	"Dropping %d frame(s).\n"
+water	44:34	0:0	6	"Dropping %d frame(s).\n"
+arg	44:61	44:65	5	drop
+water	44:61	0:0	6	drop
+water	44:66	0:0	4	;
+water	45:8	0:0	4	s
+op	45:9	0:0	4	->
+water	45:11	0:0	4	drop
+op	45:16	0:0	4	+=
+water	45:19	0:0	4	drop
+water	45:23	0:0	4	;
+call	46:8	46:26	4	flush_fifo
+arg	46:19	46:26	5	s->fifo
+water	46:19	0:0	6	s
+op	46:20	0:0	6	->
+water	46:22	0:0	6	fifo
+water	46:27	0:0	4	;
+water	47:8	0:0	4	ret
+op	47:12	0:0	4	=
+call	47:14	47:40	4	write_to_fifo
+arg	47:28	47:35	5	s->fifo
+water	47:28	0:0	6	s
+op	47:29	0:0	6	->
+water	47:31	0:0	6	fifo
+arg	47:37	47:40	5	buf
+water	47:37	0:0	6	buf
+water	47:41	0:0	4	;
+return	48:8	48:18	4	ret
+water	48:15	0:0	5	ret
+water	49:4	0:0	4	}
+for	51:4	76:4	2	(i = 0 ;i < delta;i ++)
+forinit	51:9	51:14	3	i = 0 ;
+water	51:9	0:0	4	i
+op	51:11	0:0	4	=
+water	51:13	0:0	4	0
+water	51:14	0:0	4	;
+cond	51:16	51:20	3	i < delta
+water	51:16	0:0	4	i
+op	51:18	0:0	4	<
+water	51:20	0:0	4	delta
+forexpr	51:27	51:28	3	i ++
+water	51:27	0:0	4	i
+op	51:28	0:0	4	++
+stmts	51:32	76:4	3	
+water	51:32	0:0	4	{
+decl	52:8	52:24	4	AVFrame	*buf_out
+call	53:8	53:69	4	av_fifo_generic_read
+arg	53:29	53:36	5	s->fifo
+water	53:29	0:0	6	s
+op	53:30	0:0	6	->
+water	53:32	0:0	6	fifo
+arg	53:38	53:46	5	&buf_out
+op	53:38	0:0	6	&
+water	53:39	0:0	6	buf_out
+arg	53:48	53:63	5	sizeof(buf_out)
+op	53:48	0:0	6	sizeof
+water	53:54	0:0	6	(
+water	53:55	0:0	6	buf_out
+water	53:62	0:0	6	)
+arg	53:65	53:69	5	NULL
+water	53:65	0:0	6	NULL
+water	53:70	0:0	4	;
+if	55:8	68:8	4	(!av_fifo_size (s -> fifo ) && i < delta - 1)
+cond	55:12	55:50	5	!av_fifo_size (s -> fifo ) && i < delta - 1
+op	55:12	0:0	6	!
+call	55:13	55:33	6	av_fifo_size
+arg	55:26	55:33	7	s->fifo
+water	55:26	0:0	8	s
+op	55:27	0:0	8	->
+water	55:29	0:0	8	fifo
+op	55:35	0:0	6	&&
+water	55:38	0:0	6	i
+op	55:40	0:0	6	<
+water	55:42	0:0	6	delta
+op	55:48	0:0	6	-
+water	55:50	0:0	6	1
+stmts	55:53	68:8	5	
+water	55:53	0:0	6	{
+decl	56:12	56:50	6	AVFrame	*dup
+op	56:25	0:0	6	=
+call	56:27	56:49	7	av_frame_clone
+arg	56:42	56:49	8	buf_out
+water	56:42	0:0	9	buf_out
+call	57:12	57:60	6	av_log
+arg	57:19	57:22	7	ctx
+water	57:19	0:0	8	ctx
+arg	57:24	57:36	7	AV_LOG_DEBUG
+water	57:24	0:0	8	AV_LOG_DEBUG
+arg	57:38	57:60	7	"Duplicating frame.\n"
+water	57:38	0:0	8	"Duplicating frame.\n"
+water	57:61	0:0	6	;
+if	58:12	59:49	6	(dup)
+cond	58:16	58:16	7	dup
+water	58:16	0:0	8	dup
+stmts	59:16	59:49	7	
+water	59:16	0:0	8	ret
+op	59:20	0:0	8	=
+call	59:22	59:48	8	write_to_fifo
+arg	59:36	59:43	9	s->fifo
+water	59:36	0:0	10	s
+op	59:37	0:0	10	->
+water	59:39	0:0	10	fifo
+arg	59:45	59:48	9	dup
+water	59:45	0:0	10	dup
+water	59:49	0:0	8	;
+else	60:12	61:37	6
+stmts	61:16	61:37	7	
+water	61:16	0:0	8	ret
+op	61:20	0:0	8	=
+call	61:22	61:36	8	AVERROR
+arg	61:30	61:36	9	ENOMEM
+water	61:30	0:0	10	ENOMEM
+water	61:37	0:0	8	;
+if	62:12	66:12	6	(ret < 0)
+cond	62:16	62:22	7	ret < 0
+water	62:16	0:0	8	ret
+op	62:20	0:0	8	<
+water	62:22	0:0	8	0
+stmts	62:25	66:12	7	
+water	62:25	0:0	8	{
+call	63:16	63:38	8	av_frame_free
+arg	63:30	63:38	9	&buf_out
+op	63:30	0:0	10	&
+water	63:31	0:0	10	buf_out
+water	63:39	0:0	8	;
+call	64:16	64:34	8	av_frame_free
+arg	64:30	64:34	9	&buf
+op	64:30	0:0	10	&
+water	64:31	0:0	10	buf
+water	64:35	0:0	8	;
+return	65:16	65:26	8	ret
+water	65:23	0:0	9	ret
+water	66:12	0:0	8	}
+water	67:12	0:0	6	s
+op	67:13	0:0	6	->
+water	67:15	0:0	6	dup
+op	67:18	0:0	6	++
+water	67:20	0:0	6	;
+water	68:8	0:0	6	}
+water	69:8	0:0	4	buf_out
+op	69:15	0:0	4	->
+water	69:17	0:0	4	pts
+op	69:21	0:0	4	=
+call	69:23	70:54	4	av_rescale_q
+arg	69:36	69:48	5	s->first_pts
+water	69:36	0:0	6	s
+op	69:37	0:0	6	->
+water	69:39	0:0	6	first_pts
+arg	69:50	69:67	5	inlink->time_base
+water	69:50	0:0	6	inlink
+op	69:56	0:0	6	->
+water	69:58	0:0	6	time_base
+arg	70:36	70:54	5	outlink->time_base
+water	70:36	0:0	6	outlink
+op	70:43	0:0	6	->
+water	70:45	0:0	6	time_base
+op	70:56	0:0	4	+
+water	70:58	0:0	4	s
+op	70:59	0:0	4	->
+water	70:61	0:0	4	frames_out
+water	70:71	0:0	4	;
+if	71:8	74:8	4	(( ret =ff_filter_frame (outlink ,buf_out ) ) < 0)
+cond	71:12	71:56	5	( ret =ff_filter_frame (outlink ,buf_out ) ) < 0
+water	71:12	0:0	6	(
+water	71:13	0:0	6	ret
+op	71:17	0:0	6	=
+call	71:19	71:51	6	ff_filter_frame
+arg	71:35	71:42	7	outlink
+water	71:35	0:0	8	outlink
+arg	71:44	71:51	7	buf_out
+water	71:44	0:0	8	buf_out
+water	71:52	0:0	6	)
+op	71:54	0:0	6	<
+water	71:56	0:0	6	0
+stmts	71:59	74:8	5	
+water	71:59	0:0	6	{
+call	72:12	72:30	6	av_frame_free
+arg	72:26	72:30	7	&buf
+op	72:26	0:0	8	&
+water	72:27	0:0	8	buf
+water	72:31	0:0	6	;
+return	73:12	73:22	6	ret
+water	73:19	0:0	7	ret
+water	74:8	0:0	6	}
+water	75:8	0:0	4	s
+op	75:9	0:0	4	->
+water	75:11	0:0	4	frames_out
+op	75:21	0:0	4	++
+water	75:23	0:0	4	;
+water	76:4	0:0	4	}
+call	77:4	77:22	2	flush_fifo
+arg	77:15	77:22	3	s->fifo
+water	77:15	0:0	4	s
+op	77:16	0:0	4	->
+water	77:18	0:0	4	fifo
+water	77:23	0:0	2	;
+water	78:4	0:0	2	ret
+op	78:8	0:0	2	=
+call	78:10	78:36	2	write_to_fifo
+arg	78:24	78:31	3	s->fifo
+water	78:24	0:0	4	s
+op	78:25	0:0	4	->
+water	78:27	0:0	4	fifo
+arg	78:33	78:36	3	buf
+water	78:33	0:0	4	buf
+water	78:37	0:0	2	;
+return	79:4	79:14	2	ret
+water	79:11	0:0	3	ret

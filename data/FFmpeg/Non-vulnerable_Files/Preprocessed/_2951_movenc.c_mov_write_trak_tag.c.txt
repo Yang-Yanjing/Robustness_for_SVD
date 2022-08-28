@@ -1,0 +1,297 @@
+func	1:0	46:0	0	static int	mov_write_trak_tag
+params	1:29	0:0	1	
+param	1:30	1:45	2	AVIOContext *	pb
+param	1:47	1:65	2	MOVMuxContext *	mov
+param	2:30	2:45	2	MOVTrack *	track
+param	2:47	2:59	2	AVStream *	st
+stmnts	0:0	45:31	1	
+decl	4:4	4:31	2	int64_t	pos
+op	4:16	0:0	2	=
+call	4:18	4:30	3	avio_tell
+arg	4:28	4:30	4	pb
+water	4:28	0:0	5	pb
+decl	5:4	5:35	2	int	entry_backup
+op	5:21	0:0	2	=
+water	5:23	0:0	2	track
+op	5:28	0:0	2	->
+water	5:30	0:0	2	entry
+decl	6:4	6:40	2	int	chunk_backup
+op	6:21	0:0	2	=
+water	6:23	0:0	2	track
+op	6:28	0:0	2	->
+water	6:30	0:0	2	chunkCount
+decl	7:4	7:11	2	int	ret
+if	10:4	11:44	2	(mov -> flags & FF_MOV_FLAG_EMPTY_MOOV)
+cond	10:8	10:21	3	mov -> flags & FF_MOV_FLAG_EMPTY_MOOV
+water	10:8	0:0	4	mov
+op	10:11	0:0	4	->
+water	10:13	0:0	4	flags
+op	10:19	0:0	4	&
+water	10:21	0:0	4	FF_MOV_FLAG_EMPTY_MOOV
+stmts	11:8	11:44	3	
+water	11:8	0:0	4	track
+op	11:13	0:0	4	->
+water	11:15	0:0	4	chunkCount
+op	11:26	0:0	4	=
+water	11:28	0:0	4	track
+op	11:33	0:0	4	->
+water	11:35	0:0	4	entry
+op	11:41	0:0	4	=
+water	11:43	0:0	4	0
+water	11:44	0:0	4	;
+call	12:4	12:19	2	avio_wb32
+arg	12:14	12:16	3	pb
+water	12:14	0:0	4	pb
+arg	12:18	12:19	3	0
+water	12:18	0:0	4	0
+water	12:20	0:0	2	;
+call	13:4	13:27	2	ffio_wfourcc
+arg	13:17	13:19	3	pb
+water	13:17	0:0	4	pb
+arg	13:21	13:27	3	"trak"
+water	13:21	0:0	4	"trak"
+water	13:28	0:0	2	;
+call	14:4	14:41	2	mov_write_tkhd_tag
+arg	14:23	14:25	3	pb
+water	14:23	0:0	4	pb
+arg	14:27	14:30	3	mov
+water	14:27	0:0	4	mov
+arg	14:32	14:37	3	track
+water	14:32	0:0	4	track
+arg	14:39	14:41	3	st
+water	14:39	0:0	4	st
+water	14:42	0:0	2	;
+call	15:4	15:37	2	av_assert2
+arg	15:15	15:37	3	mov->use_editlist>=0
+water	15:15	0:0	4	mov
+op	15:18	0:0	4	->
+water	15:20	0:0	4	use_editlist
+op	15:33	0:0	4	>=
+water	15:36	0:0	4	0
+water	15:38	0:0	2	;
+if	16:4	22:4	2	(track -> start_dts != AV_NOPTS_VALUE)
+cond	16:8	16:28	3	track -> start_dts != AV_NOPTS_VALUE
+water	16:8	0:0	4	track
+op	16:13	0:0	4	->
+water	16:15	0:0	4	start_dts
+op	16:25	0:0	4	!=
+water	16:28	0:0	4	AV_NOPTS_VALUE
+stmts	16:44	22:4	3	
+water	16:44	0:0	4	{
+if	17:8	18:46	4	(mov -> use_editlist)
+cond	17:12	17:17	5	mov -> use_editlist
+water	17:12	0:0	6	mov
+op	17:15	0:0	6	->
+water	17:17	0:0	6	use_editlist
+stmts	18:12	18:46	5	
+call	18:12	18:45	6	mov_write_edts_tag
+arg	18:31	18:33	7	pb
+water	18:31	0:0	8	pb
+arg	18:35	18:38	7	mov
+water	18:35	0:0	8	mov
+arg	18:40	18:45	7	track
+water	18:40	0:0	8	track
+water	18:46	0:0	6	;
+else	19:8	21:90	4
+stmts	19:13	21:90	5	
+if	19:13	21:90	6	(( track -> entry && track -> cluster [ 0 ] . dts ) || track -> mode == MODE_PSP ||is_clcp_track (track ))
+cond	19:17	19:106	7	( track -> entry && track -> cluster [ 0 ] . dts ) || track -> mode == MODE_PSP ||is_clcp_track (track )
+water	19:17	0:0	8	(
+water	19:18	0:0	8	track
+op	19:23	0:0	8	->
+water	19:25	0:0	8	entry
+op	19:31	0:0	8	&&
+water	19:34	0:0	8	track
+op	19:39	0:0	8	->
+water	19:41	0:0	8	cluster
+op	19:48	0:0	8	[
+water	19:49	0:0	8	0
+op	19:50	0:0	8	]
+op	19:51	0:0	8	.
+water	19:52	0:0	8	dts
+water	19:55	0:0	8	)
+op	19:57	0:0	8	||
+water	19:60	0:0	8	track
+op	19:65	0:0	8	->
+water	19:67	0:0	8	mode
+op	19:72	0:0	8	==
+water	19:75	0:0	8	MODE_PSP
+op	19:84	0:0	8	||
+call	19:87	19:106	8	is_clcp_track
+arg	19:101	19:106	9	track
+water	19:101	0:0	10	track
+stmts	20:12	21:90	7	
+call	20:12	21:89	8	av_log
+arg	20:19	20:26	9	mov->fc
+water	20:19	0:0	10	mov
+op	20:22	0:0	10	->
+water	20:24	0:0	10	fc
+arg	20:28	20:42	9	AV_LOG_WARNING
+water	20:28	0:0	10	AV_LOG_WARNING
+arg	21:19	21:89	9	"Not writing any edit list even though one would have been required\n"
+water	21:19	0:0	10	"Not writing any edit list even though one would have been required\n"
+water	21:90	0:0	8	;
+water	22:4	0:0	4	}
+if	23:4	24:37	2	(track -> tref_tag)
+cond	23:8	23:15	3	track -> tref_tag
+water	23:8	0:0	4	track
+op	23:13	0:0	4	->
+water	23:15	0:0	4	tref_tag
+stmts	24:8	24:37	3	
+call	24:8	24:36	4	mov_write_tref_tag
+arg	24:27	24:29	5	pb
+water	24:27	0:0	6	pb
+arg	24:31	24:36	5	track
+water	24:31	0:0	6	track
+water	24:37	0:0	4	;
+if	25:4	26:18	2	(( ret =mov_write_mdia_tag (pb ,mov ,track ) ) < 0)
+cond	25:8	25:53	3	( ret =mov_write_mdia_tag (pb ,mov ,track ) ) < 0
+water	25:8	0:0	4	(
+water	25:9	0:0	4	ret
+op	25:13	0:0	4	=
+call	25:15	25:48	4	mov_write_mdia_tag
+arg	25:34	25:36	5	pb
+water	25:34	0:0	6	pb
+arg	25:38	25:41	5	mov
+water	25:38	0:0	6	mov
+arg	25:43	25:48	5	track
+water	25:43	0:0	6	track
+water	25:49	0:0	4	)
+op	25:51	0:0	4	<
+water	25:53	0:0	4	0
+stmts	26:8	26:18	3	
+return	26:8	26:18	4	ret
+water	26:15	0:0	5	ret
+if	27:4	28:41	2	(track -> mode == MODE_PSP)
+cond	27:8	27:23	3	track -> mode == MODE_PSP
+water	27:8	0:0	4	track
+op	27:13	0:0	4	->
+water	27:15	0:0	4	mode
+op	27:20	0:0	4	==
+water	27:23	0:0	4	MODE_PSP
+stmts	28:8	28:41	3	
+call	28:8	28:40	4	mov_write_uuid_tag_psp
+arg	28:31	28:33	5	pb
+water	28:31	0:0	6	pb
+arg	28:35	28:40	5	track
+water	28:35	0:0	6	track
+water	28:41	0:0	4	;
+if	29:4	30:37	2	(track -> tag ==MKTAG ('r' ,'t' ,'p' ,' ' ))
+cond	29:8	29:43	3	track -> tag ==MKTAG ('r' ,'t' ,'p' ,' ' )
+water	29:8	0:0	4	track
+op	29:13	0:0	4	->
+water	29:15	0:0	4	tag
+op	29:19	0:0	4	==
+call	29:22	29:43	4	MKTAG
+arg	29:28	29:31	5	'r'
+water	29:28	0:0	6	'r'
+arg	29:32	29:35	5	't'
+water	29:32	0:0	6	't'
+arg	29:36	29:39	5	'p'
+water	29:36	0:0	6	'p'
+arg	29:40	29:43	5	' '
+water	29:40	0:0	6	' '
+stmts	30:8	30:37	3	
+call	30:8	30:36	4	mov_write_udta_sdp
+arg	30:27	30:29	5	pb
+water	30:27	0:0	6	pb
+arg	30:31	30:36	5	track
+water	30:31	0:0	6	track
+water	30:37	0:0	4	;
+if	31:4	41:4	2	(track -> mode == MODE_MOV)
+cond	31:8	31:23	3	track -> mode == MODE_MOV
+water	31:8	0:0	4	track
+op	31:13	0:0	4	->
+water	31:15	0:0	4	mode
+op	31:20	0:0	4	==
+water	31:23	0:0	4	MODE_MOV
+stmts	31:33	41:4	3	
+water	31:33	0:0	4	{
+if	32:8	37:8	4	(track -> enc -> codec_type == AVMEDIA_TYPE_VIDEO)
+cond	32:12	32:38	5	track -> enc -> codec_type == AVMEDIA_TYPE_VIDEO
+water	32:12	0:0	6	track
+op	32:17	0:0	6	->
+water	32:19	0:0	6	enc
+op	32:22	0:0	6	->
+water	32:24	0:0	6	codec_type
+op	32:35	0:0	6	==
+water	32:38	0:0	6	AVMEDIA_TYPE_VIDEO
+stmts	32:58	37:8	5	
+water	32:58	0:0	6	{
+decl	33:12	33:72	6	double	sample_aspect_ratio
+op	33:39	0:0	6	=
+call	33:41	33:71	7	av_q2d
+arg	33:48	33:71	8	st->sample_aspect_ratio
+water	33:48	0:0	9	st
+op	33:50	0:0	9	->
+water	33:52	0:0	9	sample_aspect_ratio
+if	34:12	36:12	6	(st -> sample_aspect_ratio . num && 1 . 0 != sample_aspect_ratio)
+cond	34:16	34:54	7	st -> sample_aspect_ratio . num && 1 . 0 != sample_aspect_ratio
+water	34:16	0:0	8	st
+op	34:18	0:0	8	->
+water	34:20	0:0	8	sample_aspect_ratio
+op	34:39	0:0	8	.
+water	34:40	0:0	8	num
+op	34:44	0:0	8	&&
+water	34:47	0:0	8	1
+op	34:48	0:0	8	.
+water	34:49	0:0	8	0
+op	34:51	0:0	8	!=
+water	34:54	0:0	8	sample_aspect_ratio
+stmts	34:75	36:12	7	
+water	34:75	0:0	8	{
+call	35:16	35:44	8	mov_write_tapt_tag
+arg	35:35	35:37	9	pb
+water	35:35	0:0	10	pb
+arg	35:39	35:44	9	track
+water	35:39	0:0	10	track
+water	35:45	0:0	8	;
+water	36:12	0:0	8	}
+water	37:8	0:0	6	}
+if	38:8	40:8	4	(is_clcp_track (track ) && st -> sample_aspect_ratio . num)
+cond	38:12	38:60	5	is_clcp_track (track ) && st -> sample_aspect_ratio . num
+call	38:12	38:31	6	is_clcp_track
+arg	38:26	38:31	7	track
+water	38:26	0:0	8	track
+op	38:33	0:0	6	&&
+water	38:36	0:0	6	st
+op	38:38	0:0	6	->
+water	38:40	0:0	6	sample_aspect_ratio
+op	38:59	0:0	6	.
+water	38:60	0:0	6	num
+stmts	38:65	40:8	5	
+water	38:65	0:0	6	{
+call	39:12	39:40	6	mov_write_tapt_tag
+arg	39:31	39:33	7	pb
+water	39:31	0:0	8	pb
+arg	39:35	39:40	7	track
+water	39:35	0:0	8	track
+water	39:41	0:0	6	;
+water	40:8	0:0	6	}
+water	41:4	0:0	4	}
+call	42:4	42:40	2	mov_write_track_udta_tag
+arg	42:29	42:31	3	pb
+water	42:29	0:0	4	pb
+arg	42:33	42:36	3	mov
+water	42:33	0:0	4	mov
+arg	42:38	42:40	3	st
+water	42:38	0:0	4	st
+water	42:41	0:0	2	;
+water	43:4	0:0	2	track
+op	43:9	0:0	2	->
+water	43:11	0:0	2	entry
+op	43:17	0:0	2	=
+water	43:19	0:0	2	entry_backup
+water	43:31	0:0	2	;
+water	44:4	0:0	2	track
+op	44:9	0:0	2	->
+water	44:11	0:0	2	chunkCount
+op	44:22	0:0	2	=
+water	44:24	0:0	2	chunk_backup
+water	44:36	0:0	2	;
+return	45:4	45:31	2	update_size(pb,pos)
+call	45:11	45:30	3	update_size
+arg	45:23	45:25	4	pb
+water	45:23	0:0	5	pb
+arg	45:27	45:30	4	pos
+water	45:27	0:0	5	pos

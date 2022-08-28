@@ -1,0 +1,316 @@
+func	1:0	45:0	0	int	ff_audio_data_copy
+params	1:22	0:0	1	
+param	1:23	1:37	2	AudioData *	dst
+param	1:39	1:53	2	AudioData *	src
+param	1:55	1:74	2	ChannelMapInfo *	map
+stmnts	0:0	44:12	1	
+decl	3:4	3:14	2	int	ret
+water	3:11	0:0	2	,
+decl	3:4	3:14	2	int	p
+if	5:4	6:30	2	(dst -> sample_fmt != src -> sample_fmt || dst -> channels < src -> channels)
+cond	5:8	5:67	3	dst -> sample_fmt != src -> sample_fmt || dst -> channels < src -> channels
+water	5:8	0:0	4	dst
+op	5:11	0:0	4	->
+water	5:13	0:0	4	sample_fmt
+op	5:24	0:0	4	!=
+water	5:27	0:0	4	src
+op	5:30	0:0	4	->
+water	5:32	0:0	4	sample_fmt
+op	5:43	0:0	4	||
+water	5:46	0:0	4	dst
+op	5:49	0:0	4	->
+water	5:51	0:0	4	channels
+op	5:60	0:0	4	<
+water	5:62	0:0	4	src
+op	5:65	0:0	4	->
+water	5:67	0:0	4	channels
+stmts	6:8	6:30	3	
+return	6:8	6:30	4	AVERROR(EINVAL)
+call	6:15	6:29	5	AVERROR
+arg	6:23	6:29	6	EINVAL
+water	6:23	0:0	7	EINVAL
+if	7:4	10:4	2	(map && ! src -> is_planar)
+cond	7:8	7:21	3	map && ! src -> is_planar
+water	7:8	0:0	4	map
+op	7:12	0:0	4	&&
+op	7:15	0:0	4	!
+water	7:16	0:0	4	src
+op	7:19	0:0	4	->
+water	7:21	0:0	4	is_planar
+stmts	7:32	10:4	3	
+water	7:32	0:0	4	{
+call	8:8	8:76	4	av_log
+arg	8:15	8:18	5	src
+water	8:15	0:0	6	src
+arg	8:20	8:32	5	AV_LOG_ERROR
+water	8:20	0:0	6	AV_LOG_ERROR
+arg	8:34	8:76	5	"cannot remap packed format during copy\n"
+water	8:34	0:0	6	"cannot remap packed format during copy\n"
+water	8:77	0:0	4	;
+return	9:8	9:30	4	AVERROR(EINVAL)
+call	9:15	9:29	5	AVERROR
+arg	9:23	9:29	6	EINVAL
+water	9:23	0:0	7	EINVAL
+water	10:4	0:0	4	}
+if	12:4	15:4	2	(! src -> nb_samples)
+cond	12:8	12:14	3	! src -> nb_samples
+op	12:8	0:0	4	!
+water	12:9	0:0	4	src
+op	12:12	0:0	4	->
+water	12:14	0:0	4	nb_samples
+stmts	12:26	15:4	3	
+water	12:26	0:0	4	{
+water	13:8	0:0	4	dst
+op	13:11	0:0	4	->
+water	13:13	0:0	4	nb_samples
+op	13:24	0:0	4	=
+water	13:26	0:0	4	0
+water	13:27	0:0	4	;
+return	14:8	14:16	4	0
+water	14:15	0:0	5	0
+water	15:4	0:0	4	}
+water	17:4	0:0	2	ret
+op	17:8	0:0	2	=
+call	17:10	17:52	2	ff_audio_data_realloc
+arg	17:32	17:35	3	dst
+water	17:32	0:0	4	dst
+arg	17:37	17:52	3	src->nb_samples
+water	17:37	0:0	4	src
+op	17:40	0:0	4	->
+water	17:42	0:0	4	nb_samples
+water	17:53	0:0	2	;
+if	18:4	19:18	2	(ret < 0)
+cond	18:8	18:14	3	ret < 0
+water	18:8	0:0	4	ret
+op	18:12	0:0	4	<
+water	18:14	0:0	4	0
+stmts	19:8	19:18	3	
+return	19:8	19:18	4	ret
+water	19:15	0:0	5	ret
+if	21:4	39:4	2	(map)
+cond	21:8	21:8	3	map
+water	21:8	0:0	4	map
+stmts	21:13	39:4	3	
+water	21:13	0:0	4	{
+if	22:8	28:8	4	(map -> do_remap)
+cond	22:12	22:17	5	map -> do_remap
+water	22:12	0:0	6	map
+op	22:15	0:0	6	->
+water	22:17	0:0	6	do_remap
+stmts	22:27	28:8	5	
+water	22:27	0:0	6	{
+for	23:12	27:12	6	(p = 0 ;p < src -> planes;p ++)
+forinit	23:17	23:22	7	p = 0 ;
+water	23:17	0:0	8	p
+op	23:19	0:0	8	=
+water	23:21	0:0	8	0
+water	23:22	0:0	8	;
+cond	23:24	23:33	7	p < src -> planes
+water	23:24	0:0	8	p
+op	23:26	0:0	8	<
+water	23:28	0:0	8	src
+op	23:31	0:0	8	->
+water	23:33	0:0	8	planes
+forexpr	23:41	23:42	7	p ++
+water	23:41	0:0	8	p
+op	23:42	0:0	8	++
+stmts	23:46	27:12	7	
+water	23:46	0:0	8	{
+if	24:16	26:57	8	(map -> channel_map [ p ] >= 0)
+cond	24:20	24:43	9	map -> channel_map [ p ] >= 0
+water	24:20	0:0	10	map
+op	24:23	0:0	10	->
+water	24:25	0:0	10	channel_map
+op	24:36	0:0	10	[
+water	24:37	0:0	10	p
+op	24:38	0:0	10	]
+op	24:40	0:0	10	>=
+water	24:43	0:0	10	0
+stmts	25:20	26:57	9	
+call	25:20	26:56	10	memcpy
+arg	25:27	25:39	11	dst->data[p]
+water	25:27	0:0	12	dst
+op	25:30	0:0	12	->
+water	25:32	0:0	12	data
+op	25:36	0:0	12	[
+water	25:37	0:0	12	p
+op	25:38	0:0	12	]
+arg	25:41	25:71	11	src->data[map->channel_map[p]]
+water	25:41	0:0	12	src
+op	25:44	0:0	12	->
+water	25:46	0:0	12	data
+op	25:50	0:0	12	[
+water	25:51	0:0	12	map
+op	25:54	0:0	12	->
+water	25:56	0:0	12	channel_map
+op	25:67	0:0	12	[
+water	25:68	0:0	12	p
+op	25:69	0:0	12	]
+op	25:70	0:0	12	]
+arg	26:27	26:56	11	src->nb_samples*src->stride
+water	26:27	0:0	12	src
+op	26:30	0:0	12	->
+water	26:32	0:0	12	nb_samples
+op	26:43	0:0	12	*
+water	26:45	0:0	12	src
+op	26:48	0:0	12	->
+water	26:50	0:0	12	stride
+water	26:57	0:0	10	;
+water	27:12	0:0	8	}
+water	28:8	0:0	6	}
+if	29:8	38:8	4	(map -> do_copy || map -> do_zero)
+cond	29:12	29:33	5	map -> do_copy || map -> do_zero
+water	29:12	0:0	6	map
+op	29:15	0:0	6	->
+water	29:17	0:0	6	do_copy
+op	29:25	0:0	6	||
+water	29:28	0:0	6	map
+op	29:31	0:0	6	->
+water	29:33	0:0	6	do_zero
+stmts	29:42	38:8	5	
+water	29:42	0:0	6	{
+for	30:12	37:12	6	(p = 0 ;p < src -> planes;p ++)
+forinit	30:17	30:22	7	p = 0 ;
+water	30:17	0:0	8	p
+op	30:19	0:0	8	=
+water	30:21	0:0	8	0
+water	30:22	0:0	8	;
+cond	30:24	30:33	7	p < src -> planes
+water	30:24	0:0	8	p
+op	30:26	0:0	8	<
+water	30:28	0:0	8	src
+op	30:31	0:0	8	->
+water	30:33	0:0	8	planes
+forexpr	30:41	30:42	7	p ++
+water	30:41	0:0	8	p
+op	30:42	0:0	8	++
+stmts	30:46	37:12	7	
+water	30:46	0:0	8	{
+if	31:16	33:57	8	(map -> channel_copy [ p ])
+cond	31:20	31:39	9	map -> channel_copy [ p ]
+water	31:20	0:0	10	map
+op	31:23	0:0	10	->
+water	31:25	0:0	10	channel_copy
+op	31:37	0:0	10	[
+water	31:38	0:0	10	p
+op	31:39	0:0	10	]
+stmts	32:20	33:57	9	
+call	32:20	33:56	10	memcpy
+arg	32:27	32:39	11	dst->data[p]
+water	32:27	0:0	12	dst
+op	32:30	0:0	12	->
+water	32:32	0:0	12	data
+op	32:36	0:0	12	[
+water	32:37	0:0	12	p
+op	32:38	0:0	12	]
+arg	32:41	32:72	11	dst->data[map->channel_copy[p]]
+water	32:41	0:0	12	dst
+op	32:44	0:0	12	->
+water	32:46	0:0	12	data
+op	32:50	0:0	12	[
+water	32:51	0:0	12	map
+op	32:54	0:0	12	->
+water	32:56	0:0	12	channel_copy
+op	32:68	0:0	12	[
+water	32:69	0:0	12	p
+op	32:70	0:0	12	]
+op	32:71	0:0	12	]
+arg	33:27	33:56	11	src->nb_samples*src->stride
+water	33:27	0:0	12	src
+op	33:30	0:0	12	->
+water	33:32	0:0	12	nb_samples
+op	33:43	0:0	12	*
+water	33:45	0:0	12	src
+op	33:48	0:0	12	->
+water	33:50	0:0	12	stride
+water	33:57	0:0	10	;
+else	34:16	36:62	8
+stmts	34:21	36:62	9	
+if	34:21	36:62	10	(map -> channel_zero [ p ])
+cond	34:25	34:44	11	map -> channel_zero [ p ]
+water	34:25	0:0	12	map
+op	34:28	0:0	12	->
+water	34:30	0:0	12	channel_zero
+op	34:42	0:0	12	[
+water	34:43	0:0	12	p
+op	34:44	0:0	12	]
+stmts	35:20	36:62	11	
+call	35:20	36:61	12	av_samples_set_silence
+arg	35:43	35:56	13	&dst->data[p]
+op	35:43	0:0	14	&
+water	35:44	0:0	14	dst
+op	35:47	0:0	14	->
+water	35:49	0:0	14	data
+op	35:53	0:0	14	[
+water	35:54	0:0	14	p
+op	35:55	0:0	14	]
+arg	35:58	35:59	13	0
+water	35:58	0:0	14	0
+arg	35:61	35:76	13	src->nb_samples
+water	35:61	0:0	14	src
+op	35:64	0:0	14	->
+water	35:66	0:0	14	nb_samples
+arg	36:43	36:44	13	1
+water	36:43	0:0	14	1
+arg	36:46	36:61	13	dst->sample_fmt
+water	36:46	0:0	14	dst
+op	36:49	0:0	14	->
+water	36:51	0:0	14	sample_fmt
+water	36:62	0:0	12	;
+water	37:12	0:0	8	}
+water	38:8	0:0	6	}
+water	39:4	0:0	4	}
+else	39:6	42:4	2
+stmts	39:11	42:4	3	
+water	39:11	0:0	4	{
+for	40:8	41:77	4	(p = 0 ;p < src -> planes;p ++)
+forinit	40:13	40:18	5	p = 0 ;
+water	40:13	0:0	6	p
+op	40:15	0:0	6	=
+water	40:17	0:0	6	0
+water	40:18	0:0	6	;
+cond	40:20	40:29	5	p < src -> planes
+water	40:20	0:0	6	p
+op	40:22	0:0	6	<
+water	40:24	0:0	6	src
+op	40:27	0:0	6	->
+water	40:29	0:0	6	planes
+forexpr	40:37	40:38	5	p ++
+water	40:37	0:0	6	p
+op	40:38	0:0	6	++
+stmts	41:12	41:77	5	
+call	41:12	41:76	6	memcpy
+arg	41:19	41:31	7	dst->data[p]
+water	41:19	0:0	8	dst
+op	41:22	0:0	8	->
+water	41:24	0:0	8	data
+op	41:28	0:0	8	[
+water	41:29	0:0	8	p
+op	41:30	0:0	8	]
+arg	41:33	41:45	7	src->data[p]
+water	41:33	0:0	8	src
+op	41:36	0:0	8	->
+water	41:38	0:0	8	data
+op	41:42	0:0	8	[
+water	41:43	0:0	8	p
+op	41:44	0:0	8	]
+arg	41:47	41:76	7	src->nb_samples*src->stride
+water	41:47	0:0	8	src
+op	41:50	0:0	8	->
+water	41:52	0:0	8	nb_samples
+op	41:63	0:0	8	*
+water	41:65	0:0	8	src
+op	41:68	0:0	8	->
+water	41:70	0:0	8	stride
+water	41:77	0:0	6	;
+water	42:4	0:0	4	}
+water	43:4	0:0	2	dst
+op	43:7	0:0	2	->
+water	43:9	0:0	2	nb_samples
+op	43:20	0:0	2	=
+water	43:22	0:0	2	src
+op	43:25	0:0	2	->
+water	43:27	0:0	2	nb_samples
+water	43:37	0:0	2	;
+return	44:4	44:12	2	0
+water	44:11	0:0	3	0

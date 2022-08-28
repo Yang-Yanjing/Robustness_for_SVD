@@ -1,0 +1,374 @@
+func	1:0	59:0	0	static int	mmap_init
+params	1:20	0:0	1	
+param	1:21	1:41	2	AVFormatContext *	ctx
+stmnts	0:0	58:12	1	
+decl	3:4	3:14	2	int	i
+water	3:9	0:0	2	,
+decl	3:4	3:14	2	int	res
+decl	4:4	4:41	2	struct video_data	*s
+op	4:25	0:0	2	=
+water	4:27	0:0	2	ctx
+op	4:30	0:0	2	->
+water	4:32	0:0	2	priv_data
+decl	5:4	9:5	2	struct v4l2_requestbuffers	req
+op	5:35	0:0	2	=
+water	5:37	0:0	2	{
+op	6:8	0:0	2	.
+water	6:9	0:0	2	type
+op	6:16	0:0	2	=
+water	6:18	0:0	2	V4L2_BUF_TYPE_VIDEO_CAPTURE
+water	6:45	0:0	2	,
+op	7:8	0:0	2	.
+water	7:9	0:0	2	count
+op	7:16	0:0	2	=
+water	7:18	0:0	2	desired_video_buffers
+water	7:39	0:0	2	,
+op	8:8	0:0	2	.
+water	8:9	0:0	2	memory
+op	8:16	0:0	2	=
+water	8:18	0:0	2	V4L2_MEMORY_MMAP
+water	9:4	0:0	2	}
+if	10:4	14:4	2	(v4l2_ioctl (s -> fd ,VIDIOC_REQBUFS ,& req ) < 0)
+cond	10:8	10:50	3	v4l2_ioctl (s -> fd ,VIDIOC_REQBUFS ,& req ) < 0
+call	10:8	10:46	4	v4l2_ioctl
+arg	10:19	10:24	5	s->fd
+water	10:19	0:0	6	s
+op	10:20	0:0	6	->
+water	10:22	0:0	6	fd
+arg	10:26	10:40	5	VIDIOC_REQBUFS
+water	10:26	0:0	6	VIDIOC_REQBUFS
+arg	10:42	10:46	5	&req
+op	10:42	0:0	6	&
+water	10:43	0:0	6	req
+op	10:48	0:0	4	<
+water	10:50	0:0	4	0
+stmts	10:53	14:4	3	
+water	10:53	0:0	4	{
+water	11:8	0:0	4	res
+op	11:12	0:0	4	=
+call	11:14	11:27	4	AVERROR
+arg	11:22	11:27	5	errno
+water	11:22	0:0	6	errno
+water	11:28	0:0	4	;
+call	12:8	12:80	4	av_log
+arg	12:15	12:18	5	ctx
+water	12:15	0:0	6	ctx
+arg	12:20	12:32	5	AV_LOG_ERROR
+water	12:20	0:0	6	AV_LOG_ERROR
+arg	12:34	12:63	5	"ioctl(VIDIOC_REQBUFS): %s\n"
+water	12:34	0:0	6	"ioctl(VIDIOC_REQBUFS): %s\n"
+arg	12:65	12:80	5	av_err2str(res)
+call	12:65	12:79	6	av_err2str
+arg	12:76	12:79	7	res
+water	12:76	0:0	8	res
+water	12:81	0:0	4	;
+return	13:8	13:18	4	res
+water	13:15	0:0	5	res
+water	14:4	0:0	4	}
+if	15:4	18:4	2	(req . count < 2)
+cond	15:8	15:20	3	req . count < 2
+water	15:8	0:0	4	req
+op	15:11	0:0	4	.
+water	15:12	0:0	4	count
+op	15:18	0:0	4	<
+water	15:20	0:0	4	2
+stmts	15:23	18:4	3	
+water	15:23	0:0	4	{
+call	16:8	16:64	4	av_log
+arg	16:15	16:18	5	ctx
+water	16:15	0:0	6	ctx
+arg	16:20	16:32	5	AV_LOG_ERROR
+water	16:20	0:0	6	AV_LOG_ERROR
+arg	16:34	16:64	5	"Insufficient buffer memory\n"
+water	16:34	0:0	6	"Insufficient buffer memory\n"
+water	16:65	0:0	4	;
+return	17:8	17:30	4	AVERROR(ENOMEM)
+call	17:15	17:29	5	AVERROR
+arg	17:23	17:29	6	ENOMEM
+water	17:23	0:0	7	ENOMEM
+water	18:4	0:0	4	}
+water	19:4	0:0	2	s
+op	19:5	0:0	2	->
+water	19:7	0:0	2	buffers
+op	19:15	0:0	2	=
+water	19:17	0:0	2	req
+op	19:20	0:0	2	.
+water	19:21	0:0	2	count
+water	19:26	0:0	2	;
+water	20:4	0:0	2	s
+op	20:5	0:0	2	->
+water	20:7	0:0	2	buf_start
+op	20:17	0:0	2	=
+call	20:19	20:61	2	av_malloc_array
+arg	20:35	20:45	3	s->buffers
+water	20:35	0:0	4	s
+op	20:36	0:0	4	->
+water	20:38	0:0	4	buffers
+arg	20:47	20:61	3	sizeof(void*)
+op	20:47	0:0	4	sizeof
+water	20:53	0:0	4	(
+water	20:54	0:0	4	void
+op	20:59	0:0	4	*
+water	20:60	0:0	4	)
+water	20:62	0:0	2	;
+if	21:4	24:4	2	(! s -> buf_start)
+cond	21:8	21:12	3	! s -> buf_start
+op	21:8	0:0	4	!
+water	21:9	0:0	4	s
+op	21:10	0:0	4	->
+water	21:12	0:0	4	buf_start
+stmts	21:23	24:4	3	
+water	21:23	0:0	4	{
+call	22:8	22:69	4	av_log
+arg	22:15	22:18	5	ctx
+water	22:15	0:0	6	ctx
+arg	22:20	22:32	5	AV_LOG_ERROR
+water	22:20	0:0	6	AV_LOG_ERROR
+arg	22:34	22:69	5	"Cannot allocate buffer pointers\n"
+water	22:34	0:0	6	"Cannot allocate buffer pointers\n"
+water	22:70	0:0	4	;
+return	23:8	23:30	4	AVERROR(ENOMEM)
+call	23:15	23:29	5	AVERROR
+arg	23:23	23:29	6	ENOMEM
+water	23:23	0:0	7	ENOMEM
+water	24:4	0:0	4	}
+water	25:4	0:0	2	s
+op	25:5	0:0	2	->
+water	25:7	0:0	2	buf_len
+op	25:15	0:0	2	=
+call	25:17	25:65	2	av_malloc_array
+arg	25:33	25:43	3	s->buffers
+water	25:33	0:0	4	s
+op	25:34	0:0	4	->
+water	25:36	0:0	4	buffers
+arg	25:45	25:65	3	sizeof(unsignedint)
+op	25:45	0:0	4	sizeof
+water	25:51	0:0	4	(
+water	25:52	0:0	4	unsigned
+water	25:61	0:0	4	int
+water	25:64	0:0	4	)
+water	25:66	0:0	2	;
+if	26:4	30:4	2	(! s -> buf_len)
+cond	26:8	26:12	3	! s -> buf_len
+op	26:8	0:0	4	!
+water	26:9	0:0	4	s
+op	26:10	0:0	4	->
+water	26:12	0:0	4	buf_len
+stmts	26:21	30:4	3	
+water	26:21	0:0	4	{
+call	27:8	27:66	4	av_log
+arg	27:15	27:18	5	ctx
+water	27:15	0:0	6	ctx
+arg	27:20	27:32	5	AV_LOG_ERROR
+water	27:20	0:0	6	AV_LOG_ERROR
+arg	27:34	27:66	5	"Cannot allocate buffer sizes\n"
+water	27:34	0:0	6	"Cannot allocate buffer sizes\n"
+water	27:67	0:0	4	;
+call	28:8	28:30	4	av_freep
+arg	28:17	28:30	5	&s->buf_start
+op	28:17	0:0	6	&
+water	28:18	0:0	6	s
+op	28:19	0:0	6	->
+water	28:21	0:0	6	buf_start
+water	28:31	0:0	4	;
+return	29:8	29:30	4	AVERROR(ENOMEM)
+call	29:15	29:29	5	AVERROR
+arg	29:23	29:29	6	ENOMEM
+water	29:23	0:0	7	ENOMEM
+water	30:4	0:0	4	}
+for	31:4	57:4	2	(i = 0 ;i < req . count;i ++)
+forinit	31:9	31:14	3	i = 0 ;
+water	31:9	0:0	4	i
+op	31:11	0:0	4	=
+water	31:13	0:0	4	0
+water	31:14	0:0	4	;
+cond	31:16	31:24	3	i < req . count
+water	31:16	0:0	4	i
+op	31:18	0:0	4	<
+water	31:20	0:0	4	req
+op	31:23	0:0	4	.
+water	31:24	0:0	4	count
+forexpr	31:31	31:32	3	i ++
+water	31:31	0:0	4	i
+op	31:32	0:0	4	++
+stmts	31:36	57:4	3	
+water	31:36	0:0	4	{
+decl	32:8	36:9	4	struct v4l2_buffer	buf
+op	32:31	0:0	4	=
+water	32:33	0:0	4	{
+op	33:12	0:0	4	.
+water	33:13	0:0	4	type
+op	33:20	0:0	4	=
+water	33:22	0:0	4	V4L2_BUF_TYPE_VIDEO_CAPTURE
+water	33:49	0:0	4	,
+op	34:12	0:0	4	.
+water	34:13	0:0	4	index
+op	34:20	0:0	4	=
+water	34:22	0:0	4	i
+water	34:23	0:0	4	,
+op	35:12	0:0	4	.
+water	35:13	0:0	4	memory
+op	35:20	0:0	4	=
+water	35:22	0:0	4	V4L2_MEMORY_MMAP
+water	36:8	0:0	4	}
+if	37:8	41:8	4	(v4l2_ioctl (s -> fd ,VIDIOC_QUERYBUF ,& buf ) < 0)
+cond	37:12	37:55	5	v4l2_ioctl (s -> fd ,VIDIOC_QUERYBUF ,& buf ) < 0
+call	37:12	37:51	6	v4l2_ioctl
+arg	37:23	37:28	7	s->fd
+water	37:23	0:0	8	s
+op	37:24	0:0	8	->
+water	37:26	0:0	8	fd
+arg	37:30	37:45	7	VIDIOC_QUERYBUF
+water	37:30	0:0	8	VIDIOC_QUERYBUF
+arg	37:47	37:51	7	&buf
+op	37:47	0:0	8	&
+water	37:48	0:0	8	buf
+op	37:53	0:0	6	<
+water	37:55	0:0	6	0
+stmts	37:58	41:8	5	
+water	37:58	0:0	6	{
+water	38:12	0:0	6	res
+op	38:16	0:0	6	=
+call	38:18	38:31	6	AVERROR
+arg	38:26	38:31	7	errno
+water	38:26	0:0	8	errno
+water	38:32	0:0	6	;
+call	39:12	39:85	6	av_log
+arg	39:19	39:22	7	ctx
+water	39:19	0:0	8	ctx
+arg	39:24	39:36	7	AV_LOG_ERROR
+water	39:24	0:0	8	AV_LOG_ERROR
+arg	39:38	39:68	7	"ioctl(VIDIOC_QUERYBUF): %s\n"
+water	39:38	0:0	8	"ioctl(VIDIOC_QUERYBUF): %s\n"
+arg	39:70	39:85	7	av_err2str(res)
+call	39:70	39:84	8	av_err2str
+arg	39:81	39:84	9	res
+water	39:81	0:0	10	res
+water	39:86	0:0	6	;
+return	40:12	40:22	6	res
+water	40:19	0:0	7	res
+water	41:8	0:0	6	}
+water	42:8	0:0	4	s
+op	42:9	0:0	4	->
+water	42:11	0:0	4	buf_len
+op	42:18	0:0	4	[
+water	42:19	0:0	4	i
+op	42:20	0:0	4	]
+op	42:22	0:0	4	=
+water	42:24	0:0	4	buf
+op	42:27	0:0	4	.
+water	42:28	0:0	4	length
+water	42:34	0:0	4	;
+if	43:8	48:8	4	(s -> frame_size > 0 && s -> buf_len [ i ] < s -> frame_size)
+cond	43:12	43:52	5	s -> frame_size > 0 && s -> buf_len [ i ] < s -> frame_size
+water	43:12	0:0	6	s
+op	43:13	0:0	6	->
+water	43:15	0:0	6	frame_size
+op	43:26	0:0	6	>
+water	43:28	0:0	6	0
+op	43:30	0:0	6	&&
+water	43:33	0:0	6	s
+op	43:34	0:0	6	->
+water	43:36	0:0	6	buf_len
+op	43:43	0:0	6	[
+water	43:44	0:0	6	i
+op	43:45	0:0	6	]
+op	43:47	0:0	6	<
+water	43:49	0:0	6	s
+op	43:50	0:0	6	->
+water	43:52	0:0	6	frame_size
+stmts	43:64	48:8	5	
+water	43:64	0:0	6	{
+call	44:12	46:50	6	av_log
+arg	44:19	44:22	7	ctx
+water	44:19	0:0	8	ctx
+arg	44:24	44:36	7	AV_LOG_ERROR
+water	44:24	0:0	8	AV_LOG_ERROR
+arg	45:19	45:64	7	"buf_len[%d] = %d < expected frame size %d\n"
+water	45:19	0:0	8	"buf_len[%d] = %d < expected frame size %d\n"
+arg	46:19	46:20	7	i
+water	46:19	0:0	8	i
+arg	46:22	46:35	7	s->buf_len[i]
+water	46:22	0:0	8	s
+op	46:23	0:0	8	->
+water	46:25	0:0	8	buf_len
+op	46:32	0:0	8	[
+water	46:33	0:0	8	i
+op	46:34	0:0	8	]
+arg	46:37	46:50	7	s->frame_size
+water	46:37	0:0	8	s
+op	46:38	0:0	8	->
+water	46:40	0:0	8	frame_size
+water	46:51	0:0	6	;
+return	47:12	47:34	6	AVERROR(ENOMEM)
+call	47:19	47:33	7	AVERROR
+arg	47:27	47:33	8	ENOMEM
+water	47:27	0:0	9	ENOMEM
+water	48:8	0:0	6	}
+water	49:8	0:0	4	s
+op	49:9	0:0	4	->
+water	49:11	0:0	4	buf_start
+op	49:20	0:0	4	[
+water	49:21	0:0	4	i
+op	49:22	0:0	4	]
+op	49:24	0:0	4	=
+call	49:26	51:50	4	v4l2_mmap
+arg	49:36	49:40	5	NULL
+water	49:36	0:0	6	NULL
+arg	49:42	49:52	5	buf.length
+water	49:42	0:0	6	buf
+op	49:45	0:0	6	.
+water	49:46	0:0	6	length
+arg	50:31	50:53	5	PROT_READ|PROT_WRITE
+water	50:31	0:0	6	PROT_READ
+op	50:41	0:0	6	|
+water	50:43	0:0	6	PROT_WRITE
+arg	50:55	50:65	5	MAP_SHARED
+water	50:55	0:0	6	MAP_SHARED
+arg	51:31	51:36	5	s->fd
+water	51:31	0:0	6	s
+op	51:32	0:0	6	->
+water	51:34	0:0	6	fd
+arg	51:38	51:50	5	buf.m.offset
+water	51:38	0:0	6	buf
+op	51:41	0:0	6	.
+water	51:42	0:0	6	m
+op	51:43	0:0	6	.
+water	51:44	0:0	6	offset
+water	51:51	0:0	4	;
+if	52:8	56:8	4	(s -> buf_start [ i ] == MAP_FAILED)
+cond	52:12	52:31	5	s -> buf_start [ i ] == MAP_FAILED
+water	52:12	0:0	6	s
+op	52:13	0:0	6	->
+water	52:15	0:0	6	buf_start
+op	52:24	0:0	6	[
+water	52:25	0:0	6	i
+op	52:26	0:0	6	]
+op	52:28	0:0	6	==
+water	52:31	0:0	6	MAP_FAILED
+stmts	52:43	56:8	5	
+water	52:43	0:0	6	{
+water	53:12	0:0	6	res
+op	53:16	0:0	6	=
+call	53:18	53:31	6	AVERROR
+arg	53:26	53:31	7	errno
+water	53:26	0:0	8	errno
+water	53:32	0:0	6	;
+call	54:12	54:67	6	av_log
+arg	54:19	54:22	7	ctx
+water	54:19	0:0	8	ctx
+arg	54:24	54:36	7	AV_LOG_ERROR
+water	54:24	0:0	8	AV_LOG_ERROR
+arg	54:38	54:50	7	"mmap: %s\n"
+water	54:38	0:0	8	"mmap: %s\n"
+arg	54:52	54:67	7	av_err2str(res)
+call	54:52	54:66	8	av_err2str
+arg	54:63	54:66	9	res
+water	54:63	0:0	10	res
+water	54:68	0:0	6	;
+return	55:12	55:22	6	res
+water	55:19	0:0	7	res
+water	56:8	0:0	6	}
+water	57:4	0:0	4	}
+return	58:4	58:12	2	0
+water	58:11	0:0	3	0

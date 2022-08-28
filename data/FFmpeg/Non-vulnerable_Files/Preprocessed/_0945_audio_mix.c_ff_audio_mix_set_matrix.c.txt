@@ -1,0 +1,542 @@
+func	1:0	81:0	0	int	ff_audio_mix_set_matrix
+params	1:27	0:0	1	
+param	1:28	1:40	2	AudioMix *	am
+param	1:42	1:62	2	const double *	matrix
+param	1:64	1:74	2	int	stride
+stmnts	0:0	80:12	1	
+decl	3:4	3:25	2	int	i
+water	3:9	0:0	2	,
+decl	3:4	3:25	2	int	o
+water	3:12	0:0	2	,
+decl	3:4	3:25	2	int	i0
+water	3:16	0:0	2	,
+decl	3:4	3:25	2	int	o0
+water	3:20	0:0	2	,
+decl	3:4	3:25	2	int	ret
+decl	4:4	4:28	2	char	in_layout_name[128]
+decl	5:4	5:29	2	char	out_layout_name[128]
+if	6:4	10:4	2	(am -> in_channels <= 0 || am -> in_channels > AVRESAMPLE_MAX_CHANNELS || am -> out_channels <= 0 || am -> out_channels > AVRESAMPLE_MAX_CHANNELS)
+cond	6:9	7:52	3	am -> in_channels <= 0 || am -> in_channels > AVRESAMPLE_MAX_CHANNELS || am -> out_channels <= 0 || am -> out_channels > AVRESAMPLE_MAX_CHANNELS
+water	6:9	0:0	4	am
+op	6:11	0:0	4	->
+water	6:13	0:0	4	in_channels
+op	6:25	0:0	4	<=
+water	6:28	0:0	4	0
+op	6:30	0:0	4	||
+water	6:34	0:0	4	am
+op	6:36	0:0	4	->
+water	6:38	0:0	4	in_channels
+op	6:50	0:0	4	>
+water	6:52	0:0	4	AVRESAMPLE_MAX_CHANNELS
+op	6:76	0:0	4	||
+water	7:8	0:0	4	am
+op	7:10	0:0	4	->
+water	7:12	0:0	4	out_channels
+op	7:25	0:0	4	<=
+water	7:28	0:0	4	0
+op	7:30	0:0	4	||
+water	7:33	0:0	4	am
+op	7:35	0:0	4	->
+water	7:37	0:0	4	out_channels
+op	7:50	0:0	4	>
+water	7:52	0:0	4	AVRESAMPLE_MAX_CHANNELS
+stmts	7:77	10:4	3	
+water	7:77	0:0	4	{
+call	8:8	8:64	4	av_log
+arg	8:15	8:22	5	am->avr
+water	8:15	0:0	6	am
+op	8:17	0:0	6	->
+water	8:19	0:0	6	avr
+arg	8:24	8:36	5	AV_LOG_ERROR
+water	8:24	0:0	6	AV_LOG_ERROR
+arg	8:38	8:64	5	"Invalid channel counts\n"
+water	8:38	0:0	6	"Invalid channel counts\n"
+water	8:65	0:0	4	;
+return	9:8	9:30	4	AVERROR(EINVAL)
+call	9:15	9:29	5	AVERROR
+arg	9:23	9:29	6	EINVAL
+water	9:23	0:0	7	EINVAL
+water	10:4	0:0	4	}
+if	11:4	14:4	2	(am -> matrix)
+cond	11:8	11:12	3	am -> matrix
+water	11:8	0:0	4	am
+op	11:10	0:0	4	->
+water	11:12	0:0	4	matrix
+stmts	11:20	14:4	3	
+water	11:20	0:0	4	{
+call	12:8	12:29	4	av_free
+arg	12:16	12:29	5	am->matrix[0]
+water	12:16	0:0	6	am
+op	12:18	0:0	6	->
+water	12:20	0:0	6	matrix
+op	12:26	0:0	6	[
+water	12:27	0:0	6	0
+op	12:28	0:0	6	]
+water	12:30	0:0	4	;
+water	13:8	0:0	4	am
+op	13:10	0:0	4	->
+water	13:12	0:0	4	matrix
+op	13:19	0:0	4	=
+water	13:21	0:0	4	NULL
+water	13:25	0:0	4	;
+water	14:4	0:0	4	}
+water	15:4	0:0	2	am
+op	15:6	0:0	2	->
+water	15:8	0:0	2	in_matrix_channels
+op	15:28	0:0	2	=
+water	15:30	0:0	2	am
+op	15:32	0:0	2	->
+water	15:34	0:0	2	in_channels
+water	15:45	0:0	2	;
+water	16:4	0:0	2	am
+op	16:6	0:0	2	->
+water	16:8	0:0	2	out_matrix_channels
+op	16:28	0:0	2	=
+water	16:30	0:0	2	am
+op	16:32	0:0	2	->
+water	16:34	0:0	2	out_channels
+water	16:46	0:0	2	;
+call	17:4	17:36	2	reduce_matrix
+arg	17:18	17:20	3	am
+water	17:18	0:0	4	am
+arg	17:22	17:28	3	matrix
+water	17:22	0:0	4	matrix
+arg	17:30	17:36	3	stride
+water	17:30	0:0	4	stride
+water	17:37	0:0	2	;
+water	19:4	0:0	2	am
+op	19:6	0:0	2	->
+water	19:8	0:0	2	matrix_
+water	20:39	0:0	2	am
+op	20:41	0:0	2	->
+water	20:43	0:0	2	in_matrix_channels
+op	20:63	0:0	2	*
+op	21:39	0:0	2	sizeof
+water	21:45	0:0	2	(
+op	21:46	0:0	2	*
+water	21:47	0:0	2	am
+op	21:49	0:0	2	->
+water	21:51	0:0	2	matrix_
+water	22:4	0:0	2	if
+water	22:7	0:0	2	(
+op	22:8	0:0	2	!
+water	22:9	0:0	2	am
+op	22:11	0:0	2	->
+water	22:13	0:0	2	matrix_
+water	23:8	0:0	2	return
+call	23:15	23:29	2	AVERROR
+arg	23:23	23:29	3	ENOMEM
+water	23:23	0:0	4	ENOMEM
+water	23:30	0:0	2	;
+for	24:4	39:4	2	(o = 0 , o0 = 0 ;o < am -> out_channels;o ++)
+forinit	24:9	24:22	3	o = 0 , o0 = 0 ;
+water	24:9	0:0	4	o
+op	24:11	0:0	4	=
+water	24:13	0:0	4	0
+water	24:14	0:0	4	,
+water	24:16	0:0	4	o0
+op	24:19	0:0	4	=
+water	24:21	0:0	4	0
+water	24:22	0:0	4	;
+cond	24:24	24:32	3	o < am -> out_channels
+water	24:24	0:0	4	o
+op	24:26	0:0	4	<
+water	24:28	0:0	4	am
+op	24:30	0:0	4	->
+water	24:32	0:0	4	out_channels
+forexpr	24:46	24:47	3	o ++
+water	24:46	0:0	4	o
+op	24:47	0:0	4	++
+stmts	24:51	39:4	3	
+water	24:51	0:0	4	{
+if	25:8	26:20	4	(am -> output_zero [ o ] || am -> output_skip [ o ])
+cond	25:12	25:51	5	am -> output_zero [ o ] || am -> output_skip [ o ]
+water	25:12	0:0	6	am
+op	25:14	0:0	6	->
+water	25:16	0:0	6	output_zero
+op	25:27	0:0	6	[
+water	25:28	0:0	6	o
+op	25:29	0:0	6	]
+op	25:31	0:0	6	||
+water	25:34	0:0	6	am
+op	25:36	0:0	6	->
+water	25:38	0:0	6	output_skip
+op	25:49	0:0	6	[
+water	25:50	0:0	6	o
+op	25:51	0:0	6	]
+stmts	26:12	26:20	5	
+continue	26:12	26:20	6	
+if	27:8	29:59	4	(o0 > 0)
+cond	27:12	27:17	5	o0 > 0
+water	27:12	0:0	6	o0
+op	27:15	0:0	6	>
+water	27:17	0:0	6	0
+stmts	28:12	29:59	5	
+water	28:12	0:0	6	am
+op	28:14	0:0	6	->
+water	28:16	0:0	6	matrix_
+water	29:37	0:0	6	am
+op	29:39	0:0	6	->
+water	29:41	0:0	6	in_matrix_channels
+water	29:59	0:0	6	;
+for	30:8	37:8	4	(i = 0 , i0 = 0 ;i < am -> in_channels;i ++)
+forinit	30:13	30:26	5	i = 0 , i0 = 0 ;
+water	30:13	0:0	6	i
+op	30:15	0:0	6	=
+water	30:17	0:0	6	0
+water	30:18	0:0	6	,
+water	30:20	0:0	6	i0
+op	30:23	0:0	6	=
+water	30:25	0:0	6	0
+water	30:26	0:0	6	;
+cond	30:28	30:36	5	i < am -> in_channels
+water	30:28	0:0	6	i
+op	30:30	0:0	6	<
+water	30:32	0:0	6	am
+op	30:34	0:0	6	->
+water	30:36	0:0	6	in_channels
+forexpr	30:49	30:50	5	i ++
+water	30:49	0:0	6	i
+op	30:50	0:0	6	++
+stmts	30:54	37:8	5	
+water	30:54	0:0	6	{
+decl	31:12	31:20	6	double	v
+if	32:12	33:24	6	(am -> input_skip [ i ] || am -> output_zero [ i ])
+cond	32:16	32:54	7	am -> input_skip [ i ] || am -> output_zero [ i ]
+water	32:16	0:0	8	am
+op	32:18	0:0	8	->
+water	32:20	0:0	8	input_skip
+op	32:30	0:0	8	[
+water	32:31	0:0	8	i
+op	32:32	0:0	8	]
+op	32:34	0:0	8	||
+water	32:37	0:0	8	am
+op	32:39	0:0	8	->
+water	32:41	0:0	8	output_zero
+op	32:52	0:0	8	[
+water	32:53	0:0	8	i
+op	32:54	0:0	8	]
+stmts	33:16	33:24	7	
+continue	33:16	33:24	8	
+water	34:12	0:0	6	v
+op	34:14	0:0	6	=
+water	34:16	0:0	6	matrix
+op	34:22	0:0	6	[
+water	34:23	0:0	6	o
+op	34:25	0:0	6	*
+water	34:27	0:0	6	stride
+op	34:34	0:0	6	+
+water	34:36	0:0	6	i
+op	34:37	0:0	6	]
+water	34:38	0:0	6	;
+water	35:12	0:0	6	am
+op	35:14	0:0	6	->
+water	35:16	0:0	6	matrix_
+water	36:12	0:0	6	i0
+op	36:14	0:0	6	++
+water	36:16	0:0	6	;
+water	37:8	0:0	6	}
+water	38:8	0:0	4	o0
+op	38:10	0:0	4	++
+water	38:12	0:0	4	;
+water	39:4	0:0	4	}
+water	40:4	0:0	2	am
+op	40:6	0:0	2	->
+water	40:8	0:0	2	matrix
+op	40:15	0:0	2	=
+water	40:17	0:0	2	(
+water	40:18	0:0	2	void
+op	40:23	0:0	2	*
+op	40:24	0:0	2	*
+water	40:25	0:0	2	)
+water	40:26	0:0	2	am
+op	40:28	0:0	2	->
+water	40:30	0:0	2	matrix_
+water	41:4	0:0	2	if
+water	41:7	0:0	2	(
+water	41:8	0:0	2	am
+op	41:10	0:0	2	->
+water	41:12	0:0	2	in_matrix_channels
+op	41:31	0:0	2	&&
+water	41:34	0:0	2	am
+op	41:36	0:0	2	->
+water	41:38	0:0	2	out_matrix_channels
+water	41:57	0:0	2	)
+water	41:59	0:0	2	{
+water	42:8	0:0	2	switch
+water	42:15	0:0	2	(
+water	42:16	0:0	2	am
+op	42:18	0:0	2	->
+water	42:20	0:0	2	coeff_type
+water	42:30	0:0	2	)
+water	42:32	0:0	2	{
+water	43:8	0:0	2	case
+water	43:13	0:0	2	AV_MIX_COEFF_TYPE_Q8
+water	43:33	0:0	2	:
+call	44:12	44:62	2	CONVERT_MATRIX
+arg	44:27	44:29	3	q8
+water	44:27	0:0	4	q8
+arg	44:31	44:62	3	av_clip_int16(lrint(256.0*v))
+call	44:31	44:61	4	av_clip_int16
+arg	44:45	44:61	5	lrint(256.0*v)
+call	44:45	44:60	6	lrint
+arg	44:51	44:60	7	256.0*v
+water	44:51	0:0	8	256
+op	44:54	0:0	8	.
+water	44:55	0:0	8	0
+op	44:57	0:0	8	*
+water	44:59	0:0	8	v
+water	45:12	0:0	2	break
+water	45:17	0:0	2	;
+water	46:8	0:0	2	case
+water	46:13	0:0	2	AV_MIX_COEFF_TYPE_Q15
+water	46:34	0:0	2	:
+call	47:12	47:67	2	CONVERT_MATRIX
+arg	47:27	47:30	3	q15
+water	47:27	0:0	4	q15
+arg	47:32	47:67	3	av_clipl_int32(llrint(32768.0*v))
+call	47:32	47:66	4	av_clipl_int32
+arg	47:47	47:66	5	llrint(32768.0*v)
+call	47:47	47:65	6	llrint
+arg	47:54	47:65	7	32768.0*v
+water	47:54	0:0	8	32768
+op	47:59	0:0	8	.
+water	47:60	0:0	8	0
+op	47:62	0:0	8	*
+water	47:64	0:0	8	v
+water	48:12	0:0	2	break
+water	48:17	0:0	2	;
+water	49:8	0:0	2	case
+water	49:13	0:0	2	AV_MIX_COEFF_TYPE_FLT
+water	49:34	0:0	2	:
+call	50:12	50:33	2	CONVERT_MATRIX
+arg	50:27	50:30	3	flt
+water	50:27	0:0	4	flt
+arg	50:32	50:33	3	v
+water	50:32	0:0	4	v
+water	51:12	0:0	2	break
+water	51:17	0:0	2	;
+water	52:8	0:0	2	default
+water	52:15	0:0	2	:
+call	53:12	53:68	2	av_log
+arg	53:19	53:26	3	am->avr
+water	53:19	0:0	4	am
+op	53:21	0:0	4	->
+water	53:23	0:0	4	avr
+arg	53:28	53:40	3	AV_LOG_ERROR
+water	53:28	0:0	4	AV_LOG_ERROR
+arg	53:42	53:68	3	"Invalid mix coeff type\n"
+water	53:42	0:0	4	"Invalid mix coeff type\n"
+water	53:69	0:0	2	;
+water	54:12	0:0	2	return
+call	54:19	54:33	2	AVERROR
+arg	54:27	54:33	3	EINVAL
+water	54:27	0:0	4	EINVAL
+water	54:34	0:0	2	;
+water	55:8	0:0	2	}
+water	56:4	0:0	2	}
+water	57:4	0:0	2	ret
+op	57:8	0:0	2	=
+call	57:10	57:30	2	mix_function_init
+arg	57:28	57:30	3	am
+water	57:28	0:0	4	am
+water	57:31	0:0	2	;
+if	58:4	59:18	2	(ret < 0)
+cond	58:8	58:14	3	ret < 0
+water	58:8	0:0	4	ret
+op	58:12	0:0	4	<
+water	58:14	0:0	4	0
+stmts	59:8	59:18	3	
+return	59:8	59:18	4	ret
+water	59:15	0:0	5	ret
+call	60:4	61:63	2	av_get_channel_layout_string
+arg	60:33	60:47	3	in_layout_name
+water	60:33	0:0	4	in_layout_name
+arg	60:49	60:71	3	sizeof(in_layout_name)
+op	60:49	0:0	4	sizeof
+water	60:55	0:0	4	(
+water	60:56	0:0	4	in_layout_name
+water	60:70	0:0	4	)
+arg	61:33	61:48	3	am->in_channels
+water	61:33	0:0	4	am
+op	61:35	0:0	4	->
+water	61:37	0:0	4	in_channels
+arg	61:50	61:63	3	am->in_layout
+water	61:50	0:0	4	am
+op	61:52	0:0	4	->
+water	61:54	0:0	4	in_layout
+water	61:64	0:0	2	;
+call	62:4	63:65	2	av_get_channel_layout_string
+arg	62:33	62:48	3	out_layout_name
+water	62:33	0:0	4	out_layout_name
+arg	62:50	62:73	3	sizeof(out_layout_name)
+op	62:50	0:0	4	sizeof
+water	62:56	0:0	4	(
+water	62:57	0:0	4	out_layout_name
+water	62:72	0:0	4	)
+arg	63:33	63:49	3	am->out_channels
+water	63:33	0:0	4	am
+op	63:35	0:0	4	->
+water	63:37	0:0	4	out_channels
+arg	63:51	63:65	3	am->out_layout
+water	63:51	0:0	4	am
+op	63:53	0:0	4	->
+water	63:55	0:0	4	out_layout
+water	63:66	0:0	2	;
+call	64:4	65:42	2	av_log
+arg	64:11	64:18	3	am->avr
+water	64:11	0:0	4	am
+op	64:13	0:0	4	->
+water	64:15	0:0	4	avr
+arg	64:20	64:32	3	AV_LOG_DEBUG
+water	64:20	0:0	4	AV_LOG_DEBUG
+arg	64:34	64:57	3	"audio_mix: %s to %s\n"
+water	64:34	0:0	4	"audio_mix: %s to %s\n"
+arg	65:11	65:25	3	in_layout_name
+water	65:11	0:0	4	in_layout_name
+arg	65:27	65:42	3	out_layout_name
+water	65:27	0:0	4	out_layout_name
+water	65:43	0:0	2	;
+call	66:4	67:58	2	av_log
+arg	66:11	66:18	3	am->avr
+water	66:11	0:0	4	am
+op	66:13	0:0	4	->
+water	66:15	0:0	4	avr
+arg	66:20	66:32	3	AV_LOG_DEBUG
+water	66:20	0:0	4	AV_LOG_DEBUG
+arg	66:34	66:58	3	"matrix size: %d x %d\n"
+water	66:34	0:0	4	"matrix size: %d x %d\n"
+arg	67:11	67:33	3	am->in_matrix_channels
+water	67:11	0:0	4	am
+op	67:13	0:0	4	->
+water	67:15	0:0	4	in_matrix_channels
+arg	67:35	67:58	3	am->out_matrix_channels
+water	67:35	0:0	4	am
+op	67:37	0:0	4	->
+water	67:39	0:0	4	out_matrix_channels
+water	67:59	0:0	2	;
+for	68:4	79:4	2	(o = 0 ;o < am -> out_channels;o ++)
+forinit	68:9	68:14	3	o = 0 ;
+water	68:9	0:0	4	o
+op	68:11	0:0	4	=
+water	68:13	0:0	4	0
+water	68:14	0:0	4	;
+cond	68:16	68:24	3	o < am -> out_channels
+water	68:16	0:0	4	o
+op	68:18	0:0	4	<
+water	68:20	0:0	4	am
+op	68:22	0:0	4	->
+water	68:24	0:0	4	out_channels
+forexpr	68:38	68:39	3	o ++
+water	68:38	0:0	4	o
+op	68:39	0:0	4	++
+stmts	68:43	79:4	3	
+water	68:43	0:0	4	{
+for	69:8	77:8	4	(i = 0 ;i < am -> in_channels;i ++)
+forinit	69:13	69:18	5	i = 0 ;
+water	69:13	0:0	6	i
+op	69:15	0:0	6	=
+water	69:17	0:0	6	0
+water	69:18	0:0	6	;
+cond	69:20	69:28	5	i < am -> in_channels
+water	69:20	0:0	6	i
+op	69:22	0:0	6	<
+water	69:24	0:0	6	am
+op	69:26	0:0	6	->
+water	69:28	0:0	6	in_channels
+forexpr	69:41	69:42	5	i ++
+water	69:41	0:0	6	i
+op	69:42	0:0	6	++
+stmts	69:46	77:8	5	
+water	69:46	0:0	6	{
+if	70:12	71:57	6	(am -> output_zero [ o ])
+cond	70:16	70:33	7	am -> output_zero [ o ]
+water	70:16	0:0	8	am
+op	70:18	0:0	8	->
+water	70:20	0:0	8	output_zero
+op	70:31	0:0	8	[
+water	70:32	0:0	8	o
+op	70:33	0:0	8	]
+stmts	71:16	71:57	7	
+call	71:16	71:56	8	av_log
+arg	71:23	71:30	9	am->avr
+water	71:23	0:0	10	am
+op	71:25	0:0	10	->
+water	71:27	0:0	10	avr
+arg	71:32	71:44	9	AV_LOG_DEBUG
+water	71:32	0:0	10	AV_LOG_DEBUG
+arg	71:46	71:56	9	"  (ZERO)"
+water	71:46	0:0	10	"  (ZERO)"
+water	71:57	0:0	8	;
+else	72:12	73:57	6
+stmts	72:17	73:57	7	
+if	72:17	73:57	8	(am -> input_skip [ i ] || am -> output_zero [ i ] || am -> output_skip [ o ])
+cond	72:21	72:81	9	am -> input_skip [ i ] || am -> output_zero [ i ] || am -> output_skip [ o ]
+water	72:21	0:0	10	am
+op	72:23	0:0	10	->
+water	72:25	0:0	10	input_skip
+op	72:35	0:0	10	[
+water	72:36	0:0	10	i
+op	72:37	0:0	10	]
+op	72:39	0:0	10	||
+water	72:42	0:0	10	am
+op	72:44	0:0	10	->
+water	72:46	0:0	10	output_zero
+op	72:57	0:0	10	[
+water	72:58	0:0	10	i
+op	72:59	0:0	10	]
+op	72:61	0:0	10	||
+water	72:64	0:0	10	am
+op	72:66	0:0	10	->
+water	72:68	0:0	10	output_skip
+op	72:79	0:0	10	[
+water	72:80	0:0	10	o
+op	72:81	0:0	10	]
+stmts	73:16	73:57	9	
+call	73:16	73:56	10	av_log
+arg	73:23	73:30	11	am->avr
+water	73:23	0:0	12	am
+op	73:25	0:0	12	->
+water	73:27	0:0	12	avr
+arg	73:32	73:44	11	AV_LOG_DEBUG
+water	73:32	0:0	12	AV_LOG_DEBUG
+arg	73:46	73:56	11	"  (SKIP)"
+water	73:46	0:0	12	"  (SKIP)"
+water	73:57	0:0	10	;
+else	74:12	76:55	6
+stmts	75:16	76:55	7	
+call	75:16	76:54	8	av_log
+arg	75:23	75:30	9	am->avr
+water	75:23	0:0	10	am
+op	75:25	0:0	10	->
+water	75:27	0:0	10	avr
+arg	75:32	75:44	9	AV_LOG_DEBUG
+water	75:32	0:0	10	AV_LOG_DEBUG
+arg	75:46	75:56	9	"  %0.3f "
+water	75:46	0:0	10	"  %0.3f "
+arg	76:23	76:54	9	matrix[o*am->in_channels+i]
+water	76:23	0:0	10	matrix
+op	76:29	0:0	10	[
+water	76:30	0:0	10	o
+op	76:32	0:0	10	*
+water	76:34	0:0	10	am
+op	76:36	0:0	10	->
+water	76:38	0:0	10	in_channels
+op	76:50	0:0	10	+
+water	76:52	0:0	10	i
+op	76:53	0:0	10	]
+water	76:55	0:0	8	;
+water	77:8	0:0	6	}
+call	78:8	78:42	4	av_log
+arg	78:15	78:22	5	am->avr
+water	78:15	0:0	6	am
+op	78:17	0:0	6	->
+water	78:19	0:0	6	avr
+arg	78:24	78:36	5	AV_LOG_DEBUG
+water	78:24	0:0	6	AV_LOG_DEBUG
+arg	78:38	78:42	5	"\n"
+water	78:38	0:0	6	"\n"
+water	78:43	0:0	4	;
+water	79:4	0:0	4	}
+return	80:4	80:12	2	0
+water	80:11	0:0	3	0

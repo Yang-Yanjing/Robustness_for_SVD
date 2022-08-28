@@ -1,0 +1,117 @@
+func	1:0	42:0	0	static int	decode_audio_frame
+params	1:29	0:0	1	
+param	1:30	1:44	2	AVFrame *	frame
+param	2:30	2:67	2	AVFormatContext *	input_format_context
+param	3:30	3:65	2	AVCodecContext *	input_codec_context
+param	4:30	4:47	2	int *	data_present
+param	4:49	4:62	2	int *	finished
+stmnts	0:0	41:12	1	
+decl	7:4	7:25	2	AVPacket	input_packet
+decl	8:4	8:13	2	int	error
+call	9:4	9:29	2	init_packet
+arg	9:16	9:29	3	&input_packet
+op	9:16	0:0	4	&
+water	9:17	0:0	4	input_packet
+water	9:30	0:0	2	;
+if	11:4	20:4	2	(( error =av_read_frame (input_format_context ,& input_packet ) ) < 0)
+cond	11:8	11:71	3	( error =av_read_frame (input_format_context ,& input_packet ) ) < 0
+water	11:8	0:0	4	(
+water	11:9	0:0	4	error
+op	11:15	0:0	4	=
+call	11:17	11:66	4	av_read_frame
+arg	11:31	11:51	5	input_format_context
+water	11:31	0:0	6	input_format_context
+arg	11:53	11:66	5	&input_packet
+op	11:53	0:0	6	&
+water	11:54	0:0	6	input_packet
+water	11:67	0:0	4	)
+op	11:69	0:0	4	<
+water	11:71	0:0	4	0
+stmts	11:74	20:4	3	
+water	11:74	0:0	4	{
+if	13:8	14:25	4	(error == AVERROR_EOF)
+cond	13:12	13:21	5	error == AVERROR_EOF
+water	13:12	0:0	6	error
+op	13:18	0:0	6	==
+water	13:21	0:0	6	AVERROR_EOF
+stmts	14:12	14:25	5	
+op	14:12	0:0	6	*
+water	14:13	0:0	6	finished
+op	14:22	0:0	6	=
+water	14:24	0:0	6	1
+water	14:25	0:0	6	;
+else	15:8	19:8	4
+stmts	15:13	19:8	5	
+water	15:13	0:0	6	{
+call	16:12	17:41	6	fprintf
+arg	16:20	16:26	7	stderr
+water	16:20	0:0	8	stderr
+arg	16:28	16:65	7	"Could not read frame (error '%s')\n"
+water	16:28	0:0	8	"Could not read frame (error '%s')\n"
+arg	17:20	17:41	7	get_error_text(error)
+call	17:20	17:40	8	get_error_text
+arg	17:35	17:40	9	error
+water	17:35	0:0	10	error
+water	17:42	0:0	6	;
+return	18:12	18:24	6	error
+water	18:19	0:0	7	error
+water	19:8	0:0	6	}
+water	20:4	0:0	4	}
+if	27:4	33:4	2	(( error =avcodec_decode_audio4 (input_codec_context ,frame ,data_present ,& input_packet ) ) < 0)
+cond	27:8	28:71	3	( error =avcodec_decode_audio4 (input_codec_context ,frame ,data_present ,& input_packet ) ) < 0
+water	27:8	0:0	4	(
+water	27:9	0:0	4	error
+op	27:15	0:0	4	=
+call	27:17	28:66	4	avcodec_decode_audio4
+arg	27:39	27:58	5	input_codec_context
+water	27:39	0:0	6	input_codec_context
+arg	27:60	27:65	5	frame
+water	27:60	0:0	6	frame
+arg	28:39	28:51	5	data_present
+water	28:39	0:0	6	data_present
+arg	28:53	28:66	5	&input_packet
+op	28:53	0:0	6	&
+water	28:54	0:0	6	input_packet
+water	28:67	0:0	4	)
+op	28:69	0:0	4	<
+water	28:71	0:0	4	0
+stmts	28:74	33:4	3	
+water	28:74	0:0	4	{
+call	29:8	30:37	4	fprintf
+arg	29:16	29:22	5	stderr
+water	29:16	0:0	6	stderr
+arg	29:24	29:63	5	"Could not decode frame (error '%s')\n"
+water	29:24	0:0	6	"Could not decode frame (error '%s')\n"
+arg	30:16	30:37	5	get_error_text(error)
+call	30:16	30:36	6	get_error_text
+arg	30:31	30:36	7	error
+water	30:31	0:0	8	error
+water	30:38	0:0	4	;
+call	31:8	31:36	4	av_free_packet
+arg	31:23	31:36	5	&input_packet
+op	31:23	0:0	6	&
+water	31:24	0:0	6	input_packet
+water	31:37	0:0	4	;
+return	32:8	32:20	4	error
+water	32:15	0:0	5	error
+water	33:4	0:0	4	}
+if	38:4	39:21	2	(* finished && * data_present)
+cond	38:8	38:22	3	* finished && * data_present
+op	38:8	0:0	4	*
+water	38:9	0:0	4	finished
+op	38:18	0:0	4	&&
+op	38:21	0:0	4	*
+water	38:22	0:0	4	data_present
+stmts	39:8	39:21	3	
+op	39:8	0:0	4	*
+water	39:9	0:0	4	finished
+op	39:18	0:0	4	=
+water	39:20	0:0	4	0
+water	39:21	0:0	4	;
+call	40:4	40:32	2	av_free_packet
+arg	40:19	40:32	3	&input_packet
+op	40:19	0:0	4	&
+water	40:20	0:0	4	input_packet
+water	40:33	0:0	2	;
+return	41:4	41:12	2	0
+water	41:11	0:0	3	0

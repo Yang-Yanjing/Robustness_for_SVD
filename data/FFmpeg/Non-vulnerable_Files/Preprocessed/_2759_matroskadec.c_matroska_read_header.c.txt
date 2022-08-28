@@ -1,0 +1,1042 @@
+func	1:0	134:0	0	static int	matroska_read_header
+params	1:31	0:0	1	
+param	1:32	1:50	2	AVFormatContext *	s
+stmnts	0:0	133:12	1	
+decl	3:4	3:49	2	MatroskaDemuxContext	*matroska
+op	3:35	0:0	2	=
+water	3:37	0:0	2	s
+op	3:38	0:0	2	->
+water	3:40	0:0	2	priv_data
+decl	4:4	4:55	2	EbmlList	*attachments_list
+op	4:31	0:0	2	=
+op	4:33	0:0	2	&
+water	4:34	0:0	2	matroska
+op	4:42	0:0	2	->
+water	4:44	0:0	2	attachments
+decl	5:4	5:52	2	EbmlList	*chapters_list
+op	5:31	0:0	2	=
+op	5:33	0:0	2	&
+water	5:34	0:0	2	matroska
+op	5:42	0:0	2	->
+water	5:44	0:0	2	chapters
+decl	6:4	6:35	2	MatroskaAttachment	*attachments
+decl	7:4	7:29	2	MatroskaChapter	*chapters
+decl	8:4	8:26	2	uint64_t	max_start
+op	8:23	0:0	2	=
+water	8:25	0:0	2	0
+decl	9:4	9:15	2	int64_t	pos
+decl	10:4	10:21	2	Ebml	ebml
+op	10:14	0:0	2	=
+water	10:16	0:0	2	{
+water	10:18	0:0	2	0
+water	10:20	0:0	2	}
+decl	11:4	11:17	2	int	i
+water	11:9	0:0	2	,
+decl	11:4	11:17	2	int	j
+water	11:12	0:0	2	,
+decl	11:4	11:17	2	int	res
+water	12:4	0:0	2	matroska
+op	12:12	0:0	2	->
+water	12:14	0:0	2	ctx
+op	12:18	0:0	2	=
+water	12:20	0:0	2	s
+water	12:21	0:0	2	;
+water	13:4	0:0	2	matroska
+op	13:12	0:0	2	->
+water	13:14	0:0	2	cues_parsing_deferred
+op	13:36	0:0	2	=
+water	13:38	0:0	2	1
+water	13:39	0:0	2	;
+if	15:4	19:4	2	(ebml_parse (matroska ,ebml_syntax ,& ebml ) || ! ebml . doctype)
+cond	15:8	15:58	3	ebml_parse (matroska ,ebml_syntax ,& ebml ) || ! ebml . doctype
+call	15:8	15:47	4	ebml_parse
+arg	15:19	15:27	5	matroska
+water	15:19	0:0	6	matroska
+arg	15:29	15:40	5	ebml_syntax
+water	15:29	0:0	6	ebml_syntax
+arg	15:42	15:47	5	&ebml
+op	15:42	0:0	6	&
+water	15:43	0:0	6	ebml
+op	15:49	0:0	4	||
+op	15:52	0:0	4	!
+water	15:53	0:0	4	ebml
+op	15:57	0:0	4	.
+water	15:58	0:0	4	doctype
+stmts	15:67	19:4	3	
+water	15:67	0:0	4	{
+call	16:8	16:74	4	av_log
+arg	16:15	16:28	5	matroska->ctx
+water	16:15	0:0	6	matroska
+op	16:23	0:0	6	->
+water	16:25	0:0	6	ctx
+arg	16:30	16:42	5	AV_LOG_ERROR
+water	16:30	0:0	6	AV_LOG_ERROR
+arg	16:44	16:74	5	"EBML header parsing failed\n"
+water	16:44	0:0	6	"EBML header parsing failed\n"
+water	16:75	0:0	4	;
+call	17:8	17:36	4	ebml_free
+arg	17:18	17:29	5	ebml_syntax
+water	17:18	0:0	6	ebml_syntax
+arg	17:31	17:36	5	&ebml
+op	17:31	0:0	6	&
+water	17:32	0:0	6	ebml
+water	17:37	0:0	4	;
+return	18:8	18:34	4	AVERROR_INVALIDDATA
+water	18:15	0:0	5	AVERROR_INVALIDDATA
+water	19:4	0:0	4	}
+if	20:4	30:4	2	(ebml . version > EBML_VERSION || ebml . max_size > sizeof ( uint64_t ) || ebml . id_length > sizeof ( uint32_t ) || ebml . doctype_version > 3)
+cond	20:8	23:31	3	ebml . version > EBML_VERSION || ebml . max_size > sizeof ( uint64_t ) || ebml . id_length > sizeof ( uint32_t ) || ebml . doctype_version > 3
+water	20:8	0:0	4	ebml
+op	20:12	0:0	4	.
+water	20:13	0:0	4	version
+op	20:29	0:0	4	>
+water	20:31	0:0	4	EBML_VERSION
+op	20:49	0:0	4	||
+water	21:8	0:0	4	ebml
+op	21:12	0:0	4	.
+water	21:13	0:0	4	max_size
+op	21:29	0:0	4	>
+op	21:31	0:0	4	sizeof
+water	21:37	0:0	4	(
+water	21:38	0:0	4	uint64_t
+water	21:46	0:0	4	)
+op	21:49	0:0	4	||
+water	22:8	0:0	4	ebml
+op	22:12	0:0	4	.
+water	22:13	0:0	4	id_length
+op	22:29	0:0	4	>
+op	22:31	0:0	4	sizeof
+water	22:37	0:0	4	(
+water	22:38	0:0	4	uint32_t
+water	22:46	0:0	4	)
+op	22:49	0:0	4	||
+water	23:8	0:0	4	ebml
+op	23:12	0:0	4	.
+water	23:13	0:0	4	doctype_version
+op	23:29	0:0	4	>
+water	23:31	0:0	4	3
+stmts	23:34	30:4	3	
+water	23:34	0:0	4	{
+call	24:8	27:63	4	av_log
+arg	24:15	24:28	5	matroska->ctx
+water	24:15	0:0	6	matroska
+op	24:23	0:0	6	->
+water	24:25	0:0	6	ctx
+arg	24:30	24:42	5	AV_LOG_ERROR
+water	24:30	0:0	6	AV_LOG_ERROR
+arg	25:15	26:78	5	"EBML header using unsupported features\n""(EBML version %"PRIu64", doctype %s, doc version %"PRIu64")\n"
+water	25:15	0:0	6	"EBML header using unsupported features\n"
+water	26:15	0:0	6	"(EBML version %"
+water	26:32	0:0	6	PRIu64
+water	26:38	0:0	6	", doctype %s, doc version %"
+water	26:67	0:0	6	PRIu64
+water	26:73	0:0	6	")\n"
+arg	27:15	27:27	5	ebml.version
+water	27:15	0:0	6	ebml
+op	27:19	0:0	6	.
+water	27:20	0:0	6	version
+arg	27:29	27:41	5	ebml.doctype
+water	27:29	0:0	6	ebml
+op	27:33	0:0	6	.
+water	27:34	0:0	6	doctype
+arg	27:43	27:63	5	ebml.doctype_version
+water	27:43	0:0	6	ebml
+op	27:47	0:0	6	.
+water	27:48	0:0	6	doctype_version
+water	27:64	0:0	4	;
+call	28:8	28:36	4	ebml_free
+arg	28:18	28:29	5	ebml_syntax
+water	28:18	0:0	6	ebml_syntax
+arg	28:31	28:36	5	&ebml
+op	28:31	0:0	6	&
+water	28:32	0:0	6	ebml
+water	28:37	0:0	4	;
+return	29:8	29:35	4	AVERROR_PATCHWELCOME
+water	29:15	0:0	5	AVERROR_PATCHWELCOME
+water	30:4	0:0	4	}
+else	30:6	35:4	2
+stmts	30:11	35:4	3	
+if	30:11	35:4	4	(ebml . doctype_version == 3)
+cond	30:15	30:39	5	ebml . doctype_version == 3
+water	30:15	0:0	6	ebml
+op	30:19	0:0	6	.
+water	30:20	0:0	6	doctype_version
+op	30:36	0:0	6	==
+water	30:39	0:0	6	3
+stmts	30:42	35:4	5	
+water	30:42	0:0	6	{
+call	31:8	34:63	6	av_log
+arg	31:15	31:28	7	matroska->ctx
+water	31:15	0:0	8	matroska
+op	31:23	0:0	8	->
+water	31:25	0:0	8	ctx
+arg	31:30	31:44	7	AV_LOG_WARNING
+water	31:30	0:0	8	AV_LOG_WARNING
+arg	32:15	33:78	7	"EBML header using unsupported features\n""(EBML version %"PRIu64", doctype %s, doc version %"PRIu64")\n"
+water	32:15	0:0	8	"EBML header using unsupported features\n"
+water	33:15	0:0	8	"(EBML version %"
+water	33:32	0:0	8	PRIu64
+water	33:38	0:0	8	", doctype %s, doc version %"
+water	33:67	0:0	8	PRIu64
+water	33:73	0:0	8	")\n"
+arg	34:15	34:27	7	ebml.version
+water	34:15	0:0	8	ebml
+op	34:19	0:0	8	.
+water	34:20	0:0	8	version
+arg	34:29	34:41	7	ebml.doctype
+water	34:29	0:0	8	ebml
+op	34:33	0:0	8	.
+water	34:34	0:0	8	doctype
+arg	34:43	34:63	7	ebml.doctype_version
+water	34:43	0:0	8	ebml
+op	34:47	0:0	8	.
+water	34:48	0:0	8	doctype_version
+water	34:64	0:0	6	;
+water	35:4	0:0	6	}
+for	36:4	38:17	2	(i = 0 ;i <FF_ARRAY_ELEMS (matroska_doctypes );i ++)
+forinit	36:9	36:14	3	i = 0 ;
+water	36:9	0:0	4	i
+op	36:11	0:0	4	=
+water	36:13	0:0	4	0
+water	36:14	0:0	4	;
+cond	36:16	36:52	3	i <FF_ARRAY_ELEMS (matroska_doctypes )
+water	36:16	0:0	4	i
+op	36:18	0:0	4	<
+call	36:20	36:52	4	FF_ARRAY_ELEMS
+arg	36:35	36:52	5	matroska_doctypes
+water	36:35	0:0	6	matroska_doctypes
+forexpr	36:55	36:56	3	i ++
+water	36:55	0:0	4	i
+op	36:56	0:0	4	++
+stmts	37:8	38:17	3	
+if	37:8	38:17	4	(!strcmp (ebml . doctype ,matroska_doctypes [ i ] ))
+cond	37:12	37:54	5	!strcmp (ebml . doctype ,matroska_doctypes [ i ] )
+op	37:12	0:0	6	!
+call	37:13	37:54	6	strcmp
+arg	37:20	37:32	7	ebml.doctype
+water	37:20	0:0	8	ebml
+op	37:24	0:0	8	.
+water	37:25	0:0	8	doctype
+arg	37:34	37:54	7	matroska_doctypes[i]
+water	37:34	0:0	8	matroska_doctypes
+op	37:51	0:0	8	[
+water	37:52	0:0	8	i
+op	37:53	0:0	8	]
+stmts	38:12	38:17	5	
+break	38:12	38:17	6	
+if	39:4	45:4	2	(i >=FF_ARRAY_ELEMS (matroska_doctypes ))
+cond	39:8	39:45	3	i >=FF_ARRAY_ELEMS (matroska_doctypes )
+water	39:8	0:0	4	i
+op	39:10	0:0	4	>=
+call	39:13	39:45	4	FF_ARRAY_ELEMS
+arg	39:28	39:45	5	matroska_doctypes
+water	39:28	0:0	6	matroska_doctypes
+stmts	39:48	45:4	3	
+water	39:48	0:0	4	{
+call	40:8	40:77	4	av_log
+arg	40:15	40:16	5	s
+water	40:15	0:0	6	s
+arg	40:18	40:32	5	AV_LOG_WARNING
+water	40:18	0:0	6	AV_LOG_WARNING
+arg	40:34	40:63	5	"Unknown EBML doctype '%s'\n"
+water	40:34	0:0	6	"Unknown EBML doctype '%s'\n"
+arg	40:65	40:77	5	ebml.doctype
+water	40:65	0:0	6	ebml
+op	40:69	0:0	6	.
+water	40:70	0:0	6	doctype
+water	40:78	0:0	4	;
+if	41:8	44:8	4	(matroska -> ctx -> error_recognition & AV_EF_EXPLODE)
+cond	41:12	41:47	5	matroska -> ctx -> error_recognition & AV_EF_EXPLODE
+water	41:12	0:0	6	matroska
+op	41:20	0:0	6	->
+water	41:22	0:0	6	ctx
+op	41:25	0:0	6	->
+water	41:27	0:0	6	error_recognition
+op	41:45	0:0	6	&
+water	41:47	0:0	6	AV_EF_EXPLODE
+stmts	41:62	44:8	5	
+water	41:62	0:0	6	{
+call	42:12	42:40	6	ebml_free
+arg	42:22	42:33	7	ebml_syntax
+water	42:22	0:0	8	ebml_syntax
+arg	42:35	42:40	7	&ebml
+op	42:35	0:0	8	&
+water	42:36	0:0	8	ebml
+water	42:41	0:0	6	;
+return	43:12	43:38	6	AVERROR_INVALIDDATA
+water	43:19	0:0	7	AVERROR_INVALIDDATA
+water	44:8	0:0	6	}
+water	45:4	0:0	4	}
+call	46:4	46:32	2	ebml_free
+arg	46:14	46:25	3	ebml_syntax
+water	46:14	0:0	4	ebml_syntax
+arg	46:27	46:32	3	&ebml
+op	46:27	0:0	4	&
+water	46:28	0:0	4	ebml
+water	46:33	0:0	2	;
+water	48:4	0:0	2	pos
+op	48:8	0:0	2	=
+call	48:10	48:37	2	avio_tell
+arg	48:20	48:37	3	matroska->ctx->pb
+water	48:20	0:0	4	matroska
+op	48:28	0:0	4	->
+water	48:30	0:0	4	ctx
+op	48:33	0:0	4	->
+water	48:35	0:0	4	pb
+water	48:38	0:0	2	;
+water	49:4	0:0	2	res
+op	49:8	0:0	2	=
+call	49:10	49:58	2	ebml_parse
+arg	49:21	49:29	3	matroska
+water	49:21	0:0	4	matroska
+arg	49:31	49:48	3	matroska_segments
+water	49:31	0:0	4	matroska_segments
+arg	49:50	49:58	3	matroska
+water	49:50	0:0	4	matroska
+water	49:59	0:0	2	;
+while	51:4	57:4	2	(res != 1)
+cond	51:11	51:18	3	res != 1
+water	51:11	0:0	4	res
+op	51:15	0:0	4	!=
+water	51:18	0:0	4	1
+stmts	51:21	57:4	3	
+water	51:21	0:0	4	{
+water	52:8	0:0	4	res
+op	52:12	0:0	4	=
+call	52:14	52:43	4	matroska_resync
+arg	52:30	52:38	5	matroska
+water	52:30	0:0	6	matroska
+arg	52:40	52:43	5	pos
+water	52:40	0:0	6	pos
+water	52:44	0:0	4	;
+if	53:8	54:22	4	(res < 0)
+cond	53:12	53:18	5	res < 0
+water	53:12	0:0	6	res
+op	53:16	0:0	6	<
+water	53:18	0:0	6	0
+stmts	54:12	54:22	5	
+return	54:12	54:22	6	res
+water	54:19	0:0	7	res
+water	55:8	0:0	4	pos
+op	55:12	0:0	4	=
+call	55:14	55:41	4	avio_tell
+arg	55:24	55:41	5	matroska->ctx->pb
+water	55:24	0:0	6	matroska
+op	55:32	0:0	6	->
+water	55:34	0:0	6	ctx
+op	55:37	0:0	6	->
+water	55:39	0:0	6	pb
+water	55:42	0:0	4	;
+water	56:8	0:0	4	res
+op	56:12	0:0	4	=
+call	56:14	56:61	4	ebml_parse
+arg	56:25	56:33	5	matroska
+water	56:25	0:0	6	matroska
+arg	56:35	56:51	5	matroska_segment
+water	56:35	0:0	6	matroska_segment
+arg	56:53	56:61	5	matroska
+water	56:53	0:0	6	matroska
+water	56:62	0:0	4	;
+water	57:4	0:0	4	}
+call	58:4	58:38	2	matroska_execute_seekhead
+arg	58:30	58:38	3	matroska
+water	58:30	0:0	4	matroska
+water	58:39	0:0	2	;
+if	59:4	60:38	2	(! matroska -> time_scale)
+cond	59:8	59:19	3	! matroska -> time_scale
+op	59:8	0:0	4	!
+water	59:9	0:0	4	matroska
+op	59:17	0:0	4	->
+water	59:19	0:0	4	time_scale
+stmts	60:8	60:38	3	
+water	60:8	0:0	4	matroska
+op	60:16	0:0	4	->
+water	60:18	0:0	4	time_scale
+op	60:29	0:0	4	=
+water	60:31	0:0	4	1000000
+water	60:38	0:0	4	;
+if	61:4	63:53	2	(matroska -> duration)
+cond	61:8	61:18	3	matroska -> duration
+water	61:8	0:0	4	matroska
+op	61:16	0:0	4	->
+water	61:18	0:0	4	duration
+stmts	62:8	63:53	3	
+water	62:8	0:0	4	matroska
+op	62:16	0:0	4	->
+water	62:18	0:0	4	ctx
+op	62:21	0:0	4	->
+water	62:23	0:0	4	duration
+op	62:32	0:0	4	=
+water	62:34	0:0	4	matroska
+op	62:42	0:0	4	->
+water	62:44	0:0	4	duration
+op	62:53	0:0	4	*
+water	62:55	0:0	4	matroska
+op	62:63	0:0	4	->
+water	62:65	0:0	4	time_scale
+op	62:76	0:0	4	*
+water	63:34	0:0	4	1000
+op	63:39	0:0	4	/
+water	63:41	0:0	4	AV_TIME_BASE
+water	63:53	0:0	4	;
+call	64:4	64:57	2	av_dict_set
+arg	64:16	64:28	3	&s->metadata
+op	64:16	0:0	4	&
+water	64:17	0:0	4	s
+op	64:18	0:0	4	->
+water	64:20	0:0	4	metadata
+arg	64:30	64:37	3	"title"
+water	64:30	0:0	4	"title"
+arg	64:39	64:54	3	matroska->title
+water	64:39	0:0	4	matroska
+op	64:47	0:0	4	->
+water	64:49	0:0	4	title
+arg	64:56	64:57	3	0
+water	64:56	0:0	4	0
+water	64:58	0:0	2	;
+call	65:4	65:63	2	av_dict_set
+arg	65:16	65:28	3	&s->metadata
+op	65:16	0:0	4	&
+water	65:17	0:0	4	s
+op	65:18	0:0	4	->
+water	65:20	0:0	4	metadata
+arg	65:30	65:39	3	"encoder"
+water	65:30	0:0	4	"encoder"
+arg	65:41	65:60	3	matroska->muxingapp
+water	65:41	0:0	4	matroska
+op	65:49	0:0	4	->
+water	65:51	0:0	4	muxingapp
+arg	65:62	65:63	3	0
+water	65:62	0:0	4	0
+water	65:64	0:0	2	;
+if	66:4	67:87	2	(matroska -> date_utc . size == 8)
+cond	66:8	66:35	3	matroska -> date_utc . size == 8
+water	66:8	0:0	4	matroska
+op	66:16	0:0	4	->
+water	66:18	0:0	4	date_utc
+op	66:26	0:0	4	.
+water	66:27	0:0	4	size
+op	66:32	0:0	4	==
+water	66:35	0:0	4	8
+stmts	67:8	67:87	3	
+call	67:8	67:86	4	matroska_metadata_creation_time
+arg	67:40	67:52	5	&s->metadata
+op	67:40	0:0	6	&
+water	67:41	0:0	6	s
+op	67:42	0:0	6	->
+water	67:44	0:0	6	metadata
+arg	67:54	67:86	5	AV_RB64(matroska->date_utc.data)
+call	67:54	67:85	6	AV_RB64
+arg	67:62	67:85	7	matroska->date_utc.data
+water	67:62	0:0	8	matroska
+op	67:70	0:0	8	->
+water	67:72	0:0	8	date_utc
+op	67:80	0:0	8	.
+water	67:81	0:0	8	data
+water	67:87	0:0	4	;
+water	68:4	0:0	2	res
+op	68:8	0:0	2	=
+call	68:10	68:33	2	matroska_parse_tracks
+arg	68:32	68:33	3	s
+water	68:32	0:0	4	s
+water	68:34	0:0	2	;
+if	69:4	70:18	2	(res < 0)
+cond	69:8	69:14	3	res < 0
+water	69:8	0:0	4	res
+op	69:12	0:0	4	<
+water	69:14	0:0	4	0
+stmts	70:8	70:18	3	
+return	70:8	70:18	4	res
+water	70:15	0:0	5	res
+water	71:4	0:0	2	attachments
+op	71:16	0:0	2	=
+water	71:18	0:0	2	attachments_list
+op	71:34	0:0	2	->
+water	71:36	0:0	2	elem
+water	71:40	0:0	2	;
+for	72:4	115:4	2	(j = 0 ;j < attachments_list -> nb_elem;j ++)
+forinit	72:9	72:14	3	j = 0 ;
+water	72:9	0:0	4	j
+op	72:11	0:0	4	=
+water	72:13	0:0	4	0
+water	72:14	0:0	4	;
+cond	72:16	72:38	3	j < attachments_list -> nb_elem
+water	72:16	0:0	4	j
+op	72:18	0:0	4	<
+water	72:20	0:0	4	attachments_list
+op	72:36	0:0	4	->
+water	72:38	0:0	4	nb_elem
+forexpr	72:47	72:48	3	j ++
+water	72:47	0:0	4	j
+op	72:48	0:0	4	++
+stmts	72:52	115:4	3	
+water	72:52	0:0	4	{
+if	73:8	76:8	4	(! ( attachments [ j ] . filename && attachments [ j ] . mime && attachments [ j ] . bin . data && attachments [ j ] . bin . size > 0 ))
+cond	73:12	74:68	5	! ( attachments [ j ] . filename && attachments [ j ] . mime && attachments [ j ] . bin . data && attachments [ j ] . bin . size > 0 )
+op	73:12	0:0	6	!
+water	73:13	0:0	6	(
+water	73:14	0:0	6	attachments
+op	73:25	0:0	6	[
+water	73:26	0:0	6	j
+op	73:27	0:0	6	]
+op	73:28	0:0	6	.
+water	73:29	0:0	6	filename
+op	73:38	0:0	6	&&
+water	73:41	0:0	6	attachments
+op	73:52	0:0	6	[
+water	73:53	0:0	6	j
+op	73:54	0:0	6	]
+op	73:55	0:0	6	.
+water	73:56	0:0	6	mime
+op	73:61	0:0	6	&&
+water	74:14	0:0	6	attachments
+op	74:25	0:0	6	[
+water	74:26	0:0	6	j
+op	74:27	0:0	6	]
+op	74:28	0:0	6	.
+water	74:29	0:0	6	bin
+op	74:32	0:0	6	.
+water	74:33	0:0	6	data
+op	74:38	0:0	6	&&
+water	74:41	0:0	6	attachments
+op	74:52	0:0	6	[
+water	74:53	0:0	6	j
+op	74:54	0:0	6	]
+op	74:55	0:0	6	.
+water	74:56	0:0	6	bin
+op	74:59	0:0	6	.
+water	74:60	0:0	6	size
+op	74:65	0:0	6	>
+water	74:67	0:0	6	0
+water	74:68	0:0	6	)
+stmts	74:71	76:8	5	
+water	74:71	0:0	6	{
+call	75:12	75:73	6	av_log
+arg	75:19	75:32	7	matroska->ctx
+water	75:19	0:0	8	matroska
+op	75:27	0:0	8	->
+water	75:29	0:0	8	ctx
+arg	75:34	75:46	7	AV_LOG_ERROR
+water	75:34	0:0	8	AV_LOG_ERROR
+arg	75:48	75:73	7	"incomplete attachment\n"
+water	75:48	0:0	8	"incomplete attachment\n"
+water	75:74	0:0	6	;
+water	76:8	0:0	6	}
+else	76:10	114:8	4
+stmts	76:15	114:8	5	
+water	76:15	0:0	6	{
+decl	77:12	77:55	6	AVStream	*st
+op	77:25	0:0	6	=
+call	77:27	77:54	7	avformat_new_stream
+arg	77:47	77:48	8	s
+water	77:47	0:0	9	s
+arg	77:50	77:54	8	NULL
+water	77:50	0:0	9	NULL
+if	78:12	79:21	6	(! st)
+cond	78:16	78:17	7	! st
+op	78:16	0:0	8	!
+water	78:17	0:0	8	st
+stmts	79:16	79:21	7	
+break	79:16	79:21	8	
+call	80:12	80:77	6	av_dict_set
+arg	80:24	80:37	7	&st->metadata
+op	80:24	0:0	8	&
+water	80:25	0:0	8	st
+op	80:27	0:0	8	->
+water	80:29	0:0	8	metadata
+arg	80:39	80:49	7	"filename"
+water	80:39	0:0	8	"filename"
+arg	80:51	80:74	7	attachments[j].filename
+water	80:51	0:0	8	attachments
+op	80:62	0:0	8	[
+water	80:63	0:0	8	j
+op	80:64	0:0	8	]
+op	80:65	0:0	8	.
+water	80:66	0:0	8	filename
+arg	80:76	80:77	7	0
+water	80:76	0:0	8	0
+water	80:78	0:0	6	;
+call	81:12	81:73	6	av_dict_set
+arg	81:24	81:37	7	&st->metadata
+op	81:24	0:0	8	&
+water	81:25	0:0	8	st
+op	81:27	0:0	8	->
+water	81:29	0:0	8	metadata
+arg	81:39	81:49	7	"mimetype"
+water	81:39	0:0	8	"mimetype"
+arg	81:51	81:70	7	attachments[j].mime
+water	81:51	0:0	8	attachments
+op	81:62	0:0	8	[
+water	81:63	0:0	8	j
+op	81:64	0:0	8	]
+op	81:65	0:0	8	.
+water	81:66	0:0	8	mime
+arg	81:72	81:73	7	0
+water	81:72	0:0	8	0
+water	81:74	0:0	6	;
+water	82:12	0:0	6	st
+op	82:14	0:0	6	->
+water	82:16	0:0	6	codec
+op	82:21	0:0	6	->
+water	82:23	0:0	6	codec_id
+op	82:34	0:0	6	=
+water	82:36	0:0	6	AV_CODEC_ID_NONE
+water	82:52	0:0	6	;
+for	83:12	89:12	6	(i = 0 ;ff_mkv_image_mime_tags [ i ] . id != AV_CODEC_ID_NONE;i ++)
+forinit	83:17	83:22	7	i = 0 ;
+water	83:17	0:0	8	i
+op	83:19	0:0	8	=
+water	83:21	0:0	8	0
+water	83:22	0:0	8	;
+cond	83:24	83:56	7	ff_mkv_image_mime_tags [ i ] . id != AV_CODEC_ID_NONE
+water	83:24	0:0	8	ff_mkv_image_mime_tags
+op	83:46	0:0	8	[
+water	83:47	0:0	8	i
+op	83:48	0:0	8	]
+op	83:49	0:0	8	.
+water	83:50	0:0	8	id
+op	83:53	0:0	8	!=
+water	83:56	0:0	8	AV_CODEC_ID_NONE
+forexpr	83:74	83:75	7	i ++
+water	83:74	0:0	8	i
+op	83:75	0:0	8	++
+stmts	83:79	89:12	7	
+water	83:79	0:0	8	{
+if	84:16	88:16	8	(!strncmp (ff_mkv_image_mime_tags [ i ] . str ,attachments [ j ] . mime ,strlen (ff_mkv_image_mime_tags [ i ] . str ) ))
+cond	84:20	85:66	9	!strncmp (ff_mkv_image_mime_tags [ i ] . str ,attachments [ j ] . mime ,strlen (ff_mkv_image_mime_tags [ i ] . str ) )
+op	84:20	0:0	10	!
+call	84:21	85:66	10	strncmp
+arg	84:29	84:58	11	ff_mkv_image_mime_tags[i].str
+water	84:29	0:0	12	ff_mkv_image_mime_tags
+op	84:51	0:0	12	[
+water	84:52	0:0	12	i
+op	84:53	0:0	12	]
+op	84:54	0:0	12	.
+water	84:55	0:0	12	str
+arg	84:60	84:79	11	attachments[j].mime
+water	84:60	0:0	12	attachments
+op	84:71	0:0	12	[
+water	84:72	0:0	12	j
+op	84:73	0:0	12	]
+op	84:74	0:0	12	.
+water	84:75	0:0	12	mime
+arg	85:29	85:66	11	strlen(ff_mkv_image_mime_tags[i].str)
+call	85:29	85:65	12	strlen
+arg	85:36	85:65	13	ff_mkv_image_mime_tags[i].str
+water	85:36	0:0	14	ff_mkv_image_mime_tags
+op	85:58	0:0	14	[
+water	85:59	0:0	14	i
+op	85:60	0:0	14	]
+op	85:61	0:0	14	.
+water	85:62	0:0	14	str
+stmts	85:69	88:16	9	
+water	85:69	0:0	10	{
+water	86:20	0:0	10	st
+op	86:22	0:0	10	->
+water	86:24	0:0	10	codec
+op	86:29	0:0	10	->
+water	86:31	0:0	10	codec_id
+op	86:40	0:0	10	=
+water	86:42	0:0	10	ff_mkv_image_mime_tags
+op	86:64	0:0	10	[
+water	86:65	0:0	10	i
+op	86:66	0:0	10	]
+op	86:67	0:0	10	.
+water	86:68	0:0	10	id
+water	86:70	0:0	10	;
+break	87:20	87:25	10	
+water	88:16	0:0	10	}
+water	89:12	0:0	8	}
+water	90:12	0:0	6	attachments
+op	90:23	0:0	6	[
+water	90:24	0:0	6	j
+op	90:25	0:0	6	]
+op	90:26	0:0	6	.
+water	90:27	0:0	6	stream
+op	90:34	0:0	6	=
+water	90:36	0:0	6	st
+water	90:38	0:0	6	;
+if	91:12	100:12	6	(st -> codec -> codec_id != AV_CODEC_ID_NONE)
+cond	91:16	91:39	7	st -> codec -> codec_id != AV_CODEC_ID_NONE
+water	91:16	0:0	8	st
+op	91:18	0:0	8	->
+water	91:20	0:0	8	codec
+op	91:25	0:0	8	->
+water	91:27	0:0	8	codec_id
+op	91:36	0:0	8	!=
+water	91:39	0:0	8	AV_CODEC_ID_NONE
+stmts	91:57	100:12	7	
+water	91:57	0:0	8	{
+water	92:16	0:0	8	st
+op	92:18	0:0	8	->
+water	92:20	0:0	8	disposition
+op	92:37	0:0	8	|=
+water	92:40	0:0	8	AV_DISPOSITION_ATTACHED_PIC
+water	92:67	0:0	8	;
+water	93:16	0:0	8	st
+op	93:18	0:0	8	->
+water	93:20	0:0	8	codec
+op	93:25	0:0	8	->
+water	93:27	0:0	8	codec_type
+op	93:38	0:0	8	=
+water	93:40	0:0	8	AVMEDIA_TYPE_VIDEO
+water	93:58	0:0	8	;
+call	94:16	94:48	8	av_init_packet
+arg	94:31	94:48	9	&st->attached_pic
+op	94:31	0:0	10	&
+water	94:32	0:0	10	st
+op	94:34	0:0	10	->
+water	94:36	0:0	10	attached_pic
+water	94:49	0:0	8	;
+if	95:16	96:30	8	(( res =av_new_packet (& st -> attached_pic ,attachments [ j ] . bin . size ) ) < 0)
+cond	95:20	95:88	9	( res =av_new_packet (& st -> attached_pic ,attachments [ j ] . bin . size ) ) < 0
+water	95:20	0:0	10	(
+water	95:21	0:0	10	res
+op	95:25	0:0	10	=
+call	95:27	95:83	10	av_new_packet
+arg	95:41	95:58	11	&st->attached_pic
+op	95:41	0:0	12	&
+water	95:42	0:0	12	st
+op	95:44	0:0	12	->
+water	95:46	0:0	12	attached_pic
+arg	95:60	95:83	11	attachments[j].bin.size
+water	95:60	0:0	12	attachments
+op	95:71	0:0	12	[
+water	95:72	0:0	12	j
+op	95:73	0:0	12	]
+op	95:74	0:0	12	.
+water	95:75	0:0	12	bin
+op	95:78	0:0	12	.
+water	95:79	0:0	12	size
+water	95:84	0:0	10	)
+op	95:86	0:0	10	<
+water	95:88	0:0	10	0
+stmts	96:20	96:30	9	
+return	96:20	96:30	10	res
+water	96:27	0:0	11	res
+call	97:16	97:94	8	memcpy
+arg	97:23	97:44	9	st->attached_pic.data
+water	97:23	0:0	10	st
+op	97:25	0:0	10	->
+water	97:27	0:0	10	attached_pic
+op	97:39	0:0	10	.
+water	97:40	0:0	10	data
+arg	97:46	97:69	9	attachments[j].bin.data
+water	97:46	0:0	10	attachments
+op	97:57	0:0	10	[
+water	97:58	0:0	10	j
+op	97:59	0:0	10	]
+op	97:60	0:0	10	.
+water	97:61	0:0	10	bin
+op	97:64	0:0	10	.
+water	97:65	0:0	10	data
+arg	97:71	97:94	9	attachments[j].bin.size
+water	97:71	0:0	10	attachments
+op	97:82	0:0	10	[
+water	97:83	0:0	10	j
+op	97:84	0:0	10	]
+op	97:85	0:0	10	.
+water	97:86	0:0	10	bin
+op	97:89	0:0	10	.
+water	97:90	0:0	10	size
+water	97:95	0:0	8	;
+water	98:16	0:0	8	st
+op	98:18	0:0	8	->
+water	98:20	0:0	8	attached_pic
+op	98:32	0:0	8	.
+water	98:33	0:0	8	stream_index
+op	98:46	0:0	8	=
+water	98:48	0:0	8	st
+op	98:50	0:0	8	->
+water	98:52	0:0	8	index
+water	98:57	0:0	8	;
+water	99:16	0:0	8	st
+op	99:18	0:0	8	->
+water	99:20	0:0	8	attached_pic
+op	99:32	0:0	8	.
+water	99:33	0:0	8	flags
+op	99:45	0:0	8	|=
+water	99:48	0:0	8	AV_PKT_FLAG_KEY
+water	99:63	0:0	8	;
+water	100:12	0:0	8	}
+else	100:14	113:12	6
+stmts	100:19	113:12	7	
+water	100:19	0:0	8	{
+water	101:16	0:0	8	st
+op	101:18	0:0	8	->
+water	101:20	0:0	8	codec
+op	101:25	0:0	8	->
+water	101:27	0:0	8	codec_type
+op	101:38	0:0	8	=
+water	101:40	0:0	8	AVMEDIA_TYPE_ATTACHMENT
+water	101:63	0:0	8	;
+if	102:16	103:25	8	(ff_alloc_extradata (st -> codec ,attachments [ j ] . bin . size ))
+cond	102:20	102:73	9	ff_alloc_extradata (st -> codec ,attachments [ j ] . bin . size )
+call	102:20	102:73	10	ff_alloc_extradata
+arg	102:39	102:48	11	st->codec
+water	102:39	0:0	12	st
+op	102:41	0:0	12	->
+water	102:43	0:0	12	codec
+arg	102:50	102:73	11	attachments[j].bin.size
+water	102:50	0:0	12	attachments
+op	102:61	0:0	12	[
+water	102:62	0:0	12	j
+op	102:63	0:0	12	]
+op	102:64	0:0	12	.
+water	102:65	0:0	12	bin
+op	102:68	0:0	12	.
+water	102:69	0:0	12	size
+stmts	103:20	103:25	9	
+break	103:20	103:25	10	
+call	104:16	105:46	8	memcpy
+arg	104:23	104:43	9	st->codec->extradata
+water	104:23	0:0	10	st
+op	104:25	0:0	10	->
+water	104:27	0:0	10	codec
+op	104:32	0:0	10	->
+water	104:34	0:0	10	extradata
+arg	104:45	104:68	9	attachments[j].bin.data
+water	104:45	0:0	10	attachments
+op	104:56	0:0	10	[
+water	104:57	0:0	10	j
+op	104:58	0:0	10	]
+op	104:59	0:0	10	.
+water	104:60	0:0	10	bin
+op	104:63	0:0	10	.
+water	104:64	0:0	10	data
+arg	105:23	105:46	9	attachments[j].bin.size
+water	105:23	0:0	10	attachments
+op	105:34	0:0	10	[
+water	105:35	0:0	10	j
+op	105:36	0:0	10	]
+op	105:37	0:0	10	.
+water	105:38	0:0	10	bin
+op	105:41	0:0	10	.
+water	105:42	0:0	10	size
+water	105:47	0:0	8	;
+for	106:16	112:16	8	(i = 0 ;ff_mkv_mime_tags [ i ] . id != AV_CODEC_ID_NONE;i ++)
+forinit	106:21	106:26	9	i = 0 ;
+water	106:21	0:0	10	i
+op	106:23	0:0	10	=
+water	106:25	0:0	10	0
+water	106:26	0:0	10	;
+cond	106:28	106:54	9	ff_mkv_mime_tags [ i ] . id != AV_CODEC_ID_NONE
+water	106:28	0:0	10	ff_mkv_mime_tags
+op	106:44	0:0	10	[
+water	106:45	0:0	10	i
+op	106:46	0:0	10	]
+op	106:47	0:0	10	.
+water	106:48	0:0	10	id
+op	106:51	0:0	10	!=
+water	106:54	0:0	10	AV_CODEC_ID_NONE
+forexpr	106:72	106:73	9	i ++
+water	106:72	0:0	10	i
+op	106:73	0:0	10	++
+stmts	106:77	112:16	9	
+water	106:77	0:0	10	{
+if	107:20	111:20	10	(!strncmp (ff_mkv_mime_tags [ i ] . str ,attachments [ j ] . mime ,strlen (ff_mkv_mime_tags [ i ] . str ) ))
+cond	107:24	108:63	11	!strncmp (ff_mkv_mime_tags [ i ] . str ,attachments [ j ] . mime ,strlen (ff_mkv_mime_tags [ i ] . str ) )
+op	107:24	0:0	12	!
+call	107:25	108:63	12	strncmp
+arg	107:33	107:56	13	ff_mkv_mime_tags[i].str
+water	107:33	0:0	14	ff_mkv_mime_tags
+op	107:49	0:0	14	[
+water	107:50	0:0	14	i
+op	107:51	0:0	14	]
+op	107:52	0:0	14	.
+water	107:53	0:0	14	str
+arg	107:58	107:77	13	attachments[j].mime
+water	107:58	0:0	14	attachments
+op	107:69	0:0	14	[
+water	107:70	0:0	14	j
+op	107:71	0:0	14	]
+op	107:72	0:0	14	.
+water	107:73	0:0	14	mime
+arg	108:32	108:63	13	strlen(ff_mkv_mime_tags[i].str)
+call	108:32	108:62	14	strlen
+arg	108:39	108:62	15	ff_mkv_mime_tags[i].str
+water	108:39	0:0	16	ff_mkv_mime_tags
+op	108:55	0:0	16	[
+water	108:56	0:0	16	i
+op	108:57	0:0	16	]
+op	108:58	0:0	16	.
+water	108:59	0:0	16	str
+stmts	108:66	111:20	11	
+water	108:66	0:0	12	{
+water	109:24	0:0	12	st
+op	109:26	0:0	12	->
+water	109:28	0:0	12	codec
+op	109:33	0:0	12	->
+water	109:35	0:0	12	codec_id
+op	109:44	0:0	12	=
+water	109:46	0:0	12	ff_mkv_mime_tags
+op	109:62	0:0	12	[
+water	109:63	0:0	12	i
+op	109:64	0:0	12	]
+op	109:65	0:0	12	.
+water	109:66	0:0	12	id
+water	109:68	0:0	12	;
+break	110:24	110:29	12	
+water	111:20	0:0	12	}
+water	112:16	0:0	10	}
+water	113:12	0:0	8	}
+water	114:8	0:0	6	}
+water	115:4	0:0	4	}
+water	116:4	0:0	2	chapters
+op	116:13	0:0	2	=
+water	116:15	0:0	2	chapters_list
+op	116:28	0:0	2	->
+water	116:30	0:0	2	elem
+water	116:34	0:0	2	;
+for	117:4	130:8	2	(i = 0 ;i < chapters_list -> nb_elem;i ++)
+forinit	117:9	117:14	3	i = 0 ;
+water	117:9	0:0	4	i
+op	117:11	0:0	4	=
+water	117:13	0:0	4	0
+water	117:14	0:0	4	;
+cond	117:16	117:35	3	i < chapters_list -> nb_elem
+water	117:16	0:0	4	i
+op	117:18	0:0	4	<
+water	117:20	0:0	4	chapters_list
+op	117:33	0:0	4	->
+water	117:35	0:0	4	nb_elem
+forexpr	117:44	117:45	3	i ++
+water	117:44	0:0	4	i
+op	117:45	0:0	4	++
+stmts	118:8	130:8	3	
+if	118:8	130:8	4	(chapters [ i ] . start != AV_NOPTS_VALUE && chapters [ i ] . uid && ( max_start == 0 || chapters [ i ] . start > max_start ))
+cond	118:12	119:60	5	chapters [ i ] . start != AV_NOPTS_VALUE && chapters [ i ] . uid && ( max_start == 0 || chapters [ i ] . start > max_start )
+water	118:12	0:0	6	chapters
+op	118:20	0:0	6	[
+water	118:21	0:0	6	i
+op	118:22	0:0	6	]
+op	118:23	0:0	6	.
+water	118:24	0:0	6	start
+op	118:30	0:0	6	!=
+water	118:33	0:0	6	AV_NOPTS_VALUE
+op	118:48	0:0	6	&&
+water	118:51	0:0	6	chapters
+op	118:59	0:0	6	[
+water	118:60	0:0	6	i
+op	118:61	0:0	6	]
+op	118:62	0:0	6	.
+water	118:63	0:0	6	uid
+op	118:67	0:0	6	&&
+water	119:12	0:0	6	(
+water	119:13	0:0	6	max_start
+op	119:23	0:0	6	==
+water	119:26	0:0	6	0
+op	119:28	0:0	6	||
+water	119:31	0:0	6	chapters
+op	119:39	0:0	6	[
+water	119:40	0:0	6	i
+op	119:41	0:0	6	]
+op	119:42	0:0	6	.
+water	119:43	0:0	6	start
+op	119:49	0:0	6	>
+water	119:51	0:0	6	max_start
+water	119:60	0:0	6	)
+stmts	119:63	130:8	5	
+water	119:63	0:0	6	{
+water	120:12	0:0	6	chapters
+op	120:20	0:0	6	[
+water	120:21	0:0	6	i
+op	120:22	0:0	6	]
+op	120:23	0:0	6	.
+water	120:24	0:0	6	chapter
+op	120:32	0:0	6	=
+call	121:16	124:52	6	avpriv_new_chapter
+arg	121:35	121:36	7	s
+water	121:35	0:0	8	s
+arg	121:38	121:53	7	chapters[i].uid
+water	121:38	0:0	8	chapters
+op	121:46	0:0	8	[
+water	121:47	0:0	8	i
+op	121:48	0:0	8	]
+op	121:49	0:0	8	.
+water	121:50	0:0	8	uid
+arg	122:35	122:65	7	(AVRational){1,1000000000}
+water	122:35	0:0	8	(
+water	122:36	0:0	8	AVRational
+water	122:46	0:0	8	)
+water	122:48	0:0	8	{
+water	122:50	0:0	8	1
+water	122:51	0:0	8	,
+water	122:53	0:0	8	1000000000
+water	122:64	0:0	8	}
+arg	123:35	123:52	7	chapters[i].start
+water	123:35	0:0	8	chapters
+op	123:43	0:0	8	[
+water	123:44	0:0	8	i
+op	123:45	0:0	8	]
+op	123:46	0:0	8	.
+water	123:47	0:0	8	start
+arg	123:54	123:69	7	chapters[i].end
+water	123:54	0:0	8	chapters
+op	123:62	0:0	8	[
+water	123:63	0:0	8	i
+op	123:64	0:0	8	]
+op	123:65	0:0	8	.
+water	123:66	0:0	8	end
+arg	124:35	124:52	7	chapters[i].title
+water	124:35	0:0	8	chapters
+op	124:43	0:0	8	[
+water	124:44	0:0	8	i
+op	124:45	0:0	8	]
+op	124:46	0:0	8	.
+water	124:47	0:0	8	title
+water	124:53	0:0	6	;
+if	125:12	128:12	6	(chapters [ i ] . chapter)
+cond	125:16	125:28	7	chapters [ i ] . chapter
+water	125:16	0:0	8	chapters
+op	125:24	0:0	8	[
+water	125:25	0:0	8	i
+op	125:26	0:0	8	]
+op	125:27	0:0	8	.
+water	125:28	0:0	8	chapter
+stmts	125:37	128:12	7	
+water	125:37	0:0	8	{
+call	126:16	127:57	8	av_dict_set
+arg	126:28	126:58	9	&chapters[i].chapter->metadata
+op	126:28	0:0	10	&
+water	126:29	0:0	10	chapters
+op	126:37	0:0	10	[
+water	126:38	0:0	10	i
+op	126:39	0:0	10	]
+op	126:40	0:0	10	.
+water	126:41	0:0	10	chapter
+op	126:48	0:0	10	->
+water	126:50	0:0	10	metadata
+arg	127:28	127:35	9	"title"
+water	127:28	0:0	10	"title"
+arg	127:37	127:54	9	chapters[i].title
+water	127:37	0:0	10	chapters
+op	127:45	0:0	10	[
+water	127:46	0:0	10	i
+op	127:47	0:0	10	]
+op	127:48	0:0	10	.
+water	127:49	0:0	10	title
+arg	127:56	127:57	9	0
+water	127:56	0:0	10	0
+water	127:58	0:0	8	;
+water	128:12	0:0	8	}
+water	129:12	0:0	6	max_start
+op	129:22	0:0	6	=
+water	129:24	0:0	6	chapters
+op	129:32	0:0	6	[
+water	129:33	0:0	6	i
+op	129:34	0:0	6	]
+op	129:35	0:0	6	.
+water	129:36	0:0	6	start
+water	129:41	0:0	6	;
+water	130:8	0:0	6	}
+call	131:4	131:39	2	matroska_add_index_entries
+arg	131:31	131:39	3	matroska
+water	131:31	0:0	4	matroska
+water	131:40	0:0	2	;
+call	132:4	132:27	2	matroska_convert_tags
+arg	132:26	132:27	3	s
+water	132:26	0:0	4	s
+water	132:28	0:0	2	;
+return	133:4	133:12	2	0
+water	133:11	0:0	3	0

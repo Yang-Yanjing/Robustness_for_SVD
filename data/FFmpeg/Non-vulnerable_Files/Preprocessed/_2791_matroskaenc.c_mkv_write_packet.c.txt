@@ -1,0 +1,398 @@
+func	1:0	71:0	0	static int	mkv_write_packet
+params	1:27	0:0	1	
+param	1:28	1:46	2	AVFormatContext *	s
+param	1:48	1:61	2	AVPacket *	pkt
+stmnts	0:0	70:14	1	
+decl	3:4	3:42	2	MatroskaMuxContext	*mkv
+op	3:28	0:0	2	=
+water	3:30	0:0	2	s
+op	3:31	0:0	2	->
+water	3:33	0:0	2	priv_data
+decl	4:4	4:78	2	int	codec_type
+op	4:28	0:0	2	=
+water	4:30	0:0	2	s
+op	4:31	0:0	2	->
+water	4:33	0:0	2	streams
+op	4:40	0:0	2	[
+water	4:41	0:0	2	pkt
+op	4:44	0:0	2	->
+water	4:46	0:0	2	stream_index
+op	4:58	0:0	2	]
+op	4:59	0:0	2	->
+water	4:61	0:0	2	codec
+op	4:66	0:0	2	->
+water	4:68	0:0	2	codec_type
+decl	5:4	5:62	2	int	keyframe
+op	5:28	0:0	2	=
+op	5:30	0:0	2	!
+op	5:31	0:0	2	!
+water	5:32	0:0	2	(
+water	5:33	0:0	2	pkt
+op	5:36	0:0	2	->
+water	5:38	0:0	2	flags
+op	5:44	0:0	2	&
+water	5:46	0:0	2	AV_PKT_FLAG_KEY
+water	5:61	0:0	2	)
+decl	6:4	6:20	2	int	cluster_size
+decl	7:4	7:24	2	int64_t	cluster_time
+decl	8:4	8:11	2	int	ret
+decl	9:4	9:25	2	int	start_new_cluster
+if	10:4	11:50	2	(mkv -> tracks [ pkt -> stream_index ] . write_dts)
+cond	10:8	10:39	3	mkv -> tracks [ pkt -> stream_index ] . write_dts
+water	10:8	0:0	4	mkv
+op	10:11	0:0	4	->
+water	10:13	0:0	4	tracks
+op	10:19	0:0	4	[
+water	10:20	0:0	4	pkt
+op	10:23	0:0	4	->
+water	10:25	0:0	4	stream_index
+op	10:37	0:0	4	]
+op	10:38	0:0	4	.
+water	10:39	0:0	4	write_dts
+stmts	11:8	11:50	3	
+water	11:8	0:0	4	cluster_time
+op	11:21	0:0	4	=
+water	11:23	0:0	4	pkt
+op	11:26	0:0	4	->
+water	11:28	0:0	4	dts
+op	11:32	0:0	4	-
+water	11:34	0:0	4	mkv
+op	11:37	0:0	4	->
+water	11:39	0:0	4	cluster_pts
+water	11:50	0:0	4	;
+else	12:4	13:50	2
+stmts	13:8	13:50	3	
+water	13:8	0:0	4	cluster_time
+op	13:21	0:0	4	=
+water	13:23	0:0	4	pkt
+op	13:26	0:0	4	->
+water	13:28	0:0	4	pts
+op	13:32	0:0	4	-
+water	13:34	0:0	4	mkv
+op	13:37	0:0	4	->
+water	13:39	0:0	4	cluster_pts
+water	13:50	0:0	4	;
+water	14:4	0:0	2	cluster_time
+op	14:17	0:0	2	+=
+water	14:20	0:0	2	mkv
+op	14:23	0:0	2	->
+water	14:25	0:0	2	tracks
+op	14:31	0:0	2	[
+water	14:32	0:0	2	pkt
+op	14:35	0:0	2	->
+water	14:37	0:0	2	stream_index
+op	14:49	0:0	2	]
+op	14:50	0:0	2	.
+water	14:51	0:0	2	ts_offset
+water	14:60	0:0	2	;
+if	17:4	19:4	2	(s -> pb -> seekable)
+cond	17:8	17:15	3	s -> pb -> seekable
+water	17:8	0:0	4	s
+op	17:9	0:0	4	->
+water	17:11	0:0	4	pb
+op	17:13	0:0	4	->
+water	17:15	0:0	4	seekable
+stmts	17:25	19:4	3	
+water	17:25	0:0	4	{
+water	18:8	0:0	4	cluster_size
+op	18:21	0:0	4	=
+call	18:23	18:38	4	avio_tell
+arg	18:33	18:38	5	s->pb
+water	18:33	0:0	6	s
+op	18:34	0:0	6	->
+water	18:36	0:0	6	pb
+op	18:40	0:0	4	-
+water	18:42	0:0	4	mkv
+op	18:45	0:0	4	->
+water	18:47	0:0	4	cluster_pos
+water	18:58	0:0	4	;
+water	19:4	0:0	4	}
+else	19:6	21:4	2
+stmts	19:11	21:4	3	
+water	19:11	0:0	4	{
+water	20:8	0:0	4	cluster_size
+op	20:21	0:0	4	=
+call	20:23	20:44	4	avio_tell
+arg	20:33	20:44	5	mkv->dyn_bc
+water	20:33	0:0	6	mkv
+op	20:36	0:0	6	->
+water	20:38	0:0	6	dyn_bc
+water	20:45	0:0	4	;
+water	21:4	0:0	4	}
+if	22:4	27:4	2	(mkv -> is_dash && codec_type == AVMEDIA_TYPE_VIDEO)
+cond	22:8	22:38	3	mkv -> is_dash && codec_type == AVMEDIA_TYPE_VIDEO
+water	22:8	0:0	4	mkv
+op	22:11	0:0	4	->
+water	22:13	0:0	4	is_dash
+op	22:21	0:0	4	&&
+water	22:24	0:0	4	codec_type
+op	22:35	0:0	4	==
+water	22:38	0:0	4	AVMEDIA_TYPE_VIDEO
+stmts	22:58	27:4	3	
+water	22:58	0:0	4	{
+water	26:8	0:0	4	start_new_cluster
+op	26:26	0:0	4	=
+water	26:28	0:0	4	keyframe
+water	26:36	0:0	4	;
+water	27:4	0:0	4	}
+else	27:6	32:4	2
+stmts	27:11	32:4	3	
+if	27:11	32:4	4	(mkv -> is_dash && codec_type == AVMEDIA_TYPE_AUDIO && ( mkv -> cluster_pos == - 1 || cluster_time > mkv -> cluster_time_limit ))
+cond	27:15	29:54	5	mkv -> is_dash && codec_type == AVMEDIA_TYPE_AUDIO && ( mkv -> cluster_pos == - 1 || cluster_time > mkv -> cluster_time_limit )
+water	27:15	0:0	6	mkv
+op	27:18	0:0	6	->
+water	27:20	0:0	6	is_dash
+op	27:28	0:0	6	&&
+water	27:31	0:0	6	codec_type
+op	27:42	0:0	6	==
+water	27:45	0:0	6	AVMEDIA_TYPE_AUDIO
+op	27:64	0:0	6	&&
+water	28:15	0:0	6	(
+water	28:16	0:0	6	mkv
+op	28:19	0:0	6	->
+water	28:21	0:0	6	cluster_pos
+op	28:33	0:0	6	==
+op	28:36	0:0	6	-
+water	28:37	0:0	6	1
+op	28:39	0:0	6	||
+water	29:16	0:0	6	cluster_time
+op	29:29	0:0	6	>
+water	29:31	0:0	6	mkv
+op	29:34	0:0	6	->
+water	29:36	0:0	6	cluster_time_limit
+water	29:54	0:0	6	)
+stmts	29:57	32:4	5	
+water	29:57	0:0	6	{
+water	31:8	0:0	6	start_new_cluster
+op	31:26	0:0	6	=
+water	31:28	0:0	6	1
+water	31:29	0:0	6	;
+water	32:4	0:0	6	}
+else	32:6	38:4	2
+stmts	32:11	38:4	3	
+if	32:11	38:4	4	(! mkv -> is_dash && ( cluster_size > mkv -> cluster_size_limit || cluster_time > mkv -> cluster_time_limit || ( codec_type == AVMEDIA_TYPE_VIDEO && keyframe && cluster_size > 4 * 1024 ) ))
+cond	32:15	36:41	5	! mkv -> is_dash && ( cluster_size > mkv -> cluster_size_limit || cluster_time > mkv -> cluster_time_limit || ( codec_type == AVMEDIA_TYPE_VIDEO && keyframe && cluster_size > 4 * 1024 ) )
+op	32:15	0:0	6	!
+water	32:16	0:0	6	mkv
+op	32:19	0:0	6	->
+water	32:21	0:0	6	is_dash
+op	32:29	0:0	6	&&
+water	33:15	0:0	6	(
+water	33:16	0:0	6	cluster_size
+op	33:29	0:0	6	>
+water	33:31	0:0	6	mkv
+op	33:34	0:0	6	->
+water	33:36	0:0	6	cluster_size_limit
+op	33:55	0:0	6	||
+water	34:16	0:0	6	cluster_time
+op	34:29	0:0	6	>
+water	34:31	0:0	6	mkv
+op	34:34	0:0	6	->
+water	34:36	0:0	6	cluster_time_limit
+op	34:55	0:0	6	||
+water	35:16	0:0	6	(
+water	35:17	0:0	6	codec_type
+op	35:28	0:0	6	==
+water	35:31	0:0	6	AVMEDIA_TYPE_VIDEO
+op	35:50	0:0	6	&&
+water	35:53	0:0	6	keyframe
+op	35:62	0:0	6	&&
+water	36:17	0:0	6	cluster_size
+op	36:30	0:0	6	>
+water	36:32	0:0	6	4
+op	36:34	0:0	6	*
+water	36:36	0:0	6	1024
+water	36:40	0:0	6	)
+water	36:41	0:0	6	)
+stmts	36:44	38:4	5	
+water	36:44	0:0	6	{
+water	37:8	0:0	6	start_new_cluster
+op	37:26	0:0	6	=
+water	37:28	0:0	6	1
+water	37:29	0:0	6	;
+water	38:4	0:0	6	}
+else	38:6	40:4	2
+stmts	38:11	40:4	3	
+water	38:11	0:0	4	{
+water	39:8	0:0	4	start_new_cluster
+op	39:26	0:0	4	=
+water	39:28	0:0	4	0
+water	39:29	0:0	4	;
+water	40:4	0:0	4	}
+if	41:4	43:4	2	(mkv -> cluster_pos != - 1 && start_new_cluster)
+cond	41:8	41:34	3	mkv -> cluster_pos != - 1 && start_new_cluster
+water	41:8	0:0	4	mkv
+op	41:11	0:0	4	->
+water	41:13	0:0	4	cluster_pos
+op	41:25	0:0	4	!=
+op	41:28	0:0	4	-
+water	41:29	0:0	4	1
+op	41:31	0:0	4	&&
+water	41:34	0:0	4	start_new_cluster
+stmts	41:53	43:4	3	
+water	41:53	0:0	4	{
+call	42:8	42:36	4	mkv_start_new_cluster
+arg	42:30	42:31	5	s
+water	42:30	0:0	6	s
+arg	42:33	42:36	5	pkt
+water	42:33	0:0	6	pkt
+water	42:37	0:0	4	;
+water	43:4	0:0	4	}
+if	45:4	55:4	2	(mkv -> cur_audio_pkt . size > 0)
+cond	45:8	45:34	3	mkv -> cur_audio_pkt . size > 0
+water	45:8	0:0	4	mkv
+op	45:11	0:0	4	->
+water	45:13	0:0	4	cur_audio_pkt
+op	45:26	0:0	4	.
+water	45:27	0:0	4	size
+op	45:32	0:0	4	>
+water	45:34	0:0	4	0
+stmts	45:37	55:4	3	
+water	45:37	0:0	4	{
+water	47:8	0:0	4	ret
+op	47:12	0:0	4	=
+call	47:14	48:76	4	mkv_write_packet_internal
+arg	47:40	47:41	5	s
+water	47:40	0:0	6	s
+arg	47:43	47:62	5	&mkv->cur_audio_pkt
+op	47:43	0:0	6	&
+water	47:44	0:0	6	mkv
+op	47:47	0:0	6	->
+water	47:49	0:0	6	cur_audio_pkt
+arg	48:40	48:76	5	mkv->is_dash?start_new_cluster:0
+water	48:40	0:0	6	mkv
+op	48:43	0:0	6	->
+water	48:45	0:0	6	is_dash
+water	48:53	0:0	6	?
+water	48:55	0:0	6	start_new_cluster
+water	48:73	0:0	6	:
+water	48:75	0:0	6	0
+water	48:77	0:0	4	;
+call	49:8	49:42	4	av_free_packet
+arg	49:23	49:42	5	&mkv->cur_audio_pkt
+op	49:23	0:0	6	&
+water	49:24	0:0	6	mkv
+op	49:27	0:0	6	->
+water	49:29	0:0	6	cur_audio_pkt
+water	49:43	0:0	4	;
+if	50:8	54:8	4	(ret < 0)
+cond	50:12	50:18	5	ret < 0
+water	50:12	0:0	6	ret
+op	50:16	0:0	6	<
+water	50:18	0:0	6	0
+stmts	50:21	54:8	5	
+water	50:21	0:0	6	{
+call	51:12	52:70	6	av_log
+arg	51:19	51:20	7	s
+water	51:19	0:0	8	s
+arg	51:22	51:34	7	AV_LOG_ERROR
+water	51:22	0:0	8	AV_LOG_ERROR
+arg	52:19	52:65	7	"Could not write cached audio packet ret:%d\n"
+water	52:19	0:0	8	"Could not write cached audio packet ret:%d\n"
+arg	52:67	52:70	7	ret
+water	52:67	0:0	8	ret
+water	52:71	0:0	6	;
+return	53:12	53:22	6	ret
+water	53:19	0:0	7	ret
+water	54:8	0:0	6	}
+water	55:4	0:0	4	}
+if	58:4	68:4	2	(codec_type == AVMEDIA_TYPE_AUDIO)
+cond	58:8	58:22	3	codec_type == AVMEDIA_TYPE_AUDIO
+water	58:8	0:0	4	codec_type
+op	58:19	0:0	4	==
+water	58:22	0:0	4	AVMEDIA_TYPE_AUDIO
+stmts	58:42	68:4	3	
+water	58:42	0:0	4	{
+water	59:8	0:0	4	mkv
+op	59:11	0:0	4	->
+water	59:13	0:0	4	cur_audio_pkt
+op	59:27	0:0	4	=
+op	59:29	0:0	4	*
+water	59:30	0:0	4	pkt
+water	59:33	0:0	4	;
+if	60:8	63:8	4	(pkt -> buf)
+cond	60:12	60:17	5	pkt -> buf
+water	60:12	0:0	6	pkt
+op	60:15	0:0	6	->
+water	60:17	0:0	6	buf
+stmts	60:22	63:8	5	
+water	60:22	0:0	6	{
+water	61:12	0:0	6	mkv
+op	61:15	0:0	6	->
+water	61:17	0:0	6	cur_audio_pkt
+op	61:30	0:0	6	.
+water	61:31	0:0	6	buf
+op	61:35	0:0	6	=
+call	61:37	61:59	6	av_buffer_ref
+arg	61:51	61:59	7	pkt->buf
+water	61:51	0:0	8	pkt
+op	61:54	0:0	8	->
+water	61:56	0:0	8	buf
+water	61:60	0:0	6	;
+water	62:12	0:0	6	ret
+op	62:16	0:0	6	=
+water	62:18	0:0	6	mkv
+op	62:21	0:0	6	->
+water	62:23	0:0	6	cur_audio_pkt
+op	62:36	0:0	6	.
+water	62:37	0:0	6	buf
+water	62:41	0:0	6	?
+water	62:43	0:0	6	0
+water	62:45	0:0	6	:
+call	62:47	62:61	6	AVERROR
+arg	62:55	62:61	7	ENOMEM
+water	62:55	0:0	8	ENOMEM
+water	62:62	0:0	6	;
+water	63:8	0:0	6	}
+else	63:10	64:52	4
+stmts	64:12	64:52	5	
+water	64:12	0:0	6	ret
+op	64:16	0:0	6	=
+call	64:18	64:51	6	av_dup_packet
+arg	64:32	64:51	7	&mkv->cur_audio_pkt
+op	64:32	0:0	8	&
+water	64:33	0:0	8	mkv
+op	64:36	0:0	8	->
+water	64:38	0:0	8	cur_audio_pkt
+water	64:52	0:0	6	;
+if	65:8	67:8	4	(mkv -> cur_audio_pkt . side_data_elems > 0)
+cond	65:12	65:49	5	mkv -> cur_audio_pkt . side_data_elems > 0
+water	65:12	0:0	6	mkv
+op	65:15	0:0	6	->
+water	65:17	0:0	6	cur_audio_pkt
+op	65:30	0:0	6	.
+water	65:31	0:0	6	side_data_elems
+op	65:47	0:0	6	>
+water	65:49	0:0	6	0
+stmts	65:52	67:8	5	
+water	65:52	0:0	6	{
+water	66:12	0:0	6	ret
+op	66:16	0:0	6	=
+call	66:18	66:83	6	av_copy_packet_side_data
+arg	66:43	66:62	7	&mkv->cur_audio_pkt
+op	66:43	0:0	8	&
+water	66:44	0:0	8	mkv
+op	66:47	0:0	8	->
+water	66:49	0:0	8	cur_audio_pkt
+arg	66:64	66:83	7	&mkv->cur_audio_pkt
+op	66:64	0:0	8	&
+water	66:65	0:0	8	mkv
+op	66:68	0:0	8	->
+water	66:70	0:0	8	cur_audio_pkt
+water	66:84	0:0	6	;
+water	67:8	0:0	6	}
+water	68:4	0:0	4	}
+else	68:6	69:50	2
+stmts	69:8	69:50	3	
+water	69:8	0:0	4	ret
+op	69:12	0:0	4	=
+call	69:14	69:49	4	mkv_write_packet_internal
+arg	69:40	69:41	5	s
+water	69:40	0:0	6	s
+arg	69:43	69:46	5	pkt
+water	69:43	0:0	6	pkt
+arg	69:48	69:49	5	0
+water	69:48	0:0	6	0
+water	69:50	0:0	4	;
+return	70:4	70:14	2	ret
+water	70:11	0:0	3	ret

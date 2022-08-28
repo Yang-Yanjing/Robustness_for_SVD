@@ -1,0 +1,148 @@
+func	1:15	28:0	0	int	audio_write_header
+params	1:37	0:0	1	
+param	1:38	1:57	2	AVFormatContext *	s1
+stmnts	0:0	27:23	1	
+decl	3:4	3:31	2	AlsaData	*s
+op	3:16	0:0	2	=
+water	3:18	0:0	2	s1
+op	3:20	0:0	2	->
+water	3:22	0:0	2	priv_data
+decl	4:4	4:23	2	AVStream	*st
+op	4:17	0:0	2	=
+water	4:19	0:0	2	NULL
+decl	5:4	5:28	2	unsigned int	sample_rate
+decl	6:4	6:27	2	enum AVCodecID	codec_id
+decl	7:4	7:11	2	int	res
+if	8:4	11:4	2	(s1 -> nb_streams != 1 || s1 -> streams [ 0 ] -> codec -> codec_type != AVMEDIA_TYPE_AUDIO)
+cond	8:8	8:68	3	s1 -> nb_streams != 1 || s1 -> streams [ 0 ] -> codec -> codec_type != AVMEDIA_TYPE_AUDIO
+water	8:8	0:0	4	s1
+op	8:10	0:0	4	->
+water	8:12	0:0	4	nb_streams
+op	8:23	0:0	4	!=
+water	8:26	0:0	4	1
+op	8:28	0:0	4	||
+water	8:31	0:0	4	s1
+op	8:33	0:0	4	->
+water	8:35	0:0	4	streams
+op	8:42	0:0	4	[
+water	8:43	0:0	4	0
+op	8:44	0:0	4	]
+op	8:45	0:0	4	->
+water	8:47	0:0	4	codec
+op	8:52	0:0	4	->
+water	8:54	0:0	4	codec_type
+op	8:65	0:0	4	!=
+water	8:68	0:0	4	AVMEDIA_TYPE_AUDIO
+stmts	8:88	11:4	3	
+water	8:88	0:0	4	{
+call	9:8	9:77	4	av_log
+arg	9:15	9:17	5	s1
+water	9:15	0:0	6	s1
+arg	9:19	9:31	5	AV_LOG_ERROR
+water	9:19	0:0	6	AV_LOG_ERROR
+arg	9:33	9:77	5	"Only a single audio stream is supported.\n"
+water	9:33	0:0	6	"Only a single audio stream is supported.\n"
+water	9:78	0:0	4	;
+return	10:8	10:30	4	AVERROR(EINVAL)
+call	10:15	10:29	5	AVERROR
+arg	10:23	10:29	6	EINVAL
+water	10:23	0:0	7	EINVAL
+water	11:4	0:0	4	}
+water	12:4	0:0	2	st
+op	12:7	0:0	2	=
+water	12:9	0:0	2	s1
+op	12:11	0:0	2	->
+water	12:13	0:0	2	streams
+op	12:20	0:0	2	[
+water	12:21	0:0	2	0
+op	12:22	0:0	2	]
+water	12:23	0:0	2	;
+water	13:4	0:0	2	sample_rate
+op	13:16	0:0	2	=
+water	13:18	0:0	2	st
+op	13:20	0:0	2	->
+water	13:22	0:0	2	codec
+op	13:27	0:0	2	->
+water	13:29	0:0	2	sample_rate
+water	13:40	0:0	2	;
+water	14:4	0:0	2	codec_id
+op	14:16	0:0	2	=
+water	14:18	0:0	2	st
+op	14:20	0:0	2	->
+water	14:22	0:0	2	codec
+op	14:27	0:0	2	->
+water	14:29	0:0	2	codec_id
+water	14:37	0:0	2	;
+water	15:4	0:0	2	res
+op	15:8	0:0	2	=
+call	15:10	16:38	2	ff_alsa_open
+arg	15:23	15:25	3	s1
+water	15:23	0:0	4	s1
+arg	15:27	15:50	3	SND_PCM_STREAM_PLAYBACK
+water	15:27	0:0	4	SND_PCM_STREAM_PLAYBACK
+arg	15:52	15:64	3	&sample_rate
+op	15:52	0:0	4	&
+water	15:53	0:0	4	sample_rate
+arg	16:8	16:27	3	st->codec->channels
+water	16:8	0:0	4	st
+op	16:10	0:0	4	->
+water	16:12	0:0	4	codec
+op	16:17	0:0	4	->
+water	16:19	0:0	4	channels
+arg	16:29	16:38	3	&codec_id
+op	16:29	0:0	4	&
+water	16:30	0:0	4	codec_id
+water	16:39	0:0	2	;
+if	17:4	22:4	2	(sample_rate != st -> codec -> sample_rate)
+cond	17:8	17:34	3	sample_rate != st -> codec -> sample_rate
+water	17:8	0:0	4	sample_rate
+op	17:20	0:0	4	!=
+water	17:23	0:0	4	st
+op	17:25	0:0	4	->
+water	17:27	0:0	4	codec
+op	17:32	0:0	4	->
+water	17:34	0:0	4	sample_rate
+stmts	17:47	22:4	3	
+water	17:47	0:0	4	{
+call	18:8	20:50	4	av_log
+arg	18:15	18:17	5	s1
+water	18:15	0:0	6	s1
+arg	18:19	18:31	5	AV_LOG_ERROR
+water	18:19	0:0	6	AV_LOG_ERROR
+arg	19:15	19:62	5	"sample rate %d not available, nearest is %d\n"
+water	19:15	0:0	6	"sample rate %d not available, nearest is %d\n"
+arg	20:15	20:37	5	st->codec->sample_rate
+water	20:15	0:0	6	st
+op	20:17	0:0	6	->
+water	20:19	0:0	6	codec
+op	20:24	0:0	6	->
+water	20:26	0:0	6	sample_rate
+arg	20:39	20:50	5	sample_rate
+water	20:39	0:0	6	sample_rate
+water	20:51	0:0	4	;
+goto	21:8	21:17	4	fail
+water	21:13	0:0	5	fail
+water	22:4	0:0	4	}
+call	23:4	23:46	2	avpriv_set_pts_info
+arg	23:24	23:26	3	st
+water	23:24	0:0	4	st
+arg	23:28	23:30	3	64
+water	23:28	0:0	4	64
+arg	23:32	23:33	3	1
+water	23:32	0:0	4	1
+arg	23:35	23:46	3	sample_rate
+water	23:35	0:0	4	sample_rate
+water	23:47	0:0	2	;
+return	24:4	24:14	2	res
+water	24:11	0:0	3	res
+label	25:0	25:4	2	fail :
+call	26:4	26:22	2	snd_pcm_close
+arg	26:18	26:22	3	s->h
+water	26:18	0:0	4	s
+op	26:19	0:0	4	->
+water	26:21	0:0	4	h
+water	26:23	0:0	2	;
+return	27:4	27:23	2	AVERROR(EIO)
+call	27:11	27:22	3	AVERROR
+arg	27:19	27:22	4	EIO
+water	27:19	0:0	5	EIO

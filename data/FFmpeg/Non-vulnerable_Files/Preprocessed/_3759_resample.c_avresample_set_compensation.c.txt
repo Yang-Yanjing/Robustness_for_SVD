@@ -1,0 +1,297 @@
+func	1:0	75:0	0	int	avresample_set_compensation
+params	1:31	0:0	1	
+param	1:32	1:59	2	AVAudioResampleContext *	avr
+param	1:61	1:77	2	int	sample_delta
+param	2:32	2:57	2	int	compensation_distance
+stmnts	0:0	74:14	1	
+decl	4:4	4:22	2	ResampleContext	*c
+decl	5:4	5:30	2	AudioData	*fifo_buf
+op	5:24	0:0	2	=
+water	5:26	0:0	2	NULL
+decl	6:4	6:15	2	int	ret
+op	6:12	0:0	2	=
+water	6:14	0:0	2	0
+if	7:4	8:30	2	(compensation_distance < 0)
+cond	7:8	7:32	3	compensation_distance < 0
+water	7:8	0:0	4	compensation_distance
+op	7:30	0:0	4	<
+water	7:32	0:0	4	0
+stmts	8:8	8:30	3	
+return	8:8	8:30	4	AVERROR(EINVAL)
+call	8:15	8:29	5	AVERROR
+arg	8:23	8:29	6	EINVAL
+water	8:23	0:0	7	EINVAL
+if	9:4	10:30	2	(! compensation_distance && sample_delta)
+cond	9:8	9:34	3	! compensation_distance && sample_delta
+op	9:8	0:0	4	!
+water	9:9	0:0	4	compensation_distance
+op	9:31	0:0	4	&&
+water	9:34	0:0	4	sample_delta
+stmts	10:8	10:30	3	
+return	10:8	10:30	4	AVERROR(EINVAL)
+call	10:15	10:29	5	AVERROR
+arg	10:23	10:29	6	EINVAL
+water	10:23	0:0	7	EINVAL
+if	11:4	62:4	2	(! avr -> resample_needed)
+cond	11:8	11:14	3	! avr -> resample_needed
+op	11:8	0:0	4	!
+water	11:9	0:0	4	avr
+op	11:12	0:0	4	->
+water	11:14	0:0	4	resample_needed
+stmts	11:31	62:4	3	
+water	11:31	0:0	4	{
+decl	15:8	15:24	4	int	fifo_samples
+decl	16:8	16:30	4	int	restore_matrix
+op	16:27	0:0	4	=
+water	16:29	0:0	4	0
+decl	17:8	17:80	4	double	matrix[AVRESAMPLE_MAX_CHANNELS*AVRESAMPLE_MAX_CHANNELS]
+op	17:73	0:0	4	=
+water	17:75	0:0	4	{
+water	17:77	0:0	4	0
+water	17:79	0:0	4	}
+water	19:8	0:0	4	fifo_samples
+op	19:21	0:0	4	=
+call	19:23	19:55	4	av_audio_fifo_size
+arg	19:42	19:55	5	avr->out_fifo
+water	19:42	0:0	6	avr
+op	19:45	0:0	6	->
+water	19:47	0:0	6	out_fifo
+water	19:56	0:0	4	;
+if	20:8	29:8	4	(fifo_samples > 0)
+cond	20:12	20:27	5	fifo_samples > 0
+water	20:12	0:0	6	fifo_samples
+op	20:25	0:0	6	>
+water	20:27	0:0	6	0
+stmts	20:30	29:8	5	
+water	20:30	0:0	6	{
+water	21:12	0:0	6	fifo_buf
+op	21:21	0:0	6	=
+call	21:23	22:68	6	ff_audio_data_alloc
+arg	21:43	21:60	7	avr->out_channels
+water	21:43	0:0	8	avr
+op	21:46	0:0	8	->
+water	21:48	0:0	8	out_channels
+arg	21:62	21:74	7	fifo_samples
+water	21:62	0:0	8	fifo_samples
+arg	22:43	22:62	7	avr->out_sample_fmt
+water	22:43	0:0	8	avr
+op	22:46	0:0	8	->
+water	22:48	0:0	8	out_sample_fmt
+arg	22:64	22:68	7	NULL
+water	22:64	0:0	8	NULL
+water	22:69	0:0	6	;
+if	23:12	24:38	6	(! fifo_buf)
+cond	23:16	23:17	7	! fifo_buf
+op	23:16	0:0	8	!
+water	23:17	0:0	8	fifo_buf
+stmts	24:16	24:38	7	
+return	24:16	24:38	8	AVERROR(EINVAL)
+call	24:23	24:37	9	AVERROR
+arg	24:31	24:37	10	EINVAL
+water	24:31	0:0	11	EINVAL
+water	25:12	0:0	6	ret
+op	25:16	0:0	6	=
+call	25:18	26:59	6	ff_audio_data_read_from_fifo
+arg	25:47	25:60	7	avr->out_fifo
+water	25:47	0:0	8	avr
+op	25:50	0:0	8	->
+water	25:52	0:0	8	out_fifo
+arg	25:62	25:70	7	fifo_buf
+water	25:62	0:0	8	fifo_buf
+arg	26:47	26:59	7	fifo_samples
+water	26:47	0:0	8	fifo_samples
+water	26:60	0:0	6	;
+if	27:12	28:32	6	(ret < 0)
+cond	27:16	27:22	7	ret < 0
+water	27:16	0:0	8	ret
+op	27:20	0:0	8	<
+water	27:22	0:0	8	0
+stmts	28:16	28:32	7	
+goto	28:16	28:32	8	reinit_fail
+water	28:21	0:0	9	reinit_fail
+water	29:8	0:0	6	}
+if	31:8	36:8	4	(avr -> am)
+cond	31:12	31:17	5	avr -> am
+water	31:12	0:0	6	avr
+op	31:15	0:0	6	->
+water	31:17	0:0	6	am
+stmts	31:21	36:8	5	
+water	31:21	0:0	6	{
+water	32:12	0:0	6	ret
+op	32:16	0:0	6	=
+call	32:18	32:76	6	avresample_get_matrix
+arg	32:40	32:43	7	avr
+water	32:40	0:0	8	avr
+arg	32:45	32:51	7	matrix
+water	32:45	0:0	8	matrix
+arg	32:53	32:76	7	AVRESAMPLE_MAX_CHANNELS
+water	32:53	0:0	8	AVRESAMPLE_MAX_CHANNELS
+water	32:77	0:0	6	;
+if	33:12	34:32	6	(ret < 0)
+cond	33:16	33:22	7	ret < 0
+water	33:16	0:0	8	ret
+op	33:20	0:0	8	<
+water	33:22	0:0	8	0
+stmts	34:16	34:32	7	
+goto	34:16	34:32	8	reinit_fail
+water	34:21	0:0	9	reinit_fail
+water	35:12	0:0	6	restore_matrix
+op	35:27	0:0	6	=
+water	35:29	0:0	6	1
+water	35:30	0:0	6	;
+water	36:8	0:0	6	}
+call	38:8	38:28	4	avresample_close
+arg	38:25	38:28	5	avr
+water	38:25	0:0	6	avr
+water	38:29	0:0	4	;
+water	39:8	0:0	4	avr
+op	39:11	0:0	4	->
+water	39:13	0:0	4	force_resampling
+op	39:30	0:0	4	=
+water	39:32	0:0	4	1
+water	39:33	0:0	4	;
+if	41:8	45:8	4	(restore_matrix)
+cond	41:12	41:12	5	restore_matrix
+water	41:12	0:0	6	restore_matrix
+stmts	41:28	45:8	5	
+water	41:28	0:0	6	{
+water	42:12	0:0	6	ret
+op	42:16	0:0	6	=
+call	42:18	42:76	6	avresample_set_matrix
+arg	42:40	42:43	7	avr
+water	42:40	0:0	8	avr
+arg	42:45	42:51	7	matrix
+water	42:45	0:0	8	matrix
+arg	42:53	42:76	7	AVRESAMPLE_MAX_CHANNELS
+water	42:53	0:0	8	AVRESAMPLE_MAX_CHANNELS
+water	42:77	0:0	6	;
+if	43:12	44:32	6	(ret < 0)
+cond	43:16	43:22	7	ret < 0
+water	43:16	0:0	8	ret
+op	43:20	0:0	8	<
+water	43:22	0:0	8	0
+stmts	44:16	44:32	7	
+goto	44:16	44:32	8	reinit_fail
+water	44:21	0:0	9	reinit_fail
+water	45:8	0:0	6	}
+water	47:8	0:0	4	ret
+op	47:12	0:0	4	=
+call	47:14	47:33	4	avresample_open
+arg	47:30	47:33	5	avr
+water	47:30	0:0	6	avr
+water	47:34	0:0	4	;
+if	48:8	49:28	4	(ret < 0)
+cond	48:12	48:18	5	ret < 0
+water	48:12	0:0	6	ret
+op	48:16	0:0	6	<
+water	48:18	0:0	6	0
+stmts	49:12	49:28	5	
+goto	49:12	49:28	6	reinit_fail
+water	49:17	0:0	7	reinit_fail
+if	51:8	57:8	4	(fifo_samples > 0)
+cond	51:12	51:27	5	fifo_samples > 0
+water	51:12	0:0	6	fifo_samples
+op	51:25	0:0	6	>
+water	51:27	0:0	6	0
+stmts	51:30	57:8	5	
+water	51:30	0:0	6	{
+water	52:12	0:0	6	ret
+op	52:16	0:0	6	=
+call	52:18	53:56	6	ff_audio_data_add_to_fifo
+arg	52:44	52:57	7	avr->out_fifo
+water	52:44	0:0	8	avr
+op	52:47	0:0	8	->
+water	52:49	0:0	8	out_fifo
+arg	52:59	52:67	7	fifo_buf
+water	52:59	0:0	8	fifo_buf
+arg	52:69	52:70	7	0
+water	52:69	0:0	8	0
+arg	53:44	53:56	7	fifo_samples
+water	53:44	0:0	8	fifo_samples
+water	53:57	0:0	6	;
+if	54:12	55:32	6	(ret < 0)
+cond	54:16	54:22	7	ret < 0
+water	54:16	0:0	8	ret
+op	54:20	0:0	8	<
+water	54:22	0:0	8	0
+stmts	55:16	55:32	7	
+goto	55:16	55:32	8	reinit_fail
+water	55:21	0:0	9	reinit_fail
+call	56:12	56:40	6	ff_audio_data_free
+arg	56:31	56:40	7	&fifo_buf
+op	56:31	0:0	8	&
+water	56:32	0:0	8	fifo_buf
+water	56:41	0:0	6	;
+water	57:8	0:0	6	}
+call	59:8	59:75	4	av_log
+arg	59:15	59:18	5	avr
+water	59:15	0:0	6	avr
+arg	59:20	59:32	5	AV_LOG_ERROR
+water	59:20	0:0	6	AV_LOG_ERROR
+arg	59:34	59:75	5	"Unable to set resampling compensation\n"
+water	59:34	0:0	6	"Unable to set resampling compensation\n"
+water	59:76	0:0	4	;
+return	60:8	60:30	4	AVERROR(EINVAL)
+call	60:15	60:29	5	AVERROR
+arg	60:23	60:29	6	EINVAL
+water	60:23	0:0	7	EINVAL
+water	62:4	0:0	4	}
+water	63:4	0:0	2	c
+op	63:6	0:0	2	=
+water	63:8	0:0	2	avr
+op	63:11	0:0	2	->
+water	63:13	0:0	2	resample
+water	63:21	0:0	2	;
+water	64:4	0:0	2	c
+op	64:5	0:0	2	->
+water	64:7	0:0	2	compensation_distance
+op	64:29	0:0	2	=
+water	64:31	0:0	2	compensation_distance
+water	64:52	0:0	2	;
+if	65:4	68:4	2	(compensation_distance)
+cond	65:8	65:8	3	compensation_distance
+water	65:8	0:0	4	compensation_distance
+stmts	65:31	68:4	3	
+water	65:31	0:0	4	{
+water	66:8	0:0	4	c
+op	66:9	0:0	4	->
+water	66:11	0:0	4	dst_incr
+op	66:20	0:0	4	=
+water	66:22	0:0	4	c
+op	66:23	0:0	4	->
+water	66:25	0:0	4	ideal_dst_incr
+op	66:40	0:0	4	-
+water	66:42	0:0	4	c
+op	66:43	0:0	4	->
+water	66:45	0:0	4	ideal_dst_incr
+op	66:60	0:0	4	*
+water	67:22	0:0	4	(
+water	67:23	0:0	4	int64_t
+water	67:30	0:0	4	)
+water	67:31	0:0	4	sample_delta
+op	67:44	0:0	4	/
+water	67:46	0:0	4	compensation_distance
+water	67:67	0:0	4	;
+water	68:4	0:0	4	}
+else	68:6	70:4	2
+stmts	68:11	70:4	3	
+water	68:11	0:0	4	{
+water	69:8	0:0	4	c
+op	69:9	0:0	4	->
+water	69:11	0:0	4	dst_incr
+op	69:20	0:0	4	=
+water	69:22	0:0	4	c
+op	69:23	0:0	4	->
+water	69:25	0:0	4	ideal_dst_incr
+water	69:39	0:0	4	;
+water	70:4	0:0	4	}
+return	71:4	71:12	2	0
+water	71:11	0:0	3	0
+label	72:0	72:11	2	reinit_fail :
+call	73:4	73:32	2	ff_audio_data_free
+arg	73:23	73:32	3	&fifo_buf
+op	73:23	0:0	4	&
+water	73:24	0:0	4	fifo_buf
+water	73:33	0:0	2	;
+return	74:4	74:14	2	ret
+water	74:11	0:0	3	ret

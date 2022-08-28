@@ -1,0 +1,188 @@
+func	1:0	33:0	0	static int	xcbgrab_read_packet
+params	1:30	0:0	1	
+param	1:31	1:49	2	AVFormatContext *	s
+param	1:51	1:64	2	AVPacket *	pkt
+stmnts	0:0	32:14	1	
+decl	3:4	3:36	2	XCBGrabContext	*c
+op	3:22	0:0	2	=
+water	3:24	0:0	2	s
+op	3:25	0:0	2	->
+water	3:27	0:0	2	priv_data
+decl	4:4	4:33	2	xcb_query_pointer_cookie_t	pc
+decl	5:4	5:32	2	xcb_get_geometry_cookie_t	gc
+decl	6:4	6:40	2	xcb_query_pointer_reply_t	*p
+op	6:34	0:0	2	=
+water	6:36	0:0	2	NULL
+decl	7:4	7:40	2	xcb_get_geometry_reply_t	*geo
+op	7:34	0:0	2	=
+water	7:36	0:0	2	NULL
+decl	8:4	8:15	2	int	ret
+op	8:12	0:0	2	=
+water	8:14	0:0	2	0
+call	9:4	9:21	2	wait_frame
+arg	9:15	9:16	3	s
+water	9:15	0:0	4	s
+arg	9:18	9:21	3	pkt
+water	9:18	0:0	4	pkt
+water	9:22	0:0	2	;
+if	10:4	15:4	2	(c -> follow_mouse || c -> draw_mouse)
+cond	10:8	10:30	3	c -> follow_mouse || c -> draw_mouse
+water	10:8	0:0	4	c
+op	10:9	0:0	4	->
+water	10:11	0:0	4	follow_mouse
+op	10:24	0:0	4	||
+water	10:27	0:0	4	c
+op	10:28	0:0	4	->
+water	10:30	0:0	4	draw_mouse
+stmts	10:42	15:4	3	
+water	10:42	0:0	4	{
+water	11:8	0:0	4	pc
+op	11:12	0:0	4	=
+call	11:14	11:56	4	xcb_query_pointer
+arg	11:32	11:39	5	c->conn
+water	11:32	0:0	6	c
+op	11:33	0:0	6	->
+water	11:35	0:0	6	conn
+arg	11:41	11:56	5	c->screen->root
+water	11:41	0:0	6	c
+op	11:42	0:0	6	->
+water	11:44	0:0	6	screen
+op	11:50	0:0	6	->
+water	11:52	0:0	6	root
+water	11:57	0:0	4	;
+water	12:8	0:0	4	gc
+op	12:12	0:0	4	=
+call	12:14	12:55	4	xcb_get_geometry
+arg	12:31	12:38	5	c->conn
+water	12:31	0:0	6	c
+op	12:32	0:0	6	->
+water	12:34	0:0	6	conn
+arg	12:40	12:55	5	c->screen->root
+water	12:40	0:0	6	c
+op	12:41	0:0	6	->
+water	12:43	0:0	6	screen
+op	12:49	0:0	6	->
+water	12:51	0:0	6	root
+water	12:56	0:0	4	;
+water	13:8	0:0	4	p
+op	13:12	0:0	4	=
+call	13:14	13:55	4	xcb_query_pointer_reply
+arg	13:38	13:45	5	c->conn
+water	13:38	0:0	6	c
+op	13:39	0:0	6	->
+water	13:41	0:0	6	conn
+arg	13:47	13:49	5	pc
+water	13:47	0:0	6	pc
+arg	13:51	13:55	5	NULL
+water	13:51	0:0	6	NULL
+water	13:56	0:0	4	;
+water	14:8	0:0	4	geo
+op	14:12	0:0	4	=
+call	14:14	14:54	4	xcb_get_geometry_reply
+arg	14:37	14:44	5	c->conn
+water	14:37	0:0	6	c
+op	14:38	0:0	6	->
+water	14:40	0:0	6	conn
+arg	14:46	14:48	5	gc
+water	14:46	0:0	6	gc
+arg	14:50	14:54	5	NULL
+water	14:50	0:0	6	NULL
+water	14:55	0:0	4	;
+water	15:4	0:0	4	}
+if	16:4	17:37	2	(c -> follow_mouse && p -> same_screen)
+cond	16:8	16:30	3	c -> follow_mouse && p -> same_screen
+water	16:8	0:0	4	c
+op	16:9	0:0	4	->
+water	16:11	0:0	4	follow_mouse
+op	16:24	0:0	4	&&
+water	16:27	0:0	4	p
+op	16:28	0:0	4	->
+water	16:30	0:0	4	same_screen
+stmts	17:8	17:37	3	
+call	17:8	17:36	4	xcbgrab_reposition
+arg	17:27	17:28	5	s
+water	17:27	0:0	6	s
+arg	17:30	17:31	5	p
+water	17:30	0:0	6	p
+arg	17:33	17:36	5	geo
+water	17:33	0:0	6	geo
+water	17:37	0:0	4	;
+if	18:4	19:32	2	(c -> show_region)
+cond	18:8	18:11	3	c -> show_region
+water	18:8	0:0	4	c
+op	18:9	0:0	4	->
+water	18:11	0:0	4	show_region
+stmts	19:8	19:32	3	
+call	19:8	19:31	4	xcbgrab_update_region
+arg	19:30	19:31	5	s
+water	19:30	0:0	6	s
+water	19:32	0:0	4	;
+if	21:4	22:22	2	(c -> has_shm &&xcbgrab_frame_shm (s ,pkt ) < 0)
+cond	21:8	21:50	3	c -> has_shm &&xcbgrab_frame_shm (s ,pkt ) < 0
+water	21:8	0:0	4	c
+op	21:9	0:0	4	->
+water	21:11	0:0	4	has_shm
+op	21:19	0:0	4	&&
+call	21:22	21:46	4	xcbgrab_frame_shm
+arg	21:40	21:41	5	s
+water	21:40	0:0	6	s
+arg	21:43	21:46	5	pkt
+water	21:43	0:0	6	pkt
+op	21:48	0:0	4	<
+water	21:50	0:0	4	0
+stmts	22:8	22:22	3	
+water	22:8	0:0	4	c
+op	22:9	0:0	4	->
+water	22:11	0:0	4	has_shm
+op	22:19	0:0	4	=
+water	22:21	0:0	4	0
+water	22:22	0:0	4	;
+if	24:4	25:35	2	(! c -> has_shm)
+cond	24:8	24:12	3	! c -> has_shm
+op	24:8	0:0	4	!
+water	24:9	0:0	4	c
+op	24:10	0:0	4	->
+water	24:12	0:0	4	has_shm
+stmts	25:8	25:35	3	
+water	25:8	0:0	4	ret
+op	25:12	0:0	4	=
+call	25:14	25:34	4	xcbgrab_frame
+arg	25:28	25:29	5	s
+water	25:28	0:0	6	s
+arg	25:31	25:34	5	pkt
+water	25:31	0:0	6	pkt
+water	25:35	0:0	4	;
+if	27:4	28:42	2	(ret >= 0 && c -> draw_mouse && p -> same_screen)
+cond	27:8	27:40	3	ret >= 0 && c -> draw_mouse && p -> same_screen
+water	27:8	0:0	4	ret
+op	27:12	0:0	4	>=
+water	27:15	0:0	4	0
+op	27:17	0:0	4	&&
+water	27:20	0:0	4	c
+op	27:21	0:0	4	->
+water	27:23	0:0	4	draw_mouse
+op	27:34	0:0	4	&&
+water	27:37	0:0	4	p
+op	27:38	0:0	4	->
+water	27:40	0:0	4	same_screen
+stmts	28:8	28:42	3	
+call	28:8	28:41	4	xcbgrab_draw_mouse
+arg	28:27	28:28	5	s
+water	28:27	0:0	6	s
+arg	28:30	28:33	5	pkt
+water	28:30	0:0	6	pkt
+arg	28:35	28:36	5	p
+water	28:35	0:0	6	p
+arg	28:38	28:41	5	geo
+water	28:38	0:0	6	geo
+water	28:42	0:0	4	;
+call	30:4	30:10	2	free
+arg	30:9	30:10	3	p
+water	30:9	0:0	4	p
+water	30:11	0:0	2	;
+call	31:4	31:12	2	free
+arg	31:9	31:12	3	geo
+water	31:9	0:0	4	geo
+water	31:13	0:0	2	;
+return	32:4	32:14	2	ret
+water	32:11	0:0	3	ret

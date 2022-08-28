@@ -1,0 +1,380 @@
+func	1:0	52:0	0	static int	filter_frame
+params	1:23	0:0	1	
+param	1:24	1:44	2	AVFilterLink *	inlink
+param	1:46	1:58	2	AVFrame *	buf
+stmnts	0:0	51:56	1	
+decl	3:4	3:38	2	AVFilterContext	*ctx
+op	3:25	0:0	2	=
+water	3:27	0:0	2	inlink
+op	3:33	0:0	2	->
+water	3:35	0:0	2	dst
+decl	4:4	4:36	2	AShowInfoContext	*s
+op	4:25	0:0	2	=
+water	4:27	0:0	2	ctx
+op	4:30	0:0	2	->
+water	4:32	0:0	2	priv
+decl	5:4	5:26	2	char	chlayout_str[128]
+decl	6:4	6:25	2	uint32_t	checksum
+op	6:22	0:0	2	=
+water	6:24	0:0	2	0
+decl	7:4	7:38	2	int	channels
+op	7:20	0:0	2	=
+water	7:22	0:0	2	inlink
+op	7:28	0:0	2	->
+water	7:30	0:0	2	channels
+decl	8:4	8:58	2	int	planar
+op	8:20	0:0	2	=
+call	8:22	8:57	3	av_sample_fmt_is_planar
+arg	8:46	8:57	4	buf->format
+water	8:46	0:0	5	buf
+op	8:49	0:0	5	->
+water	8:51	0:0	5	format
+decl	9:4	9:84	2	int	block_align
+op	9:20	0:0	2	=
+call	9:22	9:57	3	av_get_bytes_per_sample
+arg	9:46	9:57	4	buf->format
+water	9:46	0:0	5	buf
+op	9:49	0:0	5	->
+water	9:51	0:0	5	format
+op	9:59	0:0	2	*
+water	9:61	0:0	2	(
+water	9:62	0:0	2	planar
+water	9:69	0:0	2	?
+water	9:71	0:0	2	1
+water	9:73	0:0	2	:
+water	9:75	0:0	2	channels
+water	9:83	0:0	2	)
+decl	10:4	10:51	2	int	data_size
+op	10:20	0:0	2	=
+water	10:22	0:0	2	buf
+op	10:25	0:0	2	->
+water	10:27	0:0	2	nb_samples
+op	10:38	0:0	2	*
+water	10:40	0:0	2	block_align
+decl	11:4	11:43	2	int	planes
+op	11:20	0:0	2	=
+water	11:22	0:0	2	planar
+water	11:29	0:0	2	?
+water	11:31	0:0	2	channels
+water	11:40	0:0	2	:
+water	11:42	0:0	2	1
+decl	12:4	12:9	2	int	i
+decl	13:4	13:95	2	void	*tmp_ptr
+op	13:18	0:0	2	=
+call	13:20	13:94	3	av_realloc_array
+arg	13:37	13:55	4	s->plane_checksums
+water	13:37	0:0	5	s
+op	13:38	0:0	5	->
+water	13:40	0:0	5	plane_checksums
+arg	13:57	13:65	4	channels
+water	13:57	0:0	5	channels
+arg	13:67	13:94	4	sizeof(*s->plane_checksums)
+op	13:67	0:0	5	sizeof
+water	13:73	0:0	5	(
+op	13:74	0:0	5	*
+water	13:75	0:0	5	s
+op	13:76	0:0	5	->
+water	13:78	0:0	5	plane_checksums
+water	13:93	0:0	5	)
+if	14:4	15:30	2	(! tmp_ptr)
+cond	14:8	14:9	3	! tmp_ptr
+op	14:8	0:0	4	!
+water	14:9	0:0	4	tmp_ptr
+stmts	15:8	15:30	3	
+return	15:8	15:30	4	AVERROR(ENOMEM)
+call	15:15	15:29	5	AVERROR
+arg	15:23	15:29	6	ENOMEM
+water	15:23	0:0	7	ENOMEM
+water	16:4	0:0	2	s
+op	16:5	0:0	2	->
+water	16:7	0:0	2	plane_checksums
+op	16:23	0:0	2	=
+water	16:25	0:0	2	tmp_ptr
+water	16:32	0:0	2	;
+for	17:4	22:4	2	(i = 0 ;i < planes;i ++)
+forinit	17:9	17:14	3	i = 0 ;
+water	17:9	0:0	4	i
+op	17:11	0:0	4	=
+water	17:13	0:0	4	0
+water	17:14	0:0	4	;
+cond	17:16	17:20	3	i < planes
+water	17:16	0:0	4	i
+op	17:18	0:0	4	<
+water	17:20	0:0	4	planes
+forexpr	17:28	17:29	3	i ++
+water	17:28	0:0	4	i
+op	17:29	0:0	4	++
+stmts	17:33	22:4	3	
+water	17:33	0:0	4	{
+decl	18:8	18:45	4	uint8_t	*data
+op	18:22	0:0	4	=
+water	18:24	0:0	4	buf
+op	18:27	0:0	4	->
+water	18:29	0:0	4	extended_data
+op	18:42	0:0	4	[
+water	18:43	0:0	4	i
+op	18:44	0:0	4	]
+water	19:8	0:0	4	s
+op	19:9	0:0	4	->
+water	19:11	0:0	4	plane_checksums
+op	19:26	0:0	4	[
+water	19:27	0:0	4	i
+op	19:28	0:0	4	]
+op	19:30	0:0	4	=
+call	19:32	19:68	4	av_adler32_update
+arg	19:50	19:51	5	0
+water	19:50	0:0	6	0
+arg	19:53	19:57	5	data
+water	19:53	0:0	6	data
+arg	19:59	19:68	5	data_size
+water	19:59	0:0	6	data_size
+water	19:69	0:0	4	;
+water	20:8	0:0	4	checksum
+op	20:17	0:0	4	=
+water	20:19	0:0	4	i
+water	20:21	0:0	4	?
+call	20:23	20:66	4	av_adler32_update
+arg	20:41	20:49	5	checksum
+water	20:41	0:0	6	checksum
+arg	20:51	20:55	5	data
+water	20:51	0:0	6	data
+arg	20:57	20:66	5	data_size
+water	20:57	0:0	6	data_size
+water	20:68	0:0	4	:
+water	21:23	0:0	4	s
+op	21:24	0:0	4	->
+water	21:26	0:0	4	plane_checksums
+op	21:41	0:0	4	[
+water	21:42	0:0	4	0
+op	21:43	0:0	4	]
+water	21:44	0:0	4	;
+water	22:4	0:0	4	}
+call	23:4	24:52	2	av_get_channel_layout_string
+arg	23:33	23:45	3	chlayout_str
+water	23:33	0:0	4	chlayout_str
+arg	23:47	23:67	3	sizeof(chlayout_str)
+op	23:47	0:0	4	sizeof
+water	23:53	0:0	4	(
+water	23:54	0:0	4	chlayout_str
+water	23:66	0:0	4	)
+arg	23:69	23:71	3	-1
+op	23:69	0:0	4	-
+water	23:70	0:0	4	1
+arg	24:33	24:52	3	buf->channel_layout
+water	24:33	0:0	4	buf
+op	24:36	0:0	4	->
+water	24:38	0:0	4	channel_layout
+water	24:53	0:0	2	;
+call	25:4	34:19	2	av_log
+arg	25:11	25:14	3	ctx
+water	25:11	0:0	4	ctx
+arg	25:16	25:27	3	AV_LOG_INFO
+water	25:16	0:0	4	AV_LOG_INFO
+arg	26:11	28:34	3	"n:%"PRId64" pts:%s pts_time:%s pos:%"PRId64" ""fmt:%s channels:%d chlayout:%s rate:%d nb_samples:%d ""checksum:%08"PRIX32" "
+water	26:11	0:0	4	"n:%"
+water	26:16	0:0	4	PRId64
+water	26:22	0:0	4	" pts:%s pts_time:%s pos:%"
+water	26:49	0:0	4	PRId64
+water	26:55	0:0	4	" "
+water	27:11	0:0	4	"fmt:%s channels:%d chlayout:%s rate:%d nb_samples:%d "
+water	28:11	0:0	4	"checksum:%08"
+water	28:25	0:0	4	PRIX32
+water	28:31	0:0	4	" "
+arg	29:11	29:30	3	inlink->frame_count
+water	29:11	0:0	4	inlink
+op	29:17	0:0	4	->
+water	29:19	0:0	4	frame_count
+arg	30:11	30:30	3	av_ts2str(buf->pts)
+call	30:11	30:29	4	av_ts2str
+arg	30:21	30:29	5	buf->pts
+water	30:21	0:0	6	buf
+op	30:24	0:0	6	->
+water	30:26	0:0	6	pts
+arg	30:32	30:75	3	av_ts2timestr(buf->pts,&inlink->time_base)
+call	30:32	30:74	4	av_ts2timestr
+arg	30:46	30:54	5	buf->pts
+water	30:46	0:0	6	buf
+op	30:49	0:0	6	->
+water	30:51	0:0	6	pts
+arg	30:56	30:74	5	&inlink->time_base
+op	30:56	0:0	6	&
+water	30:57	0:0	6	inlink
+op	30:63	0:0	6	->
+water	30:65	0:0	6	time_base
+arg	31:11	31:36	3	av_frame_get_pkt_pos(buf)
+call	31:11	31:35	4	av_frame_get_pkt_pos
+arg	31:32	31:35	5	buf
+water	31:32	0:0	6	buf
+arg	32:11	32:46	3	av_get_sample_fmt_name(buf->format)
+call	32:11	32:45	4	av_get_sample_fmt_name
+arg	32:34	32:45	5	buf->format
+water	32:34	0:0	6	buf
+op	32:37	0:0	6	->
+water	32:39	0:0	6	format
+arg	32:48	32:74	3	av_frame_get_channels(buf)
+call	32:48	32:73	4	av_frame_get_channels
+arg	32:70	32:73	5	buf
+water	32:70	0:0	6	buf
+arg	32:76	32:88	3	chlayout_str
+water	32:76	0:0	4	chlayout_str
+arg	33:11	33:27	3	buf->sample_rate
+water	33:11	0:0	4	buf
+op	33:14	0:0	4	->
+water	33:16	0:0	4	sample_rate
+arg	33:29	33:44	3	buf->nb_samples
+water	33:29	0:0	4	buf
+op	33:32	0:0	4	->
+water	33:34	0:0	4	nb_samples
+arg	34:11	34:19	3	checksum
+water	34:11	0:0	4	checksum
+water	34:20	0:0	2	;
+call	35:4	35:50	2	av_log
+arg	35:11	35:14	3	ctx
+water	35:11	0:0	4	ctx
+arg	35:16	35:27	3	AV_LOG_INFO
+water	35:16	0:0	4	AV_LOG_INFO
+arg	35:29	35:50	3	"plane_checksums: [ "
+water	35:29	0:0	4	"plane_checksums: [ "
+water	35:51	0:0	2	;
+for	36:4	37:71	2	(i = 0 ;i < planes;i ++)
+forinit	36:9	36:14	3	i = 0 ;
+water	36:9	0:0	4	i
+op	36:11	0:0	4	=
+water	36:13	0:0	4	0
+water	36:14	0:0	4	;
+cond	36:16	36:20	3	i < planes
+water	36:16	0:0	4	i
+op	36:18	0:0	4	<
+water	36:20	0:0	4	planes
+forexpr	36:28	36:29	3	i ++
+water	36:28	0:0	4	i
+op	36:29	0:0	4	++
+stmts	37:8	37:71	3	
+call	37:8	37:70	4	av_log
+arg	37:15	37:18	5	ctx
+water	37:15	0:0	6	ctx
+arg	37:20	37:31	5	AV_LOG_INFO
+water	37:20	0:0	6	AV_LOG_INFO
+arg	37:33	37:47	5	"%08"PRIX32" "
+water	37:33	0:0	6	"%08"
+water	37:38	0:0	6	PRIX32
+water	37:44	0:0	6	" "
+arg	37:49	37:70	5	s->plane_checksums[i]
+water	37:49	0:0	6	s
+op	37:50	0:0	6	->
+water	37:52	0:0	6	plane_checksums
+op	37:67	0:0	6	[
+water	37:68	0:0	6	i
+op	37:69	0:0	6	]
+water	37:71	0:0	4	;
+call	38:4	38:34	2	av_log
+arg	38:11	38:14	3	ctx
+water	38:11	0:0	4	ctx
+arg	38:16	38:27	3	AV_LOG_INFO
+water	38:16	0:0	4	AV_LOG_INFO
+arg	38:29	38:34	3	"]\n"
+water	38:29	0:0	4	"]\n"
+water	38:35	0:0	2	;
+for	39:4	50:4	2	(i = 0 ;i < buf -> nb_side_data;i ++)
+forinit	39:9	39:14	3	i = 0 ;
+water	39:9	0:0	4	i
+op	39:11	0:0	4	=
+water	39:13	0:0	4	0
+water	39:14	0:0	4	;
+cond	39:16	39:25	3	i < buf -> nb_side_data
+water	39:16	0:0	4	i
+op	39:18	0:0	4	<
+water	39:20	0:0	4	buf
+op	39:23	0:0	4	->
+water	39:25	0:0	4	nb_side_data
+forexpr	39:39	39:40	3	i ++
+water	39:39	0:0	4	i
+op	39:40	0:0	4	++
+stmts	39:44	50:4	3	
+water	39:44	0:0	4	{
+decl	40:8	40:47	4	AVFrameSideData	*sd
+op	40:28	0:0	4	=
+water	40:30	0:0	4	buf
+op	40:33	0:0	4	->
+water	40:35	0:0	4	side_data
+op	40:44	0:0	4	[
+water	40:45	0:0	4	i
+op	40:46	0:0	4	]
+call	41:8	41:49	4	av_log
+arg	41:15	41:18	5	ctx
+water	41:15	0:0	6	ctx
+arg	41:20	41:31	5	AV_LOG_INFO
+water	41:20	0:0	6	AV_LOG_INFO
+arg	41:33	41:49	5	"  side data - "
+water	41:33	0:0	6	"  side data - "
+water	41:50	0:0	4	;
+switch	42:8	48:8	4	(sd -> type)
+cond	42:16	42:20	5	sd -> type
+water	42:16	0:0	6	sd
+op	42:18	0:0	6	->
+water	42:20	0:0	6	type
+stmts	42:26	48:8	5	
+water	42:26	0:0	6	{
+label	43:8	43:41	6	case AV_FRAME_DATA_MATRIXENCODING :
+call	43:43	43:66	6	dump_matrixenc
+arg	43:59	43:62	7	ctx
+water	43:59	0:0	8	ctx
+arg	43:64	43:66	7	sd
+water	43:64	0:0	8	sd
+water	43:67	0:0	6	;
+break	43:69	43:74	6	
+label	44:8	44:39	6	case AV_FRAME_DATA_DOWNMIX_INFO :
+call	44:43	44:66	6	dump_downmix
+arg	44:59	44:62	7	ctx
+water	44:59	0:0	8	ctx
+arg	44:64	44:66	7	sd
+water	44:64	0:0	8	sd
+water	44:67	0:0	6	;
+break	44:69	44:74	6	
+label	45:8	45:37	6	case AV_FRAME_DATA_REPLAYGAIN :
+call	45:43	45:66	6	dump_replaygain
+arg	45:59	45:62	7	ctx
+water	45:59	0:0	8	ctx
+arg	45:64	45:66	7	sd
+water	45:64	0:0	8	sd
+water	45:67	0:0	6	;
+break	45:69	45:74	6	
+label	46:8	46:45	6	case AV_FRAME_DATA_AUDIO_SERVICE_TYPE :
+call	46:47	46:78	6	dump_audio_service_type
+arg	46:71	46:74	7	ctx
+water	46:71	0:0	8	ctx
+arg	46:76	46:78	7	sd
+water	46:76	0:0	8	sd
+water	46:79	0:0	6	;
+break	46:81	46:86	6	
+label	47:8	47:15	6	default :
+call	47:43	47:66	6	dump_unknown
+arg	47:59	47:62	7	ctx
+water	47:59	0:0	8	ctx
+arg	47:64	47:66	7	sd
+water	47:64	0:0	8	sd
+water	47:67	0:0	6	;
+break	47:69	47:74	6	
+water	48:8	0:0	6	}
+call	49:8	49:37	4	av_log
+arg	49:15	49:18	5	ctx
+water	49:15	0:0	6	ctx
+arg	49:20	49:31	5	AV_LOG_INFO
+water	49:20	0:0	6	AV_LOG_INFO
+arg	49:33	49:37	5	"\n"
+water	49:33	0:0	6	"\n"
+water	49:38	0:0	4	;
+water	50:4	0:0	4	}
+return	51:4	51:56	2	ff_filter_frame(inlink->dst->outputs[0],buf)
+call	51:11	51:55	3	ff_filter_frame
+arg	51:27	51:50	4	inlink->dst->outputs[0]
+water	51:27	0:0	5	inlink
+op	51:33	0:0	5	->
+water	51:35	0:0	5	dst
+op	51:38	0:0	5	->
+water	51:40	0:0	5	outputs
+op	51:47	0:0	5	[
+water	51:48	0:0	5	0
+op	51:49	0:0	5	]
+arg	51:52	51:55	4	buf
+water	51:52	0:0	5	buf

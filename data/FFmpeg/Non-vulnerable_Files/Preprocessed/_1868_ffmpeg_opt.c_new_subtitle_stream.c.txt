@@ -1,0 +1,115 @@
+func	1:0	20:0	0	static OutputStream *	new_subtitle_stream
+params	1:40	0:0	1	
+param	1:41	1:58	2	OptionsContext *	o
+param	1:60	1:79	2	AVFormatContext *	oc
+param	1:81	1:97	2	int	source_index
+stmnts	0:0	19:14	1	
+decl	3:4	3:16	2	AVStream	*st
+decl	4:4	4:21	2	OutputStream	*ost
+decl	5:4	5:32	2	AVCodecContext	*subtitle_enc
+water	6:4	0:0	2	ost
+op	6:8	0:0	2	=
+call	6:10	6:70	2	new_output_stream
+arg	6:28	6:29	3	o
+water	6:28	0:0	4	o
+arg	6:31	6:33	3	oc
+water	6:31	0:0	4	oc
+arg	6:35	6:56	3	AVMEDIA_TYPE_SUBTITLE
+water	6:35	0:0	4	AVMEDIA_TYPE_SUBTITLE
+arg	6:58	6:70	3	source_index
+water	6:58	0:0	4	source_index
+water	6:71	0:0	2	;
+water	7:4	0:0	2	st
+op	7:8	0:0	2	=
+water	7:10	0:0	2	ost
+op	7:13	0:0	2	->
+water	7:15	0:0	2	st
+water	7:17	0:0	2	;
+water	8:4	0:0	2	subtitle_enc
+op	8:17	0:0	2	=
+water	8:19	0:0	2	ost
+op	8:22	0:0	2	->
+water	8:24	0:0	2	enc_ctx
+water	8:31	0:0	2	;
+water	9:4	0:0	2	subtitle_enc
+op	9:16	0:0	2	->
+water	9:18	0:0	2	codec_type
+op	9:29	0:0	2	=
+water	9:31	0:0	2	AVMEDIA_TYPE_SUBTITLE
+water	9:52	0:0	2	;
+call	10:4	10:93	2	MATCH_PER_STREAM_OPT
+arg	10:25	10:50	3	copy_initial_nonkeyframes
+water	10:25	0:0	4	copy_initial_nonkeyframes
+arg	10:52	10:53	3	i
+water	10:52	0:0	4	i
+arg	10:55	10:85	3	ost->copy_initial_nonkeyframes
+water	10:55	0:0	4	ost
+op	10:58	0:0	4	->
+water	10:60	0:0	4	copy_initial_nonkeyframes
+arg	10:87	10:89	3	oc
+water	10:87	0:0	4	oc
+arg	10:91	10:93	3	st
+water	10:91	0:0	4	st
+water	10:94	0:0	2	;
+if	11:4	18:4	2	(! ost -> stream_copy)
+cond	11:8	11:14	3	! ost -> stream_copy
+op	11:8	0:0	4	!
+water	11:9	0:0	4	ost
+op	11:12	0:0	4	->
+water	11:14	0:0	4	stream_copy
+stmts	11:27	18:4	3	
+water	11:27	0:0	4	{
+decl	12:8	12:31	4	char	*frame_size
+op	12:25	0:0	4	=
+water	12:27	0:0	4	NULL
+call	13:8	13:65	4	MATCH_PER_STREAM_OPT
+arg	13:29	13:40	5	frame_sizes
+water	13:29	0:0	6	frame_sizes
+arg	13:42	13:45	5	str
+water	13:42	0:0	6	str
+arg	13:47	13:57	5	frame_size
+water	13:47	0:0	6	frame_size
+arg	13:59	13:61	5	oc
+water	13:59	0:0	6	oc
+arg	13:63	13:65	5	st
+water	13:63	0:0	6	st
+water	13:66	0:0	4	;
+if	14:8	17:8	4	(frame_size &&av_parse_video_size (& subtitle_enc -> width ,& subtitle_enc -> height ,frame_size ) < 0)
+cond	14:12	14:105	5	frame_size &&av_parse_video_size (& subtitle_enc -> width ,& subtitle_enc -> height ,frame_size ) < 0
+water	14:12	0:0	6	frame_size
+op	14:23	0:0	6	&&
+call	14:26	14:101	6	av_parse_video_size
+arg	14:46	14:66	7	&subtitle_enc->width
+op	14:46	0:0	8	&
+water	14:47	0:0	8	subtitle_enc
+op	14:59	0:0	8	->
+water	14:61	0:0	8	width
+arg	14:68	14:89	7	&subtitle_enc->height
+op	14:68	0:0	8	&
+water	14:69	0:0	8	subtitle_enc
+op	14:81	0:0	8	->
+water	14:83	0:0	8	height
+arg	14:91	14:101	7	frame_size
+water	14:91	0:0	8	frame_size
+op	14:103	0:0	6	<
+water	14:105	0:0	6	0
+stmts	14:108	17:8	5	
+water	14:108	0:0	6	{
+call	15:12	15:78	6	av_log
+arg	15:19	15:23	7	NULL
+water	15:19	0:0	8	NULL
+arg	15:25	15:37	7	AV_LOG_FATAL
+water	15:25	0:0	8	AV_LOG_FATAL
+arg	15:39	15:66	7	"Invalid frame size: %s.\n"
+water	15:39	0:0	8	"Invalid frame size: %s.\n"
+arg	15:68	15:78	7	frame_size
+water	15:68	0:0	8	frame_size
+water	15:79	0:0	6	;
+call	16:12	16:26	6	exit_program
+arg	16:25	16:26	7	1
+water	16:25	0:0	8	1
+water	16:27	0:0	6	;
+water	17:8	0:0	6	}
+water	18:4	0:0	4	}
+return	19:4	19:14	2	ost
+water	19:11	0:0	3	ost

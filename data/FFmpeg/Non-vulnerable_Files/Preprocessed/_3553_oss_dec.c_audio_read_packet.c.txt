@@ -1,0 +1,197 @@
+func	1:0	36:0	0	static int	audio_read_packet
+params	1:28	0:0	1	
+param	1:29	1:48	2	AVFormatContext *	s1
+param	1:50	1:63	2	AVPacket *	pkt
+stmnts	0:0	35:12	1	
+decl	3:4	3:35	2	OSSAudioData	*s
+op	3:20	0:0	2	=
+water	3:22	0:0	2	s1
+op	3:24	0:0	2	->
+water	3:26	0:0	2	priv_data
+decl	4:4	4:19	2	int	ret
+water	4:11	0:0	2	,
+decl	4:4	4:19	2	int	bdelay
+decl	5:4	5:20	2	int64_t	cur_time
+decl	6:4	6:31	2	struct audio_buf_info	abufi
+if	7:4	8:18	2	(( ret =av_new_packet (pkt ,s -> frame_size ) ) < 0)
+cond	7:8	7:50	3	( ret =av_new_packet (pkt ,s -> frame_size ) ) < 0
+water	7:8	0:0	4	(
+water	7:9	0:0	4	ret
+op	7:12	0:0	4	=
+call	7:13	7:45	4	av_new_packet
+arg	7:27	7:30	5	pkt
+water	7:27	0:0	6	pkt
+arg	7:32	7:45	5	s->frame_size
+water	7:32	0:0	6	s
+op	7:33	0:0	6	->
+water	7:35	0:0	6	frame_size
+water	7:46	0:0	4	)
+op	7:48	0:0	4	<
+water	7:50	0:0	4	0
+stmts	8:8	8:18	3	
+return	8:8	8:18	4	ret
+water	8:15	0:0	5	ret
+water	9:4	0:0	2	ret
+op	9:8	0:0	2	=
+call	9:10	9:42	2	read
+arg	9:15	9:20	3	s->fd
+water	9:15	0:0	4	s
+op	9:16	0:0	4	->
+water	9:18	0:0	4	fd
+arg	9:22	9:31	3	pkt->data
+water	9:22	0:0	4	pkt
+op	9:25	0:0	4	->
+water	9:27	0:0	4	data
+arg	9:33	9:42	3	pkt->size
+water	9:33	0:0	4	pkt
+op	9:36	0:0	4	->
+water	9:38	0:0	4	size
+water	9:43	0:0	2	;
+if	10:4	15:4	2	(ret <= 0)
+cond	10:8	10:15	3	ret <= 0
+water	10:8	0:0	4	ret
+op	10:12	0:0	4	<=
+water	10:15	0:0	4	0
+stmts	10:17	15:4	3	
+water	10:17	0:0	4	{
+call	11:8	11:26	4	av_free_packet
+arg	11:23	11:26	5	pkt
+water	11:23	0:0	6	pkt
+water	11:27	0:0	4	;
+water	12:8	0:0	4	pkt
+op	12:11	0:0	4	->
+water	12:13	0:0	4	size
+op	12:18	0:0	4	=
+water	12:20	0:0	4	0
+water	12:21	0:0	4	;
+if	13:8	13:41	4	(ret < 0)
+cond	13:12	13:16	5	ret < 0
+water	13:12	0:0	6	ret
+op	13:15	0:0	6	<
+water	13:16	0:0	6	0
+stmts	13:20	13:41	5	
+return	13:20	13:41	6	AVERROR(errno)
+call	13:27	13:40	7	AVERROR
+arg	13:35	13:40	8	errno
+water	13:35	0:0	9	errno
+else	14:8	14:38	4
+stmts	14:20	14:38	5	
+return	14:20	14:38	6	AVERROR_EOF
+water	14:27	0:0	7	AVERROR_EOF
+water	15:4	0:0	4	}
+water	16:4	0:0	2	pkt
+op	16:7	0:0	2	->
+water	16:9	0:0	2	size
+op	16:14	0:0	2	=
+water	16:16	0:0	2	ret
+water	16:19	0:0	2	;
+water	18:4	0:0	2	cur_time
+op	18:13	0:0	2	=
+call	18:15	18:26	2	av_gettime
+water	18:27	0:0	2	;
+water	19:4	0:0	2	bdelay
+op	19:11	0:0	2	=
+water	19:13	0:0	2	ret
+water	19:16	0:0	2	;
+if	20:4	22:4	2	(ioctl (s -> fd ,SNDCTL_DSP_GETISPACE ,& abufi ) == 0)
+cond	20:8	20:54	3	ioctl (s -> fd ,SNDCTL_DSP_GETISPACE ,& abufi ) == 0
+call	20:8	20:49	4	ioctl
+arg	20:14	20:19	5	s->fd
+water	20:14	0:0	6	s
+op	20:15	0:0	6	->
+water	20:17	0:0	6	fd
+arg	20:21	20:41	5	SNDCTL_DSP_GETISPACE
+water	20:21	0:0	6	SNDCTL_DSP_GETISPACE
+arg	20:43	20:49	5	&abufi
+op	20:43	0:0	6	&
+water	20:44	0:0	6	abufi
+op	20:51	0:0	4	==
+water	20:54	0:0	4	0
+stmts	20:57	22:4	3	
+water	20:57	0:0	4	{
+water	21:8	0:0	4	bdelay
+op	21:15	0:0	4	+=
+water	21:18	0:0	4	abufi
+op	21:23	0:0	4	.
+water	21:24	0:0	4	bytes
+water	21:29	0:0	4	;
+water	22:4	0:0	4	}
+water	24:4	0:0	2	cur_time
+op	24:13	0:0	2	-=
+water	24:16	0:0	2	(
+water	24:17	0:0	2	bdelay
+op	24:24	0:0	2	*
+water	24:26	0:0	2	1000000
+water	24:33	0:0	2	LL
+water	24:35	0:0	2	)
+op	24:37	0:0	2	/
+water	24:39	0:0	2	(
+water	24:40	0:0	2	s
+op	24:41	0:0	2	->
+water	24:43	0:0	2	sample_rate
+op	24:55	0:0	2	*
+water	24:57	0:0	2	s
+op	24:58	0:0	2	->
+water	24:60	0:0	2	channels
+water	24:68	0:0	2	)
+water	24:69	0:0	2	;
+water	26:4	0:0	2	pkt
+op	26:7	0:0	2	->
+water	26:9	0:0	2	pts
+op	26:13	0:0	2	=
+water	26:15	0:0	2	cur_time
+water	26:23	0:0	2	;
+if	27:4	34:4	2	(s -> flip_left && s -> channels == 2)
+cond	27:8	27:39	3	s -> flip_left && s -> channels == 2
+water	27:8	0:0	4	s
+op	27:9	0:0	4	->
+water	27:11	0:0	4	flip_left
+op	27:21	0:0	4	&&
+water	27:24	0:0	4	s
+op	27:25	0:0	4	->
+water	27:27	0:0	4	channels
+op	27:36	0:0	4	==
+water	27:39	0:0	4	2
+stmts	27:42	34:4	3	
+water	27:42	0:0	4	{
+decl	28:8	28:13	4	int	i
+decl	29:8	29:38	4	short	*p
+op	29:17	0:0	4	=
+water	29:19	0:0	4	(
+water	29:20	0:0	4	short
+op	29:26	0:0	4	*
+water	29:27	0:0	4	)
+water	29:29	0:0	4	pkt
+op	29:32	0:0	4	->
+water	29:34	0:0	4	data
+for	30:8	33:8	4	(i = 0 ;i < ret;i += 4)
+forinit	30:13	30:18	5	i = 0 ;
+water	30:13	0:0	6	i
+op	30:15	0:0	6	=
+water	30:17	0:0	6	0
+water	30:18	0:0	6	;
+cond	30:20	30:24	5	i < ret
+water	30:20	0:0	6	i
+op	30:22	0:0	6	<
+water	30:24	0:0	6	ret
+forexpr	30:29	30:34	5	i += 4
+water	30:29	0:0	6	i
+op	30:31	0:0	6	+=
+water	30:34	0:0	6	4
+stmts	30:37	33:8	5	
+water	30:37	0:0	6	{
+op	31:12	0:0	6	*
+water	31:13	0:0	6	p
+op	31:15	0:0	6	=
+op	31:17	0:0	6	~
+op	31:18	0:0	6	*
+water	31:19	0:0	6	p
+water	31:20	0:0	6	;
+water	32:12	0:0	6	p
+op	32:14	0:0	6	+=
+water	32:17	0:0	6	2
+water	32:18	0:0	6	;
+water	33:8	0:0	6	}
+water	34:4	0:0	4	}
+return	35:4	35:12	2	0
+water	35:11	0:0	3	0

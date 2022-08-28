@@ -1,0 +1,91 @@
+func	1:0	18:0	0	int	ff_rtmp_calc_digest
+params	1:23	0:0	1	
+param	1:24	1:42	2	const uint8_t *	src
+param	1:44	1:51	2	int	len
+param	1:53	1:60	2	int	gap
+param	2:24	2:42	2	const uint8_t *	key
+param	2:44	2:54	2	int	keylen
+param	2:56	2:68	2	uint8_t *	dst
+stmnts	0:0	17:12	1	
+decl	4:4	4:16	2	AVHMAC	*hmac
+water	5:4	0:0	2	hmac
+op	5:9	0:0	2	=
+call	5:11	5:39	2	av_hmac_alloc
+arg	5:25	5:39	3	AV_HMAC_SHA256
+water	5:25	0:0	4	AV_HMAC_SHA256
+water	5:40	0:0	2	;
+if	6:4	7:30	2	(! hmac)
+cond	6:8	6:9	3	! hmac
+op	6:8	0:0	4	!
+water	6:9	0:0	4	hmac
+stmts	7:8	7:30	3	
+return	7:8	7:30	4	AVERROR(ENOMEM)
+call	7:15	7:29	5	AVERROR
+arg	7:23	7:29	6	ENOMEM
+water	7:23	0:0	7	ENOMEM
+call	8:4	8:34	2	av_hmac_init
+arg	8:17	8:21	3	hmac
+water	8:17	0:0	4	hmac
+arg	8:23	8:26	3	key
+water	8:23	0:0	4	key
+arg	8:28	8:34	3	keylen
+water	8:28	0:0	4	keylen
+water	8:35	0:0	2	;
+if	9:4	11:4	2	(gap <= 0)
+cond	9:8	9:15	3	gap <= 0
+water	9:8	0:0	4	gap
+op	9:12	0:0	4	<=
+water	9:15	0:0	4	0
+stmts	9:18	11:4	3	
+water	9:18	0:0	4	{
+call	10:8	10:37	4	av_hmac_update
+arg	10:23	10:27	5	hmac
+water	10:23	0:0	6	hmac
+arg	10:29	10:32	5	src
+water	10:29	0:0	6	src
+arg	10:34	10:37	5	len
+water	10:34	0:0	6	len
+water	10:38	0:0	4	;
+water	11:4	0:0	4	}
+else	11:6	14:4	2
+stmts	11:11	14:4	3	
+water	11:11	0:0	4	{
+call	12:8	12:37	4	av_hmac_update
+arg	12:23	12:27	5	hmac
+water	12:23	0:0	6	hmac
+arg	12:29	12:32	5	src
+water	12:29	0:0	6	src
+arg	12:34	12:37	5	gap
+water	12:34	0:0	6	gap
+water	12:38	0:0	4	;
+call	13:8	13:59	4	av_hmac_update
+arg	13:23	13:27	5	hmac
+water	13:23	0:0	6	hmac
+arg	13:29	13:43	5	src+gap+32
+water	13:29	0:0	6	src
+op	13:33	0:0	6	+
+water	13:35	0:0	6	gap
+op	13:39	0:0	6	+
+water	13:41	0:0	6	32
+arg	13:45	13:59	5	len-gap-32
+water	13:45	0:0	6	len
+op	13:49	0:0	6	-
+water	13:51	0:0	6	gap
+op	13:55	0:0	6	-
+water	13:57	0:0	6	32
+water	13:60	0:0	4	;
+water	14:4	0:0	4	}
+call	15:4	15:31	2	av_hmac_final
+arg	15:18	15:22	3	hmac
+water	15:18	0:0	4	hmac
+arg	15:24	15:27	3	dst
+water	15:24	0:0	4	dst
+arg	15:29	15:31	3	32
+water	15:29	0:0	4	32
+water	15:32	0:0	2	;
+call	16:4	16:21	2	av_hmac_free
+arg	16:17	16:21	3	hmac
+water	16:17	0:0	4	hmac
+water	16:22	0:0	2	;
+return	17:4	17:12	2	0
+water	17:11	0:0	3	0

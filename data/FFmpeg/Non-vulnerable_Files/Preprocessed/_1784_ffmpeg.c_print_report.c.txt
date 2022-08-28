@@ -1,0 +1,1334 @@
+func	1:0	170:0	0	static void	print_report
+params	1:24	0:0	1	
+param	1:25	1:43	2	int	is_last_report
+param	1:45	1:64	2	int64_t	timer_start
+param	1:66	1:82	2	int64_t	cur_time
+stmnts	0:0	169:37	1	
+decl	3:4	3:18	2	char	buf[1024]
+decl	4:4	4:23	2	AVBPrint	buf_script
+decl	5:4	5:21	2	OutputStream	*ost
+decl	6:4	6:23	2	AVFormatContext	*oc
+decl	7:4	7:22	2	int64_t	total_size
+decl	8:4	8:23	2	AVCodecContext	*enc
+decl	9:4	9:28	2	int	frame_number
+water	9:20	0:0	2	,
+decl	9:4	9:28	2	int	vid
+water	9:25	0:0	2	,
+decl	9:4	9:28	2	int	i
+decl	10:4	10:18	2	double	bitrate
+decl	11:4	11:16	2	double	speed
+decl	12:4	12:31	2	int64_t	pts
+op	12:16	0:0	2	=
+water	12:18	0:0	2	INT64_MIN
+op	12:28	0:0	2	+
+water	12:30	0:0	2	1
+water	13:4	0:0	2	static
+water	13:11	0:0	2	int64_t
+water	13:19	0:0	2	last_time
+op	13:29	0:0	2	=
+op	13:31	0:0	2	-
+water	13:32	0:0	2	1
+water	13:33	0:0	2	;
+water	14:4	0:0	2	static
+water	14:11	0:0	2	int
+water	14:15	0:0	2	qp_histogram
+op	14:27	0:0	2	[
+water	14:28	0:0	2	52
+op	14:30	0:0	2	]
+water	14:31	0:0	2	;
+decl	15:4	15:29	2	int	hours
+water	15:13	0:0	2	,
+decl	15:4	15:29	2	int	mins
+water	15:19	0:0	2	,
+decl	15:4	15:29	2	int	secs
+water	15:25	0:0	2	,
+decl	15:4	15:29	2	int	us
+decl	16:4	16:11	2	int	ret
+decl	17:4	17:11	2	float	t
+if	18:4	19:14	2	(! print_stats && ! is_last_report && ! progress_avio)
+cond	18:8	18:44	3	! print_stats && ! is_last_report && ! progress_avio
+op	18:8	0:0	4	!
+water	18:9	0:0	4	print_stats
+op	18:21	0:0	4	&&
+op	18:24	0:0	4	!
+water	18:25	0:0	4	is_last_report
+op	18:40	0:0	4	&&
+op	18:43	0:0	4	!
+water	18:44	0:0	4	progress_avio
+stmts	19:8	19:14	3	
+return	19:8	19:14	4	
+if	20:4	28:4	2	(! is_last_report)
+cond	20:8	20:9	3	! is_last_report
+op	20:8	0:0	4	!
+water	20:9	0:0	4	is_last_report
+stmts	20:25	28:4	3	
+water	20:25	0:0	4	{
+if	21:8	24:8	4	(last_time == - 1)
+cond	21:12	21:26	5	last_time == - 1
+water	21:12	0:0	6	last_time
+op	21:22	0:0	6	==
+op	21:25	0:0	6	-
+water	21:26	0:0	6	1
+stmts	21:29	24:8	5	
+water	21:29	0:0	6	{
+water	22:12	0:0	6	last_time
+op	22:22	0:0	6	=
+water	22:24	0:0	6	cur_time
+water	22:32	0:0	6	;
+return	23:12	23:18	6	
+water	24:8	0:0	6	}
+if	25:8	26:18	4	(( cur_time - last_time ) < 500000)
+cond	25:12	25:37	5	( cur_time - last_time ) < 500000
+water	25:12	0:0	6	(
+water	25:13	0:0	6	cur_time
+op	25:22	0:0	6	-
+water	25:24	0:0	6	last_time
+water	25:33	0:0	6	)
+op	25:35	0:0	6	<
+water	25:37	0:0	6	500000
+stmts	26:12	26:18	5	
+return	26:12	26:18	6	
+water	27:8	0:0	4	last_time
+op	27:18	0:0	4	=
+water	27:20	0:0	4	cur_time
+water	27:28	0:0	4	;
+water	28:4	0:0	4	}
+water	29:4	0:0	2	t
+op	29:6	0:0	2	=
+water	29:8	0:0	2	(
+water	29:9	0:0	2	cur_time
+op	29:17	0:0	2	-
+water	29:18	0:0	2	timer_start
+water	29:29	0:0	2	)
+op	29:31	0:0	2	/
+water	29:33	0:0	2	1000000
+op	29:40	0:0	2	.
+water	29:41	0:0	2	0
+water	29:42	0:0	2	;
+water	30:4	0:0	2	oc
+op	30:7	0:0	2	=
+water	30:9	0:0	2	output_files
+op	30:21	0:0	2	[
+water	30:22	0:0	2	0
+op	30:23	0:0	2	]
+op	30:24	0:0	2	->
+water	30:26	0:0	2	ctx
+water	30:29	0:0	2	;
+water	31:4	0:0	2	total_size
+op	31:15	0:0	2	=
+call	31:17	31:33	2	avio_size
+arg	31:27	31:33	3	oc->pb
+water	31:27	0:0	4	oc
+op	31:29	0:0	4	->
+water	31:31	0:0	4	pb
+water	31:34	0:0	2	;
+if	32:4	33:38	2	(total_size <= 0)
+cond	32:8	32:22	3	total_size <= 0
+water	32:8	0:0	4	total_size
+op	32:19	0:0	4	<=
+water	32:22	0:0	4	0
+stmts	33:8	33:38	3	
+water	33:8	0:0	4	total_size
+op	33:19	0:0	4	=
+call	33:21	33:37	4	avio_tell
+arg	33:31	33:37	5	oc->pb
+water	33:31	0:0	6	oc
+op	33:33	0:0	6	->
+water	33:35	0:0	6	pb
+water	33:38	0:0	4	;
+water	34:4	0:0	2	buf
+op	34:7	0:0	2	[
+water	34:8	0:0	2	0
+op	34:9	0:0	2	]
+op	34:11	0:0	2	=
+water	34:13	0:0	2	'\0'
+water	34:17	0:0	2	;
+water	35:4	0:0	2	vid
+op	35:8	0:0	2	=
+water	35:10	0:0	2	0
+water	35:11	0:0	2	;
+call	36:4	36:36	2	av_bprint_init
+arg	36:19	36:30	3	&buf_script
+op	36:19	0:0	4	&
+water	36:20	0:0	4	buf_script
+arg	36:32	36:33	3	0
+water	36:32	0:0	4	0
+arg	36:35	36:36	3	1
+water	36:35	0:0	4	1
+water	36:37	0:0	2	;
+for	37:4	105:4	2	(i = 0 ;i < nb_output_streams;i ++)
+forinit	37:9	37:14	3	i = 0 ;
+water	37:9	0:0	4	i
+op	37:11	0:0	4	=
+water	37:13	0:0	4	0
+water	37:14	0:0	4	;
+cond	37:16	37:20	3	i < nb_output_streams
+water	37:16	0:0	4	i
+op	37:18	0:0	4	<
+water	37:20	0:0	4	nb_output_streams
+forexpr	37:39	37:40	3	i ++
+water	37:39	0:0	4	i
+op	37:40	0:0	4	++
+stmts	37:44	105:4	3	
+water	37:44	0:0	4	{
+decl	38:8	38:20	4	float	q
+op	38:16	0:0	4	=
+op	38:18	0:0	4	-
+water	38:19	0:0	4	1
+water	39:8	0:0	4	ost
+op	39:12	0:0	4	=
+water	39:14	0:0	4	output_streams
+op	39:28	0:0	4	[
+water	39:29	0:0	4	i
+op	39:30	0:0	4	]
+water	39:31	0:0	4	;
+water	40:8	0:0	4	enc
+op	40:12	0:0	4	=
+water	40:14	0:0	4	ost
+op	40:17	0:0	4	->
+water	40:19	0:0	4	enc_ctx
+water	40:26	0:0	4	;
+if	41:8	42:51	4	(! ost -> stream_copy)
+cond	41:12	41:18	5	! ost -> stream_copy
+op	41:12	0:0	6	!
+water	41:13	0:0	6	ost
+op	41:16	0:0	6	->
+water	41:18	0:0	6	stream_copy
+stmts	42:12	42:51	5	
+water	42:12	0:0	6	q
+op	42:14	0:0	6	=
+water	42:16	0:0	6	ost
+op	42:19	0:0	6	->
+water	42:21	0:0	6	quality
+op	42:29	0:0	6	/
+water	42:31	0:0	6	(
+water	42:32	0:0	6	float
+water	42:37	0:0	6	)
+water	42:39	0:0	6	FF_QP2LAMBDA
+water	42:51	0:0	6	;
+if	43:8	47:8	4	(vid && enc -> codec_type == AVMEDIA_TYPE_VIDEO)
+cond	43:12	43:38	5	vid && enc -> codec_type == AVMEDIA_TYPE_VIDEO
+water	43:12	0:0	6	vid
+op	43:16	0:0	6	&&
+water	43:19	0:0	6	enc
+op	43:22	0:0	6	->
+water	43:24	0:0	6	codec_type
+op	43:35	0:0	6	==
+water	43:38	0:0	6	AVMEDIA_TYPE_VIDEO
+stmts	43:58	47:8	5	
+water	43:58	0:0	6	{
+call	44:12	44:80	6	snprintf
+arg	44:21	44:38	7	buf+strlen(buf)
+water	44:21	0:0	8	buf
+op	44:25	0:0	8	+
+call	44:27	44:37	8	strlen
+arg	44:34	44:37	9	buf
+water	44:34	0:0	10	buf
+arg	44:40	44:65	7	sizeof(buf)-strlen(buf)
+op	44:40	0:0	8	sizeof
+water	44:46	0:0	8	(
+water	44:47	0:0	8	buf
+water	44:50	0:0	8	)
+op	44:52	0:0	8	-
+call	44:54	44:64	8	strlen
+arg	44:61	44:64	9	buf
+water	44:61	0:0	10	buf
+arg	44:67	44:77	7	"q=%2.1f "
+water	44:67	0:0	8	"q=%2.1f "
+arg	44:79	44:80	7	q
+water	44:79	0:0	8	q
+water	44:81	0:0	6	;
+call	45:12	46:53	6	av_bprintf
+arg	45:23	45:34	7	&buf_script
+op	45:23	0:0	8	&
+water	45:24	0:0	8	buf_script
+arg	45:36	45:59	7	"stream_%d_%d_q=%.1f\n"
+water	45:36	0:0	8	"stream_%d_%d_q=%.1f\n"
+arg	46:23	46:38	7	ost->file_index
+water	46:23	0:0	8	ost
+op	46:26	0:0	8	->
+water	46:28	0:0	8	file_index
+arg	46:40	46:50	7	ost->index
+water	46:40	0:0	8	ost
+op	46:43	0:0	8	->
+water	46:45	0:0	8	index
+arg	46:52	46:53	7	q
+water	46:52	0:0	8	q
+water	46:54	0:0	6	;
+water	47:8	0:0	6	}
+if	48:8	98:8	4	(! vid && enc -> codec_type == AVMEDIA_TYPE_VIDEO)
+cond	48:12	48:39	5	! vid && enc -> codec_type == AVMEDIA_TYPE_VIDEO
+op	48:12	0:0	6	!
+water	48:13	0:0	6	vid
+op	48:17	0:0	6	&&
+water	48:20	0:0	6	enc
+op	48:23	0:0	6	->
+water	48:25	0:0	6	codec_type
+op	48:36	0:0	6	==
+water	48:39	0:0	6	AVMEDIA_TYPE_VIDEO
+stmts	48:59	98:8	5	
+water	48:59	0:0	6	{
+decl	49:12	49:21	6	float	fps
+water	50:12	0:0	6	frame_number
+op	50:25	0:0	6	=
+water	50:27	0:0	6	ost
+op	50:30	0:0	6	->
+water	50:32	0:0	6	frame_number
+water	50:44	0:0	6	;
+water	51:12	0:0	6	fps
+op	51:16	0:0	6	=
+water	51:18	0:0	6	t
+op	51:20	0:0	6	>
+water	51:22	0:0	6	1
+water	51:24	0:0	6	?
+water	51:26	0:0	6	frame_number
+op	51:39	0:0	6	/
+water	51:41	0:0	6	t
+water	51:43	0:0	6	:
+water	51:45	0:0	6	0
+water	51:46	0:0	6	;
+call	52:12	53:53	6	snprintf
+arg	52:21	52:38	7	buf+strlen(buf)
+water	52:21	0:0	8	buf
+op	52:25	0:0	8	+
+call	52:27	52:37	8	strlen
+arg	52:34	52:37	9	buf
+water	52:34	0:0	10	buf
+arg	52:40	52:65	7	sizeof(buf)-strlen(buf)
+op	52:40	0:0	8	sizeof
+water	52:46	0:0	8	(
+water	52:47	0:0	8	buf
+water	52:50	0:0	8	)
+op	52:52	0:0	8	-
+call	52:54	52:64	8	strlen
+arg	52:61	52:64	9	buf
+water	52:61	0:0	10	buf
+arg	52:67	52:97	7	"frame=%5d fps=%3.*f q=%3.1f "
+water	52:67	0:0	8	"frame=%5d fps=%3.*f q=%3.1f "
+arg	53:21	53:33	7	frame_number
+water	53:21	0:0	8	frame_number
+arg	53:35	53:45	7	fps<9.95
+water	53:35	0:0	8	fps
+op	53:39	0:0	8	<
+water	53:41	0:0	8	9
+op	53:42	0:0	8	.
+water	53:43	0:0	8	95
+arg	53:47	53:50	7	fps
+water	53:47	0:0	8	fps
+arg	53:52	53:53	7	q
+water	53:52	0:0	8	q
+water	53:54	0:0	6	;
+call	54:12	54:62	6	av_bprintf
+arg	54:23	54:34	7	&buf_script
+op	54:23	0:0	8	&
+water	54:24	0:0	8	buf_script
+arg	54:36	54:48	7	"frame=%d\n"
+water	54:36	0:0	8	"frame=%d\n"
+arg	54:50	54:62	7	frame_number
+water	54:50	0:0	8	frame_number
+water	54:63	0:0	6	;
+call	55:12	55:53	6	av_bprintf
+arg	55:23	55:34	7	&buf_script
+op	55:23	0:0	8	&
+water	55:24	0:0	8	buf_script
+arg	55:36	55:48	7	"fps=%.1f\n"
+water	55:36	0:0	8	"fps=%.1f\n"
+arg	55:50	55:53	7	fps
+water	55:50	0:0	8	fps
+water	55:54	0:0	6	;
+call	56:12	57:53	6	av_bprintf
+arg	56:23	56:34	7	&buf_script
+op	56:23	0:0	8	&
+water	56:24	0:0	8	buf_script
+arg	56:36	56:59	7	"stream_%d_%d_q=%.1f\n"
+water	56:36	0:0	8	"stream_%d_%d_q=%.1f\n"
+arg	57:23	57:38	7	ost->file_index
+water	57:23	0:0	8	ost
+op	57:26	0:0	8	->
+water	57:28	0:0	8	file_index
+arg	57:40	57:50	7	ost->index
+water	57:40	0:0	8	ost
+op	57:43	0:0	8	->
+water	57:45	0:0	8	index
+arg	57:52	57:53	7	q
+water	57:52	0:0	8	q
+water	57:54	0:0	6	;
+if	58:12	59:75	6	(is_last_report)
+cond	58:16	58:16	7	is_last_report
+water	58:16	0:0	8	is_last_report
+stmts	59:16	59:75	7	
+call	59:16	59:74	8	snprintf
+arg	59:25	59:42	9	buf+strlen(buf)
+water	59:25	0:0	10	buf
+op	59:29	0:0	10	+
+call	59:31	59:41	10	strlen
+arg	59:38	59:41	11	buf
+water	59:38	0:0	12	buf
+arg	59:44	59:69	9	sizeof(buf)-strlen(buf)
+op	59:44	0:0	10	sizeof
+water	59:50	0:0	10	(
+water	59:51	0:0	10	buf
+water	59:54	0:0	10	)
+op	59:56	0:0	10	-
+call	59:58	59:68	10	strlen
+arg	59:65	59:68	11	buf
+water	59:65	0:0	12	buf
+arg	59:71	59:74	9	"L"
+water	59:71	0:0	10	"L"
+water	59:75	0:0	8	;
+if	60:12	67:12	6	(qp_hist)
+cond	60:16	60:16	7	qp_hist
+water	60:16	0:0	8	qp_hist
+stmts	60:25	67:12	7	
+water	60:25	0:0	8	{
+decl	61:16	61:21	8	int	j
+decl	62:16	62:34	8	int	qp
+op	62:23	0:0	8	=
+call	62:25	62:33	9	lrintf
+arg	62:32	62:33	10	q
+water	62:32	0:0	11	q
+if	63:16	64:38	8	(qp >= 0 && qp <FF_ARRAY_ELEMS (qp_histogram ))
+cond	63:20	63:63	9	qp >= 0 && qp <FF_ARRAY_ELEMS (qp_histogram )
+water	63:20	0:0	10	qp
+op	63:23	0:0	10	>=
+water	63:26	0:0	10	0
+op	63:28	0:0	10	&&
+water	63:31	0:0	10	qp
+op	63:34	0:0	10	<
+call	63:36	63:63	10	FF_ARRAY_ELEMS
+arg	63:51	63:63	11	qp_histogram
+water	63:51	0:0	12	qp_histogram
+stmts	64:20	64:38	9	
+water	64:20	0:0	10	qp_histogram
+op	64:32	0:0	10	[
+water	64:33	0:0	10	qp
+op	64:35	0:0	10	]
+op	64:36	0:0	10	++
+water	64:38	0:0	10	;
+for	65:16	66:110	8	(j = 0 ;j < 32;j ++)
+forinit	65:21	65:26	9	j = 0 ;
+water	65:21	0:0	10	j
+op	65:23	0:0	10	=
+water	65:25	0:0	10	0
+water	65:26	0:0	10	;
+cond	65:28	65:32	9	j < 32
+water	65:28	0:0	10	j
+op	65:30	0:0	10	<
+water	65:32	0:0	10	32
+forexpr	65:36	65:37	9	j ++
+water	65:36	0:0	10	j
+op	65:37	0:0	10	++
+stmts	66:20	66:110	9	
+call	66:20	66:109	10	snprintf
+arg	66:29	66:46	11	buf+strlen(buf)
+water	66:29	0:0	12	buf
+op	66:33	0:0	12	+
+call	66:35	66:45	12	strlen
+arg	66:42	66:45	13	buf
+water	66:42	0:0	14	buf
+arg	66:48	66:73	11	sizeof(buf)-strlen(buf)
+op	66:48	0:0	12	sizeof
+water	66:54	0:0	12	(
+water	66:55	0:0	12	buf
+water	66:58	0:0	12	)
+op	66:60	0:0	12	-
+call	66:62	66:72	12	strlen
+arg	66:69	66:72	13	buf
+water	66:69	0:0	14	buf
+arg	66:75	66:79	11	"%X"
+water	66:75	0:0	12	"%X"
+arg	66:81	66:109	11	av_log2(qp_histogram[j]+1)
+call	66:81	66:108	12	av_log2
+arg	66:89	66:108	13	qp_histogram[j]+1
+water	66:89	0:0	14	qp_histogram
+op	66:101	0:0	14	[
+water	66:102	0:0	14	j
+op	66:103	0:0	14	]
+op	66:105	0:0	14	+
+water	66:107	0:0	14	1
+water	66:110	0:0	10	;
+water	67:12	0:0	8	}
+if	68:12	96:12	6	(( enc -> flags & AV_CODEC_FLAG_PSNR ) && ( ost -> pict_type != AV_PICTURE_TYPE_NONE || is_last_report ))
+cond	68:16	68:110	7	( enc -> flags & AV_CODEC_FLAG_PSNR ) && ( ost -> pict_type != AV_PICTURE_TYPE_NONE || is_last_report )
+water	68:16	0:0	8	(
+water	68:17	0:0	8	enc
+op	68:20	0:0	8	->
+water	68:22	0:0	8	flags
+op	68:28	0:0	8	&
+water	68:30	0:0	8	AV_CODEC_FLAG_PSNR
+water	68:48	0:0	8	)
+op	68:50	0:0	8	&&
+water	68:53	0:0	8	(
+water	68:54	0:0	8	ost
+op	68:57	0:0	8	->
+water	68:59	0:0	8	pict_type
+op	68:69	0:0	8	!=
+water	68:72	0:0	8	AV_PICTURE_TYPE_NONE
+op	68:93	0:0	8	||
+water	68:96	0:0	8	is_last_report
+water	68:110	0:0	8	)
+stmts	68:113	96:12	7	
+water	68:113	0:0	8	{
+decl	69:16	69:21	8	int	j
+decl	70:16	70:43	8	double	error
+water	70:28	0:0	8	,
+decl	70:16	70:43	8	double	error_sum
+op	70:40	0:0	8	=
+water	70:42	0:0	8	0
+decl	71:16	71:43	8	double	scale
+water	71:28	0:0	8	,
+decl	71:16	71:43	8	double	scale_sum
+op	71:40	0:0	8	=
+water	71:42	0:0	8	0
+decl	72:16	72:24	8	double	p
+decl	73:16	73:46	8	char	type[3]
+op	73:29	0:0	8	=
+water	73:31	0:0	8	{
+water	73:33	0:0	8	'Y'
+water	73:36	0:0	8	,
+water	73:37	0:0	8	'U'
+water	73:40	0:0	8	,
+water	73:41	0:0	8	'V'
+water	73:45	0:0	8	}
+call	74:16	74:78	8	snprintf
+arg	74:25	74:42	9	buf+strlen(buf)
+water	74:25	0:0	10	buf
+op	74:29	0:0	10	+
+call	74:31	74:41	10	strlen
+arg	74:38	74:41	11	buf
+water	74:38	0:0	12	buf
+arg	74:44	74:69	9	sizeof(buf)-strlen(buf)
+op	74:44	0:0	10	sizeof
+water	74:50	0:0	10	(
+water	74:51	0:0	10	buf
+water	74:54	0:0	10	)
+op	74:56	0:0	10	-
+call	74:58	74:68	10	strlen
+arg	74:65	74:68	11	buf
+water	74:65	0:0	12	buf
+arg	74:71	74:78	9	"PSNR="
+water	74:71	0:0	10	"PSNR="
+water	74:79	0:0	8	;
+for	75:16	91:16	8	(j = 0 ;j < 3;j ++)
+forinit	75:21	75:26	9	j = 0 ;
+water	75:21	0:0	10	j
+op	75:23	0:0	10	=
+water	75:25	0:0	10	0
+water	75:26	0:0	10	;
+cond	75:28	75:32	9	j < 3
+water	75:28	0:0	10	j
+op	75:30	0:0	10	<
+water	75:32	0:0	10	3
+forexpr	75:35	75:36	9	j ++
+water	75:35	0:0	10	j
+op	75:36	0:0	10	++
+stmts	75:40	91:16	9	
+water	75:40	0:0	10	{
+if	76:20	79:20	10	(is_last_report)
+cond	76:24	76:24	11	is_last_report
+water	76:24	0:0	12	is_last_report
+stmts	76:40	79:20	11	
+water	76:40	0:0	12	{
+water	77:24	0:0	12	error
+op	77:30	0:0	12	=
+water	77:32	0:0	12	enc
+op	77:35	0:0	12	->
+water	77:37	0:0	12	error
+op	77:42	0:0	12	[
+water	77:43	0:0	12	j
+op	77:44	0:0	12	]
+water	77:45	0:0	12	;
+water	78:24	0:0	12	scale
+op	78:30	0:0	12	=
+water	78:32	0:0	12	enc
+op	78:35	0:0	12	->
+water	78:37	0:0	12	width
+op	78:43	0:0	12	*
+water	78:45	0:0	12	enc
+op	78:48	0:0	12	->
+water	78:50	0:0	12	height
+op	78:57	0:0	12	*
+water	78:59	0:0	12	255
+op	78:62	0:0	12	.
+water	78:63	0:0	12	0
+op	78:65	0:0	12	*
+water	78:67	0:0	12	255
+op	78:70	0:0	12	.
+water	78:71	0:0	12	0
+op	78:73	0:0	12	*
+water	78:75	0:0	12	frame_number
+water	78:87	0:0	12	;
+water	79:20	0:0	12	}
+else	79:22	82:20	10
+stmts	79:27	82:20	11	
+water	79:27	0:0	12	{
+water	80:24	0:0	12	error
+op	80:30	0:0	12	=
+water	80:32	0:0	12	ost
+op	80:35	0:0	12	->
+water	80:37	0:0	12	error
+op	80:42	0:0	12	[
+water	80:43	0:0	12	j
+op	80:44	0:0	12	]
+water	80:45	0:0	12	;
+water	81:24	0:0	12	scale
+op	81:30	0:0	12	=
+water	81:32	0:0	12	enc
+op	81:35	0:0	12	->
+water	81:37	0:0	12	width
+op	81:43	0:0	12	*
+water	81:45	0:0	12	enc
+op	81:48	0:0	12	->
+water	81:50	0:0	12	height
+op	81:57	0:0	12	*
+water	81:59	0:0	12	255
+op	81:62	0:0	12	.
+water	81:63	0:0	12	0
+op	81:65	0:0	12	*
+water	81:67	0:0	12	255
+op	81:70	0:0	12	.
+water	81:71	0:0	12	0
+water	81:72	0:0	12	;
+water	82:20	0:0	12	}
+if	83:20	84:34	10	(j)
+cond	83:24	83:24	11	j
+water	83:24	0:0	12	j
+stmts	84:24	84:34	11	
+water	84:24	0:0	12	scale
+op	84:30	0:0	12	/=
+water	84:33	0:0	12	4
+water	84:34	0:0	12	;
+water	85:20	0:0	10	error_sum
+op	85:30	0:0	10	+=
+water	85:33	0:0	10	error
+water	85:38	0:0	10	;
+water	86:20	0:0	10	scale_sum
+op	86:30	0:0	10	+=
+water	86:33	0:0	10	scale
+water	86:38	0:0	10	;
+water	87:20	0:0	10	p
+op	87:22	0:0	10	=
+call	87:24	87:42	10	psnr
+arg	87:29	87:42	11	error/scale
+water	87:29	0:0	12	error
+op	87:35	0:0	12	/
+water	87:37	0:0	12	scale
+water	87:43	0:0	10	;
+call	88:20	88:98	10	snprintf
+arg	88:29	88:46	11	buf+strlen(buf)
+water	88:29	0:0	12	buf
+op	88:33	0:0	12	+
+call	88:35	88:45	12	strlen
+arg	88:42	88:45	13	buf
+water	88:42	0:0	14	buf
+arg	88:48	88:73	11	sizeof(buf)-strlen(buf)
+op	88:48	0:0	12	sizeof
+water	88:54	0:0	12	(
+water	88:55	0:0	12	buf
+water	88:58	0:0	12	)
+op	88:60	0:0	12	-
+call	88:62	88:72	12	strlen
+arg	88:69	88:72	13	buf
+water	88:69	0:0	14	buf
+arg	88:75	88:86	11	"%c:%2.2f "
+water	88:75	0:0	12	"%c:%2.2f "
+arg	88:88	88:95	11	type[j]
+water	88:88	0:0	12	type
+op	88:92	0:0	12	[
+water	88:93	0:0	12	j
+op	88:94	0:0	12	]
+arg	88:97	88:98	11	p
+water	88:97	0:0	12	p
+water	88:99	0:0	10	;
+call	89:20	90:75	10	av_bprintf
+arg	89:31	89:42	11	&buf_script
+op	89:31	0:0	12	&
+water	89:32	0:0	12	buf_script
+arg	89:44	89:74	11	"stream_%d_%d_psnr_%c=%2.2f\n"
+water	89:44	0:0	12	"stream_%d_%d_psnr_%c=%2.2f\n"
+arg	90:31	90:46	11	ost->file_index
+water	90:31	0:0	12	ost
+op	90:34	0:0	12	->
+water	90:36	0:0	12	file_index
+arg	90:48	90:58	11	ost->index
+water	90:48	0:0	12	ost
+op	90:51	0:0	12	->
+water	90:53	0:0	12	index
+arg	90:60	90:72	11	type[j]|32
+water	90:60	0:0	12	type
+op	90:64	0:0	12	[
+water	90:65	0:0	12	j
+op	90:66	0:0	12	]
+op	90:68	0:0	12	|
+water	90:70	0:0	12	32
+arg	90:74	90:75	11	p
+water	90:74	0:0	12	p
+water	90:76	0:0	10	;
+water	91:16	0:0	10	}
+water	92:16	0:0	8	p
+op	92:18	0:0	8	=
+call	92:20	92:46	8	psnr
+arg	92:25	92:46	9	error_sum/scale_sum
+water	92:25	0:0	10	error_sum
+op	92:35	0:0	10	/
+water	92:37	0:0	10	scale_sum
+water	92:47	0:0	8	;
+call	93:16	93:110	8	snprintf
+arg	93:25	93:42	9	buf+strlen(buf)
+water	93:25	0:0	10	buf
+op	93:29	0:0	10	+
+call	93:31	93:41	10	strlen
+arg	93:38	93:41	11	buf
+water	93:38	0:0	12	buf
+arg	93:44	93:69	9	sizeof(buf)-strlen(buf)
+op	93:44	0:0	10	sizeof
+water	93:50	0:0	10	(
+water	93:51	0:0	10	buf
+water	93:54	0:0	10	)
+op	93:56	0:0	10	-
+call	93:58	93:68	10	strlen
+arg	93:65	93:68	11	buf
+water	93:65	0:0	12	buf
+arg	93:71	93:81	9	"*:%2.2f "
+water	93:71	0:0	10	"*:%2.2f "
+arg	93:83	93:110	9	psnr(error_sum/scale_sum)
+call	93:83	93:109	10	psnr
+arg	93:88	93:109	11	error_sum/scale_sum
+water	93:88	0:0	12	error_sum
+op	93:98	0:0	12	/
+water	93:100	0:0	12	scale_sum
+water	93:111	0:0	8	;
+call	94:16	95:57	8	av_bprintf
+arg	94:27	94:38	9	&buf_script
+op	94:27	0:0	10	&
+water	94:28	0:0	10	buf_script
+arg	94:40	94:71	9	"stream_%d_%d_psnr_all=%2.2f\n"
+water	94:40	0:0	10	"stream_%d_%d_psnr_all=%2.2f\n"
+arg	95:27	95:42	9	ost->file_index
+water	95:27	0:0	10	ost
+op	95:30	0:0	10	->
+water	95:32	0:0	10	file_index
+arg	95:44	95:54	9	ost->index
+water	95:44	0:0	10	ost
+op	95:47	0:0	10	->
+water	95:49	0:0	10	index
+arg	95:56	95:57	9	p
+water	95:56	0:0	10	p
+water	95:58	0:0	8	;
+water	96:12	0:0	8	}
+water	97:12	0:0	6	vid
+op	97:16	0:0	6	=
+water	97:18	0:0	6	1
+water	97:19	0:0	6	;
+water	98:8	0:0	6	}
+if	100:8	102:78	4	(av_stream_get_end_pts (ost -> st ) != AV_NOPTS_VALUE)
+cond	100:12	100:46	5	av_stream_get_end_pts (ost -> st ) != AV_NOPTS_VALUE
+call	100:12	100:41	6	av_stream_get_end_pts
+arg	100:34	100:41	7	ost->st
+water	100:34	0:0	8	ost
+op	100:37	0:0	8	->
+water	100:39	0:0	8	st
+op	100:43	0:0	6	!=
+water	100:46	0:0	6	AV_NOPTS_VALUE
+stmts	101:12	102:78	5	
+water	101:12	0:0	6	pts
+op	101:16	0:0	6	=
+call	101:18	102:77	6	FFMAX
+arg	101:24	101:27	7	pts
+water	101:24	0:0	8	pts
+arg	101:29	102:77	7	av_rescale_q(av_stream_get_end_pts(ost->st),ost->st->time_base,AV_TIME_BASE_Q)
+call	101:29	102:76	8	av_rescale_q
+arg	101:42	101:72	9	av_stream_get_end_pts(ost->st)
+call	101:42	101:71	10	av_stream_get_end_pts
+arg	101:64	101:71	11	ost->st
+water	101:64	0:0	12	ost
+op	101:67	0:0	12	->
+water	101:69	0:0	12	st
+arg	102:42	102:60	9	ost->st->time_base
+water	102:42	0:0	10	ost
+op	102:45	0:0	10	->
+water	102:47	0:0	10	st
+op	102:49	0:0	10	->
+water	102:51	0:0	10	time_base
+arg	102:62	102:76	9	AV_TIME_BASE_Q
+water	102:62	0:0	10	AV_TIME_BASE_Q
+water	102:78	0:0	6	;
+if	103:8	104:47	4	(is_last_report)
+cond	103:12	103:12	5	is_last_report
+water	103:12	0:0	6	is_last_report
+stmts	104:12	104:47	5	
+water	104:12	0:0	6	nb_frames_drop
+op	104:27	0:0	6	+=
+water	104:30	0:0	6	ost
+op	104:33	0:0	6	->
+water	104:35	0:0	6	last_dropped
+water	104:47	0:0	6	;
+water	105:4	0:0	4	}
+water	106:4	0:0	2	secs
+op	106:9	0:0	2	=
+call	106:11	106:20	2	FFABS
+arg	106:17	106:20	3	pts
+water	106:17	0:0	4	pts
+op	106:22	0:0	2	/
+water	106:24	0:0	2	AV_TIME_BASE
+water	106:36	0:0	2	;
+water	107:4	0:0	2	us
+op	107:7	0:0	2	=
+call	107:9	107:18	2	FFABS
+arg	107:15	107:18	3	pts
+water	107:15	0:0	4	pts
+op	107:20	0:0	2	%
+water	107:22	0:0	2	AV_TIME_BASE
+water	107:34	0:0	2	;
+water	108:4	0:0	2	mins
+op	108:9	0:0	2	=
+water	108:11	0:0	2	secs
+op	108:16	0:0	2	/
+water	108:18	0:0	2	60
+water	108:20	0:0	2	;
+water	109:4	0:0	2	secs
+op	109:9	0:0	2	%=
+water	109:12	0:0	2	60
+water	109:14	0:0	2	;
+water	110:4	0:0	2	hours
+op	110:10	0:0	2	=
+water	110:12	0:0	2	mins
+op	110:17	0:0	2	/
+water	110:19	0:0	2	60
+water	110:21	0:0	2	;
+water	111:4	0:0	2	mins
+op	111:9	0:0	2	%=
+water	111:12	0:0	2	60
+water	111:14	0:0	2	;
+water	112:4	0:0	2	bitrate
+op	112:12	0:0	2	=
+water	112:14	0:0	2	pts
+op	112:18	0:0	2	&&
+water	112:21	0:0	2	total_size
+op	112:32	0:0	2	>=
+water	112:35	0:0	2	0
+water	112:37	0:0	2	?
+water	112:39	0:0	2	total_size
+op	112:50	0:0	2	*
+water	112:52	0:0	2	8
+op	112:54	0:0	2	/
+water	112:56	0:0	2	(
+water	112:57	0:0	2	pts
+op	112:61	0:0	2	/
+water	112:63	0:0	2	1000
+op	112:67	0:0	2	.
+water	112:68	0:0	2	0
+water	112:69	0:0	2	)
+water	112:71	0:0	2	:
+op	112:73	0:0	2	-
+water	112:74	0:0	2	1
+water	112:75	0:0	2	;
+water	113:4	0:0	2	speed
+op	113:10	0:0	2	=
+water	113:12	0:0	2	t
+op	113:14	0:0	2	!=
+water	113:17	0:0	2	0
+op	113:18	0:0	2	.
+water	113:19	0:0	2	0
+water	113:21	0:0	2	?
+water	113:23	0:0	2	(
+water	113:24	0:0	2	double
+water	113:30	0:0	2	)
+water	113:31	0:0	2	pts
+op	113:35	0:0	2	/
+water	113:37	0:0	2	AV_TIME_BASE
+op	113:50	0:0	2	/
+water	113:52	0:0	2	t
+water	113:54	0:0	2	:
+op	113:56	0:0	2	-
+water	113:57	0:0	2	1
+water	113:58	0:0	2	;
+if	114:4	115:50	2	(total_size < 0)
+cond	114:8	114:21	3	total_size < 0
+water	114:8	0:0	4	total_size
+op	114:19	0:0	4	<
+water	114:21	0:0	4	0
+stmts	114:24	115:50	3	
+call	114:24	115:49	4	snprintf
+arg	114:33	114:50	5	buf+strlen(buf)
+water	114:33	0:0	6	buf
+op	114:37	0:0	6	+
+call	114:39	114:49	6	strlen
+arg	114:46	114:49	7	buf
+water	114:46	0:0	8	buf
+arg	114:52	114:77	5	sizeof(buf)-strlen(buf)
+op	114:52	0:0	6	sizeof
+water	114:58	0:0	6	(
+water	114:59	0:0	6	buf
+water	114:62	0:0	6	)
+op	114:64	0:0	6	-
+call	114:66	114:76	6	strlen
+arg	114:73	114:76	7	buf
+water	114:73	0:0	8	buf
+arg	115:33	115:49	5	"size=N/A time="
+water	115:33	0:0	6	"size=N/A time="
+water	115:50	0:0	4	;
+else	116:4	117:75	2
+stmts	116:24	117:75	3	
+call	116:24	117:74	4	snprintf
+arg	116:33	116:50	5	buf+strlen(buf)
+water	116:33	0:0	6	buf
+op	116:37	0:0	6	+
+call	116:39	116:49	6	strlen
+arg	116:46	116:49	7	buf
+water	116:46	0:0	8	buf
+arg	116:52	116:77	5	sizeof(buf)-strlen(buf)
+op	116:52	0:0	6	sizeof
+water	116:58	0:0	6	(
+water	116:59	0:0	6	buf
+water	116:62	0:0	6	)
+op	116:64	0:0	6	-
+call	116:66	116:76	6	strlen
+arg	116:73	116:76	7	buf
+water	116:73	0:0	8	buf
+arg	117:33	117:53	5	"size=%8.0fkB time="
+water	117:33	0:0	6	"size=%8.0fkB time="
+arg	117:55	117:74	5	total_size/1024.0
+water	117:55	0:0	6	total_size
+op	117:66	0:0	6	/
+water	117:68	0:0	6	1024
+op	117:72	0:0	6	.
+water	117:73	0:0	6	0
+water	117:75	0:0	4	;
+if	118:4	119:67	2	(pts < 0)
+cond	118:8	118:14	3	pts < 0
+water	118:8	0:0	4	pts
+op	118:12	0:0	4	<
+water	118:14	0:0	4	0
+stmts	119:8	119:67	3	
+call	119:8	119:66	4	snprintf
+arg	119:17	119:34	5	buf+strlen(buf)
+water	119:17	0:0	6	buf
+op	119:21	0:0	6	+
+call	119:23	119:33	6	strlen
+arg	119:30	119:33	7	buf
+water	119:30	0:0	8	buf
+arg	119:36	119:61	5	sizeof(buf)-strlen(buf)
+op	119:36	0:0	6	sizeof
+water	119:42	0:0	6	(
+water	119:43	0:0	6	buf
+water	119:46	0:0	6	)
+op	119:48	0:0	6	-
+call	119:50	119:60	6	strlen
+arg	119:57	119:60	7	buf
+water	119:57	0:0	8	buf
+arg	119:63	119:66	5	"-"
+water	119:63	0:0	6	"-"
+water	119:67	0:0	4	;
+call	120:4	122:38	2	snprintf
+arg	120:13	120:30	3	buf+strlen(buf)
+water	120:13	0:0	4	buf
+op	120:17	0:0	4	+
+call	120:19	120:29	4	strlen
+arg	120:26	120:29	5	buf
+water	120:26	0:0	6	buf
+arg	120:32	120:57	3	sizeof(buf)-strlen(buf)
+op	120:32	0:0	4	sizeof
+water	120:38	0:0	4	(
+water	120:39	0:0	4	buf
+water	120:42	0:0	4	)
+op	120:44	0:0	4	-
+call	120:46	120:56	4	strlen
+arg	120:53	120:56	5	buf
+water	120:53	0:0	6	buf
+arg	121:13	121:35	3	"%02d:%02d:%02d.%02d "
+water	121:13	0:0	4	"%02d:%02d:%02d.%02d "
+arg	121:37	121:42	3	hours
+water	121:37	0:0	4	hours
+arg	121:44	121:48	3	mins
+water	121:44	0:0	4	mins
+arg	121:50	121:54	3	secs
+water	121:50	0:0	4	secs
+arg	122:13	122:38	3	(100*us)/AV_TIME_BASE
+water	122:13	0:0	4	(
+water	122:14	0:0	4	100
+op	122:18	0:0	4	*
+water	122:20	0:0	4	us
+water	122:22	0:0	4	)
+op	122:24	0:0	4	/
+water	122:26	0:0	4	AV_TIME_BASE
+water	122:39	0:0	2	;
+if	123:4	126:4	2	(bitrate < 0)
+cond	123:8	123:18	3	bitrate < 0
+water	123:8	0:0	4	bitrate
+op	123:16	0:0	4	<
+water	123:18	0:0	4	0
+stmts	123:21	126:4	3	
+water	123:21	0:0	4	{
+call	124:8	124:75	4	snprintf
+arg	124:17	124:34	5	buf+strlen(buf)
+water	124:17	0:0	6	buf
+op	124:21	0:0	6	+
+call	124:23	124:33	6	strlen
+arg	124:30	124:33	7	buf
+water	124:30	0:0	8	buf
+arg	124:36	124:61	5	sizeof(buf)-strlen(buf)
+op	124:36	0:0	6	sizeof
+water	124:42	0:0	6	(
+water	124:43	0:0	6	buf
+water	124:46	0:0	6	)
+op	124:48	0:0	6	-
+call	124:50	124:60	6	strlen
+arg	124:57	124:60	7	buf
+water	124:57	0:0	8	buf
+arg	124:62	124:75	5	"bitrate=N/A"
+water	124:62	0:0	6	"bitrate=N/A"
+water	124:76	0:0	4	;
+call	125:8	125:47	4	av_bprintf
+arg	125:19	125:30	5	&buf_script
+op	125:19	0:0	6	&
+water	125:20	0:0	6	buf_script
+arg	125:32	125:47	5	"bitrate=N/A\n"
+water	125:32	0:0	6	"bitrate=N/A\n"
+water	125:48	0:0	4	;
+water	126:4	0:0	4	}
+else	126:5	129:4	2
+stmts	126:9	129:4	3	
+water	126:9	0:0	4	{
+call	127:8	127:93	4	snprintf
+arg	127:17	127:34	5	buf+strlen(buf)
+water	127:17	0:0	6	buf
+op	127:21	0:0	6	+
+call	127:23	127:33	6	strlen
+arg	127:30	127:33	7	buf
+water	127:30	0:0	8	buf
+arg	127:36	127:61	5	sizeof(buf)-strlen(buf)
+op	127:36	0:0	6	sizeof
+water	127:42	0:0	6	(
+water	127:43	0:0	6	buf
+water	127:46	0:0	6	)
+op	127:48	0:0	6	-
+call	127:50	127:60	6	strlen
+arg	127:57	127:60	7	buf
+water	127:57	0:0	8	buf
+arg	127:62	127:84	5	"bitrate=%6.1fkbits/s"
+water	127:62	0:0	6	"bitrate=%6.1fkbits/s"
+arg	127:86	127:93	5	bitrate
+water	127:86	0:0	6	bitrate
+water	127:94	0:0	4	;
+call	128:8	128:65	4	av_bprintf
+arg	128:19	128:30	5	&buf_script
+op	128:19	0:0	6	&
+water	128:20	0:0	6	buf_script
+arg	128:32	128:56	5	"bitrate=%6.1fkbits/s\n"
+water	128:32	0:0	6	"bitrate=%6.1fkbits/s\n"
+arg	128:58	128:65	5	bitrate
+water	128:58	0:0	6	bitrate
+water	128:66	0:0	4	;
+water	129:4	0:0	4	}
+if	130:4	130:67	2	(total_size < 0)
+cond	130:8	130:21	3	total_size < 0
+water	130:8	0:0	4	total_size
+op	130:19	0:0	4	<
+water	130:21	0:0	4	0
+stmts	130:24	130:67	3	
+call	130:24	130:66	4	av_bprintf
+arg	130:35	130:46	5	&buf_script
+op	130:35	0:0	6	&
+water	130:36	0:0	6	buf_script
+arg	130:48	130:66	5	"total_size=N/A\n"
+water	130:48	0:0	6	"total_size=N/A\n"
+water	130:67	0:0	4	;
+else	131:4	131:85	2
+stmts	131:24	131:85	3	
+call	131:24	131:84	4	av_bprintf
+arg	131:35	131:46	5	&buf_script
+op	131:35	0:0	6	&
+water	131:36	0:0	6	buf_script
+arg	131:48	131:72	5	"total_size=%"PRId64"\n"
+water	131:48	0:0	6	"total_size=%"
+water	131:62	0:0	6	PRId64
+water	131:68	0:0	6	"\n"
+arg	131:74	131:84	5	total_size
+water	131:74	0:0	6	total_size
+water	131:85	0:0	4	;
+call	132:4	132:58	2	av_bprintf
+arg	132:15	132:26	3	&buf_script
+op	132:15	0:0	4	&
+water	132:16	0:0	4	buf_script
+arg	132:28	132:53	3	"out_time_ms=%"PRId64"\n"
+water	132:28	0:0	4	"out_time_ms=%"
+water	132:43	0:0	4	PRId64
+water	132:49	0:0	4	"\n"
+arg	132:55	132:58	3	pts
+water	132:55	0:0	4	pts
+water	132:59	0:0	2	;
+call	133:4	134:36	2	av_bprintf
+arg	133:15	133:26	3	&buf_script
+op	133:15	0:0	4	&
+water	133:16	0:0	4	buf_script
+arg	133:28	133:60	3	"out_time=%02d:%02d:%02d.%06d\n"
+water	133:28	0:0	4	"out_time=%02d:%02d:%02d.%06d\n"
+arg	134:15	134:20	3	hours
+water	134:15	0:0	4	hours
+arg	134:22	134:26	3	mins
+water	134:22	0:0	4	mins
+arg	134:28	134:32	3	secs
+water	134:28	0:0	4	secs
+arg	134:34	134:36	3	us
+water	134:34	0:0	4	us
+water	134:37	0:0	2	;
+if	135:4	137:46	2	(nb_frames_dup || nb_frames_drop)
+cond	135:8	135:25	3	nb_frames_dup || nb_frames_drop
+water	135:8	0:0	4	nb_frames_dup
+op	135:22	0:0	4	||
+water	135:25	0:0	4	nb_frames_drop
+stmts	136:8	137:46	3	
+call	136:8	137:45	4	snprintf
+arg	136:17	136:34	5	buf+strlen(buf)
+water	136:17	0:0	6	buf
+op	136:21	0:0	6	+
+call	136:23	136:33	6	strlen
+arg	136:30	136:33	7	buf
+water	136:30	0:0	8	buf
+arg	136:36	136:61	5	sizeof(buf)-strlen(buf)
+op	136:36	0:0	6	sizeof
+water	136:42	0:0	6	(
+water	136:43	0:0	6	buf
+water	136:46	0:0	6	)
+op	136:48	0:0	6	-
+call	136:50	136:60	6	strlen
+arg	136:57	136:60	7	buf
+water	136:57	0:0	8	buf
+arg	136:63	136:80	5	" dup=%d drop=%d"
+water	136:63	0:0	6	" dup=%d drop=%d"
+arg	137:16	137:29	5	nb_frames_dup
+water	137:16	0:0	6	nb_frames_dup
+arg	137:31	137:45	5	nb_frames_drop
+water	137:31	0:0	6	nb_frames_drop
+water	137:46	0:0	4	;
+call	138:4	138:60	2	av_bprintf
+arg	138:15	138:26	3	&buf_script
+op	138:15	0:0	4	&
+water	138:16	0:0	4	buf_script
+arg	138:28	138:45	3	"dup_frames=%d\n"
+water	138:28	0:0	4	"dup_frames=%d\n"
+arg	138:47	138:60	3	nb_frames_dup
+water	138:47	0:0	4	nb_frames_dup
+water	138:61	0:0	2	;
+call	139:4	139:62	2	av_bprintf
+arg	139:15	139:26	3	&buf_script
+op	139:15	0:0	4	&
+water	139:16	0:0	4	buf_script
+arg	139:28	139:46	3	"drop_frames=%d\n"
+water	139:28	0:0	4	"drop_frames=%d\n"
+arg	139:48	139:62	3	nb_frames_drop
+water	139:48	0:0	4	nb_frames_drop
+water	139:63	0:0	2	;
+if	140:4	143:4	2	(speed < 0)
+cond	140:8	140:16	3	speed < 0
+water	140:8	0:0	4	speed
+op	140:14	0:0	4	<
+water	140:16	0:0	4	0
+stmts	140:19	143:4	3	
+water	140:19	0:0	4	{
+call	141:8	141:74	4	snprintf
+arg	141:17	141:34	5	buf+strlen(buf)
+water	141:17	0:0	6	buf
+op	141:21	0:0	6	+
+call	141:23	141:33	6	strlen
+arg	141:30	141:33	7	buf
+water	141:30	0:0	8	buf
+arg	141:36	141:61	5	sizeof(buf)-strlen(buf)
+op	141:36	0:0	6	sizeof
+water	141:42	0:0	6	(
+water	141:43	0:0	6	buf
+water	141:46	0:0	6	)
+op	141:48	0:0	6	-
+call	141:50	141:60	6	strlen
+arg	141:57	141:60	7	buf
+water	141:57	0:0	8	buf
+arg	141:62	141:74	5	" speed=N/A"
+water	141:62	0:0	6	" speed=N/A"
+water	141:75	0:0	4	;
+call	142:8	142:45	4	av_bprintf
+arg	142:19	142:30	5	&buf_script
+op	142:19	0:0	6	&
+water	142:20	0:0	6	buf_script
+arg	142:32	142:45	5	"speed=N/A\n"
+water	142:32	0:0	6	"speed=N/A\n"
+water	142:46	0:0	4	;
+water	143:4	0:0	4	}
+else	143:6	146:4	2
+stmts	143:11	146:4	3	
+water	143:11	0:0	4	{
+call	144:8	144:84	4	snprintf
+arg	144:17	144:34	5	buf+strlen(buf)
+water	144:17	0:0	6	buf
+op	144:21	0:0	6	+
+call	144:23	144:33	6	strlen
+arg	144:30	144:33	7	buf
+water	144:30	0:0	8	buf
+arg	144:36	144:61	5	sizeof(buf)-strlen(buf)
+op	144:36	0:0	6	sizeof
+water	144:42	0:0	6	(
+water	144:43	0:0	6	buf
+water	144:46	0:0	6	)
+op	144:48	0:0	6	-
+call	144:50	144:60	6	strlen
+arg	144:57	144:60	7	buf
+water	144:57	0:0	8	buf
+arg	144:62	144:77	5	" speed=%4.3gx"
+water	144:62	0:0	6	" speed=%4.3gx"
+arg	144:79	144:84	5	speed
+water	144:79	0:0	6	speed
+water	144:85	0:0	4	;
+call	145:8	145:55	4	av_bprintf
+arg	145:19	145:30	5	&buf_script
+op	145:19	0:0	6	&
+water	145:20	0:0	6	buf_script
+arg	145:32	145:48	5	"speed=%4.3gx\n"
+water	145:32	0:0	6	"speed=%4.3gx\n"
+arg	145:50	145:55	5	speed
+water	145:50	0:0	6	speed
+water	145:56	0:0	4	;
+water	146:4	0:0	4	}
+if	147:4	154:4	2	(print_stats || is_last_report)
+cond	147:8	147:23	3	print_stats || is_last_report
+water	147:8	0:0	4	print_stats
+op	147:20	0:0	4	||
+water	147:23	0:0	4	is_last_report
+stmts	147:39	154:4	3	
+water	147:39	0:0	4	{
+decl	148:8	148:53	4	const char	end
+op	148:23	0:0	4	=
+water	148:25	0:0	4	is_last_report
+water	148:40	0:0	4	?
+water	148:42	0:0	4	'\n'
+water	148:47	0:0	4	:
+water	148:49	0:0	4	'\r'
+if	149:8	151:8	4	(print_stats == 1 && AV_LOG_INFO >av_log_get_level ( ))
+cond	149:12	149:61	5	print_stats == 1 && AV_LOG_INFO >av_log_get_level ( )
+water	149:12	0:0	6	print_stats
+op	149:23	0:0	6	==
+water	149:25	0:0	6	1
+op	149:27	0:0	6	&&
+water	149:30	0:0	6	AV_LOG_INFO
+op	149:42	0:0	6	>
+call	149:44	149:61	6	av_log_get_level
+stmts	149:64	151:8	5	
+water	149:64	0:0	6	{
+call	150:12	150:48	6	fprintf
+arg	150:20	150:26	7	stderr
+water	150:20	0:0	8	stderr
+arg	150:28	150:38	7	"%s    %c"
+water	150:28	0:0	8	"%s    %c"
+arg	150:40	150:43	7	buf
+water	150:40	0:0	8	buf
+arg	150:45	150:48	7	end
+water	150:45	0:0	8	end
+water	150:49	0:0	6	;
+water	151:8	0:0	6	}
+else	151:10	152:59	4
+stmts	152:12	152:59	5	
+call	152:12	152:58	6	av_log
+arg	152:19	152:23	7	NULL
+water	152:19	0:0	8	NULL
+arg	152:25	152:36	7	AV_LOG_INFO
+water	152:25	0:0	8	AV_LOG_INFO
+arg	152:38	152:48	7	"%s    %c"
+water	152:38	0:0	8	"%s    %c"
+arg	152:50	152:53	7	buf
+water	152:50	0:0	8	buf
+arg	152:55	152:58	7	end
+water	152:55	0:0	8	end
+water	152:59	0:0	6	;
+call	153:4	153:17	4	fflush
+arg	153:11	153:17	5	stderr
+water	153:11	0:0	6	stderr
+water	153:18	0:0	4	;
+water	154:4	0:0	4	}
+if	155:4	167:4	2	(progress_avio)
+cond	155:8	155:8	3	progress_avio
+water	155:8	0:0	4	progress_avio
+stmts	155:23	167:4	3	
+water	155:23	0:0	4	{
+call	156:8	157:54	4	av_bprintf
+arg	156:19	156:30	5	&buf_script
+op	156:19	0:0	6	&
+water	156:20	0:0	6	buf_script
+arg	156:32	156:47	5	"progress=%s\n"
+water	156:32	0:0	6	"progress=%s\n"
+arg	157:19	157:54	5	is_last_report?"end":"continue"
+water	157:19	0:0	6	is_last_report
+water	157:34	0:0	6	?
+water	157:36	0:0	6	"end"
+water	157:42	0:0	6	:
+water	157:44	0:0	6	"continue"
+water	157:55	0:0	4	;
+call	158:8	159:61	4	avio_write
+arg	158:19	158:32	5	progress_avio
+water	158:19	0:0	6	progress_avio
+arg	158:34	158:48	5	buf_script.str
+water	158:34	0:0	6	buf_script
+op	158:44	0:0	6	.
+water	158:45	0:0	6	str
+arg	159:19	159:61	5	FFMIN(buf_script.len,buf_script.size-1)
+call	159:19	159:60	6	FFMIN
+arg	159:25	159:39	7	buf_script.len
+water	159:25	0:0	8	buf_script
+op	159:35	0:0	8	.
+water	159:36	0:0	8	len
+arg	159:41	159:60	7	buf_script.size-1
+water	159:41	0:0	8	buf_script
+op	159:51	0:0	8	.
+water	159:52	0:0	8	size
+op	159:57	0:0	8	-
+water	159:59	0:0	8	1
+water	159:62	0:0	4	;
+call	160:8	160:32	4	avio_flush
+arg	160:19	160:32	5	progress_avio
+water	160:19	0:0	6	progress_avio
+water	160:33	0:0	4	;
+call	161:8	161:44	4	av_bprint_finalize
+arg	161:27	161:38	5	&buf_script
+op	161:27	0:0	6	&
+water	161:28	0:0	6	buf_script
+arg	161:40	161:44	5	NULL
+water	161:40	0:0	6	NULL
+water	161:45	0:0	4	;
+if	162:8	166:8	4	(is_last_report)
+cond	162:12	162:12	5	is_last_report
+water	162:12	0:0	6	is_last_report
+stmts	162:28	166:8	5	
+water	162:28	0:0	6	{
+if	163:12	165:105	6	(( ret =avio_closep (& progress_avio ) ) < 0)
+cond	163:16	163:54	7	( ret =avio_closep (& progress_avio ) ) < 0
+water	163:16	0:0	8	(
+water	163:17	0:0	8	ret
+op	163:21	0:0	8	=
+call	163:23	163:49	8	avio_closep
+arg	163:35	163:49	9	&progress_avio
+op	163:35	0:0	10	&
+water	163:36	0:0	10	progress_avio
+water	163:50	0:0	8	)
+op	163:52	0:0	8	<
+water	163:54	0:0	8	0
+stmts	164:16	165:105	7	
+call	164:16	165:104	8	av_log
+arg	164:23	164:27	9	NULL
+water	164:23	0:0	10	NULL
+arg	164:29	164:41	9	AV_LOG_ERROR
+water	164:29	0:0	10	AV_LOG_ERROR
+arg	165:23	165:87	9	"Error closing progress log, loss of information possible: %s\n"
+water	165:23	0:0	10	"Error closing progress log, loss of information possible: %s\n"
+arg	165:89	165:104	9	av_err2str(ret)
+call	165:89	165:103	10	av_err2str
+arg	165:100	165:103	11	ret
+water	165:100	0:0	12	ret
+water	165:105	0:0	8	;
+water	166:8	0:0	6	}
+water	167:4	0:0	4	}
+if	168:4	169:37	2	(is_last_report)
+cond	168:8	168:8	3	is_last_report
+water	168:8	0:0	4	is_last_report
+stmts	169:8	169:37	3	
+call	169:8	169:36	4	print_final_stats
+arg	169:26	169:36	5	total_size
+water	169:26	0:0	6	total_size
+water	169:37	0:0	4	;

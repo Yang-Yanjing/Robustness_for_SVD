@@ -1,0 +1,347 @@
+func	1:0	47:0	0	static int	filter_frame
+params	1:23	0:0	1	
+param	1:24	1:44	2	AVFilterLink *	inlink
+param	1:46	1:57	2	AVFrame *	in
+stmnts	0:0	46:40	1	
+decl	3:4	3:38	2	AVFilterContext	*ctx
+op	3:25	0:0	2	=
+water	3:27	0:0	2	inlink
+op	3:33	0:0	2	->
+water	3:35	0:0	2	dst
+decl	4:4	4:43	2	AVFilterLink	*outlink
+op	4:26	0:0	2	=
+water	4:28	0:0	2	ctx
+op	4:31	0:0	2	->
+water	4:33	0:0	2	outputs
+op	4:40	0:0	2	[
+water	4:41	0:0	2	0
+op	4:42	0:0	2	]
+decl	5:4	5:62	2	AVFrame	*out
+op	5:17	0:0	2	=
+call	5:19	5:61	3	ff_get_audio_buffer
+arg	5:39	5:45	4	inlink
+water	5:39	0:0	5	inlink
+arg	5:47	5:61	4	in->nb_samples
+water	5:47	0:0	5	in
+op	5:49	0:0	5	->
+water	5:51	0:0	5	nb_samples
+decl	6:4	6:33	2	DCShiftContext	*s
+op	6:22	0:0	2	=
+water	6:24	0:0	2	ctx
+op	6:27	0:0	2	->
+water	6:29	0:0	2	priv
+decl	7:4	7:12	2	int	i
+water	7:9	0:0	2	,
+decl	7:4	7:12	2	int	j
+decl	8:4	8:31	2	double	dcshift
+op	8:19	0:0	2	=
+water	8:21	0:0	2	s
+op	8:22	0:0	2	->
+water	8:24	0:0	2	dcshift
+if	9:4	12:4	2	(! out)
+cond	9:8	9:9	3	! out
+op	9:8	0:0	4	!
+water	9:9	0:0	4	out
+stmts	9:14	12:4	3	
+water	9:14	0:0	4	{
+call	10:8	10:25	4	av_frame_free
+arg	10:22	10:25	5	&in
+op	10:22	0:0	6	&
+water	10:23	0:0	6	in
+water	10:26	0:0	4	;
+return	11:8	11:30	4	AVERROR(ENOMEM)
+call	11:15	11:29	5	AVERROR
+arg	11:23	11:29	6	ENOMEM
+water	11:23	0:0	7	ENOMEM
+water	12:4	0:0	4	}
+call	13:4	13:31	2	av_frame_copy_props
+arg	13:24	13:27	3	out
+water	13:24	0:0	4	out
+arg	13:29	13:31	3	in
+water	13:29	0:0	4	in
+water	13:32	0:0	2	;
+if	14:4	35:4	2	(s -> limitergain > 0)
+cond	14:8	14:25	3	s -> limitergain > 0
+water	14:8	0:0	4	s
+op	14:9	0:0	4	->
+water	14:11	0:0	4	limitergain
+op	14:23	0:0	4	>
+water	14:25	0:0	4	0
+stmts	14:28	35:4	3	
+water	14:28	0:0	4	{
+for	15:8	34:8	4	(i = 0 ;i < inlink -> channels;i ++)
+forinit	15:13	15:18	5	i = 0 ;
+water	15:13	0:0	6	i
+op	15:15	0:0	6	=
+water	15:17	0:0	6	0
+water	15:18	0:0	6	;
+cond	15:20	15:32	5	i < inlink -> channels
+water	15:20	0:0	6	i
+op	15:22	0:0	6	<
+water	15:24	0:0	6	inlink
+op	15:30	0:0	6	->
+water	15:32	0:0	6	channels
+forexpr	15:42	15:43	5	i ++
+water	15:42	0:0	6	i
+op	15:43	0:0	6	++
+stmts	15:47	34:8	5	
+water	15:47	0:0	6	{
+decl	16:12	16:64	6	const int32_t	*src
+op	16:31	0:0	6	=
+water	16:33	0:0	6	(
+water	16:34	0:0	6	int32_t
+op	16:42	0:0	6	*
+water	16:43	0:0	6	)
+water	16:44	0:0	6	in
+op	16:46	0:0	6	->
+water	16:48	0:0	6	extended_data
+op	16:61	0:0	6	[
+water	16:62	0:0	6	i
+op	16:63	0:0	6	]
+decl	17:12	17:59	6	int32_t	*dst
+op	17:25	0:0	6	=
+water	17:27	0:0	6	(
+water	17:28	0:0	6	int32_t
+op	17:36	0:0	6	*
+water	17:37	0:0	6	)
+water	17:38	0:0	6	out
+op	17:41	0:0	6	->
+water	17:43	0:0	6	extended_data
+op	17:56	0:0	6	[
+water	17:57	0:0	6	i
+op	17:58	0:0	6	]
+for	18:12	33:12	6	(j = 0 ;j < in -> nb_samples;j ++)
+forinit	18:17	18:22	7	j = 0 ;
+water	18:17	0:0	8	j
+op	18:19	0:0	8	=
+water	18:21	0:0	8	0
+water	18:22	0:0	8	;
+cond	18:24	18:32	7	j < in -> nb_samples
+water	18:24	0:0	8	j
+op	18:26	0:0	8	<
+water	18:28	0:0	8	in
+op	18:30	0:0	8	->
+water	18:32	0:0	8	nb_samples
+forexpr	18:44	18:45	7	j ++
+water	18:44	0:0	8	j
+op	18:45	0:0	8	++
+stmts	18:49	33:12	7	
+water	18:49	0:0	8	{
+decl	19:16	19:24	8	double	d
+water	20:16	0:0	8	d
+op	20:18	0:0	8	=
+water	20:20	0:0	8	src
+op	20:23	0:0	8	[
+water	20:24	0:0	8	j
+op	20:25	0:0	8	]
+water	20:26	0:0	8	;
+if	21:16	25:16	8	(d > s -> limiterthreshhold && dcshift > 0)
+cond	21:20	21:58	9	d > s -> limiterthreshhold && dcshift > 0
+water	21:20	0:0	10	d
+op	21:22	0:0	10	>
+water	21:24	0:0	10	s
+op	21:25	0:0	10	->
+water	21:27	0:0	10	limiterthreshhold
+op	21:45	0:0	10	&&
+water	21:48	0:0	10	dcshift
+op	21:56	0:0	10	>
+water	21:58	0:0	10	0
+stmts	21:61	25:16	9	
+water	21:61	0:0	10	{
+water	22:20	0:0	10	d
+op	22:22	0:0	10	=
+water	22:24	0:0	10	(
+water	22:25	0:0	10	d
+op	22:27	0:0	10	-
+water	22:29	0:0	10	s
+op	22:30	0:0	10	->
+water	22:32	0:0	10	limiterthreshhold
+water	22:49	0:0	10	)
+op	22:51	0:0	10	*
+water	22:53	0:0	10	s
+op	22:54	0:0	10	->
+water	22:56	0:0	10	limitergain
+op	22:68	0:0	10	/
+water	23:29	0:0	10	(
+water	23:30	0:0	10	INT32_MAX
+op	23:40	0:0	10	-
+water	23:42	0:0	10	s
+op	23:43	0:0	10	->
+water	23:45	0:0	10	limiterthreshhold
+water	23:62	0:0	10	)
+op	23:64	0:0	10	+
+water	24:29	0:0	10	s
+op	24:30	0:0	10	->
+water	24:32	0:0	10	limiterthreshhold
+op	24:50	0:0	10	+
+water	24:52	0:0	10	dcshift
+water	24:59	0:0	10	;
+water	25:16	0:0	10	}
+else	25:18	29:16	8
+stmts	25:23	29:16	9	
+if	25:23	29:16	10	(d < - s -> limiterthreshhold && dcshift < 0)
+cond	25:27	25:66	11	d < - s -> limiterthreshhold && dcshift < 0
+water	25:27	0:0	12	d
+op	25:29	0:0	12	<
+op	25:31	0:0	12	-
+water	25:32	0:0	12	s
+op	25:33	0:0	12	->
+water	25:35	0:0	12	limiterthreshhold
+op	25:53	0:0	12	&&
+water	25:56	0:0	12	dcshift
+op	25:64	0:0	12	<
+water	25:66	0:0	12	0
+stmts	25:69	29:16	11	
+water	25:69	0:0	12	{
+water	26:20	0:0	12	d
+op	26:22	0:0	12	=
+water	26:24	0:0	12	(
+water	26:25	0:0	12	d
+op	26:27	0:0	12	+
+water	26:29	0:0	12	s
+op	26:30	0:0	12	->
+water	26:32	0:0	12	limiterthreshhold
+water	26:49	0:0	12	)
+op	26:51	0:0	12	*
+water	26:53	0:0	12	s
+op	26:54	0:0	12	->
+water	26:56	0:0	12	limitergain
+op	26:68	0:0	12	/
+water	27:29	0:0	12	(
+water	27:30	0:0	12	INT32_MAX
+op	27:40	0:0	12	-
+water	27:42	0:0	12	s
+op	27:43	0:0	12	->
+water	27:45	0:0	12	limiterthreshhold
+water	27:62	0:0	12	)
+op	27:64	0:0	12	-
+water	28:29	0:0	12	s
+op	28:30	0:0	12	->
+water	28:32	0:0	12	limiterthreshhold
+op	28:50	0:0	12	+
+water	28:52	0:0	12	dcshift
+water	28:59	0:0	12	;
+water	29:16	0:0	12	}
+else	29:18	31:16	8
+stmts	29:23	31:16	9	
+water	29:23	0:0	10	{
+water	30:20	0:0	10	d
+op	30:22	0:0	10	=
+water	30:24	0:0	10	dcshift
+op	30:32	0:0	10	*
+water	30:34	0:0	10	INT32_MAX
+op	30:44	0:0	10	+
+water	30:46	0:0	10	d
+water	30:47	0:0	10	;
+water	31:16	0:0	10	}
+water	32:16	0:0	8	dst
+op	32:19	0:0	8	[
+water	32:20	0:0	8	j
+op	32:21	0:0	8	]
+op	32:23	0:0	8	=
+call	32:25	32:41	8	av_clipl_int32
+arg	32:40	32:41	9	d
+water	32:40	0:0	10	d
+water	32:42	0:0	8	;
+water	33:12	0:0	8	}
+water	34:8	0:0	6	}
+water	35:4	0:0	4	}
+else	35:6	44:4	2
+stmts	35:11	44:4	3	
+water	35:11	0:0	4	{
+for	36:8	43:8	4	(i = 0 ;i < inlink -> channels;i ++)
+forinit	36:13	36:18	5	i = 0 ;
+water	36:13	0:0	6	i
+op	36:15	0:0	6	=
+water	36:17	0:0	6	0
+water	36:18	0:0	6	;
+cond	36:20	36:32	5	i < inlink -> channels
+water	36:20	0:0	6	i
+op	36:22	0:0	6	<
+water	36:24	0:0	6	inlink
+op	36:30	0:0	6	->
+water	36:32	0:0	6	channels
+forexpr	36:42	36:43	5	i ++
+water	36:42	0:0	6	i
+op	36:43	0:0	6	++
+stmts	36:47	43:8	5	
+water	36:47	0:0	6	{
+decl	37:12	37:64	6	const int32_t	*src
+op	37:31	0:0	6	=
+water	37:33	0:0	6	(
+water	37:34	0:0	6	int32_t
+op	37:42	0:0	6	*
+water	37:43	0:0	6	)
+water	37:44	0:0	6	in
+op	37:46	0:0	6	->
+water	37:48	0:0	6	extended_data
+op	37:61	0:0	6	[
+water	37:62	0:0	6	i
+op	37:63	0:0	6	]
+decl	38:12	38:59	6	int32_t	*dst
+op	38:25	0:0	6	=
+water	38:27	0:0	6	(
+water	38:28	0:0	6	int32_t
+op	38:36	0:0	6	*
+water	38:37	0:0	6	)
+water	38:38	0:0	6	out
+op	38:41	0:0	6	->
+water	38:43	0:0	6	extended_data
+op	38:56	0:0	6	[
+water	38:57	0:0	6	i
+op	38:58	0:0	6	]
+for	39:12	42:12	6	(j = 0 ;j < in -> nb_samples;j ++)
+forinit	39:17	39:22	7	j = 0 ;
+water	39:17	0:0	8	j
+op	39:19	0:0	8	=
+water	39:21	0:0	8	0
+water	39:22	0:0	8	;
+cond	39:24	39:32	7	j < in -> nb_samples
+water	39:24	0:0	8	j
+op	39:26	0:0	8	<
+water	39:28	0:0	8	in
+op	39:30	0:0	8	->
+water	39:32	0:0	8	nb_samples
+forexpr	39:44	39:45	7	j ++
+water	39:44	0:0	8	j
+op	39:45	0:0	8	++
+stmts	39:49	42:12	7	
+water	39:49	0:0	8	{
+decl	40:16	40:62	8	double	d
+op	40:25	0:0	8	=
+water	40:27	0:0	8	dcshift
+op	40:35	0:0	8	*
+water	40:37	0:0	8	(
+water	40:38	0:0	8	INT32_MAX
+op	40:48	0:0	8	+
+water	40:50	0:0	8	1
+op	40:51	0:0	8	.
+water	40:52	0:0	8	)
+op	40:54	0:0	8	+
+water	40:56	0:0	8	src
+op	40:59	0:0	8	[
+water	40:60	0:0	8	j
+op	40:61	0:0	8	]
+water	41:16	0:0	8	dst
+op	41:19	0:0	8	[
+water	41:20	0:0	8	j
+op	41:21	0:0	8	]
+op	41:23	0:0	8	=
+call	41:25	41:41	8	av_clipl_int32
+arg	41:40	41:41	9	d
+water	41:40	0:0	10	d
+water	41:42	0:0	8	;
+water	42:12	0:0	8	}
+water	43:8	0:0	6	}
+water	44:4	0:0	4	}
+call	45:4	45:21	2	av_frame_free
+arg	45:18	45:21	3	&in
+op	45:18	0:0	4	&
+water	45:19	0:0	4	in
+water	45:22	0:0	2	;
+return	46:4	46:40	2	ff_filter_frame(outlink,out)
+call	46:11	46:39	3	ff_filter_frame
+arg	46:27	46:34	4	outlink
+water	46:27	0:0	5	outlink
+arg	46:36	46:39	4	out
+water	46:36	0:0	5	out

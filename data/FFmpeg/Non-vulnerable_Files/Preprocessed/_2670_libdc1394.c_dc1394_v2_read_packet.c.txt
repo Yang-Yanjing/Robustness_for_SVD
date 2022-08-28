@@ -1,0 +1,143 @@
+func	1:0	22:0	0	static int	dc1394_v2_read_packet
+params	1:32	0:0	1	
+param	1:33	1:51	2	AVFormatContext *	c
+param	1:53	1:66	2	AVPacket *	pkt
+stmnts	0:0	21:14	1	
+decl	3:4	3:45	2	struct dc1394_data	*dc1394
+op	3:31	0:0	2	=
+water	3:33	0:0	2	c
+op	3:34	0:0	2	->
+water	3:36	0:0	2	priv_data
+decl	4:4	4:11	2	int	res
+if	6:4	9:4	2	(dc1394 -> current_frame ++)
+cond	6:8	6:29	3	dc1394 -> current_frame ++
+water	6:8	0:0	4	dc1394
+op	6:14	0:0	4	->
+water	6:16	0:0	4	current_frame
+op	6:29	0:0	4	++
+stmts	6:33	9:4	3	
+water	6:33	0:0	4	{
+if	7:8	8:90	4	(dc1394_capture_enqueue (dc1394 -> camera ,dc1394 -> frame ) != DC1394_SUCCESS)
+cond	7:12	7:69	5	dc1394_capture_enqueue (dc1394 -> camera ,dc1394 -> frame ) != DC1394_SUCCESS
+call	7:12	7:64	6	dc1394_capture_enqueue
+arg	7:35	7:49	7	dc1394->camera
+water	7:35	0:0	8	dc1394
+op	7:41	0:0	8	->
+water	7:43	0:0	8	camera
+arg	7:51	7:64	7	dc1394->frame
+water	7:51	0:0	8	dc1394
+op	7:57	0:0	8	->
+water	7:59	0:0	8	frame
+op	7:66	0:0	6	!=
+water	7:69	0:0	6	DC1394_SUCCESS
+stmts	8:12	8:90	5	
+call	8:12	8:89	6	av_log
+arg	8:19	8:20	7	c
+water	8:19	0:0	8	c
+arg	8:22	8:34	7	AV_LOG_ERROR
+water	8:22	0:0	8	AV_LOG_ERROR
+arg	8:36	8:66	7	"failed to release %d frame\n"
+water	8:36	0:0	8	"failed to release %d frame\n"
+arg	8:68	8:89	7	dc1394->current_frame
+water	8:68	0:0	8	dc1394
+op	8:74	0:0	8	->
+water	8:76	0:0	8	current_frame
+water	8:90	0:0	6	;
+water	9:4	0:0	4	}
+water	10:4	0:0	2	res
+op	10:8	0:0	2	=
+call	10:10	10:91	2	dc1394_capture_dequeue
+arg	10:33	10:47	3	dc1394->camera
+water	10:33	0:0	4	dc1394
+op	10:39	0:0	4	->
+water	10:41	0:0	4	camera
+arg	10:49	10:75	3	DC1394_CAPTURE_POLICY_WAIT
+water	10:49	0:0	4	DC1394_CAPTURE_POLICY_WAIT
+arg	10:77	10:91	3	&dc1394->frame
+op	10:77	0:0	4	&
+water	10:78	0:0	4	dc1394
+op	10:84	0:0	4	->
+water	10:86	0:0	4	frame
+water	10:92	0:0	2	;
+if	11:4	15:4	2	(res == DC1394_SUCCESS)
+cond	11:8	11:15	3	res == DC1394_SUCCESS
+water	11:8	0:0	4	res
+op	11:12	0:0	4	==
+water	11:15	0:0	4	DC1394_SUCCESS
+stmts	11:31	15:4	3	
+water	11:31	0:0	4	{
+water	12:8	0:0	4	dc1394
+op	12:14	0:0	4	->
+water	12:16	0:0	4	packet
+op	12:22	0:0	4	.
+water	12:23	0:0	4	data
+op	12:28	0:0	4	=
+water	12:30	0:0	4	(
+water	12:31	0:0	4	uint8_t
+op	12:39	0:0	4	*
+water	12:40	0:0	4	)
+water	12:42	0:0	4	dc1394
+op	12:48	0:0	4	->
+water	12:50	0:0	4	frame
+op	12:55	0:0	4	->
+water	12:57	0:0	4	image
+water	12:62	0:0	4	;
+water	13:8	0:0	4	dc1394
+op	13:14	0:0	4	->
+water	13:16	0:0	4	packet
+op	13:22	0:0	4	.
+water	13:23	0:0	4	pts
+op	13:28	0:0	4	=
+water	13:30	0:0	4	dc1394
+op	13:36	0:0	4	->
+water	13:38	0:0	4	current_frame
+op	13:52	0:0	4	*
+water	13:54	0:0	4	1000000
+op	13:62	0:0	4	/
+water	13:64	0:0	4	dc1394
+op	13:70	0:0	4	->
+water	13:72	0:0	4	frame_rate
+water	13:82	0:0	4	;
+water	14:8	0:0	4	res
+op	14:12	0:0	4	=
+water	14:14	0:0	4	dc1394
+op	14:20	0:0	4	->
+water	14:22	0:0	4	frame
+op	14:27	0:0	4	->
+water	14:29	0:0	4	image_bytes
+water	14:40	0:0	4	;
+water	15:4	0:0	4	}
+else	15:6	19:4	2
+stmts	15:11	19:4	3	
+water	15:11	0:0	4	{
+call	16:8	16:54	4	av_log
+arg	16:15	16:16	5	c
+water	16:15	0:0	6	c
+arg	16:18	16:30	5	AV_LOG_ERROR
+water	16:18	0:0	6	AV_LOG_ERROR
+arg	16:32	16:54	5	"DMA capture failed\n"
+water	16:32	0:0	6	"DMA capture failed\n"
+water	16:55	0:0	4	;
+water	17:8	0:0	4	dc1394
+op	17:14	0:0	4	->
+water	17:16	0:0	4	packet
+op	17:22	0:0	4	.
+water	17:23	0:0	4	data
+op	17:28	0:0	4	=
+water	17:30	0:0	4	NULL
+water	17:34	0:0	4	;
+water	18:8	0:0	4	res
+op	18:12	0:0	4	=
+op	18:14	0:0	4	-
+water	18:15	0:0	4	1
+water	18:16	0:0	4	;
+water	19:4	0:0	4	}
+op	20:4	0:0	2	*
+water	20:5	0:0	2	pkt
+op	20:9	0:0	2	=
+water	20:11	0:0	2	dc1394
+op	20:17	0:0	2	->
+water	20:19	0:0	2	packet
+water	20:25	0:0	2	;
+return	21:4	21:14	2	res
+water	21:11	0:0	3	res

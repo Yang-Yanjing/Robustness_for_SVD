@@ -1,0 +1,214 @@
+func	1:0	39:0	0	static int	asf_read_properties
+params	1:30	0:0	1	
+param	1:31	1:49	2	AVFormatContext *	s
+param	1:51	1:74	2	const GUIDParseTable *	g
+stmnts	0:0	38:12	1	
+decl	3:4	3:34	2	ASFContext	*asf
+op	3:20	0:0	2	=
+water	3:22	0:0	2	s
+op	3:23	0:0	2	->
+water	3:25	0:0	2	priv_data
+decl	4:4	4:27	2	AVIOContext	*pb
+op	4:20	0:0	2	=
+water	4:22	0:0	2	s
+op	4:23	0:0	2	->
+water	4:25	0:0	2	pb
+decl	5:4	5:24	2	time_t	creation_time
+call	6:4	6:16	2	avio_rl64
+arg	6:14	6:16	3	pb
+water	6:14	0:0	4	pb
+water	6:17	0:0	2	;
+call	7:4	7:20	2	avio_skip
+arg	7:14	7:16	3	pb
+water	7:14	0:0	4	pb
+arg	7:18	7:20	3	16
+water	7:18	0:0	4	16
+water	7:21	0:0	2	;
+call	8:4	8:19	2	avio_skip
+arg	8:14	8:16	3	pb
+water	8:14	0:0	4	pb
+arg	8:18	8:19	3	8
+water	8:18	0:0	4	8
+water	8:20	0:0	2	;
+water	9:4	0:0	2	creation_time
+op	9:18	0:0	2	=
+call	9:20	9:32	2	avio_rl64
+arg	9:30	9:32	3	pb
+water	9:30	0:0	4	pb
+water	9:33	0:0	2	;
+if	10:4	28:4	2	(! ( asf -> b_flags & ASF_FLAG_BROADCAST ))
+cond	10:8	10:43	3	! ( asf -> b_flags & ASF_FLAG_BROADCAST )
+op	10:8	0:0	4	!
+water	10:9	0:0	4	(
+water	10:10	0:0	4	asf
+op	10:13	0:0	4	->
+water	10:15	0:0	4	b_flags
+op	10:23	0:0	4	&
+water	10:25	0:0	4	ASF_FLAG_BROADCAST
+water	10:43	0:0	4	)
+stmts	10:46	28:4	3	
+water	10:46	0:0	4	{
+decl	11:8	11:23	4	struct tm	tmbuf
+decl	12:8	12:21	4	struct tm	*tm
+decl	13:8	13:20	4	char	buf[64]
+water	15:8	0:0	4	creation_time
+op	15:22	0:0	4	/=
+water	15:25	0:0	4	10000000
+water	15:33	0:0	4	;
+water	17:8	0:0	4	creation_time
+op	17:22	0:0	4	-=
+water	17:25	0:0	4	11644473600
+water	17:36	0:0	4	;
+water	18:8	0:0	4	tm
+op	18:11	0:0	4	=
+call	18:13	18:44	4	gmtime_r
+arg	18:22	18:36	5	&creation_time
+op	18:22	0:0	6	&
+water	18:23	0:0	6	creation_time
+arg	18:38	18:44	5	&tmbuf
+op	18:38	0:0	6	&
+water	18:39	0:0	6	tmbuf
+water	18:45	0:0	4	;
+if	19:8	22:8	4	(tm)
+cond	19:12	19:12	5	tm
+water	19:12	0:0	6	tm
+stmts	19:16	22:8	5	
+water	19:16	0:0	6	{
+if	20:12	21:29	6	(!strftime (buf ,sizeof ( buf ) ,"%Y-%m-%d %H:%M:%S" ,tm ))
+cond	20:16	20:67	7	!strftime (buf ,sizeof ( buf ) ,"%Y-%m-%d %H:%M:%S" ,tm )
+op	20:16	0:0	8	!
+call	20:17	20:67	8	strftime
+arg	20:26	20:29	9	buf
+water	20:26	0:0	10	buf
+arg	20:31	20:42	9	sizeof(buf)
+op	20:31	0:0	10	sizeof
+water	20:37	0:0	10	(
+water	20:38	0:0	10	buf
+water	20:41	0:0	10	)
+arg	20:44	20:63	9	"%Y-%m-%d %H:%M:%S"
+water	20:44	0:0	10	"%Y-%m-%d %H:%M:%S"
+arg	20:65	20:67	9	tm
+water	20:65	0:0	10	tm
+stmts	21:16	21:29	7	
+water	21:16	0:0	8	buf
+op	21:19	0:0	8	[
+water	21:20	0:0	8	0
+op	21:21	0:0	8	]
+op	21:23	0:0	8	=
+water	21:25	0:0	8	'\0'
+water	21:29	0:0	8	;
+water	22:8	0:0	6	}
+else	22:10	23:25	4
+stmts	23:12	23:25	5	
+water	23:12	0:0	6	buf
+op	23:15	0:0	6	[
+water	23:16	0:0	6	0
+op	23:17	0:0	6	]
+op	23:19	0:0	6	=
+water	23:21	0:0	6	'\0'
+water	23:25	0:0	6	;
+if	24:8	27:8	4	(buf [ 0 ])
+cond	24:12	24:17	5	buf [ 0 ]
+water	24:12	0:0	6	buf
+op	24:15	0:0	6	[
+water	24:16	0:0	6	0
+op	24:17	0:0	6	]
+stmts	24:20	27:8	5	
+water	24:20	0:0	6	{
+if	25:12	26:66	6	(av_dict_set (& s -> metadata ,"creation_time" ,buf ,0 ) < 0)
+cond	25:16	25:69	7	av_dict_set (& s -> metadata ,"creation_time" ,buf ,0 ) < 0
+call	25:16	25:65	8	av_dict_set
+arg	25:28	25:40	9	&s->metadata
+op	25:28	0:0	10	&
+water	25:29	0:0	10	s
+op	25:30	0:0	10	->
+water	25:32	0:0	10	metadata
+arg	25:42	25:57	9	"creation_time"
+water	25:42	0:0	10	"creation_time"
+arg	25:59	25:62	9	buf
+water	25:59	0:0	10	buf
+arg	25:64	25:65	9	0
+water	25:64	0:0	10	0
+op	25:67	0:0	8	<
+water	25:69	0:0	8	0
+stmts	26:16	26:66	7	
+call	26:16	26:65	8	av_log
+arg	26:23	26:24	9	s
+water	26:23	0:0	10	s
+arg	26:26	26:40	9	AV_LOG_WARNING
+water	26:26	0:0	10	AV_LOG_WARNING
+arg	26:42	26:65	9	"av_dict_set failed.\n"
+water	26:42	0:0	10	"av_dict_set failed.\n"
+water	26:66	0:0	8	;
+water	27:8	0:0	6	}
+water	28:4	0:0	4	}
+water	29:4	0:0	2	asf
+op	29:7	0:0	2	->
+water	29:9	0:0	2	nb_packets
+op	29:21	0:0	2	=
+call	29:23	29:35	2	avio_rl64
+arg	29:33	29:35	3	pb
+water	29:33	0:0	4	pb
+water	29:36	0:0	2	;
+water	30:4	0:0	2	asf
+op	30:7	0:0	2	->
+water	30:9	0:0	2	duration
+op	30:21	0:0	2	=
+call	30:23	30:35	2	avio_rl64
+arg	30:33	30:35	3	pb
+water	30:33	0:0	4	pb
+op	30:37	0:0	2	/
+water	30:39	0:0	2	10000
+water	30:44	0:0	2	;
+call	31:4	31:19	2	avio_skip
+arg	31:14	31:16	3	pb
+water	31:14	0:0	4	pb
+arg	31:18	31:19	3	8
+water	31:18	0:0	4	8
+water	31:20	0:0	2	;
+water	32:4	0:0	2	asf
+op	32:7	0:0	2	->
+water	32:9	0:0	2	preroll
+op	32:21	0:0	2	=
+call	32:23	32:35	2	avio_rl64
+arg	32:33	32:35	3	pb
+water	32:33	0:0	4	pb
+water	32:36	0:0	2	;
+water	33:4	0:0	2	asf
+op	33:7	0:0	2	->
+water	33:9	0:0	2	duration
+op	33:20	0:0	2	-=
+water	33:23	0:0	2	asf
+op	33:26	0:0	2	->
+water	33:28	0:0	2	preroll
+water	33:35	0:0	2	;
+water	34:4	0:0	2	asf
+op	34:7	0:0	2	->
+water	34:9	0:0	2	b_flags
+op	34:21	0:0	2	=
+call	34:23	34:35	2	avio_rl32
+arg	34:33	34:35	3	pb
+water	34:33	0:0	4	pb
+water	34:36	0:0	2	;
+call	35:4	35:19	2	avio_skip
+arg	35:14	35:16	3	pb
+water	35:14	0:0	4	pb
+arg	35:18	35:19	3	4
+water	35:18	0:0	4	4
+water	35:20	0:0	2	;
+water	36:4	0:0	2	asf
+op	36:7	0:0	2	->
+water	36:9	0:0	2	packet_size
+op	36:22	0:0	2	=
+call	36:24	36:36	2	avio_rl32
+arg	36:34	36:36	3	pb
+water	36:34	0:0	4	pb
+water	36:37	0:0	2	;
+call	37:4	37:19	2	avio_skip
+arg	37:14	37:16	3	pb
+water	37:14	0:0	4	pb
+arg	37:18	37:19	3	4
+water	37:18	0:0	4	4
+water	37:20	0:0	2	;
+return	38:4	38:12	2	0
+water	38:11	0:0	3	0

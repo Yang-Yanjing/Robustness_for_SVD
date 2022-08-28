@@ -1,0 +1,183 @@
+func	1:0	28:0	0	static int	append_flv_data
+params	1:26	0:0	1	
+param	1:27	1:42	2	RTMPContext *	rt
+param	1:44	1:59	2	RTMPPacket *	pkt
+param	1:61	1:69	2	int	skip
+stmnts	0:0	27:12	1	
+decl	3:4	3:25	2	int	old_flv_size
+water	3:20	0:0	2	,
+decl	3:4	3:25	2	int	ret
+decl	4:4	4:22	2	PutByteContext	pbc
+decl	5:4	5:42	2	const uint8_t	*data
+op	5:24	0:0	2	=
+water	5:26	0:0	2	pkt
+op	5:29	0:0	2	->
+water	5:31	0:0	2	data
+op	5:36	0:0	2	+
+water	5:38	0:0	2	skip
+decl	6:4	6:42	2	const int	size
+op	6:24	0:0	2	=
+water	6:26	0:0	2	pkt
+op	6:29	0:0	2	->
+water	6:31	0:0	2	size
+op	6:36	0:0	2	-
+water	6:38	0:0	2	skip
+decl	7:4	7:40	2	uint32_t	ts
+op	7:24	0:0	2	=
+water	7:26	0:0	2	pkt
+op	7:29	0:0	2	->
+water	7:31	0:0	2	timestamp
+if	8:4	10:4	2	(pkt -> type == RTMP_PT_AUDIO)
+cond	8:8	8:21	3	pkt -> type == RTMP_PT_AUDIO
+water	8:8	0:0	4	pkt
+op	8:11	0:0	4	->
+water	8:13	0:0	4	type
+op	8:18	0:0	4	==
+water	8:21	0:0	4	RTMP_PT_AUDIO
+stmts	8:36	10:4	3	
+water	8:36	0:0	4	{
+water	9:8	0:0	4	rt
+op	9:10	0:0	4	->
+water	9:12	0:0	4	has_audio
+op	9:22	0:0	4	=
+water	9:24	0:0	4	1
+water	9:25	0:0	4	;
+water	10:4	0:0	4	}
+else	10:6	12:4	2
+stmts	10:11	12:4	3	
+if	10:11	12:4	4	(pkt -> type == RTMP_PT_VIDEO)
+cond	10:15	10:28	5	pkt -> type == RTMP_PT_VIDEO
+water	10:15	0:0	6	pkt
+op	10:18	0:0	6	->
+water	10:20	0:0	6	type
+op	10:25	0:0	6	==
+water	10:28	0:0	6	RTMP_PT_VIDEO
+stmts	10:43	12:4	5	
+water	10:43	0:0	6	{
+water	11:8	0:0	6	rt
+op	11:10	0:0	6	->
+water	11:12	0:0	6	has_video
+op	11:22	0:0	6	=
+water	11:24	0:0	6	1
+water	11:25	0:0	6	;
+water	12:4	0:0	6	}
+water	13:4	0:0	2	old_flv_size
+op	13:17	0:0	2	=
+call	13:19	13:46	2	update_offset
+arg	13:33	13:35	3	rt
+water	13:33	0:0	4	rt
+arg	13:37	13:46	3	size+15
+water	13:37	0:0	4	size
+op	13:42	0:0	4	+
+water	13:44	0:0	4	15
+water	13:47	0:0	2	;
+if	14:4	17:4	2	(( ret =av_reallocp (& rt -> flv_data ,rt -> flv_size ) ) < 0)
+cond	14:8	14:59	3	( ret =av_reallocp (& rt -> flv_data ,rt -> flv_size ) ) < 0
+water	14:8	0:0	4	(
+water	14:9	0:0	4	ret
+op	14:13	0:0	4	=
+call	14:15	14:54	4	av_reallocp
+arg	14:27	14:40	5	&rt->flv_data
+op	14:27	0:0	6	&
+water	14:28	0:0	6	rt
+op	14:30	0:0	6	->
+water	14:32	0:0	6	flv_data
+arg	14:42	14:54	5	rt->flv_size
+water	14:42	0:0	6	rt
+op	14:44	0:0	6	->
+water	14:46	0:0	6	flv_size
+water	14:55	0:0	4	)
+op	14:57	0:0	4	<
+water	14:59	0:0	4	0
+stmts	14:62	17:4	3	
+water	14:62	0:0	4	{
+water	15:8	0:0	4	rt
+op	15:10	0:0	4	->
+water	15:12	0:0	4	flv_size
+op	15:21	0:0	4	=
+water	15:23	0:0	4	rt
+op	15:25	0:0	4	->
+water	15:27	0:0	4	flv_off
+op	15:35	0:0	4	=
+water	15:37	0:0	4	0
+water	15:38	0:0	4	;
+return	16:8	16:18	4	ret
+water	16:15	0:0	5	ret
+water	17:4	0:0	4	}
+call	18:4	18:60	2	bytestream2_init_writer
+arg	18:28	18:32	3	&pbc
+op	18:28	0:0	4	&
+water	18:29	0:0	4	pbc
+arg	18:34	18:46	3	rt->flv_data
+water	18:34	0:0	4	rt
+op	18:36	0:0	4	->
+water	18:38	0:0	4	flv_data
+arg	18:48	18:60	3	rt->flv_size
+water	18:48	0:0	4	rt
+op	18:50	0:0	4	->
+water	18:52	0:0	4	flv_size
+water	18:61	0:0	2	;
+call	19:4	19:41	2	bytestream2_skip_p
+arg	19:23	19:27	3	&pbc
+op	19:23	0:0	4	&
+water	19:24	0:0	4	pbc
+arg	19:29	19:41	3	old_flv_size
+water	19:29	0:0	4	old_flv_size
+water	19:42	0:0	2	;
+call	20:4	20:40	2	bytestream2_put_byte
+arg	20:25	20:29	3	&pbc
+op	20:25	0:0	4	&
+water	20:26	0:0	4	pbc
+arg	20:31	20:40	3	pkt->type
+water	20:31	0:0	4	pkt
+op	20:34	0:0	4	->
+water	20:36	0:0	4	type
+water	20:41	0:0	2	;
+call	21:4	21:35	2	bytestream2_put_be24
+arg	21:25	21:29	3	&pbc
+op	21:25	0:0	4	&
+water	21:26	0:0	4	pbc
+arg	21:31	21:35	3	size
+water	21:31	0:0	4	size
+water	21:36	0:0	2	;
+call	22:4	22:33	2	bytestream2_put_be24
+arg	22:25	22:29	3	&pbc
+op	22:25	0:0	4	&
+water	22:26	0:0	4	pbc
+arg	22:31	22:33	3	ts
+water	22:31	0:0	4	ts
+water	22:34	0:0	2	;
+call	23:4	23:39	2	bytestream2_put_byte
+arg	23:25	23:29	3	&pbc
+op	23:25	0:0	4	&
+water	23:26	0:0	4	pbc
+arg	23:31	23:39	3	ts>>24
+water	23:31	0:0	4	ts
+op	23:34	0:0	4	>>
+water	23:37	0:0	4	24
+water	23:40	0:0	2	;
+call	24:4	24:32	2	bytestream2_put_be24
+arg	24:25	24:29	3	&pbc
+op	24:25	0:0	4	&
+water	24:26	0:0	4	pbc
+arg	24:31	24:32	3	0
+water	24:31	0:0	4	0
+water	24:33	0:0	2	;
+call	25:4	25:43	2	bytestream2_put_buffer
+arg	25:27	25:31	3	&pbc
+op	25:27	0:0	4	&
+water	25:28	0:0	4	pbc
+arg	25:33	25:37	3	data
+water	25:33	0:0	4	data
+arg	25:39	25:43	3	size
+water	25:39	0:0	4	size
+water	25:44	0:0	2	;
+call	26:4	26:32	2	bytestream2_put_be32
+arg	26:25	26:29	3	&pbc
+op	26:25	0:0	4	&
+water	26:26	0:0	4	pbc
+arg	26:31	26:32	3	0
+water	26:31	0:0	4	0
+water	26:33	0:0	2	;
+return	27:4	27:12	2	0
+water	27:11	0:0	3	0

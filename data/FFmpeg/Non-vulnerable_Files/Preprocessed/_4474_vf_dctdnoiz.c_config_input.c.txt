@@ -1,0 +1,746 @@
+func	2:0	75:0	0	static int	config_input
+params	2:23	0:0	1	
+param	2:24	2:44	2	AVFilterLink *	inlink
+stmnts	0:0	74:12	1	
+decl	4:4	4:38	2	AVFilterContext	*ctx
+op	4:25	0:0	2	=
+water	4:27	0:0	2	inlink
+op	4:33	0:0	2	->
+water	4:35	0:0	2	dst
+decl	5:4	5:34	2	DCTdnoizContext	*s
+op	5:23	0:0	2	=
+water	5:25	0:0	2	ctx
+op	5:28	0:0	2	->
+water	5:30	0:0	2	priv
+decl	6:4	6:66	2	int	i
+water	6:9	0:0	2	,
+decl	6:4	6:66	2	int	x
+water	6:12	0:0	2	,
+decl	6:4	6:66	2	int	y
+water	6:15	0:0	2	,
+decl	6:4	6:66	2	int	bx
+water	6:19	0:0	2	,
+decl	6:4	6:66	2	int	by
+water	6:23	0:0	2	,
+decl	6:4	6:66	2	int	linesize
+water	6:33	0:0	2	,
+decl	6:4	6:66	2	int	*iweights
+water	6:44	0:0	2	,
+decl	6:4	6:66	2	int	max_slice_h
+water	6:57	0:0	2	,
+decl	6:4	6:66	2	int	slice_h
+decl	7:4	7:31	2	const int	bsize
+op	7:20	0:0	2	=
+water	7:22	0:0	2	1
+op	7:24	0:0	2	<<
+water	7:27	0:0	2	s
+op	7:28	0:0	2	->
+water	7:30	0:0	2	n
+switch	8:4	19:4	2	(inlink -> format)
+cond	8:12	8:20	3	inlink -> format
+water	8:12	0:0	4	inlink
+op	8:18	0:0	4	->
+water	8:20	0:0	4	format
+stmts	8:28	19:4	3	
+water	8:28	0:0	4	{
+label	9:4	9:25	4	case AV_PIX_FMT_BGR24 :
+water	10:8	0:0	4	s
+op	10:9	0:0	4	->
+water	10:11	0:0	4	color_decorrelation
+op	10:31	0:0	4	=
+water	10:33	0:0	4	color_decorrelation_bgr
+water	10:56	0:0	4	;
+water	11:8	0:0	4	s
+op	11:9	0:0	4	->
+water	11:11	0:0	4	color_correlation
+op	11:31	0:0	4	=
+water	11:33	0:0	4	color_correlation_bgr
+water	11:54	0:0	4	;
+break	12:8	12:13	4	
+label	13:4	13:25	4	case AV_PIX_FMT_RGB24 :
+water	14:8	0:0	4	s
+op	14:9	0:0	4	->
+water	14:11	0:0	4	color_decorrelation
+op	14:31	0:0	4	=
+water	14:33	0:0	4	color_decorrelation_rgb
+water	14:56	0:0	4	;
+water	15:8	0:0	4	s
+op	15:9	0:0	4	->
+water	15:11	0:0	4	color_correlation
+op	15:31	0:0	4	=
+water	15:33	0:0	4	color_correlation_rgb
+water	15:54	0:0	4	;
+break	16:8	16:13	4	
+label	17:4	17:11	4	default :
+call	18:8	18:20	4	av_assert0
+arg	18:19	18:20	5	0
+water	18:19	0:0	6	0
+water	18:21	0:0	4	;
+water	19:4	0:0	4	}
+water	20:4	0:0	2	s
+op	20:5	0:0	2	->
+water	20:7	0:0	2	pr_width
+op	20:17	0:0	2	=
+water	20:19	0:0	2	inlink
+op	20:25	0:0	2	->
+water	20:27	0:0	2	w
+op	20:29	0:0	2	-
+water	20:31	0:0	2	(
+water	20:32	0:0	2	inlink
+op	20:38	0:0	2	->
+water	20:40	0:0	2	w
+op	20:42	0:0	2	-
+water	20:44	0:0	2	bsize
+water	20:49	0:0	2	)
+op	20:51	0:0	2	%
+water	20:53	0:0	2	s
+op	20:54	0:0	2	->
+water	20:56	0:0	2	step
+water	20:60	0:0	2	;
+water	21:4	0:0	2	s
+op	21:5	0:0	2	->
+water	21:7	0:0	2	pr_height
+op	21:17	0:0	2	=
+water	21:19	0:0	2	inlink
+op	21:25	0:0	2	->
+water	21:27	0:0	2	h
+op	21:29	0:0	2	-
+water	21:31	0:0	2	(
+water	21:32	0:0	2	inlink
+op	21:38	0:0	2	->
+water	21:40	0:0	2	h
+op	21:42	0:0	2	-
+water	21:44	0:0	2	bsize
+water	21:49	0:0	2	)
+op	21:51	0:0	2	%
+water	21:53	0:0	2	s
+op	21:54	0:0	2	->
+water	21:56	0:0	2	step
+water	21:60	0:0	2	;
+if	22:4	24:39	2	(s -> pr_width != inlink -> w)
+cond	22:8	22:31	3	s -> pr_width != inlink -> w
+water	22:8	0:0	4	s
+op	22:9	0:0	4	->
+water	22:11	0:0	4	pr_width
+op	22:20	0:0	4	!=
+water	22:23	0:0	4	inlink
+op	22:29	0:0	4	->
+water	22:31	0:0	4	w
+stmts	23:8	24:39	3	
+call	23:8	24:38	4	av_log
+arg	23:15	23:18	5	ctx
+water	23:15	0:0	6	ctx
+arg	23:20	23:34	5	AV_LOG_WARNING
+water	23:20	0:0	6	AV_LOG_WARNING
+arg	23:36	23:87	5	"The last %d horizontal pixels won't be denoised\n"
+water	23:36	0:0	6	"The last %d horizontal pixels won't be denoised\n"
+arg	24:15	24:38	5	inlink->w-s->pr_width
+water	24:15	0:0	6	inlink
+op	24:21	0:0	6	->
+water	24:23	0:0	6	w
+op	24:25	0:0	6	-
+water	24:27	0:0	6	s
+op	24:28	0:0	6	->
+water	24:30	0:0	6	pr_width
+water	24:39	0:0	4	;
+if	25:4	27:40	2	(s -> pr_height != inlink -> h)
+cond	25:8	25:32	3	s -> pr_height != inlink -> h
+water	25:8	0:0	4	s
+op	25:9	0:0	4	->
+water	25:11	0:0	4	pr_height
+op	25:21	0:0	4	!=
+water	25:24	0:0	4	inlink
+op	25:30	0:0	4	->
+water	25:32	0:0	4	h
+stmts	26:8	27:40	3	
+call	26:8	27:39	4	av_log
+arg	26:15	26:18	5	ctx
+water	26:15	0:0	6	ctx
+arg	26:20	26:34	5	AV_LOG_WARNING
+water	26:20	0:0	6	AV_LOG_WARNING
+arg	26:36	26:85	5	"The last %d vertical pixels won't be denoised\n"
+water	26:36	0:0	6	"The last %d vertical pixels won't be denoised\n"
+arg	27:15	27:39	5	inlink->h-s->pr_height
+water	27:15	0:0	6	inlink
+op	27:21	0:0	6	->
+water	27:23	0:0	6	h
+op	27:25	0:0	6	-
+water	27:27	0:0	6	s
+op	27:28	0:0	6	->
+water	27:30	0:0	6	pr_height
+water	27:40	0:0	4	;
+water	28:4	0:0	2	max_slice_h
+op	28:16	0:0	2	=
+water	28:18	0:0	2	s
+op	28:19	0:0	2	->
+water	28:21	0:0	2	pr_height
+op	28:31	0:0	2	/
+water	28:33	0:0	2	(
+water	28:34	0:0	2	(
+water	28:35	0:0	2	s
+op	28:36	0:0	2	->
+water	28:38	0:0	2	bsize
+op	28:44	0:0	2	-
+water	28:46	0:0	2	1
+water	28:47	0:0	2	)
+op	28:49	0:0	2	*
+water	28:51	0:0	2	2
+water	28:52	0:0	2	)
+water	28:53	0:0	2	;
+water	29:4	0:0	2	s
+op	29:5	0:0	2	->
+water	29:7	0:0	2	nb_threads
+op	29:18	0:0	2	=
+call	29:20	29:75	2	FFMIN3
+arg	29:27	29:38	3	MAX_THREADS
+water	29:27	0:0	4	MAX_THREADS
+arg	29:40	29:62	3	ctx->graph->nb_threads
+water	29:40	0:0	4	ctx
+op	29:43	0:0	4	->
+water	29:45	0:0	4	graph
+op	29:50	0:0	4	->
+water	29:52	0:0	4	nb_threads
+arg	29:64	29:75	3	max_slice_h
+water	29:64	0:0	4	max_slice_h
+water	29:76	0:0	2	;
+call	30:4	31:74	2	av_log
+arg	30:11	30:14	3	ctx
+water	30:11	0:0	4	ctx
+arg	30:16	30:28	3	AV_LOG_DEBUG
+water	30:16	0:0	4	AV_LOG_DEBUG
+arg	30:30	30:73	3	"threads: [max=%d hmax=%d user=%d] => %d\n"
+water	30:30	0:0	4	"threads: [max=%d hmax=%d user=%d] => %d\n"
+arg	31:11	31:22	3	MAX_THREADS
+water	31:11	0:0	4	MAX_THREADS
+arg	31:24	31:35	3	max_slice_h
+water	31:24	0:0	4	max_slice_h
+arg	31:37	31:59	3	ctx->graph->nb_threads
+water	31:37	0:0	4	ctx
+op	31:40	0:0	4	->
+water	31:42	0:0	4	graph
+op	31:47	0:0	4	->
+water	31:49	0:0	4	nb_threads
+arg	31:61	31:74	3	s->nb_threads
+water	31:61	0:0	4	s
+op	31:62	0:0	4	->
+water	31:64	0:0	4	nb_threads
+water	31:75	0:0	2	;
+water	32:4	0:0	2	s
+op	32:5	0:0	2	->
+water	32:7	0:0	2	p_linesize
+op	32:18	0:0	2	=
+water	32:20	0:0	2	linesize
+op	32:29	0:0	2	=
+call	32:31	32:54	2	FFALIGN
+arg	32:39	32:50	3	s->pr_width
+water	32:39	0:0	4	s
+op	32:40	0:0	4	->
+water	32:42	0:0	4	pr_width
+arg	32:52	32:54	3	32
+water	32:52	0:0	4	32
+water	32:55	0:0	2	;
+for	33:4	39:4	2	(i = 0 ;i < 2;i ++)
+forinit	33:9	33:14	3	i = 0 ;
+water	33:9	0:0	4	i
+op	33:11	0:0	4	=
+water	33:13	0:0	4	0
+water	33:14	0:0	4	;
+cond	33:16	33:20	3	i < 2
+water	33:16	0:0	4	i
+op	33:18	0:0	4	<
+water	33:20	0:0	4	2
+forexpr	33:23	33:24	3	i ++
+water	33:23	0:0	4	i
+op	33:24	0:0	4	++
+stmts	33:28	39:4	3	
+water	33:28	0:0	4	{
+water	34:8	0:0	4	s
+op	34:9	0:0	4	->
+water	34:11	0:0	4	cbuf
+op	34:15	0:0	4	[
+water	34:16	0:0	4	i
+op	34:17	0:0	4	]
+op	34:18	0:0	4	[
+water	34:19	0:0	4	0
+op	34:20	0:0	4	]
+op	34:22	0:0	4	=
+call	34:24	34:87	4	av_malloc_array
+arg	34:40	34:63	5	linesize*s->pr_height
+water	34:40	0:0	6	linesize
+op	34:49	0:0	6	*
+water	34:51	0:0	6	s
+op	34:52	0:0	6	->
+water	34:54	0:0	6	pr_height
+arg	34:65	34:87	5	sizeof(*s->cbuf[i][0])
+op	34:65	0:0	6	sizeof
+water	34:71	0:0	6	(
+op	34:72	0:0	6	*
+water	34:73	0:0	6	s
+op	34:74	0:0	6	->
+water	34:76	0:0	6	cbuf
+op	34:80	0:0	6	[
+water	34:81	0:0	6	i
+op	34:82	0:0	6	]
+op	34:83	0:0	6	[
+water	34:84	0:0	6	0
+op	34:85	0:0	6	]
+water	34:86	0:0	6	)
+water	34:88	0:0	4	;
+water	35:8	0:0	4	s
+op	35:9	0:0	4	->
+water	35:11	0:0	4	cbuf
+op	35:15	0:0	4	[
+water	35:16	0:0	4	i
+op	35:17	0:0	4	]
+op	35:18	0:0	4	[
+water	35:19	0:0	4	1
+op	35:20	0:0	4	]
+op	35:22	0:0	4	=
+call	35:24	35:87	4	av_malloc_array
+arg	35:40	35:63	5	linesize*s->pr_height
+water	35:40	0:0	6	linesize
+op	35:49	0:0	6	*
+water	35:51	0:0	6	s
+op	35:52	0:0	6	->
+water	35:54	0:0	6	pr_height
+arg	35:65	35:87	5	sizeof(*s->cbuf[i][1])
+op	35:65	0:0	6	sizeof
+water	35:71	0:0	6	(
+op	35:72	0:0	6	*
+water	35:73	0:0	6	s
+op	35:74	0:0	6	->
+water	35:76	0:0	6	cbuf
+op	35:80	0:0	6	[
+water	35:81	0:0	6	i
+op	35:82	0:0	6	]
+op	35:83	0:0	6	[
+water	35:84	0:0	6	1
+op	35:85	0:0	6	]
+water	35:86	0:0	6	)
+water	35:88	0:0	4	;
+water	36:8	0:0	4	s
+op	36:9	0:0	4	->
+water	36:11	0:0	4	cbuf
+op	36:15	0:0	4	[
+water	36:16	0:0	4	i
+op	36:17	0:0	4	]
+op	36:18	0:0	4	[
+water	36:19	0:0	4	2
+op	36:20	0:0	4	]
+op	36:22	0:0	4	=
+call	36:24	36:87	4	av_malloc_array
+arg	36:40	36:63	5	linesize*s->pr_height
+water	36:40	0:0	6	linesize
+op	36:49	0:0	6	*
+water	36:51	0:0	6	s
+op	36:52	0:0	6	->
+water	36:54	0:0	6	pr_height
+arg	36:65	36:87	5	sizeof(*s->cbuf[i][2])
+op	36:65	0:0	6	sizeof
+water	36:71	0:0	6	(
+op	36:72	0:0	6	*
+water	36:73	0:0	6	s
+op	36:74	0:0	6	->
+water	36:76	0:0	6	cbuf
+op	36:80	0:0	6	[
+water	36:81	0:0	6	i
+op	36:82	0:0	6	]
+op	36:83	0:0	6	[
+water	36:84	0:0	6	2
+op	36:85	0:0	6	]
+water	36:86	0:0	6	)
+water	36:88	0:0	4	;
+if	37:8	38:34	4	(! s -> cbuf [ i ] [ 0 ] || ! s -> cbuf [ i ] [ 1 ] || ! s -> cbuf [ i ] [ 2 ])
+cond	37:12	37:61	5	! s -> cbuf [ i ] [ 0 ] || ! s -> cbuf [ i ] [ 1 ] || ! s -> cbuf [ i ] [ 2 ]
+op	37:12	0:0	6	!
+water	37:13	0:0	6	s
+op	37:14	0:0	6	->
+water	37:16	0:0	6	cbuf
+op	37:20	0:0	6	[
+water	37:21	0:0	6	i
+op	37:22	0:0	6	]
+op	37:23	0:0	6	[
+water	37:24	0:0	6	0
+op	37:25	0:0	6	]
+op	37:27	0:0	6	||
+op	37:30	0:0	6	!
+water	37:31	0:0	6	s
+op	37:32	0:0	6	->
+water	37:34	0:0	6	cbuf
+op	37:38	0:0	6	[
+water	37:39	0:0	6	i
+op	37:40	0:0	6	]
+op	37:41	0:0	6	[
+water	37:42	0:0	6	1
+op	37:43	0:0	6	]
+op	37:45	0:0	6	||
+op	37:48	0:0	6	!
+water	37:49	0:0	6	s
+op	37:50	0:0	6	->
+water	37:52	0:0	6	cbuf
+op	37:56	0:0	6	[
+water	37:57	0:0	6	i
+op	37:58	0:0	6	]
+op	37:59	0:0	6	[
+water	37:60	0:0	6	2
+op	37:61	0:0	6	]
+stmts	38:12	38:34	5	
+return	38:12	38:34	6	AVERROR(ENOMEM)
+call	38:19	38:33	7	AVERROR
+arg	38:27	38:33	8	ENOMEM
+water	38:27	0:0	9	ENOMEM
+water	39:4	0:0	4	}
+if	42:4	49:4	2	(s -> expr_str)
+cond	42:8	42:11	3	s -> expr_str
+water	42:8	0:0	4	s
+op	42:9	0:0	4	->
+water	42:11	0:0	4	expr_str
+stmts	42:21	49:4	3	
+water	42:21	0:0	4	{
+for	43:8	48:8	4	(i = 0 ;i < s -> nb_threads;i ++)
+forinit	43:13	43:18	5	i = 0 ;
+water	43:13	0:0	6	i
+op	43:15	0:0	6	=
+water	43:17	0:0	6	0
+water	43:18	0:0	6	;
+cond	43:20	43:27	5	i < s -> nb_threads
+water	43:20	0:0	6	i
+op	43:22	0:0	6	<
+water	43:24	0:0	6	s
+op	43:25	0:0	6	->
+water	43:27	0:0	6	nb_threads
+forexpr	43:39	43:40	5	i ++
+water	43:39	0:0	6	i
+op	43:40	0:0	6	++
+stmts	43:44	48:8	5	
+water	43:44	0:0	6	{
+decl	44:12	45:67	6	int	ret
+op	44:20	0:0	6	=
+call	44:22	45:66	7	av_expr_parse
+arg	44:36	44:47	8	&s->expr[i]
+op	44:36	0:0	9	&
+water	44:37	0:0	9	s
+op	44:38	0:0	9	->
+water	44:40	0:0	9	expr
+op	44:44	0:0	9	[
+water	44:45	0:0	9	i
+op	44:46	0:0	9	]
+arg	44:49	44:60	8	s->expr_str
+water	44:49	0:0	9	s
+op	44:50	0:0	9	->
+water	44:52	0:0	9	expr_str
+arg	44:62	44:71	8	var_names
+water	44:62	0:0	9	var_names
+arg	45:36	45:40	8	NULL
+water	45:36	0:0	9	NULL
+arg	45:42	45:46	8	NULL
+water	45:42	0:0	9	NULL
+arg	45:48	45:52	8	NULL
+water	45:48	0:0	9	NULL
+arg	45:54	45:58	8	NULL
+water	45:54	0:0	9	NULL
+arg	45:60	45:61	8	0
+water	45:60	0:0	9	0
+arg	45:63	45:66	8	ctx
+water	45:63	0:0	9	ctx
+if	46:12	47:26	6	(ret < 0)
+cond	46:16	46:22	7	ret < 0
+water	46:16	0:0	8	ret
+op	46:20	0:0	8	<
+water	46:22	0:0	8	0
+stmts	47:16	47:26	7	
+return	47:16	47:26	8	ret
+water	47:23	0:0	9	ret
+water	48:8	0:0	6	}
+water	49:4	0:0	4	}
+water	53:4	0:0	2	slice_h
+op	53:12	0:0	2	=
+water	53:14	0:0	2	(
+water	53:15	0:0	2	int
+water	53:18	0:0	2	)
+call	53:19	53:60	2	ceilf
+arg	53:25	53:60	3	s->pr_height/(float)s->nb_threads
+water	53:25	0:0	4	s
+op	53:26	0:0	4	->
+water	53:28	0:0	4	pr_height
+op	53:38	0:0	4	/
+water	53:40	0:0	4	(
+water	53:41	0:0	4	float
+water	53:46	0:0	4	)
+water	53:47	0:0	4	s
+op	53:48	0:0	4	->
+water	53:50	0:0	4	nb_threads
+op	53:62	0:0	2	+
+water	53:64	0:0	2	(
+water	53:65	0:0	2	s
+op	53:66	0:0	2	->
+water	53:68	0:0	2	bsize
+op	53:74	0:0	2	-
+water	53:76	0:0	2	1
+water	53:77	0:0	2	)
+op	53:79	0:0	2	*
+water	53:81	0:0	2	2
+water	53:82	0:0	2	;
+for	54:4	58:4	2	(i = 0 ;i < s -> nb_threads;i ++)
+forinit	54:9	54:14	3	i = 0 ;
+water	54:9	0:0	4	i
+op	54:11	0:0	4	=
+water	54:13	0:0	4	0
+water	54:14	0:0	4	;
+cond	54:16	54:23	3	i < s -> nb_threads
+water	54:16	0:0	4	i
+op	54:18	0:0	4	<
+water	54:20	0:0	4	s
+op	54:21	0:0	4	->
+water	54:23	0:0	4	nb_threads
+forexpr	54:35	54:36	3	i ++
+water	54:35	0:0	4	i
+op	54:36	0:0	4	++
+stmts	54:40	58:4	3	
+water	54:40	0:0	4	{
+water	55:8	0:0	4	s
+op	55:9	0:0	4	->
+water	55:11	0:0	4	slices
+op	55:17	0:0	4	[
+water	55:18	0:0	4	i
+op	55:19	0:0	4	]
+op	55:21	0:0	4	=
+call	55:23	55:80	4	av_malloc_array
+arg	55:39	55:47	5	linesize
+water	55:39	0:0	6	linesize
+arg	55:49	55:80	5	slice_h*sizeof(*s->slices[i])
+water	55:49	0:0	6	slice_h
+op	55:57	0:0	6	*
+op	55:59	0:0	6	sizeof
+water	55:65	0:0	6	(
+op	55:66	0:0	6	*
+water	55:67	0:0	6	s
+op	55:68	0:0	6	->
+water	55:70	0:0	6	slices
+op	55:76	0:0	6	[
+water	55:77	0:0	6	i
+op	55:78	0:0	6	]
+water	55:79	0:0	6	)
+water	55:81	0:0	4	;
+if	56:8	57:34	4	(! s -> slices [ i ])
+cond	56:12	56:24	5	! s -> slices [ i ]
+op	56:12	0:0	6	!
+water	56:13	0:0	6	s
+op	56:14	0:0	6	->
+water	56:16	0:0	6	slices
+op	56:22	0:0	6	[
+water	56:23	0:0	6	i
+op	56:24	0:0	6	]
+stmts	57:12	57:34	5	
+return	57:12	57:34	6	AVERROR(ENOMEM)
+call	57:19	57:33	7	AVERROR
+arg	57:27	57:33	8	ENOMEM
+water	57:27	0:0	9	ENOMEM
+water	58:4	0:0	4	}
+water	59:4	0:0	2	s
+op	59:5	0:0	2	->
+water	59:7	0:0	2	weights
+op	59:15	0:0	2	=
+call	59:17	59:72	2	av_malloc
+arg	59:27	59:72	3	s->pr_height*linesize*sizeof(*s->weights)
+water	59:27	0:0	4	s
+op	59:28	0:0	4	->
+water	59:30	0:0	4	pr_height
+op	59:40	0:0	4	*
+water	59:42	0:0	4	linesize
+op	59:51	0:0	4	*
+op	59:53	0:0	4	sizeof
+water	59:59	0:0	4	(
+op	59:60	0:0	4	*
+water	59:61	0:0	4	s
+op	59:62	0:0	4	->
+water	59:64	0:0	4	weights
+water	59:71	0:0	4	)
+water	59:73	0:0	2	;
+if	60:4	61:30	2	(! s -> weights)
+cond	60:8	60:12	3	! s -> weights
+op	60:8	0:0	4	!
+water	60:9	0:0	4	s
+op	60:10	0:0	4	->
+water	60:12	0:0	4	weights
+stmts	61:8	61:30	3	
+return	61:8	61:30	4	AVERROR(ENOMEM)
+call	61:15	61:29	5	AVERROR
+arg	61:23	61:29	6	ENOMEM
+water	61:23	0:0	7	ENOMEM
+water	62:4	0:0	2	iweights
+op	62:13	0:0	2	=
+call	62:15	62:67	2	av_calloc
+arg	62:25	62:37	3	s->pr_height
+water	62:25	0:0	4	s
+op	62:26	0:0	4	->
+water	62:28	0:0	4	pr_height
+arg	62:39	62:67	3	linesize*sizeof(*iweights)
+water	62:39	0:0	4	linesize
+op	62:48	0:0	4	*
+op	62:50	0:0	4	sizeof
+water	62:56	0:0	4	(
+op	62:57	0:0	4	*
+water	62:58	0:0	4	iweights
+water	62:66	0:0	4	)
+water	62:68	0:0	2	;
+if	63:4	64:30	2	(! iweights)
+cond	63:8	63:9	3	! iweights
+op	63:8	0:0	4	!
+water	63:9	0:0	4	iweights
+stmts	64:8	64:30	3	
+return	64:8	64:30	4	AVERROR(ENOMEM)
+call	64:15	64:29	5	AVERROR
+arg	64:23	64:29	6	ENOMEM
+water	64:23	0:0	7	ENOMEM
+for	65:4	69:58	2	(y = 0 ;y < s -> pr_height - bsize + 1;y += s -> step)
+forinit	65:9	65:14	3	y = 0 ;
+water	65:9	0:0	4	y
+op	65:11	0:0	4	=
+water	65:13	0:0	4	0
+water	65:14	0:0	4	;
+cond	65:16	65:43	3	y < s -> pr_height - bsize + 1
+water	65:16	0:0	4	y
+op	65:18	0:0	4	<
+water	65:20	0:0	4	s
+op	65:21	0:0	4	->
+water	65:23	0:0	4	pr_height
+op	65:33	0:0	4	-
+water	65:35	0:0	4	bsize
+op	65:41	0:0	4	+
+water	65:43	0:0	4	1
+forexpr	65:46	65:54	3	y += s -> step
+water	65:46	0:0	4	y
+op	65:48	0:0	4	+=
+water	65:51	0:0	4	s
+op	65:52	0:0	4	->
+water	65:54	0:0	4	step
+stmts	66:8	69:58	3	
+for	66:8	69:58	4	(x = 0 ;x < s -> pr_width - bsize + 1;x += s -> step)
+forinit	66:13	66:18	5	x = 0 ;
+water	66:13	0:0	6	x
+op	66:15	0:0	6	=
+water	66:17	0:0	6	0
+water	66:18	0:0	6	;
+cond	66:20	66:46	5	x < s -> pr_width - bsize + 1
+water	66:20	0:0	6	x
+op	66:22	0:0	6	<
+water	66:24	0:0	6	s
+op	66:25	0:0	6	->
+water	66:27	0:0	6	pr_width
+op	66:36	0:0	6	-
+water	66:38	0:0	6	bsize
+op	66:44	0:0	6	+
+water	66:46	0:0	6	1
+forexpr	66:49	66:57	5	x += s -> step
+water	66:49	0:0	6	x
+op	66:51	0:0	6	+=
+water	66:54	0:0	6	s
+op	66:55	0:0	6	->
+water	66:57	0:0	6	step
+stmts	67:12	69:58	5	
+for	67:12	69:58	6	(by = 0 ;by < bsize;by ++)
+forinit	67:17	67:23	7	by = 0 ;
+water	67:17	0:0	8	by
+op	67:20	0:0	8	=
+water	67:22	0:0	8	0
+water	67:23	0:0	8	;
+cond	67:25	67:30	7	by < bsize
+water	67:25	0:0	8	by
+op	67:28	0:0	8	<
+water	67:30	0:0	8	bsize
+forexpr	67:37	67:39	7	by ++
+water	67:37	0:0	8	by
+op	67:39	0:0	8	++
+stmts	68:16	69:58	7	
+for	68:16	69:58	8	(bx = 0 ;bx < bsize;bx ++)
+forinit	68:21	68:27	9	bx = 0 ;
+water	68:21	0:0	10	bx
+op	68:24	0:0	10	=
+water	68:26	0:0	10	0
+water	68:27	0:0	10	;
+cond	68:29	68:34	9	bx < bsize
+water	68:29	0:0	10	bx
+op	68:32	0:0	10	<
+water	68:34	0:0	10	bsize
+forexpr	68:41	68:43	9	bx ++
+water	68:41	0:0	10	bx
+op	68:43	0:0	10	++
+stmts	69:20	69:58	9	
+water	69:20	0:0	10	iweights
+op	69:28	0:0	10	[
+water	69:29	0:0	10	(
+water	69:30	0:0	10	y
+op	69:32	0:0	10	+
+water	69:34	0:0	10	by
+water	69:36	0:0	10	)
+op	69:37	0:0	10	*
+water	69:38	0:0	10	linesize
+op	69:47	0:0	10	+
+water	69:49	0:0	10	x
+op	69:51	0:0	10	+
+water	69:53	0:0	10	bx
+op	69:55	0:0	10	]
+op	69:56	0:0	10	++
+water	69:58	0:0	10	;
+for	70:4	72:70	2	(y = 0 ;y < s -> pr_height;y ++)
+forinit	70:9	70:14	3	y = 0 ;
+water	70:9	0:0	4	y
+op	70:11	0:0	4	=
+water	70:13	0:0	4	0
+water	70:14	0:0	4	;
+cond	70:16	70:23	3	y < s -> pr_height
+water	70:16	0:0	4	y
+op	70:18	0:0	4	<
+water	70:20	0:0	4	s
+op	70:21	0:0	4	->
+water	70:23	0:0	4	pr_height
+forexpr	70:34	70:35	3	y ++
+water	70:34	0:0	4	y
+op	70:35	0:0	4	++
+stmts	71:8	72:70	3	
+for	71:8	72:70	4	(x = 0 ;x < s -> pr_width;x ++)
+forinit	71:13	71:18	5	x = 0 ;
+water	71:13	0:0	6	x
+op	71:15	0:0	6	=
+water	71:17	0:0	6	0
+water	71:18	0:0	6	;
+cond	71:20	71:27	5	x < s -> pr_width
+water	71:20	0:0	6	x
+op	71:22	0:0	6	<
+water	71:24	0:0	6	s
+op	71:25	0:0	6	->
+water	71:27	0:0	6	pr_width
+forexpr	71:37	71:38	5	x ++
+water	71:37	0:0	6	x
+op	71:38	0:0	6	++
+stmts	72:12	72:70	5	
+water	72:12	0:0	6	s
+op	72:13	0:0	6	->
+water	72:15	0:0	6	weights
+op	72:22	0:0	6	[
+water	72:23	0:0	6	y
+op	72:24	0:0	6	*
+water	72:25	0:0	6	linesize
+op	72:34	0:0	6	+
+water	72:36	0:0	6	x
+op	72:37	0:0	6	]
+op	72:39	0:0	6	=
+water	72:41	0:0	6	1
+op	72:42	0:0	6	.
+op	72:44	0:0	6	/
+water	72:46	0:0	6	iweights
+op	72:54	0:0	6	[
+water	72:55	0:0	6	y
+op	72:56	0:0	6	*
+water	72:57	0:0	6	linesize
+op	72:66	0:0	6	+
+water	72:68	0:0	6	x
+op	72:69	0:0	6	]
+water	72:70	0:0	6	;
+call	73:4	73:20	2	av_free
+arg	73:12	73:20	3	iweights
+water	73:12	0:0	4	iweights
+water	73:21	0:0	2	;
+return	74:4	74:12	2	0
+water	74:11	0:0	3	0

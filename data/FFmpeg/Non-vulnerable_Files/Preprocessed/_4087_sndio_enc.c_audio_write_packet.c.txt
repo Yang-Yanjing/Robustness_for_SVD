@@ -1,0 +1,131 @@
+func	1:0	22:0	0	static int	audio_write_packet
+params	1:29	0:0	1	
+param	1:30	1:49	2	AVFormatContext *	s1
+param	1:51	1:64	2	AVPacket *	pkt
+stmnts	0:0	21:12	1	
+decl	3:4	3:32	2	SndioData	*s
+op	3:17	0:0	2	=
+water	3:19	0:0	2	s1
+op	3:21	0:0	2	->
+water	3:23	0:0	2	priv_data
+decl	4:4	4:27	2	uint8_t	*buf
+op	4:16	0:0	2	=
+water	4:18	0:0	2	pkt
+op	4:21	0:0	2	->
+water	4:23	0:0	2	data
+decl	5:4	5:24	2	int	size
+op	5:13	0:0	2	=
+water	5:15	0:0	2	pkt
+op	5:18	0:0	2	->
+water	5:20	0:0	2	size
+decl	6:4	6:16	2	int	len
+water	6:11	0:0	2	,
+decl	6:4	6:16	2	int	ret
+while	7:4	20:4	2	(size > 0)
+cond	7:11	7:18	3	size > 0
+water	7:11	0:0	4	size
+op	7:16	0:0	4	>
+water	7:18	0:0	4	0
+stmts	7:21	20:4	3	
+water	7:21	0:0	4	{
+water	8:8	0:0	4	len
+op	8:12	0:0	4	=
+call	8:14	8:59	4	FFMIN
+arg	8:20	8:53	5	s->buffer_size-s->buffer_offset
+water	8:20	0:0	6	s
+op	8:21	0:0	6	->
+water	8:23	0:0	6	buffer_size
+op	8:35	0:0	6	-
+water	8:37	0:0	6	s
+op	8:38	0:0	6	->
+water	8:40	0:0	6	buffer_offset
+arg	8:55	8:59	5	size
+water	8:55	0:0	6	size
+water	8:60	0:0	4	;
+call	9:8	9:53	4	memcpy
+arg	9:15	9:43	5	s->buffer+s->buffer_offset
+water	9:15	0:0	6	s
+op	9:16	0:0	6	->
+water	9:18	0:0	6	buffer
+op	9:25	0:0	6	+
+water	9:27	0:0	6	s
+op	9:28	0:0	6	->
+water	9:30	0:0	6	buffer_offset
+arg	9:45	9:48	5	buf
+water	9:45	0:0	6	buf
+arg	9:50	9:53	5	len
+water	9:50	0:0	6	len
+water	9:54	0:0	4	;
+water	10:8	0:0	4	buf
+op	10:13	0:0	4	+=
+water	10:16	0:0	4	len
+water	10:19	0:0	4	;
+water	11:8	0:0	4	size
+op	11:13	0:0	4	-=
+water	11:16	0:0	4	len
+water	11:19	0:0	4	;
+water	12:8	0:0	4	s
+op	12:9	0:0	4	->
+water	12:11	0:0	4	buffer_offset
+op	12:25	0:0	4	+=
+water	12:28	0:0	4	len
+water	12:31	0:0	4	;
+if	13:8	19:8	4	(s -> buffer_offset >= s -> buffer_size)
+cond	13:12	13:35	5	s -> buffer_offset >= s -> buffer_size
+water	13:12	0:0	6	s
+op	13:13	0:0	6	->
+water	13:15	0:0	6	buffer_offset
+op	13:29	0:0	6	>=
+water	13:32	0:0	6	s
+op	13:33	0:0	6	->
+water	13:35	0:0	6	buffer_size
+stmts	13:48	19:8	5	
+water	13:48	0:0	6	{
+water	14:12	0:0	6	ret
+op	14:16	0:0	6	=
+call	14:18	14:61	6	sio_write
+arg	14:28	14:34	7	s->hdl
+water	14:28	0:0	8	s
+op	14:29	0:0	8	->
+water	14:31	0:0	8	hdl
+arg	14:36	14:45	7	s->buffer
+water	14:36	0:0	8	s
+op	14:37	0:0	8	->
+water	14:39	0:0	8	buffer
+arg	14:47	14:61	7	s->buffer_size
+water	14:47	0:0	8	s
+op	14:48	0:0	8	->
+water	14:50	0:0	8	buffer_size
+water	14:62	0:0	6	;
+if	15:12	16:35	6	(ret == 0 ||sio_eof (s -> hdl ))
+cond	15:16	15:42	7	ret == 0 ||sio_eof (s -> hdl )
+water	15:16	0:0	8	ret
+op	15:20	0:0	8	==
+water	15:23	0:0	8	0
+op	15:25	0:0	8	||
+call	15:28	15:42	8	sio_eof
+arg	15:36	15:42	9	s->hdl
+water	15:36	0:0	10	s
+op	15:37	0:0	10	->
+water	15:39	0:0	10	hdl
+stmts	16:16	16:35	7	
+return	16:16	16:35	8	AVERROR(EIO)
+call	16:23	16:34	9	AVERROR
+arg	16:31	16:34	10	EIO
+water	16:31	0:0	11	EIO
+water	17:12	0:0	6	s
+op	17:13	0:0	6	->
+water	17:15	0:0	6	softpos
+op	17:28	0:0	6	+=
+water	17:31	0:0	6	ret
+water	17:34	0:0	6	;
+water	18:12	0:0	6	s
+op	18:13	0:0	6	->
+water	18:15	0:0	6	buffer_offset
+op	18:29	0:0	6	=
+water	18:31	0:0	6	0
+water	18:32	0:0	6	;
+water	19:8	0:0	6	}
+water	20:4	0:0	4	}
+return	21:4	21:12	2	0
+water	21:11	0:0	3	0

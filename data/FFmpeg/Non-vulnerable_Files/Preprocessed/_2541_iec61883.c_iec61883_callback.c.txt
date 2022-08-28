@@ -1,0 +1,173 @@
+func	1:0	42:0	0	static int	iec61883_callback
+params	1:28	0:0	1	
+param	1:29	1:48	2	unsigned char *	data
+param	1:50	1:60	2	int	length
+param	2:29	2:41	2	int	complete
+param	2:43	2:62	2	void *	callback_data
+stmnts	0:0	41:14	1	
+decl	4:4	4:44	2	struct iec61883_data	*dv
+op	4:29	0:0	2	=
+water	4:31	0:0	2	callback_data
+decl	5:4	5:20	2	DVPacket	*packet
+decl	6:4	6:11	2	int	ret
+call	8:4	8:33	2	pthread_mutex_lock
+arg	8:23	8:33	3	&dv->mutex
+op	8:23	0:0	4	&
+water	8:24	0:0	4	dv
+op	8:26	0:0	4	->
+water	8:28	0:0	4	mutex
+water	8:34	0:0	2	;
+if	10:4	14:4	2	(dv -> packets >= dv -> max_packets)
+cond	10:8	10:27	3	dv -> packets >= dv -> max_packets
+water	10:8	0:0	4	dv
+op	10:10	0:0	4	->
+water	10:12	0:0	4	packets
+op	10:20	0:0	4	>=
+water	10:23	0:0	4	dv
+op	10:25	0:0	4	->
+water	10:27	0:0	4	max_packets
+stmts	10:40	14:4	3	
+water	10:40	0:0	4	{
+call	11:8	11:73	4	av_log
+arg	11:15	11:19	5	NULL
+water	11:15	0:0	6	NULL
+arg	11:21	11:33	5	AV_LOG_ERROR
+water	11:21	0:0	6	AV_LOG_ERROR
+arg	11:35	11:73	5	"DV packet queue overrun, dropping.\n"
+water	11:35	0:0	6	"DV packet queue overrun, dropping.\n"
+water	11:74	0:0	4	;
+water	12:8	0:0	4	ret
+op	12:12	0:0	4	=
+water	12:14	0:0	4	0
+water	12:15	0:0	4	;
+goto	13:8	13:17	4	exit
+water	13:13	0:0	5	exit
+water	14:4	0:0	4	}
+water	15:4	0:0	2	packet
+op	15:11	0:0	2	=
+call	15:13	15:39	2	av_mallocz
+arg	15:24	15:39	3	sizeof(*packet)
+op	15:24	0:0	4	sizeof
+water	15:30	0:0	4	(
+op	15:31	0:0	4	*
+water	15:32	0:0	4	packet
+water	15:38	0:0	4	)
+water	15:40	0:0	2	;
+if	16:4	19:4	2	(! packet)
+cond	16:8	16:9	3	! packet
+op	16:8	0:0	4	!
+water	16:9	0:0	4	packet
+stmts	16:17	19:4	3	
+water	16:17	0:0	4	{
+water	17:8	0:0	4	ret
+op	17:12	0:0	4	=
+op	17:14	0:0	4	-
+water	17:15	0:0	4	1
+water	17:16	0:0	4	;
+goto	18:8	18:17	4	exit
+water	18:13	0:0	5	exit
+water	19:4	0:0	4	}
+water	20:4	0:0	2	packet
+op	20:10	0:0	2	->
+water	20:12	0:0	2	buf
+op	20:16	0:0	2	=
+call	20:18	20:34	2	av_malloc
+arg	20:28	20:34	3	length
+water	20:28	0:0	4	length
+water	20:35	0:0	2	;
+if	21:4	24:4	2	(! packet -> buf)
+cond	21:8	21:17	3	! packet -> buf
+op	21:8	0:0	4	!
+water	21:9	0:0	4	packet
+op	21:15	0:0	4	->
+water	21:17	0:0	4	buf
+stmts	21:22	24:4	3	
+water	21:22	0:0	4	{
+water	22:8	0:0	4	ret
+op	22:12	0:0	4	=
+op	22:14	0:0	4	-
+water	22:15	0:0	4	1
+water	22:16	0:0	4	;
+goto	23:8	23:17	4	exit
+water	23:13	0:0	5	exit
+water	24:4	0:0	4	}
+water	25:4	0:0	2	packet
+op	25:10	0:0	2	->
+water	25:12	0:0	2	len
+op	25:16	0:0	2	=
+water	25:18	0:0	2	length
+water	25:24	0:0	2	;
+call	26:4	26:36	2	memcpy
+arg	26:11	26:22	3	packet->buf
+water	26:11	0:0	4	packet
+op	26:17	0:0	4	->
+water	26:19	0:0	4	buf
+arg	26:24	26:28	3	data
+water	26:24	0:0	4	data
+arg	26:30	26:36	3	length
+water	26:30	0:0	4	length
+water	26:37	0:0	2	;
+if	27:4	30:4	2	(dv -> queue_first)
+cond	27:8	27:12	3	dv -> queue_first
+water	27:8	0:0	4	dv
+op	27:10	0:0	4	->
+water	27:12	0:0	4	queue_first
+stmts	27:25	30:4	3	
+water	27:25	0:0	4	{
+water	28:8	0:0	4	dv
+op	28:10	0:0	4	->
+water	28:12	0:0	4	queue_last
+op	28:22	0:0	4	->
+water	28:24	0:0	4	next
+op	28:29	0:0	4	=
+water	28:31	0:0	4	packet
+water	28:37	0:0	4	;
+water	29:8	0:0	4	dv
+op	29:10	0:0	4	->
+water	29:12	0:0	4	queue_last
+op	29:23	0:0	4	=
+water	29:25	0:0	4	packet
+water	29:31	0:0	4	;
+water	30:4	0:0	4	}
+else	30:6	33:4	2
+stmts	30:11	33:4	3	
+water	30:11	0:0	4	{
+water	31:8	0:0	4	dv
+op	31:10	0:0	4	->
+water	31:12	0:0	4	queue_first
+op	31:24	0:0	4	=
+water	31:26	0:0	4	packet
+water	31:32	0:0	4	;
+water	32:8	0:0	4	dv
+op	32:10	0:0	4	->
+water	32:12	0:0	4	queue_last
+op	32:23	0:0	4	=
+water	32:25	0:0	4	packet
+water	32:31	0:0	4	;
+water	33:4	0:0	4	}
+water	34:4	0:0	2	dv
+op	34:6	0:0	2	->
+water	34:8	0:0	2	packets
+op	34:15	0:0	2	++
+water	34:17	0:0	2	;
+water	35:4	0:0	2	ret
+op	35:8	0:0	2	=
+water	35:10	0:0	2	0
+water	35:11	0:0	2	;
+label	36:0	36:4	2	exit :
+call	38:4	38:36	2	pthread_cond_broadcast
+arg	38:27	38:36	3	&dv->cond
+op	38:27	0:0	4	&
+water	38:28	0:0	4	dv
+op	38:30	0:0	4	->
+water	38:32	0:0	4	cond
+water	38:37	0:0	2	;
+call	39:4	39:35	2	pthread_mutex_unlock
+arg	39:25	39:35	3	&dv->mutex
+op	39:25	0:0	4	&
+water	39:26	0:0	4	dv
+op	39:28	0:0	4	->
+water	39:30	0:0	4	mutex
+water	39:36	0:0	2	;
+return	41:4	41:14	2	ret
+water	41:11	0:0	3	ret

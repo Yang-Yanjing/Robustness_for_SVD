@@ -1,0 +1,90 @@
+func	1:0	16:0	0	static int	read_from_url
+params	1:24	0:0	1	
+param	1:25	1:45	2	struct playlist *	pls
+param	1:47	1:59	2	uint8_t *	buf
+param	1:61	1:73	2	int	buf_size
+param	2:25	2:50	2	enum ReadFromURLMode	mode
+stmnts	0:0	15:14	1	
+decl	4:4	4:11	2	int	ret
+decl	5:4	5:76	2	struct segment	*seg
+op	5:24	0:0	2	=
+water	5:26	0:0	2	pls
+op	5:29	0:0	2	->
+water	5:31	0:0	2	segments
+op	5:39	0:0	2	[
+water	5:40	0:0	2	pls
+op	5:43	0:0	2	->
+water	5:45	0:0	2	cur_seq_no
+op	5:56	0:0	2	-
+water	5:58	0:0	2	pls
+op	5:61	0:0	2	->
+water	5:63	0:0	2	start_seq_no
+op	5:75	0:0	2	]
+if	7:4	8:67	2	(seg -> size >= 0)
+cond	7:8	7:21	3	seg -> size >= 0
+water	7:8	0:0	4	seg
+op	7:11	0:0	4	->
+water	7:13	0:0	4	size
+op	7:18	0:0	4	>=
+water	7:21	0:0	4	0
+stmts	8:8	8:67	3	
+water	8:8	0:0	4	buf_size
+op	8:17	0:0	4	=
+call	8:19	8:66	4	FFMIN
+arg	8:25	8:33	5	buf_size
+water	8:25	0:0	6	buf_size
+arg	8:35	8:66	5	seg->size-pls->cur_seg_offset
+water	8:35	0:0	6	seg
+op	8:38	0:0	6	->
+water	8:40	0:0	6	size
+op	8:45	0:0	6	-
+water	8:47	0:0	6	pls
+op	8:50	0:0	6	->
+water	8:52	0:0	6	cur_seg_offset
+water	8:67	0:0	4	;
+if	9:4	10:60	2	(mode == READ_COMPLETE)
+cond	9:8	9:16	3	mode == READ_COMPLETE
+water	9:8	0:0	4	mode
+op	9:13	0:0	4	==
+water	9:16	0:0	4	READ_COMPLETE
+stmts	10:8	10:60	3	
+water	10:8	0:0	4	ret
+op	10:12	0:0	4	=
+call	10:14	10:59	4	ffurl_read_complete
+arg	10:34	10:44	5	pls->input
+water	10:34	0:0	6	pls
+op	10:37	0:0	6	->
+water	10:39	0:0	6	input
+arg	10:46	10:49	5	buf
+water	10:46	0:0	6	buf
+arg	10:51	10:59	5	buf_size
+water	10:51	0:0	6	buf_size
+water	10:60	0:0	4	;
+else	11:4	12:51	2
+stmts	12:8	12:51	3	
+water	12:8	0:0	4	ret
+op	12:12	0:0	4	=
+call	12:14	12:50	4	ffurl_read
+arg	12:25	12:35	5	pls->input
+water	12:25	0:0	6	pls
+op	12:28	0:0	6	->
+water	12:30	0:0	6	input
+arg	12:37	12:40	5	buf
+water	12:37	0:0	6	buf
+arg	12:42	12:50	5	buf_size
+water	12:42	0:0	6	buf_size
+water	12:51	0:0	4	;
+if	13:4	14:34	2	(ret > 0)
+cond	13:8	13:14	3	ret > 0
+water	13:8	0:0	4	ret
+op	13:12	0:0	4	>
+water	13:14	0:0	4	0
+stmts	14:8	14:34	3	
+water	14:8	0:0	4	pls
+op	14:11	0:0	4	->
+water	14:13	0:0	4	cur_seg_offset
+op	14:28	0:0	4	+=
+water	14:31	0:0	4	ret
+water	14:34	0:0	4	;
+return	15:4	15:14	2	ret
+water	15:11	0:0	3	ret

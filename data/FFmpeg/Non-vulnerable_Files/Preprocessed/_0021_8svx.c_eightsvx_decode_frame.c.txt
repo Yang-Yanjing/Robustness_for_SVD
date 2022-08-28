@@ -1,0 +1,425 @@
+func	1:0	57:0	0	static int	eightsvx_decode_frame
+params	1:32	0:0	1	
+param	1:33	1:54	2	AVCodecContext *	avctx
+param	1:56	1:66	2	void *	data
+param	2:33	2:51	2	int *	got_frame_ptr
+param	2:53	2:68	2	AVPacket *	avpkt
+stmnts	0:0	56:75	1	
+decl	4:4	4:43	2	EightSvxContext	*esc
+op	4:25	0:0	2	=
+water	4:27	0:0	2	avctx
+op	4:32	0:0	2	->
+water	4:34	0:0	2	priv_data
+decl	5:4	5:31	2	AVFrame	*frame
+op	5:25	0:0	2	=
+water	5:27	0:0	2	data
+decl	6:4	6:16	2	int	buf_size
+decl	7:4	7:15	2	int	ch
+water	7:10	0:0	2	,
+decl	7:4	7:15	2	int	ret
+decl	8:4	8:20	2	int	hdr_size
+op	8:17	0:0	2	=
+water	8:19	0:0	2	2
+if	10:4	35:4	2	(! esc -> data [ 0 ] && avpkt)
+cond	10:8	10:25	3	! esc -> data [ 0 ] && avpkt
+op	10:8	0:0	4	!
+water	10:9	0:0	4	esc
+op	10:12	0:0	4	->
+water	10:14	0:0	4	data
+op	10:18	0:0	4	[
+water	10:19	0:0	4	0
+op	10:20	0:0	4	]
+op	10:22	0:0	4	&&
+water	10:25	0:0	4	avpkt
+stmts	10:32	35:4	3	
+water	10:32	0:0	4	{
+decl	11:8	11:64	4	int	chan_size
+op	11:22	0:0	4	=
+water	11:24	0:0	4	avpkt
+op	11:29	0:0	4	->
+water	11:31	0:0	4	size
+op	11:36	0:0	4	/
+water	11:38	0:0	4	avctx
+op	11:43	0:0	4	->
+water	11:45	0:0	4	channels
+op	11:54	0:0	4	-
+water	11:56	0:0	4	hdr_size
+if	12:8	14:8	4	(avpkt -> size % avctx -> channels)
+cond	12:12	12:33	5	avpkt -> size % avctx -> channels
+water	12:12	0:0	6	avpkt
+op	12:17	0:0	6	->
+water	12:19	0:0	6	size
+op	12:24	0:0	6	%
+water	12:26	0:0	6	avctx
+op	12:31	0:0	6	->
+water	12:33	0:0	6	channels
+stmts	12:43	14:8	5	
+water	12:43	0:0	6	{
+call	13:12	13:86	6	av_log
+arg	13:19	13:24	7	avctx
+water	13:19	0:0	8	avctx
+arg	13:26	13:40	7	AV_LOG_WARNING
+water	13:26	0:0	8	AV_LOG_WARNING
+arg	13:42	13:86	7	"Packet with odd size, ignoring last byte\n"
+water	13:42	0:0	8	"Packet with odd size, ignoring last byte\n"
+water	13:87	0:0	6	;
+water	14:8	0:0	6	}
+if	15:8	18:8	4	(avpkt -> size < ( hdr_size + 1 ) * avctx -> channels)
+cond	15:12	15:50	5	avpkt -> size < ( hdr_size + 1 ) * avctx -> channels
+water	15:12	0:0	6	avpkt
+op	15:17	0:0	6	->
+water	15:19	0:0	6	size
+op	15:24	0:0	6	<
+water	15:26	0:0	6	(
+water	15:27	0:0	6	hdr_size
+op	15:36	0:0	6	+
+water	15:38	0:0	6	1
+water	15:39	0:0	6	)
+op	15:41	0:0	6	*
+water	15:43	0:0	6	avctx
+op	15:48	0:0	6	->
+water	15:50	0:0	6	channels
+stmts	15:60	18:8	5	
+water	15:60	0:0	6	{
+call	16:12	16:68	6	av_log
+arg	16:19	16:24	7	avctx
+water	16:19	0:0	8	avctx
+arg	16:26	16:38	7	AV_LOG_ERROR
+water	16:26	0:0	8	AV_LOG_ERROR
+arg	16:40	16:68	7	"packet size is too small\n"
+water	16:40	0:0	8	"packet size is too small\n"
+water	16:69	0:0	6	;
+return	17:12	17:38	6	AVERROR_INVALIDDATA
+water	17:19	0:0	7	AVERROR_INVALIDDATA
+water	18:8	0:0	6	}
+water	19:8	0:0	4	esc
+op	19:11	0:0	4	->
+water	19:13	0:0	4	fib_acc
+op	19:20	0:0	4	[
+water	19:21	0:0	4	0
+op	19:22	0:0	4	]
+op	19:24	0:0	4	=
+water	19:26	0:0	4	avpkt
+op	19:31	0:0	4	->
+water	19:33	0:0	4	data
+op	19:37	0:0	4	[
+water	19:38	0:0	4	1
+op	19:39	0:0	4	]
+op	19:41	0:0	4	+
+water	19:43	0:0	4	128
+water	19:46	0:0	4	;
+if	20:8	21:62	4	(avctx -> channels == 2)
+cond	20:12	20:31	5	avctx -> channels == 2
+water	20:12	0:0	6	avctx
+op	20:17	0:0	6	->
+water	20:19	0:0	6	channels
+op	20:28	0:0	6	==
+water	20:31	0:0	6	2
+stmts	21:12	21:62	5	
+water	21:12	0:0	6	esc
+op	21:15	0:0	6	->
+water	21:17	0:0	6	fib_acc
+op	21:24	0:0	6	[
+water	21:25	0:0	6	1
+op	21:26	0:0	6	]
+op	21:28	0:0	6	=
+water	21:30	0:0	6	avpkt
+op	21:35	0:0	6	->
+water	21:37	0:0	6	data
+op	21:41	0:0	6	[
+water	21:42	0:0	6	2
+op	21:43	0:0	6	+
+water	21:44	0:0	6	chan_size
+op	21:53	0:0	6	+
+water	21:54	0:0	6	1
+op	21:55	0:0	6	]
+op	21:57	0:0	6	+
+water	21:59	0:0	6	128
+water	21:62	0:0	6	;
+water	22:8	0:0	4	esc
+op	22:11	0:0	4	->
+water	22:13	0:0	4	data_idx
+op	22:23	0:0	4	=
+water	22:25	0:0	4	0
+water	22:26	0:0	4	;
+water	23:8	0:0	4	esc
+op	23:11	0:0	4	->
+water	23:13	0:0	4	data_size
+op	23:23	0:0	4	=
+water	23:25	0:0	4	chan_size
+water	23:34	0:0	4	;
+if	24:8	25:34	4	(! ( esc -> data [ 0 ] =av_malloc (chan_size ) ))
+cond	24:12	24:49	5	! ( esc -> data [ 0 ] =av_malloc (chan_size ) )
+op	24:12	0:0	6	!
+water	24:13	0:0	6	(
+water	24:14	0:0	6	esc
+op	24:17	0:0	6	->
+water	24:19	0:0	6	data
+op	24:23	0:0	6	[
+water	24:24	0:0	6	0
+op	24:25	0:0	6	]
+op	24:27	0:0	6	=
+call	24:29	24:48	6	av_malloc
+arg	24:39	24:48	7	chan_size
+water	24:39	0:0	8	chan_size
+water	24:49	0:0	6	)
+stmts	25:12	25:34	5	
+return	25:12	25:34	6	AVERROR(ENOMEM)
+call	25:19	25:33	7	AVERROR
+arg	25:27	25:33	8	ENOMEM
+water	25:27	0:0	9	ENOMEM
+if	26:8	31:8	4	(avctx -> channels == 2)
+cond	26:12	26:31	5	avctx -> channels == 2
+water	26:12	0:0	6	avctx
+op	26:17	0:0	6	->
+water	26:19	0:0	6	channels
+op	26:28	0:0	6	==
+water	26:31	0:0	6	2
+stmts	26:34	31:8	5	
+water	26:34	0:0	6	{
+if	27:12	30:12	6	(! ( esc -> data [ 1 ] =av_malloc (chan_size ) ))
+cond	27:16	27:53	7	! ( esc -> data [ 1 ] =av_malloc (chan_size ) )
+op	27:16	0:0	8	!
+water	27:17	0:0	8	(
+water	27:18	0:0	8	esc
+op	27:21	0:0	8	->
+water	27:23	0:0	8	data
+op	27:27	0:0	8	[
+water	27:28	0:0	8	1
+op	27:29	0:0	8	]
+op	27:31	0:0	8	=
+call	27:33	27:52	8	av_malloc
+arg	27:43	27:52	9	chan_size
+water	27:43	0:0	10	chan_size
+water	27:53	0:0	8	)
+stmts	27:56	30:12	7	
+water	27:56	0:0	8	{
+call	28:16	28:38	8	av_freep
+arg	28:25	28:38	9	&esc->data[0]
+op	28:25	0:0	10	&
+water	28:26	0:0	10	esc
+op	28:29	0:0	10	->
+water	28:31	0:0	10	data
+op	28:35	0:0	10	[
+water	28:36	0:0	10	0
+op	28:37	0:0	10	]
+water	28:39	0:0	8	;
+return	29:16	29:38	8	AVERROR(ENOMEM)
+call	29:23	29:37	9	AVERROR
+arg	29:31	29:37	10	ENOMEM
+water	29:31	0:0	11	ENOMEM
+water	30:12	0:0	8	}
+water	31:8	0:0	6	}
+call	32:8	32:62	4	memcpy
+arg	32:15	32:27	5	esc->data[0]
+water	32:15	0:0	6	esc
+op	32:18	0:0	6	->
+water	32:20	0:0	6	data
+op	32:24	0:0	6	[
+water	32:25	0:0	6	0
+op	32:26	0:0	6	]
+arg	32:29	32:51	5	&avpkt->data[hdr_size]
+op	32:29	0:0	6	&
+water	32:30	0:0	6	avpkt
+op	32:35	0:0	6	->
+water	32:37	0:0	6	data
+op	32:41	0:0	6	[
+water	32:42	0:0	6	hdr_size
+op	32:50	0:0	6	]
+arg	32:53	32:62	5	chan_size
+water	32:53	0:0	6	chan_size
+water	32:63	0:0	4	;
+if	33:8	34:79	4	(avctx -> channels == 2)
+cond	33:12	33:31	5	avctx -> channels == 2
+water	33:12	0:0	6	avctx
+op	33:17	0:0	6	->
+water	33:19	0:0	6	channels
+op	33:28	0:0	6	==
+water	33:31	0:0	6	2
+stmts	34:12	34:79	5	
+call	34:12	34:78	6	memcpy
+arg	34:19	34:31	7	esc->data[1]
+water	34:19	0:0	8	esc
+op	34:22	0:0	8	->
+water	34:24	0:0	8	data
+op	34:28	0:0	8	[
+water	34:29	0:0	8	1
+op	34:30	0:0	8	]
+arg	34:33	34:67	7	&avpkt->data[2*hdr_size+chan_size]
+op	34:33	0:0	8	&
+water	34:34	0:0	8	avpkt
+op	34:39	0:0	8	->
+water	34:41	0:0	8	data
+op	34:45	0:0	8	[
+water	34:46	0:0	8	2
+op	34:47	0:0	8	*
+water	34:48	0:0	8	hdr_size
+op	34:56	0:0	8	+
+water	34:57	0:0	8	chan_size
+op	34:66	0:0	8	]
+arg	34:69	34:78	7	chan_size
+water	34:69	0:0	8	chan_size
+water	34:79	0:0	6	;
+water	35:4	0:0	4	}
+if	36:4	39:4	2	(! esc -> data [ 0 ])
+cond	36:8	36:20	3	! esc -> data [ 0 ]
+op	36:8	0:0	4	!
+water	36:9	0:0	4	esc
+op	36:12	0:0	4	->
+water	36:14	0:0	4	data
+op	36:18	0:0	4	[
+water	36:19	0:0	4	0
+op	36:20	0:0	4	]
+stmts	36:23	39:4	3	
+water	36:23	0:0	4	{
+call	37:8	37:63	4	av_log
+arg	37:15	37:20	5	avctx
+water	37:15	0:0	6	avctx
+arg	37:22	37:34	5	AV_LOG_ERROR
+water	37:22	0:0	6	AV_LOG_ERROR
+arg	37:36	37:63	5	"unexpected empty packet\n"
+water	37:36	0:0	6	"unexpected empty packet\n"
+water	37:64	0:0	4	;
+return	38:8	38:34	4	AVERROR_INVALIDDATA
+water	38:15	0:0	5	AVERROR_INVALIDDATA
+water	39:4	0:0	4	}
+water	41:4	0:0	2	buf_size
+op	41:13	0:0	2	=
+call	41:15	41:67	2	FFMIN
+arg	41:21	41:35	3	MAX_FRAME_SIZE
+water	41:21	0:0	4	MAX_FRAME_SIZE
+arg	41:37	41:67	3	esc->data_size-esc->data_idx
+water	41:37	0:0	4	esc
+op	41:40	0:0	4	->
+water	41:42	0:0	4	data_size
+op	41:52	0:0	4	-
+water	41:54	0:0	4	esc
+op	41:57	0:0	4	->
+water	41:59	0:0	4	data_idx
+water	41:68	0:0	2	;
+if	42:4	45:4	2	(buf_size <= 0)
+cond	42:8	42:20	3	buf_size <= 0
+water	42:8	0:0	4	buf_size
+op	42:17	0:0	4	<=
+water	42:20	0:0	4	0
+stmts	42:23	45:4	3	
+water	42:23	0:0	4	{
+op	43:8	0:0	4	*
+water	43:9	0:0	4	got_frame_ptr
+op	43:23	0:0	4	=
+water	43:25	0:0	4	0
+water	43:26	0:0	4	;
+return	44:8	44:26	4	avpkt->size
+water	44:15	0:0	5	avpkt
+op	44:20	0:0	5	->
+water	44:22	0:0	5	size
+water	45:4	0:0	4	}
+water	47:4	0:0	2	frame
+op	47:9	0:0	2	->
+water	47:11	0:0	2	nb_samples
+op	47:22	0:0	2	=
+water	47:24	0:0	2	buf_size
+op	47:33	0:0	2	*
+water	47:35	0:0	2	2
+water	47:36	0:0	2	;
+if	48:4	49:18	2	(( ret =ff_get_buffer (avctx ,frame ,0 ) ) < 0)
+cond	48:8	48:49	3	( ret =ff_get_buffer (avctx ,frame ,0 ) ) < 0
+water	48:8	0:0	4	(
+water	48:9	0:0	4	ret
+op	48:13	0:0	4	=
+call	48:15	48:44	4	ff_get_buffer
+arg	48:29	48:34	5	avctx
+water	48:29	0:0	6	avctx
+arg	48:36	48:41	5	frame
+water	48:36	0:0	6	frame
+arg	48:43	48:44	5	0
+water	48:43	0:0	6	0
+water	48:45	0:0	4	)
+op	48:47	0:0	4	<
+water	48:49	0:0	4	0
+stmts	49:8	49:18	3	
+return	49:8	49:18	4	ret
+water	49:15	0:0	5	ret
+for	50:4	53:4	2	(ch = 0 ;ch < avctx -> channels;ch ++)
+forinit	50:9	50:15	3	ch = 0 ;
+water	50:9	0:0	4	ch
+op	50:12	0:0	4	=
+water	50:14	0:0	4	0
+water	50:15	0:0	4	;
+cond	50:17	50:29	3	ch < avctx -> channels
+water	50:17	0:0	4	ch
+op	50:20	0:0	4	<
+water	50:22	0:0	4	avctx
+op	50:27	0:0	4	->
+water	50:29	0:0	4	channels
+forexpr	50:39	50:41	3	ch ++
+water	50:39	0:0	4	ch
+op	50:41	0:0	4	++
+stmts	50:45	53:4	3	
+water	50:45	0:0	4	{
+call	51:8	52:60	4	delta_decode
+arg	51:21	51:36	5	frame->data[ch]
+water	51:21	0:0	6	frame
+op	51:26	0:0	6	->
+water	51:28	0:0	6	data
+op	51:32	0:0	6	[
+water	51:33	0:0	6	ch
+op	51:35	0:0	6	]
+arg	51:38	51:67	5	&esc->data[ch][esc->data_idx]
+op	51:38	0:0	6	&
+water	51:39	0:0	6	esc
+op	51:42	0:0	6	->
+water	51:44	0:0	6	data
+op	51:48	0:0	6	[
+water	51:49	0:0	6	ch
+op	51:51	0:0	6	]
+op	51:52	0:0	6	[
+water	51:53	0:0	6	esc
+op	51:56	0:0	6	->
+water	51:58	0:0	6	data_idx
+op	51:66	0:0	6	]
+arg	52:21	52:29	5	buf_size
+water	52:21	0:0	6	buf_size
+arg	52:31	52:48	5	&esc->fib_acc[ch]
+op	52:31	0:0	6	&
+water	52:32	0:0	6	esc
+op	52:35	0:0	6	->
+water	52:37	0:0	6	fib_acc
+op	52:44	0:0	6	[
+water	52:45	0:0	6	ch
+op	52:47	0:0	6	]
+arg	52:50	52:60	5	esc->table
+water	52:50	0:0	6	esc
+op	52:53	0:0	6	->
+water	52:55	0:0	6	table
+water	52:61	0:0	4	;
+water	53:4	0:0	4	}
+water	54:4	0:0	2	esc
+op	54:7	0:0	2	->
+water	54:9	0:0	2	data_idx
+op	54:18	0:0	2	+=
+water	54:21	0:0	2	buf_size
+water	54:29	0:0	2	;
+op	55:4	0:0	2	*
+water	55:5	0:0	2	got_frame_ptr
+op	55:19	0:0	2	=
+water	55:21	0:0	2	1
+water	55:22	0:0	2	;
+return	56:4	56:75	2	((avctx->frame_number==0)*hdr_size+buf_size)*avctx->channels
+water	56:11	0:0	3	(
+water	56:12	0:0	3	(
+water	56:13	0:0	3	avctx
+op	56:18	0:0	3	->
+water	56:20	0:0	3	frame_number
+op	56:33	0:0	3	==
+water	56:36	0:0	3	0
+water	56:37	0:0	3	)
+op	56:38	0:0	3	*
+water	56:39	0:0	3	hdr_size
+op	56:48	0:0	3	+
+water	56:50	0:0	3	buf_size
+water	56:58	0:0	3	)
+op	56:59	0:0	3	*
+water	56:60	0:0	3	avctx
+op	56:65	0:0	3	->
+water	56:67	0:0	3	channels

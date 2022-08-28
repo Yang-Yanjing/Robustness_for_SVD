@@ -1,0 +1,121 @@
+func	1:0	20:0	0	static void	mxf_write_common_fields
+params	1:35	0:0	1	
+param	1:36	1:54	2	AVFormatContext *	s
+param	1:56	1:68	2	AVStream *	st
+stmnts	0:0	19:4	1	
+decl	3:4	3:34	2	MXFContext	*mxf
+op	3:20	0:0	2	=
+water	3:22	0:0	2	s
+op	3:23	0:0	2	->
+water	3:25	0:0	2	priv_data
+decl	4:4	4:27	2	AVIOContext	*pb
+op	4:20	0:0	2	=
+water	4:22	0:0	2	s
+op	4:23	0:0	2	->
+water	4:25	0:0	2	pb
+call	6:4	6:38	2	mxf_write_local_tag
+arg	6:24	6:26	3	pb
+water	6:24	0:0	4	pb
+arg	6:28	6:30	3	16
+water	6:28	0:0	4	16
+arg	6:32	6:38	3	0x0201
+water	6:32	0:0	4	0
+water	6:33	0:0	4	x0201
+water	6:39	0:0	2	;
+if	7:4	8:60	2	(st == mxf -> timecode_track)
+cond	7:8	7:19	3	st == mxf -> timecode_track
+water	7:8	0:0	4	st
+op	7:11	0:0	4	==
+water	7:14	0:0	4	mxf
+op	7:17	0:0	4	->
+water	7:19	0:0	4	timecode_track
+stmts	8:8	8:60	3	
+call	8:8	8:59	4	avio_write
+arg	8:19	8:21	5	pb
+water	8:19	0:0	6	pb
+arg	8:23	8:55	5	smpte_12m_timecode_track_data_ul
+water	8:23	0:0	6	smpte_12m_timecode_track_data_ul
+arg	8:57	8:59	5	16
+water	8:57	0:0	6	16
+water	8:60	0:0	4	;
+else	9:4	12:4	2
+stmts	9:9	12:4	3	
+water	9:9	0:0	4	{
+decl	10:8	10:89	4	const MXFCodecUL	*data_def_ul
+op	10:38	0:0	4	=
+call	10:40	10:88	5	mxf_get_data_definition_ul
+arg	10:67	10:88	6	st->codec->codec_type
+water	10:67	0:0	7	st
+op	10:69	0:0	7	->
+water	10:71	0:0	7	codec
+op	10:76	0:0	7	->
+water	10:78	0:0	7	codec_type
+call	11:8	11:43	4	avio_write
+arg	11:19	11:21	5	pb
+water	11:19	0:0	6	pb
+arg	11:23	11:39	5	data_def_ul->uid
+water	11:23	0:0	6	data_def_ul
+op	11:34	0:0	6	->
+water	11:36	0:0	6	uid
+arg	11:41	11:43	5	16
+water	11:41	0:0	6	16
+water	11:44	0:0	4	;
+water	12:4	0:0	4	}
+call	14:4	14:37	2	mxf_write_local_tag
+arg	14:24	14:26	3	pb
+water	14:24	0:0	4	pb
+arg	14:28	14:29	3	8
+water	14:28	0:0	4	8
+arg	14:31	14:37	3	0x0202
+water	14:31	0:0	4	0
+water	14:32	0:0	4	x0202
+water	14:38	0:0	2	;
+if	15:4	17:4	2	(st != mxf -> timecode_track && s -> oformat == & ff_mxf_opatom_muxer && st -> codec -> codec_type == AVMEDIA_TYPE_AUDIO)
+cond	15:8	15:100	3	st != mxf -> timecode_track && s -> oformat == & ff_mxf_opatom_muxer && st -> codec -> codec_type == AVMEDIA_TYPE_AUDIO
+water	15:8	0:0	4	st
+op	15:11	0:0	4	!=
+water	15:14	0:0	4	mxf
+op	15:17	0:0	4	->
+water	15:19	0:0	4	timecode_track
+op	15:34	0:0	4	&&
+water	15:37	0:0	4	s
+op	15:38	0:0	4	->
+water	15:40	0:0	4	oformat
+op	15:48	0:0	4	==
+op	15:51	0:0	4	&
+water	15:52	0:0	4	ff_mxf_opatom_muxer
+op	15:72	0:0	4	&&
+water	15:75	0:0	4	st
+op	15:77	0:0	4	->
+water	15:79	0:0	4	codec
+op	15:84	0:0	4	->
+water	15:86	0:0	4	codec_type
+op	15:97	0:0	4	==
+water	15:100	0:0	4	AVMEDIA_TYPE_AUDIO
+stmts	15:119	17:4	3	
+water	15:119	0:0	4	{
+call	16:8	16:66	4	avio_wb64
+arg	16:18	16:20	5	pb
+water	16:18	0:0	6	pb
+arg	16:22	16:66	5	mxf->body_offset/mxf->edit_unit_byte_count
+water	16:22	0:0	6	mxf
+op	16:25	0:0	6	->
+water	16:27	0:0	6	body_offset
+op	16:39	0:0	6	/
+water	16:41	0:0	6	mxf
+op	16:44	0:0	6	->
+water	16:46	0:0	6	edit_unit_byte_count
+water	16:67	0:0	4	;
+water	17:4	0:0	4	}
+else	17:6	19:4	2
+stmts	17:11	19:4	3	
+water	17:11	0:0	4	{
+call	18:8	18:35	4	avio_wb64
+arg	18:18	18:20	5	pb
+water	18:18	0:0	6	pb
+arg	18:22	18:35	5	mxf->duration
+water	18:22	0:0	6	mxf
+op	18:25	0:0	6	->
+water	18:27	0:0	6	duration
+water	18:36	0:0	4	;
+water	19:4	0:0	4	}

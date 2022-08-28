@@ -1,0 +1,132 @@
+func	1:0	22:0	0	static int	request_frame
+params	1:24	0:0	1	
+param	1:25	1:46	2	AVFilterLink *	outlink
+stmnts	0:0	21:14	1	
+decl	3:4	3:39	2	AVFilterContext	*ctx
+op	3:25	0:0	2	=
+water	3:27	0:0	2	outlink
+op	3:34	0:0	2	->
+water	3:36	0:0	2	src
+decl	4:4	4:39	2	SilenceRemoveContext	*s
+op	4:28	0:0	2	=
+water	4:30	0:0	2	ctx
+op	4:33	0:0	2	->
+water	4:35	0:0	2	priv
+decl	5:4	5:11	2	int	ret
+water	6:4	0:0	2	ret
+op	6:8	0:0	2	=
+call	6:10	6:41	2	ff_request_frame
+arg	6:27	6:41	3	ctx->inputs[0]
+water	6:27	0:0	4	ctx
+op	6:30	0:0	4	->
+water	6:32	0:0	4	inputs
+op	6:38	0:0	4	[
+water	6:39	0:0	4	0
+op	6:40	0:0	4	]
+water	6:42	0:0	2	;
+if	7:4	20:4	2	(ret == AVERROR_EOF && ( s -> mode == SILENCE_COPY_FLUSH || s -> mode == SILENCE_COPY ))
+cond	7:8	8:54	3	ret == AVERROR_EOF && ( s -> mode == SILENCE_COPY_FLUSH || s -> mode == SILENCE_COPY )
+water	7:8	0:0	4	ret
+op	7:12	0:0	4	==
+water	7:15	0:0	4	AVERROR_EOF
+op	7:27	0:0	4	&&
+water	7:30	0:0	4	(
+water	7:31	0:0	4	s
+op	7:32	0:0	4	->
+water	7:34	0:0	4	mode
+op	7:39	0:0	4	==
+water	7:42	0:0	4	SILENCE_COPY_FLUSH
+op	7:61	0:0	4	||
+water	8:31	0:0	4	s
+op	8:32	0:0	4	->
+water	8:34	0:0	4	mode
+op	8:39	0:0	4	==
+water	8:42	0:0	4	SILENCE_COPY
+water	8:54	0:0	4	)
+stmts	8:57	20:4	3	
+water	8:57	0:0	4	{
+decl	9:8	9:62	4	int	nbs
+op	9:16	0:0	4	=
+water	9:18	0:0	4	s
+op	9:19	0:0	4	->
+water	9:21	0:0	4	stop_holdoff_end
+op	9:38	0:0	4	-
+water	9:40	0:0	4	s
+op	9:41	0:0	4	->
+water	9:43	0:0	4	stop_holdoff_offset
+if	10:8	18:8	4	(nbs)
+cond	10:12	10:12	5	nbs
+water	10:12	0:0	6	nbs
+stmts	10:17	18:8	5	
+water	10:17	0:0	6	{
+decl	11:12	11:26	6	AVFrame	*frame
+water	12:12	0:0	6	frame
+op	12:18	0:0	6	=
+call	12:20	12:72	6	ff_get_audio_buffer
+arg	12:40	12:47	7	outlink
+water	12:40	0:0	8	outlink
+arg	12:49	12:72	7	nbs/outlink->channels
+water	12:49	0:0	8	nbs
+op	12:53	0:0	8	/
+water	12:55	0:0	8	outlink
+op	12:62	0:0	8	->
+water	12:64	0:0	8	channels
+water	12:73	0:0	6	;
+if	13:12	14:38	6	(! frame)
+cond	13:16	13:17	7	! frame
+op	13:16	0:0	8	!
+water	13:17	0:0	8	frame
+stmts	14:16	14:38	7	
+return	14:16	14:38	8	AVERROR(ENOMEM)
+call	14:23	14:37	9	AVERROR
+arg	14:31	14:37	10	ENOMEM
+water	14:31	0:0	11	ENOMEM
+call	15:12	16:39	6	memcpy
+arg	15:19	15:33	7	frame->data[0]
+water	15:19	0:0	8	frame
+op	15:24	0:0	8	->
+water	15:26	0:0	8	data
+op	15:30	0:0	8	[
+water	15:31	0:0	8	0
+op	15:32	0:0	8	]
+arg	15:35	15:75	7	&s->stop_holdoff[s->stop_holdoff_offset]
+op	15:35	0:0	8	&
+water	15:36	0:0	8	s
+op	15:37	0:0	8	->
+water	15:39	0:0	8	stop_holdoff
+op	15:51	0:0	8	[
+water	15:52	0:0	8	s
+op	15:53	0:0	8	->
+water	15:55	0:0	8	stop_holdoff_offset
+op	15:74	0:0	8	]
+arg	16:19	16:39	7	nbs*sizeof(double)
+water	16:19	0:0	8	nbs
+op	16:23	0:0	8	*
+op	16:25	0:0	8	sizeof
+water	16:31	0:0	8	(
+water	16:32	0:0	8	double
+water	16:38	0:0	8	)
+water	16:40	0:0	6	;
+water	17:12	0:0	6	ret
+op	17:16	0:0	6	=
+call	17:18	17:55	6	ff_filter_frame
+arg	17:34	17:48	7	ctx->inputs[0]
+water	17:34	0:0	8	ctx
+op	17:37	0:0	8	->
+water	17:39	0:0	8	inputs
+op	17:45	0:0	8	[
+water	17:46	0:0	8	0
+op	17:47	0:0	8	]
+arg	17:50	17:55	7	frame
+water	17:50	0:0	8	frame
+water	17:56	0:0	6	;
+water	18:8	0:0	6	}
+water	19:8	0:0	4	s
+op	19:9	0:0	4	->
+water	19:11	0:0	4	mode
+op	19:16	0:0	4	=
+water	19:18	0:0	4	SILENCE_STOP
+water	19:30	0:0	4	;
+water	20:4	0:0	4	}
+return	21:4	21:14	2	ret
+water	21:11	0:0	3	ret

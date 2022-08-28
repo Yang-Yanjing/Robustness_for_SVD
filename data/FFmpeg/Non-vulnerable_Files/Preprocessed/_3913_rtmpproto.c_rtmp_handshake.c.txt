@@ -1,0 +1,831 @@
+func	1:0	151:0	0	static int	rtmp_handshake
+params	1:25	0:0	1	
+param	1:26	1:39	2	URLContext *	s
+param	1:41	1:56	2	RTMPContext *	rt
+stmnts	0:0	150:12	1	
+decl	3:4	3:13	2	AVLFG	rnd
+decl	4:4	11:5	2	uint8_t	tosend[RTMP_HANDSHAKE_PACKET_SIZE+1]
+op	4:53	0:0	2	=
+water	4:55	0:0	2	{
+water	5:8	0:0	2	3
+water	5:9	0:0	2	,
+water	6:8	0:0	2	0
+water	6:9	0:0	2	,
+water	6:11	0:0	2	0
+water	6:12	0:0	2	,
+water	6:14	0:0	2	0
+water	6:15	0:0	2	,
+water	6:17	0:0	2	0
+water	6:18	0:0	2	,
+water	7:8	0:0	2	RTMP_CLIENT_VER1
+water	7:24	0:0	2	,
+water	8:8	0:0	2	RTMP_CLIENT_VER2
+water	8:24	0:0	2	,
+water	9:8	0:0	2	RTMP_CLIENT_VER3
+water	9:24	0:0	2	,
+water	10:8	0:0	2	RTMP_CLIENT_VER4
+water	10:24	0:0	2	,
+water	11:4	0:0	2	}
+decl	12:4	12:50	2	uint8_t	clientdata[RTMP_HANDSHAKE_PACKET_SIZE]
+decl	13:4	13:52	2	uint8_t	serverdata[RTMP_HANDSHAKE_PACKET_SIZE+1]
+decl	14:4	14:9	2	int	i
+decl	15:4	15:30	2	int	server_pos
+water	15:18	0:0	2	,
+decl	15:4	15:30	2	int	client_pos
+decl	16:4	16:37	2	uint8_t	digest[32]
+water	16:22	0:0	2	,
+decl	16:4	16:37	2	uint8_t	signature[32]
+decl	17:4	17:21	2	int	ret
+water	17:11	0:0	2	,
+decl	17:4	17:21	2	int	type
+op	17:18	0:0	2	=
+water	17:20	0:0	2	0
+call	18:4	18:46	2	av_log
+arg	18:11	18:12	3	s
+water	18:11	0:0	4	s
+arg	18:14	18:26	3	AV_LOG_DEBUG
+water	18:14	0:0	4	AV_LOG_DEBUG
+arg	18:28	18:46	3	"Handshaking...\n"
+water	18:28	0:0	4	"Handshaking...\n"
+water	18:47	0:0	2	;
+call	19:4	19:32	2	av_lfg_init
+arg	19:16	19:20	3	&rnd
+op	19:16	0:0	4	&
+water	19:17	0:0	4	rnd
+arg	19:22	19:32	3	0xDEADC0DE
+water	19:22	0:0	4	0
+water	19:23	0:0	4	xDEADC0DE
+water	19:33	0:0	2	;
+for	21:4	22:42	2	(i = 9 ;i <= RTMP_HANDSHAKE_PACKET_SIZE;i ++)
+forinit	21:9	21:14	3	i = 9 ;
+water	21:9	0:0	4	i
+op	21:11	0:0	4	=
+water	21:13	0:0	4	9
+water	21:14	0:0	4	;
+cond	21:16	21:21	3	i <= RTMP_HANDSHAKE_PACKET_SIZE
+water	21:16	0:0	4	i
+op	21:18	0:0	4	<=
+water	21:21	0:0	4	RTMP_HANDSHAKE_PACKET_SIZE
+forexpr	21:49	21:50	3	i ++
+water	21:49	0:0	4	i
+op	21:50	0:0	4	++
+stmts	22:8	22:42	3	
+water	22:8	0:0	4	tosend
+op	22:14	0:0	4	[
+water	22:15	0:0	4	i
+op	22:16	0:0	4	]
+op	22:18	0:0	4	=
+call	22:20	22:35	4	av_lfg_get
+arg	22:31	22:35	5	&rnd
+op	22:31	0:0	6	&
+water	22:32	0:0	6	rnd
+op	22:37	0:0	4	>>
+water	22:40	0:0	4	24
+water	22:42	0:0	4	;
+if	23:4	36:4	2	(CONFIG_FFRTMPCRYPT_PROTOCOL && rt -> encrypted)
+cond	23:8	23:43	3	CONFIG_FFRTMPCRYPT_PROTOCOL && rt -> encrypted
+water	23:8	0:0	4	CONFIG_FFRTMPCRYPT_PROTOCOL
+op	23:36	0:0	4	&&
+water	23:39	0:0	4	rt
+op	23:41	0:0	4	->
+water	23:43	0:0	4	encrypted
+stmts	23:54	36:4	3	
+water	23:54	0:0	4	{
+water	27:8	0:0	4	tosend
+op	27:14	0:0	4	[
+water	27:15	0:0	4	0
+op	27:16	0:0	4	]
+op	27:18	0:0	4	=
+water	27:20	0:0	4	6
+water	27:21	0:0	4	;
+water	28:8	0:0	4	tosend
+op	28:14	0:0	4	[
+water	28:15	0:0	4	5
+op	28:16	0:0	4	]
+op	28:18	0:0	4	=
+water	28:20	0:0	4	128
+water	28:23	0:0	4	;
+water	29:8	0:0	4	tosend
+op	29:14	0:0	4	[
+water	29:15	0:0	4	6
+op	29:16	0:0	4	]
+op	29:18	0:0	4	=
+water	29:20	0:0	4	0
+water	29:21	0:0	4	;
+water	30:8	0:0	4	tosend
+op	30:14	0:0	4	[
+water	30:15	0:0	4	7
+op	30:16	0:0	4	]
+op	30:18	0:0	4	=
+water	30:20	0:0	4	3
+water	30:21	0:0	4	;
+water	31:8	0:0	4	tosend
+op	31:14	0:0	4	[
+water	31:15	0:0	4	8
+op	31:16	0:0	4	]
+op	31:18	0:0	4	=
+water	31:20	0:0	4	2
+water	31:21	0:0	4	;
+if	34:8	35:22	4	(( ret =ff_rtmpe_gen_pub_key (rt -> stream ,tosend + 1 ) ) < 0)
+cond	34:12	34:67	5	( ret =ff_rtmpe_gen_pub_key (rt -> stream ,tosend + 1 ) ) < 0
+water	34:12	0:0	6	(
+water	34:13	0:0	6	ret
+op	34:17	0:0	6	=
+call	34:19	34:62	6	ff_rtmpe_gen_pub_key
+arg	34:40	34:50	7	rt->stream
+water	34:40	0:0	8	rt
+op	34:42	0:0	8	->
+water	34:44	0:0	8	stream
+arg	34:52	34:62	7	tosend+1
+water	34:52	0:0	8	tosend
+op	34:59	0:0	8	+
+water	34:61	0:0	8	1
+water	34:63	0:0	6	)
+op	34:65	0:0	6	<
+water	34:67	0:0	6	0
+stmts	35:12	35:22	5	
+return	35:12	35:22	6	ret
+water	35:19	0:0	7	ret
+water	36:4	0:0	4	}
+water	37:4	0:0	2	client_pos
+op	37:15	0:0	2	=
+call	37:17	37:77	2	rtmp_handshake_imprint_with_digest
+arg	37:52	37:62	3	tosend+1
+water	37:52	0:0	4	tosend
+op	37:59	0:0	4	+
+water	37:61	0:0	4	1
+arg	37:64	37:77	3	rt->encrypted
+water	37:64	0:0	4	rt
+op	37:66	0:0	4	->
+water	37:68	0:0	4	encrypted
+water	37:78	0:0	2	;
+if	38:4	39:25	2	(client_pos < 0)
+cond	38:8	38:21	3	client_pos < 0
+water	38:8	0:0	4	client_pos
+op	38:19	0:0	4	<
+water	38:21	0:0	4	0
+stmts	39:8	39:25	3	
+return	39:8	39:25	4	client_pos
+water	39:15	0:0	5	client_pos
+if	40:4	44:4	2	(( ret =ffurl_write (rt -> stream ,tosend ,RTMP_HANDSHAKE_PACKET_SIZE + 1 ) ) < 0)
+cond	40:8	41:62	3	( ret =ffurl_write (rt -> stream ,tosend ,RTMP_HANDSHAKE_PACKET_SIZE + 1 ) ) < 0
+water	40:8	0:0	4	(
+water	40:9	0:0	4	ret
+op	40:13	0:0	4	=
+call	40:15	41:57	4	ffurl_write
+arg	40:27	40:37	5	rt->stream
+water	40:27	0:0	6	rt
+op	40:29	0:0	6	->
+water	40:31	0:0	6	stream
+arg	40:39	40:45	5	tosend
+water	40:39	0:0	6	tosend
+arg	41:27	41:57	5	RTMP_HANDSHAKE_PACKET_SIZE+1
+water	41:27	0:0	6	RTMP_HANDSHAKE_PACKET_SIZE
+op	41:54	0:0	6	+
+water	41:56	0:0	6	1
+water	41:58	0:0	4	)
+op	41:60	0:0	4	<
+water	41:62	0:0	4	0
+stmts	41:65	44:4	3	
+water	41:65	0:0	4	{
+call	42:8	42:71	4	av_log
+arg	42:15	42:16	5	s
+water	42:15	0:0	6	s
+arg	42:18	42:30	5	AV_LOG_ERROR
+water	42:18	0:0	6	AV_LOG_ERROR
+arg	42:32	42:71	5	"Cannot write RTMP handshake request\n"
+water	42:32	0:0	6	"Cannot write RTMP handshake request\n"
+water	42:72	0:0	4	;
+return	43:8	43:18	4	ret
+water	43:15	0:0	5	ret
+water	44:4	0:0	4	}
+if	45:4	49:4	2	(( ret =ffurl_read_complete (rt -> stream ,serverdata ,RTMP_HANDSHAKE_PACKET_SIZE + 1 ) ) < 0)
+cond	45:8	46:70	3	( ret =ffurl_read_complete (rt -> stream ,serverdata ,RTMP_HANDSHAKE_PACKET_SIZE + 1 ) ) < 0
+water	45:8	0:0	4	(
+water	45:9	0:0	4	ret
+op	45:13	0:0	4	=
+call	45:15	46:65	4	ffurl_read_complete
+arg	45:35	45:45	5	rt->stream
+water	45:35	0:0	6	rt
+op	45:37	0:0	6	->
+water	45:39	0:0	6	stream
+arg	45:47	45:57	5	serverdata
+water	45:47	0:0	6	serverdata
+arg	46:35	46:65	5	RTMP_HANDSHAKE_PACKET_SIZE+1
+water	46:35	0:0	6	RTMP_HANDSHAKE_PACKET_SIZE
+op	46:62	0:0	6	+
+water	46:64	0:0	6	1
+water	46:66	0:0	4	)
+op	46:68	0:0	4	<
+water	46:70	0:0	4	0
+stmts	46:73	49:4	3	
+water	46:73	0:0	4	{
+call	47:8	47:71	4	av_log
+arg	47:15	47:16	5	s
+water	47:15	0:0	6	s
+arg	47:18	47:30	5	AV_LOG_ERROR
+water	47:18	0:0	6	AV_LOG_ERROR
+arg	47:32	47:71	5	"Cannot read RTMP handshake response\n"
+water	47:32	0:0	6	"Cannot read RTMP handshake response\n"
+water	47:72	0:0	4	;
+return	48:8	48:18	4	ret
+water	48:15	0:0	5	ret
+water	49:4	0:0	4	}
+if	50:4	54:4	2	(( ret =ffurl_read_complete (rt -> stream ,clientdata ,RTMP_HANDSHAKE_PACKET_SIZE ) ) < 0)
+cond	50:8	51:66	3	( ret =ffurl_read_complete (rt -> stream ,clientdata ,RTMP_HANDSHAKE_PACKET_SIZE ) ) < 0
+water	50:8	0:0	4	(
+water	50:9	0:0	4	ret
+op	50:13	0:0	4	=
+call	50:15	51:61	4	ffurl_read_complete
+arg	50:35	50:45	5	rt->stream
+water	50:35	0:0	6	rt
+op	50:37	0:0	6	->
+water	50:39	0:0	6	stream
+arg	50:47	50:57	5	clientdata
+water	50:47	0:0	6	clientdata
+arg	51:35	51:61	5	RTMP_HANDSHAKE_PACKET_SIZE
+water	51:35	0:0	6	RTMP_HANDSHAKE_PACKET_SIZE
+water	51:62	0:0	4	)
+op	51:64	0:0	4	<
+water	51:66	0:0	4	0
+stmts	51:69	54:4	3	
+water	51:69	0:0	4	{
+call	52:8	52:71	4	av_log
+arg	52:15	52:16	5	s
+water	52:15	0:0	6	s
+arg	52:18	52:30	5	AV_LOG_ERROR
+water	52:18	0:0	6	AV_LOG_ERROR
+arg	52:32	52:71	5	"Cannot read RTMP handshake response\n"
+water	52:32	0:0	6	"Cannot read RTMP handshake response\n"
+water	52:72	0:0	4	;
+return	53:8	53:18	4	ret
+water	53:15	0:0	5	ret
+water	54:4	0:0	4	}
+call	55:4	55:61	2	av_log
+arg	55:11	55:12	3	s
+water	55:11	0:0	4	s
+arg	55:14	55:26	3	AV_LOG_DEBUG
+water	55:14	0:0	4	AV_LOG_DEBUG
+arg	55:28	55:46	3	"Type answer %d\n"
+water	55:28	0:0	4	"Type answer %d\n"
+arg	55:48	55:61	3	serverdata[0]
+water	55:48	0:0	4	serverdata
+op	55:58	0:0	4	[
+water	55:59	0:0	4	0
+op	55:60	0:0	4	]
+water	55:62	0:0	2	;
+call	56:4	57:69	2	av_log
+arg	56:11	56:12	3	s
+water	56:11	0:0	4	s
+arg	56:14	56:26	3	AV_LOG_DEBUG
+water	56:14	0:0	4	AV_LOG_DEBUG
+arg	56:28	56:58	3	"Server version %d.%d.%d.%d\n"
+water	56:28	0:0	4	"Server version %d.%d.%d.%d\n"
+arg	57:11	57:24	3	serverdata[5]
+water	57:11	0:0	4	serverdata
+op	57:21	0:0	4	[
+water	57:22	0:0	4	5
+op	57:23	0:0	4	]
+arg	57:26	57:39	3	serverdata[6]
+water	57:26	0:0	4	serverdata
+op	57:36	0:0	4	[
+water	57:37	0:0	4	6
+op	57:38	0:0	4	]
+arg	57:41	57:54	3	serverdata[7]
+water	57:41	0:0	4	serverdata
+op	57:51	0:0	4	[
+water	57:52	0:0	4	7
+op	57:53	0:0	4	]
+arg	57:56	57:69	3	serverdata[8]
+water	57:56	0:0	4	serverdata
+op	57:66	0:0	4	[
+water	57:67	0:0	4	8
+op	57:68	0:0	4	]
+water	57:70	0:0	2	;
+if	58:4	128:4	2	(rt -> is_input && serverdata [ 5 ] >= 3)
+cond	58:8	58:41	3	rt -> is_input && serverdata [ 5 ] >= 3
+water	58:8	0:0	4	rt
+op	58:10	0:0	4	->
+water	58:12	0:0	4	is_input
+op	58:21	0:0	4	&&
+water	58:24	0:0	4	serverdata
+op	58:34	0:0	4	[
+water	58:35	0:0	4	5
+op	58:36	0:0	4	]
+op	58:38	0:0	4	>=
+water	58:41	0:0	4	3
+stmts	58:44	128:4	3	
+water	58:44	0:0	4	{
+water	59:8	0:0	4	server_pos
+op	59:19	0:0	4	=
+call	59:21	59:61	4	rtmp_validate_digest
+arg	59:42	59:56	5	serverdata+1
+water	59:42	0:0	6	serverdata
+op	59:53	0:0	6	+
+water	59:55	0:0	6	1
+arg	59:58	59:61	5	772
+water	59:58	0:0	6	772
+water	59:62	0:0	4	;
+if	60:8	61:29	4	(server_pos < 0)
+cond	60:12	60:25	5	server_pos < 0
+water	60:12	0:0	6	server_pos
+op	60:23	0:0	6	<
+water	60:25	0:0	6	0
+stmts	61:12	61:29	5	
+return	61:12	61:29	6	server_pos
+water	61:19	0:0	7	server_pos
+if	62:8	71:8	4	(! server_pos)
+cond	62:12	62:13	5	! server_pos
+op	62:12	0:0	6	!
+water	62:13	0:0	6	server_pos
+stmts	62:25	71:8	5	
+water	62:25	0:0	6	{
+water	63:12	0:0	6	type
+op	63:17	0:0	6	=
+water	63:19	0:0	6	1
+water	63:20	0:0	6	;
+water	64:12	0:0	6	server_pos
+op	64:23	0:0	6	=
+call	64:25	64:63	6	rtmp_validate_digest
+arg	64:46	64:60	7	serverdata+1
+water	64:46	0:0	8	serverdata
+op	64:57	0:0	8	+
+water	64:59	0:0	8	1
+arg	64:62	64:63	7	8
+water	64:62	0:0	8	8
+water	64:64	0:0	6	;
+if	65:12	66:33	6	(server_pos < 0)
+cond	65:16	65:29	7	server_pos < 0
+water	65:16	0:0	8	server_pos
+op	65:27	0:0	8	<
+water	65:29	0:0	8	0
+stmts	66:16	66:33	7	
+return	66:16	66:33	8	server_pos
+water	66:23	0:0	9	server_pos
+if	67:12	70:12	6	(! server_pos)
+cond	67:16	67:17	7	! server_pos
+op	67:16	0:0	8	!
+water	67:17	0:0	8	server_pos
+stmts	67:29	70:12	7	
+water	67:29	0:0	8	{
+call	68:16	68:77	8	av_log
+arg	68:23	68:24	9	s
+water	68:23	0:0	10	s
+arg	68:26	68:38	9	AV_LOG_ERROR
+water	68:26	0:0	10	AV_LOG_ERROR
+arg	68:40	68:77	9	"Server response validating failed\n"
+water	68:40	0:0	10	"Server response validating failed\n"
+water	68:78	0:0	8	;
+return	69:16	69:35	8	AVERROR(EIO)
+call	69:23	69:34	9	AVERROR
+arg	69:31	69:34	10	EIO
+water	69:31	0:0	11	EIO
+water	70:12	0:0	8	}
+water	71:8	0:0	6	}
+if	74:8	78:8	4	(rt -> swfsize)
+cond	74:12	74:16	5	rt -> swfsize
+water	74:12	0:0	6	rt
+op	74:14	0:0	6	->
+water	74:16	0:0	6	swfsize
+stmts	74:25	78:8	5	
+water	74:25	0:0	6	{
+if	75:12	77:26	6	(( ret =rtmp_calc_swf_verification (s ,rt ,serverdata + 1 + RTMP_HANDSHAKE_PACKET_SIZE - 32 ) ) < 0)
+cond	75:16	76:86	7	( ret =rtmp_calc_swf_verification (s ,rt ,serverdata + 1 + RTMP_HANDSHAKE_PACKET_SIZE - 32 ) ) < 0
+water	75:16	0:0	8	(
+water	75:17	0:0	8	ret
+op	75:21	0:0	8	=
+call	75:23	76:81	8	rtmp_calc_swf_verification
+arg	75:50	75:51	9	s
+water	75:50	0:0	10	s
+arg	75:53	75:55	9	rt
+water	75:53	0:0	10	rt
+arg	75:57	76:81	9	serverdata+1+RTMP_HANDSHAKE_PACKET_SIZE-32
+water	75:57	0:0	10	serverdata
+op	75:68	0:0	10	+
+water	75:70	0:0	10	1
+op	75:72	0:0	10	+
+water	76:50	0:0	10	RTMP_HANDSHAKE_PACKET_SIZE
+op	76:77	0:0	10	-
+water	76:79	0:0	10	32
+water	76:82	0:0	8	)
+op	76:84	0:0	8	<
+water	76:86	0:0	8	0
+stmts	77:16	77:26	7	
+return	77:16	77:26	8	ret
+water	77:23	0:0	9	ret
+water	78:8	0:0	6	}
+water	79:8	0:0	4	ret
+op	79:12	0:0	4	=
+call	79:14	81:40	4	ff_rtmp_calc_digest
+arg	79:34	79:57	5	tosend+1+client_pos
+water	79:34	0:0	6	tosend
+op	79:41	0:0	6	+
+water	79:43	0:0	6	1
+op	79:45	0:0	6	+
+water	79:47	0:0	6	client_pos
+arg	79:59	79:61	5	32
+water	79:59	0:0	6	32
+arg	79:63	79:64	5	0
+water	79:63	0:0	6	0
+arg	80:34	80:49	5	rtmp_server_key
+water	80:34	0:0	6	rtmp_server_key
+arg	80:51	80:74	5	sizeof(rtmp_server_key)
+op	80:51	0:0	6	sizeof
+water	80:57	0:0	6	(
+water	80:58	0:0	6	rtmp_server_key
+water	80:73	0:0	6	)
+arg	81:34	81:40	5	digest
+water	81:34	0:0	6	digest
+water	81:41	0:0	4	;
+if	82:8	83:22	4	(ret < 0)
+cond	82:12	82:18	5	ret < 0
+water	82:12	0:0	6	ret
+op	82:16	0:0	6	<
+water	82:18	0:0	6	0
+stmts	83:12	83:22	5	
+return	83:12	83:22	6	ret
+water	83:19	0:0	7	ret
+water	84:8	0:0	4	ret
+op	84:12	0:0	4	=
+call	84:14	85:58	4	ff_rtmp_calc_digest
+arg	84:34	84:44	5	clientdata
+water	84:34	0:0	6	clientdata
+arg	84:46	84:77	5	RTMP_HANDSHAKE_PACKET_SIZE-32
+water	84:46	0:0	6	RTMP_HANDSHAKE_PACKET_SIZE
+op	84:73	0:0	6	-
+water	84:75	0:0	6	32
+arg	85:34	85:35	5	0
+water	85:34	0:0	6	0
+arg	85:37	85:43	5	digest
+water	85:37	0:0	6	digest
+arg	85:45	85:47	5	32
+water	85:45	0:0	6	32
+arg	85:49	85:58	5	signature
+water	85:49	0:0	6	signature
+water	85:59	0:0	4	;
+if	86:8	87:22	4	(ret < 0)
+cond	86:12	86:18	5	ret < 0
+water	86:12	0:0	6	ret
+op	86:16	0:0	6	<
+water	86:18	0:0	6	0
+stmts	87:12	87:22	5	
+return	87:12	87:22	6	ret
+water	87:19	0:0	7	ret
+if	88:8	96:8	4	(CONFIG_FFRTMPCRYPT_PROTOCOL && rt -> encrypted)
+cond	88:12	88:47	5	CONFIG_FFRTMPCRYPT_PROTOCOL && rt -> encrypted
+water	88:12	0:0	6	CONFIG_FFRTMPCRYPT_PROTOCOL
+op	88:40	0:0	6	&&
+water	88:43	0:0	6	rt
+op	88:45	0:0	6	->
+water	88:47	0:0	6	encrypted
+stmts	88:58	96:8	5	
+water	88:58	0:0	6	{
+if	91:12	93:26	6	(( ret =ff_rtmpe_compute_secret_key (rt -> stream ,serverdata + 1 ,tosend + 1 ,type ) ) < 0)
+cond	91:16	92:72	7	( ret =ff_rtmpe_compute_secret_key (rt -> stream ,serverdata + 1 ,tosend + 1 ,type ) ) < 0
+water	91:16	0:0	8	(
+water	91:17	0:0	8	ret
+op	91:21	0:0	8	=
+call	91:23	92:67	8	ff_rtmpe_compute_secret_key
+arg	91:51	91:61	9	rt->stream
+water	91:51	0:0	10	rt
+op	91:53	0:0	10	->
+water	91:55	0:0	10	stream
+arg	91:63	91:77	9	serverdata+1
+water	91:63	0:0	10	serverdata
+op	91:74	0:0	10	+
+water	91:76	0:0	10	1
+arg	92:51	92:61	9	tosend+1
+water	92:51	0:0	10	tosend
+op	92:58	0:0	10	+
+water	92:60	0:0	10	1
+arg	92:63	92:67	9	type
+water	92:63	0:0	10	type
+water	92:68	0:0	8	)
+op	92:70	0:0	8	<
+water	92:72	0:0	8	0
+stmts	93:16	93:26	7	
+return	93:16	93:26	8	ret
+water	93:23	0:0	9	ret
+call	95:12	95:77	6	ff_rtmpe_encrypt_sig
+arg	95:33	95:43	7	rt->stream
+water	95:33	0:0	8	rt
+op	95:35	0:0	8	->
+water	95:37	0:0	8	stream
+arg	95:45	95:54	7	signature
+water	95:45	0:0	8	signature
+arg	95:56	95:62	7	digest
+water	95:56	0:0	8	digest
+arg	95:64	95:77	7	serverdata[0]
+water	95:64	0:0	8	serverdata
+op	95:74	0:0	8	[
+water	95:75	0:0	8	0
+op	95:76	0:0	8	]
+water	95:78	0:0	6	;
+water	96:8	0:0	6	}
+if	97:8	100:8	4	(memcmp (signature ,clientdata + RTMP_HANDSHAKE_PACKET_SIZE - 32 ,32 ))
+cond	97:12	97:78	5	memcmp (signature ,clientdata + RTMP_HANDSHAKE_PACKET_SIZE - 32 ,32 )
+call	97:12	97:78	6	memcmp
+arg	97:19	97:28	7	signature
+water	97:19	0:0	8	signature
+arg	97:30	97:74	7	clientdata+RTMP_HANDSHAKE_PACKET_SIZE-32
+water	97:30	0:0	8	clientdata
+op	97:41	0:0	8	+
+water	97:43	0:0	8	RTMP_HANDSHAKE_PACKET_SIZE
+op	97:70	0:0	8	-
+water	97:72	0:0	8	32
+arg	97:76	97:78	7	32
+water	97:76	0:0	8	32
+stmts	97:81	100:8	5	
+water	97:81	0:0	6	{
+call	98:12	98:58	6	av_log
+arg	98:19	98:20	7	s
+water	98:19	0:0	8	s
+arg	98:22	98:34	7	AV_LOG_ERROR
+water	98:22	0:0	8	AV_LOG_ERROR
+arg	98:36	98:58	7	"Signature mismatch\n"
+water	98:36	0:0	8	"Signature mismatch\n"
+water	98:59	0:0	6	;
+return	99:12	99:31	6	AVERROR(EIO)
+call	99:19	99:30	7	AVERROR
+arg	99:27	99:30	8	EIO
+water	99:27	0:0	9	EIO
+water	100:8	0:0	6	}
+for	101:8	102:46	4	(i = 0 ;i < RTMP_HANDSHAKE_PACKET_SIZE;i ++)
+forinit	101:13	101:18	5	i = 0 ;
+water	101:13	0:0	6	i
+op	101:15	0:0	6	=
+water	101:17	0:0	6	0
+water	101:18	0:0	6	;
+cond	101:20	101:24	5	i < RTMP_HANDSHAKE_PACKET_SIZE
+water	101:20	0:0	6	i
+op	101:22	0:0	6	<
+water	101:24	0:0	6	RTMP_HANDSHAKE_PACKET_SIZE
+forexpr	101:52	101:53	5	i ++
+water	101:52	0:0	6	i
+op	101:53	0:0	6	++
+stmts	102:12	102:46	5	
+water	102:12	0:0	6	tosend
+op	102:18	0:0	6	[
+water	102:19	0:0	6	i
+op	102:20	0:0	6	]
+op	102:22	0:0	6	=
+call	102:24	102:39	6	av_lfg_get
+arg	102:35	102:39	7	&rnd
+op	102:35	0:0	8	&
+water	102:36	0:0	8	rnd
+op	102:41	0:0	6	>>
+water	102:44	0:0	6	24
+water	102:46	0:0	6	;
+water	103:8	0:0	4	ret
+op	103:12	0:0	4	=
+call	103:14	105:40	4	ff_rtmp_calc_digest
+arg	103:34	103:61	5	serverdata+1+server_pos
+water	103:34	0:0	6	serverdata
+op	103:45	0:0	6	+
+water	103:47	0:0	6	1
+op	103:49	0:0	6	+
+water	103:51	0:0	6	server_pos
+arg	103:63	103:65	5	32
+water	103:63	0:0	6	32
+arg	103:67	103:68	5	0
+water	103:67	0:0	6	0
+arg	104:34	104:49	5	rtmp_player_key
+water	104:34	0:0	6	rtmp_player_key
+arg	104:51	104:74	5	sizeof(rtmp_player_key)
+op	104:51	0:0	6	sizeof
+water	104:57	0:0	6	(
+water	104:58	0:0	6	rtmp_player_key
+water	104:73	0:0	6	)
+arg	105:34	105:40	5	digest
+water	105:34	0:0	6	digest
+water	105:41	0:0	4	;
+if	106:8	107:22	4	(ret < 0)
+cond	106:12	106:18	5	ret < 0
+water	106:12	0:0	6	ret
+op	106:16	0:0	6	<
+water	106:18	0:0	6	0
+stmts	107:12	107:22	5	
+return	107:12	107:22	6	ret
+water	107:19	0:0	7	ret
+water	108:8	0:0	4	ret
+op	108:12	0:0	4	=
+call	108:14	110:74	4	ff_rtmp_calc_digest
+arg	108:34	108:40	5	tosend
+water	108:34	0:0	6	tosend
+arg	108:42	108:73	5	RTMP_HANDSHAKE_PACKET_SIZE-32
+water	108:42	0:0	6	RTMP_HANDSHAKE_PACKET_SIZE
+op	108:69	0:0	6	-
+water	108:71	0:0	6	32
+arg	108:75	108:76	5	0
+water	108:75	0:0	6	0
+arg	109:34	109:40	5	digest
+water	109:34	0:0	6	digest
+arg	109:42	109:44	5	32
+water	109:42	0:0	6	32
+arg	110:34	110:74	5	tosend+RTMP_HANDSHAKE_PACKET_SIZE-32
+water	110:34	0:0	6	tosend
+op	110:41	0:0	6	+
+water	110:43	0:0	6	RTMP_HANDSHAKE_PACKET_SIZE
+op	110:70	0:0	6	-
+water	110:72	0:0	6	32
+water	110:75	0:0	4	;
+if	111:8	112:22	4	(ret < 0)
+cond	111:12	111:18	5	ret < 0
+water	111:12	0:0	6	ret
+op	111:16	0:0	6	<
+water	111:18	0:0	6	0
+stmts	112:12	112:22	5	
+return	112:12	112:22	6	ret
+water	112:19	0:0	7	ret
+if	113:8	118:8	4	(CONFIG_FFRTMPCRYPT_PROTOCOL && rt -> encrypted)
+cond	113:12	113:47	5	CONFIG_FFRTMPCRYPT_PROTOCOL && rt -> encrypted
+water	113:12	0:0	6	CONFIG_FFRTMPCRYPT_PROTOCOL
+op	113:40	0:0	6	&&
+water	113:43	0:0	6	rt
+op	113:45	0:0	6	->
+water	113:47	0:0	6	encrypted
+stmts	113:58	118:8	5	
+water	113:58	0:0	6	{
+call	115:12	117:46	6	ff_rtmpe_encrypt_sig
+arg	115:33	115:43	7	rt->stream
+water	115:33	0:0	8	rt
+op	115:35	0:0	8	->
+water	115:37	0:0	8	stream
+arg	115:45	116:64	7	tosend+RTMP_HANDSHAKE_PACKET_SIZE-32
+water	115:45	0:0	8	tosend
+op	115:52	0:0	8	+
+water	116:33	0:0	8	RTMP_HANDSHAKE_PACKET_SIZE
+op	116:60	0:0	8	-
+water	116:62	0:0	8	32
+arg	116:66	116:72	7	digest
+water	116:66	0:0	8	digest
+arg	117:33	117:46	7	serverdata[0]
+water	117:33	0:0	8	serverdata
+op	117:43	0:0	8	[
+water	117:44	0:0	8	0
+op	117:45	0:0	8	]
+water	117:47	0:0	6	;
+water	118:8	0:0	6	}
+if	120:8	122:22	4	(( ret =ffurl_write (rt -> stream ,tosend ,RTMP_HANDSHAKE_PACKET_SIZE ) ) < 0)
+cond	120:12	121:62	5	( ret =ffurl_write (rt -> stream ,tosend ,RTMP_HANDSHAKE_PACKET_SIZE ) ) < 0
+water	120:12	0:0	6	(
+water	120:13	0:0	6	ret
+op	120:17	0:0	6	=
+call	120:19	121:57	6	ffurl_write
+arg	120:31	120:41	7	rt->stream
+water	120:31	0:0	8	rt
+op	120:33	0:0	8	->
+water	120:35	0:0	8	stream
+arg	120:43	120:49	7	tosend
+water	120:43	0:0	8	tosend
+arg	121:31	121:57	7	RTMP_HANDSHAKE_PACKET_SIZE
+water	121:31	0:0	8	RTMP_HANDSHAKE_PACKET_SIZE
+water	121:58	0:0	6	)
+op	121:60	0:0	6	<
+water	121:62	0:0	6	0
+stmts	122:12	122:22	5	
+return	122:12	122:22	6	ret
+water	122:19	0:0	7	ret
+if	123:8	127:8	4	(CONFIG_FFRTMPCRYPT_PROTOCOL && rt -> encrypted)
+cond	123:12	123:47	5	CONFIG_FFRTMPCRYPT_PROTOCOL && rt -> encrypted
+water	123:12	0:0	6	CONFIG_FFRTMPCRYPT_PROTOCOL
+op	123:40	0:0	6	&&
+water	123:43	0:0	6	rt
+op	123:45	0:0	6	->
+water	123:47	0:0	6	encrypted
+stmts	123:58	127:8	5	
+water	123:58	0:0	6	{
+if	125:12	126:26	6	(( ret =ff_rtmpe_update_keystream (rt -> stream ) ) < 0)
+cond	125:16	125:64	7	( ret =ff_rtmpe_update_keystream (rt -> stream ) ) < 0
+water	125:16	0:0	8	(
+water	125:17	0:0	8	ret
+op	125:21	0:0	8	=
+call	125:23	125:59	8	ff_rtmpe_update_keystream
+arg	125:49	125:59	9	rt->stream
+water	125:49	0:0	10	rt
+op	125:51	0:0	10	->
+water	125:53	0:0	10	stream
+water	125:60	0:0	8	)
+op	125:62	0:0	8	<
+water	125:64	0:0	8	0
+stmts	126:16	126:26	7	
+return	126:16	126:26	8	ret
+water	126:23	0:0	9	ret
+water	127:8	0:0	6	}
+water	128:4	0:0	4	}
+else	128:6	149:4	2
+stmts	128:11	149:4	3	
+water	128:11	0:0	4	{
+if	129:8	140:8	4	(CONFIG_FFRTMPCRYPT_PROTOCOL && rt -> encrypted)
+cond	129:12	129:47	5	CONFIG_FFRTMPCRYPT_PROTOCOL && rt -> encrypted
+water	129:12	0:0	6	CONFIG_FFRTMPCRYPT_PROTOCOL
+op	129:40	0:0	6	&&
+water	129:43	0:0	6	rt
+op	129:45	0:0	6	->
+water	129:47	0:0	6	encrypted
+stmts	129:58	140:8	5	
+water	129:58	0:0	6	{
+if	132:12	134:26	6	(( ret =ff_rtmpe_compute_secret_key (rt -> stream ,serverdata + 1 ,tosend + 1 ,1 ) ) < 0)
+cond	132:16	133:46	7	( ret =ff_rtmpe_compute_secret_key (rt -> stream ,serverdata + 1 ,tosend + 1 ,1 ) ) < 0
+water	132:16	0:0	8	(
+water	132:17	0:0	8	ret
+op	132:21	0:0	8	=
+call	132:23	133:41	8	ff_rtmpe_compute_secret_key
+arg	132:51	132:61	9	rt->stream
+water	132:51	0:0	10	rt
+op	132:53	0:0	10	->
+water	132:55	0:0	10	stream
+arg	132:63	132:77	9	serverdata+1
+water	132:63	0:0	10	serverdata
+op	132:74	0:0	10	+
+water	132:76	0:0	10	1
+arg	133:28	133:38	9	tosend+1
+water	133:28	0:0	10	tosend
+op	133:35	0:0	10	+
+water	133:37	0:0	10	1
+arg	133:40	133:41	9	1
+water	133:40	0:0	10	1
+water	133:42	0:0	8	)
+op	133:44	0:0	8	<
+water	133:46	0:0	8	0
+stmts	134:16	134:26	7	
+return	134:16	134:26	8	ret
+water	134:23	0:0	9	ret
+if	135:12	139:12	6	(serverdata [ 0 ] == 9)
+cond	135:16	135:33	7	serverdata [ 0 ] == 9
+water	135:16	0:0	8	serverdata
+op	135:26	0:0	8	[
+water	135:27	0:0	8	0
+op	135:28	0:0	8	]
+op	135:30	0:0	8	==
+water	135:33	0:0	8	9
+stmts	135:36	139:12	7	
+water	135:36	0:0	8	{
+call	137:16	138:50	8	ff_rtmpe_encrypt_sig
+arg	137:37	137:47	9	rt->stream
+water	137:37	0:0	10	rt
+op	137:39	0:0	10	->
+water	137:41	0:0	10	stream
+arg	137:49	137:58	9	signature
+water	137:49	0:0	10	signature
+arg	137:60	137:66	9	digest
+water	137:60	0:0	10	digest
+arg	138:37	138:50	9	serverdata[0]
+water	138:37	0:0	10	serverdata
+op	138:47	0:0	10	[
+water	138:48	0:0	10	0
+op	138:49	0:0	10	]
+water	138:51	0:0	8	;
+water	139:12	0:0	8	}
+water	140:8	0:0	6	}
+if	141:8	143:22	4	(( ret =ffurl_write (rt -> stream ,serverdata + 1 ,RTMP_HANDSHAKE_PACKET_SIZE ) ) < 0)
+cond	141:12	142:62	5	( ret =ffurl_write (rt -> stream ,serverdata + 1 ,RTMP_HANDSHAKE_PACKET_SIZE ) ) < 0
+water	141:12	0:0	6	(
+water	141:13	0:0	6	ret
+op	141:17	0:0	6	=
+call	141:19	142:57	6	ffurl_write
+arg	141:31	141:41	7	rt->stream
+water	141:31	0:0	8	rt
+op	141:33	0:0	8	->
+water	141:35	0:0	8	stream
+arg	141:43	141:57	7	serverdata+1
+water	141:43	0:0	8	serverdata
+op	141:54	0:0	8	+
+water	141:56	0:0	8	1
+arg	142:31	142:57	7	RTMP_HANDSHAKE_PACKET_SIZE
+water	142:31	0:0	8	RTMP_HANDSHAKE_PACKET_SIZE
+water	142:58	0:0	6	)
+op	142:60	0:0	6	<
+water	142:62	0:0	6	0
+stmts	143:12	143:22	5	
+return	143:12	143:22	6	ret
+water	143:19	0:0	7	ret
+if	144:8	148:8	4	(CONFIG_FFRTMPCRYPT_PROTOCOL && rt -> encrypted)
+cond	144:12	144:47	5	CONFIG_FFRTMPCRYPT_PROTOCOL && rt -> encrypted
+water	144:12	0:0	6	CONFIG_FFRTMPCRYPT_PROTOCOL
+op	144:40	0:0	6	&&
+water	144:43	0:0	6	rt
+op	144:45	0:0	6	->
+water	144:47	0:0	6	encrypted
+stmts	144:58	148:8	5	
+water	144:58	0:0	6	{
+if	146:12	147:26	6	(( ret =ff_rtmpe_update_keystream (rt -> stream ) ) < 0)
+cond	146:16	146:64	7	( ret =ff_rtmpe_update_keystream (rt -> stream ) ) < 0
+water	146:16	0:0	8	(
+water	146:17	0:0	8	ret
+op	146:21	0:0	8	=
+call	146:23	146:59	8	ff_rtmpe_update_keystream
+arg	146:49	146:59	9	rt->stream
+water	146:49	0:0	10	rt
+op	146:51	0:0	10	->
+water	146:53	0:0	10	stream
+water	146:60	0:0	8	)
+op	146:62	0:0	8	<
+water	146:64	0:0	8	0
+stmts	147:16	147:26	7	
+return	147:16	147:26	8	ret
+water	147:23	0:0	9	ret
+water	148:8	0:0	6	}
+water	149:4	0:0	4	}
+return	150:4	150:12	2	0
+water	150:11	0:0	3	0

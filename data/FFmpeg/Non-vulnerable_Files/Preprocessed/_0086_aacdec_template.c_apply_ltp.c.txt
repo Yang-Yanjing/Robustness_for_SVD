@@ -1,0 +1,229 @@
+func	1:0	23:0	0	static void	apply_ltp
+params	1:21	0:0	1	
+param	1:22	1:36	2	AACContext *	ac
+param	1:38	1:63	2	SingleChannelElement *	sce
+stmnts	0:0	22:4	1	
+decl	3:4	3:49	2	const LongTermPrediction	*ltp
+op	3:34	0:0	2	=
+op	3:36	0:0	2	&
+water	3:37	0:0	2	sce
+op	3:40	0:0	2	->
+water	3:42	0:0	2	ics
+op	3:45	0:0	2	.
+water	3:46	0:0	2	ltp
+decl	4:4	4:49	2	const uint16_t	*offsets
+op	4:28	0:0	2	=
+water	4:30	0:0	2	sce
+op	4:33	0:0	2	->
+water	4:35	0:0	2	ics
+op	4:38	0:0	2	.
+water	4:39	0:0	2	swb_offset
+decl	5:4	5:14	2	int	i
+water	5:9	0:0	2	,
+decl	5:4	5:14	2	int	sfb
+if	6:4	22:4	2	(sce -> ics . window_sequence [ 0 ] != EIGHT_SHORT_SEQUENCE)
+cond	6:8	6:39	3	sce -> ics . window_sequence [ 0 ] != EIGHT_SHORT_SEQUENCE
+water	6:8	0:0	4	sce
+op	6:11	0:0	4	->
+water	6:13	0:0	4	ics
+op	6:16	0:0	4	.
+water	6:17	0:0	4	window_sequence
+op	6:32	0:0	4	[
+water	6:33	0:0	4	0
+op	6:34	0:0	4	]
+op	6:36	0:0	4	!=
+water	6:39	0:0	4	EIGHT_SHORT_SEQUENCE
+stmts	6:61	22:4	3	
+water	6:61	0:0	4	{
+decl	7:8	7:37	4	INTFLOAT	*predTime
+op	7:27	0:0	4	=
+water	7:29	0:0	4	sce
+op	7:32	0:0	4	->
+water	7:34	0:0	4	ret
+decl	8:8	8:41	4	INTFLOAT	*predFreq
+op	8:27	0:0	4	=
+water	8:29	0:0	4	ac
+op	8:31	0:0	4	->
+water	8:33	0:0	4	buf_mdct
+decl	9:8	9:34	4	int16_t	num_samples
+op	9:28	0:0	4	=
+water	9:30	0:0	4	2048
+if	10:8	11:41	4	(ltp -> lag < 1024)
+cond	10:12	10:23	5	ltp -> lag < 1024
+water	10:12	0:0	6	ltp
+op	10:15	0:0	6	->
+water	10:17	0:0	6	lag
+op	10:21	0:0	6	<
+water	10:23	0:0	6	1024
+stmts	11:12	11:41	5	
+water	11:12	0:0	6	num_samples
+op	11:24	0:0	6	=
+water	11:26	0:0	6	ltp
+op	11:29	0:0	6	->
+water	11:31	0:0	6	lag
+op	11:35	0:0	6	+
+water	11:37	0:0	6	1024
+water	11:41	0:0	6	;
+for	12:8	13:83	4	(i = 0 ;i < num_samples;i ++)
+forinit	12:13	12:18	5	i = 0 ;
+water	12:13	0:0	6	i
+op	12:15	0:0	6	=
+water	12:17	0:0	6	0
+water	12:18	0:0	6	;
+cond	12:20	12:24	5	i < num_samples
+water	12:20	0:0	6	i
+op	12:22	0:0	6	<
+water	12:24	0:0	6	num_samples
+forexpr	12:37	12:38	5	i ++
+water	12:37	0:0	6	i
+op	12:38	0:0	6	++
+stmts	13:12	13:83	5	
+water	13:12	0:0	6	predTime
+op	13:20	0:0	6	[
+water	13:21	0:0	6	i
+op	13:22	0:0	6	]
+op	13:24	0:0	6	=
+call	13:26	13:82	6	AAC_MUL30
+arg	13:36	13:71	7	sce->ltp_state[i+2048-ltp->lag]
+water	13:36	0:0	8	sce
+op	13:39	0:0	8	->
+water	13:41	0:0	8	ltp_state
+op	13:50	0:0	8	[
+water	13:51	0:0	8	i
+op	13:53	0:0	8	+
+water	13:55	0:0	8	2048
+op	13:60	0:0	8	-
+water	13:62	0:0	8	ltp
+op	13:65	0:0	8	->
+water	13:67	0:0	8	lag
+op	13:70	0:0	8	]
+arg	13:73	13:82	7	ltp->coef
+water	13:73	0:0	8	ltp
+op	13:76	0:0	8	->
+water	13:78	0:0	8	coef
+water	13:83	0:0	6	;
+call	14:8	14:62	4	memset
+arg	14:15	14:27	5	&predTime[i]
+op	14:15	0:0	6	&
+water	14:16	0:0	6	predTime
+op	14:24	0:0	6	[
+water	14:25	0:0	6	i
+op	14:26	0:0	6	]
+arg	14:29	14:30	5	0
+water	14:29	0:0	6	0
+arg	14:32	14:62	5	(2048-i)*sizeof(*predTime)
+water	14:32	0:0	6	(
+water	14:33	0:0	6	2048
+op	14:38	0:0	6	-
+water	14:40	0:0	6	i
+water	14:41	0:0	6	)
+op	14:43	0:0	6	*
+op	14:45	0:0	6	sizeof
+water	14:51	0:0	6	(
+op	14:52	0:0	6	*
+water	14:53	0:0	6	predTime
+water	14:61	0:0	6	)
+water	14:63	0:0	4	;
+call	15:8	15:68	4	ac->windowing_and_mdct_ltp
+arg	15:35	15:37	5	ac
+water	15:35	0:0	6	ac
+arg	15:39	15:47	5	predFreq
+water	15:39	0:0	6	predFreq
+arg	15:49	15:57	5	predTime
+water	15:49	0:0	6	predTime
+arg	15:59	15:68	5	&sce->ics
+op	15:59	0:0	6	&
+water	15:60	0:0	6	sce
+op	15:63	0:0	6	->
+water	15:65	0:0	6	ics
+water	15:69	0:0	4	;
+if	16:8	17:60	4	(sce -> tns . present)
+cond	16:12	16:21	5	sce -> tns . present
+water	16:12	0:0	6	sce
+op	16:15	0:0	6	->
+water	16:17	0:0	6	tns
+op	16:20	0:0	6	.
+water	16:21	0:0	6	present
+stmts	17:12	17:60	5	
+call	17:12	17:59	6	ac->apply_tns
+arg	17:26	17:34	7	predFreq
+water	17:26	0:0	8	predFreq
+arg	17:36	17:45	7	&sce->tns
+op	17:36	0:0	8	&
+water	17:37	0:0	8	sce
+op	17:40	0:0	8	->
+water	17:42	0:0	8	tns
+arg	17:47	17:56	7	&sce->ics
+op	17:47	0:0	8	&
+water	17:48	0:0	8	sce
+op	17:51	0:0	8	->
+water	17:53	0:0	8	ics
+arg	17:58	17:59	7	0
+water	17:58	0:0	8	0
+water	17:60	0:0	6	;
+for	18:8	21:49	4	(sfb = 0 ;sfb <FFMIN (sce -> ics . max_sfb ,MAX_LTP_LONG_SFB );sfb ++)
+forinit	18:13	18:20	5	sfb = 0 ;
+water	18:13	0:0	6	sfb
+op	18:17	0:0	6	=
+water	18:19	0:0	6	0
+water	18:20	0:0	6	;
+cond	18:22	18:68	5	sfb <FFMIN (sce -> ics . max_sfb ,MAX_LTP_LONG_SFB )
+water	18:22	0:0	6	sfb
+op	18:26	0:0	6	<
+call	18:28	18:68	6	FFMIN
+arg	18:34	18:50	7	sce->ics.max_sfb
+water	18:34	0:0	8	sce
+op	18:37	0:0	8	->
+water	18:39	0:0	8	ics
+op	18:42	0:0	8	.
+water	18:43	0:0	8	max_sfb
+arg	18:52	18:68	7	MAX_LTP_LONG_SFB
+water	18:52	0:0	8	MAX_LTP_LONG_SFB
+forexpr	18:71	18:74	5	sfb ++
+water	18:71	0:0	6	sfb
+op	18:74	0:0	6	++
+stmts	19:12	21:49	5	
+if	19:12	21:49	6	(ltp -> used [ sfb ])
+cond	19:16	19:29	7	ltp -> used [ sfb ]
+water	19:16	0:0	8	ltp
+op	19:19	0:0	8	->
+water	19:21	0:0	8	used
+op	19:25	0:0	8	[
+water	19:26	0:0	8	sfb
+op	19:29	0:0	8	]
+stmts	20:16	21:49	7	
+for	20:16	21:49	8	(i = offsets [ sfb ] ;i < offsets [ sfb + 1 ];i ++)
+forinit	20:21	20:37	9	i = offsets [ sfb ] ;
+water	20:21	0:0	10	i
+op	20:23	0:0	10	=
+water	20:25	0:0	10	offsets
+op	20:32	0:0	10	[
+water	20:33	0:0	10	sfb
+op	20:36	0:0	10	]
+water	20:37	0:0	10	;
+cond	20:39	20:58	9	i < offsets [ sfb + 1 ]
+water	20:39	0:0	10	i
+op	20:41	0:0	10	<
+water	20:43	0:0	10	offsets
+op	20:50	0:0	10	[
+water	20:51	0:0	10	sfb
+op	20:55	0:0	10	+
+water	20:57	0:0	10	1
+op	20:58	0:0	10	]
+forexpr	20:61	20:62	9	i ++
+water	20:61	0:0	10	i
+op	20:62	0:0	10	++
+stmts	21:20	21:49	9	
+water	21:20	0:0	10	sce
+op	21:23	0:0	10	->
+water	21:25	0:0	10	coeffs
+op	21:31	0:0	10	[
+water	21:32	0:0	10	i
+op	21:33	0:0	10	]
+op	21:35	0:0	10	+=
+water	21:38	0:0	10	predFreq
+op	21:46	0:0	10	[
+water	21:47	0:0	10	i
+op	21:48	0:0	10	]
+water	21:49	0:0	10	;
+water	22:4	0:0	4	}

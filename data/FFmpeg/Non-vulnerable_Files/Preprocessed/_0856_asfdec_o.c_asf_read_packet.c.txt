@@ -1,0 +1,438 @@
+func	1:0	69:0	0	static int	asf_read_packet
+params	1:26	0:0	1	
+param	1:27	1:45	2	AVFormatContext *	s
+param	1:47	1:60	2	AVPacket *	pkt
+stmnts	0:0	68:12	1	
+decl	3:4	3:34	2	ASFContext	*asf
+op	3:20	0:0	2	=
+water	3:22	0:0	2	s
+op	3:23	0:0	2	->
+water	3:25	0:0	2	priv_data
+decl	4:4	4:27	2	AVIOContext	*pb
+op	4:20	0:0	2	=
+water	4:22	0:0	2	s
+op	4:23	0:0	2	->
+water	4:25	0:0	2	pb
+decl	5:4	5:14	2	int	ret
+water	5:11	0:0	2	,
+decl	5:4	5:14	2	int	i
+if	6:4	8:26	2	((avio_tell (pb ) >= asf -> data_offset + asf -> data_size ) && ! ( asf -> b_flags & ASF_FLAG_BROADCAST ))
+cond	6:8	7:43	3	(avio_tell (pb ) >= asf -> data_offset + asf -> data_size ) && ! ( asf -> b_flags & ASF_FLAG_BROADCAST )
+water	6:8	0:0	4	(
+call	6:9	6:21	4	avio_tell
+arg	6:19	6:21	5	pb
+water	6:19	0:0	6	pb
+op	6:23	0:0	4	>=
+water	6:26	0:0	4	asf
+op	6:29	0:0	4	->
+water	6:31	0:0	4	data_offset
+op	6:43	0:0	4	+
+water	6:45	0:0	4	asf
+op	6:48	0:0	4	->
+water	6:50	0:0	4	data_size
+water	6:59	0:0	4	)
+op	6:61	0:0	4	&&
+op	7:8	0:0	4	!
+water	7:9	0:0	4	(
+water	7:10	0:0	4	asf
+op	7:13	0:0	4	->
+water	7:15	0:0	4	b_flags
+op	7:23	0:0	4	&
+water	7:25	0:0	4	ASF_FLAG_BROADCAST
+water	7:43	0:0	4	)
+stmts	8:8	8:26	3	
+return	8:8	8:26	4	AVERROR_EOF
+water	8:15	0:0	5	AVERROR_EOF
+while	9:4	65:4	2	(! pb -> eof_reached)
+cond	9:11	9:16	3	! pb -> eof_reached
+op	9:11	0:0	4	!
+water	9:12	0:0	4	pb
+op	9:14	0:0	4	->
+water	9:16	0:0	4	eof_reached
+stmts	9:29	65:4	3	
+water	9:29	0:0	4	{
+if	10:8	16:8	4	(asf -> state == PARSE_PACKET_HEADER)
+cond	10:12	10:26	5	asf -> state == PARSE_PACKET_HEADER
+water	10:12	0:0	6	asf
+op	10:15	0:0	6	->
+water	10:17	0:0	6	state
+op	10:23	0:0	6	==
+water	10:26	0:0	6	PARSE_PACKET_HEADER
+stmts	10:47	16:8	5	
+water	10:47	0:0	6	{
+call	11:12	11:36	6	asf_read_packet_header
+arg	11:35	11:36	7	s
+water	11:35	0:0	8	s
+water	11:37	0:0	6	;
+if	12:12	13:40	6	(! asf -> nb_mult_left)
+cond	12:16	12:22	7	! asf -> nb_mult_left
+op	12:16	0:0	8	!
+water	12:17	0:0	8	asf
+op	12:20	0:0	8	->
+water	12:22	0:0	8	nb_mult_left
+stmts	13:16	13:40	7	
+water	13:16	0:0	8	asf
+op	13:19	0:0	8	->
+water	13:21	0:0	8	state
+op	13:27	0:0	8	=
+water	13:29	0:0	8	READ_SINGLE
+water	13:40	0:0	8	;
+else	14:12	15:39	6
+stmts	15:16	15:39	7	
+water	15:16	0:0	8	asf
+op	15:19	0:0	8	->
+water	15:21	0:0	8	state
+op	15:27	0:0	8	=
+water	15:29	0:0	8	READ_MULTI
+water	15:39	0:0	8	;
+water	16:8	0:0	6	}
+if	17:8	18:22	4	(( ret =asf_read_payload (s ,pkt ) ) < 0)
+cond	17:12	17:47	5	( ret =asf_read_payload (s ,pkt ) ) < 0
+water	17:12	0:0	6	(
+water	17:13	0:0	6	ret
+op	17:17	0:0	6	=
+call	17:19	17:42	6	asf_read_payload
+arg	17:36	17:37	7	s
+water	17:36	0:0	8	s
+arg	17:39	17:42	7	pkt
+water	17:39	0:0	8	pkt
+water	17:43	0:0	6	)
+op	17:45	0:0	6	<
+water	17:47	0:0	6	0
+stmts	18:12	18:22	5	
+return	18:12	18:22	6	ret
+water	18:19	0:0	7	ret
+switch	19:8	44:8	4	(asf -> state)
+cond	19:16	19:21	5	asf -> state
+water	19:16	0:0	6	asf
+op	19:19	0:0	6	->
+water	19:21	0:0	6	state
+stmts	19:28	44:8	5	
+water	19:28	0:0	6	{
+label	20:8	20:24	6	case READ_SINGLE :
+if	21:12	22:48	6	(! asf -> sub_left)
+cond	21:16	21:22	7	! asf -> sub_left
+op	21:16	0:0	8	!
+water	21:17	0:0	8	asf
+op	21:20	0:0	8	->
+water	21:22	0:0	8	sub_left
+stmts	22:16	22:48	7	
+water	22:16	0:0	8	asf
+op	22:19	0:0	8	->
+water	22:21	0:0	8	state
+op	22:27	0:0	8	=
+water	22:29	0:0	8	PARSE_PACKET_HEADER
+water	22:48	0:0	8	;
+break	23:12	23:17	6	
+label	24:8	24:27	6	case READ_MULTI_SUB :
+if	25:12	31:12	6	(! asf -> sub_left && ! asf -> nb_mult_left)
+cond	25:16	25:40	7	! asf -> sub_left && ! asf -> nb_mult_left
+op	25:16	0:0	8	!
+water	25:17	0:0	8	asf
+op	25:20	0:0	8	->
+water	25:22	0:0	8	sub_left
+op	25:31	0:0	8	&&
+op	25:34	0:0	8	!
+water	25:35	0:0	8	asf
+op	25:38	0:0	8	->
+water	25:40	0:0	8	nb_mult_left
+stmts	25:54	31:12	7	
+water	25:54	0:0	8	{
+water	26:16	0:0	8	asf
+op	26:19	0:0	8	->
+water	26:21	0:0	8	state
+op	26:27	0:0	8	=
+water	26:29	0:0	8	PARSE_PACKET_HEADER
+water	26:48	0:0	8	;
+if	27:16	28:47	8	(! asf -> return_subpayload)
+cond	27:20	27:26	9	! asf -> return_subpayload
+op	27:20	0:0	10	!
+water	27:21	0:0	10	asf
+op	27:24	0:0	10	->
+water	27:26	0:0	10	return_subpayload
+stmts	28:20	28:47	9	
+call	28:20	28:46	10	avio_skip
+arg	28:30	28:32	11	pb
+water	28:30	0:0	12	pb
+arg	28:34	28:46	11	asf->pad_len
+water	28:34	0:0	12	asf
+op	28:37	0:0	12	->
+water	28:39	0:0	12	pad_len
+water	28:47	0:0	10	;
+if	29:16	30:82	8	(asf -> packet_offset + asf -> packet_size >avio_tell (pb ))
+cond	29:20	29:72	9	asf -> packet_offset + asf -> packet_size >avio_tell (pb )
+water	29:20	0:0	10	asf
+op	29:23	0:0	10	->
+water	29:25	0:0	10	packet_offset
+op	29:39	0:0	10	+
+water	29:41	0:0	10	asf
+op	29:44	0:0	10	->
+water	29:46	0:0	10	packet_size
+op	29:58	0:0	10	>
+call	29:60	29:72	10	avio_tell
+arg	29:70	29:72	11	pb
+water	29:70	0:0	12	pb
+stmts	30:20	30:82	9	
+call	30:20	30:81	10	avio_seek
+arg	30:30	30:32	11	pb
+water	30:30	0:0	12	pb
+arg	30:34	30:71	11	asf->packet_offset+asf->packet_size
+water	30:34	0:0	12	asf
+op	30:37	0:0	12	->
+water	30:39	0:0	12	packet_offset
+op	30:53	0:0	12	+
+water	30:55	0:0	12	asf
+op	30:58	0:0	12	->
+water	30:60	0:0	12	packet_size
+arg	30:73	30:81	11	SEEK_SET
+water	30:73	0:0	12	SEEK_SET
+water	30:82	0:0	10	;
+water	31:12	0:0	8	}
+else	31:14	32:39	6
+stmts	31:19	32:39	7	
+if	31:19	32:39	8	(! asf -> sub_left)
+cond	31:23	31:29	9	! asf -> sub_left
+op	31:23	0:0	10	!
+water	31:24	0:0	10	asf
+op	31:27	0:0	10	->
+water	31:29	0:0	10	sub_left
+stmts	32:16	32:39	9	
+water	32:16	0:0	10	asf
+op	32:19	0:0	10	->
+water	32:21	0:0	10	state
+op	32:27	0:0	10	=
+water	32:29	0:0	10	READ_MULTI
+water	32:39	0:0	10	;
+break	33:12	33:17	6	
+label	34:8	34:23	6	case READ_MULTI :
+if	35:12	42:12	6	(! asf -> nb_mult_left)
+cond	35:16	35:22	7	! asf -> nb_mult_left
+op	35:16	0:0	8	!
+water	35:17	0:0	8	asf
+op	35:20	0:0	8	->
+water	35:22	0:0	8	nb_mult_left
+stmts	35:36	42:12	7	
+water	35:36	0:0	8	{
+water	36:16	0:0	8	asf
+op	36:19	0:0	8	->
+water	36:21	0:0	8	state
+op	36:27	0:0	8	=
+water	36:29	0:0	8	PARSE_PACKET_HEADER
+water	36:48	0:0	8	;
+if	37:16	39:16	8	(! asf -> return_subpayload)
+cond	37:20	37:26	9	! asf -> return_subpayload
+op	37:20	0:0	10	!
+water	37:21	0:0	10	asf
+op	37:24	0:0	10	->
+water	37:26	0:0	10	return_subpayload
+stmts	37:45	39:16	9	
+water	37:45	0:0	10	{
+call	38:20	38:46	10	avio_skip
+arg	38:30	38:32	11	pb
+water	38:30	0:0	12	pb
+arg	38:34	38:46	11	asf->pad_len
+water	38:34	0:0	12	asf
+op	38:37	0:0	12	->
+water	38:39	0:0	12	pad_len
+water	38:47	0:0	10	;
+water	39:16	0:0	10	}
+if	40:16	41:82	8	(asf -> packet_offset + asf -> packet_size >avio_tell (pb ))
+cond	40:20	40:72	9	asf -> packet_offset + asf -> packet_size >avio_tell (pb )
+water	40:20	0:0	10	asf
+op	40:23	0:0	10	->
+water	40:25	0:0	10	packet_offset
+op	40:39	0:0	10	+
+water	40:41	0:0	10	asf
+op	40:44	0:0	10	->
+water	40:46	0:0	10	packet_size
+op	40:58	0:0	10	>
+call	40:60	40:72	10	avio_tell
+arg	40:70	40:72	11	pb
+water	40:70	0:0	12	pb
+stmts	41:20	41:82	9	
+call	41:20	41:81	10	avio_seek
+arg	41:30	41:32	11	pb
+water	41:30	0:0	12	pb
+arg	41:34	41:71	11	asf->packet_offset+asf->packet_size
+water	41:34	0:0	12	asf
+op	41:37	0:0	12	->
+water	41:39	0:0	12	packet_offset
+op	41:53	0:0	12	+
+water	41:55	0:0	12	asf
+op	41:58	0:0	12	->
+water	41:60	0:0	12	packet_size
+arg	41:73	41:81	11	SEEK_SET
+water	41:73	0:0	12	SEEK_SET
+water	41:82	0:0	10	;
+water	42:12	0:0	8	}
+break	43:12	43:17	6	
+water	44:8	0:0	6	}
+if	45:8	48:8	4	(asf -> return_subpayload)
+cond	45:12	45:17	5	asf -> return_subpayload
+water	45:12	0:0	6	asf
+op	45:15	0:0	6	->
+water	45:17	0:0	6	return_subpayload
+stmts	45:36	48:8	5	
+water	45:36	0:0	6	{
+water	46:12	0:0	6	asf
+op	46:15	0:0	6	->
+water	46:17	0:0	6	return_subpayload
+op	46:35	0:0	6	=
+water	46:37	0:0	6	0
+water	46:38	0:0	6	;
+return	47:12	47:20	6	0
+water	47:19	0:0	7	0
+water	48:8	0:0	6	}
+for	49:8	64:8	4	(i = 0 ;i < s -> nb_streams;i ++)
+forinit	49:13	49:18	5	i = 0 ;
+water	49:13	0:0	6	i
+op	49:15	0:0	6	=
+water	49:17	0:0	6	0
+water	49:18	0:0	6	;
+cond	49:20	49:27	5	i < s -> nb_streams
+water	49:20	0:0	6	i
+op	49:22	0:0	6	<
+water	49:24	0:0	6	s
+op	49:25	0:0	6	->
+water	49:27	0:0	6	nb_streams
+forexpr	49:39	49:40	5	i ++
+water	49:39	0:0	6	i
+op	49:40	0:0	6	++
+stmts	49:44	64:8	5	
+water	49:44	0:0	6	{
+decl	50:12	50:53	6	ASFPacket	*asf_pkt
+op	50:31	0:0	6	=
+op	50:33	0:0	6	&
+water	50:34	0:0	6	asf
+op	50:37	0:0	6	->
+water	50:39	0:0	6	asf_st
+op	50:45	0:0	6	[
+water	50:46	0:0	6	i
+op	50:47	0:0	6	]
+op	50:48	0:0	6	->
+water	50:50	0:0	6	pkt
+if	51:12	63:12	6	(asf_pkt && ! asf_pkt -> size_left && asf_pkt -> data_size)
+cond	51:16	51:59	7	asf_pkt && ! asf_pkt -> size_left && asf_pkt -> data_size
+water	51:16	0:0	8	asf_pkt
+op	51:24	0:0	8	&&
+op	51:27	0:0	8	!
+water	51:28	0:0	8	asf_pkt
+op	51:35	0:0	8	->
+water	51:37	0:0	8	size_left
+op	51:47	0:0	8	&&
+water	51:50	0:0	8	asf_pkt
+op	51:57	0:0	8	->
+water	51:59	0:0	8	data_size
+stmts	51:70	63:12	7	
+water	51:70	0:0	8	{
+if	52:16	55:34	8	(asf -> asf_st [ i ] -> span > 1 && asf -> asf_st [ i ] -> type == AVMEDIA_TYPE_AUDIO)
+cond	52:20	53:44	9	asf -> asf_st [ i ] -> span > 1 && asf -> asf_st [ i ] -> type == AVMEDIA_TYPE_AUDIO
+water	52:20	0:0	10	asf
+op	52:23	0:0	10	->
+water	52:25	0:0	10	asf_st
+op	52:31	0:0	10	[
+water	52:32	0:0	10	i
+op	52:33	0:0	10	]
+op	52:34	0:0	10	->
+water	52:36	0:0	10	span
+op	52:41	0:0	10	>
+water	52:43	0:0	10	1
+op	52:45	0:0	10	&&
+water	53:20	0:0	10	asf
+op	53:23	0:0	10	->
+water	53:25	0:0	10	asf_st
+op	53:31	0:0	10	[
+water	53:32	0:0	10	i
+op	53:33	0:0	10	]
+op	53:34	0:0	10	->
+water	53:36	0:0	10	type
+op	53:41	0:0	10	==
+water	53:44	0:0	10	AVMEDIA_TYPE_AUDIO
+stmts	54:20	55:34	9	
+if	54:20	55:34	10	(( ret =asf_deinterleave (s ,asf_pkt ,i ) ) < 0)
+cond	54:24	54:66	11	( ret =asf_deinterleave (s ,asf_pkt ,i ) ) < 0
+water	54:24	0:0	12	(
+water	54:25	0:0	12	ret
+op	54:29	0:0	12	=
+call	54:31	54:61	12	asf_deinterleave
+arg	54:48	54:49	13	s
+water	54:48	0:0	14	s
+arg	54:51	54:58	13	asf_pkt
+water	54:51	0:0	14	asf_pkt
+arg	54:60	54:61	13	i
+water	54:60	0:0	14	i
+water	54:62	0:0	12	)
+op	54:64	0:0	12	<
+water	54:66	0:0	12	0
+stmts	55:24	55:34	11	
+return	55:24	55:34	12	ret
+water	55:31	0:0	13	ret
+call	56:16	56:55	8	av_packet_move_ref
+arg	56:35	56:38	9	pkt
+water	56:35	0:0	10	pkt
+arg	56:40	56:55	9	&asf_pkt->avpkt
+op	56:40	0:0	10	&
+water	56:41	0:0	10	asf_pkt
+op	56:48	0:0	10	->
+water	56:50	0:0	10	avpkt
+water	56:56	0:0	8	;
+water	57:16	0:0	8	pkt
+op	57:19	0:0	8	->
+water	57:21	0:0	8	stream_index
+op	57:35	0:0	8	=
+water	57:37	0:0	8	asf
+op	57:40	0:0	8	->
+water	57:42	0:0	8	asf_st
+op	57:48	0:0	8	[
+water	57:49	0:0	8	i
+op	57:50	0:0	8	]
+op	57:51	0:0	8	->
+water	57:53	0:0	8	index
+water	57:58	0:0	8	;
+water	58:16	0:0	8	pkt
+op	58:19	0:0	8	->
+water	58:21	0:0	8	flags
+op	58:35	0:0	8	=
+water	58:37	0:0	8	asf_pkt
+op	58:44	0:0	8	->
+water	58:46	0:0	8	flags
+water	58:51	0:0	8	;
+water	59:16	0:0	8	pkt
+op	59:19	0:0	8	->
+water	59:21	0:0	8	dts
+op	59:35	0:0	8	=
+water	59:37	0:0	8	asf_pkt
+op	59:44	0:0	8	->
+water	59:46	0:0	8	dts
+op	59:50	0:0	8	-
+water	59:52	0:0	8	asf
+op	59:55	0:0	8	->
+water	59:57	0:0	8	preroll
+water	59:64	0:0	8	;
+water	60:16	0:0	8	asf_pkt
+op	60:23	0:0	8	->
+water	60:25	0:0	8	data_size
+op	60:35	0:0	8	=
+water	60:37	0:0	8	0
+water	60:38	0:0	8	;
+water	61:16	0:0	8	asf_pkt
+op	61:23	0:0	8	->
+water	61:25	0:0	8	frame_num
+op	61:35	0:0	8	=
+water	61:37	0:0	8	0
+water	61:38	0:0	8	;
+return	62:16	62:24	8	0
+water	62:23	0:0	9	0
+water	63:12	0:0	8	}
+water	64:8	0:0	6	}
+water	65:4	0:0	4	}
+if	66:4	67:26	2	(pb -> eof_reached)
+cond	66:8	66:12	3	pb -> eof_reached
+water	66:8	0:0	4	pb
+op	66:10	0:0	4	->
+water	66:12	0:0	4	eof_reached
+stmts	67:8	67:26	3	
+return	67:8	67:26	4	AVERROR_EOF
+water	67:15	0:0	5	AVERROR_EOF
+return	68:4	68:12	2	0
+water	68:11	0:0	3	0

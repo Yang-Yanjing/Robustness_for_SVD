@@ -1,0 +1,526 @@
+func	1:0	115:0	0	static int	matroska_parse_frame
+params	1:31	0:0	1	
+param	1:32	1:62	2	MatroskaDemuxContext *	matroska
+param	2:32	2:52	2	MatroskaTrack *	track
+param	2:54	2:66	2	AVStream *	st
+param	3:32	3:45	2	uint8_t *	data
+param	3:47	3:59	2	int	pkt_size
+param	4:32	4:49	2	uint64_t	timecode
+param	4:51	4:73	2	uint64_t	lace_duration
+param	5:32	5:43	2	int64_t	pos
+param	5:45	5:60	2	int	is_keyframe
+param	6:32	6:51	2	uint8_t *	additional
+param	6:53	6:75	2	uint64_t	additional_id
+param	6:77	6:96	2	int	additional_size
+param	7:32	7:55	2	int64_t	discard_padding
+stmnts	0:0	114:14	1	
+decl	9:4	9:60	2	MatroskaTrackEncoding	*encodings
+op	9:37	0:0	2	=
+water	9:39	0:0	2	track
+op	9:44	0:0	2	->
+water	9:46	0:0	2	encodings
+op	9:55	0:0	2	.
+water	9:56	0:0	2	elem
+decl	10:4	10:28	2	uint8_t	*pkt_data
+op	10:22	0:0	2	=
+water	10:24	0:0	2	data
+decl	11:4	11:23	2	int	offset
+op	11:15	0:0	2	=
+water	11:17	0:0	2	0
+water	11:18	0:0	2	,
+decl	11:4	11:23	2	int	res
+decl	12:4	12:17	2	AVPacket	*pkt
+if	13:4	17:4	2	(encodings && ! encodings -> type && encodings -> scope & 1)
+cond	13:8	13:60	3	encodings && ! encodings -> type && encodings -> scope & 1
+water	13:8	0:0	4	encodings
+op	13:18	0:0	4	&&
+op	13:21	0:0	4	!
+water	13:22	0:0	4	encodings
+op	13:31	0:0	4	->
+water	13:33	0:0	4	type
+op	13:38	0:0	4	&&
+water	13:41	0:0	4	encodings
+op	13:50	0:0	4	->
+water	13:52	0:0	4	scope
+op	13:58	0:0	4	&
+water	13:60	0:0	4	1
+stmts	13:63	17:4	3	
+water	13:63	0:0	4	{
+water	14:8	0:0	4	res
+op	14:12	0:0	4	=
+call	14:14	14:64	4	matroska_decode_buffer
+arg	14:37	14:46	5	&pkt_data
+op	14:37	0:0	6	&
+water	14:38	0:0	6	pkt_data
+arg	14:48	14:57	5	&pkt_size
+op	14:48	0:0	6	&
+water	14:49	0:0	6	pkt_size
+arg	14:59	14:64	5	track
+water	14:59	0:0	6	track
+water	14:65	0:0	4	;
+if	15:8	16:22	4	(res < 0)
+cond	15:12	15:18	5	res < 0
+water	15:12	0:0	6	res
+op	15:16	0:0	6	<
+water	15:18	0:0	6	0
+stmts	16:12	16:22	5	
+return	16:12	16:22	6	res
+water	16:19	0:0	7	res
+water	17:4	0:0	4	}
+if	18:4	29:4	2	(st -> codec -> codec_id == AV_CODEC_ID_WAVPACK)
+cond	18:8	18:31	3	st -> codec -> codec_id == AV_CODEC_ID_WAVPACK
+water	18:8	0:0	4	st
+op	18:10	0:0	4	->
+water	18:12	0:0	4	codec
+op	18:17	0:0	4	->
+water	18:19	0:0	4	codec_id
+op	18:28	0:0	4	==
+water	18:31	0:0	4	AV_CODEC_ID_WAVPACK
+stmts	18:52	29:4	3	
+water	18:52	0:0	4	{
+decl	19:8	19:24	4	uint8_t	*wv_data
+water	20:8	0:0	4	res
+op	20:12	0:0	4	=
+call	20:14	20:73	4	matroska_parse_wavpack
+arg	20:37	20:42	5	track
+water	20:37	0:0	6	track
+arg	20:44	20:52	5	pkt_data
+water	20:44	0:0	6	pkt_data
+arg	20:54	20:62	5	&wv_data
+op	20:54	0:0	6	&
+water	20:55	0:0	6	wv_data
+arg	20:64	20:73	5	&pkt_size
+op	20:64	0:0	6	&
+water	20:65	0:0	6	pkt_size
+water	20:74	0:0	4	;
+if	21:8	25:8	4	(res < 0)
+cond	21:12	21:18	5	res < 0
+water	21:12	0:0	6	res
+op	21:16	0:0	6	<
+water	21:18	0:0	6	0
+stmts	21:21	25:8	5	
+water	21:21	0:0	6	{
+call	22:12	23:53	6	av_log
+arg	22:19	22:32	7	matroska->ctx
+water	22:19	0:0	8	matroska
+op	22:27	0:0	8	->
+water	22:29	0:0	8	ctx
+arg	22:34	22:46	7	AV_LOG_ERROR
+water	22:34	0:0	8	AV_LOG_ERROR
+arg	23:19	23:53	7	"Error parsing a wavpack block.\n"
+water	23:19	0:0	8	"Error parsing a wavpack block.\n"
+water	23:54	0:0	6	;
+goto	24:12	24:21	6	fail
+water	24:17	0:0	7	fail
+water	25:8	0:0	6	}
+if	26:8	27:31	4	(pkt_data != data)
+cond	26:12	26:24	5	pkt_data != data
+water	26:12	0:0	6	pkt_data
+op	26:21	0:0	6	!=
+water	26:24	0:0	6	data
+stmts	27:12	27:31	5	
+call	27:12	27:30	6	av_freep
+arg	27:21	27:30	7	&pkt_data
+op	27:21	0:0	8	&
+water	27:22	0:0	8	pkt_data
+water	27:31	0:0	6	;
+water	28:8	0:0	4	pkt_data
+op	28:17	0:0	4	=
+water	28:19	0:0	4	wv_data
+water	28:26	0:0	4	;
+water	29:4	0:0	4	}
+if	30:4	32:18	2	(st -> codec -> codec_id == AV_CODEC_ID_PRORES &&AV_RB32 (& data [ 4 ] ) !=MKBETAG ('i' ,'c' ,'p' ,'f' ))
+cond	30:8	31:55	3	st -> codec -> codec_id == AV_CODEC_ID_PRORES &&AV_RB32 (& data [ 4 ] ) !=MKBETAG ('i' ,'c' ,'p' ,'f' )
+water	30:8	0:0	4	st
+op	30:10	0:0	4	->
+water	30:12	0:0	4	codec
+op	30:17	0:0	4	->
+water	30:19	0:0	4	codec_id
+op	30:28	0:0	4	==
+water	30:31	0:0	4	AV_CODEC_ID_PRORES
+op	30:50	0:0	4	&&
+call	31:8	31:24	4	AV_RB32
+arg	31:16	31:24	5	&data[4]
+op	31:16	0:0	6	&
+water	31:17	0:0	6	data
+op	31:21	0:0	6	[
+water	31:22	0:0	6	4
+op	31:23	0:0	6	]
+op	31:26	0:0	4	!=
+call	31:29	31:55	4	MKBETAG
+arg	31:37	31:40	5	'i'
+water	31:37	0:0	6	'i'
+arg	31:42	31:45	5	'c'
+water	31:42	0:0	6	'c'
+arg	31:47	31:50	5	'p'
+water	31:47	0:0	6	'p'
+arg	31:52	31:55	5	'f'
+water	31:52	0:0	6	'f'
+stmts	32:8	32:18	3	
+water	32:8	0:0	4	offset
+op	32:15	0:0	4	=
+water	32:17	0:0	4	8
+water	32:18	0:0	4	;
+water	33:4	0:0	2	pkt
+op	33:8	0:0	2	=
+call	33:10	33:37	2	av_mallocz
+arg	33:21	33:37	3	sizeof(AVPacket)
+op	33:21	0:0	4	sizeof
+water	33:27	0:0	4	(
+water	33:28	0:0	4	AVPacket
+water	33:36	0:0	4	)
+water	33:38	0:0	2	;
+if	34:4	38:4	2	(! pkt)
+cond	34:8	34:9	3	! pkt
+op	34:8	0:0	4	!
+water	34:9	0:0	4	pkt
+stmts	34:14	38:4	3	
+water	34:14	0:0	4	{
+if	35:8	36:31	4	(pkt_data != data)
+cond	35:12	35:24	5	pkt_data != data
+water	35:12	0:0	6	pkt_data
+op	35:21	0:0	6	!=
+water	35:24	0:0	6	data
+stmts	36:12	36:31	5	
+call	36:12	36:30	6	av_freep
+arg	36:21	36:30	7	&pkt_data
+op	36:21	0:0	8	&
+water	36:22	0:0	8	pkt_data
+water	36:31	0:0	6	;
+return	37:8	37:30	4	AVERROR(ENOMEM)
+call	37:15	37:29	5	AVERROR
+arg	37:23	37:29	6	ENOMEM
+water	37:23	0:0	7	ENOMEM
+water	38:4	0:0	4	}
+if	40:4	44:4	2	(av_new_packet (pkt ,pkt_size + offset ) < 0)
+cond	40:8	40:48	3	av_new_packet (pkt ,pkt_size + offset ) < 0
+call	40:8	40:44	4	av_new_packet
+arg	40:22	40:25	5	pkt
+water	40:22	0:0	6	pkt
+arg	40:27	40:44	5	pkt_size+offset
+water	40:27	0:0	6	pkt_size
+op	40:36	0:0	6	+
+water	40:38	0:0	6	offset
+op	40:46	0:0	4	<
+water	40:48	0:0	4	0
+stmts	40:51	44:4	3	
+water	40:51	0:0	4	{
+call	41:8	41:19	4	av_free
+arg	41:16	41:19	5	pkt
+water	41:16	0:0	6	pkt
+water	41:20	0:0	4	;
+water	42:8	0:0	4	res
+op	42:12	0:0	4	=
+call	42:14	42:28	4	AVERROR
+arg	42:22	42:28	5	ENOMEM
+water	42:22	0:0	6	ENOMEM
+water	42:29	0:0	4	;
+goto	43:8	43:17	4	fail
+water	43:13	0:0	5	fail
+water	44:4	0:0	4	}
+if	45:4	49:4	2	(st -> codec -> codec_id == AV_CODEC_ID_PRORES && offset == 8)
+cond	45:8	45:63	3	st -> codec -> codec_id == AV_CODEC_ID_PRORES && offset == 8
+water	45:8	0:0	4	st
+op	45:10	0:0	4	->
+water	45:12	0:0	4	codec
+op	45:17	0:0	4	->
+water	45:19	0:0	4	codec_id
+op	45:28	0:0	4	==
+water	45:31	0:0	4	AV_CODEC_ID_PRORES
+op	45:50	0:0	4	&&
+water	45:53	0:0	4	offset
+op	45:60	0:0	4	==
+water	45:63	0:0	4	8
+stmts	45:66	49:4	3	
+water	45:66	0:0	4	{
+decl	46:8	46:32	4	uint8_t	*buf
+op	46:21	0:0	4	=
+water	46:23	0:0	4	pkt
+op	46:26	0:0	4	->
+water	46:28	0:0	4	data
+call	47:8	47:42	4	bytestream_put_be32
+arg	47:28	47:32	5	&buf
+op	47:28	0:0	6	&
+water	47:29	0:0	6	buf
+arg	47:34	47:42	5	pkt_size
+water	47:34	0:0	6	pkt_size
+water	47:43	0:0	4	;
+call	48:8	48:61	4	bytestream_put_be32
+arg	48:28	48:32	5	&buf
+op	48:28	0:0	6	&
+water	48:29	0:0	6	buf
+arg	48:34	48:61	5	MKBETAG('i','c','p','f')
+call	48:34	48:60	6	MKBETAG
+arg	48:42	48:45	7	'i'
+water	48:42	0:0	8	'i'
+arg	48:47	48:50	7	'c'
+water	48:47	0:0	8	'c'
+arg	48:52	48:55	7	'p'
+water	48:52	0:0	8	'p'
+arg	48:57	48:60	7	'f'
+water	48:57	0:0	8	'f'
+water	48:62	0:0	4	;
+water	49:4	0:0	4	}
+call	50:4	50:49	2	memcpy
+arg	50:11	50:29	3	pkt->data+offset
+water	50:11	0:0	4	pkt
+op	50:14	0:0	4	->
+water	50:16	0:0	4	data
+op	50:21	0:0	4	+
+water	50:23	0:0	4	offset
+arg	50:31	50:39	3	pkt_data
+water	50:31	0:0	4	pkt_data
+arg	50:41	50:49	3	pkt_size
+water	50:41	0:0	4	pkt_size
+water	50:50	0:0	2	;
+if	51:4	52:27	2	(pkt_data != data)
+cond	51:8	51:20	3	pkt_data != data
+water	51:8	0:0	4	pkt_data
+op	51:17	0:0	4	!=
+water	51:20	0:0	4	data
+stmts	52:8	52:27	3	
+call	52:8	52:26	4	av_freep
+arg	52:17	52:26	5	&pkt_data
+op	52:17	0:0	6	&
+water	52:18	0:0	6	pkt_data
+water	52:27	0:0	4	;
+water	53:4	0:0	2	pkt
+op	53:7	0:0	2	->
+water	53:9	0:0	2	flags
+op	53:22	0:0	2	=
+water	53:24	0:0	2	is_keyframe
+water	53:35	0:0	2	;
+water	54:4	0:0	2	pkt
+op	54:7	0:0	2	->
+water	54:9	0:0	2	stream_index
+op	54:22	0:0	2	=
+water	54:24	0:0	2	st
+op	54:26	0:0	2	->
+water	54:28	0:0	2	index
+water	54:33	0:0	2	;
+if	55:4	66:4	2	(additional_size > 0)
+cond	55:8	55:26	3	additional_size > 0
+water	55:8	0:0	4	additional_size
+op	55:24	0:0	4	>
+water	55:26	0:0	4	0
+stmts	55:29	66:4	3	
+water	55:29	0:0	4	{
+decl	56:8	58:73	4	uint8_t	*side_data
+op	56:27	0:0	4	=
+call	56:29	58:72	5	av_packet_new_side_data
+arg	56:53	56:56	6	pkt
+water	56:53	0:0	7	pkt
+arg	57:53	57:89	6	AV_PKT_DATA_MATROSKA_BLOCKADDITIONAL
+water	57:53	0:0	7	AV_PKT_DATA_MATROSKA_BLOCKADDITIONAL
+arg	58:53	58:72	6	additional_size+8
+water	58:53	0:0	7	additional_size
+op	58:69	0:0	7	+
+water	58:71	0:0	7	8
+if	59:8	63:8	4	(! side_data)
+cond	59:12	59:13	5	! side_data
+op	59:12	0:0	6	!
+water	59:13	0:0	6	side_data
+stmts	59:24	63:8	5	
+water	59:24	0:0	6	{
+call	60:12	60:30	6	av_free_packet
+arg	60:27	60:30	7	pkt
+water	60:27	0:0	8	pkt
+water	60:31	0:0	6	;
+call	61:12	61:23	6	av_free
+arg	61:20	61:23	7	pkt
+water	61:20	0:0	8	pkt
+water	61:24	0:0	6	;
+return	62:12	62:34	6	AVERROR(ENOMEM)
+call	62:19	62:33	7	AVERROR
+arg	62:27	62:33	8	ENOMEM
+water	62:27	0:0	9	ENOMEM
+water	63:8	0:0	6	}
+call	64:8	64:40	4	AV_WB64
+arg	64:16	64:25	5	side_data
+water	64:16	0:0	6	side_data
+arg	64:27	64:40	5	additional_id
+water	64:27	0:0	6	additional_id
+water	64:41	0:0	4	;
+call	65:8	65:57	4	memcpy
+arg	65:15	65:28	5	side_data+8
+water	65:15	0:0	6	side_data
+op	65:25	0:0	6	+
+water	65:27	0:0	6	8
+arg	65:30	65:40	5	additional
+water	65:30	0:0	6	additional
+arg	65:42	65:57	5	additional_size
+water	65:42	0:0	6	additional_size
+water	65:58	0:0	4	;
+water	66:4	0:0	4	}
+if	67:4	80:4	2	(discard_padding)
+cond	67:8	67:8	3	discard_padding
+water	67:8	0:0	4	discard_padding
+stmts	67:25	80:4	3	
+water	67:25	0:0	4	{
+decl	68:8	70:56	4	uint8_t	*side_data
+op	68:27	0:0	4	=
+call	68:29	70:55	5	av_packet_new_side_data
+arg	68:53	68:56	6	pkt
+water	68:53	0:0	7	pkt
+arg	69:53	69:77	6	AV_PKT_DATA_SKIP_SAMPLES
+water	69:53	0:0	7	AV_PKT_DATA_SKIP_SAMPLES
+arg	70:53	70:55	6	10
+water	70:53	0:0	7	10
+if	71:8	75:8	4	(! side_data)
+cond	71:12	71:13	5	! side_data
+op	71:12	0:0	6	!
+water	71:13	0:0	6	side_data
+stmts	71:24	75:8	5	
+water	71:24	0:0	6	{
+call	72:12	72:30	6	av_free_packet
+arg	72:27	72:30	7	pkt
+water	72:27	0:0	8	pkt
+water	72:31	0:0	6	;
+call	73:12	73:23	6	av_free
+arg	73:20	73:23	7	pkt
+water	73:20	0:0	8	pkt
+water	73:24	0:0	6	;
+return	74:12	74:34	6	AVERROR(ENOMEM)
+call	74:19	74:33	7	AVERROR
+arg	74:27	74:33	8	ENOMEM
+water	74:27	0:0	9	ENOMEM
+water	75:8	0:0	6	}
+call	76:8	76:28	4	AV_WL32
+arg	76:16	76:25	5	side_data
+water	76:16	0:0	6	side_data
+arg	76:27	76:28	5	0
+water	76:27	0:0	6	0
+water	76:29	0:0	4	;
+call	77:8	79:84	4	AV_WL32
+arg	77:16	77:29	5	side_data+4
+water	77:16	0:0	6	side_data
+op	77:26	0:0	6	+
+water	77:28	0:0	6	4
+arg	77:31	79:84	5	av_rescale_q(discard_padding,(AVRational){1,1000000000},(AVRational){1,st->codec->sample_rate})
+call	77:31	79:83	6	av_rescale_q
+arg	77:44	77:59	7	discard_padding
+water	77:44	0:0	8	discard_padding
+arg	78:44	78:71	7	(AVRational){1,1000000000}
+water	78:44	0:0	8	(
+water	78:45	0:0	8	AVRational
+water	78:55	0:0	8	)
+water	78:56	0:0	8	{
+water	78:57	0:0	8	1
+water	78:58	0:0	8	,
+water	78:60	0:0	8	1000000000
+water	78:70	0:0	8	}
+arg	79:44	79:83	7	(AVRational){1,st->codec->sample_rate}
+water	79:44	0:0	8	(
+water	79:45	0:0	8	AVRational
+water	79:55	0:0	8	)
+water	79:56	0:0	8	{
+water	79:57	0:0	8	1
+water	79:58	0:0	8	,
+water	79:60	0:0	8	st
+op	79:62	0:0	8	->
+water	79:64	0:0	8	codec
+op	79:69	0:0	8	->
+water	79:71	0:0	8	sample_rate
+water	79:82	0:0	8	}
+water	79:85	0:0	4	;
+water	80:4	0:0	4	}
+if	81:4	82:27	2	(track -> ms_compat)
+cond	81:8	81:15	3	track -> ms_compat
+water	81:8	0:0	4	track
+op	81:13	0:0	4	->
+water	81:15	0:0	4	ms_compat
+stmts	82:8	82:27	3	
+water	82:8	0:0	4	pkt
+op	82:11	0:0	4	->
+water	82:13	0:0	4	dts
+op	82:17	0:0	4	=
+water	82:19	0:0	4	timecode
+water	82:27	0:0	4	;
+else	83:4	84:27	2
+stmts	84:8	84:27	3	
+water	84:8	0:0	4	pkt
+op	84:11	0:0	4	->
+water	84:13	0:0	4	pts
+op	84:17	0:0	4	=
+water	84:19	0:0	4	timecode
+water	84:27	0:0	4	;
+water	85:4	0:0	2	pkt
+op	85:7	0:0	2	->
+water	85:9	0:0	2	pos
+op	85:13	0:0	2	=
+water	85:15	0:0	2	pos
+water	85:18	0:0	2	;
+if	86:4	96:4	2	(st -> codec -> codec_id == AV_CODEC_ID_SUBRIP)
+cond	86:8	86:31	3	st -> codec -> codec_id == AV_CODEC_ID_SUBRIP
+water	86:8	0:0	4	st
+op	86:10	0:0	4	->
+water	86:12	0:0	4	codec
+op	86:17	0:0	4	->
+water	86:19	0:0	4	codec_id
+op	86:28	0:0	4	==
+water	86:31	0:0	4	AV_CODEC_ID_SUBRIP
+stmts	86:51	96:4	3	
+water	86:51	0:0	4	{
+water	95:8	0:0	4	pkt
+op	95:11	0:0	4	->
+water	95:13	0:0	4	convergence_duration
+op	95:34	0:0	4	=
+water	95:36	0:0	4	lace_duration
+water	95:49	0:0	4	;
+water	96:4	0:0	4	}
+if	97:4	107:4	2	(track -> type != MATROSKA_TRACK_TYPE_SUBTITLE || lace_duration <= INT_MAX)
+cond	97:8	98:25	3	track -> type != MATROSKA_TRACK_TYPE_SUBTITLE || lace_duration <= INT_MAX
+water	97:8	0:0	4	track
+op	97:13	0:0	4	->
+water	97:15	0:0	4	type
+op	97:20	0:0	4	!=
+water	97:23	0:0	4	MATROSKA_TRACK_TYPE_SUBTITLE
+op	97:52	0:0	4	||
+water	98:8	0:0	4	lace_duration
+op	98:22	0:0	4	<=
+water	98:25	0:0	4	INT_MAX
+stmts	98:34	107:4	3	
+water	98:34	0:0	4	{
+water	106:8	0:0	4	pkt
+op	106:11	0:0	4	->
+water	106:13	0:0	4	duration
+op	106:22	0:0	4	=
+water	106:24	0:0	4	lace_duration
+water	106:37	0:0	4	;
+water	107:4	0:0	4	}
+call	108:4	108:64	2	dynarray_add
+arg	108:17	108:35	3	&matroska->packets
+op	108:17	0:0	4	&
+water	108:18	0:0	4	matroska
+op	108:26	0:0	4	->
+water	108:28	0:0	4	packets
+arg	108:37	108:59	3	&matroska->num_packets
+op	108:37	0:0	4	&
+water	108:38	0:0	4	matroska
+op	108:46	0:0	4	->
+water	108:48	0:0	4	num_packets
+arg	108:61	108:64	3	pkt
+water	108:61	0:0	4	pkt
+water	108:65	0:0	2	;
+water	109:4	0:0	2	matroska
+op	109:12	0:0	2	->
+water	109:14	0:0	2	prev_pkt
+op	109:23	0:0	2	=
+water	109:25	0:0	2	pkt
+water	109:28	0:0	2	;
+return	110:4	110:12	2	0
+water	110:11	0:0	3	0
+label	111:0	111:4	2	fail :
+if	112:4	113:27	2	(pkt_data != data)
+cond	112:8	112:20	3	pkt_data != data
+water	112:8	0:0	4	pkt_data
+op	112:17	0:0	4	!=
+water	112:20	0:0	4	data
+stmts	113:8	113:27	3	
+call	113:8	113:26	4	av_freep
+arg	113:17	113:26	5	&pkt_data
+op	113:17	0:0	6	&
+water	113:18	0:0	6	pkt_data
+water	113:27	0:0	4	;
+return	114:4	114:14	2	res
+water	114:11	0:0	3	res

@@ -1,0 +1,162 @@
+func	1:0	28:0	0	static int	decimate_frame
+params	1:25	0:0	1	
+param	1:26	1:46	2	AVFilterContext *	ctx
+param	2:26	2:38	2	AVFrame *	cur
+param	2:40	2:52	2	AVFrame *	ref
+stmnts	0:0	27:12	1	
+decl	4:4	4:41	2	DecimateContext	*decimate
+op	4:30	0:0	2	=
+water	4:32	0:0	2	ctx
+op	4:35	0:0	2	->
+water	4:37	0:0	2	priv
+decl	5:4	5:13	2	int	plane
+if	6:4	8:16	2	(decimate -> max_drop_count > 0 && decimate -> drop_count >= decimate -> max_drop_count)
+cond	6:8	7:42	3	decimate -> max_drop_count > 0 && decimate -> drop_count >= decimate -> max_drop_count
+water	6:8	0:0	4	decimate
+op	6:16	0:0	4	->
+water	6:18	0:0	4	max_drop_count
+op	6:33	0:0	4	>
+water	6:35	0:0	4	0
+op	6:37	0:0	4	&&
+water	7:8	0:0	4	decimate
+op	7:16	0:0	4	->
+water	7:18	0:0	4	drop_count
+op	7:29	0:0	4	>=
+water	7:32	0:0	4	decimate
+op	7:40	0:0	4	->
+water	7:42	0:0	4	max_drop_count
+stmts	8:8	8:16	3	
+return	8:8	8:16	4	0
+water	8:15	0:0	5	0
+if	9:4	11:16	2	(decimate -> max_drop_count < 0 && ( decimate -> drop_count - 1 ) > decimate -> max_drop_count)
+cond	9:8	10:45	3	decimate -> max_drop_count < 0 && ( decimate -> drop_count - 1 ) > decimate -> max_drop_count
+water	9:8	0:0	4	decimate
+op	9:16	0:0	4	->
+water	9:18	0:0	4	max_drop_count
+op	9:33	0:0	4	<
+water	9:35	0:0	4	0
+op	9:37	0:0	4	&&
+water	10:8	0:0	4	(
+water	10:9	0:0	4	decimate
+op	10:17	0:0	4	->
+water	10:19	0:0	4	drop_count
+op	10:29	0:0	4	-
+water	10:30	0:0	4	1
+water	10:31	0:0	4	)
+op	10:33	0:0	4	>
+water	10:35	0:0	4	decimate
+op	10:43	0:0	4	->
+water	10:45	0:0	4	max_drop_count
+stmts	11:8	11:16	3	
+return	11:8	11:16	4	0
+water	11:15	0:0	5	0
+for	12:4	26:4	2	(plane = 0 ;ref -> data [ plane ] && ref -> linesize [ plane ];plane ++)
+forinit	12:9	12:18	3	plane = 0 ;
+water	12:9	0:0	4	plane
+op	12:15	0:0	4	=
+water	12:17	0:0	4	0
+water	12:18	0:0	4	;
+cond	12:20	12:59	3	ref -> data [ plane ] && ref -> linesize [ plane ]
+water	12:20	0:0	4	ref
+op	12:23	0:0	4	->
+water	12:25	0:0	4	data
+op	12:29	0:0	4	[
+water	12:30	0:0	4	plane
+op	12:35	0:0	4	]
+op	12:37	0:0	4	&&
+water	12:40	0:0	4	ref
+op	12:43	0:0	4	->
+water	12:45	0:0	4	linesize
+op	12:53	0:0	4	[
+water	12:54	0:0	4	plane
+op	12:59	0:0	4	]
+forexpr	12:62	12:67	3	plane ++
+water	12:62	0:0	4	plane
+op	12:67	0:0	4	++
+stmts	12:71	26:4	3	
+water	12:71	0:0	4	{
+decl	18:8	18:64	4	int	vsub
+op	18:17	0:0	4	=
+water	18:19	0:0	4	plane
+op	18:25	0:0	4	==
+water	18:28	0:0	4	1
+op	18:30	0:0	4	||
+water	18:33	0:0	4	plane
+op	18:39	0:0	4	==
+water	18:42	0:0	4	2
+water	18:44	0:0	4	?
+water	18:46	0:0	4	decimate
+op	18:54	0:0	4	->
+water	18:56	0:0	4	vsub
+water	18:61	0:0	4	:
+water	18:63	0:0	4	0
+decl	19:8	19:64	4	int	hsub
+op	19:17	0:0	4	=
+water	19:19	0:0	4	plane
+op	19:25	0:0	4	==
+water	19:28	0:0	4	1
+op	19:30	0:0	4	||
+water	19:33	0:0	4	plane
+op	19:39	0:0	4	==
+water	19:42	0:0	4	2
+water	19:44	0:0	4	?
+water	19:46	0:0	4	decimate
+op	19:54	0:0	4	->
+water	19:56	0:0	4	hsub
+water	19:61	0:0	4	:
+water	19:63	0:0	4	0
+if	20:8	25:20	4	(diff_planes (ctx ,cur -> data [ plane ] ,cur -> linesize [ plane ] ,ref -> data [ plane ] ,ref -> linesize [ plane ] ,FF_CEIL_RSHIFT (ref -> width ,hsub ) ,FF_CEIL_RSHIFT (ref -> height ,vsub ) ))
+cond	20:12	24:57	5	diff_planes (ctx ,cur -> data [ plane ] ,cur -> linesize [ plane ] ,ref -> data [ plane ] ,ref -> linesize [ plane ] ,FF_CEIL_RSHIFT (ref -> width ,hsub ) ,FF_CEIL_RSHIFT (ref -> height ,vsub ) )
+call	20:12	24:57	6	diff_planes
+arg	20:24	20:27	7	ctx
+water	20:24	0:0	8	ctx
+arg	21:24	21:40	7	cur->data[plane]
+water	21:24	0:0	8	cur
+op	21:27	0:0	8	->
+water	21:29	0:0	8	data
+op	21:33	0:0	8	[
+water	21:34	0:0	8	plane
+op	21:39	0:0	8	]
+arg	21:42	21:62	7	cur->linesize[plane]
+water	21:42	0:0	8	cur
+op	21:45	0:0	8	->
+water	21:47	0:0	8	linesize
+op	21:55	0:0	8	[
+water	21:56	0:0	8	plane
+op	21:61	0:0	8	]
+arg	22:24	22:40	7	ref->data[plane]
+water	22:24	0:0	8	ref
+op	22:27	0:0	8	->
+water	22:29	0:0	8	data
+op	22:33	0:0	8	[
+water	22:34	0:0	8	plane
+op	22:39	0:0	8	]
+arg	22:42	22:62	7	ref->linesize[plane]
+water	22:42	0:0	8	ref
+op	22:45	0:0	8	->
+water	22:47	0:0	8	linesize
+op	22:55	0:0	8	[
+water	22:56	0:0	8	plane
+op	22:61	0:0	8	]
+arg	23:24	23:57	7	FF_CEIL_RSHIFT(ref->width,hsub)
+call	23:24	23:56	8	FF_CEIL_RSHIFT
+arg	23:39	23:49	9	ref->width
+water	23:39	0:0	10	ref
+op	23:42	0:0	10	->
+water	23:44	0:0	10	width
+arg	23:52	23:56	9	hsub
+water	23:52	0:0	10	hsub
+arg	24:24	24:57	7	FF_CEIL_RSHIFT(ref->height,vsub)
+call	24:24	24:56	8	FF_CEIL_RSHIFT
+arg	24:39	24:50	9	ref->height
+water	24:39	0:0	10	ref
+op	24:42	0:0	10	->
+water	24:44	0:0	10	height
+arg	24:52	24:56	9	vsub
+water	24:52	0:0	10	vsub
+stmts	25:12	25:20	5	
+return	25:12	25:20	6	0
+water	25:19	0:0	7	0
+water	26:4	0:0	4	}
+return	27:4	27:12	2	1
+water	27:11	0:0	3	1

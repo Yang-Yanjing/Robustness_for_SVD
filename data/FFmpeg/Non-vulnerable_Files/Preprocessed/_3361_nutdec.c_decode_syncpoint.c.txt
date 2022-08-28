@@ -1,0 +1,215 @@
+func	1:0	33:0	0	static int	decode_syncpoint
+params	1:27	0:0	1	
+param	1:28	1:43	2	NUTContext *	nut
+param	1:45	1:56	2	int64_t *	ts
+param	1:58	1:75	2	int64_t *	back_ptr
+stmnts	0:0	32:12	1	
+decl	3:4	3:33	2	AVFormatContext	*s
+op	3:23	0:0	2	=
+water	3:25	0:0	2	nut
+op	3:28	0:0	2	->
+water	3:30	0:0	2	avf
+decl	4:4	4:30	2	AVIOContext	*bc
+op	4:23	0:0	2	=
+water	4:25	0:0	2	s
+op	4:26	0:0	2	->
+water	4:28	0:0	2	pb
+decl	5:4	5:15	2	int64_t	end
+decl	6:4	6:16	2	uint64_t	tmp
+decl	7:4	7:11	2	int	ret
+water	8:4	0:0	2	nut
+op	8:7	0:0	2	->
+water	8:9	0:0	2	last_syncpoint_pos
+op	8:28	0:0	2	=
+call	8:30	8:42	2	avio_tell
+arg	8:40	8:42	3	bc
+water	8:40	0:0	4	bc
+op	8:44	0:0	2	-
+water	8:46	0:0	2	8
+water	8:47	0:0	2	;
+water	9:4	0:0	2	end
+op	9:9	0:0	2	=
+call	9:11	9:59	2	get_packetheader
+arg	9:28	9:31	3	nut
+water	9:28	0:0	4	nut
+arg	9:33	9:35	3	bc
+water	9:33	0:0	4	bc
+arg	9:37	9:38	3	1
+water	9:37	0:0	4	1
+arg	9:40	9:59	3	SYNCPOINT_STARTCODE
+water	9:40	0:0	4	SYNCPOINT_STARTCODE
+water	9:60	0:0	2	;
+water	10:4	0:0	2	end
+op	10:8	0:0	2	+=
+call	10:11	10:23	2	avio_tell
+arg	10:21	10:23	3	bc
+water	10:21	0:0	4	bc
+water	10:24	0:0	2	;
+water	11:4	0:0	2	tmp
+op	11:14	0:0	2	=
+call	11:16	11:35	2	ffio_read_varlen
+arg	11:33	11:35	3	bc
+water	11:33	0:0	4	bc
+water	11:36	0:0	2	;
+op	12:4	0:0	2	*
+water	12:5	0:0	2	back_ptr
+op	12:14	0:0	2	=
+water	12:16	0:0	2	nut
+op	12:19	0:0	2	->
+water	12:21	0:0	2	last_syncpoint_pos
+op	12:40	0:0	2	-
+water	12:42	0:0	2	16
+call	12:45	12:66	2	*ffio_read_varlen
+arg	12:64	12:66	3	bc
+water	12:64	0:0	4	bc
+water	12:67	0:0	2	;
+if	13:4	14:34	2	(* back_ptr < 0)
+cond	13:8	13:20	3	* back_ptr < 0
+op	13:8	0:0	4	*
+water	13:9	0:0	4	back_ptr
+op	13:18	0:0	4	<
+water	13:20	0:0	4	0
+stmts	14:8	14:34	3	
+return	14:8	14:34	4	AVERROR_INVALIDDATA
+water	14:15	0:0	5	AVERROR_INVALIDDATA
+call	15:4	16:46	2	ff_nut_reset_ts
+arg	15:20	15:23	3	nut
+water	15:20	0:0	4	nut
+arg	15:25	15:67	3	nut->time_base[tmp%nut->time_base_count]
+water	15:25	0:0	4	nut
+op	15:28	0:0	4	->
+water	15:30	0:0	4	time_base
+op	15:39	0:0	4	[
+water	15:40	0:0	4	tmp
+op	15:44	0:0	4	%
+water	15:46	0:0	4	nut
+op	15:49	0:0	4	->
+water	15:51	0:0	4	time_base_count
+op	15:66	0:0	4	]
+arg	16:20	16:46	3	tmp/nut->time_base_count
+water	16:20	0:0	4	tmp
+op	16:24	0:0	4	/
+water	16:26	0:0	4	nut
+op	16:29	0:0	4	->
+water	16:31	0:0	4	time_base_count
+water	16:47	0:0	2	;
+if	17:4	23:4	2	(nut -> flags & NUT_BROADCAST)
+cond	17:8	17:21	3	nut -> flags & NUT_BROADCAST
+water	17:8	0:0	4	nut
+op	17:11	0:0	4	->
+water	17:13	0:0	4	flags
+op	17:19	0:0	4	&
+water	17:21	0:0	4	NUT_BROADCAST
+stmts	17:36	23:4	3	
+water	17:36	0:0	4	{
+water	18:8	0:0	4	tmp
+op	18:12	0:0	4	=
+call	18:14	18:33	4	ffio_read_varlen
+arg	18:31	18:33	5	bc
+water	18:31	0:0	6	bc
+water	18:34	0:0	4	;
+call	19:8	22:43	4	av_log
+arg	19:15	19:16	5	s
+water	19:15	0:0	6	s
+arg	19:18	19:32	5	AV_LOG_VERBOSE
+water	19:18	0:0	6	AV_LOG_VERBOSE
+arg	19:34	19:67	5	"Syncpoint wallclock %"PRId64"\n"
+water	19:34	0:0	6	"Syncpoint wallclock %"
+water	19:57	0:0	6	PRId64
+water	19:63	0:0	6	"\n"
+arg	20:15	22:43	5	av_rescale_q(tmp/nut->time_base_count,nut->time_base[tmp%nut->time_base_count],AV_TIME_BASE_Q)
+call	20:15	22:42	6	av_rescale_q
+arg	20:28	20:54	7	tmp/nut->time_base_count
+water	20:28	0:0	8	tmp
+op	20:32	0:0	8	/
+water	20:34	0:0	8	nut
+op	20:37	0:0	8	->
+water	20:39	0:0	8	time_base_count
+arg	21:28	21:70	7	nut->time_base[tmp%nut->time_base_count]
+water	21:28	0:0	8	nut
+op	21:31	0:0	8	->
+water	21:33	0:0	8	time_base
+op	21:42	0:0	8	[
+water	21:43	0:0	8	tmp
+op	21:47	0:0	8	%
+water	21:49	0:0	8	nut
+op	21:52	0:0	8	->
+water	21:54	0:0	8	time_base_count
+op	21:69	0:0	8	]
+arg	22:28	22:42	7	AV_TIME_BASE_Q
+water	22:28	0:0	8	AV_TIME_BASE_Q
+water	22:44	0:0	4	;
+water	23:4	0:0	4	}
+if	24:4	27:4	2	(skip_reserved (bc ,end ) ||ffio_get_checksum (bc ))
+cond	24:8	24:54	3	skip_reserved (bc ,end ) ||ffio_get_checksum (bc )
+call	24:8	24:29	4	skip_reserved
+arg	24:22	24:24	5	bc
+water	24:22	0:0	6	bc
+arg	24:26	24:29	5	end
+water	24:26	0:0	6	end
+op	24:31	0:0	4	||
+call	24:34	24:54	4	ffio_get_checksum
+arg	24:52	24:54	5	bc
+water	24:52	0:0	6	bc
+stmts	24:57	27:4	3	
+water	24:57	0:0	4	{
+call	25:8	25:64	4	av_log
+arg	25:15	25:16	5	s
+water	25:15	0:0	6	s
+arg	25:18	25:30	5	AV_LOG_ERROR
+water	25:18	0:0	6	AV_LOG_ERROR
+arg	25:32	25:64	5	"sync point checksum mismatch\n"
+water	25:32	0:0	6	"sync point checksum mismatch\n"
+water	25:65	0:0	4	;
+return	26:8	26:34	4	AVERROR_INVALIDDATA
+water	26:15	0:0	5	AVERROR_INVALIDDATA
+water	27:4	0:0	4	}
+op	28:4	0:0	2	*
+water	28:5	0:0	2	ts
+op	28:8	0:0	2	=
+water	28:10	0:0	2	tmp
+op	28:14	0:0	2	/
+water	28:16	0:0	2	nut
+op	28:19	0:0	2	->
+water	28:21	0:0	2	time_base_count
+call	28:37	29:59	2	*av_q2d
+arg	29:17	29:59	3	nut->time_base[tmp%nut->time_base_count]
+water	29:17	0:0	4	nut
+op	29:20	0:0	4	->
+water	29:22	0:0	4	time_base
+op	29:31	0:0	4	[
+water	29:32	0:0	4	tmp
+op	29:36	0:0	4	%
+water	29:38	0:0	4	nut
+op	29:41	0:0	4	->
+water	29:43	0:0	4	time_base_count
+op	29:58	0:0	4	]
+op	29:61	0:0	2	*
+water	29:63	0:0	2	AV_TIME_BASE
+water	29:75	0:0	2	;
+if	30:4	31:18	2	(( ret =ff_nut_add_sp (nut ,nut -> last_syncpoint_pos ,* back_ptr ,* ts ) ) < 0)
+cond	30:8	30:78	3	( ret =ff_nut_add_sp (nut ,nut -> last_syncpoint_pos ,* back_ptr ,* ts ) ) < 0
+water	30:8	0:0	4	(
+water	30:9	0:0	4	ret
+op	30:13	0:0	4	=
+call	30:15	30:73	4	ff_nut_add_sp
+arg	30:29	30:32	5	nut
+water	30:29	0:0	6	nut
+arg	30:34	30:57	5	nut->last_syncpoint_pos
+water	30:34	0:0	6	nut
+op	30:37	0:0	6	->
+water	30:39	0:0	6	last_syncpoint_pos
+arg	30:59	30:68	5	*back_ptr
+op	30:59	0:0	6	*
+water	30:60	0:0	6	back_ptr
+arg	30:70	30:73	5	*ts
+op	30:70	0:0	6	*
+water	30:71	0:0	6	ts
+water	30:74	0:0	4	)
+op	30:76	0:0	4	<
+water	30:78	0:0	4	0
+stmts	31:8	31:18	3	
+return	31:8	31:18	4	ret
+water	31:15	0:0	5	ret
+return	32:4	32:12	2	0
+water	32:11	0:0	3	0

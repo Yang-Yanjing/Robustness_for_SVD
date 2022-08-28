@@ -1,0 +1,322 @@
+func	1:0	45:0	0	static int	push_single_pic
+params	1:26	0:0	1	
+param	1:27	1:48	2	AVFilterLink *	outlink
+stmnts	0:0	44:30	1	
+decl	3:4	3:39	2	AVFilterContext	*ctx
+op	3:25	0:0	2	=
+water	3:27	0:0	2	outlink
+op	3:34	0:0	2	->
+water	3:36	0:0	2	src
+decl	4:4	4:41	2	AVFilterLink	*inlink
+op	4:25	0:0	2	=
+water	4:27	0:0	2	ctx
+op	4:30	0:0	2	->
+water	4:32	0:0	2	inputs
+op	4:38	0:0	2	[
+water	4:39	0:0	2	0
+op	4:40	0:0	2	]
+decl	5:4	5:43	2	ShowWavesContext	*showwaves
+op	5:32	0:0	2	=
+water	5:34	0:0	2	ctx
+op	5:37	0:0	2	->
+water	5:39	0:0	2	priv
+decl	6:4	6:70	2	int64_t	n
+op	6:14	0:0	2	=
+water	6:16	0:0	2	0
+water	6:17	0:0	2	,
+decl	6:4	6:70	2	int64_t	max_samples
+op	6:31	0:0	2	=
+water	6:33	0:0	2	showwaves
+op	6:42	0:0	2	->
+water	6:44	0:0	2	total_samples
+op	6:58	0:0	2	/
+water	6:60	0:0	2	outlink
+op	6:67	0:0	2	->
+water	6:69	0:0	2	w
+decl	7:4	7:39	2	AVFrame	*out
+op	7:17	0:0	2	=
+water	7:19	0:0	2	showwaves
+op	7:28	0:0	2	->
+water	7:30	0:0	2	outpicref
+decl	8:4	8:27	2	struct frame_node	*node
+decl	9:4	9:44	2	const int	nb_channels
+op	9:26	0:0	2	=
+water	9:28	0:0	2	inlink
+op	9:34	0:0	2	->
+water	9:36	0:0	2	channels
+decl	10:4	10:69	2	const int	x
+op	10:16	0:0	2	=
+water	10:18	0:0	2	255
+op	10:22	0:0	2	/
+water	10:24	0:0	2	(
+water	10:25	0:0	2	showwaves
+op	10:34	0:0	2	->
+water	10:36	0:0	2	split_channels
+water	10:51	0:0	2	?
+water	10:53	0:0	2	1
+water	10:55	0:0	2	:
+water	10:57	0:0	2	nb_channels
+water	10:68	0:0	2	)
+decl	11:4	11:91	2	const int	ch_height
+op	11:24	0:0	2	=
+water	11:26	0:0	2	showwaves
+op	11:35	0:0	2	->
+water	11:37	0:0	2	split_channels
+water	11:52	0:0	2	?
+water	11:54	0:0	2	outlink
+op	11:61	0:0	2	->
+water	11:63	0:0	2	h
+op	11:65	0:0	2	/
+water	11:67	0:0	2	nb_channels
+water	11:79	0:0	2	:
+water	11:81	0:0	2	outlink
+op	11:88	0:0	2	->
+water	11:90	0:0	2	h
+decl	12:4	12:41	2	const int	linesize
+op	12:23	0:0	2	=
+water	12:25	0:0	2	out
+op	12:28	0:0	2	->
+water	12:30	0:0	2	linesize
+op	12:38	0:0	2	[
+water	12:39	0:0	2	0
+op	12:40	0:0	2	]
+decl	13:4	13:15	2	int	col
+op	13:12	0:0	2	=
+water	13:14	0:0	2	0
+decl	14:4	14:33	2	int64_t	*sum
+op	14:17	0:0	2	=
+water	14:19	0:0	2	showwaves
+op	14:28	0:0	2	->
+water	14:30	0:0	2	sum
+if	15:4	18:4	2	(max_samples == 0)
+cond	15:8	15:23	3	max_samples == 0
+water	15:8	0:0	4	max_samples
+op	15:20	0:0	4	==
+water	15:23	0:0	4	0
+stmts	15:26	18:4	3	
+water	15:26	0:0	4	{
+call	16:8	16:53	4	av_log
+arg	16:15	16:18	5	ctx
+water	16:15	0:0	6	ctx
+arg	16:20	16:32	5	AV_LOG_ERROR
+water	16:20	0:0	6	AV_LOG_ERROR
+arg	16:34	16:53	5	"Too few samples\n"
+water	16:34	0:0	6	"Too few samples\n"
+water	16:54	0:0	4	;
+return	17:8	17:30	4	AVERROR(EINVAL)
+call	17:15	17:29	5	AVERROR
+arg	17:23	17:29	6	EINVAL
+water	17:23	0:0	7	EINVAL
+water	18:4	0:0	4	}
+call	19:4	19:98	2	av_log
+arg	19:11	19:14	3	ctx
+water	19:11	0:0	4	ctx
+arg	19:16	19:28	3	AV_LOG_DEBUG
+water	19:16	0:0	4	AV_LOG_DEBUG
+arg	19:30	19:85	3	"Create frame averaging %"PRId64" samples per column\n"
+water	19:30	0:0	4	"Create frame averaging %"
+water	19:56	0:0	4	PRId64
+water	19:62	0:0	4	" samples per column\n"
+arg	19:87	19:98	3	max_samples
+water	19:87	0:0	4	max_samples
+water	19:99	0:0	2	;
+call	20:4	20:30	2	memset
+arg	20:11	20:14	3	sum
+water	20:11	0:0	4	sum
+arg	20:16	20:17	3	0
+water	20:16	0:0	4	0
+arg	20:19	20:30	3	nb_channels
+water	20:19	0:0	4	nb_channels
+water	20:31	0:0	2	;
+for	21:4	43:4	2	(node = showwaves -> audio_frames ;node;node = node -> next)
+forinit	21:9	21:39	3	node = showwaves -> audio_frames ;
+water	21:9	0:0	4	node
+op	21:14	0:0	4	=
+water	21:16	0:0	4	showwaves
+op	21:25	0:0	4	->
+water	21:27	0:0	4	audio_frames
+water	21:39	0:0	4	;
+cond	21:41	21:41	3	node
+water	21:41	0:0	4	node
+forexpr	21:47	21:60	3	node = node -> next
+water	21:47	0:0	4	node
+op	21:52	0:0	4	=
+water	21:54	0:0	4	node
+op	21:58	0:0	4	->
+water	21:60	0:0	4	next
+stmts	21:66	43:4	3	
+water	21:66	0:0	4	{
+decl	22:8	22:13	4	int	i
+decl	23:8	23:42	4	const AVFrame	*frame
+op	23:29	0:0	4	=
+water	23:31	0:0	4	node
+op	23:35	0:0	4	->
+water	23:37	0:0	4	frame
+decl	24:8	24:58	4	const int16_t	*p
+op	24:25	0:0	4	=
+water	24:27	0:0	4	(
+water	24:28	0:0	4	const
+water	24:34	0:0	4	int16_t
+op	24:42	0:0	4	*
+water	24:43	0:0	4	)
+water	24:44	0:0	4	frame
+op	24:49	0:0	4	->
+water	24:51	0:0	4	data
+op	24:55	0:0	4	[
+water	24:56	0:0	4	0
+op	24:57	0:0	4	]
+for	25:8	42:8	4	(i = 0 ;i < frame -> nb_samples;i ++)
+forinit	25:13	25:18	5	i = 0 ;
+water	25:13	0:0	6	i
+op	25:15	0:0	6	=
+water	25:17	0:0	6	0
+water	25:18	0:0	6	;
+cond	25:20	25:31	5	i < frame -> nb_samples
+water	25:20	0:0	6	i
+op	25:22	0:0	6	<
+water	25:24	0:0	6	frame
+op	25:29	0:0	6	->
+water	25:31	0:0	6	nb_samples
+forexpr	25:43	25:44	5	i ++
+water	25:43	0:0	6	i
+op	25:44	0:0	6	++
+stmts	25:48	42:8	5	
+water	25:48	0:0	6	{
+decl	26:12	26:18	6	int	ch
+for	27:12	28:58	6	(ch = 0 ;ch < nb_channels;ch ++)
+forinit	27:17	27:23	7	ch = 0 ;
+water	27:17	0:0	8	ch
+op	27:20	0:0	8	=
+water	27:22	0:0	8	0
+water	27:23	0:0	8	;
+cond	27:25	27:30	7	ch < nb_channels
+water	27:25	0:0	8	ch
+op	27:28	0:0	8	<
+water	27:30	0:0	8	nb_channels
+forexpr	27:43	27:45	7	ch ++
+water	27:43	0:0	8	ch
+op	27:45	0:0	8	++
+stmts	28:16	28:58	7	
+water	28:16	0:0	8	sum
+op	28:19	0:0	8	[
+water	28:20	0:0	8	ch
+op	28:22	0:0	8	]
+op	28:24	0:0	8	+=
+call	28:27	28:52	8	abs
+arg	28:31	28:52	9	p[ch+i*nb_channels]
+water	28:31	0:0	10	p
+op	28:32	0:0	10	[
+water	28:33	0:0	10	ch
+op	28:36	0:0	10	+
+water	28:38	0:0	10	i
+op	28:39	0:0	10	*
+water	28:40	0:0	10	nb_channels
+op	28:51	0:0	10	]
+op	28:54	0:0	8	<<
+water	28:57	0:0	8	1
+water	28:58	0:0	8	;
+if	29:12	41:12	6	(n ++ == max_samples)
+cond	29:16	29:23	7	n ++ == max_samples
+water	29:16	0:0	8	n
+op	29:17	0:0	8	++
+op	29:20	0:0	8	==
+water	29:23	0:0	8	max_samples
+stmts	29:36	41:12	7	
+water	29:36	0:0	8	{
+for	30:16	38:16	8	(ch = 0 ;ch < nb_channels;ch ++)
+forinit	30:21	30:27	9	ch = 0 ;
+water	30:21	0:0	10	ch
+op	30:24	0:0	10	=
+water	30:26	0:0	10	0
+water	30:27	0:0	10	;
+cond	30:29	30:34	9	ch < nb_channels
+water	30:29	0:0	10	ch
+op	30:32	0:0	10	<
+water	30:34	0:0	10	nb_channels
+forexpr	30:47	30:49	9	ch ++
+water	30:47	0:0	10	ch
+op	30:49	0:0	10	++
+stmts	30:53	38:16	9	
+water	30:53	0:0	10	{
+decl	31:20	31:58	10	int16_t	sample
+op	31:35	0:0	10	=
+water	31:37	0:0	10	sum
+op	31:40	0:0	10	[
+water	31:41	0:0	10	ch
+op	31:43	0:0	10	]
+op	31:45	0:0	10	/
+water	31:47	0:0	10	max_samples
+decl	32:20	32:53	10	uint8_t	*buf
+op	32:33	0:0	10	=
+water	32:35	0:0	10	out
+op	32:38	0:0	10	->
+water	32:40	0:0	10	data
+op	32:44	0:0	10	[
+water	32:45	0:0	10	0
+op	32:46	0:0	10	]
+op	32:48	0:0	10	+
+water	32:50	0:0	10	col
+if	33:20	34:52	10	(showwaves -> split_channels)
+cond	33:24	33:35	11	showwaves -> split_channels
+water	33:24	0:0	12	showwaves
+op	33:33	0:0	12	->
+water	33:35	0:0	12	split_channels
+stmts	34:24	34:52	11	
+water	34:24	0:0	12	buf
+op	34:28	0:0	12	+=
+water	34:31	0:0	12	ch
+op	34:33	0:0	12	*
+water	34:34	0:0	12	ch_height
+op	34:43	0:0	12	*
+water	34:44	0:0	12	linesize
+water	34:52	0:0	12	;
+call	35:20	35:47	10	av_assert0
+arg	35:31	35:47	11	col<outlink->w
+water	35:31	0:0	12	col
+op	35:35	0:0	12	<
+water	35:37	0:0	12	outlink
+op	35:44	0:0	12	->
+water	35:46	0:0	12	w
+water	35:48	0:0	10	;
+call	36:20	36:103	10	showwaves->draw_sample
+arg	36:43	36:46	11	buf
+water	36:43	0:0	12	buf
+arg	36:48	36:57	11	ch_height
+water	36:48	0:0	12	ch_height
+arg	36:59	36:67	11	linesize
+water	36:59	0:0	12	linesize
+arg	36:69	36:75	11	sample
+water	36:69	0:0	12	sample
+arg	36:77	36:100	11	&showwaves->buf_idy[ch]
+op	36:77	0:0	12	&
+water	36:78	0:0	12	showwaves
+op	36:87	0:0	12	->
+water	36:89	0:0	12	buf_idy
+op	36:96	0:0	12	[
+water	36:97	0:0	12	ch
+op	36:99	0:0	12	]
+arg	36:102	36:103	11	x
+water	36:102	0:0	12	x
+water	36:104	0:0	10	;
+water	37:20	0:0	10	sum
+op	37:23	0:0	10	[
+water	37:24	0:0	10	ch
+op	37:26	0:0	10	]
+op	37:28	0:0	10	=
+water	37:30	0:0	10	0
+water	37:31	0:0	10	;
+water	38:16	0:0	10	}
+water	39:16	0:0	8	col
+op	39:19	0:0	8	++
+water	39:21	0:0	8	;
+water	40:16	0:0	8	n
+op	40:18	0:0	8	=
+water	40:20	0:0	8	0
+water	40:21	0:0	8	;
+water	41:12	0:0	8	}
+water	42:8	0:0	6	}
+water	43:4	0:0	4	}
+return	44:4	44:30	2	push_frame(outlink)
+call	44:11	44:29	3	push_frame
+arg	44:22	44:29	4	outlink
+water	44:22	0:0	5	outlink

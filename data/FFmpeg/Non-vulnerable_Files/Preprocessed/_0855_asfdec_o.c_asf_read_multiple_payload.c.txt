@@ -1,0 +1,252 @@
+func	1:0	46:0	0	static int	asf_read_multiple_payload
+params	1:36	0:0	1	
+param	1:37	1:55	2	AVFormatContext *	s
+param	1:57	1:70	2	AVPacket *	pkt
+param	2:33	2:51	2	ASFPacket *	asf_pkt
+stmnts	0:0	45:12	1	
+decl	4:4	4:34	2	ASFContext	*asf
+op	4:20	0:0	2	=
+water	4:22	0:0	2	s
+op	4:23	0:0	2	->
+water	4:25	0:0	2	priv_data
+decl	5:4	5:27	2	AVIOContext	*pb
+op	5:20	0:0	2	=
+water	5:22	0:0	2	s
+op	5:23	0:0	2	->
+water	5:25	0:0	2	pb
+decl	6:4	6:20	2	uint16_t	pay_len
+decl	7:4	7:20	2	unsigned char	*p
+decl	8:4	8:11	2	int	ret
+decl	9:4	9:16	2	int	skip
+op	9:13	0:0	2	=
+water	9:15	0:0	2	0
+if	11:4	17:4	2	(asf -> rep_data_len == 1)
+cond	11:8	11:29	3	asf -> rep_data_len == 1
+water	11:8	0:0	4	asf
+op	11:11	0:0	4	->
+water	11:13	0:0	4	rep_data_len
+op	11:26	0:0	4	==
+water	11:29	0:0	4	1
+stmts	11:32	17:4	3	
+water	11:32	0:0	4	{
+water	12:8	0:0	4	asf
+op	12:11	0:0	4	->
+water	12:13	0:0	4	sub_left
+op	12:22	0:0	4	=
+water	12:24	0:0	4	1
+water	12:25	0:0	4	;
+water	13:8	0:0	4	asf
+op	13:11	0:0	4	->
+water	13:13	0:0	4	state
+op	13:19	0:0	4	=
+water	13:21	0:0	4	READ_MULTI_SUB
+water	13:35	0:0	4	;
+water	14:8	0:0	4	pkt
+op	14:11	0:0	4	->
+water	14:13	0:0	4	flags
+op	14:19	0:0	4	=
+water	14:21	0:0	4	asf_pkt
+op	14:28	0:0	4	->
+water	14:30	0:0	4	flags
+water	14:35	0:0	4	;
+if	15:8	16:22	4	(( ret =asf_read_subpayload (s ,pkt ,1 ) ) < 0)
+cond	15:12	15:53	5	( ret =asf_read_subpayload (s ,pkt ,1 ) ) < 0
+water	15:12	0:0	6	(
+water	15:13	0:0	6	ret
+op	15:17	0:0	6	=
+call	15:19	15:48	6	asf_read_subpayload
+arg	15:39	15:40	7	s
+water	15:39	0:0	8	s
+arg	15:42	15:45	7	pkt
+water	15:42	0:0	8	pkt
+arg	15:47	15:48	7	1
+water	15:47	0:0	8	1
+water	15:49	0:0	6	)
+op	15:51	0:0	6	<
+water	15:53	0:0	6	0
+stmts	16:12	16:22	5	
+return	16:12	16:22	6	ret
+water	16:19	0:0	7	ret
+water	17:4	0:0	4	}
+else	17:6	44:4	2
+stmts	17:11	44:4	3	
+water	17:11	0:0	4	{
+if	18:8	20:26	4	(asf -> rep_data_len)
+cond	18:12	18:17	5	asf -> rep_data_len
+water	18:12	0:0	6	asf
+op	18:15	0:0	6	->
+water	18:17	0:0	6	rep_data_len
+stmts	19:12	20:26	5	
+if	19:12	20:26	6	(( ret =asf_read_replicated_data (s ,asf_pkt ) ) < 0)
+cond	19:16	19:63	7	( ret =asf_read_replicated_data (s ,asf_pkt ) ) < 0
+water	19:16	0:0	8	(
+water	19:17	0:0	8	ret
+op	19:21	0:0	8	=
+call	19:23	19:58	8	asf_read_replicated_data
+arg	19:48	19:49	9	s
+water	19:48	0:0	10	s
+arg	19:51	19:58	9	asf_pkt
+water	19:51	0:0	10	asf_pkt
+water	19:59	0:0	8	)
+op	19:61	0:0	8	<
+water	19:63	0:0	8	0
+stmts	20:16	20:26	7	
+return	20:16	20:26	8	ret
+water	20:23	0:0	9	ret
+water	21:8	0:0	4	pay_len
+op	21:16	0:0	4	=
+call	21:18	21:30	4	avio_rl16
+arg	21:28	21:30	5	pb
+water	21:28	0:0	6	pb
+water	21:31	0:0	4	;
+if	22:8	28:8	4	(pay_len > asf -> packet_size)
+cond	22:12	22:27	5	pay_len > asf -> packet_size
+water	22:12	0:0	6	pay_len
+op	22:20	0:0	6	>
+water	22:22	0:0	6	asf
+op	22:25	0:0	6	->
+water	22:27	0:0	6	packet_size
+stmts	22:40	28:8	5	
+water	22:40	0:0	6	{
+call	23:12	26:59	6	av_log
+arg	23:19	23:20	7	s
+water	23:19	0:0	8	s
+arg	23:22	23:34	7	AV_LOG_ERROR
+water	23:22	0:0	8	AV_LOG_ERROR
+arg	24:19	25:68	7	"Error: invalid data packet size, pay_len %"PRIu16", ""asf->packet_size %"PRIu32", offset %"PRId64".\n"
+water	24:19	0:0	8	"Error: invalid data packet size, pay_len %"
+water	24:63	0:0	8	PRIu16
+water	24:69	0:0	8	", "
+water	25:19	0:0	8	"asf->packet_size %"
+water	25:39	0:0	8	PRIu32
+water	25:45	0:0	8	", offset %"
+water	25:57	0:0	8	PRId64
+water	25:63	0:0	8	".\n"
+arg	26:19	26:26	7	pay_len
+water	26:19	0:0	8	pay_len
+arg	26:28	26:44	7	asf->packet_size
+water	26:28	0:0	8	asf
+op	26:31	0:0	8	->
+water	26:33	0:0	8	packet_size
+arg	26:46	26:59	7	avio_tell(pb)
+call	26:46	26:58	8	avio_tell
+arg	26:56	26:58	9	pb
+water	26:56	0:0	10	pb
+water	26:60	0:0	6	;
+return	27:12	27:38	6	AVERROR_INVALIDDATA
+water	27:19	0:0	7	AVERROR_INVALIDDATA
+water	28:8	0:0	6	}
+water	29:8	0:0	4	p
+op	29:10	0:0	4	=
+water	29:12	0:0	4	asf_pkt
+op	29:19	0:0	4	->
+water	29:21	0:0	4	avpkt
+op	29:26	0:0	4	.
+water	29:27	0:0	4	data
+op	29:32	0:0	4	+
+water	29:34	0:0	4	asf_pkt
+op	29:41	0:0	4	->
+water	29:43	0:0	4	data_size
+op	29:53	0:0	4	-
+water	29:55	0:0	4	asf_pkt
+op	29:62	0:0	4	->
+water	29:64	0:0	4	size_left
+water	29:73	0:0	4	;
+if	30:8	36:8	4	(pay_len > asf_pkt -> size_left)
+cond	30:12	30:31	5	pay_len > asf_pkt -> size_left
+water	30:12	0:0	6	pay_len
+op	30:20	0:0	6	>
+water	30:22	0:0	6	asf_pkt
+op	30:29	0:0	6	->
+water	30:31	0:0	6	size_left
+stmts	30:42	36:8	5	
+water	30:42	0:0	6	{
+call	31:12	33:39	6	av_log
+arg	31:19	31:20	7	s
+water	31:19	0:0	8	s
+arg	31:22	31:34	7	AV_LOG_ERROR
+water	31:22	0:0	8	AV_LOG_ERROR
+arg	32:19	32:81	7	"Error: invalid buffer size, pay_len %d, data size left %d.\n"
+water	32:19	0:0	8	"Error: invalid buffer size, pay_len %d, data size left %d.\n"
+arg	33:12	33:19	7	pay_len
+water	33:12	0:0	8	pay_len
+arg	33:21	33:39	7	asf_pkt->size_left
+water	33:21	0:0	8	asf_pkt
+op	33:28	0:0	8	->
+water	33:30	0:0	8	size_left
+water	33:40	0:0	6	;
+water	34:12	0:0	6	skip
+op	34:17	0:0	6	=
+water	34:19	0:0	6	pay_len
+op	34:27	0:0	6	-
+water	34:29	0:0	6	asf_pkt
+op	34:36	0:0	6	->
+water	34:38	0:0	6	size_left
+water	34:47	0:0	6	;
+water	35:12	0:0	6	pay_len
+op	35:20	0:0	6	=
+water	35:22	0:0	6	asf_pkt
+op	35:29	0:0	6	->
+water	35:31	0:0	6	size_left
+water	35:40	0:0	6	;
+water	36:8	0:0	6	}
+if	37:8	38:22	4	(( ret =avio_read (pb ,p ,pay_len ) ) < 0)
+cond	37:12	37:48	5	( ret =avio_read (pb ,p ,pay_len ) ) < 0
+water	37:12	0:0	6	(
+water	37:13	0:0	6	ret
+op	37:17	0:0	6	=
+call	37:19	37:43	6	avio_read
+arg	37:29	37:31	7	pb
+water	37:29	0:0	8	pb
+arg	37:33	37:34	7	p
+water	37:33	0:0	8	p
+arg	37:36	37:43	7	pay_len
+water	37:36	0:0	8	pay_len
+water	37:44	0:0	6	)
+op	37:46	0:0	6	<
+water	37:48	0:0	6	0
+stmts	38:12	38:22	5	
+return	38:12	38:22	6	ret
+water	38:19	0:0	7	ret
+if	39:8	40:43	4	(s -> key && s -> keylen == 20)
+cond	39:12	39:35	5	s -> key && s -> keylen == 20
+water	39:12	0:0	6	s
+op	39:13	0:0	6	->
+water	39:15	0:0	6	key
+op	39:19	0:0	6	&&
+water	39:22	0:0	6	s
+op	39:23	0:0	6	->
+water	39:25	0:0	6	keylen
+op	39:32	0:0	6	==
+water	39:35	0:0	6	20
+stmts	40:12	40:43	5	
+call	40:12	40:42	6	ff_asfcrypt_dec
+arg	40:28	40:34	7	s->key
+water	40:28	0:0	8	s
+op	40:29	0:0	8	->
+water	40:31	0:0	8	key
+arg	40:36	40:37	7	p
+water	40:36	0:0	8	p
+arg	40:39	40:42	7	ret
+water	40:39	0:0	8	ret
+water	40:43	0:0	6	;
+call	41:8	41:26	4	avio_skip
+arg	41:18	41:20	5	pb
+water	41:18	0:0	6	pb
+arg	41:22	41:26	5	skip
+water	41:22	0:0	6	skip
+water	41:27	0:0	4	;
+water	42:8	0:0	4	asf_pkt
+op	42:15	0:0	4	->
+water	42:17	0:0	4	size_left
+op	42:27	0:0	4	-=
+water	42:30	0:0	4	pay_len
+water	42:37	0:0	4	;
+water	43:8	0:0	4	asf
+op	43:11	0:0	4	->
+water	43:13	0:0	4	nb_mult_left
+op	43:25	0:0	4	--
+water	43:27	0:0	4	;
+water	44:4	0:0	4	}
+return	45:4	45:12	2	0
+water	45:11	0:0	3	0

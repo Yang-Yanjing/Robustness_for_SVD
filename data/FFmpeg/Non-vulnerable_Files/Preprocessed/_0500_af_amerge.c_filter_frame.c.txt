@@ -1,0 +1,681 @@
+func	1:0	78:0	0	static int	filter_frame
+params	1:23	0:0	1	
+param	1:24	1:44	2	AVFilterLink *	inlink
+param	1:46	1:64	2	AVFrame *	insamples
+stmnts	0:0	77:51	1	
+decl	3:4	3:38	2	AVFilterContext	*ctx
+op	3:25	0:0	2	=
+water	3:27	0:0	2	inlink
+op	3:33	0:0	2	->
+water	3:35	0:0	2	dst
+decl	4:4	4:32	2	AMergeContext	*s
+op	4:21	0:0	2	=
+water	4:23	0:0	2	ctx
+op	4:26	0:0	2	->
+water	4:28	0:0	2	priv
+water	5:4	0:0	2	AVFilterLink
+op	5:17	0:0	2	*
+water	5:18	0:0	2	const
+water	5:24	0:0	2	outlink
+op	5:32	0:0	2	=
+water	5:34	0:0	2	ctx
+op	5:37	0:0	2	->
+water	5:39	0:0	2	outputs
+op	5:46	0:0	2	[
+water	5:47	0:0	2	0
+op	5:48	0:0	2	]
+water	5:49	0:0	2	;
+decl	6:4	6:20	2	int	input_number
+decl	7:4	7:25	2	int	nb_samples
+water	7:18	0:0	2	,
+decl	7:4	7:25	2	int	ns
+water	7:22	0:0	2	,
+decl	7:4	7:25	2	int	i
+decl	8:4	8:39	2	AVFrame	*outbuf
+water	8:19	0:0	2	,
+decl	8:4	8:39	2	AVFrame	*inbuf[SWR_CH_MAX]
+decl	9:4	9:35	2	uint8_t	*ins[SWR_CH_MAX]
+water	9:28	0:0	2	,
+decl	9:4	9:35	2	uint8_t	*outs
+for	10:4	12:17	2	(input_number = 0 ;input_number < s -> nb_inputs;input_number ++)
+forinit	10:9	10:25	3	input_number = 0 ;
+water	10:9	0:0	4	input_number
+op	10:22	0:0	4	=
+water	10:24	0:0	4	0
+water	10:25	0:0	4	;
+cond	10:27	10:45	3	input_number < s -> nb_inputs
+water	10:27	0:0	4	input_number
+op	10:40	0:0	4	<
+water	10:42	0:0	4	s
+op	10:43	0:0	4	->
+water	10:45	0:0	4	nb_inputs
+forexpr	10:56	10:68	3	input_number ++
+water	10:56	0:0	4	input_number
+op	10:68	0:0	4	++
+stmts	11:8	12:17	3	
+if	11:8	12:17	4	(inlink == ctx -> inputs [ input_number ])
+cond	11:12	11:46	5	inlink == ctx -> inputs [ input_number ]
+water	11:12	0:0	6	inlink
+op	11:19	0:0	6	==
+water	11:22	0:0	6	ctx
+op	11:25	0:0	6	->
+water	11:27	0:0	6	inputs
+op	11:33	0:0	6	[
+water	11:34	0:0	6	input_number
+op	11:46	0:0	6	]
+stmts	12:12	12:17	5	
+break	12:12	12:17	6	
+call	13:4	13:42	2	av_assert1
+arg	13:15	13:42	3	input_number<s->nb_inputs
+water	13:15	0:0	4	input_number
+op	13:28	0:0	4	<
+water	13:30	0:0	4	s
+op	13:31	0:0	4	->
+water	13:33	0:0	4	nb_inputs
+water	13:43	0:0	2	;
+if	14:4	17:4	2	(ff_bufqueue_is_full (& s -> in [ input_number ] . queue ))
+cond	14:8	14:54	3	ff_bufqueue_is_full (& s -> in [ input_number ] . queue )
+call	14:8	14:54	4	ff_bufqueue_is_full
+arg	14:28	14:54	5	&s->in[input_number].queue
+op	14:28	0:0	6	&
+water	14:29	0:0	6	s
+op	14:30	0:0	6	->
+water	14:32	0:0	6	in
+op	14:34	0:0	6	[
+water	14:35	0:0	6	input_number
+op	14:47	0:0	6	]
+op	14:48	0:0	6	.
+water	14:49	0:0	6	queue
+stmts	14:57	17:4	3	
+water	14:57	0:0	4	{
+call	15:8	15:32	4	av_frame_free
+arg	15:22	15:32	5	&insamples
+op	15:22	0:0	6	&
+water	15:23	0:0	6	insamples
+water	15:33	0:0	4	;
+return	16:8	16:30	4	AVERROR(ENOMEM)
+call	16:15	16:29	5	AVERROR
+arg	16:23	16:29	6	ENOMEM
+water	16:23	0:0	7	ENOMEM
+water	17:4	0:0	4	}
+call	18:4	18:78	2	ff_bufqueue_add
+arg	18:20	18:23	3	ctx
+water	18:20	0:0	4	ctx
+arg	18:25	18:51	3	&s->in[input_number].queue
+op	18:25	0:0	4	&
+water	18:26	0:0	4	s
+op	18:27	0:0	4	->
+water	18:29	0:0	4	in
+op	18:31	0:0	4	[
+water	18:32	0:0	4	input_number
+op	18:44	0:0	4	]
+op	18:45	0:0	4	.
+water	18:46	0:0	4	queue
+arg	18:53	18:78	3	av_frame_clone(insamples)
+call	18:53	18:77	4	av_frame_clone
+arg	18:68	18:77	5	insamples
+water	18:68	0:0	6	insamples
+water	18:79	0:0	2	;
+water	19:4	0:0	2	s
+op	19:5	0:0	2	->
+water	19:7	0:0	2	in
+op	19:9	0:0	2	[
+water	19:10	0:0	2	input_number
+op	19:22	0:0	2	]
+op	19:23	0:0	2	.
+water	19:24	0:0	2	nb_samples
+op	19:35	0:0	2	+=
+water	19:38	0:0	2	insamples
+op	19:47	0:0	2	->
+water	19:49	0:0	2	nb_samples
+water	19:59	0:0	2	;
+call	20:4	20:28	2	av_frame_free
+arg	20:18	20:28	3	&insamples
+op	20:18	0:0	4	&
+water	20:19	0:0	4	insamples
+water	20:29	0:0	2	;
+water	21:4	0:0	2	nb_samples
+op	21:15	0:0	2	=
+water	21:17	0:0	2	s
+op	21:18	0:0	2	->
+water	21:20	0:0	2	in
+op	21:22	0:0	2	[
+water	21:23	0:0	2	0
+op	21:24	0:0	2	]
+op	21:25	0:0	2	.
+water	21:26	0:0	2	nb_samples
+water	21:36	0:0	2	;
+for	22:4	23:59	2	(i = 1 ;i < s -> nb_inputs;i ++)
+forinit	22:9	22:14	3	i = 1 ;
+water	22:9	0:0	4	i
+op	22:11	0:0	4	=
+water	22:13	0:0	4	1
+water	22:14	0:0	4	;
+cond	22:16	22:23	3	i < s -> nb_inputs
+water	22:16	0:0	4	i
+op	22:18	0:0	4	<
+water	22:20	0:0	4	s
+op	22:21	0:0	4	->
+water	22:23	0:0	4	nb_inputs
+forexpr	22:34	22:35	3	i ++
+water	22:34	0:0	4	i
+op	22:35	0:0	4	++
+stmts	23:8	23:59	3	
+water	23:8	0:0	4	nb_samples
+op	23:19	0:0	4	=
+call	23:21	23:58	4	FFMIN
+arg	23:27	23:37	5	nb_samples
+water	23:27	0:0	6	nb_samples
+arg	23:39	23:58	5	s->in[i].nb_samples
+water	23:39	0:0	6	s
+op	23:40	0:0	6	->
+water	23:42	0:0	6	in
+op	23:44	0:0	6	[
+water	23:45	0:0	6	i
+op	23:46	0:0	6	]
+op	23:47	0:0	6	.
+water	23:48	0:0	6	nb_samples
+water	23:59	0:0	4	;
+if	24:4	25:16	2	(! nb_samples)
+cond	24:8	24:9	3	! nb_samples
+op	24:8	0:0	4	!
+water	24:9	0:0	4	nb_samples
+stmts	25:8	25:16	3	
+return	25:8	25:16	4	0
+water	25:15	0:0	5	0
+water	26:4	0:0	2	outbuf
+op	26:11	0:0	2	=
+call	26:13	26:60	2	ff_get_audio_buffer
+arg	26:33	26:48	3	ctx->outputs[0]
+water	26:33	0:0	4	ctx
+op	26:36	0:0	4	->
+water	26:38	0:0	4	outputs
+op	26:45	0:0	4	[
+water	26:46	0:0	4	0
+op	26:47	0:0	4	]
+arg	26:50	26:60	3	nb_samples
+water	26:50	0:0	4	nb_samples
+water	26:61	0:0	2	;
+if	27:4	28:30	2	(! outbuf)
+cond	27:8	27:9	3	! outbuf
+op	27:8	0:0	4	!
+water	27:9	0:0	4	outbuf
+stmts	28:8	28:30	3	
+return	28:8	28:30	4	AVERROR(ENOMEM)
+call	28:15	28:29	5	AVERROR
+arg	28:23	28:29	6	ENOMEM
+water	28:23	0:0	7	ENOMEM
+water	29:4	0:0	2	outs
+op	29:9	0:0	2	=
+water	29:11	0:0	2	outbuf
+op	29:17	0:0	2	->
+water	29:19	0:0	2	data
+op	29:23	0:0	2	[
+water	29:24	0:0	2	0
+op	29:25	0:0	2	]
+water	29:26	0:0	2	;
+for	30:4	34:4	2	(i = 0 ;i < s -> nb_inputs;i ++)
+forinit	30:9	30:14	3	i = 0 ;
+water	30:9	0:0	4	i
+op	30:11	0:0	4	=
+water	30:13	0:0	4	0
+water	30:14	0:0	4	;
+cond	30:16	30:23	3	i < s -> nb_inputs
+water	30:16	0:0	4	i
+op	30:18	0:0	4	<
+water	30:20	0:0	4	s
+op	30:21	0:0	4	->
+water	30:23	0:0	4	nb_inputs
+forexpr	30:34	30:35	3	i ++
+water	30:34	0:0	4	i
+op	30:35	0:0	4	++
+stmts	30:39	34:4	3	
+water	30:39	0:0	4	{
+water	31:8	0:0	4	inbuf
+op	31:13	0:0	4	[
+water	31:14	0:0	4	i
+op	31:15	0:0	4	]
+op	31:17	0:0	4	=
+call	31:19	31:54	4	ff_bufqueue_peek
+arg	31:36	31:51	5	&s->in[i].queue
+op	31:36	0:0	6	&
+water	31:37	0:0	6	s
+op	31:38	0:0	6	->
+water	31:40	0:0	6	in
+op	31:42	0:0	6	[
+water	31:43	0:0	6	i
+op	31:44	0:0	6	]
+op	31:45	0:0	6	.
+water	31:46	0:0	6	queue
+arg	31:53	31:54	5	0
+water	31:53	0:0	6	0
+water	31:55	0:0	4	;
+water	32:8	0:0	4	ins
+op	32:11	0:0	4	[
+water	32:12	0:0	4	i
+op	32:13	0:0	4	]
+op	32:15	0:0	4	=
+water	32:17	0:0	4	inbuf
+op	32:22	0:0	4	[
+water	32:23	0:0	4	i
+op	32:24	0:0	4	]
+op	32:25	0:0	4	->
+water	32:27	0:0	4	data
+op	32:31	0:0	4	[
+water	32:32	0:0	4	0
+op	32:33	0:0	4	]
+op	32:35	0:0	4	+
+water	33:17	0:0	4	s
+op	33:18	0:0	4	->
+water	33:20	0:0	4	in
+op	33:22	0:0	4	[
+water	33:23	0:0	4	i
+op	33:24	0:0	4	]
+op	33:25	0:0	4	.
+water	33:26	0:0	4	pos
+op	33:30	0:0	4	*
+water	33:32	0:0	4	s
+op	33:33	0:0	4	->
+water	33:35	0:0	4	in
+op	33:37	0:0	4	[
+water	33:38	0:0	4	i
+op	33:39	0:0	4	]
+op	33:40	0:0	4	.
+water	33:41	0:0	4	nb_ch
+op	33:47	0:0	4	*
+water	33:49	0:0	4	s
+op	33:50	0:0	4	->
+water	33:52	0:0	4	bps
+water	33:55	0:0	4	;
+water	34:4	0:0	4	}
+call	35:4	35:40	2	av_frame_copy_props
+arg	35:24	35:30	3	outbuf
+water	35:24	0:0	4	outbuf
+arg	35:32	35:40	3	inbuf[0]
+water	35:32	0:0	4	inbuf
+op	35:37	0:0	4	[
+water	35:38	0:0	4	0
+op	35:39	0:0	4	]
+water	35:41	0:0	2	;
+water	36:4	0:0	2	outbuf
+op	36:10	0:0	2	->
+water	36:12	0:0	2	pts
+op	36:16	0:0	2	=
+water	36:18	0:0	2	inbuf
+op	36:23	0:0	2	[
+water	36:24	0:0	2	0
+op	36:25	0:0	2	]
+op	36:26	0:0	2	->
+water	36:28	0:0	2	pts
+op	36:32	0:0	2	==
+water	36:35	0:0	2	AV_NOPTS_VALUE
+water	36:50	0:0	2	?
+water	36:52	0:0	2	AV_NOPTS_VALUE
+water	36:67	0:0	2	:
+water	37:18	0:0	2	inbuf
+op	37:23	0:0	2	[
+water	37:24	0:0	2	0
+op	37:25	0:0	2	]
+op	37:26	0:0	2	->
+water	37:28	0:0	2	pts
+op	37:32	0:0	2	+
+call	38:18	40:57	2	av_rescale_q
+arg	38:31	38:43	3	s->in[0].pos
+water	38:31	0:0	4	s
+op	38:32	0:0	4	->
+water	38:34	0:0	4	in
+op	38:36	0:0	4	[
+water	38:37	0:0	4	0
+op	38:38	0:0	4	]
+op	38:39	0:0	4	.
+water	38:40	0:0	4	pos
+arg	39:31	39:72	3	av_make_q(1,ctx->inputs[0]->sample_rate)
+call	39:31	39:71	4	av_make_q
+arg	39:41	39:42	5	1
+water	39:41	0:0	6	1
+arg	39:44	39:71	5	ctx->inputs[0]->sample_rate
+water	39:44	0:0	6	ctx
+op	39:47	0:0	6	->
+water	39:49	0:0	6	inputs
+op	39:55	0:0	6	[
+water	39:56	0:0	6	0
+op	39:57	0:0	6	]
+op	39:58	0:0	6	->
+water	39:60	0:0	6	sample_rate
+arg	40:31	40:57	3	ctx->outputs[0]->time_base
+water	40:31	0:0	4	ctx
+op	40:34	0:0	4	->
+water	40:36	0:0	4	outputs
+op	40:43	0:0	4	[
+water	40:44	0:0	4	0
+op	40:45	0:0	4	]
+op	40:46	0:0	4	->
+water	40:48	0:0	4	time_base
+water	40:58	0:0	2	;
+water	41:4	0:0	2	outbuf
+op	41:10	0:0	2	->
+water	41:12	0:0	2	nb_samples
+op	41:27	0:0	2	=
+water	41:29	0:0	2	nb_samples
+water	41:39	0:0	2	;
+water	42:4	0:0	2	outbuf
+op	42:10	0:0	2	->
+water	42:12	0:0	2	channel_layout
+op	42:27	0:0	2	=
+water	42:29	0:0	2	outlink
+op	42:36	0:0	2	->
+water	42:38	0:0	2	channel_layout
+water	42:52	0:0	2	;
+call	43:4	43:51	2	av_frame_set_channels
+arg	43:26	43:32	3	outbuf
+water	43:26	0:0	4	outbuf
+arg	43:34	43:51	3	outlink->channels
+water	43:34	0:0	4	outlink
+op	43:41	0:0	4	->
+water	43:43	0:0	4	channels
+water	43:52	0:0	2	;
+while	44:4	76:4	2	(nb_samples)
+cond	44:11	44:11	3	nb_samples
+water	44:11	0:0	4	nb_samples
+stmts	44:23	76:4	3	
+water	44:23	0:0	4	{
+water	45:8	0:0	4	ns
+op	45:11	0:0	4	=
+water	45:13	0:0	4	nb_samples
+water	45:23	0:0	4	;
+for	46:8	47:63	4	(i = 0 ;i < s -> nb_inputs;i ++)
+forinit	46:13	46:18	5	i = 0 ;
+water	46:13	0:0	6	i
+op	46:15	0:0	6	=
+water	46:17	0:0	6	0
+water	46:18	0:0	6	;
+cond	46:20	46:27	5	i < s -> nb_inputs
+water	46:20	0:0	6	i
+op	46:22	0:0	6	<
+water	46:24	0:0	6	s
+op	46:25	0:0	6	->
+water	46:27	0:0	6	nb_inputs
+forexpr	46:38	46:39	5	i ++
+water	46:38	0:0	6	i
+op	46:39	0:0	6	++
+stmts	47:12	47:63	5	
+water	47:12	0:0	6	ns
+op	47:15	0:0	6	=
+call	47:17	47:62	6	FFMIN
+arg	47:23	47:25	7	ns
+water	47:23	0:0	8	ns
+arg	47:27	47:62	7	inbuf[i]->nb_samples-s->in[i].pos
+water	47:27	0:0	8	inbuf
+op	47:32	0:0	8	[
+water	47:33	0:0	8	i
+op	47:34	0:0	8	]
+op	47:35	0:0	8	->
+water	47:37	0:0	8	nb_samples
+op	47:48	0:0	8	-
+water	47:50	0:0	8	s
+op	47:51	0:0	8	->
+water	47:53	0:0	8	in
+op	47:55	0:0	8	[
+water	47:56	0:0	8	i
+op	47:57	0:0	8	]
+op	47:58	0:0	8	.
+water	47:59	0:0	8	pos
+water	47:63	0:0	6	;
+switch	50:8	63:8	4	(s -> bps)
+cond	50:16	50:19	5	s -> bps
+water	50:16	0:0	6	s
+op	50:17	0:0	6	->
+water	50:19	0:0	6	bps
+stmts	50:24	63:8	5	
+water	50:24	0:0	6	{
+label	51:12	51:18	6	case 1 :
+call	52:16	52:77	6	copy_samples
+arg	52:29	52:41	7	s->nb_inputs
+water	52:29	0:0	8	s
+op	52:30	0:0	8	->
+water	52:32	0:0	8	nb_inputs
+arg	52:43	52:48	7	s->in
+water	52:43	0:0	8	s
+op	52:44	0:0	8	->
+water	52:46	0:0	8	in
+arg	52:50	52:58	7	s->route
+water	52:50	0:0	8	s
+op	52:51	0:0	8	->
+water	52:53	0:0	8	route
+arg	52:60	52:63	7	ins
+water	52:60	0:0	8	ins
+arg	52:65	52:70	7	&outs
+op	52:65	0:0	8	&
+water	52:66	0:0	8	outs
+arg	52:72	52:74	7	ns
+water	52:72	0:0	8	ns
+arg	52:76	52:77	7	1
+water	52:76	0:0	8	1
+water	52:78	0:0	6	;
+break	53:16	53:21	6	
+label	54:12	54:18	6	case 2 :
+call	55:16	55:77	6	copy_samples
+arg	55:29	55:41	7	s->nb_inputs
+water	55:29	0:0	8	s
+op	55:30	0:0	8	->
+water	55:32	0:0	8	nb_inputs
+arg	55:43	55:48	7	s->in
+water	55:43	0:0	8	s
+op	55:44	0:0	8	->
+water	55:46	0:0	8	in
+arg	55:50	55:58	7	s->route
+water	55:50	0:0	8	s
+op	55:51	0:0	8	->
+water	55:53	0:0	8	route
+arg	55:60	55:63	7	ins
+water	55:60	0:0	8	ins
+arg	55:65	55:70	7	&outs
+op	55:65	0:0	8	&
+water	55:66	0:0	8	outs
+arg	55:72	55:74	7	ns
+water	55:72	0:0	8	ns
+arg	55:76	55:77	7	2
+water	55:76	0:0	8	2
+water	55:78	0:0	6	;
+break	56:16	56:21	6	
+label	57:12	57:18	6	case 4 :
+call	58:16	58:77	6	copy_samples
+arg	58:29	58:41	7	s->nb_inputs
+water	58:29	0:0	8	s
+op	58:30	0:0	8	->
+water	58:32	0:0	8	nb_inputs
+arg	58:43	58:48	7	s->in
+water	58:43	0:0	8	s
+op	58:44	0:0	8	->
+water	58:46	0:0	8	in
+arg	58:50	58:58	7	s->route
+water	58:50	0:0	8	s
+op	58:51	0:0	8	->
+water	58:53	0:0	8	route
+arg	58:60	58:63	7	ins
+water	58:60	0:0	8	ins
+arg	58:65	58:70	7	&outs
+op	58:65	0:0	8	&
+water	58:66	0:0	8	outs
+arg	58:72	58:74	7	ns
+water	58:72	0:0	8	ns
+arg	58:76	58:77	7	4
+water	58:76	0:0	8	4
+water	58:78	0:0	6	;
+break	59:16	59:21	6	
+label	60:12	60:19	6	default :
+call	61:16	61:82	6	copy_samples
+arg	61:29	61:41	7	s->nb_inputs
+water	61:29	0:0	8	s
+op	61:30	0:0	8	->
+water	61:32	0:0	8	nb_inputs
+arg	61:43	61:48	7	s->in
+water	61:43	0:0	8	s
+op	61:44	0:0	8	->
+water	61:46	0:0	8	in
+arg	61:50	61:58	7	s->route
+water	61:50	0:0	8	s
+op	61:51	0:0	8	->
+water	61:53	0:0	8	route
+arg	61:60	61:63	7	ins
+water	61:60	0:0	8	ins
+arg	61:65	61:70	7	&outs
+op	61:65	0:0	8	&
+water	61:66	0:0	8	outs
+arg	61:72	61:74	7	ns
+water	61:72	0:0	8	ns
+arg	61:76	61:82	7	s->bps
+water	61:76	0:0	8	s
+op	61:77	0:0	8	->
+water	61:79	0:0	8	bps
+water	61:83	0:0	6	;
+break	62:16	62:21	6	
+water	63:8	0:0	6	}
+water	64:8	0:0	4	nb_samples
+op	64:19	0:0	4	-=
+water	64:22	0:0	4	ns
+water	64:24	0:0	4	;
+for	65:8	75:8	4	(i = 0 ;i < s -> nb_inputs;i ++)
+forinit	65:13	65:18	5	i = 0 ;
+water	65:13	0:0	6	i
+op	65:15	0:0	6	=
+water	65:17	0:0	6	0
+water	65:18	0:0	6	;
+cond	65:20	65:27	5	i < s -> nb_inputs
+water	65:20	0:0	6	i
+op	65:22	0:0	6	<
+water	65:24	0:0	6	s
+op	65:25	0:0	6	->
+water	65:27	0:0	6	nb_inputs
+forexpr	65:38	65:39	5	i ++
+water	65:38	0:0	6	i
+op	65:39	0:0	6	++
+stmts	65:43	75:8	5	
+water	65:43	0:0	6	{
+water	66:12	0:0	6	s
+op	66:13	0:0	6	->
+water	66:15	0:0	6	in
+op	66:17	0:0	6	[
+water	66:18	0:0	6	i
+op	66:19	0:0	6	]
+op	66:20	0:0	6	.
+water	66:21	0:0	6	nb_samples
+op	66:32	0:0	6	-=
+water	66:35	0:0	6	ns
+water	66:37	0:0	6	;
+water	67:12	0:0	6	s
+op	67:13	0:0	6	->
+water	67:15	0:0	6	in
+op	67:17	0:0	6	[
+water	67:18	0:0	6	i
+op	67:19	0:0	6	]
+op	67:20	0:0	6	.
+water	67:21	0:0	6	pos
+op	67:25	0:0	6	+=
+water	67:28	0:0	6	ns
+water	67:30	0:0	6	;
+if	68:12	74:12	6	(s -> in [ i ] . pos == inbuf [ i ] -> nb_samples)
+cond	68:16	68:42	7	s -> in [ i ] . pos == inbuf [ i ] -> nb_samples
+water	68:16	0:0	8	s
+op	68:17	0:0	8	->
+water	68:19	0:0	8	in
+op	68:21	0:0	8	[
+water	68:22	0:0	8	i
+op	68:23	0:0	8	]
+op	68:24	0:0	8	.
+water	68:25	0:0	8	pos
+op	68:29	0:0	8	==
+water	68:32	0:0	8	inbuf
+op	68:37	0:0	8	[
+water	68:38	0:0	8	i
+op	68:39	0:0	8	]
+op	68:40	0:0	8	->
+water	68:42	0:0	8	nb_samples
+stmts	68:54	74:12	7	
+water	68:54	0:0	8	{
+water	69:16	0:0	8	s
+op	69:17	0:0	8	->
+water	69:19	0:0	8	in
+op	69:21	0:0	8	[
+water	69:22	0:0	8	i
+op	69:23	0:0	8	]
+op	69:24	0:0	8	.
+water	69:25	0:0	8	pos
+op	69:29	0:0	8	=
+water	69:31	0:0	8	0
+water	69:32	0:0	8	;
+call	70:16	70:39	8	av_frame_free
+arg	70:30	70:39	9	&inbuf[i]
+op	70:30	0:0	10	&
+water	70:31	0:0	10	inbuf
+op	70:36	0:0	10	[
+water	70:37	0:0	10	i
+op	70:38	0:0	10	]
+water	70:40	0:0	8	;
+call	71:16	71:47	8	ff_bufqueue_get
+arg	71:32	71:47	9	&s->in[i].queue
+op	71:32	0:0	10	&
+water	71:33	0:0	10	s
+op	71:34	0:0	10	->
+water	71:36	0:0	10	in
+op	71:38	0:0	10	[
+water	71:39	0:0	10	i
+op	71:40	0:0	10	]
+op	71:41	0:0	10	.
+water	71:42	0:0	10	queue
+water	71:48	0:0	8	;
+water	72:16	0:0	8	inbuf
+op	72:21	0:0	8	[
+water	72:22	0:0	8	i
+op	72:23	0:0	8	]
+op	72:25	0:0	8	=
+call	72:27	72:62	8	ff_bufqueue_peek
+arg	72:44	72:59	9	&s->in[i].queue
+op	72:44	0:0	10	&
+water	72:45	0:0	10	s
+op	72:46	0:0	10	->
+water	72:48	0:0	10	in
+op	72:50	0:0	10	[
+water	72:51	0:0	10	i
+op	72:52	0:0	10	]
+op	72:53	0:0	10	.
+water	72:54	0:0	10	queue
+arg	72:61	72:62	9	0
+water	72:61	0:0	10	0
+water	72:63	0:0	8	;
+water	73:16	0:0	8	ins
+op	73:19	0:0	8	[
+water	73:20	0:0	8	i
+op	73:21	0:0	8	]
+op	73:23	0:0	8	=
+water	73:25	0:0	8	inbuf
+op	73:30	0:0	8	[
+water	73:31	0:0	8	i
+op	73:32	0:0	8	]
+water	73:34	0:0	8	?
+water	73:36	0:0	8	inbuf
+op	73:41	0:0	8	[
+water	73:42	0:0	8	i
+op	73:43	0:0	8	]
+op	73:44	0:0	8	->
+water	73:46	0:0	8	data
+op	73:50	0:0	8	[
+water	73:51	0:0	8	0
+op	73:52	0:0	8	]
+water	73:54	0:0	8	:
+water	73:56	0:0	8	NULL
+water	73:60	0:0	8	;
+water	74:12	0:0	8	}
+water	75:8	0:0	6	}
+water	76:4	0:0	4	}
+return	77:4	77:51	2	ff_filter_frame(ctx->outputs[0],outbuf)
+call	77:11	77:50	3	ff_filter_frame
+arg	77:27	77:42	4	ctx->outputs[0]
+water	77:27	0:0	5	ctx
+op	77:30	0:0	5	->
+water	77:32	0:0	5	outputs
+op	77:39	0:0	5	[
+water	77:40	0:0	5	0
+op	77:41	0:0	5	]
+arg	77:44	77:50	4	outbuf
+water	77:44	0:0	5	outbuf

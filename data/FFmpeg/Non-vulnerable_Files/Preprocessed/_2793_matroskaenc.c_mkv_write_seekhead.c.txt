@@ -1,0 +1,213 @@
+func	1:0	35:0	0	static int64_t	mkv_write_seekhead
+params	1:33	0:0	1	
+param	1:34	1:49	2	AVIOContext *	pb
+param	1:51	1:74	2	MatroskaMuxContext *	mkv
+stmnts	0:0	34:21	1	
+decl	3:4	3:47	2	mkv_seekhead	*seekhead
+op	3:27	0:0	2	=
+water	3:29	0:0	2	mkv
+op	3:32	0:0	2	->
+water	3:34	0:0	2	main_seekhead
+decl	4:4	4:35	2	ebml_master	metaseek
+water	4:24	0:0	2	,
+decl	4:4	4:35	2	ebml_master	seekentry
+decl	5:4	5:22	2	int64_t	currentpos
+decl	6:4	6:9	2	int	i
+water	7:4	0:0	2	currentpos
+op	7:15	0:0	2	=
+call	7:17	7:29	2	avio_tell
+arg	7:27	7:29	3	pb
+water	7:27	0:0	4	pb
+water	7:30	0:0	2	;
+if	8:4	13:4	2	(seekhead -> reserved_size > 0)
+cond	8:8	8:34	3	seekhead -> reserved_size > 0
+water	8:8	0:0	4	seekhead
+op	8:16	0:0	4	->
+water	8:18	0:0	4	reserved_size
+op	8:32	0:0	4	>
+water	8:34	0:0	4	0
+stmts	8:37	13:4	3	
+water	8:37	0:0	4	{
+if	9:8	12:8	4	(avio_seek (pb ,seekhead -> filepos ,SEEK_SET ) < 0)
+cond	9:12	9:57	5	avio_seek (pb ,seekhead -> filepos ,SEEK_SET ) < 0
+call	9:12	9:53	6	avio_seek
+arg	9:22	9:24	7	pb
+water	9:22	0:0	8	pb
+arg	9:26	9:43	7	seekhead->filepos
+water	9:26	0:0	8	seekhead
+op	9:34	0:0	8	->
+water	9:36	0:0	8	filepos
+arg	9:45	9:53	7	SEEK_SET
+water	9:45	0:0	8	SEEK_SET
+op	9:55	0:0	6	<
+water	9:57	0:0	6	0
+stmts	9:60	12:8	5	
+water	9:60	0:0	6	{
+water	10:12	0:0	6	currentpos
+op	10:23	0:0	6	=
+op	10:25	0:0	6	-
+water	10:26	0:0	6	1
+water	10:27	0:0	6	;
+goto	11:12	11:21	6	fail
+water	11:17	0:0	7	fail
+water	12:8	0:0	6	}
+water	13:4	0:0	4	}
+water	14:4	0:0	2	metaseek
+op	14:13	0:0	2	=
+call	14:15	14:82	2	start_ebml_master
+arg	14:33	14:35	3	pb
+water	14:33	0:0	4	pb
+arg	14:37	14:57	3	MATROSKA_ID_SEEKHEAD
+water	14:37	0:0	4	MATROSKA_ID_SEEKHEAD
+arg	14:59	14:82	3	seekhead->reserved_size
+water	14:59	0:0	4	seekhead
+op	14:67	0:0	4	->
+water	14:69	0:0	4	reserved_size
+water	14:83	0:0	2	;
+for	15:4	23:4	2	(i = 0 ;i < seekhead -> num_entries;i ++)
+forinit	15:9	15:14	3	i = 0 ;
+water	15:9	0:0	4	i
+op	15:11	0:0	4	=
+water	15:13	0:0	4	0
+water	15:14	0:0	4	;
+cond	15:16	15:30	3	i < seekhead -> num_entries
+water	15:16	0:0	4	i
+op	15:18	0:0	4	<
+water	15:20	0:0	4	seekhead
+op	15:28	0:0	4	->
+water	15:30	0:0	4	num_entries
+forexpr	15:43	15:44	3	i ++
+water	15:43	0:0	4	i
+op	15:44	0:0	4	++
+stmts	15:48	23:4	3	
+water	15:48	0:0	4	{
+decl	16:8	16:57	4	mkv_seekhead_entry	*entry
+op	16:34	0:0	4	=
+op	16:36	0:0	4	&
+water	16:37	0:0	4	seekhead
+op	16:45	0:0	4	->
+water	16:47	0:0	4	entries
+op	16:54	0:0	4	[
+water	16:55	0:0	4	i
+op	16:56	0:0	4	]
+water	17:8	0:0	4	seekentry
+op	17:18	0:0	4	=
+call	17:20	17:83	4	start_ebml_master
+arg	17:38	17:40	5	pb
+water	17:38	0:0	6	pb
+arg	17:42	17:63	5	MATROSKA_ID_SEEKENTRY
+water	17:42	0:0	6	MATROSKA_ID_SEEKENTRY
+arg	17:65	17:83	5	MAX_SEEKENTRY_SIZE
+water	17:65	0:0	6	MAX_SEEKENTRY_SIZE
+water	17:84	0:0	4	;
+call	18:8	18:42	4	put_ebml_id
+arg	18:20	18:22	5	pb
+water	18:20	0:0	6	pb
+arg	18:24	18:42	5	MATROSKA_ID_SEEKID
+water	18:24	0:0	6	MATROSKA_ID_SEEKID
+water	18:43	0:0	4	;
+call	19:8	19:58	4	put_ebml_num
+arg	19:21	19:23	5	pb
+water	19:21	0:0	6	pb
+arg	19:25	19:55	5	ebml_id_size(entry->elementid)
+call	19:25	19:54	6	ebml_id_size
+arg	19:38	19:54	7	entry->elementid
+water	19:38	0:0	8	entry
+op	19:43	0:0	8	->
+water	19:45	0:0	8	elementid
+arg	19:57	19:58	5	0
+water	19:57	0:0	6	0
+water	19:59	0:0	4	;
+call	20:8	20:40	4	put_ebml_id
+arg	20:20	20:22	5	pb
+water	20:20	0:0	6	pb
+arg	20:24	20:40	5	entry->elementid
+water	20:24	0:0	6	entry
+op	20:29	0:0	6	->
+water	20:31	0:0	6	elementid
+water	20:41	0:0	4	;
+call	21:8	21:69	4	put_ebml_uint
+arg	21:22	21:24	5	pb
+water	21:22	0:0	6	pb
+arg	21:26	21:50	5	MATROSKA_ID_SEEKPOSITION
+water	21:26	0:0	6	MATROSKA_ID_SEEKPOSITION
+arg	21:52	21:69	5	entry->segmentpos
+water	21:52	0:0	6	entry
+op	21:57	0:0	6	->
+water	21:59	0:0	6	segmentpos
+water	21:70	0:0	4	;
+call	22:8	22:37	4	end_ebml_master
+arg	22:24	22:26	5	pb
+water	22:24	0:0	6	pb
+arg	22:28	22:37	5	seekentry
+water	22:28	0:0	6	seekentry
+water	22:38	0:0	4	;
+water	23:4	0:0	4	}
+call	24:4	24:32	2	end_ebml_master
+arg	24:20	24:22	3	pb
+water	24:20	0:0	4	pb
+arg	24:24	24:32	3	metaseek
+water	24:24	0:0	4	metaseek
+water	24:33	0:0	2	;
+if	25:4	30:4	2	(seekhead -> reserved_size > 0)
+cond	25:8	25:34	3	seekhead -> reserved_size > 0
+water	25:8	0:0	4	seekhead
+op	25:16	0:0	4	->
+water	25:18	0:0	4	reserved_size
+op	25:32	0:0	4	>
+water	25:34	0:0	4	0
+stmts	25:37	30:4	3	
+water	25:37	0:0	4	{
+decl	26:8	26:88	4	uint64_t	remaining
+op	26:27	0:0	4	=
+water	26:29	0:0	4	seekhead
+op	26:37	0:0	4	->
+water	26:39	0:0	4	filepos
+op	26:47	0:0	4	+
+water	26:49	0:0	4	seekhead
+op	26:57	0:0	4	->
+water	26:59	0:0	4	reserved_size
+op	26:73	0:0	4	-
+call	26:75	26:87	5	avio_tell
+arg	26:85	26:87	6	pb
+water	26:85	0:0	7	pb
+call	27:8	27:35	4	put_ebml_void
+arg	27:22	27:24	5	pb
+water	27:22	0:0	6	pb
+arg	27:26	27:35	5	remaining
+water	27:26	0:0	6	remaining
+water	27:36	0:0	4	;
+call	28:8	28:42	4	avio_seek
+arg	28:18	28:20	5	pb
+water	28:18	0:0	6	pb
+arg	28:22	28:32	5	currentpos
+water	28:22	0:0	6	currentpos
+arg	28:34	28:42	5	SEEK_SET
+water	28:34	0:0	6	SEEK_SET
+water	28:43	0:0	4	;
+water	29:8	0:0	4	currentpos
+op	29:19	0:0	4	=
+water	29:21	0:0	4	seekhead
+op	29:29	0:0	4	->
+water	29:31	0:0	4	filepos
+water	29:38	0:0	4	;
+water	30:4	0:0	4	}
+label	31:0	31:4	2	fail :
+call	32:4	32:41	2	av_freep
+arg	32:13	32:41	3	&mkv->main_seekhead->entries
+op	32:13	0:0	4	&
+water	32:14	0:0	4	mkv
+op	32:17	0:0	4	->
+water	32:19	0:0	4	main_seekhead
+op	32:32	0:0	4	->
+water	32:34	0:0	4	entries
+water	32:42	0:0	2	;
+call	33:4	33:32	2	av_freep
+arg	33:13	33:32	3	&mkv->main_seekhead
+op	33:13	0:0	4	&
+water	33:14	0:0	4	mkv
+op	33:17	0:0	4	->
+water	33:19	0:0	4	main_seekhead
+water	33:33	0:0	2	;
+return	34:4	34:21	2	currentpos
+water	34:11	0:0	3	currentpos

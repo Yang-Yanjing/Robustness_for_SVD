@@ -1,0 +1,314 @@
+func	1:0	61:0	0	static int	aac_decode_frame
+params	1:27	0:0	1	
+param	1:28	1:49	2	AVCodecContext *	avctx
+param	1:51	1:61	2	void *	data
+param	2:28	2:46	2	int *	got_frame_ptr
+param	2:48	2:63	2	AVPacket *	avpkt
+stmnts	0:0	60:58	1	
+decl	4:4	4:37	2	AACContext	*ac
+op	4:19	0:0	2	=
+water	4:21	0:0	2	avctx
+op	4:26	0:0	2	->
+water	4:28	0:0	2	priv_data
+decl	5:4	5:36	2	const uint8_t	*buf
+op	5:23	0:0	2	=
+water	5:25	0:0	2	avpkt
+op	5:30	0:0	2	->
+water	5:32	0:0	2	data
+decl	6:4	6:30	2	int	buf_size
+op	6:17	0:0	2	=
+water	6:19	0:0	2	avpkt
+op	6:24	0:0	2	->
+water	6:26	0:0	2	size
+decl	7:4	7:20	2	GetBitContext	gb
+decl	8:4	8:20	2	int	buf_consumed
+decl	9:4	9:18	2	int	buf_offset
+decl	10:4	10:11	2	int	err
+decl	11:4	11:26	2	int	new_extradata_size
+decl	12:4	14:59	2	const uint8_t	*new_extradata
+op	12:33	0:0	2	=
+call	12:35	14:58	3	av_packet_get_side_data
+arg	12:59	12:64	4	avpkt
+water	12:59	0:0	5	avpkt
+arg	13:39	13:64	4	AV_PKT_DATA_NEW_EXTRADATA
+water	13:39	0:0	5	AV_PKT_DATA_NEW_EXTRADATA
+arg	14:39	14:58	4	&new_extradata_size
+op	14:39	0:0	5	&
+water	14:40	0:0	5	new_extradata_size
+decl	15:4	15:24	2	int	jp_dualmono_size
+decl	16:4	18:57	2	const uint8_t	*jp_dualmono
+op	16:33	0:0	2	=
+call	16:35	18:56	3	av_packet_get_side_data
+arg	16:59	16:64	4	avpkt
+water	16:59	0:0	5	avpkt
+arg	17:39	17:62	4	AV_PKT_DATA_JP_DUALMONO
+water	17:39	0:0	5	AV_PKT_DATA_JP_DUALMONO
+arg	18:39	18:56	4	&jp_dualmono_size
+op	18:39	0:0	5	&
+water	18:40	0:0	5	jp_dualmono_size
+if	19:4	34:4	2	(new_extradata && 0)
+cond	19:8	19:25	3	new_extradata && 0
+water	19:8	0:0	4	new_extradata
+op	19:22	0:0	4	&&
+water	19:25	0:0	4	0
+stmts	19:28	34:4	3	
+water	19:28	0:0	4	{
+call	20:8	20:32	4	av_free
+arg	20:16	20:32	5	avctx->extradata
+water	20:16	0:0	6	avctx
+op	20:21	0:0	6	->
+water	20:23	0:0	6	extradata
+water	20:33	0:0	4	;
+water	21:8	0:0	4	avctx
+op	21:13	0:0	4	->
+water	21:15	0:0	4	extradata
+op	21:25	0:0	4	=
+call	21:27	22:66	4	av_mallocz
+arg	21:38	22:66	5	new_extradata_size+AV_INPUT_BUFFER_PADDING_SIZE
+water	21:38	0:0	6	new_extradata_size
+op	21:57	0:0	6	+
+water	22:38	0:0	6	AV_INPUT_BUFFER_PADDING_SIZE
+water	22:67	0:0	4	;
+if	23:8	24:34	4	(! avctx -> extradata)
+cond	23:12	23:20	5	! avctx -> extradata
+op	23:12	0:0	6	!
+water	23:13	0:0	6	avctx
+op	23:18	0:0	6	->
+water	23:20	0:0	6	extradata
+stmts	24:12	24:34	5	
+return	24:12	24:34	6	AVERROR(ENOMEM)
+call	24:19	24:33	7	AVERROR
+arg	24:27	24:33	8	ENOMEM
+water	24:27	0:0	9	ENOMEM
+water	25:8	0:0	4	avctx
+op	25:13	0:0	4	->
+water	25:15	0:0	4	extradata_size
+op	25:30	0:0	4	=
+water	25:32	0:0	4	new_extradata_size
+water	25:50	0:0	4	;
+call	26:8	26:66	4	memcpy
+arg	26:15	26:31	5	avctx->extradata
+water	26:15	0:0	6	avctx
+op	26:20	0:0	6	->
+water	26:22	0:0	6	extradata
+arg	26:33	26:46	5	new_extradata
+water	26:33	0:0	6	new_extradata
+arg	26:48	26:66	5	new_extradata_size
+water	26:48	0:0	6	new_extradata_size
+water	26:67	0:0	4	;
+call	27:8	27:36	4	push_output_configuration
+arg	27:34	27:36	5	ac
+water	27:34	0:0	6	ac
+water	27:37	0:0	4	;
+if	28:8	33:8	4	(decode_audio_specific_config (ac ,ac -> avctx ,& ac -> oc [ 1 ] . m4ac ,avctx -> extradata ,avctx -> extradata_size * 8 LL ,1 ) < 0)
+cond	28:12	30:73	5	decode_audio_specific_config (ac ,ac -> avctx ,& ac -> oc [ 1 ] . m4ac ,avctx -> extradata ,avctx -> extradata_size * 8 LL ,1 ) < 0
+call	28:12	30:69	6	decode_audio_specific_config
+arg	28:41	28:43	7	ac
+water	28:41	0:0	8	ac
+arg	28:45	28:54	7	ac->avctx
+water	28:45	0:0	8	ac
+op	28:47	0:0	8	->
+water	28:49	0:0	8	avctx
+arg	28:56	28:71	7	&ac->oc[1].m4ac
+op	28:56	0:0	8	&
+water	28:57	0:0	8	ac
+op	28:59	0:0	8	->
+water	28:61	0:0	8	oc
+op	28:63	0:0	8	[
+water	28:64	0:0	8	1
+op	28:65	0:0	8	]
+op	28:66	0:0	8	.
+water	28:67	0:0	8	m4ac
+arg	29:41	29:57	7	avctx->extradata
+water	29:41	0:0	8	avctx
+op	29:46	0:0	8	->
+water	29:48	0:0	8	extradata
+arg	30:41	30:66	7	avctx->extradata_size*8LL
+water	30:41	0:0	8	avctx
+op	30:46	0:0	8	->
+water	30:48	0:0	8	extradata_size
+op	30:62	0:0	8	*
+water	30:63	0:0	8	8
+water	30:64	0:0	8	LL
+arg	30:68	30:69	7	1
+water	30:68	0:0	8	1
+op	30:71	0:0	6	<
+water	30:73	0:0	6	0
+stmts	30:76	33:8	5	
+water	30:76	0:0	6	{
+call	31:12	31:39	6	pop_output_configuration
+arg	31:37	31:39	7	ac
+water	31:37	0:0	8	ac
+water	31:40	0:0	6	;
+return	32:12	32:38	6	AVERROR_INVALIDDATA
+water	32:19	0:0	7	AVERROR_INVALIDDATA
+water	33:8	0:0	6	}
+water	34:4	0:0	4	}
+water	35:4	0:0	2	ac
+op	35:6	0:0	2	->
+water	35:8	0:0	2	dmono_mode
+op	35:19	0:0	2	=
+water	35:21	0:0	2	0
+water	35:22	0:0	2	;
+if	36:4	37:42	2	(jp_dualmono && jp_dualmono_size > 0)
+cond	36:8	36:42	3	jp_dualmono && jp_dualmono_size > 0
+water	36:8	0:0	4	jp_dualmono
+op	36:20	0:0	4	&&
+water	36:23	0:0	4	jp_dualmono_size
+op	36:40	0:0	4	>
+water	36:42	0:0	4	0
+stmts	37:8	37:42	3	
+water	37:8	0:0	4	ac
+op	37:10	0:0	4	->
+water	37:12	0:0	4	dmono_mode
+op	37:23	0:0	4	=
+water	37:26	0:0	4	1
+op	37:28	0:0	4	+
+op	37:30	0:0	4	*
+water	37:31	0:0	4	jp_dualmono
+water	37:42	0:0	4	;
+if	38:4	39:45	2	(ac -> force_dmono_mode >= 0)
+cond	38:8	38:32	3	ac -> force_dmono_mode >= 0
+water	38:8	0:0	4	ac
+op	38:10	0:0	4	->
+water	38:12	0:0	4	force_dmono_mode
+op	38:29	0:0	4	>=
+water	38:32	0:0	4	0
+stmts	39:8	39:45	3	
+water	39:8	0:0	4	ac
+op	39:10	0:0	4	->
+water	39:12	0:0	4	dmono_mode
+op	39:23	0:0	4	=
+water	39:25	0:0	4	ac
+op	39:27	0:0	4	->
+water	39:29	0:0	4	force_dmono_mode
+water	39:45	0:0	4	;
+if	40:4	41:34	2	(INT_MAX / 8 <= buf_size)
+cond	40:8	40:23	3	INT_MAX / 8 <= buf_size
+water	40:8	0:0	4	INT_MAX
+op	40:16	0:0	4	/
+water	40:18	0:0	4	8
+op	40:20	0:0	4	<=
+water	40:23	0:0	4	buf_size
+stmts	41:8	41:34	3	
+return	41:8	41:34	4	AVERROR_INVALIDDATA
+water	41:15	0:0	5	AVERROR_INVALIDDATA
+if	42:4	43:18	2	(( err =init_get_bits8 (& gb ,buf ,buf_size ) ) < 0)
+cond	42:8	42:53	3	( err =init_get_bits8 (& gb ,buf ,buf_size ) ) < 0
+water	42:8	0:0	4	(
+water	42:9	0:0	4	err
+op	42:13	0:0	4	=
+call	42:15	42:48	4	init_get_bits8
+arg	42:30	42:33	5	&gb
+op	42:30	0:0	6	&
+water	42:31	0:0	6	gb
+arg	42:35	42:38	5	buf
+water	42:35	0:0	6	buf
+arg	42:40	42:48	5	buf_size
+water	42:40	0:0	6	buf_size
+water	42:49	0:0	4	)
+op	42:51	0:0	4	<
+water	42:53	0:0	4	0
+stmts	43:8	43:18	3	
+return	43:8	43:18	4	err
+water	43:15	0:0	5	err
+switch	44:4	53:4	2	(ac -> oc [ 1 ] . m4ac . object_type)
+cond	44:12	44:27	3	ac -> oc [ 1 ] . m4ac . object_type
+water	44:12	0:0	4	ac
+op	44:14	0:0	4	->
+water	44:16	0:0	4	oc
+op	44:18	0:0	4	[
+water	44:19	0:0	4	1
+op	44:20	0:0	4	]
+op	44:21	0:0	4	.
+water	44:22	0:0	4	m4ac
+op	44:26	0:0	4	.
+water	44:27	0:0	4	object_type
+stmts	44:40	53:4	3	
+water	44:40	0:0	4	{
+label	45:4	45:22	4	case AOT_ER_AAC_LC :
+label	46:4	46:23	4	case AOT_ER_AAC_LTP :
+label	47:4	47:22	4	case AOT_ER_AAC_LD :
+label	48:4	48:23	4	case AOT_ER_AAC_ELD :
+water	49:8	0:0	4	err
+op	49:12	0:0	4	=
+call	49:14	49:65	4	aac_decode_er_frame
+arg	49:34	49:39	5	avctx
+water	49:34	0:0	6	avctx
+arg	49:41	49:45	5	data
+water	49:41	0:0	6	data
+arg	49:47	49:60	5	got_frame_ptr
+water	49:47	0:0	6	got_frame_ptr
+arg	49:62	49:65	5	&gb
+op	49:62	0:0	6	&
+water	49:63	0:0	6	gb
+water	49:66	0:0	4	;
+break	50:8	50:13	4	
+label	51:4	51:11	4	default :
+water	52:8	0:0	4	err
+op	52:12	0:0	4	=
+call	52:14	52:73	4	aac_decode_frame_int
+arg	52:35	52:40	5	avctx
+water	52:35	0:0	6	avctx
+arg	52:42	52:46	5	data
+water	52:42	0:0	6	data
+arg	52:48	52:61	5	got_frame_ptr
+water	52:48	0:0	6	got_frame_ptr
+arg	52:63	52:66	5	&gb
+op	52:63	0:0	6	&
+water	52:64	0:0	6	gb
+arg	52:68	52:73	5	avpkt
+water	52:68	0:0	6	avpkt
+water	52:74	0:0	4	;
+water	53:4	0:0	4	}
+if	54:4	55:18	2	(err < 0)
+cond	54:8	54:14	3	err < 0
+water	54:8	0:0	4	err
+op	54:12	0:0	4	<
+water	54:14	0:0	4	0
+stmts	55:8	55:18	3	
+return	55:8	55:18	4	err
+water	55:15	0:0	5	err
+water	56:4	0:0	2	buf_consumed
+op	56:17	0:0	2	=
+water	56:19	0:0	2	(
+call	56:20	56:38	2	get_bits_count
+arg	56:35	56:38	3	&gb
+op	56:35	0:0	4	&
+water	56:36	0:0	4	gb
+op	56:40	0:0	2	+
+water	56:42	0:0	2	7
+water	56:43	0:0	2	)
+op	56:45	0:0	2	>>
+water	56:48	0:0	2	3
+water	56:49	0:0	2	;
+for	57:4	59:17	2	(buf_offset = buf_consumed ;buf_offset < buf_size;buf_offset ++)
+forinit	57:9	57:34	3	buf_offset = buf_consumed ;
+water	57:9	0:0	4	buf_offset
+op	57:20	0:0	4	=
+water	57:22	0:0	4	buf_consumed
+water	57:34	0:0	4	;
+cond	57:36	57:49	3	buf_offset < buf_size
+water	57:36	0:0	4	buf_offset
+op	57:47	0:0	4	<
+water	57:49	0:0	4	buf_size
+forexpr	57:59	57:69	3	buf_offset ++
+water	57:59	0:0	4	buf_offset
+op	57:69	0:0	4	++
+stmts	58:8	59:17	3	
+if	58:8	59:17	4	(buf [ buf_offset ])
+cond	58:12	58:26	5	buf [ buf_offset ]
+water	58:12	0:0	6	buf
+op	58:15	0:0	6	[
+water	58:16	0:0	6	buf_offset
+op	58:26	0:0	6	]
+stmts	59:12	59:17	5	
+break	59:12	59:17	6	
+return	60:4	60:58	2	buf_size>buf_offset?buf_consumed:buf_size
+water	60:11	0:0	3	buf_size
+op	60:20	0:0	3	>
+water	60:22	0:0	3	buf_offset
+water	60:33	0:0	3	?
+water	60:35	0:0	3	buf_consumed
+water	60:48	0:0	3	:
+water	60:50	0:0	3	buf_size

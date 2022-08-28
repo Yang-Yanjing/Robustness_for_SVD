@@ -1,0 +1,128 @@
+func	1:0	20:0	0	static int	rewind_file
+params	1:22	0:0	1	
+param	1:23	1:43	2	AVFilterContext *	ctx
+stmnts	0:0	19:12	1	
+decl	3:4	3:35	2	MovieContext	*movie
+op	3:24	0:0	2	=
+water	3:26	0:0	2	ctx
+op	3:29	0:0	2	->
+water	3:31	0:0	2	priv
+decl	4:4	4:41	2	int64_t	timestamp
+op	4:22	0:0	2	=
+water	4:24	0:0	2	movie
+op	4:29	0:0	2	->
+water	4:31	0:0	2	seek_point
+decl	5:4	5:14	2	int	ret
+water	5:11	0:0	2	,
+decl	5:4	5:14	2	int	i
+if	6:4	7:50	2	(movie -> format_ctx -> start_time != AV_NOPTS_VALUE)
+cond	6:8	6:41	3	movie -> format_ctx -> start_time != AV_NOPTS_VALUE
+water	6:8	0:0	4	movie
+op	6:13	0:0	4	->
+water	6:15	0:0	4	format_ctx
+op	6:25	0:0	4	->
+water	6:27	0:0	4	start_time
+op	6:38	0:0	4	!=
+water	6:41	0:0	4	AV_NOPTS_VALUE
+stmts	7:8	7:50	3	
+water	7:8	0:0	4	timestamp
+op	7:18	0:0	4	+=
+water	7:21	0:0	4	movie
+op	7:26	0:0	4	->
+water	7:28	0:0	4	format_ctx
+op	7:38	0:0	4	->
+water	7:40	0:0	4	start_time
+water	7:50	0:0	4	;
+water	8:4	0:0	2	ret
+op	8:8	0:0	2	=
+call	8:10	8:78	2	av_seek_frame
+arg	8:24	8:41	3	movie->format_ctx
+water	8:24	0:0	4	movie
+op	8:29	0:0	4	->
+water	8:31	0:0	4	format_ctx
+arg	8:43	8:45	3	-1
+op	8:43	0:0	4	-
+water	8:44	0:0	4	1
+arg	8:47	8:56	3	timestamp
+water	8:47	0:0	4	timestamp
+arg	8:58	8:78	3	AVSEEK_FLAG_BACKWARD
+water	8:58	0:0	4	AVSEEK_FLAG_BACKWARD
+water	8:79	0:0	2	;
+if	9:4	13:4	2	(ret < 0)
+cond	9:8	9:14	3	ret < 0
+water	9:8	0:0	4	ret
+op	9:12	0:0	4	<
+water	9:14	0:0	4	0
+stmts	9:17	13:4	3	
+water	9:17	0:0	4	{
+call	10:8	10:73	4	av_log
+arg	10:15	10:18	5	ctx
+water	10:15	0:0	6	ctx
+arg	10:20	10:32	5	AV_LOG_ERROR
+water	10:20	0:0	6	AV_LOG_ERROR
+arg	10:34	10:56	5	"Unable to loop: %s\n"
+water	10:34	0:0	6	"Unable to loop: %s\n"
+arg	10:58	10:73	5	av_err2str(ret)
+call	10:58	10:72	6	av_err2str
+arg	10:69	10:72	7	ret
+water	10:69	0:0	8	ret
+water	10:74	0:0	4	;
+water	11:8	0:0	4	movie
+op	11:13	0:0	4	->
+water	11:15	0:0	4	loop_count
+op	11:26	0:0	4	=
+water	11:28	0:0	4	1
+water	11:29	0:0	4	;
+return	12:8	12:18	4	ret
+water	12:15	0:0	5	ret
+water	13:4	0:0	4	}
+for	14:4	17:4	2	(i = 0 ;i < ctx -> nb_outputs;i ++)
+forinit	14:9	14:14	3	i = 0 ;
+water	14:9	0:0	4	i
+op	14:11	0:0	4	=
+water	14:13	0:0	4	0
+water	14:14	0:0	4	;
+cond	14:16	14:25	3	i < ctx -> nb_outputs
+water	14:16	0:0	4	i
+op	14:18	0:0	4	<
+water	14:20	0:0	4	ctx
+op	14:23	0:0	4	->
+water	14:25	0:0	4	nb_outputs
+forexpr	14:37	14:38	3	i ++
+water	14:37	0:0	4	i
+op	14:38	0:0	4	++
+stmts	14:42	17:4	3	
+water	14:42	0:0	4	{
+call	15:8	15:52	4	avcodec_flush_buffers
+arg	15:30	15:52	5	movie->st[i].st->codec
+water	15:30	0:0	6	movie
+op	15:35	0:0	6	->
+water	15:37	0:0	6	st
+op	15:39	0:0	6	[
+water	15:40	0:0	6	i
+op	15:41	0:0	6	]
+op	15:42	0:0	6	.
+water	15:43	0:0	6	st
+op	15:45	0:0	6	->
+water	15:47	0:0	6	codec
+water	15:53	0:0	4	;
+water	16:8	0:0	4	movie
+op	16:13	0:0	4	->
+water	16:15	0:0	4	st
+op	16:17	0:0	4	[
+water	16:18	0:0	4	i
+op	16:19	0:0	4	]
+op	16:20	0:0	4	.
+water	16:21	0:0	4	done
+op	16:26	0:0	4	=
+water	16:28	0:0	4	0
+water	16:29	0:0	4	;
+water	17:4	0:0	4	}
+water	18:4	0:0	2	movie
+op	18:9	0:0	2	->
+water	18:11	0:0	2	eof
+op	18:15	0:0	2	=
+water	18:17	0:0	2	0
+water	18:18	0:0	2	;
+return	19:4	19:12	2	0
+water	19:11	0:0	3	0

@@ -1,0 +1,150 @@
+func	1:0	27:0	0	static int	read_audio_mux_element
+params	1:33	0:0	1	
+param	1:34	1:61	2	struct LATMContext *	latmctx
+param	2:34	2:51	2	GetBitContext *	gb
+stmnts	0:0	26:12	1	
+decl	4:4	4:11	2	int	err
+decl	5:4	5:42	2	uint8_t	use_same_mux
+op	5:25	0:0	2	=
+call	5:27	5:41	3	get_bits
+arg	5:36	5:38	4	gb
+water	5:36	0:0	5	gb
+arg	5:40	5:41	4	1
+water	5:40	0:0	5	1
+if	6:4	9:4	2	(! use_same_mux)
+cond	6:8	6:9	3	! use_same_mux
+op	6:8	0:0	4	!
+water	6:9	0:0	4	use_same_mux
+stmts	6:23	9:4	3	
+water	6:23	0:0	4	{
+if	7:8	8:22	4	(( err =read_stream_mux_config (latmctx ,gb ) ) < 0)
+cond	7:12	7:58	5	( err =read_stream_mux_config (latmctx ,gb ) ) < 0
+water	7:12	0:0	6	(
+water	7:13	0:0	6	err
+op	7:17	0:0	6	=
+call	7:19	7:53	6	read_stream_mux_config
+arg	7:42	7:49	7	latmctx
+water	7:42	0:0	8	latmctx
+arg	7:51	7:53	7	gb
+water	7:51	0:0	8	gb
+water	7:54	0:0	6	)
+op	7:56	0:0	6	<
+water	7:58	0:0	6	0
+stmts	8:12	8:22	5	
+return	8:12	8:22	6	err
+water	8:19	0:0	7	err
+water	9:4	0:0	4	}
+else	9:6	13:4	2
+stmts	9:11	13:4	3	
+if	9:11	13:4	4	(! latmctx -> aac_ctx . avctx -> extradata)
+cond	9:15	9:40	5	! latmctx -> aac_ctx . avctx -> extradata
+op	9:15	0:0	6	!
+water	9:16	0:0	6	latmctx
+op	9:23	0:0	6	->
+water	9:25	0:0	6	aac_ctx
+op	9:32	0:0	6	.
+water	9:33	0:0	6	avctx
+op	9:38	0:0	6	->
+water	9:40	0:0	6	extradata
+stmts	9:51	13:4	5	
+water	9:51	0:0	6	{
+call	10:8	11:42	6	av_log
+arg	10:15	10:37	7	latmctx->aac_ctx.avctx
+water	10:15	0:0	8	latmctx
+op	10:22	0:0	8	->
+water	10:24	0:0	8	aac_ctx
+op	10:31	0:0	8	.
+water	10:32	0:0	8	avctx
+arg	10:39	10:51	7	AV_LOG_DEBUG
+water	10:39	0:0	8	AV_LOG_DEBUG
+arg	11:15	11:42	7	"no decoder config found\n"
+water	11:15	0:0	8	"no decoder config found\n"
+water	11:43	0:0	6	;
+return	12:8	12:30	6	AVERROR(EAGAIN)
+call	12:15	12:29	7	AVERROR
+arg	12:23	12:29	8	EAGAIN
+water	12:23	0:0	9	EAGAIN
+water	13:4	0:0	6	}
+if	14:4	25:4	2	(latmctx -> audio_mux_version_A == 0)
+cond	14:8	14:40	3	latmctx -> audio_mux_version_A == 0
+water	14:8	0:0	4	latmctx
+op	14:15	0:0	4	->
+water	14:17	0:0	4	audio_mux_version_A
+op	14:37	0:0	4	==
+water	14:40	0:0	4	0
+stmts	14:43	25:4	3	
+water	14:43	0:0	4	{
+decl	15:8	15:73	4	int	mux_slot_length_bytes
+op	15:34	0:0	4	=
+call	15:36	15:72	5	read_payload_length_info
+arg	15:61	15:68	6	latmctx
+water	15:61	0:0	7	latmctx
+arg	15:70	15:72	6	gb
+water	15:70	0:0	7	gb
+if	16:8	19:8	4	(mux_slot_length_bytes * 8 >get_bits_left (gb ))
+cond	16:12	16:56	5	mux_slot_length_bytes * 8 >get_bits_left (gb )
+water	16:12	0:0	6	mux_slot_length_bytes
+op	16:34	0:0	6	*
+water	16:36	0:0	6	8
+op	16:38	0:0	6	>
+call	16:40	16:56	6	get_bits_left
+arg	16:54	16:56	7	gb
+water	16:54	0:0	8	gb
+stmts	16:59	19:8	5	
+water	16:59	0:0	6	{
+call	17:12	17:77	6	av_log
+arg	17:19	17:41	7	latmctx->aac_ctx.avctx
+water	17:19	0:0	8	latmctx
+op	17:26	0:0	8	->
+water	17:28	0:0	8	aac_ctx
+op	17:35	0:0	8	.
+water	17:36	0:0	8	avctx
+arg	17:43	17:55	7	AV_LOG_ERROR
+water	17:43	0:0	8	AV_LOG_ERROR
+arg	17:57	17:77	7	"incomplete frame\n"
+water	17:57	0:0	8	"incomplete frame\n"
+water	17:78	0:0	6	;
+return	18:12	18:38	6	AVERROR_INVALIDDATA
+water	18:19	0:0	7	AVERROR_INVALIDDATA
+water	19:8	0:0	6	}
+else	19:10	24:8	4
+stmts	19:15	24:8	5	
+if	19:15	24:8	6	(mux_slot_length_bytes * 8 + 256 <get_bits_left (gb ))
+cond	19:19	19:69	7	mux_slot_length_bytes * 8 + 256 <get_bits_left (gb )
+water	19:19	0:0	8	mux_slot_length_bytes
+op	19:41	0:0	8	*
+water	19:43	0:0	8	8
+op	19:45	0:0	8	+
+water	19:47	0:0	8	256
+op	19:51	0:0	8	<
+call	19:53	19:69	8	get_bits_left
+arg	19:67	19:69	9	gb
+water	19:67	0:0	10	gb
+stmts	19:72	24:8	7	
+water	19:72	0:0	8	{
+call	20:12	22:63	8	av_log
+arg	20:19	20:41	9	latmctx->aac_ctx.avctx
+water	20:19	0:0	10	latmctx
+op	20:26	0:0	10	->
+water	20:28	0:0	10	aac_ctx
+op	20:35	0:0	10	.
+water	20:36	0:0	10	avctx
+arg	20:43	20:55	9	AV_LOG_ERROR
+water	20:43	0:0	10	AV_LOG_ERROR
+arg	21:19	21:53	9	"frame length mismatch %d << %d\n"
+water	21:19	0:0	10	"frame length mismatch %d << %d\n"
+arg	22:19	22:44	9	mux_slot_length_bytes*8
+water	22:19	0:0	10	mux_slot_length_bytes
+op	22:41	0:0	10	*
+water	22:43	0:0	10	8
+arg	22:46	22:63	9	get_bits_left(gb)
+call	22:46	22:62	10	get_bits_left
+arg	22:60	22:62	11	gb
+water	22:60	0:0	12	gb
+water	22:64	0:0	8	;
+return	23:12	23:38	8	AVERROR_INVALIDDATA
+water	23:19	0:0	9	AVERROR_INVALIDDATA
+water	24:8	0:0	8	}
+water	25:4	0:0	4	}
+return	26:4	26:12	2	0
+water	26:11	0:0	3	0

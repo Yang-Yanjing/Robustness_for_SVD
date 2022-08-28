@@ -1,0 +1,147 @@
+func	1:0	24:0	0	static int	config_input
+params	1:23	0:0	1	
+param	1:24	1:44	2	AVFilterLink *	inlink
+stmnts	0:0	23:12	1	
+decl	3:4	3:38	2	AVFilterContext	*ctx
+op	3:25	0:0	2	=
+water	3:27	0:0	2	inlink
+op	3:33	0:0	2	->
+water	3:35	0:0	2	dst
+decl	4:4	4:31	2	PP7Context	*pp7
+op	4:20	0:0	2	=
+water	4:22	0:0	2	ctx
+op	4:25	0:0	2	->
+water	4:27	0:0	2	priv
+decl	5:4	5:45	2	const int	h
+op	5:16	0:0	2	=
+call	5:18	5:44	3	FFALIGN
+arg	5:26	5:40	4	inlink->h+16
+water	5:26	0:0	5	inlink
+op	5:32	0:0	5	->
+water	5:34	0:0	5	h
+op	5:36	0:0	5	+
+water	5:38	0:0	5	16
+arg	5:42	5:44	4	16
+water	5:42	0:0	5	16
+decl	6:4	6:72	2	const AVPixFmtDescriptor	*desc
+op	6:35	0:0	2	=
+call	6:37	6:71	3	av_pix_fmt_desc_get
+arg	6:57	6:71	4	inlink->format
+water	6:57	0:0	5	inlink
+op	6:63	0:0	5	->
+water	6:65	0:0	5	format
+water	7:4	0:0	2	pp7
+op	7:7	0:0	2	->
+water	7:9	0:0	2	hsub
+op	7:14	0:0	2	=
+water	7:16	0:0	2	desc
+op	7:20	0:0	2	->
+water	7:22	0:0	2	log2_chroma_w
+water	7:35	0:0	2	;
+water	8:4	0:0	2	pp7
+op	8:7	0:0	2	->
+water	8:9	0:0	2	vsub
+op	8:14	0:0	2	=
+water	8:16	0:0	2	desc
+op	8:20	0:0	2	->
+water	8:22	0:0	2	log2_chroma_h
+water	8:35	0:0	2	;
+water	9:4	0:0	2	pp7
+op	9:7	0:0	2	->
+water	9:9	0:0	2	temp_stride
+op	9:21	0:0	2	=
+call	9:23	9:49	2	FFALIGN
+arg	9:31	9:45	3	inlink->w+16
+water	9:31	0:0	4	inlink
+op	9:37	0:0	4	->
+water	9:39	0:0	4	w
+op	9:41	0:0	4	+
+water	9:43	0:0	4	16
+arg	9:47	9:49	3	16
+water	9:47	0:0	4	16
+water	9:50	0:0	2	;
+water	10:4	0:0	2	pp7
+op	10:7	0:0	2	->
+water	10:9	0:0	2	src
+op	10:13	0:0	2	=
+call	10:15	10:75	2	av_malloc_array
+arg	10:31	10:47	3	pp7->temp_stride
+water	10:31	0:0	4	pp7
+op	10:34	0:0	4	->
+water	10:36	0:0	4	temp_stride
+arg	10:50	10:75	3	(h+8)*sizeof(uint8_t)
+water	10:50	0:0	4	(
+water	10:51	0:0	4	h
+op	10:53	0:0	4	+
+water	10:55	0:0	4	8
+water	10:56	0:0	4	)
+op	10:58	0:0	4	*
+op	10:60	0:0	4	sizeof
+water	10:66	0:0	4	(
+water	10:67	0:0	4	uint8_t
+water	10:74	0:0	4	)
+water	10:76	0:0	2	;
+if	11:4	12:30	2	(! pp7 -> src)
+cond	11:8	11:14	3	! pp7 -> src
+op	11:8	0:0	4	!
+water	11:9	0:0	4	pp7
+op	11:12	0:0	4	->
+water	11:14	0:0	4	src
+stmts	12:8	12:30	3	
+return	12:8	12:30	4	AVERROR(ENOMEM)
+call	12:15	12:29	5	AVERROR
+arg	12:23	12:29	6	ENOMEM
+water	12:23	0:0	7	ENOMEM
+call	13:4	13:19	2	init_thres2
+arg	13:16	13:19	3	pp7
+water	13:16	0:0	4	pp7
+water	13:20	0:0	2	;
+switch	14:4	19:4	2	(pp7 -> mode)
+cond	14:12	14:17	3	pp7 -> mode
+water	14:12	0:0	4	pp7
+op	14:15	0:0	4	->
+water	14:17	0:0	4	mode
+stmts	14:23	19:4	3	
+water	14:23	0:0	4	{
+label	15:8	15:14	4	case 0 :
+water	15:16	0:0	4	pp7
+op	15:19	0:0	4	->
+water	15:21	0:0	4	requantize
+op	15:32	0:0	4	=
+water	15:34	0:0	4	hardthresh_c
+water	15:46	0:0	4	;
+break	15:48	15:53	4	
+label	16:8	16:14	4	case 1 :
+water	16:16	0:0	4	pp7
+op	16:19	0:0	4	->
+water	16:21	0:0	4	requantize
+op	16:32	0:0	4	=
+water	16:34	0:0	4	softthresh_c
+water	16:46	0:0	4	;
+break	16:48	16:53	4	
+label	17:8	17:15	4	default :
+label	18:8	18:14	4	case 2 :
+water	18:16	0:0	4	pp7
+op	18:19	0:0	4	->
+water	18:21	0:0	4	requantize
+op	18:32	0:0	4	=
+water	18:34	0:0	4	mediumthresh_c
+water	18:48	0:0	4	;
+break	18:50	18:55	4	
+water	19:4	0:0	4	}
+water	20:4	0:0	2	pp7
+op	20:7	0:0	2	->
+water	20:9	0:0	2	dctB
+op	20:14	0:0	2	=
+water	20:16	0:0	2	dctB_c
+water	20:22	0:0	2	;
+if	21:4	22:28	2	(ARCH_X86)
+cond	21:8	21:8	3	ARCH_X86
+water	21:8	0:0	4	ARCH_X86
+stmts	22:8	22:28	3	
+call	22:8	22:27	4	ff_pp7_init_x86
+arg	22:24	22:27	5	pp7
+water	22:24	0:0	6	pp7
+water	22:28	0:0	4	;
+return	23:4	23:12	2	0
+water	23:11	0:0	3	0

@@ -1,0 +1,476 @@
+func	1:0	72:0	0	static int	mkv_write_attachments
+params	1:32	0:0	1	
+param	1:33	1:51	2	AVFormatContext *	s
+stmnts	0:0	71:12	1	
+decl	3:4	3:42	2	MatroskaMuxContext	*mkv
+op	3:28	0:0	2	=
+water	3:30	0:0	2	s
+op	3:31	0:0	2	->
+water	3:33	0:0	2	priv_data
+decl	4:4	4:27	2	AVIOContext	*pb
+op	4:20	0:0	2	=
+water	4:22	0:0	2	s
+op	4:23	0:0	2	->
+water	4:25	0:0	2	pb
+decl	5:4	5:27	2	ebml_master	attachments
+decl	6:4	6:11	2	AVLFG	c
+decl	7:4	7:14	2	int	i
+water	7:9	0:0	2	,
+decl	7:4	7:14	2	int	ret
+if	8:4	9:16	2	(! mkv -> have_attachments)
+cond	8:8	8:14	3	! mkv -> have_attachments
+op	8:8	0:0	4	!
+water	8:9	0:0	4	mkv
+op	8:12	0:0	4	->
+water	8:14	0:0	4	have_attachments
+stmts	9:8	9:16	3	
+return	9:8	9:16	4	0
+water	9:15	0:0	5	0
+call	10:4	10:40	2	av_lfg_init
+arg	10:16	10:18	3	&c
+op	10:16	0:0	4	&
+water	10:17	0:0	4	c
+arg	10:20	10:40	3	av_get_random_seed()
+call	10:20	10:39	4	av_get_random_seed
+water	10:41	0:0	2	;
+water	11:4	0:0	2	ret
+op	11:8	0:0	2	=
+call	11:10	11:91	2	mkv_add_seekhead_entry
+arg	11:33	11:51	3	mkv->main_seekhead
+water	11:33	0:0	4	mkv
+op	11:36	0:0	4	->
+water	11:38	0:0	4	main_seekhead
+arg	11:53	11:76	3	MATROSKA_ID_ATTACHMENTS
+water	11:53	0:0	4	MATROSKA_ID_ATTACHMENTS
+arg	11:78	11:91	3	avio_tell(pb)
+call	11:78	11:90	4	avio_tell
+arg	11:88	11:90	5	pb
+water	11:88	0:0	6	pb
+water	11:92	0:0	2	;
+if	12:4	12:27	2	(ret < 0)
+cond	12:8	12:14	3	ret < 0
+water	12:8	0:0	4	ret
+op	12:12	0:0	4	<
+water	12:14	0:0	4	0
+stmts	12:17	12:27	3	
+return	12:17	12:27	4	ret
+water	12:24	0:0	5	ret
+water	13:4	0:0	2	attachments
+op	13:16	0:0	2	=
+call	13:18	13:66	2	start_ebml_master
+arg	13:36	13:38	3	pb
+water	13:36	0:0	4	pb
+arg	13:40	13:63	3	MATROSKA_ID_ATTACHMENTS
+water	13:40	0:0	4	MATROSKA_ID_ATTACHMENTS
+arg	13:65	13:66	3	0
+water	13:65	0:0	4	0
+water	13:67	0:0	2	;
+for	14:4	69:4	2	(i = 0 ;i < s -> nb_streams;i ++)
+forinit	14:9	14:14	3	i = 0 ;
+water	14:9	0:0	4	i
+op	14:11	0:0	4	=
+water	14:13	0:0	4	0
+water	14:14	0:0	4	;
+cond	14:16	14:23	3	i < s -> nb_streams
+water	14:16	0:0	4	i
+op	14:18	0:0	4	<
+water	14:20	0:0	4	s
+op	14:21	0:0	4	->
+water	14:23	0:0	4	nb_streams
+forexpr	14:35	14:36	3	i ++
+water	14:35	0:0	4	i
+op	14:36	0:0	4	++
+stmts	14:40	69:4	3	
+water	14:40	0:0	4	{
+decl	15:8	15:36	4	AVStream	*st
+op	15:21	0:0	4	=
+water	15:23	0:0	4	s
+op	15:24	0:0	4	->
+water	15:26	0:0	4	streams
+op	15:33	0:0	4	[
+water	15:34	0:0	4	i
+op	15:35	0:0	4	]
+decl	16:8	16:33	4	ebml_master	attached_file
+decl	17:8	17:28	4	AVDictionaryEntry	*t
+decl	18:8	18:35	4	const char	*mimetype
+op	18:29	0:0	4	=
+water	18:31	0:0	4	NULL
+decl	19:8	19:24	4	uint64_t	fileuid
+if	20:8	21:20	4	(st -> codec -> codec_type != AVMEDIA_TYPE_ATTACHMENT)
+cond	20:12	20:37	5	st -> codec -> codec_type != AVMEDIA_TYPE_ATTACHMENT
+water	20:12	0:0	6	st
+op	20:14	0:0	6	->
+water	20:16	0:0	6	codec
+op	20:21	0:0	6	->
+water	20:23	0:0	6	codec_type
+op	20:34	0:0	6	!=
+water	20:37	0:0	6	AVMEDIA_TYPE_ATTACHMENT
+stmts	21:12	21:20	5	
+continue	21:12	21:20	6	
+water	22:8	0:0	4	attached_file
+op	22:22	0:0	4	=
+call	22:24	22:73	4	start_ebml_master
+arg	22:42	22:44	5	pb
+water	22:42	0:0	6	pb
+arg	22:46	22:70	5	MATROSKA_ID_ATTACHEDFILE
+water	22:46	0:0	6	MATROSKA_ID_ATTACHEDFILE
+arg	22:72	22:73	5	0
+water	22:72	0:0	6	0
+water	22:74	0:0	4	;
+if	23:8	24:63	4	(t =av_dict_get (st -> metadata ,"title" ,NULL ,0 ))
+cond	23:12	23:58	5	t =av_dict_get (st -> metadata ,"title" ,NULL ,0 )
+water	23:12	0:0	6	t
+op	23:14	0:0	6	=
+call	23:16	23:58	6	av_dict_get
+arg	23:28	23:40	7	st->metadata
+water	23:28	0:0	8	st
+op	23:30	0:0	8	->
+water	23:32	0:0	8	metadata
+arg	23:42	23:49	7	"title"
+water	23:42	0:0	8	"title"
+arg	23:51	23:55	7	NULL
+water	23:51	0:0	8	NULL
+arg	23:57	23:58	7	0
+water	23:57	0:0	8	0
+stmts	24:12	24:63	5	
+call	24:12	24:62	6	put_ebml_string
+arg	24:28	24:30	7	pb
+water	24:28	0:0	8	pb
+arg	24:32	24:52	7	MATROSKA_ID_FILEDESC
+water	24:32	0:0	8	MATROSKA_ID_FILEDESC
+arg	24:54	24:62	7	t->value
+water	24:54	0:0	8	t
+op	24:55	0:0	8	->
+water	24:57	0:0	8	value
+water	24:63	0:0	6	;
+if	25:8	28:8	4	(! ( t =av_dict_get (st -> metadata ,"filename" ,NULL ,0 ) ))
+cond	25:12	25:64	5	! ( t =av_dict_get (st -> metadata ,"filename" ,NULL ,0 ) )
+op	25:12	0:0	6	!
+water	25:13	0:0	6	(
+water	25:14	0:0	6	t
+op	25:16	0:0	6	=
+call	25:18	25:63	6	av_dict_get
+arg	25:30	25:42	7	st->metadata
+water	25:30	0:0	8	st
+op	25:32	0:0	8	->
+water	25:34	0:0	8	metadata
+arg	25:44	25:54	7	"filename"
+water	25:44	0:0	8	"filename"
+arg	25:56	25:60	7	NULL
+water	25:56	0:0	8	NULL
+arg	25:62	25:63	7	0
+water	25:62	0:0	8	0
+water	25:64	0:0	6	)
+stmts	25:67	28:8	5	
+water	25:67	0:0	6	{
+call	26:12	26:84	6	av_log
+arg	26:19	26:20	7	s
+water	26:19	0:0	8	s
+arg	26:22	26:34	7	AV_LOG_ERROR
+water	26:22	0:0	8	AV_LOG_ERROR
+arg	26:36	26:81	7	"Attachment stream %d has no filename tag.\n"
+water	26:36	0:0	8	"Attachment stream %d has no filename tag.\n"
+arg	26:83	26:84	7	i
+water	26:83	0:0	8	i
+water	26:85	0:0	6	;
+return	27:12	27:34	6	AVERROR(EINVAL)
+call	27:19	27:33	7	AVERROR
+arg	27:27	27:33	8	EINVAL
+water	27:27	0:0	9	EINVAL
+water	28:8	0:0	6	}
+call	29:8	29:58	4	put_ebml_string
+arg	29:24	29:26	5	pb
+water	29:24	0:0	6	pb
+arg	29:28	29:48	5	MATROSKA_ID_FILENAME
+water	29:28	0:0	6	MATROSKA_ID_FILENAME
+arg	29:50	29:58	5	t->value
+water	29:50	0:0	6	t
+op	29:51	0:0	6	->
+water	29:53	0:0	6	value
+water	29:59	0:0	4	;
+if	30:8	31:31	4	(t =av_dict_get (st -> metadata ,"mimetype" ,NULL ,0 ))
+cond	30:12	30:61	5	t =av_dict_get (st -> metadata ,"mimetype" ,NULL ,0 )
+water	30:12	0:0	6	t
+op	30:14	0:0	6	=
+call	30:16	30:61	6	av_dict_get
+arg	30:28	30:40	7	st->metadata
+water	30:28	0:0	8	st
+op	30:30	0:0	8	->
+water	30:32	0:0	8	metadata
+arg	30:42	30:52	7	"mimetype"
+water	30:42	0:0	8	"mimetype"
+arg	30:54	30:58	7	NULL
+water	30:54	0:0	8	NULL
+arg	30:60	30:61	7	0
+water	30:60	0:0	8	0
+stmts	31:12	31:31	5	
+water	31:12	0:0	6	mimetype
+op	31:21	0:0	6	=
+water	31:23	0:0	6	t
+op	31:24	0:0	6	->
+water	31:26	0:0	6	value
+water	31:31	0:0	6	;
+else	32:8	44:8	4
+stmts	32:13	44:8	5	
+if	32:13	44:8	6	(st -> codec -> codec_id != AV_CODEC_ID_NONE)
+cond	32:17	32:40	7	st -> codec -> codec_id != AV_CODEC_ID_NONE
+water	32:17	0:0	8	st
+op	32:19	0:0	8	->
+water	32:21	0:0	8	codec
+op	32:26	0:0	8	->
+water	32:28	0:0	8	codec_id
+op	32:37	0:0	8	!=
+water	32:40	0:0	8	AV_CODEC_ID_NONE
+stmts	32:59	44:8	7	
+water	32:59	0:0	8	{
+decl	33:12	33:17	8	int	i
+for	34:12	38:16	8	(i = 0 ;ff_mkv_mime_tags [ i ] . id != AV_CODEC_ID_NONE;i ++)
+forinit	34:17	34:22	9	i = 0 ;
+water	34:17	0:0	10	i
+op	34:19	0:0	10	=
+water	34:21	0:0	10	0
+water	34:22	0:0	10	;
+cond	34:24	34:50	9	ff_mkv_mime_tags [ i ] . id != AV_CODEC_ID_NONE
+water	34:24	0:0	10	ff_mkv_mime_tags
+op	34:40	0:0	10	[
+water	34:41	0:0	10	i
+op	34:42	0:0	10	]
+op	34:43	0:0	10	.
+water	34:44	0:0	10	id
+op	34:47	0:0	10	!=
+water	34:50	0:0	10	AV_CODEC_ID_NONE
+forexpr	34:68	34:69	9	i ++
+water	34:68	0:0	10	i
+op	34:69	0:0	10	++
+stmts	35:16	38:16	9	
+if	35:16	38:16	10	(ff_mkv_mime_tags [ i ] . id == st -> codec -> codec_id)
+cond	35:20	35:57	11	ff_mkv_mime_tags [ i ] . id == st -> codec -> codec_id
+water	35:20	0:0	12	ff_mkv_mime_tags
+op	35:36	0:0	12	[
+water	35:37	0:0	12	i
+op	35:38	0:0	12	]
+op	35:39	0:0	12	.
+water	35:40	0:0	12	id
+op	35:43	0:0	12	==
+water	35:46	0:0	12	st
+op	35:48	0:0	12	->
+water	35:50	0:0	12	codec
+op	35:55	0:0	12	->
+water	35:57	0:0	12	codec_id
+stmts	35:67	38:16	11	
+water	35:67	0:0	12	{
+water	36:20	0:0	12	mimetype
+op	36:29	0:0	12	=
+water	36:31	0:0	12	ff_mkv_mime_tags
+op	36:47	0:0	12	[
+water	36:48	0:0	12	i
+op	36:49	0:0	12	]
+op	36:50	0:0	12	.
+water	36:51	0:0	12	str
+water	36:54	0:0	12	;
+break	37:20	37:25	12	
+water	38:16	0:0	12	}
+for	39:12	43:16	8	(i = 0 ;ff_mkv_image_mime_tags [ i ] . id != AV_CODEC_ID_NONE;i ++)
+forinit	39:17	39:22	9	i = 0 ;
+water	39:17	0:0	10	i
+op	39:19	0:0	10	=
+water	39:21	0:0	10	0
+water	39:22	0:0	10	;
+cond	39:24	39:56	9	ff_mkv_image_mime_tags [ i ] . id != AV_CODEC_ID_NONE
+water	39:24	0:0	10	ff_mkv_image_mime_tags
+op	39:46	0:0	10	[
+water	39:47	0:0	10	i
+op	39:48	0:0	10	]
+op	39:49	0:0	10	.
+water	39:50	0:0	10	id
+op	39:53	0:0	10	!=
+water	39:56	0:0	10	AV_CODEC_ID_NONE
+forexpr	39:74	39:75	9	i ++
+water	39:74	0:0	10	i
+op	39:75	0:0	10	++
+stmts	40:16	43:16	9	
+if	40:16	43:16	10	(ff_mkv_image_mime_tags [ i ] . id == st -> codec -> codec_id)
+cond	40:20	40:63	11	ff_mkv_image_mime_tags [ i ] . id == st -> codec -> codec_id
+water	40:20	0:0	12	ff_mkv_image_mime_tags
+op	40:42	0:0	12	[
+water	40:43	0:0	12	i
+op	40:44	0:0	12	]
+op	40:45	0:0	12	.
+water	40:46	0:0	12	id
+op	40:49	0:0	12	==
+water	40:52	0:0	12	st
+op	40:54	0:0	12	->
+water	40:56	0:0	12	codec
+op	40:61	0:0	12	->
+water	40:63	0:0	12	codec_id
+stmts	40:73	43:16	11	
+water	40:73	0:0	12	{
+water	41:20	0:0	12	mimetype
+op	41:29	0:0	12	=
+water	41:31	0:0	12	ff_mkv_image_mime_tags
+op	41:53	0:0	12	[
+water	41:54	0:0	12	i
+op	41:55	0:0	12	]
+op	41:56	0:0	12	.
+water	41:57	0:0	12	str
+water	41:60	0:0	12	;
+break	42:20	42:25	12	
+water	43:16	0:0	12	}
+water	44:8	0:0	8	}
+if	45:8	49:8	4	(! mimetype)
+cond	45:12	45:13	5	! mimetype
+op	45:12	0:0	6	!
+water	45:13	0:0	6	mimetype
+stmts	45:23	49:8	5	
+water	45:23	0:0	6	{
+call	46:12	47:82	6	av_log
+arg	46:19	46:20	7	s
+water	46:19	0:0	8	s
+arg	46:22	46:34	7	AV_LOG_ERROR
+water	46:22	0:0	8	AV_LOG_ERROR
+arg	46:36	47:79	7	"Attachment stream %d has no mimetype tag and ""it cannot be deduced from the codec id.\n"
+water	46:36	0:0	8	"Attachment stream %d has no mimetype tag and "
+water	47:36	0:0	8	"it cannot be deduced from the codec id.\n"
+arg	47:81	47:82	7	i
+water	47:81	0:0	8	i
+water	47:83	0:0	6	;
+return	48:12	48:34	6	AVERROR(EINVAL)
+call	48:19	48:33	7	AVERROR
+arg	48:27	48:33	8	EINVAL
+water	48:27	0:0	9	EINVAL
+water	49:8	0:0	6	}
+if	50:8	60:8	4	(s -> flags & AVFMT_FLAG_BITEXACT)
+cond	50:12	50:23	5	s -> flags & AVFMT_FLAG_BITEXACT
+water	50:12	0:0	6	s
+op	50:13	0:0	6	->
+water	50:15	0:0	6	flags
+op	50:21	0:0	6	&
+water	50:23	0:0	6	AVFMT_FLAG_BITEXACT
+stmts	50:44	60:8	5	
+water	50:44	0:0	6	{
+decl	51:12	51:46	6	struct AVSHA	*sha
+op	51:30	0:0	6	=
+call	51:32	51:45	7	av_sha_alloc
+decl	52:12	52:30	6	uint8_t	digest[20]
+if	53:12	54:38	6	(! sha)
+cond	53:16	53:17	7	! sha
+op	53:16	0:0	8	!
+water	53:17	0:0	8	sha
+stmts	54:16	54:38	7	
+return	54:16	54:38	8	AVERROR(ENOMEM)
+call	54:23	54:37	9	AVERROR
+arg	54:31	54:37	10	ENOMEM
+water	54:31	0:0	11	ENOMEM
+call	55:12	55:32	6	av_sha_init
+arg	55:24	55:27	7	sha
+water	55:24	0:0	8	sha
+arg	55:29	55:32	7	160
+water	55:29	0:0	8	160
+water	55:33	0:0	6	;
+call	56:12	56:78	6	av_sha_update
+arg	56:26	56:29	7	sha
+water	56:26	0:0	8	sha
+arg	56:31	56:51	7	st->codec->extradata
+water	56:31	0:0	8	st
+op	56:33	0:0	8	->
+water	56:35	0:0	8	codec
+op	56:40	0:0	8	->
+water	56:42	0:0	8	extradata
+arg	56:53	56:78	7	st->codec->extradata_size
+water	56:53	0:0	8	st
+op	56:55	0:0	8	->
+water	56:57	0:0	8	codec
+op	56:62	0:0	8	->
+water	56:64	0:0	8	extradata_size
+water	56:79	0:0	6	;
+call	57:12	57:36	6	av_sha_final
+arg	57:25	57:28	7	sha
+water	57:25	0:0	8	sha
+arg	57:30	57:36	7	digest
+water	57:30	0:0	8	digest
+water	57:37	0:0	6	;
+call	58:12	58:23	6	av_free
+arg	58:20	58:23	7	sha
+water	58:20	0:0	8	sha
+water	58:24	0:0	6	;
+water	59:12	0:0	6	fileuid
+op	59:20	0:0	6	=
+call	59:22	59:36	6	AV_RL64
+arg	59:30	59:36	7	digest
+water	59:30	0:0	8	digest
+water	59:37	0:0	6	;
+water	60:8	0:0	6	}
+else	60:10	62:8	4
+stmts	60:15	62:8	5	
+water	60:15	0:0	6	{
+water	61:12	0:0	6	fileuid
+op	61:20	0:0	6	=
+call	61:22	61:35	6	av_lfg_get
+arg	61:33	61:35	7	&c
+op	61:33	0:0	8	&
+water	61:34	0:0	8	c
+water	61:36	0:0	6	;
+water	62:8	0:0	6	}
+call	63:8	64:25	4	av_log
+arg	63:15	63:16	5	s
+water	63:15	0:0	6	s
+arg	63:18	63:32	5	AV_LOG_VERBOSE
+water	63:18	0:0	6	AV_LOG_VERBOSE
+arg	63:34	63:74	5	"Using %.16"PRIx64" for attachment %d\n"
+water	63:34	0:0	6	"Using %.16"
+water	63:46	0:0	6	PRIx64
+water	63:52	0:0	6	" for attachment %d\n"
+arg	64:15	64:22	5	fileuid
+water	64:15	0:0	6	fileuid
+arg	64:24	64:25	5	i
+water	64:24	0:0	6	i
+water	64:26	0:0	4	;
+call	65:8	65:62	4	put_ebml_string
+arg	65:24	65:26	5	pb
+water	65:24	0:0	6	pb
+arg	65:28	65:52	5	MATROSKA_ID_FILEMIMETYPE
+water	65:28	0:0	6	MATROSKA_ID_FILEMIMETYPE
+arg	65:54	65:62	5	mimetype
+water	65:54	0:0	6	mimetype
+water	65:63	0:0	4	;
+call	66:8	66:97	4	put_ebml_binary
+arg	66:24	66:26	5	pb
+water	66:24	0:0	6	pb
+arg	66:28	66:48	5	MATROSKA_ID_FILEDATA
+water	66:28	0:0	6	MATROSKA_ID_FILEDATA
+arg	66:50	66:70	5	st->codec->extradata
+water	66:50	0:0	6	st
+op	66:52	0:0	6	->
+water	66:54	0:0	6	codec
+op	66:59	0:0	6	->
+water	66:61	0:0	6	extradata
+arg	66:72	66:97	5	st->codec->extradata_size
+water	66:72	0:0	6	st
+op	66:74	0:0	6	->
+water	66:76	0:0	6	codec
+op	66:81	0:0	6	->
+water	66:83	0:0	6	extradata_size
+water	66:98	0:0	4	;
+call	67:8	67:54	4	put_ebml_uint
+arg	67:22	67:24	5	pb
+water	67:22	0:0	6	pb
+arg	67:26	67:45	5	MATROSKA_ID_FILEUID
+water	67:26	0:0	6	MATROSKA_ID_FILEUID
+arg	67:47	67:54	5	fileuid
+water	67:47	0:0	6	fileuid
+water	67:55	0:0	4	;
+call	68:8	68:41	4	end_ebml_master
+arg	68:24	68:26	5	pb
+water	68:24	0:0	6	pb
+arg	68:28	68:41	5	attached_file
+water	68:28	0:0	6	attached_file
+water	68:42	0:0	4	;
+water	69:4	0:0	4	}
+call	70:4	70:35	2	end_ebml_master
+arg	70:20	70:22	3	pb
+water	70:20	0:0	4	pb
+arg	70:24	70:35	3	attachments
+water	70:24	0:0	4	attachments
+water	70:36	0:0	2	;
+return	71:4	71:12	2	0
+water	71:11	0:0	3	0

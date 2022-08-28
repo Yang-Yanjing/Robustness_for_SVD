@@ -1,0 +1,525 @@
+func	1:0	75:0	0	static int64_t	run_opencl_bench
+params	1:31	0:0	1	
+param	1:32	1:67	2	AVOpenCLExternalEnv *	ext_opencl_env
+stmnts	0:0	74:14	1	
+decl	3:4	3:47	2	int	i
+water	3:9	0:0	2	,
+decl	3:4	3:47	2	int	arg
+op	3:15	0:0	2	=
+water	3:17	0:0	2	0
+water	3:18	0:0	2	,
+decl	3:4	3:47	2	int	width
+op	3:26	0:0	2	=
+water	3:28	0:0	2	1920
+water	3:32	0:0	2	,
+decl	3:4	3:47	2	int	height
+op	3:41	0:0	2	=
+water	3:43	0:0	2	1088
+decl	4:4	4:26	2	int64_t	start
+water	4:17	0:0	2	,
+decl	4:4	4:26	2	int64_t	ret
+op	4:23	0:0	2	=
+water	4:25	0:0	2	0
+decl	5:4	5:17	2	cl_int	status
+decl	6:4	6:21	2	size_t	kernel_len
+decl	7:4	7:15	2	char	*inbuf
+decl	8:4	8:13	2	int	*mask
+decl	9:4	9:48	2	int	buf_size
+op	9:17	0:0	2	=
+water	9:19	0:0	2	width
+op	9:25	0:0	2	*
+water	9:27	0:0	2	height
+op	9:34	0:0	2	*
+op	9:36	0:0	2	sizeof
+water	9:42	0:0	2	(
+water	9:43	0:0	2	char
+water	9:47	0:0	2	)
+decl	10:4	10:42	2	int	mask_size
+op	10:18	0:0	2	=
+op	10:20	0:0	2	sizeof
+water	10:26	0:0	2	(
+water	10:27	0:0	2	uint32_t
+water	10:35	0:0	2	)
+op	10:37	0:0	2	*
+water	10:39	0:0	2	128
+decl	11:4	11:39	2	cl_mem	cl_mask
+water	11:18	0:0	2	,
+decl	11:4	11:39	2	cl_mem	cl_inbuf
+water	11:28	0:0	2	,
+decl	11:4	11:39	2	cl_mem	cl_outbuf
+decl	12:4	12:27	2	cl_kernel	kernel
+op	12:21	0:0	2	=
+water	12:23	0:0	2	NULL
+decl	13:4	13:29	2	cl_program	program
+op	13:23	0:0	2	=
+water	13:25	0:0	2	NULL
+decl	14:4	14:43	2	size_t	local_work_size_2d[2]
+op	14:33	0:0	2	=
+water	14:35	0:0	2	{
+water	14:36	0:0	2	16
+water	14:38	0:0	2	,
+water	14:40	0:0	2	16
+water	14:42	0:0	2	}
+decl	15:4	15:67	2	size_t	global_work_size_2d[2]
+op	15:34	0:0	2	=
+water	15:36	0:0	2	{
+water	15:37	0:0	2	(
+water	15:38	0:0	2	size_t
+water	15:44	0:0	2	)
+water	15:45	0:0	2	width
+water	15:50	0:0	2	,
+water	15:52	0:0	2	(
+water	15:53	0:0	2	size_t
+water	15:59	0:0	2	)
+water	15:60	0:0	2	height
+water	15:66	0:0	2	}
+if	16:4	20:4	2	(! ( inbuf =av_malloc (buf_size ) ) || ! ( mask =av_malloc (mask_size ) ))
+cond	16:8	16:71	3	! ( inbuf =av_malloc (buf_size ) ) || ! ( mask =av_malloc (mask_size ) )
+op	16:8	0:0	4	!
+water	16:9	0:0	4	(
+water	16:10	0:0	4	inbuf
+op	16:16	0:0	4	=
+call	16:18	16:36	4	av_malloc
+arg	16:28	16:36	5	buf_size
+water	16:28	0:0	6	buf_size
+water	16:37	0:0	4	)
+op	16:39	0:0	4	||
+op	16:42	0:0	4	!
+water	16:43	0:0	4	(
+water	16:44	0:0	4	mask
+op	16:49	0:0	4	=
+call	16:51	16:70	4	av_malloc
+arg	16:61	16:70	5	mask_size
+water	16:61	0:0	6	mask_size
+water	16:71	0:0	4	)
+stmts	16:74	20:4	3	
+water	16:74	0:0	4	{
+call	17:8	17:52	4	av_log
+arg	17:15	17:19	5	NULL
+water	17:15	0:0	6	NULL
+arg	17:21	17:33	5	AV_LOG_ERROR
+water	17:21	0:0	6	AV_LOG_ERROR
+arg	17:35	17:52	5	"Out of memory\n"
+water	17:35	0:0	6	"Out of memory\n"
+water	17:53	0:0	4	;
+water	18:8	0:0	4	ret
+op	18:12	0:0	4	=
+call	18:14	18:28	4	AVERROR
+arg	18:22	18:28	5	ENOMEM
+water	18:22	0:0	6	ENOMEM
+water	18:29	0:0	4	;
+goto	19:8	19:16	4	end
+water	19:13	0:0	5	end
+water	20:4	0:0	4	}
+call	21:4	21:41	2	fill_rand_int
+arg	21:18	21:29	3	(int*)inbuf
+water	21:18	0:0	4	(
+water	21:19	0:0	4	int
+op	21:22	0:0	4	*
+water	21:23	0:0	4	)
+water	21:24	0:0	4	inbuf
+arg	21:31	21:41	3	buf_size/4
+water	21:31	0:0	4	buf_size
+op	21:39	0:0	4	/
+water	21:40	0:0	4	4
+water	21:42	0:0	2	;
+call	22:4	22:35	2	fill_rand_int
+arg	22:18	22:22	3	mask
+water	22:18	0:0	4	mask
+arg	22:24	22:35	3	mask_size/4
+water	22:24	0:0	4	mask_size
+op	22:33	0:0	4	/
+water	22:34	0:0	4	4
+water	22:36	0:0	2	;
+call	23:4	23:50	2	CREATEBUF
+arg	23:14	23:21	3	cl_mask
+water	23:14	0:0	4	cl_mask
+arg	23:23	23:39	3	CL_MEM_READ_ONLY
+water	23:23	0:0	4	CL_MEM_READ_ONLY
+arg	23:41	23:50	3	mask_size
+water	23:41	0:0	4	mask_size
+water	23:51	0:0	2	;
+call	24:4	24:50	2	CREATEBUF
+arg	24:14	24:22	3	cl_inbuf
+water	24:14	0:0	4	cl_inbuf
+arg	24:24	24:40	3	CL_MEM_READ_ONLY
+water	24:24	0:0	4	CL_MEM_READ_ONLY
+arg	24:42	24:50	3	buf_size
+water	24:42	0:0	4	buf_size
+water	24:51	0:0	2	;
+call	25:4	25:52	2	CREATEBUF
+arg	25:14	25:23	3	cl_outbuf
+water	25:14	0:0	4	cl_outbuf
+arg	25:25	25:42	3	CL_MEM_READ_WRITE
+water	25:25	0:0	4	CL_MEM_READ_WRITE
+arg	25:44	25:52	3	buf_size
+water	25:44	0:0	4	buf_size
+water	25:53	0:0	2	;
+water	26:4	0:0	2	kernel_len
+op	26:15	0:0	2	=
+call	26:17	26:40	2	strlen
+arg	26:24	26:40	3	ocl_bench_source
+water	26:24	0:0	4	ocl_bench_source
+water	26:41	0:0	2	;
+water	27:4	0:0	2	program
+op	27:12	0:0	2	=
+call	27:14	28:60	2	clCreateProgramWithSource
+arg	27:40	27:63	3	ext_opencl_env->context
+water	27:40	0:0	4	ext_opencl_env
+op	27:54	0:0	4	->
+water	27:56	0:0	4	context
+arg	27:65	27:66	3	1
+water	27:65	0:0	4	1
+arg	27:68	27:85	3	&ocl_bench_source
+op	27:68	0:0	4	&
+water	27:69	0:0	4	ocl_bench_source
+arg	28:40	28:51	3	&kernel_len
+op	28:40	0:0	4	&
+water	28:41	0:0	4	kernel_len
+arg	28:53	28:60	3	&status
+op	28:53	0:0	4	&
+water	28:54	0:0	4	status
+water	28:61	0:0	2	;
+if	29:4	33:4	2	(status != CL_SUCCESS || ! program)
+cond	29:8	29:33	3	status != CL_SUCCESS || ! program
+water	29:8	0:0	4	status
+op	29:15	0:0	4	!=
+water	29:18	0:0	4	CL_SUCCESS
+op	29:29	0:0	4	||
+op	29:32	0:0	4	!
+water	29:33	0:0	4	program
+stmts	29:42	33:4	3	
+water	29:42	0:0	4	{
+call	30:8	30:80	4	av_log
+arg	30:15	30:19	5	NULL
+water	30:15	0:0	6	NULL
+arg	30:21	30:33	5	AV_LOG_ERROR
+water	30:21	0:0	6	AV_LOG_ERROR
+arg	30:35	30:80	5	"OpenCL unable to create benchmark program\n"
+water	30:35	0:0	6	"OpenCL unable to create benchmark program\n"
+water	30:81	0:0	4	;
+water	31:8	0:0	4	ret
+op	31:12	0:0	4	=
+water	31:14	0:0	4	AVERROR_EXTERNAL
+water	31:30	0:0	4	;
+goto	32:8	32:16	4	end
+water	32:13	0:0	5	end
+water	33:4	0:0	4	}
+water	34:4	0:0	2	status
+op	34:11	0:0	2	=
+call	34:13	34:86	2	clBuildProgram
+arg	34:28	34:35	3	program
+water	34:28	0:0	4	program
+arg	34:37	34:38	3	1
+water	34:37	0:0	4	1
+arg	34:40	34:68	3	&(ext_opencl_env->device_id)
+op	34:40	0:0	4	&
+water	34:41	0:0	4	(
+water	34:42	0:0	4	ext_opencl_env
+op	34:56	0:0	4	->
+water	34:58	0:0	4	device_id
+water	34:67	0:0	4	)
+arg	34:70	34:74	3	NULL
+water	34:70	0:0	4	NULL
+arg	34:76	34:80	3	NULL
+water	34:76	0:0	4	NULL
+arg	34:82	34:86	3	NULL
+water	34:82	0:0	4	NULL
+water	34:87	0:0	2	;
+if	35:4	39:4	2	(status != CL_SUCCESS)
+cond	35:8	35:18	3	status != CL_SUCCESS
+water	35:8	0:0	4	status
+op	35:15	0:0	4	!=
+water	35:18	0:0	4	CL_SUCCESS
+stmts	35:30	39:4	3	
+water	35:30	0:0	4	{
+call	36:8	36:79	4	av_log
+arg	36:15	36:19	5	NULL
+water	36:15	0:0	6	NULL
+arg	36:21	36:33	5	AV_LOG_ERROR
+water	36:21	0:0	6	AV_LOG_ERROR
+arg	36:35	36:79	5	"OpenCL unable to build benchmark program\n"
+water	36:35	0:0	6	"OpenCL unable to build benchmark program\n"
+water	36:80	0:0	4	;
+water	37:8	0:0	4	ret
+op	37:12	0:0	4	=
+water	37:14	0:0	4	AVERROR_EXTERNAL
+water	37:30	0:0	4	;
+goto	38:8	38:16	4	end
+water	38:13	0:0	5	end
+water	39:4	0:0	4	}
+water	40:4	0:0	2	kernel
+op	40:11	0:0	2	=
+call	40:13	40:61	2	clCreateKernel
+arg	40:28	40:35	3	program
+water	40:28	0:0	4	program
+arg	40:37	40:52	3	"unsharp_bench"
+water	40:37	0:0	4	"unsharp_bench"
+arg	40:54	40:61	3	&status
+op	40:54	0:0	4	&
+water	40:55	0:0	4	status
+water	40:62	0:0	2	;
+if	41:4	45:4	2	(status != CL_SUCCESS)
+cond	41:8	41:18	3	status != CL_SUCCESS
+water	41:8	0:0	4	status
+op	41:15	0:0	4	!=
+water	41:18	0:0	4	CL_SUCCESS
+stmts	41:30	45:4	3	
+water	41:30	0:0	4	{
+call	42:8	42:79	4	av_log
+arg	42:15	42:19	5	NULL
+water	42:15	0:0	6	NULL
+arg	42:21	42:33	5	AV_LOG_ERROR
+water	42:21	0:0	6	AV_LOG_ERROR
+arg	42:35	42:79	5	"OpenCL unable to create benchmark kernel\n"
+water	42:35	0:0	6	"OpenCL unable to create benchmark kernel\n"
+water	42:80	0:0	4	;
+water	43:8	0:0	4	ret
+op	43:12	0:0	4	=
+water	43:14	0:0	4	AVERROR_EXTERNAL
+water	43:30	0:0	4	;
+goto	44:8	44:16	4	end
+water	44:13	0:0	5	end
+water	45:4	0:0	4	}
+call	46:4	47:43	2	OCLCHECK
+arg	46:13	46:33	3	clEnqueueWriteBuffer
+water	46:13	0:0	4	clEnqueueWriteBuffer
+arg	46:35	46:64	3	ext_opencl_env->command_queue
+water	46:35	0:0	4	ext_opencl_env
+op	46:49	0:0	4	->
+water	46:51	0:0	4	command_queue
+arg	46:66	46:74	3	cl_inbuf
+water	46:66	0:0	4	cl_inbuf
+arg	46:76	46:83	3	CL_TRUE
+water	46:76	0:0	4	CL_TRUE
+arg	46:85	46:86	3	0
+water	46:85	0:0	4	0
+arg	47:13	47:21	3	buf_size
+water	47:13	0:0	4	buf_size
+arg	47:23	47:28	3	inbuf
+water	47:23	0:0	4	inbuf
+arg	47:30	47:31	3	0
+water	47:30	0:0	4	0
+arg	47:33	47:37	3	NULL
+water	47:33	0:0	4	NULL
+arg	47:39	47:43	3	NULL
+water	47:39	0:0	4	NULL
+water	47:44	0:0	2	;
+call	48:4	49:43	2	OCLCHECK
+arg	48:13	48:33	3	clEnqueueWriteBuffer
+water	48:13	0:0	4	clEnqueueWriteBuffer
+arg	48:35	48:64	3	ext_opencl_env->command_queue
+water	48:35	0:0	4	ext_opencl_env
+op	48:49	0:0	4	->
+water	48:51	0:0	4	command_queue
+arg	48:66	48:73	3	cl_mask
+water	48:66	0:0	4	cl_mask
+arg	48:75	48:82	3	CL_TRUE
+water	48:75	0:0	4	CL_TRUE
+arg	48:84	48:85	3	0
+water	48:84	0:0	4	0
+arg	49:13	49:22	3	mask_size
+water	49:13	0:0	4	mask_size
+arg	49:24	49:28	3	mask
+water	49:24	0:0	4	mask
+arg	49:30	49:31	3	0
+water	49:30	0:0	4	0
+arg	49:33	49:37	3	NULL
+water	49:33	0:0	4	NULL
+arg	49:39	49:43	3	NULL
+water	49:39	0:0	4	NULL
+water	49:44	0:0	2	;
+call	50:4	50:69	2	OCLCHECK
+arg	50:13	50:27	3	clSetKernelArg
+water	50:13	0:0	4	clSetKernelArg
+arg	50:29	50:35	3	kernel
+water	50:29	0:0	4	kernel
+arg	50:37	50:42	3	arg++
+water	50:37	0:0	4	arg
+op	50:40	0:0	4	++
+arg	50:44	50:58	3	sizeof(cl_mem)
+op	50:44	0:0	4	sizeof
+water	50:50	0:0	4	(
+water	50:51	0:0	4	cl_mem
+water	50:57	0:0	4	)
+arg	50:60	50:69	3	&cl_inbuf
+op	50:60	0:0	4	&
+water	50:61	0:0	4	cl_inbuf
+water	50:70	0:0	2	;
+call	51:4	51:70	2	OCLCHECK
+arg	51:13	51:27	3	clSetKernelArg
+water	51:13	0:0	4	clSetKernelArg
+arg	51:29	51:35	3	kernel
+water	51:29	0:0	4	kernel
+arg	51:37	51:42	3	arg++
+water	51:37	0:0	4	arg
+op	51:40	0:0	4	++
+arg	51:44	51:58	3	sizeof(cl_mem)
+op	51:44	0:0	4	sizeof
+water	51:50	0:0	4	(
+water	51:51	0:0	4	cl_mem
+water	51:57	0:0	4	)
+arg	51:60	51:70	3	&cl_outbuf
+op	51:60	0:0	4	&
+water	51:61	0:0	4	cl_outbuf
+water	51:71	0:0	2	;
+call	52:4	52:68	2	OCLCHECK
+arg	52:13	52:27	3	clSetKernelArg
+water	52:13	0:0	4	clSetKernelArg
+arg	52:29	52:35	3	kernel
+water	52:29	0:0	4	kernel
+arg	52:37	52:42	3	arg++
+water	52:37	0:0	4	arg
+op	52:40	0:0	4	++
+arg	52:44	52:58	3	sizeof(cl_mem)
+op	52:44	0:0	4	sizeof
+water	52:50	0:0	4	(
+water	52:51	0:0	4	cl_mem
+water	52:57	0:0	4	)
+arg	52:60	52:68	3	&cl_mask
+op	52:60	0:0	4	&
+water	52:61	0:0	4	cl_mask
+water	52:69	0:0	2	;
+call	53:4	53:66	2	OCLCHECK
+arg	53:13	53:27	3	clSetKernelArg
+water	53:13	0:0	4	clSetKernelArg
+arg	53:29	53:35	3	kernel
+water	53:29	0:0	4	kernel
+arg	53:37	53:42	3	arg++
+water	53:37	0:0	4	arg
+op	53:40	0:0	4	++
+arg	53:44	53:58	3	sizeof(cl_int)
+op	53:44	0:0	4	sizeof
+water	53:50	0:0	4	(
+water	53:51	0:0	4	cl_int
+water	53:57	0:0	4	)
+arg	53:60	53:66	3	&width
+op	53:60	0:0	4	&
+water	53:61	0:0	4	width
+water	53:67	0:0	2	;
+call	54:4	54:67	2	OCLCHECK
+arg	54:13	54:27	3	clSetKernelArg
+water	54:13	0:0	4	clSetKernelArg
+arg	54:29	54:35	3	kernel
+water	54:29	0:0	4	kernel
+arg	54:37	54:42	3	arg++
+water	54:37	0:0	4	arg
+op	54:40	0:0	4	++
+arg	54:44	54:58	3	sizeof(cl_int)
+op	54:44	0:0	4	sizeof
+water	54:50	0:0	4	(
+water	54:51	0:0	4	cl_int
+water	54:57	0:0	4	)
+arg	54:60	54:67	3	&height
+op	54:60	0:0	4	&
+water	54:61	0:0	4	height
+water	54:68	0:0	2	;
+water	55:4	0:0	2	start
+op	55:10	0:0	2	=
+call	55:12	55:32	2	av_gettime_relative
+water	55:33	0:0	2	;
+for	56:4	58:72	2	(i = 0 ;i < OPENCL_NB_ITER;i ++)
+forinit	56:9	56:14	3	i = 0 ;
+water	56:9	0:0	4	i
+op	56:11	0:0	4	=
+water	56:13	0:0	4	0
+water	56:14	0:0	4	;
+cond	56:16	56:20	3	i < OPENCL_NB_ITER
+water	56:16	0:0	4	i
+op	56:18	0:0	4	<
+water	56:20	0:0	4	OPENCL_NB_ITER
+forexpr	56:36	56:37	3	i ++
+water	56:36	0:0	4	i
+op	56:37	0:0	4	++
+stmts	57:8	58:72	3	
+call	57:8	58:71	4	OCLCHECK
+arg	57:17	57:39	5	clEnqueueNDRangeKernel
+water	57:17	0:0	6	clEnqueueNDRangeKernel
+arg	57:41	57:70	5	ext_opencl_env->command_queue
+water	57:41	0:0	6	ext_opencl_env
+op	57:55	0:0	6	->
+water	57:57	0:0	6	command_queue
+arg	57:72	57:78	5	kernel
+water	57:72	0:0	6	kernel
+arg	57:80	57:81	5	2
+water	57:80	0:0	6	2
+arg	57:83	57:87	5	NULL
+water	57:83	0:0	6	NULL
+arg	58:17	58:36	5	global_work_size_2d
+water	58:17	0:0	6	global_work_size_2d
+arg	58:38	58:56	5	local_work_size_2d
+water	58:38	0:0	6	local_work_size_2d
+arg	58:58	58:59	5	0
+water	58:58	0:0	6	0
+arg	58:61	58:65	5	NULL
+water	58:61	0:0	6	NULL
+arg	58:67	58:71	5	NULL
+water	58:67	0:0	6	NULL
+water	58:72	0:0	4	;
+call	59:4	59:42	2	clFinish
+arg	59:13	59:42	3	ext_opencl_env->command_queue
+water	59:13	0:0	4	ext_opencl_env
+op	59:27	0:0	4	->
+water	59:29	0:0	4	command_queue
+water	59:43	0:0	2	;
+water	60:4	0:0	2	ret
+op	60:8	0:0	2	=
+water	60:10	0:0	2	(
+call	60:11	60:31	2	av_gettime_relative
+op	60:33	0:0	2	-
+water	60:35	0:0	2	start
+water	60:40	0:0	2	)
+op	60:41	0:0	2	/
+water	60:42	0:0	2	OPENCL_NB_ITER
+water	60:56	0:0	2	;
+label	61:0	61:3	2	end :
+if	62:4	63:31	2	(kernel)
+cond	62:8	62:8	3	kernel
+water	62:8	0:0	4	kernel
+stmts	63:8	63:31	3	
+call	63:8	63:30	4	clReleaseKernel
+arg	63:24	63:30	5	kernel
+water	63:24	0:0	6	kernel
+water	63:31	0:0	4	;
+if	64:4	65:33	2	(program)
+cond	64:8	64:8	3	program
+water	64:8	0:0	4	program
+stmts	65:8	65:33	3	
+call	65:8	65:32	4	clReleaseProgram
+arg	65:25	65:32	5	program
+water	65:25	0:0	6	program
+water	65:33	0:0	4	;
+if	66:4	67:36	2	(cl_inbuf)
+cond	66:8	66:8	3	cl_inbuf
+water	66:8	0:0	4	cl_inbuf
+stmts	67:8	67:36	3	
+call	67:8	67:35	4	clReleaseMemObject
+arg	67:27	67:35	5	cl_inbuf
+water	67:27	0:0	6	cl_inbuf
+water	67:36	0:0	4	;
+if	68:4	69:37	2	(cl_outbuf)
+cond	68:8	68:8	3	cl_outbuf
+water	68:8	0:0	4	cl_outbuf
+stmts	69:8	69:37	3	
+call	69:8	69:36	4	clReleaseMemObject
+arg	69:27	69:36	5	cl_outbuf
+water	69:27	0:0	6	cl_outbuf
+water	69:37	0:0	4	;
+if	70:4	71:35	2	(cl_mask)
+cond	70:8	70:8	3	cl_mask
+water	70:8	0:0	4	cl_mask
+stmts	71:8	71:35	3	
+call	71:8	71:34	4	clReleaseMemObject
+arg	71:27	71:34	5	cl_mask
+water	71:27	0:0	6	cl_mask
+water	71:35	0:0	4	;
+call	72:4	72:17	2	av_free
+arg	72:12	72:17	3	inbuf
+water	72:12	0:0	4	inbuf
+water	72:18	0:0	2	;
+call	73:4	73:16	2	av_free
+arg	73:12	73:16	3	mask
+water	73:12	0:0	4	mask
+water	73:17	0:0	2	;
+return	74:4	74:14	2	ret
+water	74:11	0:0	3	ret

@@ -1,0 +1,509 @@
+func	1:0	75:0	0	static int	decoder_decode_frame
+params	1:31	0:0	1	
+param	1:32	1:42	2	Decoder *	d
+param	1:44	1:58	2	AVFrame *	frame
+param	1:60	1:75	2	AVSubtitle *	sub
+stmnts	0:0	74:20	1	
+decl	2:4	2:21	2	int	got_frame
+op	2:18	0:0	2	=
+water	2:20	0:0	2	0
+do	3:4	73:4	2	(! got_frame && ! d -> finished)
+cond	73:13	73:31	3	! got_frame && ! d -> finished
+op	73:13	0:0	4	!
+water	73:14	0:0	4	got_frame
+op	73:24	0:0	4	&&
+op	73:27	0:0	4	!
+water	73:28	0:0	4	d
+op	73:29	0:0	4	->
+water	73:31	0:0	4	finished
+stmts	3:7	73:4	3	
+water	3:7	0:0	4	{
+decl	4:8	4:20	4	int	ret
+op	4:16	0:0	4	=
+op	4:18	0:0	4	-
+water	4:19	0:0	4	1
+if	5:8	6:21	4	(d -> queue -> abort_request)
+cond	5:12	5:22	5	d -> queue -> abort_request
+water	5:12	0:0	6	d
+op	5:13	0:0	6	->
+water	5:15	0:0	6	queue
+op	5:20	0:0	6	->
+water	5:22	0:0	6	abort_request
+stmts	6:12	6:21	5	
+return	6:12	6:21	6	-1
+op	6:19	0:0	7	-
+water	6:20	0:0	7	1
+if	7:8	24:8	4	(! d -> packet_pending || d -> queue -> serial != d -> pkt_serial)
+cond	7:12	7:57	5	! d -> packet_pending || d -> queue -> serial != d -> pkt_serial
+op	7:12	0:0	6	!
+water	7:13	0:0	6	d
+op	7:14	0:0	6	->
+water	7:16	0:0	6	packet_pending
+op	7:31	0:0	6	||
+water	7:34	0:0	6	d
+op	7:35	0:0	6	->
+water	7:37	0:0	6	queue
+op	7:42	0:0	6	->
+water	7:44	0:0	6	serial
+op	7:51	0:0	6	!=
+water	7:54	0:0	6	d
+op	7:55	0:0	6	->
+water	7:57	0:0	6	pkt_serial
+stmts	7:69	24:8	5	
+water	7:69	0:0	6	{
+decl	8:12	8:24	6	AVPacket	pkt
+do	9:12	20:12	6	(pkt . data == flush_pkt . data || d -> queue -> serial != d -> pkt_serial)
+cond	20:21	20:74	7	pkt . data == flush_pkt . data || d -> queue -> serial != d -> pkt_serial
+water	20:21	0:0	8	pkt
+op	20:24	0:0	8	.
+water	20:25	0:0	8	data
+op	20:30	0:0	8	==
+water	20:33	0:0	8	flush_pkt
+op	20:42	0:0	8	.
+water	20:43	0:0	8	data
+op	20:48	0:0	8	||
+water	20:51	0:0	8	d
+op	20:52	0:0	8	->
+water	20:54	0:0	8	queue
+op	20:59	0:0	8	->
+water	20:61	0:0	8	serial
+op	20:68	0:0	8	!=
+water	20:71	0:0	8	d
+op	20:72	0:0	8	->
+water	20:74	0:0	8	pkt_serial
+stmts	9:15	20:12	7	
+water	9:15	0:0	8	{
+if	10:16	11:55	8	(d -> queue -> nb_packets == 0)
+cond	10:20	10:44	9	d -> queue -> nb_packets == 0
+water	10:20	0:0	10	d
+op	10:21	0:0	10	->
+water	10:23	0:0	10	queue
+op	10:28	0:0	10	->
+water	10:30	0:0	10	nb_packets
+op	10:41	0:0	10	==
+water	10:44	0:0	10	0
+stmts	11:20	11:55	9	
+call	11:20	11:54	10	SDL_CondSignal
+arg	11:35	11:54	11	d->empty_queue_cond
+water	11:35	0:0	12	d
+op	11:36	0:0	12	->
+water	11:38	0:0	12	empty_queue_cond
+water	11:55	0:0	10	;
+if	12:16	13:29	8	(packet_queue_get (d -> queue ,& pkt ,1 ,& d -> pkt_serial ) < 0)
+cond	12:20	12:74	9	packet_queue_get (d -> queue ,& pkt ,1 ,& d -> pkt_serial ) < 0
+call	12:20	12:70	10	packet_queue_get
+arg	12:37	12:45	11	d->queue
+water	12:37	0:0	12	d
+op	12:38	0:0	12	->
+water	12:40	0:0	12	queue
+arg	12:47	12:51	11	&pkt
+op	12:47	0:0	12	&
+water	12:48	0:0	12	pkt
+arg	12:53	12:54	11	1
+water	12:53	0:0	12	1
+arg	12:56	12:70	11	&d->pkt_serial
+op	12:56	0:0	12	&
+water	12:57	0:0	12	d
+op	12:58	0:0	12	->
+water	12:60	0:0	12	pkt_serial
+op	12:72	0:0	10	<
+water	12:74	0:0	10	0
+stmts	13:20	13:29	9	
+return	13:20	13:29	10	-1
+op	13:27	0:0	11	-
+water	13:28	0:0	11	1
+if	14:16	19:16	8	(pkt . data == flush_pkt . data)
+cond	14:20	14:42	9	pkt . data == flush_pkt . data
+water	14:20	0:0	10	pkt
+op	14:23	0:0	10	.
+water	14:24	0:0	10	data
+op	14:29	0:0	10	==
+water	14:32	0:0	10	flush_pkt
+op	14:41	0:0	10	.
+water	14:42	0:0	10	data
+stmts	14:48	19:16	9	
+water	14:48	0:0	10	{
+call	15:20	15:50	10	avcodec_flush_buffers
+arg	15:42	15:50	11	d->avctx
+water	15:42	0:0	12	d
+op	15:43	0:0	12	->
+water	15:45	0:0	12	avctx
+water	15:51	0:0	10	;
+water	16:20	0:0	10	d
+op	16:21	0:0	10	->
+water	16:23	0:0	10	finished
+op	16:32	0:0	10	=
+water	16:34	0:0	10	0
+water	16:35	0:0	10	;
+water	17:20	0:0	10	d
+op	17:21	0:0	10	->
+water	17:23	0:0	10	next_pts
+op	17:32	0:0	10	=
+water	17:34	0:0	10	d
+op	17:35	0:0	10	->
+water	17:37	0:0	10	start_pts
+water	17:46	0:0	10	;
+water	18:20	0:0	10	d
+op	18:21	0:0	10	->
+water	18:23	0:0	10	next_pts_tb
+op	18:35	0:0	10	=
+water	18:37	0:0	10	d
+op	18:38	0:0	10	->
+water	18:40	0:0	10	start_pts_tb
+water	18:52	0:0	10	;
+water	19:16	0:0	10	}
+water	20:12	0:0	8	}
+water	20:85	0:0	6	;
+call	21:12	21:35	6	av_packet_unref
+arg	21:28	21:35	7	&d->pkt
+op	21:28	0:0	8	&
+water	21:29	0:0	8	d
+op	21:30	0:0	8	->
+water	21:32	0:0	8	pkt
+water	21:36	0:0	6	;
+water	22:12	0:0	6	d
+op	22:13	0:0	6	->
+water	22:15	0:0	6	pkt_temp
+op	22:24	0:0	6	=
+water	22:26	0:0	6	d
+op	22:27	0:0	6	->
+water	22:29	0:0	6	pkt
+op	22:33	0:0	6	=
+water	22:35	0:0	6	pkt
+water	22:38	0:0	6	;
+water	23:12	0:0	6	d
+op	23:13	0:0	6	->
+water	23:15	0:0	6	packet_pending
+op	23:30	0:0	6	=
+water	23:32	0:0	6	1
+water	23:33	0:0	6	;
+water	24:8	0:0	6	}
+switch	25:8	53:8	4	(d -> avctx -> codec_type)
+cond	25:16	25:26	5	d -> avctx -> codec_type
+water	25:16	0:0	6	d
+op	25:17	0:0	6	->
+water	25:19	0:0	6	avctx
+op	25:24	0:0	6	->
+water	25:26	0:0	6	codec_type
+stmts	25:38	53:8	5	
+water	25:38	0:0	6	{
+label	26:12	26:35	6	case AVMEDIA_TYPE_VIDEO :
+water	27:16	0:0	6	ret
+op	27:20	0:0	6	=
+call	27:22	27:85	6	avcodec_decode_video2
+arg	27:44	27:52	7	d->avctx
+water	27:44	0:0	8	d
+op	27:45	0:0	8	->
+water	27:47	0:0	8	avctx
+arg	27:54	27:59	7	frame
+water	27:54	0:0	8	frame
+arg	27:61	27:71	7	&got_frame
+op	27:61	0:0	8	&
+water	27:62	0:0	8	got_frame
+arg	27:73	27:85	7	&d->pkt_temp
+op	27:73	0:0	8	&
+water	27:74	0:0	8	d
+op	27:75	0:0	8	->
+water	27:77	0:0	8	pkt_temp
+water	27:86	0:0	6	;
+if	28:16	34:16	6	(got_frame)
+cond	28:20	28:20	7	got_frame
+water	28:20	0:0	8	got_frame
+stmts	28:31	34:16	7	
+water	28:31	0:0	8	{
+if	29:20	31:20	8	(decoder_reorder_pts == - 1)
+cond	29:24	29:48	9	decoder_reorder_pts == - 1
+water	29:24	0:0	10	decoder_reorder_pts
+op	29:44	0:0	10	==
+op	29:47	0:0	10	-
+water	29:48	0:0	10	1
+stmts	29:51	31:20	9	
+water	29:51	0:0	10	{
+water	30:24	0:0	10	frame
+op	30:29	0:0	10	->
+water	30:31	0:0	10	pts
+op	30:35	0:0	10	=
+call	30:37	30:77	10	av_frame_get_best_effort_timestamp
+arg	30:72	30:77	11	frame
+water	30:72	0:0	12	frame
+water	30:78	0:0	10	;
+water	31:20	0:0	10	}
+else	31:22	33:20	8
+stmts	31:27	33:20	9	
+if	31:27	33:20	10	(! decoder_reorder_pts)
+cond	31:31	31:32	11	! decoder_reorder_pts
+op	31:31	0:0	12	!
+water	31:32	0:0	12	decoder_reorder_pts
+stmts	31:53	33:20	11	
+water	31:53	0:0	12	{
+water	32:24	0:0	12	frame
+op	32:29	0:0	12	->
+water	32:31	0:0	12	pts
+op	32:35	0:0	12	=
+water	32:37	0:0	12	frame
+op	32:42	0:0	12	->
+water	32:44	0:0	12	pkt_dts
+water	32:51	0:0	12	;
+water	33:20	0:0	12	}
+water	34:16	0:0	8	}
+break	35:16	35:21	6	
+label	36:12	36:35	6	case AVMEDIA_TYPE_AUDIO :
+water	37:16	0:0	6	ret
+op	37:20	0:0	6	=
+call	37:22	37:85	6	avcodec_decode_audio4
+arg	37:44	37:52	7	d->avctx
+water	37:44	0:0	8	d
+op	37:45	0:0	8	->
+water	37:47	0:0	8	avctx
+arg	37:54	37:59	7	frame
+water	37:54	0:0	8	frame
+arg	37:61	37:71	7	&got_frame
+op	37:61	0:0	8	&
+water	37:62	0:0	8	got_frame
+arg	37:73	37:85	7	&d->pkt_temp
+op	37:73	0:0	8	&
+water	37:74	0:0	8	d
+op	37:75	0:0	8	->
+water	37:77	0:0	8	pkt_temp
+water	37:86	0:0	6	;
+if	38:16	48:16	6	(got_frame)
+cond	38:20	38:20	7	got_frame
+water	38:20	0:0	8	got_frame
+stmts	38:31	48:16	7	
+water	38:31	0:0	8	{
+decl	39:20	39:71	8	AVRational	tb
+op	39:34	0:0	8	=
+water	39:36	0:0	8	(
+water	39:37	0:0	8	AVRational
+water	39:47	0:0	8	)
+water	39:48	0:0	8	{
+water	39:49	0:0	8	1
+water	39:50	0:0	8	,
+water	39:52	0:0	8	frame
+op	39:57	0:0	8	->
+water	39:59	0:0	8	sample_rate
+water	39:70	0:0	8	}
+if	40:20	41:102	8	(frame -> pts != AV_NOPTS_VALUE)
+cond	40:24	40:38	9	frame -> pts != AV_NOPTS_VALUE
+water	40:24	0:0	10	frame
+op	40:29	0:0	10	->
+water	40:31	0:0	10	pts
+op	40:35	0:0	10	!=
+water	40:38	0:0	10	AV_NOPTS_VALUE
+stmts	41:24	41:102	9	
+water	41:24	0:0	10	frame
+op	41:29	0:0	10	->
+water	41:31	0:0	10	pts
+op	41:35	0:0	10	=
+call	41:37	41:101	10	av_rescale_q
+arg	41:50	41:60	11	frame->pts
+water	41:50	0:0	12	frame
+op	41:55	0:0	12	->
+water	41:57	0:0	12	pts
+arg	41:62	41:97	11	av_codec_get_pkt_timebase(d->avctx)
+call	41:62	41:96	12	av_codec_get_pkt_timebase
+arg	41:88	41:96	13	d->avctx
+water	41:88	0:0	14	d
+op	41:89	0:0	14	->
+water	41:91	0:0	14	avctx
+arg	41:99	41:101	11	tb
+water	41:99	0:0	12	tb
+water	41:102	0:0	10	;
+else	42:20	43:82	8
+stmts	42:25	43:82	9	
+if	42:25	43:82	10	(d -> next_pts != AV_NOPTS_VALUE)
+cond	42:29	42:44	11	d -> next_pts != AV_NOPTS_VALUE
+water	42:29	0:0	12	d
+op	42:30	0:0	12	->
+water	42:32	0:0	12	next_pts
+op	42:41	0:0	12	!=
+water	42:44	0:0	12	AV_NOPTS_VALUE
+stmts	43:24	43:82	11	
+water	43:24	0:0	12	frame
+op	43:29	0:0	12	->
+water	43:31	0:0	12	pts
+op	43:35	0:0	12	=
+call	43:37	43:81	12	av_rescale_q
+arg	43:50	43:61	13	d->next_pts
+water	43:50	0:0	14	d
+op	43:51	0:0	14	->
+water	43:53	0:0	14	next_pts
+arg	43:63	43:77	13	d->next_pts_tb
+water	43:63	0:0	14	d
+op	43:64	0:0	14	->
+water	43:66	0:0	14	next_pts_tb
+arg	43:79	43:81	13	tb
+water	43:79	0:0	14	tb
+water	43:82	0:0	12	;
+if	44:20	47:20	8	(frame -> pts != AV_NOPTS_VALUE)
+cond	44:24	44:38	9	frame -> pts != AV_NOPTS_VALUE
+water	44:24	0:0	10	frame
+op	44:29	0:0	10	->
+water	44:31	0:0	10	pts
+op	44:35	0:0	10	!=
+water	44:38	0:0	10	AV_NOPTS_VALUE
+stmts	44:54	47:20	9	
+water	44:54	0:0	10	{
+water	45:24	0:0	10	d
+op	45:25	0:0	10	->
+water	45:27	0:0	10	next_pts
+op	45:36	0:0	10	=
+water	45:38	0:0	10	frame
+op	45:43	0:0	10	->
+water	45:45	0:0	10	pts
+op	45:49	0:0	10	+
+water	45:51	0:0	10	frame
+op	45:56	0:0	10	->
+water	45:58	0:0	10	nb_samples
+water	45:68	0:0	10	;
+water	46:24	0:0	10	d
+op	46:25	0:0	10	->
+water	46:27	0:0	10	next_pts_tb
+op	46:39	0:0	10	=
+water	46:41	0:0	10	tb
+water	46:43	0:0	10	;
+water	47:20	0:0	10	}
+water	48:16	0:0	8	}
+break	49:16	49:21	6	
+label	50:12	50:38	6	case AVMEDIA_TYPE_SUBTITLE :
+water	51:16	0:0	6	ret
+op	51:20	0:0	6	=
+call	51:22	51:86	6	avcodec_decode_subtitle2
+arg	51:47	51:55	7	d->avctx
+water	51:47	0:0	8	d
+op	51:48	0:0	8	->
+water	51:50	0:0	8	avctx
+arg	51:57	51:60	7	sub
+water	51:57	0:0	8	sub
+arg	51:62	51:72	7	&got_frame
+op	51:62	0:0	8	&
+water	51:63	0:0	8	got_frame
+arg	51:74	51:86	7	&d->pkt_temp
+op	51:74	0:0	8	&
+water	51:75	0:0	8	d
+op	51:76	0:0	8	->
+water	51:78	0:0	8	pkt_temp
+water	51:87	0:0	6	;
+break	52:16	52:21	6	
+water	53:8	0:0	6	}
+if	54:8	56:8	4	(ret < 0)
+cond	54:12	54:18	5	ret < 0
+water	54:12	0:0	6	ret
+op	54:16	0:0	6	<
+water	54:18	0:0	6	0
+stmts	54:21	56:8	5	
+water	54:21	0:0	6	{
+water	55:12	0:0	6	d
+op	55:13	0:0	6	->
+water	55:15	0:0	6	packet_pending
+op	55:30	0:0	6	=
+water	55:32	0:0	6	0
+water	55:33	0:0	6	;
+water	56:8	0:0	6	}
+else	56:10	72:8	4
+stmts	56:15	72:8	5	
+water	56:15	0:0	6	{
+water	57:12	0:0	6	d
+op	57:13	0:0	6	->
+water	57:15	0:0	6	pkt_temp
+op	57:23	0:0	6	.
+water	57:24	0:0	6	dts
+op	57:28	0:0	6	=
+water	58:12	0:0	6	d
+op	58:13	0:0	6	->
+water	58:15	0:0	6	pkt_temp
+op	58:23	0:0	6	.
+water	58:24	0:0	6	pts
+op	58:28	0:0	6	=
+water	58:30	0:0	6	AV_NOPTS_VALUE
+water	58:44	0:0	6	;
+if	59:12	66:12	6	(d -> pkt_temp . data)
+cond	59:16	59:28	7	d -> pkt_temp . data
+water	59:16	0:0	8	d
+op	59:17	0:0	8	->
+water	59:19	0:0	8	pkt_temp
+op	59:27	0:0	8	.
+water	59:28	0:0	8	data
+stmts	59:34	66:12	7	
+water	59:34	0:0	8	{
+if	60:16	61:42	8	(d -> avctx -> codec_type != AVMEDIA_TYPE_AUDIO)
+cond	60:20	60:44	9	d -> avctx -> codec_type != AVMEDIA_TYPE_AUDIO
+water	60:20	0:0	10	d
+op	60:21	0:0	10	->
+water	60:23	0:0	10	avctx
+op	60:28	0:0	10	->
+water	60:30	0:0	10	codec_type
+op	60:41	0:0	10	!=
+water	60:44	0:0	10	AVMEDIA_TYPE_AUDIO
+stmts	61:20	61:42	9	
+water	61:20	0:0	10	ret
+op	61:24	0:0	10	=
+water	61:26	0:0	10	d
+op	61:27	0:0	10	->
+water	61:29	0:0	10	pkt_temp
+op	61:37	0:0	10	.
+water	61:38	0:0	10	size
+water	61:42	0:0	10	;
+water	62:16	0:0	8	d
+op	62:17	0:0	8	->
+water	62:19	0:0	8	pkt_temp
+op	62:27	0:0	8	.
+water	62:28	0:0	8	data
+op	62:33	0:0	8	+=
+water	62:36	0:0	8	ret
+water	62:39	0:0	8	;
+water	63:16	0:0	8	d
+op	63:17	0:0	8	->
+water	63:19	0:0	8	pkt_temp
+op	63:27	0:0	8	.
+water	63:28	0:0	8	size
+op	63:33	0:0	8	-=
+water	63:36	0:0	8	ret
+water	63:39	0:0	8	;
+if	64:16	65:41	8	(d -> pkt_temp . size <= 0)
+cond	64:20	64:40	9	d -> pkt_temp . size <= 0
+water	64:20	0:0	10	d
+op	64:21	0:0	10	->
+water	64:23	0:0	10	pkt_temp
+op	64:31	0:0	10	.
+water	64:32	0:0	10	size
+op	64:37	0:0	10	<=
+water	64:40	0:0	10	0
+stmts	65:20	65:41	9	
+water	65:20	0:0	10	d
+op	65:21	0:0	10	->
+water	65:23	0:0	10	packet_pending
+op	65:38	0:0	10	=
+water	65:40	0:0	10	0
+water	65:41	0:0	10	;
+water	66:12	0:0	8	}
+else	66:14	71:12	6
+stmts	66:19	71:12	7	
+water	66:19	0:0	8	{
+if	67:16	70:16	8	(! got_frame)
+cond	67:20	67:21	9	! got_frame
+op	67:20	0:0	10	!
+water	67:21	0:0	10	got_frame
+stmts	67:32	70:16	9	
+water	67:32	0:0	10	{
+water	68:20	0:0	10	d
+op	68:21	0:0	10	->
+water	68:23	0:0	10	packet_pending
+op	68:38	0:0	10	=
+water	68:40	0:0	10	0
+water	68:41	0:0	10	;
+water	69:20	0:0	10	d
+op	69:21	0:0	10	->
+water	69:23	0:0	10	finished
+op	69:32	0:0	10	=
+water	69:34	0:0	10	d
+op	69:35	0:0	10	->
+water	69:37	0:0	10	pkt_serial
+water	69:47	0:0	10	;
+water	70:16	0:0	10	}
+water	71:12	0:0	8	}
+water	72:8	0:0	6	}
+water	73:4	0:0	4	}
+water	73:40	0:0	2	;
+return	74:4	74:20	2	got_frame
+water	74:11	0:0	3	got_frame

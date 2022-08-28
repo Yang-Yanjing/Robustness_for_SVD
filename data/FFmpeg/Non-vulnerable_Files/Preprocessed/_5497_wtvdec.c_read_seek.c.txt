@@ -1,0 +1,247 @@
+func	1:0	36:0	0	static int	read_seek
+params	1:20	0:0	1	
+param	1:21	1:39	2	AVFormatContext *	s
+param	1:41	1:57	2	int	stream_index
+param	2:21	2:31	2	int64_t	ts
+param	2:33	2:42	2	int	flags
+stmnts	0:0	35:12	1	
+decl	4:4	4:34	2	WtvContext	*wtv
+op	4:20	0:0	2	=
+water	4:22	0:0	2	s
+op	4:23	0:0	2	->
+water	4:25	0:0	2	priv_data
+decl	5:4	5:29	2	AVIOContext	*pb
+op	5:20	0:0	2	=
+water	5:22	0:0	2	wtv
+op	5:25	0:0	2	->
+water	5:27	0:0	2	pb
+decl	6:4	6:32	2	AVStream	*st
+op	6:17	0:0	2	=
+water	6:19	0:0	2	s
+op	6:20	0:0	2	->
+water	6:22	0:0	2	streams
+op	6:29	0:0	2	[
+water	6:30	0:0	2	0
+op	6:31	0:0	2	]
+decl	7:4	7:23	2	int64_t	ts_relative
+decl	8:4	8:9	2	int	i
+if	9:4	10:30	2	(( flags & AVSEEK_FLAG_FRAME ) || ( flags & AVSEEK_FLAG_BYTE ))
+cond	9:8	9:64	3	( flags & AVSEEK_FLAG_FRAME ) || ( flags & AVSEEK_FLAG_BYTE )
+water	9:8	0:0	4	(
+water	9:9	0:0	4	flags
+op	9:15	0:0	4	&
+water	9:17	0:0	4	AVSEEK_FLAG_FRAME
+water	9:34	0:0	4	)
+op	9:36	0:0	4	||
+water	9:39	0:0	4	(
+water	9:40	0:0	4	flags
+op	9:46	0:0	4	&
+water	9:48	0:0	4	AVSEEK_FLAG_BYTE
+water	9:64	0:0	4	)
+stmts	10:8	10:30	3	
+return	10:8	10:30	4	AVERROR(ENOSYS)
+call	10:15	10:29	5	AVERROR
+arg	10:23	10:29	6	ENOSYS
+water	10:23	0:0	7	ENOSYS
+water	13:4	0:0	2	ts_relative
+op	13:16	0:0	2	=
+water	13:18	0:0	2	ts
+water	13:20	0:0	2	;
+if	14:4	15:33	2	(wtv -> epoch != AV_NOPTS_VALUE)
+cond	14:8	14:22	3	wtv -> epoch != AV_NOPTS_VALUE
+water	14:8	0:0	4	wtv
+op	14:11	0:0	4	->
+water	14:13	0:0	4	epoch
+op	14:19	0:0	4	!=
+water	14:22	0:0	4	AV_NOPTS_VALUE
+stmts	15:8	15:33	3	
+water	15:8	0:0	4	ts_relative
+op	15:20	0:0	4	-=
+water	15:23	0:0	4	wtv
+op	15:26	0:0	4	->
+water	15:28	0:0	4	epoch
+water	15:33	0:0	4	;
+water	16:4	0:0	2	i
+op	16:6	0:0	2	=
+call	16:8	16:95	2	ff_index_search_timestamp
+arg	16:34	16:52	3	wtv->index_entries
+water	16:34	0:0	4	wtv
+op	16:37	0:0	4	->
+water	16:39	0:0	4	index_entries
+arg	16:54	16:75	3	wtv->nb_index_entries
+water	16:54	0:0	4	wtv
+op	16:57	0:0	4	->
+water	16:59	0:0	4	nb_index_entries
+arg	16:77	16:88	3	ts_relative
+water	16:77	0:0	4	ts_relative
+arg	16:90	16:95	3	flags
+water	16:90	0:0	4	flags
+water	16:96	0:0	2	;
+if	17:4	28:4	2	(i < 0)
+cond	17:8	17:12	3	i < 0
+water	17:8	0:0	4	i
+op	17:10	0:0	4	<
+water	17:12	0:0	4	0
+stmts	17:15	28:4	3	
+water	17:15	0:0	4	{
+if	18:8	21:8	4	(wtv -> last_valid_pts == AV_NOPTS_VALUE || ts < wtv -> last_valid_pts)
+cond	18:12	18:63	5	wtv -> last_valid_pts == AV_NOPTS_VALUE || ts < wtv -> last_valid_pts
+water	18:12	0:0	6	wtv
+op	18:15	0:0	6	->
+water	18:17	0:0	6	last_valid_pts
+op	18:32	0:0	6	==
+water	18:35	0:0	6	AV_NOPTS_VALUE
+op	18:50	0:0	6	||
+water	18:53	0:0	6	ts
+op	18:56	0:0	6	<
+water	18:58	0:0	6	wtv
+op	18:61	0:0	6	->
+water	18:63	0:0	6	last_valid_pts
+stmts	18:79	21:8	5	
+water	18:79	0:0	6	{
+if	19:12	20:25	6	(avio_seek (pb ,0 ,SEEK_SET ) < 0)
+cond	19:16	19:45	7	avio_seek (pb ,0 ,SEEK_SET ) < 0
+call	19:16	19:41	8	avio_seek
+arg	19:26	19:28	9	pb
+water	19:26	0:0	10	pb
+arg	19:30	19:31	9	0
+water	19:30	0:0	10	0
+arg	19:33	19:41	9	SEEK_SET
+water	19:33	0:0	10	SEEK_SET
+op	19:43	0:0	8	<
+water	19:45	0:0	8	0
+stmts	20:16	20:25	7	
+return	20:16	20:25	8	-1
+op	20:23	0:0	9	-
+water	20:24	0:0	9	1
+water	21:8	0:0	6	}
+else	21:10	24:8	4
+stmts	21:15	24:8	5	
+if	21:15	24:8	6	(st -> duration != AV_NOPTS_VALUE && ts_relative > st -> duration && wtv -> nb_index_entries)
+cond	21:19	21:88	7	st -> duration != AV_NOPTS_VALUE && ts_relative > st -> duration && wtv -> nb_index_entries
+water	21:19	0:0	8	st
+op	21:21	0:0	8	->
+water	21:23	0:0	8	duration
+op	21:32	0:0	8	!=
+water	21:35	0:0	8	AV_NOPTS_VALUE
+op	21:50	0:0	8	&&
+water	21:53	0:0	8	ts_relative
+op	21:65	0:0	8	>
+water	21:67	0:0	8	st
+op	21:69	0:0	8	->
+water	21:71	0:0	8	duration
+op	21:80	0:0	8	&&
+water	21:83	0:0	8	wtv
+op	21:86	0:0	8	->
+water	21:88	0:0	8	nb_index_entries
+stmts	21:106	24:8	7	
+water	21:106	0:0	8	{
+if	22:12	23:25	8	(avio_seek (pb ,wtv -> index_entries [ wtv -> nb_index_entries - 1 ] . pos ,SEEK_SET ) < 0)
+cond	22:16	22:93	9	avio_seek (pb ,wtv -> index_entries [ wtv -> nb_index_entries - 1 ] . pos ,SEEK_SET ) < 0
+call	22:16	22:89	10	avio_seek
+arg	22:26	22:28	11	pb
+water	22:26	0:0	12	pb
+arg	22:30	22:79	11	wtv->index_entries[wtv->nb_index_entries-1].pos
+water	22:30	0:0	12	wtv
+op	22:33	0:0	12	->
+water	22:35	0:0	12	index_entries
+op	22:48	0:0	12	[
+water	22:49	0:0	12	wtv
+op	22:52	0:0	12	->
+water	22:54	0:0	12	nb_index_entries
+op	22:71	0:0	12	-
+water	22:73	0:0	12	1
+op	22:74	0:0	12	]
+op	22:75	0:0	12	.
+water	22:76	0:0	12	pos
+arg	22:81	22:89	11	SEEK_SET
+water	22:81	0:0	12	SEEK_SET
+op	22:91	0:0	10	<
+water	22:93	0:0	10	0
+stmts	23:16	23:25	9	
+return	23:16	23:25	10	-1
+op	23:23	0:0	11	-
+water	23:24	0:0	11	1
+water	24:8	0:0	8	}
+if	25:8	26:34	4	(parse_chunks (s ,SEEK_TO_PTS ,ts ,0 ) < 0)
+cond	25:12	25:50	5	parse_chunks (s ,SEEK_TO_PTS ,ts ,0 ) < 0
+call	25:12	25:46	6	parse_chunks
+arg	25:25	25:26	7	s
+water	25:25	0:0	8	s
+arg	25:28	25:39	7	SEEK_TO_PTS
+water	25:28	0:0	8	SEEK_TO_PTS
+arg	25:41	25:43	7	ts
+water	25:41	0:0	8	ts
+arg	25:45	25:46	7	0
+water	25:45	0:0	8	0
+op	25:48	0:0	6	<
+water	25:50	0:0	6	0
+stmts	26:12	26:34	5	
+return	26:12	26:34	6	AVERROR(ERANGE)
+call	26:19	26:33	7	AVERROR
+arg	26:27	26:33	8	ERANGE
+water	26:27	0:0	9	ERANGE
+return	27:8	27:16	4	0
+water	27:15	0:0	5	0
+water	28:4	0:0	4	}
+if	29:4	30:17	2	(avio_seek (pb ,wtv -> index_entries [ i ] . pos ,SEEK_SET ) < 0)
+cond	29:8	29:61	3	avio_seek (pb ,wtv -> index_entries [ i ] . pos ,SEEK_SET ) < 0
+call	29:8	29:57	4	avio_seek
+arg	29:18	29:20	5	pb
+water	29:18	0:0	6	pb
+arg	29:22	29:47	5	wtv->index_entries[i].pos
+water	29:22	0:0	6	wtv
+op	29:25	0:0	6	->
+water	29:27	0:0	6	index_entries
+op	29:40	0:0	6	[
+water	29:41	0:0	6	i
+op	29:42	0:0	6	]
+op	29:43	0:0	6	.
+water	29:44	0:0	6	pos
+arg	29:49	29:57	5	SEEK_SET
+water	29:49	0:0	6	SEEK_SET
+op	29:59	0:0	4	<
+water	29:61	0:0	4	0
+stmts	30:8	30:17	3	
+return	30:8	30:17	4	-1
+op	30:15	0:0	5	-
+water	30:16	0:0	5	1
+water	31:4	0:0	2	wtv
+op	31:7	0:0	2	->
+water	31:9	0:0	2	pts
+op	31:13	0:0	2	=
+water	31:15	0:0	2	wtv
+op	31:18	0:0	2	->
+water	31:20	0:0	2	index_entries
+op	31:33	0:0	2	[
+water	31:34	0:0	2	i
+op	31:35	0:0	2	]
+op	31:36	0:0	2	.
+water	31:37	0:0	2	timestamp
+water	31:46	0:0	2	;
+if	32:4	33:30	2	(wtv -> epoch != AV_NOPTS_VALUE)
+cond	32:8	32:22	3	wtv -> epoch != AV_NOPTS_VALUE
+water	32:8	0:0	4	wtv
+op	32:11	0:0	4	->
+water	32:13	0:0	4	epoch
+op	32:19	0:0	4	!=
+water	32:22	0:0	4	AV_NOPTS_VALUE
+stmts	33:8	33:30	3	
+water	33:8	0:0	4	wtv
+op	33:11	0:0	4	->
+water	33:13	0:0	4	pts
+op	33:17	0:0	4	+=
+water	33:20	0:0	4	wtv
+op	33:23	0:0	4	->
+water	33:25	0:0	4	epoch
+water	33:30	0:0	4	;
+water	34:4	0:0	2	wtv
+op	34:7	0:0	2	->
+water	34:9	0:0	2	last_valid_pts
+op	34:24	0:0	2	=
+water	34:26	0:0	2	wtv
+op	34:29	0:0	2	->
+water	34:31	0:0	2	pts
+water	34:34	0:0	2	;
+return	35:4	35:12	2	0
+water	35:11	0:0	3	0

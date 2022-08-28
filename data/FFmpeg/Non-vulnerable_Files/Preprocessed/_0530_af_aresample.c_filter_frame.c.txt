@@ -1,0 +1,284 @@
+func	1:0	42:0	0	static int	filter_frame
+params	1:23	0:0	1	
+param	1:24	1:44	2	AVFilterLink *	inlink
+param	1:46	1:67	2	AVFrame *	insamplesref
+stmnts	0:0	41:14	1	
+decl	3:4	3:51	2	AResampleContext	*aresample
+op	3:32	0:0	2	=
+water	3:34	0:0	2	inlink
+op	3:40	0:0	2	->
+water	3:42	0:0	2	dst
+op	3:45	0:0	2	->
+water	3:47	0:0	2	priv
+decl	4:4	4:46	2	const int	n_in
+op	4:20	0:0	2	=
+water	4:22	0:0	2	insamplesref
+op	4:34	0:0	2	->
+water	4:36	0:0	2	nb_samples
+decl	5:4	5:17	2	int64_t	delay
+decl	6:4	6:50	2	int	n_out
+op	6:20	0:0	2	=
+water	6:22	0:0	2	n_in
+op	6:27	0:0	2	*
+water	6:29	0:0	2	aresample
+op	6:38	0:0	2	->
+water	6:40	0:0	2	ratio
+op	6:46	0:0	2	+
+water	6:48	0:0	2	32
+water	7:4	0:0	2	AVFilterLink
+op	7:17	0:0	2	*
+water	7:18	0:0	2	const
+water	7:24	0:0	2	outlink
+op	7:32	0:0	2	=
+water	7:34	0:0	2	inlink
+op	7:40	0:0	2	->
+water	7:42	0:0	2	dst
+op	7:45	0:0	2	->
+water	7:47	0:0	2	outputs
+op	7:54	0:0	2	[
+water	7:55	0:0	2	0
+op	7:56	0:0	2	]
+water	7:57	0:0	2	;
+decl	8:4	8:26	2	AVFrame	*outsamplesref
+decl	9:4	9:11	2	int	ret
+water	10:4	0:0	2	delay
+op	10:10	0:0	2	=
+call	10:12	10:62	2	swr_get_delay
+arg	10:26	10:40	3	aresample->swr
+water	10:26	0:0	4	aresample
+op	10:35	0:0	4	->
+water	10:37	0:0	4	swr
+arg	10:42	10:62	3	outlink->sample_rate
+water	10:42	0:0	4	outlink
+op	10:49	0:0	4	->
+water	10:51	0:0	4	sample_rate
+water	10:63	0:0	2	;
+if	11:4	12:49	2	(delay > 0)
+cond	11:8	11:16	3	delay > 0
+water	11:8	0:0	4	delay
+op	11:14	0:0	4	>
+water	11:16	0:0	4	0
+stmts	12:8	12:49	3	
+water	12:8	0:0	4	n_out
+op	12:14	0:0	4	+=
+call	12:17	12:48	4	FFMIN
+arg	12:23	12:28	5	delay
+water	12:23	0:0	6	delay
+arg	12:30	12:48	5	FFMAX(4096,n_out)
+call	12:30	12:47	6	FFMAX
+arg	12:36	12:40	7	4096
+water	12:36	0:0	8	4096
+arg	12:42	12:47	7	n_out
+water	12:42	0:0	8	n_out
+water	12:49	0:0	4	;
+water	13:4	0:0	2	outsamplesref
+op	13:18	0:0	2	=
+call	13:20	13:54	2	ff_get_audio_buffer
+arg	13:40	13:47	3	outlink
+water	13:40	0:0	4	outlink
+arg	13:49	13:54	3	n_out
+water	13:49	0:0	4	n_out
+water	13:55	0:0	2	;
+if	14:4	15:30	2	(! outsamplesref)
+cond	14:7	14:8	3	! outsamplesref
+op	14:7	0:0	4	!
+water	14:8	0:0	4	outsamplesref
+stmts	15:8	15:30	3	
+return	15:8	15:30	4	AVERROR(ENOMEM)
+call	15:15	15:29	5	AVERROR
+arg	15:23	15:29	6	ENOMEM
+water	15:23	0:0	7	ENOMEM
+call	16:4	16:51	2	av_frame_copy_props
+arg	16:24	16:37	3	outsamplesref
+water	16:24	0:0	4	outsamplesref
+arg	16:39	16:51	3	insamplesref
+water	16:39	0:0	4	insamplesref
+water	16:52	0:0	2	;
+water	17:4	0:0	2	outsamplesref
+op	17:17	0:0	2	->
+water	17:19	0:0	2	format
+op	17:41	0:0	2	=
+water	17:43	0:0	2	outlink
+op	17:50	0:0	2	->
+water	17:52	0:0	2	format
+water	17:58	0:0	2	;
+call	18:4	18:58	2	av_frame_set_channels
+arg	18:26	18:39	3	outsamplesref
+water	18:26	0:0	4	outsamplesref
+arg	18:41	18:58	3	outlink->channels
+water	18:41	0:0	4	outlink
+op	18:48	0:0	4	->
+water	18:50	0:0	4	channels
+water	18:59	0:0	2	;
+water	19:4	0:0	2	outsamplesref
+op	19:17	0:0	2	->
+water	19:19	0:0	2	channel_layout
+op	19:41	0:0	2	=
+water	19:43	0:0	2	outlink
+op	19:50	0:0	2	->
+water	19:52	0:0	2	channel_layout
+water	19:66	0:0	2	;
+water	20:4	0:0	2	outsamplesref
+op	20:17	0:0	2	->
+water	20:19	0:0	2	sample_rate
+op	20:41	0:0	2	=
+water	20:43	0:0	2	outlink
+op	20:50	0:0	2	->
+water	20:52	0:0	2	sample_rate
+water	20:63	0:0	2	;
+if	21:4	26:4	2	(insamplesref -> pts != AV_NOPTS_VALUE)
+cond	21:7	21:28	3	insamplesref -> pts != AV_NOPTS_VALUE
+water	21:7	0:0	4	insamplesref
+op	21:19	0:0	4	->
+water	21:21	0:0	4	pts
+op	21:25	0:0	4	!=
+water	21:28	0:0	4	AV_NOPTS_VALUE
+stmts	21:44	26:4	3	
+water	21:44	0:0	4	{
+decl	22:8	22:153	4	int64_t	inpts
+op	22:22	0:0	4	=
+call	22:24	22:152	5	av_rescale
+arg	22:35	22:52	6	insamplesref->pts
+water	22:35	0:0	7	insamplesref
+op	22:47	0:0	7	->
+water	22:49	0:0	7	pts
+arg	22:54	22:129	6	inlink->time_base.num*(int64_t)outlink->sample_rate*inlink->sample_rate
+water	22:54	0:0	7	inlink
+op	22:60	0:0	7	->
+water	22:62	0:0	7	time_base
+op	22:71	0:0	7	.
+water	22:72	0:0	7	num
+op	22:76	0:0	7	*
+water	22:78	0:0	7	(
+water	22:79	0:0	7	int64_t
+water	22:86	0:0	7	)
+water	22:87	0:0	7	outlink
+op	22:94	0:0	7	->
+water	22:96	0:0	7	sample_rate
+op	22:108	0:0	7	*
+water	22:110	0:0	7	inlink
+op	22:116	0:0	7	->
+water	22:118	0:0	7	sample_rate
+arg	22:131	22:152	6	inlink->time_base.den
+water	22:131	0:0	7	inlink
+op	22:137	0:0	7	->
+water	22:139	0:0	7	time_base
+op	22:148	0:0	7	.
+water	22:149	0:0	7	den
+decl	23:8	23:59	4	int64_t	outpts
+op	23:22	0:0	4	=
+call	23:24	23:58	5	swr_next_pts
+arg	23:37	23:51	6	aresample->swr
+water	23:37	0:0	7	aresample
+op	23:46	0:0	7	->
+water	23:48	0:0	7	swr
+arg	23:53	23:58	6	inpts
+water	23:53	0:0	7	inpts
+water	24:8	0:0	4	aresample
+op	24:17	0:0	4	->
+water	24:19	0:0	4	next_pts
+op	24:28	0:0	4	=
+water	25:8	0:0	4	outsamplesref
+op	25:21	0:0	4	->
+water	25:23	0:0	4	pts
+op	25:28	0:0	4	=
+call	25:30	25:69	4	ROUNDED_DIV
+arg	25:42	25:48	5	outpts
+water	25:42	0:0	6	outpts
+arg	25:50	25:69	5	inlink->sample_rate
+water	25:50	0:0	6	inlink
+op	25:56	0:0	6	->
+water	25:58	0:0	6	sample_rate
+water	25:70	0:0	4	;
+water	26:4	0:0	4	}
+else	26:6	28:4	2
+stmts	26:11	28:4	3	
+water	26:11	0:0	4	{
+water	27:8	0:0	4	outsamplesref
+op	27:21	0:0	4	->
+water	27:23	0:0	4	pts
+op	27:28	0:0	4	=
+water	27:30	0:0	4	AV_NOPTS_VALUE
+water	27:44	0:0	4	;
+water	28:4	0:0	4	}
+water	29:4	0:0	2	n_out
+op	29:10	0:0	2	=
+call	29:12	30:74	2	swr_convert
+arg	29:24	29:38	3	aresample->swr
+water	29:24	0:0	4	aresample
+op	29:33	0:0	4	->
+water	29:35	0:0	4	swr
+arg	29:40	29:68	3	outsamplesref->extended_data
+water	29:40	0:0	4	outsamplesref
+op	29:53	0:0	4	->
+water	29:55	0:0	4	extended_data
+arg	29:70	29:75	3	n_out
+water	29:70	0:0	4	n_out
+arg	30:33	30:68	3	(void*)insamplesref->extended_data
+water	30:33	0:0	4	(
+water	30:34	0:0	4	void
+op	30:39	0:0	4	*
+water	30:40	0:0	4	)
+water	30:41	0:0	4	insamplesref
+op	30:53	0:0	4	->
+water	30:55	0:0	4	extended_data
+arg	30:70	30:74	3	n_in
+water	30:70	0:0	4	n_in
+water	30:75	0:0	2	;
+if	31:4	35:4	2	(n_out <= 0)
+cond	31:8	31:17	3	n_out <= 0
+water	31:8	0:0	4	n_out
+op	31:14	0:0	4	<=
+water	31:17	0:0	4	0
+stmts	31:20	35:4	3	
+water	31:20	0:0	4	{
+call	32:8	32:36	4	av_frame_free
+arg	32:22	32:36	5	&outsamplesref
+op	32:22	0:0	6	&
+water	32:23	0:0	6	outsamplesref
+water	32:37	0:0	4	;
+call	33:8	33:35	4	av_frame_free
+arg	33:22	33:35	5	&insamplesref
+op	33:22	0:0	6	&
+water	33:23	0:0	6	insamplesref
+water	33:36	0:0	4	;
+return	34:8	34:16	4	0
+water	34:15	0:0	5	0
+water	35:4	0:0	4	}
+water	36:4	0:0	2	aresample
+op	36:13	0:0	2	->
+water	36:15	0:0	2	more_data
+op	36:25	0:0	2	=
+water	36:27	0:0	2	outsamplesref
+op	36:40	0:0	2	->
+water	36:42	0:0	2	nb_samples
+op	36:53	0:0	2	==
+water	36:56	0:0	2	n_out
+water	36:61	0:0	2	;
+water	37:4	0:0	2	outsamplesref
+op	37:17	0:0	2	->
+water	37:19	0:0	2	nb_samples
+op	37:31	0:0	2	=
+water	37:33	0:0	2	n_out
+water	37:38	0:0	2	;
+water	38:4	0:0	2	ret
+op	38:8	0:0	2	=
+call	38:10	38:48	2	ff_filter_frame
+arg	38:26	38:33	3	outlink
+water	38:26	0:0	4	outlink
+arg	38:35	38:48	3	outsamplesref
+water	38:35	0:0	4	outsamplesref
+water	38:49	0:0	2	;
+water	39:4	0:0	2	aresample
+op	39:13	0:0	2	->
+water	39:15	0:0	2	req_fullfilled
+op	39:29	0:0	2	=
+water	39:31	0:0	2	1
+water	39:32	0:0	2	;
+call	40:4	40:31	2	av_frame_free
+arg	40:18	40:31	3	&insamplesref
+op	40:18	0:0	4	&
+water	40:19	0:0	4	insamplesref
+water	40:32	0:0	2	;
+return	41:4	41:14	2	ret
+water	41:11	0:0	3	ret

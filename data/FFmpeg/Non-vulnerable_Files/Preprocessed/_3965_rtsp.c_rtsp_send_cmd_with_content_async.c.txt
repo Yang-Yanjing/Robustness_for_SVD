@@ -1,0 +1,305 @@
+func	1:0	49:0	0	static int	rtsp_send_cmd_with_content_async
+params	1:43	0:0	1	
+param	1:44	1:62	2	AVFormatContext *	s
+param	2:44	2:62	2	const char *	method
+param	2:64	2:79	2	const char *	url
+param	3:44	3:63	2	const char *	headers
+param	4:44	4:77	2	const unsigned char *	send_content
+param	5:44	5:67	2	int	send_content_length
+stmnts	0:0	48:12	1	
+decl	7:4	7:32	2	RTSPState	*rt
+op	7:18	0:0	2	=
+water	7:20	0:0	2	s
+op	7:21	0:0	2	->
+water	7:23	0:0	2	priv_data
+decl	8:4	8:28	2	char	buf[4096]
+water	8:18	0:0	2	,
+decl	8:4	8:28	2	char	*out_buf
+decl	9:4	9:47	2	char	base64buf[AV_BASE64_SIZE(sizeof(buf))]
+water	11:4	0:0	2	out_buf
+op	11:12	0:0	2	=
+water	11:14	0:0	2	buf
+water	11:17	0:0	2	;
+water	12:4	0:0	2	rt
+op	12:6	0:0	2	->
+water	12:8	0:0	2	seq
+op	12:11	0:0	2	++
+water	12:13	0:0	2	;
+call	13:4	13:64	2	snprintf
+arg	13:13	13:16	3	buf
+water	13:13	0:0	4	buf
+arg	13:18	13:29	3	sizeof(buf)
+op	13:18	0:0	4	sizeof
+water	13:24	0:0	4	(
+water	13:25	0:0	4	buf
+water	13:28	0:0	4	)
+arg	13:31	13:51	3	"%s %s RTSP/1.0\r\n"
+water	13:31	0:0	4	"%s %s RTSP/1.0\r\n"
+arg	13:53	13:59	3	method
+water	13:53	0:0	4	method
+arg	13:61	13:64	3	url
+water	13:61	0:0	4	url
+water	13:65	0:0	2	;
+if	14:4	15:45	2	(headers)
+cond	14:8	14:8	3	headers
+water	14:8	0:0	4	headers
+stmts	15:8	15:45	3	
+call	15:8	15:44	4	av_strlcat
+arg	15:19	15:22	5	buf
+water	15:19	0:0	6	buf
+arg	15:24	15:31	5	headers
+water	15:24	0:0	6	headers
+arg	15:33	15:44	5	sizeof(buf)
+op	15:33	0:0	6	sizeof
+water	15:39	0:0	6	(
+water	15:40	0:0	6	buf
+water	15:43	0:0	6	)
+water	15:45	0:0	4	;
+call	16:4	16:57	2	av_strlcatf
+arg	16:16	16:19	3	buf
+water	16:16	0:0	4	buf
+arg	16:21	16:32	3	sizeof(buf)
+op	16:21	0:0	4	sizeof
+water	16:27	0:0	4	(
+water	16:28	0:0	4	buf
+water	16:31	0:0	4	)
+arg	16:34	16:48	3	"CSeq: %d\r\n"
+water	16:34	0:0	4	"CSeq: %d\r\n"
+arg	16:50	16:57	3	rt->seq
+water	16:50	0:0	4	rt
+op	16:52	0:0	4	->
+water	16:54	0:0	4	seq
+water	16:58	0:0	2	;
+call	17:4	17:71	2	av_strlcatf
+arg	17:16	17:19	3	buf
+water	17:16	0:0	4	buf
+arg	17:21	17:32	3	sizeof(buf)
+op	17:21	0:0	4	sizeof
+water	17:27	0:0	4	(
+water	17:28	0:0	4	buf
+water	17:31	0:0	4	)
+arg	17:34	17:54	3	"User-Agent: %s\r\n"
+water	17:34	0:0	4	"User-Agent: %s\r\n"
+arg	17:57	17:71	3	rt->user_agent
+water	17:57	0:0	4	rt
+op	17:59	0:0	4	->
+water	17:61	0:0	4	user_agent
+water	17:72	0:0	2	;
+if	18:4	21:4	2	(rt -> session_id [ 0 ] != '\0' && ( ! headers || !strstr (headers ,"\nIf-Match:" ) ))
+cond	18:8	19:39	3	rt -> session_id [ 0 ] != '\0' && ( ! headers || !strstr (headers ,"\nIf-Match:" ) )
+water	18:8	0:0	4	rt
+op	18:10	0:0	4	->
+water	18:12	0:0	4	session_id
+op	18:22	0:0	4	[
+water	18:23	0:0	4	0
+op	18:24	0:0	4	]
+op	18:26	0:0	4	!=
+water	18:29	0:0	4	'\0'
+op	18:34	0:0	4	&&
+water	18:37	0:0	4	(
+op	18:38	0:0	4	!
+water	18:39	0:0	4	headers
+op	18:47	0:0	4	||
+op	19:8	0:0	4	!
+call	19:9	19:38	4	strstr
+arg	19:16	19:23	5	headers
+water	19:16	0:0	6	headers
+arg	19:25	19:38	5	"\nIf-Match:"
+water	19:25	0:0	6	"\nIf-Match:"
+water	19:39	0:0	4	)
+stmts	19:42	21:4	3	
+water	19:42	0:0	4	{
+call	20:8	20:71	4	av_strlcatf
+arg	20:20	20:23	5	buf
+water	20:20	0:0	6	buf
+arg	20:25	20:36	5	sizeof(buf)
+op	20:25	0:0	6	sizeof
+water	20:31	0:0	6	(
+water	20:32	0:0	6	buf
+water	20:35	0:0	6	)
+arg	20:38	20:55	5	"Session: %s\r\n"
+water	20:38	0:0	6	"Session: %s\r\n"
+arg	20:57	20:71	5	rt->session_id
+water	20:57	0:0	6	rt
+op	20:59	0:0	6	->
+water	20:61	0:0	6	session_id
+water	20:72	0:0	4	;
+water	21:4	0:0	4	}
+if	22:4	28:4	2	(rt -> auth [ 0 ])
+cond	22:8	22:18	3	rt -> auth [ 0 ]
+water	22:8	0:0	4	rt
+op	22:10	0:0	4	->
+water	22:12	0:0	4	auth
+op	22:16	0:0	4	[
+water	22:17	0:0	4	0
+op	22:18	0:0	4	]
+stmts	22:21	28:4	3	
+water	22:21	0:0	4	{
+decl	23:8	24:71	4	char	*str
+op	23:18	0:0	4	=
+call	23:20	24:70	5	ff_http_auth_create_response
+arg	23:49	23:64	6	&rt->auth_state
+op	23:49	0:0	7	&
+water	23:50	0:0	7	rt
+op	23:52	0:0	7	->
+water	23:54	0:0	7	auth_state
+arg	24:49	24:57	6	rt->auth
+water	24:49	0:0	7	rt
+op	24:51	0:0	7	->
+water	24:53	0:0	7	auth
+arg	24:59	24:62	6	url
+water	24:59	0:0	7	url
+arg	24:64	24:70	6	method
+water	24:64	0:0	7	method
+if	25:8	26:45	4	(str)
+cond	25:12	25:12	5	str
+water	25:12	0:0	6	str
+stmts	26:12	26:45	5	
+call	26:12	26:44	6	av_strlcat
+arg	26:23	26:26	7	buf
+water	26:23	0:0	8	buf
+arg	26:28	26:31	7	str
+water	26:28	0:0	8	str
+arg	26:33	26:44	7	sizeof(buf)
+op	26:33	0:0	8	sizeof
+water	26:39	0:0	8	(
+water	26:40	0:0	8	buf
+water	26:43	0:0	8	)
+water	26:45	0:0	6	;
+call	27:8	27:19	4	av_free
+arg	27:16	27:19	5	str
+water	27:16	0:0	6	str
+water	27:20	0:0	4	;
+water	28:4	0:0	4	}
+if	29:4	30:84	2	(send_content_length > 0 && send_content)
+cond	29:8	29:35	3	send_content_length > 0 && send_content
+water	29:8	0:0	4	send_content_length
+op	29:28	0:0	4	>
+water	29:30	0:0	4	0
+op	29:32	0:0	4	&&
+water	29:35	0:0	4	send_content
+stmts	30:8	30:84	3	
+call	30:8	30:83	4	av_strlcatf
+arg	30:20	30:23	5	buf
+water	30:20	0:0	6	buf
+arg	30:25	30:36	5	sizeof(buf)
+op	30:25	0:0	6	sizeof
+water	30:31	0:0	6	(
+water	30:32	0:0	6	buf
+water	30:35	0:0	6	)
+arg	30:38	30:62	5	"Content-Length: %d\r\n"
+water	30:38	0:0	6	"Content-Length: %d\r\n"
+arg	30:64	30:83	5	send_content_length
+water	30:64	0:0	6	send_content_length
+water	30:84	0:0	4	;
+call	31:4	31:39	2	av_strlcat
+arg	31:15	31:18	3	buf
+water	31:15	0:0	4	buf
+arg	31:20	31:26	3	"\r\n"
+water	31:20	0:0	4	"\r\n"
+arg	31:28	31:39	3	sizeof(buf)
+op	31:28	0:0	4	sizeof
+water	31:34	0:0	4	(
+water	31:35	0:0	4	buf
+water	31:38	0:0	4	)
+water	31:40	0:0	2	;
+if	33:4	36:4	2	(rt -> control_transport == RTSP_MODE_TUNNEL)
+cond	33:8	33:33	3	rt -> control_transport == RTSP_MODE_TUNNEL
+water	33:8	0:0	4	rt
+op	33:10	0:0	4	->
+water	33:12	0:0	4	control_transport
+op	33:30	0:0	4	==
+water	33:33	0:0	4	RTSP_MODE_TUNNEL
+stmts	33:51	36:4	3	
+water	33:51	0:0	4	{
+call	34:8	34:71	4	av_base64_encode
+arg	34:25	34:34	5	base64buf
+water	34:25	0:0	6	base64buf
+arg	34:36	34:53	5	sizeof(base64buf)
+op	34:36	0:0	6	sizeof
+water	34:42	0:0	6	(
+water	34:43	0:0	6	base64buf
+water	34:52	0:0	6	)
+arg	34:55	34:58	5	buf
+water	34:55	0:0	6	buf
+arg	34:60	34:71	5	strlen(buf)
+call	34:60	34:70	6	strlen
+arg	34:67	34:70	7	buf
+water	34:67	0:0	8	buf
+water	34:72	0:0	4	;
+water	35:8	0:0	4	out_buf
+op	35:16	0:0	4	=
+water	35:18	0:0	4	base64buf
+water	35:27	0:0	4	;
+water	36:4	0:0	4	}
+call	37:4	37:51	2	av_log
+arg	37:11	37:12	3	s
+water	37:11	0:0	4	s
+arg	37:14	37:26	3	AV_LOG_TRACE
+water	37:14	0:0	4	AV_LOG_TRACE
+arg	37:28	37:46	3	"Sending:\n%s--\n"
+water	37:28	0:0	4	"Sending:\n%s--\n"
+arg	37:48	37:51	3	buf
+water	37:48	0:0	4	buf
+water	37:52	0:0	2	;
+call	38:4	38:57	2	ffurl_write
+arg	38:16	38:31	3	rt->rtsp_hd_out
+water	38:16	0:0	4	rt
+op	38:18	0:0	4	->
+water	38:20	0:0	4	rtsp_hd_out
+arg	38:33	38:40	3	out_buf
+water	38:33	0:0	4	out_buf
+arg	38:42	38:57	3	strlen(out_buf)
+call	38:42	38:56	4	strlen
+arg	38:49	38:56	5	out_buf
+water	38:49	0:0	6	out_buf
+water	38:58	0:0	2	;
+if	39:4	46:4	2	(send_content_length > 0 && send_content)
+cond	39:8	39:35	3	send_content_length > 0 && send_content
+water	39:8	0:0	4	send_content_length
+op	39:28	0:0	4	>
+water	39:30	0:0	4	0
+op	39:32	0:0	4	&&
+water	39:35	0:0	4	send_content
+stmts	39:49	46:4	3	
+water	39:49	0:0	4	{
+if	40:8	44:8	4	(rt -> control_transport == RTSP_MODE_TUNNEL)
+cond	40:12	40:37	5	rt -> control_transport == RTSP_MODE_TUNNEL
+water	40:12	0:0	6	rt
+op	40:14	0:0	6	->
+water	40:16	0:0	6	control_transport
+op	40:34	0:0	6	==
+water	40:37	0:0	6	RTSP_MODE_TUNNEL
+stmts	40:55	44:8	5	
+water	40:55	0:0	6	{
+call	41:12	42:71	6	av_log
+arg	41:19	41:20	7	s
+water	41:19	0:0	8	s
+arg	41:22	41:34	7	AV_LOG_ERROR
+water	41:22	0:0	8	AV_LOG_ERROR
+arg	41:36	42:71	7	"tunneling of RTSP requests ""with content data not supported\n"
+water	41:36	0:0	8	"tunneling of RTSP requests "
+water	42:36	0:0	8	"with content data not supported\n"
+water	42:72	0:0	6	;
+return	43:12	43:39	6	AVERROR_PATCHWELCOME
+water	43:19	0:0	7	AVERROR_PATCHWELCOME
+water	44:8	0:0	6	}
+call	45:8	45:70	4	ffurl_write
+arg	45:20	45:35	5	rt->rtsp_hd_out
+water	45:20	0:0	6	rt
+op	45:22	0:0	6	->
+water	45:24	0:0	6	rtsp_hd_out
+arg	45:37	45:49	5	send_content
+water	45:37	0:0	6	send_content
+arg	45:51	45:70	5	send_content_length
+water	45:51	0:0	6	send_content_length
+water	45:71	0:0	4	;
+water	46:4	0:0	4	}
+water	47:4	0:0	2	rt
+op	47:6	0:0	2	->
+water	47:8	0:0	2	last_cmd_time
+op	47:22	0:0	2	=
+call	47:24	47:44	2	av_gettime_relative
+water	47:45	0:0	2	;
+return	48:4	48:12	2	0
+water	48:11	0:0	3	0

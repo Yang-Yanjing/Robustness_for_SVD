@@ -1,0 +1,327 @@
+func	1:0	54:0	0	static int	filter_frame
+params	1:23	0:0	1	
+param	1:24	1:44	2	AVFilterLink *	inlink
+param	1:46	1:58	2	AVFrame *	ref
+stmnts	0:0	53:26	1	
+decl	3:4	3:38	2	AVFilterContext	*ctx
+op	3:25	0:0	2	=
+water	3:27	0:0	2	inlink
+op	3:33	0:0	2	->
+water	3:35	0:0	2	dst
+decl	4:4	4:39	2	SendCmdContext	*sendcmd
+op	4:28	0:0	2	=
+water	4:30	0:0	2	ctx
+op	4:33	0:0	2	->
+water	4:35	0:0	2	priv
+decl	5:4	5:14	2	int64_t	ts
+decl	6:4	6:17	2	int	i
+water	6:9	0:0	2	,
+decl	6:4	6:17	2	int	j
+water	6:12	0:0	2	,
+decl	6:4	6:17	2	int	ret
+if	7:4	8:16	2	(ref -> pts == AV_NOPTS_VALUE)
+cond	7:8	7:20	3	ref -> pts == AV_NOPTS_VALUE
+water	7:8	0:0	4	ref
+op	7:11	0:0	4	->
+water	7:13	0:0	4	pts
+op	7:17	0:0	4	==
+water	7:20	0:0	4	AV_NOPTS_VALUE
+stmts	8:8	8:16	3	
+goto	8:8	8:16	4	end
+water	8:13	0:0	5	end
+water	9:4	0:0	2	ts
+op	9:7	0:0	2	=
+call	9:9	9:65	2	av_rescale_q
+arg	9:22	9:30	3	ref->pts
+water	9:22	0:0	4	ref
+op	9:25	0:0	4	->
+water	9:27	0:0	4	pts
+arg	9:32	9:49	3	inlink->time_base
+water	9:32	0:0	4	inlink
+op	9:38	0:0	4	->
+water	9:40	0:0	4	time_base
+arg	9:51	9:65	3	AV_TIME_BASE_Q
+water	9:51	0:0	4	AV_TIME_BASE_Q
+water	9:66	0:0	2	;
+for	11:4	46:4	2	(i = 0 ;i < sendcmd -> nb_intervals;i ++)
+forinit	11:9	11:14	3	i = 0 ;
+water	11:9	0:0	4	i
+op	11:11	0:0	4	=
+water	11:13	0:0	4	0
+water	11:14	0:0	4	;
+cond	11:16	11:29	3	i < sendcmd -> nb_intervals
+water	11:16	0:0	4	i
+op	11:18	0:0	4	<
+water	11:20	0:0	4	sendcmd
+op	11:27	0:0	4	->
+water	11:29	0:0	4	nb_intervals
+forexpr	11:43	11:44	3	i ++
+water	11:43	0:0	4	i
+op	11:44	0:0	4	++
+stmts	11:48	46:4	3	
+water	11:48	0:0	4	{
+decl	12:8	12:51	4	Interval	*interval
+op	12:27	0:0	4	=
+op	12:29	0:0	4	&
+water	12:30	0:0	4	sendcmd
+op	12:37	0:0	4	->
+water	12:39	0:0	4	intervals
+op	12:48	0:0	4	[
+water	12:49	0:0	4	i
+op	12:50	0:0	4	]
+decl	13:8	13:21	4	int	flags
+op	13:18	0:0	4	=
+water	13:20	0:0	4	0
+if	14:8	17:8	4	(! interval -> enabled &&WITHIN_INTERVAL (ts ,interval -> start_ts ,interval -> end_ts ))
+cond	14:12	14:90	5	! interval -> enabled &&WITHIN_INTERVAL (ts ,interval -> start_ts ,interval -> end_ts )
+op	14:12	0:0	6	!
+water	14:13	0:0	6	interval
+op	14:21	0:0	6	->
+water	14:23	0:0	6	enabled
+op	14:31	0:0	6	&&
+call	14:34	14:90	6	WITHIN_INTERVAL
+arg	14:50	14:52	7	ts
+water	14:50	0:0	8	ts
+arg	14:54	14:72	7	interval->start_ts
+water	14:54	0:0	8	interval
+op	14:62	0:0	8	->
+water	14:64	0:0	8	start_ts
+arg	14:74	14:90	7	interval->end_ts
+water	14:74	0:0	8	interval
+op	14:82	0:0	8	->
+water	14:84	0:0	8	end_ts
+stmts	14:93	17:8	5	
+water	14:93	0:0	6	{
+water	15:12	0:0	6	flags
+op	15:18	0:0	6	+=
+water	15:21	0:0	6	COMMAND_FLAG_ENTER
+water	15:39	0:0	6	;
+water	16:12	0:0	6	interval
+op	16:20	0:0	6	->
+water	16:22	0:0	6	enabled
+op	16:30	0:0	6	=
+water	16:32	0:0	6	1
+water	16:33	0:0	6	;
+water	17:8	0:0	6	}
+if	18:8	21:8	4	(interval -> enabled && !WITHIN_INTERVAL (ts ,interval -> start_ts ,interval -> end_ts ))
+cond	18:12	18:90	5	interval -> enabled && !WITHIN_INTERVAL (ts ,interval -> start_ts ,interval -> end_ts )
+water	18:12	0:0	6	interval
+op	18:20	0:0	6	->
+water	18:22	0:0	6	enabled
+op	18:30	0:0	6	&&
+op	18:33	0:0	6	!
+call	18:34	18:90	6	WITHIN_INTERVAL
+arg	18:50	18:52	7	ts
+water	18:50	0:0	8	ts
+arg	18:54	18:72	7	interval->start_ts
+water	18:54	0:0	8	interval
+op	18:62	0:0	8	->
+water	18:64	0:0	8	start_ts
+arg	18:74	18:90	7	interval->end_ts
+water	18:74	0:0	8	interval
+op	18:82	0:0	8	->
+water	18:84	0:0	8	end_ts
+stmts	18:93	21:8	5	
+water	18:93	0:0	6	{
+water	19:12	0:0	6	flags
+op	19:18	0:0	6	+=
+water	19:21	0:0	6	COMMAND_FLAG_LEAVE
+water	19:39	0:0	6	;
+water	20:12	0:0	6	interval
+op	20:20	0:0	6	->
+water	20:22	0:0	6	enabled
+op	20:30	0:0	6	=
+water	20:32	0:0	6	0
+water	20:33	0:0	6	;
+water	21:8	0:0	6	}
+if	22:8	45:8	4	(flags)
+cond	22:12	22:12	5	flags
+water	22:12	0:0	6	flags
+stmts	22:19	45:8	5	
+water	22:19	0:0	6	{
+decl	23:12	23:25	6	AVBPrint	pbuf
+call	24:12	28:37	6	av_log
+arg	24:19	24:22	7	ctx
+water	24:19	0:0	8	ctx
+arg	24:24	24:38	7	AV_LOG_VERBOSE
+water	24:24	0:0	8	AV_LOG_VERBOSE
+arg	25:19	25:68	7	"[%s] interval #%d start_ts:%f end_ts:%f ts:%f\n"
+water	25:19	0:0	8	"[%s] interval #%d start_ts:%f end_ts:%f ts:%f\n"
+arg	26:19	26:55	7	make_command_flags_str(&pbuf,flags)
+call	26:19	26:54	8	make_command_flags_str
+arg	26:42	26:47	9	&pbuf
+op	26:42	0:0	10	&
+water	26:43	0:0	10	pbuf
+arg	26:49	26:54	9	flags
+water	26:49	0:0	10	flags
+arg	26:57	26:72	7	interval->index
+water	26:57	0:0	8	interval
+op	26:65	0:0	8	->
+water	26:67	0:0	8	index
+arg	27:19	27:53	7	(double)interval->start_ts/1000000
+water	27:19	0:0	8	(
+water	27:20	0:0	8	double
+water	27:26	0:0	8	)
+water	27:27	0:0	8	interval
+op	27:35	0:0	8	->
+water	27:37	0:0	8	start_ts
+op	27:45	0:0	8	/
+water	27:46	0:0	8	1000000
+arg	27:55	27:87	7	(double)interval->end_ts/1000000
+water	27:55	0:0	8	(
+water	27:56	0:0	8	double
+water	27:62	0:0	8	)
+water	27:63	0:0	8	interval
+op	27:71	0:0	8	->
+water	27:73	0:0	8	end_ts
+op	27:79	0:0	8	/
+water	27:80	0:0	8	1000000
+arg	28:19	28:37	7	(double)ts/1000000
+water	28:19	0:0	8	(
+water	28:20	0:0	8	double
+water	28:26	0:0	8	)
+water	28:27	0:0	8	ts
+op	28:29	0:0	8	/
+water	28:30	0:0	8	1000000
+water	28:38	0:0	6	;
+for	29:12	44:12	6	(j = 0 ;flags && j < interval -> nb_commands;j ++)
+forinit	29:17	29:22	7	j = 0 ;
+water	29:17	0:0	8	j
+op	29:19	0:0	8	=
+water	29:21	0:0	8	0
+water	29:22	0:0	8	;
+cond	29:24	29:47	7	flags && j < interval -> nb_commands
+water	29:24	0:0	8	flags
+op	29:30	0:0	8	&&
+water	29:33	0:0	8	j
+op	29:35	0:0	8	<
+water	29:37	0:0	8	interval
+op	29:45	0:0	8	->
+water	29:47	0:0	8	nb_commands
+forexpr	29:60	29:61	7	j ++
+water	29:60	0:0	8	j
+op	29:61	0:0	8	++
+stmts	29:65	44:12	7	
+water	29:65	0:0	8	{
+decl	30:16	30:53	8	Command	*cmd
+op	30:29	0:0	8	=
+op	30:31	0:0	8	&
+water	30:32	0:0	8	interval
+op	30:40	0:0	8	->
+water	30:42	0:0	8	commands
+op	30:50	0:0	8	[
+water	30:51	0:0	8	j
+op	30:52	0:0	8	]
+decl	31:16	31:30	8	char	buf[1024]
+if	32:16	43:16	8	(cmd -> flags & flags)
+cond	32:20	32:33	9	cmd -> flags & flags
+water	32:20	0:0	10	cmd
+op	32:23	0:0	10	->
+water	32:25	0:0	10	flags
+op	32:31	0:0	10	&
+water	32:33	0:0	10	flags
+stmts	32:40	43:16	9	
+water	32:40	0:0	10	{
+call	33:20	35:74	10	av_log
+arg	33:27	33:30	11	ctx
+water	33:27	0:0	12	ctx
+arg	33:32	33:46	11	AV_LOG_VERBOSE
+water	33:32	0:0	12	AV_LOG_VERBOSE
+arg	34:27	34:81	11	"Processing command #%d target:%s command:%s arg:%s\n"
+water	34:27	0:0	12	"Processing command #%d target:%s command:%s arg:%s\n"
+arg	35:27	35:37	11	cmd->index
+water	35:27	0:0	12	cmd
+op	35:30	0:0	12	->
+water	35:32	0:0	12	index
+arg	35:39	35:50	11	cmd->target
+water	35:39	0:0	12	cmd
+op	35:42	0:0	12	->
+water	35:44	0:0	12	target
+arg	35:52	35:64	11	cmd->command
+water	35:52	0:0	12	cmd
+op	35:55	0:0	12	->
+water	35:57	0:0	12	command
+arg	35:66	35:74	11	cmd->arg
+water	35:66	0:0	12	cmd
+op	35:69	0:0	12	->
+water	35:71	0:0	12	arg
+water	35:75	0:0	10	;
+water	36:20	0:0	10	ret
+op	36:24	0:0	10	=
+call	36:26	39:75	10	avfilter_graph_send_command
+arg	36:54	36:67	11	inlink->graph
+water	36:54	0:0	12	inlink
+op	36:60	0:0	12	->
+water	36:62	0:0	12	graph
+arg	37:54	37:65	11	cmd->target
+water	37:54	0:0	12	cmd
+op	37:57	0:0	12	->
+water	37:59	0:0	12	target
+arg	37:67	37:79	11	cmd->command
+water	37:67	0:0	12	cmd
+op	37:70	0:0	12	->
+water	37:72	0:0	12	command
+arg	37:81	37:89	11	cmd->arg
+water	37:81	0:0	12	cmd
+op	37:84	0:0	12	->
+water	37:86	0:0	12	arg
+arg	38:54	38:57	11	buf
+water	38:54	0:0	12	buf
+arg	38:59	38:70	11	sizeof(buf)
+op	38:59	0:0	12	sizeof
+water	38:65	0:0	12	(
+water	38:66	0:0	12	buf
+water	38:69	0:0	12	)
+arg	39:54	39:75	11	AVFILTER_CMD_FLAG_ONE
+water	39:54	0:0	12	AVFILTER_CMD_FLAG_ONE
+water	39:76	0:0	10	;
+call	40:20	42:59	10	av_log
+arg	40:27	40:30	11	ctx
+water	40:27	0:0	12	ctx
+arg	40:32	40:46	11	AV_LOG_VERBOSE
+water	40:32	0:0	12	AV_LOG_VERBOSE
+arg	41:27	41:75	11	"Command reply for command #%d: ret:%s res:%s\n"
+water	41:27	0:0	12	"Command reply for command #%d: ret:%s res:%s\n"
+arg	42:27	42:37	11	cmd->index
+water	42:27	0:0	12	cmd
+op	42:30	0:0	12	->
+water	42:32	0:0	12	index
+arg	42:39	42:54	11	av_err2str(ret)
+call	42:39	42:53	12	av_err2str
+arg	42:50	42:53	13	ret
+water	42:50	0:0	14	ret
+arg	42:56	42:59	11	buf
+water	42:56	0:0	12	buf
+water	42:60	0:0	10	;
+water	43:16	0:0	10	}
+water	44:12	0:0	8	}
+water	45:8	0:0	6	}
+water	46:4	0:0	4	}
+label	47:0	47:3	2	end :
+switch	48:4	52:4	2	(inlink -> type)
+cond	48:12	48:20	3	inlink -> type
+water	48:12	0:0	4	inlink
+op	48:18	0:0	4	->
+water	48:20	0:0	4	type
+stmts	48:26	52:4	3	
+water	48:26	0:0	4	{
+label	49:4	49:27	4	case AVMEDIA_TYPE_VIDEO :
+label	50:4	50:27	4	case AVMEDIA_TYPE_AUDIO :
+return	51:8	51:60	4	ff_filter_frame(inlink->dst->outputs[0],ref)
+call	51:15	51:59	5	ff_filter_frame
+arg	51:31	51:54	6	inlink->dst->outputs[0]
+water	51:31	0:0	7	inlink
+op	51:37	0:0	7	->
+water	51:39	0:0	7	dst
+op	51:42	0:0	7	->
+water	51:44	0:0	7	outputs
+op	51:51	0:0	7	[
+water	51:52	0:0	7	0
+op	51:53	0:0	7	]
+arg	51:56	51:59	6	ref
+water	51:56	0:0	7	ref
+water	52:4	0:0	4	}
+return	53:4	53:26	2	AVERROR(ENOSYS)
+call	53:11	53:25	3	AVERROR
+arg	53:19	53:25	4	ENOSYS
+water	53:19	0:0	5	ENOSYS

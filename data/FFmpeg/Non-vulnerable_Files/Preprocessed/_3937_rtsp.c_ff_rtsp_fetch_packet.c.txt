@@ -1,0 +1,1015 @@
+func	1:0	171:0	0	int	ff_rtsp_fetch_packet
+params	1:24	0:0	1	
+param	1:25	1:43	2	AVFormatContext *	s
+param	1:45	1:58	2	AVPacket *	pkt
+stmnts	0:0	170:14	1	
+decl	3:4	3:32	2	RTSPState	*rt
+op	3:18	0:0	2	=
+water	3:20	0:0	2	s
+op	3:21	0:0	2	->
+water	3:23	0:0	2	priv_data
+decl	4:4	4:16	2	int	ret
+water	4:11	0:0	2	,
+decl	4:4	4:16	2	int	len
+decl	5:4	5:47	2	RTSPStream	*rtsp_st
+water	5:23	0:0	2	,
+decl	5:4	5:47	2	RTSPStream	*first_queue_st
+op	5:41	0:0	2	=
+water	5:43	0:0	2	NULL
+decl	6:4	6:24	2	int64_t	wait_end
+op	6:21	0:0	2	=
+water	6:23	0:0	2	0
+if	7:4	8:26	2	(rt -> nb_byes == rt -> nb_rtsp_streams)
+cond	7:8	7:27	3	rt -> nb_byes == rt -> nb_rtsp_streams
+water	7:8	0:0	4	rt
+op	7:10	0:0	4	->
+water	7:12	0:0	4	nb_byes
+op	7:20	0:0	4	==
+water	7:23	0:0	4	rt
+op	7:25	0:0	4	->
+water	7:27	0:0	4	nb_rtsp_streams
+stmts	8:8	8:26	3	
+return	8:8	8:26	4	AVERROR_EOF
+water	8:15	0:0	5	AVERROR_EOF
+if	10:4	30:4	2	(rt -> cur_transport_priv)
+cond	10:8	10:12	3	rt -> cur_transport_priv
+water	10:8	0:0	4	rt
+op	10:10	0:0	4	->
+water	10:12	0:0	4	cur_transport_priv
+stmts	10:32	30:4	3	
+water	10:32	0:0	4	{
+if	11:8	13:8	4	(rt -> transport == RTSP_TRANSPORT_RDT)
+cond	11:12	11:29	5	rt -> transport == RTSP_TRANSPORT_RDT
+water	11:12	0:0	6	rt
+op	11:14	0:0	6	->
+water	11:16	0:0	6	transport
+op	11:26	0:0	6	==
+water	11:29	0:0	6	RTSP_TRANSPORT_RDT
+stmts	11:49	13:8	5	
+water	11:49	0:0	6	{
+water	12:12	0:0	6	ret
+op	12:16	0:0	6	=
+call	12:18	12:74	6	ff_rdt_parse_packet
+arg	12:38	12:60	7	rt->cur_transport_priv
+water	12:38	0:0	8	rt
+op	12:40	0:0	8	->
+water	12:42	0:0	8	cur_transport_priv
+arg	12:62	12:65	7	pkt
+water	12:62	0:0	8	pkt
+arg	12:67	12:71	7	NULL
+water	12:67	0:0	8	NULL
+arg	12:73	12:74	7	0
+water	12:73	0:0	8	0
+water	12:75	0:0	6	;
+water	13:8	0:0	6	}
+else	13:10	15:8	4
+stmts	13:15	15:8	5	
+if	13:15	15:8	6	(rt -> transport == RTSP_TRANSPORT_RTP)
+cond	13:19	13:36	7	rt -> transport == RTSP_TRANSPORT_RTP
+water	13:19	0:0	8	rt
+op	13:21	0:0	8	->
+water	13:23	0:0	8	transport
+op	13:33	0:0	8	==
+water	13:36	0:0	8	RTSP_TRANSPORT_RTP
+stmts	13:56	15:8	7	
+water	13:56	0:0	8	{
+water	14:12	0:0	8	ret
+op	14:16	0:0	8	=
+call	14:18	14:74	8	ff_rtp_parse_packet
+arg	14:38	14:60	9	rt->cur_transport_priv
+water	14:38	0:0	10	rt
+op	14:40	0:0	10	->
+water	14:42	0:0	10	cur_transport_priv
+arg	14:62	14:65	9	pkt
+water	14:62	0:0	10	pkt
+arg	14:67	14:71	9	NULL
+water	14:67	0:0	10	NULL
+arg	14:73	14:74	9	0
+water	14:73	0:0	10	0
+water	14:75	0:0	8	;
+water	15:8	0:0	8	}
+else	15:10	21:8	4
+stmts	15:15	21:8	5	
+if	15:15	21:8	6	(CONFIG_RTPDEC && rt -> ts)
+cond	15:19	15:40	7	CONFIG_RTPDEC && rt -> ts
+water	15:19	0:0	8	CONFIG_RTPDEC
+op	15:33	0:0	8	&&
+water	15:36	0:0	8	rt
+op	15:38	0:0	8	->
+water	15:40	0:0	8	ts
+stmts	15:44	21:8	7	
+water	15:44	0:0	8	{
+water	16:12	0:0	8	ret
+op	16:16	0:0	8	=
+call	16:18	16:122	8	avpriv_mpegts_parse_packet
+arg	16:45	16:51	9	rt->ts
+water	16:45	0:0	10	rt
+op	16:47	0:0	10	->
+water	16:49	0:0	10	ts
+arg	16:53	16:56	9	pkt
+water	16:53	0:0	10	pkt
+arg	16:58	16:87	9	rt->recvbuf+rt->recvbuf_pos
+water	16:58	0:0	10	rt
+op	16:60	0:0	10	->
+water	16:62	0:0	10	recvbuf
+op	16:70	0:0	10	+
+water	16:72	0:0	10	rt
+op	16:74	0:0	10	->
+water	16:76	0:0	10	recvbuf_pos
+arg	16:89	16:122	9	rt->recvbuf_len-rt->recvbuf_pos
+water	16:89	0:0	10	rt
+op	16:91	0:0	10	->
+water	16:93	0:0	10	recvbuf_len
+op	16:105	0:0	10	-
+water	16:107	0:0	10	rt
+op	16:109	0:0	10	->
+water	16:111	0:0	10	recvbuf_pos
+water	16:123	0:0	8	;
+if	17:12	20:12	8	(ret >= 0)
+cond	17:16	17:23	9	ret >= 0
+water	17:16	0:0	10	ret
+op	17:20	0:0	10	>=
+water	17:23	0:0	10	0
+stmts	17:26	20:12	9	
+water	17:26	0:0	10	{
+water	18:16	0:0	10	rt
+op	18:18	0:0	10	->
+water	18:20	0:0	10	recvbuf_pos
+op	18:32	0:0	10	+=
+water	18:35	0:0	10	ret
+water	18:38	0:0	10	;
+water	19:16	0:0	10	ret
+op	19:20	0:0	10	=
+water	19:22	0:0	10	rt
+op	19:24	0:0	10	->
+water	19:26	0:0	10	recvbuf_pos
+op	19:38	0:0	10	<
+water	19:40	0:0	10	rt
+op	19:42	0:0	10	->
+water	19:44	0:0	10	recvbuf_len
+water	19:55	0:0	10	;
+water	20:12	0:0	10	}
+water	21:8	0:0	8	}
+else	21:10	22:20	4
+stmts	22:12	22:20	5	
+water	22:12	0:0	6	ret
+op	22:16	0:0	6	=
+op	22:18	0:0	6	-
+water	22:19	0:0	6	1
+water	22:20	0:0	6	;
+if	23:8	26:8	4	(ret == 0)
+cond	23:12	23:19	5	ret == 0
+water	23:12	0:0	6	ret
+op	23:16	0:0	6	==
+water	23:19	0:0	6	0
+stmts	23:22	26:8	5	
+water	23:22	0:0	6	{
+water	24:12	0:0	6	rt
+op	24:14	0:0	6	->
+water	24:16	0:0	6	cur_transport_priv
+op	24:35	0:0	6	=
+water	24:37	0:0	6	NULL
+water	24:41	0:0	6	;
+return	25:12	25:20	6	0
+water	25:19	0:0	7	0
+water	26:8	0:0	6	}
+else	26:10	28:8	4
+stmts	26:15	28:8	5	
+if	26:15	28:8	6	(ret == 1)
+cond	26:19	26:26	7	ret == 1
+water	26:19	0:0	8	ret
+op	26:23	0:0	8	==
+water	26:26	0:0	8	1
+stmts	26:29	28:8	7	
+water	26:29	0:0	8	{
+return	27:12	27:20	8	0
+water	27:19	0:0	9	0
+water	28:8	0:0	8	}
+else	28:10	29:41	4
+stmts	29:12	29:41	5	
+water	29:12	0:0	6	rt
+op	29:14	0:0	6	->
+water	29:16	0:0	6	cur_transport_priv
+op	29:35	0:0	6	=
+water	29:37	0:0	6	NULL
+water	29:41	0:0	6	;
+water	30:4	0:0	4	}
+label	31:0	31:4	2	redo :
+if	32:4	53:4	2	(rt -> transport == RTSP_TRANSPORT_RTP)
+cond	32:8	32:25	3	rt -> transport == RTSP_TRANSPORT_RTP
+water	32:8	0:0	4	rt
+op	32:10	0:0	4	->
+water	32:12	0:0	4	transport
+op	32:22	0:0	4	==
+water	32:25	0:0	4	RTSP_TRANSPORT_RTP
+stmts	32:45	53:4	3	
+water	32:45	0:0	4	{
+decl	33:8	33:13	4	int	i
+decl	34:8	34:36	4	int64_t	first_queue_time
+op	34:33	0:0	4	=
+water	34:35	0:0	4	0
+for	35:8	46:8	4	(i = 0 ;i < rt -> nb_rtsp_streams;i ++)
+forinit	35:13	35:18	5	i = 0 ;
+water	35:13	0:0	6	i
+op	35:15	0:0	6	=
+water	35:17	0:0	6	0
+water	35:18	0:0	6	;
+cond	35:20	35:28	5	i < rt -> nb_rtsp_streams
+water	35:20	0:0	6	i
+op	35:22	0:0	6	<
+water	35:24	0:0	6	rt
+op	35:26	0:0	6	->
+water	35:28	0:0	6	nb_rtsp_streams
+forexpr	35:45	35:46	5	i ++
+water	35:45	0:0	6	i
+op	35:46	0:0	6	++
+stmts	35:50	46:8	5	
+water	35:50	0:0	6	{
+decl	36:12	36:73	6	RTPDemuxContext	*rtpctx
+op	36:36	0:0	6	=
+water	36:38	0:0	6	rt
+op	36:40	0:0	6	->
+water	36:42	0:0	6	rtsp_streams
+op	36:54	0:0	6	[
+water	36:55	0:0	6	i
+op	36:56	0:0	6	]
+op	36:57	0:0	6	->
+water	36:59	0:0	6	transport_priv
+decl	37:12	37:30	6	int64_t	queue_time
+if	38:12	39:24	6	(! rtpctx)
+cond	38:16	38:17	7	! rtpctx
+op	38:16	0:0	8	!
+water	38:17	0:0	8	rtpctx
+stmts	39:16	39:24	7	
+continue	39:16	39:24	8	
+water	40:12	0:0	6	queue_time
+op	40:23	0:0	6	=
+call	40:25	40:57	6	ff_rtp_queued_packet_time
+arg	40:51	40:57	7	rtpctx
+water	40:51	0:0	8	rtpctx
+water	40:58	0:0	6	;
+if	41:12	45:12	6	(queue_time && ( queue_time - first_queue_time < 0 || ! first_queue_time ))
+cond	41:16	42:48	7	queue_time && ( queue_time - first_queue_time < 0 || ! first_queue_time )
+water	41:16	0:0	8	queue_time
+op	41:27	0:0	8	&&
+water	41:30	0:0	8	(
+water	41:31	0:0	8	queue_time
+op	41:42	0:0	8	-
+water	41:44	0:0	8	first_queue_time
+op	41:61	0:0	8	<
+water	41:63	0:0	8	0
+op	41:65	0:0	8	||
+op	42:31	0:0	8	!
+water	42:32	0:0	8	first_queue_time
+water	42:48	0:0	8	)
+stmts	42:51	45:12	7	
+water	42:51	0:0	8	{
+water	43:16	0:0	8	first_queue_time
+op	43:33	0:0	8	=
+water	43:35	0:0	8	queue_time
+water	43:45	0:0	8	;
+water	44:16	0:0	8	first_queue_st
+op	44:33	0:0	8	=
+water	44:35	0:0	8	rt
+op	44:37	0:0	8	->
+water	44:39	0:0	8	rtsp_streams
+op	44:51	0:0	8	[
+water	44:52	0:0	8	i
+op	44:53	0:0	8	]
+water	44:54	0:0	8	;
+water	45:12	0:0	8	}
+water	46:8	0:0	6	}
+if	47:8	49:8	4	(first_queue_time)
+cond	47:12	47:12	5	first_queue_time
+water	47:12	0:0	6	first_queue_time
+stmts	47:30	49:8	5	
+water	47:30	0:0	6	{
+water	48:12	0:0	6	wait_end
+op	48:21	0:0	6	=
+water	48:23	0:0	6	first_queue_time
+op	48:40	0:0	6	+
+water	48:42	0:0	6	s
+op	48:43	0:0	6	->
+water	48:45	0:0	6	max_delay
+water	48:54	0:0	6	;
+water	49:8	0:0	6	}
+else	49:10	52:8	4
+stmts	49:15	52:8	5	
+water	49:15	0:0	6	{
+water	50:12	0:0	6	wait_end
+op	50:21	0:0	6	=
+water	50:23	0:0	6	0
+water	50:24	0:0	6	;
+water	51:12	0:0	6	first_queue_st
+op	51:27	0:0	6	=
+water	51:29	0:0	6	NULL
+water	51:33	0:0	6	;
+water	52:8	0:0	6	}
+water	53:4	0:0	4	}
+if	55:4	59:4	2	(! rt -> recvbuf)
+cond	55:8	55:13	3	! rt -> recvbuf
+op	55:8	0:0	4	!
+water	55:9	0:0	4	rt
+op	55:11	0:0	4	->
+water	55:13	0:0	4	recvbuf
+stmts	55:22	59:4	3	
+water	55:22	0:0	4	{
+water	56:8	0:0	4	rt
+op	56:10	0:0	4	->
+water	56:12	0:0	4	recvbuf
+op	56:20	0:0	4	=
+call	56:22	56:44	4	av_malloc
+arg	56:32	56:44	5	RECVBUF_SIZE
+water	56:32	0:0	6	RECVBUF_SIZE
+water	56:45	0:0	4	;
+if	57:8	58:34	4	(! rt -> recvbuf)
+cond	57:12	57:17	5	! rt -> recvbuf
+op	57:12	0:0	6	!
+water	57:13	0:0	6	rt
+op	57:15	0:0	6	->
+water	57:17	0:0	6	recvbuf
+stmts	58:12	58:34	5	
+return	58:12	58:34	6	AVERROR(ENOMEM)
+call	58:19	58:33	7	AVERROR
+arg	58:27	58:33	8	ENOMEM
+water	58:27	0:0	9	ENOMEM
+water	59:4	0:0	4	}
+switch	60:4	83:4	2	(rt -> lower_transport)
+cond	60:11	60:15	3	rt -> lower_transport
+water	60:11	0:0	4	rt
+op	60:13	0:0	4	->
+water	60:15	0:0	4	lower_transport
+stmts	60:32	83:4	3	
+water	60:32	0:0	4	{
+label	61:4	61:11	4	default :
+label	63:4	63:33	4	case RTSP_LOWER_TRANSPORT_TCP :
+water	64:8	0:0	4	len
+op	64:12	0:0	4	=
+call	64:14	64:76	4	ff_rtsp_tcp_read_packet
+arg	64:38	64:39	5	s
+water	64:38	0:0	6	s
+arg	64:41	64:49	5	&rtsp_st
+op	64:41	0:0	6	&
+water	64:42	0:0	6	rtsp_st
+arg	64:51	64:62	5	rt->recvbuf
+water	64:51	0:0	6	rt
+op	64:53	0:0	6	->
+water	64:55	0:0	6	recvbuf
+arg	64:64	64:76	5	RECVBUF_SIZE
+water	64:64	0:0	6	RECVBUF_SIZE
+water	64:77	0:0	4	;
+break	65:8	65:13	4	
+label	67:4	67:33	4	case RTSP_LOWER_TRANSPORT_UDP :
+label	68:4	68:43	4	case RTSP_LOWER_TRANSPORT_UDP_MULTICAST :
+water	69:8	0:0	4	len
+op	69:12	0:0	4	=
+call	69:14	69:78	4	udp_read_packet
+arg	69:30	69:31	5	s
+water	69:30	0:0	6	s
+arg	69:33	69:41	5	&rtsp_st
+op	69:33	0:0	6	&
+water	69:34	0:0	6	rtsp_st
+arg	69:43	69:54	5	rt->recvbuf
+water	69:43	0:0	6	rt
+op	69:45	0:0	6	->
+water	69:47	0:0	6	recvbuf
+arg	69:56	69:68	5	RECVBUF_SIZE
+water	69:56	0:0	6	RECVBUF_SIZE
+arg	69:70	69:78	5	wait_end
+water	69:70	0:0	6	wait_end
+water	69:79	0:0	4	;
+if	70:8	71:98	4	(len > 0 && rtsp_st -> transport_priv && rt -> transport == RTSP_TRANSPORT_RTP)
+cond	70:12	70:67	5	len > 0 && rtsp_st -> transport_priv && rt -> transport == RTSP_TRANSPORT_RTP
+water	70:12	0:0	6	len
+op	70:16	0:0	6	>
+water	70:18	0:0	6	0
+op	70:20	0:0	6	&&
+water	70:23	0:0	6	rtsp_st
+op	70:30	0:0	6	->
+water	70:32	0:0	6	transport_priv
+op	70:47	0:0	6	&&
+water	70:50	0:0	6	rt
+op	70:52	0:0	6	->
+water	70:54	0:0	6	transport
+op	70:64	0:0	6	==
+water	70:67	0:0	6	RTSP_TRANSPORT_RTP
+stmts	71:12	71:98	5	
+call	71:12	71:97	6	ff_rtp_check_and_send_back_rr
+arg	71:42	71:65	7	rtsp_st->transport_priv
+water	71:42	0:0	8	rtsp_st
+op	71:49	0:0	8	->
+water	71:51	0:0	8	transport_priv
+arg	71:67	71:86	7	rtsp_st->rtp_handle
+water	71:67	0:0	8	rtsp_st
+op	71:74	0:0	8	->
+water	71:76	0:0	8	rtp_handle
+arg	71:88	71:92	7	NULL
+water	71:88	0:0	8	NULL
+arg	71:94	71:97	7	len
+water	71:94	0:0	8	len
+water	71:98	0:0	6	;
+break	72:8	72:13	4	
+label	73:4	73:36	4	case RTSP_LOWER_TRANSPORT_CUSTOM :
+if	74:8	76:33	4	(first_queue_st && rt -> transport == RTSP_TRANSPORT_RTP && wait_end && wait_end <av_gettime_relative ( ))
+cond	74:12	75:55	5	first_queue_st && rt -> transport == RTSP_TRANSPORT_RTP && wait_end && wait_end <av_gettime_relative ( )
+water	74:12	0:0	6	first_queue_st
+op	74:27	0:0	6	&&
+water	74:30	0:0	6	rt
+op	74:32	0:0	6	->
+water	74:34	0:0	6	transport
+op	74:44	0:0	6	==
+water	74:47	0:0	6	RTSP_TRANSPORT_RTP
+op	74:66	0:0	6	&&
+water	75:12	0:0	6	wait_end
+op	75:21	0:0	6	&&
+water	75:24	0:0	6	wait_end
+op	75:33	0:0	6	<
+call	75:35	75:55	6	av_gettime_relative
+stmts	76:12	76:33	5	
+water	76:12	0:0	6	len
+op	76:16	0:0	6	=
+call	76:18	76:32	6	AVERROR
+arg	76:26	76:32	7	EAGAIN
+water	76:26	0:0	8	EAGAIN
+water	76:33	0:0	6	;
+else	77:8	78:69	4
+stmts	78:12	78:69	5	
+water	78:12	0:0	6	len
+op	78:16	0:0	6	=
+call	78:18	78:68	6	ffio_read_partial
+arg	78:36	78:41	7	s->pb
+water	78:36	0:0	8	s
+op	78:37	0:0	8	->
+water	78:39	0:0	8	pb
+arg	78:43	78:54	7	rt->recvbuf
+water	78:43	0:0	8	rt
+op	78:45	0:0	8	->
+water	78:47	0:0	8	recvbuf
+arg	78:56	78:68	7	RECVBUF_SIZE
+water	78:56	0:0	8	RECVBUF_SIZE
+water	78:69	0:0	6	;
+water	79:8	0:0	4	len
+op	79:12	0:0	4	=
+call	79:14	79:55	4	pick_stream
+arg	79:26	79:27	5	s
+water	79:26	0:0	6	s
+arg	79:29	79:37	5	&rtsp_st
+op	79:29	0:0	6	&
+water	79:30	0:0	6	rtsp_st
+arg	79:39	79:50	5	rt->recvbuf
+water	79:39	0:0	6	rt
+op	79:41	0:0	6	->
+water	79:43	0:0	6	recvbuf
+arg	79:52	79:55	5	len
+water	79:52	0:0	6	len
+water	79:56	0:0	4	;
+if	80:8	81:84	4	(len > 0 && rtsp_st -> transport_priv && rt -> transport == RTSP_TRANSPORT_RTP)
+cond	80:12	80:67	5	len > 0 && rtsp_st -> transport_priv && rt -> transport == RTSP_TRANSPORT_RTP
+water	80:12	0:0	6	len
+op	80:16	0:0	6	>
+water	80:18	0:0	6	0
+op	80:20	0:0	6	&&
+water	80:23	0:0	6	rtsp_st
+op	80:30	0:0	6	->
+water	80:32	0:0	6	transport_priv
+op	80:47	0:0	6	&&
+water	80:50	0:0	6	rt
+op	80:52	0:0	6	->
+water	80:54	0:0	6	transport
+op	80:64	0:0	6	==
+water	80:67	0:0	6	RTSP_TRANSPORT_RTP
+stmts	81:12	81:84	5	
+call	81:12	81:83	6	ff_rtp_check_and_send_back_rr
+arg	81:42	81:65	7	rtsp_st->transport_priv
+water	81:42	0:0	8	rtsp_st
+op	81:49	0:0	8	->
+water	81:51	0:0	8	transport_priv
+arg	81:67	81:71	7	NULL
+water	81:67	0:0	8	NULL
+arg	81:73	81:78	7	s->pb
+water	81:73	0:0	8	s
+op	81:74	0:0	8	->
+water	81:76	0:0	8	pb
+arg	81:80	81:83	7	len
+water	81:80	0:0	8	len
+water	81:84	0:0	6	;
+break	82:8	82:13	4	
+water	83:4	0:0	4	}
+if	84:4	89:4	2	(len ==AVERROR (EAGAIN ) && first_queue_st && rt -> transport == RTSP_TRANSPORT_RTP)
+cond	84:8	85:25	3	len ==AVERROR (EAGAIN ) && first_queue_st && rt -> transport == RTSP_TRANSPORT_RTP
+water	84:8	0:0	4	len
+op	84:12	0:0	4	==
+call	84:15	84:29	4	AVERROR
+arg	84:23	84:29	5	EAGAIN
+water	84:23	0:0	6	EAGAIN
+op	84:31	0:0	4	&&
+water	84:34	0:0	4	first_queue_st
+op	84:49	0:0	4	&&
+water	85:8	0:0	4	rt
+op	85:10	0:0	4	->
+water	85:12	0:0	4	transport
+op	85:22	0:0	4	==
+water	85:25	0:0	4	RTSP_TRANSPORT_RTP
+stmts	85:45	89:4	3	
+water	85:45	0:0	4	{
+water	86:8	0:0	4	rtsp_st
+op	86:16	0:0	4	=
+water	86:18	0:0	4	first_queue_st
+water	86:32	0:0	4	;
+water	87:8	0:0	4	ret
+op	87:12	0:0	4	=
+call	87:14	87:71	4	ff_rtp_parse_packet
+arg	87:34	87:57	5	rtsp_st->transport_priv
+water	87:34	0:0	6	rtsp_st
+op	87:41	0:0	6	->
+water	87:43	0:0	6	transport_priv
+arg	87:59	87:62	5	pkt
+water	87:59	0:0	6	pkt
+arg	87:64	87:68	5	NULL
+water	87:64	0:0	6	NULL
+arg	87:70	87:71	5	0
+water	87:70	0:0	6	0
+water	87:72	0:0	4	;
+goto	88:8	88:16	4	end
+water	88:13	0:0	5	end
+water	89:4	0:0	4	}
+if	90:4	91:18	2	(len < 0)
+cond	90:8	90:14	3	len < 0
+water	90:8	0:0	4	len
+op	90:12	0:0	4	<
+water	90:14	0:0	4	0
+stmts	91:8	91:18	3	
+return	91:8	91:18	4	len
+water	91:15	0:0	5	len
+if	92:4	93:26	2	(len == 0)
+cond	92:8	92:15	3	len == 0
+water	92:8	0:0	4	len
+op	92:12	0:0	4	==
+water	92:15	0:0	4	0
+stmts	93:8	93:26	3	
+return	93:8	93:26	4	AVERROR_EOF
+water	93:15	0:0	5	AVERROR_EOF
+if	94:4	96:4	2	(rt -> transport == RTSP_TRANSPORT_RDT)
+cond	94:8	94:25	3	rt -> transport == RTSP_TRANSPORT_RDT
+water	94:8	0:0	4	rt
+op	94:10	0:0	4	->
+water	94:12	0:0	4	transport
+op	94:22	0:0	4	==
+water	94:25	0:0	4	RTSP_TRANSPORT_RDT
+stmts	94:45	96:4	3	
+water	94:45	0:0	4	{
+water	95:8	0:0	4	ret
+op	95:12	0:0	4	=
+call	95:14	95:81	4	ff_rdt_parse_packet
+arg	95:34	95:57	5	rtsp_st->transport_priv
+water	95:34	0:0	6	rtsp_st
+op	95:41	0:0	6	->
+water	95:43	0:0	6	transport_priv
+arg	95:59	95:62	5	pkt
+water	95:59	0:0	6	pkt
+arg	95:64	95:76	5	&rt->recvbuf
+op	95:64	0:0	6	&
+water	95:65	0:0	6	rt
+op	95:67	0:0	6	->
+water	95:69	0:0	6	recvbuf
+arg	95:78	95:81	5	len
+water	95:78	0:0	6	len
+water	95:82	0:0	4	;
+water	96:4	0:0	4	}
+else	96:6	149:4	2
+stmts	96:11	149:4	3	
+if	96:11	149:4	4	(rt -> transport == RTSP_TRANSPORT_RTP)
+cond	96:15	96:32	5	rt -> transport == RTSP_TRANSPORT_RTP
+water	96:15	0:0	6	rt
+op	96:17	0:0	6	->
+water	96:19	0:0	6	transport
+op	96:29	0:0	6	==
+water	96:32	0:0	6	RTSP_TRANSPORT_RTP
+stmts	96:52	149:4	5	
+water	96:52	0:0	6	{
+water	97:8	0:0	6	ret
+op	97:12	0:0	6	=
+call	97:14	97:81	6	ff_rtp_parse_packet
+arg	97:34	97:57	7	rtsp_st->transport_priv
+water	97:34	0:0	8	rtsp_st
+op	97:41	0:0	8	->
+water	97:43	0:0	8	transport_priv
+arg	97:59	97:62	7	pkt
+water	97:59	0:0	8	pkt
+arg	97:64	97:76	7	&rt->recvbuf
+op	97:64	0:0	8	&
+water	97:65	0:0	8	rt
+op	97:67	0:0	8	->
+water	97:69	0:0	8	recvbuf
+arg	97:78	97:81	7	len
+water	97:78	0:0	8	len
+water	97:82	0:0	6	;
+if	98:8	103:8	6	(rtsp_st -> feedback)
+cond	98:12	98:21	7	rtsp_st -> feedback
+water	98:12	0:0	8	rtsp_st
+op	98:19	0:0	8	->
+water	98:21	0:0	8	feedback
+stmts	98:31	103:8	7	
+water	98:31	0:0	8	{
+decl	99:12	99:34	8	AVIOContext	*pb
+op	99:28	0:0	8	=
+water	99:30	0:0	8	NULL
+if	100:12	101:26	8	(rt -> lower_transport == RTSP_LOWER_TRANSPORT_CUSTOM)
+cond	100:16	100:39	9	rt -> lower_transport == RTSP_LOWER_TRANSPORT_CUSTOM
+water	100:16	0:0	10	rt
+op	100:18	0:0	10	->
+water	100:20	0:0	10	lower_transport
+op	100:36	0:0	10	==
+water	100:39	0:0	10	RTSP_LOWER_TRANSPORT_CUSTOM
+stmts	101:16	101:26	9	
+water	101:16	0:0	10	pb
+op	101:19	0:0	10	=
+water	101:21	0:0	10	s
+op	101:22	0:0	10	->
+water	101:24	0:0	10	pb
+water	101:26	0:0	10	;
+call	102:12	102:86	8	ff_rtp_send_rtcp_feedback
+arg	102:38	102:61	9	rtsp_st->transport_priv
+water	102:38	0:0	10	rtsp_st
+op	102:45	0:0	10	->
+water	102:47	0:0	10	transport_priv
+arg	102:63	102:82	9	rtsp_st->rtp_handle
+water	102:63	0:0	10	rtsp_st
+op	102:70	0:0	10	->
+water	102:72	0:0	10	rtp_handle
+arg	102:84	102:86	9	pb
+water	102:84	0:0	10	pb
+water	102:87	0:0	8	;
+water	103:8	0:0	8	}
+if	104:8	148:8	6	(ret < 0)
+cond	104:12	104:18	7	ret < 0
+water	104:12	0:0	8	ret
+op	104:16	0:0	8	<
+water	104:18	0:0	8	0
+stmts	104:21	148:8	7	
+water	104:21	0:0	8	{
+decl	107:12	107:61	8	RTPDemuxContext	*rtpctx
+op	107:36	0:0	8	=
+water	107:38	0:0	8	rtsp_st
+op	107:45	0:0	8	->
+water	107:47	0:0	8	transport_priv
+if	108:12	140:12	8	(rtpctx -> first_rtcp_ntp_time != AV_NOPTS_VALUE)
+cond	108:16	108:47	9	rtpctx -> first_rtcp_ntp_time != AV_NOPTS_VALUE
+water	108:16	0:0	10	rtpctx
+op	108:22	0:0	10	->
+water	108:24	0:0	10	first_rtcp_ntp_time
+op	108:44	0:0	10	!=
+water	108:47	0:0	10	AV_NOPTS_VALUE
+stmts	108:63	140:12	9	
+water	108:63	0:0	10	{
+decl	113:16	113:21	10	int	i
+decl	114:16	114:35	10	AVStream	*st
+op	114:29	0:0	10	=
+water	114:31	0:0	10	NULL
+if	115:16	116:58	10	(rtsp_st -> stream_index >= 0)
+cond	115:20	115:45	11	rtsp_st -> stream_index >= 0
+water	115:20	0:0	12	rtsp_st
+op	115:27	0:0	12	->
+water	115:29	0:0	12	stream_index
+op	115:42	0:0	12	>=
+water	115:45	0:0	12	0
+stmts	116:20	116:58	11	
+water	116:20	0:0	12	st
+op	116:23	0:0	12	=
+water	116:25	0:0	12	s
+op	116:26	0:0	12	->
+water	116:28	0:0	12	streams
+op	116:35	0:0	12	[
+water	116:36	0:0	12	rtsp_st
+op	116:43	0:0	12	->
+water	116:45	0:0	12	stream_index
+op	116:57	0:0	12	]
+water	116:58	0:0	12	;
+for	117:16	129:16	10	(i = 0 ;i < rt -> nb_rtsp_streams;i ++)
+forinit	117:21	117:26	11	i = 0 ;
+water	117:21	0:0	12	i
+op	117:23	0:0	12	=
+water	117:25	0:0	12	0
+water	117:26	0:0	12	;
+cond	117:28	117:36	11	i < rt -> nb_rtsp_streams
+water	117:28	0:0	12	i
+op	117:30	0:0	12	<
+water	117:32	0:0	12	rt
+op	117:34	0:0	12	->
+water	117:36	0:0	12	nb_rtsp_streams
+forexpr	117:53	117:54	11	i ++
+water	117:53	0:0	12	i
+op	117:54	0:0	12	++
+stmts	117:58	129:16	11	
+water	117:58	0:0	12	{
+decl	118:20	118:82	12	RTPDemuxContext	*rtpctx2
+op	118:45	0:0	12	=
+water	118:47	0:0	12	rt
+op	118:49	0:0	12	->
+water	118:51	0:0	12	rtsp_streams
+op	118:63	0:0	12	[
+water	118:64	0:0	12	i
+op	118:65	0:0	12	]
+op	118:66	0:0	12	->
+water	118:68	0:0	12	transport_priv
+decl	119:20	119:40	12	AVStream	*st2
+op	119:34	0:0	12	=
+water	119:36	0:0	12	NULL
+if	120:20	121:75	12	(rt -> rtsp_streams [ i ] -> stream_index >= 0)
+cond	120:24	120:61	13	rt -> rtsp_streams [ i ] -> stream_index >= 0
+water	120:24	0:0	14	rt
+op	120:26	0:0	14	->
+water	120:28	0:0	14	rtsp_streams
+op	120:40	0:0	14	[
+water	120:41	0:0	14	i
+op	120:42	0:0	14	]
+op	120:43	0:0	14	->
+water	120:45	0:0	14	stream_index
+op	120:58	0:0	14	>=
+water	120:61	0:0	14	0
+stmts	121:24	121:75	13	
+water	121:24	0:0	14	st2
+op	121:28	0:0	14	=
+water	121:30	0:0	14	s
+op	121:31	0:0	14	->
+water	121:33	0:0	14	streams
+op	121:40	0:0	14	[
+water	121:41	0:0	14	rt
+op	121:43	0:0	14	->
+water	121:45	0:0	14	rtsp_streams
+op	121:57	0:0	14	[
+water	121:58	0:0	14	i
+op	121:59	0:0	14	]
+op	121:60	0:0	14	->
+water	121:62	0:0	14	stream_index
+op	121:74	0:0	14	]
+water	121:75	0:0	14	;
+if	122:20	128:20	12	(rtpctx2 && st && st2 && rtpctx2 -> first_rtcp_ntp_time == AV_NOPTS_VALUE)
+cond	122:24	123:56	13	rtpctx2 && st && st2 && rtpctx2 -> first_rtcp_ntp_time == AV_NOPTS_VALUE
+water	122:24	0:0	14	rtpctx2
+op	122:32	0:0	14	&&
+water	122:35	0:0	14	st
+op	122:38	0:0	14	&&
+water	122:41	0:0	14	st2
+op	122:45	0:0	14	&&
+water	123:24	0:0	14	rtpctx2
+op	123:31	0:0	14	->
+water	123:33	0:0	14	first_rtcp_ntp_time
+op	123:53	0:0	14	==
+water	123:56	0:0	14	AV_NOPTS_VALUE
+stmts	123:72	128:20	13	
+water	123:72	0:0	14	{
+water	124:24	0:0	14	rtpctx2
+op	124:31	0:0	14	->
+water	124:33	0:0	14	first_rtcp_ntp_time
+op	124:53	0:0	14	=
+water	124:55	0:0	14	rtpctx
+op	124:61	0:0	14	->
+water	124:63	0:0	14	first_rtcp_ntp_time
+water	124:82	0:0	14	;
+water	125:24	0:0	14	rtpctx2
+op	125:31	0:0	14	->
+water	125:33	0:0	14	rtcp_ts_offset
+op	125:48	0:0	14	=
+call	125:50	127:42	14	av_rescale_q
+arg	126:28	126:50	15	rtpctx->rtcp_ts_offset
+water	126:28	0:0	16	rtpctx
+op	126:34	0:0	16	->
+water	126:36	0:0	16	rtcp_ts_offset
+arg	126:52	126:65	15	st->time_base
+water	126:52	0:0	16	st
+op	126:54	0:0	16	->
+water	126:56	0:0	16	time_base
+arg	127:28	127:42	15	st2->time_base
+water	127:28	0:0	16	st2
+op	127:31	0:0	16	->
+water	127:33	0:0	16	time_base
+water	127:43	0:0	14	;
+water	128:20	0:0	14	}
+water	129:16	0:0	12	}
+if	131:16	139:16	10	(s -> start_time_realtime == AV_NOPTS_VALUE)
+cond	131:20	131:46	11	s -> start_time_realtime == AV_NOPTS_VALUE
+water	131:20	0:0	12	s
+op	131:21	0:0	12	->
+water	131:23	0:0	12	start_time_realtime
+op	131:43	0:0	12	==
+water	131:46	0:0	12	AV_NOPTS_VALUE
+stmts	131:62	139:16	11	
+water	131:62	0:0	12	{
+water	132:20	0:0	12	s
+op	132:21	0:0	12	->
+water	132:23	0:0	12	start_time_realtime
+op	132:43	0:0	12	=
+call	132:45	132:125	12	av_rescale
+arg	132:57	132:105	13	rtpctx->first_rtcp_ntp_time-(NTP_OFFSET<<32)
+water	132:57	0:0	14	rtpctx
+op	132:63	0:0	14	->
+water	132:65	0:0	14	first_rtcp_ntp_time
+op	132:85	0:0	14	-
+water	132:87	0:0	14	(
+water	132:88	0:0	14	NTP_OFFSET
+op	132:99	0:0	14	<<
+water	132:102	0:0	14	32
+water	132:104	0:0	14	)
+arg	132:107	132:114	13	1000000
+water	132:107	0:0	14	1000000
+arg	132:116	132:125	13	1LL<<32
+water	132:116	0:0	14	1
+water	132:117	0:0	14	LL
+op	132:120	0:0	14	<<
+water	132:123	0:0	14	32
+water	132:126	0:0	12	;
+if	133:20	138:20	12	(rtpctx -> st)
+cond	133:24	133:32	13	rtpctx -> st
+water	133:24	0:0	14	rtpctx
+op	133:30	0:0	14	->
+water	133:32	0:0	14	st
+stmts	133:36	138:20	13	
+water	133:36	0:0	14	{
+water	134:24	0:0	14	s
+op	134:25	0:0	14	->
+water	134:27	0:0	14	start_time_realtime
+op	134:47	0:0	14	-=
+call	135:28	137:76	14	av_rescale
+arg	135:40	135:62	15	rtpctx->rtcp_ts_offset
+water	135:40	0:0	16	rtpctx
+op	135:46	0:0	16	->
+water	135:48	0:0	16	rtcp_ts_offset
+arg	136:40	136:86	15	(uint64_t)rtpctx->st->time_base.num*1000000
+water	136:40	0:0	16	(
+water	136:41	0:0	16	uint64_t
+water	136:49	0:0	16	)
+water	136:51	0:0	16	rtpctx
+op	136:57	0:0	16	->
+water	136:59	0:0	16	st
+op	136:61	0:0	16	->
+water	136:63	0:0	16	time_base
+op	136:72	0:0	16	.
+water	136:73	0:0	16	num
+op	136:77	0:0	16	*
+water	136:79	0:0	16	1000000
+arg	137:51	137:76	15	rtpctx->st->time_base.den
+water	137:51	0:0	16	rtpctx
+op	137:57	0:0	16	->
+water	137:59	0:0	16	st
+op	137:61	0:0	16	->
+water	137:63	0:0	16	time_base
+op	137:72	0:0	16	.
+water	137:73	0:0	16	den
+water	137:77	0:0	14	;
+water	138:20	0:0	14	}
+water	139:16	0:0	12	}
+water	140:12	0:0	10	}
+if	141:12	147:12	8	(ret == - RTCP_BYE)
+cond	141:16	141:24	9	ret == - RTCP_BYE
+water	141:16	0:0	10	ret
+op	141:20	0:0	10	==
+op	141:23	0:0	10	-
+water	141:24	0:0	10	RTCP_BYE
+stmts	141:34	147:12	9	
+water	141:34	0:0	10	{
+water	142:16	0:0	10	rt
+op	142:18	0:0	10	->
+water	142:20	0:0	10	nb_byes
+op	142:27	0:0	10	++
+water	142:29	0:0	10	;
+call	143:16	144:78	10	av_log
+arg	143:23	143:24	11	s
+water	143:23	0:0	12	s
+arg	143:26	143:38	11	AV_LOG_DEBUG
+water	143:26	0:0	12	AV_LOG_DEBUG
+arg	143:40	143:78	11	"Received BYE for stream %d (%d/%d)\n"
+water	143:40	0:0	12	"Received BYE for stream %d (%d/%d)\n"
+arg	144:23	144:44	11	rtsp_st->stream_index
+water	144:23	0:0	12	rtsp_st
+op	144:30	0:0	12	->
+water	144:32	0:0	12	stream_index
+arg	144:46	144:57	11	rt->nb_byes
+water	144:46	0:0	12	rt
+op	144:48	0:0	12	->
+water	144:50	0:0	12	nb_byes
+arg	144:59	144:78	11	rt->nb_rtsp_streams
+water	144:59	0:0	12	rt
+op	144:61	0:0	12	->
+water	144:63	0:0	12	nb_rtsp_streams
+water	144:79	0:0	10	;
+if	145:16	146:38	10	(rt -> nb_byes == rt -> nb_rtsp_streams)
+cond	145:20	145:39	11	rt -> nb_byes == rt -> nb_rtsp_streams
+water	145:20	0:0	12	rt
+op	145:22	0:0	12	->
+water	145:24	0:0	12	nb_byes
+op	145:32	0:0	12	==
+water	145:35	0:0	12	rt
+op	145:37	0:0	12	->
+water	145:39	0:0	12	nb_rtsp_streams
+stmts	146:20	146:38	11	
+return	146:20	146:38	12	AVERROR_EOF
+water	146:27	0:0	13	AVERROR_EOF
+water	147:12	0:0	10	}
+water	148:8	0:0	8	}
+water	149:4	0:0	6	}
+else	149:6	161:4	2
+stmts	149:11	161:4	3	
+if	149:11	161:4	4	(CONFIG_RTPDEC && rt -> ts)
+cond	149:15	149:36	5	CONFIG_RTPDEC && rt -> ts
+water	149:15	0:0	6	CONFIG_RTPDEC
+op	149:29	0:0	6	&&
+water	149:32	0:0	6	rt
+op	149:34	0:0	6	->
+water	149:36	0:0	6	ts
+stmts	149:40	161:4	5	
+water	149:40	0:0	6	{
+water	150:8	0:0	6	ret
+op	150:12	0:0	6	=
+call	150:14	150:70	6	avpriv_mpegts_parse_packet
+arg	150:41	150:47	7	rt->ts
+water	150:41	0:0	8	rt
+op	150:43	0:0	8	->
+water	150:45	0:0	8	ts
+arg	150:49	150:52	7	pkt
+water	150:49	0:0	8	pkt
+arg	150:54	150:65	7	rt->recvbuf
+water	150:54	0:0	8	rt
+op	150:56	0:0	8	->
+water	150:58	0:0	8	recvbuf
+arg	150:67	150:70	7	len
+water	150:67	0:0	8	len
+water	150:71	0:0	6	;
+if	151:8	160:8	6	(ret >= 0)
+cond	151:12	151:19	7	ret >= 0
+water	151:12	0:0	8	ret
+op	151:16	0:0	8	>=
+water	151:19	0:0	8	0
+stmts	151:22	160:8	7	
+water	151:22	0:0	8	{
+if	152:12	157:12	8	(ret < len)
+cond	152:16	152:22	9	ret < len
+water	152:16	0:0	10	ret
+op	152:20	0:0	10	<
+water	152:22	0:0	10	len
+stmts	152:27	157:12	9	
+water	152:27	0:0	10	{
+water	153:16	0:0	10	rt
+op	153:18	0:0	10	->
+water	153:20	0:0	10	recvbuf_len
+op	153:32	0:0	10	=
+water	153:34	0:0	10	len
+water	153:37	0:0	10	;
+water	154:16	0:0	10	rt
+op	154:18	0:0	10	->
+water	154:20	0:0	10	recvbuf_pos
+op	154:32	0:0	10	=
+water	154:34	0:0	10	ret
+water	154:37	0:0	10	;
+water	155:16	0:0	10	rt
+op	155:18	0:0	10	->
+water	155:20	0:0	10	cur_transport_priv
+op	155:39	0:0	10	=
+water	155:41	0:0	10	rt
+op	155:43	0:0	10	->
+water	155:45	0:0	10	ts
+water	155:47	0:0	10	;
+return	156:16	156:24	10	1
+water	156:23	0:0	11	1
+water	157:12	0:0	10	}
+else	157:14	159:12	8
+stmts	157:19	159:12	9	
+water	157:19	0:0	10	{
+water	158:16	0:0	10	ret
+op	158:20	0:0	10	=
+water	158:22	0:0	10	0
+water	158:23	0:0	10	;
+water	159:12	0:0	10	}
+water	160:8	0:0	8	}
+water	161:4	0:0	6	}
+else	161:6	163:4	2
+stmts	161:11	163:4	3	
+water	161:11	0:0	4	{
+return	162:8	162:34	4	AVERROR_INVALIDDATA
+water	162:15	0:0	5	AVERROR_INVALIDDATA
+water	163:4	0:0	4	}
+label	164:0	164:3	2	end :
+if	165:4	166:17	2	(ret < 0)
+cond	165:8	165:14	3	ret < 0
+water	165:8	0:0	4	ret
+op	165:12	0:0	4	<
+water	165:14	0:0	4	0
+stmts	166:8	166:17	3	
+goto	166:8	166:17	4	redo
+water	166:13	0:0	5	redo
+if	167:4	169:56	2	(ret == 1)
+cond	167:8	167:15	3	ret == 1
+water	167:8	0:0	4	ret
+op	167:12	0:0	4	==
+water	167:15	0:0	4	1
+stmts	169:8	169:56	3	
+water	169:8	0:0	4	rt
+op	169:10	0:0	4	->
+water	169:12	0:0	4	cur_transport_priv
+op	169:31	0:0	4	=
+water	169:33	0:0	4	rtsp_st
+op	169:40	0:0	4	->
+water	169:42	0:0	4	transport_priv
+water	169:56	0:0	4	;
+return	170:4	170:14	2	ret
+water	170:11	0:0	3	ret

@@ -1,0 +1,458 @@
+func	1:0	86:0	0	static int	event_thread
+params	1:23	0:0	1	
+param	1:24	1:33	2	void *	arg
+stmnts	0:0	85:12	1	
+decl	3:4	3:28	2	AVFormatContext	*s
+op	3:23	0:0	2	=
+water	3:25	0:0	2	arg
+decl	4:4	4:34	2	SDLContext	*sdl
+op	4:20	0:0	2	=
+water	4:22	0:0	2	s
+op	4:23	0:0	2	->
+water	4:25	0:0	2	priv_data
+decl	5:4	5:78	2	int	flags
+op	5:14	0:0	2	=
+water	5:16	0:0	2	SDL_BASE_FLAGS
+op	5:31	0:0	2	|
+water	5:33	0:0	2	(
+water	5:34	0:0	2	sdl
+op	5:37	0:0	2	->
+water	5:39	0:0	2	window_fullscreen
+water	5:57	0:0	2	?
+water	5:59	0:0	2	SDL_FULLSCREEN
+water	5:74	0:0	2	:
+water	5:76	0:0	2	0
+water	5:77	0:0	2	)
+decl	6:4	6:32	2	AVStream	*st
+op	6:17	0:0	2	=
+water	6:19	0:0	2	s
+op	6:20	0:0	2	->
+water	6:22	0:0	2	streams
+op	6:29	0:0	2	[
+water	6:30	0:0	2	0
+op	6:31	0:0	2	]
+decl	7:4	7:38	2	AVCodecContext	*encctx
+op	7:27	0:0	2	=
+water	7:29	0:0	2	st
+op	7:31	0:0	2	->
+water	7:33	0:0	2	codec
+if	9:4	13:4	2	(SDL_Init (SDL_INIT_VIDEO ) != 0)
+cond	9:8	9:36	3	SDL_Init (SDL_INIT_VIDEO ) != 0
+call	9:8	9:31	4	SDL_Init
+arg	9:17	9:31	5	SDL_INIT_VIDEO
+water	9:17	0:0	6	SDL_INIT_VIDEO
+op	9:33	0:0	4	!=
+water	9:36	0:0	4	0
+stmts	9:39	13:4	3	
+water	9:39	0:0	4	{
+call	10:8	10:80	4	av_log
+arg	10:15	10:16	5	s
+water	10:15	0:0	6	s
+arg	10:18	10:30	5	AV_LOG_ERROR
+water	10:18	0:0	6	AV_LOG_ERROR
+arg	10:32	10:64	5	"Unable to initialize SDL: %s\n"
+water	10:32	0:0	6	"Unable to initialize SDL: %s\n"
+arg	10:66	10:80	5	SDL_GetError()
+call	10:66	10:79	6	SDL_GetError
+water	10:81	0:0	4	;
+water	11:8	0:0	4	sdl
+op	11:11	0:0	4	->
+water	11:13	0:0	4	init_ret
+op	11:22	0:0	4	=
+call	11:24	11:38	4	AVERROR
+arg	11:32	11:38	5	EINVAL
+water	11:32	0:0	6	EINVAL
+water	11:39	0:0	4	;
+goto	12:8	12:21	4	init_end
+water	12:13	0:0	5	init_end
+water	13:4	0:0	4	}
+call	14:4	14:56	2	SDL_WM_SetCaption
+arg	14:22	14:39	3	sdl->window_title
+water	14:22	0:0	4	sdl
+op	14:25	0:0	4	->
+water	14:27	0:0	4	window_title
+arg	14:41	14:56	3	sdl->icon_title
+water	14:41	0:0	4	sdl
+op	14:44	0:0	4	->
+water	14:46	0:0	4	icon_title
+water	14:57	0:0	2	;
+water	15:4	0:0	2	sdl
+op	15:7	0:0	2	->
+water	15:9	0:0	2	surface
+op	15:17	0:0	2	=
+call	15:19	16:45	2	SDL_SetVideoMode
+arg	15:36	15:53	3	sdl->window_width
+water	15:36	0:0	4	sdl
+op	15:39	0:0	4	->
+water	15:41	0:0	4	window_width
+arg	15:55	15:73	3	sdl->window_height
+water	15:55	0:0	4	sdl
+op	15:58	0:0	4	->
+water	15:60	0:0	4	window_height
+arg	16:36	16:38	3	24
+water	16:36	0:0	4	24
+arg	16:40	16:45	3	flags
+water	16:40	0:0	4	flags
+water	16:46	0:0	2	;
+if	17:4	21:4	2	(! sdl -> surface)
+cond	17:8	17:14	3	! sdl -> surface
+op	17:8	0:0	4	!
+water	17:9	0:0	4	sdl
+op	17:12	0:0	4	->
+water	17:14	0:0	4	surface
+stmts	17:23	21:4	3	
+water	17:23	0:0	4	{
+call	18:8	18:82	4	av_log
+arg	18:15	18:18	5	sdl
+water	18:15	0:0	6	sdl
+arg	18:20	18:32	5	AV_LOG_ERROR
+water	18:20	0:0	6	AV_LOG_ERROR
+arg	18:34	18:66	5	"Unable to set video mode: %s\n"
+water	18:34	0:0	6	"Unable to set video mode: %s\n"
+arg	18:68	18:82	5	SDL_GetError()
+call	18:68	18:81	6	SDL_GetError
+water	18:83	0:0	4	;
+water	19:8	0:0	4	sdl
+op	19:11	0:0	4	->
+water	19:13	0:0	4	init_ret
+op	19:22	0:0	4	=
+call	19:24	19:38	4	AVERROR
+arg	19:32	19:38	5	EINVAL
+water	19:32	0:0	6	EINVAL
+water	19:39	0:0	4	;
+goto	20:8	20:21	4	init_end
+water	20:13	0:0	5	init_end
+water	21:4	0:0	4	}
+water	22:4	0:0	2	sdl
+op	22:7	0:0	2	->
+water	22:9	0:0	2	overlay
+op	22:17	0:0	2	=
+call	22:19	23:70	2	SDL_CreateYUVOverlay
+arg	22:40	22:53	3	encctx->width
+water	22:40	0:0	4	encctx
+op	22:46	0:0	4	->
+water	22:48	0:0	4	width
+arg	22:55	22:69	3	encctx->height
+water	22:55	0:0	4	encctx
+op	22:61	0:0	4	->
+water	22:63	0:0	4	height
+arg	23:40	23:56	3	sdl->overlay_fmt
+water	23:40	0:0	4	sdl
+op	23:43	0:0	4	->
+water	23:45	0:0	4	overlay_fmt
+arg	23:58	23:70	3	sdl->surface
+water	23:58	0:0	4	sdl
+op	23:61	0:0	4	->
+water	23:63	0:0	4	surface
+water	23:71	0:0	2	;
+if	24:4	30:4	2	(! sdl -> overlay || sdl -> overlay -> pitches [ 0 ] < encctx -> width)
+cond	24:8	24:60	3	! sdl -> overlay || sdl -> overlay -> pitches [ 0 ] < encctx -> width
+op	24:8	0:0	4	!
+water	24:9	0:0	4	sdl
+op	24:12	0:0	4	->
+water	24:14	0:0	4	overlay
+op	24:22	0:0	4	||
+water	24:25	0:0	4	sdl
+op	24:28	0:0	4	->
+water	24:30	0:0	4	overlay
+op	24:37	0:0	4	->
+water	24:39	0:0	4	pitches
+op	24:46	0:0	4	[
+water	24:47	0:0	4	0
+op	24:48	0:0	4	]
+op	24:50	0:0	4	<
+water	24:52	0:0	4	encctx
+op	24:58	0:0	4	->
+water	24:60	0:0	4	width
+stmts	24:67	30:4	3	
+water	24:67	0:0	4	{
+call	25:8	27:44	4	av_log
+arg	25:15	25:16	5	s
+water	25:15	0:0	6	s
+arg	25:18	25:30	5	AV_LOG_ERROR
+water	25:18	0:0	6	AV_LOG_ERROR
+arg	26:15	26:76	5	"SDL does not support an overlay with size of %dx%d pixels\n"
+water	26:15	0:0	6	"SDL does not support an overlay with size of %dx%d pixels\n"
+arg	27:15	27:28	5	encctx->width
+water	27:15	0:0	6	encctx
+op	27:21	0:0	6	->
+water	27:23	0:0	6	width
+arg	27:30	27:44	5	encctx->height
+water	27:30	0:0	6	encctx
+op	27:36	0:0	6	->
+water	27:38	0:0	6	height
+water	27:45	0:0	4	;
+water	28:8	0:0	4	sdl
+op	28:11	0:0	4	->
+water	28:13	0:0	4	init_ret
+op	28:22	0:0	4	=
+call	28:24	28:38	4	AVERROR
+arg	28:32	28:38	5	EINVAL
+water	28:32	0:0	6	EINVAL
+water	28:39	0:0	4	;
+goto	29:8	29:21	4	init_end
+water	29:13	0:0	5	init_end
+water	30:4	0:0	4	}
+water	31:4	0:0	2	sdl
+op	31:7	0:0	2	->
+water	31:9	0:0	2	init_ret
+op	31:18	0:0	2	=
+water	31:20	0:0	2	0
+water	31:21	0:0	2	;
+call	32:4	34:51	2	av_log
+arg	32:11	32:12	3	s
+water	32:11	0:0	4	s
+arg	32:14	32:28	3	AV_LOG_VERBOSE
+water	32:14	0:0	4	AV_LOG_VERBOSE
+arg	32:30	32:63	3	"w:%d h:%d fmt:%s -> w:%d h:%d\n"
+water	32:30	0:0	4	"w:%d h:%d fmt:%s -> w:%d h:%d\n"
+arg	33:11	33:24	3	encctx->width
+water	33:11	0:0	4	encctx
+op	33:17	0:0	4	->
+water	33:19	0:0	4	width
+arg	33:26	33:40	3	encctx->height
+water	33:26	0:0	4	encctx
+op	33:32	0:0	4	->
+water	33:34	0:0	4	height
+arg	33:42	33:78	3	av_get_pix_fmt_name(encctx->pix_fmt)
+call	33:42	33:77	4	av_get_pix_fmt_name
+arg	33:62	33:77	5	encctx->pix_fmt
+water	33:62	0:0	6	encctx
+op	33:68	0:0	6	->
+water	33:70	0:0	6	pix_fmt
+arg	34:11	34:30	3	sdl->overlay_rect.w
+water	34:11	0:0	4	sdl
+op	34:14	0:0	4	->
+water	34:16	0:0	4	overlay_rect
+op	34:28	0:0	4	.
+water	34:29	0:0	4	w
+arg	34:32	34:51	3	sdl->overlay_rect.h
+water	34:32	0:0	4	sdl
+op	34:35	0:0	4	->
+water	34:37	0:0	4	overlay_rect
+op	34:49	0:0	4	.
+water	34:50	0:0	4	h
+water	34:52	0:0	2	;
+label	35:0	35:8	2	init_end :
+call	36:4	36:28	2	SDL_LockMutex
+arg	36:18	36:28	3	sdl->mutex
+water	36:18	0:0	4	sdl
+op	36:21	0:0	4	->
+water	36:23	0:0	4	mutex
+water	36:29	0:0	2	;
+water	37:4	0:0	2	sdl
+op	37:7	0:0	2	->
+water	37:9	0:0	2	inited
+op	37:16	0:0	2	=
+water	37:18	0:0	2	1
+water	37:19	0:0	2	;
+call	38:4	38:30	2	SDL_UnlockMutex
+arg	38:20	38:30	3	sdl->mutex
+water	38:20	0:0	4	sdl
+op	38:23	0:0	4	->
+water	38:25	0:0	4	mutex
+water	38:31	0:0	2	;
+call	39:4	39:33	2	SDL_CondSignal
+arg	39:19	39:33	3	sdl->init_cond
+water	39:19	0:0	4	sdl
+op	39:22	0:0	4	->
+water	39:24	0:0	4	init_cond
+water	39:34	0:0	2	;
+if	40:4	41:28	2	(sdl -> init_ret < 0)
+cond	40:8	40:24	3	sdl -> init_ret < 0
+water	40:8	0:0	4	sdl
+op	40:11	0:0	4	->
+water	40:13	0:0	4	init_ret
+op	40:22	0:0	4	<
+water	40:24	0:0	4	0
+stmts	41:8	41:28	3	
+return	41:8	41:28	4	sdl->init_ret
+water	41:15	0:0	5	sdl
+op	41:18	0:0	5	->
+water	41:20	0:0	5	init_ret
+while	43:4	84:4	2	(! sdl -> quit)
+cond	43:11	43:17	3	! sdl -> quit
+op	43:11	0:0	4	!
+water	43:12	0:0	4	sdl
+op	43:15	0:0	4	->
+water	43:17	0:0	4	quit
+stmts	43:23	84:4	3	
+water	43:23	0:0	4	{
+decl	44:8	44:15	4	int	ret
+decl	45:8	45:23	4	SDL_Event	event
+call	46:8	46:23	4	SDL_PumpEvents
+water	46:24	0:0	4	;
+water	47:8	0:0	4	ret
+op	47:12	0:0	4	=
+call	47:14	47:67	4	SDL_PeepEvents
+arg	47:29	47:35	5	&event
+op	47:29	0:0	6	&
+water	47:30	0:0	6	event
+arg	47:37	47:38	5	1
+water	47:37	0:0	6	1
+arg	47:40	47:52	5	SDL_GETEVENT
+water	47:40	0:0	6	SDL_GETEVENT
+arg	47:54	47:67	5	SDL_ALLEVENTS
+water	47:54	0:0	6	SDL_ALLEVENTS
+water	47:68	0:0	4	;
+if	48:8	51:8	4	(ret < 0)
+cond	48:12	48:18	5	ret < 0
+water	48:12	0:0	6	ret
+op	48:16	0:0	6	<
+water	48:18	0:0	6	0
+stmts	48:21	51:8	5	
+water	48:21	0:0	6	{
+call	49:12	49:88	6	av_log
+arg	49:19	49:20	7	s
+water	49:19	0:0	8	s
+arg	49:22	49:34	7	AV_LOG_ERROR
+water	49:22	0:0	8	AV_LOG_ERROR
+arg	49:36	49:72	7	"Error when getting SDL event: %s\n"
+water	49:36	0:0	8	"Error when getting SDL event: %s\n"
+arg	49:74	49:88	7	SDL_GetError()
+call	49:74	49:87	8	SDL_GetError
+water	49:89	0:0	6	;
+continue	50:12	50:20	6	
+water	51:8	0:0	6	}
+if	52:8	55:8	4	(ret == 0)
+cond	52:12	52:19	5	ret == 0
+water	52:12	0:0	6	ret
+op	52:16	0:0	6	==
+water	52:19	0:0	6	0
+stmts	52:22	55:8	5	
+water	52:22	0:0	6	{
+call	53:12	53:24	6	SDL_Delay
+arg	53:22	53:24	7	10
+water	53:22	0:0	8	10
+water	53:25	0:0	6	;
+continue	54:12	54:20	6	
+water	55:8	0:0	6	}
+switch	56:8	83:8	4	(event . type)
+cond	56:16	56:22	5	event . type
+water	56:16	0:0	6	event
+op	56:21	0:0	6	.
+water	56:22	0:0	6	type
+stmts	56:28	83:8	5	
+water	56:28	0:0	6	{
+label	57:8	57:24	6	case SDL_KEYDOWN :
+switch	58:12	63:12	6	(event . key . keysym . sym)
+cond	58:20	58:37	7	event . key . keysym . sym
+water	58:20	0:0	8	event
+op	58:25	0:0	8	.
+water	58:26	0:0	8	key
+op	58:29	0:0	8	.
+water	58:30	0:0	8	keysym
+op	58:36	0:0	8	.
+water	58:37	0:0	8	sym
+stmts	58:42	63:12	7	
+water	58:42	0:0	8	{
+label	59:12	59:28	8	case SDLK_ESCAPE :
+label	60:12	60:23	8	case SDLK_q :
+water	61:16	0:0	8	sdl
+op	61:19	0:0	8	->
+water	61:21	0:0	8	quit
+op	61:26	0:0	8	=
+water	61:28	0:0	8	1
+water	61:29	0:0	8	;
+break	62:16	62:21	8	
+water	63:12	0:0	8	}
+break	64:12	64:17	6	
+label	65:8	65:21	6	case SDL_QUIT :
+water	66:12	0:0	6	sdl
+op	66:15	0:0	6	->
+water	66:17	0:0	6	quit
+op	66:22	0:0	6	=
+water	66:24	0:0	6	1
+water	66:25	0:0	6	;
+break	67:12	67:17	6	
+label	68:8	68:28	6	case SDL_VIDEORESIZE :
+water	69:12	0:0	6	sdl
+op	69:15	0:0	6	->
+water	69:17	0:0	6	window_width
+op	69:31	0:0	6	=
+water	69:33	0:0	6	event
+op	69:38	0:0	6	.
+water	69:39	0:0	6	resize
+op	69:45	0:0	6	.
+water	69:46	0:0	6	w
+water	69:47	0:0	6	;
+water	70:12	0:0	6	sdl
+op	70:15	0:0	6	->
+water	70:17	0:0	6	window_height
+op	70:31	0:0	6	=
+water	70:33	0:0	6	event
+op	70:38	0:0	6	.
+water	70:39	0:0	6	resize
+op	70:45	0:0	6	.
+water	70:46	0:0	6	h
+water	70:47	0:0	6	;
+call	71:12	71:36	6	SDL_LockMutex
+arg	71:26	71:36	7	sdl->mutex
+water	71:26	0:0	8	sdl
+op	71:29	0:0	8	->
+water	71:31	0:0	8	mutex
+water	71:37	0:0	6	;
+water	72:12	0:0	6	sdl
+op	72:15	0:0	6	->
+water	72:17	0:0	6	surface
+op	72:25	0:0	6	=
+call	72:27	72:101	6	SDL_SetVideoMode
+arg	72:44	72:61	7	sdl->window_width
+water	72:44	0:0	8	sdl
+op	72:47	0:0	8	->
+water	72:49	0:0	8	window_width
+arg	72:63	72:81	7	sdl->window_height
+water	72:63	0:0	8	sdl
+op	72:66	0:0	8	->
+water	72:68	0:0	8	window_height
+arg	72:83	72:85	7	24
+water	72:83	0:0	8	24
+arg	72:87	72:101	7	SDL_BASE_FLAGS
+water	72:87	0:0	8	SDL_BASE_FLAGS
+water	72:102	0:0	6	;
+if	73:12	76:12	6	(! sdl -> surface)
+cond	73:16	73:22	7	! sdl -> surface
+op	73:16	0:0	8	!
+water	73:17	0:0	8	sdl
+op	73:20	0:0	8	->
+water	73:22	0:0	8	surface
+stmts	73:31	76:12	7	
+water	73:31	0:0	8	{
+call	74:16	74:92	8	av_log
+arg	74:23	74:24	9	s
+water	74:23	0:0	10	s
+arg	74:26	74:38	9	AV_LOG_ERROR
+water	74:26	0:0	10	AV_LOG_ERROR
+arg	74:40	74:76	9	"Failed to set SDL video mode: %s\n"
+water	74:40	0:0	10	"Failed to set SDL video mode: %s\n"
+arg	74:78	74:92	9	SDL_GetError()
+call	74:78	74:91	10	SDL_GetError
+water	74:93	0:0	8	;
+water	75:16	0:0	8	sdl
+op	75:19	0:0	8	->
+water	75:21	0:0	8	quit
+op	75:26	0:0	8	=
+water	75:28	0:0	8	1
+water	75:29	0:0	8	;
+water	76:12	0:0	8	}
+else	76:14	78:12	6
+stmts	76:19	78:12	7	
+water	76:19	0:0	8	{
+call	77:16	77:38	8	compute_overlay_rect
+arg	77:37	77:38	9	s
+water	77:37	0:0	10	s
+water	77:39	0:0	8	;
+water	78:12	0:0	8	}
+call	79:12	79:38	6	SDL_UnlockMutex
+arg	79:28	79:38	7	sdl->mutex
+water	79:28	0:0	8	sdl
+op	79:31	0:0	8	->
+water	79:33	0:0	8	mutex
+water	79:39	0:0	6	;
+break	80:12	80:17	6	
+label	81:8	81:15	6	default :
+break	82:12	82:17	6	
+water	83:8	0:0	6	}
+water	84:4	0:0	4	}
+return	85:4	85:12	2	0
+water	85:11	0:0	3	0

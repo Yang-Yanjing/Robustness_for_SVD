@@ -1,0 +1,340 @@
+func	1:0	50:0	0	static int	mxf_read_packet
+params	1:26	0:0	1	
+param	1:27	1:45	2	AVFormatContext *	s
+param	1:47	1:60	2	AVPacket *	pkt
+stmnts	0:0	49:12	1	
+decl	3:4	3:34	2	MXFContext	*mxf
+op	3:20	0:0	2	=
+water	3:22	0:0	2	s
+op	3:23	0:0	2	->
+water	3:25	0:0	2	priv_data
+decl	4:4	4:17	2	int	ret
+water	4:11	0:0	2	,
+decl	4:4	4:17	2	int	size
+decl	5:4	5:32	2	int64_t	ret64
+water	5:17	0:0	2	,
+decl	5:4	5:32	2	int64_t	pos
+water	5:22	0:0	2	,
+decl	5:4	5:32	2	int64_t	next_pos
+decl	6:4	6:16	2	AVStream	*st
+decl	7:4	7:20	2	MXFIndexTable	*t
+decl	8:4	8:18	2	int	edit_units
+if	9:4	10:42	2	(mxf -> op != OPAtom)
+cond	9:8	9:19	3	mxf -> op != OPAtom
+water	9:8	0:0	4	mxf
+op	9:11	0:0	4	->
+water	9:13	0:0	4	op
+op	9:16	0:0	4	!=
+water	9:19	0:0	4	OPAtom
+stmts	10:8	10:42	3	
+return	10:8	10:42	4	mxf_read_packet_old(s,pkt)
+call	10:15	10:41	5	mxf_read_packet_old
+arg	10:35	10:36	6	s
+water	10:35	0:0	7	s
+arg	10:38	10:41	6	pkt
+water	10:38	0:0	7	pkt
+if	12:4	13:26	2	(s -> nb_streams < 1)
+cond	12:8	12:24	3	s -> nb_streams < 1
+water	12:8	0:0	4	s
+op	12:9	0:0	4	->
+water	12:11	0:0	4	nb_streams
+op	12:22	0:0	4	<
+water	12:24	0:0	4	1
+stmts	13:8	13:26	3	
+return	13:8	13:26	4	AVERROR_EOF
+water	13:15	0:0	5	AVERROR_EOF
+water	16:4	0:0	2	st
+op	16:7	0:0	2	=
+water	16:9	0:0	2	s
+op	16:10	0:0	2	->
+water	16:12	0:0	2	streams
+op	16:19	0:0	2	[
+water	16:20	0:0	2	0
+op	16:21	0:0	2	]
+water	16:22	0:0	2	;
+water	17:4	0:0	2	t
+op	17:6	0:0	2	=
+op	17:8	0:0	2	&
+water	17:9	0:0	2	mxf
+op	17:12	0:0	2	->
+water	17:14	0:0	2	index_tables
+op	17:26	0:0	2	[
+water	17:27	0:0	2	0
+op	17:28	0:0	2	]
+water	17:29	0:0	2	;
+if	18:4	19:26	2	(mxf -> current_edit_unit >= st -> duration)
+cond	18:8	18:38	3	mxf -> current_edit_unit >= st -> duration
+water	18:8	0:0	4	mxf
+op	18:11	0:0	4	->
+water	18:13	0:0	4	current_edit_unit
+op	18:31	0:0	4	>=
+water	18:34	0:0	4	st
+op	18:36	0:0	4	->
+water	18:38	0:0	4	duration
+stmts	19:8	19:26	3	
+return	19:8	19:26	4	AVERROR_EOF
+water	19:15	0:0	5	AVERROR_EOF
+water	20:4	0:0	2	edit_units
+op	20:15	0:0	2	=
+call	20:17	20:88	2	FFMIN
+arg	20:23	20:49	3	mxf->edit_units_per_packet
+water	20:23	0:0	4	mxf
+op	20:26	0:0	4	->
+water	20:28	0:0	4	edit_units_per_packet
+arg	20:51	20:88	3	st->duration-mxf->current_edit_unit
+water	20:51	0:0	4	st
+op	20:53	0:0	4	->
+water	20:55	0:0	4	duration
+op	20:64	0:0	4	-
+water	20:66	0:0	4	mxf
+op	20:69	0:0	4	->
+water	20:71	0:0	4	current_edit_unit
+water	20:89	0:0	2	;
+if	21:4	22:18	2	(( ret =mxf_edit_unit_absolute_offset (mxf ,t ,mxf -> current_edit_unit ,NULL ,& pos ,1 ) ) < 0)
+cond	21:8	21:95	3	( ret =mxf_edit_unit_absolute_offset (mxf ,t ,mxf -> current_edit_unit ,NULL ,& pos ,1 ) ) < 0
+water	21:8	0:0	4	(
+water	21:9	0:0	4	ret
+op	21:13	0:0	4	=
+call	21:15	21:90	4	mxf_edit_unit_absolute_offset
+arg	21:45	21:48	5	mxf
+water	21:45	0:0	6	mxf
+arg	21:50	21:51	5	t
+water	21:50	0:0	6	t
+arg	21:53	21:75	5	mxf->current_edit_unit
+water	21:53	0:0	6	mxf
+op	21:56	0:0	6	->
+water	21:58	0:0	6	current_edit_unit
+arg	21:77	21:81	5	NULL
+water	21:77	0:0	6	NULL
+arg	21:83	21:87	5	&pos
+op	21:83	0:0	6	&
+water	21:84	0:0	6	pos
+arg	21:89	21:90	5	1
+water	21:89	0:0	6	1
+water	21:91	0:0	4	)
+op	21:93	0:0	4	<
+water	21:95	0:0	4	0
+stmts	22:8	22:18	3	
+return	22:8	22:18	4	ret
+water	22:15	0:0	5	ret
+if	25:4	29:4	2	(( ret =mxf_edit_unit_absolute_offset (mxf ,t ,mxf -> current_edit_unit + edit_units ,NULL ,& next_pos ,0 ) ) < 0 && ( next_pos =mxf_essence_container_end (mxf ,t -> body_sid ) ) <= 0)
+cond	25:8	26:68	3	( ret =mxf_edit_unit_absolute_offset (mxf ,t ,mxf -> current_edit_unit + edit_units ,NULL ,& next_pos ,0 ) ) < 0 && ( next_pos =mxf_essence_container_end (mxf ,t -> body_sid ) ) <= 0
+water	25:8	0:0	4	(
+water	25:9	0:0	4	ret
+op	25:13	0:0	4	=
+call	25:15	25:108	4	mxf_edit_unit_absolute_offset
+arg	25:45	25:48	5	mxf
+water	25:45	0:0	6	mxf
+arg	25:50	25:51	5	t
+water	25:50	0:0	6	t
+arg	25:53	25:88	5	mxf->current_edit_unit+edit_units
+water	25:53	0:0	6	mxf
+op	25:56	0:0	6	->
+water	25:58	0:0	6	current_edit_unit
+op	25:76	0:0	6	+
+water	25:78	0:0	6	edit_units
+arg	25:90	25:94	5	NULL
+water	25:90	0:0	6	NULL
+arg	25:96	25:105	5	&next_pos
+op	25:96	0:0	6	&
+water	25:97	0:0	6	next_pos
+arg	25:107	25:108	5	0
+water	25:107	0:0	6	0
+water	25:109	0:0	4	)
+op	25:111	0:0	4	<
+water	25:113	0:0	4	0
+op	25:115	0:0	4	&&
+water	26:8	0:0	4	(
+water	26:9	0:0	4	next_pos
+op	26:18	0:0	4	=
+call	26:20	26:62	4	mxf_essence_container_end
+arg	26:46	26:49	5	mxf
+water	26:46	0:0	6	mxf
+arg	26:51	26:62	5	t->body_sid
+water	26:51	0:0	6	t
+op	26:52	0:0	6	->
+water	26:54	0:0	6	body_sid
+water	26:63	0:0	4	)
+op	26:65	0:0	4	<=
+water	26:68	0:0	4	0
+stmts	26:71	29:4	3	
+water	26:71	0:0	4	{
+call	27:8	27:81	4	av_log
+arg	27:15	27:16	5	s
+water	27:15	0:0	6	s
+arg	27:18	27:30	5	AV_LOG_ERROR
+water	27:18	0:0	6	AV_LOG_ERROR
+arg	27:32	27:81	5	"unable to compute the size of the last packet\n"
+water	27:32	0:0	6	"unable to compute the size of the last packet\n"
+water	27:82	0:0	4	;
+return	28:8	28:34	4	AVERROR_INVALIDDATA
+water	28:15	0:0	5	AVERROR_INVALIDDATA
+water	29:4	0:0	4	}
+if	30:4	33:4	2	(( size = next_pos - pos ) <= 0)
+cond	30:8	30:35	3	( size = next_pos - pos ) <= 0
+water	30:8	0:0	4	(
+water	30:9	0:0	4	size
+op	30:14	0:0	4	=
+water	30:16	0:0	4	next_pos
+op	30:25	0:0	4	-
+water	30:27	0:0	4	pos
+water	30:30	0:0	4	)
+op	30:32	0:0	4	<=
+water	30:35	0:0	4	0
+stmts	30:38	33:4	3	
+water	30:38	0:0	4	{
+call	31:8	31:54	4	av_log
+arg	31:15	31:16	5	s
+water	31:15	0:0	6	s
+arg	31:18	31:30	5	AV_LOG_ERROR
+water	31:18	0:0	6	AV_LOG_ERROR
+arg	31:32	31:48	5	"bad size: %i\n"
+water	31:32	0:0	6	"bad size: %i\n"
+arg	31:50	31:54	5	size
+water	31:50	0:0	6	size
+water	31:55	0:0	4	;
+return	32:8	32:34	4	AVERROR_INVALIDDATA
+water	32:15	0:0	5	AVERROR_INVALIDDATA
+water	33:4	0:0	4	}
+if	34:4	35:20	2	(( ret64 =avio_seek (s -> pb ,pos ,SEEK_SET ) ) < 0)
+cond	34:8	34:52	3	( ret64 =avio_seek (s -> pb ,pos ,SEEK_SET ) ) < 0
+water	34:8	0:0	4	(
+water	34:9	0:0	4	ret64
+op	34:15	0:0	4	=
+call	34:17	34:47	4	avio_seek
+arg	34:27	34:32	5	s->pb
+water	34:27	0:0	6	s
+op	34:28	0:0	6	->
+water	34:30	0:0	6	pb
+arg	34:34	34:37	5	pos
+water	34:34	0:0	6	pos
+arg	34:39	34:47	5	SEEK_SET
+water	34:39	0:0	6	SEEK_SET
+water	34:48	0:0	4	)
+op	34:50	0:0	4	<
+water	34:52	0:0	4	0
+stmts	35:8	35:20	3	
+return	35:8	35:20	4	ret64
+water	35:15	0:0	5	ret64
+if	36:4	37:19	2	(( size =av_get_packet (s -> pb ,pkt ,size ) ) < 0)
+cond	36:8	36:51	3	( size =av_get_packet (s -> pb ,pkt ,size ) ) < 0
+water	36:8	0:0	4	(
+water	36:9	0:0	4	size
+op	36:14	0:0	4	=
+call	36:16	36:46	4	av_get_packet
+arg	36:30	36:35	5	s->pb
+water	36:30	0:0	6	s
+op	36:31	0:0	6	->
+water	36:33	0:0	6	pb
+arg	36:37	36:40	5	pkt
+water	36:37	0:0	6	pkt
+arg	36:42	36:46	5	size
+water	36:42	0:0	6	size
+water	36:47	0:0	4	)
+op	36:49	0:0	4	<
+water	36:51	0:0	4	0
+stmts	37:8	37:19	3	
+return	37:8	37:19	4	size
+water	37:15	0:0	5	size
+water	38:4	0:0	2	pkt
+op	38:7	0:0	2	->
+water	38:9	0:0	2	stream_index
+op	38:22	0:0	2	=
+water	38:24	0:0	2	0
+water	38:25	0:0	2	;
+if	39:4	43:4	2	(st -> codec -> codec_type == AVMEDIA_TYPE_VIDEO && t -> ptses && mxf -> current_edit_unit >= 0 && mxf -> current_edit_unit < t -> nb_ptses)
+cond	39:8	40:67	3	st -> codec -> codec_type == AVMEDIA_TYPE_VIDEO && t -> ptses && mxf -> current_edit_unit >= 0 && mxf -> current_edit_unit < t -> nb_ptses
+water	39:8	0:0	4	st
+op	39:10	0:0	4	->
+water	39:12	0:0	4	codec
+op	39:17	0:0	4	->
+water	39:19	0:0	4	codec_type
+op	39:30	0:0	4	==
+water	39:33	0:0	4	AVMEDIA_TYPE_VIDEO
+op	39:52	0:0	4	&&
+water	39:55	0:0	4	t
+op	39:56	0:0	4	->
+water	39:58	0:0	4	ptses
+op	39:64	0:0	4	&&
+water	40:8	0:0	4	mxf
+op	40:11	0:0	4	->
+water	40:13	0:0	4	current_edit_unit
+op	40:31	0:0	4	>=
+water	40:34	0:0	4	0
+op	40:36	0:0	4	&&
+water	40:39	0:0	4	mxf
+op	40:42	0:0	4	->
+water	40:44	0:0	4	current_edit_unit
+op	40:62	0:0	4	<
+water	40:64	0:0	4	t
+op	40:65	0:0	4	->
+water	40:67	0:0	4	nb_ptses
+stmts	40:77	43:4	3	
+water	40:77	0:0	4	{
+water	41:8	0:0	4	pkt
+op	41:11	0:0	4	->
+water	41:13	0:0	4	dts
+op	41:17	0:0	4	=
+water	41:19	0:0	4	mxf
+op	41:22	0:0	4	->
+water	41:24	0:0	4	current_edit_unit
+op	41:42	0:0	4	+
+water	41:44	0:0	4	t
+op	41:45	0:0	4	->
+water	41:47	0:0	4	first_dts
+water	41:56	0:0	4	;
+water	42:8	0:0	4	pkt
+op	42:11	0:0	4	->
+water	42:13	0:0	4	pts
+op	42:17	0:0	4	=
+water	42:19	0:0	4	t
+op	42:20	0:0	4	->
+water	42:22	0:0	4	ptses
+op	42:27	0:0	4	[
+water	42:28	0:0	4	mxf
+op	42:31	0:0	4	->
+water	42:33	0:0	4	current_edit_unit
+op	42:50	0:0	4	]
+water	42:51	0:0	4	;
+water	43:4	0:0	4	}
+else	43:6	47:4	2
+stmts	43:11	47:4	3	
+if	43:11	47:4	4	(st -> codec -> codec_type == AVMEDIA_TYPE_AUDIO)
+cond	43:15	43:40	5	st -> codec -> codec_type == AVMEDIA_TYPE_AUDIO
+water	43:15	0:0	6	st
+op	43:17	0:0	6	->
+water	43:19	0:0	6	codec
+op	43:24	0:0	6	->
+water	43:26	0:0	6	codec_type
+op	43:37	0:0	6	==
+water	43:40	0:0	6	AVMEDIA_TYPE_AUDIO
+stmts	43:60	47:4	5	
+water	43:60	0:0	6	{
+decl	44:8	44:56	6	int	ret
+op	44:16	0:0	6	=
+call	44:18	44:55	7	mxf_set_audio_pts
+arg	44:36	44:39	8	mxf
+water	44:36	0:0	9	mxf
+arg	44:41	44:50	8	st->codec
+water	44:41	0:0	9	st
+op	44:43	0:0	9	->
+water	44:45	0:0	9	codec
+arg	44:52	44:55	8	pkt
+water	44:52	0:0	9	pkt
+if	45:8	46:22	6	(ret < 0)
+cond	45:12	45:18	7	ret < 0
+water	45:12	0:0	8	ret
+op	45:16	0:0	8	<
+water	45:18	0:0	8	0
+stmts	46:12	46:22	7	
+return	46:12	46:22	8	ret
+water	46:19	0:0	9	ret
+water	47:4	0:0	6	}
+water	48:4	0:0	2	mxf
+op	48:7	0:0	2	->
+water	48:9	0:0	2	current_edit_unit
+op	48:27	0:0	2	+=
+water	48:30	0:0	2	edit_units
+water	48:40	0:0	2	;
+return	49:4	49:12	2	0
+water	49:11	0:0	3	0

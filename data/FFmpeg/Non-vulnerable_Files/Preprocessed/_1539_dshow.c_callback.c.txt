@@ -1,0 +1,167 @@
+func	1:0	30:0	0	static void	callback
+params	2:8	0:0	1	
+param	2:9	2:24	2	void *	priv_data
+param	2:26	2:35	2	int	index
+param	2:37	2:49	2	uint8_t *	buf
+param	2:51	2:63	2	int	buf_size
+param	2:65	2:77	2	int64_t	time
+param	2:79	2:107	2	enum dshowDeviceType	devtype
+stmnts	0:0	29:10	1	
+decl	4:4	4:34	2	AVFormatContext	*s
+op	4:23	0:0	2	=
+water	4:25	0:0	2	priv_data
+decl	5:4	5:40	2	struct dshow_ctx	*ctx
+op	5:26	0:0	2	=
+water	5:28	0:0	2	s
+op	5:29	0:0	2	->
+water	5:31	0:0	2	priv_data
+decl	6:4	6:36	2	AVPacketList	**ppktl
+water	6:24	0:0	2	,
+decl	6:4	6:36	2	AVPacketList	*pktl_next
+call	8:4	8:44	2	WaitForSingleObject
+arg	8:24	8:34	3	ctx->mutex
+water	8:24	0:0	4	ctx
+op	8:27	0:0	4	->
+water	8:29	0:0	4	mutex
+arg	8:36	8:44	3	INFINITE
+water	8:36	0:0	4	INFINITE
+water	8:45	0:0	2	;
+if	9:4	10:17	2	(shall_we_drop (s ,index ,devtype ))
+cond	9:7	9:38	3	shall_we_drop (s ,index ,devtype )
+call	9:7	9:38	4	shall_we_drop
+arg	9:21	9:22	5	s
+water	9:21	0:0	6	s
+arg	9:24	9:29	5	index
+water	9:24	0:0	6	index
+arg	9:31	9:38	5	devtype
+water	9:31	0:0	6	devtype
+stmts	10:8	10:17	3	
+goto	10:8	10:17	4	fail
+water	10:13	0:0	5	fail
+water	11:4	0:0	2	pktl_next
+op	11:14	0:0	2	=
+call	11:16	11:47	2	av_mallocz
+arg	11:27	11:47	3	sizeof(AVPacketList)
+op	11:27	0:0	4	sizeof
+water	11:33	0:0	4	(
+water	11:34	0:0	4	AVPacketList
+water	11:46	0:0	4	)
+water	11:48	0:0	2	;
+if	12:4	13:17	2	(! pktl_next)
+cond	12:7	12:8	3	! pktl_next
+op	12:7	0:0	4	!
+water	12:8	0:0	4	pktl_next
+stmts	13:8	13:17	3	
+goto	13:8	13:17	4	fail
+water	13:13	0:0	5	fail
+if	14:4	17:4	2	(av_new_packet (& pktl_next -> pkt ,buf_size ) < 0)
+cond	14:7	14:50	3	av_new_packet (& pktl_next -> pkt ,buf_size ) < 0
+call	14:7	14:46	4	av_new_packet
+arg	14:21	14:36	5	&pktl_next->pkt
+op	14:21	0:0	6	&
+water	14:22	0:0	6	pktl_next
+op	14:31	0:0	6	->
+water	14:33	0:0	6	pkt
+arg	14:38	14:46	5	buf_size
+water	14:38	0:0	6	buf_size
+op	14:48	0:0	4	<
+water	14:50	0:0	4	0
+stmts	14:53	17:4	3	
+water	14:53	0:0	4	{
+call	15:8	15:25	4	av_free
+arg	15:16	15:25	5	pktl_next
+water	15:16	0:0	6	pktl_next
+water	15:26	0:0	4	;
+goto	16:8	16:17	4	fail
+water	16:13	0:0	5	fail
+water	17:4	0:0	4	}
+water	18:4	0:0	2	pktl_next
+op	18:13	0:0	2	->
+water	18:15	0:0	2	pkt
+op	18:18	0:0	2	.
+water	18:19	0:0	2	stream_index
+op	18:32	0:0	2	=
+water	18:34	0:0	2	index
+water	18:39	0:0	2	;
+water	19:4	0:0	2	pktl_next
+op	19:13	0:0	2	->
+water	19:15	0:0	2	pkt
+op	19:18	0:0	2	.
+water	19:19	0:0	2	pts
+op	19:23	0:0	2	=
+water	19:25	0:0	2	time
+water	19:29	0:0	2	;
+call	20:4	20:45	2	memcpy
+arg	20:11	20:30	3	pktl_next->pkt.data
+water	20:11	0:0	4	pktl_next
+op	20:20	0:0	4	->
+water	20:22	0:0	4	pkt
+op	20:25	0:0	4	.
+water	20:26	0:0	4	data
+arg	20:32	20:35	3	buf
+water	20:32	0:0	4	buf
+arg	20:37	20:45	3	buf_size
+water	20:37	0:0	4	buf_size
+water	20:46	0:0	2	;
+for	21:4	21:62	2	(ppktl = & ctx -> pktl ;* ppktl;ppktl = & ( * ppktl ) -> next)
+forinit	21:8	21:27	3	ppktl = & ctx -> pktl ;
+water	21:8	0:0	4	ppktl
+op	21:14	0:0	4	=
+op	21:16	0:0	4	&
+water	21:17	0:0	4	ctx
+op	21:20	0:0	4	->
+water	21:22	0:0	4	pktl
+water	21:27	0:0	4	;
+cond	21:29	21:30	3	* ppktl
+op	21:29	0:0	4	*
+water	21:30	0:0	4	ppktl
+forexpr	21:38	21:57	3	ppktl = & ( * ppktl ) -> next
+water	21:38	0:0	4	ppktl
+op	21:44	0:0	4	=
+op	21:46	0:0	4	&
+water	21:47	0:0	4	(
+op	21:48	0:0	4	*
+water	21:49	0:0	4	ppktl
+water	21:54	0:0	4	)
+op	21:55	0:0	4	->
+water	21:57	0:0	4	next
+stmts	21:62	21:62	3	
+water	21:62	0:0	4	;
+op	22:4	0:0	2	*
+water	22:5	0:0	2	ppktl
+op	22:11	0:0	2	=
+water	22:13	0:0	2	pktl_next
+water	22:22	0:0	2	;
+water	23:4	0:0	2	ctx
+op	23:7	0:0	2	->
+water	23:9	0:0	2	curbufsize
+op	23:19	0:0	2	[
+water	23:20	0:0	2	index
+op	23:25	0:0	2	]
+op	23:27	0:0	2	+=
+water	23:30	0:0	2	buf_size
+water	23:38	0:0	2	;
+call	24:4	24:26	2	SetEvent
+arg	24:13	24:26	3	ctx->event[1]
+water	24:13	0:0	4	ctx
+op	24:16	0:0	4	->
+water	24:18	0:0	4	event
+op	24:23	0:0	4	[
+water	24:24	0:0	4	1
+op	24:25	0:0	4	]
+water	24:27	0:0	2	;
+call	25:4	25:27	2	ReleaseMutex
+arg	25:17	25:27	3	ctx->mutex
+water	25:17	0:0	4	ctx
+op	25:20	0:0	4	->
+water	25:22	0:0	4	mutex
+water	25:28	0:0	2	;
+return	26:4	26:10	2	
+label	27:0	27:4	2	fail :
+call	28:4	28:27	2	ReleaseMutex
+arg	28:17	28:27	3	ctx->mutex
+water	28:17	0:0	4	ctx
+op	28:20	0:0	4	->
+water	28:22	0:0	4	mutex
+water	28:28	0:0	2	;
+return	29:4	29:10	2	

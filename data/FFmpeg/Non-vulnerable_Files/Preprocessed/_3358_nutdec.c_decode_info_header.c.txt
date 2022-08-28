@@ -1,0 +1,676 @@
+func	1:0	109:0	0	static int	decode_info_header
+params	1:29	0:0	1	
+param	1:30	1:45	2	NUTContext *	nut
+stmnts	0:0	108:24	1	
+decl	3:4	3:33	2	AVFormatContext	*s
+op	3:23	0:0	2	=
+water	3:25	0:0	2	nut
+op	3:28	0:0	2	->
+water	3:30	0:0	2	avf
+decl	4:4	4:30	2	AVIOContext	*bc
+op	4:23	0:0	2	=
+water	4:25	0:0	2	s
+op	4:26	0:0	2	->
+water	4:28	0:0	2	pb
+decl	5:4	5:44	2	uint64_t	tmp
+water	5:16	0:0	2	,
+decl	5:4	5:44	2	uint64_t	chapter_start
+water	5:31	0:0	2	,
+decl	5:4	5:44	2	uint64_t	chapter_len
+decl	6:4	6:39	2	unsigned int	stream_id_plus1
+water	6:32	0:0	2	,
+decl	6:4	6:39	2	unsigned int	count
+decl	7:4	7:30	2	int	chapter_id
+water	7:18	0:0	2	,
+decl	7:4	7:30	2	int	i
+water	7:21	0:0	2	,
+decl	7:4	7:30	2	int	ret
+op	7:27	0:0	2	=
+water	7:29	0:0	2	0
+decl	8:4	8:22	2	int64_t	value
+water	8:17	0:0	2	,
+decl	8:4	8:22	2	int64_t	end
+decl	9:4	9:50	2	char	name[256]
+water	9:18	0:0	2	,
+decl	9:4	9:50	2	char	str_value[1024]
+water	9:35	0:0	2	,
+decl	9:4	9:50	2	char	type_str[256]
+decl	10:4	10:20	2	const char	*type
+decl	11:4	11:34	2	int	*event_flags
+op	11:28	0:0	2	=
+water	11:30	0:0	2	NULL
+decl	12:4	12:34	2	AVChapter	*chapter
+op	12:28	0:0	2	=
+water	12:30	0:0	2	NULL
+decl	13:4	13:34	2	AVStream	*st
+op	13:28	0:0	2	=
+water	13:30	0:0	2	NULL
+decl	14:4	14:34	2	AVDictionary	**metadata
+op	14:28	0:0	2	=
+water	14:30	0:0	2	NULL
+decl	15:4	15:31	2	int	metadata_flag
+op	15:28	0:0	2	=
+water	15:30	0:0	2	0
+water	16:4	0:0	2	end
+op	16:9	0:0	2	=
+call	16:11	16:54	2	get_packetheader
+arg	16:28	16:31	3	nut
+water	16:28	0:0	4	nut
+arg	16:33	16:35	3	bc
+water	16:33	0:0	4	bc
+arg	16:37	16:38	3	1
+water	16:37	0:0	4	1
+arg	16:40	16:54	3	INFO_STARTCODE
+water	16:40	0:0	4	INFO_STARTCODE
+water	16:55	0:0	2	;
+water	17:4	0:0	2	end
+op	17:8	0:0	2	+=
+call	17:11	17:23	2	avio_tell
+arg	17:21	17:23	3	bc
+water	17:21	0:0	4	bc
+water	17:24	0:0	2	;
+call	18:4	18:47	2	GET_V
+arg	18:10	18:25	3	stream_id_plus1
+water	18:10	0:0	4	stream_id_plus1
+arg	18:27	18:47	3	tmp<=s->nb_streams
+water	18:27	0:0	4	tmp
+op	18:31	0:0	4	<=
+water	18:34	0:0	4	s
+op	18:35	0:0	4	->
+water	18:37	0:0	4	nb_streams
+water	18:48	0:0	2	;
+water	19:4	0:0	2	chapter_id
+op	19:18	0:0	2	=
+call	19:20	19:28	2	get_s
+arg	19:26	19:28	3	bc
+water	19:26	0:0	4	bc
+water	19:29	0:0	2	;
+water	20:4	0:0	2	chapter_start
+op	20:18	0:0	2	=
+call	20:20	20:39	2	ffio_read_varlen
+arg	20:37	20:39	3	bc
+water	20:37	0:0	4	bc
+water	20:40	0:0	2	;
+water	21:4	0:0	2	chapter_len
+op	21:18	0:0	2	=
+call	21:20	21:39	2	ffio_read_varlen
+arg	21:37	21:39	3	bc
+water	21:37	0:0	4	bc
+water	21:40	0:0	2	;
+water	22:4	0:0	2	count
+op	22:18	0:0	2	=
+call	22:20	22:39	2	ffio_read_varlen
+arg	22:37	22:39	3	bc
+water	22:37	0:0	4	bc
+water	22:40	0:0	2	;
+if	23:4	34:4	2	(chapter_id && ! stream_id_plus1)
+cond	23:8	23:23	3	chapter_id && ! stream_id_plus1
+water	23:8	0:0	4	chapter_id
+op	23:19	0:0	4	&&
+op	23:22	0:0	4	!
+water	23:23	0:0	4	stream_id_plus1
+stmts	23:40	34:4	3	
+water	23:40	0:0	4	{
+decl	24:8	24:60	4	int64_t	start
+op	24:22	0:0	4	=
+water	24:24	0:0	4	chapter_start
+op	24:38	0:0	4	/
+water	24:40	0:0	4	nut
+op	24:43	0:0	4	->
+water	24:45	0:0	4	time_base_count
+water	25:8	0:0	4	chapter
+op	25:16	0:0	4	=
+call	25:18	28:69	4	avpriv_new_chapter
+arg	25:37	25:38	5	s
+water	25:37	0:0	6	s
+arg	25:40	25:50	5	chapter_id
+water	25:40	0:0	6	chapter_id
+arg	26:37	27:73	5	nut->time_base[chapter_start%nut->time_base_count]
+water	26:37	0:0	6	nut
+op	26:40	0:0	6	->
+water	26:42	0:0	6	time_base
+op	26:51	0:0	6	[
+water	26:52	0:0	6	chapter_start
+op	26:66	0:0	6	%
+water	27:52	0:0	6	nut
+op	27:55	0:0	6	->
+water	27:57	0:0	6	time_base_count
+op	27:72	0:0	6	]
+arg	28:37	28:42	5	start
+water	28:37	0:0	6	start
+arg	28:44	28:63	5	start+chapter_len
+water	28:44	0:0	6	start
+op	28:50	0:0	6	+
+water	28:52	0:0	6	chapter_len
+arg	28:65	28:69	5	NULL
+water	28:65	0:0	6	NULL
+water	28:70	0:0	4	;
+if	29:8	32:8	4	(! chapter)
+cond	29:12	29:13	5	! chapter
+op	29:12	0:0	6	!
+water	29:13	0:0	6	chapter
+stmts	29:22	32:8	5	
+water	29:22	0:0	6	{
+call	30:12	30:65	6	av_log
+arg	30:19	30:20	7	s
+water	30:19	0:0	8	s
+arg	30:22	30:34	7	AV_LOG_ERROR
+water	30:22	0:0	8	AV_LOG_ERROR
+arg	30:36	30:65	7	"Could not create chapter.\n"
+water	30:36	0:0	8	"Could not create chapter.\n"
+water	30:66	0:0	6	;
+return	31:12	31:34	6	AVERROR(ENOMEM)
+call	31:19	31:33	7	AVERROR
+arg	31:27	31:33	8	ENOMEM
+water	31:27	0:0	9	ENOMEM
+water	32:8	0:0	6	}
+water	33:8	0:0	4	metadata
+op	33:17	0:0	4	=
+op	33:19	0:0	4	&
+water	33:20	0:0	4	chapter
+op	33:27	0:0	4	->
+water	33:29	0:0	4	metadata
+water	33:37	0:0	4	;
+water	34:4	0:0	4	}
+else	34:6	39:4	2
+stmts	34:11	39:4	3	
+if	34:11	39:4	4	(stream_id_plus1)
+cond	34:15	34:15	5	stream_id_plus1
+water	34:15	0:0	6	stream_id_plus1
+stmts	34:32	39:4	5	
+water	34:32	0:0	6	{
+water	35:8	0:0	6	st
+op	35:17	0:0	6	=
+water	35:19	0:0	6	s
+op	35:20	0:0	6	->
+water	35:22	0:0	6	streams
+op	35:29	0:0	6	[
+water	35:30	0:0	6	stream_id_plus1
+op	35:46	0:0	6	-
+water	35:48	0:0	6	1
+op	35:49	0:0	6	]
+water	35:50	0:0	6	;
+water	36:8	0:0	6	metadata
+op	36:17	0:0	6	=
+op	36:19	0:0	6	&
+water	36:20	0:0	6	st
+op	36:22	0:0	6	->
+water	36:24	0:0	6	metadata
+water	36:32	0:0	6	;
+water	37:8	0:0	6	event_flags
+op	37:20	0:0	6	=
+op	37:22	0:0	6	&
+water	37:23	0:0	6	st
+op	37:25	0:0	6	->
+water	37:27	0:0	6	event_flags
+water	37:38	0:0	6	;
+water	38:8	0:0	6	metadata_flag
+op	38:22	0:0	6	=
+water	38:24	0:0	6	AVSTREAM_EVENT_FLAG_METADATA_UPDATED
+water	38:60	0:0	6	;
+water	39:4	0:0	6	}
+else	39:6	43:4	2
+stmts	39:11	43:4	3	
+water	39:11	0:0	4	{
+water	40:8	0:0	4	metadata
+op	40:17	0:0	4	=
+op	40:19	0:0	4	&
+water	40:20	0:0	4	s
+op	40:21	0:0	4	->
+water	40:23	0:0	4	metadata
+water	40:31	0:0	4	;
+water	41:8	0:0	4	event_flags
+op	41:20	0:0	4	=
+op	41:22	0:0	4	&
+water	41:23	0:0	4	s
+op	41:24	0:0	4	->
+water	41:26	0:0	4	event_flags
+water	41:37	0:0	4	;
+water	42:8	0:0	4	metadata_flag
+op	42:22	0:0	4	=
+water	42:24	0:0	4	AVFMT_EVENT_FLAG_METADATA_UPDATED
+water	42:57	0:0	4	;
+water	43:4	0:0	4	}
+for	44:4	102:4	2	(i = 0 ;i < count;i ++)
+forinit	44:9	44:14	3	i = 0 ;
+water	44:9	0:0	4	i
+op	44:11	0:0	4	=
+water	44:13	0:0	4	0
+water	44:14	0:0	4	;
+cond	44:16	44:20	3	i < count
+water	44:16	0:0	4	i
+op	44:18	0:0	4	<
+water	44:20	0:0	4	count
+forexpr	44:27	44:28	3	i ++
+water	44:27	0:0	4	i
+op	44:28	0:0	4	++
+stmts	44:32	102:4	3	
+water	44:32	0:0	4	{
+water	45:8	0:0	4	ret
+op	45:12	0:0	4	=
+call	45:14	45:44	4	get_str
+arg	45:22	45:24	5	bc
+water	45:22	0:0	6	bc
+arg	45:26	45:30	5	name
+water	45:26	0:0	6	name
+arg	45:32	45:44	5	sizeof(name)
+op	45:32	0:0	6	sizeof
+water	45:38	0:0	6	(
+water	45:39	0:0	6	name
+water	45:43	0:0	6	)
+water	45:45	0:0	4	;
+if	46:8	49:8	4	(ret < 0)
+cond	46:12	46:18	5	ret < 0
+water	46:12	0:0	6	ret
+op	46:16	0:0	6	<
+water	46:18	0:0	6	0
+stmts	46:21	49:8	5	
+water	46:21	0:0	6	{
+call	47:12	47:81	6	av_log
+arg	47:19	47:20	7	s
+water	47:19	0:0	8	s
+arg	47:22	47:34	7	AV_LOG_ERROR
+water	47:22	0:0	8	AV_LOG_ERROR
+arg	47:36	47:81	7	"get_str failed while decoding info header\n"
+water	47:36	0:0	8	"get_str failed while decoding info header\n"
+water	47:82	0:0	6	;
+return	48:12	48:22	6	ret
+water	48:19	0:0	7	ret
+water	49:8	0:0	6	}
+water	50:8	0:0	4	value
+op	50:14	0:0	4	=
+call	50:16	50:24	4	get_s
+arg	50:22	50:24	5	bc
+water	50:22	0:0	6	bc
+water	50:25	0:0	4	;
+water	51:8	0:0	4	str_value
+op	51:17	0:0	4	[
+water	51:18	0:0	4	0
+op	51:19	0:0	4	]
+op	51:21	0:0	4	=
+water	51:23	0:0	4	0
+water	51:24	0:0	4	;
+if	52:8	55:8	4	(value == - 1)
+cond	52:12	52:22	5	value == - 1
+water	52:12	0:0	6	value
+op	52:18	0:0	6	==
+op	52:21	0:0	6	-
+water	52:22	0:0	6	1
+stmts	52:25	55:8	5	
+water	52:25	0:0	6	{
+water	53:12	0:0	6	type
+op	53:17	0:0	6	=
+water	53:19	0:0	6	"UTF-8"
+water	53:26	0:0	6	;
+water	54:12	0:0	6	ret
+op	54:16	0:0	6	=
+call	54:18	54:58	6	get_str
+arg	54:26	54:28	7	bc
+water	54:26	0:0	8	bc
+arg	54:30	54:39	7	str_value
+water	54:30	0:0	8	str_value
+arg	54:41	54:58	7	sizeof(str_value)
+op	54:41	0:0	8	sizeof
+water	54:47	0:0	8	(
+water	54:48	0:0	8	str_value
+water	54:57	0:0	8	)
+water	54:59	0:0	6	;
+water	55:8	0:0	6	}
+else	55:10	63:8	4
+stmts	55:15	63:8	5	
+if	55:15	63:8	6	(value == - 2)
+cond	55:19	55:29	7	value == - 2
+water	55:19	0:0	8	value
+op	55:25	0:0	8	==
+op	55:28	0:0	8	-
+water	55:29	0:0	8	2
+stmts	55:32	63:8	7	
+water	55:32	0:0	8	{
+water	56:12	0:0	8	ret
+op	56:16	0:0	8	=
+call	56:18	56:56	8	get_str
+arg	56:26	56:28	9	bc
+water	56:26	0:0	10	bc
+arg	56:30	56:38	9	type_str
+water	56:30	0:0	10	type_str
+arg	56:40	56:56	9	sizeof(type_str)
+op	56:40	0:0	10	sizeof
+water	56:46	0:0	10	(
+water	56:47	0:0	10	type_str
+water	56:55	0:0	10	)
+water	56:57	0:0	8	;
+if	57:12	60:12	8	(ret < 0)
+cond	57:16	57:22	9	ret < 0
+water	57:16	0:0	10	ret
+op	57:20	0:0	10	<
+water	57:22	0:0	10	0
+stmts	57:25	60:12	9	
+water	57:25	0:0	10	{
+call	58:16	58:85	10	av_log
+arg	58:23	58:24	11	s
+water	58:23	0:0	12	s
+arg	58:26	58:38	11	AV_LOG_ERROR
+water	58:26	0:0	12	AV_LOG_ERROR
+arg	58:40	58:85	11	"get_str failed while decoding info header\n"
+water	58:40	0:0	12	"get_str failed while decoding info header\n"
+water	58:86	0:0	10	;
+return	59:16	59:26	10	ret
+water	59:23	0:0	11	ret
+water	60:12	0:0	10	}
+water	61:12	0:0	8	type
+op	61:17	0:0	8	=
+water	61:19	0:0	8	type_str
+water	61:27	0:0	8	;
+water	62:12	0:0	8	ret
+op	62:16	0:0	8	=
+call	62:18	62:58	8	get_str
+arg	62:26	62:28	9	bc
+water	62:26	0:0	10	bc
+arg	62:30	62:39	9	str_value
+water	62:30	0:0	10	str_value
+arg	62:41	62:58	9	sizeof(str_value)
+op	62:41	0:0	10	sizeof
+water	62:47	0:0	10	(
+water	62:48	0:0	10	str_value
+water	62:57	0:0	10	)
+water	62:59	0:0	8	;
+water	63:8	0:0	8	}
+else	63:10	66:8	4
+stmts	63:15	66:8	5	
+if	63:15	66:8	6	(value == - 3)
+cond	63:19	63:29	7	value == - 3
+water	63:19	0:0	8	value
+op	63:25	0:0	8	==
+op	63:28	0:0	8	-
+water	63:29	0:0	8	3
+stmts	63:32	66:8	7	
+water	63:32	0:0	8	{
+water	64:12	0:0	8	type
+op	64:18	0:0	8	=
+water	64:20	0:0	8	"s"
+water	64:23	0:0	8	;
+water	65:12	0:0	8	value
+op	65:18	0:0	8	=
+call	65:20	65:28	8	get_s
+arg	65:26	65:28	9	bc
+water	65:26	0:0	10	bc
+water	65:29	0:0	8	;
+water	66:8	0:0	8	}
+else	66:10	69:8	4
+stmts	66:15	69:8	5	
+if	66:15	69:8	6	(value == - 4)
+cond	66:19	66:29	7	value == - 4
+water	66:19	0:0	8	value
+op	66:25	0:0	8	==
+op	66:28	0:0	8	-
+water	66:29	0:0	8	4
+stmts	66:32	69:8	7	
+water	66:32	0:0	8	{
+water	67:12	0:0	8	type
+op	67:18	0:0	8	=
+water	67:20	0:0	8	"t"
+water	67:23	0:0	8	;
+water	68:12	0:0	8	value
+op	68:18	0:0	8	=
+call	68:20	68:39	8	ffio_read_varlen
+arg	68:37	68:39	9	bc
+water	68:37	0:0	10	bc
+water	68:40	0:0	8	;
+water	69:8	0:0	8	}
+else	69:10	72:8	4
+stmts	69:15	72:8	5	
+if	69:15	72:8	6	(value < - 4)
+cond	69:19	69:28	7	value < - 4
+water	69:19	0:0	8	value
+op	69:25	0:0	8	<
+op	69:27	0:0	8	-
+water	69:28	0:0	8	4
+stmts	69:31	72:8	7	
+water	69:31	0:0	8	{
+water	70:12	0:0	8	type
+op	70:17	0:0	8	=
+water	70:19	0:0	8	"r"
+water	70:22	0:0	8	;
+call	71:12	71:20	8	get_s
+arg	71:18	71:20	9	bc
+water	71:18	0:0	10	bc
+water	71:21	0:0	8	;
+water	72:8	0:0	8	}
+else	72:10	74:8	4
+stmts	72:15	74:8	5	
+water	72:15	0:0	6	{
+water	73:12	0:0	6	type
+op	73:17	0:0	6	=
+water	73:19	0:0	6	"v"
+water	73:22	0:0	6	;
+water	74:8	0:0	6	}
+if	75:8	78:8	4	(ret < 0)
+cond	75:12	75:18	5	ret < 0
+water	75:12	0:0	6	ret
+op	75:16	0:0	6	<
+water	75:18	0:0	6	0
+stmts	75:21	78:8	5	
+water	75:21	0:0	6	{
+call	76:12	76:81	6	av_log
+arg	76:19	76:20	7	s
+water	76:19	0:0	8	s
+arg	76:22	76:34	7	AV_LOG_ERROR
+water	76:22	0:0	8	AV_LOG_ERROR
+arg	76:36	76:81	7	"get_str failed while decoding info header\n"
+water	76:36	0:0	8	"get_str failed while decoding info header\n"
+water	76:82	0:0	6	;
+return	77:12	77:22	6	ret
+water	77:19	0:0	7	ret
+water	78:8	0:0	6	}
+if	79:8	82:8	4	(stream_id_plus1 > s -> nb_streams)
+cond	79:12	79:33	5	stream_id_plus1 > s -> nb_streams
+water	79:12	0:0	6	stream_id_plus1
+op	79:28	0:0	6	>
+water	79:30	0:0	6	s
+op	79:31	0:0	6	->
+water	79:33	0:0	6	nb_streams
+stmts	79:45	82:8	5	
+water	79:45	0:0	6	{
+call	80:12	80:73	6	av_log
+arg	80:19	80:20	7	s
+water	80:19	0:0	8	s
+arg	80:22	80:34	7	AV_LOG_ERROR
+water	80:22	0:0	8	AV_LOG_ERROR
+arg	80:36	80:73	7	"invalid stream id for info packet\n"
+water	80:36	0:0	8	"invalid stream id for info packet\n"
+water	80:74	0:0	6	;
+continue	81:12	81:20	6	
+water	82:8	0:0	6	}
+if	83:8	101:8	4	(!strcmp (type ,"UTF-8" ))
+cond	83:12	83:33	5	!strcmp (type ,"UTF-8" )
+op	83:12	0:0	6	!
+call	83:13	83:33	6	strcmp
+arg	83:20	83:24	7	type
+water	83:20	0:0	8	type
+arg	83:26	83:33	7	"UTF-8"
+water	83:26	0:0	8	"UTF-8"
+stmts	83:36	101:8	5	
+water	83:36	0:0	6	{
+if	84:12	87:12	6	(chapter_id == 0 && !strcmp (name ,"Disposition" ))
+cond	84:16	84:62	7	chapter_id == 0 && !strcmp (name ,"Disposition" )
+water	84:16	0:0	8	chapter_id
+op	84:27	0:0	8	==
+water	84:30	0:0	8	0
+op	84:32	0:0	8	&&
+op	84:35	0:0	8	!
+call	84:36	84:62	8	strcmp
+arg	84:43	84:47	9	name
+water	84:43	0:0	10	name
+arg	84:49	84:62	9	"Disposition"
+water	84:49	0:0	10	"Disposition"
+stmts	84:65	87:12	7	
+water	84:65	0:0	8	{
+call	85:16	85:70	8	set_disposition_bits
+arg	85:37	85:38	9	s
+water	85:37	0:0	10	s
+arg	85:40	85:49	9	str_value
+water	85:40	0:0	10	str_value
+arg	85:51	85:70	9	stream_id_plus1-1
+water	85:51	0:0	10	stream_id_plus1
+op	85:67	0:0	10	-
+water	85:69	0:0	10	1
+water	85:71	0:0	8	;
+continue	86:16	86:24	8	
+water	87:12	0:0	8	}
+if	88:12	94:12	6	(stream_id_plus1 && !strcmp (name ,"r_frame_rate" ))
+cond	88:16	88:63	7	stream_id_plus1 && !strcmp (name ,"r_frame_rate" )
+water	88:16	0:0	8	stream_id_plus1
+op	88:32	0:0	8	&&
+op	88:35	0:0	8	!
+call	88:36	88:63	8	strcmp
+arg	88:43	88:47	9	name
+water	88:43	0:0	10	name
+arg	88:49	88:63	9	"r_frame_rate"
+water	88:49	0:0	10	"r_frame_rate"
+stmts	88:66	94:12	7	
+water	88:66	0:0	8	{
+call	89:16	89:87	8	sscanf
+arg	89:23	89:32	9	str_value
+water	89:23	0:0	10	str_value
+arg	89:34	89:41	9	"%d/%d"
+water	89:34	0:0	10	"%d/%d"
+arg	89:43	89:64	9	&st->r_frame_rate.num
+op	89:43	0:0	10	&
+water	89:44	0:0	10	st
+op	89:46	0:0	10	->
+water	89:48	0:0	10	r_frame_rate
+op	89:60	0:0	10	.
+water	89:61	0:0	10	num
+arg	89:66	89:87	9	&st->r_frame_rate.den
+op	89:66	0:0	10	&
+water	89:67	0:0	10	st
+op	89:69	0:0	10	->
+water	89:71	0:0	10	r_frame_rate
+op	89:83	0:0	10	.
+water	89:84	0:0	10	den
+water	89:88	0:0	8	;
+if	90:16	92:67	8	(st -> r_frame_rate . num >= 1000 LL * st -> r_frame_rate . den || st -> r_frame_rate . num < 0 || st -> r_frame_rate . num < 0)
+cond	90:20	91:71	9	st -> r_frame_rate . num >= 1000 LL * st -> r_frame_rate . den || st -> r_frame_rate . num < 0 || st -> r_frame_rate . num < 0
+water	90:20	0:0	10	st
+op	90:22	0:0	10	->
+water	90:24	0:0	10	r_frame_rate
+op	90:36	0:0	10	.
+water	90:37	0:0	10	num
+op	90:41	0:0	10	>=
+water	90:44	0:0	10	1000
+water	90:48	0:0	10	LL
+op	90:50	0:0	10	*
+water	90:51	0:0	10	st
+op	90:53	0:0	10	->
+water	90:55	0:0	10	r_frame_rate
+op	90:67	0:0	10	.
+water	90:68	0:0	10	den
+op	90:72	0:0	10	||
+water	91:20	0:0	10	st
+op	91:22	0:0	10	->
+water	91:24	0:0	10	r_frame_rate
+op	91:36	0:0	10	.
+water	91:37	0:0	10	num
+op	91:41	0:0	10	<
+water	91:43	0:0	10	0
+op	91:45	0:0	10	||
+water	91:48	0:0	10	st
+op	91:50	0:0	10	->
+water	91:52	0:0	10	r_frame_rate
+op	91:64	0:0	10	.
+water	91:65	0:0	10	num
+op	91:69	0:0	10	<
+water	91:71	0:0	10	0
+stmts	92:20	92:67	9	
+water	92:20	0:0	10	st
+op	92:22	0:0	10	->
+water	92:24	0:0	10	r_frame_rate
+op	92:36	0:0	10	.
+water	92:37	0:0	10	num
+op	92:41	0:0	10	=
+water	92:43	0:0	10	st
+op	92:45	0:0	10	->
+water	92:47	0:0	10	r_frame_rate
+op	92:59	0:0	10	.
+water	92:60	0:0	10	den
+op	92:64	0:0	10	=
+water	92:66	0:0	10	0
+water	92:67	0:0	10	;
+continue	93:16	93:24	8	
+water	94:12	0:0	8	}
+if	95:12	100:12	6	(metadata &&av_strcasecmp (name ,"Uses" ) &&av_strcasecmp (name ,"Depends" ) &&av_strcasecmp (name ,"Replaces" ))
+cond	95:16	96:80	7	metadata &&av_strcasecmp (name ,"Uses" ) &&av_strcasecmp (name ,"Depends" ) &&av_strcasecmp (name ,"Replaces" )
+water	95:16	0:0	8	metadata
+op	95:25	0:0	8	&&
+call	95:28	95:54	8	av_strcasecmp
+arg	95:42	95:46	9	name
+water	95:42	0:0	10	name
+arg	95:48	95:54	9	"Uses"
+water	95:48	0:0	10	"Uses"
+op	95:56	0:0	8	&&
+call	96:16	96:45	8	av_strcasecmp
+arg	96:30	96:34	9	name
+water	96:30	0:0	10	name
+arg	96:36	96:45	9	"Depends"
+water	96:36	0:0	10	"Depends"
+op	96:47	0:0	8	&&
+call	96:50	96:80	8	av_strcasecmp
+arg	96:64	96:68	9	name
+water	96:64	0:0	10	name
+arg	96:70	96:80	9	"Replaces"
+water	96:70	0:0	10	"Replaces"
+stmts	96:83	100:12	7	
+water	96:83	0:0	8	{
+if	97:16	98:49	8	(event_flags)
+cond	97:20	97:20	9	event_flags
+water	97:20	0:0	10	event_flags
+stmts	98:20	98:49	9	
+op	98:20	0:0	10	*
+water	98:21	0:0	10	event_flags
+op	98:33	0:0	10	|=
+water	98:36	0:0	10	metadata_flag
+water	98:49	0:0	10	;
+call	99:16	99:56	8	av_dict_set
+arg	99:28	99:36	9	metadata
+water	99:28	0:0	10	metadata
+arg	99:38	99:42	9	name
+water	99:38	0:0	10	name
+arg	99:44	99:53	9	str_value
+water	99:44	0:0	10	str_value
+arg	99:55	99:56	9	0
+water	99:55	0:0	10	0
+water	99:57	0:0	8	;
+water	100:12	0:0	8	}
+water	101:8	0:0	6	}
+water	102:4	0:0	4	}
+if	103:4	106:4	2	(skip_reserved (bc ,end ) ||ffio_get_checksum (bc ))
+cond	103:8	103:54	3	skip_reserved (bc ,end ) ||ffio_get_checksum (bc )
+call	103:8	103:29	4	skip_reserved
+arg	103:22	103:24	5	bc
+water	103:22	0:0	6	bc
+arg	103:26	103:29	5	end
+water	103:26	0:0	6	end
+op	103:31	0:0	4	||
+call	103:34	103:54	4	ffio_get_checksum
+arg	103:52	103:54	5	bc
+water	103:52	0:0	6	bc
+stmts	103:57	106:4	3	
+water	103:57	0:0	4	{
+call	104:8	104:65	4	av_log
+arg	104:15	104:16	5	s
+water	104:15	0:0	6	s
+arg	104:18	104:30	5	AV_LOG_ERROR
+water	104:18	0:0	6	AV_LOG_ERROR
+arg	104:32	104:65	5	"info header checksum mismatch\n"
+water	104:32	0:0	6	"info header checksum mismatch\n"
+water	104:66	0:0	4	;
+return	105:8	105:34	4	AVERROR_INVALIDDATA
+water	105:15	0:0	5	AVERROR_INVALIDDATA
+water	106:4	0:0	4	}
+label	107:0	107:4	2	fail :
+return	108:4	108:24	2	FFMIN(ret,0)
+call	108:11	108:23	3	FFMIN
+arg	108:17	108:20	4	ret
+water	108:17	0:0	5	ret
+arg	108:22	108:23	4	0
+water	108:22	0:0	5	0

@@ -1,0 +1,334 @@
+func	1:0	62:0	0	static int	dc1394_v2_read_header
+params	1:32	0:0	1	
+param	1:33	1:51	2	AVFormatContext *	c
+stmnts	0:0	61:13	1	
+decl	3:4	3:38	2	dc1394_data	*dc1394
+op	3:24	0:0	2	=
+water	3:26	0:0	2	c
+op	3:27	0:0	2	->
+water	3:29	0:0	2	priv_data
+decl	4:4	4:29	2	dc1394camera_list_t	*list
+decl	5:4	5:14	2	int	res
+water	5:11	0:0	2	,
+decl	5:4	5:14	2	int	i
+decl	6:4	6:42	2	struct dc1394_frame_format	*fmt
+op	6:36	0:0	2	=
+water	6:38	0:0	2	NULL
+decl	7:4	7:40	2	struct dc1394_frame_rate	*fps
+op	7:34	0:0	2	=
+water	7:36	0:0	2	NULL
+if	8:4	9:16	2	(dc1394_read_common (c ,& fmt ,& fps ) != 0)
+cond	8:8	8:45	3	dc1394_read_common (c ,& fmt ,& fps ) != 0
+call	8:8	8:40	4	dc1394_read_common
+arg	8:27	8:28	5	c
+water	8:27	0:0	6	c
+arg	8:30	8:34	5	&fmt
+op	8:30	0:0	6	&
+water	8:31	0:0	6	fmt
+arg	8:36	8:40	5	&fps
+op	8:36	0:0	6	&
+water	8:37	0:0	6	fps
+op	8:42	0:0	4	!=
+water	8:45	0:0	4	0
+stmts	9:7	9:16	3	
+return	9:7	9:16	4	-1
+op	9:14	0:0	5	-
+water	9:15	0:0	5	1
+water	11:4	0:0	2	dc1394
+op	11:10	0:0	2	->
+water	11:12	0:0	2	d
+op	11:14	0:0	2	=
+call	11:16	11:27	2	dc1394_new
+water	11:28	0:0	2	;
+call	12:4	12:45	2	dc1394_camera_enumerate
+arg	12:29	12:38	3	dc1394->d
+water	12:29	0:0	4	dc1394
+op	12:35	0:0	4	->
+water	12:37	0:0	4	d
+arg	12:40	12:45	3	&list
+op	12:40	0:0	4	&
+water	12:41	0:0	4	list
+water	12:46	0:0	2	;
+if	13:4	16:4	2	(! list || list -> num == 0)
+cond	13:9	13:31	3	! list || list -> num == 0
+op	13:9	0:0	4	!
+water	13:10	0:0	4	list
+op	13:15	0:0	4	||
+water	13:18	0:0	4	list
+op	13:22	0:0	4	->
+water	13:24	0:0	4	num
+op	13:28	0:0	4	==
+water	13:31	0:0	4	0
+stmts	13:34	16:4	3	
+water	13:34	0:0	4	{
+call	14:8	14:71	4	av_log
+arg	14:15	14:16	5	c
+water	14:15	0:0	6	c
+arg	14:18	14:30	5	AV_LOG_ERROR
+water	14:18	0:0	6	AV_LOG_ERROR
+arg	14:32	14:71	5	"Unable to look for an IIDC camera\n\n"
+water	14:32	0:0	6	"Unable to look for an IIDC camera\n\n"
+water	14:72	0:0	4	;
+goto	15:8	15:16	4	out
+water	15:13	0:0	5	out
+water	16:4	0:0	4	}
+water	18:4	0:0	2	dc1394
+op	18:10	0:0	2	->
+water	18:12	0:0	2	camera
+op	18:19	0:0	2	=
+call	18:21	18:68	2	dc1394_camera_new
+arg	18:40	18:49	3	dc1394->d
+water	18:40	0:0	4	dc1394
+op	18:46	0:0	4	->
+water	18:48	0:0	4	d
+arg	18:51	18:68	3	list->ids[0].guid
+water	18:51	0:0	4	list
+op	18:55	0:0	4	->
+water	18:57	0:0	4	ids
+op	18:60	0:0	4	[
+water	18:61	0:0	4	0
+op	18:62	0:0	4	]
+op	18:63	0:0	4	.
+water	18:64	0:0	4	guid
+water	18:69	0:0	2	;
+if	19:4	21:4	2	(list -> num > 1)
+cond	19:8	19:20	3	list -> num > 1
+water	19:8	0:0	4	list
+op	19:12	0:0	4	->
+water	19:14	0:0	4	num
+op	19:18	0:0	4	>
+water	19:20	0:0	4	1
+stmts	19:23	21:4	3	
+water	19:23	0:0	4	{
+call	20:8	20:70	4	av_log
+arg	20:15	20:16	5	c
+water	20:15	0:0	6	c
+arg	20:18	20:29	5	AV_LOG_INFO
+water	20:18	0:0	6	AV_LOG_INFO
+arg	20:31	20:70	5	"Working with the first camera found\n"
+water	20:31	0:0	6	"Working with the first camera found\n"
+water	20:71	0:0	4	;
+water	21:4	0:0	4	}
+call	23:4	23:33	2	dc1394_camera_free_list
+arg	23:29	23:33	3	list
+water	23:29	0:0	4	list
+water	23:34	0:0	2	;
+if	25:4	28:4	2	(dc1394 -> camera -> bmode_capable > 0)
+cond	25:8	25:38	3	dc1394 -> camera -> bmode_capable > 0
+water	25:8	0:0	4	dc1394
+op	25:14	0:0	4	->
+water	25:16	0:0	4	camera
+op	25:22	0:0	4	->
+water	25:24	0:0	4	bmode_capable
+op	25:37	0:0	4	>
+water	25:38	0:0	4	0
+stmts	25:41	28:4	3	
+water	25:41	0:0	4	{
+call	26:7	26:82	4	dc1394_video_set_operation_mode
+arg	26:39	26:53	5	dc1394->camera
+water	26:39	0:0	6	dc1394
+op	26:45	0:0	6	->
+water	26:47	0:0	6	camera
+arg	26:55	26:82	5	DC1394_OPERATION_MODE_1394B
+water	26:55	0:0	6	DC1394_OPERATION_MODE_1394B
+water	26:83	0:0	4	;
+water	27:7	0:0	4	i
+op	27:9	0:0	4	=
+water	27:11	0:0	4	DC1394_ISO_SPEED_800
+water	27:31	0:0	4	;
+water	28:4	0:0	4	}
+else	28:6	30:4	2
+stmts	28:11	30:4	3	
+water	28:11	0:0	4	{
+water	29:7	0:0	4	i
+op	29:9	0:0	4	=
+water	29:11	0:0	4	DC1394_ISO_SPEED_400
+water	29:31	0:0	4	;
+water	30:4	0:0	4	}
+for	31:4	33:4	2	(res = DC1394_FAILURE ;i >= DC1394_ISO_SPEED_MIN && res != DC1394_SUCCESS;i --)
+forinit	31:9	31:29	3	res = DC1394_FAILURE ;
+water	31:9	0:0	4	res
+op	31:13	0:0	4	=
+water	31:15	0:0	4	DC1394_FAILURE
+water	31:29	0:0	4	;
+cond	31:31	31:67	3	i >= DC1394_ISO_SPEED_MIN && res != DC1394_SUCCESS
+water	31:31	0:0	4	i
+op	31:33	0:0	4	>=
+water	31:36	0:0	4	DC1394_ISO_SPEED_MIN
+op	31:57	0:0	4	&&
+water	31:60	0:0	4	res
+op	31:64	0:0	4	!=
+water	31:67	0:0	4	DC1394_SUCCESS
+forexpr	31:83	31:84	3	i --
+water	31:83	0:0	4	i
+op	31:84	0:0	4	--
+stmts	31:88	33:4	3	
+water	31:88	0:0	4	{
+water	32:12	0:0	4	res
+op	32:15	0:0	4	=
+call	32:16	32:60	4	dc1394_video_set_iso_speed
+arg	32:43	32:57	5	dc1394->camera
+water	32:43	0:0	6	dc1394
+op	32:49	0:0	6	->
+water	32:51	0:0	6	camera
+arg	32:59	32:60	5	i
+water	32:59	0:0	6	i
+water	32:61	0:0	4	;
+water	33:4	0:0	4	}
+if	34:4	37:4	2	(res != DC1394_SUCCESS)
+cond	34:8	34:15	3	res != DC1394_SUCCESS
+water	34:8	0:0	4	res
+op	34:12	0:0	4	!=
+water	34:15	0:0	4	DC1394_SUCCESS
+stmts	34:31	37:4	3	
+water	34:31	0:0	4	{
+call	35:8	35:58	4	av_log
+arg	35:15	35:16	5	c
+water	35:15	0:0	6	c
+arg	35:18	35:30	5	AV_LOG_ERROR
+water	35:18	0:0	6	AV_LOG_ERROR
+arg	35:32	35:58	5	"Couldn't set ISO Speed\n"
+water	35:32	0:0	6	"Couldn't set ISO Speed\n"
+water	35:59	0:0	4	;
+goto	36:8	36:23	4	out_camera
+water	36:13	0:0	5	out_camera
+water	37:4	0:0	4	}
+if	38:4	41:4	2	(dc1394_video_set_mode (dc1394 -> camera ,fmt -> frame_size_id ) != DC1394_SUCCESS)
+cond	38:8	38:69	3	dc1394_video_set_mode (dc1394 -> camera ,fmt -> frame_size_id ) != DC1394_SUCCESS
+call	38:8	38:64	4	dc1394_video_set_mode
+arg	38:30	38:44	5	dc1394->camera
+water	38:30	0:0	6	dc1394
+op	38:36	0:0	6	->
+water	38:38	0:0	6	camera
+arg	38:46	38:64	5	fmt->frame_size_id
+water	38:46	0:0	6	fmt
+op	38:49	0:0	6	->
+water	38:51	0:0	6	frame_size_id
+op	38:66	0:0	4	!=
+water	38:69	0:0	4	DC1394_SUCCESS
+stmts	38:85	41:4	3	
+water	38:85	0:0	4	{
+call	39:8	39:61	4	av_log
+arg	39:15	39:16	5	c
+water	39:15	0:0	6	c
+arg	39:18	39:30	5	AV_LOG_ERROR
+water	39:18	0:0	6	AV_LOG_ERROR
+arg	39:32	39:61	5	"Couldn't set video format\n"
+water	39:32	0:0	6	"Couldn't set video format\n"
+water	39:62	0:0	4	;
+goto	40:8	40:23	4	out_camera
+water	40:13	0:0	5	out_camera
+water	41:4	0:0	4	}
+if	42:4	45:4	2	(dc1394_video_set_framerate (dc1394 -> camera ,fps -> frame_rate_id ) != DC1394_SUCCESS)
+cond	42:8	42:73	3	dc1394_video_set_framerate (dc1394 -> camera ,fps -> frame_rate_id ) != DC1394_SUCCESS
+call	42:8	42:68	4	dc1394_video_set_framerate
+arg	42:35	42:49	5	dc1394->camera
+water	42:35	0:0	6	dc1394
+op	42:41	0:0	6	->
+water	42:43	0:0	6	camera
+arg	42:50	42:68	5	fps->frame_rate_id
+water	42:50	0:0	6	fps
+op	42:53	0:0	6	->
+water	42:55	0:0	6	frame_rate_id
+op	42:70	0:0	4	!=
+water	42:73	0:0	4	DC1394_SUCCESS
+stmts	42:89	45:4	3	
+water	42:89	0:0	4	{
+call	43:8	43:78	4	av_log
+arg	43:15	43:16	5	c
+water	43:15	0:0	6	c
+arg	43:18	43:30	5	AV_LOG_ERROR
+water	43:18	0:0	6	AV_LOG_ERROR
+arg	43:32	43:62	5	"Couldn't set framerate %d \n"
+water	43:32	0:0	6	"Couldn't set framerate %d \n"
+arg	43:63	43:78	5	fps->frame_rate
+water	43:63	0:0	6	fps
+op	43:66	0:0	6	->
+water	43:68	0:0	6	frame_rate
+water	43:79	0:0	4	;
+goto	44:8	44:23	4	out_camera
+water	44:13	0:0	5	out_camera
+water	45:4	0:0	4	}
+if	46:4	49:4	2	(dc1394_capture_setup (dc1394 -> camera ,10 ,DC1394_CAPTURE_FLAGS_DEFAULT ) != DC1394_SUCCESS)
+cond	46:8	46:80	3	dc1394_capture_setup (dc1394 -> camera ,10 ,DC1394_CAPTURE_FLAGS_DEFAULT ) != DC1394_SUCCESS
+call	46:8	46:77	4	dc1394_capture_setup
+arg	46:29	46:43	5	dc1394->camera
+water	46:29	0:0	6	dc1394
+op	46:35	0:0	6	->
+water	46:37	0:0	6	camera
+arg	46:45	46:47	5	10
+water	46:45	0:0	6	10
+arg	46:49	46:77	5	DC1394_CAPTURE_FLAGS_DEFAULT
+water	46:49	0:0	6	DC1394_CAPTURE_FLAGS_DEFAULT
+op	46:78	0:0	4	!=
+water	46:80	0:0	4	DC1394_SUCCESS
+stmts	46:96	49:4	3	
+water	46:96	0:0	4	{
+call	47:8	47:56	4	av_log
+arg	47:15	47:16	5	c
+water	47:15	0:0	6	c
+arg	47:18	47:30	5	AV_LOG_ERROR
+water	47:18	0:0	6	AV_LOG_ERROR
+arg	47:32	47:56	5	"Cannot setup camera \n"
+water	47:32	0:0	6	"Cannot setup camera \n"
+water	47:57	0:0	4	;
+goto	48:8	48:23	4	out_camera
+water	48:13	0:0	5	out_camera
+water	49:4	0:0	4	}
+if	50:4	53:4	2	(dc1394_video_set_transmission (dc1394 -> camera ,DC1394_ON ) != DC1394_SUCCESS)
+cond	50:8	50:67	3	dc1394_video_set_transmission (dc1394 -> camera ,DC1394_ON ) != DC1394_SUCCESS
+call	50:8	50:63	4	dc1394_video_set_transmission
+arg	50:38	50:52	5	dc1394->camera
+water	50:38	0:0	6	dc1394
+op	50:44	0:0	6	->
+water	50:46	0:0	6	camera
+arg	50:54	50:63	5	DC1394_ON
+water	50:54	0:0	6	DC1394_ON
+op	50:65	0:0	4	!=
+water	50:67	0:0	4	DC1394_SUCCESS
+stmts	50:83	53:4	3	
+water	50:83	0:0	4	{
+call	51:8	51:56	4	av_log
+arg	51:15	51:16	5	c
+water	51:15	0:0	6	c
+arg	51:18	51:30	5	AV_LOG_ERROR
+water	51:18	0:0	6	AV_LOG_ERROR
+arg	51:32	51:56	5	"Cannot start capture\n"
+water	51:32	0:0	6	"Cannot start capture\n"
+water	51:57	0:0	4	;
+goto	52:8	52:23	4	out_camera
+water	52:13	0:0	5	out_camera
+water	53:4	0:0	4	}
+return	54:4	54:12	2	0
+water	54:11	0:0	3	0
+label	55:0	55:10	2	out_camera :
+call	56:4	56:38	2	dc1394_capture_stop
+arg	56:24	56:38	3	dc1394->camera
+water	56:24	0:0	4	dc1394
+op	56:30	0:0	4	->
+water	56:32	0:0	4	camera
+water	56:39	0:0	2	;
+call	57:4	57:60	2	dc1394_video_set_transmission
+arg	57:34	57:48	3	dc1394->camera
+water	57:34	0:0	4	dc1394
+op	57:40	0:0	4	->
+water	57:42	0:0	4	camera
+arg	57:50	57:60	3	DC1394_OFF
+water	57:50	0:0	4	DC1394_OFF
+water	57:61	0:0	2	;
+call	58:4	58:38	2	dc1394_camera_free
+arg	58:24	58:38	3	dc1394->camera
+water	58:24	0:0	4	dc1394
+op	58:30	0:0	4	->
+water	58:32	0:0	4	camera
+water	58:39	0:0	2	;
+label	59:0	59:3	2	out :
+call	60:4	60:25	2	dc1394_free
+arg	60:16	60:25	3	dc1394->d
+water	60:16	0:0	4	dc1394
+op	60:22	0:0	4	->
+water	60:24	0:0	4	d
+water	60:26	0:0	2	;
+return	61:4	61:13	2	-1
+op	61:11	0:0	3	-
+water	61:12	0:0	3	1

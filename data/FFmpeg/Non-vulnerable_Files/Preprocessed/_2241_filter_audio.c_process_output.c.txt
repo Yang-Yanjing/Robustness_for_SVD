@@ -1,0 +1,135 @@
+func	1:0	20:0	0	static int	process_output
+params	1:25	0:0	1	
+param	1:26	1:43	2	struct AVMD5 *	md5
+param	1:45	1:59	2	AVFrame *	frame
+stmnts	0:0	19:12	1	
+decl	3:4	3:59	2	int	planar
+op	3:19	0:0	2	=
+call	3:21	3:58	3	av_sample_fmt_is_planar
+arg	3:45	3:58	4	frame->format
+water	3:45	0:0	5	frame
+op	3:50	0:0	5	->
+water	3:52	0:0	5	format
+decl	4:4	4:77	2	int	channels
+op	4:19	0:0	2	=
+call	4:21	4:76	3	av_get_channel_layout_nb_channels
+arg	4:55	4:76	4	frame->channel_layout
+water	4:55	0:0	5	frame
+op	4:60	0:0	5	->
+water	4:62	0:0	5	channel_layout
+decl	5:4	5:42	2	int	planes
+op	5:19	0:0	2	=
+water	5:21	0:0	2	planar
+water	5:28	0:0	2	?
+water	5:30	0:0	2	channels
+water	5:39	0:0	2	:
+water	5:41	0:0	2	1
+decl	6:4	6:59	2	int	bps
+op	6:19	0:0	2	=
+call	6:21	6:58	3	av_get_bytes_per_sample
+arg	6:45	6:58	4	frame->format
+water	6:45	0:0	5	frame
+op	6:50	0:0	5	->
+water	6:52	0:0	5	format
+decl	7:4	7:70	2	int	plane_size
+op	7:19	0:0	2	=
+water	7:21	0:0	2	bps
+op	7:25	0:0	2	*
+water	7:27	0:0	2	frame
+op	7:32	0:0	2	->
+water	7:34	0:0	2	nb_samples
+op	7:45	0:0	2	*
+water	7:47	0:0	2	(
+water	7:48	0:0	2	planar
+water	7:55	0:0	2	?
+water	7:57	0:0	2	1
+water	7:59	0:0	2	:
+water	7:61	0:0	2	channels
+water	7:69	0:0	2	)
+decl	8:4	8:12	2	int	i
+water	8:9	0:0	2	,
+decl	8:4	8:12	2	int	j
+for	9:4	17:4	2	(i = 0 ;i < planes;i ++)
+forinit	9:9	9:14	3	i = 0 ;
+water	9:9	0:0	4	i
+op	9:11	0:0	4	=
+water	9:13	0:0	4	0
+water	9:14	0:0	4	;
+cond	9:16	9:20	3	i < planes
+water	9:16	0:0	4	i
+op	9:18	0:0	4	<
+water	9:20	0:0	4	planes
+forexpr	9:28	9:29	3	i ++
+water	9:28	0:0	4	i
+op	9:29	0:0	4	++
+stmts	9:33	17:4	3	
+water	9:33	0:0	4	{
+decl	10:8	10:28	4	uint8_t	checksum[16]
+call	11:8	11:23	4	av_md5_init
+arg	11:20	11:23	5	md5
+water	11:20	0:0	6	md5
+water	11:24	0:0	4	;
+call	12:8	12:64	4	av_md5_sum
+arg	12:19	12:27	5	checksum
+water	12:19	0:0	6	checksum
+arg	12:29	12:52	5	frame->extended_data[i]
+water	12:29	0:0	6	frame
+op	12:34	0:0	6	->
+water	12:36	0:0	6	extended_data
+op	12:49	0:0	6	[
+water	12:50	0:0	6	i
+op	12:51	0:0	6	]
+arg	12:54	12:64	5	plane_size
+water	12:54	0:0	6	plane_size
+water	12:65	0:0	4	;
+call	13:8	13:41	4	fprintf
+arg	13:16	13:22	5	stdout
+water	13:16	0:0	6	stdout
+arg	13:24	13:38	5	"plane %d: 0x"
+water	13:24	0:0	6	"plane %d: 0x"
+arg	13:40	13:41	5	i
+water	13:40	0:0	6	i
+water	13:42	0:0	4	;
+for	14:8	15:48	4	(j = 0 ;j < sizeof ( checksum );j ++)
+forinit	14:13	14:18	5	j = 0 ;
+water	14:13	0:0	6	j
+op	14:15	0:0	6	=
+water	14:17	0:0	6	0
+water	14:18	0:0	6	;
+cond	14:20	14:39	5	j < sizeof ( checksum )
+water	14:20	0:0	6	j
+op	14:22	0:0	6	<
+op	14:24	0:0	6	sizeof
+water	14:30	0:0	6	(
+water	14:31	0:0	6	checksum
+water	14:39	0:0	6	)
+forexpr	14:42	14:43	5	j ++
+water	14:42	0:0	6	j
+op	14:43	0:0	6	++
+stmts	15:12	15:48	5	
+call	15:12	15:47	6	fprintf
+arg	15:20	15:26	7	stdout
+water	15:20	0:0	8	stdout
+arg	15:28	15:34	7	"%02X"
+water	15:28	0:0	8	"%02X"
+arg	15:36	15:47	7	checksum[j]
+water	15:36	0:0	8	checksum
+op	15:44	0:0	8	[
+water	15:45	0:0	8	j
+op	15:46	0:0	8	]
+water	15:48	0:0	6	;
+call	16:8	16:28	4	fprintf
+arg	16:16	16:22	5	stdout
+water	16:16	0:0	6	stdout
+arg	16:24	16:28	5	"\n"
+water	16:24	0:0	6	"\n"
+water	16:29	0:0	4	;
+water	17:4	0:0	4	}
+call	18:4	18:24	2	fprintf
+arg	18:12	18:18	3	stdout
+water	18:12	0:0	4	stdout
+arg	18:20	18:24	3	"\n"
+water	18:20	0:0	4	"\n"
+water	18:25	0:0	2	;
+return	19:4	19:12	2	0
+water	19:11	0:0	3	0

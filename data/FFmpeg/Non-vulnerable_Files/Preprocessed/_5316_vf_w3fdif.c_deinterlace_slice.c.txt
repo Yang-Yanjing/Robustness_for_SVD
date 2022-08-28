@@ -1,0 +1,1002 @@
+func	1:0	111:0	0	static int	deinterlace_slice
+params	1:28	0:0	1	
+param	1:29	1:49	2	AVFilterContext *	ctx
+param	1:51	1:60	2	void *	arg
+param	1:62	1:71	2	int	jobnr
+param	1:73	1:84	2	int	nb_jobs
+stmnts	0:0	110:12	1	
+decl	3:4	3:32	2	W3FDIFContext	*s
+op	3:21	0:0	2	=
+water	3:23	0:0	2	ctx
+op	3:26	0:0	2	->
+water	3:28	0:0	2	priv
+decl	4:4	4:24	2	ThreadData	*td
+op	4:19	0:0	2	=
+water	4:21	0:0	2	arg
+decl	5:4	5:26	2	AVFrame	*out
+op	5:17	0:0	2	=
+water	5:19	0:0	2	td
+op	5:21	0:0	2	->
+water	5:23	0:0	2	out
+decl	6:4	6:26	2	AVFrame	*cur
+op	6:17	0:0	2	=
+water	6:19	0:0	2	td
+op	6:21	0:0	2	->
+water	6:23	0:0	2	cur
+decl	7:4	7:26	2	AVFrame	*adj
+op	7:17	0:0	2	=
+water	7:19	0:0	2	td
+op	7:21	0:0	2	->
+water	7:23	0:0	2	adj
+decl	8:4	8:31	2	const int	plane
+op	8:20	0:0	2	=
+water	8:22	0:0	2	td
+op	8:24	0:0	2	->
+water	8:26	0:0	2	plane
+decl	9:4	9:32	2	const int	filter
+op	9:21	0:0	2	=
+water	9:23	0:0	2	s
+op	9:24	0:0	2	->
+water	9:26	0:0	2	filter
+decl	10:4	10:56	2	uint8_t	*in_line
+water	10:20	0:0	2	,
+decl	10:4	10:56	2	uint8_t	*in_lines_cur[5]
+water	10:38	0:0	2	,
+decl	10:4	10:56	2	uint8_t	*in_lines_adj[5]
+decl	11:4	11:33	2	uint8_t	*out_line
+water	11:21	0:0	2	,
+decl	11:4	11:33	2	uint8_t	*out_pixel
+decl	12:4	12:35	2	int32_t	*work_line
+water	12:22	0:0	2	,
+decl	12:4	12:35	2	int32_t	*work_pixel
+decl	13:4	13:40	2	uint8_t	*cur_data
+op	13:22	0:0	2	=
+water	13:24	0:0	2	cur
+op	13:27	0:0	2	->
+water	13:29	0:0	2	data
+op	13:33	0:0	2	[
+water	13:34	0:0	2	plane
+op	13:39	0:0	2	]
+decl	14:4	14:40	2	uint8_t	*adj_data
+op	14:22	0:0	2	=
+water	14:24	0:0	2	adj
+op	14:27	0:0	2	->
+water	14:29	0:0	2	data
+op	14:33	0:0	2	[
+water	14:34	0:0	2	plane
+op	14:39	0:0	2	]
+decl	15:4	15:40	2	uint8_t	*dst_data
+op	15:22	0:0	2	=
+water	15:24	0:0	2	out
+op	15:27	0:0	2	->
+water	15:29	0:0	2	data
+op	15:33	0:0	2	[
+water	15:34	0:0	2	plane
+op	15:39	0:0	2	]
+decl	16:4	16:43	2	const int	linesize
+op	16:23	0:0	2	=
+water	16:25	0:0	2	s
+op	16:26	0:0	2	->
+water	16:28	0:0	2	linesize
+op	16:36	0:0	2	[
+water	16:37	0:0	2	plane
+op	16:42	0:0	2	]
+decl	17:4	17:46	2	const int	height
+op	17:23	0:0	2	=
+water	17:25	0:0	2	s
+op	17:26	0:0	2	->
+water	17:28	0:0	2	planeheight
+op	17:39	0:0	2	[
+water	17:40	0:0	2	plane
+op	17:45	0:0	2	]
+decl	18:4	18:52	2	const int	cur_line_stride
+op	18:30	0:0	2	=
+water	18:32	0:0	2	cur
+op	18:35	0:0	2	->
+water	18:37	0:0	2	linesize
+op	18:45	0:0	2	[
+water	18:46	0:0	2	plane
+op	18:51	0:0	2	]
+decl	19:4	19:52	2	const int	adj_line_stride
+op	19:30	0:0	2	=
+water	19:32	0:0	2	adj
+op	19:35	0:0	2	->
+water	19:37	0:0	2	linesize
+op	19:45	0:0	2	[
+water	19:46	0:0	2	plane
+op	19:51	0:0	2	]
+decl	20:4	20:52	2	const int	dst_line_stride
+op	20:30	0:0	2	=
+water	20:32	0:0	2	out
+op	20:35	0:0	2	->
+water	20:37	0:0	2	linesize
+op	20:45	0:0	2	[
+water	20:46	0:0	2	plane
+op	20:51	0:0	2	]
+decl	21:4	21:48	2	const int	start
+op	21:20	0:0	2	=
+water	21:22	0:0	2	(
+water	21:23	0:0	2	height
+op	21:30	0:0	2	*
+water	21:32	0:0	2	jobnr
+water	21:37	0:0	2	)
+op	21:39	0:0	2	/
+water	21:41	0:0	2	nb_jobs
+decl	22:4	22:50	2	const int	end
+op	22:18	0:0	2	=
+water	22:20	0:0	2	(
+water	22:21	0:0	2	height
+op	22:28	0:0	2	*
+water	22:30	0:0	2	(
+water	22:31	0:0	2	jobnr
+op	22:36	0:0	2	+
+water	22:37	0:0	2	1
+water	22:38	0:0	2	)
+water	22:39	0:0	2	)
+op	22:41	0:0	2	/
+water	22:43	0:0	2	nb_jobs
+decl	23:4	23:25	2	int	i
+water	23:9	0:0	2	,
+decl	23:4	23:25	2	int	j
+water	23:12	0:0	2	,
+decl	23:4	23:25	2	int	y_in
+water	23:18	0:0	2	,
+decl	23:4	23:25	2	int	y_out
+water	25:4	0:0	2	y_out
+op	25:10	0:0	2	=
+water	25:12	0:0	2	start
+op	25:18	0:0	2	+
+water	25:20	0:0	2	(
+water	25:21	0:0	2	s
+op	25:22	0:0	2	->
+water	25:24	0:0	2	field
+op	25:30	0:0	2	==
+water	25:33	0:0	2	cur
+op	25:36	0:0	2	->
+water	25:38	0:0	2	top_field_first
+water	25:53	0:0	2	)
+op	25:55	0:0	2	-
+water	25:57	0:0	2	(
+water	25:58	0:0	2	start
+op	25:64	0:0	2	&
+water	25:66	0:0	2	1
+water	25:67	0:0	2	)
+water	25:68	0:0	2	;
+water	26:4	0:0	2	in_line
+op	26:13	0:0	2	=
+water	26:15	0:0	2	cur_data
+op	26:24	0:0	2	+
+water	26:26	0:0	2	(
+water	26:27	0:0	2	y_out
+op	26:33	0:0	2	*
+water	26:35	0:0	2	cur_line_stride
+water	26:50	0:0	2	)
+water	26:51	0:0	2	;
+water	27:4	0:0	2	out_line
+op	27:13	0:0	2	=
+water	27:15	0:0	2	dst_data
+op	27:24	0:0	2	+
+water	27:26	0:0	2	(
+water	27:27	0:0	2	y_out
+op	27:33	0:0	2	*
+water	27:35	0:0	2	dst_line_stride
+water	27:50	0:0	2	)
+water	27:51	0:0	2	;
+while	28:4	33:4	2	(y_out < end)
+cond	28:11	28:19	3	y_out < end
+water	28:11	0:0	4	y_out
+op	28:17	0:0	4	<
+water	28:19	0:0	4	end
+stmts	28:24	33:4	3	
+water	28:24	0:0	4	{
+call	29:8	29:42	4	memcpy
+arg	29:15	29:23	5	out_line
+water	29:15	0:0	6	out_line
+arg	29:25	29:32	5	in_line
+water	29:25	0:0	6	in_line
+arg	29:34	29:42	5	linesize
+water	29:34	0:0	6	linesize
+water	29:43	0:0	4	;
+water	30:8	0:0	4	y_out
+op	30:14	0:0	4	+=
+water	30:17	0:0	4	2
+water	30:18	0:0	4	;
+water	31:8	0:0	4	in_line
+op	31:17	0:0	4	+=
+water	31:20	0:0	4	cur_line_stride
+op	31:36	0:0	4	*
+water	31:38	0:0	4	2
+water	31:39	0:0	4	;
+water	32:8	0:0	4	out_line
+op	32:17	0:0	4	+=
+water	32:20	0:0	4	dst_line_stride
+op	32:36	0:0	4	*
+water	32:38	0:0	4	2
+water	32:39	0:0	4	;
+water	33:4	0:0	4	}
+water	35:4	0:0	2	y_out
+op	35:10	0:0	2	=
+water	35:12	0:0	2	start
+op	35:18	0:0	2	+
+water	35:20	0:0	2	(
+water	35:21	0:0	2	s
+op	35:22	0:0	2	->
+water	35:24	0:0	2	field
+op	35:30	0:0	2	!=
+water	35:33	0:0	2	cur
+op	35:36	0:0	2	->
+water	35:38	0:0	2	top_field_first
+water	35:53	0:0	2	)
+op	35:55	0:0	2	-
+water	35:57	0:0	2	(
+water	35:58	0:0	2	start
+op	35:64	0:0	2	&
+water	35:66	0:0	2	1
+water	35:67	0:0	2	)
+water	35:68	0:0	2	;
+water	36:4	0:0	2	out_line
+op	36:13	0:0	2	=
+water	36:15	0:0	2	dst_data
+op	36:24	0:0	2	+
+water	36:26	0:0	2	(
+water	36:27	0:0	2	y_out
+op	36:33	0:0	2	*
+water	36:35	0:0	2	dst_line_stride
+water	36:50	0:0	2	)
+water	36:51	0:0	2	;
+while	37:4	109:4	2	(y_out < end)
+cond	37:11	37:19	3	y_out < end
+water	37:11	0:0	4	y_out
+op	37:17	0:0	4	<
+water	37:19	0:0	4	end
+stmts	37:24	109:4	3	
+water	37:24	0:0	4	{
+call	39:8	39:78	4	memset
+arg	39:15	39:34	5	s->work_line[jobnr]
+water	39:15	0:0	6	s
+op	39:16	0:0	6	->
+water	39:18	0:0	6	work_line
+op	39:27	0:0	6	[
+water	39:28	0:0	6	jobnr
+op	39:33	0:0	6	]
+arg	39:36	39:37	5	0
+water	39:36	0:0	6	0
+arg	39:39	39:78	5	sizeof(*s->work_line[jobnr])*linesize
+op	39:39	0:0	6	sizeof
+water	39:45	0:0	6	(
+op	39:46	0:0	6	*
+water	39:47	0:0	6	s
+op	39:48	0:0	6	->
+water	39:50	0:0	6	work_line
+op	39:59	0:0	6	[
+water	39:60	0:0	6	jobnr
+op	39:65	0:0	6	]
+water	39:66	0:0	6	)
+op	39:68	0:0	6	*
+water	39:70	0:0	6	linesize
+water	39:79	0:0	4	;
+for	41:8	48:8	4	(j = 0 ;j < n_coef_lf [ filter ];j ++)
+forinit	41:13	41:18	5	j = 0 ;
+water	41:13	0:0	6	j
+op	41:15	0:0	6	=
+water	41:17	0:0	6	0
+water	41:18	0:0	6	;
+cond	41:20	41:40	5	j < n_coef_lf [ filter ]
+water	41:20	0:0	6	j
+op	41:22	0:0	6	<
+water	41:24	0:0	6	n_coef_lf
+op	41:33	0:0	6	[
+water	41:34	0:0	6	filter
+op	41:40	0:0	6	]
+forexpr	41:43	41:44	5	j ++
+water	41:43	0:0	6	j
+op	41:44	0:0	6	++
+stmts	41:48	48:8	5	
+water	41:48	0:0	6	{
+water	42:12	0:0	6	y_in
+op	42:17	0:0	6	=
+water	42:19	0:0	6	(
+water	42:20	0:0	6	y_out
+op	42:26	0:0	6	+
+water	42:28	0:0	6	1
+water	42:29	0:0	6	)
+op	42:31	0:0	6	+
+water	42:33	0:0	6	(
+water	42:34	0:0	6	j
+op	42:36	0:0	6	*
+water	42:38	0:0	6	2
+water	42:39	0:0	6	)
+op	42:41	0:0	6	-
+water	42:43	0:0	6	n_coef_lf
+op	42:52	0:0	6	[
+water	42:53	0:0	6	filter
+op	42:59	0:0	6	]
+water	42:60	0:0	6	;
+while	43:12	44:25	6	(y_in < 0)
+cond	43:19	43:26	7	y_in < 0
+water	43:19	0:0	8	y_in
+op	43:24	0:0	8	<
+water	43:26	0:0	8	0
+stmts	44:16	44:25	7	
+water	44:16	0:0	8	y_in
+op	44:21	0:0	8	+=
+water	44:24	0:0	8	2
+water	44:25	0:0	8	;
+while	45:12	46:25	6	(y_in >= height)
+cond	45:19	45:27	7	y_in >= height
+water	45:19	0:0	8	y_in
+op	45:24	0:0	8	>=
+water	45:27	0:0	8	height
+stmts	46:16	46:25	7	
+water	46:16	0:0	8	y_in
+op	46:21	0:0	8	-=
+water	46:24	0:0	8	2
+water	46:25	0:0	8	;
+water	47:12	0:0	6	in_lines_cur
+op	47:24	0:0	6	[
+water	47:25	0:0	6	j
+op	47:26	0:0	6	]
+op	47:28	0:0	6	=
+water	47:30	0:0	6	cur_data
+op	47:39	0:0	6	+
+water	47:41	0:0	6	(
+water	47:42	0:0	6	y_in
+op	47:47	0:0	6	*
+water	47:49	0:0	6	cur_line_stride
+water	47:64	0:0	6	)
+water	47:65	0:0	6	;
+water	48:8	0:0	6	}
+water	49:8	0:0	4	work_line
+op	49:18	0:0	4	=
+water	49:20	0:0	4	s
+op	49:21	0:0	4	->
+water	49:23	0:0	4	work_line
+op	49:32	0:0	4	[
+water	49:33	0:0	4	jobnr
+op	49:38	0:0	4	]
+water	49:39	0:0	4	;
+switch	50:8	64:8	4	(n_coef_lf [ filter ])
+cond	50:16	50:32	5	n_coef_lf [ filter ]
+water	50:16	0:0	6	n_coef_lf
+op	50:25	0:0	6	[
+water	50:26	0:0	6	filter
+op	50:32	0:0	6	]
+stmts	50:35	64:8	5	
+water	50:35	0:0	6	{
+label	51:8	51:14	6	case 2 :
+for	52:12	55:12	6	(i = 0 ;i < linesize;i ++)
+forinit	52:17	52:22	7	i = 0 ;
+water	52:17	0:0	8	i
+op	52:19	0:0	8	=
+water	52:21	0:0	8	0
+water	52:22	0:0	8	;
+cond	52:24	52:28	7	i < linesize
+water	52:24	0:0	8	i
+op	52:26	0:0	8	<
+water	52:28	0:0	8	linesize
+forexpr	52:38	52:39	7	i ++
+water	52:38	0:0	8	i
+op	52:39	0:0	8	++
+stmts	52:43	55:12	7	
+water	52:43	0:0	8	{
+op	53:16	0:0	8	*
+water	53:17	0:0	8	work_line
+op	53:29	0:0	8	+=
+op	53:32	0:0	8	*
+water	53:33	0:0	8	in_lines_cur
+op	53:45	0:0	8	[
+water	53:46	0:0	8	0
+op	53:47	0:0	8	]
+op	53:48	0:0	8	++
+op	53:51	0:0	8	*
+water	53:53	0:0	8	coef_lf
+op	53:60	0:0	8	[
+water	53:61	0:0	8	filter
+op	53:67	0:0	8	]
+op	53:68	0:0	8	[
+water	53:69	0:0	8	0
+op	53:70	0:0	8	]
+water	53:71	0:0	8	;
+op	54:16	0:0	8	*
+water	54:17	0:0	8	work_line
+op	54:26	0:0	8	++
+op	54:29	0:0	8	+=
+op	54:32	0:0	8	*
+water	54:33	0:0	8	in_lines_cur
+op	54:45	0:0	8	[
+water	54:46	0:0	8	1
+op	54:47	0:0	8	]
+op	54:48	0:0	8	++
+op	54:51	0:0	8	*
+water	54:53	0:0	8	coef_lf
+op	54:60	0:0	8	[
+water	54:61	0:0	8	filter
+op	54:67	0:0	8	]
+op	54:68	0:0	8	[
+water	54:69	0:0	8	1
+op	54:70	0:0	8	]
+water	54:71	0:0	8	;
+water	55:12	0:0	8	}
+break	56:12	56:17	6	
+label	57:8	57:14	6	case 4 :
+for	58:12	63:12	6	(i = 0 ;i < linesize;i ++)
+forinit	58:17	58:22	7	i = 0 ;
+water	58:17	0:0	8	i
+op	58:19	0:0	8	=
+water	58:21	0:0	8	0
+water	58:22	0:0	8	;
+cond	58:24	58:28	7	i < linesize
+water	58:24	0:0	8	i
+op	58:26	0:0	8	<
+water	58:28	0:0	8	linesize
+forexpr	58:38	58:39	7	i ++
+water	58:38	0:0	8	i
+op	58:39	0:0	8	++
+stmts	58:43	63:12	7	
+water	58:43	0:0	8	{
+op	59:16	0:0	8	*
+water	59:17	0:0	8	work_line
+op	59:29	0:0	8	+=
+op	59:32	0:0	8	*
+water	59:33	0:0	8	in_lines_cur
+op	59:45	0:0	8	[
+water	59:46	0:0	8	0
+op	59:47	0:0	8	]
+op	59:48	0:0	8	++
+op	59:51	0:0	8	*
+water	59:53	0:0	8	coef_lf
+op	59:60	0:0	8	[
+water	59:61	0:0	8	filter
+op	59:67	0:0	8	]
+op	59:68	0:0	8	[
+water	59:69	0:0	8	0
+op	59:70	0:0	8	]
+water	59:71	0:0	8	;
+op	60:16	0:0	8	*
+water	60:17	0:0	8	work_line
+op	60:29	0:0	8	+=
+op	60:32	0:0	8	*
+water	60:33	0:0	8	in_lines_cur
+op	60:45	0:0	8	[
+water	60:46	0:0	8	1
+op	60:47	0:0	8	]
+op	60:48	0:0	8	++
+op	60:51	0:0	8	*
+water	60:53	0:0	8	coef_lf
+op	60:60	0:0	8	[
+water	60:61	0:0	8	filter
+op	60:67	0:0	8	]
+op	60:68	0:0	8	[
+water	60:69	0:0	8	1
+op	60:70	0:0	8	]
+water	60:71	0:0	8	;
+op	61:16	0:0	8	*
+water	61:17	0:0	8	work_line
+op	61:29	0:0	8	+=
+op	61:32	0:0	8	*
+water	61:33	0:0	8	in_lines_cur
+op	61:45	0:0	8	[
+water	61:46	0:0	8	2
+op	61:47	0:0	8	]
+op	61:48	0:0	8	++
+op	61:51	0:0	8	*
+water	61:53	0:0	8	coef_lf
+op	61:60	0:0	8	[
+water	61:61	0:0	8	filter
+op	61:67	0:0	8	]
+op	61:68	0:0	8	[
+water	61:69	0:0	8	2
+op	61:70	0:0	8	]
+water	61:71	0:0	8	;
+op	62:16	0:0	8	*
+water	62:17	0:0	8	work_line
+op	62:26	0:0	8	++
+op	62:29	0:0	8	+=
+op	62:32	0:0	8	*
+water	62:33	0:0	8	in_lines_cur
+op	62:45	0:0	8	[
+water	62:46	0:0	8	3
+op	62:47	0:0	8	]
+op	62:48	0:0	8	++
+op	62:51	0:0	8	*
+water	62:53	0:0	8	coef_lf
+op	62:60	0:0	8	[
+water	62:61	0:0	8	filter
+op	62:67	0:0	8	]
+op	62:68	0:0	8	[
+water	62:69	0:0	8	3
+op	62:70	0:0	8	]
+water	62:71	0:0	8	;
+water	63:12	0:0	8	}
+water	64:8	0:0	6	}
+for	66:8	74:8	4	(j = 0 ;j < n_coef_hf [ filter ];j ++)
+forinit	66:13	66:18	5	j = 0 ;
+water	66:13	0:0	6	j
+op	66:15	0:0	6	=
+water	66:17	0:0	6	0
+water	66:18	0:0	6	;
+cond	66:20	66:40	5	j < n_coef_hf [ filter ]
+water	66:20	0:0	6	j
+op	66:22	0:0	6	<
+water	66:24	0:0	6	n_coef_hf
+op	66:33	0:0	6	[
+water	66:34	0:0	6	filter
+op	66:40	0:0	6	]
+forexpr	66:43	66:44	5	j ++
+water	66:43	0:0	6	j
+op	66:44	0:0	6	++
+stmts	66:48	74:8	5	
+water	66:48	0:0	6	{
+water	67:12	0:0	6	y_in
+op	67:17	0:0	6	=
+water	67:19	0:0	6	(
+water	67:20	0:0	6	y_out
+op	67:26	0:0	6	+
+water	67:28	0:0	6	1
+water	67:29	0:0	6	)
+op	67:31	0:0	6	+
+water	67:33	0:0	6	(
+water	67:34	0:0	6	j
+op	67:36	0:0	6	*
+water	67:38	0:0	6	2
+water	67:39	0:0	6	)
+op	67:41	0:0	6	-
+water	67:43	0:0	6	n_coef_hf
+op	67:52	0:0	6	[
+water	67:53	0:0	6	filter
+op	67:59	0:0	6	]
+water	67:60	0:0	6	;
+while	68:12	69:25	6	(y_in < 0)
+cond	68:19	68:26	7	y_in < 0
+water	68:19	0:0	8	y_in
+op	68:24	0:0	8	<
+water	68:26	0:0	8	0
+stmts	69:16	69:25	7	
+water	69:16	0:0	8	y_in
+op	69:21	0:0	8	+=
+water	69:24	0:0	8	2
+water	69:25	0:0	8	;
+while	70:12	71:25	6	(y_in >= height)
+cond	70:19	70:27	7	y_in >= height
+water	70:19	0:0	8	y_in
+op	70:24	0:0	8	>=
+water	70:27	0:0	8	height
+stmts	71:16	71:25	7	
+water	71:16	0:0	8	y_in
+op	71:21	0:0	8	-=
+water	71:24	0:0	8	2
+water	71:25	0:0	8	;
+water	72:12	0:0	6	in_lines_cur
+op	72:24	0:0	6	[
+water	72:25	0:0	6	j
+op	72:26	0:0	6	]
+op	72:28	0:0	6	=
+water	72:30	0:0	6	cur_data
+op	72:39	0:0	6	+
+water	72:41	0:0	6	(
+water	72:42	0:0	6	y_in
+op	72:47	0:0	6	*
+water	72:49	0:0	6	cur_line_stride
+water	72:64	0:0	6	)
+water	72:65	0:0	6	;
+water	73:12	0:0	6	in_lines_adj
+op	73:24	0:0	6	[
+water	73:25	0:0	6	j
+op	73:26	0:0	6	]
+op	73:28	0:0	6	=
+water	73:30	0:0	6	adj_data
+op	73:39	0:0	6	+
+water	73:41	0:0	6	(
+water	73:42	0:0	6	y_in
+op	73:47	0:0	6	*
+water	73:49	0:0	6	adj_line_stride
+water	73:64	0:0	6	)
+water	73:65	0:0	6	;
+water	74:8	0:0	6	}
+water	75:8	0:0	4	work_line
+op	75:18	0:0	4	=
+water	75:20	0:0	4	s
+op	75:21	0:0	4	->
+water	75:23	0:0	4	work_line
+op	75:32	0:0	4	[
+water	75:33	0:0	4	jobnr
+op	75:38	0:0	4	]
+water	75:39	0:0	4	;
+switch	76:8	100:8	4	(n_coef_hf [ filter ])
+cond	76:16	76:32	5	n_coef_hf [ filter ]
+water	76:16	0:0	6	n_coef_hf
+op	76:25	0:0	6	[
+water	76:26	0:0	6	filter
+op	76:32	0:0	6	]
+stmts	76:35	100:8	5	
+water	76:35	0:0	6	{
+label	77:8	77:14	6	case 3 :
+for	78:12	85:12	6	(i = 0 ;i < linesize;i ++)
+forinit	78:17	78:22	7	i = 0 ;
+water	78:17	0:0	8	i
+op	78:19	0:0	8	=
+water	78:21	0:0	8	0
+water	78:22	0:0	8	;
+cond	78:24	78:28	7	i < linesize
+water	78:24	0:0	8	i
+op	78:26	0:0	8	<
+water	78:28	0:0	8	linesize
+forexpr	78:38	78:39	7	i ++
+water	78:38	0:0	8	i
+op	78:39	0:0	8	++
+stmts	78:43	85:12	7	
+water	78:43	0:0	8	{
+op	79:16	0:0	8	*
+water	79:17	0:0	8	work_line
+op	79:29	0:0	8	+=
+op	79:32	0:0	8	*
+water	79:33	0:0	8	in_lines_cur
+op	79:45	0:0	8	[
+water	79:46	0:0	8	0
+op	79:47	0:0	8	]
+op	79:48	0:0	8	++
+op	79:51	0:0	8	*
+water	79:53	0:0	8	coef_hf
+op	79:60	0:0	8	[
+water	79:61	0:0	8	filter
+op	79:67	0:0	8	]
+op	79:68	0:0	8	[
+water	79:69	0:0	8	0
+op	79:70	0:0	8	]
+water	79:71	0:0	8	;
+op	80:16	0:0	8	*
+water	80:17	0:0	8	work_line
+op	80:29	0:0	8	+=
+op	80:32	0:0	8	*
+water	80:33	0:0	8	in_lines_adj
+op	80:45	0:0	8	[
+water	80:46	0:0	8	0
+op	80:47	0:0	8	]
+op	80:48	0:0	8	++
+op	80:51	0:0	8	*
+water	80:53	0:0	8	coef_hf
+op	80:60	0:0	8	[
+water	80:61	0:0	8	filter
+op	80:67	0:0	8	]
+op	80:68	0:0	8	[
+water	80:69	0:0	8	0
+op	80:70	0:0	8	]
+water	80:71	0:0	8	;
+op	81:16	0:0	8	*
+water	81:17	0:0	8	work_line
+op	81:29	0:0	8	+=
+op	81:32	0:0	8	*
+water	81:33	0:0	8	in_lines_cur
+op	81:45	0:0	8	[
+water	81:46	0:0	8	1
+op	81:47	0:0	8	]
+op	81:48	0:0	8	++
+op	81:51	0:0	8	*
+water	81:53	0:0	8	coef_hf
+op	81:60	0:0	8	[
+water	81:61	0:0	8	filter
+op	81:67	0:0	8	]
+op	81:68	0:0	8	[
+water	81:69	0:0	8	1
+op	81:70	0:0	8	]
+water	81:71	0:0	8	;
+op	82:16	0:0	8	*
+water	82:17	0:0	8	work_line
+op	82:29	0:0	8	+=
+op	82:32	0:0	8	*
+water	82:33	0:0	8	in_lines_adj
+op	82:45	0:0	8	[
+water	82:46	0:0	8	1
+op	82:47	0:0	8	]
+op	82:48	0:0	8	++
+op	82:51	0:0	8	*
+water	82:53	0:0	8	coef_hf
+op	82:60	0:0	8	[
+water	82:61	0:0	8	filter
+op	82:67	0:0	8	]
+op	82:68	0:0	8	[
+water	82:69	0:0	8	1
+op	82:70	0:0	8	]
+water	82:71	0:0	8	;
+op	83:16	0:0	8	*
+water	83:17	0:0	8	work_line
+op	83:29	0:0	8	+=
+op	83:32	0:0	8	*
+water	83:33	0:0	8	in_lines_cur
+op	83:45	0:0	8	[
+water	83:46	0:0	8	2
+op	83:47	0:0	8	]
+op	83:48	0:0	8	++
+op	83:51	0:0	8	*
+water	83:53	0:0	8	coef_hf
+op	83:60	0:0	8	[
+water	83:61	0:0	8	filter
+op	83:67	0:0	8	]
+op	83:68	0:0	8	[
+water	83:69	0:0	8	2
+op	83:70	0:0	8	]
+water	83:71	0:0	8	;
+op	84:16	0:0	8	*
+water	84:17	0:0	8	work_line
+op	84:26	0:0	8	++
+op	84:29	0:0	8	+=
+op	84:32	0:0	8	*
+water	84:33	0:0	8	in_lines_adj
+op	84:45	0:0	8	[
+water	84:46	0:0	8	2
+op	84:47	0:0	8	]
+op	84:48	0:0	8	++
+op	84:51	0:0	8	*
+water	84:53	0:0	8	coef_hf
+op	84:60	0:0	8	[
+water	84:61	0:0	8	filter
+op	84:67	0:0	8	]
+op	84:68	0:0	8	[
+water	84:69	0:0	8	2
+op	84:70	0:0	8	]
+water	84:71	0:0	8	;
+water	85:12	0:0	8	}
+break	86:12	86:17	6	
+label	87:8	87:14	6	case 5 :
+for	88:12	99:12	6	(i = 0 ;i < linesize;i ++)
+forinit	88:17	88:22	7	i = 0 ;
+water	88:17	0:0	8	i
+op	88:19	0:0	8	=
+water	88:21	0:0	8	0
+water	88:22	0:0	8	;
+cond	88:24	88:28	7	i < linesize
+water	88:24	0:0	8	i
+op	88:26	0:0	8	<
+water	88:28	0:0	8	linesize
+forexpr	88:38	88:39	7	i ++
+water	88:38	0:0	8	i
+op	88:39	0:0	8	++
+stmts	88:43	99:12	7	
+water	88:43	0:0	8	{
+op	89:16	0:0	8	*
+water	89:17	0:0	8	work_line
+op	89:29	0:0	8	+=
+op	89:32	0:0	8	*
+water	89:33	0:0	8	in_lines_cur
+op	89:45	0:0	8	[
+water	89:46	0:0	8	0
+op	89:47	0:0	8	]
+op	89:48	0:0	8	++
+op	89:51	0:0	8	*
+water	89:53	0:0	8	coef_hf
+op	89:60	0:0	8	[
+water	89:61	0:0	8	filter
+op	89:67	0:0	8	]
+op	89:68	0:0	8	[
+water	89:69	0:0	8	0
+op	89:70	0:0	8	]
+water	89:71	0:0	8	;
+op	90:16	0:0	8	*
+water	90:17	0:0	8	work_line
+op	90:29	0:0	8	+=
+op	90:32	0:0	8	*
+water	90:33	0:0	8	in_lines_adj
+op	90:45	0:0	8	[
+water	90:46	0:0	8	0
+op	90:47	0:0	8	]
+op	90:48	0:0	8	++
+op	90:51	0:0	8	*
+water	90:53	0:0	8	coef_hf
+op	90:60	0:0	8	[
+water	90:61	0:0	8	filter
+op	90:67	0:0	8	]
+op	90:68	0:0	8	[
+water	90:69	0:0	8	0
+op	90:70	0:0	8	]
+water	90:71	0:0	8	;
+op	91:16	0:0	8	*
+water	91:17	0:0	8	work_line
+op	91:29	0:0	8	+=
+op	91:32	0:0	8	*
+water	91:33	0:0	8	in_lines_cur
+op	91:45	0:0	8	[
+water	91:46	0:0	8	1
+op	91:47	0:0	8	]
+op	91:48	0:0	8	++
+op	91:51	0:0	8	*
+water	91:53	0:0	8	coef_hf
+op	91:60	0:0	8	[
+water	91:61	0:0	8	filter
+op	91:67	0:0	8	]
+op	91:68	0:0	8	[
+water	91:69	0:0	8	1
+op	91:70	0:0	8	]
+water	91:71	0:0	8	;
+op	92:16	0:0	8	*
+water	92:17	0:0	8	work_line
+op	92:29	0:0	8	+=
+op	92:32	0:0	8	*
+water	92:33	0:0	8	in_lines_adj
+op	92:45	0:0	8	[
+water	92:46	0:0	8	1
+op	92:47	0:0	8	]
+op	92:48	0:0	8	++
+op	92:51	0:0	8	*
+water	92:53	0:0	8	coef_hf
+op	92:60	0:0	8	[
+water	92:61	0:0	8	filter
+op	92:67	0:0	8	]
+op	92:68	0:0	8	[
+water	92:69	0:0	8	1
+op	92:70	0:0	8	]
+water	92:71	0:0	8	;
+op	93:16	0:0	8	*
+water	93:17	0:0	8	work_line
+op	93:29	0:0	8	+=
+op	93:32	0:0	8	*
+water	93:33	0:0	8	in_lines_cur
+op	93:45	0:0	8	[
+water	93:46	0:0	8	2
+op	93:47	0:0	8	]
+op	93:48	0:0	8	++
+op	93:51	0:0	8	*
+water	93:53	0:0	8	coef_hf
+op	93:60	0:0	8	[
+water	93:61	0:0	8	filter
+op	93:67	0:0	8	]
+op	93:68	0:0	8	[
+water	93:69	0:0	8	2
+op	93:70	0:0	8	]
+water	93:71	0:0	8	;
+op	94:16	0:0	8	*
+water	94:17	0:0	8	work_line
+op	94:29	0:0	8	+=
+op	94:32	0:0	8	*
+water	94:33	0:0	8	in_lines_adj
+op	94:45	0:0	8	[
+water	94:46	0:0	8	2
+op	94:47	0:0	8	]
+op	94:48	0:0	8	++
+op	94:51	0:0	8	*
+water	94:53	0:0	8	coef_hf
+op	94:60	0:0	8	[
+water	94:61	0:0	8	filter
+op	94:67	0:0	8	]
+op	94:68	0:0	8	[
+water	94:69	0:0	8	2
+op	94:70	0:0	8	]
+water	94:71	0:0	8	;
+op	95:16	0:0	8	*
+water	95:17	0:0	8	work_line
+op	95:29	0:0	8	+=
+op	95:32	0:0	8	*
+water	95:33	0:0	8	in_lines_cur
+op	95:45	0:0	8	[
+water	95:46	0:0	8	3
+op	95:47	0:0	8	]
+op	95:48	0:0	8	++
+op	95:51	0:0	8	*
+water	95:53	0:0	8	coef_hf
+op	95:60	0:0	8	[
+water	95:61	0:0	8	filter
+op	95:67	0:0	8	]
+op	95:68	0:0	8	[
+water	95:69	0:0	8	3
+op	95:70	0:0	8	]
+water	95:71	0:0	8	;
+op	96:16	0:0	8	*
+water	96:17	0:0	8	work_line
+op	96:29	0:0	8	+=
+op	96:32	0:0	8	*
+water	96:33	0:0	8	in_lines_adj
+op	96:45	0:0	8	[
+water	96:46	0:0	8	3
+op	96:47	0:0	8	]
+op	96:48	0:0	8	++
+op	96:51	0:0	8	*
+water	96:53	0:0	8	coef_hf
+op	96:60	0:0	8	[
+water	96:61	0:0	8	filter
+op	96:67	0:0	8	]
+op	96:68	0:0	8	[
+water	96:69	0:0	8	3
+op	96:70	0:0	8	]
+water	96:71	0:0	8	;
+op	97:16	0:0	8	*
+water	97:17	0:0	8	work_line
+op	97:29	0:0	8	+=
+op	97:32	0:0	8	*
+water	97:33	0:0	8	in_lines_cur
+op	97:45	0:0	8	[
+water	97:46	0:0	8	4
+op	97:47	0:0	8	]
+op	97:48	0:0	8	++
+op	97:51	0:0	8	*
+water	97:53	0:0	8	coef_hf
+op	97:60	0:0	8	[
+water	97:61	0:0	8	filter
+op	97:67	0:0	8	]
+op	97:68	0:0	8	[
+water	97:69	0:0	8	4
+op	97:70	0:0	8	]
+water	97:71	0:0	8	;
+op	98:16	0:0	8	*
+water	98:17	0:0	8	work_line
+op	98:26	0:0	8	++
+op	98:29	0:0	8	+=
+op	98:32	0:0	8	*
+water	98:33	0:0	8	in_lines_adj
+op	98:45	0:0	8	[
+water	98:46	0:0	8	4
+op	98:47	0:0	8	]
+op	98:48	0:0	8	++
+op	98:51	0:0	8	*
+water	98:53	0:0	8	coef_hf
+op	98:60	0:0	8	[
+water	98:61	0:0	8	filter
+op	98:67	0:0	8	]
+op	98:68	0:0	8	[
+water	98:69	0:0	8	4
+op	98:70	0:0	8	]
+water	98:71	0:0	8	;
+water	99:12	0:0	8	}
+water	100:8	0:0	6	}
+water	102:8	0:0	4	work_pixel
+op	102:19	0:0	4	=
+water	102:21	0:0	4	s
+op	102:22	0:0	4	->
+water	102:24	0:0	4	work_line
+op	102:33	0:0	4	[
+water	102:34	0:0	4	jobnr
+op	102:39	0:0	4	]
+water	102:40	0:0	4	;
+water	103:8	0:0	4	out_pixel
+op	103:18	0:0	4	=
+water	103:20	0:0	4	out_line
+water	103:28	0:0	4	;
+for	104:8	105:72	4	(j = 0 ;j < linesize;j ++ , out_pixel ++ , work_pixel ++)
+forinit	104:13	104:18	5	j = 0 ;
+water	104:13	0:0	6	j
+op	104:15	0:0	6	=
+water	104:17	0:0	6	0
+water	104:18	0:0	6	;
+cond	104:20	104:24	5	j < linesize
+water	104:20	0:0	6	j
+op	104:22	0:0	6	<
+water	104:24	0:0	6	linesize
+forexpr	104:34	104:62	5	j ++ , out_pixel ++ , work_pixel ++
+water	104:34	0:0	6	j
+op	104:35	0:0	6	++
+water	104:37	0:0	6	,
+water	104:39	0:0	6	out_pixel
+op	104:48	0:0	6	++
+water	104:50	0:0	6	,
+water	104:52	0:0	6	work_pixel
+op	104:62	0:0	6	++
+stmts	105:13	105:72	5	
+op	105:13	0:0	6	*
+water	105:14	0:0	6	out_pixel
+op	105:24	0:0	6	=
+call	105:26	105:65	6	av_clip
+arg	105:34	105:45	7	*work_pixel
+op	105:34	0:0	8	*
+water	105:35	0:0	8	work_pixel
+arg	105:47	105:48	7	0
+water	105:47	0:0	8	0
+arg	105:50	105:65	7	255*256*256
+water	105:50	0:0	8	255
+op	105:54	0:0	8	*
+water	105:56	0:0	8	256
+op	105:60	0:0	8	*
+water	105:62	0:0	8	256
+op	105:67	0:0	6	>>
+water	105:70	0:0	6	16
+water	105:72	0:0	6	;
+water	107:8	0:0	4	y_out
+op	107:14	0:0	4	+=
+water	107:17	0:0	4	2
+water	107:18	0:0	4	;
+water	108:8	0:0	4	out_line
+op	108:17	0:0	4	+=
+water	108:20	0:0	4	dst_line_stride
+op	108:36	0:0	4	*
+water	108:38	0:0	4	2
+water	108:39	0:0	4	;
+water	109:4	0:0	4	}
+return	110:4	110:12	2	0
+water	110:11	0:0	3	0

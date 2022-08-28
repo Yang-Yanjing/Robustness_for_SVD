@@ -1,0 +1,217 @@
+func	1:0	32:0	0	static int	wtvfile_read_packet
+params	1:30	0:0	1	
+param	1:31	1:43	2	void *	opaque
+param	1:45	1:57	2	uint8_t *	buf
+param	1:59	1:71	2	int	buf_size
+stmnts	0:0	31:16	1	
+decl	3:4	3:24	2	WtvFile	*wf
+op	3:16	0:0	2	=
+water	3:18	0:0	2	opaque
+decl	4:4	4:39	2	AVIOContext	*pb
+op	4:20	0:0	2	=
+water	4:22	0:0	2	wf
+op	4:24	0:0	2	->
+water	4:26	0:0	2	pb_filesystem
+decl	5:4	5:17	2	int	nread
+op	5:14	0:0	2	=
+water	5:16	0:0	2	0
+if	6:4	7:17	2	(wf -> error || pb -> error)
+cond	6:8	6:25	3	wf -> error || pb -> error
+water	6:8	0:0	4	wf
+op	6:10	0:0	4	->
+water	6:12	0:0	4	error
+op	6:18	0:0	4	||
+water	6:21	0:0	4	pb
+op	6:23	0:0	4	->
+water	6:25	0:0	4	error
+stmts	7:8	7:17	3	
+return	7:8	7:17	4	-1
+op	7:15	0:0	5	-
+water	7:16	0:0	5	1
+if	8:4	9:16	2	(wf -> position >= wf -> length ||avio_feof (pb ))
+cond	8:8	8:50	3	wf -> position >= wf -> length ||avio_feof (pb )
+water	8:8	0:0	4	wf
+op	8:10	0:0	4	->
+water	8:12	0:0	4	position
+op	8:21	0:0	4	>=
+water	8:24	0:0	4	wf
+op	8:26	0:0	4	->
+water	8:28	0:0	4	length
+op	8:35	0:0	4	||
+call	8:38	8:50	4	avio_feof
+arg	8:48	8:50	5	pb
+water	8:48	0:0	6	pb
+stmts	9:8	9:16	3	
+return	9:8	9:16	4	0
+water	9:15	0:0	5	0
+water	10:4	0:0	2	buf_size
+op	10:13	0:0	2	=
+call	10:15	10:56	2	FFMIN
+arg	10:21	10:29	3	buf_size
+water	10:21	0:0	4	buf_size
+arg	10:31	10:56	3	wf->length-wf->position
+water	10:31	0:0	4	wf
+op	10:33	0:0	4	->
+water	10:35	0:0	4	length
+op	10:42	0:0	4	-
+water	10:44	0:0	4	wf
+op	10:46	0:0	4	->
+water	10:48	0:0	4	position
+water	10:57	0:0	2	;
+while	11:4	30:4	2	(nread < buf_size)
+cond	11:10	11:18	3	nread < buf_size
+water	11:10	0:0	4	nread
+op	11:16	0:0	4	<
+water	11:18	0:0	4	buf_size
+stmts	11:28	30:4	3	
+water	11:28	0:0	4	{
+decl	12:8	12:13	4	int	n
+decl	13:8	13:104	4	int	remaining_in_sector
+op	13:32	0:0	4	=
+water	13:34	0:0	4	(
+water	13:35	0:0	4	1
+op	13:37	0:0	4	<<
+water	13:40	0:0	4	wf
+op	13:42	0:0	4	->
+water	13:44	0:0	4	sector_bits
+water	13:55	0:0	4	)
+op	13:57	0:0	4	-
+water	13:59	0:0	4	(
+water	13:60	0:0	4	wf
+op	13:62	0:0	4	->
+water	13:64	0:0	4	position
+op	13:73	0:0	4	&
+water	13:75	0:0	4	(
+water	13:76	0:0	4	(
+water	13:77	0:0	4	1
+op	13:79	0:0	4	<<
+water	13:82	0:0	4	wf
+op	13:84	0:0	4	->
+water	13:86	0:0	4	sector_bits
+water	13:97	0:0	4	)
+op	13:99	0:0	4	-
+water	13:101	0:0	4	1
+water	13:102	0:0	4	)
+water	13:103	0:0	4	)
+decl	14:8	14:78	4	int	read_request
+op	14:32	0:0	4	=
+call	14:34	14:77	5	FFMIN
+arg	14:40	14:56	6	buf_size-nread
+water	14:40	0:0	7	buf_size
+op	14:49	0:0	7	-
+water	14:51	0:0	7	nread
+arg	14:58	14:77	6	remaining_in_sector
+water	14:58	0:0	7	remaining_in_sector
+water	15:8	0:0	4	n
+op	15:10	0:0	4	=
+call	15:12	15:43	4	avio_read
+arg	15:22	15:24	5	pb
+water	15:22	0:0	6	pb
+arg	15:26	15:29	5	buf
+water	15:26	0:0	6	buf
+arg	15:31	15:43	5	read_request
+water	15:31	0:0	6	read_request
+water	15:44	0:0	4	;
+if	16:8	17:17	4	(n <= 0)
+cond	16:12	16:17	5	n <= 0
+water	16:12	0:0	6	n
+op	16:14	0:0	6	<=
+water	16:17	0:0	6	0
+stmts	17:12	17:17	5	
+break	17:12	17:17	6	
+water	18:8	0:0	4	nread
+op	18:14	0:0	4	+=
+water	18:17	0:0	4	n
+water	18:18	0:0	4	;
+water	19:8	0:0	4	buf
+op	19:12	0:0	4	+=
+water	19:15	0:0	4	n
+water	19:16	0:0	4	;
+water	20:8	0:0	4	wf
+op	20:10	0:0	4	->
+water	20:12	0:0	4	position
+op	20:21	0:0	4	+=
+water	20:24	0:0	4	n
+water	20:25	0:0	4	;
+if	21:8	29:8	4	(n == remaining_in_sector)
+cond	21:12	21:17	5	n == remaining_in_sector
+water	21:12	0:0	6	n
+op	21:14	0:0	6	==
+water	21:17	0:0	6	remaining_in_sector
+stmts	21:38	29:8	5	
+water	21:38	0:0	6	{
+decl	22:12	22:51	6	int	i
+op	22:18	0:0	6	=
+water	22:20	0:0	6	wf
+op	22:22	0:0	6	->
+water	22:24	0:0	6	position
+op	22:33	0:0	6	>>
+water	22:36	0:0	6	wf
+op	22:38	0:0	6	->
+water	22:40	0:0	6	sector_bits
+if	23:12	28:12	6	(i >= wf -> nb_sectors || ( wf -> sectors [ i ] != wf -> sectors [ i - 1 ] + ( 1 << ( wf -> sector_bits - WTV_SECTOR_BITS ) ) &&seek_by_sector (pb ,wf -> sectors [ i ] ,0 ) < 0 ))
+cond	23:16	25:57	7	i >= wf -> nb_sectors || ( wf -> sectors [ i ] != wf -> sectors [ i - 1 ] + ( 1 << ( wf -> sector_bits - WTV_SECTOR_BITS ) ) &&seek_by_sector (pb ,wf -> sectors [ i ] ,0 ) < 0 )
+water	23:16	0:0	8	i
+op	23:18	0:0	8	>=
+water	23:21	0:0	8	wf
+op	23:23	0:0	8	->
+water	23:25	0:0	8	nb_sectors
+op	23:36	0:0	8	||
+water	24:16	0:0	8	(
+water	24:17	0:0	8	wf
+op	24:19	0:0	8	->
+water	24:21	0:0	8	sectors
+op	24:28	0:0	8	[
+water	24:29	0:0	8	i
+op	24:30	0:0	8	]
+op	24:32	0:0	8	!=
+water	24:35	0:0	8	wf
+op	24:37	0:0	8	->
+water	24:39	0:0	8	sectors
+op	24:46	0:0	8	[
+water	24:47	0:0	8	i
+op	24:49	0:0	8	-
+water	24:51	0:0	8	1
+op	24:52	0:0	8	]
+op	24:54	0:0	8	+
+water	24:56	0:0	8	(
+water	24:57	0:0	8	1
+op	24:59	0:0	8	<<
+water	24:62	0:0	8	(
+water	24:63	0:0	8	wf
+op	24:65	0:0	8	->
+water	24:67	0:0	8	sector_bits
+op	24:79	0:0	8	-
+water	24:81	0:0	8	WTV_SECTOR_BITS
+water	24:96	0:0	8	)
+water	24:97	0:0	8	)
+op	24:99	0:0	8	&&
+call	25:16	25:52	8	seek_by_sector
+arg	25:31	25:33	9	pb
+water	25:31	0:0	10	pb
+arg	25:35	25:49	9	wf->sectors[i]
+water	25:35	0:0	10	wf
+op	25:37	0:0	10	->
+water	25:39	0:0	10	sectors
+op	25:46	0:0	10	[
+water	25:47	0:0	10	i
+op	25:48	0:0	10	]
+arg	25:51	25:52	9	0
+water	25:51	0:0	10	0
+op	25:54	0:0	8	<
+water	25:56	0:0	8	0
+water	25:57	0:0	8	)
+stmts	25:60	28:12	7	
+water	25:60	0:0	8	{
+water	26:16	0:0	8	wf
+op	26:18	0:0	8	->
+water	26:20	0:0	8	error
+op	26:26	0:0	8	=
+water	26:28	0:0	8	1
+water	26:29	0:0	8	;
+break	27:16	27:21	8	
+water	28:12	0:0	8	}
+water	29:8	0:0	6	}
+water	30:4	0:0	4	}
+return	31:4	31:16	2	nread
+water	31:11	0:0	3	nread

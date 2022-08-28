@@ -1,0 +1,137 @@
+func	1:0	31:0	0	static int	resolve_host
+params	1:23	0:0	1	
+param	1:24	1:48	2	struct in_addr *	sin_addr
+param	1:50	1:70	2	const char *	hostname
+stmnts	3:4	30:12	1	
+if	3:4	29:4	2	(!ff_inet_aton (hostname ,sin_addr ))
+cond	3:8	3:40	3	!ff_inet_aton (hostname ,sin_addr )
+op	3:8	0:0	4	!
+call	3:9	3:40	4	ff_inet_aton
+arg	3:22	3:30	5	hostname
+water	3:22	0:0	6	hostname
+arg	3:32	3:40	5	sin_addr
+water	3:32	0:0	6	sin_addr
+stmts	3:43	29:4	3	
+water	3:43	0:0	4	{
+decl	5:8	5:33	4	struct addrinfo	*ai
+water	5:27	0:0	4	,
+decl	5:8	5:33	4	struct addrinfo	*cur
+decl	6:8	6:37	4	struct addrinfo	hints
+op	6:30	0:0	4	=
+water	6:32	0:0	4	{
+water	6:34	0:0	4	0
+water	6:36	0:0	4	}
+water	7:8	0:0	4	hints
+op	7:13	0:0	4	.
+water	7:14	0:0	4	ai_family
+op	7:24	0:0	4	=
+water	7:26	0:0	4	AF_INET
+water	7:33	0:0	4	;
+if	8:8	9:21	4	(getaddrinfo (hostname ,NULL ,& hints ,& ai ))
+cond	8:12	8:51	5	getaddrinfo (hostname ,NULL ,& hints ,& ai )
+call	8:12	8:51	6	getaddrinfo
+arg	8:24	8:32	7	hostname
+water	8:24	0:0	8	hostname
+arg	8:34	8:38	7	NULL
+water	8:34	0:0	8	NULL
+arg	8:40	8:46	7	&hints
+op	8:40	0:0	8	&
+water	8:41	0:0	8	hints
+arg	8:48	8:51	7	&ai
+op	8:48	0:0	8	&
+water	8:49	0:0	8	ai
+stmts	9:12	9:21	5	
+return	9:12	9:21	6	-1
+op	9:19	0:0	7	-
+water	9:20	0:0	7	1
+for	13:8	19:8	4	(cur = ai ;cur;cur = cur -> ai_next)
+forinit	13:13	13:21	5	cur = ai ;
+water	13:13	0:0	6	cur
+op	13:17	0:0	6	=
+water	13:19	0:0	6	ai
+water	13:21	0:0	6	;
+cond	13:23	13:23	5	cur
+water	13:23	0:0	6	cur
+forexpr	13:28	13:39	5	cur = cur -> ai_next
+water	13:28	0:0	6	cur
+op	13:32	0:0	6	=
+water	13:34	0:0	6	cur
+op	13:37	0:0	6	->
+water	13:39	0:0	6	ai_next
+stmts	13:48	19:8	5	
+water	13:48	0:0	6	{
+if	14:12	18:12	6	(cur -> ai_family == AF_INET)
+cond	14:16	14:34	7	cur -> ai_family == AF_INET
+water	14:16	0:0	8	cur
+op	14:19	0:0	8	->
+water	14:21	0:0	8	ai_family
+op	14:31	0:0	8	==
+water	14:34	0:0	8	AF_INET
+stmts	14:43	18:12	7	
+water	14:43	0:0	8	{
+op	15:16	0:0	8	*
+water	15:17	0:0	8	sin_addr
+op	15:26	0:0	8	=
+water	15:28	0:0	8	(
+water	15:29	0:0	8	(
+water	15:30	0:0	8	struct
+water	15:37	0:0	8	sockaddr_in
+op	15:49	0:0	8	*
+water	15:50	0:0	8	)
+water	15:51	0:0	8	cur
+op	15:54	0:0	8	->
+water	15:56	0:0	8	ai_addr
+water	15:63	0:0	8	)
+op	15:64	0:0	8	->
+water	15:66	0:0	8	sin_addr
+water	15:74	0:0	8	;
+call	16:16	16:31	8	freeaddrinfo
+arg	16:29	16:31	9	ai
+water	16:29	0:0	10	ai
+water	16:32	0:0	8	;
+return	17:16	17:24	8	0
+water	17:23	0:0	9	0
+water	18:12	0:0	8	}
+water	19:8	0:0	6	}
+call	20:8	20:23	4	freeaddrinfo
+arg	20:21	20:23	5	ai
+water	20:21	0:0	6	ai
+water	20:24	0:0	4	;
+return	21:8	21:17	4	-1
+op	21:15	0:0	5	-
+water	21:16	0:0	5	1
+decl	23:8	23:26	4	struct hostent	*hp
+water	24:8	0:0	4	hp
+op	24:11	0:0	4	=
+call	24:13	24:35	4	gethostbyname
+arg	24:27	24:35	5	hostname
+water	24:27	0:0	6	hostname
+water	24:36	0:0	4	;
+if	25:8	26:21	4	(! hp)
+cond	25:12	25:13	5	! hp
+op	25:12	0:0	6	!
+water	25:13	0:0	6	hp
+stmts	26:12	26:21	5	
+return	26:12	26:21	6	-1
+op	26:19	0:0	7	-
+water	26:20	0:0	7	1
+call	27:8	27:67	4	memcpy
+arg	27:15	27:23	5	sin_addr
+water	27:15	0:0	6	sin_addr
+arg	27:25	27:43	5	hp->h_addr_list[0]
+water	27:25	0:0	6	hp
+op	27:27	0:0	6	->
+water	27:29	0:0	6	h_addr_list
+op	27:40	0:0	6	[
+water	27:41	0:0	6	0
+op	27:42	0:0	6	]
+arg	27:45	27:67	5	sizeof(structin_addr)
+op	27:45	0:0	6	sizeof
+water	27:51	0:0	6	(
+water	27:52	0:0	6	struct
+water	27:59	0:0	6	in_addr
+water	27:66	0:0	6	)
+water	27:68	0:0	4	;
+water	29:4	0:0	4	}
+return	30:4	30:12	2	0
+water	30:11	0:0	3	0

@@ -1,0 +1,98 @@
+static void ff_acelp_apply_order_2_transfer_function_mips(float *out, const float *in,
+                                              const float zero_coeffs[2],
+                                              const float pole_coeffs[2],
+                                              float gain, float mem[2], int n)
+{
+    
+
+
+    __asm__ volatile (
+        "lwc1   $f0,    0(%[mem])                                              \n\t"
+        "blez   %[n],   ff_acelp_apply_order_2_transfer_function_end%=         \n\t"
+        "lwc1   $f1,    4(%[mem])                                              \n\t"
+        "lwc1   $f2,    0(%[pole_coeffs])                                      \n\t"
+        "lwc1   $f3,    4(%[pole_coeffs])                                      \n\t"
+        "lwc1   $f4,    0(%[zero_coeffs])                                      \n\t"
+        "lwc1   $f5,    4(%[zero_coeffs])                                      \n\t"
+        "ff_acelp_apply_order_2_transfer_function_madd%=:                      \n\t"
+        "lwc1   $f6,    0(%[in])                                               \n\t"
+        "mul.s  $f9,    $f3,      $f1                                          \n\t"
+        "mul.s  $f7,    $f2,      $f0                                          \n\t"
+        "msub.s $f7,    $f7,      %[gain], $f6                                 \n\t"
+        "sub.s  $f7,    $f7,      $f9                                          \n\t"
+        "madd.s $f8,    $f7,      $f4,     $f0                                 \n\t"
+        "madd.s $f8,    $f8,      $f5,     $f1                                 \n\t"
+        "lwc1   $f11,   4(%[in])                                               \n\t"
+        "mul.s  $f12,   $f3,      $f0                                          \n\t"
+        "mul.s  $f13,   $f2,      $f7                                          \n\t"
+        "msub.s $f13,   $f13,     %[gain], $f11                                \n\t"
+        "sub.s  $f13,   $f13,     $f12                                         \n\t"
+        "madd.s $f14,   $f13,     $f4,     $f7                                 \n\t"
+        "madd.s $f14,   $f14,     $f5,     $f0                                 \n\t"
+        "swc1   $f8,    0(%[out])                                              \n\t"
+        "lwc1   $f6,    8(%[in])                                               \n\t"
+        "mul.s  $f9,    $f3,      $f7                                          \n\t"
+        "mul.s  $f15,   $f2,      $f13                                         \n\t"
+        "msub.s $f15,   $f15,     %[gain], $f6                                 \n\t"
+        "sub.s  $f15,   $f15,     $f9                                          \n\t"
+        "madd.s $f8,    $f15,     $f4,     $f13                                \n\t"
+        "madd.s $f8,    $f8,      $f5,     $f7                                 \n\t"
+        "swc1   $f14,   4(%[out])                                              \n\t"
+        "lwc1   $f11,   12(%[in])                                              \n\t"
+        "mul.s  $f12,   $f3,      $f13                                         \n\t"
+        "mul.s  $f16,   $f2,      $f15                                         \n\t"
+        "msub.s $f16,   $f16,     %[gain], $f11                                \n\t"
+        "sub.s  $f16,   $f16,     $f12                                         \n\t"
+        "madd.s $f14,   $f16,     $f4,     $f15                                \n\t"
+        "madd.s $f14,   $f14,     $f5,     $f13                                \n\t"
+        "swc1   $f8,    8(%[out])                                              \n\t"
+        "lwc1   $f6,    16(%[in])                                              \n\t"
+        "mul.s  $f9,    $f3,      $f15                                         \n\t"
+        "mul.s  $f7,    $f2,      $f16                                         \n\t"
+        "msub.s $f7,    $f7,      %[gain], $f6                                 \n\t"
+        "sub.s  $f7,    $f7,      $f9                                          \n\t"
+        "madd.s $f8,    $f7,      $f4,     $f16                                \n\t"
+        "madd.s $f8,    $f8,      $f5,     $f15                                \n\t"
+        "swc1   $f14,   12(%[out])                                             \n\t"
+        "lwc1   $f11,   20(%[in])                                              \n\t"
+        "mul.s  $f12,   $f3,      $f16                                         \n\t"
+        "mul.s  $f13,   $f2,      $f7                                          \n\t"
+        "msub.s $f13,   $f13,     %[gain], $f11                                \n\t"
+        "sub.s  $f13,   $f13,     $f12                                         \n\t"
+        "madd.s $f14,   $f13,     $f4,     $f7                                 \n\t"
+        "madd.s $f14,   $f14,     $f5,     $f16                                \n\t"
+        "swc1   $f8,    16(%[out])                                             \n\t"
+        "lwc1   $f6,    24(%[in])                                              \n\t"
+        "mul.s  $f9,    $f3,      $f7                                          \n\t"
+        "mul.s  $f15,   $f2,      $f13                                         \n\t"
+        "msub.s $f15,   $f15,     %[gain], $f6                                 \n\t"
+        "sub.s  $f1,    $f15,     $f9                                          \n\t"
+        "madd.s $f8,    $f1,      $f4,     $f13                                \n\t"
+        "madd.s $f8,    $f8,      $f5,     $f7                                 \n\t"
+        "swc1   $f14,   20(%[out])                                             \n\t"
+        "lwc1   $f11,   28(%[in])                                              \n\t"
+        "mul.s  $f12,   $f3,      $f13                                         \n\t"
+        "mul.s  $f16,   $f2,      $f1                                          \n\t"
+        "msub.s $f16,   $f16,     %[gain], $f11                                \n\t"
+        "sub.s  $f0,    $f16,     $f12                                         \n\t"
+        "madd.s $f14,   $f0,      $f4,     $f1                                 \n\t"
+        "madd.s $f14,   $f14,     $f5,     $f13                                \n\t"
+        "swc1   $f8,    24(%[out])                                             \n\t"
+        PTR_ADDIU "%[out], 32                                                  \n\t"
+        PTR_ADDIU "%[in],  32                                                  \n\t"
+        "addiu  %[n],   -8                                                     \n\t"
+        "swc1   $f14,   -4(%[out])                                             \n\t"
+        "bnez   %[n],   ff_acelp_apply_order_2_transfer_function_madd%=        \n\t"
+        "swc1   $f1,    4(%[mem])                                              \n\t"
+        "swc1   $f0,    0(%[mem])                                              \n\t"
+        "ff_acelp_apply_order_2_transfer_function_end%=:                       \n\t"
+         : [out] "+r" (out),
+           [in] "+r" (in), [gain] "+f" (gain),
+           [n] "+r" (n), [mem] "+r" (mem)
+         : [zero_coeffs] "r" (zero_coeffs),
+           [pole_coeffs] "r" (pole_coeffs)
+         : "$f0", "$f1", "$f2", "$f3", "$f4", "$f5",
+           "$f6", "$f7",  "$f8", "$f9", "$f10", "$f11",
+           "$f12", "$f13", "$f14", "$f15", "$f16", "memory"
+    );
+}

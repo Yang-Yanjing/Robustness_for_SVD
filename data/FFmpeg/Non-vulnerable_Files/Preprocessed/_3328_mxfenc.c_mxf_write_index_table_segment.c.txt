@@ -1,0 +1,812 @@
+func	1:0	112:0	0	static void	mxf_write_index_table_segment
+params	1:41	0:0	1	
+param	1:42	1:60	2	AVFormatContext *	s
+stmnts	0:0	111:4	1	
+decl	3:4	3:34	2	MXFContext	*mxf
+op	3:20	0:0	2	=
+water	3:22	0:0	2	s
+op	3:23	0:0	2	->
+water	3:25	0:0	2	priv_data
+decl	4:4	4:27	2	AVIOContext	*pb
+op	4:20	0:0	2	=
+water	4:22	0:0	2	s
+op	4:23	0:0	2	->
+water	4:25	0:0	2	pb
+decl	5:4	5:37	2	int	i
+water	5:9	0:0	2	,
+decl	5:4	5:37	2	int	j
+water	5:12	0:0	2	,
+decl	5:4	5:37	2	int	temporal_reordering
+op	5:34	0:0	2	=
+water	5:36	0:0	2	0
+decl	6:4	6:39	2	int	key_index
+op	6:18	0:0	2	=
+water	6:20	0:0	2	mxf
+op	6:23	0:0	2	->
+water	6:25	0:0	2	last_key_index
+call	7:4	7:74	2	av_log
+arg	7:11	7:12	3	s
+water	7:11	0:0	4	s
+arg	7:14	7:26	3	AV_LOG_DEBUG
+water	7:14	0:0	4	AV_LOG_DEBUG
+arg	7:28	7:51	3	"edit units count %d\n"
+water	7:28	0:0	4	"edit units count %d\n"
+arg	7:53	7:74	3	mxf->edit_units_count
+water	7:53	0:0	4	mxf
+op	7:56	0:0	4	->
+water	7:58	0:0	4	edit_units_count
+water	7:75	0:0	2	;
+if	8:4	9:14	2	(! mxf -> edit_units_count && ! mxf -> edit_unit_byte_count)
+cond	8:8	8:40	3	! mxf -> edit_units_count && ! mxf -> edit_unit_byte_count
+op	8:8	0:0	4	!
+water	8:9	0:0	4	mxf
+op	8:12	0:0	4	->
+water	8:14	0:0	4	edit_units_count
+op	8:31	0:0	4	&&
+op	8:34	0:0	4	!
+water	8:35	0:0	4	mxf
+op	8:38	0:0	4	->
+water	8:40	0:0	4	edit_unit_byte_count
+stmts	9:8	9:14	3	
+return	9:8	9:14	4	
+call	10:4	10:46	2	avio_write
+arg	10:15	10:17	3	pb
+water	10:15	0:0	4	pb
+arg	10:19	10:42	3	index_table_segment_key
+water	10:19	0:0	4	index_table_segment_key
+arg	10:44	10:46	3	16
+water	10:44	0:0	4	16
+water	10:47	0:0	2	;
+if	11:4	13:4	2	(mxf -> edit_unit_byte_count)
+cond	11:8	11:13	3	mxf -> edit_unit_byte_count
+water	11:8	0:0	4	mxf
+op	11:11	0:0	4	->
+water	11:13	0:0	4	edit_unit_byte_count
+stmts	11:35	13:4	3	
+water	11:35	0:0	4	{
+call	12:8	12:36	4	klv_encode_ber_length
+arg	12:30	12:32	5	pb
+water	12:30	0:0	6	pb
+arg	12:34	12:36	5	80
+water	12:34	0:0	6	80
+water	12:37	0:0	4	;
+water	13:4	0:0	4	}
+else	13:6	16:4	2
+stmts	13:11	16:4	3	
+water	13:11	0:0	4	{
+call	14:8	15:80	4	klv_encode_ber_length
+arg	14:30	14:32	5	pb
+water	14:30	0:0	6	pb
+arg	14:34	15:80	5	85+12+(s->nb_streams+1LL)*6+12+mxf->edit_units_count*(11+mxf->slice_count*4LL)
+water	14:34	0:0	6	85
+op	14:37	0:0	6	+
+water	14:39	0:0	6	12
+op	14:41	0:0	6	+
+water	14:42	0:0	6	(
+water	14:43	0:0	6	s
+op	14:44	0:0	6	->
+water	14:46	0:0	6	nb_streams
+op	14:56	0:0	6	+
+water	14:57	0:0	6	1
+water	14:58	0:0	6	LL
+water	14:60	0:0	6	)
+op	14:61	0:0	6	*
+water	14:62	0:0	6	6
+op	14:64	0:0	6	+
+water	15:30	0:0	6	12
+op	15:32	0:0	6	+
+water	15:33	0:0	6	mxf
+op	15:36	0:0	6	->
+water	15:38	0:0	6	edit_units_count
+op	15:54	0:0	6	*
+water	15:55	0:0	6	(
+water	15:56	0:0	6	11
+op	15:58	0:0	6	+
+water	15:59	0:0	6	mxf
+op	15:62	0:0	6	->
+water	15:64	0:0	6	slice_count
+op	15:75	0:0	6	*
+water	15:76	0:0	6	4
+water	15:77	0:0	6	LL
+water	15:79	0:0	6	)
+water	15:81	0:0	4	;
+water	16:4	0:0	4	}
+call	18:4	18:38	2	mxf_write_local_tag
+arg	18:24	18:26	3	pb
+water	18:24	0:0	4	pb
+arg	18:28	18:30	3	16
+water	18:28	0:0	4	16
+arg	18:32	18:38	3	0x3C0A
+water	18:32	0:0	4	0
+water	18:33	0:0	4	x3C0A
+water	18:39	0:0	2	;
+call	19:4	19:43	2	mxf_write_uuid
+arg	19:19	19:21	3	pb
+water	19:19	0:0	4	pb
+arg	19:23	19:40	3	IndexTableSegment
+water	19:23	0:0	4	IndexTableSegment
+arg	19:42	19:43	3	0
+water	19:42	0:0	4	0
+water	19:44	0:0	2	;
+call	21:4	21:37	2	mxf_write_local_tag
+arg	21:24	21:26	3	pb
+water	21:24	0:0	4	pb
+arg	21:28	21:29	3	8
+water	21:28	0:0	4	8
+arg	21:31	21:37	3	0x3F0B
+water	21:31	0:0	4	0
+water	21:32	0:0	4	x3F0B
+water	21:38	0:0	2	;
+call	22:4	22:36	2	avio_wb32
+arg	22:14	22:16	3	pb
+water	22:14	0:0	4	pb
+arg	22:18	22:36	3	mxf->time_base.den
+water	22:18	0:0	4	mxf
+op	22:21	0:0	4	->
+water	22:23	0:0	4	time_base
+op	22:32	0:0	4	.
+water	22:33	0:0	4	den
+water	22:37	0:0	2	;
+call	23:4	23:36	2	avio_wb32
+arg	23:14	23:16	3	pb
+water	23:14	0:0	4	pb
+arg	23:18	23:36	3	mxf->time_base.num
+water	23:18	0:0	4	mxf
+op	23:21	0:0	4	->
+water	23:23	0:0	4	time_base
+op	23:32	0:0	4	.
+water	23:33	0:0	4	num
+water	23:37	0:0	2	;
+call	25:4	25:37	2	mxf_write_local_tag
+arg	25:24	25:26	3	pb
+water	25:24	0:0	4	pb
+arg	25:28	25:29	3	8
+water	25:28	0:0	4	8
+arg	25:31	25:37	3	0x3F0C
+water	25:31	0:0	4	0
+water	25:32	0:0	4	x3F0C
+water	25:38	0:0	2	;
+call	26:4	26:45	2	avio_wb64
+arg	26:14	26:16	3	pb
+water	26:14	0:0	4	pb
+arg	26:18	26:45	3	mxf->last_indexed_edit_unit
+water	26:18	0:0	4	mxf
+op	26:21	0:0	4	->
+water	26:23	0:0	4	last_indexed_edit_unit
+water	26:46	0:0	2	;
+call	28:4	28:37	2	mxf_write_local_tag
+arg	28:24	28:26	3	pb
+water	28:24	0:0	4	pb
+arg	28:28	28:29	3	8
+water	28:28	0:0	4	8
+arg	28:31	28:37	3	0x3F0D
+water	28:31	0:0	4	0
+water	28:32	0:0	4	x3F0D
+water	28:38	0:0	2	;
+if	29:4	30:24	2	(mxf -> edit_unit_byte_count)
+cond	29:8	29:13	3	mxf -> edit_unit_byte_count
+water	29:8	0:0	4	mxf
+op	29:11	0:0	4	->
+water	29:13	0:0	4	edit_unit_byte_count
+stmts	30:8	30:24	3	
+call	30:8	30:23	4	avio_wb64
+arg	30:18	30:20	5	pb
+water	30:18	0:0	6	pb
+arg	30:22	30:23	5	0
+water	30:22	0:0	6	0
+water	30:24	0:0	4	;
+else	31:4	32:44	2
+stmts	32:8	32:44	3	
+call	32:8	32:43	4	avio_wb64
+arg	32:18	32:20	5	pb
+water	32:18	0:0	6	pb
+arg	32:22	32:43	5	mxf->edit_units_count
+water	32:22	0:0	6	mxf
+op	32:25	0:0	6	->
+water	32:27	0:0	6	edit_units_count
+water	32:44	0:0	4	;
+call	34:4	34:37	2	mxf_write_local_tag
+arg	34:24	34:26	3	pb
+water	34:24	0:0	4	pb
+arg	34:28	34:29	3	4
+water	34:28	0:0	4	4
+arg	34:31	34:37	3	0x3F05
+water	34:31	0:0	4	0
+water	34:32	0:0	4	x3F05
+water	34:38	0:0	2	;
+call	35:4	35:43	2	avio_wb32
+arg	35:14	35:16	3	pb
+water	35:14	0:0	4	pb
+arg	35:18	35:43	3	mxf->edit_unit_byte_count
+water	35:18	0:0	4	mxf
+op	35:21	0:0	4	->
+water	35:23	0:0	4	edit_unit_byte_count
+water	35:44	0:0	2	;
+call	37:4	37:37	2	mxf_write_local_tag
+arg	37:24	37:26	3	pb
+water	37:24	0:0	4	pb
+arg	37:28	37:29	3	4
+water	37:28	0:0	4	4
+arg	37:31	37:37	3	0x3F06
+water	37:31	0:0	4	0
+water	37:32	0:0	4	x3F06
+water	37:38	0:0	2	;
+call	38:4	38:19	2	avio_wb32
+arg	38:14	38:16	3	pb
+water	38:14	0:0	4	pb
+arg	38:18	38:19	3	2
+water	38:18	0:0	4	2
+water	38:20	0:0	2	;
+call	40:4	40:37	2	mxf_write_local_tag
+arg	40:24	40:26	3	pb
+water	40:24	0:0	4	pb
+arg	40:28	40:29	3	4
+water	40:28	0:0	4	4
+arg	40:31	40:37	3	0x3F07
+water	40:31	0:0	4	0
+water	40:32	0:0	4	x3F07
+water	40:38	0:0	2	;
+call	41:4	41:19	2	avio_wb32
+arg	41:14	41:16	3	pb
+water	41:14	0:0	4	pb
+arg	41:18	41:19	3	1
+water	41:18	0:0	4	1
+water	41:20	0:0	2	;
+if	42:4	111:4	2	(! mxf -> edit_unit_byte_count)
+cond	42:8	42:14	3	! mxf -> edit_unit_byte_count
+op	42:8	0:0	4	!
+water	42:9	0:0	4	mxf
+op	42:12	0:0	4	->
+water	42:14	0:0	4	edit_unit_byte_count
+stmts	42:36	111:4	3	
+water	42:36	0:0	4	{
+call	44:8	44:41	4	mxf_write_local_tag
+arg	44:28	44:30	5	pb
+water	44:28	0:0	6	pb
+arg	44:32	44:33	5	1
+water	44:32	0:0	6	1
+arg	44:35	44:41	5	0x3F08
+water	44:35	0:0	6	0
+water	44:36	0:0	6	x3F08
+water	44:42	0:0	4	;
+call	45:8	45:36	4	avio_w8
+arg	45:16	45:18	5	pb
+water	45:16	0:0	6	pb
+arg	45:20	45:36	5	mxf->slice_count
+water	45:20	0:0	6	mxf
+op	45:23	0:0	6	->
+water	45:25	0:0	6	slice_count
+water	45:37	0:0	4	;
+call	47:8	47:63	4	mxf_write_local_tag
+arg	47:28	47:30	5	pb
+water	47:28	0:0	6	pb
+arg	47:32	47:55	5	8+(s->nb_streams+1)*6
+water	47:32	0:0	6	8
+op	47:34	0:0	6	+
+water	47:36	0:0	6	(
+water	47:37	0:0	6	s
+op	47:38	0:0	6	->
+water	47:40	0:0	6	nb_streams
+op	47:50	0:0	6	+
+water	47:51	0:0	6	1
+water	47:52	0:0	6	)
+op	47:53	0:0	6	*
+water	47:54	0:0	6	6
+arg	47:57	47:63	5	0x3F09
+water	47:57	0:0	6	0
+water	47:58	0:0	6	x3F09
+water	47:64	0:0	4	;
+call	48:8	48:37	4	avio_wb32
+arg	48:18	48:20	5	pb
+water	48:18	0:0	6	pb
+arg	48:22	48:37	5	s->nb_streams+1
+water	48:22	0:0	6	s
+op	48:23	0:0	6	->
+water	48:25	0:0	6	nb_streams
+op	48:35	0:0	6	+
+water	48:36	0:0	6	1
+water	48:38	0:0	4	;
+call	49:8	49:23	4	avio_wb32
+arg	49:18	49:20	5	pb
+water	49:18	0:0	6	pb
+arg	49:22	49:23	5	6
+water	49:22	0:0	6	6
+water	49:24	0:0	4	;
+call	51:8	51:21	4	avio_w8
+arg	51:16	51:18	5	pb
+water	51:16	0:0	6	pb
+arg	51:20	51:21	5	0
+water	51:20	0:0	6	0
+water	51:22	0:0	4	;
+call	52:8	52:21	4	avio_w8
+arg	52:16	52:18	5	pb
+water	52:16	0:0	6	pb
+arg	52:20	52:21	5	0
+water	52:20	0:0	6	0
+water	52:22	0:0	4	;
+call	53:8	53:23	4	avio_wb32
+arg	53:18	53:20	5	pb
+water	53:18	0:0	6	pb
+arg	53:22	53:23	5	0
+water	53:22	0:0	6	0
+water	53:24	0:0	4	;
+for	54:8	69:8	4	(i = 0 ;i < s -> nb_streams;i ++)
+forinit	54:13	54:18	5	i = 0 ;
+water	54:13	0:0	6	i
+op	54:15	0:0	6	=
+water	54:17	0:0	6	0
+water	54:18	0:0	6	;
+cond	54:20	54:27	5	i < s -> nb_streams
+water	54:20	0:0	6	i
+op	54:22	0:0	6	<
+water	54:24	0:0	6	s
+op	54:25	0:0	6	->
+water	54:27	0:0	6	nb_streams
+forexpr	54:39	54:40	5	i ++
+water	54:39	0:0	6	i
+op	54:40	0:0	6	++
+stmts	54:44	69:8	5	
+water	54:44	0:0	6	{
+decl	55:12	55:40	6	AVStream	*st
+op	55:25	0:0	6	=
+water	55:27	0:0	6	s
+op	55:28	0:0	6	->
+water	55:30	0:0	6	streams
+op	55:37	0:0	6	[
+water	55:38	0:0	6	i
+op	55:39	0:0	6	]
+decl	56:12	56:48	6	MXFStreamContext	*sc
+op	56:33	0:0	6	=
+water	56:35	0:0	6	st
+op	56:37	0:0	6	->
+water	56:39	0:0	6	priv_data
+call	57:12	57:47	6	avio_w8
+arg	57:20	57:22	7	pb
+water	57:20	0:0	8	pb
+arg	57:24	57:47	7	sc->temporal_reordering
+water	57:24	0:0	8	sc
+op	57:26	0:0	8	->
+water	57:28	0:0	8	temporal_reordering
+water	57:48	0:0	6	;
+if	58:12	59:39	6	(sc -> temporal_reordering)
+cond	58:16	58:20	7	sc -> temporal_reordering
+water	58:16	0:0	8	sc
+op	58:18	0:0	8	->
+water	58:20	0:0	8	temporal_reordering
+stmts	59:16	59:39	7	
+water	59:16	0:0	8	temporal_reordering
+op	59:36	0:0	8	=
+water	59:38	0:0	8	1
+water	59:39	0:0	8	;
+if	60:12	63:12	6	(i == 0)
+cond	60:16	60:21	7	i == 0
+water	60:16	0:0	8	i
+op	60:18	0:0	8	==
+water	60:21	0:0	8	0
+stmts	60:24	63:12	7	
+water	60:24	0:0	8	{
+call	61:16	61:29	8	avio_w8
+arg	61:24	61:26	9	pb
+water	61:24	0:0	10	pb
+arg	61:28	61:29	9	0
+water	61:28	0:0	10	0
+water	61:30	0:0	8	;
+call	62:16	62:38	8	avio_wb32
+arg	62:26	62:28	9	pb
+water	62:26	0:0	10	pb
+arg	62:30	62:38	9	KAG_SIZE
+water	62:30	0:0	10	KAG_SIZE
+water	62:39	0:0	8	;
+water	63:12	0:0	8	}
+else	63:14	68:12	6
+stmts	63:19	68:12	7	
+water	63:19	0:0	8	{
+water	64:16	0:0	8	unsigned
+water	64:25	0:0	8	audio_frame_size
+op	64:42	0:0	8	=
+water	64:44	0:0	8	sc
+op	64:46	0:0	8	->
+water	64:48	0:0	8	aic
+op	64:51	0:0	8	.
+water	64:52	0:0	8	samples
+op	64:59	0:0	8	[
+water	64:60	0:0	8	0
+op	64:61	0:0	8	]
+op	64:62	0:0	8	*
+water	64:63	0:0	8	sc
+op	64:65	0:0	8	->
+water	64:67	0:0	8	aic
+op	64:70	0:0	8	.
+water	64:71	0:0	8	sample_size
+water	64:82	0:0	8	;
+water	65:16	0:0	8	audio_frame_size
+op	65:33	0:0	8	+=
+call	65:36	65:66	8	klv_fill_size
+arg	65:50	65:66	9	audio_frame_size
+water	65:50	0:0	10	audio_frame_size
+water	65:67	0:0	8	;
+call	66:16	66:29	8	avio_w8
+arg	66:24	66:26	9	pb
+water	66:24	0:0	10	pb
+arg	66:28	66:29	9	1
+water	66:28	0:0	10	1
+water	66:30	0:0	8	;
+call	67:16	67:52	8	avio_wb32
+arg	67:26	67:28	9	pb
+water	67:26	0:0	10	pb
+arg	67:30	67:52	9	(i-1)*audio_frame_size
+water	67:30	0:0	10	(
+water	67:31	0:0	10	i
+op	67:32	0:0	10	-
+water	67:33	0:0	10	1
+water	67:34	0:0	10	)
+op	67:35	0:0	10	*
+water	67:36	0:0	10	audio_frame_size
+water	67:53	0:0	8	;
+water	68:12	0:0	8	}
+water	69:8	0:0	6	}
+call	70:8	70:89	4	mxf_write_local_tag
+arg	70:28	70:30	5	pb
+water	70:28	0:0	6	pb
+arg	70:32	70:81	5	8+mxf->edit_units_count*(11+mxf->slice_count*4)
+water	70:32	0:0	6	8
+op	70:34	0:0	6	+
+water	70:36	0:0	6	mxf
+op	70:39	0:0	6	->
+water	70:41	0:0	6	edit_units_count
+op	70:57	0:0	6	*
+water	70:58	0:0	6	(
+water	70:59	0:0	6	11
+op	70:61	0:0	6	+
+water	70:62	0:0	6	mxf
+op	70:65	0:0	6	->
+water	70:67	0:0	6	slice_count
+op	70:78	0:0	6	*
+water	70:79	0:0	6	4
+water	70:80	0:0	6	)
+arg	70:83	70:89	5	0x3F0A
+water	70:83	0:0	6	0
+water	70:84	0:0	6	x3F0A
+water	70:90	0:0	4	;
+call	71:8	71:43	4	avio_wb32
+arg	71:18	71:20	5	pb
+water	71:18	0:0	6	pb
+arg	71:22	71:43	5	mxf->edit_units_count
+water	71:22	0:0	6	mxf
+op	71:25	0:0	6	->
+water	71:27	0:0	6	edit_units_count
+water	71:44	0:0	4	;
+call	72:8	72:43	4	avio_wb32
+arg	72:18	72:20	5	pb
+water	72:18	0:0	6	pb
+arg	72:22	72:43	5	11+mxf->slice_count*4
+water	72:22	0:0	6	11
+op	72:24	0:0	6	+
+water	72:25	0:0	6	mxf
+op	72:28	0:0	6	->
+water	72:30	0:0	6	slice_count
+op	72:41	0:0	6	*
+water	72:42	0:0	6	4
+water	72:44	0:0	4	;
+for	73:8	107:8	4	(i = 0 ;i < mxf -> edit_units_count;i ++)
+forinit	73:13	73:18	5	i = 0 ;
+water	73:13	0:0	6	i
+op	73:15	0:0	6	=
+water	73:17	0:0	6	0
+water	73:18	0:0	6	;
+cond	73:20	73:29	5	i < mxf -> edit_units_count
+water	73:20	0:0	6	i
+op	73:22	0:0	6	<
+water	73:24	0:0	6	mxf
+op	73:27	0:0	6	->
+water	73:29	0:0	6	edit_units_count
+forexpr	73:47	73:48	5	i ++
+water	73:47	0:0	6	i
+op	73:48	0:0	6	++
+stmts	73:52	107:8	5	
+water	73:52	0:0	6	{
+decl	74:12	74:35	6	int	temporal_offset
+op	74:32	0:0	6	=
+water	74:34	0:0	6	0
+if	75:12	78:12	6	(! ( mxf -> index_entries [ i ] . flags & 0 x33 ))
+cond	75:16	75:52	7	! ( mxf -> index_entries [ i ] . flags & 0 x33 )
+op	75:16	0:0	8	!
+water	75:17	0:0	8	(
+water	75:18	0:0	8	mxf
+op	75:21	0:0	8	->
+water	75:23	0:0	8	index_entries
+op	75:36	0:0	8	[
+water	75:37	0:0	8	i
+op	75:38	0:0	8	]
+op	75:39	0:0	8	.
+water	75:40	0:0	8	flags
+op	75:46	0:0	8	&
+water	75:48	0:0	8	0
+water	75:49	0:0	8	x33
+water	75:52	0:0	8	)
+stmts	75:55	78:12	7	
+water	75:55	0:0	8	{
+water	76:16	0:0	8	mxf
+op	76:19	0:0	8	->
+water	76:21	0:0	8	last_key_index
+op	76:36	0:0	8	=
+water	76:38	0:0	8	key_index
+water	76:47	0:0	8	;
+water	77:16	0:0	8	key_index
+op	77:26	0:0	8	=
+water	77:28	0:0	8	i
+water	77:29	0:0	8	;
+water	78:12	0:0	8	}
+if	79:12	90:12	6	(temporal_reordering)
+cond	79:16	79:16	7	temporal_reordering
+water	79:16	0:0	8	temporal_reordering
+stmts	79:37	90:12	7	
+water	79:37	0:0	8	{
+decl	80:16	80:50	8	int	pic_num_in_gop
+op	80:35	0:0	8	=
+water	80:37	0:0	8	i
+op	80:39	0:0	8	-
+water	80:41	0:0	8	key_index
+if	81:16	89:16	8	(pic_num_in_gop != mxf -> index_entries [ i ] . temporal_ref)
+cond	81:20	81:60	9	pic_num_in_gop != mxf -> index_entries [ i ] . temporal_ref
+water	81:20	0:0	10	pic_num_in_gop
+op	81:35	0:0	10	!=
+water	81:38	0:0	10	mxf
+op	81:41	0:0	10	->
+water	81:43	0:0	10	index_entries
+op	81:56	0:0	10	[
+water	81:57	0:0	10	i
+op	81:58	0:0	10	]
+op	81:59	0:0	10	.
+water	81:60	0:0	10	temporal_ref
+stmts	81:74	89:16	9	
+water	81:74	0:0	10	{
+for	82:20	85:20	10	(j = key_index ;j < mxf -> edit_units_count;j ++)
+forinit	82:25	82:38	11	j = key_index ;
+water	82:25	0:0	12	j
+op	82:27	0:0	12	=
+water	82:29	0:0	12	key_index
+water	82:38	0:0	12	;
+cond	82:40	82:49	11	j < mxf -> edit_units_count
+water	82:40	0:0	12	j
+op	82:42	0:0	12	<
+water	82:44	0:0	12	mxf
+op	82:47	0:0	12	->
+water	82:49	0:0	12	edit_units_count
+forexpr	82:67	82:68	11	j ++
+water	82:67	0:0	12	j
+op	82:68	0:0	12	++
+stmts	82:72	85:20	11	
+water	82:72	0:0	12	{
+if	83:24	84:33	12	(pic_num_in_gop == mxf -> index_entries [ j ] . temporal_ref)
+cond	83:28	83:68	13	pic_num_in_gop == mxf -> index_entries [ j ] . temporal_ref
+water	83:28	0:0	14	pic_num_in_gop
+op	83:43	0:0	14	==
+water	83:46	0:0	14	mxf
+op	83:49	0:0	14	->
+water	83:51	0:0	14	index_entries
+op	83:64	0:0	14	[
+water	83:65	0:0	14	j
+op	83:66	0:0	14	]
+op	83:67	0:0	14	.
+water	83:68	0:0	14	temporal_ref
+stmts	84:28	84:33	13	
+break	84:28	84:33	14	
+water	85:20	0:0	12	}
+if	86:20	87:69	10	(j == mxf -> edit_units_count)
+cond	86:24	86:34	11	j == mxf -> edit_units_count
+water	86:24	0:0	12	j
+op	86:26	0:0	12	==
+water	86:29	0:0	12	mxf
+op	86:32	0:0	12	->
+water	86:34	0:0	12	edit_units_count
+stmts	87:24	87:69	11	
+call	87:24	87:68	12	av_log
+arg	87:31	87:32	13	s
+water	87:31	0:0	14	s
+arg	87:34	87:48	13	AV_LOG_WARNING
+water	87:34	0:0	14	AV_LOG_WARNING
+arg	87:50	87:68	13	"missing frames\n"
+water	87:50	0:0	14	"missing frames\n"
+water	87:69	0:0	12	;
+water	88:20	0:0	10	temporal_offset
+op	88:36	0:0	10	=
+water	88:38	0:0	10	j
+op	88:40	0:0	10	-
+water	88:42	0:0	10	key_index
+op	88:52	0:0	10	-
+water	88:54	0:0	10	pic_num_in_gop
+water	88:68	0:0	10	;
+water	89:16	0:0	10	}
+water	90:12	0:0	8	}
+call	91:12	91:39	6	avio_w8
+arg	91:20	91:22	7	pb
+water	91:20	0:0	8	pb
+arg	91:24	91:39	7	temporal_offset
+water	91:24	0:0	8	temporal_offset
+water	91:40	0:0	6	;
+if	92:12	94:12	6	(( mxf -> index_entries [ i ] . flags & 0 x30 ) == 0 x30)
+cond	92:16	92:57	7	( mxf -> index_entries [ i ] . flags & 0 x30 ) == 0 x30
+water	92:16	0:0	8	(
+water	92:17	0:0	8	mxf
+op	92:20	0:0	8	->
+water	92:22	0:0	8	index_entries
+op	92:35	0:0	8	[
+water	92:36	0:0	8	i
+op	92:37	0:0	8	]
+op	92:38	0:0	8	.
+water	92:39	0:0	8	flags
+op	92:45	0:0	8	&
+water	92:47	0:0	8	0
+water	92:48	0:0	8	x30
+water	92:51	0:0	8	)
+op	92:53	0:0	8	==
+water	92:56	0:0	8	0
+water	92:57	0:0	8	x30
+stmts	92:62	94:12	7	
+water	92:62	0:0	8	{
+call	93:16	93:51	8	avio_w8
+arg	93:24	93:26	9	pb
+water	93:24	0:0	10	pb
+arg	93:28	93:51	9	mxf->last_key_index-i
+water	93:28	0:0	10	mxf
+op	93:31	0:0	10	->
+water	93:33	0:0	10	last_key_index
+op	93:48	0:0	10	-
+water	93:50	0:0	10	i
+water	93:52	0:0	8	;
+water	94:12	0:0	8	}
+else	94:14	98:12	6
+stmts	94:19	98:12	7	
+water	94:19	0:0	8	{
+call	95:16	95:41	8	avio_w8
+arg	95:24	95:26	9	pb
+water	95:24	0:0	10	pb
+arg	95:28	95:41	9	key_index-i
+water	95:28	0:0	10	key_index
+op	95:38	0:0	10	-
+water	95:40	0:0	10	i
+water	95:42	0:0	8	;
+if	96:16	97:51	8	(( mxf -> index_entries [ i ] . flags & 0 x20 ) == 0 x20)
+cond	96:20	96:61	9	( mxf -> index_entries [ i ] . flags & 0 x20 ) == 0 x20
+water	96:20	0:0	10	(
+water	96:21	0:0	10	mxf
+op	96:24	0:0	10	->
+water	96:26	0:0	10	index_entries
+op	96:39	0:0	10	[
+water	96:40	0:0	10	i
+op	96:41	0:0	10	]
+op	96:42	0:0	10	.
+water	96:43	0:0	10	flags
+op	96:49	0:0	10	&
+water	96:51	0:0	10	0
+water	96:52	0:0	10	x20
+water	96:55	0:0	10	)
+op	96:57	0:0	10	==
+water	96:60	0:0	10	0
+water	96:61	0:0	10	x20
+stmts	97:20	97:51	9	
+water	97:20	0:0	10	mxf
+op	97:23	0:0	10	->
+water	97:25	0:0	10	last_key_index
+op	97:40	0:0	10	=
+water	97:42	0:0	10	key_index
+water	97:51	0:0	10	;
+water	98:12	0:0	8	}
+if	99:12	101:51	6	(! ( mxf -> index_entries [ i ] . flags & 0 x33 ) && mxf -> index_entries [ i ] . flags & 0 x40 && ! temporal_offset)
+cond	99:16	100:55	7	! ( mxf -> index_entries [ i ] . flags & 0 x33 ) && mxf -> index_entries [ i ] . flags & 0 x40 && ! temporal_offset
+op	99:16	0:0	8	!
+water	99:17	0:0	8	(
+water	99:18	0:0	8	mxf
+op	99:21	0:0	8	->
+water	99:23	0:0	8	index_entries
+op	99:36	0:0	8	[
+water	99:37	0:0	8	i
+op	99:38	0:0	8	]
+op	99:39	0:0	8	.
+water	99:40	0:0	8	flags
+op	99:46	0:0	8	&
+water	99:48	0:0	8	0
+water	99:49	0:0	8	x33
+water	99:52	0:0	8	)
+op	99:54	0:0	8	&&
+water	100:16	0:0	8	mxf
+op	100:19	0:0	8	->
+water	100:21	0:0	8	index_entries
+op	100:34	0:0	8	[
+water	100:35	0:0	8	i
+op	100:36	0:0	8	]
+op	100:37	0:0	8	.
+water	100:38	0:0	8	flags
+op	100:44	0:0	8	&
+water	100:46	0:0	8	0
+water	100:47	0:0	8	x40
+op	100:51	0:0	8	&&
+op	100:54	0:0	8	!
+water	100:55	0:0	8	temporal_offset
+stmts	101:16	101:51	7	
+water	101:16	0:0	8	mxf
+op	101:19	0:0	8	->
+water	101:21	0:0	8	index_entries
+op	101:34	0:0	8	[
+water	101:35	0:0	8	i
+op	101:36	0:0	8	]
+op	101:37	0:0	8	.
+water	101:38	0:0	8	flags
+op	101:44	0:0	8	|=
+water	101:47	0:0	8	0
+water	101:48	0:0	8	x80
+water	101:51	0:0	8	;
+call	102:12	102:51	6	avio_w8
+arg	102:20	102:22	7	pb
+water	102:20	0:0	8	pb
+arg	102:24	102:51	7	mxf->index_entries[i].flags
+water	102:24	0:0	8	mxf
+op	102:27	0:0	8	->
+water	102:29	0:0	8	index_entries
+op	102:42	0:0	8	[
+water	102:43	0:0	8	i
+op	102:44	0:0	8	]
+op	102:45	0:0	8	.
+water	102:46	0:0	8	flags
+water	102:52	0:0	6	;
+call	104:12	104:54	6	avio_wb64
+arg	104:22	104:24	7	pb
+water	104:22	0:0	8	pb
+arg	104:26	104:54	7	mxf->index_entries[i].offset
+water	104:26	0:0	8	mxf
+op	104:29	0:0	8	->
+water	104:31	0:0	8	index_entries
+op	104:44	0:0	8	[
+water	104:45	0:0	8	i
+op	104:46	0:0	8	]
+op	104:47	0:0	8	.
+water	104:48	0:0	8	offset
+water	104:55	0:0	6	;
+if	105:12	106:65	6	(s -> nb_streams > 1)
+cond	105:16	105:32	7	s -> nb_streams > 1
+water	105:16	0:0	8	s
+op	105:17	0:0	8	->
+water	105:19	0:0	8	nb_streams
+op	105:30	0:0	8	>
+water	105:32	0:0	8	1
+stmts	106:16	106:65	7	
+call	106:16	106:64	8	avio_wb32
+arg	106:26	106:28	9	pb
+water	106:26	0:0	10	pb
+arg	106:30	106:64	9	mxf->index_entries[i].slice_offset
+water	106:30	0:0	10	mxf
+op	106:33	0:0	10	->
+water	106:35	0:0	10	index_entries
+op	106:48	0:0	10	[
+water	106:49	0:0	10	i
+op	106:50	0:0	10	]
+op	106:51	0:0	10	.
+water	106:52	0:0	10	slice_offset
+water	106:65	0:0	8	;
+water	107:8	0:0	6	}
+water	108:8	0:0	4	mxf
+op	108:11	0:0	4	->
+water	108:13	0:0	4	last_key_index
+op	108:28	0:0	4	=
+water	108:30	0:0	4	key_index
+op	108:40	0:0	4	-
+water	108:42	0:0	4	mxf
+op	108:45	0:0	4	->
+water	108:47	0:0	4	edit_units_count
+water	108:63	0:0	4	;
+water	109:8	0:0	4	mxf
+op	109:11	0:0	4	->
+water	109:13	0:0	4	last_indexed_edit_unit
+op	109:36	0:0	4	+=
+water	109:39	0:0	4	mxf
+op	109:42	0:0	4	->
+water	109:44	0:0	4	edit_units_count
+water	109:60	0:0	4	;
+water	110:8	0:0	4	mxf
+op	110:11	0:0	4	->
+water	110:13	0:0	4	edit_units_count
+op	110:30	0:0	4	=
+water	110:32	0:0	4	0
+water	110:33	0:0	4	;
+water	111:4	0:0	4	}

@@ -1,0 +1,436 @@
+func	1:0	75:0	0	static int	compute_crc_of_packets
+params	1:33	0:0	1	
+param	1:34	1:58	2	AVFormatContext *	fmt_ctx
+param	1:60	1:76	2	int	video_stream
+param	2:32	2:51	2	AVCodecContext *	ctx
+param	2:53	2:64	2	AVFrame *	fr
+param	2:66	2:83	2	uint64_t	ts_start
+param	2:85	2:100	2	uint64_t	ts_end
+param	2:102	2:116	2	int	no_seeking
+stmnts	0:0	74:12	1	
+decl	4:4	4:31	2	int	number_of_written_bytes
+decl	5:4	5:21	2	int	got_frame
+op	5:18	0:0	2	=
+water	5:20	0:0	2	0
+decl	6:4	6:14	2	int	result
+decl	7:4	7:25	2	int	end_of_stream
+op	7:22	0:0	2	=
+water	7:24	0:0	2	0
+decl	8:4	8:24	2	int	byte_buffer_size
+decl	9:4	9:24	2	uint8_t	*byte_buffer
+decl	10:4	10:15	2	int64_t	crc
+decl	11:4	11:16	2	AVPacket	pkt
+water	12:4	0:0	2	byte_buffer_size
+op	12:21	0:0	2	=
+call	12:23	12:89	2	av_image_get_buffer_size
+arg	12:48	12:60	3	ctx->pix_fmt
+water	12:48	0:0	4	ctx
+op	12:51	0:0	4	->
+water	12:53	0:0	4	pix_fmt
+arg	12:62	12:72	3	ctx->width
+water	12:62	0:0	4	ctx
+op	12:65	0:0	4	->
+water	12:67	0:0	4	width
+arg	12:74	12:85	3	ctx->height
+water	12:74	0:0	4	ctx
+op	12:77	0:0	4	->
+water	12:79	0:0	4	height
+arg	12:87	12:89	3	16
+water	12:87	0:0	4	16
+water	12:90	0:0	2	;
+water	13:4	0:0	2	byte_buffer
+op	13:16	0:0	2	=
+call	13:18	13:44	2	av_malloc
+arg	13:28	13:44	3	byte_buffer_size
+water	13:28	0:0	4	byte_buffer_size
+water	13:45	0:0	2	;
+if	14:4	17:4	2	(! byte_buffer)
+cond	14:8	14:9	3	! byte_buffer
+op	14:8	0:0	4	!
+water	14:9	0:0	4	byte_buffer
+stmts	14:22	17:4	3	
+water	14:22	0:0	4	{
+call	15:8	15:60	4	av_log
+arg	15:15	15:19	5	NULL
+water	15:15	0:0	6	NULL
+arg	15:21	15:33	5	AV_LOG_ERROR
+water	15:21	0:0	6	AV_LOG_ERROR
+arg	15:35	15:60	5	"Can't allocate buffer\n"
+water	15:35	0:0	6	"Can't allocate buffer\n"
+water	15:61	0:0	4	;
+return	16:8	16:30	4	AVERROR(ENOMEM)
+call	16:15	16:29	5	AVERROR
+arg	16:23	16:29	6	ENOMEM
+water	16:23	0:0	7	ENOMEM
+water	17:4	0:0	4	}
+if	18:4	26:4	2	(! no_seeking)
+cond	18:8	18:9	3	! no_seeking
+op	18:8	0:0	4	!
+water	18:9	0:0	4	no_seeking
+stmts	18:21	26:4	3	
+water	18:21	0:0	4	{
+water	19:8	0:0	4	result
+op	19:15	0:0	4	=
+call	19:17	19:79	4	av_seek_frame
+arg	19:31	19:38	5	fmt_ctx
+water	19:31	0:0	6	fmt_ctx
+arg	19:40	19:52	5	video_stream
+water	19:40	0:0	6	video_stream
+arg	19:54	19:62	5	ts_start
+water	19:54	0:0	6	ts_start
+arg	19:64	19:79	5	AVSEEK_FLAG_ANY
+water	19:64	0:0	6	AVSEEK_FLAG_ANY
+water	19:80	0:0	4	;
+call	20:8	20:104	4	printf
+arg	20:15	20:86	5	"Seeking to %"PRId64", computing crc for frames with pts < %"PRId64"\n"
+water	20:15	0:0	6	"Seeking to %"
+water	20:29	0:0	6	PRId64
+water	20:35	0:0	6	", computing crc for frames with pts < %"
+water	20:76	0:0	6	PRId64
+water	20:82	0:0	6	"\n"
+arg	20:88	20:96	5	ts_start
+water	20:88	0:0	6	ts_start
+arg	20:98	20:104	5	ts_end
+water	20:98	0:0	6	ts_end
+water	20:105	0:0	4	;
+if	21:8	24:8	4	(result < 0)
+cond	21:12	21:21	5	result < 0
+water	21:12	0:0	6	result
+op	21:19	0:0	6	<
+water	21:21	0:0	6	0
+stmts	21:24	24:8	5	
+water	21:24	0:0	6	{
+call	22:12	22:59	6	av_log
+arg	22:19	22:23	7	NULL
+water	22:19	0:0	8	NULL
+arg	22:25	22:37	7	AV_LOG_ERROR
+water	22:25	0:0	8	AV_LOG_ERROR
+arg	22:39	22:59	7	"Error in seeking\n"
+water	22:39	0:0	8	"Error in seeking\n"
+water	22:60	0:0	6	;
+return	23:12	23:25	6	result
+water	23:19	0:0	7	result
+water	24:8	0:0	6	}
+call	25:8	25:33	4	avcodec_flush_buffers
+arg	25:30	25:33	5	ctx
+water	25:30	0:0	6	ctx
+water	25:34	0:0	4	;
+water	26:4	0:0	4	}
+call	27:4	27:23	2	av_init_packet
+arg	27:19	27:23	3	&pkt
+op	27:19	0:0	4	&
+water	27:20	0:0	4	pkt
+water	27:24	0:0	2	;
+do	28:4	71:4	2	(( ! end_of_stream || got_frame ) && ( no_seeking || ( fr -> pkt_pts +av_frame_get_pkt_duration (fr ) <= ts_end ) ))
+cond	71:13	71:116	3	( ! end_of_stream || got_frame ) && ( no_seeking || ( fr -> pkt_pts +av_frame_get_pkt_duration (fr ) <= ts_end ) )
+water	71:13	0:0	4	(
+op	71:14	0:0	4	!
+water	71:15	0:0	4	end_of_stream
+op	71:29	0:0	4	||
+water	71:32	0:0	4	got_frame
+water	71:41	0:0	4	)
+op	71:43	0:0	4	&&
+water	71:46	0:0	4	(
+water	71:47	0:0	4	no_seeking
+op	71:58	0:0	4	||
+water	71:61	0:0	4	(
+water	71:62	0:0	4	fr
+op	71:64	0:0	4	->
+water	71:66	0:0	4	pkt_pts
+op	71:74	0:0	4	+
+call	71:76	71:104	4	av_frame_get_pkt_duration
+arg	71:102	71:104	5	fr
+water	71:102	0:0	6	fr
+op	71:106	0:0	4	<=
+water	71:109	0:0	4	ts_end
+water	71:115	0:0	4	)
+water	71:116	0:0	4	)
+stmts	28:7	71:4	3	
+water	28:7	0:0	4	{
+if	29:8	31:33	4	(! end_of_stream)
+cond	29:12	29:13	5	! end_of_stream
+op	29:12	0:0	6	!
+water	29:13	0:0	6	end_of_stream
+stmts	30:12	31:33	5	
+if	30:12	31:33	6	(av_read_frame (fmt_ctx ,& pkt ) < 0)
+cond	30:16	30:47	7	av_read_frame (fmt_ctx ,& pkt ) < 0
+call	30:16	30:43	8	av_read_frame
+arg	30:30	30:37	9	fmt_ctx
+water	30:30	0:0	10	fmt_ctx
+arg	30:39	30:43	9	&pkt
+op	30:39	0:0	10	&
+water	30:40	0:0	10	pkt
+op	30:45	0:0	8	<
+water	30:47	0:0	8	0
+stmts	31:16	31:33	7	
+water	31:16	0:0	8	end_of_stream
+op	31:30	0:0	8	=
+water	31:32	0:0	8	1
+water	31:33	0:0	8	;
+if	32:8	35:8	4	(end_of_stream)
+cond	32:12	32:12	5	end_of_stream
+water	32:12	0:0	6	end_of_stream
+stmts	32:27	35:8	5	
+water	32:27	0:0	6	{
+water	33:12	0:0	6	pkt
+op	33:15	0:0	6	.
+water	33:16	0:0	6	data
+op	33:21	0:0	6	=
+water	33:23	0:0	6	NULL
+water	33:27	0:0	6	;
+water	34:12	0:0	6	pkt
+op	34:15	0:0	6	.
+water	34:16	0:0	6	size
+op	34:21	0:0	6	=
+water	34:23	0:0	6	0
+water	34:24	0:0	6	;
+water	35:8	0:0	6	}
+if	36:8	68:8	4	(pkt . stream_index == video_stream || end_of_stream)
+cond	36:12	36:48	5	pkt . stream_index == video_stream || end_of_stream
+water	36:12	0:0	6	pkt
+op	36:15	0:0	6	.
+water	36:16	0:0	6	stream_index
+op	36:29	0:0	6	==
+water	36:32	0:0	6	video_stream
+op	36:45	0:0	6	||
+water	36:48	0:0	6	end_of_stream
+stmts	36:63	68:8	5	
+water	36:63	0:0	6	{
+water	37:12	0:0	6	got_frame
+op	37:22	0:0	6	=
+water	37:24	0:0	6	0
+water	37:25	0:0	6	;
+if	38:12	41:12	6	(( pkt . pts == AV_NOPTS_VALUE ) && ( ! end_of_stream ))
+cond	38:16	38:62	7	( pkt . pts == AV_NOPTS_VALUE ) && ( ! end_of_stream )
+water	38:16	0:0	8	(
+water	38:17	0:0	8	pkt
+op	38:20	0:0	8	.
+water	38:21	0:0	8	pts
+op	38:25	0:0	8	==
+water	38:28	0:0	8	AV_NOPTS_VALUE
+water	38:42	0:0	8	)
+op	38:44	0:0	8	&&
+water	38:47	0:0	8	(
+op	38:48	0:0	8	!
+water	38:49	0:0	8	end_of_stream
+water	38:62	0:0	8	)
+stmts	38:65	41:12	7	
+water	38:65	0:0	8	{
+call	39:16	39:84	8	av_log
+arg	39:23	39:27	9	NULL
+water	39:23	0:0	10	NULL
+arg	39:29	39:41	9	AV_LOG_ERROR
+water	39:29	0:0	10	AV_LOG_ERROR
+arg	39:43	39:84	9	"Error: frames doesn't have pts values\n"
+water	39:43	0:0	10	"Error: frames doesn't have pts values\n"
+water	39:85	0:0	8	;
+return	40:16	40:25	8	-1
+op	40:23	0:0	9	-
+water	40:24	0:0	9	1
+water	41:12	0:0	8	}
+water	42:12	0:0	6	result
+op	42:19	0:0	6	=
+call	42:21	42:68	6	avcodec_decode_video2
+arg	42:43	42:46	7	ctx
+water	42:43	0:0	8	ctx
+arg	42:48	42:50	7	fr
+water	42:48	0:0	8	fr
+arg	42:52	42:62	7	&got_frame
+op	42:52	0:0	8	&
+water	42:53	0:0	8	got_frame
+arg	42:64	42:68	7	&pkt
+op	42:64	0:0	8	&
+water	42:65	0:0	8	pkt
+water	42:69	0:0	6	;
+if	43:12	46:12	6	(result < 0)
+cond	43:16	43:25	7	result < 0
+water	43:16	0:0	8	result
+op	43:23	0:0	8	<
+water	43:25	0:0	8	0
+stmts	43:28	46:12	7	
+water	43:28	0:0	8	{
+call	44:16	44:67	8	av_log
+arg	44:23	44:27	9	NULL
+water	44:23	0:0	10	NULL
+arg	44:29	44:41	9	AV_LOG_ERROR
+water	44:29	0:0	10	AV_LOG_ERROR
+arg	44:43	44:67	9	"Error decoding frame\n"
+water	44:43	0:0	10	"Error decoding frame\n"
+water	44:68	0:0	8	;
+return	45:16	45:29	8	result
+water	45:23	0:0	9	result
+water	46:12	0:0	8	}
+if	47:12	67:12	6	(got_frame)
+cond	47:16	47:16	7	got_frame
+water	47:16	0:0	8	got_frame
+stmts	47:27	67:12	7	
+water	47:27	0:0	8	{
+water	48:16	0:0	8	number_of_written_bytes
+op	48:40	0:0	8	=
+call	48:42	50:80	8	av_image_copy_to_buffer
+arg	48:66	48:77	9	byte_buffer
+water	48:66	0:0	10	byte_buffer
+arg	48:79	48:95	9	byte_buffer_size
+water	48:79	0:0	10	byte_buffer_size
+arg	49:40	49:72	9	(constuint8_t*const*)fr->data
+water	49:40	0:0	10	(
+water	49:41	0:0	10	const
+water	49:47	0:0	10	uint8_t
+op	49:54	0:0	10	*
+water	49:56	0:0	10	const
+op	49:62	0:0	10	*
+water	49:63	0:0	10	)
+water	49:64	0:0	10	fr
+op	49:66	0:0	10	->
+water	49:68	0:0	10	data
+arg	49:74	49:99	9	(constint*)fr->linesize
+water	49:74	0:0	10	(
+water	49:75	0:0	10	const
+water	49:81	0:0	10	int
+op	49:84	0:0	10	*
+water	49:85	0:0	10	)
+water	49:87	0:0	10	fr
+op	49:89	0:0	10	->
+water	49:91	0:0	10	linesize
+arg	50:40	50:52	9	ctx->pix_fmt
+water	50:40	0:0	10	ctx
+op	50:43	0:0	10	->
+water	50:45	0:0	10	pix_fmt
+arg	50:54	50:64	9	ctx->width
+water	50:54	0:0	10	ctx
+op	50:57	0:0	10	->
+water	50:59	0:0	10	width
+arg	50:66	50:77	9	ctx->height
+water	50:66	0:0	10	ctx
+op	50:69	0:0	10	->
+water	50:71	0:0	10	height
+arg	50:79	50:80	9	1
+water	50:79	0:0	10	1
+water	50:81	0:0	8	;
+if	51:16	54:16	8	(number_of_written_bytes < 0)
+cond	51:20	51:46	9	number_of_written_bytes < 0
+water	51:20	0:0	10	number_of_written_bytes
+op	51:44	0:0	10	<
+water	51:46	0:0	10	0
+stmts	51:49	54:16	9	
+water	51:49	0:0	10	{
+call	52:20	52:77	10	av_log
+arg	52:27	52:31	11	NULL
+water	52:27	0:0	12	NULL
+arg	52:33	52:45	11	AV_LOG_ERROR
+water	52:33	0:0	12	AV_LOG_ERROR
+arg	52:47	52:77	11	"Can't copy image to buffer\n"
+water	52:47	0:0	12	"Can't copy image to buffer\n"
+water	52:78	0:0	10	;
+return	53:20	53:50	10	number_of_written_bytes
+water	53:27	0:0	11	number_of_written_bytes
+water	54:16	0:0	10	}
+if	55:16	56:25	8	(( fr -> pkt_pts > ts_end ) && ( ! no_seeking ))
+cond	55:20	55:58	9	( fr -> pkt_pts > ts_end ) && ( ! no_seeking )
+water	55:20	0:0	10	(
+water	55:21	0:0	10	fr
+op	55:23	0:0	10	->
+water	55:25	0:0	10	pkt_pts
+op	55:33	0:0	10	>
+water	55:35	0:0	10	ts_end
+water	55:41	0:0	10	)
+op	55:43	0:0	10	&&
+water	55:46	0:0	10	(
+op	55:47	0:0	10	!
+water	55:48	0:0	10	no_seeking
+water	55:58	0:0	10	)
+stmts	56:20	56:25	9	
+break	56:20	56:25	10	
+water	57:16	0:0	8	crc
+op	57:20	0:0	8	=
+call	57:22	57:95	8	av_adler32_update
+arg	57:40	57:41	9	0
+water	57:40	0:0	10	0
+arg	57:43	57:70	9	(constuint8_t*)byte_buffer
+water	57:43	0:0	10	(
+water	57:44	0:0	10	const
+water	57:50	0:0	10	uint8_t
+op	57:57	0:0	10	*
+water	57:58	0:0	10	)
+water	57:59	0:0	10	byte_buffer
+arg	57:72	57:95	9	number_of_written_bytes
+water	57:72	0:0	10	number_of_written_bytes
+water	57:96	0:0	8	;
+call	58:16	58:65	8	printf
+arg	58:23	58:47	9	"%10"PRId64", 0x%08lx\n"
+water	58:23	0:0	10	"%10"
+water	58:28	0:0	10	PRId64
+water	58:34	0:0	10	", 0x%08lx\n"
+arg	58:49	58:60	9	fr->pkt_pts
+water	58:49	0:0	10	fr
+op	58:51	0:0	10	->
+water	58:53	0:0	10	pkt_pts
+arg	58:62	58:65	9	crc
+water	58:62	0:0	10	crc
+water	58:66	0:0	8	;
+if	59:16	62:16	8	(no_seeking)
+cond	59:20	59:20	9	no_seeking
+water	59:20	0:0	10	no_seeking
+stmts	59:32	62:16	9	
+water	59:32	0:0	10	{
+if	60:20	61:33	10	(add_crc_to_array (crc ,fr -> pkt_pts ) < 0)
+cond	60:24	60:61	11	add_crc_to_array (crc ,fr -> pkt_pts ) < 0
+call	60:24	60:57	12	add_crc_to_array
+arg	60:41	60:44	13	crc
+water	60:41	0:0	14	crc
+arg	60:46	60:57	13	fr->pkt_pts
+water	60:46	0:0	14	fr
+op	60:48	0:0	14	->
+water	60:50	0:0	14	pkt_pts
+op	60:59	0:0	12	<
+water	60:61	0:0	12	0
+stmts	61:24	61:33	11	
+return	61:24	61:33	12	-1
+op	61:31	0:0	13	-
+water	61:32	0:0	13	1
+water	62:16	0:0	10	}
+else	63:16	66:16	8
+stmts	63:21	66:16	9	
+water	63:21	0:0	10	{
+if	64:20	65:33	10	(compare_crc_in_array (crc ,fr -> pkt_pts ) < 0)
+cond	64:24	64:65	11	compare_crc_in_array (crc ,fr -> pkt_pts ) < 0
+call	64:24	64:61	12	compare_crc_in_array
+arg	64:45	64:48	13	crc
+water	64:45	0:0	14	crc
+arg	64:50	64:61	13	fr->pkt_pts
+water	64:50	0:0	14	fr
+op	64:52	0:0	14	->
+water	64:54	0:0	14	pkt_pts
+op	64:63	0:0	12	<
+water	64:65	0:0	12	0
+stmts	65:24	65:33	11	
+return	65:24	65:33	12	-1
+op	65:31	0:0	13	-
+water	65:32	0:0	13	1
+water	66:16	0:0	10	}
+water	67:12	0:0	8	}
+water	68:8	0:0	6	}
+call	69:8	69:27	4	av_free_packet
+arg	69:23	69:27	5	&pkt
+op	69:23	0:0	6	&
+water	69:24	0:0	6	pkt
+water	69:28	0:0	4	;
+call	70:8	70:27	4	av_init_packet
+arg	70:23	70:27	5	&pkt
+op	70:23	0:0	6	&
+water	70:24	0:0	6	pkt
+water	70:28	0:0	4	;
+water	71:4	0:0	4	}
+water	71:118	0:0	2	;
+call	72:4	72:23	2	av_free_packet
+arg	72:19	72:23	3	&pkt
+op	72:19	0:0	4	&
+water	72:20	0:0	4	pkt
+water	72:24	0:0	2	;
+call	73:4	73:25	2	av_freep
+arg	73:13	73:25	3	&byte_buffer
+op	73:13	0:0	4	&
+water	73:14	0:0	4	byte_buffer
+water	73:26	0:0	2	;
+return	74:4	74:12	2	0
+water	74:11	0:0	3	0

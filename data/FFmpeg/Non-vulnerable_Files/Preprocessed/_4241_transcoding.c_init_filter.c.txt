@@ -1,0 +1,720 @@
+func	1:0	129:0	0	static int	init_filter
+params	1:22	0:0	1	
+param	1:23	1:45	2	FilteringContext *	fctx
+param	1:47	1:70	2	AVCodecContext *	dec_ctx
+param	2:8	2:31	2	AVCodecContext *	enc_ctx
+param	2:33	2:56	2	const char *	filter_spec
+stmnts	0:0	128:14	1	
+decl	4:4	4:18	2	char	args[512]
+decl	5:4	5:15	2	int	ret
+op	5:12	0:0	2	=
+water	5:14	0:0	2	0
+decl	6:4	6:30	2	AVFilter	*buffersrc
+op	6:24	0:0	2	=
+water	6:26	0:0	2	NULL
+decl	7:4	7:31	2	AVFilter	*buffersink
+op	7:25	0:0	2	=
+water	7:27	0:0	2	NULL
+decl	8:4	8:41	2	AVFilterContext	*buffersrc_ctx
+op	8:35	0:0	2	=
+water	8:37	0:0	2	NULL
+decl	9:4	9:42	2	AVFilterContext	*buffersink_ctx
+op	9:36	0:0	2	=
+water	9:38	0:0	2	NULL
+decl	10:4	10:51	2	AVFilterInOut	*outputs
+op	10:27	0:0	2	=
+call	10:29	10:50	3	avfilter_inout_alloc
+decl	11:4	11:51	2	AVFilterInOut	*inputs
+op	11:27	0:0	2	=
+call	11:29	11:50	3	avfilter_inout_alloc
+decl	12:4	12:56	2	AVFilterGraph	*filter_graph
+op	12:32	0:0	2	=
+call	12:34	12:55	3	avfilter_graph_alloc
+if	13:4	16:4	2	(! outputs || ! inputs || ! filter_graph)
+cond	13:8	13:32	3	! outputs || ! inputs || ! filter_graph
+op	13:8	0:0	4	!
+water	13:9	0:0	4	outputs
+op	13:17	0:0	4	||
+op	13:20	0:0	4	!
+water	13:21	0:0	4	inputs
+op	13:28	0:0	4	||
+op	13:31	0:0	4	!
+water	13:32	0:0	4	filter_graph
+stmts	13:46	16:4	3	
+water	13:46	0:0	4	{
+water	14:8	0:0	4	ret
+op	14:12	0:0	4	=
+call	14:14	14:28	4	AVERROR
+arg	14:22	14:28	5	ENOMEM
+water	14:22	0:0	6	ENOMEM
+water	14:29	0:0	4	;
+goto	15:8	15:16	4	end
+water	15:13	0:0	5	end
+water	16:4	0:0	4	}
+if	17:4	50:4	2	(dec_ctx -> codec_type == AVMEDIA_TYPE_VIDEO)
+cond	17:8	17:31	3	dec_ctx -> codec_type == AVMEDIA_TYPE_VIDEO
+water	17:8	0:0	4	dec_ctx
+op	17:15	0:0	4	->
+water	17:17	0:0	4	codec_type
+op	17:28	0:0	4	==
+water	17:31	0:0	4	AVMEDIA_TYPE_VIDEO
+stmts	17:51	50:4	3	
+water	17:51	0:0	4	{
+water	18:8	0:0	4	buffersrc
+op	18:18	0:0	4	=
+call	18:20	18:49	4	avfilter_get_by_name
+arg	18:41	18:49	5	"buffer"
+water	18:41	0:0	6	"buffer"
+water	18:50	0:0	4	;
+water	19:8	0:0	4	buffersink
+op	19:19	0:0	4	=
+call	19:21	19:54	4	avfilter_get_by_name
+arg	19:42	19:54	5	"buffersink"
+water	19:42	0:0	6	"buffersink"
+water	19:55	0:0	4	;
+if	20:8	24:8	4	(! buffersrc || ! buffersink)
+cond	20:12	20:27	5	! buffersrc || ! buffersink
+op	20:12	0:0	6	!
+water	20:13	0:0	6	buffersrc
+op	20:23	0:0	6	||
+op	20:26	0:0	6	!
+water	20:27	0:0	6	buffersink
+stmts	20:39	24:8	5	
+water	20:39	0:0	6	{
+call	21:12	21:85	6	av_log
+arg	21:19	21:23	7	NULL
+water	21:19	0:0	8	NULL
+arg	21:25	21:37	7	AV_LOG_ERROR
+water	21:25	0:0	8	AV_LOG_ERROR
+arg	21:39	21:85	7	"filtering source or sink element not found\n"
+water	21:39	0:0	8	"filtering source or sink element not found\n"
+water	21:86	0:0	6	;
+water	22:12	0:0	6	ret
+op	22:16	0:0	6	=
+water	22:18	0:0	6	AVERROR_UNKNOWN
+water	22:33	0:0	6	;
+goto	23:12	23:20	6	end
+water	23:17	0:0	7	end
+water	24:8	0:0	6	}
+call	25:8	30:48	4	snprintf
+arg	25:17	25:21	5	args
+water	25:17	0:0	6	args
+arg	25:23	25:35	5	sizeof(args)
+op	25:23	0:0	6	sizeof
+water	25:29	0:0	6	(
+water	25:30	0:0	6	args
+water	25:34	0:0	6	)
+arg	26:16	26:80	5	"video_size=%dx%d:pix_fmt=%d:time_base=%d/%d:pixel_aspect=%d/%d"
+water	26:16	0:0	6	"video_size=%dx%d:pix_fmt=%d:time_base=%d/%d:pixel_aspect=%d/%d"
+arg	27:16	27:30	5	dec_ctx->width
+water	27:16	0:0	6	dec_ctx
+op	27:23	0:0	6	->
+water	27:25	0:0	6	width
+arg	27:32	27:47	5	dec_ctx->height
+water	27:32	0:0	6	dec_ctx
+op	27:39	0:0	6	->
+water	27:41	0:0	6	height
+arg	27:49	27:65	5	dec_ctx->pix_fmt
+water	27:49	0:0	6	dec_ctx
+op	27:56	0:0	6	->
+water	27:58	0:0	6	pix_fmt
+arg	28:16	28:38	5	dec_ctx->time_base.num
+water	28:16	0:0	6	dec_ctx
+op	28:23	0:0	6	->
+water	28:25	0:0	6	time_base
+op	28:34	0:0	6	.
+water	28:35	0:0	6	num
+arg	28:40	28:62	5	dec_ctx->time_base.den
+water	28:40	0:0	6	dec_ctx
+op	28:47	0:0	6	->
+water	28:49	0:0	6	time_base
+op	28:58	0:0	6	.
+water	28:59	0:0	6	den
+arg	29:16	29:48	5	dec_ctx->sample_aspect_ratio.num
+water	29:16	0:0	6	dec_ctx
+op	29:23	0:0	6	->
+water	29:25	0:0	6	sample_aspect_ratio
+op	29:44	0:0	6	.
+water	29:45	0:0	6	num
+arg	30:16	30:48	5	dec_ctx->sample_aspect_ratio.den
+water	30:16	0:0	6	dec_ctx
+op	30:23	0:0	6	->
+water	30:25	0:0	6	sample_aspect_ratio
+op	30:44	0:0	6	.
+water	30:45	0:0	6	den
+water	30:49	0:0	4	;
+water	31:8	0:0	4	ret
+op	31:12	0:0	4	=
+call	31:14	32:40	4	avfilter_graph_create_filter
+arg	31:43	31:57	5	&buffersrc_ctx
+op	31:43	0:0	6	&
+water	31:44	0:0	6	buffersrc_ctx
+arg	31:59	31:68	5	buffersrc
+water	31:59	0:0	6	buffersrc
+arg	31:70	31:74	5	"in"
+water	31:70	0:0	6	"in"
+arg	32:16	32:20	5	args
+water	32:16	0:0	6	args
+arg	32:22	32:26	5	NULL
+water	32:22	0:0	6	NULL
+arg	32:28	32:40	5	filter_graph
+water	32:28	0:0	6	filter_graph
+water	32:41	0:0	4	;
+if	33:8	36:8	4	(ret < 0)
+cond	33:12	33:18	5	ret < 0
+water	33:12	0:0	6	ret
+op	33:16	0:0	6	<
+water	33:18	0:0	6	0
+stmts	33:21	36:8	5	
+water	33:21	0:0	6	{
+call	34:12	34:70	6	av_log
+arg	34:19	34:23	7	NULL
+water	34:19	0:0	8	NULL
+arg	34:25	34:37	7	AV_LOG_ERROR
+water	34:25	0:0	8	AV_LOG_ERROR
+arg	34:39	34:70	7	"Cannot create buffer source\n"
+water	34:39	0:0	8	"Cannot create buffer source\n"
+water	34:71	0:0	6	;
+goto	35:12	35:20	6	end
+water	35:17	0:0	7	end
+water	36:8	0:0	6	}
+water	37:8	0:0	4	ret
+op	37:12	0:0	4	=
+call	37:14	38:40	4	avfilter_graph_create_filter
+arg	37:43	37:58	5	&buffersink_ctx
+op	37:43	0:0	6	&
+water	37:44	0:0	6	buffersink_ctx
+arg	37:60	37:70	5	buffersink
+water	37:60	0:0	6	buffersink
+arg	37:72	37:77	5	"out"
+water	37:72	0:0	6	"out"
+arg	38:16	38:20	5	NULL
+water	38:16	0:0	6	NULL
+arg	38:22	38:26	5	NULL
+water	38:22	0:0	6	NULL
+arg	38:28	38:40	5	filter_graph
+water	38:28	0:0	6	filter_graph
+water	38:41	0:0	4	;
+if	39:8	42:8	4	(ret < 0)
+cond	39:12	39:18	5	ret < 0
+water	39:12	0:0	6	ret
+op	39:16	0:0	6	<
+water	39:18	0:0	6	0
+stmts	39:21	42:8	5	
+water	39:21	0:0	6	{
+call	40:12	40:68	6	av_log
+arg	40:19	40:23	7	NULL
+water	40:19	0:0	8	NULL
+arg	40:25	40:37	7	AV_LOG_ERROR
+water	40:25	0:0	8	AV_LOG_ERROR
+arg	40:39	40:68	7	"Cannot create buffer sink\n"
+water	40:39	0:0	8	"Cannot create buffer sink\n"
+water	40:69	0:0	6	;
+goto	41:12	41:20	6	end
+water	41:17	0:0	7	end
+water	42:8	0:0	6	}
+water	43:8	0:0	4	ret
+op	43:12	0:0	4	=
+call	43:14	45:38	4	av_opt_set_bin
+arg	43:29	43:43	5	buffersink_ctx
+water	43:29	0:0	6	buffersink_ctx
+arg	43:45	43:55	5	"pix_fmts"
+water	43:45	0:0	6	"pix_fmts"
+arg	44:16	44:43	5	(uint8_t*)&enc_ctx->pix_fmt
+water	44:16	0:0	6	(
+water	44:17	0:0	6	uint8_t
+op	44:24	0:0	6	*
+water	44:25	0:0	6	)
+op	44:26	0:0	6	&
+water	44:27	0:0	6	enc_ctx
+op	44:34	0:0	6	->
+water	44:36	0:0	6	pix_fmt
+arg	44:45	44:69	5	sizeof(enc_ctx->pix_fmt)
+op	44:45	0:0	6	sizeof
+water	44:51	0:0	6	(
+water	44:52	0:0	6	enc_ctx
+op	44:59	0:0	6	->
+water	44:61	0:0	6	pix_fmt
+water	44:68	0:0	6	)
+arg	45:16	45:38	5	AV_OPT_SEARCH_CHILDREN
+water	45:16	0:0	6	AV_OPT_SEARCH_CHILDREN
+water	45:39	0:0	4	;
+if	46:8	49:8	4	(ret < 0)
+cond	46:12	46:18	5	ret < 0
+water	46:12	0:0	6	ret
+op	46:16	0:0	6	<
+water	46:18	0:0	6	0
+stmts	46:21	49:8	5	
+water	46:21	0:0	6	{
+call	47:12	47:73	6	av_log
+arg	47:19	47:23	7	NULL
+water	47:19	0:0	8	NULL
+arg	47:25	47:37	7	AV_LOG_ERROR
+water	47:25	0:0	8	AV_LOG_ERROR
+arg	47:39	47:73	7	"Cannot set output pixel format\n"
+water	47:39	0:0	8	"Cannot set output pixel format\n"
+water	47:74	0:0	6	;
+goto	48:12	48:20	6	end
+water	48:17	0:0	7	end
+water	49:8	0:0	6	}
+water	50:4	0:0	4	}
+else	50:6	99:4	2
+stmts	50:11	99:4	3	
+if	50:11	99:4	4	(dec_ctx -> codec_type == AVMEDIA_TYPE_AUDIO)
+cond	50:15	50:38	5	dec_ctx -> codec_type == AVMEDIA_TYPE_AUDIO
+water	50:15	0:0	6	dec_ctx
+op	50:22	0:0	6	->
+water	50:24	0:0	6	codec_type
+op	50:35	0:0	6	==
+water	50:38	0:0	6	AVMEDIA_TYPE_AUDIO
+stmts	50:58	99:4	5	
+water	50:58	0:0	6	{
+water	51:8	0:0	6	buffersrc
+op	51:18	0:0	6	=
+call	51:20	51:50	6	avfilter_get_by_name
+arg	51:41	51:50	7	"abuffer"
+water	51:41	0:0	8	"abuffer"
+water	51:51	0:0	6	;
+water	52:8	0:0	6	buffersink
+op	52:19	0:0	6	=
+call	52:21	52:55	6	avfilter_get_by_name
+arg	52:42	52:55	7	"abuffersink"
+water	52:42	0:0	8	"abuffersink"
+water	52:56	0:0	6	;
+if	53:8	57:8	6	(! buffersrc || ! buffersink)
+cond	53:12	53:27	7	! buffersrc || ! buffersink
+op	53:12	0:0	8	!
+water	53:13	0:0	8	buffersrc
+op	53:23	0:0	8	||
+op	53:26	0:0	8	!
+water	53:27	0:0	8	buffersink
+stmts	53:39	57:8	7	
+water	53:39	0:0	8	{
+call	54:12	54:85	8	av_log
+arg	54:19	54:23	9	NULL
+water	54:19	0:0	10	NULL
+arg	54:25	54:37	9	AV_LOG_ERROR
+water	54:25	0:0	10	AV_LOG_ERROR
+arg	54:39	54:85	9	"filtering source or sink element not found\n"
+water	54:39	0:0	10	"filtering source or sink element not found\n"
+water	54:86	0:0	8	;
+water	55:12	0:0	8	ret
+op	55:16	0:0	8	=
+water	55:18	0:0	8	AVERROR_UNKNOWN
+water	55:33	0:0	8	;
+goto	56:12	56:20	8	end
+water	56:17	0:0	9	end
+water	57:8	0:0	8	}
+if	58:8	60:64	6	(! dec_ctx -> channel_layout)
+cond	58:12	58:22	7	! dec_ctx -> channel_layout
+op	58:12	0:0	8	!
+water	58:13	0:0	8	dec_ctx
+op	58:20	0:0	8	->
+water	58:22	0:0	8	channel_layout
+stmts	59:12	60:64	7	
+water	59:12	0:0	8	dec_ctx
+op	59:19	0:0	8	->
+water	59:21	0:0	8	channel_layout
+op	59:36	0:0	8	=
+call	60:16	60:63	8	av_get_default_channel_layout
+arg	60:46	60:63	9	dec_ctx->channels
+water	60:46	0:0	10	dec_ctx
+op	60:53	0:0	10	->
+water	60:55	0:0	10	channels
+water	60:64	0:0	8	;
+call	61:8	65:39	6	snprintf
+arg	61:17	61:21	7	args
+water	61:17	0:0	8	args
+arg	61:23	61:35	7	sizeof(args)
+op	61:23	0:0	8	sizeof
+water	61:29	0:0	8	(
+water	61:30	0:0	8	args
+water	61:34	0:0	8	)
+arg	62:16	62:87	7	"time_base=%d/%d:sample_rate=%d:sample_fmt=%s:channel_layout=0x%"PRIx64
+water	62:16	0:0	8	"time_base=%d/%d:sample_rate=%d:sample_fmt=%s:channel_layout=0x%"
+water	62:81	0:0	8	PRIx64
+arg	63:16	63:38	7	dec_ctx->time_base.num
+water	63:16	0:0	8	dec_ctx
+op	63:23	0:0	8	->
+water	63:25	0:0	8	time_base
+op	63:34	0:0	8	.
+water	63:35	0:0	8	num
+arg	63:40	63:62	7	dec_ctx->time_base.den
+water	63:40	0:0	8	dec_ctx
+op	63:47	0:0	8	->
+water	63:49	0:0	8	time_base
+op	63:58	0:0	8	.
+water	63:59	0:0	8	den
+arg	63:64	63:84	7	dec_ctx->sample_rate
+water	63:64	0:0	8	dec_ctx
+op	63:71	0:0	8	->
+water	63:73	0:0	8	sample_rate
+arg	64:16	64:59	7	av_get_sample_fmt_name(dec_ctx->sample_fmt)
+call	64:16	64:58	8	av_get_sample_fmt_name
+arg	64:39	64:58	9	dec_ctx->sample_fmt
+water	64:39	0:0	10	dec_ctx
+op	64:46	0:0	10	->
+water	64:48	0:0	10	sample_fmt
+arg	65:16	65:39	7	dec_ctx->channel_layout
+water	65:16	0:0	8	dec_ctx
+op	65:23	0:0	8	->
+water	65:25	0:0	8	channel_layout
+water	65:40	0:0	6	;
+water	66:8	0:0	6	ret
+op	66:12	0:0	6	=
+call	66:14	67:40	6	avfilter_graph_create_filter
+arg	66:43	66:57	7	&buffersrc_ctx
+op	66:43	0:0	8	&
+water	66:44	0:0	8	buffersrc_ctx
+arg	66:59	66:68	7	buffersrc
+water	66:59	0:0	8	buffersrc
+arg	66:70	66:74	7	"in"
+water	66:70	0:0	8	"in"
+arg	67:16	67:20	7	args
+water	67:16	0:0	8	args
+arg	67:22	67:26	7	NULL
+water	67:22	0:0	8	NULL
+arg	67:28	67:40	7	filter_graph
+water	67:28	0:0	8	filter_graph
+water	67:41	0:0	6	;
+if	68:8	71:8	6	(ret < 0)
+cond	68:12	68:18	7	ret < 0
+water	68:12	0:0	8	ret
+op	68:16	0:0	8	<
+water	68:18	0:0	8	0
+stmts	68:21	71:8	7	
+water	68:21	0:0	8	{
+call	69:12	69:76	8	av_log
+arg	69:19	69:23	9	NULL
+water	69:19	0:0	10	NULL
+arg	69:25	69:37	9	AV_LOG_ERROR
+water	69:25	0:0	10	AV_LOG_ERROR
+arg	69:39	69:76	9	"Cannot create audio buffer source\n"
+water	69:39	0:0	10	"Cannot create audio buffer source\n"
+water	69:77	0:0	8	;
+goto	70:12	70:20	8	end
+water	70:17	0:0	9	end
+water	71:8	0:0	8	}
+water	72:8	0:0	6	ret
+op	72:12	0:0	6	=
+call	72:14	73:40	6	avfilter_graph_create_filter
+arg	72:43	72:58	7	&buffersink_ctx
+op	72:43	0:0	8	&
+water	72:44	0:0	8	buffersink_ctx
+arg	72:60	72:70	7	buffersink
+water	72:60	0:0	8	buffersink
+arg	72:72	72:77	7	"out"
+water	72:72	0:0	8	"out"
+arg	73:16	73:20	7	NULL
+water	73:16	0:0	8	NULL
+arg	73:22	73:26	7	NULL
+water	73:22	0:0	8	NULL
+arg	73:28	73:40	7	filter_graph
+water	73:28	0:0	8	filter_graph
+water	73:41	0:0	6	;
+if	74:8	77:8	6	(ret < 0)
+cond	74:12	74:18	7	ret < 0
+water	74:12	0:0	8	ret
+op	74:16	0:0	8	<
+water	74:18	0:0	8	0
+stmts	74:21	77:8	7	
+water	74:21	0:0	8	{
+call	75:12	75:74	8	av_log
+arg	75:19	75:23	9	NULL
+water	75:19	0:0	10	NULL
+arg	75:25	75:37	9	AV_LOG_ERROR
+water	75:25	0:0	10	AV_LOG_ERROR
+arg	75:39	75:74	9	"Cannot create audio buffer sink\n"
+water	75:39	0:0	10	"Cannot create audio buffer sink\n"
+water	75:75	0:0	8	;
+goto	76:12	76:20	8	end
+water	76:17	0:0	9	end
+water	77:8	0:0	8	}
+water	78:8	0:0	6	ret
+op	78:12	0:0	6	=
+call	78:14	80:38	6	av_opt_set_bin
+arg	78:29	78:43	7	buffersink_ctx
+water	78:29	0:0	8	buffersink_ctx
+arg	78:45	78:58	7	"sample_fmts"
+water	78:45	0:0	8	"sample_fmts"
+arg	79:16	79:46	7	(uint8_t*)&enc_ctx->sample_fmt
+water	79:16	0:0	8	(
+water	79:17	0:0	8	uint8_t
+op	79:24	0:0	8	*
+water	79:25	0:0	8	)
+op	79:26	0:0	8	&
+water	79:27	0:0	8	enc_ctx
+op	79:34	0:0	8	->
+water	79:36	0:0	8	sample_fmt
+arg	79:48	79:75	7	sizeof(enc_ctx->sample_fmt)
+op	79:48	0:0	8	sizeof
+water	79:54	0:0	8	(
+water	79:55	0:0	8	enc_ctx
+op	79:62	0:0	8	->
+water	79:64	0:0	8	sample_fmt
+water	79:74	0:0	8	)
+arg	80:16	80:38	7	AV_OPT_SEARCH_CHILDREN
+water	80:16	0:0	8	AV_OPT_SEARCH_CHILDREN
+water	80:39	0:0	6	;
+if	81:8	84:8	6	(ret < 0)
+cond	81:12	81:18	7	ret < 0
+water	81:12	0:0	8	ret
+op	81:16	0:0	8	<
+water	81:18	0:0	8	0
+stmts	81:21	84:8	7	
+water	81:21	0:0	8	{
+call	82:12	82:74	8	av_log
+arg	82:19	82:23	9	NULL
+water	82:19	0:0	10	NULL
+arg	82:25	82:37	9	AV_LOG_ERROR
+water	82:25	0:0	10	AV_LOG_ERROR
+arg	82:39	82:74	9	"Cannot set output sample format\n"
+water	82:39	0:0	10	"Cannot set output sample format\n"
+water	82:75	0:0	8	;
+goto	83:12	83:20	8	end
+water	83:17	0:0	9	end
+water	84:8	0:0	8	}
+water	85:8	0:0	6	ret
+op	85:12	0:0	6	=
+call	85:14	87:71	6	av_opt_set_bin
+arg	85:29	85:43	7	buffersink_ctx
+water	85:29	0:0	8	buffersink_ctx
+arg	85:45	85:62	7	"channel_layouts"
+water	85:45	0:0	8	"channel_layouts"
+arg	86:16	86:50	7	(uint8_t*)&enc_ctx->channel_layout
+water	86:16	0:0	8	(
+water	86:17	0:0	8	uint8_t
+op	86:24	0:0	8	*
+water	86:25	0:0	8	)
+op	86:26	0:0	8	&
+water	86:27	0:0	8	enc_ctx
+op	86:34	0:0	8	->
+water	86:36	0:0	8	channel_layout
+arg	87:16	87:47	7	sizeof(enc_ctx->channel_layout)
+op	87:16	0:0	8	sizeof
+water	87:22	0:0	8	(
+water	87:23	0:0	8	enc_ctx
+op	87:30	0:0	8	->
+water	87:32	0:0	8	channel_layout
+water	87:46	0:0	8	)
+arg	87:49	87:71	7	AV_OPT_SEARCH_CHILDREN
+water	87:49	0:0	8	AV_OPT_SEARCH_CHILDREN
+water	87:72	0:0	6	;
+if	88:8	91:8	6	(ret < 0)
+cond	88:12	88:18	7	ret < 0
+water	88:12	0:0	8	ret
+op	88:16	0:0	8	<
+water	88:18	0:0	8	0
+stmts	88:21	91:8	7	
+water	88:21	0:0	8	{
+call	89:12	89:75	8	av_log
+arg	89:19	89:23	9	NULL
+water	89:19	0:0	10	NULL
+arg	89:25	89:37	9	AV_LOG_ERROR
+water	89:25	0:0	10	AV_LOG_ERROR
+arg	89:39	89:75	9	"Cannot set output channel layout\n"
+water	89:39	0:0	10	"Cannot set output channel layout\n"
+water	89:76	0:0	8	;
+goto	90:12	90:20	8	end
+water	90:17	0:0	9	end
+water	91:8	0:0	8	}
+water	92:8	0:0	6	ret
+op	92:12	0:0	6	=
+call	92:14	94:38	6	av_opt_set_bin
+arg	92:29	92:43	7	buffersink_ctx
+water	92:29	0:0	8	buffersink_ctx
+arg	92:45	92:59	7	"sample_rates"
+water	92:45	0:0	8	"sample_rates"
+arg	93:16	93:47	7	(uint8_t*)&enc_ctx->sample_rate
+water	93:16	0:0	8	(
+water	93:17	0:0	8	uint8_t
+op	93:24	0:0	8	*
+water	93:25	0:0	8	)
+op	93:26	0:0	8	&
+water	93:27	0:0	8	enc_ctx
+op	93:34	0:0	8	->
+water	93:36	0:0	8	sample_rate
+arg	93:49	93:77	7	sizeof(enc_ctx->sample_rate)
+op	93:49	0:0	8	sizeof
+water	93:55	0:0	8	(
+water	93:56	0:0	8	enc_ctx
+op	93:63	0:0	8	->
+water	93:65	0:0	8	sample_rate
+water	93:76	0:0	8	)
+arg	94:16	94:38	7	AV_OPT_SEARCH_CHILDREN
+water	94:16	0:0	8	AV_OPT_SEARCH_CHILDREN
+water	94:39	0:0	6	;
+if	95:8	98:8	6	(ret < 0)
+cond	95:12	95:18	7	ret < 0
+water	95:12	0:0	8	ret
+op	95:16	0:0	8	<
+water	95:18	0:0	8	0
+stmts	95:21	98:8	7	
+water	95:21	0:0	8	{
+call	96:12	96:72	8	av_log
+arg	96:19	96:23	9	NULL
+water	96:19	0:0	10	NULL
+arg	96:25	96:37	9	AV_LOG_ERROR
+water	96:25	0:0	10	AV_LOG_ERROR
+arg	96:39	96:72	9	"Cannot set output sample rate\n"
+water	96:39	0:0	10	"Cannot set output sample rate\n"
+water	96:73	0:0	8	;
+goto	97:12	97:20	8	end
+water	97:17	0:0	9	end
+water	98:8	0:0	8	}
+water	99:4	0:0	6	}
+else	99:6	102:4	2
+stmts	99:11	102:4	3	
+water	99:11	0:0	4	{
+water	100:8	0:0	4	ret
+op	100:12	0:0	4	=
+water	100:14	0:0	4	AVERROR_UNKNOWN
+water	100:29	0:0	4	;
+goto	101:8	101:16	4	end
+water	101:13	0:0	5	end
+water	102:4	0:0	4	}
+water	104:4	0:0	2	outputs
+op	104:11	0:0	2	->
+water	104:13	0:0	2	name
+op	104:24	0:0	2	=
+call	104:26	104:40	2	av_strdup
+arg	104:36	104:40	3	"in"
+water	104:36	0:0	4	"in"
+water	104:41	0:0	2	;
+water	105:4	0:0	2	outputs
+op	105:11	0:0	2	->
+water	105:13	0:0	2	filter_ctx
+op	105:24	0:0	2	=
+water	105:26	0:0	2	buffersrc_ctx
+water	105:39	0:0	2	;
+water	106:4	0:0	2	outputs
+op	106:11	0:0	2	->
+water	106:13	0:0	2	pad_idx
+op	106:24	0:0	2	=
+water	106:26	0:0	2	0
+water	106:27	0:0	2	;
+water	107:4	0:0	2	outputs
+op	107:11	0:0	2	->
+water	107:13	0:0	2	next
+op	107:24	0:0	2	=
+water	107:26	0:0	2	NULL
+water	107:30	0:0	2	;
+water	108:4	0:0	2	inputs
+op	108:10	0:0	2	->
+water	108:12	0:0	2	name
+op	108:23	0:0	2	=
+call	108:25	108:40	2	av_strdup
+arg	108:35	108:40	3	"out"
+water	108:35	0:0	4	"out"
+water	108:41	0:0	2	;
+water	109:4	0:0	2	inputs
+op	109:10	0:0	2	->
+water	109:12	0:0	2	filter_ctx
+op	109:23	0:0	2	=
+water	109:25	0:0	2	buffersink_ctx
+water	109:39	0:0	2	;
+water	110:4	0:0	2	inputs
+op	110:10	0:0	2	->
+water	110:12	0:0	2	pad_idx
+op	110:23	0:0	2	=
+water	110:25	0:0	2	0
+water	110:26	0:0	2	;
+water	111:4	0:0	2	inputs
+op	111:10	0:0	2	->
+water	111:12	0:0	2	next
+op	111:23	0:0	2	=
+water	111:25	0:0	2	NULL
+water	111:29	0:0	2	;
+if	112:4	115:4	2	(! outputs -> name || ! inputs -> name)
+cond	112:8	112:35	3	! outputs -> name || ! inputs -> name
+op	112:8	0:0	4	!
+water	112:9	0:0	4	outputs
+op	112:16	0:0	4	->
+water	112:18	0:0	4	name
+op	112:23	0:0	4	||
+op	112:26	0:0	4	!
+water	112:27	0:0	4	inputs
+op	112:33	0:0	4	->
+water	112:35	0:0	4	name
+stmts	112:41	115:4	3	
+water	112:41	0:0	4	{
+water	113:8	0:0	4	ret
+op	113:12	0:0	4	=
+call	113:14	113:28	4	AVERROR
+arg	113:22	113:28	5	ENOMEM
+water	113:22	0:0	6	ENOMEM
+water	113:29	0:0	4	;
+goto	114:8	114:16	4	end
+water	114:13	0:0	5	end
+water	115:4	0:0	4	}
+if	116:4	118:16	2	(( ret =avfilter_graph_parse_ptr (filter_graph ,filter_spec ,& inputs ,& outputs ,NULL ) ) < 0)
+cond	116:8	117:48	3	( ret =avfilter_graph_parse_ptr (filter_graph ,filter_spec ,& inputs ,& outputs ,NULL ) ) < 0
+water	116:8	0:0	4	(
+water	116:9	0:0	4	ret
+op	116:13	0:0	4	=
+call	116:15	117:43	4	avfilter_graph_parse_ptr
+arg	116:40	116:52	5	filter_graph
+water	116:40	0:0	6	filter_graph
+arg	116:54	116:65	5	filter_spec
+water	116:54	0:0	6	filter_spec
+arg	117:20	117:27	5	&inputs
+op	117:20	0:0	6	&
+water	117:21	0:0	6	inputs
+arg	117:29	117:37	5	&outputs
+op	117:29	0:0	6	&
+water	117:30	0:0	6	outputs
+arg	117:39	117:43	5	NULL
+water	117:39	0:0	6	NULL
+water	117:44	0:0	4	)
+op	117:46	0:0	4	<
+water	117:48	0:0	4	0
+stmts	118:8	118:16	3	
+goto	118:8	118:16	4	end
+water	118:13	0:0	5	end
+if	119:4	120:16	2	(( ret =avfilter_graph_config (filter_graph ,NULL ) ) < 0)
+cond	119:8	119:60	3	( ret =avfilter_graph_config (filter_graph ,NULL ) ) < 0
+water	119:8	0:0	4	(
+water	119:9	0:0	4	ret
+op	119:13	0:0	4	=
+call	119:15	119:55	4	avfilter_graph_config
+arg	119:37	119:49	5	filter_graph
+water	119:37	0:0	6	filter_graph
+arg	119:51	119:55	5	NULL
+water	119:51	0:0	6	NULL
+water	119:56	0:0	4	)
+op	119:58	0:0	4	<
+water	119:60	0:0	4	0
+stmts	120:8	120:16	3	
+goto	120:8	120:16	4	end
+water	120:13	0:0	5	end
+water	122:4	0:0	2	fctx
+op	122:8	0:0	2	->
+water	122:10	0:0	2	buffersrc_ctx
+op	122:24	0:0	2	=
+water	122:26	0:0	2	buffersrc_ctx
+water	122:39	0:0	2	;
+water	123:4	0:0	2	fctx
+op	123:8	0:0	2	->
+water	123:10	0:0	2	buffersink_ctx
+op	123:25	0:0	2	=
+water	123:27	0:0	2	buffersink_ctx
+water	123:41	0:0	2	;
+water	124:4	0:0	2	fctx
+op	124:8	0:0	2	->
+water	124:10	0:0	2	filter_graph
+op	124:23	0:0	2	=
+water	124:25	0:0	2	filter_graph
+water	124:37	0:0	2	;
+label	125:0	125:3	2	end :
+call	126:4	126:31	2	avfilter_inout_free
+arg	126:24	126:31	3	&inputs
+op	126:24	0:0	4	&
+water	126:25	0:0	4	inputs
+water	126:32	0:0	2	;
+call	127:4	127:32	2	avfilter_inout_free
+arg	127:24	127:32	3	&outputs
+op	127:24	0:0	4	&
+water	127:25	0:0	4	outputs
+water	127:33	0:0	2	;
+return	128:4	128:14	2	ret
+water	128:11	0:0	3	ret

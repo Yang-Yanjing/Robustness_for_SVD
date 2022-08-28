@@ -1,0 +1,181 @@
+func	1:0	47:0	0	int	av_tempfile
+params	1:15	0:0	1	
+param	1:16	1:34	2	const char *	prefix
+param	1:36	1:51	2	char * *	filename
+param	1:53	1:67	2	int	log_offset
+param	1:69	1:82	2	void *	log_ctx
+stmnts	0:0	46:13	1	
+decl	3:4	3:78	2	FileLogContext	file_log_ctx
+op	3:32	0:0	2	=
+water	3:34	0:0	2	{
+op	3:36	0:0	2	&
+water	3:37	0:0	2	file_log_ctx_class
+water	3:55	0:0	2	,
+water	3:57	0:0	2	log_offset
+water	3:67	0:0	2	,
+water	3:69	0:0	2	log_ctx
+water	3:77	0:0	2	}
+decl	4:4	4:15	2	int	fd
+op	4:11	0:0	2	=
+op	4:13	0:0	2	-
+water	4:14	0:0	2	1
+decl	6:4	6:36	2	void	*ptr
+op	6:13	0:0	2	=
+call	6:15	6:35	3	tempnam
+arg	6:23	6:27	4	NULL
+water	6:23	0:0	5	NULL
+arg	6:29	6:35	4	prefix
+water	6:29	0:0	5	prefix
+if	7:4	8:33	2	(! ptr)
+cond	7:7	7:8	3	! ptr
+op	7:7	0:0	4	!
+water	7:8	0:0	4	ptr
+stmts	8:8	8:33	3	
+water	8:8	0:0	4	ptr
+op	8:11	0:0	4	=
+call	8:13	8:32	4	tempnam
+arg	8:21	8:24	5	"."
+water	8:21	0:0	6	"."
+arg	8:26	8:32	5	prefix
+water	8:26	0:0	6	prefix
+water	8:33	0:0	4	;
+op	9:4	0:0	2	*
+water	9:5	0:0	2	filename
+op	9:14	0:0	2	=
+call	9:16	9:29	2	av_strdup
+arg	9:26	9:29	3	ptr
+water	9:26	0:0	4	ptr
+water	9:30	0:0	2	;
+call	11:4	11:12	2	free
+arg	11:9	11:12	3	ptr
+water	11:9	0:0	4	ptr
+water	11:13	0:0	2	;
+decl	13:4	13:36	2	size_t	len
+op	13:15	0:0	2	=
+call	13:17	13:30	3	strlen
+arg	13:24	13:30	4	prefix
+water	13:24	0:0	5	prefix
+op	13:32	0:0	2	+
+water	13:34	0:0	2	12
+op	14:4	0:0	2	*
+water	14:5	0:0	2	filename
+op	14:15	0:0	2	=
+call	14:17	14:30	2	av_malloc
+arg	14:27	14:30	3	len
+water	14:27	0:0	4	len
+water	14:31	0:0	2	;
+if	17:4	20:4	2	(! * filename)
+cond	17:8	17:10	3	! * filename
+op	17:8	0:0	4	!
+op	17:9	0:0	4	*
+water	17:10	0:0	4	filename
+stmts	17:20	20:4	3	
+water	17:20	0:0	4	{
+call	18:8	18:86	4	av_log
+arg	18:15	18:28	5	&file_log_ctx
+op	18:15	0:0	6	&
+water	18:16	0:0	6	file_log_ctx
+arg	18:30	18:42	5	AV_LOG_ERROR
+water	18:30	0:0	6	AV_LOG_ERROR
+arg	18:44	18:86	5	"ff_tempfile: Cannot allocate file name\n"
+water	18:44	0:0	6	"ff_tempfile: Cannot allocate file name\n"
+water	18:87	0:0	4	;
+return	19:8	19:30	4	AVERROR(ENOMEM)
+call	19:15	19:29	5	AVERROR
+arg	19:23	19:29	6	ENOMEM
+water	19:23	0:0	7	ENOMEM
+water	20:4	0:0	4	}
+water	28:4	0:0	2	fd
+op	28:7	0:0	2	=
+call	28:9	28:67	2	open
+arg	28:14	28:23	3	*filename
+op	28:14	0:0	4	*
+water	28:15	0:0	4	filename
+arg	28:25	28:61	3	O_RDWR|O_BINARY|O_CREAT|O_EXCL
+water	28:25	0:0	4	O_RDWR
+op	28:32	0:0	4	|
+water	28:34	0:0	4	O_BINARY
+op	28:43	0:0	4	|
+water	28:45	0:0	4	O_CREAT
+op	28:53	0:0	4	|
+water	28:55	0:0	4	O_EXCL
+arg	28:63	28:67	3	0600
+water	28:63	0:0	4	0600
+water	28:68	0:0	2	;
+call	30:4	30:52	2	snprintf
+arg	30:13	30:22	3	*filename
+op	30:13	0:0	4	*
+water	30:14	0:0	4	filename
+arg	30:24	30:27	3	len
+water	30:24	0:0	4	len
+arg	30:29	30:44	3	"/tmp/%sXXXXXX"
+water	30:29	0:0	4	"/tmp/%sXXXXXX"
+arg	30:46	30:52	3	prefix
+water	30:46	0:0	4	prefix
+water	30:53	0:0	2	;
+water	31:4	0:0	2	fd
+op	31:7	0:0	2	=
+call	31:9	31:26	2	mkstemp
+arg	31:17	31:26	3	*filename
+op	31:17	0:0	4	*
+water	31:18	0:0	4	filename
+water	31:27	0:0	2	;
+if	33:4	36:4	2	(fd < 0)
+cond	33:8	33:13	3	fd < 0
+water	33:8	0:0	4	fd
+op	33:11	0:0	4	<
+water	33:13	0:0	4	0
+stmts	33:16	36:4	3	
+water	33:16	0:0	4	{
+call	34:8	34:53	4	snprintf
+arg	34:17	34:26	5	*filename
+op	34:17	0:0	6	*
+water	34:18	0:0	6	filename
+arg	34:28	34:31	5	len
+water	34:28	0:0	6	len
+arg	34:33	34:45	5	"./%sXXXXXX"
+water	34:33	0:0	6	"./%sXXXXXX"
+arg	34:47	34:53	5	prefix
+water	34:47	0:0	6	prefix
+water	34:54	0:0	4	;
+water	35:8	0:0	4	fd
+op	35:11	0:0	4	=
+call	35:13	35:30	4	mkstemp
+arg	35:21	35:30	5	*filename
+op	35:21	0:0	6	*
+water	35:22	0:0	6	filename
+water	35:31	0:0	4	;
+water	36:4	0:0	4	}
+if	40:4	45:4	2	(fd < 0)
+cond	40:8	40:13	3	fd < 0
+water	40:8	0:0	4	fd
+op	40:11	0:0	4	<
+water	40:13	0:0	4	0
+stmts	40:16	45:4	3	
+water	40:16	0:0	4	{
+decl	41:8	41:32	4	int	err
+op	41:16	0:0	4	=
+call	41:18	41:31	5	AVERROR
+arg	41:26	41:31	6	errno
+water	41:26	0:0	7	errno
+call	42:8	42:101	4	av_log
+arg	42:15	42:28	5	&file_log_ctx
+op	42:15	0:0	6	&
+water	42:16	0:0	6	file_log_ctx
+arg	42:30	42:42	5	AV_LOG_ERROR
+water	42:30	0:0	6	AV_LOG_ERROR
+arg	42:44	42:90	5	"ff_tempfile: Cannot open temporary file %s\n"
+water	42:44	0:0	6	"ff_tempfile: Cannot open temporary file %s\n"
+arg	42:92	42:101	5	*filename
+op	42:92	0:0	6	*
+water	42:93	0:0	6	filename
+water	42:102	0:0	4	;
+call	43:8	43:25	4	av_freep
+arg	43:17	43:25	5	filename
+water	43:17	0:0	6	filename
+water	43:26	0:0	4	;
+return	44:8	44:18	4	err
+water	44:15	0:0	5	err
+water	45:4	0:0	4	}
+return	46:4	46:13	2	fd
+water	46:11	0:0	3	fd

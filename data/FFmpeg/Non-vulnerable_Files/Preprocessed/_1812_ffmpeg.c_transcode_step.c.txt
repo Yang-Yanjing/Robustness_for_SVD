@@ -1,0 +1,311 @@
+func	1:0	56:0	0	static int	transcode_step
+params	1:25	0:0	1	
+param	1:26	1:30	2	void
+stmnts	0:0	55:26	1	
+decl	3:4	3:21	2	OutputStream	*ost
+decl	4:4	4:28	2	InputStream	*ist
+op	4:22	0:0	2	=
+water	4:24	0:0	2	NULL
+decl	5:4	5:11	2	int	ret
+water	6:4	0:0	2	ost
+op	6:8	0:0	2	=
+call	6:10	6:24	2	choose_output
+water	6:25	0:0	2	;
+if	7:4	15:4	2	(! ost)
+cond	7:8	7:9	3	! ost
+op	7:8	0:0	4	!
+water	7:9	0:0	4	ost
+stmts	7:14	15:4	3	
+water	7:14	0:0	4	{
+if	8:8	12:8	4	(got_eagain ( ))
+cond	8:12	8:23	5	got_eagain ( )
+call	8:12	8:23	6	got_eagain
+stmts	8:26	12:8	5	
+water	8:26	0:0	6	{
+call	9:12	9:25	6	reset_eagain
+water	9:26	0:0	6	;
+call	10:12	10:27	6	av_usleep
+arg	10:22	10:27	7	10000
+water	10:22	0:0	8	10000
+water	10:28	0:0	6	;
+return	11:12	11:20	6	0
+water	11:19	0:0	7	0
+water	12:8	0:0	6	}
+call	13:8	13:80	4	av_log
+arg	13:15	13:19	5	NULL
+water	13:15	0:0	6	NULL
+arg	13:21	13:35	5	AV_LOG_VERBOSE
+water	13:21	0:0	6	AV_LOG_VERBOSE
+arg	13:37	13:80	5	"No more inputs to read from, finishing.\n"
+water	13:37	0:0	6	"No more inputs to read from, finishing.\n"
+water	13:81	0:0	4	;
+return	14:8	14:26	4	AVERROR_EOF
+water	14:15	0:0	5	AVERROR_EOF
+water	15:4	0:0	4	}
+if	16:4	24:4	2	(ost -> filter && ! ost -> filter -> graph -> graph)
+cond	16:8	16:44	3	ost -> filter && ! ost -> filter -> graph -> graph
+water	16:8	0:0	4	ost
+op	16:11	0:0	4	->
+water	16:13	0:0	4	filter
+op	16:20	0:0	4	&&
+op	16:23	0:0	4	!
+water	16:24	0:0	4	ost
+op	16:27	0:0	4	->
+water	16:29	0:0	4	filter
+op	16:35	0:0	4	->
+water	16:37	0:0	4	graph
+op	16:42	0:0	4	->
+water	16:44	0:0	4	graph
+stmts	16:51	24:4	3	
+water	16:51	0:0	4	{
+if	17:8	23:8	4	(ifilter_has_all_input_formats (ost -> filter -> graph ))
+cond	17:12	17:60	5	ifilter_has_all_input_formats (ost -> filter -> graph )
+call	17:12	17:60	6	ifilter_has_all_input_formats
+arg	17:42	17:60	7	ost->filter->graph
+water	17:42	0:0	8	ost
+op	17:45	0:0	8	->
+water	17:47	0:0	8	filter
+op	17:53	0:0	8	->
+water	17:55	0:0	8	graph
+stmts	17:63	23:8	5	
+water	17:63	0:0	6	{
+water	18:12	0:0	6	ret
+op	18:16	0:0	6	=
+call	18:18	18:58	6	configure_filtergraph
+arg	18:40	18:58	7	ost->filter->graph
+water	18:40	0:0	8	ost
+op	18:43	0:0	8	->
+water	18:45	0:0	8	filter
+op	18:51	0:0	8	->
+water	18:53	0:0	8	graph
+water	18:59	0:0	6	;
+if	19:12	22:12	6	(ret < 0)
+cond	19:16	19:22	7	ret < 0
+water	19:16	0:0	8	ret
+op	19:20	0:0	8	<
+water	19:22	0:0	8	0
+stmts	19:25	22:12	7	
+water	19:25	0:0	8	{
+call	20:16	20:76	8	av_log
+arg	20:23	20:27	9	NULL
+water	20:23	0:0	10	NULL
+arg	20:29	20:41	9	AV_LOG_ERROR
+water	20:29	0:0	10	AV_LOG_ERROR
+arg	20:43	20:76	9	"Error reinitializing filters!\n"
+water	20:43	0:0	10	"Error reinitializing filters!\n"
+water	20:77	0:0	8	;
+return	21:16	21:26	8	ret
+water	21:23	0:0	9	ret
+water	22:12	0:0	8	}
+water	23:8	0:0	6	}
+water	24:4	0:0	4	}
+if	25:4	30:4	2	(ost -> filter && ost -> filter -> graph -> graph)
+cond	25:8	25:43	3	ost -> filter && ost -> filter -> graph -> graph
+water	25:8	0:0	4	ost
+op	25:11	0:0	4	->
+water	25:13	0:0	4	filter
+op	25:20	0:0	4	&&
+water	25:23	0:0	4	ost
+op	25:26	0:0	4	->
+water	25:28	0:0	4	filter
+op	25:34	0:0	4	->
+water	25:36	0:0	4	graph
+op	25:41	0:0	4	->
+water	25:43	0:0	4	graph
+stmts	25:50	30:4	3	
+water	25:50	0:0	4	{
+if	26:8	27:22	4	(( ret =transcode_from_filter (ost -> filter -> graph ,& ist ) ) < 0)
+cond	26:12	26:70	5	( ret =transcode_from_filter (ost -> filter -> graph ,& ist ) ) < 0
+water	26:12	0:0	6	(
+water	26:13	0:0	6	ret
+op	26:17	0:0	6	=
+call	26:19	26:65	6	transcode_from_filter
+arg	26:41	26:59	7	ost->filter->graph
+water	26:41	0:0	8	ost
+op	26:44	0:0	8	->
+water	26:46	0:0	8	filter
+op	26:52	0:0	8	->
+water	26:54	0:0	8	graph
+arg	26:61	26:65	7	&ist
+op	26:61	0:0	8	&
+water	26:62	0:0	8	ist
+water	26:66	0:0	6	)
+op	26:68	0:0	6	<
+water	26:70	0:0	6	0
+stmts	27:12	27:22	5	
+return	27:12	27:22	6	ret
+water	27:19	0:0	7	ret
+if	28:8	29:20	4	(! ist)
+cond	28:12	28:13	5	! ist
+op	28:12	0:0	6	!
+water	28:13	0:0	6	ist
+stmts	29:12	29:20	5	
+return	29:12	29:20	6	0
+water	29:19	0:0	7	0
+water	30:4	0:0	4	}
+else	30:6	43:4	2
+stmts	30:11	43:4	3	
+if	30:11	43:4	4	(ost -> filter)
+cond	30:15	30:20	5	ost -> filter
+water	30:15	0:0	6	ost
+op	30:18	0:0	6	->
+water	30:20	0:0	6	filter
+stmts	30:28	43:4	5	
+water	30:28	0:0	6	{
+decl	31:8	31:13	6	int	i
+for	32:8	38:8	6	(i = 0 ;i < ost -> filter -> graph -> nb_inputs;i ++)
+forinit	32:13	32:18	7	i = 0 ;
+water	32:13	0:0	8	i
+op	32:15	0:0	8	=
+water	32:17	0:0	8	0
+water	32:18	0:0	8	;
+cond	32:20	32:44	7	i < ost -> filter -> graph -> nb_inputs
+water	32:20	0:0	8	i
+op	32:22	0:0	8	<
+water	32:24	0:0	8	ost
+op	32:27	0:0	8	->
+water	32:29	0:0	8	filter
+op	32:35	0:0	8	->
+water	32:37	0:0	8	graph
+op	32:42	0:0	8	->
+water	32:44	0:0	8	nb_inputs
+forexpr	32:55	32:56	7	i ++
+water	32:55	0:0	8	i
+op	32:56	0:0	8	++
+stmts	32:60	38:8	7	
+water	32:60	0:0	8	{
+decl	33:12	33:64	8	InputFilter	*ifilter
+op	33:33	0:0	8	=
+water	33:35	0:0	8	ost
+op	33:38	0:0	8	->
+water	33:40	0:0	8	filter
+op	33:46	0:0	8	->
+water	33:48	0:0	8	graph
+op	33:53	0:0	8	->
+water	33:55	0:0	8	inputs
+op	33:61	0:0	8	[
+water	33:62	0:0	8	i
+op	33:63	0:0	8	]
+if	34:12	37:12	8	(! ifilter -> ist -> got_output && ! input_files [ ifilter -> ist -> file_index ] -> eof_reached)
+cond	34:16	34:85	9	! ifilter -> ist -> got_output && ! input_files [ ifilter -> ist -> file_index ] -> eof_reached
+op	34:16	0:0	10	!
+water	34:17	0:0	10	ifilter
+op	34:24	0:0	10	->
+water	34:26	0:0	10	ist
+op	34:29	0:0	10	->
+water	34:31	0:0	10	got_output
+op	34:42	0:0	10	&&
+op	34:45	0:0	10	!
+water	34:46	0:0	10	input_files
+op	34:57	0:0	10	[
+water	34:58	0:0	10	ifilter
+op	34:65	0:0	10	->
+water	34:67	0:0	10	ist
+op	34:70	0:0	10	->
+water	34:72	0:0	10	file_index
+op	34:82	0:0	10	]
+op	34:83	0:0	10	->
+water	34:85	0:0	10	eof_reached
+stmts	34:98	37:12	9	
+water	34:98	0:0	10	{
+water	35:16	0:0	10	ist
+op	35:20	0:0	10	=
+water	35:22	0:0	10	ifilter
+op	35:29	0:0	10	->
+water	35:31	0:0	10	ist
+water	35:34	0:0	10	;
+break	36:16	36:21	10	
+water	37:12	0:0	10	}
+water	38:8	0:0	8	}
+if	39:8	42:8	6	(! ist)
+cond	39:12	39:13	7	! ist
+op	39:12	0:0	8	!
+water	39:13	0:0	8	ist
+stmts	39:18	42:8	7	
+water	39:18	0:0	8	{
+water	40:12	0:0	8	ost
+op	40:15	0:0	8	->
+water	40:17	0:0	8	inputs_done
+op	40:29	0:0	8	=
+water	40:31	0:0	8	1
+water	40:32	0:0	8	;
+return	41:12	41:20	8	0
+water	41:19	0:0	9	0
+water	42:8	0:0	8	}
+water	43:4	0:0	6	}
+else	43:6	46:4	2
+stmts	43:11	46:4	3	
+water	43:11	0:0	4	{
+call	44:8	44:41	4	av_assert0
+arg	44:19	44:41	5	ost->source_index>=0
+water	44:19	0:0	6	ost
+op	44:22	0:0	6	->
+water	44:24	0:0	6	source_index
+op	44:37	0:0	6	>=
+water	44:40	0:0	6	0
+water	44:42	0:0	4	;
+water	45:8	0:0	4	ist
+op	45:12	0:0	4	=
+water	45:14	0:0	4	input_streams
+op	45:27	0:0	4	[
+water	45:28	0:0	4	ost
+op	45:31	0:0	4	->
+water	45:33	0:0	4	source_index
+op	45:45	0:0	4	]
+water	45:46	0:0	4	;
+water	46:4	0:0	4	}
+water	47:4	0:0	2	ret
+op	47:8	0:0	2	=
+call	47:10	47:39	2	process_input
+arg	47:24	47:39	3	ist->file_index
+water	47:24	0:0	4	ist
+op	47:27	0:0	4	->
+water	47:29	0:0	4	file_index
+water	47:40	0:0	2	;
+if	48:4	52:4	2	(ret ==AVERROR (EAGAIN ))
+cond	48:8	48:29	3	ret ==AVERROR (EAGAIN )
+water	48:8	0:0	4	ret
+op	48:12	0:0	4	==
+call	48:15	48:29	4	AVERROR
+arg	48:23	48:29	5	EAGAIN
+water	48:23	0:0	6	EAGAIN
+stmts	48:32	52:4	3	
+water	48:32	0:0	4	{
+if	49:8	50:32	4	(input_files [ ist -> file_index ] -> eagain)
+cond	49:12	49:42	5	input_files [ ist -> file_index ] -> eagain
+water	49:12	0:0	6	input_files
+op	49:23	0:0	6	[
+water	49:24	0:0	6	ist
+op	49:27	0:0	6	->
+water	49:29	0:0	6	file_index
+op	49:39	0:0	6	]
+op	49:40	0:0	6	->
+water	49:42	0:0	6	eagain
+stmts	50:12	50:32	5	
+water	50:12	0:0	6	ost
+op	50:15	0:0	6	->
+water	50:17	0:0	6	unavailable
+op	50:29	0:0	6	=
+water	50:31	0:0	6	1
+water	50:32	0:0	6	;
+return	51:8	51:16	4	0
+water	51:15	0:0	5	0
+water	52:4	0:0	4	}
+if	53:4	54:43	2	(ret < 0)
+cond	53:8	53:14	3	ret < 0
+water	53:8	0:0	4	ret
+op	53:12	0:0	4	<
+water	53:14	0:0	4	0
+stmts	54:8	54:43	3	
+return	54:8	54:43	4	ret==AVERROR_EOF?0:ret
+water	54:15	0:0	5	ret
+op	54:19	0:0	5	==
+water	54:22	0:0	5	AVERROR_EOF
+water	54:34	0:0	5	?
+water	54:36	0:0	5	0
+water	54:38	0:0	5	:
+water	54:40	0:0	5	ret
+return	55:4	55:26	2	reap_filters(0)
+call	55:11	55:25	3	reap_filters
+arg	55:24	55:25	4	0
+water	55:24	0:0	5	0

@@ -1,0 +1,239 @@
+func	1:0	48:0	0	static int	dc1394_v1_read_header
+params	1:32	0:0	1	
+param	1:33	1:51	2	AVFormatContext *	c
+stmnts	0:0	47:13	1	
+decl	3:4	3:38	2	dc1394_data	*dc1394
+op	3:24	0:0	2	=
+water	3:26	0:0	2	c
+op	3:27	0:0	2	->
+water	3:29	0:0	2	priv_data
+decl	4:4	4:17	2	AVStream	*vst
+decl	5:4	5:26	2	nodeid_t	*camera_nodes
+decl	6:4	6:11	2	int	res
+decl	7:4	7:42	2	struct dc1394_frame_format	*fmt
+op	7:36	0:0	2	=
+water	7:38	0:0	2	NULL
+decl	8:4	8:40	2	struct dc1394_frame_rate	*fps
+op	8:34	0:0	2	=
+water	8:36	0:0	2	NULL
+if	9:4	10:17	2	(dc1394_read_common (c ,& fmt ,& fps ) != 0)
+cond	9:8	9:45	3	dc1394_read_common (c ,& fmt ,& fps ) != 0
+call	9:8	9:40	4	dc1394_read_common
+arg	9:27	9:28	5	c
+water	9:27	0:0	6	c
+arg	9:30	9:34	5	&fmt
+op	9:30	0:0	6	&
+water	9:31	0:0	6	fmt
+arg	9:36	9:40	5	&fps
+op	9:36	0:0	6	&
+water	9:37	0:0	6	fps
+op	9:42	0:0	4	!=
+water	9:45	0:0	4	0
+stmts	10:8	10:17	3	
+return	10:8	10:17	4	-1
+op	10:15	0:0	5	-
+water	10:16	0:0	5	1
+water	12:4	0:0	2	dc1394
+op	12:10	0:0	2	->
+water	12:12	0:0	2	handle
+op	12:19	0:0	2	=
+call	12:21	12:43	2	dc1394_create_handle
+arg	12:42	12:43	3	0
+water	12:42	0:0	4	0
+water	12:44	0:0	2	;
+if	13:4	16:4	2	(! dc1394 -> handle)
+cond	13:8	13:17	3	! dc1394 -> handle
+op	13:8	0:0	4	!
+water	13:9	0:0	4	dc1394
+op	13:15	0:0	4	->
+water	13:17	0:0	4	handle
+stmts	13:25	16:4	3	
+water	13:25	0:0	4	{
+call	14:8	14:78	4	av_log
+arg	14:15	14:16	5	c
+water	14:15	0:0	6	c
+arg	14:18	14:30	5	AV_LOG_ERROR
+water	14:18	0:0	6	AV_LOG_ERROR
+arg	14:32	14:74	5	"Can't acquire dc1394 handle on port %d\n"
+water	14:32	0:0	6	"Can't acquire dc1394 handle on port %d\n"
+arg	14:76	14:78	5	0
+water	14:76	0:0	6	0
+water	14:79	0:0	4	;
+goto	15:8	15:16	4	out
+water	15:13	0:0	5	out
+water	16:4	0:0	4	}
+water	17:4	0:0	2	camera_nodes
+op	17:17	0:0	2	=
+call	17:19	17:66	2	dc1394_get_camera_nodes
+arg	17:43	17:57	3	dc1394->handle
+water	17:43	0:0	4	dc1394
+op	17:49	0:0	4	->
+water	17:51	0:0	4	handle
+arg	17:59	17:63	3	&res
+op	17:59	0:0	4	&
+water	17:60	0:0	4	res
+arg	17:65	17:66	3	1
+water	17:65	0:0	4	1
+water	17:67	0:0	2	;
+if	18:4	21:4	2	(! camera_nodes || camera_nodes [ dc1394 -> channel ] == DC1394_NO_CAMERA)
+cond	18:8	18:58	3	! camera_nodes || camera_nodes [ dc1394 -> channel ] == DC1394_NO_CAMERA
+op	18:8	0:0	4	!
+water	18:9	0:0	4	camera_nodes
+op	18:22	0:0	4	||
+water	18:25	0:0	4	camera_nodes
+op	18:37	0:0	4	[
+water	18:38	0:0	4	dc1394
+op	18:44	0:0	4	->
+water	18:46	0:0	4	channel
+op	18:53	0:0	4	]
+op	18:55	0:0	4	==
+water	18:58	0:0	4	DC1394_NO_CAMERA
+stmts	18:76	21:4	3	
+water	18:76	0:0	4	{
+call	19:8	19:93	4	av_log
+arg	19:15	19:16	5	c
+water	19:15	0:0	6	c
+arg	19:18	19:30	5	AV_LOG_ERROR
+water	19:18	0:0	6	AV_LOG_ERROR
+arg	19:32	19:76	5	"There's no IIDC camera on the channel %d\n"
+water	19:32	0:0	6	"There's no IIDC camera on the channel %d\n"
+arg	19:78	19:93	5	dc1394->channel
+water	19:78	0:0	6	dc1394
+op	19:84	0:0	6	->
+water	19:86	0:0	6	channel
+water	19:94	0:0	4	;
+goto	20:8	20:23	4	out_handle
+water	20:13	0:0	5	out_handle
+water	21:4	0:0	4	}
+water	22:4	0:0	2	res
+op	22:8	0:0	2	=
+call	22:10	29:50	2	dc1394_dma_setup_capture
+arg	22:35	22:49	3	dc1394->handle
+water	22:35	0:0	4	dc1394
+op	22:41	0:0	4	->
+water	22:43	0:0	4	handle
+arg	22:51	22:80	3	camera_nodes[dc1394->channel]
+water	22:51	0:0	4	camera_nodes
+op	22:63	0:0	4	[
+water	22:64	0:0	4	dc1394
+op	22:70	0:0	4	->
+water	22:72	0:0	4	channel
+op	22:79	0:0	4	]
+arg	23:35	23:36	3	0
+water	23:35	0:0	4	0
+arg	24:35	24:59	3	FORMAT_VGA_NONCOMPRESSED
+water	24:35	0:0	4	FORMAT_VGA_NONCOMPRESSED
+arg	25:35	25:53	3	fmt->frame_size_id
+water	25:35	0:0	4	fmt
+op	25:38	0:0	4	->
+water	25:40	0:0	4	frame_size_id
+arg	26:35	26:44	3	SPEED_400
+water	26:35	0:0	4	SPEED_400
+arg	27:35	27:53	3	fps->frame_rate_id
+water	27:35	0:0	4	fps
+op	27:38	0:0	4	->
+water	27:40	0:0	4	frame_rate_id
+arg	27:55	27:56	3	8
+water	27:55	0:0	4	8
+arg	27:58	27:59	3	1
+water	27:58	0:0	4	1
+arg	28:35	28:46	3	c->filename
+water	28:35	0:0	4	c
+op	28:36	0:0	4	->
+water	28:38	0:0	4	filename
+arg	29:35	29:50	3	&dc1394->camera
+op	29:35	0:0	4	&
+water	29:36	0:0	4	dc1394
+op	29:42	0:0	4	->
+water	29:44	0:0	4	camera
+water	29:51	0:0	2	;
+call	30:4	30:41	2	dc1394_free_camera_nodes
+arg	30:29	30:41	3	camera_nodes
+water	30:29	0:0	4	camera_nodes
+water	30:42	0:0	2	;
+if	31:4	34:4	2	(res != DC1394_SUCCESS)
+cond	31:8	31:15	3	res != DC1394_SUCCESS
+water	31:8	0:0	4	res
+op	31:12	0:0	4	!=
+water	31:15	0:0	4	DC1394_SUCCESS
+stmts	31:31	34:4	3	
+water	31:31	0:0	4	{
+call	32:8	32:76	4	av_log
+arg	32:15	32:16	5	c
+water	32:15	0:0	6	c
+arg	32:18	32:30	5	AV_LOG_ERROR
+water	32:18	0:0	6	AV_LOG_ERROR
+arg	32:32	32:76	5	"Can't prepare camera for the DMA capture\n"
+water	32:32	0:0	6	"Can't prepare camera for the DMA capture\n"
+water	32:77	0:0	4	;
+goto	33:8	33:23	4	out_handle
+water	33:13	0:0	5	out_handle
+water	34:4	0:0	4	}
+water	35:4	0:0	2	res
+op	35:8	0:0	2	=
+call	35:10	35:75	2	dc1394_start_iso_transmission
+arg	35:40	35:54	3	dc1394->handle
+water	35:40	0:0	4	dc1394
+op	35:46	0:0	4	->
+water	35:48	0:0	4	handle
+arg	35:56	35:75	3	dc1394->camera.node
+water	35:56	0:0	4	dc1394
+op	35:62	0:0	4	->
+water	35:64	0:0	4	camera
+op	35:70	0:0	4	.
+water	35:71	0:0	4	node
+water	35:76	0:0	2	;
+if	36:4	39:4	2	(res != DC1394_SUCCESS)
+cond	36:8	36:15	3	res != DC1394_SUCCESS
+water	36:8	0:0	4	res
+op	36:12	0:0	4	!=
+water	36:15	0:0	4	DC1394_SUCCESS
+stmts	36:31	39:4	3	
+water	36:31	0:0	4	{
+call	37:8	37:72	4	av_log
+arg	37:15	37:16	5	c
+water	37:15	0:0	6	c
+arg	37:18	37:30	5	AV_LOG_ERROR
+water	37:18	0:0	6	AV_LOG_ERROR
+arg	37:32	37:72	5	"Can't start isochronous transmission\n"
+water	37:32	0:0	6	"Can't start isochronous transmission\n"
+water	37:73	0:0	4	;
+goto	38:8	38:27	4	out_handle_dma
+water	38:13	0:0	5	out_handle_dma
+water	39:4	0:0	4	}
+return	40:4	40:12	2	0
+water	40:11	0:0	3	0
+label	41:0	41:14	2	out_handle_dma :
+call	42:4	42:55	2	dc1394_dma_unlisten
+arg	42:24	42:38	3	dc1394->handle
+water	42:24	0:0	4	dc1394
+op	42:30	0:0	4	->
+water	42:32	0:0	4	handle
+arg	42:40	42:55	3	&dc1394->camera
+op	42:40	0:0	4	&
+water	42:41	0:0	4	dc1394
+op	42:47	0:0	4	->
+water	42:49	0:0	4	camera
+water	42:56	0:0	2	;
+call	43:4	43:61	2	dc1394_dma_release_camera
+arg	43:30	43:44	3	dc1394->handle
+water	43:30	0:0	4	dc1394
+op	43:36	0:0	4	->
+water	43:38	0:0	4	handle
+arg	43:46	43:61	3	&dc1394->camera
+op	43:46	0:0	4	&
+water	43:47	0:0	4	dc1394
+op	43:53	0:0	4	->
+water	43:55	0:0	4	camera
+water	43:62	0:0	2	;
+label	44:0	44:10	2	out_handle :
+call	45:4	45:40	2	dc1394_destroy_handle
+arg	45:26	45:40	3	dc1394->handle
+water	45:26	0:0	4	dc1394
+op	45:32	0:0	4	->
+water	45:34	0:0	4	handle
+water	45:41	0:0	2	;
+label	46:0	46:3	2	out :
+return	47:4	47:13	2	-1
+op	47:11	0:0	3	-
+water	47:12	0:0	3	1

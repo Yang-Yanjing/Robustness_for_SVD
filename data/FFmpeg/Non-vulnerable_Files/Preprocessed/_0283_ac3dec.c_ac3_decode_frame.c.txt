@@ -1,0 +1,1209 @@
+func	1:0	207:0	0	static int	ac3_decode_frame
+params	1:27	0:0	1	
+param	1:28	1:50	2	AVCodecContext *	avctx
+param	1:52	1:62	2	void *	data
+param	2:28	2:46	2	int *	got_frame_ptr
+param	2:48	2:63	2	AVPacket *	avpkt
+stmnts	0:0	206:41	1	
+decl	4:4	4:29	2	AVFrame	*frame
+op	4:23	0:0	2	=
+water	4:25	0:0	2	data
+decl	5:4	5:36	2	const uint8_t	*buf
+op	5:23	0:0	2	=
+water	5:25	0:0	2	avpkt
+op	5:30	0:0	2	->
+water	5:32	0:0	2	data
+decl	6:4	6:30	2	int	buf_size
+op	6:17	0:0	2	=
+water	6:19	0:0	2	avpkt
+op	6:24	0:0	2	->
+water	6:26	0:0	2	size
+decl	7:4	7:42	2	AC3DecodeContext	*s
+op	7:24	0:0	2	=
+water	7:26	0:0	2	avctx
+op	7:31	0:0	2	->
+water	7:33	0:0	2	priv_data
+decl	8:4	8:25	2	int	blk
+water	8:11	0:0	2	,
+decl	8:4	8:25	2	int	ch
+water	8:15	0:0	2	,
+decl	8:4	8:25	2	int	err
+water	8:20	0:0	2	,
+decl	8:4	8:25	2	int	ret
+decl	9:4	9:30	2	const uint8_t	*channel_map
+decl	10:4	10:46	2	const SHORTFLOAT	*output[AC3_MAX_CHANNELS]
+decl	11:4	11:41	2	enum AVMatrixEncoding	matrix_encoding
+decl	12:4	12:31	2	AVDownmixInfo	*downmix_info
+if	15:4	20:4	2	(buf_size >= 2 &&AV_RB16 (buf ) == 0 x770B)
+cond	15:8	15:42	3	buf_size >= 2 &&AV_RB16 (buf ) == 0 x770B
+water	15:8	0:0	4	buf_size
+op	15:17	0:0	4	>=
+water	15:20	0:0	4	2
+op	15:22	0:0	4	&&
+call	15:25	15:36	4	AV_RB16
+arg	15:33	15:36	5	buf
+water	15:33	0:0	6	buf
+op	15:38	0:0	4	==
+water	15:41	0:0	4	0
+water	15:42	0:0	4	x770B
+stmts	15:49	20:4	3	
+water	15:49	0:0	4	{
+decl	17:8	17:61	4	int	cnt
+op	17:16	0:0	4	=
+call	17:18	17:55	5	FFMIN
+arg	17:24	17:32	6	buf_size
+water	17:24	0:0	7	buf_size
+arg	17:34	17:55	6	AC3_FRAME_BUFFER_SIZE
+water	17:34	0:0	7	AC3_FRAME_BUFFER_SIZE
+op	17:57	0:0	4	>>
+water	17:60	0:0	4	1
+call	18:8	19:55	4	s->bdsp.bswap16_buf
+arg	18:28	18:56	5	(uint16_t*)s->input_buffer
+water	18:28	0:0	6	(
+water	18:29	0:0	6	uint16_t
+op	18:38	0:0	6	*
+water	18:39	0:0	6	)
+water	18:41	0:0	6	s
+op	18:42	0:0	6	->
+water	18:44	0:0	6	input_buffer
+arg	19:28	19:50	5	(constuint16_t*)buf
+water	19:28	0:0	6	(
+water	19:29	0:0	6	const
+water	19:35	0:0	6	uint16_t
+op	19:44	0:0	6	*
+water	19:45	0:0	6	)
+water	19:47	0:0	6	buf
+arg	19:52	19:55	5	cnt
+water	19:52	0:0	6	cnt
+water	19:56	0:0	4	;
+water	20:4	0:0	4	}
+else	20:6	21:76	2
+stmts	21:8	21:76	3	
+call	21:8	21:75	4	memcpy
+arg	21:15	21:30	5	s->input_buffer
+water	21:15	0:0	6	s
+op	21:16	0:0	6	->
+water	21:18	0:0	6	input_buffer
+arg	21:32	21:35	5	buf
+water	21:32	0:0	6	buf
+arg	21:37	21:75	5	FFMIN(buf_size,AC3_FRAME_BUFFER_SIZE)
+call	21:37	21:74	6	FFMIN
+arg	21:43	21:51	7	buf_size
+water	21:43	0:0	8	buf_size
+arg	21:53	21:74	7	AC3_FRAME_BUFFER_SIZE
+water	21:53	0:0	8	AC3_FRAME_BUFFER_SIZE
+water	21:76	0:0	4	;
+water	22:4	0:0	2	buf
+op	22:8	0:0	2	=
+water	22:10	0:0	2	s
+op	22:11	0:0	2	->
+water	22:13	0:0	2	input_buffer
+water	22:25	0:0	2	;
+if	24:4	25:18	2	(( ret =init_get_bits8 (& s -> gbc ,buf ,buf_size ) ) < 0)
+cond	24:8	24:57	3	( ret =init_get_bits8 (& s -> gbc ,buf ,buf_size ) ) < 0
+water	24:8	0:0	4	(
+water	24:9	0:0	4	ret
+op	24:13	0:0	4	=
+call	24:15	24:52	4	init_get_bits8
+arg	24:30	24:37	5	&s->gbc
+op	24:30	0:0	6	&
+water	24:31	0:0	6	s
+op	24:32	0:0	6	->
+water	24:34	0:0	6	gbc
+arg	24:39	24:42	5	buf
+water	24:39	0:0	6	buf
+arg	24:44	24:52	5	buf_size
+water	24:44	0:0	6	buf_size
+water	24:53	0:0	4	)
+op	24:55	0:0	4	<
+water	24:57	0:0	4	0
+stmts	25:8	25:18	3	
+return	25:8	25:18	4	ret
+water	25:15	0:0	5	ret
+water	27:4	0:0	2	err
+op	27:8	0:0	2	=
+call	27:10	27:30	2	parse_frame_header
+arg	27:29	27:30	3	s
+water	27:29	0:0	4	s
+water	27:31	0:0	2	;
+if	28:4	61:4	2	(err)
+cond	28:8	28:8	3	err
+water	28:8	0:0	4	err
+stmts	28:13	61:4	3	
+water	28:13	0:0	4	{
+switch	29:8	60:8	4	(err)
+cond	29:16	29:16	5	err
+water	29:16	0:0	6	err
+stmts	29:21	60:8	5	
+water	29:21	0:0	6	{
+label	30:8	30:37	6	case AAC_AC3_PARSE_ERROR_SYNC :
+call	31:12	31:60	6	av_log
+arg	31:19	31:24	7	avctx
+water	31:19	0:0	8	avctx
+arg	31:26	31:38	7	AV_LOG_ERROR
+water	31:26	0:0	8	AV_LOG_ERROR
+arg	31:40	31:60	7	"frame sync error\n"
+water	31:40	0:0	8	"frame sync error\n"
+water	31:61	0:0	6	;
+return	32:12	32:38	6	AVERROR_INVALIDDATA
+water	32:19	0:0	7	AVERROR_INVALIDDATA
+label	33:8	33:37	6	case AAC_AC3_PARSE_ERROR_BSID :
+call	34:12	34:64	6	av_log
+arg	34:19	34:24	7	avctx
+water	34:19	0:0	8	avctx
+arg	34:26	34:38	7	AV_LOG_ERROR
+water	34:26	0:0	8	AV_LOG_ERROR
+arg	34:40	34:64	7	"invalid bitstream id\n"
+water	34:40	0:0	8	"invalid bitstream id\n"
+water	34:65	0:0	6	;
+break	35:12	35:17	6	
+label	36:8	36:44	6	case AAC_AC3_PARSE_ERROR_SAMPLE_RATE :
+call	37:12	37:63	6	av_log
+arg	37:19	37:24	7	avctx
+water	37:19	0:0	8	avctx
+arg	37:26	37:38	7	AV_LOG_ERROR
+water	37:26	0:0	8	AV_LOG_ERROR
+arg	37:40	37:63	7	"invalid sample rate\n"
+water	37:40	0:0	8	"invalid sample rate\n"
+water	37:64	0:0	6	;
+break	38:12	38:17	6	
+label	39:8	39:43	6	case AAC_AC3_PARSE_ERROR_FRAME_SIZE :
+call	40:12	40:62	6	av_log
+arg	40:19	40:24	7	avctx
+water	40:19	0:0	8	avctx
+arg	40:26	40:38	7	AV_LOG_ERROR
+water	40:26	0:0	8	AV_LOG_ERROR
+arg	40:40	40:62	7	"invalid frame size\n"
+water	40:40	0:0	8	"invalid frame size\n"
+water	40:63	0:0	6	;
+break	41:12	41:17	6	
+label	42:8	42:43	6	case AAC_AC3_PARSE_ERROR_FRAME_TYPE :
+if	45:12	50:12	6	(s -> frame_type == EAC3_FRAME_TYPE_DEPENDENT || s -> substreamid)
+cond	45:16	45:65	7	s -> frame_type == EAC3_FRAME_TYPE_DEPENDENT || s -> substreamid
+water	45:16	0:0	8	s
+op	45:17	0:0	8	->
+water	45:19	0:0	8	frame_type
+op	45:30	0:0	8	==
+water	45:33	0:0	8	EAC3_FRAME_TYPE_DEPENDENT
+op	45:59	0:0	8	||
+water	45:62	0:0	8	s
+op	45:63	0:0	8	->
+water	45:65	0:0	8	substreamid
+stmts	45:78	50:12	7	
+water	45:78	0:0	8	{
+call	46:16	47:41	8	av_log
+arg	46:23	46:28	9	avctx
+water	46:23	0:0	10	avctx
+arg	46:30	46:44	9	AV_LOG_WARNING
+water	46:30	0:0	10	AV_LOG_WARNING
+arg	46:46	47:41	9	"unsupported frame type : ""skipping frame\n"
+water	46:46	0:0	10	"unsupported frame type : "
+water	47:23	0:0	10	"skipping frame\n"
+water	47:42	0:0	8	;
+op	48:16	0:0	8	*
+water	48:17	0:0	8	got_frame_ptr
+op	48:31	0:0	8	=
+water	48:33	0:0	8	0
+water	48:34	0:0	8	;
+return	49:16	49:31	8	buf_size
+water	49:23	0:0	9	buf_size
+water	50:12	0:0	8	}
+else	50:14	52:12	6
+stmts	50:19	52:12	7	
+water	50:19	0:0	8	{
+call	51:16	51:66	8	av_log
+arg	51:23	51:28	9	avctx
+water	51:23	0:0	10	avctx
+arg	51:30	51:42	9	AV_LOG_ERROR
+water	51:30	0:0	10	AV_LOG_ERROR
+arg	51:44	51:66	9	"invalid frame type\n"
+water	51:44	0:0	10	"invalid frame type\n"
+water	51:67	0:0	8	;
+water	52:12	0:0	8	}
+break	53:12	53:17	6	
+label	54:8	54:36	6	case AAC_AC3_PARSE_ERROR_CRC :
+label	55:8	55:44	6	case AAC_AC3_PARSE_ERROR_CHANNEL_CFG :
+break	56:12	56:17	6	
+label	57:8	57:15	6	default :
+op	58:12	0:0	6	*
+water	58:13	0:0	6	got_frame_ptr
+op	58:27	0:0	6	=
+water	58:29	0:0	6	0
+water	58:30	0:0	6	;
+return	59:12	59:22	6	err
+water	59:19	0:0	7	err
+water	60:8	0:0	6	}
+water	61:4	0:0	4	}
+else	61:6	76:4	2
+stmts	61:11	76:4	3	
+water	61:11	0:0	4	{
+if	63:8	66:8	4	(s -> frame_size > buf_size)
+cond	63:12	63:28	5	s -> frame_size > buf_size
+water	63:12	0:0	6	s
+op	63:13	0:0	6	->
+water	63:15	0:0	6	frame_size
+op	63:26	0:0	6	>
+water	63:28	0:0	6	buf_size
+stmts	63:38	66:8	5	
+water	63:38	0:0	6	{
+call	64:12	64:60	6	av_log
+arg	64:19	64:24	7	avctx
+water	64:19	0:0	8	avctx
+arg	64:26	64:38	7	AV_LOG_ERROR
+water	64:26	0:0	8	AV_LOG_ERROR
+arg	64:40	64:60	7	"incomplete frame\n"
+water	64:40	0:0	8	"incomplete frame\n"
+water	64:61	0:0	6	;
+water	65:12	0:0	6	err
+op	65:16	0:0	6	=
+water	65:18	0:0	6	AAC_AC3_PARSE_ERROR_FRAME_SIZE
+water	65:48	0:0	6	;
+water	66:8	0:0	6	}
+else	66:10	75:8	4
+stmts	66:15	75:8	5	
+if	66:15	75:8	6	(avctx -> err_recognition & ( AV_EF_CRCCHECK | AV_EF_CAREFUL ))
+cond	66:19	66:73	7	avctx -> err_recognition & ( AV_EF_CRCCHECK | AV_EF_CAREFUL )
+water	66:19	0:0	8	avctx
+op	66:24	0:0	8	->
+water	66:26	0:0	8	err_recognition
+op	66:42	0:0	8	&
+water	66:44	0:0	8	(
+water	66:45	0:0	8	AV_EF_CRCCHECK
+op	66:59	0:0	8	|
+water	66:60	0:0	8	AV_EF_CAREFUL
+water	66:73	0:0	8	)
+stmts	66:76	75:8	7	
+water	66:76	0:0	8	{
+if	68:12	74:12	8	(av_crc (av_crc_get_table (AV_CRC_16_ANSI ) ,0 ,& buf [ 2 ] ,s -> frame_size - 2 ))
+cond	68:16	69:40	9	av_crc (av_crc_get_table (AV_CRC_16_ANSI ) ,0 ,& buf [ 2 ] ,s -> frame_size - 2 )
+call	68:16	69:40	10	av_crc
+arg	68:23	68:55	11	av_crc_get_table(AV_CRC_16_ANSI)
+call	68:23	68:54	12	av_crc_get_table
+arg	68:40	68:54	13	AV_CRC_16_ANSI
+water	68:40	0:0	14	AV_CRC_16_ANSI
+arg	68:57	68:58	11	0
+water	68:57	0:0	12	0
+arg	68:60	68:67	11	&buf[2]
+op	68:60	0:0	12	&
+water	68:61	0:0	12	buf
+op	68:64	0:0	12	[
+water	68:65	0:0	12	2
+op	68:66	0:0	12	]
+arg	69:23	69:40	11	s->frame_size-2
+water	69:23	0:0	12	s
+op	69:24	0:0	12	->
+water	69:26	0:0	12	frame_size
+op	69:37	0:0	12	-
+water	69:39	0:0	12	2
+stmts	69:43	74:12	9	
+water	69:43	0:0	10	{
+call	70:16	70:66	10	av_log
+arg	70:23	70:28	11	avctx
+water	70:23	0:0	12	avctx
+arg	70:30	70:42	11	AV_LOG_ERROR
+water	70:30	0:0	12	AV_LOG_ERROR
+arg	70:44	70:66	11	"frame CRC mismatch\n"
+water	70:44	0:0	12	"frame CRC mismatch\n"
+water	70:67	0:0	10	;
+if	71:16	72:46	10	(avctx -> err_recognition & AV_EF_EXPLODE)
+cond	71:20	71:45	11	avctx -> err_recognition & AV_EF_EXPLODE
+water	71:20	0:0	12	avctx
+op	71:25	0:0	12	->
+water	71:27	0:0	12	err_recognition
+op	71:43	0:0	12	&
+water	71:45	0:0	12	AV_EF_EXPLODE
+stmts	72:20	72:46	11	
+return	72:20	72:46	12	AVERROR_INVALIDDATA
+water	72:27	0:0	13	AVERROR_INVALIDDATA
+water	73:16	0:0	10	err
+op	73:20	0:0	10	=
+water	73:22	0:0	10	AAC_AC3_PARSE_ERROR_CRC
+water	73:45	0:0	10	;
+water	74:12	0:0	10	}
+water	75:8	0:0	8	}
+water	76:4	0:0	4	}
+if	78:4	81:4	2	(! err)
+cond	78:8	78:9	3	! err
+op	78:8	0:0	4	!
+water	78:9	0:0	4	err
+stmts	78:14	81:4	3	
+water	78:14	0:0	4	{
+water	79:8	0:0	4	avctx
+op	79:13	0:0	4	->
+water	79:15	0:0	4	sample_rate
+op	79:27	0:0	4	=
+water	79:29	0:0	4	s
+op	79:30	0:0	4	->
+water	79:32	0:0	4	sample_rate
+water	79:43	0:0	4	;
+water	80:8	0:0	4	avctx
+op	80:13	0:0	4	->
+water	80:15	0:0	4	bit_rate
+op	80:27	0:0	4	=
+water	80:29	0:0	4	s
+op	80:30	0:0	4	->
+water	80:32	0:0	4	bit_rate
+water	80:40	0:0	4	;
+water	81:4	0:0	4	}
+if	83:4	106:4	2	(! err || ( s -> channels && s -> out_channels != s -> channels ))
+cond	83:8	83:62	3	! err || ( s -> channels && s -> out_channels != s -> channels )
+op	83:8	0:0	4	!
+water	83:9	0:0	4	err
+op	83:13	0:0	4	||
+water	83:16	0:0	4	(
+water	83:17	0:0	4	s
+op	83:18	0:0	4	->
+water	83:20	0:0	4	channels
+op	83:29	0:0	4	&&
+water	83:32	0:0	4	s
+op	83:33	0:0	4	->
+water	83:35	0:0	4	out_channels
+op	83:48	0:0	4	!=
+water	83:51	0:0	4	s
+op	83:52	0:0	4	->
+water	83:54	0:0	4	channels
+water	83:62	0:0	4	)
+stmts	83:65	106:4	3	
+water	83:65	0:0	4	{
+water	84:8	0:0	4	s
+op	84:9	0:0	4	->
+water	84:11	0:0	4	out_channels
+op	84:24	0:0	4	=
+water	84:26	0:0	4	s
+op	84:27	0:0	4	->
+water	84:29	0:0	4	channels
+water	84:37	0:0	4	;
+water	85:8	0:0	4	s
+op	85:9	0:0	4	->
+water	85:11	0:0	4	output_mode
+op	85:24	0:0	4	=
+water	85:26	0:0	4	s
+op	85:27	0:0	4	->
+water	85:29	0:0	4	channel_mode
+water	85:41	0:0	4	;
+if	86:8	87:46	4	(s -> lfe_on)
+cond	86:12	86:15	5	s -> lfe_on
+water	86:12	0:0	6	s
+op	86:13	0:0	6	->
+water	86:15	0:0	6	lfe_on
+stmts	87:12	87:46	5	
+water	87:12	0:0	6	s
+op	87:13	0:0	6	->
+water	87:15	0:0	6	output_mode
+op	87:27	0:0	6	|=
+water	87:30	0:0	6	AC3_OUTPUT_LFEON
+water	87:46	0:0	6	;
+if	88:8	92:8	4	(s -> channels > 1 && avctx -> request_channel_layout == AV_CH_LAYOUT_MONO)
+cond	88:12	89:45	5	s -> channels > 1 && avctx -> request_channel_layout == AV_CH_LAYOUT_MONO
+water	88:12	0:0	6	s
+op	88:13	0:0	6	->
+water	88:15	0:0	6	channels
+op	88:24	0:0	6	>
+water	88:26	0:0	6	1
+op	88:28	0:0	6	&&
+water	89:12	0:0	6	avctx
+op	89:17	0:0	6	->
+water	89:19	0:0	6	request_channel_layout
+op	89:42	0:0	6	==
+water	89:45	0:0	6	AV_CH_LAYOUT_MONO
+stmts	89:64	92:8	5	
+water	89:64	0:0	6	{
+water	90:12	0:0	6	s
+op	90:13	0:0	6	->
+water	90:15	0:0	6	out_channels
+op	90:28	0:0	6	=
+water	90:30	0:0	6	1
+water	90:31	0:0	6	;
+water	91:12	0:0	6	s
+op	91:13	0:0	6	->
+water	91:15	0:0	6	output_mode
+op	91:28	0:0	6	=
+water	91:30	0:0	6	AC3_CHMODE_MONO
+water	91:45	0:0	6	;
+water	92:8	0:0	6	}
+else	92:10	96:8	4
+stmts	92:15	96:8	5	
+if	92:15	96:8	6	(s -> channels > 2 && avctx -> request_channel_layout == AV_CH_LAYOUT_STEREO)
+cond	92:19	93:52	7	s -> channels > 2 && avctx -> request_channel_layout == AV_CH_LAYOUT_STEREO
+water	92:19	0:0	8	s
+op	92:20	0:0	8	->
+water	92:22	0:0	8	channels
+op	92:31	0:0	8	>
+water	92:33	0:0	8	2
+op	92:35	0:0	8	&&
+water	93:19	0:0	8	avctx
+op	93:24	0:0	8	->
+water	93:26	0:0	8	request_channel_layout
+op	93:49	0:0	8	==
+water	93:52	0:0	8	AV_CH_LAYOUT_STEREO
+stmts	93:73	96:8	7	
+water	93:73	0:0	8	{
+water	94:12	0:0	8	s
+op	94:13	0:0	8	->
+water	94:15	0:0	8	out_channels
+op	94:28	0:0	8	=
+water	94:30	0:0	8	2
+water	94:31	0:0	8	;
+water	95:12	0:0	8	s
+op	95:13	0:0	8	->
+water	95:15	0:0	8	output_mode
+op	95:28	0:0	8	=
+water	95:30	0:0	8	AC3_CHMODE_STEREO
+water	95:47	0:0	8	;
+water	96:8	0:0	8	}
+water	97:8	0:0	4	s
+op	97:9	0:0	4	->
+water	97:11	0:0	4	loro_center_mix_level
+op	97:35	0:0	4	=
+water	97:37	0:0	4	gain_levels
+op	97:48	0:0	4	[
+water	97:49	0:0	4	s
+op	97:50	0:0	4	->
+water	97:54	0:0	4	center_mix_level
+op	97:70	0:0	4	]
+water	97:71	0:0	4	;
+water	98:8	0:0	4	s
+op	98:9	0:0	4	->
+water	98:11	0:0	4	loro_surround_mix_level
+op	98:35	0:0	4	=
+water	98:37	0:0	4	gain_levels
+op	98:48	0:0	4	[
+water	98:49	0:0	4	s
+op	98:50	0:0	4	->
+water	98:52	0:0	4	surround_mix_level
+op	98:70	0:0	4	]
+water	98:71	0:0	4	;
+water	99:8	0:0	4	s
+op	99:9	0:0	4	->
+water	99:11	0:0	4	ltrt_center_mix_level
+op	99:35	0:0	4	=
+water	99:37	0:0	4	LEVEL_MINUS_3DB
+water	99:52	0:0	4	;
+water	100:8	0:0	4	s
+op	100:9	0:0	4	->
+water	100:11	0:0	4	ltrt_surround_mix_level
+op	100:35	0:0	4	=
+water	100:37	0:0	4	LEVEL_MINUS_3DB
+water	100:52	0:0	4	;
+if	102:8	105:8	4	(s -> channels != s -> out_channels && ! ( ( s -> output_mode & AC3_OUTPUT_LFEON ) && s -> fbw_channels == s -> out_channels ))
+cond	102:12	103:50	5	s -> channels != s -> out_channels && ! ( ( s -> output_mode & AC3_OUTPUT_LFEON ) && s -> fbw_channels == s -> out_channels )
+water	102:12	0:0	6	s
+op	102:13	0:0	6	->
+water	102:15	0:0	6	channels
+op	102:24	0:0	6	!=
+water	102:27	0:0	6	s
+op	102:28	0:0	6	->
+water	102:30	0:0	6	out_channels
+op	102:43	0:0	6	&&
+op	102:46	0:0	6	!
+water	102:47	0:0	6	(
+water	102:48	0:0	6	(
+water	102:49	0:0	6	s
+op	102:50	0:0	6	->
+water	102:52	0:0	6	output_mode
+op	102:64	0:0	6	&
+water	102:66	0:0	6	AC3_OUTPUT_LFEON
+water	102:82	0:0	6	)
+op	102:84	0:0	6	&&
+water	103:16	0:0	6	s
+op	103:17	0:0	6	->
+water	103:19	0:0	6	fbw_channels
+op	103:32	0:0	6	==
+water	103:35	0:0	6	s
+op	103:36	0:0	6	->
+water	103:38	0:0	6	out_channels
+water	103:50	0:0	6	)
+stmts	103:53	105:8	5	
+water	103:53	0:0	6	{
+call	104:12	104:32	6	set_downmix_coeffs
+arg	104:31	104:32	7	s
+water	104:31	0:0	8	s
+water	104:33	0:0	6	;
+water	105:8	0:0	6	}
+water	106:4	0:0	4	}
+else	106:6	109:4	2
+stmts	106:11	109:4	3	
+if	106:11	109:4	4	(! s -> channels)
+cond	106:15	106:19	5	! s -> channels
+op	106:15	0:0	6	!
+water	106:16	0:0	6	s
+op	106:17	0:0	6	->
+water	106:19	0:0	6	channels
+stmts	106:29	109:4	5	
+water	106:29	0:0	6	{
+call	107:8	107:72	6	av_log
+arg	107:15	107:20	7	avctx
+water	107:15	0:0	8	avctx
+arg	107:22	107:34	7	AV_LOG_ERROR
+water	107:22	0:0	8	AV_LOG_ERROR
+arg	107:36	107:72	7	"unable to determine channel mode\n"
+water	107:36	0:0	8	"unable to determine channel mode\n"
+water	107:73	0:0	6	;
+return	108:8	108:34	6	AVERROR_INVALIDDATA
+water	108:15	0:0	7	AVERROR_INVALIDDATA
+water	109:4	0:0	6	}
+water	110:4	0:0	2	avctx
+op	110:9	0:0	2	->
+water	110:11	0:0	2	channels
+op	110:20	0:0	2	=
+water	110:22	0:0	2	s
+op	110:23	0:0	2	->
+water	110:25	0:0	2	out_channels
+water	110:37	0:0	2	;
+water	111:4	0:0	2	avctx
+op	111:9	0:0	2	->
+water	111:11	0:0	2	channel_layout
+op	111:26	0:0	2	=
+water	111:28	0:0	2	avpriv_ac3_channel_layout_tab
+op	111:57	0:0	2	[
+water	111:58	0:0	2	s
+op	111:59	0:0	2	->
+water	111:61	0:0	2	output_mode
+op	111:73	0:0	2	&
+water	111:75	0:0	2	~AC3_OUTPUT_LFEON
+op	111:92	0:0	2	]
+water	111:93	0:0	2	;
+if	112:4	113:52	2	(s -> output_mode & AC3_OUTPUT_LFEON)
+cond	112:8	112:25	3	s -> output_mode & AC3_OUTPUT_LFEON
+water	112:8	0:0	4	s
+op	112:9	0:0	4	->
+water	112:11	0:0	4	output_mode
+op	112:23	0:0	4	&
+water	112:25	0:0	4	AC3_OUTPUT_LFEON
+stmts	113:8	113:52	3	
+water	113:8	0:0	4	avctx
+op	113:13	0:0	4	->
+water	113:15	0:0	4	channel_layout
+op	113:30	0:0	4	|=
+water	113:33	0:0	4	AV_CH_LOW_FREQUENCY
+water	113:52	0:0	4	;
+water	115:4	0:0	2	avctx
+op	115:9	0:0	2	->
+water	115:11	0:0	2	audio_service_type
+op	115:30	0:0	2	=
+water	115:32	0:0	2	s
+op	115:33	0:0	2	->
+water	115:35	0:0	2	bitstream_mode
+water	115:49	0:0	2	;
+if	116:4	117:65	2	(s -> bitstream_mode == 0 x7 && s -> channels > 1)
+cond	116:8	116:50	3	s -> bitstream_mode == 0 x7 && s -> channels > 1
+water	116:8	0:0	4	s
+op	116:9	0:0	4	->
+water	116:11	0:0	4	bitstream_mode
+op	116:26	0:0	4	==
+water	116:29	0:0	4	0
+water	116:30	0:0	4	x7
+op	116:33	0:0	4	&&
+water	116:36	0:0	4	s
+op	116:37	0:0	4	->
+water	116:39	0:0	4	channels
+op	116:48	0:0	4	>
+water	116:50	0:0	4	1
+stmts	117:8	117:65	3	
+water	117:8	0:0	4	avctx
+op	117:13	0:0	4	->
+water	117:15	0:0	4	audio_service_type
+op	117:34	0:0	4	=
+water	117:36	0:0	4	AV_AUDIO_SERVICE_TYPE_KARAOKE
+water	117:65	0:0	4	;
+water	119:4	0:0	2	frame
+op	119:9	0:0	2	->
+water	119:11	0:0	2	nb_samples
+op	119:22	0:0	2	=
+water	119:24	0:0	2	s
+op	119:25	0:0	2	->
+water	119:27	0:0	2	num_blocks
+op	119:38	0:0	2	*
+water	119:40	0:0	2	AC3_BLOCK_SIZE
+water	119:54	0:0	2	;
+if	120:4	121:18	2	(( ret =ff_get_buffer (avctx ,frame ,0 ) ) < 0)
+cond	120:8	120:49	3	( ret =ff_get_buffer (avctx ,frame ,0 ) ) < 0
+water	120:8	0:0	4	(
+water	120:9	0:0	4	ret
+op	120:13	0:0	4	=
+call	120:15	120:44	4	ff_get_buffer
+arg	120:29	120:34	5	avctx
+water	120:29	0:0	6	avctx
+arg	120:36	120:41	5	frame
+water	120:36	0:0	6	frame
+arg	120:43	120:44	5	0
+water	120:43	0:0	6	0
+water	120:45	0:0	4	)
+op	120:47	0:0	4	<
+water	120:49	0:0	4	0
+stmts	121:8	121:18	3	
+return	121:8	121:18	4	ret
+water	121:15	0:0	5	ret
+water	123:4	0:0	2	channel_map
+op	123:16	0:0	2	=
+water	123:18	0:0	2	ff_ac3_dec_channel_map
+op	123:40	0:0	2	[
+water	123:41	0:0	2	s
+op	123:42	0:0	2	->
+water	123:44	0:0	2	output_mode
+op	123:56	0:0	2	&
+water	123:58	0:0	2	~AC3_OUTPUT_LFEON
+op	123:75	0:0	2	]
+op	123:76	0:0	2	[
+water	123:77	0:0	2	s
+op	123:78	0:0	2	->
+water	123:80	0:0	2	lfe_on
+op	123:86	0:0	2	]
+water	123:87	0:0	2	;
+for	124:4	127:4	2	(ch = 0 ;ch < AC3_MAX_CHANNELS;ch ++)
+forinit	124:9	124:15	3	ch = 0 ;
+water	124:9	0:0	4	ch
+op	124:12	0:0	4	=
+water	124:14	0:0	4	0
+water	124:15	0:0	4	;
+cond	124:17	124:22	3	ch < AC3_MAX_CHANNELS
+water	124:17	0:0	4	ch
+op	124:20	0:0	4	<
+water	124:22	0:0	4	AC3_MAX_CHANNELS
+forexpr	124:40	124:42	3	ch ++
+water	124:40	0:0	4	ch
+op	124:42	0:0	4	++
+stmts	124:46	127:4	3	
+water	124:46	0:0	4	{
+water	125:8	0:0	4	output
+op	125:14	0:0	4	[
+water	125:15	0:0	4	ch
+op	125:17	0:0	4	]
+op	125:19	0:0	4	=
+water	125:21	0:0	4	s
+op	125:22	0:0	4	->
+water	125:24	0:0	4	output
+op	125:30	0:0	4	[
+water	125:31	0:0	4	ch
+op	125:33	0:0	4	]
+water	125:34	0:0	4	;
+water	126:8	0:0	4	s
+op	126:9	0:0	4	->
+water	126:11	0:0	4	outptr
+op	126:17	0:0	4	[
+water	126:18	0:0	4	ch
+op	126:20	0:0	4	]
+op	126:22	0:0	4	=
+water	126:24	0:0	4	s
+op	126:25	0:0	4	->
+water	126:27	0:0	4	output
+op	126:33	0:0	4	[
+water	126:34	0:0	4	ch
+op	126:36	0:0	4	]
+water	126:37	0:0	4	;
+water	127:4	0:0	4	}
+for	128:4	131:4	2	(ch = 0 ;ch < s -> channels;ch ++)
+forinit	128:9	128:15	3	ch = 0 ;
+water	128:9	0:0	4	ch
+op	128:12	0:0	4	=
+water	128:14	0:0	4	0
+water	128:15	0:0	4	;
+cond	128:17	128:25	3	ch < s -> channels
+water	128:17	0:0	4	ch
+op	128:20	0:0	4	<
+water	128:22	0:0	4	s
+op	128:23	0:0	4	->
+water	128:25	0:0	4	channels
+forexpr	128:35	128:37	3	ch ++
+water	128:35	0:0	4	ch
+op	128:37	0:0	4	++
+stmts	128:41	131:4	3	
+water	128:41	0:0	4	{
+if	129:8	130:70	4	(ch < s -> out_channels)
+cond	129:12	129:20	5	ch < s -> out_channels
+water	129:12	0:0	6	ch
+op	129:15	0:0	6	<
+water	129:17	0:0	6	s
+op	129:18	0:0	6	->
+water	129:20	0:0	6	out_channels
+stmts	130:12	130:70	5	
+water	130:12	0:0	6	s
+op	130:13	0:0	6	->
+water	130:15	0:0	6	outptr
+op	130:21	0:0	6	[
+water	130:22	0:0	6	channel_map
+op	130:33	0:0	6	[
+water	130:34	0:0	6	ch
+op	130:36	0:0	6	]
+op	130:37	0:0	6	]
+op	130:39	0:0	6	=
+water	130:41	0:0	6	(
+water	130:42	0:0	6	SHORTFLOAT
+op	130:53	0:0	6	*
+water	130:54	0:0	6	)
+water	130:55	0:0	6	frame
+op	130:60	0:0	6	->
+water	130:62	0:0	6	data
+op	130:66	0:0	6	[
+water	130:67	0:0	6	ch
+op	130:69	0:0	6	]
+water	130:70	0:0	6	;
+water	131:4	0:0	4	}
+for	132:4	146:4	2	(blk = 0 ;blk < s -> num_blocks;blk ++)
+forinit	132:9	132:16	3	blk = 0 ;
+water	132:9	0:0	4	blk
+op	132:13	0:0	4	=
+water	132:15	0:0	4	0
+water	132:16	0:0	4	;
+cond	132:18	132:27	3	blk < s -> num_blocks
+water	132:18	0:0	4	blk
+op	132:22	0:0	4	<
+water	132:24	0:0	4	s
+op	132:25	0:0	4	->
+water	132:27	0:0	4	num_blocks
+forexpr	132:39	132:42	3	blk ++
+water	132:39	0:0	4	blk
+op	132:42	0:0	4	++
+stmts	132:46	146:4	3	
+water	132:46	0:0	4	{
+if	133:8	136:8	4	(! err &&decode_audio_block (s ,blk ))
+cond	133:12	133:45	5	! err &&decode_audio_block (s ,blk )
+op	133:12	0:0	6	!
+water	133:13	0:0	6	err
+op	133:17	0:0	6	&&
+call	133:20	133:45	6	decode_audio_block
+arg	133:39	133:40	7	s
+water	133:39	0:0	8	s
+arg	133:42	133:45	7	blk
+water	133:42	0:0	8	blk
+stmts	133:48	136:8	5	
+water	133:48	0:0	6	{
+call	134:12	134:74	6	av_log
+arg	134:19	134:24	7	avctx
+water	134:19	0:0	8	avctx
+arg	134:26	134:38	7	AV_LOG_ERROR
+water	134:26	0:0	8	AV_LOG_ERROR
+arg	134:40	134:74	7	"error decoding the audio block\n"
+water	134:40	0:0	8	"error decoding the audio block\n"
+water	134:75	0:0	6	;
+water	135:12	0:0	6	err
+op	135:16	0:0	6	=
+water	135:18	0:0	6	1
+water	135:19	0:0	6	;
+water	136:8	0:0	6	}
+if	137:8	139:122	4	(err)
+cond	137:12	137:12	5	err
+water	137:12	0:0	6	err
+stmts	138:12	139:122	5	
+for	138:12	139:122	6	(ch = 0 ;ch < s -> out_channels;ch ++)
+forinit	138:17	138:23	7	ch = 0 ;
+water	138:17	0:0	8	ch
+op	138:20	0:0	8	=
+water	138:22	0:0	8	0
+water	138:23	0:0	8	;
+cond	138:25	138:33	7	ch < s -> out_channels
+water	138:25	0:0	8	ch
+op	138:28	0:0	8	<
+water	138:30	0:0	8	s
+op	138:31	0:0	8	->
+water	138:33	0:0	8	out_channels
+forexpr	138:47	138:49	7	ch ++
+water	138:47	0:0	8	ch
+op	138:49	0:0	8	++
+stmts	139:16	139:122	7	
+call	139:16	139:121	8	memcpy
+arg	139:23	139:74	9	((SHORTFLOAT*)frame->data[ch])+AC3_BLOCK_SIZE*blk
+water	139:23	0:0	10	(
+water	139:24	0:0	10	(
+water	139:25	0:0	10	SHORTFLOAT
+op	139:35	0:0	10	*
+water	139:36	0:0	10	)
+water	139:37	0:0	10	frame
+op	139:42	0:0	10	->
+water	139:44	0:0	10	data
+op	139:48	0:0	10	[
+water	139:49	0:0	10	ch
+op	139:51	0:0	10	]
+water	139:52	0:0	10	)
+op	139:54	0:0	10	+
+water	139:56	0:0	10	AC3_BLOCK_SIZE
+op	139:70	0:0	10	*
+water	139:71	0:0	10	blk
+arg	139:76	139:86	9	output[ch]
+water	139:76	0:0	10	output
+op	139:82	0:0	10	[
+water	139:83	0:0	10	ch
+op	139:85	0:0	10	]
+arg	139:88	139:121	9	AC3_BLOCK_SIZE*sizeof(SHORTFLOAT)
+water	139:88	0:0	10	AC3_BLOCK_SIZE
+op	139:102	0:0	10	*
+op	139:103	0:0	10	sizeof
+water	139:109	0:0	10	(
+water	139:110	0:0	10	SHORTFLOAT
+water	139:120	0:0	10	)
+water	139:122	0:0	8	;
+for	140:8	141:51	4	(ch = 0 ;ch < s -> out_channels;ch ++)
+forinit	140:13	140:19	5	ch = 0 ;
+water	140:13	0:0	6	ch
+op	140:16	0:0	6	=
+water	140:18	0:0	6	0
+water	140:19	0:0	6	;
+cond	140:21	140:29	5	ch < s -> out_channels
+water	140:21	0:0	6	ch
+op	140:24	0:0	6	<
+water	140:26	0:0	6	s
+op	140:27	0:0	6	->
+water	140:29	0:0	6	out_channels
+forexpr	140:43	140:45	5	ch ++
+water	140:43	0:0	6	ch
+op	140:45	0:0	6	++
+stmts	141:12	141:51	5	
+water	141:12	0:0	6	output
+op	141:18	0:0	6	[
+water	141:19	0:0	6	ch
+op	141:21	0:0	6	]
+op	141:23	0:0	6	=
+water	141:25	0:0	6	s
+op	141:26	0:0	6	->
+water	141:28	0:0	6	outptr
+op	141:34	0:0	6	[
+water	141:35	0:0	6	channel_map
+op	141:46	0:0	6	[
+water	141:47	0:0	6	ch
+op	141:49	0:0	6	]
+op	141:50	0:0	6	]
+water	141:51	0:0	6	;
+for	142:8	145:8	4	(ch = 0 ;ch < s -> out_channels;ch ++)
+forinit	142:13	142:19	5	ch = 0 ;
+water	142:13	0:0	6	ch
+op	142:16	0:0	6	=
+water	142:18	0:0	6	0
+water	142:19	0:0	6	;
+cond	142:21	142:29	5	ch < s -> out_channels
+water	142:21	0:0	6	ch
+op	142:24	0:0	6	<
+water	142:26	0:0	6	s
+op	142:27	0:0	6	->
+water	142:29	0:0	6	out_channels
+forexpr	142:43	142:45	5	ch ++
+water	142:43	0:0	6	ch
+op	142:45	0:0	6	++
+stmts	142:49	145:8	5	
+water	142:49	0:0	6	{
+if	143:12	144:60	6	(! ch || channel_map [ ch ])
+cond	143:16	143:37	7	! ch || channel_map [ ch ]
+op	143:16	0:0	8	!
+water	143:17	0:0	8	ch
+op	143:20	0:0	8	||
+water	143:23	0:0	8	channel_map
+op	143:34	0:0	8	[
+water	143:35	0:0	8	ch
+op	143:37	0:0	8	]
+stmts	144:16	144:60	7	
+water	144:16	0:0	8	s
+op	144:17	0:0	8	->
+water	144:19	0:0	8	outptr
+op	144:25	0:0	8	[
+water	144:26	0:0	8	channel_map
+op	144:37	0:0	8	[
+water	144:38	0:0	8	ch
+op	144:40	0:0	8	]
+op	144:41	0:0	8	]
+op	144:43	0:0	8	+=
+water	144:46	0:0	8	AC3_BLOCK_SIZE
+water	144:60	0:0	8	;
+water	145:8	0:0	6	}
+water	146:4	0:0	4	}
+call	147:4	147:86	2	av_frame_set_decode_error_flags
+arg	147:36	147:41	3	frame
+water	147:36	0:0	4	frame
+arg	147:43	147:86	3	err?FF_DECODE_ERROR_INVALID_BITSTREAM:0
+water	147:43	0:0	4	err
+water	147:47	0:0	4	?
+water	147:49	0:0	4	FF_DECODE_ERROR_INVALID_BITSTREAM
+water	147:83	0:0	4	:
+water	147:85	0:0	4	0
+water	147:87	0:0	2	;
+for	149:4	150:76	2	(ch = 0 ;ch < s -> out_channels;ch ++)
+forinit	149:9	149:15	3	ch = 0 ;
+water	149:9	0:0	4	ch
+op	149:12	0:0	4	=
+water	149:14	0:0	4	0
+water	149:15	0:0	4	;
+cond	149:17	149:25	3	ch < s -> out_channels
+water	149:17	0:0	4	ch
+op	149:20	0:0	4	<
+water	149:22	0:0	4	s
+op	149:23	0:0	4	->
+water	149:25	0:0	4	out_channels
+forexpr	149:39	149:41	3	ch ++
+water	149:39	0:0	4	ch
+op	149:41	0:0	4	++
+stmts	150:8	150:76	3	
+call	150:8	150:75	4	memcpy
+arg	150:15	150:28	5	s->output[ch]
+water	150:15	0:0	6	s
+op	150:16	0:0	6	->
+water	150:18	0:0	6	output
+op	150:24	0:0	6	[
+water	150:25	0:0	6	ch
+op	150:27	0:0	6	]
+arg	150:30	150:40	5	output[ch]
+water	150:30	0:0	6	output
+op	150:36	0:0	6	[
+water	150:37	0:0	6	ch
+op	150:39	0:0	6	]
+arg	150:42	150:75	5	AC3_BLOCK_SIZE*sizeof(SHORTFLOAT)
+water	150:42	0:0	6	AC3_BLOCK_SIZE
+op	150:56	0:0	6	*
+op	150:57	0:0	6	sizeof
+water	150:63	0:0	6	(
+water	150:64	0:0	6	SHORTFLOAT
+water	150:74	0:0	6	)
+water	150:76	0:0	4	;
+water	157:4	0:0	2	matrix_encoding
+op	157:20	0:0	2	=
+water	157:22	0:0	2	AV_MATRIX_ENCODING_NONE
+water	157:45	0:0	2	;
+if	158:4	164:4	2	(s -> channel_mode == AC3_CHMODE_STEREO && s -> channel_mode == ( s -> output_mode & ~AC3_OUTPUT_LFEON ))
+cond	158:8	159:62	3	s -> channel_mode == AC3_CHMODE_STEREO && s -> channel_mode == ( s -> output_mode & ~AC3_OUTPUT_LFEON )
+water	158:8	0:0	4	s
+op	158:9	0:0	4	->
+water	158:11	0:0	4	channel_mode
+op	158:24	0:0	4	==
+water	158:27	0:0	4	AC3_CHMODE_STEREO
+op	158:45	0:0	4	&&
+water	159:8	0:0	4	s
+op	159:9	0:0	4	->
+water	159:11	0:0	4	channel_mode
+op	159:24	0:0	4	==
+water	159:27	0:0	4	(
+water	159:28	0:0	4	s
+op	159:29	0:0	4	->
+water	159:31	0:0	4	output_mode
+op	159:43	0:0	4	&
+water	159:45	0:0	4	~AC3_OUTPUT_LFEON
+water	159:62	0:0	4	)
+stmts	159:65	164:4	3	
+water	159:65	0:0	4	{
+if	160:8	161:54	4	(s -> dolby_surround_mode == AC3_DSURMOD_ON)
+cond	160:12	160:38	5	s -> dolby_surround_mode == AC3_DSURMOD_ON
+water	160:12	0:0	6	s
+op	160:13	0:0	6	->
+water	160:15	0:0	6	dolby_surround_mode
+op	160:35	0:0	6	==
+water	160:38	0:0	6	AC3_DSURMOD_ON
+stmts	161:12	161:54	5	
+water	161:12	0:0	6	matrix_encoding
+op	161:28	0:0	6	=
+water	161:30	0:0	6	AV_MATRIX_ENCODING_DOLBY
+water	161:54	0:0	6	;
+else	162:8	163:63	4
+stmts	162:13	163:63	5	
+if	162:13	163:63	6	(s -> dolby_headphone_mode == AC3_DHEADPHONMOD_ON)
+cond	162:17	162:44	7	s -> dolby_headphone_mode == AC3_DHEADPHONMOD_ON
+water	162:17	0:0	8	s
+op	162:18	0:0	8	->
+water	162:20	0:0	8	dolby_headphone_mode
+op	162:41	0:0	8	==
+water	162:44	0:0	8	AC3_DHEADPHONMOD_ON
+stmts	163:12	163:63	7	
+water	163:12	0:0	8	matrix_encoding
+op	163:28	0:0	8	=
+water	163:30	0:0	8	AV_MATRIX_ENCODING_DOLBYHEADPHONE
+water	163:63	0:0	8	;
+water	164:4	0:0	4	}
+else	164:6	176:4	2
+stmts	164:11	176:4	3	
+if	164:11	176:4	4	(s -> channel_mode >= AC3_CHMODE_2F2R && s -> channel_mode == ( s -> output_mode & ~AC3_OUTPUT_LFEON ))
+cond	164:15	165:69	5	s -> channel_mode >= AC3_CHMODE_2F2R && s -> channel_mode == ( s -> output_mode & ~AC3_OUTPUT_LFEON )
+water	164:15	0:0	6	s
+op	164:16	0:0	6	->
+water	164:18	0:0	6	channel_mode
+op	164:31	0:0	6	>=
+water	164:34	0:0	6	AC3_CHMODE_2F2R
+op	164:50	0:0	6	&&
+water	165:15	0:0	6	s
+op	165:16	0:0	6	->
+water	165:18	0:0	6	channel_mode
+op	165:31	0:0	6	==
+water	165:34	0:0	6	(
+water	165:35	0:0	6	s
+op	165:36	0:0	6	->
+water	165:38	0:0	6	output_mode
+op	165:50	0:0	6	&
+water	165:52	0:0	6	~AC3_OUTPUT_LFEON
+water	165:69	0:0	6	)
+stmts	165:72	176:4	5	
+water	165:72	0:0	6	{
+switch	166:8	175:8	6	(s -> dolby_surround_ex_mode)
+cond	166:16	166:19	7	s -> dolby_surround_ex_mode
+water	166:16	0:0	8	s
+op	166:17	0:0	8	->
+water	166:19	0:0	8	dolby_surround_ex_mode
+stmts	166:43	175:8	7	
+water	166:43	0:0	8	{
+label	167:8	167:29	8	case AC3_DSUREXMOD_ON :
+water	168:12	0:0	8	matrix_encoding
+op	168:28	0:0	8	=
+water	168:30	0:0	8	AV_MATRIX_ENCODING_DOLBYEX
+water	168:56	0:0	8	;
+break	169:12	169:17	8	
+label	170:8	170:32	8	case AC3_DSUREXMOD_PLIIZ :
+water	171:12	0:0	8	matrix_encoding
+op	171:28	0:0	8	=
+water	171:30	0:0	8	AV_MATRIX_ENCODING_DPLIIZ
+water	171:55	0:0	8	;
+break	172:12	172:17	8	
+label	173:8	173:15	8	default :
+break	174:12	174:17	8	
+water	175:8	0:0	8	}
+water	176:4	0:0	6	}
+if	177:4	178:18	2	(( ret =ff_side_data_update_matrix_encoding (frame ,matrix_encoding ) ) < 0)
+cond	177:8	177:78	3	( ret =ff_side_data_update_matrix_encoding (frame ,matrix_encoding ) ) < 0
+water	177:8	0:0	4	(
+water	177:9	0:0	4	ret
+op	177:13	0:0	4	=
+call	177:15	177:73	4	ff_side_data_update_matrix_encoding
+arg	177:51	177:56	5	frame
+water	177:51	0:0	6	frame
+arg	177:58	177:73	5	matrix_encoding
+water	177:58	0:0	6	matrix_encoding
+water	177:74	0:0	4	)
+op	177:76	0:0	4	<
+water	177:78	0:0	4	0
+stmts	178:8	178:18	3	
+return	178:8	178:18	4	ret
+water	178:15	0:0	5	ret
+if	180:4	203:4	2	(( downmix_info =av_downmix_info_update_side_data (frame ) ))
+cond	180:8	180:63	3	( downmix_info =av_downmix_info_update_side_data (frame ) )
+water	180:8	0:0	4	(
+water	180:9	0:0	4	downmix_info
+op	180:22	0:0	4	=
+call	180:24	180:62	4	av_downmix_info_update_side_data
+arg	180:57	180:62	5	frame
+water	180:57	0:0	6	frame
+water	180:63	0:0	4	)
+stmts	180:66	203:4	3	
+water	180:66	0:0	4	{
+switch	181:8	194:8	4	(s -> preferred_downmix)
+cond	181:16	181:19	5	s -> preferred_downmix
+water	181:16	0:0	6	s
+op	181:17	0:0	6	->
+water	181:19	0:0	6	preferred_downmix
+stmts	181:38	194:8	5	
+water	181:38	0:0	6	{
+label	182:8	182:29	6	case AC3_DMIXMOD_LTRT :
+water	183:12	0:0	6	downmix_info
+op	183:24	0:0	6	->
+water	183:26	0:0	6	preferred_downmix_type
+op	183:49	0:0	6	=
+water	183:51	0:0	6	AV_DOWNMIX_TYPE_LTRT
+water	183:71	0:0	6	;
+break	184:12	184:17	6	
+label	185:8	185:29	6	case AC3_DMIXMOD_LORO :
+water	186:12	0:0	6	downmix_info
+op	186:24	0:0	6	->
+water	186:26	0:0	6	preferred_downmix_type
+op	186:49	0:0	6	=
+water	186:51	0:0	6	AV_DOWNMIX_TYPE_LORO
+water	186:71	0:0	6	;
+break	187:12	187:17	6	
+label	188:8	188:30	6	case AC3_DMIXMOD_DPLII :
+water	189:12	0:0	6	downmix_info
+op	189:24	0:0	6	->
+water	189:26	0:0	6	preferred_downmix_type
+op	189:49	0:0	6	=
+water	189:51	0:0	6	AV_DOWNMIX_TYPE_DPLII
+water	189:72	0:0	6	;
+break	190:12	190:17	6	
+label	191:8	191:15	6	default :
+water	192:12	0:0	6	downmix_info
+op	192:24	0:0	6	->
+water	192:26	0:0	6	preferred_downmix_type
+op	192:49	0:0	6	=
+water	192:51	0:0	6	AV_DOWNMIX_TYPE_UNKNOWN
+water	192:74	0:0	6	;
+break	193:12	193:17	6	
+water	194:8	0:0	6	}
+water	195:8	0:0	4	downmix_info
+op	195:20	0:0	4	->
+water	195:22	0:0	4	center_mix_level
+op	195:46	0:0	4	=
+water	195:48	0:0	4	gain_levels
+op	195:59	0:0	4	[
+water	195:60	0:0	4	s
+op	195:61	0:0	4	->
+water	195:70	0:0	4	center_mix_level
+op	195:86	0:0	4	]
+water	195:87	0:0	4	;
+water	196:8	0:0	4	downmix_info
+op	196:20	0:0	4	->
+water	196:22	0:0	4	center_mix_level_ltrt
+op	196:46	0:0	4	=
+water	196:48	0:0	4	gain_levels
+op	196:59	0:0	4	[
+water	196:60	0:0	4	s
+op	196:61	0:0	4	->
+water	196:65	0:0	4	center_mix_level_ltrt
+op	196:86	0:0	4	]
+water	196:87	0:0	4	;
+water	197:8	0:0	4	downmix_info
+op	197:20	0:0	4	->
+water	197:22	0:0	4	surround_mix_level
+op	197:46	0:0	4	=
+water	197:48	0:0	4	gain_levels
+op	197:59	0:0	4	[
+water	197:60	0:0	4	s
+op	197:61	0:0	4	->
+water	197:68	0:0	4	surround_mix_level
+op	197:86	0:0	4	]
+water	197:87	0:0	4	;
+water	198:8	0:0	4	downmix_info
+op	198:20	0:0	4	->
+water	198:22	0:0	4	surround_mix_level_ltrt
+op	198:46	0:0	4	=
+water	198:48	0:0	4	gain_levels
+op	198:59	0:0	4	[
+water	198:60	0:0	4	s
+op	198:61	0:0	4	->
+water	198:63	0:0	4	surround_mix_level_ltrt
+op	198:86	0:0	4	]
+water	198:87	0:0	4	;
+if	199:8	200:81	4	(s -> lfe_mix_level_exists)
+cond	199:12	199:15	5	s -> lfe_mix_level_exists
+water	199:12	0:0	6	s
+op	199:13	0:0	6	->
+water	199:15	0:0	6	lfe_mix_level_exists
+stmts	200:12	200:81	5	
+water	200:12	0:0	6	downmix_info
+op	200:24	0:0	6	->
+water	200:26	0:0	6	lfe_mix_level
+op	200:46	0:0	6	=
+water	200:48	0:0	6	gain_levels_lfe
+op	200:63	0:0	6	[
+water	200:64	0:0	6	s
+op	200:65	0:0	6	->
+water	200:67	0:0	6	lfe_mix_level
+op	200:80	0:0	6	]
+water	200:81	0:0	6	;
+else	201:8	202:51	4
+stmts	202:12	202:51	5	
+water	202:12	0:0	6	downmix_info
+op	202:24	0:0	6	->
+water	202:26	0:0	6	lfe_mix_level
+op	202:46	0:0	6	=
+water	202:48	0:0	6	0
+op	202:49	0:0	6	.
+water	202:50	0:0	6	0
+water	202:51	0:0	6	;
+water	203:4	0:0	4	}
+else	203:6	204:30	2
+stmts	204:8	204:30	3	
+return	204:8	204:30	4	AVERROR(ENOMEM)
+call	204:15	204:29	5	AVERROR
+arg	204:23	204:29	6	ENOMEM
+water	204:23	0:0	7	ENOMEM
+op	205:4	0:0	2	*
+water	205:5	0:0	2	got_frame_ptr
+op	205:19	0:0	2	=
+water	205:21	0:0	2	1
+water	205:22	0:0	2	;
+return	206:4	206:41	2	FFMIN(buf_size,s->frame_size)
+call	206:11	206:40	3	FFMIN
+arg	206:17	206:25	4	buf_size
+water	206:17	0:0	5	buf_size
+arg	206:27	206:40	4	s->frame_size
+water	206:27	0:0	5	s
+op	206:28	0:0	5	->
+water	206:30	0:0	5	frame_size

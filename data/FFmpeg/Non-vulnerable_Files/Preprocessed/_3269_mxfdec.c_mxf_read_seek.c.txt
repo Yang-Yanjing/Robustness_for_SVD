@@ -1,0 +1,348 @@
+func	1:0	60:0	0	static int	mxf_read_seek
+params	1:24	0:0	1	
+param	1:25	1:43	2	AVFormatContext *	s
+param	1:45	1:61	2	int	stream_index
+param	1:63	1:82	2	int64_t	sample_time
+param	1:84	1:93	2	int	flags
+stmnts	0:0	59:12	1	
+decl	3:4	3:43	2	AVStream	*st
+op	3:17	0:0	2	=
+water	3:19	0:0	2	s
+op	3:20	0:0	2	->
+water	3:22	0:0	2	streams
+op	3:29	0:0	2	[
+water	3:30	0:0	2	stream_index
+op	3:42	0:0	2	]
+decl	4:4	4:19	2	int64_t	seconds
+decl	5:4	5:34	2	MXFContext	*mxf
+op	5:20	0:0	2	=
+water	5:22	0:0	2	s
+op	5:23	0:0	2	->
+water	5:25	0:0	2	priv_data
+decl	6:4	6:19	2	int64_t	seekpos
+decl	7:4	7:14	2	int	i
+water	7:9	0:0	2	,
+decl	7:4	7:14	2	int	ret
+decl	8:4	8:20	2	MXFIndexTable	*t
+decl	9:4	9:42	2	MXFTrack	*source_track
+op	9:27	0:0	2	=
+water	9:29	0:0	2	st
+op	9:31	0:0	2	->
+water	9:33	0:0	2	priv_data
+if	11:4	13:69	2	(st -> codec -> codec_type == AVMEDIA_TYPE_AUDIO)
+cond	11:8	11:33	3	st -> codec -> codec_type == AVMEDIA_TYPE_AUDIO
+water	11:8	0:0	4	st
+op	11:10	0:0	4	->
+water	11:12	0:0	4	codec
+op	11:17	0:0	4	->
+water	11:19	0:0	4	codec_type
+op	11:30	0:0	4	==
+water	11:33	0:0	4	AVMEDIA_TYPE_AUDIO
+stmts	12:8	13:69	3	
+water	12:8	0:0	4	sample_time
+op	12:20	0:0	4	=
+call	12:22	13:68	4	av_rescale_q
+arg	12:35	12:46	5	sample_time
+water	12:35	0:0	6	sample_time
+arg	12:48	12:61	5	st->time_base
+water	12:48	0:0	6	st
+op	12:50	0:0	6	->
+water	12:52	0:0	6	time_base
+arg	13:35	13:68	5	av_inv_q(source_track->edit_rate)
+call	13:35	13:67	6	av_inv_q
+arg	13:44	13:67	7	source_track->edit_rate
+water	13:44	0:0	8	source_track
+op	13:56	0:0	8	->
+water	13:58	0:0	8	edit_rate
+water	13:69	0:0	4	;
+if	14:4	25:4	2	(mxf -> nb_index_tables <= 0)
+cond	14:8	14:32	3	mxf -> nb_index_tables <= 0
+water	14:8	0:0	4	mxf
+op	14:11	0:0	4	->
+water	14:13	0:0	4	nb_index_tables
+op	14:29	0:0	4	<=
+water	14:32	0:0	4	0
+stmts	14:35	25:4	3	
+water	14:35	0:0	4	{
+if	15:4	16:34	4	(! s -> bit_rate)
+cond	15:8	15:12	5	! s -> bit_rate
+op	15:8	0:0	6	!
+water	15:9	0:0	6	s
+op	15:10	0:0	6	->
+water	15:12	0:0	6	bit_rate
+stmts	16:8	16:34	5	
+return	16:8	16:34	6	AVERROR_INVALIDDATA
+water	16:15	0:0	7	AVERROR_INVALIDDATA
+if	17:4	18:23	4	(sample_time < 0)
+cond	17:8	17:22	5	sample_time < 0
+water	17:8	0:0	6	sample_time
+op	17:20	0:0	6	<
+water	17:22	0:0	6	0
+stmts	18:8	18:23	5	
+water	18:8	0:0	6	sample_time
+op	18:20	0:0	6	=
+water	18:22	0:0	6	0
+water	18:23	0:0	6	;
+water	19:4	0:0	4	seconds
+op	19:12	0:0	4	=
+call	19:14	19:74	4	av_rescale
+arg	19:25	19:36	5	sample_time
+water	19:25	0:0	6	sample_time
+arg	19:38	19:55	5	st->time_base.num
+water	19:38	0:0	6	st
+op	19:40	0:0	6	->
+water	19:42	0:0	6	time_base
+op	19:51	0:0	6	.
+water	19:52	0:0	6	num
+arg	19:57	19:74	5	st->time_base.den
+water	19:57	0:0	6	st
+op	19:59	0:0	6	->
+water	19:61	0:0	6	time_base
+op	19:70	0:0	6	.
+water	19:71	0:0	6	den
+water	19:75	0:0	4	;
+water	20:4	0:0	4	seekpos
+op	20:12	0:0	4	=
+call	20:14	20:69	4	avio_seek
+arg	20:24	20:29	5	s->pb
+water	20:24	0:0	6	s
+op	20:25	0:0	6	->
+water	20:27	0:0	6	pb
+arg	20:31	20:59	5	(s->bit_rate*seconds)>>3
+water	20:31	0:0	6	(
+water	20:32	0:0	6	s
+op	20:33	0:0	6	->
+water	20:35	0:0	6	bit_rate
+op	20:44	0:0	6	*
+water	20:46	0:0	6	seconds
+water	20:53	0:0	6	)
+op	20:55	0:0	6	>>
+water	20:58	0:0	6	3
+arg	20:61	20:69	5	SEEK_SET
+water	20:61	0:0	6	SEEK_SET
+water	20:70	0:0	4	;
+if	21:4	22:22	4	(seekpos < 0)
+cond	21:8	21:18	5	seekpos < 0
+water	21:8	0:0	6	seekpos
+op	21:16	0:0	6	<
+water	21:18	0:0	6	0
+stmts	22:8	22:22	5	
+return	22:8	22:22	6	seekpos
+water	22:15	0:0	7	seekpos
+call	23:4	23:40	4	ff_update_cur_dts
+arg	23:22	23:23	5	s
+water	23:22	0:0	6	s
+arg	23:25	23:27	5	st
+water	23:25	0:0	6	st
+arg	23:29	23:40	5	sample_time
+water	23:29	0:0	6	sample_time
+water	23:41	0:0	4	;
+water	24:4	0:0	4	mxf
+op	24:7	0:0	4	->
+water	24:9	0:0	4	current_edit_unit
+op	24:27	0:0	4	=
+water	24:29	0:0	4	sample_time
+water	24:40	0:0	4	;
+water	25:4	0:0	4	}
+else	25:6	46:4	2
+stmts	25:11	46:4	3	
+water	25:11	0:0	4	{
+water	26:8	0:0	4	t
+op	26:10	0:0	4	=
+op	26:12	0:0	4	&
+water	26:13	0:0	4	mxf
+op	26:16	0:0	4	->
+water	26:18	0:0	4	index_tables
+op	26:30	0:0	4	[
+water	26:31	0:0	4	0
+op	26:32	0:0	4	]
+water	26:33	0:0	4	;
+water	29:8	0:0	4	sample_time
+op	29:20	0:0	4	=
+call	29:22	29:42	4	FFMAX
+arg	29:28	29:39	5	sample_time
+water	29:28	0:0	6	sample_time
+arg	29:41	29:42	5	0
+water	29:41	0:0	6	0
+water	29:43	0:0	4	;
+if	30:8	36:8	4	(t -> fake_index)
+cond	30:12	30:15	5	t -> fake_index
+water	30:12	0:0	6	t
+op	30:13	0:0	6	->
+water	30:15	0:0	6	fake_index
+stmts	30:27	36:8	5	
+water	30:27	0:0	6	{
+if	32:12	33:34	6	(( sample_time =ff_index_search_timestamp (t -> fake_index ,t -> nb_ptses ,sample_time ,flags ) ) < 0)
+cond	32:16	32:108	7	( sample_time =ff_index_search_timestamp (t -> fake_index ,t -> nb_ptses ,sample_time ,flags ) ) < 0
+water	32:16	0:0	8	(
+water	32:17	0:0	8	sample_time
+op	32:29	0:0	8	=
+call	32:31	32:103	8	ff_index_search_timestamp
+arg	32:57	32:70	9	t->fake_index
+water	32:57	0:0	10	t
+op	32:58	0:0	10	->
+water	32:60	0:0	10	fake_index
+arg	32:72	32:83	9	t->nb_ptses
+water	32:72	0:0	10	t
+op	32:73	0:0	10	->
+water	32:75	0:0	10	nb_ptses
+arg	32:85	32:96	9	sample_time
+water	32:85	0:0	10	sample_time
+arg	32:98	32:103	9	flags
+water	32:98	0:0	10	flags
+water	32:104	0:0	8	)
+op	32:106	0:0	8	<
+water	32:108	0:0	8	0
+stmts	33:16	33:34	7	
+return	33:16	33:34	8	sample_time
+water	33:23	0:0	9	sample_time
+water	35:12	0:0	6	sample_time
+op	35:24	0:0	6	+=
+water	35:27	0:0	6	t
+op	35:28	0:0	6	->
+water	35:30	0:0	6	offsets
+op	35:37	0:0	6	[
+water	35:38	0:0	6	sample_time
+op	35:49	0:0	6	]
+water	35:50	0:0	6	;
+water	36:8	0:0	6	}
+else	36:10	40:8	4
+stmts	36:15	40:8	5	
+water	36:15	0:0	6	{
+water	39:12	0:0	6	sample_time
+op	39:24	0:0	6	=
+call	39:26	39:80	6	FFMIN
+arg	39:32	39:43	7	sample_time
+water	39:32	0:0	8	sample_time
+arg	39:45	39:80	7	source_track->original_duration-1
+water	39:45	0:0	8	source_track
+op	39:57	0:0	8	->
+water	39:59	0:0	8	original_duration
+op	39:77	0:0	8	-
+water	39:79	0:0	8	1
+water	39:81	0:0	6	;
+water	40:8	0:0	6	}
+if	41:8	42:22	4	(( ret =mxf_edit_unit_absolute_offset (mxf ,t ,sample_time ,& sample_time ,& seekpos ,1 ) ) < 0)
+cond	41:12	41:100	5	( ret =mxf_edit_unit_absolute_offset (mxf ,t ,sample_time ,& sample_time ,& seekpos ,1 ) ) < 0
+water	41:12	0:0	6	(
+water	41:13	0:0	6	ret
+op	41:17	0:0	6	=
+call	41:19	41:95	6	mxf_edit_unit_absolute_offset
+arg	41:49	41:52	7	mxf
+water	41:49	0:0	8	mxf
+arg	41:54	41:55	7	t
+water	41:54	0:0	8	t
+arg	41:57	41:68	7	sample_time
+water	41:57	0:0	8	sample_time
+arg	41:70	41:82	7	&sample_time
+op	41:70	0:0	8	&
+water	41:71	0:0	8	sample_time
+arg	41:84	41:92	7	&seekpos
+op	41:84	0:0	8	&
+water	41:85	0:0	8	seekpos
+arg	41:94	41:95	7	1
+water	41:94	0:0	8	1
+water	41:96	0:0	6	)
+op	41:98	0:0	6	<
+water	41:100	0:0	6	0
+stmts	42:12	42:22	5	
+return	42:12	42:22	6	ret
+water	42:19	0:0	7	ret
+call	43:8	43:44	4	ff_update_cur_dts
+arg	43:26	43:27	5	s
+water	43:26	0:0	6	s
+arg	43:29	43:31	5	st
+water	43:29	0:0	6	st
+arg	43:33	43:44	5	sample_time
+water	43:33	0:0	6	sample_time
+water	43:45	0:0	4	;
+water	44:8	0:0	4	mxf
+op	44:11	0:0	4	->
+water	44:13	0:0	4	current_edit_unit
+op	44:31	0:0	4	=
+water	44:33	0:0	4	sample_time
+water	44:44	0:0	4	;
+call	45:8	45:42	4	avio_seek
+arg	45:18	45:23	5	s->pb
+water	45:18	0:0	6	s
+op	45:19	0:0	6	->
+water	45:21	0:0	6	pb
+arg	45:25	45:32	5	seekpos
+water	45:25	0:0	6	seekpos
+arg	45:34	45:42	5	SEEK_SET
+water	45:34	0:0	6	SEEK_SET
+water	45:43	0:0	4	;
+water	46:4	0:0	4	}
+for	48:4	58:4	2	(i = 0 ;i < s -> nb_streams;i ++)
+forinit	48:9	48:14	3	i = 0 ;
+water	48:9	0:0	4	i
+op	48:11	0:0	4	=
+water	48:13	0:0	4	0
+water	48:14	0:0	4	;
+cond	48:16	48:23	3	i < s -> nb_streams
+water	48:16	0:0	4	i
+op	48:18	0:0	4	<
+water	48:20	0:0	4	s
+op	48:21	0:0	4	->
+water	48:23	0:0	4	nb_streams
+forexpr	48:35	48:36	3	i ++
+water	48:35	0:0	4	i
+op	48:36	0:0	4	++
+stmts	48:40	58:4	3	
+water	48:40	0:0	4	{
+decl	49:8	49:40	4	AVStream	*cur_st
+op	49:25	0:0	4	=
+water	49:27	0:0	4	s
+op	49:28	0:0	4	->
+water	49:30	0:0	4	streams
+op	49:37	0:0	4	[
+water	49:38	0:0	4	i
+op	49:39	0:0	4	]
+decl	50:8	50:47	4	MXFTrack	*cur_track
+op	50:28	0:0	4	=
+water	50:30	0:0	4	cur_st
+op	50:36	0:0	4	->
+water	50:38	0:0	4	priv_data
+decl	51:8	51:41	4	uint64_t	current_sample_count
+op	51:38	0:0	4	=
+water	51:40	0:0	4	0
+if	52:8	57:8	4	(cur_st -> codec -> codec_type == AVMEDIA_TYPE_AUDIO)
+cond	52:12	52:41	5	cur_st -> codec -> codec_type == AVMEDIA_TYPE_AUDIO
+water	52:12	0:0	6	cur_st
+op	52:18	0:0	6	->
+water	52:20	0:0	6	codec
+op	52:25	0:0	6	->
+water	52:27	0:0	6	codec_type
+op	52:38	0:0	6	==
+water	52:41	0:0	6	AVMEDIA_TYPE_AUDIO
+stmts	52:61	57:8	5	
+water	52:61	0:0	6	{
+water	53:12	0:0	6	ret
+op	53:16	0:0	6	=
+call	53:18	53:72	6	mxf_compute_sample_count
+arg	53:43	53:46	7	mxf
+water	53:43	0:0	8	mxf
+arg	53:48	53:49	7	i
+water	53:48	0:0	8	i
+arg	53:51	53:72	7	&current_sample_count
+op	53:51	0:0	8	&
+water	53:52	0:0	8	current_sample_count
+water	53:73	0:0	6	;
+if	54:12	55:26	6	(ret < 0)
+cond	54:16	54:22	7	ret < 0
+water	54:16	0:0	8	ret
+op	54:20	0:0	8	<
+water	54:22	0:0	8	0
+stmts	55:16	55:26	7	
+return	55:16	55:26	8	ret
+water	55:23	0:0	9	ret
+water	56:12	0:0	6	cur_track
+op	56:21	0:0	6	->
+water	56:23	0:0	6	sample_count
+op	56:36	0:0	6	=
+water	56:38	0:0	6	current_sample_count
+water	56:58	0:0	6	;
+water	57:8	0:0	6	}
+water	58:4	0:0	4	}
+return	59:4	59:12	2	0
+water	59:11	0:0	3	0

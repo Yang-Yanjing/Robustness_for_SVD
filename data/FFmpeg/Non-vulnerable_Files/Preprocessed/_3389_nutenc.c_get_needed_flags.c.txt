@@ -1,0 +1,185 @@
+func	1:0	25:0	0	static int	get_needed_flags
+params	1:27	0:0	1	
+param	1:28	1:43	2	NUTContext *	nut
+param	1:45	1:63	2	StreamContext *	nus
+param	1:65	1:78	2	FrameCode *	fc
+param	2:28	2:41	2	AVPacket *	pkt
+stmnts	0:0	24:43	1	
+decl	4:4	4:17	2	int	flags
+op	4:14	0:0	2	=
+water	4:16	0:0	2	0
+if	5:4	6:25	2	(pkt -> flags & AV_PKT_FLAG_KEY)
+cond	5:8	5:21	3	pkt -> flags & AV_PKT_FLAG_KEY
+water	5:8	0:0	4	pkt
+op	5:11	0:0	4	->
+water	5:13	0:0	4	flags
+op	5:19	0:0	4	&
+water	5:21	0:0	4	AV_PKT_FLAG_KEY
+stmts	6:8	6:25	3	
+water	6:8	0:0	4	flags
+op	6:14	0:0	4	|=
+water	6:17	0:0	4	FLAG_KEY
+water	6:25	0:0	4	;
+if	7:4	8:31	2	(pkt -> stream_index != fc -> stream_id)
+cond	7:8	7:33	3	pkt -> stream_index != fc -> stream_id
+water	7:8	0:0	4	pkt
+op	7:11	0:0	4	->
+water	7:13	0:0	4	stream_index
+op	7:26	0:0	4	!=
+water	7:29	0:0	4	fc
+op	7:31	0:0	4	->
+water	7:33	0:0	4	stream_id
+stmts	8:8	8:31	3	
+water	8:8	0:0	4	flags
+op	8:14	0:0	4	|=
+water	8:17	0:0	4	FLAG_STREAM_ID
+water	8:31	0:0	4	;
+if	9:4	10:30	2	(pkt -> size / fc -> size_mul)
+cond	9:8	9:24	3	pkt -> size / fc -> size_mul
+water	9:8	0:0	4	pkt
+op	9:11	0:0	4	->
+water	9:13	0:0	4	size
+op	9:18	0:0	4	/
+water	9:20	0:0	4	fc
+op	9:22	0:0	4	->
+water	9:24	0:0	4	size_mul
+stmts	10:8	10:30	3	
+water	10:8	0:0	4	flags
+op	10:14	0:0	4	|=
+water	10:17	0:0	4	FLAG_SIZE_MSB
+water	10:30	0:0	4	;
+if	11:4	12:31	2	(pkt -> pts - nus -> last_pts != fc -> pts_delta)
+cond	11:8	11:40	3	pkt -> pts - nus -> last_pts != fc -> pts_delta
+water	11:8	0:0	4	pkt
+op	11:11	0:0	4	->
+water	11:13	0:0	4	pts
+op	11:17	0:0	4	-
+water	11:19	0:0	4	nus
+op	11:22	0:0	4	->
+water	11:24	0:0	4	last_pts
+op	11:33	0:0	4	!=
+water	11:36	0:0	4	fc
+op	11:38	0:0	4	->
+water	11:40	0:0	4	pts_delta
+stmts	12:8	12:31	3	
+water	12:8	0:0	4	flags
+op	12:14	0:0	4	|=
+water	12:17	0:0	4	FLAG_CODED_PTS
+water	12:31	0:0	4	;
+if	13:4	14:29	2	(pkt -> side_data_elems && nut -> version > 3)
+cond	13:8	13:47	3	pkt -> side_data_elems && nut -> version > 3
+water	13:8	0:0	4	pkt
+op	13:11	0:0	4	->
+water	13:13	0:0	4	side_data_elems
+op	13:29	0:0	4	&&
+water	13:32	0:0	4	nut
+op	13:35	0:0	4	->
+water	13:37	0:0	4	version
+op	13:45	0:0	4	>
+water	13:47	0:0	4	3
+stmts	14:8	14:29	3	
+water	14:8	0:0	4	flags
+op	14:14	0:0	4	|=
+water	14:17	0:0	4	FLAG_SM_DATA
+water	14:29	0:0	4	;
+if	15:4	16:30	2	(pkt -> size > 2 * nut -> max_distance)
+cond	15:8	15:29	3	pkt -> size > 2 * nut -> max_distance
+water	15:8	0:0	4	pkt
+op	15:11	0:0	4	->
+water	15:13	0:0	4	size
+op	15:18	0:0	4	>
+water	15:20	0:0	4	2
+op	15:22	0:0	4	*
+water	15:24	0:0	4	nut
+op	15:27	0:0	4	->
+water	15:29	0:0	4	max_distance
+stmts	16:8	16:30	3	
+water	16:8	0:0	4	flags
+op	16:14	0:0	4	|=
+water	16:17	0:0	4	FLAG_CHECKSUM
+water	16:30	0:0	4	;
+if	17:4	18:30	2	(FFABS (pkt -> pts - nus -> last_pts ) > nus -> max_pts_distance)
+cond	17:8	17:47	3	FFABS (pkt -> pts - nus -> last_pts ) > nus -> max_pts_distance
+call	17:8	17:38	4	FFABS
+arg	17:14	17:38	5	pkt->pts-nus->last_pts
+water	17:14	0:0	6	pkt
+op	17:17	0:0	6	->
+water	17:19	0:0	6	pts
+op	17:23	0:0	6	-
+water	17:25	0:0	6	nus
+op	17:28	0:0	6	->
+water	17:30	0:0	6	last_pts
+op	17:40	0:0	4	>
+water	17:42	0:0	4	nus
+op	17:45	0:0	4	->
+water	17:47	0:0	4	max_pts_distance
+stmts	18:8	18:30	3	
+water	18:8	0:0	4	flags
+op	18:14	0:0	4	|=
+water	18:17	0:0	4	FLAG_CHECKSUM
+water	18:30	0:0	4	;
+if	19:4	23:32	2	(pkt -> size < nut -> header_len [ fc -> header_idx ] || ( pkt -> size > 4096 && fc -> header_idx ) ||memcmp (pkt -> data ,nut -> header [ fc -> header_idx ] ,nut -> header_len [ fc -> header_idx ] ))
+cond	19:8	22:46	3	pkt -> size < nut -> header_len [ fc -> header_idx ] || ( pkt -> size > 4096 && fc -> header_idx ) ||memcmp (pkt -> data ,nut -> header [ fc -> header_idx ] ,nut -> header_len [ fc -> header_idx ] )
+water	19:8	0:0	4	pkt
+op	19:11	0:0	4	->
+water	19:13	0:0	4	size
+op	19:18	0:0	4	<
+water	19:20	0:0	4	nut
+op	19:23	0:0	4	->
+water	19:25	0:0	4	header_len
+op	19:35	0:0	4	[
+water	19:36	0:0	4	fc
+op	19:38	0:0	4	->
+water	19:40	0:0	4	header_idx
+op	19:50	0:0	4	]
+op	19:52	0:0	4	||
+water	20:8	0:0	4	(
+water	20:9	0:0	4	pkt
+op	20:12	0:0	4	->
+water	20:14	0:0	4	size
+op	20:19	0:0	4	>
+water	20:21	0:0	4	4096
+op	20:26	0:0	4	&&
+water	20:29	0:0	4	fc
+op	20:31	0:0	4	->
+water	20:33	0:0	4	header_idx
+water	20:43	0:0	4	)
+op	20:52	0:0	4	||
+call	21:8	22:46	4	memcmp
+arg	21:15	21:24	5	pkt->data
+water	21:15	0:0	6	pkt
+op	21:18	0:0	6	->
+water	21:20	0:0	6	data
+arg	21:26	21:53	5	nut->header[fc->header_idx]
+water	21:26	0:0	6	nut
+op	21:29	0:0	6	->
+water	21:31	0:0	6	header
+op	21:37	0:0	6	[
+water	21:38	0:0	6	fc
+op	21:40	0:0	6	->
+water	21:42	0:0	6	header_idx
+op	21:52	0:0	6	]
+arg	22:15	22:46	5	nut->header_len[fc->header_idx]
+water	22:15	0:0	6	nut
+op	22:18	0:0	6	->
+water	22:20	0:0	6	header_len
+op	22:30	0:0	6	[
+water	22:31	0:0	6	fc
+op	22:33	0:0	6	->
+water	22:35	0:0	6	header_idx
+op	22:45	0:0	6	]
+stmts	23:8	23:32	3	
+water	23:8	0:0	4	flags
+op	23:14	0:0	4	|=
+water	23:17	0:0	4	FLAG_HEADER_IDX
+water	23:32	0:0	4	;
+return	24:4	24:43	2	flags|(fc->flags&FLAG_CODED)
+water	24:11	0:0	3	flags
+op	24:17	0:0	3	|
+water	24:19	0:0	3	(
+water	24:20	0:0	3	fc
+op	24:22	0:0	3	->
+water	24:24	0:0	3	flags
+op	24:30	0:0	3	&
+water	24:32	0:0	3	FLAG_CODED
+water	24:42	0:0	3	)

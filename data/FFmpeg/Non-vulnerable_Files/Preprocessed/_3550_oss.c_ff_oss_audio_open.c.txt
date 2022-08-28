@@ -1,0 +1,368 @@
+func	1:0	83:0	0	int	ff_oss_audio_open
+params	1:21	0:0	1	
+param	1:22	1:41	2	AVFormatContext *	s1
+param	1:43	1:56	2	int	is_output
+param	2:22	2:46	2	const char *	audio_device
+stmnts	0:0	81:23	1	
+decl	4:4	4:35	2	OSSAudioData	*s
+op	4:20	0:0	2	=
+water	4:22	0:0	2	s1
+op	4:24	0:0	2	->
+water	4:26	0:0	2	priv_data
+decl	5:4	5:16	2	int	audio_fd
+decl	6:4	6:16	2	int	tmp
+water	6:11	0:0	2	,
+decl	6:4	6:16	2	int	err
+decl	7:4	7:42	2	char	*flip
+op	7:15	0:0	2	=
+call	7:17	7:41	3	getenv
+arg	7:24	7:41	4	"AUDIO_FLIP_LEFT"
+water	7:24	0:0	5	"AUDIO_FLIP_LEFT"
+if	8:4	9:54	2	(is_output)
+cond	8:8	8:8	3	is_output
+water	8:8	0:0	4	is_output
+stmts	9:8	9:54	3	
+water	9:8	0:0	4	audio_fd
+op	9:17	0:0	4	=
+call	9:19	9:53	4	avpriv_open
+arg	9:31	9:43	5	audio_device
+water	9:31	0:0	6	audio_device
+arg	9:45	9:53	5	O_WRONLY
+water	9:45	0:0	6	O_WRONLY
+water	9:54	0:0	4	;
+else	10:4	11:54	2
+stmts	11:8	11:54	3	
+water	11:8	0:0	4	audio_fd
+op	11:17	0:0	4	=
+call	11:19	11:53	4	avpriv_open
+arg	11:31	11:43	5	audio_device
+water	11:31	0:0	6	audio_device
+arg	11:45	11:53	5	O_RDONLY
+water	11:45	0:0	6	O_RDONLY
+water	11:54	0:0	4	;
+if	12:4	15:4	2	(audio_fd < 0)
+cond	12:8	12:19	3	audio_fd < 0
+water	12:8	0:0	4	audio_fd
+op	12:17	0:0	4	<
+water	12:19	0:0	4	0
+stmts	12:22	15:4	3	
+water	12:22	0:0	4	{
+call	13:8	13:85	4	av_log
+arg	13:15	13:17	5	s1
+water	13:15	0:0	6	s1
+arg	13:19	13:31	5	AV_LOG_ERROR
+water	13:19	0:0	6	AV_LOG_ERROR
+arg	13:33	13:43	5	"%s: %s\n"
+water	13:33	0:0	6	"%s: %s\n"
+arg	13:45	13:57	5	audio_device
+water	13:45	0:0	6	audio_device
+arg	13:59	13:85	5	av_err2str(AVERROR(errno))
+call	13:59	13:84	6	av_err2str
+arg	13:70	13:84	7	AVERROR(errno)
+call	13:70	13:83	8	AVERROR
+arg	13:78	13:83	9	errno
+water	13:78	0:0	10	errno
+water	13:86	0:0	4	;
+return	14:8	14:27	4	AVERROR(EIO)
+call	14:15	14:26	5	AVERROR
+arg	14:23	14:26	6	EIO
+water	14:23	0:0	7	EIO
+water	15:4	0:0	4	}
+if	16:4	18:4	2	(flip && * flip == '1')
+cond	16:8	16:25	3	flip && * flip == '1'
+water	16:8	0:0	4	flip
+op	16:13	0:0	4	&&
+op	16:16	0:0	4	*
+water	16:17	0:0	4	flip
+op	16:22	0:0	4	==
+water	16:25	0:0	4	'1'
+stmts	16:30	18:4	3	
+water	16:30	0:0	4	{
+water	17:8	0:0	4	s
+op	17:9	0:0	4	->
+water	17:11	0:0	4	flip_left
+op	17:21	0:0	4	=
+water	17:23	0:0	4	1
+water	17:24	0:0	4	;
+water	18:4	0:0	4	}
+if	20:4	24:4	2	(! is_output)
+cond	20:8	20:9	3	! is_output
+op	20:8	0:0	4	!
+water	20:9	0:0	4	is_output
+stmts	20:20	24:4	3	
+water	20:20	0:0	4	{
+if	21:8	23:8	4	(fcntl (audio_fd ,F_SETFL ,O_NONBLOCK ) < 0)
+cond	21:12	21:51	5	fcntl (audio_fd ,F_SETFL ,O_NONBLOCK ) < 0
+call	21:12	21:47	6	fcntl
+arg	21:18	21:26	7	audio_fd
+water	21:18	0:0	8	audio_fd
+arg	21:28	21:35	7	F_SETFL
+water	21:28	0:0	8	F_SETFL
+arg	21:37	21:47	7	O_NONBLOCK
+water	21:37	0:0	8	O_NONBLOCK
+op	21:49	0:0	6	<
+water	21:51	0:0	6	0
+stmts	21:54	23:8	5	
+water	21:54	0:0	6	{
+call	22:12	22:125	6	av_log
+arg	22:19	22:21	7	s1
+water	22:19	0:0	8	s1
+arg	22:23	22:37	7	AV_LOG_WARNING
+water	22:23	0:0	8	AV_LOG_WARNING
+arg	22:39	22:83	7	"%s: Could not enable non block mode (%s)\n"
+water	22:39	0:0	8	"%s: Could not enable non block mode (%s)\n"
+arg	22:85	22:97	7	audio_device
+water	22:85	0:0	8	audio_device
+arg	22:99	22:125	7	av_err2str(AVERROR(errno))
+call	22:99	22:124	8	av_err2str
+arg	22:110	22:124	9	AVERROR(errno)
+call	22:110	22:123	10	AVERROR
+arg	22:118	22:123	11	errno
+water	22:118	0:0	12	errno
+water	22:126	0:0	6	;
+water	23:8	0:0	6	}
+water	24:4	0:0	4	}
+water	25:4	0:0	2	s
+op	25:5	0:0	2	->
+water	25:7	0:0	2	frame_size
+op	25:18	0:0	2	=
+water	25:20	0:0	2	OSS_AUDIO_BLOCK_SIZE
+water	25:40	0:0	2	;
+if	27:4	30:4	2	(err < 0)
+cond	27:8	27:14	3	err < 0
+water	27:8	0:0	4	err
+op	27:12	0:0	4	<
+water	27:14	0:0	4	0
+stmts	27:17	30:4	3	
+water	27:17	0:0	4	{
+water	28:8	0:0	4	av_log
+water	28:14	0:0	4	(
+water	28:15	0:0	4	s1
+water	28:17	0:0	4	,
+water	28:19	0:0	4	AV_LOG_ERROR
+water	28:31	0:0	4	,
+water	29:8	0:0	4	goto
+water	29:13	0:0	4	fail
+water	29:17	0:0	4	;
+water	30:4	0:0	4	}
+water	35:4	0:0	2	err
+op	35:8	0:0	2	=
+call	35:10	35:50	2	ioctl
+arg	35:16	35:24	3	audio_fd
+water	35:16	0:0	4	audio_fd
+arg	35:26	35:44	3	SNDCTL_DSP_GETFMTS
+water	35:26	0:0	4	SNDCTL_DSP_GETFMTS
+arg	35:46	35:50	3	&tmp
+op	35:46	0:0	4	&
+water	35:47	0:0	4	tmp
+water	35:51	0:0	2	;
+if	36:4	38:4	2	(err < 0)
+cond	36:8	36:14	3	err < 0
+water	36:8	0:0	4	err
+op	36:12	0:0	4	<
+water	36:14	0:0	4	0
+stmts	36:17	38:4	3	
+water	36:17	0:0	4	{
+call	37:8	37:89	4	av_log
+arg	37:15	37:17	5	s1
+water	37:15	0:0	6	s1
+arg	37:19	37:33	5	AV_LOG_WARNING
+water	37:19	0:0	6	AV_LOG_WARNING
+arg	37:35	37:61	5	"SNDCTL_DSP_GETFMTS: %s\n"
+water	37:35	0:0	6	"SNDCTL_DSP_GETFMTS: %s\n"
+arg	37:63	37:89	5	av_err2str(AVERROR(errno))
+call	37:63	37:88	6	av_err2str
+arg	37:74	37:88	7	AVERROR(errno)
+call	37:74	37:87	8	AVERROR
+arg	37:82	37:87	9	errno
+water	37:82	0:0	10	errno
+water	37:90	0:0	4	;
+water	38:4	0:0	4	}
+if	40:4	42:4	2	(tmp & AFMT_S16_BE)
+cond	40:8	40:14	3	tmp & AFMT_S16_BE
+water	40:8	0:0	4	tmp
+op	40:12	0:0	4	&
+water	40:14	0:0	4	AFMT_S16_BE
+stmts	40:27	42:4	3	
+water	40:27	0:0	4	{
+water	41:8	0:0	4	tmp
+op	41:12	0:0	4	=
+water	41:14	0:0	4	AFMT_S16_BE
+water	41:25	0:0	4	;
+water	42:4	0:0	4	}
+else	42:6	44:4	2
+stmts	42:11	44:4	3	
+if	42:11	44:4	4	(tmp & AFMT_S16_LE)
+cond	42:15	42:21	5	tmp & AFMT_S16_LE
+water	42:15	0:0	6	tmp
+op	42:19	0:0	6	&
+water	42:21	0:0	6	AFMT_S16_LE
+stmts	42:34	44:4	5	
+water	42:34	0:0	6	{
+water	43:8	0:0	6	tmp
+op	43:12	0:0	6	=
+water	43:14	0:0	6	AFMT_S16_LE
+water	43:25	0:0	6	;
+water	44:4	0:0	6	}
+else	44:6	46:4	2
+stmts	44:11	46:4	3	
+water	44:11	0:0	4	{
+water	45:8	0:0	4	tmp
+op	45:12	0:0	4	=
+water	45:14	0:0	4	0
+water	45:15	0:0	4	;
+water	46:4	0:0	4	}
+if	48:4	50:4	2	(tmp & AFMT_S16_LE)
+cond	48:8	48:14	3	tmp & AFMT_S16_LE
+water	48:8	0:0	4	tmp
+op	48:12	0:0	4	&
+water	48:14	0:0	4	AFMT_S16_LE
+stmts	48:27	50:4	3	
+water	48:27	0:0	4	{
+water	49:8	0:0	4	tmp
+op	49:12	0:0	4	=
+water	49:14	0:0	4	AFMT_S16_LE
+water	49:25	0:0	4	;
+water	50:4	0:0	4	}
+else	50:6	52:4	2
+stmts	50:11	52:4	3	
+if	50:11	52:4	4	(tmp & AFMT_S16_BE)
+cond	50:15	50:21	5	tmp & AFMT_S16_BE
+water	50:15	0:0	6	tmp
+op	50:19	0:0	6	&
+water	50:21	0:0	6	AFMT_S16_BE
+stmts	50:34	52:4	5	
+water	50:34	0:0	6	{
+water	51:8	0:0	6	tmp
+op	51:12	0:0	6	=
+water	51:14	0:0	6	AFMT_S16_BE
+water	51:25	0:0	6	;
+water	52:4	0:0	6	}
+else	52:6	54:4	2
+stmts	52:11	54:4	3	
+water	52:11	0:0	4	{
+water	53:8	0:0	4	tmp
+op	53:12	0:0	4	=
+water	53:14	0:0	4	0
+water	53:15	0:0	4	;
+water	54:4	0:0	4	}
+switch	56:4	67:4	2	(tmp)
+cond	56:11	56:11	3	tmp
+water	56:11	0:0	4	tmp
+stmts	56:16	67:4	3	
+water	56:16	0:0	4	{
+label	57:4	57:20	4	case AFMT_S16_LE :
+water	58:8	0:0	4	s
+op	58:9	0:0	4	->
+water	58:11	0:0	4	codec_id
+op	58:20	0:0	4	=
+water	58:22	0:0	4	AV_CODEC_ID_PCM_S16LE
+water	58:43	0:0	4	;
+break	59:8	59:13	4	
+label	60:4	60:20	4	case AFMT_S16_BE :
+water	61:8	0:0	4	s
+op	61:9	0:0	4	->
+water	61:11	0:0	4	codec_id
+op	61:20	0:0	4	=
+water	61:22	0:0	4	AV_CODEC_ID_PCM_S16BE
+water	61:43	0:0	4	;
+break	62:8	62:13	4	
+label	63:4	63:11	4	default :
+call	64:8	64:84	4	av_log
+arg	64:15	64:17	5	s1
+water	64:15	0:0	6	s1
+arg	64:19	64:31	5	AV_LOG_ERROR
+water	64:19	0:0	6	AV_LOG_ERROR
+arg	64:33	64:84	5	"Soundcard does not support 16 bit sample format\n"
+water	64:33	0:0	6	"Soundcard does not support 16 bit sample format\n"
+water	64:85	0:0	4	;
+call	65:8	65:22	4	close
+arg	65:14	65:22	5	audio_fd
+water	65:14	0:0	6	audio_fd
+water	65:23	0:0	4	;
+return	66:8	66:27	4	AVERROR(EIO)
+call	66:15	66:26	5	AVERROR
+arg	66:23	66:26	6	EIO
+water	66:23	0:0	7	EIO
+water	67:4	0:0	4	}
+water	68:4	0:0	2	err
+op	68:7	0:0	2	=
+call	68:8	68:47	2	ioctl
+arg	68:14	68:22	3	audio_fd
+water	68:14	0:0	4	audio_fd
+arg	68:24	68:41	3	SNDCTL_DSP_SETFMT
+water	68:24	0:0	4	SNDCTL_DSP_SETFMT
+arg	68:43	68:47	3	&tmp
+op	68:43	0:0	4	&
+water	68:44	0:0	4	tmp
+water	68:48	0:0	2	;
+call	69:4	69:40	2	CHECK_IOCTL_ERROR
+arg	69:22	69:40	3	SNDCTL_DSP_SETFMTS
+water	69:22	0:0	4	SNDCTL_DSP_SETFMTS
+water	70:4	0:0	2	tmp
+op	70:8	0:0	2	=
+water	70:10	0:0	2	(
+water	70:11	0:0	2	s
+op	70:12	0:0	2	->
+water	70:14	0:0	2	channels
+op	70:23	0:0	2	==
+water	70:26	0:0	2	2
+water	70:27	0:0	2	)
+water	70:28	0:0	2	;
+water	71:4	0:0	2	err
+op	71:8	0:0	2	=
+call	71:10	71:49	2	ioctl
+arg	71:16	71:24	3	audio_fd
+water	71:16	0:0	4	audio_fd
+arg	71:26	71:43	3	SNDCTL_DSP_STEREO
+water	71:26	0:0	4	SNDCTL_DSP_STEREO
+arg	71:45	71:49	3	&tmp
+op	71:45	0:0	4	&
+water	71:46	0:0	4	tmp
+water	71:50	0:0	2	;
+call	72:4	72:39	2	CHECK_IOCTL_ERROR
+arg	72:22	72:39	3	SNDCTL_DSP_STEREO
+water	72:22	0:0	4	SNDCTL_DSP_STEREO
+water	73:4	0:0	2	tmp
+op	73:8	0:0	2	=
+water	73:10	0:0	2	s
+op	73:11	0:0	2	->
+water	73:13	0:0	2	sample_rate
+water	73:24	0:0	2	;
+water	74:4	0:0	2	err
+op	74:8	0:0	2	=
+call	74:10	74:48	2	ioctl
+arg	74:16	74:24	3	audio_fd
+water	74:16	0:0	4	audio_fd
+arg	74:26	74:42	3	SNDCTL_DSP_SPEED
+water	74:26	0:0	4	SNDCTL_DSP_SPEED
+arg	74:44	74:48	3	&tmp
+op	74:44	0:0	4	&
+water	74:45	0:0	4	tmp
+water	74:49	0:0	2	;
+call	75:4	75:38	2	CHECK_IOCTL_ERROR
+arg	75:22	75:38	3	SNDCTL_DSP_SPEED
+water	75:22	0:0	4	SNDCTL_DSP_SPEED
+water	76:4	0:0	2	s
+op	76:5	0:0	2	->
+water	76:7	0:0	2	sample_rate
+op	76:19	0:0	2	=
+water	76:21	0:0	2	tmp
+water	76:24	0:0	2	;
+water	77:4	0:0	2	s
+op	77:5	0:0	2	->
+water	77:7	0:0	2	fd
+op	77:10	0:0	2	=
+water	77:12	0:0	2	audio_fd
+water	77:20	0:0	2	;
+return	78:4	78:12	2	0
+water	78:11	0:0	3	0
+label	79:1	79:5	2	fail :
+call	80:4	80:18	2	close
+arg	80:10	80:18	3	audio_fd
+water	80:10	0:0	4	audio_fd
+water	80:19	0:0	2	;
+return	81:4	81:23	2	AVERROR(EIO)
+call	81:11	81:22	3	AVERROR
+arg	81:19	81:22	4	EIO
+water	81:19	0:0	5	EIO

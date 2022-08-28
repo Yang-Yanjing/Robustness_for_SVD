@@ -1,0 +1,217 @@
+func	1:0	40:0	0	static int	ff_filter_frame_needs_framing
+params	1:40	0:0	1	
+param	1:41	1:59	2	AVFilterLink *	link
+param	1:61	1:75	2	AVFrame *	frame
+stmnts	0:0	39:14	1	
+decl	3:4	3:60	2	int	insamples
+op	3:18	0:0	2	=
+water	3:20	0:0	2	frame
+op	3:25	0:0	2	->
+water	3:27	0:0	2	nb_samples
+water	3:37	0:0	2	,
+decl	3:4	3:60	2	int	inpos
+op	3:45	0:0	2	=
+water	3:47	0:0	2	0
+water	3:48	0:0	2	,
+decl	3:4	3:60	2	int	nb_samples
+decl	4:4	4:37	2	AVFrame	*pbuf
+op	4:18	0:0	2	=
+water	4:20	0:0	2	link
+op	4:24	0:0	2	->
+water	4:26	0:0	2	partial_buf
+decl	5:4	5:50	2	int	nb_channels
+op	5:20	0:0	2	=
+call	5:22	5:49	3	av_frame_get_channels
+arg	5:44	5:49	4	frame
+water	5:44	0:0	5	frame
+decl	6:4	6:15	2	int	ret
+op	6:12	0:0	2	=
+water	6:14	0:0	2	0
+water	7:4	0:0	2	link
+op	7:8	0:0	2	->
+water	7:10	0:0	2	flags
+op	7:16	0:0	2	|=
+water	7:19	0:0	2	FF_LINK_FLAG_REQUEST_LOOP
+water	7:44	0:0	2	;
+while	9:4	36:4	2	(insamples)
+cond	9:11	9:11	3	insamples
+water	9:11	0:0	4	insamples
+stmts	9:22	36:4	3	
+water	9:22	0:0	4	{
+if	10:8	23:8	4	(! pbuf)
+cond	10:12	10:13	5	! pbuf
+op	10:12	0:0	6	!
+water	10:13	0:0	6	pbuf
+stmts	10:19	23:8	5	
+water	10:19	0:0	6	{
+decl	11:12	11:60	6	AVRational	samples_tb
+op	11:34	0:0	6	=
+water	11:36	0:0	6	{
+water	11:38	0:0	6	1
+water	11:39	0:0	6	,
+water	11:41	0:0	6	link
+op	11:45	0:0	6	->
+water	11:47	0:0	6	sample_rate
+water	11:59	0:0	6	}
+water	12:12	0:0	6	pbuf
+op	12:17	0:0	6	=
+call	12:19	12:67	6	ff_get_audio_buffer
+arg	12:39	12:43	7	link
+water	12:39	0:0	8	link
+arg	12:45	12:67	7	link->partial_buf_size
+water	12:45	0:0	8	link
+op	12:49	0:0	8	->
+water	12:51	0:0	8	partial_buf_size
+water	12:68	0:0	6	;
+if	13:12	17:12	6	(! pbuf)
+cond	13:16	13:17	7	! pbuf
+op	13:16	0:0	8	!
+water	13:17	0:0	8	pbuf
+stmts	13:23	17:12	7	
+water	13:23	0:0	8	{
+call	14:16	15:76	8	av_log
+arg	14:23	14:32	9	link->dst
+water	14:23	0:0	10	link
+op	14:27	0:0	10	->
+water	14:29	0:0	10	dst
+arg	14:34	14:48	9	AV_LOG_WARNING
+water	14:34	0:0	10	AV_LOG_WARNING
+arg	15:23	15:76	9	"Samples dropped due to memory allocation failure.\n"
+water	15:23	0:0	10	"Samples dropped due to memory allocation failure.\n"
+water	15:77	0:0	8	;
+return	16:16	16:24	8	0
+water	16:23	0:0	9	0
+water	17:12	0:0	8	}
+call	18:12	18:43	6	av_frame_copy_props
+arg	18:32	18:36	7	pbuf
+water	18:32	0:0	8	pbuf
+arg	18:38	18:43	7	frame
+water	18:38	0:0	8	frame
+water	18:44	0:0	6	;
+water	19:12	0:0	6	pbuf
+op	19:16	0:0	6	->
+water	19:18	0:0	6	pts
+op	19:22	0:0	6	=
+water	19:24	0:0	6	frame
+op	19:29	0:0	6	->
+water	19:31	0:0	6	pts
+water	19:34	0:0	6	;
+if	20:12	21:77	6	(pbuf -> pts != AV_NOPTS_VALUE)
+cond	20:16	20:29	7	pbuf -> pts != AV_NOPTS_VALUE
+water	20:16	0:0	8	pbuf
+op	20:20	0:0	8	->
+water	20:22	0:0	8	pts
+op	20:26	0:0	8	!=
+water	20:29	0:0	8	AV_NOPTS_VALUE
+stmts	21:16	21:77	7	
+water	21:16	0:0	8	pbuf
+op	21:20	0:0	8	->
+water	21:22	0:0	8	pts
+op	21:26	0:0	8	+=
+call	21:29	21:76	8	av_rescale_q
+arg	21:42	21:47	9	inpos
+water	21:42	0:0	10	inpos
+arg	21:49	21:59	9	samples_tb
+water	21:49	0:0	10	samples_tb
+arg	21:61	21:76	9	link->time_base
+water	21:61	0:0	10	link
+op	21:65	0:0	10	->
+water	21:67	0:0	10	time_base
+water	21:77	0:0	8	;
+water	22:12	0:0	6	pbuf
+op	22:16	0:0	6	->
+water	22:18	0:0	6	nb_samples
+op	22:29	0:0	6	=
+water	22:31	0:0	6	0
+water	22:32	0:0	6	;
+water	23:8	0:0	6	}
+water	24:8	0:0	4	nb_samples
+op	24:19	0:0	4	=
+call	24:21	25:68	4	FFMIN
+arg	24:27	24:36	5	insamples
+water	24:27	0:0	6	insamples
+arg	25:27	25:68	5	link->partial_buf_size-pbuf->nb_samples
+water	25:27	0:0	6	link
+op	25:31	0:0	6	->
+water	25:33	0:0	6	partial_buf_size
+op	25:50	0:0	6	-
+water	25:52	0:0	6	pbuf
+op	25:56	0:0	6	->
+water	25:58	0:0	6	nb_samples
+water	25:69	0:0	4	;
+call	26:8	28:61	4	av_samples_copy
+arg	26:24	26:43	5	pbuf->extended_data
+water	26:24	0:0	6	pbuf
+op	26:28	0:0	6	->
+water	26:30	0:0	6	extended_data
+arg	26:45	26:65	5	frame->extended_data
+water	26:45	0:0	6	frame
+op	26:50	0:0	6	->
+water	26:52	0:0	6	extended_data
+arg	27:24	27:40	5	pbuf->nb_samples
+water	27:24	0:0	6	pbuf
+op	27:28	0:0	6	->
+water	27:30	0:0	6	nb_samples
+arg	27:42	27:47	5	inpos
+water	27:42	0:0	6	inpos
+arg	28:24	28:34	5	nb_samples
+water	28:24	0:0	6	nb_samples
+arg	28:36	28:47	5	nb_channels
+water	28:36	0:0	6	nb_channels
+arg	28:49	28:61	5	link->format
+water	28:49	0:0	6	link
+op	28:53	0:0	6	->
+water	28:55	0:0	6	format
+water	28:62	0:0	4	;
+water	29:8	0:0	4	inpos
+op	29:32	0:0	4	+=
+water	29:35	0:0	4	nb_samples
+water	29:45	0:0	4	;
+water	30:8	0:0	4	insamples
+op	30:32	0:0	4	-=
+water	30:35	0:0	4	nb_samples
+water	30:45	0:0	4	;
+water	31:8	0:0	4	pbuf
+op	31:12	0:0	4	->
+water	31:14	0:0	4	nb_samples
+op	31:25	0:0	4	+=
+water	31:28	0:0	4	nb_samples
+water	31:38	0:0	4	;
+if	32:8	35:8	4	(pbuf -> nb_samples >= link -> min_samples)
+cond	32:12	32:38	5	pbuf -> nb_samples >= link -> min_samples
+water	32:12	0:0	6	pbuf
+op	32:16	0:0	6	->
+water	32:18	0:0	6	nb_samples
+op	32:29	0:0	6	>=
+water	32:32	0:0	6	link
+op	32:36	0:0	6	->
+water	32:38	0:0	6	min_samples
+stmts	32:51	35:8	5	
+water	32:51	0:0	6	{
+water	33:12	0:0	6	ret
+op	33:16	0:0	6	=
+call	33:18	33:51	6	ff_filter_frame_framed
+arg	33:41	33:45	7	link
+water	33:41	0:0	8	link
+arg	33:47	33:51	7	pbuf
+water	33:47	0:0	8	pbuf
+water	33:52	0:0	6	;
+water	34:12	0:0	6	pbuf
+op	34:17	0:0	6	=
+water	34:19	0:0	6	NULL
+water	34:23	0:0	6	;
+water	35:8	0:0	6	}
+water	36:4	0:0	4	}
+call	37:4	37:24	2	av_frame_free
+arg	37:18	37:24	3	&frame
+op	37:18	0:0	4	&
+water	37:19	0:0	4	frame
+water	37:25	0:0	2	;
+water	38:4	0:0	2	link
+op	38:8	0:0	2	->
+water	38:10	0:0	2	partial_buf
+op	38:22	0:0	2	=
+water	38:24	0:0	2	pbuf
+water	38:28	0:0	2	;
+return	39:4	39:14	2	ret
+water	39:11	0:0	3	ret

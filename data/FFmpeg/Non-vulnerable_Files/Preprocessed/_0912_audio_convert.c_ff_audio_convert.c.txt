@@ -1,0 +1,655 @@
+func	1:0	93:0	0	int	ff_audio_convert
+params	1:20	0:0	1	
+param	1:21	1:37	2	AudioConvert *	ac
+param	1:39	1:53	2	AudioData *	out
+param	1:55	1:68	2	AudioData *	in
+stmnts	0:0	92:12	1	
+decl	3:4	3:23	2	int	use_generic
+op	3:20	0:0	2	=
+water	3:22	0:0	2	1
+decl	4:4	4:36	2	int	len
+op	4:20	0:0	2	=
+water	4:22	0:0	2	in
+op	4:24	0:0	2	->
+water	4:26	0:0	2	nb_samples
+decl	5:4	5:9	2	int	p
+if	6:4	12:4	2	(ac -> dc)
+cond	6:8	6:12	3	ac -> dc
+water	6:8	0:0	4	ac
+op	6:10	0:0	4	->
+water	6:12	0:0	4	dc
+stmts	6:16	12:4	3	
+water	6:16	0:0	4	{
+call	8:8	10:51	4	av_log
+arg	8:15	8:22	5	ac->avr
+water	8:15	0:0	6	ac
+op	8:17	0:0	6	->
+water	8:19	0:0	6	avr
+arg	8:24	8:36	5	AV_LOG_TRACE
+water	8:24	0:0	6	AV_LOG_TRACE
+arg	8:38	8:89	5	"%d samples - audio_convert: %s to %s (dithered)\n"
+water	8:38	0:0	6	"%d samples - audio_convert: %s to %s (dithered)\n"
+arg	9:16	9:19	5	len
+water	9:16	0:0	6	len
+arg	9:21	9:55	5	av_get_sample_fmt_name(ac->in_fmt)
+call	9:21	9:54	6	av_get_sample_fmt_name
+arg	9:44	9:54	7	ac->in_fmt
+water	9:44	0:0	8	ac
+op	9:46	0:0	8	->
+water	9:48	0:0	8	in_fmt
+arg	10:16	10:51	5	av_get_sample_fmt_name(ac->out_fmt)
+call	10:16	10:50	6	av_get_sample_fmt_name
+arg	10:39	10:50	7	ac->out_fmt
+water	10:39	0:0	8	ac
+op	10:41	0:0	8	->
+water	10:43	0:0	8	out_fmt
+water	10:52	0:0	4	;
+return	11:8	11:49	4	ff_convert_dither(ac->dc,out,in)
+call	11:15	11:48	5	ff_convert_dither
+arg	11:33	11:39	6	ac->dc
+water	11:33	0:0	7	ac
+op	11:35	0:0	7	->
+water	11:37	0:0	7	dc
+arg	11:41	11:44	6	out
+water	11:41	0:0	7	out
+arg	11:46	11:48	6	in
+water	11:46	0:0	7	in
+water	12:4	0:0	4	}
+if	15:4	23:4	2	(ac -> has_optimized_func)
+cond	15:8	15:12	3	ac -> has_optimized_func
+water	15:8	0:0	4	ac
+op	15:10	0:0	4	->
+water	15:12	0:0	4	has_optimized_func
+stmts	15:32	23:4	3	
+water	15:32	0:0	4	{
+decl	16:8	16:68	4	int	ptr_align
+op	16:26	0:0	4	=
+call	16:28	16:67	5	FFMIN
+arg	16:34	16:47	6	in->ptr_align
+water	16:34	0:0	7	in
+op	16:36	0:0	7	->
+water	16:38	0:0	7	ptr_align
+arg	16:53	16:67	6	out->ptr_align
+water	16:53	0:0	7	out
+op	16:56	0:0	7	->
+water	16:58	0:0	7	ptr_align
+decl	17:8	17:72	4	int	samples_align
+op	17:26	0:0	4	=
+call	17:28	17:71	5	FFMIN
+arg	17:34	17:51	6	in->samples_align
+water	17:34	0:0	7	in
+op	17:36	0:0	7	->
+water	17:38	0:0	7	samples_align
+arg	17:53	17:71	6	out->samples_align
+water	17:53	0:0	7	out
+op	17:56	0:0	7	->
+water	17:58	0:0	7	samples_align
+decl	18:8	18:59	4	int	aligned_len
+op	18:26	0:0	4	=
+call	18:28	18:58	5	FFALIGN
+arg	18:36	18:39	6	len
+water	18:36	0:0	7	len
+arg	18:41	18:58	6	ac->samples_align
+water	18:41	0:0	7	ac
+op	18:43	0:0	7	->
+water	18:45	0:0	7	samples_align
+if	19:8	22:8	4	(! ( ptr_align % ac -> ptr_align ) && samples_align >= aligned_len)
+cond	19:12	19:61	5	! ( ptr_align % ac -> ptr_align ) && samples_align >= aligned_len
+op	19:12	0:0	6	!
+water	19:13	0:0	6	(
+water	19:14	0:0	6	ptr_align
+op	19:24	0:0	6	%
+water	19:26	0:0	6	ac
+op	19:28	0:0	6	->
+water	19:30	0:0	6	ptr_align
+water	19:39	0:0	6	)
+op	19:41	0:0	6	&&
+water	19:44	0:0	6	samples_align
+op	19:58	0:0	6	>=
+water	19:61	0:0	6	aligned_len
+stmts	19:74	22:8	5	
+water	19:74	0:0	6	{
+water	20:12	0:0	6	len
+op	20:16	0:0	6	=
+water	20:18	0:0	6	aligned_len
+water	20:29	0:0	6	;
+water	21:12	0:0	6	use_generic
+op	21:24	0:0	6	=
+water	21:26	0:0	6	0
+water	21:27	0:0	6	;
+water	22:8	0:0	6	}
+water	23:4	0:0	4	}
+call	24:4	27:65	2	av_log
+arg	24:11	24:18	3	ac->avr
+water	24:11	0:0	4	ac
+op	24:13	0:0	4	->
+water	24:15	0:0	4	avr
+arg	24:20	24:32	3	AV_LOG_TRACE
+water	24:20	0:0	4	AV_LOG_TRACE
+arg	24:34	24:79	3	"%d samples - audio_convert: %s to %s (%s)\n"
+water	24:34	0:0	4	"%d samples - audio_convert: %s to %s (%s)\n"
+arg	24:81	24:84	3	len
+water	24:81	0:0	4	len
+arg	25:12	25:46	3	av_get_sample_fmt_name(ac->in_fmt)
+call	25:12	25:45	4	av_get_sample_fmt_name
+arg	25:35	25:45	5	ac->in_fmt
+water	25:35	0:0	6	ac
+op	25:37	0:0	6	->
+water	25:39	0:0	6	in_fmt
+arg	26:12	26:47	3	av_get_sample_fmt_name(ac->out_fmt)
+call	26:12	26:46	4	av_get_sample_fmt_name
+arg	26:35	26:46	5	ac->out_fmt
+water	26:35	0:0	6	ac
+op	26:37	0:0	6	->
+water	26:39	0:0	6	out_fmt
+arg	27:12	27:65	3	use_generic?ac->func_descr_generic:ac->func_descr
+water	27:12	0:0	4	use_generic
+water	27:24	0:0	4	?
+water	27:26	0:0	4	ac
+op	27:28	0:0	4	->
+water	27:30	0:0	4	func_descr_generic
+water	27:49	0:0	4	:
+water	27:51	0:0	4	ac
+op	27:53	0:0	4	->
+water	27:55	0:0	4	func_descr
+water	27:66	0:0	2	;
+if	28:4	60:4	2	(ac -> apply_map)
+cond	28:8	28:12	3	ac -> apply_map
+water	28:8	0:0	4	ac
+op	28:10	0:0	4	->
+water	28:12	0:0	4	apply_map
+stmts	28:23	60:4	3	
+water	28:23	0:0	4	{
+decl	29:8	29:51	4	ChannelMapInfo	*map
+op	29:28	0:0	4	=
+op	29:30	0:0	4	&
+water	29:31	0:0	4	ac
+op	29:33	0:0	4	->
+water	29:35	0:0	4	avr
+op	29:38	0:0	4	->
+water	29:40	0:0	4	ch_map_info
+if	30:8	33:8	4	(!ff_sample_fmt_is_planar (ac -> out_fmt ,ac -> channels ))
+cond	30:12	30:62	5	!ff_sample_fmt_is_planar (ac -> out_fmt ,ac -> channels )
+op	30:12	0:0	6	!
+call	30:13	30:62	6	ff_sample_fmt_is_planar
+arg	30:37	30:48	7	ac->out_fmt
+water	30:37	0:0	8	ac
+op	30:39	0:0	8	->
+water	30:41	0:0	8	out_fmt
+arg	30:50	30:62	7	ac->channels
+water	30:50	0:0	8	ac
+op	30:52	0:0	8	->
+water	30:54	0:0	8	channels
+stmts	30:65	33:8	5	
+water	30:65	0:0	6	{
+call	31:12	31:90	6	av_log
+arg	31:19	31:26	7	ac->avr
+water	31:19	0:0	8	ac
+op	31:21	0:0	8	->
+water	31:23	0:0	8	avr
+arg	31:28	31:40	7	AV_LOG_ERROR
+water	31:28	0:0	8	AV_LOG_ERROR
+arg	31:42	31:90	7	"cannot remap packed format during conversion\n"
+water	31:42	0:0	8	"cannot remap packed format during conversion\n"
+water	31:91	0:0	6	;
+return	32:12	32:34	6	AVERROR(EINVAL)
+call	32:19	32:33	7	AVERROR
+arg	32:27	32:33	8	EINVAL
+water	32:27	0:0	9	EINVAL
+water	33:8	0:0	6	}
+if	34:8	50:8	4	(map -> do_remap)
+cond	34:12	34:17	5	map -> do_remap
+water	34:12	0:0	6	map
+op	34:15	0:0	6	->
+water	34:17	0:0	6	do_remap
+stmts	34:27	50:8	5	
+water	34:27	0:0	6	{
+if	35:12	41:12	6	(ff_sample_fmt_is_planar (ac -> in_fmt ,ac -> channels ))
+cond	35:16	35:64	7	ff_sample_fmt_is_planar (ac -> in_fmt ,ac -> channels )
+call	35:16	35:64	8	ff_sample_fmt_is_planar
+arg	35:40	35:50	9	ac->in_fmt
+water	35:40	0:0	10	ac
+op	35:42	0:0	10	->
+water	35:44	0:0	10	in_fmt
+arg	35:52	35:64	9	ac->channels
+water	35:52	0:0	10	ac
+op	35:54	0:0	10	->
+water	35:56	0:0	10	channels
+stmts	35:67	41:12	7	
+water	35:67	0:0	8	{
+decl	36:16	37:69	8	conv_func_flat	*convert
+op	36:40	0:0	8	=
+water	36:42	0:0	8	use_generic
+water	36:54	0:0	8	?
+water	36:56	0:0	8	ac
+op	36:58	0:0	8	->
+water	36:60	0:0	8	conv_flat_generic
+water	36:78	0:0	8	:
+water	37:56	0:0	8	ac
+op	37:58	0:0	8	->
+water	37:60	0:0	8	conv_flat
+for	38:16	40:81	8	(p = 0 ;p < ac -> planes;p ++)
+forinit	38:21	38:26	9	p = 0 ;
+water	38:21	0:0	10	p
+op	38:23	0:0	10	=
+water	38:25	0:0	10	0
+water	38:26	0:0	10	;
+cond	38:28	38:36	9	p < ac -> planes
+water	38:28	0:0	10	p
+op	38:30	0:0	10	<
+water	38:32	0:0	10	ac
+op	38:34	0:0	10	->
+water	38:36	0:0	10	planes
+forexpr	38:44	38:45	9	p ++
+water	38:44	0:0	10	p
+op	38:45	0:0	10	++
+stmts	39:20	40:81	9	
+if	39:20	40:81	10	(map -> channel_map [ p ] >= 0)
+cond	39:24	39:47	11	map -> channel_map [ p ] >= 0
+water	39:24	0:0	12	map
+op	39:27	0:0	12	->
+water	39:29	0:0	12	channel_map
+op	39:40	0:0	12	[
+water	39:41	0:0	12	p
+op	39:42	0:0	12	]
+op	39:44	0:0	12	>=
+water	39:47	0:0	12	0
+stmts	40:24	40:81	11	
+call	40:24	40:80	12	convert
+arg	40:32	40:44	13	out->data[p]
+water	40:32	0:0	14	out
+op	40:35	0:0	14	->
+water	40:37	0:0	14	data
+op	40:41	0:0	14	[
+water	40:42	0:0	14	p
+op	40:43	0:0	14	]
+arg	40:46	40:75	13	in->data[map->channel_map[p]]
+water	40:46	0:0	14	in
+op	40:48	0:0	14	->
+water	40:50	0:0	14	data
+op	40:54	0:0	14	[
+water	40:55	0:0	14	map
+op	40:58	0:0	14	->
+water	40:60	0:0	14	channel_map
+op	40:71	0:0	14	[
+water	40:72	0:0	14	p
+op	40:73	0:0	14	]
+op	40:74	0:0	14	]
+arg	40:77	40:80	13	len
+water	40:77	0:0	14	len
+water	40:81	0:0	12	;
+water	41:12	0:0	8	}
+else	41:14	49:12	6
+stmts	41:19	49:12	7	
+water	41:19	0:0	8	{
+decl	42:16	42:54	8	uint8_t	*data[AVRESAMPLE_MAX_CHANNELS]
+decl	43:16	45:71	8	conv_func_deinterleave	*convert
+op	43:48	0:0	8	=
+water	43:50	0:0	8	use_generic
+water	43:62	0:0	8	?
+water	44:50	0:0	8	ac
+op	44:52	0:0	8	->
+water	44:54	0:0	8	conv_deinterleave_generic
+water	44:80	0:0	8	:
+water	45:50	0:0	8	ac
+op	45:52	0:0	8	->
+water	45:54	0:0	8	conv_deinterleave
+for	46:16	47:58	8	(p = 0 ;p < ac -> channels;p ++)
+forinit	46:21	46:26	9	p = 0 ;
+water	46:21	0:0	10	p
+op	46:23	0:0	10	=
+water	46:25	0:0	10	0
+water	46:26	0:0	10	;
+cond	46:28	46:36	9	p < ac -> channels
+water	46:28	0:0	10	p
+op	46:30	0:0	10	<
+water	46:32	0:0	10	ac
+op	46:34	0:0	10	->
+water	46:36	0:0	10	channels
+forexpr	46:46	46:47	9	p ++
+water	46:46	0:0	10	p
+op	46:47	0:0	10	++
+stmts	47:20	47:58	9	
+water	47:20	0:0	10	data
+op	47:24	0:0	10	[
+water	47:25	0:0	10	map
+op	47:28	0:0	10	->
+water	47:30	0:0	10	input_map
+op	47:39	0:0	10	[
+water	47:40	0:0	10	p
+op	47:41	0:0	10	]
+op	47:42	0:0	10	]
+op	47:44	0:0	10	=
+water	47:46	0:0	10	out
+op	47:49	0:0	10	->
+water	47:51	0:0	10	data
+op	47:55	0:0	10	[
+water	47:56	0:0	10	p
+op	47:57	0:0	10	]
+water	47:58	0:0	10	;
+call	48:16	48:60	8	convert
+arg	48:24	48:28	9	data
+water	48:24	0:0	10	data
+arg	48:30	48:41	9	in->data[0]
+water	48:30	0:0	10	in
+op	48:32	0:0	10	->
+water	48:34	0:0	10	data
+op	48:38	0:0	10	[
+water	48:39	0:0	10	0
+op	48:40	0:0	10	]
+arg	48:43	48:46	9	len
+water	48:43	0:0	10	len
+arg	48:48	48:60	9	ac->channels
+water	48:48	0:0	10	ac
+op	48:50	0:0	10	->
+water	48:52	0:0	10	channels
+water	48:61	0:0	8	;
+water	49:12	0:0	8	}
+water	50:8	0:0	6	}
+if	51:8	59:8	4	(map -> do_copy || map -> do_zero)
+cond	51:12	51:33	5	map -> do_copy || map -> do_zero
+water	51:12	0:0	6	map
+op	51:15	0:0	6	->
+water	51:17	0:0	6	do_copy
+op	51:25	0:0	6	||
+water	51:28	0:0	6	map
+op	51:31	0:0	6	->
+water	51:33	0:0	6	do_zero
+stmts	51:42	59:8	5	
+water	51:42	0:0	6	{
+for	52:12	58:12	6	(p = 0 ;p < ac -> planes;p ++)
+forinit	52:17	52:22	7	p = 0 ;
+water	52:17	0:0	8	p
+op	52:19	0:0	8	=
+water	52:21	0:0	8	0
+water	52:22	0:0	8	;
+cond	52:24	52:32	7	p < ac -> planes
+water	52:24	0:0	8	p
+op	52:26	0:0	8	<
+water	52:28	0:0	8	ac
+op	52:30	0:0	8	->
+water	52:32	0:0	8	planes
+forexpr	52:40	52:41	7	p ++
+water	52:40	0:0	8	p
+op	52:41	0:0	8	++
+stmts	52:45	58:12	7	
+water	52:45	0:0	8	{
+if	53:16	55:45	8	(map -> channel_copy [ p ])
+cond	53:20	53:39	9	map -> channel_copy [ p ]
+water	53:20	0:0	10	map
+op	53:23	0:0	10	->
+water	53:25	0:0	10	channel_copy
+op	53:37	0:0	10	[
+water	53:38	0:0	10	p
+op	53:39	0:0	10	]
+stmts	54:20	55:45	9	
+call	54:20	55:44	10	memcpy
+arg	54:27	54:39	11	out->data[p]
+water	54:27	0:0	12	out
+op	54:30	0:0	12	->
+water	54:32	0:0	12	data
+op	54:36	0:0	12	[
+water	54:37	0:0	12	p
+op	54:38	0:0	12	]
+arg	54:41	54:72	11	out->data[map->channel_copy[p]]
+water	54:41	0:0	12	out
+op	54:44	0:0	12	->
+water	54:46	0:0	12	data
+op	54:50	0:0	12	[
+water	54:51	0:0	12	map
+op	54:54	0:0	12	->
+water	54:56	0:0	12	channel_copy
+op	54:68	0:0	12	[
+water	54:69	0:0	12	p
+op	54:70	0:0	12	]
+op	54:71	0:0	12	]
+arg	55:27	55:44	11	len*out->stride
+water	55:27	0:0	12	len
+op	55:31	0:0	12	*
+water	55:33	0:0	12	out
+op	55:36	0:0	12	->
+water	55:38	0:0	12	stride
+water	55:45	0:0	10	;
+else	56:16	57:81	8
+stmts	56:21	57:81	9	
+if	56:21	57:81	10	(map -> channel_zero [ p ])
+cond	56:25	56:44	11	map -> channel_zero [ p ]
+water	56:25	0:0	12	map
+op	56:28	0:0	12	->
+water	56:30	0:0	12	channel_zero
+op	56:42	0:0	12	[
+water	56:43	0:0	12	p
+op	56:44	0:0	12	]
+stmts	57:20	57:81	11	
+call	57:20	57:80	12	av_samples_set_silence
+arg	57:43	57:56	13	&out->data[p]
+op	57:43	0:0	14	&
+water	57:44	0:0	14	out
+op	57:47	0:0	14	->
+water	57:49	0:0	14	data
+op	57:53	0:0	14	[
+water	57:54	0:0	14	p
+op	57:55	0:0	14	]
+arg	57:58	57:59	13	0
+water	57:58	0:0	14	0
+arg	57:61	57:64	13	len
+water	57:61	0:0	14	len
+arg	57:66	57:67	13	1
+water	57:66	0:0	14	1
+arg	57:69	57:80	13	ac->out_fmt
+water	57:69	0:0	14	ac
+op	57:71	0:0	14	->
+water	57:73	0:0	14	out_fmt
+water	57:81	0:0	12	;
+water	58:12	0:0	8	}
+water	59:8	0:0	6	}
+water	60:4	0:0	4	}
+else	60:6	90:4	2
+stmts	60:11	90:4	3	
+water	60:11	0:0	4	{
+switch	61:8	89:8	4	(ac -> func_type)
+cond	61:16	61:20	5	ac -> func_type
+water	61:16	0:0	6	ac
+op	61:18	0:0	6	->
+water	61:20	0:0	6	func_type
+stmts	61:31	89:8	5	
+water	61:31	0:0	6	{
+label	62:8	62:32	6	case CONV_FUNC_TYPE_FLAT :
+water	62:34	0:0	6	{
+if	63:12	64:35	6	(! in -> is_planar)
+cond	63:16	63:21	7	! in -> is_planar
+op	63:16	0:0	8	!
+water	63:17	0:0	8	in
+op	63:19	0:0	8	->
+water	63:21	0:0	8	is_planar
+stmts	64:16	64:35	7	
+water	64:16	0:0	8	len
+op	64:20	0:0	8	*=
+water	64:23	0:0	8	in
+op	64:25	0:0	8	->
+water	64:27	0:0	8	channels
+water	64:35	0:0	8	;
+if	65:12	68:12	6	(use_generic)
+cond	65:16	65:16	7	use_generic
+water	65:16	0:0	8	use_generic
+stmts	65:29	68:12	7	
+water	65:29	0:0	8	{
+for	66:16	67:73	8	(p = 0 ;p < ac -> planes;p ++)
+forinit	66:21	66:26	9	p = 0 ;
+water	66:21	0:0	10	p
+op	66:23	0:0	10	=
+water	66:25	0:0	10	0
+water	66:26	0:0	10	;
+cond	66:28	66:36	9	p < ac -> planes
+water	66:28	0:0	10	p
+op	66:30	0:0	10	<
+water	66:32	0:0	10	ac
+op	66:34	0:0	10	->
+water	66:36	0:0	10	planes
+forexpr	66:44	66:45	9	p ++
+water	66:44	0:0	10	p
+op	66:45	0:0	10	++
+stmts	67:20	67:73	9	
+call	67:20	67:72	10	ac->conv_flat_generic
+arg	67:42	67:54	11	out->data[p]
+water	67:42	0:0	12	out
+op	67:45	0:0	12	->
+water	67:47	0:0	12	data
+op	67:51	0:0	12	[
+water	67:52	0:0	12	p
+op	67:53	0:0	12	]
+arg	67:56	67:67	11	in->data[p]
+water	67:56	0:0	12	in
+op	67:58	0:0	12	->
+water	67:60	0:0	12	data
+op	67:64	0:0	12	[
+water	67:65	0:0	12	p
+op	67:66	0:0	12	]
+arg	67:69	67:72	11	len
+water	67:69	0:0	12	len
+water	67:73	0:0	10	;
+water	68:12	0:0	8	}
+else	68:14	71:12	6
+stmts	68:19	71:12	7	
+water	68:19	0:0	8	{
+for	69:16	70:65	8	(p = 0 ;p < ac -> planes;p ++)
+forinit	69:21	69:26	9	p = 0 ;
+water	69:21	0:0	10	p
+op	69:23	0:0	10	=
+water	69:25	0:0	10	0
+water	69:26	0:0	10	;
+cond	69:28	69:36	9	p < ac -> planes
+water	69:28	0:0	10	p
+op	69:30	0:0	10	<
+water	69:32	0:0	10	ac
+op	69:34	0:0	10	->
+water	69:36	0:0	10	planes
+forexpr	69:44	69:45	9	p ++
+water	69:44	0:0	10	p
+op	69:45	0:0	10	++
+stmts	70:20	70:65	9	
+call	70:20	70:64	10	ac->conv_flat
+arg	70:34	70:46	11	out->data[p]
+water	70:34	0:0	12	out
+op	70:37	0:0	12	->
+water	70:39	0:0	12	data
+op	70:43	0:0	12	[
+water	70:44	0:0	12	p
+op	70:45	0:0	12	]
+arg	70:48	70:59	11	in->data[p]
+water	70:48	0:0	12	in
+op	70:50	0:0	12	->
+water	70:52	0:0	12	data
+op	70:56	0:0	12	[
+water	70:57	0:0	12	p
+op	70:58	0:0	12	]
+arg	70:61	70:64	11	len
+water	70:61	0:0	12	len
+water	70:65	0:0	10	;
+water	71:12	0:0	8	}
+break	72:12	72:17	6	
+water	73:8	0:0	6	}
+label	74:8	74:38	6	case CONV_FUNC_TYPE_INTERLEAVE :
+if	75:12	77:57	6	(use_generic)
+cond	75:16	75:16	7	use_generic
+water	75:16	0:0	8	use_generic
+stmts	76:16	77:57	7	
+call	76:16	77:56	8	ac->conv_interleave_generic
+arg	76:44	76:56	9	out->data[0]
+water	76:44	0:0	10	out
+op	76:47	0:0	10	->
+water	76:49	0:0	10	data
+op	76:53	0:0	10	[
+water	76:54	0:0	10	0
+op	76:55	0:0	10	]
+arg	76:58	76:66	9	in->data
+water	76:58	0:0	10	in
+op	76:60	0:0	10	->
+water	76:62	0:0	10	data
+arg	76:68	76:71	9	len
+water	76:68	0:0	10	len
+arg	77:44	77:56	9	ac->channels
+water	77:44	0:0	10	ac
+op	77:46	0:0	10	->
+water	77:48	0:0	10	channels
+water	77:57	0:0	8	;
+else	78:12	79:78	6
+stmts	79:16	79:78	7	
+call	79:16	79:77	8	ac->conv_interleave
+arg	79:36	79:48	9	out->data[0]
+water	79:36	0:0	10	out
+op	79:39	0:0	10	->
+water	79:41	0:0	10	data
+op	79:45	0:0	10	[
+water	79:46	0:0	10	0
+op	79:47	0:0	10	]
+arg	79:50	79:58	9	in->data
+water	79:50	0:0	10	in
+op	79:52	0:0	10	->
+water	79:54	0:0	10	data
+arg	79:60	79:63	9	len
+water	79:60	0:0	10	len
+arg	79:65	79:77	9	ac->channels
+water	79:65	0:0	10	ac
+op	79:67	0:0	10	->
+water	79:69	0:0	10	channels
+water	79:78	0:0	8	;
+break	80:12	80:17	6	
+label	81:8	81:40	6	case CONV_FUNC_TYPE_DEINTERLEAVE :
+if	82:12	84:59	6	(use_generic)
+cond	82:16	82:16	7	use_generic
+water	82:16	0:0	8	use_generic
+stmts	83:16	84:59	7	
+call	83:16	84:58	8	ac->conv_deinterleave_generic
+arg	83:46	83:55	9	out->data
+water	83:46	0:0	10	out
+op	83:49	0:0	10	->
+water	83:51	0:0	10	data
+arg	83:57	83:68	9	in->data[0]
+water	83:57	0:0	10	in
+op	83:59	0:0	10	->
+water	83:61	0:0	10	data
+op	83:65	0:0	10	[
+water	83:66	0:0	10	0
+op	83:67	0:0	10	]
+arg	83:70	83:73	9	len
+water	83:70	0:0	10	len
+arg	84:46	84:58	9	ac->channels
+water	84:46	0:0	10	ac
+op	84:48	0:0	10	->
+water	84:50	0:0	10	channels
+water	84:59	0:0	8	;
+else	85:12	87:51	6
+stmts	86:16	87:51	7	
+call	86:16	87:50	8	ac->conv_deinterleave
+arg	86:38	86:47	9	out->data
+water	86:38	0:0	10	out
+op	86:41	0:0	10	->
+water	86:43	0:0	10	data
+arg	86:49	86:60	9	in->data[0]
+water	86:49	0:0	10	in
+op	86:51	0:0	10	->
+water	86:53	0:0	10	data
+op	86:57	0:0	10	[
+water	86:58	0:0	10	0
+op	86:59	0:0	10	]
+arg	86:62	86:65	9	len
+water	86:62	0:0	10	len
+arg	87:38	87:50	9	ac->channels
+water	87:38	0:0	10	ac
+op	87:40	0:0	10	->
+water	87:42	0:0	10	channels
+water	87:51	0:0	8	;
+break	88:12	88:17	6	
+water	89:8	0:0	6	}
+water	90:4	0:0	4	}
+water	91:4	0:0	2	out
+op	91:7	0:0	2	->
+water	91:9	0:0	2	nb_samples
+op	91:20	0:0	2	=
+water	91:22	0:0	2	in
+op	91:24	0:0	2	->
+water	91:26	0:0	2	nb_samples
+water	91:36	0:0	2	;
+return	92:4	92:12	2	0
+water	92:11	0:0	3	0

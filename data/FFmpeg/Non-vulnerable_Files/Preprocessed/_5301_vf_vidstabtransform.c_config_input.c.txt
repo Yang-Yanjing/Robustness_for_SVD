@@ -1,0 +1,683 @@
+func	1:0	88:0	0	static int	config_input
+params	1:23	0:0	1	
+param	1:24	1:44	2	AVFilterLink *	inlink
+stmnts	0:0	87:12	1	
+decl	3:4	3:38	2	AVFilterContext	*ctx
+op	3:25	0:0	2	=
+water	3:27	0:0	2	inlink
+op	3:33	0:0	2	->
+water	3:35	0:0	2	dst
+decl	4:4	4:36	2	TransformContext	*tc
+op	4:25	0:0	2	=
+water	4:27	0:0	2	ctx
+op	4:30	0:0	2	->
+water	4:32	0:0	2	priv
+decl	5:4	5:11	2	FILE	*f
+decl	6:4	6:72	2	const AVPixFmtDescriptor	*desc
+op	6:35	0:0	2	=
+call	6:37	6:71	3	av_pix_fmt_desc_get
+arg	6:57	6:71	4	inlink->format
+water	6:57	0:0	5	inlink
+op	6:63	0:0	5	->
+water	6:65	0:0	5	format
+decl	7:4	7:35	2	VSTransformData	*td
+op	7:24	0:0	2	=
+op	7:26	0:0	2	&
+water	7:27	0:0	2	(
+water	7:28	0:0	2	tc
+op	7:30	0:0	2	->
+water	7:32	0:0	2	td
+water	7:34	0:0	2	)
+decl	8:4	8:22	2	VSFrameInfo	fi_src
+decl	9:4	9:23	2	VSFrameInfo	fi_dest
+if	10:4	17:4	2	(!vsFrameInfoInit (& fi_src ,inlink -> w ,inlink -> h ,ff_av2vs_pixfmt (ctx ,inlink -> format ) ) || !vsFrameInfoInit (& fi_dest ,inlink -> w ,inlink -> h ,ff_av2vs_pixfmt (ctx ,inlink -> format ) ))
+cond	10:8	13:61	3	!vsFrameInfoInit (& fi_src ,inlink -> w ,inlink -> h ,ff_av2vs_pixfmt (ctx ,inlink -> format ) ) || !vsFrameInfoInit (& fi_dest ,inlink -> w ,inlink -> h ,ff_av2vs_pixfmt (ctx ,inlink -> format ) )
+op	10:8	0:0	4	!
+call	10:9	11:61	4	vsFrameInfoInit
+arg	10:25	10:32	5	&fi_src
+op	10:25	0:0	6	&
+water	10:26	0:0	6	fi_src
+arg	10:34	10:43	5	inlink->w
+water	10:34	0:0	6	inlink
+op	10:40	0:0	6	->
+water	10:42	0:0	6	w
+arg	10:45	10:54	5	inlink->h
+water	10:45	0:0	6	inlink
+op	10:51	0:0	6	->
+water	10:53	0:0	6	h
+arg	11:25	11:61	5	ff_av2vs_pixfmt(ctx,inlink->format)
+call	11:25	11:60	6	ff_av2vs_pixfmt
+arg	11:41	11:44	7	ctx
+water	11:41	0:0	8	ctx
+arg	11:46	11:60	7	inlink->format
+water	11:46	0:0	8	inlink
+op	11:52	0:0	8	->
+water	11:54	0:0	8	format
+op	11:63	0:0	4	||
+op	12:8	0:0	4	!
+call	12:9	13:61	4	vsFrameInfoInit
+arg	12:25	12:33	5	&fi_dest
+op	12:25	0:0	6	&
+water	12:26	0:0	6	fi_dest
+arg	12:35	12:44	5	inlink->w
+water	12:35	0:0	6	inlink
+op	12:41	0:0	6	->
+water	12:43	0:0	6	w
+arg	12:46	12:55	5	inlink->h
+water	12:46	0:0	6	inlink
+op	12:52	0:0	6	->
+water	12:54	0:0	6	h
+arg	13:25	13:61	5	ff_av2vs_pixfmt(ctx,inlink->format)
+call	13:25	13:60	6	ff_av2vs_pixfmt
+arg	13:41	13:44	7	ctx
+water	13:41	0:0	8	ctx
+arg	13:46	13:60	7	inlink->format
+water	13:46	0:0	8	inlink
+op	13:52	0:0	8	->
+water	13:54	0:0	8	format
+stmts	13:64	17:4	3	
+water	13:64	0:0	4	{
+call	14:8	15:41	4	av_log
+arg	14:15	14:18	5	ctx
+water	14:15	0:0	6	ctx
+arg	14:20	14:32	5	AV_LOG_ERROR
+water	14:20	0:0	6	AV_LOG_ERROR
+arg	14:34	14:65	5	"unknown pixel format: %i (%s)"
+water	14:34	0:0	6	"unknown pixel format: %i (%s)"
+arg	15:15	15:29	5	inlink->format
+water	15:15	0:0	6	inlink
+op	15:21	0:0	6	->
+water	15:23	0:0	6	format
+arg	15:31	15:41	5	desc->name
+water	15:31	0:0	6	desc
+op	15:35	0:0	6	->
+water	15:37	0:0	6	name
+water	15:42	0:0	4	;
+return	16:8	16:30	4	AVERROR(EINVAL)
+call	16:15	16:29	5	AVERROR
+arg	16:23	16:29	6	EINVAL
+water	16:23	0:0	7	EINVAL
+water	17:4	0:0	4	}
+if	18:4	27:4	2	(fi_src . bytesPerPixel !=av_get_bits_per_pixel (desc ) / 8 || fi_src . log2ChromaW != desc -> log2_chroma_w || fi_src . log2ChromaH != desc -> log2_chroma_h)
+cond	18:8	20:36	3	fi_src . bytesPerPixel !=av_get_bits_per_pixel (desc ) / 8 || fi_src . log2ChromaW != desc -> log2_chroma_w || fi_src . log2ChromaH != desc -> log2_chroma_h
+water	18:8	0:0	4	fi_src
+op	18:14	0:0	4	.
+water	18:15	0:0	4	bytesPerPixel
+op	18:29	0:0	4	!=
+call	18:32	18:58	4	av_get_bits_per_pixel
+arg	18:54	18:58	5	desc
+water	18:54	0:0	6	desc
+op	18:59	0:0	4	/
+water	18:60	0:0	4	8
+op	18:62	0:0	4	||
+water	19:8	0:0	4	fi_src
+op	19:14	0:0	4	.
+water	19:15	0:0	4	log2ChromaW
+op	19:27	0:0	4	!=
+water	19:30	0:0	4	desc
+op	19:34	0:0	4	->
+water	19:36	0:0	4	log2_chroma_w
+op	19:50	0:0	4	||
+water	20:8	0:0	4	fi_src
+op	20:14	0:0	4	.
+water	20:15	0:0	4	log2ChromaH
+op	20:27	0:0	4	!=
+water	20:30	0:0	4	desc
+op	20:34	0:0	4	->
+water	20:36	0:0	4	log2_chroma_h
+stmts	20:51	27:4	3	
+water	20:51	0:0	4	{
+call	21:8	22:66	4	av_log
+arg	21:15	21:18	5	ctx
+water	21:15	0:0	6	ctx
+arg	21:20	21:32	5	AV_LOG_ERROR
+water	21:20	0:0	6	AV_LOG_ERROR
+arg	21:34	21:68	5	"pixel-format error: bpp %i<>%i  "
+water	21:34	0:0	6	"pixel-format error: bpp %i<>%i  "
+arg	22:15	22:35	5	fi_src.bytesPerPixel
+water	22:15	0:0	6	fi_src
+op	22:21	0:0	6	.
+water	22:22	0:0	6	bytesPerPixel
+arg	22:37	22:66	5	av_get_bits_per_pixel(desc)/8
+call	22:37	22:63	6	av_get_bits_per_pixel
+arg	22:59	22:63	7	desc
+water	22:59	0:0	8	desc
+op	22:64	0:0	6	/
+water	22:65	0:0	6	8
+water	22:67	0:0	4	;
+call	23:8	25:54	4	av_log
+arg	23:15	23:18	5	ctx
+water	23:15	0:0	6	ctx
+arg	23:20	23:32	5	AV_LOG_ERROR
+water	23:20	0:0	6	AV_LOG_ERROR
+arg	23:34	23:75	5	"chroma_subsampl: w: %i<>%i  h: %i<>%i\n"
+water	23:34	0:0	6	"chroma_subsampl: w: %i<>%i  h: %i<>%i\n"
+arg	24:15	24:33	5	fi_src.log2ChromaW
+water	24:15	0:0	6	fi_src
+op	24:21	0:0	6	.
+water	24:22	0:0	6	log2ChromaW
+arg	24:35	24:54	5	desc->log2_chroma_w
+water	24:35	0:0	6	desc
+op	24:39	0:0	6	->
+water	24:41	0:0	6	log2_chroma_w
+arg	25:15	25:33	5	fi_src.log2ChromaH
+water	25:15	0:0	6	fi_src
+op	25:21	0:0	6	.
+water	25:22	0:0	6	log2ChromaH
+arg	25:35	25:54	5	desc->log2_chroma_h
+water	25:35	0:0	6	desc
+op	25:39	0:0	6	->
+water	25:41	0:0	6	log2_chroma_h
+water	25:55	0:0	4	;
+return	26:8	26:30	4	AVERROR(EINVAL)
+call	26:15	26:29	5	AVERROR
+arg	26:23	26:29	6	EINVAL
+water	26:23	0:0	7	EINVAL
+water	27:4	0:0	4	}
+water	29:4	0:0	2	tc
+op	29:6	0:0	2	->
+water	29:8	0:0	2	conf
+op	29:12	0:0	2	.
+water	29:13	0:0	2	modName
+op	29:21	0:0	2	=
+water	29:23	0:0	2	"vidstabtransform"
+water	29:41	0:0	2	;
+water	30:4	0:0	2	tc
+op	30:6	0:0	2	->
+water	30:8	0:0	2	conf
+op	30:12	0:0	2	.
+water	30:13	0:0	2	verbose
+op	30:21	0:0	2	=
+water	30:23	0:0	2	1
+op	30:25	0:0	2	+
+water	30:27	0:0	2	tc
+op	30:29	0:0	2	->
+water	30:31	0:0	2	debug
+water	30:36	0:0	2	;
+if	31:4	35:4	2	(tc -> tripod)
+cond	31:8	31:12	3	tc -> tripod
+water	31:8	0:0	4	tc
+op	31:10	0:0	4	->
+water	31:12	0:0	4	tripod
+stmts	31:20	35:4	3	
+water	31:20	0:0	4	{
+call	32:8	32:81	4	av_log
+arg	32:15	32:18	5	ctx
+water	32:15	0:0	6	ctx
+arg	32:20	32:31	5	AV_LOG_INFO
+water	32:20	0:0	6	AV_LOG_INFO
+arg	32:33	32:81	5	"Virtual tripod mode: relative=0, smoothing=0\n"
+water	32:33	0:0	6	"Virtual tripod mode: relative=0, smoothing=0\n"
+water	32:82	0:0	4	;
+water	33:8	0:0	4	tc
+op	33:10	0:0	4	->
+water	33:12	0:0	4	conf
+op	33:16	0:0	4	.
+water	33:17	0:0	4	relative
+op	33:27	0:0	4	=
+water	33:29	0:0	4	0
+water	33:30	0:0	4	;
+water	34:8	0:0	4	tc
+op	34:10	0:0	4	->
+water	34:12	0:0	4	conf
+op	34:16	0:0	4	.
+water	34:17	0:0	4	smoothing
+op	34:27	0:0	4	=
+water	34:29	0:0	4	0
+water	34:30	0:0	4	;
+water	35:4	0:0	4	}
+water	36:4	0:0	2	tc
+op	36:6	0:0	2	->
+water	36:8	0:0	2	conf
+op	36:12	0:0	2	.
+water	36:13	0:0	2	simpleMotionCalculation
+op	36:37	0:0	2	=
+water	36:39	0:0	2	0
+water	36:40	0:0	2	;
+water	37:4	0:0	2	tc
+op	37:6	0:0	2	->
+water	37:8	0:0	2	conf
+op	37:12	0:0	2	.
+water	37:13	0:0	2	storeTransforms
+op	37:37	0:0	2	=
+water	37:39	0:0	2	tc
+op	37:41	0:0	2	->
+water	37:43	0:0	2	debug
+water	37:48	0:0	2	;
+water	38:4	0:0	2	tc
+op	38:6	0:0	2	->
+water	38:8	0:0	2	conf
+op	38:12	0:0	2	.
+water	38:13	0:0	2	smoothZoom
+op	38:37	0:0	2	=
+water	38:39	0:0	2	0
+water	38:40	0:0	2	;
+if	39:4	42:4	2	(vsTransformDataInit (td ,& tc -> conf ,& fi_src ,& fi_dest ) != VS_OK)
+cond	39:8	39:65	3	vsTransformDataInit (td ,& tc -> conf ,& fi_src ,& fi_dest ) != VS_OK
+call	39:8	39:60	4	vsTransformDataInit
+arg	39:28	39:30	5	td
+water	39:28	0:0	6	td
+arg	39:32	39:41	5	&tc->conf
+op	39:32	0:0	6	&
+water	39:33	0:0	6	tc
+op	39:35	0:0	6	->
+water	39:37	0:0	6	conf
+arg	39:43	39:50	5	&fi_src
+op	39:43	0:0	6	&
+water	39:44	0:0	6	fi_src
+arg	39:52	39:60	5	&fi_dest
+op	39:52	0:0	6	&
+water	39:53	0:0	6	fi_dest
+op	39:62	0:0	4	!=
+water	39:65	0:0	4	VS_OK
+stmts	39:72	42:4	3	
+water	39:72	0:0	4	{
+call	40:8	40:102	4	av_log
+arg	40:15	40:18	5	ctx
+water	40:15	0:0	6	ctx
+arg	40:20	40:32	5	AV_LOG_ERROR
+water	40:20	0:0	6	AV_LOG_ERROR
+arg	40:34	40:102	5	"initialization of vid.stab transform failed, please report a BUG\n"
+water	40:34	0:0	6	"initialization of vid.stab transform failed, please report a BUG\n"
+water	40:103	0:0	4	;
+return	41:8	41:30	4	AVERROR(EINVAL)
+call	41:15	41:29	5	AVERROR
+arg	41:23	41:29	6	EINVAL
+water	41:23	0:0	7	EINVAL
+water	42:4	0:0	4	}
+call	43:4	43:38	2	vsTransformGetConfig
+arg	43:25	43:34	3	&tc->conf
+op	43:25	0:0	4	&
+water	43:26	0:0	4	tc
+op	43:28	0:0	4	->
+water	43:30	0:0	4	conf
+arg	43:36	43:38	3	td
+water	43:36	0:0	4	td
+water	43:39	0:0	2	;
+call	44:4	44:88	2	av_log
+arg	44:11	44:14	3	ctx
+water	44:11	0:0	4	ctx
+arg	44:16	44:27	3	AV_LOG_INFO
+water	44:16	0:0	4	AV_LOG_INFO
+arg	44:29	44:88	3	"Video transformation/stabilization settings (pass 2/2):\n"
+water	44:29	0:0	4	"Video transformation/stabilization settings (pass 2/2):\n"
+water	44:89	0:0	2	;
+call	45:4	45:62	2	av_log
+arg	45:11	45:14	3	ctx
+water	45:11	0:0	4	ctx
+arg	45:16	45:27	3	AV_LOG_INFO
+water	45:16	0:0	4	AV_LOG_INFO
+arg	45:29	45:51	3	"    input     = %s\n"
+water	45:29	0:0	4	"    input     = %s\n"
+arg	45:53	45:62	3	tc->input
+water	45:53	0:0	4	tc
+op	45:55	0:0	4	->
+water	45:57	0:0	4	input
+water	45:63	0:0	2	;
+call	46:4	46:71	2	av_log
+arg	46:11	46:14	3	ctx
+water	46:11	0:0	4	ctx
+arg	46:16	46:27	3	AV_LOG_INFO
+water	46:16	0:0	4	AV_LOG_INFO
+arg	46:29	46:51	3	"    smoothing = %d\n"
+water	46:29	0:0	4	"    smoothing = %d\n"
+arg	46:53	46:71	3	tc->conf.smoothing
+water	46:53	0:0	4	tc
+op	46:55	0:0	4	->
+water	46:57	0:0	4	conf
+op	46:61	0:0	4	.
+water	46:62	0:0	4	smoothing
+water	46:72	0:0	2	;
+call	47:4	49:65	2	av_log
+arg	47:11	47:14	3	ctx
+water	47:11	0:0	4	ctx
+arg	47:16	47:27	3	AV_LOG_INFO
+water	47:16	0:0	4	AV_LOG_INFO
+arg	47:29	47:51	3	"    optalgo   = %s\n"
+water	47:29	0:0	4	"    optalgo   = %s\n"
+arg	48:11	49:65	3	tc->conf.camPathAlgo==VSOptimalL1?"opt":(tc->conf.camPathAlgo==VSGaussian?"gauss":"avg")
+water	48:11	0:0	4	tc
+op	48:13	0:0	4	->
+water	48:15	0:0	4	conf
+op	48:19	0:0	4	.
+water	48:20	0:0	4	camPathAlgo
+op	48:32	0:0	4	==
+water	48:35	0:0	4	VSOptimalL1
+water	48:47	0:0	4	?
+water	48:49	0:0	4	"opt"
+water	48:55	0:0	4	:
+water	49:11	0:0	4	(
+water	49:12	0:0	4	tc
+op	49:14	0:0	4	->
+water	49:16	0:0	4	conf
+op	49:20	0:0	4	.
+water	49:21	0:0	4	camPathAlgo
+op	49:33	0:0	4	==
+water	49:36	0:0	4	VSGaussian
+water	49:47	0:0	4	?
+water	49:49	0:0	4	"gauss"
+water	49:57	0:0	4	:
+water	49:59	0:0	4	"avg"
+water	49:64	0:0	4	)
+water	49:66	0:0	2	;
+call	50:4	50:70	2	av_log
+arg	50:11	50:14	3	ctx
+water	50:11	0:0	4	ctx
+arg	50:16	50:27	3	AV_LOG_INFO
+water	50:16	0:0	4	AV_LOG_INFO
+arg	50:29	50:51	3	"    maxshift  = %d\n"
+water	50:29	0:0	4	"    maxshift  = %d\n"
+arg	50:53	50:70	3	tc->conf.maxShift
+water	50:53	0:0	4	tc
+op	50:55	0:0	4	->
+water	50:57	0:0	4	conf
+op	50:61	0:0	4	.
+water	50:62	0:0	4	maxShift
+water	50:71	0:0	2	;
+call	51:4	51:70	2	av_log
+arg	51:11	51:14	3	ctx
+water	51:11	0:0	4	ctx
+arg	51:16	51:27	3	AV_LOG_INFO
+water	51:16	0:0	4	AV_LOG_INFO
+arg	51:29	51:51	3	"    maxangle  = %f\n"
+water	51:29	0:0	4	"    maxangle  = %f\n"
+arg	51:53	51:70	3	tc->conf.maxAngle
+water	51:53	0:0	4	tc
+op	51:55	0:0	4	->
+water	51:57	0:0	4	conf
+op	51:61	0:0	4	.
+water	51:62	0:0	4	maxAngle
+water	51:71	0:0	2	;
+call	52:4	52:85	2	av_log
+arg	52:11	52:14	3	ctx
+water	52:11	0:0	4	ctx
+arg	52:16	52:27	3	AV_LOG_INFO
+water	52:16	0:0	4	AV_LOG_INFO
+arg	52:29	52:51	3	"    crop      = %s\n"
+water	52:29	0:0	4	"    crop      = %s\n"
+arg	52:53	52:85	3	tc->conf.crop?"Black":"Keep"
+water	52:53	0:0	4	tc
+op	52:55	0:0	4	->
+water	52:57	0:0	4	conf
+op	52:61	0:0	4	.
+water	52:62	0:0	4	crop
+water	52:67	0:0	4	?
+water	52:69	0:0	4	"Black"
+water	52:77	0:0	4	:
+water	52:79	0:0	4	"Keep"
+water	52:86	0:0	2	;
+call	53:4	53:88	2	av_log
+arg	53:11	53:14	3	ctx
+water	53:11	0:0	4	ctx
+arg	53:16	53:27	3	AV_LOG_INFO
+water	53:16	0:0	4	AV_LOG_INFO
+arg	53:29	53:51	3	"    relative  = %s\n"
+water	53:29	0:0	4	"    relative  = %s\n"
+arg	53:53	53:88	3	tc->conf.relative?"True":"False"
+water	53:53	0:0	4	tc
+op	53:55	0:0	4	->
+water	53:57	0:0	4	conf
+op	53:61	0:0	4	.
+water	53:62	0:0	4	relative
+water	53:71	0:0	4	?
+water	53:73	0:0	4	"True"
+water	53:79	0:0	4	:
+water	53:81	0:0	4	"False"
+water	53:89	0:0	2	;
+call	54:4	54:87	2	av_log
+arg	54:11	54:14	3	ctx
+water	54:11	0:0	4	ctx
+arg	54:16	54:27	3	AV_LOG_INFO
+water	54:16	0:0	4	AV_LOG_INFO
+arg	54:29	54:51	3	"    invert    = %s\n"
+water	54:29	0:0	4	"    invert    = %s\n"
+arg	54:53	54:87	3	tc->conf.invert?"True":"False"
+water	54:53	0:0	4	tc
+op	54:55	0:0	4	->
+water	54:57	0:0	4	conf
+op	54:61	0:0	4	.
+water	54:62	0:0	4	invert
+water	54:69	0:0	4	?
+water	54:71	0:0	4	"True"
+water	54:78	0:0	4	:
+water	54:80	0:0	4	"False"
+water	54:88	0:0	2	;
+call	55:4	55:66	2	av_log
+arg	55:11	55:14	3	ctx
+water	55:11	0:0	4	ctx
+arg	55:16	55:27	3	AV_LOG_INFO
+water	55:16	0:0	4	AV_LOG_INFO
+arg	55:29	55:51	3	"    zoom      = %f\n"
+water	55:29	0:0	4	"    zoom      = %f\n"
+arg	55:53	55:66	3	tc->conf.zoom
+water	55:53	0:0	4	tc
+op	55:55	0:0	4	->
+water	55:57	0:0	4	conf
+op	55:61	0:0	4	.
+water	55:62	0:0	4	zoom
+water	55:67	0:0	2	;
+call	56:4	57:101	2	av_log
+arg	56:11	56:14	3	ctx
+water	56:11	0:0	4	ctx
+arg	56:16	56:27	3	AV_LOG_INFO
+water	56:16	0:0	4	AV_LOG_INFO
+arg	56:29	56:51	3	"    optzoom   = %s\n"
+water	56:29	0:0	4	"    optzoom   = %s\n"
+arg	57:11	57:101	3	tc->conf.optZoom==1?"Static (1)":(tc->conf.optZoom==2?"Dynamic (2)":"Off (0)")
+water	57:11	0:0	4	tc
+op	57:13	0:0	4	->
+water	57:15	0:0	4	conf
+op	57:19	0:0	4	.
+water	57:20	0:0	4	optZoom
+op	57:28	0:0	4	==
+water	57:31	0:0	4	1
+water	57:33	0:0	4	?
+water	57:35	0:0	4	"Static (1)"
+water	57:48	0:0	4	:
+water	57:50	0:0	4	(
+water	57:51	0:0	4	tc
+op	57:53	0:0	4	->
+water	57:55	0:0	4	conf
+op	57:59	0:0	4	.
+water	57:60	0:0	4	optZoom
+op	57:68	0:0	4	==
+water	57:71	0:0	4	2
+water	57:73	0:0	4	?
+water	57:75	0:0	4	"Dynamic (2)"
+water	57:89	0:0	4	:
+water	57:91	0:0	4	"Off (0)"
+water	57:100	0:0	4	)
+water	57:102	0:0	2	;
+if	58:4	59:76	2	(tc -> conf . optZoom == 2)
+cond	58:8	58:28	3	tc -> conf . optZoom == 2
+water	58:8	0:0	4	tc
+op	58:10	0:0	4	->
+water	58:12	0:0	4	conf
+op	58:16	0:0	4	.
+water	58:17	0:0	4	optZoom
+op	58:25	0:0	4	==
+water	58:28	0:0	4	2
+stmts	59:8	59:76	3	
+call	59:8	59:75	4	av_log
+arg	59:15	59:18	5	ctx
+water	59:15	0:0	6	ctx
+arg	59:20	59:31	5	AV_LOG_INFO
+water	59:20	0:0	6	AV_LOG_INFO
+arg	59:33	59:55	5	"    zoomspeed = %g\n"
+water	59:33	0:0	6	"    zoomspeed = %g\n"
+arg	59:57	59:75	5	tc->conf.zoomSpeed
+water	59:57	0:0	6	tc
+op	59:59	0:0	6	->
+water	59:61	0:0	6	conf
+op	59:65	0:0	6	.
+water	59:66	0:0	6	zoomSpeed
+water	59:76	0:0	4	;
+call	60:4	60:100	2	av_log
+arg	60:11	60:14	3	ctx
+water	60:11	0:0	4	ctx
+arg	60:16	60:27	3	AV_LOG_INFO
+water	60:16	0:0	4	AV_LOG_INFO
+arg	60:29	60:51	3	"    interpol  = %s\n"
+water	60:29	0:0	4	"    interpol  = %s\n"
+arg	60:53	60:100	3	getInterpolationTypeName(tc->conf.interpolType)
+call	60:53	60:99	4	getInterpolationTypeName
+arg	60:78	60:99	5	tc->conf.interpolType
+water	60:78	0:0	6	tc
+op	60:80	0:0	6	->
+water	60:82	0:0	6	conf
+op	60:86	0:0	6	.
+water	60:87	0:0	6	interpolType
+water	60:101	0:0	2	;
+water	61:4	0:0	2	f
+op	61:6	0:0	2	=
+call	61:8	61:28	2	fopen
+arg	61:14	61:23	3	tc->input
+water	61:14	0:0	4	tc
+op	61:16	0:0	4	->
+water	61:18	0:0	4	input
+arg	61:25	61:28	3	"r"
+water	61:25	0:0	4	"r"
+water	61:29	0:0	2	;
+if	62:4	66:4	2	(! f)
+cond	62:8	62:9	3	! f
+op	62:8	0:0	4	!
+water	62:9	0:0	4	f
+stmts	62:12	66:4	3	
+water	62:12	0:0	4	{
+decl	63:8	63:32	4	int	ret
+op	63:16	0:0	4	=
+call	63:18	63:31	5	AVERROR
+arg	63:26	63:31	6	errno
+water	63:26	0:0	7	errno
+call	64:8	64:74	4	av_log
+arg	64:15	64:18	5	ctx
+water	64:15	0:0	6	ctx
+arg	64:20	64:32	5	AV_LOG_ERROR
+water	64:20	0:0	6	AV_LOG_ERROR
+arg	64:34	64:63	5	"cannot open input file %s\n"
+water	64:34	0:0	6	"cannot open input file %s\n"
+arg	64:65	64:74	5	tc->input
+water	64:65	0:0	6	tc
+op	64:67	0:0	6	->
+water	64:69	0:0	6	input
+water	64:75	0:0	4	;
+return	65:8	65:18	4	ret
+water	65:15	0:0	5	ret
+water	66:4	0:0	4	}
+else	66:6	80:4	2
+stmts	66:11	80:4	3	
+water	66:11	0:0	4	{
+decl	67:8	67:31	4	VSManyLocalMotions	mlms
+if	68:8	74:8	4	(vsReadLocalMotionsFile (f ,& mlms ) == VS_OK)
+cond	68:12	68:48	5	vsReadLocalMotionsFile (f ,& mlms ) == VS_OK
+call	68:12	68:43	6	vsReadLocalMotionsFile
+arg	68:35	68:36	7	f
+water	68:35	0:0	8	f
+arg	68:38	68:43	7	&mlms
+op	68:38	0:0	8	&
+water	68:39	0:0	8	mlms
+op	68:45	0:0	6	==
+water	68:48	0:0	6	VS_OK
+stmts	68:55	74:8	5	
+water	68:55	0:0	6	{
+if	70:12	73:12	6	(vsLocalmotions2Transforms (td ,& mlms ,& tc -> trans ) != VS_OK)
+cond	70:16	70:68	7	vsLocalmotions2Transforms (td ,& mlms ,& tc -> trans ) != VS_OK
+call	70:16	70:63	8	vsLocalmotions2Transforms
+arg	70:42	70:44	9	td
+water	70:42	0:0	10	td
+arg	70:46	70:51	9	&mlms
+op	70:46	0:0	10	&
+water	70:47	0:0	10	mlms
+arg	70:53	70:63	9	&tc->trans
+op	70:53	0:0	10	&
+water	70:54	0:0	10	tc
+op	70:56	0:0	10	->
+water	70:58	0:0	10	trans
+op	70:65	0:0	8	!=
+water	70:68	0:0	8	VS_OK
+stmts	70:75	73:12	7	
+water	70:75	0:0	8	{
+call	71:16	71:80	8	av_log
+arg	71:23	71:26	9	ctx
+water	71:23	0:0	10	ctx
+arg	71:28	71:40	9	AV_LOG_ERROR
+water	71:28	0:0	10	AV_LOG_ERROR
+arg	71:42	71:80	9	"calculating transformations failed\n"
+water	71:42	0:0	10	"calculating transformations failed\n"
+water	71:81	0:0	8	;
+return	72:16	72:38	8	AVERROR(EINVAL)
+call	72:23	72:37	9	AVERROR
+arg	72:31	72:37	10	EINVAL
+water	72:31	0:0	11	EINVAL
+water	73:12	0:0	8	}
+water	74:8	0:0	6	}
+else	74:10	79:8	4
+stmts	74:15	79:8	5	
+water	74:15	0:0	6	{
+if	75:12	78:12	6	(!vsReadOldTransforms (td ,f ,& tc -> trans ))
+cond	75:16	75:54	7	!vsReadOldTransforms (td ,f ,& tc -> trans )
+op	75:16	0:0	8	!
+call	75:17	75:54	8	vsReadOldTransforms
+arg	75:37	75:39	9	td
+water	75:37	0:0	10	td
+arg	75:41	75:42	9	f
+water	75:41	0:0	10	f
+arg	75:44	75:54	9	&tc->trans
+op	75:44	0:0	10	&
+water	75:45	0:0	10	tc
+op	75:47	0:0	10	->
+water	75:49	0:0	10	trans
+stmts	75:57	78:12	7	
+water	75:57	0:0	8	{
+call	76:16	76:84	8	av_log
+arg	76:23	76:26	9	ctx
+water	76:23	0:0	10	ctx
+arg	76:28	76:40	9	AV_LOG_ERROR
+water	76:28	0:0	10	AV_LOG_ERROR
+arg	76:42	76:73	9	"error parsing input file %s\n"
+water	76:42	0:0	10	"error parsing input file %s\n"
+arg	76:75	76:84	9	tc->input
+water	76:75	0:0	10	tc
+op	76:77	0:0	10	->
+water	76:79	0:0	10	input
+water	76:85	0:0	8	;
+return	77:16	77:38	8	AVERROR(EINVAL)
+call	77:23	77:37	9	AVERROR
+arg	77:31	77:37	10	EINVAL
+water	77:31	0:0	11	EINVAL
+water	78:12	0:0	8	}
+water	79:8	0:0	6	}
+water	80:4	0:0	4	}
+call	81:4	81:12	2	fclose
+arg	81:11	81:12	3	f
+water	81:11	0:0	4	f
+water	81:13	0:0	2	;
+if	82:4	85:4	2	(vsPreprocessTransforms (td ,& tc -> trans ) != VS_OK)
+cond	82:8	82:50	3	vsPreprocessTransforms (td ,& tc -> trans ) != VS_OK
+call	82:8	82:45	4	vsPreprocessTransforms
+arg	82:31	82:33	5	td
+water	82:31	0:0	6	td
+arg	82:35	82:45	5	&tc->trans
+op	82:35	0:0	6	&
+water	82:36	0:0	6	tc
+op	82:38	0:0	6	->
+water	82:40	0:0	6	trans
+op	82:47	0:0	4	!=
+water	82:50	0:0	4	VS_OK
+stmts	82:57	85:4	3	
+water	82:57	0:0	4	{
+call	83:8	83:74	4	av_log
+arg	83:15	83:18	5	ctx
+water	83:15	0:0	6	ctx
+arg	83:20	83:32	5	AV_LOG_ERROR
+water	83:20	0:0	6	AV_LOG_ERROR
+arg	83:34	83:74	5	"error while preprocessing transforms\n"
+water	83:34	0:0	6	"error while preprocessing transforms\n"
+water	83:75	0:0	4	;
+return	84:8	84:30	4	AVERROR(EINVAL)
+call	84:15	84:29	5	AVERROR
+arg	84:23	84:29	6	EINVAL
+water	84:23	0:0	7	EINVAL
+water	85:4	0:0	4	}
+return	87:4	87:12	2	0
+water	87:11	0:0	3	0

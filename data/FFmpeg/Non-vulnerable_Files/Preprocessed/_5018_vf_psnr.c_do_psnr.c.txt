@@ -1,0 +1,436 @@
+func	1:0	41:0	0	static AVFrame *	do_psnr
+params	1:23	0:0	1	
+param	1:24	1:44	2	AVFilterContext *	ctx
+param	1:46	1:59	2	AVFrame *	main
+param	2:24	2:42	2	const AVFrame *	ref
+stmnts	0:0	40:15	1	
+decl	4:4	4:30	2	PSNRContext	*s
+op	4:19	0:0	2	=
+water	4:21	0:0	2	ctx
+op	4:24	0:0	2	->
+water	4:26	0:0	2	priv
+decl	5:4	5:31	2	double	comp_mse[4]
+water	5:22	0:0	2	,
+decl	5:4	5:31	2	double	mse
+op	5:28	0:0	2	=
+water	5:30	0:0	2	0
+decl	6:4	6:12	2	int	j
+water	6:9	0:0	2	,
+decl	6:4	6:12	2	int	c
+decl	7:4	7:62	2	AVDictionary	**metadata
+op	7:28	0:0	2	=
+call	7:30	7:61	3	avpriv_frame_get_metadatap
+arg	7:57	7:61	4	main
+water	7:57	0:0	5	main
+call	8:4	10:61	2	compute_images_mse
+arg	8:23	8:24	3	s
+water	8:23	0:0	4	s
+arg	8:26	8:54	3	(constuint8_t**)main->data
+water	8:26	0:0	4	(
+water	8:27	0:0	4	const
+water	8:33	0:0	4	uint8_t
+op	8:41	0:0	4	*
+op	8:42	0:0	4	*
+water	8:43	0:0	4	)
+water	8:44	0:0	4	main
+op	8:48	0:0	4	->
+water	8:50	0:0	4	data
+arg	8:56	8:70	3	main->linesize
+water	8:56	0:0	4	main
+op	8:60	0:0	4	->
+water	8:62	0:0	4	linesize
+arg	9:26	9:53	3	(constuint8_t**)ref->data
+water	9:26	0:0	4	(
+water	9:27	0:0	4	const
+water	9:33	0:0	4	uint8_t
+op	9:41	0:0	4	*
+op	9:42	0:0	4	*
+water	9:43	0:0	4	)
+water	9:44	0:0	4	ref
+op	9:47	0:0	4	->
+water	9:49	0:0	4	data
+arg	9:55	9:68	3	ref->linesize
+water	9:55	0:0	4	ref
+op	9:58	0:0	4	->
+water	9:60	0:0	4	linesize
+arg	10:26	10:37	3	main->width
+water	10:26	0:0	4	main
+op	10:30	0:0	4	->
+water	10:32	0:0	4	width
+arg	10:39	10:51	3	main->height
+water	10:39	0:0	4	main
+op	10:43	0:0	4	->
+water	10:45	0:0	4	height
+arg	10:53	10:61	3	comp_mse
+water	10:53	0:0	4	comp_mse
+water	10:62	0:0	2	;
+for	11:4	12:46	2	(j = 0 ;j < s -> nb_components;j ++)
+forinit	11:9	11:14	3	j = 0 ;
+water	11:9	0:0	4	j
+op	11:11	0:0	4	=
+water	11:13	0:0	4	0
+water	11:14	0:0	4	;
+cond	11:16	11:23	3	j < s -> nb_components
+water	11:16	0:0	4	j
+op	11:18	0:0	4	<
+water	11:20	0:0	4	s
+op	11:21	0:0	4	->
+water	11:23	0:0	4	nb_components
+forexpr	11:38	11:39	3	j ++
+water	11:38	0:0	4	j
+op	11:39	0:0	4	++
+stmts	12:8	12:46	3	
+water	12:8	0:0	4	mse
+op	12:12	0:0	4	+=
+water	12:15	0:0	4	comp_mse
+op	12:23	0:0	4	[
+water	12:24	0:0	4	j
+op	12:25	0:0	4	]
+op	12:27	0:0	4	*
+water	12:29	0:0	4	s
+op	12:30	0:0	4	->
+water	12:32	0:0	4	planeweight
+op	12:43	0:0	4	[
+water	12:44	0:0	4	j
+op	12:45	0:0	4	]
+water	12:46	0:0	4	;
+water	13:4	0:0	2	s
+op	13:5	0:0	2	->
+water	13:7	0:0	2	min_mse
+op	13:15	0:0	2	=
+call	13:17	13:38	2	FFMIN
+arg	13:23	13:33	3	s->min_mse
+water	13:23	0:0	4	s
+op	13:24	0:0	4	->
+water	13:26	0:0	4	min_mse
+arg	13:35	13:38	3	mse
+water	13:35	0:0	4	mse
+water	13:39	0:0	2	;
+water	14:4	0:0	2	s
+op	14:5	0:0	2	->
+water	14:7	0:0	2	max_mse
+op	14:15	0:0	2	=
+call	14:17	14:38	2	FFMAX
+arg	14:23	14:33	3	s->max_mse
+water	14:23	0:0	4	s
+op	14:24	0:0	4	->
+water	14:26	0:0	4	max_mse
+arg	14:35	14:38	3	mse
+water	14:35	0:0	4	mse
+water	14:39	0:0	2	;
+water	15:4	0:0	2	s
+op	15:5	0:0	2	->
+water	15:7	0:0	2	mse
+op	15:11	0:0	2	+=
+water	15:14	0:0	2	mse
+water	15:17	0:0	2	;
+for	16:4	17:37	2	(j = 0 ;j < s -> nb_components;j ++)
+forinit	16:9	16:14	3	j = 0 ;
+water	16:9	0:0	4	j
+op	16:11	0:0	4	=
+water	16:13	0:0	4	0
+water	16:14	0:0	4	;
+cond	16:16	16:23	3	j < s -> nb_components
+water	16:16	0:0	4	j
+op	16:18	0:0	4	<
+water	16:20	0:0	4	s
+op	16:21	0:0	4	->
+water	16:23	0:0	4	nb_components
+forexpr	16:38	16:39	3	j ++
+water	16:38	0:0	4	j
+op	16:39	0:0	4	++
+stmts	17:8	17:37	3	
+water	17:8	0:0	4	s
+op	17:9	0:0	4	->
+water	17:11	0:0	4	mse_comp
+op	17:19	0:0	4	[
+water	17:20	0:0	4	j
+op	17:21	0:0	4	]
+op	17:23	0:0	4	+=
+water	17:26	0:0	4	comp_mse
+op	17:34	0:0	4	[
+water	17:35	0:0	4	j
+op	17:36	0:0	4	]
+water	17:37	0:0	4	;
+water	18:4	0:0	2	s
+op	18:5	0:0	2	->
+water	18:7	0:0	2	nb_frames
+op	18:16	0:0	2	++
+water	18:18	0:0	2	;
+for	19:4	23:4	2	(j = 0 ;j < s -> nb_components;j ++)
+forinit	19:9	19:14	3	j = 0 ;
+water	19:9	0:0	4	j
+op	19:11	0:0	4	=
+water	19:13	0:0	4	0
+water	19:14	0:0	4	;
+cond	19:16	19:23	3	j < s -> nb_components
+water	19:16	0:0	4	j
+op	19:18	0:0	4	<
+water	19:20	0:0	4	s
+op	19:21	0:0	4	->
+water	19:23	0:0	4	nb_components
+forexpr	19:38	19:39	3	j ++
+water	19:38	0:0	4	j
+op	19:39	0:0	4	++
+stmts	19:43	23:4	3	
+water	19:43	0:0	4	{
+water	20:8	0:0	4	c
+op	20:10	0:0	4	=
+water	20:12	0:0	4	s
+op	20:13	0:0	4	->
+water	20:15	0:0	4	is_rgb
+water	20:22	0:0	4	?
+water	20:24	0:0	4	s
+op	20:25	0:0	4	->
+water	20:27	0:0	4	rgba_map
+op	20:35	0:0	4	[
+water	20:36	0:0	4	j
+op	20:37	0:0	4	]
+water	20:39	0:0	4	:
+water	20:41	0:0	4	j
+water	20:42	0:0	4	;
+call	21:8	21:70	4	set_meta
+arg	21:17	21:25	5	metadata
+water	21:17	0:0	6	metadata
+arg	21:27	21:44	5	"lavfi.psnr.mse."
+water	21:27	0:0	6	"lavfi.psnr.mse."
+arg	21:46	21:57	5	s->comps[j]
+water	21:46	0:0	6	s
+op	21:47	0:0	6	->
+water	21:49	0:0	6	comps
+op	21:54	0:0	6	[
+water	21:55	0:0	6	j
+op	21:56	0:0	6	]
+arg	21:59	21:70	5	comp_mse[c]
+water	21:59	0:0	6	comp_mse
+op	21:67	0:0	6	[
+water	21:68	0:0	6	c
+op	21:69	0:0	6	]
+water	21:71	0:0	4	;
+call	22:8	22:95	4	set_meta
+arg	22:17	22:25	5	metadata
+water	22:17	0:0	6	metadata
+arg	22:27	22:45	5	"lavfi.psnr.psnr."
+water	22:27	0:0	6	"lavfi.psnr.psnr."
+arg	22:47	22:58	5	s->comps[j]
+water	22:47	0:0	6	s
+op	22:48	0:0	6	->
+water	22:50	0:0	6	comps
+op	22:55	0:0	6	[
+water	22:56	0:0	6	j
+op	22:57	0:0	6	]
+arg	22:60	22:95	5	get_psnr(comp_mse[c],1,s->max[c])
+call	22:60	22:94	6	get_psnr
+arg	22:69	22:80	7	comp_mse[c]
+water	22:69	0:0	8	comp_mse
+op	22:77	0:0	8	[
+water	22:78	0:0	8	c
+op	22:79	0:0	8	]
+arg	22:82	22:83	7	1
+water	22:82	0:0	8	1
+arg	22:85	22:94	7	s->max[c]
+water	22:85	0:0	8	s
+op	22:86	0:0	8	->
+water	22:88	0:0	8	max
+op	22:91	0:0	8	[
+water	22:92	0:0	8	c
+op	22:93	0:0	8	]
+water	22:96	0:0	4	;
+water	23:4	0:0	4	}
+call	24:4	24:51	2	set_meta
+arg	24:13	24:21	3	metadata
+water	24:13	0:0	4	metadata
+arg	24:23	24:43	3	"lavfi.psnr.mse_avg"
+water	24:23	0:0	4	"lavfi.psnr.mse_avg"
+arg	24:45	24:46	3	0
+water	24:45	0:0	4	0
+arg	24:48	24:51	3	mse
+water	24:48	0:0	4	mse
+water	24:52	0:0	2	;
+call	25:4	25:81	2	set_meta
+arg	25:13	25:21	3	metadata
+water	25:13	0:0	4	metadata
+arg	25:23	25:44	3	"lavfi.psnr.psnr_avg"
+water	25:23	0:0	4	"lavfi.psnr.psnr_avg"
+arg	25:46	25:47	3	0
+water	25:46	0:0	4	0
+arg	25:49	25:81	3	get_psnr(mse,1,s->average_max)
+call	25:49	25:80	4	get_psnr
+arg	25:58	25:61	5	mse
+water	25:58	0:0	6	mse
+arg	25:63	25:64	5	1
+water	25:63	0:0	6	1
+arg	25:66	25:80	5	s->average_max
+water	25:66	0:0	6	s
+op	25:67	0:0	6	->
+water	25:69	0:0	6	average_max
+water	25:82	0:0	2	;
+if	26:4	39:4	2	(s -> stats_file)
+cond	26:8	26:11	3	s -> stats_file
+water	26:8	0:0	4	s
+op	26:9	0:0	4	->
+water	26:11	0:0	4	stats_file
+stmts	26:23	39:4	3	
+water	26:23	0:0	4	{
+call	27:8	27:78	4	fprintf
+arg	27:16	27:29	5	s->stats_file
+water	27:16	0:0	6	s
+op	27:17	0:0	6	->
+water	27:19	0:0	6	stats_file
+arg	27:31	27:59	5	"n:%"PRId64" mse_avg:%0.2f "
+water	27:31	0:0	6	"n:%"
+water	27:36	0:0	6	PRId64
+water	27:42	0:0	6	" mse_avg:%0.2f "
+arg	27:61	27:73	5	s->nb_frames
+water	27:61	0:0	6	s
+op	27:62	0:0	6	->
+water	27:64	0:0	6	nb_frames
+arg	27:75	27:78	5	mse
+water	27:75	0:0	6	mse
+water	27:79	0:0	4	;
+for	28:8	31:8	4	(j = 0 ;j < s -> nb_components;j ++)
+forinit	28:13	28:18	5	j = 0 ;
+water	28:13	0:0	6	j
+op	28:15	0:0	6	=
+water	28:17	0:0	6	0
+water	28:18	0:0	6	;
+cond	28:20	28:27	5	j < s -> nb_components
+water	28:20	0:0	6	j
+op	28:22	0:0	6	<
+water	28:24	0:0	6	s
+op	28:25	0:0	6	->
+water	28:27	0:0	6	nb_components
+forexpr	28:42	28:43	5	j ++
+water	28:42	0:0	6	j
+op	28:43	0:0	6	++
+stmts	28:47	31:8	5	
+water	28:47	0:0	6	{
+water	29:12	0:0	6	c
+op	29:14	0:0	6	=
+water	29:16	0:0	6	s
+op	29:17	0:0	6	->
+water	29:19	0:0	6	is_rgb
+water	29:26	0:0	6	?
+water	29:28	0:0	6	s
+op	29:29	0:0	6	->
+water	29:31	0:0	6	rgba_map
+op	29:39	0:0	6	[
+water	29:40	0:0	6	j
+op	29:41	0:0	6	]
+water	29:43	0:0	6	:
+water	29:45	0:0	6	j
+water	29:46	0:0	6	;
+call	30:12	30:76	6	fprintf
+arg	30:20	30:33	7	s->stats_file
+water	30:20	0:0	8	s
+op	30:21	0:0	8	->
+water	30:23	0:0	8	stats_file
+arg	30:35	30:50	7	"mse_%c:%0.2f "
+water	30:35	0:0	8	"mse_%c:%0.2f "
+arg	30:52	30:63	7	s->comps[j]
+water	30:52	0:0	8	s
+op	30:53	0:0	8	->
+water	30:55	0:0	8	comps
+op	30:60	0:0	8	[
+water	30:61	0:0	8	j
+op	30:62	0:0	8	]
+arg	30:65	30:76	7	comp_mse[c]
+water	30:65	0:0	8	comp_mse
+op	30:73	0:0	8	[
+water	30:74	0:0	8	c
+op	30:75	0:0	8	]
+water	30:77	0:0	6	;
+water	31:8	0:0	6	}
+call	32:8	32:82	4	fprintf
+arg	32:16	32:29	5	s->stats_file
+water	32:16	0:0	6	s
+op	32:17	0:0	6	->
+water	32:19	0:0	6	stats_file
+arg	32:31	32:48	5	"psnr_avg:%0.2f "
+water	32:31	0:0	6	"psnr_avg:%0.2f "
+arg	32:50	32:82	5	get_psnr(mse,1,s->average_max)
+call	32:50	32:81	6	get_psnr
+arg	32:59	32:62	7	mse
+water	32:59	0:0	8	mse
+arg	32:64	32:65	7	1
+water	32:64	0:0	8	1
+arg	32:67	32:81	7	s->average_max
+water	32:67	0:0	8	s
+op	32:68	0:0	8	->
+water	32:70	0:0	8	average_max
+water	32:83	0:0	4	;
+for	33:8	37:8	4	(j = 0 ;j < s -> nb_components;j ++)
+forinit	33:13	33:18	5	j = 0 ;
+water	33:13	0:0	6	j
+op	33:15	0:0	6	=
+water	33:17	0:0	6	0
+water	33:18	0:0	6	;
+cond	33:20	33:27	5	j < s -> nb_components
+water	33:20	0:0	6	j
+op	33:22	0:0	6	<
+water	33:24	0:0	6	s
+op	33:25	0:0	6	->
+water	33:27	0:0	6	nb_components
+forexpr	33:42	33:43	5	j ++
+water	33:42	0:0	6	j
+op	33:43	0:0	6	++
+stmts	33:47	37:8	5	
+water	33:47	0:0	6	{
+water	34:12	0:0	6	c
+op	34:14	0:0	6	=
+water	34:16	0:0	6	s
+op	34:17	0:0	6	->
+water	34:19	0:0	6	is_rgb
+water	34:26	0:0	6	?
+water	34:28	0:0	6	s
+op	34:29	0:0	6	->
+water	34:31	0:0	6	rgba_map
+op	34:39	0:0	6	[
+water	34:40	0:0	6	j
+op	34:41	0:0	6	]
+water	34:43	0:0	6	:
+water	34:45	0:0	6	j
+water	34:46	0:0	6	;
+call	35:12	36:55	6	fprintf
+arg	35:20	35:33	7	s->stats_file
+water	35:20	0:0	8	s
+op	35:21	0:0	8	->
+water	35:23	0:0	8	stats_file
+arg	35:35	35:51	7	"psnr_%c:%0.2f "
+water	35:35	0:0	8	"psnr_%c:%0.2f "
+arg	35:53	35:64	7	s->comps[j]
+water	35:53	0:0	8	s
+op	35:54	0:0	8	->
+water	35:56	0:0	8	comps
+op	35:61	0:0	8	[
+water	35:62	0:0	8	j
+op	35:63	0:0	8	]
+arg	36:20	36:55	7	get_psnr(comp_mse[c],1,s->max[c])
+call	36:20	36:54	8	get_psnr
+arg	36:29	36:40	9	comp_mse[c]
+water	36:29	0:0	10	comp_mse
+op	36:37	0:0	10	[
+water	36:38	0:0	10	c
+op	36:39	0:0	10	]
+arg	36:42	36:43	9	1
+water	36:42	0:0	10	1
+arg	36:45	36:54	9	s->max[c]
+water	36:45	0:0	10	s
+op	36:46	0:0	10	->
+water	36:48	0:0	10	max
+op	36:51	0:0	10	[
+water	36:52	0:0	10	c
+op	36:53	0:0	10	]
+water	36:56	0:0	6	;
+water	37:8	0:0	6	}
+call	38:8	38:35	4	fprintf
+arg	38:16	38:29	5	s->stats_file
+water	38:16	0:0	6	s
+op	38:17	0:0	6	->
+water	38:19	0:0	6	stats_file
+arg	38:31	38:35	5	"\n"
+water	38:31	0:0	6	"\n"
+water	38:36	0:0	4	;
+water	39:4	0:0	4	}
+return	40:4	40:15	2	main
+water	40:11	0:0	3	main

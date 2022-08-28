@@ -1,0 +1,427 @@
+func	1:0	63:0	0	static int	mpeg_mux_write_packet
+params	1:32	0:0	1	
+param	1:33	1:53	2	AVFormatContext *	ctx
+param	1:55	1:68	2	AVPacket *	pkt
+stmnts	0:0	62:4	1	
+decl	3:4	3:40	2	int	stream_index
+op	3:21	0:0	2	=
+water	3:23	0:0	2	pkt
+op	3:26	0:0	2	->
+water	3:28	0:0	2	stream_index
+decl	4:4	4:32	2	int	size
+op	4:21	0:0	2	=
+water	4:23	0:0	2	pkt
+op	4:26	0:0	2	->
+water	4:28	0:0	2	size
+decl	5:4	5:32	2	uint8_t	*buf
+op	5:21	0:0	2	=
+water	5:23	0:0	2	pkt
+op	5:26	0:0	2	->
+water	5:28	0:0	2	data
+decl	6:4	6:38	2	MpegMuxContext	*s
+op	6:22	0:0	2	=
+water	6:24	0:0	2	ctx
+op	6:27	0:0	2	->
+water	6:29	0:0	2	priv_data
+decl	7:4	7:50	2	AVStream	*st
+op	7:22	0:0	2	=
+water	7:24	0:0	2	ctx
+op	7:27	0:0	2	->
+water	7:29	0:0	2	streams
+op	7:36	0:0	2	[
+water	7:37	0:0	2	stream_index
+op	7:49	0:0	2	]
+decl	8:4	8:38	2	StreamInfo	*stream
+op	8:23	0:0	2	=
+water	8:25	0:0	2	st
+op	8:27	0:0	2	->
+water	8:29	0:0	2	priv_data
+decl	9:4	9:20	2	int64_t	pts
+water	9:15	0:0	2	,
+decl	9:4	9:20	2	int64_t	dts
+decl	10:4	10:24	2	PacketDesc	*pkt_desc
+decl	11:4	11:15	2	int	preload
+decl	12:4	13:56	2	const int	is_iframe
+op	12:24	0:0	2	=
+water	12:26	0:0	2	st
+op	12:28	0:0	2	->
+water	12:30	0:0	2	codec
+op	12:35	0:0	2	->
+water	12:37	0:0	2	codec_type
+op	12:48	0:0	2	==
+water	12:51	0:0	2	AVMEDIA_TYPE_VIDEO
+op	12:70	0:0	2	&&
+water	13:26	0:0	2	(
+water	13:27	0:0	2	pkt
+op	13:30	0:0	2	->
+water	13:32	0:0	2	flags
+op	13:38	0:0	2	&
+water	13:40	0:0	2	AV_PKT_FLAG_KEY
+water	13:55	0:0	2	)
+water	14:4	0:0	2	preload
+op	14:12	0:0	2	=
+call	14:14	14:56	2	av_rescale
+arg	14:25	14:35	3	s->preload
+water	14:25	0:0	4	s
+op	14:26	0:0	4	->
+water	14:28	0:0	4	preload
+arg	14:37	14:42	3	90000
+water	14:37	0:0	4	90000
+arg	14:44	14:56	3	AV_TIME_BASE
+water	14:44	0:0	4	AV_TIME_BASE
+water	14:57	0:0	2	;
+water	15:4	0:0	2	pts
+op	15:8	0:0	2	=
+water	15:10	0:0	2	pkt
+op	15:13	0:0	2	->
+water	15:15	0:0	2	pts
+water	15:18	0:0	2	;
+water	16:4	0:0	2	dts
+op	16:8	0:0	2	=
+water	16:10	0:0	2	pkt
+op	16:13	0:0	2	->
+water	16:15	0:0	2	dts
+water	16:18	0:0	2	;
+if	17:4	28:4	2	(s -> last_scr == AV_NOPTS_VALUE)
+cond	17:8	17:23	3	s -> last_scr == AV_NOPTS_VALUE
+water	17:8	0:0	4	s
+op	17:9	0:0	4	->
+water	17:11	0:0	4	last_scr
+op	17:20	0:0	4	==
+water	17:23	0:0	4	AV_NOPTS_VALUE
+stmts	17:39	28:4	3	
+water	17:39	0:0	4	{
+if	18:8	22:8	4	(dts == AV_NOPTS_VALUE || ( dts < preload && ctx -> avoid_negative_ts ) || s -> is_dvd)
+cond	18:12	18:85	5	dts == AV_NOPTS_VALUE || ( dts < preload && ctx -> avoid_negative_ts ) || s -> is_dvd
+water	18:12	0:0	6	dts
+op	18:16	0:0	6	==
+water	18:19	0:0	6	AV_NOPTS_VALUE
+op	18:34	0:0	6	||
+water	18:37	0:0	6	(
+water	18:38	0:0	6	dts
+op	18:42	0:0	6	<
+water	18:44	0:0	6	preload
+op	18:52	0:0	6	&&
+water	18:55	0:0	6	ctx
+op	18:58	0:0	6	->
+water	18:60	0:0	6	avoid_negative_ts
+water	18:77	0:0	6	)
+op	18:79	0:0	6	||
+water	18:82	0:0	6	s
+op	18:83	0:0	6	->
+water	18:85	0:0	6	is_dvd
+stmts	18:93	22:8	5	
+water	18:93	0:0	6	{
+if	19:12	20:67	6	(dts != AV_NOPTS_VALUE)
+cond	19:16	19:23	7	dts != AV_NOPTS_VALUE
+water	19:16	0:0	8	dts
+op	19:20	0:0	8	!=
+water	19:23	0:0	8	AV_NOPTS_VALUE
+stmts	20:16	20:67	7	
+water	20:16	0:0	8	s
+op	20:17	0:0	8	->
+water	20:19	0:0	8	preload
+op	20:27	0:0	8	+=
+call	20:30	20:66	8	av_rescale
+arg	20:41	20:45	9	-dts
+op	20:41	0:0	10	-
+water	20:42	0:0	10	dts
+arg	20:47	20:59	9	AV_TIME_BASE
+water	20:47	0:0	10	AV_TIME_BASE
+arg	20:61	20:66	9	90000
+water	20:61	0:0	10	90000
+water	20:67	0:0	8	;
+water	21:12	0:0	6	s
+op	21:13	0:0	6	->
+water	21:15	0:0	6	last_scr
+op	21:24	0:0	6	=
+water	21:26	0:0	6	0
+water	21:27	0:0	6	;
+water	22:8	0:0	6	}
+else	22:10	25:8	4
+stmts	22:15	25:8	5	
+water	22:15	0:0	6	{
+water	23:12	0:0	6	s
+op	23:13	0:0	6	->
+water	23:15	0:0	6	last_scr
+op	23:24	0:0	6	=
+water	23:26	0:0	6	dts
+op	23:30	0:0	6	-
+water	23:32	0:0	6	preload
+water	23:39	0:0	6	;
+water	24:12	0:0	6	s
+op	24:13	0:0	6	->
+water	24:15	0:0	6	preload
+op	24:23	0:0	6	=
+water	24:25	0:0	6	0
+water	24:26	0:0	6	;
+water	25:8	0:0	6	}
+water	26:8	0:0	4	preload
+op	26:16	0:0	4	=
+call	26:18	26:60	4	av_rescale
+arg	26:29	26:39	5	s->preload
+water	26:29	0:0	6	s
+op	26:30	0:0	6	->
+water	26:32	0:0	6	preload
+arg	26:41	26:46	5	90000
+water	26:41	0:0	6	90000
+arg	26:48	26:60	5	AV_TIME_BASE
+water	26:48	0:0	6	AV_TIME_BASE
+water	26:61	0:0	4	;
+call	27:8	27:107	4	av_log
+arg	27:15	27:18	5	ctx
+water	27:15	0:0	6	ctx
+arg	27:20	27:32	5	AV_LOG_DEBUG
+water	27:20	0:0	6	AV_LOG_DEBUG
+arg	27:34	27:79	5	"First SCR: %"PRId64" First DTS: %"PRId64"\n"
+water	27:34	0:0	6	"First SCR: %"
+water	27:48	0:0	6	PRId64
+water	27:54	0:0	6	" First DTS: %"
+water	27:69	0:0	6	PRId64
+water	27:75	0:0	6	"\n"
+arg	27:81	27:92	5	s->last_scr
+water	27:81	0:0	6	s
+op	27:82	0:0	6	->
+water	27:84	0:0	6	last_scr
+arg	27:94	27:107	5	dts+preload
+water	27:94	0:0	6	dts
+op	27:98	0:0	6	+
+water	27:100	0:0	6	preload
+water	27:108	0:0	4	;
+water	28:4	0:0	4	}
+if	29:4	29:45	2	(dts != AV_NOPTS_VALUE)
+cond	29:8	29:15	3	dts != AV_NOPTS_VALUE
+water	29:8	0:0	4	dts
+op	29:12	0:0	4	!=
+water	29:15	0:0	4	AV_NOPTS_VALUE
+stmts	29:31	29:45	3	
+water	29:31	0:0	4	dts
+op	29:35	0:0	4	+=
+water	29:38	0:0	4	preload
+water	29:45	0:0	4	;
+if	30:4	30:45	2	(pts != AV_NOPTS_VALUE)
+cond	30:8	30:15	3	pts != AV_NOPTS_VALUE
+water	30:8	0:0	4	pts
+op	30:12	0:0	4	!=
+water	30:15	0:0	4	AV_NOPTS_VALUE
+stmts	30:31	30:45	3	
+water	30:31	0:0	4	pts
+op	30:35	0:0	4	+=
+water	30:38	0:0	4	preload
+water	30:45	0:0	4	;
+call	31:4	33:52	2	av_log
+arg	31:11	31:14	3	ctx
+water	31:11	0:0	4	ctx
+arg	31:16	31:28	3	AV_LOG_TRACE
+water	31:16	0:0	4	AV_LOG_TRACE
+arg	31:30	31:75	3	"dts:%f pts:%f flags:%d stream:%d nopts:%d\n"
+water	31:30	0:0	4	"dts:%f pts:%f flags:%d stream:%d nopts:%d\n"
+arg	32:12	32:25	3	dts/90000.0
+water	32:12	0:0	4	dts
+op	32:16	0:0	4	/
+water	32:18	0:0	4	90000
+op	32:23	0:0	4	.
+water	32:24	0:0	4	0
+arg	32:27	32:40	3	pts/90000.0
+water	32:27	0:0	4	pts
+op	32:31	0:0	4	/
+water	32:33	0:0	4	90000
+op	32:38	0:0	4	.
+water	32:39	0:0	4	0
+arg	32:42	32:52	3	pkt->flags
+water	32:42	0:0	4	pkt
+op	32:45	0:0	4	->
+water	32:47	0:0	4	flags
+arg	33:12	33:29	3	pkt->stream_index
+water	33:12	0:0	4	pkt
+op	33:15	0:0	4	->
+water	33:17	0:0	4	stream_index
+arg	33:31	33:52	3	pts!=AV_NOPTS_VALUE
+water	33:31	0:0	4	pts
+op	33:35	0:0	4	!=
+water	33:38	0:0	4	AV_NOPTS_VALUE
+water	33:53	0:0	2	;
+if	34:4	35:52	2	(! stream -> premux_packet)
+cond	34:8	34:17	3	! stream -> premux_packet
+op	34:8	0:0	4	!
+water	34:9	0:0	4	stream
+op	34:15	0:0	4	->
+water	34:17	0:0	4	premux_packet
+stmts	35:8	35:52	3	
+water	35:8	0:0	4	stream
+op	35:14	0:0	4	->
+water	35:16	0:0	4	next_packet
+op	35:28	0:0	4	=
+op	35:30	0:0	4	&
+water	35:31	0:0	4	stream
+op	35:37	0:0	4	->
+water	35:39	0:0	4	premux_packet
+water	35:52	0:0	4	;
+op	36:4	0:0	2	*
+water	36:5	0:0	2	stream
+op	36:11	0:0	2	->
+water	36:13	0:0	2	next_packet
+op	36:29	0:0	2	=
+water	37:4	0:0	2	pkt_desc
+op	37:29	0:0	2	=
+call	37:31	37:60	2	av_mallocz
+arg	37:42	37:60	3	sizeof(PacketDesc)
+op	37:42	0:0	4	sizeof
+water	37:48	0:0	4	(
+water	37:49	0:0	4	PacketDesc
+water	37:59	0:0	4	)
+water	37:61	0:0	2	;
+water	38:4	0:0	2	pkt_desc
+op	38:12	0:0	2	->
+water	38:14	0:0	2	pts
+op	38:29	0:0	2	=
+water	38:31	0:0	2	pts
+water	38:34	0:0	2	;
+water	39:4	0:0	2	pkt_desc
+op	39:12	0:0	2	->
+water	39:14	0:0	2	dts
+op	39:29	0:0	2	=
+water	39:31	0:0	2	dts
+water	39:34	0:0	2	;
+water	40:4	0:0	2	pkt_desc
+op	40:12	0:0	2	->
+water	40:14	0:0	2	unwritten_size
+op	40:29	0:0	2	=
+water	41:4	0:0	2	pkt_desc
+op	41:12	0:0	2	->
+water	41:14	0:0	2	size
+op	41:29	0:0	2	=
+water	41:31	0:0	2	size
+water	41:35	0:0	2	;
+if	42:4	43:43	2	(! stream -> predecode_packet)
+cond	42:8	42:17	3	! stream -> predecode_packet
+op	42:8	0:0	4	!
+water	42:9	0:0	4	stream
+op	42:15	0:0	4	->
+water	42:17	0:0	4	predecode_packet
+stmts	43:8	43:43	3	
+water	43:8	0:0	4	stream
+op	43:14	0:0	4	->
+water	43:16	0:0	4	predecode_packet
+op	43:33	0:0	4	=
+water	43:35	0:0	4	pkt_desc
+water	43:43	0:0	4	;
+water	44:4	0:0	2	stream
+op	44:10	0:0	2	->
+water	44:12	0:0	2	next_packet
+op	44:24	0:0	2	=
+op	44:26	0:0	2	&
+water	44:27	0:0	2	pkt_desc
+op	44:35	0:0	2	->
+water	44:37	0:0	2	next
+water	44:41	0:0	2	;
+if	45:4	46:17	2	(av_fifo_realloc2 (stream -> fifo ,av_fifo_size (stream -> fifo ) + size ) < 0)
+cond	45:8	45:76	3	av_fifo_realloc2 (stream -> fifo ,av_fifo_size (stream -> fifo ) + size ) < 0
+call	45:8	45:72	4	av_fifo_realloc2
+arg	45:25	45:37	5	stream->fifo
+water	45:25	0:0	6	stream
+op	45:31	0:0	6	->
+water	45:33	0:0	6	fifo
+arg	45:39	45:72	5	av_fifo_size(stream->fifo)+size
+call	45:39	45:64	6	av_fifo_size
+arg	45:52	45:64	7	stream->fifo
+water	45:52	0:0	8	stream
+op	45:58	0:0	8	->
+water	45:60	0:0	8	fifo
+op	45:66	0:0	6	+
+water	45:68	0:0	6	size
+op	45:74	0:0	4	<
+water	45:76	0:0	4	0
+stmts	46:8	46:17	3	
+return	46:8	46:17	4	-1
+op	46:15	0:0	5	-
+water	46:16	0:0	5	1
+if	47:4	56:4	2	(s -> is_dvd)
+cond	47:8	47:11	3	s -> is_dvd
+water	47:8	0:0	4	s
+op	47:9	0:0	4	->
+water	47:11	0:0	4	is_dvd
+stmts	47:19	56:4	3	
+water	47:19	0:0	4	{
+if	49:8	55:8	4	(is_iframe && ( s -> packet_number == 0 || ( pts - stream -> vobu_start_pts >= 36000 ) ))
+cond	49:12	51:52	5	is_iframe && ( s -> packet_number == 0 || ( pts - stream -> vobu_start_pts >= 36000 ) )
+water	49:12	0:0	6	is_iframe
+op	49:22	0:0	6	&&
+water	50:12	0:0	6	(
+water	50:13	0:0	6	s
+op	50:14	0:0	6	->
+water	50:16	0:0	6	packet_number
+op	50:30	0:0	6	==
+water	50:33	0:0	6	0
+op	50:35	0:0	6	||
+water	51:13	0:0	6	(
+water	51:14	0:0	6	pts
+op	51:18	0:0	6	-
+water	51:20	0:0	6	stream
+op	51:26	0:0	6	->
+water	51:28	0:0	6	vobu_start_pts
+op	51:43	0:0	6	>=
+water	51:46	0:0	6	36000
+water	51:51	0:0	6	)
+water	51:52	0:0	6	)
+stmts	51:55	55:8	5	
+water	51:55	0:0	6	{
+water	52:12	0:0	6	stream
+op	52:18	0:0	6	->
+water	52:20	0:0	6	bytes_to_iframe
+op	52:36	0:0	6	=
+call	52:38	52:63	6	av_fifo_size
+arg	52:51	52:63	7	stream->fifo
+water	52:51	0:0	8	stream
+op	52:57	0:0	8	->
+water	52:59	0:0	8	fifo
+water	52:64	0:0	6	;
+water	53:12	0:0	6	stream
+op	53:18	0:0	6	->
+water	53:20	0:0	6	align_iframe
+op	53:36	0:0	6	=
+water	53:38	0:0	6	1
+water	53:39	0:0	6	;
+water	54:12	0:0	6	stream
+op	54:18	0:0	6	->
+water	54:20	0:0	6	vobu_start_pts
+op	54:36	0:0	6	=
+water	54:38	0:0	6	pts
+water	54:41	0:0	6	;
+water	55:8	0:0	6	}
+water	56:4	0:0	4	}
+call	57:4	57:55	2	av_fifo_generic_write
+arg	57:26	57:38	3	stream->fifo
+water	57:26	0:0	4	stream
+op	57:32	0:0	4	->
+water	57:34	0:0	4	fifo
+arg	57:40	57:43	3	buf
+water	57:40	0:0	4	buf
+arg	57:45	57:49	3	size
+water	57:45	0:0	4	size
+arg	57:51	57:55	3	NULL
+water	57:51	0:0	4	NULL
+water	57:56	0:0	2	;
+for	58:4	62:4	2	(;;)
+forinit	58:9	58:9	3	;
+water	58:9	0:0	4	;
+cond	0:0	0:0	3	
+forexpr	0:0	0:0	3	
+stmts	58:13	62:4	3	
+water	58:13	0:0	4	{
+decl	59:8	59:39	4	int	ret
+op	59:16	0:0	4	=
+call	59:18	59:38	5	output_packet
+arg	59:32	59:35	6	ctx
+water	59:32	0:0	7	ctx
+arg	59:37	59:38	6	0
+water	59:37	0:0	7	0
+if	60:8	61:22	4	(ret <= 0)
+cond	60:12	60:19	5	ret <= 0
+water	60:12	0:0	6	ret
+op	60:16	0:0	6	<=
+water	60:19	0:0	6	0
+stmts	61:12	61:22	5	
+return	61:12	61:22	6	ret
+water	61:19	0:0	7	ret
+water	62:4	0:0	4	}

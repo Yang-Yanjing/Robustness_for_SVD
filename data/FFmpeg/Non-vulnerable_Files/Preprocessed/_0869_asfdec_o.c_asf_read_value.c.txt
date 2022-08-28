@@ -1,0 +1,206 @@
+func	1:0	38:0	0	static int	asf_read_value
+params	1:25	0:0	1	
+param	1:26	1:44	2	AVFormatContext *	s
+param	1:46	1:65	2	const uint8_t *	name
+param	1:67	1:84	2	uint16_t	name_len
+param	2:26	2:42	2	uint16_t	val_len
+param	2:44	2:52	2	int	type
+param	2:54	2:72	2	AVDictionary * *	met
+stmnts	0:0	37:14	1	
+decl	4:4	4:11	2	int	ret
+decl	5:4	5:18	2	uint8_t	*value
+decl	6:4	6:37	2	uint16_t	buflen
+op	6:20	0:0	2	=
+water	6:22	0:0	2	2
+op	6:24	0:0	2	*
+water	6:26	0:0	2	val_len
+op	6:34	0:0	2	+
+water	6:36	0:0	2	1
+decl	7:4	7:27	2	AVIOContext	*pb
+op	7:20	0:0	2	=
+water	7:22	0:0	2	s
+op	7:23	0:0	2	->
+water	7:25	0:0	2	pb
+water	8:4	0:0	2	value
+op	8:10	0:0	2	=
+call	8:12	8:28	2	av_malloc
+arg	8:22	8:28	3	buflen
+water	8:22	0:0	4	buflen
+water	8:29	0:0	2	;
+if	9:4	10:30	2	(! value)
+cond	9:8	9:9	3	! value
+op	9:8	0:0	4	!
+water	9:9	0:0	4	value
+stmts	10:8	10:30	3	
+return	10:8	10:30	4	AVERROR(ENOMEM)
+call	10:15	10:29	5	AVERROR
+arg	10:23	10:29	6	ENOMEM
+water	10:23	0:0	7	ENOMEM
+if	11:4	17:4	2	(type == ASF_UNICODE)
+cond	11:8	11:16	3	type == ASF_UNICODE
+water	11:8	0:0	4	type
+op	11:13	0:0	4	==
+water	11:16	0:0	4	ASF_UNICODE
+stmts	11:29	17:4	3	
+water	11:29	0:0	4	{
+if	13:8	14:23	4	(( ret =get_asf_string (pb ,val_len ,value ,buflen ) ) < 0)
+cond	13:12	13:65	5	( ret =get_asf_string (pb ,val_len ,value ,buflen ) ) < 0
+water	13:12	0:0	6	(
+water	13:13	0:0	6	ret
+op	13:17	0:0	6	=
+call	13:19	13:60	6	get_asf_string
+arg	13:34	13:36	7	pb
+water	13:34	0:0	8	pb
+arg	13:38	13:45	7	val_len
+water	13:38	0:0	8	val_len
+arg	13:47	13:52	7	value
+water	13:47	0:0	8	value
+arg	13:54	13:60	7	buflen
+water	13:54	0:0	8	buflen
+water	13:61	0:0	6	)
+op	13:63	0:0	6	<
+water	13:65	0:0	6	0
+stmts	14:12	14:23	5	
+goto	14:12	14:23	6	failed
+water	14:17	0:0	7	failed
+if	15:8	16:62	4	(av_dict_set (met ,name ,value ,0 ) < 0)
+cond	15:12	15:47	5	av_dict_set (met ,name ,value ,0 ) < 0
+call	15:12	15:43	6	av_dict_set
+arg	15:24	15:27	7	met
+water	15:24	0:0	8	met
+arg	15:29	15:33	7	name
+water	15:29	0:0	8	name
+arg	15:35	15:40	7	value
+water	15:35	0:0	8	value
+arg	15:42	15:43	7	0
+water	15:42	0:0	8	0
+op	15:45	0:0	6	<
+water	15:47	0:0	6	0
+stmts	16:12	16:62	5	
+call	16:12	16:61	6	av_log
+arg	16:19	16:20	7	s
+water	16:19	0:0	8	s
+arg	16:22	16:36	7	AV_LOG_WARNING
+water	16:22	0:0	8	AV_LOG_WARNING
+arg	16:38	16:61	7	"av_dict_set failed.\n"
+water	16:38	0:0	8	"av_dict_set failed.\n"
+water	16:62	0:0	6	;
+water	17:4	0:0	4	}
+else	17:6	32:4	2
+stmts	17:11	32:4	3	
+water	17:11	0:0	4	{
+decl	18:8	18:21	4	char	buf[256]
+if	19:8	22:8	4	(val_len > sizeof ( buf ))
+cond	19:12	19:32	5	val_len > sizeof ( buf )
+water	19:12	0:0	6	val_len
+op	19:20	0:0	6	>
+op	19:22	0:0	6	sizeof
+water	19:28	0:0	6	(
+water	19:29	0:0	6	buf
+water	19:32	0:0	6	)
+stmts	19:35	22:8	5	
+water	19:35	0:0	6	{
+water	20:12	0:0	6	ret
+op	20:16	0:0	6	=
+water	20:18	0:0	6	AVERROR_INVALIDDATA
+water	20:37	0:0	6	;
+goto	21:12	21:23	6	failed
+water	21:17	0:0	7	failed
+water	22:8	0:0	6	}
+if	23:8	24:23	4	(( ret =avio_read (pb ,value ,val_len ) ) < 0)
+cond	23:12	23:52	5	( ret =avio_read (pb ,value ,val_len ) ) < 0
+water	23:12	0:0	6	(
+water	23:13	0:0	6	ret
+op	23:17	0:0	6	=
+call	23:19	23:47	6	avio_read
+arg	23:29	23:31	7	pb
+water	23:29	0:0	8	pb
+arg	23:33	23:38	7	value
+water	23:33	0:0	8	value
+arg	23:40	23:47	7	val_len
+water	23:40	0:0	8	val_len
+water	23:48	0:0	6	)
+op	23:50	0:0	6	<
+water	23:52	0:0	6	0
+stmts	24:12	24:23	5	
+goto	24:12	24:23	6	failed
+water	24:17	0:0	7	failed
+if	25:8	26:29	4	(ret < 2 * val_len)
+cond	25:12	25:22	5	ret < 2 * val_len
+water	25:12	0:0	6	ret
+op	25:16	0:0	6	<
+water	25:18	0:0	6	2
+op	25:20	0:0	6	*
+water	25:22	0:0	6	val_len
+stmts	26:12	26:29	5	
+water	26:12	0:0	6	value
+op	26:17	0:0	6	[
+water	26:18	0:0	6	ret
+op	26:21	0:0	6	]
+op	26:23	0:0	6	=
+water	26:25	0:0	6	'\0'
+water	26:29	0:0	6	;
+else	27:8	28:41	4
+stmts	28:12	28:41	5	
+water	28:12	0:0	6	value
+op	28:17	0:0	6	[
+water	28:18	0:0	6	2
+op	28:20	0:0	6	*
+water	28:22	0:0	6	val_len
+op	28:30	0:0	6	-
+water	28:32	0:0	6	1
+op	28:33	0:0	6	]
+op	28:35	0:0	6	=
+water	28:37	0:0	6	'\0'
+water	28:41	0:0	6	;
+call	29:8	29:46	4	snprintf
+arg	29:17	29:20	5	buf
+water	29:17	0:0	6	buf
+arg	29:22	29:33	5	sizeof(buf)
+op	29:22	0:0	6	sizeof
+water	29:28	0:0	6	(
+water	29:29	0:0	6	buf
+water	29:32	0:0	6	)
+arg	29:35	29:39	5	"%s"
+water	29:35	0:0	6	"%s"
+arg	29:41	29:46	5	value
+water	29:41	0:0	6	value
+water	29:47	0:0	4	;
+if	30:8	31:62	4	(av_dict_set (met ,name ,buf ,0 ) < 0)
+cond	30:12	30:45	5	av_dict_set (met ,name ,buf ,0 ) < 0
+call	30:12	30:41	6	av_dict_set
+arg	30:24	30:27	7	met
+water	30:24	0:0	8	met
+arg	30:29	30:33	7	name
+water	30:29	0:0	8	name
+arg	30:35	30:38	7	buf
+water	30:35	0:0	8	buf
+arg	30:40	30:41	7	0
+water	30:40	0:0	8	0
+op	30:43	0:0	6	<
+water	30:45	0:0	6	0
+stmts	31:12	31:62	5	
+call	31:12	31:61	6	av_log
+arg	31:19	31:20	7	s
+water	31:19	0:0	8	s
+arg	31:22	31:36	7	AV_LOG_WARNING
+water	31:22	0:0	8	AV_LOG_WARNING
+arg	31:38	31:61	7	"av_dict_set failed.\n"
+water	31:38	0:0	8	"av_dict_set failed.\n"
+water	31:62	0:0	6	;
+water	32:4	0:0	4	}
+call	33:4	33:19	2	av_freep
+arg	33:13	33:19	3	&value
+op	33:13	0:0	4	&
+water	33:14	0:0	4	value
+water	33:20	0:0	2	;
+return	34:4	34:12	2	0
+water	34:11	0:0	3	0
+label	35:0	35:6	2	failed :
+call	36:4	36:19	2	av_freep
+arg	36:13	36:19	3	&value
+op	36:13	0:0	4	&
+water	36:14	0:0	4	value
+water	36:20	0:0	2	;
+return	37:4	37:14	2	ret
+water	37:11	0:0	3	ret

@@ -1,0 +1,344 @@
+func	1:0	55:0	0	static int	start_jack
+params	1:21	0:0	1	
+param	1:22	1:46	2	AVFormatContext *	context
+stmnts	0:0	54:12	1	
+decl	3:4	3:39	2	JackData	*self
+op	3:19	0:0	2	=
+water	3:21	0:0	2	context
+op	3:28	0:0	2	->
+water	3:30	0:0	2	priv_data
+decl	4:4	4:24	2	jack_status_t	status
+decl	5:4	5:15	2	int	i
+water	5:9	0:0	2	,
+decl	5:4	5:15	2	int	test
+water	7:4	0:0	2	self
+op	7:8	0:0	2	->
+water	7:10	0:0	2	client
+op	7:17	0:0	2	=
+call	7:19	7:78	2	jack_client_open
+arg	7:36	7:53	3	context->filename
+water	7:36	0:0	4	context
+op	7:43	0:0	4	->
+water	7:45	0:0	4	filename
+arg	7:55	7:69	3	JackNullOption
+water	7:55	0:0	4	JackNullOption
+arg	7:71	7:78	3	&status
+op	7:71	0:0	4	&
+water	7:72	0:0	4	status
+water	7:79	0:0	2	;
+if	8:4	11:4	2	(! self -> client)
+cond	8:8	8:15	3	! self -> client
+op	8:8	0:0	4	!
+water	8:9	0:0	4	self
+op	8:13	0:0	4	->
+water	8:15	0:0	4	client
+stmts	8:23	11:4	3	
+water	8:23	0:0	4	{
+call	9:8	9:77	4	av_log
+arg	9:15	9:22	5	context
+water	9:15	0:0	6	context
+arg	9:24	9:36	5	AV_LOG_ERROR
+water	9:24	0:0	6	AV_LOG_ERROR
+arg	9:38	9:77	5	"Unable to register as a JACK client\n"
+water	9:38	0:0	6	"Unable to register as a JACK client\n"
+water	9:78	0:0	4	;
+return	10:8	10:27	4	AVERROR(EIO)
+call	10:15	10:26	5	AVERROR
+arg	10:23	10:26	6	EIO
+water	10:23	0:0	7	EIO
+water	11:4	0:0	4	}
+call	12:4	12:38	2	sem_init
+arg	12:13	12:32	3	&self->packet_count
+op	12:13	0:0	4	&
+water	12:14	0:0	4	self
+op	12:18	0:0	4	->
+water	12:20	0:0	4	packet_count
+arg	12:34	12:35	3	0
+water	12:34	0:0	4	0
+arg	12:37	12:38	3	0
+water	12:37	0:0	4	0
+water	12:39	0:0	2	;
+water	13:4	0:0	2	self
+op	13:8	0:0	2	->
+water	13:10	0:0	2	sample_rate
+op	13:22	0:0	2	=
+call	13:24	13:57	2	jack_get_sample_rate
+arg	13:45	13:57	3	self->client
+water	13:45	0:0	4	self
+op	13:49	0:0	4	->
+water	13:51	0:0	4	client
+water	13:58	0:0	2	;
+water	14:4	0:0	2	self
+op	14:8	0:0	2	->
+water	14:10	0:0	2	ports
+op	14:22	0:0	2	=
+call	14:24	14:74	2	av_malloc_array
+arg	14:40	14:52	3	self->nports
+water	14:40	0:0	4	self
+op	14:44	0:0	4	->
+water	14:46	0:0	4	nports
+arg	14:54	14:74	3	sizeof(*self->ports)
+op	14:54	0:0	4	sizeof
+water	14:60	0:0	4	(
+op	14:61	0:0	4	*
+water	14:62	0:0	4	self
+op	14:66	0:0	4	->
+water	14:68	0:0	4	ports
+water	14:73	0:0	4	)
+water	14:75	0:0	2	;
+if	15:4	16:30	2	(! self -> ports)
+cond	15:8	15:15	3	! self -> ports
+op	15:8	0:0	4	!
+water	15:9	0:0	4	self
+op	15:13	0:0	4	->
+water	15:15	0:0	4	ports
+stmts	16:8	16:30	3	
+return	16:8	16:30	4	AVERROR(ENOMEM)
+call	16:15	16:29	5	AVERROR
+arg	16:23	16:29	6	ENOMEM
+water	16:23	0:0	7	ENOMEM
+water	17:4	0:0	2	self
+op	17:8	0:0	2	->
+water	17:10	0:0	2	buffer_size
+op	17:22	0:0	2	=
+call	17:24	17:57	2	jack_get_buffer_size
+arg	17:45	17:57	3	self->client
+water	17:45	0:0	4	self
+op	17:49	0:0	4	->
+water	17:51	0:0	4	client
+water	17:58	0:0	2	;
+for	19:4	31:4	2	(i = 0 ;i < self -> nports;i ++)
+forinit	19:9	19:14	3	i = 0 ;
+water	19:9	0:0	4	i
+op	19:11	0:0	4	=
+water	19:13	0:0	4	0
+water	19:14	0:0	4	;
+cond	19:16	19:26	3	i < self -> nports
+water	19:16	0:0	4	i
+op	19:18	0:0	4	<
+water	19:20	0:0	4	self
+op	19:24	0:0	4	->
+water	19:26	0:0	4	nports
+forexpr	19:34	19:35	3	i ++
+water	19:34	0:0	4	i
+op	19:35	0:0	4	++
+stmts	19:39	31:4	3	
+water	19:39	0:0	4	{
+decl	20:8	20:20	4	char	str[16]
+call	21:8	21:52	4	snprintf
+arg	21:17	21:20	5	str
+water	21:17	0:0	6	str
+arg	21:22	21:33	5	sizeof(str)
+op	21:22	0:0	6	sizeof
+water	21:28	0:0	6	(
+water	21:29	0:0	6	str
+water	21:32	0:0	6	)
+arg	21:35	21:45	5	"input_%d"
+water	21:35	0:0	6	"input_%d"
+arg	21:47	21:52	5	i+1
+water	21:47	0:0	6	i
+op	21:49	0:0	6	+
+water	21:51	0:0	6	1
+water	21:53	0:0	4	;
+water	22:8	0:0	4	self
+op	22:12	0:0	4	->
+water	22:14	0:0	4	ports
+op	22:19	0:0	4	[
+water	22:20	0:0	4	i
+op	22:21	0:0	4	]
+op	22:23	0:0	4	=
+call	22:25	24:62	4	jack_port_register
+arg	22:44	22:56	5	self->client
+water	22:44	0:0	6	self
+op	22:48	0:0	6	->
+water	22:50	0:0	6	client
+arg	22:58	22:61	5	str
+water	22:58	0:0	6	str
+arg	23:44	23:67	5	JACK_DEFAULT_AUDIO_TYPE
+water	23:44	0:0	6	JACK_DEFAULT_AUDIO_TYPE
+arg	24:44	24:59	5	JackPortIsInput
+water	24:44	0:0	6	JackPortIsInput
+arg	24:61	24:62	5	0
+water	24:61	0:0	6	0
+water	24:63	0:0	4	;
+if	25:8	30:8	4	(! self -> ports [ i ])
+cond	25:12	25:26	5	! self -> ports [ i ]
+op	25:12	0:0	6	!
+water	25:13	0:0	6	self
+op	25:17	0:0	6	->
+water	25:19	0:0	6	ports
+op	25:24	0:0	6	[
+water	25:25	0:0	6	i
+op	25:26	0:0	6	]
+stmts	25:29	30:8	5	
+water	25:29	0:0	6	{
+call	26:12	27:41	6	av_log
+arg	26:19	26:26	7	context
+water	26:19	0:0	8	context
+arg	26:28	26:40	7	AV_LOG_ERROR
+water	26:28	0:0	8	AV_LOG_ERROR
+arg	26:42	26:75	7	"Unable to register port %s:%s\n"
+water	26:42	0:0	8	"Unable to register port %s:%s\n"
+arg	27:19	27:36	7	context->filename
+water	27:19	0:0	8	context
+op	27:26	0:0	8	->
+water	27:28	0:0	8	filename
+arg	27:38	27:41	7	str
+water	27:38	0:0	8	str
+water	27:42	0:0	6	;
+call	28:12	28:42	6	jack_client_close
+arg	28:30	28:42	7	self->client
+water	28:30	0:0	8	self
+op	28:34	0:0	8	->
+water	28:36	0:0	8	client
+water	28:43	0:0	6	;
+return	29:12	29:31	6	AVERROR(EIO)
+call	29:19	29:30	7	AVERROR
+arg	29:27	29:30	8	EIO
+water	29:27	0:0	9	EIO
+water	30:8	0:0	6	}
+water	31:4	0:0	4	}
+call	33:4	33:66	2	jack_set_process_callback
+arg	33:30	33:42	3	self->client
+water	33:30	0:0	4	self
+op	33:34	0:0	4	->
+water	33:36	0:0	4	client
+arg	33:44	33:60	3	process_callback
+water	33:44	0:0	4	process_callback
+arg	33:62	33:66	3	self
+water	33:62	0:0	4	self
+water	33:67	0:0	2	;
+call	34:4	34:58	2	jack_on_shutdown
+arg	34:21	34:33	3	self->client
+water	34:21	0:0	4	self
+op	34:25	0:0	4	->
+water	34:27	0:0	4	client
+arg	34:35	34:52	3	shutdown_callback
+water	34:35	0:0	4	shutdown_callback
+arg	34:54	34:58	3	self
+water	34:54	0:0	4	self
+water	34:59	0:0	2	;
+call	35:4	35:60	2	jack_set_xrun_callback
+arg	35:27	35:39	3	self->client
+water	35:27	0:0	4	self
+op	35:31	0:0	4	->
+water	35:33	0:0	4	client
+arg	35:41	35:54	3	xrun_callback
+water	35:41	0:0	4	xrun_callback
+arg	35:56	35:60	3	self
+water	35:56	0:0	4	self
+water	35:61	0:0	2	;
+water	37:4	0:0	2	self
+op	37:8	0:0	2	->
+water	37:10	0:0	2	timefilter
+op	37:22	0:0	2	=
+call	37:24	37:90	2	ff_timefilter_new
+arg	37:43	37:66	3	1.0/self->sample_rate
+water	37:43	0:0	4	1
+op	37:44	0:0	4	.
+water	37:45	0:0	4	0
+op	37:47	0:0	4	/
+water	37:49	0:0	4	self
+op	37:53	0:0	4	->
+water	37:55	0:0	4	sample_rate
+arg	37:68	37:85	3	self->buffer_size
+water	37:68	0:0	4	self
+op	37:72	0:0	4	->
+water	37:74	0:0	4	buffer_size
+arg	37:87	37:90	3	1.5
+water	37:87	0:0	4	1
+op	37:88	0:0	4	.
+water	37:89	0:0	4	5
+water	37:91	0:0	2	;
+if	38:4	41:4	2	(! self -> timefilter)
+cond	38:8	38:15	3	! self -> timefilter
+op	38:8	0:0	4	!
+water	38:9	0:0	4	self
+op	38:13	0:0	4	->
+water	38:15	0:0	4	timefilter
+stmts	38:27	41:4	3	
+water	38:27	0:0	4	{
+call	39:8	39:38	4	jack_client_close
+arg	39:26	39:38	5	self->client
+water	39:26	0:0	6	self
+op	39:30	0:0	6	->
+water	39:32	0:0	6	client
+water	39:39	0:0	4	;
+return	40:8	40:30	4	AVERROR(ENOMEM)
+call	40:15	40:29	5	AVERROR
+arg	40:23	40:29	6	ENOMEM
+water	40:23	0:0	7	ENOMEM
+water	41:4	0:0	4	}
+water	43:4	0:0	2	self
+op	43:8	0:0	2	->
+water	43:10	0:0	2	filled_pkts
+op	43:22	0:0	2	=
+call	43:24	43:78	2	av_fifo_alloc_array
+arg	43:44	43:60	3	FIFO_PACKETS_NUM
+water	43:44	0:0	4	FIFO_PACKETS_NUM
+arg	43:62	43:78	3	sizeof(AVPacket)
+op	43:62	0:0	4	sizeof
+water	43:68	0:0	4	(
+water	43:69	0:0	4	AVPacket
+water	43:77	0:0	4	)
+water	43:79	0:0	2	;
+water	45:4	0:0	2	self
+op	45:8	0:0	2	->
+water	45:10	0:0	2	new_pkts
+op	45:22	0:0	2	=
+call	45:24	45:84	2	av_fifo_alloc_array
+arg	45:44	45:66	3	(FIFO_PACKETS_NUM+1)
+water	45:44	0:0	4	(
+water	45:45	0:0	4	FIFO_PACKETS_NUM
+op	45:62	0:0	4	+
+water	45:64	0:0	4	1
+water	45:65	0:0	4	)
+arg	45:68	45:84	3	sizeof(AVPacket)
+op	45:68	0:0	4	sizeof
+water	45:74	0:0	4	(
+water	45:75	0:0	4	AVPacket
+water	45:83	0:0	4	)
+water	45:85	0:0	2	;
+if	46:4	49:4	2	(! self -> new_pkts)
+cond	46:8	46:15	3	! self -> new_pkts
+op	46:8	0:0	4	!
+water	46:9	0:0	4	self
+op	46:13	0:0	4	->
+water	46:15	0:0	4	new_pkts
+stmts	46:25	49:4	3	
+water	46:25	0:0	4	{
+call	47:8	47:38	4	jack_client_close
+arg	47:26	47:38	5	self->client
+water	47:26	0:0	6	self
+op	47:30	0:0	6	->
+water	47:32	0:0	6	client
+water	47:39	0:0	4	;
+return	48:8	48:30	4	AVERROR(ENOMEM)
+call	48:15	48:29	5	AVERROR
+arg	48:23	48:29	6	ENOMEM
+water	48:23	0:0	7	ENOMEM
+water	49:4	0:0	4	}
+if	50:4	53:4	2	(( test =supply_new_packets (self ,context ) ))
+cond	50:8	50:49	3	( test =supply_new_packets (self ,context ) )
+water	50:8	0:0	4	(
+water	50:9	0:0	4	test
+op	50:14	0:0	4	=
+call	50:16	50:48	4	supply_new_packets
+arg	50:35	50:39	5	self
+water	50:35	0:0	6	self
+arg	50:41	50:48	5	context
+water	50:41	0:0	6	context
+water	50:49	0:0	4	)
+stmts	50:52	53:4	3	
+water	50:52	0:0	4	{
+call	51:8	51:38	4	jack_client_close
+arg	51:26	51:38	5	self->client
+water	51:26	0:0	6	self
+op	51:30	0:0	6	->
+water	51:32	0:0	6	client
+water	51:39	0:0	4	;
+return	52:8	52:19	4	test
+water	52:15	0:0	5	test
+water	53:4	0:0	4	}
+return	54:4	54:12	2	0
+water	54:11	0:0	3	0

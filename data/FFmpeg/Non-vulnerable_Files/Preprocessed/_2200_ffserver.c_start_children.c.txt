@@ -1,0 +1,339 @@
+func	1:0	68:0	0	static void	start_children
+params	1:26	0:0	1	
+param	1:27	1:47	2	FFServerStream *	feed
+stmnts	0:0	67:22	1	
+decl	3:4	3:18	2	char	*pathname
+decl	4:4	4:15	2	char	*slash
+decl	5:4	5:9	2	int	i
+decl	6:4	6:21	2	size_t	cmd_length
+if	7:4	8:14	2	(no_launch)
+cond	7:8	7:8	3	no_launch
+water	7:8	0:0	4	no_launch
+stmts	8:8	8:14	3	
+return	8:8	8:14	4	
+water	9:4	0:0	2	cmd_length
+op	9:15	0:0	2	=
+call	9:17	9:39	2	strlen
+arg	9:24	9:39	3	my_program_name
+water	9:24	0:0	4	my_program_name
+water	9:40	0:0	2	;
+if	14:4	18:4	2	(cmd_length > PATH_LENGTH - 1)
+cond	14:8	14:35	3	cmd_length > PATH_LENGTH - 1
+water	14:8	0:0	4	cmd_length
+op	14:19	0:0	4	>
+water	14:21	0:0	4	PATH_LENGTH
+op	14:33	0:0	4	-
+water	14:35	0:0	4	1
+stmts	14:38	18:4	3	
+water	14:38	0:0	4	{
+call	15:8	16:76	4	http_log
+arg	15:17	16:46	5	"Could not start children. Command line: '%s' exceeds ""path length limit (%d)\n"
+water	15:17	0:0	6	"Could not start children. Command line: '%s' exceeds "
+water	16:20	0:0	6	"path length limit (%d)\n"
+arg	16:48	16:63	5	my_program_name
+water	16:48	0:0	6	my_program_name
+arg	16:65	16:76	5	PATH_LENGTH
+water	16:65	0:0	6	PATH_LENGTH
+water	16:77	0:0	4	;
+return	17:8	17:14	4	
+water	18:4	0:0	4	}
+water	19:4	0:0	2	slash
+op	19:10	0:0	2	=
+call	19:12	19:40	2	strrchr
+arg	19:20	19:35	3	my_program_name
+water	19:20	0:0	4	my_program_name
+arg	19:37	19:40	3	'/'
+water	19:37	0:0	4	'/'
+water	19:41	0:0	2	;
+if	20:4	22:4	2	(! slash)
+cond	20:8	20:9	3	! slash
+op	20:8	0:0	4	!
+water	20:9	0:0	4	slash
+stmts	20:16	22:4	3	
+water	20:16	0:0	4	{
+water	21:8	0:0	4	pathname
+op	21:17	0:0	4	=
+call	21:19	21:46	4	av_mallocz
+arg	21:30	21:46	5	sizeof("ffmpeg")
+op	21:30	0:0	6	sizeof
+water	21:36	0:0	6	(
+water	21:37	0:0	6	"ffmpeg"
+water	21:45	0:0	6	)
+water	21:47	0:0	4	;
+water	22:4	0:0	4	}
+else	22:6	27:4	2
+stmts	22:11	27:4	3	
+water	22:11	0:0	4	{
+water	23:8	0:0	4	pathname
+op	23:17	0:0	4	=
+call	23:19	23:72	4	av_mallocz
+arg	23:30	23:72	5	slash-my_program_name+sizeof("ffmpeg")
+water	23:30	0:0	6	slash
+op	23:36	0:0	6	-
+water	23:38	0:0	6	my_program_name
+op	23:54	0:0	6	+
+op	23:56	0:0	6	sizeof
+water	23:62	0:0	6	(
+water	23:63	0:0	6	"ffmpeg"
+water	23:71	0:0	6	)
+water	23:73	0:0	4	;
+if	24:8	26:8	4	(pathname != NULL)
+cond	24:12	24:24	5	pathname != NULL
+water	24:12	0:0	6	pathname
+op	24:21	0:0	6	!=
+water	24:24	0:0	6	NULL
+stmts	24:30	26:8	5	
+water	24:30	0:0	6	{
+call	25:12	25:69	6	memcpy
+arg	25:19	25:27	7	pathname
+water	25:19	0:0	8	pathname
+arg	25:29	25:44	7	my_program_name
+water	25:29	0:0	8	my_program_name
+arg	25:46	25:69	7	slash-my_program_name
+water	25:46	0:0	8	slash
+op	25:52	0:0	8	-
+water	25:54	0:0	8	my_program_name
+water	25:70	0:0	6	;
+water	26:8	0:0	6	}
+water	27:4	0:0	4	}
+if	28:4	31:4	2	(! pathname)
+cond	28:8	28:9	3	! pathname
+op	28:8	0:0	4	!
+water	28:9	0:0	4	pathname
+stmts	28:19	31:4	3	
+water	28:19	0:0	4	{
+call	29:8	29:68	4	http_log
+arg	29:17	29:68	5	"Could not allocate memory for children cmd line\n"
+water	29:17	0:0	6	"Could not allocate memory for children cmd line\n"
+water	29:69	0:0	4	;
+return	30:8	30:14	4	
+water	31:4	0:0	4	}
+call	33:4	33:29	2	strcat
+arg	33:11	33:19	3	pathname
+water	33:11	0:0	4	pathname
+arg	33:21	33:29	3	"ffmpeg"
+water	33:21	0:0	4	"ffmpeg"
+water	33:30	0:0	2	;
+for	34:4	66:4	2	(;feed;feed = feed -> next)
+forinit	34:9	34:9	3	;
+water	34:9	0:0	4	;
+cond	34:11	34:11	3	feed
+water	34:11	0:0	4	feed
+forexpr	34:17	34:30	3	feed = feed -> next
+water	34:17	0:0	4	feed
+op	34:22	0:0	4	=
+water	34:24	0:0	4	feed
+op	34:28	0:0	4	->
+water	34:30	0:0	4	next
+stmts	34:36	66:4	3	
+water	34:36	0:0	4	{
+if	35:8	36:20	4	(! feed -> child_argv || feed -> pid)
+cond	35:12	35:39	5	! feed -> child_argv || feed -> pid
+op	35:12	0:0	6	!
+water	35:13	0:0	6	feed
+op	35:17	0:0	6	->
+water	35:19	0:0	6	child_argv
+op	35:30	0:0	6	||
+water	35:33	0:0	6	feed
+op	35:37	0:0	6	->
+water	35:39	0:0	6	pid
+stmts	36:12	36:20	5	
+continue	36:12	36:20	6	
+water	37:8	0:0	4	feed
+op	37:12	0:0	4	->
+water	37:14	0:0	4	pid_start
+op	37:24	0:0	4	=
+call	37:26	37:32	4	time
+arg	37:31	37:32	5	0
+water	37:31	0:0	6	0
+water	37:33	0:0	4	;
+water	38:8	0:0	4	feed
+op	38:12	0:0	4	->
+water	38:14	0:0	4	pid
+op	38:18	0:0	4	=
+call	38:20	38:25	4	fork
+water	38:26	0:0	4	;
+if	39:8	43:8	4	(feed -> pid < 0)
+cond	39:12	39:24	5	feed -> pid < 0
+water	39:12	0:0	6	feed
+op	39:16	0:0	6	->
+water	39:18	0:0	6	pid
+op	39:22	0:0	6	<
+water	39:24	0:0	6	0
+stmts	39:27	43:8	5	
+water	39:27	0:0	6	{
+call	40:12	40:71	6	http_log
+arg	40:21	40:54	7	"Unable to create children: %s\n"
+water	40:21	0:0	8	"Unable to create children: %s\n"
+arg	40:56	40:71	7	strerror(errno)
+call	40:56	40:70	8	strerror
+arg	40:65	40:70	9	errno
+water	40:65	0:0	10	errno
+water	40:72	0:0	6	;
+call	41:12	41:29	6	av_free
+arg	41:21	41:29	7	pathname
+water	41:21	0:0	8	pathname
+water	41:30	0:0	6	;
+call	42:12	42:29	6	exit
+arg	42:17	42:29	7	EXIT_FAILURE
+water	42:17	0:0	8	EXIT_FAILURE
+water	42:30	0:0	6	;
+water	43:8	0:0	6	}
+if	44:8	45:20	4	(feed -> pid)
+cond	44:12	44:18	5	feed -> pid
+water	44:12	0:0	6	feed
+op	44:16	0:0	6	->
+water	44:18	0:0	6	pid
+stmts	45:12	45:20	5	
+continue	45:12	45:20	6	
+call	47:8	47:40	4	http_log
+arg	47:17	47:40	5	"Launch command line: "
+water	47:17	0:0	6	"Launch command line: "
+water	47:41	0:0	4	;
+call	48:8	48:32	4	http_log
+arg	48:17	48:22	5	"%s "
+water	48:17	0:0	6	"%s "
+arg	48:24	48:32	5	pathname
+water	48:24	0:0	6	pathname
+water	48:33	0:0	4	;
+for	49:8	50:48	4	(i = 1 ;feed -> child_argv [ i ] && feed -> child_argv [ i ] [ 0 ];i ++)
+forinit	49:13	49:18	5	i = 1 ;
+water	49:13	0:0	6	i
+op	49:15	0:0	6	=
+water	49:17	0:0	6	1
+water	49:18	0:0	6	;
+cond	49:20	49:64	5	feed -> child_argv [ i ] && feed -> child_argv [ i ] [ 0 ]
+water	49:20	0:0	6	feed
+op	49:24	0:0	6	->
+water	49:26	0:0	6	child_argv
+op	49:36	0:0	6	[
+water	49:37	0:0	6	i
+op	49:38	0:0	6	]
+op	49:40	0:0	6	&&
+water	49:43	0:0	6	feed
+op	49:47	0:0	6	->
+water	49:49	0:0	6	child_argv
+op	49:59	0:0	6	[
+water	49:60	0:0	6	i
+op	49:61	0:0	6	]
+op	49:62	0:0	6	[
+water	49:63	0:0	6	0
+op	49:64	0:0	6	]
+forexpr	49:67	49:68	5	i ++
+water	49:67	0:0	6	i
+op	49:68	0:0	6	++
+stmts	50:12	50:48	5	
+call	50:12	50:47	6	http_log
+arg	50:21	50:26	7	"%s "
+water	50:21	0:0	8	"%s "
+arg	50:28	50:47	7	feed->child_argv[i]
+water	50:28	0:0	8	feed
+op	50:32	0:0	8	->
+water	50:34	0:0	8	child_argv
+op	50:44	0:0	8	[
+water	50:45	0:0	8	i
+op	50:46	0:0	8	]
+water	50:48	0:0	6	;
+call	51:8	51:21	4	http_log
+arg	51:17	51:21	5	"\n"
+water	51:17	0:0	6	"\n"
+water	51:22	0:0	4	;
+for	52:8	53:20	4	(i = 3 ;i < 256;i ++)
+forinit	52:13	52:18	5	i = 3 ;
+water	52:13	0:0	6	i
+op	52:15	0:0	6	=
+water	52:17	0:0	6	3
+water	52:18	0:0	6	;
+cond	52:20	52:24	5	i < 256
+water	52:20	0:0	6	i
+op	52:22	0:0	6	<
+water	52:24	0:0	6	256
+forexpr	52:29	52:30	5	i ++
+water	52:29	0:0	6	i
+op	52:30	0:0	6	++
+stmts	53:12	53:20	5	
+call	53:12	53:19	6	close
+arg	53:18	53:19	7	i
+water	53:18	0:0	8	i
+water	53:20	0:0	6	;
+if	54:8	61:8	4	(! config . debug)
+cond	54:12	54:20	5	! config . debug
+op	54:12	0:0	6	!
+water	54:13	0:0	6	config
+op	54:19	0:0	6	.
+water	54:20	0:0	6	debug
+stmts	54:27	61:8	5	
+water	54:27	0:0	6	{
+if	55:12	56:68	6	(!freopen ("/dev/null" ,"r" ,stdin ))
+cond	55:16	55:48	7	!freopen ("/dev/null" ,"r" ,stdin )
+op	55:16	0:0	8	!
+call	55:17	55:48	8	freopen
+arg	55:25	55:36	9	"/dev/null"
+water	55:25	0:0	10	"/dev/null"
+arg	55:38	55:41	9	"r"
+water	55:38	0:0	10	"r"
+arg	55:43	55:48	9	stdin
+water	55:43	0:0	10	stdin
+stmts	56:16	56:68	7	
+call	56:16	56:67	8	http_log
+arg	56:25	56:67	9	"failed to redirect STDIN to /dev/null\n;"
+water	56:25	0:0	10	"failed to redirect STDIN to /dev/null\n;"
+water	56:68	0:0	8	;
+if	57:12	58:69	6	(!freopen ("/dev/null" ,"w" ,stdout ))
+cond	57:16	57:49	7	!freopen ("/dev/null" ,"w" ,stdout )
+op	57:16	0:0	8	!
+call	57:17	57:49	8	freopen
+arg	57:25	57:36	9	"/dev/null"
+water	57:25	0:0	10	"/dev/null"
+arg	57:38	57:41	9	"w"
+water	57:38	0:0	10	"w"
+arg	57:43	57:49	9	stdout
+water	57:43	0:0	10	stdout
+stmts	58:16	58:69	7	
+call	58:16	58:68	8	http_log
+arg	58:25	58:68	9	"failed to redirect STDOUT to /dev/null\n;"
+water	58:25	0:0	10	"failed to redirect STDOUT to /dev/null\n;"
+water	58:69	0:0	8	;
+if	59:12	60:69	6	(!freopen ("/dev/null" ,"w" ,stderr ))
+cond	59:16	59:49	7	!freopen ("/dev/null" ,"w" ,stderr )
+op	59:16	0:0	8	!
+call	59:17	59:49	8	freopen
+arg	59:25	59:36	9	"/dev/null"
+water	59:25	0:0	10	"/dev/null"
+arg	59:38	59:41	9	"w"
+water	59:38	0:0	10	"w"
+arg	59:43	59:49	9	stderr
+water	59:43	0:0	10	stderr
+stmts	60:16	60:69	7	
+call	60:16	60:68	8	http_log
+arg	60:25	60:68	9	"failed to redirect STDERR to /dev/null\n;"
+water	60:25	0:0	10	"failed to redirect STDERR to /dev/null\n;"
+water	60:69	0:0	8	;
+water	61:8	0:0	6	}
+call	62:8	62:31	4	signal
+arg	62:15	62:22	5	SIGPIPE
+water	62:15	0:0	6	SIGPIPE
+arg	62:24	62:31	5	SIG_DFL
+water	62:24	0:0	6	SIG_DFL
+water	62:32	0:0	4	;
+call	63:8	63:41	4	execvp
+arg	63:15	63:23	5	pathname
+water	63:15	0:0	6	pathname
+arg	63:25	63:41	5	feed->child_argv
+water	63:25	0:0	6	feed
+op	63:29	0:0	6	->
+water	63:31	0:0	6	child_argv
+water	63:42	0:0	4	;
+call	64:8	64:25	4	av_free
+arg	64:17	64:25	5	pathname
+water	64:17	0:0	6	pathname
+water	64:26	0:0	4	;
+call	65:8	65:15	4	_exit
+arg	65:14	65:15	5	1
+water	65:14	0:0	6	1
+water	65:16	0:0	4	;
+water	66:4	0:0	4	}
+call	67:4	67:21	2	av_free
+arg	67:13	67:21	3	pathname
+water	67:13	0:0	4	pathname
+water	67:22	0:0	2	;

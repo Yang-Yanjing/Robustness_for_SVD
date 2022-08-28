@@ -1,0 +1,160 @@
+func	1:0	37:0	0	static int	vaapi_retrieve_data
+params	1:30	0:0	1	
+param	1:31	1:52	2	AVCodecContext *	avctx
+param	1:54	1:68	2	AVFrame *	input
+stmnts	0:0	36:14	1	
+decl	3:4	3:36	2	InputStream	*ist
+op	3:21	0:0	2	=
+water	3:23	0:0	2	avctx
+op	3:28	0:0	2	->
+water	3:30	0:0	2	opaque
+decl	4:4	4:47	2	VAAPIDecoderContext	*ctx
+op	4:29	0:0	2	=
+water	4:31	0:0	2	ist
+op	4:34	0:0	2	->
+water	4:36	0:0	2	hwaccel_ctx
+decl	5:4	5:23	2	AVFrame	*output
+op	5:20	0:0	2	=
+water	5:22	0:0	2	0
+decl	6:4	6:11	2	int	err
+call	7:4	7:48	2	av_assert0
+arg	7:15	7:48	3	input->format==AV_PIX_FMT_VAAPI
+water	7:15	0:0	4	input
+op	7:20	0:0	4	->
+water	7:22	0:0	4	format
+op	7:29	0:0	4	==
+water	7:32	0:0	4	AV_PIX_FMT_VAAPI
+water	7:49	0:0	2	;
+if	8:4	11:4	2	(ctx -> output_format == AV_PIX_FMT_VAAPI)
+cond	8:8	8:30	3	ctx -> output_format == AV_PIX_FMT_VAAPI
+water	8:8	0:0	4	ctx
+op	8:11	0:0	4	->
+water	8:13	0:0	4	output_format
+op	8:27	0:0	4	==
+water	8:30	0:0	4	AV_PIX_FMT_VAAPI
+stmts	8:48	11:4	3	
+water	8:48	0:0	4	{
+return	10:8	10:16	4	0
+water	10:15	0:0	5	0
+water	11:4	0:0	4	}
+call	12:4	13:50	2	av_log
+arg	12:11	12:14	3	ctx
+water	12:11	0:0	4	ctx
+arg	12:16	12:28	3	AV_LOG_DEBUG
+water	12:16	0:0	4	AV_LOG_DEBUG
+arg	12:30	12:65	3	"Retrieve data from surface %#x.\n"
+water	12:30	0:0	4	"Retrieve data from surface %#x.\n"
+arg	13:11	13:50	3	(unsignedint)(uintptr_t)input->data[3]
+call	13:11	13:35	4	(unsignedint)
+arg	13:26	13:35	5	uintptr_t
+water	13:26	0:0	6	uintptr_t
+water	13:36	0:0	4	input
+op	13:41	0:0	4	->
+water	13:43	0:0	4	data
+op	13:47	0:0	4	[
+water	13:48	0:0	4	3
+op	13:49	0:0	4	]
+water	13:51	0:0	2	;
+water	14:4	0:0	2	output
+op	14:11	0:0	2	=
+call	14:13	14:28	2	av_frame_alloc
+water	14:29	0:0	2	;
+if	15:4	16:30	2	(! output)
+cond	15:8	15:9	3	! output
+op	15:8	0:0	4	!
+water	15:9	0:0	4	output
+stmts	16:8	16:30	3	
+return	16:8	16:30	4	AVERROR(ENOMEM)
+call	16:15	16:29	5	AVERROR
+arg	16:23	16:29	6	ENOMEM
+water	16:23	0:0	7	ENOMEM
+water	17:4	0:0	2	output
+op	17:10	0:0	2	->
+water	17:12	0:0	2	format
+op	17:19	0:0	2	=
+water	17:21	0:0	2	ctx
+op	17:24	0:0	2	->
+water	17:26	0:0	2	output_format
+water	17:39	0:0	2	;
+water	18:4	0:0	2	err
+op	18:8	0:0	2	=
+call	18:10	18:51	2	av_hwframe_transfer_data
+arg	18:35	18:41	3	output
+water	18:35	0:0	4	output
+arg	18:43	18:48	3	input
+water	18:43	0:0	4	input
+arg	18:50	18:51	3	0
+water	18:50	0:0	4	0
+water	18:52	0:0	2	;
+if	19:4	23:4	2	(err < 0)
+cond	19:8	19:14	3	err < 0
+water	19:8	0:0	4	err
+op	19:12	0:0	4	<
+water	19:14	0:0	4	0
+stmts	19:17	23:4	3	
+water	19:17	0:0	4	{
+call	20:8	21:41	4	av_log
+arg	20:15	20:18	5	ctx
+water	20:15	0:0	6	ctx
+arg	20:20	20:32	5	AV_LOG_ERROR
+water	20:20	0:0	6	AV_LOG_ERROR
+arg	20:34	21:36	5	"Failed to transfer data to ""output frame: %d.\n"
+water	20:34	0:0	6	"Failed to transfer data to "
+water	21:15	0:0	6	"output frame: %d.\n"
+arg	21:38	21:41	5	err
+water	21:38	0:0	6	err
+water	21:42	0:0	4	;
+goto	22:8	22:17	4	fail
+water	22:13	0:0	5	fail
+water	23:4	0:0	4	}
+water	24:4	0:0	2	err
+op	24:8	0:0	2	=
+call	24:10	24:43	2	av_frame_copy_props
+arg	24:30	24:36	3	output
+water	24:30	0:0	4	output
+arg	24:38	24:43	3	input
+water	24:38	0:0	4	input
+water	24:44	0:0	2	;
+if	25:4	28:4	2	(err < 0)
+cond	25:8	25:14	3	err < 0
+water	25:8	0:0	4	err
+op	25:12	0:0	4	<
+water	25:14	0:0	4	0
+stmts	25:17	28:4	3	
+water	25:17	0:0	4	{
+call	26:8	26:29	4	av_frame_unref
+arg	26:23	26:29	5	output
+water	26:23	0:0	6	output
+water	26:30	0:0	4	;
+goto	27:8	27:17	4	fail
+water	27:13	0:0	5	fail
+water	28:4	0:0	4	}
+call	29:4	29:24	2	av_frame_unref
+arg	29:19	29:24	3	input
+water	29:19	0:0	4	input
+water	29:25	0:0	2	;
+call	30:4	30:35	2	av_frame_move_ref
+arg	30:22	30:27	3	input
+water	30:22	0:0	4	input
+arg	30:29	30:35	3	output
+water	30:29	0:0	4	output
+water	30:36	0:0	2	;
+call	31:4	31:25	2	av_frame_free
+arg	31:18	31:25	3	&output
+op	31:18	0:0	4	&
+water	31:19	0:0	4	output
+water	31:26	0:0	2	;
+return	32:4	32:12	2	0
+water	32:11	0:0	3	0
+label	33:0	33:4	2	fail :
+if	34:4	35:30	2	(output)
+cond	34:8	34:8	3	output
+water	34:8	0:0	4	output
+stmts	35:8	35:30	3	
+call	35:8	35:29	4	av_frame_free
+arg	35:22	35:29	5	&output
+op	35:22	0:0	6	&
+water	35:23	0:0	6	output
+water	35:30	0:0	4	;
+return	36:4	36:14	2	err
+water	36:11	0:0	3	err

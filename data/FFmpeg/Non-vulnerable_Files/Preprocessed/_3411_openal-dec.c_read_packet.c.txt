@@ -1,0 +1,133 @@
+func	1:0	25:0	0	static int	read_packet
+params	1:22	0:0	1	
+param	1:23	1:43	2	AVFormatContext *	ctx
+param	1:45	1:58	2	AVPacket *	pkt
+stmnts	0:0	24:16	1	
+decl	3:4	3:32	2	al_data	*ad
+op	3:16	0:0	2	=
+water	3:18	0:0	2	ctx
+op	3:21	0:0	2	->
+water	3:23	0:0	2	priv_data
+decl	4:4	4:15	2	int	error
+op	4:13	0:0	2	=
+water	4:14	0:0	2	0
+decl	5:4	5:25	2	const char	*error_msg
+decl	6:4	6:21	2	ALCint	nb_samples
+call	8:4	8:90	2	alcGetIntegerv
+arg	8:19	8:29	3	ad->device
+water	8:19	0:0	4	ad
+op	8:21	0:0	4	->
+water	8:23	0:0	4	device
+arg	8:31	8:50	3	ALC_CAPTURE_SAMPLES
+water	8:31	0:0	4	ALC_CAPTURE_SAMPLES
+arg	8:52	8:77	3	(ALCsizei)sizeof(ALCint)
+water	8:52	0:0	4	(
+water	8:53	0:0	4	ALCsizei
+water	8:61	0:0	4	)
+op	8:63	0:0	4	sizeof
+water	8:69	0:0	4	(
+water	8:70	0:0	4	ALCint
+water	8:76	0:0	4	)
+arg	8:79	8:90	3	&nb_samples
+op	8:79	0:0	4	&
+water	8:80	0:0	4	nb_samples
+water	8:91	0:0	2	;
+if	9:4	9:63	2	(error =al_get_error (ad -> device ,& error_msg ))
+cond	9:8	9:51	3	error =al_get_error (ad -> device ,& error_msg )
+water	9:8	0:0	4	error
+op	9:14	0:0	4	=
+call	9:16	9:51	4	al_get_error
+arg	9:29	9:39	5	ad->device
+water	9:29	0:0	6	ad
+op	9:31	0:0	6	->
+water	9:33	0:0	6	device
+arg	9:41	9:51	5	&error_msg
+op	9:41	0:0	6	&
+water	9:42	0:0	6	error_msg
+stmts	9:54	9:63	3	
+goto	9:54	9:63	4	fail
+water	9:59	0:0	5	fail
+if	11:4	12:17	2	(( error =av_new_packet (pkt ,nb_samples * ad -> sample_step ) ) < 0)
+cond	11:8	11:67	3	( error =av_new_packet (pkt ,nb_samples * ad -> sample_step ) ) < 0
+water	11:8	0:0	4	(
+water	11:9	0:0	4	error
+op	11:15	0:0	4	=
+call	11:17	11:62	4	av_new_packet
+arg	11:31	11:34	5	pkt
+water	11:31	0:0	6	pkt
+arg	11:36	11:62	5	nb_samples*ad->sample_step
+water	11:36	0:0	6	nb_samples
+op	11:46	0:0	6	*
+water	11:47	0:0	6	ad
+op	11:49	0:0	6	->
+water	11:51	0:0	6	sample_step
+water	11:63	0:0	4	)
+op	11:65	0:0	4	<
+water	11:67	0:0	4	0
+stmts	12:8	12:17	3	
+goto	12:8	12:17	4	fail
+water	12:13	0:0	5	fail
+water	13:4	0:0	2	pkt
+op	13:7	0:0	2	->
+water	13:9	0:0	2	pts
+op	13:13	0:0	2	=
+call	13:15	13:26	2	av_gettime
+water	13:27	0:0	2	;
+call	15:4	15:55	2	alcCaptureSamples
+arg	15:22	15:32	3	ad->device
+water	15:22	0:0	4	ad
+op	15:24	0:0	4	->
+water	15:26	0:0	4	device
+arg	15:34	15:43	3	pkt->data
+water	15:34	0:0	4	pkt
+op	15:37	0:0	4	->
+water	15:39	0:0	4	data
+arg	15:45	15:55	3	nb_samples
+water	15:45	0:0	4	nb_samples
+water	15:56	0:0	2	;
+if	16:4	16:63	2	(error =al_get_error (ad -> device ,& error_msg ))
+cond	16:8	16:51	3	error =al_get_error (ad -> device ,& error_msg )
+water	16:8	0:0	4	error
+op	16:14	0:0	4	=
+call	16:16	16:51	4	al_get_error
+arg	16:29	16:39	5	ad->device
+water	16:29	0:0	6	ad
+op	16:31	0:0	6	->
+water	16:33	0:0	6	device
+arg	16:41	16:51	5	&error_msg
+op	16:41	0:0	6	&
+water	16:42	0:0	6	error_msg
+stmts	16:54	16:63	3	
+goto	16:54	16:63	4	fail
+water	16:59	0:0	5	fail
+return	17:4	17:20	2	pkt->size
+water	17:11	0:0	3	pkt
+op	17:14	0:0	3	->
+water	17:16	0:0	3	size
+label	18:0	18:4	2	fail :
+if	20:4	21:27	2	(pkt -> data)
+cond	20:8	20:13	3	pkt -> data
+water	20:8	0:0	4	pkt
+op	20:11	0:0	4	->
+water	20:13	0:0	4	data
+stmts	21:8	21:27	3	
+call	21:8	21:26	4	av_free_packet
+arg	21:23	21:26	5	pkt
+water	21:23	0:0	6	pkt
+water	21:27	0:0	4	;
+if	22:4	23:59	2	(error_msg)
+cond	22:8	22:8	3	error_msg
+water	22:8	0:0	4	error_msg
+stmts	23:8	23:59	3	
+call	23:8	23:58	4	av_log
+arg	23:15	23:18	5	ctx
+water	23:15	0:0	6	ctx
+arg	23:20	23:32	5	AV_LOG_ERROR
+water	23:20	0:0	6	AV_LOG_ERROR
+arg	23:34	23:47	5	"Error: %s\n"
+water	23:34	0:0	6	"Error: %s\n"
+arg	23:49	23:58	5	error_msg
+water	23:49	0:0	6	error_msg
+water	23:59	0:0	4	;
+return	24:4	24:16	2	error
+water	24:11	0:0	3	error

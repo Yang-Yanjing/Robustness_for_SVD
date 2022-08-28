@@ -1,0 +1,281 @@
+func	1:0	47:0	0	int	ff_pulse_audio_get_devices
+params	1:30	0:0	1	
+param	1:31	1:56	2	AVDeviceInfoList *	devices
+param	1:58	1:76	2	const char *	server
+param	1:78	1:88	2	int	output
+stmnts	0:0	46:30	1	
+decl	3:4	3:29	2	pa_mainloop	*pa_ml
+op	3:23	0:0	2	=
+water	3:25	0:0	2	NULL
+decl	4:4	4:30	2	pa_operation	*pa_op
+op	4:24	0:0	2	=
+water	4:26	0:0	2	NULL
+decl	5:4	5:29	2	pa_context	*pa_ctx
+op	5:23	0:0	2	=
+water	5:25	0:0	2	NULL
+decl	6:4	6:36	2	enum pa_operation_state	op_state
+decl	7:4	7:41	2	PulseAudioDeviceList	dev_list
+op	7:34	0:0	2	=
+water	7:36	0:0	2	{
+water	7:38	0:0	2	0
+water	7:40	0:0	2	}
+decl	8:4	8:9	2	int	i
+water	9:4	0:0	2	dev_list
+op	9:12	0:0	2	.
+water	9:13	0:0	2	output
+op	9:20	0:0	2	=
+water	9:22	0:0	2	output
+water	9:28	0:0	2	;
+water	10:4	0:0	2	dev_list
+op	10:12	0:0	2	.
+water	10:13	0:0	2	devices
+op	10:21	0:0	2	=
+water	10:23	0:0	2	devices
+water	10:30	0:0	2	;
+if	11:4	12:30	2	(! devices)
+cond	11:8	11:9	3	! devices
+op	11:8	0:0	4	!
+water	11:9	0:0	4	devices
+stmts	12:8	12:30	3	
+return	12:8	12:30	4	AVERROR(EINVAL)
+call	12:15	12:29	5	AVERROR
+arg	12:23	12:29	6	EINVAL
+water	12:23	0:0	7	EINVAL
+water	13:4	0:0	2	devices
+op	13:11	0:0	2	->
+water	13:13	0:0	2	nb_devices
+op	13:24	0:0	2	=
+water	13:26	0:0	2	0
+water	13:27	0:0	2	;
+water	14:4	0:0	2	devices
+op	14:11	0:0	2	->
+water	14:13	0:0	2	devices
+op	14:21	0:0	2	=
+water	14:23	0:0	2	NULL
+water	14:27	0:0	2	;
+if	15:4	16:17	2	(( dev_list . error_code =ff_pulse_audio_connect_context (& pa_ml ,& pa_ctx ,server ,"Query devices" ) ) < 0)
+cond	15:8	15:107	3	( dev_list . error_code =ff_pulse_audio_connect_context (& pa_ml ,& pa_ctx ,server ,"Query devices" ) ) < 0
+water	15:8	0:0	4	(
+water	15:9	0:0	4	dev_list
+op	15:17	0:0	4	.
+water	15:18	0:0	4	error_code
+op	15:29	0:0	4	=
+call	15:31	15:102	4	ff_pulse_audio_connect_context
+arg	15:62	15:68	5	&pa_ml
+op	15:62	0:0	6	&
+water	15:63	0:0	6	pa_ml
+arg	15:70	15:77	5	&pa_ctx
+op	15:70	0:0	6	&
+water	15:71	0:0	6	pa_ctx
+arg	15:79	15:85	5	server
+water	15:79	0:0	6	server
+arg	15:87	15:102	5	"Query devices"
+water	15:87	0:0	6	"Query devices"
+water	15:103	0:0	4	)
+op	15:105	0:0	4	<
+water	15:107	0:0	4	0
+stmts	16:8	16:17	3	
+goto	16:8	16:17	4	fail
+water	16:13	0:0	5	fail
+if	17:4	18:92	2	(output)
+cond	17:8	17:8	3	output
+water	17:8	0:0	4	output
+stmts	18:8	18:92	3	
+water	18:8	0:0	4	pa_op
+op	18:14	0:0	4	=
+call	18:16	18:91	4	pa_context_get_sink_info_list
+arg	18:46	18:52	5	pa_ctx
+water	18:46	0:0	6	pa_ctx
+arg	18:54	18:80	5	pulse_audio_sink_device_cb
+water	18:54	0:0	6	pulse_audio_sink_device_cb
+arg	18:82	18:91	5	&dev_list
+op	18:82	0:0	6	&
+water	18:83	0:0	6	dev_list
+water	18:92	0:0	4	;
+else	19:4	20:96	2
+stmts	20:8	20:96	3	
+water	20:8	0:0	4	pa_op
+op	20:14	0:0	4	=
+call	20:16	20:95	4	pa_context_get_source_info_list
+arg	20:48	20:54	5	pa_ctx
+water	20:48	0:0	6	pa_ctx
+arg	20:56	20:84	5	pulse_audio_source_device_cb
+water	20:56	0:0	6	pulse_audio_source_device_cb
+arg	20:86	20:95	5	&dev_list
+op	20:86	0:0	6	&
+water	20:87	0:0	6	dev_list
+water	20:96	0:0	4	;
+while	21:4	22:43	2	(( op_state =pa_operation_get_state (pa_op ) ) == PA_OPERATION_RUNNING)
+cond	21:11	21:57	3	( op_state =pa_operation_get_state (pa_op ) ) == PA_OPERATION_RUNNING
+water	21:11	0:0	4	(
+water	21:12	0:0	4	op_state
+op	21:21	0:0	4	=
+call	21:23	21:51	4	pa_operation_get_state
+arg	21:46	21:51	5	pa_op
+water	21:46	0:0	6	pa_op
+water	21:52	0:0	4	)
+op	21:54	0:0	4	==
+water	21:57	0:0	4	PA_OPERATION_RUNNING
+stmts	22:8	22:43	3	
+call	22:8	22:42	4	pa_mainloop_iterate
+arg	22:28	22:33	5	pa_ml
+water	22:28	0:0	6	pa_ml
+arg	22:35	22:36	5	1
+water	22:35	0:0	6	1
+arg	22:38	22:42	5	NULL
+water	22:38	0:0	6	NULL
+water	22:43	0:0	4	;
+if	23:4	24:46	2	(op_state != PA_OPERATION_DONE)
+cond	23:8	23:20	3	op_state != PA_OPERATION_DONE
+water	23:8	0:0	4	op_state
+op	23:17	0:0	4	!=
+water	23:20	0:0	4	PA_OPERATION_DONE
+stmts	24:8	24:46	3	
+water	24:8	0:0	4	dev_list
+op	24:16	0:0	4	.
+water	24:17	0:0	4	error_code
+op	24:28	0:0	4	=
+water	24:30	0:0	4	AVERROR_EXTERNAL
+water	24:46	0:0	4	;
+call	25:4	25:28	2	pa_operation_unref
+arg	25:23	25:28	3	pa_op
+water	25:23	0:0	4	pa_op
+water	25:29	0:0	2	;
+if	26:4	27:17	2	(dev_list . error_code < 0)
+cond	26:8	26:30	3	dev_list . error_code < 0
+water	26:8	0:0	4	dev_list
+op	26:16	0:0	4	.
+water	26:17	0:0	4	error_code
+op	26:28	0:0	4	<
+water	26:30	0:0	4	0
+stmts	27:8	27:17	3	
+goto	27:8	27:17	4	fail
+water	27:13	0:0	5	fail
+water	28:4	0:0	2	pa_op
+op	28:10	0:0	2	=
+call	28:12	28:78	2	pa_context_get_server_info
+arg	28:39	28:45	3	pa_ctx
+water	28:39	0:0	4	pa_ctx
+arg	28:47	28:67	3	pulse_server_info_cb
+water	28:47	0:0	4	pulse_server_info_cb
+arg	28:69	28:78	3	&dev_list
+op	28:69	0:0	4	&
+water	28:70	0:0	4	dev_list
+water	28:79	0:0	2	;
+while	29:4	30:43	2	(( op_state =pa_operation_get_state (pa_op ) ) == PA_OPERATION_RUNNING)
+cond	29:11	29:57	3	( op_state =pa_operation_get_state (pa_op ) ) == PA_OPERATION_RUNNING
+water	29:11	0:0	4	(
+water	29:12	0:0	4	op_state
+op	29:21	0:0	4	=
+call	29:23	29:51	4	pa_operation_get_state
+arg	29:46	29:51	5	pa_op
+water	29:46	0:0	6	pa_op
+water	29:52	0:0	4	)
+op	29:54	0:0	4	==
+water	29:57	0:0	4	PA_OPERATION_RUNNING
+stmts	30:8	30:43	3	
+call	30:8	30:42	4	pa_mainloop_iterate
+arg	30:28	30:33	5	pa_ml
+water	30:28	0:0	6	pa_ml
+arg	30:35	30:36	5	1
+water	30:35	0:0	6	1
+arg	30:38	30:42	5	NULL
+water	30:38	0:0	6	NULL
+water	30:43	0:0	4	;
+if	31:4	32:46	2	(op_state != PA_OPERATION_DONE)
+cond	31:8	31:20	3	op_state != PA_OPERATION_DONE
+water	31:8	0:0	4	op_state
+op	31:17	0:0	4	!=
+water	31:20	0:0	4	PA_OPERATION_DONE
+stmts	32:8	32:46	3	
+water	32:8	0:0	4	dev_list
+op	32:16	0:0	4	.
+water	32:17	0:0	4	error_code
+op	32:28	0:0	4	=
+water	32:30	0:0	4	AVERROR_EXTERNAL
+water	32:46	0:0	4	;
+call	33:4	33:28	2	pa_operation_unref
+arg	33:23	33:28	3	pa_op
+water	33:23	0:0	4	pa_op
+water	33:29	0:0	2	;
+if	34:4	35:17	2	(dev_list . error_code < 0)
+cond	34:8	34:30	3	dev_list . error_code < 0
+water	34:8	0:0	4	dev_list
+op	34:16	0:0	4	.
+water	34:17	0:0	4	error_code
+op	34:28	0:0	4	<
+water	34:30	0:0	4	0
+stmts	35:8	35:17	3	
+goto	35:8	35:17	4	fail
+water	35:13	0:0	5	fail
+water	36:4	0:0	2	devices
+op	36:11	0:0	2	->
+water	36:13	0:0	2	default_device
+op	36:28	0:0	2	=
+op	36:30	0:0	2	-
+water	36:31	0:0	2	1
+water	36:32	0:0	2	;
+for	37:4	42:4	2	(i = 0 ;i < devices -> nb_devices;i ++)
+forinit	37:9	37:14	3	i = 0 ;
+water	37:9	0:0	4	i
+op	37:11	0:0	4	=
+water	37:13	0:0	4	0
+water	37:14	0:0	4	;
+cond	37:16	37:29	3	i < devices -> nb_devices
+water	37:16	0:0	4	i
+op	37:18	0:0	4	<
+water	37:20	0:0	4	devices
+op	37:27	0:0	4	->
+water	37:29	0:0	4	nb_devices
+forexpr	37:41	37:42	3	i ++
+water	37:41	0:0	4	i
+op	37:42	0:0	4	++
+stmts	37:46	42:4	3	
+water	37:46	0:0	4	{
+if	38:8	41:8	4	(!strcmp (devices -> devices [ i ] -> device_name ,dev_list . default_device ))
+cond	38:12	38:77	5	!strcmp (devices -> devices [ i ] -> device_name ,dev_list . default_device )
+op	38:12	0:0	6	!
+call	38:13	38:77	6	strcmp
+arg	38:20	38:52	7	devices->devices[i]->device_name
+water	38:20	0:0	8	devices
+op	38:27	0:0	8	->
+water	38:29	0:0	8	devices
+op	38:36	0:0	8	[
+water	38:37	0:0	8	i
+op	38:38	0:0	8	]
+op	38:39	0:0	8	->
+water	38:41	0:0	8	device_name
+arg	38:54	38:77	7	dev_list.default_device
+water	38:54	0:0	8	dev_list
+op	38:62	0:0	8	.
+water	38:63	0:0	8	default_device
+stmts	38:80	41:8	5	
+water	38:80	0:0	6	{
+water	39:12	0:0	6	devices
+op	39:19	0:0	6	->
+water	39:21	0:0	6	default_device
+op	39:36	0:0	6	=
+water	39:38	0:0	6	i
+water	39:39	0:0	6	;
+break	40:12	40:17	6	
+water	41:8	0:0	6	}
+water	42:4	0:0	4	}
+label	43:2	43:6	2	fail :
+call	44:4	44:35	2	av_free
+arg	44:12	44:35	3	dev_list.default_device
+water	44:12	0:0	4	dev_list
+op	44:20	0:0	4	.
+water	44:21	0:0	4	default_device
+water	44:36	0:0	2	;
+call	45:4	45:53	2	ff_pulse_audio_disconnect_context
+arg	45:38	45:44	3	&pa_ml
+op	45:38	0:0	4	&
+water	45:39	0:0	4	pa_ml
+arg	45:46	45:53	3	&pa_ctx
+op	45:46	0:0	4	&
+water	45:47	0:0	4	pa_ctx
+water	45:54	0:0	2	;
+return	46:4	46:30	2	dev_list.error_code
+water	46:11	0:0	3	dev_list
+op	46:19	0:0	3	.
+water	46:20	0:0	3	error_code

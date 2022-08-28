@@ -1,0 +1,655 @@
+func	1:0	89:0	0	static int	mxf_write_packet
+params	1:27	0:0	1	
+param	1:28	1:46	2	AVFormatContext *	s
+param	1:48	1:61	2	AVPacket *	pkt
+stmnts	0:0	88:12	1	
+decl	3:4	3:34	2	MXFContext	*mxf
+op	3:20	0:0	2	=
+water	3:22	0:0	2	s
+op	3:23	0:0	2	->
+water	3:25	0:0	2	priv_data
+decl	4:4	4:27	2	AVIOContext	*pb
+op	4:20	0:0	2	=
+water	4:22	0:0	2	s
+op	4:23	0:0	2	->
+water	4:25	0:0	2	pb
+decl	5:4	5:48	2	AVStream	*st
+op	5:17	0:0	2	=
+water	5:19	0:0	2	s
+op	5:20	0:0	2	->
+water	5:22	0:0	2	streams
+op	5:29	0:0	2	[
+water	5:30	0:0	2	pkt
+op	5:33	0:0	2	->
+water	5:35	0:0	2	stream_index
+op	5:47	0:0	2	]
+decl	6:4	6:40	2	MXFStreamContext	*sc
+op	6:25	0:0	2	=
+water	6:27	0:0	2	st
+op	6:29	0:0	2	->
+water	6:31	0:0	2	priv_data
+decl	7:4	7:26	2	MXFIndexEntry	ie
+op	7:21	0:0	2	=
+water	7:23	0:0	2	{
+water	7:24	0:0	2	0
+water	7:25	0:0	2	}
+decl	8:4	8:11	2	int	err
+if	9:4	16:4	2	(! mxf -> edit_unit_byte_count && ! ( mxf -> edit_units_count % EDIT_UNITS_PER_BODY ))
+cond	9:8	9:83	3	! mxf -> edit_unit_byte_count && ! ( mxf -> edit_units_count % EDIT_UNITS_PER_BODY )
+op	9:8	0:0	4	!
+water	9:9	0:0	4	mxf
+op	9:12	0:0	4	->
+water	9:14	0:0	4	edit_unit_byte_count
+op	9:35	0:0	4	&&
+op	9:38	0:0	4	!
+water	9:39	0:0	4	(
+water	9:40	0:0	4	mxf
+op	9:43	0:0	4	->
+water	9:45	0:0	4	edit_units_count
+op	9:62	0:0	4	%
+water	9:64	0:0	4	EDIT_UNITS_PER_BODY
+water	9:83	0:0	4	)
+stmts	9:86	16:4	3	
+water	9:86	0:0	4	{
+if	10:8	15:8	4	(( err =av_reallocp_array (& mxf -> index_entries ,mxf -> edit_units_count + EDIT_UNITS_PER_BODY ,sizeof ( * mxf -> index_entries ) ) ) < 0)
+cond	10:12	11:92	5	( err =av_reallocp_array (& mxf -> index_entries ,mxf -> edit_units_count + EDIT_UNITS_PER_BODY ,sizeof ( * mxf -> index_entries ) ) ) < 0
+water	10:12	0:0	6	(
+water	10:13	0:0	6	err
+op	10:17	0:0	6	=
+call	10:19	11:87	6	av_reallocp_array
+arg	10:37	10:56	7	&mxf->index_entries
+op	10:37	0:0	8	&
+water	10:38	0:0	8	mxf
+op	10:41	0:0	8	->
+water	10:43	0:0	8	index_entries
+arg	10:58	11:58	7	mxf->edit_units_count+EDIT_UNITS_PER_BODY
+water	10:58	0:0	8	mxf
+op	10:61	0:0	8	->
+water	10:63	0:0	8	edit_units_count
+op	11:37	0:0	8	+
+water	11:39	0:0	8	EDIT_UNITS_PER_BODY
+arg	11:60	11:87	7	sizeof(*mxf->index_entries)
+op	11:60	0:0	8	sizeof
+water	11:66	0:0	8	(
+op	11:67	0:0	8	*
+water	11:68	0:0	8	mxf
+op	11:71	0:0	8	->
+water	11:73	0:0	8	index_entries
+water	11:86	0:0	8	)
+water	11:88	0:0	6	)
+op	11:90	0:0	6	<
+water	11:92	0:0	6	0
+stmts	11:95	15:8	5	
+water	11:95	0:0	6	{
+water	12:12	0:0	6	mxf
+op	12:15	0:0	6	->
+water	12:17	0:0	6	edit_units_count
+op	12:34	0:0	6	=
+water	12:36	0:0	6	0
+water	12:37	0:0	6	;
+call	13:12	13:72	6	av_log
+arg	13:19	13:20	7	s
+water	13:19	0:0	8	s
+arg	13:22	13:34	7	AV_LOG_ERROR
+water	13:22	0:0	8	AV_LOG_ERROR
+arg	13:36	13:72	7	"could not allocate index entries\n"
+water	13:36	0:0	8	"could not allocate index entries\n"
+water	13:73	0:0	6	;
+return	14:12	14:22	6	err
+water	14:19	0:0	7	err
+water	15:8	0:0	6	}
+water	16:4	0:0	4	}
+if	17:4	22:4	2	(st -> codec -> codec_id == AV_CODEC_ID_MPEG2VIDEO)
+cond	17:8	17:31	3	st -> codec -> codec_id == AV_CODEC_ID_MPEG2VIDEO
+water	17:8	0:0	4	st
+op	17:10	0:0	4	->
+water	17:12	0:0	4	codec
+op	17:17	0:0	4	->
+water	17:19	0:0	4	codec_id
+op	17:28	0:0	4	==
+water	17:31	0:0	4	AV_CODEC_ID_MPEG2VIDEO
+stmts	17:55	22:4	3	
+water	17:55	0:0	4	{
+if	18:8	21:8	4	(!mxf_parse_mpeg2_frame (s ,st ,pkt ,& ie ))
+cond	18:12	18:50	5	!mxf_parse_mpeg2_frame (s ,st ,pkt ,& ie )
+op	18:12	0:0	6	!
+call	18:13	18:50	6	mxf_parse_mpeg2_frame
+arg	18:35	18:36	7	s
+water	18:35	0:0	8	s
+arg	18:38	18:40	7	st
+water	18:38	0:0	8	st
+arg	18:42	18:45	7	pkt
+water	18:42	0:0	8	pkt
+arg	18:47	18:50	7	&ie
+op	18:47	0:0	8	&
+water	18:48	0:0	8	ie
+stmts	18:53	21:8	5	
+water	18:53	0:0	6	{
+call	19:12	19:77	6	av_log
+arg	19:19	19:20	7	s
+water	19:19	0:0	8	s
+arg	19:22	19:34	7	AV_LOG_ERROR
+water	19:22	0:0	8	AV_LOG_ERROR
+arg	19:36	19:77	7	"could not get mpeg2 profile and level\n"
+water	19:36	0:0	8	"could not get mpeg2 profile and level\n"
+water	19:78	0:0	6	;
+return	20:12	20:21	6	-1
+op	20:19	0:0	7	-
+water	20:20	0:0	7	1
+water	21:8	0:0	6	}
+water	22:4	0:0	4	}
+else	22:6	27:4	2
+stmts	22:11	27:4	3	
+if	22:11	27:4	4	(st -> codec -> codec_id == AV_CODEC_ID_DNXHD)
+cond	22:15	22:38	5	st -> codec -> codec_id == AV_CODEC_ID_DNXHD
+water	22:15	0:0	6	st
+op	22:17	0:0	6	->
+water	22:19	0:0	6	codec
+op	22:24	0:0	6	->
+water	22:26	0:0	6	codec_id
+op	22:35	0:0	6	==
+water	22:38	0:0	6	AV_CODEC_ID_DNXHD
+stmts	22:57	27:4	5	
+water	22:57	0:0	6	{
+if	23:8	26:8	6	(!mxf_parse_dnxhd_frame (s ,st ,pkt ))
+cond	23:12	23:45	7	!mxf_parse_dnxhd_frame (s ,st ,pkt )
+op	23:12	0:0	8	!
+call	23:13	23:45	8	mxf_parse_dnxhd_frame
+arg	23:35	23:36	9	s
+water	23:35	0:0	10	s
+arg	23:38	23:40	9	st
+water	23:38	0:0	10	st
+arg	23:42	23:45	9	pkt
+water	23:42	0:0	10	pkt
+stmts	23:48	26:8	7	
+water	23:48	0:0	8	{
+call	24:12	24:67	8	av_log
+arg	24:19	24:20	9	s
+water	24:19	0:0	10	s
+arg	24:22	24:34	9	AV_LOG_ERROR
+water	24:22	0:0	10	AV_LOG_ERROR
+arg	24:36	24:67	9	"could not get dnxhd profile\n"
+water	24:36	0:0	10	"could not get dnxhd profile\n"
+water	24:68	0:0	8	;
+return	25:12	25:21	8	-1
+op	25:19	0:0	9	-
+water	25:20	0:0	9	1
+water	26:8	0:0	8	}
+water	27:4	0:0	6	}
+else	27:6	32:4	2
+stmts	27:11	32:4	3	
+if	27:11	32:4	4	(st -> codec -> codec_id == AV_CODEC_ID_DVVIDEO)
+cond	27:15	27:38	5	st -> codec -> codec_id == AV_CODEC_ID_DVVIDEO
+water	27:15	0:0	6	st
+op	27:17	0:0	6	->
+water	27:19	0:0	6	codec
+op	27:24	0:0	6	->
+water	27:26	0:0	6	codec_id
+op	27:35	0:0	6	==
+water	27:38	0:0	6	AV_CODEC_ID_DVVIDEO
+stmts	27:59	32:4	5	
+water	27:59	0:0	6	{
+if	28:8	31:8	6	(!mxf_parse_dv_frame (s ,st ,pkt ))
+cond	28:12	28:42	7	!mxf_parse_dv_frame (s ,st ,pkt )
+op	28:12	0:0	8	!
+call	28:13	28:42	8	mxf_parse_dv_frame
+arg	28:32	28:33	9	s
+water	28:32	0:0	10	s
+arg	28:35	28:37	9	st
+water	28:35	0:0	10	st
+arg	28:39	28:42	9	pkt
+water	28:39	0:0	10	pkt
+stmts	28:45	31:8	7	
+water	28:45	0:0	8	{
+call	29:12	29:64	8	av_log
+arg	29:19	29:20	9	s
+water	29:19	0:0	10	s
+arg	29:22	29:34	9	AV_LOG_ERROR
+water	29:22	0:0	10	AV_LOG_ERROR
+arg	29:36	29:64	9	"could not get dv profile\n"
+water	29:36	0:0	10	"could not get dv profile\n"
+water	29:65	0:0	8	;
+return	30:12	30:21	8	-1
+op	30:19	0:0	9	-
+water	30:20	0:0	9	1
+water	31:8	0:0	8	}
+water	32:4	0:0	6	}
+else	32:6	37:4	2
+stmts	32:11	37:4	3	
+if	32:11	37:4	4	(st -> codec -> codec_id == AV_CODEC_ID_H264)
+cond	32:15	32:38	5	st -> codec -> codec_id == AV_CODEC_ID_H264
+water	32:15	0:0	6	st
+op	32:17	0:0	6	->
+water	32:19	0:0	6	codec
+op	32:24	0:0	6	->
+water	32:26	0:0	6	codec_id
+op	32:35	0:0	6	==
+water	32:38	0:0	6	AV_CODEC_ID_H264
+stmts	32:56	37:4	5	
+water	32:56	0:0	6	{
+if	33:8	36:8	6	(!mxf_parse_h264_frame (s ,st ,pkt ,& ie ))
+cond	33:12	33:49	7	!mxf_parse_h264_frame (s ,st ,pkt ,& ie )
+op	33:12	0:0	8	!
+call	33:13	33:49	8	mxf_parse_h264_frame
+arg	33:34	33:35	9	s
+water	33:34	0:0	10	s
+arg	33:37	33:39	9	st
+water	33:37	0:0	10	st
+arg	33:41	33:44	9	pkt
+water	33:41	0:0	10	pkt
+arg	33:46	33:49	9	&ie
+op	33:46	0:0	10	&
+water	33:47	0:0	10	ie
+stmts	33:52	36:8	7	
+water	33:52	0:0	8	{
+call	34:12	34:66	8	av_log
+arg	34:19	34:20	9	s
+water	34:19	0:0	10	s
+arg	34:22	34:34	9	AV_LOG_ERROR
+water	34:22	0:0	10	AV_LOG_ERROR
+arg	34:36	34:66	9	"could not get h264 profile\n"
+water	34:36	0:0	10	"could not get h264 profile\n"
+water	34:67	0:0	8	;
+return	35:12	35:21	8	-1
+op	35:19	0:0	9	-
+water	35:20	0:0	9	1
+water	36:8	0:0	8	}
+water	37:4	0:0	6	}
+if	38:4	39:51	2	(s -> oformat == & ff_mxf_opatom_muxer)
+cond	38:8	38:23	3	s -> oformat == & ff_mxf_opatom_muxer
+water	38:8	0:0	4	s
+op	38:9	0:0	4	->
+water	38:11	0:0	4	oformat
+op	38:19	0:0	4	==
+op	38:22	0:0	4	&
+water	38:23	0:0	4	ff_mxf_opatom_muxer
+stmts	39:8	39:51	3	
+return	39:8	39:51	4	mxf_write_opatom_packet(s,pkt,&ie)
+call	39:15	39:50	5	mxf_write_opatom_packet
+arg	39:39	39:40	6	s
+water	39:39	0:0	7	s
+arg	39:42	39:45	6	pkt
+water	39:42	0:0	7	pkt
+arg	39:47	39:50	6	&ie
+op	39:47	0:0	7	&
+water	39:48	0:0	7	ie
+if	40:4	51:4	2	(! mxf -> header_written)
+cond	40:8	40:14	3	! mxf -> header_written
+op	40:8	0:0	4	!
+water	40:9	0:0	4	mxf
+op	40:12	0:0	4	->
+water	40:14	0:0	4	header_written
+stmts	40:30	51:4	3	
+water	40:30	0:0	4	{
+if	41:8	46:8	4	(mxf -> edit_unit_byte_count)
+cond	41:12	41:17	5	mxf -> edit_unit_byte_count
+water	41:12	0:0	6	mxf
+op	41:15	0:0	6	->
+water	41:17	0:0	6	edit_unit_byte_count
+stmts	41:39	46:8	5	
+water	41:39	0:0	6	{
+if	42:12	43:26	6	(( err =mxf_write_partition (s ,1 ,2 ,header_open_partition_key ,1 ) ) < 0)
+cond	42:16	42:85	7	( err =mxf_write_partition (s ,1 ,2 ,header_open_partition_key ,1 ) ) < 0
+water	42:16	0:0	8	(
+water	42:17	0:0	8	err
+op	42:21	0:0	8	=
+call	42:23	42:80	8	mxf_write_partition
+arg	42:43	42:44	9	s
+water	42:43	0:0	10	s
+arg	42:46	42:47	9	1
+water	42:46	0:0	10	1
+arg	42:49	42:50	9	2
+water	42:49	0:0	10	2
+arg	42:52	42:77	9	header_open_partition_key
+water	42:52	0:0	10	header_open_partition_key
+arg	42:79	42:80	9	1
+water	42:79	0:0	10	1
+water	42:81	0:0	8	)
+op	42:83	0:0	8	<
+water	42:85	0:0	8	0
+stmts	43:16	43:26	7	
+return	43:16	43:26	8	err
+water	43:23	0:0	9	err
+call	44:12	44:32	6	mxf_write_klv_fill
+arg	44:31	44:32	7	s
+water	44:31	0:0	8	s
+water	44:33	0:0	6	;
+call	45:12	45:43	6	mxf_write_index_table_segment
+arg	45:42	45:43	7	s
+water	45:42	0:0	8	s
+water	45:44	0:0	6	;
+water	46:8	0:0	6	}
+else	46:10	49:8	4
+stmts	46:15	49:8	5	
+water	46:15	0:0	6	{
+if	47:12	48:26	6	(( err =mxf_write_partition (s ,0 ,0 ,header_open_partition_key ,1 ) ) < 0)
+cond	47:16	47:85	7	( err =mxf_write_partition (s ,0 ,0 ,header_open_partition_key ,1 ) ) < 0
+water	47:16	0:0	8	(
+water	47:17	0:0	8	err
+op	47:21	0:0	8	=
+call	47:23	47:80	8	mxf_write_partition
+arg	47:43	47:44	9	s
+water	47:43	0:0	10	s
+arg	47:46	47:47	9	0
+water	47:46	0:0	10	0
+arg	47:49	47:50	9	0
+water	47:49	0:0	10	0
+arg	47:52	47:77	9	header_open_partition_key
+water	47:52	0:0	10	header_open_partition_key
+arg	47:79	47:80	9	1
+water	47:79	0:0	10	1
+water	47:81	0:0	8	)
+op	47:83	0:0	8	<
+water	47:85	0:0	8	0
+stmts	48:16	48:26	7	
+return	48:16	48:26	8	err
+water	48:23	0:0	9	err
+water	49:8	0:0	6	}
+water	50:8	0:0	4	mxf
+op	50:11	0:0	4	->
+water	50:13	0:0	4	header_written
+op	50:28	0:0	4	=
+water	50:30	0:0	4	1
+water	50:31	0:0	4	;
+water	51:4	0:0	4	}
+if	52:4	71:4	2	(st -> index == 0)
+cond	52:8	52:21	3	st -> index == 0
+water	52:8	0:0	4	st
+op	52:10	0:0	4	->
+water	52:12	0:0	4	index
+op	52:18	0:0	4	==
+water	52:21	0:0	4	0
+stmts	52:24	71:4	3	
+water	52:24	0:0	4	{
+if	53:8	61:8	4	(! mxf -> edit_unit_byte_count && ( ! mxf -> edit_units_count || mxf -> edit_units_count > EDIT_UNITS_PER_BODY ) && ! ( ie . flags & 0 x33 ))
+cond	53:12	55:29	5	! mxf -> edit_unit_byte_count && ( ! mxf -> edit_units_count || mxf -> edit_units_count > EDIT_UNITS_PER_BODY ) && ! ( ie . flags & 0 x33 )
+op	53:12	0:0	6	!
+water	53:13	0:0	6	mxf
+op	53:16	0:0	6	->
+water	53:18	0:0	6	edit_unit_byte_count
+op	53:39	0:0	6	&&
+water	54:12	0:0	6	(
+op	54:13	0:0	6	!
+water	54:14	0:0	6	mxf
+op	54:17	0:0	6	->
+water	54:19	0:0	6	edit_units_count
+op	54:36	0:0	6	||
+water	54:39	0:0	6	mxf
+op	54:42	0:0	6	->
+water	54:44	0:0	6	edit_units_count
+op	54:61	0:0	6	>
+water	54:63	0:0	6	EDIT_UNITS_PER_BODY
+water	54:82	0:0	6	)
+op	54:84	0:0	6	&&
+op	55:12	0:0	6	!
+water	55:13	0:0	6	(
+water	55:14	0:0	6	ie
+op	55:16	0:0	6	.
+water	55:17	0:0	6	flags
+op	55:23	0:0	6	&
+water	55:25	0:0	6	0
+water	55:26	0:0	6	x33
+water	55:29	0:0	6	)
+stmts	55:32	61:8	5	
+water	55:32	0:0	6	{
+call	56:12	56:32	6	mxf_write_klv_fill
+arg	56:31	56:32	7	s
+water	56:31	0:0	8	s
+water	56:33	0:0	6	;
+if	57:12	58:26	6	(( err =mxf_write_partition (s ,1 ,2 ,body_partition_key ,0 ) ) < 0)
+cond	57:16	57:78	7	( err =mxf_write_partition (s ,1 ,2 ,body_partition_key ,0 ) ) < 0
+water	57:16	0:0	8	(
+water	57:17	0:0	8	err
+op	57:21	0:0	8	=
+call	57:23	57:73	8	mxf_write_partition
+arg	57:43	57:44	9	s
+water	57:43	0:0	10	s
+arg	57:46	57:47	9	1
+water	57:46	0:0	10	1
+arg	57:49	57:50	9	2
+water	57:49	0:0	10	2
+arg	57:52	57:70	9	body_partition_key
+water	57:52	0:0	10	body_partition_key
+arg	57:72	57:73	9	0
+water	57:72	0:0	10	0
+water	57:74	0:0	8	)
+op	57:76	0:0	8	<
+water	57:78	0:0	8	0
+stmts	58:16	58:26	7	
+return	58:16	58:26	8	err
+water	58:23	0:0	9	err
+call	59:12	59:32	6	mxf_write_klv_fill
+arg	59:31	59:32	7	s
+water	59:31	0:0	8	s
+water	59:33	0:0	6	;
+call	60:12	60:43	6	mxf_write_index_table_segment
+arg	60:42	60:43	7	s
+water	60:42	0:0	8	s
+water	60:44	0:0	6	;
+water	61:8	0:0	6	}
+call	62:8	62:28	4	mxf_write_klv_fill
+arg	62:27	62:28	5	s
+water	62:27	0:0	6	s
+water	62:29	0:0	4	;
+call	63:8	63:31	4	mxf_write_system_item
+arg	63:30	63:31	5	s
+water	63:30	0:0	6	s
+water	63:32	0:0	4	;
+if	64:8	69:8	4	(! mxf -> edit_unit_byte_count)
+cond	64:12	64:18	5	! mxf -> edit_unit_byte_count
+op	64:12	0:0	6	!
+water	64:13	0:0	6	mxf
+op	64:16	0:0	6	->
+water	64:18	0:0	6	edit_unit_byte_count
+stmts	64:40	69:8	5	
+water	64:40	0:0	6	{
+water	65:12	0:0	6	mxf
+op	65:15	0:0	6	->
+water	65:17	0:0	6	index_entries
+op	65:30	0:0	6	[
+water	65:31	0:0	6	mxf
+op	65:34	0:0	6	->
+water	65:36	0:0	6	edit_units_count
+op	65:52	0:0	6	]
+op	65:53	0:0	6	.
+water	65:54	0:0	6	offset
+op	65:61	0:0	6	=
+water	65:63	0:0	6	mxf
+op	65:66	0:0	6	->
+water	65:68	0:0	6	body_offset
+water	65:79	0:0	6	;
+water	66:12	0:0	6	mxf
+op	66:15	0:0	6	->
+water	66:17	0:0	6	index_entries
+op	66:30	0:0	6	[
+water	66:31	0:0	6	mxf
+op	66:34	0:0	6	->
+water	66:36	0:0	6	edit_units_count
+op	66:52	0:0	6	]
+op	66:53	0:0	6	.
+water	66:54	0:0	6	flags
+op	66:60	0:0	6	=
+water	66:62	0:0	6	ie
+op	66:64	0:0	6	.
+water	66:65	0:0	6	flags
+water	66:70	0:0	6	;
+water	67:12	0:0	6	mxf
+op	67:15	0:0	6	->
+water	67:17	0:0	6	index_entries
+op	67:30	0:0	6	[
+water	67:31	0:0	6	mxf
+op	67:34	0:0	6	->
+water	67:36	0:0	6	edit_units_count
+op	67:52	0:0	6	]
+op	67:53	0:0	6	.
+water	67:54	0:0	6	temporal_ref
+op	67:67	0:0	6	=
+water	67:69	0:0	6	ie
+op	67:71	0:0	6	.
+water	67:72	0:0	6	temporal_ref
+water	67:84	0:0	6	;
+water	68:12	0:0	6	mxf
+op	68:15	0:0	6	->
+water	68:17	0:0	6	body_offset
+op	68:29	0:0	6	+=
+water	68:32	0:0	6	KAG_SIZE
+water	68:40	0:0	6	;
+water	69:8	0:0	6	}
+water	70:8	0:0	4	mxf
+op	70:11	0:0	4	->
+water	70:13	0:0	4	edit_units_count
+op	70:29	0:0	4	++
+water	70:31	0:0	4	;
+water	71:4	0:0	4	}
+else	71:6	74:4	2
+stmts	71:11	74:4	3	
+if	71:11	74:4	4	(! mxf -> edit_unit_byte_count && st -> index == 1)
+cond	71:15	71:58	5	! mxf -> edit_unit_byte_count && st -> index == 1
+op	71:15	0:0	6	!
+water	71:16	0:0	6	mxf
+op	71:19	0:0	6	->
+water	71:21	0:0	6	edit_unit_byte_count
+op	71:42	0:0	6	&&
+water	71:45	0:0	6	st
+op	71:47	0:0	6	->
+water	71:49	0:0	6	index
+op	71:55	0:0	6	==
+water	71:58	0:0	6	1
+stmts	71:61	74:4	5	
+water	71:61	0:0	6	{
+water	72:8	0:0	6	mxf
+op	72:11	0:0	6	->
+water	72:13	0:0	6	index_entries
+op	72:26	0:0	6	[
+water	72:27	0:0	6	mxf
+op	72:30	0:0	6	->
+water	72:32	0:0	6	edit_units_count
+op	72:48	0:0	6	-
+water	72:49	0:0	6	1
+op	72:50	0:0	6	]
+op	72:51	0:0	6	.
+water	72:52	0:0	6	slice_offset
+op	72:65	0:0	6	=
+water	73:12	0:0	6	mxf
+op	73:15	0:0	6	->
+water	73:17	0:0	6	body_offset
+op	73:29	0:0	6	-
+water	73:31	0:0	6	mxf
+op	73:34	0:0	6	->
+water	73:36	0:0	6	index_entries
+op	73:49	0:0	6	[
+water	73:50	0:0	6	mxf
+op	73:53	0:0	6	->
+water	73:55	0:0	6	edit_units_count
+op	73:71	0:0	6	-
+water	73:72	0:0	6	1
+op	73:73	0:0	6	]
+op	73:74	0:0	6	.
+water	73:75	0:0	6	offset
+water	73:81	0:0	6	;
+water	74:4	0:0	6	}
+call	75:4	75:24	2	mxf_write_klv_fill
+arg	75:23	75:24	3	s
+water	75:23	0:0	4	s
+water	75:25	0:0	2	;
+call	76:4	76:52	2	avio_write
+arg	76:15	76:17	3	pb
+water	76:15	0:0	4	pb
+arg	76:19	76:48	3	sc->track_essence_element_key
+water	76:19	0:0	4	sc
+op	76:21	0:0	4	->
+water	76:23	0:0	4	track_essence_element_key
+arg	76:50	76:52	3	16
+water	76:50	0:0	4	16
+water	76:53	0:0	2	;
+if	77:4	82:4	2	(s -> oformat == & ff_mxf_d10_muxer)
+cond	77:8	77:23	3	s -> oformat == & ff_mxf_d10_muxer
+water	77:8	0:0	4	s
+op	77:9	0:0	4	->
+water	77:11	0:0	4	oformat
+op	77:19	0:0	4	==
+op	77:22	0:0	4	&
+water	77:23	0:0	4	ff_mxf_d10_muxer
+stmts	77:41	82:4	3	
+water	77:41	0:0	4	{
+if	78:8	79:50	4	(st -> codec -> codec_type == AVMEDIA_TYPE_VIDEO)
+cond	78:12	78:37	5	st -> codec -> codec_type == AVMEDIA_TYPE_VIDEO
+water	78:12	0:0	6	st
+op	78:14	0:0	6	->
+water	78:16	0:0	6	codec
+op	78:21	0:0	6	->
+water	78:23	0:0	6	codec_type
+op	78:34	0:0	6	==
+water	78:37	0:0	6	AVMEDIA_TYPE_VIDEO
+stmts	79:12	79:50	5	
+call	79:12	79:49	6	mxf_write_d10_video_packet
+arg	79:39	79:40	7	s
+water	79:39	0:0	8	s
+arg	79:42	79:44	7	st
+water	79:42	0:0	8	st
+arg	79:46	79:49	7	pkt
+water	79:46	0:0	8	pkt
+water	79:50	0:0	6	;
+else	80:8	81:50	4
+stmts	81:12	81:50	5	
+call	81:12	81:49	6	mxf_write_d10_audio_packet
+arg	81:39	81:40	7	s
+water	81:39	0:0	8	s
+arg	81:42	81:44	7	st
+water	81:42	0:0	8	st
+arg	81:46	81:49	7	pkt
+water	81:46	0:0	8	pkt
+water	81:50	0:0	6	;
+water	82:4	0:0	4	}
+else	82:6	86:4	2
+stmts	82:11	86:4	3	
+water	82:11	0:0	4	{
+call	83:8	83:44	4	klv_encode_ber4_length
+arg	83:31	83:33	5	pb
+water	83:31	0:0	6	pb
+arg	83:35	83:44	5	pkt->size
+water	83:35	0:0	6	pkt
+op	83:38	0:0	6	->
+water	83:40	0:0	6	size
+water	83:45	0:0	4	;
+call	84:8	84:43	4	avio_write
+arg	84:19	84:21	5	pb
+water	84:19	0:0	6	pb
+arg	84:23	84:32	5	pkt->data
+water	84:23	0:0	6	pkt
+op	84:26	0:0	6	->
+water	84:28	0:0	6	data
+arg	84:34	84:43	5	pkt->size
+water	84:34	0:0	6	pkt
+op	84:37	0:0	6	->
+water	84:39	0:0	6	size
+water	84:44	0:0	4	;
+water	85:8	0:0	4	mxf
+op	85:11	0:0	4	->
+water	85:13	0:0	4	body_offset
+op	85:25	0:0	4	+=
+water	85:28	0:0	4	16
+op	85:30	0:0	4	+
+water	85:31	0:0	4	4
+op	85:32	0:0	4	+
+water	85:33	0:0	4	pkt
+op	85:36	0:0	4	->
+water	85:38	0:0	4	size
+op	85:43	0:0	4	+
+call	85:45	85:73	4	klv_fill_size
+arg	85:59	85:73	5	16+4+pkt->size
+water	85:59	0:0	6	16
+op	85:61	0:0	6	+
+water	85:62	0:0	6	4
+op	85:63	0:0	6	+
+water	85:64	0:0	6	pkt
+op	85:67	0:0	6	->
+water	85:69	0:0	6	size
+water	85:74	0:0	4	;
+water	86:4	0:0	4	}
+call	87:4	87:17	2	avio_flush
+arg	87:15	87:17	3	pb
+water	87:15	0:0	4	pb
+water	87:18	0:0	2	;
+return	88:4	88:12	2	0
+water	88:11	0:0	3	0

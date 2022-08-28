@@ -1,0 +1,259 @@
+func	1:0	68:0	0	int	videotoolbox_init
+params	1:21	0:0	1	
+param	1:22	1:39	2	AVCodecContext *	s
+stmnts	0:0	67:14	1	
+decl	3:4	3:32	2	InputStream	*ist
+op	3:21	0:0	2	=
+water	3:23	0:0	2	s
+op	3:24	0:0	2	->
+water	3:26	0:0	2	opaque
+decl	4:4	4:84	2	int	loglevel
+op	4:17	0:0	2	=
+water	4:19	0:0	2	(
+water	4:20	0:0	2	ist
+op	4:23	0:0	2	->
+water	4:25	0:0	2	hwaccel_id
+op	4:36	0:0	2	==
+water	4:39	0:0	2	HWACCEL_AUTO
+water	4:51	0:0	2	)
+water	4:53	0:0	2	?
+water	4:55	0:0	2	AV_LOG_VERBOSE
+water	4:70	0:0	2	:
+water	4:72	0:0	2	AV_LOG_ERROR
+decl	5:4	5:15	2	int	ret
+op	5:12	0:0	2	=
+water	5:14	0:0	2	0
+decl	6:4	6:17	2	VTContext	*vt
+water	7:4	0:0	2	vt
+op	7:7	0:0	2	=
+call	7:9	7:31	2	av_mallocz
+arg	7:20	7:31	3	sizeof(*vt)
+op	7:20	0:0	4	sizeof
+water	7:26	0:0	4	(
+op	7:27	0:0	4	*
+water	7:28	0:0	4	vt
+water	7:30	0:0	4	)
+water	7:32	0:0	2	;
+if	8:4	9:30	2	(! vt)
+cond	8:8	8:9	3	! vt
+op	8:8	0:0	4	!
+water	8:9	0:0	4	vt
+stmts	9:8	9:30	3	
+return	9:8	9:30	4	AVERROR(ENOMEM)
+call	9:15	9:29	5	AVERROR
+arg	9:23	9:29	6	ENOMEM
+water	9:23	0:0	7	ENOMEM
+water	10:4	0:0	2	ist
+op	10:7	0:0	2	->
+water	10:9	0:0	2	hwaccel_ctx
+op	10:31	0:0	2	=
+water	10:33	0:0	2	vt
+water	10:35	0:0	2	;
+water	11:4	0:0	2	ist
+op	11:7	0:0	2	->
+water	11:9	0:0	2	hwaccel_uninit
+op	11:31	0:0	2	=
+water	11:33	0:0	2	videotoolbox_uninit
+water	11:52	0:0	2	;
+water	12:4	0:0	2	ist
+op	12:7	0:0	2	->
+water	12:9	0:0	2	hwaccel_retrieve_data
+op	12:31	0:0	2	=
+water	12:33	0:0	2	videotoolbox_retrieve_data
+water	12:59	0:0	2	;
+water	13:4	0:0	2	vt
+op	13:6	0:0	2	->
+water	13:8	0:0	2	tmp_frame
+op	13:18	0:0	2	=
+call	13:20	13:35	2	av_frame_alloc
+water	13:36	0:0	2	;
+if	14:4	17:4	2	(! vt -> tmp_frame)
+cond	14:8	14:13	3	! vt -> tmp_frame
+op	14:8	0:0	4	!
+water	14:9	0:0	4	vt
+op	14:11	0:0	4	->
+water	14:13	0:0	4	tmp_frame
+stmts	14:24	17:4	3	
+water	14:24	0:0	4	{
+water	15:8	0:0	4	ret
+op	15:12	0:0	4	=
+call	15:14	15:28	4	AVERROR
+arg	15:22	15:28	5	ENOMEM
+water	15:22	0:0	6	ENOMEM
+water	15:29	0:0	4	;
+goto	16:8	16:17	4	fail
+water	16:13	0:0	5	fail
+water	17:4	0:0	4	}
+if	18:4	38:4	2	(ist -> hwaccel_id == HWACCEL_VIDEOTOOLBOX)
+cond	18:8	18:27	3	ist -> hwaccel_id == HWACCEL_VIDEOTOOLBOX
+water	18:8	0:0	4	ist
+op	18:11	0:0	4	->
+water	18:13	0:0	4	hwaccel_id
+op	18:24	0:0	4	==
+water	18:27	0:0	4	HWACCEL_VIDEOTOOLBOX
+stmts	18:49	38:4	3	
+water	18:49	0:0	4	{
+if	20:8	22:8	4	(! videotoolbox_pixfmt)
+cond	20:12	20:13	5	! videotoolbox_pixfmt
+op	20:12	0:0	6	!
+water	20:13	0:0	6	videotoolbox_pixfmt
+stmts	20:34	22:8	5	
+water	20:34	0:0	6	{
+water	21:12	0:0	6	ret
+op	21:16	0:0	6	=
+call	21:18	21:48	6	av_videotoolbox_default_init
+arg	21:47	21:48	7	s
+water	21:47	0:0	8	s
+water	21:49	0:0	6	;
+water	22:8	0:0	6	}
+else	22:10	36:8	4
+stmts	22:15	36:8	5	
+water	22:15	0:0	6	{
+decl	23:12	23:74	6	AVVideotoolboxContext	*vtctx
+op	23:41	0:0	6	=
+call	23:43	23:73	7	av_videotoolbox_alloc_context
+decl	24:12	26:85	6	CFStringRef	pixfmt_str
+op	24:35	0:0	6	=
+call	24:37	26:84	7	CFStringCreateWithCString
+arg	24:63	24:82	8	kCFAllocatorDefault
+water	24:63	0:0	9	kCFAllocatorDefault
+arg	25:63	25:82	8	videotoolbox_pixfmt
+water	25:63	0:0	9	videotoolbox_pixfmt
+arg	26:63	26:84	8	kCFStringEncodingUTF8
+water	26:63	0:0	9	kCFStringEncodingUTF8
+water	28:12	0:0	6	vtctx
+op	28:17	0:0	6	->
+water	28:19	0:0	6	cv_pix_fmt_type
+op	28:35	0:0	6	=
+call	28:37	28:69	6	UTGetOSTypeFromString
+arg	28:59	28:69	7	pixfmt_str
+water	28:59	0:0	8	pixfmt_str
+water	28:70	0:0	6	;
+call	30:12	32:60	6	av_log
+arg	30:19	30:20	7	s
+water	30:19	0:0	8	s
+arg	30:22	30:30	7	loglevel
+water	30:22	0:0	8	loglevel
+arg	30:32	32:39	7	"UTGetOSTypeFromString() is not available ""on this platform, %s pixel format can not be honored from ""the command line\n"
+water	30:32	0:0	8	"UTGetOSTypeFromString() is not available "
+water	31:19	0:0	8	"on this platform, %s pixel format can not be honored from "
+water	32:19	0:0	8	"the command line\n"
+arg	32:41	32:60	7	videotoolbox_pixfmt
+water	32:41	0:0	8	videotoolbox_pixfmt
+water	32:61	0:0	6	;
+water	34:12	0:0	6	ret
+op	34:16	0:0	6	=
+call	34:18	34:56	6	av_videotoolbox_default_init2
+arg	34:48	34:49	7	s
+water	34:48	0:0	8	s
+arg	34:51	34:56	7	vtctx
+water	34:51	0:0	8	vtctx
+water	34:57	0:0	6	;
+call	35:12	35:32	6	CFRelease
+arg	35:22	35:32	7	pixfmt_str
+water	35:22	0:0	8	pixfmt_str
+water	35:33	0:0	6	;
+water	36:8	0:0	6	}
+water	38:4	0:0	4	}
+else	38:6	58:4	2
+stmts	38:11	58:4	3	
+water	38:11	0:0	4	{
+if	40:8	42:8	4	(! videotoolbox_pixfmt)
+cond	40:12	40:13	5	! videotoolbox_pixfmt
+op	40:12	0:0	6	!
+water	40:13	0:0	6	videotoolbox_pixfmt
+stmts	40:34	42:8	5	
+water	40:34	0:0	6	{
+water	41:12	0:0	6	ret
+op	41:16	0:0	6	=
+call	41:18	41:39	6	av_vda_default_init
+arg	41:38	41:39	7	s
+water	41:38	0:0	8	s
+water	41:40	0:0	6	;
+water	42:8	0:0	6	}
+else	42:10	56:8	4
+stmts	42:15	56:8	5	
+water	42:15	0:0	6	{
+decl	43:12	43:57	6	AVVDAContext	*vdactx
+op	43:33	0:0	6	=
+call	43:35	43:56	7	av_vda_alloc_context
+decl	44:12	46:85	6	CFStringRef	pixfmt_str
+op	44:35	0:0	6	=
+call	44:37	46:84	7	CFStringCreateWithCString
+arg	44:63	44:82	8	kCFAllocatorDefault
+water	44:63	0:0	9	kCFAllocatorDefault
+arg	45:63	45:82	8	videotoolbox_pixfmt
+water	45:63	0:0	9	videotoolbox_pixfmt
+arg	46:63	46:84	8	kCFStringEncodingUTF8
+water	46:63	0:0	9	kCFStringEncodingUTF8
+water	48:12	0:0	6	vdactx
+op	48:18	0:0	6	->
+water	48:20	0:0	6	cv_pix_fmt_type
+op	48:36	0:0	6	=
+call	48:38	48:70	6	UTGetOSTypeFromString
+arg	48:60	48:70	7	pixfmt_str
+water	48:60	0:0	8	pixfmt_str
+water	48:71	0:0	6	;
+call	50:12	52:60	6	av_log
+arg	50:19	50:20	7	s
+water	50:19	0:0	8	s
+arg	50:22	50:30	7	loglevel
+water	50:22	0:0	8	loglevel
+arg	50:32	52:39	7	"UTGetOSTypeFromString() is not available ""on this platform, %s pixel format can not be honored from ""the command line\n"
+water	50:32	0:0	8	"UTGetOSTypeFromString() is not available "
+water	51:19	0:0	8	"on this platform, %s pixel format can not be honored from "
+water	52:19	0:0	8	"the command line\n"
+arg	52:41	52:60	7	videotoolbox_pixfmt
+water	52:41	0:0	8	videotoolbox_pixfmt
+water	52:61	0:0	6	;
+water	54:12	0:0	6	ret
+op	54:16	0:0	6	=
+call	54:18	54:48	6	av_vda_default_init2
+arg	54:39	54:40	7	s
+water	54:39	0:0	8	s
+arg	54:42	54:48	7	vdactx
+water	54:42	0:0	8	vdactx
+water	54:49	0:0	6	;
+call	55:12	55:32	6	CFRelease
+arg	55:22	55:32	7	pixfmt_str
+water	55:22	0:0	8	pixfmt_str
+water	55:33	0:0	6	;
+water	56:8	0:0	6	}
+water	58:4	0:0	4	}
+if	59:4	63:4	2	(ret < 0)
+cond	59:8	59:14	3	ret < 0
+water	59:8	0:0	4	ret
+op	59:12	0:0	4	<
+water	59:14	0:0	4	0
+stmts	59:17	63:4	3	
+water	59:17	0:0	4	{
+call	60:8	61:111	4	av_log
+arg	60:15	60:19	5	NULL
+water	60:15	0:0	6	NULL
+arg	60:21	60:29	5	loglevel
+water	60:21	0:0	6	loglevel
+arg	61:15	61:45	5	"Error creating %s decoder.\n"
+water	61:15	0:0	6	"Error creating %s decoder.\n"
+arg	61:47	61:111	5	ist->hwaccel_id==HWACCEL_VIDEOTOOLBOX?"Videotoolbox":"VDA"
+water	61:47	0:0	6	ist
+op	61:50	0:0	6	->
+water	61:52	0:0	6	hwaccel_id
+op	61:63	0:0	6	==
+water	61:66	0:0	6	HWACCEL_VIDEOTOOLBOX
+water	61:87	0:0	6	?
+water	61:89	0:0	6	"Videotoolbox"
+water	61:104	0:0	6	:
+water	61:106	0:0	6	"VDA"
+water	61:112	0:0	4	;
+goto	62:8	62:17	4	fail
+water	62:13	0:0	5	fail
+water	63:4	0:0	4	}
+return	64:4	64:12	2	0
+water	64:11	0:0	3	0
+label	65:0	65:4	2	fail :
+call	66:4	66:25	2	videotoolbox_uninit
+arg	66:24	66:25	3	s
+water	66:24	0:0	4	s
+water	66:26	0:0	2	;
+return	67:4	67:14	2	ret
+water	67:11	0:0	3	ret

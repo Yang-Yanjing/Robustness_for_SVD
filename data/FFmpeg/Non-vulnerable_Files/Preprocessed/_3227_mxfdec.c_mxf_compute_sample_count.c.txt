@@ -1,0 +1,233 @@
+func	1:0	35:0	0	static int	mxf_compute_sample_count
+params	1:35	0:0	1	
+param	1:36	1:51	2	MXFContext *	mxf
+param	1:53	1:69	2	int	stream_index
+param	2:36	2:58	2	uint64_t *	sample_count
+stmnts	0:0	34:12	1	
+decl	4:4	4:30	2	int	i
+water	4:9	0:0	2	,
+decl	4:4	4:30	2	int	total
+op	4:17	0:0	2	=
+water	4:19	0:0	2	0
+water	4:20	0:0	2	,
+decl	4:4	4:30	2	int	size
+op	4:27	0:0	2	=
+water	4:29	0:0	2	0
+decl	5:4	5:49	2	AVStream	*st
+op	5:17	0:0	2	=
+water	5:19	0:0	2	mxf
+op	5:22	0:0	2	->
+water	5:24	0:0	2	fc
+op	5:26	0:0	2	->
+water	5:28	0:0	2	streams
+op	5:35	0:0	2	[
+water	5:36	0:0	2	stream_index
+op	5:48	0:0	2	]
+decl	6:4	6:35	2	MXFTrack	*track
+op	6:20	0:0	2	=
+water	6:22	0:0	2	st
+op	6:24	0:0	2	->
+water	6:26	0:0	2	priv_data
+decl	7:4	7:53	2	AVRational	time_base
+op	7:25	0:0	2	=
+call	7:27	7:52	3	av_inv_q
+arg	7:36	7:52	4	track->edit_rate
+water	7:36	0:0	5	track
+op	7:41	0:0	5	->
+water	7:43	0:0	5	edit_rate
+decl	8:4	8:52	2	AVRational	sample_rate
+op	8:27	0:0	2	=
+call	8:29	8:51	3	av_inv_q
+arg	8:38	8:51	4	st->time_base
+water	8:38	0:0	5	st
+op	8:40	0:0	5	->
+water	8:42	0:0	5	time_base
+decl	9:4	9:40	2	const MXFSamplesPerFrame	*spf
+op	9:34	0:0	2	=
+water	9:36	0:0	2	NULL
+if	10:4	11:62	2	(( sample_rate . num / sample_rate . den ) == 48000)
+cond	10:8	10:47	3	( sample_rate . num / sample_rate . den ) == 48000
+water	10:8	0:0	4	(
+water	10:9	0:0	4	sample_rate
+op	10:20	0:0	4	.
+water	10:21	0:0	4	num
+op	10:25	0:0	4	/
+water	10:27	0:0	4	sample_rate
+op	10:38	0:0	4	.
+water	10:39	0:0	4	den
+water	10:42	0:0	4	)
+op	10:44	0:0	4	==
+water	10:47	0:0	4	48000
+stmts	11:8	11:62	3	
+water	11:8	0:0	4	spf
+op	11:12	0:0	4	=
+call	11:14	11:61	4	ff_mxf_get_samples_per_frame
+arg	11:43	11:50	5	mxf->fc
+water	11:43	0:0	6	mxf
+op	11:46	0:0	6	->
+water	11:48	0:0	6	fc
+arg	11:52	11:61	5	time_base
+water	11:52	0:0	6	time_base
+water	11:62	0:0	4	;
+if	12:4	24:4	2	(! spf)
+cond	12:8	12:9	3	! spf
+op	12:8	0:0	4	!
+water	12:9	0:0	4	spf
+stmts	12:14	24:4	3	
+water	12:14	0:0	4	{
+decl	13:8	14:57	4	int	remainder
+op	13:22	0:0	4	=
+water	13:24	0:0	4	(
+water	13:25	0:0	4	sample_rate
+op	13:36	0:0	4	.
+water	13:37	0:0	4	num
+op	13:41	0:0	4	*
+water	13:43	0:0	4	time_base
+op	13:52	0:0	4	.
+water	13:53	0:0	4	num
+water	13:56	0:0	4	)
+op	13:58	0:0	4	%
+water	14:24	0:0	4	(
+water	14:25	0:0	4	time_base
+op	14:34	0:0	4	.
+water	14:35	0:0	4	den
+op	14:39	0:0	4	*
+water	14:41	0:0	4	sample_rate
+op	14:52	0:0	4	.
+water	14:53	0:0	4	den
+water	14:56	0:0	4	)
+op	15:8	0:0	4	*
+water	15:9	0:0	4	sample_count
+op	15:22	0:0	4	=
+call	15:24	16:73	4	av_q2d
+arg	15:31	16:73	5	av_mul_q((AVRational){mxf->current_edit_unit,1},av_mul_q(sample_rate,time_base))
+call	15:31	16:72	6	av_mul_q
+arg	15:40	15:79	7	(AVRational){mxf->current_edit_unit,1}
+water	15:40	0:0	8	(
+water	15:41	0:0	8	AVRational
+water	15:51	0:0	8	)
+water	15:52	0:0	8	{
+water	15:53	0:0	8	mxf
+op	15:56	0:0	8	->
+water	15:58	0:0	8	current_edit_unit
+water	15:75	0:0	8	,
+water	15:77	0:0	8	1
+water	15:78	0:0	8	}
+arg	16:40	16:72	7	av_mul_q(sample_rate,time_base)
+call	16:40	16:71	8	av_mul_q
+arg	16:49	16:60	9	sample_rate
+water	16:49	0:0	10	sample_rate
+arg	16:62	16:71	9	time_base
+water	16:62	0:0	10	time_base
+water	16:74	0:0	4	;
+if	17:8	22:52	4	(remainder)
+cond	17:12	17:12	5	remainder
+water	17:12	0:0	6	remainder
+stmts	18:12	22:52	5	
+call	18:12	22:51	6	av_log
+arg	18:19	18:26	7	mxf->fc
+water	18:19	0:0	8	mxf
+op	18:22	0:0	8	->
+water	18:24	0:0	8	fc
+arg	18:28	18:42	7	AV_LOG_WARNING
+water	18:28	0:0	8	AV_LOG_WARNING
+arg	19:19	20:72	7	"seeking detected on stream #%d with time base (%d/%d) and ""sample rate (%d/%d), audio pts won't be accurate.\n"
+water	19:19	0:0	8	"seeking detected on stream #%d with time base (%d/%d) and "
+water	20:19	0:0	8	"sample rate (%d/%d), audio pts won't be accurate.\n"
+arg	21:19	21:31	7	stream_index
+water	21:19	0:0	8	stream_index
+arg	21:33	21:46	7	time_base.num
+water	21:33	0:0	8	time_base
+op	21:42	0:0	8	.
+water	21:43	0:0	8	num
+arg	21:48	21:61	7	time_base.den
+water	21:48	0:0	8	time_base
+op	21:57	0:0	8	.
+water	21:58	0:0	8	den
+arg	22:19	22:34	7	sample_rate.num
+water	22:19	0:0	8	sample_rate
+op	22:30	0:0	8	.
+water	22:31	0:0	8	num
+arg	22:36	22:51	7	sample_rate.den
+water	22:36	0:0	8	sample_rate
+op	22:47	0:0	8	.
+water	22:48	0:0	8	den
+water	22:52	0:0	6	;
+return	23:8	23:16	4	0
+water	23:15	0:0	5	0
+water	24:4	0:0	4	}
+while	25:4	28:4	2	(spf -> samples_per_frame [ size ])
+cond	25:11	25:38	3	spf -> samples_per_frame [ size ]
+water	25:11	0:0	4	spf
+op	25:14	0:0	4	->
+water	25:16	0:0	4	samples_per_frame
+op	25:33	0:0	4	[
+water	25:34	0:0	4	size
+op	25:38	0:0	4	]
+stmts	25:41	28:4	3	
+water	25:41	0:0	4	{
+water	26:8	0:0	4	total
+op	26:14	0:0	4	+=
+water	26:17	0:0	4	spf
+op	26:20	0:0	4	->
+water	26:22	0:0	4	samples_per_frame
+op	26:39	0:0	4	[
+water	26:40	0:0	4	size
+op	26:44	0:0	4	]
+water	26:45	0:0	4	;
+water	27:8	0:0	4	size
+op	27:12	0:0	4	++
+water	27:14	0:0	4	;
+water	28:4	0:0	4	}
+call	29:4	29:19	2	av_assert2
+arg	29:15	29:19	3	size
+water	29:15	0:0	4	size
+water	29:20	0:0	2	;
+op	30:4	0:0	2	*
+water	30:5	0:0	2	sample_count
+op	30:18	0:0	2	=
+water	30:20	0:0	2	(
+water	30:21	0:0	2	mxf
+op	30:24	0:0	2	->
+water	30:26	0:0	2	current_edit_unit
+op	30:44	0:0	2	/
+water	30:46	0:0	2	size
+water	30:50	0:0	2	)
+op	30:52	0:0	2	*
+water	30:54	0:0	2	(
+water	30:55	0:0	2	uint64_t
+water	30:63	0:0	2	)
+water	30:64	0:0	2	total
+water	30:69	0:0	2	;
+for	31:4	33:4	2	(i = 0 ;i < mxf -> current_edit_unit % size;i ++)
+forinit	31:9	31:14	3	i = 0 ;
+water	31:9	0:0	4	i
+op	31:11	0:0	4	=
+water	31:13	0:0	4	0
+water	31:14	0:0	4	;
+cond	31:16	31:45	3	i < mxf -> current_edit_unit % size
+water	31:16	0:0	4	i
+op	31:18	0:0	4	<
+water	31:20	0:0	4	mxf
+op	31:23	0:0	4	->
+water	31:25	0:0	4	current_edit_unit
+op	31:43	0:0	4	%
+water	31:45	0:0	4	size
+forexpr	31:51	31:52	3	i ++
+water	31:51	0:0	4	i
+op	31:52	0:0	4	++
+stmts	31:56	33:4	3	
+water	31:56	0:0	4	{
+op	32:8	0:0	4	*
+water	32:9	0:0	4	sample_count
+op	32:22	0:0	4	+=
+water	32:25	0:0	4	spf
+op	32:28	0:0	4	->
+water	32:30	0:0	4	samples_per_frame
+op	32:47	0:0	4	[
+water	32:48	0:0	4	i
+op	32:49	0:0	4	]
+water	32:50	0:0	4	;
+water	33:4	0:0	4	}
+return	34:4	34:12	2	0
+water	34:11	0:0	3	0

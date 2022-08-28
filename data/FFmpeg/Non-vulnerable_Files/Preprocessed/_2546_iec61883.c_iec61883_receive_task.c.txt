@@ -1,0 +1,172 @@
+func	1:0	34:0	0	static void *	iec61883_receive_task
+params	1:34	0:0	1	
+param	1:35	1:47	2	void *	opaque
+stmnts	0:0	33:15	1	
+decl	3:4	3:61	2	struct iec61883_data	*dv
+op	3:29	0:0	2	=
+water	3:31	0:0	2	(
+water	3:32	0:0	2	struct
+water	3:39	0:0	2	iec61883_data
+op	3:53	0:0	2	*
+water	3:54	0:0	2	)
+water	3:55	0:0	2	opaque
+decl	4:4	4:14	2	int	result
+while	6:4	32:4	2	(dv -> thread_loop)
+cond	6:11	6:15	3	dv -> thread_loop
+water	6:11	0:0	4	dv
+op	6:13	0:0	4	->
+water	6:15	0:0	4	thread_loop
+stmts	8:4	32:4	3	
+water	8:4	0:0	4	{
+while	9:8	15:8	4	(( result =poll (& dv -> raw1394_poll ,1 ,200 ) ) < 0)
+cond	9:15	9:60	5	( result =poll (& dv -> raw1394_poll ,1 ,200 ) ) < 0
+water	9:15	0:0	6	(
+water	9:16	0:0	6	result
+op	9:23	0:0	6	=
+call	9:25	9:55	6	poll
+arg	9:30	9:47	7	&dv->raw1394_poll
+op	9:30	0:0	8	&
+water	9:31	0:0	8	dv
+op	9:33	0:0	8	->
+water	9:35	0:0	8	raw1394_poll
+arg	9:49	9:50	7	1
+water	9:49	0:0	8	1
+arg	9:52	9:55	7	200
+water	9:52	0:0	8	200
+water	9:56	0:0	6	)
+op	9:58	0:0	6	<
+water	9:60	0:0	6	0
+stmts	9:63	15:8	5	
+water	9:63	0:0	6	{
+if	10:12	14:12	6	(! ( errno == EAGAIN || errno == EINTR ))
+cond	10:16	10:51	7	! ( errno == EAGAIN || errno == EINTR )
+op	10:16	0:0	8	!
+water	10:17	0:0	8	(
+water	10:18	0:0	8	errno
+op	10:24	0:0	8	==
+water	10:27	0:0	8	EAGAIN
+op	10:34	0:0	8	||
+water	10:37	0:0	8	errno
+op	10:43	0:0	8	==
+water	10:46	0:0	8	EINTR
+water	10:51	0:0	8	)
+stmts	10:54	14:12	7	
+water	10:54	0:0	8	{
+call	11:16	11:75	8	av_log
+arg	11:23	11:27	9	NULL
+water	11:23	0:0	10	NULL
+arg	11:29	11:41	9	AV_LOG_ERROR
+water	11:29	0:0	10	AV_LOG_ERROR
+arg	11:43	11:75	9	"Raw1394 poll error occurred.\n"
+water	11:43	0:0	10	"Raw1394 poll error occurred.\n"
+water	11:76	0:0	8	;
+water	12:16	0:0	8	dv
+op	12:18	0:0	8	->
+water	12:20	0:0	8	receive_error
+op	12:34	0:0	8	=
+call	12:36	12:47	8	AVERROR
+arg	12:44	12:47	9	EIO
+water	12:44	0:0	10	EIO
+water	12:48	0:0	8	;
+return	13:16	13:27	8	NULL
+water	13:23	0:0	9	NULL
+water	14:12	0:0	8	}
+water	15:8	0:0	6	}
+if	16:8	20:8	4	(result > 0 && ( ( dv -> raw1394_poll . revents & POLLIN ) || ( dv -> raw1394_poll . revents & POLLPRI ) ))
+cond	16:12	17:66	5	result > 0 && ( ( dv -> raw1394_poll . revents & POLLIN ) || ( dv -> raw1394_poll . revents & POLLPRI ) )
+water	16:12	0:0	6	result
+op	16:19	0:0	6	>
+water	16:21	0:0	6	0
+op	16:23	0:0	6	&&
+water	16:26	0:0	6	(
+water	16:27	0:0	6	(
+water	16:28	0:0	6	dv
+op	16:30	0:0	6	->
+water	16:32	0:0	6	raw1394_poll
+op	16:44	0:0	6	.
+water	16:45	0:0	6	revents
+op	16:53	0:0	6	&
+water	16:55	0:0	6	POLLIN
+water	16:61	0:0	6	)
+op	17:27	0:0	6	||
+water	17:30	0:0	6	(
+water	17:31	0:0	6	dv
+op	17:33	0:0	6	->
+water	17:35	0:0	6	raw1394_poll
+op	17:47	0:0	6	.
+water	17:48	0:0	6	revents
+op	17:56	0:0	6	&
+water	17:58	0:0	6	POLLPRI
+water	17:65	0:0	6	)
+water	17:66	0:0	6	)
+stmts	17:69	20:8	5	
+water	17:69	0:0	6	{
+water	18:12	0:0	6	dv
+op	18:14	0:0	6	->
+water	18:16	0:0	6	receiving
+op	18:26	0:0	6	=
+water	18:28	0:0	6	1
+water	18:29	0:0	6	;
+call	19:12	19:44	6	raw1394_loop_iterate
+arg	19:33	19:44	7	dv->raw1394
+water	19:33	0:0	8	dv
+op	19:35	0:0	8	->
+water	19:37	0:0	8	raw1394
+water	19:45	0:0	6	;
+water	20:8	0:0	6	}
+else	20:10	31:8	4
+stmts	20:15	31:8	5	
+if	20:15	31:8	6	(dv -> receiving)
+cond	20:19	20:23	7	dv -> receiving
+water	20:19	0:0	8	dv
+op	20:21	0:0	8	->
+water	20:23	0:0	8	receiving
+stmts	20:34	31:8	7	
+water	20:34	0:0	8	{
+call	21:12	21:71	8	av_log
+arg	21:19	21:23	9	NULL
+water	21:19	0:0	10	NULL
+arg	21:25	21:37	9	AV_LOG_ERROR
+water	21:25	0:0	10	AV_LOG_ERROR
+arg	21:39	21:71	9	"No more input data available\n"
+water	21:39	0:0	10	"No more input data available\n"
+water	21:72	0:0	8	;
+call	23:12	23:41	8	pthread_mutex_lock
+arg	23:31	23:41	9	&dv->mutex
+op	23:31	0:0	10	&
+water	23:32	0:0	10	dv
+op	23:34	0:0	10	->
+water	23:36	0:0	10	mutex
+water	23:42	0:0	8	;
+water	24:12	0:0	8	dv
+op	24:14	0:0	8	->
+water	24:16	0:0	8	eof
+op	24:20	0:0	8	=
+water	24:22	0:0	8	1
+water	24:23	0:0	8	;
+call	25:12	25:44	8	pthread_cond_broadcast
+arg	25:35	25:44	9	&dv->cond
+op	25:35	0:0	10	&
+water	25:36	0:0	10	dv
+op	25:38	0:0	10	->
+water	25:40	0:0	10	cond
+water	25:45	0:0	8	;
+call	26:12	26:43	8	pthread_mutex_unlock
+arg	26:33	26:43	9	&dv->mutex
+op	26:33	0:0	10	&
+water	26:34	0:0	10	dv
+op	26:36	0:0	10	->
+water	26:38	0:0	10	mutex
+water	26:44	0:0	8	;
+water	28:12	0:0	8	dv
+op	28:14	0:0	8	->
+water	28:16	0:0	8	eof
+op	28:20	0:0	8	=
+water	28:22	0:0	8	1
+water	28:23	0:0	8	;
+return	30:12	30:23	8	NULL
+water	30:19	0:0	9	NULL
+water	31:8	0:0	8	}
+water	32:4	0:0	4	}
+return	33:4	33:15	2	NULL
+water	33:11	0:0	3	NULL

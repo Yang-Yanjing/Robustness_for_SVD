@@ -1,0 +1,503 @@
+func	1:0	87:0	0	static int	udp_read_packet
+params	1:26	0:0	1	
+param	1:27	1:45	2	AVFormatContext *	s
+param	1:47	1:68	2	RTSPStream * *	prtsp_st
+param	2:27	2:39	2	uint8_t *	buf
+param	2:41	2:53	2	int	buf_size
+param	2:55	2:71	2	int64_t	wait_end
+stmnts	0:0	86:4	1	
+decl	4:4	4:32	2	RTSPState	*rt
+op	4:18	0:0	2	=
+water	4:20	0:0	2	s
+op	4:21	0:0	2	->
+water	4:23	0:0	2	priv_data
+decl	5:4	5:23	2	RTSPStream	*rtsp_st
+decl	6:4	6:42	2	int	n
+water	6:9	0:0	2	,
+decl	6:4	6:42	2	int	i
+water	6:12	0:0	2	,
+decl	6:4	6:42	2	int	ret
+water	6:17	0:0	2	,
+decl	6:4	6:42	2	int	tcp_fd
+water	6:25	0:0	2	,
+decl	6:4	6:42	2	int	timeout_cnt
+op	6:39	0:0	2	=
+water	6:41	0:0	2	0
+decl	7:4	7:17	2	int	max_p
+op	7:14	0:0	2	=
+water	7:16	0:0	2	0
+decl	8:4	8:28	2	struct pollfd	*p
+op	8:21	0:0	2	=
+water	8:23	0:0	2	rt
+op	8:25	0:0	2	->
+water	8:27	0:0	2	p
+decl	9:4	9:35	2	int	*fds
+op	9:13	0:0	2	=
+water	9:15	0:0	2	NULL
+water	9:19	0:0	2	,
+decl	9:4	9:35	2	int	fdsnum
+water	9:27	0:0	2	,
+decl	9:4	9:35	2	int	fdsidx
+for	10:4	86:4	2	(;;)
+forinit	10:9	10:9	3	;
+water	10:9	0:0	4	;
+cond	0:0	0:0	3	
+forexpr	0:0	0:0	3	
+stmts	10:13	86:4	3	
+water	10:13	0:0	4	{
+if	11:8	12:31	4	(ff_check_interrupt (& s -> interrupt_callback ))
+cond	11:12	11:53	5	ff_check_interrupt (& s -> interrupt_callback )
+call	11:12	11:53	6	ff_check_interrupt
+arg	11:31	11:53	7	&s->interrupt_callback
+op	11:31	0:0	8	&
+water	11:32	0:0	8	s
+op	11:33	0:0	8	->
+water	11:35	0:0	8	interrupt_callback
+stmts	12:12	12:31	5	
+return	12:12	12:31	6	AVERROR_EXIT
+water	12:19	0:0	7	AVERROR_EXIT
+if	13:8	14:34	4	(wait_end && wait_end -av_gettime_relative ( ) < 0)
+cond	13:12	13:59	5	wait_end && wait_end -av_gettime_relative ( ) < 0
+water	13:12	0:0	6	wait_end
+op	13:21	0:0	6	&&
+water	13:24	0:0	6	wait_end
+op	13:33	0:0	6	-
+call	13:35	13:55	6	av_gettime_relative
+op	13:57	0:0	6	<
+water	13:59	0:0	6	0
+stmts	14:12	14:34	5	
+return	14:12	14:34	6	AVERROR(EAGAIN)
+call	14:19	14:33	7	AVERROR
+arg	14:27	14:33	8	EAGAIN
+water	14:27	0:0	9	EAGAIN
+water	15:8	0:0	4	max_p
+op	15:14	0:0	4	=
+water	15:16	0:0	4	0
+water	15:17	0:0	4	;
+if	16:8	20:8	4	(rt -> rtsp_hd)
+cond	16:12	16:16	5	rt -> rtsp_hd
+water	16:12	0:0	6	rt
+op	16:14	0:0	6	->
+water	16:16	0:0	6	rtsp_hd
+stmts	16:25	20:8	5	
+water	16:25	0:0	6	{
+water	17:12	0:0	6	tcp_fd
+op	17:19	0:0	6	=
+call	17:21	17:54	6	ffurl_get_file_handle
+arg	17:43	17:54	7	rt->rtsp_hd
+water	17:43	0:0	8	rt
+op	17:45	0:0	8	->
+water	17:47	0:0	8	rtsp_hd
+water	17:55	0:0	6	;
+water	18:12	0:0	6	p
+op	18:13	0:0	6	[
+water	18:14	0:0	6	max_p
+op	18:19	0:0	6	]
+op	18:20	0:0	6	.
+water	18:21	0:0	6	fd
+op	18:24	0:0	6	=
+water	18:26	0:0	6	tcp_fd
+water	18:32	0:0	6	;
+water	19:12	0:0	6	p
+op	19:13	0:0	6	[
+water	19:14	0:0	6	max_p
+op	19:19	0:0	6	++
+op	19:21	0:0	6	]
+op	19:22	0:0	6	.
+water	19:23	0:0	6	events
+op	19:30	0:0	6	=
+water	19:32	0:0	6	POLLIN
+water	19:38	0:0	6	;
+water	20:8	0:0	6	}
+else	20:10	22:8	4
+stmts	20:15	22:8	5	
+water	20:15	0:0	6	{
+water	21:12	0:0	6	tcp_fd
+op	21:19	0:0	6	=
+op	21:21	0:0	6	-
+water	21:22	0:0	6	1
+water	21:23	0:0	6	;
+water	22:8	0:0	6	}
+for	23:8	42:8	4	(i = 0 ;i < rt -> nb_rtsp_streams;i ++)
+forinit	23:13	23:18	5	i = 0 ;
+water	23:13	0:0	6	i
+op	23:15	0:0	6	=
+water	23:17	0:0	6	0
+water	23:18	0:0	6	;
+cond	23:20	23:28	5	i < rt -> nb_rtsp_streams
+water	23:20	0:0	6	i
+op	23:22	0:0	6	<
+water	23:24	0:0	6	rt
+op	23:26	0:0	6	->
+water	23:28	0:0	6	nb_rtsp_streams
+forexpr	23:45	23:46	5	i ++
+water	23:45	0:0	6	i
+op	23:46	0:0	6	++
+stmts	23:50	42:8	5	
+water	23:50	0:0	6	{
+water	24:12	0:0	6	rtsp_st
+op	24:20	0:0	6	=
+water	24:22	0:0	6	rt
+op	24:24	0:0	6	->
+water	24:26	0:0	6	rtsp_streams
+op	24:38	0:0	6	[
+water	24:39	0:0	6	i
+op	24:40	0:0	6	]
+water	24:41	0:0	6	;
+if	25:12	41:12	6	(rtsp_st -> rtp_handle)
+cond	25:16	25:25	7	rtsp_st -> rtp_handle
+water	25:16	0:0	8	rtsp_st
+op	25:23	0:0	8	->
+water	25:25	0:0	8	rtp_handle
+stmts	25:37	41:12	7	
+water	25:37	0:0	8	{
+if	26:16	30:16	8	(ret =ffurl_get_multi_file_handle (rtsp_st -> rtp_handle ,& fds ,& fdsnum ))
+cond	26:20	27:67	9	ret =ffurl_get_multi_file_handle (rtsp_st -> rtp_handle ,& fds ,& fdsnum )
+water	26:20	0:0	10	ret
+op	26:24	0:0	10	=
+call	26:26	27:67	10	ffurl_get_multi_file_handle
+arg	26:54	26:73	11	rtsp_st->rtp_handle
+water	26:54	0:0	12	rtsp_st
+op	26:61	0:0	12	->
+water	26:63	0:0	12	rtp_handle
+arg	27:54	27:58	11	&fds
+op	27:54	0:0	12	&
+water	27:55	0:0	12	fds
+arg	27:60	27:67	11	&fdsnum
+op	27:60	0:0	12	&
+water	27:61	0:0	12	fdsnum
+stmts	27:70	30:16	9	
+water	27:70	0:0	10	{
+call	28:20	28:75	10	av_log
+arg	28:27	28:28	11	s
+water	28:27	0:0	12	s
+arg	28:30	28:42	11	AV_LOG_ERROR
+water	28:30	0:0	12	AV_LOG_ERROR
+arg	28:44	28:75	11	"Unable to recover rtp ports\n"
+water	28:44	0:0	12	"Unable to recover rtp ports\n"
+water	28:76	0:0	10	;
+return	29:20	29:30	10	ret
+water	29:27	0:0	11	ret
+water	30:16	0:0	10	}
+if	31:16	35:16	8	(fdsnum != 2)
+cond	31:20	31:30	9	fdsnum != 2
+water	31:20	0:0	10	fdsnum
+op	31:27	0:0	10	!=
+water	31:30	0:0	10	2
+stmts	31:33	35:16	9	
+water	31:33	0:0	10	{
+call	32:20	33:69	10	av_log
+arg	32:27	32:28	11	s
+water	32:27	0:0	12	s
+arg	32:30	32:42	11	AV_LOG_ERROR
+water	32:30	0:0	12	AV_LOG_ERROR
+arg	33:27	33:61	11	"Number of fds %d not supported\n"
+water	33:27	0:0	12	"Number of fds %d not supported\n"
+arg	33:63	33:69	11	fdsnum
+water	33:63	0:0	12	fdsnum
+water	33:70	0:0	10	;
+return	34:20	34:46	10	AVERROR_INVALIDDATA
+water	34:27	0:0	11	AVERROR_INVALIDDATA
+water	35:16	0:0	10	}
+for	36:16	39:16	8	(fdsidx = 0 ;fdsidx < fdsnum;fdsidx ++)
+forinit	36:21	36:31	9	fdsidx = 0 ;
+water	36:21	0:0	10	fdsidx
+op	36:28	0:0	10	=
+water	36:30	0:0	10	0
+water	36:31	0:0	10	;
+cond	36:33	36:42	9	fdsidx < fdsnum
+water	36:33	0:0	10	fdsidx
+op	36:40	0:0	10	<
+water	36:42	0:0	10	fdsnum
+forexpr	36:50	36:56	9	fdsidx ++
+water	36:50	0:0	10	fdsidx
+op	36:56	0:0	10	++
+stmts	36:60	39:16	9	
+water	36:60	0:0	10	{
+water	37:20	0:0	10	p
+op	37:21	0:0	10	[
+water	37:22	0:0	10	max_p
+op	37:27	0:0	10	]
+op	37:28	0:0	10	.
+water	37:29	0:0	10	fd
+op	37:38	0:0	10	=
+water	37:40	0:0	10	fds
+op	37:43	0:0	10	[
+water	37:44	0:0	10	fdsidx
+op	37:50	0:0	10	]
+water	37:51	0:0	10	;
+water	38:20	0:0	10	p
+op	38:21	0:0	10	[
+water	38:22	0:0	10	max_p
+op	38:27	0:0	10	++
+op	38:29	0:0	10	]
+op	38:30	0:0	10	.
+water	38:31	0:0	10	events
+op	38:38	0:0	10	=
+water	38:40	0:0	10	POLLIN
+water	38:46	0:0	10	;
+water	39:16	0:0	10	}
+call	40:16	40:29	8	av_freep
+arg	40:25	40:29	9	&fds
+op	40:25	0:0	10	&
+water	40:26	0:0	10	fds
+water	40:30	0:0	8	;
+water	41:12	0:0	8	}
+water	42:8	0:0	6	}
+water	43:8	0:0	4	n
+op	43:10	0:0	4	=
+call	43:12	43:42	4	poll
+arg	43:17	43:18	5	p
+water	43:17	0:0	6	p
+arg	43:20	43:25	5	max_p
+water	43:20	0:0	6	max_p
+arg	43:27	43:42	5	POLL_TIMEOUT_MS
+water	43:27	0:0	6	POLL_TIMEOUT_MS
+water	43:43	0:0	4	;
+if	44:8	82:8	4	(n > 0)
+cond	44:12	44:16	5	n > 0
+water	44:12	0:0	6	n
+op	44:14	0:0	6	>
+water	44:16	0:0	6	0
+stmts	44:19	82:8	5	
+water	44:19	0:0	6	{
+decl	45:12	45:38	6	int	j
+op	45:18	0:0	6	=
+water	45:20	0:0	6	1
+op	45:22	0:0	6	-
+water	45:24	0:0	6	(
+water	45:25	0:0	6	tcp_fd
+op	45:32	0:0	6	==
+op	45:35	0:0	6	-
+water	45:36	0:0	6	1
+water	45:37	0:0	6	)
+water	46:12	0:0	6	timeout_cnt
+op	46:24	0:0	6	=
+water	46:26	0:0	6	0
+water	46:27	0:0	6	;
+for	47:12	59:12	6	(i = 0 ;i < rt -> nb_rtsp_streams;i ++)
+forinit	47:17	47:22	7	i = 0 ;
+water	47:17	0:0	8	i
+op	47:19	0:0	8	=
+water	47:21	0:0	8	0
+water	47:22	0:0	8	;
+cond	47:24	47:32	7	i < rt -> nb_rtsp_streams
+water	47:24	0:0	8	i
+op	47:26	0:0	8	<
+water	47:28	0:0	8	rt
+op	47:30	0:0	8	->
+water	47:32	0:0	8	nb_rtsp_streams
+forexpr	47:49	47:50	7	i ++
+water	47:49	0:0	8	i
+op	47:50	0:0	8	++
+stmts	47:54	59:12	7	
+water	47:54	0:0	8	{
+water	48:16	0:0	8	rtsp_st
+op	48:24	0:0	8	=
+water	48:26	0:0	8	rt
+op	48:28	0:0	8	->
+water	48:30	0:0	8	rtsp_streams
+op	48:42	0:0	8	[
+water	48:43	0:0	8	i
+op	48:44	0:0	8	]
+water	48:45	0:0	8	;
+if	49:16	58:16	8	(rtsp_st -> rtp_handle)
+cond	49:20	49:29	9	rtsp_st -> rtp_handle
+water	49:20	0:0	10	rtsp_st
+op	49:27	0:0	10	->
+water	49:29	0:0	10	rtp_handle
+stmts	49:41	58:16	9	
+water	49:41	0:0	10	{
+if	50:20	56:20	10	(p [ j ] . revents & POLLIN || p [ j + 1 ] . revents & POLLIN)
+cond	50:24	50:66	11	p [ j ] . revents & POLLIN || p [ j + 1 ] . revents & POLLIN
+water	50:24	0:0	12	p
+op	50:25	0:0	12	[
+water	50:26	0:0	12	j
+op	50:27	0:0	12	]
+op	50:28	0:0	12	.
+water	50:29	0:0	12	revents
+op	50:37	0:0	12	&
+water	50:39	0:0	12	POLLIN
+op	50:46	0:0	12	||
+water	50:49	0:0	12	p
+op	50:50	0:0	12	[
+water	50:51	0:0	12	j
+op	50:52	0:0	12	+
+water	50:53	0:0	12	1
+op	50:54	0:0	12	]
+op	50:55	0:0	12	.
+water	50:56	0:0	12	revents
+op	50:64	0:0	12	&
+water	50:66	0:0	12	POLLIN
+stmts	50:74	56:20	11	
+water	50:74	0:0	12	{
+water	51:24	0:0	12	ret
+op	51:28	0:0	12	=
+call	51:30	51:75	12	ffurl_read
+arg	51:41	51:60	13	rtsp_st->rtp_handle
+water	51:41	0:0	14	rtsp_st
+op	51:48	0:0	14	->
+water	51:50	0:0	14	rtp_handle
+arg	51:62	51:65	13	buf
+water	51:62	0:0	14	buf
+arg	51:67	51:75	13	buf_size
+water	51:67	0:0	14	buf_size
+water	51:76	0:0	12	;
+if	52:24	55:24	12	(ret > 0)
+cond	52:28	52:34	13	ret > 0
+water	52:28	0:0	14	ret
+op	52:32	0:0	14	>
+water	52:34	0:0	14	0
+stmts	52:37	55:24	13	
+water	52:37	0:0	14	{
+op	53:28	0:0	14	*
+water	53:29	0:0	14	prtsp_st
+op	53:38	0:0	14	=
+water	53:40	0:0	14	rtsp_st
+water	53:47	0:0	14	;
+return	54:28	54:38	14	ret
+water	54:35	0:0	15	ret
+water	55:24	0:0	14	}
+water	56:20	0:0	12	}
+water	57:20	0:0	10	j
+op	57:21	0:0	10	+=
+water	57:23	0:0	10	2
+water	57:24	0:0	10	;
+water	58:16	0:0	10	}
+water	59:12	0:0	8	}
+if	61:12	80:12	6	(tcp_fd != - 1 && p [ 0 ] . revents & POLLIN)
+cond	61:16	61:47	7	tcp_fd != - 1 && p [ 0 ] . revents & POLLIN
+water	61:16	0:0	8	tcp_fd
+op	61:23	0:0	8	!=
+op	61:26	0:0	8	-
+water	61:27	0:0	8	1
+op	61:29	0:0	8	&&
+water	61:32	0:0	8	p
+op	61:33	0:0	8	[
+water	61:34	0:0	8	0
+op	61:35	0:0	8	]
+op	61:36	0:0	8	.
+water	61:37	0:0	8	revents
+op	61:45	0:0	8	&
+water	61:47	0:0	8	POLLIN
+stmts	61:55	80:12	7	
+water	61:55	0:0	8	{
+if	62:16	71:16	8	(rt -> rtsp_flags & RTSP_FLAG_LISTEN)
+cond	62:20	62:37	9	rt -> rtsp_flags & RTSP_FLAG_LISTEN
+water	62:20	0:0	10	rt
+op	62:22	0:0	10	->
+water	62:24	0:0	10	rtsp_flags
+op	62:35	0:0	10	&
+water	62:37	0:0	10	RTSP_FLAG_LISTEN
+stmts	62:55	71:16	9	
+water	62:55	0:0	10	{
+if	63:20	69:20	10	(rt -> state == RTSP_STATE_STREAMING)
+cond	63:24	63:37	11	rt -> state == RTSP_STATE_STREAMING
+water	63:24	0:0	12	rt
+op	63:26	0:0	12	->
+water	63:28	0:0	12	state
+op	63:34	0:0	12	==
+water	63:37	0:0	12	RTSP_STATE_STREAMING
+stmts	63:59	69:20	11	
+water	63:59	0:0	12	{
+if	64:24	65:46	12	(!ff_rtsp_parse_streaming_commands (s ))
+cond	64:28	64:63	13	!ff_rtsp_parse_streaming_commands (s )
+op	64:28	0:0	14	!
+call	64:29	64:63	14	ff_rtsp_parse_streaming_commands
+arg	64:62	64:63	15	s
+water	64:62	0:0	16	s
+stmts	65:28	65:46	13	
+return	65:28	65:46	14	AVERROR_EOF
+water	65:35	0:0	15	AVERROR_EOF
+else	66:24	68:68	12
+stmts	67:28	68:68	13	
+call	67:28	68:67	14	av_log
+arg	67:35	67:36	15	s
+water	67:35	0:0	16	s
+arg	67:38	67:52	15	AV_LOG_WARNING
+water	67:38	0:0	16	AV_LOG_WARNING
+arg	68:35	68:67	15	"Unable to answer to TEARDOWN\n"
+water	68:35	0:0	16	"Unable to answer to TEARDOWN\n"
+water	68:68	0:0	14	;
+water	69:20	0:0	12	}
+else	69:22	70:32	10
+stmts	70:24	70:32	11	
+return	70:24	70:32	12	0
+water	70:31	0:0	13	0
+water	71:16	0:0	10	}
+else	71:18	79:16	8
+stmts	71:23	79:16	9	
+water	71:23	0:0	10	{
+decl	72:20	72:43	10	RTSPMessageHeader	reply
+water	73:20	0:0	10	ret
+op	73:24	0:0	10	=
+call	73:26	73:69	10	ff_rtsp_read_reply
+arg	73:45	73:46	11	s
+water	73:45	0:0	12	s
+arg	73:48	73:54	11	&reply
+op	73:48	0:0	12	&
+water	73:49	0:0	12	reply
+arg	73:56	73:60	11	NULL
+water	73:56	0:0	12	NULL
+arg	73:62	73:63	11	0
+water	73:62	0:0	12	0
+arg	73:65	73:69	11	NULL
+water	73:65	0:0	12	NULL
+water	73:70	0:0	10	;
+if	74:20	75:34	10	(ret < 0)
+cond	74:24	74:30	11	ret < 0
+water	74:24	0:0	12	ret
+op	74:28	0:0	12	<
+water	74:30	0:0	12	0
+stmts	75:24	75:34	11	
+return	75:24	75:34	12	ret
+water	75:31	0:0	13	ret
+if	77:20	78:32	10	(rt -> state != RTSP_STATE_STREAMING)
+cond	77:24	77:37	11	rt -> state != RTSP_STATE_STREAMING
+water	77:24	0:0	12	rt
+op	77:26	0:0	12	->
+water	77:28	0:0	12	state
+op	77:34	0:0	12	!=
+water	77:37	0:0	12	RTSP_STATE_STREAMING
+stmts	78:24	78:32	11	
+return	78:24	78:32	12	0
+water	78:31	0:0	13	0
+water	79:16	0:0	10	}
+water	80:12	0:0	8	}
+water	82:8	0:0	6	}
+else	82:10	84:8	4
+stmts	82:15	84:8	5	
+if	82:15	84:8	6	(n == 0 && ++ timeout_cnt >= MAX_TIMEOUTS)
+cond	82:19	82:46	7	n == 0 && ++ timeout_cnt >= MAX_TIMEOUTS
+water	82:19	0:0	8	n
+op	82:21	0:0	8	==
+water	82:24	0:0	8	0
+op	82:26	0:0	8	&&
+op	82:29	0:0	8	++
+water	82:31	0:0	8	timeout_cnt
+op	82:43	0:0	8	>=
+water	82:46	0:0	8	MAX_TIMEOUTS
+stmts	82:60	84:8	7	
+water	82:60	0:0	8	{
+return	83:12	83:37	8	AVERROR(ETIMEDOUT)
+call	83:19	83:36	9	AVERROR
+arg	83:27	83:36	10	ETIMEDOUT
+water	83:27	0:0	11	ETIMEDOUT
+water	84:8	0:0	8	}
+else	84:10	85:33	4
+stmts	84:15	85:33	5	
+if	84:15	85:33	6	(n < 0 && errno != EINTR)
+cond	84:19	84:37	7	n < 0 && errno != EINTR
+water	84:19	0:0	8	n
+op	84:21	0:0	8	<
+water	84:23	0:0	8	0
+op	84:25	0:0	8	&&
+water	84:28	0:0	8	errno
+op	84:34	0:0	8	!=
+water	84:37	0:0	8	EINTR
+stmts	85:12	85:33	7	
+return	85:12	85:33	8	AVERROR(errno)
+call	85:19	85:32	9	AVERROR
+arg	85:27	85:32	10	errno
+water	85:27	0:0	11	errno
+water	86:4	0:0	4	}

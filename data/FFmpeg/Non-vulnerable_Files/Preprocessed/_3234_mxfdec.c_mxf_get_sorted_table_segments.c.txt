@@ -1,0 +1,366 @@
+func	1:0	52:0	0	static int	mxf_get_sorted_table_segments
+params	1:40	0:0	1	
+param	1:41	1:56	2	MXFContext *	mxf
+param	1:58	1:81	2	int *	nb_sorted_segments
+param	1:83	1:122	2	MXFIndexTableSegment * * *	sorted_segments
+stmnts	0:0	51:12	1	
+decl	3:4	3:29	2	int	i
+water	3:9	0:0	2	,
+decl	3:4	3:29	2	int	j
+water	3:12	0:0	2	,
+decl	3:4	3:29	2	int	nb_segments
+op	3:26	0:0	2	=
+water	3:28	0:0	2	0
+decl	4:4	4:44	2	MXFIndexTableSegment	**unsorted_segments
+decl	5:4	5:70	2	int	last_body_sid
+op	5:22	0:0	2	=
+op	5:24	0:0	2	-
+water	5:25	0:0	2	1
+water	5:26	0:0	2	,
+decl	5:4	5:70	2	int	last_index_sid
+op	5:43	0:0	2	=
+op	5:45	0:0	2	-
+water	5:46	0:0	2	1
+water	5:47	0:0	2	,
+decl	5:4	5:70	2	int	last_index_start
+op	5:66	0:0	2	=
+op	5:68	0:0	2	-
+water	5:69	0:0	2	1
+for	7:4	9:25	2	(i = 0 ;i < mxf -> metadata_sets_count;i ++)
+forinit	7:9	7:14	3	i = 0 ;
+water	7:9	0:0	4	i
+op	7:11	0:0	4	=
+water	7:13	0:0	4	0
+water	7:14	0:0	4	;
+cond	7:16	7:25	3	i < mxf -> metadata_sets_count
+water	7:16	0:0	4	i
+op	7:18	0:0	4	<
+water	7:20	0:0	4	mxf
+op	7:23	0:0	4	->
+water	7:25	0:0	4	metadata_sets_count
+forexpr	7:46	7:47	3	i ++
+water	7:46	0:0	4	i
+op	7:47	0:0	4	++
+stmts	8:8	9:25	3	
+if	8:8	9:25	4	(mxf -> metadata_sets [ i ] -> type == IndexTableSegment)
+cond	8:12	8:43	5	mxf -> metadata_sets [ i ] -> type == IndexTableSegment
+water	8:12	0:0	6	mxf
+op	8:15	0:0	6	->
+water	8:17	0:0	6	metadata_sets
+op	8:30	0:0	6	[
+water	8:31	0:0	6	i
+op	8:32	0:0	6	]
+op	8:33	0:0	6	->
+water	8:35	0:0	6	type
+op	8:40	0:0	6	==
+water	8:43	0:0	6	IndexTableSegment
+stmts	9:12	9:25	5	
+water	9:12	0:0	6	nb_segments
+op	9:23	0:0	6	++
+water	9:25	0:0	6	;
+if	10:4	11:34	2	(! nb_segments)
+cond	10:8	10:9	3	! nb_segments
+op	10:8	0:0	4	!
+water	10:9	0:0	4	nb_segments
+stmts	11:8	11:34	3	
+return	11:8	11:34	4	AVERROR_INVALIDDATA
+water	11:15	0:0	5	AVERROR_INVALIDDATA
+if	12:4	17:4	2	(! ( unsorted_segments =av_calloc (nb_segments ,sizeof ( * unsorted_segments ) ) ) || ! ( * sorted_segments =av_calloc (nb_segments ,sizeof ( * * sorted_segments ) ) ))
+cond	12:8	13:79	3	! ( unsorted_segments =av_calloc (nb_segments ,sizeof ( * unsorted_segments ) ) ) || ! ( * sorted_segments =av_calloc (nb_segments ,sizeof ( * * sorted_segments ) ) )
+op	12:8	0:0	4	!
+water	12:9	0:0	4	(
+water	12:10	0:0	4	unsorted_segments
+op	12:28	0:0	4	=
+call	12:30	12:79	4	av_calloc
+arg	12:40	12:51	5	nb_segments
+water	12:40	0:0	6	nb_segments
+arg	12:53	12:79	5	sizeof(*unsorted_segments)
+op	12:53	0:0	6	sizeof
+water	12:59	0:0	6	(
+op	12:60	0:0	6	*
+water	12:61	0:0	6	unsorted_segments
+water	12:78	0:0	6	)
+water	12:80	0:0	4	)
+op	12:82	0:0	4	||
+op	13:8	0:0	4	!
+water	13:9	0:0	4	(
+op	13:10	0:0	4	*
+water	13:11	0:0	4	sorted_segments
+op	13:28	0:0	4	=
+call	13:30	13:78	4	av_calloc
+arg	13:40	13:51	5	nb_segments
+water	13:40	0:0	6	nb_segments
+arg	13:53	13:78	5	sizeof(**sorted_segments)
+op	13:53	0:0	6	sizeof
+water	13:59	0:0	6	(
+op	13:60	0:0	6	*
+op	13:61	0:0	6	*
+water	13:62	0:0	6	sorted_segments
+water	13:77	0:0	6	)
+water	13:79	0:0	4	)
+stmts	13:82	17:4	3	
+water	13:82	0:0	4	{
+call	14:8	14:32	4	av_freep
+arg	14:17	14:32	5	sorted_segments
+water	14:17	0:0	6	sorted_segments
+water	14:33	0:0	4	;
+call	15:8	15:33	4	av_free
+arg	15:16	15:33	5	unsorted_segments
+water	15:16	0:0	6	unsorted_segments
+water	15:34	0:0	4	;
+return	16:8	16:30	4	AVERROR(ENOMEM)
+call	16:15	16:29	5	AVERROR
+arg	16:23	16:29	6	ENOMEM
+water	16:23	0:0	7	ENOMEM
+water	17:4	0:0	4	}
+for	18:4	20:81	2	(i = j = 0 ;i < mxf -> metadata_sets_count;i ++)
+forinit	18:9	18:18	3	i = j = 0 ;
+water	18:9	0:0	4	i
+op	18:11	0:0	4	=
+water	18:13	0:0	4	j
+op	18:15	0:0	4	=
+water	18:17	0:0	4	0
+water	18:18	0:0	4	;
+cond	18:20	18:29	3	i < mxf -> metadata_sets_count
+water	18:20	0:0	4	i
+op	18:22	0:0	4	<
+water	18:24	0:0	4	mxf
+op	18:27	0:0	4	->
+water	18:29	0:0	4	metadata_sets_count
+forexpr	18:50	18:51	3	i ++
+water	18:50	0:0	4	i
+op	18:51	0:0	4	++
+stmts	19:8	20:81	3	
+if	19:8	20:81	4	(mxf -> metadata_sets [ i ] -> type == IndexTableSegment)
+cond	19:12	19:43	5	mxf -> metadata_sets [ i ] -> type == IndexTableSegment
+water	19:12	0:0	6	mxf
+op	19:15	0:0	6	->
+water	19:17	0:0	6	metadata_sets
+op	19:30	0:0	6	[
+water	19:31	0:0	6	i
+op	19:32	0:0	6	]
+op	19:33	0:0	6	->
+water	19:35	0:0	6	type
+op	19:40	0:0	6	==
+water	19:43	0:0	6	IndexTableSegment
+stmts	20:12	20:81	5	
+water	20:12	0:0	6	unsorted_segments
+op	20:29	0:0	6	[
+water	20:30	0:0	6	j
+op	20:31	0:0	6	++
+op	20:33	0:0	6	]
+op	20:35	0:0	6	=
+water	20:37	0:0	6	(
+water	20:38	0:0	6	MXFIndexTableSegment
+op	20:58	0:0	6	*
+water	20:59	0:0	6	)
+water	20:60	0:0	6	mxf
+op	20:63	0:0	6	->
+water	20:65	0:0	6	metadata_sets
+op	20:78	0:0	6	[
+water	20:79	0:0	6	i
+op	20:80	0:0	6	]
+water	20:81	0:0	6	;
+op	21:4	0:0	2	*
+water	21:5	0:0	2	nb_sorted_segments
+op	21:24	0:0	2	=
+water	21:26	0:0	2	0
+water	21:27	0:0	2	;
+for	23:4	49:4	2	(i = 0 ;i < nb_segments;i ++)
+forinit	23:9	23:14	3	i = 0 ;
+water	23:9	0:0	4	i
+op	23:11	0:0	4	=
+water	23:13	0:0	4	0
+water	23:14	0:0	4	;
+cond	23:16	23:20	3	i < nb_segments
+water	23:16	0:0	4	i
+op	23:18	0:0	4	<
+water	23:20	0:0	4	nb_segments
+forexpr	23:33	23:34	3	i ++
+water	23:33	0:0	4	i
+op	23:34	0:0	4	++
+stmts	23:38	49:4	3	
+water	23:38	0:0	4	{
+decl	24:8	24:85	4	int	best
+op	24:17	0:0	4	=
+op	24:19	0:0	4	-
+water	24:20	0:0	4	1
+water	24:21	0:0	4	,
+decl	24:8	24:85	4	int	best_body_sid
+op	24:37	0:0	4	=
+op	24:39	0:0	4	-
+water	24:40	0:0	4	1
+water	24:41	0:0	4	,
+decl	24:8	24:85	4	int	best_index_sid
+op	24:58	0:0	4	=
+op	24:60	0:0	4	-
+water	24:61	0:0	4	1
+water	24:62	0:0	4	,
+decl	24:8	24:85	4	int	best_index_start
+op	24:81	0:0	4	=
+op	24:83	0:0	4	-
+water	24:84	0:0	4	1
+decl	25:8	25:40	4	uint64_t	best_index_duration
+op	25:37	0:0	4	=
+water	25:39	0:0	4	0
+for	26:8	41:8	4	(j = 0 ;j < nb_segments;j ++)
+forinit	26:13	26:18	5	j = 0 ;
+water	26:13	0:0	6	j
+op	26:15	0:0	6	=
+water	26:17	0:0	6	0
+water	26:18	0:0	6	;
+cond	26:20	26:24	5	j < nb_segments
+water	26:20	0:0	6	j
+op	26:22	0:0	6	<
+water	26:24	0:0	6	nb_segments
+forexpr	26:37	26:38	5	j ++
+water	26:37	0:0	6	j
+op	26:38	0:0	6	++
+stmts	26:42	41:8	5	
+water	26:42	0:0	6	{
+decl	27:12	27:58	6	MXFIndexTableSegment	*s
+op	27:36	0:0	6	=
+water	27:38	0:0	6	unsorted_segments
+op	27:55	0:0	6	[
+water	27:56	0:0	6	j
+op	27:57	0:0	6	]
+if	32:12	40:12	6	(( i == 0 || s -> body_sid > last_body_sid || s -> index_sid > last_index_sid || s -> index_start_position > last_index_start ) && ( best == - 1 || s -> body_sid < best_body_sid || s -> index_sid < best_index_sid || s -> index_start_position < best_index_start || ( s -> index_start_position == best_index_start && s -> index_duration > best_index_duration ) ))
+cond	32:16	34:104	7	( i == 0 || s -> body_sid > last_body_sid || s -> index_sid > last_index_sid || s -> index_start_position > last_index_start ) && ( best == - 1 || s -> body_sid < best_body_sid || s -> index_sid < best_index_sid || s -> index_start_position < best_index_start || ( s -> index_start_position == best_index_start && s -> index_duration > best_index_duration ) )
+water	32:16	0:0	8	(
+water	32:17	0:0	8	i
+op	32:19	0:0	8	==
+water	32:22	0:0	8	0
+op	32:28	0:0	8	||
+water	32:31	0:0	8	s
+op	32:32	0:0	8	->
+water	32:34	0:0	8	body_sid
+op	32:43	0:0	8	>
+water	32:45	0:0	8	last_body_sid
+op	32:59	0:0	8	||
+water	32:62	0:0	8	s
+op	32:63	0:0	8	->
+water	32:65	0:0	8	index_sid
+op	32:75	0:0	8	>
+water	32:77	0:0	8	last_index_sid
+op	32:92	0:0	8	||
+water	32:95	0:0	8	s
+op	32:96	0:0	8	->
+water	32:98	0:0	8	index_start_position
+op	32:119	0:0	8	>
+water	32:121	0:0	8	last_index_start
+water	32:137	0:0	8	)
+op	32:139	0:0	8	&&
+water	33:16	0:0	8	(
+water	33:17	0:0	8	best
+op	33:22	0:0	8	==
+op	33:25	0:0	8	-
+water	33:26	0:0	8	1
+op	33:28	0:0	8	||
+water	33:31	0:0	8	s
+op	33:32	0:0	8	->
+water	33:34	0:0	8	body_sid
+op	33:43	0:0	8	<
+water	33:45	0:0	8	best_body_sid
+op	33:59	0:0	8	||
+water	33:62	0:0	8	s
+op	33:63	0:0	8	->
+water	33:65	0:0	8	index_sid
+op	33:75	0:0	8	<
+water	33:77	0:0	8	best_index_sid
+op	33:92	0:0	8	||
+water	33:95	0:0	8	s
+op	33:96	0:0	8	->
+water	33:98	0:0	8	index_start_position
+op	33:119	0:0	8	<
+water	33:121	0:0	8	best_index_start
+op	33:138	0:0	8	||
+water	34:16	0:0	8	(
+water	34:17	0:0	8	s
+op	34:18	0:0	8	->
+water	34:20	0:0	8	index_start_position
+op	34:41	0:0	8	==
+water	34:44	0:0	8	best_index_start
+op	34:61	0:0	8	&&
+water	34:64	0:0	8	s
+op	34:65	0:0	8	->
+water	34:67	0:0	8	index_duration
+op	34:82	0:0	8	>
+water	34:84	0:0	8	best_index_duration
+water	34:103	0:0	8	)
+water	34:104	0:0	8	)
+stmts	34:107	40:12	7	
+water	34:107	0:0	8	{
+water	35:16	0:0	8	best
+op	35:33	0:0	8	=
+water	35:35	0:0	8	j
+water	35:36	0:0	8	;
+water	36:16	0:0	8	best_body_sid
+op	36:33	0:0	8	=
+water	36:35	0:0	8	s
+op	36:36	0:0	8	->
+water	36:38	0:0	8	body_sid
+water	36:46	0:0	8	;
+water	37:16	0:0	8	best_index_sid
+op	37:33	0:0	8	=
+water	37:35	0:0	8	s
+op	37:36	0:0	8	->
+water	37:38	0:0	8	index_sid
+water	37:47	0:0	8	;
+water	38:16	0:0	8	best_index_start
+op	38:33	0:0	8	=
+water	38:35	0:0	8	s
+op	38:36	0:0	8	->
+water	38:38	0:0	8	index_start_position
+water	38:58	0:0	8	;
+water	39:16	0:0	8	best_index_duration
+op	39:36	0:0	8	=
+water	39:38	0:0	8	s
+op	39:39	0:0	8	->
+water	39:41	0:0	8	index_duration
+water	39:55	0:0	8	;
+water	40:12	0:0	8	}
+water	41:8	0:0	6	}
+if	43:8	44:17	4	(best == - 1)
+cond	43:12	43:21	5	best == - 1
+water	43:12	0:0	6	best
+op	43:17	0:0	6	==
+op	43:20	0:0	6	-
+water	43:21	0:0	6	1
+stmts	44:12	44:17	5	
+break	44:12	44:17	6	
+water	45:8	0:0	4	(
+op	45:9	0:0	4	*
+water	45:10	0:0	4	sorted_segments
+water	45:25	0:0	4	)
+op	45:26	0:0	4	[
+water	45:27	0:0	4	(
+op	45:28	0:0	4	*
+water	45:29	0:0	4	nb_sorted_segments
+water	45:47	0:0	4	)
+op	45:48	0:0	4	++
+op	45:50	0:0	4	]
+op	45:52	0:0	4	=
+water	45:54	0:0	4	unsorted_segments
+op	45:71	0:0	4	[
+water	45:72	0:0	4	best
+op	45:76	0:0	4	]
+water	45:77	0:0	4	;
+water	46:8	0:0	4	last_body_sid
+op	46:25	0:0	4	=
+water	46:27	0:0	4	best_body_sid
+water	46:40	0:0	4	;
+water	47:8	0:0	4	last_index_sid
+op	47:25	0:0	4	=
+water	47:27	0:0	4	best_index_sid
+water	47:41	0:0	4	;
+water	48:8	0:0	4	last_index_start
+op	48:25	0:0	4	=
+water	48:27	0:0	4	best_index_start
+water	48:43	0:0	4	;
+water	49:4	0:0	4	}
+call	50:4	50:29	2	av_free
+arg	50:12	50:29	3	unsorted_segments
+water	50:12	0:0	4	unsorted_segments
+water	50:30	0:0	2	;
+return	51:4	51:12	2	0
+water	51:11	0:0	3	0

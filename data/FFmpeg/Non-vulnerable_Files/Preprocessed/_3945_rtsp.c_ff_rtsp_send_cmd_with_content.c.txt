@@ -1,0 +1,154 @@
+func	1:0	33:0	0	int	ff_rtsp_send_cmd_with_content
+params	1:33	0:0	1	
+param	1:34	1:52	2	AVFormatContext *	s
+param	2:34	2:52	2	const char *	method
+param	2:54	2:69	2	const char *	url
+param	3:34	3:52	2	const char *	header
+param	4:34	4:58	2	RTSPMessageHeader *	reply
+param	5:34	5:61	2	unsigned char * *	content_ptr
+param	6:34	6:67	2	const unsigned char *	send_content
+param	7:34	7:57	2	int	send_content_length
+stmnts	0:0	32:12	1	
+decl	9:4	9:32	2	RTSPState	*rt
+op	9:18	0:0	2	=
+water	9:20	0:0	2	s
+op	9:21	0:0	2	->
+water	9:23	0:0	2	priv_data
+decl	10:4	10:30	2	HTTPAuthType	cur_auth_type
+decl	11:4	11:25	2	int	ret
+water	11:11	0:0	2	,
+decl	11:4	11:25	2	int	attempts
+op	11:22	0:0	2	=
+water	11:24	0:0	2	0
+label	12:0	12:5	2	retry :
+water	13:4	0:0	2	cur_auth_type
+op	13:18	0:0	2	=
+water	13:20	0:0	2	rt
+op	13:22	0:0	2	->
+water	13:24	0:0	2	auth_state
+op	13:34	0:0	2	.
+water	13:35	0:0	2	auth_type
+water	13:44	0:0	2	;
+if	14:4	17:18	2	(( ret =rtsp_send_cmd_with_content_async (s ,method ,url ,header ,send_content ,send_content_length ) ))
+cond	14:8	16:68	3	( ret =rtsp_send_cmd_with_content_async (s ,method ,url ,header ,send_content ,send_content_length ) )
+water	14:8	0:0	4	(
+water	14:9	0:0	4	ret
+op	14:13	0:0	4	=
+call	14:15	16:67	4	rtsp_send_cmd_with_content_async
+arg	14:48	14:49	5	s
+water	14:48	0:0	6	s
+arg	14:51	14:57	5	method
+water	14:51	0:0	6	method
+arg	14:59	14:62	5	url
+water	14:59	0:0	6	url
+arg	14:64	14:70	5	header
+water	14:64	0:0	6	header
+arg	15:48	15:60	5	send_content
+water	15:48	0:0	6	send_content
+arg	16:48	16:67	5	send_content_length
+water	16:48	0:0	6	send_content_length
+water	16:68	0:0	4	)
+stmts	17:8	17:18	3	
+return	17:8	17:18	4	ret
+water	17:15	0:0	5	ret
+if	18:4	19:18	2	(( ret =ff_rtsp_read_reply (s ,reply ,content_ptr ,0 ,method ) ) < 0)
+cond	18:8	18:72	3	( ret =ff_rtsp_read_reply (s ,reply ,content_ptr ,0 ,method ) ) < 0
+water	18:8	0:0	4	(
+water	18:9	0:0	4	ret
+op	18:13	0:0	4	=
+call	18:15	18:66	4	ff_rtsp_read_reply
+arg	18:34	18:35	5	s
+water	18:34	0:0	6	s
+arg	18:37	18:42	5	reply
+water	18:37	0:0	6	reply
+arg	18:44	18:55	5	content_ptr
+water	18:44	0:0	6	content_ptr
+arg	18:57	18:58	5	0
+water	18:57	0:0	6	0
+arg	18:60	18:66	5	method
+water	18:60	0:0	6	method
+water	18:68	0:0	4	)
+op	18:70	0:0	4	<
+water	18:72	0:0	4	0
+stmts	19:8	19:18	3	
+return	19:8	19:18	4	ret
+water	19:15	0:0	5	ret
+water	20:4	0:0	2	attempts
+op	20:12	0:0	2	++
+water	20:14	0:0	2	;
+if	21:4	24:18	2	(reply -> status_code == 401 && ( cur_auth_type == HTTP_AUTH_NONE || rt -> auth_state . stale ) && rt -> auth_state . auth_type != HTTP_AUTH_NONE && attempts < 2)
+cond	21:8	23:65	3	reply -> status_code == 401 && ( cur_auth_type == HTTP_AUTH_NONE || rt -> auth_state . stale ) && rt -> auth_state . auth_type != HTTP_AUTH_NONE && attempts < 2
+water	21:8	0:0	4	reply
+op	21:13	0:0	4	->
+water	21:15	0:0	4	status_code
+op	21:27	0:0	4	==
+water	21:30	0:0	4	401
+op	21:34	0:0	4	&&
+water	22:8	0:0	4	(
+water	22:9	0:0	4	cur_auth_type
+op	22:23	0:0	4	==
+water	22:26	0:0	4	HTTP_AUTH_NONE
+op	22:41	0:0	4	||
+water	22:44	0:0	4	rt
+op	22:46	0:0	4	->
+water	22:48	0:0	4	auth_state
+op	22:58	0:0	4	.
+water	22:59	0:0	4	stale
+water	22:64	0:0	4	)
+op	22:66	0:0	4	&&
+water	23:8	0:0	4	rt
+op	23:10	0:0	4	->
+water	23:12	0:0	4	auth_state
+op	23:22	0:0	4	.
+water	23:23	0:0	4	auth_type
+op	23:33	0:0	4	!=
+water	23:36	0:0	4	HTTP_AUTH_NONE
+op	23:51	0:0	4	&&
+water	23:54	0:0	4	attempts
+op	23:63	0:0	4	<
+water	23:65	0:0	4	2
+stmts	24:8	24:18	3	
+goto	24:8	24:18	4	retry
+water	24:13	0:0	5	retry
+if	25:4	31:4	2	(reply -> status_code > 400)
+cond	25:8	25:29	3	reply -> status_code > 400
+water	25:8	0:0	4	reply
+op	25:13	0:0	4	->
+water	25:15	0:0	4	status_code
+op	25:27	0:0	4	>
+water	25:29	0:0	4	400
+stmts	25:33	31:4	3	
+water	25:33	0:0	4	{
+call	26:8	29:28	4	av_log
+arg	26:15	26:16	5	s
+water	26:15	0:0	6	s
+arg	26:18	26:30	5	AV_LOG_ERROR
+water	26:18	0:0	6	AV_LOG_ERROR
+arg	26:32	26:58	5	"method %s failed: %d%s\n"
+water	26:32	0:0	6	"method %s failed: %d%s\n"
+arg	27:15	27:21	5	method
+water	27:15	0:0	6	method
+arg	28:15	28:33	5	reply->status_code
+water	28:15	0:0	6	reply
+op	28:20	0:0	6	->
+water	28:22	0:0	6	status_code
+arg	29:15	29:28	5	reply->reason
+water	29:15	0:0	6	reply
+op	29:20	0:0	6	->
+water	29:22	0:0	6	reason
+water	29:29	0:0	4	;
+call	30:8	30:54	4	av_log
+arg	30:15	30:16	5	s
+water	30:15	0:0	6	s
+arg	30:18	30:30	5	AV_LOG_DEBUG
+water	30:18	0:0	6	AV_LOG_DEBUG
+arg	30:32	30:38	5	"%s\n"
+water	30:32	0:0	6	"%s\n"
+arg	30:40	30:54	5	rt->last_reply
+water	30:40	0:0	6	rt
+op	30:42	0:0	6	->
+water	30:44	0:0	6	last_reply
+water	30:55	0:0	4	;
+water	31:4	0:0	4	}
+return	32:4	32:12	2	0
+water	32:11	0:0	3	0

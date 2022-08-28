@@ -1,0 +1,1971 @@
+func	1:0	386:0	0	static int	http_parse_request
+params	1:29	0:0	1	
+param	1:30	1:44	2	HTTPContext *	c
+stmnts	0:0	385:12	1	
+decl	3:4	3:17	2	const char	*p
+decl	4:4	4:12	2	char	*p1
+decl	5:4	5:29	2	enum RedirType	redir_type
+decl	6:4	6:16	2	char	cmd[32]
+decl	7:4	7:35	2	char	info[1024]
+water	7:19	0:0	2	,
+decl	7:4	7:35	2	char	filename[1024]
+decl	8:4	8:22	2	char	url[1024]
+water	8:18	0:0	2	,
+decl	8:4	8:22	2	char	*q
+decl	9:4	9:21	2	char	protocol[32]
+decl	10:4	10:18	2	char	msg[1024]
+decl	11:4	11:28	2	char	*encoded_msg
+op	11:22	0:0	2	=
+water	11:24	0:0	2	NULL
+decl	12:4	12:25	2	const char	*mime_type
+decl	13:4	13:26	2	FFServerStream	*stream
+decl	14:4	14:9	2	int	i
+decl	15:4	15:20	2	char	ratebuf[32]
+decl	16:4	16:29	2	const char	*useragent
+op	16:26	0:0	2	=
+water	16:28	0:0	2	0
+water	17:4	0:0	2	p
+op	17:6	0:0	2	=
+water	17:8	0:0	2	c
+op	17:9	0:0	2	->
+water	17:11	0:0	2	buffer
+water	17:17	0:0	2	;
+call	18:4	18:33	2	get_word
+arg	18:13	18:16	3	cmd
+water	18:13	0:0	4	cmd
+arg	18:18	18:29	3	sizeof(cmd)
+op	18:18	0:0	4	sizeof
+water	18:24	0:0	4	(
+water	18:25	0:0	4	cmd
+water	18:28	0:0	4	)
+arg	18:31	18:33	3	&p
+op	18:31	0:0	4	&
+water	18:32	0:0	4	p
+water	18:34	0:0	2	;
+call	19:4	19:48	2	av_strlcpy
+arg	19:15	19:24	3	c->method
+water	19:15	0:0	4	c
+op	19:16	0:0	4	->
+water	19:18	0:0	4	method
+arg	19:26	19:29	3	cmd
+water	19:26	0:0	4	cmd
+arg	19:31	19:48	3	sizeof(c->method)
+op	19:31	0:0	4	sizeof
+water	19:37	0:0	4	(
+water	19:38	0:0	4	c
+op	19:39	0:0	4	->
+water	19:41	0:0	4	method
+water	19:47	0:0	4	)
+water	19:49	0:0	2	;
+if	20:4	21:19	2	(!strcmp (cmd ,"GET" ))
+cond	20:8	20:26	3	!strcmp (cmd ,"GET" )
+op	20:8	0:0	4	!
+call	20:9	20:26	4	strcmp
+arg	20:16	20:19	5	cmd
+water	20:16	0:0	6	cmd
+arg	20:21	20:26	5	"GET"
+water	20:21	0:0	6	"GET"
+stmts	21:8	21:19	3	
+water	21:8	0:0	4	c
+op	21:9	0:0	4	->
+water	21:11	0:0	4	post
+op	21:16	0:0	4	=
+water	21:18	0:0	4	0
+water	21:19	0:0	4	;
+else	22:4	23:19	2
+stmts	22:9	23:19	3	
+if	22:9	23:19	4	(!strcmp (cmd ,"POST" ))
+cond	22:13	22:32	5	!strcmp (cmd ,"POST" )
+op	22:13	0:0	6	!
+call	22:14	22:32	6	strcmp
+arg	22:21	22:24	7	cmd
+water	22:21	0:0	8	cmd
+arg	22:26	22:32	7	"POST"
+water	22:26	0:0	8	"POST"
+stmts	23:8	23:19	5	
+water	23:8	0:0	6	c
+op	23:9	0:0	6	->
+water	23:11	0:0	6	post
+op	23:16	0:0	6	=
+water	23:18	0:0	6	1
+water	23:19	0:0	6	;
+else	24:4	25:17	2
+stmts	25:8	25:17	3	
+return	25:8	25:17	4	-1
+op	25:15	0:0	5	-
+water	25:16	0:0	5	1
+call	26:4	26:33	2	get_word
+arg	26:13	26:16	3	url
+water	26:13	0:0	4	url
+arg	26:18	26:29	3	sizeof(url)
+op	26:18	0:0	4	sizeof
+water	26:24	0:0	4	(
+water	26:25	0:0	4	url
+water	26:28	0:0	4	)
+arg	26:31	26:33	3	&p
+op	26:31	0:0	4	&
+water	26:32	0:0	4	p
+water	26:34	0:0	2	;
+call	27:4	27:42	2	av_strlcpy
+arg	27:15	27:21	3	c->url
+water	27:15	0:0	4	c
+op	27:16	0:0	4	->
+water	27:18	0:0	4	url
+arg	27:23	27:26	3	url
+water	27:23	0:0	4	url
+arg	27:28	27:42	3	sizeof(c->url)
+op	27:28	0:0	4	sizeof
+water	27:34	0:0	4	(
+water	27:35	0:0	4	c
+op	27:36	0:0	4	->
+water	27:38	0:0	4	url
+water	27:41	0:0	4	)
+water	27:43	0:0	2	;
+call	28:4	28:58	2	get_word
+arg	28:13	28:21	3	protocol
+water	28:13	0:0	4	protocol
+arg	28:23	28:39	3	sizeof(protocol)
+op	28:23	0:0	4	sizeof
+water	28:29	0:0	4	(
+water	28:30	0:0	4	protocol
+water	28:38	0:0	4	)
+arg	28:41	28:58	3	(constchar**)&p
+water	28:41	0:0	4	(
+water	28:42	0:0	4	const
+water	28:48	0:0	4	char
+op	28:53	0:0	4	*
+op	28:54	0:0	4	*
+water	28:55	0:0	4	)
+op	28:56	0:0	4	&
+water	28:57	0:0	4	p
+water	28:59	0:0	2	;
+if	29:4	30:17	2	(strcmp (protocol ,"HTTP/1.0" ) &&strcmp (protocol ,"HTTP/1.1" ))
+cond	29:8	29:67	3	strcmp (protocol ,"HTTP/1.0" ) &&strcmp (protocol ,"HTTP/1.1" )
+call	29:8	29:35	4	strcmp
+arg	29:15	29:23	5	protocol
+water	29:15	0:0	6	protocol
+arg	29:25	29:35	5	"HTTP/1.0"
+water	29:25	0:0	6	"HTTP/1.0"
+op	29:37	0:0	4	&&
+call	29:40	29:67	4	strcmp
+arg	29:47	29:55	5	protocol
+water	29:47	0:0	6	protocol
+arg	29:57	29:67	5	"HTTP/1.1"
+water	29:57	0:0	6	"HTTP/1.1"
+stmts	30:8	30:17	3	
+return	30:8	30:17	4	-1
+op	30:15	0:0	5	-
+water	30:16	0:0	5	1
+call	31:4	31:57	2	av_strlcpy
+arg	31:15	31:26	3	c->protocol
+water	31:15	0:0	4	c
+op	31:16	0:0	4	->
+water	31:18	0:0	4	protocol
+arg	31:28	31:36	3	protocol
+water	31:28	0:0	4	protocol
+arg	31:38	31:57	3	sizeof(c->protocol)
+op	31:38	0:0	4	sizeof
+water	31:44	0:0	4	(
+water	31:45	0:0	4	c
+op	31:46	0:0	4	->
+water	31:48	0:0	4	protocol
+water	31:56	0:0	4	)
+water	31:58	0:0	2	;
+if	32:4	34:60	2	(config . debug)
+cond	32:8	32:15	3	config . debug
+water	32:8	0:0	4	config
+op	32:14	0:0	4	.
+water	32:15	0:0	4	debug
+stmts	33:8	34:60	3	
+call	33:8	34:59	4	http_log
+arg	33:17	33:49	5	"%s - - New connection: %s %s\n"
+water	33:17	0:0	6	"%s - - New connection: %s %s\n"
+arg	34:17	34:49	5	inet_ntoa(c->from_addr.sin_addr)
+call	34:17	34:48	6	inet_ntoa
+arg	34:27	34:48	7	c->from_addr.sin_addr
+water	34:27	0:0	8	c
+op	34:28	0:0	8	->
+water	34:30	0:0	8	from_addr
+op	34:39	0:0	8	.
+water	34:40	0:0	8	sin_addr
+arg	34:51	34:54	5	cmd
+water	34:51	0:0	6	cmd
+arg	34:56	34:59	5	url
+water	34:56	0:0	6	url
+water	34:60	0:0	4	;
+water	36:4	0:0	2	p1
+op	36:7	0:0	2	=
+call	36:9	36:24	2	strchr
+arg	36:16	36:19	3	url
+water	36:16	0:0	4	url
+arg	36:21	36:24	3	'?'
+water	36:21	0:0	4	'?'
+water	36:25	0:0	2	;
+if	37:4	40:4	2	(p1)
+cond	37:8	37:8	3	p1
+water	37:8	0:0	4	p1
+stmts	37:12	40:4	3	
+water	37:12	0:0	4	{
+call	38:8	38:41	4	av_strlcpy
+arg	38:19	38:23	5	info
+water	38:19	0:0	6	info
+arg	38:25	38:27	5	p1
+water	38:25	0:0	6	p1
+arg	38:29	38:41	5	sizeof(info)
+op	38:29	0:0	6	sizeof
+water	38:35	0:0	6	(
+water	38:36	0:0	6	info
+water	38:40	0:0	6	)
+water	38:42	0:0	4	;
+op	39:8	0:0	4	*
+water	39:9	0:0	4	p1
+op	39:12	0:0	4	=
+water	39:14	0:0	4	'\0'
+water	39:18	0:0	4	;
+water	40:4	0:0	4	}
+else	40:6	41:22	2
+stmts	41:8	41:22	3	
+water	41:8	0:0	4	info
+op	41:12	0:0	4	[
+water	41:13	0:0	4	0
+op	41:14	0:0	4	]
+op	41:16	0:0	4	=
+water	41:18	0:0	4	'\0'
+water	41:22	0:0	4	;
+call	42:4	42:74	2	av_strlcpy
+arg	42:15	42:23	3	filename
+water	42:15	0:0	4	filename
+arg	42:25	42:54	3	url+((*url=='/')?1:0)
+water	42:25	0:0	4	url
+op	42:29	0:0	4	+
+water	42:31	0:0	4	(
+water	42:32	0:0	4	(
+op	42:33	0:0	4	*
+water	42:34	0:0	4	url
+op	42:38	0:0	4	==
+water	42:41	0:0	4	'/'
+water	42:44	0:0	4	)
+water	42:46	0:0	4	?
+water	42:48	0:0	4	1
+water	42:50	0:0	4	:
+water	42:52	0:0	4	0
+water	42:53	0:0	4	)
+arg	42:56	42:74	3	sizeof(filename)-1
+op	42:56	0:0	4	sizeof
+water	42:62	0:0	4	(
+water	42:63	0:0	4	filename
+water	42:71	0:0	4	)
+op	42:72	0:0	4	-
+water	42:73	0:0	4	1
+water	42:75	0:0	2	;
+for	43:4	54:4	2	(p = c -> buffer ;* p && * p != '\r' && * p != '\n';)
+forinit	43:9	43:22	3	p = c -> buffer ;
+water	43:9	0:0	4	p
+op	43:11	0:0	4	=
+water	43:13	0:0	4	c
+op	43:14	0:0	4	->
+water	43:16	0:0	4	buffer
+water	43:22	0:0	4	;
+cond	43:24	43:50	3	* p && * p != '\r' && * p != '\n'
+op	43:24	0:0	4	*
+water	43:25	0:0	4	p
+op	43:27	0:0	4	&&
+op	43:30	0:0	4	*
+water	43:31	0:0	4	p
+op	43:33	0:0	4	!=
+water	43:36	0:0	4	'\r'
+op	43:41	0:0	4	&&
+op	43:44	0:0	4	*
+water	43:45	0:0	4	p
+op	43:47	0:0	4	!=
+water	43:50	0:0	4	'\n'
+forexpr	0:0	0:0	3	
+stmts	43:58	54:4	3	
+water	43:58	0:0	4	{
+if	44:8	49:8	4	(av_strncasecmp (p ,"User-Agent:" ,11 ) == 0)
+cond	44:12	44:52	5	av_strncasecmp (p ,"User-Agent:" ,11 ) == 0
+call	44:12	44:47	6	av_strncasecmp
+arg	44:27	44:28	7	p
+water	44:27	0:0	8	p
+arg	44:30	44:43	7	"User-Agent:"
+water	44:30	0:0	8	"User-Agent:"
+arg	44:45	44:47	7	11
+water	44:45	0:0	8	11
+op	44:49	0:0	6	==
+water	44:52	0:0	6	0
+stmts	44:55	49:8	5	
+water	44:55	0:0	6	{
+water	45:12	0:0	6	useragent
+op	45:22	0:0	6	=
+water	45:24	0:0	6	p
+op	45:26	0:0	6	+
+water	45:28	0:0	6	11
+water	45:30	0:0	6	;
+if	46:12	47:27	6	(* useragent && * useragent != '\n' &&av_isspace (* useragent ))
+cond	46:16	46:73	7	* useragent && * useragent != '\n' &&av_isspace (* useragent )
+op	46:16	0:0	8	*
+water	46:17	0:0	8	useragent
+op	46:27	0:0	8	&&
+op	46:30	0:0	8	*
+water	46:31	0:0	8	useragent
+op	46:41	0:0	8	!=
+water	46:44	0:0	8	'\n'
+op	46:49	0:0	8	&&
+call	46:52	46:73	8	av_isspace
+arg	46:63	46:73	9	*useragent
+op	46:63	0:0	10	*
+water	46:64	0:0	10	useragent
+stmts	47:16	47:27	7	
+water	47:16	0:0	8	useragent
+op	47:25	0:0	8	++
+water	47:27	0:0	8	;
+break	48:12	48:17	6	
+water	49:8	0:0	6	}
+water	50:8	0:0	4	p
+op	50:10	0:0	4	=
+call	50:12	50:26	4	strchr
+arg	50:19	50:20	5	p
+water	50:19	0:0	6	p
+arg	50:22	50:26	5	'\n'
+water	50:22	0:0	6	'\n'
+water	50:27	0:0	4	;
+if	51:8	52:17	4	(! p)
+cond	51:12	51:13	5	! p
+op	51:12	0:0	6	!
+water	51:13	0:0	6	p
+stmts	52:12	52:17	5	
+break	52:12	52:17	6	
+water	53:8	0:0	4	p
+op	53:9	0:0	4	++
+water	53:11	0:0	4	;
+water	54:4	0:0	4	}
+water	55:4	0:0	2	redir_type
+op	55:15	0:0	2	=
+water	55:17	0:0	2	REDIR_NONE
+water	55:27	0:0	2	;
+if	56:4	59:4	2	(av_match_ext (filename ,"asx" ))
+cond	56:8	56:36	3	av_match_ext (filename ,"asx" )
+call	56:8	56:36	4	av_match_ext
+arg	56:21	56:29	5	filename
+water	56:21	0:0	6	filename
+arg	56:31	56:36	5	"asx"
+water	56:31	0:0	6	"asx"
+stmts	56:39	59:4	3	
+water	56:39	0:0	4	{
+water	57:8	0:0	4	redir_type
+op	57:19	0:0	4	=
+water	57:21	0:0	4	REDIR_ASX
+water	57:30	0:0	4	;
+water	58:8	0:0	4	filename
+op	58:16	0:0	4	[
+call	58:17	58:32	4	strlen
+arg	58:24	58:32	5	filename
+water	58:24	0:0	6	filename
+op	58:33	0:0	4	-
+water	58:34	0:0	4	1
+op	58:35	0:0	4	]
+op	58:37	0:0	4	=
+water	58:39	0:0	4	'f'
+water	58:42	0:0	4	;
+water	59:4	0:0	4	}
+else	59:6	63:4	2
+stmts	59:11	63:4	3	
+if	59:11	63:4	4	(av_match_ext (filename ,"asf" ) && ( ! useragent ||av_strncasecmp (useragent ,"NSPlayer" ,8 ) ))
+cond	59:15	60:63	5	av_match_ext (filename ,"asf" ) && ( ! useragent ||av_strncasecmp (useragent ,"NSPlayer" ,8 ) )
+call	59:15	59:43	6	av_match_ext
+arg	59:28	59:36	7	filename
+water	59:28	0:0	8	filename
+arg	59:38	59:43	7	"asf"
+water	59:38	0:0	8	"asf"
+op	59:45	0:0	6	&&
+water	60:8	0:0	6	(
+op	60:9	0:0	6	!
+water	60:10	0:0	6	useragent
+op	60:20	0:0	6	||
+call	60:23	60:62	6	av_strncasecmp
+arg	60:38	60:47	7	useragent
+water	60:38	0:0	8	useragent
+arg	60:49	60:59	7	"NSPlayer"
+water	60:49	0:0	8	"NSPlayer"
+arg	60:61	60:62	7	8
+water	60:61	0:0	8	8
+water	60:63	0:0	6	)
+stmts	60:66	63:4	5	
+water	60:66	0:0	6	{
+water	62:8	0:0	6	redir_type
+op	62:19	0:0	6	=
+water	62:21	0:0	6	REDIR_ASF
+water	62:30	0:0	6	;
+water	63:4	0:0	6	}
+else	63:6	66:4	2
+stmts	63:11	66:4	3	
+if	63:11	66:4	4	(av_match_ext (filename ,"rpm,ram" ))
+cond	63:15	63:47	5	av_match_ext (filename ,"rpm,ram" )
+call	63:15	63:47	6	av_match_ext
+arg	63:28	63:36	7	filename
+water	63:28	0:0	8	filename
+arg	63:38	63:47	7	"rpm,ram"
+water	63:38	0:0	8	"rpm,ram"
+stmts	63:50	66:4	5	
+water	63:50	0:0	6	{
+water	64:8	0:0	6	redir_type
+op	64:19	0:0	6	=
+water	64:21	0:0	6	REDIR_RAM
+water	64:30	0:0	6	;
+call	65:8	65:49	6	strcpy
+arg	65:15	65:44	7	filename+strlen(filename)-2
+water	65:15	0:0	8	filename
+op	65:24	0:0	8	+
+call	65:26	65:41	8	strlen
+arg	65:33	65:41	9	filename
+water	65:33	0:0	10	filename
+op	65:42	0:0	8	-
+water	65:43	0:0	8	2
+arg	65:46	65:49	7	"m"
+water	65:46	0:0	8	"m"
+water	65:50	0:0	6	;
+water	66:4	0:0	6	}
+else	66:6	69:4	2
+stmts	66:11	69:4	3	
+if	66:11	69:4	4	(av_match_ext (filename ,"rtsp" ))
+cond	66:15	66:44	5	av_match_ext (filename ,"rtsp" )
+call	66:15	66:44	6	av_match_ext
+arg	66:28	66:36	7	filename
+water	66:28	0:0	8	filename
+arg	66:38	66:44	7	"rtsp"
+water	66:38	0:0	8	"rtsp"
+stmts	66:47	69:4	5	
+water	66:47	0:0	6	{
+water	67:8	0:0	6	redir_type
+op	67:19	0:0	6	=
+water	67:21	0:0	6	REDIR_RTSP
+water	67:31	0:0	6	;
+call	68:8	68:60	6	compute_real_filename
+arg	68:30	68:38	7	filename
+water	68:30	0:0	8	filename
+arg	68:40	68:60	7	sizeof(filename)-1
+op	68:40	0:0	8	sizeof
+water	68:46	0:0	8	(
+water	68:47	0:0	8	filename
+water	68:55	0:0	8	)
+op	68:57	0:0	8	-
+water	68:59	0:0	8	1
+water	68:61	0:0	6	;
+water	69:4	0:0	6	}
+else	69:6	72:4	2
+stmts	69:11	72:4	3	
+if	69:11	72:4	4	(av_match_ext (filename ,"sdp" ))
+cond	69:15	69:43	5	av_match_ext (filename ,"sdp" )
+call	69:15	69:43	6	av_match_ext
+arg	69:28	69:36	7	filename
+water	69:28	0:0	8	filename
+arg	69:38	69:43	7	"sdp"
+water	69:38	0:0	8	"sdp"
+stmts	69:46	72:4	5	
+water	69:46	0:0	6	{
+water	70:8	0:0	6	redir_type
+op	70:19	0:0	6	=
+water	70:21	0:0	6	REDIR_SDP
+water	70:30	0:0	6	;
+call	71:8	71:60	6	compute_real_filename
+arg	71:30	71:38	7	filename
+water	71:30	0:0	8	filename
+arg	71:40	71:60	7	sizeof(filename)-1
+op	71:40	0:0	8	sizeof
+water	71:46	0:0	8	(
+water	71:47	0:0	8	filename
+water	71:55	0:0	8	)
+op	71:57	0:0	8	-
+water	71:59	0:0	8	1
+water	71:61	0:0	6	;
+water	72:4	0:0	6	}
+if	74:4	75:64	2	(!strlen (filename ))
+cond	74:8	74:24	3	!strlen (filename )
+op	74:8	0:0	4	!
+call	74:9	74:24	4	strlen
+arg	74:16	74:24	5	filename
+water	74:16	0:0	6	filename
+stmts	75:8	75:64	3	
+call	75:8	75:63	4	av_strlcpy
+arg	75:19	75:27	5	filename
+water	75:19	0:0	6	filename
+arg	75:29	75:41	5	"index.html"
+water	75:29	0:0	6	"index.html"
+arg	75:43	75:63	5	sizeof(filename)-1
+op	75:43	0:0	6	sizeof
+water	75:49	0:0	6	(
+water	75:50	0:0	6	filename
+water	75:58	0:0	6	)
+op	75:60	0:0	6	-
+water	75:62	0:0	6	1
+water	75:64	0:0	4	;
+water	76:4	0:0	2	stream
+op	76:11	0:0	2	=
+water	76:13	0:0	2	config
+op	76:19	0:0	2	.
+water	76:20	0:0	2	first_stream
+water	76:32	0:0	2	;
+while	77:4	81:4	2	(stream)
+cond	77:11	77:11	3	stream
+water	77:11	0:0	4	stream
+stmts	77:19	81:4	3	
+water	77:19	0:0	4	{
+if	78:8	79:17	4	(!strcmp (stream -> filename ,filename ) &&validate_acl (stream ,c ))
+cond	78:12	78:73	5	!strcmp (stream -> filename ,filename ) &&validate_acl (stream ,c )
+op	78:12	0:0	6	!
+call	78:13	78:46	6	strcmp
+arg	78:20	78:36	7	stream->filename
+water	78:20	0:0	8	stream
+op	78:26	0:0	8	->
+water	78:28	0:0	8	filename
+arg	78:38	78:46	7	filename
+water	78:38	0:0	8	filename
+op	78:48	0:0	6	&&
+call	78:51	78:73	6	validate_acl
+arg	78:64	78:70	7	stream
+water	78:64	0:0	8	stream
+arg	78:72	78:73	7	c
+water	78:72	0:0	8	c
+stmts	79:12	79:17	5	
+break	79:12	79:17	6	
+water	80:8	0:0	4	stream
+op	80:15	0:0	4	=
+water	80:17	0:0	4	stream
+op	80:23	0:0	4	->
+water	80:25	0:0	4	next
+water	80:29	0:0	4	;
+water	81:4	0:0	4	}
+if	82:4	86:4	2	(! stream)
+cond	82:8	82:9	3	! stream
+op	82:8	0:0	4	!
+water	82:9	0:0	4	stream
+stmts	82:17	86:4	3	
+water	82:17	0:0	4	{
+call	83:8	83:61	4	snprintf
+arg	83:17	83:20	5	msg
+water	83:17	0:0	6	msg
+arg	83:22	83:33	5	sizeof(msg)
+op	83:22	0:0	6	sizeof
+water	83:28	0:0	6	(
+water	83:29	0:0	6	msg
+water	83:32	0:0	6	)
+arg	83:35	83:56	5	"File '%s' not found"
+water	83:35	0:0	6	"File '%s' not found"
+arg	83:58	83:61	5	url
+water	83:58	0:0	6	url
+water	83:62	0:0	4	;
+call	84:8	84:45	4	http_log
+arg	84:17	84:40	5	"File '%s' not found\n"
+water	84:17	0:0	6	"File '%s' not found\n"
+arg	84:42	84:45	5	url
+water	84:42	0:0	6	url
+water	84:46	0:0	4	;
+goto	85:8	85:23	4	send_error
+water	85:13	0:0	5	send_error
+water	86:4	0:0	4	}
+water	87:4	0:0	2	c
+op	87:5	0:0	2	->
+water	87:7	0:0	2	stream
+op	87:14	0:0	2	=
+water	87:16	0:0	2	stream
+water	87:22	0:0	2	;
+call	88:4	88:73	2	memcpy
+arg	88:11	88:26	3	c->feed_streams
+water	88:11	0:0	4	c
+op	88:12	0:0	4	->
+water	88:14	0:0	4	feed_streams
+arg	88:28	88:48	3	stream->feed_streams
+water	88:28	0:0	4	stream
+op	88:34	0:0	4	->
+water	88:36	0:0	4	feed_streams
+arg	88:50	88:73	3	sizeof(c->feed_streams)
+op	88:50	0:0	4	sizeof
+water	88:56	0:0	4	(
+water	88:57	0:0	4	c
+op	88:58	0:0	4	->
+water	88:60	0:0	4	feed_streams
+water	88:72	0:0	4	)
+water	88:74	0:0	2	;
+call	89:4	89:69	2	memset
+arg	89:11	89:33	3	c->switch_feed_streams
+water	89:11	0:0	4	c
+op	89:12	0:0	4	->
+water	89:14	0:0	4	switch_feed_streams
+arg	89:35	89:37	3	-1
+op	89:35	0:0	4	-
+water	89:36	0:0	4	1
+arg	89:39	89:69	3	sizeof(c->switch_feed_streams)
+op	89:39	0:0	4	sizeof
+water	89:45	0:0	4	(
+water	89:46	0:0	4	c
+op	89:47	0:0	4	->
+water	89:49	0:0	4	switch_feed_streams
+water	89:68	0:0	4	)
+water	89:70	0:0	2	;
+if	90:4	109:4	2	(stream -> stream_type == STREAM_TYPE_REDIRECT)
+cond	90:8	90:31	3	stream -> stream_type == STREAM_TYPE_REDIRECT
+water	90:8	0:0	4	stream
+op	90:14	0:0	4	->
+water	90:16	0:0	4	stream_type
+op	90:28	0:0	4	==
+water	90:31	0:0	4	STREAM_TYPE_REDIRECT
+stmts	90:53	109:4	3	
+water	90:53	0:0	4	{
+water	91:8	0:0	4	c
+op	91:9	0:0	4	->
+water	91:11	0:0	4	http_error
+op	91:22	0:0	4	=
+water	91:24	0:0	4	301
+water	91:27	0:0	4	;
+water	92:8	0:0	4	q
+op	92:10	0:0	4	=
+water	92:12	0:0	4	c
+op	92:13	0:0	4	->
+water	92:15	0:0	4	buffer
+water	92:21	0:0	4	;
+call	93:8	102:61	4	snprintf
+arg	93:17	93:18	5	q
+water	93:17	0:0	6	q
+arg	93:20	93:34	5	c->buffer_size
+water	93:20	0:0	6	c
+op	93:21	0:0	6	->
+water	93:23	0:0	6	buffer_size
+arg	94:22	101:42	5	"HTTP/1.0 301 Moved\r\n""Location: %s\r\n""Content-type: text/html\r\n""\r\n""<!DOCTYPE html>\n""<html><head><title>Moved</title></head><body>\r\n""You should be <a href=\"%s\">redirected</a>.\r\n""</body></html>\r\n"
+water	94:22	0:0	6	"HTTP/1.0 301 Moved\r\n"
+water	95:22	0:0	6	"Location: %s\r\n"
+water	96:22	0:0	6	"Content-type: text/html\r\n"
+water	97:22	0:0	6	"\r\n"
+water	98:22	0:0	6	"<!DOCTYPE html>\n"
+water	99:22	0:0	6	"<html><head><title>Moved</title></head><body>\r\n"
+water	100:22	0:0	6	"You should be <a href=\"%s\">redirected</a>.\r\n"
+water	101:22	0:0	6	"</body></html>\r\n"
+arg	102:17	102:38	5	stream->feed_filename
+water	102:17	0:0	6	stream
+op	102:23	0:0	6	->
+water	102:25	0:0	6	feed_filename
+arg	102:40	102:61	5	stream->feed_filename
+water	102:40	0:0	6	stream
+op	102:46	0:0	6	->
+water	102:48	0:0	6	feed_filename
+water	102:62	0:0	4	;
+water	103:8	0:0	4	q
+op	103:10	0:0	4	+=
+call	103:13	103:21	4	strlen
+arg	103:20	103:21	5	q
+water	103:20	0:0	6	q
+water	103:22	0:0	4	;
+water	105:8	0:0	4	c
+op	105:9	0:0	4	->
+water	105:11	0:0	4	buffer_ptr
+op	105:22	0:0	4	=
+water	105:24	0:0	4	c
+op	105:25	0:0	4	->
+water	105:27	0:0	4	buffer
+water	105:33	0:0	4	;
+water	106:8	0:0	4	c
+op	106:9	0:0	4	->
+water	106:11	0:0	4	buffer_end
+op	106:22	0:0	4	=
+water	106:24	0:0	4	q
+water	106:25	0:0	4	;
+water	107:8	0:0	4	c
+op	107:9	0:0	4	->
+water	107:11	0:0	4	state
+op	107:17	0:0	4	=
+water	107:19	0:0	4	HTTPSTATE_SEND_HEADER
+water	107:40	0:0	4	;
+return	108:8	108:16	4	0
+water	108:15	0:0	5	0
+water	109:4	0:0	4	}
+if	111:4	118:4	2	(extract_rates (ratebuf ,sizeof ( ratebuf ) ,c -> buffer ))
+cond	111:8	111:57	3	extract_rates (ratebuf ,sizeof ( ratebuf ) ,c -> buffer )
+call	111:8	111:57	4	extract_rates
+arg	111:22	111:29	5	ratebuf
+water	111:22	0:0	6	ratebuf
+arg	111:31	111:46	5	sizeof(ratebuf)
+op	111:31	0:0	6	sizeof
+water	111:37	0:0	6	(
+water	111:38	0:0	6	ratebuf
+water	111:45	0:0	6	)
+arg	111:48	111:57	5	c->buffer
+water	111:48	0:0	6	c
+op	111:49	0:0	6	->
+water	111:51	0:0	6	buffer
+stmts	111:60	118:4	3	
+water	111:60	0:0	4	{
+if	112:8	117:8	4	(modify_current_stream (c ,ratebuf ))
+cond	112:12	112:44	5	modify_current_stream (c ,ratebuf )
+call	112:12	112:44	6	modify_current_stream
+arg	112:34	112:35	7	c
+water	112:34	0:0	8	c
+arg	112:37	112:44	7	ratebuf
+water	112:37	0:0	8	ratebuf
+stmts	112:47	117:8	5	
+water	112:47	0:0	6	{
+for	113:12	116:12	6	(i = 0 ;i <FF_ARRAY_ELEMS (c -> feed_streams );i ++)
+forinit	113:17	113:22	7	i = 0 ;
+water	113:17	0:0	8	i
+op	113:19	0:0	8	=
+water	113:21	0:0	8	0
+water	113:22	0:0	8	;
+cond	113:24	113:58	7	i <FF_ARRAY_ELEMS (c -> feed_streams )
+water	113:24	0:0	8	i
+op	113:26	0:0	8	<
+call	113:28	113:58	8	FF_ARRAY_ELEMS
+arg	113:43	113:58	9	c->feed_streams
+water	113:43	0:0	10	c
+op	113:44	0:0	10	->
+water	113:46	0:0	10	feed_streams
+forexpr	113:61	113:62	7	i ++
+water	113:61	0:0	8	i
+op	113:62	0:0	8	++
+stmts	113:66	116:12	7	
+water	113:66	0:0	8	{
+if	114:16	115:50	8	(c -> switch_feed_streams [ i ] >= 0)
+cond	114:20	114:49	9	c -> switch_feed_streams [ i ] >= 0
+water	114:20	0:0	10	c
+op	114:21	0:0	10	->
+water	114:23	0:0	10	switch_feed_streams
+op	114:42	0:0	10	[
+water	114:43	0:0	10	i
+op	114:44	0:0	10	]
+op	114:46	0:0	10	>=
+water	114:49	0:0	10	0
+stmts	115:20	115:50	9	
+water	115:20	0:0	10	c
+op	115:21	0:0	10	->
+water	115:23	0:0	10	switch_feed_streams
+op	115:42	0:0	10	[
+water	115:43	0:0	10	i
+op	115:44	0:0	10	]
+op	115:46	0:0	10	=
+op	115:48	0:0	10	-
+water	115:49	0:0	10	1
+water	115:50	0:0	10	;
+water	116:12	0:0	8	}
+water	117:8	0:0	6	}
+water	118:4	0:0	4	}
+if	119:4	120:46	2	(c -> post == 0 && stream -> stream_type == STREAM_TYPE_LIVE)
+cond	119:8	119:47	3	c -> post == 0 && stream -> stream_type == STREAM_TYPE_LIVE
+water	119:8	0:0	4	c
+op	119:9	0:0	4	->
+water	119:11	0:0	4	post
+op	119:16	0:0	4	==
+water	119:19	0:0	4	0
+op	119:21	0:0	4	&&
+water	119:24	0:0	4	stream
+op	119:30	0:0	4	->
+water	119:32	0:0	4	stream_type
+op	119:44	0:0	4	==
+water	119:47	0:0	4	STREAM_TYPE_LIVE
+stmts	120:8	120:46	3	
+water	120:8	0:0	4	current_bandwidth
+op	120:26	0:0	4	+=
+water	120:29	0:0	4	stream
+op	120:35	0:0	4	->
+water	120:37	0:0	4	bandwidth
+water	120:46	0:0	4	;
+if	122:4	126:4	2	(stream -> feed_opened)
+cond	122:8	122:16	3	stream -> feed_opened
+water	122:8	0:0	4	stream
+op	122:14	0:0	4	->
+water	122:16	0:0	4	feed_opened
+stmts	122:29	126:4	3	
+water	122:29	0:0	4	{
+call	123:8	123:73	4	snprintf
+arg	123:17	123:20	5	msg
+water	123:17	0:0	6	msg
+arg	123:22	123:33	5	sizeof(msg)
+op	123:22	0:0	6	sizeof
+water	123:28	0:0	6	(
+water	123:29	0:0	6	msg
+water	123:32	0:0	6	)
+arg	123:35	123:73	5	"This feed is already being received."
+water	123:35	0:0	6	"This feed is already being received."
+water	123:74	0:0	4	;
+call	124:8	124:76	4	http_log
+arg	124:17	124:53	5	"Feed '%s' already being received\n"
+water	124:17	0:0	6	"Feed '%s' already being received\n"
+arg	124:55	124:76	5	stream->feed_filename
+water	124:55	0:0	6	stream
+op	124:61	0:0	6	->
+water	124:63	0:0	6	feed_filename
+water	124:77	0:0	4	;
+goto	125:8	125:23	4	send_error
+water	125:13	0:0	5	send_error
+water	126:4	0:0	4	}
+if	127:4	149:4	2	(c -> post == 0 && config . max_bandwidth < current_bandwidth)
+cond	127:8	127:47	3	c -> post == 0 && config . max_bandwidth < current_bandwidth
+water	127:8	0:0	4	c
+op	127:9	0:0	4	->
+water	127:11	0:0	4	post
+op	127:16	0:0	4	==
+water	127:19	0:0	4	0
+op	127:21	0:0	4	&&
+water	127:24	0:0	4	config
+op	127:30	0:0	4	.
+water	127:31	0:0	4	max_bandwidth
+op	127:45	0:0	4	<
+water	127:47	0:0	4	current_bandwidth
+stmts	127:66	149:4	3	
+water	127:66	0:0	4	{
+water	128:8	0:0	4	c
+op	128:9	0:0	4	->
+water	128:11	0:0	4	http_error
+op	128:22	0:0	4	=
+water	128:24	0:0	4	503
+water	128:27	0:0	4	;
+water	129:8	0:0	4	q
+op	129:10	0:0	4	=
+water	129:12	0:0	4	c
+op	129:13	0:0	4	->
+water	129:15	0:0	4	buffer
+water	129:21	0:0	4	;
+call	130:8	142:56	4	snprintf
+arg	130:17	130:18	5	q
+water	130:17	0:0	6	q
+arg	130:20	130:34	5	c->buffer_size
+water	130:20	0:0	6	c
+op	130:21	0:0	6	->
+water	130:23	0:0	6	buffer_size
+arg	131:22	141:42	5	"HTTP/1.0 503 Server too busy\r\n""Content-type: text/html\r\n""\r\n""<!DOCTYPE html>\n""<html><head><title>Too busy</title></head><body>\r\n""<p>The server is too busy to serve your request at ""this time.</p>\r\n""<p>The bandwidth being served (including your stream) ""is %"PRIu64"kbit/s, and this exceeds the limit of ""%"PRIu64"kbit/s.</p>\r\n""</body></html>\r\n"
+water	131:22	0:0	6	"HTTP/1.0 503 Server too busy\r\n"
+water	132:22	0:0	6	"Content-type: text/html\r\n"
+water	133:22	0:0	6	"\r\n"
+water	134:22	0:0	6	"<!DOCTYPE html>\n"
+water	135:22	0:0	6	"<html><head><title>Too busy</title></head><body>\r\n"
+water	136:22	0:0	6	"<p>The server is too busy to serve your request at "
+water	137:22	0:0	6	"this time.</p>\r\n"
+water	138:22	0:0	6	"<p>The bandwidth being served (including your stream) "
+water	139:22	0:0	6	"is %"
+water	139:28	0:0	6	PRIu64
+water	139:34	0:0	6	"kbit/s, and this exceeds the limit of "
+water	140:22	0:0	6	"%"
+water	140:25	0:0	6	PRIu64
+water	140:31	0:0	6	"kbit/s.</p>\r\n"
+water	141:22	0:0	6	"</body></html>\r\n"
+arg	142:17	142:34	5	current_bandwidth
+water	142:17	0:0	6	current_bandwidth
+arg	142:36	142:56	5	config.max_bandwidth
+water	142:36	0:0	6	config
+op	142:42	0:0	6	.
+water	142:43	0:0	6	max_bandwidth
+water	142:57	0:0	4	;
+water	143:8	0:0	4	q
+op	143:10	0:0	4	+=
+call	143:13	143:21	4	strlen
+arg	143:20	143:21	5	q
+water	143:20	0:0	6	q
+water	143:22	0:0	4	;
+water	145:8	0:0	4	c
+op	145:9	0:0	4	->
+water	145:11	0:0	4	buffer_ptr
+op	145:22	0:0	4	=
+water	145:24	0:0	4	c
+op	145:25	0:0	4	->
+water	145:27	0:0	4	buffer
+water	145:33	0:0	4	;
+water	146:8	0:0	4	c
+op	146:9	0:0	4	->
+water	146:11	0:0	4	buffer_end
+op	146:22	0:0	4	=
+water	146:24	0:0	4	q
+water	146:25	0:0	4	;
+water	147:8	0:0	4	c
+op	147:9	0:0	4	->
+water	147:11	0:0	4	state
+op	147:17	0:0	4	=
+water	147:19	0:0	4	HTTPSTATE_SEND_HEADER
+water	147:40	0:0	4	;
+return	148:8	148:16	4	0
+water	148:15	0:0	5	0
+water	149:4	0:0	4	}
+if	150:4	264:4	2	(redir_type != REDIR_NONE)
+cond	150:8	150:22	3	redir_type != REDIR_NONE
+water	150:8	0:0	4	redir_type
+op	150:19	0:0	4	!=
+water	150:22	0:0	4	REDIR_NONE
+stmts	150:34	264:4	3	
+water	150:34	0:0	4	{
+decl	151:8	151:32	4	const char	*hostinfo
+op	151:29	0:0	4	=
+water	151:31	0:0	4	0
+for	152:8	161:8	4	(p = c -> buffer ;* p && * p != '\r' && * p != '\n';)
+forinit	152:13	152:26	5	p = c -> buffer ;
+water	152:13	0:0	6	p
+op	152:15	0:0	6	=
+water	152:17	0:0	6	c
+op	152:18	0:0	6	->
+water	152:20	0:0	6	buffer
+water	152:26	0:0	6	;
+cond	152:28	152:54	5	* p && * p != '\r' && * p != '\n'
+op	152:28	0:0	6	*
+water	152:29	0:0	6	p
+op	152:31	0:0	6	&&
+op	152:34	0:0	6	*
+water	152:35	0:0	6	p
+op	152:37	0:0	6	!=
+water	152:40	0:0	6	'\r'
+op	152:45	0:0	6	&&
+op	152:48	0:0	6	*
+water	152:49	0:0	6	p
+op	152:51	0:0	6	!=
+water	152:54	0:0	6	'\n'
+forexpr	0:0	0:0	5	
+stmts	152:62	161:8	5	
+water	152:62	0:0	6	{
+if	153:12	156:12	6	(av_strncasecmp (p ,"Host:" ,5 ) == 0)
+cond	153:16	153:49	7	av_strncasecmp (p ,"Host:" ,5 ) == 0
+call	153:16	153:44	8	av_strncasecmp
+arg	153:31	153:32	9	p
+water	153:31	0:0	10	p
+arg	153:34	153:41	9	"Host:"
+water	153:34	0:0	10	"Host:"
+arg	153:43	153:44	9	5
+water	153:43	0:0	10	5
+op	153:46	0:0	8	==
+water	153:49	0:0	8	0
+stmts	153:52	156:12	7	
+water	153:52	0:0	8	{
+water	154:16	0:0	8	hostinfo
+op	154:25	0:0	8	=
+water	154:27	0:0	8	p
+op	154:29	0:0	8	+
+water	154:31	0:0	8	5
+water	154:32	0:0	8	;
+break	155:16	155:21	8	
+water	156:12	0:0	8	}
+water	157:12	0:0	6	p
+op	157:14	0:0	6	=
+call	157:16	157:30	6	strchr
+arg	157:23	157:24	7	p
+water	157:23	0:0	8	p
+arg	157:26	157:30	7	'\n'
+water	157:26	0:0	8	'\n'
+water	157:31	0:0	6	;
+if	158:12	159:21	6	(! p)
+cond	158:16	158:17	7	! p
+op	158:16	0:0	8	!
+water	158:17	0:0	8	p
+stmts	159:16	159:21	7	
+break	159:16	159:21	8	
+water	160:12	0:0	6	p
+op	160:13	0:0	6	++
+water	160:15	0:0	6	;
+water	161:8	0:0	6	}
+if	162:8	261:8	4	(hostinfo)
+cond	162:12	162:12	5	hostinfo
+water	162:12	0:0	6	hostinfo
+stmts	162:22	261:8	5	
+water	162:22	0:0	6	{
+decl	163:12	163:21	6	char	*eoh
+decl	164:12	164:29	6	char	hostbuf[260]
+while	165:12	166:26	6	(av_isspace (* hostinfo ))
+cond	165:19	165:39	7	av_isspace (* hostinfo )
+call	165:19	165:39	8	av_isspace
+arg	165:30	165:39	9	*hostinfo
+op	165:30	0:0	10	*
+water	165:31	0:0	10	hostinfo
+stmts	166:16	166:26	7	
+water	166:16	0:0	8	hostinfo
+op	166:24	0:0	8	++
+water	166:26	0:0	8	;
+water	167:12	0:0	6	eoh
+op	167:16	0:0	6	=
+call	167:18	167:39	6	strchr
+arg	167:25	167:33	7	hostinfo
+water	167:25	0:0	8	hostinfo
+arg	167:35	167:39	7	'\n'
+water	167:35	0:0	8	'\n'
+water	167:40	0:0	6	;
+if	168:12	260:12	6	(eoh)
+cond	168:16	168:16	7	eoh
+water	168:16	0:0	8	eoh
+stmts	168:21	260:12	7	
+water	168:21	0:0	8	{
+if	169:16	170:25	8	(eoh [ - 1 ] == '\r')
+cond	169:20	169:31	9	eoh [ - 1 ] == '\r'
+water	169:20	0:0	10	eoh
+op	169:23	0:0	10	[
+op	169:24	0:0	10	-
+water	169:25	0:0	10	1
+op	169:26	0:0	10	]
+op	169:28	0:0	10	==
+water	169:31	0:0	10	'\r'
+stmts	170:20	170:25	9	
+water	170:20	0:0	10	eoh
+op	170:23	0:0	10	--
+water	170:25	0:0	10	;
+if	171:16	259:16	8	(eoh - hostinfo < sizeof ( hostbuf ) - 1)
+cond	171:20	171:55	9	eoh - hostinfo < sizeof ( hostbuf ) - 1
+water	171:20	0:0	10	eoh
+op	171:24	0:0	10	-
+water	171:26	0:0	10	hostinfo
+op	171:35	0:0	10	<
+op	171:37	0:0	10	sizeof
+water	171:43	0:0	10	(
+water	171:44	0:0	10	hostbuf
+water	171:51	0:0	10	)
+op	171:53	0:0	10	-
+water	171:55	0:0	10	1
+stmts	171:58	259:16	9	
+water	171:58	0:0	10	{
+call	172:20	172:60	10	memcpy
+arg	172:27	172:34	11	hostbuf
+water	172:27	0:0	12	hostbuf
+arg	172:36	172:44	11	hostinfo
+water	172:36	0:0	12	hostinfo
+arg	172:46	172:60	11	eoh-hostinfo
+water	172:46	0:0	12	eoh
+op	172:50	0:0	12	-
+water	172:52	0:0	12	hostinfo
+water	172:61	0:0	10	;
+water	173:20	0:0	10	hostbuf
+op	173:27	0:0	10	[
+water	173:28	0:0	10	eoh
+op	173:32	0:0	10	-
+water	173:34	0:0	10	hostinfo
+op	173:42	0:0	10	]
+op	173:44	0:0	10	=
+water	173:46	0:0	10	0
+water	173:47	0:0	10	;
+water	174:20	0:0	10	c
+op	174:21	0:0	10	->
+water	174:23	0:0	10	http_error
+op	174:34	0:0	10	=
+water	174:36	0:0	10	200
+water	174:39	0:0	10	;
+water	175:20	0:0	10	q
+op	175:22	0:0	10	=
+water	175:24	0:0	10	c
+op	175:25	0:0	10	->
+water	175:27	0:0	10	buffer
+water	175:33	0:0	10	;
+switch	176:20	253:20	10	(redir_type)
+cond	176:27	176:27	11	redir_type
+water	176:27	0:0	12	redir_type
+stmts	176:39	253:20	11	
+water	176:39	0:0	12	{
+label	177:20	177:34	12	case REDIR_ASX :
+call	178:24	185:75	12	snprintf
+arg	178:33	178:34	13	q
+water	178:33	0:0	14	q
+arg	178:36	178:50	13	c->buffer_size
+water	178:36	0:0	14	c
+op	178:37	0:0	14	->
+water	178:39	0:0	14	buffer_size
+arg	179:38	185:50	13	"HTTP/1.0 200 ASX Follows\r\n""Content-type: video/x-ms-asf\r\n""\r\n""<ASX Version=\"3\">\r\n""<ENTRY><REF HREF=\"http://%s/%s%s\"/></ENTRY>\r\n""</ASX>\r\n"
+water	179:38	0:0	14	"HTTP/1.0 200 ASX Follows\r\n"
+water	180:38	0:0	14	"Content-type: video/x-ms-asf\r\n"
+water	181:38	0:0	14	"\r\n"
+water	182:38	0:0	14	"<ASX Version=\"3\">\r\n"
+water	184:38	0:0	14	"<ENTRY><REF HREF=\"http://%s/%s%s\"/></ENTRY>\r\n"
+water	185:38	0:0	14	"</ASX>\r\n"
+arg	185:52	185:59	13	hostbuf
+water	185:52	0:0	14	hostbuf
+arg	185:61	185:69	13	filename
+water	185:61	0:0	14	filename
+arg	185:71	185:75	13	info
+water	185:71	0:0	14	info
+water	185:76	0:0	12	;
+water	186:24	0:0	12	q
+op	186:26	0:0	12	+=
+call	186:29	186:37	12	strlen
+arg	186:36	186:37	13	q
+water	186:36	0:0	14	q
+water	186:38	0:0	12	;
+break	187:24	187:29	12	
+label	188:20	188:34	12	case REDIR_RAM :
+call	189:24	194:83	12	snprintf
+arg	189:33	189:34	13	q
+water	189:33	0:0	14	q
+arg	189:36	189:50	13	c->buffer_size
+water	189:36	0:0	14	c
+op	189:37	0:0	14	->
+water	189:39	0:0	14	buffer_size
+arg	190:38	194:58	13	"HTTP/1.0 200 RAM Follows\r\n""Content-type: audio/x-pn-realaudio\r\n""\r\n""# Autogenerated by ffserver\r\n""http://%s/%s%s\r\n"
+water	190:38	0:0	14	"HTTP/1.0 200 RAM Follows\r\n"
+water	191:38	0:0	14	"Content-type: audio/x-pn-realaudio\r\n"
+water	192:38	0:0	14	"\r\n"
+water	193:38	0:0	14	"# Autogenerated by ffserver\r\n"
+water	194:38	0:0	14	"http://%s/%s%s\r\n"
+arg	194:60	194:67	13	hostbuf
+water	194:60	0:0	14	hostbuf
+arg	194:69	194:77	13	filename
+water	194:69	0:0	14	filename
+arg	194:79	194:83	13	info
+water	194:79	0:0	14	info
+water	194:84	0:0	12	;
+water	195:24	0:0	12	q
+op	195:26	0:0	12	+=
+call	195:29	195:37	12	strlen
+arg	195:36	195:37	13	q
+water	195:36	0:0	14	q
+water	195:38	0:0	12	;
+break	196:24	196:29	12	
+label	197:20	197:34	12	case REDIR_ASF :
+call	198:24	203:88	12	snprintf
+arg	198:33	198:34	13	q
+water	198:33	0:0	14	q
+arg	198:36	198:50	13	c->buffer_size
+water	198:36	0:0	14	c
+op	198:37	0:0	14	->
+water	198:39	0:0	14	buffer_size
+arg	199:38	203:63	13	"HTTP/1.0 200 ASF Redirect follows\r\n""Content-type: video/x-ms-asf\r\n""\r\n""[Reference]\r\n""Ref1=http://%s/%s%s\r\n"
+water	199:38	0:0	14	"HTTP/1.0 200 ASF Redirect follows\r\n"
+water	200:38	0:0	14	"Content-type: video/x-ms-asf\r\n"
+water	201:38	0:0	14	"\r\n"
+water	202:38	0:0	14	"[Reference]\r\n"
+water	203:38	0:0	14	"Ref1=http://%s/%s%s\r\n"
+arg	203:65	203:72	13	hostbuf
+water	203:65	0:0	14	hostbuf
+arg	203:74	203:82	13	filename
+water	203:74	0:0	14	filename
+arg	203:84	203:88	13	info
+water	203:84	0:0	14	info
+water	203:89	0:0	12	;
+water	204:24	0:0	12	q
+op	204:26	0:0	12	+=
+call	204:29	204:37	12	strlen
+arg	204:36	204:37	13	q
+water	204:36	0:0	14	q
+water	204:38	0:0	12	;
+break	205:24	205:29	12	
+label	206:20	206:35	12	case REDIR_RTSP :
+water	207:24	0:0	12	{
+decl	208:28	208:50	12	char	hostname[256]
+water	208:46	0:0	12	,
+decl	208:28	208:50	12	char	*p
+call	210:28	210:74	12	av_strlcpy
+arg	210:39	210:47	13	hostname
+water	210:39	0:0	14	hostname
+arg	210:49	210:56	13	hostbuf
+water	210:49	0:0	14	hostbuf
+arg	210:58	210:74	13	sizeof(hostname)
+op	210:58	0:0	14	sizeof
+water	210:64	0:0	14	(
+water	210:65	0:0	14	hostname
+water	210:73	0:0	14	)
+water	210:75	0:0	12	;
+water	211:28	0:0	12	p
+op	211:30	0:0	12	=
+call	211:32	211:53	12	strrchr
+arg	211:40	211:48	13	hostname
+water	211:40	0:0	14	hostname
+arg	211:50	211:53	13	':'
+water	211:50	0:0	14	':'
+water	211:54	0:0	12	;
+if	212:28	213:41	12	(p)
+cond	212:32	212:32	13	p
+water	212:32	0:0	14	p
+stmts	213:32	213:41	13	
+op	213:32	0:0	14	*
+water	213:33	0:0	14	p
+op	213:35	0:0	14	=
+water	213:37	0:0	14	'\0'
+water	213:41	0:0	14	;
+call	214:28	219:117	12	snprintf
+arg	214:37	214:38	13	q
+water	214:37	0:0	14	q
+arg	214:40	214:54	13	c->buffer_size
+water	214:40	0:0	14	c
+op	214:41	0:0	14	->
+water	214:43	0:0	14	buffer_size
+arg	215:42	219:63	13	"HTTP/1.0 200 RTSP Redirect follows\r\n""Content-type: application/x-rtsp\r\n""\r\n""rtsp://%s:%d/%s\r\n"
+water	215:42	0:0	14	"HTTP/1.0 200 RTSP Redirect follows\r\n"
+water	217:42	0:0	14	"Content-type: application/x-rtsp\r\n"
+water	218:42	0:0	14	"\r\n"
+water	219:42	0:0	14	"rtsp://%s:%d/%s\r\n"
+arg	219:65	219:73	13	hostname
+water	219:65	0:0	14	hostname
+arg	219:75	219:107	13	ntohs(config.rtsp_addr.sin_port)
+call	219:75	219:106	14	ntohs
+arg	219:81	219:106	15	config.rtsp_addr.sin_port
+water	219:81	0:0	16	config
+op	219:87	0:0	16	.
+water	219:88	0:0	16	rtsp_addr
+op	219:97	0:0	16	.
+water	219:98	0:0	16	sin_port
+arg	219:109	219:117	13	filename
+water	219:109	0:0	14	filename
+water	219:118	0:0	12	;
+water	220:28	0:0	12	q
+op	220:30	0:0	12	+=
+call	220:33	220:41	12	strlen
+arg	220:40	220:41	13	q
+water	220:40	0:0	14	q
+water	220:42	0:0	12	;
+water	221:24	0:0	12	}
+break	222:24	222:29	12	
+label	223:20	223:34	12	case REDIR_SDP :
+water	224:24	0:0	12	{
+decl	225:28	225:45	12	uint8_t	*sdp_data
+decl	226:28	226:45	12	int	sdp_data_size
+decl	227:28	227:41	12	socklen_t	len
+decl	228:28	228:54	12	struct sockaddr_in	my_addr
+call	229:28	232:48	12	snprintf
+arg	229:37	229:38	13	q
+water	229:37	0:0	14	q
+arg	229:40	229:54	13	c->buffer_size
+water	229:40	0:0	14	c
+op	229:41	0:0	14	->
+water	229:43	0:0	14	buffer_size
+arg	230:42	232:48	13	"HTTP/1.0 200 OK\r\n""Content-type: application/sdp\r\n""\r\n"
+water	230:42	0:0	14	"HTTP/1.0 200 OK\r\n"
+water	231:42	0:0	14	"Content-type: application/sdp\r\n"
+water	232:42	0:0	14	"\r\n"
+water	232:49	0:0	12	;
+water	233:28	0:0	12	q
+op	233:30	0:0	12	+=
+call	233:33	233:41	12	strlen
+arg	233:40	233:41	13	q
+water	233:40	0:0	14	q
+water	233:42	0:0	12	;
+water	234:28	0:0	12	len
+op	234:32	0:0	12	=
+op	234:34	0:0	12	sizeof
+water	234:40	0:0	12	(
+water	234:41	0:0	12	my_addr
+water	234:48	0:0	12	)
+water	234:49	0:0	12	;
+if	236:28	237:66	12	(getsockname (c -> fd ,( struct sockaddr * ) & my_addr ,& len ))
+cond	236:32	236:84	13	getsockname (c -> fd ,( struct sockaddr * ) & my_addr ,& len )
+call	236:32	236:84	14	getsockname
+arg	236:44	236:49	15	c->fd
+water	236:44	0:0	16	c
+op	236:45	0:0	16	->
+water	236:47	0:0	16	fd
+arg	236:51	236:78	15	(structsockaddr*)&my_addr
+water	236:51	0:0	16	(
+water	236:52	0:0	16	struct
+water	236:59	0:0	16	sockaddr
+op	236:68	0:0	16	*
+water	236:69	0:0	16	)
+op	236:70	0:0	16	&
+water	236:71	0:0	16	my_addr
+arg	236:80	236:84	15	&len
+op	236:80	0:0	16	&
+water	236:81	0:0	16	len
+stmts	237:32	237:66	13	
+call	237:32	237:65	14	http_log
+arg	237:41	237:65	15	"getsockname() failed\n"
+water	237:41	0:0	16	"getsockname() failed\n"
+water	237:66	0:0	14	;
+water	239:28	0:0	12	sdp_data_size
+op	239:42	0:0	12	=
+call	239:44	241:84	12	prepare_sdp_description
+arg	239:68	239:74	13	stream
+water	239:68	0:0	14	stream
+arg	240:68	240:77	13	&sdp_data
+op	240:68	0:0	14	&
+water	240:69	0:0	14	sdp_data
+arg	241:68	241:84	13	my_addr.sin_addr
+water	241:68	0:0	14	my_addr
+op	241:75	0:0	14	.
+water	241:76	0:0	14	sin_addr
+water	241:85	0:0	12	;
+if	242:28	247:28	12	(sdp_data_size > 0)
+cond	242:32	242:48	13	sdp_data_size > 0
+water	242:32	0:0	14	sdp_data_size
+op	242:46	0:0	14	>
+water	242:48	0:0	14	0
+stmts	242:51	247:28	13	
+water	242:51	0:0	14	{
+call	243:32	243:65	14	memcpy
+arg	243:39	243:40	15	q
+water	243:39	0:0	16	q
+arg	243:42	243:50	15	sdp_data
+water	243:42	0:0	16	sdp_data
+arg	243:52	243:65	15	sdp_data_size
+water	243:52	0:0	16	sdp_data_size
+water	243:66	0:0	14	;
+water	244:32	0:0	14	q
+op	244:34	0:0	14	+=
+water	244:37	0:0	14	sdp_data_size
+water	244:50	0:0	14	;
+op	245:32	0:0	14	*
+water	245:33	0:0	14	q
+op	245:35	0:0	14	=
+water	245:37	0:0	14	'\0'
+water	245:41	0:0	14	;
+call	246:32	246:50	14	av_freep
+arg	246:41	246:50	15	&sdp_data
+op	246:41	0:0	16	&
+water	246:42	0:0	16	sdp_data
+water	246:51	0:0	14	;
+water	247:28	0:0	14	}
+water	248:24	0:0	12	}
+break	249:24	249:29	12	
+label	250:20	250:27	12	default :
+call	251:24	251:30	12	abort
+water	251:31	0:0	12	;
+break	252:24	252:29	12	
+water	253:20	0:0	12	}
+water	255:20	0:0	10	c
+op	255:21	0:0	10	->
+water	255:23	0:0	10	buffer_ptr
+op	255:34	0:0	10	=
+water	255:36	0:0	10	c
+op	255:37	0:0	10	->
+water	255:39	0:0	10	buffer
+water	255:45	0:0	10	;
+water	256:20	0:0	10	c
+op	256:21	0:0	10	->
+water	256:23	0:0	10	buffer_end
+op	256:34	0:0	10	=
+water	256:36	0:0	10	q
+water	256:37	0:0	10	;
+water	257:20	0:0	10	c
+op	257:21	0:0	10	->
+water	257:23	0:0	10	state
+op	257:29	0:0	10	=
+water	257:31	0:0	10	HTTPSTATE_SEND_HEADER
+water	257:52	0:0	10	;
+return	258:20	258:28	10	0
+water	258:27	0:0	11	0
+water	259:16	0:0	10	}
+water	260:12	0:0	8	}
+water	261:8	0:0	6	}
+call	262:8	262:61	4	snprintf
+arg	262:17	262:20	5	msg
+water	262:17	0:0	6	msg
+arg	262:22	262:33	5	sizeof(msg)
+op	262:22	0:0	6	sizeof
+water	262:28	0:0	6	(
+water	262:29	0:0	6	msg
+water	262:32	0:0	6	)
+arg	262:35	262:61	5	"ASX/RAM file not handled"
+water	262:35	0:0	6	"ASX/RAM file not handled"
+water	262:62	0:0	4	;
+goto	263:8	263:23	4	send_error
+water	263:13	0:0	5	send_error
+water	264:4	0:0	4	}
+water	265:4	0:0	2	stream
+op	265:10	0:0	2	->
+water	265:12	0:0	2	conns_served
+op	265:24	0:0	2	++
+water	265:26	0:0	2	;
+if	267:4	320:4	2	(c -> post)
+cond	267:8	267:11	3	c -> post
+water	267:8	0:0	4	c
+op	267:9	0:0	4	->
+water	267:11	0:0	4	post
+stmts	267:17	320:4	3	
+water	267:17	0:0	4	{
+if	269:8	312:8	4	(! stream -> is_feed)
+cond	269:12	269:21	5	! stream -> is_feed
+op	269:12	0:0	6	!
+water	269:13	0:0	6	stream
+op	269:19	0:0	6	->
+water	269:21	0:0	6	is_feed
+stmts	269:30	312:8	5	
+water	269:30	0:0	6	{
+decl	272:12	272:35	6	const char	*logline
+op	272:32	0:0	6	=
+water	272:34	0:0	6	0
+decl	273:12	273:29	6	int	client_id
+op	273:26	0:0	6	=
+water	273:28	0:0	6	0
+for	274:12	285:12	6	(p = c -> buffer ;* p && * p != '\r' && * p != '\n';)
+forinit	274:17	274:30	7	p = c -> buffer ;
+water	274:17	0:0	8	p
+op	274:19	0:0	8	=
+water	274:21	0:0	8	c
+op	274:22	0:0	8	->
+water	274:24	0:0	8	buffer
+water	274:30	0:0	8	;
+cond	274:32	274:58	7	* p && * p != '\r' && * p != '\n'
+op	274:32	0:0	8	*
+water	274:33	0:0	8	p
+op	274:35	0:0	8	&&
+op	274:38	0:0	8	*
+water	274:39	0:0	8	p
+op	274:41	0:0	8	!=
+water	274:44	0:0	8	'\r'
+op	274:49	0:0	8	&&
+op	274:52	0:0	8	*
+water	274:53	0:0	8	p
+op	274:55	0:0	8	!=
+water	274:58	0:0	8	'\n'
+forexpr	0:0	0:0	7	
+stmts	274:66	285:12	7	
+water	274:66	0:0	8	{
+if	275:16	278:16	8	(av_strncasecmp (p ,"Pragma: log-line=" ,17 ) == 0)
+cond	275:20	275:66	9	av_strncasecmp (p ,"Pragma: log-line=" ,17 ) == 0
+call	275:20	275:61	10	av_strncasecmp
+arg	275:35	275:36	11	p
+water	275:35	0:0	12	p
+arg	275:38	275:57	11	"Pragma: log-line="
+water	275:38	0:0	12	"Pragma: log-line="
+arg	275:59	275:61	11	17
+water	275:59	0:0	12	17
+op	275:63	0:0	10	==
+water	275:66	0:0	10	0
+stmts	275:69	278:16	9	
+water	275:69	0:0	10	{
+water	276:20	0:0	10	logline
+op	276:28	0:0	10	=
+water	276:30	0:0	10	p
+water	276:31	0:0	10	;
+break	277:20	277:25	10	
+water	278:16	0:0	10	}
+if	279:16	280:53	8	(av_strncasecmp (p ,"Pragma: client-id=" ,18 ) == 0)
+cond	279:20	279:67	9	av_strncasecmp (p ,"Pragma: client-id=" ,18 ) == 0
+call	279:20	279:62	10	av_strncasecmp
+arg	279:35	279:36	11	p
+water	279:35	0:0	12	p
+arg	279:38	279:58	11	"Pragma: client-id="
+water	279:38	0:0	12	"Pragma: client-id="
+arg	279:60	279:62	11	18
+water	279:60	0:0	12	18
+op	279:64	0:0	10	==
+water	279:67	0:0	10	0
+stmts	280:20	280:53	9	
+water	280:20	0:0	10	client_id
+op	280:30	0:0	10	=
+call	280:32	280:52	10	strtol
+arg	280:39	280:45	11	p+18
+water	280:39	0:0	12	p
+op	280:41	0:0	12	+
+water	280:43	0:0	12	18
+arg	280:47	280:48	11	0
+water	280:47	0:0	12	0
+arg	280:50	280:52	11	10
+water	280:50	0:0	12	10
+water	280:53	0:0	10	;
+water	281:16	0:0	8	p
+op	281:18	0:0	8	=
+call	281:20	281:34	8	strchr
+arg	281:27	281:28	9	p
+water	281:27	0:0	10	p
+arg	281:30	281:34	9	'\n'
+water	281:30	0:0	10	'\n'
+water	281:35	0:0	8	;
+if	282:16	283:25	8	(! p)
+cond	282:20	282:21	9	! p
+op	282:20	0:0	10	!
+water	282:21	0:0	10	p
+stmts	283:20	283:25	9	
+break	283:20	283:25	10	
+water	284:16	0:0	8	p
+op	284:17	0:0	8	++
+water	284:19	0:0	8	;
+water	285:12	0:0	8	}
+if	286:12	295:12	6	(logline)
+cond	286:16	286:16	7	logline
+water	286:16	0:0	8	logline
+stmts	286:25	295:12	7	
+water	286:25	0:0	8	{
+decl	287:16	287:49	8	char	*eol
+op	287:26	0:0	8	=
+call	287:28	287:48	9	strchr
+arg	287:35	287:42	10	logline
+water	287:35	0:0	11	logline
+arg	287:44	287:48	10	'\n'
+water	287:44	0:0	11	'\n'
+water	288:16	0:0	8	logline
+op	288:24	0:0	8	+=
+water	288:27	0:0	8	17
+water	288:29	0:0	8	;
+if	289:16	294:16	8	(eol)
+cond	289:20	289:20	9	eol
+water	289:20	0:0	10	eol
+stmts	289:25	294:16	9	
+water	289:25	0:0	10	{
+if	290:20	291:29	10	(eol [ - 1 ] == '\r')
+cond	290:24	290:35	11	eol [ - 1 ] == '\r'
+water	290:24	0:0	12	eol
+op	290:27	0:0	12	[
+op	290:28	0:0	12	-
+water	290:29	0:0	12	1
+op	290:30	0:0	12	]
+op	290:32	0:0	12	==
+water	290:35	0:0	12	'\r'
+stmts	291:24	291:29	11	
+water	291:24	0:0	12	eol
+op	291:27	0:0	12	--
+water	291:29	0:0	12	;
+call	292:20	292:69	10	http_log
+arg	292:29	292:37	11	"%.*s\n"
+water	292:29	0:0	12	"%.*s\n"
+arg	292:39	292:60	11	(int)(eol-logline)
+call	292:39	292:59	12	(int)
+arg	292:46	292:59	13	eol-logline
+water	292:46	0:0	14	eol
+op	292:50	0:0	14	-
+water	292:52	0:0	14	logline
+arg	292:62	292:69	11	logline
+water	292:62	0:0	12	logline
+water	292:70	0:0	10	;
+water	293:20	0:0	10	c
+op	293:21	0:0	10	->
+water	293:23	0:0	10	suppress_log
+op	293:36	0:0	10	=
+water	293:38	0:0	10	1
+water	293:39	0:0	10	;
+water	294:16	0:0	10	}
+water	295:12	0:0	8	}
+call	297:12	297:54	6	http_log
+arg	297:21	297:43	7	"\nGot request:\n%s\n"
+water	297:21	0:0	8	"\nGot request:\n%s\n"
+arg	297:45	297:54	7	c->buffer
+water	297:45	0:0	8	c
+op	297:46	0:0	8	->
+water	297:48	0:0	8	buffer
+water	297:55	0:0	6	;
+if	299:12	308:12	6	(client_id &&extract_rates (ratebuf ,sizeof ( ratebuf ) ,c -> buffer ))
+cond	299:16	299:78	7	client_id &&extract_rates (ratebuf ,sizeof ( ratebuf ) ,c -> buffer )
+water	299:16	0:0	8	client_id
+op	299:26	0:0	8	&&
+call	299:29	299:78	8	extract_rates
+arg	299:43	299:50	9	ratebuf
+water	299:43	0:0	10	ratebuf
+arg	299:52	299:67	9	sizeof(ratebuf)
+op	299:52	0:0	10	sizeof
+water	299:58	0:0	10	(
+water	299:59	0:0	10	ratebuf
+water	299:66	0:0	10	)
+arg	299:69	299:78	9	c->buffer
+water	299:69	0:0	10	c
+op	299:70	0:0	10	->
+water	299:72	0:0	10	buffer
+stmts	299:81	308:12	7	
+water	299:81	0:0	8	{
+decl	300:16	300:33	8	HTTPContext	*wmpc
+for	302:16	305:16	8	(wmpc = first_http_ctx ;wmpc;wmpc = wmpc -> next)
+forinit	302:21	302:42	9	wmpc = first_http_ctx ;
+water	302:21	0:0	10	wmpc
+op	302:26	0:0	10	=
+water	302:28	0:0	10	first_http_ctx
+water	302:42	0:0	10	;
+cond	302:44	302:44	9	wmpc
+water	302:44	0:0	10	wmpc
+forexpr	302:50	302:63	9	wmpc = wmpc -> next
+water	302:50	0:0	10	wmpc
+op	302:55	0:0	10	=
+water	302:57	0:0	10	wmpc
+op	302:61	0:0	10	->
+water	302:63	0:0	10	next
+stmts	302:69	305:16	9	
+water	302:69	0:0	10	{
+if	303:20	304:29	10	(wmpc -> wmp_client_id == client_id)
+cond	303:24	303:47	11	wmpc -> wmp_client_id == client_id
+water	303:24	0:0	12	wmpc
+op	303:28	0:0	12	->
+water	303:30	0:0	12	wmp_client_id
+op	303:44	0:0	12	==
+water	303:47	0:0	12	client_id
+stmts	304:24	304:29	11	
+break	304:24	304:29	12	
+water	305:16	0:0	10	}
+if	306:16	307:44	8	(wmpc &&modify_current_stream (wmpc ,ratebuf ))
+cond	306:20	306:63	9	wmpc &&modify_current_stream (wmpc ,ratebuf )
+water	306:20	0:0	10	wmpc
+op	306:25	0:0	10	&&
+call	306:28	306:63	10	modify_current_stream
+arg	306:50	306:54	11	wmpc
+water	306:50	0:0	12	wmpc
+arg	306:56	306:63	11	ratebuf
+water	306:56	0:0	12	ratebuf
+stmts	307:20	307:44	9	
+water	307:20	0:0	10	wmpc
+op	307:24	0:0	10	->
+water	307:26	0:0	10	switch_pending
+op	307:41	0:0	10	=
+water	307:43	0:0	10	1
+water	307:44	0:0	10	;
+water	308:12	0:0	8	}
+call	309:12	309:65	6	snprintf
+arg	309:21	309:24	7	msg
+water	309:21	0:0	8	msg
+arg	309:26	309:37	7	sizeof(msg)
+op	309:26	0:0	8	sizeof
+water	309:32	0:0	8	(
+water	309:33	0:0	8	msg
+water	309:36	0:0	8	)
+arg	309:39	309:65	7	"POST command not handled"
+water	309:39	0:0	8	"POST command not handled"
+water	309:66	0:0	6	;
+water	310:12	0:0	6	c
+op	310:13	0:0	6	->
+water	310:15	0:0	6	stream
+op	310:22	0:0	6	=
+water	310:24	0:0	6	0
+water	310:25	0:0	6	;
+goto	311:12	311:27	6	send_error
+water	311:17	0:0	7	send_error
+water	312:8	0:0	6	}
+if	313:8	316:8	4	(http_start_receive_data (c ) < 0)
+cond	313:12	313:41	5	http_start_receive_data (c ) < 0
+call	313:12	313:37	6	http_start_receive_data
+arg	313:36	313:37	7	c
+water	313:36	0:0	8	c
+op	313:39	0:0	6	<
+water	313:41	0:0	6	0
+stmts	313:44	316:8	5	
+water	313:44	0:0	6	{
+call	314:12	314:60	6	snprintf
+arg	314:21	314:24	7	msg
+water	314:21	0:0	8	msg
+arg	314:26	314:37	7	sizeof(msg)
+op	314:26	0:0	8	sizeof
+water	314:32	0:0	8	(
+water	314:33	0:0	8	msg
+water	314:36	0:0	8	)
+arg	314:39	314:60	7	"could not open feed"
+water	314:39	0:0	8	"could not open feed"
+water	314:61	0:0	6	;
+goto	315:12	315:27	6	send_error
+water	315:17	0:0	7	send_error
+water	316:8	0:0	6	}
+water	317:8	0:0	4	c
+op	317:9	0:0	4	->
+water	317:11	0:0	4	http_error
+op	317:22	0:0	4	=
+water	317:24	0:0	4	0
+water	317:25	0:0	4	;
+water	318:8	0:0	4	c
+op	318:9	0:0	4	->
+water	318:11	0:0	4	state
+op	318:17	0:0	4	=
+water	318:19	0:0	4	HTTPSTATE_RECEIVE_DATA
+water	318:41	0:0	4	;
+return	319:8	319:16	4	0
+water	319:15	0:0	5	0
+water	320:4	0:0	4	}
+if	322:4	323:51	2	(strcmp (stream -> filename +strlen (stream -> filename ) - 4 ,".asf" ) == 0)
+cond	322:8	322:75	3	strcmp (stream -> filename +strlen (stream -> filename ) - 4 ,".asf" ) == 0
+call	322:8	322:70	4	strcmp
+arg	322:15	322:62	5	stream->filename+strlen(stream->filename)-4
+water	322:15	0:0	6	stream
+op	322:21	0:0	6	->
+water	322:23	0:0	6	filename
+op	322:32	0:0	6	+
+call	322:34	322:57	6	strlen
+arg	322:41	322:57	7	stream->filename
+water	322:41	0:0	8	stream
+op	322:47	0:0	8	->
+water	322:49	0:0	8	filename
+op	322:59	0:0	6	-
+water	322:61	0:0	6	4
+arg	322:64	322:70	5	".asf"
+water	322:64	0:0	6	".asf"
+op	322:72	0:0	4	==
+water	322:75	0:0	4	0
+stmts	323:8	323:51	3	
+call	323:8	323:50	4	http_log
+arg	323:17	323:39	5	"\nGot request:\n%s\n"
+water	323:17	0:0	6	"\nGot request:\n%s\n"
+arg	323:41	323:50	5	c->buffer
+water	323:41	0:0	6	c
+op	323:42	0:0	6	->
+water	323:44	0:0	6	buffer
+water	323:51	0:0	4	;
+if	325:4	326:24	2	(c -> stream -> stream_type == STREAM_TYPE_STATUS)
+cond	325:8	325:34	3	c -> stream -> stream_type == STREAM_TYPE_STATUS
+water	325:8	0:0	4	c
+op	325:9	0:0	4	->
+water	325:11	0:0	4	stream
+op	325:17	0:0	4	->
+water	325:19	0:0	4	stream_type
+op	325:31	0:0	4	==
+water	325:34	0:0	4	STREAM_TYPE_STATUS
+stmts	326:8	326:24	3	
+goto	326:8	326:24	4	send_status
+water	326:13	0:0	5	send_status
+if	328:4	331:4	2	(open_input_stream (c ,info ) < 0)
+cond	328:8	328:37	3	open_input_stream (c ,info ) < 0
+call	328:8	328:33	4	open_input_stream
+arg	328:26	328:27	5	c
+water	328:26	0:0	6	c
+arg	328:29	328:33	5	info
+water	328:29	0:0	6	info
+op	328:35	0:0	4	<
+water	328:37	0:0	4	0
+stmts	328:40	331:4	3	
+water	328:40	0:0	4	{
+call	329:8	329:86	4	snprintf
+arg	329:17	329:20	5	msg
+water	329:17	0:0	6	msg
+arg	329:22	329:33	5	sizeof(msg)
+op	329:22	0:0	6	sizeof
+water	329:28	0:0	6	(
+water	329:29	0:0	6	msg
+water	329:32	0:0	6	)
+arg	329:35	329:81	5	"Input stream corresponding to '%s' not found"
+water	329:35	0:0	6	"Input stream corresponding to '%s' not found"
+arg	329:83	329:86	5	url
+water	329:83	0:0	6	url
+water	329:87	0:0	4	;
+goto	330:8	330:23	4	send_error
+water	330:13	0:0	5	send_error
+water	331:4	0:0	4	}
+water	333:4	0:0	2	c
+op	333:5	0:0	2	->
+water	333:7	0:0	2	buffer
+op	333:13	0:0	2	[
+water	333:14	0:0	2	0
+op	333:15	0:0	2	]
+op	333:17	0:0	2	=
+water	333:19	0:0	2	0
+water	333:20	0:0	2	;
+call	334:4	334:64	2	av_strlcatf
+arg	334:16	334:25	3	c->buffer
+water	334:16	0:0	4	c
+op	334:17	0:0	4	->
+water	334:19	0:0	4	buffer
+arg	334:27	334:41	3	c->buffer_size
+water	334:27	0:0	4	c
+op	334:28	0:0	4	->
+water	334:30	0:0	4	buffer_size
+arg	334:43	334:64	3	"HTTP/1.0 200 OK\r\n"
+water	334:43	0:0	4	"HTTP/1.0 200 OK\r\n"
+water	334:65	0:0	2	;
+water	335:4	0:0	2	mime_type
+op	335:14	0:0	2	=
+water	335:16	0:0	2	c
+op	335:17	0:0	2	->
+water	335:19	0:0	2	stream
+op	335:25	0:0	2	->
+water	335:27	0:0	2	fmt
+op	335:30	0:0	2	->
+water	335:32	0:0	2	mime_type
+water	335:41	0:0	2	;
+if	336:4	337:48	2	(! mime_type)
+cond	336:8	336:9	3	! mime_type
+op	336:8	0:0	4	!
+water	336:9	0:0	4	mime_type
+stmts	337:8	337:48	3	
+water	337:8	0:0	4	mime_type
+op	337:18	0:0	4	=
+water	337:20	0:0	4	"application/x-octet-stream"
+water	337:48	0:0	4	;
+call	338:4	338:65	2	av_strlcatf
+arg	338:16	338:25	3	c->buffer
+water	338:16	0:0	4	c
+op	338:17	0:0	4	->
+water	338:19	0:0	4	buffer
+arg	338:27	338:41	3	c->buffer_size
+water	338:27	0:0	4	c
+op	338:28	0:0	4	->
+water	338:30	0:0	4	buffer_size
+arg	338:43	338:65	3	"Pragma: no-cache\r\n"
+water	338:43	0:0	4	"Pragma: no-cache\r\n"
+water	338:66	0:0	2	;
+if	340:4	344:4	2	(!strcmp (c -> stream -> fmt -> name ,"asf_stream" ))
+cond	340:8	340:49	3	!strcmp (c -> stream -> fmt -> name ,"asf_stream" )
+op	340:8	0:0	4	!
+call	340:9	340:49	4	strcmp
+arg	340:16	340:36	5	c->stream->fmt->name
+water	340:16	0:0	6	c
+op	340:17	0:0	6	->
+water	340:19	0:0	6	stream
+op	340:25	0:0	6	->
+water	340:27	0:0	6	fmt
+op	340:30	0:0	6	->
+water	340:32	0:0	6	name
+arg	340:37	340:49	5	"asf_stream"
+water	340:37	0:0	6	"asf_stream"
+stmts	340:52	344:4	3	
+water	340:52	0:0	4	{
+water	342:8	0:0	4	c
+op	342:9	0:0	4	->
+water	342:11	0:0	4	wmp_client_id
+op	342:25	0:0	4	=
+call	342:27	342:51	4	av_lfg_get
+arg	342:38	342:51	5	&random_state
+op	342:38	0:0	6	&
+water	342:39	0:0	6	random_state
+water	342:52	0:0	4	;
+call	343:8	343:181	4	av_strlcatf
+arg	343:20	343:29	5	c->buffer
+water	343:20	0:0	6	c
+op	343:21	0:0	6	->
+water	343:23	0:0	6	buffer
+arg	343:31	343:45	5	c->buffer_size
+water	343:31	0:0	6	c
+op	343:32	0:0	6	->
+water	343:34	0:0	6	buffer_size
+arg	343:47	343:163	5	"Server: Cougar 4.1.0.3923\r\nCache-Control: no-cache\r\nPragma: client-id=%d\r\nPragma: features=\"broadcast\"\r\n"
+water	343:47	0:0	6	"Server: Cougar 4.1.0.3923\r\nCache-Control: no-cache\r\nPragma: client-id=%d\r\nPragma: features=\"broadcast\"\r\n"
+arg	343:165	343:181	5	c->wmp_client_id
+water	343:165	0:0	6	c
+op	343:166	0:0	6	->
+water	343:168	0:0	6	wmp_client_id
+water	343:182	0:0	4	;
+water	344:4	0:0	4	}
+call	345:4	345:76	2	av_strlcatf
+arg	345:16	345:25	3	c->buffer
+water	345:16	0:0	4	c
+op	345:17	0:0	4	->
+water	345:19	0:0	4	buffer
+arg	345:27	345:41	3	c->buffer_size
+water	345:27	0:0	4	c
+op	345:28	0:0	4	->
+water	345:30	0:0	4	buffer_size
+arg	345:43	345:65	3	"Content-Type: %s\r\n"
+water	345:43	0:0	4	"Content-Type: %s\r\n"
+arg	345:67	345:76	3	mime_type
+water	345:67	0:0	4	mime_type
+water	345:77	0:0	2	;
+call	346:4	346:49	2	av_strlcatf
+arg	346:16	346:25	3	c->buffer
+water	346:16	0:0	4	c
+op	346:17	0:0	4	->
+water	346:19	0:0	4	buffer
+arg	346:27	346:41	3	c->buffer_size
+water	346:27	0:0	4	c
+op	346:28	0:0	4	->
+water	346:30	0:0	4	buffer_size
+arg	346:43	346:49	3	"\r\n"
+water	346:43	0:0	4	"\r\n"
+water	346:50	0:0	2	;
+water	347:4	0:0	2	q
+op	347:6	0:0	2	=
+water	347:8	0:0	2	c
+op	347:9	0:0	2	->
+water	347:11	0:0	2	buffer
+op	347:18	0:0	2	+
+call	347:20	347:36	2	strlen
+arg	347:27	347:36	3	c->buffer
+water	347:27	0:0	4	c
+op	347:28	0:0	4	->
+water	347:30	0:0	4	buffer
+water	347:37	0:0	2	;
+water	349:4	0:0	2	c
+op	349:5	0:0	2	->
+water	349:7	0:0	2	http_error
+op	349:18	0:0	2	=
+water	349:20	0:0	2	0
+water	349:21	0:0	2	;
+water	350:4	0:0	2	c
+op	350:5	0:0	2	->
+water	350:7	0:0	2	buffer_ptr
+op	350:18	0:0	2	=
+water	350:20	0:0	2	c
+op	350:21	0:0	2	->
+water	350:23	0:0	2	buffer
+water	350:29	0:0	2	;
+water	351:4	0:0	2	c
+op	351:5	0:0	2	->
+water	351:7	0:0	2	buffer_end
+op	351:18	0:0	2	=
+water	351:20	0:0	2	q
+water	351:21	0:0	2	;
+water	352:4	0:0	2	c
+op	352:5	0:0	2	->
+water	352:7	0:0	2	state
+op	352:13	0:0	2	=
+water	352:15	0:0	2	HTTPSTATE_SEND_HEADER
+water	352:36	0:0	2	;
+return	353:4	353:12	2	0
+water	353:11	0:0	3	0
+label	354:1	354:11	2	send_error :
+water	355:4	0:0	2	c
+op	355:5	0:0	2	->
+water	355:7	0:0	2	http_error
+op	355:18	0:0	2	=
+water	355:20	0:0	2	404
+water	355:23	0:0	2	;
+water	356:4	0:0	2	q
+op	356:6	0:0	2	=
+water	356:8	0:0	2	c
+op	356:9	0:0	2	->
+water	356:11	0:0	2	buffer
+water	356:17	0:0	2	;
+if	357:4	359:4	2	(!htmlencode (msg ,& encoded_msg ))
+cond	357:8	357:37	3	!htmlencode (msg ,& encoded_msg )
+op	357:8	0:0	4	!
+call	357:9	357:37	4	htmlencode
+arg	357:20	357:23	5	msg
+water	357:20	0:0	6	msg
+arg	357:25	357:37	5	&encoded_msg
+op	357:25	0:0	6	&
+water	357:26	0:0	6	encoded_msg
+stmts	357:40	359:4	3	
+water	357:40	0:0	4	{
+call	358:8	358:64	4	http_log
+arg	358:17	358:59	5	"Could not encode filename '%s' as HTML\n"
+water	358:17	0:0	6	"Could not encode filename '%s' as HTML\n"
+arg	358:61	358:64	5	msg
+water	358:61	0:0	6	msg
+water	358:65	0:0	4	;
+water	359:4	0:0	4	}
+call	360:4	371:74	2	snprintf
+arg	360:13	360:14	3	q
+water	360:13	0:0	4	q
+arg	360:16	360:30	3	c->buffer_size
+water	360:16	0:0	4	c
+op	360:17	0:0	4	->
+water	360:19	0:0	4	buffer_size
+arg	361:18	371:29	3	"HTTP/1.0 404 Not Found\r\n""Content-type: text/html\r\n""\r\n""<!DOCTYPE html>\n""<html>\n""<head>\n""<meta charset=\"UTF-8\">\n""<title>404 Not Found</title>\n""</head>\n""<body>%s</body>\n""</html>\n"
+water	361:18	0:0	4	"HTTP/1.0 404 Not Found\r\n"
+water	362:18	0:0	4	"Content-type: text/html\r\n"
+water	363:18	0:0	4	"\r\n"
+water	364:18	0:0	4	"<!DOCTYPE html>\n"
+water	365:18	0:0	4	"<html>\n"
+water	366:18	0:0	4	"<head>\n"
+water	367:18	0:0	4	"<meta charset=\"UTF-8\">\n"
+water	368:18	0:0	4	"<title>404 Not Found</title>\n"
+water	369:18	0:0	4	"</head>\n"
+water	370:18	0:0	4	"<body>%s</body>\n"
+water	371:18	0:0	4	"</html>\n"
+arg	371:31	371:74	3	encoded_msg?encoded_msg:"File not found"
+water	371:31	0:0	4	encoded_msg
+water	371:42	0:0	4	?
+water	371:44	0:0	4	encoded_msg
+water	371:56	0:0	4	:
+water	371:58	0:0	4	"File not found"
+water	371:75	0:0	2	;
+water	372:4	0:0	2	q
+op	372:6	0:0	2	+=
+call	372:9	372:17	2	strlen
+arg	372:16	372:17	3	q
+water	372:16	0:0	4	q
+water	372:18	0:0	2	;
+water	374:4	0:0	2	c
+op	374:5	0:0	2	->
+water	374:7	0:0	2	buffer_ptr
+op	374:18	0:0	2	=
+water	374:20	0:0	2	c
+op	374:21	0:0	2	->
+water	374:23	0:0	2	buffer
+water	374:29	0:0	2	;
+water	375:4	0:0	2	c
+op	375:5	0:0	2	->
+water	375:7	0:0	2	buffer_end
+op	375:18	0:0	2	=
+water	375:20	0:0	2	q
+water	375:21	0:0	2	;
+water	376:4	0:0	2	c
+op	376:5	0:0	2	->
+water	376:7	0:0	2	state
+op	376:13	0:0	2	=
+water	376:15	0:0	2	HTTPSTATE_SEND_HEADER
+water	376:36	0:0	2	;
+call	377:4	377:25	2	av_freep
+arg	377:13	377:25	3	&encoded_msg
+op	377:13	0:0	4	&
+water	377:14	0:0	4	encoded_msg
+water	377:26	0:0	2	;
+return	378:4	378:12	2	0
+water	378:11	0:0	3	0
+label	379:1	379:12	2	send_status :
+call	380:4	380:20	2	compute_status
+arg	380:19	380:20	3	c
+water	380:19	0:0	4	c
+water	380:21	0:0	2	;
+water	383:4	0:0	2	c
+op	383:5	0:0	2	->
+water	383:7	0:0	2	http_error
+op	383:18	0:0	2	=
+water	383:20	0:0	2	200
+water	383:23	0:0	2	;
+water	384:4	0:0	2	c
+op	384:5	0:0	2	->
+water	384:7	0:0	2	state
+op	384:13	0:0	2	=
+water	384:15	0:0	2	HTTPSTATE_SEND_HEADER
+water	384:36	0:0	2	;
+return	385:4	385:12	2	0
+water	385:11	0:0	3	0

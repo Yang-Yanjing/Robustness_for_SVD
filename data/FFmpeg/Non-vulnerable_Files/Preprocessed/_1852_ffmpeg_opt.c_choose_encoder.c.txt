@@ -1,0 +1,224 @@
+func	1:0	32:0	0	static int	choose_encoder
+params	1:25	0:0	1	
+param	1:26	1:43	2	OptionsContext *	o
+param	1:45	1:63	2	AVFormatContext *	s
+param	1:65	1:82	2	OutputStream *	ost
+stmnts	0:0	31:12	1	
+decl	3:4	3:57	2	enum AVMediaType	type
+op	3:26	0:0	2	=
+water	3:28	0:0	2	ost
+op	3:31	0:0	2	->
+water	3:33	0:0	2	st
+op	3:35	0:0	2	->
+water	3:37	0:0	2	codecpar
+op	3:45	0:0	2	->
+water	3:47	0:0	2	codec_type
+decl	4:4	4:27	2	char	*codec_name
+op	4:21	0:0	2	=
+water	4:23	0:0	2	NULL
+if	5:4	26:4	2	(type == AVMEDIA_TYPE_VIDEO || type == AVMEDIA_TYPE_AUDIO || type == AVMEDIA_TYPE_SUBTITLE)
+cond	5:8	5:76	3	type == AVMEDIA_TYPE_VIDEO || type == AVMEDIA_TYPE_AUDIO || type == AVMEDIA_TYPE_SUBTITLE
+water	5:8	0:0	4	type
+op	5:13	0:0	4	==
+water	5:16	0:0	4	AVMEDIA_TYPE_VIDEO
+op	5:35	0:0	4	||
+water	5:38	0:0	4	type
+op	5:43	0:0	4	==
+water	5:46	0:0	4	AVMEDIA_TYPE_AUDIO
+op	5:65	0:0	4	||
+water	5:68	0:0	4	type
+op	5:73	0:0	4	==
+water	5:76	0:0	4	AVMEDIA_TYPE_SUBTITLE
+stmts	5:99	26:4	3	
+water	5:99	0:0	4	{
+call	6:8	6:69	4	MATCH_PER_STREAM_OPT
+arg	6:29	6:40	5	codec_names
+water	6:29	0:0	6	codec_names
+arg	6:42	6:45	5	str
+water	6:42	0:0	6	str
+arg	6:47	6:57	5	codec_name
+water	6:47	0:0	6	codec_name
+arg	6:59	6:60	5	s
+water	6:59	0:0	6	s
+arg	6:62	6:69	5	ost->st
+water	6:62	0:0	6	ost
+op	6:65	0:0	6	->
+water	6:67	0:0	6	st
+water	6:70	0:0	4	;
+if	7:8	19:8	4	(! codec_name)
+cond	7:12	7:13	5	! codec_name
+op	7:12	0:0	6	!
+water	7:13	0:0	6	codec_name
+stmts	7:25	19:8	5	
+water	7:25	0:0	6	{
+water	8:12	0:0	6	ost
+op	8:15	0:0	6	->
+water	8:17	0:0	6	st
+op	8:19	0:0	6	->
+water	8:21	0:0	6	codecpar
+op	8:29	0:0	6	->
+water	8:31	0:0	6	codec_id
+op	8:40	0:0	6	=
+call	8:42	9:92	6	av_guess_codec
+arg	8:57	8:67	7	s->oformat
+water	8:57	0:0	8	s
+op	8:58	0:0	8	->
+water	8:60	0:0	8	oformat
+arg	8:69	8:73	7	NULL
+water	8:69	0:0	8	NULL
+arg	8:75	8:86	7	s->filename
+water	8:75	0:0	8	s
+op	8:76	0:0	8	->
+water	8:78	0:0	8	filename
+arg	9:57	9:61	7	NULL
+water	9:57	0:0	8	NULL
+arg	9:63	9:92	7	ost->st->codecpar->codec_type
+water	9:63	0:0	8	ost
+op	9:66	0:0	8	->
+water	9:68	0:0	8	st
+op	9:70	0:0	8	->
+water	9:72	0:0	8	codecpar
+op	9:80	0:0	8	->
+water	9:82	0:0	8	codec_type
+water	9:93	0:0	6	;
+water	10:12	0:0	6	ost
+op	10:15	0:0	6	->
+water	10:17	0:0	6	enc
+op	10:21	0:0	6	=
+call	10:23	10:71	6	avcodec_find_encoder
+arg	10:44	10:71	7	ost->st->codecpar->codec_id
+water	10:44	0:0	8	ost
+op	10:47	0:0	8	->
+water	10:49	0:0	8	st
+op	10:51	0:0	8	->
+water	10:53	0:0	8	codecpar
+op	10:61	0:0	8	->
+water	10:63	0:0	8	codec_id
+water	10:72	0:0	6	;
+if	11:12	18:12	6	(! ost -> enc)
+cond	11:16	11:22	7	! ost -> enc
+op	11:16	0:0	8	!
+water	11:17	0:0	8	ost
+op	11:20	0:0	8	->
+water	11:22	0:0	8	enc
+stmts	11:27	18:12	7	
+water	11:27	0:0	8	{
+call	12:16	16:68	8	av_log
+arg	12:23	12:27	9	NULL
+water	12:23	0:0	10	NULL
+arg	12:29	12:41	9	AV_LOG_FATAL
+water	12:29	0:0	10	AV_LOG_FATAL
+arg	12:43	14:80	9	"Automatic encoder selection failed for ""output stream #%d:%d. Default encoder for format %s (codec %s) is ""probably disabled. Please choose an encoder manually.\n"
+water	12:43	0:0	10	"Automatic encoder selection failed for "
+water	13:23	0:0	10	"output stream #%d:%d. Default encoder for format %s (codec %s) is "
+water	14:23	0:0	10	"probably disabled. Please choose an encoder manually.\n"
+arg	15:23	15:38	9	ost->file_index
+water	15:23	0:0	10	ost
+op	15:26	0:0	10	->
+water	15:28	0:0	10	file_index
+arg	15:40	15:50	9	ost->index
+water	15:40	0:0	10	ost
+op	15:43	0:0	10	->
+water	15:45	0:0	10	index
+arg	15:52	15:68	9	s->oformat->name
+water	15:52	0:0	10	s
+op	15:53	0:0	10	->
+water	15:55	0:0	10	oformat
+op	15:62	0:0	10	->
+water	15:64	0:0	10	name
+arg	16:23	16:68	9	avcodec_get_name(ost->st->codecpar->codec_id)
+call	16:23	16:67	10	avcodec_get_name
+arg	16:40	16:67	11	ost->st->codecpar->codec_id
+water	16:40	0:0	12	ost
+op	16:43	0:0	12	->
+water	16:45	0:0	12	st
+op	16:47	0:0	12	->
+water	16:49	0:0	12	codecpar
+op	16:57	0:0	12	->
+water	16:59	0:0	12	codec_id
+water	16:69	0:0	8	;
+return	17:16	17:48	8	AVERROR_ENCODER_NOT_FOUND
+water	17:23	0:0	9	AVERROR_ENCODER_NOT_FOUND
+water	18:12	0:0	8	}
+water	19:8	0:0	6	}
+else	19:10	20:32	4
+stmts	19:15	20:32	5	
+if	19:15	20:32	6	(!strcmp (codec_name ,"copy" ))
+cond	19:19	19:45	7	!strcmp (codec_name ,"copy" )
+op	19:19	0:0	8	!
+call	19:20	19:45	8	strcmp
+arg	19:27	19:37	9	codec_name
+water	19:27	0:0	10	codec_name
+arg	19:39	19:45	9	"copy"
+water	19:39	0:0	10	"copy"
+stmts	20:12	20:32	7	
+water	20:12	0:0	8	ost
+op	20:15	0:0	8	->
+water	20:17	0:0	8	stream_copy
+op	20:29	0:0	8	=
+water	20:31	0:0	8	1
+water	20:32	0:0	8	;
+else	21:8	24:8	4
+stmts	21:13	24:8	5	
+water	21:13	0:0	6	{
+water	22:12	0:0	6	ost
+op	22:15	0:0	6	->
+water	22:17	0:0	6	enc
+op	22:21	0:0	6	=
+call	22:23	22:85	6	find_codec_or_die
+arg	22:41	22:51	7	codec_name
+water	22:41	0:0	8	codec_name
+arg	22:53	22:82	7	ost->st->codecpar->codec_type
+water	22:53	0:0	8	ost
+op	22:56	0:0	8	->
+water	22:58	0:0	8	st
+op	22:60	0:0	8	->
+water	22:62	0:0	8	codecpar
+op	22:70	0:0	8	->
+water	22:72	0:0	8	codec_type
+arg	22:84	22:85	7	1
+water	22:84	0:0	8	1
+water	22:86	0:0	6	;
+water	23:12	0:0	6	ost
+op	23:15	0:0	6	->
+water	23:17	0:0	6	st
+op	23:19	0:0	6	->
+water	23:21	0:0	6	codecpar
+op	23:29	0:0	6	->
+water	23:31	0:0	6	codec_id
+op	23:40	0:0	6	=
+water	23:42	0:0	6	ost
+op	23:45	0:0	6	->
+water	23:47	0:0	6	enc
+op	23:50	0:0	6	->
+water	23:52	0:0	6	id
+water	23:54	0:0	6	;
+water	24:8	0:0	6	}
+water	25:8	0:0	4	ost
+op	25:11	0:0	4	->
+water	25:13	0:0	4	encoding_needed
+op	25:29	0:0	4	=
+op	25:31	0:0	4	!
+water	25:32	0:0	4	ost
+op	25:35	0:0	4	->
+water	25:37	0:0	4	stream_copy
+water	25:48	0:0	4	;
+water	26:4	0:0	4	}
+else	26:6	30:4	2
+stmts	26:11	30:4	3	
+water	26:11	0:0	4	{
+water	28:8	0:0	4	ost
+op	28:11	0:0	4	->
+water	28:13	0:0	4	stream_copy
+op	28:29	0:0	4	=
+water	28:31	0:0	4	1
+water	28:32	0:0	4	;
+water	29:8	0:0	4	ost
+op	29:11	0:0	4	->
+water	29:13	0:0	4	encoding_needed
+op	29:29	0:0	4	=
+water	29:31	0:0	4	0
+water	29:32	0:0	4	;
+water	30:4	0:0	4	}
+return	31:4	31:12	2	0
+water	31:11	0:0	3	0

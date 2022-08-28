@@ -1,0 +1,168 @@
+func	1:0	38:0	0	static int	yae_align
+params	1:20	0:0	1	
+param	1:21	1:40	2	AudioFragment *	frag
+param	2:21	2:46	2	const AudioFragment *	prev
+param	3:21	3:37	2	const int	window
+param	4:21	4:40	2	const int	delta_max
+param	5:21	5:36	2	const int	drift
+param	6:21	6:43	2	FFTSample *	correlation
+param	7:21	7:49	2	RDFTContext *	complex_to_real
+stmnts	0:0	37:22	1	
+decl	9:4	9:34	2	int	best_offset
+op	9:26	0:0	2	=
+op	9:28	0:0	2	-
+water	9:29	0:0	2	drift
+decl	10:4	10:36	2	FFTSample	best_metric
+op	10:26	0:0	2	=
+op	10:28	0:0	2	-
+water	10:29	0:0	2	FLT_MAX
+decl	11:4	11:20	2	FFTSample	*xcorr
+decl	12:4	12:10	2	int	i0
+decl	13:4	13:10	2	int	i1
+decl	14:4	14:9	2	int	i
+call	15:4	19:29	2	yae_xcorr_via_rdft
+arg	15:23	15:34	3	correlation
+water	15:23	0:0	4	correlation
+arg	16:23	16:38	3	complex_to_real
+water	16:23	0:0	4	complex_to_real
+arg	17:23	17:53	3	(constFFTComplex*)prev->xdat
+water	17:23	0:0	4	(
+water	17:24	0:0	4	const
+water	17:30	0:0	4	FFTComplex
+op	17:41	0:0	4	*
+water	17:42	0:0	4	)
+water	17:43	0:0	4	prev
+op	17:47	0:0	4	->
+water	17:49	0:0	4	xdat
+arg	18:23	18:53	3	(constFFTComplex*)frag->xdat
+water	18:23	0:0	4	(
+water	18:24	0:0	4	const
+water	18:30	0:0	4	FFTComplex
+op	18:41	0:0	4	*
+water	18:42	0:0	4	)
+water	18:43	0:0	4	frag
+op	18:47	0:0	4	->
+water	18:49	0:0	4	xdat
+arg	19:23	19:29	3	window
+water	19:23	0:0	4	window
+water	19:30	0:0	2	;
+water	21:4	0:0	2	i0
+op	21:7	0:0	2	=
+call	21:9	21:48	2	FFMAX
+arg	21:15	21:45	3	window/2-delta_max-drift
+water	21:15	0:0	4	window
+op	21:22	0:0	4	/
+water	21:24	0:0	4	2
+op	21:26	0:0	4	-
+water	21:28	0:0	4	delta_max
+op	21:38	0:0	4	-
+water	21:40	0:0	4	drift
+arg	21:47	21:48	3	0
+water	21:47	0:0	4	0
+water	21:49	0:0	2	;
+water	22:4	0:0	2	i0
+op	22:7	0:0	2	=
+call	22:9	22:25	2	FFMIN
+arg	22:15	22:17	3	i0
+water	22:15	0:0	4	i0
+arg	22:19	22:25	3	window
+water	22:19	0:0	4	window
+water	22:26	0:0	2	;
+water	23:4	0:0	2	i1
+op	23:7	0:0	2	=
+call	23:9	23:67	2	FFMIN
+arg	23:15	23:45	3	window/2+delta_max-drift
+water	23:15	0:0	4	window
+op	23:22	0:0	4	/
+water	23:24	0:0	4	2
+op	23:26	0:0	4	+
+water	23:28	0:0	4	delta_max
+op	23:38	0:0	4	-
+water	23:40	0:0	4	drift
+arg	23:47	23:67	3	window-window/16
+water	23:47	0:0	4	window
+op	23:54	0:0	4	-
+water	23:56	0:0	4	window
+op	23:63	0:0	4	/
+water	23:65	0:0	4	16
+water	23:68	0:0	2	;
+water	24:4	0:0	2	i1
+op	24:7	0:0	2	=
+call	24:9	24:20	2	FFMAX
+arg	24:15	24:17	3	i1
+water	24:15	0:0	4	i1
+arg	24:19	24:20	3	0
+water	24:19	0:0	4	0
+water	24:21	0:0	2	;
+water	26:4	0:0	2	xcorr
+op	26:10	0:0	2	=
+water	26:12	0:0	2	correlation
+op	26:24	0:0	2	+
+water	26:26	0:0	2	i0
+water	26:28	0:0	2	;
+for	27:4	36:4	2	(i = i0 ;i < i1;i ++ , xcorr ++)
+forinit	27:9	27:15	3	i = i0 ;
+water	27:9	0:0	4	i
+op	27:11	0:0	4	=
+water	27:13	0:0	4	i0
+water	27:15	0:0	4	;
+cond	27:17	27:21	3	i < i1
+water	27:17	0:0	4	i
+op	27:19	0:0	4	<
+water	27:21	0:0	4	i1
+forexpr	27:25	27:35	3	i ++ , xcorr ++
+water	27:25	0:0	4	i
+op	27:26	0:0	4	++
+water	27:28	0:0	4	,
+water	27:30	0:0	4	xcorr
+op	27:35	0:0	4	++
+stmts	27:39	36:4	3	
+water	27:39	0:0	4	{
+decl	28:8	28:33	4	FFTSample	metric
+op	28:25	0:0	4	=
+op	28:27	0:0	4	*
+water	28:28	0:0	4	xcorr
+decl	30:8	30:49	4	FFTSample	drifti
+op	30:25	0:0	4	=
+call	30:27	30:48	5	(FFTSample)
+arg	30:39	30:48	6	drift+i
+water	30:39	0:0	7	drift
+op	30:45	0:0	7	+
+water	30:47	0:0	7	i
+water	31:8	0:0	4	metric
+op	31:15	0:0	4	*=
+water	31:18	0:0	4	drifti
+call	31:25	31:45	4	*(FFTSample)
+arg	31:39	31:45	5	i-i0
+water	31:39	0:0	6	i
+op	31:41	0:0	6	-
+water	31:43	0:0	6	i0
+call	31:47	31:67	4	*(FFTSample)
+arg	31:61	31:67	5	i1-i
+water	31:61	0:0	6	i1
+op	31:64	0:0	6	-
+water	31:66	0:0	6	i
+water	31:68	0:0	4	;
+if	32:8	35:8	4	(metric > best_metric)
+cond	32:12	32:21	5	metric > best_metric
+water	32:12	0:0	6	metric
+op	32:19	0:0	6	>
+water	32:21	0:0	6	best_metric
+stmts	32:34	35:8	5	
+water	32:34	0:0	6	{
+water	33:12	0:0	6	best_metric
+op	33:24	0:0	6	=
+water	33:26	0:0	6	metric
+water	33:32	0:0	6	;
+water	34:12	0:0	6	best_offset
+op	34:24	0:0	6	=
+water	34:26	0:0	6	i
+op	34:28	0:0	6	-
+water	34:30	0:0	6	window
+op	34:37	0:0	6	/
+water	34:39	0:0	6	2
+water	34:40	0:0	6	;
+water	35:8	0:0	6	}
+water	36:4	0:0	4	}
+return	37:4	37:22	2	best_offset
+water	37:11	0:0	3	best_offset

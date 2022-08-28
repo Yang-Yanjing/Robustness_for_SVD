@@ -1,0 +1,522 @@
+func	1:0	87:0	0	static int	mxf_read_packet_old
+params	1:30	0:0	1	
+param	1:31	1:49	2	AVFormatContext *	s
+param	1:51	1:64	2	AVPacket *	pkt
+stmnts	0:0	86:47	1	
+decl	3:4	3:17	2	KLVPacket	klv
+decl	4:4	4:34	2	MXFContext	*mxf
+op	4:20	0:0	2	=
+water	4:22	0:0	2	s
+op	4:23	0:0	2	->
+water	4:25	0:0	2	priv_data
+decl	5:4	5:11	2	int	ret
+while	6:4	85:4	2	(( ret =klv_read_packet (& klv ,s -> pb ) ) == 0)
+cond	6:11	6:51	3	( ret =klv_read_packet (& klv ,s -> pb ) ) == 0
+water	6:11	0:0	4	(
+water	6:12	0:0	4	ret
+op	6:16	0:0	4	=
+call	6:18	6:45	4	klv_read_packet
+arg	6:34	6:38	5	&klv
+op	6:34	0:0	6	&
+water	6:35	0:0	6	klv
+arg	6:40	6:45	5	s->pb
+water	6:40	0:0	6	s
+op	6:41	0:0	6	->
+water	6:43	0:0	6	pb
+water	6:46	0:0	4	)
+op	6:48	0:0	4	==
+water	6:51	0:0	4	0
+stmts	6:54	85:4	3	
+water	6:54	0:0	4	{
+call	7:8	7:43	4	PRINT_KEY
+arg	7:18	7:19	5	s
+water	7:18	0:0	6	s
+arg	7:21	7:34	5	"read packet"
+water	7:21	0:0	6	"read packet"
+arg	7:36	7:43	5	klv.key
+water	7:36	0:0	6	klv
+op	7:39	0:0	6	.
+water	7:40	0:0	6	key
+water	7:44	0:0	4	;
+call	8:8	8:92	4	av_log
+arg	8:15	8:16	5	s
+water	8:15	0:0	6	s
+arg	8:18	8:30	5	AV_LOG_TRACE
+water	8:18	0:0	6	AV_LOG_TRACE
+arg	8:32	8:68	5	"size %"PRIu64" offset %#"PRIx64"\n"
+water	8:32	0:0	6	"size %"
+water	8:40	0:0	6	PRIu64
+water	8:46	0:0	6	" offset %#"
+water	8:58	0:0	6	PRIx64
+water	8:64	0:0	6	"\n"
+arg	8:70	8:80	5	klv.length
+water	8:70	0:0	6	klv
+op	8:73	0:0	6	.
+water	8:74	0:0	6	length
+arg	8:82	8:92	5	klv.offset
+water	8:82	0:0	6	klv
+op	8:85	0:0	6	.
+water	8:86	0:0	6	offset
+water	8:93	0:0	4	;
+if	9:8	16:8	4	(IS_KLV_KEY (klv . key ,mxf_encrypted_triplet_key ))
+cond	9:12	9:57	5	IS_KLV_KEY (klv . key ,mxf_encrypted_triplet_key )
+call	9:12	9:57	6	IS_KLV_KEY
+arg	9:23	9:30	7	klv.key
+water	9:23	0:0	8	klv
+op	9:26	0:0	8	.
+water	9:27	0:0	8	key
+arg	9:32	9:57	7	mxf_encrypted_triplet_key
+water	9:32	0:0	8	mxf_encrypted_triplet_key
+stmts	9:60	16:8	5	
+water	9:60	0:0	6	{
+water	10:12	0:0	6	ret
+op	10:16	0:0	6	=
+call	10:18	10:50	6	mxf_decrypt_triplet
+arg	10:38	10:39	7	s
+water	10:38	0:0	8	s
+arg	10:41	10:44	7	pkt
+water	10:41	0:0	8	pkt
+arg	10:46	10:50	7	&klv
+op	10:46	0:0	8	&
+water	10:47	0:0	8	klv
+water	10:51	0:0	6	;
+if	11:12	14:12	6	(ret < 0)
+cond	11:16	11:22	7	ret < 0
+water	11:16	0:0	8	ret
+op	11:20	0:0	8	<
+water	11:22	0:0	8	0
+stmts	11:25	14:12	7	
+water	11:25	0:0	8	{
+call	12:16	12:67	8	av_log
+arg	12:23	12:24	9	s
+water	12:23	0:0	10	s
+arg	12:26	12:38	9	AV_LOG_ERROR
+water	12:26	0:0	10	AV_LOG_ERROR
+arg	12:40	12:67	9	"invalid encoded triplet\n"
+water	12:40	0:0	10	"invalid encoded triplet\n"
+water	12:68	0:0	8	;
+return	13:16	13:26	8	ret
+water	13:23	0:0	9	ret
+water	14:12	0:0	8	}
+return	15:12	15:20	6	0
+water	15:19	0:0	7	0
+water	16:8	0:0	6	}
+if	17:8	82:8	4	(IS_KLV_KEY (klv . key ,mxf_essence_element_key ) ||IS_KLV_KEY (klv . key ,mxf_avid_essence_element_key ))
+cond	17:12	18:60	5	IS_KLV_KEY (klv . key ,mxf_essence_element_key ) ||IS_KLV_KEY (klv . key ,mxf_avid_essence_element_key )
+call	17:12	17:55	6	IS_KLV_KEY
+arg	17:23	17:30	7	klv.key
+water	17:23	0:0	8	klv
+op	17:26	0:0	8	.
+water	17:27	0:0	8	key
+arg	17:32	17:55	7	mxf_essence_element_key
+water	17:32	0:0	8	mxf_essence_element_key
+op	17:57	0:0	6	||
+call	18:12	18:60	6	IS_KLV_KEY
+arg	18:23	18:30	7	klv.key
+water	18:23	0:0	8	klv
+op	18:26	0:0	8	.
+water	18:27	0:0	8	key
+arg	18:32	18:60	7	mxf_avid_essence_element_key
+water	18:32	0:0	8	mxf_avid_essence_element_key
+stmts	18:63	82:8	5	
+water	18:63	0:0	6	{
+decl	19:12	19:53	6	int	index
+op	19:22	0:0	6	=
+call	19:24	19:52	7	mxf_get_stream_index
+arg	19:45	19:46	8	s
+water	19:45	0:0	9	s
+arg	19:48	19:52	8	&klv
+op	19:48	0:0	9	&
+water	19:49	0:0	9	klv
+decl	20:12	20:38	6	int64_t	next_ofs
+water	20:28	0:0	6	,
+decl	20:12	20:38	6	int64_t	next_klv
+decl	21:12	21:24	6	AVStream	*st
+decl	22:12	22:27	6	MXFTrack	*track
+decl	23:12	23:33	6	AVCodecContext	*codec
+if	24:12	29:12	6	(index < 0)
+cond	24:16	24:24	7	index < 0
+water	24:16	0:0	8	index
+op	24:22	0:0	8	<
+water	24:24	0:0	8	0
+stmts	24:27	29:12	7	
+water	24:27	0:0	8	{
+call	25:16	27:44	8	av_log
+arg	25:23	25:24	9	s
+water	25:23	0:0	10	s
+arg	25:26	25:38	9	AV_LOG_ERROR
+water	25:26	0:0	10	AV_LOG_ERROR
+arg	26:23	26:63	9	"error getting stream index %"PRIu32"\n"
+water	26:23	0:0	10	"error getting stream index %"
+water	26:53	0:0	10	PRIu32
+water	26:59	0:0	10	"\n"
+arg	27:23	27:44	9	AV_RB32(klv.key+12)
+call	27:23	27:43	10	AV_RB32
+arg	27:31	27:43	11	klv.key+12
+water	27:31	0:0	12	klv
+op	27:34	0:0	12	.
+water	27:35	0:0	12	key
+op	27:39	0:0	12	+
+water	27:41	0:0	12	12
+water	27:45	0:0	8	;
+goto	28:16	28:25	8	skip
+water	28:21	0:0	9	skip
+water	29:12	0:0	8	}
+water	30:12	0:0	6	st
+op	30:15	0:0	6	=
+water	30:17	0:0	6	s
+op	30:18	0:0	6	->
+water	30:20	0:0	6	streams
+op	30:27	0:0	6	[
+water	30:28	0:0	6	index
+op	30:33	0:0	6	]
+water	30:34	0:0	6	;
+water	31:12	0:0	6	track
+op	31:18	0:0	6	=
+water	31:20	0:0	6	st
+op	31:22	0:0	6	->
+water	31:24	0:0	6	priv_data
+water	31:33	0:0	6	;
+if	32:12	33:25	6	(s -> streams [ index ] -> discard == AVDISCARD_ALL)
+cond	32:16	32:46	7	s -> streams [ index ] -> discard == AVDISCARD_ALL
+water	32:16	0:0	8	s
+op	32:17	0:0	8	->
+water	32:19	0:0	8	streams
+op	32:26	0:0	8	[
+water	32:27	0:0	8	index
+op	32:32	0:0	8	]
+op	32:33	0:0	8	->
+water	32:35	0:0	8	discard
+op	32:43	0:0	8	==
+water	32:46	0:0	8	AVDISCARD_ALL
+stmts	33:16	33:25	7	
+goto	33:16	33:25	8	skip
+water	33:21	0:0	9	skip
+water	34:12	0:0	6	next_klv
+op	34:21	0:0	6	=
+call	34:23	34:38	6	avio_tell
+arg	34:33	34:38	7	s->pb
+water	34:33	0:0	8	s
+op	34:34	0:0	8	->
+water	34:36	0:0	8	pb
+op	34:40	0:0	6	+
+water	34:42	0:0	6	klv
+op	34:45	0:0	6	.
+water	34:46	0:0	6	length
+water	34:52	0:0	6	;
+water	35:12	0:0	6	next_ofs
+op	35:21	0:0	6	=
+call	35:23	35:64	6	mxf_set_current_edit_unit
+arg	35:49	35:52	7	mxf
+water	35:49	0:0	8	mxf
+arg	35:54	35:64	7	klv.offset
+water	35:54	0:0	8	klv
+op	35:57	0:0	8	.
+water	35:58	0:0	8	offset
+water	35:65	0:0	6	;
+if	36:12	45:12	6	(next_ofs >= 0 && next_klv > next_ofs)
+cond	36:16	36:44	7	next_ofs >= 0 && next_klv > next_ofs
+water	36:16	0:0	8	next_ofs
+op	36:25	0:0	8	>=
+water	36:28	0:0	8	0
+op	36:30	0:0	8	&&
+water	36:33	0:0	8	next_klv
+op	36:42	0:0	8	>
+water	36:44	0:0	8	next_ofs
+stmts	36:54	45:12	7	
+water	36:54	0:0	8	{
+call	39:16	43:60	8	avpriv_request_sample
+arg	39:38	39:39	9	s
+water	39:38	0:0	10	s
+arg	40:38	42:54	9	"OPAtom misinterpreted as OP1a?""KLV for edit unit %i extending into ""next edit unit"
+water	40:38	0:0	10	"OPAtom misinterpreted as OP1a?"
+water	41:38	0:0	10	"KLV for edit unit %i extending into "
+water	42:38	0:0	10	"next edit unit"
+arg	43:38	43:60	9	mxf->current_edit_unit
+water	43:38	0:0	10	mxf
+op	43:41	0:0	10	->
+water	43:43	0:0	10	current_edit_unit
+water	43:61	0:0	8	;
+water	44:16	0:0	8	klv
+op	44:19	0:0	8	.
+water	44:20	0:0	8	length
+op	44:27	0:0	8	=
+water	44:29	0:0	8	next_ofs
+op	44:38	0:0	8	-
+call	44:40	44:55	8	avio_tell
+arg	44:50	44:55	9	s->pb
+water	44:50	0:0	10	s
+op	44:51	0:0	10	->
+water	44:53	0:0	10	pb
+water	44:56	0:0	8	;
+water	45:12	0:0	8	}
+if	47:12	54:12	6	(klv . key [ 12 ] == 0 x06 && klv . key [ 13 ] == 0 x01 && klv . key [ 14 ] == 0 x10)
+cond	47:16	47:78	7	klv . key [ 12 ] == 0 x06 && klv . key [ 13 ] == 0 x01 && klv . key [ 14 ] == 0 x10
+water	47:16	0:0	8	klv
+op	47:19	0:0	8	.
+water	47:20	0:0	8	key
+op	47:23	0:0	8	[
+water	47:24	0:0	8	12
+op	47:26	0:0	8	]
+op	47:28	0:0	8	==
+water	47:31	0:0	8	0
+water	47:32	0:0	8	x06
+op	47:36	0:0	8	&&
+water	47:39	0:0	8	klv
+op	47:42	0:0	8	.
+water	47:43	0:0	8	key
+op	47:46	0:0	8	[
+water	47:47	0:0	8	13
+op	47:49	0:0	8	]
+op	47:51	0:0	8	==
+water	47:54	0:0	8	0
+water	47:55	0:0	8	x01
+op	47:59	0:0	8	&&
+water	47:62	0:0	8	klv
+op	47:65	0:0	8	.
+water	47:66	0:0	8	key
+op	47:69	0:0	8	[
+water	47:70	0:0	8	14
+op	47:72	0:0	8	]
+op	47:74	0:0	8	==
+water	47:77	0:0	8	0
+water	47:78	0:0	8	x10
+stmts	47:83	54:12	7	
+water	47:83	0:0	8	{
+water	48:16	0:0	8	ret
+op	48:20	0:0	8	=
+call	48:22	49:61	8	mxf_get_d10_aes3_packet
+arg	48:46	48:51	9	s->pb
+water	48:46	0:0	10	s
+op	48:47	0:0	10	->
+water	48:49	0:0	10	pb
+arg	48:53	48:70	9	s->streams[index]
+water	48:53	0:0	10	s
+op	48:54	0:0	10	->
+water	48:56	0:0	10	streams
+op	48:63	0:0	10	[
+water	48:64	0:0	10	index
+op	48:69	0:0	10	]
+arg	49:46	49:49	9	pkt
+water	49:46	0:0	10	pkt
+arg	49:51	49:61	9	klv.length
+water	49:51	0:0	10	klv
+op	49:54	0:0	10	.
+water	49:55	0:0	10	length
+water	49:62	0:0	8	;
+if	50:16	53:16	8	(ret < 0)
+cond	50:20	50:26	9	ret < 0
+water	50:20	0:0	10	ret
+op	50:24	0:0	10	<
+water	50:26	0:0	10	0
+stmts	50:29	53:16	9	
+water	50:29	0:0	10	{
+call	51:20	51:77	10	av_log
+arg	51:27	51:28	11	s
+water	51:27	0:0	12	s
+arg	51:30	51:42	11	AV_LOG_ERROR
+water	51:30	0:0	12	AV_LOG_ERROR
+arg	51:44	51:77	11	"error reading D-10 aes3 frame\n"
+water	51:44	0:0	12	"error reading D-10 aes3 frame\n"
+water	51:78	0:0	10	;
+return	52:20	52:30	10	ret
+water	52:27	0:0	11	ret
+water	53:16	0:0	10	}
+water	54:12	0:0	8	}
+else	54:14	58:12	6
+stmts	54:19	58:12	7	
+water	54:19	0:0	8	{
+water	55:16	0:0	8	ret
+op	55:20	0:0	8	=
+call	55:22	55:58	8	av_get_packet
+arg	55:36	55:41	9	s->pb
+water	55:36	0:0	10	s
+op	55:37	0:0	10	->
+water	55:39	0:0	10	pb
+arg	55:43	55:46	9	pkt
+water	55:43	0:0	10	pkt
+arg	55:48	55:58	9	klv.length
+water	55:48	0:0	10	klv
+op	55:51	0:0	10	.
+water	55:52	0:0	10	length
+water	55:59	0:0	8	;
+if	56:16	57:30	8	(ret < 0)
+cond	56:20	56:26	9	ret < 0
+water	56:20	0:0	10	ret
+op	56:24	0:0	10	<
+water	56:26	0:0	10	0
+stmts	57:20	57:30	9	
+return	57:20	57:30	10	ret
+water	57:27	0:0	11	ret
+water	58:12	0:0	8	}
+water	59:12	0:0	6	pkt
+op	59:15	0:0	6	->
+water	59:17	0:0	6	stream_index
+op	59:30	0:0	6	=
+water	59:32	0:0	6	index
+water	59:37	0:0	6	;
+water	60:12	0:0	6	pkt
+op	60:15	0:0	6	->
+water	60:17	0:0	6	pos
+op	60:21	0:0	6	=
+water	60:23	0:0	6	klv
+op	60:26	0:0	6	.
+water	60:27	0:0	6	offset
+water	60:33	0:0	6	;
+water	61:12	0:0	6	codec
+op	61:18	0:0	6	=
+water	61:20	0:0	6	st
+op	61:22	0:0	6	->
+water	61:24	0:0	6	codec
+water	61:29	0:0	6	;
+if	62:12	74:12	6	(codec -> codec_type == AVMEDIA_TYPE_VIDEO && next_ofs >= 0)
+cond	62:16	62:71	7	codec -> codec_type == AVMEDIA_TYPE_VIDEO && next_ofs >= 0
+water	62:16	0:0	8	codec
+op	62:21	0:0	8	->
+water	62:23	0:0	8	codec_type
+op	62:34	0:0	8	==
+water	62:37	0:0	8	AVMEDIA_TYPE_VIDEO
+op	62:56	0:0	8	&&
+water	62:59	0:0	8	next_ofs
+op	62:68	0:0	8	>=
+water	62:71	0:0	8	0
+stmts	62:74	74:12	7	
+water	62:74	0:0	8	{
+decl	65:16	65:56	8	MXFIndexTable	*t
+op	65:33	0:0	8	=
+op	65:35	0:0	8	&
+water	65:36	0:0	8	mxf
+op	65:39	0:0	8	->
+water	65:41	0:0	8	index_tables
+op	65:53	0:0	8	[
+water	65:54	0:0	8	0
+op	65:55	0:0	8	]
+if	66:16	69:16	8	(mxf -> nb_index_tables >= 1 && mxf -> current_edit_unit < t -> nb_ptses)
+cond	66:20	66:77	9	mxf -> nb_index_tables >= 1 && mxf -> current_edit_unit < t -> nb_ptses
+water	66:20	0:0	10	mxf
+op	66:23	0:0	10	->
+water	66:25	0:0	10	nb_index_tables
+op	66:41	0:0	10	>=
+water	66:44	0:0	10	1
+op	66:46	0:0	10	&&
+water	66:49	0:0	10	mxf
+op	66:52	0:0	10	->
+water	66:54	0:0	10	current_edit_unit
+op	66:72	0:0	10	<
+water	66:74	0:0	10	t
+op	66:75	0:0	10	->
+water	66:77	0:0	10	nb_ptses
+stmts	66:87	69:16	9	
+water	66:87	0:0	10	{
+water	67:20	0:0	10	pkt
+op	67:23	0:0	10	->
+water	67:25	0:0	10	dts
+op	67:29	0:0	10	=
+water	67:31	0:0	10	mxf
+op	67:34	0:0	10	->
+water	67:36	0:0	10	current_edit_unit
+op	67:54	0:0	10	+
+water	67:56	0:0	10	t
+op	67:57	0:0	10	->
+water	67:59	0:0	10	first_dts
+water	67:68	0:0	10	;
+water	68:20	0:0	10	pkt
+op	68:23	0:0	10	->
+water	68:25	0:0	10	pts
+op	68:29	0:0	10	=
+water	68:31	0:0	10	t
+op	68:32	0:0	10	->
+water	68:34	0:0	10	ptses
+op	68:39	0:0	10	[
+water	68:40	0:0	10	mxf
+op	68:43	0:0	10	->
+water	68:45	0:0	10	current_edit_unit
+op	68:62	0:0	10	]
+water	68:63	0:0	10	;
+water	69:16	0:0	10	}
+else	69:18	73:16	8
+stmts	69:23	73:16	9	
+if	69:23	73:16	10	(track -> intra_only)
+cond	69:27	69:34	11	track -> intra_only
+water	69:27	0:0	12	track
+op	69:32	0:0	12	->
+water	69:34	0:0	12	intra_only
+stmts	69:46	73:16	11	
+water	69:46	0:0	12	{
+water	72:20	0:0	12	pkt
+op	72:23	0:0	12	->
+water	72:25	0:0	12	pts
+op	72:29	0:0	12	=
+water	72:31	0:0	12	mxf
+op	72:34	0:0	12	->
+water	72:36	0:0	12	current_edit_unit
+water	72:53	0:0	12	;
+water	73:16	0:0	12	}
+water	74:12	0:0	8	}
+else	74:14	78:12	6
+stmts	74:19	78:12	7	
+if	74:19	78:12	8	(codec -> codec_type == AVMEDIA_TYPE_AUDIO)
+cond	74:23	74:44	9	codec -> codec_type == AVMEDIA_TYPE_AUDIO
+water	74:23	0:0	10	codec
+op	74:28	0:0	10	->
+water	74:30	0:0	10	codec_type
+op	74:41	0:0	10	==
+water	74:44	0:0	10	AVMEDIA_TYPE_AUDIO
+stmts	74:64	78:12	9	
+water	74:64	0:0	10	{
+water	75:16	0:0	10	ret
+op	75:20	0:0	10	=
+call	75:22	75:55	10	mxf_set_audio_pts
+arg	75:40	75:43	11	mxf
+water	75:40	0:0	12	mxf
+arg	75:45	75:50	11	codec
+water	75:45	0:0	12	codec
+arg	75:52	75:55	11	pkt
+water	75:52	0:0	12	pkt
+water	75:56	0:0	10	;
+if	76:16	77:30	10	(ret < 0)
+cond	76:20	76:26	11	ret < 0
+water	76:20	0:0	12	ret
+op	76:24	0:0	12	<
+water	76:26	0:0	12	0
+stmts	77:20	77:30	11	
+return	77:20	77:30	12	ret
+water	77:27	0:0	13	ret
+water	78:12	0:0	10	}
+call	80:12	80:47	6	avio_seek
+arg	80:22	80:27	7	s->pb
+water	80:22	0:0	8	s
+op	80:23	0:0	8	->
+water	80:25	0:0	8	pb
+arg	80:29	80:37	7	next_klv
+water	80:29	0:0	8	next_klv
+arg	80:39	80:47	7	SEEK_SET
+water	80:39	0:0	8	SEEK_SET
+water	80:48	0:0	6	;
+return	81:12	81:20	6	0
+water	81:19	0:0	7	0
+water	82:8	0:0	6	}
+else	82:10	83:12	4
+stmts	83:8	83:12	5	
+label	83:8	83:12	6	skip :
+call	84:12	84:39	4	avio_skip
+arg	84:22	84:27	5	s->pb
+water	84:22	0:0	6	s
+op	84:23	0:0	6	->
+water	84:25	0:0	6	pb
+arg	84:29	84:39	5	klv.length
+water	84:29	0:0	6	klv
+op	84:32	0:0	6	.
+water	84:33	0:0	6	length
+water	84:40	0:0	4	;
+water	85:4	0:0	4	}
+return	86:4	86:47	2	avio_feof(s->pb)?AVERROR_EOF:ret
+call	86:11	86:26	3	avio_feof
+arg	86:21	86:26	4	s->pb
+water	86:21	0:0	5	s
+op	86:22	0:0	5	->
+water	86:24	0:0	5	pb
+water	86:28	0:0	3	?
+water	86:30	0:0	3	AVERROR_EOF
+water	86:42	0:0	3	:
+water	86:44	0:0	3	ret

@@ -1,0 +1,1804 @@
+func	1:0	215:0	0	static int	adpcm_encode_frame
+params	1:29	0:0	1	
+param	1:30	1:51	2	AVCodecContext *	avctx
+param	1:53	1:68	2	AVPacket *	avpkt
+param	2:30	2:50	2	const AVFrame *	frame
+param	2:52	2:71	2	int *	got_packet_ptr
+stmnts	0:0	214:26	1	
+decl	4:4	4:35	2	int	n
+water	4:9	0:0	2	,
+decl	4:4	4:35	2	int	i
+water	4:12	0:0	2	,
+decl	4:4	4:35	2	int	ch
+water	4:16	0:0	2	,
+decl	4:4	4:35	2	int	st
+water	4:20	0:0	2	,
+decl	4:4	4:35	2	int	pkt_size
+water	4:30	0:0	2	,
+decl	4:4	4:35	2	int	ret
+decl	5:4	5:26	2	const int16_t	*samples
+decl	6:4	6:23	2	int16_t	**samples_p
+decl	7:4	7:16	2	uint8_t	*dst
+decl	8:4	8:44	2	ADPCMEncodeContext	*c
+op	8:26	0:0	2	=
+water	8:28	0:0	2	avctx
+op	8:33	0:0	2	->
+water	8:35	0:0	2	priv_data
+decl	9:4	9:16	2	uint8_t	*buf
+water	10:4	0:0	2	samples
+op	10:12	0:0	2	=
+water	10:14	0:0	2	(
+water	10:15	0:0	2	const
+water	10:21	0:0	2	int16_t
+op	10:29	0:0	2	*
+water	10:30	0:0	2	)
+water	10:31	0:0	2	frame
+op	10:36	0:0	2	->
+water	10:38	0:0	2	data
+op	10:42	0:0	2	[
+water	10:43	0:0	2	0
+op	10:44	0:0	2	]
+water	10:45	0:0	2	;
+water	11:4	0:0	2	samples_p
+op	11:14	0:0	2	=
+water	11:16	0:0	2	(
+water	11:17	0:0	2	int16_t
+op	11:25	0:0	2	*
+op	11:26	0:0	2	*
+water	11:27	0:0	2	)
+water	11:28	0:0	2	frame
+op	11:33	0:0	2	->
+water	11:35	0:0	2	extended_data
+water	11:48	0:0	2	;
+water	12:4	0:0	2	st
+op	12:7	0:0	2	=
+water	12:9	0:0	2	avctx
+op	12:14	0:0	2	->
+water	12:16	0:0	2	channels
+op	12:25	0:0	2	==
+water	12:28	0:0	2	2
+water	12:29	0:0	2	;
+if	13:4	14:85	2	(avctx -> codec_id == AV_CODEC_ID_ADPCM_SWF)
+cond	13:8	13:27	3	avctx -> codec_id == AV_CODEC_ID_ADPCM_SWF
+water	13:8	0:0	4	avctx
+op	13:13	0:0	4	->
+water	13:15	0:0	4	codec_id
+op	13:24	0:0	4	==
+water	13:27	0:0	4	AV_CODEC_ID_ADPCM_SWF
+stmts	14:8	14:85	3	
+water	14:8	0:0	4	pkt_size
+op	14:17	0:0	4	=
+water	14:19	0:0	4	(
+water	14:20	0:0	4	2
+op	14:22	0:0	4	+
+water	14:24	0:0	4	avctx
+op	14:29	0:0	4	->
+water	14:31	0:0	4	channels
+op	14:40	0:0	4	*
+water	14:42	0:0	4	(
+water	14:43	0:0	4	22
+op	14:46	0:0	4	+
+water	14:48	0:0	4	4
+op	14:50	0:0	4	*
+water	14:52	0:0	4	(
+water	14:53	0:0	4	frame
+op	14:58	0:0	4	->
+water	14:60	0:0	4	nb_samples
+op	14:71	0:0	4	-
+water	14:73	0:0	4	1
+water	14:74	0:0	4	)
+water	14:75	0:0	4	)
+op	14:77	0:0	4	+
+water	14:79	0:0	4	7
+water	14:80	0:0	4	)
+op	14:82	0:0	4	/
+water	14:84	0:0	4	8
+water	14:85	0:0	4	;
+else	15:4	16:37	2
+stmts	16:8	16:37	3	
+water	16:8	0:0	4	pkt_size
+op	16:17	0:0	4	=
+water	16:19	0:0	4	avctx
+op	16:24	0:0	4	->
+water	16:26	0:0	4	block_align
+water	16:37	0:0	4	;
+if	17:4	18:18	2	(( ret =ff_alloc_packet2 (avctx ,avpkt ,pkt_size ,0 ) ) < 0)
+cond	17:8	17:62	3	( ret =ff_alloc_packet2 (avctx ,avpkt ,pkt_size ,0 ) ) < 0
+water	17:8	0:0	4	(
+water	17:9	0:0	4	ret
+op	17:13	0:0	4	=
+call	17:15	17:57	4	ff_alloc_packet2
+arg	17:32	17:37	5	avctx
+water	17:32	0:0	6	avctx
+arg	17:39	17:44	5	avpkt
+water	17:39	0:0	6	avpkt
+arg	17:46	17:54	5	pkt_size
+water	17:46	0:0	6	pkt_size
+arg	17:56	17:57	5	0
+water	17:56	0:0	6	0
+water	17:58	0:0	4	)
+op	17:60	0:0	4	<
+water	17:62	0:0	4	0
+stmts	18:8	18:18	3	
+return	18:8	18:18	4	ret
+water	18:15	0:0	5	ret
+water	19:4	0:0	2	dst
+op	19:8	0:0	2	=
+water	19:10	0:0	2	avpkt
+op	19:15	0:0	2	->
+water	19:17	0:0	2	data
+water	19:21	0:0	2	;
+switch	20:4	209:4	2	(avctx -> codec -> id)
+cond	20:11	20:25	3	avctx -> codec -> id
+water	20:11	0:0	4	avctx
+op	20:16	0:0	4	->
+water	20:18	0:0	4	codec
+op	20:23	0:0	4	->
+water	20:25	0:0	4	id
+stmts	20:29	209:4	3	
+water	20:29	0:0	4	{
+label	21:4	21:34	4	case AV_CODEC_ID_ADPCM_IMA_WAV :
+water	22:4	0:0	4	{
+decl	23:8	23:21	4	int	blocks
+water	23:18	0:0	4	,
+decl	23:8	23:21	4	int	j
+water	24:8	0:0	4	blocks
+op	24:15	0:0	4	=
+water	24:17	0:0	4	(
+water	24:18	0:0	4	frame
+op	24:23	0:0	4	->
+water	24:25	0:0	4	nb_samples
+op	24:36	0:0	4	-
+water	24:38	0:0	4	1
+water	24:39	0:0	4	)
+op	24:41	0:0	4	/
+water	24:43	0:0	4	8
+water	24:44	0:0	4	;
+for	25:8	33:8	4	(ch = 0 ;ch < avctx -> channels;ch ++)
+forinit	25:13	25:19	5	ch = 0 ;
+water	25:13	0:0	6	ch
+op	25:16	0:0	6	=
+water	25:18	0:0	6	0
+water	25:19	0:0	6	;
+cond	25:21	25:33	5	ch < avctx -> channels
+water	25:21	0:0	6	ch
+op	25:24	0:0	6	<
+water	25:26	0:0	6	avctx
+op	25:31	0:0	6	->
+water	25:33	0:0	6	channels
+forexpr	25:43	25:45	5	ch ++
+water	25:43	0:0	6	ch
+op	25:45	0:0	6	++
+stmts	25:49	33:8	5	
+water	25:49	0:0	6	{
+decl	26:12	26:55	6	ADPCMChannelStatus	*status
+op	26:39	0:0	6	=
+op	26:41	0:0	6	&
+water	26:42	0:0	6	c
+op	26:43	0:0	6	->
+water	26:45	0:0	6	status
+op	26:51	0:0	6	[
+water	26:52	0:0	6	ch
+op	26:54	0:0	6	]
+water	27:12	0:0	6	status
+op	27:18	0:0	6	->
+water	27:20	0:0	6	prev_sample
+op	27:32	0:0	6	=
+water	27:34	0:0	6	samples_p
+op	27:43	0:0	6	[
+water	27:44	0:0	6	ch
+op	27:46	0:0	6	]
+op	27:47	0:0	6	[
+water	27:48	0:0	6	0
+op	27:49	0:0	6	]
+water	27:50	0:0	6	;
+call	30:12	30:57	6	bytestream_put_le16
+arg	30:32	30:36	7	&dst
+op	30:32	0:0	8	&
+water	30:33	0:0	8	dst
+arg	30:38	30:57	7	status->prev_sample
+water	30:38	0:0	8	status
+op	30:44	0:0	8	->
+water	30:46	0:0	8	prev_sample
+water	30:58	0:0	6	;
+op	31:12	0:0	6	*
+water	31:13	0:0	6	dst
+op	31:16	0:0	6	++
+op	31:19	0:0	6	=
+water	31:21	0:0	6	status
+op	31:27	0:0	6	->
+water	31:29	0:0	6	step_index
+water	31:39	0:0	6	;
+op	32:12	0:0	6	*
+water	32:13	0:0	6	dst
+op	32:16	0:0	6	++
+op	32:19	0:0	6	=
+water	32:21	0:0	6	0
+water	32:22	0:0	6	;
+water	33:8	0:0	6	}
+if	35:8	50:8	4	(avctx -> trellis > 0)
+cond	35:12	35:29	5	avctx -> trellis > 0
+water	35:12	0:0	6	avctx
+op	35:17	0:0	6	->
+water	35:19	0:0	6	trellis
+op	35:27	0:0	6	>
+water	35:29	0:0	6	0
+stmts	35:32	50:8	5	
+water	35:32	0:0	6	{
+call	36:12	36:81	6	FF_ALLOC_ARRAY_OR_GOTO
+arg	36:35	36:40	7	avctx
+water	36:35	0:0	8	avctx
+arg	36:42	36:45	7	buf
+water	36:42	0:0	8	buf
+arg	36:47	36:62	7	avctx->channels
+water	36:47	0:0	8	avctx
+op	36:52	0:0	8	->
+water	36:54	0:0	8	channels
+arg	36:64	36:74	7	blocks*8
+water	36:64	0:0	8	blocks
+op	36:71	0:0	8	*
+water	36:73	0:0	8	8
+arg	36:76	36:81	7	error
+water	36:76	0:0	8	error
+water	36:82	0:0	6	;
+for	37:12	41:12	6	(ch = 0 ;ch < avctx -> channels;ch ++)
+forinit	37:17	37:23	7	ch = 0 ;
+water	37:17	0:0	8	ch
+op	37:20	0:0	8	=
+water	37:22	0:0	8	0
+water	37:23	0:0	8	;
+cond	37:25	37:37	7	ch < avctx -> channels
+water	37:25	0:0	8	ch
+op	37:28	0:0	8	<
+water	37:30	0:0	8	avctx
+op	37:35	0:0	8	->
+water	37:37	0:0	8	channels
+forexpr	37:47	37:49	7	ch ++
+water	37:47	0:0	8	ch
+op	37:49	0:0	8	++
+stmts	37:53	41:12	7	
+water	37:53	0:0	8	{
+call	38:16	40:52	8	adpcm_compress_trellis
+arg	38:39	38:44	9	avctx
+water	38:39	0:0	10	avctx
+arg	38:46	38:63	9	&samples_p[ch][1]
+op	38:46	0:0	10	&
+water	38:47	0:0	10	samples_p
+op	38:56	0:0	10	[
+water	38:57	0:0	10	ch
+op	38:59	0:0	10	]
+op	38:60	0:0	10	[
+water	38:61	0:0	10	1
+op	38:62	0:0	10	]
+arg	39:39	39:60	9	buf+ch*blocks*8
+water	39:39	0:0	10	buf
+op	39:43	0:0	10	+
+water	39:45	0:0	10	ch
+op	39:48	0:0	10	*
+water	39:50	0:0	10	blocks
+op	39:57	0:0	10	*
+water	39:59	0:0	10	8
+arg	39:62	39:76	9	&c->status[ch]
+op	39:62	0:0	10	&
+water	39:63	0:0	10	c
+op	39:64	0:0	10	->
+water	39:66	0:0	10	status
+op	39:72	0:0	10	[
+water	39:73	0:0	10	ch
+op	39:75	0:0	10	]
+arg	40:39	40:49	9	blocks*8
+water	40:39	0:0	10	blocks
+op	40:46	0:0	10	*
+water	40:48	0:0	10	8
+arg	40:51	40:52	9	1
+water	40:51	0:0	10	1
+water	40:53	0:0	8	;
+water	41:12	0:0	8	}
+for	42:12	48:12	6	(i = 0 ;i < blocks;i ++)
+forinit	42:17	42:22	7	i = 0 ;
+water	42:17	0:0	8	i
+op	42:19	0:0	8	=
+water	42:21	0:0	8	0
+water	42:22	0:0	8	;
+cond	42:24	42:28	7	i < blocks
+water	42:24	0:0	8	i
+op	42:26	0:0	8	<
+water	42:28	0:0	8	blocks
+forexpr	42:36	42:37	7	i ++
+water	42:36	0:0	8	i
+op	42:37	0:0	8	++
+stmts	42:41	48:12	7	
+water	42:41	0:0	8	{
+for	43:16	47:16	8	(ch = 0 ;ch < avctx -> channels;ch ++)
+forinit	43:21	43:27	9	ch = 0 ;
+water	43:21	0:0	10	ch
+op	43:24	0:0	10	=
+water	43:26	0:0	10	0
+water	43:27	0:0	10	;
+cond	43:29	43:41	9	ch < avctx -> channels
+water	43:29	0:0	10	ch
+op	43:32	0:0	10	<
+water	43:34	0:0	10	avctx
+op	43:39	0:0	10	->
+water	43:41	0:0	10	channels
+forexpr	43:51	43:53	9	ch ++
+water	43:51	0:0	10	ch
+op	43:53	0:0	10	++
+stmts	43:57	47:16	9	
+water	43:57	0:0	10	{
+decl	44:20	44:65	10	uint8_t	*buf1
+op	44:34	0:0	10	=
+water	44:36	0:0	10	buf
+op	44:40	0:0	10	+
+water	44:42	0:0	10	ch
+op	44:45	0:0	10	*
+water	44:47	0:0	10	blocks
+op	44:54	0:0	10	*
+water	44:56	0:0	10	8
+op	44:58	0:0	10	+
+water	44:60	0:0	10	i
+op	44:62	0:0	10	*
+water	44:64	0:0	10	8
+for	45:20	46:61	10	(j = 0 ;j < 8;j += 2)
+forinit	45:25	45:30	11	j = 0 ;
+water	45:25	0:0	12	j
+op	45:27	0:0	12	=
+water	45:29	0:0	12	0
+water	45:30	0:0	12	;
+cond	45:32	45:36	11	j < 8
+water	45:32	0:0	12	j
+op	45:34	0:0	12	<
+water	45:36	0:0	12	8
+forexpr	45:39	45:44	11	j += 2
+water	45:39	0:0	12	j
+op	45:41	0:0	12	+=
+water	45:44	0:0	12	2
+stmts	46:24	46:61	11	
+op	46:24	0:0	12	*
+water	46:25	0:0	12	dst
+op	46:28	0:0	12	++
+op	46:31	0:0	12	=
+water	46:33	0:0	12	buf1
+op	46:37	0:0	12	[
+water	46:38	0:0	12	j
+op	46:39	0:0	12	]
+op	46:41	0:0	12	|
+water	46:43	0:0	12	(
+water	46:44	0:0	12	buf1
+op	46:48	0:0	12	[
+water	46:49	0:0	12	j
+op	46:51	0:0	12	+
+water	46:53	0:0	12	1
+op	46:54	0:0	12	]
+op	46:56	0:0	12	<<
+water	46:59	0:0	12	4
+water	46:60	0:0	12	)
+water	46:61	0:0	12	;
+water	47:16	0:0	10	}
+water	48:12	0:0	8	}
+call	49:12	49:23	6	av_free
+arg	49:20	49:23	7	buf
+water	49:20	0:0	8	buf
+water	49:24	0:0	6	;
+water	50:8	0:0	6	}
+else	50:10	62:8	4
+stmts	50:15	62:8	5	
+water	50:15	0:0	6	{
+for	51:12	61:12	6	(i = 0 ;i < blocks;i ++)
+forinit	51:17	51:22	7	i = 0 ;
+water	51:17	0:0	8	i
+op	51:19	0:0	8	=
+water	51:21	0:0	8	0
+water	51:22	0:0	8	;
+cond	51:24	51:28	7	i < blocks
+water	51:24	0:0	8	i
+op	51:26	0:0	8	<
+water	51:28	0:0	8	blocks
+forexpr	51:36	51:37	7	i ++
+water	51:36	0:0	8	i
+op	51:37	0:0	8	++
+stmts	51:41	61:12	7	
+water	51:41	0:0	8	{
+for	52:16	60:16	8	(ch = 0 ;ch < avctx -> channels;ch ++)
+forinit	52:21	52:27	9	ch = 0 ;
+water	52:21	0:0	10	ch
+op	52:24	0:0	10	=
+water	52:26	0:0	10	0
+water	52:27	0:0	10	;
+cond	52:29	52:41	9	ch < avctx -> channels
+water	52:29	0:0	10	ch
+op	52:32	0:0	10	<
+water	52:34	0:0	10	avctx
+op	52:39	0:0	10	->
+water	52:41	0:0	10	channels
+forexpr	52:51	52:53	9	ch ++
+water	52:51	0:0	10	ch
+op	52:53	0:0	10	++
+stmts	52:57	60:16	9	
+water	52:57	0:0	10	{
+decl	53:20	53:63	10	ADPCMChannelStatus	*status
+op	53:47	0:0	10	=
+op	53:49	0:0	10	&
+water	53:50	0:0	10	c
+op	53:51	0:0	10	->
+water	53:53	0:0	10	status
+op	53:59	0:0	10	[
+water	53:60	0:0	10	ch
+op	53:62	0:0	10	]
+decl	54:20	54:66	10	const int16_t	*smp
+op	54:39	0:0	10	=
+op	54:41	0:0	10	&
+water	54:42	0:0	10	samples_p
+op	54:51	0:0	10	[
+water	54:52	0:0	10	ch
+op	54:54	0:0	10	]
+op	54:55	0:0	10	[
+water	54:56	0:0	10	1
+op	54:58	0:0	10	+
+water	54:60	0:0	10	i
+op	54:62	0:0	10	*
+water	54:64	0:0	10	8
+op	54:65	0:0	10	]
+for	55:20	59:20	10	(j = 0 ;j < 8;j += 2)
+forinit	55:25	55:30	11	j = 0 ;
+water	55:25	0:0	12	j
+op	55:27	0:0	12	=
+water	55:29	0:0	12	0
+water	55:30	0:0	12	;
+cond	55:32	55:36	11	j < 8
+water	55:32	0:0	12	j
+op	55:34	0:0	12	<
+water	55:36	0:0	12	8
+forexpr	55:39	55:44	11	j += 2
+water	55:39	0:0	12	j
+op	55:41	0:0	12	+=
+water	55:44	0:0	12	2
+stmts	55:47	59:20	11	
+water	55:47	0:0	12	{
+decl	56:24	56:81	12	uint8_t	v
+op	56:34	0:0	12	=
+call	56:36	56:80	13	adpcm_ima_compress_sample
+arg	56:62	56:68	14	status
+water	56:62	0:0	15	status
+arg	56:70	56:80	14	smp[j]
+water	56:70	0:0	15	smp
+op	56:73	0:0	15	[
+water	56:74	0:0	15	j
+op	56:79	0:0	15	]
+water	57:24	0:0	12	v
+op	57:33	0:0	12	|=
+call	57:36	57:80	12	adpcm_ima_compress_sample
+arg	57:62	57:68	13	status
+water	57:62	0:0	14	status
+arg	57:70	57:80	13	smp[j+1]
+water	57:70	0:0	14	smp
+op	57:73	0:0	14	[
+water	57:74	0:0	14	j
+op	57:76	0:0	14	+
+water	57:78	0:0	14	1
+op	57:79	0:0	14	]
+op	57:82	0:0	12	<<
+water	57:85	0:0	12	4
+water	57:86	0:0	12	;
+op	58:24	0:0	12	*
+water	58:25	0:0	12	dst
+op	58:28	0:0	12	++
+op	58:31	0:0	12	=
+water	58:33	0:0	12	v
+water	58:34	0:0	12	;
+water	59:20	0:0	12	}
+water	60:16	0:0	10	}
+water	61:12	0:0	8	}
+water	62:8	0:0	6	}
+break	63:8	63:13	4	
+water	64:4	0:0	4	}
+label	65:4	65:33	4	case AV_CODEC_ID_ADPCM_IMA_QT :
+water	66:4	0:0	4	{
+decl	67:8	67:24	4	PutBitContext	pb
+call	68:8	68:40	4	init_put_bits
+arg	68:22	68:25	5	&pb
+op	68:22	0:0	6	&
+water	68:23	0:0	6	pb
+arg	68:27	68:30	5	dst
+water	68:27	0:0	6	dst
+arg	68:32	68:40	5	pkt_size
+water	68:32	0:0	6	pkt_size
+water	68:41	0:0	4	;
+for	69:8	89:8	4	(ch = 0 ;ch < avctx -> channels;ch ++)
+forinit	69:13	69:19	5	ch = 0 ;
+water	69:13	0:0	6	ch
+op	69:16	0:0	6	=
+water	69:18	0:0	6	0
+water	69:19	0:0	6	;
+cond	69:21	69:33	5	ch < avctx -> channels
+water	69:21	0:0	6	ch
+op	69:24	0:0	6	<
+water	69:26	0:0	6	avctx
+op	69:31	0:0	6	->
+water	69:33	0:0	6	channels
+forexpr	69:43	69:45	5	ch ++
+water	69:43	0:0	6	ch
+op	69:45	0:0	6	++
+stmts	69:49	89:8	5	
+water	69:49	0:0	6	{
+decl	70:12	70:55	6	ADPCMChannelStatus	*status
+op	70:39	0:0	6	=
+op	70:41	0:0	6	&
+water	70:42	0:0	6	c
+op	70:43	0:0	6	->
+water	70:45	0:0	6	status
+op	70:51	0:0	6	[
+water	70:52	0:0	6	ch
+op	70:54	0:0	6	]
+call	71:12	71:64	6	put_bits
+arg	71:21	71:24	7	&pb
+op	71:21	0:0	8	&
+water	71:22	0:0	8	pb
+arg	71:26	71:27	7	9
+water	71:26	0:0	8	9
+arg	71:29	71:64	7	(status->prev_sample&0xFFFF)>>7
+water	71:29	0:0	8	(
+water	71:30	0:0	8	status
+op	71:36	0:0	8	->
+water	71:38	0:0	8	prev_sample
+op	71:50	0:0	8	&
+water	71:52	0:0	8	0
+water	71:53	0:0	8	xFFFF
+water	71:58	0:0	8	)
+op	71:60	0:0	8	>>
+water	71:63	0:0	8	7
+water	71:65	0:0	6	;
+call	72:12	72:48	6	put_bits
+arg	72:21	72:24	7	&pb
+op	72:21	0:0	8	&
+water	72:22	0:0	8	pb
+arg	72:26	72:27	7	7
+water	72:26	0:0	8	7
+arg	72:30	72:48	7	status->step_index
+water	72:30	0:0	8	status
+op	72:36	0:0	8	->
+water	72:38	0:0	8	step_index
+water	72:49	0:0	6	;
+if	73:12	80:12	6	(avctx -> trellis > 0)
+cond	73:16	73:33	7	avctx -> trellis > 0
+water	73:16	0:0	8	avctx
+op	73:21	0:0	8	->
+water	73:23	0:0	8	trellis
+op	73:31	0:0	8	>
+water	73:33	0:0	8	0
+stmts	73:36	80:12	7	
+water	73:36	0:0	8	{
+decl	74:16	74:31	8	uint8_t	buf[64]
+call	75:16	76:44	8	adpcm_compress_trellis
+arg	75:39	75:44	9	avctx
+water	75:39	0:0	10	avctx
+arg	75:46	75:63	9	&samples_p[ch][0]
+op	75:46	0:0	10	&
+water	75:47	0:0	10	samples_p
+op	75:56	0:0	10	[
+water	75:57	0:0	10	ch
+op	75:59	0:0	10	]
+op	75:60	0:0	10	[
+water	75:61	0:0	10	0
+op	75:62	0:0	10	]
+arg	75:65	75:68	9	buf
+water	75:65	0:0	10	buf
+arg	75:70	75:76	9	status
+water	75:70	0:0	10	status
+arg	76:39	76:41	9	64
+water	76:39	0:0	10	64
+arg	76:43	76:44	9	1
+water	76:43	0:0	10	1
+water	76:45	0:0	8	;
+for	77:16	78:48	8	(i = 0 ;i < 64;i ++)
+forinit	77:21	77:26	9	i = 0 ;
+water	77:21	0:0	10	i
+op	77:23	0:0	10	=
+water	77:25	0:0	10	0
+water	77:26	0:0	10	;
+cond	77:28	77:32	9	i < 64
+water	77:28	0:0	10	i
+op	77:30	0:0	10	<
+water	77:32	0:0	10	64
+forexpr	77:36	77:37	9	i ++
+water	77:36	0:0	10	i
+op	77:37	0:0	10	++
+stmts	78:20	78:48	9	
+call	78:20	78:47	10	put_bits
+arg	78:29	78:32	11	&pb
+op	78:29	0:0	12	&
+water	78:30	0:0	12	pb
+arg	78:34	78:35	11	4
+water	78:34	0:0	12	4
+arg	78:37	78:47	11	buf[i^1]
+water	78:37	0:0	12	buf
+op	78:40	0:0	12	[
+water	78:41	0:0	12	i
+op	78:43	0:0	12	^
+water	78:45	0:0	12	1
+op	78:46	0:0	12	]
+water	78:48	0:0	10	;
+water	79:16	0:0	8	status
+op	79:22	0:0	8	->
+water	79:24	0:0	8	prev_sample
+op	79:36	0:0	8	=
+water	79:38	0:0	8	status
+op	79:44	0:0	8	->
+water	79:46	0:0	8	predictor
+water	79:55	0:0	8	;
+water	80:12	0:0	8	}
+else	80:14	88:12	6
+stmts	80:19	88:12	7	
+water	80:19	0:0	8	{
+for	81:16	87:16	8	(i = 0 ;i < 64;i += 2)
+forinit	81:21	81:26	9	i = 0 ;
+water	81:21	0:0	10	i
+op	81:23	0:0	10	=
+water	81:25	0:0	10	0
+water	81:26	0:0	10	;
+cond	81:28	81:32	9	i < 64
+water	81:28	0:0	10	i
+op	81:30	0:0	10	<
+water	81:32	0:0	10	64
+forexpr	81:36	81:41	9	i += 2
+water	81:36	0:0	10	i
+op	81:38	0:0	10	+=
+water	81:41	0:0	10	2
+stmts	81:44	87:16	9	
+water	81:44	0:0	10	{
+decl	82:20	82:30	10	int	t1
+water	82:26	0:0	10	,
+decl	82:20	82:30	10	int	t2
+water	83:20	0:0	10	t1
+op	83:23	0:0	10	=
+call	83:25	83:82	10	adpcm_ima_qt_compress_sample
+arg	83:54	83:60	11	status
+water	83:54	0:0	12	status
+arg	83:62	83:82	11	samples_p[ch][i]
+water	83:62	0:0	12	samples_p
+op	83:71	0:0	12	[
+water	83:72	0:0	12	ch
+op	83:74	0:0	12	]
+op	83:75	0:0	12	[
+water	83:76	0:0	12	i
+op	83:81	0:0	12	]
+water	83:83	0:0	10	;
+water	84:20	0:0	10	t2
+op	84:23	0:0	10	=
+call	84:25	84:82	10	adpcm_ima_qt_compress_sample
+arg	84:54	84:60	11	status
+water	84:54	0:0	12	status
+arg	84:62	84:82	11	samples_p[ch][i+1]
+water	84:62	0:0	12	samples_p
+op	84:71	0:0	12	[
+water	84:72	0:0	12	ch
+op	84:74	0:0	12	]
+op	84:75	0:0	12	[
+water	84:76	0:0	12	i
+op	84:78	0:0	12	+
+water	84:80	0:0	12	1
+op	84:81	0:0	12	]
+water	84:83	0:0	10	;
+call	85:20	85:39	10	put_bits
+arg	85:29	85:32	11	&pb
+op	85:29	0:0	12	&
+water	85:30	0:0	12	pb
+arg	85:34	85:35	11	4
+water	85:34	0:0	12	4
+arg	85:37	85:39	11	t2
+water	85:37	0:0	12	t2
+water	85:40	0:0	10	;
+call	86:20	86:39	10	put_bits
+arg	86:29	86:32	11	&pb
+op	86:29	0:0	12	&
+water	86:30	0:0	12	pb
+arg	86:34	86:35	11	4
+water	86:34	0:0	12	4
+arg	86:37	86:39	11	t1
+water	86:37	0:0	12	t1
+water	86:40	0:0	10	;
+water	87:16	0:0	10	}
+water	88:12	0:0	8	}
+water	89:8	0:0	6	}
+call	90:8	90:26	4	flush_put_bits
+arg	90:23	90:26	5	&pb
+op	90:23	0:0	6	&
+water	90:24	0:0	6	pb
+water	90:27	0:0	4	;
+break	91:8	91:13	4	
+water	92:4	0:0	4	}
+label	93:4	93:30	4	case AV_CODEC_ID_ADPCM_SWF :
+water	94:4	0:0	4	{
+decl	95:8	95:24	4	PutBitContext	pb
+call	96:8	96:40	4	init_put_bits
+arg	96:22	96:25	5	&pb
+op	96:22	0:0	6	&
+water	96:23	0:0	6	pb
+arg	96:27	96:30	5	dst
+water	96:27	0:0	6	dst
+arg	96:32	96:40	5	pkt_size
+water	96:32	0:0	6	pkt_size
+water	96:41	0:0	4	;
+water	97:8	0:0	4	n
+op	97:10	0:0	4	=
+water	97:12	0:0	4	frame
+op	97:17	0:0	4	->
+water	97:19	0:0	4	nb_samples
+op	97:30	0:0	4	-
+water	97:32	0:0	4	1
+water	97:33	0:0	4	;
+call	99:8	99:26	4	put_bits
+arg	99:17	99:20	5	&pb
+op	99:17	0:0	6	&
+water	99:18	0:0	6	pb
+arg	99:22	99:23	5	2
+water	99:22	0:0	6	2
+arg	99:25	99:26	5	2
+water	99:25	0:0	6	2
+water	99:27	0:0	4	;
+for	101:8	107:8	4	(i = 0 ;i < avctx -> channels;i ++)
+forinit	101:13	101:18	5	i = 0 ;
+water	101:13	0:0	6	i
+op	101:15	0:0	6	=
+water	101:17	0:0	6	0
+water	101:18	0:0	6	;
+cond	101:20	101:31	5	i < avctx -> channels
+water	101:20	0:0	6	i
+op	101:22	0:0	6	<
+water	101:24	0:0	6	avctx
+op	101:29	0:0	6	->
+water	101:31	0:0	6	channels
+forexpr	101:41	101:42	5	i ++
+water	101:41	0:0	6	i
+op	101:42	0:0	6	++
+stmts	101:46	107:8	5	
+water	101:46	0:0	6	{
+water	103:12	0:0	6	c
+op	103:13	0:0	6	->
+water	103:15	0:0	6	status
+op	103:21	0:0	6	[
+water	103:22	0:0	6	i
+op	103:23	0:0	6	]
+op	103:24	0:0	6	.
+water	103:25	0:0	6	step_index
+op	103:36	0:0	6	=
+call	103:38	103:79	6	av_clip_uintp2
+arg	103:53	103:76	7	c->status[i].step_index
+water	103:53	0:0	8	c
+op	103:54	0:0	8	->
+water	103:56	0:0	8	status
+op	103:62	0:0	8	[
+water	103:63	0:0	8	i
+op	103:64	0:0	8	]
+op	103:65	0:0	8	.
+water	103:66	0:0	8	step_index
+arg	103:78	103:79	7	6
+water	103:78	0:0	8	6
+water	103:80	0:0	6	;
+call	104:12	104:41	6	put_sbits
+arg	104:22	104:25	7	&pb
+op	104:22	0:0	8	&
+water	104:23	0:0	8	pb
+arg	104:27	104:29	7	16
+water	104:27	0:0	8	16
+arg	104:31	104:41	7	samples[i]
+water	104:31	0:0	8	samples
+op	104:38	0:0	8	[
+water	104:39	0:0	8	i
+op	104:40	0:0	8	]
+water	104:42	0:0	6	;
+call	105:12	105:52	6	put_bits
+arg	105:21	105:24	7	&pb
+op	105:21	0:0	8	&
+water	105:22	0:0	8	pb
+arg	105:26	105:27	7	6
+water	105:26	0:0	8	6
+arg	105:29	105:52	7	c->status[i].step_index
+water	105:29	0:0	8	c
+op	105:30	0:0	8	->
+water	105:32	0:0	8	status
+op	105:38	0:0	8	[
+water	105:39	0:0	8	i
+op	105:40	0:0	8	]
+op	105:41	0:0	8	.
+water	105:42	0:0	8	step_index
+water	105:53	0:0	6	;
+water	106:12	0:0	6	c
+op	106:13	0:0	6	->
+water	106:15	0:0	6	status
+op	106:21	0:0	6	[
+water	106:22	0:0	6	i
+op	106:23	0:0	6	]
+op	106:24	0:0	6	.
+water	106:25	0:0	6	prev_sample
+op	106:37	0:0	6	=
+water	106:39	0:0	6	samples
+op	106:46	0:0	6	[
+water	106:47	0:0	6	i
+op	106:48	0:0	6	]
+water	106:49	0:0	6	;
+water	107:8	0:0	6	}
+if	108:8	122:8	4	(avctx -> trellis > 0)
+cond	108:12	108:29	5	avctx -> trellis > 0
+water	108:12	0:0	6	avctx
+op	108:17	0:0	6	->
+water	108:19	0:0	6	trellis
+op	108:27	0:0	6	>
+water	108:29	0:0	6	0
+stmts	108:32	122:8	5	
+water	108:32	0:0	6	{
+call	109:12	109:53	6	FF_ALLOC_OR_GOTO
+arg	109:29	109:34	7	avctx
+water	109:29	0:0	8	avctx
+arg	109:36	109:39	7	buf
+water	109:36	0:0	8	buf
+arg	109:41	109:46	7	2*n
+water	109:41	0:0	8	2
+op	109:43	0:0	8	*
+water	109:45	0:0	8	n
+arg	109:48	109:53	7	error
+water	109:48	0:0	8	error
+water	109:54	0:0	6	;
+call	110:12	111:68	6	adpcm_compress_trellis
+arg	110:35	110:40	7	avctx
+water	110:35	0:0	8	avctx
+arg	110:42	110:67	7	samples+avctx->channels
+water	110:42	0:0	8	samples
+op	110:50	0:0	8	+
+water	110:52	0:0	8	avctx
+op	110:57	0:0	8	->
+water	110:59	0:0	8	channels
+arg	110:69	110:72	7	buf
+water	110:69	0:0	8	buf
+arg	111:35	111:48	7	&c->status[0]
+op	111:35	0:0	8	&
+water	111:36	0:0	8	c
+op	111:37	0:0	8	->
+water	111:39	0:0	8	status
+op	111:45	0:0	8	[
+water	111:46	0:0	8	0
+op	111:47	0:0	8	]
+arg	111:50	111:51	7	n
+water	111:50	0:0	8	n
+arg	111:53	111:68	7	avctx->channels
+water	111:53	0:0	8	avctx
+op	111:58	0:0	8	->
+water	111:60	0:0	8	channels
+water	111:69	0:0	6	;
+if	112:12	115:55	6	(avctx -> channels == 2)
+cond	112:16	112:35	7	avctx -> channels == 2
+water	112:16	0:0	8	avctx
+op	112:21	0:0	8	->
+water	112:23	0:0	8	channels
+op	112:32	0:0	8	==
+water	112:35	0:0	8	2
+stmts	113:16	115:55	7	
+call	113:16	115:54	8	adpcm_compress_trellis
+arg	113:39	113:44	9	avctx
+water	113:39	0:0	10	avctx
+arg	113:46	113:75	9	samples+avctx->channels+1
+water	113:46	0:0	10	samples
+op	113:54	0:0	10	+
+water	113:56	0:0	10	avctx
+op	113:61	0:0	10	->
+water	113:63	0:0	10	channels
+op	113:72	0:0	10	+
+water	113:74	0:0	10	1
+arg	114:39	114:46	9	buf+n
+water	114:39	0:0	10	buf
+op	114:43	0:0	10	+
+water	114:45	0:0	10	n
+arg	114:48	114:61	9	&c->status[1]
+op	114:48	0:0	10	&
+water	114:49	0:0	10	c
+op	114:50	0:0	10	->
+water	114:52	0:0	10	status
+op	114:58	0:0	10	[
+water	114:59	0:0	10	1
+op	114:60	0:0	10	]
+arg	114:63	114:64	9	n
+water	114:63	0:0	10	n
+arg	115:39	115:54	9	avctx->channels
+water	115:39	0:0	10	avctx
+op	115:44	0:0	10	->
+water	115:46	0:0	10	channels
+water	115:55	0:0	8	;
+for	116:12	120:12	6	(i = 0 ;i < n;i ++)
+forinit	116:17	116:22	7	i = 0 ;
+water	116:17	0:0	8	i
+op	116:19	0:0	8	=
+water	116:21	0:0	8	0
+water	116:22	0:0	8	;
+cond	116:24	116:28	7	i < n
+water	116:24	0:0	8	i
+op	116:26	0:0	8	<
+water	116:28	0:0	8	n
+forexpr	116:31	116:32	7	i ++
+water	116:31	0:0	8	i
+op	116:32	0:0	8	++
+stmts	116:36	120:12	7	
+water	116:36	0:0	8	{
+call	117:16	117:39	8	put_bits
+arg	117:25	117:28	9	&pb
+op	117:25	0:0	10	&
+water	117:26	0:0	10	pb
+arg	117:30	117:31	9	4
+water	117:30	0:0	10	4
+arg	117:33	117:39	9	buf[i]
+water	117:33	0:0	10	buf
+op	117:36	0:0	10	[
+water	117:37	0:0	10	i
+op	117:38	0:0	10	]
+water	117:40	0:0	8	;
+if	118:16	119:48	8	(avctx -> channels == 2)
+cond	118:20	118:39	9	avctx -> channels == 2
+water	118:20	0:0	10	avctx
+op	118:25	0:0	10	->
+water	118:27	0:0	10	channels
+op	118:36	0:0	10	==
+water	118:39	0:0	10	2
+stmts	119:20	119:48	9	
+call	119:20	119:47	10	put_bits
+arg	119:29	119:32	11	&pb
+op	119:29	0:0	12	&
+water	119:30	0:0	12	pb
+arg	119:34	119:35	11	4
+water	119:34	0:0	12	4
+arg	119:37	119:47	11	buf[n+i]
+water	119:37	0:0	12	buf
+op	119:40	0:0	12	[
+water	119:41	0:0	12	n
+op	119:43	0:0	12	+
+water	119:45	0:0	12	i
+op	119:46	0:0	12	]
+water	119:48	0:0	10	;
+water	120:12	0:0	8	}
+call	121:12	121:23	6	av_free
+arg	121:20	121:23	7	buf
+water	121:20	0:0	8	buf
+water	121:24	0:0	6	;
+water	122:8	0:0	6	}
+else	122:10	130:8	4
+stmts	122:15	130:8	5	
+water	122:15	0:0	6	{
+for	123:12	129:12	6	(i = 1 ;i < frame -> nb_samples;i ++)
+forinit	123:17	123:22	7	i = 1 ;
+water	123:17	0:0	8	i
+op	123:19	0:0	8	=
+water	123:21	0:0	8	1
+water	123:22	0:0	8	;
+cond	123:24	123:35	7	i < frame -> nb_samples
+water	123:24	0:0	8	i
+op	123:26	0:0	8	<
+water	123:28	0:0	8	frame
+op	123:33	0:0	8	->
+water	123:35	0:0	8	nb_samples
+forexpr	123:47	123:48	7	i ++
+water	123:47	0:0	8	i
+op	123:48	0:0	8	++
+stmts	123:52	129:12	7	
+water	123:52	0:0	8	{
+call	124:16	125:54	8	put_bits
+arg	124:25	124:28	9	&pb
+op	124:25	0:0	10	&
+water	124:26	0:0	10	pb
+arg	124:30	124:31	9	4
+water	124:30	0:0	10	4
+arg	124:33	125:54	9	adpcm_ima_compress_sample(&c->status[0],samples[avctx->channels*i])
+call	124:33	125:53	10	adpcm_ima_compress_sample
+arg	124:59	124:72	11	&c->status[0]
+op	124:59	0:0	12	&
+water	124:60	0:0	12	c
+op	124:61	0:0	12	->
+water	124:63	0:0	12	status
+op	124:69	0:0	12	[
+water	124:70	0:0	12	0
+op	124:71	0:0	12	]
+arg	125:25	125:53	11	samples[avctx->channels*i]
+water	125:25	0:0	12	samples
+op	125:32	0:0	12	[
+water	125:33	0:0	12	avctx
+op	125:38	0:0	12	->
+water	125:40	0:0	12	channels
+op	125:49	0:0	12	*
+water	125:51	0:0	12	i
+op	125:52	0:0	12	]
+water	125:55	0:0	8	;
+if	126:16	128:49	8	(avctx -> channels == 2)
+cond	126:20	126:39	9	avctx -> channels == 2
+water	126:20	0:0	10	avctx
+op	126:25	0:0	10	->
+water	126:27	0:0	10	channels
+op	126:36	0:0	10	==
+water	126:39	0:0	10	2
+stmts	127:20	128:49	9	
+call	127:20	128:48	10	put_bits
+arg	127:29	127:32	11	&pb
+op	127:29	0:0	12	&
+water	127:30	0:0	12	pb
+arg	127:34	127:35	11	4
+water	127:34	0:0	12	4
+arg	127:37	128:48	11	adpcm_ima_compress_sample(&c->status[1],samples[2*i+1])
+call	127:37	128:47	12	adpcm_ima_compress_sample
+arg	127:63	127:76	13	&c->status[1]
+op	127:63	0:0	14	&
+water	127:64	0:0	14	c
+op	127:65	0:0	14	->
+water	127:67	0:0	14	status
+op	127:73	0:0	14	[
+water	127:74	0:0	14	1
+op	127:75	0:0	14	]
+arg	128:29	128:47	13	samples[2*i+1]
+water	128:29	0:0	14	samples
+op	128:36	0:0	14	[
+water	128:37	0:0	14	2
+op	128:39	0:0	14	*
+water	128:41	0:0	14	i
+op	128:43	0:0	14	+
+water	128:45	0:0	14	1
+op	128:46	0:0	14	]
+water	128:49	0:0	10	;
+water	129:12	0:0	8	}
+water	130:8	0:0	6	}
+call	131:8	131:26	4	flush_put_bits
+arg	131:23	131:26	5	&pb
+op	131:23	0:0	6	&
+water	131:24	0:0	6	pb
+water	131:27	0:0	4	;
+break	132:8	132:13	4	
+water	133:4	0:0	4	}
+label	134:4	134:29	4	case AV_CODEC_ID_ADPCM_MS :
+for	135:8	140:8	4	(i = 0 ;i < avctx -> channels;i ++)
+forinit	135:13	135:18	5	i = 0 ;
+water	135:13	0:0	6	i
+op	135:15	0:0	6	=
+water	135:17	0:0	6	0
+water	135:18	0:0	6	;
+cond	135:20	135:31	5	i < avctx -> channels
+water	135:20	0:0	6	i
+op	135:22	0:0	6	<
+water	135:24	0:0	6	avctx
+op	135:29	0:0	6	->
+water	135:31	0:0	6	channels
+forexpr	135:41	135:42	5	i ++
+water	135:41	0:0	6	i
+op	135:42	0:0	6	++
+stmts	135:46	140:8	5	
+water	135:46	0:0	6	{
+decl	136:12	136:29	6	int	predictor
+op	136:26	0:0	6	=
+water	136:28	0:0	6	0
+op	137:12	0:0	6	*
+water	137:13	0:0	6	dst
+op	137:16	0:0	6	++
+op	137:19	0:0	6	=
+water	137:21	0:0	6	predictor
+water	137:30	0:0	6	;
+water	138:12	0:0	6	c
+op	138:13	0:0	6	->
+water	138:15	0:0	6	status
+op	138:21	0:0	6	[
+water	138:22	0:0	6	i
+op	138:23	0:0	6	]
+op	138:24	0:0	6	.
+water	138:25	0:0	6	coeff1
+op	138:32	0:0	6	=
+water	138:34	0:0	6	ff_adpcm_AdaptCoeff1
+op	138:54	0:0	6	[
+water	138:55	0:0	6	predictor
+op	138:64	0:0	6	]
+water	138:65	0:0	6	;
+water	139:12	0:0	6	c
+op	139:13	0:0	6	->
+water	139:15	0:0	6	status
+op	139:21	0:0	6	[
+water	139:22	0:0	6	i
+op	139:23	0:0	6	]
+op	139:24	0:0	6	.
+water	139:25	0:0	6	coeff2
+op	139:32	0:0	6	=
+water	139:34	0:0	6	ff_adpcm_AdaptCoeff2
+op	139:54	0:0	6	[
+water	139:55	0:0	6	predictor
+op	139:64	0:0	6	]
+water	139:65	0:0	6	;
+water	140:8	0:0	6	}
+for	141:8	145:8	4	(i = 0 ;i < avctx -> channels;i ++)
+forinit	141:13	141:18	5	i = 0 ;
+water	141:13	0:0	6	i
+op	141:15	0:0	6	=
+water	141:17	0:0	6	0
+water	141:18	0:0	6	;
+cond	141:20	141:31	5	i < avctx -> channels
+water	141:20	0:0	6	i
+op	141:22	0:0	6	<
+water	141:24	0:0	6	avctx
+op	141:29	0:0	6	->
+water	141:31	0:0	6	channels
+forexpr	141:41	141:42	5	i ++
+water	141:41	0:0	6	i
+op	141:42	0:0	6	++
+stmts	141:46	145:8	5	
+water	141:46	0:0	6	{
+if	142:12	143:40	6	(c -> status [ i ] . idelta < 16)
+cond	142:16	142:38	7	c -> status [ i ] . idelta < 16
+water	142:16	0:0	8	c
+op	142:17	0:0	8	->
+water	142:19	0:0	8	status
+op	142:25	0:0	8	[
+water	142:26	0:0	8	i
+op	142:27	0:0	8	]
+op	142:28	0:0	8	.
+water	142:29	0:0	8	idelta
+op	142:36	0:0	8	<
+water	142:38	0:0	8	16
+stmts	143:16	143:40	7	
+water	143:16	0:0	8	c
+op	143:17	0:0	8	->
+water	143:19	0:0	8	status
+op	143:25	0:0	8	[
+water	143:26	0:0	8	i
+op	143:27	0:0	8	]
+op	143:28	0:0	8	.
+water	143:29	0:0	8	idelta
+op	143:36	0:0	8	=
+water	143:38	0:0	8	16
+water	143:40	0:0	8	;
+call	144:12	144:57	6	bytestream_put_le16
+arg	144:32	144:36	7	&dst
+op	144:32	0:0	8	&
+water	144:33	0:0	8	dst
+arg	144:38	144:57	7	c->status[i].idelta
+water	144:38	0:0	8	c
+op	144:39	0:0	8	->
+water	144:41	0:0	8	status
+op	144:47	0:0	8	[
+water	144:48	0:0	8	i
+op	144:49	0:0	8	]
+op	144:50	0:0	8	.
+water	144:51	0:0	8	idelta
+water	144:58	0:0	6	;
+water	145:8	0:0	6	}
+for	146:8	147:44	4	(i = 0 ;i < avctx -> channels;i ++)
+forinit	146:13	146:18	5	i = 0 ;
+water	146:13	0:0	6	i
+op	146:15	0:0	6	=
+water	146:17	0:0	6	0
+water	146:18	0:0	6	;
+cond	146:20	146:31	5	i < avctx -> channels
+water	146:20	0:0	6	i
+op	146:22	0:0	6	<
+water	146:24	0:0	6	avctx
+op	146:29	0:0	6	->
+water	146:31	0:0	6	channels
+forexpr	146:41	146:42	5	i ++
+water	146:41	0:0	6	i
+op	146:42	0:0	6	++
+stmts	147:12	147:44	5	
+water	147:12	0:0	6	c
+op	147:13	0:0	6	->
+water	147:15	0:0	6	status
+op	147:21	0:0	6	[
+water	147:22	0:0	6	i
+op	147:23	0:0	6	]
+op	147:24	0:0	6	.
+water	147:25	0:0	6	sample2
+op	147:32	0:0	6	=
+op	147:34	0:0	6	*
+water	147:35	0:0	6	samples
+op	147:42	0:0	6	++
+water	147:44	0:0	6	;
+for	148:8	151:8	4	(i = 0 ;i < avctx -> channels;i ++)
+forinit	148:13	148:18	5	i = 0 ;
+water	148:13	0:0	6	i
+op	148:15	0:0	6	=
+water	148:17	0:0	6	0
+water	148:18	0:0	6	;
+cond	148:20	148:31	5	i < avctx -> channels
+water	148:20	0:0	6	i
+op	148:22	0:0	6	<
+water	148:24	0:0	6	avctx
+op	148:29	0:0	6	->
+water	148:31	0:0	6	channels
+forexpr	148:41	148:42	5	i ++
+water	148:41	0:0	6	i
+op	148:42	0:0	6	++
+stmts	148:46	151:8	5	
+water	148:46	0:0	6	{
+water	149:12	0:0	6	c
+op	149:13	0:0	6	->
+water	149:15	0:0	6	status
+op	149:21	0:0	6	[
+water	149:22	0:0	6	i
+op	149:23	0:0	6	]
+op	149:24	0:0	6	.
+water	149:25	0:0	6	sample1
+op	149:33	0:0	6	=
+op	149:35	0:0	6	*
+water	149:36	0:0	6	samples
+op	149:43	0:0	6	++
+water	149:45	0:0	6	;
+call	150:12	150:58	6	bytestream_put_le16
+arg	150:32	150:36	7	&dst
+op	150:32	0:0	8	&
+water	150:33	0:0	8	dst
+arg	150:38	150:58	7	c->status[i].sample1
+water	150:38	0:0	8	c
+op	150:39	0:0	8	->
+water	150:41	0:0	8	status
+op	150:47	0:0	8	[
+water	150:48	0:0	8	i
+op	150:49	0:0	8	]
+op	150:50	0:0	8	.
+water	150:51	0:0	8	sample1
+water	150:59	0:0	6	;
+water	151:8	0:0	6	}
+for	152:8	153:59	4	(i = 0 ;i < avctx -> channels;i ++)
+forinit	152:13	152:18	5	i = 0 ;
+water	152:13	0:0	6	i
+op	152:15	0:0	6	=
+water	152:17	0:0	6	0
+water	152:18	0:0	6	;
+cond	152:20	152:31	5	i < avctx -> channels
+water	152:20	0:0	6	i
+op	152:22	0:0	6	<
+water	152:24	0:0	6	avctx
+op	152:29	0:0	6	->
+water	152:31	0:0	6	channels
+forexpr	152:41	152:42	5	i ++
+water	152:41	0:0	6	i
+op	152:42	0:0	6	++
+stmts	153:12	153:59	5	
+call	153:12	153:58	6	bytestream_put_le16
+arg	153:32	153:36	7	&dst
+op	153:32	0:0	8	&
+water	153:33	0:0	8	dst
+arg	153:38	153:58	7	c->status[i].sample2
+water	153:38	0:0	8	c
+op	153:39	0:0	8	->
+water	153:41	0:0	8	status
+op	153:47	0:0	8	[
+water	153:48	0:0	8	i
+op	153:49	0:0	8	]
+op	153:50	0:0	8	.
+water	153:51	0:0	8	sample2
+water	153:59	0:0	6	;
+if	154:8	171:8	4	(avctx -> trellis > 0)
+cond	154:12	154:29	5	avctx -> trellis > 0
+water	154:12	0:0	6	avctx
+op	154:17	0:0	6	->
+water	154:19	0:0	6	trellis
+op	154:27	0:0	6	>
+water	154:29	0:0	6	0
+stmts	154:32	171:8	5	
+water	154:32	0:0	6	{
+water	155:12	0:0	6	n
+op	155:14	0:0	6	=
+water	155:16	0:0	6	avctx
+op	155:21	0:0	6	->
+water	155:23	0:0	6	block_align
+op	155:35	0:0	6	-
+water	155:37	0:0	6	7
+op	155:39	0:0	6	*
+water	155:41	0:0	6	avctx
+op	155:46	0:0	6	->
+water	155:48	0:0	6	channels
+water	155:56	0:0	6	;
+call	156:12	156:53	6	FF_ALLOC_OR_GOTO
+arg	156:29	156:34	7	avctx
+water	156:29	0:0	8	avctx
+arg	156:36	156:39	7	buf
+water	156:36	0:0	8	buf
+arg	156:41	156:46	7	2*n
+water	156:41	0:0	8	2
+op	156:43	0:0	8	*
+water	156:45	0:0	8	n
+arg	156:48	156:53	7	error
+water	156:48	0:0	8	error
+water	156:54	0:0	6	;
+if	157:12	162:12	6	(avctx -> channels == 1)
+cond	157:16	157:35	7	avctx -> channels == 1
+water	157:16	0:0	8	avctx
+op	157:21	0:0	8	->
+water	157:23	0:0	8	channels
+op	157:32	0:0	8	==
+water	157:35	0:0	8	1
+stmts	157:38	162:12	7	
+water	157:38	0:0	8	{
+call	158:16	159:54	8	adpcm_compress_trellis
+arg	158:39	158:44	9	avctx
+water	158:39	0:0	10	avctx
+arg	158:46	158:53	9	samples
+water	158:46	0:0	10	samples
+arg	158:55	158:58	9	buf
+water	158:55	0:0	10	buf
+arg	158:60	158:73	9	&c->status[0]
+op	158:60	0:0	10	&
+water	158:61	0:0	10	c
+op	158:62	0:0	10	->
+water	158:64	0:0	10	status
+op	158:70	0:0	10	[
+water	158:71	0:0	10	0
+op	158:72	0:0	10	]
+arg	158:75	158:76	9	n
+water	158:75	0:0	10	n
+arg	159:39	159:54	9	avctx->channels
+water	159:39	0:0	10	avctx
+op	159:44	0:0	10	->
+water	159:46	0:0	10	channels
+water	159:55	0:0	8	;
+for	160:16	161:55	8	(i = 0 ;i < n;i += 2)
+forinit	160:21	160:26	9	i = 0 ;
+water	160:21	0:0	10	i
+op	160:23	0:0	10	=
+water	160:25	0:0	10	0
+water	160:26	0:0	10	;
+cond	160:28	160:32	9	i < n
+water	160:28	0:0	10	i
+op	160:30	0:0	10	<
+water	160:32	0:0	10	n
+forexpr	160:35	160:40	9	i += 2
+water	160:35	0:0	10	i
+op	160:37	0:0	10	+=
+water	160:40	0:0	10	2
+stmts	161:20	161:55	9	
+op	161:20	0:0	10	*
+water	161:21	0:0	10	dst
+op	161:24	0:0	10	++
+op	161:27	0:0	10	=
+water	161:29	0:0	10	(
+water	161:30	0:0	10	buf
+op	161:33	0:0	10	[
+water	161:34	0:0	10	i
+op	161:35	0:0	10	]
+op	161:37	0:0	10	<<
+water	161:40	0:0	10	4
+water	161:41	0:0	10	)
+op	161:43	0:0	10	|
+water	161:45	0:0	10	buf
+op	161:48	0:0	10	[
+water	161:49	0:0	10	i
+op	161:51	0:0	10	+
+water	161:53	0:0	10	1
+op	161:54	0:0	10	]
+water	161:55	0:0	10	;
+water	162:12	0:0	8	}
+else	162:14	169:12	6
+stmts	162:19	169:12	7	
+water	162:19	0:0	8	{
+call	163:16	164:72	8	adpcm_compress_trellis
+arg	163:39	163:44	9	avctx
+water	163:39	0:0	10	avctx
+arg	163:46	163:53	9	samples
+water	163:46	0:0	10	samples
+arg	163:59	163:62	9	buf
+water	163:59	0:0	10	buf
+arg	164:39	164:52	9	&c->status[0]
+op	164:39	0:0	10	&
+water	164:40	0:0	10	c
+op	164:41	0:0	10	->
+water	164:43	0:0	10	status
+op	164:49	0:0	10	[
+water	164:50	0:0	10	0
+op	164:51	0:0	10	]
+arg	164:54	164:55	9	n
+water	164:54	0:0	10	n
+arg	164:57	164:72	9	avctx->channels
+water	164:57	0:0	10	avctx
+op	164:62	0:0	10	->
+water	164:64	0:0	10	channels
+water	164:73	0:0	8	;
+call	165:16	166:72	8	adpcm_compress_trellis
+arg	165:39	165:44	9	avctx
+water	165:39	0:0	10	avctx
+arg	165:46	165:57	9	samples+1
+water	165:46	0:0	10	samples
+op	165:54	0:0	10	+
+water	165:56	0:0	10	1
+arg	165:59	165:66	9	buf+n
+water	165:59	0:0	10	buf
+op	165:63	0:0	10	+
+water	165:65	0:0	10	n
+arg	166:39	166:52	9	&c->status[1]
+op	166:39	0:0	10	&
+water	166:40	0:0	10	c
+op	166:41	0:0	10	->
+water	166:43	0:0	10	status
+op	166:49	0:0	10	[
+water	166:50	0:0	10	1
+op	166:51	0:0	10	]
+arg	166:54	166:55	9	n
+water	166:54	0:0	10	n
+arg	166:57	166:72	9	avctx->channels
+water	166:57	0:0	10	avctx
+op	166:62	0:0	10	->
+water	166:64	0:0	10	channels
+water	166:73	0:0	8	;
+for	167:16	168:55	8	(i = 0 ;i < n;i ++)
+forinit	167:21	167:26	9	i = 0 ;
+water	167:21	0:0	10	i
+op	167:23	0:0	10	=
+water	167:25	0:0	10	0
+water	167:26	0:0	10	;
+cond	167:28	167:32	9	i < n
+water	167:28	0:0	10	i
+op	167:30	0:0	10	<
+water	167:32	0:0	10	n
+forexpr	167:35	167:36	9	i ++
+water	167:35	0:0	10	i
+op	167:36	0:0	10	++
+stmts	168:20	168:55	9	
+op	168:20	0:0	10	*
+water	168:21	0:0	10	dst
+op	168:24	0:0	10	++
+op	168:27	0:0	10	=
+water	168:29	0:0	10	(
+water	168:30	0:0	10	buf
+op	168:33	0:0	10	[
+water	168:34	0:0	10	i
+op	168:35	0:0	10	]
+op	168:37	0:0	10	<<
+water	168:40	0:0	10	4
+water	168:41	0:0	10	)
+op	168:43	0:0	10	|
+water	168:45	0:0	10	buf
+op	168:48	0:0	10	[
+water	168:49	0:0	10	n
+op	168:51	0:0	10	+
+water	168:53	0:0	10	i
+op	168:54	0:0	10	]
+water	168:55	0:0	10	;
+water	169:12	0:0	8	}
+call	170:12	170:23	6	av_free
+arg	170:20	170:23	7	buf
+water	170:20	0:0	8	buf
+water	170:24	0:0	6	;
+water	171:8	0:0	6	}
+else	171:10	178:8	4
+stmts	171:15	178:8	5	
+water	171:15	0:0	6	{
+for	172:12	177:12	6	(i = 7 * avctx -> channels ;i < avctx -> block_align;i ++)
+forinit	172:17	172:40	7	i = 7 * avctx -> channels ;
+water	172:17	0:0	8	i
+op	172:19	0:0	8	=
+water	172:21	0:0	8	7
+op	172:23	0:0	8	*
+water	172:25	0:0	8	avctx
+op	172:30	0:0	8	->
+water	172:32	0:0	8	channels
+water	172:40	0:0	8	;
+cond	172:42	172:53	7	i < avctx -> block_align
+water	172:42	0:0	8	i
+op	172:44	0:0	8	<
+water	172:46	0:0	8	avctx
+op	172:51	0:0	8	->
+water	172:53	0:0	8	block_align
+forexpr	172:66	172:67	7	i ++
+water	172:66	0:0	8	i
+op	172:67	0:0	8	++
+stmts	172:71	177:12	7	
+water	172:71	0:0	8	{
+decl	173:16	173:26	8	int	nibble
+water	174:16	0:0	8	nibble
+op	174:24	0:0	8	=
+call	174:26	174:77	8	adpcm_ms_compress_sample
+arg	174:51	174:65	9	&c->status[0]
+op	174:51	0:0	10	&
+water	174:52	0:0	10	c
+op	174:53	0:0	10	->
+water	174:55	0:0	10	status
+op	174:61	0:0	10	[
+water	174:63	0:0	10	0
+op	174:64	0:0	10	]
+arg	174:67	174:77	9	*samples++
+op	174:67	0:0	10	*
+water	174:68	0:0	10	samples
+op	174:75	0:0	10	++
+op	174:79	0:0	8	<<
+water	174:82	0:0	8	4
+water	174:83	0:0	8	;
+water	175:16	0:0	8	nibble
+op	175:23	0:0	8	|=
+call	175:26	175:77	8	adpcm_ms_compress_sample
+arg	175:51	175:65	9	&c->status[st]
+op	175:51	0:0	10	&
+water	175:52	0:0	10	c
+op	175:53	0:0	10	->
+water	175:55	0:0	10	status
+op	175:61	0:0	10	[
+water	175:62	0:0	10	st
+op	175:64	0:0	10	]
+arg	175:67	175:77	9	*samples++
+op	175:67	0:0	10	*
+water	175:68	0:0	10	samples
+op	175:75	0:0	10	++
+water	175:78	0:0	8	;
+op	176:16	0:0	8	*
+water	176:17	0:0	8	dst
+op	176:20	0:0	8	++
+op	176:24	0:0	8	=
+water	176:26	0:0	8	nibble
+water	176:32	0:0	8	;
+water	177:12	0:0	8	}
+water	178:8	0:0	6	}
+break	179:8	179:13	4	
+label	180:4	180:33	4	case AV_CODEC_ID_ADPCM_YAMAHA :
+water	181:8	0:0	4	n
+op	181:10	0:0	4	=
+water	181:12	0:0	4	frame
+op	181:17	0:0	4	->
+water	181:19	0:0	4	nb_samples
+op	181:30	0:0	4	/
+water	181:32	0:0	4	2
+water	181:33	0:0	4	;
+if	182:8	199:8	4	(avctx -> trellis > 0)
+cond	182:12	182:29	5	avctx -> trellis > 0
+water	182:12	0:0	6	avctx
+op	182:17	0:0	6	->
+water	182:19	0:0	6	trellis
+op	182:27	0:0	6	>
+water	182:29	0:0	6	0
+stmts	182:32	199:8	5	
+water	182:32	0:0	6	{
+call	183:12	183:57	6	FF_ALLOC_OR_GOTO
+arg	183:29	183:34	7	avctx
+water	183:29	0:0	8	avctx
+arg	183:36	183:39	7	buf
+water	183:36	0:0	8	buf
+arg	183:41	183:50	7	2*n*2
+water	183:41	0:0	8	2
+op	183:43	0:0	8	*
+water	183:45	0:0	8	n
+op	183:47	0:0	8	*
+water	183:49	0:0	8	2
+arg	183:52	183:57	7	error
+water	183:52	0:0	8	error
+water	183:58	0:0	6	;
+water	184:12	0:0	6	n
+op	184:14	0:0	6	*=
+water	184:17	0:0	6	2
+water	184:18	0:0	6	;
+if	185:12	190:12	6	(avctx -> channels == 1)
+cond	185:16	185:35	7	avctx -> channels == 1
+water	185:16	0:0	8	avctx
+op	185:21	0:0	8	->
+water	185:23	0:0	8	channels
+op	185:32	0:0	8	==
+water	185:35	0:0	8	1
+stmts	185:38	190:12	7	
+water	185:38	0:0	8	{
+call	186:16	187:54	8	adpcm_compress_trellis
+arg	186:39	186:44	9	avctx
+water	186:39	0:0	10	avctx
+arg	186:46	186:53	9	samples
+water	186:46	0:0	10	samples
+arg	186:55	186:58	9	buf
+water	186:55	0:0	10	buf
+arg	186:60	186:73	9	&c->status[0]
+op	186:60	0:0	10	&
+water	186:61	0:0	10	c
+op	186:62	0:0	10	->
+water	186:64	0:0	10	status
+op	186:70	0:0	10	[
+water	186:71	0:0	10	0
+op	186:72	0:0	10	]
+arg	186:75	186:76	9	n
+water	186:75	0:0	10	n
+arg	187:39	187:54	9	avctx->channels
+water	187:39	0:0	10	avctx
+op	187:44	0:0	10	->
+water	187:46	0:0	10	channels
+water	187:55	0:0	8	;
+for	188:16	189:55	8	(i = 0 ;i < n;i += 2)
+forinit	188:21	188:26	9	i = 0 ;
+water	188:21	0:0	10	i
+op	188:23	0:0	10	=
+water	188:25	0:0	10	0
+water	188:26	0:0	10	;
+cond	188:28	188:32	9	i < n
+water	188:28	0:0	10	i
+op	188:30	0:0	10	<
+water	188:32	0:0	10	n
+forexpr	188:35	188:40	9	i += 2
+water	188:35	0:0	10	i
+op	188:37	0:0	10	+=
+water	188:40	0:0	10	2
+stmts	189:20	189:55	9	
+op	189:20	0:0	10	*
+water	189:21	0:0	10	dst
+op	189:24	0:0	10	++
+op	189:27	0:0	10	=
+water	189:29	0:0	10	buf
+op	189:32	0:0	10	[
+water	189:33	0:0	10	i
+op	189:34	0:0	10	]
+op	189:36	0:0	10	|
+water	189:38	0:0	10	(
+water	189:39	0:0	10	buf
+op	189:42	0:0	10	[
+water	189:43	0:0	10	i
+op	189:45	0:0	10	+
+water	189:47	0:0	10	1
+op	189:48	0:0	10	]
+op	189:50	0:0	10	<<
+water	189:53	0:0	10	4
+water	189:54	0:0	10	)
+water	189:55	0:0	10	;
+water	190:12	0:0	8	}
+else	190:14	197:12	6
+stmts	190:19	197:12	7	
+water	190:19	0:0	8	{
+call	191:16	192:72	8	adpcm_compress_trellis
+arg	191:39	191:44	9	avctx
+water	191:39	0:0	10	avctx
+arg	191:46	191:53	9	samples
+water	191:46	0:0	10	samples
+arg	191:59	191:62	9	buf
+water	191:59	0:0	10	buf
+arg	192:39	192:52	9	&c->status[0]
+op	192:39	0:0	10	&
+water	192:40	0:0	10	c
+op	192:41	0:0	10	->
+water	192:43	0:0	10	status
+op	192:49	0:0	10	[
+water	192:50	0:0	10	0
+op	192:51	0:0	10	]
+arg	192:54	192:55	9	n
+water	192:54	0:0	10	n
+arg	192:57	192:72	9	avctx->channels
+water	192:57	0:0	10	avctx
+op	192:62	0:0	10	->
+water	192:64	0:0	10	channels
+water	192:73	0:0	8	;
+call	193:16	194:72	8	adpcm_compress_trellis
+arg	193:39	193:44	9	avctx
+water	193:39	0:0	10	avctx
+arg	193:46	193:57	9	samples+1
+water	193:46	0:0	10	samples
+op	193:54	0:0	10	+
+water	193:56	0:0	10	1
+arg	193:59	193:66	9	buf+n
+water	193:59	0:0	10	buf
+op	193:63	0:0	10	+
+water	193:65	0:0	10	n
+arg	194:39	194:52	9	&c->status[1]
+op	194:39	0:0	10	&
+water	194:40	0:0	10	c
+op	194:41	0:0	10	->
+water	194:43	0:0	10	status
+op	194:49	0:0	10	[
+water	194:50	0:0	10	1
+op	194:51	0:0	10	]
+arg	194:54	194:55	9	n
+water	194:54	0:0	10	n
+arg	194:57	194:72	9	avctx->channels
+water	194:57	0:0	10	avctx
+op	194:62	0:0	10	->
+water	194:64	0:0	10	channels
+water	194:73	0:0	8	;
+for	195:16	196:55	8	(i = 0 ;i < n;i ++)
+forinit	195:21	195:26	9	i = 0 ;
+water	195:21	0:0	10	i
+op	195:23	0:0	10	=
+water	195:25	0:0	10	0
+water	195:26	0:0	10	;
+cond	195:28	195:32	9	i < n
+water	195:28	0:0	10	i
+op	195:30	0:0	10	<
+water	195:32	0:0	10	n
+forexpr	195:35	195:36	9	i ++
+water	195:35	0:0	10	i
+op	195:36	0:0	10	++
+stmts	196:20	196:55	9	
+op	196:20	0:0	10	*
+water	196:21	0:0	10	dst
+op	196:24	0:0	10	++
+op	196:27	0:0	10	=
+water	196:29	0:0	10	buf
+op	196:32	0:0	10	[
+water	196:33	0:0	10	i
+op	196:34	0:0	10	]
+op	196:36	0:0	10	|
+water	196:38	0:0	10	(
+water	196:39	0:0	10	buf
+op	196:42	0:0	10	[
+water	196:43	0:0	10	n
+op	196:45	0:0	10	+
+water	196:47	0:0	10	i
+op	196:48	0:0	10	]
+op	196:50	0:0	10	<<
+water	196:53	0:0	10	4
+water	196:54	0:0	10	)
+water	196:55	0:0	10	;
+water	197:12	0:0	8	}
+call	198:12	198:23	6	av_free
+arg	198:20	198:23	7	buf
+water	198:20	0:0	8	buf
+water	198:24	0:0	6	;
+water	199:8	0:0	6	}
+else	199:10	205:12	4
+stmts	200:12	205:12	5	
+for	200:12	205:12	6	(n *= avctx -> channels ;n > 0;n --)
+forinit	200:17	200:37	7	n *= avctx -> channels ;
+water	200:17	0:0	8	n
+op	200:19	0:0	8	*=
+water	200:22	0:0	8	avctx
+op	200:27	0:0	8	->
+water	200:29	0:0	8	channels
+water	200:37	0:0	8	;
+cond	200:39	200:43	7	n > 0
+water	200:39	0:0	8	n
+op	200:41	0:0	8	>
+water	200:43	0:0	8	0
+forexpr	200:46	200:47	7	n --
+water	200:46	0:0	8	n
+op	200:47	0:0	8	--
+stmts	200:51	205:12	7	
+water	200:51	0:0	8	{
+decl	201:16	201:26	8	int	nibble
+water	202:16	0:0	8	nibble
+op	202:24	0:0	8	=
+call	202:26	202:81	8	adpcm_yamaha_compress_sample
+arg	202:55	202:69	9	&c->status[0]
+op	202:55	0:0	10	&
+water	202:56	0:0	10	c
+op	202:57	0:0	10	->
+water	202:59	0:0	10	status
+op	202:65	0:0	10	[
+water	202:67	0:0	10	0
+op	202:68	0:0	10	]
+arg	202:71	202:81	9	*samples++
+op	202:71	0:0	10	*
+water	202:72	0:0	10	samples
+op	202:79	0:0	10	++
+water	202:82	0:0	8	;
+water	203:16	0:0	8	nibble
+op	203:23	0:0	8	|=
+call	203:26	203:81	8	adpcm_yamaha_compress_sample
+arg	203:55	203:69	9	&c->status[st]
+op	203:55	0:0	10	&
+water	203:56	0:0	10	c
+op	203:57	0:0	10	->
+water	203:59	0:0	10	status
+op	203:65	0:0	10	[
+water	203:66	0:0	10	st
+op	203:68	0:0	10	]
+arg	203:71	203:81	9	*samples++
+op	203:71	0:0	10	*
+water	203:72	0:0	10	samples
+op	203:79	0:0	10	++
+op	203:83	0:0	8	<<
+water	203:86	0:0	8	4
+water	203:87	0:0	8	;
+op	204:16	0:0	8	*
+water	204:17	0:0	8	dst
+op	204:20	0:0	8	++
+op	204:24	0:0	8	=
+water	204:26	0:0	8	nibble
+water	204:32	0:0	8	;
+water	205:12	0:0	8	}
+break	206:8	206:13	4	
+label	207:4	207:11	4	default :
+return	208:8	208:30	4	AVERROR(EINVAL)
+call	208:15	208:29	5	AVERROR
+arg	208:23	208:29	6	EINVAL
+water	208:23	0:0	7	EINVAL
+water	209:4	0:0	4	}
+water	210:4	0:0	2	avpkt
+op	210:9	0:0	2	->
+water	210:11	0:0	2	size
+op	210:16	0:0	2	=
+water	210:18	0:0	2	pkt_size
+water	210:26	0:0	2	;
+op	211:4	0:0	2	*
+water	211:5	0:0	2	got_packet_ptr
+op	211:20	0:0	2	=
+water	211:22	0:0	2	1
+water	211:23	0:0	2	;
+return	212:4	212:12	2	0
+water	212:11	0:0	3	0
+label	213:0	213:5	2	error :
+return	214:4	214:26	2	AVERROR(ENOMEM)
+call	214:11	214:25	3	AVERROR
+arg	214:19	214:25	4	ENOMEM
+water	214:19	0:0	5	ENOMEM

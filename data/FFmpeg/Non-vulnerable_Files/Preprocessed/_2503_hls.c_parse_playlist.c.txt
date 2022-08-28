@@ -1,0 +1,1108 @@
+func	1:0	181:0	0	static int	parse_playlist
+params	1:25	0:0	1	
+param	1:26	1:39	2	HLSContext *	c
+param	1:41	1:56	2	const char *	url
+param	2:26	2:46	2	struct playlist *	pls
+param	2:48	2:63	2	AVIOContext *	in
+stmnts	0:0	180:14	1	
+decl	4:4	4:47	2	int	ret
+op	4:12	0:0	2	=
+water	4:14	0:0	2	0
+water	4:15	0:0	2	,
+decl	4:4	4:47	2	int	is_segment
+op	4:28	0:0	2	=
+water	4:30	0:0	2	0
+water	4:31	0:0	2	,
+decl	4:4	4:47	2	int	is_variant
+op	4:44	0:0	2	=
+water	4:46	0:0	2	0
+decl	5:4	5:24	2	int64_t	duration
+op	5:21	0:0	2	=
+water	5:23	0:0	2	0
+decl	6:4	6:36	2	enum KeyType	key_type
+op	6:26	0:0	2	=
+water	6:28	0:0	2	KEY_NONE
+decl	7:4	7:23	2	uint8_t	iv[16]
+op	7:19	0:0	2	=
+water	7:21	0:0	2	""
+decl	8:4	8:18	2	int	has_iv
+op	8:15	0:0	2	=
+water	8:17	0:0	2	0
+decl	9:4	9:31	2	char	key[MAX_URL_SIZE]
+op	9:27	0:0	2	=
+water	9:29	0:0	2	""
+decl	10:4	10:27	2	char	line[MAX_URL_SIZE]
+decl	11:4	11:19	2	const char	*ptr
+decl	12:4	12:20	2	int	close_in
+op	12:17	0:0	2	=
+water	12:19	0:0	2	0
+decl	13:4	13:26	2	int64_t	seg_offset
+op	13:23	0:0	2	=
+water	13:25	0:0	2	0
+decl	14:4	14:25	2	int64_t	seg_size
+op	14:21	0:0	2	=
+op	14:23	0:0	2	-
+water	14:24	0:0	2	1
+decl	15:4	15:27	2	uint8_t	*new_url
+op	15:21	0:0	2	=
+water	15:23	0:0	2	NULL
+decl	16:4	16:36	2	struct variant_info	variant_info
+decl	17:4	17:30	2	char	tmp_str[MAX_URL_SIZE]
+if	18:4	39:4	2	(! in)
+cond	18:8	18:9	3	! in
+op	18:8	0:0	4	!
+water	18:9	0:0	4	in
+stmts	18:13	39:4	3	
+water	18:13	0:0	4	{
+decl	20:8	20:33	4	AVDictionary	*opts
+op	20:27	0:0	4	=
+water	20:29	0:0	4	NULL
+water	21:8	0:0	4	close_in
+op	21:17	0:0	4	=
+water	21:19	0:0	4	1
+water	21:20	0:0	4	;
+call	23:8	23:45	4	av_dict_set
+arg	23:20	23:25	5	&opts
+op	23:20	0:0	6	&
+water	23:21	0:0	6	opts
+arg	23:27	23:37	5	"seekable"
+water	23:27	0:0	6	"seekable"
+arg	23:39	23:42	5	"0"
+water	23:39	0:0	6	"0"
+arg	23:44	23:45	5	0
+water	23:44	0:0	6	0
+water	23:46	0:0	4	;
+call	25:8	25:57	4	av_dict_set
+arg	25:20	25:25	5	&opts
+op	25:20	0:0	6	&
+water	25:21	0:0	6	opts
+arg	25:27	25:39	5	"user-agent"
+water	25:27	0:0	6	"user-agent"
+arg	25:41	25:54	5	c->user_agent
+water	25:41	0:0	6	c
+op	25:42	0:0	6	->
+water	25:44	0:0	6	user_agent
+arg	25:56	25:57	5	0
+water	25:56	0:0	6	0
+water	25:58	0:0	4	;
+call	26:8	26:51	4	av_dict_set
+arg	26:20	26:25	5	&opts
+op	26:20	0:0	6	&
+water	26:21	0:0	6	opts
+arg	26:27	26:36	5	"cookies"
+water	26:27	0:0	6	"cookies"
+arg	26:38	26:48	5	c->cookies
+water	26:38	0:0	6	c
+op	26:39	0:0	6	->
+water	26:41	0:0	6	cookies
+arg	26:50	26:51	5	0
+water	26:50	0:0	6	0
+water	26:52	0:0	4	;
+call	27:8	27:51	4	av_dict_set
+arg	27:20	27:25	5	&opts
+op	27:20	0:0	6	&
+water	27:21	0:0	6	opts
+arg	27:27	27:36	5	"headers"
+water	27:27	0:0	6	"headers"
+arg	27:38	27:48	5	c->headers
+water	27:38	0:0	6	c
+op	27:39	0:0	6	->
+water	27:41	0:0	6	headers
+arg	27:50	27:51	5	0
+water	27:50	0:0	6	0
+water	27:52	0:0	4	;
+water	28:8	0:0	4	ret
+op	28:12	0:0	4	=
+call	28:14	29:53	4	avio_open2
+arg	28:25	28:28	5	&in
+op	28:25	0:0	6	&
+water	28:26	0:0	6	in
+arg	28:30	28:33	5	url
+water	28:30	0:0	6	url
+arg	28:35	28:49	5	AVIO_FLAG_READ
+water	28:35	0:0	6	AVIO_FLAG_READ
+arg	29:25	29:46	5	c->interrupt_callback
+water	29:25	0:0	6	c
+op	29:26	0:0	6	->
+water	29:28	0:0	6	interrupt_callback
+arg	29:48	29:53	5	&opts
+op	29:48	0:0	6	&
+water	29:49	0:0	6	opts
+water	29:54	0:0	4	;
+call	30:8	30:26	4	av_dict_free
+arg	30:21	30:26	5	&opts
+op	30:21	0:0	6	&
+water	30:22	0:0	6	opts
+water	30:27	0:0	4	;
+if	31:8	32:22	4	(ret < 0)
+cond	31:12	31:18	5	ret < 0
+water	31:12	0:0	6	ret
+op	31:16	0:0	6	<
+water	31:18	0:0	6	0
+stmts	32:12	32:22	5	
+return	32:12	32:22	6	ret
+water	32:19	0:0	7	ret
+water	34:8	0:0	4	ret
+op	34:12	0:0	4	=
+call	34:14	34:33	4	open_in
+arg	34:22	34:23	5	c
+water	34:22	0:0	6	c
+arg	34:25	34:28	5	&in
+op	34:25	0:0	6	&
+water	34:26	0:0	6	in
+arg	34:30	34:33	5	url
+water	34:30	0:0	6	url
+water	34:34	0:0	4	;
+if	35:8	36:22	4	(ret < 0)
+cond	35:12	35:18	5	ret < 0
+water	35:12	0:0	6	ret
+op	35:16	0:0	6	<
+water	35:18	0:0	6	0
+stmts	36:12	36:22	5	
+return	36:12	36:22	6	ret
+water	36:19	0:0	7	ret
+water	37:8	0:0	4	close_in
+op	37:17	0:0	4	=
+water	37:19	0:0	4	1
+water	37:20	0:0	4	;
+water	39:4	0:0	4	}
+if	40:4	41:21	2	(av_opt_get (in ,"location" ,AV_OPT_SEARCH_CHILDREN ,& new_url ) >= 0)
+cond	40:8	40:72	3	av_opt_get (in ,"location" ,AV_OPT_SEARCH_CHILDREN ,& new_url ) >= 0
+call	40:8	40:67	4	av_opt_get
+arg	40:19	40:21	5	in
+water	40:19	0:0	6	in
+arg	40:23	40:33	5	"location"
+water	40:23	0:0	6	"location"
+arg	40:35	40:57	5	AV_OPT_SEARCH_CHILDREN
+water	40:35	0:0	6	AV_OPT_SEARCH_CHILDREN
+arg	40:59	40:67	5	&new_url
+op	40:59	0:0	6	&
+water	40:60	0:0	6	new_url
+op	40:69	0:0	4	>=
+water	40:72	0:0	4	0
+stmts	41:8	41:21	3	
+water	41:8	0:0	4	url
+op	41:12	0:0	4	=
+water	41:14	0:0	4	new_url
+water	41:21	0:0	4	;
+call	42:4	42:42	2	read_chomp_line
+arg	42:20	42:22	3	in
+water	42:20	0:0	4	in
+arg	42:24	42:28	3	line
+water	42:24	0:0	4	line
+arg	42:30	42:42	3	sizeof(line)
+op	42:30	0:0	4	sizeof
+water	42:36	0:0	4	(
+water	42:37	0:0	4	line
+water	42:41	0:0	4	)
+water	42:43	0:0	2	;
+if	43:4	46:4	2	(strcmp (line ,"#EXTM3U" ))
+cond	43:8	43:30	3	strcmp (line ,"#EXTM3U" )
+call	43:8	43:30	4	strcmp
+arg	43:15	43:19	5	line
+water	43:15	0:0	6	line
+arg	43:21	43:30	5	"#EXTM3U"
+water	43:21	0:0	6	"#EXTM3U"
+stmts	43:33	46:4	3	
+water	43:33	0:0	4	{
+water	44:8	0:0	4	ret
+op	44:12	0:0	4	=
+water	44:14	0:0	4	AVERROR_INVALIDDATA
+water	44:33	0:0	4	;
+goto	45:8	45:17	4	fail
+water	45:13	0:0	5	fail
+water	46:4	0:0	4	}
+if	47:4	51:4	2	(pls)
+cond	47:8	47:8	3	pls
+water	47:8	0:0	4	pls
+stmts	47:13	51:4	3	
+water	47:13	0:0	4	{
+call	48:8	48:29	4	free_segment_list
+arg	48:26	48:29	5	pls
+water	48:26	0:0	6	pls
+water	48:30	0:0	4	;
+water	49:8	0:0	4	pls
+op	49:11	0:0	4	->
+water	49:13	0:0	4	finished
+op	49:22	0:0	4	=
+water	49:24	0:0	4	0
+water	49:25	0:0	4	;
+water	50:8	0:0	4	pls
+op	50:11	0:0	4	->
+water	50:13	0:0	4	type
+op	50:18	0:0	4	=
+water	50:20	0:0	4	PLS_TYPE_UNSPECIFIED
+water	50:40	0:0	4	;
+water	51:4	0:0	4	}
+while	52:4	173:4	2	(!avio_feof (in ))
+cond	52:11	52:24	3	!avio_feof (in )
+op	52:11	0:0	4	!
+call	52:12	52:24	4	avio_feof
+arg	52:22	52:24	5	in
+water	52:22	0:0	6	in
+stmts	52:27	173:4	3	
+water	52:27	0:0	4	{
+call	53:8	53:46	4	read_chomp_line
+arg	53:24	53:26	5	in
+water	53:24	0:0	6	in
+arg	53:28	53:32	5	line
+water	53:28	0:0	6	line
+arg	53:34	53:46	5	sizeof(line)
+op	53:34	0:0	6	sizeof
+water	53:40	0:0	6	(
+water	53:41	0:0	6	line
+water	53:45	0:0	6	)
+water	53:47	0:0	4	;
+if	54:8	59:8	4	(av_strstart (line ,"#EXT-X-STREAM-INF:" ,& ptr ))
+cond	54:12	54:56	5	av_strstart (line ,"#EXT-X-STREAM-INF:" ,& ptr )
+call	54:12	54:56	6	av_strstart
+arg	54:24	54:28	7	line
+water	54:24	0:0	8	line
+arg	54:30	54:50	7	"#EXT-X-STREAM-INF:"
+water	54:30	0:0	8	"#EXT-X-STREAM-INF:"
+arg	54:52	54:56	7	&ptr
+op	54:52	0:0	8	&
+water	54:53	0:0	8	ptr
+stmts	54:59	59:8	5	
+water	54:59	0:0	6	{
+water	55:12	0:0	6	is_variant
+op	55:23	0:0	6	=
+water	55:25	0:0	6	1
+water	55:26	0:0	6	;
+call	56:12	56:57	6	memset
+arg	56:19	56:32	7	&variant_info
+op	56:19	0:0	8	&
+water	56:20	0:0	8	variant_info
+arg	56:34	56:35	7	0
+water	56:34	0:0	8	0
+arg	56:37	56:57	7	sizeof(variant_info)
+op	56:37	0:0	8	sizeof
+water	56:43	0:0	8	(
+water	56:44	0:0	8	variant_info
+water	56:56	0:0	8	)
+water	56:58	0:0	6	;
+call	57:12	58:44	6	ff_parse_key_value
+arg	57:31	57:34	7	ptr
+water	57:31	0:0	8	ptr
+arg	57:36	57:77	7	(ff_parse_key_val_cb)handle_variant_args
+water	57:36	0:0	8	(
+water	57:37	0:0	8	ff_parse_key_val_cb
+water	57:56	0:0	8	)
+water	57:58	0:0	8	handle_variant_args
+arg	58:31	58:44	7	&variant_info
+op	58:31	0:0	8	&
+water	58:32	0:0	8	variant_info
+water	58:45	0:0	6	;
+water	59:8	0:0	6	}
+else	59:10	74:8	4
+stmts	59:15	74:8	5	
+if	59:15	74:8	6	(av_strstart (line ,"#EXT-X-KEY:" ,& ptr ))
+cond	59:19	59:56	7	av_strstart (line ,"#EXT-X-KEY:" ,& ptr )
+call	59:19	59:56	8	av_strstart
+arg	59:31	59:35	9	line
+water	59:31	0:0	10	line
+arg	59:37	59:50	9	"#EXT-X-KEY:"
+water	59:37	0:0	10	"#EXT-X-KEY:"
+arg	59:52	59:56	9	&ptr
+op	59:52	0:0	10	&
+water	59:53	0:0	10	ptr
+stmts	59:59	74:8	7	
+water	59:59	0:0	8	{
+decl	60:12	60:40	8	struct key_info	info
+op	60:33	0:0	8	=
+water	60:35	0:0	8	{
+water	60:36	0:0	8	{
+water	60:37	0:0	8	0
+water	60:38	0:0	8	}
+water	60:39	0:0	8	}
+call	61:12	62:36	8	ff_parse_key_value
+arg	61:31	61:34	9	ptr
+water	61:31	0:0	10	ptr
+arg	61:36	61:73	9	(ff_parse_key_val_cb)handle_key_args
+water	61:36	0:0	10	(
+water	61:37	0:0	10	ff_parse_key_val_cb
+water	61:56	0:0	10	)
+water	61:58	0:0	10	handle_key_args
+arg	62:31	62:36	9	&info
+op	62:31	0:0	10	&
+water	62:32	0:0	10	info
+water	62:37	0:0	8	;
+water	63:12	0:0	8	key_type
+op	63:21	0:0	8	=
+water	63:23	0:0	8	KEY_NONE
+water	63:31	0:0	8	;
+water	64:12	0:0	8	has_iv
+op	64:19	0:0	8	=
+water	64:21	0:0	8	0
+water	64:22	0:0	8	;
+if	65:12	66:38	8	(!strcmp (info . method ,"AES-128" ))
+cond	65:16	65:46	9	!strcmp (info . method ,"AES-128" )
+op	65:16	0:0	10	!
+call	65:17	65:46	10	strcmp
+arg	65:24	65:35	11	info.method
+water	65:24	0:0	12	info
+op	65:28	0:0	12	.
+water	65:29	0:0	12	method
+arg	65:37	65:46	11	"AES-128"
+water	65:37	0:0	12	"AES-128"
+stmts	66:16	66:38	9	
+water	66:16	0:0	10	key_type
+op	66:25	0:0	10	=
+water	66:27	0:0	10	KEY_AES_128
+water	66:38	0:0	10	;
+if	67:12	68:41	8	(!strcmp (info . method ,"SAMPLE-AES" ))
+cond	67:16	67:49	9	!strcmp (info . method ,"SAMPLE-AES" )
+op	67:16	0:0	10	!
+call	67:17	67:49	10	strcmp
+arg	67:24	67:35	11	info.method
+water	67:24	0:0	12	info
+op	67:28	0:0	12	.
+water	67:29	0:0	12	method
+arg	67:37	67:49	11	"SAMPLE-AES"
+water	67:37	0:0	12	"SAMPLE-AES"
+stmts	68:16	68:41	9	
+water	68:16	0:0	10	key_type
+op	68:25	0:0	10	=
+water	68:27	0:0	10	KEY_SAMPLE_AES
+water	68:41	0:0	10	;
+if	69:12	72:12	8	(!strncmp (info . iv ,"0x" ,2 ) || !strncmp (info . iv ,"0X" ,2 ))
+cond	69:16	69:71	9	!strncmp (info . iv ,"0x" ,2 ) || !strncmp (info . iv ,"0X" ,2 )
+op	69:16	0:0	10	!
+call	69:17	69:41	10	strncmp
+arg	69:25	69:32	11	info.iv
+water	69:25	0:0	12	info
+op	69:29	0:0	12	.
+water	69:30	0:0	12	iv
+arg	69:34	69:38	11	"0x"
+water	69:34	0:0	12	"0x"
+arg	69:40	69:41	11	2
+water	69:40	0:0	12	2
+op	69:43	0:0	10	||
+op	69:46	0:0	10	!
+call	69:47	69:71	10	strncmp
+arg	69:55	69:62	11	info.iv
+water	69:55	0:0	12	info
+op	69:59	0:0	12	.
+water	69:60	0:0	12	iv
+arg	69:64	69:68	11	"0X"
+water	69:64	0:0	12	"0X"
+arg	69:70	69:71	11	2
+water	69:70	0:0	12	2
+stmts	69:74	72:12	9	
+water	69:74	0:0	10	{
+call	70:16	70:46	10	ff_hex_to_data
+arg	70:31	70:33	11	iv
+water	70:31	0:0	12	iv
+arg	70:35	70:46	11	info.iv+2
+water	70:35	0:0	12	info
+op	70:39	0:0	12	.
+water	70:40	0:0	12	iv
+op	70:43	0:0	12	+
+water	70:45	0:0	12	2
+water	70:47	0:0	10	;
+water	71:16	0:0	10	has_iv
+op	71:23	0:0	10	=
+water	71:25	0:0	10	1
+water	71:26	0:0	10	;
+water	72:12	0:0	10	}
+call	73:12	73:49	8	av_strlcpy
+arg	73:23	73:26	9	key
+water	73:23	0:0	10	key
+arg	73:28	73:36	9	info.uri
+water	73:28	0:0	10	info
+op	73:32	0:0	10	.
+water	73:33	0:0	10	uri
+arg	73:38	73:49	9	sizeof(key)
+op	73:38	0:0	10	sizeof
+water	73:44	0:0	10	(
+water	73:45	0:0	10	key
+water	73:48	0:0	10	)
+water	73:50	0:0	8	;
+water	74:8	0:0	8	}
+else	74:10	79:8	4
+stmts	74:15	79:8	5	
+if	74:15	79:8	6	(av_strstart (line ,"#EXT-X-MEDIA:" ,& ptr ))
+cond	74:19	74:58	7	av_strstart (line ,"#EXT-X-MEDIA:" ,& ptr )
+call	74:19	74:58	8	av_strstart
+arg	74:31	74:35	9	line
+water	74:31	0:0	10	line
+arg	74:37	74:52	9	"#EXT-X-MEDIA:"
+water	74:37	0:0	10	"#EXT-X-MEDIA:"
+arg	74:54	74:58	9	&ptr
+op	74:54	0:0	10	&
+water	74:55	0:0	10	ptr
+stmts	74:61	79:8	7	
+water	74:61	0:0	8	{
+decl	75:12	75:46	8	struct rendition_info	info
+op	75:39	0:0	8	=
+water	75:41	0:0	8	{
+water	75:42	0:0	8	{
+water	75:43	0:0	8	0
+water	75:44	0:0	8	}
+water	75:45	0:0	8	}
+call	76:12	77:36	8	ff_parse_key_value
+arg	76:31	76:34	9	ptr
+water	76:31	0:0	10	ptr
+arg	76:36	76:79	9	(ff_parse_key_val_cb)handle_rendition_args
+water	76:36	0:0	10	(
+water	76:37	0:0	10	ff_parse_key_val_cb
+water	76:56	0:0	10	)
+water	76:58	0:0	10	handle_rendition_args
+arg	77:31	77:36	9	&info
+op	77:31	0:0	10	&
+water	77:32	0:0	10	info
+water	77:37	0:0	8	;
+call	78:12	78:39	8	new_rendition
+arg	78:26	78:27	9	c
+water	78:26	0:0	10	c
+arg	78:29	78:34	9	&info
+op	78:29	0:0	10	&
+water	78:30	0:0	10	info
+arg	78:36	78:39	9	url
+water	78:36	0:0	10	url
+water	78:40	0:0	8	;
+water	79:8	0:0	8	}
+else	79:10	84:8	4
+stmts	79:15	84:8	5	
+if	79:15	84:8	6	(av_strstart (line ,"#EXT-X-TARGETDURATION:" ,& ptr ))
+cond	79:19	79:67	7	av_strstart (line ,"#EXT-X-TARGETDURATION:" ,& ptr )
+call	79:19	79:67	8	av_strstart
+arg	79:31	79:35	9	line
+water	79:31	0:0	10	line
+arg	79:37	79:61	9	"#EXT-X-TARGETDURATION:"
+water	79:37	0:0	10	"#EXT-X-TARGETDURATION:"
+arg	79:63	79:67	9	&ptr
+op	79:63	0:0	10	&
+water	79:64	0:0	10	ptr
+stmts	79:70	84:8	7	
+water	79:70	0:0	8	{
+water	80:12	0:0	8	ret
+op	80:16	0:0	8	=
+call	80:18	80:46	8	ensure_playlist
+arg	80:34	80:35	9	c
+water	80:34	0:0	10	c
+arg	80:37	80:41	9	&pls
+op	80:37	0:0	10	&
+water	80:38	0:0	10	pls
+arg	80:43	80:46	9	url
+water	80:43	0:0	10	url
+water	80:47	0:0	8	;
+if	81:12	82:25	8	(ret < 0)
+cond	81:16	81:22	9	ret < 0
+water	81:16	0:0	10	ret
+op	81:20	0:0	10	<
+water	81:22	0:0	10	0
+stmts	82:16	82:25	9	
+goto	82:16	82:25	10	fail
+water	82:21	0:0	11	fail
+water	83:12	0:0	8	pls
+op	83:15	0:0	8	->
+water	83:17	0:0	8	target_duration
+op	83:33	0:0	8	=
+call	83:35	83:43	8	atoi
+arg	83:40	83:43	9	ptr
+water	83:40	0:0	10	ptr
+op	83:45	0:0	8	*
+water	83:47	0:0	8	AV_TIME_BASE
+water	83:59	0:0	8	;
+water	84:8	0:0	8	}
+else	84:10	89:8	4
+stmts	84:15	89:8	5	
+if	84:15	89:8	6	(av_strstart (line ,"#EXT-X-MEDIA-SEQUENCE:" ,& ptr ))
+cond	84:19	84:67	7	av_strstart (line ,"#EXT-X-MEDIA-SEQUENCE:" ,& ptr )
+call	84:19	84:67	8	av_strstart
+arg	84:31	84:35	9	line
+water	84:31	0:0	10	line
+arg	84:37	84:61	9	"#EXT-X-MEDIA-SEQUENCE:"
+water	84:37	0:0	10	"#EXT-X-MEDIA-SEQUENCE:"
+arg	84:63	84:67	9	&ptr
+op	84:63	0:0	10	&
+water	84:64	0:0	10	ptr
+stmts	84:70	89:8	7	
+water	84:70	0:0	8	{
+water	85:12	0:0	8	ret
+op	85:16	0:0	8	=
+call	85:18	85:46	8	ensure_playlist
+arg	85:34	85:35	9	c
+water	85:34	0:0	10	c
+arg	85:37	85:41	9	&pls
+op	85:37	0:0	10	&
+water	85:38	0:0	10	pls
+arg	85:43	85:46	9	url
+water	85:43	0:0	10	url
+water	85:47	0:0	8	;
+if	86:12	87:25	8	(ret < 0)
+cond	86:16	86:22	9	ret < 0
+water	86:16	0:0	10	ret
+op	86:20	0:0	10	<
+water	86:22	0:0	10	0
+stmts	87:16	87:25	9	
+goto	87:16	87:25	10	fail
+water	87:21	0:0	11	fail
+water	88:12	0:0	8	pls
+op	88:15	0:0	8	->
+water	88:17	0:0	8	start_seq_no
+op	88:30	0:0	8	=
+call	88:32	88:40	8	atoi
+arg	88:37	88:40	9	ptr
+water	88:37	0:0	10	ptr
+water	88:41	0:0	8	;
+water	89:8	0:0	8	}
+else	89:10	97:8	4
+stmts	89:15	97:8	5	
+if	89:15	97:8	6	(av_strstart (line ,"#EXT-X-PLAYLIST-TYPE:" ,& ptr ))
+cond	89:19	89:66	7	av_strstart (line ,"#EXT-X-PLAYLIST-TYPE:" ,& ptr )
+call	89:19	89:66	8	av_strstart
+arg	89:31	89:35	9	line
+water	89:31	0:0	10	line
+arg	89:37	89:60	9	"#EXT-X-PLAYLIST-TYPE:"
+water	89:37	0:0	10	"#EXT-X-PLAYLIST-TYPE:"
+arg	89:62	89:66	9	&ptr
+op	89:62	0:0	10	&
+water	89:63	0:0	10	ptr
+stmts	89:69	97:8	7	
+water	89:69	0:0	8	{
+water	90:12	0:0	8	ret
+op	90:16	0:0	8	=
+call	90:18	90:46	8	ensure_playlist
+arg	90:34	90:35	9	c
+water	90:34	0:0	10	c
+arg	90:37	90:41	9	&pls
+op	90:37	0:0	10	&
+water	90:38	0:0	10	pls
+arg	90:43	90:46	9	url
+water	90:43	0:0	10	url
+water	90:47	0:0	8	;
+if	91:12	92:25	8	(ret < 0)
+cond	91:16	91:22	9	ret < 0
+water	91:16	0:0	10	ret
+op	91:20	0:0	10	<
+water	91:22	0:0	10	0
+stmts	92:16	92:25	9	
+goto	92:16	92:25	10	fail
+water	92:21	0:0	11	fail
+if	93:12	94:42	8	(!strcmp (ptr ,"EVENT" ))
+cond	93:16	93:36	9	!strcmp (ptr ,"EVENT" )
+op	93:16	0:0	10	!
+call	93:17	93:36	10	strcmp
+arg	93:24	93:27	11	ptr
+water	93:24	0:0	12	ptr
+arg	93:29	93:36	11	"EVENT"
+water	93:29	0:0	12	"EVENT"
+stmts	94:16	94:42	9	
+water	94:16	0:0	10	pls
+op	94:19	0:0	10	->
+water	94:21	0:0	10	type
+op	94:26	0:0	10	=
+water	94:28	0:0	10	PLS_TYPE_EVENT
+water	94:42	0:0	10	;
+else	95:12	96:40	8
+stmts	95:17	96:40	9	
+if	95:17	96:40	10	(!strcmp (ptr ,"VOD" ))
+cond	95:21	95:39	11	!strcmp (ptr ,"VOD" )
+op	95:21	0:0	12	!
+call	95:22	95:39	12	strcmp
+arg	95:29	95:32	13	ptr
+water	95:29	0:0	14	ptr
+arg	95:34	95:39	13	"VOD"
+water	95:34	0:0	14	"VOD"
+stmts	96:16	96:40	11	
+water	96:16	0:0	12	pls
+op	96:19	0:0	12	->
+water	96:21	0:0	12	type
+op	96:26	0:0	12	=
+water	96:28	0:0	12	PLS_TYPE_VOD
+water	96:40	0:0	12	;
+water	97:8	0:0	8	}
+else	97:10	100:8	4
+stmts	97:15	100:8	5	
+if	97:15	100:8	6	(av_strstart (line ,"#EXT-X-ENDLIST" ,& ptr ))
+cond	97:19	97:59	7	av_strstart (line ,"#EXT-X-ENDLIST" ,& ptr )
+call	97:19	97:59	8	av_strstart
+arg	97:31	97:35	9	line
+water	97:31	0:0	10	line
+arg	97:37	97:53	9	"#EXT-X-ENDLIST"
+water	97:37	0:0	10	"#EXT-X-ENDLIST"
+arg	97:55	97:59	9	&ptr
+op	97:55	0:0	10	&
+water	97:56	0:0	10	ptr
+stmts	97:62	100:8	7	
+water	97:62	0:0	8	{
+if	98:12	99:33	8	(pls)
+cond	98:16	98:16	9	pls
+water	98:16	0:0	10	pls
+stmts	99:16	99:33	9	
+water	99:16	0:0	10	pls
+op	99:19	0:0	10	->
+water	99:21	0:0	10	finished
+op	99:30	0:0	10	=
+water	99:32	0:0	10	1
+water	99:33	0:0	10	;
+water	100:8	0:0	8	}
+else	100:10	103:8	4
+stmts	100:15	103:8	5	
+if	100:15	103:8	6	(av_strstart (line ,"#EXTINF:" ,& ptr ))
+cond	100:19	100:53	7	av_strstart (line ,"#EXTINF:" ,& ptr )
+call	100:19	100:53	8	av_strstart
+arg	100:31	100:35	9	line
+water	100:31	0:0	10	line
+arg	100:37	100:47	9	"#EXTINF:"
+water	100:37	0:0	10	"#EXTINF:"
+arg	100:49	100:53	9	&ptr
+op	100:49	0:0	10	&
+water	100:50	0:0	10	ptr
+stmts	100:56	103:8	7	
+water	100:56	0:0	8	{
+water	101:12	0:0	8	is_segment
+op	101:23	0:0	8	=
+water	101:25	0:0	8	1
+water	101:26	0:0	8	;
+water	102:12	0:0	8	duration
+op	102:23	0:0	8	=
+call	102:25	102:33	8	atof
+arg	102:30	102:33	9	ptr
+water	102:30	0:0	10	ptr
+op	102:35	0:0	8	*
+water	102:37	0:0	8	AV_TIME_BASE
+water	102:49	0:0	8	;
+water	103:8	0:0	8	}
+else	103:10	108:8	4
+stmts	103:15	108:8	5	
+if	103:15	108:8	6	(av_strstart (line ,"#EXT-X-BYTERANGE:" ,& ptr ))
+cond	103:19	103:62	7	av_strstart (line ,"#EXT-X-BYTERANGE:" ,& ptr )
+call	103:19	103:62	8	av_strstart
+arg	103:31	103:35	9	line
+water	103:31	0:0	10	line
+arg	103:37	103:56	9	"#EXT-X-BYTERANGE:"
+water	103:37	0:0	10	"#EXT-X-BYTERANGE:"
+arg	103:58	103:62	9	&ptr
+op	103:58	0:0	10	&
+water	103:59	0:0	10	ptr
+stmts	103:65	108:8	7	
+water	103:65	0:0	8	{
+water	104:12	0:0	8	seg_size
+op	104:21	0:0	8	=
+call	104:23	104:31	8	atoi
+arg	104:28	104:31	9	ptr
+water	104:28	0:0	10	ptr
+water	104:32	0:0	8	;
+water	105:12	0:0	8	ptr
+op	105:16	0:0	8	=
+call	105:18	105:33	8	strchr
+arg	105:25	105:28	9	ptr
+water	105:25	0:0	10	ptr
+arg	105:30	105:33	9	'@'
+water	105:30	0:0	10	'@'
+water	105:34	0:0	8	;
+if	106:12	107:40	8	(ptr)
+cond	106:16	106:16	9	ptr
+water	106:16	0:0	10	ptr
+stmts	107:16	107:40	9	
+water	107:16	0:0	10	seg_offset
+op	107:27	0:0	10	=
+call	107:29	107:39	10	atoi
+arg	107:34	107:39	11	ptr+1
+water	107:34	0:0	12	ptr
+op	107:37	0:0	12	+
+water	107:38	0:0	12	1
+water	107:40	0:0	10	;
+water	108:8	0:0	8	}
+else	108:10	110:8	4
+stmts	108:15	110:8	5	
+if	108:15	110:8	6	(av_strstart (line ,"#" ,NULL ))
+cond	108:19	108:46	7	av_strstart (line ,"#" ,NULL )
+call	108:19	108:46	8	av_strstart
+arg	108:31	108:35	9	line
+water	108:31	0:0	10	line
+arg	108:37	108:40	9	"#"
+water	108:37	0:0	10	"#"
+arg	108:42	108:46	9	NULL
+water	108:42	0:0	10	NULL
+stmts	108:49	110:8	7	
+water	108:49	0:0	8	{
+continue	109:12	109:20	8	
+water	110:8	0:0	8	}
+else	110:10	172:8	4
+stmts	110:15	172:8	5	
+if	110:15	172:8	6	(line [ 0 ])
+cond	110:19	110:25	7	line [ 0 ]
+water	110:19	0:0	8	line
+op	110:23	0:0	8	[
+water	110:24	0:0	8	0
+op	110:25	0:0	8	]
+stmts	110:28	172:8	7	
+water	110:28	0:0	8	{
+if	111:12	117:12	8	(is_variant)
+cond	111:16	111:16	9	is_variant
+water	111:16	0:0	10	is_variant
+stmts	111:28	117:12	9	
+water	111:28	0:0	10	{
+if	112:16	115:16	10	(!new_variant (c ,& variant_info ,line ,url ))
+cond	112:20	112:60	11	!new_variant (c ,& variant_info ,line ,url )
+op	112:20	0:0	12	!
+call	112:21	112:60	12	new_variant
+arg	112:33	112:34	13	c
+water	112:33	0:0	14	c
+arg	112:36	112:49	13	&variant_info
+op	112:36	0:0	14	&
+water	112:37	0:0	14	variant_info
+arg	112:51	112:55	13	line
+water	112:51	0:0	14	line
+arg	112:57	112:60	13	url
+water	112:57	0:0	14	url
+stmts	112:63	115:16	11	
+water	112:63	0:0	12	{
+water	113:20	0:0	12	ret
+op	113:24	0:0	12	=
+call	113:26	113:40	12	AVERROR
+arg	113:34	113:40	13	ENOMEM
+water	113:34	0:0	14	ENOMEM
+water	113:41	0:0	12	;
+goto	114:20	114:29	12	fail
+water	114:25	0:0	13	fail
+water	115:16	0:0	12	}
+water	116:16	0:0	10	is_variant
+op	116:27	0:0	10	=
+water	116:29	0:0	10	0
+water	116:30	0:0	10	;
+water	117:12	0:0	10	}
+if	118:12	171:12	8	(is_segment)
+cond	118:16	118:16	9	is_segment
+water	118:16	0:0	10	is_segment
+stmts	118:28	171:12	9	
+water	118:28	0:0	10	{
+decl	119:16	119:35	10	struct segment	*seg
+if	120:16	126:16	10	(! pls)
+cond	120:20	120:21	11	! pls
+op	120:20	0:0	12	!
+water	120:21	0:0	12	pls
+stmts	120:26	126:16	11	
+water	120:26	0:0	12	{
+if	121:20	124:20	12	(!new_variant (c ,0 ,url ,NULL ))
+cond	121:24	121:52	13	!new_variant (c ,0 ,url ,NULL )
+op	121:24	0:0	14	!
+call	121:25	121:52	14	new_variant
+arg	121:37	121:38	15	c
+water	121:37	0:0	16	c
+arg	121:40	121:41	15	0
+water	121:40	0:0	16	0
+arg	121:43	121:46	15	url
+water	121:43	0:0	16	url
+arg	121:48	121:52	15	NULL
+water	121:48	0:0	16	NULL
+stmts	121:55	124:20	13	
+water	121:55	0:0	14	{
+water	122:24	0:0	14	ret
+op	122:28	0:0	14	=
+call	122:30	122:44	14	AVERROR
+arg	122:38	122:44	15	ENOMEM
+water	122:38	0:0	16	ENOMEM
+water	122:45	0:0	14	;
+goto	123:24	123:33	14	fail
+water	123:29	0:0	15	fail
+water	124:20	0:0	14	}
+water	125:20	0:0	12	pls
+op	125:24	0:0	12	=
+water	125:26	0:0	12	c
+op	125:27	0:0	12	->
+water	125:29	0:0	12	playlists
+op	125:38	0:0	12	[
+water	125:39	0:0	12	c
+op	125:40	0:0	12	->
+water	125:42	0:0	12	n_playlists
+op	125:54	0:0	12	-
+water	125:56	0:0	12	1
+op	125:57	0:0	12	]
+water	125:58	0:0	12	;
+water	126:16	0:0	12	}
+water	127:16	0:0	10	seg
+op	127:20	0:0	10	=
+call	127:22	127:54	10	av_malloc
+arg	127:32	127:54	11	sizeof(structsegment)
+op	127:32	0:0	12	sizeof
+water	127:38	0:0	12	(
+water	127:39	0:0	12	struct
+water	127:46	0:0	12	segment
+water	127:53	0:0	12	)
+water	127:55	0:0	10	;
+if	128:16	131:16	10	(! seg)
+cond	128:20	128:21	11	! seg
+op	128:20	0:0	12	!
+water	128:21	0:0	12	seg
+stmts	128:26	131:16	11	
+water	128:26	0:0	12	{
+water	129:20	0:0	12	ret
+op	129:24	0:0	12	=
+call	129:26	129:40	12	AVERROR
+arg	129:34	129:40	13	ENOMEM
+water	129:34	0:0	14	ENOMEM
+water	129:41	0:0	12	;
+goto	130:20	130:29	12	fail
+water	130:25	0:0	13	fail
+water	131:16	0:0	12	}
+water	132:16	0:0	10	seg
+op	132:19	0:0	10	->
+water	132:21	0:0	10	duration
+op	132:30	0:0	10	=
+water	132:32	0:0	10	duration
+water	132:40	0:0	10	;
+water	133:16	0:0	10	seg
+op	133:19	0:0	10	->
+water	133:21	0:0	10	key_type
+op	133:30	0:0	10	=
+water	133:32	0:0	10	key_type
+water	133:40	0:0	10	;
+if	134:16	136:16	10	(has_iv)
+cond	134:20	134:20	11	has_iv
+water	134:20	0:0	12	has_iv
+stmts	134:28	136:16	11	
+water	134:28	0:0	12	{
+call	135:20	135:50	12	memcpy
+arg	135:27	135:34	13	seg->iv
+water	135:27	0:0	14	seg
+op	135:30	0:0	14	->
+water	135:32	0:0	14	iv
+arg	135:36	135:38	13	iv
+water	135:36	0:0	14	iv
+arg	135:40	135:50	13	sizeof(iv)
+op	135:40	0:0	14	sizeof
+water	135:46	0:0	14	(
+water	135:47	0:0	14	iv
+water	135:49	0:0	14	)
+water	135:51	0:0	12	;
+water	136:16	0:0	12	}
+else	136:18	140:16	10
+stmts	136:23	140:16	11	
+water	136:23	0:0	12	{
+decl	137:20	137:65	12	int	seq
+op	137:28	0:0	12	=
+water	137:30	0:0	12	pls
+op	137:33	0:0	12	->
+water	137:35	0:0	12	start_seq_no
+op	137:48	0:0	12	+
+water	137:50	0:0	12	pls
+op	137:53	0:0	12	->
+water	137:55	0:0	12	n_segments
+call	138:20	138:54	12	memset
+arg	138:27	138:34	13	seg->iv
+water	138:27	0:0	14	seg
+op	138:30	0:0	14	->
+water	138:32	0:0	14	iv
+arg	138:36	138:37	13	0
+water	138:36	0:0	14	0
+arg	138:39	138:54	13	sizeof(seg->iv)
+op	138:39	0:0	14	sizeof
+water	138:45	0:0	14	(
+water	138:46	0:0	14	seg
+op	138:49	0:0	14	->
+water	138:51	0:0	14	iv
+water	138:53	0:0	14	)
+water	138:55	0:0	12	;
+call	139:20	139:45	12	AV_WB32
+arg	139:28	139:40	13	seg->iv+12
+water	139:28	0:0	14	seg
+op	139:31	0:0	14	->
+water	139:33	0:0	14	iv
+op	139:36	0:0	14	+
+water	139:38	0:0	14	12
+arg	139:42	139:45	13	seq
+water	139:42	0:0	14	seq
+water	139:46	0:0	12	;
+water	140:16	0:0	12	}
+if	141:16	149:16	10	(key_type != KEY_NONE)
+cond	141:20	141:32	11	key_type != KEY_NONE
+water	141:20	0:0	12	key_type
+op	141:29	0:0	12	!=
+water	141:32	0:0	12	KEY_NONE
+stmts	141:42	149:16	11	
+water	141:42	0:0	12	{
+call	142:20	142:75	12	ff_make_absolute_url
+arg	142:41	142:48	13	tmp_str
+water	142:41	0:0	14	tmp_str
+arg	142:50	142:65	13	sizeof(tmp_str)
+op	142:50	0:0	14	sizeof
+water	142:56	0:0	14	(
+water	142:57	0:0	14	tmp_str
+water	142:64	0:0	14	)
+arg	142:67	142:70	13	url
+water	142:67	0:0	14	url
+arg	142:72	142:75	13	key
+water	142:72	0:0	14	key
+water	142:76	0:0	12	;
+water	143:20	0:0	12	seg
+op	143:23	0:0	12	->
+water	143:25	0:0	12	key
+op	143:29	0:0	12	=
+call	143:31	143:48	12	av_strdup
+arg	143:41	143:48	13	tmp_str
+water	143:41	0:0	14	tmp_str
+water	143:49	0:0	12	;
+if	144:20	148:20	12	(! seg -> key)
+cond	144:24	144:30	13	! seg -> key
+op	144:24	0:0	14	!
+water	144:25	0:0	14	seg
+op	144:28	0:0	14	->
+water	144:30	0:0	14	key
+stmts	144:35	148:20	13	
+water	144:35	0:0	14	{
+call	145:24	145:35	14	av_free
+arg	145:32	145:35	15	seg
+water	145:32	0:0	16	seg
+water	145:36	0:0	14	;
+water	146:24	0:0	14	ret
+op	146:28	0:0	14	=
+call	146:30	146:44	14	AVERROR
+arg	146:38	146:44	15	ENOMEM
+water	146:38	0:0	16	ENOMEM
+water	146:45	0:0	14	;
+goto	147:24	147:33	14	fail
+water	147:29	0:0	15	fail
+water	148:20	0:0	14	}
+water	149:16	0:0	12	}
+else	149:18	151:16	10
+stmts	149:23	151:16	11	
+water	149:23	0:0	12	{
+water	150:20	0:0	12	seg
+op	150:23	0:0	12	->
+water	150:25	0:0	12	key
+op	150:29	0:0	12	=
+water	150:31	0:0	12	NULL
+water	150:35	0:0	12	;
+water	151:16	0:0	12	}
+call	152:16	152:72	10	ff_make_absolute_url
+arg	152:37	152:44	11	tmp_str
+water	152:37	0:0	12	tmp_str
+arg	152:46	152:61	11	sizeof(tmp_str)
+op	152:46	0:0	12	sizeof
+water	152:52	0:0	12	(
+water	152:53	0:0	12	tmp_str
+water	152:60	0:0	12	)
+arg	152:63	152:66	11	url
+water	152:63	0:0	12	url
+arg	152:68	152:72	11	line
+water	152:68	0:0	12	line
+water	152:73	0:0	10	;
+water	153:16	0:0	10	seg
+op	153:19	0:0	10	->
+water	153:21	0:0	10	url
+op	153:25	0:0	10	=
+call	153:27	153:44	10	av_strdup
+arg	153:37	153:44	11	tmp_str
+water	153:37	0:0	12	tmp_str
+water	153:45	0:0	10	;
+if	154:16	159:16	10	(! seg -> url)
+cond	154:20	154:26	11	! seg -> url
+op	154:20	0:0	12	!
+water	154:21	0:0	12	seg
+op	154:24	0:0	12	->
+water	154:26	0:0	12	url
+stmts	154:31	159:16	11	
+water	154:31	0:0	12	{
+call	155:20	155:36	12	av_free
+arg	155:28	155:36	13	seg->key
+water	155:28	0:0	14	seg
+op	155:31	0:0	14	->
+water	155:33	0:0	14	key
+water	155:37	0:0	12	;
+call	156:20	156:31	12	av_free
+arg	156:28	156:31	13	seg
+water	156:28	0:0	14	seg
+water	156:32	0:0	12	;
+water	157:20	0:0	12	ret
+op	157:24	0:0	12	=
+call	157:26	157:40	12	AVERROR
+arg	157:34	157:40	13	ENOMEM
+water	157:34	0:0	14	ENOMEM
+water	157:41	0:0	12	;
+goto	158:20	158:29	12	fail
+water	158:25	0:0	13	fail
+water	159:16	0:0	12	}
+call	160:16	160:66	10	dynarray_add
+arg	160:29	160:43	11	&pls->segments
+op	160:29	0:0	12	&
+water	160:30	0:0	12	pls
+op	160:33	0:0	12	->
+water	160:35	0:0	12	segments
+arg	160:45	160:61	11	&pls->n_segments
+op	160:45	0:0	12	&
+water	160:46	0:0	12	pls
+op	160:49	0:0	12	->
+water	160:51	0:0	12	n_segments
+arg	160:63	160:66	11	seg
+water	160:63	0:0	12	seg
+water	160:67	0:0	10	;
+water	161:16	0:0	10	is_segment
+op	161:27	0:0	10	=
+water	161:29	0:0	10	0
+water	161:30	0:0	10	;
+water	162:16	0:0	10	seg
+op	162:19	0:0	10	->
+water	162:21	0:0	10	size
+op	162:26	0:0	10	=
+water	162:28	0:0	10	seg_size
+water	162:36	0:0	10	;
+if	163:16	167:16	10	(seg_size >= 0)
+cond	163:20	163:32	11	seg_size >= 0
+water	163:20	0:0	12	seg_size
+op	163:29	0:0	12	>=
+water	163:32	0:0	12	0
+stmts	163:35	167:16	11	
+water	163:35	0:0	12	{
+water	164:20	0:0	12	seg
+op	164:23	0:0	12	->
+water	164:25	0:0	12	url_offset
+op	164:36	0:0	12	=
+water	164:38	0:0	12	seg_offset
+water	164:48	0:0	12	;
+water	165:20	0:0	12	seg_offset
+op	165:31	0:0	12	+=
+water	165:34	0:0	12	seg_size
+water	165:42	0:0	12	;
+water	166:20	0:0	12	seg_size
+op	166:29	0:0	12	=
+op	166:31	0:0	12	-
+water	166:32	0:0	12	1
+water	166:33	0:0	12	;
+water	167:16	0:0	12	}
+else	167:18	170:16	10
+stmts	167:23	170:16	11	
+water	167:23	0:0	12	{
+water	168:20	0:0	12	seg
+op	168:23	0:0	12	->
+water	168:25	0:0	12	url_offset
+op	168:36	0:0	12	=
+water	168:38	0:0	12	0
+water	168:39	0:0	12	;
+water	169:20	0:0	12	seg_offset
+op	169:31	0:0	12	=
+water	169:33	0:0	12	0
+water	169:34	0:0	12	;
+water	170:16	0:0	12	}
+water	171:12	0:0	10	}
+water	172:8	0:0	8	}
+water	173:4	0:0	4	}
+if	174:4	175:51	2	(pls)
+cond	174:8	174:8	3	pls
+water	174:8	0:0	4	pls
+stmts	175:8	175:51	3	
+water	175:8	0:0	4	pls
+op	175:11	0:0	4	->
+water	175:13	0:0	4	last_load_time
+op	175:28	0:0	4	=
+call	175:30	175:50	4	av_gettime_relative
+water	175:51	0:0	4	;
+label	176:0	176:4	2	fail :
+call	177:4	177:19	2	av_free
+arg	177:12	177:19	3	new_url
+water	177:12	0:0	4	new_url
+water	177:20	0:0	2	;
+if	178:4	179:22	2	(close_in)
+cond	178:8	178:8	3	close_in
+water	178:8	0:0	4	close_in
+stmts	179:8	179:22	3	
+call	179:8	179:21	4	avio_close
+arg	179:19	179:21	5	in
+water	179:19	0:0	6	in
+water	179:22	0:0	4	;
+return	180:4	180:14	2	ret
+water	180:11	0:0	3	ret

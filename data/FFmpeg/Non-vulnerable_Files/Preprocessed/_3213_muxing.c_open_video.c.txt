@@ -1,0 +1,153 @@
+func	1:0	31:0	0	static void	open_video
+params	1:22	0:0	1	
+param	1:23	1:42	2	AVFormatContext *	oc
+param	1:44	1:58	2	AVCodec *	codec
+param	1:60	1:77	2	OutputStream *	ost
+param	1:79	1:100	2	AVDictionary *	opt_arg
+stmnts	0:0	30:4	1	
+decl	3:4	3:11	2	int	ret
+decl	4:4	4:38	2	AVCodecContext	*c
+op	4:22	0:0	2	=
+water	4:24	0:0	2	ost
+op	4:27	0:0	2	->
+water	4:29	0:0	2	st
+op	4:31	0:0	2	->
+water	4:33	0:0	2	codec
+decl	5:4	5:28	2	AVDictionary	*opt
+op	5:22	0:0	2	=
+water	5:24	0:0	2	NULL
+call	6:4	6:33	2	av_dict_copy
+arg	6:17	6:21	3	&opt
+op	6:17	0:0	4	&
+water	6:18	0:0	4	opt
+arg	6:23	6:30	3	opt_arg
+water	6:23	0:0	4	opt_arg
+arg	6:32	6:33	3	0
+water	6:32	0:0	4	0
+water	6:34	0:0	2	;
+water	8:4	0:0	2	ret
+op	8:8	0:0	2	=
+call	8:10	8:38	2	avcodec_open2
+arg	8:24	8:25	3	c
+water	8:24	0:0	4	c
+arg	8:27	8:32	3	codec
+water	8:27	0:0	4	codec
+arg	8:34	8:38	3	&opt
+op	8:34	0:0	4	&
+water	8:35	0:0	4	opt
+water	8:39	0:0	2	;
+call	9:4	9:21	2	av_dict_free
+arg	9:17	9:21	3	&opt
+op	9:17	0:0	4	&
+water	9:18	0:0	4	opt
+water	9:22	0:0	2	;
+if	10:4	13:4	2	(ret < 0)
+cond	10:8	10:14	3	ret < 0
+water	10:8	0:0	4	ret
+op	10:12	0:0	4	<
+water	10:14	0:0	4	0
+stmts	10:17	13:4	3	
+water	10:17	0:0	4	{
+call	11:8	11:75	4	fprintf
+arg	11:16	11:22	5	stderr
+water	11:16	0:0	6	stderr
+arg	11:24	11:58	5	"Could not open video codec: %s\n"
+water	11:24	0:0	6	"Could not open video codec: %s\n"
+arg	11:60	11:75	5	av_err2str(ret)
+call	11:60	11:74	6	av_err2str
+arg	11:71	11:74	7	ret
+water	11:71	0:0	8	ret
+water	11:76	0:0	4	;
+call	12:8	12:14	4	exit
+arg	12:13	12:14	5	1
+water	12:13	0:0	6	1
+water	12:15	0:0	4	;
+water	13:4	0:0	4	}
+water	15:4	0:0	2	ost
+op	15:7	0:0	2	->
+water	15:9	0:0	2	frame
+op	15:15	0:0	2	=
+call	15:17	15:62	2	alloc_picture
+arg	15:31	15:41	3	c->pix_fmt
+water	15:31	0:0	4	c
+op	15:32	0:0	4	->
+water	15:34	0:0	4	pix_fmt
+arg	15:43	15:51	3	c->width
+water	15:43	0:0	4	c
+op	15:44	0:0	4	->
+water	15:46	0:0	4	width
+arg	15:53	15:62	3	c->height
+water	15:53	0:0	4	c
+op	15:54	0:0	4	->
+water	15:56	0:0	4	height
+water	15:63	0:0	2	;
+if	16:4	19:4	2	(! ost -> frame)
+cond	16:8	16:14	3	! ost -> frame
+op	16:8	0:0	4	!
+water	16:9	0:0	4	ost
+op	16:12	0:0	4	->
+water	16:14	0:0	4	frame
+stmts	16:21	19:4	3	
+water	16:21	0:0	4	{
+call	17:8	17:58	4	fprintf
+arg	17:16	17:22	5	stderr
+water	17:16	0:0	6	stderr
+arg	17:24	17:58	5	"Could not allocate video frame\n"
+water	17:24	0:0	6	"Could not allocate video frame\n"
+water	17:59	0:0	4	;
+call	18:8	18:14	4	exit
+arg	18:13	18:14	5	1
+water	18:13	0:0	6	1
+water	18:15	0:0	4	;
+water	19:4	0:0	4	}
+water	23:4	0:0	2	ost
+op	23:7	0:0	2	->
+water	23:9	0:0	2	tmp_frame
+op	23:19	0:0	2	=
+water	23:21	0:0	2	NULL
+water	23:25	0:0	2	;
+if	24:4	30:4	2	(c -> pix_fmt != AV_PIX_FMT_YUV420P)
+cond	24:8	24:22	3	c -> pix_fmt != AV_PIX_FMT_YUV420P
+water	24:8	0:0	4	c
+op	24:9	0:0	4	->
+water	24:11	0:0	4	pix_fmt
+op	24:19	0:0	4	!=
+water	24:22	0:0	4	AV_PIX_FMT_YUV420P
+stmts	24:42	30:4	3	
+water	24:42	0:0	4	{
+water	25:8	0:0	4	ost
+op	25:11	0:0	4	->
+water	25:13	0:0	4	tmp_frame
+op	25:23	0:0	4	=
+call	25:25	25:78	4	alloc_picture
+arg	25:39	25:57	5	AV_PIX_FMT_YUV420P
+water	25:39	0:0	6	AV_PIX_FMT_YUV420P
+arg	25:59	25:67	5	c->width
+water	25:59	0:0	6	c
+op	25:60	0:0	6	->
+water	25:62	0:0	6	width
+arg	25:69	25:78	5	c->height
+water	25:69	0:0	6	c
+op	25:70	0:0	6	->
+water	25:72	0:0	6	height
+water	25:79	0:0	4	;
+if	26:8	29:8	4	(! ost -> tmp_frame)
+cond	26:12	26:18	5	! ost -> tmp_frame
+op	26:12	0:0	6	!
+water	26:13	0:0	6	ost
+op	26:16	0:0	6	->
+water	26:18	0:0	6	tmp_frame
+stmts	26:29	29:8	5	
+water	26:29	0:0	6	{
+call	27:12	27:68	6	fprintf
+arg	27:20	27:26	7	stderr
+water	27:20	0:0	8	stderr
+arg	27:28	27:68	7	"Could not allocate temporary picture\n"
+water	27:28	0:0	8	"Could not allocate temporary picture\n"
+water	27:69	0:0	6	;
+call	28:12	28:18	6	exit
+arg	28:17	28:18	7	1
+water	28:17	0:0	8	1
+water	28:19	0:0	6	;
+water	29:8	0:0	6	}
+water	30:4	0:0	4	}

@@ -1,0 +1,211 @@
+func	1:0	35:0	0	static int	synchronize_audio
+params	1:28	0:0	1	
+param	1:29	1:43	2	VideoState *	is
+param	1:45	1:59	2	int	nb_samples
+stmnts	0:0	34:28	1	
+decl	3:4	3:38	2	int	wanted_nb_samples
+op	3:26	0:0	2	=
+water	3:28	0:0	2	nb_samples
+if	5:4	33:4	2	(get_master_sync_type (is ) != AV_SYNC_AUDIO_MASTER)
+cond	5:8	5:36	3	get_master_sync_type (is ) != AV_SYNC_AUDIO_MASTER
+call	5:8	5:31	4	get_master_sync_type
+arg	5:29	5:31	5	is
+water	5:29	0:0	6	is
+op	5:33	0:0	4	!=
+water	5:36	0:0	4	AV_SYNC_AUDIO_MASTER
+stmts	5:58	33:4	3	
+water	5:58	0:0	4	{
+decl	6:8	6:29	4	double	diff
+water	6:19	0:0	4	,
+decl	6:8	6:29	4	double	avg_diff
+decl	7:8	7:42	4	int	min_nb_samples
+water	7:26	0:0	4	,
+decl	7:8	7:42	4	int	max_nb_samples
+water	8:8	0:0	4	diff
+op	8:13	0:0	4	=
+call	8:15	8:36	4	get_clock
+arg	8:25	8:36	5	&is->audclk
+op	8:25	0:0	6	&
+water	8:26	0:0	6	is
+op	8:28	0:0	6	->
+water	8:30	0:0	6	audclk
+op	8:38	0:0	4	-
+call	8:40	8:59	4	get_master_clock
+arg	8:57	8:59	5	is
+water	8:57	0:0	6	is
+water	8:60	0:0	4	;
+if	9:8	27:8	4	(!isnan (diff ) &&fabs (diff ) < AV_NOSYNC_THRESHOLD)
+cond	9:12	9:41	5	!isnan (diff ) &&fabs (diff ) < AV_NOSYNC_THRESHOLD
+op	9:12	0:0	6	!
+call	9:13	9:23	6	isnan
+arg	9:19	9:23	7	diff
+water	9:19	0:0	8	diff
+op	9:25	0:0	6	&&
+call	9:28	9:37	6	fabs
+arg	9:33	9:37	7	diff
+water	9:33	0:0	8	diff
+op	9:39	0:0	6	<
+water	9:41	0:0	6	AV_NOSYNC_THRESHOLD
+stmts	9:62	27:8	5	
+water	9:62	0:0	6	{
+water	10:12	0:0	6	is
+op	10:14	0:0	6	->
+water	10:16	0:0	6	audio_diff_cum
+op	10:31	0:0	6	=
+water	10:33	0:0	6	diff
+op	10:38	0:0	6	+
+water	10:40	0:0	6	is
+op	10:42	0:0	6	->
+water	10:44	0:0	6	audio_diff_avg_coef
+op	10:64	0:0	6	*
+water	10:66	0:0	6	is
+op	10:68	0:0	6	->
+water	10:70	0:0	6	audio_diff_cum
+water	10:84	0:0	6	;
+if	11:12	14:12	6	(is -> audio_diff_avg_count < AUDIO_DIFF_AVG_NB)
+cond	11:16	11:43	7	is -> audio_diff_avg_count < AUDIO_DIFF_AVG_NB
+water	11:16	0:0	8	is
+op	11:18	0:0	8	->
+water	11:20	0:0	8	audio_diff_avg_count
+op	11:41	0:0	8	<
+water	11:43	0:0	8	AUDIO_DIFF_AVG_NB
+stmts	11:62	14:12	7	
+water	11:62	0:0	8	{
+water	13:16	0:0	8	is
+op	13:18	0:0	8	->
+water	13:20	0:0	8	audio_diff_avg_count
+op	13:40	0:0	8	++
+water	13:42	0:0	8	;
+water	14:12	0:0	8	}
+else	14:14	26:12	6
+stmts	14:19	26:12	7	
+water	14:19	0:0	8	{
+water	16:16	0:0	8	avg_diff
+op	16:25	0:0	8	=
+water	16:27	0:0	8	is
+op	16:29	0:0	8	->
+water	16:31	0:0	8	audio_diff_cum
+op	16:46	0:0	8	*
+water	16:48	0:0	8	(
+water	16:49	0:0	8	1
+op	16:50	0:0	8	.
+water	16:51	0:0	8	0
+op	16:53	0:0	8	-
+water	16:55	0:0	8	is
+op	16:57	0:0	8	->
+water	16:59	0:0	8	audio_diff_avg_coef
+water	16:78	0:0	8	)
+water	16:79	0:0	8	;
+if	17:16	22:16	8	(fabs (avg_diff ) >= is -> audio_diff_threshold)
+cond	17:20	17:42	9	fabs (avg_diff ) >= is -> audio_diff_threshold
+call	17:20	17:33	10	fabs
+arg	17:25	17:33	11	avg_diff
+water	17:25	0:0	12	avg_diff
+op	17:35	0:0	10	>=
+water	17:38	0:0	10	is
+op	17:40	0:0	10	->
+water	17:42	0:0	10	audio_diff_threshold
+stmts	17:64	22:16	9	
+water	17:64	0:0	10	{
+water	18:20	0:0	10	wanted_nb_samples
+op	18:38	0:0	10	=
+water	18:40	0:0	10	nb_samples
+op	18:51	0:0	10	+
+call	18:53	18:84	10	(int)
+arg	18:59	18:84	11	diff*is->audio_src.freq
+water	18:59	0:0	12	diff
+op	18:64	0:0	12	*
+water	18:66	0:0	12	is
+op	18:68	0:0	12	->
+water	18:70	0:0	12	audio_src
+op	18:79	0:0	12	.
+water	18:80	0:0	12	freq
+water	18:85	0:0	10	;
+water	19:20	0:0	10	min_nb_samples
+op	19:35	0:0	10	=
+water	19:37	0:0	10	(
+water	19:38	0:0	10	(
+water	19:39	0:0	10	nb_samples
+op	19:50	0:0	10	*
+water	19:52	0:0	10	(
+water	19:53	0:0	10	100
+op	19:57	0:0	10	-
+water	19:59	0:0	10	SAMPLE_CORRECTION_PERCENT_MAX
+water	19:88	0:0	10	)
+op	19:90	0:0	10	/
+water	19:92	0:0	10	100
+water	19:95	0:0	10	)
+water	19:96	0:0	10	)
+water	19:97	0:0	10	;
+water	20:20	0:0	10	max_nb_samples
+op	20:35	0:0	10	=
+water	20:37	0:0	10	(
+water	20:38	0:0	10	(
+water	20:39	0:0	10	nb_samples
+op	20:50	0:0	10	*
+water	20:52	0:0	10	(
+water	20:53	0:0	10	100
+op	20:57	0:0	10	+
+water	20:59	0:0	10	SAMPLE_CORRECTION_PERCENT_MAX
+water	20:88	0:0	10	)
+op	20:90	0:0	10	/
+water	20:92	0:0	10	100
+water	20:95	0:0	10	)
+water	20:96	0:0	10	)
+water	20:97	0:0	10	;
+water	21:20	0:0	10	wanted_nb_samples
+op	21:38	0:0	10	=
+call	21:40	21:97	10	av_clip
+arg	21:48	21:65	11	wanted_nb_samples
+water	21:48	0:0	12	wanted_nb_samples
+arg	21:67	21:81	11	min_nb_samples
+water	21:67	0:0	12	min_nb_samples
+arg	21:83	21:97	11	max_nb_samples
+water	21:83	0:0	12	max_nb_samples
+water	21:98	0:0	10	;
+water	22:16	0:0	10	}
+call	23:16	25:65	8	av_log
+arg	23:23	23:27	9	NULL
+water	23:23	0:0	10	NULL
+arg	23:29	23:41	9	AV_LOG_TRACE
+water	23:29	0:0	10	AV_LOG_TRACE
+arg	23:43	23:92	9	"diff=%f adiff=%f sample_diff=%d apts=%0.3f %f\n"
+water	23:43	0:0	10	"diff=%f adiff=%f sample_diff=%d apts=%0.3f %f\n"
+arg	24:24	24:28	9	diff
+water	24:24	0:0	10	diff
+arg	24:30	24:38	9	avg_diff
+water	24:30	0:0	10	avg_diff
+arg	24:40	24:70	9	wanted_nb_samples-nb_samples
+water	24:40	0:0	10	wanted_nb_samples
+op	24:58	0:0	10	-
+water	24:60	0:0	10	nb_samples
+arg	25:24	25:39	9	is->audio_clock
+water	25:24	0:0	10	is
+op	25:26	0:0	10	->
+water	25:28	0:0	10	audio_clock
+arg	25:41	25:65	9	is->audio_diff_threshold
+water	25:41	0:0	10	is
+op	25:43	0:0	10	->
+water	25:45	0:0	10	audio_diff_threshold
+water	25:66	0:0	8	;
+water	26:12	0:0	8	}
+water	27:8	0:0	6	}
+else	27:10	32:8	4
+stmts	27:15	32:8	5	
+water	27:15	0:0	6	{
+water	30:12	0:0	6	is
+op	30:14	0:0	6	->
+water	30:16	0:0	6	audio_diff_avg_count
+op	30:37	0:0	6	=
+water	30:39	0:0	6	0
+water	30:40	0:0	6	;
+water	31:12	0:0	6	is
+op	31:14	0:0	6	->
+water	31:16	0:0	6	audio_diff_cum
+op	31:37	0:0	6	=
+water	31:39	0:0	6	0
+water	31:40	0:0	6	;
+water	32:8	0:0	6	}
+water	33:4	0:0	4	}
+return	34:4	34:28	2	wanted_nb_samples
+water	34:11	0:0	3	wanted_nb_samples

@@ -1,0 +1,50 @@
+func	1:0	7:0	0	static double	get_max_local_gain
+params	1:32	0:0	1	
+param	1:33	1:65	2	DynamicAudioNormalizerContext *	s
+param	1:67	1:81	2	AVFrame *	frame
+param	2:33	2:44	2	int	channel
+stmnts	0:0	6:69	1	
+decl	4:4	4:83	2	const double	maximum_gain
+op	4:30	0:0	2	=
+water	4:32	0:0	2	s
+op	4:33	0:0	2	->
+water	4:35	0:0	2	peak_value
+op	4:46	0:0	2	/
+call	4:48	4:82	3	find_peak_magnitude
+arg	4:68	4:73	4	frame
+water	4:68	0:0	5	frame
+arg	4:75	4:82	4	channel
+water	4:75	0:0	5	channel
+decl	5:4	5:119	2	const double	rms_gain
+op	5:26	0:0	2	=
+water	5:28	0:0	2	s
+op	5:29	0:0	2	->
+water	5:31	0:0	2	target_rms
+op	5:42	0:0	2	>
+water	5:44	0:0	2	DBL_EPSILON
+water	5:56	0:0	2	?
+water	5:58	0:0	2	(
+water	5:59	0:0	2	s
+op	5:60	0:0	2	->
+water	5:62	0:0	2	target_rms
+op	5:73	0:0	2	/
+call	5:75	5:107	3	compute_frame_rms
+arg	5:93	5:98	4	frame
+water	5:93	0:0	5	frame
+arg	5:100	5:107	4	channel
+water	5:100	0:0	5	channel
+water	5:108	0:0	2	)
+water	5:110	0:0	2	:
+water	5:112	0:0	2	DBL_MAX
+return	6:4	6:69	2	bound(s->max_amplification,FFMIN(maximum_gain,rms_gain))
+call	6:11	6:68	3	bound
+arg	6:17	6:37	4	s->max_amplification
+water	6:17	0:0	5	s
+op	6:18	0:0	5	->
+water	6:20	0:0	5	max_amplification
+arg	6:39	6:68	4	FFMIN(maximum_gain,rms_gain)
+call	6:39	6:67	5	FFMIN
+arg	6:45	6:57	6	maximum_gain
+water	6:45	0:0	7	maximum_gain
+arg	6:59	6:67	6	rms_gain
+water	6:59	0:0	7	rms_gain

@@ -1,0 +1,518 @@
+func	1:0	85:0	0	static int	mpegts_read_header
+params	1:29	0:0	1	
+param	1:30	1:48	2	AVFormatContext *	s
+stmnts	0:0	84:12	1	
+decl	3:4	3:36	2	MpegTSContext	*ts
+op	3:22	0:0	2	=
+water	3:24	0:0	2	s
+op	3:25	0:0	2	->
+water	3:27	0:0	2	priv_data
+decl	4:4	4:29	2	AVIOContext	*pb
+op	4:22	0:0	2	=
+water	4:24	0:0	2	s
+op	4:25	0:0	2	->
+water	4:27	0:0	2	pb
+decl	5:4	5:31	2	uint8_t	buf[8*1024]
+op	5:26	0:0	2	=
+water	5:28	0:0	2	{
+water	5:29	0:0	2	0
+water	5:30	0:0	2	}
+decl	6:4	6:11	2	int	len
+decl	7:4	9:72	2	int64_t	pos
+water	7:15	0:0	2	,
+decl	7:4	9:72	2	int64_t	probesize
+op	7:27	0:0	2	=
+water	9:29	0:0	2	s
+op	9:30	0:0	2	->
+water	9:32	0:0	2	probesize
+water	9:42	0:0	2	?
+water	9:44	0:0	2	s
+op	9:45	0:0	2	->
+water	9:47	0:0	2	probesize
+water	9:57	0:0	2	:
+water	9:59	0:0	2	s
+op	9:60	0:0	2	->
+water	9:62	0:0	2	probesize2
+water	11:29	0:0	2	s
+op	11:30	0:0	2	->
+water	11:32	0:0	2	probesize
+water	11:41	0:0	2	;
+if	13:4	14:78	2	(ffio_ensure_seekback (pb ,probesize ) < 0)
+cond	13:8	13:46	3	ffio_ensure_seekback (pb ,probesize ) < 0
+call	13:8	13:42	4	ffio_ensure_seekback
+arg	13:29	13:31	5	pb
+water	13:29	0:0	6	pb
+arg	13:33	13:42	5	probesize
+water	13:33	0:0	6	probesize
+op	13:44	0:0	4	<
+water	13:46	0:0	4	0
+stmts	14:8	14:78	3	
+call	14:8	14:77	4	av_log
+arg	14:15	14:16	5	s
+water	14:15	0:0	6	s
+arg	14:18	14:32	5	AV_LOG_WARNING
+water	14:18	0:0	6	AV_LOG_WARNING
+arg	14:34	14:77	5	"Failed to allocate buffers for seekback\n"
+water	14:34	0:0	6	"Failed to allocate buffers for seekback\n"
+water	14:78	0:0	4	;
+water	16:4	0:0	2	pos
+op	16:8	0:0	2	=
+call	16:10	16:22	2	avio_tell
+arg	16:20	16:22	3	pb
+water	16:20	0:0	4	pb
+water	16:23	0:0	2	;
+water	17:4	0:0	2	len
+op	17:8	0:0	2	=
+call	17:10	17:40	2	avio_read
+arg	17:20	17:22	3	pb
+water	17:20	0:0	4	pb
+arg	17:24	17:27	3	buf
+water	17:24	0:0	4	buf
+arg	17:29	17:40	3	sizeof(buf)
+op	17:29	0:0	4	sizeof
+water	17:35	0:0	4	(
+water	17:36	0:0	4	buf
+water	17:39	0:0	4	)
+water	17:41	0:0	2	;
+water	18:4	0:0	2	ts
+op	18:6	0:0	2	->
+water	18:8	0:0	2	raw_packet_size
+op	18:24	0:0	2	=
+call	18:26	18:50	2	get_packet_size
+arg	18:42	18:45	3	buf
+water	18:42	0:0	4	buf
+arg	18:47	18:50	3	len
+water	18:47	0:0	4	len
+water	18:51	0:0	2	;
+if	19:4	22:4	2	(ts -> raw_packet_size <= 0)
+cond	19:8	19:31	3	ts -> raw_packet_size <= 0
+water	19:8	0:0	4	ts
+op	19:10	0:0	4	->
+water	19:12	0:0	4	raw_packet_size
+op	19:28	0:0	4	<=
+water	19:31	0:0	4	0
+stmts	19:34	22:4	3	
+water	19:34	0:0	4	{
+call	20:8	20:97	4	av_log
+arg	20:15	20:16	5	s
+water	20:15	0:0	6	s
+arg	20:18	20:32	5	AV_LOG_WARNING
+water	20:18	0:0	6	AV_LOG_WARNING
+arg	20:34	20:97	5	"Could not detect TS packet size, defaulting to non-FEC/DVHS\n"
+water	20:34	0:0	6	"Could not detect TS packet size, defaulting to non-FEC/DVHS\n"
+water	20:98	0:0	4	;
+water	21:8	0:0	4	ts
+op	21:10	0:0	4	->
+water	21:12	0:0	4	raw_packet_size
+op	21:28	0:0	4	=
+water	21:30	0:0	4	TS_PACKET_SIZE
+water	21:44	0:0	4	;
+water	22:4	0:0	4	}
+water	23:4	0:0	2	ts
+op	23:6	0:0	2	->
+water	23:8	0:0	2	stream
+op	23:19	0:0	2	=
+water	23:21	0:0	2	s
+water	23:22	0:0	2	;
+water	24:4	0:0	2	ts
+op	24:6	0:0	2	->
+water	24:8	0:0	2	auto_guess
+op	24:19	0:0	2	=
+water	24:21	0:0	2	0
+water	24:22	0:0	2	;
+if	25:4	36:4	2	(s -> iformat == & ff_mpegts_demuxer)
+cond	25:8	25:23	3	s -> iformat == & ff_mpegts_demuxer
+water	25:8	0:0	4	s
+op	25:9	0:0	4	->
+water	25:11	0:0	4	iformat
+op	25:19	0:0	4	==
+op	25:22	0:0	4	&
+water	25:23	0:0	4	ff_mpegts_demuxer
+stmts	25:42	36:4	3	
+water	25:42	0:0	4	{
+call	28:8	28:28	4	seek_back
+arg	28:18	28:19	5	s
+water	28:18	0:0	6	s
+arg	28:21	28:23	5	pb
+water	28:21	0:0	6	pb
+arg	28:25	28:28	5	pos
+water	28:25	0:0	6	pos
+water	28:29	0:0	4	;
+call	29:8	29:61	4	mpegts_open_section_filter
+arg	29:35	29:37	5	ts
+water	29:35	0:0	6	ts
+arg	29:39	29:46	5	SDT_PID
+water	29:39	0:0	6	SDT_PID
+arg	29:48	29:54	5	sdt_cb
+water	29:48	0:0	6	sdt_cb
+arg	29:56	29:58	5	ts
+water	29:56	0:0	6	ts
+arg	29:60	29:61	5	1
+water	29:60	0:0	6	1
+water	29:62	0:0	4	;
+call	30:8	30:61	4	mpegts_open_section_filter
+arg	30:35	30:37	5	ts
+water	30:35	0:0	6	ts
+arg	30:39	30:46	5	PAT_PID
+water	30:39	0:0	6	PAT_PID
+arg	30:48	30:54	5	pat_cb
+water	30:48	0:0	6	pat_cb
+arg	30:56	30:58	5	ts
+water	30:56	0:0	6	ts
+arg	30:60	30:61	5	1
+water	30:60	0:0	6	1
+water	30:62	0:0	4	;
+call	31:8	31:58	4	handle_packets
+arg	31:23	31:25	5	ts
+water	31:23	0:0	6	ts
+arg	31:27	31:58	5	probesize/ts->raw_packet_size
+water	31:27	0:0	6	probesize
+op	31:37	0:0	6	/
+water	31:39	0:0	6	ts
+op	31:41	0:0	6	->
+water	31:43	0:0	6	raw_packet_size
+water	31:59	0:0	4	;
+water	33:8	0:0	4	ts
+op	33:10	0:0	4	->
+water	33:12	0:0	4	auto_guess
+op	33:23	0:0	4	=
+water	33:25	0:0	4	1
+water	33:26	0:0	4	;
+call	34:8	34:56	4	av_log
+arg	34:15	34:25	5	ts->stream
+water	34:15	0:0	6	ts
+op	34:17	0:0	6	->
+water	34:19	0:0	6	stream
+arg	34:27	34:39	5	AV_LOG_TRACE
+water	34:27	0:0	6	AV_LOG_TRACE
+arg	34:41	34:56	5	"tuning done\n"
+water	34:41	0:0	6	"tuning done\n"
+water	34:57	0:0	4	;
+water	35:8	0:0	4	s
+op	35:9	0:0	4	->
+water	35:11	0:0	4	ctx_flags
+op	35:21	0:0	4	|=
+water	35:24	0:0	4	AVFMTCTX_NOHEADER
+water	35:41	0:0	4	;
+water	36:4	0:0	4	}
+else	36:6	82:4	2
+stmts	36:11	82:4	3	
+water	36:11	0:0	4	{
+decl	37:8	37:20	4	AVStream	*st
+decl	38:8	38:57	4	int	pcr_pid
+water	38:19	0:0	4	,
+decl	38:8	38:57	4	int	pid
+water	38:24	0:0	4	,
+decl	38:8	38:57	4	int	nb_packets
+water	38:36	0:0	4	,
+decl	38:8	38:57	4	int	nb_pcrs
+water	38:45	0:0	4	,
+decl	38:8	38:57	4	int	ret
+water	38:50	0:0	4	,
+decl	38:8	38:57	4	int	pcr_l
+decl	39:8	39:30	4	int64_t	pcrs[2]
+water	39:23	0:0	4	,
+decl	39:8	39:30	4	int64_t	pcr_h
+decl	40:8	40:27	4	int	packet_count[2]
+decl	41:8	41:38	4	uint8_t	packet[TS_PACKET_SIZE]
+decl	42:8	42:27	4	const uint8_t	*data
+water	44:8	0:0	4	st
+op	44:11	0:0	4	=
+call	44:13	44:40	4	avformat_new_stream
+arg	44:33	44:34	5	s
+water	44:33	0:0	6	s
+arg	44:36	44:40	5	NULL
+water	44:36	0:0	6	NULL
+water	44:41	0:0	4	;
+if	45:8	46:34	4	(! st)
+cond	45:12	45:13	5	! st
+op	45:12	0:0	6	!
+water	45:13	0:0	6	st
+stmts	46:12	46:34	5	
+return	46:12	46:34	6	AVERROR(ENOMEM)
+call	46:19	46:33	7	AVERROR
+arg	46:27	46:33	8	ENOMEM
+water	46:27	0:0	9	ENOMEM
+call	47:8	47:47	4	avpriv_set_pts_info
+arg	47:28	47:30	5	st
+water	47:28	0:0	6	st
+arg	47:32	47:34	5	60
+water	47:32	0:0	6	60
+arg	47:36	47:37	5	1
+water	47:36	0:0	6	1
+arg	47:39	47:47	5	27000000
+water	47:39	0:0	6	27000000
+water	47:48	0:0	4	;
+water	48:8	0:0	4	st
+op	48:10	0:0	4	->
+water	48:12	0:0	4	codec
+op	48:17	0:0	4	->
+water	48:19	0:0	4	codec_type
+op	48:30	0:0	4	=
+water	48:32	0:0	4	AVMEDIA_TYPE_DATA
+water	48:49	0:0	4	;
+water	49:8	0:0	4	st
+op	49:10	0:0	4	->
+water	49:12	0:0	4	codec
+op	49:17	0:0	4	->
+water	49:19	0:0	4	codec_id
+op	49:30	0:0	4	=
+water	49:32	0:0	4	AV_CODEC_ID_MPEG2TS
+water	49:51	0:0	4	;
+water	51:8	0:0	4	pcr_pid
+op	51:19	0:0	4	=
+op	51:21	0:0	4	-
+water	51:22	0:0	4	1
+water	51:23	0:0	4	;
+water	52:8	0:0	4	nb_pcrs
+op	52:19	0:0	4	=
+water	52:21	0:0	4	0
+water	52:22	0:0	4	;
+water	53:8	0:0	4	nb_packets
+op	53:19	0:0	4	=
+water	53:21	0:0	4	0
+water	53:22	0:0	4	;
+for	54:8	72:8	4	(;;)
+forinit	54:13	54:13	5	;
+water	54:13	0:0	6	;
+cond	0:0	0:0	5	
+forexpr	0:0	0:0	5	
+stmts	54:17	72:8	5	
+water	54:17	0:0	6	{
+water	55:12	0:0	6	ret
+op	55:16	0:0	6	=
+call	55:18	55:67	6	read_packet
+arg	55:30	55:31	7	s
+water	55:30	0:0	8	s
+arg	55:33	55:39	7	packet
+water	55:33	0:0	8	packet
+arg	55:41	55:60	7	ts->raw_packet_size
+water	55:41	0:0	8	ts
+op	55:43	0:0	8	->
+water	55:45	0:0	8	raw_packet_size
+arg	55:62	55:67	7	&data
+op	55:62	0:0	8	&
+water	55:63	0:0	8	data
+water	55:68	0:0	6	;
+if	56:12	57:26	6	(ret < 0)
+cond	56:16	56:22	7	ret < 0
+water	56:16	0:0	8	ret
+op	56:20	0:0	8	<
+water	56:22	0:0	8	0
+stmts	57:16	57:26	7	
+return	57:16	57:26	8	ret
+water	57:23	0:0	9	ret
+water	58:12	0:0	6	pid
+op	58:16	0:0	6	=
+call	58:18	58:34	6	AV_RB16
+arg	58:26	58:34	7	data+1
+water	58:26	0:0	8	data
+op	58:31	0:0	8	+
+water	58:33	0:0	8	1
+op	58:36	0:0	6	&
+water	58:38	0:0	6	0
+water	58:39	0:0	6	x1fff
+water	58:44	0:0	6	;
+if	59:12	68:12	6	(( pcr_pid == - 1 || pcr_pid == pid ) &&parse_pcr (& pcr_h ,& pcr_l ,data ) == 0)
+cond	59:16	60:51	7	( pcr_pid == - 1 || pcr_pid == pid ) &&parse_pcr (& pcr_h ,& pcr_l ,data ) == 0
+water	59:16	0:0	8	(
+water	59:17	0:0	8	pcr_pid
+op	59:25	0:0	8	==
+op	59:28	0:0	8	-
+water	59:29	0:0	8	1
+op	59:31	0:0	8	||
+water	59:34	0:0	8	pcr_pid
+op	59:42	0:0	8	==
+water	59:45	0:0	8	pid
+water	59:48	0:0	8	)
+op	59:50	0:0	8	&&
+call	60:16	60:46	8	parse_pcr
+arg	60:26	60:32	9	&pcr_h
+op	60:26	0:0	10	&
+water	60:27	0:0	10	pcr_h
+arg	60:34	60:40	9	&pcr_l
+op	60:34	0:0	10	&
+water	60:35	0:0	10	pcr_l
+arg	60:42	60:46	9	data
+water	60:42	0:0	10	data
+op	60:48	0:0	8	==
+water	60:51	0:0	8	0
+stmts	60:54	68:12	7	
+water	60:54	0:0	8	{
+call	61:16	61:62	8	finished_reading_packet
+arg	61:40	61:41	9	s
+water	61:40	0:0	10	s
+arg	61:43	61:62	9	ts->raw_packet_size
+water	61:43	0:0	10	ts
+op	61:45	0:0	10	->
+water	61:47	0:0	10	raw_packet_size
+water	61:63	0:0	8	;
+water	62:16	0:0	8	pcr_pid
+op	62:24	0:0	8	=
+water	62:26	0:0	8	pid
+water	62:29	0:0	8	;
+water	63:16	0:0	8	packet_count
+op	63:28	0:0	8	[
+water	63:29	0:0	8	nb_pcrs
+op	63:36	0:0	8	]
+op	63:38	0:0	8	=
+water	63:40	0:0	8	nb_packets
+water	63:50	0:0	8	;
+water	64:16	0:0	8	pcrs
+op	64:20	0:0	8	[
+water	64:21	0:0	8	nb_pcrs
+op	64:28	0:0	8	]
+op	64:30	0:0	8	=
+water	64:32	0:0	8	pcr_h
+op	64:38	0:0	8	*
+water	64:40	0:0	8	300
+op	64:44	0:0	8	+
+water	64:46	0:0	8	pcr_l
+water	64:51	0:0	8	;
+water	65:16	0:0	8	nb_pcrs
+op	65:23	0:0	8	++
+water	65:25	0:0	8	;
+if	66:16	67:25	8	(nb_pcrs >= 2)
+cond	66:20	66:31	9	nb_pcrs >= 2
+water	66:20	0:0	10	nb_pcrs
+op	66:28	0:0	10	>=
+water	66:31	0:0	10	2
+stmts	67:20	67:25	9	
+break	67:20	67:25	10	
+water	68:12	0:0	8	}
+else	68:14	70:12	6
+stmts	68:19	70:12	7	
+water	68:19	0:0	8	{
+call	69:16	69:62	8	finished_reading_packet
+arg	69:40	69:41	9	s
+water	69:40	0:0	10	s
+arg	69:43	69:62	9	ts->raw_packet_size
+water	69:43	0:0	10	ts
+op	69:45	0:0	10	->
+water	69:47	0:0	10	raw_packet_size
+water	69:63	0:0	8	;
+water	70:12	0:0	8	}
+water	71:12	0:0	6	nb_packets
+op	71:22	0:0	6	++
+water	71:24	0:0	6	;
+water	72:8	0:0	6	}
+water	75:8	0:0	4	ts
+op	75:10	0:0	4	->
+water	75:12	0:0	4	pcr_incr
+op	75:21	0:0	4	=
+water	75:23	0:0	4	(
+water	75:24	0:0	4	pcrs
+op	75:28	0:0	4	[
+water	75:29	0:0	4	1
+op	75:30	0:0	4	]
+op	75:32	0:0	4	-
+water	75:34	0:0	4	pcrs
+op	75:38	0:0	4	[
+water	75:39	0:0	4	0
+op	75:40	0:0	4	]
+water	75:41	0:0	4	)
+op	75:43	0:0	4	/
+water	75:45	0:0	4	(
+water	75:46	0:0	4	packet_count
+op	75:58	0:0	4	[
+water	75:59	0:0	4	1
+op	75:60	0:0	4	]
+op	75:62	0:0	4	-
+water	75:64	0:0	4	packet_count
+op	75:76	0:0	4	[
+water	75:77	0:0	4	0
+op	75:78	0:0	4	]
+water	75:79	0:0	4	)
+water	75:80	0:0	4	;
+water	76:8	0:0	4	ts
+op	76:10	0:0	4	->
+water	76:12	0:0	4	cur_pcr
+op	76:21	0:0	4	=
+water	76:23	0:0	4	pcrs
+op	76:27	0:0	4	[
+water	76:28	0:0	4	0
+op	76:29	0:0	4	]
+op	76:31	0:0	4	-
+water	76:33	0:0	4	ts
+op	76:35	0:0	4	->
+water	76:37	0:0	4	pcr_incr
+op	76:46	0:0	4	*
+water	76:48	0:0	4	packet_count
+op	76:60	0:0	4	[
+water	76:61	0:0	4	0
+op	76:62	0:0	4	]
+water	76:63	0:0	4	;
+water	77:8	0:0	4	s
+op	77:9	0:0	4	->
+water	77:11	0:0	4	bit_rate
+op	77:21	0:0	4	=
+water	77:23	0:0	4	TS_PACKET_SIZE
+op	77:38	0:0	4	*
+water	77:40	0:0	4	8
+op	77:42	0:0	4	*
+water	77:44	0:0	4	27000000
+water	77:52	0:0	4	LL
+op	77:55	0:0	4	/
+water	77:57	0:0	4	ts
+op	77:59	0:0	4	->
+water	77:61	0:0	4	pcr_incr
+water	77:69	0:0	4	;
+water	78:8	0:0	4	st
+op	78:10	0:0	4	->
+water	78:12	0:0	4	codec
+op	78:17	0:0	4	->
+water	78:19	0:0	4	bit_rate
+op	78:28	0:0	4	=
+water	78:30	0:0	4	s
+op	78:31	0:0	4	->
+water	78:33	0:0	4	bit_rate
+water	78:41	0:0	4	;
+water	79:8	0:0	4	st
+op	79:10	0:0	4	->
+water	79:12	0:0	4	start_time
+op	79:28	0:0	4	=
+water	79:30	0:0	4	ts
+op	79:32	0:0	4	->
+water	79:34	0:0	4	cur_pcr
+water	79:41	0:0	4	;
+call	80:8	81:72	4	av_log
+arg	80:15	80:25	5	ts->stream
+water	80:15	0:0	6	ts
+op	80:17	0:0	6	->
+water	80:19	0:0	6	stream
+arg	80:27	80:39	5	AV_LOG_TRACE
+water	80:27	0:0	6	AV_LOG_TRACE
+arg	80:41	80:74	5	"start=%0.3f pcr=%0.3f incr=%d\n"
+water	80:41	0:0	6	"start=%0.3f pcr=%0.3f incr=%d\n"
+arg	81:16	81:42	5	st->start_time/1000000.0
+water	81:16	0:0	6	st
+op	81:18	0:0	6	->
+water	81:20	0:0	6	start_time
+op	81:31	0:0	6	/
+water	81:33	0:0	6	1000000
+op	81:40	0:0	6	.
+water	81:41	0:0	6	0
+arg	81:44	81:58	5	pcrs[0]/27e6
+water	81:44	0:0	6	pcrs
+op	81:48	0:0	6	[
+water	81:49	0:0	6	0
+op	81:50	0:0	6	]
+op	81:52	0:0	6	/
+water	81:54	0:0	6	27
+water	81:56	0:0	6	e6
+arg	81:60	81:72	5	ts->pcr_incr
+water	81:60	0:0	6	ts
+op	81:62	0:0	6	->
+water	81:64	0:0	6	pcr_incr
+water	81:73	0:0	4	;
+water	82:4	0:0	4	}
+call	83:4	83:24	2	seek_back
+arg	83:14	83:15	3	s
+water	83:14	0:0	4	s
+arg	83:17	83:19	3	pb
+water	83:17	0:0	4	pb
+arg	83:21	83:24	3	pos
+water	83:21	0:0	4	pos
+water	83:25	0:0	2	;
+return	84:4	84:12	2	0
+water	84:11	0:0	3	0

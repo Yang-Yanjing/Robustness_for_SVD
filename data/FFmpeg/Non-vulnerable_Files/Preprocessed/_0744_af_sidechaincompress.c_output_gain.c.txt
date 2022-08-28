@@ -1,0 +1,116 @@
+func	1:0	22:0	0	static double	output_gain
+params	1:25	0:0	1	
+param	1:26	1:42	2	double	lin_slope
+param	1:44	1:56	2	double	ratio
+param	1:58	1:70	2	double	thres
+param	2:26	2:37	2	double	knee
+param	2:39	2:56	2	double	knee_start
+param	2:58	2:74	2	double	knee_stop
+param	3:26	3:53	2	double	compressed_knee_stop
+param	3:55	3:68	2	int	detection
+stmnts	0:0	21:28	1	
+decl	5:4	5:33	2	double	slope
+op	5:17	0:0	2	=
+call	5:19	5:32	3	log
+arg	5:23	5:32	4	lin_slope
+water	5:23	0:0	5	lin_slope
+decl	6:4	6:21	2	double	gain
+op	6:16	0:0	2	=
+water	6:18	0:0	2	0
+op	6:19	0:0	2	.
+water	6:20	0:0	2	0
+decl	7:4	7:22	2	double	delta
+op	7:17	0:0	2	=
+water	7:19	0:0	2	0
+op	7:20	0:0	2	.
+water	7:21	0:0	2	0
+if	8:4	9:20	2	(detection)
+cond	8:8	8:8	3	detection
+water	8:8	0:0	4	detection
+stmts	9:8	9:20	3	
+water	9:8	0:0	4	slope
+op	9:14	0:0	4	*=
+water	9:17	0:0	4	0
+op	9:18	0:0	4	.
+water	9:19	0:0	4	5
+water	9:20	0:0	4	;
+if	10:4	13:4	2	(IS_FAKE_INFINITY (ratio ))
+cond	10:8	10:30	3	IS_FAKE_INFINITY (ratio )
+call	10:8	10:30	4	IS_FAKE_INFINITY
+arg	10:25	10:30	5	ratio
+water	10:25	0:0	6	ratio
+stmts	10:33	13:4	3	
+water	10:33	0:0	4	{
+water	11:8	0:0	4	gain
+op	11:13	0:0	4	=
+water	11:15	0:0	4	thres
+water	11:20	0:0	4	;
+water	12:8	0:0	4	delta
+op	12:14	0:0	4	=
+water	12:16	0:0	4	0
+op	12:17	0:0	4	.
+water	12:18	0:0	4	0
+water	12:19	0:0	4	;
+water	13:4	0:0	4	}
+else	13:6	16:4	2
+stmts	13:11	16:4	3	
+water	13:11	0:0	4	{
+water	14:8	0:0	4	gain
+op	14:13	0:0	4	=
+water	14:15	0:0	4	(
+water	14:16	0:0	4	slope
+op	14:22	0:0	4	-
+water	14:24	0:0	4	thres
+water	14:29	0:0	4	)
+op	14:31	0:0	4	/
+water	14:33	0:0	4	ratio
+op	14:39	0:0	4	+
+water	14:41	0:0	4	thres
+water	14:46	0:0	4	;
+water	15:8	0:0	4	delta
+op	15:14	0:0	4	=
+water	15:16	0:0	4	1
+op	15:17	0:0	4	.
+water	15:18	0:0	4	0
+op	15:20	0:0	4	/
+water	15:22	0:0	4	ratio
+water	15:27	0:0	4	;
+water	16:4	0:0	4	}
+if	17:4	20:48	2	(knee > 1 . 0 && slope < knee_stop)
+cond	17:8	17:30	3	knee > 1 . 0 && slope < knee_stop
+water	17:8	0:0	4	knee
+op	17:13	0:0	4	>
+water	17:15	0:0	4	1
+op	17:16	0:0	4	.
+water	17:17	0:0	4	0
+op	17:19	0:0	4	&&
+water	17:22	0:0	4	slope
+op	17:28	0:0	4	<
+water	17:30	0:0	4	knee_stop
+stmts	18:8	20:48	3	
+water	18:8	0:0	4	gain
+op	18:13	0:0	4	=
+call	18:15	20:47	4	hermite_interpolation
+arg	18:37	18:42	5	slope
+water	18:37	0:0	6	slope
+arg	18:44	18:54	5	knee_start
+water	18:44	0:0	6	knee_start
+arg	18:56	18:65	5	knee_stop
+water	18:56	0:0	6	knee_stop
+arg	19:37	19:47	5	knee_start
+water	19:37	0:0	6	knee_start
+arg	19:49	19:69	5	compressed_knee_stop
+water	19:49	0:0	6	compressed_knee_stop
+arg	20:37	20:40	5	1.0
+water	20:37	0:0	6	1
+op	20:38	0:0	6	.
+water	20:39	0:0	6	0
+arg	20:42	20:47	5	delta
+water	20:42	0:0	6	delta
+water	20:48	0:0	4	;
+return	21:4	21:28	2	exp(gain-slope)
+call	21:11	21:27	3	exp
+arg	21:15	21:27	4	gain-slope
+water	21:15	0:0	5	gain
+op	21:20	0:0	5	-
+water	21:22	0:0	5	slope

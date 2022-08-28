@@ -1,0 +1,512 @@
+func	1:0	71:0	0	static void	mxf_write_package
+params	1:29	0:0	1	
+param	1:30	1:48	2	AVFormatContext *	s
+param	1:50	1:78	2	enum MXFMetadataSetType	type
+param	1:80	1:104	2	const char *	package_name
+stmnts	0:0	70:4	1	
+decl	3:4	3:34	2	MXFContext	*mxf
+op	3:20	0:0	2	=
+water	3:22	0:0	2	s
+op	3:23	0:0	2	->
+water	3:25	0:0	2	priv_data
+decl	4:4	4:27	2	AVIOContext	*pb
+op	4:20	0:0	2	=
+water	4:22	0:0	2	s
+op	4:23	0:0	2	->
+water	4:25	0:0	2	pb
+decl	5:4	5:40	2	int	i
+water	5:9	0:0	2	,
+decl	5:4	5:40	2	int	track_count
+op	5:23	0:0	2	=
+water	5:25	0:0	2	s
+op	5:26	0:0	2	->
+water	5:28	0:0	2	nb_streams
+op	5:38	0:0	2	+
+water	5:39	0:0	2	1
+decl	6:4	6:60	2	int	name_size
+op	6:18	0:0	2	=
+call	6:20	6:59	3	mxf_utf16_local_tag_length
+arg	6:47	6:59	4	package_name
+water	6:47	0:0	5	package_name
+decl	7:4	7:30	2	int	user_comment_count
+op	7:27	0:0	2	=
+water	7:29	0:0	2	0
+if	8:4	13:4	2	(type == MaterialPackage)
+cond	8:8	8:16	3	type == MaterialPackage
+water	8:8	0:0	4	type
+op	8:13	0:0	4	==
+water	8:16	0:0	4	MaterialPackage
+stmts	8:33	13:4	3	
+water	8:33	0:0	4	{
+water	9:8	0:0	4	user_comment_count
+op	9:27	0:0	4	=
+call	9:29	9:67	4	mxf_write_user_comments
+arg	9:53	9:54	5	s
+water	9:53	0:0	6	s
+arg	9:56	9:67	5	s->metadata
+water	9:56	0:0	6	s
+op	9:57	0:0	6	->
+water	9:59	0:0	6	metadata
+water	9:68	0:0	4	;
+call	10:8	10:43	4	mxf_write_metadata_key
+arg	10:31	10:33	5	pb
+water	10:31	0:0	6	pb
+arg	10:35	10:43	5	0x013600
+water	10:35	0:0	6	0
+water	10:36	0:0	6	x013600
+water	10:44	0:0	4	;
+call	11:8	11:61	4	PRINT_KEY
+arg	11:18	11:19	5	s
+water	11:18	0:0	6	s
+arg	11:21	11:43	5	"Material Package key"
+water	11:21	0:0	6	"Material Package key"
+arg	11:45	11:61	5	pb->buf_ptr-16
+water	11:45	0:0	6	pb
+op	11:47	0:0	6	->
+water	11:49	0:0	6	buf_ptr
+op	11:57	0:0	6	-
+water	11:59	0:0	6	16
+water	11:62	0:0	4	;
+call	12:8	12:94	4	klv_encode_ber_length
+arg	12:30	12:32	5	pb
+water	12:30	0:0	6	pb
+arg	12:34	12:94	5	104+name_size+(16*track_count)+(16*user_comment_count)
+water	12:34	0:0	6	104
+op	12:38	0:0	6	+
+water	12:40	0:0	6	name_size
+op	12:50	0:0	6	+
+water	12:52	0:0	6	(
+water	12:53	0:0	6	16
+op	12:55	0:0	6	*
+water	12:56	0:0	6	track_count
+water	12:67	0:0	6	)
+op	12:69	0:0	6	+
+water	12:71	0:0	6	(
+water	12:72	0:0	6	16
+op	12:74	0:0	6	*
+water	12:75	0:0	6	user_comment_count
+water	12:93	0:0	6	)
+water	12:95	0:0	4	;
+water	13:4	0:0	4	}
+else	13:6	17:4	2
+stmts	13:11	17:4	3	
+water	13:11	0:0	4	{
+call	14:8	14:43	4	mxf_write_metadata_key
+arg	14:31	14:33	5	pb
+water	14:31	0:0	6	pb
+arg	14:35	14:43	5	0x013700
+water	14:35	0:0	6	0
+water	14:36	0:0	6	x013700
+water	14:44	0:0	4	;
+call	15:8	15:59	4	PRINT_KEY
+arg	15:18	15:19	5	s
+water	15:18	0:0	6	s
+arg	15:21	15:41	5	"Source Package key"
+water	15:21	0:0	6	"Source Package key"
+arg	15:43	15:59	5	pb->buf_ptr-16
+water	15:43	0:0	6	pb
+op	15:45	0:0	6	->
+water	15:47	0:0	6	buf_ptr
+op	15:55	0:0	6	-
+water	15:57	0:0	6	16
+water	15:60	0:0	4	;
+call	16:8	16:68	4	klv_encode_ber_length
+arg	16:30	16:32	5	pb
+water	16:30	0:0	6	pb
+arg	16:34	16:68	5	124+name_size+(16*track_count)
+water	16:34	0:0	6	124
+op	16:38	0:0	6	+
+water	16:40	0:0	6	name_size
+op	16:50	0:0	6	+
+water	16:52	0:0	6	(
+water	16:53	0:0	6	16
+op	16:55	0:0	6	*
+water	16:56	0:0	6	track_count
+water	16:67	0:0	6	)
+water	16:69	0:0	4	;
+water	17:4	0:0	4	}
+call	19:4	19:38	2	mxf_write_local_tag
+arg	19:24	19:26	3	pb
+water	19:24	0:0	4	pb
+arg	19:28	19:30	3	16
+water	19:28	0:0	4	16
+arg	19:32	19:38	3	0x3C0A
+water	19:32	0:0	4	0
+water	19:33	0:0	4	x3C0A
+water	19:39	0:0	2	;
+call	20:4	20:30	2	mxf_write_uuid
+arg	20:19	20:21	3	pb
+water	20:19	0:0	4	pb
+arg	20:23	20:27	3	type
+water	20:23	0:0	4	type
+arg	20:29	20:30	3	0
+water	20:29	0:0	4	0
+water	20:31	0:0	2	;
+call	21:4	21:52	2	av_log
+arg	21:11	21:12	3	s
+water	21:11	0:0	4	s
+arg	21:13	21:25	3	AV_LOG_DEBUG
+water	21:13	0:0	4	AV_LOG_DEBUG
+arg	21:27	21:46	3	"package type:%d\n"
+water	21:27	0:0	4	"package type:%d\n"
+arg	21:48	21:52	3	type
+water	21:48	0:0	4	type
+water	21:53	0:0	2	;
+call	22:4	22:48	2	PRINT_KEY
+arg	22:14	22:15	3	s
+water	22:14	0:0	4	s
+arg	22:17	22:30	3	"package uid"
+water	22:17	0:0	4	"package uid"
+arg	22:32	22:48	3	pb->buf_ptr-16
+water	22:32	0:0	4	pb
+op	22:34	0:0	4	->
+water	22:36	0:0	4	buf_ptr
+op	22:44	0:0	4	-
+water	22:46	0:0	4	16
+water	22:49	0:0	2	;
+call	24:4	24:38	2	mxf_write_local_tag
+arg	24:24	24:26	3	pb
+water	24:24	0:0	4	pb
+arg	24:28	24:30	3	32
+water	24:28	0:0	4	32
+arg	24:32	24:38	3	0x4401
+water	24:32	0:0	4	0
+water	24:33	0:0	4	x4401
+water	24:39	0:0	2	;
+call	25:4	25:43	2	mxf_write_umid
+arg	25:19	25:20	3	s
+water	25:19	0:0	4	s
+arg	25:22	25:43	3	type==SourcePackage
+water	25:22	0:0	4	type
+op	25:27	0:0	4	==
+water	25:30	0:0	4	SourcePackage
+water	25:44	0:0	2	;
+call	26:4	26:61	2	PRINT_KEY
+arg	26:14	26:15	3	s
+water	26:14	0:0	4	s
+arg	26:17	26:43	3	"package umid second part"
+water	26:17	0:0	4	"package umid second part"
+arg	26:45	26:61	3	pb->buf_ptr-16
+water	26:45	0:0	4	pb
+op	26:47	0:0	4	->
+water	26:49	0:0	4	buf_ptr
+op	26:57	0:0	4	-
+water	26:59	0:0	4	16
+water	26:62	0:0	2	;
+if	28:4	29:59	2	(name_size)
+cond	28:8	28:8	3	name_size
+water	28:8	0:0	4	name_size
+stmts	29:8	29:59	3	
+call	29:8	29:58	4	mxf_write_local_tag_utf16
+arg	29:34	29:36	5	pb
+water	29:34	0:0	6	pb
+arg	29:38	29:44	5	0x4402
+water	29:38	0:0	6	0
+water	29:39	0:0	6	x4402
+arg	29:46	29:58	5	package_name
+water	29:46	0:0	6	package_name
+water	29:59	0:0	4	;
+call	31:4	31:37	2	mxf_write_local_tag
+arg	31:24	31:26	3	pb
+water	31:24	0:0	4	pb
+arg	31:28	31:29	3	8
+water	31:28	0:0	4	8
+arg	31:31	31:37	3	0x4405
+water	31:31	0:0	4	0
+water	31:32	0:0	4	x4405
+water	31:38	0:0	2	;
+call	32:4	32:32	2	avio_wb64
+arg	32:14	32:16	3	pb
+water	32:14	0:0	4	pb
+arg	32:18	32:32	3	mxf->timestamp
+water	32:18	0:0	4	mxf
+op	32:21	0:0	4	->
+water	32:23	0:0	4	timestamp
+water	32:33	0:0	2	;
+call	34:4	34:37	2	mxf_write_local_tag
+arg	34:24	34:26	3	pb
+water	34:24	0:0	4	pb
+arg	34:28	34:29	3	8
+water	34:28	0:0	4	8
+arg	34:31	34:37	3	0x4404
+water	34:31	0:0	4	0
+water	34:32	0:0	4	x4404
+water	34:38	0:0	2	;
+call	35:4	35:32	2	avio_wb64
+arg	35:14	35:16	3	pb
+water	35:14	0:0	4	pb
+arg	35:18	35:32	3	mxf->timestamp
+water	35:18	0:0	4	mxf
+op	35:21	0:0	4	->
+water	35:23	0:0	4	timestamp
+water	35:33	0:0	2	;
+call	37:4	37:54	2	mxf_write_local_tag
+arg	37:24	37:26	3	pb
+water	37:24	0:0	4	pb
+arg	37:28	37:46	3	track_count*16+8
+water	37:28	0:0	4	track_count
+op	37:39	0:0	4	*
+water	37:40	0:0	4	16
+op	37:43	0:0	4	+
+water	37:45	0:0	4	8
+arg	37:48	37:54	3	0x4403
+water	37:48	0:0	4	0
+water	37:49	0:0	4	x4403
+water	37:55	0:0	2	;
+call	38:4	38:40	2	mxf_write_refs_count
+arg	38:25	38:27	3	pb
+water	38:25	0:0	4	pb
+arg	38:29	38:40	3	track_count
+water	38:29	0:0	4	track_count
+water	38:41	0:0	2	;
+call	39:4	40:41	2	mxf_write_uuid
+arg	39:19	39:21	3	pb
+water	39:19	0:0	4	pb
+arg	39:23	40:37	3	type==MaterialPackage?Track:Track+TypeBottom
+water	39:23	0:0	4	type
+op	39:28	0:0	4	==
+water	39:31	0:0	4	MaterialPackage
+water	39:47	0:0	4	?
+water	39:49	0:0	4	Track
+water	39:55	0:0	4	:
+water	40:19	0:0	4	Track
+op	40:25	0:0	4	+
+water	40:27	0:0	4	TypeBottom
+arg	40:39	40:41	3	-1
+op	40:39	0:0	4	-
+water	40:40	0:0	4	1
+water	40:42	0:0	2	;
+for	41:4	42:83	2	(i = 0 ;i < s -> nb_streams;i ++)
+forinit	41:9	41:14	3	i = 0 ;
+water	41:9	0:0	4	i
+op	41:11	0:0	4	=
+water	41:13	0:0	4	0
+water	41:14	0:0	4	;
+cond	41:16	41:23	3	i < s -> nb_streams
+water	41:16	0:0	4	i
+op	41:18	0:0	4	<
+water	41:20	0:0	4	s
+op	41:21	0:0	4	->
+water	41:23	0:0	4	nb_streams
+forexpr	41:35	41:36	3	i ++
+water	41:35	0:0	4	i
+op	41:36	0:0	4	++
+stmts	42:8	42:83	3	
+call	42:8	42:82	4	mxf_write_uuid
+arg	42:23	42:25	5	pb
+water	42:23	0:0	6	pb
+arg	42:27	42:79	5	type==MaterialPackage?Track:Track+TypeBottom
+water	42:27	0:0	6	type
+op	42:32	0:0	6	==
+water	42:35	0:0	6	MaterialPackage
+water	42:51	0:0	6	?
+water	42:53	0:0	6	Track
+water	42:59	0:0	6	:
+water	42:61	0:0	6	Track
+op	42:67	0:0	6	+
+water	42:69	0:0	6	TypeBottom
+arg	42:81	42:82	5	i
+water	42:81	0:0	6	i
+water	42:83	0:0	4	;
+call	44:4	44:61	2	mxf_write_local_tag
+arg	44:24	44:26	3	pb
+water	44:24	0:0	4	pb
+arg	44:28	44:53	3	user_comment_count*16+8
+water	44:28	0:0	4	user_comment_count
+op	44:46	0:0	4	*
+water	44:47	0:0	4	16
+op	44:50	0:0	4	+
+water	44:52	0:0	4	8
+arg	44:55	44:61	3	0x4406
+water	44:55	0:0	4	0
+water	44:56	0:0	4	x4406
+water	44:62	0:0	2	;
+call	45:4	45:47	2	mxf_write_refs_count
+arg	45:25	45:27	3	pb
+water	45:25	0:0	4	pb
+arg	45:29	45:47	3	user_comment_count
+water	45:29	0:0	4	user_comment_count
+water	45:48	0:0	2	;
+for	46:4	47:90	2	(i = 0 ;i < user_comment_count;i ++)
+forinit	46:9	46:14	3	i = 0 ;
+water	46:9	0:0	4	i
+op	46:11	0:0	4	=
+water	46:13	0:0	4	0
+water	46:14	0:0	4	;
+cond	46:16	46:20	3	i < user_comment_count
+water	46:16	0:0	4	i
+op	46:18	0:0	4	<
+water	46:20	0:0	4	user_comment_count
+forexpr	46:40	46:41	3	i ++
+water	46:40	0:0	4	i
+op	46:41	0:0	4	++
+stmts	47:9	47:90	3	
+call	47:9	47:89	4	mxf_write_uuid
+arg	47:24	47:26	5	pb
+water	47:24	0:0	6	pb
+arg	47:28	47:39	5	TaggedValue
+water	47:28	0:0	6	TaggedValue
+arg	47:41	47:89	5	mxf->tagged_value_count-user_comment_count+i
+water	47:41	0:0	6	mxf
+op	47:44	0:0	6	->
+water	47:46	0:0	6	tagged_value_count
+op	47:65	0:0	6	-
+water	47:67	0:0	6	user_comment_count
+op	47:86	0:0	6	+
+water	47:88	0:0	6	i
+water	47:90	0:0	4	;
+if	49:4	56:4	2	(type == SourcePackage)
+cond	49:8	49:16	3	type == SourcePackage
+water	49:8	0:0	4	type
+op	49:13	0:0	4	==
+water	49:16	0:0	4	SourcePackage
+stmts	49:31	56:4	3	
+water	49:31	0:0	4	{
+call	50:8	50:42	4	mxf_write_local_tag
+arg	50:28	50:30	5	pb
+water	50:28	0:0	6	pb
+arg	50:32	50:34	5	16
+water	50:32	0:0	6	16
+arg	50:36	50:42	5	0x4701
+water	50:36	0:0	6	0
+water	50:37	0:0	6	x4701
+water	50:43	0:0	4	;
+if	51:8	54:8	4	(s -> nb_streams > 1)
+cond	51:12	51:28	5	s -> nb_streams > 1
+water	51:12	0:0	6	s
+op	51:13	0:0	6	->
+water	51:15	0:0	6	nb_streams
+op	51:26	0:0	6	>
+water	51:28	0:0	6	1
+stmts	51:31	54:8	5	
+water	51:31	0:0	6	{
+call	52:12	52:52	6	mxf_write_uuid
+arg	52:27	52:29	7	pb
+water	52:27	0:0	8	pb
+arg	52:31	52:49	7	MultipleDescriptor
+water	52:31	0:0	8	MultipleDescriptor
+arg	52:51	52:52	7	0
+water	52:51	0:0	8	0
+water	52:53	0:0	6	;
+call	53:12	53:40	6	mxf_write_multi_descriptor
+arg	53:39	53:40	7	s
+water	53:39	0:0	8	s
+water	53:41	0:0	6	;
+water	54:8	0:0	6	}
+else	54:10	55:48	4
+stmts	55:12	55:48	5	
+call	55:12	55:47	6	mxf_write_uuid
+arg	55:27	55:29	7	pb
+water	55:27	0:0	8	pb
+arg	55:31	55:44	7	SubDescriptor
+water	55:31	0:0	8	SubDescriptor
+arg	55:46	55:47	7	0
+water	55:46	0:0	8	0
+water	55:48	0:0	6	;
+water	56:4	0:0	4	}
+call	58:4	58:48	2	mxf_write_track
+arg	58:20	58:21	3	s
+water	58:20	0:0	4	s
+arg	58:23	58:42	3	mxf->timecode_track
+water	58:23	0:0	4	mxf
+op	58:26	0:0	4	->
+water	58:28	0:0	4	timecode_track
+arg	58:44	58:48	3	type
+water	58:44	0:0	4	type
+water	58:49	0:0	2	;
+call	59:4	59:51	2	mxf_write_sequence
+arg	59:23	59:24	3	s
+water	59:23	0:0	4	s
+arg	59:26	59:45	3	mxf->timecode_track
+water	59:26	0:0	4	mxf
+op	59:29	0:0	4	->
+water	59:31	0:0	4	timecode_track
+arg	59:47	59:51	3	type
+water	59:47	0:0	4	type
+water	59:52	0:0	2	;
+call	60:4	60:61	2	mxf_write_timecode_component
+arg	60:33	60:34	3	s
+water	60:33	0:0	4	s
+arg	60:36	60:55	3	mxf->timecode_track
+water	60:36	0:0	4	mxf
+op	60:39	0:0	4	->
+water	60:41	0:0	4	timecode_track
+arg	60:57	60:61	3	type
+water	60:57	0:0	4	type
+water	60:62	0:0	2	;
+for	61:4	70:4	2	(i = 0 ;i < s -> nb_streams;i ++)
+forinit	61:9	61:14	3	i = 0 ;
+water	61:9	0:0	4	i
+op	61:11	0:0	4	=
+water	61:13	0:0	4	0
+water	61:14	0:0	4	;
+cond	61:16	61:23	3	i < s -> nb_streams
+water	61:16	0:0	4	i
+op	61:18	0:0	4	<
+water	61:20	0:0	4	s
+op	61:21	0:0	4	->
+water	61:23	0:0	4	nb_streams
+forexpr	61:35	61:36	3	i ++
+water	61:35	0:0	4	i
+op	61:36	0:0	4	++
+stmts	61:40	70:4	3	
+water	61:40	0:0	4	{
+decl	62:8	62:36	4	AVStream	*st
+op	62:21	0:0	4	=
+water	62:23	0:0	4	s
+op	62:24	0:0	4	->
+water	62:26	0:0	4	streams
+op	62:33	0:0	4	[
+water	62:34	0:0	4	i
+op	62:35	0:0	4	]
+call	63:8	63:35	4	mxf_write_track
+arg	63:24	63:25	5	s
+water	63:24	0:0	6	s
+arg	63:27	63:29	5	st
+water	63:27	0:0	6	st
+arg	63:31	63:35	5	type
+water	63:31	0:0	6	type
+water	63:36	0:0	4	;
+call	64:8	64:38	4	mxf_write_sequence
+arg	64:27	64:28	5	s
+water	64:27	0:0	6	s
+arg	64:30	64:32	5	st
+water	64:30	0:0	6	st
+arg	64:34	64:38	5	type
+water	64:34	0:0	6	type
+water	64:39	0:0	4	;
+call	65:8	65:50	4	mxf_write_structural_component
+arg	65:39	65:40	5	s
+water	65:39	0:0	6	s
+arg	65:42	65:44	5	st
+water	65:42	0:0	6	st
+arg	65:46	65:50	5	type
+water	65:46	0:0	6	type
+water	65:51	0:0	4	;
+if	66:8	69:8	4	(type == SourcePackage)
+cond	66:12	66:20	5	type == SourcePackage
+water	66:12	0:0	6	type
+op	66:17	0:0	6	==
+water	66:20	0:0	6	SourcePackage
+stmts	66:35	69:8	5	
+water	66:35	0:0	6	{
+decl	67:12	67:48	6	MXFStreamContext	*sc
+op	67:33	0:0	6	=
+water	67:35	0:0	6	st
+op	67:37	0:0	6	->
+water	67:39	0:0	6	priv_data
+water	68:12	0:0	6	mxf_essence_container_uls
+op	68:37	0:0	6	[
+water	68:38	0:0	6	sc
+op	68:40	0:0	6	->
+water	68:42	0:0	6	index
+op	68:47	0:0	6	]
+op	68:48	0:0	6	.
+call	68:49	68:65	6	write_desc
+arg	68:60	68:61	7	s
+water	68:60	0:0	8	s
+arg	68:63	68:65	7	st
+water	68:63	0:0	8	st
+water	68:66	0:0	6	;
+water	69:8	0:0	6	}
+water	70:4	0:0	4	}

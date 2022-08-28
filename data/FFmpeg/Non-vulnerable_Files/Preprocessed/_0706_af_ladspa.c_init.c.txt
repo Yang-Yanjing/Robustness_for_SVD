@@ -1,0 +1,1230 @@
+func	1:15	170:0	0	int	init
+params	1:23	0:0	1	
+param	1:24	1:44	2	AVFilterContext *	ctx
+stmnts	0:0	169:12	1	
+decl	3:4	3:32	2	LADSPAContext	*s
+op	3:21	0:0	2	=
+water	3:23	0:0	2	ctx
+op	3:26	0:0	2	->
+water	3:28	0:0	2	priv
+decl	4:4	4:44	2	LADSPA_Descriptor_Function	descriptor_fn
+decl	5:4	5:33	2	const LADSPA_Descriptor	*desc
+decl	6:4	6:28	2	LADSPA_PortDescriptor	pd
+decl	7:4	7:30	2	AVFilterPad	pad
+op	7:20	0:0	2	=
+water	7:22	0:0	2	{
+water	7:24	0:0	2	NULL
+water	7:29	0:0	2	}
+decl	8:4	8:34	2	char	*p
+water	8:11	0:0	2	,
+decl	8:4	8:34	2	char	*arg
+water	8:17	0:0	2	,
+decl	8:4	8:34	2	char	*saveptr
+op	8:28	0:0	2	=
+water	8:30	0:0	2	NULL
+decl	9:4	9:26	2	unsigned long	nb_ports
+decl	10:4	10:9	2	int	i
+if	11:4	14:4	2	(! s -> dl_name)
+cond	11:8	11:12	3	! s -> dl_name
+op	11:8	0:0	4	!
+water	11:9	0:0	4	s
+op	11:10	0:0	4	->
+water	11:12	0:0	4	dl_name
+stmts	11:21	14:4	3	
+water	11:21	0:0	4	{
+call	12:8	12:61	4	av_log
+arg	12:15	12:18	5	ctx
+water	12:15	0:0	6	ctx
+arg	12:20	12:32	5	AV_LOG_ERROR
+water	12:20	0:0	6	AV_LOG_ERROR
+arg	12:34	12:61	5	"No plugin name provided\n"
+water	12:34	0:0	6	"No plugin name provided\n"
+water	12:62	0:0	4	;
+return	13:8	13:30	4	AVERROR(EINVAL)
+call	13:15	13:29	5	AVERROR
+arg	13:23	13:29	6	EINVAL
+water	13:23	0:0	7	EINVAL
+water	14:4	0:0	4	}
+if	15:4	18:4	2	(s -> dl_name [ 0 ] == '/' || s -> dl_name [ 0 ] == '.')
+cond	15:8	15:49	3	s -> dl_name [ 0 ] == '/' || s -> dl_name [ 0 ] == '.'
+water	15:8	0:0	4	s
+op	15:9	0:0	4	->
+water	15:11	0:0	4	dl_name
+op	15:18	0:0	4	[
+water	15:19	0:0	4	0
+op	15:20	0:0	4	]
+op	15:22	0:0	4	==
+water	15:25	0:0	4	'/'
+op	15:29	0:0	4	||
+water	15:32	0:0	4	s
+op	15:33	0:0	4	->
+water	15:35	0:0	4	dl_name
+op	15:42	0:0	4	[
+water	15:43	0:0	4	0
+op	15:44	0:0	4	]
+op	15:46	0:0	4	==
+water	15:49	0:0	4	'.'
+stmts	15:54	18:4	3	
+water	15:54	0:0	4	{
+water	17:8	0:0	4	s
+op	17:9	0:0	4	->
+water	17:11	0:0	4	dl_handle
+op	17:21	0:0	4	=
+call	17:23	17:61	4	dlopen
+arg	17:30	17:40	5	s->dl_name
+water	17:30	0:0	6	s
+op	17:31	0:0	6	->
+water	17:33	0:0	6	dl_name
+arg	17:42	17:61	5	RTLD_LOCAL|RTLD_NOW
+water	17:42	0:0	6	RTLD_LOCAL
+op	17:52	0:0	6	|
+water	17:53	0:0	6	RTLD_NOW
+water	17:62	0:0	4	;
+water	18:4	0:0	4	}
+else	18:6	38:4	2
+stmts	18:11	38:4	3	
+water	18:11	0:0	4	{
+decl	20:8	20:54	4	char	*paths
+op	20:20	0:0	4	=
+call	20:22	20:53	5	av_strdup
+arg	20:32	20:53	6	getenv("LADSPA_PATH")
+call	20:32	20:52	7	getenv
+arg	20:39	20:52	8	"LADSPA_PATH"
+water	20:39	0:0	9	"LADSPA_PATH"
+decl	21:8	21:35	4	const char	*separator
+op	21:30	0:0	4	=
+water	21:32	0:0	4	":"
+if	22:8	28:8	4	(paths)
+cond	22:12	22:12	5	paths
+water	22:12	0:0	6	paths
+stmts	22:19	28:8	5	
+water	22:19	0:0	6	{
+water	23:12	0:0	6	p
+op	23:14	0:0	6	=
+water	23:16	0:0	6	paths
+water	23:21	0:0	6	;
+while	24:12	27:12	6	(( arg =av_strtok (p ,separator ,& saveptr ) ) && ! s -> dl_handle)
+cond	24:19	24:68	7	( arg =av_strtok (p ,separator ,& saveptr ) ) && ! s -> dl_handle
+water	24:19	0:0	8	(
+water	24:20	0:0	8	arg
+op	24:24	0:0	8	=
+call	24:26	24:58	8	av_strtok
+arg	24:36	24:37	9	p
+water	24:36	0:0	10	p
+arg	24:39	24:48	9	separator
+water	24:39	0:0	10	separator
+arg	24:50	24:58	9	&saveptr
+op	24:50	0:0	10	&
+water	24:51	0:0	10	saveptr
+water	24:59	0:0	8	)
+op	24:61	0:0	8	&&
+op	24:64	0:0	8	!
+water	24:65	0:0	8	s
+op	24:66	0:0	8	->
+water	24:68	0:0	8	dl_handle
+stmts	24:79	27:12	7	
+water	24:79	0:0	8	{
+water	25:16	0:0	8	s
+op	25:17	0:0	8	->
+water	25:19	0:0	8	dl_handle
+op	25:29	0:0	8	=
+call	25:31	25:55	8	try_load
+arg	25:40	25:43	9	arg
+water	25:40	0:0	10	arg
+arg	25:45	25:55	9	s->dl_name
+water	25:45	0:0	10	s
+op	25:46	0:0	10	->
+water	25:48	0:0	10	dl_name
+water	25:56	0:0	8	;
+water	26:16	0:0	8	p
+op	26:18	0:0	8	=
+water	26:20	0:0	8	NULL
+water	26:24	0:0	8	;
+water	27:12	0:0	8	}
+water	28:8	0:0	6	}
+call	29:8	29:21	4	av_free
+arg	29:16	29:21	5	paths
+water	29:16	0:0	6	paths
+water	29:22	0:0	4	;
+if	30:8	33:8	4	(! s -> dl_handle && ( paths =av_asprintf ("%s/.ladspa/lib" ,getenv ("HOME" ) ) ))
+cond	30:12	30:83	5	! s -> dl_handle && ( paths =av_asprintf ("%s/.ladspa/lib" ,getenv ("HOME" ) ) )
+op	30:12	0:0	6	!
+water	30:13	0:0	6	s
+op	30:14	0:0	6	->
+water	30:16	0:0	6	dl_handle
+op	30:26	0:0	6	&&
+water	30:29	0:0	6	(
+water	30:30	0:0	6	paths
+op	30:36	0:0	6	=
+call	30:38	30:82	6	av_asprintf
+arg	30:50	30:66	7	"%s/.ladspa/lib"
+water	30:50	0:0	8	"%s/.ladspa/lib"
+arg	30:68	30:82	7	getenv("HOME")
+call	30:68	30:81	8	getenv
+arg	30:75	30:81	9	"HOME"
+water	30:75	0:0	10	"HOME"
+water	30:83	0:0	6	)
+stmts	30:86	33:8	5	
+water	30:86	0:0	6	{
+water	31:12	0:0	6	s
+op	31:13	0:0	6	->
+water	31:15	0:0	6	dl_handle
+op	31:25	0:0	6	=
+call	31:27	31:53	6	try_load
+arg	31:36	31:41	7	paths
+water	31:36	0:0	8	paths
+arg	31:43	31:53	7	s->dl_name
+water	31:43	0:0	8	s
+op	31:44	0:0	8	->
+water	31:46	0:0	8	dl_name
+water	31:54	0:0	6	;
+call	32:12	32:25	6	av_free
+arg	32:20	32:25	7	paths
+water	32:20	0:0	8	paths
+water	32:26	0:0	6	;
+water	33:8	0:0	6	}
+if	34:8	35:72	4	(! s -> dl_handle)
+cond	34:12	34:16	5	! s -> dl_handle
+op	34:12	0:0	6	!
+water	34:13	0:0	6	s
+op	34:14	0:0	6	->
+water	34:16	0:0	6	dl_handle
+stmts	35:12	35:72	5	
+water	35:12	0:0	6	s
+op	35:13	0:0	6	->
+water	35:15	0:0	6	dl_handle
+op	35:25	0:0	6	=
+call	35:27	35:71	6	try_load
+arg	35:36	35:59	7	"/usr/local/lib/ladspa"
+water	35:36	0:0	8	"/usr/local/lib/ladspa"
+arg	35:61	35:71	7	s->dl_name
+water	35:61	0:0	8	s
+op	35:62	0:0	8	->
+water	35:64	0:0	8	dl_name
+water	35:72	0:0	6	;
+if	36:8	37:66	4	(! s -> dl_handle)
+cond	36:12	36:16	5	! s -> dl_handle
+op	36:12	0:0	6	!
+water	36:13	0:0	6	s
+op	36:14	0:0	6	->
+water	36:16	0:0	6	dl_handle
+stmts	37:12	37:66	5	
+water	37:12	0:0	6	s
+op	37:13	0:0	6	->
+water	37:15	0:0	6	dl_handle
+op	37:25	0:0	6	=
+call	37:27	37:65	6	try_load
+arg	37:36	37:53	7	"/usr/lib/ladspa"
+water	37:36	0:0	8	"/usr/lib/ladspa"
+arg	37:55	37:65	7	s->dl_name
+water	37:55	0:0	8	s
+op	37:56	0:0	8	->
+water	37:58	0:0	8	dl_name
+water	37:66	0:0	6	;
+water	38:4	0:0	4	}
+if	39:4	42:4	2	(! s -> dl_handle)
+cond	39:8	39:12	3	! s -> dl_handle
+op	39:8	0:0	4	!
+water	39:9	0:0	4	s
+op	39:10	0:0	4	->
+water	39:12	0:0	4	dl_handle
+stmts	39:23	42:4	3	
+water	39:23	0:0	4	{
+call	40:8	40:69	4	av_log
+arg	40:15	40:18	5	ctx
+water	40:15	0:0	6	ctx
+arg	40:20	40:32	5	AV_LOG_ERROR
+water	40:20	0:0	6	AV_LOG_ERROR
+arg	40:34	40:57	5	"Failed to load '%s'\n"
+water	40:34	0:0	6	"Failed to load '%s'\n"
+arg	40:59	40:69	5	s->dl_name
+water	40:59	0:0	6	s
+op	40:60	0:0	6	->
+water	40:62	0:0	6	dl_name
+water	40:70	0:0	4	;
+return	41:8	41:30	4	AVERROR(EINVAL)
+call	41:15	41:29	5	AVERROR
+arg	41:23	41:29	6	EINVAL
+water	41:23	0:0	7	EINVAL
+water	42:4	0:0	4	}
+water	43:4	0:0	2	descriptor_fn
+op	43:18	0:0	2	=
+call	43:20	43:59	2	dlsym
+arg	43:26	43:38	3	s->dl_handle
+water	43:26	0:0	4	s
+op	43:27	0:0	4	->
+water	43:29	0:0	4	dl_handle
+arg	43:40	43:59	3	"ladspa_descriptor"
+water	43:40	0:0	4	"ladspa_descriptor"
+water	43:60	0:0	2	;
+if	44:4	47:4	2	(! descriptor_fn)
+cond	44:8	44:9	3	! descriptor_fn
+op	44:8	0:0	4	!
+water	44:9	0:0	4	descriptor_fn
+stmts	44:24	47:4	3	
+water	44:24	0:0	4	{
+call	45:8	45:85	4	av_log
+arg	45:15	45:18	5	ctx
+water	45:15	0:0	6	ctx
+arg	45:20	45:32	5	AV_LOG_ERROR
+water	45:20	0:0	6	AV_LOG_ERROR
+arg	45:34	45:74	5	"Could not find ladspa_descriptor: %s\n"
+water	45:34	0:0	6	"Could not find ladspa_descriptor: %s\n"
+arg	45:76	45:85	5	dlerror()
+call	45:76	45:84	6	dlerror
+water	45:86	0:0	4	;
+return	46:8	46:30	4	AVERROR(EINVAL)
+call	46:15	46:29	5	AVERROR
+arg	46:23	46:29	6	EINVAL
+water	46:23	0:0	7	EINVAL
+water	47:4	0:0	4	}
+if	49:4	66:4	2	(! s -> plugin)
+cond	49:8	49:12	3	! s -> plugin
+op	49:8	0:0	4	!
+water	49:9	0:0	4	s
+op	49:10	0:0	4	->
+water	49:12	0:0	4	plugin
+stmts	49:20	66:4	3	
+water	49:20	0:0	4	{
+call	50:8	50:97	4	av_log
+arg	50:15	50:18	5	ctx
+water	50:15	0:0	6	ctx
+arg	50:20	50:31	5	AV_LOG_INFO
+water	50:20	0:0	6	AV_LOG_INFO
+arg	50:33	50:85	5	"The '%s' library contains the following plugins:\n"
+water	50:33	0:0	6	"The '%s' library contains the following plugins:\n"
+arg	50:87	50:97	5	s->dl_name
+water	50:87	0:0	6	s
+op	50:88	0:0	6	->
+water	50:90	0:0	6	dl_name
+water	50:98	0:0	4	;
+call	51:8	51:55	4	av_log
+arg	51:15	51:18	5	ctx
+water	51:15	0:0	6	ctx
+arg	51:20	51:31	5	AV_LOG_INFO
+water	51:20	0:0	6	AV_LOG_INFO
+arg	51:33	51:55	5	"I = Input Channels\n"
+water	51:33	0:0	6	"I = Input Channels\n"
+water	51:56	0:0	4	;
+call	52:8	52:56	4	av_log
+arg	52:15	52:18	5	ctx
+water	52:15	0:0	6	ctx
+arg	52:20	52:31	5	AV_LOG_INFO
+water	52:20	0:0	6	AV_LOG_INFO
+arg	52:33	52:56	5	"O = Output Channels\n"
+water	52:33	0:0	6	"O = Output Channels\n"
+water	52:57	0:0	4	;
+call	53:8	53:74	4	av_log
+arg	53:15	53:18	5	ctx
+water	53:15	0:0	6	ctx
+arg	53:20	53:31	5	AV_LOG_INFO
+water	53:20	0:0	6	AV_LOG_INFO
+arg	53:33	53:49	5	"I:O %-25s %s\n"
+water	53:33	0:0	6	"I:O %-25s %s\n"
+arg	53:51	53:59	5	"Plugin"
+water	53:51	0:0	6	"Plugin"
+arg	53:61	53:74	5	"Description"
+water	53:61	0:0	6	"Description"
+water	53:75	0:0	4	;
+call	54:8	54:37	4	av_log
+arg	54:15	54:18	5	ctx
+water	54:15	0:0	6	ctx
+arg	54:20	54:31	5	AV_LOG_INFO
+water	54:20	0:0	6	AV_LOG_INFO
+arg	54:33	54:37	5	"\n"
+water	54:33	0:0	6	"\n"
+water	54:38	0:0	4	;
+for	55:8	64:8	4	(i = 0 ;desc =descriptor_fn (i );i ++)
+forinit	55:13	55:18	5	i = 0 ;
+water	55:13	0:0	6	i
+op	55:15	0:0	6	=
+water	55:17	0:0	6	0
+water	55:18	0:0	6	;
+cond	55:20	55:42	5	desc =descriptor_fn (i )
+water	55:20	0:0	6	desc
+op	55:25	0:0	6	=
+call	55:27	55:42	6	descriptor_fn
+arg	55:41	55:42	7	i
+water	55:41	0:0	8	i
+forexpr	55:45	55:46	5	i ++
+water	55:45	0:0	6	i
+op	55:46	0:0	6	++
+stmts	55:50	64:8	5	
+water	55:50	0:0	6	{
+decl	56:12	56:49	6	unsigned long	inputs
+op	56:33	0:0	6	=
+water	56:35	0:0	6	0
+water	56:36	0:0	6	,
+decl	56:12	56:49	6	unsigned long	outputs
+op	56:46	0:0	6	=
+water	56:48	0:0	6	0
+call	57:12	57:47	6	count_ports
+arg	57:24	57:28	7	desc
+water	57:24	0:0	8	desc
+arg	57:30	57:37	7	&inputs
+op	57:30	0:0	8	&
+water	57:31	0:0	8	inputs
+arg	57:39	57:47	7	&outputs
+op	57:39	0:0	8	&
+water	57:40	0:0	8	outputs
+water	57:48	0:0	6	;
+call	58:12	59:56	6	av_log
+arg	58:19	58:22	7	ctx
+water	58:19	0:0	8	ctx
+arg	58:24	58:35	7	AV_LOG_INFO
+water	58:24	0:0	8	AV_LOG_INFO
+arg	58:37	58:57	7	"%lu:%lu %-25s %s\n"
+water	58:37	0:0	8	"%lu:%lu %-25s %s\n"
+arg	58:59	58:65	7	inputs
+water	58:59	0:0	8	inputs
+arg	58:67	58:74	7	outputs
+water	58:67	0:0	8	outputs
+arg	58:76	58:87	7	desc->Label
+water	58:76	0:0	8	desc
+op	58:80	0:0	8	->
+water	58:82	0:0	8	Label
+arg	59:19	59:56	7	(char*)av_x_if_null(desc->Name,"?")
+water	59:19	0:0	8	(
+water	59:20	0:0	8	char
+op	59:25	0:0	8	*
+water	59:26	0:0	8	)
+call	59:27	59:55	8	av_x_if_null
+arg	59:40	59:50	9	desc->Name
+water	59:40	0:0	10	desc
+op	59:44	0:0	10	->
+water	59:46	0:0	10	Name
+arg	59:52	59:55	9	"?"
+water	59:52	0:0	10	"?"
+water	59:57	0:0	6	;
+call	60:12	61:57	6	av_log
+arg	60:19	60:22	7	ctx
+water	60:19	0:0	8	ctx
+arg	60:24	60:38	7	AV_LOG_VERBOSE
+water	60:24	0:0	8	AV_LOG_VERBOSE
+arg	60:40	60:53	7	"Maker: %s\n"
+water	60:40	0:0	8	"Maker: %s\n"
+arg	61:19	61:57	7	(char*)av_x_if_null(desc->Maker,"?")
+water	61:19	0:0	8	(
+water	61:20	0:0	8	char
+op	61:25	0:0	8	*
+water	61:26	0:0	8	)
+call	61:27	61:56	8	av_x_if_null
+arg	61:40	61:51	9	desc->Maker
+water	61:40	0:0	10	desc
+op	61:44	0:0	10	->
+water	61:46	0:0	10	Maker
+arg	61:53	61:56	9	"?"
+water	61:53	0:0	10	"?"
+water	61:58	0:0	6	;
+call	62:12	63:61	6	av_log
+arg	62:19	62:22	7	ctx
+water	62:19	0:0	8	ctx
+arg	62:24	62:38	7	AV_LOG_VERBOSE
+water	62:24	0:0	8	AV_LOG_VERBOSE
+arg	62:40	62:57	7	"Copyright: %s\n"
+water	62:40	0:0	8	"Copyright: %s\n"
+arg	63:19	63:61	7	(char*)av_x_if_null(desc->Copyright,"?")
+water	63:19	0:0	8	(
+water	63:20	0:0	8	char
+op	63:25	0:0	8	*
+water	63:26	0:0	8	)
+call	63:27	63:60	8	av_x_if_null
+arg	63:40	63:55	9	desc->Copyright
+water	63:40	0:0	10	desc
+op	63:44	0:0	10	->
+water	63:46	0:0	10	Copyright
+arg	63:57	63:60	9	"?"
+water	63:57	0:0	10	"?"
+water	63:62	0:0	6	;
+water	64:8	0:0	6	}
+return	65:8	65:27	4	AVERROR_EXIT
+water	65:15	0:0	5	AVERROR_EXIT
+water	66:4	0:0	4	}
+else	66:6	76:4	2
+stmts	66:11	76:4	3	
+water	66:11	0:0	4	{
+for	67:8	75:8	4	(i = 0 ;;i ++)
+forinit	67:13	67:18	5	i = 0 ;
+water	67:13	0:0	6	i
+op	67:15	0:0	6	=
+water	67:17	0:0	6	0
+water	67:18	0:0	6	;
+cond	0:0	0:0	5	
+forexpr	67:21	67:22	5	i ++
+water	67:21	0:0	6	i
+op	67:22	0:0	6	++
+stmts	67:26	75:8	5	
+water	67:26	0:0	6	{
+water	68:12	0:0	6	desc
+op	68:17	0:0	6	=
+call	68:19	68:34	6	descriptor_fn
+arg	68:33	68:34	7	i
+water	68:33	0:0	8	i
+water	68:35	0:0	6	;
+if	69:12	72:12	6	(! desc)
+cond	69:16	69:17	7	! desc
+op	69:16	0:0	8	!
+water	69:17	0:0	8	desc
+stmts	69:23	72:12	7	
+water	69:23	0:0	8	{
+call	70:16	70:82	8	av_log
+arg	70:23	70:26	9	ctx
+water	70:23	0:0	10	ctx
+arg	70:28	70:40	9	AV_LOG_ERROR
+water	70:28	0:0	10	AV_LOG_ERROR
+arg	70:42	70:71	9	"Could not find plugin: %s\n"
+water	70:42	0:0	10	"Could not find plugin: %s\n"
+arg	70:73	70:82	9	s->plugin
+water	70:73	0:0	10	s
+op	70:74	0:0	10	->
+water	70:76	0:0	10	plugin
+water	70:83	0:0	8	;
+return	71:16	71:38	8	AVERROR(EINVAL)
+call	71:23	71:37	9	AVERROR
+arg	71:31	71:37	10	EINVAL
+water	71:31	0:0	11	EINVAL
+water	72:12	0:0	8	}
+if	73:12	74:21	6	(desc -> Label && !strcmp (desc -> Label ,s -> plugin ))
+cond	73:16	73:61	7	desc -> Label && !strcmp (desc -> Label ,s -> plugin )
+water	73:16	0:0	8	desc
+op	73:20	0:0	8	->
+water	73:22	0:0	8	Label
+op	73:28	0:0	8	&&
+op	73:31	0:0	8	!
+call	73:32	73:61	8	strcmp
+arg	73:39	73:50	9	desc->Label
+water	73:39	0:0	10	desc
+op	73:43	0:0	10	->
+water	73:45	0:0	10	Label
+arg	73:52	73:61	9	s->plugin
+water	73:52	0:0	10	s
+op	73:53	0:0	10	->
+water	73:55	0:0	10	plugin
+stmts	74:16	74:21	7	
+break	74:16	74:21	8	
+water	75:8	0:0	6	}
+water	76:4	0:0	4	}
+water	77:4	0:0	2	s
+op	77:5	0:0	2	->
+water	77:7	0:0	2	desc
+op	77:13	0:0	2	=
+water	77:15	0:0	2	desc
+water	77:19	0:0	2	;
+water	78:4	0:0	2	nb_ports
+op	78:13	0:0	2	=
+water	78:15	0:0	2	desc
+op	78:19	0:0	2	->
+water	78:21	0:0	2	PortCount
+water	78:30	0:0	2	;
+water	79:4	0:0	2	s
+op	79:5	0:0	2	->
+water	79:7	0:0	2	ipmap
+op	79:13	0:0	2	=
+call	79:15	79:52	2	av_calloc
+arg	79:25	79:33	3	nb_ports
+water	79:25	0:0	4	nb_ports
+arg	79:35	79:52	3	sizeof(*s->ipmap)
+op	79:35	0:0	4	sizeof
+water	79:41	0:0	4	(
+op	79:42	0:0	4	*
+water	79:43	0:0	4	s
+op	79:44	0:0	4	->
+water	79:46	0:0	4	ipmap
+water	79:51	0:0	4	)
+water	79:53	0:0	2	;
+water	80:4	0:0	2	s
+op	80:5	0:0	2	->
+water	80:7	0:0	2	opmap
+op	80:13	0:0	2	=
+call	80:15	80:52	2	av_calloc
+arg	80:25	80:33	3	nb_ports
+water	80:25	0:0	4	nb_ports
+arg	80:35	80:52	3	sizeof(*s->opmap)
+op	80:35	0:0	4	sizeof
+water	80:41	0:0	4	(
+op	80:42	0:0	4	*
+water	80:43	0:0	4	s
+op	80:44	0:0	4	->
+water	80:46	0:0	4	opmap
+water	80:51	0:0	4	)
+water	80:53	0:0	2	;
+water	81:4	0:0	2	s
+op	81:5	0:0	2	->
+water	81:7	0:0	2	icmap
+op	81:13	0:0	2	=
+call	81:15	81:52	2	av_calloc
+arg	81:25	81:33	3	nb_ports
+water	81:25	0:0	4	nb_ports
+arg	81:35	81:52	3	sizeof(*s->icmap)
+op	81:35	0:0	4	sizeof
+water	81:41	0:0	4	(
+op	81:42	0:0	4	*
+water	81:43	0:0	4	s
+op	81:44	0:0	4	->
+water	81:46	0:0	4	icmap
+water	81:51	0:0	4	)
+water	81:53	0:0	2	;
+water	82:4	0:0	2	s
+op	82:5	0:0	2	->
+water	82:7	0:0	2	ocmap
+op	82:13	0:0	2	=
+call	82:15	82:52	2	av_calloc
+arg	82:25	82:33	3	nb_ports
+water	82:25	0:0	4	nb_ports
+arg	82:35	82:52	3	sizeof(*s->ocmap)
+op	82:35	0:0	4	sizeof
+water	82:41	0:0	4	(
+op	82:42	0:0	4	*
+water	82:43	0:0	4	s
+op	82:44	0:0	4	->
+water	82:46	0:0	4	ocmap
+water	82:51	0:0	4	)
+water	82:53	0:0	2	;
+water	83:4	0:0	2	s
+op	83:5	0:0	2	->
+water	83:7	0:0	2	ictlv
+op	83:13	0:0	2	=
+call	83:15	83:52	2	av_calloc
+arg	83:25	83:33	3	nb_ports
+water	83:25	0:0	4	nb_ports
+arg	83:35	83:52	3	sizeof(*s->ictlv)
+op	83:35	0:0	4	sizeof
+water	83:41	0:0	4	(
+op	83:42	0:0	4	*
+water	83:43	0:0	4	s
+op	83:44	0:0	4	->
+water	83:46	0:0	4	ictlv
+water	83:51	0:0	4	)
+water	83:53	0:0	2	;
+water	84:4	0:0	2	s
+op	84:5	0:0	2	->
+water	84:7	0:0	2	octlv
+op	84:13	0:0	2	=
+call	84:15	84:52	2	av_calloc
+arg	84:25	84:33	3	nb_ports
+water	84:25	0:0	4	nb_ports
+arg	84:35	84:52	3	sizeof(*s->octlv)
+op	84:35	0:0	4	sizeof
+water	84:41	0:0	4	(
+op	84:42	0:0	4	*
+water	84:43	0:0	4	s
+op	84:44	0:0	4	->
+water	84:46	0:0	4	octlv
+water	84:51	0:0	4	)
+water	84:53	0:0	2	;
+water	85:4	0:0	2	s
+op	85:5	0:0	2	->
+water	85:7	0:0	2	ctl_needs_value
+op	85:23	0:0	2	=
+call	85:25	85:72	2	av_calloc
+arg	85:35	85:43	3	nb_ports
+water	85:35	0:0	4	nb_ports
+arg	85:45	85:72	3	sizeof(*s->ctl_needs_value)
+op	85:45	0:0	4	sizeof
+water	85:51	0:0	4	(
+op	85:52	0:0	4	*
+water	85:53	0:0	4	s
+op	85:54	0:0	4	->
+water	85:56	0:0	4	ctl_needs_value
+water	85:71	0:0	4	)
+water	85:73	0:0	2	;
+if	86:4	88:30	2	(! s -> ipmap || ! s -> opmap || ! s -> icmap || ! s -> ocmap || ! s -> ictlv || ! s -> octlv || ! s -> ctl_needs_value)
+cond	86:8	87:51	3	! s -> ipmap || ! s -> opmap || ! s -> icmap || ! s -> ocmap || ! s -> ictlv || ! s -> octlv || ! s -> ctl_needs_value
+op	86:8	0:0	4	!
+water	86:9	0:0	4	s
+op	86:10	0:0	4	->
+water	86:12	0:0	4	ipmap
+op	86:18	0:0	4	||
+op	86:21	0:0	4	!
+water	86:22	0:0	4	s
+op	86:23	0:0	4	->
+water	86:25	0:0	4	opmap
+op	86:31	0:0	4	||
+op	86:34	0:0	4	!
+water	86:35	0:0	4	s
+op	86:36	0:0	4	->
+water	86:38	0:0	4	icmap
+op	86:44	0:0	4	||
+op	87:8	0:0	4	!
+water	87:9	0:0	4	s
+op	87:10	0:0	4	->
+water	87:12	0:0	4	ocmap
+op	87:18	0:0	4	||
+op	87:21	0:0	4	!
+water	87:22	0:0	4	s
+op	87:23	0:0	4	->
+water	87:25	0:0	4	ictlv
+op	87:31	0:0	4	||
+op	87:34	0:0	4	!
+water	87:35	0:0	4	s
+op	87:36	0:0	4	->
+water	87:38	0:0	4	octlv
+op	87:44	0:0	4	||
+op	87:47	0:0	4	!
+water	87:48	0:0	4	s
+op	87:49	0:0	4	->
+water	87:51	0:0	4	ctl_needs_value
+stmts	88:8	88:30	3	
+return	88:8	88:30	4	AVERROR(ENOMEM)
+call	88:15	88:29	5	AVERROR
+arg	88:23	88:29	6	ENOMEM
+water	88:23	0:0	7	ENOMEM
+for	89:4	112:4	2	(i = 0 ;i < nb_ports;i ++)
+forinit	89:9	89:14	3	i = 0 ;
+water	89:9	0:0	4	i
+op	89:11	0:0	4	=
+water	89:13	0:0	4	0
+water	89:14	0:0	4	;
+cond	89:16	89:20	3	i < nb_ports
+water	89:16	0:0	4	i
+op	89:18	0:0	4	<
+water	89:20	0:0	4	nb_ports
+forexpr	89:30	89:31	3	i ++
+water	89:30	0:0	4	i
+op	89:31	0:0	4	++
+stmts	89:35	112:4	3	
+water	89:35	0:0	4	{
+water	90:8	0:0	4	pd
+op	90:11	0:0	4	=
+water	90:13	0:0	4	desc
+op	90:17	0:0	4	->
+water	90:19	0:0	4	PortDescriptors
+op	90:34	0:0	4	[
+water	90:35	0:0	4	i
+op	90:36	0:0	4	]
+water	90:37	0:0	4	;
+if	91:8	99:8	4	(LADSPA_IS_PORT_AUDIO (pd ))
+cond	91:12	91:35	5	LADSPA_IS_PORT_AUDIO (pd )
+call	91:12	91:35	6	LADSPA_IS_PORT_AUDIO
+arg	91:33	91:35	7	pd
+water	91:33	0:0	8	pd
+stmts	91:38	99:8	5	
+water	91:38	0:0	6	{
+if	92:12	95:12	6	(LADSPA_IS_PORT_INPUT (pd ))
+cond	92:16	92:39	7	LADSPA_IS_PORT_INPUT (pd )
+call	92:16	92:39	8	LADSPA_IS_PORT_INPUT
+arg	92:37	92:39	9	pd
+water	92:37	0:0	10	pd
+stmts	92:42	95:12	7	
+water	92:42	0:0	8	{
+water	93:16	0:0	8	s
+op	93:17	0:0	8	->
+water	93:19	0:0	8	ipmap
+op	93:24	0:0	8	[
+water	93:25	0:0	8	s
+op	93:26	0:0	8	->
+water	93:28	0:0	8	nb_inputs
+op	93:37	0:0	8	]
+op	93:39	0:0	8	=
+water	93:41	0:0	8	i
+water	93:42	0:0	8	;
+water	94:16	0:0	8	s
+op	94:17	0:0	8	->
+water	94:19	0:0	8	nb_inputs
+op	94:28	0:0	8	++
+water	94:30	0:0	8	;
+water	95:12	0:0	8	}
+else	95:14	98:12	6
+stmts	95:19	98:12	7	
+if	95:19	98:12	8	(LADSPA_IS_PORT_OUTPUT (pd ))
+cond	95:23	95:47	9	LADSPA_IS_PORT_OUTPUT (pd )
+call	95:23	95:47	10	LADSPA_IS_PORT_OUTPUT
+arg	95:45	95:47	11	pd
+water	95:45	0:0	12	pd
+stmts	95:50	98:12	9	
+water	95:50	0:0	10	{
+water	96:16	0:0	10	s
+op	96:17	0:0	10	->
+water	96:19	0:0	10	opmap
+op	96:24	0:0	10	[
+water	96:25	0:0	10	s
+op	96:26	0:0	10	->
+water	96:28	0:0	10	nb_outputs
+op	96:38	0:0	10	]
+op	96:40	0:0	10	=
+water	96:42	0:0	10	i
+water	96:43	0:0	10	;
+water	97:16	0:0	10	s
+op	97:17	0:0	10	->
+water	97:19	0:0	10	nb_outputs
+op	97:29	0:0	10	++
+water	97:31	0:0	10	;
+water	98:12	0:0	10	}
+water	99:8	0:0	6	}
+else	99:10	111:8	4
+stmts	99:15	111:8	5	
+if	99:15	111:8	6	(LADSPA_IS_PORT_CONTROL (pd ))
+cond	99:19	99:44	7	LADSPA_IS_PORT_CONTROL (pd )
+call	99:19	99:44	8	LADSPA_IS_PORT_CONTROL
+arg	99:42	99:44	9	pd
+water	99:42	0:0	10	pd
+stmts	99:47	111:8	7	
+water	99:47	0:0	8	{
+if	100:12	107:12	8	(LADSPA_IS_PORT_INPUT (pd ))
+cond	100:16	100:39	9	LADSPA_IS_PORT_INPUT (pd )
+call	100:16	100:39	10	LADSPA_IS_PORT_INPUT
+arg	100:37	100:39	11	pd
+water	100:37	0:0	12	pd
+stmts	100:42	107:12	9	
+water	100:42	0:0	10	{
+water	101:16	0:0	10	s
+op	101:17	0:0	10	->
+water	101:19	0:0	10	icmap
+op	101:24	0:0	10	[
+water	101:25	0:0	10	s
+op	101:26	0:0	10	->
+water	101:28	0:0	10	nb_inputcontrols
+op	101:44	0:0	10	]
+op	101:46	0:0	10	=
+water	101:48	0:0	10	i
+water	101:49	0:0	10	;
+if	102:16	103:85	10	(LADSPA_IS_HINT_HAS_DEFAULT (desc -> PortRangeHints [ i ] . HintDescriptor ))
+cond	102:20	102:85	11	LADSPA_IS_HINT_HAS_DEFAULT (desc -> PortRangeHints [ i ] . HintDescriptor )
+call	102:20	102:85	12	LADSPA_IS_HINT_HAS_DEFAULT
+arg	102:47	102:85	13	desc->PortRangeHints[i].HintDescriptor
+water	102:47	0:0	14	desc
+op	102:51	0:0	14	->
+water	102:53	0:0	14	PortRangeHints
+op	102:67	0:0	14	[
+water	102:68	0:0	14	i
+op	102:69	0:0	14	]
+op	102:70	0:0	14	.
+water	102:71	0:0	14	HintDescriptor
+stmts	103:20	103:85	11	
+call	103:20	103:84	12	set_default_ctl_value
+arg	103:42	103:43	13	s
+water	103:42	0:0	14	s
+arg	103:45	103:64	13	s->nb_inputcontrols
+water	103:45	0:0	14	s
+op	103:46	0:0	14	->
+water	103:48	0:0	14	nb_inputcontrols
+arg	103:66	103:74	13	s->icmap
+water	103:66	0:0	14	s
+op	103:67	0:0	14	->
+water	103:69	0:0	14	icmap
+arg	103:76	103:84	13	s->ictlv
+water	103:76	0:0	14	s
+op	103:77	0:0	14	->
+water	103:79	0:0	14	ictlv
+water	103:85	0:0	12	;
+else	104:16	105:63	10
+stmts	105:20	105:63	11	
+water	105:20	0:0	12	s
+op	105:21	0:0	12	->
+water	105:23	0:0	12	ctl_needs_value
+op	105:38	0:0	12	[
+water	105:39	0:0	12	s
+op	105:40	0:0	12	->
+water	105:42	0:0	12	nb_inputcontrols
+op	105:58	0:0	12	]
+op	105:60	0:0	12	=
+water	105:62	0:0	12	1
+water	105:63	0:0	12	;
+water	106:16	0:0	10	s
+op	106:17	0:0	10	->
+water	106:19	0:0	10	nb_inputcontrols
+op	106:35	0:0	10	++
+water	106:37	0:0	10	;
+water	107:12	0:0	10	}
+else	107:14	110:12	8
+stmts	107:19	110:12	9	
+if	107:19	110:12	10	(LADSPA_IS_PORT_OUTPUT (pd ))
+cond	107:23	107:47	11	LADSPA_IS_PORT_OUTPUT (pd )
+call	107:23	107:47	12	LADSPA_IS_PORT_OUTPUT
+arg	107:45	107:47	13	pd
+water	107:45	0:0	14	pd
+stmts	107:50	110:12	11	
+water	107:50	0:0	12	{
+water	108:16	0:0	12	s
+op	108:17	0:0	12	->
+water	108:19	0:0	12	ocmap
+op	108:24	0:0	12	[
+water	108:25	0:0	12	s
+op	108:26	0:0	12	->
+water	108:28	0:0	12	nb_outputcontrols
+op	108:45	0:0	12	]
+op	108:47	0:0	12	=
+water	108:49	0:0	12	i
+water	108:50	0:0	12	;
+water	109:16	0:0	12	s
+op	109:17	0:0	12	->
+water	109:19	0:0	12	nb_outputcontrols
+op	109:36	0:0	12	++
+water	109:38	0:0	12	;
+water	110:12	0:0	12	}
+water	111:8	0:0	8	}
+water	112:4	0:0	4	}
+if	114:4	127:4	2	(s -> options && !strcmp (s -> options ,"help" ))
+cond	114:8	114:48	3	s -> options && !strcmp (s -> options ,"help" )
+water	114:8	0:0	4	s
+op	114:9	0:0	4	->
+water	114:11	0:0	4	options
+op	114:19	0:0	4	&&
+op	114:22	0:0	4	!
+call	114:23	114:48	4	strcmp
+arg	114:30	114:40	5	s->options
+water	114:30	0:0	6	s
+op	114:31	0:0	6	->
+water	114:33	0:0	6	options
+arg	114:42	114:48	5	"help"
+water	114:42	0:0	6	"help"
+stmts	114:51	127:4	3	
+water	114:51	0:0	4	{
+if	115:8	119:8	4	(! s -> nb_inputcontrols)
+cond	115:12	115:16	5	! s -> nb_inputcontrols
+op	115:12	0:0	6	!
+water	115:13	0:0	6	s
+op	115:14	0:0	6	->
+water	115:16	0:0	6	nb_inputcontrols
+stmts	115:34	119:8	5	
+water	115:34	0:0	6	{
+call	116:12	118:30	6	av_log
+arg	116:19	116:22	7	ctx
+water	116:19	0:0	8	ctx
+arg	116:24	116:35	7	AV_LOG_INFO
+water	116:24	0:0	8	AV_LOG_INFO
+arg	117:19	117:72	7	"The '%s' plugin does not have any input controls.\n"
+water	117:19	0:0	8	"The '%s' plugin does not have any input controls.\n"
+arg	118:19	118:30	7	desc->Label
+water	118:19	0:0	8	desc
+op	118:23	0:0	8	->
+water	118:25	0:0	8	Label
+water	118:31	0:0	6	;
+water	119:8	0:0	6	}
+else	119:10	125:8	4
+stmts	119:15	125:8	5	
+water	119:15	0:0	6	{
+call	120:12	122:30	6	av_log
+arg	120:19	120:22	7	ctx
+water	120:19	0:0	8	ctx
+arg	120:24	120:35	7	AV_LOG_INFO
+water	120:24	0:0	8	AV_LOG_INFO
+arg	121:19	121:72	7	"The '%s' plugin has the following input controls:\n"
+water	121:19	0:0	8	"The '%s' plugin has the following input controls:\n"
+arg	122:19	122:30	7	desc->Label
+water	122:19	0:0	8	desc
+op	122:23	0:0	8	->
+water	122:25	0:0	8	Label
+water	122:31	0:0	6	;
+for	123:12	124:77	6	(i = 0 ;i < s -> nb_inputcontrols;i ++)
+forinit	123:17	123:22	7	i = 0 ;
+water	123:17	0:0	8	i
+op	123:19	0:0	8	=
+water	123:21	0:0	8	0
+water	123:22	0:0	8	;
+cond	123:24	123:31	7	i < s -> nb_inputcontrols
+water	123:24	0:0	8	i
+op	123:26	0:0	8	<
+water	123:28	0:0	8	s
+op	123:29	0:0	8	->
+water	123:31	0:0	8	nb_inputcontrols
+forexpr	123:49	123:50	7	i ++
+water	123:49	0:0	8	i
+op	123:50	0:0	8	++
+stmts	124:16	124:77	7	
+call	124:16	124:76	8	print_ctl_info
+arg	124:31	124:34	9	ctx
+water	124:31	0:0	10	ctx
+arg	124:36	124:47	9	AV_LOG_INFO
+water	124:36	0:0	10	AV_LOG_INFO
+arg	124:49	124:50	9	s
+water	124:49	0:0	10	s
+arg	124:52	124:53	9	i
+water	124:52	0:0	10	i
+arg	124:55	124:63	9	s->icmap
+water	124:55	0:0	10	s
+op	124:56	0:0	10	->
+water	124:58	0:0	10	icmap
+arg	124:65	124:73	9	s->ictlv
+water	124:65	0:0	10	s
+op	124:66	0:0	10	->
+water	124:68	0:0	10	ictlv
+arg	124:75	124:76	9	0
+water	124:75	0:0	10	0
+water	124:77	0:0	8	;
+water	125:8	0:0	6	}
+return	126:8	126:27	4	AVERROR_EXIT
+water	126:15	0:0	5	AVERROR_EXIT
+water	127:4	0:0	4	}
+water	129:4	0:0	2	p
+op	129:6	0:0	2	=
+water	129:8	0:0	2	s
+op	129:9	0:0	2	->
+water	129:11	0:0	2	options
+water	129:18	0:0	2	;
+while	130:4	143:4	2	(s -> options)
+cond	130:11	130:14	3	s -> options
+water	130:11	0:0	4	s
+op	130:12	0:0	4	->
+water	130:14	0:0	4	options
+stmts	130:23	143:4	3	
+water	130:23	0:0	4	{
+decl	131:8	131:23	4	LADSPA_Data	val
+decl	132:8	132:15	4	int	ret
+if	133:8	134:17	4	(! ( arg =av_strtok (p ,"|" ,& saveptr ) ))
+cond	133:12	133:47	5	! ( arg =av_strtok (p ,"|" ,& saveptr ) )
+op	133:12	0:0	6	!
+water	133:13	0:0	6	(
+water	133:14	0:0	6	arg
+op	133:18	0:0	6	=
+call	133:20	133:46	6	av_strtok
+arg	133:30	133:31	7	p
+water	133:30	0:0	8	p
+arg	133:33	133:36	7	"|"
+water	133:33	0:0	8	"|"
+arg	133:38	133:46	7	&saveptr
+op	133:38	0:0	8	&
+water	133:39	0:0	8	saveptr
+water	133:47	0:0	6	)
+stmts	134:12	134:17	5	
+break	134:12	134:17	6	
+water	135:8	0:0	4	p
+op	135:10	0:0	4	=
+water	135:12	0:0	4	NULL
+water	135:16	0:0	4	;
+if	136:8	139:8	4	(sscanf (arg ,"c%d=%f" ,& i ,& val ) != 2)
+cond	136:12	136:47	5	sscanf (arg ,"c%d=%f" ,& i ,& val ) != 2
+call	136:12	136:42	6	sscanf
+arg	136:19	136:22	7	arg
+water	136:19	0:0	8	arg
+arg	136:24	136:32	7	"c%d=%f"
+water	136:24	0:0	8	"c%d=%f"
+arg	136:34	136:36	7	&i
+op	136:34	0:0	8	&
+water	136:35	0:0	8	i
+arg	136:38	136:42	7	&val
+op	136:38	0:0	8	&
+water	136:39	0:0	8	val
+op	136:44	0:0	6	!=
+water	136:47	0:0	6	2
+stmts	136:50	139:8	5	
+water	136:50	0:0	6	{
+call	137:12	137:57	6	av_log
+arg	137:19	137:22	7	ctx
+water	137:19	0:0	8	ctx
+arg	137:24	137:36	7	AV_LOG_ERROR
+water	137:24	0:0	8	AV_LOG_ERROR
+arg	137:38	137:57	7	"Invalid syntax.\n"
+water	137:38	0:0	8	"Invalid syntax.\n"
+water	137:58	0:0	6	;
+return	138:12	138:34	6	AVERROR(EINVAL)
+call	138:19	138:33	7	AVERROR
+arg	138:27	138:33	8	EINVAL
+water	138:27	0:0	9	EINVAL
+water	139:8	0:0	6	}
+if	140:8	141:22	4	(( ret =set_control (ctx ,i ,val ) ) < 0)
+cond	140:12	140:47	5	( ret =set_control (ctx ,i ,val ) ) < 0
+water	140:12	0:0	6	(
+water	140:13	0:0	6	ret
+op	140:17	0:0	6	=
+call	140:19	140:42	6	set_control
+arg	140:31	140:34	7	ctx
+water	140:31	0:0	8	ctx
+arg	140:36	140:37	7	i
+water	140:36	0:0	8	i
+arg	140:39	140:42	7	val
+water	140:39	0:0	8	val
+water	140:43	0:0	6	)
+op	140:45	0:0	6	<
+water	140:47	0:0	6	0
+stmts	141:12	141:22	5	
+return	141:12	141:22	6	ret
+water	141:19	0:0	7	ret
+water	142:8	0:0	4	s
+op	142:9	0:0	4	->
+water	142:11	0:0	4	ctl_needs_value
+op	142:26	0:0	4	[
+water	142:27	0:0	4	i
+op	142:28	0:0	4	]
+op	142:30	0:0	4	=
+water	142:32	0:0	4	0
+water	142:33	0:0	4	;
+water	143:4	0:0	4	}
+for	145:4	151:4	2	(i = 0 ;i < s -> nb_inputcontrols;i ++)
+forinit	145:9	145:14	3	i = 0 ;
+water	145:9	0:0	4	i
+op	145:11	0:0	4	=
+water	145:13	0:0	4	0
+water	145:14	0:0	4	;
+cond	145:16	145:23	3	i < s -> nb_inputcontrols
+water	145:16	0:0	4	i
+op	145:18	0:0	4	<
+water	145:20	0:0	4	s
+op	145:21	0:0	4	->
+water	145:23	0:0	4	nb_inputcontrols
+forexpr	145:41	145:42	3	i ++
+water	145:41	0:0	4	i
+op	145:42	0:0	4	++
+stmts	145:46	151:4	3	
+water	145:46	0:0	4	{
+if	146:8	150:8	4	(s -> ctl_needs_value [ i ])
+cond	146:12	146:32	5	s -> ctl_needs_value [ i ]
+water	146:12	0:0	6	s
+op	146:13	0:0	6	->
+water	146:15	0:0	6	ctl_needs_value
+op	146:30	0:0	6	[
+water	146:31	0:0	6	i
+op	146:32	0:0	6	]
+stmts	146:35	150:8	5	
+water	146:35	0:0	6	{
+call	147:12	147:69	6	av_log
+arg	147:19	147:22	7	ctx
+water	147:19	0:0	8	ctx
+arg	147:24	147:36	7	AV_LOG_ERROR
+water	147:24	0:0	8	AV_LOG_ERROR
+arg	147:38	147:66	7	"Control c%d must be set.\n"
+water	147:38	0:0	8	"Control c%d must be set.\n"
+arg	147:68	147:69	7	i
+water	147:68	0:0	8	i
+water	147:70	0:0	6	;
+call	148:12	148:73	6	print_ctl_info
+arg	148:27	148:30	7	ctx
+water	148:27	0:0	8	ctx
+arg	148:32	148:44	7	AV_LOG_ERROR
+water	148:32	0:0	8	AV_LOG_ERROR
+arg	148:46	148:47	7	s
+water	148:46	0:0	8	s
+arg	148:49	148:50	7	i
+water	148:49	0:0	8	i
+arg	148:52	148:60	7	s->icmap
+water	148:52	0:0	8	s
+op	148:53	0:0	8	->
+water	148:55	0:0	8	icmap
+arg	148:62	148:70	7	s->ictlv
+water	148:62	0:0	8	s
+op	148:63	0:0	8	->
+water	148:65	0:0	8	ictlv
+arg	148:72	148:73	7	0
+water	148:72	0:0	8	0
+water	148:74	0:0	6	;
+return	149:12	149:34	6	AVERROR(EINVAL)
+call	149:19	149:33	7	AVERROR
+arg	149:27	149:33	8	EINVAL
+water	149:27	0:0	9	EINVAL
+water	150:8	0:0	6	}
+water	151:4	0:0	4	}
+water	152:4	0:0	2	pad
+op	152:7	0:0	2	.
+water	152:8	0:0	2	type
+op	152:13	0:0	2	=
+water	152:15	0:0	2	AVMEDIA_TYPE_AUDIO
+water	152:33	0:0	2	;
+if	153:4	163:4	2	(s -> nb_inputs)
+cond	153:8	153:11	3	s -> nb_inputs
+water	153:8	0:0	4	s
+op	153:9	0:0	4	->
+water	153:11	0:0	4	nb_inputs
+stmts	153:22	163:4	3	
+water	153:22	0:0	4	{
+water	154:8	0:0	4	pad
+op	154:11	0:0	4	.
+water	154:12	0:0	4	name
+op	154:17	0:0	4	=
+call	154:19	154:69	4	av_asprintf
+arg	154:31	154:42	5	"in0:%s%lu"
+water	154:31	0:0	6	"in0:%s%lu"
+arg	154:44	154:55	5	desc->Label
+water	154:44	0:0	6	desc
+op	154:48	0:0	6	->
+water	154:50	0:0	6	Label
+arg	154:57	154:69	5	s->nb_inputs
+water	154:57	0:0	6	s
+op	154:58	0:0	6	->
+water	154:60	0:0	6	nb_inputs
+water	154:70	0:0	4	;
+if	155:8	156:34	4	(! pad . name)
+cond	155:12	155:17	5	! pad . name
+op	155:12	0:0	6	!
+water	155:13	0:0	6	pad
+op	155:16	0:0	6	.
+water	155:17	0:0	6	name
+stmts	156:12	156:34	5	
+return	156:12	156:34	6	AVERROR(ENOMEM)
+call	156:19	156:33	7	AVERROR
+arg	156:27	156:33	8	ENOMEM
+water	156:27	0:0	9	ENOMEM
+water	157:8	0:0	4	pad
+op	157:11	0:0	4	.
+water	157:12	0:0	4	filter_frame
+op	157:25	0:0	4	=
+water	157:27	0:0	4	filter_frame
+water	157:39	0:0	4	;
+water	158:8	0:0	4	pad
+op	158:11	0:0	4	.
+water	158:12	0:0	4	config_props
+op	158:25	0:0	4	=
+water	158:27	0:0	4	config_input
+water	158:39	0:0	4	;
+if	159:8	162:8	4	(ff_insert_inpad (ctx ,ctx -> nb_inputs ,& pad ) < 0)
+cond	159:12	159:57	5	ff_insert_inpad (ctx ,ctx -> nb_inputs ,& pad ) < 0
+call	159:12	159:53	6	ff_insert_inpad
+arg	159:28	159:31	7	ctx
+water	159:28	0:0	8	ctx
+arg	159:33	159:47	7	ctx->nb_inputs
+water	159:33	0:0	8	ctx
+op	159:36	0:0	8	->
+water	159:38	0:0	8	nb_inputs
+arg	159:49	159:53	7	&pad
+op	159:49	0:0	8	&
+water	159:50	0:0	8	pad
+op	159:55	0:0	6	<
+water	159:57	0:0	6	0
+stmts	159:60	162:8	5	
+water	159:60	0:0	6	{
+call	160:12	160:30	6	av_freep
+arg	160:21	160:30	7	&pad.name
+op	160:21	0:0	8	&
+water	160:22	0:0	8	pad
+op	160:25	0:0	8	.
+water	160:26	0:0	8	name
+water	160:31	0:0	6	;
+return	161:12	161:34	6	AVERROR(ENOMEM)
+call	161:19	161:33	7	AVERROR
+arg	161:27	161:33	8	ENOMEM
+water	161:27	0:0	9	ENOMEM
+water	162:8	0:0	6	}
+water	163:4	0:0	4	}
+call	164:4	164:54	2	av_log
+arg	164:11	164:14	3	ctx
+water	164:11	0:0	4	ctx
+arg	164:16	164:28	3	AV_LOG_DEBUG
+water	164:16	0:0	4	AV_LOG_DEBUG
+arg	164:30	164:44	3	"ports: %lu\n"
+water	164:30	0:0	4	"ports: %lu\n"
+arg	164:46	164:54	3	nb_ports
+water	164:46	0:0	4	nb_ports
+water	164:55	0:0	2	;
+call	165:4	166:57	2	av_log
+arg	165:11	165:14	3	ctx
+water	165:11	0:0	4	ctx
+arg	165:16	165:28	3	AV_LOG_DEBUG
+water	165:16	0:0	4	AV_LOG_DEBUG
+arg	165:30	165:58	3	"inputs: %lu outputs: %lu\n"
+water	165:30	0:0	4	"inputs: %lu outputs: %lu\n"
+arg	166:30	166:42	3	s->nb_inputs
+water	166:30	0:0	4	s
+op	166:31	0:0	4	->
+water	166:33	0:0	4	nb_inputs
+arg	166:44	166:57	3	s->nb_outputs
+water	166:44	0:0	4	s
+op	166:45	0:0	4	->
+water	166:47	0:0	4	nb_outputs
+water	166:58	0:0	2	;
+call	167:4	168:71	2	av_log
+arg	167:11	167:14	3	ctx
+water	167:11	0:0	4	ctx
+arg	167:16	167:28	3	AV_LOG_DEBUG
+water	167:16	0:0	4	AV_LOG_DEBUG
+arg	167:30	167:74	3	"input controls: %lu output controls: %lu\n"
+water	167:30	0:0	4	"input controls: %lu output controls: %lu\n"
+arg	168:30	168:49	3	s->nb_inputcontrols
+water	168:30	0:0	4	s
+op	168:31	0:0	4	->
+water	168:33	0:0	4	nb_inputcontrols
+arg	168:51	168:71	3	s->nb_outputcontrols
+water	168:51	0:0	4	s
+op	168:52	0:0	4	->
+water	168:54	0:0	4	nb_outputcontrols
+water	168:72	0:0	2	;
+return	169:4	169:12	2	0
+water	169:11	0:0	3	0

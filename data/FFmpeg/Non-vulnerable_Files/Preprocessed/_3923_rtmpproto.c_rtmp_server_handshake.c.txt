@@ -1,0 +1,297 @@
+func	1:0	70:0	0	static int	rtmp_server_handshake
+params	1:32	0:0	1	
+param	1:33	1:46	2	URLContext *	s
+param	1:48	1:63	2	RTMPContext *	rt
+stmnts	0:0	69:12	1	
+decl	3:4	3:46	2	uint8_t	buffer[RTMP_HANDSHAKE_PACKET_SIZE]
+decl	4:4	4:21	2	uint32_t	hs_epoch
+decl	5:4	5:24	2	uint32_t	hs_my_epoch
+decl	6:4	6:45	2	uint8_t	hs_c1[RTMP_HANDSHAKE_PACKET_SIZE]
+decl	7:4	7:45	2	uint8_t	hs_s1[RTMP_HANDSHAKE_PACKET_SIZE]
+decl	8:4	8:19	2	uint32_t	zeroes
+decl	9:4	9:27	2	uint32_t	temp
+op	9:24	0:0	2	=
+water	9:26	0:0	2	0
+decl	10:4	10:27	2	int	randomidx
+op	10:24	0:0	2	=
+water	10:26	0:0	2	0
+decl	11:4	11:27	2	int	inoutsize
+op	11:24	0:0	2	=
+water	11:26	0:0	2	0
+decl	12:4	12:11	2	int	ret
+water	13:4	0:0	2	inoutsize
+op	13:14	0:0	2	=
+call	13:16	13:57	2	ffurl_read_complete
+arg	13:36	13:46	3	rt->stream
+water	13:36	0:0	4	rt
+op	13:38	0:0	4	->
+water	13:40	0:0	4	stream
+arg	13:48	13:54	3	buffer
+water	13:48	0:0	4	buffer
+arg	13:56	13:57	3	1
+water	13:56	0:0	4	1
+water	13:58	0:0	2	;
+if	14:4	17:4	2	(inoutsize <= 0)
+cond	14:8	14:21	3	inoutsize <= 0
+water	14:8	0:0	4	inoutsize
+op	14:18	0:0	4	<=
+water	14:21	0:0	4	0
+stmts	14:24	17:4	3	
+water	14:24	0:0	4	{
+call	15:8	15:60	4	av_log
+arg	15:15	15:16	5	s
+water	15:15	0:0	6	s
+arg	15:18	15:30	5	AV_LOG_ERROR
+water	15:18	0:0	6	AV_LOG_ERROR
+arg	15:32	15:60	5	"Unable to read handshake\n"
+water	15:32	0:0	6	"Unable to read handshake\n"
+water	15:61	0:0	4	;
+return	16:8	16:27	4	AVERROR(EIO)
+call	16:15	16:26	5	AVERROR
+arg	16:23	16:26	6	EIO
+water	16:23	0:0	7	EIO
+water	17:4	0:0	4	}
+if	19:4	22:4	2	(buffer [ 0 ] != 3)
+cond	19:8	19:21	3	buffer [ 0 ] != 3
+water	19:8	0:0	4	buffer
+op	19:14	0:0	4	[
+water	19:15	0:0	4	0
+op	19:16	0:0	4	]
+op	19:18	0:0	4	!=
+water	19:21	0:0	4	3
+stmts	19:24	22:4	3	
+water	19:24	0:0	4	{
+call	20:8	20:66	4	av_log
+arg	20:15	20:16	5	s
+water	20:15	0:0	6	s
+arg	20:18	20:30	5	AV_LOG_ERROR
+water	20:18	0:0	6	AV_LOG_ERROR
+arg	20:32	20:66	5	"RTMP protocol version mismatch\n"
+water	20:32	0:0	6	"RTMP protocol version mismatch\n"
+water	20:67	0:0	4	;
+return	21:8	21:27	4	AVERROR(EIO)
+call	21:15	21:26	5	AVERROR
+arg	21:23	21:26	6	EIO
+water	21:23	0:0	7	EIO
+water	22:4	0:0	4	}
+if	23:4	27:4	2	(ffurl_write (rt -> stream ,buffer ,1 ) <= 0)
+cond	23:8	23:46	3	ffurl_write (rt -> stream ,buffer ,1 ) <= 0
+call	23:8	23:41	4	ffurl_write
+arg	23:20	23:30	5	rt->stream
+water	23:20	0:0	6	rt
+op	23:22	0:0	6	->
+water	23:24	0:0	6	stream
+arg	23:32	23:38	5	buffer
+water	23:32	0:0	6	buffer
+arg	23:40	23:41	5	1
+water	23:40	0:0	6	1
+op	23:43	0:0	4	<=
+water	23:46	0:0	4	0
+stmts	23:49	27:4	3	
+water	23:49	0:0	4	{
+call	24:8	25:51	4	av_log
+arg	24:15	24:16	5	s
+water	24:15	0:0	6	s
+arg	24:18	24:30	5	AV_LOG_ERROR
+water	24:18	0:0	6	AV_LOG_ERROR
+arg	25:15	25:51	5	"Unable to write answer - RTMP S0\n"
+water	25:15	0:0	6	"Unable to write answer - RTMP S0\n"
+water	25:52	0:0	4	;
+return	26:8	26:27	4	AVERROR(EIO)
+call	26:15	26:26	5	AVERROR
+arg	26:23	26:26	6	EIO
+water	26:23	0:0	7	EIO
+water	27:4	0:0	4	}
+water	29:4	0:0	2	ret
+op	29:8	0:0	2	=
+call	29:10	30:59	2	rtmp_receive_hs_packet
+arg	29:33	29:35	3	rt
+water	29:33	0:0	4	rt
+arg	29:37	29:46	3	&hs_epoch
+op	29:37	0:0	4	&
+water	29:38	0:0	4	hs_epoch
+arg	29:48	29:55	3	&zeroes
+op	29:48	0:0	4	&
+water	29:49	0:0	4	zeroes
+arg	29:57	29:62	3	hs_c1
+water	29:57	0:0	4	hs_c1
+arg	30:33	30:59	3	RTMP_HANDSHAKE_PACKET_SIZE
+water	30:33	0:0	4	RTMP_HANDSHAKE_PACKET_SIZE
+water	30:60	0:0	2	;
+if	31:4	34:4	2	(ret)
+cond	31:8	31:8	3	ret
+water	31:8	0:0	4	ret
+stmts	31:13	34:4	3	
+water	31:13	0:0	4	{
+call	32:8	32:59	4	av_log
+arg	32:15	32:16	5	s
+water	32:15	0:0	6	s
+arg	32:18	32:30	5	AV_LOG_ERROR
+water	32:18	0:0	6	AV_LOG_ERROR
+arg	32:32	32:59	5	"RTMP Handshake C1 Error\n"
+water	32:32	0:0	6	"RTMP Handshake C1 Error\n"
+water	32:60	0:0	4	;
+return	33:8	33:18	4	ret
+water	33:15	0:0	5	ret
+water	34:4	0:0	4	}
+water	37:4	0:0	2	hs_my_epoch
+op	37:16	0:0	2	=
+water	37:18	0:0	2	hs_epoch
+water	37:26	0:0	2	;
+for	39:4	41:56	2	(randomidx = 8 ;randomidx < ( RTMP_HANDSHAKE_PACKET_SIZE );randomidx += 4)
+forinit	39:9	39:22	3	randomidx = 8 ;
+water	39:9	0:0	4	randomidx
+op	39:19	0:0	4	=
+water	39:21	0:0	4	8
+water	39:22	0:0	4	;
+cond	39:24	39:63	3	randomidx < ( RTMP_HANDSHAKE_PACKET_SIZE )
+water	39:24	0:0	4	randomidx
+op	39:34	0:0	4	<
+water	39:36	0:0	4	(
+water	39:37	0:0	4	RTMP_HANDSHAKE_PACKET_SIZE
+water	39:63	0:0	4	)
+forexpr	40:9	40:22	3	randomidx += 4
+water	40:9	0:0	4	randomidx
+op	40:19	0:0	4	+=
+water	40:22	0:0	4	4
+stmts	41:8	41:56	3	
+call	41:8	41:55	4	AV_WB32
+arg	41:16	41:33	5	hs_s1+randomidx
+water	41:16	0:0	6	hs_s1
+op	41:22	0:0	6	+
+water	41:24	0:0	6	randomidx
+arg	41:35	41:55	5	av_get_random_seed()
+call	41:35	41:54	6	av_get_random_seed
+water	41:56	0:0	4	;
+water	42:4	0:0	2	ret
+op	42:8	0:0	2	=
+call	42:10	43:56	2	rtmp_send_hs_packet
+arg	42:30	42:32	3	rt
+water	42:30	0:0	4	rt
+arg	42:34	42:45	3	hs_my_epoch
+water	42:34	0:0	4	hs_my_epoch
+arg	42:47	42:48	3	0
+water	42:47	0:0	4	0
+arg	42:50	42:55	3	hs_s1
+water	42:50	0:0	4	hs_s1
+arg	43:30	43:56	3	RTMP_HANDSHAKE_PACKET_SIZE
+water	43:30	0:0	4	RTMP_HANDSHAKE_PACKET_SIZE
+water	43:57	0:0	2	;
+if	44:4	47:4	2	(ret)
+cond	44:8	44:8	3	ret
+water	44:8	0:0	4	ret
+stmts	44:13	47:4	3	
+water	44:13	0:0	4	{
+call	45:8	45:59	4	av_log
+arg	45:15	45:16	5	s
+water	45:15	0:0	6	s
+arg	45:18	45:30	5	AV_LOG_ERROR
+water	45:18	0:0	6	AV_LOG_ERROR
+arg	45:32	45:59	5	"RTMP Handshake S1 Error\n"
+water	45:32	0:0	6	"RTMP Handshake S1 Error\n"
+water	45:60	0:0	4	;
+return	46:8	46:18	4	ret
+water	46:15	0:0	5	ret
+water	47:4	0:0	4	}
+water	49:4	0:0	2	ret
+op	49:8	0:0	2	=
+call	49:10	50:56	2	rtmp_send_hs_packet
+arg	49:30	49:32	3	rt
+water	49:30	0:0	4	rt
+arg	49:34	49:42	3	hs_epoch
+water	49:34	0:0	4	hs_epoch
+arg	49:44	49:45	3	0
+water	49:44	0:0	4	0
+arg	49:47	49:52	3	hs_c1
+water	49:47	0:0	4	hs_c1
+arg	50:30	50:56	3	RTMP_HANDSHAKE_PACKET_SIZE
+water	50:30	0:0	4	RTMP_HANDSHAKE_PACKET_SIZE
+water	50:57	0:0	2	;
+if	51:4	54:4	2	(ret)
+cond	51:8	51:8	3	ret
+water	51:8	0:0	4	ret
+stmts	51:13	54:4	3	
+water	51:13	0:0	4	{
+call	52:8	52:59	4	av_log
+arg	52:15	52:16	5	s
+water	52:15	0:0	6	s
+arg	52:18	52:30	5	AV_LOG_ERROR
+water	52:18	0:0	6	AV_LOG_ERROR
+arg	52:32	52:59	5	"RTMP Handshake S2 Error\n"
+water	52:32	0:0	6	"RTMP Handshake S2 Error\n"
+water	52:60	0:0	4	;
+return	53:8	53:18	4	ret
+water	53:15	0:0	5	ret
+water	54:4	0:0	4	}
+water	56:4	0:0	2	ret
+op	56:8	0:0	2	=
+call	56:10	57:59	2	rtmp_receive_hs_packet
+arg	56:33	56:35	3	rt
+water	56:33	0:0	4	rt
+arg	56:37	56:42	3	&temp
+op	56:37	0:0	4	&
+water	56:38	0:0	4	temp
+arg	56:44	56:51	3	&zeroes
+op	56:44	0:0	4	&
+water	56:45	0:0	4	zeroes
+arg	56:53	56:59	3	buffer
+water	56:53	0:0	4	buffer
+arg	57:33	57:59	3	RTMP_HANDSHAKE_PACKET_SIZE
+water	57:33	0:0	4	RTMP_HANDSHAKE_PACKET_SIZE
+water	57:60	0:0	2	;
+if	58:4	61:4	2	(ret)
+cond	58:8	58:8	3	ret
+water	58:8	0:0	4	ret
+stmts	58:13	61:4	3	
+water	58:13	0:0	4	{
+call	59:8	59:59	4	av_log
+arg	59:15	59:16	5	s
+water	59:15	0:0	6	s
+arg	59:18	59:30	5	AV_LOG_ERROR
+water	59:18	0:0	6	AV_LOG_ERROR
+arg	59:32	59:59	5	"RTMP Handshake C2 Error\n"
+water	59:32	0:0	6	"RTMP Handshake C2 Error\n"
+water	59:60	0:0	4	;
+return	60:8	60:18	4	ret
+water	60:15	0:0	5	ret
+water	61:4	0:0	4	}
+if	62:4	64:78	2	(temp != hs_my_epoch)
+cond	62:8	62:16	3	temp != hs_my_epoch
+water	62:8	0:0	4	temp
+op	62:13	0:0	4	!=
+water	62:16	0:0	4	hs_my_epoch
+stmts	63:8	64:78	3	
+call	63:8	64:77	4	av_log
+arg	63:15	63:16	5	s
+water	63:15	0:0	6	s
+arg	63:18	63:32	5	AV_LOG_WARNING
+water	63:18	0:0	6	AV_LOG_WARNING
+arg	64:15	64:77	5	"Erroneous C2 Message epoch does not match up with C1 epoch\n"
+water	64:15	0:0	6	"Erroneous C2 Message epoch does not match up with C1 epoch\n"
+water	64:78	0:0	4	;
+if	65:4	68:65	2	(memcmp (buffer + 8 ,hs_s1 + 8 ,RTMP_HANDSHAKE_PACKET_SIZE - 8 ))
+cond	65:8	66:45	3	memcmp (buffer + 8 ,hs_s1 + 8 ,RTMP_HANDSHAKE_PACKET_SIZE - 8 )
+call	65:8	66:45	4	memcmp
+arg	65:15	65:25	5	buffer+8
+water	65:15	0:0	6	buffer
+op	65:22	0:0	6	+
+water	65:24	0:0	6	8
+arg	65:27	65:36	5	hs_s1+8
+water	65:27	0:0	6	hs_s1
+op	65:33	0:0	6	+
+water	65:35	0:0	6	8
+arg	66:15	66:45	5	RTMP_HANDSHAKE_PACKET_SIZE-8
+water	66:15	0:0	6	RTMP_HANDSHAKE_PACKET_SIZE
+op	66:42	0:0	6	-
+water	66:44	0:0	6	8
+stmts	67:8	68:65	3	
+call	67:8	68:64	4	av_log
+arg	67:15	67:16	5	s
+water	67:15	0:0	6	s
+arg	67:18	67:32	5	AV_LOG_WARNING
+water	67:18	0:0	6	AV_LOG_WARNING
+arg	68:15	68:64	5	"Erroneous C2 Message random does not match up\n"
+water	68:15	0:0	6	"Erroneous C2 Message random does not match up\n"
+water	68:65	0:0	4	;
+return	69:4	69:12	2	0
+water	69:11	0:0	3	0

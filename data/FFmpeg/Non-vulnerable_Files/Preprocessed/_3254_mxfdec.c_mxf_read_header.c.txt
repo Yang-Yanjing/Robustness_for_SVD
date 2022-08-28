@@ -1,0 +1,610 @@
+func	1:0	114:0	0	static int	mxf_read_header
+params	1:26	0:0	1	
+param	1:27	1:45	2	AVFormatContext *	s
+stmnts	0:0	113:14	1	
+decl	3:4	3:34	2	MXFContext	*mxf
+op	3:20	0:0	2	=
+water	3:22	0:0	2	s
+op	3:23	0:0	2	->
+water	3:25	0:0	2	priv_data
+decl	4:4	4:17	2	KLVPacket	klv
+decl	5:4	5:30	2	int64_t	essence_offset
+op	5:27	0:0	2	=
+water	5:29	0:0	2	0
+decl	6:4	6:11	2	int	ret
+water	7:4	0:0	2	mxf
+op	7:7	0:0	2	->
+water	7:9	0:0	2	last_forward_tell
+op	7:27	0:0	2	=
+water	7:29	0:0	2	INT64_MAX
+water	7:38	0:0	2	;
+water	8:4	0:0	2	mxf
+op	8:7	0:0	2	->
+water	8:9	0:0	2	edit_units_per_packet
+op	8:31	0:0	2	=
+water	8:33	0:0	2	1
+water	8:34	0:0	2	;
+if	9:4	12:4	2	(!mxf_read_sync (s -> pb ,mxf_header_partition_pack_key ,14 ))
+cond	9:8	9:63	3	!mxf_read_sync (s -> pb ,mxf_header_partition_pack_key ,14 )
+op	9:8	0:0	4	!
+call	9:9	9:63	4	mxf_read_sync
+arg	9:23	9:28	5	s->pb
+water	9:23	0:0	6	s
+op	9:24	0:0	6	->
+water	9:26	0:0	6	pb
+arg	9:30	9:59	5	mxf_header_partition_pack_key
+water	9:30	0:0	6	mxf_header_partition_pack_key
+arg	9:61	9:63	5	14
+water	9:61	0:0	6	14
+stmts	9:66	12:4	3	
+water	9:66	0:0	4	{
+call	10:8	10:76	4	av_log
+arg	10:15	10:16	5	s
+water	10:15	0:0	6	s
+arg	10:18	10:30	5	AV_LOG_ERROR
+water	10:18	0:0	6	AV_LOG_ERROR
+arg	10:32	10:76	5	"could not find header partition pack key\n"
+water	10:32	0:0	6	"could not find header partition pack key\n"
+water	10:77	0:0	4	;
+return	11:8	11:34	4	AVERROR_INVALIDDATA
+water	11:15	0:0	5	AVERROR_INVALIDDATA
+water	12:4	0:0	4	}
+call	13:4	13:34	2	avio_seek
+arg	13:14	13:19	3	s->pb
+water	13:14	0:0	4	s
+op	13:15	0:0	4	->
+water	13:17	0:0	4	pb
+arg	13:21	13:24	3	-14
+op	13:21	0:0	4	-
+water	13:22	0:0	4	14
+arg	13:26	13:34	3	SEEK_CUR
+water	13:26	0:0	4	SEEK_CUR
+water	13:35	0:0	2	;
+water	14:4	0:0	2	mxf
+op	14:7	0:0	2	->
+water	14:9	0:0	2	fc
+op	14:12	0:0	2	=
+water	14:14	0:0	2	s
+water	14:15	0:0	2	;
+water	15:4	0:0	2	mxf
+op	15:7	0:0	2	->
+water	15:9	0:0	2	run_in
+op	15:16	0:0	2	=
+call	15:18	15:33	2	avio_tell
+arg	15:28	15:33	3	s->pb
+water	15:28	0:0	4	s
+op	15:29	0:0	4	->
+water	15:31	0:0	4	pb
+water	15:34	0:0	2	;
+call	16:4	16:32	2	mxf_read_random_index_pack
+arg	16:31	16:32	3	s
+water	16:31	0:0	4	s
+water	16:33	0:0	2	;
+while	17:4	84:4	2	(!avio_feof (s -> pb ))
+cond	17:11	17:27	3	!avio_feof (s -> pb )
+op	17:11	0:0	4	!
+call	17:12	17:27	4	avio_feof
+arg	17:22	17:27	5	s->pb
+water	17:22	0:0	6	s
+op	17:23	0:0	6	->
+water	17:25	0:0	6	pb
+stmts	17:30	84:4	3	
+water	17:30	0:0	4	{
+decl	18:8	18:49	4	const MXFMetadataReadTableEntry	*metadata
+if	19:8	25:8	4	(klv_read_packet (& klv ,s -> pb ) < 0)
+cond	19:12	19:43	5	klv_read_packet (& klv ,s -> pb ) < 0
+call	19:12	19:39	6	klv_read_packet
+arg	19:28	19:32	7	&klv
+op	19:28	0:0	8	&
+water	19:29	0:0	8	klv
+arg	19:34	19:39	7	s->pb
+water	19:34	0:0	8	s
+op	19:35	0:0	8	->
+water	19:37	0:0	8	pb
+op	19:41	0:0	6	<
+water	19:43	0:0	6	0
+stmts	19:46	25:8	5	
+water	19:46	0:0	6	{
+if	21:12	22:21	6	(mxf_parse_handle_partition_or_eof (mxf ) <= 0)
+cond	21:15	21:57	7	mxf_parse_handle_partition_or_eof (mxf ) <= 0
+call	21:15	21:52	8	mxf_parse_handle_partition_or_eof
+arg	21:49	21:52	9	mxf
+water	21:49	0:0	10	mxf
+op	21:54	0:0	8	<=
+water	21:57	0:0	8	0
+stmts	22:16	22:21	7	
+break	22:16	22:21	8	
+else	23:12	24:24	6
+stmts	24:16	24:24	7	
+continue	24:16	24:24	8	
+water	25:8	0:0	6	}
+call	26:8	26:43	4	PRINT_KEY
+arg	26:18	26:19	5	s
+water	26:18	0:0	6	s
+arg	26:21	26:34	5	"read header"
+water	26:21	0:0	6	"read header"
+arg	26:36	26:43	5	klv.key
+water	26:36	0:0	6	klv
+op	26:39	0:0	6	.
+water	26:40	0:0	6	key
+water	26:44	0:0	4	;
+call	27:8	27:92	4	av_log
+arg	27:15	27:16	5	s
+water	27:15	0:0	6	s
+arg	27:18	27:30	5	AV_LOG_TRACE
+water	27:18	0:0	6	AV_LOG_TRACE
+arg	27:32	27:68	5	"size %"PRIu64" offset %#"PRIx64"\n"
+water	27:32	0:0	6	"size %"
+water	27:40	0:0	6	PRIu64
+water	27:46	0:0	6	" offset %#"
+water	27:58	0:0	6	PRIx64
+water	27:64	0:0	6	"\n"
+arg	27:70	27:80	5	klv.length
+water	27:70	0:0	6	klv
+op	27:73	0:0	6	.
+water	27:74	0:0	6	length
+arg	27:82	27:92	5	klv.offset
+water	27:82	0:0	6	klv
+op	27:85	0:0	6	.
+water	27:86	0:0	6	offset
+water	27:93	0:0	4	;
+if	28:8	64:8	4	(IS_KLV_KEY (klv . key ,mxf_encrypted_triplet_key ) ||IS_KLV_KEY (klv . key ,mxf_essence_element_key ) ||IS_KLV_KEY (klv . key ,mxf_avid_essence_element_key ) ||IS_KLV_KEY (klv . key ,mxf_system_item_key ))
+cond	28:12	31:51	5	IS_KLV_KEY (klv . key ,mxf_encrypted_triplet_key ) ||IS_KLV_KEY (klv . key ,mxf_essence_element_key ) ||IS_KLV_KEY (klv . key ,mxf_avid_essence_element_key ) ||IS_KLV_KEY (klv . key ,mxf_system_item_key )
+call	28:12	28:57	6	IS_KLV_KEY
+arg	28:23	28:30	7	klv.key
+water	28:23	0:0	8	klv
+op	28:26	0:0	8	.
+water	28:27	0:0	8	key
+arg	28:32	28:57	7	mxf_encrypted_triplet_key
+water	28:32	0:0	8	mxf_encrypted_triplet_key
+op	28:59	0:0	6	||
+call	29:12	29:55	6	IS_KLV_KEY
+arg	29:23	29:30	7	klv.key
+water	29:23	0:0	8	klv
+op	29:26	0:0	8	.
+water	29:27	0:0	8	key
+arg	29:32	29:55	7	mxf_essence_element_key
+water	29:32	0:0	8	mxf_essence_element_key
+op	29:57	0:0	6	||
+call	30:12	30:60	6	IS_KLV_KEY
+arg	30:23	30:30	7	klv.key
+water	30:23	0:0	8	klv
+op	30:26	0:0	8	.
+water	30:27	0:0	8	key
+arg	30:32	30:60	7	mxf_avid_essence_element_key
+water	30:32	0:0	8	mxf_avid_essence_element_key
+op	30:62	0:0	6	||
+call	31:12	31:51	6	IS_KLV_KEY
+arg	31:23	31:30	7	klv.key
+water	31:23	0:0	8	klv
+op	31:26	0:0	8	.
+water	31:27	0:0	8	key
+arg	31:32	31:51	7	mxf_system_item_key
+water	31:32	0:0	8	mxf_system_item_key
+stmts	31:54	64:8	5	
+water	31:54	0:0	6	{
+if	32:12	35:12	6	(! mxf -> current_partition)
+cond	32:16	32:22	7	! mxf -> current_partition
+op	32:16	0:0	8	!
+water	32:17	0:0	8	mxf
+op	32:20	0:0	8	->
+water	32:22	0:0	8	current_partition
+stmts	32:41	35:12	7	
+water	32:41	0:0	8	{
+call	33:16	33:92	8	av_log
+arg	33:23	33:30	9	mxf->fc
+water	33:23	0:0	10	mxf
+op	33:26	0:0	10	->
+water	33:28	0:0	10	fc
+arg	33:32	33:44	9	AV_LOG_ERROR
+water	33:32	0:0	10	AV_LOG_ERROR
+arg	33:46	33:92	9	"found essence prior to first PartitionPack\n"
+water	33:46	0:0	10	"found essence prior to first PartitionPack\n"
+water	33:93	0:0	8	;
+return	34:16	34:42	8	AVERROR_INVALIDDATA
+water	34:23	0:0	9	AVERROR_INVALIDDATA
+water	35:12	0:0	8	}
+if	36:12	57:12	6	(! mxf -> current_partition -> essence_offset)
+cond	36:16	36:41	7	! mxf -> current_partition -> essence_offset
+op	36:16	0:0	8	!
+water	36:17	0:0	8	mxf
+op	36:20	0:0	8	->
+water	36:22	0:0	8	current_partition
+op	36:39	0:0	8	->
+water	36:41	0:0	8	essence_offset
+stmts	36:57	57:12	7	
+water	36:57	0:0	8	{
+decl	42:16	46:109	8	int64_t	op1a_essence_offset
+op	42:44	0:0	8	=
+call	43:20	44:108	9	round_to_kag
+arg	43:33	44:68	10	mxf->current_partition->this_partition+mxf->current_partition->pack_length
+water	43:33	0:0	11	mxf
+op	43:36	0:0	11	->
+water	43:38	0:0	11	current_partition
+op	43:55	0:0	11	->
+water	43:57	0:0	11	this_partition
+op	43:72	0:0	11	+
+water	44:33	0:0	11	mxf
+op	44:36	0:0	11	->
+water	44:38	0:0	11	current_partition
+op	44:55	0:0	11	->
+water	44:57	0:0	11	pack_length
+arg	44:76	44:108	10	mxf->current_partition->kag_size
+water	44:76	0:0	11	mxf
+op	44:79	0:0	11	->
+water	44:81	0:0	11	current_partition
+op	44:98	0:0	11	->
+water	44:100	0:0	11	kag_size
+op	44:110	0:0	8	+
+call	45:20	45:108	9	round_to_kag
+arg	45:33	45:74	10	mxf->current_partition->header_byte_count
+water	45:33	0:0	11	mxf
+op	45:36	0:0	11	->
+water	45:38	0:0	11	current_partition
+op	45:55	0:0	11	->
+water	45:57	0:0	11	header_byte_count
+arg	45:76	45:108	10	mxf->current_partition->kag_size
+water	45:76	0:0	11	mxf
+op	45:79	0:0	11	->
+water	45:81	0:0	11	current_partition
+op	45:98	0:0	11	->
+water	45:100	0:0	11	kag_size
+op	45:110	0:0	8	+
+call	46:20	46:108	9	round_to_kag
+arg	46:33	46:73	10	mxf->current_partition->index_byte_count
+water	46:33	0:0	11	mxf
+op	46:36	0:0	11	->
+water	46:38	0:0	11	current_partition
+op	46:55	0:0	11	->
+water	46:57	0:0	11	index_byte_count
+arg	46:76	46:108	10	mxf->current_partition->kag_size
+water	46:76	0:0	11	mxf
+op	46:79	0:0	11	->
+water	46:81	0:0	11	current_partition
+op	46:98	0:0	11	->
+water	46:100	0:0	11	kag_size
+if	47:16	53:16	8	(mxf -> op == OPAtom)
+cond	47:20	47:31	9	mxf -> op == OPAtom
+water	47:20	0:0	10	mxf
+op	47:23	0:0	10	->
+water	47:25	0:0	10	op
+op	47:28	0:0	10	==
+water	47:31	0:0	10	OPAtom
+stmts	47:39	53:16	9	
+water	47:39	0:0	10	{
+water	51:20	0:0	10	mxf
+op	51:23	0:0	10	->
+water	51:25	0:0	10	current_partition
+op	51:42	0:0	10	->
+water	51:44	0:0	10	essence_offset
+op	51:59	0:0	10	=
+call	51:61	51:76	10	avio_tell
+arg	51:71	51:76	11	s->pb
+water	51:71	0:0	12	s
+op	51:72	0:0	12	->
+water	51:74	0:0	12	pb
+water	51:77	0:0	10	;
+water	52:20	0:0	10	mxf
+op	52:23	0:0	10	->
+water	52:25	0:0	10	current_partition
+op	52:42	0:0	10	->
+water	52:44	0:0	10	essence_length
+op	52:59	0:0	10	=
+water	52:61	0:0	10	klv
+op	52:64	0:0	10	.
+water	52:65	0:0	10	length
+water	52:71	0:0	10	;
+water	53:16	0:0	10	}
+else	53:18	56:16	8
+stmts	53:23	56:16	9	
+water	53:23	0:0	10	{
+water	55:20	0:0	10	mxf
+op	55:23	0:0	10	->
+water	55:25	0:0	10	current_partition
+op	55:42	0:0	10	->
+water	55:44	0:0	10	essence_offset
+op	55:59	0:0	10	=
+water	55:61	0:0	10	op1a_essence_offset
+water	55:80	0:0	10	;
+water	56:16	0:0	10	}
+water	57:12	0:0	8	}
+if	58:12	59:43	6	(! essence_offset)
+cond	58:16	58:17	7	! essence_offset
+op	58:16	0:0	8	!
+water	58:17	0:0	8	essence_offset
+stmts	59:16	59:43	7	
+water	59:16	0:0	8	essence_offset
+op	59:31	0:0	8	=
+water	59:33	0:0	8	klv
+op	59:36	0:0	8	.
+water	59:37	0:0	8	offset
+water	59:43	0:0	8	;
+if	61:12	62:21	6	(mxf_parse_handle_essence (mxf ) <= 0)
+cond	61:16	61:49	7	mxf_parse_handle_essence (mxf ) <= 0
+call	61:16	61:44	8	mxf_parse_handle_essence
+arg	61:41	61:44	9	mxf
+water	61:41	0:0	10	mxf
+op	61:46	0:0	8	<=
+water	61:49	0:0	8	0
+stmts	62:16	62:21	7	
+break	62:16	62:21	8	
+continue	63:12	63:20	6	
+water	64:8	0:0	6	}
+else	64:10	71:8	4
+stmts	64:15	71:8	5	
+if	64:15	71:8	6	(mxf_is_partition_pack_key (klv . key ) && mxf -> current_partition)
+cond	64:19	64:62	7	mxf_is_partition_pack_key (klv . key ) && mxf -> current_partition
+call	64:19	64:52	8	mxf_is_partition_pack_key
+arg	64:45	64:52	9	klv.key
+water	64:45	0:0	10	klv
+op	64:48	0:0	10	.
+water	64:49	0:0	10	key
+op	64:54	0:0	8	&&
+water	64:57	0:0	8	mxf
+op	64:60	0:0	8	->
+water	64:62	0:0	8	current_partition
+stmts	64:81	71:8	7	
+water	64:81	0:0	8	{
+if	66:12	67:21	8	(mxf_parse_handle_partition_or_eof (mxf ) <= 0)
+cond	66:15	66:57	9	mxf_parse_handle_partition_or_eof (mxf ) <= 0
+call	66:15	66:52	10	mxf_parse_handle_partition_or_eof
+arg	66:49	66:52	11	mxf
+water	66:49	0:0	12	mxf
+op	66:54	0:0	10	<=
+water	66:57	0:0	10	0
+stmts	67:16	67:21	9	
+break	67:16	67:21	10	
+else	68:12	69:24	8
+stmts	68:17	69:24	9	
+if	68:17	69:24	10	(mxf -> parsing_backward)
+cond	68:21	68:26	11	mxf -> parsing_backward
+water	68:21	0:0	12	mxf
+op	68:24	0:0	12	->
+water	68:26	0:0	12	parsing_backward
+stmts	69:16	69:24	11	
+continue	69:16	69:24	12	
+water	71:8	0:0	8	}
+for	72:8	81:8	4	(metadata = mxf_metadata_read_table ;metadata -> read;metadata ++)
+forinit	72:13	72:47	5	metadata = mxf_metadata_read_table ;
+water	72:13	0:0	6	metadata
+op	72:22	0:0	6	=
+water	72:24	0:0	6	mxf_metadata_read_table
+water	72:47	0:0	6	;
+cond	72:49	72:59	5	metadata -> read
+water	72:49	0:0	6	metadata
+op	72:57	0:0	6	->
+water	72:59	0:0	6	read
+forexpr	72:65	72:73	5	metadata ++
+water	72:65	0:0	6	metadata
+op	72:73	0:0	6	++
+stmts	72:77	81:8	5	
+water	72:77	0:0	6	{
+if	73:12	77:12	6	(IS_KLV_KEY (klv . key ,metadata -> key ))
+cond	73:16	73:49	7	IS_KLV_KEY (klv . key ,metadata -> key )
+call	73:16	73:49	8	IS_KLV_KEY
+arg	73:27	73:34	9	klv.key
+water	73:27	0:0	10	klv
+op	73:30	0:0	10	.
+water	73:31	0:0	10	key
+arg	73:36	73:49	9	metadata->key
+water	73:36	0:0	10	metadata
+op	73:44	0:0	10	->
+water	73:46	0:0	10	key
+stmts	73:52	77:12	7	
+water	73:52	0:0	8	{
+if	74:16	75:29	8	(( ret =mxf_parse_klv (mxf ,klv ,metadata -> read ,metadata -> ctx_size ,metadata -> type ) ) < 0)
+cond	74:20	74:106	9	( ret =mxf_parse_klv (mxf ,klv ,metadata -> read ,metadata -> ctx_size ,metadata -> type ) ) < 0
+water	74:20	0:0	10	(
+water	74:21	0:0	10	ret
+op	74:25	0:0	10	=
+call	74:27	74:101	10	mxf_parse_klv
+arg	74:41	74:44	11	mxf
+water	74:41	0:0	12	mxf
+arg	74:46	74:49	11	klv
+water	74:46	0:0	12	klv
+arg	74:51	74:65	11	metadata->read
+water	74:51	0:0	12	metadata
+op	74:59	0:0	12	->
+water	74:61	0:0	12	read
+arg	74:67	74:85	11	metadata->ctx_size
+water	74:67	0:0	12	metadata
+op	74:75	0:0	12	->
+water	74:77	0:0	12	ctx_size
+arg	74:87	74:101	11	metadata->type
+water	74:87	0:0	12	metadata
+op	74:95	0:0	12	->
+water	74:97	0:0	12	type
+water	74:102	0:0	10	)
+op	74:104	0:0	10	<
+water	74:106	0:0	10	0
+stmts	75:20	75:29	9	
+goto	75:20	75:29	10	fail
+water	75:25	0:0	11	fail
+break	76:16	76:21	8	
+water	77:12	0:0	8	}
+else	77:14	80:12	6
+stmts	77:19	80:12	7	
+water	77:19	0:0	8	{
+call	78:16	79:39	8	av_log
+arg	78:23	78:24	9	s
+water	78:23	0:0	10	s
+arg	78:26	78:40	9	AV_LOG_VERBOSE
+water	78:26	0:0	10	AV_LOG_VERBOSE
+arg	78:42	78:66	9	"Dark key "PRIxUID"\n"
+water	78:42	0:0	10	"Dark key "
+water	78:54	0:0	10	PRIxUID
+water	78:62	0:0	10	"\n"
+arg	79:23	79:39	9	UID_ARG(klv.key)
+call	79:23	79:38	10	UID_ARG
+arg	79:31	79:38	11	klv.key
+water	79:31	0:0	12	klv
+op	79:34	0:0	12	.
+water	79:35	0:0	12	key
+water	79:40	0:0	8	;
+water	80:12	0:0	8	}
+water	81:8	0:0	6	}
+if	82:8	83:40	4	(! metadata -> read)
+cond	82:12	82:23	5	! metadata -> read
+op	82:12	0:0	6	!
+water	82:13	0:0	6	metadata
+op	82:21	0:0	6	->
+water	82:23	0:0	6	read
+stmts	83:12	83:40	5	
+call	83:12	83:39	6	avio_skip
+arg	83:22	83:27	7	s->pb
+water	83:22	0:0	8	s
+op	83:23	0:0	8	->
+water	83:25	0:0	8	pb
+arg	83:29	83:39	7	klv.length
+water	83:29	0:0	8	klv
+op	83:32	0:0	8	.
+water	83:33	0:0	8	length
+water	83:40	0:0	6	;
+water	84:4	0:0	4	}
+if	86:4	90:4	2	(! essence_offset)
+cond	86:8	86:9	3	! essence_offset
+op	86:8	0:0	4	!
+water	86:9	0:0	4	essence_offset
+stmts	86:26	90:4	3	
+water	86:26	0:0	4	{
+call	87:8	87:46	4	av_log
+arg	87:15	87:16	5	s
+water	87:15	0:0	6	s
+arg	87:18	87:30	5	AV_LOG_ERROR
+water	87:18	0:0	6	AV_LOG_ERROR
+arg	87:32	87:46	5	"no essence\n"
+water	87:32	0:0	6	"no essence\n"
+water	87:47	0:0	4	;
+water	88:8	0:0	4	ret
+op	88:12	0:0	4	=
+water	88:14	0:0	4	AVERROR_INVALIDDATA
+water	88:33	0:0	4	;
+goto	89:8	89:17	4	fail
+water	89:13	0:0	5	fail
+water	90:4	0:0	4	}
+call	91:4	91:45	2	avio_seek
+arg	91:14	91:19	3	s->pb
+water	91:14	0:0	4	s
+op	91:15	0:0	4	->
+water	91:17	0:0	4	pb
+arg	91:21	91:35	3	essence_offset
+water	91:21	0:0	4	essence_offset
+arg	91:37	91:45	3	SEEK_SET
+water	91:37	0:0	4	SEEK_SET
+water	91:46	0:0	2	;
+call	92:4	92:38	2	mxf_compute_essence_containers
+arg	92:35	92:38	3	mxf
+water	92:35	0:0	4	mxf
+water	92:39	0:0	2	;
+if	95:4	96:17	2	(( ret =mxf_parse_structural_metadata (mxf ) ) < 0)
+cond	95:8	95:53	3	( ret =mxf_parse_structural_metadata (mxf ) ) < 0
+water	95:8	0:0	4	(
+water	95:9	0:0	4	ret
+op	95:13	0:0	4	=
+call	95:15	95:48	4	mxf_parse_structural_metadata
+arg	95:45	95:48	5	mxf
+water	95:45	0:0	6	mxf
+water	95:49	0:0	4	)
+op	95:51	0:0	4	<
+water	95:53	0:0	4	0
+stmts	96:8	96:17	3	
+goto	96:8	96:17	4	fail
+water	96:13	0:0	5	fail
+call	97:4	97:40	2	mxf_handle_missing_index_segment
+arg	97:37	97:40	3	mxf
+water	97:37	0:0	4	mxf
+water	97:41	0:0	2	;
+if	98:4	99:17	2	(( ret =mxf_compute_index_tables (mxf ) ) < 0)
+cond	98:8	98:48	3	( ret =mxf_compute_index_tables (mxf ) ) < 0
+water	98:8	0:0	4	(
+water	98:9	0:0	4	ret
+op	98:13	0:0	4	=
+call	98:15	98:43	4	mxf_compute_index_tables
+arg	98:40	98:43	5	mxf
+water	98:40	0:0	6	mxf
+water	98:44	0:0	4	)
+op	98:46	0:0	4	<
+water	98:48	0:0	4	0
+stmts	99:8	99:17	3	
+goto	99:8	99:17	4	fail
+water	99:13	0:0	5	fail
+if	100:4	104:4	2	(mxf -> nb_index_tables > 1)
+cond	100:8	100:31	3	mxf -> nb_index_tables > 1
+water	100:8	0:0	4	mxf
+op	100:11	0:0	4	->
+water	100:13	0:0	4	nb_index_tables
+op	100:29	0:0	4	>
+water	100:31	0:0	4	1
+stmts	100:34	104:4	3	
+water	100:34	0:0	4	{
+call	102:8	103:67	4	av_log
+arg	102:15	102:22	5	mxf->fc
+water	102:15	0:0	6	mxf
+op	102:18	0:0	6	->
+water	102:20	0:0	6	fc
+arg	102:24	102:35	5	AV_LOG_INFO
+water	102:24	0:0	6	AV_LOG_INFO
+arg	102:37	102:108	5	"got %i index tables - only the first one (IndexSID %i) will be used\n"
+water	102:37	0:0	6	"got %i index tables - only the first one (IndexSID %i) will be used\n"
+arg	103:15	103:35	5	mxf->nb_index_tables
+water	103:15	0:0	6	mxf
+op	103:18	0:0	6	->
+water	103:20	0:0	6	nb_index_tables
+arg	103:37	103:67	5	mxf->index_tables[0].index_sid
+water	103:37	0:0	6	mxf
+op	103:40	0:0	6	->
+water	103:42	0:0	6	index_tables
+op	103:54	0:0	6	[
+water	103:55	0:0	6	0
+op	103:56	0:0	6	]
+op	103:57	0:0	6	.
+water	103:58	0:0	6	index_sid
+water	103:68	0:0	4	;
+water	104:4	0:0	4	}
+else	104:6	108:4	2
+stmts	104:11	108:4	3	
+if	104:11	108:4	4	(mxf -> nb_index_tables == 0 && mxf -> op == OPAtom)
+cond	104:15	104:55	5	mxf -> nb_index_tables == 0 && mxf -> op == OPAtom
+water	104:15	0:0	6	mxf
+op	104:18	0:0	6	->
+water	104:20	0:0	6	nb_index_tables
+op	104:36	0:0	6	==
+water	104:39	0:0	6	0
+op	104:41	0:0	6	&&
+water	104:44	0:0	6	mxf
+op	104:47	0:0	6	->
+water	104:49	0:0	6	op
+op	104:52	0:0	6	==
+water	104:55	0:0	6	OPAtom
+stmts	104:63	108:4	5	
+water	104:63	0:0	6	{
+call	105:8	105:78	6	av_log
+arg	105:15	105:22	7	mxf->fc
+water	105:15	0:0	8	mxf
+op	105:18	0:0	8	->
+water	105:20	0:0	8	fc
+arg	105:24	105:36	7	AV_LOG_ERROR
+water	105:24	0:0	8	AV_LOG_ERROR
+arg	105:38	105:78	7	"cannot demux OPAtom without an index\n"
+water	105:38	0:0	8	"cannot demux OPAtom without an index\n"
+water	105:79	0:0	6	;
+water	106:8	0:0	6	ret
+op	106:12	0:0	6	=
+water	106:14	0:0	6	AVERROR_INVALIDDATA
+water	106:33	0:0	6	;
+goto	107:8	107:17	6	fail
+water	107:13	0:0	7	fail
+water	108:4	0:0	6	}
+call	109:4	109:27	2	mxf_handle_small_eubc
+arg	109:26	109:27	3	s
+water	109:26	0:0	4	s
+water	109:28	0:0	2	;
+return	110:4	110:12	2	0
+water	110:11	0:0	3	0
+label	111:0	111:4	2	fail :
+call	112:4	112:20	2	mxf_read_close
+arg	112:19	112:20	3	s
+water	112:19	0:0	4	s
+water	112:21	0:0	2	;
+return	113:4	113:14	2	ret
+water	113:11	0:0	3	ret

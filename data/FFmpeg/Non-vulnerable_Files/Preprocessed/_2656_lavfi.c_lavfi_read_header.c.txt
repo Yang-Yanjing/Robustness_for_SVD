@@ -1,0 +1,1389 @@
+func	1:8	205:0	0	static int	lavfi_read_header
+params	1:36	0:0	1	
+param	1:37	1:59	2	AVFormatContext *	avctx
+stmnts	0:0	204:14	1	
+decl	3:4	3:42	2	LavfiContext	*lavfi
+op	3:24	0:0	2	=
+water	3:26	0:0	2	avctx
+op	3:31	0:0	2	->
+water	3:33	0:0	2	priv_data
+decl	4:4	4:67	2	AVFilterInOut	*input_links
+op	4:31	0:0	2	=
+water	4:33	0:0	2	NULL
+water	4:37	0:0	2	,
+decl	4:4	4:67	2	AVFilterInOut	*output_links
+op	4:53	0:0	2	=
+water	4:55	0:0	2	NULL
+water	4:59	0:0	2	,
+decl	4:4	4:67	2	AVFilterInOut	*inout
+decl	5:4	5:38	2	AVFilter	*buffersink
+water	5:24	0:0	2	,
+decl	5:4	5:38	2	AVFilter	*abuffersink
+decl	6:4	6:53	2	int	*pix_fmts
+op	6:18	0:0	2	=
+call	6:20	6:52	3	create_all_formats
+arg	6:39	6:52	4	AV_PIX_FMT_NB
+water	6:39	0:0	5	AV_PIX_FMT_NB
+decl	7:4	7:25	2	enum AVMediaType	type
+decl	8:4	8:21	2	int	ret
+op	8:12	0:0	2	=
+water	8:14	0:0	2	0
+water	8:15	0:0	2	,
+decl	8:4	8:21	2	int	i
+water	8:18	0:0	2	,
+decl	8:4	8:21	2	int	n
+if	10:4	11:29	2	(! pix_fmts)
+cond	10:8	10:9	3	! pix_fmts
+op	10:8	0:0	4	!
+water	10:9	0:0	4	pix_fmts
+stmts	11:8	11:29	3	
+call	11:8	11:28	4	FAIL
+arg	11:13	11:28	5	AVERROR(ENOMEM)
+call	11:13	11:27	6	AVERROR
+arg	11:21	11:27	7	ENOMEM
+water	11:21	0:0	8	ENOMEM
+water	11:29	0:0	4	;
+call	12:4	12:26	2	avfilter_register_all
+water	12:27	0:0	2	;
+water	13:4	0:0	2	buffersink
+op	13:15	0:0	2	=
+call	13:17	13:50	2	avfilter_get_by_name
+arg	13:38	13:50	3	"buffersink"
+water	13:38	0:0	4	"buffersink"
+water	13:51	0:0	2	;
+water	14:4	0:0	2	abuffersink
+op	14:16	0:0	2	=
+call	14:18	14:52	2	avfilter_get_by_name
+arg	14:39	14:52	3	"abuffersink"
+water	14:39	0:0	4	"abuffersink"
+water	14:53	0:0	2	;
+if	15:4	19:4	2	(lavfi -> graph_filename && lavfi -> graph_str)
+cond	15:8	15:40	3	lavfi -> graph_filename && lavfi -> graph_str
+water	15:8	0:0	4	lavfi
+op	15:13	0:0	4	->
+water	15:15	0:0	4	graph_filename
+op	15:30	0:0	4	&&
+water	15:33	0:0	4	lavfi
+op	15:38	0:0	4	->
+water	15:40	0:0	4	graph_str
+stmts	15:51	19:4	3	
+water	15:51	0:0	4	{
+call	16:8	17:80	4	av_log
+arg	16:15	16:20	5	avctx
+water	16:15	0:0	6	avctx
+arg	16:22	16:34	5	AV_LOG_ERROR
+water	16:22	0:0	6	AV_LOG_ERROR
+arg	17:15	17:80	5	"Only one of the graph or graph_file options must be specified\n"
+water	17:15	0:0	6	"Only one of the graph or graph_file options must be specified\n"
+water	17:81	0:0	4	;
+call	18:8	18:28	4	FAIL
+arg	18:13	18:28	5	AVERROR(EINVAL)
+call	18:13	18:27	6	AVERROR
+arg	18:21	18:27	7	EINVAL
+water	18:21	0:0	8	EINVAL
+water	18:29	0:0	4	;
+water	19:4	0:0	4	}
+if	20:4	38:4	2	(lavfi -> graph_filename)
+cond	20:8	20:15	3	lavfi -> graph_filename
+water	20:8	0:0	4	lavfi
+op	20:13	0:0	4	->
+water	20:15	0:0	4	graph_filename
+stmts	20:31	38:4	3	
+water	20:31	0:0	4	{
+decl	21:8	21:30	4	AVBPrint	graph_file_pb
+decl	22:8	22:32	4	AVIOContext	*avio
+op	22:26	0:0	4	=
+water	22:28	0:0	4	NULL
+water	23:8	0:0	4	ret
+op	23:12	0:0	4	=
+call	23:14	23:68	4	avio_open
+arg	23:24	23:29	5	&avio
+op	23:24	0:0	6	&
+water	23:25	0:0	6	avio
+arg	23:31	23:52	5	lavfi->graph_filename
+water	23:31	0:0	6	lavfi
+op	23:36	0:0	6	->
+water	23:38	0:0	6	graph_filename
+arg	23:54	23:68	5	AVIO_FLAG_READ
+water	23:54	0:0	6	AVIO_FLAG_READ
+water	23:69	0:0	4	;
+if	24:8	25:20	4	(ret < 0)
+cond	24:12	24:18	5	ret < 0
+water	24:12	0:0	6	ret
+op	24:16	0:0	6	<
+water	24:18	0:0	6	0
+stmts	25:12	25:20	5	
+goto	25:12	25:20	6	end
+water	25:17	0:0	7	end
+call	26:8	26:66	4	av_bprint_init
+arg	26:23	26:37	5	&graph_file_pb
+op	26:23	0:0	6	&
+water	26:24	0:0	6	graph_file_pb
+arg	26:39	26:40	5	0
+water	26:39	0:0	6	0
+arg	26:42	26:66	5	AV_BPRINT_SIZE_UNLIMITED
+water	26:42	0:0	6	AV_BPRINT_SIZE_UNLIMITED
+water	26:67	0:0	4	;
+water	27:8	0:0	4	ret
+op	27:12	0:0	4	=
+call	27:14	27:63	4	avio_read_to_bprint
+arg	27:34	27:38	5	avio
+water	27:34	0:0	6	avio
+arg	27:40	27:54	5	&graph_file_pb
+op	27:40	0:0	6	&
+water	27:41	0:0	6	graph_file_pb
+arg	27:56	27:63	5	INT_MAX
+water	27:56	0:0	6	INT_MAX
+water	27:64	0:0	4	;
+call	28:8	28:25	4	avio_closep
+arg	28:20	28:25	5	&avio
+op	28:20	0:0	6	&
+water	28:21	0:0	6	avio
+water	28:26	0:0	4	;
+call	29:8	29:47	4	av_bprint_chars
+arg	29:24	29:38	5	&graph_file_pb
+op	29:24	0:0	6	&
+water	29:25	0:0	6	graph_file_pb
+arg	29:40	29:44	5	'\0'
+water	29:40	0:0	6	'\0'
+arg	29:46	29:47	5	1
+water	29:46	0:0	6	1
+water	29:48	0:0	4	;
+if	30:8	31:33	4	(! ret && !av_bprint_is_complete (& graph_file_pb ))
+cond	30:12	30:57	5	! ret && !av_bprint_is_complete (& graph_file_pb )
+op	30:12	0:0	6	!
+water	30:13	0:0	6	ret
+op	30:17	0:0	6	&&
+op	30:20	0:0	6	!
+call	30:21	30:57	6	av_bprint_is_complete
+arg	30:43	30:57	7	&graph_file_pb
+op	30:43	0:0	8	&
+water	30:44	0:0	8	graph_file_pb
+stmts	31:12	31:33	5	
+water	31:12	0:0	6	ret
+op	31:16	0:0	6	=
+call	31:18	31:32	6	AVERROR
+arg	31:26	31:32	7	ENOMEM
+water	31:26	0:0	8	ENOMEM
+water	31:33	0:0	6	;
+if	32:8	35:8	4	(ret)
+cond	32:12	32:12	5	ret
+water	32:12	0:0	6	ret
+stmts	32:17	35:8	5	
+water	32:17	0:0	6	{
+call	33:12	33:51	6	av_bprint_finalize
+arg	33:31	33:45	7	&graph_file_pb
+op	33:31	0:0	8	&
+water	33:32	0:0	8	graph_file_pb
+arg	33:47	33:51	7	NULL
+water	33:47	0:0	8	NULL
+water	33:52	0:0	6	;
+goto	34:12	34:20	6	end
+water	34:17	0:0	7	end
+water	35:8	0:0	6	}
+if	36:8	37:20	4	(( ret =av_bprint_finalize (& graph_file_pb ,& lavfi -> graph_str ) ))
+cond	36:12	36:72	5	( ret =av_bprint_finalize (& graph_file_pb ,& lavfi -> graph_str ) )
+water	36:12	0:0	6	(
+water	36:13	0:0	6	ret
+op	36:17	0:0	6	=
+call	36:19	36:71	6	av_bprint_finalize
+arg	36:38	36:52	7	&graph_file_pb
+op	36:38	0:0	8	&
+water	36:39	0:0	8	graph_file_pb
+arg	36:54	36:71	7	&lavfi->graph_str
+op	36:54	0:0	8	&
+water	36:55	0:0	8	lavfi
+op	36:60	0:0	8	->
+water	36:62	0:0	8	graph_str
+water	36:72	0:0	6	)
+stmts	37:12	37:20	5	
+goto	37:12	37:20	6	end
+water	37:17	0:0	7	end
+water	38:4	0:0	4	}
+if	39:4	40:53	2	(! lavfi -> graph_str)
+cond	39:8	39:16	3	! lavfi -> graph_str
+op	39:8	0:0	4	!
+water	39:9	0:0	4	lavfi
+op	39:14	0:0	4	->
+water	39:16	0:0	4	graph_str
+stmts	40:8	40:53	3	
+water	40:8	0:0	4	lavfi
+op	40:13	0:0	4	->
+water	40:15	0:0	4	graph_str
+op	40:25	0:0	4	=
+call	40:27	40:52	4	av_strdup
+arg	40:37	40:52	5	avctx->filename
+water	40:37	0:0	6	avctx
+op	40:42	0:0	6	->
+water	40:44	0:0	6	filename
+water	40:53	0:0	4	;
+if	42:4	43:29	2	(! ( lavfi -> graph =avfilter_graph_alloc ( ) ))
+cond	42:8	42:47	3	! ( lavfi -> graph =avfilter_graph_alloc ( ) )
+op	42:8	0:0	4	!
+water	42:9	0:0	4	(
+water	42:10	0:0	4	lavfi
+op	42:15	0:0	4	->
+water	42:17	0:0	4	graph
+op	42:23	0:0	4	=
+call	42:25	42:46	4	avfilter_graph_alloc
+water	42:47	0:0	4	)
+stmts	43:8	43:29	3	
+call	43:8	43:28	4	FAIL
+arg	43:13	43:28	5	AVERROR(ENOMEM)
+call	43:13	43:27	6	AVERROR
+arg	43:21	43:27	7	ENOMEM
+water	43:21	0:0	8	ENOMEM
+water	43:29	0:0	4	;
+if	44:4	46:16	2	(( ret =avfilter_graph_parse_ptr (lavfi -> graph ,lavfi -> graph_str ,& input_links ,& output_links ,avctx ) ) < 0)
+cond	44:8	45:75	3	( ret =avfilter_graph_parse_ptr (lavfi -> graph ,lavfi -> graph_str ,& input_links ,& output_links ,avctx ) ) < 0
+water	44:8	0:0	4	(
+water	44:9	0:0	4	ret
+op	44:13	0:0	4	=
+call	44:15	45:70	4	avfilter_graph_parse_ptr
+arg	44:40	44:52	5	lavfi->graph
+water	44:40	0:0	6	lavfi
+op	44:45	0:0	6	->
+water	44:47	0:0	6	graph
+arg	44:54	44:70	5	lavfi->graph_str
+water	44:54	0:0	6	lavfi
+op	44:59	0:0	6	->
+water	44:61	0:0	6	graph_str
+arg	45:36	45:48	5	&input_links
+op	45:36	0:0	6	&
+water	45:37	0:0	6	input_links
+arg	45:50	45:63	5	&output_links
+op	45:50	0:0	6	&
+water	45:51	0:0	6	output_links
+arg	45:65	45:70	5	avctx
+water	45:65	0:0	6	avctx
+water	45:71	0:0	4	)
+op	45:73	0:0	4	<
+water	45:75	0:0	4	0
+stmts	46:8	46:16	3	
+goto	46:8	46:16	4	end
+water	46:13	0:0	5	end
+if	47:4	51:4	2	(input_links)
+cond	47:8	47:8	3	input_links
+water	47:8	0:0	4	input_links
+stmts	47:21	51:4	3	
+water	47:21	0:0	4	{
+call	48:8	49:68	4	av_log
+arg	48:15	48:20	5	avctx
+water	48:15	0:0	6	avctx
+arg	48:22	48:34	5	AV_LOG_ERROR
+water	48:22	0:0	6	AV_LOG_ERROR
+arg	49:15	49:68	5	"Open inputs in the filtergraph are not acceptable\n"
+water	49:15	0:0	6	"Open inputs in the filtergraph are not acceptable\n"
+water	49:69	0:0	4	;
+call	50:8	50:28	4	FAIL
+arg	50:13	50:28	5	AVERROR(EINVAL)
+call	50:13	50:27	6	AVERROR
+arg	50:21	50:27	7	EINVAL
+water	50:21	0:0	8	EINVAL
+water	50:29	0:0	4	;
+water	51:4	0:0	4	}
+for	53:4	53:70	2	(n = 0 , inout = output_links ;inout;n ++ , inout = inout -> next)
+forinit	53:9	53:36	3	n = 0 , inout = output_links ;
+water	53:9	0:0	4	n
+op	53:11	0:0	4	=
+water	53:13	0:0	4	0
+water	53:14	0:0	4	,
+water	53:16	0:0	4	inout
+op	53:22	0:0	4	=
+water	53:24	0:0	4	output_links
+water	53:36	0:0	4	;
+cond	53:38	53:38	3	inout
+water	53:38	0:0	4	inout
+forexpr	53:45	53:65	3	n ++ , inout = inout -> next
+water	53:45	0:0	4	n
+op	53:46	0:0	4	++
+water	53:48	0:0	4	,
+water	53:50	0:0	4	inout
+op	53:56	0:0	4	=
+water	53:58	0:0	4	inout
+op	53:63	0:0	4	->
+water	53:65	0:0	4	next
+stmts	53:70	53:70	3	
+water	53:70	0:0	4	;
+water	54:4	0:0	2	lavfi
+op	54:9	0:0	2	->
+water	54:11	0:0	2	nb_sinks
+op	54:20	0:0	2	=
+water	54:22	0:0	2	n
+water	54:23	0:0	2	;
+if	55:4	56:29	2	(! ( lavfi -> sink_stream_map =av_malloc (sizeof ( int ) * n ) ))
+cond	55:8	55:61	3	! ( lavfi -> sink_stream_map =av_malloc (sizeof ( int ) * n ) )
+op	55:8	0:0	4	!
+water	55:9	0:0	4	(
+water	55:10	0:0	4	lavfi
+op	55:15	0:0	4	->
+water	55:17	0:0	4	sink_stream_map
+op	55:33	0:0	4	=
+call	55:35	55:60	4	av_malloc
+arg	55:45	55:60	5	sizeof(int)*n
+op	55:45	0:0	6	sizeof
+water	55:51	0:0	6	(
+water	55:52	0:0	6	int
+water	55:55	0:0	6	)
+op	55:57	0:0	6	*
+water	55:59	0:0	6	n
+water	55:61	0:0	4	)
+stmts	56:8	56:29	3	
+call	56:8	56:28	4	FAIL
+arg	56:13	56:28	5	AVERROR(ENOMEM)
+call	56:13	56:27	6	AVERROR
+arg	56:21	56:27	7	ENOMEM
+water	56:21	0:0	8	ENOMEM
+water	56:29	0:0	4	;
+if	57:4	58:29	2	(! ( lavfi -> sink_eof =av_mallocz (sizeof ( int ) * n ) ))
+cond	57:8	57:55	3	! ( lavfi -> sink_eof =av_mallocz (sizeof ( int ) * n ) )
+op	57:8	0:0	4	!
+water	57:9	0:0	4	(
+water	57:10	0:0	4	lavfi
+op	57:15	0:0	4	->
+water	57:17	0:0	4	sink_eof
+op	57:26	0:0	4	=
+call	57:28	57:54	4	av_mallocz
+arg	57:39	57:54	5	sizeof(int)*n
+op	57:39	0:0	6	sizeof
+water	57:45	0:0	6	(
+water	57:46	0:0	6	int
+water	57:49	0:0	6	)
+op	57:51	0:0	6	*
+water	57:53	0:0	6	n
+water	57:55	0:0	4	)
+stmts	58:8	58:29	3	
+call	58:8	58:28	4	FAIL
+arg	58:13	58:28	5	AVERROR(ENOMEM)
+call	58:13	58:27	6	AVERROR
+arg	58:21	58:27	7	ENOMEM
+water	58:21	0:0	8	ENOMEM
+water	58:29	0:0	4	;
+if	59:4	60:29	2	(! ( lavfi -> stream_sink_map =av_malloc (sizeof ( int ) * n ) ))
+cond	59:8	59:61	3	! ( lavfi -> stream_sink_map =av_malloc (sizeof ( int ) * n ) )
+op	59:8	0:0	4	!
+water	59:9	0:0	4	(
+water	59:10	0:0	4	lavfi
+op	59:15	0:0	4	->
+water	59:17	0:0	4	stream_sink_map
+op	59:33	0:0	4	=
+call	59:35	59:60	4	av_malloc
+arg	59:45	59:60	5	sizeof(int)*n
+op	59:45	0:0	6	sizeof
+water	59:51	0:0	6	(
+water	59:52	0:0	6	int
+water	59:55	0:0	6	)
+op	59:57	0:0	6	*
+water	59:59	0:0	6	n
+water	59:61	0:0	4	)
+stmts	60:8	60:29	3	
+call	60:8	60:28	4	FAIL
+arg	60:13	60:28	5	AVERROR(ENOMEM)
+call	60:13	60:27	6	AVERROR
+arg	60:21	60:27	7	ENOMEM
+water	60:21	0:0	8	ENOMEM
+water	60:29	0:0	4	;
+if	61:4	62:29	2	(! ( lavfi -> sink_stream_subcc_map =av_malloc (sizeof ( int ) * n ) ))
+cond	61:8	61:67	3	! ( lavfi -> sink_stream_subcc_map =av_malloc (sizeof ( int ) * n ) )
+op	61:8	0:0	4	!
+water	61:9	0:0	4	(
+water	61:10	0:0	4	lavfi
+op	61:15	0:0	4	->
+water	61:17	0:0	4	sink_stream_subcc_map
+op	61:39	0:0	4	=
+call	61:41	61:66	4	av_malloc
+arg	61:51	61:66	5	sizeof(int)*n
+op	61:51	0:0	6	sizeof
+water	61:57	0:0	6	(
+water	61:58	0:0	6	int
+water	61:61	0:0	6	)
+op	61:63	0:0	6	*
+water	61:65	0:0	6	n
+water	61:67	0:0	4	)
+stmts	62:8	62:29	3	
+call	62:8	62:28	4	FAIL
+arg	62:13	62:28	5	AVERROR(ENOMEM)
+call	62:13	62:27	6	AVERROR
+arg	62:21	62:27	7	ENOMEM
+water	62:21	0:0	8	ENOMEM
+water	62:29	0:0	4	;
+for	63:4	64:38	2	(i = 0 ;i < n;i ++)
+forinit	63:9	63:14	3	i = 0 ;
+water	63:9	0:0	4	i
+op	63:11	0:0	4	=
+water	63:13	0:0	4	0
+water	63:14	0:0	4	;
+cond	63:16	63:20	3	i < n
+water	63:16	0:0	4	i
+op	63:18	0:0	4	<
+water	63:20	0:0	4	n
+forexpr	63:23	63:24	3	i ++
+water	63:23	0:0	4	i
+op	63:24	0:0	4	++
+stmts	64:8	64:38	3	
+water	64:8	0:0	4	lavfi
+op	64:13	0:0	4	->
+water	64:15	0:0	4	stream_sink_map
+op	64:30	0:0	4	[
+water	64:31	0:0	4	i
+op	64:32	0:0	4	]
+op	64:34	0:0	4	=
+op	64:36	0:0	4	-
+water	64:37	0:0	4	1
+water	64:38	0:0	4	;
+for	67:4	100:4	2	(i = 0 , inout = output_links ;inout;i ++ , inout = inout -> next)
+forinit	67:9	67:36	3	i = 0 , inout = output_links ;
+water	67:9	0:0	4	i
+op	67:11	0:0	4	=
+water	67:13	0:0	4	0
+water	67:14	0:0	4	,
+water	67:16	0:0	4	inout
+op	67:22	0:0	4	=
+water	67:24	0:0	4	output_links
+water	67:36	0:0	4	;
+cond	67:38	67:38	3	inout
+water	67:38	0:0	4	inout
+forexpr	67:45	67:65	3	i ++ , inout = inout -> next
+water	67:45	0:0	4	i
+op	67:46	0:0	4	++
+water	67:48	0:0	4	,
+water	67:50	0:0	4	inout
+op	67:56	0:0	4	=
+water	67:58	0:0	4	inout
+op	67:63	0:0	4	->
+water	67:65	0:0	4	next
+stmts	67:71	100:4	3	
+water	67:71	0:0	4	{
+decl	68:8	68:53	4	int	stream_idx
+op	68:23	0:0	4	=
+water	68:25	0:0	4	0
+water	68:26	0:0	4	,
+decl	68:8	68:53	4	int	suffix
+op	68:35	0:0	4	=
+water	68:37	0:0	4	0
+water	68:38	0:0	4	,
+decl	68:8	68:53	4	int	use_subcc
+op	68:50	0:0	4	=
+water	68:52	0:0	4	0
+call	69:8	69:70	4	sscanf
+arg	69:15	69:26	5	inout->name
+water	69:15	0:0	6	inout
+op	69:20	0:0	6	->
+water	69:22	0:0	6	name
+arg	69:28	69:39	5	"out%n%d%n"
+water	69:28	0:0	6	"out%n%d%n"
+arg	69:41	69:48	5	&suffix
+op	69:41	0:0	6	&
+water	69:42	0:0	6	suffix
+arg	69:50	69:61	5	&stream_idx
+op	69:50	0:0	6	&
+water	69:51	0:0	6	stream_idx
+arg	69:63	69:70	5	&suffix
+op	69:63	0:0	6	&
+water	69:64	0:0	6	suffix
+water	69:71	0:0	4	;
+if	70:8	74:8	4	(! suffix)
+cond	70:12	70:13	5	! suffix
+op	70:12	0:0	6	!
+water	70:13	0:0	6	suffix
+stmts	70:21	74:8	5	
+water	70:21	0:0	6	{
+call	71:12	72:60	6	av_log
+arg	71:19	71:24	7	avctx
+water	71:19	0:0	8	avctx
+arg	71:27	71:39	7	AV_LOG_ERROR
+water	71:27	0:0	8	AV_LOG_ERROR
+arg	72:19	72:47	7	"Invalid outpad name '%s'\n"
+water	72:19	0:0	8	"Invalid outpad name '%s'\n"
+arg	72:49	72:60	7	inout->name
+water	72:49	0:0	8	inout
+op	72:54	0:0	8	->
+water	72:56	0:0	8	name
+water	72:61	0:0	6	;
+call	73:12	73:32	6	FAIL
+arg	73:17	73:32	7	AVERROR(EINVAL)
+call	73:17	73:31	8	AVERROR
+arg	73:25	73:31	9	EINVAL
+water	73:25	0:0	10	EINVAL
+water	73:33	0:0	6	;
+water	74:8	0:0	6	}
+if	75:8	83:8	4	(inout -> name [ suffix ])
+cond	75:12	75:30	5	inout -> name [ suffix ]
+water	75:12	0:0	6	inout
+op	75:17	0:0	6	->
+water	75:19	0:0	6	name
+op	75:23	0:0	6	[
+water	75:24	0:0	6	suffix
+op	75:30	0:0	6	]
+stmts	75:33	83:8	5	
+water	75:33	0:0	6	{
+if	76:12	78:12	6	(!strcmp (inout -> name + suffix ,"+subcc" ))
+cond	76:16	76:54	7	!strcmp (inout -> name + suffix ,"+subcc" )
+op	76:16	0:0	8	!
+call	76:17	76:54	8	strcmp
+arg	76:24	76:44	9	inout->name+suffix
+water	76:24	0:0	10	inout
+op	76:29	0:0	10	->
+water	76:31	0:0	10	name
+op	76:36	0:0	10	+
+water	76:38	0:0	10	suffix
+arg	76:46	76:54	9	"+subcc"
+water	76:46	0:0	10	"+subcc"
+stmts	76:57	78:12	7	
+water	76:57	0:0	8	{
+water	77:16	0:0	8	use_subcc
+op	77:26	0:0	8	=
+water	77:28	0:0	8	1
+water	77:29	0:0	8	;
+water	78:12	0:0	8	}
+else	78:14	82:12	6
+stmts	78:19	82:12	7	
+water	78:19	0:0	8	{
+call	79:16	80:66	8	av_log
+arg	79:23	79:28	9	avctx
+water	79:23	0:0	10	avctx
+arg	79:31	79:43	9	AV_LOG_ERROR
+water	79:31	0:0	10	AV_LOG_ERROR
+arg	80:23	80:53	9	"Invalid outpad suffix '%s'\n"
+water	80:23	0:0	10	"Invalid outpad suffix '%s'\n"
+arg	80:55	80:66	9	inout->name
+water	80:55	0:0	10	inout
+op	80:60	0:0	10	->
+water	80:62	0:0	10	name
+water	80:67	0:0	8	;
+call	81:16	81:36	8	FAIL
+arg	81:21	81:36	9	AVERROR(EINVAL)
+call	81:21	81:35	10	AVERROR
+arg	81:29	81:35	11	EINVAL
+water	81:29	0:0	12	EINVAL
+water	81:37	0:0	8	;
+water	82:12	0:0	8	}
+water	83:8	0:0	6	}
+if	84:8	90:8	4	(( unsigned ) stream_idx >= n)
+cond	84:12	84:36	5	( unsigned ) stream_idx >= n
+water	84:12	0:0	6	(
+water	84:13	0:0	6	unsigned
+water	84:21	0:0	6	)
+water	84:22	0:0	6	stream_idx
+op	84:33	0:0	6	>=
+water	84:36	0:0	6	n
+stmts	84:39	90:8	5	
+water	84:39	0:0	6	{
+call	85:12	88:33	6	av_log
+arg	85:19	85:24	7	avctx
+water	85:19	0:0	8	avctx
+arg	85:26	85:38	7	AV_LOG_ERROR
+water	85:26	0:0	8	AV_LOG_ERROR
+arg	86:19	87:56	7	"Invalid index was specified in output '%s', ""must be a non-negative value < %d\n"
+water	86:19	0:0	8	"Invalid index was specified in output '%s', "
+water	87:19	0:0	8	"must be a non-negative value < %d\n"
+arg	88:19	88:30	7	inout->name
+water	88:19	0:0	8	inout
+op	88:24	0:0	8	->
+water	88:26	0:0	8	name
+arg	88:32	88:33	7	n
+water	88:32	0:0	8	n
+water	88:34	0:0	6	;
+call	89:12	89:32	6	FAIL
+arg	89:17	89:32	7	AVERROR(EINVAL)
+call	89:17	89:31	8	AVERROR
+arg	89:25	89:31	9	EINVAL
+water	89:25	0:0	10	EINVAL
+water	89:33	0:0	6	;
+water	90:8	0:0	6	}
+if	91:8	96:8	4	(lavfi -> stream_sink_map [ stream_idx ] != - 1)
+cond	91:12	91:51	5	lavfi -> stream_sink_map [ stream_idx ] != - 1
+water	91:12	0:0	6	lavfi
+op	91:17	0:0	6	->
+water	91:19	0:0	6	stream_sink_map
+op	91:34	0:0	6	[
+water	91:35	0:0	6	stream_idx
+op	91:45	0:0	6	]
+op	91:47	0:0	6	!=
+op	91:50	0:0	6	-
+water	91:51	0:0	6	1
+stmts	91:54	96:8	5	
+water	91:54	0:0	6	{
+call	92:12	94:29	6	av_log
+arg	92:19	92:24	7	avctx
+water	92:19	0:0	8	avctx
+arg	92:27	92:39	7	AV_LOG_ERROR
+water	92:27	0:0	8	AV_LOG_ERROR
+arg	93:19	93:75	7	"An output with stream index %d was already specified\n"
+water	93:19	0:0	8	"An output with stream index %d was already specified\n"
+arg	94:19	94:29	7	stream_idx
+water	94:19	0:0	8	stream_idx
+water	94:30	0:0	6	;
+call	95:12	95:32	6	FAIL
+arg	95:17	95:32	7	AVERROR(EINVAL)
+call	95:17	95:31	8	AVERROR
+arg	95:25	95:31	9	EINVAL
+water	95:25	0:0	10	EINVAL
+water	95:33	0:0	6	;
+water	96:8	0:0	6	}
+water	97:8	0:0	4	lavfi
+op	97:13	0:0	4	->
+water	97:15	0:0	4	sink_stream_map
+op	97:30	0:0	4	[
+water	97:31	0:0	4	i
+op	97:32	0:0	4	]
+op	97:34	0:0	4	=
+water	97:36	0:0	4	stream_idx
+water	97:46	0:0	4	;
+water	98:8	0:0	4	lavfi
+op	98:13	0:0	4	->
+water	98:15	0:0	4	stream_sink_map
+op	98:30	0:0	4	[
+water	98:31	0:0	4	stream_idx
+op	98:41	0:0	4	]
+op	98:43	0:0	4	=
+water	98:45	0:0	4	i
+water	98:46	0:0	4	;
+water	99:8	0:0	4	lavfi
+op	99:13	0:0	4	->
+water	99:15	0:0	4	sink_stream_subcc_map
+op	99:36	0:0	4	[
+water	99:37	0:0	4	i
+op	99:38	0:0	4	]
+op	99:40	0:0	4	=
+op	99:42	0:0	4	!
+op	99:43	0:0	4	!
+water	99:44	0:0	4	use_subcc
+water	99:53	0:0	4	;
+water	100:4	0:0	4	}
+for	102:4	107:4	2	(i = 0 , inout = output_links ;inout;i ++ , inout = inout -> next)
+forinit	102:9	102:36	3	i = 0 , inout = output_links ;
+water	102:9	0:0	4	i
+op	102:11	0:0	4	=
+water	102:13	0:0	4	0
+water	102:14	0:0	4	,
+water	102:16	0:0	4	inout
+op	102:22	0:0	4	=
+water	102:24	0:0	4	output_links
+water	102:36	0:0	4	;
+cond	102:38	102:38	3	inout
+water	102:38	0:0	4	inout
+forexpr	102:45	102:65	3	i ++ , inout = inout -> next
+water	102:45	0:0	4	i
+op	102:46	0:0	4	++
+water	102:48	0:0	4	,
+water	102:50	0:0	4	inout
+op	102:56	0:0	4	=
+water	102:58	0:0	4	inout
+op	102:63	0:0	4	->
+water	102:65	0:0	4	next
+stmts	102:71	107:4	3	
+water	102:71	0:0	4	{
+decl	103:8	103:20	4	AVStream	*st
+if	104:8	105:33	4	(! ( st =avformat_new_stream (avctx ,NULL ) ))
+cond	104:12	104:51	5	! ( st =avformat_new_stream (avctx ,NULL ) )
+op	104:12	0:0	6	!
+water	104:13	0:0	6	(
+water	104:14	0:0	6	st
+op	104:17	0:0	6	=
+call	104:19	104:50	6	avformat_new_stream
+arg	104:39	104:44	7	avctx
+water	104:39	0:0	8	avctx
+arg	104:46	104:50	7	NULL
+water	104:46	0:0	8	NULL
+water	104:51	0:0	6	)
+stmts	105:12	105:33	5	
+call	105:12	105:32	6	FAIL
+arg	105:17	105:32	7	AVERROR(ENOMEM)
+call	105:17	105:31	8	AVERROR
+arg	105:25	105:31	9	ENOMEM
+water	105:25	0:0	10	ENOMEM
+water	105:33	0:0	6	;
+water	106:8	0:0	4	st
+op	106:10	0:0	4	->
+water	106:12	0:0	4	id
+op	106:15	0:0	4	=
+water	106:17	0:0	4	i
+water	106:18	0:0	4	;
+water	107:4	0:0	4	}
+water	109:4	0:0	2	lavfi
+op	109:9	0:0	2	->
+water	109:11	0:0	2	sinks
+op	109:17	0:0	2	=
+call	109:19	109:77	2	av_malloc_array
+arg	109:35	109:50	3	lavfi->nb_sinks
+water	109:35	0:0	4	lavfi
+op	109:40	0:0	4	->
+water	109:42	0:0	4	nb_sinks
+arg	109:52	109:77	3	sizeof(AVFilterContext*)
+op	109:52	0:0	4	sizeof
+water	109:58	0:0	4	(
+water	109:59	0:0	4	AVFilterContext
+op	109:75	0:0	4	*
+water	109:76	0:0	4	)
+water	109:78	0:0	2	;
+if	110:4	111:29	2	(! lavfi -> sinks)
+cond	110:8	110:16	3	! lavfi -> sinks
+op	110:8	0:0	4	!
+water	110:9	0:0	4	lavfi
+op	110:14	0:0	4	->
+water	110:16	0:0	4	sinks
+stmts	111:8	111:29	3	
+call	111:8	111:28	4	FAIL
+arg	111:13	111:28	5	AVERROR(ENOMEM)
+call	111:13	111:27	6	AVERROR
+arg	111:21	111:27	7	ENOMEM
+water	111:21	0:0	8	ENOMEM
+water	111:29	0:0	4	;
+for	112:4	153:4	2	(i = 0 , inout = output_links ;inout;i ++ , inout = inout -> next)
+forinit	112:9	112:36	3	i = 0 , inout = output_links ;
+water	112:9	0:0	4	i
+op	112:11	0:0	4	=
+water	112:13	0:0	4	0
+water	112:14	0:0	4	,
+water	112:16	0:0	4	inout
+op	112:22	0:0	4	=
+water	112:24	0:0	4	output_links
+water	112:36	0:0	4	;
+cond	112:38	112:38	3	inout
+water	112:38	0:0	4	inout
+forexpr	112:45	112:65	3	i ++ , inout = inout -> next
+water	112:45	0:0	4	i
+op	112:46	0:0	4	++
+water	112:48	0:0	4	,
+water	112:50	0:0	4	inout
+op	112:56	0:0	4	=
+water	112:58	0:0	4	inout
+op	112:63	0:0	4	->
+water	112:65	0:0	4	next
+stmts	112:71	153:4	3	
+water	112:71	0:0	4	{
+decl	113:8	113:29	4	AVFilterContext	*sink
+water	114:8	0:0	4	type
+op	114:13	0:0	4	=
+call	114:15	114:83	4	avfilter_pad_get_type
+arg	114:37	114:67	5	inout->filter_ctx->output_pads
+water	114:37	0:0	6	inout
+op	114:42	0:0	6	->
+water	114:44	0:0	6	filter_ctx
+op	114:54	0:0	6	->
+water	114:56	0:0	6	output_pads
+arg	114:69	114:83	5	inout->pad_idx
+water	114:69	0:0	6	inout
+op	114:74	0:0	6	->
+water	114:76	0:0	6	pad_idx
+water	114:84	0:0	4	;
+if	115:8	119:8	4	(type == AVMEDIA_TYPE_VIDEO && ! buffersink || type == AVMEDIA_TYPE_AUDIO && ! abuffersink)
+cond	115:12	116:44	5	type == AVMEDIA_TYPE_VIDEO && ! buffersink || type == AVMEDIA_TYPE_AUDIO && ! abuffersink
+water	115:12	0:0	6	type
+op	115:17	0:0	6	==
+water	115:20	0:0	6	AVMEDIA_TYPE_VIDEO
+op	115:39	0:0	6	&&
+op	115:42	0:0	6	!
+water	115:44	0:0	6	buffersink
+op	115:55	0:0	6	||
+water	116:12	0:0	6	type
+op	116:17	0:0	6	==
+water	116:20	0:0	6	AVMEDIA_TYPE_AUDIO
+op	116:39	0:0	6	&&
+op	116:42	0:0	6	!
+water	116:44	0:0	6	abuffersink
+stmts	116:57	119:8	5	
+water	116:57	0:0	6	{
+call	117:16	117:93	6	av_log
+arg	117:23	117:28	7	avctx
+water	117:23	0:0	8	avctx
+arg	117:30	117:42	7	AV_LOG_ERROR
+water	117:30	0:0	8	AV_LOG_ERROR
+arg	117:44	117:93	7	"Missing required buffersink filter, aborting.\n"
+water	117:44	0:0	8	"Missing required buffersink filter, aborting.\n"
+water	117:94	0:0	6	;
+call	118:16	118:45	6	FAIL
+arg	118:21	118:45	7	AVERROR_FILTER_NOT_FOUND
+water	118:21	0:0	8	AVERROR_FILTER_NOT_FOUND
+water	118:46	0:0	6	;
+water	119:8	0:0	6	}
+if	120:8	128:8	4	(type == AVMEDIA_TYPE_VIDEO)
+cond	120:12	120:20	5	type == AVMEDIA_TYPE_VIDEO
+water	120:12	0:0	6	type
+op	120:17	0:0	6	==
+water	120:20	0:0	6	AVMEDIA_TYPE_VIDEO
+stmts	120:40	128:8	5	
+water	120:40	0:0	6	{
+water	121:12	0:0	6	ret
+op	121:16	0:0	6	=
+call	121:18	123:65	6	avfilter_graph_create_filter
+arg	121:47	121:52	7	&sink
+op	121:47	0:0	8	&
+water	121:48	0:0	8	sink
+arg	121:54	121:64	7	buffersink
+water	121:54	0:0	8	buffersink
+arg	122:47	122:58	7	inout->name
+water	122:47	0:0	8	inout
+op	122:52	0:0	8	->
+water	122:54	0:0	8	name
+arg	122:60	122:64	7	NULL
+water	122:60	0:0	8	NULL
+arg	123:47	123:51	7	NULL
+water	123:47	0:0	8	NULL
+arg	123:53	123:65	7	lavfi->graph
+water	123:53	0:0	8	lavfi
+op	123:58	0:0	8	->
+water	123:60	0:0	8	graph
+water	123:66	0:0	6	;
+if	124:12	125:111	6	(ret >= 0)
+cond	124:16	124:23	7	ret >= 0
+water	124:16	0:0	8	ret
+op	124:20	0:0	8	>=
+water	124:23	0:0	8	0
+stmts	125:16	125:111	7	
+water	125:16	0:0	8	ret
+op	125:20	0:0	8	=
+call	125:22	125:110	8	av_opt_set_int_list
+arg	125:42	125:46	9	sink
+water	125:42	0:0	10	sink
+arg	125:48	125:58	9	"pix_fmts"
+water	125:48	0:0	10	"pix_fmts"
+arg	125:60	125:68	9	pix_fmts
+water	125:60	0:0	10	pix_fmts
+arg	125:71	125:86	9	AV_PIX_FMT_NONE
+water	125:71	0:0	10	AV_PIX_FMT_NONE
+arg	125:88	125:110	9	AV_OPT_SEARCH_CHILDREN
+water	125:88	0:0	10	AV_OPT_SEARCH_CHILDREN
+water	125:111	0:0	8	;
+if	126:12	127:24	6	(ret < 0)
+cond	126:16	126:22	7	ret < 0
+water	126:16	0:0	8	ret
+op	126:20	0:0	8	<
+water	126:22	0:0	8	0
+stmts	127:16	127:24	7	
+goto	127:16	127:24	8	end
+water	127:21	0:0	9	end
+water	128:8	0:0	6	}
+else	128:10	145:8	4
+stmts	128:15	145:8	5	
+if	128:15	145:8	6	(type == AVMEDIA_TYPE_AUDIO)
+cond	128:19	128:27	7	type == AVMEDIA_TYPE_AUDIO
+water	128:19	0:0	8	type
+op	128:24	0:0	8	==
+water	128:27	0:0	8	AVMEDIA_TYPE_AUDIO
+stmts	128:47	145:8	7	
+water	128:47	0:0	8	{
+decl	129:12	133:73	8	enum AVSampleFormat	sample_fmts[]
+op	129:46	0:0	8	=
+water	129:48	0:0	8	{
+water	129:50	0:0	8	AV_SAMPLE_FMT_U8
+water	129:66	0:0	8	,
+water	130:50	0:0	8	AV_SAMPLE_FMT_S16
+water	130:67	0:0	8	,
+water	131:50	0:0	8	AV_SAMPLE_FMT_S32
+water	131:67	0:0	8	,
+water	132:50	0:0	8	AV_SAMPLE_FMT_FLT
+water	132:67	0:0	8	,
+water	133:50	0:0	8	AV_SAMPLE_FMT_DBL
+water	133:67	0:0	8	,
+op	133:69	0:0	8	-
+water	133:70	0:0	8	1
+water	133:72	0:0	8	}
+water	134:12	0:0	8	ret
+op	134:16	0:0	8	=
+call	134:18	136:65	8	avfilter_graph_create_filter
+arg	134:47	134:52	9	&sink
+op	134:47	0:0	10	&
+water	134:48	0:0	10	sink
+arg	134:54	134:65	9	abuffersink
+water	134:54	0:0	10	abuffersink
+arg	135:47	135:58	9	inout->name
+water	135:47	0:0	10	inout
+op	135:52	0:0	10	->
+water	135:54	0:0	10	name
+arg	135:60	135:64	9	NULL
+water	135:60	0:0	10	NULL
+arg	136:47	136:51	9	NULL
+water	136:47	0:0	10	NULL
+arg	136:53	136:65	9	lavfi->graph
+water	136:53	0:0	10	lavfi
+op	136:58	0:0	10	->
+water	136:60	0:0	10	graph
+water	136:66	0:0	8	;
+if	137:12	138:120	8	(ret >= 0)
+cond	137:16	137:23	9	ret >= 0
+water	137:16	0:0	10	ret
+op	137:20	0:0	10	>=
+water	137:23	0:0	10	0
+stmts	138:16	138:120	9	
+water	138:16	0:0	10	ret
+op	138:20	0:0	10	=
+call	138:22	138:119	10	av_opt_set_int_list
+arg	138:42	138:46	11	sink
+water	138:42	0:0	12	sink
+arg	138:48	138:61	11	"sample_fmts"
+water	138:48	0:0	12	"sample_fmts"
+arg	138:63	138:74	11	sample_fmts
+water	138:63	0:0	12	sample_fmts
+arg	138:77	138:95	11	AV_SAMPLE_FMT_NONE
+water	138:77	0:0	12	AV_SAMPLE_FMT_NONE
+arg	138:97	138:119	11	AV_OPT_SEARCH_CHILDREN
+water	138:97	0:0	12	AV_OPT_SEARCH_CHILDREN
+water	138:120	0:0	10	;
+if	139:12	140:24	8	(ret < 0)
+cond	139:16	139:22	9	ret < 0
+water	139:16	0:0	10	ret
+op	139:20	0:0	10	<
+water	139:22	0:0	10	0
+stmts	140:16	140:24	9	
+goto	140:16	140:24	10	end
+water	140:21	0:0	11	end
+water	141:12	0:0	8	ret
+op	141:16	0:0	8	=
+call	141:18	142:55	8	av_opt_set_int
+arg	141:33	141:37	9	sink
+water	141:33	0:0	10	sink
+arg	141:39	141:59	9	"all_channel_counts"
+water	141:39	0:0	10	"all_channel_counts"
+arg	141:61	141:62	9	1
+water	141:61	0:0	10	1
+arg	142:33	142:55	9	AV_OPT_SEARCH_CHILDREN
+water	142:33	0:0	10	AV_OPT_SEARCH_CHILDREN
+water	142:56	0:0	8	;
+if	143:12	144:24	8	(ret < 0)
+cond	143:16	143:22	9	ret < 0
+water	143:16	0:0	10	ret
+op	143:20	0:0	10	<
+water	143:22	0:0	10	0
+stmts	144:16	144:24	9	
+goto	144:16	144:24	10	end
+water	144:21	0:0	11	end
+water	145:8	0:0	8	}
+else	145:10	149:8	4
+stmts	145:15	149:8	5	
+water	145:15	0:0	6	{
+call	146:12	147:97	6	av_log
+arg	146:19	146:24	7	avctx
+water	146:19	0:0	8	avctx
+arg	146:27	146:39	7	AV_LOG_ERROR
+water	146:27	0:0	8	AV_LOG_ERROR
+arg	147:19	147:84	7	"Output '%s' is not a video or audio output, not yet supported\n"
+water	147:19	0:0	8	"Output '%s' is not a video or audio output, not yet supported\n"
+arg	147:86	147:97	7	inout->name
+water	147:86	0:0	8	inout
+op	147:91	0:0	8	->
+water	147:93	0:0	8	name
+water	147:98	0:0	6	;
+call	148:12	148:32	6	FAIL
+arg	148:17	148:32	7	AVERROR(EINVAL)
+call	148:17	148:31	8	AVERROR
+arg	148:25	148:31	9	EINVAL
+water	148:25	0:0	10	EINVAL
+water	148:33	0:0	6	;
+water	149:8	0:0	6	}
+water	150:8	0:0	4	lavfi
+op	150:13	0:0	4	->
+water	150:15	0:0	4	sinks
+op	150:20	0:0	4	[
+water	150:21	0:0	4	i
+op	150:22	0:0	4	]
+op	150:24	0:0	4	=
+water	150:26	0:0	4	sink
+water	150:30	0:0	4	;
+if	151:8	152:20	4	(( ret =avfilter_link (inout -> filter_ctx ,inout -> pad_idx ,sink ,0 ) ) < 0)
+cond	151:12	151:80	5	( ret =avfilter_link (inout -> filter_ctx ,inout -> pad_idx ,sink ,0 ) ) < 0
+water	151:12	0:0	6	(
+water	151:13	0:0	6	ret
+op	151:17	0:0	6	=
+call	151:19	151:75	6	avfilter_link
+arg	151:33	151:50	7	inout->filter_ctx
+water	151:33	0:0	8	inout
+op	151:38	0:0	8	->
+water	151:40	0:0	8	filter_ctx
+arg	151:52	151:66	7	inout->pad_idx
+water	151:52	0:0	8	inout
+op	151:57	0:0	8	->
+water	151:59	0:0	8	pad_idx
+arg	151:68	151:72	7	sink
+water	151:68	0:0	8	sink
+arg	151:74	151:75	7	0
+water	151:74	0:0	8	0
+water	151:76	0:0	6	)
+op	151:78	0:0	6	<
+water	151:80	0:0	6	0
+stmts	152:12	152:20	5	
+goto	152:12	152:20	6	end
+water	152:17	0:0	7	end
+water	153:4	0:0	4	}
+if	155:4	156:16	2	(( ret =avfilter_graph_config (lavfi -> graph ,avctx ) ) < 0)
+cond	155:8	155:61	3	( ret =avfilter_graph_config (lavfi -> graph ,avctx ) ) < 0
+water	155:8	0:0	4	(
+water	155:9	0:0	4	ret
+op	155:13	0:0	4	=
+call	155:15	155:56	4	avfilter_graph_config
+arg	155:37	155:49	5	lavfi->graph
+water	155:37	0:0	6	lavfi
+op	155:42	0:0	6	->
+water	155:44	0:0	6	graph
+arg	155:51	155:56	5	avctx
+water	155:51	0:0	6	avctx
+water	155:57	0:0	4	)
+op	155:59	0:0	4	<
+water	155:61	0:0	4	0
+stmts	156:8	156:16	3	
+goto	156:8	156:16	4	end
+water	156:13	0:0	5	end
+if	157:4	162:4	2	(lavfi -> dump_graph)
+cond	157:8	157:15	3	lavfi -> dump_graph
+water	157:8	0:0	4	lavfi
+op	157:13	0:0	4	->
+water	157:15	0:0	4	dump_graph
+stmts	157:27	162:4	3	
+water	157:27	0:0	4	{
+decl	158:8	158:73	4	char	*dump
+op	158:19	0:0	4	=
+call	158:21	158:72	5	avfilter_graph_dump
+arg	158:41	158:53	6	lavfi->graph
+water	158:41	0:0	7	lavfi
+op	158:46	0:0	7	->
+water	158:48	0:0	7	graph
+arg	158:55	158:72	6	lavfi->dump_graph
+water	158:55	0:0	7	lavfi
+op	158:60	0:0	7	->
+water	158:62	0:0	7	dump_graph
+call	159:8	159:26	4	fputs
+arg	159:14	159:18	5	dump
+water	159:14	0:0	6	dump
+arg	159:20	159:26	5	stderr
+water	159:20	0:0	6	stderr
+water	159:27	0:0	4	;
+call	160:8	160:21	4	fflush
+arg	160:15	160:21	5	stderr
+water	160:15	0:0	6	stderr
+water	160:22	0:0	4	;
+call	161:8	161:20	4	av_free
+arg	161:16	161:20	5	dump
+water	161:16	0:0	6	dump
+water	161:21	0:0	4	;
+water	162:4	0:0	4	}
+for	164:4	193:4	2	(i = 0 ;i < lavfi -> nb_sinks;i ++)
+forinit	164:9	164:14	3	i = 0 ;
+water	164:9	0:0	4	i
+op	164:11	0:0	4	=
+water	164:13	0:0	4	0
+water	164:14	0:0	4	;
+cond	164:16	164:27	3	i < lavfi -> nb_sinks
+water	164:16	0:0	4	i
+op	164:18	0:0	4	<
+water	164:20	0:0	4	lavfi
+op	164:25	0:0	4	->
+water	164:27	0:0	4	nb_sinks
+forexpr	164:37	164:38	3	i ++
+water	164:37	0:0	4	i
+op	164:38	0:0	4	++
+stmts	164:42	193:4	3	
+water	164:42	0:0	4	{
+decl	165:8	165:79	4	AVFilterLink	*link
+op	165:27	0:0	4	=
+water	165:29	0:0	4	lavfi
+op	165:34	0:0	4	->
+water	165:36	0:0	4	sinks
+op	165:41	0:0	4	[
+water	165:42	0:0	4	lavfi
+op	165:47	0:0	4	->
+water	165:49	0:0	4	stream_sink_map
+op	165:64	0:0	4	[
+water	165:65	0:0	4	i
+op	165:66	0:0	4	]
+op	165:67	0:0	4	]
+op	165:68	0:0	4	->
+water	165:70	0:0	4	inputs
+op	165:76	0:0	4	[
+water	165:77	0:0	4	0
+op	165:78	0:0	4	]
+decl	166:8	166:40	4	AVStream	*st
+op	166:21	0:0	4	=
+water	166:23	0:0	4	avctx
+op	166:28	0:0	4	->
+water	166:30	0:0	4	streams
+op	166:37	0:0	4	[
+water	166:38	0:0	4	i
+op	166:39	0:0	4	]
+water	167:8	0:0	4	st
+op	167:10	0:0	4	->
+water	167:12	0:0	4	codec
+op	167:17	0:0	4	->
+water	167:19	0:0	4	codec_type
+op	167:30	0:0	4	=
+water	167:32	0:0	4	link
+op	167:36	0:0	4	->
+water	167:38	0:0	4	type
+water	167:42	0:0	4	;
+call	168:8	168:76	4	avpriv_set_pts_info
+arg	168:28	168:30	5	st
+water	168:28	0:0	6	st
+arg	168:32	168:34	5	64
+water	168:32	0:0	6	64
+arg	168:36	168:55	5	link->time_base.num
+water	168:36	0:0	6	link
+op	168:40	0:0	6	->
+water	168:42	0:0	6	time_base
+op	168:51	0:0	6	.
+water	168:52	0:0	6	num
+arg	168:57	168:76	5	link->time_base.den
+water	168:57	0:0	6	link
+op	168:61	0:0	6	->
+water	168:63	0:0	6	time_base
+op	168:72	0:0	6	.
+water	168:73	0:0	6	den
+water	168:77	0:0	4	;
+if	169:8	181:8	4	(link -> type == AVMEDIA_TYPE_VIDEO)
+cond	169:12	169:26	5	link -> type == AVMEDIA_TYPE_VIDEO
+water	169:12	0:0	6	link
+op	169:16	0:0	6	->
+water	169:18	0:0	6	type
+op	169:23	0:0	6	==
+water	169:26	0:0	6	AVMEDIA_TYPE_VIDEO
+stmts	169:46	181:8	5	
+water	169:46	0:0	6	{
+water	170:12	0:0	6	st
+op	170:14	0:0	6	->
+water	170:16	0:0	6	codec
+op	170:21	0:0	6	->
+water	170:23	0:0	6	codec_id
+op	170:34	0:0	6	=
+water	170:36	0:0	6	AV_CODEC_ID_RAWVIDEO
+water	170:56	0:0	6	;
+water	171:12	0:0	6	st
+op	171:14	0:0	6	->
+water	171:16	0:0	6	codec
+op	171:21	0:0	6	->
+water	171:23	0:0	6	pix_fmt
+op	171:34	0:0	6	=
+water	171:36	0:0	6	link
+op	171:40	0:0	6	->
+water	171:42	0:0	6	format
+water	171:48	0:0	6	;
+water	172:12	0:0	6	st
+op	172:14	0:0	6	->
+water	172:16	0:0	6	codec
+op	172:21	0:0	6	->
+water	172:23	0:0	6	time_base
+op	172:34	0:0	6	=
+water	172:36	0:0	6	link
+op	172:40	0:0	6	->
+water	172:42	0:0	6	time_base
+water	172:51	0:0	6	;
+water	173:12	0:0	6	st
+op	173:14	0:0	6	->
+water	173:16	0:0	6	codec
+op	173:21	0:0	6	->
+water	173:23	0:0	6	width
+op	173:34	0:0	6	=
+water	173:36	0:0	6	link
+op	173:40	0:0	6	->
+water	173:42	0:0	6	w
+water	173:43	0:0	6	;
+water	174:12	0:0	6	st
+op	174:14	0:0	6	->
+water	174:16	0:0	6	codec
+op	174:21	0:0	6	->
+water	174:23	0:0	6	height
+op	174:34	0:0	6	=
+water	174:36	0:0	6	link
+op	174:40	0:0	6	->
+water	174:42	0:0	6	h
+water	174:43	0:0	6	;
+water	175:12	0:0	6	st
+op	175:21	0:0	6	->
+water	175:23	0:0	6	sample_aspect_ratio
+op	175:43	0:0	6	=
+water	176:12	0:0	6	st
+op	176:14	0:0	6	->
+water	176:16	0:0	6	codec
+op	176:21	0:0	6	->
+water	176:23	0:0	6	sample_aspect_ratio
+op	176:43	0:0	6	=
+water	176:45	0:0	6	link
+op	176:49	0:0	6	->
+water	176:51	0:0	6	sample_aspect_ratio
+water	176:70	0:0	6	;
+water	177:12	0:0	6	avctx
+op	177:17	0:0	6	->
+water	177:19	0:0	6	probesize
+op	177:29	0:0	6	=
+call	177:31	180:39	6	FFMAX
+arg	177:37	177:53	7	avctx->probesize
+water	177:37	0:0	8	avctx
+op	177:42	0:0	8	->
+water	177:44	0:0	8	probesize
+arg	178:37	180:39	7	link->w*link->h*av_get_padded_bits_per_pixel(av_pix_fmt_desc_get(link->format))*30
+water	178:37	0:0	8	link
+op	178:41	0:0	8	->
+water	178:43	0:0	8	w
+op	178:45	0:0	8	*
+water	178:47	0:0	8	link
+op	178:51	0:0	8	->
+water	178:53	0:0	8	h
+call	178:55	179:99	8	*av_get_padded_bits_per_pixel
+arg	179:66	179:99	9	av_pix_fmt_desc_get(link->format)
+call	179:66	179:98	10	av_pix_fmt_desc_get
+arg	179:86	179:98	11	link->format
+water	179:86	0:0	12	link
+op	179:90	0:0	12	->
+water	179:92	0:0	12	format
+op	179:101	0:0	8	*
+water	180:37	0:0	8	30
+water	180:40	0:0	6	;
+water	181:8	0:0	6	}
+else	181:10	192:8	4
+stmts	181:15	192:8	5	
+if	181:15	192:8	6	(link -> type == AVMEDIA_TYPE_AUDIO)
+cond	181:19	181:33	7	link -> type == AVMEDIA_TYPE_AUDIO
+water	181:19	0:0	8	link
+op	181:23	0:0	8	->
+water	181:25	0:0	8	type
+op	181:30	0:0	8	==
+water	181:33	0:0	8	AVMEDIA_TYPE_AUDIO
+stmts	181:53	192:8	7	
+water	181:53	0:0	8	{
+water	182:12	0:0	8	st
+op	182:14	0:0	8	->
+water	182:16	0:0	8	codec
+op	182:21	0:0	8	->
+water	182:23	0:0	8	codec_id
+op	182:35	0:0	8	=
+call	182:37	182:70	8	av_get_pcm_codec
+arg	182:54	182:66	9	link->format
+water	182:54	0:0	10	link
+op	182:58	0:0	10	->
+water	182:60	0:0	10	format
+arg	182:68	182:70	9	-1
+op	182:68	0:0	10	-
+water	182:69	0:0	10	1
+water	182:71	0:0	8	;
+water	183:12	0:0	8	st
+op	183:14	0:0	8	->
+water	183:16	0:0	8	codec
+op	183:21	0:0	8	->
+water	183:23	0:0	8	channels
+op	183:35	0:0	8	=
+call	183:37	183:68	8	avfilter_link_get_channels
+arg	183:64	183:68	9	link
+water	183:64	0:0	10	link
+water	183:69	0:0	8	;
+water	184:12	0:0	8	st
+op	184:14	0:0	8	->
+water	184:16	0:0	8	codec
+op	184:21	0:0	8	->
+water	184:23	0:0	8	sample_fmt
+op	184:35	0:0	8	=
+water	184:37	0:0	8	link
+op	184:41	0:0	8	->
+water	184:43	0:0	8	format
+water	184:49	0:0	8	;
+water	185:12	0:0	8	st
+op	185:14	0:0	8	->
+water	185:16	0:0	8	codec
+op	185:21	0:0	8	->
+water	185:23	0:0	8	sample_rate
+op	185:35	0:0	8	=
+water	185:37	0:0	8	link
+op	185:41	0:0	8	->
+water	185:43	0:0	8	sample_rate
+water	185:54	0:0	8	;
+water	186:12	0:0	8	st
+op	186:14	0:0	8	->
+water	186:16	0:0	8	codec
+op	186:21	0:0	8	->
+water	186:23	0:0	8	time_base
+op	186:35	0:0	8	=
+water	186:37	0:0	8	link
+op	186:41	0:0	8	->
+water	186:43	0:0	8	time_base
+water	186:52	0:0	8	;
+water	187:12	0:0	8	st
+op	187:14	0:0	8	->
+water	187:16	0:0	8	codec
+op	187:21	0:0	8	->
+water	187:23	0:0	8	channel_layout
+op	187:38	0:0	8	=
+water	187:40	0:0	8	link
+op	187:44	0:0	8	->
+water	187:46	0:0	8	channel_layout
+water	187:60	0:0	8	;
+if	188:12	191:60	8	(st -> codec -> codec_id == AV_CODEC_ID_NONE)
+cond	188:16	188:39	9	st -> codec -> codec_id == AV_CODEC_ID_NONE
+water	188:16	0:0	10	st
+op	188:18	0:0	10	->
+water	188:20	0:0	10	codec
+op	188:25	0:0	10	->
+water	188:27	0:0	10	codec_id
+op	188:36	0:0	10	==
+water	188:39	0:0	10	AV_CODEC_ID_NONE
+stmts	189:16	191:60	9	
+call	189:16	191:59	10	av_log
+arg	189:23	189:28	11	avctx
+water	189:23	0:0	12	avctx
+arg	189:30	189:42	11	AV_LOG_ERROR
+water	189:30	0:0	12	AV_LOG_ERROR
+arg	190:23	190:73	11	"Could not find PCM codec for sample format %s.\n"
+water	190:23	0:0	12	"Could not find PCM codec for sample format %s.\n"
+arg	191:23	191:59	11	av_get_sample_fmt_name(link->format)
+call	191:23	191:58	12	av_get_sample_fmt_name
+arg	191:46	191:58	13	link->format
+water	191:46	0:0	14	link
+op	191:50	0:0	14	->
+water	191:52	0:0	14	format
+water	191:60	0:0	10	;
+water	192:8	0:0	8	}
+water	193:4	0:0	4	}
+if	194:4	195:16	2	(( ret =create_subcc_streams (avctx ) ) < 0)
+cond	194:8	194:46	3	( ret =create_subcc_streams (avctx ) ) < 0
+water	194:8	0:0	4	(
+water	194:9	0:0	4	ret
+op	194:13	0:0	4	=
+call	194:15	194:41	4	create_subcc_streams
+arg	194:36	194:41	5	avctx
+water	194:36	0:0	6	avctx
+water	194:42	0:0	4	)
+op	194:44	0:0	4	<
+water	194:46	0:0	4	0
+stmts	195:8	195:16	3	
+goto	195:8	195:16	4	end
+water	195:13	0:0	5	end
+if	196:4	197:29	2	(! ( lavfi -> decoded_frame =av_frame_alloc ( ) ))
+cond	196:8	196:49	3	! ( lavfi -> decoded_frame =av_frame_alloc ( ) )
+op	196:8	0:0	4	!
+water	196:9	0:0	4	(
+water	196:10	0:0	4	lavfi
+op	196:15	0:0	4	->
+water	196:17	0:0	4	decoded_frame
+op	196:31	0:0	4	=
+call	196:33	196:48	4	av_frame_alloc
+water	196:49	0:0	4	)
+stmts	197:8	197:29	3	
+call	197:8	197:28	4	FAIL
+arg	197:13	197:28	5	AVERROR(ENOMEM)
+call	197:13	197:27	6	AVERROR
+arg	197:21	197:27	7	ENOMEM
+water	197:21	0:0	8	ENOMEM
+water	197:29	0:0	4	;
+label	198:0	198:3	2	end :
+call	199:4	199:20	2	av_free
+arg	199:12	199:20	3	pix_fmts
+water	199:12	0:0	4	pix_fmts
+water	199:21	0:0	2	;
+call	200:4	200:36	2	avfilter_inout_free
+arg	200:24	200:36	3	&input_links
+op	200:24	0:0	4	&
+water	200:25	0:0	4	input_links
+water	200:37	0:0	2	;
+call	201:4	201:37	2	avfilter_inout_free
+arg	201:24	201:37	3	&output_links
+op	201:24	0:0	4	&
+water	201:25	0:0	4	output_links
+water	201:38	0:0	2	;
+if	202:4	203:31	2	(ret < 0)
+cond	202:8	202:14	3	ret < 0
+water	202:8	0:0	4	ret
+op	202:12	0:0	4	<
+water	202:14	0:0	4	0
+stmts	203:8	203:31	3	
+call	203:8	203:30	4	lavfi_read_close
+arg	203:25	203:30	5	avctx
+water	203:25	0:0	6	avctx
+water	203:31	0:0	4	;
+return	204:4	204:14	2	ret
+water	204:11	0:0	3	ret

@@ -1,0 +1,422 @@
+func	1:0	38:0	0	static int	filter_frame
+params	1:23	0:0	1	
+param	1:24	1:44	2	AVFilterLink *	inlink
+param	1:46	1:64	2	AVFrame *	insamples
+stmnts	0:0	37:4	1	
+decl	3:4	3:27	2	int	i
+water	3:9	0:0	2	,
+decl	3:4	3:27	2	int	ch
+water	3:13	0:0	2	,
+decl	3:4	3:27	2	int	idx_insample
+decl	4:4	4:38	2	AVFilterContext	*ctx
+op	4:25	0:0	2	=
+water	4:27	0:0	2	inlink
+op	4:33	0:0	2	->
+water	4:35	0:0	2	dst
+decl	5:4	5:39	2	EBUR128Context	*ebur128
+op	5:28	0:0	2	=
+water	5:30	0:0	2	ctx
+op	5:33	0:0	2	->
+water	5:35	0:0	2	priv
+decl	6:4	6:48	2	const int	nb_channels
+op	6:26	0:0	2	=
+water	6:28	0:0	2	ebur128
+op	6:35	0:0	2	->
+water	6:37	0:0	2	nb_channels
+decl	7:4	7:49	2	const int	nb_samples
+op	7:26	0:0	2	=
+water	7:28	0:0	2	insamples
+op	7:37	0:0	2	->
+water	7:39	0:0	2	nb_samples
+decl	8:4	8:56	2	const double	*samples
+op	8:26	0:0	2	=
+water	8:28	0:0	2	(
+water	8:29	0:0	2	double
+op	8:36	0:0	2	*
+water	8:37	0:0	2	)
+water	8:38	0:0	2	insamples
+op	8:47	0:0	2	->
+water	8:49	0:0	2	data
+op	8:53	0:0	2	[
+water	8:54	0:0	2	0
+op	8:55	0:0	2	]
+decl	9:4	9:37	2	AVFrame	*pic
+op	9:17	0:0	2	=
+water	9:19	0:0	2	ebur128
+op	9:26	0:0	2	->
+water	9:28	0:0	2	outpicref
+if	11:4	27:4	2	(ebur128 -> peak_mode & PEAK_MODE_TRUE_PEAKS)
+cond	11:8	11:29	3	ebur128 -> peak_mode & PEAK_MODE_TRUE_PEAKS
+water	11:8	0:0	4	ebur128
+op	11:15	0:0	4	->
+water	11:17	0:0	4	peak_mode
+op	11:27	0:0	4	&
+water	11:29	0:0	4	PEAK_MODE_TRUE_PEAKS
+stmts	11:51	27:4	3	
+water	11:51	0:0	4	{
+decl	12:8	12:52	4	const double	*swr_samples
+op	12:34	0:0	4	=
+water	12:36	0:0	4	ebur128
+op	12:43	0:0	4	->
+water	12:45	0:0	4	swr_buf
+decl	13:8	14:76	4	int	ret
+op	13:16	0:0	4	=
+call	13:18	14:75	5	swr_convert
+arg	13:30	13:46	6	ebur128->swr_ctx
+water	13:30	0:0	7	ebur128
+op	13:37	0:0	7	->
+water	13:39	0:0	7	swr_ctx
+arg	13:48	13:76	6	(uint8_t**)&ebur128->swr_buf
+water	13:48	0:0	7	(
+water	13:49	0:0	7	uint8_t
+op	13:56	0:0	7	*
+op	13:57	0:0	7	*
+water	13:58	0:0	7	)
+op	13:59	0:0	7	&
+water	13:60	0:0	7	ebur128
+op	13:67	0:0	7	->
+water	13:69	0:0	7	swr_buf
+arg	13:78	13:83	6	19200
+water	13:78	0:0	7	19200
+arg	14:30	14:63	6	(constuint8_t**)insamples->data
+water	14:30	0:0	7	(
+water	14:31	0:0	7	const
+water	14:37	0:0	7	uint8_t
+op	14:45	0:0	7	*
+op	14:46	0:0	7	*
+water	14:47	0:0	7	)
+water	14:48	0:0	7	insamples
+op	14:57	0:0	7	->
+water	14:59	0:0	7	data
+arg	14:65	14:75	6	nb_samples
+water	14:65	0:0	7	nb_samples
+if	15:8	16:22	4	(ret < 0)
+cond	15:12	15:18	5	ret < 0
+water	15:12	0:0	6	ret
+op	15:16	0:0	6	<
+water	15:18	0:0	6	0
+stmts	16:12	16:22	5	
+return	16:12	16:22	6	ret
+water	16:19	0:0	7	ret
+for	17:8	18:51	4	(ch = 0 ;ch < nb_channels;ch ++)
+forinit	17:13	17:19	5	ch = 0 ;
+water	17:13	0:0	6	ch
+op	17:16	0:0	6	=
+water	17:18	0:0	6	0
+water	17:19	0:0	6	;
+cond	17:21	17:26	5	ch < nb_channels
+water	17:21	0:0	6	ch
+op	17:24	0:0	6	<
+water	17:26	0:0	6	nb_channels
+forexpr	17:39	17:41	5	ch ++
+water	17:39	0:0	6	ch
+op	17:41	0:0	6	++
+stmts	18:12	18:51	5	
+water	18:12	0:0	6	ebur128
+op	18:19	0:0	6	->
+water	18:21	0:0	6	true_peaks_per_frame
+op	18:41	0:0	6	[
+water	18:42	0:0	6	ch
+op	18:44	0:0	6	]
+op	18:46	0:0	6	=
+water	18:48	0:0	6	0
+op	18:49	0:0	6	.
+water	18:50	0:0	6	0
+water	18:51	0:0	6	;
+for	19:8	26:8	4	(idx_insample = 0 ;idx_insample < ret;idx_insample ++)
+forinit	19:13	19:29	5	idx_insample = 0 ;
+water	19:13	0:0	6	idx_insample
+op	19:26	0:0	6	=
+water	19:28	0:0	6	0
+water	19:29	0:0	6	;
+cond	19:31	19:46	5	idx_insample < ret
+water	19:31	0:0	6	idx_insample
+op	19:44	0:0	6	<
+water	19:46	0:0	6	ret
+forexpr	19:51	19:63	5	idx_insample ++
+water	19:51	0:0	6	idx_insample
+op	19:63	0:0	6	++
+stmts	19:67	26:8	5	
+water	19:67	0:0	6	{
+for	20:12	25:12	6	(ch = 0 ;ch < nb_channels;ch ++)
+forinit	20:17	20:23	7	ch = 0 ;
+water	20:17	0:0	8	ch
+op	20:20	0:0	8	=
+water	20:22	0:0	8	0
+water	20:23	0:0	8	;
+cond	20:25	20:30	7	ch < nb_channels
+water	20:25	0:0	8	ch
+op	20:28	0:0	8	<
+water	20:30	0:0	8	nb_channels
+forexpr	20:43	20:45	7	ch ++
+water	20:43	0:0	8	ch
+op	20:45	0:0	8	++
+stmts	20:49	25:12	7	
+water	20:49	0:0	8	{
+water	21:16	0:0	8	ebur128
+op	21:23	0:0	8	->
+water	21:25	0:0	8	true_peaks
+op	21:35	0:0	8	[
+water	21:36	0:0	8	ch
+op	21:38	0:0	8	]
+op	21:40	0:0	8	=
+call	21:42	21:92	8	FFMAX
+arg	21:48	21:71	9	ebur128->true_peaks[ch]
+water	21:48	0:0	10	ebur128
+op	21:55	0:0	10	->
+water	21:57	0:0	10	true_peaks
+op	21:67	0:0	10	[
+water	21:68	0:0	10	ch
+op	21:70	0:0	10	]
+arg	21:73	21:92	9	FFABS(*swr_samples)
+call	21:73	21:91	10	FFABS
+arg	21:79	21:91	11	*swr_samples
+op	21:79	0:0	12	*
+water	21:80	0:0	12	swr_samples
+water	21:93	0:0	8	;
+water	22:16	0:0	8	ebur128
+op	22:23	0:0	8	->
+water	22:25	0:0	8	true_peaks_per_frame
+op	22:45	0:0	8	[
+water	22:46	0:0	8	ch
+op	22:48	0:0	8	]
+op	22:50	0:0	8	=
+call	22:52	23:77	8	FFMAX
+arg	22:58	22:91	9	ebur128->true_peaks_per_frame[ch]
+water	22:58	0:0	10	ebur128
+op	22:65	0:0	10	->
+water	22:67	0:0	10	true_peaks_per_frame
+op	22:87	0:0	10	[
+water	22:88	0:0	10	ch
+op	22:90	0:0	10	]
+arg	23:58	23:77	9	FFABS(*swr_samples)
+call	23:58	23:76	10	FFABS
+arg	23:64	23:76	11	*swr_samples
+op	23:64	0:0	12	*
+water	23:65	0:0	12	swr_samples
+water	23:78	0:0	8	;
+water	24:16	0:0	8	swr_samples
+op	24:27	0:0	8	++
+water	24:29	0:0	8	;
+water	25:12	0:0	8	}
+water	26:8	0:0	6	}
+water	27:4	0:0	4	}
+for	29:4	37:4	2	(idx_insample = 0 ;idx_insample < nb_samples;idx_insample ++)
+forinit	29:9	29:25	3	idx_insample = 0 ;
+water	29:9	0:0	4	idx_insample
+op	29:22	0:0	4	=
+water	29:24	0:0	4	0
+water	29:25	0:0	4	;
+cond	29:27	29:42	3	idx_insample < nb_samples
+water	29:27	0:0	4	idx_insample
+op	29:40	0:0	4	<
+water	29:42	0:0	4	nb_samples
+forexpr	29:54	29:66	3	idx_insample ++
+water	29:54	0:0	4	idx_insample
+op	29:66	0:0	4	++
+stmts	29:70	37:4	3	
+water	29:70	0:0	4	{
+decl	30:8	30:55	4	const int	bin_id_400
+op	30:30	0:0	4	=
+water	30:32	0:0	4	ebur128
+op	30:39	0:0	4	->
+water	30:41	0:0	4	i400
+op	30:45	0:0	4	.
+water	30:46	0:0	4	cache_pos
+decl	31:8	31:56	4	const int	bin_id_3000
+op	31:30	0:0	4	=
+water	31:32	0:0	4	ebur128
+op	31:39	0:0	4	->
+water	31:41	0:0	4	i3000
+op	31:46	0:0	4	.
+water	31:47	0:0	4	cache_pos
+water	33:4	0:0	4	ebur128
+op	33:11	0:0	4	->
+water	33:13	0:0	4	i
+water	34:4	0:0	4	if
+water	34:7	0:0	4	(
+water	34:8	0:0	4	ebur128
+op	34:15	0:0	4	->
+water	34:17	0:0	4	i
+water	35:8	0:0	4	ebur128
+op	35:15	0:0	4	->
+water	35:17	0:0	4	i
+water	36:8	0:0	4	ebur128
+op	36:15	0:0	4	->
+water	36:17	0:0	4	i
+water	37:4	0:0	4	}
+decl	42:12	42:22	0	double	bin
+decl	50:12	50:43	0	double	*dst
+op	50:24	0:0	0	=
+water	50:26	0:0	0	ebur128
+op	50:33	0:0	0	->
+water	50:35	0:0	0	Y
+op	50:37	0:0	0	+
+water	50:39	0:0	0	ch
+op	50:41	0:0	0	*
+water	50:42	0:0	0	3
+decl	51:12	51:43	0	double	*src
+op	51:24	0:0	0	=
+water	51:26	0:0	0	ebur128
+op	51:33	0:0	0	->
+water	51:35	0:0	0	X
+op	51:37	0:0	0	+
+water	51:39	0:0	0	ch
+op	51:41	0:0	0	*
+water	51:42	0:0	0	3
+decl	75:12	75:46	0	double	loudness_400
+water	75:31	0:0	0	,
+decl	75:12	75:46	0	double	loudness_3000
+decl	76:12	76:56	0	double	power_400
+op	76:29	0:0	0	=
+water	76:31	0:0	0	1
+water	76:32	0:0	0	e
+op	76:33	0:0	0	-
+water	76:34	0:0	0	12
+water	76:36	0:0	0	,
+decl	76:12	76:56	0	double	power_3000
+op	76:49	0:0	0	=
+water	76:51	0:0	0	1
+water	76:52	0:0	0	e
+op	76:53	0:0	0	-
+water	76:54	0:0	0	12
+decl	77:12	77:51	0	AVFilterLink	*outlink
+op	77:34	0:0	0	=
+water	77:36	0:0	0	ctx
+op	77:39	0:0	0	->
+water	77:41	0:0	0	outputs
+op	77:48	0:0	0	[
+water	77:49	0:0	0	0
+op	77:50	0:0	0	]
+decl	78:12	80:48	0	const int64_t	pts
+op	78:30	0:0	0	=
+water	78:32	0:0	0	insamples
+op	78:41	0:0	0	->
+water	78:43	0:0	0	pts
+op	78:47	0:0	0	+
+call	79:16	80:47	1	av_rescale_q
+arg	79:29	79:41	2	idx_insample
+water	79:29	0:0	3	idx_insample
+arg	79:43	79:81	2	(AVRational){1,inlink->sample_rate}
+water	79:43	0:0	3	(
+water	79:44	0:0	3	AVRational
+water	79:54	0:0	3	)
+water	79:55	0:0	3	{
+water	79:57	0:0	3	1
+water	79:58	0:0	3	,
+water	79:60	0:0	3	inlink
+op	79:66	0:0	3	->
+water	79:68	0:0	3	sample_rate
+water	79:80	0:0	3	}
+arg	80:29	80:47	2	outlink->time_base
+water	80:29	0:0	3	outlink
+op	80:36	0:0	3	->
+water	80:38	0:0	3	time_base
+decl	96:16	96:41	0	double	integrated_sum
+op	96:38	0:0	0	=
+water	96:40	0:0	0	0
+decl	97:16	97:37	0	int	nb_integrated
+op	97:34	0:0	0	=
+water	97:36	0:0	0	0
+decl	98:16	99:75	0	int	gate_hist_pos
+op	98:34	0:0	0	=
+call	98:36	99:74	1	gate_update
+arg	98:48	98:62	2	&ebur128->i400
+op	98:48	0:0	3	&
+water	98:49	0:0	3	ebur128
+op	98:56	0:0	3	->
+water	98:58	0:0	3	i400
+arg	98:64	98:73	2	power_400
+water	98:64	0:0	3	power_400
+arg	99:48	99:60	2	loudness_400
+water	99:48	0:0	3	loudness_400
+arg	99:62	99:74	2	I_GATE_THRES
+water	99:62	0:0	3	I_GATE_THRES
+decl	103:20	103:69	0	const int	nb_v
+op	103:35	0:0	0	=
+water	103:37	0:0	0	ebur128
+op	103:44	0:0	0	->
+water	103:46	0:0	0	i400
+op	103:50	0:0	0	.
+water	103:51	0:0	0	histogram
+op	103:60	0:0	0	[
+water	103:61	0:0	0	i
+op	103:62	0:0	0	]
+op	103:63	0:0	0	.
+water	103:64	0:0	0	count
+decl	117:16	117:33	0	int	nb_powers
+op	117:30	0:0	0	=
+water	117:32	0:0	0	0
+decl	118:16	119:78	0	int	gate_hist_pos
+op	118:34	0:0	0	=
+call	118:36	119:77	1	gate_update
+arg	118:48	118:63	2	&ebur128->i3000
+op	118:48	0:0	3	&
+water	118:49	0:0	3	ebur128
+op	118:56	0:0	3	->
+water	118:58	0:0	3	i3000
+arg	118:65	118:75	2	power_3000
+water	118:65	0:0	3	power_3000
+arg	119:48	119:61	2	loudness_3000
+water	119:48	0:0	3	loudness_3000
+arg	119:63	119:77	2	LRA_GATE_THRES
+water	119:63	0:0	3	LRA_GATE_THRES
+decl	123:20	123:33	0	int	n
+water	123:25	0:0	0	,
+decl	123:20	123:33	0	int	nb_pow
+decl	151:16	151:29	0	int	x
+water	151:21	0:0	0	,
+decl	151:16	151:29	0	int	y
+water	151:24	0:0	0	,
+decl	151:16	151:29	0	int	ret
+decl	152:16	152:26	0	uint8_t	*p
+decl	153:16	153:84	0	const int	y_loudness_lu_graph
+op	153:46	0:0	0	=
+call	153:48	153:83	1	lu_to_y
+arg	153:56	153:63	2	ebur128
+water	153:56	0:0	3	ebur128
+arg	153:65	153:83	2	loudness_3000+23
+water	153:65	0:0	3	loudness_3000
+op	153:79	0:0	3	+
+water	153:81	0:0	3	23
+decl	154:16	154:84	0	const int	y_loudness_lu_gauge
+op	154:46	0:0	0	=
+call	154:48	154:83	1	lu_to_y
+arg	154:56	154:63	2	ebur128
+water	154:56	0:0	3	ebur128
+arg	154:65	154:83	2	loudness_400+23
+water	154:65	0:0	3	loudness_400
+op	154:79	0:0	3	+
+water	154:81	0:0	3	23
+decl	158:20	158:87	0	const uint8_t	*c
+op	158:37	0:0	0	=
+call	158:39	158:86	1	get_graph_color
+arg	158:55	158:62	2	ebur128
+water	158:55	0:0	3	ebur128
+arg	158:64	158:83	2	y_loudness_lu_graph
+water	158:64	0:0	3	y_loudness_lu_graph
+arg	158:85	158:86	2	y
+water	158:85	0:0	3	y
+decl	166:20	166:87	0	const uint8_t	*c
+op	166:37	0:0	0	=
+call	166:39	166:86	1	get_graph_color
+arg	166:55	166:62	2	ebur128
+water	166:55	0:0	3	ebur128
+arg	166:64	166:83	2	y_loudness_lu_gauge
+water	166:64	0:0	3	y_loudness_lu_gauge
+arg	166:85	166:86	2	y
+water	166:85	0:0	3	y
+decl	183:16	183:33	0	char	metabuf[128]
+decl	191:8	191:20	0	char	key[64]
+decl	213:29	214:52	0	PEAK_MODE_	av_log
+water	214:14	0:0	0	(
+water	214:15	0:0	0	ctx
+water	214:18	0:0	0	,
+water	214:20	0:0	0	ebur128
+op	214:27	0:0	0	->
+water	214:29	0:0	0	loglevel
+water	214:37	0:0	0	,
+water	214:39	0:0	0	"  "
+water	214:44	0:0	0	str
+water	214:48	0:0	0	":"
+water	214:51	0:0	0	)

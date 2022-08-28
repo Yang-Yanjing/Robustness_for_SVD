@@ -1,0 +1,227 @@
+func	1:24	41:0	0	int	process_frame
+params	1:41	0:0	1	
+param	1:42	1:58	2	WriterContext *	w
+param	2:42	2:58	2	InputFile *	ifile
+param	3:42	3:56	2	AVFrame *	frame
+param	3:58	3:71	2	AVPacket *	pkt
+stmnts	0:0	40:20	1	
+decl	5:4	5:45	2	AVFormatContext	*fmt_ctx
+op	5:29	0:0	2	=
+water	5:31	0:0	2	ifile
+op	5:36	0:0	2	->
+water	5:38	0:0	2	fmt_ctx
+decl	6:4	6:71	2	AVCodecContext	*dec_ctx
+op	6:28	0:0	2	=
+water	6:30	0:0	2	ifile
+op	6:35	0:0	2	->
+water	6:37	0:0	2	streams
+op	6:44	0:0	2	[
+water	6:45	0:0	2	pkt
+op	6:48	0:0	2	->
+water	6:50	0:0	2	stream_index
+op	6:62	0:0	2	]
+op	6:63	0:0	2	.
+water	6:64	0:0	2	dec_ctx
+decl	7:4	7:75	2	AVCodecParameters	*par
+op	7:27	0:0	2	=
+water	7:29	0:0	2	ifile
+op	7:34	0:0	2	->
+water	7:36	0:0	2	streams
+op	7:43	0:0	2	[
+water	7:44	0:0	2	pkt
+op	7:47	0:0	2	->
+water	7:49	0:0	2	stream_index
+op	7:61	0:0	2	]
+op	7:62	0:0	2	.
+water	7:63	0:0	2	st
+op	7:65	0:0	2	->
+water	7:67	0:0	2	codecpar
+decl	8:4	8:18	2	AVSubtitle	sub
+decl	9:4	9:30	2	int	ret
+op	9:12	0:0	2	=
+water	9:14	0:0	2	0
+water	9:15	0:0	2	,
+decl	9:4	9:30	2	int	got_frame
+op	9:27	0:0	2	=
+water	9:29	0:0	2	0
+call	10:4	10:15	2	clear_log
+arg	10:14	10:15	3	1
+water	10:14	0:0	4	1
+water	10:16	0:0	2	;
+if	11:4	23:4	2	(dec_ctx && dec_ctx -> codec)
+cond	11:8	11:28	3	dec_ctx && dec_ctx -> codec
+water	11:8	0:0	4	dec_ctx
+op	11:16	0:0	4	&&
+water	11:19	0:0	4	dec_ctx
+op	11:26	0:0	4	->
+water	11:28	0:0	4	codec
+stmts	11:35	23:4	3	
+water	11:35	0:0	4	{
+switch	12:8	22:8	4	(par -> codec_type)
+cond	12:16	12:21	5	par -> codec_type
+water	12:16	0:0	6	par
+op	12:19	0:0	6	->
+water	12:21	0:0	6	codec_type
+stmts	12:33	22:8	5	
+water	12:33	0:0	6	{
+label	13:8	13:31	6	case AVMEDIA_TYPE_VIDEO :
+water	14:12	0:0	6	ret
+op	14:16	0:0	6	=
+call	14:18	14:71	6	avcodec_decode_video2
+arg	14:40	14:47	7	dec_ctx
+water	14:40	0:0	8	dec_ctx
+arg	14:49	14:54	7	frame
+water	14:49	0:0	8	frame
+arg	14:56	14:66	7	&got_frame
+op	14:56	0:0	8	&
+water	14:57	0:0	8	got_frame
+arg	14:68	14:71	7	pkt
+water	14:68	0:0	8	pkt
+water	14:72	0:0	6	;
+break	15:12	15:17	6	
+label	16:8	16:31	6	case AVMEDIA_TYPE_AUDIO :
+water	17:12	0:0	6	ret
+op	17:16	0:0	6	=
+call	17:18	17:71	6	avcodec_decode_audio4
+arg	17:40	17:47	7	dec_ctx
+water	17:40	0:0	8	dec_ctx
+arg	17:49	17:54	7	frame
+water	17:49	0:0	8	frame
+arg	17:56	17:66	7	&got_frame
+op	17:56	0:0	8	&
+water	17:57	0:0	8	got_frame
+arg	17:68	17:71	7	pkt
+water	17:68	0:0	8	pkt
+water	17:72	0:0	6	;
+break	18:12	18:17	6	
+label	19:8	19:34	6	case AVMEDIA_TYPE_SUBTITLE :
+water	20:12	0:0	6	ret
+op	20:16	0:0	6	=
+call	20:18	20:73	6	avcodec_decode_subtitle2
+arg	20:43	20:50	7	dec_ctx
+water	20:43	0:0	8	dec_ctx
+arg	20:52	20:56	7	&sub
+op	20:52	0:0	8	&
+water	20:53	0:0	8	sub
+arg	20:58	20:68	7	&got_frame
+op	20:58	0:0	8	&
+water	20:59	0:0	8	got_frame
+arg	20:70	20:73	7	pkt
+water	20:70	0:0	8	pkt
+water	20:74	0:0	6	;
+break	21:12	21:17	6	
+water	22:8	0:0	6	}
+water	23:4	0:0	4	}
+if	24:4	25:18	2	(ret < 0)
+cond	24:8	24:14	3	ret < 0
+water	24:8	0:0	4	ret
+op	24:12	0:0	4	<
+water	24:14	0:0	4	0
+stmts	25:8	25:18	3	
+return	25:8	25:18	4	ret
+water	25:15	0:0	5	ret
+water	26:4	0:0	2	ret
+op	26:8	0:0	2	=
+call	26:10	26:30	2	FFMIN
+arg	26:16	26:19	3	ret
+water	26:16	0:0	4	ret
+arg	26:21	26:30	3	pkt->size
+water	26:21	0:0	4	pkt
+op	26:24	0:0	4	->
+water	26:26	0:0	4	size
+water	26:31	0:0	2	;
+water	27:4	0:0	2	pkt
+op	27:7	0:0	2	->
+water	27:9	0:0	2	data
+op	27:14	0:0	2	+=
+water	27:17	0:0	2	ret
+water	27:20	0:0	2	;
+water	28:4	0:0	2	pkt
+op	28:7	0:0	2	->
+water	28:9	0:0	2	size
+op	28:14	0:0	2	-=
+water	28:17	0:0	2	ret
+water	28:20	0:0	2	;
+if	29:4	39:4	2	(got_frame)
+cond	29:8	29:8	3	got_frame
+water	29:8	0:0	4	got_frame
+stmts	29:19	39:4	3	
+water	29:19	0:0	4	{
+decl	30:8	30:63	4	int	is_sub
+op	30:19	0:0	4	=
+water	30:21	0:0	4	(
+water	30:22	0:0	4	par
+op	30:25	0:0	4	->
+water	30:27	0:0	4	codec_type
+op	30:38	0:0	4	==
+water	30:41	0:0	4	AVMEDIA_TYPE_SUBTITLE
+water	30:62	0:0	4	)
+water	31:8	0:0	4	nb_streams_frames
+op	31:25	0:0	4	[
+water	31:26	0:0	4	pkt
+op	31:29	0:0	4	->
+water	31:31	0:0	4	stream_index
+op	31:43	0:0	4	]
+op	31:44	0:0	4	++
+water	31:46	0:0	4	;
+if	32:8	34:85	4	(do_show_frames)
+cond	32:12	32:12	5	do_show_frames
+water	32:12	0:0	6	do_show_frames
+stmts	33:12	34:85	5	
+if	33:12	34:85	6	(is_sub)
+cond	33:16	33:16	7	is_sub
+water	33:16	0:0	8	is_sub
+stmts	34:16	34:85	7	
+call	34:16	34:84	8	show_subtitle
+arg	34:30	34:31	9	w
+water	34:30	0:0	10	w
+arg	34:33	34:37	9	&sub
+op	34:33	0:0	10	&
+water	34:34	0:0	10	sub
+arg	34:39	34:75	9	ifile->streams[pkt->stream_index].st
+water	34:39	0:0	10	ifile
+op	34:44	0:0	10	->
+water	34:46	0:0	10	streams
+op	34:53	0:0	10	[
+water	34:54	0:0	10	pkt
+op	34:57	0:0	10	->
+water	34:59	0:0	10	stream_index
+op	34:71	0:0	10	]
+op	34:72	0:0	10	.
+water	34:73	0:0	10	st
+arg	34:77	34:84	9	fmt_ctx
+water	34:77	0:0	10	fmt_ctx
+water	34:85	0:0	8	;
+else	35:12	36:83	4
+stmts	36:16	36:83	5	
+call	36:16	36:82	6	show_frame
+arg	36:27	36:28	7	w
+water	36:27	0:0	8	w
+arg	36:30	36:35	7	frame
+water	36:30	0:0	8	frame
+arg	36:37	36:73	7	ifile->streams[pkt->stream_index].st
+water	36:37	0:0	8	ifile
+op	36:42	0:0	8	->
+water	36:44	0:0	8	streams
+op	36:51	0:0	8	[
+water	36:52	0:0	8	pkt
+op	36:55	0:0	8	->
+water	36:57	0:0	8	stream_index
+op	36:69	0:0	8	]
+op	36:70	0:0	8	.
+water	36:71	0:0	8	st
+arg	36:75	36:82	7	fmt_ctx
+water	36:75	0:0	8	fmt_ctx
+water	36:83	0:0	6	;
+if	37:8	38:33	4	(is_sub)
+cond	37:12	37:12	5	is_sub
+water	37:12	0:0	6	is_sub
+stmts	38:12	38:33	5	
+call	38:12	38:32	6	avsubtitle_free
+arg	38:28	38:32	7	&sub
+op	38:28	0:0	8	&
+water	38:29	0:0	8	sub
+water	38:33	0:0	6	;
+water	39:4	0:0	4	}
+return	40:4	40:20	2	got_frame
+water	40:11	0:0	3	got_frame

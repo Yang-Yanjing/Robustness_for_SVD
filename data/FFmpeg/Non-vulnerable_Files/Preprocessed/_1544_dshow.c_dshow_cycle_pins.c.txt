@@ -1,0 +1,675 @@
+func	1:0	121:0	0	static int	dshow_cycle_pins
+params	2:16	0:0	1	
+param	2:17	2:39	2	AVFormatContext *	avctx
+param	2:41	2:69	2	enum dshowDeviceType	devtype
+param	3:17	3:54	2	enum dshowSourceFilterType	sourcetype
+param	3:56	3:82	2	IBaseFilter *	device_filter
+param	3:84	3:95	2	IPin * *	ppin
+stmnts	0:0	120:12	1	
+decl	5:4	5:44	2	struct dshow_ctx	*ctx
+op	5:26	0:0	2	=
+water	5:28	0:0	2	avctx
+op	5:33	0:0	2	->
+water	5:35	0:0	2	priv_data
+decl	6:4	6:23	2	IEnumPins	*pins
+op	6:20	0:0	2	=
+water	6:22	0:0	2	0
+decl	7:4	7:27	2	IPin	*device_pin
+op	7:21	0:0	2	=
+water	7:23	0:0	2	NULL
+decl	8:4	8:13	2	IPin	*pin
+decl	9:4	9:9	2	int	r
+decl	10:4	10:69	2	const GUID	*mediatype[2]
+op	10:29	0:0	2	=
+water	10:31	0:0	2	{
+op	10:33	0:0	2	&
+water	10:34	0:0	2	MEDIATYPE_Video
+water	10:49	0:0	2	,
+op	10:51	0:0	2	&
+water	10:52	0:0	2	MEDIATYPE_Audio
+water	10:68	0:0	2	}
+decl	11:4	11:79	2	const char	*devtypename
+op	11:28	0:0	2	=
+water	11:30	0:0	2	(
+water	11:31	0:0	2	devtype
+op	11:39	0:0	2	==
+water	11:42	0:0	2	VideoDevice
+water	11:53	0:0	2	)
+water	11:55	0:0	2	?
+water	11:57	0:0	2	"video"
+water	11:65	0:0	2	:
+water	11:67	0:0	2	"audio only"
+decl	12:4	12:86	2	const char	*sourcetypename
+op	12:31	0:0	2	=
+water	12:33	0:0	2	(
+water	12:34	0:0	2	sourcetype
+op	12:45	0:0	2	==
+water	12:48	0:0	2	VideoSourceDevice
+water	12:65	0:0	2	)
+water	12:67	0:0	2	?
+water	12:69	0:0	2	"video"
+water	12:77	0:0	2	:
+water	12:79	0:0	2	"audio"
+decl	13:4	17:84	2	int	set_format
+op	13:19	0:0	2	=
+water	13:21	0:0	2	(
+water	13:22	0:0	2	devtype
+op	13:30	0:0	2	==
+water	13:33	0:0	2	VideoDevice
+op	13:45	0:0	2	&&
+water	13:48	0:0	2	(
+water	13:49	0:0	2	ctx
+op	13:52	0:0	2	->
+water	13:54	0:0	2	framerate
+op	13:64	0:0	2	||
+water	14:48	0:0	2	(
+water	14:49	0:0	2	ctx
+op	14:52	0:0	2	->
+water	14:54	0:0	2	requested_width
+op	14:70	0:0	2	&&
+water	14:73	0:0	2	ctx
+op	14:76	0:0	2	->
+water	14:78	0:0	2	requested_height
+water	14:94	0:0	2	)
+op	14:96	0:0	2	||
+water	15:49	0:0	2	ctx
+op	15:52	0:0	2	->
+water	15:54	0:0	2	pixel_format
+op	15:67	0:0	2	!=
+water	15:70	0:0	2	AV_PIX_FMT_NONE
+op	15:86	0:0	2	||
+water	16:49	0:0	2	ctx
+op	16:52	0:0	2	->
+water	16:54	0:0	2	video_codec_id
+op	16:69	0:0	2	!=
+water	16:72	0:0	2	AV_CODEC_ID_RAWVIDEO
+water	16:92	0:0	2	)
+water	16:93	0:0	2	)
+op	17:18	0:0	2	||
+water	17:21	0:0	2	(
+water	17:22	0:0	2	devtype
+op	17:30	0:0	2	==
+water	17:33	0:0	2	AudioDevice
+op	17:45	0:0	2	&&
+water	17:48	0:0	2	(
+water	17:49	0:0	2	ctx
+op	17:52	0:0	2	->
+water	17:54	0:0	2	channels
+op	17:63	0:0	2	||
+water	17:66	0:0	2	ctx
+op	17:69	0:0	2	->
+water	17:71	0:0	2	sample_rate
+water	17:82	0:0	2	)
+water	17:83	0:0	2	)
+decl	18:4	18:22	2	int	format_set
+op	18:19	0:0	2	=
+water	18:21	0:0	2	0
+decl	19:4	19:121	2	int	should_show_properties
+op	19:31	0:0	2	=
+water	19:33	0:0	2	(
+water	19:34	0:0	2	devtype
+op	19:42	0:0	2	==
+water	19:45	0:0	2	VideoDevice
+water	19:56	0:0	2	)
+water	19:58	0:0	2	?
+water	19:60	0:0	2	ctx
+op	19:63	0:0	2	->
+water	19:65	0:0	2	show_video_device_dialog
+water	19:90	0:0	2	:
+water	19:92	0:0	2	ctx
+op	19:95	0:0	2	->
+water	19:97	0:0	2	show_audio_device_dialog
+if	20:4	21:58	2	(should_show_properties)
+cond	20:8	20:8	3	should_show_properties
+water	20:8	0:0	4	should_show_properties
+stmts	21:8	21:58	3	
+call	21:8	21:57	4	dshow_show_filter_properties
+arg	21:37	21:50	5	device_filter
+water	21:37	0:0	6	device_filter
+arg	21:52	21:57	5	avctx
+water	21:52	0:0	6	avctx
+water	21:58	0:0	4	;
+water	22:4	0:0	2	r
+op	22:6	0:0	2	=
+call	22:8	22:49	2	IBaseFilter_EnumPins
+arg	22:29	22:42	3	device_filter
+water	22:29	0:0	4	device_filter
+arg	22:44	22:49	3	&pins
+op	22:44	0:0	4	&
+water	22:45	0:0	4	pins
+water	22:50	0:0	2	;
+if	23:4	26:4	2	(r != S_OK)
+cond	23:8	23:13	3	r != S_OK
+water	23:8	0:0	4	r
+op	23:10	0:0	4	!=
+water	23:13	0:0	4	S_OK
+stmts	23:19	26:4	3	
+water	23:19	0:0	4	{
+call	24:8	24:65	4	av_log
+arg	24:15	24:20	5	avctx
+water	24:15	0:0	6	avctx
+arg	24:22	24:34	5	AV_LOG_ERROR
+water	24:22	0:0	6	AV_LOG_ERROR
+arg	24:36	24:65	5	"Could not enumerate pins.\n"
+water	24:36	0:0	6	"Could not enumerate pins.\n"
+water	24:66	0:0	4	;
+return	25:8	25:27	4	AVERROR(EIO)
+call	25:15	25:26	5	AVERROR
+arg	25:23	25:26	6	EIO
+water	25:23	0:0	7	EIO
+water	26:4	0:0	4	}
+if	27:4	30:4	2	(! ppin)
+cond	27:8	27:9	3	! ppin
+op	27:8	0:0	4	!
+water	27:9	0:0	4	ppin
+stmts	27:15	30:4	3	
+water	27:15	0:0	4	{
+call	28:8	29:42	4	av_log
+arg	28:15	28:20	5	avctx
+water	28:15	0:0	6	avctx
+arg	28:22	28:33	5	AV_LOG_INFO
+water	28:22	0:0	6	AV_LOG_INFO
+arg	28:35	28:85	5	"DirectShow %s device options (from %s devices)\n"
+water	28:35	0:0	6	"DirectShow %s device options (from %s devices)\n"
+arg	29:15	29:26	5	devtypename
+water	29:15	0:0	6	devtypename
+arg	29:28	29:42	5	sourcetypename
+water	29:28	0:0	6	sourcetypename
+water	29:43	0:0	4	;
+water	30:4	0:0	4	}
+while	31:4	106:4	2	(! device_pin &&IEnumPins_Next (pins ,1 ,& pin ,NULL ) == S_OK)
+cond	31:11	31:65	3	! device_pin &&IEnumPins_Next (pins ,1 ,& pin ,NULL ) == S_OK
+op	31:11	0:0	4	!
+water	31:12	0:0	4	device_pin
+op	31:23	0:0	4	&&
+call	31:26	31:60	4	IEnumPins_Next
+arg	31:41	31:45	5	pins
+water	31:41	0:0	6	pins
+arg	31:47	31:48	5	1
+water	31:47	0:0	6	1
+arg	31:50	31:54	5	&pin
+op	31:50	0:0	6	&
+water	31:51	0:0	6	pin
+arg	31:56	31:60	5	NULL
+water	31:56	0:0	6	NULL
+op	31:62	0:0	4	==
+water	31:65	0:0	4	S_OK
+stmts	31:71	106:4	3	
+water	31:71	0:0	4	{
+decl	32:8	32:32	4	IKsPropertySet	*p
+op	32:26	0:0	4	=
+water	32:28	0:0	4	NULL
+decl	33:8	33:37	4	IEnumMediaTypes	*types
+op	33:31	0:0	4	=
+water	33:33	0:0	4	NULL
+decl	34:8	34:27	4	PIN_INFO	info
+op	34:22	0:0	4	=
+water	34:24	0:0	4	{
+water	34:25	0:0	4	0
+water	34:26	0:0	4	}
+decl	35:8	35:27	4	AM_MEDIA_TYPE	*type
+decl	36:8	36:21	4	GUID	category
+decl	37:8	37:16	4	DWORD	r2
+decl	38:8	38:29	4	char	*name_buf
+op	38:23	0:0	4	=
+water	38:25	0:0	4	NULL
+decl	39:8	39:30	4	wchar_t	*pin_id
+op	39:24	0:0	4	=
+water	39:26	0:0	4	NULL
+decl	40:8	40:28	4	char	*pin_buf
+op	40:22	0:0	4	=
+water	40:24	0:0	4	NULL
+decl	41:8	41:99	4	char	*desired_pin_name
+op	41:31	0:0	4	=
+water	41:33	0:0	4	devtype
+op	41:41	0:0	4	==
+water	41:44	0:0	4	VideoDevice
+water	41:56	0:0	4	?
+water	41:58	0:0	4	ctx
+op	41:61	0:0	4	->
+water	41:63	0:0	4	video_pin_name
+water	41:78	0:0	4	:
+water	41:80	0:0	4	ctx
+op	41:83	0:0	4	->
+water	41:85	0:0	4	audio_pin_name
+call	42:8	42:36	4	IPin_QueryPinInfo
+arg	42:26	42:29	5	pin
+water	42:26	0:0	6	pin
+arg	42:31	42:36	5	&info
+op	42:31	0:0	6	&
+water	42:32	0:0	6	info
+water	42:37	0:0	4	;
+call	43:8	43:40	4	IBaseFilter_Release
+arg	43:28	43:40	5	info.pFilter
+water	43:28	0:0	6	info
+op	43:32	0:0	6	.
+water	43:33	0:0	6	pFilter
+water	43:41	0:0	4	;
+if	44:8	45:21	4	(info . dir != PINDIR_OUTPUT)
+cond	44:12	44:24	5	info . dir != PINDIR_OUTPUT
+water	44:12	0:0	6	info
+op	44:16	0:0	6	.
+water	44:17	0:0	6	dir
+op	44:21	0:0	6	!=
+water	44:24	0:0	6	PINDIR_OUTPUT
+stmts	45:12	45:21	5	
+goto	45:12	45:21	6	next
+water	45:17	0:0	7	next
+if	46:8	47:21	4	(IPin_QueryInterface (pin ,& IID_IKsPropertySet ,( void * * ) & p ) != S_OK)
+cond	46:12	46:75	5	IPin_QueryInterface (pin ,& IID_IKsPropertySet ,( void * * ) & p ) != S_OK
+call	46:12	46:70	6	IPin_QueryInterface
+arg	46:32	46:35	7	pin
+water	46:32	0:0	8	pin
+arg	46:37	46:56	7	&IID_IKsPropertySet
+op	46:37	0:0	8	&
+water	46:38	0:0	8	IID_IKsPropertySet
+arg	46:58	46:70	7	(void**)&p
+water	46:58	0:0	8	(
+water	46:59	0:0	8	void
+op	46:64	0:0	8	*
+op	46:65	0:0	8	*
+water	46:66	0:0	8	)
+op	46:68	0:0	8	&
+water	46:69	0:0	8	p
+op	46:72	0:0	6	!=
+water	46:75	0:0	6	S_OK
+stmts	47:12	47:21	5	
+goto	47:12	47:21	6	next
+water	47:17	0:0	7	next
+if	48:8	50:21	4	(IKsPropertySet_Get (p ,& AMPROPSETID_Pin ,AMPROPERTY_PIN_CATEGORY ,NULL ,0 ,& category ,sizeof ( GUID ) ,& r2 ) != S_OK)
+cond	48:12	49:73	5	IKsPropertySet_Get (p ,& AMPROPSETID_Pin ,AMPROPERTY_PIN_CATEGORY ,NULL ,0 ,& category ,sizeof ( GUID ) ,& r2 ) != S_OK
+call	48:12	49:68	6	IKsPropertySet_Get
+arg	48:31	48:32	7	p
+water	48:31	0:0	8	p
+arg	48:34	48:50	7	&AMPROPSETID_Pin
+op	48:34	0:0	8	&
+water	48:35	0:0	8	AMPROPSETID_Pin
+arg	48:52	48:75	7	AMPROPERTY_PIN_CATEGORY
+water	48:52	0:0	8	AMPROPERTY_PIN_CATEGORY
+arg	49:31	49:35	7	NULL
+water	49:31	0:0	8	NULL
+arg	49:37	49:38	7	0
+water	49:37	0:0	8	0
+arg	49:40	49:49	7	&category
+op	49:40	0:0	8	&
+water	49:41	0:0	8	category
+arg	49:51	49:63	7	sizeof(GUID)
+op	49:51	0:0	8	sizeof
+water	49:57	0:0	8	(
+water	49:58	0:0	8	GUID
+water	49:62	0:0	8	)
+arg	49:65	49:68	7	&r2
+op	49:65	0:0	8	&
+water	49:66	0:0	8	r2
+op	49:70	0:0	6	!=
+water	49:73	0:0	6	S_OK
+stmts	50:12	50:21	5	
+goto	50:12	50:21	6	next
+water	50:17	0:0	7	next
+if	51:8	52:21	4	(!IsEqualGUID (& category ,& PIN_CATEGORY_CAPTURE ))
+cond	51:12	51:57	5	!IsEqualGUID (& category ,& PIN_CATEGORY_CAPTURE )
+op	51:12	0:0	6	!
+call	51:13	51:57	6	IsEqualGUID
+arg	51:25	51:34	7	&category
+op	51:25	0:0	8	&
+water	51:26	0:0	8	category
+arg	51:36	51:57	7	&PIN_CATEGORY_CAPTURE
+op	51:36	0:0	8	&
+water	51:37	0:0	8	PIN_CATEGORY_CAPTURE
+stmts	52:12	52:21	5	
+goto	52:12	52:21	6	next
+water	52:17	0:0	7	next
+water	53:8	0:0	4	name_buf
+op	53:17	0:0	4	=
+call	53:19	53:49	4	dup_wchar_to_utf8
+arg	53:37	53:49	5	info.achName
+water	53:37	0:0	6	info
+op	53:41	0:0	6	.
+water	53:42	0:0	6	achName
+water	53:50	0:0	4	;
+water	54:8	0:0	4	r
+op	54:10	0:0	4	=
+call	54:12	54:37	4	IPin_QueryId
+arg	54:25	54:28	5	pin
+water	54:25	0:0	6	pin
+arg	54:30	54:37	5	&pin_id
+op	54:30	0:0	6	&
+water	54:31	0:0	6	pin_id
+water	54:38	0:0	4	;
+if	55:8	58:8	4	(r != S_OK)
+cond	55:12	55:17	5	r != S_OK
+water	55:12	0:0	6	r
+op	55:14	0:0	6	!=
+water	55:17	0:0	6	S_OK
+stmts	55:23	58:8	5	
+water	55:23	0:0	6	{
+call	56:12	56:66	6	av_log
+arg	56:19	56:24	7	avctx
+water	56:19	0:0	8	avctx
+arg	56:26	56:38	7	AV_LOG_ERROR
+water	56:26	0:0	8	AV_LOG_ERROR
+arg	56:40	56:66	7	"Could not query pin id\n"
+water	56:40	0:0	8	"Could not query pin id\n"
+water	56:67	0:0	6	;
+return	57:12	57:31	6	AVERROR(EIO)
+call	57:19	57:30	7	AVERROR
+arg	57:27	57:30	8	EIO
+water	57:27	0:0	9	EIO
+water	58:8	0:0	6	}
+water	59:8	0:0	4	pin_buf
+op	59:16	0:0	4	=
+call	59:18	59:42	4	dup_wchar_to_utf8
+arg	59:36	59:42	5	pin_id
+water	59:36	0:0	6	pin_id
+water	59:43	0:0	4	;
+if	60:8	64:8	4	(! ppin)
+cond	60:12	60:13	5	! ppin
+op	60:12	0:0	6	!
+water	60:13	0:0	6	ppin
+stmts	60:19	64:8	5	
+water	60:19	0:0	6	{
+call	61:12	61:103	6	av_log
+arg	61:19	61:24	7	avctx
+water	61:19	0:0	8	avctx
+arg	61:26	61:37	7	AV_LOG_INFO
+water	61:26	0:0	8	AV_LOG_INFO
+arg	61:39	61:84	7	" Pin \"%s\" (alternative pin name \"%s\")\n"
+water	61:39	0:0	8	" Pin \"%s\" (alternative pin name \"%s\")\n"
+arg	61:86	61:94	7	name_buf
+water	61:86	0:0	8	name_buf
+arg	61:96	61:103	7	pin_buf
+water	61:96	0:0	8	pin_buf
+water	61:104	0:0	6	;
+call	62:12	62:57	6	dshow_cycle_formats
+arg	62:32	62:37	7	avctx
+water	62:32	0:0	8	avctx
+arg	62:39	62:46	7	devtype
+water	62:39	0:0	8	devtype
+arg	62:48	62:51	7	pin
+water	62:48	0:0	8	pin
+arg	62:53	62:57	7	NULL
+water	62:53	0:0	8	NULL
+water	62:58	0:0	6	;
+goto	63:12	63:21	6	next
+water	63:17	0:0	7	next
+water	64:8	0:0	6	}
+if	65:8	71:8	4	(desired_pin_name)
+cond	65:12	65:12	5	desired_pin_name
+water	65:12	0:0	6	desired_pin_name
+stmts	65:30	71:8	5	
+water	65:30	0:0	6	{
+if	66:12	70:12	6	(strcmp (name_buf ,desired_pin_name ) &&strcmp (pin_buf ,desired_pin_name ))
+cond	66:15	66:85	7	strcmp (name_buf ,desired_pin_name ) &&strcmp (pin_buf ,desired_pin_name )
+call	66:15	66:48	8	strcmp
+arg	66:22	66:30	9	name_buf
+water	66:22	0:0	10	name_buf
+arg	66:32	66:48	9	desired_pin_name
+water	66:32	0:0	10	desired_pin_name
+op	66:50	0:0	8	&&
+call	66:53	66:85	8	strcmp
+arg	66:60	66:67	9	pin_buf
+water	66:60	0:0	10	pin_buf
+arg	66:69	66:85	9	desired_pin_name
+water	66:69	0:0	10	desired_pin_name
+stmts	66:88	70:12	7	
+water	66:88	0:0	8	{
+call	67:16	68:55	8	av_log
+arg	67:23	67:28	9	avctx
+water	67:23	0:0	10	avctx
+arg	67:30	67:42	9	AV_LOG_DEBUG
+water	67:30	0:0	10	AV_LOG_DEBUG
+arg	67:44	67:96	9	"skipping pin \"%s\" (\"%s\") != requested \"%s\"\n"
+water	67:44	0:0	10	"skipping pin \"%s\" (\"%s\") != requested \"%s\"\n"
+arg	68:20	68:28	9	name_buf
+water	68:20	0:0	10	name_buf
+arg	68:30	68:37	9	pin_buf
+water	68:30	0:0	10	pin_buf
+arg	68:39	68:55	9	desired_pin_name
+water	68:39	0:0	10	desired_pin_name
+water	68:56	0:0	8	;
+goto	69:16	69:25	8	next
+water	69:21	0:0	9	next
+water	70:12	0:0	8	}
+water	71:8	0:0	6	}
+if	72:8	77:8	4	(set_format)
+cond	72:12	72:12	5	set_format
+water	72:12	0:0	6	set_format
+stmts	72:24	77:8	5	
+water	72:24	0:0	6	{
+call	73:12	73:64	6	dshow_cycle_formats
+arg	73:32	73:37	7	avctx
+water	73:32	0:0	8	avctx
+arg	73:39	73:46	7	devtype
+water	73:39	0:0	8	devtype
+arg	73:48	73:51	7	pin
+water	73:48	0:0	8	pin
+arg	73:53	73:64	7	&format_set
+op	73:53	0:0	8	&
+water	73:54	0:0	8	format_set
+water	73:65	0:0	6	;
+if	74:12	76:12	6	(! format_set)
+cond	74:16	74:17	7	! format_set
+op	74:16	0:0	8	!
+water	74:17	0:0	8	format_set
+stmts	74:29	76:12	7	
+water	74:29	0:0	8	{
+goto	75:16	75:25	8	next
+water	75:21	0:0	9	next
+water	76:12	0:0	8	}
+water	77:8	0:0	6	}
+if	78:8	82:8	4	(devtype == AudioDevice && ctx -> audio_buffer_size)
+cond	78:12	78:43	5	devtype == AudioDevice && ctx -> audio_buffer_size
+water	78:12	0:0	6	devtype
+op	78:20	0:0	6	==
+water	78:23	0:0	6	AudioDevice
+op	78:35	0:0	6	&&
+water	78:38	0:0	6	ctx
+op	78:41	0:0	6	->
+water	78:43	0:0	6	audio_buffer_size
+stmts	78:62	82:8	5	
+water	78:62	0:0	6	{
+if	79:12	81:12	6	(dshow_set_audio_buffer_size (avctx ,pin ) < 0)
+cond	79:16	79:58	7	dshow_set_audio_buffer_size (avctx ,pin ) < 0
+call	79:16	79:54	8	dshow_set_audio_buffer_size
+arg	79:44	79:49	9	avctx
+water	79:44	0:0	10	avctx
+arg	79:51	79:54	9	pin
+water	79:51	0:0	10	pin
+op	79:56	0:0	8	<
+water	79:58	0:0	8	0
+stmts	79:61	81:12	7	
+water	79:61	0:0	8	{
+call	80:16	80:132	8	av_log
+arg	80:23	80:28	9	avctx
+water	80:23	0:0	10	avctx
+arg	80:30	80:42	9	AV_LOG_ERROR
+water	80:30	0:0	10	AV_LOG_ERROR
+arg	80:44	80:108	9	"unable to set audio buffer size %d to pin, using pin anyway..."
+water	80:44	0:0	10	"unable to set audio buffer size %d to pin, using pin anyway..."
+arg	80:110	80:132	9	ctx->audio_buffer_size
+water	80:110	0:0	10	ctx
+op	80:113	0:0	10	->
+water	80:115	0:0	10	audio_buffer_size
+water	80:133	0:0	8	;
+water	81:12	0:0	8	}
+water	82:8	0:0	6	}
+if	83:8	84:21	4	(IPin_EnumMediaTypes (pin ,& types ) != S_OK)
+cond	83:12	83:48	5	IPin_EnumMediaTypes (pin ,& types ) != S_OK
+call	83:12	83:43	6	IPin_EnumMediaTypes
+arg	83:32	83:35	7	pin
+water	83:32	0:0	8	pin
+arg	83:37	83:43	7	&types
+op	83:37	0:0	8	&
+water	83:38	0:0	8	types
+op	83:45	0:0	6	!=
+water	83:48	0:0	6	S_OK
+stmts	84:12	84:21	5	
+goto	84:12	84:21	6	next
+water	84:17	0:0	7	next
+call	85:8	85:35	4	IEnumMediaTypes_Reset
+arg	85:30	85:35	5	types
+water	85:30	0:0	6	types
+water	85:36	0:0	4	;
+while	87:8	94:8	4	(! device_pin &&IEnumMediaTypes_Next (types ,1 ,& type ,NULL ) == S_OK)
+cond	87:15	87:77	5	! device_pin &&IEnumMediaTypes_Next (types ,1 ,& type ,NULL ) == S_OK
+op	87:15	0:0	6	!
+water	87:16	0:0	6	device_pin
+op	87:27	0:0	6	&&
+call	87:30	87:72	6	IEnumMediaTypes_Next
+arg	87:51	87:56	7	types
+water	87:51	0:0	8	types
+arg	87:58	87:59	7	1
+water	87:58	0:0	8	1
+arg	87:61	87:66	7	&type
+op	87:61	0:0	8	&
+water	87:62	0:0	8	type
+arg	87:68	87:72	7	NULL
+water	87:68	0:0	8	NULL
+op	87:74	0:0	6	==
+water	87:77	0:0	6	S_OK
+stmts	87:83	94:8	5	
+water	87:83	0:0	6	{
+if	88:12	92:12	6	(IsEqualGUID (& type -> majortype ,mediatype [ devtype ] ))
+cond	88:16	88:64	7	IsEqualGUID (& type -> majortype ,mediatype [ devtype ] )
+call	88:16	88:64	8	IsEqualGUID
+arg	88:28	88:44	9	&type->majortype
+op	88:28	0:0	10	&
+water	88:29	0:0	10	type
+op	88:33	0:0	10	->
+water	88:35	0:0	10	majortype
+arg	88:46	88:64	9	mediatype[devtype]
+water	88:46	0:0	10	mediatype
+op	88:55	0:0	10	[
+water	88:56	0:0	10	devtype
+op	88:63	0:0	10	]
+stmts	88:67	92:12	7	
+water	88:67	0:0	8	{
+water	89:16	0:0	8	device_pin
+op	89:27	0:0	8	=
+water	89:29	0:0	8	pin
+water	89:32	0:0	8	;
+call	90:16	90:93	8	av_log
+arg	90:23	90:28	9	avctx
+water	90:23	0:0	10	avctx
+arg	90:30	90:42	9	AV_LOG_DEBUG
+water	90:30	0:0	10	AV_LOG_DEBUG
+arg	90:44	90:70	9	"Selecting pin %s on %s\n"
+water	90:44	0:0	10	"Selecting pin %s on %s\n"
+arg	90:72	90:80	9	name_buf
+water	90:72	0:0	10	name_buf
+arg	90:82	90:93	9	devtypename
+water	90:82	0:0	10	devtypename
+water	90:94	0:0	8	;
+goto	91:16	91:25	8	next
+water	91:21	0:0	9	next
+water	92:12	0:0	8	}
+call	93:12	93:30	6	CoTaskMemFree
+arg	93:26	93:30	7	type
+water	93:26	0:0	8	type
+water	93:31	0:0	6	;
+water	94:8	0:0	6	}
+label	95:0	95:4	4	next :
+if	96:8	97:42	4	(types)
+cond	96:12	96:12	5	types
+water	96:12	0:0	6	types
+stmts	97:12	97:42	5	
+call	97:12	97:41	6	IEnumMediaTypes_Release
+arg	97:36	97:41	7	types
+water	97:36	0:0	8	types
+water	97:42	0:0	6	;
+if	98:8	99:37	4	(p)
+cond	98:12	98:12	5	p
+water	98:12	0:0	6	p
+stmts	99:12	99:37	5	
+call	99:12	99:36	6	IKsPropertySet_Release
+arg	99:35	99:36	7	p
+water	99:35	0:0	8	p
+water	99:37	0:0	6	;
+if	100:8	101:29	4	(device_pin != pin)
+cond	100:12	100:26	5	device_pin != pin
+water	100:12	0:0	6	device_pin
+op	100:23	0:0	6	!=
+water	100:26	0:0	6	pin
+stmts	101:12	101:29	5	
+call	101:12	101:28	6	IPin_Release
+arg	101:25	101:28	7	pin
+water	101:25	0:0	8	pin
+water	101:29	0:0	6	;
+call	102:8	102:24	4	av_free
+arg	102:16	102:24	5	name_buf
+water	102:16	0:0	6	name_buf
+water	102:25	0:0	4	;
+call	103:8	103:23	4	av_free
+arg	103:16	103:23	5	pin_buf
+water	103:16	0:0	6	pin_buf
+water	103:24	0:0	4	;
+if	104:8	105:33	4	(pin_id)
+cond	104:12	104:12	5	pin_id
+water	104:12	0:0	6	pin_id
+stmts	105:12	105:33	5	
+call	105:12	105:32	6	CoTaskMemFree
+arg	105:26	105:32	7	pin_id
+water	105:26	0:0	8	pin_id
+water	105:33	0:0	6	;
+water	106:4	0:0	4	}
+call	107:4	107:26	2	IEnumPins_Release
+arg	107:22	107:26	3	pins
+water	107:22	0:0	4	pins
+water	107:27	0:0	2	;
+if	108:4	119:4	2	(ppin)
+cond	108:8	108:8	3	ppin
+water	108:8	0:0	4	ppin
+stmts	108:14	119:4	3	
+water	108:14	0:0	4	{
+if	109:8	112:8	4	(set_format && ! format_set)
+cond	109:12	109:27	5	set_format && ! format_set
+water	109:12	0:0	6	set_format
+op	109:23	0:0	6	&&
+op	109:26	0:0	6	!
+water	109:27	0:0	6	format_set
+stmts	109:39	112:8	5	
+water	109:39	0:0	6	{
+call	110:12	110:81	6	av_log
+arg	110:19	110:24	7	avctx
+water	110:19	0:0	8	avctx
+arg	110:26	110:38	7	AV_LOG_ERROR
+water	110:26	0:0	8	AV_LOG_ERROR
+arg	110:40	110:68	7	"Could not set %s options\n"
+water	110:40	0:0	8	"Could not set %s options\n"
+arg	110:70	110:81	7	devtypename
+water	110:70	0:0	8	devtypename
+water	110:82	0:0	6	;
+return	111:12	111:31	6	AVERROR(EIO)
+call	111:19	111:30	7	AVERROR
+arg	111:27	111:30	8	EIO
+water	111:27	0:0	9	EIO
+water	112:8	0:0	6	}
+if	113:8	117:8	4	(! device_pin)
+cond	113:12	113:13	5	! device_pin
+op	113:12	0:0	6	!
+water	113:13	0:0	6	device_pin
+stmts	113:25	117:8	5	
+water	113:25	0:0	6	{
+call	114:12	115:82	6	av_log
+arg	114:19	114:24	7	avctx
+water	114:19	0:0	8	avctx
+arg	114:26	114:38	7	AV_LOG_ERROR
+water	114:26	0:0	8	AV_LOG_ERROR
+arg	115:16	115:69	7	"Could not find output pin from %s capture device.\n"
+water	115:16	0:0	8	"Could not find output pin from %s capture device.\n"
+arg	115:71	115:82	7	devtypename
+water	115:71	0:0	8	devtypename
+water	115:83	0:0	6	;
+return	116:12	116:31	6	AVERROR(EIO)
+call	116:19	116:30	7	AVERROR
+arg	116:27	116:30	8	EIO
+water	116:27	0:0	9	EIO
+water	117:8	0:0	6	}
+op	118:8	0:0	4	*
+water	118:9	0:0	4	ppin
+op	118:14	0:0	4	=
+water	118:16	0:0	4	device_pin
+water	118:26	0:0	4	;
+water	119:4	0:0	4	}
+return	120:4	120:12	2	0
+water	120:11	0:0	3	0

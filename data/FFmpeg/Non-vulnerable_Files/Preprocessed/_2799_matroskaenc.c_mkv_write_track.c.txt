@@ -1,0 +1,1325 @@
+func	1:0	201:0	0	static int	mkv_write_track
+params	1:26	0:0	1	
+param	1:27	1:45	2	AVFormatContext *	s
+param	1:47	1:70	2	MatroskaMuxContext *	mkv
+param	2:27	2:32	2	int	i
+param	2:34	2:49	2	AVIOContext *	pb
+param	2:51	2:76	2	int	default_stream_exists
+stmnts	0:0	200:12	1	
+decl	4:4	4:32	2	AVStream	*st
+op	4:17	0:0	2	=
+water	4:19	0:0	2	s
+op	4:20	0:0	2	->
+water	4:22	0:0	2	streams
+op	4:29	0:0	2	[
+water	4:30	0:0	2	i
+op	4:31	0:0	2	]
+decl	5:4	5:37	2	AVCodecContext	*codec
+op	5:26	0:0	2	=
+water	5:28	0:0	2	st
+op	5:30	0:0	2	->
+water	5:32	0:0	2	codec
+decl	6:4	6:30	2	ebml_master	subinfo
+water	6:23	0:0	2	,
+decl	6:4	6:30	2	ebml_master	track
+decl	7:4	7:21	2	int	native_id
+op	7:18	0:0	2	=
+water	7:20	0:0	2	0
+decl	8:4	8:17	2	int	qt_id
+op	8:14	0:0	2	=
+water	8:16	0:0	2	0
+decl	9:4	9:59	2	int	bit_depth
+op	9:18	0:0	2	=
+call	9:20	9:58	3	av_get_bits_per_sample
+arg	9:43	9:58	4	codec->codec_id
+water	9:43	0:0	5	codec
+op	9:48	0:0	5	->
+water	9:50	0:0	5	codec_id
+decl	10:4	10:40	2	int	sample_rate
+op	10:20	0:0	2	=
+water	10:22	0:0	2	codec
+op	10:27	0:0	2	->
+water	10:29	0:0	2	sample_rate
+decl	11:4	11:30	2	int	output_sample_rate
+op	11:27	0:0	2	=
+water	11:29	0:0	2	0
+decl	12:4	12:29	2	int	display_width_div
+op	12:26	0:0	2	=
+water	12:28	0:0	2	1
+decl	13:4	13:30	2	int	display_height_div
+op	13:27	0:0	2	=
+water	13:29	0:0	2	1
+decl	14:4	14:14	2	int	j
+water	14:9	0:0	2	,
+decl	14:4	14:14	2	int	ret
+decl	15:4	15:26	2	AVDictionaryEntry	*tag
+call	17:4	17:39	2	avpriv_set_pts_info
+arg	17:24	17:26	3	st
+water	17:24	0:0	4	st
+arg	17:28	17:30	3	64
+water	17:28	0:0	4	64
+arg	17:32	17:33	3	1
+water	17:32	0:0	4	1
+arg	17:35	17:39	3	1000
+water	17:35	0:0	4	1000
+water	17:40	0:0	2	;
+if	18:4	21:4	2	(codec -> codec_type == AVMEDIA_TYPE_ATTACHMENT)
+cond	18:8	18:29	3	codec -> codec_type == AVMEDIA_TYPE_ATTACHMENT
+water	18:8	0:0	4	codec
+op	18:13	0:0	4	->
+water	18:15	0:0	4	codec_type
+op	18:26	0:0	4	==
+water	18:29	0:0	4	AVMEDIA_TYPE_ATTACHMENT
+stmts	18:54	21:4	3	
+water	18:54	0:0	4	{
+water	19:8	0:0	4	mkv
+op	19:11	0:0	4	->
+water	19:13	0:0	4	have_attachments
+op	19:30	0:0	4	=
+water	19:32	0:0	4	1
+water	19:33	0:0	4	;
+return	20:8	20:16	4	0
+water	20:15	0:0	5	0
+water	21:4	0:0	4	}
+if	22:4	23:67	2	(! bit_depth && codec -> codec_id != AV_CODEC_ID_ADPCM_G726)
+cond	22:8	22:41	3	! bit_depth && codec -> codec_id != AV_CODEC_ID_ADPCM_G726
+op	22:8	0:0	4	!
+water	22:9	0:0	4	bit_depth
+op	22:19	0:0	4	&&
+water	22:22	0:0	4	codec
+op	22:27	0:0	4	->
+water	22:29	0:0	4	codec_id
+op	22:38	0:0	4	!=
+water	22:41	0:0	4	AV_CODEC_ID_ADPCM_G726
+stmts	23:8	23:67	3	
+water	23:8	0:0	4	bit_depth
+op	23:18	0:0	4	=
+call	23:20	23:61	4	av_get_bytes_per_sample
+arg	23:44	23:61	5	codec->sample_fmt
+water	23:44	0:0	6	codec
+op	23:49	0:0	6	->
+water	23:51	0:0	6	sample_fmt
+op	23:63	0:0	4	<<
+water	23:66	0:0	4	3
+water	23:67	0:0	4	;
+if	24:4	25:48	2	(! bit_depth)
+cond	24:8	24:9	3	! bit_depth
+op	24:8	0:0	4	!
+water	24:9	0:0	4	bit_depth
+stmts	25:8	25:48	3	
+water	25:8	0:0	4	bit_depth
+op	25:18	0:0	4	=
+water	25:20	0:0	4	codec
+op	25:25	0:0	4	->
+water	25:27	0:0	4	bits_per_coded_sample
+water	25:48	0:0	4	;
+if	26:4	30:4	2	(codec -> codec_id == AV_CODEC_ID_AAC)
+cond	26:8	26:27	3	codec -> codec_id == AV_CODEC_ID_AAC
+water	26:8	0:0	4	codec
+op	26:13	0:0	4	->
+water	26:15	0:0	4	codec_id
+op	26:24	0:0	4	==
+water	26:27	0:0	4	AV_CODEC_ID_AAC
+stmts	26:44	30:4	3	
+water	26:44	0:0	4	{
+water	27:8	0:0	4	ret
+op	27:12	0:0	4	=
+call	27:14	27:78	4	get_aac_sample_rates
+arg	27:35	27:36	5	s
+water	27:35	0:0	6	s
+arg	27:38	27:43	5	codec
+water	27:38	0:0	6	codec
+arg	27:45	27:57	5	&sample_rate
+op	27:45	0:0	6	&
+water	27:46	0:0	6	sample_rate
+arg	27:59	27:78	5	&output_sample_rate
+op	27:59	0:0	6	&
+water	27:60	0:0	6	output_sample_rate
+water	27:79	0:0	4	;
+if	28:8	29:22	4	(ret < 0)
+cond	28:12	28:18	5	ret < 0
+water	28:12	0:0	6	ret
+op	28:16	0:0	6	<
+water	28:18	0:0	6	0
+stmts	29:12	29:22	5	
+return	29:12	29:22	6	ret
+water	29:19	0:0	7	ret
+water	30:4	0:0	4	}
+water	31:4	0:0	2	track
+op	31:10	0:0	2	=
+call	31:12	31:59	2	start_ebml_master
+arg	31:30	31:32	3	pb
+water	31:30	0:0	4	pb
+arg	31:34	31:56	3	MATROSKA_ID_TRACKENTRY
+water	31:34	0:0	4	MATROSKA_ID_TRACKENTRY
+arg	31:58	31:59	3	0
+water	31:58	0:0	4	0
+water	31:60	0:0	2	;
+call	32:4	33:64	2	put_ebml_uint
+arg	32:19	32:21	3	pb
+water	32:19	0:0	4	pb
+arg	32:23	32:46	3	MATROSKA_ID_TRACKNUMBER
+water	32:23	0:0	4	MATROSKA_ID_TRACKNUMBER
+arg	33:19	33:64	3	mkv->is_dash?mkv->dash_track_number:i+1
+water	33:19	0:0	4	mkv
+op	33:22	0:0	4	->
+water	33:24	0:0	4	is_dash
+water	33:32	0:0	4	?
+water	33:34	0:0	4	mkv
+op	33:37	0:0	4	->
+water	33:39	0:0	4	dash_track_number
+water	33:57	0:0	4	:
+water	33:59	0:0	4	i
+op	33:61	0:0	4	+
+water	33:63	0:0	4	1
+water	33:65	0:0	2	;
+call	34:4	35:64	2	put_ebml_uint
+arg	34:19	34:21	3	pb
+water	34:19	0:0	4	pb
+arg	34:23	34:43	3	MATROSKA_ID_TRACKUID
+water	34:23	0:0	4	MATROSKA_ID_TRACKUID
+arg	35:19	35:64	3	mkv->is_dash?mkv->dash_track_number:i+1
+water	35:19	0:0	4	mkv
+op	35:22	0:0	4	->
+water	35:24	0:0	4	is_dash
+water	35:32	0:0	4	?
+water	35:34	0:0	4	mkv
+op	35:37	0:0	4	->
+water	35:39	0:0	4	dash_track_number
+water	35:57	0:0	4	:
+water	35:59	0:0	4	i
+op	35:61	0:0	4	+
+water	35:63	0:0	4	1
+water	35:65	0:0	2	;
+call	36:4	36:54	2	put_ebml_uint
+arg	36:19	36:21	3	pb
+water	36:19	0:0	4	pb
+arg	36:23	36:51	3	MATROSKA_ID_TRACKFLAGLACING
+water	36:23	0:0	4	MATROSKA_ID_TRACKFLAGLACING
+arg	36:53	36:54	3	0
+water	36:53	0:0	4	0
+water	36:55	0:0	2	;
+if	37:4	38:62	2	(( tag =av_dict_get (st -> metadata ,"title" ,NULL ,0 ) ))
+cond	37:8	37:58	3	( tag =av_dict_get (st -> metadata ,"title" ,NULL ,0 ) )
+water	37:8	0:0	4	(
+water	37:9	0:0	4	tag
+op	37:13	0:0	4	=
+call	37:15	37:57	4	av_dict_get
+arg	37:27	37:39	5	st->metadata
+water	37:27	0:0	6	st
+op	37:29	0:0	6	->
+water	37:31	0:0	6	metadata
+arg	37:41	37:48	5	"title"
+water	37:41	0:0	6	"title"
+arg	37:50	37:54	5	NULL
+water	37:50	0:0	6	NULL
+arg	37:56	37:57	5	0
+water	37:56	0:0	6	0
+water	37:58	0:0	4	)
+stmts	38:8	38:62	3	
+call	38:8	38:61	4	put_ebml_string
+arg	38:24	38:26	5	pb
+water	38:24	0:0	6	pb
+arg	38:28	38:49	5	MATROSKA_ID_TRACKNAME
+water	38:28	0:0	6	MATROSKA_ID_TRACKNAME
+arg	38:51	38:61	5	tag->value
+water	38:51	0:0	6	tag
+op	38:54	0:0	6	->
+water	38:56	0:0	6	value
+water	38:62	0:0	4	;
+water	39:4	0:0	2	tag
+op	39:8	0:0	2	=
+call	39:10	39:55	2	av_dict_get
+arg	39:22	39:34	3	st->metadata
+water	39:22	0:0	4	st
+op	39:24	0:0	4	->
+water	39:26	0:0	4	metadata
+arg	39:36	39:46	3	"language"
+water	39:36	0:0	4	"language"
+arg	39:48	39:52	3	NULL
+water	39:48	0:0	4	NULL
+arg	39:54	39:55	3	0
+water	39:54	0:0	4	0
+water	39:56	0:0	2	;
+if	40:4	42:4	2	(mkv -> mode != MODE_WEBM || codec -> codec_id != AV_CODEC_ID_WEBVTT)
+cond	40:8	40:53	3	mkv -> mode != MODE_WEBM || codec -> codec_id != AV_CODEC_ID_WEBVTT
+water	40:8	0:0	4	mkv
+op	40:11	0:0	4	->
+water	40:13	0:0	4	mode
+op	40:18	0:0	4	!=
+water	40:21	0:0	4	MODE_WEBM
+op	40:31	0:0	4	||
+water	40:34	0:0	4	codec
+op	40:39	0:0	4	->
+water	40:41	0:0	4	codec_id
+op	40:50	0:0	4	!=
+water	40:53	0:0	4	AV_CODEC_ID_WEBVTT
+stmts	40:73	42:4	3	
+water	40:73	0:0	4	{
+call	41:8	41:91	4	put_ebml_string
+arg	41:24	41:26	5	pb
+water	41:24	0:0	6	pb
+arg	41:28	41:53	5	MATROSKA_ID_TRACKLANGUAGE
+water	41:28	0:0	6	MATROSKA_ID_TRACKLANGUAGE
+arg	41:55	41:91	5	tag&&tag->value?tag->value:"und"
+water	41:55	0:0	6	tag
+op	41:59	0:0	6	&&
+water	41:62	0:0	6	tag
+op	41:65	0:0	6	->
+water	41:67	0:0	6	value
+water	41:73	0:0	6	?
+water	41:75	0:0	6	tag
+op	41:78	0:0	6	->
+water	41:80	0:0	6	value
+water	41:85	0:0	6	:
+water	41:86	0:0	6	"und"
+water	41:92	0:0	4	;
+water	42:4	0:0	4	}
+else	42:6	44:4	2
+stmts	42:11	44:4	3	
+if	42:11	44:4	4	(tag && tag -> value)
+cond	42:15	42:27	5	tag && tag -> value
+water	42:15	0:0	6	tag
+op	42:19	0:0	6	&&
+water	42:22	0:0	6	tag
+op	42:25	0:0	6	->
+water	42:27	0:0	6	value
+stmts	42:34	44:4	5	
+water	42:34	0:0	6	{
+call	43:8	43:65	6	put_ebml_string
+arg	43:24	43:26	7	pb
+water	43:24	0:0	8	pb
+arg	43:28	43:53	7	MATROSKA_ID_TRACKLANGUAGE
+water	43:28	0:0	8	MATROSKA_ID_TRACKLANGUAGE
+arg	43:55	43:65	7	tag->value
+water	43:55	0:0	8	tag
+op	43:58	0:0	8	->
+water	43:60	0:0	8	value
+water	43:66	0:0	6	;
+water	44:4	0:0	6	}
+if	47:4	48:101	2	(default_stream_exists && ! ( st -> disposition & AV_DISPOSITION_DEFAULT ))
+cond	47:8	47:75	3	default_stream_exists && ! ( st -> disposition & AV_DISPOSITION_DEFAULT )
+water	47:8	0:0	4	default_stream_exists
+op	47:30	0:0	4	&&
+op	47:33	0:0	4	!
+water	47:34	0:0	4	(
+water	47:35	0:0	4	st
+op	47:37	0:0	4	->
+water	47:39	0:0	4	disposition
+op	47:51	0:0	4	&
+water	47:53	0:0	4	AV_DISPOSITION_DEFAULT
+water	47:75	0:0	4	)
+stmts	48:8	48:101	3	
+call	48:8	48:100	4	put_ebml_uint
+arg	48:22	48:24	5	pb
+water	48:22	0:0	6	pb
+arg	48:26	48:54	5	MATROSKA_ID_TRACKFLAGDEFAULT
+water	48:26	0:0	6	MATROSKA_ID_TRACKFLAGDEFAULT
+arg	48:56	48:100	5	!!(st->disposition&AV_DISPOSITION_DEFAULT)
+op	48:56	0:0	6	!
+op	48:57	0:0	6	!
+water	48:58	0:0	6	(
+water	48:59	0:0	6	st
+op	48:61	0:0	6	->
+water	48:63	0:0	6	disposition
+op	48:75	0:0	6	&
+water	48:77	0:0	6	AV_DISPOSITION_DEFAULT
+water	48:99	0:0	6	)
+water	48:101	0:0	4	;
+if	49:4	50:57	2	(st -> disposition & AV_DISPOSITION_FORCED)
+cond	49:8	49:26	3	st -> disposition & AV_DISPOSITION_FORCED
+water	49:8	0:0	4	st
+op	49:10	0:0	4	->
+water	49:12	0:0	4	disposition
+op	49:24	0:0	4	&
+water	49:26	0:0	4	AV_DISPOSITION_FORCED
+stmts	50:8	50:57	3	
+call	50:8	50:56	4	put_ebml_uint
+arg	50:22	50:24	5	pb
+water	50:22	0:0	6	pb
+arg	50:26	50:53	5	MATROSKA_ID_TRACKFLAGFORCED
+water	50:26	0:0	6	MATROSKA_ID_TRACKFLAGFORCED
+arg	50:55	50:56	5	1
+water	50:55	0:0	6	1
+water	50:57	0:0	4	;
+if	51:4	67:4	2	(mkv -> mode == MODE_WEBM && codec -> codec_id == AV_CODEC_ID_WEBVTT)
+cond	51:8	51:53	3	mkv -> mode == MODE_WEBM && codec -> codec_id == AV_CODEC_ID_WEBVTT
+water	51:8	0:0	4	mkv
+op	51:11	0:0	4	->
+water	51:13	0:0	4	mode
+op	51:18	0:0	4	==
+water	51:21	0:0	4	MODE_WEBM
+op	51:31	0:0	4	&&
+water	51:34	0:0	4	codec
+op	51:39	0:0	4	->
+water	51:41	0:0	4	codec_id
+op	51:50	0:0	4	==
+water	51:53	0:0	4	AV_CODEC_ID_WEBVTT
+stmts	51:73	67:4	3	
+water	51:73	0:0	4	{
+decl	52:8	52:28	4	const char	*codec_id
+if	53:8	56:8	4	(st -> disposition & AV_DISPOSITION_CAPTIONS)
+cond	53:12	53:30	5	st -> disposition & AV_DISPOSITION_CAPTIONS
+water	53:12	0:0	6	st
+op	53:14	0:0	6	->
+water	53:16	0:0	6	disposition
+op	53:28	0:0	6	&
+water	53:30	0:0	6	AV_DISPOSITION_CAPTIONS
+stmts	53:55	56:8	5	
+water	53:55	0:0	6	{
+water	54:12	0:0	6	codec_id
+op	54:21	0:0	6	=
+water	54:23	0:0	6	"D_WEBVTT/CAPTIONS"
+water	54:42	0:0	6	;
+water	55:12	0:0	6	native_id
+op	55:22	0:0	6	=
+water	55:24	0:0	6	MATROSKA_TRACK_TYPE_SUBTITLE
+water	55:52	0:0	6	;
+water	56:8	0:0	6	}
+else	56:10	59:8	4
+stmts	56:15	59:8	5	
+if	56:15	59:8	6	(st -> disposition & AV_DISPOSITION_DESCRIPTIONS)
+cond	56:19	56:37	7	st -> disposition & AV_DISPOSITION_DESCRIPTIONS
+water	56:19	0:0	8	st
+op	56:21	0:0	8	->
+water	56:23	0:0	8	disposition
+op	56:35	0:0	8	&
+water	56:37	0:0	8	AV_DISPOSITION_DESCRIPTIONS
+stmts	56:66	59:8	7	
+water	56:66	0:0	8	{
+water	57:12	0:0	8	codec_id
+op	57:21	0:0	8	=
+water	57:23	0:0	8	"D_WEBVTT/DESCRIPTIONS"
+water	57:46	0:0	8	;
+water	58:12	0:0	8	native_id
+op	58:22	0:0	8	=
+water	58:24	0:0	8	MATROSKA_TRACK_TYPE_METADATA
+water	58:52	0:0	8	;
+water	59:8	0:0	8	}
+else	59:10	62:8	4
+stmts	59:15	62:8	5	
+if	59:15	62:8	6	(st -> disposition & AV_DISPOSITION_METADATA)
+cond	59:19	59:37	7	st -> disposition & AV_DISPOSITION_METADATA
+water	59:19	0:0	8	st
+op	59:21	0:0	8	->
+water	59:23	0:0	8	disposition
+op	59:35	0:0	8	&
+water	59:37	0:0	8	AV_DISPOSITION_METADATA
+stmts	59:62	62:8	7	
+water	59:62	0:0	8	{
+water	60:12	0:0	8	codec_id
+op	60:21	0:0	8	=
+water	60:23	0:0	8	"D_WEBVTT/METADATA"
+water	60:42	0:0	8	;
+water	61:12	0:0	8	native_id
+op	61:22	0:0	8	=
+water	61:24	0:0	8	MATROSKA_TRACK_TYPE_METADATA
+water	61:52	0:0	8	;
+water	62:8	0:0	8	}
+else	62:10	65:8	4
+stmts	62:15	65:8	5	
+water	62:15	0:0	6	{
+water	63:12	0:0	6	codec_id
+op	63:21	0:0	6	=
+water	63:23	0:0	6	"D_WEBVTT/SUBTITLES"
+water	63:43	0:0	6	;
+water	64:12	0:0	6	native_id
+op	64:22	0:0	6	=
+water	64:24	0:0	6	MATROSKA_TRACK_TYPE_SUBTITLE
+water	64:52	0:0	6	;
+water	65:8	0:0	6	}
+call	66:8	66:57	4	put_ebml_string
+arg	66:24	66:26	5	pb
+water	66:24	0:0	6	pb
+arg	66:28	66:47	5	MATROSKA_ID_CODECID
+water	66:28	0:0	6	MATROSKA_ID_CODECID
+arg	66:49	66:57	5	codec_id
+water	66:49	0:0	6	codec_id
+water	66:58	0:0	4	;
+water	67:4	0:0	4	}
+else	67:6	86:4	2
+stmts	67:11	86:4	3	
+water	67:11	0:0	4	{
+for	70:8	76:8	4	(j = 0 ;ff_mkv_codec_tags [ j ] . id != AV_CODEC_ID_NONE;j ++)
+forinit	70:13	70:18	5	j = 0 ;
+water	70:13	0:0	6	j
+op	70:15	0:0	6	=
+water	70:17	0:0	6	0
+water	70:18	0:0	6	;
+cond	70:20	70:47	5	ff_mkv_codec_tags [ j ] . id != AV_CODEC_ID_NONE
+water	70:20	0:0	6	ff_mkv_codec_tags
+op	70:37	0:0	6	[
+water	70:38	0:0	6	j
+op	70:39	0:0	6	]
+op	70:40	0:0	6	.
+water	70:41	0:0	6	id
+op	70:44	0:0	6	!=
+water	70:47	0:0	6	AV_CODEC_ID_NONE
+forexpr	70:65	70:66	5	j ++
+water	70:65	0:0	6	j
+op	70:66	0:0	6	++
+stmts	70:70	76:8	5	
+water	70:70	0:0	6	{
+if	71:12	75:12	6	(ff_mkv_codec_tags [ j ] . id == codec -> codec_id)
+cond	71:16	71:50	7	ff_mkv_codec_tags [ j ] . id == codec -> codec_id
+water	71:16	0:0	8	ff_mkv_codec_tags
+op	71:33	0:0	8	[
+water	71:34	0:0	8	j
+op	71:35	0:0	8	]
+op	71:36	0:0	8	.
+water	71:37	0:0	8	id
+op	71:40	0:0	8	==
+water	71:43	0:0	8	codec
+op	71:48	0:0	8	->
+water	71:50	0:0	8	codec_id
+stmts	71:60	75:12	7	
+water	71:60	0:0	8	{
+call	72:16	72:81	8	put_ebml_string
+arg	72:32	72:34	9	pb
+water	72:32	0:0	10	pb
+arg	72:36	72:55	9	MATROSKA_ID_CODECID
+water	72:36	0:0	10	MATROSKA_ID_CODECID
+arg	72:57	72:81	9	ff_mkv_codec_tags[j].str
+water	72:57	0:0	10	ff_mkv_codec_tags
+op	72:74	0:0	10	[
+water	72:75	0:0	10	j
+op	72:76	0:0	10	]
+op	72:77	0:0	10	.
+water	72:78	0:0	10	str
+water	72:82	0:0	8	;
+water	73:16	0:0	8	native_id
+op	73:26	0:0	8	=
+water	73:28	0:0	8	1
+water	73:29	0:0	8	;
+break	74:16	74:21	8	
+water	75:12	0:0	8	}
+water	76:8	0:0	6	}
+if	77:8	85:8	4	(codec -> codec_id == AV_CODEC_ID_RAWVIDEO && ! codec -> codec_tag)
+cond	77:12	77:63	5	codec -> codec_id == AV_CODEC_ID_RAWVIDEO && ! codec -> codec_tag
+water	77:12	0:0	6	codec
+op	77:17	0:0	6	->
+water	77:19	0:0	6	codec_id
+op	77:28	0:0	6	==
+water	77:31	0:0	6	AV_CODEC_ID_RAWVIDEO
+op	77:52	0:0	6	&&
+op	77:55	0:0	6	!
+water	77:56	0:0	6	codec
+op	77:61	0:0	6	->
+water	77:63	0:0	6	codec_tag
+stmts	77:74	85:8	5	
+water	77:74	0:0	6	{
+if	78:12	80:12	6	(mkv -> allow_raw_vfw)
+cond	78:16	78:21	7	mkv -> allow_raw_vfw
+water	78:16	0:0	8	mkv
+op	78:19	0:0	8	->
+water	78:21	0:0	8	allow_raw_vfw
+stmts	78:36	80:12	7	
+water	78:36	0:0	8	{
+water	79:16	0:0	8	native_id
+op	79:26	0:0	8	=
+water	79:28	0:0	8	0
+water	79:29	0:0	8	;
+water	80:12	0:0	8	}
+else	80:14	84:12	6
+stmts	80:19	84:12	7	
+water	80:19	0:0	8	{
+call	81:16	82:136	8	av_log
+arg	81:23	81:24	9	s
+water	81:23	0:0	10	s
+arg	81:26	81:38	9	AV_LOG_ERROR
+water	81:26	0:0	10	AV_LOG_ERROR
+arg	81:40	82:136	9	"Raw RGB is not supported Natively in Matroska, you can use AVI or NUT or\n""If you would like to store it anyway using VFW mode, enable allow_raw_vfw (-allow_raw_vfw 1)\n"
+water	81:40	0:0	10	"Raw RGB is not supported Natively in Matroska, you can use AVI or NUT or\n"
+water	82:40	0:0	10	"If you would like to store it anyway using VFW mode, enable allow_raw_vfw (-allow_raw_vfw 1)\n"
+water	82:137	0:0	8	;
+return	83:16	83:38	8	AVERROR(EINVAL)
+call	83:23	83:37	9	AVERROR
+arg	83:31	83:37	10	EINVAL
+water	83:31	0:0	11	EINVAL
+water	84:12	0:0	8	}
+water	85:8	0:0	6	}
+water	86:4	0:0	4	}
+if	87:4	95:4	2	(codec -> codec_type == AVMEDIA_TYPE_AUDIO && codec -> initial_padding && codec -> codec_id == AV_CODEC_ID_OPUS)
+cond	87:8	87:96	3	codec -> codec_type == AVMEDIA_TYPE_AUDIO && codec -> initial_padding && codec -> codec_id == AV_CODEC_ID_OPUS
+water	87:8	0:0	4	codec
+op	87:13	0:0	4	->
+water	87:15	0:0	4	codec_type
+op	87:26	0:0	4	==
+water	87:29	0:0	4	AVMEDIA_TYPE_AUDIO
+op	87:48	0:0	4	&&
+water	87:51	0:0	4	codec
+op	87:56	0:0	4	->
+water	87:58	0:0	4	initial_padding
+op	87:74	0:0	4	&&
+water	87:77	0:0	4	codec
+op	87:82	0:0	4	->
+water	87:84	0:0	4	codec_id
+op	87:93	0:0	4	==
+water	87:96	0:0	4	AV_CODEC_ID_OPUS
+stmts	87:114	95:4	3	
+water	87:114	0:0	4	{
+call	91:8	94:65	4	put_ebml_uint
+arg	91:22	91:24	5	pb
+water	91:22	0:0	6	pb
+arg	91:26	91:48	5	MATROSKA_ID_CODECDELAY
+water	91:26	0:0	6	MATROSKA_ID_CODECDELAY
+arg	92:22	94:65	5	av_rescale_q(codec->initial_padding,(AVRational){1,codec->sample_rate},(AVRational){1,1000000000})
+call	92:22	94:64	6	av_rescale_q
+arg	92:35	92:57	7	codec->initial_padding
+water	92:35	0:0	8	codec
+op	92:40	0:0	8	->
+water	92:42	0:0	8	initial_padding
+arg	93:35	93:72	7	(AVRational){1,codec->sample_rate}
+water	93:35	0:0	8	(
+water	93:36	0:0	8	AVRational
+water	93:46	0:0	8	)
+water	93:47	0:0	8	{
+water	93:49	0:0	8	1
+water	93:50	0:0	8	,
+water	93:52	0:0	8	codec
+op	93:57	0:0	8	->
+water	93:59	0:0	8	sample_rate
+water	93:71	0:0	8	}
+arg	94:35	94:64	7	(AVRational){1,1000000000}
+water	94:35	0:0	8	(
+water	94:36	0:0	8	AVRational
+water	94:46	0:0	8	)
+water	94:47	0:0	8	{
+water	94:49	0:0	8	1
+water	94:50	0:0	8	,
+water	94:52	0:0	8	1000000000
+water	94:63	0:0	8	}
+water	94:66	0:0	4	;
+water	95:4	0:0	4	}
+if	96:4	98:4	2	(codec -> codec_id == AV_CODEC_ID_OPUS)
+cond	96:8	96:27	3	codec -> codec_id == AV_CODEC_ID_OPUS
+water	96:8	0:0	4	codec
+op	96:13	0:0	4	->
+water	96:15	0:0	4	codec_id
+op	96:24	0:0	4	==
+water	96:27	0:0	4	AV_CODEC_ID_OPUS
+stmts	96:45	98:4	3	
+water	96:45	0:0	4	{
+call	97:8	97:68	4	put_ebml_uint
+arg	97:22	97:24	5	pb
+water	97:22	0:0	6	pb
+arg	97:26	97:49	5	MATROSKA_ID_SEEKPREROLL
+water	97:26	0:0	6	MATROSKA_ID_SEEKPREROLL
+arg	97:51	97:68	5	OPUS_SEEK_PREROLL
+water	97:51	0:0	6	OPUS_SEEK_PREROLL
+water	97:69	0:0	4	;
+water	98:4	0:0	4	}
+if	99:4	107:4	2	(mkv -> mode == MODE_WEBM && ! ( codec -> codec_id == AV_CODEC_ID_VP8 || codec -> codec_id == AV_CODEC_ID_VP9 || codec -> codec_id == AV_CODEC_ID_OPUS || codec -> codec_id == AV_CODEC_ID_VORBIS || codec -> codec_id == AV_CODEC_ID_WEBVTT ))
+cond	99:8	103:73	3	mkv -> mode == MODE_WEBM && ! ( codec -> codec_id == AV_CODEC_ID_VP8 || codec -> codec_id == AV_CODEC_ID_VP9 || codec -> codec_id == AV_CODEC_ID_OPUS || codec -> codec_id == AV_CODEC_ID_VORBIS || codec -> codec_id == AV_CODEC_ID_WEBVTT )
+water	99:8	0:0	4	mkv
+op	99:11	0:0	4	->
+water	99:13	0:0	4	mode
+op	99:18	0:0	4	==
+water	99:21	0:0	4	MODE_WEBM
+op	99:31	0:0	4	&&
+op	99:34	0:0	4	!
+water	99:35	0:0	4	(
+water	99:36	0:0	4	codec
+op	99:41	0:0	4	->
+water	99:43	0:0	4	codec_id
+op	99:52	0:0	4	==
+water	99:55	0:0	4	AV_CODEC_ID_VP8
+op	99:71	0:0	4	||
+water	100:36	0:0	4	codec
+op	100:41	0:0	4	->
+water	100:43	0:0	4	codec_id
+op	100:52	0:0	4	==
+water	100:55	0:0	4	AV_CODEC_ID_VP9
+op	100:71	0:0	4	||
+water	101:36	0:0	4	codec
+op	101:41	0:0	4	->
+water	101:43	0:0	4	codec_id
+op	101:52	0:0	4	==
+water	101:55	0:0	4	AV_CODEC_ID_OPUS
+op	101:72	0:0	4	||
+water	102:36	0:0	4	codec
+op	102:41	0:0	4	->
+water	102:43	0:0	4	codec_id
+op	102:52	0:0	4	==
+water	102:55	0:0	4	AV_CODEC_ID_VORBIS
+op	102:74	0:0	4	||
+water	103:36	0:0	4	codec
+op	103:41	0:0	4	->
+water	103:43	0:0	4	codec_id
+op	103:52	0:0	4	==
+water	103:55	0:0	4	AV_CODEC_ID_WEBVTT
+water	103:73	0:0	4	)
+stmts	103:76	107:4	3	
+water	103:76	0:0	4	{
+call	104:8	105:110	4	av_log
+arg	104:15	104:16	5	s
+water	104:15	0:0	6	s
+arg	104:18	104:30	5	AV_LOG_ERROR
+water	104:18	0:0	6	AV_LOG_ERROR
+arg	105:15	105:110	5	"Only VP8 or VP9 video and Vorbis or Opus audio and WebVTT subtitles are supported for WebM.\n"
+water	105:15	0:0	6	"Only VP8 or VP9 video and Vorbis or Opus audio and WebVTT subtitles are supported for WebM.\n"
+water	105:111	0:0	4	;
+return	106:8	106:30	4	AVERROR(EINVAL)
+call	106:15	106:29	5	AVERROR
+arg	106:23	106:29	6	EINVAL
+water	106:23	0:0	7	EINVAL
+water	107:4	0:0	4	}
+switch	108:4	193:4	2	(codec -> codec_type)
+cond	108:12	108:19	3	codec -> codec_type
+water	108:12	0:0	4	codec
+op	108:17	0:0	4	->
+water	108:19	0:0	4	codec_type
+stmts	108:31	193:4	3	
+water	108:31	0:0	4	{
+label	109:4	109:27	4	case AVMEDIA_TYPE_VIDEO :
+call	110:8	110:74	4	put_ebml_uint
+arg	110:22	110:24	5	pb
+water	110:22	0:0	6	pb
+arg	110:26	110:47	5	MATROSKA_ID_TRACKTYPE
+water	110:26	0:0	6	MATROSKA_ID_TRACKTYPE
+arg	110:49	110:74	5	MATROSKA_TRACK_TYPE_VIDEO
+water	110:49	0:0	6	MATROSKA_TRACK_TYPE_VIDEO
+water	110:75	0:0	4	;
+if	111:8	113:127	4	(st -> avg_frame_rate . num > 0 && st -> avg_frame_rate . den > 0 &&av_cmp_q (av_inv_q (st -> avg_frame_rate ) ,codec -> time_base ) > 0)
+cond	111:14	112:73	5	st -> avg_frame_rate . num > 0 && st -> avg_frame_rate . den > 0 &&av_cmp_q (av_inv_q (st -> avg_frame_rate ) ,codec -> time_base ) > 0
+water	111:14	0:0	6	st
+op	111:16	0:0	6	->
+water	111:18	0:0	6	avg_frame_rate
+op	111:32	0:0	6	.
+water	111:33	0:0	6	num
+op	111:37	0:0	6	>
+water	111:39	0:0	6	0
+op	111:41	0:0	6	&&
+water	111:44	0:0	6	st
+op	111:46	0:0	6	->
+water	111:48	0:0	6	avg_frame_rate
+op	111:62	0:0	6	.
+water	111:63	0:0	6	den
+op	111:67	0:0	6	>
+water	111:69	0:0	6	0
+op	112:11	0:0	6	&&
+call	112:14	112:69	6	av_cmp_q
+arg	112:23	112:51	7	av_inv_q(st->avg_frame_rate)
+call	112:23	112:50	8	av_inv_q
+arg	112:32	112:50	9	st->avg_frame_rate
+water	112:32	0:0	10	st
+op	112:34	0:0	10	->
+water	112:36	0:0	10	avg_frame_rate
+arg	112:53	112:69	7	codec->time_base
+water	112:53	0:0	8	codec
+op	112:58	0:0	8	->
+water	112:60	0:0	8	time_base
+op	112:71	0:0	6	>
+water	112:73	0:0	6	0
+stmts	113:12	113:127	5	
+call	113:12	113:126	6	put_ebml_uint
+arg	113:26	113:28	7	pb
+water	113:26	0:0	8	pb
+arg	113:30	113:62	7	MATROSKA_ID_TRACKDEFAULTDURATION
+water	113:30	0:0	8	MATROSKA_ID_TRACKDEFAULTDURATION
+arg	113:64	113:126	7	1000000000LL*st->avg_frame_rate.den/st->avg_frame_rate.num
+water	113:64	0:0	8	1000000000
+water	113:74	0:0	8	LL
+op	113:77	0:0	8	*
+water	113:79	0:0	8	st
+op	113:81	0:0	8	->
+water	113:83	0:0	8	avg_frame_rate
+op	113:97	0:0	8	.
+water	113:98	0:0	8	den
+op	113:102	0:0	8	/
+water	113:104	0:0	8	st
+op	113:106	0:0	8	->
+water	113:108	0:0	8	avg_frame_rate
+op	113:122	0:0	8	.
+water	113:123	0:0	8	num
+water	113:127	0:0	6	;
+else	114:8	115:123	4
+stmts	115:12	115:123	5	
+call	115:12	115:122	6	put_ebml_uint
+arg	115:26	115:28	7	pb
+water	115:26	0:0	8	pb
+arg	115:30	115:62	7	MATROSKA_ID_TRACKDEFAULTDURATION
+water	115:30	0:0	8	MATROSKA_ID_TRACKDEFAULTDURATION
+arg	115:64	115:122	7	1000000000LL*codec->time_base.num/codec->time_base.den
+water	115:64	0:0	8	1000000000
+water	115:74	0:0	8	LL
+op	115:77	0:0	8	*
+water	115:79	0:0	8	codec
+op	115:84	0:0	8	->
+water	115:86	0:0	8	time_base
+op	115:95	0:0	8	.
+water	115:96	0:0	8	num
+op	115:100	0:0	8	/
+water	115:102	0:0	8	codec
+op	115:107	0:0	8	->
+water	115:109	0:0	8	time_base
+op	115:118	0:0	8	.
+water	115:119	0:0	8	den
+water	115:123	0:0	6	;
+if	116:8	122:21	4	(! native_id &&ff_codec_get_tag (ff_codec_movvideo_tags ,codec -> codec_id ) && ( ( !ff_codec_get_tag (ff_codec_bmp_tags ,codec -> codec_id ) && codec -> codec_id != AV_CODEC_ID_RAWVIDEO ) || codec -> codec_id == AV_CODEC_ID_SVQ1 || codec -> codec_id == AV_CODEC_ID_SVQ3 || codec -> codec_id == AV_CODEC_ID_CINEPAK ))
+cond	116:12	121:51	5	! native_id &&ff_codec_get_tag (ff_codec_movvideo_tags ,codec -> codec_id ) && ( ( !ff_codec_get_tag (ff_codec_bmp_tags ,codec -> codec_id ) && codec -> codec_id != AV_CODEC_ID_RAWVIDEO ) || codec -> codec_id == AV_CODEC_ID_SVQ1 || codec -> codec_id == AV_CODEC_ID_SVQ3 || codec -> codec_id == AV_CODEC_ID_CINEPAK )
+op	116:12	0:0	6	!
+water	116:13	0:0	6	native_id
+op	116:23	0:0	6	&&
+call	117:12	117:68	6	ff_codec_get_tag
+arg	117:29	117:51	7	ff_codec_movvideo_tags
+water	117:29	0:0	8	ff_codec_movvideo_tags
+arg	117:53	117:68	7	codec->codec_id
+water	117:53	0:0	8	codec
+op	117:58	0:0	8	->
+water	117:60	0:0	8	codec_id
+op	117:70	0:0	6	&&
+water	118:12	0:0	6	(
+water	118:13	0:0	6	(
+op	118:14	0:0	6	!
+call	118:15	118:68	6	ff_codec_get_tag
+arg	118:32	118:49	7	ff_codec_bmp_tags
+water	118:32	0:0	8	ff_codec_bmp_tags
+arg	118:53	118:68	7	codec->codec_id
+water	118:53	0:0	8	codec
+op	118:58	0:0	8	->
+water	118:60	0:0	8	codec_id
+op	118:70	0:0	6	&&
+water	118:73	0:0	6	codec
+op	118:78	0:0	6	->
+water	118:80	0:0	6	codec_id
+op	118:89	0:0	6	!=
+water	118:92	0:0	6	AV_CODEC_ID_RAWVIDEO
+water	118:112	0:0	6	)
+op	118:114	0:0	6	||
+water	119:13	0:0	6	codec
+op	119:18	0:0	6	->
+water	119:20	0:0	6	codec_id
+op	119:29	0:0	6	==
+water	119:32	0:0	6	AV_CODEC_ID_SVQ1
+op	119:49	0:0	6	||
+water	120:13	0:0	6	codec
+op	120:18	0:0	6	->
+water	120:20	0:0	6	codec_id
+op	120:29	0:0	6	==
+water	120:32	0:0	6	AV_CODEC_ID_SVQ3
+op	120:49	0:0	6	||
+water	121:13	0:0	6	codec
+op	121:18	0:0	6	->
+water	121:20	0:0	6	codec_id
+op	121:29	0:0	6	==
+water	121:32	0:0	6	AV_CODEC_ID_CINEPAK
+water	121:51	0:0	6	)
+stmts	122:12	122:21	5	
+water	122:12	0:0	6	qt_id
+op	122:18	0:0	6	=
+water	122:20	0:0	6	1
+water	122:21	0:0	6	;
+if	123:8	124:67	4	(qt_id)
+cond	123:12	123:12	5	qt_id
+water	123:12	0:0	6	qt_id
+stmts	124:12	124:67	5	
+call	124:12	124:66	6	put_ebml_string
+arg	124:28	124:30	7	pb
+water	124:28	0:0	8	pb
+arg	124:32	124:51	7	MATROSKA_ID_CODECID
+water	124:32	0:0	8	MATROSKA_ID_CODECID
+arg	124:53	124:66	7	"V_QUICKTIME"
+water	124:53	0:0	8	"V_QUICKTIME"
+water	124:67	0:0	6	;
+else	125:8	130:8	4
+stmts	125:13	130:8	5	
+if	125:13	130:8	6	(! native_id)
+cond	125:17	125:18	7	! native_id
+op	125:17	0:0	8	!
+water	125:18	0:0	8	native_id
+stmts	125:29	130:8	7	
+water	125:29	0:0	8	{
+call	127:12	127:70	8	put_ebml_string
+arg	127:28	127:30	9	pb
+water	127:28	0:0	10	pb
+arg	127:32	127:51	9	MATROSKA_ID_CODECID
+water	127:32	0:0	10	MATROSKA_ID_CODECID
+arg	127:53	127:70	9	"V_MS/VFW/FOURCC"
+water	127:53	0:0	10	"V_MS/VFW/FOURCC"
+water	127:71	0:0	8	;
+water	128:12	0:0	8	mkv
+op	128:15	0:0	8	->
+water	128:17	0:0	8	tracks
+op	128:23	0:0	8	[
+water	128:24	0:0	8	i
+op	128:25	0:0	8	]
+op	128:26	0:0	8	.
+water	128:27	0:0	8	write_dts
+op	128:37	0:0	8	=
+water	128:39	0:0	8	1
+water	128:40	0:0	8	;
+water	129:12	0:0	8	s
+op	129:13	0:0	8	->
+water	129:15	0:0	8	internal
+op	129:23	0:0	8	->
+water	129:25	0:0	8	avoid_negative_ts_use_pts
+op	129:51	0:0	8	=
+water	129:53	0:0	8	0
+water	129:54	0:0	8	;
+water	130:8	0:0	8	}
+water	131:8	0:0	4	subinfo
+op	131:16	0:0	4	=
+call	131:18	131:65	4	start_ebml_master
+arg	131:36	131:38	5	pb
+water	131:36	0:0	6	pb
+arg	131:40	131:62	5	MATROSKA_ID_TRACKVIDEO
+water	131:40	0:0	6	MATROSKA_ID_TRACKVIDEO
+arg	131:64	131:65	5	0
+water	131:64	0:0	6	0
+water	131:66	0:0	4	;
+call	133:8	133:69	4	put_ebml_uint
+arg	133:23	133:25	5	pb
+water	133:23	0:0	6	pb
+arg	133:27	133:55	5	MATROSKA_ID_VIDEOPIXELWIDTH
+water	133:27	0:0	6	MATROSKA_ID_VIDEOPIXELWIDTH
+arg	133:57	133:69	5	codec->width
+water	133:57	0:0	6	codec
+op	133:62	0:0	6	->
+water	133:64	0:0	6	width
+water	133:70	0:0	4	;
+call	134:8	134:70	4	put_ebml_uint
+arg	134:23	134:25	5	pb
+water	134:23	0:0	6	pb
+arg	134:27	134:55	5	MATROSKA_ID_VIDEOPIXELHEIGHT
+water	134:27	0:0	6	MATROSKA_ID_VIDEOPIXELHEIGHT
+arg	134:57	134:70	5	codec->height
+water	134:57	0:0	6	codec
+op	134:62	0:0	6	->
+water	134:64	0:0	6	height
+water	134:71	0:0	4	;
+water	137:8	0:0	4	ret
+op	137:12	0:0	4	=
+call	137:14	139:55	4	mkv_write_stereo_mode
+arg	137:36	137:37	5	s
+water	137:36	0:0	6	s
+arg	137:39	137:41	5	pb
+water	137:39	0:0	6	pb
+arg	137:43	137:45	5	st
+water	137:43	0:0	6	st
+arg	137:47	137:56	5	mkv->mode
+water	137:47	0:0	6	mkv
+op	137:50	0:0	6	->
+water	137:52	0:0	6	mode
+arg	138:36	138:54	5	&display_width_div
+op	138:36	0:0	6	&
+water	138:37	0:0	6	display_width_div
+arg	139:36	139:55	5	&display_height_div
+op	139:36	0:0	6	&
+water	139:37	0:0	6	display_height_div
+water	139:56	0:0	4	;
+if	140:8	141:22	4	(ret < 0)
+cond	140:12	140:18	5	ret < 0
+water	140:12	0:0	6	ret
+op	140:16	0:0	6	<
+water	140:18	0:0	6	0
+stmts	141:12	141:22	5	
+return	141:12	141:22	6	ret
+water	141:19	0:0	7	ret
+if	142:8	146:8	4	(( ( tag =av_dict_get (st -> metadata ,"alpha_mode" ,NULL ,0 ) ) &&atoi (tag -> value ) ) || ( ( tag =av_dict_get (s -> metadata ,"alpha_mode" ,NULL ,0 ) ) &&atoi (tag -> value ) ) || ( codec -> pix_fmt == AV_PIX_FMT_YUVA420P ))
+cond	142:12	144:50	5	( ( tag =av_dict_get (st -> metadata ,"alpha_mode" ,NULL ,0 ) ) &&atoi (tag -> value ) ) || ( ( tag =av_dict_get (s -> metadata ,"alpha_mode" ,NULL ,0 ) ) &&atoi (tag -> value ) ) || ( codec -> pix_fmt == AV_PIX_FMT_YUVA420P )
+water	142:12	0:0	6	(
+water	142:13	0:0	6	(
+water	142:14	0:0	6	tag
+op	142:18	0:0	6	=
+call	142:20	142:67	6	av_dict_get
+arg	142:32	142:44	7	st->metadata
+water	142:32	0:0	8	st
+op	142:34	0:0	8	->
+water	142:36	0:0	8	metadata
+arg	142:46	142:58	7	"alpha_mode"
+water	142:46	0:0	8	"alpha_mode"
+arg	142:60	142:64	7	NULL
+water	142:60	0:0	8	NULL
+arg	142:66	142:67	7	0
+water	142:66	0:0	8	0
+water	142:68	0:0	6	)
+op	142:70	0:0	6	&&
+call	142:73	142:88	6	atoi
+arg	142:78	142:88	7	tag->value
+water	142:78	0:0	8	tag
+op	142:81	0:0	8	->
+water	142:83	0:0	8	value
+water	142:89	0:0	6	)
+op	142:91	0:0	6	||
+water	143:12	0:0	6	(
+water	143:13	0:0	6	(
+water	143:14	0:0	6	tag
+op	143:18	0:0	6	=
+call	143:20	143:67	6	av_dict_get
+arg	143:33	143:44	7	s->metadata
+water	143:33	0:0	8	s
+op	143:34	0:0	8	->
+water	143:36	0:0	8	metadata
+arg	143:46	143:58	7	"alpha_mode"
+water	143:46	0:0	8	"alpha_mode"
+arg	143:60	143:64	7	NULL
+water	143:60	0:0	8	NULL
+arg	143:66	143:67	7	0
+water	143:66	0:0	8	0
+water	143:68	0:0	6	)
+op	143:70	0:0	6	&&
+call	143:73	143:88	6	atoi
+arg	143:78	143:88	7	tag->value
+water	143:78	0:0	8	tag
+op	143:81	0:0	8	->
+water	143:83	0:0	8	value
+water	143:89	0:0	6	)
+op	143:91	0:0	6	||
+water	144:12	0:0	6	(
+water	144:13	0:0	6	codec
+op	144:18	0:0	6	->
+water	144:20	0:0	6	pix_fmt
+op	144:28	0:0	6	==
+water	144:31	0:0	6	AV_PIX_FMT_YUVA420P
+water	144:50	0:0	6	)
+stmts	144:53	146:8	5	
+water	144:53	0:0	6	{
+call	145:12	145:59	6	put_ebml_uint
+arg	145:26	145:28	7	pb
+water	145:26	0:0	8	pb
+arg	145:30	145:56	7	MATROSKA_ID_VIDEOALPHAMODE
+water	145:30	0:0	8	MATROSKA_ID_VIDEOALPHAMODE
+arg	145:58	145:59	7	1
+water	145:58	0:0	8	1
+water	145:60	0:0	6	;
+water	146:8	0:0	6	}
+if	149:8	157:8	4	(st -> sample_aspect_ratio . num)
+cond	149:12	149:36	5	st -> sample_aspect_ratio . num
+water	149:12	0:0	6	st
+op	149:14	0:0	6	->
+water	149:16	0:0	6	sample_aspect_ratio
+op	149:35	0:0	6	.
+water	149:36	0:0	6	num
+stmts	149:41	157:8	5	
+water	149:41	0:0	6	{
+decl	150:12	150:112	6	int64_t	d_width
+op	150:28	0:0	6	=
+call	150:30	150:111	7	av_rescale
+arg	150:41	150:53	8	codec->width
+water	150:41	0:0	9	codec
+op	150:46	0:0	9	->
+water	150:48	0:0	9	width
+arg	150:55	150:82	8	st->sample_aspect_ratio.num
+water	150:55	0:0	9	st
+op	150:57	0:0	9	->
+water	150:59	0:0	9	sample_aspect_ratio
+op	150:78	0:0	9	.
+water	150:79	0:0	9	num
+arg	150:84	150:111	8	st->sample_aspect_ratio.den
+water	150:84	0:0	9	st
+op	150:86	0:0	9	->
+water	150:88	0:0	9	sample_aspect_ratio
+op	150:107	0:0	9	.
+water	150:108	0:0	9	den
+if	151:12	154:12	6	(d_width > INT_MAX)
+cond	151:16	151:26	7	d_width > INT_MAX
+water	151:16	0:0	8	d_width
+op	151:24	0:0	8	>
+water	151:26	0:0	8	INT_MAX
+stmts	151:35	154:12	7	
+water	151:35	0:0	8	{
+call	152:16	152:69	8	av_log
+arg	152:23	152:24	9	s
+water	152:23	0:0	10	s
+arg	152:26	152:38	9	AV_LOG_ERROR
+water	152:26	0:0	10	AV_LOG_ERROR
+arg	152:40	152:69	9	"Overflow in display width\n"
+water	152:40	0:0	10	"Overflow in display width\n"
+water	152:70	0:0	8	;
+return	153:16	153:38	8	AVERROR(EINVAL)
+call	153:23	153:37	9	AVERROR
+arg	153:31	153:37	10	EINVAL
+water	153:31	0:0	11	EINVAL
+water	154:12	0:0	8	}
+call	155:12	155:89	6	put_ebml_uint
+arg	155:26	155:28	7	pb
+water	155:26	0:0	8	pb
+arg	155:30	155:60	7	MATROSKA_ID_VIDEODISPLAYWIDTH
+water	155:30	0:0	8	MATROSKA_ID_VIDEODISPLAYWIDTH
+arg	155:62	155:89	7	d_width/display_width_div
+water	155:62	0:0	8	d_width
+op	155:70	0:0	8	/
+water	155:72	0:0	8	display_width_div
+water	155:90	0:0	6	;
+call	156:12	156:96	6	put_ebml_uint
+arg	156:26	156:28	7	pb
+water	156:26	0:0	8	pb
+arg	156:30	156:60	7	MATROSKA_ID_VIDEODISPLAYHEIGHT
+water	156:30	0:0	8	MATROSKA_ID_VIDEODISPLAYHEIGHT
+arg	156:62	156:96	7	codec->height/display_height_div
+water	156:62	0:0	8	codec
+op	156:67	0:0	8	->
+water	156:69	0:0	8	height
+op	156:76	0:0	8	/
+water	156:78	0:0	8	display_height_div
+water	156:97	0:0	6	;
+water	157:8	0:0	6	}
+else	157:10	160:8	4
+stmts	157:15	160:8	5	
+if	157:15	160:8	6	(display_width_div != 1 || display_height_div != 1)
+cond	157:19	157:67	7	display_width_div != 1 || display_height_div != 1
+water	157:19	0:0	8	display_width_div
+op	157:37	0:0	8	!=
+water	157:40	0:0	8	1
+op	157:42	0:0	8	||
+water	157:45	0:0	8	display_height_div
+op	157:64	0:0	8	!=
+water	157:67	0:0	8	1
+stmts	157:70	160:8	7	
+water	157:70	0:0	8	{
+call	158:12	158:94	8	put_ebml_uint
+arg	158:26	158:28	9	pb
+water	158:26	0:0	10	pb
+arg	158:30	158:60	9	MATROSKA_ID_VIDEODISPLAYWIDTH
+water	158:30	0:0	10	MATROSKA_ID_VIDEODISPLAYWIDTH
+arg	158:62	158:94	9	codec->width/display_width_div
+water	158:62	0:0	10	codec
+op	158:67	0:0	10	->
+water	158:69	0:0	10	width
+op	158:75	0:0	10	/
+water	158:77	0:0	10	display_width_div
+water	158:95	0:0	8	;
+call	159:12	159:96	8	put_ebml_uint
+arg	159:26	159:28	9	pb
+water	159:26	0:0	10	pb
+arg	159:30	159:60	9	MATROSKA_ID_VIDEODISPLAYHEIGHT
+water	159:30	0:0	10	MATROSKA_ID_VIDEODISPLAYHEIGHT
+arg	159:62	159:96	9	codec->height/display_height_div
+water	159:62	0:0	10	codec
+op	159:67	0:0	10	->
+water	159:69	0:0	10	height
+op	159:76	0:0	10	/
+water	159:78	0:0	10	display_height_div
+water	159:97	0:0	8	;
+water	160:8	0:0	8	}
+if	161:8	164:8	4	(codec -> codec_id == AV_CODEC_ID_RAWVIDEO)
+cond	161:12	161:31	5	codec -> codec_id == AV_CODEC_ID_RAWVIDEO
+water	161:12	0:0	6	codec
+op	161:17	0:0	6	->
+water	161:19	0:0	6	codec_id
+op	161:28	0:0	6	==
+water	161:31	0:0	6	AV_CODEC_ID_RAWVIDEO
+stmts	161:53	164:8	5	
+water	161:53	0:0	6	{
+decl	162:12	162:63	6	uint32_t	color_space
+op	162:33	0:0	6	=
+call	162:35	162:62	7	av_le2ne32
+arg	162:46	162:62	8	codec->codec_tag
+water	162:46	0:0	9	codec
+op	162:51	0:0	9	->
+water	162:53	0:0	9	codec_tag
+call	163:12	163:94	6	put_ebml_binary
+arg	163:28	163:30	7	pb
+water	163:28	0:0	8	pb
+arg	163:32	163:59	7	MATROSKA_ID_VIDEOCOLORSPACE
+water	163:32	0:0	8	MATROSKA_ID_VIDEOCOLORSPACE
+arg	163:61	163:73	7	&color_space
+op	163:61	0:0	8	&
+water	163:62	0:0	8	color_space
+arg	163:75	163:94	7	sizeof(color_space)
+op	163:75	0:0	8	sizeof
+water	163:81	0:0	8	(
+water	163:82	0:0	8	color_space
+water	163:93	0:0	8	)
+water	163:95	0:0	6	;
+water	164:8	0:0	6	}
+call	165:8	165:35	4	end_ebml_master
+arg	165:24	165:26	5	pb
+water	165:24	0:0	6	pb
+arg	165:28	165:35	5	subinfo
+water	165:28	0:0	6	subinfo
+water	165:36	0:0	4	;
+break	166:8	166:13	4	
+label	167:4	167:27	4	case AVMEDIA_TYPE_AUDIO :
+call	168:8	168:74	4	put_ebml_uint
+arg	168:22	168:24	5	pb
+water	168:22	0:0	6	pb
+arg	168:26	168:47	5	MATROSKA_ID_TRACKTYPE
+water	168:26	0:0	6	MATROSKA_ID_TRACKTYPE
+arg	168:49	168:74	5	MATROSKA_TRACK_TYPE_AUDIO
+water	168:49	0:0	6	MATROSKA_TRACK_TYPE_AUDIO
+water	168:75	0:0	4	;
+if	169:8	171:64	4	(! native_id)
+cond	169:12	169:13	5	! native_id
+op	169:12	0:0	6	!
+water	169:13	0:0	6	native_id
+stmts	171:12	171:64	5	
+call	171:12	171:63	6	put_ebml_string
+arg	171:28	171:30	7	pb
+water	171:28	0:0	8	pb
+arg	171:32	171:51	7	MATROSKA_ID_CODECID
+water	171:32	0:0	8	MATROSKA_ID_CODECID
+arg	171:53	171:63	7	"A_MS/ACM"
+water	171:53	0:0	8	"A_MS/ACM"
+water	171:64	0:0	6	;
+water	172:8	0:0	4	subinfo
+op	172:16	0:0	4	=
+call	172:18	172:65	4	start_ebml_master
+arg	172:36	172:38	5	pb
+water	172:36	0:0	6	pb
+arg	172:40	172:62	5	MATROSKA_ID_TRACKAUDIO
+water	172:40	0:0	6	MATROSKA_ID_TRACKAUDIO
+arg	172:64	172:65	5	0
+water	172:64	0:0	6	0
+water	172:66	0:0	4	;
+call	173:8	173:74	4	put_ebml_uint
+arg	173:24	173:26	5	pb
+water	173:24	0:0	6	pb
+arg	173:28	173:57	5	MATROSKA_ID_AUDIOCHANNELS
+water	173:28	0:0	6	MATROSKA_ID_AUDIOCHANNELS
+arg	173:59	173:74	5	codec->channels
+water	173:59	0:0	6	codec
+op	173:64	0:0	6	->
+water	173:66	0:0	6	channels
+water	173:75	0:0	4	;
+call	174:8	174:70	4	put_ebml_float
+arg	174:24	174:26	5	pb
+water	174:24	0:0	6	pb
+arg	174:28	174:57	5	MATROSKA_ID_AUDIOSAMPLINGFREQ
+water	174:28	0:0	6	MATROSKA_ID_AUDIOSAMPLINGFREQ
+arg	174:59	174:70	5	sample_rate
+water	174:59	0:0	6	sample_rate
+water	174:71	0:0	4	;
+if	175:8	176:84	4	(output_sample_rate)
+cond	175:12	175:12	5	output_sample_rate
+water	175:12	0:0	6	output_sample_rate
+stmts	176:12	176:84	5	
+call	176:12	176:83	6	put_ebml_float
+arg	176:27	176:29	7	pb
+water	176:27	0:0	8	pb
+arg	176:31	176:63	7	MATROSKA_ID_AUDIOOUTSAMPLINGFREQ
+water	176:31	0:0	8	MATROSKA_ID_AUDIOOUTSAMPLINGFREQ
+arg	176:65	176:83	7	output_sample_rate
+water	176:65	0:0	8	output_sample_rate
+water	176:84	0:0	6	;
+if	177:8	178:67	4	(bit_depth)
+cond	177:12	177:12	5	bit_depth
+water	177:12	0:0	6	bit_depth
+stmts	178:12	178:67	5	
+call	178:12	178:66	6	put_ebml_uint
+arg	178:26	178:28	7	pb
+water	178:26	0:0	8	pb
+arg	178:30	178:55	7	MATROSKA_ID_AUDIOBITDEPTH
+water	178:30	0:0	8	MATROSKA_ID_AUDIOBITDEPTH
+arg	178:57	178:66	7	bit_depth
+water	178:57	0:0	8	bit_depth
+water	178:67	0:0	6	;
+call	179:8	179:35	4	end_ebml_master
+arg	179:24	179:26	5	pb
+water	179:24	0:0	6	pb
+arg	179:28	179:35	5	subinfo
+water	179:28	0:0	6	subinfo
+water	179:36	0:0	4	;
+break	180:8	180:13	4	
+label	181:4	181:30	4	case AVMEDIA_TYPE_SUBTITLE :
+if	182:8	185:8	4	(! native_id)
+cond	182:12	182:13	5	! native_id
+op	182:12	0:0	6	!
+water	182:13	0:0	6	native_id
+stmts	182:24	185:8	5	
+water	182:24	0:0	6	{
+call	183:12	183:92	6	av_log
+arg	183:19	183:20	7	s
+water	183:19	0:0	8	s
+arg	183:22	183:34	7	AV_LOG_ERROR
+water	183:22	0:0	8	AV_LOG_ERROR
+arg	183:36	183:75	7	"Subtitle codec %d is not supported.\n"
+water	183:36	0:0	8	"Subtitle codec %d is not supported.\n"
+arg	183:77	183:92	7	codec->codec_id
+water	183:77	0:0	8	codec
+op	183:82	0:0	8	->
+water	183:84	0:0	8	codec_id
+water	183:93	0:0	6	;
+return	184:12	184:34	6	AVERROR(ENOSYS)
+call	184:19	184:33	7	AVERROR
+arg	184:27	184:33	8	ENOSYS
+water	184:27	0:0	9	ENOSYS
+water	185:8	0:0	6	}
+if	186:8	187:52	4	(mkv -> mode != MODE_WEBM || codec -> codec_id != AV_CODEC_ID_WEBVTT)
+cond	186:12	186:57	5	mkv -> mode != MODE_WEBM || codec -> codec_id != AV_CODEC_ID_WEBVTT
+water	186:12	0:0	6	mkv
+op	186:15	0:0	6	->
+water	186:17	0:0	6	mode
+op	186:22	0:0	6	!=
+water	186:25	0:0	6	MODE_WEBM
+op	186:35	0:0	6	||
+water	186:38	0:0	6	codec
+op	186:43	0:0	6	->
+water	186:45	0:0	6	codec_id
+op	186:54	0:0	6	!=
+water	186:57	0:0	6	AV_CODEC_ID_WEBVTT
+stmts	187:12	187:52	5	
+water	187:12	0:0	6	native_id
+op	187:22	0:0	6	=
+water	187:24	0:0	6	MATROSKA_TRACK_TYPE_SUBTITLE
+water	187:52	0:0	6	;
+call	188:8	188:58	4	put_ebml_uint
+arg	188:22	188:24	5	pb
+water	188:22	0:0	6	pb
+arg	188:26	188:47	5	MATROSKA_ID_TRACKTYPE
+water	188:26	0:0	6	MATROSKA_ID_TRACKTYPE
+arg	188:49	188:58	5	native_id
+water	188:49	0:0	6	native_id
+water	188:59	0:0	4	;
+break	189:8	189:13	4	
+label	190:4	190:11	4	default :
+call	191:8	191:96	4	av_log
+arg	191:15	191:16	5	s
+water	191:15	0:0	6	s
+arg	191:18	191:30	5	AV_LOG_ERROR
+water	191:18	0:0	6	AV_LOG_ERROR
+arg	191:32	191:96	5	"Only audio, video, and subtitles are supported for Matroska.\n"
+water	191:32	0:0	6	"Only audio, video, and subtitles are supported for Matroska.\n"
+water	191:97	0:0	4	;
+return	192:8	192:30	4	AVERROR(EINVAL)
+call	192:15	192:29	5	AVERROR
+arg	192:23	192:29	6	EINVAL
+water	192:23	0:0	7	EINVAL
+water	193:4	0:0	4	}
+if	194:4	198:4	2	(mkv -> mode != MODE_WEBM || codec -> codec_id != AV_CODEC_ID_WEBVTT)
+cond	194:8	194:53	3	mkv -> mode != MODE_WEBM || codec -> codec_id != AV_CODEC_ID_WEBVTT
+water	194:8	0:0	4	mkv
+op	194:11	0:0	4	->
+water	194:13	0:0	4	mode
+op	194:18	0:0	4	!=
+water	194:21	0:0	4	MODE_WEBM
+op	194:31	0:0	4	||
+water	194:34	0:0	4	codec
+op	194:39	0:0	4	->
+water	194:41	0:0	4	codec_id
+op	194:50	0:0	4	!=
+water	194:53	0:0	4	AV_CODEC_ID_WEBVTT
+stmts	194:73	198:4	3	
+water	194:73	0:0	4	{
+water	195:8	0:0	4	ret
+op	195:12	0:0	4	=
+call	195:14	195:67	4	mkv_write_codecprivate
+arg	195:37	195:38	5	s
+water	195:37	0:0	6	s
+arg	195:40	195:42	5	pb
+water	195:40	0:0	6	pb
+arg	195:44	195:49	5	codec
+water	195:44	0:0	6	codec
+arg	195:51	195:60	5	native_id
+water	195:51	0:0	6	native_id
+arg	195:62	195:67	5	qt_id
+water	195:62	0:0	6	qt_id
+water	195:68	0:0	4	;
+if	196:8	197:22	4	(ret < 0)
+cond	196:12	196:18	5	ret < 0
+water	196:12	0:0	6	ret
+op	196:16	0:0	6	<
+water	196:18	0:0	6	0
+stmts	197:12	197:22	5	
+return	197:12	197:22	6	ret
+water	197:19	0:0	7	ret
+water	198:4	0:0	4	}
+call	199:4	199:29	2	end_ebml_master
+arg	199:20	199:22	3	pb
+water	199:20	0:0	4	pb
+arg	199:24	199:29	3	track
+water	199:24	0:0	4	track
+water	199:30	0:0	2	;
+return	200:4	200:12	2	0
+water	200:11	0:0	3	0

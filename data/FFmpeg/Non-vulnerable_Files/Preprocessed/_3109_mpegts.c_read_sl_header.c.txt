@@ -1,0 +1,440 @@
+func	1:0	63:0	0	static int	read_sl_header
+params	1:25	0:0	1	
+param	1:26	1:41	2	PESContext *	pes
+param	1:43	1:60	2	SLConfigDescr *	sl
+param	2:26	2:44	2	const uint8_t *	buf
+param	2:46	2:58	2	int	buf_size
+stmnts	0:0	62:41	1	
+decl	4:4	4:20	2	GetBitContext	gb
+decl	5:4	5:71	2	int	au_start_flag
+op	5:22	0:0	2	=
+water	5:24	0:0	2	0
+water	5:25	0:0	2	,
+decl	5:4	5:71	2	int	au_end_flag
+op	5:39	0:0	2	=
+water	5:41	0:0	2	0
+water	5:42	0:0	2	,
+decl	5:4	5:71	2	int	ocr_flag
+op	5:53	0:0	2	=
+water	5:55	0:0	2	0
+water	5:56	0:0	2	,
+decl	5:4	5:71	2	int	idle_flag
+op	5:68	0:0	2	=
+water	5:70	0:0	2	0
+decl	6:4	6:65	2	int	padding_flag
+op	6:21	0:0	2	=
+water	6:23	0:0	2	0
+water	6:24	0:0	2	,
+decl	6:4	6:65	2	int	padding_bits
+op	6:39	0:0	2	=
+water	6:41	0:0	2	0
+water	6:42	0:0	2	,
+decl	6:4	6:65	2	int	inst_bitrate_flag
+op	6:62	0:0	2	=
+water	6:64	0:0	2	0
+decl	7:4	7:36	2	int	dts_flag
+op	7:17	0:0	2	=
+op	7:19	0:0	2	-
+water	7:20	0:0	2	1
+water	7:21	0:0	2	,
+decl	7:4	7:36	2	int	cts_flag
+op	7:32	0:0	2	=
+op	7:34	0:0	2	-
+water	7:35	0:0	2	1
+decl	8:4	8:54	2	int64_t	dts
+op	8:16	0:0	2	=
+water	8:18	0:0	2	AV_NOPTS_VALUE
+water	8:32	0:0	2	,
+decl	8:4	8:54	2	int64_t	cts
+op	8:38	0:0	2	=
+water	8:40	0:0	2	AV_NOPTS_VALUE
+decl	9:4	9:58	2	uint8_t	buf_padded[128+AV_INPUT_BUFFER_PADDING_SIZE]
+decl	10:4	10:92	2	int	buf_padded_size
+op	10:24	0:0	2	=
+call	10:26	10:91	3	FFMIN
+arg	10:32	10:40	4	buf_size
+water	10:32	0:0	5	buf_size
+arg	10:42	10:91	4	sizeof(buf_padded)-AV_INPUT_BUFFER_PADDING_SIZE
+op	10:42	0:0	5	sizeof
+water	10:48	0:0	5	(
+water	10:49	0:0	5	buf_padded
+water	10:59	0:0	5	)
+op	10:61	0:0	5	-
+water	10:63	0:0	5	AV_INPUT_BUFFER_PADDING_SIZE
+call	11:4	11:43	2	memcpy
+arg	11:11	11:21	3	buf_padded
+water	11:11	0:0	4	buf_padded
+arg	11:23	11:26	3	buf
+water	11:23	0:0	4	buf
+arg	11:28	11:43	3	buf_padded_size
+water	11:28	0:0	4	buf_padded_size
+water	11:44	0:0	2	;
+call	12:4	12:54	2	init_get_bits
+arg	12:18	12:21	3	&gb
+op	12:18	0:0	4	&
+water	12:19	0:0	4	gb
+arg	12:23	12:33	3	buf_padded
+water	12:23	0:0	4	buf_padded
+arg	12:35	12:54	3	buf_padded_size*8
+water	12:35	0:0	4	buf_padded_size
+op	12:51	0:0	4	*
+water	12:53	0:0	4	8
+water	12:55	0:0	2	;
+if	13:4	14:38	2	(sl -> use_au_start)
+cond	13:8	13:12	3	sl -> use_au_start
+water	13:8	0:0	4	sl
+op	13:10	0:0	4	->
+water	13:12	0:0	4	use_au_start
+stmts	14:8	14:38	3	
+water	14:8	0:0	4	au_start_flag
+op	14:22	0:0	4	=
+call	14:24	14:37	4	get_bits1
+arg	14:34	14:37	5	&gb
+op	14:34	0:0	6	&
+water	14:35	0:0	6	gb
+water	14:38	0:0	4	;
+if	15:4	16:36	2	(sl -> use_au_end)
+cond	15:8	15:12	3	sl -> use_au_end
+water	15:8	0:0	4	sl
+op	15:10	0:0	4	->
+water	15:12	0:0	4	use_au_end
+stmts	16:8	16:36	3	
+water	16:8	0:0	4	au_end_flag
+op	16:20	0:0	4	=
+call	16:22	16:35	4	get_bits1
+arg	16:32	16:35	5	&gb
+op	16:32	0:0	6	&
+water	16:33	0:0	6	gb
+water	16:36	0:0	4	;
+if	17:4	18:39	2	(! sl -> use_au_start && ! sl -> use_au_end)
+cond	17:8	17:34	3	! sl -> use_au_start && ! sl -> use_au_end
+op	17:8	0:0	4	!
+water	17:9	0:0	4	sl
+op	17:11	0:0	4	->
+water	17:13	0:0	4	use_au_start
+op	17:26	0:0	4	&&
+op	17:29	0:0	4	!
+water	17:30	0:0	4	sl
+op	17:32	0:0	4	->
+water	17:34	0:0	4	use_au_end
+stmts	18:8	18:39	3	
+water	18:8	0:0	4	au_start_flag
+op	18:22	0:0	4	=
+water	18:24	0:0	4	au_end_flag
+op	18:36	0:0	4	=
+water	18:38	0:0	4	1
+water	18:39	0:0	4	;
+if	19:4	20:33	2	(sl -> ocr_len > 0)
+cond	19:8	19:22	3	sl -> ocr_len > 0
+water	19:8	0:0	4	sl
+op	19:10	0:0	4	->
+water	19:12	0:0	4	ocr_len
+op	19:20	0:0	4	>
+water	19:22	0:0	4	0
+stmts	20:8	20:33	3	
+water	20:8	0:0	4	ocr_flag
+op	20:17	0:0	4	=
+call	20:19	20:32	4	get_bits1
+arg	20:29	20:32	5	&gb
+op	20:29	0:0	6	&
+water	20:30	0:0	6	gb
+water	20:33	0:0	4	;
+if	21:4	22:34	2	(sl -> use_idle)
+cond	21:8	21:12	3	sl -> use_idle
+water	21:8	0:0	4	sl
+op	21:10	0:0	4	->
+water	21:12	0:0	4	use_idle
+stmts	22:8	22:34	3	
+water	22:8	0:0	4	idle_flag
+op	22:18	0:0	4	=
+call	22:20	22:33	4	get_bits1
+arg	22:30	22:33	5	&gb
+op	22:30	0:0	6	&
+water	22:31	0:0	6	gb
+water	22:34	0:0	4	;
+if	23:4	24:37	2	(sl -> use_padding)
+cond	23:8	23:12	3	sl -> use_padding
+water	23:8	0:0	4	sl
+op	23:10	0:0	4	->
+water	23:12	0:0	4	use_padding
+stmts	24:8	24:37	3	
+water	24:8	0:0	4	padding_flag
+op	24:21	0:0	4	=
+call	24:23	24:36	4	get_bits1
+arg	24:33	24:36	5	&gb
+op	24:33	0:0	6	&
+water	24:34	0:0	6	gb
+water	24:37	0:0	4	;
+if	25:4	26:39	2	(padding_flag)
+cond	25:8	25:8	3	padding_flag
+water	25:8	0:0	4	padding_flag
+stmts	26:8	26:39	3	
+water	26:8	0:0	4	padding_bits
+op	26:21	0:0	4	=
+call	26:23	26:38	4	get_bits
+arg	26:32	26:35	5	&gb
+op	26:32	0:0	6	&
+water	26:33	0:0	6	gb
+arg	26:37	26:38	5	3
+water	26:37	0:0	6	3
+water	26:39	0:0	4	;
+if	27:4	55:4	2	(! idle_flag && ( ! padding_flag || padding_bits != 0 ))
+cond	27:8	27:57	3	! idle_flag && ( ! padding_flag || padding_bits != 0 )
+op	27:8	0:0	4	!
+water	27:9	0:0	4	idle_flag
+op	27:19	0:0	4	&&
+water	27:22	0:0	4	(
+op	27:23	0:0	4	!
+water	27:24	0:0	4	padding_flag
+op	27:37	0:0	4	||
+water	27:40	0:0	4	padding_bits
+op	27:53	0:0	4	!=
+water	27:56	0:0	4	0
+water	27:57	0:0	4	)
+stmts	27:60	55:4	3	
+water	27:60	0:0	4	{
+if	28:8	29:55	4	(sl -> packet_seq_num_len)
+cond	28:12	28:16	5	sl -> packet_seq_num_len
+water	28:12	0:0	6	sl
+op	28:14	0:0	6	->
+water	28:16	0:0	6	packet_seq_num_len
+stmts	29:12	29:55	5	
+call	29:12	29:54	6	skip_bits_long
+arg	29:27	29:30	7	&gb
+op	29:27	0:0	8	&
+water	29:28	0:0	8	gb
+arg	29:32	29:54	7	sl->packet_seq_num_len
+water	29:32	0:0	8	sl
+op	29:34	0:0	8	->
+water	29:36	0:0	8	packet_seq_num_len
+water	29:55	0:0	6	;
+if	30:8	32:50	4	(sl -> degr_prior_len)
+cond	30:12	30:16	5	sl -> degr_prior_len
+water	30:12	0:0	6	sl
+op	30:14	0:0	6	->
+water	30:16	0:0	6	degr_prior_len
+stmts	31:12	32:50	5	
+if	31:12	32:50	6	(get_bits1 (& gb ))
+cond	31:16	31:29	7	get_bits1 (& gb )
+call	31:16	31:29	8	get_bits1
+arg	31:26	31:29	9	&gb
+op	31:26	0:0	10	&
+water	31:27	0:0	10	gb
+stmts	32:16	32:50	7	
+call	32:16	32:49	8	skip_bits
+arg	32:26	32:29	9	&gb
+op	32:26	0:0	10	&
+water	32:27	0:0	10	gb
+arg	32:31	32:49	9	sl->degr_prior_len
+water	32:31	0:0	10	sl
+op	32:33	0:0	10	->
+water	32:35	0:0	10	degr_prior_len
+water	32:50	0:0	8	;
+if	33:8	34:44	4	(ocr_flag)
+cond	33:12	33:12	5	ocr_flag
+water	33:12	0:0	6	ocr_flag
+stmts	34:12	34:44	5	
+call	34:12	34:43	6	skip_bits_long
+arg	34:27	34:30	7	&gb
+op	34:27	0:0	8	&
+water	34:28	0:0	8	gb
+arg	34:32	34:43	7	sl->ocr_len
+water	34:32	0:0	8	sl
+op	34:34	0:0	8	->
+water	34:36	0:0	8	ocr_len
+water	34:44	0:0	6	;
+if	35:8	44:8	4	(au_start_flag)
+cond	35:12	35:12	5	au_start_flag
+water	35:12	0:0	6	au_start_flag
+stmts	35:27	44:8	5	
+water	35:27	0:0	6	{
+if	36:12	37:30	6	(sl -> use_rand_acc_pt)
+cond	36:16	36:20	7	sl -> use_rand_acc_pt
+water	36:16	0:0	8	sl
+op	36:18	0:0	8	->
+water	36:20	0:0	8	use_rand_acc_pt
+stmts	37:16	37:30	7	
+call	37:16	37:29	8	get_bits1
+arg	37:26	37:29	9	&gb
+op	37:26	0:0	10	&
+water	37:27	0:0	10	gb
+water	37:30	0:0	8	;
+if	38:12	39:55	6	(sl -> au_seq_num_len > 0)
+cond	38:16	38:37	7	sl -> au_seq_num_len > 0
+water	38:16	0:0	8	sl
+op	38:18	0:0	8	->
+water	38:20	0:0	8	au_seq_num_len
+op	38:35	0:0	8	>
+water	38:37	0:0	8	0
+stmts	39:16	39:55	7	
+call	39:16	39:54	8	skip_bits_long
+arg	39:31	39:34	9	&gb
+op	39:31	0:0	10	&
+water	39:32	0:0	10	gb
+arg	39:36	39:54	9	sl->au_seq_num_len
+water	39:36	0:0	10	sl
+op	39:38	0:0	10	->
+water	39:40	0:0	10	au_seq_num_len
+water	39:55	0:0	8	;
+if	40:12	43:12	6	(sl -> use_timestamps)
+cond	40:16	40:20	7	sl -> use_timestamps
+water	40:16	0:0	8	sl
+op	40:18	0:0	8	->
+water	40:20	0:0	8	use_timestamps
+stmts	40:36	43:12	7	
+water	40:36	0:0	8	{
+water	41:16	0:0	8	dts_flag
+op	41:25	0:0	8	=
+call	41:27	41:40	8	get_bits1
+arg	41:37	41:40	9	&gb
+op	41:37	0:0	10	&
+water	41:38	0:0	10	gb
+water	41:41	0:0	8	;
+water	42:16	0:0	8	cts_flag
+op	42:25	0:0	8	=
+call	42:27	42:40	8	get_bits1
+arg	42:37	42:40	9	&gb
+op	42:37	0:0	10	&
+water	42:38	0:0	10	gb
+water	42:41	0:0	8	;
+water	43:12	0:0	8	}
+water	44:8	0:0	6	}
+if	45:8	46:46	4	(sl -> inst_bitrate_len)
+cond	45:12	45:16	5	sl -> inst_bitrate_len
+water	45:12	0:0	6	sl
+op	45:14	0:0	6	->
+water	45:16	0:0	6	inst_bitrate_len
+stmts	46:12	46:46	5	
+water	46:12	0:0	6	inst_bitrate_flag
+op	46:30	0:0	6	=
+call	46:32	46:45	6	get_bits1
+arg	46:42	46:45	7	&gb
+op	46:42	0:0	8	&
+water	46:43	0:0	8	gb
+water	46:46	0:0	6	;
+if	47:8	48:50	4	(dts_flag == 1)
+cond	47:12	47:24	5	dts_flag == 1
+water	47:12	0:0	6	dts_flag
+op	47:21	0:0	6	==
+water	47:24	0:0	6	1
+stmts	48:12	48:50	5	
+water	48:12	0:0	6	dts
+op	48:16	0:0	6	=
+call	48:18	48:49	6	get_ts64
+arg	48:27	48:30	7	&gb
+op	48:27	0:0	8	&
+water	48:28	0:0	8	gb
+arg	48:32	48:49	7	sl->timestamp_len
+water	48:32	0:0	8	sl
+op	48:34	0:0	8	->
+water	48:36	0:0	8	timestamp_len
+water	48:50	0:0	6	;
+if	49:8	50:50	4	(cts_flag == 1)
+cond	49:12	49:24	5	cts_flag == 1
+water	49:12	0:0	6	cts_flag
+op	49:21	0:0	6	==
+water	49:24	0:0	6	1
+stmts	50:12	50:50	5	
+water	50:12	0:0	6	cts
+op	50:16	0:0	6	=
+call	50:18	50:49	6	get_ts64
+arg	50:27	50:30	7	&gb
+op	50:27	0:0	8	&
+water	50:28	0:0	8	gb
+arg	50:32	50:49	7	sl->timestamp_len
+water	50:32	0:0	8	sl
+op	50:34	0:0	8	->
+water	50:36	0:0	8	timestamp_len
+water	50:50	0:0	6	;
+if	51:8	52:43	4	(sl -> au_len > 0)
+cond	51:12	51:25	5	sl -> au_len > 0
+water	51:12	0:0	6	sl
+op	51:14	0:0	6	->
+water	51:16	0:0	6	au_len
+op	51:23	0:0	6	>
+water	51:25	0:0	6	0
+stmts	52:12	52:43	5	
+call	52:12	52:42	6	skip_bits_long
+arg	52:27	52:30	7	&gb
+op	52:27	0:0	8	&
+water	52:28	0:0	8	gb
+arg	52:32	52:42	7	sl->au_len
+water	52:32	0:0	8	sl
+op	52:34	0:0	8	->
+water	52:36	0:0	8	au_len
+water	52:43	0:0	6	;
+if	53:8	54:53	4	(inst_bitrate_flag)
+cond	53:12	53:12	5	inst_bitrate_flag
+water	53:12	0:0	6	inst_bitrate_flag
+stmts	54:12	54:53	5	
+call	54:12	54:52	6	skip_bits_long
+arg	54:27	54:30	7	&gb
+op	54:27	0:0	8	&
+water	54:28	0:0	8	gb
+arg	54:32	54:52	7	sl->inst_bitrate_len
+water	54:32	0:0	8	sl
+op	54:34	0:0	8	->
+water	54:36	0:0	8	inst_bitrate_len
+water	54:53	0:0	6	;
+water	55:4	0:0	4	}
+if	56:4	57:22	2	(dts != AV_NOPTS_VALUE)
+cond	56:8	56:15	3	dts != AV_NOPTS_VALUE
+water	56:8	0:0	4	dts
+op	56:12	0:0	4	!=
+water	56:15	0:0	4	AV_NOPTS_VALUE
+stmts	57:8	57:22	3	
+water	57:8	0:0	4	pes
+op	57:11	0:0	4	->
+water	57:13	0:0	4	dts
+op	57:17	0:0	4	=
+water	57:19	0:0	4	dts
+water	57:22	0:0	4	;
+if	58:4	59:22	2	(cts != AV_NOPTS_VALUE)
+cond	58:8	58:15	3	cts != AV_NOPTS_VALUE
+water	58:8	0:0	4	cts
+op	58:12	0:0	4	!=
+water	58:15	0:0	4	AV_NOPTS_VALUE
+stmts	59:8	59:22	3	
+water	59:8	0:0	4	pes
+op	59:11	0:0	4	->
+water	59:13	0:0	4	pts
+op	59:17	0:0	4	=
+water	59:19	0:0	4	cts
+water	59:22	0:0	4	;
+if	60:4	61:77	2	(sl -> timestamp_len && sl -> timestamp_res)
+cond	60:8	60:33	3	sl -> timestamp_len && sl -> timestamp_res
+water	60:8	0:0	4	sl
+op	60:10	0:0	4	->
+water	60:12	0:0	4	timestamp_len
+op	60:26	0:0	4	&&
+water	60:29	0:0	4	sl
+op	60:31	0:0	4	->
+water	60:33	0:0	4	timestamp_res
+stmts	61:8	61:77	3	
+call	61:8	61:76	4	avpriv_set_pts_info
+arg	61:28	61:35	5	pes->st
+water	61:28	0:0	6	pes
+op	61:31	0:0	6	->
+water	61:33	0:0	6	st
+arg	61:37	61:54	5	sl->timestamp_len
+water	61:37	0:0	6	sl
+op	61:39	0:0	6	->
+water	61:41	0:0	6	timestamp_len
+arg	61:56	61:57	5	1
+water	61:56	0:0	6	1
+arg	61:59	61:76	5	sl->timestamp_res
+water	61:59	0:0	6	sl
+op	61:61	0:0	6	->
+water	61:63	0:0	6	timestamp_res
+water	61:77	0:0	4	;
+return	62:4	62:41	2	(get_bits_count(&gb)+7)>>3
+water	62:11	0:0	3	(
+call	62:12	62:30	3	get_bits_count
+arg	62:27	62:30	4	&gb
+op	62:27	0:0	5	&
+water	62:28	0:0	5	gb
+op	62:32	0:0	3	+
+water	62:34	0:0	3	7
+water	62:35	0:0	3	)
+op	62:37	0:0	3	>>
+water	62:40	0:0	3	3

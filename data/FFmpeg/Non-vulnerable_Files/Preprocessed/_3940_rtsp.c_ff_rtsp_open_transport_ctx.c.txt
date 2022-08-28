@@ -1,0 +1,297 @@
+func	1:0	51:0	0	int	ff_rtsp_open_transport_ctx
+params	1:30	0:0	1	
+param	1:31	1:49	2	AVFormatContext *	s
+param	1:51	1:70	2	RTSPStream *	rtsp_st
+stmnts	0:0	50:12	1	
+decl	3:4	3:32	2	RTSPState	*rt
+op	3:18	0:0	2	=
+water	3:20	0:0	2	s
+op	3:21	0:0	2	->
+water	3:23	0:0	2	priv_data
+decl	4:4	4:23	2	AVStream	*st
+op	4:17	0:0	2	=
+water	4:19	0:0	2	NULL
+decl	5:4	5:57	2	int	reordering_queue_size
+op	5:30	0:0	2	=
+water	5:32	0:0	2	rt
+op	5:34	0:0	2	->
+water	5:36	0:0	2	reordering_queue_size
+if	6:4	11:4	2	(reordering_queue_size < 0)
+cond	6:8	6:32	3	reordering_queue_size < 0
+water	6:8	0:0	4	reordering_queue_size
+op	6:30	0:0	4	<
+water	6:32	0:0	4	0
+stmts	6:35	11:4	3	
+water	6:35	0:0	4	{
+if	7:8	8:37	4	(rt -> lower_transport == RTSP_LOWER_TRANSPORT_TCP || ! s -> max_delay)
+cond	7:12	7:67	5	rt -> lower_transport == RTSP_LOWER_TRANSPORT_TCP || ! s -> max_delay
+water	7:12	0:0	6	rt
+op	7:14	0:0	6	->
+water	7:16	0:0	6	lower_transport
+op	7:32	0:0	6	==
+water	7:35	0:0	6	RTSP_LOWER_TRANSPORT_TCP
+op	7:60	0:0	6	||
+op	7:63	0:0	6	!
+water	7:64	0:0	6	s
+op	7:65	0:0	6	->
+water	7:67	0:0	6	max_delay
+stmts	8:12	8:37	5	
+water	8:12	0:0	6	reordering_queue_size
+op	8:34	0:0	6	=
+water	8:36	0:0	6	0
+water	8:37	0:0	6	;
+else	9:8	10:66	4
+stmts	10:12	10:66	5	
+water	10:12	0:0	6	reordering_queue_size
+op	10:34	0:0	6	=
+water	10:36	0:0	6	RTP_REORDER_QUEUE_DEFAULT_SIZE
+water	10:66	0:0	6	;
+water	11:4	0:0	4	}
+if	13:4	14:46	2	(rtsp_st -> stream_index >= 0)
+cond	13:8	13:33	3	rtsp_st -> stream_index >= 0
+water	13:8	0:0	4	rtsp_st
+op	13:15	0:0	4	->
+water	13:17	0:0	4	stream_index
+op	13:30	0:0	4	>=
+water	13:33	0:0	4	0
+stmts	14:8	14:46	3	
+water	14:8	0:0	4	st
+op	14:11	0:0	4	=
+water	14:13	0:0	4	s
+op	14:14	0:0	4	->
+water	14:16	0:0	4	streams
+op	14:23	0:0	4	[
+water	14:24	0:0	4	rtsp_st
+op	14:31	0:0	4	->
+water	14:33	0:0	4	stream_index
+op	14:45	0:0	4	]
+water	14:46	0:0	4	;
+if	15:4	16:41	2	(! st)
+cond	15:8	15:9	3	! st
+op	15:8	0:0	4	!
+water	15:9	0:0	4	st
+stmts	16:8	16:41	3	
+water	16:8	0:0	4	s
+op	16:9	0:0	4	->
+water	16:11	0:0	4	ctx_flags
+op	16:21	0:0	4	|=
+water	16:24	0:0	4	AVFMTCTX_NOHEADER
+water	16:41	0:0	4	;
+if	17:4	27:4	2	(CONFIG_RTSP_MUXER && s -> oformat && st)
+cond	17:8	17:43	3	CONFIG_RTSP_MUXER && s -> oformat && st
+water	17:8	0:0	4	CONFIG_RTSP_MUXER
+op	17:26	0:0	4	&&
+water	17:29	0:0	4	s
+op	17:30	0:0	4	->
+water	17:32	0:0	4	oformat
+op	17:40	0:0	4	&&
+water	17:43	0:0	4	st
+stmts	17:47	27:4	3	
+water	17:47	0:0	4	{
+decl	18:8	21:62	4	int	ret
+op	18:16	0:0	4	=
+call	18:18	21:61	5	ff_rtp_chain_mux_open
+arg	18:40	18:84	6	(AVFormatContext**)&rtsp_st->transport_priv
+water	18:40	0:0	7	(
+water	18:41	0:0	7	AVFormatContext
+op	18:57	0:0	7	*
+op	18:58	0:0	7	*
+water	18:59	0:0	7	)
+op	18:60	0:0	7	&
+water	18:61	0:0	7	rtsp_st
+op	18:68	0:0	7	->
+water	18:70	0:0	7	transport_priv
+arg	19:40	19:41	6	s
+water	19:40	0:0	7	s
+arg	19:43	19:45	6	st
+water	19:43	0:0	7	st
+arg	19:47	19:66	6	rtsp_st->rtp_handle
+water	19:47	0:0	7	rtsp_st
+op	19:54	0:0	7	->
+water	19:56	0:0	7	rtp_handle
+arg	20:40	20:64	6	RTSP_TCP_MAX_PACKET_SIZE
+water	20:40	0:0	7	RTSP_TCP_MAX_PACKET_SIZE
+arg	21:40	21:61	6	rtsp_st->stream_index
+water	21:40	0:0	7	rtsp_st
+op	21:47	0:0	7	->
+water	21:49	0:0	7	stream_index
+water	23:8	0:0	4	rtsp_st
+op	23:15	0:0	4	->
+water	23:17	0:0	4	rtp_handle
+op	23:28	0:0	4	=
+water	23:30	0:0	4	NULL
+water	23:34	0:0	4	;
+if	24:8	25:22	4	(ret < 0)
+cond	24:12	24:18	5	ret < 0
+water	24:12	0:0	6	ret
+op	24:16	0:0	6	<
+water	24:18	0:0	6	0
+stmts	25:12	25:22	5	
+return	25:12	25:22	6	ret
+water	25:19	0:0	7	ret
+water	26:8	0:0	4	st
+op	26:10	0:0	4	->
+water	26:12	0:0	4	time_base
+op	26:22	0:0	4	=
+water	26:24	0:0	4	(
+water	26:25	0:0	4	(
+water	26:26	0:0	4	AVFormatContext
+op	26:41	0:0	4	*
+water	26:42	0:0	4	)
+water	26:43	0:0	4	rtsp_st
+op	26:50	0:0	4	->
+water	26:52	0:0	4	transport_priv
+water	26:66	0:0	4	)
+op	26:67	0:0	4	->
+water	26:69	0:0	4	streams
+op	26:76	0:0	4	[
+water	26:77	0:0	4	0
+op	26:78	0:0	4	]
+op	26:79	0:0	4	->
+water	26:81	0:0	4	time_base
+water	26:90	0:0	4	;
+water	27:4	0:0	4	}
+else	27:6	29:4	2
+stmts	27:11	29:4	3	
+if	27:11	29:4	4	(rt -> transport == RTSP_TRANSPORT_RAW)
+cond	27:15	27:32	5	rt -> transport == RTSP_TRANSPORT_RAW
+water	27:15	0:0	6	rt
+op	27:17	0:0	6	->
+water	27:19	0:0	6	transport
+op	27:29	0:0	6	==
+water	27:32	0:0	6	RTSP_TRANSPORT_RAW
+stmts	27:52	29:4	5	
+water	27:52	0:0	6	{
+return	28:8	28:16	6	0
+water	28:15	0:0	7	0
+water	29:4	0:0	6	}
+else	29:6	32:69	2
+stmts	29:11	32:69	3	
+if	29:11	32:69	4	(CONFIG_RTPDEC && rt -> transport == RTSP_TRANSPORT_RDT && st)
+cond	29:15	29:71	5	CONFIG_RTPDEC && rt -> transport == RTSP_TRANSPORT_RDT && st
+water	29:15	0:0	6	CONFIG_RTPDEC
+op	29:29	0:0	6	&&
+water	29:32	0:0	6	rt
+op	29:34	0:0	6	->
+water	29:36	0:0	6	transport
+op	29:46	0:0	6	==
+water	29:49	0:0	6	RTSP_TRANSPORT_RDT
+op	29:68	0:0	6	&&
+water	29:71	0:0	6	st
+stmts	30:8	32:69	5	
+water	30:8	0:0	6	rtsp_st
+op	30:15	0:0	6	->
+water	30:17	0:0	6	transport_priv
+op	30:32	0:0	6	=
+call	30:34	32:68	6	ff_rdt_parse_open
+arg	30:52	30:53	7	s
+water	30:52	0:0	8	s
+arg	30:55	30:64	7	st->index
+water	30:55	0:0	8	st
+op	30:57	0:0	8	->
+water	30:59	0:0	8	index
+arg	31:44	31:77	7	rtsp_st->dynamic_protocol_context
+water	31:44	0:0	8	rtsp_st
+op	31:51	0:0	8	->
+water	31:53	0:0	8	dynamic_protocol_context
+arg	32:44	32:68	7	rtsp_st->dynamic_handler
+water	32:44	0:0	8	rtsp_st
+op	32:51	0:0	8	->
+water	32:53	0:0	8	dynamic_handler
+water	32:69	0:0	6	;
+else	33:4	36:63	2
+stmts	33:9	36:63	3	
+if	33:9	36:63	4	(CONFIG_RTPDEC)
+cond	33:13	33:13	5	CONFIG_RTPDEC
+water	33:13	0:0	6	CONFIG_RTPDEC
+stmts	34:8	36:63	5	
+water	34:8	0:0	6	rtsp_st
+op	34:15	0:0	6	->
+water	34:17	0:0	6	transport_priv
+op	34:32	0:0	6	=
+call	34:34	36:62	6	ff_rtp_parse_open
+arg	34:52	34:53	7	s
+water	34:52	0:0	8	s
+arg	34:55	34:57	7	st
+water	34:55	0:0	8	st
+arg	35:41	35:66	7	rtsp_st->sdp_payload_type
+water	35:41	0:0	8	rtsp_st
+op	35:48	0:0	8	->
+water	35:50	0:0	8	sdp_payload_type
+arg	36:41	36:62	7	reordering_queue_size
+water	36:41	0:0	8	reordering_queue_size
+water	36:63	0:0	6	;
+if	37:4	39:4	2	(! rtsp_st -> transport_priv)
+cond	37:8	37:18	3	! rtsp_st -> transport_priv
+op	37:8	0:0	4	!
+water	37:9	0:0	4	rtsp_st
+op	37:16	0:0	4	->
+water	37:18	0:0	4	transport_priv
+stmts	37:34	39:4	3	
+water	37:34	0:0	4	{
+return	38:9	38:31	4	AVERROR(ENOMEM)
+call	38:16	38:30	5	AVERROR
+arg	38:24	38:30	6	ENOMEM
+water	38:24	0:0	7	ENOMEM
+water	39:4	0:0	4	}
+else	39:6	49:4	2
+stmts	39:11	49:4	3	
+if	39:11	49:4	4	(CONFIG_RTPDEC && rt -> transport == RTSP_TRANSPORT_RTP)
+cond	39:15	39:49	5	CONFIG_RTPDEC && rt -> transport == RTSP_TRANSPORT_RTP
+water	39:15	0:0	6	CONFIG_RTPDEC
+op	39:29	0:0	6	&&
+water	39:32	0:0	6	rt
+op	39:34	0:0	6	->
+water	39:36	0:0	6	transport
+op	39:46	0:0	6	==
+water	39:49	0:0	6	RTSP_TRANSPORT_RTP
+stmts	39:69	49:4	5	
+water	39:69	0:0	6	{
+if	40:8	44:8	6	(rtsp_st -> dynamic_handler)
+cond	40:12	40:21	7	rtsp_st -> dynamic_handler
+water	40:12	0:0	8	rtsp_st
+op	40:19	0:0	8	->
+water	40:21	0:0	8	dynamic_handler
+stmts	40:38	44:8	7	
+water	40:38	0:0	8	{
+call	41:12	43:70	8	ff_rtp_parse_set_dynamic_protocol
+arg	41:46	41:69	9	rtsp_st->transport_priv
+water	41:46	0:0	10	rtsp_st
+op	41:53	0:0	10	->
+water	41:55	0:0	10	transport_priv
+arg	42:46	42:79	9	rtsp_st->dynamic_protocol_context
+water	42:46	0:0	10	rtsp_st
+op	42:53	0:0	10	->
+water	42:55	0:0	10	dynamic_protocol_context
+arg	43:46	43:70	9	rtsp_st->dynamic_handler
+water	43:46	0:0	10	rtsp_st
+op	43:53	0:0	10	->
+water	43:55	0:0	10	dynamic_handler
+water	43:71	0:0	8	;
+water	44:8	0:0	8	}
+if	45:8	48:59	6	(rtsp_st -> crypto_suite [ 0 ])
+cond	45:12	45:35	7	rtsp_st -> crypto_suite [ 0 ]
+water	45:12	0:0	8	rtsp_st
+op	45:19	0:0	8	->
+water	45:21	0:0	8	crypto_suite
+op	45:33	0:0	8	[
+water	45:34	0:0	8	0
+op	45:35	0:0	8	]
+stmts	46:12	48:59	7	
+call	46:12	48:58	8	ff_rtp_parse_set_crypto
+arg	46:36	46:59	9	rtsp_st->transport_priv
+water	46:36	0:0	10	rtsp_st
+op	46:43	0:0	10	->
+water	46:45	0:0	10	transport_priv
+arg	47:36	47:57	9	rtsp_st->crypto_suite
+water	47:36	0:0	10	rtsp_st
+op	47:43	0:0	10	->
+water	47:45	0:0	10	crypto_suite
+arg	48:36	48:58	9	rtsp_st->crypto_params
+water	48:36	0:0	10	rtsp_st
+op	48:43	0:0	10	->
+water	48:45	0:0	10	crypto_params
+water	48:59	0:0	8	;
+water	49:4	0:0	6	}
+return	50:4	50:12	2	0
+water	50:11	0:0	3	0

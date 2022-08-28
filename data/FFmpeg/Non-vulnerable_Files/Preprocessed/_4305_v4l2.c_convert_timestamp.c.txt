@@ -1,0 +1,84 @@
+func	1:0	19:0	0	static int	convert_timestamp
+params	1:28	0:0	1	
+param	1:29	1:49	2	AVFormatContext *	ctx
+param	1:51	1:62	2	int64_t *	ts
+stmnts	0:0	18:12	1	
+decl	3:4	3:41	2	struct video_data	*s
+op	3:25	0:0	2	=
+water	3:27	0:0	2	ctx
+op	3:30	0:0	2	->
+water	3:32	0:0	2	priv_data
+if	4:4	8:4	2	(s -> ts_mode)
+cond	4:8	4:11	3	s -> ts_mode
+water	4:8	0:0	4	s
+op	4:9	0:0	4	->
+water	4:11	0:0	4	ts_mode
+stmts	4:20	8:4	3	
+water	4:20	0:0	4	{
+decl	5:8	5:48	4	int	r
+op	5:14	0:0	4	=
+call	5:16	5:47	5	init_convert_timestamp
+arg	5:39	5:42	6	ctx
+water	5:39	0:0	7	ctx
+arg	5:44	5:47	6	*ts
+op	5:44	0:0	7	*
+water	5:45	0:0	7	ts
+if	6:8	7:20	4	(r < 0)
+cond	6:12	6:16	5	r < 0
+water	6:12	0:0	6	r
+op	6:14	0:0	6	<
+water	6:16	0:0	6	0
+stmts	7:12	7:20	5	
+return	7:12	7:20	6	r
+water	7:19	0:0	7	r
+water	8:4	0:0	4	}
+if	10:4	16:4	2	(s -> timefilter)
+cond	10:8	10:11	3	s -> timefilter
+water	10:8	0:0	4	s
+op	10:9	0:0	4	->
+water	10:11	0:0	4	timefilter
+stmts	10:23	16:4	3	
+water	10:23	0:0	4	{
+decl	11:8	11:35	4	int64_t	nowa
+op	11:21	0:0	4	=
+call	11:23	11:34	5	av_gettime
+decl	12:8	12:45	4	int64_t	nowm
+op	12:21	0:0	4	=
+call	12:23	12:44	5	av_gettime_monotonic
+call	13:8	13:71	4	ff_timefilter_update
+arg	13:29	13:42	5	s->timefilter
+water	13:29	0:0	6	s
+op	13:30	0:0	6	->
+water	13:32	0:0	6	timefilter
+arg	13:44	13:48	5	nowa
+water	13:44	0:0	6	nowa
+arg	13:50	13:71	5	nowm-s->last_time_m
+water	13:50	0:0	6	nowm
+op	13:55	0:0	6	-
+water	13:57	0:0	6	s
+op	13:58	0:0	6	->
+water	13:60	0:0	6	last_time_m
+water	13:72	0:0	4	;
+water	14:8	0:0	4	s
+op	14:9	0:0	4	->
+water	14:11	0:0	4	last_time_m
+op	14:23	0:0	4	=
+water	14:25	0:0	4	nowm
+water	14:29	0:0	4	;
+op	15:8	0:0	4	*
+water	15:9	0:0	4	ts
+op	15:12	0:0	4	=
+call	15:14	15:58	4	ff_timefilter_eval
+arg	15:33	15:46	5	s->timefilter
+water	15:33	0:0	6	s
+op	15:34	0:0	6	->
+water	15:36	0:0	6	timefilter
+arg	15:48	15:58	5	*ts-nowm
+op	15:48	0:0	6	*
+water	15:49	0:0	6	ts
+op	15:52	0:0	6	-
+water	15:54	0:0	6	nowm
+water	15:59	0:0	4	;
+water	16:4	0:0	4	}
+return	18:4	18:12	2	0
+water	18:11	0:0	3	0

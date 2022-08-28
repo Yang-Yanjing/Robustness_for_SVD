@@ -1,0 +1,492 @@
+func	1:0	70:0	0	static int	matroska_parse_rm_audio
+params	1:34	0:0	1	
+param	1:35	1:65	2	MatroskaDemuxContext *	matroska
+param	2:35	2:55	2	MatroskaTrack *	track
+param	2:57	2:69	2	AVStream *	st
+param	3:35	3:48	2	uint8_t *	data
+param	3:50	3:58	2	int	size
+param	3:60	3:77	2	uint64_t	timecode
+param	4:35	4:46	2	int64_t	pos
+stmnts	0:0	69:12	1	
+decl	6:4	6:34	2	int	a
+op	6:10	0:0	2	=
+water	6:12	0:0	2	st
+op	6:14	0:0	2	->
+water	6:16	0:0	2	codec
+op	6:21	0:0	2	->
+water	6:23	0:0	2	block_align
+decl	7:4	7:42	2	int	sps
+op	7:12	0:0	2	=
+water	7:14	0:0	2	track
+op	7:19	0:0	2	->
+water	7:21	0:0	2	audio
+op	7:26	0:0	2	.
+water	7:27	0:0	2	sub_packet_size
+decl	8:4	8:42	2	int	cfs
+op	8:12	0:0	2	=
+water	8:14	0:0	2	track
+op	8:19	0:0	2	->
+water	8:21	0:0	2	audio
+op	8:26	0:0	2	.
+water	8:27	0:0	2	coded_framesize
+decl	9:4	9:39	2	int	h
+op	9:12	0:0	2	=
+water	9:14	0:0	2	track
+op	9:19	0:0	2	->
+water	9:21	0:0	2	audio
+op	9:26	0:0	2	.
+water	9:27	0:0	2	sub_packet_h
+decl	10:4	10:41	2	int	y
+op	10:12	0:0	2	=
+water	10:14	0:0	2	track
+op	10:19	0:0	2	->
+water	10:21	0:0	2	audio
+op	10:26	0:0	2	.
+water	10:27	0:0	2	sub_packet_cnt
+decl	11:4	11:37	2	int	w
+op	11:12	0:0	2	=
+water	11:14	0:0	2	track
+op	11:19	0:0	2	->
+water	11:21	0:0	2	audio
+op	11:26	0:0	2	.
+water	11:27	0:0	2	frame_size
+decl	12:4	12:9	2	int	x
+if	13:4	49:4	2	(! track -> audio . pkt_cnt)
+cond	13:8	13:22	3	! track -> audio . pkt_cnt
+op	13:8	0:0	4	!
+water	13:9	0:0	4	track
+op	13:14	0:0	4	->
+water	13:16	0:0	4	audio
+op	13:21	0:0	4	.
+water	13:22	0:0	4	pkt_cnt
+stmts	13:31	49:4	3	
+water	13:31	0:0	4	{
+if	14:8	15:48	4	(track -> audio . sub_packet_cnt == 0)
+cond	14:12	14:43	5	track -> audio . sub_packet_cnt == 0
+water	14:12	0:0	6	track
+op	14:17	0:0	6	->
+water	14:19	0:0	6	audio
+op	14:24	0:0	6	.
+water	14:25	0:0	6	sub_packet_cnt
+op	14:40	0:0	6	==
+water	14:43	0:0	6	0
+stmts	15:12	15:48	5	
+water	15:12	0:0	6	track
+op	15:17	0:0	6	->
+water	15:19	0:0	6	audio
+op	15:24	0:0	6	.
+water	15:25	0:0	6	buf_timecode
+op	15:38	0:0	6	=
+water	15:40	0:0	6	timecode
+water	15:48	0:0	6	;
+if	16:8	25:8	4	(st -> codec -> codec_id == AV_CODEC_ID_RA_288)
+cond	16:12	16:35	5	st -> codec -> codec_id == AV_CODEC_ID_RA_288
+water	16:12	0:0	6	st
+op	16:14	0:0	6	->
+water	16:16	0:0	6	codec
+op	16:21	0:0	6	->
+water	16:23	0:0	6	codec_id
+op	16:32	0:0	6	==
+water	16:35	0:0	6	AV_CODEC_ID_RA_288
+stmts	16:55	25:8	5	
+water	16:55	0:0	6	{
+if	17:12	21:12	6	(size < cfs * h / 2)
+cond	17:16	17:33	7	size < cfs * h / 2
+water	17:16	0:0	8	size
+op	17:21	0:0	8	<
+water	17:23	0:0	8	cfs
+op	17:27	0:0	8	*
+water	17:29	0:0	8	h
+op	17:31	0:0	8	/
+water	17:33	0:0	8	2
+stmts	17:36	21:12	7	
+water	17:36	0:0	8	{
+call	18:16	19:66	8	av_log
+arg	18:23	18:36	9	matroska->ctx
+water	18:23	0:0	10	matroska
+op	18:31	0:0	10	->
+water	18:33	0:0	10	ctx
+arg	18:38	18:50	9	AV_LOG_ERROR
+water	18:38	0:0	10	AV_LOG_ERROR
+arg	19:23	19:66	9	"Corrupt int4 RM-style audio packet size\n"
+water	19:23	0:0	10	"Corrupt int4 RM-style audio packet size\n"
+water	19:67	0:0	8	;
+return	20:16	20:42	8	AVERROR_INVALIDDATA
+water	20:23	0:0	9	AVERROR_INVALIDDATA
+water	21:12	0:0	8	}
+for	22:12	24:43	6	(x = 0 ;x < h / 2;x ++)
+forinit	22:17	22:22	7	x = 0 ;
+water	22:17	0:0	8	x
+op	22:19	0:0	8	=
+water	22:21	0:0	8	0
+water	22:22	0:0	8	;
+cond	22:24	22:32	7	x < h / 2
+water	22:24	0:0	8	x
+op	22:26	0:0	8	<
+water	22:28	0:0	8	h
+op	22:30	0:0	8	/
+water	22:32	0:0	8	2
+forexpr	22:35	22:36	7	x ++
+water	22:35	0:0	8	x
+op	22:36	0:0	8	++
+stmts	23:16	24:43	7	
+call	23:16	24:42	8	memcpy
+arg	23:23	23:61	9	track->audio.buf+x*2*w+y*cfs
+water	23:23	0:0	10	track
+op	23:28	0:0	10	->
+water	23:30	0:0	10	audio
+op	23:35	0:0	10	.
+water	23:36	0:0	10	buf
+op	23:40	0:0	10	+
+water	23:42	0:0	10	x
+op	23:44	0:0	10	*
+water	23:46	0:0	10	2
+op	23:48	0:0	10	*
+water	23:50	0:0	10	w
+op	23:52	0:0	10	+
+water	23:54	0:0	10	y
+op	23:56	0:0	10	*
+water	23:58	0:0	10	cfs
+arg	24:23	24:37	9	data+x*cfs
+water	24:23	0:0	10	data
+op	24:28	0:0	10	+
+water	24:30	0:0	10	x
+op	24:32	0:0	10	*
+water	24:34	0:0	10	cfs
+arg	24:39	24:42	9	cfs
+water	24:39	0:0	10	cfs
+water	24:43	0:0	8	;
+water	25:8	0:0	6	}
+else	25:10	32:8	4
+stmts	25:15	32:8	5	
+if	25:15	32:8	6	(st -> codec -> codec_id == AV_CODEC_ID_SIPR)
+cond	25:19	25:42	7	st -> codec -> codec_id == AV_CODEC_ID_SIPR
+water	25:19	0:0	8	st
+op	25:21	0:0	8	->
+water	25:23	0:0	8	codec
+op	25:28	0:0	8	->
+water	25:30	0:0	8	codec_id
+op	25:39	0:0	8	==
+water	25:42	0:0	8	AV_CODEC_ID_SIPR
+stmts	25:60	32:8	7	
+water	25:60	0:0	8	{
+if	26:12	30:12	8	(size < w)
+cond	26:16	26:23	9	size < w
+water	26:16	0:0	10	size
+op	26:21	0:0	10	<
+water	26:23	0:0	10	w
+stmts	26:26	30:12	9	
+water	26:26	0:0	10	{
+call	27:16	28:66	10	av_log
+arg	27:23	27:36	11	matroska->ctx
+water	27:23	0:0	12	matroska
+op	27:31	0:0	12	->
+water	27:33	0:0	12	ctx
+arg	27:38	27:50	11	AV_LOG_ERROR
+water	27:38	0:0	12	AV_LOG_ERROR
+arg	28:23	28:66	11	"Corrupt sipr RM-style audio packet size\n"
+water	28:23	0:0	12	"Corrupt sipr RM-style audio packet size\n"
+water	28:67	0:0	10	;
+return	29:16	29:42	10	AVERROR_INVALIDDATA
+water	29:23	0:0	11	AVERROR_INVALIDDATA
+water	30:12	0:0	10	}
+call	31:12	31:52	8	memcpy
+arg	31:19	31:43	9	track->audio.buf+y*w
+water	31:19	0:0	10	track
+op	31:24	0:0	10	->
+water	31:26	0:0	10	audio
+op	31:31	0:0	10	.
+water	31:32	0:0	10	buf
+op	31:36	0:0	10	+
+water	31:38	0:0	10	y
+op	31:40	0:0	10	*
+water	31:42	0:0	10	w
+arg	31:45	31:49	9	data
+water	31:45	0:0	10	data
+arg	31:51	31:52	9	w
+water	31:51	0:0	10	w
+water	31:53	0:0	8	;
+water	32:8	0:0	8	}
+else	32:10	42:8	4
+stmts	32:15	42:8	5	
+water	32:15	0:0	6	{
+if	33:12	37:12	6	(size < sps * w / sps || h <= 0 || w % sps)
+cond	33:16	33:50	7	size < sps * w / sps || h <= 0 || w % sps
+water	33:16	0:0	8	size
+op	33:21	0:0	8	<
+water	33:23	0:0	8	sps
+op	33:27	0:0	8	*
+water	33:29	0:0	8	w
+op	33:31	0:0	8	/
+water	33:33	0:0	8	sps
+op	33:37	0:0	8	||
+water	33:40	0:0	8	h
+op	33:41	0:0	8	<=
+water	33:43	0:0	8	0
+op	33:45	0:0	8	||
+water	33:48	0:0	8	w
+op	33:49	0:0	8	%
+water	33:50	0:0	8	sps
+stmts	33:55	37:12	7	
+water	33:55	0:0	8	{
+call	34:16	35:69	8	av_log
+arg	34:23	34:36	9	matroska->ctx
+water	34:23	0:0	10	matroska
+op	34:31	0:0	10	->
+water	34:33	0:0	10	ctx
+arg	34:38	34:50	9	AV_LOG_ERROR
+water	34:38	0:0	10	AV_LOG_ERROR
+arg	35:23	35:69	9	"Corrupt generic RM-style audio packet size\n"
+water	35:23	0:0	10	"Corrupt generic RM-style audio packet size\n"
+water	35:70	0:0	8	;
+return	36:16	36:42	8	AVERROR_INVALIDDATA
+water	36:23	0:0	9	AVERROR_INVALIDDATA
+water	37:12	0:0	8	}
+for	38:12	41:43	6	(x = 0 ;x < w / sps;x ++)
+forinit	38:17	38:22	7	x = 0 ;
+water	38:17	0:0	8	x
+op	38:19	0:0	8	=
+water	38:21	0:0	8	0
+water	38:22	0:0	8	;
+cond	38:24	38:32	7	x < w / sps
+water	38:24	0:0	8	x
+op	38:26	0:0	8	<
+water	38:28	0:0	8	w
+op	38:30	0:0	8	/
+water	38:32	0:0	8	sps
+forexpr	38:37	38:38	7	x ++
+water	38:37	0:0	8	x
+op	38:38	0:0	8	++
+stmts	39:16	41:43	7	
+call	39:16	41:42	8	memcpy
+arg	39:23	40:73	9	track->audio.buf+sps*(h*x+((h+1)/2)*(y&1)+(y>>1))
+water	39:23	0:0	10	track
+op	39:28	0:0	10	->
+water	39:30	0:0	10	audio
+op	39:35	0:0	10	.
+water	39:36	0:0	10	buf
+op	39:40	0:0	10	+
+water	40:23	0:0	10	sps
+op	40:27	0:0	10	*
+water	40:29	0:0	10	(
+water	40:30	0:0	10	h
+op	40:32	0:0	10	*
+water	40:34	0:0	10	x
+op	40:36	0:0	10	+
+water	40:38	0:0	10	(
+water	40:39	0:0	10	(
+water	40:40	0:0	10	h
+op	40:42	0:0	10	+
+water	40:44	0:0	10	1
+water	40:45	0:0	10	)
+op	40:47	0:0	10	/
+water	40:49	0:0	10	2
+water	40:50	0:0	10	)
+op	40:52	0:0	10	*
+water	40:54	0:0	10	(
+water	40:55	0:0	10	y
+op	40:57	0:0	10	&
+water	40:59	0:0	10	1
+water	40:60	0:0	10	)
+op	40:62	0:0	10	+
+water	40:64	0:0	10	(
+water	40:65	0:0	10	y
+op	40:67	0:0	10	>>
+water	40:70	0:0	10	1
+water	40:71	0:0	10	)
+water	40:72	0:0	10	)
+arg	41:23	41:37	9	data+x*sps
+water	41:23	0:0	10	data
+op	41:28	0:0	10	+
+water	41:30	0:0	10	x
+op	41:32	0:0	10	*
+water	41:34	0:0	10	sps
+arg	41:39	41:42	9	sps
+water	41:39	0:0	10	sps
+water	41:43	0:0	8	;
+water	42:8	0:0	6	}
+if	43:8	48:8	4	(++ track -> audio . sub_packet_cnt >= h)
+cond	43:12	43:45	5	++ track -> audio . sub_packet_cnt >= h
+op	43:12	0:0	6	++
+water	43:14	0:0	6	track
+op	43:19	0:0	6	->
+water	43:21	0:0	6	audio
+op	43:26	0:0	6	.
+water	43:27	0:0	6	sub_packet_cnt
+op	43:42	0:0	6	>=
+water	43:45	0:0	6	h
+stmts	43:48	48:8	5	
+water	43:48	0:0	6	{
+if	44:12	45:63	6	(st -> codec -> codec_id == AV_CODEC_ID_SIPR)
+cond	44:16	44:39	7	st -> codec -> codec_id == AV_CODEC_ID_SIPR
+water	44:16	0:0	8	st
+op	44:18	0:0	8	->
+water	44:20	0:0	8	codec
+op	44:25	0:0	8	->
+water	44:27	0:0	8	codec_id
+op	44:36	0:0	8	==
+water	44:39	0:0	8	AV_CODEC_ID_SIPR
+stmts	45:16	45:63	7	
+call	45:16	45:62	8	ff_rm_reorder_sipr_data
+arg	45:40	45:56	9	track->audio.buf
+water	45:40	0:0	10	track
+op	45:45	0:0	10	->
+water	45:47	0:0	10	audio
+op	45:52	0:0	10	.
+water	45:53	0:0	10	buf
+arg	45:58	45:59	9	h
+water	45:58	0:0	10	h
+arg	45:61	45:62	9	w
+water	45:61	0:0	10	w
+water	45:63	0:0	8	;
+water	46:12	0:0	6	track
+op	46:17	0:0	6	->
+water	46:19	0:0	6	audio
+op	46:24	0:0	6	.
+water	46:25	0:0	6	sub_packet_cnt
+op	46:40	0:0	6	=
+water	46:42	0:0	6	0
+water	46:43	0:0	6	;
+water	47:12	0:0	6	track
+op	47:17	0:0	6	->
+water	47:19	0:0	6	audio
+op	47:24	0:0	6	.
+water	47:25	0:0	6	pkt_cnt
+op	47:40	0:0	6	=
+water	47:42	0:0	6	h
+op	47:44	0:0	6	*
+water	47:46	0:0	6	w
+op	47:48	0:0	6	/
+water	47:50	0:0	6	a
+water	47:51	0:0	6	;
+water	48:8	0:0	6	}
+water	49:4	0:0	4	}
+while	50:4	68:4	2	(track -> audio . pkt_cnt)
+cond	50:11	50:24	3	track -> audio . pkt_cnt
+water	50:11	0:0	4	track
+op	50:16	0:0	4	->
+water	50:18	0:0	4	audio
+op	50:23	0:0	4	.
+water	50:24	0:0	4	pkt_cnt
+stmts	50:33	68:4	3	
+water	50:33	0:0	4	{
+decl	51:8	51:15	4	int	ret
+decl	52:8	52:52	4	AVPacket	*pkt
+op	52:22	0:0	4	=
+call	52:24	52:51	5	av_mallocz
+arg	52:35	52:51	6	sizeof(AVPacket)
+op	52:35	0:0	7	sizeof
+water	52:41	0:0	7	(
+water	52:42	0:0	7	AVPacket
+water	52:50	0:0	7	)
+if	53:8	54:34	4	(! pkt)
+cond	53:12	53:13	5	! pkt
+op	53:12	0:0	6	!
+water	53:13	0:0	6	pkt
+stmts	54:12	54:34	5	
+return	54:12	54:34	6	AVERROR(ENOMEM)
+call	54:19	54:33	7	AVERROR
+arg	54:27	54:33	8	ENOMEM
+water	54:27	0:0	9	ENOMEM
+water	55:8	0:0	4	ret
+op	55:12	0:0	4	=
+call	55:14	55:34	4	av_new_packet
+arg	55:28	55:31	5	pkt
+water	55:28	0:0	6	pkt
+arg	55:33	55:34	5	a
+water	55:33	0:0	6	a
+water	55:35	0:0	4	;
+if	56:8	59:8	4	(ret < 0)
+cond	56:12	56:18	5	ret < 0
+water	56:12	0:0	6	ret
+op	56:16	0:0	6	<
+water	56:18	0:0	6	0
+stmts	56:21	59:8	5	
+water	56:21	0:0	6	{
+call	57:12	57:23	6	av_free
+arg	57:20	57:23	7	pkt
+water	57:20	0:0	8	pkt
+water	57:24	0:0	6	;
+return	58:12	58:22	6	ret
+water	58:19	0:0	7	ret
+water	59:8	0:0	6	}
+call	60:8	62:16	4	memcpy
+arg	60:15	60:24	5	pkt->data
+water	60:15	0:0	6	pkt
+op	60:18	0:0	6	->
+water	60:20	0:0	6	data
+arg	61:15	61:74	5	track->audio.buf+a*(h*w/a-track->audio.pkt_cnt--)
+water	61:15	0:0	6	track
+op	61:20	0:0	6	->
+water	61:22	0:0	6	audio
+op	61:27	0:0	6	.
+water	61:28	0:0	6	buf
+op	61:32	0:0	6	+
+water	61:34	0:0	6	a
+op	61:36	0:0	6	*
+water	61:38	0:0	6	(
+water	61:39	0:0	6	h
+op	61:41	0:0	6	*
+water	61:43	0:0	6	w
+op	61:45	0:0	6	/
+water	61:47	0:0	6	a
+op	61:49	0:0	6	-
+water	61:51	0:0	6	track
+op	61:56	0:0	6	->
+water	61:58	0:0	6	audio
+op	61:63	0:0	6	.
+water	61:64	0:0	6	pkt_cnt
+op	61:71	0:0	6	--
+water	61:73	0:0	6	)
+arg	62:15	62:16	5	a
+water	62:15	0:0	6	a
+water	62:17	0:0	4	;
+water	63:8	0:0	4	pkt
+op	63:11	0:0	4	->
+water	63:13	0:0	4	pts
+op	63:34	0:0	4	=
+water	63:36	0:0	4	track
+op	63:41	0:0	4	->
+water	63:43	0:0	4	audio
+op	63:48	0:0	4	.
+water	63:49	0:0	4	buf_timecode
+water	63:61	0:0	4	;
+water	64:8	0:0	4	track
+op	64:13	0:0	4	->
+water	64:15	0:0	4	audio
+op	64:20	0:0	4	.
+water	64:21	0:0	4	buf_timecode
+op	64:34	0:0	4	=
+water	64:36	0:0	4	AV_NOPTS_VALUE
+water	64:50	0:0	4	;
+water	65:8	0:0	4	pkt
+op	65:11	0:0	4	->
+water	65:13	0:0	4	pos
+op	65:34	0:0	4	=
+water	65:36	0:0	4	pos
+water	65:39	0:0	4	;
+water	66:8	0:0	4	pkt
+op	66:11	0:0	4	->
+water	66:13	0:0	4	stream_index
+op	66:34	0:0	4	=
+water	66:36	0:0	4	st
+op	66:38	0:0	4	->
+water	66:40	0:0	4	index
+water	66:45	0:0	4	;
+call	67:8	67:68	4	dynarray_add
+arg	67:21	67:39	5	&matroska->packets
+op	67:21	0:0	6	&
+water	67:22	0:0	6	matroska
+op	67:30	0:0	6	->
+water	67:32	0:0	6	packets
+arg	67:41	67:63	5	&matroska->num_packets
+op	67:41	0:0	6	&
+water	67:42	0:0	6	matroska
+op	67:50	0:0	6	->
+water	67:52	0:0	6	num_packets
+arg	67:65	67:68	5	pkt
+water	67:65	0:0	6	pkt
+water	67:69	0:0	4	;
+water	68:4	0:0	4	}
+return	69:4	69:12	2	0
+water	69:11	0:0	3	0

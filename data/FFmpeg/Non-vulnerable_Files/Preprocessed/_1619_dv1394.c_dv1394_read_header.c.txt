@@ -1,0 +1,155 @@
+func	1:0	29:0	0	static int	dv1394_read_header
+params	1:29	0:0	1	
+param	1:30	1:55	2	AVFormatContext *	context
+stmnts	0:0	28:23	1	
+decl	3:4	3:47	2	struct dv1394_data	*dv
+op	3:27	0:0	2	=
+water	3:29	0:0	2	context
+op	3:36	0:0	2	->
+water	3:38	0:0	2	priv_data
+water	4:4	0:0	2	dv
+op	4:6	0:0	2	->
+water	4:8	0:0	2	dv_demux
+op	4:17	0:0	2	=
+call	4:19	4:47	2	avpriv_dv_init_demux
+arg	4:40	4:47	3	context
+water	4:40	0:0	4	context
+water	4:48	0:0	2	;
+if	5:4	6:19	2	(! dv -> dv_demux)
+cond	5:8	5:13	3	! dv -> dv_demux
+op	5:8	0:0	4	!
+water	5:9	0:0	4	dv
+op	5:11	0:0	4	->
+water	5:13	0:0	4	dv_demux
+stmts	6:8	6:19	3	
+goto	6:8	6:19	4	failed
+water	6:13	0:0	5	failed
+water	8:4	0:0	2	dv
+op	8:6	0:0	2	->
+water	8:8	0:0	2	fd
+op	8:11	0:0	2	=
+call	8:13	8:52	2	avpriv_open
+arg	8:25	8:42	3	context->filename
+water	8:25	0:0	4	context
+op	8:32	0:0	4	->
+water	8:34	0:0	4	filename
+arg	8:44	8:52	3	O_RDONLY
+water	8:44	0:0	4	O_RDONLY
+water	8:53	0:0	2	;
+if	9:4	12:4	2	(dv -> fd < 0)
+cond	9:8	9:17	3	dv -> fd < 0
+water	9:8	0:0	4	dv
+op	9:10	0:0	4	->
+water	9:12	0:0	4	fd
+op	9:15	0:0	4	<
+water	9:17	0:0	4	0
+stmts	9:20	12:4	3	
+water	9:20	0:0	4	{
+call	10:8	10:90	4	av_log
+arg	10:15	10:22	5	context
+water	10:15	0:0	6	context
+arg	10:24	10:36	5	AV_LOG_ERROR
+water	10:24	0:0	6	AV_LOG_ERROR
+arg	10:38	10:73	5	"Failed to open DV interface: %s\n"
+water	10:38	0:0	6	"Failed to open DV interface: %s\n"
+arg	10:75	10:90	5	strerror(errno)
+call	10:75	10:89	6	strerror
+arg	10:84	10:89	7	errno
+water	10:84	0:0	8	errno
+water	10:91	0:0	4	;
+goto	11:8	11:19	4	failed
+water	11:13	0:0	5	failed
+water	12:4	0:0	4	}
+if	13:4	16:4	2	(dv1394_reset (dv ) < 0)
+cond	13:8	13:27	3	dv1394_reset (dv ) < 0
+call	13:8	13:23	4	dv1394_reset
+arg	13:21	13:23	5	dv
+water	13:21	0:0	6	dv
+op	13:25	0:0	4	<
+water	13:27	0:0	4	0
+stmts	13:30	16:4	3	
+water	13:30	0:0	4	{
+call	14:8	14:96	4	av_log
+arg	14:15	14:22	5	context
+water	14:15	0:0	6	context
+arg	14:24	14:36	5	AV_LOG_ERROR
+water	14:24	0:0	6	AV_LOG_ERROR
+arg	14:38	14:79	5	"Failed to initialize DV interface: %s\n"
+water	14:38	0:0	6	"Failed to initialize DV interface: %s\n"
+arg	14:81	14:96	5	strerror(errno)
+call	14:81	14:95	6	strerror
+arg	14:90	14:95	7	errno
+water	14:90	0:0	8	errno
+water	14:97	0:0	4	;
+goto	15:8	15:19	4	failed
+water	15:13	0:0	5	failed
+water	16:4	0:0	4	}
+water	17:4	0:0	2	dv
+op	17:6	0:0	2	->
+water	17:8	0:0	2	ring
+op	17:13	0:0	2	=
+call	17:15	18:53	2	mmap
+arg	17:20	17:24	3	NULL
+water	17:20	0:0	4	NULL
+arg	17:26	17:68	3	DV1394_PAL_FRAME_SIZE*DV1394_RING_FRAMES
+water	17:26	0:0	4	DV1394_PAL_FRAME_SIZE
+op	17:48	0:0	4	*
+water	17:50	0:0	4	DV1394_RING_FRAMES
+arg	18:20	18:29	3	PROT_READ
+water	18:20	0:0	4	PROT_READ
+arg	18:31	18:42	3	MAP_PRIVATE
+water	18:31	0:0	4	MAP_PRIVATE
+arg	18:44	18:50	3	dv->fd
+water	18:44	0:0	4	dv
+op	18:46	0:0	4	->
+water	18:48	0:0	4	fd
+arg	18:52	18:53	3	0
+water	18:52	0:0	4	0
+water	18:54	0:0	2	;
+if	19:4	22:4	2	(dv -> ring == MAP_FAILED)
+cond	19:8	19:20	3	dv -> ring == MAP_FAILED
+water	19:8	0:0	4	dv
+op	19:10	0:0	4	->
+water	19:12	0:0	4	ring
+op	19:17	0:0	4	==
+water	19:20	0:0	4	MAP_FAILED
+stmts	19:32	22:4	3	
+water	19:32	0:0	4	{
+call	20:8	20:92	4	av_log
+arg	20:15	20:22	5	context
+water	20:15	0:0	6	context
+arg	20:24	20:36	5	AV_LOG_ERROR
+water	20:24	0:0	6	AV_LOG_ERROR
+arg	20:38	20:75	5	"Failed to mmap DV ring buffer: %s\n"
+water	20:38	0:0	6	"Failed to mmap DV ring buffer: %s\n"
+arg	20:77	20:92	5	strerror(errno)
+call	20:77	20:91	6	strerror
+arg	20:86	20:91	7	errno
+water	20:86	0:0	8	errno
+water	20:93	0:0	4	;
+goto	21:8	21:19	4	failed
+water	21:13	0:0	5	failed
+water	22:4	0:0	4	}
+if	23:4	24:19	2	(dv1394_start (dv ) < 0)
+cond	23:8	23:27	3	dv1394_start (dv ) < 0
+call	23:8	23:23	4	dv1394_start
+arg	23:21	23:23	5	dv
+water	23:21	0:0	6	dv
+op	23:25	0:0	4	<
+water	23:27	0:0	4	0
+stmts	24:8	24:19	3	
+goto	24:8	24:19	4	failed
+water	24:13	0:0	5	failed
+return	25:4	25:12	2	0
+water	25:11	0:0	3	0
+label	26:0	26:6	2	failed :
+call	27:4	27:16	2	close
+arg	27:10	27:16	3	dv->fd
+water	27:10	0:0	4	dv
+op	27:12	0:0	4	->
+water	27:14	0:0	4	fd
+water	27:17	0:0	2	;
+return	28:4	28:23	2	AVERROR(EIO)
+call	28:11	28:22	3	AVERROR
+arg	28:19	28:22	4	EIO
+water	28:19	0:0	5	EIO

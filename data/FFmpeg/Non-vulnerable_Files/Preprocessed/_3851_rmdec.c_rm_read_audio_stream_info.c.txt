@@ -1,0 +1,996 @@
+func	1:0	180:0	0	static int	rm_read_audio_stream_info
+params	1:36	0:0	1	
+param	1:37	1:55	2	AVFormatContext *	s
+param	1:57	1:72	2	AVIOContext *	pb
+param	2:37	2:49	2	AVStream *	st
+param	2:51	2:64	2	RMStream *	ast
+param	2:66	2:78	2	int	read_all
+stmnts	0:0	179:12	1	
+decl	4:4	4:17	2	char	buf[256]
+decl	5:4	5:20	2	uint32_t	version
+decl	6:4	6:11	2	int	ret
+water	8:4	0:0	2	version
+op	8:12	0:0	2	=
+call	8:14	8:26	2	avio_rb16
+arg	8:24	8:26	3	pb
+water	8:24	0:0	4	pb
+water	8:27	0:0	2	;
+if	9:4	33:4	2	(version == 3)
+cond	9:8	9:19	3	version == 3
+water	9:8	0:0	4	version
+op	9:16	0:0	4	==
+water	9:19	0:0	4	3
+stmts	9:22	33:4	3	
+water	9:22	0:0	4	{
+water	10:8	0:0	4	unsigned
+water	10:17	0:0	4	bytes_per_minute
+water	10:33	0:0	4	;
+decl	11:8	11:39	4	int	header_size
+op	11:24	0:0	4	=
+call	11:26	11:38	5	avio_rb16
+arg	11:36	11:38	6	pb
+water	11:36	0:0	7	pb
+decl	12:8	12:40	4	int64_t	startpos
+op	12:25	0:0	4	=
+call	12:27	12:39	5	avio_tell
+arg	12:37	12:39	6	pb
+water	12:37	0:0	7	pb
+call	13:8	13:23	4	avio_skip
+arg	13:18	13:20	5	pb
+water	13:18	0:0	6	pb
+arg	13:22	13:23	5	8
+water	13:22	0:0	6	8
+water	13:24	0:0	4	;
+water	14:8	0:0	4	bytes_per_minute
+op	14:25	0:0	4	=
+call	14:27	14:39	4	avio_rb16
+arg	14:37	14:39	5	pb
+water	14:37	0:0	6	pb
+water	14:40	0:0	4	;
+call	15:8	15:23	4	avio_skip
+arg	15:18	15:20	5	pb
+water	15:18	0:0	6	pb
+arg	15:22	15:23	5	4
+water	15:22	0:0	6	4
+water	15:24	0:0	4	;
+call	16:8	16:33	4	rm_read_metadata
+arg	16:25	16:26	5	s
+water	16:25	0:0	6	s
+arg	16:28	16:30	5	pb
+water	16:28	0:0	6	pb
+arg	16:32	16:33	5	0
+water	16:32	0:0	6	0
+water	16:34	0:0	4	;
+if	17:8	21:8	4	(( startpos + header_size ) >=avio_tell (pb ) + 2)
+cond	17:12	17:56	5	( startpos + header_size ) >=avio_tell (pb ) + 2
+water	17:12	0:0	6	(
+water	17:13	0:0	6	startpos
+op	17:22	0:0	6	+
+water	17:24	0:0	6	header_size
+water	17:35	0:0	6	)
+op	17:37	0:0	6	>=
+call	17:40	17:52	6	avio_tell
+arg	17:50	17:52	7	pb
+water	17:50	0:0	8	pb
+op	17:54	0:0	6	+
+water	17:56	0:0	6	2
+stmts	17:59	21:8	5	
+water	17:59	0:0	6	{
+call	19:12	19:22	6	avio_r8
+arg	19:20	19:22	7	pb
+water	19:20	0:0	8	pb
+water	19:23	0:0	6	;
+call	20:12	20:41	6	get_str8
+arg	20:21	20:23	7	pb
+water	20:21	0:0	8	pb
+arg	20:25	20:28	7	buf
+water	20:25	0:0	8	buf
+arg	20:30	20:41	7	sizeof(buf)
+op	20:30	0:0	8	sizeof
+water	20:36	0:0	8	(
+water	20:37	0:0	8	buf
+water	20:40	0:0	8	)
+water	20:42	0:0	6	;
+water	21:8	0:0	6	}
+if	23:8	24:65	4	(( startpos + header_size ) >avio_tell (pb ))
+cond	23:12	23:51	5	( startpos + header_size ) >avio_tell (pb )
+water	23:12	0:0	6	(
+water	23:13	0:0	6	startpos
+op	23:22	0:0	6	+
+water	23:24	0:0	6	header_size
+water	23:35	0:0	6	)
+op	23:37	0:0	6	>
+call	23:39	23:51	6	avio_tell
+arg	23:49	23:51	7	pb
+water	23:49	0:0	8	pb
+stmts	24:12	24:65	5	
+call	24:12	24:64	6	avio_skip
+arg	24:22	24:24	7	pb
+water	24:22	0:0	8	pb
+arg	24:26	24:64	7	header_size+startpos-avio_tell(pb)
+water	24:26	0:0	8	header_size
+op	24:38	0:0	8	+
+water	24:40	0:0	8	startpos
+op	24:49	0:0	8	-
+call	24:51	24:63	8	avio_tell
+arg	24:61	24:63	9	pb
+water	24:61	0:0	10	pb
+water	24:65	0:0	6	;
+if	25:8	26:61	4	(bytes_per_minute)
+cond	25:12	25:12	5	bytes_per_minute
+water	25:12	0:0	6	bytes_per_minute
+stmts	26:12	26:61	5	
+water	26:12	0:0	6	st
+op	26:14	0:0	6	->
+water	26:16	0:0	6	codec
+op	26:21	0:0	6	->
+water	26:23	0:0	6	bit_rate
+op	26:32	0:0	6	=
+water	26:34	0:0	6	8
+water	26:35	0:0	6	LL
+op	26:38	0:0	6	*
+water	26:40	0:0	6	bytes_per_minute
+op	26:57	0:0	6	/
+water	26:59	0:0	6	60
+water	26:61	0:0	6	;
+water	27:8	0:0	4	st
+op	27:10	0:0	4	->
+water	27:12	0:0	4	codec
+op	27:17	0:0	4	->
+water	27:19	0:0	4	sample_rate
+op	27:31	0:0	4	=
+water	27:33	0:0	4	8000
+water	27:37	0:0	4	;
+water	28:8	0:0	4	st
+op	28:10	0:0	4	->
+water	28:12	0:0	4	codec
+op	28:17	0:0	4	->
+water	28:19	0:0	4	channels
+op	28:28	0:0	4	=
+water	28:30	0:0	4	1
+water	28:31	0:0	4	;
+water	29:8	0:0	4	st
+op	29:10	0:0	4	->
+water	29:12	0:0	4	codec
+op	29:17	0:0	4	->
+water	29:19	0:0	4	channel_layout
+op	29:34	0:0	4	=
+water	29:36	0:0	4	AV_CH_LAYOUT_MONO
+water	29:53	0:0	4	;
+water	30:8	0:0	4	st
+op	30:10	0:0	4	->
+water	30:12	0:0	4	codec
+op	30:17	0:0	4	->
+water	30:19	0:0	4	codec_type
+op	30:30	0:0	4	=
+water	30:32	0:0	4	AVMEDIA_TYPE_AUDIO
+water	30:50	0:0	4	;
+water	31:8	0:0	4	st
+op	31:10	0:0	4	->
+water	31:12	0:0	4	codec
+op	31:17	0:0	4	->
+water	31:19	0:0	4	codec_id
+op	31:28	0:0	4	=
+water	31:30	0:0	4	AV_CODEC_ID_RA_144
+water	31:48	0:0	4	;
+water	32:8	0:0	4	ast
+op	32:11	0:0	4	->
+water	32:13	0:0	4	deint_id
+op	32:22	0:0	4	=
+water	32:24	0:0	4	DEINT_ID_INT0
+water	32:37	0:0	4	;
+water	33:4	0:0	4	}
+else	33:6	178:4	2
+stmts	33:11	178:4	3	
+water	33:11	0:0	4	{
+decl	34:8	34:66	4	int	flavor
+water	34:18	0:0	4	,
+decl	34:8	34:66	4	int	sub_packet_h
+water	34:32	0:0	4	,
+decl	34:8	34:66	4	int	coded_framesize
+water	34:49	0:0	4	,
+decl	34:8	34:66	4	int	sub_packet_size
+decl	35:8	35:28	4	int	codecdata_length
+water	36:8	0:0	4	unsigned
+water	36:17	0:0	4	bytes_per_minute
+water	36:33	0:0	4	;
+call	38:8	38:23	4	avio_skip
+arg	38:18	38:20	5	pb
+water	38:18	0:0	6	pb
+arg	38:22	38:23	5	2
+water	38:22	0:0	6	2
+water	38:24	0:0	4	;
+call	39:8	39:20	4	avio_rb32
+arg	39:18	39:20	5	pb
+water	39:18	0:0	6	pb
+water	39:21	0:0	4	;
+call	40:8	40:20	4	avio_rb32
+arg	40:18	40:20	5	pb
+water	40:18	0:0	6	pb
+water	40:21	0:0	4	;
+call	41:8	41:20	4	avio_rb16
+arg	41:18	41:20	5	pb
+water	41:18	0:0	6	pb
+water	41:21	0:0	4	;
+call	42:8	42:20	4	avio_rb32
+arg	42:18	42:20	5	pb
+water	42:18	0:0	6	pb
+water	42:21	0:0	4	;
+water	43:8	0:0	4	flavor
+op	43:14	0:0	4	=
+call	43:16	43:28	4	avio_rb16
+arg	43:26	43:28	5	pb
+water	43:26	0:0	6	pb
+water	43:29	0:0	4	;
+water	44:8	0:0	4	ast
+op	44:11	0:0	4	->
+water	44:13	0:0	4	coded_framesize
+op	44:29	0:0	4	=
+water	44:31	0:0	4	coded_framesize
+op	44:47	0:0	4	=
+call	44:49	44:61	4	avio_rb32
+arg	44:59	44:61	5	pb
+water	44:59	0:0	6	pb
+water	44:62	0:0	4	;
+call	45:8	45:20	4	avio_rb32
+arg	45:18	45:20	5	pb
+water	45:18	0:0	6	pb
+water	45:21	0:0	4	;
+water	46:8	0:0	4	bytes_per_minute
+op	46:25	0:0	4	=
+call	46:27	46:39	4	avio_rb32
+arg	46:37	46:39	5	pb
+water	46:37	0:0	6	pb
+water	46:40	0:0	4	;
+if	47:8	50:8	4	(version == 4)
+cond	47:12	47:23	5	version == 4
+water	47:12	0:0	6	version
+op	47:20	0:0	6	==
+water	47:23	0:0	6	4
+stmts	47:26	50:8	5	
+water	47:26	0:0	6	{
+if	48:12	49:65	6	(bytes_per_minute)
+cond	48:16	48:16	7	bytes_per_minute
+water	48:16	0:0	8	bytes_per_minute
+stmts	49:16	49:65	7	
+water	49:16	0:0	8	st
+op	49:18	0:0	8	->
+water	49:20	0:0	8	codec
+op	49:25	0:0	8	->
+water	49:27	0:0	8	bit_rate
+op	49:36	0:0	8	=
+water	49:38	0:0	8	8
+water	49:39	0:0	8	LL
+op	49:42	0:0	8	*
+water	49:44	0:0	8	bytes_per_minute
+op	49:61	0:0	8	/
+water	49:63	0:0	8	60
+water	49:65	0:0	8	;
+water	50:8	0:0	6	}
+call	51:8	51:20	4	avio_rb32
+arg	51:18	51:20	5	pb
+water	51:18	0:0	6	pb
+water	51:21	0:0	4	;
+water	52:8	0:0	4	ast
+op	52:11	0:0	4	->
+water	52:13	0:0	4	sub_packet_h
+op	52:26	0:0	4	=
+water	52:28	0:0	4	sub_packet_h
+op	52:41	0:0	4	=
+call	52:43	52:55	4	avio_rb16
+arg	52:53	52:55	5	pb
+water	52:53	0:0	6	pb
+water	52:56	0:0	4	;
+water	53:8	0:0	4	st
+op	53:10	0:0	4	->
+water	53:12	0:0	4	codec
+op	53:17	0:0	4	->
+water	53:19	0:0	4	block_align
+op	53:30	0:0	4	=
+call	53:32	53:44	4	avio_rb16
+arg	53:42	53:44	5	pb
+water	53:42	0:0	6	pb
+water	53:45	0:0	4	;
+water	54:8	0:0	4	ast
+op	54:11	0:0	4	->
+water	54:13	0:0	4	sub_packet_size
+op	54:29	0:0	4	=
+water	54:31	0:0	4	sub_packet_size
+op	54:47	0:0	4	=
+call	54:49	54:61	4	avio_rb16
+arg	54:59	54:61	5	pb
+water	54:59	0:0	6	pb
+water	54:62	0:0	4	;
+call	55:8	55:20	4	avio_rb16
+arg	55:18	55:20	5	pb
+water	55:18	0:0	6	pb
+water	55:21	0:0	4	;
+if	56:8	58:8	4	(version == 5)
+cond	56:12	56:23	5	version == 5
+water	56:12	0:0	6	version
+op	56:20	0:0	6	==
+water	56:23	0:0	6	5
+stmts	56:26	58:8	5	
+water	56:26	0:0	6	{
+call	57:12	57:24	6	avio_rb16
+arg	57:22	57:24	7	pb
+water	57:22	0:0	8	pb
+water	57:25	0:0	6	;
+call	57:27	57:39	6	avio_rb16
+arg	57:37	57:39	7	pb
+water	57:37	0:0	8	pb
+water	57:40	0:0	6	;
+call	57:42	57:54	6	avio_rb16
+arg	57:52	57:54	7	pb
+water	57:52	0:0	8	pb
+water	57:55	0:0	6	;
+water	58:8	0:0	6	}
+water	59:8	0:0	4	st
+op	59:10	0:0	4	->
+water	59:12	0:0	4	codec
+op	59:17	0:0	4	->
+water	59:19	0:0	4	sample_rate
+op	59:31	0:0	4	=
+call	59:33	59:45	4	avio_rb16
+arg	59:43	59:45	5	pb
+water	59:43	0:0	6	pb
+water	59:46	0:0	4	;
+call	60:8	60:20	4	avio_rb32
+arg	60:18	60:20	5	pb
+water	60:18	0:0	6	pb
+water	60:21	0:0	4	;
+water	61:8	0:0	4	st
+op	61:10	0:0	4	->
+water	61:12	0:0	4	codec
+op	61:17	0:0	4	->
+water	61:19	0:0	4	channels
+op	61:28	0:0	4	=
+call	61:30	61:42	4	avio_rb16
+arg	61:40	61:42	5	pb
+water	61:40	0:0	6	pb
+water	61:43	0:0	4	;
+if	62:8	66:8	4	(version == 5)
+cond	62:12	62:23	5	version == 5
+water	62:12	0:0	6	version
+op	62:20	0:0	6	==
+water	62:23	0:0	6	5
+stmts	62:26	66:8	5	
+water	62:26	0:0	6	{
+water	63:12	0:0	6	ast
+op	63:15	0:0	6	->
+water	63:17	0:0	6	deint_id
+op	63:26	0:0	6	=
+call	63:28	63:40	6	avio_rl32
+arg	63:38	63:40	7	pb
+water	63:38	0:0	8	pb
+water	63:41	0:0	6	;
+call	64:12	64:32	6	avio_read
+arg	64:22	64:24	7	pb
+water	64:22	0:0	8	pb
+arg	64:26	64:29	7	buf
+water	64:26	0:0	8	buf
+arg	64:31	64:32	7	4
+water	64:31	0:0	8	4
+water	64:33	0:0	6	;
+water	65:12	0:0	6	buf
+op	65:15	0:0	6	[
+water	65:16	0:0	6	4
+op	65:17	0:0	6	]
+op	65:19	0:0	6	=
+water	65:21	0:0	6	0
+water	65:22	0:0	6	;
+water	66:8	0:0	6	}
+else	66:10	71:8	4
+stmts	66:15	71:8	5	
+water	66:15	0:0	6	{
+call	67:12	67:26	6	AV_WL32
+arg	67:20	67:23	7	buf
+water	67:20	0:0	8	buf
+arg	67:25	67:26	7	0
+water	67:25	0:0	8	0
+water	67:27	0:0	6	;
+call	68:12	68:41	6	get_str8
+arg	68:21	68:23	7	pb
+water	68:21	0:0	8	pb
+arg	68:25	68:28	7	buf
+water	68:25	0:0	8	buf
+arg	68:30	68:41	7	sizeof(buf)
+op	68:30	0:0	8	sizeof
+water	68:36	0:0	8	(
+water	68:37	0:0	8	buf
+water	68:40	0:0	8	)
+water	68:42	0:0	6	;
+water	69:12	0:0	6	ast
+op	69:15	0:0	6	->
+water	69:17	0:0	6	deint_id
+op	69:26	0:0	6	=
+call	69:28	69:39	6	AV_RL32
+arg	69:36	69:39	7	buf
+water	69:36	0:0	8	buf
+water	69:40	0:0	6	;
+call	70:12	70:41	6	get_str8
+arg	70:21	70:23	7	pb
+water	70:21	0:0	8	pb
+arg	70:25	70:28	7	buf
+water	70:25	0:0	8	buf
+arg	70:30	70:41	7	sizeof(buf)
+op	70:30	0:0	8	sizeof
+water	70:36	0:0	8	(
+water	70:37	0:0	8	buf
+water	70:40	0:0	8	)
+water	70:42	0:0	6	;
+water	71:8	0:0	6	}
+water	72:8	0:0	4	st
+op	72:10	0:0	4	->
+water	72:12	0:0	4	codec
+op	72:17	0:0	4	->
+water	72:19	0:0	4	codec_type
+op	72:30	0:0	4	=
+water	72:32	0:0	4	AVMEDIA_TYPE_AUDIO
+water	72:50	0:0	4	;
+water	73:8	0:0	4	st
+op	73:10	0:0	4	->
+water	73:12	0:0	4	codec
+op	73:17	0:0	4	->
+water	73:19	0:0	4	codec_tag
+op	73:30	0:0	4	=
+call	73:32	73:43	4	AV_RL32
+arg	73:40	73:43	5	buf
+water	73:40	0:0	6	buf
+water	73:44	0:0	4	;
+water	74:8	0:0	4	st
+op	74:10	0:0	4	->
+water	74:12	0:0	4	codec
+op	74:17	0:0	4	->
+water	74:19	0:0	4	codec_id
+op	74:30	0:0	4	=
+call	74:32	75:68	4	ff_codec_get_id
+arg	74:48	74:64	5	ff_rm_codec_tags
+water	74:48	0:0	6	ff_rm_codec_tags
+arg	75:48	75:68	5	st->codec->codec_tag
+water	75:48	0:0	6	st
+op	75:50	0:0	6	->
+water	75:52	0:0	6	codec
+op	75:57	0:0	6	->
+water	75:59	0:0	6	codec_tag
+water	75:69	0:0	4	;
+switch	76:8	134:8	4	(st -> codec -> codec_id)
+cond	76:16	76:27	5	st -> codec -> codec_id
+water	76:16	0:0	6	st
+op	76:18	0:0	6	->
+water	76:20	0:0	6	codec
+op	76:25	0:0	6	->
+water	76:27	0:0	6	codec_id
+stmts	76:37	134:8	5	
+water	76:37	0:0	6	{
+label	77:8	77:28	6	case AV_CODEC_ID_AC3 :
+water	78:12	0:0	6	st
+op	78:14	0:0	6	->
+water	78:16	0:0	6	need_parsing
+op	78:29	0:0	6	=
+water	78:31	0:0	6	AVSTREAM_PARSE_FULL
+water	78:50	0:0	6	;
+break	79:12	79:17	6	
+label	80:8	80:31	6	case AV_CODEC_ID_RA_288 :
+water	81:12	0:0	6	st
+op	81:14	0:0	6	->
+water	81:16	0:0	6	codec
+op	81:21	0:0	6	->
+water	81:23	0:0	6	extradata_size
+op	81:37	0:0	6	=
+water	81:39	0:0	6	0
+water	81:40	0:0	6	;
+water	82:12	0:0	6	ast
+op	82:15	0:0	6	->
+water	82:17	0:0	6	audio_framesize
+op	82:33	0:0	6	=
+water	82:35	0:0	6	st
+op	82:37	0:0	6	->
+water	82:39	0:0	6	codec
+op	82:44	0:0	6	->
+water	82:46	0:0	6	block_align
+water	82:57	0:0	6	;
+water	83:12	0:0	6	st
+op	83:14	0:0	6	->
+water	83:16	0:0	6	codec
+op	83:21	0:0	6	->
+water	83:23	0:0	6	block_align
+op	83:35	0:0	6	=
+water	83:37	0:0	6	coded_framesize
+water	83:52	0:0	6	;
+break	84:12	84:17	6	
+label	85:8	85:29	6	case AV_CODEC_ID_COOK :
+water	86:12	0:0	6	st
+op	86:14	0:0	6	->
+water	86:16	0:0	6	need_parsing
+op	86:29	0:0	6	=
+water	86:31	0:0	6	AVSTREAM_PARSE_HEADERS
+water	86:53	0:0	6	;
+label	87:8	87:31	6	case AV_CODEC_ID_ATRAC3 :
+label	88:8	88:29	6	case AV_CODEC_ID_SIPR :
+if	89:12	91:12	6	(read_all)
+cond	89:16	89:16	7	read_all
+water	89:16	0:0	8	read_all
+stmts	89:26	91:12	7	
+water	89:26	0:0	8	{
+water	90:16	0:0	8	codecdata_length
+op	90:33	0:0	8	=
+water	90:35	0:0	8	0
+water	90:36	0:0	8	;
+water	91:12	0:0	8	}
+else	91:14	100:12	6
+stmts	91:19	100:12	7	
+water	91:19	0:0	8	{
+call	92:16	92:28	8	avio_rb16
+arg	92:26	92:28	9	pb
+water	92:26	0:0	10	pb
+water	92:29	0:0	8	;
+call	92:31	92:41	8	avio_r8
+arg	92:39	92:41	9	pb
+water	92:39	0:0	10	pb
+water	92:42	0:0	8	;
+if	93:16	94:31	8	(version == 5)
+cond	93:20	93:31	9	version == 5
+water	93:20	0:0	10	version
+op	93:28	0:0	10	==
+water	93:31	0:0	10	5
+stmts	94:20	94:31	9	
+call	94:20	94:30	10	avio_r8
+arg	94:28	94:30	11	pb
+water	94:28	0:0	12	pb
+water	94:31	0:0	10	;
+water	95:16	0:0	8	codecdata_length
+op	95:33	0:0	8	=
+call	95:35	95:47	8	avio_rb32
+arg	95:45	95:47	9	pb
+water	95:45	0:0	10	pb
+water	95:48	0:0	8	;
+if	96:16	99:16	8	(codecdata_length + AV_INPUT_BUFFER_PADDING_SIZE <= ( unsigned ) codecdata_length)
+cond	96:19	96:80	9	codecdata_length + AV_INPUT_BUFFER_PADDING_SIZE <= ( unsigned ) codecdata_length
+water	96:19	0:0	10	codecdata_length
+op	96:36	0:0	10	+
+water	96:38	0:0	10	AV_INPUT_BUFFER_PADDING_SIZE
+op	96:67	0:0	10	<=
+water	96:70	0:0	10	(
+water	96:71	0:0	10	unsigned
+water	96:79	0:0	10	)
+water	96:80	0:0	10	codecdata_length
+stmts	96:97	99:16	9	
+water	96:97	0:0	10	{
+call	97:20	97:74	10	av_log
+arg	97:27	97:28	11	s
+water	97:27	0:0	12	s
+arg	97:30	97:42	11	AV_LOG_ERROR
+water	97:30	0:0	12	AV_LOG_ERROR
+arg	97:44	97:74	11	"codecdata_length too large\n"
+water	97:44	0:0	12	"codecdata_length too large\n"
+water	97:75	0:0	10	;
+return	98:20	98:29	10	-1
+op	98:27	0:0	11	-
+water	98:28	0:0	11	1
+water	99:16	0:0	10	}
+water	100:12	0:0	8	}
+water	101:12	0:0	6	ast
+op	101:15	0:0	6	->
+water	101:17	0:0	6	audio_framesize
+op	101:33	0:0	6	=
+water	101:35	0:0	6	st
+op	101:37	0:0	6	->
+water	101:39	0:0	6	codec
+op	101:44	0:0	6	->
+water	101:46	0:0	6	block_align
+water	101:57	0:0	6	;
+if	102:12	109:12	6	(st -> codec -> codec_id == AV_CODEC_ID_SIPR)
+cond	102:16	102:39	7	st -> codec -> codec_id == AV_CODEC_ID_SIPR
+water	102:16	0:0	8	st
+op	102:18	0:0	8	->
+water	102:20	0:0	8	codec
+op	102:25	0:0	8	->
+water	102:27	0:0	8	codec_id
+op	102:36	0:0	8	==
+water	102:39	0:0	8	AV_CODEC_ID_SIPR
+stmts	102:57	109:12	7	
+water	102:57	0:0	8	{
+if	103:16	107:16	8	(flavor > 3)
+cond	103:20	103:29	9	flavor > 3
+water	103:20	0:0	10	flavor
+op	103:27	0:0	10	>
+water	103:29	0:0	10	3
+stmts	103:32	107:16	9	
+water	103:32	0:0	10	{
+call	104:20	105:33	10	av_log
+arg	104:27	104:28	11	s
+water	104:27	0:0	12	s
+arg	104:30	104:42	11	AV_LOG_ERROR
+water	104:30	0:0	12	AV_LOG_ERROR
+arg	104:44	104:71	11	"bad SIPR file flavor %d\n"
+water	104:44	0:0	12	"bad SIPR file flavor %d\n"
+arg	105:27	105:33	11	flavor
+water	105:27	0:0	12	flavor
+water	105:34	0:0	10	;
+return	106:20	106:29	10	-1
+op	106:27	0:0	11	-
+water	106:28	0:0	11	1
+water	107:16	0:0	10	}
+water	108:16	0:0	8	st
+op	108:18	0:0	8	->
+water	108:20	0:0	8	codec
+op	108:25	0:0	8	->
+water	108:27	0:0	8	block_align
+op	108:39	0:0	8	=
+water	108:41	0:0	8	ff_sipr_subpk_size
+op	108:59	0:0	8	[
+water	108:60	0:0	8	flavor
+op	108:66	0:0	8	]
+water	108:67	0:0	8	;
+water	109:12	0:0	8	}
+else	109:14	115:12	6
+stmts	109:19	115:12	7	
+water	109:19	0:0	8	{
+if	110:16	113:16	8	(sub_packet_size <= 0)
+cond	110:19	110:38	9	sub_packet_size <= 0
+water	110:19	0:0	10	sub_packet_size
+op	110:35	0:0	10	<=
+water	110:38	0:0	10	0
+stmts	110:40	113:16	9	
+water	110:40	0:0	10	{
+call	111:20	111:74	10	av_log
+arg	111:27	111:28	11	s
+water	111:27	0:0	12	s
+arg	111:30	111:42	11	AV_LOG_ERROR
+water	111:30	0:0	12	AV_LOG_ERROR
+arg	111:44	111:74	11	"sub_packet_size is invalid\n"
+water	111:44	0:0	12	"sub_packet_size is invalid\n"
+water	111:75	0:0	10	;
+return	112:20	112:29	10	-1
+op	112:27	0:0	11	-
+water	112:28	0:0	11	1
+water	113:16	0:0	10	}
+water	114:16	0:0	8	st
+op	114:18	0:0	8	->
+water	114:20	0:0	8	codec
+op	114:25	0:0	8	->
+water	114:27	0:0	8	block_align
+op	114:39	0:0	8	=
+water	114:41	0:0	8	ast
+op	114:44	0:0	8	->
+water	114:46	0:0	8	sub_packet_size
+water	114:61	0:0	8	;
+water	115:12	0:0	8	}
+if	116:12	117:26	6	(( ret =rm_read_extradata (pb ,st -> codec ,codecdata_length ) ) < 0)
+cond	116:16	116:77	7	( ret =rm_read_extradata (pb ,st -> codec ,codecdata_length ) ) < 0
+water	116:16	0:0	8	(
+water	116:17	0:0	8	ret
+op	116:21	0:0	8	=
+call	116:23	116:72	8	rm_read_extradata
+arg	116:41	116:43	9	pb
+water	116:41	0:0	10	pb
+arg	116:45	116:54	9	st->codec
+water	116:45	0:0	10	st
+op	116:47	0:0	10	->
+water	116:49	0:0	10	codec
+arg	116:56	116:72	9	codecdata_length
+water	116:56	0:0	10	codecdata_length
+water	116:73	0:0	8	)
+op	116:75	0:0	8	<
+water	116:77	0:0	8	0
+stmts	117:16	117:26	7	
+return	117:16	117:26	8	ret
+water	117:23	0:0	9	ret
+break	118:12	118:17	6	
+label	119:8	119:28	6	case AV_CODEC_ID_AAC :
+call	120:12	120:24	6	avio_rb16
+arg	120:22	120:24	7	pb
+water	120:22	0:0	8	pb
+water	120:25	0:0	6	;
+call	120:27	120:37	6	avio_r8
+arg	120:35	120:37	7	pb
+water	120:35	0:0	8	pb
+water	120:38	0:0	6	;
+if	121:12	122:27	6	(version == 5)
+cond	121:16	121:27	7	version == 5
+water	121:16	0:0	8	version
+op	121:24	0:0	8	==
+water	121:27	0:0	8	5
+stmts	122:16	122:27	7	
+call	122:16	122:26	8	avio_r8
+arg	122:24	122:26	9	pb
+water	122:24	0:0	10	pb
+water	122:27	0:0	8	;
+water	123:12	0:0	6	codecdata_length
+op	123:29	0:0	6	=
+call	123:31	123:43	6	avio_rb32
+arg	123:41	123:43	7	pb
+water	123:41	0:0	8	pb
+water	123:44	0:0	6	;
+if	124:12	127:12	6	(codecdata_length + AV_INPUT_BUFFER_PADDING_SIZE <= ( unsigned ) codecdata_length)
+cond	124:15	124:76	7	codecdata_length + AV_INPUT_BUFFER_PADDING_SIZE <= ( unsigned ) codecdata_length
+water	124:15	0:0	8	codecdata_length
+op	124:32	0:0	8	+
+water	124:34	0:0	8	AV_INPUT_BUFFER_PADDING_SIZE
+op	124:63	0:0	8	<=
+water	124:66	0:0	8	(
+water	124:67	0:0	8	unsigned
+water	124:75	0:0	8	)
+water	124:76	0:0	8	codecdata_length
+stmts	124:93	127:12	7	
+water	124:93	0:0	8	{
+call	125:16	125:70	8	av_log
+arg	125:23	125:24	9	s
+water	125:23	0:0	10	s
+arg	125:26	125:38	9	AV_LOG_ERROR
+water	125:26	0:0	10	AV_LOG_ERROR
+arg	125:40	125:70	9	"codecdata_length too large\n"
+water	125:40	0:0	10	"codecdata_length too large\n"
+water	125:71	0:0	8	;
+return	126:16	126:25	8	-1
+op	126:23	0:0	9	-
+water	126:24	0:0	9	1
+water	127:12	0:0	8	}
+if	128:12	132:12	6	(codecdata_length >= 1)
+cond	128:16	128:36	7	codecdata_length >= 1
+water	128:16	0:0	8	codecdata_length
+op	128:33	0:0	8	>=
+water	128:36	0:0	8	1
+stmts	128:39	132:12	7	
+water	128:39	0:0	8	{
+call	129:16	129:26	8	avio_r8
+arg	129:24	129:26	9	pb
+water	129:24	0:0	10	pb
+water	129:27	0:0	8	;
+if	130:16	131:30	8	(( ret =rm_read_extradata (pb ,st -> codec ,codecdata_length - 1 ) ) < 0)
+cond	130:20	130:85	9	( ret =rm_read_extradata (pb ,st -> codec ,codecdata_length - 1 ) ) < 0
+water	130:20	0:0	10	(
+water	130:21	0:0	10	ret
+op	130:25	0:0	10	=
+call	130:27	130:80	10	rm_read_extradata
+arg	130:45	130:47	11	pb
+water	130:45	0:0	12	pb
+arg	130:49	130:58	11	st->codec
+water	130:49	0:0	12	st
+op	130:51	0:0	12	->
+water	130:53	0:0	12	codec
+arg	130:60	130:80	11	codecdata_length-1
+water	130:60	0:0	12	codecdata_length
+op	130:77	0:0	12	-
+water	130:79	0:0	12	1
+water	130:81	0:0	10	)
+op	130:83	0:0	10	<
+water	130:85	0:0	10	0
+stmts	131:20	131:30	9	
+return	131:20	131:30	10	ret
+water	131:27	0:0	11	ret
+water	132:12	0:0	8	}
+break	133:12	133:17	6	
+water	134:8	0:0	6	}
+switch	135:8	161:8	4	(ast -> deint_id)
+cond	135:16	135:21	5	ast -> deint_id
+water	135:16	0:0	6	ast
+op	135:19	0:0	6	->
+water	135:21	0:0	6	deint_id
+stmts	135:31	161:8	5	
+water	135:31	0:0	6	{
+label	136:8	136:26	6	case DEINT_ID_INT4 :
+if	137:12	140:42	6	(ast -> coded_framesize > ast -> audio_framesize || sub_packet_h <= 1 || ast -> coded_framesize * sub_packet_h > ( 2 + ( sub_packet_h & 1 ) ) * ast -> audio_framesize)
+cond	137:16	139:86	7	ast -> coded_framesize > ast -> audio_framesize || sub_packet_h <= 1 || ast -> coded_framesize * sub_packet_h > ( 2 + ( sub_packet_h & 1 ) ) * ast -> audio_framesize
+water	137:16	0:0	8	ast
+op	137:19	0:0	8	->
+water	137:21	0:0	8	coded_framesize
+op	137:37	0:0	8	>
+water	137:39	0:0	8	ast
+op	137:42	0:0	8	->
+water	137:44	0:0	8	audio_framesize
+op	137:60	0:0	8	||
+water	138:16	0:0	8	sub_packet_h
+op	138:29	0:0	8	<=
+water	138:32	0:0	8	1
+op	138:34	0:0	8	||
+water	139:16	0:0	8	ast
+op	139:19	0:0	8	->
+water	139:21	0:0	8	coded_framesize
+op	139:37	0:0	8	*
+water	139:39	0:0	8	sub_packet_h
+op	139:52	0:0	8	>
+water	139:54	0:0	8	(
+water	139:55	0:0	8	2
+op	139:57	0:0	8	+
+water	139:59	0:0	8	(
+water	139:60	0:0	8	sub_packet_h
+op	139:73	0:0	8	&
+water	139:75	0:0	8	1
+water	139:76	0:0	8	)
+water	139:77	0:0	8	)
+op	139:79	0:0	8	*
+water	139:81	0:0	8	ast
+op	139:84	0:0	8	->
+water	139:86	0:0	8	audio_framesize
+stmts	140:16	140:42	7	
+return	140:16	140:42	8	AVERROR_INVALIDDATA
+water	140:23	0:0	9	AVERROR_INVALIDDATA
+if	141:12	144:12	6	(ast -> coded_framesize * sub_packet_h != 2 * ast -> audio_framesize)
+cond	141:16	141:62	7	ast -> coded_framesize * sub_packet_h != 2 * ast -> audio_framesize
+water	141:16	0:0	8	ast
+op	141:19	0:0	8	->
+water	141:21	0:0	8	coded_framesize
+op	141:37	0:0	8	*
+water	141:39	0:0	8	sub_packet_h
+op	141:52	0:0	8	!=
+water	141:55	0:0	8	2
+op	141:56	0:0	8	*
+water	141:57	0:0	8	ast
+op	141:60	0:0	8	->
+water	141:62	0:0	8	audio_framesize
+stmts	141:79	144:12	7	
+water	141:79	0:0	8	{
+call	142:16	142:77	8	avpriv_request_sample
+arg	142:38	142:39	9	s
+water	142:38	0:0	10	s
+arg	142:41	142:77	9	"mismatching interleaver parameters"
+water	142:41	0:0	10	"mismatching interleaver parameters"
+water	142:78	0:0	8	;
+return	143:16	143:42	8	AVERROR_INVALIDDATA
+water	143:23	0:0	9	AVERROR_INVALIDDATA
+water	144:12	0:0	8	}
+break	145:12	145:17	6	
+label	146:8	146:26	6	case DEINT_ID_GENR :
+if	147:12	149:42	6	(ast -> sub_packet_size <= 0 || ast -> sub_packet_size > ast -> audio_framesize)
+cond	147:16	148:44	7	ast -> sub_packet_size <= 0 || ast -> sub_packet_size > ast -> audio_framesize
+water	147:16	0:0	8	ast
+op	147:19	0:0	8	->
+water	147:21	0:0	8	sub_packet_size
+op	147:37	0:0	8	<=
+water	147:40	0:0	8	0
+op	147:42	0:0	8	||
+water	148:16	0:0	8	ast
+op	148:19	0:0	8	->
+water	148:21	0:0	8	sub_packet_size
+op	148:37	0:0	8	>
+water	148:39	0:0	8	ast
+op	148:42	0:0	8	->
+water	148:44	0:0	8	audio_framesize
+stmts	149:16	149:42	7	
+return	149:16	149:42	8	AVERROR_INVALIDDATA
+water	149:23	0:0	9	AVERROR_INVALIDDATA
+if	150:12	151:42	6	(ast -> audio_framesize % ast -> sub_packet_size)
+cond	150:16	150:44	7	ast -> audio_framesize % ast -> sub_packet_size
+water	150:16	0:0	8	ast
+op	150:19	0:0	8	->
+water	150:21	0:0	8	audio_framesize
+op	150:37	0:0	8	%
+water	150:39	0:0	8	ast
+op	150:42	0:0	8	->
+water	150:44	0:0	8	sub_packet_size
+stmts	151:16	151:42	7	
+return	151:16	151:42	8	AVERROR_INVALIDDATA
+water	151:23	0:0	9	AVERROR_INVALIDDATA
+break	152:12	152:17	6	
+label	153:8	153:26	6	case DEINT_ID_SIPR :
+label	154:8	154:26	6	case DEINT_ID_INT0 :
+label	155:8	155:26	6	case DEINT_ID_VBRS :
+label	156:8	156:26	6	case DEINT_ID_VBRF :
+break	157:12	157:17	6	
+label	158:8	158:15	6	default :
+call	159:12	159:84	6	av_log
+arg	159:19	159:20	7	s
+water	159:19	0:0	8	s
+arg	159:22	159:35	7	AV_LOG_ERROR
+water	159:22	0:0	8	AV_LOG_ERROR
+arg	159:36	159:69	7	"Unknown interleaver %"PRIX32"\n"
+water	159:36	0:0	8	"Unknown interleaver %"
+water	159:59	0:0	8	PRIX32
+water	159:65	0:0	8	"\n"
+arg	159:71	159:84	7	ast->deint_id
+water	159:71	0:0	8	ast
+op	159:74	0:0	8	->
+water	159:76	0:0	8	deint_id
+water	159:85	0:0	6	;
+return	160:12	160:38	6	AVERROR_INVALIDDATA
+water	160:19	0:0	7	AVERROR_INVALIDDATA
+water	161:8	0:0	6	}
+if	162:8	171:8	4	(ast -> deint_id == DEINT_ID_INT4 || ast -> deint_id == DEINT_ID_GENR || ast -> deint_id == DEINT_ID_SIPR)
+cond	162:12	164:29	5	ast -> deint_id == DEINT_ID_INT4 || ast -> deint_id == DEINT_ID_GENR || ast -> deint_id == DEINT_ID_SIPR
+water	162:12	0:0	6	ast
+op	162:15	0:0	6	->
+water	162:17	0:0	6	deint_id
+op	162:26	0:0	6	==
+water	162:29	0:0	6	DEINT_ID_INT4
+op	162:43	0:0	6	||
+water	163:12	0:0	6	ast
+op	163:15	0:0	6	->
+water	163:17	0:0	6	deint_id
+op	163:26	0:0	6	==
+water	163:29	0:0	6	DEINT_ID_GENR
+op	163:43	0:0	6	||
+water	164:12	0:0	6	ast
+op	164:15	0:0	6	->
+water	164:17	0:0	6	deint_id
+op	164:26	0:0	6	==
+water	164:29	0:0	6	DEINT_ID_SIPR
+stmts	164:44	171:8	5	
+water	164:44	0:0	6	{
+if	165:12	168:42	6	(st -> codec -> block_align <= 0 || ast -> audio_framesize * sub_packet_h > ( unsigned ) INT_MAX || ast -> audio_framesize * sub_packet_h < st -> codec -> block_align)
+cond	165:16	167:65	7	st -> codec -> block_align <= 0 || ast -> audio_framesize * sub_packet_h > ( unsigned ) INT_MAX || ast -> audio_framesize * sub_packet_h < st -> codec -> block_align
+water	165:16	0:0	8	st
+op	165:18	0:0	8	->
+water	165:20	0:0	8	codec
+op	165:25	0:0	8	->
+water	165:27	0:0	8	block_align
+op	165:39	0:0	8	<=
+water	165:42	0:0	8	0
+op	165:44	0:0	8	||
+water	166:16	0:0	8	ast
+op	166:19	0:0	8	->
+water	166:21	0:0	8	audio_framesize
+op	166:37	0:0	8	*
+water	166:39	0:0	8	sub_packet_h
+op	166:52	0:0	8	>
+water	166:54	0:0	8	(
+water	166:55	0:0	8	unsigned
+water	166:63	0:0	8	)
+water	166:64	0:0	8	INT_MAX
+op	166:72	0:0	8	||
+water	167:16	0:0	8	ast
+op	167:19	0:0	8	->
+water	167:21	0:0	8	audio_framesize
+op	167:37	0:0	8	*
+water	167:39	0:0	8	sub_packet_h
+op	167:52	0:0	8	<
+water	167:54	0:0	8	st
+op	167:56	0:0	8	->
+water	167:58	0:0	8	codec
+op	167:63	0:0	8	->
+water	167:65	0:0	8	block_align
+stmts	168:16	168:42	7	
+return	168:16	168:42	8	AVERROR_INVALIDDATA
+water	168:23	0:0	9	AVERROR_INVALIDDATA
+if	169:12	170:38	6	(av_new_packet (& ast -> pkt ,ast -> audio_framesize * sub_packet_h ) < 0)
+cond	169:16	169:80	7	av_new_packet (& ast -> pkt ,ast -> audio_framesize * sub_packet_h ) < 0
+call	169:16	169:76	8	av_new_packet
+arg	169:30	169:39	9	&ast->pkt
+op	169:30	0:0	10	&
+water	169:31	0:0	10	ast
+op	169:34	0:0	10	->
+water	169:36	0:0	10	pkt
+arg	169:41	169:76	9	ast->audio_framesize*sub_packet_h
+water	169:41	0:0	10	ast
+op	169:44	0:0	10	->
+water	169:46	0:0	10	audio_framesize
+op	169:62	0:0	10	*
+water	169:64	0:0	10	sub_packet_h
+op	169:78	0:0	8	<
+water	169:80	0:0	8	0
+stmts	170:16	170:38	7	
+return	170:16	170:38	8	AVERROR(ENOMEM)
+call	170:23	170:37	9	AVERROR
+arg	170:31	170:37	10	ENOMEM
+water	170:31	0:0	11	ENOMEM
+water	171:8	0:0	6	}
+if	172:8	177:8	4	(read_all)
+cond	172:12	172:12	5	read_all
+water	172:12	0:0	6	read_all
+stmts	172:22	177:8	5	
+water	172:22	0:0	6	{
+call	173:12	173:22	6	avio_r8
+arg	173:20	173:22	7	pb
+water	173:20	0:0	8	pb
+water	173:23	0:0	6	;
+call	174:12	174:22	6	avio_r8
+arg	174:20	174:22	7	pb
+water	174:20	0:0	8	pb
+water	174:23	0:0	6	;
+call	175:12	175:22	6	avio_r8
+arg	175:20	175:22	7	pb
+water	175:20	0:0	8	pb
+water	175:23	0:0	6	;
+call	176:12	176:37	6	rm_read_metadata
+arg	176:29	176:30	7	s
+water	176:29	0:0	8	s
+arg	176:32	176:34	7	pb
+water	176:32	0:0	8	pb
+arg	176:36	176:37	7	0
+water	176:36	0:0	8	0
+water	176:38	0:0	6	;
+water	177:8	0:0	6	}
+water	178:4	0:0	4	}
+return	179:4	179:12	2	0
+water	179:11	0:0	3	0

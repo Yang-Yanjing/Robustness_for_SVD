@@ -1,0 +1,1758 @@
+func	1:0	280:0	0	static void	do_video_out
+params	1:24	0:0	1	
+param	1:25	1:39	2	OutputFile *	of
+param	2:25	2:42	2	OutputStream *	ost
+param	3:25	3:46	2	AVFrame *	next_picture
+param	4:25	4:41	2	double	sync_ipts
+stmnts	0:0	279:19	1	
+decl	6:4	6:30	2	int	ret
+water	6:11	0:0	2	,
+decl	6:4	6:30	2	int	format_video_sync
+decl	7:4	7:16	2	AVPacket	pkt
+decl	8:4	8:38	2	AVCodecContext	*enc
+op	8:24	0:0	2	=
+water	8:26	0:0	2	ost
+op	8:29	0:0	2	->
+water	8:31	0:0	2	enc_ctx
+decl	9:4	9:50	2	AVCodecParameters	*mux_par
+op	9:31	0:0	2	=
+water	9:33	0:0	2	ost
+op	9:36	0:0	2	->
+water	9:38	0:0	2	st
+op	9:40	0:0	2	->
+water	9:42	0:0	2	codecpar
+decl	10:4	10:25	2	AVRational	frame_rate
+decl	11:4	11:32	2	int	nb_frames
+water	11:17	0:0	2	,
+decl	11:4	11:32	2	int	nb0_frames
+water	11:29	0:0	2	,
+decl	11:4	11:32	2	int	i
+decl	12:4	12:24	2	double	delta
+water	12:16	0:0	2	,
+decl	12:4	12:24	2	double	delta0
+decl	13:4	13:23	2	double	duration
+op	13:20	0:0	2	=
+water	13:22	0:0	2	0
+decl	14:4	14:22	2	int	frame_size
+op	14:19	0:0	2	=
+water	14:21	0:0	2	0
+decl	15:4	15:27	2	InputStream	*ist
+op	15:21	0:0	2	=
+water	15:23	0:0	2	NULL
+decl	16:4	16:49	2	AVFilterContext	*filter
+op	16:28	0:0	2	=
+water	16:30	0:0	2	ost
+op	16:33	0:0	2	->
+water	16:35	0:0	2	filter
+op	16:41	0:0	2	->
+water	16:43	0:0	2	filter
+if	17:4	18:46	2	(ost -> source_index >= 0)
+cond	17:8	17:29	3	ost -> source_index >= 0
+water	17:8	0:0	4	ost
+op	17:11	0:0	4	->
+water	17:13	0:0	4	source_index
+op	17:26	0:0	4	>=
+water	17:29	0:0	4	0
+stmts	18:8	18:46	3	
+water	18:8	0:0	4	ist
+op	18:12	0:0	4	=
+water	18:14	0:0	4	input_streams
+op	18:27	0:0	4	[
+water	18:28	0:0	4	ost
+op	18:31	0:0	4	->
+water	18:33	0:0	4	source_index
+op	18:45	0:0	4	]
+water	18:46	0:0	4	;
+water	19:4	0:0	2	frame_rate
+op	19:15	0:0	2	=
+call	19:17	19:52	2	av_buffersink_get_frame_rate
+arg	19:46	19:52	3	filter
+water	19:46	0:0	4	filter
+water	19:53	0:0	2	;
+if	20:4	21:66	2	(frame_rate . num > 0 && frame_rate . den > 0)
+cond	20:8	20:47	3	frame_rate . num > 0 && frame_rate . den > 0
+water	20:8	0:0	4	frame_rate
+op	20:18	0:0	4	.
+water	20:19	0:0	4	num
+op	20:23	0:0	4	>
+water	20:25	0:0	4	0
+op	20:27	0:0	4	&&
+water	20:30	0:0	4	frame_rate
+op	20:40	0:0	4	.
+water	20:41	0:0	4	den
+op	20:45	0:0	4	>
+water	20:47	0:0	4	0
+stmts	21:8	21:66	3	
+water	21:8	0:0	4	duration
+op	21:17	0:0	4	=
+water	21:19	0:0	4	1
+op	21:20	0:0	4	/
+water	21:21	0:0	4	(
+call	21:22	21:39	4	av_q2d
+arg	21:29	21:39	5	frame_rate
+water	21:29	0:0	6	frame_rate
+call	21:41	21:64	4	*av_q2d
+arg	21:50	21:64	5	enc->time_base
+water	21:50	0:0	6	enc
+op	21:53	0:0	6	->
+water	21:55	0:0	6	time_base
+water	21:65	0:0	4	)
+water	21:66	0:0	4	;
+if	22:4	23:88	2	(ist && ist -> st -> start_time != AV_NOPTS_VALUE && ist -> st -> first_dts != AV_NOPTS_VALUE && ost -> frame_rate . num)
+cond	22:7	22:111	3	ist && ist -> st -> start_time != AV_NOPTS_VALUE && ist -> st -> first_dts != AV_NOPTS_VALUE && ost -> frame_rate . num
+water	22:7	0:0	4	ist
+op	22:11	0:0	4	&&
+water	22:14	0:0	4	ist
+op	22:17	0:0	4	->
+water	22:19	0:0	4	st
+op	22:21	0:0	4	->
+water	22:23	0:0	4	start_time
+op	22:34	0:0	4	!=
+water	22:37	0:0	4	AV_NOPTS_VALUE
+op	22:52	0:0	4	&&
+water	22:55	0:0	4	ist
+op	22:58	0:0	4	->
+water	22:60	0:0	4	st
+op	22:62	0:0	4	->
+water	22:64	0:0	4	first_dts
+op	22:74	0:0	4	!=
+water	22:77	0:0	4	AV_NOPTS_VALUE
+op	22:92	0:0	4	&&
+water	22:95	0:0	4	ost
+op	22:98	0:0	4	->
+water	22:100	0:0	4	frame_rate
+op	22:110	0:0	4	.
+water	22:111	0:0	4	num
+stmts	23:8	23:88	3	
+water	23:8	0:0	4	duration
+op	23:17	0:0	4	=
+call	23:19	23:87	4	FFMIN
+arg	23:25	23:33	5	duration
+water	23:25	0:0	6	duration
+arg	23:35	23:87	5	1/(av_q2d(ost->frame_rate)*av_q2d(enc->time_base))
+water	23:35	0:0	6	1
+op	23:36	0:0	6	/
+water	23:37	0:0	6	(
+call	23:38	23:60	6	av_q2d
+arg	23:45	23:60	7	ost->frame_rate
+water	23:45	0:0	8	ost
+op	23:48	0:0	8	->
+water	23:50	0:0	8	frame_rate
+call	23:62	23:85	6	*av_q2d
+arg	23:71	23:85	7	enc->time_base
+water	23:71	0:0	8	enc
+op	23:74	0:0	8	->
+water	23:76	0:0	8	time_base
+water	23:86	0:0	6	)
+water	23:88	0:0	4	;
+if	24:4	30:4	2	(! ost -> filters_script && ! ost -> filters && next_picture && ist &&lrintf (av_frame_get_pkt_duration (next_picture )* av_q2d (ist -> st -> time_base ) /av_q2d (enc -> time_base ) ) > 0)
+cond	24:8	28:112	3	! ost -> filters_script && ! ost -> filters && next_picture && ist &&lrintf (av_frame_get_pkt_duration (next_picture )* av_q2d (ist -> st -> time_base ) /av_q2d (enc -> time_base ) ) > 0
+op	24:8	0:0	4	!
+water	24:9	0:0	4	ost
+op	24:12	0:0	4	->
+water	24:14	0:0	4	filters_script
+op	24:29	0:0	4	&&
+op	25:8	0:0	4	!
+water	25:9	0:0	4	ost
+op	25:12	0:0	4	->
+water	25:14	0:0	4	filters
+op	25:22	0:0	4	&&
+water	26:8	0:0	4	next_picture
+op	26:21	0:0	4	&&
+water	27:8	0:0	4	ist
+op	27:12	0:0	4	&&
+call	28:8	28:108	4	lrintf
+arg	28:15	28:108	5	av_frame_get_pkt_duration(next_picture)*av_q2d(ist->st->time_base)/av_q2d(enc->time_base)
+call	28:15	28:53	6	av_frame_get_pkt_duration
+arg	28:41	28:53	7	next_picture
+water	28:41	0:0	8	next_picture
+call	28:55	28:82	6	*av_q2d
+arg	28:64	28:82	7	ist->st->time_base
+water	28:64	0:0	8	ist
+op	28:67	0:0	8	->
+water	28:69	0:0	8	st
+op	28:71	0:0	8	->
+water	28:73	0:0	8	time_base
+op	28:84	0:0	6	/
+call	28:86	28:107	6	av_q2d
+arg	28:93	28:107	7	enc->time_base
+water	28:93	0:0	8	enc
+op	28:96	0:0	8	->
+water	28:98	0:0	8	time_base
+op	28:110	0:0	4	>
+water	28:112	0:0	4	0
+stmts	28:115	30:4	3	
+water	28:115	0:0	4	{
+water	29:8	0:0	4	duration
+op	29:17	0:0	4	=
+call	29:19	29:119	4	lrintf
+arg	29:26	29:119	5	av_frame_get_pkt_duration(next_picture)*av_q2d(ist->st->time_base)/av_q2d(enc->time_base)
+call	29:26	29:64	6	av_frame_get_pkt_duration
+arg	29:52	29:64	7	next_picture
+water	29:52	0:0	8	next_picture
+call	29:66	29:93	6	*av_q2d
+arg	29:75	29:93	7	ist->st->time_base
+water	29:75	0:0	8	ist
+op	29:78	0:0	8	->
+water	29:80	0:0	8	st
+op	29:82	0:0	8	->
+water	29:84	0:0	8	time_base
+op	29:95	0:0	6	/
+call	29:97	29:118	6	av_q2d
+arg	29:104	29:118	7	enc->time_base
+water	29:104	0:0	8	enc
+op	29:107	0:0	8	->
+water	29:109	0:0	8	time_base
+water	29:120	0:0	4	;
+water	30:4	0:0	4	}
+if	31:4	36:4	2	(! next_picture)
+cond	31:8	31:9	3	! next_picture
+op	31:8	0:0	4	!
+water	31:9	0:0	4	next_picture
+stmts	31:23	36:4	3	
+water	31:23	0:0	4	{
+water	33:8	0:0	4	nb0_frames
+op	33:19	0:0	4	=
+water	33:21	0:0	4	nb_frames
+op	33:31	0:0	4	=
+call	33:33	35:65	4	mid_pred
+arg	33:42	33:65	5	ost->last_nb0_frames[0]
+water	33:42	0:0	6	ost
+op	33:45	0:0	6	->
+water	33:47	0:0	6	last_nb0_frames
+op	33:62	0:0	6	[
+water	33:63	0:0	6	0
+op	33:64	0:0	6	]
+arg	34:42	34:65	5	ost->last_nb0_frames[1]
+water	34:42	0:0	6	ost
+op	34:45	0:0	6	->
+water	34:47	0:0	6	last_nb0_frames
+op	34:62	0:0	6	[
+water	34:63	0:0	6	1
+op	34:64	0:0	6	]
+arg	35:42	35:65	5	ost->last_nb0_frames[2]
+water	35:42	0:0	6	ost
+op	35:45	0:0	6	->
+water	35:47	0:0	6	last_nb0_frames
+op	35:62	0:0	6	[
+water	35:63	0:0	6	2
+op	35:64	0:0	6	]
+water	35:66	0:0	4	;
+water	36:4	0:0	4	}
+else	36:6	104:4	2
+stmts	36:11	104:4	3	
+water	36:11	0:0	4	{
+water	37:8	0:0	4	delta0
+op	37:15	0:0	4	=
+water	37:17	0:0	4	sync_ipts
+op	37:27	0:0	4	-
+water	37:29	0:0	4	ost
+op	37:32	0:0	4	->
+water	37:34	0:0	4	sync_opts
+water	37:43	0:0	4	;
+water	38:8	0:0	4	delta
+op	38:15	0:0	4	=
+water	38:17	0:0	4	delta0
+op	38:24	0:0	4	+
+water	38:26	0:0	4	duration
+water	38:34	0:0	4	;
+water	40:8	0:0	4	nb0_frames
+op	40:19	0:0	4	=
+water	40:21	0:0	4	0
+water	40:22	0:0	4	;
+water	41:8	0:0	4	nb_frames
+op	41:18	0:0	4	=
+water	41:20	0:0	4	1
+water	41:21	0:0	4	;
+water	42:8	0:0	4	format_video_sync
+op	42:26	0:0	4	=
+water	42:28	0:0	4	video_sync_method
+water	42:45	0:0	4	;
+if	43:8	57:8	4	(format_video_sync == VSYNC_AUTO)
+cond	43:12	43:33	5	format_video_sync == VSYNC_AUTO
+water	43:12	0:0	6	format_video_sync
+op	43:30	0:0	6	==
+water	43:33	0:0	6	VSYNC_AUTO
+stmts	43:45	57:8	5	
+water	43:45	0:0	6	{
+if	44:12	46:12	6	(!strcmp (of -> ctx -> oformat -> name ,"avi" ))
+cond	44:15	44:52	7	!strcmp (of -> ctx -> oformat -> name ,"avi" )
+op	44:15	0:0	8	!
+call	44:16	44:52	8	strcmp
+arg	44:23	44:45	9	of->ctx->oformat->name
+water	44:23	0:0	10	of
+op	44:25	0:0	10	->
+water	44:27	0:0	10	ctx
+op	44:30	0:0	10	->
+water	44:32	0:0	10	oformat
+op	44:39	0:0	10	->
+water	44:41	0:0	10	name
+arg	44:47	44:52	9	"avi"
+water	44:47	0:0	10	"avi"
+stmts	44:55	46:12	7	
+water	44:55	0:0	8	{
+water	45:16	0:0	8	format_video_sync
+op	45:34	0:0	8	=
+water	45:36	0:0	8	VSYNC_VFR
+water	45:45	0:0	8	;
+water	46:12	0:0	8	}
+else	46:14	47:177	6
+stmts	47:16	47:177	7	
+water	47:16	0:0	8	format_video_sync
+op	47:34	0:0	8	=
+water	47:36	0:0	8	(
+water	47:37	0:0	8	of
+op	47:39	0:0	8	->
+water	47:41	0:0	8	ctx
+op	47:44	0:0	8	->
+water	47:46	0:0	8	oformat
+op	47:53	0:0	8	->
+water	47:55	0:0	8	flags
+op	47:61	0:0	8	&
+water	47:63	0:0	8	AVFMT_VARIABLE_FPS
+water	47:81	0:0	8	)
+water	47:83	0:0	8	?
+water	47:85	0:0	8	(
+water	47:86	0:0	8	(
+water	47:87	0:0	8	of
+op	47:89	0:0	8	->
+water	47:91	0:0	8	ctx
+op	47:94	0:0	8	->
+water	47:96	0:0	8	oformat
+op	47:103	0:0	8	->
+water	47:105	0:0	8	flags
+op	47:111	0:0	8	&
+water	47:113	0:0	8	AVFMT_NOTIMESTAMPS
+water	47:131	0:0	8	)
+water	47:133	0:0	8	?
+water	47:135	0:0	8	VSYNC_PASSTHROUGH
+water	47:153	0:0	8	:
+water	47:155	0:0	8	VSYNC_VFR
+water	47:164	0:0	8	)
+water	47:166	0:0	8	:
+water	47:168	0:0	8	VSYNC_CFR
+water	47:177	0:0	8	;
+if	48:12	53:12	6	(ist && format_video_sync == VSYNC_CFR && input_files [ ist -> file_index ] -> ctx -> nb_streams == 1 && input_files [ ist -> file_index ] -> input_ts_offset == 0)
+cond	48:19	51:68	7	ist && format_video_sync == VSYNC_CFR && input_files [ ist -> file_index ] -> ctx -> nb_streams == 1 && input_files [ ist -> file_index ] -> input_ts_offset == 0
+water	48:19	0:0	8	ist
+op	49:16	0:0	8	&&
+water	49:19	0:0	8	format_video_sync
+op	49:37	0:0	8	==
+water	49:40	0:0	8	VSYNC_CFR
+op	50:16	0:0	8	&&
+water	50:19	0:0	8	input_files
+op	50:30	0:0	8	[
+water	50:31	0:0	8	ist
+op	50:34	0:0	8	->
+water	50:36	0:0	8	file_index
+op	50:46	0:0	8	]
+op	50:47	0:0	8	->
+water	50:49	0:0	8	ctx
+op	50:52	0:0	8	->
+water	50:54	0:0	8	nb_streams
+op	50:65	0:0	8	==
+water	50:68	0:0	8	1
+op	51:16	0:0	8	&&
+water	51:19	0:0	8	input_files
+op	51:30	0:0	8	[
+water	51:31	0:0	8	ist
+op	51:34	0:0	8	->
+water	51:36	0:0	8	file_index
+op	51:46	0:0	8	]
+op	51:47	0:0	8	->
+water	51:49	0:0	8	input_ts_offset
+op	51:65	0:0	8	==
+water	51:68	0:0	8	0
+stmts	51:71	53:12	7	
+water	51:71	0:0	8	{
+water	52:16	0:0	8	format_video_sync
+op	52:34	0:0	8	=
+water	52:36	0:0	8	VSYNC_VSCFR
+water	52:47	0:0	8	;
+water	53:12	0:0	8	}
+if	54:12	56:12	6	(format_video_sync == VSYNC_CFR && copy_ts)
+cond	54:16	54:50	7	format_video_sync == VSYNC_CFR && copy_ts
+water	54:16	0:0	8	format_video_sync
+op	54:34	0:0	8	==
+water	54:37	0:0	8	VSYNC_CFR
+op	54:47	0:0	8	&&
+water	54:50	0:0	8	copy_ts
+stmts	54:59	56:12	7	
+water	54:59	0:0	8	{
+water	55:16	0:0	8	format_video_sync
+op	55:34	0:0	8	=
+water	55:36	0:0	8	VSYNC_VSCFR
+water	55:47	0:0	8	;
+water	56:12	0:0	8	}
+water	57:8	0:0	6	}
+water	58:8	0:0	4	ost
+op	58:11	0:0	4	->
+water	58:13	0:0	4	is_cfr
+op	58:20	0:0	4	=
+water	58:22	0:0	4	(
+water	58:23	0:0	4	format_video_sync
+op	58:41	0:0	4	==
+water	58:44	0:0	4	VSYNC_CFR
+op	58:54	0:0	4	||
+water	58:57	0:0	4	format_video_sync
+op	58:75	0:0	4	==
+water	58:78	0:0	4	VSYNC_VSCFR
+water	58:89	0:0	4	)
+water	58:90	0:0	4	;
+if	59:8	70:8	4	(delta0 < 0 && delta > 0 && format_video_sync != VSYNC_PASSTHROUGH && format_video_sync != VSYNC_DROP)
+cond	59:12	62:33	5	delta0 < 0 && delta > 0 && format_video_sync != VSYNC_PASSTHROUGH && format_video_sync != VSYNC_DROP
+water	59:12	0:0	6	delta0
+op	59:19	0:0	6	<
+water	59:21	0:0	6	0
+op	59:23	0:0	6	&&
+water	60:12	0:0	6	delta
+op	60:18	0:0	6	>
+water	60:20	0:0	6	0
+op	60:22	0:0	6	&&
+water	61:12	0:0	6	format_video_sync
+op	61:30	0:0	6	!=
+water	61:33	0:0	6	VSYNC_PASSTHROUGH
+op	61:51	0:0	6	&&
+water	62:12	0:0	6	format_video_sync
+op	62:30	0:0	6	!=
+water	62:33	0:0	6	VSYNC_DROP
+stmts	62:45	70:8	5	
+water	62:45	0:0	6	{
+if	63:12	65:12	6	(delta0 < - 0 . 6)
+cond	63:16	63:28	7	delta0 < - 0 . 6
+water	63:16	0:0	8	delta0
+op	63:23	0:0	8	<
+op	63:25	0:0	8	-
+water	63:26	0:0	8	0
+op	63:27	0:0	8	.
+water	63:28	0:0	8	6
+stmts	63:31	65:12	7	
+water	63:31	0:0	8	{
+call	64:16	64:84	8	av_log
+arg	64:23	64:27	9	NULL
+water	64:23	0:0	10	NULL
+arg	64:29	64:43	9	AV_LOG_WARNING
+water	64:29	0:0	10	AV_LOG_WARNING
+arg	64:45	64:75	9	"Past duration %f too large\n"
+water	64:45	0:0	10	"Past duration %f too large\n"
+arg	64:77	64:84	9	-delta0
+op	64:77	0:0	10	-
+water	64:78	0:0	10	delta0
+water	64:85	0:0	8	;
+water	65:12	0:0	8	}
+else	65:14	66:96	6
+stmts	66:16	66:96	7	
+call	66:16	66:95	8	av_log
+arg	66:23	66:27	9	NULL
+water	66:23	0:0	10	NULL
+arg	66:29	66:41	9	AV_LOG_DEBUG
+water	66:29	0:0	10	AV_LOG_DEBUG
+arg	66:43	66:86	9	"Clipping frame in rate conversion by %f\n"
+water	66:43	0:0	10	"Clipping frame in rate conversion by %f\n"
+arg	66:88	66:95	9	-delta0
+op	66:88	0:0	10	-
+water	66:89	0:0	10	delta0
+water	66:96	0:0	8	;
+water	67:12	0:0	6	sync_ipts
+op	67:22	0:0	6	=
+water	67:24	0:0	6	ost
+op	67:27	0:0	6	->
+water	67:29	0:0	6	sync_opts
+water	67:38	0:0	6	;
+water	68:12	0:0	6	duration
+op	68:21	0:0	6	+=
+water	68:24	0:0	6	delta0
+water	68:30	0:0	6	;
+water	69:12	0:0	6	delta0
+op	69:19	0:0	6	=
+water	69:21	0:0	6	0
+water	69:22	0:0	6	;
+water	70:8	0:0	6	}
+switch	71:8	103:8	4	(format_video_sync)
+cond	71:16	71:16	5	format_video_sync
+water	71:16	0:0	6	format_video_sync
+stmts	71:35	103:8	5	
+water	71:35	0:0	6	{
+label	72:8	72:24	6	case VSYNC_VSCFR :
+if	73:12	78:12	6	(ost -> frame_number == 0 && delta0 >= 0 . 5)
+cond	73:16	73:54	7	ost -> frame_number == 0 && delta0 >= 0 . 5
+water	73:16	0:0	8	ost
+op	73:19	0:0	8	->
+water	73:21	0:0	8	frame_number
+op	73:34	0:0	8	==
+water	73:37	0:0	8	0
+op	73:39	0:0	8	&&
+water	73:42	0:0	8	delta0
+op	73:49	0:0	8	>=
+water	73:52	0:0	8	0
+op	73:53	0:0	8	.
+water	73:54	0:0	8	5
+stmts	73:57	78:12	7	
+water	73:57	0:0	8	{
+call	74:16	74:101	8	av_log
+arg	74:23	74:27	9	NULL
+water	74:23	0:0	10	NULL
+arg	74:29	74:41	9	AV_LOG_DEBUG
+water	74:29	0:0	10	AV_LOG_DEBUG
+arg	74:43	74:80	9	"Not duplicating %d initial frames\n"
+water	74:43	0:0	10	"Not duplicating %d initial frames\n"
+arg	74:82	74:101	9	(int)lrintf(delta0)
+water	74:82	0:0	10	(
+water	74:83	0:0	10	int
+water	74:86	0:0	10	)
+call	74:87	74:100	10	lrintf
+arg	74:94	74:100	11	delta0
+water	74:94	0:0	12	delta0
+water	74:102	0:0	8	;
+water	75:16	0:0	8	delta
+op	75:22	0:0	8	=
+water	75:24	0:0	8	duration
+water	75:32	0:0	8	;
+water	76:16	0:0	8	delta0
+op	76:23	0:0	8	=
+water	76:25	0:0	8	0
+water	76:26	0:0	8	;
+water	77:16	0:0	8	ost
+op	77:19	0:0	8	->
+water	77:21	0:0	8	sync_opts
+op	77:31	0:0	8	=
+call	77:33	77:48	8	lrint
+arg	77:39	77:48	9	sync_ipts
+water	77:39	0:0	10	sync_ipts
+water	77:49	0:0	8	;
+water	78:12	0:0	8	}
+label	79:8	79:22	6	case VSYNC_CFR :
+if	81:12	83:12	6	(frame_drop_threshold && delta < frame_drop_threshold && ost -> frame_number)
+cond	81:16	81:77	7	frame_drop_threshold && delta < frame_drop_threshold && ost -> frame_number
+water	81:16	0:0	8	frame_drop_threshold
+op	81:37	0:0	8	&&
+water	81:40	0:0	8	delta
+op	81:46	0:0	8	<
+water	81:48	0:0	8	frame_drop_threshold
+op	81:69	0:0	8	&&
+water	81:72	0:0	8	ost
+op	81:75	0:0	8	->
+water	81:77	0:0	8	frame_number
+stmts	81:91	83:12	7	
+water	81:91	0:0	8	{
+water	82:16	0:0	8	nb_frames
+op	82:26	0:0	8	=
+water	82:28	0:0	8	0
+water	82:29	0:0	8	;
+water	83:12	0:0	8	}
+else	83:14	84:29	6
+stmts	83:19	84:29	7	
+if	83:19	84:29	8	(delta < - 1 . 1)
+cond	83:23	83:34	9	delta < - 1 . 1
+water	83:23	0:0	10	delta
+op	83:29	0:0	10	<
+op	83:31	0:0	10	-
+water	83:32	0:0	10	1
+op	83:33	0:0	10	.
+water	83:34	0:0	10	1
+stmts	84:16	84:29	9	
+water	84:16	0:0	10	nb_frames
+op	84:26	0:0	10	=
+water	84:28	0:0	10	0
+water	84:29	0:0	10	;
+else	85:12	89:12	6
+stmts	85:17	89:12	7	
+if	85:17	89:12	8	(delta > 1 . 1)
+cond	85:21	85:31	9	delta > 1 . 1
+water	85:21	0:0	10	delta
+op	85:27	0:0	10	>
+water	85:29	0:0	10	1
+op	85:30	0:0	10	.
+water	85:31	0:0	10	1
+stmts	85:34	89:12	9	
+water	85:34	0:0	10	{
+water	86:16	0:0	10	nb_frames
+op	86:26	0:0	10	=
+call	86:28	86:40	10	lrintf
+arg	86:35	86:40	11	delta
+water	86:35	0:0	12	delta
+water	86:41	0:0	10	;
+if	87:16	88:53	10	(delta0 > 1 . 1)
+cond	87:20	87:31	11	delta0 > 1 . 1
+water	87:20	0:0	12	delta0
+op	87:27	0:0	12	>
+water	87:29	0:0	12	1
+op	87:30	0:0	12	.
+water	87:31	0:0	12	1
+stmts	88:20	88:53	11	
+water	88:20	0:0	12	nb0_frames
+op	88:31	0:0	12	=
+call	88:33	88:52	12	lrintf
+arg	88:40	88:52	13	delta0-0.6
+water	88:40	0:0	14	delta0
+op	88:47	0:0	14	-
+water	88:49	0:0	14	0
+op	88:50	0:0	14	.
+water	88:51	0:0	14	6
+water	88:53	0:0	12	;
+water	89:12	0:0	10	}
+break	90:12	90:17	6	
+label	91:8	91:22	6	case VSYNC_VFR :
+if	92:12	93:29	6	(delta <= - 0 . 6)
+cond	92:16	92:28	7	delta <= - 0 . 6
+water	92:16	0:0	8	delta
+op	92:22	0:0	8	<=
+op	92:25	0:0	8	-
+water	92:26	0:0	8	0
+op	92:27	0:0	8	.
+water	92:28	0:0	8	6
+stmts	93:16	93:29	7	
+water	93:16	0:0	8	nb_frames
+op	93:26	0:0	8	=
+water	93:28	0:0	8	0
+water	93:29	0:0	8	;
+else	94:12	95:49	6
+stmts	94:17	95:49	7	
+if	94:17	95:49	8	(delta > 0 . 6)
+cond	94:21	94:31	9	delta > 0 . 6
+water	94:21	0:0	10	delta
+op	94:27	0:0	10	>
+water	94:29	0:0	10	0
+op	94:30	0:0	10	.
+water	94:31	0:0	10	6
+stmts	95:16	95:49	9	
+water	95:16	0:0	10	ost
+op	95:19	0:0	10	->
+water	95:21	0:0	10	sync_opts
+op	95:31	0:0	10	=
+call	95:33	95:48	10	lrint
+arg	95:39	95:48	11	sync_ipts
+water	95:39	0:0	12	sync_ipts
+water	95:49	0:0	10	;
+break	96:12	96:17	6	
+label	97:8	97:23	6	case VSYNC_DROP :
+label	98:8	98:30	6	case VSYNC_PASSTHROUGH :
+water	99:12	0:0	6	ost
+op	99:15	0:0	6	->
+water	99:17	0:0	6	sync_opts
+op	99:27	0:0	6	=
+call	99:29	99:44	6	lrint
+arg	99:35	99:44	7	sync_ipts
+water	99:35	0:0	8	sync_ipts
+water	99:45	0:0	6	;
+break	100:12	100:17	6	
+label	101:8	101:15	6	default :
+call	102:12	102:24	6	av_assert0
+arg	102:23	102:24	7	0
+water	102:23	0:0	8	0
+water	102:25	0:0	6	;
+water	103:8	0:0	6	}
+water	104:4	0:0	4	}
+water	105:4	0:0	2	nb_frames
+op	105:14	0:0	2	=
+call	105:16	105:68	2	FFMIN
+arg	105:22	105:31	3	nb_frames
+water	105:22	0:0	4	nb_frames
+arg	105:33	105:68	3	ost->max_frames-ost->frame_number
+water	105:33	0:0	4	ost
+op	105:36	0:0	4	->
+water	105:38	0:0	4	max_frames
+op	105:49	0:0	4	-
+water	105:51	0:0	4	ost
+op	105:54	0:0	4	->
+water	105:56	0:0	4	frame_number
+water	105:69	0:0	2	;
+water	106:4	0:0	2	nb0_frames
+op	106:15	0:0	2	=
+call	106:17	106:44	2	FFMIN
+arg	106:23	106:33	3	nb0_frames
+water	106:23	0:0	4	nb0_frames
+arg	106:35	106:44	3	nb_frames
+water	106:35	0:0	4	nb_frames
+water	106:45	0:0	2	;
+call	107:4	109:88	2	memmove
+arg	107:12	107:36	3	ost->last_nb0_frames+1
+water	107:12	0:0	4	ost
+op	107:15	0:0	4	->
+water	107:17	0:0	4	last_nb0_frames
+op	107:33	0:0	4	+
+water	107:35	0:0	4	1
+arg	108:12	108:32	3	ost->last_nb0_frames
+water	108:12	0:0	4	ost
+op	108:15	0:0	4	->
+water	108:17	0:0	4	last_nb0_frames
+arg	109:12	109:88	3	sizeof(ost->last_nb0_frames[0])*(FF_ARRAY_ELEMS(ost->last_nb0_frames)-1)
+op	109:12	0:0	4	sizeof
+water	109:18	0:0	4	(
+water	109:19	0:0	4	ost
+op	109:22	0:0	4	->
+water	109:24	0:0	4	last_nb0_frames
+op	109:39	0:0	4	[
+water	109:40	0:0	4	0
+op	109:41	0:0	4	]
+water	109:42	0:0	4	)
+op	109:44	0:0	4	*
+water	109:46	0:0	4	(
+call	109:47	109:82	4	FF_ARRAY_ELEMS
+arg	109:62	109:82	5	ost->last_nb0_frames
+water	109:62	0:0	6	ost
+op	109:65	0:0	6	->
+water	109:67	0:0	6	last_nb0_frames
+op	109:84	0:0	4	-
+water	109:86	0:0	4	1
+water	109:87	0:0	4	)
+water	109:89	0:0	2	;
+water	110:4	0:0	2	ost
+op	110:7	0:0	2	->
+water	110:9	0:0	2	last_nb0_frames
+op	110:24	0:0	2	[
+water	110:25	0:0	2	0
+op	110:26	0:0	2	]
+op	110:28	0:0	2	=
+water	110:30	0:0	2	nb0_frames
+water	110:40	0:0	2	;
+if	111:4	116:4	2	(nb0_frames == 0 && ost -> last_dropped)
+cond	111:8	111:32	3	nb0_frames == 0 && ost -> last_dropped
+water	111:8	0:0	4	nb0_frames
+op	111:19	0:0	4	==
+water	111:22	0:0	4	0
+op	111:24	0:0	4	&&
+water	111:27	0:0	4	ost
+op	111:30	0:0	4	->
+water	111:32	0:0	4	last_dropped
+stmts	111:46	116:4	3	
+water	111:46	0:0	4	{
+water	112:8	0:0	4	nb_frames_drop
+op	112:22	0:0	4	++
+water	112:24	0:0	4	;
+call	113:8	115:70	4	av_log
+arg	113:15	113:19	5	NULL
+water	113:15	0:0	6	NULL
+arg	113:21	113:35	5	AV_LOG_VERBOSE
+water	113:21	0:0	6	AV_LOG_VERBOSE
+arg	114:15	114:71	5	"*** dropping frame %d from stream %d at ts %"PRId64"\n"
+water	114:15	0:0	6	"*** dropping frame %d from stream %d at ts %"
+water	114:61	0:0	6	PRId64
+water	114:67	0:0	6	"\n"
+arg	115:15	115:32	5	ost->frame_number
+water	115:15	0:0	6	ost
+op	115:18	0:0	6	->
+water	115:20	0:0	6	frame_number
+arg	115:34	115:48	5	ost->st->index
+water	115:34	0:0	6	ost
+op	115:37	0:0	6	->
+water	115:39	0:0	6	st
+op	115:41	0:0	6	->
+water	115:43	0:0	6	index
+arg	115:50	115:70	5	ost->last_frame->pts
+water	115:50	0:0	6	ost
+op	115:53	0:0	6	->
+water	115:55	0:0	6	last_frame
+op	115:65	0:0	6	->
+water	115:67	0:0	6	pts
+water	115:71	0:0	4	;
+water	116:4	0:0	4	}
+if	117:4	129:4	2	(nb_frames > ( nb0_frames && ost -> last_dropped ) + ( nb_frames > nb0_frames ))
+cond	117:8	117:79	3	nb_frames > ( nb0_frames && ost -> last_dropped ) + ( nb_frames > nb0_frames )
+water	117:8	0:0	4	nb_frames
+op	117:18	0:0	4	>
+water	117:20	0:0	4	(
+water	117:21	0:0	4	nb0_frames
+op	117:32	0:0	4	&&
+water	117:35	0:0	4	ost
+op	117:38	0:0	4	->
+water	117:40	0:0	4	last_dropped
+water	117:52	0:0	4	)
+op	117:54	0:0	4	+
+water	117:56	0:0	4	(
+water	117:57	0:0	4	nb_frames
+op	117:67	0:0	4	>
+water	117:69	0:0	4	nb0_frames
+water	117:79	0:0	4	)
+stmts	117:82	129:4	3	
+water	117:82	0:0	4	{
+if	118:8	122:8	4	(nb_frames > dts_error_threshold * 30)
+cond	118:12	118:46	5	nb_frames > dts_error_threshold * 30
+water	118:12	0:0	6	nb_frames
+op	118:22	0:0	6	>
+water	118:24	0:0	6	dts_error_threshold
+op	118:44	0:0	6	*
+water	118:46	0:0	6	30
+stmts	118:50	122:8	5	
+water	118:50	0:0	6	{
+call	119:12	119:98	6	av_log
+arg	119:19	119:23	7	NULL
+water	119:19	0:0	8	NULL
+arg	119:25	119:37	7	AV_LOG_ERROR
+water	119:25	0:0	8	AV_LOG_ERROR
+arg	119:39	119:83	7	"%d frame duplication too large, skipping\n"
+water	119:39	0:0	8	"%d frame duplication too large, skipping\n"
+arg	119:85	119:98	7	nb_frames-1
+water	119:85	0:0	8	nb_frames
+op	119:95	0:0	8	-
+water	119:97	0:0	8	1
+water	119:99	0:0	6	;
+water	120:12	0:0	6	nb_frames_drop
+op	120:26	0:0	6	++
+water	120:28	0:0	6	;
+return	121:12	121:18	6	
+water	122:8	0:0	6	}
+water	123:8	0:0	4	nb_frames_dup
+op	123:22	0:0	4	+=
+water	123:25	0:0	4	nb_frames
+op	123:35	0:0	4	-
+water	123:37	0:0	4	(
+water	123:38	0:0	4	nb0_frames
+op	123:49	0:0	4	&&
+water	123:52	0:0	4	ost
+op	123:55	0:0	4	->
+water	123:57	0:0	4	last_dropped
+water	123:69	0:0	4	)
+op	123:71	0:0	4	-
+water	123:73	0:0	4	(
+water	123:74	0:0	4	nb_frames
+op	123:84	0:0	4	>
+water	123:86	0:0	4	nb0_frames
+water	123:96	0:0	4	)
+water	123:97	0:0	4	;
+call	124:8	124:67	4	av_log
+arg	124:15	124:19	5	NULL
+water	124:15	0:0	6	NULL
+arg	124:21	124:35	5	AV_LOG_VERBOSE
+water	124:21	0:0	6	AV_LOG_VERBOSE
+arg	124:37	124:52	5	"*** %d dup!\n"
+water	124:37	0:0	6	"*** %d dup!\n"
+arg	124:54	124:67	5	nb_frames-1
+water	124:54	0:0	6	nb_frames
+op	124:64	0:0	6	-
+water	124:66	0:0	6	1
+water	124:68	0:0	4	;
+if	125:8	128:8	4	(nb_frames_dup > dup_warning)
+cond	125:12	125:28	5	nb_frames_dup > dup_warning
+water	125:12	0:0	6	nb_frames_dup
+op	125:26	0:0	6	>
+water	125:28	0:0	6	dup_warning
+stmts	125:41	128:8	5	
+water	125:41	0:0	6	{
+call	126:12	126:88	6	av_log
+arg	126:19	126:23	7	NULL
+water	126:19	0:0	8	NULL
+arg	126:25	126:39	7	AV_LOG_WARNING
+water	126:25	0:0	8	AV_LOG_WARNING
+arg	126:41	126:75	7	"More than %d frames duplicated\n"
+water	126:41	0:0	8	"More than %d frames duplicated\n"
+arg	126:77	126:88	7	dup_warning
+water	126:77	0:0	8	dup_warning
+water	126:89	0:0	6	;
+water	127:12	0:0	6	dup_warning
+op	127:24	0:0	6	*=
+water	127:27	0:0	6	10
+water	127:29	0:0	6	;
+water	128:8	0:0	6	}
+water	129:4	0:0	4	}
+water	130:4	0:0	2	ost
+op	130:7	0:0	2	->
+water	130:9	0:0	2	last_dropped
+op	130:22	0:0	2	=
+water	130:24	0:0	2	nb_frames
+op	130:34	0:0	2	==
+water	130:37	0:0	2	nb0_frames
+op	130:48	0:0	2	&&
+water	130:51	0:0	2	next_picture
+water	130:63	0:0	2	;
+for	132:2	268:2	2	(i = 0 ;i < nb_frames;i ++)
+forinit	132:7	132:12	3	i = 0 ;
+water	132:7	0:0	4	i
+op	132:9	0:0	4	=
+water	132:11	0:0	4	0
+water	132:12	0:0	4	;
+cond	132:14	132:18	3	i < nb_frames
+water	132:14	0:0	4	i
+op	132:16	0:0	4	<
+water	132:18	0:0	4	nb_frames
+forexpr	132:29	132:30	3	i ++
+water	132:29	0:0	4	i
+op	132:30	0:0	4	++
+stmts	132:34	268:2	3	
+water	132:34	0:0	4	{
+decl	133:4	133:23	4	AVFrame	*in_picture
+call	134:4	134:23	4	av_init_packet
+arg	134:19	134:23	5	&pkt
+op	134:19	0:0	6	&
+water	134:20	0:0	6	pkt
+water	134:24	0:0	4	;
+water	135:4	0:0	4	pkt
+op	135:7	0:0	4	.
+water	135:8	0:0	4	data
+op	135:13	0:0	4	=
+water	135:15	0:0	4	NULL
+water	135:19	0:0	4	;
+water	136:4	0:0	4	pkt
+op	136:7	0:0	4	.
+water	136:8	0:0	4	size
+op	136:13	0:0	4	=
+water	136:15	0:0	4	0
+water	136:16	0:0	4	;
+if	137:4	139:4	4	(i < nb0_frames && ost -> last_frame)
+cond	137:8	137:31	5	i < nb0_frames && ost -> last_frame
+water	137:8	0:0	6	i
+op	137:10	0:0	6	<
+water	137:12	0:0	6	nb0_frames
+op	137:23	0:0	6	&&
+water	137:26	0:0	6	ost
+op	137:29	0:0	6	->
+water	137:31	0:0	6	last_frame
+stmts	137:43	139:4	5	
+water	137:43	0:0	6	{
+water	138:8	0:0	6	in_picture
+op	138:19	0:0	6	=
+water	138:21	0:0	6	ost
+op	138:24	0:0	6	->
+water	138:26	0:0	6	last_frame
+water	138:36	0:0	6	;
+water	139:4	0:0	6	}
+else	139:6	140:33	4
+stmts	140:8	140:33	5	
+water	140:8	0:0	6	in_picture
+op	140:19	0:0	6	=
+water	140:21	0:0	6	next_picture
+water	140:33	0:0	6	;
+if	141:4	142:14	4	(! in_picture)
+cond	141:8	141:9	5	! in_picture
+op	141:8	0:0	6	!
+water	141:9	0:0	6	in_picture
+stmts	142:8	142:14	5	
+return	142:8	142:14	6	
+water	143:4	0:0	4	in_picture
+op	143:14	0:0	4	->
+water	143:16	0:0	4	pts
+op	143:20	0:0	4	=
+water	143:22	0:0	4	ost
+op	143:25	0:0	4	->
+water	143:27	0:0	4	sync_opts
+water	143:36	0:0	4	;
+if	145:4	149:14	4	(!check_recording_time (ost ))
+cond	145:8	145:33	5	!check_recording_time (ost )
+op	145:8	0:0	6	!
+call	145:9	145:33	6	check_recording_time
+arg	145:30	145:33	7	ost
+water	145:30	0:0	8	ost
+stmts	147:4	149:14	5	
+if	147:4	149:14	6	(ost -> frame_number >= ost -> max_frames)
+cond	147:8	147:34	7	ost -> frame_number >= ost -> max_frames
+water	147:8	0:0	8	ost
+op	147:11	0:0	8	->
+water	147:13	0:0	8	frame_number
+op	147:26	0:0	8	>=
+water	147:29	0:0	8	ost
+op	147:32	0:0	8	->
+water	147:34	0:0	8	max_frames
+stmts	149:8	149:14	7	
+return	149:8	149:14	8	
+if	151:4	165:4	4	(of -> ctx -> oformat -> flags & AVFMT_RAWPICTURE && enc -> codec -> id == AV_CODEC_ID_RAWVIDEO)
+cond	151:8	152:26	5	of -> ctx -> oformat -> flags & AVFMT_RAWPICTURE && enc -> codec -> id == AV_CODEC_ID_RAWVIDEO
+water	151:8	0:0	6	of
+op	151:10	0:0	6	->
+water	151:12	0:0	6	ctx
+op	151:15	0:0	6	->
+water	151:17	0:0	6	oformat
+op	151:24	0:0	6	->
+water	151:26	0:0	6	flags
+op	151:32	0:0	6	&
+water	151:34	0:0	6	AVFMT_RAWPICTURE
+op	151:51	0:0	6	&&
+water	152:8	0:0	6	enc
+op	152:11	0:0	6	->
+water	152:13	0:0	6	codec
+op	152:18	0:0	6	->
+water	152:20	0:0	6	id
+op	152:23	0:0	6	==
+water	152:26	0:0	6	AV_CODEC_ID_RAWVIDEO
+stmts	152:48	165:4	5	
+water	152:48	0:0	6	{
+if	156:8	157:88	6	(in_picture -> interlaced_frame)
+cond	156:12	156:24	7	in_picture -> interlaced_frame
+water	156:12	0:0	8	in_picture
+op	156:22	0:0	8	->
+water	156:24	0:0	8	interlaced_frame
+stmts	157:12	157:88	7	
+water	157:12	0:0	8	mux_par
+op	157:19	0:0	8	->
+water	157:21	0:0	8	field_order
+op	157:33	0:0	8	=
+water	157:35	0:0	8	in_picture
+op	157:45	0:0	8	->
+water	157:47	0:0	8	top_field_first
+water	157:63	0:0	8	?
+water	157:65	0:0	8	AV_FIELD_TB
+water	157:76	0:0	8	:
+water	157:77	0:0	8	AV_FIELD_BT
+water	157:88	0:0	8	;
+else	158:8	159:55	6
+stmts	159:12	159:55	7	
+water	159:12	0:0	8	mux_par
+op	159:19	0:0	8	->
+water	159:21	0:0	8	field_order
+op	159:33	0:0	8	=
+water	159:35	0:0	8	AV_FIELD_PROGRESSIVE
+water	159:55	0:0	8	;
+water	160:8	0:0	6	pkt
+op	160:11	0:0	6	.
+water	160:12	0:0	6	data
+op	160:19	0:0	6	=
+water	160:21	0:0	6	(
+water	160:22	0:0	6	uint8_t
+op	160:30	0:0	6	*
+water	160:31	0:0	6	)
+water	160:32	0:0	6	in_picture
+water	160:42	0:0	6	;
+water	161:8	0:0	6	pkt
+op	161:11	0:0	6	.
+water	161:12	0:0	6	size
+op	161:19	0:0	6	=
+op	161:22	0:0	6	sizeof
+water	161:28	0:0	6	(
+water	161:29	0:0	6	AVPicture
+water	161:38	0:0	6	)
+water	161:39	0:0	6	;
+water	162:8	0:0	6	pkt
+op	162:11	0:0	6	.
+water	162:12	0:0	6	pts
+op	162:19	0:0	6	=
+call	162:21	162:84	6	av_rescale_q
+arg	162:34	162:49	7	in_picture->pts
+water	162:34	0:0	8	in_picture
+op	162:44	0:0	8	->
+water	162:46	0:0	8	pts
+arg	162:51	162:65	7	enc->time_base
+water	162:51	0:0	8	enc
+op	162:54	0:0	8	->
+water	162:56	0:0	8	time_base
+arg	162:67	162:84	7	ost->mux_timebase
+water	162:67	0:0	8	ost
+op	162:70	0:0	8	->
+water	162:72	0:0	8	mux_timebase
+water	162:85	0:0	6	;
+water	163:8	0:0	6	pkt
+op	163:11	0:0	6	.
+water	163:12	0:0	6	flags
+op	163:18	0:0	6	|=
+water	163:21	0:0	6	AV_PKT_FLAG_KEY
+water	163:36	0:0	6	;
+call	164:8	164:35	6	output_packet
+arg	164:22	164:24	7	of
+water	164:22	0:0	8	of
+arg	164:26	164:30	7	&pkt
+op	164:26	0:0	8	&
+water	164:27	0:0	8	pkt
+arg	164:32	164:35	7	ost
+water	164:32	0:0	8	ost
+water	164:36	0:0	6	;
+water	165:4	0:0	6	}
+else	165:6	258:4	4
+stmts	167:4	258:4	5	
+water	167:4	0:0	6	{
+decl	168:8	168:31	6	int	forced_keyframe
+op	168:28	0:0	6	=
+water	168:30	0:0	6	0
+decl	169:8	169:23	6	double	pts_time
+if	170:8	172:64	6	(enc -> flags & ( AV_CODEC_FLAG_INTERLACED_DCT | AV_CODEC_FLAG_INTERLACED_ME ) && ost -> top_field_first >= 0)
+cond	170:12	171:36	7	enc -> flags & ( AV_CODEC_FLAG_INTERLACED_DCT | AV_CODEC_FLAG_INTERLACED_ME ) && ost -> top_field_first >= 0
+water	170:12	0:0	8	enc
+op	170:15	0:0	8	->
+water	170:17	0:0	8	flags
+op	170:23	0:0	8	&
+water	170:25	0:0	8	(
+water	170:26	0:0	8	AV_CODEC_FLAG_INTERLACED_DCT
+op	170:55	0:0	8	|
+water	170:57	0:0	8	AV_CODEC_FLAG_INTERLACED_ME
+water	170:84	0:0	8	)
+op	170:86	0:0	8	&&
+water	171:12	0:0	8	ost
+op	171:15	0:0	8	->
+water	171:17	0:0	8	top_field_first
+op	171:33	0:0	8	>=
+water	171:36	0:0	8	0
+stmts	172:12	172:64	7	
+water	172:12	0:0	8	in_picture
+op	172:22	0:0	8	->
+water	172:24	0:0	8	top_field_first
+op	172:40	0:0	8	=
+op	172:42	0:0	8	!
+op	172:43	0:0	8	!
+water	172:44	0:0	8	ost
+op	172:47	0:0	8	->
+water	172:49	0:0	8	top_field_first
+water	172:64	0:0	8	;
+if	173:8	178:8	6	(in_picture -> interlaced_frame)
+cond	173:12	173:24	7	in_picture -> interlaced_frame
+water	173:12	0:0	8	in_picture
+op	173:22	0:0	8	->
+water	173:24	0:0	8	interlaced_frame
+stmts	173:42	178:8	7	
+water	173:42	0:0	8	{
+if	174:12	175:92	8	(enc -> codec -> id == AV_CODEC_ID_MJPEG)
+cond	174:16	174:34	9	enc -> codec -> id == AV_CODEC_ID_MJPEG
+water	174:16	0:0	10	enc
+op	174:19	0:0	10	->
+water	174:21	0:0	10	codec
+op	174:26	0:0	10	->
+water	174:28	0:0	10	id
+op	174:31	0:0	10	==
+water	174:34	0:0	10	AV_CODEC_ID_MJPEG
+stmts	175:16	175:92	9	
+water	175:16	0:0	10	mux_par
+op	175:23	0:0	10	->
+water	175:25	0:0	10	field_order
+op	175:37	0:0	10	=
+water	175:39	0:0	10	in_picture
+op	175:49	0:0	10	->
+water	175:51	0:0	10	top_field_first
+water	175:67	0:0	10	?
+water	175:69	0:0	10	AV_FIELD_TT
+water	175:80	0:0	10	:
+water	175:81	0:0	10	AV_FIELD_BB
+water	175:92	0:0	10	;
+else	176:12	177:92	8
+stmts	177:16	177:92	9	
+water	177:16	0:0	10	mux_par
+op	177:23	0:0	10	->
+water	177:25	0:0	10	field_order
+op	177:37	0:0	10	=
+water	177:39	0:0	10	in_picture
+op	177:49	0:0	10	->
+water	177:51	0:0	10	top_field_first
+water	177:67	0:0	10	?
+water	177:69	0:0	10	AV_FIELD_TB
+water	177:80	0:0	10	:
+water	177:81	0:0	10	AV_FIELD_BT
+water	177:92	0:0	10	;
+water	178:8	0:0	8	}
+else	178:10	179:55	6
+stmts	179:12	179:55	7	
+water	179:12	0:0	8	mux_par
+op	179:19	0:0	8	->
+water	179:21	0:0	8	field_order
+op	179:33	0:0	8	=
+water	179:35	0:0	8	AV_FIELD_PROGRESSIVE
+water	179:55	0:0	8	;
+water	180:8	0:0	6	in_picture
+op	180:18	0:0	6	->
+water	180:20	0:0	6	quality
+op	180:28	0:0	6	=
+water	180:30	0:0	6	enc
+op	180:33	0:0	6	->
+water	180:35	0:0	6	global_quality
+water	180:49	0:0	6	;
+water	181:8	0:0	6	in_picture
+op	181:18	0:0	6	->
+water	181:20	0:0	6	pict_type
+op	181:30	0:0	6	=
+water	181:32	0:0	6	0
+water	181:33	0:0	6	;
+water	182:8	0:0	6	pts_time
+op	182:17	0:0	6	=
+water	182:19	0:0	6	in_picture
+op	182:29	0:0	6	->
+water	182:31	0:0	6	pts
+op	182:35	0:0	6	!=
+water	182:38	0:0	6	AV_NOPTS_VALUE
+water	182:53	0:0	6	?
+water	183:12	0:0	6	in_picture
+op	183:22	0:0	6	->
+water	183:24	0:0	6	pts
+call	183:28	183:51	6	*av_q2d
+arg	183:37	183:51	7	enc->time_base
+water	183:37	0:0	8	enc
+op	183:40	0:0	8	->
+water	183:42	0:0	8	time_base
+water	183:53	0:0	6	:
+water	183:55	0:0	6	NAN
+water	183:58	0:0	6	;
+if	184:8	188:8	6	(ost -> forced_kf_index < ost -> forced_kf_count && in_picture -> pts >= ost -> forced_kf_pts [ ost -> forced_kf_index ])
+cond	184:12	185:70	7	ost -> forced_kf_index < ost -> forced_kf_count && in_picture -> pts >= ost -> forced_kf_pts [ ost -> forced_kf_index ]
+water	184:12	0:0	8	ost
+op	184:15	0:0	8	->
+water	184:17	0:0	8	forced_kf_index
+op	184:33	0:0	8	<
+water	184:35	0:0	8	ost
+op	184:38	0:0	8	->
+water	184:40	0:0	8	forced_kf_count
+op	184:56	0:0	8	&&
+water	185:12	0:0	8	in_picture
+op	185:22	0:0	8	->
+water	185:24	0:0	8	pts
+op	185:28	0:0	8	>=
+water	185:31	0:0	8	ost
+op	185:34	0:0	8	->
+water	185:36	0:0	8	forced_kf_pts
+op	185:49	0:0	8	[
+water	185:50	0:0	8	ost
+op	185:53	0:0	8	->
+water	185:55	0:0	8	forced_kf_index
+op	185:70	0:0	8	]
+stmts	185:73	188:8	7	
+water	185:73	0:0	8	{
+water	186:12	0:0	8	ost
+op	186:15	0:0	8	->
+water	186:17	0:0	8	forced_kf_index
+op	186:32	0:0	8	++
+water	186:34	0:0	8	;
+water	187:12	0:0	8	forced_keyframe
+op	187:28	0:0	8	=
+water	187:30	0:0	8	1
+water	187:31	0:0	8	;
+water	188:8	0:0	8	}
+else	188:10	209:8	6
+stmts	188:15	209:8	7	
+if	188:15	209:8	8	(ost -> forced_keyframes_pexpr)
+cond	188:19	188:24	9	ost -> forced_keyframes_pexpr
+water	188:19	0:0	10	ost
+op	188:22	0:0	10	->
+water	188:24	0:0	10	forced_keyframes_pexpr
+stmts	188:48	209:8	9	
+water	188:48	0:0	10	{
+decl	189:12	189:22	10	double	res
+water	190:12	0:0	10	ost
+op	190:15	0:0	10	->
+water	190:17	0:0	10	forced_keyframes_expr_const_values
+op	190:51	0:0	10	[
+water	190:52	0:0	10	FKF_T
+op	190:57	0:0	10	]
+op	190:59	0:0	10	=
+water	190:61	0:0	10	pts_time
+water	190:69	0:0	10	;
+water	191:12	0:0	10	res
+op	191:16	0:0	10	=
+call	191:18	192:76	10	av_expr_eval
+arg	191:31	191:58	11	ost->forced_keyframes_pexpr
+water	191:31	0:0	12	ost
+op	191:34	0:0	12	->
+water	191:36	0:0	12	forced_keyframes_pexpr
+arg	192:31	192:70	11	ost->forced_keyframes_expr_const_values
+water	192:31	0:0	12	ost
+op	192:34	0:0	12	->
+water	192:36	0:0	12	forced_keyframes_expr_const_values
+arg	192:72	192:76	11	NULL
+water	192:72	0:0	12	NULL
+water	192:77	0:0	10	;
+call	193:12	199:23	10	ff_dlog
+arg	193:20	193:24	11	NULL
+water	193:20	0:0	12	NULL
+arg	193:26	193:112	11	"force_key_frame: n:%f n_forced:%f prev_forced_n:%f t:%f prev_forced_t:%f -> res:%f\n"
+water	193:26	0:0	12	"force_key_frame: n:%f n_forced:%f prev_forced_n:%f t:%f prev_forced_t:%f -> res:%f\n"
+arg	194:20	194:66	11	ost->forced_keyframes_expr_const_values[FKF_N]
+water	194:20	0:0	12	ost
+op	194:23	0:0	12	->
+water	194:25	0:0	12	forced_keyframes_expr_const_values
+op	194:59	0:0	12	[
+water	194:60	0:0	12	FKF_N
+op	194:65	0:0	12	]
+arg	195:20	195:73	11	ost->forced_keyframes_expr_const_values[FKF_N_FORCED]
+water	195:20	0:0	12	ost
+op	195:23	0:0	12	->
+water	195:25	0:0	12	forced_keyframes_expr_const_values
+op	195:59	0:0	12	[
+water	195:60	0:0	12	FKF_N_FORCED
+op	195:72	0:0	12	]
+arg	196:20	196:78	11	ost->forced_keyframes_expr_const_values[FKF_PREV_FORCED_N]
+water	196:20	0:0	12	ost
+op	196:23	0:0	12	->
+water	196:25	0:0	12	forced_keyframes_expr_const_values
+op	196:59	0:0	12	[
+water	196:60	0:0	12	FKF_PREV_FORCED_N
+op	196:77	0:0	12	]
+arg	197:20	197:66	11	ost->forced_keyframes_expr_const_values[FKF_T]
+water	197:20	0:0	12	ost
+op	197:23	0:0	12	->
+water	197:25	0:0	12	forced_keyframes_expr_const_values
+op	197:59	0:0	12	[
+water	197:60	0:0	12	FKF_T
+op	197:65	0:0	12	]
+arg	198:20	198:78	11	ost->forced_keyframes_expr_const_values[FKF_PREV_FORCED_T]
+water	198:20	0:0	12	ost
+op	198:23	0:0	12	->
+water	198:25	0:0	12	forced_keyframes_expr_const_values
+op	198:59	0:0	12	[
+water	198:60	0:0	12	FKF_PREV_FORCED_T
+op	198:77	0:0	12	]
+arg	199:20	199:23	11	res
+water	199:20	0:0	12	res
+water	199:24	0:0	10	;
+if	200:12	207:12	10	(res)
+cond	200:16	200:16	11	res
+water	200:16	0:0	12	res
+stmts	200:21	207:12	11	
+water	200:21	0:0	12	{
+water	201:16	0:0	12	forced_keyframe
+op	201:32	0:0	12	=
+water	201:34	0:0	12	1
+water	201:35	0:0	12	;
+water	202:16	0:0	12	ost
+op	202:19	0:0	12	->
+water	202:21	0:0	12	forced_keyframes_expr_const_values
+op	202:55	0:0	12	[
+water	202:56	0:0	12	FKF_PREV_FORCED_N
+op	202:73	0:0	12	]
+op	202:75	0:0	12	=
+water	203:20	0:0	12	ost
+op	203:23	0:0	12	->
+water	203:25	0:0	12	forced_keyframes_expr_const_values
+op	203:59	0:0	12	[
+water	203:60	0:0	12	FKF_N
+op	203:65	0:0	12	]
+water	203:66	0:0	12	;
+water	204:16	0:0	12	ost
+op	204:19	0:0	12	->
+water	204:21	0:0	12	forced_keyframes_expr_const_values
+op	204:55	0:0	12	[
+water	204:56	0:0	12	FKF_PREV_FORCED_T
+op	204:73	0:0	12	]
+op	204:75	0:0	12	=
+water	205:20	0:0	12	ost
+op	205:23	0:0	12	->
+water	205:25	0:0	12	forced_keyframes_expr_const_values
+op	205:59	0:0	12	[
+water	205:60	0:0	12	FKF_T
+op	205:65	0:0	12	]
+water	205:66	0:0	12	;
+water	206:16	0:0	12	ost
+op	206:19	0:0	12	->
+water	206:21	0:0	12	forced_keyframes_expr_const_values
+op	206:55	0:0	12	[
+water	206:56	0:0	12	FKF_N_FORCED
+op	206:68	0:0	12	]
+op	206:70	0:0	12	+=
+water	206:73	0:0	12	1
+water	206:74	0:0	12	;
+water	207:12	0:0	12	}
+water	208:12	0:0	10	ost
+op	208:15	0:0	10	->
+water	208:17	0:0	10	forced_keyframes_expr_const_values
+op	208:51	0:0	10	[
+water	208:52	0:0	10	FKF_N
+op	208:57	0:0	10	]
+op	208:59	0:0	10	+=
+water	208:62	0:0	10	1
+water	208:63	0:0	10	;
+water	209:8	0:0	10	}
+else	209:10	213:8	6
+stmts	209:15	213:8	7	
+if	209:15	213:8	8	(ost -> forced_keyframes && !strncmp (ost -> forced_keyframes ,"source" ,6 ) && in_picture -> key_frame == 1)
+cond	209:22	211:45	9	ost -> forced_keyframes && !strncmp (ost -> forced_keyframes ,"source" ,6 ) && in_picture -> key_frame == 1
+water	209:22	0:0	10	ost
+op	209:25	0:0	10	->
+water	209:27	0:0	10	forced_keyframes
+op	210:19	0:0	10	&&
+op	210:22	0:0	10	!
+call	210:23	210:65	10	strncmp
+arg	210:31	210:52	11	ost->forced_keyframes
+water	210:31	0:0	12	ost
+op	210:34	0:0	12	->
+water	210:36	0:0	12	forced_keyframes
+arg	210:54	210:62	11	"source"
+water	210:54	0:0	12	"source"
+arg	210:64	210:65	11	6
+water	210:64	0:0	12	6
+op	211:19	0:0	10	&&
+water	211:22	0:0	10	in_picture
+op	211:32	0:0	10	->
+water	211:34	0:0	10	key_frame
+op	211:43	0:0	10	==
+water	211:45	0:0	10	1
+stmts	211:48	213:8	9	
+water	211:48	0:0	10	{
+water	212:12	0:0	10	forced_keyframe
+op	212:28	0:0	10	=
+water	212:30	0:0	10	1
+water	212:31	0:0	10	;
+water	213:8	0:0	10	}
+if	214:8	217:8	6	(forced_keyframe)
+cond	214:12	214:12	7	forced_keyframe
+water	214:12	0:0	8	forced_keyframe
+stmts	214:29	217:8	7	
+water	214:29	0:0	8	{
+water	215:12	0:0	8	in_picture
+op	215:22	0:0	8	->
+water	215:24	0:0	8	pict_type
+op	215:34	0:0	8	=
+water	215:36	0:0	8	AV_PICTURE_TYPE_I
+water	215:53	0:0	8	;
+call	216:12	216:79	8	av_log
+arg	216:19	216:23	9	NULL
+water	216:19	0:0	10	NULL
+arg	216:25	216:37	9	AV_LOG_DEBUG
+water	216:25	0:0	10	AV_LOG_DEBUG
+arg	216:39	216:69	9	"Forced keyframe at time %f\n"
+water	216:39	0:0	10	"Forced keyframe at time %f\n"
+arg	216:71	216:79	9	pts_time
+water	216:71	0:0	10	pts_time
+water	216:80	0:0	8	;
+water	217:8	0:0	8	}
+call	218:8	218:29	6	update_benchmark
+arg	218:25	218:29	7	NULL
+water	218:25	0:0	8	NULL
+water	218:30	0:0	6	;
+if	219:8	224:8	6	(debug_ts)
+cond	219:12	219:12	7	debug_ts
+water	219:12	0:0	8	debug_ts
+stmts	219:22	224:8	7	
+water	219:22	0:0	8	{
+call	220:12	223:57	8	av_log
+arg	220:19	220:23	9	NULL
+water	220:19	0:0	10	NULL
+arg	220:25	220:36	9	AV_LOG_INFO
+water	220:25	0:0	10	AV_LOG_INFO
+arg	220:38	221:69	9	"encoder <- type:video ""frame_pts:%s frame_pts_time:%s time_base:%d/%d\n"
+water	220:38	0:0	10	"encoder <- type:video "
+water	221:19	0:0	10	"frame_pts:%s frame_pts_time:%s time_base:%d/%d\n"
+arg	222:19	222:45	9	av_ts2str(in_picture->pts)
+call	222:19	222:44	10	av_ts2str
+arg	222:29	222:44	11	in_picture->pts
+water	222:29	0:0	12	in_picture
+op	222:39	0:0	12	->
+water	222:41	0:0	12	pts
+arg	222:47	222:94	9	av_ts2timestr(in_picture->pts,&enc->time_base)
+call	222:47	222:93	10	av_ts2timestr
+arg	222:61	222:76	11	in_picture->pts
+water	222:61	0:0	12	in_picture
+op	222:71	0:0	12	->
+water	222:73	0:0	12	pts
+arg	222:78	222:93	11	&enc->time_base
+op	222:78	0:0	12	&
+water	222:79	0:0	12	enc
+op	222:82	0:0	12	->
+water	222:84	0:0	12	time_base
+arg	223:19	223:37	9	enc->time_base.num
+water	223:19	0:0	10	enc
+op	223:22	0:0	10	->
+water	223:24	0:0	10	time_base
+op	223:33	0:0	10	.
+water	223:34	0:0	10	num
+arg	223:39	223:57	9	enc->time_base.den
+water	223:39	0:0	10	enc
+op	223:42	0:0	10	->
+water	223:44	0:0	10	time_base
+op	223:53	0:0	10	.
+water	223:54	0:0	10	den
+water	223:58	0:0	8	;
+water	224:8	0:0	8	}
+water	225:8	0:0	6	ost
+op	225:11	0:0	6	->
+water	225:13	0:0	6	frames_encoded
+op	225:27	0:0	6	++
+water	225:29	0:0	6	;
+water	226:8	0:0	6	ret
+op	226:12	0:0	6	=
+call	226:14	226:48	6	avcodec_send_frame
+arg	226:33	226:36	7	enc
+water	226:33	0:0	8	enc
+arg	226:38	226:48	7	in_picture
+water	226:38	0:0	8	in_picture
+water	226:49	0:0	6	;
+if	227:8	228:22	6	(ret < 0)
+cond	227:12	227:18	7	ret < 0
+water	227:12	0:0	8	ret
+op	227:16	0:0	8	<
+water	227:18	0:0	8	0
+stmts	228:12	228:22	7	
+goto	228:12	228:22	8	error
+water	228:17	0:0	9	error
+while	229:8	257:8	6	(1)
+cond	229:15	229:15	7	1
+water	229:15	0:0	8	1
+stmts	229:18	257:8	7	
+water	229:18	0:0	8	{
+water	230:12	0:0	8	ret
+op	230:16	0:0	8	=
+call	230:18	230:50	8	avcodec_receive_packet
+arg	230:41	230:44	9	enc
+water	230:41	0:0	10	enc
+arg	230:46	230:50	9	&pkt
+op	230:46	0:0	10	&
+water	230:47	0:0	10	pkt
+water	230:51	0:0	8	;
+call	231:12	231:78	8	update_benchmark
+arg	231:29	231:49	9	"encode_video %d.%d"
+water	231:29	0:0	10	"encode_video %d.%d"
+arg	231:51	231:66	9	ost->file_index
+water	231:51	0:0	10	ost
+op	231:54	0:0	10	->
+water	231:56	0:0	10	file_index
+arg	231:68	231:78	9	ost->index
+water	231:68	0:0	10	ost
+op	231:71	0:0	10	->
+water	231:73	0:0	10	index
+water	231:79	0:0	8	;
+if	232:12	233:21	8	(ret ==AVERROR (EAGAIN ))
+cond	232:16	232:37	9	ret ==AVERROR (EAGAIN )
+water	232:16	0:0	10	ret
+op	232:20	0:0	10	==
+call	232:23	232:37	10	AVERROR
+arg	232:31	232:37	11	EAGAIN
+water	232:31	0:0	12	EAGAIN
+stmts	233:16	233:21	9	
+break	233:16	233:21	10	
+if	234:12	235:26	8	(ret < 0)
+cond	234:16	234:22	9	ret < 0
+water	234:16	0:0	10	ret
+op	234:20	0:0	10	<
+water	234:22	0:0	10	0
+stmts	235:16	235:26	9	
+goto	235:16	235:26	10	error
+water	235:21	0:0	11	error
+if	236:12	241:12	8	(debug_ts)
+cond	236:16	236:16	9	debug_ts
+water	236:16	0:0	10	debug_ts
+stmts	236:26	241:12	9	
+water	236:26	0:0	10	{
+call	237:16	240:82	10	av_log
+arg	237:23	237:27	11	NULL
+water	237:23	0:0	12	NULL
+arg	237:29	237:40	11	AV_LOG_INFO
+water	237:29	0:0	12	AV_LOG_INFO
+arg	237:42	238:80	11	"encoder -> type:video ""pkt_pts:%s pkt_pts_time:%s pkt_dts:%s pkt_dts_time:%s\n"
+water	237:42	0:0	12	"encoder -> type:video "
+water	238:23	0:0	12	"pkt_pts:%s pkt_pts_time:%s pkt_dts:%s pkt_dts_time:%s\n"
+arg	239:23	239:41	11	av_ts2str(pkt.pts)
+call	239:23	239:40	12	av_ts2str
+arg	239:33	239:40	13	pkt.pts
+water	239:33	0:0	14	pkt
+op	239:36	0:0	14	.
+water	239:37	0:0	14	pts
+arg	239:43	239:82	11	av_ts2timestr(pkt.pts,&enc->time_base)
+call	239:43	239:81	12	av_ts2timestr
+arg	239:57	239:64	13	pkt.pts
+water	239:57	0:0	14	pkt
+op	239:60	0:0	14	.
+water	239:61	0:0	14	pts
+arg	239:66	239:81	13	&enc->time_base
+op	239:66	0:0	14	&
+water	239:67	0:0	14	enc
+op	239:70	0:0	14	->
+water	239:72	0:0	14	time_base
+arg	240:23	240:41	11	av_ts2str(pkt.dts)
+call	240:23	240:40	12	av_ts2str
+arg	240:33	240:40	13	pkt.dts
+water	240:33	0:0	14	pkt
+op	240:36	0:0	14	.
+water	240:37	0:0	14	dts
+arg	240:43	240:82	11	av_ts2timestr(pkt.dts,&enc->time_base)
+call	240:43	240:81	12	av_ts2timestr
+arg	240:57	240:64	13	pkt.dts
+water	240:57	0:0	14	pkt
+op	240:60	0:0	14	.
+water	240:61	0:0	14	dts
+arg	240:66	240:81	13	&enc->time_base
+op	240:66	0:0	14	&
+water	240:67	0:0	14	enc
+op	240:70	0:0	14	->
+water	240:72	0:0	14	time_base
+water	240:83	0:0	10	;
+water	241:12	0:0	10	}
+if	242:12	243:40	8	(pkt . pts == AV_NOPTS_VALUE && ! ( enc -> codec -> capabilities & AV_CODEC_CAP_DELAY ))
+cond	242:16	242:92	9	pkt . pts == AV_NOPTS_VALUE && ! ( enc -> codec -> capabilities & AV_CODEC_CAP_DELAY )
+water	242:16	0:0	10	pkt
+op	242:19	0:0	10	.
+water	242:20	0:0	10	pts
+op	242:24	0:0	10	==
+water	242:27	0:0	10	AV_NOPTS_VALUE
+op	242:42	0:0	10	&&
+op	242:45	0:0	10	!
+water	242:46	0:0	10	(
+water	242:47	0:0	10	enc
+op	242:50	0:0	10	->
+water	242:52	0:0	10	codec
+op	242:57	0:0	10	->
+water	242:59	0:0	10	capabilities
+op	242:72	0:0	10	&
+water	242:74	0:0	10	AV_CODEC_CAP_DELAY
+water	242:92	0:0	10	)
+stmts	243:16	243:40	9	
+water	243:16	0:0	10	pkt
+op	243:19	0:0	10	.
+water	243:20	0:0	10	pts
+op	243:24	0:0	10	=
+water	243:26	0:0	10	ost
+op	243:29	0:0	10	->
+water	243:31	0:0	10	sync_opts
+water	243:40	0:0	10	;
+call	244:12	244:72	8	av_packet_rescale_ts
+arg	244:33	244:37	9	&pkt
+op	244:33	0:0	10	&
+water	244:34	0:0	10	pkt
+arg	244:39	244:53	9	enc->time_base
+water	244:39	0:0	10	enc
+op	244:42	0:0	10	->
+water	244:44	0:0	10	time_base
+arg	244:55	244:72	9	ost->mux_timebase
+water	244:55	0:0	10	ost
+op	244:58	0:0	10	->
+water	244:60	0:0	10	mux_timebase
+water	244:73	0:0	8	;
+if	245:12	250:12	8	(debug_ts)
+cond	245:16	245:16	9	debug_ts
+water	245:16	0:0	10	debug_ts
+stmts	245:26	250:12	9	
+water	245:26	0:0	10	{
+call	246:16	249:82	10	av_log
+arg	246:23	246:27	11	NULL
+water	246:23	0:0	12	NULL
+arg	246:29	246:40	11	AV_LOG_INFO
+water	246:29	0:0	12	AV_LOG_INFO
+arg	246:42	247:77	11	"encoder -> type:video ""pkt_pts:%s pkt_pts_time:%s pkt_dts:%s pkt_dts_time:%s\n"
+water	246:42	0:0	12	"encoder -> type:video "
+water	247:20	0:0	12	"pkt_pts:%s pkt_pts_time:%s pkt_dts:%s pkt_dts_time:%s\n"
+arg	248:20	248:38	11	av_ts2str(pkt.pts)
+call	248:20	248:37	12	av_ts2str
+arg	248:30	248:37	13	pkt.pts
+water	248:30	0:0	14	pkt
+op	248:33	0:0	14	.
+water	248:34	0:0	14	pts
+arg	248:40	248:82	11	av_ts2timestr(pkt.pts,&ost->mux_timebase)
+call	248:40	248:81	12	av_ts2timestr
+arg	248:54	248:61	13	pkt.pts
+water	248:54	0:0	14	pkt
+op	248:57	0:0	14	.
+water	248:58	0:0	14	pts
+arg	248:63	248:81	13	&ost->mux_timebase
+op	248:63	0:0	14	&
+water	248:64	0:0	14	ost
+op	248:67	0:0	14	->
+water	248:69	0:0	14	mux_timebase
+arg	249:20	249:38	11	av_ts2str(pkt.dts)
+call	249:20	249:37	12	av_ts2str
+arg	249:30	249:37	13	pkt.dts
+water	249:30	0:0	14	pkt
+op	249:33	0:0	14	.
+water	249:34	0:0	14	dts
+arg	249:40	249:82	11	av_ts2timestr(pkt.dts,&ost->mux_timebase)
+call	249:40	249:81	12	av_ts2timestr
+arg	249:54	249:61	13	pkt.dts
+water	249:54	0:0	14	pkt
+op	249:57	0:0	14	.
+water	249:58	0:0	14	dts
+arg	249:63	249:81	13	&ost->mux_timebase
+op	249:63	0:0	14	&
+water	249:64	0:0	14	ost
+op	249:67	0:0	14	->
+water	249:69	0:0	14	mux_timebase
+water	249:83	0:0	10	;
+water	250:12	0:0	10	}
+water	251:12	0:0	8	frame_size
+op	251:23	0:0	8	=
+water	251:25	0:0	8	pkt
+op	251:28	0:0	8	.
+water	251:29	0:0	8	size
+water	251:33	0:0	8	;
+call	252:12	252:39	8	output_packet
+arg	252:26	252:28	9	of
+water	252:26	0:0	10	of
+arg	252:30	252:34	9	&pkt
+op	252:30	0:0	10	&
+water	252:31	0:0	10	pkt
+arg	252:36	252:39	9	ost
+water	252:36	0:0	10	ost
+water	252:40	0:0	8	;
+if	254:12	256:12	8	(ost -> logfile && enc -> stats_out)
+cond	254:16	254:37	9	ost -> logfile && enc -> stats_out
+water	254:16	0:0	10	ost
+op	254:19	0:0	10	->
+water	254:21	0:0	10	logfile
+op	254:29	0:0	10	&&
+water	254:32	0:0	10	enc
+op	254:35	0:0	10	->
+water	254:37	0:0	10	stats_out
+stmts	254:48	256:12	9	
+water	254:48	0:0	10	{
+call	255:16	255:58	10	fprintf
+arg	255:24	255:36	11	ost->logfile
+water	255:24	0:0	12	ost
+op	255:27	0:0	12	->
+water	255:29	0:0	12	logfile
+arg	255:38	255:42	11	"%s"
+water	255:38	0:0	12	"%s"
+arg	255:44	255:58	11	enc->stats_out
+water	255:44	0:0	12	enc
+op	255:47	0:0	12	->
+water	255:49	0:0	12	stats_out
+water	255:59	0:0	10	;
+water	256:12	0:0	10	}
+water	257:8	0:0	8	}
+water	258:4	0:0	6	}
+water	259:4	0:0	4	ost
+op	259:7	0:0	4	->
+water	259:9	0:0	4	sync_opts
+op	259:18	0:0	4	++
+water	259:20	0:0	4	;
+water	265:4	0:0	4	ost
+op	265:7	0:0	4	->
+water	265:9	0:0	4	frame_number
+op	265:21	0:0	4	++
+water	265:23	0:0	4	;
+if	266:4	267:39	4	(vstats_filename && frame_size)
+cond	266:8	266:27	5	vstats_filename && frame_size
+water	266:8	0:0	6	vstats_filename
+op	266:24	0:0	6	&&
+water	266:27	0:0	6	frame_size
+stmts	267:8	267:39	5	
+call	267:8	267:38	6	do_video_stats
+arg	267:23	267:26	7	ost
+water	267:23	0:0	8	ost
+arg	267:28	267:38	7	frame_size
+water	267:28	0:0	8	frame_size
+water	267:39	0:0	6	;
+water	268:2	0:0	4	}
+if	269:4	270:42	2	(! ost -> last_frame)
+cond	269:8	269:14	3	! ost -> last_frame
+op	269:8	0:0	4	!
+water	269:9	0:0	4	ost
+op	269:12	0:0	4	->
+water	269:14	0:0	4	last_frame
+stmts	270:8	270:42	3	
+water	270:8	0:0	4	ost
+op	270:11	0:0	4	->
+water	270:13	0:0	4	last_frame
+op	270:24	0:0	4	=
+call	270:26	270:41	4	av_frame_alloc
+water	270:42	0:0	4	;
+call	271:4	271:34	2	av_frame_unref
+arg	271:19	271:34	3	ost->last_frame
+water	271:19	0:0	4	ost
+op	271:22	0:0	4	->
+water	271:24	0:0	4	last_frame
+water	271:35	0:0	2	;
+if	272:4	273:51	2	(next_picture && ost -> last_frame)
+cond	272:8	272:29	3	next_picture && ost -> last_frame
+water	272:8	0:0	4	next_picture
+op	272:21	0:0	4	&&
+water	272:24	0:0	4	ost
+op	272:27	0:0	4	->
+water	272:29	0:0	4	last_frame
+stmts	273:8	273:51	3	
+call	273:8	273:50	4	av_frame_ref
+arg	273:21	273:36	5	ost->last_frame
+water	273:21	0:0	6	ost
+op	273:24	0:0	6	->
+water	273:26	0:0	6	last_frame
+arg	273:38	273:50	5	next_picture
+water	273:38	0:0	6	next_picture
+water	273:51	0:0	4	;
+else	274:4	275:39	2
+stmts	275:8	275:39	3	
+call	275:8	275:38	4	av_frame_free
+arg	275:22	275:38	5	&ost->last_frame
+op	275:22	0:0	6	&
+water	275:23	0:0	6	ost
+op	275:26	0:0	6	->
+water	275:28	0:0	6	last_frame
+water	275:39	0:0	4	;
+return	276:4	276:10	2	
+label	277:0	277:5	2	error :
+call	278:4	278:56	2	av_log
+arg	278:11	278:15	3	NULL
+water	278:11	0:0	4	NULL
+arg	278:17	278:29	3	AV_LOG_FATAL
+water	278:17	0:0	4	AV_LOG_FATAL
+arg	278:31	278:56	3	"Video encoding failed\n"
+water	278:31	0:0	4	"Video encoding failed\n"
+water	278:57	0:0	2	;
+call	279:4	279:18	2	exit_program
+arg	279:17	279:18	3	1
+water	279:17	0:0	4	1
+water	279:19	0:0	2	;

@@ -1,0 +1,969 @@
+func	1:0	152:0	0	static int	amf_parse_object
+params	1:27	0:0	1	
+param	1:28	1:46	2	AVFormatContext *	s
+param	1:48	1:65	2	AVStream *	astream
+param	2:28	2:45	2	AVStream *	vstream
+param	2:47	2:62	2	const char *	key
+param	3:28	3:43	2	int64_t	max_pos
+param	3:45	3:54	2	int	depth
+stmnts	0:0	151:12	1	
+decl	5:4	5:35	2	AVCodecContext	*acodec
+water	5:26	0:0	2	,
+decl	5:4	5:35	2	AVCodecContext	*vcodec
+decl	6:4	6:34	2	FLVContext	*flv
+op	6:20	0:0	2	=
+water	6:22	0:0	2	s
+op	6:23	0:0	2	->
+water	6:25	0:0	2	priv_data
+decl	7:4	7:20	2	AVIOContext	*ioc
+decl	8:4	8:24	2	AMFDataType	amf_type
+decl	9:4	9:22	2	char	str_val[1024]
+decl	10:4	10:18	2	double	num_val
+water	11:4	0:0	2	num_val
+op	11:13	0:0	2	=
+water	11:15	0:0	2	0
+water	11:16	0:0	2	;
+water	12:4	0:0	2	ioc
+op	12:13	0:0	2	=
+water	12:15	0:0	2	s
+op	12:16	0:0	2	->
+water	12:18	0:0	2	pb
+water	12:20	0:0	2	;
+water	13:4	0:0	2	amf_type
+op	13:13	0:0	2	=
+call	13:15	13:26	2	avio_r8
+arg	13:23	13:26	3	ioc
+water	13:23	0:0	4	ioc
+water	13:27	0:0	2	;
+switch	14:4	78:4	2	(amf_type)
+cond	14:12	14:12	3	amf_type
+water	14:12	0:0	4	amf_type
+stmts	14:22	78:4	3	
+water	14:22	0:0	4	{
+label	15:4	15:29	4	case AMF_DATA_TYPE_NUMBER :
+water	16:8	0:0	4	num_val
+op	16:16	0:0	4	=
+call	16:18	16:46	4	av_int2double
+arg	16:32	16:46	5	avio_rb64(ioc)
+call	16:32	16:45	6	avio_rb64
+arg	16:42	16:45	7	ioc
+water	16:42	0:0	8	ioc
+water	16:47	0:0	4	;
+break	17:8	17:13	4	
+label	18:4	18:27	4	case AMF_DATA_TYPE_BOOL :
+water	19:8	0:0	4	num_val
+op	19:16	0:0	4	=
+call	19:18	19:29	4	avio_r8
+arg	19:26	19:29	5	ioc
+water	19:26	0:0	6	ioc
+water	19:30	0:0	4	;
+break	20:8	20:13	4	
+label	21:4	21:29	4	case AMF_DATA_TYPE_STRING :
+if	22:8	25:8	4	(amf_get_string (ioc ,str_val ,sizeof ( str_val ) ) < 0)
+cond	22:12	22:60	5	amf_get_string (ioc ,str_val ,sizeof ( str_val ) ) < 0
+call	22:12	22:56	6	amf_get_string
+arg	22:27	22:30	7	ioc
+water	22:27	0:0	8	ioc
+arg	22:32	22:39	7	str_val
+water	22:32	0:0	8	str_val
+arg	22:41	22:56	7	sizeof(str_val)
+op	22:41	0:0	8	sizeof
+water	22:47	0:0	8	(
+water	22:48	0:0	8	str_val
+water	22:55	0:0	8	)
+op	22:58	0:0	6	<
+water	22:60	0:0	6	0
+stmts	22:63	25:8	5	
+water	22:63	0:0	6	{
+call	23:12	23:75	6	av_log
+arg	23:19	23:20	7	s
+water	23:19	0:0	8	s
+arg	23:22	23:34	7	AV_LOG_ERROR
+water	23:22	0:0	8	AV_LOG_ERROR
+arg	23:36	23:75	7	"AMF_DATA_TYPE_STRING parsing failed\n"
+water	23:36	0:0	8	"AMF_DATA_TYPE_STRING parsing failed\n"
+water	23:76	0:0	6	;
+return	24:12	24:21	6	-1
+op	24:19	0:0	7	-
+water	24:20	0:0	7	1
+water	25:8	0:0	6	}
+break	26:8	26:13	4	
+label	27:4	27:29	4	case AMF_DATA_TYPE_OBJECT :
+if	28:8	33:74	4	(( vstream || astream ) && key && ioc -> seekable && !strcmp (KEYFRAMES_TAG ,key ) && depth == 1)
+cond	28:12	30:52	5	( vstream || astream ) && key && ioc -> seekable && !strcmp (KEYFRAMES_TAG ,key ) && depth == 1
+water	28:12	0:0	6	(
+water	28:13	0:0	6	vstream
+op	28:21	0:0	6	||
+water	28:24	0:0	6	astream
+water	28:31	0:0	6	)
+op	28:33	0:0	6	&&
+water	28:36	0:0	6	key
+op	28:40	0:0	6	&&
+water	29:12	0:0	6	ioc
+op	29:15	0:0	6	->
+water	29:17	0:0	6	seekable
+op	29:26	0:0	6	&&
+op	30:12	0:0	6	!
+call	30:13	30:38	6	strcmp
+arg	30:20	30:33	7	KEYFRAMES_TAG
+water	30:20	0:0	8	KEYFRAMES_TAG
+arg	30:35	30:38	7	key
+water	30:35	0:0	8	key
+op	30:40	0:0	6	&&
+water	30:43	0:0	6	depth
+op	30:49	0:0	6	==
+water	30:52	0:0	6	1
+stmts	31:12	33:74	5	
+if	31:12	33:74	6	(parse_keyframes_index (s ,ioc ,vstream ? vstream : astream ,max_pos ) < 0)
+cond	31:16	32:49	7	parse_keyframes_index (s ,ioc ,vstream ? vstream : astream ,max_pos ) < 0
+call	31:16	32:45	8	parse_keyframes_index
+arg	31:38	31:39	9	s
+water	31:38	0:0	10	s
+arg	31:41	31:44	9	ioc
+water	31:41	0:0	10	ioc
+arg	31:46	31:73	9	vstream?vstream:astream
+water	31:46	0:0	10	vstream
+water	31:54	0:0	10	?
+water	31:56	0:0	10	vstream
+water	31:64	0:0	10	:
+water	31:66	0:0	10	astream
+arg	32:38	32:45	9	max_pos
+water	32:38	0:0	10	max_pos
+op	32:47	0:0	8	<
+water	32:49	0:0	8	0
+stmts	33:16	33:74	7	
+call	33:16	33:73	8	av_log
+arg	33:23	33:24	9	s
+water	33:23	0:0	10	s
+arg	33:26	33:38	9	AV_LOG_ERROR
+water	33:26	0:0	10	AV_LOG_ERROR
+arg	33:40	33:73	9	"Keyframe index parsing failed\n"
+water	33:40	0:0	10	"Keyframe index parsing failed\n"
+water	33:74	0:0	8	;
+while	34:8	38:25	4	(avio_tell (ioc ) < max_pos - 2 &&amf_get_string (ioc ,str_val ,sizeof ( str_val ) ) > 0)
+cond	34:15	35:63	5	avio_tell (ioc ) < max_pos - 2 &&amf_get_string (ioc ,str_val ,sizeof ( str_val ) ) > 0
+call	34:15	34:28	6	avio_tell
+arg	34:25	34:28	7	ioc
+water	34:25	0:0	8	ioc
+op	34:30	0:0	6	<
+water	34:32	0:0	6	max_pos
+op	34:40	0:0	6	-
+water	34:42	0:0	6	2
+op	34:44	0:0	6	&&
+call	35:15	35:59	6	amf_get_string
+arg	35:30	35:33	7	ioc
+water	35:30	0:0	8	ioc
+arg	35:35	35:42	7	str_val
+water	35:35	0:0	8	str_val
+arg	35:44	35:59	7	sizeof(str_val)
+op	35:44	0:0	8	sizeof
+water	35:50	0:0	8	(
+water	35:51	0:0	8	str_val
+water	35:58	0:0	8	)
+op	35:61	0:0	6	>
+water	35:63	0:0	6	0
+stmts	36:12	38:25	5	
+if	36:12	38:25	6	(amf_parse_object (s ,astream ,vstream ,str_val ,max_pos ,depth + 1 ) < 0)
+cond	36:16	37:46	7	amf_parse_object (s ,astream ,vstream ,str_val ,max_pos ,depth + 1 ) < 0
+call	36:16	37:42	8	amf_parse_object
+arg	36:33	36:34	9	s
+water	36:33	0:0	10	s
+arg	36:36	36:43	9	astream
+water	36:36	0:0	10	astream
+arg	36:45	36:52	9	vstream
+water	36:45	0:0	10	vstream
+arg	36:54	36:61	9	str_val
+water	36:54	0:0	10	str_val
+arg	36:63	36:70	9	max_pos
+water	36:63	0:0	10	max_pos
+arg	37:33	37:42	9	depth+1
+water	37:33	0:0	10	depth
+op	37:39	0:0	10	+
+water	37:41	0:0	10	1
+op	37:44	0:0	8	<
+water	37:46	0:0	8	0
+stmts	38:16	38:25	7	
+return	38:16	38:25	8	-1
+op	38:23	0:0	9	-
+water	38:24	0:0	9	1
+if	39:8	42:8	4	(avio_r8 (ioc ) != AMF_END_OF_OBJECT)
+cond	39:12	39:28	5	avio_r8 (ioc ) != AMF_END_OF_OBJECT
+call	39:12	39:23	6	avio_r8
+arg	39:20	39:23	7	ioc
+water	39:20	0:0	8	ioc
+op	39:25	0:0	6	!=
+water	39:28	0:0	6	AMF_END_OF_OBJECT
+stmts	39:47	42:8	5	
+water	39:47	0:0	6	{
+call	40:12	40:89	6	av_log
+arg	40:19	40:20	7	s
+water	40:19	0:0	8	s
+arg	40:22	40:34	7	AV_LOG_ERROR
+water	40:22	0:0	8	AV_LOG_ERROR
+arg	40:36	40:89	7	"Missing AMF_END_OF_OBJECT in AMF_DATA_TYPE_OBJECT\n"
+water	40:36	0:0	8	"Missing AMF_END_OF_OBJECT in AMF_DATA_TYPE_OBJECT\n"
+water	40:90	0:0	6	;
+return	41:12	41:21	6	-1
+op	41:19	0:0	7	-
+water	41:20	0:0	7	1
+water	42:8	0:0	6	}
+break	43:8	43:13	4	
+label	44:4	44:27	4	case AMF_DATA_TYPE_NULL :
+label	45:4	45:32	4	case AMF_DATA_TYPE_UNDEFINED :
+label	46:4	46:34	4	case AMF_DATA_TYPE_UNSUPPORTED :
+break	47:8	47:13	4	
+label	48:4	48:33	4	case AMF_DATA_TYPE_MIXEDARRAY :
+call	49:8	49:24	4	avio_skip
+arg	49:18	49:21	5	ioc
+water	49:18	0:0	6	ioc
+arg	49:23	49:24	5	4
+water	49:23	0:0	6	4
+water	49:25	0:0	4	;
+while	50:8	56:25	4	(avio_tell (ioc ) < max_pos - 2 &&amf_get_string (ioc ,str_val ,sizeof ( str_val ) ) > 0)
+cond	50:15	51:63	5	avio_tell (ioc ) < max_pos - 2 &&amf_get_string (ioc ,str_val ,sizeof ( str_val ) ) > 0
+call	50:15	50:28	6	avio_tell
+arg	50:25	50:28	7	ioc
+water	50:25	0:0	8	ioc
+op	50:30	0:0	6	<
+water	50:32	0:0	6	max_pos
+op	50:40	0:0	6	-
+water	50:42	0:0	6	2
+op	50:44	0:0	6	&&
+call	51:15	51:59	6	amf_get_string
+arg	51:30	51:33	7	ioc
+water	51:30	0:0	8	ioc
+arg	51:35	51:42	7	str_val
+water	51:35	0:0	8	str_val
+arg	51:44	51:59	7	sizeof(str_val)
+op	51:44	0:0	8	sizeof
+water	51:50	0:0	8	(
+water	51:51	0:0	8	str_val
+water	51:58	0:0	8	)
+op	51:61	0:0	6	>
+water	51:63	0:0	6	0
+stmts	54:12	56:25	5	
+if	54:12	56:25	6	(amf_parse_object (s ,astream ,vstream ,str_val ,max_pos ,depth + 1 ) < 0)
+cond	54:16	55:46	7	amf_parse_object (s ,astream ,vstream ,str_val ,max_pos ,depth + 1 ) < 0
+call	54:16	55:42	8	amf_parse_object
+arg	54:33	54:34	9	s
+water	54:33	0:0	10	s
+arg	54:36	54:43	9	astream
+water	54:36	0:0	10	astream
+arg	54:45	54:52	9	vstream
+water	54:45	0:0	10	vstream
+arg	54:54	54:61	9	str_val
+water	54:54	0:0	10	str_val
+arg	54:63	54:70	9	max_pos
+water	54:63	0:0	10	max_pos
+arg	55:33	55:42	9	depth+1
+water	55:33	0:0	10	depth
+op	55:39	0:0	10	+
+water	55:41	0:0	10	1
+op	55:44	0:0	8	<
+water	55:46	0:0	8	0
+stmts	56:16	56:25	7	
+return	56:16	56:25	8	-1
+op	56:23	0:0	9	-
+water	56:24	0:0	9	1
+if	57:8	60:8	4	(avio_r8 (ioc ) != AMF_END_OF_OBJECT)
+cond	57:12	57:28	5	avio_r8 (ioc ) != AMF_END_OF_OBJECT
+call	57:12	57:23	6	avio_r8
+arg	57:20	57:23	7	ioc
+water	57:20	0:0	8	ioc
+op	57:25	0:0	6	!=
+water	57:28	0:0	6	AMF_END_OF_OBJECT
+stmts	57:47	60:8	5	
+water	57:47	0:0	6	{
+call	58:12	58:93	6	av_log
+arg	58:19	58:20	7	s
+water	58:19	0:0	8	s
+arg	58:22	58:34	7	AV_LOG_ERROR
+water	58:22	0:0	8	AV_LOG_ERROR
+arg	58:36	58:93	7	"Missing AMF_END_OF_OBJECT in AMF_DATA_TYPE_MIXEDARRAY\n"
+water	58:36	0:0	8	"Missing AMF_END_OF_OBJECT in AMF_DATA_TYPE_MIXEDARRAY\n"
+water	58:94	0:0	6	;
+return	59:12	59:21	6	-1
+op	59:19	0:0	7	-
+water	59:20	0:0	7	1
+water	60:8	0:0	6	}
+break	61:8	61:13	4	
+label	62:4	62:28	4	case AMF_DATA_TYPE_ARRAY :
+water	63:4	0:0	4	{
+decl	64:8	64:32	4	unsigned int	arraylen
+water	64:29	0:0	4	,
+decl	64:8	64:32	4	unsigned int	i
+water	65:8	0:0	4	arraylen
+op	65:17	0:0	4	=
+call	65:19	65:32	4	avio_rb32
+arg	65:29	65:32	5	ioc
+water	65:29	0:0	6	ioc
+water	65:33	0:0	4	;
+for	66:8	69:25	4	(i = 0 ;i < arraylen &&avio_tell (ioc ) < max_pos - 1;i ++)
+forinit	66:13	66:18	5	i = 0 ;
+water	66:13	0:0	6	i
+op	66:15	0:0	6	=
+water	66:17	0:0	6	0
+water	66:18	0:0	6	;
+cond	66:20	66:63	5	i < arraylen &&avio_tell (ioc ) < max_pos - 1
+water	66:20	0:0	6	i
+op	66:22	0:0	6	<
+water	66:24	0:0	6	arraylen
+op	66:33	0:0	6	&&
+call	66:36	66:49	6	avio_tell
+arg	66:46	66:49	7	ioc
+water	66:46	0:0	8	ioc
+op	66:51	0:0	6	<
+water	66:53	0:0	6	max_pos
+op	66:61	0:0	6	-
+water	66:63	0:0	6	1
+forexpr	66:66	66:67	5	i ++
+water	66:66	0:0	6	i
+op	66:67	0:0	6	++
+stmts	67:12	69:25	5	
+if	67:12	69:25	6	(amf_parse_object (s ,NULL ,NULL ,NULL ,max_pos ,depth + 1 ) < 0)
+cond	67:16	68:46	7	amf_parse_object (s ,NULL ,NULL ,NULL ,max_pos ,depth + 1 ) < 0
+call	67:16	68:42	8	amf_parse_object
+arg	67:33	67:34	9	s
+water	67:33	0:0	10	s
+arg	67:36	67:40	9	NULL
+water	67:36	0:0	10	NULL
+arg	67:42	67:46	9	NULL
+water	67:42	0:0	10	NULL
+arg	67:48	67:52	9	NULL
+water	67:48	0:0	10	NULL
+arg	67:54	67:61	9	max_pos
+water	67:54	0:0	10	max_pos
+arg	68:33	68:42	9	depth+1
+water	68:33	0:0	10	depth
+op	68:39	0:0	10	+
+water	68:41	0:0	10	1
+op	68:44	0:0	8	<
+water	68:46	0:0	8	0
+stmts	69:16	69:25	7	
+return	69:16	69:25	8	-1
+op	69:23	0:0	9	-
+water	69:24	0:0	9	1
+water	70:4	0:0	4	}
+break	71:4	71:9	4	
+label	72:4	72:27	4	case AMF_DATA_TYPE_DATE :
+call	73:8	73:28	4	avio_skip
+arg	73:18	73:21	5	ioc
+water	73:18	0:0	6	ioc
+arg	73:23	73:28	5	8+2
+water	73:23	0:0	6	8
+op	73:25	0:0	6	+
+water	73:27	0:0	6	2
+water	73:29	0:0	4	;
+break	74:8	74:13	4	
+label	75:4	75:11	4	default :
+call	76:8	76:69	4	av_log
+arg	76:15	76:16	5	s
+water	76:15	0:0	6	s
+arg	76:18	76:30	5	AV_LOG_ERROR
+water	76:18	0:0	6	AV_LOG_ERROR
+arg	76:32	76:59	5	"unsupported amf type %d\n"
+water	76:32	0:0	6	"unsupported amf type %d\n"
+arg	76:61	76:69	5	amf_type
+water	76:61	0:0	6	amf_type
+water	76:70	0:0	4	;
+return	77:8	77:17	4	-1
+op	77:15	0:0	5	-
+water	77:16	0:0	5	1
+water	78:4	0:0	4	}
+if	79:4	150:4	2	(key)
+cond	79:8	79:8	3	key
+water	79:8	0:0	4	key
+stmts	79:13	150:4	3	
+water	79:13	0:0	4	{
+water	80:8	0:0	4	acodec
+op	80:15	0:0	4	=
+water	80:17	0:0	4	astream
+water	80:25	0:0	4	?
+water	80:27	0:0	4	astream
+op	80:34	0:0	4	->
+water	80:36	0:0	4	codec
+water	80:42	0:0	4	:
+water	80:44	0:0	4	NULL
+water	80:48	0:0	4	;
+water	81:8	0:0	4	vcodec
+op	81:15	0:0	4	=
+water	81:17	0:0	4	vstream
+water	81:25	0:0	4	?
+water	81:27	0:0	4	vstream
+op	81:34	0:0	4	->
+water	81:36	0:0	4	codec
+water	81:42	0:0	4	:
+water	81:44	0:0	4	NULL
+water	81:48	0:0	4	;
+if	83:8	121:8	4	(depth == 1)
+cond	83:12	83:21	5	depth == 1
+water	83:12	0:0	6	depth
+op	83:18	0:0	6	==
+water	83:21	0:0	6	1
+stmts	83:24	121:8	5	
+water	83:24	0:0	6	{
+if	84:12	120:12	6	(amf_type == AMF_DATA_TYPE_NUMBER || amf_type == AMF_DATA_TYPE_BOOL)
+cond	84:16	85:28	7	amf_type == AMF_DATA_TYPE_NUMBER || amf_type == AMF_DATA_TYPE_BOOL
+water	84:16	0:0	8	amf_type
+op	84:25	0:0	8	==
+water	84:28	0:0	8	AMF_DATA_TYPE_NUMBER
+op	84:49	0:0	8	||
+water	85:16	0:0	8	amf_type
+op	85:25	0:0	8	==
+water	85:28	0:0	8	AMF_DATA_TYPE_BOOL
+stmts	85:48	120:12	7	
+water	85:48	0:0	8	{
+if	86:16	87:56	8	(!strcmp (key ,"duration" ))
+cond	86:20	86:43	9	!strcmp (key ,"duration" )
+op	86:20	0:0	10	!
+call	86:21	86:43	10	strcmp
+arg	86:28	86:31	11	key
+water	86:28	0:0	12	key
+arg	86:33	86:43	11	"duration"
+water	86:33	0:0	12	"duration"
+stmts	87:20	87:56	9	
+water	87:20	0:0	10	s
+op	87:21	0:0	10	->
+water	87:23	0:0	10	duration
+op	87:32	0:0	10	=
+water	87:34	0:0	10	num_val
+op	87:42	0:0	10	*
+water	87:44	0:0	10	AV_TIME_BASE
+water	87:56	0:0	10	;
+else	88:16	90:55	8
+stmts	88:21	90:55	9	
+if	88:21	90:55	10	(!strcmp (key ,"videodatarate" ) && vcodec && 0 <=( int ) (num_val * 1024 . 0 ))
+cond	88:25	89:52	11	!strcmp (key ,"videodatarate" ) && vcodec && 0 <=( int ) (num_val * 1024 . 0 )
+op	88:25	0:0	12	!
+call	88:26	88:53	12	strcmp
+arg	88:33	88:36	13	key
+water	88:33	0:0	14	key
+arg	88:38	88:53	13	"videodatarate"
+water	88:38	0:0	14	"videodatarate"
+op	88:55	0:0	12	&&
+water	88:58	0:0	12	vcodec
+op	88:65	0:0	12	&&
+water	89:25	0:0	12	0
+op	89:27	0:0	12	<=
+call	89:30	89:52	12	(int)
+arg	89:36	89:52	13	num_val*1024.0
+water	89:36	0:0	14	num_val
+op	89:44	0:0	14	*
+water	89:46	0:0	14	1024
+op	89:50	0:0	14	.
+water	89:51	0:0	14	0
+stmts	90:20	90:55	11	
+water	90:20	0:0	12	vcodec
+op	90:26	0:0	12	->
+water	90:28	0:0	12	bit_rate
+op	90:37	0:0	12	=
+water	90:39	0:0	12	num_val
+op	90:47	0:0	12	*
+water	90:49	0:0	12	1024
+op	90:53	0:0	12	.
+water	90:54	0:0	12	0
+water	90:55	0:0	12	;
+else	91:16	93:55	8
+stmts	91:21	93:55	9	
+if	91:21	93:55	10	(!strcmp (key ,"audiodatarate" ) && acodec && 0 <=( int ) (num_val * 1024 . 0 ))
+cond	91:25	92:52	11	!strcmp (key ,"audiodatarate" ) && acodec && 0 <=( int ) (num_val * 1024 . 0 )
+op	91:25	0:0	12	!
+call	91:26	91:53	12	strcmp
+arg	91:33	91:36	13	key
+water	91:33	0:0	14	key
+arg	91:38	91:53	13	"audiodatarate"
+water	91:38	0:0	14	"audiodatarate"
+op	91:55	0:0	12	&&
+water	91:58	0:0	12	acodec
+op	91:65	0:0	12	&&
+water	92:25	0:0	12	0
+op	92:27	0:0	12	<=
+call	92:30	92:52	12	(int)
+arg	92:36	92:52	13	num_val*1024.0
+water	92:36	0:0	14	num_val
+op	92:44	0:0	14	*
+water	92:46	0:0	14	1024
+op	92:50	0:0	14	.
+water	92:51	0:0	14	0
+stmts	93:20	93:55	11	
+water	93:20	0:0	12	acodec
+op	93:26	0:0	12	->
+water	93:28	0:0	12	bit_rate
+op	93:37	0:0	12	=
+water	93:39	0:0	12	num_val
+op	93:47	0:0	12	*
+water	93:49	0:0	12	1024
+op	93:53	0:0	12	.
+water	93:54	0:0	12	0
+water	93:55	0:0	12	;
+else	94:16	99:16	8
+stmts	94:21	99:16	9	
+if	94:21	99:16	10	(!strcmp (key ,"datastream" ))
+cond	94:25	94:50	11	!strcmp (key ,"datastream" )
+op	94:25	0:0	12	!
+call	94:26	94:50	12	strcmp
+arg	94:33	94:36	13	key
+water	94:33	0:0	14	key
+arg	94:38	94:50	13	"datastream"
+water	94:38	0:0	14	"datastream"
+stmts	94:53	99:16	11	
+water	94:53	0:0	12	{
+decl	95:20	95:74	12	AVStream	*st
+op	95:33	0:0	12	=
+call	95:35	95:73	13	create_stream
+arg	95:49	95:50	14	s
+water	95:49	0:0	15	s
+arg	95:52	95:73	14	AVMEDIA_TYPE_SUBTITLE
+water	95:52	0:0	15	AVMEDIA_TYPE_SUBTITLE
+if	96:20	97:46	12	(! st)
+cond	96:24	96:25	13	! st
+op	96:24	0:0	14	!
+water	96:25	0:0	14	st
+stmts	97:24	97:46	13	
+return	97:24	97:46	14	AVERROR(ENOMEM)
+call	97:31	97:45	15	AVERROR
+arg	97:39	97:45	16	ENOMEM
+water	97:39	0:0	17	ENOMEM
+water	98:20	0:0	12	st
+op	98:22	0:0	12	->
+water	98:24	0:0	12	codec
+op	98:29	0:0	12	->
+water	98:31	0:0	12	codec_id
+op	98:40	0:0	12	=
+water	98:42	0:0	12	AV_CODEC_ID_TEXT
+water	98:58	0:0	12	;
+water	99:16	0:0	12	}
+else	99:18	119:16	8
+stmts	99:23	119:16	9	
+if	99:23	119:16	10	(flv -> trust_metadata)
+cond	99:27	99:32	11	flv -> trust_metadata
+water	99:27	0:0	12	flv
+op	99:30	0:0	12	->
+water	99:32	0:0	12	trust_metadata
+stmts	99:48	119:16	11	
+water	99:48	0:0	12	{
+if	100:20	102:20	12	(!strcmp (key ,"videocodecid" ) && vcodec)
+cond	100:24	100:56	13	!strcmp (key ,"videocodecid" ) && vcodec
+op	100:24	0:0	14	!
+call	100:25	100:51	14	strcmp
+arg	100:32	100:35	15	key
+water	100:32	0:0	16	key
+arg	100:37	100:51	15	"videocodecid"
+water	100:37	0:0	16	"videocodecid"
+op	100:53	0:0	14	&&
+water	100:56	0:0	14	vcodec
+stmts	100:64	102:20	13	
+water	100:64	0:0	14	{
+call	101:24	101:66	14	flv_set_video_codec
+arg	101:44	101:45	15	s
+water	101:44	0:0	16	s
+arg	101:47	101:54	15	vstream
+water	101:47	0:0	16	vstream
+arg	101:56	101:63	15	num_val
+water	101:56	0:0	16	num_val
+arg	101:65	101:66	15	0
+water	101:65	0:0	16	0
+water	101:67	0:0	14	;
+water	102:20	0:0	14	}
+else	102:22	105:20	12
+stmts	102:27	105:20	13	
+if	102:27	105:20	14	(!strcmp (key ,"audiocodecid" ) && acodec)
+cond	102:31	102:63	15	!strcmp (key ,"audiocodecid" ) && acodec
+op	102:31	0:0	16	!
+call	102:32	102:58	16	strcmp
+arg	102:39	102:42	17	key
+water	102:39	0:0	18	key
+arg	102:44	102:58	17	"audiocodecid"
+water	102:44	0:0	18	"audiocodecid"
+op	102:60	0:0	16	&&
+water	102:63	0:0	16	acodec
+stmts	102:71	105:20	15	
+water	102:71	0:0	16	{
+decl	103:24	103:75	16	int	id
+op	103:31	0:0	16	=
+water	103:33	0:0	16	(
+water	103:34	0:0	16	(
+water	103:35	0:0	16	int
+water	103:38	0:0	16	)
+water	103:39	0:0	16	num_val
+water	103:46	0:0	16	)
+op	103:48	0:0	16	<<
+water	103:51	0:0	16	FLV_AUDIO_CODECID_OFFSET
+call	104:24	104:66	16	flv_set_audio_codec
+arg	104:44	104:45	17	s
+water	104:44	0:0	18	s
+arg	104:47	104:54	17	astream
+water	104:47	0:0	18	astream
+arg	104:56	104:62	17	acodec
+water	104:56	0:0	18	acodec
+arg	104:64	104:66	17	id
+water	104:64	0:0	18	id
+water	104:67	0:0	16	;
+water	105:20	0:0	16	}
+else	105:22	107:20	12
+stmts	105:27	107:20	13	
+if	105:27	107:20	14	(!strcmp (key ,"audiosamplerate" ) && acodec)
+cond	105:31	105:66	15	!strcmp (key ,"audiosamplerate" ) && acodec
+op	105:31	0:0	16	!
+call	105:32	105:61	16	strcmp
+arg	105:39	105:42	17	key
+water	105:39	0:0	18	key
+arg	105:44	105:61	17	"audiosamplerate"
+water	105:44	0:0	18	"audiosamplerate"
+op	105:63	0:0	16	&&
+water	105:66	0:0	16	acodec
+stmts	105:74	107:20	15	
+water	105:74	0:0	16	{
+water	106:24	0:0	16	acodec
+op	106:30	0:0	16	->
+water	106:32	0:0	16	sample_rate
+op	106:44	0:0	16	=
+water	106:46	0:0	16	num_val
+water	106:53	0:0	16	;
+water	107:20	0:0	16	}
+else	107:22	109:20	12
+stmts	107:27	109:20	13	
+if	107:27	109:20	14	(!strcmp (key ,"audiosamplesize" ) && acodec)
+cond	107:31	107:66	15	!strcmp (key ,"audiosamplesize" ) && acodec
+op	107:31	0:0	16	!
+call	107:32	107:61	16	strcmp
+arg	107:39	107:42	17	key
+water	107:39	0:0	18	key
+arg	107:44	107:61	17	"audiosamplesize"
+water	107:44	0:0	18	"audiosamplesize"
+op	107:63	0:0	16	&&
+water	107:66	0:0	16	acodec
+stmts	107:74	109:20	15	
+water	107:74	0:0	16	{
+water	108:24	0:0	16	acodec
+op	108:30	0:0	16	->
+water	108:32	0:0	16	bits_per_coded_sample
+op	108:54	0:0	16	=
+water	108:56	0:0	16	num_val
+water	108:63	0:0	16	;
+water	109:20	0:0	16	}
+else	109:22	114:20	12
+stmts	109:27	114:20	13	
+if	109:27	114:20	14	(!strcmp (key ,"stereo" ) && acodec)
+cond	109:31	109:57	15	!strcmp (key ,"stereo" ) && acodec
+op	109:31	0:0	16	!
+call	109:32	109:52	16	strcmp
+arg	109:39	109:42	17	key
+water	109:39	0:0	18	key
+arg	109:44	109:52	17	"stereo"
+water	109:44	0:0	18	"stereo"
+op	109:54	0:0	16	&&
+water	109:57	0:0	16	acodec
+stmts	109:65	114:20	15	
+water	109:65	0:0	16	{
+water	110:24	0:0	16	acodec
+op	110:30	0:0	16	->
+water	110:32	0:0	16	channels
+op	110:47	0:0	16	=
+water	110:49	0:0	16	num_val
+op	110:57	0:0	16	+
+water	110:59	0:0	16	1
+water	110:60	0:0	16	;
+water	111:24	0:0	16	acodec
+op	111:30	0:0	16	->
+water	111:32	0:0	16	channel_layout
+op	111:47	0:0	16	=
+water	111:49	0:0	16	acodec
+op	111:55	0:0	16	->
+water	111:57	0:0	16	channels
+op	111:66	0:0	16	==
+water	111:69	0:0	16	2
+water	111:71	0:0	16	?
+water	112:49	0:0	16	AV_CH_LAYOUT_STEREO
+water	112:69	0:0	16	:
+water	113:49	0:0	16	AV_CH_LAYOUT_MONO
+water	113:66	0:0	16	;
+water	114:20	0:0	16	}
+else	114:22	116:20	12
+stmts	114:27	116:20	13	
+if	114:27	116:20	14	(!strcmp (key ,"width" ) && vcodec)
+cond	114:31	114:56	15	!strcmp (key ,"width" ) && vcodec
+op	114:31	0:0	16	!
+call	114:32	114:51	16	strcmp
+arg	114:39	114:42	17	key
+water	114:39	0:0	18	key
+arg	114:44	114:51	17	"width"
+water	114:44	0:0	18	"width"
+op	114:53	0:0	16	&&
+water	114:56	0:0	16	vcodec
+stmts	114:64	116:20	15	
+water	114:64	0:0	16	{
+water	115:24	0:0	16	vcodec
+op	115:30	0:0	16	->
+water	115:32	0:0	16	width
+op	115:38	0:0	16	=
+water	115:40	0:0	16	num_val
+water	115:47	0:0	16	;
+water	116:20	0:0	16	}
+else	116:22	118:20	12
+stmts	116:27	118:20	13	
+if	116:27	118:20	14	(!strcmp (key ,"height" ) && vcodec)
+cond	116:31	116:57	15	!strcmp (key ,"height" ) && vcodec
+op	116:31	0:0	16	!
+call	116:32	116:52	16	strcmp
+arg	116:39	116:42	17	key
+water	116:39	0:0	18	key
+arg	116:44	116:52	17	"height"
+water	116:44	0:0	18	"height"
+op	116:54	0:0	16	&&
+water	116:57	0:0	16	vcodec
+stmts	116:65	118:20	15	
+water	116:65	0:0	16	{
+water	117:24	0:0	16	vcodec
+op	117:30	0:0	16	->
+water	117:32	0:0	16	height
+op	117:39	0:0	16	=
+water	117:41	0:0	16	num_val
+water	117:48	0:0	16	;
+water	118:20	0:0	16	}
+water	119:16	0:0	12	}
+water	120:12	0:0	8	}
+water	121:8	0:0	6	}
+if	122:8	125:50	4	(amf_type == AMF_DATA_TYPE_OBJECT && s -> nb_streams == 1 && ( ( ! acodec && !strcmp (key ,"audiocodecid" ) ) || ( ! vcodec && !strcmp (key ,"videocodecid" ) ) ))
+cond	122:12	124:53	5	amf_type == AMF_DATA_TYPE_OBJECT && s -> nb_streams == 1 && ( ( ! acodec && !strcmp (key ,"audiocodecid" ) ) || ( ! vcodec && !strcmp (key ,"videocodecid" ) ) )
+water	122:12	0:0	6	amf_type
+op	122:21	0:0	6	==
+water	122:24	0:0	6	AMF_DATA_TYPE_OBJECT
+op	122:45	0:0	6	&&
+water	122:48	0:0	6	s
+op	122:49	0:0	6	->
+water	122:51	0:0	6	nb_streams
+op	122:62	0:0	6	==
+water	122:65	0:0	6	1
+op	122:67	0:0	6	&&
+water	123:11	0:0	6	(
+water	123:12	0:0	6	(
+op	123:13	0:0	6	!
+water	123:14	0:0	6	acodec
+op	123:21	0:0	6	&&
+op	123:24	0:0	6	!
+call	123:25	123:51	6	strcmp
+arg	123:32	123:35	7	key
+water	123:32	0:0	8	key
+arg	123:37	123:51	7	"audiocodecid"
+water	123:37	0:0	8	"audiocodecid"
+water	123:52	0:0	6	)
+op	123:54	0:0	6	||
+water	124:12	0:0	6	(
+op	124:13	0:0	6	!
+water	124:14	0:0	6	vcodec
+op	124:21	0:0	6	&&
+op	124:24	0:0	6	!
+call	124:25	124:51	6	strcmp
+arg	124:32	124:35	7	key
+water	124:32	0:0	8	key
+arg	124:37	124:51	7	"videocodecid"
+water	124:37	0:0	8	"videocodecid"
+water	124:52	0:0	6	)
+water	124:53	0:0	6	)
+stmts	125:16	125:50	5	
+water	125:16	0:0	6	s
+op	125:17	0:0	6	->
+water	125:19	0:0	6	ctx_flags
+op	125:29	0:0	6	&=
+water	125:32	0:0	6	~AVFMTCTX_NOHEADER
+water	125:50	0:0	6	;
+if	126:8	139:20	4	(!strcmp (key ,"duration" ) || !strcmp (key ,"filesize" ) || !strcmp (key ,"width" ) || !strcmp (key ,"height" ) || !strcmp (key ,"videodatarate" ) || !strcmp (key ,"framerate" ) || !strcmp (key ,"videocodecid" ) || !strcmp (key ,"audiodatarate" ) || !strcmp (key ,"audiosamplerate" ) || !strcmp (key ,"audiosamplesize" ) || !strcmp (key ,"stereo" ) || !strcmp (key ,"audiocodecid" ) || !strcmp (key ,"datastream" ))
+cond	126:12	138:37	5	!strcmp (key ,"duration" ) || !strcmp (key ,"filesize" ) || !strcmp (key ,"width" ) || !strcmp (key ,"height" ) || !strcmp (key ,"videodatarate" ) || !strcmp (key ,"framerate" ) || !strcmp (key ,"videocodecid" ) || !strcmp (key ,"audiodatarate" ) || !strcmp (key ,"audiosamplerate" ) || !strcmp (key ,"audiosamplesize" ) || !strcmp (key ,"stereo" ) || !strcmp (key ,"audiocodecid" ) || !strcmp (key ,"datastream" )
+op	126:12	0:0	6	!
+call	126:13	126:35	6	strcmp
+arg	126:20	126:23	7	key
+water	126:20	0:0	8	key
+arg	126:25	126:35	7	"duration"
+water	126:25	0:0	8	"duration"
+op	126:44	0:0	6	||
+op	127:12	0:0	6	!
+call	127:13	127:35	6	strcmp
+arg	127:20	127:23	7	key
+water	127:20	0:0	8	key
+arg	127:25	127:35	7	"filesize"
+water	127:25	0:0	8	"filesize"
+op	127:44	0:0	6	||
+op	128:12	0:0	6	!
+call	128:13	128:32	6	strcmp
+arg	128:20	128:23	7	key
+water	128:20	0:0	8	key
+arg	128:25	128:32	7	"width"
+water	128:25	0:0	8	"width"
+op	128:44	0:0	6	||
+op	129:12	0:0	6	!
+call	129:13	129:33	6	strcmp
+arg	129:20	129:23	7	key
+water	129:20	0:0	8	key
+arg	129:25	129:33	7	"height"
+water	129:25	0:0	8	"height"
+op	129:44	0:0	6	||
+op	130:12	0:0	6	!
+call	130:13	130:40	6	strcmp
+arg	130:20	130:23	7	key
+water	130:20	0:0	8	key
+arg	130:25	130:40	7	"videodatarate"
+water	130:25	0:0	8	"videodatarate"
+op	130:44	0:0	6	||
+op	131:12	0:0	6	!
+call	131:13	131:36	6	strcmp
+arg	131:20	131:23	7	key
+water	131:20	0:0	8	key
+arg	131:25	131:36	7	"framerate"
+water	131:25	0:0	8	"framerate"
+op	131:44	0:0	6	||
+op	132:12	0:0	6	!
+call	132:13	132:39	6	strcmp
+arg	132:20	132:23	7	key
+water	132:20	0:0	8	key
+arg	132:25	132:39	7	"videocodecid"
+water	132:25	0:0	8	"videocodecid"
+op	132:44	0:0	6	||
+op	133:12	0:0	6	!
+call	133:13	133:40	6	strcmp
+arg	133:20	133:23	7	key
+water	133:20	0:0	8	key
+arg	133:25	133:40	7	"audiodatarate"
+water	133:25	0:0	8	"audiodatarate"
+op	133:44	0:0	6	||
+op	134:12	0:0	6	!
+call	134:13	134:42	6	strcmp
+arg	134:20	134:23	7	key
+water	134:20	0:0	8	key
+arg	134:25	134:42	7	"audiosamplerate"
+water	134:25	0:0	8	"audiosamplerate"
+op	134:44	0:0	6	||
+op	135:12	0:0	6	!
+call	135:13	135:42	6	strcmp
+arg	135:20	135:23	7	key
+water	135:20	0:0	8	key
+arg	135:25	135:42	7	"audiosamplesize"
+water	135:25	0:0	8	"audiosamplesize"
+op	135:44	0:0	6	||
+op	136:12	0:0	6	!
+call	136:13	136:33	6	strcmp
+arg	136:20	136:23	7	key
+water	136:20	0:0	8	key
+arg	136:25	136:33	7	"stereo"
+water	136:25	0:0	8	"stereo"
+op	136:44	0:0	6	||
+op	137:12	0:0	6	!
+call	137:13	137:39	6	strcmp
+arg	137:20	137:23	7	key
+water	137:20	0:0	8	key
+arg	137:25	137:39	7	"audiocodecid"
+water	137:25	0:0	8	"audiocodecid"
+op	137:44	0:0	6	||
+op	138:12	0:0	6	!
+call	138:13	138:37	6	strcmp
+arg	138:20	138:23	7	key
+water	138:20	0:0	8	key
+arg	138:25	138:37	7	"datastream"
+water	138:25	0:0	8	"datastream"
+stmts	139:12	139:20	5	
+return	139:12	139:20	6	0
+water	139:19	0:0	7	0
+water	140:8	0:0	4	s
+op	140:9	0:0	4	->
+water	140:11	0:0	4	event_flags
+op	140:23	0:0	4	|=
+water	140:26	0:0	4	AVFMT_EVENT_FLAG_METADATA_UPDATED
+water	140:59	0:0	4	;
+if	141:8	145:8	4	(amf_type == AMF_DATA_TYPE_BOOL)
+cond	141:12	141:24	5	amf_type == AMF_DATA_TYPE_BOOL
+water	141:12	0:0	6	amf_type
+op	141:21	0:0	6	==
+water	141:24	0:0	6	AMF_DATA_TYPE_BOOL
+stmts	141:44	145:8	5	
+water	141:44	0:0	6	{
+call	142:12	143:38	6	av_strlcpy
+arg	142:23	142:30	7	str_val
+water	142:23	0:0	8	str_val
+arg	142:32	142:62	7	num_val>0?"true":"false"
+water	142:32	0:0	8	num_val
+op	142:40	0:0	8	>
+water	142:42	0:0	8	0
+water	142:44	0:0	8	?
+water	142:46	0:0	8	"true"
+water	142:53	0:0	8	:
+water	142:55	0:0	8	"false"
+arg	143:23	143:38	7	sizeof(str_val)
+op	143:23	0:0	8	sizeof
+water	143:29	0:0	8	(
+water	143:30	0:0	8	str_val
+water	143:37	0:0	8	)
+water	143:39	0:0	6	;
+call	144:12	144:53	6	av_dict_set
+arg	144:24	144:36	7	&s->metadata
+op	144:24	0:0	8	&
+water	144:25	0:0	8	s
+op	144:26	0:0	8	->
+water	144:28	0:0	8	metadata
+arg	144:38	144:41	7	key
+water	144:38	0:0	8	key
+arg	144:43	144:50	7	str_val
+water	144:43	0:0	8	str_val
+arg	144:52	144:53	7	0
+water	144:52	0:0	8	0
+water	144:54	0:0	6	;
+water	145:8	0:0	6	}
+else	145:10	148:8	4
+stmts	145:15	148:8	5	
+if	145:15	148:8	6	(amf_type == AMF_DATA_TYPE_NUMBER)
+cond	145:19	145:31	7	amf_type == AMF_DATA_TYPE_NUMBER
+water	145:19	0:0	8	amf_type
+op	145:28	0:0	8	==
+water	145:31	0:0	8	AMF_DATA_TYPE_NUMBER
+stmts	145:53	148:8	7	
+water	145:53	0:0	8	{
+call	146:12	146:61	8	snprintf
+arg	146:21	146:28	9	str_val
+water	146:21	0:0	10	str_val
+arg	146:30	146:45	9	sizeof(str_val)
+op	146:30	0:0	10	sizeof
+water	146:36	0:0	10	(
+water	146:37	0:0	10	str_val
+water	146:44	0:0	10	)
+arg	146:47	146:52	9	"%.f"
+water	146:47	0:0	10	"%.f"
+arg	146:54	146:61	9	num_val
+water	146:54	0:0	10	num_val
+water	146:62	0:0	8	;
+call	147:12	147:53	8	av_dict_set
+arg	147:24	147:36	9	&s->metadata
+op	147:24	0:0	10	&
+water	147:25	0:0	10	s
+op	147:26	0:0	10	->
+water	147:28	0:0	10	metadata
+arg	147:38	147:41	9	key
+water	147:38	0:0	10	key
+arg	147:43	147:50	9	str_val
+water	147:43	0:0	10	str_val
+arg	147:52	147:53	9	0
+water	147:52	0:0	10	0
+water	147:54	0:0	8	;
+water	148:8	0:0	8	}
+else	148:10	149:54	4
+stmts	148:15	149:54	5	
+if	148:15	149:54	6	(amf_type == AMF_DATA_TYPE_STRING)
+cond	148:19	148:31	7	amf_type == AMF_DATA_TYPE_STRING
+water	148:19	0:0	8	amf_type
+op	148:28	0:0	8	==
+water	148:31	0:0	8	AMF_DATA_TYPE_STRING
+stmts	149:12	149:54	7	
+call	149:12	149:53	8	av_dict_set
+arg	149:24	149:36	9	&s->metadata
+op	149:24	0:0	10	&
+water	149:25	0:0	10	s
+op	149:26	0:0	10	->
+water	149:28	0:0	10	metadata
+arg	149:38	149:41	9	key
+water	149:38	0:0	10	key
+arg	149:43	149:50	9	str_val
+water	149:43	0:0	10	str_val
+arg	149:52	149:53	9	0
+water	149:52	0:0	10	0
+water	149:54	0:0	8	;
+water	150:4	0:0	4	}
+return	151:4	151:12	2	0
+water	151:11	0:0	3	0

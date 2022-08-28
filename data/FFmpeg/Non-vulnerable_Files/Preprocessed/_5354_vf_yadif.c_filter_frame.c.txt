@@ -1,0 +1,416 @@
+func	1:0	51:0	0	static int	filter_frame
+params	1:23	0:0	1	
+param	1:24	1:42	2	AVFilterLink *	link
+param	1:44	1:58	2	AVFrame *	frame
+stmnts	0:0	50:31	1	
+decl	3:4	3:36	2	AVFilterContext	*ctx
+op	3:25	0:0	2	=
+water	3:27	0:0	2	link
+op	3:31	0:0	2	->
+water	3:33	0:0	2	dst
+decl	4:4	4:35	2	YADIFContext	*yadif
+op	4:24	0:0	2	=
+water	4:26	0:0	2	ctx
+op	4:29	0:0	2	->
+water	4:31	0:0	2	priv
+call	5:4	5:20	2	av_assert0
+arg	5:15	5:20	3	frame
+water	5:15	0:0	4	frame
+water	5:21	0:0	2	;
+if	6:4	7:28	2	(yadif -> frame_pending)
+cond	6:8	6:15	3	yadif -> frame_pending
+water	6:8	0:0	4	yadif
+op	6:13	0:0	4	->
+water	6:15	0:0	4	frame_pending
+stmts	7:8	7:28	3	
+call	7:8	7:27	4	return_frame
+arg	7:21	7:24	5	ctx
+water	7:21	0:0	6	ctx
+arg	7:26	7:27	5	1
+water	7:26	0:0	6	1
+water	7:28	0:0	4	;
+if	8:4	9:35	2	(yadif -> prev)
+cond	8:8	8:15	3	yadif -> prev
+water	8:8	0:0	4	yadif
+op	8:13	0:0	4	->
+water	8:15	0:0	4	prev
+stmts	9:8	9:35	3	
+call	9:8	9:34	4	av_frame_free
+arg	9:22	9:34	5	&yadif->prev
+op	9:22	0:0	6	&
+water	9:23	0:0	6	yadif
+op	9:28	0:0	6	->
+water	9:30	0:0	6	prev
+water	9:35	0:0	4	;
+water	10:4	0:0	2	yadif
+op	10:9	0:0	2	->
+water	10:11	0:0	2	prev
+op	10:16	0:0	2	=
+water	10:18	0:0	2	yadif
+op	10:23	0:0	2	->
+water	10:25	0:0	2	cur
+water	10:28	0:0	2	;
+water	11:4	0:0	2	yadif
+op	11:9	0:0	2	->
+water	11:11	0:0	2	cur
+op	11:16	0:0	2	=
+water	11:18	0:0	2	yadif
+op	11:23	0:0	2	->
+water	11:25	0:0	2	next
+water	11:29	0:0	2	;
+water	12:4	0:0	2	yadif
+op	12:9	0:0	2	->
+water	12:11	0:0	2	next
+op	12:16	0:0	2	=
+water	12:18	0:0	2	frame
+water	12:23	0:0	2	;
+if	13:4	15:30	2	(! yadif -> cur && ! ( yadif -> cur =av_frame_clone (yadif -> next ) ))
+cond	13:8	14:50	3	! yadif -> cur && ! ( yadif -> cur =av_frame_clone (yadif -> next ) )
+op	13:8	0:0	4	!
+water	13:9	0:0	4	yadif
+op	13:14	0:0	4	->
+water	13:16	0:0	4	cur
+op	13:20	0:0	4	&&
+op	14:8	0:0	4	!
+water	14:9	0:0	4	(
+water	14:10	0:0	4	yadif
+op	14:15	0:0	4	->
+water	14:17	0:0	4	cur
+op	14:21	0:0	4	=
+call	14:23	14:49	4	av_frame_clone
+arg	14:38	14:49	5	yadif->next
+water	14:38	0:0	6	yadif
+op	14:43	0:0	6	->
+water	14:45	0:0	6	next
+water	14:50	0:0	4	)
+stmts	15:8	15:30	3	
+return	15:8	15:30	4	AVERROR(ENOMEM)
+call	15:15	15:29	5	AVERROR
+arg	15:23	15:29	6	ENOMEM
+water	15:23	0:0	7	ENOMEM
+if	16:4	19:4	2	(checkstride (yadif ,yadif -> next ,yadif -> cur ))
+cond	16:8	16:50	3	checkstride (yadif ,yadif -> next ,yadif -> cur )
+call	16:8	16:50	4	checkstride
+arg	16:20	16:25	5	yadif
+water	16:20	0:0	6	yadif
+arg	16:27	16:38	5	yadif->next
+water	16:27	0:0	6	yadif
+op	16:32	0:0	6	->
+water	16:34	0:0	6	next
+arg	16:40	16:50	5	yadif->cur
+water	16:40	0:0	6	yadif
+op	16:45	0:0	6	->
+water	16:47	0:0	6	cur
+stmts	16:53	19:4	3	
+water	16:53	0:0	4	{
+call	17:8	17:82	4	av_log
+arg	17:15	17:18	5	ctx
+water	17:15	0:0	6	ctx
+arg	17:20	17:34	5	AV_LOG_VERBOSE
+water	17:20	0:0	6	AV_LOG_VERBOSE
+arg	17:36	17:82	5	"Reallocating frame due to differing stride\n"
+water	17:36	0:0	6	"Reallocating frame due to differing stride\n"
+water	17:83	0:0	4	;
+call	18:8	18:35	4	fixstride
+arg	18:18	18:22	5	link
+water	18:18	0:0	6	link
+arg	18:24	18:35	5	yadif->next
+water	18:24	0:0	6	yadif
+op	18:29	0:0	6	->
+water	18:31	0:0	6	next
+water	18:36	0:0	4	;
+water	19:4	0:0	4	}
+if	20:4	21:35	2	(checkstride (yadif ,yadif -> next ,yadif -> cur ))
+cond	20:8	20:50	3	checkstride (yadif ,yadif -> next ,yadif -> cur )
+call	20:8	20:50	4	checkstride
+arg	20:20	20:25	5	yadif
+water	20:20	0:0	6	yadif
+arg	20:27	20:38	5	yadif->next
+water	20:27	0:0	6	yadif
+op	20:32	0:0	6	->
+water	20:34	0:0	6	next
+arg	20:40	20:50	5	yadif->cur
+water	20:40	0:0	6	yadif
+op	20:45	0:0	6	->
+water	20:47	0:0	6	cur
+stmts	21:8	21:35	3	
+call	21:8	21:34	4	fixstride
+arg	21:18	21:22	5	link
+water	21:18	0:0	6	link
+arg	21:24	21:34	5	yadif->cur
+water	21:24	0:0	6	yadif
+op	21:29	0:0	6	->
+water	21:31	0:0	6	cur
+water	21:35	0:0	4	;
+if	22:4	23:36	2	(yadif -> prev &&checkstride (yadif ,yadif -> next ,yadif -> prev ))
+cond	22:8	22:66	3	yadif -> prev &&checkstride (yadif ,yadif -> next ,yadif -> prev )
+water	22:8	0:0	4	yadif
+op	22:13	0:0	4	->
+water	22:15	0:0	4	prev
+op	22:20	0:0	4	&&
+call	22:23	22:66	4	checkstride
+arg	22:35	22:40	5	yadif
+water	22:35	0:0	6	yadif
+arg	22:42	22:53	5	yadif->next
+water	22:42	0:0	6	yadif
+op	22:47	0:0	6	->
+water	22:49	0:0	6	next
+arg	22:55	22:66	5	yadif->prev
+water	22:55	0:0	6	yadif
+op	22:60	0:0	6	->
+water	22:62	0:0	6	prev
+stmts	23:8	23:36	3	
+call	23:8	23:35	4	fixstride
+arg	23:18	23:22	5	link
+water	23:18	0:0	6	link
+arg	23:24	23:35	5	yadif->prev
+water	23:24	0:0	6	yadif
+op	23:29	0:0	6	->
+water	23:31	0:0	6	prev
+water	23:36	0:0	4	;
+if	24:4	27:4	2	(checkstride (yadif ,yadif -> next ,yadif -> cur ) || ( yadif -> prev &&checkstride (yadif ,yadif -> next ,yadif -> prev ) ))
+cond	24:8	24:115	3	checkstride (yadif ,yadif -> next ,yadif -> cur ) || ( yadif -> prev &&checkstride (yadif ,yadif -> next ,yadif -> prev ) )
+call	24:8	24:50	4	checkstride
+arg	24:20	24:25	5	yadif
+water	24:20	0:0	6	yadif
+arg	24:27	24:38	5	yadif->next
+water	24:27	0:0	6	yadif
+op	24:32	0:0	6	->
+water	24:34	0:0	6	next
+arg	24:40	24:50	5	yadif->cur
+water	24:40	0:0	6	yadif
+op	24:45	0:0	6	->
+water	24:47	0:0	6	cur
+op	24:52	0:0	4	||
+water	24:55	0:0	4	(
+water	24:56	0:0	4	yadif
+op	24:61	0:0	4	->
+water	24:63	0:0	4	prev
+op	24:68	0:0	4	&&
+call	24:71	24:114	4	checkstride
+arg	24:83	24:88	5	yadif
+water	24:83	0:0	6	yadif
+arg	24:90	24:101	5	yadif->next
+water	24:90	0:0	6	yadif
+op	24:95	0:0	6	->
+water	24:97	0:0	6	next
+arg	24:103	24:114	5	yadif->prev
+water	24:103	0:0	6	yadif
+op	24:108	0:0	6	->
+water	24:110	0:0	6	prev
+water	24:115	0:0	4	)
+stmts	24:118	27:4	3	
+water	24:118	0:0	4	{
+call	25:8	25:64	4	av_log
+arg	25:15	25:18	5	ctx
+water	25:15	0:0	6	ctx
+arg	25:20	25:32	5	AV_LOG_ERROR
+water	25:20	0:0	6	AV_LOG_ERROR
+arg	25:34	25:64	5	"Failed to reallocate frame\n"
+water	25:34	0:0	6	"Failed to reallocate frame\n"
+water	25:65	0:0	4	;
+return	26:8	26:17	4	-1
+op	26:15	0:0	5	-
+water	26:16	0:0	5	1
+water	27:4	0:0	4	}
+if	28:4	29:16	2	(! yadif -> prev)
+cond	28:8	28:16	3	! yadif -> prev
+op	28:8	0:0	4	!
+water	28:9	0:0	4	yadif
+op	28:14	0:0	4	->
+water	28:16	0:0	4	prev
+stmts	29:8	29:16	3	
+return	29:8	29:16	4	0
+water	29:15	0:0	5	0
+if	30:4	42:4	2	(( yadif -> deint && ! yadif -> cur -> interlaced_frame ) || ctx -> is_disabled || ( yadif -> deint && ! yadif -> prev -> interlaced_frame && yadif -> prev -> repeat_pict ) || ( yadif -> deint && ! yadif -> next -> interlaced_frame && yadif -> next -> repeat_pict ))
+cond	30:8	33:83	3	( yadif -> deint && ! yadif -> cur -> interlaced_frame ) || ctx -> is_disabled || ( yadif -> deint && ! yadif -> prev -> interlaced_frame && yadif -> prev -> repeat_pict ) || ( yadif -> deint && ! yadif -> next -> interlaced_frame && yadif -> next -> repeat_pict )
+water	30:8	0:0	4	(
+water	30:9	0:0	4	yadif
+op	30:14	0:0	4	->
+water	30:16	0:0	4	deint
+op	30:22	0:0	4	&&
+op	30:25	0:0	4	!
+water	30:26	0:0	4	yadif
+op	30:31	0:0	4	->
+water	30:33	0:0	4	cur
+op	30:36	0:0	4	->
+water	30:38	0:0	4	interlaced_frame
+water	30:54	0:0	4	)
+op	30:56	0:0	4	||
+water	31:8	0:0	4	ctx
+op	31:11	0:0	4	->
+water	31:13	0:0	4	is_disabled
+op	31:25	0:0	4	||
+water	32:8	0:0	4	(
+water	32:9	0:0	4	yadif
+op	32:14	0:0	4	->
+water	32:16	0:0	4	deint
+op	32:22	0:0	4	&&
+op	32:25	0:0	4	!
+water	32:26	0:0	4	yadif
+op	32:31	0:0	4	->
+water	32:33	0:0	4	prev
+op	32:37	0:0	4	->
+water	32:39	0:0	4	interlaced_frame
+op	32:56	0:0	4	&&
+water	32:59	0:0	4	yadif
+op	32:64	0:0	4	->
+water	32:66	0:0	4	prev
+op	32:70	0:0	4	->
+water	32:72	0:0	4	repeat_pict
+water	32:83	0:0	4	)
+op	32:85	0:0	4	||
+water	33:8	0:0	4	(
+water	33:9	0:0	4	yadif
+op	33:14	0:0	4	->
+water	33:16	0:0	4	deint
+op	33:22	0:0	4	&&
+op	33:25	0:0	4	!
+water	33:26	0:0	4	yadif
+op	33:31	0:0	4	->
+water	33:33	0:0	4	next
+op	33:37	0:0	4	->
+water	33:39	0:0	4	interlaced_frame
+op	33:56	0:0	4	&&
+water	33:59	0:0	4	yadif
+op	33:64	0:0	4	->
+water	33:66	0:0	4	next
+op	33:70	0:0	4	->
+water	33:72	0:0	4	repeat_pict
+water	33:83	0:0	4	)
+stmts	34:6	42:4	3	
+water	34:6	0:0	4	{
+water	35:8	0:0	4	yadif
+op	35:13	0:0	4	->
+water	35:15	0:0	4	out
+op	35:20	0:0	4	=
+call	35:22	35:47	4	av_frame_clone
+arg	35:37	35:47	5	yadif->cur
+water	35:37	0:0	6	yadif
+op	35:42	0:0	6	->
+water	35:44	0:0	6	cur
+water	35:48	0:0	4	;
+if	36:8	37:34	4	(! yadif -> out)
+cond	36:12	36:20	5	! yadif -> out
+op	36:12	0:0	6	!
+water	36:13	0:0	6	yadif
+op	36:18	0:0	6	->
+water	36:20	0:0	6	out
+stmts	37:12	37:34	5	
+return	37:12	37:34	6	AVERROR(ENOMEM)
+call	37:19	37:33	7	AVERROR
+arg	37:27	37:33	8	ENOMEM
+water	37:27	0:0	9	ENOMEM
+call	38:8	38:34	4	av_frame_free
+arg	38:22	38:34	5	&yadif->prev
+op	38:22	0:0	6	&
+water	38:23	0:0	6	yadif
+op	38:28	0:0	6	->
+water	38:30	0:0	6	prev
+water	38:35	0:0	4	;
+if	39:8	40:32	4	(yadif -> out -> pts != AV_NOPTS_VALUE)
+cond	39:12	39:31	5	yadif -> out -> pts != AV_NOPTS_VALUE
+water	39:12	0:0	6	yadif
+op	39:17	0:0	6	->
+water	39:19	0:0	6	out
+op	39:22	0:0	6	->
+water	39:24	0:0	6	pts
+op	39:28	0:0	6	!=
+water	39:31	0:0	6	AV_NOPTS_VALUE
+stmts	40:12	40:32	5	
+water	40:12	0:0	6	yadif
+op	40:17	0:0	6	->
+water	40:19	0:0	6	out
+op	40:22	0:0	6	->
+water	40:24	0:0	6	pts
+op	40:28	0:0	6	*=
+water	40:31	0:0	6	2
+water	40:32	0:0	6	;
+return	41:8	41:59	4	ff_filter_frame(ctx->outputs[0],yadif->out)
+call	41:15	41:58	5	ff_filter_frame
+arg	41:31	41:46	6	ctx->outputs[0]
+water	41:31	0:0	7	ctx
+op	41:34	0:0	7	->
+water	41:36	0:0	7	outputs
+op	41:43	0:0	7	[
+water	41:44	0:0	7	0
+op	41:45	0:0	7	]
+arg	41:48	41:58	6	yadif->out
+water	41:48	0:0	7	yadif
+op	41:53	0:0	7	->
+water	41:55	0:0	7	out
+water	42:4	0:0	4	}
+water	43:4	0:0	2	yadif
+op	43:9	0:0	2	->
+water	43:11	0:0	2	out
+op	43:15	0:0	2	=
+call	43:17	43:70	2	ff_get_video_buffer
+arg	43:37	43:52	3	ctx->outputs[0]
+water	43:37	0:0	4	ctx
+op	43:40	0:0	4	->
+water	43:42	0:0	4	outputs
+op	43:49	0:0	4	[
+water	43:50	0:0	4	0
+op	43:51	0:0	4	]
+arg	43:54	43:61	3	link->w
+water	43:54	0:0	4	link
+op	43:58	0:0	4	->
+water	43:60	0:0	4	w
+arg	43:63	43:70	3	link->h
+water	43:63	0:0	4	link
+op	43:67	0:0	4	->
+water	43:69	0:0	4	h
+water	43:71	0:0	2	;
+if	44:4	45:30	2	(! yadif -> out)
+cond	44:8	44:16	3	! yadif -> out
+op	44:8	0:0	4	!
+water	44:9	0:0	4	yadif
+op	44:14	0:0	4	->
+water	44:16	0:0	4	out
+stmts	45:8	45:30	3	
+return	45:8	45:30	4	AVERROR(ENOMEM)
+call	45:15	45:29	5	AVERROR
+arg	45:23	45:29	6	ENOMEM
+water	45:23	0:0	7	ENOMEM
+call	46:4	46:46	2	av_frame_copy_props
+arg	46:24	46:34	3	yadif->out
+water	46:24	0:0	4	yadif
+op	46:29	0:0	4	->
+water	46:31	0:0	4	out
+arg	46:36	46:46	3	yadif->cur
+water	46:36	0:0	4	yadif
+op	46:41	0:0	4	->
+water	46:43	0:0	4	cur
+water	46:47	0:0	2	;
+water	47:4	0:0	2	yadif
+op	47:9	0:0	2	->
+water	47:11	0:0	2	out
+op	47:14	0:0	2	->
+water	47:16	0:0	2	interlaced_frame
+op	47:33	0:0	2	=
+water	47:35	0:0	2	0
+water	47:36	0:0	2	;
+if	48:4	49:28	2	(yadif -> out -> pts != AV_NOPTS_VALUE)
+cond	48:8	48:27	3	yadif -> out -> pts != AV_NOPTS_VALUE
+water	48:8	0:0	4	yadif
+op	48:13	0:0	4	->
+water	48:15	0:0	4	out
+op	48:18	0:0	4	->
+water	48:20	0:0	4	pts
+op	48:24	0:0	4	!=
+water	48:27	0:0	4	AV_NOPTS_VALUE
+stmts	49:8	49:28	3	
+water	49:8	0:0	4	yadif
+op	49:13	0:0	4	->
+water	49:15	0:0	4	out
+op	49:18	0:0	4	->
+water	49:20	0:0	4	pts
+op	49:24	0:0	4	*=
+water	49:27	0:0	4	2
+water	49:28	0:0	4	;
+return	50:4	50:31	2	return_frame(ctx,0)
+call	50:11	50:30	3	return_frame
+arg	50:24	50:27	4	ctx
+water	50:24	0:0	5	ctx
+arg	50:29	50:30	4	0
+water	50:29	0:0	5	0

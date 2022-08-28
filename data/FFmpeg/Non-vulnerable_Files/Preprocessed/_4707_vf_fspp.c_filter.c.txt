@@ -1,0 +1,1062 @@
+func	1:0	78:0	0	static void	filter
+params	1:18	0:0	1	
+param	1:19	1:33	2	FSPPContext *	p
+param	1:35	1:47	2	uint8_t *	dst
+param	1:49	1:61	2	uint8_t *	src
+param	2:19	2:33	2	int	dst_stride
+param	2:35	2:49	2	int	src_stride
+param	3:19	3:28	2	int	width
+param	3:30	3:40	2	int	height
+param	4:19	4:36	2	uint8_t *	qp_store
+param	4:38	4:51	2	int	qp_stride
+param	4:53	4:64	2	int	is_luma
+stmnts	0:0	77:4	1	
+decl	6:4	6:27	2	int	x
+water	6:9	0:0	2	,
+decl	6:4	6:27	2	int	x0
+water	6:13	0:0	2	,
+decl	6:4	6:27	2	int	y
+water	6:16	0:0	2	,
+decl	6:4	6:27	2	int	es
+water	6:20	0:0	2	,
+decl	6:4	6:27	2	int	qy
+water	6:24	0:0	2	,
+decl	6:4	6:27	2	int	t
+decl	7:4	7:62	2	const int	stride
+op	7:21	0:0	2	=
+water	7:23	0:0	2	is_luma
+water	7:31	0:0	2	?
+water	7:33	0:0	2	p
+op	7:34	0:0	2	->
+water	7:36	0:0	2	temp_stride
+water	7:48	0:0	2	:
+water	7:50	0:0	2	(
+water	7:51	0:0	2	width
+op	7:57	0:0	2	+
+water	7:59	0:0	2	16
+water	7:61	0:0	2	)
+decl	8:4	8:38	2	const int	step
+op	8:19	0:0	2	=
+water	8:21	0:0	2	6
+op	8:23	0:0	2	-
+water	8:25	0:0	2	p
+op	8:26	0:0	2	->
+water	8:28	0:0	2	log2_count
+decl	9:4	9:43	2	const int	qpsh
+op	9:19	0:0	2	=
+water	9:21	0:0	2	4
+op	9:23	0:0	2	-
+water	9:25	0:0	2	p
+op	9:26	0:0	2	->
+water	9:28	0:0	2	hsub
+op	9:33	0:0	2	*
+op	9:35	0:0	2	!
+water	9:36	0:0	2	is_luma
+decl	10:4	10:43	2	const int	qpsv
+op	10:19	0:0	2	=
+water	10:21	0:0	2	4
+op	10:23	0:0	2	-
+water	10:25	0:0	2	p
+op	10:26	0:0	2	->
+water	10:28	0:0	2	vsub
+op	10:33	0:0	2	*
+op	10:35	0:0	2	!
+water	10:36	0:0	2	is_luma
+call	11:4	11:44	2	DECLARE_ALIGNED
+arg	11:20	11:22	3	32
+water	11:20	0:0	4	32
+arg	11:24	11:31	3	int32_t
+water	11:24	0:0	4	int32_t
+arg	11:33	11:44	3	block_align
+water	11:33	0:0	4	block_align
+op	11:45	0:0	2	[
+water	11:46	0:0	2	4
+op	11:48	0:0	2	*
+water	11:50	0:0	2	8
+op	11:52	0:0	2	*
+water	11:54	0:0	2	BLOCKSZ
+op	11:62	0:0	2	+
+water	11:64	0:0	2	4
+op	11:66	0:0	2	*
+water	11:68	0:0	2	8
+op	11:70	0:0	2	*
+water	11:72	0:0	2	BLOCKSZ
+op	11:79	0:0	2	]
+water	11:80	0:0	2	;
+decl	12:4	12:44	2	int16_t	*block
+op	12:20	0:0	2	=
+water	12:22	0:0	2	(
+water	12:23	0:0	2	int16_t
+op	12:31	0:0	2	*
+water	12:32	0:0	2	)
+water	12:33	0:0	2	block_align
+decl	13:4	13:64	2	int16_t	*block3
+op	13:20	0:0	2	=
+call	13:22	13:63	3	(int16_t*)
+arg	13:34	13:63	4	block_align+4*8*BLOCKSZ
+water	13:34	0:0	5	block_align
+op	13:46	0:0	5	+
+water	13:48	0:0	5	4
+op	13:50	0:0	5	*
+water	13:52	0:0	5	8
+op	13:54	0:0	5	*
+water	13:56	0:0	5	BLOCKSZ
+call	14:4	14:37	2	memset
+arg	14:11	14:17	3	block3
+water	14:11	0:0	4	block3
+arg	14:19	14:20	3	0
+water	14:19	0:0	4	0
+arg	14:22	14:37	3	4*8*BLOCKSZ
+water	14:22	0:0	4	4
+op	14:24	0:0	4	*
+water	14:26	0:0	4	8
+op	14:28	0:0	4	*
+water	14:30	0:0	4	BLOCKSZ
+water	14:38	0:0	2	;
+if	15:4	15:28	2	(! src || ! dst)
+cond	15:8	15:17	3	! src || ! dst
+op	15:8	0:0	4	!
+water	15:9	0:0	4	src
+op	15:13	0:0	4	||
+op	15:16	0:0	4	!
+water	15:17	0:0	4	dst
+stmts	15:22	15:28	3	
+return	15:22	15:28	4	
+for	16:4	23:4	2	(y = 0 ;y < height;y ++)
+forinit	16:9	16:14	3	y = 0 ;
+water	16:9	0:0	4	y
+op	16:11	0:0	4	=
+water	16:13	0:0	4	0
+water	16:14	0:0	4	;
+cond	16:16	16:20	3	y < height
+water	16:16	0:0	4	y
+op	16:18	0:0	4	<
+water	16:20	0:0	4	height
+forexpr	16:28	16:29	3	y ++
+water	16:28	0:0	4	y
+op	16:29	0:0	4	++
+stmts	16:33	23:4	3	
+water	16:33	0:0	4	{
+decl	17:8	17:47	4	int	index
+op	17:18	0:0	4	=
+water	17:20	0:0	4	8
+op	17:22	0:0	4	+
+water	17:24	0:0	4	8
+op	17:26	0:0	4	*
+water	17:28	0:0	4	stride
+op	17:35	0:0	4	+
+water	17:37	0:0	4	y
+op	17:39	0:0	4	*
+water	17:41	0:0	4	stride
+call	18:8	18:58	4	memcpy
+arg	18:15	18:29	5	p->src+index
+water	18:15	0:0	6	p
+op	18:16	0:0	6	->
+water	18:18	0:0	6	src
+op	18:22	0:0	6	+
+water	18:24	0:0	6	index
+arg	18:31	18:51	5	src+y*src_stride
+water	18:31	0:0	6	src
+op	18:35	0:0	6	+
+water	18:37	0:0	6	y
+op	18:39	0:0	6	*
+water	18:41	0:0	6	src_stride
+arg	18:53	18:58	5	width
+water	18:53	0:0	6	width
+water	18:59	0:0	4	;
+for	19:8	22:8	4	(x = 0 ;x < 8;x ++)
+forinit	19:13	19:18	5	x = 0 ;
+water	19:13	0:0	6	x
+op	19:15	0:0	6	=
+water	19:17	0:0	6	0
+water	19:18	0:0	6	;
+cond	19:20	19:24	5	x < 8
+water	19:20	0:0	6	x
+op	19:22	0:0	6	<
+water	19:24	0:0	6	8
+forexpr	19:27	19:28	5	x ++
+water	19:27	0:0	6	x
+op	19:28	0:0	6	++
+stmts	19:32	22:8	5	
+water	19:32	0:0	6	{
+water	20:12	0:0	6	p
+op	20:13	0:0	6	->
+water	20:15	0:0	6	src
+op	20:18	0:0	6	[
+water	20:19	0:0	6	index
+op	20:33	0:0	6	-
+water	20:35	0:0	6	x
+op	20:37	0:0	6	-
+water	20:39	0:0	6	1
+op	20:40	0:0	6	]
+op	20:42	0:0	6	=
+water	20:44	0:0	6	p
+op	20:45	0:0	6	->
+water	20:47	0:0	6	src
+op	20:50	0:0	6	[
+water	20:51	0:0	6	index
+op	20:57	0:0	6	+
+water	20:67	0:0	6	x
+op	20:72	0:0	6	]
+water	20:73	0:0	6	;
+water	21:12	0:0	6	p
+op	21:13	0:0	6	->
+water	21:15	0:0	6	src
+op	21:18	0:0	6	[
+water	21:19	0:0	6	index
+op	21:25	0:0	6	+
+water	21:27	0:0	6	width
+op	21:33	0:0	6	+
+water	21:35	0:0	6	x
+op	21:40	0:0	6	]
+op	21:42	0:0	6	=
+water	21:44	0:0	6	p
+op	21:45	0:0	6	->
+water	21:47	0:0	6	src
+op	21:50	0:0	6	[
+water	21:51	0:0	6	index
+op	21:57	0:0	6	+
+water	21:59	0:0	6	width
+op	21:65	0:0	6	-
+water	21:67	0:0	6	x
+op	21:69	0:0	6	-
+water	21:71	0:0	6	1
+op	21:72	0:0	6	]
+water	21:73	0:0	6	;
+water	22:8	0:0	6	}
+water	23:4	0:0	4	}
+for	24:4	27:4	2	(y = 0 ;y < 8;y ++)
+forinit	24:9	24:14	3	y = 0 ;
+water	24:9	0:0	4	y
+op	24:11	0:0	4	=
+water	24:13	0:0	4	0
+water	24:14	0:0	4	;
+cond	24:16	24:20	3	y < 8
+water	24:16	0:0	4	y
+op	24:18	0:0	4	<
+water	24:20	0:0	4	8
+forexpr	24:23	24:24	3	y ++
+water	24:23	0:0	4	y
+op	24:24	0:0	4	++
+stmts	24:28	27:4	3	
+water	24:28	0:0	4	{
+call	25:8	25:93	4	memcpy
+arg	25:15	25:49	5	p->src+(7-y)*stride
+water	25:15	0:0	6	p
+op	25:16	0:0	6	->
+water	25:18	0:0	6	src
+op	25:22	0:0	6	+
+water	25:24	0:0	6	(
+water	25:30	0:0	6	7
+op	25:32	0:0	6	-
+water	25:34	0:0	6	y
+water	25:39	0:0	6	)
+op	25:41	0:0	6	*
+water	25:43	0:0	6	stride
+arg	25:51	25:85	5	p->src+(y+8)*stride
+water	25:51	0:0	6	p
+op	25:52	0:0	6	->
+water	25:54	0:0	6	src
+op	25:58	0:0	6	+
+water	25:60	0:0	6	(
+water	25:66	0:0	6	y
+op	25:68	0:0	6	+
+water	25:70	0:0	6	8
+water	25:75	0:0	6	)
+op	25:77	0:0	6	*
+water	25:79	0:0	6	stride
+arg	25:87	25:93	5	stride
+water	25:87	0:0	6	stride
+water	25:94	0:0	4	;
+call	26:8	26:93	4	memcpy
+arg	26:15	26:49	5	p->src+(height+8+y)*stride
+water	26:15	0:0	6	p
+op	26:16	0:0	6	->
+water	26:18	0:0	6	src
+op	26:22	0:0	6	+
+water	26:24	0:0	6	(
+water	26:25	0:0	6	height
+op	26:32	0:0	6	+
+water	26:34	0:0	6	8
+op	26:36	0:0	6	+
+water	26:38	0:0	6	y
+water	26:39	0:0	6	)
+op	26:41	0:0	6	*
+water	26:43	0:0	6	stride
+arg	26:51	26:85	5	p->src+(height-y+7)*stride
+water	26:51	0:0	6	p
+op	26:52	0:0	6	->
+water	26:54	0:0	6	src
+op	26:58	0:0	6	+
+water	26:60	0:0	6	(
+water	26:61	0:0	6	height
+op	26:68	0:0	6	-
+water	26:70	0:0	6	y
+op	26:72	0:0	6	+
+water	26:74	0:0	6	7
+water	26:75	0:0	6	)
+op	26:77	0:0	6	*
+water	26:79	0:0	6	stride
+arg	26:87	26:93	5	stride
+water	26:87	0:0	6	stride
+water	26:94	0:0	4	;
+water	27:4	0:0	4	}
+for	29:4	30:68	2	(y = 8 ;y < 24;y ++)
+forinit	29:9	29:14	3	y = 8 ;
+water	29:9	0:0	4	y
+op	29:11	0:0	4	=
+water	29:13	0:0	4	8
+water	29:14	0:0	4	;
+cond	29:16	29:20	3	y < 24
+water	29:16	0:0	4	y
+op	29:18	0:0	4	<
+water	29:20	0:0	4	24
+forexpr	29:24	29:25	3	y ++
+water	29:24	0:0	4	y
+op	29:25	0:0	4	++
+stmts	30:8	30:68	3	
+call	30:8	30:67	4	memset
+arg	30:15	30:39	5	p->temp+8+y*stride
+water	30:15	0:0	6	p
+op	30:16	0:0	6	->
+water	30:18	0:0	6	temp
+op	30:23	0:0	6	+
+water	30:25	0:0	6	8
+op	30:27	0:0	6	+
+water	30:29	0:0	6	y
+op	30:31	0:0	6	*
+water	30:33	0:0	6	stride
+arg	30:41	30:42	5	0
+water	30:41	0:0	6	0
+arg	30:44	30:67	5	width*sizeof(int16_t)
+water	30:44	0:0	6	width
+op	30:50	0:0	6	*
+op	30:52	0:0	6	sizeof
+water	30:58	0:0	6	(
+water	30:59	0:0	6	int16_t
+water	30:66	0:0	6	)
+water	30:68	0:0	4	;
+for	31:4	69:4	2	(y = step ;y < height + 8;y += step)
+forinit	31:9	31:17	3	y = step ;
+water	31:9	0:0	4	y
+op	31:11	0:0	4	=
+water	31:13	0:0	4	step
+water	31:17	0:0	4	;
+cond	31:19	31:32	3	y < height + 8
+water	31:19	0:0	4	y
+op	31:21	0:0	4	<
+water	31:23	0:0	4	height
+op	31:30	0:0	4	+
+water	31:32	0:0	4	8
+forexpr	31:35	31:40	3	y += step
+water	31:35	0:0	4	y
+op	31:37	0:0	4	+=
+water	31:40	0:0	4	step
+stmts	31:46	69:4	3	
+water	31:46	0:0	4	{
+decl	32:8	32:35	4	const int	y1
+op	32:21	0:0	4	=
+water	32:23	0:0	4	y
+op	32:25	0:0	4	-
+water	32:27	0:0	4	8
+op	32:29	0:0	4	+
+water	32:31	0:0	4	step
+water	33:8	0:0	4	qy
+op	33:11	0:0	4	=
+water	33:13	0:0	4	y
+op	33:15	0:0	4	-
+water	33:17	0:0	4	4
+water	33:18	0:0	4	;
+if	34:8	34:44	4	(qy > height - 1)
+cond	34:12	34:26	5	qy > height - 1
+water	34:12	0:0	6	qy
+op	34:15	0:0	6	>
+water	34:17	0:0	6	height
+op	34:24	0:0	6	-
+water	34:26	0:0	6	1
+stmts	34:29	34:44	5	
+water	34:29	0:0	6	qy
+op	34:32	0:0	6	=
+water	34:34	0:0	6	height
+op	34:41	0:0	6	-
+water	34:43	0:0	6	1
+water	34:44	0:0	6	;
+if	35:8	35:26	4	(qy < 0)
+cond	35:12	35:17	5	qy < 0
+water	35:12	0:0	6	qy
+op	35:15	0:0	6	<
+water	35:17	0:0	6	0
+stmts	35:20	35:26	5	
+water	35:20	0:0	6	qy
+op	35:23	0:0	6	=
+water	35:25	0:0	6	0
+water	35:26	0:0	6	;
+water	36:8	0:0	4	qy
+op	36:11	0:0	4	=
+water	36:13	0:0	4	(
+water	36:14	0:0	4	qy
+op	36:17	0:0	4	>>
+water	36:20	0:0	4	qpsv
+water	36:24	0:0	4	)
+op	36:26	0:0	4	*
+water	36:28	0:0	4	qp_stride
+water	36:37	0:0	4	;
+call	37:8	37:69	4	p->row_fdct
+arg	37:20	37:25	5	block
+water	37:20	0:0	6	block
+arg	37:27	37:58	5	p->src+y*stride+2-(y&1)
+water	37:27	0:0	6	p
+op	37:28	0:0	6	->
+water	37:30	0:0	6	src
+op	37:34	0:0	6	+
+water	37:36	0:0	6	y
+op	37:38	0:0	6	*
+water	37:40	0:0	6	stride
+op	37:47	0:0	6	+
+water	37:49	0:0	6	2
+op	37:51	0:0	6	-
+water	37:53	0:0	6	(
+water	37:54	0:0	6	y
+op	37:55	0:0	6	&
+water	37:56	0:0	6	1
+water	37:57	0:0	6	)
+arg	37:60	37:66	5	stride
+water	37:60	0:0	6	stride
+arg	37:68	37:69	5	2
+water	37:68	0:0	6	2
+water	37:70	0:0	4	;
+for	38:8	54:8	4	(x0 = 0 ;x0 < width + 8 - 8 * ( BLOCKSZ - 1 );x0 += 8 * ( BLOCKSZ - 1 ))
+forinit	38:13	38:19	5	x0 = 0 ;
+water	38:13	0:0	6	x0
+op	38:16	0:0	6	=
+water	38:18	0:0	6	0
+water	38:19	0:0	6	;
+cond	38:21	38:54	5	x0 < width + 8 - 8 * ( BLOCKSZ - 1 )
+water	38:21	0:0	6	x0
+op	38:24	0:0	6	<
+water	38:26	0:0	6	width
+op	38:32	0:0	6	+
+water	38:34	0:0	6	8
+op	38:36	0:0	6	-
+water	38:38	0:0	6	8
+op	38:40	0:0	6	*
+water	38:42	0:0	6	(
+water	38:43	0:0	6	BLOCKSZ
+op	38:51	0:0	6	-
+water	38:53	0:0	6	1
+water	38:54	0:0	6	)
+forexpr	38:57	38:79	5	x0 += 8 * ( BLOCKSZ - 1 )
+water	38:57	0:0	6	x0
+op	38:60	0:0	6	+=
+water	38:63	0:0	6	8
+op	38:65	0:0	6	*
+water	38:67	0:0	6	(
+water	38:68	0:0	6	BLOCKSZ
+op	38:76	0:0	6	-
+water	38:78	0:0	6	1
+water	38:79	0:0	6	)
+stmts	38:82	54:8	5	
+water	38:82	0:0	6	{
+call	39:12	39:106	6	p->row_fdct
+arg	39:24	39:37	7	block+8*8
+water	39:24	0:0	8	block
+op	39:30	0:0	8	+
+water	39:32	0:0	8	8
+op	39:34	0:0	8	*
+water	39:36	0:0	8	8
+arg	39:39	39:79	7	p->src+y*stride+8+x0+2-(y&1)
+water	39:39	0:0	8	p
+op	39:40	0:0	8	->
+water	39:42	0:0	8	src
+op	39:46	0:0	8	+
+water	39:48	0:0	8	y
+op	39:50	0:0	8	*
+water	39:52	0:0	8	stride
+op	39:59	0:0	8	+
+water	39:61	0:0	8	8
+op	39:63	0:0	8	+
+water	39:65	0:0	8	x0
+op	39:68	0:0	8	+
+water	39:70	0:0	8	2
+op	39:72	0:0	8	-
+water	39:74	0:0	8	(
+water	39:75	0:0	8	y
+op	39:76	0:0	8	&
+water	39:77	0:0	8	1
+water	39:78	0:0	8	)
+arg	39:81	39:87	7	stride
+water	39:81	0:0	8	stride
+arg	39:89	39:106	7	2*(BLOCKSZ-1)
+water	39:89	0:0	8	2
+op	39:91	0:0	8	*
+water	39:93	0:0	8	(
+water	39:94	0:0	8	BLOCKSZ
+op	39:102	0:0	8	-
+water	39:104	0:0	8	1
+water	39:105	0:0	8	)
+water	39:107	0:0	6	;
+if	40:12	41:116	6	(p -> qp)
+cond	40:16	40:19	7	p -> qp
+water	40:16	0:0	8	p
+op	40:17	0:0	8	->
+water	40:19	0:0	8	qp
+stmts	41:16	41:116	7	
+call	41:16	41:115	8	p->column_fidct
+arg	41:32	41:65	9	(int16_t*)(&p->threshold_mtx[0])
+call	41:32	41:64	10	(int16_t*)
+arg	41:44	41:64	11	&p->threshold_mtx[0]
+op	41:44	0:0	12	&
+water	41:45	0:0	12	p
+op	41:46	0:0	12	->
+water	41:48	0:0	12	threshold_mtx
+op	41:61	0:0	12	[
+water	41:62	0:0	12	0
+op	41:63	0:0	12	]
+arg	41:67	41:80	9	block+0*8
+water	41:67	0:0	10	block
+op	41:73	0:0	10	+
+water	41:75	0:0	10	0
+op	41:77	0:0	10	*
+water	41:79	0:0	10	8
+arg	41:82	41:96	9	block3+0*8
+water	41:82	0:0	10	block3
+op	41:89	0:0	10	+
+water	41:91	0:0	10	0
+op	41:93	0:0	10	*
+water	41:95	0:0	10	8
+arg	41:98	41:115	9	8*(BLOCKSZ-1)
+water	41:98	0:0	10	8
+op	41:100	0:0	10	*
+water	41:102	0:0	10	(
+water	41:103	0:0	10	BLOCKSZ
+op	41:111	0:0	10	-
+water	41:113	0:0	10	1
+water	41:114	0:0	10	)
+water	41:116	0:0	8	;
+else	42:12	50:16	6
+stmts	43:16	50:16	7	
+for	43:16	50:16	8	(x = 0 ;x < 8 * ( BLOCKSZ - 1 );x += 8)
+forinit	43:21	43:26	9	x = 0 ;
+water	43:21	0:0	10	x
+op	43:23	0:0	10	=
+water	43:25	0:0	10	0
+water	43:26	0:0	10	;
+cond	43:28	43:48	9	x < 8 * ( BLOCKSZ - 1 )
+water	43:28	0:0	10	x
+op	43:30	0:0	10	<
+water	43:32	0:0	10	8
+op	43:34	0:0	10	*
+water	43:36	0:0	10	(
+water	43:37	0:0	10	BLOCKSZ
+op	43:45	0:0	10	-
+water	43:47	0:0	10	1
+water	43:48	0:0	10	)
+forexpr	43:51	43:56	9	x += 8
+water	43:51	0:0	10	x
+op	43:53	0:0	10	+=
+water	43:56	0:0	10	8
+stmts	43:59	50:16	9	
+water	43:59	0:0	10	{
+water	44:20	0:0	10	t
+op	44:22	0:0	10	=
+water	44:24	0:0	10	x
+op	44:26	0:0	10	+
+water	44:28	0:0	10	x0
+op	44:31	0:0	10	-
+water	44:33	0:0	10	2
+water	44:34	0:0	10	;
+if	45:20	45:36	10	(t < 0)
+cond	45:24	45:28	11	t < 0
+water	45:24	0:0	12	t
+op	45:26	0:0	12	<
+water	45:28	0:0	12	0
+stmts	45:31	45:36	11	
+water	45:31	0:0	12	t
+op	45:33	0:0	12	=
+water	45:35	0:0	12	0
+water	45:36	0:0	12	;
+water	46:20	0:0	10	t
+op	46:22	0:0	10	=
+water	46:24	0:0	10	qp_store
+op	46:32	0:0	10	[
+water	46:33	0:0	10	qy
+op	46:36	0:0	10	+
+water	46:38	0:0	10	(
+water	46:39	0:0	10	t
+op	46:41	0:0	10	>>
+water	46:44	0:0	10	qpsh
+water	46:48	0:0	10	)
+op	46:49	0:0	10	]
+water	46:50	0:0	10	;
+water	47:20	0:0	10	t
+op	47:22	0:0	10	=
+call	47:24	47:56	10	ff_norm_qscale
+arg	47:39	47:40	11	t
+water	47:39	0:0	12	t
+arg	47:42	47:56	11	p->qscale_type
+water	47:42	0:0	12	p
+op	47:43	0:0	12	->
+water	47:45	0:0	12	qscale_type
+water	47:57	0:0	10	;
+if	48:20	48:145	10	(t != p -> prev_q)
+cond	48:24	48:32	11	t != p -> prev_q
+water	48:24	0:0	12	t
+op	48:26	0:0	12	!=
+water	48:29	0:0	12	p
+op	48:30	0:0	12	->
+water	48:32	0:0	12	prev_q
+stmts	48:40	48:145	11	
+water	48:40	0:0	12	p
+op	48:41	0:0	12	->
+water	48:43	0:0	12	prev_q
+op	48:50	0:0	12	=
+water	48:52	0:0	12	t
+water	48:53	0:0	12	,
+call	48:55	48:144	12	p->mul_thrmat
+arg	48:69	48:106	13	(int16_t*)(&p->threshold_mtx_noq[0])
+call	48:69	48:105	14	(int16_t*)
+arg	48:81	48:105	15	&p->threshold_mtx_noq[0]
+op	48:81	0:0	16	&
+water	48:82	0:0	16	p
+op	48:83	0:0	16	->
+water	48:85	0:0	16	threshold_mtx_noq
+op	48:102	0:0	16	[
+water	48:103	0:0	16	0
+op	48:104	0:0	16	]
+arg	48:108	48:141	13	(int16_t*)(&p->threshold_mtx[0])
+call	48:108	48:140	14	(int16_t*)
+arg	48:120	48:140	15	&p->threshold_mtx[0]
+op	48:120	0:0	16	&
+water	48:121	0:0	16	p
+op	48:122	0:0	16	->
+water	48:124	0:0	16	threshold_mtx
+op	48:137	0:0	16	[
+water	48:138	0:0	16	0
+op	48:139	0:0	16	]
+arg	48:143	48:144	13	t
+water	48:143	0:0	14	t
+water	48:145	0:0	12	;
+call	49:20	49:103	10	p->column_fidct
+arg	49:36	49:69	11	(int16_t*)(&p->threshold_mtx[0])
+call	49:36	49:68	12	(int16_t*)
+arg	49:48	49:68	13	&p->threshold_mtx[0]
+op	49:48	0:0	14	&
+water	49:49	0:0	14	p
+op	49:50	0:0	14	->
+water	49:52	0:0	14	threshold_mtx
+op	49:65	0:0	14	[
+water	49:66	0:0	14	0
+op	49:67	0:0	14	]
+arg	49:71	49:84	11	block+x*8
+water	49:71	0:0	12	block
+op	49:77	0:0	12	+
+water	49:79	0:0	12	x
+op	49:81	0:0	12	*
+water	49:83	0:0	12	8
+arg	49:86	49:100	11	block3+x*8
+water	49:86	0:0	12	block3
+op	49:93	0:0	12	+
+water	49:95	0:0	12	x
+op	49:97	0:0	12	*
+water	49:99	0:0	12	8
+arg	49:102	49:103	11	8
+water	49:102	0:0	12	8
+water	49:104	0:0	10	;
+water	50:16	0:0	10	}
+call	51:12	51:113	6	p->row_idct
+arg	51:24	51:38	7	block3+0*8
+water	51:24	0:0	8	block3
+op	51:31	0:0	8	+
+water	51:33	0:0	8	0
+op	51:35	0:0	8	*
+water	51:37	0:0	8	8
+arg	51:40	51:86	7	p->temp+(y&15)*stride+x0+2-(y&1)
+water	51:40	0:0	8	p
+op	51:41	0:0	8	->
+water	51:43	0:0	8	temp
+op	51:48	0:0	8	+
+water	51:50	0:0	8	(
+water	51:51	0:0	8	y
+op	51:53	0:0	8	&
+water	51:55	0:0	8	15
+water	51:57	0:0	8	)
+op	51:59	0:0	8	*
+water	51:61	0:0	8	stride
+op	51:68	0:0	8	+
+water	51:70	0:0	8	x0
+op	51:73	0:0	8	+
+water	51:75	0:0	8	2
+op	51:77	0:0	8	-
+water	51:79	0:0	8	(
+water	51:80	0:0	8	y
+op	51:82	0:0	8	&
+water	51:84	0:0	8	1
+water	51:85	0:0	8	)
+arg	51:88	51:94	7	stride
+water	51:88	0:0	8	stride
+arg	51:96	51:113	7	2*(BLOCKSZ-1)
+water	51:96	0:0	8	2
+op	51:98	0:0	8	*
+water	51:100	0:0	8	(
+water	51:101	0:0	8	BLOCKSZ
+op	51:109	0:0	8	-
+water	51:111	0:0	8	1
+water	51:112	0:0	8	)
+water	51:114	0:0	6	;
+call	52:12	52:80	6	memmove
+arg	52:20	52:25	7	block
+water	52:20	0:0	8	block
+arg	52:28	52:55	7	block+(BLOCKSZ-1)*64
+water	52:28	0:0	8	block
+op	52:35	0:0	8	+
+water	52:37	0:0	8	(
+water	52:38	0:0	8	BLOCKSZ
+op	52:46	0:0	8	-
+water	52:48	0:0	8	1
+water	52:49	0:0	8	)
+op	52:51	0:0	8	*
+water	52:53	0:0	8	64
+arg	52:57	52:80	7	8*8*sizeof(int16_t)
+water	52:57	0:0	8	8
+op	52:59	0:0	8	*
+water	52:61	0:0	8	8
+op	52:63	0:0	8	*
+op	52:65	0:0	8	sizeof
+water	52:71	0:0	8	(
+water	52:72	0:0	8	int16_t
+water	52:79	0:0	8	)
+water	52:81	0:0	6	;
+call	53:12	53:80	6	memmove
+arg	53:20	53:26	7	block3
+water	53:20	0:0	8	block3
+arg	53:28	53:55	7	block3+(BLOCKSZ-1)*64
+water	53:28	0:0	8	block3
+op	53:35	0:0	8	+
+water	53:37	0:0	8	(
+water	53:38	0:0	8	BLOCKSZ
+op	53:46	0:0	8	-
+water	53:48	0:0	8	1
+water	53:49	0:0	8	)
+op	53:51	0:0	8	*
+water	53:53	0:0	8	64
+arg	53:57	53:80	7	6*8*sizeof(int16_t)
+water	53:57	0:0	8	6
+op	53:59	0:0	8	*
+water	53:61	0:0	8	8
+op	53:63	0:0	8	*
+op	53:65	0:0	8	sizeof
+water	53:71	0:0	8	(
+water	53:72	0:0	8	int16_t
+water	53:79	0:0	8	)
+water	53:81	0:0	6	;
+water	54:8	0:0	6	}
+water	55:8	0:0	4	es
+op	55:11	0:0	4	=
+water	55:13	0:0	4	width
+op	55:19	0:0	4	+
+water	55:21	0:0	4	8
+op	55:23	0:0	4	-
+water	55:25	0:0	4	x0
+water	55:27	0:0	4	;
+if	56:8	57:105	4	(es > 8)
+cond	56:12	56:17	5	es > 8
+water	56:12	0:0	6	es
+op	56:15	0:0	6	>
+water	56:17	0:0	6	8
+stmts	57:12	57:105	5	
+call	57:12	57:104	6	p->row_fdct
+arg	57:24	57:37	7	block+8*8
+water	57:24	0:0	8	block
+op	57:30	0:0	8	+
+water	57:32	0:0	8	8
+op	57:34	0:0	8	*
+water	57:36	0:0	8	8
+arg	57:39	57:81	7	p->src+y*stride+8+x0+2-(y&1)
+water	57:39	0:0	8	p
+op	57:40	0:0	8	->
+water	57:42	0:0	8	src
+op	57:46	0:0	8	+
+water	57:48	0:0	8	y
+op	57:50	0:0	8	*
+water	57:52	0:0	8	stride
+op	57:59	0:0	8	+
+water	57:61	0:0	8	8
+op	57:63	0:0	8	+
+water	57:65	0:0	8	x0
+op	57:68	0:0	8	+
+water	57:70	0:0	8	2
+op	57:72	0:0	8	-
+water	57:74	0:0	8	(
+water	57:75	0:0	8	y
+op	57:77	0:0	8	&
+water	57:79	0:0	8	1
+water	57:80	0:0	8	)
+arg	57:83	57:89	7	stride
+water	57:83	0:0	8	stride
+arg	57:91	57:104	7	(es-4)>>2
+water	57:91	0:0	8	(
+water	57:92	0:0	8	es
+op	57:95	0:0	8	-
+water	57:97	0:0	8	4
+water	57:98	0:0	8	)
+op	57:100	0:0	8	>>
+water	57:103	0:0	8	2
+water	57:105	0:0	6	;
+call	58:8	58:81	4	p->column_fidct
+arg	58:24	58:57	5	(int16_t*)(&p->threshold_mtx[0])
+call	58:24	58:56	6	(int16_t*)
+arg	58:36	58:56	7	&p->threshold_mtx[0]
+op	58:36	0:0	8	&
+water	58:37	0:0	8	p
+op	58:38	0:0	8	->
+water	58:40	0:0	8	threshold_mtx
+op	58:53	0:0	8	[
+water	58:54	0:0	8	0
+op	58:55	0:0	8	]
+arg	58:59	58:64	5	block
+water	58:59	0:0	6	block
+arg	58:66	58:72	5	block3
+water	58:66	0:0	6	block3
+arg	58:74	58:81	5	es&(~1)
+water	58:74	0:0	6	es
+op	58:76	0:0	6	&
+water	58:77	0:0	6	(
+water	58:78	0:0	6	~1
+water	58:80	0:0	6	)
+water	58:82	0:0	4	;
+if	59:8	60:104	4	(es > 3)
+cond	59:12	59:17	5	es > 3
+water	59:12	0:0	6	es
+op	59:15	0:0	6	>
+water	59:17	0:0	6	3
+stmts	60:12	60:104	5	
+call	60:12	60:103	6	p->row_idct
+arg	60:24	60:38	7	block3+0*8
+water	60:24	0:0	8	block3
+op	60:31	0:0	8	+
+water	60:33	0:0	8	0
+op	60:35	0:0	8	*
+water	60:37	0:0	8	8
+arg	60:40	60:86	7	p->temp+(y&15)*stride+x0+2-(y&1)
+water	60:40	0:0	8	p
+op	60:41	0:0	8	->
+water	60:43	0:0	8	temp
+op	60:48	0:0	8	+
+water	60:50	0:0	8	(
+water	60:51	0:0	8	y
+op	60:53	0:0	8	&
+water	60:55	0:0	8	15
+water	60:57	0:0	8	)
+op	60:59	0:0	8	*
+water	60:61	0:0	8	stride
+op	60:68	0:0	8	+
+water	60:70	0:0	8	x0
+op	60:73	0:0	8	+
+water	60:75	0:0	8	2
+op	60:77	0:0	8	-
+water	60:79	0:0	8	(
+water	60:80	0:0	8	y
+op	60:82	0:0	8	&
+water	60:84	0:0	8	1
+water	60:85	0:0	8	)
+arg	60:88	60:94	7	stride
+water	60:88	0:0	8	stride
+arg	60:96	60:103	7	es>>2
+water	60:96	0:0	8	es
+op	60:99	0:0	8	>>
+water	60:102	0:0	8	2
+water	60:104	0:0	6	;
+if	61:8	68:8	4	(! ( y1 & 7 ) && y1)
+cond	61:12	61:25	5	! ( y1 & 7 ) && y1
+op	61:12	0:0	6	!
+water	61:13	0:0	6	(
+water	61:14	0:0	6	y1
+op	61:17	0:0	6	&
+water	61:19	0:0	6	7
+water	61:20	0:0	6	)
+op	61:22	0:0	6	&&
+water	61:25	0:0	6	y1
+stmts	61:29	68:8	5	
+water	61:29	0:0	6	{
+if	62:12	64:79	6	(y1 & 8)
+cond	62:16	62:21	7	y1 & 8
+water	62:16	0:0	8	y1
+op	62:19	0:0	8	&
+water	62:21	0:0	8	8
+stmts	63:16	64:79	7	
+call	63:16	64:78	8	p->store_slice
+arg	63:31	63:58	9	dst+(y1-8)*dst_stride
+water	63:31	0:0	10	dst
+op	63:35	0:0	10	+
+water	63:37	0:0	10	(
+water	63:38	0:0	10	y1
+op	63:41	0:0	10	-
+water	63:43	0:0	10	8
+water	63:44	0:0	10	)
+op	63:46	0:0	10	*
+water	63:48	0:0	10	dst_stride
+arg	63:60	63:84	9	p->temp+8+8*stride
+water	63:60	0:0	10	p
+op	63:61	0:0	10	->
+water	63:63	0:0	10	temp
+op	63:68	0:0	10	+
+water	63:70	0:0	10	8
+op	63:72	0:0	10	+
+water	63:74	0:0	10	8
+op	63:76	0:0	10	*
+water	63:78	0:0	10	stride
+arg	64:31	64:41	9	dst_stride
+water	64:31	0:0	10	dst_stride
+arg	64:43	64:49	9	stride
+water	64:43	0:0	10	stride
+arg	64:51	64:56	9	width
+water	64:51	0:0	10	width
+arg	64:58	64:59	9	8
+water	64:58	0:0	10	8
+arg	64:61	64:78	9	5-p->log2_count
+water	64:61	0:0	10	5
+op	64:63	0:0	10	-
+water	64:65	0:0	10	p
+op	64:66	0:0	10	->
+water	64:68	0:0	10	log2_count
+water	64:79	0:0	8	;
+else	65:12	67:80	6
+stmts	66:16	67:80	7	
+call	66:16	67:79	8	p->store_slice2
+arg	66:32	66:59	9	dst+(y1-8)*dst_stride
+water	66:32	0:0	10	dst
+op	66:36	0:0	10	+
+water	66:38	0:0	10	(
+water	66:39	0:0	10	y1
+op	66:42	0:0	10	-
+water	66:44	0:0	10	8
+water	66:45	0:0	10	)
+op	66:47	0:0	10	*
+water	66:49	0:0	10	dst_stride
+arg	66:61	66:85	9	p->temp+8+0*stride
+water	66:61	0:0	10	p
+op	66:62	0:0	10	->
+water	66:64	0:0	10	temp
+op	66:69	0:0	10	+
+water	66:71	0:0	10	8
+op	66:73	0:0	10	+
+water	66:75	0:0	10	0
+op	66:77	0:0	10	*
+water	66:79	0:0	10	stride
+arg	67:32	67:42	9	dst_stride
+water	67:32	0:0	10	dst_stride
+arg	67:44	67:50	9	stride
+water	67:44	0:0	10	stride
+arg	67:52	67:57	9	width
+water	67:52	0:0	10	width
+arg	67:59	67:60	9	8
+water	67:59	0:0	10	8
+arg	67:62	67:79	9	5-p->log2_count
+water	67:62	0:0	10	5
+op	67:64	0:0	10	-
+water	67:66	0:0	10	p
+op	67:67	0:0	10	->
+water	67:69	0:0	10	log2_count
+water	67:80	0:0	8	;
+water	68:8	0:0	6	}
+water	69:4	0:0	4	}
+if	70:4	77:4	2	(y & 7)
+cond	70:8	70:12	3	y & 7
+water	70:8	0:0	4	y
+op	70:10	0:0	4	&
+water	70:12	0:0	4	7
+stmts	70:15	77:4	3	
+water	70:15	0:0	4	{
+if	71:8	73:77	4	(y & 8)
+cond	71:12	71:16	5	y & 8
+water	71:12	0:0	6	y
+op	71:14	0:0	6	&
+water	71:16	0:0	6	8
+stmts	72:12	73:77	5	
+call	72:12	73:76	6	p->store_slice
+arg	72:27	72:60	7	dst+((y-8)&~7)*dst_stride
+water	72:27	0:0	8	dst
+op	72:31	0:0	8	+
+water	72:33	0:0	8	(
+water	72:34	0:0	8	(
+water	72:35	0:0	8	y
+op	72:37	0:0	8	-
+water	72:39	0:0	8	8
+water	72:40	0:0	8	)
+op	72:42	0:0	8	&
+water	72:44	0:0	8	~7
+water	72:46	0:0	8	)
+op	72:48	0:0	8	*
+water	72:50	0:0	8	dst_stride
+arg	72:62	72:86	7	p->temp+8+8*stride
+water	72:62	0:0	8	p
+op	72:63	0:0	8	->
+water	72:65	0:0	8	temp
+op	72:70	0:0	8	+
+water	72:72	0:0	8	8
+op	72:74	0:0	8	+
+water	72:76	0:0	8	8
+op	72:78	0:0	8	*
+water	72:80	0:0	8	stride
+arg	73:27	73:37	7	dst_stride
+water	73:27	0:0	8	dst_stride
+arg	73:39	73:45	7	stride
+water	73:39	0:0	8	stride
+arg	73:47	73:52	7	width
+water	73:47	0:0	8	width
+arg	73:54	73:57	7	y&7
+water	73:54	0:0	8	y
+op	73:55	0:0	8	&
+water	73:56	0:0	8	7
+arg	73:59	73:76	7	5-p->log2_count
+water	73:59	0:0	8	5
+op	73:61	0:0	8	-
+water	73:63	0:0	8	p
+op	73:64	0:0	8	->
+water	73:66	0:0	8	log2_count
+water	73:77	0:0	6	;
+else	74:8	76:78	4
+stmts	75:12	76:78	5	
+call	75:12	76:77	6	p->store_slice2
+arg	75:28	75:61	7	dst+((y-8)&~7)*dst_stride
+water	75:28	0:0	8	dst
+op	75:32	0:0	8	+
+water	75:34	0:0	8	(
+water	75:35	0:0	8	(
+water	75:36	0:0	8	y
+op	75:38	0:0	8	-
+water	75:40	0:0	8	8
+water	75:41	0:0	8	)
+op	75:43	0:0	8	&
+water	75:45	0:0	8	~7
+water	75:47	0:0	8	)
+op	75:49	0:0	8	*
+water	75:51	0:0	8	dst_stride
+arg	75:63	75:87	7	p->temp+8+0*stride
+water	75:63	0:0	8	p
+op	75:64	0:0	8	->
+water	75:66	0:0	8	temp
+op	75:71	0:0	8	+
+water	75:73	0:0	8	8
+op	75:75	0:0	8	+
+water	75:77	0:0	8	0
+op	75:79	0:0	8	*
+water	75:81	0:0	8	stride
+arg	76:28	76:38	7	dst_stride
+water	76:28	0:0	8	dst_stride
+arg	76:40	76:46	7	stride
+water	76:40	0:0	8	stride
+arg	76:48	76:53	7	width
+water	76:48	0:0	8	width
+arg	76:55	76:58	7	y&7
+water	76:55	0:0	8	y
+op	76:56	0:0	8	&
+water	76:57	0:0	8	7
+arg	76:60	76:77	7	5-p->log2_count
+water	76:60	0:0	8	5
+op	76:62	0:0	8	-
+water	76:64	0:0	8	p
+op	76:65	0:0	8	->
+water	76:67	0:0	8	log2_count
+water	76:78	0:0	6	;
+water	77:4	0:0	4	}
