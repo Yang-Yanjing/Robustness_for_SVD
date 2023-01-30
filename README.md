@@ -1,7 +1,5 @@
 # Robustness_for_SVD
 Robustness for Software Vulnerability Detection
-# Robustness_for_SVD
-Robustness for Software Vulnerability Detection
 # A novel robustness verification method for source code processing based artificial intelligence systems
 
 ## Main research content
