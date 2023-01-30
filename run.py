@@ -33,7 +33,8 @@ def trainonce():
 
 
 # trainonce()
-os.system("python main.py --config config/config.yaml")
+# os.system("python main.py --config config/config.yaml")
+print("YYJ")
 
 
 
