@@ -8,6 +8,11 @@ Robustness for Software Vulnerability Detection
 
 To solve the problem of instability of AI systems based on source code processing in complex code scenarios, this paper proposes a Robustness Verification method (RVMHM, Robustness Verification by Metropolis-Hastings attack).  Firstly, the code preprocessing tool based on the program’s abstract syntax trees is used to extract the variable pool of the model, and then the MHM source code attack algorithm is used to replace the variable perturbation model prediction effect.  The robustness of the AI system is measured by observing the change in the robustness verification index before and after the attack by interfering with the data and model interaction process.
 
+```
+The address of the research is ./RobTest
+
+```
+
 ## The Project Structure
 ```
 Robustness for Software Vulnerability Detection
@@ -21,9 +26,11 @@ Robustness for Software Vulnerability Detection
     |--embedding # feature embedding extraction encoding mapped data files
     |--tools # utility functions used by some projects
     |--victim_models # The model to be validated
+    |--log & mid_data & preprocessdata #The verbose data
 |--dataset.py
 |--generate_datastruct.py #the file that generates data structures
-|--RVmhm.py RVMHM main program file
+|--Robust.py Attack algorithm template
+|--mhm.py MHM main file
 ```
 
 ## How to Conduct the Project
