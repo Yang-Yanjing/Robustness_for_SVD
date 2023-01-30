@@ -1,0 +1,112 @@
+func	2:0	26:0	0	int	sout_MuxSendBuffer
+params	2:22	0:0	1	
+param	2:24	2:41	2	sout_mux_t *	p_mux
+param	2:43	2:64	2	sout_input_t *	p_input
+param	3:25	3:43	2	block_t *	p_buffer
+stmnts	0:0	25:33	1	
+decl	5:4	5:35	2	mtime_t	i_dts
+op	5:18	0:0	2	=
+water	5:20	0:0	2	p_buffer
+op	5:28	0:0	2	->
+water	5:30	0:0	2	i_dts
+call	6:4	6:45	2	block_FifoPut
+arg	6:19	6:34	3	p_input->p_fifo
+water	6:19	0:0	4	p_input
+op	6:26	0:0	4	->
+water	6:28	0:0	4	p_fifo
+arg	6:36	6:45	3	p_buffer
+water	6:36	0:0	4	p_buffer
+water	6:46	0:0	2	;
+if	7:4	13:4	2	(p_mux -> p_sout -> i_out_pace_nocontrol)
+cond	7:8	7:23	3	p_mux -> p_sout -> i_out_pace_nocontrol
+water	7:8	0:0	4	p_mux
+op	7:13	0:0	4	->
+water	7:15	0:0	4	p_sout
+op	7:21	0:0	4	->
+water	7:23	0:0	4	i_out_pace_nocontrol
+stmts	8:4	13:4	3	
+water	8:4	0:0	4	{
+decl	9:8	9:38	4	mtime_t	current_date
+op	9:29	0:0	4	=
+call	9:31	9:37	5	mdate
+if	10:8	12:44	4	(current_date > i_dts)
+cond	10:13	10:28	5	current_date > i_dts
+water	10:13	0:0	6	current_date
+op	10:26	0:0	6	>
+water	10:28	0:0	6	i_dts
+stmts	11:12	12:44	5	
+call	11:12	12:43	6	msg_Warn
+arg	11:22	11:27	7	p_mux
+water	11:22	0:0	8	p_mux
+arg	11:29	11:68	7	"late buffer for mux input (%"PRId64")"
+water	11:29	0:0	8	"late buffer for mux input (%"
+water	11:59	0:0	8	PRId64
+water	11:65	0:0	8	")"
+arg	12:22	12:43	7	current_date-i_dts
+water	12:22	0:0	8	current_date
+op	12:35	0:0	8	-
+water	12:37	0:0	8	i_dts
+water	12:44	0:0	6	;
+water	13:4	0:0	4	}
+if	14:4	24:4	2	(p_mux -> b_waiting_stream)
+cond	14:8	14:15	3	p_mux -> b_waiting_stream
+water	14:8	0:0	4	p_mux
+op	14:13	0:0	4	->
+water	14:15	0:0	4	b_waiting_stream
+stmts	15:4	24:4	3	
+water	15:4	0:0	4	{
+decl	16:8	16:101	4	const int64_t	i_caching
+op	16:32	0:0	4	=
+call	16:34	16:84	5	var_GetInteger
+arg	16:50	16:63	6	p_mux->p_sout
+water	16:50	0:0	7	p_mux
+op	16:55	0:0	7	->
+water	16:57	0:0	7	p_sout
+arg	16:65	16:84	6	"sout-mux-caching"
+water	16:65	0:0	7	"sout-mux-caching"
+call	16:86	16:100	5	*INT64_C
+arg	16:96	16:100	6	1000
+water	16:96	0:0	7	1000
+if	17:8	18:45	4	(p_mux -> i_add_stream_start < 0)
+cond	17:12	17:40	5	p_mux -> i_add_stream_start < 0
+water	17:12	0:0	6	p_mux
+op	17:17	0:0	6	->
+water	17:19	0:0	6	i_add_stream_start
+op	17:38	0:0	6	<
+water	17:40	0:0	6	0
+stmts	18:12	18:45	5	
+water	18:12	0:0	6	p_mux
+op	18:17	0:0	6	->
+water	18:19	0:0	6	i_add_stream_start
+op	18:38	0:0	6	=
+water	18:40	0:0	6	i_dts
+water	18:45	0:0	6	;
+if	20:8	22:30	4	(p_mux -> i_add_stream_start < 0 || i_dts < p_mux -> i_add_stream_start + i_caching)
+cond	20:12	21:48	5	p_mux -> i_add_stream_start < 0 || i_dts < p_mux -> i_add_stream_start + i_caching
+water	20:12	0:0	6	p_mux
+op	20:17	0:0	6	->
+water	20:19	0:0	6	i_add_stream_start
+op	20:38	0:0	6	<
+water	20:40	0:0	6	0
+op	20:42	0:0	6	||
+water	21:12	0:0	6	i_dts
+op	21:18	0:0	6	<
+water	21:20	0:0	6	p_mux
+op	21:25	0:0	6	->
+water	21:27	0:0	6	i_add_stream_start
+op	21:46	0:0	6	+
+water	21:48	0:0	6	i_caching
+stmts	22:12	22:30	5	
+return	22:12	22:30	6	VLC_SUCCESS
+water	22:19	0:0	7	VLC_SUCCESS
+water	23:8	0:0	4	p_mux
+op	23:13	0:0	4	->
+water	23:15	0:0	4	b_waiting_stream
+op	23:32	0:0	4	=
+water	23:34	0:0	4	false
+water	23:39	0:0	4	;
+water	24:4	0:0	4	}
+return	25:4	25:33	2	p_mux->pf_mux(p_mux)
+call	25:11	25:32	3	p_mux->pf_mux
+arg	25:26	25:32	4	p_mux
+water	25:26	0:0	5	p_mux

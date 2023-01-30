@@ -1,0 +1,144 @@
+func	2:0	34:0	0	static int	st_Handshake
+params	2:24	0:0	1	
+param	2:25	2:43	2	vlc_tls_t *	session
+param	2:45	2:61	2	const char *	host
+param	3:40	3:59	2	const char *	service
+stmnts	4:4	33:4	1	
+call	4:4	4:22	2	VLC_UNUSED
+arg	4:15	4:22	3	service
+water	4:15	0:0	4	service
+water	4:23	0:0	2	;
+decl	5:4	5:37	2	vlc_tls_sys_t	*sys
+op	5:23	0:0	2	=
+water	5:25	0:0	2	session
+op	5:32	0:0	2	->
+water	5:34	0:0	2	sys
+decl	6:4	6:52	2	OSStatus	retValue
+op	6:22	0:0	2	=
+call	6:24	6:51	3	SSLHandshake
+arg	6:37	6:51	4	sys->p_context
+water	6:37	0:0	5	sys
+op	6:40	0:0	5	->
+water	6:42	0:0	5	p_context
+if	7:4	10:4	2	(retValue == errSSLWouldBlock)
+cond	7:8	7:20	3	retValue == errSSLWouldBlock
+water	7:8	0:0	4	retValue
+op	7:17	0:0	4	==
+water	7:20	0:0	4	errSSLWouldBlock
+stmts	7:38	10:4	3	
+water	7:38	0:0	4	{
+call	8:8	8:64	4	msg_Dbg
+arg	8:16	8:23	5	session
+water	8:16	0:0	6	session
+arg	8:25	8:64	5	"handshake is blocked, try again later"
+water	8:25	0:0	6	"handshake is blocked, try again later"
+water	8:65	0:0	4	;
+return	9:8	9:49	4	1+(sys->b_blocking_send?1:0)
+water	9:15	0:0	5	1
+op	9:17	0:0	5	+
+water	9:19	0:0	5	(
+water	9:20	0:0	5	sys
+op	9:23	0:0	5	->
+water	9:25	0:0	5	b_blocking_send
+water	9:41	0:0	5	?
+water	9:43	0:0	5	1
+water	9:45	0:0	5	:
+water	9:47	0:0	5	0
+water	9:48	0:0	5	)
+water	10:4	0:0	4	}
+switch	11:4	33:4	2	(retValue)
+cond	11:12	11:12	3	retValue
+water	11:12	0:0	4	retValue
+stmts	11:22	33:4	3	
+water	11:22	0:0	4	{
+label	12:8	12:18	4	case noErr :
+if	13:12	15:12	4	(sys -> b_server_mode == false &&st_validateServerCertificate (session ,host ) != 0)
+cond	13:16	13:94	5	sys -> b_server_mode == false &&st_validateServerCertificate (session ,host ) != 0
+water	13:16	0:0	6	sys
+op	13:19	0:0	6	->
+water	13:21	0:0	6	b_server_mode
+op	13:35	0:0	6	==
+water	13:38	0:0	6	false
+op	13:44	0:0	6	&&
+call	13:47	13:89	6	st_validateServerCertificate
+arg	13:76	13:83	7	session
+water	13:76	0:0	8	session
+arg	13:85	13:89	7	host
+water	13:85	0:0	8	host
+op	13:91	0:0	6	!=
+water	13:94	0:0	6	0
+stmts	13:97	15:12	5	
+water	13:97	0:0	6	{
+return	14:16	14:25	6	-1
+op	14:23	0:0	7	-
+water	14:24	0:0	7	1
+water	15:12	0:0	6	}
+call	16:12	16:63	4	msg_Dbg
+arg	16:20	16:27	5	session
+water	16:20	0:0	6	session
+arg	16:29	16:63	5	"handshake completed successfully"
+water	16:29	0:0	6	"handshake completed successfully"
+water	16:64	0:0	4	;
+water	17:12	0:0	4	sys
+op	17:15	0:0	4	->
+water	17:17	0:0	4	b_handshaked
+op	17:30	0:0	4	=
+water	17:32	0:0	4	true
+water	17:36	0:0	4	;
+return	18:12	18:20	4	0
+water	18:19	0:0	5	0
+label	19:8	19:38	4	case errSSLServerAuthCompleted :
+return	20:12	20:55	4	st_Handshake(session,host,service)
+call	20:19	20:54	5	st_Handshake
+arg	20:32	20:39	6	session
+water	20:32	0:0	7	session
+arg	20:41	20:45	6	host
+water	20:41	0:0	7	host
+arg	20:47	20:54	6	service
+water	20:47	0:0	7	service
+label	21:8	21:36	4	case errSSLConnectionRefused :
+call	22:12	22:53	4	msg_Err
+arg	22:20	22:27	5	session
+water	22:20	0:0	6	session
+arg	22:29	22:53	5	"connection was refused"
+water	22:29	0:0	6	"connection was refused"
+water	22:54	0:0	4	;
+return	23:12	23:21	4	-1
+op	23:19	0:0	5	-
+water	23:20	0:0	5	1
+label	24:8	24:30	4	case errSSLNegotiation :
+call	25:12	25:62	4	msg_Err
+arg	25:20	25:27	5	session
+water	25:20	0:0	6	session
+arg	25:29	25:62	5	"cipher suite negotiation failed"
+water	25:29	0:0	6	"cipher suite negotiation failed"
+water	25:63	0:0	4	;
+return	26:12	26:21	4	-1
+op	26:19	0:0	5	-
+water	26:20	0:0	5	1
+label	27:8	27:29	4	case errSSLFatalAlert :
+call	28:12	28:67	4	msg_Err
+arg	28:20	28:27	5	session
+water	28:20	0:0	6	session
+arg	28:29	28:67	5	"fatal error occured during handshake"
+water	28:29	0:0	6	"fatal error occured during handshake"
+water	28:68	0:0	4	;
+return	29:12	29:21	4	-1
+op	29:19	0:0	5	-
+water	29:20	0:0	5	1
+label	30:8	30:15	4	default :
+call	31:12	31:73	4	msg_Err
+arg	31:20	31:27	5	session
+water	31:20	0:0	6	session
+arg	31:29	31:58	5	"handshake returned error %d"
+water	31:29	0:0	6	"handshake returned error %d"
+arg	31:60	31:73	5	(int)retValue
+water	31:60	0:0	6	(
+water	31:61	0:0	6	int
+water	31:64	0:0	6	)
+water	31:65	0:0	6	retValue
+water	31:74	0:0	4	;
+return	32:12	32:21	4	-1
+op	32:19	0:0	5	-
+water	32:20	0:0	5	1
+water	33:4	0:0	4	}

@@ -1,0 +1,612 @@
+func	2:0	114:0	0	static int	ftp_StartStream
+params	2:26	0:0	1	
+param	2:28	2:50	2	vlc_object_t *	p_access
+param	2:52	2:71	2	access_sys_t *	p_sys
+param	3:28	3:45	2	uint64_t	i_start
+stmnts	0:0	113:22	1	
+decl	5:4	5:50	2	char	psz_ipv4[16]
+water	5:21	0:0	2	,
+decl	5:4	5:50	2	char	*psz_ip
+op	5:31	0:0	2	=
+water	5:33	0:0	2	p_sys
+op	5:38	0:0	2	->
+water	5:40	0:0	2	sz_epsv_ip
+decl	6:4	6:17	2	int	i_answer
+decl	7:4	7:30	2	char	*psz_arg
+water	7:17	0:0	2	,
+decl	7:4	7:30	2	char	*psz_parser
+decl	8:4	8:15	2	int	i_port
+call	9:4	9:33	2	assert
+arg	9:12	9:33	3	p_sys->data.fd==-1
+water	9:12	0:0	4	p_sys
+op	9:17	0:0	4	->
+water	9:19	0:0	4	data
+op	9:23	0:0	4	.
+water	9:24	0:0	4	fd
+op	9:27	0:0	4	==
+op	9:30	0:0	4	-
+water	9:31	0:0	4	1
+water	9:34	0:0	2	;
+if	10:4	15:4	2	((ftp_SendCommand (p_access ,p_sys ,* psz_ip ? "EPSV" : "PASV" ) < 0 ) || (ftp_RecvCommand (p_access ,p_sys ,& i_answer ,& psz_arg ) != 2 ))
+cond	10:8	11:71	3	(ftp_SendCommand (p_access ,p_sys ,* psz_ip ? "EPSV" : "PASV" ) < 0 ) || (ftp_RecvCommand (p_access ,p_sys ,& i_answer ,& psz_arg ) != 2 )
+water	10:8	0:0	4	(
+call	10:10	10:70	4	ftp_SendCommand
+arg	10:27	10:35	5	p_access
+water	10:27	0:0	6	p_access
+arg	10:37	10:42	5	p_sys
+water	10:37	0:0	6	p_sys
+arg	10:44	10:70	5	*psz_ip?"EPSV":"PASV"
+op	10:44	0:0	6	*
+water	10:45	0:0	6	psz_ip
+water	10:52	0:0	6	?
+water	10:54	0:0	6	"EPSV"
+water	10:61	0:0	6	:
+water	10:63	0:0	6	"PASV"
+op	10:72	0:0	4	<
+water	10:74	0:0	4	0
+water	10:76	0:0	4	)
+op	11:5	0:0	4	||
+water	11:8	0:0	4	(
+call	11:10	11:64	4	ftp_RecvCommand
+arg	11:27	11:35	5	p_access
+water	11:27	0:0	6	p_access
+arg	11:37	11:42	5	p_sys
+water	11:37	0:0	6	p_sys
+arg	11:44	11:53	5	&i_answer
+op	11:44	0:0	6	&
+water	11:45	0:0	6	i_answer
+arg	11:55	11:64	5	&psz_arg
+op	11:55	0:0	6	&
+water	11:56	0:0	6	psz_arg
+op	11:66	0:0	4	!=
+water	11:69	0:0	4	2
+water	11:71	0:0	4	)
+stmts	12:4	15:4	3	
+water	12:4	0:0	4	{
+call	13:8	13:53	4	msg_Err
+arg	13:17	13:25	5	p_access
+water	13:17	0:0	6	p_access
+arg	13:27	13:53	5	"cannot set passive mode"
+water	13:27	0:0	6	"cannot set passive mode"
+water	13:54	0:0	4	;
+return	14:8	14:27	4	VLC_EGENERIC
+water	14:15	0:0	5	VLC_EGENERIC
+water	15:4	0:0	4	}
+water	16:4	0:0	2	psz_parser
+op	16:15	0:0	2	=
+call	16:17	16:38	2	strchr
+arg	16:25	16:32	3	psz_arg
+water	16:25	0:0	4	psz_arg
+arg	16:34	16:38	3	'('
+water	16:34	0:0	4	'('
+water	16:39	0:0	2	;
+if	17:4	22:4	2	(psz_parser == NULL)
+cond	17:8	17:22	3	psz_parser == NULL
+water	17:8	0:0	4	psz_parser
+op	17:19	0:0	4	==
+water	17:22	0:0	4	NULL
+stmts	18:4	22:4	3	
+water	18:4	0:0	4	{
+call	19:8	19:22	4	free
+arg	19:14	19:22	5	psz_arg
+water	19:14	0:0	6	psz_arg
+water	19:23	0:0	4	;
+call	20:8	20:64	4	msg_Err
+arg	20:17	20:25	5	p_access
+water	20:17	0:0	6	p_access
+arg	20:27	20:64	5	"cannot parse passive mode response"
+water	20:27	0:0	6	"cannot parse passive mode response"
+water	20:65	0:0	4	;
+return	21:8	21:27	4	VLC_EGENERIC
+water	21:15	0:0	5	VLC_EGENERIC
+water	22:4	0:0	4	}
+if	23:4	31:4	2	(* psz_ip)
+cond	23:8	23:9	3	* psz_ip
+op	23:8	0:0	4	*
+water	23:9	0:0	4	psz_ip
+stmts	24:4	31:4	3	
+water	24:4	0:0	4	{
+if	25:8	30:8	4	(sscanf (psz_parser ,"(%*3c%u" ,& i_port ) < 1)
+cond	25:12	25:55	5	sscanf (psz_parser ,"(%*3c%u" ,& i_port ) < 1
+call	25:12	25:51	6	sscanf
+arg	25:20	25:30	7	psz_parser
+water	25:20	0:0	8	psz_parser
+arg	25:32	25:41	7	"(%*3c%u"
+water	25:32	0:0	8	"(%*3c%u"
+arg	25:43	25:51	7	&i_port
+op	25:43	0:0	8	&
+water	25:44	0:0	8	i_port
+op	25:53	0:0	6	<
+water	25:55	0:0	6	1
+stmts	26:8	30:8	5	
+water	26:8	0:0	6	{
+call	27:12	27:26	6	free
+arg	27:18	27:26	7	psz_arg
+water	27:18	0:0	8	psz_arg
+water	27:27	0:0	6	;
+call	28:12	28:68	6	msg_Err
+arg	28:21	28:29	7	p_access
+water	28:21	0:0	8	p_access
+arg	28:31	28:68	7	"cannot parse passive mode response"
+water	28:31	0:0	8	"cannot parse passive mode response"
+water	28:69	0:0	6	;
+return	29:12	29:31	6	VLC_EGENERIC
+water	29:19	0:0	7	VLC_EGENERIC
+water	30:8	0:0	6	}
+water	31:4	0:0	4	}
+else	32:4	46:4	2
+stmts	33:4	46:4	3	
+water	33:4	0:0	4	{
+water	34:8	0:0	4	unsigned
+water	34:17	0:0	4	a1
+water	34:19	0:0	4	,
+water	34:21	0:0	4	a2
+water	34:23	0:0	4	,
+water	34:25	0:0	4	a3
+water	34:27	0:0	4	,
+water	34:29	0:0	4	a4
+water	34:31	0:0	4	,
+water	34:33	0:0	4	p1
+water	34:35	0:0	4	,
+water	34:37	0:0	4	p2
+water	34:39	0:0	4	;
+if	35:8	42:8	4	((sscanf (psz_parser ,"(%u,%u,%u,%u,%u,%u" ,& a1 ,& a2 ,& a3 ,& a4 ,& p1 ,& p2 ) < 6 ) || ( a1 > 255 ) || ( a2 > 255 ) || ( a3 > 255 ) || ( a4 > 255 ) || ( p1 > 255 ) || ( p2 > 255 ))
+cond	35:12	37:71	5	(sscanf (psz_parser ,"(%u,%u,%u,%u,%u,%u" ,& a1 ,& a2 ,& a3 ,& a4 ,& p1 ,& p2 ) < 6 ) || ( a1 > 255 ) || ( a2 > 255 ) || ( a3 > 255 ) || ( a4 > 255 ) || ( p1 > 255 ) || ( p2 > 255 )
+water	35:12	0:0	6	(
+call	35:14	36:31	6	sscanf
+arg	35:22	35:32	7	psz_parser
+water	35:22	0:0	8	psz_parser
+arg	35:34	35:54	7	"(%u,%u,%u,%u,%u,%u"
+water	35:34	0:0	8	"(%u,%u,%u,%u,%u,%u"
+arg	35:56	35:59	7	&a1
+op	35:56	0:0	8	&
+water	35:57	0:0	8	a1
+arg	35:61	35:64	7	&a2
+op	35:61	0:0	8	&
+water	35:62	0:0	8	a2
+arg	35:66	35:69	7	&a3
+op	35:66	0:0	8	&
+water	35:67	0:0	8	a3
+arg	35:71	35:74	7	&a4
+op	35:71	0:0	8	&
+water	35:72	0:0	8	a4
+arg	36:22	36:25	7	&p1
+op	36:22	0:0	8	&
+water	36:23	0:0	8	p1
+arg	36:27	36:31	7	&p2
+op	36:27	0:0	8	&
+water	36:28	0:0	8	p2
+op	36:33	0:0	6	<
+water	36:35	0:0	6	6
+water	36:37	0:0	6	)
+op	36:39	0:0	6	||
+water	36:42	0:0	6	(
+water	36:44	0:0	6	a1
+op	36:47	0:0	6	>
+water	36:49	0:0	6	255
+water	36:53	0:0	6	)
+op	36:55	0:0	6	||
+water	36:58	0:0	6	(
+water	36:60	0:0	6	a2
+op	36:63	0:0	6	>
+water	36:65	0:0	6	255
+water	36:69	0:0	6	)
+op	37:9	0:0	6	||
+water	37:12	0:0	6	(
+water	37:14	0:0	6	a3
+op	37:17	0:0	6	>
+water	37:19	0:0	6	255
+water	37:23	0:0	6	)
+op	37:25	0:0	6	||
+water	37:28	0:0	6	(
+water	37:30	0:0	6	a4
+op	37:33	0:0	6	>
+water	37:35	0:0	6	255
+water	37:39	0:0	6	)
+op	37:41	0:0	6	||
+water	37:44	0:0	6	(
+water	37:46	0:0	6	p1
+op	37:49	0:0	6	>
+water	37:51	0:0	6	255
+water	37:55	0:0	6	)
+op	37:57	0:0	6	||
+water	37:60	0:0	6	(
+water	37:62	0:0	6	p2
+op	37:65	0:0	6	>
+water	37:67	0:0	6	255
+water	37:71	0:0	6	)
+stmts	38:8	42:8	5	
+water	38:8	0:0	6	{
+call	39:12	39:26	6	free
+arg	39:18	39:26	7	psz_arg
+water	39:18	0:0	8	psz_arg
+water	39:27	0:0	6	;
+call	40:12	40:68	6	msg_Err
+arg	40:21	40:29	7	p_access
+water	40:21	0:0	8	p_access
+arg	40:31	40:68	7	"cannot parse passive mode response"
+water	40:31	0:0	8	"cannot parse passive mode response"
+water	40:69	0:0	6	;
+return	41:12	41:31	6	VLC_EGENERIC
+water	41:19	0:0	7	VLC_EGENERIC
+water	42:8	0:0	6	}
+call	43:8	43:57	4	sprintf
+arg	43:17	43:25	5	psz_ipv4
+water	43:17	0:0	6	psz_ipv4
+arg	43:27	43:40	5	"%u.%u.%u.%u"
+water	43:27	0:0	6	"%u.%u.%u.%u"
+arg	43:42	43:44	5	a1
+water	43:42	0:0	6	a1
+arg	43:46	43:48	5	a2
+water	43:46	0:0	6	a2
+arg	43:50	43:52	5	a3
+water	43:50	0:0	6	a3
+arg	43:54	43:57	5	a4
+water	43:54	0:0	6	a4
+water	43:58	0:0	4	;
+water	44:8	0:0	4	psz_ip
+op	44:15	0:0	4	=
+water	44:17	0:0	4	psz_ipv4
+water	44:25	0:0	4	;
+water	45:8	0:0	4	i_port
+op	45:15	0:0	4	=
+water	45:17	0:0	4	(
+water	45:18	0:0	4	p1
+op	45:21	0:0	4	<<
+water	45:24	0:0	4	8
+water	45:25	0:0	4	)
+op	45:27	0:0	4	|
+water	45:29	0:0	4	p2
+water	45:31	0:0	4	;
+water	46:4	0:0	4	}
+call	47:4	47:18	2	free
+arg	47:10	47:18	3	psz_arg
+water	47:10	0:0	4	psz_arg
+water	47:19	0:0	2	;
+call	48:4	48:55	2	msg_Dbg
+arg	48:13	48:21	3	p_access
+water	48:13	0:0	4	p_access
+arg	48:23	48:38	3	"ip:%s port:%d"
+water	48:23	0:0	4	"ip:%s port:%d"
+arg	48:40	48:46	3	psz_ip
+water	48:40	0:0	4	psz_ip
+arg	48:48	48:55	3	i_port
+water	48:48	0:0	4	i_port
+water	48:56	0:0	2	;
+if	49:4	54:4	2	(ftp_SendCommand (p_access ,p_sys ,"TYPE I" ) < 0 ||ftp_RecvCommand (p_access ,p_sys ,& i_answer ,NULL ) != 2)
+cond	49:8	50:63	3	ftp_SendCommand (p_access ,p_sys ,"TYPE I" ) < 0 ||ftp_RecvCommand (p_access ,p_sys ,& i_answer ,NULL ) != 2
+call	49:8	49:51	4	ftp_SendCommand
+arg	49:25	49:33	5	p_access
+water	49:25	0:0	6	p_access
+arg	49:35	49:40	5	p_sys
+water	49:35	0:0	6	p_sys
+arg	49:42	49:51	5	"TYPE I"
+water	49:42	0:0	6	"TYPE I"
+op	49:53	0:0	4	<
+water	49:55	0:0	4	0
+op	49:57	0:0	4	||
+call	50:8	50:58	4	ftp_RecvCommand
+arg	50:25	50:33	5	p_access
+water	50:25	0:0	6	p_access
+arg	50:35	50:40	5	p_sys
+water	50:35	0:0	6	p_sys
+arg	50:42	50:51	5	&i_answer
+op	50:42	0:0	6	&
+water	50:43	0:0	6	i_answer
+arg	50:53	50:58	5	NULL
+water	50:53	0:0	6	NULL
+op	50:60	0:0	4	!=
+water	50:63	0:0	4	2
+stmts	51:4	54:4	3	
+water	51:4	0:0	4	{
+call	52:8	52:61	4	msg_Err
+arg	52:17	52:25	5	p_access
+water	52:17	0:0	6	p_access
+arg	52:27	52:61	5	"cannot set binary transfer mode"
+water	52:27	0:0	6	"cannot set binary transfer mode"
+water	52:62	0:0	4	;
+return	53:8	53:27	4	VLC_EGENERIC
+water	53:15	0:0	5	VLC_EGENERIC
+water	54:4	0:0	4	}
+if	55:4	63:4	2	(i_start > 0)
+cond	55:8	55:18	3	i_start > 0
+water	55:8	0:0	4	i_start
+op	55:16	0:0	4	>
+water	55:18	0:0	4	0
+stmts	56:4	63:4	3	
+water	56:4	0:0	4	{
+if	57:8	62:8	4	(ftp_SendCommand (p_access ,p_sys ,"REST %" PRIu64 ,i_start ) < 0 ||ftp_RecvCommand (p_access ,p_sys ,& i_answer ,NULL ) > 3)
+cond	57:12	58:66	5	ftp_SendCommand (p_access ,p_sys ,"REST %" PRIu64 ,i_start ) < 0 ||ftp_RecvCommand (p_access ,p_sys ,& i_answer ,NULL ) > 3
+call	57:12	57:70	6	ftp_SendCommand
+arg	57:29	57:37	7	p_access
+water	57:29	0:0	8	p_access
+arg	57:39	57:44	7	p_sys
+water	57:39	0:0	8	p_sys
+arg	57:46	57:60	7	"REST %"PRIu64
+water	57:46	0:0	8	"REST %"
+water	57:54	0:0	8	PRIu64
+arg	57:62	57:70	7	i_start
+water	57:62	0:0	8	i_start
+op	57:72	0:0	6	<
+water	57:74	0:0	6	0
+op	57:76	0:0	6	||
+call	58:12	58:62	6	ftp_RecvCommand
+arg	58:29	58:37	7	p_access
+water	58:29	0:0	8	p_access
+arg	58:39	58:44	7	p_sys
+water	58:39	0:0	8	p_sys
+arg	58:46	58:55	7	&i_answer
+op	58:46	0:0	8	&
+water	58:47	0:0	8	i_answer
+arg	58:57	58:62	7	NULL
+water	58:57	0:0	8	NULL
+op	58:64	0:0	6	>
+water	58:66	0:0	6	3
+stmts	59:8	62:8	5	
+water	59:8	0:0	6	{
+call	60:12	60:59	6	msg_Err
+arg	60:21	60:29	7	p_access
+water	60:21	0:0	8	p_access
+arg	60:31	60:59	7	"cannot set restart offset"
+water	60:31	0:0	8	"cannot set restart offset"
+water	60:60	0:0	6	;
+return	61:12	61:31	6	VLC_EGENERIC
+water	61:19	0:0	7	VLC_EGENERIC
+water	62:8	0:0	6	}
+water	63:4	0:0	4	}
+call	64:4	64:56	2	msg_Dbg
+arg	64:13	64:21	3	p_access
+water	64:13	0:0	4	p_access
+arg	64:23	64:56	3	"waiting for data connection..."
+water	64:23	0:0	4	"waiting for data connection..."
+water	64:57	0:0	2	;
+water	65:4	0:0	2	p_sys
+op	65:9	0:0	2	->
+water	65:11	0:0	2	data
+op	65:15	0:0	2	.
+water	65:16	0:0	2	fd
+op	65:19	0:0	2	=
+call	65:21	65:62	2	net_ConnectTCP
+arg	65:37	65:45	3	p_access
+water	65:37	0:0	4	p_access
+arg	65:47	65:53	3	psz_ip
+water	65:47	0:0	4	psz_ip
+arg	65:55	65:62	3	i_port
+water	65:55	0:0	4	i_port
+water	65:63	0:0	2	;
+if	66:4	70:4	2	(p_sys -> data . fd < 0)
+cond	66:8	66:25	3	p_sys -> data . fd < 0
+water	66:8	0:0	4	p_sys
+op	66:13	0:0	4	->
+water	66:15	0:0	4	data
+op	66:19	0:0	4	.
+water	66:20	0:0	4	fd
+op	66:23	0:0	4	<
+water	66:25	0:0	4	0
+stmts	67:4	70:4	3	
+water	67:4	0:0	4	{
+call	68:8	68:59	4	msg_Err
+arg	68:17	68:25	5	p_access
+water	68:17	0:0	6	p_access
+arg	68:27	68:59	5	"failed to connect with server"
+water	68:27	0:0	6	"failed to connect with server"
+water	68:60	0:0	4	;
+return	69:8	69:27	4	VLC_EGENERIC
+water	69:15	0:0	5	VLC_EGENERIC
+water	70:4	0:0	4	}
+call	71:4	72:28	2	msg_Dbg
+arg	71:13	71:21	3	p_access
+water	71:13	0:0	4	p_access
+arg	71:23	71:61	3	"connection with \"%s:%d\" successful"
+water	71:23	0:0	4	"connection with \"%s:%d\" successful"
+arg	72:13	72:19	3	psz_ip
+water	72:13	0:0	4	psz_ip
+arg	72:21	72:28	3	i_port
+water	72:21	0:0	4	i_port
+water	72:29	0:0	2	;
+if	73:4	81:4	2	(p_sys -> directory)
+cond	73:8	73:15	3	p_sys -> directory
+water	73:8	0:0	4	p_sys
+op	73:13	0:0	4	->
+water	73:15	0:0	4	directory
+stmts	74:4	81:4	3	
+water	74:4	0:0	4	{
+if	75:8	80:8	4	(ftp_SendCommand (p_access ,p_sys ,"NLST" ) < 0 ||ftp_RecvCommand (p_access ,p_sys ,NULL ,& psz_arg ) > 2)
+cond	75:12	76:65	5	ftp_SendCommand (p_access ,p_sys ,"NLST" ) < 0 ||ftp_RecvCommand (p_access ,p_sys ,NULL ,& psz_arg ) > 2
+call	75:12	75:53	6	ftp_SendCommand
+arg	75:29	75:37	7	p_access
+water	75:29	0:0	8	p_access
+arg	75:39	75:44	7	p_sys
+water	75:39	0:0	8	p_sys
+arg	75:46	75:53	7	"NLST"
+water	75:46	0:0	8	"NLST"
+op	75:55	0:0	6	<
+water	75:57	0:0	6	0
+op	75:59	0:0	6	||
+call	76:12	76:61	6	ftp_RecvCommand
+arg	76:29	76:37	7	p_access
+water	76:29	0:0	8	p_access
+arg	76:39	76:44	7	p_sys
+water	76:39	0:0	8	p_sys
+arg	76:46	76:50	7	NULL
+water	76:46	0:0	8	NULL
+arg	76:52	76:61	7	&psz_arg
+op	76:52	0:0	8	&
+water	76:53	0:0	8	psz_arg
+op	76:63	0:0	6	>
+water	76:65	0:0	6	2
+stmts	77:8	80:8	5	
+water	77:8	0:0	6	{
+call	78:12	78:64	6	msg_Err
+arg	78:21	78:29	7	p_access
+water	78:21	0:0	8	p_access
+arg	78:31	78:64	7	"cannot list directory contents"
+water	78:31	0:0	8	"cannot list directory contents"
+water	78:65	0:0	6	;
+return	79:8	79:27	6	VLC_EGENERIC
+water	79:15	0:0	7	VLC_EGENERIC
+water	80:8	0:0	6	}
+water	81:4	0:0	4	}
+else	82:4	94:4	2
+stmts	83:4	94:4	3	
+water	83:4	0:0	4	{
+call	85:8	85:36	4	assert
+arg	85:16	85:36	5	p_sys->url.psz_path
+water	85:16	0:0	6	p_sys
+op	85:21	0:0	6	->
+water	85:23	0:0	6	url
+op	85:26	0:0	6	.
+water	85:27	0:0	6	psz_path
+water	85:37	0:0	4	;
+if	86:8	93:8	4	(ftp_SendCommand (p_access ,p_sys ,"%s %s" ,p_sys -> out ? "STOR" : "RETR" ,p_sys -> url . psz_path ) < 0 ||ftp_RecvCommand (p_access ,p_sys ,& i_answer ,NULL ) > 2)
+cond	86:12	89:66	5	ftp_SendCommand (p_access ,p_sys ,"%s %s" ,p_sys -> out ? "STOR" : "RETR" ,p_sys -> url . psz_path ) < 0 ||ftp_RecvCommand (p_access ,p_sys ,& i_answer ,NULL ) > 2
+call	86:12	88:49	6	ftp_SendCommand
+arg	86:29	86:37	7	p_access
+water	86:29	0:0	8	p_access
+arg	86:39	86:44	7	p_sys
+water	86:39	0:0	8	p_sys
+arg	86:46	86:53	7	"%s %s"
+water	86:46	0:0	8	"%s %s"
+arg	87:29	87:57	7	p_sys->out?"STOR":"RETR"
+water	87:29	0:0	8	p_sys
+op	87:34	0:0	8	->
+water	87:36	0:0	8	out
+water	87:40	0:0	8	?
+water	87:42	0:0	8	"STOR"
+water	87:49	0:0	8	:
+water	87:51	0:0	8	"RETR"
+arg	88:29	88:49	7	p_sys->url.psz_path
+water	88:29	0:0	8	p_sys
+op	88:34	0:0	8	->
+water	88:36	0:0	8	url
+op	88:39	0:0	8	.
+water	88:40	0:0	8	psz_path
+op	88:51	0:0	6	<
+water	88:53	0:0	6	0
+op	89:9	0:0	6	||
+call	89:12	89:62	6	ftp_RecvCommand
+arg	89:29	89:37	7	p_access
+water	89:29	0:0	8	p_access
+arg	89:39	89:44	7	p_sys
+water	89:39	0:0	8	p_sys
+arg	89:46	89:55	7	&i_answer
+op	89:46	0:0	8	&
+water	89:47	0:0	8	i_answer
+arg	89:57	89:62	7	NULL
+water	89:57	0:0	8	NULL
+op	89:64	0:0	6	>
+water	89:66	0:0	6	2
+stmts	90:8	93:8	5	
+water	90:8	0:0	6	{
+call	91:12	91:54	6	msg_Err
+arg	91:21	91:29	7	p_access
+water	91:21	0:0	8	p_access
+arg	91:31	91:54	7	"cannot retrieve file"
+water	91:31	0:0	8	"cannot retrieve file"
+water	91:55	0:0	6	;
+return	92:12	92:31	6	VLC_EGENERIC
+water	92:19	0:0	7	VLC_EGENERIC
+water	93:8	0:0	6	}
+water	94:4	0:0	4	}
+if	95:4	110:4	2	(p_sys -> tlsmode != NONE)
+cond	95:8	95:26	3	p_sys -> tlsmode != NONE
+water	95:8	0:0	4	p_sys
+op	95:13	0:0	4	->
+water	95:15	0:0	4	tlsmode
+op	95:23	0:0	4	!=
+water	95:26	0:0	4	NONE
+stmts	96:4	110:4	3	
+water	96:4	0:0	4	{
+water	99:8	0:0	4	p_sys
+op	99:13	0:0	4	->
+water	99:15	0:0	4	data
+op	99:19	0:0	4	.
+water	99:20	0:0	4	p_tls
+op	99:26	0:0	4	=
+call	99:28	102:73	4	vlc_tls_ClientSessionCreate
+arg	99:57	99:71	5	p_sys->p_creds
+water	99:57	0:0	6	p_sys
+op	99:62	0:0	6	->
+water	99:64	0:0	6	p_creds
+arg	100:28	100:42	5	p_sys->data.fd
+water	100:28	0:0	6	p_sys
+op	100:33	0:0	6	->
+water	100:35	0:0	6	data
+op	100:39	0:0	6	.
+water	100:40	0:0	6	fd
+arg	100:44	100:63	5	p_sys->url.psz_host
+water	100:44	0:0	6	p_sys
+op	100:49	0:0	6	->
+water	100:51	0:0	6	url
+op	100:54	0:0	6	.
+water	100:55	0:0	6	psz_host
+arg	101:28	102:73	5	(p_sys->tlsmode==EXPLICIT)?"ftpes-data":"ftps-data"
+water	101:28	0:0	6	(
+water	101:30	0:0	6	p_sys
+op	101:35	0:0	6	->
+water	101:37	0:0	6	tlsmode
+op	101:45	0:0	6	==
+water	101:48	0:0	6	EXPLICIT
+water	101:57	0:0	6	)
+water	101:59	0:0	6	?
+water	101:61	0:0	6	"ftpes-data"
+water	102:59	0:0	6	:
+water	102:61	0:0	6	"ftps-data"
+water	102:74	0:0	4	;
+if	103:8	108:8	4	(p_sys -> data . p_tls == NULL)
+cond	103:12	103:33	5	p_sys -> data . p_tls == NULL
+water	103:12	0:0	6	p_sys
+op	103:17	0:0	6	->
+water	103:19	0:0	6	data
+op	103:23	0:0	6	.
+water	103:24	0:0	6	p_tls
+op	103:30	0:0	6	==
+water	103:33	0:0	6	NULL
+stmts	104:8	108:8	5	
+water	104:8	0:0	6	{
+call	105:12	106:67	6	msg_Err
+arg	105:21	105:29	7	p_access
+water	105:21	0:0	8	p_access
+arg	105:31	106:67	7	"cannot establish FTP/TLS session for data"": server not allowing new session ?"
+water	105:31	0:0	8	"cannot establish FTP/TLS session for data"
+water	106:29	0:0	8	": server not allowing new session ?"
+water	106:68	0:0	6	;
+return	107:12	107:31	6	VLC_EGENERIC
+water	107:19	0:0	7	VLC_EGENERIC
+water	108:8	0:0	6	}
+water	109:8	0:0	4	p_sys
+op	109:13	0:0	4	->
+water	109:15	0:0	4	data
+op	109:19	0:0	4	.
+water	109:20	0:0	4	p_vs
+op	109:25	0:0	4	=
+op	109:27	0:0	4	&
+water	109:28	0:0	4	p_sys
+op	109:33	0:0	4	->
+water	109:35	0:0	4	data
+op	109:39	0:0	4	.
+water	109:40	0:0	4	p_tls
+op	109:45	0:0	4	->
+water	109:47	0:0	4	sock
+water	109:51	0:0	4	;
+water	110:4	0:0	4	}
+else	111:4	112:66	2
+stmts	112:8	112:66	3	
+call	112:8	112:65	4	shutdown
+arg	112:18	112:32	5	p_sys->data.fd
+water	112:18	0:0	6	p_sys
+op	112:23	0:0	6	->
+water	112:25	0:0	6	data
+op	112:29	0:0	6	.
+water	112:30	0:0	6	fd
+arg	112:34	112:65	5	p_sys->out?SHUT_RD:SHUT_WR
+water	112:34	0:0	6	p_sys
+op	112:39	0:0	6	->
+water	112:41	0:0	6	out
+water	112:45	0:0	6	?
+water	112:47	0:0	6	SHUT_RD
+water	112:55	0:0	6	:
+water	112:57	0:0	6	SHUT_WR
+water	112:66	0:0	4	;
+return	113:4	113:22	2	VLC_SUCCESS
+water	113:11	0:0	3	VLC_SUCCESS

@@ -1,0 +1,323 @@
+func	2:0	61:0	0	static bool	OggSeekToPacket
+params	2:27	0:0	1	
+param	2:29	2:45	2	demux_t *	p_demux
+param	2:47	2:73	2	logical_stream_t *	p_stream
+param	3:12	3:32	2	int64_t	i_granulepos
+param	3:34	3:76	2	packetStartCoordinates *	p_lastpacketcoords
+param	4:12	4:25	2	bool	b_exact
+stmnts	0:0	60:16	1	
+decl	6:4	6:17	2	ogg_packet	op
+decl	7:4	7:40	2	demux_sys_t	*p_sys
+op	7:24	0:0	2	=
+water	7:26	0:0	2	p_demux
+op	7:33	0:0	2	->
+water	7:35	0:0	2	p_sys
+if	8:4	9:20	2	(ogg_stream_pagein (& p_stream -> os ,& p_sys -> current_page ) != 0)
+cond	8:9	8:69	3	ogg_stream_pagein (& p_stream -> os ,& p_sys -> current_page ) != 0
+call	8:9	8:64	4	ogg_stream_pagein
+arg	8:28	8:41	5	&p_stream->os
+op	8:28	0:0	6	&
+water	8:29	0:0	6	p_stream
+op	8:37	0:0	6	->
+water	8:39	0:0	6	os
+arg	8:43	8:64	5	&p_sys->current_page
+op	8:43	0:0	6	&
+water	8:44	0:0	6	p_sys
+op	8:49	0:0	6	->
+water	8:51	0:0	6	current_page
+op	8:66	0:0	4	!=
+water	8:69	0:0	4	0
+stmts	9:8	9:20	3	
+return	9:8	9:20	4	false
+water	9:15	0:0	5	false
+water	10:4	0:0	2	p_sys
+op	10:9	0:0	2	->
+water	10:11	0:0	2	b_page_waiting
+op	10:26	0:0	2	=
+water	10:28	0:0	2	true
+water	10:32	0:0	2	;
+decl	11:4	11:11	2	int	i
+op	11:9	0:0	2	=
+water	11:10	0:0	2	0
+decl	12:4	12:76	2	int64_t	itarget_frame
+op	12:26	0:0	2	=
+call	12:28	12:75	3	Ogg_GetKeyframeGranule
+arg	12:52	12:60	4	p_stream
+water	12:52	0:0	5	p_stream
+arg	12:62	12:75	4	i_granulepos
+water	12:62	0:0	5	i_granulepos
+decl	13:4	13:100	2	int64_t	iframe
+op	13:19	0:0	2	=
+call	13:21	13:99	3	Ogg_GetKeyframeGranule
+arg	13:45	13:53	4	p_stream
+water	13:45	0:0	5	p_stream
+arg	13:55	13:99	4	ogg_page_granulepos(&p_sys->current_page)
+call	13:55	13:97	5	ogg_page_granulepos
+arg	13:76	13:97	6	&p_sys->current_page
+op	13:76	0:0	7	&
+water	13:77	0:0	7	p_sys
+op	13:82	0:0	7	->
+water	13:84	0:0	7	current_page
+if	14:4	20:4	2	(!ogg_page_continued (& p_sys -> current_page ))
+cond	14:9	14:52	3	!ogg_page_continued (& p_sys -> current_page )
+op	14:9	0:0	4	!
+call	14:11	14:52	4	ogg_page_continued
+arg	14:31	14:52	5	&p_sys->current_page
+op	14:31	0:0	6	&
+water	14:32	0:0	6	p_sys
+op	14:37	0:0	6	->
+water	14:39	0:0	6	current_page
+stmts	15:4	20:4	3	
+water	15:4	0:0	4	{
+water	17:8	0:0	4	p_lastpacketcoords
+op	17:26	0:0	4	->
+water	17:28	0:0	4	i_pageno
+op	17:37	0:0	4	=
+call	17:39	17:77	4	ogg_page_pageno
+arg	17:56	17:77	5	&p_sys->current_page
+op	17:56	0:0	6	&
+water	17:57	0:0	6	p_sys
+op	17:62	0:0	6	->
+water	17:64	0:0	6	current_page
+water	17:78	0:0	4	;
+water	18:8	0:0	4	p_lastpacketcoords
+op	18:26	0:0	4	->
+water	18:28	0:0	4	i_pos
+op	18:34	0:0	4	=
+water	18:36	0:0	4	p_sys
+op	18:41	0:0	4	->
+water	18:43	0:0	4	i_input_position
+water	18:59	0:0	4	;
+water	19:8	0:0	4	p_lastpacketcoords
+op	19:26	0:0	4	->
+water	19:28	0:0	4	i_skip
+op	19:35	0:0	4	=
+water	19:37	0:0	4	0
+water	19:38	0:0	4	;
+water	20:4	0:0	4	}
+if	21:4	26:4	2	(b_exact && iframe > itarget_frame)
+cond	21:9	21:29	3	b_exact && iframe > itarget_frame
+water	21:9	0:0	4	b_exact
+op	21:17	0:0	4	&&
+water	21:20	0:0	4	iframe
+op	21:27	0:0	4	>
+water	21:29	0:0	4	itarget_frame
+stmts	22:4	26:4	3	
+water	22:4	0:0	4	{
+while	23:8	23:65	4	(ogg_stream_packetout (& p_stream -> os ,& op ) > 0)
+cond	23:15	23:60	5	ogg_stream_packetout (& p_stream -> os ,& op ) > 0
+call	23:15	23:56	6	ogg_stream_packetout
+arg	23:37	23:50	7	&p_stream->os
+op	23:37	0:0	8	&
+water	23:38	0:0	8	p_stream
+op	23:46	0:0	8	->
+water	23:48	0:0	8	os
+arg	23:52	23:56	7	&op
+op	23:52	0:0	8	&
+water	23:53	0:0	8	op
+op	23:58	0:0	6	>
+water	23:60	0:0	6	0
+stmts	23:64	23:65	5	
+water	23:64	0:0	6	{
+water	0:0	0:0	6	STATEMENTS
+water	23:65	0:0	6	}
+water	23:66	0:0	4	;
+water	24:8	0:0	4	p_sys
+op	24:13	0:0	4	->
+water	24:15	0:0	4	b_page_waiting
+op	24:30	0:0	4	=
+water	24:32	0:0	4	false
+water	24:37	0:0	4	;
+return	25:8	25:20	4	false
+water	25:15	0:0	5	false
+water	26:4	0:0	4	}
+while	27:4	59:4	2	(ogg_stream_packetpeek (& p_stream -> os ,& op ) > 0)
+cond	27:11	27:57	3	ogg_stream_packetpeek (& p_stream -> os ,& op ) > 0
+call	27:11	27:53	4	ogg_stream_packetpeek
+arg	27:34	27:47	5	&p_stream->os
+op	27:34	0:0	6	&
+water	27:35	0:0	6	p_stream
+op	27:43	0:0	6	->
+water	27:45	0:0	6	os
+arg	27:49	27:53	5	&op
+op	27:49	0:0	6	&
+water	27:50	0:0	6	op
+op	27:55	0:0	4	>
+water	27:57	0:0	4	0
+stmts	28:4	59:4	3	
+water	28:4	0:0	4	{
+if	29:8	52:8	4	(( ! b_exact || itarget_frame == iframe ) &&Ogg_IsKeyFrame (p_stream ,& op ))
+cond	29:13	29:86	5	( ! b_exact || itarget_frame == iframe ) &&Ogg_IsKeyFrame (p_stream ,& op )
+water	29:13	0:0	6	(
+op	29:15	0:0	6	!
+water	29:16	0:0	6	b_exact
+op	29:24	0:0	6	||
+water	29:27	0:0	6	itarget_frame
+op	29:41	0:0	6	==
+water	29:44	0:0	6	iframe
+water	29:51	0:0	6	)
+op	29:53	0:0	6	&&
+call	29:56	29:86	6	Ogg_IsKeyFrame
+arg	29:72	29:80	7	p_stream
+water	29:72	0:0	8	p_stream
+arg	29:82	29:86	7	&op
+op	29:82	0:0	8	&
+water	29:83	0:0	8	op
+stmts	30:8	52:8	5	
+water	30:8	0:0	6	{
+water	31:12	0:0	6	OggDebug
+water	31:20	0:0	6	(
+call	32:16	32:50	6	msg_Dbg
+arg	32:24	32:31	7	p_demux
+water	32:24	0:0	8	p_demux
+arg	32:33	32:50	7	"** KEYFRAME **"
+water	32:33	0:0	8	"** KEYFRAME **"
+water	32:51	0:0	6	;
+call	33:16	33:197	6	msg_Dbg
+arg	33:24	33:31	7	p_demux
+water	33:24	0:0	8	p_demux
+arg	33:33	33:111	7	"** KEYFRAME PACKET START pageno %"PRId64" OFFSET %"PRId64" skip %"PRId64" **"
+water	33:33	0:0	8	"** KEYFRAME PACKET START pageno %"
+water	33:68	0:0	8	PRId64
+water	33:74	0:0	8	" OFFSET %"
+water	33:85	0:0	8	PRId64
+water	33:91	0:0	8	" skip %"
+water	33:100	0:0	8	PRId64
+water	33:106	0:0	8	" **"
+arg	33:113	33:141	7	p_lastpacketcoords->i_pageno
+water	33:113	0:0	8	p_lastpacketcoords
+op	33:131	0:0	8	->
+water	33:133	0:0	8	i_pageno
+arg	33:143	33:168	7	p_lastpacketcoords->i_pos
+water	33:143	0:0	8	p_lastpacketcoords
+op	33:161	0:0	8	->
+water	33:163	0:0	8	i_pos
+arg	33:170	33:197	7	p_lastpacketcoords->i_skip
+water	33:170	0:0	8	p_lastpacketcoords
+op	33:188	0:0	8	->
+water	33:190	0:0	8	i_skip
+water	33:198	0:0	6	;
+call	34:16	35:135	6	msg_Dbg
+arg	34:24	34:31	7	p_demux
+water	34:24	0:0	8	p_demux
+arg	34:33	34:121	7	"KEYFRAME PACKET IS at pageno %"PRId64" OFFSET %"PRId64" with skip %d packet (%d / %d) "
+water	34:33	0:0	8	"KEYFRAME PACKET IS at pageno %"
+water	34:65	0:0	8	PRId64
+water	34:71	0:0	8	" OFFSET %"
+water	34:82	0:0	8	PRId64
+water	34:88	0:0	8	" with skip %d packet (%d / %d) "
+arg	35:20	35:59	7	ogg_page_pageno(&p_sys->current_page)
+call	35:20	35:58	8	ogg_page_pageno
+arg	35:37	35:58	9	&p_sys->current_page
+op	35:37	0:0	10	&
+water	35:38	0:0	10	p_sys
+op	35:43	0:0	10	->
+water	35:45	0:0	10	current_page
+arg	35:61	35:84	7	p_sys->i_input_position
+water	35:61	0:0	8	p_sys
+op	35:66	0:0	8	->
+water	35:68	0:0	8	i_input_position
+arg	35:86	35:87	7	i
+water	35:86	0:0	8	i
+arg	35:89	35:92	7	i+1
+water	35:89	0:0	8	i
+op	35:90	0:0	8	+
+water	35:91	0:0	8	1
+arg	35:94	35:135	7	ogg_page_packets(&p_sys->current_page)
+call	35:94	35:133	8	ogg_page_packets
+arg	35:112	35:133	9	&p_sys->current_page
+op	35:112	0:0	10	&
+water	35:113	0:0	10	p_sys
+op	35:118	0:0	10	->
+water	35:120	0:0	10	current_page
+water	35:136	0:0	6	;
+water	36:16	0:0	6	DemuxDebug
+water	36:26	0:0	6	(
+water	36:28	0:0	6	p_sys
+op	36:33	0:0	6	->
+water	36:35	0:0	6	b_seeked
+op	36:44	0:0	6	=
+water	36:46	0:0	6	true
+water	36:50	0:0	6	;
+water	36:52	0:0	6	)
+water	37:12	0:0	6	)
+water	37:13	0:0	6	;
+if	38:12	50:12	6	(i != 0)
+cond	38:17	38:22	7	i != 0
+water	38:17	0:0	8	i
+op	38:19	0:0	8	!=
+water	38:22	0:0	8	0
+stmts	39:12	50:12	7	
+water	39:12	0:0	8	{
+water	47:16	0:0	8	p_lastpacketcoords
+op	47:34	0:0	8	->
+water	47:36	0:0	8	i_pageno
+op	47:45	0:0	8	=
+call	47:47	47:85	8	ogg_page_pageno
+arg	47:64	47:85	9	&p_sys->current_page
+op	47:64	0:0	10	&
+water	47:65	0:0	10	p_sys
+op	47:70	0:0	10	->
+water	47:72	0:0	10	current_page
+water	47:86	0:0	8	;
+water	48:16	0:0	8	p_lastpacketcoords
+op	48:34	0:0	8	->
+water	48:36	0:0	8	i_pos
+op	48:42	0:0	8	=
+water	48:44	0:0	8	p_sys
+op	48:49	0:0	8	->
+water	48:51	0:0	8	i_input_position
+water	48:67	0:0	8	;
+water	49:16	0:0	8	p_lastpacketcoords
+op	49:34	0:0	8	->
+water	49:36	0:0	8	i_skip
+op	49:43	0:0	8	=
+water	49:45	0:0	8	i
+water	49:46	0:0	8	;
+water	50:12	0:0	8	}
+return	51:12	51:23	6	true
+water	51:19	0:0	7	true
+water	52:8	0:0	6	}
+water	53:8	0:0	4	p_lastpacketcoords
+op	53:26	0:0	4	->
+water	53:28	0:0	4	i_pageno
+op	53:37	0:0	4	=
+call	53:39	53:77	4	ogg_page_pageno
+arg	53:56	53:77	5	&p_sys->current_page
+op	53:56	0:0	6	&
+water	53:57	0:0	6	p_sys
+op	53:62	0:0	6	->
+water	53:64	0:0	6	current_page
+water	53:78	0:0	4	;
+water	54:8	0:0	4	p_lastpacketcoords
+op	54:26	0:0	4	->
+water	54:28	0:0	4	i_pos
+op	54:34	0:0	4	=
+water	54:36	0:0	4	p_sys
+op	54:41	0:0	4	->
+water	54:43	0:0	4	i_input_position
+water	54:59	0:0	4	;
+water	55:8	0:0	4	p_lastpacketcoords
+op	55:26	0:0	4	->
+water	55:28	0:0	4	i_skip
+op	55:35	0:0	4	=
+water	55:37	0:0	4	i
+op	55:39	0:0	4	+
+water	55:41	0:0	4	1
+water	55:42	0:0	4	;
+water	56:8	0:0	4	i
+op	56:9	0:0	4	++
+water	56:11	0:0	4	;
+call	58:8	58:49	4	ogg_stream_packetout
+arg	58:30	58:43	5	&p_stream->os
+op	58:30	0:0	6	&
+water	58:31	0:0	6	p_stream
+op	58:39	0:0	6	->
+water	58:41	0:0	6	os
+arg	58:45	58:49	5	&op
+op	58:45	0:0	6	&
+water	58:46	0:0	6	op
+water	58:50	0:0	4	;
+water	59:4	0:0	4	}
+return	60:4	60:16	2	false
+water	60:11	0:0	3	false

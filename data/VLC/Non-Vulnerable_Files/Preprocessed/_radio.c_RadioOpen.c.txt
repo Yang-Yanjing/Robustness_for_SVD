@@ -1,0 +1,226 @@
+func	2:0	42:0	0	int	RadioOpen
+params	2:14	0:0	1	
+param	2:15	2:32	2	vlc_object_t *	obj
+stmnts	0:0	41:23	1	
+decl	4:4	4:35	2	demux_t	*demux
+op	4:19	0:0	2	=
+water	4:21	0:0	2	(
+water	4:22	0:0	2	demux_t
+op	4:30	0:0	2	*
+water	4:31	0:0	2	)
+water	4:32	0:0	2	obj
+decl	6:4	6:56	2	size_t	pathlen
+op	6:19	0:0	2	=
+call	6:21	6:55	3	strcspn
+arg	6:30	6:49	4	demux->psz_location
+water	6:30	0:0	5	demux
+op	6:35	0:0	5	->
+water	6:37	0:0	5	psz_location
+arg	6:51	6:55	4	":;"
+water	6:51	0:0	5	":;"
+decl	7:4	8:78	2	char	*path
+op	7:15	0:0	2	=
+water	7:17	0:0	2	(
+water	7:18	0:0	2	pathlen
+op	7:26	0:0	2	!=
+water	7:29	0:0	2	0
+water	7:30	0:0	2	)
+water	7:32	0:0	2	?
+call	7:34	7:71	3	strndup
+arg	7:43	7:62	4	demux->psz_location
+water	7:43	0:0	5	demux
+op	7:48	0:0	5	->
+water	7:50	0:0	5	psz_location
+arg	7:64	7:71	4	pathlen
+water	7:64	0:0	5	pathlen
+water	8:30	0:0	2	:
+call	8:32	8:77	3	var_InheritString
+arg	8:51	8:54	4	obj
+water	8:51	0:0	5	obj
+arg	8:56	8:77	4	CFG_PREFIX"radio-dev"
+water	8:56	0:0	5	CFG_PREFIX
+water	8:66	0:0	5	"radio-dev"
+if	9:4	10:25	2	(unlikely (path == NULL ))
+cond	9:8	9:29	3	unlikely (path == NULL )
+call	9:8	9:29	4	unlikely
+arg	9:17	9:29	5	path==NULL
+water	9:17	0:0	6	path
+op	9:22	0:0	6	==
+water	9:25	0:0	6	NULL
+stmts	10:8	10:25	3	
+return	10:8	10:25	4	VLC_ENOMEM
+water	10:15	0:0	5	VLC_ENOMEM
+if	11:4	12:78	2	(demux -> psz_location [ pathlen ] != '\0')
+cond	11:8	11:40	3	demux -> psz_location [ pathlen ] != '\0'
+water	11:8	0:0	4	demux
+op	11:13	0:0	4	->
+water	11:15	0:0	4	psz_location
+op	11:27	0:0	4	[
+water	11:28	0:0	4	pathlen
+op	11:35	0:0	4	]
+op	11:37	0:0	4	!=
+water	11:40	0:0	4	'\0'
+stmts	12:8	12:78	3	
+call	12:8	12:77	4	var_LocationParse
+arg	12:27	12:30	5	obj
+water	12:27	0:0	6	obj
+arg	12:32	12:65	5	demux->psz_location+pathlen+1
+water	12:32	0:0	6	demux
+op	12:37	0:0	6	->
+water	12:39	0:0	6	psz_location
+op	12:52	0:0	6	+
+water	12:54	0:0	6	pathlen
+op	12:62	0:0	6	+
+water	12:64	0:0	6	1
+arg	12:67	12:77	5	CFG_PREFIX
+water	12:67	0:0	6	CFG_PREFIX
+water	12:78	0:0	4	;
+decl	14:4	14:17	2	uint32_t	caps
+decl	15:4	15:42	2	int	fd
+op	15:11	0:0	2	=
+call	15:13	15:41	3	OpenDevice
+arg	15:25	15:28	4	obj
+water	15:25	0:0	5	obj
+arg	15:30	15:34	4	path
+water	15:30	0:0	5	path
+arg	15:36	15:41	4	&caps
+op	15:36	0:0	5	&
+water	15:37	0:0	5	caps
+call	16:4	16:14	2	free
+arg	16:10	16:14	3	path
+water	16:10	0:0	4	path
+water	16:15	0:0	2	;
+if	17:4	18:27	2	(fd == - 1)
+cond	17:8	17:15	3	fd == - 1
+water	17:8	0:0	4	fd
+op	17:11	0:0	4	==
+op	17:14	0:0	4	-
+water	17:15	0:0	4	1
+stmts	18:8	18:27	3	
+return	18:8	18:27	4	VLC_EGENERIC
+water	18:15	0:0	5	VLC_EGENERIC
+if	19:4	23:4	2	(! ( caps & V4L2_CAP_TUNER ))
+cond	19:8	19:31	3	! ( caps & V4L2_CAP_TUNER )
+op	19:8	0:0	4	!
+water	19:9	0:0	4	(
+water	19:10	0:0	4	caps
+op	19:15	0:0	4	&
+water	19:17	0:0	4	V4L2_CAP_TUNER
+water	19:31	0:0	4	)
+stmts	20:4	23:4	3	
+water	20:4	0:0	4	{
+call	21:8	21:48	4	msg_Err
+arg	21:17	21:20	5	obj
+water	21:17	0:0	6	obj
+arg	21:22	21:48	5	"not a radio tuner device"
+water	21:22	0:0	6	"not a radio tuner device"
+water	21:49	0:0	4	;
+goto	22:8	22:18	4	error
+water	22:13	0:0	5	error
+water	23:4	0:0	4	}
+if	24:4	25:18	2	(SetupTuner (obj ,fd ,0 ))
+cond	24:8	24:30	3	SetupTuner (obj ,fd ,0 )
+call	24:8	24:30	4	SetupTuner
+arg	24:20	24:23	5	obj
+water	24:20	0:0	6	obj
+arg	24:25	24:27	5	fd
+water	24:25	0:0	6	fd
+arg	24:29	24:30	5	0
+water	24:29	0:0	6	0
+stmts	25:8	25:18	3	
+goto	25:8	25:18	4	error
+water	25:13	0:0	5	error
+decl	26:4	26:45	2	demux_sys_t	*sys
+op	26:21	0:0	2	=
+call	26:23	26:44	3	malloc
+arg	26:31	26:44	4	sizeof(*sys)
+op	26:31	0:0	5	sizeof
+water	26:38	0:0	5	(
+op	26:39	0:0	5	*
+water	26:40	0:0	5	sys
+water	26:43	0:0	5	)
+if	27:4	28:18	2	(unlikely (sys == NULL ))
+cond	27:8	27:28	3	unlikely (sys == NULL )
+call	27:8	27:28	4	unlikely
+arg	27:17	27:28	5	sys==NULL
+water	27:17	0:0	6	sys
+op	27:21	0:0	6	==
+water	27:24	0:0	6	NULL
+stmts	28:8	28:18	3	
+goto	28:8	28:18	4	error
+water	28:13	0:0	5	error
+water	29:4	0:0	2	sys
+op	29:7	0:0	2	->
+water	29:9	0:0	2	fd
+op	29:12	0:0	2	=
+water	29:14	0:0	2	fd
+water	29:16	0:0	2	;
+water	30:4	0:0	2	sys
+op	30:7	0:0	2	->
+water	30:9	0:0	2	controls
+op	30:18	0:0	2	=
+call	30:20	30:55	2	ControlsInit
+arg	30:34	30:51	3	VLC_OBJECT(demux)
+call	30:34	30:50	4	VLC_OBJECT
+arg	30:45	30:50	5	demux
+water	30:45	0:0	6	demux
+arg	30:53	30:55	3	fd
+water	30:53	0:0	4	fd
+water	30:56	0:0	2	;
+water	31:4	0:0	2	sys
+op	31:7	0:0	2	->
+water	31:9	0:0	2	start
+op	31:15	0:0	2	=
+call	31:17	31:24	2	mdate
+water	31:25	0:0	2	;
+water	32:4	0:0	2	demux
+op	32:9	0:0	2	->
+water	32:11	0:0	2	p_sys
+op	32:17	0:0	2	=
+water	32:19	0:0	2	sys
+water	32:22	0:0	2	;
+water	33:4	0:0	2	demux
+op	33:9	0:0	2	->
+water	33:11	0:0	2	pf_demux
+op	33:20	0:0	2	=
+water	33:22	0:0	2	NULL
+water	33:26	0:0	2	;
+water	34:4	0:0	2	demux
+op	34:9	0:0	2	->
+water	34:11	0:0	2	pf_control
+op	34:22	0:0	2	=
+water	34:24	0:0	2	RadioControl
+water	34:36	0:0	2	;
+water	35:4	0:0	2	demux
+op	35:9	0:0	2	->
+water	35:11	0:0	2	info
+op	35:15	0:0	2	.
+water	35:16	0:0	2	i_update
+op	35:25	0:0	2	=
+water	35:27	0:0	2	0
+water	35:28	0:0	2	;
+water	36:4	0:0	2	demux
+op	36:9	0:0	2	->
+water	36:11	0:0	2	info
+op	36:15	0:0	2	.
+water	36:16	0:0	2	i_title
+op	36:24	0:0	2	=
+water	36:26	0:0	2	0
+water	36:27	0:0	2	;
+water	37:4	0:0	2	demux
+op	37:9	0:0	2	->
+water	37:11	0:0	2	info
+op	37:15	0:0	2	.
+water	37:16	0:0	2	i_seekpoint
+op	37:28	0:0	2	=
+water	37:30	0:0	2	0
+water	37:31	0:0	2	;
+return	38:4	38:22	2	VLC_SUCCESS
+water	38:11	0:0	3	VLC_SUCCESS
+label	39:0	39:5	2	error :
+call	40:4	40:18	2	v4l2_close
+arg	40:16	40:18	3	fd
+water	40:16	0:0	4	fd
+water	40:19	0:0	2	;
+return	41:4	41:23	2	VLC_EGENERIC
+water	41:11	0:0	3	VLC_EGENERIC

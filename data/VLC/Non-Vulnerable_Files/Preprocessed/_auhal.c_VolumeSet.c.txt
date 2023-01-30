@@ -1,0 +1,86 @@
+func	2:0	22:0	0	static int	VolumeSet
+params	2:20	0:0	1	
+param	2:21	2:44	2	audio_output_t *	p_aout
+param	2:46	2:58	2	float	volume
+stmnts	0:0	21:18	1	
+decl	4:4	4:42	2	struct aout_sys_t	*p_sys
+op	4:29	0:0	2	=
+water	4:31	0:0	2	p_aout
+op	4:37	0:0	2	->
+water	4:39	0:0	2	sys
+decl	5:4	5:24	2	OSStatus	ostatus
+op	5:21	0:0	2	=
+water	5:23	0:0	2	0
+if	6:4	7:27	2	(p_sys -> b_digital)
+cond	6:7	6:14	3	p_sys -> b_digital
+water	6:7	0:0	4	p_sys
+op	6:12	0:0	4	->
+water	6:14	0:0	4	b_digital
+stmts	7:8	7:27	3	
+return	7:8	7:27	4	VLC_EGENERIC
+water	7:15	0:0	5	VLC_EGENERIC
+water	8:4	0:0	2	p_sys
+op	8:9	0:0	2	->
+water	8:11	0:0	2	f_volume
+op	8:20	0:0	2	=
+water	8:22	0:0	2	volume
+water	8:28	0:0	2	;
+call	9:4	9:36	2	aout_VolumeReport
+arg	9:22	9:28	3	p_aout
+water	9:22	0:0	4	p_aout
+arg	9:30	9:36	3	volume
+water	9:30	0:0	4	volume
+water	9:37	0:0	2	;
+if	11:4	18:4	2	(! p_sys -> b_mute)
+cond	11:7	11:15	3	! p_sys -> b_mute
+op	11:7	0:0	4	!
+water	11:8	0:0	4	p_sys
+op	11:13	0:0	4	->
+water	11:15	0:0	4	b_mute
+stmts	11:23	18:4	3	
+water	11:23	0:0	4	{
+water	12:8	0:0	4	ostatus
+op	12:16	0:0	4	=
+call	12:18	17:41	4	AudioUnitSetParameter
+arg	12:40	12:54	5	p_sys->au_unit
+water	12:40	0:0	6	p_sys
+op	12:45	0:0	6	->
+water	12:47	0:0	6	au_unit
+arg	13:40	13:62	5	kHALOutputParam_Volume
+water	13:40	0:0	6	kHALOutputParam_Volume
+arg	14:40	14:62	5	kAudioUnitScope_Global
+water	14:40	0:0	6	kAudioUnitScope_Global
+arg	15:40	15:41	5	0
+water	15:40	0:0	6	0
+arg	16:40	16:64	5	volume*volume*volume
+water	16:40	0:0	6	volume
+op	16:47	0:0	6	*
+water	16:49	0:0	6	volume
+op	16:56	0:0	6	*
+water	16:58	0:0	6	volume
+arg	17:40	17:41	5	0
+water	17:40	0:0	6	0
+water	17:42	0:0	4	;
+water	18:4	0:0	4	}
+if	19:4	20:84	2	(var_InheritBool (p_aout ,"volume-save" ))
+cond	19:8	19:45	3	var_InheritBool (p_aout ,"volume-save" )
+call	19:8	19:45	4	var_InheritBool
+arg	19:24	19:30	5	p_aout
+water	19:24	0:0	6	p_aout
+arg	19:32	19:45	5	"volume-save"
+water	19:32	0:0	6	"volume-save"
+stmts	20:8	20:84	3	
+call	20:8	20:83	4	config_PutInt
+arg	20:22	20:28	5	p_aout
+water	20:22	0:0	6	p_aout
+arg	20:30	20:44	5	"auhal-volume"
+water	20:30	0:0	6	"auhal-volume"
+arg	20:46	20:83	5	lroundf(volume*AOUT_VOLUME_DEFAULT)
+call	20:46	20:82	6	lroundf
+arg	20:54	20:82	7	volume*AOUT_VOLUME_DEFAULT
+water	20:54	0:0	8	volume
+op	20:61	0:0	8	*
+water	20:63	0:0	8	AOUT_VOLUME_DEFAULT
+water	20:84	0:0	4	;
+return	21:4	21:18	2	ostatus
+water	21:11	0:0	3	ostatus

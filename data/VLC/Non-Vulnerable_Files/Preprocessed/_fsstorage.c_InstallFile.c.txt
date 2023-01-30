@@ -1,0 +1,184 @@
+func	2:0	49:0	0	static int	InstallFile
+params	2:22	0:0	1	
+param	2:24	2:48	2	addons_storage_t *	p_this
+param	2:50	2:78	2	const char *	psz_downloadlink
+param	3:24	3:45	2	const char *	psz_dest
+stmnts	0:0	48:22	1	
+decl	5:4	5:22	2	stream_t	*p_stream
+decl	6:4	6:20	2	FILE	*p_destfile
+decl	7:4	7:22	2	char	buffer[1<<10]
+decl	8:4	8:18	2	int	i_read
+op	8:15	0:0	2	=
+water	8:17	0:0	2	0
+water	9:4	0:0	2	p_stream
+op	9:13	0:0	2	=
+call	9:15	9:55	2	stream_UrlNew
+arg	9:30	9:36	3	p_this
+water	9:30	0:0	4	p_this
+arg	9:38	9:55	3	psz_downloadlink
+water	9:38	0:0	4	psz_downloadlink
+water	9:56	0:0	2	;
+if	10:4	14:4	2	(! p_stream)
+cond	10:8	10:9	3	! p_stream
+op	10:8	0:0	4	!
+water	10:9	0:0	4	p_stream
+stmts	11:4	14:4	3	
+water	11:4	0:0	4	{
+call	12:8	12:84	4	msg_Err
+arg	12:17	12:23	5	p_this
+water	12:17	0:0	6	p_this
+arg	12:25	12:65	5	"Failed to access Addon download url %s"
+water	12:25	0:0	6	"Failed to access Addon download url %s"
+arg	12:67	12:84	5	psz_downloadlink
+water	12:67	0:0	6	psz_downloadlink
+water	12:85	0:0	4	;
+return	13:8	13:27	4	VLC_EGENERIC
+water	13:15	0:0	5	VLC_EGENERIC
+water	14:4	0:0	4	}
+decl	15:4	15:39	2	char	*psz_path
+op	15:19	0:0	2	=
+call	15:21	15:38	3	strdup
+arg	15:29	15:38	4	psz_dest
+water	15:29	0:0	5	psz_dest
+if	16:4	20:4	2	(! psz_path)
+cond	16:9	16:10	3	! psz_path
+op	16:9	0:0	4	!
+water	16:10	0:0	4	psz_path
+stmts	17:4	20:4	3	
+water	17:4	0:0	4	{
+call	18:8	18:32	4	stream_Delete
+arg	18:23	18:32	5	p_stream
+water	18:23	0:0	6	p_stream
+water	18:33	0:0	4	;
+return	19:8	19:25	4	VLC_ENOMEM
+water	19:15	0:0	5	VLC_ENOMEM
+water	20:4	0:0	4	}
+decl	21:4	21:53	2	char	*psz_buf
+op	21:18	0:0	2	=
+call	21:20	21:52	3	strrchr
+arg	21:29	21:37	4	psz_path
+water	21:29	0:0	5	psz_path
+arg	21:39	21:52	4	DIR_SEP_CHAR
+water	21:39	0:0	5	DIR_SEP_CHAR
+if	22:4	28:4	2	(psz_buf)
+cond	22:8	22:8	3	psz_buf
+water	22:8	0:0	4	psz_buf
+stmts	23:4	28:4	3	
+water	23:4	0:0	4	{
+op	24:8	0:0	4	*
+op	24:9	0:0	4	++
+water	24:11	0:0	4	psz_buf
+op	24:19	0:0	4	=
+water	24:21	0:0	4	'\0'
+water	24:25	0:0	4	;
+if	26:8	26:84	4	(!EMPTY_STR (psz_path ))
+cond	26:12	26:33	5	!EMPTY_STR (psz_path )
+op	26:12	0:0	6	!
+call	26:13	26:33	6	EMPTY_STR
+arg	26:24	26:33	7	psz_path
+water	26:24	0:0	8	psz_path
+stmts	26:37	26:84	5	
+call	26:37	26:83	6	recursive_mkdir
+arg	26:54	26:72	7	VLC_OBJECT(p_this)
+call	26:54	26:71	8	VLC_OBJECT
+arg	26:65	26:71	9	p_this
+water	26:65	0:0	10	p_this
+arg	26:74	26:83	7	psz_path
+water	26:74	0:0	8	psz_path
+water	26:84	0:0	6	;
+call	27:8	27:23	4	free
+arg	27:14	27:23	5	psz_path
+water	27:14	0:0	6	psz_path
+water	27:24	0:0	4	;
+water	28:4	0:0	4	}
+water	29:4	0:0	2	p_destfile
+op	29:15	0:0	2	=
+call	29:17	29:42	2	vlc_fopen
+arg	29:28	29:36	3	psz_dest
+water	29:28	0:0	4	psz_dest
+arg	29:38	29:42	3	"w"
+water	29:38	0:0	4	"w"
+water	29:43	0:0	2	;
+if	30:4	35:4	2	(! p_destfile)
+cond	30:8	30:9	3	! p_destfile
+op	30:8	0:0	4	!
+water	30:9	0:0	4	p_destfile
+stmts	31:4	35:4	3	
+water	31:4	0:0	4	{
+call	32:8	32:74	4	msg_Err
+arg	32:17	32:23	5	p_this
+water	32:17	0:0	6	p_this
+arg	32:25	32:63	5	"Failed to open Addon storage file %s"
+water	32:25	0:0	6	"Failed to open Addon storage file %s"
+arg	32:65	32:74	5	psz_dest
+water	32:65	0:0	6	psz_dest
+water	32:75	0:0	4	;
+call	33:8	33:32	4	stream_Delete
+arg	33:23	33:32	5	p_stream
+water	33:23	0:0	6	p_stream
+water	33:33	0:0	4	;
+return	34:8	34:27	4	VLC_EGENERIC
+water	34:15	0:0	5	VLC_EGENERIC
+water	35:4	0:0	4	}
+while	36:4	45:4	2	(( i_read =stream_Read (p_stream ,& buffer ,1 << 10 ) ))
+cond	36:12	36:63	3	( i_read =stream_Read (p_stream ,& buffer ,1 << 10 ) )
+water	36:12	0:0	4	(
+water	36:14	0:0	4	i_read
+op	36:21	0:0	4	=
+call	36:23	36:61	4	stream_Read
+arg	36:36	36:44	5	p_stream
+water	36:36	0:0	6	p_stream
+arg	36:46	36:53	5	&buffer
+op	36:46	0:0	6	&
+water	36:47	0:0	6	buffer
+arg	36:55	36:61	5	1<<10
+water	36:55	0:0	6	1
+op	36:56	0:0	6	<<
+water	36:58	0:0	6	10
+water	36:63	0:0	4	)
+stmts	37:4	45:4	3	
+water	37:4	0:0	4	{
+if	38:8	44:8	4	(fwrite (& buffer ,i_read ,1 ,p_destfile ) < 1)
+cond	38:13	38:56	5	fwrite (& buffer ,i_read ,1 ,p_destfile ) < 1
+call	38:13	38:52	6	fwrite
+arg	38:21	38:28	7	&buffer
+op	38:21	0:0	8	&
+water	38:22	0:0	8	buffer
+arg	38:30	38:36	7	i_read
+water	38:30	0:0	8	i_read
+arg	38:38	38:39	7	1
+water	38:38	0:0	8	1
+arg	38:41	38:52	7	p_destfile
+water	38:41	0:0	8	p_destfile
+op	38:54	0:0	6	<
+water	38:56	0:0	6	1
+stmts	39:8	44:8	5	
+water	39:8	0:0	6	{
+call	40:12	40:61	6	msg_Err
+arg	40:21	40:27	7	p_this
+water	40:21	0:0	8	p_this
+arg	40:29	40:61	7	"Failed to write to Addon file"
+water	40:29	0:0	8	"Failed to write to Addon file"
+water	40:62	0:0	6	;
+call	41:12	41:31	6	fclose
+arg	41:20	41:31	7	p_destfile
+water	41:20	0:0	8	p_destfile
+water	41:32	0:0	6	;
+call	42:12	42:36	6	stream_Delete
+arg	42:27	42:36	7	p_stream
+water	42:27	0:0	8	p_stream
+water	42:37	0:0	6	;
+return	43:12	43:31	6	VLC_EGENERIC
+water	43:19	0:0	7	VLC_EGENERIC
+water	44:8	0:0	6	}
+water	45:4	0:0	4	}
+call	46:4	46:23	2	fclose
+arg	46:12	46:23	3	p_destfile
+water	46:12	0:0	4	p_destfile
+water	46:24	0:0	2	;
+call	47:4	47:28	2	stream_Delete
+arg	47:19	47:28	3	p_stream
+water	47:19	0:0	4	p_stream
+water	47:29	0:0	2	;
+return	48:4	48:22	2	VLC_SUCCESS
+water	48:11	0:0	3	VLC_SUCCESS

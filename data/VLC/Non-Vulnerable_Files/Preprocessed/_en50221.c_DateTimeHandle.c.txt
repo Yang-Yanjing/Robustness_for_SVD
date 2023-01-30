@@ -1,0 +1,101 @@
+func	2:0	29:0	0	static void	DateTimeHandle
+params	2:26	0:0	1	
+param	2:28	2:40	2	cam_t *	p_cam
+param	2:42	2:58	2	int	i_session_id
+param	3:28	3:43	2	uint8_t *	p_apdu
+param	3:45	3:56	2	int	i_size
+stmnts	0:0	28:4	1	
+decl	5:4	6:64	2	date_time_t	*p_date
+op	5:24	0:0	2	=
+water	6:8	0:0	2	(
+water	6:9	0:0	2	date_time_t
+op	6:21	0:0	2	*
+water	6:22	0:0	2	)
+water	6:23	0:0	2	p_cam
+op	6:28	0:0	2	->
+water	6:30	0:0	2	p_sessions
+op	6:40	0:0	2	[
+water	6:41	0:0	2	i_session_id
+op	6:54	0:0	2	-
+water	6:56	0:0	2	1
+op	6:57	0:0	2	]
+op	6:58	0:0	2	.
+water	6:59	0:0	2	p_sys
+decl	7:4	7:44	2	int	i_tag
+op	7:14	0:0	2	=
+call	7:16	7:43	3	APDUGetTag
+arg	7:28	7:34	4	p_apdu
+water	7:28	0:0	5	p_apdu
+arg	7:36	7:43	4	i_size
+water	7:36	0:0	5	i_size
+switch	8:4	28:4	2	(i_tag)
+cond	8:13	8:13	3	i_tag
+water	8:13	0:0	4	i_tag
+stmts	9:4	28:4	3	
+water	9:4	0:0	4	{
+label	10:4	10:26	4	case AOT_DATE_TIME_ENQ :
+water	11:4	0:0	4	{
+decl	12:8	12:13	4	int	l
+decl	13:8	13:54	4	const uint8_t	*d
+op	13:25	0:0	4	=
+call	13:27	13:53	5	APDUGetLength
+arg	13:42	13:48	6	p_apdu
+water	13:42	0:0	7	p_apdu
+arg	13:50	13:53	6	&l
+op	13:50	0:0	7	&
+water	13:51	0:0	7	l
+if	14:8	19:8	4	(l > 0)
+cond	14:13	14:17	5	l > 0
+water	14:13	0:0	6	l
+op	14:15	0:0	6	>
+water	14:17	0:0	6	0
+stmts	15:8	19:8	5	
+water	15:8	0:0	6	{
+water	16:12	0:0	6	p_date
+op	16:18	0:0	6	->
+water	16:20	0:0	6	i_interval
+op	16:31	0:0	6	=
+op	16:33	0:0	6	*
+water	16:34	0:0	6	d
+water	16:35	0:0	6	;
+call	17:12	18:40	6	msg_Dbg
+arg	17:21	17:31	7	p_cam->obj
+water	17:21	0:0	8	p_cam
+op	17:26	0:0	8	->
+water	17:28	0:0	8	obj
+arg	17:33	17:70	7	"DateTimeHandle : interval set to %d"
+water	17:33	0:0	8	"DateTimeHandle : interval set to %d"
+arg	18:21	18:40	7	p_date->i_interval
+water	18:21	0:0	8	p_date
+op	18:27	0:0	8	->
+water	18:29	0:0	8	i_interval
+water	18:41	0:0	6	;
+water	19:8	0:0	6	}
+else	20:8	21:34	4
+stmts	21:12	21:34	5	
+water	21:12	0:0	6	p_date
+op	21:18	0:0	6	->
+water	21:20	0:0	6	i_interval
+op	21:31	0:0	6	=
+water	21:33	0:0	6	0
+water	21:34	0:0	6	;
+call	22:8	22:42	4	DateTimeSend
+arg	22:22	22:27	5	p_cam
+water	22:22	0:0	6	p_cam
+arg	22:29	22:42	5	i_session_id
+water	22:29	0:0	6	i_session_id
+water	22:43	0:0	4	;
+break	23:8	23:13	4	
+water	24:4	0:0	4	}
+label	25:4	25:11	4	default :
+call	26:8	27:23	4	msg_Err
+arg	26:17	26:27	5	p_cam->obj
+water	26:17	0:0	6	p_cam
+op	26:22	0:0	6	->
+water	26:24	0:0	6	obj
+arg	26:29	26:70	5	"unexpected tag in DateTimeHandle (0x%x)"
+water	26:29	0:0	6	"unexpected tag in DateTimeHandle (0x%x)"
+arg	27:17	27:23	5	i_tag
+water	27:17	0:0	6	i_tag
+water	27:24	0:0	4	;
+water	28:4	0:0	4	}

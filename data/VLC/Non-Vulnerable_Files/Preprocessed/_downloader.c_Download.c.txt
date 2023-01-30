@@ -1,0 +1,712 @@
+func	2:0	127:0	0	static int	Download
+params	2:19	0:0	1	
+param	2:21	2:32	2	stream_t *	s
+param	2:34	2:52	2	sms_stream_t *	sms
+stmnts	0:0	126:22	1	
+decl	4:4	4:34	2	stream_sys_t	*p_sys
+op	4:24	0:0	2	=
+water	4:26	0:0	2	s
+op	4:27	0:0	2	->
+water	4:29	0:0	2	p_sys
+decl	5:4	5:44	2	int	index
+op	5:14	0:0	2	=
+call	5:16	5:43	3	es_cat_to_index
+arg	5:33	5:43	4	sms->type
+water	5:33	0:0	5	sms
+op	5:36	0:0	5	->
+water	5:38	0:0	5	type
+if	6:4	10:4	2	(unlikely (index == - 1 ))
+cond	6:9	6:31	3	unlikely (index == - 1 )
+call	6:9	6:31	4	unlikely
+arg	6:19	6:31	5	index==-1
+water	6:19	0:0	6	index
+op	6:25	0:0	6	==
+op	6:28	0:0	6	-
+water	6:29	0:0	6	1
+stmts	7:4	10:4	3	
+water	7:4	0:0	4	{
+call	8:8	8:42	4	msg_Err
+arg	8:17	8:18	5	s
+water	8:17	0:0	6	s
+arg	8:20	8:42	5	"invalid stream type"
+water	8:20	0:0	6	"invalid stream type"
+water	8:43	0:0	4	;
+return	9:8	9:27	4	VLC_EGENERIC
+water	9:15	0:0	5	VLC_EGENERIC
+water	10:4	0:0	4	}
+decl	11:4	11:52	2	int64_t	start_time
+op	11:23	0:0	2	=
+water	11:25	0:0	2	p_sys
+op	11:30	0:0	2	->
+water	11:32	0:0	2	download
+op	11:40	0:0	2	.
+water	11:41	0:0	2	lead
+op	11:45	0:0	2	[
+water	11:46	0:0	2	index
+op	11:51	0:0	2	]
+decl	12:4	12:67	2	quality_level_t	*qlevel
+op	12:28	0:0	2	=
+call	12:30	12:66	3	get_qlevel
+arg	12:42	12:45	4	sms
+water	12:42	0:0	5	sms
+arg	12:47	12:66	4	sms->download_qlvl
+water	12:47	0:0	5	sms
+op	12:50	0:0	5	->
+water	12:52	0:0	5	download_qlvl
+if	13:4	17:4	2	(unlikely (! qlevel ))
+cond	13:8	13:26	3	unlikely (! qlevel )
+call	13:8	13:26	4	unlikely
+arg	13:18	13:26	5	!qlevel
+op	13:18	0:0	6	!
+water	13:19	0:0	6	qlevel
+stmts	14:4	17:4	3	
+water	14:4	0:0	4	{
+call	15:8	15:76	4	msg_Err
+arg	15:17	15:18	5	s
+water	15:17	0:0	6	s
+arg	15:20	15:55	5	"Could not get quality level id %u"
+water	15:20	0:0	6	"Could not get quality level id %u"
+arg	15:57	15:76	5	sms->download_qlvl
+water	15:57	0:0	6	sms
+op	15:60	0:0	6	->
+water	15:62	0:0	6	download_qlvl
+water	15:77	0:0	4	;
+return	16:8	16:27	4	VLC_EGENERIC
+water	16:15	0:0	5	VLC_EGENERIC
+water	17:4	0:0	4	}
+decl	18:4	18:49	2	chunk_t	*chunk
+op	18:19	0:0	2	=
+call	18:21	18:48	3	chunk_Get
+arg	18:32	18:35	4	sms
+water	18:32	0:0	5	sms
+arg	18:37	18:48	4	start_time
+water	18:37	0:0	5	start_time
+if	19:4	24:4	2	(! chunk)
+cond	19:8	19:9	3	! chunk
+op	19:8	0:0	4	!
+water	19:9	0:0	4	chunk
+stmts	20:4	24:4	3	
+water	20:4	0:0	4	{
+call	21:8	22:64	4	msg_Warn
+arg	21:18	21:19	5	s
+water	21:18	0:0	6	s
+arg	21:21	22:40	5	"Could not find a chunk for stream %s, ""start time = %"PRIu64""
+water	21:21	0:0	6	"Could not find a chunk for stream %s, "
+water	22:16	0:0	6	"start time = %"
+water	22:32	0:0	6	PRIu64
+water	22:38	0:0	6	""
+arg	22:42	22:51	5	sms->name
+water	22:42	0:0	6	sms
+op	22:45	0:0	6	->
+water	22:47	0:0	6	name
+arg	22:53	22:64	5	start_time
+water	22:53	0:0	6	start_time
+water	22:65	0:0	4	;
+return	23:8	23:27	4	VLC_EGENERIC
+water	23:15	0:0	5	VLC_EGENERIC
+water	24:4	0:0	4	}
+if	25:4	30:4	2	(chunk -> data != NULL)
+cond	25:8	25:23	3	chunk -> data != NULL
+water	25:8	0:0	4	chunk
+op	25:13	0:0	4	->
+water	25:15	0:0	4	data
+op	25:20	0:0	4	!=
+water	25:23	0:0	4	NULL
+stmts	26:4	30:4	3	
+water	26:4	0:0	4	{
+call	28:8	28:50	4	msg_Warn
+arg	28:18	28:19	5	s
+water	28:18	0:0	6	s
+arg	28:21	28:50	5	"Segment already downloaded"
+water	28:21	0:0	6	"Segment already downloaded"
+water	28:51	0:0	4	;
+return	29:8	29:26	4	VLC_SUCCESS
+water	29:15	0:0	5	VLC_SUCCESS
+water	30:4	0:0	4	}
+water	31:4	0:0	2	chunk
+op	31:9	0:0	2	->
+water	31:11	0:0	2	type
+op	31:16	0:0	2	=
+water	31:18	0:0	2	sms
+op	31:21	0:0	2	->
+water	31:23	0:0	2	type
+water	31:27	0:0	2	;
+decl	32:4	33:70	2	char	*url
+op	32:14	0:0	2	=
+call	32:16	33:69	3	ConstructUrl
+arg	32:30	32:47	4	sms->url_template
+water	32:30	0:0	5	sms
+op	32:33	0:0	5	->
+water	32:35	0:0	5	url_template
+arg	32:49	32:64	4	p_sys->base_url
+water	32:49	0:0	5	p_sys
+op	32:54	0:0	5	->
+water	32:56	0:0	5	base_url
+arg	33:34	33:49	4	qlevel->Bitrate
+water	33:34	0:0	5	qlevel
+op	33:40	0:0	5	->
+water	33:42	0:0	5	Bitrate
+arg	33:51	33:69	4	chunk->start_time
+water	33:51	0:0	5	chunk
+op	33:56	0:0	5	->
+water	33:58	0:0	5	start_time
+if	34:4	38:4	2	(! url)
+cond	34:8	34:9	3	! url
+op	34:8	0:0	4	!
+water	34:9	0:0	4	url
+stmts	35:4	38:4	3	
+water	35:4	0:0	4	{
+call	36:8	36:49	4	msg_Err
+arg	36:17	36:18	5	s
+water	36:17	0:0	6	s
+arg	36:20	36:49	5	"ConstructUrl returned NULL"
+water	36:20	0:0	6	"ConstructUrl returned NULL"
+water	36:50	0:0	4	;
+return	37:8	37:27	4	VLC_EGENERIC
+water	37:15	0:0	5	VLC_EGENERIC
+water	38:4	0:0	4	}
+decl	40:4	40:49	2	uint64_t	avg_bw
+op	40:20	0:0	2	=
+call	40:22	40:48	3	sms_queue_avg
+arg	40:37	40:48	4	p_sys->bws
+water	40:37	0:0	5	p_sys
+op	40:42	0:0	5	->
+water	40:44	0:0	5	bws
+if	41:4	53:4	2	(( avg_bw > 0 ) && ( qlevel -> Bitrate > 0 ))
+cond	41:8	41:44	3	( avg_bw > 0 ) && ( qlevel -> Bitrate > 0 )
+water	41:8	0:0	4	(
+water	41:9	0:0	4	avg_bw
+op	41:16	0:0	4	>
+water	41:18	0:0	4	0
+water	41:19	0:0	4	)
+op	41:21	0:0	4	&&
+water	41:24	0:0	4	(
+water	41:25	0:0	4	qlevel
+op	41:31	0:0	4	->
+water	41:33	0:0	4	Bitrate
+op	41:41	0:0	4	>
+water	41:43	0:0	4	0
+water	41:44	0:0	4	)
+stmts	42:4	53:4	3	
+water	42:4	0:0	4	{
+water	44:8	0:0	4	unsigned
+water	44:17	0:0	4	chunk_duration
+op	44:32	0:0	4	=
+water	44:34	0:0	4	chunk
+op	44:39	0:0	4	->
+water	44:41	0:0	4	duration
+op	44:50	0:0	4	*
+water	44:52	0:0	4	1000
+op	44:57	0:0	4	/
+water	44:59	0:0	4	sms
+op	44:62	0:0	4	->
+water	44:64	0:0	4	timescale
+water	44:73	0:0	4	;
+decl	45:8	45:63	4	uint64_t	size
+op	45:22	0:0	4	=
+water	45:24	0:0	4	chunk_duration
+op	45:39	0:0	4	*
+water	45:41	0:0	4	qlevel
+op	45:47	0:0	4	->
+water	45:49	0:0	4	Bitrate
+op	45:57	0:0	4	/
+water	45:59	0:0	4	1000
+water	46:8	0:0	4	unsigned
+water	46:17	0:0	4	estimated
+op	46:27	0:0	4	=
+water	46:29	0:0	4	size
+op	46:34	0:0	4	*
+water	46:36	0:0	4	1000
+op	46:41	0:0	4	/
+water	46:43	0:0	4	avg_bw
+water	46:49	0:0	4	;
+if	47:8	52:8	4	(estimated > chunk_duration)
+cond	47:12	47:24	5	estimated > chunk_duration
+water	47:12	0:0	6	estimated
+op	47:22	0:0	6	>
+water	47:24	0:0	6	chunk_duration
+stmts	48:8	52:8	5	
+water	48:8	0:0	6	{
+call	49:12	51:67	6	msg_Warn
+arg	49:22	49:23	7	s
+water	49:22	0:0	8	s
+arg	49:24	50:63	7	"downloading of chunk %d would take %d ms, ""which is longer than its playback (%d ms)"
+water	49:24	0:0	8	"downloading of chunk %d would take %d ms, "
+water	50:20	0:0	8	"which is longer than its playback (%d ms)"
+arg	51:24	51:39	7	chunk->sequence
+water	51:24	0:0	8	chunk
+op	51:29	0:0	8	->
+water	51:31	0:0	8	sequence
+arg	51:41	51:50	7	estimated
+water	51:41	0:0	8	estimated
+arg	51:52	51:67	7	chunk_duration
+water	51:52	0:0	8	chunk_duration
+water	51:68	0:0	6	;
+water	52:8	0:0	6	}
+water	53:4	0:0	4	}
+decl	54:4	54:27	2	mtime_t	start
+op	54:18	0:0	2	=
+call	54:20	54:26	3	mdate
+if	55:4	60:4	2	(sms_Download (s ,chunk ,url ) != VLC_SUCCESS)
+cond	55:8	55:41	3	sms_Download (s ,chunk ,url ) != VLC_SUCCESS
+call	55:8	55:36	4	sms_Download
+arg	55:22	55:23	5	s
+water	55:22	0:0	6	s
+arg	55:25	55:30	5	chunk
+water	55:25	0:0	6	chunk
+arg	55:32	55:36	5	url
+water	55:32	0:0	6	url
+op	55:38	0:0	4	!=
+water	55:41	0:0	4	VLC_SUCCESS
+stmts	56:4	60:4	3	
+water	56:4	0:0	4	{
+call	57:8	58:68	4	msg_Err
+arg	57:17	57:18	5	s
+water	57:17	0:0	6	s
+arg	57:20	58:22	5	"downloaded chunk %u from stream %s at quality\_n            %u failed"
+water	57:20	0:0	6	"downloaded chunk %u from stream %s at quality\_n            %u failed"
+arg	58:24	58:39	5	chunk->sequence
+water	58:24	0:0	6	chunk
+op	58:29	0:0	6	->
+water	58:31	0:0	6	sequence
+arg	58:41	58:50	5	sms->name
+water	58:41	0:0	6	sms
+op	58:44	0:0	6	->
+water	58:46	0:0	6	name
+arg	58:52	58:68	5	qlevel->Bitrate
+water	58:52	0:0	6	qlevel
+op	58:58	0:0	6	->
+water	58:60	0:0	6	Bitrate
+water	58:69	0:0	4	;
+return	59:8	59:27	4	VLC_EGENERIC
+water	59:15	0:0	5	VLC_EGENERIC
+water	60:4	0:0	4	}
+decl	61:4	61:38	2	mtime_t	duration
+op	61:21	0:0	2	=
+call	61:23	61:29	3	mdate
+op	61:31	0:0	2	-
+water	61:33	0:0	2	start
+water	62:4	0:0	2	unsigned
+water	62:13	0:0	2	real_id
+op	62:21	0:0	2	=
+call	62:23	62:52	2	set_track_id
+arg	62:37	62:42	3	chunk
+water	62:37	0:0	4	chunk
+arg	62:44	62:52	3	sms->id
+water	62:44	0:0	4	sms
+op	62:47	0:0	4	->
+water	62:49	0:0	4	id
+water	62:53	0:0	2	;
+if	63:4	67:4	2	(real_id == 0)
+cond	63:8	63:19	3	real_id == 0
+water	63:8	0:0	4	real_id
+op	63:16	0:0	4	==
+water	63:19	0:0	4	0
+stmts	64:4	67:4	3	
+water	64:4	0:0	4	{
+call	65:8	65:58	4	msg_Err
+arg	65:17	65:18	5	s
+water	65:17	0:0	6	s
+arg	65:20	65:58	5	"tfhd box not found or invalid chunk"
+water	65:20	0:0	6	"tfhd box not found or invalid chunk"
+water	65:59	0:0	4	;
+return	66:8	66:27	4	VLC_EGENERIC
+water	66:15	0:0	5	VLC_EGENERIC
+water	67:4	0:0	4	}
+if	69:4	70:34	2	(p_sys -> b_live)
+cond	69:8	69:15	3	p_sys -> b_live
+water	69:8	0:0	4	p_sys
+op	69:13	0:0	4	->
+water	69:15	0:0	4	b_live
+stmts	70:8	70:34	3	
+call	70:8	70:33	4	get_new_chunks
+arg	70:24	70:25	5	s
+water	70:24	0:0	6	s
+arg	70:27	70:33	5	chunk
+water	70:27	0:0	6	chunk
+water	70:34	0:0	4	;
+call	71:4	71:47	2	vlc_mutex_lock
+arg	71:20	71:47	3	&p_sys->download.lock_wait
+op	71:20	0:0	4	&
+water	71:21	0:0	4	p_sys
+op	71:26	0:0	4	->
+water	71:28	0:0	4	download
+op	71:36	0:0	4	.
+water	71:37	0:0	4	lock_wait
+water	71:48	0:0	2	;
+call	72:4	72:52	2	vlc_array_append
+arg	72:22	72:44	3	p_sys->download.chunks
+water	72:22	0:0	4	p_sys
+op	72:27	0:0	4	->
+water	72:29	0:0	4	download
+op	72:37	0:0	4	.
+water	72:38	0:0	4	chunks
+arg	72:46	72:52	3	chunk
+water	72:46	0:0	4	chunk
+water	72:53	0:0	2	;
+call	73:4	73:43	2	vlc_cond_signal
+arg	73:21	73:43	3	&p_sys->download.wait
+op	73:21	0:0	4	&
+water	73:22	0:0	4	p_sys
+op	73:27	0:0	4	->
+water	73:29	0:0	4	download
+op	73:37	0:0	4	.
+water	73:38	0:0	4	wait
+water	73:44	0:0	2	;
+call	74:4	74:49	2	vlc_mutex_unlock
+arg	74:22	74:49	3	&p_sys->download.lock_wait
+op	74:22	0:0	4	&
+water	74:23	0:0	4	p_sys
+op	74:28	0:0	4	->
+water	74:30	0:0	4	download
+op	74:38	0:0	4	.
+water	74:39	0:0	4	lock_wait
+water	74:50	0:0	2	;
+call	75:4	76:60	2	msg_Info
+arg	75:14	75:15	3	s
+water	75:14	0:0	4	s
+arg	75:17	75:67	3	"downloaded chunk %d from stream %s at quality %u"
+water	75:17	0:0	4	"downloaded chunk %d from stream %s at quality %u"
+arg	76:16	76:31	3	chunk->sequence
+water	76:16	0:0	4	chunk
+op	76:21	0:0	4	->
+water	76:23	0:0	4	sequence
+arg	76:33	76:42	3	sms->name
+water	76:33	0:0	4	sms
+op	76:36	0:0	4	->
+water	76:38	0:0	4	name
+arg	76:44	76:60	3	qlevel->Bitrate
+water	76:44	0:0	4	qlevel
+op	76:50	0:0	4	->
+water	76:52	0:0	4	Bitrate
+water	76:61	0:0	2	;
+decl	77:4	77:62	2	uint64_t	actual_lead
+op	77:25	0:0	2	=
+water	77:27	0:0	2	chunk
+op	77:32	0:0	2	->
+water	77:34	0:0	2	start_time
+op	77:45	0:0	2	+
+water	77:47	0:0	2	chunk
+op	77:52	0:0	2	->
+water	77:54	0:0	2	duration
+decl	78:4	78:42	2	int	ind
+op	78:12	0:0	2	=
+call	78:14	78:41	3	es_cat_to_index
+arg	78:31	78:41	4	sms->type
+water	78:31	0:0	5	sms
+op	78:34	0:0	5	->
+water	78:36	0:0	5	type
+water	79:4	0:0	2	p_sys
+op	79:9	0:0	2	->
+water	79:11	0:0	2	download
+op	79:19	0:0	2	.
+water	79:20	0:0	2	ck_index
+op	79:28	0:0	2	[
+water	79:29	0:0	2	ind
+op	79:32	0:0	2	]
+op	79:34	0:0	2	=
+water	79:36	0:0	2	chunk
+op	79:41	0:0	2	->
+water	79:43	0:0	2	sequence
+water	79:51	0:0	2	;
+water	80:4	0:0	2	p_sys
+op	80:9	0:0	2	->
+water	80:11	0:0	2	download
+op	80:19	0:0	2	.
+water	80:20	0:0	2	lead
+op	80:24	0:0	2	[
+water	80:25	0:0	2	ind
+op	80:28	0:0	2	]
+op	80:30	0:0	2	=
+call	80:32	80:78	2	__MIN
+arg	80:39	80:64	3	p_sys->download.lead[ind]
+water	80:39	0:0	4	p_sys
+op	80:44	0:0	4	->
+water	80:46	0:0	4	download
+op	80:54	0:0	4	.
+water	80:55	0:0	4	lead
+op	80:59	0:0	4	[
+water	80:60	0:0	4	ind
+op	80:63	0:0	4	]
+arg	80:66	80:78	3	actual_lead
+water	80:66	0:0	4	actual_lead
+water	80:79	0:0	2	;
+if	81:4	86:4	2	(sms -> type == VIDEO_ES || ( !SMS_GET_SELECTED_ST (VIDEO_ES ) && sms -> type == AUDIO_ES ))
+cond	81:8	82:72	3	sms -> type == VIDEO_ES || ( !SMS_GET_SELECTED_ST (VIDEO_ES ) && sms -> type == AUDIO_ES )
+water	81:8	0:0	4	sms
+op	81:11	0:0	4	->
+water	81:13	0:0	4	type
+op	81:18	0:0	4	==
+water	81:21	0:0	4	VIDEO_ES
+op	81:30	0:0	4	||
+water	82:12	0:0	4	(
+op	82:14	0:0	4	!
+call	82:15	82:45	4	SMS_GET_SELECTED_ST
+arg	82:36	82:45	5	VIDEO_ES
+water	82:36	0:0	6	VIDEO_ES
+op	82:47	0:0	4	&&
+water	82:50	0:0	4	sms
+op	82:53	0:0	4	->
+water	82:55	0:0	4	type
+op	82:60	0:0	4	==
+water	82:63	0:0	4	AUDIO_ES
+water	82:72	0:0	4	)
+stmts	83:4	86:4	3	
+water	83:4	0:0	4	{
+water	84:8	0:0	4	p_sys
+op	84:13	0:0	4	->
+water	84:15	0:0	4	playback
+op	84:23	0:0	4	.
+water	84:24	0:0	4	toffset
+op	84:32	0:0	4	=
+call	84:34	85:72	4	__MIN
+arg	84:41	84:64	5	p_sys->playback.toffset
+water	84:41	0:0	6	p_sys
+op	84:46	0:0	6	->
+water	84:48	0:0	6	playback
+op	84:56	0:0	6	.
+water	84:57	0:0	6	toffset
+arg	85:44	85:72	5	(uint64_t)chunk->start_time
+water	85:44	0:0	6	(
+water	85:45	0:0	6	uint64_t
+water	85:53	0:0	6	)
+water	85:54	0:0	6	chunk
+op	85:59	0:0	6	->
+water	85:61	0:0	6	start_time
+water	85:73	0:0	4	;
+water	86:4	0:0	4	}
+water	87:4	0:0	2	unsigned
+water	87:13	0:0	2	dur_ms
+op	87:20	0:0	2	=
+call	87:22	87:48	2	__MAX
+arg	87:29	87:30	3	1
+water	87:29	0:0	4	1
+arg	87:32	87:48	3	duration/1000
+water	87:32	0:0	4	duration
+op	87:41	0:0	4	/
+water	87:43	0:0	4	1000
+water	87:49	0:0	2	;
+decl	88:4	88:49	2	uint64_t	bw
+op	88:16	0:0	2	=
+water	88:18	0:0	2	chunk
+op	88:23	0:0	2	->
+water	88:25	0:0	2	size
+op	88:30	0:0	2	*
+water	88:32	0:0	2	8
+op	88:34	0:0	2	*
+water	88:36	0:0	2	1000
+op	88:41	0:0	2	/
+water	88:43	0:0	2	dur_ms
+if	89:4	90:27	2	(sms_queue_put (p_sys -> bws ,bw ) != VLC_SUCCESS)
+cond	89:8	89:43	3	sms_queue_put (p_sys -> bws ,bw ) != VLC_SUCCESS
+call	89:8	89:38	4	sms_queue_put
+arg	89:23	89:33	5	p_sys->bws
+water	89:23	0:0	6	p_sys
+op	89:28	0:0	6	->
+water	89:30	0:0	6	bws
+arg	89:35	89:38	5	bw
+water	89:35	0:0	6	bw
+op	89:40	0:0	4	!=
+water	89:43	0:0	4	VLC_SUCCESS
+stmts	90:8	90:27	3	
+return	90:8	90:27	4	VLC_EGENERIC
+water	90:15	0:0	5	VLC_EGENERIC
+water	91:4	0:0	2	avg_bw
+op	91:11	0:0	2	=
+call	91:13	91:39	2	sms_queue_avg
+arg	91:28	91:39	3	p_sys->bws
+water	91:28	0:0	4	p_sys
+op	91:33	0:0	4	->
+water	91:35	0:0	4	bws
+water	91:40	0:0	2	;
+if	92:4	93:26	2	(sms -> type != VIDEO_ES)
+cond	92:8	92:21	3	sms -> type != VIDEO_ES
+water	92:8	0:0	4	sms
+op	92:11	0:0	4	->
+water	92:13	0:0	4	type
+op	92:18	0:0	4	!=
+water	92:21	0:0	4	VIDEO_ES
+stmts	93:8	93:26	3	
+return	93:8	93:26	4	VLC_SUCCESS
+water	93:15	0:0	5	VLC_SUCCESS
+if	95:4	96:26	2	(chunk -> sequence <= 1)
+cond	95:8	95:27	3	chunk -> sequence <= 1
+water	95:8	0:0	4	chunk
+op	95:13	0:0	4	->
+water	95:15	0:0	4	sequence
+op	95:24	0:0	4	<=
+water	95:27	0:0	4	1
+stmts	96:8	96:26	3	
+return	96:8	96:26	4	VLC_SUCCESS
+water	96:15	0:0	5	VLC_SUCCESS
+water	97:4	0:0	2	unsigned
+water	97:13	0:0	2	new_qlevel_id
+op	97:27	0:0	2	=
+call	97:29	97:65	2	BandwidthAdaptation
+arg	97:50	97:51	3	s
+water	97:50	0:0	4	s
+arg	97:53	97:56	3	sms
+water	97:53	0:0	4	sms
+arg	97:58	97:65	3	avg_bw
+water	97:58	0:0	4	avg_bw
+water	97:66	0:0	2	;
+decl	98:4	98:66	2	quality_level_t	*new_qlevel
+op	98:32	0:0	2	=
+call	98:34	98:65	3	get_qlevel
+arg	98:46	98:49	4	sms
+water	98:46	0:0	5	sms
+arg	98:51	98:65	4	new_qlevel_id
+water	98:51	0:0	5	new_qlevel_id
+if	99:4	103:4	2	(unlikely (! new_qlevel ))
+cond	99:8	99:30	3	unlikely (! new_qlevel )
+call	99:8	99:30	4	unlikely
+arg	99:18	99:30	5	!new_qlevel
+op	99:18	0:0	6	!
+water	99:19	0:0	6	new_qlevel
+stmts	100:4	103:4	3	
+water	100:4	0:0	4	{
+call	101:8	101:71	4	msg_Err
+arg	101:17	101:18	5	s
+water	101:17	0:0	6	s
+arg	101:20	101:55	5	"Could not get quality level id %u"
+water	101:20	0:0	6	"Could not get quality level id %u"
+arg	101:57	101:71	5	new_qlevel_id
+water	101:57	0:0	6	new_qlevel_id
+water	101:72	0:0	4	;
+return	102:8	102:27	4	VLC_EGENERIC
+water	102:15	0:0	5	VLC_EGENERIC
+water	103:4	0:0	4	}
+if	104:4	110:4	2	(new_qlevel -> Bitrate != qlevel -> Bitrate)
+cond	104:8	104:39	3	new_qlevel -> Bitrate != qlevel -> Bitrate
+water	104:8	0:0	4	new_qlevel
+op	104:18	0:0	4	->
+water	104:20	0:0	4	Bitrate
+op	104:28	0:0	4	!=
+water	104:31	0:0	4	qlevel
+op	104:37	0:0	4	->
+water	104:39	0:0	4	Bitrate
+stmts	105:4	110:4	3	
+water	105:4	0:0	4	{
+call	106:8	108:37	4	msg_Warn
+arg	106:18	106:19	5	s
+water	106:18	0:0	6	s
+arg	106:21	106:56	5	"detected %s bandwidth (%u) stream"
+water	106:21	0:0	6	"detected %s bandwidth (%u) stream"
+arg	107:17	107:78	5	(new_qlevel->Bitrate>=qlevel->Bitrate)?"faster":"lower"
+water	107:17	0:0	6	(
+water	107:18	0:0	6	new_qlevel
+op	107:28	0:0	6	->
+water	107:30	0:0	6	Bitrate
+op	107:38	0:0	6	>=
+water	107:41	0:0	6	qlevel
+op	107:47	0:0	6	->
+water	107:49	0:0	6	Bitrate
+water	107:56	0:0	6	)
+water	107:58	0:0	6	?
+water	107:60	0:0	6	"faster"
+water	107:69	0:0	6	:
+water	107:71	0:0	6	"lower"
+arg	108:17	108:37	5	new_qlevel->Bitrate
+water	108:17	0:0	6	new_qlevel
+op	108:27	0:0	6	->
+water	108:29	0:0	6	Bitrate
+water	108:38	0:0	4	;
+water	109:8	0:0	4	sms
+op	109:11	0:0	4	->
+water	109:13	0:0	4	download_qlvl
+op	109:27	0:0	4	=
+water	109:29	0:0	4	new_qlevel_id
+water	109:42	0:0	4	;
+water	110:4	0:0	4	}
+if	111:4	125:4	2	(new_qlevel -> MaxWidth != qlevel -> MaxWidth || new_qlevel -> MaxHeight != qlevel -> MaxHeight)
+cond	111:8	112:41	3	new_qlevel -> MaxWidth != qlevel -> MaxWidth || new_qlevel -> MaxHeight != qlevel -> MaxHeight
+water	111:8	0:0	4	new_qlevel
+op	111:18	0:0	4	->
+water	111:20	0:0	4	MaxWidth
+op	111:29	0:0	4	!=
+water	111:32	0:0	4	qlevel
+op	111:38	0:0	4	->
+water	111:40	0:0	4	MaxWidth
+op	111:49	0:0	4	||
+water	112:8	0:0	4	new_qlevel
+op	112:18	0:0	4	->
+water	112:20	0:0	4	MaxHeight
+op	112:30	0:0	4	!=
+water	112:33	0:0	4	qlevel
+op	112:39	0:0	4	->
+water	112:41	0:0	4	MaxHeight
+stmts	113:4	125:4	3	
+water	113:4	0:0	4	{
+decl	114:8	114:52	4	chunk_t	*new_init_ck
+op	114:29	0:0	4	=
+call	114:31	114:51	5	build_init_chunk
+arg	114:49	114:51	6	s
+water	114:49	0:0	7	s
+if	115:8	118:8	4	(! new_init_ck)
+cond	115:12	115:13	5	! new_init_ck
+op	115:12	0:0	6	!
+water	115:13	0:0	6	new_init_ck
+stmts	116:8	118:8	5	
+water	116:8	0:0	6	{
+return	117:12	117:31	6	VLC_EGENERIC
+water	117:19	0:0	7	VLC_EGENERIC
+water	118:8	0:0	6	}
+water	119:8	0:0	4	new_init_ck
+op	119:19	0:0	4	->
+water	119:21	0:0	4	offset
+op	119:28	0:0	4	=
+water	119:30	0:0	4	p_sys
+op	119:35	0:0	4	->
+water	119:37	0:0	4	download
+op	119:45	0:0	4	.
+water	119:46	0:0	4	next_chunk_offset
+water	119:63	0:0	4	;
+water	120:8	0:0	4	p_sys
+op	120:13	0:0	4	->
+water	120:15	0:0	4	download
+op	120:23	0:0	4	.
+water	120:24	0:0	4	next_chunk_offset
+op	120:42	0:0	4	+=
+water	120:45	0:0	4	new_init_ck
+op	120:56	0:0	4	->
+water	120:58	0:0	4	size
+water	120:62	0:0	4	;
+call	121:8	121:51	4	vlc_mutex_lock
+arg	121:24	121:51	5	&p_sys->download.lock_wait
+op	121:24	0:0	6	&
+water	121:25	0:0	6	p_sys
+op	121:30	0:0	6	->
+water	121:32	0:0	6	download
+op	121:40	0:0	6	.
+water	121:41	0:0	6	lock_wait
+water	121:52	0:0	4	;
+call	122:8	122:62	4	vlc_array_append
+arg	122:26	122:48	5	p_sys->download.chunks
+water	122:26	0:0	6	p_sys
+op	122:31	0:0	6	->
+water	122:33	0:0	6	download
+op	122:41	0:0	6	.
+water	122:42	0:0	6	chunks
+arg	122:50	122:62	5	new_init_ck
+water	122:50	0:0	6	new_init_ck
+water	122:63	0:0	4	;
+call	123:8	123:58	4	vlc_array_append
+arg	123:26	123:44	5	p_sys->init_chunks
+water	123:26	0:0	6	p_sys
+op	123:31	0:0	6	->
+water	123:33	0:0	6	init_chunks
+arg	123:46	123:58	5	new_init_ck
+water	123:46	0:0	6	new_init_ck
+water	123:59	0:0	4	;
+call	124:8	124:53	4	vlc_mutex_unlock
+arg	124:26	124:53	5	&p_sys->download.lock_wait
+op	124:26	0:0	6	&
+water	124:27	0:0	6	p_sys
+op	124:32	0:0	6	->
+water	124:34	0:0	6	download
+op	124:42	0:0	6	.
+water	124:43	0:0	6	lock_wait
+water	124:54	0:0	4	;
+water	125:4	0:0	4	}
+return	126:4	126:22	2	VLC_SUCCESS
+water	126:11	0:0	3	VLC_SUCCESS

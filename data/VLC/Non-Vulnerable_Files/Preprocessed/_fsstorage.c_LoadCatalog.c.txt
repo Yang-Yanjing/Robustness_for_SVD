@@ -1,0 +1,754 @@
+func	2:0	169:0	0	static int	LoadCatalog
+params	2:22	0:0	1	
+param	2:24	2:50	2	addons_finder_t *	p_finder
+stmnts	0:0	168:15	1	
+decl	4:4	4:18	2	char	*psz_path
+decl	5:4	5:58	2	char	*psz_userdir
+op	5:23	0:0	2	=
+call	5:25	5:57	3	config_GetUserDir
+arg	5:44	5:57	4	VLC_DATA_DIR
+water	5:44	0:0	5	VLC_DATA_DIR
+if	6:4	6:41	2	(! psz_userdir)
+cond	6:9	6:10	3	! psz_userdir
+op	6:9	0:0	4	!
+water	6:10	0:0	4	psz_userdir
+stmts	6:24	6:41	3	
+return	6:24	6:41	4	VLC_ENOMEM
+water	6:31	0:0	5	VLC_ENOMEM
+if	7:4	11:4	2	(asprintf (& psz_path ,"%s%s" ,psz_userdir ,ADDONS_CATALOG ) < 1)
+cond	7:9	7:70	3	asprintf (& psz_path ,"%s%s" ,psz_userdir ,ADDONS_CATALOG ) < 1
+call	7:9	7:66	4	asprintf
+arg	7:19	7:28	5	&psz_path
+op	7:19	0:0	6	&
+water	7:20	0:0	6	psz_path
+arg	7:30	7:36	5	"%s%s"
+water	7:30	0:0	6	"%s%s"
+arg	7:38	7:49	5	psz_userdir
+water	7:38	0:0	6	psz_userdir
+arg	7:51	7:66	5	ADDONS_CATALOG
+water	7:51	0:0	6	ADDONS_CATALOG
+op	7:68	0:0	4	<
+water	7:70	0:0	4	1
+stmts	8:4	11:4	3	
+water	8:4	0:0	4	{
+call	9:8	9:26	4	free
+arg	9:14	9:26	5	psz_userdir
+water	9:14	0:0	6	psz_userdir
+water	9:27	0:0	4	;
+return	10:8	10:25	4	VLC_ENOMEM
+water	10:15	0:0	5	VLC_ENOMEM
+water	11:4	0:0	4	}
+call	12:4	12:22	2	free
+arg	12:10	12:22	3	psz_userdir
+water	12:10	0:0	4	psz_userdir
+water	12:23	0:0	2	;
+decl	13:4	13:33	2	addon_entry_t	*p_entry
+op	13:27	0:0	2	=
+water	13:29	0:0	2	NULL
+decl	14:4	14:22	2	const char	*p_node
+decl	15:4	15:27	2	int	i_current_node_type
+decl	16:4	16:27	2	int	i_ret
+op	16:14	0:0	2	=
+water	16:16	0:0	2	VLC_SUCCESS
+decl	18:4	18:28	2	const char	*attr
+water	18:20	0:0	2	,
+decl	18:4	18:28	2	const char	*value
+decl	20:4	20:29	2	char	*psz_filename
+op	20:23	0:0	2	=
+water	20:25	0:0	2	NULL
+decl	21:4	21:23	2	int	i_filetype
+op	21:19	0:0	2	=
+op	21:21	0:0	2	-
+water	21:22	0:0	2	1
+decl	22:4	22:21	2	struct stat	stat_
+if	23:4	27:4	2	(vlc_stat (psz_path ,& stat_ ))
+cond	23:9	23:36	3	vlc_stat (psz_path ,& stat_ )
+call	23:9	23:36	4	vlc_stat
+arg	23:19	23:27	5	psz_path
+water	23:19	0:0	6	psz_path
+arg	23:29	23:36	5	&stat_
+op	23:29	0:0	6	&
+water	23:30	0:0	6	stat_
+stmts	24:4	27:4	3	
+water	24:4	0:0	4	{
+call	25:8	25:23	4	free
+arg	25:14	25:23	5	psz_path
+water	25:14	0:0	6	psz_path
+water	25:24	0:0	4	;
+return	26:8	26:27	4	VLC_EGENERIC
+water	26:15	0:0	5	VLC_EGENERIC
+water	27:4	0:0	4	}
+decl	28:4	28:60	2	char	*psz_catalog_uri
+op	28:26	0:0	2	=
+call	28:28	28:59	3	vlc_path2uri
+arg	28:42	28:50	4	psz_path
+water	28:42	0:0	5	psz_path
+arg	28:52	28:59	4	"file"
+water	28:52	0:0	5	"file"
+call	29:4	29:19	2	free
+arg	29:10	29:19	3	psz_path
+water	29:10	0:0	4	psz_path
+water	29:20	0:0	2	;
+if	30:4	31:27	2	(! psz_catalog_uri)
+cond	30:9	30:10	3	! psz_catalog_uri
+op	30:9	0:0	4	!
+water	30:10	0:0	4	psz_catalog_uri
+stmts	31:8	31:27	3	
+return	31:8	31:27	4	VLC_EGENERIC
+water	31:15	0:0	5	VLC_EGENERIC
+decl	32:4	32:67	2	stream_t	*p_stream
+op	32:23	0:0	2	=
+call	32:25	32:66	3	stream_UrlNew
+arg	32:40	32:48	4	p_finder
+water	32:40	0:0	5	p_finder
+arg	32:50	32:66	4	psz_catalog_uri
+water	32:50	0:0	5	psz_catalog_uri
+call	33:4	33:26	2	free
+arg	33:10	33:26	3	psz_catalog_uri
+water	33:10	0:0	4	psz_catalog_uri
+water	33:27	0:0	2	;
+if	34:4	34:40	2	(! p_stream)
+cond	34:8	34:10	3	! p_stream
+op	34:8	0:0	4	!
+water	34:10	0:0	4	p_stream
+stmts	34:21	34:40	3	
+return	34:21	34:40	4	VLC_EGENERIC
+water	34:28	0:0	5	VLC_EGENERIC
+decl	35:4	35:71	2	xml_reader_t	*p_xml_reader
+op	35:31	0:0	2	=
+call	35:33	35:70	3	xml_ReaderCreate
+arg	35:51	35:59	4	p_finder
+water	35:51	0:0	5	p_finder
+arg	35:61	35:70	4	p_stream
+water	35:61	0:0	5	p_stream
+if	36:4	40:4	2	(! p_xml_reader)
+cond	36:8	36:9	3	! p_xml_reader
+op	36:8	0:0	4	!
+water	36:9	0:0	4	p_xml_reader
+stmts	37:4	40:4	3	
+water	37:4	0:0	4	{
+call	38:8	38:32	4	stream_Delete
+arg	38:23	38:32	5	p_stream
+water	38:23	0:0	6	p_stream
+water	38:33	0:0	4	;
+return	39:8	39:27	4	VLC_EGENERIC
+water	39:15	0:0	5	VLC_EGENERIC
+water	40:4	0:0	4	}
+if	41:4	46:4	2	(xml_ReaderNextNode (p_xml_reader ,& p_node ) != XML_READER_STARTELEM)
+cond	41:8	41:55	3	xml_ReaderNextNode (p_xml_reader ,& p_node ) != XML_READER_STARTELEM
+call	41:8	41:50	4	xml_ReaderNextNode
+arg	41:28	41:40	5	p_xml_reader
+water	41:28	0:0	6	p_xml_reader
+arg	41:42	41:50	5	&p_node
+op	41:42	0:0	6	&
+water	41:43	0:0	6	p_node
+op	41:52	0:0	4	!=
+water	41:55	0:0	4	XML_READER_STARTELEM
+stmts	42:4	46:4	3	
+water	42:4	0:0	4	{
+call	43:8	43:45	4	msg_Err
+arg	43:17	43:25	5	p_finder
+water	43:17	0:0	6	p_finder
+arg	43:27	43:45	5	"invalid catalog"
+water	43:27	0:0	6	"invalid catalog"
+water	43:46	0:0	4	;
+water	44:8	0:0	4	i_ret
+op	44:14	0:0	4	=
+water	44:16	0:0	4	VLC_EGENERIC
+water	44:28	0:0	4	;
+goto	45:8	45:16	4	end
+water	45:13	0:0	5	end
+water	46:4	0:0	4	}
+if	47:4	52:4	2	(strcmp (p_node ,"videolan" ))
+cond	47:9	47:35	3	strcmp (p_node ,"videolan" )
+call	47:9	47:35	4	strcmp
+arg	47:17	47:23	5	p_node
+water	47:17	0:0	6	p_node
+arg	47:25	47:35	5	"videolan"
+water	47:25	0:0	6	"videolan"
+stmts	48:4	52:4	3	
+water	48:4	0:0	4	{
+call	49:8	49:61	4	msg_Err
+arg	49:17	49:25	5	p_finder
+water	49:17	0:0	6	p_finder
+arg	49:27	49:61	5	"unsupported catalog data format"
+water	49:27	0:0	6	"unsupported catalog data format"
+water	49:62	0:0	4	;
+water	50:8	0:0	4	i_ret
+op	50:14	0:0	4	=
+water	50:16	0:0	4	VLC_EGENERIC
+water	50:28	0:0	4	;
+goto	51:8	51:16	4	end
+water	51:13	0:0	5	end
+water	52:4	0:0	4	}
+while	53:4	162:4	2	(( i_current_node_type =xml_ReaderNextNode (p_xml_reader ,& p_node ) ) > 0)
+cond	53:11	53:81	3	( i_current_node_type =xml_ReaderNextNode (p_xml_reader ,& p_node ) ) > 0
+water	53:11	0:0	4	(
+water	53:12	0:0	4	i_current_node_type
+op	53:32	0:0	4	=
+call	53:34	53:76	4	xml_ReaderNextNode
+arg	53:54	53:66	5	p_xml_reader
+water	53:54	0:0	6	p_xml_reader
+arg	53:68	53:76	5	&p_node
+op	53:68	0:0	6	&
+water	53:69	0:0	6	p_node
+water	53:77	0:0	4	)
+op	53:79	0:0	4	>
+water	53:81	0:0	4	0
+stmts	54:4	162:4	3	
+water	54:4	0:0	4	{
+switch	55:8	161:8	4	(i_current_node_type)
+cond	55:16	55:16	5	i_current_node_type
+water	55:16	0:0	6	i_current_node_type
+stmts	56:8	161:8	5	
+water	56:8	0:0	6	{
+label	57:8	57:33	6	case XML_READER_STARTELEM :
+water	58:8	0:0	6	{
+if	59:12	101:12	6	(!strcmp (p_node ,"addon" ))
+cond	59:17	59:43	7	!strcmp (p_node ,"addon" )
+op	59:17	0:0	8	!
+call	59:19	59:43	8	strcmp
+arg	59:27	59:33	9	p_node
+water	59:27	0:0	10	p_node
+arg	59:35	59:43	9	"addon"
+water	59:35	0:0	10	"addon"
+stmts	60:12	101:12	7	
+water	60:12	0:0	8	{
+if	61:16	62:50	8	(p_entry)
+cond	61:21	61:21	9	p_entry
+water	61:21	0:0	10	p_entry
+stmts	62:20	62:50	9	
+call	62:20	62:49	10	addon_entry_Release
+arg	62:41	62:49	11	p_entry
+water	62:41	0:0	12	p_entry
+water	62:50	0:0	10	;
+water	63:16	0:0	8	p_entry
+op	63:24	0:0	8	=
+call	63:26	63:42	8	addon_entry_New
+water	63:43	0:0	8	;
+water	65:16	0:0	8	p_entry
+op	65:23	0:0	8	->
+water	65:25	0:0	8	e_flags
+op	65:33	0:0	8	=
+water	65:35	0:0	8	ADDON_MANAGEABLE
+water	65:51	0:0	8	;
+water	66:16	0:0	8	p_entry
+op	66:23	0:0	8	->
+water	66:25	0:0	8	e_state
+op	66:33	0:0	8	=
+water	66:35	0:0	8	ADDON_INSTALLED
+water	66:50	0:0	8	;
+while	67:16	99:16	8	(( attr =xml_ReaderNextAttr (p_xml_reader ,& value ) ))
+cond	67:23	67:73	9	( attr =xml_ReaderNextAttr (p_xml_reader ,& value ) )
+water	67:23	0:0	10	(
+water	67:24	0:0	10	attr
+op	67:29	0:0	10	=
+call	67:31	67:72	10	xml_ReaderNextAttr
+arg	67:51	67:63	11	p_xml_reader
+water	67:51	0:0	12	p_xml_reader
+arg	67:65	67:72	11	&value
+op	67:65	0:0	12	&
+water	67:66	0:0	12	value
+water	67:73	0:0	10	)
+stmts	68:16	99:16	9	
+water	68:16	0:0	10	{
+if	69:20	72:20	10	(!strcmp (attr ,"type" ))
+cond	69:25	69:47	11	!strcmp (attr ,"type" )
+op	69:25	0:0	12	!
+call	69:26	69:47	12	strcmp
+arg	69:34	69:38	13	attr
+water	69:34	0:0	14	attr
+arg	69:40	69:47	13	"type"
+water	69:40	0:0	14	"type"
+stmts	70:20	72:20	11	
+water	70:20	0:0	12	{
+water	71:24	0:0	12	p_entry
+op	71:31	0:0	12	->
+water	71:33	0:0	12	e_type
+op	71:40	0:0	12	=
+call	71:42	71:58	12	ReadType
+arg	71:52	71:58	13	value
+water	71:52	0:0	14	value
+water	71:59	0:0	12	;
+water	72:20	0:0	12	}
+else	73:20	76:20	10
+stmts	73:25	76:20	11	
+if	73:25	76:20	12	(!strcmp (attr ,"id" ))
+cond	73:30	73:50	13	!strcmp (attr ,"id" )
+op	73:30	0:0	14	!
+call	73:31	73:50	14	strcmp
+arg	73:39	73:43	15	attr
+water	73:39	0:0	16	attr
+arg	73:45	73:50	15	"id"
+water	73:45	0:0	16	"id"
+stmts	74:20	76:20	13	
+water	74:20	0:0	14	{
+call	75:24	75:65	14	addons_uuid_read
+arg	75:42	75:47	15	value
+water	75:42	0:0	16	value
+arg	75:49	75:65	15	&p_entry->uuid
+op	75:49	0:0	16	&
+water	75:51	0:0	16	p_entry
+op	75:58	0:0	16	->
+water	75:60	0:0	16	uuid
+water	75:66	0:0	14	;
+water	76:20	0:0	14	}
+else	77:20	82:20	10
+stmts	77:25	82:20	11	
+if	77:25	82:20	12	(!strcmp (attr ,"downloads" ))
+cond	77:30	77:57	13	!strcmp (attr ,"downloads" )
+op	77:30	0:0	14	!
+call	77:31	77:57	14	strcmp
+arg	77:39	77:43	15	attr
+water	77:39	0:0	16	attr
+arg	77:45	77:57	15	"downloads"
+water	77:45	0:0	16	"downloads"
+stmts	78:20	82:20	13	
+water	78:20	0:0	14	{
+water	79:24	0:0	14	p_entry
+op	79:31	0:0	14	->
+water	79:33	0:0	14	i_downloads
+op	79:45	0:0	14	=
+call	79:47	79:59	14	atoi
+arg	79:53	79:59	15	value
+water	79:53	0:0	16	value
+water	79:60	0:0	14	;
+if	80:24	81:52	14	(p_entry -> i_downloads < 0)
+cond	80:29	80:52	15	p_entry -> i_downloads < 0
+water	80:29	0:0	16	p_entry
+op	80:36	0:0	16	->
+water	80:38	0:0	16	i_downloads
+op	80:50	0:0	16	<
+water	80:52	0:0	16	0
+stmts	81:28	81:52	15	
+water	81:28	0:0	16	p_entry
+op	81:35	0:0	16	->
+water	81:37	0:0	16	i_downloads
+op	81:49	0:0	16	=
+water	81:51	0:0	16	0
+water	81:52	0:0	16	;
+water	82:20	0:0	14	}
+else	83:20	90:20	10
+stmts	83:25	90:20	11	
+if	83:25	90:20	12	(!strcmp (attr ,"score" ))
+cond	83:30	83:53	13	!strcmp (attr ,"score" )
+op	83:30	0:0	14	!
+call	83:31	83:53	14	strcmp
+arg	83:39	83:43	15	attr
+water	83:39	0:0	16	attr
+arg	83:45	83:53	15	"score"
+water	83:45	0:0	16	"score"
+stmts	84:20	90:20	13	
+water	84:20	0:0	14	{
+water	85:24	0:0	14	p_entry
+op	85:31	0:0	14	->
+water	85:33	0:0	14	i_score
+op	85:41	0:0	14	=
+call	85:43	85:55	14	atoi
+arg	85:49	85:55	15	value
+water	85:49	0:0	16	value
+water	85:56	0:0	14	;
+if	86:24	87:48	14	(p_entry -> i_score < 0)
+cond	86:29	86:48	15	p_entry -> i_score < 0
+water	86:29	0:0	16	p_entry
+op	86:36	0:0	16	->
+water	86:38	0:0	16	i_score
+op	86:46	0:0	16	<
+water	86:48	0:0	16	0
+stmts	87:28	87:48	15	
+water	87:28	0:0	16	p_entry
+op	87:35	0:0	16	->
+water	87:37	0:0	16	i_score
+op	87:45	0:0	16	=
+water	87:47	0:0	16	0
+water	87:48	0:0	16	;
+else	88:24	89:62	14
+stmts	88:29	89:62	15	
+if	88:29	89:62	16	(p_entry -> i_score > ADDON_MAX_SCORE)
+cond	88:34	88:53	17	p_entry -> i_score > ADDON_MAX_SCORE
+water	88:34	0:0	18	p_entry
+op	88:41	0:0	18	->
+water	88:43	0:0	18	i_score
+op	88:51	0:0	18	>
+water	88:53	0:0	18	ADDON_MAX_SCORE
+stmts	89:28	89:62	17	
+water	89:28	0:0	18	p_entry
+op	89:35	0:0	18	->
+water	89:37	0:0	18	i_score
+op	89:45	0:0	18	=
+water	89:47	0:0	18	ADDON_MAX_SCORE
+water	89:62	0:0	18	;
+water	90:20	0:0	14	}
+else	91:20	94:20	10
+stmts	91:25	94:20	11	
+if	91:25	94:20	12	(!strcmp (attr ,"source" ))
+cond	91:30	91:54	13	!strcmp (attr ,"source" )
+op	91:30	0:0	14	!
+call	91:31	91:54	14	strcmp
+arg	91:39	91:43	15	attr
+water	91:39	0:0	16	attr
+arg	91:45	91:54	15	"source"
+water	91:45	0:0	16	"source"
+stmts	92:20	94:20	13	
+water	92:20	0:0	14	{
+water	93:24	0:0	14	p_entry
+op	93:31	0:0	14	->
+water	93:33	0:0	14	psz_source_module
+op	93:51	0:0	14	=
+call	93:53	93:67	14	strdup
+arg	93:61	93:67	15	value
+water	93:61	0:0	16	value
+water	93:68	0:0	14	;
+water	94:20	0:0	14	}
+else	95:20	98:20	10
+stmts	95:25	98:20	11	
+if	95:25	98:20	12	(!strcmp (attr ,"version" ))
+cond	95:30	95:55	13	!strcmp (attr ,"version" )
+op	95:30	0:0	14	!
+call	95:31	95:55	14	strcmp
+arg	95:39	95:43	15	attr
+water	95:39	0:0	16	attr
+arg	95:45	95:55	15	"version"
+water	95:45	0:0	16	"version"
+stmts	96:20	98:20	13	
+water	96:20	0:0	14	{
+water	97:24	0:0	14	p_entry
+op	97:31	0:0	14	->
+water	97:33	0:0	14	psz_version
+op	97:45	0:0	14	=
+call	97:47	97:61	14	strdup
+arg	97:55	97:61	15	value
+water	97:55	0:0	16	value
+water	97:62	0:0	14	;
+water	98:20	0:0	14	}
+water	99:16	0:0	10	}
+break	100:16	100:21	8	
+water	101:12	0:0	8	}
+if	102:12	102:33	6	(! p_entry)
+cond	102:17	102:18	7	! p_entry
+op	102:17	0:0	8	!
+water	102:18	0:0	8	p_entry
+stmts	102:28	102:33	7	
+break	102:28	102:33	8	
+call	103:12	103:59	6	BINDNODE
+arg	103:21	103:27	7	"name"
+water	103:21	0:0	8	"name"
+arg	103:29	103:46	7	p_entry->psz_name
+water	103:29	0:0	8	p_entry
+op	103:36	0:0	8	->
+water	103:38	0:0	8	psz_name
+arg	103:48	103:59	7	TYPE_STRING
+water	103:48	0:0	8	TYPE_STRING
+call	104:12	104:69	6	BINDNODE
+arg	104:21	104:30	7	"archive"
+water	104:21	0:0	8	"archive"
+arg	104:32	104:56	7	p_entry->psz_archive_uri
+water	104:32	0:0	8	p_entry
+op	104:39	0:0	8	->
+water	104:41	0:0	8	psz_archive_uri
+arg	104:58	104:69	7	TYPE_STRING
+water	104:58	0:0	8	TYPE_STRING
+call	105:12	105:65	6	BINDNODE
+arg	105:21	105:30	7	"summary"
+water	105:21	0:0	8	"summary"
+arg	105:32	105:52	7	p_entry->psz_summary
+water	105:32	0:0	8	p_entry
+op	105:39	0:0	8	->
+water	105:41	0:0	8	psz_summary
+arg	105:54	105:65	7	TYPE_STRING
+water	105:54	0:0	8	TYPE_STRING
+call	106:12	106:73	6	BINDNODE
+arg	106:21	106:34	7	"description"
+water	106:21	0:0	8	"description"
+arg	106:36	106:60	7	p_entry->psz_description
+water	106:36	0:0	8	p_entry
+op	106:43	0:0	8	->
+water	106:45	0:0	8	psz_description
+arg	106:62	106:73	7	TYPE_STRING
+water	106:62	0:0	8	TYPE_STRING
+call	107:12	107:66	6	BINDNODE
+arg	107:21	107:28	7	"image"
+water	107:21	0:0	8	"image"
+arg	107:30	107:53	7	p_entry->psz_image_data
+water	107:30	0:0	8	p_entry
+op	107:37	0:0	8	->
+water	107:39	0:0	8	psz_image_data
+arg	107:55	107:66	7	TYPE_STRING
+water	107:55	0:0	8	TYPE_STRING
+call	108:12	108:58	6	BINDNODE
+arg	108:21	108:31	7	"resource"
+water	108:21	0:0	8	"resource"
+arg	108:33	108:45	7	psz_filename
+water	108:33	0:0	8	psz_filename
+arg	108:47	108:58	7	TYPE_STRING
+water	108:47	0:0	8	TYPE_STRING
+call	109:12	109:64	6	BINDNODE
+arg	109:21	109:30	7	"creator"
+water	109:21	0:0	8	"creator"
+arg	109:32	109:51	7	p_entry->psz_author
+water	109:32	0:0	8	p_entry
+op	109:39	0:0	8	->
+water	109:41	0:0	8	psz_author
+arg	109:53	109:64	7	TYPE_STRING
+water	109:53	0:0	8	TYPE_STRING
+call	110:12	110:70	6	BINDNODE
+arg	110:21	110:32	7	"sourceurl"
+water	110:21	0:0	8	"sourceurl"
+arg	110:34	110:57	7	p_entry->psz_source_uri
+water	110:34	0:0	8	p_entry
+op	110:41	0:0	8	->
+water	110:43	0:0	8	psz_source_uri
+arg	110:59	110:70	7	TYPE_STRING
+water	110:59	0:0	8	TYPE_STRING
+water	111:12	0:0	6	data_pointer
+op	111:24	0:0	6	.
+water	111:25	0:0	6	e_type
+op	111:32	0:0	6	=
+water	111:34	0:0	6	TYPE_NONE
+water	111:43	0:0	6	;
+if	112:12	121:12	6	(!strcmp (p_node ,"resource" ))
+cond	112:17	112:46	7	!strcmp (p_node ,"resource" )
+op	112:17	0:0	8	!
+call	112:19	112:46	8	strcmp
+arg	112:27	112:33	9	p_node
+water	112:27	0:0	10	p_node
+arg	112:35	112:46	9	"resource"
+water	112:35	0:0	10	"resource"
+stmts	113:12	121:12	7	
+water	113:12	0:0	8	{
+while	114:16	120:16	8	(( attr =xml_ReaderNextAttr (p_xml_reader ,& value ) ))
+cond	114:23	114:73	9	( attr =xml_ReaderNextAttr (p_xml_reader ,& value ) )
+water	114:23	0:0	10	(
+water	114:24	0:0	10	attr
+op	114:29	0:0	10	=
+call	114:31	114:72	10	xml_ReaderNextAttr
+arg	114:51	114:63	11	p_xml_reader
+water	114:51	0:0	12	p_xml_reader
+arg	114:65	114:72	11	&value
+op	114:65	0:0	12	&
+water	114:66	0:0	12	value
+water	114:73	0:0	10	)
+stmts	115:16	120:16	9	
+water	115:16	0:0	10	{
+if	116:20	119:20	10	(!strcmp (attr ,"type" ))
+cond	116:25	116:47	11	!strcmp (attr ,"type" )
+op	116:25	0:0	12	!
+call	116:26	116:47	12	strcmp
+arg	116:34	116:38	13	attr
+water	116:34	0:0	14	attr
+arg	116:40	116:47	13	"type"
+water	116:40	0:0	14	"type"
+stmts	117:20	119:20	11	
+water	117:20	0:0	12	{
+water	118:24	0:0	12	i_filetype
+op	118:35	0:0	12	=
+call	118:37	118:53	12	ReadType
+arg	118:47	118:53	13	value
+water	118:47	0:0	14	value
+water	118:54	0:0	12	;
+water	119:20	0:0	12	}
+water	120:16	0:0	10	}
+water	121:12	0:0	8	}
+break	122:12	122:17	6	
+water	123:8	0:0	6	}
+label	124:8	124:28	6	case XML_READER_TEXT :
+if	125:12	125:69	6	(data_pointer . e_type == TYPE_NONE || ! p_entry)
+cond	125:17	125:54	7	data_pointer . e_type == TYPE_NONE || ! p_entry
+water	125:17	0:0	8	data_pointer
+op	125:29	0:0	8	.
+water	125:30	0:0	8	e_type
+op	125:37	0:0	8	==
+water	125:40	0:0	8	TYPE_NONE
+op	125:50	0:0	8	||
+op	125:53	0:0	8	!
+water	125:54	0:0	8	p_entry
+stmts	125:64	125:69	7	
+break	125:64	125:69	8	
+if	126:12	127:60	6	(data_pointer . e_type == TYPE_STRING)
+cond	126:17	126:40	7	data_pointer . e_type == TYPE_STRING
+water	126:17	0:0	8	data_pointer
+op	126:29	0:0	8	.
+water	126:30	0:0	8	e_type
+op	126:37	0:0	8	==
+water	126:40	0:0	8	TYPE_STRING
+stmts	127:16	127:60	7	
+op	127:16	0:0	8	*
+water	127:17	0:0	8	data_pointer
+op	127:29	0:0	8	.
+water	127:30	0:0	8	u_data
+op	127:36	0:0	8	.
+water	127:37	0:0	8	ppsz
+op	127:42	0:0	8	=
+call	127:44	127:59	8	strdup
+arg	127:52	127:59	9	p_node
+water	127:52	0:0	10	p_node
+water	127:60	0:0	8	;
+else	128:12	130:56	6
+stmts	129:12	130:56	7	
+if	129:12	130:56	8	(data_pointer . e_type == TYPE_LONG)
+cond	129:17	129:40	9	data_pointer . e_type == TYPE_LONG
+water	129:17	0:0	10	data_pointer
+op	129:29	0:0	10	.
+water	129:30	0:0	10	e_type
+op	129:37	0:0	10	==
+water	129:40	0:0	10	TYPE_LONG
+stmts	130:16	130:56	9	
+op	130:16	0:0	10	*
+water	130:17	0:0	10	data_pointer
+op	130:29	0:0	10	.
+water	130:30	0:0	10	u_data
+op	130:36	0:0	10	.
+water	130:37	0:0	10	pl
+op	130:40	0:0	10	=
+call	130:42	130:55	10	atol
+arg	130:48	130:55	11	p_node
+water	130:48	0:0	12	p_node
+water	130:56	0:0	10	;
+else	131:12	133:56	6
+stmts	132:12	133:56	7	
+if	132:12	133:56	8	(data_pointer . e_type == TYPE_INTEGER)
+cond	132:17	132:40	9	data_pointer . e_type == TYPE_INTEGER
+water	132:17	0:0	10	data_pointer
+op	132:29	0:0	10	.
+water	132:30	0:0	10	e_type
+op	132:37	0:0	10	==
+water	132:40	0:0	10	TYPE_INTEGER
+stmts	133:16	133:56	9	
+op	133:16	0:0	10	*
+water	133:17	0:0	10	data_pointer
+op	133:29	0:0	10	.
+water	133:30	0:0	10	u_data
+op	133:36	0:0	10	.
+water	133:37	0:0	10	pi
+op	133:40	0:0	10	=
+call	133:42	133:55	10	atoi
+arg	133:48	133:55	11	p_node
+water	133:48	0:0	12	p_node
+water	133:56	0:0	10	;
+break	134:12	134:17	6	
+label	135:8	135:31	6	case XML_READER_ENDELEM :
+if	136:12	136:33	6	(! p_entry)
+cond	136:17	136:18	7	! p_entry
+op	136:17	0:0	8	!
+water	136:18	0:0	8	p_entry
+stmts	136:28	136:33	7	
+break	136:28	136:33	8	
+if	137:12	142:12	6	(!strcmp (p_node ,"addon" ))
+cond	137:17	137:43	7	!strcmp (p_node ,"addon" )
+op	137:17	0:0	8	!
+call	137:19	137:43	8	strcmp
+arg	137:27	137:33	9	p_node
+water	137:27	0:0	10	p_node
+arg	137:35	137:43	9	"addon"
+water	137:35	0:0	10	"addon"
+stmts	138:12	142:12	7	
+water	138:12	0:0	8	{
+call	140:16	140:57	8	ARRAY_APPEND
+arg	140:30	140:47	9	p_finder->entries
+water	140:30	0:0	10	p_finder
+op	140:38	0:0	10	->
+water	140:40	0:0	10	entries
+arg	140:49	140:57	9	p_entry
+water	140:49	0:0	10	p_entry
+water	140:58	0:0	8	;
+water	141:16	0:0	8	p_entry
+op	141:24	0:0	8	=
+water	141:26	0:0	8	NULL
+water	141:30	0:0	8	;
+water	142:12	0:0	8	}
+if	143:12	156:12	6	(!strcmp (p_node ,"resource" ))
+cond	143:17	143:46	7	!strcmp (p_node ,"resource" )
+op	143:17	0:0	8	!
+call	143:19	143:46	8	strcmp
+arg	143:27	143:33	9	p_node
+water	143:27	0:0	10	p_node
+arg	143:35	143:46	9	"resource"
+water	143:35	0:0	10	"resource"
+stmts	144:12	156:12	7	
+water	144:12	0:0	8	{
+if	145:16	152:16	8	(p_entry && psz_filename && i_filetype >= 0)
+cond	145:21	145:62	9	p_entry && psz_filename && i_filetype >= 0
+water	145:21	0:0	10	p_entry
+op	145:29	0:0	10	&&
+water	145:32	0:0	10	psz_filename
+op	145:45	0:0	10	&&
+water	145:48	0:0	10	i_filetype
+op	145:59	0:0	10	>=
+water	145:62	0:0	10	0
+stmts	146:16	152:16	9	
+water	146:16	0:0	10	{
+decl	147:20	147:73	10	addon_file_t	*p_file
+op	147:41	0:0	10	=
+call	147:43	147:72	11	malloc
+arg	147:51	147:72	12	sizeof(addon_file_t)
+op	147:51	0:0	13	sizeof
+water	147:57	0:0	13	(
+water	147:58	0:0	13	addon_file_t
+water	147:70	0:0	13	)
+water	148:20	0:0	10	p_file
+op	148:26	0:0	10	->
+water	148:28	0:0	10	e_filetype
+op	148:39	0:0	10	=
+water	148:41	0:0	10	i_filetype
+water	148:51	0:0	10	;
+water	149:20	0:0	10	p_file
+op	149:26	0:0	10	->
+water	149:28	0:0	10	psz_filename
+op	149:41	0:0	10	=
+water	149:43	0:0	10	psz_filename
+water	149:55	0:0	10	;
+water	150:20	0:0	10	p_file
+op	150:26	0:0	10	->
+water	150:28	0:0	10	psz_download_uri
+op	150:45	0:0	10	=
+water	150:47	0:0	10	NULL
+water	150:51	0:0	10	;
+call	151:20	151:57	10	ARRAY_APPEND
+arg	151:34	151:48	11	p_entry->files
+water	151:34	0:0	12	p_entry
+op	151:41	0:0	12	->
+water	151:43	0:0	12	files
+arg	151:50	151:57	11	p_file
+water	151:50	0:0	12	p_file
+water	151:58	0:0	10	;
+water	152:16	0:0	10	}
+water	154:16	0:0	8	psz_filename
+op	154:29	0:0	8	=
+water	154:31	0:0	8	NULL
+water	154:35	0:0	8	;
+water	155:16	0:0	8	i_filetype
+op	155:27	0:0	8	=
+op	155:29	0:0	8	-
+water	155:30	0:0	8	1
+water	155:31	0:0	8	;
+water	156:12	0:0	8	}
+water	157:12	0:0	6	data_pointer
+op	157:24	0:0	6	.
+water	157:25	0:0	6	e_type
+op	157:32	0:0	6	=
+water	157:34	0:0	6	TYPE_NONE
+water	157:43	0:0	6	;
+break	158:12	158:17	6	
+label	159:8	159:15	6	default :
+break	160:12	160:17	6	
+water	161:8	0:0	6	}
+water	162:4	0:0	4	}
+label	163:0	163:3	2	end :
+if	164:3	165:37	2	(p_entry)
+cond	164:8	164:8	3	p_entry
+water	164:8	0:0	4	p_entry
+stmts	165:7	165:37	3	
+call	165:7	165:36	4	addon_entry_Release
+arg	165:28	165:36	5	p_entry
+water	165:28	0:0	6	p_entry
+water	165:37	0:0	4	;
+call	166:3	166:34	2	xml_ReaderDelete
+arg	166:21	166:34	3	p_xml_reader
+water	166:21	0:0	4	p_xml_reader
+water	166:35	0:0	2	;
+call	167:3	167:27	2	stream_Delete
+arg	167:18	167:27	3	p_stream
+water	167:18	0:0	4	p_stream
+water	167:28	0:0	2	;
+return	168:3	168:15	2	i_ret
+water	168:10	0:0	3	i_ret

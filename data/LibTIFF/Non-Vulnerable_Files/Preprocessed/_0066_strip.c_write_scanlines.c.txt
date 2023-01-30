@@ -1,0 +1,127 @@
+func	1:0	24:0	0	int	write_scanlines
+params	2:15	0:0	1	
+param	2:16	2:25	2	TIFF *	tif
+param	2:27	2:46	2	const tdata_t	array
+param	2:48	2:66	2	const tsize_t	size
+stmnts	0:0	23:9	1	
+decl	4:1	4:20	2	uint32	length
+water	4:15	0:0	2	,
+decl	4:1	4:20	2	uint32	row
+decl	5:1	5:30	2	tsize_t	scanlinesize
+water	5:22	0:0	2	,
+decl	5:1	5:30	2	tsize_t	offset
+water	6:8	0:0	2	(
+water	6:9	0:0	2	void
+water	6:13	0:0	2	)
+water	6:15	0:0	2	size
+water	6:19	0:0	2	;
+if	7:1	10:1	2	(!TIFFGetField (tif ,TIFFTAG_IMAGELENGTH ,& length ))
+cond	7:5	7:52	3	!TIFFGetField (tif ,TIFFTAG_IMAGELENGTH ,& length )
+op	7:5	0:0	4	!
+call	7:6	7:52	4	TIFFGetField
+arg	7:19	7:22	5	tif
+water	7:19	0:0	6	tif
+arg	7:24	7:43	5	TIFFTAG_IMAGELENGTH
+water	7:24	0:0	6	TIFFTAG_IMAGELENGTH
+arg	7:45	7:52	5	&length
+op	7:45	0:0	6	&
+water	7:46	0:0	6	length
+stmts	7:55	10:1	3	
+water	7:55	0:0	4	{
+call	8:2	8:61	4	fprintf
+arg	8:11	8:17	5	stderr
+water	8:11	0:0	6	stderr
+arg	8:19	8:40	5	"Can't get tag %d.\n"
+water	8:19	0:0	6	"Can't get tag %d.\n"
+arg	8:42	8:61	5	TIFFTAG_IMAGELENGTH
+water	8:42	0:0	6	TIFFTAG_IMAGELENGTH
+water	8:62	0:0	4	;
+return	9:2	9:11	4	-1
+op	9:9	0:0	5	-
+water	9:10	0:0	5	1
+water	10:1	0:0	4	}
+water	11:1	0:0	2	scanlinesize
+op	11:14	0:0	2	=
+call	11:16	11:36	2	TIFFScanlineSize
+arg	11:33	11:36	3	tif
+water	11:33	0:0	4	tif
+water	11:37	0:0	2	;
+if	12:1	15:1	2	(! scanlinesize)
+cond	12:5	12:6	3	! scanlinesize
+op	12:5	0:0	4	!
+water	12:6	0:0	4	scanlinesize
+stmts	12:20	15:1	3	
+water	12:20	0:0	4	{
+call	13:2	13:46	4	fprintf
+arg	13:11	13:17	5	stderr
+water	13:11	0:0	6	stderr
+arg	13:19	13:46	5	"Wrong size of scanline.\n"
+water	13:19	0:0	6	"Wrong size of scanline.\n"
+water	13:47	0:0	4	;
+return	14:2	14:11	4	-1
+op	14:9	0:0	5	-
+water	14:10	0:0	5	1
+water	15:1	0:0	4	}
+for	16:1	22:8	2	(offset = 0 , row = 0 ;row < length;offset += scanlinesize , row ++)
+forinit	16:6	16:25	3	offset = 0 , row = 0 ;
+water	16:6	0:0	4	offset
+op	16:13	0:0	4	=
+water	16:15	0:0	4	0
+water	16:16	0:0	4	,
+water	16:18	0:0	4	row
+op	16:22	0:0	4	=
+water	16:24	0:0	4	0
+water	16:25	0:0	4	;
+cond	16:27	16:33	3	row < length
+water	16:27	0:0	4	row
+op	16:31	0:0	4	<
+water	16:33	0:0	4	length
+forexpr	16:41	16:66	3	offset += scanlinesize , row ++
+water	16:41	0:0	4	offset
+op	16:47	0:0	4	+=
+water	16:49	0:0	4	scanlinesize
+water	16:61	0:0	4	,
+water	16:63	0:0	4	row
+op	16:66	0:0	4	++
+stmts	16:70	22:8	3	
+water	16:70	0:0	4	{
+if	17:2	21:2	4	(TIFFWriteScanline (tif ,( char * ) array + offset ,row ,0 ) == - 1)
+cond	17:6	17:65	5	TIFFWriteScanline (tif ,( char * ) array + offset ,row ,0 ) == - 1
+call	17:6	17:59	6	TIFFWriteScanline
+arg	17:24	17:27	7	tif
+water	17:24	0:0	8	tif
+arg	17:29	17:51	7	(char*)array+offset
+water	17:29	0:0	8	(
+water	17:30	0:0	8	char
+op	17:35	0:0	8	*
+water	17:36	0:0	8	)
+water	17:37	0:0	8	array
+op	17:43	0:0	8	+
+water	17:45	0:0	8	offset
+arg	17:53	17:56	7	row
+water	17:53	0:0	8	row
+arg	17:58	17:59	7	0
+water	17:58	0:0	8	0
+op	17:61	0:0	6	==
+op	17:64	0:0	6	-
+water	17:65	0:0	6	1
+stmts	17:68	21:2	5	
+water	17:68	0:0	6	{
+call	18:3	19:55	6	fprintf
+arg	18:12	18:18	7	stderr
+water	18:12	0:0	8	stderr
+arg	19:5	19:43	7	"Can't write image data at row %lu.\n"
+water	19:5	0:0	8	"Can't write image data at row %lu.\n"
+arg	19:45	19:55	7	(long)row
+water	19:45	0:0	8	(
+water	19:46	0:0	8	long
+water	19:50	0:0	8	)
+water	19:52	0:0	8	row
+water	19:56	0:0	6	;
+return	20:3	20:12	6	-1
+op	20:10	0:0	7	-
+water	20:11	0:0	7	1
+water	21:2	0:0	6	}
+water	22:8	0:0	4	}
+return	23:1	23:9	2	0
+water	23:8	0:0	3	0

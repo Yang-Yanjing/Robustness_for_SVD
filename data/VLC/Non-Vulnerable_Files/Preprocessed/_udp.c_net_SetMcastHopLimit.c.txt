@@ -1,0 +1,138 @@
+func	2:0	44:0	0	static int	net_SetMcastHopLimit
+params	2:31	0:0	1	
+param	2:33	2:53	2	vlc_object_t *	p_this
+param	3:33	3:39	2	int	fd
+param	3:41	3:51	2	int	family
+param	3:53	3:62	2	int	hlim
+stmnts	0:0	43:22	1	
+decl	5:4	5:18	2	int	proto
+water	5:13	0:0	2	,
+decl	5:4	5:18	2	int	cmd
+switch	10:4	28:4	2	(family)
+cond	10:12	10:12	3	family
+water	10:12	0:0	4	family
+stmts	11:4	28:4	3	
+water	11:4	0:0	4	{
+label	13:8	13:20	4	case AF_INET :
+water	14:12	0:0	4	proto
+op	14:18	0:0	4	=
+water	14:20	0:0	4	SOL_IP
+water	14:26	0:0	4	;
+water	15:12	0:0	4	cmd
+op	15:16	0:0	4	=
+water	15:18	0:0	4	IP_MULTICAST_TTL
+water	15:34	0:0	4	;
+break	16:12	16:17	4	
+label	19:8	19:21	4	case AF_INET6 :
+water	20:12	0:0	4	proto
+op	20:18	0:0	4	=
+water	20:20	0:0	4	SOL_IPV6
+water	20:28	0:0	4	;
+water	21:12	0:0	4	cmd
+op	21:16	0:0	4	=
+water	21:18	0:0	4	IPV6_MULTICAST_HOPS
+water	21:37	0:0	4	;
+break	22:12	22:17	4	
+label	24:8	24:15	4	default :
+water	25:12	0:0	4	errno
+op	25:18	0:0	4	=
+water	25:20	0:0	4	EAFNOSUPPORT
+water	25:32	0:0	4	;
+call	26:12	26:65	4	msg_Warn
+arg	26:22	26:28	5	p_this
+water	26:22	0:0	6	p_this
+arg	26:30	26:34	5	"%s"
+water	26:30	0:0	6	"%s"
+arg	26:36	26:65	5	vlc_strerror_c(EAFNOSUPPORT)
+call	26:36	26:63	6	vlc_strerror_c
+arg	26:51	26:63	7	EAFNOSUPPORT
+water	26:51	0:0	8	EAFNOSUPPORT
+water	26:66	0:0	4	;
+return	27:12	27:31	4	VLC_EGENERIC
+water	27:19	0:0	5	VLC_EGENERIC
+water	28:4	0:0	4	}
+if	29:4	42:4	2	(setsockopt (fd ,proto ,cmd ,& hlim ,sizeof ( hlim ) ) < 0)
+cond	29:8	29:62	3	setsockopt (fd ,proto ,cmd ,& hlim ,sizeof ( hlim ) ) < 0
+call	29:8	29:58	4	setsockopt
+arg	29:20	29:22	5	fd
+water	29:20	0:0	6	fd
+arg	29:24	29:29	5	proto
+water	29:24	0:0	6	proto
+arg	29:31	29:34	5	cmd
+water	29:31	0:0	6	cmd
+arg	29:36	29:41	5	&hlim
+op	29:36	0:0	6	&
+water	29:37	0:0	6	hlim
+arg	29:43	29:58	5	sizeof(hlim)
+op	29:43	0:0	6	sizeof
+water	29:49	0:0	6	(
+water	29:51	0:0	6	hlim
+water	29:56	0:0	6	)
+op	29:60	0:0	4	<
+water	29:62	0:0	4	0
+stmts	30:4	42:4	3	
+water	30:4	0:0	4	{
+decl	32:8	32:25	4	unsigned char	buf
+call	33:8	34:43	4	msg_Dbg
+arg	33:17	33:23	5	p_this
+water	33:17	0:0	6	p_this
+arg	33:25	33:56	5	"cannot set hop limit (%d): %s"
+water	33:25	0:0	6	"cannot set hop limit (%d): %s"
+arg	33:58	33:62	5	hlim
+water	33:58	0:0	6	hlim
+arg	34:17	34:43	5	vlc_strerror_c(net_errno)
+call	34:17	34:41	6	vlc_strerror_c
+arg	34:32	34:41	7	net_errno
+water	34:32	0:0	8	net_errno
+water	34:44	0:0	4	;
+water	35:8	0:0	4	buf
+op	35:12	0:0	4	=
+call	35:14	35:57	4	(unsignedchar)
+arg	35:30	35:57	5	(hlim>255)?255:hlim
+water	35:30	0:0	6	(
+water	35:32	0:0	6	hlim
+op	35:37	0:0	6	>
+water	35:39	0:0	6	255
+water	35:43	0:0	6	)
+water	35:45	0:0	6	?
+water	35:47	0:0	6	255
+water	35:51	0:0	6	:
+water	35:53	0:0	6	hlim
+water	35:58	0:0	4	;
+if	36:8	41:8	4	(setsockopt (fd ,proto ,cmd ,& buf ,sizeof ( buf ) ))
+cond	36:12	36:60	5	setsockopt (fd ,proto ,cmd ,& buf ,sizeof ( buf ) )
+call	36:12	36:60	6	setsockopt
+arg	36:24	36:26	7	fd
+water	36:24	0:0	8	fd
+arg	36:28	36:33	7	proto
+water	36:28	0:0	8	proto
+arg	36:35	36:38	7	cmd
+water	36:35	0:0	8	cmd
+arg	36:40	36:44	7	&buf
+op	36:40	0:0	8	&
+water	36:41	0:0	8	buf
+arg	36:46	36:60	7	sizeof(buf)
+op	36:46	0:0	8	sizeof
+water	36:52	0:0	8	(
+water	36:54	0:0	8	buf
+water	36:58	0:0	8	)
+stmts	37:8	41:8	5	
+water	37:8	0:0	6	{
+call	38:12	39:47	6	msg_Err
+arg	38:21	38:27	7	p_this
+water	38:21	0:0	8	p_this
+arg	38:29	38:60	7	"cannot set hop limit (%d): %s"
+water	38:29	0:0	8	"cannot set hop limit (%d): %s"
+arg	38:62	38:66	7	hlim
+water	38:62	0:0	8	hlim
+arg	39:21	39:47	7	vlc_strerror_c(net_errno)
+call	39:21	39:45	8	vlc_strerror_c
+arg	39:36	39:45	9	net_errno
+water	39:36	0:0	10	net_errno
+water	39:48	0:0	6	;
+return	40:12	40:31	6	VLC_EGENERIC
+water	40:19	0:0	7	VLC_EGENERIC
+water	41:8	0:0	6	}
+water	42:4	0:0	4	}
+return	43:4	43:22	2	VLC_SUCCESS
+water	43:11	0:0	3	VLC_SUCCESS

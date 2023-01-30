@@ -1,0 +1,194 @@
+func	2:0	47:0	0	static block_t *	Reassemble
+params	2:26	0:0	1	
+param	2:28	2:44	2	decoder_t *	p_dec
+param	2:46	2:63	2	block_t *	p_block
+stmnts	0:0	46:15	1	
+decl	4:4	4:39	2	decoder_sys_t	*p_sys
+op	4:25	0:0	2	=
+water	4:27	0:0	2	p_dec
+op	4:32	0:0	2	->
+water	4:34	0:0	2	p_sys
+if	5:4	11:4	2	(p_block -> i_buffer < SPU_HEADER_LEN)
+cond	5:8	5:28	3	p_block -> i_buffer < SPU_HEADER_LEN
+water	5:8	0:0	4	p_block
+op	5:15	0:0	4	->
+water	5:17	0:0	4	i_buffer
+op	5:26	0:0	4	<
+water	5:28	0:0	4	SPU_HEADER_LEN
+stmts	6:4	11:4	3	
+water	6:4	0:0	4	{
+call	7:8	8:51	4	msg_Dbg
+arg	7:17	7:22	5	p_dec
+water	7:17	0:0	6	p_dec
+arg	7:24	7:64	5	"invalid packet header (size %zu < %u)"
+water	7:24	0:0	6	"invalid packet header (size %zu < %u)"
+arg	8:17	8:34	5	p_block->i_buffer
+water	8:17	0:0	6	p_block
+op	8:24	0:0	6	->
+water	8:26	0:0	6	i_buffer
+arg	8:36	8:51	5	SPU_HEADER_LEN
+water	8:36	0:0	6	SPU_HEADER_LEN
+water	8:52	0:0	4	;
+call	9:8	9:31	4	block_Release
+arg	9:23	9:31	5	p_block
+water	9:23	0:0	6	p_block
+water	9:32	0:0	4	;
+return	10:8	10:19	4	NULL
+water	10:15	0:0	5	NULL
+water	11:4	0:0	4	}
+if	16:4	20:4	2	(p_sys -> i_state == SUBTITLE_BLOCK_EMPTY && p_block -> i_pts <= VLC_TS_INVALID)
+cond	16:8	16:68	3	p_sys -> i_state == SUBTITLE_BLOCK_EMPTY && p_block -> i_pts <= VLC_TS_INVALID
+water	16:8	0:0	4	p_sys
+op	16:13	0:0	4	->
+water	16:15	0:0	4	i_state
+op	16:23	0:0	4	==
+water	16:26	0:0	4	SUBTITLE_BLOCK_EMPTY
+op	16:47	0:0	4	&&
+water	16:50	0:0	4	p_block
+op	16:57	0:0	4	->
+water	16:59	0:0	4	i_pts
+op	16:65	0:0	4	<=
+water	16:68	0:0	4	VLC_TS_INVALID
+stmts	17:4	20:4	3	
+water	17:4	0:0	4	{
+call	18:8	18:67	4	msg_Warn
+arg	18:18	18:23	5	p_dec
+water	18:18	0:0	6	p_dec
+arg	18:25	18:67	5	"first packet expected but no PTS present"
+water	18:25	0:0	6	"first packet expected but no PTS present"
+water	18:68	0:0	4	;
+return	19:8	19:19	4	NULL
+water	19:15	0:0	5	NULL
+water	20:4	0:0	4	}
+water	21:4	0:0	2	p_block
+op	21:11	0:0	2	->
+water	21:13	0:0	2	p_buffer
+op	21:22	0:0	2	+=
+water	21:25	0:0	2	SPU_HEADER_LEN
+water	21:39	0:0	2	;
+water	22:4	0:0	2	p_block
+op	22:11	0:0	2	->
+water	22:13	0:0	2	i_buffer
+op	22:22	0:0	2	-=
+water	22:25	0:0	2	SPU_HEADER_LEN
+water	22:39	0:0	2	;
+if	24:4	24:78	2	(p_sys -> i_state == SUBTITLE_BLOCK_EMPTY)
+cond	24:8	24:26	3	p_sys -> i_state == SUBTITLE_BLOCK_EMPTY
+water	24:8	0:0	4	p_sys
+op	24:13	0:0	4	->
+water	24:15	0:0	4	i_state
+op	24:23	0:0	4	==
+water	24:26	0:0	4	SUBTITLE_BLOCK_EMPTY
+stmts	24:49	24:78	3	
+call	24:49	24:77	4	ParseHeader
+arg	24:62	24:67	5	p_dec
+water	24:62	0:0	6	p_dec
+arg	24:69	24:77	5	p_block
+water	24:69	0:0	6	p_block
+water	24:78	0:0	4	;
+call	25:4	25:46	2	block_ChainAppend
+arg	25:23	25:36	3	&p_sys->p_spu
+op	25:23	0:0	4	&
+water	25:24	0:0	4	p_sys
+op	25:29	0:0	4	->
+water	25:31	0:0	4	p_spu
+arg	25:38	25:46	3	p_block
+water	25:38	0:0	4	p_block
+water	25:47	0:0	2	;
+water	26:4	0:0	2	p_sys
+op	26:9	0:0	2	->
+water	26:11	0:0	2	p_spu
+op	26:17	0:0	2	=
+call	26:19	26:51	2	block_ChainGather
+arg	26:38	26:51	3	p_sys->p_spu
+water	26:38	0:0	4	p_sys
+op	26:43	0:0	4	->
+water	26:45	0:0	4	p_spu
+water	26:52	0:0	2	;
+if	27:4	40:4	2	(p_sys -> p_spu -> i_buffer >= p_sys -> i_spu_size)
+cond	27:8	27:41	3	p_sys -> p_spu -> i_buffer >= p_sys -> i_spu_size
+water	27:8	0:0	4	p_sys
+op	27:13	0:0	4	->
+water	27:15	0:0	4	p_spu
+op	27:20	0:0	4	->
+water	27:22	0:0	4	i_buffer
+op	27:31	0:0	4	>=
+water	27:34	0:0	4	p_sys
+op	27:39	0:0	4	->
+water	27:41	0:0	4	i_spu_size
+stmts	28:4	40:4	3	
+water	28:4	0:0	4	{
+decl	29:8	29:37	4	block_t	*p_spu
+op	29:23	0:0	4	=
+water	29:25	0:0	4	p_sys
+op	29:30	0:0	4	->
+water	29:32	0:0	4	p_spu
+if	30:8	34:8	4	(p_spu -> i_buffer != p_sys -> i_spu_size)
+cond	30:12	30:38	5	p_spu -> i_buffer != p_sys -> i_spu_size
+water	30:12	0:0	6	p_spu
+op	30:17	0:0	6	->
+water	30:19	0:0	6	i_buffer
+op	30:28	0:0	6	!=
+water	30:31	0:0	6	p_sys
+op	30:36	0:0	6	->
+water	30:38	0:0	6	i_spu_size
+stmts	31:8	34:8	5	
+water	31:8	0:0	6	{
+call	32:12	33:57	6	msg_Warn
+arg	32:22	32:27	7	p_dec
+water	32:22	0:0	8	p_dec
+arg	32:29	32:65	7	"SPU packets size=%zu should be %zu"
+water	32:29	0:0	8	"SPU packets size=%zu should be %zu"
+arg	33:22	33:37	7	p_spu->i_buffer
+water	33:22	0:0	8	p_spu
+op	33:27	0:0	8	->
+water	33:29	0:0	8	i_buffer
+arg	33:39	33:57	7	p_sys->i_spu_size
+water	33:39	0:0	8	p_sys
+op	33:44	0:0	8	->
+water	33:46	0:0	8	i_spu_size
+water	33:58	0:0	6	;
+water	34:8	0:0	6	}
+call	35:8	35:78	4	msg_Dbg
+arg	35:17	35:22	5	p_dec
+water	35:17	0:0	6	p_dec
+arg	35:24	35:61	5	"subtitle packet complete, size=%zuu"
+water	35:24	0:0	6	"subtitle packet complete, size=%zuu"
+arg	35:63	35:78	5	p_spu->i_buffer
+water	35:63	0:0	6	p_spu
+op	35:68	0:0	6	->
+water	35:70	0:0	6	i_buffer
+water	35:79	0:0	4	;
+call	36:8	36:36	4	ParseMetaInfo
+arg	36:23	36:28	5	p_dec
+water	36:23	0:0	6	p_dec
+arg	36:30	36:36	5	p_spu
+water	36:30	0:0	6	p_spu
+water	36:37	0:0	4	;
+water	37:8	0:0	4	p_sys
+op	37:13	0:0	4	->
+water	37:15	0:0	4	i_state
+op	37:23	0:0	4	=
+water	37:25	0:0	4	SUBTITLE_BLOCK_EMPTY
+water	37:45	0:0	4	;
+water	38:8	0:0	4	p_sys
+op	38:13	0:0	4	->
+water	38:15	0:0	4	p_spu
+op	38:21	0:0	4	=
+water	38:23	0:0	4	0
+water	38:24	0:0	4	;
+return	39:8	39:20	4	p_spu
+water	39:15	0:0	5	p_spu
+water	40:4	0:0	4	}
+else	41:4	45:4	2
+stmts	42:4	45:4	3	
+water	42:4	0:0	4	{
+water	44:8	0:0	4	p_sys
+op	44:13	0:0	4	->
+water	44:15	0:0	4	i_state
+op	44:23	0:0	4	=
+water	44:25	0:0	4	SUBTITLE_BLOCK_PARTIAL
+water	44:47	0:0	4	;
+water	45:4	0:0	4	}
+return	46:4	46:15	2	NULL
+water	46:11	0:0	3	NULL

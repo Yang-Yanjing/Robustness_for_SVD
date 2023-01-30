@@ -1,0 +1,1345 @@
+func	2:0	263:0	0	static subpicture_t *	Filter
+params	2:27	0:0	1	
+param	2:29	2:47	2	filter_t *	p_filter
+param	2:49	2:62	2	mtime_t	date
+stmnts	0:0	262:16	1	
+decl	4:4	4:41	2	filter_sys_t	*p_sys
+op	4:24	0:0	2	=
+water	4:26	0:0	2	p_filter
+op	4:34	0:0	2	->
+water	4:36	0:0	2	p_sys
+decl	5:4	5:22	2	bridge_t	*p_bridge
+decl	6:4	6:43	2	int	i_index
+water	6:15	0:0	2	,
+decl	6:4	6:43	2	int	i_real_index
+water	6:29	0:0	2	,
+decl	6:4	6:43	2	int	i_row
+water	6:36	0:0	2	,
+decl	6:4	6:43	2	int	i_col
+decl	7:4	7:62	2	int	i_greatest_real_index_used
+op	7:35	0:0	2	=
+water	7:37	0:0	2	p_sys
+op	7:42	0:0	2	->
+water	7:44	0:0	2	i_order_length
+op	7:59	0:0	2	-
+water	7:61	0:0	2	1
+decl	8:4	8:50	2	unsigned int	col_inner_width
+water	8:32	0:0	2	,
+decl	8:4	8:50	2	unsigned int	row_inner_height
+decl	9:4	9:33	2	subpicture_region_t	*p_region
+decl	10:4	10:45	2	subpicture_region_t	*p_region_prev
+op	10:39	0:0	2	=
+water	10:41	0:0	2	NULL
+decl	12:4	12:58	2	subpicture_t	*p_spu
+op	12:24	0:0	2	=
+call	12:26	12:57	3	filter_NewSubpicture
+arg	12:48	12:57	4	p_filter
+water	12:48	0:0	5	p_filter
+if	13:4	14:19	2	(! p_spu)
+cond	13:8	13:9	3	! p_spu
+op	13:8	0:0	4	!
+water	13:9	0:0	4	p_spu
+stmts	14:8	14:19	3	
+return	14:8	14:19	4	NULL
+water	14:15	0:0	5	NULL
+water	16:4	0:0	2	p_spu
+op	16:9	0:0	2	->
+water	16:11	0:0	2	i_channel
+op	16:21	0:0	2	=
+water	16:23	0:0	2	0
+water	16:24	0:0	2	;
+water	17:4	0:0	2	p_spu
+op	17:9	0:0	2	->
+water	17:11	0:0	2	i_start
+op	17:20	0:0	2	=
+water	17:22	0:0	2	date
+water	17:26	0:0	2	;
+water	18:4	0:0	2	p_spu
+op	18:9	0:0	2	->
+water	18:11	0:0	2	i_stop
+op	18:18	0:0	2	=
+water	18:20	0:0	2	0
+water	18:21	0:0	2	;
+water	19:4	0:0	2	p_spu
+op	19:9	0:0	2	->
+water	19:11	0:0	2	b_ephemer
+op	19:21	0:0	2	=
+water	19:23	0:0	2	true
+water	19:27	0:0	2	;
+water	20:4	0:0	2	p_spu
+op	20:9	0:0	2	->
+water	20:11	0:0	2	i_alpha
+op	20:19	0:0	2	=
+water	20:21	0:0	2	p_sys
+op	20:26	0:0	2	->
+water	20:28	0:0	2	i_alpha
+water	20:35	0:0	2	;
+water	21:4	0:0	2	p_spu
+op	21:9	0:0	2	->
+water	21:11	0:0	2	b_absolute
+op	21:22	0:0	2	=
+water	21:24	0:0	2	false
+water	21:29	0:0	2	;
+water	22:4	0:0	2	p_spu
+op	22:9	0:0	2	->
+water	22:11	0:0	2	i_original_picture_width
+op	22:36	0:0	2	=
+water	22:38	0:0	2	p_sys
+op	22:43	0:0	2	->
+water	22:45	0:0	2	i_width
+water	22:52	0:0	2	;
+water	23:4	0:0	2	p_spu
+op	23:9	0:0	2	->
+water	23:11	0:0	2	i_original_picture_height
+op	23:37	0:0	2	=
+water	23:39	0:0	2	p_sys
+op	23:44	0:0	2	->
+water	23:46	0:0	2	i_height
+water	23:54	0:0	2	;
+call	24:4	24:33	2	vlc_mutex_lock
+arg	24:20	24:33	3	&p_sys->lock
+op	24:20	0:0	4	&
+water	24:21	0:0	4	p_sys
+op	24:26	0:0	4	->
+water	24:28	0:0	4	lock
+water	24:34	0:0	2	;
+call	25:4	25:38	2	vlc_global_lock
+arg	25:21	25:38	3	VLC_MOSAIC_MUTEX
+water	25:21	0:0	4	VLC_MOSAIC_MUTEX
+water	25:39	0:0	2	;
+water	26:4	0:0	2	p_bridge
+op	26:13	0:0	2	=
+call	26:15	26:35	2	GetBridge
+arg	26:26	26:35	3	p_filter
+water	26:26	0:0	4	p_filter
+water	26:36	0:0	2	;
+if	27:4	32:4	2	(p_bridge == NULL)
+cond	27:9	27:21	3	p_bridge == NULL
+water	27:9	0:0	4	p_bridge
+op	27:18	0:0	4	==
+water	27:21	0:0	4	NULL
+stmts	28:4	32:4	3	
+water	28:4	0:0	4	{
+call	29:8	29:44	4	vlc_global_unlock
+arg	29:27	29:44	5	VLC_MOSAIC_MUTEX
+water	29:27	0:0	6	VLC_MOSAIC_MUTEX
+water	29:45	0:0	4	;
+call	30:8	30:39	4	vlc_mutex_unlock
+arg	30:26	30:39	5	&p_sys->lock
+op	30:26	0:0	6	&
+water	30:27	0:0	6	p_sys
+op	30:32	0:0	6	->
+water	30:34	0:0	6	lock
+water	30:40	0:0	4	;
+return	31:8	31:20	4	p_spu
+water	31:15	0:0	5	p_spu
+water	32:4	0:0	4	}
+if	33:4	46:4	2	(p_sys -> i_position == position_offsets)
+cond	33:9	33:30	3	p_sys -> i_position == position_offsets
+water	33:9	0:0	4	p_sys
+op	33:14	0:0	4	->
+water	33:16	0:0	4	i_position
+op	33:27	0:0	4	==
+water	33:30	0:0	4	position_offsets
+stmts	34:4	46:4	3	
+water	34:4	0:0	4	{
+if	37:8	45:8	4	(p_sys -> i_offsets_length != p_sys -> i_order_length)
+cond	37:13	37:47	5	p_sys -> i_offsets_length != p_sys -> i_order_length
+water	37:13	0:0	6	p_sys
+op	37:18	0:0	6	->
+water	37:20	0:0	6	i_offsets_length
+op	37:37	0:0	6	!=
+water	37:40	0:0	6	p_sys
+op	37:45	0:0	6	->
+water	37:47	0:0	6	i_order_length
+stmts	38:8	45:8	5	
+water	38:8	0:0	6	{
+call	39:12	43:68	6	msg_Err
+arg	39:21	39:29	7	p_filter
+water	39:21	0:0	8	p_filter
+arg	40:21	42:43	7	"Number of specified offsets (%d) does not match number ""of input substreams in mosaic-order (%d), falling back ""to mosaic-position=0"
+water	40:21	0:0	8	"Number of specified offsets (%d) does not match number "
+water	41:21	0:0	8	"of input substreams in mosaic-order (%d), falling back "
+water	42:21	0:0	8	"to mosaic-position=0"
+arg	43:21	43:44	7	p_sys->i_offsets_length
+water	43:21	0:0	8	p_sys
+op	43:26	0:0	8	->
+water	43:28	0:0	8	i_offsets_length
+arg	43:46	43:68	7	p_sys->i_order_length
+water	43:46	0:0	8	p_sys
+op	43:51	0:0	8	->
+water	43:53	0:0	8	i_order_length
+water	43:69	0:0	6	;
+water	44:12	0:0	6	p_sys
+op	44:17	0:0	6	->
+water	44:19	0:0	6	i_position
+op	44:30	0:0	6	=
+water	44:32	0:0	6	position_auto
+water	44:45	0:0	6	;
+water	45:8	0:0	6	}
+water	46:4	0:0	4	}
+if	47:4	76:4	2	(p_sys -> i_position == position_auto)
+cond	47:9	47:30	3	p_sys -> i_position == position_auto
+water	47:9	0:0	4	p_sys
+op	47:14	0:0	4	->
+water	47:16	0:0	4	i_position
+op	47:27	0:0	4	==
+water	47:30	0:0	4	position_auto
+stmts	48:4	76:4	3	
+water	48:4	0:0	4	{
+decl	49:8	49:45	4	int	i_numpics
+op	49:22	0:0	4	=
+water	49:24	0:0	4	p_sys
+op	49:29	0:0	4	->
+water	49:31	0:0	4	i_order_length
+for	50:8	71:8	4	(i_index = 0 ;i_index < p_bridge -> i_es_num;i_index ++)
+forinit	50:14	50:25	5	i_index = 0 ;
+water	50:14	0:0	6	i_index
+op	50:22	0:0	6	=
+water	50:24	0:0	6	0
+water	50:25	0:0	6	;
+cond	50:27	50:47	5	i_index < p_bridge -> i_es_num
+water	50:27	0:0	6	i_index
+op	50:35	0:0	6	<
+water	50:37	0:0	6	p_bridge
+op	50:45	0:0	6	->
+water	50:47	0:0	6	i_es_num
+forexpr	50:57	50:64	5	i_index ++
+water	50:57	0:0	6	i_index
+op	50:64	0:0	6	++
+stmts	51:8	71:8	5	
+water	51:8	0:0	6	{
+decl	52:12	52:57	6	bridged_es_t	*p_es
+op	52:31	0:0	6	=
+water	52:33	0:0	6	p_bridge
+op	52:41	0:0	6	->
+water	52:43	0:0	6	pp_es
+op	52:48	0:0	6	[
+water	52:49	0:0	6	i_index
+op	52:56	0:0	6	]
+if	53:12	70:12	6	(! p_es -> b_empty)
+cond	53:17	53:24	7	! p_es -> b_empty
+op	53:17	0:0	8	!
+water	53:18	0:0	8	p_es
+op	53:22	0:0	8	->
+water	53:24	0:0	8	b_empty
+stmts	54:12	70:12	7	
+water	54:12	0:0	8	{
+water	55:16	0:0	8	i_numpics
+op	55:26	0:0	8	++
+water	55:28	0:0	8	;
+if	56:16	69:16	8	(p_sys -> i_order_length && p_es -> psz_id != NULL)
+cond	56:20	56:61	9	p_sys -> i_order_length && p_es -> psz_id != NULL
+water	56:20	0:0	10	p_sys
+op	56:25	0:0	10	->
+water	56:27	0:0	10	i_order_length
+op	56:42	0:0	10	&&
+water	56:45	0:0	10	p_es
+op	56:49	0:0	10	->
+water	56:51	0:0	10	psz_id
+op	56:58	0:0	10	!=
+water	56:61	0:0	10	NULL
+stmts	57:16	69:16	9	
+water	57:16	0:0	10	{
+decl	60:20	60:25	10	int	i
+for	61:20	68:20	10	(i = 0 ;i < p_sys -> i_order_length;i ++)
+forinit	61:25	61:30	11	i = 0 ;
+water	61:25	0:0	12	i
+op	61:27	0:0	12	=
+water	61:29	0:0	12	0
+water	61:30	0:0	12	;
+cond	61:32	61:43	11	i < p_sys -> i_order_length
+water	61:32	0:0	12	i
+op	61:34	0:0	12	<
+water	61:36	0:0	12	p_sys
+op	61:41	0:0	12	->
+water	61:43	0:0	12	i_order_length
+forexpr	61:60	61:61	11	i ++
+water	61:60	0:0	12	i
+op	61:61	0:0	12	++
+stmts	62:20	68:20	11	
+water	62:20	0:0	12	{
+if	63:24	67:24	12	(!strcmp (p_sys -> ppsz_order [ i ] ,p_es -> psz_id ))
+cond	63:28	63:72	13	!strcmp (p_sys -> ppsz_order [ i ] ,p_es -> psz_id )
+op	63:28	0:0	14	!
+call	63:29	63:72	14	strcmp
+arg	63:37	63:57	15	p_sys->ppsz_order[i]
+water	63:37	0:0	16	p_sys
+op	63:42	0:0	16	->
+water	63:44	0:0	16	ppsz_order
+op	63:54	0:0	16	[
+water	63:55	0:0	16	i
+op	63:56	0:0	16	]
+arg	63:59	63:72	15	p_es->psz_id
+water	63:59	0:0	16	p_es
+op	63:63	0:0	16	->
+water	63:65	0:0	16	psz_id
+stmts	64:24	67:24	13	
+water	64:24	0:0	14	{
+water	65:28	0:0	14	i_numpics
+op	65:37	0:0	14	--
+water	65:39	0:0	14	;
+break	66:28	66:33	14	
+water	67:24	0:0	14	}
+water	68:20	0:0	12	}
+water	69:16	0:0	10	}
+water	70:12	0:0	8	}
+water	71:8	0:0	6	}
+water	72:8	0:0	4	p_sys
+op	72:13	0:0	4	->
+water	72:15	0:0	4	i_rows
+op	72:22	0:0	4	=
+call	72:24	72:54	4	ceil
+arg	72:29	72:54	5	sqrt((double)i_numpics)
+call	72:29	72:53	6	sqrt
+arg	72:35	72:53	7	(double)i_numpics
+water	72:35	0:0	8	(
+water	72:36	0:0	8	double
+water	72:42	0:0	8	)
+water	72:43	0:0	8	i_numpics
+water	72:55	0:0	4	;
+water	73:8	0:0	4	p_sys
+op	73:13	0:0	4	->
+water	73:15	0:0	4	i_cols
+op	73:22	0:0	4	=
+water	73:24	0:0	4	(
+water	73:26	0:0	4	i_numpics
+op	73:36	0:0	4	%
+water	73:38	0:0	4	p_sys
+op	73:43	0:0	4	->
+water	73:45	0:0	4	i_rows
+op	73:52	0:0	4	==
+water	73:55	0:0	4	0
+water	73:57	0:0	4	?
+water	74:28	0:0	4	i_numpics
+op	74:38	0:0	4	/
+water	74:40	0:0	4	p_sys
+op	74:45	0:0	4	->
+water	74:47	0:0	4	i_rows
+water	74:54	0:0	4	:
+water	75:28	0:0	4	i_numpics
+op	75:38	0:0	4	/
+water	75:40	0:0	4	p_sys
+op	75:45	0:0	4	->
+water	75:47	0:0	4	i_rows
+op	75:54	0:0	4	+
+water	75:56	0:0	4	1
+water	75:58	0:0	4	)
+water	75:59	0:0	4	;
+water	76:4	0:0	4	}
+water	77:4	0:0	2	col_inner_width
+op	77:21	0:0	2	=
+water	77:23	0:0	2	(
+water	77:25	0:0	2	(
+water	77:27	0:0	2	p_sys
+op	77:32	0:0	2	->
+water	77:34	0:0	2	i_width
+op	77:42	0:0	2	-
+water	77:44	0:0	2	(
+water	77:46	0:0	2	p_sys
+op	77:51	0:0	2	->
+water	77:53	0:0	2	i_cols
+op	77:60	0:0	2	-
+water	77:62	0:0	2	1
+water	77:64	0:0	2	)
+op	78:23	0:0	2	*
+water	78:25	0:0	2	p_sys
+op	78:30	0:0	2	->
+water	78:32	0:0	2	i_borderw
+water	78:42	0:0	2	)
+op	78:44	0:0	2	/
+water	78:46	0:0	2	p_sys
+op	78:51	0:0	2	->
+water	78:53	0:0	2	i_cols
+water	78:60	0:0	2	)
+water	78:61	0:0	2	;
+water	79:4	0:0	2	row_inner_height
+op	79:21	0:0	2	=
+water	79:23	0:0	2	(
+water	79:25	0:0	2	(
+water	79:27	0:0	2	p_sys
+op	79:32	0:0	2	->
+water	79:34	0:0	2	i_height
+op	79:43	0:0	2	-
+water	79:45	0:0	2	(
+water	79:47	0:0	2	p_sys
+op	79:52	0:0	2	->
+water	79:54	0:0	2	i_rows
+op	79:61	0:0	2	-
+water	79:63	0:0	2	1
+water	79:65	0:0	2	)
+op	80:23	0:0	2	*
+water	80:25	0:0	2	p_sys
+op	80:30	0:0	2	->
+water	80:32	0:0	2	i_borderh
+water	80:42	0:0	2	)
+op	80:44	0:0	2	/
+water	80:46	0:0	2	p_sys
+op	80:51	0:0	2	->
+water	80:53	0:0	2	i_rows
+water	80:60	0:0	2	)
+water	80:61	0:0	2	;
+water	81:4	0:0	2	i_real_index
+op	81:17	0:0	2	=
+water	81:19	0:0	2	0
+water	81:20	0:0	2	;
+for	82:4	259:4	2	(i_index = 0 ;i_index < p_bridge -> i_es_num;i_index ++)
+forinit	82:10	82:21	3	i_index = 0 ;
+water	82:10	0:0	4	i_index
+op	82:18	0:0	4	=
+water	82:20	0:0	4	0
+water	82:21	0:0	4	;
+cond	82:23	82:43	3	i_index < p_bridge -> i_es_num
+water	82:23	0:0	4	i_index
+op	82:31	0:0	4	<
+water	82:33	0:0	4	p_bridge
+op	82:41	0:0	4	->
+water	82:43	0:0	4	i_es_num
+forexpr	82:53	82:60	3	i_index ++
+water	82:53	0:0	4	i_index
+op	82:60	0:0	4	++
+stmts	83:4	259:4	3	
+water	83:4	0:0	4	{
+decl	84:8	84:53	4	bridged_es_t	*p_es
+op	84:27	0:0	4	=
+water	84:29	0:0	4	p_bridge
+op	84:37	0:0	4	->
+water	84:39	0:0	4	pp_es
+op	84:44	0:0	4	[
+water	84:45	0:0	4	i_index
+op	84:52	0:0	4	]
+decl	85:8	85:38	4	video_format_t	fmt_in
+water	85:29	0:0	4	,
+decl	85:8	85:38	4	video_format_t	fmt_out
+decl	86:8	86:30	4	picture_t	*p_converted
+call	87:8	87:53	4	memset
+arg	87:16	87:23	5	&fmt_in
+op	87:16	0:0	6	&
+water	87:17	0:0	6	fmt_in
+arg	87:25	87:26	5	0
+water	87:25	0:0	6	0
+arg	87:28	87:53	5	sizeof(video_format_t)
+op	87:28	0:0	6	sizeof
+water	87:34	0:0	6	(
+water	87:36	0:0	6	video_format_t
+water	87:51	0:0	6	)
+water	87:54	0:0	4	;
+call	88:8	88:54	4	memset
+arg	88:16	88:24	5	&fmt_out
+op	88:16	0:0	6	&
+water	88:17	0:0	6	fmt_out
+arg	88:26	88:27	5	0
+water	88:26	0:0	6	0
+arg	88:29	88:54	5	sizeof(video_format_t)
+op	88:29	0:0	6	sizeof
+water	88:35	0:0	6	(
+water	88:37	0:0	6	video_format_t
+water	88:52	0:0	6	)
+water	88:55	0:0	4	;
+if	89:8	90:20	4	(p_es -> b_empty)
+cond	89:13	89:19	5	p_es -> b_empty
+water	89:13	0:0	6	p_es
+op	89:17	0:0	6	->
+water	89:19	0:0	6	b_empty
+stmts	90:12	90:20	5	
+continue	90:12	90:20	6	
+while	91:8	116:8	4	(p_es -> p_picture != NULL && p_es -> p_picture -> date + p_sys -> i_delay < date)
+cond	91:16	92:61	5	p_es -> p_picture != NULL && p_es -> p_picture -> date + p_sys -> i_delay < date
+water	91:16	0:0	6	p_es
+op	91:20	0:0	6	->
+water	91:22	0:0	6	p_picture
+op	91:32	0:0	6	!=
+water	91:35	0:0	6	NULL
+op	92:17	0:0	6	&&
+water	92:20	0:0	6	p_es
+op	92:24	0:0	6	->
+water	92:26	0:0	6	p_picture
+op	92:35	0:0	6	->
+water	92:37	0:0	6	date
+op	92:42	0:0	6	+
+water	92:44	0:0	6	p_sys
+op	92:49	0:0	6	->
+water	92:51	0:0	6	i_delay
+op	92:59	0:0	6	<
+water	92:61	0:0	6	date
+stmts	93:8	116:8	5	
+water	93:8	0:0	6	{
+if	94:12	99:12	6	(p_es -> p_picture -> p_next != NULL)
+cond	94:17	94:44	7	p_es -> p_picture -> p_next != NULL
+water	94:17	0:0	8	p_es
+op	94:21	0:0	8	->
+water	94:23	0:0	8	p_picture
+op	94:32	0:0	8	->
+water	94:34	0:0	8	p_next
+op	94:41	0:0	8	!=
+water	94:44	0:0	8	NULL
+stmts	95:12	99:12	7	
+water	95:12	0:0	8	{
+decl	96:16	96:59	8	picture_t	*p_next
+op	96:34	0:0	8	=
+water	96:36	0:0	8	p_es
+op	96:40	0:0	8	->
+water	96:42	0:0	8	p_picture
+op	96:51	0:0	8	->
+water	96:53	0:0	8	p_next
+call	97:16	97:49	8	picture_Release
+arg	97:33	97:49	9	p_es->p_picture
+water	97:33	0:0	10	p_es
+op	97:37	0:0	10	->
+water	97:39	0:0	10	p_picture
+water	97:50	0:0	8	;
+water	98:16	0:0	8	p_es
+op	98:20	0:0	8	->
+water	98:22	0:0	8	p_picture
+op	98:32	0:0	8	=
+water	98:34	0:0	8	p_next
+water	98:40	0:0	8	;
+water	99:12	0:0	8	}
+else	100:12	108:12	6
+stmts	100:17	108:12	7	
+if	100:17	108:12	8	(p_es -> p_picture -> date + p_sys -> i_delay + BLANK_DELAY < date)
+cond	100:22	101:24	9	p_es -> p_picture -> date + p_sys -> i_delay + BLANK_DELAY < date
+water	100:22	0:0	10	p_es
+op	100:26	0:0	10	->
+water	100:28	0:0	10	p_picture
+op	100:37	0:0	10	->
+water	100:39	0:0	10	date
+op	100:44	0:0	10	+
+water	100:46	0:0	10	p_sys
+op	100:51	0:0	10	->
+water	100:53	0:0	10	i_delay
+op	100:61	0:0	10	+
+water	100:63	0:0	10	BLANK_DELAY
+op	100:75	0:0	10	<
+water	101:24	0:0	10	date
+stmts	102:12	108:12	9	
+water	102:12	0:0	10	{
+call	104:16	104:49	10	picture_Release
+arg	104:33	104:49	11	p_es->p_picture
+water	104:33	0:0	12	p_es
+op	104:37	0:0	12	->
+water	104:39	0:0	12	p_picture
+water	104:50	0:0	10	;
+water	105:16	0:0	10	p_es
+op	105:20	0:0	10	->
+water	105:22	0:0	10	p_picture
+op	105:32	0:0	10	=
+water	105:34	0:0	10	NULL
+water	105:38	0:0	10	;
+water	106:16	0:0	10	p_es
+op	106:20	0:0	10	->
+water	106:22	0:0	10	pp_last
+op	106:30	0:0	10	=
+op	106:32	0:0	10	&
+water	106:33	0:0	10	p_es
+op	106:37	0:0	10	->
+water	106:39	0:0	10	p_picture
+water	106:48	0:0	10	;
+break	107:16	107:21	10	
+water	108:12	0:0	10	}
+else	109:12	115:12	6
+stmts	110:12	115:12	7	
+water	110:12	0:0	8	{
+call	111:16	113:71	8	msg_Dbg
+arg	111:25	111:33	9	p_filter
+water	111:25	0:0	10	p_filter
+arg	111:35	111:73	9	"too late picture for %s (%"PRId64")"
+water	111:35	0:0	10	"too late picture for %s (%"
+water	111:63	0:0	10	PRId64
+water	111:70	0:0	10	")"
+arg	112:25	112:37	9	p_es->psz_id
+water	112:25	0:0	10	p_es
+op	112:29	0:0	10	->
+water	112:31	0:0	10	psz_id
+arg	113:25	113:71	9	date-p_es->p_picture->date-p_sys->i_delay
+water	113:25	0:0	10	date
+op	113:30	0:0	10	-
+water	113:32	0:0	10	p_es
+op	113:36	0:0	10	->
+water	113:38	0:0	10	p_picture
+op	113:47	0:0	10	->
+water	113:49	0:0	10	date
+op	113:54	0:0	10	-
+water	113:56	0:0	10	p_sys
+op	113:61	0:0	10	->
+water	113:63	0:0	10	i_delay
+water	113:72	0:0	8	;
+break	114:16	114:21	8	
+water	115:12	0:0	8	}
+water	116:8	0:0	6	}
+if	117:8	118:20	4	(p_es -> p_picture == NULL)
+cond	117:13	117:32	5	p_es -> p_picture == NULL
+water	117:13	0:0	6	p_es
+op	117:17	0:0	6	->
+water	117:19	0:0	6	p_picture
+op	117:29	0:0	6	==
+water	117:32	0:0	6	NULL
+stmts	118:12	118:20	5	
+continue	118:12	118:20	6	
+if	119:8	122:8	4	(p_sys -> i_order_length == 0)
+cond	119:13	119:38	5	p_sys -> i_order_length == 0
+water	119:13	0:0	6	p_sys
+op	119:18	0:0	6	->
+water	119:20	0:0	6	i_order_length
+op	119:35	0:0	6	==
+water	119:38	0:0	6	0
+stmts	120:8	122:8	5	
+water	120:8	0:0	6	{
+water	121:12	0:0	6	i_real_index
+op	121:24	0:0	6	++
+water	121:26	0:0	6	;
+water	122:8	0:0	6	}
+else	123:8	137:8	4
+stmts	124:8	137:8	5	
+water	124:8	0:0	6	{
+decl	125:12	125:17	6	int	i
+for	126:12	134:12	6	(i = 0 ;i <= p_sys -> i_order_length;i ++)
+forinit	126:18	126:23	7	i = 0 ;
+water	126:18	0:0	8	i
+op	126:20	0:0	8	=
+water	126:22	0:0	8	0
+water	126:23	0:0	8	;
+cond	126:25	126:37	7	i <= p_sys -> i_order_length
+water	126:25	0:0	8	i
+op	126:27	0:0	8	<=
+water	126:30	0:0	8	p_sys
+op	126:35	0:0	8	->
+water	126:37	0:0	8	i_order_length
+forexpr	126:53	126:54	7	i ++
+water	126:53	0:0	8	i
+op	126:54	0:0	8	++
+stmts	127:12	134:12	7	
+water	127:12	0:0	8	{
+if	128:16	128:55	8	(i == p_sys -> i_order_length)
+cond	128:21	128:33	9	i == p_sys -> i_order_length
+water	128:21	0:0	10	i
+op	128:23	0:0	10	==
+water	128:26	0:0	10	p_sys
+op	128:31	0:0	10	->
+water	128:33	0:0	10	i_order_length
+stmts	128:50	128:55	9	
+break	128:50	128:55	10	
+if	129:16	133:16	8	(strcmp (p_es -> psz_id ,p_sys -> ppsz_order [ i ] ) == 0)
+cond	129:21	129:69	9	strcmp (p_es -> psz_id ,p_sys -> ppsz_order [ i ] ) == 0
+call	129:21	129:64	10	strcmp
+arg	129:29	129:41	11	p_es->psz_id
+water	129:29	0:0	12	p_es
+op	129:33	0:0	12	->
+water	129:35	0:0	12	psz_id
+arg	129:43	129:64	11	p_sys->ppsz_order[i]
+water	129:43	0:0	12	p_sys
+op	129:48	0:0	12	->
+water	129:50	0:0	12	ppsz_order
+op	129:60	0:0	12	[
+water	129:61	0:0	12	i
+op	129:62	0:0	12	]
+op	129:66	0:0	10	==
+water	129:69	0:0	10	0
+stmts	130:16	133:16	9	
+water	130:16	0:0	10	{
+water	131:20	0:0	10	i_real_index
+op	131:33	0:0	10	=
+water	131:35	0:0	10	i
+water	131:36	0:0	10	;
+break	132:20	132:25	10	
+water	133:16	0:0	10	}
+water	134:12	0:0	8	}
+if	135:12	136:59	6	(i == p_sys -> i_order_length)
+cond	135:17	135:29	7	i == p_sys -> i_order_length
+water	135:17	0:0	8	i
+op	135:19	0:0	8	==
+water	135:22	0:0	8	p_sys
+op	135:27	0:0	8	->
+water	135:29	0:0	8	i_order_length
+stmts	136:16	136:59	7	
+water	136:16	0:0	8	i_real_index
+op	136:29	0:0	8	=
+op	136:31	0:0	8	++
+water	136:33	0:0	8	i_greatest_real_index_used
+water	136:59	0:0	8	;
+water	137:8	0:0	6	}
+water	138:8	0:0	4	i_row
+op	138:14	0:0	4	=
+water	138:16	0:0	4	(
+water	138:18	0:0	4	i_real_index
+op	138:31	0:0	4	/
+water	138:33	0:0	4	p_sys
+op	138:38	0:0	4	->
+water	138:40	0:0	4	i_cols
+water	138:47	0:0	4	)
+op	138:49	0:0	4	%
+water	138:51	0:0	4	p_sys
+op	138:56	0:0	4	->
+water	138:58	0:0	4	i_rows
+water	138:64	0:0	4	;
+water	139:8	0:0	4	i_col
+op	139:14	0:0	4	=
+water	139:16	0:0	4	i_real_index
+op	139:29	0:0	4	%
+water	139:31	0:0	4	p_sys
+op	139:36	0:0	4	->
+water	139:38	0:0	4	i_cols
+water	139:45	0:0	4	;
+if	140:8	177:8	4	(! p_sys -> b_keep)
+cond	140:13	140:21	5	! p_sys -> b_keep
+op	140:13	0:0	6	!
+water	140:14	0:0	6	p_sys
+op	140:19	0:0	6	->
+water	140:21	0:0	6	b_keep
+stmts	141:8	177:8	5	
+water	141:8	0:0	6	{
+water	143:12	0:0	6	fmt_in
+op	143:18	0:0	6	.
+water	143:19	0:0	6	i_chroma
+op	143:28	0:0	6	=
+water	143:30	0:0	6	p_es
+op	143:34	0:0	6	->
+water	143:36	0:0	6	p_picture
+op	143:45	0:0	6	->
+water	143:47	0:0	6	format
+op	143:53	0:0	6	.
+water	143:54	0:0	6	i_chroma
+water	143:62	0:0	6	;
+water	144:12	0:0	6	fmt_in
+op	144:18	0:0	6	.
+water	144:19	0:0	6	i_height
+op	144:28	0:0	6	=
+water	144:30	0:0	6	p_es
+op	144:34	0:0	6	->
+water	144:36	0:0	6	p_picture
+op	144:45	0:0	6	->
+water	144:47	0:0	6	format
+op	144:53	0:0	6	.
+water	144:54	0:0	6	i_height
+water	144:62	0:0	6	;
+water	145:12	0:0	6	fmt_in
+op	145:18	0:0	6	.
+water	145:19	0:0	6	i_width
+op	145:27	0:0	6	=
+water	145:29	0:0	6	p_es
+op	145:33	0:0	6	->
+water	145:35	0:0	6	p_picture
+op	145:44	0:0	6	->
+water	145:46	0:0	6	format
+op	145:52	0:0	6	.
+water	145:53	0:0	6	i_width
+water	145:60	0:0	6	;
+if	146:12	148:49	6	(fmt_in . i_chroma == VLC_CODEC_YUVA || fmt_in . i_chroma == VLC_CODEC_RGBA)
+cond	146:16	147:35	7	fmt_in . i_chroma == VLC_CODEC_YUVA || fmt_in . i_chroma == VLC_CODEC_RGBA
+water	146:16	0:0	8	fmt_in
+op	146:22	0:0	8	.
+water	146:23	0:0	8	i_chroma
+op	146:32	0:0	8	==
+water	146:35	0:0	8	VLC_CODEC_YUVA
+op	146:50	0:0	8	||
+water	147:16	0:0	8	fmt_in
+op	147:22	0:0	8	.
+water	147:23	0:0	8	i_chroma
+op	147:32	0:0	8	==
+water	147:35	0:0	8	VLC_CODEC_RGBA
+stmts	148:16	148:49	7	
+water	148:16	0:0	8	fmt_out
+op	148:23	0:0	8	.
+water	148:24	0:0	8	i_chroma
+op	148:33	0:0	8	=
+water	148:35	0:0	8	VLC_CODEC_YUVA
+water	148:49	0:0	8	;
+else	149:12	150:49	6
+stmts	150:16	150:49	7	
+water	150:16	0:0	8	fmt_out
+op	150:23	0:0	8	.
+water	150:24	0:0	8	i_chroma
+op	150:33	0:0	8	=
+water	150:35	0:0	8	VLC_CODEC_I420
+water	150:49	0:0	8	;
+water	151:12	0:0	6	fmt_out
+op	151:19	0:0	6	.
+water	151:20	0:0	6	i_width
+op	151:28	0:0	6	=
+water	151:30	0:0	6	col_inner_width
+water	151:45	0:0	6	;
+water	152:12	0:0	6	fmt_out
+op	152:19	0:0	6	.
+water	152:20	0:0	6	i_height
+op	152:29	0:0	6	=
+water	152:31	0:0	6	row_inner_height
+water	152:47	0:0	6	;
+if	153:12	166:13	6	(p_sys -> b_ar)
+cond	153:16	153:23	7	p_sys -> b_ar
+water	153:16	0:0	8	p_sys
+op	153:21	0:0	8	->
+water	153:23	0:0	8	b_ar
+stmts	154:12	166:13	7	
+water	154:12	0:0	8	{
+if	155:16	160:16	8	(( float ) fmt_out . i_width / ( float ) fmt_out . i_height > ( float ) fmt_in . i_width / ( float ) fmt_in . i_height)
+cond	155:20	156:62	9	( float ) fmt_out . i_width / ( float ) fmt_out . i_height > ( float ) fmt_in . i_width / ( float ) fmt_in . i_height
+water	155:20	0:0	10	(
+water	155:21	0:0	10	float
+water	155:26	0:0	10	)
+water	155:27	0:0	10	fmt_out
+op	155:34	0:0	10	.
+water	155:35	0:0	10	i_width
+op	155:43	0:0	10	/
+water	155:45	0:0	10	(
+water	155:46	0:0	10	float
+water	155:51	0:0	10	)
+water	155:52	0:0	10	fmt_out
+op	155:59	0:0	10	.
+water	155:60	0:0	10	i_height
+op	156:22	0:0	10	>
+water	156:24	0:0	10	(
+water	156:25	0:0	10	float
+water	156:30	0:0	10	)
+water	156:31	0:0	10	fmt_in
+op	156:37	0:0	10	.
+water	156:38	0:0	10	i_width
+op	156:46	0:0	10	/
+water	156:48	0:0	10	(
+water	156:49	0:0	10	float
+water	156:54	0:0	10	)
+water	156:55	0:0	10	fmt_in
+op	156:61	0:0	10	.
+water	156:62	0:0	10	i_height
+stmts	157:16	160:16	9	
+water	157:16	0:0	10	{
+water	158:20	0:0	10	fmt_out
+op	158:27	0:0	10	.
+water	158:28	0:0	10	i_width
+op	158:36	0:0	10	=
+water	158:38	0:0	10	(
+water	158:40	0:0	10	fmt_out
+op	158:47	0:0	10	.
+water	158:48	0:0	10	i_height
+op	158:57	0:0	10	*
+water	158:59	0:0	10	fmt_in
+op	158:65	0:0	10	.
+water	158:66	0:0	10	i_width
+water	158:74	0:0	10	)
+op	159:41	0:0	10	/
+water	159:43	0:0	10	fmt_in
+op	159:49	0:0	10	.
+water	159:50	0:0	10	i_height
+water	159:58	0:0	10	;
+water	160:16	0:0	10	}
+else	161:16	165:16	8
+stmts	162:16	165:16	9	
+water	162:16	0:0	10	{
+water	163:20	0:0	10	fmt_out
+op	163:27	0:0	10	.
+water	163:28	0:0	10	i_height
+op	163:37	0:0	10	=
+water	163:39	0:0	10	(
+water	163:41	0:0	10	fmt_out
+op	163:48	0:0	10	.
+water	163:49	0:0	10	i_width
+op	163:57	0:0	10	*
+water	163:59	0:0	10	fmt_in
+op	163:65	0:0	10	.
+water	163:66	0:0	10	i_height
+water	163:75	0:0	10	)
+op	164:40	0:0	10	/
+water	164:42	0:0	10	fmt_in
+op	164:48	0:0	10	.
+water	164:49	0:0	10	i_width
+water	164:56	0:0	10	;
+water	165:16	0:0	10	}
+water	166:13	0:0	8	}
+water	167:12	0:0	6	fmt_out
+op	167:19	0:0	6	.
+water	167:20	0:0	6	i_visible_width
+op	167:36	0:0	6	=
+water	167:38	0:0	6	fmt_out
+op	167:45	0:0	6	.
+water	167:46	0:0	6	i_width
+water	167:53	0:0	6	;
+water	168:12	0:0	6	fmt_out
+op	168:19	0:0	6	.
+water	168:20	0:0	6	i_visible_height
+op	168:37	0:0	6	=
+water	168:39	0:0	6	fmt_out
+op	168:46	0:0	6	.
+water	168:47	0:0	6	i_height
+water	168:55	0:0	6	;
+water	169:12	0:0	6	p_converted
+op	169:24	0:0	6	=
+call	169:26	170:59	6	image_Convert
+arg	169:41	169:55	7	p_sys->p_image
+water	169:41	0:0	8	p_sys
+op	169:46	0:0	8	->
+water	169:48	0:0	8	p_image
+arg	169:57	169:72	7	p_es->p_picture
+water	169:57	0:0	8	p_es
+op	169:61	0:0	8	->
+water	169:63	0:0	8	p_picture
+arg	170:41	170:48	7	&fmt_in
+op	170:41	0:0	8	&
+water	170:42	0:0	8	fmt_in
+arg	170:50	170:59	7	&fmt_out
+op	170:50	0:0	8	&
+water	170:51	0:0	8	fmt_out
+water	170:60	0:0	6	;
+if	171:12	176:12	6	(! p_converted)
+cond	171:16	171:17	7	! p_converted
+op	171:16	0:0	8	!
+water	171:17	0:0	8	p_converted
+stmts	172:12	176:12	7	
+water	172:12	0:0	8	{
+call	173:16	174:73	8	msg_Warn
+arg	173:26	173:34	9	p_filter
+water	173:26	0:0	10	p_filter
+arg	174:27	174:73	9	"image resizing and chroma conversion failed"
+water	174:27	0:0	10	"image resizing and chroma conversion failed"
+water	174:74	0:0	8	;
+continue	175:16	175:24	8	
+water	176:12	0:0	8	}
+water	177:8	0:0	6	}
+else	178:8	186:8	4
+stmts	179:8	186:8	5	
+water	179:8	0:0	6	{
+water	180:12	0:0	6	p_converted
+op	180:24	0:0	6	=
+water	180:26	0:0	6	p_es
+op	180:30	0:0	6	->
+water	180:32	0:0	6	p_picture
+water	180:41	0:0	6	;
+water	181:12	0:0	6	fmt_in
+op	181:18	0:0	6	.
+water	181:19	0:0	6	i_width
+op	181:27	0:0	6	=
+water	181:29	0:0	6	fmt_out
+op	181:36	0:0	6	.
+water	181:37	0:0	6	i_width
+op	181:45	0:0	6	=
+water	181:47	0:0	6	p_converted
+op	181:58	0:0	6	->
+water	181:60	0:0	6	format
+op	181:66	0:0	6	.
+water	181:67	0:0	6	i_width
+water	181:74	0:0	6	;
+water	182:12	0:0	6	fmt_in
+op	182:18	0:0	6	.
+water	182:19	0:0	6	i_height
+op	182:28	0:0	6	=
+water	182:30	0:0	6	fmt_out
+op	182:37	0:0	6	.
+water	182:38	0:0	6	i_height
+op	182:47	0:0	6	=
+water	182:49	0:0	6	p_converted
+op	182:60	0:0	6	->
+water	182:62	0:0	6	format
+op	182:68	0:0	6	.
+water	182:69	0:0	6	i_height
+water	182:77	0:0	6	;
+water	183:12	0:0	6	fmt_in
+op	183:18	0:0	6	.
+water	183:19	0:0	6	i_chroma
+op	183:28	0:0	6	=
+water	183:30	0:0	6	fmt_out
+op	183:37	0:0	6	.
+water	183:38	0:0	6	i_chroma
+op	183:47	0:0	6	=
+water	183:49	0:0	6	p_converted
+op	183:60	0:0	6	->
+water	183:62	0:0	6	format
+op	183:68	0:0	6	.
+water	183:69	0:0	6	i_chroma
+water	183:77	0:0	6	;
+water	184:12	0:0	6	fmt_out
+op	184:19	0:0	6	.
+water	184:20	0:0	6	i_visible_width
+op	184:36	0:0	6	=
+water	184:38	0:0	6	fmt_out
+op	184:45	0:0	6	.
+water	184:46	0:0	6	i_width
+water	184:53	0:0	6	;
+water	185:12	0:0	6	fmt_out
+op	185:19	0:0	6	.
+water	185:20	0:0	6	i_visible_height
+op	185:37	0:0	6	=
+water	185:39	0:0	6	fmt_out
+op	185:46	0:0	6	.
+water	185:47	0:0	6	i_height
+water	185:55	0:0	6	;
+water	186:8	0:0	6	}
+water	187:8	0:0	4	p_region
+op	187:17	0:0	4	=
+call	187:19	187:51	4	subpicture_region_New
+arg	187:42	187:51	5	&fmt_out
+op	187:42	0:0	6	&
+water	187:43	0:0	6	fmt_out
+water	187:52	0:0	4	;
+if	189:8	190:60	4	(p_region)
+cond	189:12	189:12	5	p_region
+water	189:12	0:0	6	p_region
+stmts	190:12	190:60	5	
+call	190:12	190:59	6	picture_Copy
+arg	190:26	190:45	7	p_region->p_picture
+water	190:26	0:0	8	p_region
+op	190:34	0:0	8	->
+water	190:36	0:0	8	p_picture
+arg	190:47	190:59	7	p_converted
+water	190:47	0:0	8	p_converted
+water	190:60	0:0	6	;
+if	191:8	192:42	4	(! p_sys -> b_keep)
+cond	191:12	191:20	5	! p_sys -> b_keep
+op	191:12	0:0	6	!
+water	191:13	0:0	6	p_sys
+op	191:18	0:0	6	->
+water	191:20	0:0	6	b_keep
+stmts	192:12	192:42	5	
+call	192:12	192:41	6	picture_Release
+arg	192:29	192:41	7	p_converted
+water	192:29	0:0	8	p_converted
+water	192:42	0:0	6	;
+if	193:8	200:8	4	(! p_region)
+cond	193:12	193:13	5	! p_region
+op	193:12	0:0	6	!
+water	193:13	0:0	6	p_region
+stmts	194:8	200:8	5	
+water	194:8	0:0	6	{
+call	195:12	195:60	6	msg_Err
+arg	195:21	195:29	7	p_filter
+water	195:21	0:0	8	p_filter
+arg	195:31	195:60	7	"cannot allocate SPU region"
+water	195:31	0:0	8	"cannot allocate SPU region"
+water	195:61	0:0	6	;
+call	196:12	196:57	6	p_filter->pf_sub_buffer_del
+arg	196:41	196:49	7	p_filter
+water	196:41	0:0	8	p_filter
+arg	196:51	196:57	7	p_spu
+water	196:51	0:0	8	p_spu
+water	196:58	0:0	6	;
+call	197:12	197:48	6	vlc_global_unlock
+arg	197:31	197:48	7	VLC_MOSAIC_MUTEX
+water	197:31	0:0	8	VLC_MOSAIC_MUTEX
+water	197:49	0:0	6	;
+call	198:12	198:43	6	vlc_mutex_unlock
+arg	198:30	198:43	7	&p_sys->lock
+op	198:30	0:0	8	&
+water	198:31	0:0	8	p_sys
+op	198:36	0:0	8	->
+water	198:38	0:0	8	lock
+water	198:44	0:0	6	;
+return	199:12	199:23	6	NULL
+water	199:19	0:0	7	NULL
+water	200:8	0:0	6	}
+if	201:8	205:8	4	(p_es -> i_x >= 0 && p_es -> i_y >= 0)
+cond	201:12	201:43	5	p_es -> i_x >= 0 && p_es -> i_y >= 0
+water	201:12	0:0	6	p_es
+op	201:16	0:0	6	->
+water	201:18	0:0	6	i_x
+op	201:22	0:0	6	>=
+water	201:25	0:0	6	0
+op	201:27	0:0	6	&&
+water	201:30	0:0	6	p_es
+op	201:34	0:0	6	->
+water	201:36	0:0	6	i_y
+op	201:40	0:0	6	>=
+water	201:43	0:0	6	0
+stmts	202:8	205:8	5	
+water	202:8	0:0	6	{
+water	203:12	0:0	6	p_region
+op	203:20	0:0	6	->
+water	203:22	0:0	6	i_x
+op	203:26	0:0	6	=
+water	203:28	0:0	6	p_es
+op	203:32	0:0	6	->
+water	203:34	0:0	6	i_x
+water	203:37	0:0	6	;
+water	204:12	0:0	6	p_region
+op	204:20	0:0	6	->
+water	204:22	0:0	6	i_y
+op	204:26	0:0	6	=
+water	204:28	0:0	6	p_es
+op	204:32	0:0	6	->
+water	204:34	0:0	6	i_y
+water	204:37	0:0	6	;
+water	205:8	0:0	6	}
+else	206:8	210:8	4
+stmts	206:13	210:8	5	
+if	206:13	210:8	6	(p_sys -> i_position == position_offsets)
+cond	206:17	206:38	7	p_sys -> i_position == position_offsets
+water	206:17	0:0	8	p_sys
+op	206:22	0:0	8	->
+water	206:24	0:0	8	i_position
+op	206:35	0:0	8	==
+water	206:38	0:0	8	position_offsets
+stmts	207:8	210:8	7	
+water	207:8	0:0	8	{
+water	208:12	0:0	8	p_region
+op	208:20	0:0	8	->
+water	208:22	0:0	8	i_x
+op	208:26	0:0	8	=
+water	208:28	0:0	8	p_sys
+op	208:33	0:0	8	->
+water	208:35	0:0	8	pi_x_offsets
+op	208:47	0:0	8	[
+water	208:48	0:0	8	i_real_index
+op	208:60	0:0	8	]
+water	208:61	0:0	8	;
+water	209:12	0:0	8	p_region
+op	209:20	0:0	8	->
+water	209:22	0:0	8	i_y
+op	209:26	0:0	8	=
+water	209:28	0:0	8	p_sys
+op	209:33	0:0	8	->
+water	209:35	0:0	8	pi_y_offsets
+op	209:47	0:0	8	[
+water	209:48	0:0	8	i_real_index
+op	209:60	0:0	8	]
+water	209:61	0:0	8	;
+water	210:8	0:0	8	}
+else	211:8	247:8	4
+stmts	212:8	247:8	5	
+water	212:8	0:0	6	{
+if	213:12	221:12	6	(fmt_out . i_width > col_inner_width || p_sys -> b_ar || p_sys -> b_keep)
+cond	213:16	214:38	7	fmt_out . i_width > col_inner_width || p_sys -> b_ar || p_sys -> b_keep
+water	213:16	0:0	8	fmt_out
+op	213:23	0:0	8	.
+water	213:24	0:0	8	i_width
+op	213:32	0:0	8	>
+water	213:34	0:0	8	col_inner_width
+op	213:50	0:0	8	||
+water	214:16	0:0	8	p_sys
+op	214:21	0:0	8	->
+water	214:23	0:0	8	b_ar
+op	214:28	0:0	8	||
+water	214:31	0:0	8	p_sys
+op	214:36	0:0	8	->
+water	214:38	0:0	8	b_keep
+stmts	215:12	221:12	7	
+water	215:12	0:0	8	{
+water	218:16	0:0	8	p_region
+op	218:24	0:0	8	->
+water	218:26	0:0	8	i_x
+op	218:30	0:0	8	=
+water	218:32	0:0	8	p_sys
+op	218:37	0:0	8	->
+water	218:39	0:0	8	i_xoffset
+op	219:28	0:0	8	+
+water	219:30	0:0	8	i_col
+op	219:36	0:0	8	*
+water	219:38	0:0	8	(
+water	219:40	0:0	8	p_sys
+op	219:45	0:0	8	->
+water	219:47	0:0	8	i_width
+op	219:55	0:0	8	/
+water	219:57	0:0	8	p_sys
+op	219:62	0:0	8	->
+water	219:64	0:0	8	i_cols
+water	219:71	0:0	8	)
+op	220:28	0:0	8	+
+water	220:30	0:0	8	(
+water	220:32	0:0	8	i_col
+op	220:38	0:0	8	*
+water	220:40	0:0	8	p_sys
+op	220:45	0:0	8	->
+water	220:47	0:0	8	i_borderw
+water	220:57	0:0	8	)
+op	220:59	0:0	8	/
+water	220:61	0:0	8	p_sys
+op	220:66	0:0	8	->
+water	220:68	0:0	8	i_cols
+water	220:74	0:0	8	;
+water	221:12	0:0	8	}
+else	222:12	229:12	6
+stmts	223:12	229:12	7	
+water	223:12	0:0	8	{
+water	225:16	0:0	8	p_region
+op	225:24	0:0	8	->
+water	225:26	0:0	8	i_x
+op	225:30	0:0	8	=
+water	225:32	0:0	8	p_sys
+op	225:37	0:0	8	->
+water	225:39	0:0	8	i_xoffset
+op	226:24	0:0	8	+
+water	226:26	0:0	8	i_col
+op	226:32	0:0	8	*
+water	226:34	0:0	8	(
+water	226:36	0:0	8	p_sys
+op	226:41	0:0	8	->
+water	226:43	0:0	8	i_width
+op	226:51	0:0	8	/
+water	226:53	0:0	8	p_sys
+op	226:58	0:0	8	->
+water	226:60	0:0	8	i_cols
+water	226:67	0:0	8	)
+op	227:24	0:0	8	+
+water	227:26	0:0	8	(
+water	227:28	0:0	8	i_col
+op	227:34	0:0	8	*
+water	227:36	0:0	8	p_sys
+op	227:41	0:0	8	->
+water	227:43	0:0	8	i_borderw
+water	227:53	0:0	8	)
+op	227:55	0:0	8	/
+water	227:57	0:0	8	p_sys
+op	227:62	0:0	8	->
+water	227:64	0:0	8	i_cols
+op	228:24	0:0	8	+
+water	228:26	0:0	8	(
+water	228:28	0:0	8	col_inner_width
+op	228:44	0:0	8	-
+water	228:46	0:0	8	fmt_out
+op	228:53	0:0	8	.
+water	228:54	0:0	8	i_width
+water	228:62	0:0	8	)
+op	228:64	0:0	8	/
+water	228:66	0:0	8	2
+water	228:67	0:0	8	;
+water	229:12	0:0	8	}
+if	230:12	238:12	6	(fmt_out . i_height > row_inner_height || p_sys -> b_ar || p_sys -> b_keep)
+cond	230:16	231:41	7	fmt_out . i_height > row_inner_height || p_sys -> b_ar || p_sys -> b_keep
+water	230:16	0:0	8	fmt_out
+op	230:23	0:0	8	.
+water	230:24	0:0	8	i_height
+op	230:33	0:0	8	>
+water	230:35	0:0	8	row_inner_height
+op	231:16	0:0	8	||
+water	231:19	0:0	8	p_sys
+op	231:24	0:0	8	->
+water	231:26	0:0	8	b_ar
+op	231:31	0:0	8	||
+water	231:34	0:0	8	p_sys
+op	231:39	0:0	8	->
+water	231:41	0:0	8	b_keep
+stmts	232:12	238:12	7	
+water	232:12	0:0	8	{
+water	235:16	0:0	8	p_region
+op	235:24	0:0	8	->
+water	235:26	0:0	8	i_y
+op	235:30	0:0	8	=
+water	235:32	0:0	8	p_sys
+op	235:37	0:0	8	->
+water	235:39	0:0	8	i_yoffset
+op	236:24	0:0	8	+
+water	236:26	0:0	8	i_row
+op	236:32	0:0	8	*
+water	236:34	0:0	8	(
+water	236:36	0:0	8	p_sys
+op	236:41	0:0	8	->
+water	236:43	0:0	8	i_height
+op	236:52	0:0	8	/
+water	236:54	0:0	8	p_sys
+op	236:59	0:0	8	->
+water	236:61	0:0	8	i_rows
+water	236:68	0:0	8	)
+op	237:24	0:0	8	+
+water	237:26	0:0	8	(
+water	237:28	0:0	8	i_row
+op	237:34	0:0	8	*
+water	237:36	0:0	8	p_sys
+op	237:41	0:0	8	->
+water	237:43	0:0	8	i_borderh
+water	237:53	0:0	8	)
+op	237:55	0:0	8	/
+water	237:57	0:0	8	p_sys
+op	237:62	0:0	8	->
+water	237:64	0:0	8	i_rows
+water	237:70	0:0	8	;
+water	238:12	0:0	8	}
+else	239:12	246:12	6
+stmts	240:12	246:12	7	
+water	240:12	0:0	8	{
+water	242:16	0:0	8	p_region
+op	242:24	0:0	8	->
+water	242:26	0:0	8	i_y
+op	242:30	0:0	8	=
+water	242:32	0:0	8	p_sys
+op	242:37	0:0	8	->
+water	242:39	0:0	8	i_yoffset
+op	243:24	0:0	8	+
+water	243:26	0:0	8	i_row
+op	243:32	0:0	8	*
+water	243:34	0:0	8	(
+water	243:36	0:0	8	p_sys
+op	243:41	0:0	8	->
+water	243:43	0:0	8	i_height
+op	243:52	0:0	8	/
+water	243:54	0:0	8	p_sys
+op	243:59	0:0	8	->
+water	243:61	0:0	8	i_rows
+water	243:68	0:0	8	)
+op	244:24	0:0	8	+
+water	244:26	0:0	8	(
+water	244:28	0:0	8	i_row
+op	244:34	0:0	8	*
+water	244:36	0:0	8	p_sys
+op	244:41	0:0	8	->
+water	244:43	0:0	8	i_borderh
+water	244:53	0:0	8	)
+op	244:55	0:0	8	/
+water	244:57	0:0	8	p_sys
+op	244:62	0:0	8	->
+water	244:64	0:0	8	i_rows
+op	245:24	0:0	8	+
+water	245:26	0:0	8	(
+water	245:28	0:0	8	row_inner_height
+op	245:45	0:0	8	-
+water	245:47	0:0	8	fmt_out
+op	245:54	0:0	8	.
+water	245:55	0:0	8	i_height
+water	245:64	0:0	8	)
+op	245:66	0:0	8	/
+water	245:68	0:0	8	2
+water	245:69	0:0	8	;
+water	246:12	0:0	8	}
+water	247:8	0:0	6	}
+water	248:8	0:0	4	p_region
+op	248:16	0:0	4	->
+water	248:18	0:0	4	i_align
+op	248:26	0:0	4	=
+water	248:28	0:0	4	p_sys
+op	248:33	0:0	4	->
+water	248:35	0:0	4	i_align
+water	248:42	0:0	4	;
+water	249:8	0:0	4	p_region
+op	249:16	0:0	4	->
+water	249:18	0:0	4	i_alpha
+op	249:26	0:0	4	=
+water	249:28	0:0	4	p_es
+op	249:32	0:0	4	->
+water	249:34	0:0	4	i_alpha
+water	249:41	0:0	4	;
+if	250:8	253:8	4	(p_region_prev == NULL)
+cond	250:12	250:29	5	p_region_prev == NULL
+water	250:12	0:0	6	p_region_prev
+op	250:26	0:0	6	==
+water	250:29	0:0	6	NULL
+stmts	251:8	253:8	5	
+water	251:8	0:0	6	{
+water	252:12	0:0	6	p_spu
+op	252:17	0:0	6	->
+water	252:19	0:0	6	p_region
+op	252:28	0:0	6	=
+water	252:30	0:0	6	p_region
+water	252:38	0:0	6	;
+water	253:8	0:0	6	}
+else	254:8	257:8	4
+stmts	255:8	257:8	5	
+water	255:8	0:0	6	{
+water	256:12	0:0	6	p_region_prev
+op	256:25	0:0	6	->
+water	256:27	0:0	6	p_next
+op	256:34	0:0	6	=
+water	256:36	0:0	6	p_region
+water	256:44	0:0	6	;
+water	257:8	0:0	6	}
+water	258:8	0:0	4	p_region_prev
+op	258:22	0:0	4	=
+water	258:24	0:0	4	p_region
+water	258:32	0:0	4	;
+water	259:4	0:0	4	}
+call	260:4	260:40	2	vlc_global_unlock
+arg	260:23	260:40	3	VLC_MOSAIC_MUTEX
+water	260:23	0:0	4	VLC_MOSAIC_MUTEX
+water	260:41	0:0	2	;
+call	261:4	261:35	2	vlc_mutex_unlock
+arg	261:22	261:35	3	&p_sys->lock
+op	261:22	0:0	4	&
+water	261:23	0:0	4	p_sys
+op	261:28	0:0	4	->
+water	261:30	0:0	4	lock
+water	261:36	0:0	2	;
+return	262:4	262:16	2	p_spu
+water	262:11	0:0	3	p_spu

@@ -1,0 +1,667 @@
+func	2:0	170:0	0	static int	rtp_packetize_jpeg
+params	2:29	0:0	1	
+param	2:31	2:55	2	sout_stream_id_sys_t *	id
+param	2:57	2:69	2	block_t *	in
+stmnts	0:0	169:23	1	
+decl	4:4	4:34	2	uint8_t	*p_data
+op	4:20	0:0	2	=
+water	4:22	0:0	2	in
+op	4:24	0:0	2	->
+water	4:26	0:0	2	p_buffer
+decl	5:4	5:34	2	int	i_data
+op	5:20	0:0	2	=
+water	5:22	0:0	2	in
+op	5:24	0:0	2	->
+water	5:26	0:0	2	i_buffer
+decl	6:4	6:37	2	uint8_t	*bufend
+op	6:20	0:0	2	=
+water	6:22	0:0	2	p_data
+op	6:29	0:0	2	+
+water	6:31	0:0	2	i_data
+decl	7:4	7:33	2	const uint8_t	*qtables
+op	7:27	0:0	2	=
+water	7:29	0:0	2	NULL
+decl	8:4	8:22	2	int	nb_qtables
+op	8:19	0:0	2	=
+water	8:21	0:0	2	0
+decl	9:4	9:15	2	int	off
+op	9:12	0:0	2	=
+water	9:14	0:0	2	0
+decl	10:4	10:25	2	int	y_sampling_factor
+decl	15:4	15:12	2	int	type
+decl	16:4	16:13	2	int	w
+op	16:10	0:0	2	=
+water	16:12	0:0	2	0
+decl	17:4	17:13	2	int	h
+op	17:10	0:0	2	=
+water	17:12	0:0	2	0
+decl	18:4	18:24	2	int	restart_interval
+decl	19:4	19:21	2	int	dri_found
+op	19:18	0:0	2	=
+water	19:20	0:0	2	0
+if	21:4	22:18	2	(GetWBE (p_data ) != 0 xffd8)
+cond	21:8	21:27	3	GetWBE (p_data ) != 0 xffd8
+call	21:8	21:21	4	GetWBE
+arg	21:15	21:21	5	p_data
+water	21:15	0:0	6	p_data
+op	21:23	0:0	4	!=
+water	21:26	0:0	4	0
+water	21:27	0:0	4	xffd8
+stmts	22:8	22:18	3	
+goto	22:8	22:18	4	error
+water	22:13	0:0	5	error
+water	23:4	0:0	2	p_data
+op	23:11	0:0	2	+=
+water	23:14	0:0	2	2
+water	23:15	0:0	2	;
+water	24:4	0:0	2	i_data
+op	24:11	0:0	2	-=
+water	24:14	0:0	2	2
+water	24:15	0:0	2	;
+decl	26:4	26:27	2	int	header_finished
+op	26:24	0:0	2	=
+water	26:26	0:0	2	0
+while	27:4	90:4	2	(! header_finished && p_data + 4 <= bufend)
+cond	27:11	27:45	3	! header_finished && p_data + 4 <= bufend
+op	27:11	0:0	4	!
+water	27:12	0:0	4	header_finished
+op	27:28	0:0	4	&&
+water	27:31	0:0	4	p_data
+op	27:38	0:0	4	+
+water	27:40	0:0	4	4
+op	27:42	0:0	4	<=
+water	27:45	0:0	4	bufend
+stmts	27:53	90:4	3	
+water	27:53	0:0	4	{
+decl	28:8	28:40	4	uint16_t	marker
+op	28:24	0:0	4	=
+call	28:26	28:39	5	GetWBE
+arg	28:33	28:39	6	p_data
+water	28:33	0:0	7	p_data
+decl	29:8	29:37	4	uint8_t	*section
+op	29:25	0:0	4	=
+water	29:27	0:0	4	p_data
+op	29:34	0:0	4	+
+water	29:36	0:0	4	2
+decl	30:8	30:42	4	int	section_size
+op	30:25	0:0	4	=
+call	30:27	30:41	5	GetWBE
+arg	30:34	30:41	6	section
+water	30:34	0:0	7	section
+decl	31:8	31:42	4	uint8_t	*section_body
+op	31:30	0:0	4	=
+water	31:32	0:0	4	p_data
+op	31:39	0:0	4	+
+water	31:41	0:0	4	4
+if	32:8	33:22	4	(section + section_size > bufend)
+cond	32:12	32:37	5	section + section_size > bufend
+water	32:12	0:0	6	section
+op	32:20	0:0	6	+
+water	32:22	0:0	6	section_size
+op	32:35	0:0	6	>
+water	32:37	0:0	6	bufend
+stmts	33:12	33:22	5	
+goto	33:12	33:22	6	error
+water	33:17	0:0	7	error
+call	34:8	34:42	4	assert
+arg	34:15	34:42	5	(marker&0xff00)==0xff00
+water	34:15	0:0	6	(
+water	34:16	0:0	6	marker
+op	34:23	0:0	6	&
+water	34:25	0:0	6	0
+water	34:26	0:0	6	xff00
+water	34:31	0:0	6	)
+op	34:33	0:0	6	==
+water	34:36	0:0	6	0
+water	34:37	0:0	6	xff00
+water	34:43	0:0	4	;
+switch	35:8	86:8	4	(marker)
+cond	35:16	35:16	5	marker
+water	35:16	0:0	6	marker
+stmts	36:8	86:8	5	
+water	36:8	0:0	6	{
+label	37:12	37:31	6	case 0 xffdb :
+if	38:16	39:30	6	(section_body [ 0 ])
+cond	38:20	38:34	7	section_body [ 0 ]
+water	38:20	0:0	8	section_body
+op	38:32	0:0	8	[
+water	38:33	0:0	8	0
+op	38:34	0:0	8	]
+stmts	39:20	39:30	7	
+goto	39:20	39:30	8	error
+water	39:25	0:0	9	error
+water	41:16	0:0	6	nb_qtables
+op	41:27	0:0	6	=
+water	41:29	0:0	6	section_size
+op	41:42	0:0	6	/
+water	41:44	0:0	6	65
+water	41:46	0:0	6	;
+water	42:16	0:0	6	qtables
+op	42:24	0:0	6	=
+water	42:26	0:0	6	section_body
+water	42:38	0:0	6	;
+break	43:16	43:21	6	
+label	44:12	44:32	6	case 0 xffc0 :
+water	45:12	0:0	6	{
+decl	46:16	46:53	6	int	height
+op	46:27	0:0	6	=
+call	46:29	46:52	7	GetWBE
+arg	46:36	46:52	8	&section_body[1]
+op	46:36	0:0	9	&
+water	46:37	0:0	9	section_body
+op	46:49	0:0	9	[
+water	46:50	0:0	9	1
+op	46:51	0:0	9	]
+decl	47:16	47:52	6	int	width
+op	47:26	0:0	6	=
+call	47:28	47:51	7	GetWBE
+arg	47:35	47:51	8	&section_body[3]
+op	47:35	0:0	9	&
+water	47:36	0:0	9	section_body
+op	47:48	0:0	9	[
+water	47:49	0:0	9	3
+op	47:50	0:0	9	]
+if	48:16	52:16	6	(width > 2040 || height > 2040)
+cond	48:20	48:45	7	width > 2040 || height > 2040
+water	48:20	0:0	8	width
+op	48:26	0:0	8	>
+water	48:28	0:0	8	2040
+op	48:33	0:0	8	||
+water	48:36	0:0	8	height
+op	48:43	0:0	8	>
+water	48:45	0:0	8	2040
+stmts	49:16	52:16	7	
+water	49:16	0:0	8	{
+goto	51:20	51:30	8	error
+water	51:25	0:0	9	error
+water	52:16	0:0	8	}
+water	54:16	0:0	6	w
+op	54:18	0:0	6	=
+water	54:20	0:0	6	(
+water	54:21	0:0	6	(
+water	54:22	0:0	6	width
+op	54:27	0:0	6	+
+water	54:28	0:0	6	7
+water	54:29	0:0	6	)
+op	54:30	0:0	6	&
+water	54:31	0:0	6	~7
+water	54:33	0:0	6	)
+op	54:35	0:0	6	>>
+water	54:38	0:0	6	3
+water	54:39	0:0	6	;
+water	55:16	0:0	6	h
+op	55:18	0:0	6	=
+water	55:20	0:0	6	(
+water	55:21	0:0	6	(
+water	55:22	0:0	6	height
+op	55:28	0:0	6	+
+water	55:29	0:0	6	7
+water	55:30	0:0	6	)
+op	55:31	0:0	6	&
+water	55:32	0:0	6	~7
+water	55:34	0:0	6	)
+op	55:36	0:0	6	>>
+water	55:39	0:0	6	3
+water	55:40	0:0	6	;
+if	62:16	63:30	6	(section_body [ 5 ] != 3)
+cond	62:20	62:39	7	section_body [ 5 ] != 3
+water	62:20	0:0	8	section_body
+op	62:32	0:0	8	[
+water	62:33	0:0	8	5
+op	62:34	0:0	8	]
+op	62:36	0:0	8	!=
+water	62:39	0:0	8	3
+stmts	63:20	63:30	7	
+goto	63:20	63:30	8	error
+water	63:25	0:0	9	error
+for	64:16	75:16	6	( int j = 0 ;j < 3;j ++)
+forinit	0:0	64:30	7	 int j = 0 ;
+decl	64:21	64:30	8	int	j
+op	64:27	0:0	8	=
+water	64:29	0:0	8	0
+cond	64:32	64:36	7	j < 3
+water	64:32	0:0	8	j
+op	64:34	0:0	8	<
+water	64:36	0:0	8	3
+forexpr	64:39	64:40	7	j ++
+water	64:39	0:0	8	j
+op	64:40	0:0	8	++
+stmts	65:16	75:16	7	
+water	65:16	0:0	8	{
+if	66:20	69:20	8	(section_body [ 6 + j * 3 ] == 1)
+cond	66:24	66:51	9	section_body [ 6 + j * 3 ] == 1
+water	66:24	0:0	10	section_body
+op	66:36	0:0	10	[
+water	66:37	0:0	10	6
+op	66:39	0:0	10	+
+water	66:41	0:0	10	j
+op	66:43	0:0	10	*
+water	66:45	0:0	10	3
+op	66:46	0:0	10	]
+op	66:48	0:0	10	==
+water	66:51	0:0	10	1
+stmts	67:20	69:20	9	
+water	67:20	0:0	10	{
+water	68:24	0:0	10	y_sampling_factor
+op	68:42	0:0	10	=
+water	68:44	0:0	10	section_body
+op	68:56	0:0	10	[
+water	68:57	0:0	10	6
+op	68:59	0:0	10	+
+water	68:61	0:0	10	j
+op	68:63	0:0	10	*
+water	68:65	0:0	10	3
+op	68:67	0:0	10	+
+water	68:69	0:0	10	1
+op	68:70	0:0	10	]
+water	68:71	0:0	10	;
+water	69:20	0:0	10	}
+else	70:20	74:20	8
+stmts	70:25	74:20	9	
+if	70:25	74:20	10	(section_body [ 6 + j * 3 + 1 ] != 0 x11)
+cond	70:29	70:61	11	section_body [ 6 + j * 3 + 1 ] != 0 x11
+water	70:29	0:0	12	section_body
+op	70:41	0:0	12	[
+water	70:42	0:0	12	6
+op	70:44	0:0	12	+
+water	70:46	0:0	12	j
+op	70:48	0:0	12	*
+water	70:50	0:0	12	3
+op	70:52	0:0	12	+
+water	70:54	0:0	12	1
+op	70:55	0:0	12	]
+op	70:57	0:0	12	!=
+water	70:60	0:0	12	0
+water	70:61	0:0	12	x11
+stmts	71:20	74:20	11	
+water	71:20	0:0	12	{
+goto	73:24	73:34	12	error
+water	73:29	0:0	13	error
+water	74:20	0:0	12	}
+water	75:16	0:0	8	}
+break	76:16	76:21	6	
+water	77:12	0:0	6	}
+label	78:12	78:31	6	case 0 xffdd :
+water	79:16	0:0	6	restart_interval
+op	79:33	0:0	6	=
+call	79:35	79:54	6	GetWBE
+arg	79:42	79:54	7	section_body
+water	79:42	0:0	8	section_body
+water	79:55	0:0	6	;
+water	80:16	0:0	6	dri_found
+op	80:26	0:0	6	=
+water	80:28	0:0	6	1
+water	80:29	0:0	6	;
+break	81:16	81:21	6	
+label	82:12	82:31	6	case 0 xffda :
+water	84:16	0:0	6	header_finished
+op	84:32	0:0	6	=
+water	84:34	0:0	6	1
+water	84:35	0:0	6	;
+break	85:16	85:21	6	
+water	86:8	0:0	6	}
+water	88:8	0:0	4	p_data
+op	88:15	0:0	4	+=
+water	88:18	0:0	4	2
+op	88:20	0:0	4	+
+water	88:22	0:0	4	section_size
+water	88:34	0:0	4	;
+water	89:8	0:0	4	i_data
+op	89:15	0:0	4	-=
+water	89:18	0:0	4	2
+op	89:20	0:0	4	+
+water	89:22	0:0	4	section_size
+water	89:34	0:0	4	;
+water	90:4	0:0	4	}
+if	91:4	92:18	2	(! header_finished)
+cond	91:8	91:9	3	! header_finished
+op	91:8	0:0	4	!
+water	91:9	0:0	4	header_finished
+stmts	92:8	92:18	3	
+goto	92:8	92:18	4	error
+water	92:13	0:0	5	error
+if	93:4	94:18	2	(! w || ! h)
+cond	93:8	93:15	3	! w || ! h
+op	93:8	0:0	4	!
+water	93:9	0:0	4	w
+op	93:11	0:0	4	||
+op	93:14	0:0	4	!
+water	93:15	0:0	4	h
+stmts	94:8	94:18	3	
+goto	94:8	94:18	4	error
+water	94:13	0:0	5	error
+switch	95:4	105:4	2	(y_sampling_factor)
+cond	95:12	95:12	3	y_sampling_factor
+water	95:12	0:0	4	y_sampling_factor
+stmts	96:4	105:4	3	
+water	96:4	0:0	4	{
+label	97:8	97:17	4	case 0 x22 :
+water	98:12	0:0	4	type
+op	98:17	0:0	4	=
+water	98:19	0:0	4	1
+water	98:20	0:0	4	;
+break	99:12	99:17	4	
+label	100:8	100:17	4	case 0 x21 :
+water	101:12	0:0	4	type
+op	101:17	0:0	4	=
+water	101:19	0:0	4	0
+water	101:20	0:0	4	;
+break	102:12	102:17	4	
+label	103:8	103:15	4	default :
+goto	104:12	104:22	4	error
+water	104:17	0:0	5	error
+water	105:4	0:0	4	}
+if	106:4	107:18	2	(dri_found)
+cond	106:8	106:8	3	dri_found
+water	106:8	0:0	4	dri_found
+stmts	107:8	107:18	3	
+water	107:8	0:0	4	type
+op	107:13	0:0	4	+=
+water	107:16	0:0	4	64
+water	107:18	0:0	4	;
+while	108:4	164:4	2	(i_data)
+cond	108:12	108:12	3	i_data
+water	108:12	0:0	4	i_data
+stmts	109:4	164:4	3	
+water	109:4	0:0	4	{
+decl	110:8	110:40	4	int	hdr_size
+op	110:21	0:0	4	=
+water	110:23	0:0	4	8
+op	110:25	0:0	4	+
+water	110:27	0:0	4	dri_found
+op	110:37	0:0	4	*
+water	110:39	0:0	4	4
+if	111:8	112:43	4	(off == 0 && nb_qtables)
+cond	111:12	111:24	5	off == 0 && nb_qtables
+water	111:12	0:0	6	off
+op	111:16	0:0	6	==
+water	111:19	0:0	6	0
+op	111:21	0:0	6	&&
+water	111:24	0:0	6	nb_qtables
+stmts	112:12	112:43	5	
+water	112:12	0:0	6	hdr_size
+op	112:21	0:0	6	+=
+water	112:24	0:0	6	4
+op	112:26	0:0	6	+
+water	112:28	0:0	6	64
+op	112:31	0:0	6	*
+water	112:33	0:0	6	nb_qtables
+water	112:43	0:0	6	;
+decl	113:8	113:71	4	int	i_payload
+op	113:22	0:0	4	=
+call	113:24	113:70	5	__MIN
+arg	113:31	113:37	6	i_data
+water	113:31	0:0	7	i_data
+arg	113:39	113:70	6	(int)(rtp_mtu(id)-hdr_size)
+call	113:39	113:68	7	(int)
+arg	113:45	113:68	8	rtp_mtu(id)-hdr_size
+call	113:45	113:56	9	rtp_mtu
+arg	113:54	113:56	10	id
+water	113:54	0:0	11	id
+op	113:58	0:0	9	-
+water	113:60	0:0	9	hdr_size
+if	114:8	115:22	4	(i_payload <= 0)
+cond	114:13	114:26	5	i_payload <= 0
+water	114:13	0:0	6	i_payload
+op	114:23	0:0	6	<=
+water	114:26	0:0	6	0
+stmts	115:12	115:22	5	
+goto	115:12	115:22	6	error
+water	115:17	0:0	7	error
+decl	116:8	116:63	4	block_t	*out
+op	116:21	0:0	4	=
+call	116:23	116:62	5	block_Alloc
+arg	116:36	116:62	6	12+hdr_size+i_payload
+water	116:36	0:0	7	12
+op	116:39	0:0	7	+
+water	116:41	0:0	7	hdr_size
+op	116:50	0:0	7	+
+water	116:52	0:0	7	i_payload
+if	117:8	121:8	4	(out == NULL)
+cond	117:12	117:19	5	out == NULL
+water	117:12	0:0	6	out
+op	117:16	0:0	6	==
+water	117:19	0:0	6	NULL
+stmts	118:8	121:8	5	
+water	118:8	0:0	6	{
+call	119:12	119:30	6	block_Release
+arg	119:27	119:30	7	in
+water	119:27	0:0	8	in
+water	119:31	0:0	6	;
+return	120:12	120:29	6	VLC_ENOMEM
+water	120:19	0:0	7	VLC_ENOMEM
+water	121:8	0:0	6	}
+decl	122:8	122:39	4	uint8_t	*p
+op	122:19	0:0	4	=
+water	122:21	0:0	4	out
+op	122:24	0:0	4	->
+water	122:26	0:0	4	p_buffer
+op	122:35	0:0	4	+
+water	122:37	0:0	4	12
+call	125:8	125:35	4	SetDWBE
+arg	125:16	125:17	5	p
+water	125:16	0:0	6	p
+arg	125:19	125:35	5	off&0x00ffffff
+water	125:19	0:0	6	off
+op	125:23	0:0	6	&
+water	125:25	0:0	6	0
+water	125:26	0:0	6	x00ffffff
+water	125:36	0:0	4	;
+water	126:8	0:0	4	p
+op	126:10	0:0	4	+=
+water	126:13	0:0	4	4
+water	126:14	0:0	4	;
+op	127:8	0:0	4	*
+water	127:9	0:0	4	p
+op	127:10	0:0	4	++
+op	127:13	0:0	4	=
+water	127:15	0:0	4	type
+water	127:19	0:0	4	;
+op	128:8	0:0	4	*
+water	128:9	0:0	4	p
+op	128:10	0:0	4	++
+op	128:13	0:0	4	=
+water	128:15	0:0	4	255
+water	128:18	0:0	4	;
+op	129:8	0:0	4	*
+water	129:9	0:0	4	p
+op	129:10	0:0	4	++
+op	129:13	0:0	4	=
+water	129:15	0:0	4	w
+water	129:16	0:0	4	;
+op	130:8	0:0	4	*
+water	130:9	0:0	4	p
+op	130:10	0:0	4	++
+op	130:13	0:0	4	=
+water	130:15	0:0	4	h
+water	130:16	0:0	4	;
+if	132:8	139:8	4	(dri_found)
+cond	132:12	132:12	5	dri_found
+water	132:12	0:0	6	dri_found
+stmts	133:8	139:8	5	
+water	133:8	0:0	6	{
+call	134:12	134:38	6	SetWBE
+arg	134:19	134:20	7	p
+water	134:19	0:0	8	p
+arg	134:22	134:38	7	restart_interval
+water	134:22	0:0	8	restart_interval
+water	134:39	0:0	6	;
+water	135:12	0:0	6	p
+op	135:14	0:0	6	+=
+water	135:17	0:0	6	2
+water	135:18	0:0	6	;
+call	137:12	137:28	6	SetWBE
+arg	137:19	137:20	7	p
+water	137:19	0:0	8	p
+arg	137:22	137:28	7	0xffff
+water	137:22	0:0	8	0
+water	137:23	0:0	8	xffff
+water	137:29	0:0	6	;
+water	138:12	0:0	6	p
+op	138:14	0:0	6	+=
+water	138:17	0:0	6	2
+water	138:18	0:0	6	;
+water	139:8	0:0	6	}
+if	140:8	152:8	4	(off == 0 && nb_qtables)
+cond	140:12	140:24	5	off == 0 && nb_qtables
+water	140:12	0:0	6	off
+op	140:16	0:0	6	==
+water	140:19	0:0	6	0
+op	140:21	0:0	6	&&
+water	140:24	0:0	6	nb_qtables
+stmts	141:8	152:8	5	
+water	141:8	0:0	6	{
+op	143:12	0:0	6	*
+water	143:13	0:0	6	p
+op	143:14	0:0	6	++
+op	143:17	0:0	6	=
+water	143:19	0:0	6	0
+water	143:20	0:0	6	;
+op	144:12	0:0	6	*
+water	144:13	0:0	6	p
+op	144:14	0:0	6	++
+op	144:17	0:0	6	=
+water	144:19	0:0	6	0
+water	144:20	0:0	6	;
+call	145:12	145:38	6	SetWBE
+arg	145:20	145:21	7	p
+water	145:20	0:0	8	p
+arg	145:23	145:38	7	64*nb_qtables
+water	145:23	0:0	8	64
+op	145:26	0:0	8	*
+water	145:28	0:0	8	nb_qtables
+water	145:39	0:0	6	;
+water	146:12	0:0	6	p
+op	146:14	0:0	6	+=
+water	146:17	0:0	6	2
+water	146:18	0:0	6	;
+for	147:12	151:12	6	( int i = 0 ;i < nb_qtables;i ++)
+forinit	0:0	147:26	7	 int i = 0 ;
+decl	147:17	147:26	8	int	i
+op	147:23	0:0	8	=
+water	147:25	0:0	8	0
+cond	147:28	147:32	7	i < nb_qtables
+water	147:28	0:0	8	i
+op	147:30	0:0	8	<
+water	147:32	0:0	8	nb_qtables
+forexpr	147:44	147:45	7	i ++
+water	147:44	0:0	8	i
+op	147:45	0:0	8	++
+stmts	148:12	151:12	7	
+water	148:12	0:0	8	{
+call	149:16	149:51	8	memcpy
+arg	149:24	149:25	9	p
+water	149:24	0:0	10	p
+arg	149:27	149:47	9	&qtables[65*i+1]
+op	149:27	0:0	10	&
+water	149:28	0:0	10	qtables
+op	149:35	0:0	10	[
+water	149:36	0:0	10	65
+op	149:39	0:0	10	*
+water	149:41	0:0	10	i
+op	149:43	0:0	10	+
+water	149:45	0:0	10	1
+op	149:46	0:0	10	]
+arg	149:49	149:51	9	64
+water	149:49	0:0	10	64
+water	149:52	0:0	8	;
+water	150:16	0:0	8	p
+op	150:18	0:0	8	+=
+water	150:21	0:0	8	64
+water	150:23	0:0	8	;
+water	151:12	0:0	8	}
+water	152:8	0:0	6	}
+call	154:8	155:75	4	rtp_packetize_common
+arg	154:30	154:32	5	id
+water	154:30	0:0	6	id
+arg	154:34	154:37	5	out
+water	154:34	0:0	6	out
+arg	154:39	154:60	5	(i_payload==i_data)
+water	154:39	0:0	6	(
+water	154:40	0:0	6	i_payload
+op	154:50	0:0	6	==
+water	154:53	0:0	6	i_data
+water	154:59	0:0	6	)
+arg	155:22	155:75	5	(in->i_pts>VLC_TS_INVALID?in->i_pts:in->i_dts)
+water	155:22	0:0	6	(
+water	155:23	0:0	6	in
+op	155:25	0:0	6	->
+water	155:27	0:0	6	i_pts
+op	155:33	0:0	6	>
+water	155:35	0:0	6	VLC_TS_INVALID
+water	155:50	0:0	6	?
+water	155:52	0:0	6	in
+op	155:54	0:0	6	->
+water	155:56	0:0	6	i_pts
+water	155:62	0:0	6	:
+water	155:64	0:0	6	in
+op	155:66	0:0	6	->
+water	155:68	0:0	6	i_dts
+water	155:73	0:0	6	)
+water	155:76	0:0	4	;
+call	156:8	156:37	4	memcpy
+arg	156:16	156:17	5	p
+water	156:16	0:0	6	p
+arg	156:19	156:25	5	p_data
+water	156:19	0:0	6	p_data
+arg	156:27	156:37	5	i_payload
+water	156:27	0:0	6	i_payload
+water	156:38	0:0	4	;
+water	157:8	0:0	4	out
+op	157:11	0:0	4	->
+water	157:13	0:0	4	i_buffer
+op	157:22	0:0	4	=
+water	157:24	0:0	4	12
+op	157:27	0:0	4	+
+water	157:29	0:0	4	hdr_size
+op	157:38	0:0	4	+
+water	157:40	0:0	4	i_payload
+water	157:49	0:0	4	;
+water	158:8	0:0	4	out
+op	158:11	0:0	4	->
+water	158:13	0:0	4	i_dts
+op	158:22	0:0	4	=
+water	158:24	0:0	4	in
+op	158:26	0:0	4	->
+water	158:28	0:0	4	i_dts
+water	158:33	0:0	4	;
+water	159:8	0:0	4	out
+op	159:11	0:0	4	->
+water	159:13	0:0	4	i_length
+op	159:22	0:0	4	=
+water	159:24	0:0	4	in
+op	159:26	0:0	4	->
+water	159:28	0:0	4	i_length
+water	159:36	0:0	4	;
+call	160:8	160:36	4	rtp_packetize_send
+arg	160:28	160:30	5	id
+water	160:28	0:0	6	id
+arg	160:32	160:36	5	out
+water	160:32	0:0	6	out
+water	160:37	0:0	4	;
+water	161:8	0:0	4	p_data
+op	161:15	0:0	4	+=
+water	161:18	0:0	4	i_payload
+water	161:27	0:0	4	;
+water	162:8	0:0	4	i_data
+op	162:15	0:0	4	-=
+water	162:18	0:0	4	i_payload
+water	162:27	0:0	4	;
+water	163:8	0:0	4	off
+op	163:15	0:0	4	+=
+water	163:18	0:0	4	i_payload
+water	163:27	0:0	4	;
+water	164:4	0:0	4	}
+call	165:4	165:20	2	block_Release
+arg	165:18	165:20	3	in
+water	165:18	0:0	4	in
+water	165:21	0:0	2	;
+return	166:4	166:22	2	VLC_SUCCESS
+water	166:11	0:0	3	VLC_SUCCESS
+label	167:0	167:5	2	error :
+call	168:4	168:20	2	block_Release
+arg	168:18	168:20	3	in
+water	168:18	0:0	4	in
+water	168:21	0:0	2	;
+return	169:4	169:23	2	VLC_EGENERIC
+water	169:11	0:0	3	VLC_EGENERIC

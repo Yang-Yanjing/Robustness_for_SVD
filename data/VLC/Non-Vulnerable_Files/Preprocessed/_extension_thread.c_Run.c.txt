@@ -1,0 +1,410 @@
+func	2:0	106:0	0	static void *	Run
+params	2:16	0:0	1	
+param	2:18	2:29	2	void *	data
+stmnts	0:0	105:15	1	
+decl	4:4	4:29	2	extension_t	*p_ext
+op	4:23	0:0	2	=
+water	4:25	0:0	2	data
+decl	5:4	5:53	2	extensions_manager_t	*p_mgr
+op	5:32	0:0	2	=
+water	5:34	0:0	2	p_ext
+op	5:39	0:0	2	->
+water	5:41	0:0	2	p_sys
+op	5:46	0:0	2	->
+water	5:48	0:0	2	p_mgr
+call	6:4	6:48	2	vlc_mutex_lock
+arg	6:20	6:48	3	&p_ext->p_sys->command_lock
+op	6:20	0:0	4	&
+water	6:21	0:0	4	p_ext
+op	6:26	0:0	4	->
+water	6:28	0:0	4	p_sys
+op	6:33	0:0	4	->
+water	6:35	0:0	4	command_lock
+water	6:49	0:0	2	;
+call	7:4	7:52	2	mutex_cleanup_push
+arg	7:24	7:52	3	&p_ext->p_sys->command_lock
+op	7:24	0:0	4	&
+water	7:25	0:0	4	p_ext
+op	7:30	0:0	4	->
+water	7:32	0:0	4	p_sys
+op	7:37	0:0	4	->
+water	7:39	0:0	4	command_lock
+water	7:53	0:0	2	;
+while	8:4	101:4	2	(! p_ext -> p_sys -> b_exiting)
+cond	8:11	8:26	3	! p_ext -> p_sys -> b_exiting
+op	8:11	0:0	4	!
+water	8:12	0:0	4	p_ext
+op	8:17	0:0	4	->
+water	8:19	0:0	4	p_sys
+op	8:24	0:0	4	->
+water	8:26	0:0	4	b_exiting
+stmts	9:4	101:4	3	
+water	9:4	0:0	4	{
+decl	10:8	10:53	4	struct command_t	*cmd
+op	10:30	0:0	4	=
+water	10:32	0:0	4	p_ext
+op	10:37	0:0	4	->
+water	10:39	0:0	4	p_sys
+op	10:44	0:0	4	->
+water	10:46	0:0	4	command
+if	12:8	16:8	4	(cmd == NULL)
+cond	12:12	12:19	5	cmd == NULL
+water	12:12	0:0	6	cmd
+op	12:16	0:0	6	==
+water	12:19	0:0	6	NULL
+stmts	13:8	16:8	5	
+water	13:8	0:0	6	{
+call	14:12	14:76	6	vlc_cond_wait
+arg	14:27	14:46	7	&p_ext->p_sys->wait
+op	14:27	0:0	8	&
+water	14:28	0:0	8	p_ext
+op	14:33	0:0	8	->
+water	14:35	0:0	8	p_sys
+op	14:40	0:0	8	->
+water	14:42	0:0	8	wait
+arg	14:48	14:76	7	&p_ext->p_sys->command_lock
+op	14:48	0:0	8	&
+water	14:49	0:0	8	p_ext
+op	14:54	0:0	8	->
+water	14:56	0:0	8	p_sys
+op	14:61	0:0	8	->
+water	14:63	0:0	8	command_lock
+water	14:77	0:0	6	;
+continue	15:12	15:20	6	
+water	16:8	0:0	6	}
+water	17:8	0:0	4	p_ext
+op	17:13	0:0	4	->
+water	17:15	0:0	4	p_sys
+op	17:20	0:0	4	->
+water	17:22	0:0	4	command
+op	17:30	0:0	4	=
+water	17:32	0:0	4	cmd
+op	17:35	0:0	4	->
+water	17:37	0:0	4	next
+water	17:41	0:0	4	;
+water	18:8	0:0	4	cmd
+op	18:11	0:0	4	->
+water	18:13	0:0	4	next
+op	18:18	0:0	4	=
+water	18:20	0:0	4	NULL
+water	18:24	0:0	4	;
+call	19:8	19:54	4	vlc_mutex_unlock
+arg	19:26	19:54	5	&p_ext->p_sys->command_lock
+op	19:26	0:0	6	&
+water	19:27	0:0	6	p_ext
+op	19:32	0:0	6	->
+water	19:34	0:0	6	p_sys
+op	19:39	0:0	6	->
+water	19:41	0:0	6	command_lock
+water	19:55	0:0	4	;
+decl	21:8	21:37	4	int	cancel
+op	21:19	0:0	4	=
+call	21:21	21:36	5	vlc_savecancel
+if	22:8	97:8	4	(LockExtension (p_ext ))
+cond	22:12	22:33	5	LockExtension (p_ext )
+call	22:12	22:33	6	LockExtension
+arg	22:27	22:33	7	p_ext
+water	22:27	0:0	8	p_ext
+stmts	23:8	97:8	5	
+water	23:8	0:0	6	{
+switch	24:12	95:12	6	(cmd -> i_command)
+cond	24:20	24:25	7	cmd -> i_command
+water	24:20	0:0	8	cmd
+op	24:23	0:0	8	->
+water	24:25	0:0	8	i_command
+stmts	25:12	95:12	7	
+water	25:12	0:0	8	{
+label	26:16	26:33	8	case CMD_ACTIVATE :
+water	27:16	0:0	8	{
+if	28:20	32:20	8	(lua_ExecuteFunction (p_mgr ,p_ext ,"activate" ,LUA_END ) < 0)
+cond	28:24	28:83	9	lua_ExecuteFunction (p_mgr ,p_ext ,"activate" ,LUA_END ) < 0
+call	28:24	28:79	10	lua_ExecuteFunction
+arg	28:45	28:50	11	p_mgr
+water	28:45	0:0	12	p_mgr
+arg	28:52	28:57	11	p_ext
+water	28:52	0:0	12	p_ext
+arg	28:59	28:69	11	"activate"
+water	28:59	0:0	12	"activate"
+arg	28:71	28:79	11	LUA_END
+water	28:71	0:0	12	LUA_END
+op	28:81	0:0	10	<
+water	28:83	0:0	10	0
+stmts	29:20	32:20	9	
+water	29:20	0:0	10	{
+call	30:24	30:72	10	msg_Err
+arg	30:33	30:38	11	p_mgr
+water	30:33	0:0	12	p_mgr
+arg	30:40	30:72	11	"Could not activate extension!"
+water	30:40	0:0	12	"Could not activate extension!"
+water	30:73	0:0	10	;
+call	31:24	31:49	10	Deactivate
+arg	31:36	31:41	11	p_mgr
+water	31:36	0:0	12	p_mgr
+arg	31:43	31:49	11	p_ext
+water	31:43	0:0	12	p_ext
+water	31:50	0:0	10	;
+water	32:20	0:0	10	}
+break	33:20	33:25	8	
+water	34:16	0:0	8	}
+label	35:16	35:35	8	case CMD_DEACTIVATE :
+water	36:16	0:0	8	{
+call	37:20	37:74	8	msg_Dbg
+arg	37:29	37:34	9	p_mgr
+water	37:29	0:0	10	p_mgr
+arg	37:36	37:55	9	"Deactivating '%s'"
+water	37:36	0:0	10	"Deactivating '%s'"
+arg	37:57	37:74	9	p_ext->psz_title
+water	37:57	0:0	10	p_ext
+op	37:62	0:0	10	->
+water	37:64	0:0	10	psz_title
+water	37:75	0:0	8	;
+if	38:20	42:20	8	(lua_ExtensionDeactivate (p_mgr ,p_ext ) < 0)
+cond	38:24	38:66	9	lua_ExtensionDeactivate (p_mgr ,p_ext ) < 0
+call	38:24	38:62	10	lua_ExtensionDeactivate
+arg	38:49	38:54	11	p_mgr
+water	38:49	0:0	12	p_mgr
+arg	38:56	38:62	11	p_ext
+water	38:56	0:0	12	p_ext
+op	38:64	0:0	10	<
+water	38:66	0:0	10	0
+stmts	39:20	42:20	9	
+water	39:20	0:0	10	{
+call	40:24	41:51	10	msg_Warn
+arg	40:34	40:39	11	p_mgr
+water	40:34	0:0	12	p_mgr
+arg	40:41	40:85	11	"Extension '%s' did not deactivate properly"
+water	40:41	0:0	12	"Extension '%s' did not deactivate properly"
+arg	41:34	41:51	11	p_ext->psz_title
+water	41:34	0:0	12	p_ext
+op	41:39	0:0	12	->
+water	41:41	0:0	12	psz_title
+water	41:52	0:0	10	;
+water	42:20	0:0	10	}
+water	43:20	0:0	8	p_ext
+op	43:25	0:0	8	->
+water	43:27	0:0	8	p_sys
+op	43:32	0:0	8	->
+water	43:34	0:0	8	b_exiting
+op	43:44	0:0	8	=
+water	43:46	0:0	8	true
+water	43:50	0:0	8	;
+call	44:20	44:50	8	RemoveActivated
+arg	44:37	44:42	9	p_mgr
+water	44:37	0:0	10	p_mgr
+arg	44:44	44:50	9	p_ext
+water	44:44	0:0	10	p_ext
+water	44:51	0:0	8	;
+break	45:20	45:25	8	
+water	46:16	0:0	8	}
+label	47:16	47:30	8	case CMD_CLOSE :
+water	48:16	0:0	8	{
+call	49:20	49:72	8	lua_ExecuteFunction
+arg	49:41	49:46	9	p_mgr
+water	49:41	0:0	10	p_mgr
+arg	49:48	49:53	9	p_ext
+water	49:48	0:0	10	p_ext
+arg	49:55	49:62	9	"close"
+water	49:55	0:0	10	"close"
+arg	49:64	49:72	9	LUA_END
+water	49:64	0:0	10	LUA_END
+water	49:73	0:0	8	;
+break	50:20	50:25	8	
+water	51:16	0:0	8	}
+label	52:16	52:30	8	case CMD_CLICK :
+water	53:16	0:0	8	{
+decl	54:20	54:63	8	extension_widget_t	*p_widget
+op	54:49	0:0	8	=
+water	54:51	0:0	8	cmd
+op	54:54	0:0	8	->
+water	54:56	0:0	8	data
+op	54:60	0:0	8	[
+water	54:61	0:0	8	0
+op	54:62	0:0	8	]
+call	55:20	55:37	8	assert
+arg	55:28	55:37	9	p_widget
+water	55:28	0:0	10	p_widget
+water	55:38	0:0	8	;
+call	56:20	57:65	8	msg_Dbg
+arg	56:29	56:34	9	p_mgr
+water	56:29	0:0	10	p_mgr
+arg	56:36	56:57	9	"Clicking '%s': '%s'"
+water	56:36	0:0	10	"Clicking '%s': '%s'"
+arg	57:29	57:44	9	p_ext->psz_name
+water	57:29	0:0	10	p_ext
+op	57:34	0:0	10	->
+water	57:36	0:0	10	psz_name
+arg	57:46	57:65	9	p_widget->psz_text
+water	57:46	0:0	10	p_widget
+op	57:54	0:0	10	->
+water	57:56	0:0	10	psz_text
+water	57:66	0:0	8	;
+if	58:20	61:20	8	(lua_ExtensionWidgetClick (p_mgr ,p_ext ,p_widget ) < 0)
+cond	58:24	58:77	9	lua_ExtensionWidgetClick (p_mgr ,p_ext ,p_widget ) < 0
+call	58:24	58:73	10	lua_ExtensionWidgetClick
+arg	58:50	58:55	11	p_mgr
+water	58:50	0:0	12	p_mgr
+arg	58:57	58:62	11	p_ext
+water	58:57	0:0	12	p_ext
+arg	58:64	58:73	11	p_widget
+water	58:64	0:0	12	p_widget
+op	58:75	0:0	10	<
+water	58:77	0:0	10	0
+stmts	59:20	61:20	9	
+water	59:20	0:0	10	{
+call	60:24	60:69	10	msg_Warn
+arg	60:34	60:39	11	p_mgr
+water	60:34	0:0	12	p_mgr
+arg	60:41	60:69	11	"Could not translate click"
+water	60:41	0:0	12	"Could not translate click"
+water	60:70	0:0	10	;
+water	61:20	0:0	10	}
+break	62:20	62:25	8	
+water	63:16	0:0	8	}
+label	64:16	64:36	8	case CMD_TRIGGERMENU :
+water	65:16	0:0	8	{
+decl	66:20	66:45	8	int	*pi_id
+op	66:31	0:0	8	=
+water	66:33	0:0	8	cmd
+op	66:36	0:0	8	->
+water	66:38	0:0	8	data
+op	66:42	0:0	8	[
+water	66:43	0:0	8	0
+op	66:44	0:0	8	]
+call	67:20	67:34	8	assert
+arg	67:28	67:34	9	pi_id
+water	67:28	0:0	10	pi_id
+water	67:35	0:0	8	;
+call	68:20	69:53	8	msg_Dbg
+arg	68:29	68:34	9	p_mgr
+water	68:29	0:0	10	p_mgr
+arg	68:36	68:61	9	"Trigger menu %d of '%s'"
+water	68:36	0:0	10	"Trigger menu %d of '%s'"
+arg	69:29	69:35	9	*pi_id
+op	69:29	0:0	10	*
+water	69:30	0:0	10	pi_id
+arg	69:37	69:53	9	p_ext->psz_name
+water	69:37	0:0	10	p_ext
+op	69:42	0:0	10	->
+water	69:44	0:0	10	psz_name
+water	69:54	0:0	8	;
+call	70:20	70:67	8	lua_ExtensionTriggerMenu
+arg	70:46	70:51	9	p_mgr
+water	70:46	0:0	10	p_mgr
+arg	70:53	70:58	9	p_ext
+water	70:53	0:0	10	p_ext
+arg	70:60	70:67	9	*pi_id
+op	70:60	0:0	10	*
+water	70:61	0:0	10	pi_id
+water	70:68	0:0	8	;
+break	71:20	71:25	8	
+water	72:16	0:0	8	}
+label	73:16	73:34	8	case CMD_SET_INPUT :
+water	74:16	0:0	8	{
+call	75:20	75:80	8	lua_ExecuteFunction
+arg	75:41	75:46	9	p_mgr
+water	75:41	0:0	10	p_mgr
+arg	75:48	75:53	9	p_ext
+water	75:48	0:0	10	p_ext
+arg	75:55	75:70	9	"input_changed"
+water	75:55	0:0	10	"input_changed"
+arg	75:72	75:80	9	LUA_END
+water	75:72	0:0	10	LUA_END
+water	75:81	0:0	8	;
+break	76:20	76:25	8	
+water	77:16	0:0	8	}
+label	78:16	78:36	8	case CMD_UPDATE_META :
+water	79:16	0:0	8	{
+call	80:20	80:79	8	lua_ExecuteFunction
+arg	80:41	80:46	9	p_mgr
+water	80:41	0:0	10	p_mgr
+arg	80:48	80:53	9	p_ext
+water	80:48	0:0	10	p_ext
+arg	80:55	80:69	9	"meta_changed"
+water	80:55	0:0	10	"meta_changed"
+arg	80:71	80:79	9	LUA_END
+water	80:71	0:0	10	LUA_END
+water	80:80	0:0	8	;
+break	81:20	81:25	8	
+water	82:16	0:0	8	}
+label	83:16	83:40	8	case CMD_PLAYING_CHANGED :
+water	84:16	0:0	8	{
+call	85:20	86:69	8	lua_ExecuteFunction
+arg	85:41	85:46	9	p_mgr
+water	85:41	0:0	10	p_mgr
+arg	85:48	85:53	9	p_ext
+water	85:48	0:0	10	p_ext
+arg	85:55	85:72	9	"playing_changed"
+water	85:55	0:0	10	"playing_changed"
+arg	86:28	86:35	9	LUA_NUM
+water	86:28	0:0	10	LUA_NUM
+arg	86:37	86:59	9	*((int*)cmd->data[0])
+op	86:37	0:0	10	*
+water	86:38	0:0	10	(
+water	86:39	0:0	10	(
+water	86:40	0:0	10	int
+op	86:44	0:0	10	*
+water	86:45	0:0	10	)
+water	86:46	0:0	10	cmd
+op	86:49	0:0	10	->
+water	86:51	0:0	10	data
+op	86:55	0:0	10	[
+water	86:56	0:0	10	0
+op	86:57	0:0	10	]
+water	86:58	0:0	10	)
+arg	86:61	86:69	9	LUA_END
+water	86:61	0:0	10	LUA_END
+water	86:70	0:0	8	;
+break	87:20	87:25	8	
+water	88:16	0:0	8	}
+label	89:16	89:23	8	default :
+water	90:16	0:0	8	{
+call	91:20	92:44	8	msg_Dbg
+arg	91:29	91:34	9	p_mgr
+water	91:29	0:0	10	p_mgr
+arg	91:36	91:84	9	"Unknown command in extension command queue: %d"
+water	91:36	0:0	10	"Unknown command in extension command queue: %d"
+arg	92:29	92:44	9	cmd->i_command
+water	92:29	0:0	10	cmd
+op	92:32	0:0	10	->
+water	92:34	0:0	10	i_command
+water	92:45	0:0	8	;
+break	93:20	93:25	8	
+water	94:16	0:0	8	}
+water	95:12	0:0	8	}
+call	96:12	96:35	6	UnlockExtension
+arg	96:29	96:35	7	p_ext
+water	96:29	0:0	8	p_ext
+water	96:36	0:0	6	;
+water	97:8	0:0	6	}
+call	98:8	98:26	4	FreeCommands
+arg	98:22	98:26	5	cmd
+water	98:22	0:0	6	cmd
+water	98:27	0:0	4	;
+call	99:8	99:34	4	vlc_restorecancel
+arg	99:27	99:34	5	cancel
+water	99:27	0:0	6	cancel
+water	99:35	0:0	4	;
+call	100:8	100:52	4	vlc_mutex_lock
+arg	100:24	100:52	5	&p_ext->p_sys->command_lock
+op	100:24	0:0	6	&
+water	100:25	0:0	6	p_ext
+op	100:30	0:0	6	->
+water	100:32	0:0	6	p_sys
+op	100:37	0:0	6	->
+water	100:39	0:0	6	command_lock
+water	100:53	0:0	4	;
+water	101:4	0:0	4	}
+call	102:4	102:21	2	vlc_cleanup_run
+water	102:22	0:0	2	;
+call	103:4	103:67	2	msg_Dbg
+arg	103:13	103:18	3	p_mgr
+water	103:13	0:0	4	p_mgr
+arg	103:20	103:48	3	"Extension thread end: '%s'"
+water	103:20	0:0	4	"Extension thread end: '%s'"
+arg	103:50	103:67	3	p_ext->psz_title
+water	103:50	0:0	4	p_ext
+op	103:55	0:0	4	->
+water	103:57	0:0	4	psz_title
+water	103:68	0:0	2	;
+return	105:4	105:15	2	NULL
+water	105:11	0:0	3	NULL

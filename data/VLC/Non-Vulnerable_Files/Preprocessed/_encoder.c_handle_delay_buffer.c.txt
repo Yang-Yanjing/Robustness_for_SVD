@@ -1,0 +1,345 @@
+func	2:0	47:0	0	static block_t *	handle_delay_buffer
+params	2:35	0:0	1	
+param	2:37	2:53	2	encoder_t *	p_enc
+param	2:55	2:75	2	encoder_sys_t *	p_sys
+param	2:77	2:93	2	int	buffer_delay
+param	2:95	2:114	2	block_t *	p_aout_buf
+param	2:116	2:137	2	int	leftover_samples
+stmnts	0:0	46:18	1	
+decl	4:4	4:27	2	block_t	*p_block
+op	4:21	0:0	2	=
+water	4:23	0:0	2	NULL
+decl	6:4	6:94	2	const int	leftover
+op	6:23	0:0	2	=
+water	6:25	0:0	2	leftover_samples
+op	6:42	0:0	2	*
+water	6:44	0:0	2	p_sys
+op	6:49	0:0	2	->
+water	6:51	0:0	2	p_context
+op	6:60	0:0	2	->
+water	6:62	0:0	2	channels
+op	6:71	0:0	2	*
+water	6:73	0:0	2	p_sys
+op	6:78	0:0	2	->
+water	6:80	0:0	2	i_sample_bytes
+call	7:4	7:45	2	avcodec_get_frame_defaults
+arg	7:32	7:45	3	p_sys->frame
+water	7:32	0:0	4	p_sys
+op	7:37	0:0	4	->
+water	7:39	0:0	4	frame
+water	7:46	0:0	2	;
+water	8:4	0:0	2	p_sys
+op	8:9	0:0	2	->
+water	8:11	0:0	2	frame
+op	8:16	0:0	2	->
+water	8:18	0:0	2	format
+op	8:29	0:0	2	=
+water	8:31	0:0	2	p_sys
+op	8:36	0:0	2	->
+water	8:38	0:0	2	p_context
+op	8:47	0:0	2	->
+water	8:49	0:0	2	sample_fmt
+water	8:59	0:0	2	;
+water	9:4	0:0	2	p_sys
+op	9:9	0:0	2	->
+water	9:11	0:0	2	frame
+op	9:16	0:0	2	->
+water	9:18	0:0	2	nb_samples
+op	9:29	0:0	2	=
+water	9:31	0:0	2	leftover_samples
+op	9:48	0:0	2	+
+water	9:50	0:0	2	p_sys
+op	9:55	0:0	2	->
+water	9:57	0:0	2	i_samples_delay
+water	9:72	0:0	2	;
+water	10:4	0:0	2	p_sys
+op	10:9	0:0	2	->
+water	10:11	0:0	2	frame
+op	10:16	0:0	2	->
+water	10:18	0:0	2	pts
+op	10:29	0:0	2	=
+call	10:31	10:61	2	date_Get
+arg	10:41	10:61	3	&p_sys->buffer_date
+op	10:41	0:0	4	&
+water	10:42	0:0	4	p_sys
+op	10:47	0:0	4	->
+water	10:49	0:0	4	buffer_date
+water	10:62	0:0	2	;
+if	11:4	12:71	2	(likely (p_sys -> frame -> pts != AV_NOPTS_VALUE ))
+cond	11:8	11:51	3	likely (p_sys -> frame -> pts != AV_NOPTS_VALUE )
+call	11:8	11:51	4	likely
+arg	11:16	11:51	5	p_sys->frame->pts!=AV_NOPTS_VALUE
+water	11:16	0:0	6	p_sys
+op	11:21	0:0	6	->
+water	11:23	0:0	6	frame
+op	11:28	0:0	6	->
+water	11:30	0:0	6	pts
+op	11:34	0:0	6	!=
+water	11:37	0:0	6	AV_NOPTS_VALUE
+stmts	12:8	12:71	3	
+call	12:8	12:70	4	date_Increment
+arg	12:24	12:43	5	&p_sys->buffer_date
+op	12:24	0:0	6	&
+water	12:25	0:0	6	p_sys
+op	12:30	0:0	6	->
+water	12:32	0:0	6	buffer_date
+arg	12:45	12:70	5	p_sys->frame->nb_samples
+water	12:45	0:0	6	p_sys
+op	12:50	0:0	6	->
+water	12:52	0:0	6	frame
+op	12:57	0:0	6	->
+water	12:59	0:0	6	nb_samples
+water	12:71	0:0	4	;
+if	13:4	27:4	2	(likely (p_aout_buf ))
+cond	13:8	13:27	3	likely (p_aout_buf )
+call	13:8	13:27	4	likely
+arg	13:16	13:27	5	p_aout_buf
+water	13:16	0:0	6	p_aout_buf
+stmts	14:4	27:4	3	
+water	14:4	0:0	4	{
+water	15:8	0:0	4	p_aout_buf
+op	15:18	0:0	4	->
+water	15:20	0:0	4	i_nb_samples
+op	15:33	0:0	4	-=
+water	15:36	0:0	4	leftover_samples
+water	15:52	0:0	4	;
+call	16:8	16:77	4	memcpy
+arg	16:16	16:44	5	p_sys->p_buffer+buffer_delay
+water	16:16	0:0	6	p_sys
+op	16:21	0:0	6	->
+water	16:23	0:0	6	p_buffer
+op	16:31	0:0	6	+
+water	16:32	0:0	6	buffer_delay
+arg	16:46	16:66	5	p_aout_buf->p_buffer
+water	16:46	0:0	6	p_aout_buf
+op	16:56	0:0	6	->
+water	16:58	0:0	6	p_buffer
+arg	16:68	16:77	5	leftover
+water	16:68	0:0	6	leftover
+water	16:78	0:0	4	;
+if	18:8	20:88	4	(p_sys -> b_planar)
+cond	18:12	18:19	5	p_sys -> b_planar
+water	18:12	0:0	6	p_sys
+op	18:17	0:0	6	->
+water	18:19	0:0	6	b_planar
+stmts	19:12	20:88	5	
+call	19:12	20:87	6	aout_Deinterleave
+arg	19:31	19:54	7	p_sys->p_interleave_buf
+water	19:31	0:0	8	p_sys
+op	19:36	0:0	8	->
+water	19:38	0:0	8	p_interleave_buf
+arg	19:56	19:71	7	p_sys->p_buffer
+water	19:56	0:0	8	p_sys
+op	19:61	0:0	8	->
+water	19:63	0:0	8	p_buffer
+arg	20:16	20:35	7	p_sys->i_frame_size
+water	20:16	0:0	8	p_sys
+op	20:21	0:0	8	->
+water	20:23	0:0	8	i_frame_size
+arg	20:37	20:63	7	p_sys->p_context->channels
+water	20:37	0:0	8	p_sys
+op	20:42	0:0	8	->
+water	20:44	0:0	8	p_context
+op	20:53	0:0	8	->
+water	20:55	0:0	8	channels
+arg	20:65	20:87	7	p_enc->fmt_in.i_codec
+water	20:65	0:0	8	p_enc
+op	20:70	0:0	8	->
+water	20:72	0:0	8	fmt_in
+op	20:78	0:0	8	.
+water	20:79	0:0	8	i_codec
+water	20:88	0:0	6	;
+else	21:8	22:83	4
+stmts	22:12	22:83	5	
+call	22:12	22:82	6	memcpy
+arg	22:20	22:50	7	p_sys->p_buffer+buffer_delay
+water	22:20	0:0	8	p_sys
+op	22:25	0:0	8	->
+water	22:27	0:0	8	p_buffer
+op	22:36	0:0	8	+
+water	22:38	0:0	8	buffer_delay
+arg	22:52	22:72	7	p_aout_buf->p_buffer
+water	22:52	0:0	8	p_aout_buf
+op	22:62	0:0	8	->
+water	22:64	0:0	8	p_buffer
+arg	22:74	22:82	7	leftover
+water	22:74	0:0	8	leftover
+water	22:83	0:0	6	;
+water	23:8	0:0	4	p_aout_buf
+op	23:18	0:0	4	->
+water	23:20	0:0	4	p_buffer
+op	23:33	0:0	4	+=
+water	23:36	0:0	4	leftover
+water	23:44	0:0	4	;
+water	24:8	0:0	4	p_aout_buf
+op	24:18	0:0	4	->
+water	24:20	0:0	4	i_buffer
+op	24:33	0:0	4	-=
+water	24:36	0:0	4	leftover
+water	24:44	0:0	4	;
+if	25:8	26:71	4	(likely (p_sys -> frame -> pts != AV_NOPTS_VALUE ))
+cond	25:12	25:55	5	likely (p_sys -> frame -> pts != AV_NOPTS_VALUE )
+call	25:12	25:55	6	likely
+arg	25:20	25:55	7	p_sys->frame->pts!=AV_NOPTS_VALUE
+water	25:20	0:0	8	p_sys
+op	25:25	0:0	8	->
+water	25:27	0:0	8	frame
+op	25:32	0:0	8	->
+water	25:34	0:0	8	pts
+op	25:38	0:0	8	!=
+water	25:41	0:0	8	AV_NOPTS_VALUE
+stmts	26:12	26:71	5	
+water	26:12	0:0	6	p_aout_buf
+op	26:22	0:0	6	->
+water	26:24	0:0	6	i_pts
+op	26:38	0:0	6	=
+call	26:40	26:70	6	date_Get
+arg	26:50	26:70	7	&p_sys->buffer_date
+op	26:50	0:0	8	&
+water	26:51	0:0	8	p_sys
+op	26:56	0:0	8	->
+water	26:58	0:0	8	buffer_date
+water	26:71	0:0	6	;
+water	27:4	0:0	4	}
+if	28:4	35:4	2	(unlikely (( ( leftover + buffer_delay ) < p_sys -> i_buffer_out ) && ! ( p_sys -> p_codec -> capabilities & CODEC_CAP_SMALL_LAST_FRAME ) ))
+cond	28:7	29:78	3	unlikely (( ( leftover + buffer_delay ) < p_sys -> i_buffer_out ) && ! ( p_sys -> p_codec -> capabilities & CODEC_CAP_SMALL_LAST_FRAME ) )
+call	28:7	29:78	4	unlikely
+arg	28:17	29:78	5	((leftover+buffer_delay)<p_sys->i_buffer_out)&&!(p_sys->p_codec->capabilities&CODEC_CAP_SMALL_LAST_FRAME)
+water	28:17	0:0	6	(
+water	28:19	0:0	6	(
+water	28:20	0:0	6	leftover
+op	28:29	0:0	6	+
+water	28:31	0:0	6	buffer_delay
+water	28:43	0:0	6	)
+op	28:45	0:0	6	<
+water	28:47	0:0	6	p_sys
+op	28:52	0:0	6	->
+water	28:54	0:0	6	i_buffer_out
+water	28:67	0:0	6	)
+op	28:69	0:0	6	&&
+op	29:17	0:0	6	!
+water	29:18	0:0	6	(
+water	29:19	0:0	6	p_sys
+op	29:24	0:0	6	->
+water	29:26	0:0	6	p_codec
+op	29:33	0:0	6	->
+water	29:35	0:0	6	capabilities
+op	29:48	0:0	6	&
+water	29:50	0:0	6	CODEC_CAP_SMALL_LAST_FRAME
+water	29:77	0:0	6	)
+stmts	30:4	35:4	3	
+water	30:4	0:0	4	{
+call	31:8	31:62	4	msg_Dbg
+arg	31:17	31:22	5	p_enc
+water	31:17	0:0	6	p_enc
+arg	31:24	31:62	5	"No small last frame support, padding"
+water	31:24	0:0	6	"No small last frame support, padding"
+water	31:63	0:0	4	;
+decl	32:8	32:75	4	size_t	padding_size
+op	32:28	0:0	4	=
+water	32:30	0:0	4	p_sys
+op	32:35	0:0	4	->
+water	32:37	0:0	4	i_buffer_out
+op	32:50	0:0	4	-
+water	32:52	0:0	4	(
+water	32:53	0:0	4	leftover
+op	32:61	0:0	4	+
+water	32:62	0:0	4	buffer_delay
+water	32:74	0:0	4	)
+call	33:8	33:75	4	memset
+arg	33:16	33:57	5	p_sys->p_buffer+(leftover+buffer_delay)
+water	33:16	0:0	6	p_sys
+op	33:21	0:0	6	->
+water	33:23	0:0	6	p_buffer
+op	33:32	0:0	6	+
+water	33:34	0:0	6	(
+water	33:35	0:0	6	leftover
+op	33:43	0:0	6	+
+water	33:44	0:0	6	buffer_delay
+water	33:56	0:0	6	)
+arg	33:59	33:60	5	0
+water	33:59	0:0	6	0
+arg	33:62	33:75	5	padding_size
+water	33:62	0:0	6	padding_size
+water	33:76	0:0	4	;
+water	34:8	0:0	4	buffer_delay
+op	34:21	0:0	4	+=
+water	34:24	0:0	4	padding_size
+water	34:36	0:0	4	;
+water	35:4	0:0	4	}
+if	36:4	43:4	2	(avcodec_fill_audio_frame (p_sys -> frame ,p_sys -> p_context -> channels ,p_sys -> p_context -> sample_fmt ,p_sys -> b_planar ? p_sys -> p_interleave_buf : p_sys -> p_buffer ,p_sys -> i_buffer_out ,DEFAULT_ALIGN ) < 0)
+cond	36:8	39:29	3	avcodec_fill_audio_frame (p_sys -> frame ,p_sys -> p_context -> channels ,p_sys -> p_context -> sample_fmt ,p_sys -> b_planar ? p_sys -> p_interleave_buf : p_sys -> p_buffer ,p_sys -> i_buffer_out ,DEFAULT_ALIGN ) < 0
+call	36:8	39:25	4	avcodec_fill_audio_frame
+arg	36:34	36:46	5	p_sys->frame
+water	36:34	0:0	6	p_sys
+op	36:39	0:0	6	->
+water	36:41	0:0	6	frame
+arg	36:48	36:74	5	p_sys->p_context->channels
+water	36:48	0:0	6	p_sys
+op	36:53	0:0	6	->
+water	36:55	0:0	6	p_context
+op	36:64	0:0	6	->
+water	36:66	0:0	6	channels
+arg	37:12	37:40	5	p_sys->p_context->sample_fmt
+water	37:12	0:0	6	p_sys
+op	37:17	0:0	6	->
+water	37:19	0:0	6	p_context
+op	37:28	0:0	6	->
+water	37:30	0:0	6	sample_fmt
+arg	37:42	37:101	5	p_sys->b_planar?p_sys->p_interleave_buf:p_sys->p_buffer
+water	37:42	0:0	6	p_sys
+op	37:47	0:0	6	->
+water	37:49	0:0	6	b_planar
+water	37:58	0:0	6	?
+water	37:60	0:0	6	p_sys
+op	37:65	0:0	6	->
+water	37:67	0:0	6	p_interleave_buf
+water	37:84	0:0	6	:
+water	37:86	0:0	6	p_sys
+op	37:91	0:0	6	->
+water	37:93	0:0	6	p_buffer
+arg	38:12	38:31	5	p_sys->i_buffer_out
+water	38:12	0:0	6	p_sys
+op	38:17	0:0	6	->
+water	38:19	0:0	6	i_buffer_out
+arg	39:12	39:25	5	DEFAULT_ALIGN
+water	39:12	0:0	6	DEFAULT_ALIGN
+op	39:27	0:0	4	<
+water	39:29	0:0	4	0
+stmts	40:4	43:4	3	
+water	40:4	0:0	4	{
+call	41:8	41:50	4	msg_Err
+arg	41:17	41:22	5	p_enc
+water	41:17	0:0	6	p_enc
+arg	41:24	41:50	5	"filling error on fillup"
+water	41:24	0:0	6	"filling error on fillup"
+water	41:51	0:0	4	;
+water	42:8	0:0	4	p_sys
+op	42:13	0:0	4	->
+water	42:15	0:0	4	frame
+op	42:20	0:0	4	->
+water	42:22	0:0	4	nb_samples
+op	42:33	0:0	4	=
+water	42:35	0:0	4	0
+water	42:36	0:0	4	;
+water	43:4	0:0	4	}
+water	44:4	0:0	2	p_sys
+op	44:9	0:0	2	->
+water	44:11	0:0	2	i_samples_delay
+op	44:27	0:0	2	=
+water	44:29	0:0	2	0
+water	44:30	0:0	2	;
+water	45:4	0:0	2	p_block
+op	45:12	0:0	2	=
+call	45:14	45:62	2	encode_audio_buffer
+arg	45:35	45:40	3	p_enc
+water	45:35	0:0	4	p_enc
+arg	45:42	45:47	3	p_sys
+water	45:42	0:0	4	p_sys
+arg	45:49	45:62	3	p_sys->frame
+water	45:49	0:0	4	p_sys
+op	45:54	0:0	4	->
+water	45:56	0:0	4	frame
+water	45:63	0:0	2	;
+return	46:4	46:18	2	p_block
+water	46:11	0:0	3	p_block

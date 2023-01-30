@@ -1,0 +1,1045 @@
+func	2:0	179:0	0	static int	SendIn
+params	2:17	0:0	1	
+param	2:19	2:42	2	sout_stream_t *	p_stream
+param	2:44	2:68	2	sout_stream_id_sys_t *	id
+param	3:19	3:37	2	block_t *	p_buffer
+stmnts	0:0	178:22	1	
+decl	5:4	5:73	2	in_sout_stream_sys_t	*p_sys
+op	5:32	0:0	2	=
+water	5:34	0:0	2	(
+water	5:35	0:0	2	in_sout_stream_sys_t
+op	5:56	0:0	2	*
+water	5:57	0:0	2	)
+water	5:58	0:0	2	p_stream
+op	5:66	0:0	2	->
+water	5:68	0:0	2	p_sys
+decl	6:4	6:22	2	bridge_t	*p_bridge
+decl	7:4	7:23	2	bool	b_no_es
+op	7:17	0:0	2	=
+water	7:19	0:0	2	true
+decl	8:4	8:9	2	int	i
+decl	9:4	9:24	2	int	i_date
+op	9:15	0:0	2	=
+call	9:17	9:23	3	mdate
+if	11:4	12:71	2	(! p_sys -> b_placeholder)
+cond	11:8	11:16	3	! p_sys -> b_placeholder
+op	11:8	0:0	4	!
+water	11:9	0:0	4	p_sys
+op	11:14	0:0	4	->
+water	11:16	0:0	4	b_placeholder
+stmts	12:8	12:71	3	
+call	12:8	12:70	4	p_stream->p_next->pf_send
+arg	12:35	12:51	5	p_stream->p_next
+water	12:35	0:0	6	p_stream
+op	12:43	0:0	6	->
+water	12:45	0:0	6	p_next
+arg	12:53	12:59	5	id->id
+water	12:53	0:0	6	id
+op	12:55	0:0	6	->
+water	12:57	0:0	6	id
+arg	12:61	12:70	5	p_buffer
+water	12:61	0:0	6	p_buffer
+water	12:71	0:0	4	;
+call	14:4	14:26	2	vlc_mutex_lock
+arg	14:20	14:26	3	&lock
+op	14:20	0:0	4	&
+water	14:21	0:0	4	lock
+water	14:27	0:0	2	;
+water	15:4	0:0	2	p_bridge
+op	15:13	0:0	2	=
+call	15:15	15:67	2	var_GetAddress
+arg	15:31	15:49	3	p_stream->p_libvlc
+water	15:31	0:0	4	p_stream
+op	15:39	0:0	4	->
+water	15:41	0:0	4	p_libvlc
+arg	15:51	15:67	3	p_sys->psz_name
+water	15:51	0:0	4	p_sys
+op	15:56	0:0	4	->
+water	15:58	0:0	4	psz_name
+water	15:68	0:0	2	;
+if	16:4	149:4	2	(p_bridge)
+cond	16:8	16:8	3	p_bridge
+water	16:8	0:0	4	p_bridge
+stmts	17:4	149:4	3	
+water	17:4	0:0	4	{
+for	18:4	140:4	4	(i = 0 ;i < p_bridge -> i_es_num;i ++)
+forinit	18:10	18:15	5	i = 0 ;
+water	18:10	0:0	6	i
+op	18:12	0:0	6	=
+water	18:14	0:0	6	0
+water	18:15	0:0	6	;
+cond	18:17	18:31	5	i < p_bridge -> i_es_num
+water	18:17	0:0	6	i
+op	18:19	0:0	6	<
+water	18:21	0:0	6	p_bridge
+op	18:29	0:0	6	->
+water	18:31	0:0	6	i_es_num
+forexpr	18:41	18:42	5	i ++
+water	18:41	0:0	6	i
+op	18:42	0:0	6	++
+stmts	19:4	140:4	5	
+water	19:4	0:0	6	{
+if	20:8	21:27	6	(! p_bridge -> pp_es [ i ] -> b_empty)
+cond	20:13	20:34	7	! p_bridge -> pp_es [ i ] -> b_empty
+op	20:13	0:0	8	!
+water	20:14	0:0	8	p_bridge
+op	20:22	0:0	8	->
+water	20:24	0:0	8	pp_es
+op	20:29	0:0	8	[
+water	20:30	0:0	8	i
+op	20:31	0:0	8	]
+op	20:32	0:0	8	->
+water	20:34	0:0	8	b_empty
+stmts	21:12	21:27	7	
+water	21:12	0:0	8	b_no_es
+op	21:20	0:0	8	=
+water	21:22	0:0	8	false
+water	21:27	0:0	8	;
+while	22:8	34:8	6	(p_bridge -> pp_es [ i ] -> p_block != NULL && ( p_bridge -> pp_es [ i ] -> p_block -> i_dts + p_sys -> i_delay < i_date || p_bridge -> pp_es [ i ] -> p_block -> i_dts + p_sys -> i_delay < p_bridge -> pp_es [ i ] -> i_last ))
+cond	22:16	26:54	7	p_bridge -> pp_es [ i ] -> p_block != NULL && ( p_bridge -> pp_es [ i ] -> p_block -> i_dts + p_sys -> i_delay < i_date || p_bridge -> pp_es [ i ] -> p_block -> i_dts + p_sys -> i_delay < p_bridge -> pp_es [ i ] -> i_last )
+water	22:16	0:0	8	p_bridge
+op	22:24	0:0	8	->
+water	22:26	0:0	8	pp_es
+op	22:31	0:0	8	[
+water	22:32	0:0	8	i
+op	22:33	0:0	8	]
+op	22:34	0:0	8	->
+water	22:36	0:0	8	p_block
+op	22:44	0:0	8	!=
+water	22:47	0:0	8	NULL
+op	23:17	0:0	8	&&
+water	23:20	0:0	8	(
+water	23:21	0:0	8	p_bridge
+op	23:29	0:0	8	->
+water	23:31	0:0	8	pp_es
+op	23:36	0:0	8	[
+water	23:37	0:0	8	i
+op	23:38	0:0	8	]
+op	23:39	0:0	8	->
+water	23:41	0:0	8	p_block
+op	23:48	0:0	8	->
+water	23:50	0:0	8	i_dts
+op	23:56	0:0	8	+
+water	23:58	0:0	8	p_sys
+op	23:63	0:0	8	->
+water	23:65	0:0	8	i_delay
+op	24:23	0:0	8	<
+water	24:25	0:0	8	i_date
+op	25:22	0:0	8	||
+water	25:25	0:0	8	p_bridge
+op	25:33	0:0	8	->
+water	25:35	0:0	8	pp_es
+op	25:40	0:0	8	[
+water	25:41	0:0	8	i
+op	25:42	0:0	8	]
+op	25:43	0:0	8	->
+water	25:45	0:0	8	p_block
+op	25:52	0:0	8	->
+water	25:54	0:0	8	i_dts
+op	25:60	0:0	8	+
+water	25:62	0:0	8	p_sys
+op	25:67	0:0	8	->
+water	25:69	0:0	8	i_delay
+op	26:26	0:0	8	<
+water	26:28	0:0	8	p_bridge
+op	26:36	0:0	8	->
+water	26:38	0:0	8	pp_es
+op	26:43	0:0	8	[
+water	26:44	0:0	8	i
+op	26:45	0:0	8	]
+op	26:46	0:0	8	->
+water	26:48	0:0	8	i_last
+water	26:54	0:0	8	)
+stmts	27:8	34:8	7	
+water	27:8	0:0	8	{
+decl	28:12	28:58	8	block_t	*p_block
+op	28:29	0:0	8	=
+water	28:31	0:0	8	p_bridge
+op	28:39	0:0	8	->
+water	28:41	0:0	8	pp_es
+op	28:46	0:0	8	[
+water	28:47	0:0	8	i
+op	28:48	0:0	8	]
+op	28:49	0:0	8	->
+water	28:51	0:0	8	p_block
+call	29:12	30:62	8	msg_Dbg
+arg	29:21	29:29	9	p_stream
+water	29:21	0:0	10	p_stream
+arg	29:31	29:63	9	"dropping a packet (%"PRId64")"
+water	29:31	0:0	10	"dropping a packet (%"
+water	29:53	0:0	10	PRId64
+water	29:60	0:0	10	")"
+arg	30:21	30:62	9	i_date-p_block->i_dts-p_sys->i_delay
+water	30:21	0:0	10	i_date
+op	30:28	0:0	10	-
+water	30:30	0:0	10	p_block
+op	30:37	0:0	10	->
+water	30:39	0:0	10	i_dts
+op	30:45	0:0	10	-
+water	30:47	0:0	10	p_sys
+op	30:52	0:0	10	->
+water	30:54	0:0	10	i_delay
+water	30:63	0:0	8	;
+water	31:12	0:0	8	p_bridge
+op	31:20	0:0	8	->
+water	31:22	0:0	8	pp_es
+op	31:27	0:0	8	[
+water	31:28	0:0	8	i
+op	31:29	0:0	8	]
+op	31:30	0:0	8	->
+water	31:32	0:0	8	p_block
+op	32:16	0:0	8	=
+water	32:18	0:0	8	p_bridge
+op	32:26	0:0	8	->
+water	32:28	0:0	8	pp_es
+op	32:33	0:0	8	[
+water	32:34	0:0	8	i
+op	32:35	0:0	8	]
+op	32:36	0:0	8	->
+water	32:38	0:0	8	p_block
+op	32:45	0:0	8	->
+water	32:47	0:0	8	p_next
+water	32:53	0:0	8	;
+call	33:12	33:35	8	block_Release
+arg	33:27	33:35	9	p_block
+water	33:27	0:0	10	p_block
+water	33:36	0:0	8	;
+water	34:8	0:0	8	}
+if	35:8	38:8	6	(p_bridge -> pp_es [ i ] -> p_block == NULL)
+cond	35:13	35:44	7	p_bridge -> pp_es [ i ] -> p_block == NULL
+water	35:13	0:0	8	p_bridge
+op	35:21	0:0	8	->
+water	35:23	0:0	8	pp_es
+op	35:28	0:0	8	[
+water	35:29	0:0	8	i
+op	35:30	0:0	8	]
+op	35:31	0:0	8	->
+water	35:33	0:0	8	p_block
+op	35:41	0:0	8	==
+water	35:44	0:0	8	NULL
+stmts	36:8	38:8	7	
+water	36:8	0:0	8	{
+water	37:12	0:0	8	p_bridge
+op	37:20	0:0	8	->
+water	37:22	0:0	8	pp_es
+op	37:27	0:0	8	[
+water	37:28	0:0	8	i
+op	37:29	0:0	8	]
+op	37:30	0:0	8	->
+water	37:32	0:0	8	pp_last
+op	37:40	0:0	8	=
+op	37:42	0:0	8	&
+water	37:43	0:0	8	p_bridge
+op	37:51	0:0	8	->
+water	37:53	0:0	8	pp_es
+op	37:58	0:0	8	[
+water	37:59	0:0	8	i
+op	37:60	0:0	8	]
+op	37:61	0:0	8	->
+water	37:63	0:0	8	p_block
+water	37:70	0:0	8	;
+water	38:8	0:0	8	}
+if	39:8	68:8	6	(p_bridge -> pp_es [ i ] -> b_changed)
+cond	39:13	39:33	7	p_bridge -> pp_es [ i ] -> b_changed
+water	39:13	0:0	8	p_bridge
+op	39:21	0:0	8	->
+water	39:23	0:0	8	pp_es
+op	39:28	0:0	8	[
+water	39:29	0:0	8	i
+op	39:30	0:0	8	]
+op	39:31	0:0	8	->
+water	39:33	0:0	8	b_changed
+stmts	40:8	68:8	7	
+water	40:8	0:0	8	{
+if	41:12	44:12	8	(p_bridge -> pp_es [ i ] -> b_empty && p_bridge -> pp_es [ i ] -> id != NULL)
+cond	41:17	41:74	9	p_bridge -> pp_es [ i ] -> b_empty && p_bridge -> pp_es [ i ] -> id != NULL
+water	41:17	0:0	10	p_bridge
+op	41:25	0:0	10	->
+water	41:27	0:0	10	pp_es
+op	41:32	0:0	10	[
+water	41:33	0:0	10	i
+op	41:34	0:0	10	]
+op	41:35	0:0	10	->
+water	41:37	0:0	10	b_empty
+op	41:45	0:0	10	&&
+water	41:48	0:0	10	p_bridge
+op	41:56	0:0	10	->
+water	41:58	0:0	10	pp_es
+op	41:63	0:0	10	[
+water	41:64	0:0	10	i
+op	41:65	0:0	10	]
+op	41:66	0:0	10	->
+water	41:68	0:0	10	id
+op	41:71	0:0	10	!=
+water	41:74	0:0	10	NULL
+stmts	42:12	44:12	9	
+water	42:12	0:0	10	{
+call	43:16	43:83	10	p_stream->p_next->pf_del
+arg	43:42	43:58	11	p_stream->p_next
+water	43:42	0:0	12	p_stream
+op	43:50	0:0	12	->
+water	43:52	0:0	12	p_next
+arg	43:60	43:83	11	p_bridge->pp_es[i]->id
+water	43:60	0:0	12	p_bridge
+op	43:68	0:0	12	->
+water	43:70	0:0	12	pp_es
+op	43:75	0:0	12	[
+water	43:76	0:0	12	i
+op	43:77	0:0	12	]
+op	43:78	0:0	12	->
+water	43:80	0:0	12	id
+water	43:84	0:0	10	;
+water	44:12	0:0	10	}
+else	45:12	67:12	8
+stmts	46:12	67:12	9	
+water	46:12	0:0	10	{
+if	48:16	52:16	10	(p_bridge -> pp_es [ i ] -> p_block == NULL || p_bridge -> pp_es [ i ] -> p_block -> p_next == NULL)
+cond	48:21	49:64	11	p_bridge -> pp_es [ i ] -> p_block == NULL || p_bridge -> pp_es [ i ] -> p_block -> p_next == NULL
+water	48:21	0:0	12	p_bridge
+op	48:29	0:0	12	->
+water	48:31	0:0	12	pp_es
+op	48:36	0:0	12	[
+water	48:37	0:0	12	i
+op	48:38	0:0	12	]
+op	48:39	0:0	12	->
+water	48:41	0:0	12	p_block
+op	48:49	0:0	12	==
+water	48:52	0:0	12	NULL
+op	49:22	0:0	12	||
+water	49:25	0:0	12	p_bridge
+op	49:33	0:0	12	->
+water	49:35	0:0	12	pp_es
+op	49:40	0:0	12	[
+water	49:41	0:0	12	i
+op	49:42	0:0	12	]
+op	49:43	0:0	12	->
+water	49:45	0:0	12	p_block
+op	49:52	0:0	12	->
+water	49:54	0:0	12	p_next
+op	49:61	0:0	12	==
+water	49:64	0:0	12	NULL
+stmts	50:16	52:16	11	
+water	50:16	0:0	12	{
+continue	51:20	51:28	12	
+water	52:16	0:0	12	}
+water	53:16	0:0	10	p_bridge
+op	53:24	0:0	10	->
+water	53:26	0:0	10	pp_es
+op	53:31	0:0	10	[
+water	53:32	0:0	10	i
+op	53:33	0:0	10	]
+op	53:34	0:0	10	->
+water	53:36	0:0	10	fmt
+op	53:39	0:0	10	.
+water	53:40	0:0	10	i_id
+op	53:45	0:0	10	+=
+water	53:48	0:0	10	p_sys
+op	53:53	0:0	10	->
+water	53:55	0:0	10	i_id_offset
+water	53:66	0:0	10	;
+if	54:16	63:16	10	(! p_sys -> b_placeholder)
+cond	54:20	54:28	11	! p_sys -> b_placeholder
+op	54:20	0:0	12	!
+water	54:21	0:0	12	p_sys
+op	54:26	0:0	12	->
+water	54:28	0:0	12	b_placeholder
+stmts	55:16	63:16	11	
+water	55:16	0:0	12	{
+water	56:20	0:0	12	p_bridge
+op	56:28	0:0	12	->
+water	56:30	0:0	12	pp_es
+op	56:35	0:0	12	[
+water	56:36	0:0	12	i
+op	56:37	0:0	12	]
+op	56:38	0:0	12	->
+water	56:40	0:0	12	id
+op	56:43	0:0	12	=
+call	56:45	57:75	12	p_stream->p_next->pf_add
+arg	57:32	57:48	13	p_stream->p_next
+water	57:32	0:0	14	p_stream
+op	57:40	0:0	14	->
+water	57:42	0:0	14	p_next
+arg	57:50	57:75	13	&p_bridge->pp_es[i]->fmt
+op	57:50	0:0	14	&
+water	57:51	0:0	14	p_bridge
+op	57:59	0:0	14	->
+water	57:61	0:0	14	pp_es
+op	57:66	0:0	14	[
+water	57:67	0:0	14	i
+op	57:68	0:0	14	]
+op	57:69	0:0	14	->
+water	57:71	0:0	14	fmt
+water	57:76	0:0	12	;
+if	58:20	62:20	12	(p_bridge -> pp_es [ i ] -> id == NULL)
+cond	58:25	58:51	13	p_bridge -> pp_es [ i ] -> id == NULL
+water	58:25	0:0	14	p_bridge
+op	58:33	0:0	14	->
+water	58:35	0:0	14	pp_es
+op	58:40	0:0	14	[
+water	58:41	0:0	14	i
+op	58:42	0:0	14	]
+op	58:43	0:0	14	->
+water	58:45	0:0	14	id
+op	58:48	0:0	14	==
+water	58:51	0:0	14	NULL
+stmts	59:20	62:20	13	
+water	59:20	0:0	14	{
+call	60:24	61:63	14	msg_Warn
+arg	60:34	60:42	15	p_stream
+water	60:34	0:0	16	p_stream
+arg	60:44	60:77	15	"couldn't create chain for id %d"
+water	60:44	0:0	16	"couldn't create chain for id %d"
+arg	61:34	61:63	15	p_bridge->pp_es[i]->fmt.i_id
+water	61:34	0:0	16	p_bridge
+op	61:42	0:0	16	->
+water	61:44	0:0	16	pp_es
+op	61:49	0:0	16	[
+water	61:50	0:0	16	i
+op	61:51	0:0	16	]
+op	61:52	0:0	16	->
+water	61:54	0:0	16	fmt
+op	61:57	0:0	16	.
+water	61:58	0:0	16	i_id
+water	61:64	0:0	14	;
+water	62:20	0:0	14	}
+water	63:16	0:0	12	}
+call	64:16	66:57	10	msg_Dbg
+arg	64:25	64:33	11	p_stream
+water	64:25	0:0	12	p_stream
+arg	64:35	64:79	11	"bridging in input codec=%4.4s id=%d pos=%d"
+water	64:35	0:0	12	"bridging in input codec=%4.4s id=%d pos=%d"
+arg	65:25	65:64	11	(char*)&p_bridge->pp_es[i]->fmt.i_codec
+water	65:25	0:0	12	(
+water	65:26	0:0	12	char
+op	65:30	0:0	12	*
+water	65:31	0:0	12	)
+op	65:32	0:0	12	&
+water	65:33	0:0	12	p_bridge
+op	65:41	0:0	12	->
+water	65:43	0:0	12	pp_es
+op	65:48	0:0	12	[
+water	65:49	0:0	12	i
+op	65:50	0:0	12	]
+op	65:51	0:0	12	->
+water	65:53	0:0	12	fmt
+op	65:56	0:0	12	.
+water	65:57	0:0	12	i_codec
+arg	66:25	66:53	11	p_bridge->pp_es[i]->fmt.i_id
+water	66:25	0:0	12	p_bridge
+op	66:33	0:0	12	->
+water	66:35	0:0	12	pp_es
+op	66:40	0:0	12	[
+water	66:41	0:0	12	i
+op	66:42	0:0	12	]
+op	66:43	0:0	12	->
+water	66:45	0:0	12	fmt
+op	66:48	0:0	12	.
+water	66:49	0:0	12	i_id
+arg	66:55	66:57	11	i
+water	66:55	0:0	12	i
+water	66:58	0:0	10	;
+water	67:12	0:0	10	}
+water	68:8	0:0	8	}
+water	69:8	0:0	6	p_bridge
+op	69:16	0:0	6	->
+water	69:18	0:0	6	pp_es
+op	69:23	0:0	6	[
+water	69:24	0:0	6	i
+op	69:25	0:0	6	]
+op	69:26	0:0	6	->
+water	69:28	0:0	6	b_changed
+op	69:38	0:0	6	=
+water	69:40	0:0	6	false
+water	69:45	0:0	6	;
+if	70:8	71:20	6	(p_bridge -> pp_es [ i ] -> b_empty)
+cond	70:13	70:33	7	p_bridge -> pp_es [ i ] -> b_empty
+water	70:13	0:0	8	p_bridge
+op	70:21	0:0	8	->
+water	70:23	0:0	8	pp_es
+op	70:28	0:0	8	[
+water	70:29	0:0	8	i
+op	70:30	0:0	8	]
+op	70:31	0:0	8	->
+water	70:33	0:0	8	b_empty
+stmts	71:12	71:20	7	
+continue	71:12	71:20	8	
+if	72:8	85:8	6	(p_bridge -> pp_es [ i ] -> p_block == NULL)
+cond	72:13	72:44	7	p_bridge -> pp_es [ i ] -> p_block == NULL
+water	72:13	0:0	8	p_bridge
+op	72:21	0:0	8	->
+water	72:23	0:0	8	pp_es
+op	72:28	0:0	8	[
+water	72:29	0:0	8	i
+op	72:30	0:0	8	]
+op	72:31	0:0	8	->
+water	72:33	0:0	8	p_block
+op	72:41	0:0	8	==
+water	72:44	0:0	8	NULL
+stmts	73:8	85:8	7	
+water	73:8	0:0	8	{
+if	74:12	83:12	8	(p_bridge -> pp_es [ i ] -> id != NULL && p_bridge -> pp_es [ i ] -> i_last < i_date)
+cond	74:17	75:50	9	p_bridge -> pp_es [ i ] -> id != NULL && p_bridge -> pp_es [ i ] -> i_last < i_date
+water	74:17	0:0	10	p_bridge
+op	74:25	0:0	10	->
+water	74:27	0:0	10	pp_es
+op	74:32	0:0	10	[
+water	74:33	0:0	10	i
+op	74:34	0:0	10	]
+op	74:35	0:0	10	->
+water	74:37	0:0	10	id
+op	74:40	0:0	10	!=
+water	74:43	0:0	10	NULL
+op	75:18	0:0	10	&&
+water	75:21	0:0	10	p_bridge
+op	75:29	0:0	10	->
+water	75:31	0:0	10	pp_es
+op	75:36	0:0	10	[
+water	75:37	0:0	10	i
+op	75:38	0:0	10	]
+op	75:39	0:0	10	->
+water	75:41	0:0	10	i_last
+op	75:48	0:0	10	<
+water	75:50	0:0	10	i_date
+stmts	76:12	83:12	9	
+water	76:12	0:0	10	{
+if	77:16	79:66	10	(! p_sys -> b_placeholder)
+cond	77:20	77:28	11	! p_sys -> b_placeholder
+op	77:20	0:0	12	!
+water	77:21	0:0	12	p_sys
+op	77:26	0:0	12	->
+water	77:28	0:0	12	b_placeholder
+stmts	78:20	79:66	11	
+call	78:20	79:65	12	p_stream->p_next->pf_del
+arg	78:46	78:62	13	p_stream->p_next
+water	78:46	0:0	14	p_stream
+op	78:54	0:0	14	->
+water	78:56	0:0	14	p_next
+arg	79:42	79:65	13	p_bridge->pp_es[i]->id
+water	79:42	0:0	14	p_bridge
+op	79:50	0:0	14	->
+water	79:52	0:0	14	pp_es
+op	79:57	0:0	14	[
+water	79:58	0:0	14	i
+op	79:59	0:0	14	]
+op	79:60	0:0	14	->
+water	79:62	0:0	14	id
+water	79:66	0:0	12	;
+water	80:16	0:0	10	p_bridge
+op	80:24	0:0	10	->
+water	80:26	0:0	10	pp_es
+op	80:31	0:0	10	[
+water	80:32	0:0	10	i
+op	80:33	0:0	10	]
+op	80:34	0:0	10	->
+water	80:36	0:0	10	fmt
+op	80:39	0:0	10	.
+water	80:40	0:0	10	i_id
+op	80:45	0:0	10	-=
+water	80:48	0:0	10	p_sys
+op	80:53	0:0	10	->
+water	80:55	0:0	10	i_id_offset
+water	80:66	0:0	10	;
+water	81:16	0:0	10	p_bridge
+op	81:24	0:0	10	->
+water	81:26	0:0	10	pp_es
+op	81:31	0:0	10	[
+water	81:32	0:0	10	i
+op	81:33	0:0	10	]
+op	81:34	0:0	10	->
+water	81:36	0:0	10	b_changed
+op	81:46	0:0	10	=
+water	81:48	0:0	10	true
+water	81:52	0:0	10	;
+water	82:16	0:0	10	p_bridge
+op	82:24	0:0	10	->
+water	82:26	0:0	10	pp_es
+op	82:31	0:0	10	[
+water	82:32	0:0	10	i
+op	82:33	0:0	10	]
+op	82:34	0:0	10	->
+water	82:36	0:0	10	id
+op	82:39	0:0	10	=
+water	82:41	0:0	10	NULL
+water	82:45	0:0	10	;
+water	83:12	0:0	10	}
+continue	84:12	84:20	8	
+water	85:8	0:0	8	}
+if	86:8	133:8	6	(p_bridge -> pp_es [ i ] -> id != NULL || p_sys -> b_placeholder)
+cond	86:13	86:54	7	p_bridge -> pp_es [ i ] -> id != NULL || p_sys -> b_placeholder
+water	86:13	0:0	8	p_bridge
+op	86:21	0:0	8	->
+water	86:23	0:0	8	pp_es
+op	86:28	0:0	8	[
+water	86:29	0:0	8	i
+op	86:30	0:0	8	]
+op	86:31	0:0	8	->
+water	86:33	0:0	8	id
+op	86:36	0:0	8	!=
+water	86:39	0:0	8	NULL
+op	86:44	0:0	8	||
+water	86:47	0:0	8	p_sys
+op	86:52	0:0	8	->
+water	86:54	0:0	8	b_placeholder
+stmts	87:8	133:8	7	
+water	87:8	0:0	8	{
+decl	88:12	88:58	8	block_t	*p_block
+op	88:29	0:0	8	=
+water	88:31	0:0	8	p_bridge
+op	88:39	0:0	8	->
+water	88:41	0:0	8	pp_es
+op	88:46	0:0	8	[
+water	88:47	0:0	8	i
+op	88:48	0:0	8	]
+op	88:49	0:0	8	->
+water	88:51	0:0	8	p_block
+while	89:12	95:12	8	(p_block != NULL)
+cond	89:20	89:31	9	p_block != NULL
+water	89:20	0:0	10	p_block
+op	89:28	0:0	10	!=
+water	89:31	0:0	10	NULL
+stmts	90:12	95:12	9	
+water	90:12	0:0	10	{
+water	91:16	0:0	10	p_bridge
+op	91:24	0:0	10	->
+water	91:26	0:0	10	pp_es
+op	91:31	0:0	10	[
+water	91:32	0:0	10	i
+op	91:33	0:0	10	]
+op	91:34	0:0	10	->
+water	91:36	0:0	10	i_last
+op	91:43	0:0	10	=
+water	91:45	0:0	10	p_block
+op	91:52	0:0	10	->
+water	91:54	0:0	10	i_dts
+water	91:59	0:0	10	;
+water	92:16	0:0	10	p_block
+op	92:23	0:0	10	->
+water	92:25	0:0	10	i_pts
+op	92:31	0:0	10	+=
+water	92:34	0:0	10	p_sys
+op	92:39	0:0	10	->
+water	92:41	0:0	10	i_delay
+water	92:48	0:0	10	;
+water	93:16	0:0	10	p_block
+op	93:23	0:0	10	->
+water	93:25	0:0	10	i_dts
+op	93:31	0:0	10	+=
+water	93:34	0:0	10	p_sys
+op	93:39	0:0	10	->
+water	93:41	0:0	10	i_delay
+water	93:48	0:0	10	;
+water	94:16	0:0	10	p_block
+op	94:24	0:0	10	=
+water	94:26	0:0	10	p_block
+op	94:33	0:0	10	->
+water	94:35	0:0	10	p_next
+water	94:41	0:0	10	;
+water	95:12	0:0	10	}
+decl	96:12	96:46	8	sout_stream_id_sys_t	*newid
+op	96:40	0:0	8	=
+water	96:42	0:0	8	NULL
+if	97:12	128:12	8	(p_sys -> b_placeholder)
+cond	97:16	97:23	9	p_sys -> b_placeholder
+water	97:16	0:0	10	p_sys
+op	97:21	0:0	10	->
+water	97:23	0:0	10	b_placeholder
+stmts	98:12	128:12	9	
+water	98:12	0:0	10	{
+switch	99:16	127:16	10	(p_bridge -> pp_es [ i ] -> fmt . i_cat)
+cond	99:24	99:48	11	p_bridge -> pp_es [ i ] -> fmt . i_cat
+water	99:24	0:0	12	p_bridge
+op	99:32	0:0	12	->
+water	99:34	0:0	12	pp_es
+op	99:39	0:0	12	[
+water	99:40	0:0	12	i
+op	99:41	0:0	12	]
+op	99:42	0:0	12	->
+water	99:44	0:0	12	fmt
+op	99:47	0:0	12	.
+water	99:48	0:0	12	i_cat
+stmts	100:16	127:16	11	
+water	100:16	0:0	12	{
+label	101:20	101:33	12	case VIDEO_ES :
+water	102:24	0:0	12	p_sys
+op	102:29	0:0	12	->
+water	102:31	0:0	12	i_last_video
+op	102:44	0:0	12	=
+water	102:46	0:0	12	i_date
+water	102:52	0:0	12	;
+water	103:24	0:0	12	newid
+op	103:30	0:0	12	=
+water	103:32	0:0	12	p_sys
+op	103:37	0:0	12	->
+water	103:39	0:0	12	id_video
+water	103:47	0:0	12	;
+if	104:24	105:33	12	(! newid)
+cond	104:28	104:29	13	! newid
+op	104:28	0:0	14	!
+water	104:29	0:0	14	newid
+stmts	105:28	105:33	13	
+break	105:28	105:33	14	
+if	106:24	115:24	12	(! p_sys -> b_switch_on_iframe || p_sys -> i_state == placeholder_off || ( p_bridge -> pp_es [ i ] -> fmt . i_cat == VIDEO_ES && p_bridge -> pp_es [ i ] -> p_block -> i_flags & BLOCK_FLAG_TYPE_I ))
+cond	106:28	109:87	13	! p_sys -> b_switch_on_iframe || p_sys -> i_state == placeholder_off || ( p_bridge -> pp_es [ i ] -> fmt . i_cat == VIDEO_ES && p_bridge -> pp_es [ i ] -> p_block -> i_flags & BLOCK_FLAG_TYPE_I )
+op	106:28	0:0	14	!
+water	106:29	0:0	14	p_sys
+op	106:34	0:0	14	->
+water	106:36	0:0	14	b_switch_on_iframe
+op	106:55	0:0	14	||
+water	107:28	0:0	14	p_sys
+op	107:33	0:0	14	->
+water	107:35	0:0	14	i_state
+op	107:43	0:0	14	==
+water	107:46	0:0	14	placeholder_off
+op	107:62	0:0	14	||
+water	108:28	0:0	14	(
+water	108:30	0:0	14	p_bridge
+op	108:38	0:0	14	->
+water	108:40	0:0	14	pp_es
+op	108:45	0:0	14	[
+water	108:46	0:0	14	i
+op	108:47	0:0	14	]
+op	108:48	0:0	14	->
+water	108:50	0:0	14	fmt
+op	108:53	0:0	14	.
+water	108:54	0:0	14	i_cat
+op	108:60	0:0	14	==
+water	108:63	0:0	14	VIDEO_ES
+op	108:72	0:0	14	&&
+water	109:30	0:0	14	p_bridge
+op	109:38	0:0	14	->
+water	109:40	0:0	14	pp_es
+op	109:45	0:0	14	[
+water	109:46	0:0	14	i
+op	109:47	0:0	14	]
+op	109:48	0:0	14	->
+water	109:50	0:0	14	p_block
+op	109:57	0:0	14	->
+water	109:59	0:0	14	i_flags
+op	109:67	0:0	14	&
+water	109:69	0:0	14	BLOCK_FLAG_TYPE_I
+water	109:87	0:0	14	)
+stmts	110:24	115:24	13	
+water	110:24	0:0	14	{
+call	111:28	113:67	14	p_stream->p_next->pf_send
+arg	111:55	111:71	15	p_stream->p_next
+water	111:55	0:0	16	p_stream
+op	111:63	0:0	16	->
+water	111:65	0:0	16	p_next
+arg	112:39	112:44	15	newid
+water	112:39	0:0	16	newid
+arg	113:39	113:67	15	p_bridge->pp_es[i]->p_block
+water	113:39	0:0	16	p_bridge
+op	113:47	0:0	16	->
+water	113:49	0:0	16	pp_es
+op	113:54	0:0	16	[
+water	113:55	0:0	16	i
+op	113:56	0:0	16	]
+op	113:57	0:0	16	->
+water	113:59	0:0	16	p_block
+water	113:68	0:0	14	;
+water	114:28	0:0	14	p_sys
+op	114:33	0:0	14	->
+water	114:35	0:0	14	i_state
+op	114:43	0:0	14	=
+water	114:45	0:0	14	placeholder_off
+water	114:60	0:0	14	;
+water	115:24	0:0	14	}
+break	116:24	116:29	12	
+label	117:20	117:33	12	case AUDIO_ES :
+water	118:24	0:0	12	newid
+op	118:30	0:0	12	=
+water	118:32	0:0	12	p_sys
+op	118:37	0:0	12	->
+water	118:39	0:0	12	id_audio
+water	118:47	0:0	12	;
+if	119:24	120:33	12	(! newid)
+cond	119:28	119:29	13	! newid
+op	119:28	0:0	14	!
+water	119:29	0:0	14	newid
+stmts	120:28	120:33	13	
+break	120:28	120:33	14	
+water	121:24	0:0	12	p_sys
+op	121:29	0:0	12	->
+water	121:31	0:0	12	i_last_audio
+op	121:44	0:0	12	=
+water	121:46	0:0	12	i_date
+water	121:52	0:0	12	;
+label	122:20	122:27	12	default :
+call	123:24	125:63	12	p_stream->p_next->pf_send
+arg	123:51	123:67	13	p_stream->p_next
+water	123:51	0:0	14	p_stream
+op	123:59	0:0	14	->
+water	123:61	0:0	14	p_next
+arg	124:35	124:69	13	newid?newid:p_bridge->pp_es[i]->id
+water	124:35	0:0	14	newid
+water	124:40	0:0	14	?
+water	124:41	0:0	14	newid
+water	124:46	0:0	14	:
+water	124:47	0:0	14	p_bridge
+op	124:55	0:0	14	->
+water	124:57	0:0	14	pp_es
+op	124:62	0:0	14	[
+water	124:63	0:0	14	i
+op	124:64	0:0	14	]
+op	124:65	0:0	14	->
+water	124:67	0:0	14	id
+arg	125:35	125:63	13	p_bridge->pp_es[i]->p_block
+water	125:35	0:0	14	p_bridge
+op	125:43	0:0	14	->
+water	125:45	0:0	14	pp_es
+op	125:50	0:0	14	[
+water	125:51	0:0	14	i
+op	125:52	0:0	14	]
+op	125:53	0:0	14	->
+water	125:55	0:0	14	p_block
+water	125:64	0:0	12	;
+break	126:24	126:29	12	
+water	127:16	0:0	12	}
+water	128:12	0:0	10	}
+else	129:12	132:68	8
+stmts	130:16	132:68	9	
+call	130:16	132:67	10	p_stream->p_next->pf_send
+arg	130:43	130:59	11	p_stream->p_next
+water	130:43	0:0	12	p_stream
+op	130:51	0:0	12	->
+water	130:53	0:0	12	p_next
+arg	131:39	131:61	11	p_bridge->pp_es[i]->id
+water	131:39	0:0	12	p_bridge
+op	131:47	0:0	12	->
+water	131:49	0:0	12	pp_es
+op	131:54	0:0	12	[
+water	131:55	0:0	12	i
+op	131:56	0:0	12	]
+op	131:57	0:0	12	->
+water	131:59	0:0	12	id
+arg	132:39	132:67	11	p_bridge->pp_es[i]->p_block
+water	132:39	0:0	12	p_bridge
+op	132:47	0:0	12	->
+water	132:49	0:0	12	pp_es
+op	132:54	0:0	12	[
+water	132:55	0:0	12	i
+op	132:56	0:0	12	]
+op	132:57	0:0	12	->
+water	132:59	0:0	12	p_block
+water	132:68	0:0	10	;
+water	133:8	0:0	8	}
+else	134:8	137:8	6
+stmts	135:8	137:8	7	
+water	135:8	0:0	8	{
+call	136:12	136:60	8	block_ChainRelease
+arg	136:32	136:60	9	p_bridge->pp_es[i]->p_block
+water	136:32	0:0	10	p_bridge
+op	136:40	0:0	10	->
+water	136:42	0:0	10	pp_es
+op	136:47	0:0	10	[
+water	136:48	0:0	10	i
+op	136:49	0:0	10	]
+op	136:50	0:0	10	->
+water	136:52	0:0	10	p_block
+water	136:61	0:0	8	;
+water	137:8	0:0	8	}
+water	138:8	0:0	6	p_bridge
+op	138:16	0:0	6	->
+water	138:18	0:0	6	pp_es
+op	138:23	0:0	6	[
+water	138:24	0:0	6	i
+op	138:25	0:0	6	]
+op	138:26	0:0	6	->
+water	138:28	0:0	6	p_block
+op	138:36	0:0	6	=
+water	138:38	0:0	6	NULL
+water	138:42	0:0	6	;
+water	139:8	0:0	6	p_bridge
+op	139:16	0:0	6	->
+water	139:18	0:0	6	pp_es
+op	139:23	0:0	6	[
+water	139:24	0:0	6	i
+op	139:25	0:0	6	]
+op	139:26	0:0	6	->
+water	139:28	0:0	6	pp_last
+op	139:36	0:0	6	=
+op	139:38	0:0	6	&
+water	139:39	0:0	6	p_bridge
+op	139:47	0:0	6	->
+water	139:49	0:0	6	pp_es
+op	139:54	0:0	6	[
+water	139:55	0:0	6	i
+op	139:56	0:0	6	]
+op	139:57	0:0	6	->
+water	139:59	0:0	6	p_block
+water	139:66	0:0	6	;
+water	140:4	0:0	6	}
+if	141:4	148:4	4	(b_no_es)
+cond	141:8	141:8	5	b_no_es
+water	141:8	0:0	6	b_no_es
+stmts	142:4	148:4	5	
+water	142:4	0:0	6	{
+for	143:8	144:38	6	(i = 0 ;i < p_bridge -> i_es_num;i ++)
+forinit	143:14	143:19	7	i = 0 ;
+water	143:14	0:0	8	i
+op	143:16	0:0	8	=
+water	143:18	0:0	8	0
+water	143:19	0:0	8	;
+cond	143:21	143:35	7	i < p_bridge -> i_es_num
+water	143:21	0:0	8	i
+op	143:23	0:0	8	<
+water	143:25	0:0	8	p_bridge
+op	143:33	0:0	8	->
+water	143:35	0:0	8	i_es_num
+forexpr	143:45	143:46	7	i ++
+water	143:45	0:0	8	i
+op	143:46	0:0	8	++
+stmts	144:12	144:38	7	
+call	144:12	144:37	8	free
+arg	144:18	144:37	9	p_bridge->pp_es[i]
+water	144:18	0:0	10	p_bridge
+op	144:26	0:0	10	->
+water	144:28	0:0	10	pp_es
+op	144:33	0:0	10	[
+water	144:34	0:0	10	i
+op	144:35	0:0	10	]
+water	144:38	0:0	8	;
+call	145:8	145:30	6	free
+arg	145:14	145:30	7	p_bridge->pp_es
+water	145:14	0:0	8	p_bridge
+op	145:22	0:0	8	->
+water	145:24	0:0	8	pp_es
+water	145:31	0:0	6	;
+call	146:8	146:23	6	free
+arg	146:14	146:23	7	p_bridge
+water	146:14	0:0	8	p_bridge
+water	146:24	0:0	6	;
+call	147:8	147:57	6	var_Destroy
+arg	147:21	147:39	7	p_stream->p_libvlc
+water	147:21	0:0	8	p_stream
+op	147:29	0:0	8	->
+water	147:31	0:0	8	p_libvlc
+arg	147:41	147:57	7	p_sys->psz_name
+water	147:41	0:0	8	p_sys
+op	147:46	0:0	8	->
+water	147:48	0:0	8	psz_name
+water	147:58	0:0	6	;
+water	148:4	0:0	6	}
+water	149:4	0:0	4	}
+if	150:4	176:4	2	(p_sys -> b_placeholder)
+cond	150:8	150:15	3	p_sys -> b_placeholder
+water	150:8	0:0	4	p_sys
+op	150:13	0:0	4	->
+water	150:15	0:0	4	b_placeholder
+stmts	151:4	176:4	3	
+water	151:4	0:0	4	{
+switch	152:8	175:8	4	(id -> i_cat)
+cond	152:16	152:20	5	id -> i_cat
+water	152:16	0:0	6	id
+op	152:18	0:0	6	->
+water	152:20	0:0	6	i_cat
+stmts	153:8	175:8	5	
+water	153:8	0:0	6	{
+label	154:12	154:25	6	case VIDEO_ES :
+if	155:16	162:16	6	(( p_sys -> i_last_video + p_sys -> i_placeholder_delay < i_date && ( ! p_sys -> b_switch_on_iframe || p_buffer -> i_flags & BLOCK_FLAG_TYPE_I ) ) || p_sys -> i_state == placeholder_on)
+cond	155:20	158:39	7	( p_sys -> i_last_video + p_sys -> i_placeholder_delay < i_date && ( ! p_sys -> b_switch_on_iframe || p_buffer -> i_flags & BLOCK_FLAG_TYPE_I ) ) || p_sys -> i_state == placeholder_on
+water	155:20	0:0	8	(
+water	155:22	0:0	8	p_sys
+op	155:27	0:0	8	->
+water	155:29	0:0	8	i_last_video
+op	155:42	0:0	8	+
+water	155:44	0:0	8	p_sys
+op	155:49	0:0	8	->
+water	155:51	0:0	8	i_placeholder_delay
+op	155:71	0:0	8	<
+water	155:73	0:0	8	i_date
+op	156:20	0:0	8	&&
+water	156:23	0:0	8	(
+op	156:26	0:0	8	!
+water	156:27	0:0	8	p_sys
+op	156:32	0:0	8	->
+water	156:34	0:0	8	b_switch_on_iframe
+op	157:23	0:0	8	||
+water	157:26	0:0	8	p_buffer
+op	157:34	0:0	8	->
+water	157:36	0:0	8	i_flags
+op	157:44	0:0	8	&
+water	157:46	0:0	8	BLOCK_FLAG_TYPE_I
+water	157:64	0:0	8	)
+water	157:66	0:0	8	)
+op	158:18	0:0	8	||
+water	158:21	0:0	8	p_sys
+op	158:26	0:0	8	->
+water	158:28	0:0	8	i_state
+op	158:36	0:0	8	==
+water	158:39	0:0	8	placeholder_on
+stmts	159:16	162:16	7	
+water	159:16	0:0	8	{
+call	160:20	160:82	8	p_stream->p_next->pf_send
+arg	160:47	160:63	9	p_stream->p_next
+water	160:47	0:0	10	p_stream
+op	160:55	0:0	10	->
+water	160:57	0:0	10	p_next
+arg	160:65	160:71	9	id->id
+water	160:65	0:0	10	id
+op	160:67	0:0	10	->
+water	160:69	0:0	10	id
+arg	160:73	160:82	9	p_buffer
+water	160:73	0:0	10	p_buffer
+water	160:83	0:0	8	;
+water	161:20	0:0	8	p_sys
+op	161:25	0:0	8	->
+water	161:27	0:0	8	i_state
+op	161:35	0:0	8	=
+water	161:37	0:0	8	placeholder_on
+water	161:51	0:0	8	;
+water	162:16	0:0	8	}
+else	163:16	164:45	6
+stmts	164:20	164:45	7	
+call	164:20	164:44	8	block_Release
+arg	164:35	164:44	9	p_buffer
+water	164:35	0:0	10	p_buffer
+water	164:45	0:0	8	;
+break	165:16	165:21	6	
+label	166:12	166:25	6	case AUDIO_ES :
+if	167:16	168:83	6	(p_sys -> i_last_audio + p_sys -> i_placeholder_delay < i_date)
+cond	167:20	167:71	7	p_sys -> i_last_audio + p_sys -> i_placeholder_delay < i_date
+water	167:20	0:0	8	p_sys
+op	167:25	0:0	8	->
+water	167:27	0:0	8	i_last_audio
+op	167:40	0:0	8	+
+water	167:42	0:0	8	p_sys
+op	167:47	0:0	8	->
+water	167:49	0:0	8	i_placeholder_delay
+op	167:69	0:0	8	<
+water	167:71	0:0	8	i_date
+stmts	168:20	168:83	7	
+call	168:20	168:82	8	p_stream->p_next->pf_send
+arg	168:47	168:63	9	p_stream->p_next
+water	168:47	0:0	10	p_stream
+op	168:55	0:0	10	->
+water	168:57	0:0	10	p_next
+arg	168:65	168:71	9	id->id
+water	168:65	0:0	10	id
+op	168:67	0:0	10	->
+water	168:69	0:0	10	id
+arg	168:73	168:82	9	p_buffer
+water	168:73	0:0	10	p_buffer
+water	168:83	0:0	8	;
+else	169:16	170:45	6
+stmts	170:20	170:45	7	
+call	170:20	170:44	8	block_Release
+arg	170:35	170:44	9	p_buffer
+water	170:35	0:0	10	p_buffer
+water	170:45	0:0	8	;
+break	171:16	171:21	6	
+label	172:12	172:19	6	default :
+call	173:16	173:40	6	block_Release
+arg	173:31	173:40	7	p_buffer
+water	173:31	0:0	8	p_buffer
+water	173:41	0:0	6	;
+break	174:16	174:21	6	
+water	175:8	0:0	6	}
+water	176:4	0:0	4	}
+call	177:4	177:28	2	vlc_mutex_unlock
+arg	177:22	177:28	3	&lock
+op	177:22	0:0	4	&
+water	177:23	0:0	4	lock
+water	177:29	0:0	2	;
+return	178:4	178:22	2	VLC_SUCCESS
+water	178:11	0:0	3	VLC_SUCCESS

@@ -1,0 +1,362 @@
+func	2:0	79:0	0	static int	Peek
+params	2:15	0:0	1	
+param	2:16	2:27	2	stream_t *	s
+param	2:29	2:52	2	const uint8_t * *	pp_peek
+param	2:54	2:73	2	unsigned int	i_peek
+stmnts	0:0	78:4	1	
+decl	4:4	4:34	2	stream_sys_t	*p_sys
+op	4:24	0:0	2	=
+water	4:26	0:0	2	s
+op	4:27	0:0	2	->
+water	4:29	0:0	2	p_sys
+decl	5:4	5:22	2	segment_t	*segment
+decl	6:4	6:29	2	unsigned int	len
+op	6:21	0:0	2	=
+water	6:23	0:0	2	i_peek
+water	7:4	0:0	2	segment
+op	7:12	0:0	2	=
+call	7:14	7:26	2	GetSegment
+arg	7:25	7:26	3	s
+water	7:25	0:0	4	s
+water	7:27	0:0	2	;
+if	8:4	13:4	2	(segment == NULL)
+cond	8:8	8:19	3	segment == NULL
+water	8:8	0:0	4	segment
+op	8:16	0:0	4	==
+water	8:19	0:0	4	NULL
+stmts	9:4	13:4	3	
+water	9:4	0:0	4	{
+call	10:8	11:63	4	msg_Err
+arg	10:16	10:17	5	s
+water	10:16	0:0	6	s
+arg	10:19	10:70	5	"segment %d should have been available (stream %d)"
+water	10:19	0:0	6	"segment %d should have been available (stream %d)"
+arg	11:16	11:39	5	p_sys->playback.segment
+water	11:16	0:0	6	p_sys
+op	11:21	0:0	6	->
+water	11:23	0:0	6	playback
+op	11:31	0:0	6	.
+water	11:32	0:0	6	segment
+arg	11:41	11:63	5	p_sys->playback.stream
+water	11:41	0:0	6	p_sys
+op	11:46	0:0	6	->
+water	11:48	0:0	6	playback
+op	11:56	0:0	6	.
+water	11:57	0:0	6	stream
+water	11:64	0:0	4	;
+return	12:8	12:16	4	0
+water	12:15	0:0	5	0
+water	13:4	0:0	4	}
+call	14:4	14:33	2	vlc_mutex_lock
+arg	14:19	14:33	3	&segment->lock
+op	14:19	0:0	4	&
+water	14:20	0:0	4	segment
+op	14:27	0:0	4	->
+water	14:29	0:0	4	lock
+water	14:34	0:0	2	;
+decl	15:4	15:43	2	size_t	i_buff
+op	15:18	0:0	2	=
+water	15:20	0:0	2	segment
+op	15:27	0:0	2	->
+water	15:29	0:0	2	data
+op	15:33	0:0	2	->
+water	15:35	0:0	2	i_buffer
+decl	16:4	16:45	2	uint8_t	*p_buff
+op	16:20	0:0	2	=
+water	16:22	0:0	2	segment
+op	16:29	0:0	2	->
+water	16:31	0:0	2	data
+op	16:35	0:0	2	->
+water	16:37	0:0	2	p_buffer
+if	17:4	22:4	2	(likely (i_peek < i_buff ))
+cond	17:9	17:31	3	likely (i_peek < i_buff )
+call	17:9	17:31	4	likely
+arg	17:16	17:31	5	i_peek<i_buff
+water	17:16	0:0	6	i_peek
+op	17:23	0:0	6	<
+water	17:25	0:0	6	i_buff
+stmts	18:4	22:4	3	
+water	18:4	0:0	4	{
+op	19:8	0:0	4	*
+water	19:9	0:0	4	pp_peek
+op	19:17	0:0	4	=
+water	19:19	0:0	4	p_buff
+water	19:25	0:0	4	;
+call	20:8	20:39	4	vlc_mutex_unlock
+arg	20:25	20:39	5	&segment->lock
+op	20:25	0:0	6	&
+water	20:26	0:0	6	segment
+op	20:33	0:0	6	->
+water	20:35	0:0	6	lock
+water	20:40	0:0	4	;
+return	21:8	21:21	4	i_peek
+water	21:15	0:0	5	i_peek
+water	22:4	0:0	4	}
+else	23:4	78:4	2
+stmts	24:4	78:4	3	
+water	24:4	0:0	4	{
+decl	26:8	26:50	4	int	peek_segment
+op	26:25	0:0	4	=
+water	26:27	0:0	4	p_sys
+op	26:32	0:0	4	->
+water	26:34	0:0	4	playback
+op	26:42	0:0	4	.
+water	26:43	0:0	4	segment
+decl	27:8	27:25	4	size_t	curlen
+op	27:22	0:0	4	=
+water	27:24	0:0	4	0
+decl	28:8	28:27	4	segment_t	*nsegment
+water	29:8	0:0	4	p_sys
+op	29:13	0:0	4	->
+water	29:15	0:0	4	playback
+op	29:23	0:0	4	.
+water	29:24	0:0	4	segment
+op	29:31	0:0	4	++
+water	29:33	0:0	4	;
+decl	30:8	30:39	4	block_t	*peeked
+op	30:24	0:0	4	=
+water	30:26	0:0	4	p_sys
+op	30:31	0:0	4	->
+water	30:33	0:0	4	peeked
+if	31:8	32:41	4	(peeked == NULL)
+cond	31:12	31:22	5	peeked == NULL
+water	31:12	0:0	6	peeked
+op	31:19	0:0	6	==
+water	31:22	0:0	6	NULL
+stmts	32:12	32:41	5	
+water	32:12	0:0	6	peeked
+op	32:19	0:0	6	=
+call	32:21	32:40	6	block_Alloc
+arg	32:34	32:40	7	i_peek
+water	32:34	0:0	8	i_peek
+water	32:41	0:0	6	;
+else	33:8	34:54	4
+stmts	33:13	34:54	5	
+if	33:13	34:54	6	(peeked -> i_buffer < i_peek)
+cond	33:17	33:36	7	peeked -> i_buffer < i_peek
+water	33:17	0:0	8	peeked
+op	33:23	0:0	8	->
+water	33:25	0:0	8	i_buffer
+op	33:34	0:0	8	<
+water	33:36	0:0	8	i_peek
+stmts	34:12	34:54	7	
+water	34:12	0:0	8	peeked
+op	34:19	0:0	8	=
+call	34:21	34:53	8	block_Realloc
+arg	34:36	34:42	9	peeked
+water	34:36	0:0	10	peeked
+arg	34:44	34:45	9	0
+water	34:44	0:0	10	0
+arg	34:47	34:53	9	i_peek
+water	34:47	0:0	10	i_peek
+water	34:54	0:0	8	;
+if	35:8	39:8	4	(peeked == NULL)
+cond	35:12	35:22	5	peeked == NULL
+water	35:12	0:0	6	peeked
+op	35:19	0:0	6	==
+water	35:22	0:0	6	NULL
+stmts	36:8	39:8	5	
+water	36:8	0:0	6	{
+call	37:12	37:43	6	vlc_mutex_unlock
+arg	37:29	37:43	7	&segment->lock
+op	37:29	0:0	8	&
+water	37:30	0:0	8	segment
+op	37:37	0:0	8	->
+water	37:39	0:0	8	lock
+water	37:44	0:0	6	;
+return	38:12	38:20	6	0
+water	38:19	0:0	7	0
+water	39:8	0:0	6	}
+water	40:8	0:0	4	p_sys
+op	40:13	0:0	4	->
+water	40:15	0:0	4	peeked
+op	40:22	0:0	4	=
+water	40:24	0:0	4	peeked
+water	40:30	0:0	4	;
+call	41:8	41:47	4	memcpy
+arg	41:15	41:31	5	peeked->p_buffer
+water	41:15	0:0	6	peeked
+op	41:21	0:0	6	->
+water	41:23	0:0	6	p_buffer
+arg	41:33	41:39	5	p_buff
+water	41:33	0:0	6	p_buff
+arg	41:41	41:47	5	i_buff
+water	41:41	0:0	6	i_buff
+water	41:48	0:0	4	;
+water	42:8	0:0	4	curlen
+op	42:15	0:0	4	=
+water	42:17	0:0	4	i_buff
+water	42:23	0:0	4	;
+water	43:8	0:0	4	len
+op	43:12	0:0	4	-=
+water	43:15	0:0	4	i_buff
+water	43:21	0:0	4	;
+call	44:8	44:39	4	vlc_mutex_unlock
+arg	44:25	44:39	5	&segment->lock
+op	44:25	0:0	6	&
+water	44:26	0:0	6	segment
+op	44:33	0:0	6	->
+water	44:35	0:0	6	lock
+water	44:40	0:0	4	;
+water	45:8	0:0	4	i_buff
+op	45:15	0:0	4	=
+water	45:17	0:0	4	peeked
+op	45:23	0:0	4	->
+water	45:25	0:0	4	i_buffer
+water	45:33	0:0	4	;
+water	46:8	0:0	4	p_buff
+op	46:15	0:0	4	=
+water	46:17	0:0	4	peeked
+op	46:23	0:0	4	->
+water	46:25	0:0	4	p_buffer
+water	46:33	0:0	4	;
+op	47:8	0:0	4	*
+water	47:9	0:0	4	pp_peek
+op	47:17	0:0	4	=
+water	47:19	0:0	4	p_buff
+water	47:25	0:0	4	;
+while	48:8	74:8	4	(curlen < i_peek)
+cond	48:15	48:24	5	curlen < i_peek
+water	48:15	0:0	6	curlen
+op	48:22	0:0	6	<
+water	48:24	0:0	6	i_peek
+stmts	49:8	74:8	5	
+water	49:8	0:0	6	{
+water	50:12	0:0	6	nsegment
+op	50:21	0:0	6	=
+call	50:23	50:35	6	GetSegment
+arg	50:34	50:35	7	s
+water	50:34	0:0	8	s
+water	50:36	0:0	6	;
+if	51:12	58:12	6	(nsegment == NULL)
+cond	51:16	51:28	7	nsegment == NULL
+water	51:16	0:0	8	nsegment
+op	51:25	0:0	8	==
+water	51:28	0:0	8	NULL
+stmts	52:12	58:12	7	
+water	52:12	0:0	8	{
+call	53:16	54:71	8	msg_Err
+arg	53:24	53:25	9	s
+water	53:24	0:0	10	s
+arg	53:27	53:78	9	"segment %d should have been available (stream %d)"
+water	53:27	0:0	10	"segment %d should have been available (stream %d)"
+arg	54:24	54:47	9	p_sys->playback.segment
+water	54:24	0:0	10	p_sys
+op	54:29	0:0	10	->
+water	54:31	0:0	10	playback
+op	54:39	0:0	10	.
+water	54:40	0:0	10	segment
+arg	54:49	54:71	9	p_sys->playback.stream
+water	54:49	0:0	10	p_sys
+op	54:54	0:0	10	->
+water	54:56	0:0	10	playback
+op	54:64	0:0	10	.
+water	54:65	0:0	10	stream
+water	54:72	0:0	8	;
+water	56:16	0:0	8	p_sys
+op	56:21	0:0	8	->
+water	56:23	0:0	8	playback
+op	56:31	0:0	8	.
+water	56:32	0:0	8	segment
+op	56:40	0:0	8	=
+water	56:42	0:0	8	peek_segment
+water	56:54	0:0	8	;
+return	57:16	57:29	8	curlen
+water	57:23	0:0	9	curlen
+water	58:12	0:0	8	}
+call	59:12	59:42	6	vlc_mutex_lock
+arg	59:27	59:42	7	&nsegment->lock
+op	59:27	0:0	8	&
+water	59:28	0:0	8	nsegment
+op	59:36	0:0	8	->
+water	59:38	0:0	8	lock
+water	59:43	0:0	6	;
+if	60:12	64:12	6	(len < nsegment -> data -> i_buffer)
+cond	60:16	60:38	7	len < nsegment -> data -> i_buffer
+water	60:16	0:0	8	len
+op	60:20	0:0	8	<
+water	60:22	0:0	8	nsegment
+op	60:30	0:0	8	->
+water	60:32	0:0	8	data
+op	60:36	0:0	8	->
+water	60:38	0:0	8	i_buffer
+stmts	61:12	64:12	7	
+water	61:12	0:0	8	{
+call	62:16	62:69	8	memcpy
+arg	62:23	62:38	9	p_buff+curlen
+water	62:23	0:0	10	p_buff
+op	62:30	0:0	10	+
+water	62:32	0:0	10	curlen
+arg	62:40	62:64	9	nsegment->data->p_buffer
+water	62:40	0:0	10	nsegment
+op	62:48	0:0	10	->
+water	62:50	0:0	10	data
+op	62:54	0:0	10	->
+water	62:56	0:0	10	p_buffer
+arg	62:66	62:69	9	len
+water	62:66	0:0	10	len
+water	62:70	0:0	8	;
+water	63:16	0:0	8	curlen
+op	63:23	0:0	8	+=
+water	63:26	0:0	8	len
+water	63:29	0:0	8	;
+water	64:12	0:0	8	}
+else	65:12	72:12	6
+stmts	66:12	72:12	7	
+water	66:12	0:0	8	{
+decl	67:16	67:57	8	size_t	i_nbuff
+op	67:31	0:0	8	=
+water	67:33	0:0	8	nsegment
+op	67:41	0:0	8	->
+water	67:43	0:0	8	data
+op	67:47	0:0	8	->
+water	67:49	0:0	8	i_buffer
+call	68:16	68:73	8	memcpy
+arg	68:23	68:38	9	p_buff+curlen
+water	68:23	0:0	10	p_buff
+op	68:30	0:0	10	+
+water	68:32	0:0	10	curlen
+arg	68:40	68:64	9	nsegment->data->p_buffer
+water	68:40	0:0	10	nsegment
+op	68:48	0:0	10	->
+water	68:50	0:0	10	data
+op	68:54	0:0	10	->
+water	68:56	0:0	10	p_buffer
+arg	68:66	68:73	9	i_nbuff
+water	68:66	0:0	10	i_nbuff
+water	68:74	0:0	8	;
+water	69:16	0:0	8	curlen
+op	69:23	0:0	8	+=
+water	69:26	0:0	8	i_nbuff
+water	69:33	0:0	8	;
+water	70:16	0:0	8	len
+op	70:20	0:0	8	-=
+water	70:23	0:0	8	i_nbuff
+water	70:30	0:0	8	;
+water	71:16	0:0	8	p_sys
+op	71:21	0:0	8	->
+water	71:23	0:0	8	playback
+op	71:31	0:0	8	.
+water	71:32	0:0	8	segment
+op	71:39	0:0	8	++
+water	71:41	0:0	8	;
+water	72:12	0:0	8	}
+call	73:12	73:44	6	vlc_mutex_unlock
+arg	73:29	73:44	7	&nsegment->lock
+op	73:29	0:0	8	&
+water	73:30	0:0	8	nsegment
+op	73:38	0:0	8	->
+water	73:40	0:0	8	lock
+water	73:45	0:0	6	;
+water	74:8	0:0	6	}
+water	76:8	0:0	4	p_sys
+op	76:13	0:0	4	->
+water	76:15	0:0	4	playback
+op	76:23	0:0	4	.
+water	76:24	0:0	4	segment
+op	76:32	0:0	4	=
+water	76:34	0:0	4	peek_segment
+water	76:46	0:0	4	;
+return	77:8	77:21	4	curlen
+water	77:15	0:0	5	curlen
+water	78:4	0:0	4	}

@@ -1,0 +1,450 @@
+func	2:0	90:0	0	static void	stereo2mono_downmix
+params	2:31	0:0	1	
+param	2:33	2:52	2	filter_t *	p_filter
+param	3:33	3:51	2	block_t *	p_in_buf
+param	3:53	3:73	2	block_t *	p_out_buf
+stmnts	0:0	89:4	1	
+decl	5:4	5:57	2	filter_sys_t	*p_sys
+op	5:24	0:0	2	=
+water	5:26	0:0	2	(
+water	5:27	0:0	2	filter_sys_t
+op	5:40	0:0	2	*
+water	5:41	0:0	2	)
+water	5:42	0:0	2	p_filter
+op	5:50	0:0	2	->
+water	5:52	0:0	2	p_sys
+decl	6:4	6:69	2	int	i_input_nb
+op	6:19	0:0	2	=
+call	6:21	6:68	3	aout_FormatNbChannels
+arg	6:44	6:68	4	&p_filter->fmt_in.audio
+op	6:44	0:0	5	&
+water	6:45	0:0	5	p_filter
+op	6:53	0:0	5	->
+water	6:55	0:0	5	fmt_in
+op	6:61	0:0	5	.
+water	6:62	0:0	5	audio
+decl	7:4	7:71	2	int	i_output_nb
+op	7:20	0:0	2	=
+call	7:22	7:70	3	aout_FormatNbChannels
+arg	7:45	7:70	4	&p_filter->fmt_out.audio
+op	7:45	0:0	5	&
+water	7:46	0:0	5	p_filter
+op	7:54	0:0	5	->
+water	7:56	0:0	5	fmt_out
+op	7:63	0:0	5	.
+water	7:64	0:0	5	audio
+decl	8:4	8:50	2	int16_t	*p_in
+op	8:19	0:0	2	=
+water	8:21	0:0	2	(
+water	8:22	0:0	2	int16_t
+op	8:29	0:0	2	*
+water	8:30	0:0	2	)
+water	8:32	0:0	2	p_in_buf
+op	8:40	0:0	2	->
+water	8:42	0:0	2	p_buffer
+decl	9:4	9:19	2	uint8_t	*p_out
+decl	10:4	10:24	2	uint8_t	*p_overflow
+decl	11:4	11:21	2	uint8_t	*p_slide
+decl	12:4	12:26	2	size_t	i_overflow_size
+decl	13:4	13:21	2	size_t	i_out_size
+decl	14:4	14:21	2	unsigned int	i
+water	14:18	0:0	2	,
+decl	14:4	14:21	2	unsigned int	j
+decl	15:4	15:31	2	int	i_source_channel_offset
+decl	16:4	16:29	2	int	i_dest_channel_offset
+decl	17:4	17:24	2	unsigned int	i_delay
+decl	18:4	18:29	2	double	d_amplitude_factor
+water	20:4	0:0	2	p_out_buf
+op	20:13	0:0	2	->
+water	20:15	0:0	2	i_nb_samples
+op	20:28	0:0	2	=
+water	20:30	0:0	2	p_in_buf
+op	20:38	0:0	2	->
+water	20:40	0:0	2	i_nb_samples
+water	20:52	0:0	2	;
+water	21:4	0:0	2	p_out_buf
+op	21:13	0:0	2	->
+water	21:15	0:0	2	i_buffer
+op	21:24	0:0	2	=
+water	21:26	0:0	2	p_in_buf
+op	21:34	0:0	2	->
+water	21:36	0:0	2	i_buffer
+op	21:45	0:0	2	*
+water	21:47	0:0	2	i_output_nb
+op	21:59	0:0	2	/
+water	21:61	0:0	2	i_input_nb
+water	21:71	0:0	2	;
+water	22:4	0:0	2	p_out
+op	22:10	0:0	2	=
+water	22:12	0:0	2	p_out_buf
+op	22:21	0:0	2	->
+water	22:23	0:0	2	p_buffer
+water	22:31	0:0	2	;
+water	23:4	0:0	2	i_out_size
+op	23:15	0:0	2	=
+water	23:17	0:0	2	p_out_buf
+op	23:26	0:0	2	->
+water	23:28	0:0	2	i_buffer
+water	23:36	0:0	2	;
+water	25:4	0:0	2	p_overflow
+op	25:15	0:0	2	=
+water	25:17	0:0	2	p_sys
+op	25:22	0:0	2	->
+water	25:24	0:0	2	p_overflow_buffer
+water	25:41	0:0	2	;
+water	26:4	0:0	2	i_overflow_size
+op	26:20	0:0	2	=
+water	26:22	0:0	2	p_sys
+op	26:27	0:0	2	->
+water	26:29	0:0	2	i_overflow_buffer_size
+water	26:51	0:0	2	;
+if	27:4	28:52	2	(i_out_size > i_overflow_size)
+cond	27:9	27:22	3	i_out_size > i_overflow_size
+water	27:9	0:0	4	i_out_size
+op	27:20	0:0	4	>
+water	27:22	0:0	4	i_overflow_size
+stmts	28:8	28:52	3	
+call	28:8	28:51	4	memcpy
+arg	28:16	28:21	5	p_out
+water	28:16	0:0	6	p_out
+arg	28:23	28:33	5	p_overflow
+water	28:23	0:0	6	p_overflow
+arg	28:35	28:51	5	i_overflow_size
+water	28:35	0:0	6	i_overflow_size
+water	28:52	0:0	4	;
+else	29:4	30:47	2
+stmts	30:8	30:47	3	
+call	30:8	30:46	4	memcpy
+arg	30:16	30:21	5	p_out
+water	30:16	0:0	6	p_out
+arg	30:23	30:33	5	p_overflow
+water	30:23	0:0	6	p_overflow
+arg	30:35	30:46	5	i_out_size
+water	30:35	0:0	6	i_out_size
+water	30:47	0:0	4	;
+water	31:4	0:0	2	p_slide
+op	31:12	0:0	2	=
+water	31:14	0:0	2	p_sys
+op	31:19	0:0	2	->
+water	31:21	0:0	2	p_overflow_buffer
+water	31:38	0:0	2	;
+while	32:4	48:4	2	(p_slide < p_overflow + i_overflow_size)
+cond	32:11	32:34	3	p_slide < p_overflow + i_overflow_size
+water	32:11	0:0	4	p_slide
+op	32:19	0:0	4	<
+water	32:21	0:0	4	p_overflow
+op	32:32	0:0	4	+
+water	32:34	0:0	4	i_overflow_size
+stmts	33:4	48:4	3	
+water	33:4	0:0	4	{
+if	34:8	42:8	4	(p_slide + i_out_size < p_overflow + i_overflow_size)
+cond	34:12	34:48	5	p_slide + i_out_size < p_overflow + i_overflow_size
+water	34:12	0:0	6	p_slide
+op	34:20	0:0	6	+
+water	34:22	0:0	6	i_out_size
+op	34:33	0:0	6	<
+water	34:35	0:0	6	p_overflow
+op	34:46	0:0	6	+
+water	34:48	0:0	6	i_overflow_size
+stmts	35:8	42:8	5	
+water	35:8	0:0	6	{
+call	36:12	36:43	6	memset
+arg	36:20	36:27	7	p_slide
+water	36:20	0:0	8	p_slide
+arg	36:29	36:30	7	0
+water	36:29	0:0	8	0
+arg	36:32	36:43	7	i_out_size
+water	36:32	0:0	8	i_out_size
+water	36:44	0:0	6	;
+if	37:12	38:67	6	(p_slide + 2 * i_out_size < p_overflow + i_overflow_size)
+cond	37:16	37:56	7	p_slide + 2 * i_out_size < p_overflow + i_overflow_size
+water	37:16	0:0	8	p_slide
+op	37:24	0:0	8	+
+water	37:26	0:0	8	2
+op	37:28	0:0	8	*
+water	37:30	0:0	8	i_out_size
+op	37:41	0:0	8	<
+water	37:43	0:0	8	p_overflow
+op	37:54	0:0	8	+
+water	37:56	0:0	8	i_overflow_size
+stmts	38:16	38:67	7	
+call	38:16	38:66	8	memcpy
+arg	38:24	38:31	9	p_slide
+water	38:24	0:0	10	p_slide
+arg	38:33	38:53	9	p_slide+i_out_size
+water	38:33	0:0	10	p_slide
+op	38:41	0:0	10	+
+water	38:43	0:0	10	i_out_size
+arg	38:55	38:66	9	i_out_size
+water	38:55	0:0	10	i_out_size
+water	38:67	0:0	8	;
+else	39:12	41:81	6
+stmts	40:16	41:81	7	
+call	40:16	41:80	8	memcpy
+arg	40:24	40:31	9	p_slide
+water	40:24	0:0	10	p_slide
+arg	40:33	40:53	9	p_slide+i_out_size
+water	40:33	0:0	10	p_slide
+op	40:41	0:0	10	+
+water	40:43	0:0	10	i_out_size
+arg	41:24	41:80	9	p_overflow+i_overflow_size-(p_slide+i_out_size)
+water	41:24	0:0	10	p_overflow
+op	41:35	0:0	10	+
+water	41:37	0:0	10	i_overflow_size
+op	41:53	0:0	10	-
+water	41:55	0:0	10	(
+water	41:57	0:0	10	p_slide
+op	41:65	0:0	10	+
+water	41:67	0:0	10	i_out_size
+water	41:78	0:0	10	)
+water	41:81	0:0	8	;
+water	42:8	0:0	6	}
+else	43:8	46:8	4
+stmts	44:8	46:8	5	
+water	44:8	0:0	6	{
+call	45:12	45:71	6	memset
+arg	45:20	45:27	7	p_slide
+water	45:20	0:0	8	p_slide
+arg	45:29	45:30	7	0
+water	45:29	0:0	8	0
+arg	45:32	45:71	7	p_overflow+i_overflow_size-p_slide
+water	45:32	0:0	8	p_overflow
+op	45:43	0:0	8	+
+water	45:45	0:0	8	i_overflow_size
+op	45:61	0:0	8	-
+water	45:63	0:0	8	p_slide
+water	45:72	0:0	6	;
+water	46:8	0:0	6	}
+water	47:8	0:0	4	p_slide
+op	47:16	0:0	4	+=
+water	47:19	0:0	4	i_out_size
+water	47:29	0:0	4	;
+water	48:4	0:0	4	}
+for	50:4	89:4	2	(i = 0 ;i < p_sys -> i_nb_atomic_operations;i ++)
+forinit	50:9	50:14	3	i = 0 ;
+water	50:9	0:0	4	i
+op	50:11	0:0	4	=
+water	50:13	0:0	4	0
+water	50:14	0:0	4	;
+cond	50:16	50:27	3	i < p_sys -> i_nb_atomic_operations
+water	50:16	0:0	4	i
+op	50:18	0:0	4	<
+water	50:20	0:0	4	p_sys
+op	50:25	0:0	4	->
+water	50:27	0:0	4	i_nb_atomic_operations
+forexpr	50:51	50:52	3	i ++
+water	50:51	0:0	4	i
+op	50:52	0:0	4	++
+stmts	51:4	89:4	3	
+water	51:4	0:0	4	{
+water	53:8	0:0	4	i_source_channel_offset
+op	54:12	0:0	4	=
+water	54:14	0:0	4	p_sys
+op	54:19	0:0	4	->
+water	54:21	0:0	4	p_atomic_operations
+op	54:40	0:0	4	[
+water	54:41	0:0	4	i
+op	54:42	0:0	4	]
+op	54:43	0:0	4	.
+water	54:44	0:0	4	i_source_channel_offset
+water	54:67	0:0	4	;
+water	55:8	0:0	4	i_dest_channel_offset
+op	56:12	0:0	4	=
+water	56:14	0:0	4	p_sys
+op	56:19	0:0	4	->
+water	56:21	0:0	4	p_atomic_operations
+op	56:40	0:0	4	[
+water	56:41	0:0	4	i
+op	56:42	0:0	4	]
+op	56:43	0:0	4	.
+water	56:44	0:0	4	i_dest_channel_offset
+water	56:65	0:0	4	;
+water	57:8	0:0	4	i_delay
+op	57:16	0:0	4	=
+water	57:18	0:0	4	p_sys
+op	57:23	0:0	4	->
+water	57:25	0:0	4	p_atomic_operations
+op	57:44	0:0	4	[
+water	57:45	0:0	4	i
+op	57:46	0:0	4	]
+op	57:47	0:0	4	.
+water	57:48	0:0	4	i_delay
+water	57:55	0:0	4	;
+water	58:8	0:0	4	d_amplitude_factor
+op	59:12	0:0	4	=
+water	59:14	0:0	4	p_sys
+op	59:19	0:0	4	->
+water	59:21	0:0	4	p_atomic_operations
+op	59:40	0:0	4	[
+water	59:41	0:0	4	i
+op	59:42	0:0	4	]
+op	59:43	0:0	4	.
+water	59:44	0:0	4	d_amplitude_factor
+water	59:62	0:0	4	;
+if	60:8	77:8	4	(p_out_buf -> i_nb_samples > i_delay)
+cond	60:12	60:38	5	p_out_buf -> i_nb_samples > i_delay
+water	60:12	0:0	6	p_out_buf
+op	60:21	0:0	6	->
+water	60:23	0:0	6	i_nb_samples
+op	60:36	0:0	6	>
+water	60:38	0:0	6	i_delay
+stmts	61:8	77:8	5	
+water	61:8	0:0	6	{
+for	63:12	68:12	6	(j = 0 ;j < p_out_buf -> i_nb_samples - i_delay;j ++)
+forinit	63:17	63:22	7	j = 0 ;
+water	63:17	0:0	8	j
+op	63:19	0:0	8	=
+water	63:21	0:0	8	0
+water	63:22	0:0	8	;
+cond	63:24	63:54	7	j < p_out_buf -> i_nb_samples - i_delay
+water	63:24	0:0	8	j
+op	63:26	0:0	8	<
+water	63:28	0:0	8	p_out_buf
+op	63:37	0:0	8	->
+water	63:39	0:0	8	i_nb_samples
+op	63:52	0:0	8	-
+water	63:54	0:0	8	i_delay
+forexpr	63:63	63:64	7	j ++
+water	63:63	0:0	8	j
+op	63:64	0:0	8	++
+stmts	64:12	68:12	7	
+water	64:12	0:0	8	{
+water	65:16	0:0	8	(
+water	65:17	0:0	8	(
+water	65:18	0:0	8	int16_t
+op	65:25	0:0	8	*
+water	65:26	0:0	8	)
+water	65:27	0:0	8	p_out
+water	65:32	0:0	8	)
+op	65:33	0:0	8	[
+water	65:35	0:0	8	(
+water	65:36	0:0	8	i_delay
+op	65:43	0:0	8	+
+water	65:44	0:0	8	j
+water	65:45	0:0	8	)
+op	65:46	0:0	8	*
+water	65:47	0:0	8	i_output_nb
+op	65:59	0:0	8	+
+water	65:61	0:0	8	i_dest_channel_offset
+op	65:83	0:0	8	]
+op	66:20	0:0	8	+=
+water	66:23	0:0	8	p_in
+op	66:27	0:0	8	[
+water	66:29	0:0	8	j
+op	66:31	0:0	8	*
+water	66:33	0:0	8	i_input_nb
+op	66:44	0:0	8	+
+water	66:46	0:0	8	i_source_channel_offset
+op	66:70	0:0	8	]
+op	67:23	0:0	8	*
+water	67:25	0:0	8	d_amplitude_factor
+water	67:43	0:0	8	;
+water	68:12	0:0	8	}
+for	70:12	76:12	6	(j = 0 ;j < i_delay;j ++)
+forinit	70:17	70:22	7	j = 0 ;
+water	70:17	0:0	8	j
+op	70:19	0:0	8	=
+water	70:21	0:0	8	0
+water	70:22	0:0	8	;
+cond	70:24	70:28	7	j < i_delay
+water	70:24	0:0	8	j
+op	70:26	0:0	8	<
+water	70:28	0:0	8	i_delay
+forexpr	70:37	70:38	7	j ++
+water	70:37	0:0	8	j
+op	70:38	0:0	8	++
+stmts	71:12	76:12	7	
+water	71:12	0:0	8	{
+water	72:16	0:0	8	(
+water	72:17	0:0	8	(
+water	72:18	0:0	8	int16_t
+op	72:25	0:0	8	*
+water	72:26	0:0	8	)
+water	72:27	0:0	8	p_overflow
+water	72:37	0:0	8	)
+op	72:38	0:0	8	[
+water	72:40	0:0	8	j
+op	72:41	0:0	8	*
+water	72:42	0:0	8	i_output_nb
+op	72:54	0:0	8	+
+water	72:56	0:0	8	i_dest_channel_offset
+op	72:78	0:0	8	]
+op	73:20	0:0	8	+=
+water	73:23	0:0	8	p_in
+op	73:27	0:0	8	[
+water	73:29	0:0	8	(
+water	73:30	0:0	8	p_out_buf
+op	73:39	0:0	8	->
+water	73:41	0:0	8	i_nb_samples
+op	73:54	0:0	8	-
+water	73:56	0:0	8	i_delay
+op	73:64	0:0	8	+
+water	73:66	0:0	8	j
+water	73:67	0:0	8	)
+op	74:23	0:0	8	*
+water	74:25	0:0	8	i_input_nb
+op	74:36	0:0	8	+
+water	74:38	0:0	8	i_source_channel_offset
+op	74:62	0:0	8	]
+op	75:23	0:0	8	*
+water	75:25	0:0	8	d_amplitude_factor
+water	75:43	0:0	8	;
+water	76:12	0:0	8	}
+water	77:8	0:0	6	}
+else	78:8	88:8	4
+stmts	79:8	88:8	5	
+water	79:8	0:0	6	{
+for	81:12	87:12	6	(j = 0 ;j < p_out_buf -> i_nb_samples;j ++)
+forinit	81:17	81:22	7	j = 0 ;
+water	81:17	0:0	8	j
+op	81:19	0:0	8	=
+water	81:21	0:0	8	0
+water	81:22	0:0	8	;
+cond	81:24	81:39	7	j < p_out_buf -> i_nb_samples
+water	81:24	0:0	8	j
+op	81:26	0:0	8	<
+water	81:28	0:0	8	p_out_buf
+op	81:37	0:0	8	->
+water	81:39	0:0	8	i_nb_samples
+forexpr	81:53	81:54	7	j ++
+water	81:53	0:0	8	j
+op	81:54	0:0	8	++
+stmts	82:12	87:12	7	
+water	82:12	0:0	8	{
+water	83:16	0:0	8	(
+water	83:17	0:0	8	(
+water	83:18	0:0	8	int16_t
+op	83:25	0:0	8	*
+water	83:26	0:0	8	)
+water	83:27	0:0	8	p_overflow
+water	83:37	0:0	8	)
+op	83:38	0:0	8	[
+water	83:40	0:0	8	(
+water	83:41	0:0	8	i_delay
+op	83:49	0:0	8	-
+water	83:51	0:0	8	p_out_buf
+op	83:60	0:0	8	->
+water	83:62	0:0	8	i_nb_samples
+op	83:75	0:0	8	+
+water	83:77	0:0	8	j
+water	83:78	0:0	8	)
+op	84:40	0:0	8	*
+water	84:42	0:0	8	i_output_nb
+op	84:54	0:0	8	+
+water	84:56	0:0	8	i_dest_channel_offset
+op	84:78	0:0	8	]
+op	85:20	0:0	8	+=
+water	85:23	0:0	8	p_in
+op	85:27	0:0	8	[
+water	85:29	0:0	8	j
+op	85:31	0:0	8	*
+water	85:33	0:0	8	i_input_nb
+op	85:44	0:0	8	+
+water	85:46	0:0	8	i_source_channel_offset
+op	85:70	0:0	8	]
+op	86:23	0:0	8	*
+water	86:25	0:0	8	d_amplitude_factor
+water	86:43	0:0	8	;
+water	87:12	0:0	8	}
+water	88:8	0:0	6	}
+water	89:4	0:0	4	}

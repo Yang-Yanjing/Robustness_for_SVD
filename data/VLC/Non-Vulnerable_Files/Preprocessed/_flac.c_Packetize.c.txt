@@ -1,0 +1,1006 @@
+func	2:0	205:0	0	static block_t *	Packetize
+params	2:25	0:0	1	
+param	2:26	2:42	2	decoder_t *	p_dec
+param	2:44	2:62	2	block_t * *	pp_block
+stmnts	0:0	204:15	1	
+decl	4:4	4:39	2	decoder_sys_t	*p_sys
+op	4:25	0:0	2	=
+water	4:27	0:0	2	p_dec
+op	4:32	0:0	2	->
+water	4:34	0:0	2	p_sys
+decl	5:4	5:42	2	uint8_t	p_header[MAX_FLAC_HEADER_SIZE]
+decl	6:4	6:28	2	block_t	*out
+water	6:16	0:0	2	,
+decl	6:4	6:28	2	block_t	*in
+op	6:22	0:0	2	=
+water	6:24	0:0	2	NULL
+if	7:4	18:4	2	(pp_block && * pp_block)
+cond	7:9	7:22	3	pp_block && * pp_block
+water	7:9	0:0	4	pp_block
+op	7:18	0:0	4	&&
+op	7:21	0:0	4	*
+water	7:22	0:0	4	pp_block
+stmts	8:4	18:4	3	
+water	8:4	0:0	4	{
+water	9:8	0:0	4	in
+op	9:11	0:0	4	=
+op	9:13	0:0	4	*
+water	9:14	0:0	4	pp_block
+water	9:22	0:0	4	;
+if	10:8	17:8	4	(in -> i_flags & ( BLOCK_FLAG_DISCONTINUITY | BLOCK_FLAG_CORRUPTED ))
+cond	10:12	10:70	5	in -> i_flags & ( BLOCK_FLAG_DISCONTINUITY | BLOCK_FLAG_CORRUPTED )
+water	10:12	0:0	6	in
+op	10:14	0:0	6	->
+water	10:16	0:0	6	i_flags
+op	10:23	0:0	6	&
+water	10:24	0:0	6	(
+water	10:25	0:0	6	BLOCK_FLAG_DISCONTINUITY
+op	10:49	0:0	6	|
+water	10:50	0:0	6	BLOCK_FLAG_CORRUPTED
+water	10:70	0:0	6	)
+stmts	10:73	17:8	5	
+water	10:73	0:0	6	{
+if	11:12	14:12	6	(in -> i_flags & BLOCK_FLAG_CORRUPTED)
+cond	11:16	11:28	7	in -> i_flags & BLOCK_FLAG_CORRUPTED
+water	11:16	0:0	8	in
+op	11:18	0:0	8	->
+water	11:20	0:0	8	i_flags
+op	11:27	0:0	8	&
+water	11:28	0:0	8	BLOCK_FLAG_CORRUPTED
+stmts	11:50	14:12	7	
+water	11:50	0:0	8	{
+water	12:16	0:0	8	p_sys
+op	12:21	0:0	8	->
+water	12:23	0:0	8	i_state
+op	12:31	0:0	8	=
+water	12:33	0:0	8	STATE_NOSYNC
+water	12:45	0:0	8	;
+call	13:16	13:56	8	block_BytestreamEmpty
+arg	13:38	13:56	9	&p_sys->bytestream
+op	13:38	0:0	10	&
+water	13:39	0:0	10	p_sys
+op	13:44	0:0	10	->
+water	13:46	0:0	10	bytestream
+water	13:57	0:0	8	;
+water	14:12	0:0	8	}
+call	15:12	15:35	6	block_Release
+arg	15:26	15:35	7	*pp_block
+op	15:26	0:0	8	*
+water	15:27	0:0	8	pp_block
+water	15:36	0:0	6	;
+return	16:12	16:23	6	NULL
+water	16:19	0:0	7	NULL
+water	17:8	0:0	6	}
+water	18:4	0:0	4	}
+if	19:4	20:28	2	(! p_sys -> b_stream_info)
+cond	19:8	19:16	3	! p_sys -> b_stream_info
+op	19:8	0:0	4	!
+water	19:9	0:0	4	p_sys
+op	19:14	0:0	4	->
+water	19:16	0:0	4	b_stream_info
+stmts	20:8	20:28	3	
+call	20:8	20:27	4	ProcessHeader
+arg	20:22	20:27	5	p_dec
+water	20:22	0:0	6	p_dec
+water	20:28	0:0	4	;
+if	21:4	25:4	2	(p_sys -> stream_info . channels > 8)
+cond	21:8	21:38	3	p_sys -> stream_info . channels > 8
+water	21:8	0:0	4	p_sys
+op	21:13	0:0	4	->
+water	21:15	0:0	4	stream_info
+op	21:26	0:0	4	.
+water	21:27	0:0	4	channels
+op	21:36	0:0	4	>
+water	21:38	0:0	4	8
+stmts	21:41	25:4	3	
+water	21:41	0:0	4	{
+call	22:8	23:39	4	msg_Err
+arg	22:16	22:21	5	p_dec
+water	22:16	0:0	6	p_dec
+arg	22:23	22:74	5	"This stream uses too many audio channels (%d > 8)"
+water	22:23	0:0	6	"This stream uses too many audio channels (%d > 8)"
+arg	23:12	23:39	5	p_sys->stream_info.channels
+water	23:12	0:0	6	p_sys
+op	23:17	0:0	6	->
+water	23:19	0:0	6	stream_info
+op	23:30	0:0	6	.
+water	23:31	0:0	6	channels
+water	23:40	0:0	4	;
+return	24:8	24:19	4	NULL
+water	24:15	0:0	5	NULL
+water	25:4	0:0	4	}
+if	26:4	35:4	2	(p_sys -> i_pts <= VLC_TS_INVALID)
+cond	26:9	26:25	3	p_sys -> i_pts <= VLC_TS_INVALID
+water	26:9	0:0	4	p_sys
+op	26:14	0:0	4	->
+water	26:16	0:0	4	i_pts
+op	26:22	0:0	4	<=
+water	26:25	0:0	4	VLC_TS_INVALID
+stmts	27:4	35:4	3	
+water	27:4	0:0	4	{
+if	28:8	33:8	4	(in && in -> i_pts == p_sys -> i_pts)
+cond	28:13	28:39	5	in && in -> i_pts == p_sys -> i_pts
+water	28:13	0:0	6	in
+op	28:16	0:0	6	&&
+water	28:19	0:0	6	in
+op	28:21	0:0	6	->
+water	28:23	0:0	6	i_pts
+op	28:29	0:0	6	==
+water	28:32	0:0	6	p_sys
+op	28:37	0:0	6	->
+water	28:39	0:0	6	i_pts
+stmts	29:8	33:8	5	
+water	29:8	0:0	6	{
+call	31:12	31:28	6	block_Release
+arg	31:26	31:28	7	in
+water	31:26	0:0	8	in
+water	31:29	0:0	6	;
+return	32:12	32:23	6	NULL
+water	32:19	0:0	7	NULL
+water	33:8	0:0	6	}
+water	34:8	0:0	4	p_sys
+op	34:13	0:0	4	->
+water	34:15	0:0	4	i_rate
+op	34:22	0:0	4	=
+water	34:24	0:0	4	p_dec
+op	34:29	0:0	4	->
+water	34:31	0:0	4	fmt_out
+op	34:38	0:0	4	.
+water	34:39	0:0	4	audio
+op	34:44	0:0	4	.
+water	34:45	0:0	4	i_rate
+water	34:51	0:0	4	;
+water	35:4	0:0	4	}
+if	36:4	37:52	2	(in)
+cond	36:9	36:9	3	in
+water	36:9	0:0	4	in
+stmts	37:8	37:52	3	
+call	37:8	37:51	4	block_BytestreamPush
+arg	37:29	37:47	5	&p_sys->bytestream
+op	37:29	0:0	6	&
+water	37:30	0:0	6	p_sys
+op	37:35	0:0	6	->
+water	37:37	0:0	6	bytestream
+arg	37:49	37:51	5	in
+water	37:49	0:0	6	in
+water	37:52	0:0	4	;
+while	38:4	203:4	2	(1)
+cond	38:11	38:11	3	1
+water	38:11	0:0	4	1
+stmts	38:14	203:4	3	
+switch	38:14	203:4	4	(p_sys -> i_state)
+cond	38:22	38:29	5	p_sys -> i_state
+water	38:22	0:0	6	p_sys
+op	38:27	0:0	6	->
+water	38:29	0:0	6	i_state
+stmts	38:38	203:4	5	
+water	38:38	0:0	6	{
+label	39:4	39:21	6	case STATE_NOSYNC :
+while	40:8	46:8	6	(!block_PeekBytes (& p_sys -> bytestream ,p_header ,2 ))
+cond	40:15	40:63	7	!block_PeekBytes (& p_sys -> bytestream ,p_header ,2 )
+op	40:15	0:0	8	!
+call	40:16	40:63	8	block_PeekBytes
+arg	40:32	40:50	9	&p_sys->bytestream
+op	40:32	0:0	10	&
+water	40:33	0:0	10	p_sys
+op	40:38	0:0	10	->
+water	40:40	0:0	10	bytestream
+arg	40:52	40:60	9	p_header
+water	40:52	0:0	10	p_header
+arg	40:62	40:63	9	2
+water	40:62	0:0	10	2
+stmts	40:66	46:8	7	
+water	40:66	0:0	8	{
+if	41:12	44:12	8	(p_header [ 0 ] == 0 xFF && ( p_header [ 1 ] & 0 xFE ) == 0 xF8)
+cond	41:16	41:64	9	p_header [ 0 ] == 0 xFF && ( p_header [ 1 ] & 0 xFE ) == 0 xF8
+water	41:16	0:0	10	p_header
+op	41:24	0:0	10	[
+water	41:25	0:0	10	0
+op	41:26	0:0	10	]
+op	41:28	0:0	10	==
+water	41:31	0:0	10	0
+water	41:32	0:0	10	xFF
+op	41:36	0:0	10	&&
+water	41:39	0:0	10	(
+water	41:40	0:0	10	p_header
+op	41:48	0:0	10	[
+water	41:49	0:0	10	1
+op	41:50	0:0	10	]
+op	41:52	0:0	10	&
+water	41:54	0:0	10	0
+water	41:55	0:0	10	xFE
+water	41:58	0:0	10	)
+op	41:60	0:0	10	==
+water	41:63	0:0	10	0
+water	41:64	0:0	10	xF8
+stmts	41:69	44:12	9	
+water	41:69	0:0	10	{
+water	42:16	0:0	10	p_sys
+op	42:21	0:0	10	->
+water	42:23	0:0	10	i_state
+op	42:31	0:0	10	=
+water	42:33	0:0	10	STATE_SYNC
+water	42:43	0:0	10	;
+break	43:16	43:21	10	
+water	44:12	0:0	10	}
+call	45:12	45:45	8	block_SkipByte
+arg	45:27	45:45	9	&p_sys->bytestream
+op	45:27	0:0	10	&
+water	45:28	0:0	10	p_sys
+op	45:33	0:0	10	->
+water	45:35	0:0	10	bytestream
+water	45:46	0:0	8	;
+water	46:8	0:0	8	}
+if	47:8	50:8	6	(p_sys -> i_state != STATE_SYNC)
+cond	47:12	47:30	7	p_sys -> i_state != STATE_SYNC
+water	47:12	0:0	8	p_sys
+op	47:17	0:0	8	->
+water	47:19	0:0	8	i_state
+op	47:27	0:0	8	!=
+water	47:30	0:0	8	STATE_SYNC
+stmts	47:42	50:8	7	
+water	47:42	0:0	8	{
+call	48:12	48:52	8	block_BytestreamFlush
+arg	48:34	48:52	9	&p_sys->bytestream
+op	48:34	0:0	10	&
+water	48:35	0:0	10	p_sys
+op	48:40	0:0	10	->
+water	48:42	0:0	10	bytestream
+water	48:53	0:0	8	;
+return	49:12	49:23	8	NULL
+water	49:19	0:0	9	NULL
+water	50:8	0:0	8	}
+label	51:4	51:19	6	case STATE_SYNC :
+water	55:8	0:0	6	p_sys
+op	55:13	0:0	6	->
+water	55:15	0:0	6	i_state
+op	55:23	0:0	6	=
+water	55:25	0:0	6	STATE_HEADER
+water	55:37	0:0	6	;
+label	56:4	56:21	6	case STATE_HEADER :
+if	58:8	59:23	6	(block_PeekBytes (& p_sys -> bytestream ,p_header ,MAX_FLAC_HEADER_SIZE ))
+cond	58:12	58:78	7	block_PeekBytes (& p_sys -> bytestream ,p_header ,MAX_FLAC_HEADER_SIZE )
+call	58:12	58:78	8	block_PeekBytes
+arg	58:28	58:46	9	&p_sys->bytestream
+op	58:28	0:0	10	&
+water	58:29	0:0	10	p_sys
+op	58:34	0:0	10	->
+water	58:36	0:0	10	bytestream
+arg	58:48	58:56	9	p_header
+water	58:48	0:0	10	p_header
+arg	58:58	58:78	9	MAX_FLAC_HEADER_SIZE
+water	58:58	0:0	10	MAX_FLAC_HEADER_SIZE
+stmts	59:12	59:23	7	
+return	59:12	59:23	8	NULL
+water	59:19	0:0	9	NULL
+water	61:8	0:0	6	p_sys
+op	61:13	0:0	6	->
+water	61:15	0:0	6	i_frame_length
+op	61:30	0:0	6	=
+call	61:32	66:61	6	SyncInfo
+arg	61:41	61:46	7	p_dec
+water	61:41	0:0	8	p_dec
+arg	61:48	61:56	7	p_header
+water	61:48	0:0	8	p_header
+arg	62:42	62:60	7	&p_sys->i_channels
+op	62:42	0:0	8	&
+water	62:43	0:0	8	p_sys
+op	62:48	0:0	8	->
+water	62:50	0:0	8	i_channels
+arg	63:42	63:56	7	&p_sys->i_rate
+op	63:42	0:0	8	&
+water	63:43	0:0	8	p_sys
+op	63:48	0:0	8	->
+water	63:50	0:0	8	i_rate
+arg	64:42	64:67	7	&p_sys->i_bits_per_sample
+op	64:42	0:0	8	&
+water	64:43	0:0	8	p_sys
+op	64:48	0:0	8	->
+water	64:50	0:0	8	i_bits_per_sample
+arg	65:42	65:55	7	&p_sys->i_pts
+op	65:42	0:0	8	&
+water	65:43	0:0	8	p_sys
+op	65:48	0:0	8	->
+water	65:50	0:0	8	i_pts
+arg	66:42	66:61	7	&p_sys->i_duration
+op	66:42	0:0	8	&
+water	66:43	0:0	8	p_sys
+op	66:48	0:0	8	->
+water	66:50	0:0	8	i_duration
+water	66:62	0:0	6	;
+if	67:8	72:8	6	(! p_sys -> i_frame_length)
+cond	67:12	67:20	7	! p_sys -> i_frame_length
+op	67:12	0:0	8	!
+water	67:13	0:0	8	p_sys
+op	67:18	0:0	8	->
+water	67:20	0:0	8	i_frame_length
+stmts	67:36	72:8	7	
+water	67:36	0:0	8	{
+call	68:12	68:47	8	msg_Dbg
+arg	68:20	68:25	9	p_dec
+water	68:20	0:0	10	p_dec
+arg	68:27	68:47	9	"emulated sync word"
+water	68:27	0:0	10	"emulated sync word"
+water	68:48	0:0	8	;
+call	69:12	69:45	8	block_SkipByte
+arg	69:27	69:45	9	&p_sys->bytestream
+op	69:27	0:0	10	&
+water	69:28	0:0	10	p_sys
+op	69:33	0:0	10	->
+water	69:35	0:0	10	bytestream
+water	69:46	0:0	8	;
+water	70:12	0:0	8	p_sys
+op	70:17	0:0	8	->
+water	70:19	0:0	8	i_state
+op	70:27	0:0	8	=
+water	70:29	0:0	8	STATE_NOSYNC
+water	70:41	0:0	8	;
+break	71:12	71:17	8	
+water	72:8	0:0	8	}
+if	73:8	75:8	6	(p_sys -> i_rate != p_dec -> fmt_out . audio . i_rate)
+cond	73:12	73:50	7	p_sys -> i_rate != p_dec -> fmt_out . audio . i_rate
+water	73:12	0:0	8	p_sys
+op	73:17	0:0	8	->
+water	73:19	0:0	8	i_rate
+op	73:26	0:0	8	!=
+water	73:29	0:0	8	p_dec
+op	73:34	0:0	8	->
+water	73:36	0:0	8	fmt_out
+op	73:43	0:0	8	.
+water	73:44	0:0	8	audio
+op	73:49	0:0	8	.
+water	73:50	0:0	8	i_rate
+stmts	73:58	75:8	7	
+water	73:58	0:0	8	{
+water	74:12	0:0	8	p_dec
+op	74:17	0:0	8	->
+water	74:19	0:0	8	fmt_out
+op	74:26	0:0	8	.
+water	74:27	0:0	8	audio
+op	74:32	0:0	8	.
+water	74:33	0:0	8	i_rate
+op	74:40	0:0	8	=
+water	74:42	0:0	8	p_sys
+op	74:47	0:0	8	->
+water	74:49	0:0	8	i_rate
+water	74:55	0:0	8	;
+water	75:8	0:0	8	}
+water	76:8	0:0	6	p_sys
+op	76:13	0:0	6	->
+water	76:15	0:0	6	i_state
+op	76:23	0:0	6	=
+water	76:25	0:0	6	STATE_NEXT_SYNC
+water	76:40	0:0	6	;
+water	77:8	0:0	6	p_sys
+op	77:13	0:0	6	->
+water	77:15	0:0	6	i_frame_size
+op	77:28	0:0	6	=
+water	77:30	0:0	6	(
+water	77:32	0:0	6	p_sys
+op	77:37	0:0	6	->
+water	77:39	0:0	6	b_stream_info
+water	77:53	0:0	6	)
+water	77:55	0:0	6	?
+water	77:57	0:0	6	p_sys
+op	77:62	0:0	6	->
+water	77:64	0:0	6	stream_info
+op	77:75	0:0	6	.
+water	77:76	0:0	6	min_framesize
+water	77:90	0:0	6	:
+water	78:57	0:0	6	MIN_FLAC_FRAME_SIZE
+water	78:76	0:0	6	;
+label	84:4	84:24	6	case STATE_NEXT_SYNC :
+water	85:4	0:0	6	{
+decl	88:8	88:50	6	uint8_t	*buf
+op	88:21	0:0	6	=
+call	88:23	88:49	7	malloc
+arg	88:30	88:49	8	p_sys->i_frame_size
+water	88:30	0:0	9	p_sys
+op	88:35	0:0	9	->
+water	88:37	0:0	9	i_frame_size
+if	89:8	90:23	6	(! buf)
+cond	89:12	89:13	7	! buf
+op	89:12	0:0	8	!
+water	89:13	0:0	8	buf
+stmts	90:12	90:23	7	
+return	90:12	90:23	8	NULL
+water	90:19	0:0	9	NULL
+if	91:8	94:8	6	(block_PeekOffsetBytes (& p_sys -> bytestream ,0 ,buf ,p_sys -> i_frame_size ))
+cond	91:12	91:81	7	block_PeekOffsetBytes (& p_sys -> bytestream ,0 ,buf ,p_sys -> i_frame_size )
+call	91:12	91:81	8	block_PeekOffsetBytes
+arg	91:34	91:52	9	&p_sys->bytestream
+op	91:34	0:0	10	&
+water	91:35	0:0	10	p_sys
+op	91:40	0:0	10	->
+water	91:42	0:0	10	bytestream
+arg	91:54	91:55	9	0
+water	91:54	0:0	10	0
+arg	91:57	91:60	9	buf
+water	91:57	0:0	10	buf
+arg	91:62	91:81	9	p_sys->i_frame_size
+water	91:62	0:0	10	p_sys
+op	91:67	0:0	10	->
+water	91:69	0:0	10	i_frame_size
+stmts	91:84	94:8	7	
+water	91:84	0:0	8	{
+call	92:12	92:20	8	free
+arg	92:17	92:20	9	buf
+water	92:17	0:0	10	buf
+water	92:21	0:0	8	;
+return	93:12	93:23	8	NULL
+water	93:19	0:0	9	NULL
+water	94:8	0:0	8	}
+decl	95:8	95:24	6	uint16_t	crc
+op	95:21	0:0	6	=
+water	95:23	0:0	6	0
+for	96:8	97:41	6	(unsigned i = 0 ;i < p_sys -> i_frame_size;i ++)
+forinit	96:13	96:27	7	unsigned i = 0 ;
+water	96:13	0:0	8	unsigned
+water	96:22	0:0	8	i
+op	96:24	0:0	8	=
+water	96:26	0:0	8	0
+water	96:27	0:0	8	;
+cond	96:29	96:40	7	i < p_sys -> i_frame_size
+water	96:29	0:0	8	i
+op	96:31	0:0	8	<
+water	96:33	0:0	8	p_sys
+op	96:38	0:0	8	->
+water	96:40	0:0	8	i_frame_size
+forexpr	96:54	96:55	7	i ++
+water	96:54	0:0	8	i
+op	96:55	0:0	8	++
+stmts	97:12	97:41	7	
+water	97:12	0:0	8	crc
+op	97:16	0:0	8	=
+call	97:18	97:40	8	flac_crc16
+arg	97:29	97:32	9	crc
+water	97:29	0:0	10	crc
+arg	97:34	97:40	9	buf[i]
+water	97:34	0:0	10	buf
+op	97:37	0:0	10	[
+water	97:38	0:0	10	i
+op	97:39	0:0	10	]
+water	97:41	0:0	8	;
+call	98:8	98:16	6	free
+arg	98:13	98:16	7	buf
+water	98:13	0:0	8	buf
+water	98:17	0:0	6	;
+water	99:8	0:0	6	p_sys
+op	99:13	0:0	6	->
+water	99:15	0:0	6	crc
+op	99:19	0:0	6	=
+water	99:21	0:0	6	crc
+water	99:24	0:0	6	;
+while	101:8	134:8	6	(!block_PeekOffsetBytes (& p_sys -> bytestream ,p_sys -> i_frame_size ,p_header ,MAX_FLAC_HEADER_SIZE ))
+cond	101:15	102:50	7	!block_PeekOffsetBytes (& p_sys -> bytestream ,p_sys -> i_frame_size ,p_header ,MAX_FLAC_HEADER_SIZE )
+op	101:15	0:0	8	!
+call	101:16	102:50	8	block_PeekOffsetBytes
+arg	101:38	101:56	9	&p_sys->bytestream
+op	101:38	0:0	10	&
+water	101:39	0:0	10	p_sys
+op	101:44	0:0	10	->
+water	101:46	0:0	10	bytestream
+arg	101:58	101:77	9	p_sys->i_frame_size
+water	101:58	0:0	10	p_sys
+op	101:63	0:0	10	->
+water	101:65	0:0	10	i_frame_size
+arg	102:20	102:28	9	p_header
+water	102:20	0:0	10	p_header
+arg	102:30	102:50	9	MAX_FLAC_HEADER_SIZE
+water	102:30	0:0	10	MAX_FLAC_HEADER_SIZE
+stmts	102:53	134:8	7	
+water	102:53	0:0	8	{
+if	103:12	131:12	8	(p_header [ 0 ] == 0 xFF && ( p_header [ 1 ] & 0 xFE ) == 0 xF8)
+cond	103:16	103:64	9	p_header [ 0 ] == 0 xFF && ( p_header [ 1 ] & 0 xFE ) == 0 xF8
+water	103:16	0:0	10	p_header
+op	103:24	0:0	10	[
+water	103:25	0:0	10	0
+op	103:26	0:0	10	]
+op	103:28	0:0	10	==
+water	103:31	0:0	10	0
+water	103:32	0:0	10	xFF
+op	103:36	0:0	10	&&
+water	103:39	0:0	10	(
+water	103:40	0:0	10	p_header
+op	103:48	0:0	10	[
+water	103:49	0:0	10	1
+op	103:50	0:0	10	]
+op	103:52	0:0	10	&
+water	103:54	0:0	10	0
+water	103:55	0:0	10	xFE
+water	103:58	0:0	10	)
+op	103:60	0:0	10	==
+water	103:63	0:0	10	0
+water	103:64	0:0	10	xF8
+stmts	103:69	131:12	9	
+water	103:69	0:0	10	{
+decl	105:16	110:42	10	int	i_frame_length
+op	105:35	0:0	10	=
+call	106:20	110:41	11	SyncInfo
+arg	106:29	106:34	12	p_dec
+water	106:29	0:0	13	p_dec
+arg	106:36	106:44	12	p_header
+water	106:36	0:0	13	p_header
+arg	107:30	107:48	12	&p_sys->i_channels
+op	107:30	0:0	13	&
+water	107:31	0:0	13	p_sys
+op	107:36	0:0	13	->
+water	107:38	0:0	13	i_channels
+arg	108:30	108:44	12	&p_sys->i_rate
+op	108:30	0:0	13	&
+water	108:31	0:0	13	p_sys
+op	108:36	0:0	13	->
+water	108:38	0:0	13	i_rate
+arg	109:30	109:55	12	&p_sys->i_bits_per_sample
+op	109:30	0:0	13	&
+water	109:31	0:0	13	p_sys
+op	109:36	0:0	13	->
+water	109:38	0:0	13	i_bits_per_sample
+arg	110:30	110:34	12	NULL
+water	110:30	0:0	13	NULL
+arg	110:36	110:41	12	NULL
+water	110:36	0:0	13	NULL
+if	111:16	130:16	10	(i_frame_length)
+cond	111:20	111:20	11	i_frame_length
+water	111:20	0:0	12	i_frame_length
+stmts	111:36	130:16	11	
+water	111:36	0:0	12	{
+decl	112:20	112:40	12	uint8_t	crc_bytes[2]
+call	113:20	114:61	12	block_PeekOffsetBytes
+arg	113:42	113:60	13	&p_sys->bytestream
+op	113:42	0:0	14	&
+water	113:43	0:0	14	p_sys
+op	113:48	0:0	14	->
+water	113:50	0:0	14	bytestream
+arg	114:24	114:47	13	p_sys->i_frame_size-2
+water	114:24	0:0	14	p_sys
+op	114:29	0:0	14	->
+water	114:31	0:0	14	i_frame_size
+op	114:44	0:0	14	-
+water	114:46	0:0	14	2
+arg	114:49	114:58	13	crc_bytes
+water	114:49	0:0	14	crc_bytes
+arg	114:60	114:61	13	2
+water	114:60	0:0	14	2
+water	114:62	0:0	12	;
+decl	116:20	116:76	12	uint16_t	stream_crc
+op	116:40	0:0	12	=
+water	116:42	0:0	12	(
+water	116:43	0:0	12	crc_bytes
+op	116:52	0:0	12	[
+water	116:53	0:0	12	0
+op	116:54	0:0	12	]
+op	116:56	0:0	12	<<
+water	116:59	0:0	12	8
+water	116:60	0:0	12	)
+op	116:62	0:0	12	|
+water	116:64	0:0	12	crc_bytes
+op	116:73	0:0	12	[
+water	116:74	0:0	12	1
+op	116:75	0:0	12	]
+decl	118:20	118:76	12	uint16_t	crc
+op	118:33	0:0	12	=
+call	118:35	118:75	13	flac_crc16_undo
+arg	118:51	118:61	14	p_sys->crc
+water	118:51	0:0	15	p_sys
+op	118:56	0:0	15	->
+water	118:58	0:0	15	crc
+arg	118:63	118:75	14	crc_bytes[1]
+water	118:63	0:0	15	crc_bytes
+op	118:72	0:0	15	[
+water	118:73	0:0	15	1
+op	118:74	0:0	15	]
+water	119:29	0:0	12	crc
+op	119:33	0:0	12	=
+call	119:35	119:75	12	flac_crc16_undo
+arg	119:51	119:54	13	crc
+water	119:51	0:0	14	crc
+arg	119:63	119:75	13	crc_bytes[0]
+water	119:63	0:0	14	crc_bytes
+op	119:72	0:0	14	[
+water	119:73	0:0	14	0
+op	119:74	0:0	14	]
+water	119:76	0:0	12	;
+if	120:20	125:20	12	(stream_crc != crc)
+cond	120:24	120:38	13	stream_crc != crc
+water	120:24	0:0	14	stream_crc
+op	120:35	0:0	14	!=
+water	120:38	0:0	14	crc
+stmts	120:43	125:20	13	
+water	120:43	0:0	14	{
+call	121:24	122:64	14	msg_Warn
+arg	121:33	121:38	15	p_dec
+water	121:33	0:0	16	p_dec
+arg	121:40	121:82	15	"Bad CRC for frame size %zu: 0x%x != 0x%x"
+water	121:40	0:0	16	"Bad CRC for frame size %zu: 0x%x != 0x%x"
+arg	122:28	122:47	15	p_sys->i_frame_size
+water	122:28	0:0	16	p_sys
+op	122:33	0:0	16	->
+water	122:35	0:0	16	i_frame_size
+arg	122:49	122:52	15	crc
+water	122:49	0:0	16	crc
+arg	122:54	122:64	15	stream_crc
+water	122:54	0:0	16	stream_crc
+water	122:65	0:0	14	;
+call	123:24	123:57	14	block_SkipByte
+arg	123:39	123:57	15	&p_sys->bytestream
+op	123:39	0:0	16	&
+water	123:40	0:0	16	p_sys
+op	123:45	0:0	16	->
+water	123:47	0:0	16	bytestream
+water	123:58	0:0	14	;
+water	124:24	0:0	14	p_sys
+op	124:29	0:0	14	->
+water	124:31	0:0	14	i_state
+op	124:39	0:0	14	=
+water	124:41	0:0	14	STATE_NOSYNC
+water	124:53	0:0	14	;
+water	125:20	0:0	14	}
+else	125:22	129:20	12
+stmts	125:27	129:20	13	
+water	125:27	0:0	14	{
+water	126:24	0:0	14	p_sys
+op	126:29	0:0	14	->
+water	126:31	0:0	14	i_state
+op	126:39	0:0	14	=
+water	126:41	0:0	14	STATE_SEND_DATA
+water	126:56	0:0	14	;
+water	127:24	0:0	14	p_sys
+op	127:29	0:0	14	->
+water	127:31	0:0	14	crc
+op	127:35	0:0	14	=
+water	127:37	0:0	14	0
+water	127:38	0:0	14	;
+break	128:24	128:29	14	
+water	129:20	0:0	14	}
+water	130:16	0:0	12	}
+water	131:12	0:0	10	}
+water	132:12	0:0	8	p_sys
+op	132:17	0:0	8	->
+water	132:19	0:0	8	crc
+op	132:23	0:0	8	=
+call	132:25	132:59	8	flac_crc16
+arg	132:36	132:46	9	p_sys->crc
+water	132:36	0:0	10	p_sys
+op	132:41	0:0	10	->
+water	132:43	0:0	10	crc
+arg	132:48	132:59	9	p_header[0]
+water	132:48	0:0	10	p_header
+op	132:56	0:0	10	[
+water	132:57	0:0	10	0
+op	132:58	0:0	10	]
+water	132:60	0:0	8	;
+water	133:12	0:0	8	p_sys
+op	133:17	0:0	8	->
+water	133:19	0:0	8	i_frame_size
+op	133:31	0:0	8	++
+water	133:33	0:0	8	;
+water	134:8	0:0	8	}
+if	135:8	182:8	6	(p_sys -> i_state != STATE_SEND_DATA)
+cond	135:12	135:30	7	p_sys -> i_state != STATE_SEND_DATA
+water	135:12	0:0	8	p_sys
+op	135:17	0:0	8	->
+water	135:19	0:0	8	i_state
+op	135:27	0:0	8	!=
+water	135:30	0:0	8	STATE_SEND_DATA
+stmts	135:47	182:8	7	
+water	135:47	0:0	8	{
+if	136:12	143:12	8	(p_sys -> b_stream_info && p_sys -> stream_info . max_framesize > 0 && p_sys -> i_frame_size > p_sys -> stream_info . max_framesize)
+cond	136:16	137:57	9	p_sys -> b_stream_info && p_sys -> stream_info . max_framesize > 0 && p_sys -> i_frame_size > p_sys -> stream_info . max_framesize
+water	136:16	0:0	10	p_sys
+op	136:21	0:0	10	->
+water	136:23	0:0	10	b_stream_info
+op	136:37	0:0	10	&&
+water	136:40	0:0	10	p_sys
+op	136:45	0:0	10	->
+water	136:47	0:0	10	stream_info
+op	136:58	0:0	10	.
+water	136:59	0:0	10	max_framesize
+op	136:73	0:0	10	>
+water	136:75	0:0	10	0
+op	136:77	0:0	10	&&
+water	137:16	0:0	10	p_sys
+op	137:21	0:0	10	->
+water	137:23	0:0	10	i_frame_size
+op	137:36	0:0	10	>
+water	137:38	0:0	10	p_sys
+op	137:43	0:0	10	->
+water	137:45	0:0	10	stream_info
+op	137:56	0:0	10	.
+water	137:57	0:0	10	max_framesize
+stmts	137:72	143:12	9	
+water	137:72	0:0	10	{
+call	138:16	138:49	10	block_SkipByte
+arg	138:31	138:49	11	&p_sys->bytestream
+op	138:31	0:0	12	&
+water	138:32	0:0	12	p_sys
+op	138:37	0:0	12	->
+water	138:39	0:0	12	bytestream
+water	138:50	0:0	10	;
+call	139:16	140:77	10	msg_Warn
+arg	139:25	139:30	11	p_dec
+water	139:25	0:0	12	p_dec
+arg	139:32	139:87	11	"Frame is too big (%zu > %d), couldn't find start code"
+water	139:32	0:0	12	"Frame is too big (%zu > %d), couldn't find start code"
+arg	140:24	140:43	11	p_sys->i_frame_size
+water	140:24	0:0	12	p_sys
+op	140:29	0:0	12	->
+water	140:31	0:0	12	i_frame_size
+arg	140:45	140:77	11	p_sys->stream_info.max_framesize
+water	140:45	0:0	12	p_sys
+op	140:50	0:0	12	->
+water	140:52	0:0	12	stream_info
+op	140:63	0:0	12	.
+water	140:64	0:0	12	max_framesize
+water	140:78	0:0	10	;
+water	141:16	0:0	10	p_sys
+op	141:21	0:0	10	->
+water	141:23	0:0	10	i_state
+op	141:31	0:0	10	=
+water	141:33	0:0	10	STATE_NOSYNC
+water	141:45	0:0	10	;
+return	142:16	142:27	10	NULL
+water	142:23	0:0	11	NULL
+water	143:12	0:0	10	}
+if	144:12	176:12	8	(! in)
+cond	144:17	144:18	9	! in
+op	144:17	0:0	10	!
+water	144:18	0:0	10	in
+stmts	145:12	176:12	9	
+water	145:12	0:0	10	{
+decl	150:16	150:36	10	uint8_t	crc_bytes[2]
+if	151:16	173:16	10	(!block_PeekOffsetBytes (& p_sys -> bytestream ,p_sys -> i_frame_size - 2 ,crc_bytes ,2 ))
+cond	151:21	152:73	11	!block_PeekOffsetBytes (& p_sys -> bytestream ,p_sys -> i_frame_size - 2 ,crc_bytes ,2 )
+op	151:21	0:0	12	!
+call	151:22	152:73	12	block_PeekOffsetBytes
+arg	151:44	151:62	13	&p_sys->bytestream
+op	151:44	0:0	14	&
+water	151:45	0:0	14	p_sys
+op	151:50	0:0	14	->
+water	151:52	0:0	14	bytestream
+arg	152:36	152:59	13	p_sys->i_frame_size-2
+water	152:36	0:0	14	p_sys
+op	152:41	0:0	14	->
+water	152:43	0:0	14	i_frame_size
+op	152:56	0:0	14	-
+water	152:58	0:0	14	2
+arg	152:61	152:70	13	crc_bytes
+water	152:61	0:0	14	crc_bytes
+arg	152:72	152:73	13	2
+water	152:72	0:0	14	2
+stmts	153:16	173:16	11	
+water	153:16	0:0	12	{
+while	154:20	172:20	12	(true)
+cond	154:28	154:28	13	true
+water	154:28	0:0	14	true
+stmts	155:20	172:20	13	
+water	155:20	0:0	14	{
+decl	157:24	157:80	14	uint16_t	stream_crc
+op	157:44	0:0	14	=
+water	157:46	0:0	14	(
+water	157:47	0:0	14	crc_bytes
+op	157:56	0:0	14	[
+water	157:57	0:0	14	0
+op	157:58	0:0	14	]
+op	157:60	0:0	14	<<
+water	157:63	0:0	14	8
+water	157:64	0:0	14	)
+op	157:66	0:0	14	|
+water	157:68	0:0	14	crc_bytes
+op	157:77	0:0	14	[
+water	157:78	0:0	14	1
+op	157:79	0:0	14	]
+decl	159:24	159:80	14	uint16_t	crc
+op	159:37	0:0	14	=
+call	159:39	159:79	15	flac_crc16_undo
+arg	159:55	159:65	16	p_sys->crc
+water	159:55	0:0	17	p_sys
+op	159:60	0:0	17	->
+water	159:62	0:0	17	crc
+arg	159:67	159:79	16	crc_bytes[1]
+water	159:67	0:0	17	crc_bytes
+op	159:76	0:0	17	[
+water	159:77	0:0	17	1
+op	159:78	0:0	17	]
+water	160:33	0:0	14	crc
+op	160:37	0:0	14	=
+call	160:39	160:79	14	flac_crc16_undo
+arg	160:55	160:58	15	crc
+water	160:55	0:0	16	crc
+arg	160:67	160:79	15	crc_bytes[0]
+water	160:67	0:0	16	crc_bytes
+op	160:76	0:0	16	[
+water	160:77	0:0	16	0
+op	160:78	0:0	16	]
+water	160:80	0:0	14	;
+if	161:24	165:24	14	(stream_crc == crc)
+cond	161:28	161:42	15	stream_crc == crc
+water	161:28	0:0	16	stream_crc
+op	161:39	0:0	16	==
+water	161:42	0:0	16	crc
+stmts	162:24	165:24	15	
+water	162:24	0:0	16	{
+water	163:28	0:0	16	p_sys
+op	163:33	0:0	16	->
+water	163:35	0:0	16	i_state
+op	163:43	0:0	16	=
+water	163:45	0:0	16	STATE_SEND_DATA
+water	163:60	0:0	16	;
+break	164:28	164:33	16	
+water	165:24	0:0	16	}
+water	166:24	0:0	14	p_sys
+op	166:29	0:0	14	->
+water	166:31	0:0	14	i_frame_size
+op	166:43	0:0	14	++
+water	166:45	0:0	14	;
+if	167:24	169:33	14	(block_PeekOffsetBytes (& p_sys -> bytestream ,p_sys -> i_frame_size - 2 ,crc_bytes ,2 ))
+cond	167:29	168:88	15	block_PeekOffsetBytes (& p_sys -> bytestream ,p_sys -> i_frame_size - 2 ,crc_bytes ,2 )
+call	167:29	168:88	16	block_PeekOffsetBytes
+arg	167:51	167:69	17	&p_sys->bytestream
+op	167:51	0:0	18	&
+water	167:52	0:0	18	p_sys
+op	167:57	0:0	18	->
+water	167:59	0:0	18	bytestream
+arg	168:51	168:74	17	p_sys->i_frame_size-2
+water	168:51	0:0	18	p_sys
+op	168:56	0:0	18	->
+water	168:58	0:0	18	i_frame_size
+op	168:71	0:0	18	-
+water	168:73	0:0	18	2
+arg	168:76	168:85	17	crc_bytes
+water	168:76	0:0	18	crc_bytes
+arg	168:87	168:88	17	2
+water	168:87	0:0	18	2
+stmts	169:28	169:33	15	
+break	169:28	169:33	16	
+water	171:24	0:0	14	p_sys
+op	171:29	0:0	14	->
+water	171:31	0:0	14	crc
+op	171:35	0:0	14	=
+call	171:37	171:72	14	flac_crc16
+arg	171:48	171:58	15	p_sys->crc
+water	171:48	0:0	16	p_sys
+op	171:53	0:0	16	->
+water	171:55	0:0	16	crc
+arg	171:60	171:72	15	crc_bytes[1]
+water	171:60	0:0	16	crc_bytes
+op	171:69	0:0	16	[
+water	171:70	0:0	16	1
+op	171:71	0:0	16	]
+water	171:73	0:0	14	;
+water	172:20	0:0	14	}
+water	173:16	0:0	12	}
+if	174:16	175:31	10	(p_sys -> i_state != STATE_SEND_DATA)
+cond	174:21	174:39	11	p_sys -> i_state != STATE_SEND_DATA
+water	174:21	0:0	12	p_sys
+op	174:26	0:0	12	->
+water	174:28	0:0	12	i_state
+op	174:36	0:0	12	!=
+water	174:39	0:0	12	STATE_SEND_DATA
+stmts	175:20	175:31	11	
+return	175:20	175:31	12	NULL
+water	175:27	0:0	13	NULL
+water	176:12	0:0	10	}
+else	177:12	181:12	8
+stmts	178:12	181:12	9	
+water	178:12	0:0	10	{
+return	180:16	180:27	10	NULL
+water	180:23	0:0	11	NULL
+water	181:12	0:0	10	}
+water	182:8	0:0	8	}
+water	183:4	0:0	6	}
+label	184:4	184:24	6	case STATE_SEND_DATA :
+water	185:8	0:0	6	out
+op	185:12	0:0	6	=
+call	185:14	185:45	6	block_Alloc
+arg	185:26	185:45	7	p_sys->i_frame_size
+water	185:26	0:0	8	p_sys
+op	185:31	0:0	8	->
+water	185:33	0:0	8	i_frame_size
+water	185:46	0:0	6	;
+call	188:8	189:43	6	block_GetBytes
+arg	188:23	188:41	7	&p_sys->bytestream
+op	188:23	0:0	8	&
+water	188:24	0:0	8	p_sys
+op	188:29	0:0	8	->
+water	188:31	0:0	8	bytestream
+arg	188:43	188:56	7	out->p_buffer
+water	188:43	0:0	8	out
+op	188:46	0:0	8	->
+water	188:48	0:0	8	p_buffer
+arg	189:24	189:43	7	p_sys->i_frame_size
+water	189:24	0:0	8	p_sys
+op	189:29	0:0	8	->
+water	189:31	0:0	8	i_frame_size
+water	189:44	0:0	6	;
+water	190:8	0:0	6	p_dec
+op	190:13	0:0	6	->
+water	190:15	0:0	6	fmt_out
+op	190:22	0:0	6	.
+water	190:23	0:0	6	audio
+op	190:28	0:0	6	.
+water	190:29	0:0	6	i_channels
+op	190:40	0:0	6	=
+water	190:42	0:0	6	p_sys
+op	190:47	0:0	6	->
+water	190:49	0:0	6	i_channels
+water	190:59	0:0	6	;
+water	191:8	0:0	6	p_dec
+op	191:13	0:0	6	->
+water	191:15	0:0	6	fmt_out
+op	191:22	0:0	6	.
+water	191:23	0:0	6	audio
+op	191:28	0:0	6	.
+water	191:29	0:0	6	i_physical_channels
+op	191:49	0:0	6	=
+water	192:12	0:0	6	p_dec
+op	192:17	0:0	6	->
+water	192:19	0:0	6	fmt_out
+op	192:26	0:0	6	.
+water	192:27	0:0	6	audio
+op	192:32	0:0	6	.
+water	192:33	0:0	6	i_original_channels
+op	192:53	0:0	6	=
+water	193:16	0:0	6	pi_channels_maps
+op	193:32	0:0	6	[
+water	193:33	0:0	6	p_sys
+op	193:38	0:0	6	->
+water	193:40	0:0	6	stream_info
+op	193:51	0:0	6	.
+water	193:52	0:0	6	channels
+op	193:60	0:0	6	]
+water	193:61	0:0	6	;
+if	195:8	196:63	6	(in)
+cond	195:13	195:13	7	in
+water	195:13	0:0	8	in
+stmts	196:12	196:63	7	
+op	196:12	0:0	8	*
+water	196:13	0:0	8	pp_block
+op	196:22	0:0	8	=
+call	196:24	196:62	8	block_BytestreamPop
+arg	196:44	196:62	9	&p_sys->bytestream
+op	196:44	0:0	10	&
+water	196:45	0:0	10	p_sys
+op	196:50	0:0	10	->
+water	196:52	0:0	10	bytestream
+water	196:63	0:0	8	;
+else	197:8	198:53	6
+stmts	198:12	198:53	7	
+call	198:12	198:52	8	block_BytestreamFlush
+arg	198:34	198:52	9	&p_sys->bytestream
+op	198:34	0:0	10	&
+water	198:35	0:0	10	p_sys
+op	198:40	0:0	10	->
+water	198:42	0:0	10	bytestream
+water	198:53	0:0	8	;
+water	199:8	0:0	6	p_sys
+op	199:13	0:0	6	->
+water	199:15	0:0	6	i_state
+op	199:23	0:0	6	=
+water	199:25	0:0	6	STATE_NOSYNC
+water	199:37	0:0	6	;
+water	200:8	0:0	6	out
+op	200:11	0:0	6	->
+water	200:13	0:0	6	i_dts
+op	200:19	0:0	6	=
+water	200:21	0:0	6	out
+op	200:24	0:0	6	->
+water	200:26	0:0	6	i_pts
+op	200:32	0:0	6	=
+water	200:34	0:0	6	p_sys
+op	200:39	0:0	6	->
+water	200:41	0:0	6	i_pts
+water	200:46	0:0	6	;
+water	201:8	0:0	6	out
+op	201:11	0:0	6	->
+water	201:13	0:0	6	i_length
+op	201:22	0:0	6	=
+water	201:24	0:0	6	p_sys
+op	201:29	0:0	6	->
+water	201:31	0:0	6	i_duration
+water	201:41	0:0	6	;
+return	202:8	202:18	6	out
+water	202:15	0:0	7	out
+water	203:4	0:0	6	}
+return	204:4	204:15	2	NULL
+water	204:11	0:0	3	NULL

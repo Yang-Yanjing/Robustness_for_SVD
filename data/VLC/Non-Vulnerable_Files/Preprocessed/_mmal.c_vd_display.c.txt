@@ -1,0 +1,153 @@
+func	2:0	30:0	0	static void	vd_display
+params	2:22	0:0	1	
+param	2:23	2:41	2	vout_display_t *	vd
+param	2:43	2:61	2	picture_t *	picture
+param	3:16	3:40	2	subpicture_t *	subpicture
+stmnts	0:0	29:37	1	
+decl	5:4	5:37	2	vout_display_sys_t	*sys
+op	5:28	0:0	2	=
+water	5:30	0:0	2	vd
+op	5:32	0:0	2	->
+water	5:34	0:0	2	sys
+decl	6:4	6:43	2	picture_sys_t	*pic_sys
+op	6:27	0:0	2	=
+water	6:29	0:0	2	picture
+op	6:36	0:0	2	->
+water	6:38	0:0	2	p_sys
+decl	7:4	7:50	2	MMAL_BUFFER_HEADER_T	*buffer
+op	7:33	0:0	2	=
+water	7:35	0:0	2	pic_sys
+op	7:42	0:0	2	->
+water	7:44	0:0	2	buffer
+decl	8:4	8:24	2	MMAL_STATUS_T	status
+if	9:4	24:4	2	(! pic_sys -> displayed || ! sys -> opaque)
+cond	9:8	9:37	3	! pic_sys -> displayed || ! sys -> opaque
+op	9:8	0:0	4	!
+water	9:9	0:0	4	pic_sys
+op	9:16	0:0	4	->
+water	9:18	0:0	4	displayed
+op	9:28	0:0	4	||
+op	9:31	0:0	4	!
+water	9:32	0:0	4	sys
+op	9:35	0:0	4	->
+water	9:37	0:0	4	opaque
+stmts	9:45	24:4	3	
+water	9:45	0:0	4	{
+water	10:8	0:0	4	buffer
+op	10:14	0:0	4	->
+water	10:16	0:0	4	cmd
+op	10:20	0:0	4	=
+water	10:22	0:0	4	0
+water	10:23	0:0	4	;
+water	11:8	0:0	4	buffer
+op	11:14	0:0	4	->
+water	11:16	0:0	4	length
+op	11:23	0:0	4	=
+water	11:25	0:0	4	sys
+op	11:28	0:0	4	->
+water	11:30	0:0	4	input
+op	11:35	0:0	4	->
+water	11:37	0:0	4	buffer_size
+water	11:48	0:0	4	;
+call	12:8	12:41	4	vlc_mutex_lock
+arg	12:23	12:41	5	&sys->buffer_mutex
+op	12:23	0:0	6	&
+water	12:24	0:0	6	sys
+op	12:27	0:0	6	->
+water	12:29	0:0	6	buffer_mutex
+water	12:42	0:0	4	;
+while	13:8	14:64	4	(sys -> buffers_in_transit >= MAX_BUFFERS_IN_TRANSIT)
+cond	13:15	13:42	5	sys -> buffers_in_transit >= MAX_BUFFERS_IN_TRANSIT
+water	13:15	0:0	6	sys
+op	13:18	0:0	6	->
+water	13:20	0:0	6	buffers_in_transit
+op	13:39	0:0	6	>=
+water	13:42	0:0	6	MAX_BUFFERS_IN_TRANSIT
+stmts	14:12	14:64	5	
+call	14:12	14:63	6	vlc_cond_wait
+arg	14:26	14:43	7	&sys->buffer_cond
+op	14:26	0:0	8	&
+water	14:27	0:0	8	sys
+op	14:30	0:0	8	->
+water	14:32	0:0	8	buffer_cond
+arg	14:45	14:63	7	&sys->buffer_mutex
+op	14:45	0:0	8	&
+water	14:46	0:0	8	sys
+op	14:49	0:0	8	->
+water	14:51	0:0	8	buffer_mutex
+water	14:64	0:0	6	;
+water	15:8	0:0	4	status
+op	15:15	0:0	4	=
+call	15:17	15:57	4	mmal_port_send_buffer
+arg	15:39	15:49	5	sys->input
+water	15:39	0:0	6	sys
+op	15:42	0:0	6	->
+water	15:44	0:0	6	input
+arg	15:51	15:57	5	buffer
+water	15:51	0:0	6	buffer
+water	15:58	0:0	4	;
+if	16:8	17:37	4	(status == MMAL_SUCCESS)
+cond	16:12	16:22	5	status == MMAL_SUCCESS
+water	16:12	0:0	6	status
+op	16:19	0:0	6	==
+water	16:22	0:0	6	MMAL_SUCCESS
+stmts	17:12	17:37	5	
+op	17:12	0:0	6	++
+water	17:14	0:0	6	sys
+op	17:17	0:0	6	->
+water	17:19	0:0	6	buffers_in_transit
+water	17:37	0:0	6	;
+call	18:8	18:43	4	vlc_mutex_unlock
+arg	18:25	18:43	5	&sys->buffer_mutex
+op	18:25	0:0	6	&
+water	18:26	0:0	6	sys
+op	18:29	0:0	6	->
+water	18:31	0:0	6	buffer_mutex
+water	18:44	0:0	4	;
+if	19:8	22:8	4	(status != MMAL_SUCCESS)
+cond	19:12	19:22	5	status != MMAL_SUCCESS
+water	19:12	0:0	6	status
+op	19:19	0:0	6	!=
+water	19:22	0:0	6	MMAL_SUCCESS
+stmts	19:36	22:8	5	
+water	19:36	0:0	6	{
+call	20:12	20:76	6	msg_Err
+arg	20:20	20:22	7	vd
+water	20:20	0:0	8	vd
+arg	20:24	20:76	7	"Failed to send buffer to input port. Frame dropped"
+water	20:24	0:0	8	"Failed to send buffer to input port. Frame dropped"
+water	20:77	0:0	6	;
+call	21:12	21:35	6	picture_Release
+arg	21:28	21:35	7	picture
+water	21:28	0:0	8	picture
+water	21:36	0:0	6	;
+water	22:8	0:0	6	}
+water	23:8	0:0	4	pic_sys
+op	23:15	0:0	4	->
+water	23:17	0:0	4	displayed
+op	23:27	0:0	4	=
+water	23:29	0:0	4	true
+water	23:33	0:0	4	;
+water	24:4	0:0	4	}
+else	24:6	26:4	2
+stmts	24:11	26:4	3	
+water	24:11	0:0	4	{
+call	25:8	25:31	4	picture_Release
+arg	25:24	25:31	5	picture
+water	25:24	0:0	6	picture
+water	25:32	0:0	4	;
+water	26:4	0:0	4	}
+call	27:4	27:37	2	display_subpicture
+arg	27:23	27:25	3	vd
+water	27:23	0:0	4	vd
+arg	27:27	27:37	3	subpicture
+water	27:27	0:0	4	subpicture
+water	27:38	0:0	2	;
+if	28:4	29:37	2	(subpicture)
+cond	28:8	28:8	3	subpicture
+water	28:8	0:0	4	subpicture
+stmts	29:8	29:37	3	
+call	29:8	29:36	4	subpicture_Delete
+arg	29:26	29:36	5	subpicture
+water	29:26	0:0	6	subpicture
+water	29:37	0:0	4	;

@@ -1,0 +1,733 @@
+func	2:0	172:0	0	int	SAP_Add
+params	2:12	0:0	1	
+param	2:13	2:33	2	sap_handler_t *	p_sap
+param	2:35	2:66	2	session_descriptor_t *	p_session
+stmnts	0:0	171:22	1	
+decl	4:4	4:9	2	int	i
+decl	5:4	5:36	2	char	psz_addr[NI_MAXNUMERICHOST]
+decl	6:4	6:32	2	sap_session_t	*p_sap_session
+decl	7:4	7:18	2	mtime_t	i_hash
+union	8:4	13:4	2	<anonymous_8:4>
+decl	10:8	10:29	3	struct sockaddr	a
+decl	11:8	11:30	3	struct sockaddr_in	in
+decl	12:8	12:31	3	struct sockaddr_in6	in6
+decl	8:4	13:10	2	<anonymous_8:4>	addr
+decl	14:4	14:21	2	socklen_t	addrlen
+water	15:4	0:0	2	addrlen
+op	15:12	0:0	2	=
+water	15:14	0:0	2	p_session
+op	15:23	0:0	2	->
+water	15:25	0:0	2	addrlen
+water	15:32	0:0	2	;
+if	16:4	20:4	2	(( addrlen == 0 ) || ( addrlen > sizeof ( addr ) ))
+cond	16:8	16:50	3	( addrlen == 0 ) || ( addrlen > sizeof ( addr ) )
+water	16:8	0:0	4	(
+water	16:9	0:0	4	addrlen
+op	16:17	0:0	4	==
+water	16:20	0:0	4	0
+water	16:21	0:0	4	)
+op	16:23	0:0	4	||
+water	16:26	0:0	4	(
+water	16:27	0:0	4	addrlen
+op	16:35	0:0	4	>
+op	16:37	0:0	4	sizeof
+water	16:44	0:0	4	(
+water	16:45	0:0	4	addr
+water	16:49	0:0	4	)
+water	16:50	0:0	4	)
+stmts	17:4	20:4	3	
+water	17:4	0:0	4	{
+call	18:8	18:72	4	msg_Err
+arg	18:17	18:22	5	p_sap
+water	18:17	0:0	6	p_sap
+arg	18:24	18:72	5	"No/invalid address specified for SAP announce"
+water	18:24	0:0	6	"No/invalid address specified for SAP announce"
+water	18:73	0:0	4	;
+return	19:8	19:27	4	VLC_EGENERIC
+water	19:15	0:0	5	VLC_EGENERIC
+water	20:4	0:0	4	}
+call	22:4	22:44	2	memcpy
+arg	22:12	22:17	3	&addr
+op	22:12	0:0	4	&
+water	22:13	0:0	4	addr
+arg	22:19	22:35	3	&p_session->addr
+op	22:19	0:0	4	&
+water	22:20	0:0	4	p_session
+op	22:29	0:0	4	->
+water	22:31	0:0	4	addr
+arg	22:37	22:44	3	addrlen
+water	22:37	0:0	4	addrlen
+water	22:45	0:0	2	;
+switch	23:4	75:4	2	(addr . a . sa_family)
+cond	23:12	23:19	3	addr . a . sa_family
+water	23:12	0:0	4	addr
+op	23:16	0:0	4	.
+water	23:17	0:0	4	a
+op	23:18	0:0	4	.
+water	23:19	0:0	4	sa_family
+stmts	24:4	75:4	3	
+water	24:4	0:0	4	{
+label	26:8	26:21	4	case AF_INET6 :
+water	27:8	0:0	4	{
+decl	29:12	29:53	4	struct in6_addr	*a6
+op	29:32	0:0	4	=
+op	29:34	0:0	4	&
+water	29:35	0:0	4	addr
+op	29:39	0:0	4	.
+water	29:40	0:0	4	in6
+op	29:43	0:0	4	.
+water	29:44	0:0	4	sin6_addr
+call	30:12	31:58	4	memcpy
+arg	30:20	30:35	5	a6->s6_addr+2
+water	30:20	0:0	6	a6
+op	30:22	0:0	6	->
+water	30:24	0:0	6	s6_addr
+op	30:32	0:0	6	+
+water	30:34	0:0	6	2
+arg	30:37	31:53	5	"\x00\x00\x00\x00\x00\x00""\x00\x00\x00\x00\x00\x02\x7f\xfe"
+water	30:37	0:0	6	"\x00\x00\x00\x00\x00\x00"
+water	31:19	0:0	6	"\x00\x00\x00\x00\x00\x02\x7f\xfe"
+arg	31:55	31:58	5	14
+water	31:55	0:0	6	14
+water	31:59	0:0	4	;
+if	32:12	34:37	4	(IN6_IS_ADDR_MULTICAST (a6 ))
+cond	32:16	32:42	5	IN6_IS_ADDR_MULTICAST (a6 )
+call	32:16	32:42	6	IN6_IS_ADDR_MULTICAST
+arg	32:39	32:42	7	a6
+water	32:39	0:0	8	a6
+stmts	34:16	34:37	5	
+water	34:16	0:0	6	a6
+op	34:18	0:0	6	->
+water	34:20	0:0	6	s6_addr
+op	34:27	0:0	6	[
+water	34:28	0:0	6	1
+op	34:29	0:0	6	]
+op	34:31	0:0	6	&=
+water	34:34	0:0	6	0
+water	34:35	0:0	6	xf
+water	34:37	0:0	6	;
+else	35:12	37:52	4
+stmts	37:16	37:52	5	
+call	37:16	37:51	6	memcpy
+arg	37:24	37:35	7	a6->s6_addr
+water	37:24	0:0	8	a6
+op	37:26	0:0	8	->
+water	37:28	0:0	8	s6_addr
+arg	37:37	37:47	7	"\xff\x0e"
+water	37:37	0:0	8	"\xff\x0e"
+arg	37:49	37:51	7	2
+water	37:49	0:0	8	2
+water	37:52	0:0	6	;
+break	38:12	38:17	4	
+water	39:8	0:0	4	}
+label	41:8	41:20	4	case AF_INET :
+water	42:8	0:0	4	{
+decl	44:12	44:51	4	uint32_t	ipv4
+op	44:26	0:0	4	=
+water	44:28	0:0	4	addr
+op	44:32	0:0	4	.
+water	44:33	0:0	4	in
+op	44:35	0:0	4	.
+water	44:36	0:0	4	sin_addr
+op	44:44	0:0	4	.
+water	44:45	0:0	4	s_addr
+if	46:12	47:42	4	(( ipv4& htonl (0 xffffff00 ) ) ==htonl (0 xe0000000 ))
+cond	46:16	46:64	5	( ipv4& htonl (0 xffffff00 ) ) ==htonl (0 xe0000000 )
+water	46:16	0:0	6	(
+water	46:17	0:0	6	ipv4
+call	46:22	46:41	6	&htonl
+arg	46:31	46:41	7	0xffffff00
+water	46:31	0:0	8	0
+water	46:32	0:0	8	xffffff00
+water	46:42	0:0	6	)
+op	46:44	0:0	6	==
+call	46:47	46:64	6	htonl
+arg	46:54	46:64	7	0xe0000000
+water	46:54	0:0	8	0
+water	46:55	0:0	8	xe0000000
+stmts	47:16	47:42	5	
+water	47:16	0:0	6	ipv4
+op	47:21	0:0	6	=
+call	47:24	47:41	6	htonl
+arg	47:31	47:41	7	0xe00000ff
+water	47:31	0:0	8	0
+water	47:32	0:0	8	xe00000ff
+water	47:42	0:0	6	;
+else	48:12	51:42	4
+stmts	50:12	51:42	5	
+if	50:12	51:42	6	(( ipv4& htonl (0 xffff0000 ) ) ==htonl (0 xefff0000 ))
+cond	50:16	50:64	7	( ipv4& htonl (0 xffff0000 ) ) ==htonl (0 xefff0000 )
+water	50:16	0:0	8	(
+water	50:17	0:0	8	ipv4
+call	50:22	50:41	8	&htonl
+arg	50:31	50:41	9	0xffff0000
+water	50:31	0:0	10	0
+water	50:32	0:0	10	xffff0000
+water	50:42	0:0	8	)
+op	50:44	0:0	8	==
+call	50:47	50:64	8	htonl
+arg	50:54	50:64	9	0xefff0000
+water	50:54	0:0	10	0
+water	50:55	0:0	10	xefff0000
+stmts	51:16	51:42	7	
+water	51:16	0:0	8	ipv4
+op	51:21	0:0	8	=
+call	51:24	51:41	8	htonl
+arg	51:31	51:41	9	0xefffffff
+water	51:31	0:0	10	0
+water	51:32	0:0	10	xefffffff
+water	51:42	0:0	8	;
+else	52:12	55:42	4
+stmts	54:12	55:42	5	
+if	54:12	55:42	6	(( ipv4& htonl (0 xfffc0000 ) ) ==htonl (0 xefc00000 ))
+cond	54:16	54:64	7	( ipv4& htonl (0 xfffc0000 ) ) ==htonl (0 xefc00000 )
+water	54:16	0:0	8	(
+water	54:17	0:0	8	ipv4
+call	54:22	54:41	8	&htonl
+arg	54:31	54:41	9	0xfffc0000
+water	54:31	0:0	10	0
+water	54:32	0:0	10	xfffc0000
+water	54:42	0:0	8	)
+op	54:44	0:0	8	==
+call	54:47	54:64	8	htonl
+arg	54:54	54:64	9	0xefc00000
+water	54:54	0:0	10	0
+water	54:55	0:0	10	xefc00000
+stmts	55:16	55:42	7	
+water	55:16	0:0	8	ipv4
+op	55:21	0:0	8	=
+call	55:24	55:41	8	htonl
+arg	55:31	55:41	9	0xefc3ffff
+water	55:31	0:0	10	0
+water	55:32	0:0	10	xefc3ffff
+water	55:42	0:0	8	;
+else	56:12	58:24	4
+stmts	57:12	58:24	5	
+if	57:12	58:24	6	(( ipv4& htonl (0 xff000000 ) ) ==htonl (0 xef000000 ))
+cond	57:16	57:64	7	( ipv4& htonl (0 xff000000 ) ) ==htonl (0 xef000000 )
+water	57:16	0:0	8	(
+water	57:17	0:0	8	ipv4
+call	57:22	57:41	8	&htonl
+arg	57:31	57:41	9	0xff000000
+water	57:31	0:0	10	0
+water	57:32	0:0	10	xff000000
+water	57:42	0:0	8	)
+op	57:44	0:0	8	==
+call	57:47	57:64	8	htonl
+arg	57:54	57:64	9	0xef000000
+water	57:54	0:0	10	0
+water	57:55	0:0	10	xef000000
+stmts	58:16	58:24	7	
+water	58:16	0:0	8	ipv4
+op	58:21	0:0	8	=
+water	58:23	0:0	8	0
+water	58:24	0:0	8	;
+else	59:12	61:41	4
+stmts	61:16	61:41	5	
+water	61:16	0:0	6	ipv4
+op	61:21	0:0	6	=
+call	61:23	61:40	6	htonl
+arg	61:30	61:40	7	0xe0027ffe
+water	61:30	0:0	8	0
+water	61:31	0:0	8	xe0027ffe
+water	61:41	0:0	6	;
+if	62:12	67:12	4	(ipv4 == 0)
+cond	62:16	62:24	5	ipv4 == 0
+water	62:16	0:0	6	ipv4
+op	62:21	0:0	6	==
+water	62:24	0:0	6	0
+stmts	63:12	67:12	5	
+water	63:12	0:0	6	{
+call	64:16	65:48	6	msg_Err
+arg	64:25	64:30	7	p_sap
+water	64:25	0:0	8	p_sap
+arg	64:32	65:48	7	"Out-of-scope multicast address ""not supported by SAP"
+water	64:32	0:0	8	"Out-of-scope multicast address "
+water	65:25	0:0	8	"not supported by SAP"
+water	65:49	0:0	6	;
+return	66:16	66:35	6	VLC_EGENERIC
+water	66:23	0:0	7	VLC_EGENERIC
+water	67:12	0:0	6	}
+water	68:12	0:0	4	addr
+op	68:16	0:0	4	.
+water	68:17	0:0	4	in
+op	68:19	0:0	4	.
+water	68:20	0:0	4	sin_addr
+op	68:28	0:0	4	.
+water	68:29	0:0	4	s_addr
+op	68:36	0:0	4	=
+water	68:38	0:0	4	ipv4
+water	68:42	0:0	4	;
+break	69:12	69:17	4	
+water	70:8	0:0	4	}
+label	71:8	71:15	4	default :
+call	72:12	73:38	4	msg_Err
+arg	72:21	72:26	5	p_sap
+water	72:21	0:0	6	p_sap
+arg	72:28	72:68	5	"Address family %d not supported by SAP"
+water	72:28	0:0	6	"Address family %d not supported by SAP"
+arg	73:21	73:38	5	addr.a.sa_family
+water	73:21	0:0	6	addr
+op	73:25	0:0	6	.
+water	73:26	0:0	6	a
+op	73:27	0:0	6	.
+water	73:28	0:0	6	sa_family
+water	73:39	0:0	4	;
+return	74:12	74:31	4	VLC_EGENERIC
+water	74:19	0:0	5	VLC_EGENERIC
+water	75:4	0:0	4	}
+water	76:4	0:0	2	i
+op	76:6	0:0	2	=
+call	76:8	77:76	2	vlc_getnameinfo
+arg	76:25	76:32	3	&addr.a
+op	76:25	0:0	4	&
+water	76:26	0:0	4	addr
+op	76:30	0:0	4	.
+water	76:31	0:0	4	a
+arg	76:34	76:41	3	addrlen
+water	76:34	0:0	4	addrlen
+arg	77:25	77:33	3	psz_addr
+water	77:25	0:0	4	psz_addr
+arg	77:35	77:53	3	sizeof(psz_addr)
+op	77:35	0:0	4	sizeof
+water	77:41	0:0	4	(
+water	77:43	0:0	4	psz_addr
+water	77:52	0:0	4	)
+arg	77:55	77:59	3	NULL
+water	77:55	0:0	4	NULL
+arg	77:61	77:76	3	NI_NUMERICHOST
+water	77:61	0:0	4	NI_NUMERICHOST
+water	77:77	0:0	2	;
+if	78:4	82:4	2	(i)
+cond	78:8	78:8	3	i
+water	78:8	0:0	4	i
+stmts	79:4	82:4	3	
+water	79:4	0:0	4	{
+call	80:8	80:48	4	msg_Err
+arg	80:17	80:22	5	p_sap
+water	80:17	0:0	6	p_sap
+arg	80:24	80:28	5	"%s"
+water	80:24	0:0	6	"%s"
+arg	80:30	80:48	5	gai_strerror(i)
+call	80:30	80:46	6	gai_strerror
+arg	80:44	80:46	7	i
+water	80:44	0:0	8	i
+water	80:49	0:0	4	;
+return	81:8	81:27	4	VLC_EGENERIC
+water	81:15	0:0	5	VLC_EGENERIC
+water	82:4	0:0	4	}
+call	84:4	84:53	2	msg_Dbg
+arg	84:13	84:18	3	p_sap
+water	84:13	0:0	4	p_sap
+arg	84:20	84:43	3	"using SAP address: %s"
+water	84:20	0:0	4	"using SAP address: %s"
+arg	84:45	84:53	3	psz_addr
+water	84:45	0:0	4	psz_addr
+water	84:54	0:0	2	;
+call	85:4	85:32	2	vlc_mutex_lock
+arg	85:20	85:32	3	&p_sap->lock
+op	85:20	0:0	4	&
+water	85:21	0:0	4	p_sap
+op	85:26	0:0	4	->
+water	85:28	0:0	4	lock
+water	85:33	0:0	2	;
+decl	86:4	86:27	2	sap_address_t	*sap_addr
+for	87:4	89:17	2	(sap_addr = p_sap -> first ;sap_addr;sap_addr = sap_addr -> next)
+forinit	87:9	87:32	3	sap_addr = p_sap -> first ;
+water	87:9	0:0	4	sap_addr
+op	87:18	0:0	4	=
+water	87:20	0:0	4	p_sap
+op	87:25	0:0	4	->
+water	87:27	0:0	4	first
+water	87:32	0:0	4	;
+cond	87:34	87:34	3	sap_addr
+water	87:34	0:0	4	sap_addr
+forexpr	87:44	87:65	3	sap_addr = sap_addr -> next
+water	87:44	0:0	4	sap_addr
+op	87:53	0:0	4	=
+water	87:55	0:0	4	sap_addr
+op	87:63	0:0	4	->
+water	87:65	0:0	4	next
+stmts	88:8	89:17	3	
+if	88:8	89:17	4	(!strcmp (psz_addr ,sap_addr -> group ))
+cond	88:12	88:46	5	!strcmp (psz_addr ,sap_addr -> group )
+op	88:12	0:0	6	!
+call	88:13	88:46	6	strcmp
+arg	88:21	88:29	7	psz_addr
+water	88:21	0:0	8	psz_addr
+arg	88:31	88:46	7	sap_addr->group
+water	88:31	0:0	8	sap_addr
+op	88:39	0:0	8	->
+water	88:41	0:0	8	group
+stmts	89:12	89:17	5	
+break	89:12	89:17	6	
+if	90:4	100:4	2	(sap_addr == NULL)
+cond	90:8	90:20	3	sap_addr == NULL
+water	90:8	0:0	4	sap_addr
+op	90:17	0:0	4	==
+water	90:20	0:0	4	NULL
+stmts	91:4	100:4	3	
+water	91:4	0:0	4	{
+water	92:8	0:0	4	sap_addr
+op	92:17	0:0	4	=
+call	92:19	92:61	4	AddressCreate
+arg	92:34	92:51	5	VLC_OBJECT(p_sap)
+call	92:34	92:50	6	VLC_OBJECT
+arg	92:45	92:50	7	p_sap
+water	92:45	0:0	8	p_sap
+arg	92:53	92:61	5	psz_addr
+water	92:53	0:0	6	psz_addr
+water	92:62	0:0	4	;
+if	93:8	97:8	4	(sap_addr == NULL)
+cond	93:12	93:24	5	sap_addr == NULL
+water	93:12	0:0	6	sap_addr
+op	93:21	0:0	6	==
+water	93:24	0:0	6	NULL
+stmts	94:8	97:8	5	
+water	94:8	0:0	6	{
+call	95:12	95:42	6	vlc_mutex_unlock
+arg	95:30	95:42	7	&p_sap->lock
+op	95:30	0:0	8	&
+water	95:31	0:0	8	p_sap
+op	95:36	0:0	8	->
+water	95:38	0:0	8	lock
+water	95:43	0:0	6	;
+return	96:12	96:31	6	VLC_EGENERIC
+water	96:19	0:0	7	VLC_EGENERIC
+water	97:8	0:0	6	}
+water	98:8	0:0	4	sap_addr
+op	98:16	0:0	4	->
+water	98:18	0:0	4	next
+op	98:23	0:0	4	=
+water	98:25	0:0	4	p_sap
+op	98:30	0:0	4	->
+water	98:32	0:0	4	first
+water	98:37	0:0	4	;
+water	99:8	0:0	4	p_sap
+op	99:13	0:0	4	->
+water	99:15	0:0	4	first
+op	99:21	0:0	4	=
+water	99:23	0:0	4	sap_addr
+water	99:31	0:0	4	;
+water	100:4	0:0	4	}
+call	103:4	103:35	2	vlc_mutex_lock
+arg	103:20	103:35	3	&sap_addr->lock
+op	103:20	0:0	4	&
+water	103:21	0:0	4	sap_addr
+op	103:29	0:0	4	->
+water	103:31	0:0	4	lock
+water	103:36	0:0	2	;
+call	104:4	104:34	2	vlc_mutex_unlock
+arg	104:22	104:34	3	&p_sap->lock
+op	104:22	0:0	4	&
+water	104:23	0:0	4	p_sap
+op	104:28	0:0	4	->
+water	104:30	0:0	4	lock
+water	104:35	0:0	2	;
+call	105:4	105:64	2	memcpy
+arg	105:12	105:28	3	&p_session->orig
+op	105:12	0:0	4	&
+water	105:13	0:0	4	p_session
+op	105:22	0:0	4	->
+water	105:24	0:0	4	orig
+arg	105:30	105:45	3	&sap_addr->orig
+op	105:30	0:0	4	&
+water	105:31	0:0	4	sap_addr
+op	105:39	0:0	4	->
+water	105:41	0:0	4	orig
+arg	105:47	105:64	3	sap_addr->origlen
+water	105:47	0:0	4	sap_addr
+op	105:55	0:0	4	->
+water	105:57	0:0	4	origlen
+water	105:65	0:0	2	;
+water	106:4	0:0	2	p_session
+op	106:13	0:0	2	->
+water	106:15	0:0	2	origlen
+op	106:23	0:0	2	=
+water	106:25	0:0	2	sap_addr
+op	106:33	0:0	2	->
+water	106:35	0:0	2	origlen
+water	106:42	0:0	2	;
+decl	107:4	107:32	2	size_t	headsize
+op	107:20	0:0	2	=
+water	107:22	0:0	2	20
+water	107:24	0:0	2	,
+decl	107:4	107:32	2	size_t	length
+switch	108:4	120:4	2	(p_session -> orig . ss_family)
+cond	108:12	108:28	3	p_session -> orig . ss_family
+water	108:12	0:0	4	p_session
+op	108:21	0:0	4	->
+water	108:23	0:0	4	orig
+op	108:27	0:0	4	.
+water	108:28	0:0	4	ss_family
+stmts	109:4	120:4	3	
+water	109:4	0:0	4	{
+label	111:8	111:21	4	case AF_INET6 :
+water	112:12	0:0	4	headsize
+op	112:21	0:0	4	+=
+water	112:24	0:0	4	16
+water	112:26	0:0	4	;
+break	113:12	113:17	4	
+label	115:8	115:20	4	case AF_INET :
+water	116:12	0:0	4	headsize
+op	116:21	0:0	4	+=
+water	116:24	0:0	4	4
+water	116:25	0:0	4	;
+break	117:12	117:17	4	
+label	118:8	118:15	4	default :
+call	119:12	119:21	4	assert
+arg	119:20	119:21	5	0
+water	119:20	0:0	6	0
+water	119:22	0:0	4	;
+water	120:4	0:0	4	}
+water	122:4	0:0	2	length
+op	122:11	0:0	2	=
+water	122:13	0:0	2	headsize
+op	122:22	0:0	2	+
+call	122:24	122:50	2	strlen
+arg	122:32	122:50	3	p_session->psz_sdp
+water	122:32	0:0	4	p_session
+op	122:41	0:0	4	->
+water	122:43	0:0	4	psz_sdp
+water	122:51	0:0	2	;
+water	123:4	0:0	2	p_sap_session
+op	123:18	0:0	2	=
+call	123:20	123:64	2	malloc
+arg	123:28	123:64	3	sizeof(*p_sap_session)+length+1
+op	123:28	0:0	4	sizeof
+water	123:35	0:0	4	(
+op	123:36	0:0	4	*
+water	123:37	0:0	4	p_sap_session
+water	123:50	0:0	4	)
+op	123:52	0:0	4	+
+water	123:54	0:0	4	length
+op	123:61	0:0	4	+
+water	123:63	0:0	4	1
+water	123:65	0:0	2	;
+if	124:4	128:4	2	(p_sap_session == NULL)
+cond	124:8	124:25	3	p_sap_session == NULL
+water	124:8	0:0	4	p_sap_session
+op	124:22	0:0	4	==
+water	124:25	0:0	4	NULL
+stmts	125:4	128:4	3	
+water	125:4	0:0	4	{
+call	126:8	126:41	4	vlc_mutex_unlock
+arg	126:26	126:41	5	&sap_addr->lock
+op	126:26	0:0	6	&
+water	126:27	0:0	6	sap_addr
+op	126:35	0:0	6	->
+water	126:37	0:0	6	lock
+water	126:42	0:0	4	;
+return	127:8	127:27	4	VLC_EGENERIC
+water	127:15	0:0	5	VLC_EGENERIC
+water	128:4	0:0	4	}
+water	129:4	0:0	2	p_sap_session
+op	129:17	0:0	2	->
+water	129:19	0:0	2	next
+op	129:24	0:0	2	=
+water	129:26	0:0	2	sap_addr
+op	129:34	0:0	2	->
+water	129:36	0:0	2	first
+water	129:41	0:0	2	;
+water	130:4	0:0	2	sap_addr
+op	130:12	0:0	2	->
+water	130:14	0:0	2	first
+op	130:20	0:0	2	=
+water	130:22	0:0	2	p_sap_session
+water	130:35	0:0	2	;
+water	131:4	0:0	2	p_sap_session
+op	131:17	0:0	2	->
+water	131:19	0:0	2	p_sd
+op	131:24	0:0	2	=
+water	131:26	0:0	2	p_session
+water	131:35	0:0	2	;
+water	132:4	0:0	2	p_sap_session
+op	132:17	0:0	2	->
+water	132:19	0:0	2	length
+op	132:26	0:0	2	=
+water	132:28	0:0	2	length
+water	132:34	0:0	2	;
+decl	134:4	134:43	2	uint8_t	*psz_head
+op	134:22	0:0	2	=
+water	134:24	0:0	2	p_sap_session
+op	134:37	0:0	2	->
+water	134:39	0:0	2	data
+water	136:4	0:0	2	psz_head
+op	136:12	0:0	2	[
+water	136:13	0:0	2	0
+op	136:14	0:0	2	]
+op	136:16	0:0	2	=
+water	136:18	0:0	2	0
+water	136:19	0:0	2	x20
+water	136:22	0:0	2	;
+water	137:4	0:0	2	psz_head
+op	137:12	0:0	2	[
+water	137:13	0:0	2	1
+op	137:14	0:0	2	]
+op	137:16	0:0	2	=
+water	137:18	0:0	2	0
+water	137:19	0:0	2	x00
+water	137:22	0:0	2	;
+water	138:4	0:0	2	i_hash
+op	138:11	0:0	2	=
+call	138:13	138:19	2	mdate
+water	138:20	0:0	2	;
+water	139:4	0:0	2	psz_head
+op	139:12	0:0	2	[
+water	139:13	0:0	2	2
+op	139:14	0:0	2	]
+op	139:16	0:0	2	=
+water	139:18	0:0	2	i_hash
+op	139:25	0:0	2	>>
+water	139:28	0:0	2	8
+water	139:29	0:0	2	;
+water	140:4	0:0	2	psz_head
+op	140:12	0:0	2	[
+water	140:13	0:0	2	3
+op	140:14	0:0	2	]
+op	140:16	0:0	2	=
+water	140:18	0:0	2	i_hash
+water	140:24	0:0	2	;
+water	141:4	0:0	2	headsize
+op	141:13	0:0	2	=
+water	141:15	0:0	2	4
+water	141:16	0:0	2	;
+switch	142:4	163:4	2	(p_session -> orig . ss_family)
+cond	142:12	142:28	3	p_session -> orig . ss_family
+water	142:12	0:0	4	p_session
+op	142:21	0:0	4	->
+water	142:23	0:0	4	orig
+op	142:27	0:0	4	.
+water	142:28	0:0	4	ss_family
+stmts	143:4	163:4	3	
+water	143:4	0:0	4	{
+label	145:8	145:21	4	case AF_INET6 :
+water	146:8	0:0	4	{
+decl	147:12	148:69	4	struct in6_addr	*a6
+op	147:32	0:0	4	=
+op	148:16	0:0	4	&
+water	148:17	0:0	4	(
+water	148:18	0:0	4	(
+water	148:19	0:0	4	struct
+water	148:26	0:0	4	sockaddr_in6
+op	148:39	0:0	4	*
+water	148:40	0:0	4	)
+op	148:41	0:0	4	&
+water	148:42	0:0	4	p_session
+op	148:51	0:0	4	->
+water	148:53	0:0	4	orig
+water	148:57	0:0	4	)
+op	148:58	0:0	4	->
+water	148:60	0:0	4	sin6_addr
+call	149:12	149:47	4	memcpy
+arg	149:20	149:39	5	psz_head+headsize
+water	149:20	0:0	6	psz_head
+op	149:29	0:0	6	+
+water	149:31	0:0	6	headsize
+arg	149:41	149:43	5	a6
+water	149:41	0:0	6	a6
+arg	149:45	149:47	5	16
+water	149:45	0:0	6	16
+water	149:48	0:0	4	;
+water	150:12	0:0	4	psz_head
+op	150:20	0:0	4	[
+water	150:21	0:0	4	0
+op	150:22	0:0	4	]
+op	150:24	0:0	4	|=
+water	150:27	0:0	4	0
+water	150:28	0:0	4	x10
+water	150:31	0:0	4	;
+water	151:12	0:0	4	headsize
+op	151:21	0:0	4	+=
+water	151:24	0:0	4	16
+water	151:26	0:0	4	;
+break	152:12	152:17	4	
+water	153:8	0:0	4	}
+label	155:8	155:20	4	case AF_INET :
+water	156:8	0:0	4	{
+decl	157:12	158:75	4	uint32_t	ipv4
+op	157:26	0:0	4	=
+water	158:16	0:0	4	(
+water	158:17	0:0	4	(
+water	158:18	0:0	4	(
+water	158:19	0:0	4	struct
+water	158:26	0:0	4	sockaddr_in
+op	158:38	0:0	4	*
+water	158:39	0:0	4	)
+op	158:40	0:0	4	&
+water	158:41	0:0	4	p_session
+op	158:50	0:0	4	->
+water	158:52	0:0	4	orig
+water	158:56	0:0	4	)
+op	158:57	0:0	4	->
+water	158:59	0:0	4	sin_addr
+op	158:67	0:0	4	.
+water	158:68	0:0	4	s_addr
+water	158:74	0:0	4	)
+call	159:12	159:49	4	memcpy
+arg	159:20	159:39	5	psz_head+headsize
+water	159:20	0:0	6	psz_head
+op	159:29	0:0	6	+
+water	159:31	0:0	6	headsize
+arg	159:41	159:46	5	&ipv4
+op	159:41	0:0	6	&
+water	159:42	0:0	6	ipv4
+arg	159:48	159:49	5	4
+water	159:48	0:0	6	4
+water	159:50	0:0	4	;
+water	160:12	0:0	4	headsize
+op	160:21	0:0	4	+=
+water	160:24	0:0	4	4
+water	160:25	0:0	4	;
+break	161:12	161:17	4	
+water	162:8	0:0	4	}
+water	163:4	0:0	4	}
+call	164:4	164:54	2	memcpy
+arg	164:12	164:31	3	psz_head+headsize
+water	164:12	0:0	4	psz_head
+op	164:21	0:0	4	+
+water	164:23	0:0	4	headsize
+arg	164:33	164:50	3	"application/sdp"
+water	164:33	0:0	4	"application/sdp"
+arg	164:52	164:54	3	16
+water	164:52	0:0	4	16
+water	164:55	0:0	2	;
+water	165:4	0:0	2	headsize
+op	165:13	0:0	2	+=
+water	165:16	0:0	2	16
+water	165:18	0:0	2	;
+call	167:4	167:59	2	strcpy
+arg	167:12	167:39	3	(char*)psz_head+headsize
+water	167:12	0:0	4	(
+water	167:13	0:0	4	char
+op	167:18	0:0	4	*
+water	167:19	0:0	4	)
+water	167:20	0:0	4	psz_head
+op	167:29	0:0	4	+
+water	167:31	0:0	4	headsize
+arg	167:41	167:59	3	p_session->psz_sdp
+water	167:41	0:0	4	p_session
+op	167:50	0:0	4	->
+water	167:52	0:0	4	psz_sdp
+water	167:60	0:0	2	;
+water	168:4	0:0	2	sap_addr
+op	168:12	0:0	2	->
+water	168:14	0:0	2	session_count
+op	168:27	0:0	2	++
+water	168:29	0:0	2	;
+call	169:4	169:36	2	vlc_cond_signal
+arg	169:21	169:36	3	&sap_addr->wait
+op	169:21	0:0	4	&
+water	169:22	0:0	4	sap_addr
+op	169:30	0:0	4	->
+water	169:32	0:0	4	wait
+water	169:37	0:0	2	;
+call	170:4	170:37	2	vlc_mutex_unlock
+arg	170:22	170:37	3	&sap_addr->lock
+op	170:22	0:0	4	&
+water	170:23	0:0	4	sap_addr
+op	170:31	0:0	4	->
+water	170:33	0:0	4	lock
+water	170:38	0:0	2	;
+return	171:4	171:22	2	VLC_SUCCESS
+water	171:11	0:0	3	VLC_SUCCESS

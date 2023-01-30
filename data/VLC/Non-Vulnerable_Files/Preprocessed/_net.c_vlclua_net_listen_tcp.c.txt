@@ -1,0 +1,188 @@
+func	2:0	30:0	0	static int	vlclua_net_listen_tcp
+params	2:32	0:0	1	
+param	2:34	2:47	2	lua_State *	L
+stmnts	0:0	29:12	1	
+decl	4:4	4:47	2	vlc_object_t	*p_this
+op	4:25	0:0	2	=
+call	4:27	4:46	3	vlclua_get_this
+arg	4:44	4:46	4	L
+water	4:44	0:0	5	L
+decl	5:4	5:51	2	const char	*psz_host
+op	5:25	0:0	2	=
+call	5:27	5:50	3	luaL_checkstring
+arg	5:45	5:46	4	L
+water	5:45	0:0	5	L
+arg	5:48	5:50	4	1
+water	5:48	0:0	5	1
+decl	6:4	6:38	2	int	i_port
+op	6:15	0:0	2	=
+call	6:17	6:37	3	luaL_checkint
+arg	6:32	6:33	4	L
+water	6:32	0:0	5	L
+arg	6:35	6:37	4	2
+water	6:35	0:0	5	2
+decl	7:4	7:58	2	int	*pi_fd
+op	7:15	0:0	2	=
+call	7:17	7:57	3	net_ListenTCP
+arg	7:32	7:38	4	p_this
+water	7:32	0:0	5	p_this
+arg	7:40	7:48	4	psz_host
+water	7:40	0:0	5	psz_host
+arg	7:50	7:57	4	i_port
+water	7:50	0:0	5	i_port
+if	8:4	9:74	2	(pi_fd == NULL)
+cond	8:8	8:17	3	pi_fd == NULL
+water	8:8	0:0	4	pi_fd
+op	8:14	0:0	4	==
+water	8:17	0:0	4	NULL
+stmts	9:8	9:74	3	
+return	9:8	9:74	4	luaL_error(L,"Cannot listen on %s:%d",psz_host,i_port)
+call	9:15	9:73	5	luaL_error
+arg	9:27	9:28	6	L
+water	9:27	0:0	7	L
+arg	9:30	9:54	6	"Cannot listen on %s:%d"
+water	9:30	0:0	7	"Cannot listen on %s:%d"
+arg	9:56	9:64	6	psz_host
+water	9:56	0:0	7	psz_host
+arg	9:66	9:73	6	i_port
+water	9:66	0:0	7	i_port
+for	10:4	17:8	2	(unsigned i = 0 ;pi_fd [ i ] != - 1;i ++)
+forinit	10:9	10:23	3	unsigned i = 0 ;
+water	10:9	0:0	4	unsigned
+water	10:18	0:0	4	i
+op	10:20	0:0	4	=
+water	10:22	0:0	4	0
+water	10:23	0:0	4	;
+cond	10:25	10:38	3	pi_fd [ i ] != - 1
+water	10:25	0:0	4	pi_fd
+op	10:30	0:0	4	[
+water	10:31	0:0	4	i
+op	10:32	0:0	4	]
+op	10:34	0:0	4	!=
+op	10:37	0:0	4	-
+water	10:38	0:0	4	1
+forexpr	10:41	10:42	3	i ++
+water	10:41	0:0	4	i
+op	10:42	0:0	4	++
+stmts	11:8	17:8	3	
+if	11:8	17:8	4	(vlclua_fd_map (L ,pi_fd [ i ] ) == - 1)
+cond	11:12	11:45	5	vlclua_fd_map (L ,pi_fd [ i ] ) == - 1
+call	11:12	11:39	6	vlclua_fd_map
+arg	11:27	11:28	7	L
+water	11:27	0:0	8	L
+arg	11:30	11:39	7	pi_fd[i]
+water	11:30	0:0	8	pi_fd
+op	11:35	0:0	8	[
+water	11:36	0:0	8	i
+op	11:37	0:0	8	]
+op	11:41	0:0	6	==
+op	11:44	0:0	6	-
+water	11:45	0:0	6	1
+stmts	12:8	17:8	5	
+water	12:8	0:0	6	{
+while	13:12	14:72	6	(i > 0)
+cond	13:19	13:23	7	i > 0
+water	13:19	0:0	8	i
+op	13:21	0:0	8	>
+water	13:23	0:0	8	0
+stmts	14:16	14:72	7	
+call	14:16	14:71	8	vlclua_fd_unmap
+arg	14:33	14:34	9	L
+water	14:33	0:0	10	L
+arg	14:36	14:71	9	vlclua_fd_get_lua(L,pi_fd[--i])
+call	14:36	14:69	10	vlclua_fd_get_lua
+arg	14:55	14:56	11	L
+water	14:55	0:0	12	L
+arg	14:58	14:69	11	pi_fd[--i]
+water	14:58	0:0	12	pi_fd
+op	14:63	0:0	12	[
+op	14:64	0:0	12	--
+water	14:66	0:0	12	i
+op	14:67	0:0	12	]
+water	14:72	0:0	8	;
+call	15:12	15:35	6	net_ListenClose
+arg	15:29	15:35	7	pi_fd
+water	15:29	0:0	8	pi_fd
+water	15:36	0:0	6	;
+return	16:12	16:78	6	luaL_error(L,"Cannot listen on %s:%d",psz_host,i_port)
+call	16:19	16:77	7	luaL_error
+arg	16:31	16:32	8	L
+water	16:31	0:0	9	L
+arg	16:34	16:58	8	"Cannot listen on %s:%d"
+water	16:34	0:0	9	"Cannot listen on %s:%d"
+arg	16:60	16:68	8	psz_host
+water	16:60	0:0	9	psz_host
+arg	16:70	16:77	8	i_port
+water	16:70	0:0	9	i_port
+water	17:8	0:0	6	}
+decl	18:4	18:56	2	int	**ppi_fd
+op	18:17	0:0	2	=
+call	18:19	18:55	3	lua_newuserdata
+arg	18:36	18:37	4	L
+water	18:36	0:0	5	L
+arg	18:39	18:55	4	sizeof(int*)
+op	18:39	0:0	5	sizeof
+water	18:45	0:0	5	(
+water	18:47	0:0	5	int
+op	18:51	0:0	5	*
+water	18:53	0:0	5	)
+op	19:4	0:0	2	*
+water	19:5	0:0	2	ppi_fd
+op	19:12	0:0	2	=
+water	19:14	0:0	2	pi_fd
+water	19:19	0:0	2	;
+if	20:4	27:4	2	(luaL_newmetatable (L ,"net_listen" ))
+cond	20:8	20:43	3	luaL_newmetatable (L ,"net_listen" )
+call	20:8	20:43	4	luaL_newmetatable
+arg	20:27	20:28	5	L
+water	20:27	0:0	6	L
+arg	20:30	20:43	5	"net_listen"
+water	20:30	0:0	6	"net_listen"
+stmts	21:4	27:4	3	
+water	21:4	0:0	4	{
+call	22:8	22:24	4	lua_newtable
+arg	22:22	22:24	5	L
+water	22:22	0:0	6	L
+water	22:25	0:0	4	;
+call	23:8	23:54	4	luaL_register
+arg	23:23	23:24	5	L
+water	23:23	0:0	6	L
+arg	23:26	23:30	5	NULL
+water	23:26	0:0	6	NULL
+arg	23:32	23:54	5	vlclua_net_listen_reg
+water	23:32	0:0	6	vlclua_net_listen_reg
+water	23:55	0:0	4	;
+call	24:8	24:39	4	lua_setfield
+arg	24:22	24:23	5	L
+water	24:22	0:0	6	L
+arg	24:25	24:27	5	-2
+op	24:25	0:0	6	-
+water	24:26	0:0	6	2
+arg	24:29	24:39	5	"__index"
+water	24:29	0:0	6	"__index"
+water	24:40	0:0	4	;
+call	25:8	25:54	4	lua_pushcfunction
+arg	25:27	25:28	5	L
+water	25:27	0:0	6	L
+arg	25:30	25:54	5	vlclua_net_listen_close
+water	25:30	0:0	6	vlclua_net_listen_close
+water	25:55	0:0	4	;
+call	26:8	26:36	4	lua_setfield
+arg	26:22	26:23	5	L
+water	26:22	0:0	6	L
+arg	26:25	26:27	5	-2
+op	26:25	0:0	6	-
+water	26:26	0:0	6	2
+arg	26:29	26:36	5	"__gc"
+water	26:29	0:0	6	"__gc"
+water	26:37	0:0	4	;
+water	27:4	0:0	4	}
+call	28:4	28:28	2	lua_setmetatable
+arg	28:22	28:23	3	L
+water	28:22	0:0	4	L
+arg	28:25	28:28	3	-2
+op	28:25	0:0	4	-
+water	28:26	0:0	4	2
+water	28:29	0:0	2	;
+return	29:4	29:12	2	1
+water	29:11	0:0	3	1

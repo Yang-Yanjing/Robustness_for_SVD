@@ -1,0 +1,123 @@
+func	2:0	28:0	0	static int	installOrRemoveAddon
+params	2:31	0:0	1	
+param	2:33	2:60	2	addons_manager_t *	p_manager
+param	2:62	2:84	2	addon_entry_t *	p_entry
+param	2:86	2:101	2	bool	b_install
+stmnts	0:0	27:19	1	
+decl	4:4	4:31	2	int	i_return
+op	4:17	0:0	2	=
+water	4:19	0:0	2	VLC_EGENERIC
+decl	5:4	6:97	2	addons_storage_t	*p_storage
+op	5:32	0:0	2	=
+call	6:8	6:96	3	vlc_custom_create
+arg	6:27	6:54	4	p_manager->p_priv->p_parent
+water	6:27	0:0	5	p_manager
+op	6:36	0:0	5	->
+water	6:38	0:0	5	p_priv
+op	6:44	0:0	5	->
+water	6:46	0:0	5	p_parent
+arg	6:56	6:76	4	sizeof(*p_storage)
+op	6:56	0:0	5	sizeof
+water	6:62	0:0	5	(
+op	6:64	0:0	5	*
+water	6:65	0:0	5	p_storage
+water	6:75	0:0	5	)
+arg	6:78	6:96	4	"entries storage"
+water	6:78	0:0	5	"entries storage"
+water	7:4	0:0	2	p_storage
+op	7:13	0:0	2	->
+water	7:15	0:0	2	i_flags
+op	7:23	0:0	2	|=
+water	7:26	0:0	2	OBJECT_FLAGS_NOINTERACT
+water	7:49	0:0	2	;
+decl	8:4	9:68	2	module_t	*p_module
+op	8:23	0:0	2	=
+call	8:25	9:67	3	module_need
+arg	8:38	8:47	4	p_storage
+water	8:38	0:0	5	p_storage
+arg	8:49	8:65	4	"addons storage"
+water	8:49	0:0	5	"addons storage"
+arg	9:38	9:60	4	"addons.store.install"
+water	9:38	0:0	5	"addons.store.install"
+arg	9:62	9:67	4	true
+water	9:62	0:0	5	true
+if	10:4	25:4	2	(p_module)
+cond	10:8	10:8	3	p_module
+water	10:8	0:0	4	p_module
+stmts	11:4	25:4	3	
+water	11:4	0:0	4	{
+if	12:8	13:66	4	(b_install)
+cond	12:13	12:13	5	b_install
+water	12:13	0:0	6	b_install
+stmts	13:12	13:66	5	
+water	13:12	0:0	6	i_return
+op	13:21	0:0	6	=
+call	13:23	13:65	6	p_storage->pf_install
+arg	13:46	13:55	7	p_storage
+water	13:46	0:0	8	p_storage
+arg	13:57	13:65	7	p_entry
+water	13:57	0:0	8	p_entry
+water	13:66	0:0	6	;
+else	14:8	15:65	4
+stmts	15:12	15:65	5	
+water	15:12	0:0	6	i_return
+op	15:21	0:0	6	=
+call	15:23	15:64	6	p_storage->pf_remove
+arg	15:45	15:54	7	p_storage
+water	15:45	0:0	8	p_storage
+arg	15:56	15:64	7	p_entry
+water	15:56	0:0	8	p_entry
+water	15:65	0:0	6	;
+call	16:8	16:43	4	module_unneed
+arg	16:23	16:32	5	p_storage
+water	16:23	0:0	6	p_storage
+arg	16:34	16:43	5	p_module
+water	16:34	0:0	6	p_module
+water	16:44	0:0	4	;
+call	17:8	17:82	4	msg_Dbg
+arg	17:17	17:44	5	p_manager->p_priv->p_parent
+water	17:17	0:0	6	p_manager
+op	17:26	0:0	6	->
+water	17:28	0:0	6	p_priv
+op	17:34	0:0	6	->
+water	17:36	0:0	6	p_parent
+arg	17:46	17:71	5	"InstallAddon returns %d"
+water	17:46	0:0	6	"InstallAddon returns %d"
+arg	17:73	17:82	5	i_return
+water	17:73	0:0	6	i_return
+water	17:83	0:0	4	;
+if	18:8	24:8	4	(i_return == VLC_SUCCESS)
+cond	18:13	18:25	5	i_return == VLC_SUCCESS
+water	18:13	0:0	6	i_return
+op	18:22	0:0	6	==
+water	18:25	0:0	6	VLC_SUCCESS
+stmts	19:8	24:8	5	
+water	19:8	0:0	6	{
+call	21:12	21:43	6	vlc_mutex_lock
+arg	21:28	21:43	7	&p_entry->lock
+op	21:28	0:0	8	&
+water	21:29	0:0	8	p_entry
+op	21:36	0:0	8	->
+water	21:38	0:0	8	lock
+water	21:44	0:0	6	;
+water	22:12	0:0	6	p_entry
+op	22:19	0:0	6	->
+water	22:21	0:0	6	e_flags
+op	22:29	0:0	6	=
+water	22:31	0:0	6	ADDON_MANAGEABLE
+water	22:47	0:0	6	;
+call	23:12	23:45	6	vlc_mutex_unlock
+arg	23:30	23:45	7	&p_entry->lock
+op	23:30	0:0	8	&
+water	23:31	0:0	8	p_entry
+op	23:38	0:0	8	->
+water	23:40	0:0	8	lock
+water	23:46	0:0	6	;
+water	24:8	0:0	6	}
+water	25:4	0:0	4	}
+call	26:4	26:34	2	vlc_object_release
+arg	26:24	26:34	3	p_storage
+water	26:24	0:0	4	p_storage
+water	26:35	0:0	2	;
+return	27:4	27:19	2	i_return
+water	27:11	0:0	3	i_return

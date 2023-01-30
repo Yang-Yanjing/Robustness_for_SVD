@@ -1,0 +1,512 @@
+func	1:0	106:2	0	static int	mirrorImage
+params	2:11	0:0	1	
+param	2:12	2:22	2	uint16	spp
+param	2:24	2:34	2	uint16	bps
+param	2:36	2:49	2	uint16	mirror
+param	2:51	2:63	2	uint32	width
+param	2:65	2:78	2	uint32	length
+param	2:80	2:100	2	unsigned char *	ibuff
+stmnts	0:0	105:12	1	
+decl	4:2	4:22	2	int	shift_width
+decl	5:2	5:44	2	uint32	bytes_per_pixel
+water	5:26	0:0	2	,
+decl	5:2	5:44	2	uint32	bytes_per_sample
+decl	6:2	6:35	2	uint32	row
+water	6:14	0:0	2	,
+decl	6:2	6:35	2	uint32	rowsize
+water	6:23	0:0	2	,
+decl	6:2	6:35	2	uint32	row_offset
+decl	7:2	7:33	2	unsigned char	*line_buff
+op	7:27	0:0	2	=
+water	7:29	0:0	2	NULL
+decl	8:2	8:20	2	unsigned char	*src
+decl	9:2	9:20	2	unsigned char	*dst
+water	10:2	0:0	2	src
+op	10:6	0:0	2	=
+water	10:8	0:0	2	ibuff
+water	10:13	0:0	2	;
+water	11:2	0:0	2	rowsize
+op	11:10	0:0	2	=
+water	11:12	0:0	2	(
+water	11:13	0:0	2	(
+water	11:14	0:0	2	width
+op	11:20	0:0	2	*
+water	11:22	0:0	2	bps
+op	11:26	0:0	2	*
+water	11:28	0:0	2	spp
+water	11:31	0:0	2	)
+op	11:33	0:0	2	+
+water	11:35	0:0	2	7
+water	11:36	0:0	2	)
+op	11:38	0:0	2	/
+water	11:40	0:0	2	8
+water	11:41	0:0	2	;
+switch	12:2	104:4	2	(mirror)
+cond	12:10	12:10	3	mirror
+water	12:10	0:0	4	mirror
+stmts	13:4	104:4	3	
+water	13:4	0:0	4	{
+label	14:4	14:20	4	case MIRROR_BOTH :
+label	15:4	15:20	4	case MIRROR_VERT :
+water	16:13	0:0	4	line_buff
+op	16:23	0:0	4	=
+water	16:25	0:0	4	(
+water	16:26	0:0	4	unsigned
+water	16:35	0:0	4	char
+op	16:40	0:0	4	*
+water	16:41	0:0	4	)
+call	16:42	16:61	4	_TIFFmalloc
+arg	16:54	16:61	5	rowsize
+water	16:54	0:0	6	rowsize
+water	16:62	0:0	4	;
+if	17:13	21:15	4	(line_buff == NULL)
+cond	17:17	17:30	5	line_buff == NULL
+water	17:17	0:0	6	line_buff
+op	17:27	0:0	6	==
+water	17:30	0:0	6	NULL
+stmts	18:15	21:15	5	
+water	18:15	0:0	6	{
+call	19:8	19:95	6	TIFFError
+arg	19:19	19:32	7	"mirrorImage"
+water	19:19	0:0	8	"mirrorImage"
+arg	19:34	19:86	7	"Unable to allocate mirror line buffer of %1u bytes"
+water	19:34	0:0	8	"Unable to allocate mirror line buffer of %1u bytes"
+arg	19:88	19:95	7	rowsize
+water	19:88	0:0	8	rowsize
+water	19:96	0:0	6	;
+return	20:15	20:26	6	(-1)
+water	20:22	0:0	7	(
+op	20:23	0:0	7	-
+water	20:24	0:0	7	1
+water	20:25	0:0	7	)
+water	21:15	0:0	6	}
+water	22:13	0:0	4	dst
+op	22:17	0:0	4	=
+water	22:19	0:0	4	ibuff
+op	22:25	0:0	4	+
+water	22:27	0:0	4	(
+water	22:28	0:0	4	rowsize
+op	22:36	0:0	4	*
+water	22:38	0:0	4	(
+water	22:39	0:0	4	length
+op	22:46	0:0	4	-
+water	22:48	0:0	4	1
+water	22:49	0:0	4	)
+water	22:50	0:0	4	)
+water	22:51	0:0	4	;
+for	23:13	30:15	4	(row = 0 ;row < length / 2;row ++)
+forinit	23:18	23:25	5	row = 0 ;
+water	23:18	0:0	6	row
+op	23:22	0:0	6	=
+water	23:24	0:0	6	0
+water	23:25	0:0	6	;
+cond	23:27	23:42	5	row < length / 2
+water	23:27	0:0	6	row
+op	23:31	0:0	6	<
+water	23:33	0:0	6	length
+op	23:40	0:0	6	/
+water	23:42	0:0	6	2
+forexpr	23:45	23:48	5	row ++
+water	23:45	0:0	6	row
+op	23:48	0:0	6	++
+stmts	24:15	30:15	5	
+water	24:15	0:0	6	{
+call	25:7	25:42	6	_TIFFmemcpy
+arg	25:19	25:28	7	line_buff
+water	25:19	0:0	8	line_buff
+arg	25:30	25:33	7	src
+water	25:30	0:0	8	src
+arg	25:35	25:42	7	rowsize
+water	25:35	0:0	8	rowsize
+water	25:43	0:0	6	;
+call	26:7	26:37	6	_TIFFmemcpy
+arg	26:19	26:22	7	src
+water	26:19	0:0	8	src
+arg	26:24	26:27	7	dst
+water	26:24	0:0	8	dst
+arg	26:30	26:37	7	rowsize
+water	26:30	0:0	8	rowsize
+water	26:38	0:0	6	;
+call	27:7	27:42	6	_TIFFmemcpy
+arg	27:19	27:22	7	dst
+water	27:19	0:0	8	dst
+arg	27:24	27:33	7	line_buff
+water	27:24	0:0	8	line_buff
+arg	27:35	27:42	7	rowsize
+water	27:35	0:0	8	rowsize
+water	27:43	0:0	6	;
+water	28:15	0:0	6	src
+op	28:19	0:0	6	+=
+water	28:22	0:0	6	(
+water	28:23	0:0	6	rowsize
+water	28:30	0:0	6	)
+water	28:31	0:0	6	;
+water	29:15	0:0	6	dst
+op	29:19	0:0	6	-=
+water	29:22	0:0	6	(
+water	29:23	0:0	6	rowsize
+water	29:30	0:0	6	)
+water	29:31	0:0	6	;
+water	30:15	0:0	6	}
+if	31:13	32:35	4	(line_buff)
+cond	31:17	31:17	5	line_buff
+water	31:17	0:0	6	line_buff
+stmts	32:15	32:35	5	
+call	32:15	32:34	6	_TIFFfree
+arg	32:25	32:34	7	line_buff
+water	32:25	0:0	8	line_buff
+water	32:35	0:0	6	;
+if	33:13	34:20	4	(mirror == MIRROR_VERT)
+cond	33:17	33:27	5	mirror == MIRROR_VERT
+water	33:17	0:0	6	mirror
+op	33:24	0:0	6	==
+water	33:27	0:0	6	MIRROR_VERT
+stmts	34:15	34:20	5	
+break	34:15	34:20	6	
+label	35:4	35:22	4	case MIRROR_HORIZ :
+if	36:14	48:2	4	(( bps % 8 ) == 0)
+cond	36:18	36:31	5	( bps % 8 ) == 0
+water	36:18	0:0	6	(
+water	36:19	0:0	6	bps
+op	36:23	0:0	6	%
+water	36:25	0:0	6	8
+water	36:26	0:0	6	)
+op	36:28	0:0	6	==
+water	36:31	0:0	6	0
+stmts	37:16	48:2	5	
+water	37:16	0:0	6	{
+for	38:16	47:4	6	(row = 0 ;row < length;row ++)
+forinit	38:21	38:28	7	row = 0 ;
+water	38:21	0:0	8	row
+op	38:25	0:0	8	=
+water	38:27	0:0	8	0
+water	38:28	0:0	8	;
+cond	38:30	38:36	7	row < length
+water	38:30	0:0	8	row
+op	38:34	0:0	8	<
+water	38:36	0:0	8	length
+forexpr	38:44	38:47	7	row ++
+water	38:44	0:0	8	row
+op	38:47	0:0	8	++
+stmts	39:18	47:4	7	
+water	39:18	0:0	8	{
+water	40:4	0:0	8	row_offset
+op	40:15	0:0	8	=
+water	40:17	0:0	8	row
+op	40:21	0:0	8	*
+water	40:23	0:0	8	rowsize
+water	40:30	0:0	8	;
+water	41:18	0:0	8	src
+op	41:22	0:0	8	=
+water	41:24	0:0	8	ibuff
+op	41:30	0:0	8	+
+water	41:32	0:0	8	row_offset
+water	41:42	0:0	8	;
+water	42:18	0:0	8	dst
+op	42:22	0:0	8	=
+water	42:24	0:0	8	ibuff
+op	42:30	0:0	8	+
+water	42:32	0:0	8	row_offset
+op	42:43	0:0	8	+
+water	42:45	0:0	8	rowsize
+water	42:52	0:0	8	;
+if	43:18	46:20	8	(reverseSamplesBytes (spp ,bps ,width ,src ,dst ))
+cond	43:22	43:67	9	reverseSamplesBytes (spp ,bps ,width ,src ,dst )
+call	43:22	43:67	10	reverseSamplesBytes
+arg	43:42	43:45	11	spp
+water	43:42	0:0	12	spp
+arg	43:47	43:50	11	bps
+water	43:47	0:0	12	bps
+arg	43:52	43:57	11	width
+water	43:52	0:0	12	width
+arg	43:59	43:62	11	src
+water	43:59	0:0	12	src
+arg	43:64	43:67	11	dst
+water	43:64	0:0	12	dst
+stmts	44:20	46:20	9	
+water	44:20	0:0	10	{
+return	45:6	45:17	10	(-1)
+water	45:13	0:0	11	(
+op	45:14	0:0	11	-
+water	45:15	0:0	11	1
+water	45:16	0:0	11	)
+water	46:20	0:0	10	}
+water	47:4	0:0	8	}
+water	48:2	0:0	6	}
+else	49:7	99:2	4
+stmts	50:16	99:2	5	
+water	50:16	0:0	6	{
+if	51:16	55:18	6	(! ( line_buff = ( unsigned char * )_TIFFmalloc (rowsize + 1 ) ))
+cond	51:20	51:75	7	! ( line_buff = ( unsigned char * )_TIFFmalloc (rowsize + 1 ) )
+op	51:20	0:0	8	!
+water	51:21	0:0	8	(
+water	51:22	0:0	8	line_buff
+op	51:32	0:0	8	=
+water	51:34	0:0	8	(
+water	51:35	0:0	8	unsigned
+water	51:44	0:0	8	char
+op	51:49	0:0	8	*
+water	51:50	0:0	8	)
+call	51:51	51:74	8	_TIFFmalloc
+arg	51:63	51:74	9	rowsize+1
+water	51:63	0:0	10	rowsize
+op	51:71	0:0	10	+
+water	51:73	0:0	10	1
+water	51:75	0:0	8	)
+stmts	52:18	55:18	7	
+water	52:18	0:0	8	{
+call	53:18	53:82	8	TIFFError
+arg	53:28	53:41	9	"mirrorImage"
+water	53:28	0:0	10	"mirrorImage"
+arg	53:43	53:82	9	"Unable to allocate mirror line buffer"
+water	53:43	0:0	10	"Unable to allocate mirror line buffer"
+water	53:83	0:0	8	;
+return	54:18	54:29	8	(-1)
+water	54:25	0:0	9	(
+op	54:26	0:0	9	-
+water	54:27	0:0	9	1
+water	54:28	0:0	9	)
+water	55:18	0:0	8	}
+water	56:16	0:0	6	bytes_per_sample
+op	56:33	0:0	6	=
+water	56:35	0:0	6	(
+water	56:36	0:0	6	bps
+op	56:40	0:0	6	+
+water	56:42	0:0	6	7
+water	56:43	0:0	6	)
+op	56:45	0:0	6	/
+water	56:47	0:0	6	8
+water	56:48	0:0	6	;
+water	57:16	0:0	6	bytes_per_pixel
+op	57:33	0:0	6	=
+water	57:35	0:0	6	(
+water	57:36	0:0	6	(
+water	57:37	0:0	6	bps
+op	57:41	0:0	6	*
+water	57:43	0:0	6	spp
+water	57:46	0:0	6	)
+op	57:48	0:0	6	+
+water	57:50	0:0	6	7
+water	57:51	0:0	6	)
+op	57:53	0:0	6	/
+water	57:55	0:0	6	8
+water	57:56	0:0	6	;
+if	58:16	59:47	6	(bytes_per_pixel < ( bytes_per_sample + 1 ))
+cond	58:20	58:59	7	bytes_per_pixel < ( bytes_per_sample + 1 )
+water	58:20	0:0	8	bytes_per_pixel
+op	58:36	0:0	8	<
+water	58:38	0:0	8	(
+water	58:39	0:0	8	bytes_per_sample
+op	58:56	0:0	8	+
+water	58:58	0:0	8	1
+water	58:59	0:0	8	)
+stmts	59:18	59:47	7	
+water	59:18	0:0	8	shift_width
+op	59:30	0:0	8	=
+water	59:32	0:0	8	bytes_per_pixel
+water	59:47	0:0	8	;
+else	60:16	61:52	6
+stmts	61:18	61:52	7	
+water	61:18	0:0	8	shift_width
+op	61:30	0:0	8	=
+water	61:32	0:0	8	bytes_per_sample
+op	61:49	0:0	8	+
+water	61:51	0:0	8	1
+water	61:52	0:0	8	;
+for	62:16	96:4	6	(row = 0 ;row < length;row ++)
+forinit	62:21	62:28	7	row = 0 ;
+water	62:21	0:0	8	row
+op	62:25	0:0	8	=
+water	62:27	0:0	8	0
+water	62:28	0:0	8	;
+cond	62:30	62:36	7	row < length
+water	62:30	0:0	8	row
+op	62:34	0:0	8	<
+water	62:36	0:0	8	length
+forexpr	62:44	62:47	7	row ++
+water	62:44	0:0	8	row
+op	62:47	0:0	8	++
+stmts	63:18	96:4	7	
+water	63:18	0:0	8	{
+water	64:4	0:0	8	row_offset
+op	64:15	0:0	8	=
+water	64:17	0:0	8	row
+op	64:21	0:0	8	*
+water	64:23	0:0	8	rowsize
+water	64:30	0:0	8	;
+water	65:18	0:0	8	src
+op	65:22	0:0	8	=
+water	65:24	0:0	8	ibuff
+op	65:30	0:0	8	+
+water	65:32	0:0	8	row_offset
+water	65:42	0:0	8	;
+call	66:18	66:55	8	_TIFFmemset
+arg	66:31	66:40	9	line_buff
+water	66:31	0:0	10	line_buff
+arg	66:42	66:46	9	'\0'
+water	66:42	0:0	10	'\0'
+arg	66:48	66:55	9	rowsize
+water	66:48	0:0	10	rowsize
+water	66:56	0:0	8	;
+switch	67:18	95:20	8	(shift_width)
+cond	67:26	67:26	9	shift_width
+water	67:26	0:0	10	shift_width
+stmts	68:20	95:20	9	
+water	68:20	0:0	10	{
+label	69:20	69:26	10	case 1 :
+if	69:28	73:30	10	(reverseSamples16bits (spp ,bps ,width ,src ,line_buff ))
+cond	69:32	69:84	11	reverseSamples16bits (spp ,bps ,width ,src ,line_buff )
+call	69:32	69:84	12	reverseSamples16bits
+arg	69:53	69:56	13	spp
+water	69:53	0:0	14	spp
+arg	69:58	69:61	13	bps
+water	69:58	0:0	14	bps
+arg	69:63	69:68	13	width
+water	69:63	0:0	14	width
+arg	69:70	69:73	13	src
+water	69:70	0:0	14	src
+arg	69:75	69:84	13	line_buff
+water	69:75	0:0	14	line_buff
+stmts	70:30	73:30	11	
+water	70:30	0:0	12	{
+call	71:16	71:35	12	_TIFFfree
+arg	71:26	71:35	13	line_buff
+water	71:26	0:0	14	line_buff
+water	71:36	0:0	12	;
+return	72:30	72:41	12	(-1)
+water	72:37	0:0	13	(
+op	72:38	0:0	13	-
+water	72:39	0:0	13	1
+water	72:40	0:0	13	)
+water	73:30	0:0	12	}
+call	74:29	74:65	10	_TIFFmemcpy
+arg	74:42	74:45	11	src
+water	74:42	0:0	12	src
+arg	74:47	74:56	11	line_buff
+water	74:47	0:0	12	line_buff
+arg	74:58	74:65	11	rowsize
+water	74:58	0:0	12	rowsize
+water	74:66	0:0	10	;
+break	75:29	75:34	10	
+label	76:20	76:26	10	case 2 :
+if	76:28	80:30	10	(reverseSamples24bits (spp ,bps ,width ,src ,line_buff ))
+cond	76:32	76:84	11	reverseSamples24bits (spp ,bps ,width ,src ,line_buff )
+call	76:32	76:84	12	reverseSamples24bits
+arg	76:53	76:56	13	spp
+water	76:53	0:0	14	spp
+arg	76:58	76:61	13	bps
+water	76:58	0:0	14	bps
+arg	76:63	76:68	13	width
+water	76:63	0:0	14	width
+arg	76:70	76:73	13	src
+water	76:70	0:0	14	src
+arg	76:75	76:84	13	line_buff
+water	76:75	0:0	14	line_buff
+stmts	77:30	80:30	11	
+water	77:30	0:0	12	{
+call	78:16	78:35	12	_TIFFfree
+arg	78:26	78:35	13	line_buff
+water	78:26	0:0	14	line_buff
+water	78:36	0:0	12	;
+return	79:30	79:41	12	(-1)
+water	79:37	0:0	13	(
+op	79:38	0:0	13	-
+water	79:39	0:0	13	1
+water	79:40	0:0	13	)
+water	80:30	0:0	12	}
+call	81:29	81:65	10	_TIFFmemcpy
+arg	81:42	81:45	11	src
+water	81:42	0:0	12	src
+arg	81:47	81:56	11	line_buff
+water	81:47	0:0	12	line_buff
+arg	81:58	81:65	11	rowsize
+water	81:58	0:0	12	rowsize
+water	81:66	0:0	10	;
+break	82:29	82:34	10	
+label	83:20	83:26	10	case 3 :
+label	84:20	84:26	10	case 4 :
+label	85:20	85:26	10	case 5 :
+if	85:28	89:30	10	(reverseSamples32bits (spp ,bps ,width ,src ,line_buff ))
+cond	85:32	85:84	11	reverseSamples32bits (spp ,bps ,width ,src ,line_buff )
+call	85:32	85:84	12	reverseSamples32bits
+arg	85:53	85:56	13	spp
+water	85:53	0:0	14	spp
+arg	85:58	85:61	13	bps
+water	85:58	0:0	14	bps
+arg	85:63	85:68	13	width
+water	85:63	0:0	14	width
+arg	85:70	85:73	13	src
+water	85:70	0:0	14	src
+arg	85:75	85:84	13	line_buff
+water	85:75	0:0	14	line_buff
+stmts	86:30	89:30	11	
+water	86:30	0:0	12	{
+call	87:16	87:35	12	_TIFFfree
+arg	87:26	87:35	13	line_buff
+water	87:26	0:0	14	line_buff
+water	87:36	0:0	12	;
+return	88:30	88:41	12	(-1)
+water	88:37	0:0	13	(
+op	88:38	0:0	13	-
+water	88:39	0:0	13	1
+water	88:40	0:0	13	)
+water	89:30	0:0	12	}
+call	90:29	90:65	10	_TIFFmemcpy
+arg	90:42	90:45	11	src
+water	90:42	0:0	12	src
+arg	90:47	90:56	11	line_buff
+water	90:47	0:0	12	line_buff
+arg	90:58	90:65	11	rowsize
+water	90:58	0:0	12	rowsize
+water	90:66	0:0	10	;
+break	91:29	91:34	10	
+label	92:20	92:27	10	default :
+call	92:29	92:84	10	TIFFError
+arg	92:39	92:52	11	"mirrorImage"
+water	92:39	0:0	12	"mirrorImage"
+arg	92:53	92:79	11	"Unsupported bit depth %d"
+water	92:53	0:0	12	"Unsupported bit depth %d"
+arg	92:81	92:84	11	bps
+water	92:81	0:0	12	bps
+water	92:85	0:0	10	;
+call	93:15	93:34	10	_TIFFfree
+arg	93:25	93:34	11	line_buff
+water	93:25	0:0	12	line_buff
+water	93:35	0:0	10	;
+return	94:29	94:40	10	(-1)
+water	94:36	0:0	11	(
+op	94:37	0:0	11	-
+water	94:38	0:0	11	1
+water	94:39	0:0	11	)
+water	95:20	0:0	10	}
+water	96:4	0:0	8	}
+if	97:16	98:38	6	(line_buff)
+cond	97:20	97:20	7	line_buff
+water	97:20	0:0	8	line_buff
+stmts	98:18	98:38	7	
+call	98:18	98:37	8	_TIFFfree
+arg	98:28	98:37	9	line_buff
+water	98:28	0:0	10	line_buff
+water	98:38	0:0	8	;
+water	99:2	0:0	6	}
+break	100:13	100:18	4	
+label	101:4	101:11	4	default :
+call	101:13	101:71	4	TIFFError
+arg	101:24	101:37	5	"mirrorImage"
+water	101:24	0:0	6	"mirrorImage"
+arg	101:39	101:63	5	"Invalid mirror axis %d"
+water	101:39	0:0	6	"Invalid mirror axis %d"
+arg	101:65	101:71	5	mirror
+water	101:65	0:0	6	mirror
+water	101:72	0:0	4	;
+return	102:13	102:24	4	(-1)
+water	102:20	0:0	5	(
+op	102:21	0:0	5	-
+water	102:22	0:0	5	1
+water	102:23	0:0	5	)
+break	103:13	103:18	4	
+water	104:4	0:0	4	}
+return	105:2	105:12	2	(0)
+water	105:9	0:0	3	(
+water	105:10	0:0	3	0
+water	105:11	0:0	3	)

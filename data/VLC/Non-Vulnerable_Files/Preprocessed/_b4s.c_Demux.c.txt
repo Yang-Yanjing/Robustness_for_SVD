@@ -1,0 +1,614 @@
+func	2:0	155:0	0	static int	Demux
+params	2:16	0:0	1	
+param	2:18	2:35	2	demux_t *	p_demux
+stmnts	0:0	154:16	1	
+decl	4:4	4:18	2	int	i_ret
+op	4:14	0:0	2	=
+op	4:16	0:0	2	-
+water	4:17	0:0	2	1
+decl	5:4	5:37	2	xml_reader_t	*p_xml_reader
+op	5:31	0:0	2	=
+water	5:33	0:0	2	NULL
+decl	6:4	6:27	2	char	*psz_elname
+op	6:21	0:0	2	=
+water	6:23	0:0	2	NULL
+decl	7:4	7:20	2	const char	*node
+decl	8:4	8:25	2	input_item_t	*p_input
+decl	9:4	9:62	2	char	*psz_mrl
+op	9:18	0:0	2	=
+water	9:20	0:0	2	NULL
+water	9:24	0:0	2	,
+decl	9:4	9:62	2	char	*psz_title
+op	9:37	0:0	2	=
+water	9:39	0:0	2	NULL
+water	9:43	0:0	2	,
+decl	9:4	9:62	2	char	*psz_genre
+op	9:56	0:0	2	=
+water	9:58	0:0	2	NULL
+decl	10:4	10:68	2	char	*psz_now
+op	10:18	0:0	2	=
+water	10:20	0:0	2	NULL
+water	10:24	0:0	2	,
+decl	10:4	10:68	2	char	*psz_listeners
+op	10:41	0:0	2	=
+water	10:43	0:0	2	NULL
+water	10:47	0:0	2	,
+decl	10:4	10:68	2	char	*psz_bitrate
+op	10:62	0:0	2	=
+water	10:64	0:0	2	NULL
+decl	11:4	11:40	2	input_item_node_t	*p_subitems
+op	11:34	0:0	2	=
+water	11:36	0:0	2	NULL
+decl	12:4	12:59	2	input_item_t	*p_current_input
+op	12:34	0:0	2	=
+call	12:36	12:58	3	GetCurrentItem
+arg	12:51	12:58	4	p_demux
+water	12:51	0:0	5	p_demux
+call	13:4	13:40	2	free
+arg	13:10	13:40	3	stream_ReadLine(p_demux->s)
+call	13:10	13:38	4	stream_ReadLine
+arg	13:27	13:38	5	p_demux->s
+water	13:27	0:0	6	p_demux
+op	13:34	0:0	6	->
+water	13:36	0:0	6	s
+water	13:41	0:0	2	;
+water	14:4	0:0	2	p_xml_reader
+op	14:17	0:0	2	=
+call	14:19	14:57	2	xml_ReaderCreate
+arg	14:37	14:44	3	p_demux
+water	14:37	0:0	4	p_demux
+arg	14:46	14:57	3	p_demux->s
+water	14:46	0:0	4	p_demux
+op	14:53	0:0	4	->
+water	14:55	0:0	4	s
+water	14:58	0:0	2	;
+if	15:4	16:17	2	(! p_xml_reader)
+cond	15:8	15:9	3	! p_xml_reader
+op	15:8	0:0	4	!
+water	15:9	0:0	4	p_xml_reader
+stmts	16:8	16:17	3	
+return	16:8	16:17	4	-1
+op	16:15	0:0	5	-
+water	16:16	0:0	5	1
+if	19:4	23:4	2	(xml_ReaderNextNode (p_xml_reader ,& node ) != XML_READER_STARTELEM)
+cond	19:8	19:53	3	xml_ReaderNextNode (p_xml_reader ,& node ) != XML_READER_STARTELEM
+call	19:8	19:48	4	xml_ReaderNextNode
+arg	19:28	19:40	5	p_xml_reader
+water	19:28	0:0	6	p_xml_reader
+arg	19:42	19:48	5	&node
+op	19:42	0:0	6	&
+water	19:43	0:0	6	node
+op	19:50	0:0	4	!=
+water	19:53	0:0	4	XML_READER_STARTELEM
+stmts	20:4	23:4	3	
+water	20:4	0:0	4	{
+call	21:8	21:56	4	msg_Err
+arg	21:17	21:24	5	p_demux
+water	21:17	0:0	6	p_demux
+arg	21:26	21:56	5	"invalid file (no root node)"
+water	21:26	0:0	6	"invalid file (no root node)"
+water	21:57	0:0	4	;
+goto	22:8	22:16	4	end
+water	22:13	0:0	5	end
+water	23:4	0:0	4	}
+if	24:4	28:4	2	(strcmp (node ,"WinampXML" ))
+cond	24:8	24:34	3	strcmp (node ,"WinampXML" )
+call	24:8	24:34	4	strcmp
+arg	24:16	24:20	5	node
+water	24:16	0:0	6	node
+arg	24:22	24:34	5	"WinampXML"
+water	24:22	0:0	6	"WinampXML"
+stmts	25:4	28:4	3	
+water	25:4	0:0	4	{
+call	26:8	26:56	4	msg_Err
+arg	26:17	26:24	5	p_demux
+water	26:17	0:0	6	p_demux
+arg	26:26	26:49	5	"invalid root node: %s"
+water	26:26	0:0	6	"invalid root node: %s"
+arg	26:51	26:56	5	node
+water	26:51	0:0	6	node
+water	26:57	0:0	4	;
+goto	27:8	27:16	4	end
+water	27:13	0:0	5	end
+water	28:4	0:0	4	}
+while	32:4	37:8	2	(( i_ret =xml_ReaderNextNode (p_xml_reader ,& node ) ) != XML_READER_STARTELEM)
+cond	32:11	32:66	3	( i_ret =xml_ReaderNextNode (p_xml_reader ,& node ) ) != XML_READER_STARTELEM
+water	32:11	0:0	4	(
+water	32:12	0:0	4	i_ret
+op	32:18	0:0	4	=
+call	32:20	32:60	4	xml_ReaderNextNode
+arg	32:40	32:52	5	p_xml_reader
+water	32:40	0:0	6	p_xml_reader
+arg	32:54	32:60	5	&node
+op	32:54	0:0	6	&
+water	32:55	0:0	6	node
+water	32:61	0:0	4	)
+op	32:63	0:0	4	!=
+water	32:66	0:0	4	XML_READER_STARTELEM
+stmts	33:8	37:8	3	
+if	33:8	37:8	4	(i_ret <= 0)
+cond	33:12	33:21	5	i_ret <= 0
+water	33:12	0:0	6	i_ret
+op	33:18	0:0	6	<=
+water	33:21	0:0	6	0
+stmts	34:8	37:8	5	
+water	34:8	0:0	6	{
+call	35:12	35:61	6	msg_Err
+arg	35:21	35:28	7	p_demux
+water	35:21	0:0	8	p_demux
+arg	35:30	35:61	7	"invalid file (no child node)"
+water	35:30	0:0	8	"invalid file (no child node)"
+water	35:62	0:0	6	;
+goto	36:12	36:20	6	end
+water	36:17	0:0	7	end
+water	37:8	0:0	6	}
+if	38:4	42:4	2	(strcmp (node ,"playlist" ))
+cond	38:8	38:33	3	strcmp (node ,"playlist" )
+call	38:8	38:33	4	strcmp
+arg	38:16	38:20	5	node
+water	38:16	0:0	6	node
+arg	38:22	38:33	5	"playlist"
+water	38:22	0:0	6	"playlist"
+stmts	39:4	42:4	3	
+water	39:4	0:0	4	{
+call	40:8	40:56	4	msg_Err
+arg	40:17	40:24	5	p_demux
+water	40:17	0:0	6	p_demux
+arg	40:26	40:49	5	"invalid child node %s"
+water	40:26	0:0	6	"invalid child node %s"
+arg	40:51	40:56	5	node
+water	40:51	0:0	6	node
+water	40:57	0:0	4	;
+goto	41:8	41:16	4	end
+water	41:13	0:0	5	end
+water	42:4	0:0	4	}
+decl	44:4	44:28	2	const char	*attr
+water	44:20	0:0	2	,
+decl	44:4	44:28	2	const char	*value
+while	45:4	54:4	2	(( attr =xml_ReaderNextAttr (p_xml_reader ,& value ) ) != NULL)
+cond	45:11	45:66	3	( attr =xml_ReaderNextAttr (p_xml_reader ,& value ) ) != NULL
+water	45:11	0:0	4	(
+water	45:12	0:0	4	attr
+op	45:17	0:0	4	=
+call	45:19	45:60	4	xml_ReaderNextAttr
+arg	45:39	45:51	5	p_xml_reader
+water	45:39	0:0	6	p_xml_reader
+arg	45:53	45:60	5	&value
+op	45:53	0:0	6	&
+water	45:54	0:0	6	value
+water	45:61	0:0	4	)
+op	45:63	0:0	4	!=
+water	45:66	0:0	4	NULL
+stmts	46:4	54:4	3	
+water	46:4	0:0	4	{
+if	47:8	48:70	4	(!strcmp (attr ,"num_entries" ))
+cond	47:12	47:41	5	!strcmp (attr ,"num_entries" )
+op	47:12	0:0	6	!
+call	47:13	47:41	6	strcmp
+arg	47:21	47:25	7	attr
+water	47:21	0:0	8	attr
+arg	47:27	47:41	7	"num_entries"
+water	47:27	0:0	8	"num_entries"
+stmts	48:12	48:70	5	
+call	48:12	48:69	6	msg_Dbg
+arg	48:21	48:28	7	p_demux
+water	48:21	0:0	8	p_demux
+arg	48:30	48:55	7	"playlist has %d entries"
+water	48:30	0:0	8	"playlist has %d entries"
+arg	48:57	48:69	7	atoi(value)
+call	48:57	48:67	8	atoi
+arg	48:62	48:67	9	value
+water	48:62	0:0	10	value
+water	48:70	0:0	6	;
+else	49:8	50:56	4
+stmts	49:13	50:56	5	
+if	49:13	50:56	6	(!strcmp (attr ,"label" ))
+cond	49:17	49:40	7	!strcmp (attr ,"label" )
+op	49:17	0:0	8	!
+call	49:18	49:40	8	strcmp
+arg	49:26	49:30	9	attr
+water	49:26	0:0	10	attr
+arg	49:32	49:40	9	"label"
+water	49:32	0:0	10	"label"
+stmts	50:12	50:56	7	
+call	50:12	50:55	8	input_item_SetName
+arg	50:32	50:47	9	p_current_input
+water	50:32	0:0	10	p_current_input
+arg	50:49	50:55	9	value
+water	50:49	0:0	10	value
+water	50:56	0:0	8	;
+else	51:8	53:50	4
+stmts	52:12	53:50	5	
+call	52:12	53:49	6	msg_Warn
+arg	52:22	52:29	7	p_demux
+water	52:22	0:0	8	p_demux
+arg	52:31	53:35	7	"stray attribute %s with value %s in element"" <playlist>"
+water	52:31	0:0	8	"stray attribute %s with value %s in element"
+water	53:22	0:0	8	" <playlist>"
+arg	53:37	53:41	7	attr
+water	53:37	0:0	8	attr
+arg	53:43	53:49	7	value
+water	53:43	0:0	8	value
+water	53:50	0:0	6	;
+water	54:4	0:0	4	}
+water	55:4	0:0	2	p_subitems
+op	55:15	0:0	2	=
+call	55:17	55:57	2	input_item_node_Create
+arg	55:41	55:57	3	p_current_input
+water	55:41	0:0	4	p_current_input
+water	55:58	0:0	2	;
+while	56:4	141:4	2	(( i_ret =xml_ReaderNextNode (p_xml_reader ,& node ) ) > 0)
+cond	56:11	56:65	3	( i_ret =xml_ReaderNextNode (p_xml_reader ,& node ) ) > 0
+water	56:11	0:0	4	(
+water	56:12	0:0	4	i_ret
+op	56:18	0:0	4	=
+call	56:20	56:60	4	xml_ReaderNextNode
+arg	56:40	56:52	5	p_xml_reader
+water	56:40	0:0	6	p_xml_reader
+arg	56:54	56:60	5	&node
+op	56:54	0:0	6	&
+water	56:55	0:0	6	node
+water	56:61	0:0	4	)
+op	56:63	0:0	4	>
+water	56:65	0:0	4	0
+stmts	57:4	141:4	3	
+water	57:4	0:0	4	{
+switch	59:8	140:8	4	(i_ret)
+cond	59:16	59:16	5	i_ret
+water	59:16	0:0	6	i_ret
+stmts	60:8	140:8	5	
+water	60:8	0:0	6	{
+label	61:12	61:37	6	case XML_READER_STARTELEM :
+water	62:12	0:0	6	{
+call	64:16	64:33	6	free
+arg	64:22	64:33	7	psz_elname
+water	64:22	0:0	8	psz_elname
+water	64:34	0:0	6	;
+water	65:16	0:0	6	psz_elname
+op	65:27	0:0	6	=
+call	65:29	65:42	6	strdup
+arg	65:37	65:42	7	node
+water	65:37	0:0	8	node
+water	65:43	0:0	6	;
+if	66:16	67:28	6	(unlikely (! psz_elname ))
+cond	66:20	66:40	7	unlikely (! psz_elname )
+call	66:20	66:40	8	unlikely
+arg	66:29	66:40	9	!psz_elname
+op	66:29	0:0	10	!
+water	66:30	0:0	10	psz_elname
+stmts	67:20	67:28	7	
+goto	67:20	67:28	8	end
+water	67:25	0:0	9	end
+while	69:16	82:16	6	(( attr =xml_ReaderNextAttr (p_xml_reader ,& value ) ))
+cond	69:23	69:73	7	( attr =xml_ReaderNextAttr (p_xml_reader ,& value ) )
+water	69:23	0:0	8	(
+water	69:24	0:0	8	attr
+op	69:29	0:0	8	=
+call	69:31	69:72	8	xml_ReaderNextAttr
+arg	69:51	69:63	9	p_xml_reader
+water	69:51	0:0	10	p_xml_reader
+arg	69:65	69:72	9	&value
+op	69:65	0:0	10	&
+water	69:66	0:0	10	value
+water	69:73	0:0	8	)
+stmts	70:16	82:16	7	
+water	70:16	0:0	8	{
+if	71:20	76:20	8	(!strcmp (psz_elname ,"entry" ) && !strcmp (attr ,"Playstring" ))
+cond	71:24	72:52	9	!strcmp (psz_elname ,"entry" ) && !strcmp (attr ,"Playstring" )
+op	71:24	0:0	10	!
+call	71:25	71:53	10	strcmp
+arg	71:33	71:43	11	psz_elname
+water	71:33	0:0	12	psz_elname
+arg	71:45	71:53	11	"entry"
+water	71:45	0:0	12	"entry"
+op	71:55	0:0	10	&&
+op	72:24	0:0	10	!
+call	72:25	72:52	10	strcmp
+arg	72:33	72:37	11	attr
+water	72:33	0:0	12	attr
+arg	72:39	72:52	11	"Playstring"
+water	72:39	0:0	12	"Playstring"
+stmts	73:20	76:20	9	
+water	73:20	0:0	10	{
+call	74:24	74:38	10	free
+arg	74:30	74:38	11	psz_mrl
+water	74:30	0:0	12	psz_mrl
+water	74:39	0:0	10	;
+water	75:24	0:0	10	psz_mrl
+op	75:32	0:0	10	=
+call	75:34	75:48	10	strdup
+arg	75:42	75:48	11	value
+water	75:42	0:0	12	value
+water	75:49	0:0	10	;
+water	76:20	0:0	10	}
+else	77:20	81:20	8
+stmts	78:20	81:20	9	
+water	78:20	0:0	10	{
+call	79:24	80:51	10	msg_Warn
+arg	79:34	79:41	11	p_demux
+water	79:34	0:0	12	p_demux
+arg	79:43	79:76	11	"unexpected attribute %s in <%s>"
+water	79:43	0:0	12	"unexpected attribute %s in <%s>"
+arg	80:34	80:38	11	attr
+water	80:34	0:0	12	attr
+arg	80:40	80:51	11	psz_elname
+water	80:40	0:0	12	psz_elname
+water	80:52	0:0	10	;
+water	81:20	0:0	10	}
+water	82:16	0:0	8	}
+break	83:16	83:21	6	
+water	84:12	0:0	6	}
+label	85:12	85:32	6	case XML_READER_TEXT :
+water	86:12	0:0	6	{
+decl	87:16	87:24	6	char	**p
+if	88:16	89:25	6	(psz_elname == NULL)
+cond	88:20	88:34	7	psz_elname == NULL
+water	88:20	0:0	8	psz_elname
+op	88:31	0:0	8	==
+water	88:34	0:0	8	NULL
+stmts	89:20	89:25	7	
+break	89:20	89:25	8	
+if	90:16	91:25	6	(IsWhitespace (node ))
+cond	90:20	90:39	7	IsWhitespace (node )
+call	90:20	90:39	8	IsWhitespace
+arg	90:34	90:39	9	node
+water	90:34	0:0	10	node
+stmts	91:20	91:25	7	
+break	91:20	91:25	8	
+if	92:16	93:34	6	(!strcmp (psz_elname ,"Name" ))
+cond	92:20	92:48	7	!strcmp (psz_elname ,"Name" )
+op	92:20	0:0	8	!
+call	92:21	92:48	8	strcmp
+arg	92:29	92:39	9	psz_elname
+water	92:29	0:0	10	psz_elname
+arg	92:41	92:48	9	"Name"
+water	92:41	0:0	10	"Name"
+stmts	93:20	93:34	7	
+water	93:20	0:0	8	p
+op	93:22	0:0	8	=
+op	93:24	0:0	8	&
+water	93:25	0:0	8	psz_title
+water	93:34	0:0	8	;
+else	94:16	95:34	6
+stmts	94:21	95:34	7	
+if	94:21	95:34	8	(!strcmp (psz_elname ,"Genre" ))
+cond	94:25	94:54	9	!strcmp (psz_elname ,"Genre" )
+op	94:25	0:0	10	!
+call	94:26	94:54	10	strcmp
+arg	94:34	94:44	11	psz_elname
+water	94:34	0:0	12	psz_elname
+arg	94:46	94:54	11	"Genre"
+water	94:46	0:0	12	"Genre"
+stmts	95:20	95:34	9	
+water	95:20	0:0	10	p
+op	95:22	0:0	10	=
+op	95:24	0:0	10	&
+water	95:25	0:0	10	psz_genre
+water	95:34	0:0	10	;
+else	96:16	97:32	6
+stmts	96:21	97:32	7	
+if	96:21	97:32	8	(!strcmp (psz_elname ,"Nowplaying" ))
+cond	96:25	96:59	9	!strcmp (psz_elname ,"Nowplaying" )
+op	96:25	0:0	10	!
+call	96:26	96:59	10	strcmp
+arg	96:34	96:44	11	psz_elname
+water	96:34	0:0	12	psz_elname
+arg	96:46	96:59	11	"Nowplaying"
+water	96:46	0:0	12	"Nowplaying"
+stmts	97:20	97:32	9	
+water	97:20	0:0	10	p
+op	97:22	0:0	10	=
+op	97:24	0:0	10	&
+water	97:25	0:0	10	psz_now
+water	97:32	0:0	10	;
+else	98:16	99:38	6
+stmts	98:21	99:38	7	
+if	98:21	99:38	8	(!strcmp (psz_elname ,"Listeners" ))
+cond	98:25	98:58	9	!strcmp (psz_elname ,"Listeners" )
+op	98:25	0:0	10	!
+call	98:26	98:58	10	strcmp
+arg	98:34	98:44	11	psz_elname
+water	98:34	0:0	12	psz_elname
+arg	98:46	98:58	11	"Listeners"
+water	98:46	0:0	12	"Listeners"
+stmts	99:20	99:38	9	
+water	99:20	0:0	10	p
+op	99:22	0:0	10	=
+op	99:24	0:0	10	&
+water	99:25	0:0	10	psz_listeners
+water	99:38	0:0	10	;
+else	100:16	101:36	6
+stmts	100:21	101:36	7	
+if	100:21	101:36	8	(!strcmp (psz_elname ,"Bitrate" ))
+cond	100:25	100:56	9	!strcmp (psz_elname ,"Bitrate" )
+op	100:25	0:0	10	!
+call	100:26	100:56	10	strcmp
+arg	100:34	100:44	11	psz_elname
+water	100:34	0:0	12	psz_elname
+arg	100:46	100:56	11	"Bitrate"
+water	100:46	0:0	12	"Bitrate"
+stmts	101:20	101:36	9	
+water	101:20	0:0	10	p
+op	101:22	0:0	10	=
+op	101:24	0:0	10	&
+water	101:25	0:0	10	psz_bitrate
+water	101:36	0:0	10	;
+else	102:16	107:16	6
+stmts	103:16	107:16	7	
+water	103:16	0:0	8	{
+call	104:20	105:41	8	msg_Warn
+arg	104:30	104:37	9	p_demux
+water	104:30	0:0	10	p_demux
+arg	104:39	104:72	9	"unexpected text in element <%s>"
+water	104:39	0:0	10	"unexpected text in element <%s>"
+arg	105:30	105:41	9	psz_elname
+water	105:30	0:0	10	psz_elname
+water	105:42	0:0	8	;
+break	106:20	106:25	8	
+water	107:16	0:0	8	}
+call	108:16	108:25	6	free
+arg	108:22	108:25	7	*p
+op	108:22	0:0	8	*
+water	108:23	0:0	8	p
+water	108:26	0:0	6	;
+op	109:16	0:0	6	*
+water	109:17	0:0	6	p
+op	109:19	0:0	6	=
+call	109:21	109:34	6	strdup
+arg	109:29	109:34	7	node
+water	109:29	0:0	8	node
+water	109:35	0:0	6	;
+break	110:16	110:21	6	
+water	111:12	0:0	6	}
+label	113:12	113:35	6	case XML_READER_ENDELEM :
+water	114:12	0:0	6	{
+if	116:16	136:16	6	(!strcmp (node ,"entry" ))
+cond	116:20	116:43	7	!strcmp (node ,"entry" )
+op	116:20	0:0	8	!
+call	116:21	116:43	8	strcmp
+arg	116:29	116:33	9	node
+water	116:29	0:0	10	node
+arg	116:35	116:43	9	"entry"
+water	116:35	0:0	10	"entry"
+stmts	117:16	136:16	7	
+water	117:16	0:0	8	{
+call	118:20	118:55	8	resolve_xml_special_chars
+arg	118:47	118:55	9	psz_mrl
+water	118:47	0:0	10	psz_mrl
+water	118:56	0:0	8	;
+water	119:20	0:0	8	p_input
+op	119:28	0:0	8	=
+call	119:30	119:65	8	input_item_New
+arg	119:46	119:53	9	psz_mrl
+water	119:46	0:0	10	psz_mrl
+arg	119:55	119:65	9	psz_title
+water	119:55	0:0	10	psz_title
+water	119:66	0:0	8	;
+if	120:20	121:68	8	(psz_now)
+cond	120:24	120:24	9	psz_now
+water	120:24	0:0	10	psz_now
+stmts	121:24	121:68	9	
+call	121:24	121:67	10	input_item_SetNowPlaying
+arg	121:50	121:57	11	p_input
+water	121:50	0:0	12	p_input
+arg	121:59	121:67	11	psz_now
+water	121:59	0:0	12	psz_now
+water	121:68	0:0	10	;
+if	122:20	123:65	8	(psz_genre)
+cond	122:24	122:24	9	psz_genre
+water	122:24	0:0	10	psz_genre
+stmts	123:24	123:65	9	
+call	123:24	123:64	10	input_item_SetGenre
+arg	123:45	123:52	11	p_input
+water	123:45	0:0	12	p_input
+arg	123:54	123:64	11	psz_genre
+water	123:54	0:0	12	psz_genre
+water	123:65	0:0	10	;
+if	124:20	125:72	8	(psz_listeners)
+cond	124:24	124:24	9	psz_listeners
+water	124:24	0:0	10	psz_listeners
+stmts	125:24	125:72	9	
+call	125:24	125:71	10	msg_Err
+arg	125:33	125:40	11	p_demux
+water	125:33	0:0	12	p_demux
+arg	125:42	125:71	11	"Unsupported meta listeners"
+water	125:42	0:0	12	"Unsupported meta listeners"
+water	125:72	0:0	10	;
+if	126:20	127:70	8	(psz_bitrate)
+cond	126:24	126:24	9	psz_bitrate
+water	126:24	0:0	10	psz_bitrate
+stmts	127:24	127:70	9	
+call	127:24	127:69	10	msg_Err
+arg	127:33	127:40	11	p_demux
+water	127:33	0:0	12	p_demux
+arg	127:42	127:69	11	"Unsupported meta bitrate"
+water	127:42	0:0	12	"Unsupported meta bitrate"
+water	127:70	0:0	10	;
+call	128:20	128:68	8	input_item_node_AppendItem
+arg	128:48	128:58	9	p_subitems
+water	128:48	0:0	10	p_subitems
+arg	128:60	128:68	9	p_input
+water	128:60	0:0	10	p_input
+water	128:69	0:0	8	;
+call	129:20	129:43	8	vlc_gc_decref
+arg	129:35	129:43	9	p_input
+water	129:35	0:0	10	p_input
+water	129:44	0:0	8	;
+call	130:20	130:40	8	FREENULL
+arg	130:30	130:40	9	psz_title
+water	130:30	0:0	10	psz_title
+water	130:41	0:0	8	;
+call	131:20	131:38	8	FREENULL
+arg	131:30	131:38	9	psz_mrl
+water	131:30	0:0	10	psz_mrl
+water	131:39	0:0	8	;
+call	132:20	132:40	8	FREENULL
+arg	132:30	132:40	9	psz_genre
+water	132:30	0:0	10	psz_genre
+water	132:41	0:0	8	;
+call	133:20	133:42	8	FREENULL
+arg	133:30	133:42	9	psz_bitrate
+water	133:30	0:0	10	psz_bitrate
+water	133:43	0:0	8	;
+call	134:20	134:44	8	FREENULL
+arg	134:30	134:44	9	psz_listeners
+water	134:30	0:0	10	psz_listeners
+water	134:45	0:0	8	;
+call	135:20	135:38	8	FREENULL
+arg	135:30	135:38	9	psz_now
+water	135:30	0:0	10	psz_now
+water	135:39	0:0	8	;
+water	136:16	0:0	8	}
+call	137:16	137:37	6	FREENULL
+arg	137:26	137:37	7	psz_elname
+water	137:26	0:0	8	psz_elname
+water	137:38	0:0	6	;
+break	138:16	138:21	6	
+water	139:12	0:0	6	}
+water	140:8	0:0	6	}
+water	141:4	0:0	4	}
+if	142:4	146:4	2	(i_ret < 0)
+cond	142:8	142:16	3	i_ret < 0
+water	142:8	0:0	4	i_ret
+op	142:14	0:0	4	<
+water	142:16	0:0	4	0
+stmts	143:4	146:4	3	
+water	143:4	0:0	4	{
+call	144:8	144:54	4	msg_Warn
+arg	144:18	144:25	5	p_demux
+water	144:18	0:0	6	p_demux
+arg	144:27	144:54	5	"error while parsing data"
+water	144:27	0:0	6	"error while parsing data"
+water	144:55	0:0	4	;
+water	145:8	0:0	4	i_ret
+op	145:14	0:0	4	=
+water	145:16	0:0	4	0
+water	145:17	0:0	4	;
+water	146:4	0:0	4	}
+label	147:0	147:3	2	end :
+call	148:4	148:21	2	free
+arg	148:10	148:21	3	psz_elname
+water	148:10	0:0	4	psz_elname
+water	148:22	0:0	2	;
+if	149:4	150:51	2	(p_subitems)
+cond	149:8	149:8	3	p_subitems
+water	149:8	0:0	4	p_subitems
+stmts	150:8	150:51	3	
+call	150:8	150:50	4	input_item_node_PostAndDelete
+arg	150:39	150:50	5	p_subitems
+water	150:39	0:0	6	p_subitems
+water	150:51	0:0	4	;
+call	151:4	151:35	2	vlc_gc_decref
+arg	151:19	151:35	3	p_current_input
+water	151:19	0:0	4	p_current_input
+water	151:36	0:0	2	;
+if	152:4	153:40	2	(p_xml_reader)
+cond	152:8	152:8	3	p_xml_reader
+water	152:8	0:0	4	p_xml_reader
+stmts	153:8	153:40	3	
+call	153:8	153:39	4	xml_ReaderDelete
+arg	153:26	153:39	5	p_xml_reader
+water	153:26	0:0	6	p_xml_reader
+water	153:40	0:0	4	;
+return	154:4	154:16	2	i_ret
+water	154:11	0:0	3	i_ret

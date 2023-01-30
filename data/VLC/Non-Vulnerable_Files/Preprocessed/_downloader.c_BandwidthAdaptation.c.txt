@@ -1,0 +1,123 @@
+func	2:16	6:0	0		BandwidthAdaptation
+params	2:35	0:0	1	
+param	2:37	2:48	2	stream_t *	s
+param	3:8	3:25	2	sms_stream_t *	sms
+param	3:27	3:47	2	uint64_t *	bandwidth
+stmnts	5:4	5:29	1	
+return	5:4	5:29	2	sms->download_qlvl
+water	5:11	0:0	3	sms
+op	5:14	0:0	3	->
+water	5:16	0:0	3	download_qlvl
+func	8:16	32:0	0		BandwidthAdaptation
+params	8:35	0:0	1	
+param	8:37	8:48	2	stream_t *	s
+param	9:8	9:25	2	sms_stream_t *	sms
+param	9:27	9:46	2	uint64_t	bandwidth
+stmnts	11:4	31:14	1	
+if	11:4	12:33	2	(sms -> type != VIDEO_ES)
+cond	11:8	11:21	3	sms -> type != VIDEO_ES
+water	11:8	0:0	4	sms
+op	11:11	0:0	4	->
+water	11:13	0:0	4	type
+op	11:18	0:0	4	!=
+water	11:21	0:0	4	VIDEO_ES
+stmts	12:8	12:33	3	
+return	12:8	12:33	4	sms->download_qlvl
+water	12:15	0:0	5	sms
+op	12:18	0:0	5	->
+water	12:20	0:0	5	download_qlvl
+decl	13:4	13:29	2	uint64_t	bw_candidate
+op	13:26	0:0	2	=
+water	13:28	0:0	2	0
+decl	14:4	14:27	2	quality_level_t	*qlevel
+water	15:4	0:0	2	unsigned
+water	15:13	0:0	2	ret
+op	15:17	0:0	2	=
+water	15:19	0:0	2	sms
+op	15:22	0:0	2	->
+water	15:24	0:0	2	download_qlvl
+water	15:37	0:0	2	;
+for	16:4	30:4	2	(unsigned i = 0 ;i < sms -> qlevel_nb;i ++)
+forinit	16:9	16:23	3	unsigned i = 0 ;
+water	16:9	0:0	4	unsigned
+water	16:18	0:0	4	i
+op	16:20	0:0	4	=
+water	16:22	0:0	4	0
+water	16:23	0:0	4	;
+cond	16:25	16:34	3	i < sms -> qlevel_nb
+water	16:25	0:0	4	i
+op	16:27	0:0	4	<
+water	16:29	0:0	4	sms
+op	16:32	0:0	4	->
+water	16:34	0:0	4	qlevel_nb
+forexpr	16:45	16:46	3	i ++
+water	16:45	0:0	4	i
+op	16:46	0:0	4	++
+stmts	17:4	30:4	3	
+water	17:4	0:0	4	{
+water	18:8	0:0	4	qlevel
+op	18:15	0:0	4	=
+call	18:17	18:58	4	vlc_array_item_at_index
+arg	18:42	18:54	5	sms->qlevels
+water	18:42	0:0	6	sms
+op	18:45	0:0	6	->
+water	18:47	0:0	6	qlevels
+arg	18:56	18:58	5	i
+water	18:56	0:0	6	i
+water	18:59	0:0	4	;
+if	19:8	23:8	4	(unlikely (! qlevel ))
+cond	19:12	19:30	5	unlikely (! qlevel )
+call	19:12	19:30	6	unlikely
+arg	19:22	19:30	7	!qlevel
+op	19:22	0:0	8	!
+water	19:23	0:0	8	qlevel
+stmts	20:8	23:8	5	
+water	20:8	0:0	6	{
+call	21:12	21:61	6	msg_Err
+arg	21:21	21:22	7	s
+water	21:21	0:0	8	s
+arg	21:24	21:57	7	"Could no get %uth quality level"
+water	21:24	0:0	8	"Could no get %uth quality level"
+arg	21:59	21:61	7	i
+water	21:59	0:0	8	i
+water	21:62	0:0	6	;
+return	22:12	22:20	6	0
+water	22:19	0:0	7	0
+water	23:8	0:0	6	}
+if	24:8	29:8	4	(qlevel -> Bitrate < ( bandwidth - bandwidth / 3 ) && qlevel -> Bitrate > bw_candidate)
+cond	24:12	25:34	5	qlevel -> Bitrate < ( bandwidth - bandwidth / 3 ) && qlevel -> Bitrate > bw_candidate
+water	24:12	0:0	6	qlevel
+op	24:18	0:0	6	->
+water	24:20	0:0	6	Bitrate
+op	24:28	0:0	6	<
+water	24:30	0:0	6	(
+water	24:31	0:0	6	bandwidth
+op	24:41	0:0	6	-
+water	24:43	0:0	6	bandwidth
+op	24:53	0:0	6	/
+water	24:55	0:0	6	3
+water	24:56	0:0	6	)
+op	24:58	0:0	6	&&
+water	25:16	0:0	6	qlevel
+op	25:22	0:0	6	->
+water	25:24	0:0	6	Bitrate
+op	25:32	0:0	6	>
+water	25:34	0:0	6	bw_candidate
+stmts	26:8	29:8	5	
+water	26:8	0:0	6	{
+water	27:12	0:0	6	bw_candidate
+op	27:25	0:0	6	=
+water	27:27	0:0	6	qlevel
+op	27:33	0:0	6	->
+water	27:35	0:0	6	Bitrate
+water	27:42	0:0	6	;
+water	28:12	0:0	6	ret
+op	28:16	0:0	6	=
+water	28:18	0:0	6	qlevel
+op	28:24	0:0	6	->
+water	28:26	0:0	6	id
+water	28:28	0:0	6	;
+water	29:8	0:0	6	}
+water	30:4	0:0	4	}
+return	31:4	31:14	2	ret
+water	31:11	0:0	3	ret

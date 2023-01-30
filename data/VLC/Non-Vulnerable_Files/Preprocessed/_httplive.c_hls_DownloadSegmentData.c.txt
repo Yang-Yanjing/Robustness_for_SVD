@@ -1,0 +1,332 @@
+func	2:0	61:0	0	static int	hls_DownloadSegmentData
+params	2:34	0:0	1	
+param	2:35	2:46	2	stream_t *	s
+param	2:48	2:65	2	hls_stream_t *	hls
+param	2:67	2:85	2	segment_t *	segment
+param	2:87	2:102	2	int *	cur_stream
+stmnts	0:0	60:22	1	
+decl	4:4	4:34	2	stream_sys_t	*p_sys
+op	4:24	0:0	2	=
+water	4:26	0:0	2	s
+op	4:27	0:0	2	->
+water	4:29	0:0	2	p_sys
+call	5:4	5:14	2	assert
+arg	5:11	5:14	3	hls
+water	5:11	0:0	4	hls
+water	5:15	0:0	2	;
+call	6:4	6:18	2	assert
+arg	6:11	6:18	3	segment
+water	6:11	0:0	4	segment
+water	6:19	0:0	2	;
+call	7:4	7:33	2	vlc_mutex_lock
+arg	7:19	7:33	3	&segment->lock
+op	7:19	0:0	4	&
+water	7:20	0:0	4	segment
+op	7:27	0:0	4	->
+water	7:29	0:0	4	lock
+water	7:34	0:0	2	;
+if	8:4	13:4	2	(segment -> data != NULL)
+cond	8:8	8:25	3	segment -> data != NULL
+water	8:8	0:0	4	segment
+op	8:15	0:0	4	->
+water	8:17	0:0	4	data
+op	8:22	0:0	4	!=
+water	8:25	0:0	4	NULL
+stmts	9:4	13:4	3	
+water	9:4	0:0	4	{
+call	11:8	11:39	4	vlc_mutex_unlock
+arg	11:25	11:39	5	&segment->lock
+op	11:25	0:0	6	&
+water	11:26	0:0	6	segment
+op	11:33	0:0	6	->
+water	11:35	0:0	6	lock
+water	11:40	0:0	4	;
+return	12:8	12:26	4	VLC_SUCCESS
+water	12:15	0:0	5	VLC_SUCCESS
+water	13:4	0:0	4	}
+if	15:4	24:4	2	(( p_sys -> bandwidth > 0 ) && ( hls -> bandwidth > 0 ))
+cond	15:8	15:53	3	( p_sys -> bandwidth > 0 ) && ( hls -> bandwidth > 0 )
+water	15:8	0:0	4	(
+water	15:9	0:0	4	p_sys
+op	15:14	0:0	4	->
+water	15:16	0:0	4	bandwidth
+op	15:26	0:0	4	>
+water	15:28	0:0	4	0
+water	15:29	0:0	4	)
+op	15:31	0:0	4	&&
+water	15:34	0:0	4	(
+water	15:35	0:0	4	hls
+op	15:38	0:0	4	->
+water	15:40	0:0	4	bandwidth
+op	15:50	0:0	4	>
+water	15:52	0:0	4	0
+water	15:53	0:0	4	)
+stmts	16:4	24:4	3	
+water	16:4	0:0	4	{
+decl	17:8	17:60	4	uint64_t	size
+op	17:22	0:0	4	=
+water	17:24	0:0	4	(
+water	17:25	0:0	4	segment
+op	17:32	0:0	4	->
+water	17:34	0:0	4	duration
+op	17:43	0:0	4	*
+water	17:45	0:0	4	hls
+op	17:48	0:0	4	->
+water	17:50	0:0	4	bandwidth
+water	17:59	0:0	4	)
+decl	18:8	18:54	4	int	estimated
+op	18:22	0:0	4	=
+call	18:24	18:53	5	(int)
+arg	18:30	18:53	6	size/p_sys->bandwidth
+water	18:30	0:0	7	size
+op	18:35	0:0	7	/
+water	18:37	0:0	7	p_sys
+op	18:42	0:0	7	->
+water	18:44	0:0	7	bandwidth
+if	19:8	23:8	4	(estimated > segment -> duration)
+cond	19:12	19:33	5	estimated > segment -> duration
+water	19:12	0:0	6	estimated
+op	19:22	0:0	6	>
+water	19:24	0:0	6	segment
+op	19:31	0:0	6	->
+water	19:33	0:0	6	duration
+stmts	20:8	23:8	5	
+water	20:8	0:0	6	{
+call	21:12	22:71	6	msg_Warn
+arg	21:21	21:22	7	s
+water	21:21	0:0	8	s
+arg	21:23	21:101	7	"downloading segment %d predicted to take %ds, which exceeds its length (%ds)"
+water	21:23	0:0	8	"downloading segment %d predicted to take %ds, which exceeds its length (%ds)"
+arg	22:24	22:41	7	segment->sequence
+water	22:24	0:0	8	segment
+op	22:31	0:0	8	->
+water	22:33	0:0	8	sequence
+arg	22:43	22:52	7	estimated
+water	22:43	0:0	8	estimated
+arg	22:54	22:71	7	segment->duration
+water	22:54	0:0	8	segment
+op	22:61	0:0	8	->
+water	22:63	0:0	8	duration
+water	22:72	0:0	6	;
+water	23:8	0:0	6	}
+water	24:4	0:0	4	}
+decl	25:4	25:27	2	mtime_t	start
+op	25:18	0:0	2	=
+call	25:20	25:26	3	mdate
+decl	26:4	26:40	2	int	i_ret
+op	26:14	0:0	2	=
+call	26:16	26:39	3	hls_Download
+arg	26:29	26:30	4	s
+water	26:29	0:0	5	s
+arg	26:32	26:39	4	segment
+water	26:32	0:0	5	segment
+if	27:4	33:4	2	(i_ret != VLC_SUCCESS)
+cond	27:8	27:17	3	i_ret != VLC_SUCCESS
+water	27:8	0:0	4	i_ret
+op	27:14	0:0	4	!=
+water	27:17	0:0	4	VLC_SUCCESS
+stmts	28:4	33:4	3	
+water	28:4	0:0	4	{
+call	29:8	30:50	4	msg_Err
+arg	29:16	29:17	5	s
+water	29:16	0:0	6	s
+arg	29:19	29:65	5	"downloading segment %d from stream %d failed"
+water	29:19	0:0	6	"downloading segment %d from stream %d failed"
+arg	30:20	30:37	5	segment->sequence
+water	30:20	0:0	6	segment
+op	30:27	0:0	6	->
+water	30:29	0:0	6	sequence
+arg	30:39	30:50	5	*cur_stream
+op	30:39	0:0	6	*
+water	30:40	0:0	6	cur_stream
+water	30:51	0:0	4	;
+call	31:8	31:39	4	vlc_mutex_unlock
+arg	31:25	31:39	5	&segment->lock
+op	31:25	0:0	6	&
+water	31:26	0:0	6	segment
+op	31:33	0:0	6	->
+water	31:35	0:0	6	lock
+water	31:40	0:0	4	;
+return	32:8	32:20	4	i_ret
+water	32:15	0:0	5	i_ret
+water	33:4	0:0	4	}
+decl	34:4	34:38	2	mtime_t	duration
+op	34:21	0:0	2	=
+call	34:23	34:29	3	mdate
+op	34:31	0:0	2	-
+water	34:33	0:0	2	start
+if	35:4	39:4	2	(hls -> bandwidth == 0 && segment -> duration > 0)
+cond	35:8	35:51	3	hls -> bandwidth == 0 && segment -> duration > 0
+water	35:8	0:0	4	hls
+op	35:11	0:0	4	->
+water	35:13	0:0	4	bandwidth
+op	35:23	0:0	4	==
+water	35:26	0:0	4	0
+op	35:28	0:0	4	&&
+water	35:31	0:0	4	segment
+op	35:38	0:0	4	->
+water	35:40	0:0	4	duration
+op	35:49	0:0	4	>
+water	35:51	0:0	4	0
+stmts	36:4	39:4	3	
+water	36:4	0:0	4	{
+water	38:8	0:0	4	hls
+op	38:11	0:0	4	->
+water	38:13	0:0	4	bandwidth
+op	38:23	0:0	4	=
+call	38:25	38:93	4	(uint64_t)
+arg	38:36	38:93	5	((double)segment->size*8)/((double)segment->duration)
+water	38:36	0:0	6	(
+water	38:37	0:0	6	(
+water	38:38	0:0	6	double
+water	38:44	0:0	6	)
+water	38:45	0:0	6	segment
+op	38:52	0:0	6	->
+water	38:54	0:0	6	size
+op	38:59	0:0	6	*
+water	38:61	0:0	6	8
+water	38:62	0:0	6	)
+op	38:64	0:0	6	/
+water	38:66	0:0	6	(
+water	38:67	0:0	6	(
+water	38:68	0:0	6	double
+water	38:74	0:0	6	)
+water	38:75	0:0	6	segment
+op	38:82	0:0	6	->
+water	38:84	0:0	6	duration
+water	38:92	0:0	6	)
+water	38:94	0:0	4	;
+water	39:4	0:0	4	}
+water	41:4	0:0	2	i_ret
+op	41:10	0:0	2	=
+call	41:12	41:49	2	hls_DecodeSegmentData
+arg	41:34	41:35	3	s
+water	41:34	0:0	4	s
+arg	41:37	41:40	3	hls
+water	41:37	0:0	4	hls
+arg	41:42	41:49	3	segment
+water	41:42	0:0	4	segment
+water	41:50	0:0	2	;
+call	42:4	42:35	2	vlc_mutex_unlock
+arg	42:21	42:35	3	&segment->lock
+op	42:21	0:0	4	&
+water	42:22	0:0	4	segment
+op	42:29	0:0	4	->
+water	42:31	0:0	4	lock
+water	42:36	0:0	2	;
+if	43:4	44:20	2	(i_ret != VLC_SUCCESS)
+cond	43:7	43:16	3	i_ret != VLC_SUCCESS
+water	43:7	0:0	4	i_ret
+op	43:13	0:0	4	!=
+water	43:16	0:0	4	VLC_SUCCESS
+stmts	44:8	44:20	3	
+return	44:8	44:20	4	i_ret
+water	44:15	0:0	5	i_ret
+call	45:4	46:46	2	msg_Dbg
+arg	45:12	45:13	3	s
+water	45:12	0:0	4	s
+arg	45:15	45:53	3	"downloaded segment %d from stream %d"
+water	45:15	0:0	4	"downloaded segment %d from stream %d"
+arg	46:16	46:33	3	segment->sequence
+water	46:16	0:0	4	segment
+op	46:23	0:0	4	->
+water	46:25	0:0	4	sequence
+arg	46:35	46:46	3	*cur_stream
+op	46:35	0:0	4	*
+water	46:36	0:0	4	cur_stream
+water	46:47	0:0	2	;
+decl	47:4	47:66	2	uint64_t	bw
+op	47:16	0:0	2	=
+water	47:18	0:0	2	segment
+op	47:25	0:0	2	->
+water	47:27	0:0	2	size
+op	47:32	0:0	2	*
+water	47:34	0:0	2	8
+op	47:36	0:0	2	*
+water	47:38	0:0	2	1000000
+op	47:46	0:0	2	/
+call	47:48	47:65	3	__MAX
+arg	47:54	47:55	4	1
+water	47:54	0:0	5	1
+arg	47:57	47:65	4	duration
+water	47:57	0:0	5	duration
+water	48:4	0:0	2	p_sys
+op	48:9	0:0	2	->
+water	48:11	0:0	2	bandwidth
+op	48:21	0:0	2	=
+water	48:23	0:0	2	bw
+water	48:25	0:0	2	;
+if	49:4	59:4	2	(p_sys -> b_meta && ( hls -> bandwidth != bw ))
+cond	49:8	49:46	3	p_sys -> b_meta && ( hls -> bandwidth != bw )
+water	49:8	0:0	4	p_sys
+op	49:13	0:0	4	->
+water	49:15	0:0	4	b_meta
+op	49:22	0:0	4	&&
+water	49:25	0:0	4	(
+water	49:26	0:0	4	hls
+op	49:29	0:0	4	->
+water	49:31	0:0	4	bandwidth
+op	49:41	0:0	4	!=
+water	49:44	0:0	4	bw
+water	49:46	0:0	4	)
+stmts	50:4	59:4	3	
+water	50:4	0:0	4	{
+decl	51:8	51:60	4	int	newstream
+op	51:22	0:0	4	=
+call	51:24	51:59	5	BandwidthAdaptation
+arg	51:44	51:45	6	s
+water	51:44	0:0	7	s
+arg	51:47	51:54	6	hls->id
+water	51:47	0:0	7	hls
+op	51:50	0:0	7	->
+water	51:52	0:0	7	id
+arg	51:56	51:59	6	&bw
+op	51:56	0:0	7	&
+water	51:57	0:0	7	bw
+if	53:8	58:8	4	(( newstream >= 0 ) && ( newstream != * cur_stream ))
+cond	53:12	53:57	5	( newstream >= 0 ) && ( newstream != * cur_stream )
+water	53:12	0:0	6	(
+water	53:13	0:0	6	newstream
+op	53:23	0:0	6	>=
+water	53:26	0:0	6	0
+water	53:27	0:0	6	)
+op	53:29	0:0	6	&&
+water	53:32	0:0	6	(
+water	53:33	0:0	6	newstream
+op	53:43	0:0	6	!=
+op	53:46	0:0	6	*
+water	53:47	0:0	6	cur_stream
+water	53:57	0:0	6	)
+stmts	54:8	58:8	5	
+water	54:8	0:0	6	{
+call	55:12	56:68	6	msg_Dbg
+arg	55:20	55:21	7	s
+water	55:20	0:0	8	s
+arg	55:23	55:65	7	"detected %s bandwidth (%"PRIu64") stream"
+water	55:23	0:0	8	"detected %s bandwidth (%"
+water	55:49	0:0	8	PRIu64
+water	55:55	0:0	8	") stream"
+arg	56:21	56:64	7	(bw>=hls->bandwidth)?"faster":"lower"
+water	56:21	0:0	8	(
+water	56:22	0:0	8	bw
+op	56:25	0:0	8	>=
+water	56:28	0:0	8	hls
+op	56:31	0:0	8	->
+water	56:33	0:0	8	bandwidth
+water	56:42	0:0	8	)
+water	56:44	0:0	8	?
+water	56:46	0:0	8	"faster"
+water	56:55	0:0	8	:
+water	56:57	0:0	8	"lower"
+arg	56:66	56:68	7	bw
+water	56:66	0:0	8	bw
+water	56:69	0:0	6	;
+op	57:12	0:0	6	*
+water	57:13	0:0	6	cur_stream
+op	57:24	0:0	6	=
+water	57:26	0:0	6	newstream
+water	57:35	0:0	6	;
+water	58:8	0:0	6	}
+water	59:4	0:0	4	}
+return	60:4	60:22	2	VLC_SUCCESS
+water	60:11	0:0	3	VLC_SUCCESS

@@ -1,0 +1,197 @@
+func	2:0	32:0	0	static block_t *	DoWork
+params	2:22	0:0	1	
+param	2:24	2:43	2	filter_t *	p_filter
+param	2:45	2:64	2	block_t *	p_in_buf
+stmnts	0:0	31:20	1	
+decl	4:4	4:37	2	filter_sys_t	*p
+op	4:20	0:0	2	=
+water	4:22	0:0	2	p_filter
+op	4:30	0:0	2	->
+water	4:32	0:0	2	p_sys
+if	5:4	6:23	2	(p_filter -> fmt_in . audio . i_rate == p -> sample_rate)
+cond	5:8	5:44	3	p_filter -> fmt_in . audio . i_rate == p -> sample_rate
+water	5:8	0:0	4	p_filter
+op	5:16	0:0	4	->
+water	5:18	0:0	4	fmt_in
+op	5:24	0:0	4	.
+water	5:25	0:0	4	audio
+op	5:30	0:0	4	.
+water	5:31	0:0	4	i_rate
+op	5:38	0:0	4	==
+water	5:41	0:0	4	p
+op	5:42	0:0	4	->
+water	5:44	0:0	4	sample_rate
+stmts	6:8	6:23	3	
+return	6:8	6:23	4	p_in_buf
+water	6:15	0:0	5	p_in_buf
+decl	7:4	7:73	2	double	scale
+op	7:17	0:0	2	=
+water	7:19	0:0	2	p_filter
+op	7:27	0:0	2	->
+water	7:29	0:0	2	fmt_in
+op	7:35	0:0	2	.
+water	7:36	0:0	2	audio
+op	7:41	0:0	2	.
+water	7:42	0:0	2	i_rate
+op	7:49	0:0	2	/
+water	7:51	0:0	2	(
+water	7:52	0:0	2	double
+water	7:58	0:0	2	)
+water	7:59	0:0	2	p
+op	7:60	0:0	2	->
+water	7:62	0:0	2	sample_rate
+if	8:4	17:4	2	(scale != p -> scale)
+cond	8:8	8:20	3	scale != p -> scale
+water	8:8	0:0	4	scale
+op	8:14	0:0	4	!=
+water	8:17	0:0	4	p
+op	8:18	0:0	4	->
+water	8:20	0:0	4	scale
+stmts	8:28	17:4	3	
+water	8:28	0:0	4	{
+water	9:6	0:0	4	p
+op	9:7	0:0	4	->
+water	9:9	0:0	4	scale
+op	9:15	0:0	4	=
+water	9:17	0:0	4	scale
+water	9:22	0:0	4	;
+water	10:6	0:0	4	p
+op	10:7	0:0	4	->
+water	10:9	0:0	4	bytes_stride_scaled
+op	10:30	0:0	4	=
+water	10:32	0:0	4	p
+op	10:33	0:0	4	->
+water	10:35	0:0	4	bytes_stride
+op	10:48	0:0	4	*
+water	10:50	0:0	4	p
+op	10:51	0:0	4	->
+water	10:53	0:0	4	scale
+water	10:58	0:0	4	;
+water	11:6	0:0	4	p
+op	11:7	0:0	4	->
+water	11:9	0:0	4	frames_stride_scaled
+op	11:30	0:0	4	=
+water	11:32	0:0	4	p
+op	11:33	0:0	4	->
+water	11:35	0:0	4	bytes_stride_scaled
+op	11:55	0:0	4	/
+water	11:57	0:0	4	p
+op	11:58	0:0	4	->
+water	11:60	0:0	4	bytes_per_frame
+water	11:75	0:0	4	;
+water	12:6	0:0	4	p
+op	12:7	0:0	4	->
+water	12:9	0:0	4	bytes_to_slide
+op	12:24	0:0	4	=
+water	12:26	0:0	4	0
+water	12:27	0:0	4	;
+call	13:6	16:61	4	msg_Dbg
+arg	13:15	13:23	5	p_filter
+water	13:15	0:0	6	p_filter
+arg	13:25	13:68	5	"%.3f scale, %.3f stride_in, %i stride_out"
+water	13:25	0:0	6	"%.3f scale, %.3f stride_in, %i stride_out"
+arg	14:15	14:23	5	p->scale
+water	14:15	0:0	6	p
+op	14:16	0:0	6	->
+water	14:18	0:0	6	scale
+arg	15:15	15:38	5	p->frames_stride_scaled
+water	15:15	0:0	6	p
+op	15:16	0:0	6	->
+water	15:18	0:0	6	frames_stride_scaled
+arg	16:15	16:61	5	(int)(p->bytes_stride/p->bytes_per_frame)
+call	16:15	16:59	6	(int)
+arg	16:22	16:59	7	p->bytes_stride/p->bytes_per_frame
+water	16:22	0:0	8	p
+op	16:23	0:0	8	->
+water	16:25	0:0	8	bytes_stride
+op	16:38	0:0	8	/
+water	16:40	0:0	8	p
+op	16:41	0:0	8	->
+water	16:43	0:0	8	bytes_per_frame
+water	16:62	0:0	4	;
+water	17:4	0:0	4	}
+decl	18:4	18:84	2	size_t	i_outsize
+op	18:21	0:0	2	=
+call	18:23	18:83	3	calculate_output_buffer_size
+arg	18:54	18:62	4	p_filter
+water	18:54	0:0	5	p_filter
+arg	18:64	18:83	4	p_in_buf->i_buffer
+water	18:64	0:0	5	p_in_buf
+op	18:72	0:0	5	->
+water	18:74	0:0	5	i_buffer
+decl	19:4	19:49	2	block_t	*p_out_buf
+op	19:23	0:0	2	=
+call	19:25	19:48	3	block_Alloc
+arg	19:38	19:48	4	i_outsize
+water	19:38	0:0	5	i_outsize
+if	20:4	21:19	2	(p_out_buf == NULL)
+cond	20:8	20:21	3	p_out_buf == NULL
+water	20:8	0:0	4	p_out_buf
+op	20:18	0:0	4	==
+water	20:21	0:0	4	NULL
+stmts	21:8	21:19	3	
+return	21:8	21:19	4	NULL
+water	21:15	0:0	5	NULL
+decl	22:4	24:29	2	size_t	bytes_out
+op	22:21	0:0	2	=
+call	22:23	24:28	3	transform_buffer
+arg	22:41	22:49	4	p_filter
+water	22:41	0:0	5	p_filter
+arg	23:8	23:26	4	p_in_buf->p_buffer
+water	23:8	0:0	5	p_in_buf
+op	23:16	0:0	5	->
+water	23:18	0:0	5	p_buffer
+arg	23:28	23:46	4	p_in_buf->i_buffer
+water	23:28	0:0	5	p_in_buf
+op	23:36	0:0	5	->
+water	23:38	0:0	5	i_buffer
+arg	24:8	24:28	4	p_out_buf->p_buffer
+water	24:8	0:0	5	p_out_buf
+op	24:17	0:0	5	->
+water	24:19	0:0	5	p_buffer
+water	25:4	0:0	2	p_out_buf
+op	25:13	0:0	2	->
+water	25:15	0:0	2	i_buffer
+op	25:28	0:0	2	=
+water	25:30	0:0	2	bytes_out
+water	25:39	0:0	2	;
+water	26:4	0:0	2	p_out_buf
+op	26:13	0:0	2	->
+water	26:15	0:0	2	i_nb_samples
+op	26:28	0:0	2	=
+water	26:30	0:0	2	bytes_out
+op	26:40	0:0	2	/
+water	26:42	0:0	2	p
+op	26:43	0:0	2	->
+water	26:45	0:0	2	bytes_per_frame
+water	26:60	0:0	2	;
+water	27:4	0:0	2	p_out_buf
+op	27:13	0:0	2	->
+water	27:15	0:0	2	i_dts
+op	27:28	0:0	2	=
+water	27:30	0:0	2	p_in_buf
+op	27:38	0:0	2	->
+water	27:40	0:0	2	i_dts
+water	27:45	0:0	2	;
+water	28:4	0:0	2	p_out_buf
+op	28:13	0:0	2	->
+water	28:15	0:0	2	i_pts
+op	28:28	0:0	2	=
+water	28:30	0:0	2	p_in_buf
+op	28:38	0:0	2	->
+water	28:40	0:0	2	i_pts
+water	28:45	0:0	2	;
+water	29:4	0:0	2	p_out_buf
+op	29:13	0:0	2	->
+water	29:15	0:0	2	i_length
+op	29:28	0:0	2	=
+water	29:30	0:0	2	p_in_buf
+op	29:38	0:0	2	->
+water	29:40	0:0	2	i_length
+water	29:48	0:0	2	;
+call	30:4	30:28	2	block_Release
+arg	30:19	30:28	3	p_in_buf
+water	30:19	0:0	4	p_in_buf
+water	30:29	0:0	2	;
+return	31:4	31:20	2	p_out_buf
+water	31:11	0:0	3	p_out_buf

@@ -1,0 +1,136 @@
+func	2:0	25:0	0	static int	ReadBuffer
+params	2:21	0:0	1	
+param	2:23	2:43	2	audio_output_t *	aout
+param	2:45	2:58	2	uint8_t *	data
+param	2:60	2:69	2	int	size
+stmnts	0:0	24:14	1	
+decl	4:4	4:46	2	audio_buffer_t	*buffer
+op	4:27	0:0	2	=
+water	4:29	0:0	2	aout
+op	4:33	0:0	2	->
+water	4:35	0:0	2	sys
+op	4:38	0:0	2	->
+water	4:40	0:0	2	buffer
+decl	5:4	5:23	2	int	len
+decl	6:4	6:34	2	int	remain_len
+op	6:31	0:0	2	=
+water	6:33	0:0	2	0
+call	7:4	7:35	2	vlc_mutex_lock
+arg	7:20	7:35	3	&buffer->mutex
+op	7:20	0:0	4	&
+water	7:21	0:0	4	buffer
+op	7:27	0:0	4	->
+water	7:29	0:0	4	mutex
+water	7:36	0:0	2	;
+water	8:4	0:0	2	len
+op	8:8	0:0	2	=
+call	8:10	8:36	2	MIN
+arg	8:15	8:29	3	buffer->length
+water	8:15	0:0	4	buffer
+op	8:21	0:0	4	->
+water	8:23	0:0	4	length
+arg	8:31	8:36	3	size
+water	8:31	0:0	4	size
+water	8:37	0:0	2	;
+if	9:4	14:4	2	(buffer -> read_pos + len > buffer -> size)
+cond	9:8	9:41	3	buffer -> read_pos + len > buffer -> size
+water	9:8	0:0	4	buffer
+op	9:14	0:0	4	->
+water	9:16	0:0	4	read_pos
+op	9:25	0:0	4	+
+water	9:27	0:0	4	len
+op	9:31	0:0	4	>
+water	9:33	0:0	4	buffer
+op	9:39	0:0	4	->
+water	9:41	0:0	4	size
+stmts	10:4	14:4	3	
+water	10:4	0:0	4	{
+water	11:8	0:0	4	remain_len
+op	11:20	0:0	4	=
+water	11:22	0:0	4	len
+water	11:25	0:0	4	;
+water	12:8	0:0	4	len
+op	12:20	0:0	4	=
+water	12:22	0:0	4	buffer
+op	12:28	0:0	4	->
+water	12:30	0:0	4	size
+op	12:35	0:0	4	-
+water	12:37	0:0	4	buffer
+op	12:43	0:0	4	->
+water	12:45	0:0	4	read_pos
+water	12:53	0:0	4	;
+water	13:8	0:0	4	remain_len
+op	13:19	0:0	4	-=
+water	13:22	0:0	4	len
+water	13:25	0:0	4	;
+water	14:4	0:0	4	}
+call	15:4	15:55	2	memcpy
+arg	15:12	15:16	3	data
+water	15:12	0:0	4	data
+arg	15:18	15:49	3	buffer->data+buffer->read_pos
+water	15:18	0:0	4	buffer
+op	15:24	0:0	4	->
+water	15:26	0:0	4	data
+op	15:31	0:0	4	+
+water	15:33	0:0	4	buffer
+op	15:39	0:0	4	->
+water	15:41	0:0	4	read_pos
+arg	15:51	15:55	3	len
+water	15:51	0:0	4	len
+water	15:56	0:0	2	;
+if	16:4	17:54	2	(remain_len)
+cond	16:8	16:8	3	remain_len
+water	16:8	0:0	4	remain_len
+stmts	17:8	17:54	3	
+call	17:8	17:53	4	memcpy
+arg	17:16	17:26	5	data+len
+water	17:16	0:0	6	data
+op	17:21	0:0	6	+
+water	17:23	0:0	6	len
+arg	17:28	17:40	5	buffer->data
+water	17:28	0:0	6	buffer
+op	17:34	0:0	6	->
+water	17:36	0:0	6	data
+arg	17:42	17:53	5	remain_len
+water	17:42	0:0	6	remain_len
+water	17:54	0:0	4	;
+water	18:4	0:0	2	len
+op	18:8	0:0	2	+=
+water	18:11	0:0	2	remain_len
+water	18:21	0:0	2	;
+water	19:4	0:0	2	buffer
+op	19:10	0:0	2	->
+water	19:12	0:0	2	read_pos
+op	19:21	0:0	2	+=
+water	19:24	0:0	2	len
+water	19:27	0:0	2	;
+water	20:4	0:0	2	buffer
+op	20:10	0:0	2	->
+water	20:12	0:0	2	read_pos
+op	20:21	0:0	2	%=
+water	20:24	0:0	2	buffer
+op	20:30	0:0	2	->
+water	20:32	0:0	2	size
+water	20:36	0:0	2	;
+water	21:4	0:0	2	buffer
+op	21:10	0:0	2	->
+water	21:12	0:0	2	length
+op	21:19	0:0	2	-=
+water	21:22	0:0	2	len
+water	21:25	0:0	2	;
+call	22:4	22:35	2	vlc_cond_signal
+arg	22:21	22:35	3	&buffer->cond
+op	22:21	0:0	4	&
+water	22:22	0:0	4	buffer
+op	22:28	0:0	4	->
+water	22:30	0:0	4	cond
+water	22:36	0:0	2	;
+call	23:4	23:37	2	vlc_mutex_unlock
+arg	23:22	23:37	3	&buffer->mutex
+op	23:22	0:0	4	&
+water	23:23	0:0	4	buffer
+op	23:29	0:0	4	->
+water	23:31	0:0	4	mutex
+water	23:38	0:0	2	;
+return	24:4	24:14	2	len
+water	24:11	0:0	3	len

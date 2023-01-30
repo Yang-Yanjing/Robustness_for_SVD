@@ -1,0 +1,351 @@
+func	2:0	84:0	0	static int	FindMeta
+params	2:19	0:0	1	
+param	2:21	2:42	2	vlc_object_t *	p_this
+stmnts	0:0	83:50	1	
+decl	4:4	4:55	2	meta_fetcher_t	*p_finder
+op	4:29	0:0	2	=
+water	4:31	0:0	2	(
+water	4:32	0:0	2	meta_fetcher_t
+op	4:47	0:0	2	*
+water	4:48	0:0	2	)
+water	4:49	0:0	2	p_this
+decl	5:4	5:43	2	input_item_t	*p_item
+op	5:25	0:0	2	=
+water	5:27	0:0	2	p_finder
+op	5:35	0:0	2	->
+water	5:37	0:0	2	p_item
+decl	6:4	6:27	2	bool	b_have_art
+op	6:20	0:0	2	=
+water	6:22	0:0	2	false
+decl	7:4	7:24	2	struct stat	statinfo
+decl	8:4	8:25	2	char	*psz_path
+op	8:19	0:0	2	=
+water	8:21	0:0	2	NULL
+if	9:4	10:27	2	(! p_item)
+cond	9:8	9:9	3	! p_item
+op	9:8	0:0	4	!
+water	9:9	0:0	4	p_item
+stmts	10:8	10:27	3	
+return	10:8	10:27	4	VLC_EGENERIC
+water	10:15	0:0	5	VLC_EGENERIC
+decl	11:4	11:47	2	char	*psz_uri
+op	11:18	0:0	2	=
+call	11:20	11:46	3	input_item_GetURI
+arg	11:39	11:46	4	p_item
+water	11:39	0:0	5	p_item
+if	12:4	13:27	2	(! psz_uri)
+cond	12:8	12:9	3	! psz_uri
+op	12:8	0:0	4	!
+water	12:9	0:0	4	psz_uri
+stmts	13:8	13:27	3	
+return	13:8	13:27	4	VLC_EGENERIC
+water	13:15	0:0	5	VLC_EGENERIC
+if	14:4	32:4	2	(* psz_uri && psz_uri [strlen (psz_uri ) - 1 ] != DIR_SEP_CHAR)
+cond	14:9	14:55	3	* psz_uri && psz_uri [strlen (psz_uri ) - 1 ] != DIR_SEP_CHAR
+op	14:9	0:0	4	*
+water	14:10	0:0	4	psz_uri
+op	14:18	0:0	4	&&
+water	14:21	0:0	4	psz_uri
+op	14:28	0:0	4	[
+call	14:29	14:45	4	strlen
+arg	14:37	14:45	5	psz_uri
+water	14:37	0:0	6	psz_uri
+op	14:47	0:0	4	-
+water	14:49	0:0	4	1
+op	14:50	0:0	4	]
+op	14:52	0:0	4	!=
+water	14:55	0:0	4	DIR_SEP_CHAR
+stmts	15:4	32:4	3	
+water	15:4	0:0	4	{
+if	16:8	20:8	4	(asprintf (& psz_path ,"%s" DIR_SEP ,psz_uri ) == - 1)
+cond	16:13	16:61	5	asprintf (& psz_path ,"%s" DIR_SEP ,psz_uri ) == - 1
+call	16:13	16:55	6	asprintf
+arg	16:23	16:32	7	&psz_path
+op	16:23	0:0	8	&
+water	16:24	0:0	8	psz_path
+arg	16:34	16:45	7	"%s"DIR_SEP
+water	16:34	0:0	8	"%s"
+water	16:38	0:0	8	DIR_SEP
+arg	16:47	16:55	7	psz_uri
+water	16:47	0:0	8	psz_uri
+op	16:57	0:0	6	==
+op	16:60	0:0	6	-
+water	16:61	0:0	6	1
+stmts	17:8	20:8	5	
+water	17:8	0:0	6	{
+call	18:12	18:26	6	free
+arg	18:18	18:26	7	psz_uri
+water	18:18	0:0	8	psz_uri
+water	18:27	0:0	6	;
+return	19:12	19:31	6	VLC_EGENERIC
+water	19:19	0:0	7	VLC_EGENERIC
+water	20:8	0:0	6	}
+decl	21:8	21:49	4	char	*psz_basedir
+op	21:26	0:0	4	=
+call	21:28	21:48	5	make_path
+arg	21:39	21:48	6	psz_path
+water	21:39	0:0	7	psz_path
+call	22:8	22:27	4	FREENULL
+arg	22:18	22:27	5	psz_path
+water	22:18	0:0	6	psz_path
+water	22:28	0:0	4	;
+if	23:8	27:8	4	(psz_basedir == NULL)
+cond	23:12	23:27	5	psz_basedir == NULL
+water	23:12	0:0	6	psz_basedir
+op	23:24	0:0	6	==
+water	23:27	0:0	6	NULL
+stmts	24:8	27:8	5	
+water	24:8	0:0	6	{
+call	25:12	25:26	6	free
+arg	25:18	25:26	7	psz_uri
+water	25:18	0:0	8	psz_uri
+water	25:27	0:0	6	;
+return	26:12	26:31	6	VLC_EGENERIC
+water	26:19	0:0	7	VLC_EGENERIC
+water	27:8	0:0	6	}
+if	28:8	29:34	4	(vlc_stat (psz_basedir ,& statinfo ) == 0 &&S_ISDIR (statinfo . st_mode ))
+cond	28:12	28:79	5	vlc_stat (psz_basedir ,& statinfo ) == 0 &&S_ISDIR (statinfo . st_mode )
+call	28:12	28:45	6	vlc_stat
+arg	28:22	28:33	7	psz_basedir
+water	28:22	0:0	8	psz_basedir
+arg	28:35	28:45	7	&statinfo
+op	28:35	0:0	8	&
+water	28:36	0:0	8	statinfo
+op	28:47	0:0	6	==
+water	28:50	0:0	6	0
+op	28:52	0:0	6	&&
+call	28:55	28:79	6	S_ISDIR
+arg	28:63	28:79	7	statinfo.st_mode
+water	28:63	0:0	8	statinfo
+op	28:71	0:0	8	.
+water	28:72	0:0	8	st_mode
+stmts	29:12	29:34	5	
+water	29:12	0:0	6	psz_path
+op	29:21	0:0	6	=
+water	29:23	0:0	6	psz_basedir
+water	29:34	0:0	6	;
+else	30:8	31:31	4
+stmts	31:12	31:31	5	
+call	31:12	31:30	6	free
+arg	31:18	31:30	7	psz_basedir
+water	31:18	0:0	8	psz_basedir
+water	31:31	0:0	6	;
+water	32:4	0:0	4	}
+if	33:4	47:4	2	(psz_path == NULL)
+cond	33:9	33:21	3	psz_path == NULL
+water	33:9	0:0	4	psz_path
+op	33:18	0:0	4	==
+water	33:21	0:0	4	NULL
+stmts	34:4	47:4	3	
+water	34:4	0:0	4	{
+decl	35:8	35:48	4	char	*psz_basedir
+op	35:26	0:0	4	=
+call	35:28	35:47	5	make_path
+arg	35:39	35:47	6	psz_uri
+water	35:39	0:0	7	psz_uri
+if	36:8	40:8	4	(psz_basedir == NULL)
+cond	36:12	36:27	5	psz_basedir == NULL
+water	36:12	0:0	6	psz_basedir
+op	36:24	0:0	6	==
+water	36:27	0:0	6	NULL
+stmts	37:8	40:8	5	
+water	37:8	0:0	6	{
+call	38:12	38:26	6	free
+arg	38:18	38:26	7	psz_uri
+water	38:18	0:0	8	psz_uri
+water	38:27	0:0	6	;
+return	39:12	39:31	6	VLC_EGENERIC
+water	39:19	0:0	7	VLC_EGENERIC
+water	40:8	0:0	6	}
+decl	41:8	41:60	4	char	*psz_buf
+op	41:22	0:0	4	=
+call	41:24	41:59	5	strrchr
+arg	41:33	41:44	6	psz_basedir
+water	41:33	0:0	7	psz_basedir
+arg	41:46	41:59	6	DIR_SEP_CHAR
+water	41:46	0:0	7	DIR_SEP_CHAR
+if	42:8	43:29	4	(psz_buf)
+cond	42:12	42:12	5	psz_buf
+water	42:12	0:0	6	psz_buf
+stmts	43:12	43:29	5	
+op	43:12	0:0	6	*
+op	43:13	0:0	6	++
+water	43:15	0:0	6	psz_buf
+op	43:23	0:0	6	=
+water	43:25	0:0	6	'\0'
+water	43:29	0:0	6	;
+else	44:8	45:31	4
+stmts	45:12	45:31	5	
+op	45:12	0:0	6	*
+water	45:13	0:0	6	psz_basedir
+op	45:25	0:0	6	=
+water	45:27	0:0	6	'\0'
+water	45:31	0:0	6	;
+water	46:8	0:0	4	psz_path
+op	46:17	0:0	4	=
+water	46:19	0:0	4	psz_basedir
+water	46:30	0:0	4	;
+water	47:4	0:0	4	}
+call	48:4	48:18	2	free
+arg	48:10	48:18	3	psz_uri
+water	48:10	0:0	4	psz_uri
+water	48:19	0:0	2	;
+for	49:4	81:4	2	( int i = - 1 ;! b_have_art && i < i_covers;i ++)
+forinit	0:0	49:19	3	 int i = - 1 ;
+decl	49:9	49:19	4	int	i
+op	49:15	0:0	4	=
+op	49:17	0:0	4	-
+water	49:18	0:0	4	1
+cond	49:21	49:40	3	! b_have_art && i < i_covers
+op	49:21	0:0	4	!
+water	49:22	0:0	4	b_have_art
+op	49:33	0:0	4	&&
+water	49:36	0:0	4	i
+op	49:38	0:0	4	<
+water	49:40	0:0	4	i_covers
+forexpr	49:50	49:51	3	i ++
+water	49:50	0:0	4	i
+op	49:51	0:0	4	++
+stmts	50:4	81:4	3	
+water	50:4	0:0	4	{
+decl	51:8	51:28	4	const char	*filename
+decl	52:8	52:32	4	char	*filebuf
+water	52:21	0:0	4	,
+decl	52:8	52:32	4	char	*filepath
+if	53:8	59:8	4	(i == - 1)
+cond	53:12	53:18	5	i == - 1
+water	53:12	0:0	6	i
+op	53:14	0:0	6	==
+op	53:17	0:0	6	-
+water	53:18	0:0	6	1
+stmts	54:8	59:8	5	
+water	54:8	0:0	6	{
+water	55:12	0:0	6	filebuf
+op	55:20	0:0	6	=
+call	55:22	55:70	6	var_InheritString
+arg	55:41	55:47	7	p_this
+water	55:41	0:0	8	p_this
+arg	55:49	55:70	7	"album-art-filename"
+water	55:49	0:0	8	"album-art-filename"
+water	55:71	0:0	6	;
+if	56:12	57:24	6	(filebuf == NULL)
+cond	56:16	56:27	7	filebuf == NULL
+water	56:16	0:0	8	filebuf
+op	56:24	0:0	8	==
+water	56:27	0:0	8	NULL
+stmts	57:16	57:24	7	
+continue	57:16	57:24	8	
+water	58:12	0:0	6	filename
+op	58:21	0:0	6	=
+water	58:23	0:0	6	filebuf
+water	58:30	0:0	6	;
+water	59:8	0:0	6	}
+else	60:8	64:8	4
+stmts	61:8	64:8	5	
+water	61:8	0:0	6	{
+water	62:12	0:0	6	filename
+op	62:21	0:0	6	=
+water	62:23	0:0	6	cover_files
+op	62:34	0:0	6	[
+water	62:35	0:0	6	i
+op	62:36	0:0	6	]
+water	62:37	0:0	6	;
+water	63:12	0:0	6	filebuf
+op	63:20	0:0	6	=
+water	63:22	0:0	6	NULL
+water	63:26	0:0	6	;
+water	64:8	0:0	6	}
+if	65:8	66:27	4	(asprintf (& filepath ,"%s%s" ,psz_path ,filename ) == - 1)
+cond	65:12	65:66	5	asprintf (& filepath ,"%s%s" ,psz_path ,filename ) == - 1
+call	65:12	65:60	6	asprintf
+arg	65:22	65:31	7	&filepath
+op	65:22	0:0	8	&
+water	65:23	0:0	8	filepath
+arg	65:33	65:39	7	"%s%s"
+water	65:33	0:0	8	"%s%s"
+arg	65:41	65:49	7	psz_path
+water	65:41	0:0	8	psz_path
+arg	65:51	65:60	7	filename
+water	65:51	0:0	8	filename
+op	65:62	0:0	6	==
+op	65:65	0:0	6	-
+water	65:66	0:0	6	1
+stmts	66:12	66:27	5	
+water	66:12	0:0	6	filepath
+op	66:21	0:0	6	=
+water	66:23	0:0	6	NULL
+water	66:27	0:0	6	;
+call	67:8	67:22	4	free
+arg	67:14	67:22	5	filebuf
+water	67:14	0:0	6	filebuf
+water	67:23	0:0	4	;
+if	68:8	69:20	4	(unlikely (filepath == NULL ))
+cond	68:12	68:37	5	unlikely (filepath == NULL )
+call	68:12	68:37	6	unlikely
+arg	68:21	68:37	7	filepath==NULL
+water	68:21	0:0	8	filepath
+op	68:30	0:0	8	==
+water	68:33	0:0	8	NULL
+stmts	69:12	69:20	5	
+continue	69:12	69:20	6	
+if	70:8	79:8	4	(vlc_stat (filepath ,& statinfo ) == 0 &&S_ISREG (statinfo . st_mode ))
+cond	70:12	70:76	5	vlc_stat (filepath ,& statinfo ) == 0 &&S_ISREG (statinfo . st_mode )
+call	70:12	70:42	6	vlc_stat
+arg	70:22	70:30	7	filepath
+water	70:22	0:0	8	filepath
+arg	70:32	70:42	7	&statinfo
+op	70:32	0:0	8	&
+water	70:33	0:0	8	statinfo
+op	70:44	0:0	6	==
+water	70:47	0:0	6	0
+op	70:49	0:0	6	&&
+call	70:52	70:76	6	S_ISREG
+arg	70:60	70:76	7	statinfo.st_mode
+water	70:60	0:0	8	statinfo
+op	70:68	0:0	8	.
+water	70:69	0:0	8	st_mode
+stmts	71:8	79:8	5	
+water	71:8	0:0	6	{
+decl	72:12	72:60	6	char	*psz_uri
+op	72:26	0:0	6	=
+call	72:28	72:59	7	vlc_path2uri
+arg	72:42	72:50	8	filepath
+water	72:42	0:0	9	filepath
+arg	72:52	72:59	8	"file"
+water	72:52	0:0	9	"file"
+if	73:12	78:12	6	(psz_uri)
+cond	73:16	73:16	7	psz_uri
+water	73:16	0:0	8	psz_uri
+stmts	74:12	78:12	7	
+water	74:12	0:0	8	{
+call	75:16	75:54	8	input_item_SetArtURL
+arg	75:38	75:44	9	p_item
+water	75:38	0:0	10	p_item
+arg	75:46	75:54	9	psz_uri
+water	75:46	0:0	10	psz_uri
+water	75:55	0:0	8	;
+call	76:16	76:30	8	free
+arg	76:22	76:30	9	psz_uri
+water	76:22	0:0	10	psz_uri
+water	76:31	0:0	8	;
+water	77:16	0:0	8	b_have_art
+op	77:27	0:0	8	=
+water	77:29	0:0	8	true
+water	77:33	0:0	8	;
+water	78:12	0:0	8	}
+water	79:8	0:0	6	}
+call	80:8	80:23	4	free
+arg	80:14	80:23	5	filepath
+water	80:14	0:0	6	filepath
+water	80:24	0:0	4	;
+water	81:4	0:0	4	}
+call	82:4	82:19	2	free
+arg	82:10	82:19	3	psz_path
+water	82:10	0:0	4	psz_path
+water	82:20	0:0	2	;
+return	83:4	83:50	2	b_have_art?VLC_SUCCESS:VLC_EGENERIC
+water	83:11	0:0	3	b_have_art
+water	83:22	0:0	3	?
+water	83:24	0:0	3	VLC_SUCCESS
+water	83:36	0:0	3	:
+water	83:38	0:0	3	VLC_EGENERIC

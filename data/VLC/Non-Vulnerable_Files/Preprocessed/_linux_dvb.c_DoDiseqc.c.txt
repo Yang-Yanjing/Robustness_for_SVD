@@ -1,0 +1,402 @@
+func	2:0	87:0	0	static int	DoDiseqc
+params	2:19	0:0	1	
+param	2:21	2:40	2	access_t *	p_access
+stmnts	0:0	86:12	1	
+decl	4:4	4:41	2	access_sys_t	*p_sys
+op	4:24	0:0	2	=
+water	4:26	0:0	2	p_access
+op	4:34	0:0	2	->
+water	4:36	0:0	2	p_sys
+decl	5:4	5:13	2	int	i_val
+decl	6:4	6:14	2	bool	b_val
+decl	7:4	7:31	2	int	i_frequency
+water	7:19	0:0	2	,
+decl	7:4	7:31	2	int	i_lnb_slof
+decl	8:4	8:31	2	fe_sec_voltage_t	fe_voltage
+decl	9:4	9:30	2	fe_sec_tone_mode_t	fe_tone
+water	10:4	0:0	2	i_frequency
+op	10:16	0:0	2	=
+call	10:18	10:60	2	var_GetInteger
+arg	10:34	10:42	3	p_access
+water	10:34	0:0	4	p_access
+arg	10:44	10:60	3	"dvb-frequency"
+water	10:44	0:0	4	"dvb-frequency"
+water	10:61	0:0	2	;
+water	11:4	0:0	2	i_lnb_slof
+op	11:15	0:0	2	=
+call	11:17	11:58	2	var_GetInteger
+arg	11:33	11:41	3	p_access
+water	11:33	0:0	4	p_access
+arg	11:43	11:58	3	"dvb-lnb-slof"
+water	11:43	0:0	4	"dvb-lnb-slof"
+water	11:59	0:0	2	;
+water	12:4	0:0	2	i_val
+op	12:10	0:0	2	=
+call	12:12	12:49	2	var_GetInteger
+arg	12:28	12:36	3	p_access
+water	12:28	0:0	4	p_access
+arg	12:38	12:49	3	"dvb-tone"
+water	12:38	0:0	4	"dvb-tone"
+water	12:50	0:0	2	;
+if	13:4	20:4	2	(i_val == - 1)
+cond	13:8	13:18	3	i_val == - 1
+water	13:8	0:0	4	i_val
+op	13:14	0:0	4	==
+op	13:17	0:0	4	-
+water	13:18	0:0	4	1
+stmts	14:4	20:4	3	
+water	14:4	0:0	4	{
+if	15:8	16:21	4	(i_frequency >= i_lnb_slof)
+cond	15:12	15:27	5	i_frequency >= i_lnb_slof
+water	15:12	0:0	6	i_frequency
+op	15:24	0:0	6	>=
+water	15:27	0:0	6	i_lnb_slof
+stmts	16:12	16:21	5	
+water	16:12	0:0	6	i_val
+op	16:18	0:0	6	=
+water	16:20	0:0	6	1
+water	16:21	0:0	6	;
+else	17:8	18:21	4
+stmts	18:12	18:21	5	
+water	18:12	0:0	6	i_val
+op	18:18	0:0	6	=
+water	18:20	0:0	6	0
+water	18:21	0:0	6	;
+call	19:8	19:52	4	var_SetInteger
+arg	19:24	19:32	5	p_access
+water	19:24	0:0	6	p_access
+arg	19:34	19:44	5	"dvb-tone"
+water	19:34	0:0	6	"dvb-tone"
+arg	19:46	19:52	5	i_val
+water	19:46	0:0	6	i_val
+water	19:53	0:0	4	;
+water	20:4	0:0	4	}
+water	21:4	0:0	2	fe_voltage
+op	21:15	0:0	2	=
+call	21:17	21:41	2	DecodeVoltage
+arg	21:32	21:41	3	p_access
+water	21:32	0:0	4	p_access
+water	21:42	0:0	2	;
+water	22:4	0:0	2	fe_tone
+op	22:12	0:0	2	=
+call	22:14	22:35	2	DecodeTone
+arg	22:26	22:35	3	p_access
+water	22:26	0:0	4	p_access
+water	22:36	0:0	2	;
+if	24:4	29:4	2	(ioctl (p_sys -> i_frontend_handle ,FE_SET_TONE ,SEC_TONE_OFF ) < 0)
+cond	24:8	24:71	3	ioctl (p_sys -> i_frontend_handle ,FE_SET_TONE ,SEC_TONE_OFF ) < 0
+call	24:8	24:67	4	ioctl
+arg	24:15	24:39	5	p_sys->i_frontend_handle
+water	24:15	0:0	6	p_sys
+op	24:20	0:0	6	->
+water	24:22	0:0	6	i_frontend_handle
+arg	24:41	24:52	5	FE_SET_TONE
+water	24:41	0:0	6	FE_SET_TONE
+arg	24:54	24:67	5	SEC_TONE_OFF
+water	24:54	0:0	6	SEC_TONE_OFF
+op	24:69	0:0	4	<
+water	24:71	0:0	4	0
+stmts	25:4	29:4	3	
+water	25:4	0:0	4	{
+call	26:8	27:39	4	msg_Err
+arg	26:17	26:25	5	p_access
+water	26:17	0:0	6	p_access
+arg	26:27	26:56	5	"switching tone %s error: %s"
+water	26:27	0:0	6	"switching tone %s error: %s"
+arg	26:58	26:63	5	"off"
+water	26:58	0:0	6	"off"
+arg	27:17	27:39	5	vlc_strerror_c(errno)
+call	27:17	27:37	6	vlc_strerror_c
+arg	27:32	27:37	7	errno
+water	27:32	0:0	8	errno
+water	27:40	0:0	4	;
+return	28:8	28:27	4	VLC_EGENERIC
+water	28:15	0:0	5	VLC_EGENERIC
+water	29:4	0:0	4	}
+if	31:4	35:4	2	(ioctl (p_sys -> i_frontend_handle ,FE_SET_VOLTAGE ,fe_voltage ) < 0)
+cond	31:8	31:72	3	ioctl (p_sys -> i_frontend_handle ,FE_SET_VOLTAGE ,fe_voltage ) < 0
+call	31:8	31:68	4	ioctl
+arg	31:15	31:39	5	p_sys->i_frontend_handle
+water	31:15	0:0	6	p_sys
+op	31:20	0:0	6	->
+water	31:22	0:0	6	i_frontend_handle
+arg	31:41	31:55	5	FE_SET_VOLTAGE
+water	31:41	0:0	6	FE_SET_VOLTAGE
+arg	31:57	31:68	5	fe_voltage
+water	31:57	0:0	6	fe_voltage
+op	31:70	0:0	4	<
+water	31:72	0:0	4	0
+stmts	32:4	35:4	3	
+water	32:4	0:0	4	{
+call	33:8	33:70	4	msg_Err
+arg	33:17	33:25	5	p_access
+water	33:17	0:0	6	p_access
+arg	33:27	33:46	5	"voltage error: %s"
+water	33:27	0:0	6	"voltage error: %s"
+arg	33:48	33:70	5	vlc_strerror_c(errno)
+call	33:48	33:68	6	vlc_strerror_c
+arg	33:63	33:68	7	errno
+water	33:63	0:0	8	errno
+water	33:71	0:0	4	;
+return	34:8	34:27	4	VLC_EGENERIC
+water	34:15	0:0	5	VLC_EGENERIC
+water	35:4	0:0	4	}
+water	36:4	0:0	2	b_val
+op	36:10	0:0	2	=
+call	36:12	36:54	2	var_GetBool
+arg	36:25	36:33	3	p_access
+water	36:25	0:0	4	p_access
+arg	36:35	36:54	3	"dvb-high-voltage"
+water	36:35	0:0	4	"dvb-high-voltage"
+water	36:55	0:0	2	;
+if	37:4	42:4	2	(ioctl (p_sys -> i_frontend_handle ,FE_ENABLE_HIGH_LNB_VOLTAGE ,b_val ) < 0 && b_val)
+cond	37:8	38:58	3	ioctl (p_sys -> i_frontend_handle ,FE_ENABLE_HIGH_LNB_VOLTAGE ,b_val ) < 0 && b_val
+call	37:8	38:49	4	ioctl
+arg	37:15	37:39	5	p_sys->i_frontend_handle
+water	37:15	0:0	6	p_sys
+op	37:20	0:0	6	->
+water	37:22	0:0	6	i_frontend_handle
+arg	38:15	38:41	5	FE_ENABLE_HIGH_LNB_VOLTAGE
+water	38:15	0:0	6	FE_ENABLE_HIGH_LNB_VOLTAGE
+arg	38:43	38:49	5	b_val
+water	38:43	0:0	6	b_val
+op	38:51	0:0	4	<
+water	38:53	0:0	4	0
+op	38:55	0:0	4	&&
+water	38:58	0:0	4	b_val
+stmts	39:4	42:4	3	
+water	39:4	0:0	4	{
+call	40:8	41:39	4	msg_Err
+arg	40:17	40:25	5	p_access
+water	40:17	0:0	6	p_access
+arg	40:27	40:55	5	"high LNB voltage error: %s"
+water	40:27	0:0	6	"high LNB voltage error: %s"
+arg	41:17	41:39	5	vlc_strerror_c(errno)
+call	41:17	41:37	6	vlc_strerror_c
+arg	41:32	41:37	7	errno
+water	41:32	0:0	8	errno
+water	41:40	0:0	4	;
+water	42:4	0:0	4	}
+call	44:4	44:16	2	msleep
+arg	44:11	44:16	3	15000
+water	44:11	0:0	4	15000
+water	44:17	0:0	2	;
+water	45:4	0:0	2	i_val
+op	45:10	0:0	2	=
+call	45:12	45:50	2	var_GetInteger
+arg	45:28	45:36	3	p_access
+water	45:28	0:0	4	p_access
+arg	45:38	45:50	3	"dvb-satno"
+water	45:38	0:0	4	"dvb-satno"
+water	45:51	0:0	2	;
+if	46:4	77:4	2	(i_val > 0 && i_val < 5)
+cond	46:8	46:29	3	i_val > 0 && i_val < 5
+water	46:8	0:0	4	i_val
+op	46:14	0:0	4	>
+water	46:16	0:0	4	0
+op	46:18	0:0	4	&&
+water	46:21	0:0	4	i_val
+op	46:27	0:0	4	<
+water	46:29	0:0	4	5
+stmts	47:4	77:4	3	
+water	47:4	0:0	4	{
+decl	52:8	52:83	4	struct diseqc_cmd_t	cmd
+op	52:32	0:0	4	=
+water	52:35	0:0	4	{
+water	52:37	0:0	4	{
+water	52:38	0:0	4	{
+water	52:39	0:0	4	0
+water	52:40	0:0	4	xe0
+water	52:43	0:0	4	,
+water	52:45	0:0	4	0
+water	52:46	0:0	4	x10
+water	52:49	0:0	4	,
+water	52:51	0:0	4	0
+water	52:52	0:0	4	x38
+water	52:55	0:0	4	,
+water	52:57	0:0	4	0
+water	52:58	0:0	4	xf0
+water	52:61	0:0	4	,
+water	52:63	0:0	4	0
+water	52:64	0:0	4	x00
+water	52:67	0:0	4	,
+water	52:69	0:0	4	0
+water	52:70	0:0	4	x00
+water	52:73	0:0	4	}
+water	52:74	0:0	4	,
+water	52:76	0:0	4	4
+water	52:77	0:0	4	}
+water	52:78	0:0	4	,
+water	52:80	0:0	4	0
+water	52:82	0:0	4	}
+water	56:8	0:0	4	cmd
+op	56:11	0:0	4	.
+water	56:12	0:0	4	cmd
+op	56:15	0:0	4	.
+water	56:16	0:0	4	msg
+op	56:19	0:0	4	[
+water	56:20	0:0	4	3
+op	56:21	0:0	4	]
+op	56:23	0:0	4	=
+water	56:25	0:0	4	0
+water	56:26	0:0	4	xf0
+op	57:26	0:0	4	|
+water	57:28	0:0	4	(
+water	57:29	0:0	4	(
+water	57:30	0:0	4	(
+water	57:31	0:0	4	i_val
+op	57:37	0:0	4	-
+water	57:39	0:0	4	1
+water	57:40	0:0	4	)
+op	57:42	0:0	4	*
+water	57:44	0:0	4	4
+water	57:45	0:0	4	)
+op	57:47	0:0	4	&
+water	57:49	0:0	4	0
+water	57:50	0:0	4	xc
+water	57:52	0:0	4	)
+op	58:26	0:0	4	|
+water	58:28	0:0	4	(
+water	58:29	0:0	4	fe_voltage
+op	58:40	0:0	4	==
+water	58:43	0:0	4	SEC_VOLTAGE_13
+water	58:58	0:0	4	?
+water	58:60	0:0	4	0
+water	58:62	0:0	4	:
+water	58:64	0:0	4	2
+water	58:65	0:0	4	)
+op	59:26	0:0	4	|
+water	59:28	0:0	4	(
+water	59:29	0:0	4	fe_tone
+op	59:37	0:0	4	==
+water	59:40	0:0	4	SEC_TONE_ON
+water	59:52	0:0	4	?
+water	59:54	0:0	4	1
+water	59:56	0:0	4	:
+water	59:58	0:0	4	0
+water	59:59	0:0	4	)
+water	59:60	0:0	4	;
+if	60:8	66:8	4	(ioctl (p_sys -> i_frontend_handle ,FE_DISEQC_SEND_MASTER_CMD ,& cmd . cmd ))
+cond	60:12	61:28	5	ioctl (p_sys -> i_frontend_handle ,FE_DISEQC_SEND_MASTER_CMD ,& cmd . cmd )
+call	60:12	61:28	6	ioctl
+arg	60:19	60:43	7	p_sys->i_frontend_handle
+water	60:19	0:0	8	p_sys
+op	60:24	0:0	8	->
+water	60:26	0:0	8	i_frontend_handle
+arg	60:45	60:70	7	FE_DISEQC_SEND_MASTER_CMD
+water	60:45	0:0	8	FE_DISEQC_SEND_MASTER_CMD
+arg	61:19	61:28	7	&cmd.cmd
+op	61:19	0:0	8	&
+water	61:20	0:0	8	cmd
+op	61:23	0:0	8	.
+water	61:24	0:0	8	cmd
+stmts	62:8	66:8	5	
+water	62:8	0:0	6	{
+call	63:12	64:43	6	msg_Err
+arg	63:21	63:29	7	p_access
+water	63:21	0:0	8	p_access
+arg	63:31	63:65	7	"master command sending error: %s"
+water	63:31	0:0	8	"master command sending error: %s"
+arg	64:21	64:43	7	vlc_strerror_c(errno)
+call	64:21	64:41	8	vlc_strerror_c
+arg	64:36	64:41	9	errno
+water	64:36	0:0	10	errno
+water	64:44	0:0	6	;
+return	65:12	65:31	6	VLC_EGENERIC
+water	65:19	0:0	7	VLC_EGENERIC
+water	66:8	0:0	6	}
+call	67:8	67:38	4	msleep
+arg	67:15	67:38	5	15000+cmd.wait*1000
+water	67:15	0:0	6	15000
+op	67:21	0:0	6	+
+water	67:23	0:0	6	cmd
+op	67:26	0:0	6	.
+water	67:27	0:0	6	wait
+op	67:32	0:0	6	*
+water	67:34	0:0	6	1000
+water	67:39	0:0	4	;
+if	69:8	75:8	4	(ioctl (p_sys -> i_frontend_handle ,FE_DISEQC_SEND_BURST ,( ( i_val - 1 ) % 2 ) ? SEC_MINI_B : SEC_MINI_A ))
+cond	69:12	70:62	5	ioctl (p_sys -> i_frontend_handle ,FE_DISEQC_SEND_BURST ,( ( i_val - 1 ) % 2 ) ? SEC_MINI_B : SEC_MINI_A )
+call	69:12	70:62	6	ioctl
+arg	69:19	69:43	7	p_sys->i_frontend_handle
+water	69:19	0:0	8	p_sys
+op	69:24	0:0	8	->
+water	69:26	0:0	8	i_frontend_handle
+arg	69:45	69:65	7	FE_DISEQC_SEND_BURST
+water	69:45	0:0	8	FE_DISEQC_SEND_BURST
+arg	70:18	70:62	7	((i_val-1)%2)?SEC_MINI_B:SEC_MINI_A
+water	70:18	0:0	8	(
+water	70:19	0:0	8	(
+water	70:20	0:0	8	i_val
+op	70:26	0:0	8	-
+water	70:28	0:0	8	1
+water	70:29	0:0	8	)
+op	70:31	0:0	8	%
+water	70:33	0:0	8	2
+water	70:34	0:0	8	)
+water	70:36	0:0	8	?
+water	70:38	0:0	8	SEC_MINI_B
+water	70:49	0:0	8	:
+water	70:51	0:0	8	SEC_MINI_A
+stmts	71:8	75:8	5	
+water	71:8	0:0	6	{
+call	72:12	73:43	6	msg_Err
+arg	72:21	72:29	7	p_access
+water	72:21	0:0	8	p_access
+arg	72:31	72:56	7	"burst sending error: %s"
+water	72:31	0:0	8	"burst sending error: %s"
+arg	73:21	73:43	7	vlc_strerror_c(errno)
+call	73:21	73:41	8	vlc_strerror_c
+arg	73:36	73:41	9	errno
+water	73:36	0:0	10	errno
+water	73:44	0:0	6	;
+return	74:12	74:31	6	VLC_EGENERIC
+water	74:19	0:0	7	VLC_EGENERIC
+water	75:8	0:0	6	}
+call	76:8	76:20	4	msleep
+arg	76:15	76:20	5	15000
+water	76:15	0:0	6	15000
+water	76:21	0:0	4	;
+water	77:4	0:0	4	}
+if	78:4	84:4	2	(ioctl (p_sys -> i_frontend_handle ,FE_SET_TONE ,fe_tone ))
+cond	78:8	78:62	3	ioctl (p_sys -> i_frontend_handle ,FE_SET_TONE ,fe_tone )
+call	78:8	78:62	4	ioctl
+arg	78:15	78:39	5	p_sys->i_frontend_handle
+water	78:15	0:0	6	p_sys
+op	78:20	0:0	6	->
+water	78:22	0:0	6	i_frontend_handle
+arg	78:41	78:52	5	FE_SET_TONE
+water	78:41	0:0	6	FE_SET_TONE
+arg	78:54	78:62	5	fe_tone
+water	78:54	0:0	6	fe_tone
+stmts	79:4	84:4	3	
+water	79:4	0:0	4	{
+call	80:8	82:39	4	msg_Err
+arg	80:17	80:25	5	p_access
+water	80:17	0:0	6	p_access
+arg	80:27	80:56	5	"switching tone %s error: %s"
+water	80:27	0:0	6	"switching tone %s error: %s"
+arg	81:17	81:56	5	(fe_tone==SEC_TONE_ON)?"on":"off"
+water	81:17	0:0	6	(
+water	81:18	0:0	6	fe_tone
+op	81:26	0:0	6	==
+water	81:29	0:0	6	SEC_TONE_ON
+water	81:40	0:0	6	)
+water	81:42	0:0	6	?
+water	81:44	0:0	6	"on"
+water	81:49	0:0	6	:
+water	81:51	0:0	6	"off"
+arg	82:17	82:39	5	vlc_strerror_c(errno)
+call	82:17	82:37	6	vlc_strerror_c
+arg	82:32	82:37	7	errno
+water	82:32	0:0	8	errno
+water	82:40	0:0	4	;
+return	83:8	83:27	4	VLC_EGENERIC
+water	83:15	0:0	5	VLC_EGENERIC
+water	84:4	0:0	4	}
+call	85:4	85:16	2	msleep
+arg	85:11	85:16	3	50000
+water	85:11	0:0	4	50000
+water	85:17	0:0	2	;
+return	86:4	86:12	2	0
+water	86:11	0:0	3	0

@@ -1,0 +1,140 @@
+func	2:0	27:0	0	static int	Demux
+params	2:16	0:0	1	
+param	2:18	2:35	2	demux_t *	p_demux
+stmnts	0:0	26:12	1	
+decl	4:4	4:39	2	demux_sys_t	*p_sys
+op	4:23	0:0	2	=
+water	4:25	0:0	2	p_demux
+op	4:32	0:0	2	->
+water	4:34	0:0	2	p_sys
+decl	5:4	5:24	2	block_t	*p_block
+decl	6:4	6:24	2	int64_t	i_offset
+water	7:4	0:0	2	unsigned
+water	7:16	0:0	2	i_frames
+op	7:25	0:0	2	=
+water	7:27	0:0	2	p_sys
+op	7:32	0:0	2	->
+water	7:34	0:0	2	i_block_frames
+water	7:48	0:0	2	;
+water	8:4	0:0	2	i_offset
+op	8:13	0:0	2	=
+call	8:15	8:39	2	stream_Tell
+arg	8:28	8:39	3	p_demux->s
+water	8:28	0:0	4	p_demux
+op	8:35	0:0	4	->
+water	8:37	0:0	4	s
+water	8:40	0:0	2	;
+if	9:4	14:4	2	(p_sys -> i_data_size > 0 && i_offset >= p_sys -> i_data_offset + p_sys -> i_data_size)
+cond	9:8	10:50	3	p_sys -> i_data_size > 0 && i_offset >= p_sys -> i_data_offset + p_sys -> i_data_size
+water	9:8	0:0	4	p_sys
+op	9:13	0:0	4	->
+water	9:15	0:0	4	i_data_size
+op	9:27	0:0	4	>
+water	9:29	0:0	4	0
+op	9:31	0:0	4	&&
+water	10:8	0:0	4	i_offset
+op	10:17	0:0	4	>=
+water	10:20	0:0	4	p_sys
+op	10:25	0:0	4	->
+water	10:27	0:0	4	i_data_offset
+op	10:41	0:0	4	+
+water	10:43	0:0	4	p_sys
+op	10:48	0:0	4	->
+water	10:50	0:0	4	i_data_size
+stmts	11:4	14:4	3	
+water	11:4	0:0	4	{
+return	13:8	13:16	4	0
+water	13:15	0:0	5	0
+water	14:4	0:0	4	}
+water	15:4	0:0	2	p_block
+op	15:12	0:0	2	=
+call	15:14	15:71	2	stream_Block
+arg	15:28	15:38	3	p_demux->s
+water	15:28	0:0	4	p_demux
+op	15:35	0:0	4	->
+water	15:37	0:0	4	s
+arg	15:40	15:71	3	p_sys->i_frame_size*i_frames
+water	15:40	0:0	4	p_sys
+op	15:45	0:0	4	->
+water	15:47	0:0	4	i_frame_size
+op	15:60	0:0	4	*
+water	15:62	0:0	4	i_frames
+water	15:72	0:0	2	;
+if	16:4	20:4	2	(p_block == NULL)
+cond	16:8	16:19	3	p_block == NULL
+water	16:8	0:0	4	p_block
+op	16:16	0:0	4	==
+water	16:19	0:0	4	NULL
+stmts	17:4	20:4	3	
+water	17:4	0:0	4	{
+call	18:8	18:46	4	msg_Warn
+arg	18:18	18:25	5	p_demux
+water	18:18	0:0	6	p_demux
+arg	18:27	18:46	5	"cannot read data"
+water	18:27	0:0	6	"cannot read data"
+water	18:47	0:0	4	;
+return	19:8	19:16	4	0
+water	19:15	0:0	5	0
+water	20:4	0:0	4	}
+water	21:4	0:0	2	i_frames
+op	21:13	0:0	2	=
+water	21:15	0:0	2	p_block
+op	21:22	0:0	2	->
+water	21:24	0:0	2	i_buffer
+op	21:33	0:0	2	/
+water	21:35	0:0	2	p_sys
+op	21:40	0:0	2	->
+water	21:42	0:0	2	i_frame_size
+water	21:54	0:0	2	;
+water	22:4	0:0	2	p_block
+op	22:11	0:0	2	->
+water	22:13	0:0	2	i_dts
+op	22:19	0:0	2	=
+water	22:21	0:0	2	p_block
+op	22:28	0:0	2	->
+water	22:30	0:0	2	i_pts
+op	22:36	0:0	2	=
+call	22:38	22:60	2	date_Get
+arg	22:48	22:60	3	&p_sys->pts
+op	22:48	0:0	4	&
+water	22:49	0:0	4	p_sys
+op	22:54	0:0	4	->
+water	22:56	0:0	4	pts
+water	22:61	0:0	2	;
+call	23:4	23:65	2	es_out_Control
+arg	23:20	23:32	3	p_demux->out
+water	23:20	0:0	4	p_demux
+op	23:27	0:0	4	->
+water	23:29	0:0	4	out
+arg	23:34	23:48	3	ES_OUT_SET_PCR
+water	23:34	0:0	4	ES_OUT_SET_PCR
+arg	23:50	23:65	3	p_block->i_pts
+water	23:50	0:0	4	p_block
+op	23:57	0:0	4	->
+water	23:59	0:0	4	i_pts
+water	23:66	0:0	2	;
+call	24:4	24:52	2	es_out_Send
+arg	24:17	24:29	3	p_demux->out
+water	24:17	0:0	4	p_demux
+op	24:24	0:0	4	->
+water	24:26	0:0	4	out
+arg	24:31	24:42	3	p_sys->p_es
+water	24:31	0:0	4	p_sys
+op	24:36	0:0	4	->
+water	24:38	0:0	4	p_es
+arg	24:44	24:52	3	p_block
+water	24:44	0:0	4	p_block
+water	24:53	0:0	2	;
+call	25:4	25:57	2	date_Increment
+arg	25:20	25:31	3	&p_sys->pts
+op	25:20	0:0	4	&
+water	25:21	0:0	4	p_sys
+op	25:26	0:0	4	->
+water	25:28	0:0	4	pts
+arg	25:33	25:57	3	i_frames*FRAME_LENGTH
+water	25:33	0:0	4	i_frames
+op	25:42	0:0	4	*
+water	25:44	0:0	4	FRAME_LENGTH
+water	25:58	0:0	2	;
+return	26:4	26:12	2	1
+water	26:11	0:0	3	1

@@ -1,0 +1,656 @@
+func	2:0	142:0	0	size_t	CacheLoad
+params	2:16	0:0	1	
+param	2:18	2:38	2	vlc_object_t *	p_this
+param	2:40	2:55	2	const char *	dir
+param	2:57	2:76	2	module_cache_t * *	r
+stmnts	0:0	141:12	1	
+decl	4:4	4:22	2	char	*psz_filename
+decl	5:4	5:14	2	FILE	*file
+decl	6:4	6:22	2	int	i_size
+water	6:14	0:0	2	,
+decl	6:4	6:22	2	int	i_read
+decl	7:4	7:44	2	char	p_cachestring[sizeof(CACHE_STRING)]
+decl	8:4	8:18	2	size_t	i_cache
+decl	9:4	9:20	2	int32_t	i_marker
+call	10:4	10:24	2	assert
+arg	10:12	10:24	3	dir!=NULL
+water	10:12	0:0	4	dir
+op	10:16	0:0	4	!=
+water	10:19	0:0	4	NULL
+water	10:25	0:0	2	;
+op	11:4	0:0	2	*
+water	11:5	0:0	2	r
+op	11:7	0:0	2	=
+water	11:9	0:0	2	NULL
+water	11:13	0:0	2	;
+if	12:4	13:16	2	(asprintf (& psz_filename ,"%s" DIR_SEP CACHE_NAME ,dir ) == - 1)
+cond	12:8	12:67	3	asprintf (& psz_filename ,"%s" DIR_SEP CACHE_NAME ,dir ) == - 1
+call	12:8	12:61	4	asprintf
+arg	12:18	12:31	5	&psz_filename
+op	12:18	0:0	6	&
+water	12:19	0:0	6	psz_filename
+arg	12:33	12:55	5	"%s"DIR_SEPCACHE_NAME
+water	12:33	0:0	6	"%s"
+water	12:37	0:0	6	DIR_SEP
+water	12:45	0:0	6	CACHE_NAME
+arg	12:57	12:61	5	dir
+water	12:57	0:0	6	dir
+op	12:63	0:0	4	==
+op	12:66	0:0	4	-
+water	12:67	0:0	4	1
+stmts	13:8	13:16	3	
+return	13:8	13:16	4	0
+water	13:15	0:0	5	0
+call	14:4	14:67	2	msg_Dbg
+arg	14:13	14:19	3	p_this
+water	14:13	0:0	4	p_this
+arg	14:21	14:52	3	"loading plugins cache file %s"
+water	14:21	0:0	4	"loading plugins cache file %s"
+arg	14:54	14:67	3	psz_filename
+water	14:54	0:0	4	psz_filename
+water	14:68	0:0	2	;
+water	15:4	0:0	2	file
+op	15:9	0:0	2	=
+call	15:11	15:41	2	vlc_fopen
+arg	15:22	15:34	3	psz_filename
+water	15:22	0:0	4	psz_filename
+arg	15:36	15:41	3	"rb"
+water	15:36	0:0	4	"rb"
+water	15:42	0:0	2	;
+if	16:4	22:4	2	(! file)
+cond	16:8	16:9	3	! file
+op	16:8	0:0	4	!
+water	16:9	0:0	4	file
+stmts	17:4	22:4	3	
+water	17:4	0:0	4	{
+call	18:8	19:40	4	msg_Warn
+arg	18:18	18:24	5	p_this
+water	18:18	0:0	6	p_this
+arg	18:26	18:46	5	"cannot read %s: %s"
+water	18:26	0:0	6	"cannot read %s: %s"
+arg	18:48	18:60	5	psz_filename
+water	18:48	0:0	6	psz_filename
+arg	19:18	19:40	5	vlc_strerror_c(errno)
+call	19:18	19:38	6	vlc_strerror_c
+arg	19:33	19:38	7	errno
+water	19:33	0:0	8	errno
+water	19:41	0:0	4	;
+call	20:8	20:27	4	free
+arg	20:14	20:27	5	psz_filename
+water	20:14	0:0	6	psz_filename
+water	20:28	0:0	4	;
+return	21:8	21:16	4	0
+water	21:15	0:0	5	0
+water	22:4	0:0	4	}
+call	23:4	23:23	2	free
+arg	23:10	23:23	3	psz_filename
+water	23:10	0:0	4	psz_filename
+water	23:24	0:0	2	;
+water	25:4	0:0	2	i_size
+op	25:11	0:0	2	=
+op	25:13	0:0	2	sizeof
+water	25:19	0:0	2	(
+water	25:20	0:0	2	CACHE_STRING
+water	25:32	0:0	2	)
+op	25:34	0:0	2	-
+water	25:36	0:0	2	1
+water	25:37	0:0	2	;
+water	26:4	0:0	2	i_read
+op	26:11	0:0	2	=
+call	26:13	26:51	2	fread
+arg	26:20	26:33	3	p_cachestring
+water	26:20	0:0	4	p_cachestring
+arg	26:35	26:36	3	1
+water	26:35	0:0	4	1
+arg	26:38	26:44	3	i_size
+water	26:38	0:0	4	i_size
+arg	26:46	26:51	3	file
+water	26:46	0:0	4	file
+water	26:52	0:0	2	;
+if	27:4	33:4	2	(i_read != i_size ||memcmp (p_cachestring ,CACHE_STRING ,i_size ))
+cond	27:8	28:52	3	i_read != i_size ||memcmp (p_cachestring ,CACHE_STRING ,i_size )
+water	27:8	0:0	4	i_read
+op	27:15	0:0	4	!=
+water	27:18	0:0	4	i_size
+op	27:25	0:0	4	||
+call	28:8	28:52	4	memcmp
+arg	28:16	28:29	5	p_cachestring
+water	28:16	0:0	6	p_cachestring
+arg	28:31	28:43	5	CACHE_STRING
+water	28:31	0:0	6	CACHE_STRING
+arg	28:45	28:52	5	i_size
+water	28:45	0:0	6	i_size
+stmts	29:4	33:4	3	
+water	29:4	0:0	4	{
+call	30:8	30:73	4	msg_Warn
+arg	30:18	30:24	5	p_this
+water	30:18	0:0	6	p_this
+arg	30:26	30:73	5	"This doesn't look like a valid plugins cache"
+water	30:26	0:0	6	"This doesn't look like a valid plugins cache"
+water	30:74	0:0	4	;
+call	31:8	31:21	4	fclose
+arg	31:16	31:21	5	file
+water	31:16	0:0	6	file
+water	31:22	0:0	4	;
+return	32:8	32:16	4	0
+water	32:15	0:0	5	0
+water	33:4	0:0	4	}
+decl	36:4	36:49	2	char	p_distrostring[sizeof(DISTRO_VERSION)]
+water	37:4	0:0	2	i_size
+op	37:11	0:0	2	=
+op	37:13	0:0	2	sizeof
+water	37:19	0:0	2	(
+water	37:21	0:0	2	DISTRO_VERSION
+water	37:36	0:0	2	)
+op	37:38	0:0	2	-
+water	37:40	0:0	2	1
+water	37:41	0:0	2	;
+water	38:4	0:0	2	i_read
+op	38:11	0:0	2	=
+call	38:13	38:52	2	fread
+arg	38:20	38:34	3	p_distrostring
+water	38:20	0:0	4	p_distrostring
+arg	38:36	38:37	3	1
+water	38:36	0:0	4	1
+arg	38:39	38:45	3	i_size
+water	38:39	0:0	4	i_size
+arg	38:47	38:52	3	file
+water	38:47	0:0	4	file
+water	38:53	0:0	2	;
+if	39:4	45:4	2	(i_read != i_size ||memcmp (p_distrostring ,DISTRO_VERSION ,i_size ))
+cond	39:8	40:55	3	i_read != i_size ||memcmp (p_distrostring ,DISTRO_VERSION ,i_size )
+water	39:8	0:0	4	i_read
+op	39:15	0:0	4	!=
+water	39:18	0:0	4	i_size
+op	39:25	0:0	4	||
+call	40:8	40:55	4	memcmp
+arg	40:16	40:30	5	p_distrostring
+water	40:16	0:0	6	p_distrostring
+arg	40:32	40:46	5	DISTRO_VERSION
+water	40:32	0:0	6	DISTRO_VERSION
+arg	40:48	40:55	5	i_size
+water	40:48	0:0	6	i_size
+stmts	41:4	45:4	3	
+water	41:4	0:0	4	{
+call	42:8	42:73	4	msg_Warn
+arg	42:18	42:24	5	p_this
+water	42:18	0:0	6	p_this
+arg	42:26	42:73	5	"This doesn't look like a valid plugins cache"
+water	42:26	0:0	6	"This doesn't look like a valid plugins cache"
+water	42:74	0:0	4	;
+call	43:8	43:21	4	fclose
+arg	43:16	43:21	5	file
+water	43:16	0:0	6	file
+water	43:22	0:0	4	;
+return	44:8	44:16	4	0
+water	44:15	0:0	5	0
+water	45:4	0:0	4	}
+water	48:4	0:0	2	i_read
+op	48:11	0:0	2	=
+call	48:13	48:57	2	fread
+arg	48:20	48:29	3	&i_marker
+op	48:20	0:0	4	&
+water	48:21	0:0	4	i_marker
+arg	48:31	48:32	3	1
+water	48:31	0:0	4	1
+arg	48:34	48:50	3	sizeof(i_marker)
+op	48:34	0:0	4	sizeof
+water	48:40	0:0	4	(
+water	48:41	0:0	4	i_marker
+water	48:49	0:0	4	)
+arg	48:52	48:57	3	file
+water	48:52	0:0	4	file
+water	48:58	0:0	2	;
+if	49:4	55:4	2	(i_read != sizeof ( i_marker ) || i_marker != CACHE_SUBVERSION_NUM)
+cond	49:8	49:50	3	i_read != sizeof ( i_marker ) || i_marker != CACHE_SUBVERSION_NUM
+water	49:8	0:0	4	i_read
+op	49:15	0:0	4	!=
+op	49:18	0:0	4	sizeof
+water	49:24	0:0	4	(
+water	49:25	0:0	4	i_marker
+water	49:33	0:0	4	)
+op	49:35	0:0	4	||
+water	49:38	0:0	4	i_marker
+op	49:47	0:0	4	!=
+water	49:50	0:0	4	CACHE_SUBVERSION_NUM
+stmts	50:4	55:4	3	
+water	50:4	0:0	4	{
+call	51:8	52:39	4	msg_Warn
+arg	51:18	51:24	5	p_this
+water	51:18	0:0	6	p_this
+arg	51:26	52:39	5	"This doesn't look like a valid plugins cache ""(corrupted header)"
+water	51:26	0:0	6	"This doesn't look like a valid plugins cache "
+water	52:18	0:0	6	"(corrupted header)"
+water	52:40	0:0	4	;
+call	53:8	53:21	4	fclose
+arg	53:16	53:21	5	file
+water	53:16	0:0	6	file
+water	53:22	0:0	4	;
+return	54:8	54:16	4	0
+water	54:15	0:0	5	0
+water	55:4	0:0	4	}
+water	57:4	0:0	2	i_read
+op	57:11	0:0	2	=
+call	57:13	57:57	2	fread
+arg	57:20	57:29	3	&i_marker
+op	57:20	0:0	4	&
+water	57:21	0:0	4	i_marker
+arg	57:31	57:32	3	1
+water	57:31	0:0	4	1
+arg	57:34	57:50	3	sizeof(i_marker)
+op	57:34	0:0	4	sizeof
+water	57:40	0:0	4	(
+water	57:41	0:0	4	i_marker
+water	57:49	0:0	4	)
+arg	57:52	57:57	3	file
+water	57:52	0:0	4	file
+water	57:58	0:0	2	;
+if	58:4	65:4	2	(i_read != sizeof ( i_marker ) || i_marker !=ftell (file ) - ( int ) sizeof ( i_marker ))
+cond	58:8	59:56	3	i_read != sizeof ( i_marker ) || i_marker !=ftell (file ) - ( int ) sizeof ( i_marker )
+water	58:8	0:0	4	i_read
+op	58:15	0:0	4	!=
+op	58:18	0:0	4	sizeof
+water	58:24	0:0	4	(
+water	58:25	0:0	4	i_marker
+water	58:33	0:0	4	)
+op	58:35	0:0	4	||
+water	59:8	0:0	4	i_marker
+op	59:17	0:0	4	!=
+call	59:20	59:32	4	ftell
+arg	59:27	59:32	5	file
+water	59:27	0:0	6	file
+op	59:34	0:0	4	-
+water	59:36	0:0	4	(
+water	59:37	0:0	4	int
+water	59:40	0:0	4	)
+op	59:41	0:0	4	sizeof
+water	59:47	0:0	4	(
+water	59:48	0:0	4	i_marker
+water	59:56	0:0	4	)
+stmts	60:4	65:4	3	
+water	60:4	0:0	4	{
+call	61:8	62:39	4	msg_Warn
+arg	61:18	61:24	5	p_this
+water	61:18	0:0	6	p_this
+arg	61:26	62:39	5	"This doesn't look like a valid plugins cache ""(corrupted header)"
+water	61:26	0:0	6	"This doesn't look like a valid plugins cache "
+water	62:18	0:0	6	"(corrupted header)"
+water	62:40	0:0	4	;
+call	63:8	63:21	4	fclose
+arg	63:16	63:21	5	file
+water	63:16	0:0	6	file
+water	63:22	0:0	4	;
+return	64:8	64:16	4	0
+water	64:15	0:0	5	0
+water	65:4	0:0	4	}
+if	66:4	72:4	2	(fread (& i_cache ,1 ,sizeof ( i_cache ) ,file ) != sizeof ( i_cache ))
+cond	66:8	66:69	3	fread (& i_cache ,1 ,sizeof ( i_cache ) ,file ) != sizeof ( i_cache )
+call	66:8	66:50	4	fread
+arg	66:15	66:23	5	&i_cache
+op	66:15	0:0	6	&
+water	66:16	0:0	6	i_cache
+arg	66:25	66:26	5	1
+water	66:25	0:0	6	1
+arg	66:28	66:43	5	sizeof(i_cache)
+op	66:28	0:0	6	sizeof
+water	66:34	0:0	6	(
+water	66:35	0:0	6	i_cache
+water	66:42	0:0	6	)
+arg	66:45	66:50	5	file
+water	66:45	0:0	6	file
+op	66:52	0:0	4	!=
+op	66:55	0:0	4	sizeof
+water	66:61	0:0	4	(
+water	66:62	0:0	4	i_cache
+water	66:69	0:0	4	)
+stmts	67:4	72:4	3	
+water	67:4	0:0	4	{
+call	68:8	69:37	4	msg_Warn
+arg	68:18	68:24	5	p_this
+water	68:18	0:0	6	p_this
+arg	68:26	69:37	5	"This doesn't look like a valid plugins cache ""(file too short)"
+water	68:26	0:0	6	"This doesn't look like a valid plugins cache "
+water	69:18	0:0	6	"(file too short)"
+water	69:38	0:0	4	;
+call	70:8	70:21	4	fclose
+arg	70:16	70:21	5	file
+water	70:16	0:0	6	file
+water	70:22	0:0	4	;
+return	71:8	71:16	4	0
+water	71:15	0:0	5	0
+water	72:4	0:0	4	}
+decl	73:4	73:32	2	module_cache_t	*cache
+op	73:26	0:0	2	=
+water	73:28	0:0	2	NULL
+for	74:4	133:4	2	( size_t count = 0 ;count < i_cache;)
+forinit	0:0	74:25	3	 size_t count = 0 ;
+decl	74:9	74:25	4	size_t	count
+op	74:22	0:0	4	=
+water	74:24	0:0	4	0
+cond	74:27	74:35	3	count < i_cache
+water	74:27	0:0	4	count
+op	74:33	0:0	4	<
+water	74:35	0:0	4	i_cache
+forexpr	0:0	0:0	3	
+stmts	75:4	133:4	3	
+water	75:4	0:0	4	{
+decl	76:8	76:24	4	module_t	*module
+decl	77:8	77:24	4	int	i_submodules
+water	78:8	0:0	4	module
+op	78:15	0:0	4	=
+call	78:17	78:40	4	vlc_module_create
+arg	78:36	78:40	5	NULL
+water	78:36	0:0	6	NULL
+water	78:41	0:0	4	;
+call	80:8	80:41	4	LOAD_STRING
+arg	80:20	80:41	5	module->psz_shortname
+water	80:20	0:0	6	module
+op	80:26	0:0	6	->
+water	80:28	0:0	6	psz_shortname
+water	80:42	0:0	4	;
+call	81:8	81:40	4	LOAD_STRING
+arg	81:20	81:40	5	module->psz_longname
+water	81:20	0:0	6	module
+op	81:26	0:0	6	->
+water	81:28	0:0	6	psz_longname
+water	81:41	0:0	4	;
+call	82:8	82:36	4	LOAD_STRING
+arg	82:20	82:36	5	module->psz_help
+water	82:20	0:0	6	module
+op	82:26	0:0	6	->
+water	82:28	0:0	6	psz_help
+water	82:37	0:0	4	;
+call	83:8	83:42	4	LOAD_IMMEDIATE
+arg	83:23	83:42	5	module->i_shortcuts
+water	83:23	0:0	6	module
+op	83:29	0:0	6	->
+water	83:31	0:0	6	i_shortcuts
+water	83:43	0:0	4	;
+if	84:8	85:22	4	(module -> i_shortcuts > MODULE_SHORTCUT_MAX)
+cond	84:12	84:34	5	module -> i_shortcuts > MODULE_SHORTCUT_MAX
+water	84:12	0:0	6	module
+op	84:18	0:0	6	->
+water	84:20	0:0	6	i_shortcuts
+op	84:32	0:0	6	>
+water	84:34	0:0	6	MODULE_SHORTCUT_MAX
+stmts	85:12	85:22	5	
+goto	85:12	85:22	6	error
+water	85:17	0:0	7	error
+else	86:8	92:8	4
+stmts	87:8	92:8	5	
+water	87:8	0:0	6	{
+water	88:12	0:0	6	module
+op	88:18	0:0	6	->
+water	88:20	0:0	6	pp_shortcuts
+op	88:33	0:0	6	=
+call	89:30	89:91	6	xmalloc
+arg	89:39	89:91	7	sizeof(*module->pp_shortcuts)*module->i_shortcuts
+op	89:39	0:0	8	sizeof
+water	89:46	0:0	8	(
+op	89:47	0:0	8	*
+water	89:48	0:0	8	module
+op	89:54	0:0	8	->
+water	89:56	0:0	8	pp_shortcuts
+water	89:68	0:0	8	)
+op	89:70	0:0	8	*
+water	89:72	0:0	8	module
+op	89:78	0:0	8	->
+water	89:80	0:0	8	i_shortcuts
+water	89:92	0:0	6	;
+for	90:12	91:52	6	(unsigned j = 0 ;j < module -> i_shortcuts;j ++)
+forinit	90:17	90:31	7	unsigned j = 0 ;
+water	90:17	0:0	8	unsigned
+water	90:26	0:0	8	j
+op	90:28	0:0	8	=
+water	90:30	0:0	8	0
+water	90:31	0:0	8	;
+cond	90:33	90:45	7	j < module -> i_shortcuts
+water	90:33	0:0	8	j
+op	90:35	0:0	8	<
+water	90:37	0:0	8	module
+op	90:43	0:0	8	->
+water	90:45	0:0	8	i_shortcuts
+forexpr	90:58	90:59	7	j ++
+water	90:58	0:0	8	j
+op	90:59	0:0	8	++
+stmts	91:16	91:52	7	
+call	91:16	91:51	8	LOAD_STRING
+arg	91:28	91:51	9	module->pp_shortcuts[j]
+water	91:28	0:0	10	module
+op	91:34	0:0	10	->
+water	91:36	0:0	10	pp_shortcuts
+op	91:48	0:0	10	[
+water	91:49	0:0	10	j
+op	91:50	0:0	10	]
+water	91:52	0:0	8	;
+water	92:8	0:0	6	}
+call	93:8	93:42	4	LOAD_STRING
+arg	93:20	93:42	5	module->psz_capability
+water	93:20	0:0	6	module
+op	93:26	0:0	6	->
+water	93:28	0:0	6	psz_capability
+water	93:43	0:0	4	;
+call	94:8	94:38	4	LOAD_IMMEDIATE
+arg	94:23	94:38	5	module->i_score
+water	94:23	0:0	6	module
+op	94:29	0:0	6	->
+water	94:31	0:0	6	i_score
+water	94:39	0:0	4	;
+call	95:8	95:43	4	LOAD_IMMEDIATE
+arg	95:23	95:43	5	module->b_unloadable
+water	95:23	0:0	6	module
+op	95:29	0:0	6	->
+water	95:31	0:0	6	b_unloadable
+water	95:44	0:0	4	;
+if	97:8	98:22	4	(CacheLoadModuleConfig (module ,file ) != VLC_SUCCESS)
+cond	97:12	97:52	5	CacheLoadModuleConfig (module ,file ) != VLC_SUCCESS
+call	97:12	97:47	6	CacheLoadModuleConfig
+arg	97:35	97:41	7	module
+water	97:35	0:0	8	module
+arg	97:43	97:47	7	file
+water	97:43	0:0	8	file
+op	97:49	0:0	6	!=
+water	97:52	0:0	6	VLC_SUCCESS
+stmts	98:12	98:22	5	
+goto	98:12	98:22	6	error
+water	98:17	0:0	7	error
+call	99:8	99:34	4	LOAD_STRING
+arg	99:20	99:34	5	module->domain
+water	99:20	0:0	6	module
+op	99:26	0:0	6	->
+water	99:28	0:0	6	domain
+water	99:35	0:0	4	;
+if	100:8	101:47	4	(module -> domain != NULL)
+cond	100:12	100:30	5	module -> domain != NULL
+water	100:12	0:0	6	module
+op	100:18	0:0	6	->
+water	100:20	0:0	6	domain
+op	100:27	0:0	6	!=
+water	100:30	0:0	6	NULL
+stmts	101:12	101:47	5	
+call	101:12	101:46	6	vlc_bindtextdomain
+arg	101:32	101:46	7	module->domain
+water	101:32	0:0	8	module
+op	101:38	0:0	8	->
+water	101:40	0:0	8	domain
+water	101:47	0:0	6	;
+call	102:8	102:37	4	LOAD_IMMEDIATE
+arg	102:24	102:37	5	i_submodules
+water	102:24	0:0	6	i_submodules
+water	102:38	0:0	4	;
+while	103:8	121:8	4	(i_submodules --)
+cond	103:15	103:27	5	i_submodules --
+water	103:15	0:0	6	i_submodules
+op	103:27	0:0	6	--
+stmts	104:8	121:8	5	
+water	104:8	0:0	6	{
+decl	105:12	105:60	6	module_t	*submodule
+op	105:32	0:0	6	=
+call	105:34	105:59	7	vlc_module_create
+arg	105:53	105:59	8	module
+water	105:53	0:0	9	module
+call	106:12	106:41	6	free
+arg	106:18	106:41	7	submodule->pp_shortcuts
+water	106:18	0:0	8	submodule
+op	106:27	0:0	8	->
+water	106:29	0:0	8	pp_shortcuts
+water	106:42	0:0	6	;
+call	107:12	107:48	6	LOAD_STRING
+arg	107:24	107:48	7	submodule->psz_shortname
+water	107:24	0:0	8	submodule
+op	107:33	0:0	8	->
+water	107:35	0:0	8	psz_shortname
+water	107:49	0:0	6	;
+call	108:12	108:47	6	LOAD_STRING
+arg	108:24	108:47	7	submodule->psz_longname
+water	108:24	0:0	8	submodule
+op	108:33	0:0	8	->
+water	108:35	0:0	8	psz_longname
+water	108:48	0:0	6	;
+call	109:12	109:49	6	LOAD_IMMEDIATE
+arg	109:27	109:49	7	submodule->i_shortcuts
+water	109:27	0:0	8	submodule
+op	109:36	0:0	8	->
+water	109:38	0:0	8	i_shortcuts
+water	109:50	0:0	6	;
+if	110:12	111:26	6	(submodule -> i_shortcuts > MODULE_SHORTCUT_MAX)
+cond	110:16	110:41	7	submodule -> i_shortcuts > MODULE_SHORTCUT_MAX
+water	110:16	0:0	8	submodule
+op	110:25	0:0	8	->
+water	110:27	0:0	8	i_shortcuts
+op	110:39	0:0	8	>
+water	110:41	0:0	8	MODULE_SHORTCUT_MAX
+stmts	111:16	111:26	7	
+goto	111:16	111:26	8	error
+water	111:21	0:0	9	error
+else	112:12	118:12	6
+stmts	113:12	118:12	7	
+water	113:12	0:0	8	{
+water	114:16	0:0	8	submodule
+op	114:25	0:0	8	->
+water	114:27	0:0	8	pp_shortcuts
+op	114:40	0:0	8	=
+call	115:27	115:94	8	xmalloc
+arg	115:36	115:94	9	sizeof(*submodule->pp_shortcuts)*submodule->i_shortcuts
+op	115:36	0:0	10	sizeof
+water	115:43	0:0	10	(
+op	115:44	0:0	10	*
+water	115:45	0:0	10	submodule
+op	115:54	0:0	10	->
+water	115:56	0:0	10	pp_shortcuts
+water	115:68	0:0	10	)
+op	115:70	0:0	10	*
+water	115:72	0:0	10	submodule
+op	115:81	0:0	10	->
+water	115:83	0:0	10	i_shortcuts
+water	115:95	0:0	8	;
+for	116:16	117:59	8	(unsigned j = 0 ;j < submodule -> i_shortcuts;j ++)
+forinit	116:21	116:35	9	unsigned j = 0 ;
+water	116:21	0:0	10	unsigned
+water	116:30	0:0	10	j
+op	116:32	0:0	10	=
+water	116:34	0:0	10	0
+water	116:35	0:0	10	;
+cond	116:37	116:52	9	j < submodule -> i_shortcuts
+water	116:37	0:0	10	j
+op	116:39	0:0	10	<
+water	116:41	0:0	10	submodule
+op	116:50	0:0	10	->
+water	116:52	0:0	10	i_shortcuts
+forexpr	116:65	116:66	9	j ++
+water	116:65	0:0	10	j
+op	116:66	0:0	10	++
+stmts	117:20	117:59	9	
+call	117:20	117:58	10	LOAD_STRING
+arg	117:32	117:58	11	submodule->pp_shortcuts[j]
+water	117:32	0:0	12	submodule
+op	117:41	0:0	12	->
+water	117:43	0:0	12	pp_shortcuts
+op	117:55	0:0	12	[
+water	117:56	0:0	12	j
+op	117:57	0:0	12	]
+water	117:59	0:0	10	;
+water	118:12	0:0	8	}
+call	119:12	119:49	6	LOAD_STRING
+arg	119:24	119:49	7	submodule->psz_capability
+water	119:24	0:0	8	submodule
+op	119:33	0:0	8	->
+water	119:35	0:0	8	psz_capability
+water	119:50	0:0	6	;
+call	120:12	120:45	6	LOAD_IMMEDIATE
+arg	120:27	120:45	7	submodule->i_score
+water	120:27	0:0	8	submodule
+op	120:36	0:0	8	->
+water	120:38	0:0	8	i_score
+water	120:46	0:0	6	;
+water	121:8	0:0	6	}
+decl	122:8	122:18	4	char	*path
+decl	123:8	123:22	4	struct stat	st
+call	125:8	125:24	4	LOAD_STRING
+arg	125:20	125:24	5	path
+water	125:20	0:0	6	path
+water	125:25	0:0	4	;
+if	126:8	127:22	4	(path == NULL)
+cond	126:12	126:20	5	path == NULL
+water	126:12	0:0	6	path
+op	126:17	0:0	6	==
+water	126:20	0:0	6	NULL
+stmts	127:12	127:22	5	
+goto	127:12	127:22	6	error
+water	127:17	0:0	7	error
+call	128:8	128:34	4	LOAD_IMMEDIATE
+arg	128:23	128:34	5	st.st_mtime
+water	128:23	0:0	6	st
+op	128:25	0:0	6	.
+water	128:26	0:0	6	st_mtime
+water	128:35	0:0	4	;
+call	129:8	129:33	4	LOAD_IMMEDIATE
+arg	129:23	129:33	5	st.st_size
+water	129:23	0:0	6	st
+op	129:25	0:0	6	.
+water	129:26	0:0	6	st_size
+water	129:34	0:0	4	;
+call	130:8	130:51	4	CacheAdd
+arg	130:18	130:24	5	&cache
+op	130:18	0:0	6	&
+water	130:19	0:0	6	cache
+arg	130:26	130:32	5	&count
+op	130:26	0:0	6	&
+water	130:27	0:0	6	count
+arg	130:34	130:38	5	path
+water	130:34	0:0	6	path
+arg	130:40	130:43	5	&st
+op	130:40	0:0	6	&
+water	130:41	0:0	6	st
+arg	130:45	130:51	5	module
+water	130:45	0:0	6	module
+water	130:52	0:0	4	;
+call	131:8	131:18	4	free
+arg	131:14	131:18	5	path
+water	131:14	0:0	6	path
+water	131:19	0:0	4	;
+water	133:4	0:0	4	}
+call	134:4	134:17	2	fclose
+arg	134:12	134:17	3	file
+water	134:12	0:0	4	file
+water	134:18	0:0	2	;
+op	135:4	0:0	2	*
+water	135:5	0:0	2	r
+op	135:7	0:0	2	=
+water	135:9	0:0	2	cache
+water	135:14	0:0	2	;
+return	136:4	136:18	2	i_cache
+water	136:11	0:0	3	i_cache
+label	137:0	137:5	2	error :
+call	138:4	138:61	2	msg_Warn
+arg	138:14	138:20	3	p_this
+water	138:14	0:0	4	p_this
+arg	138:22	138:61	3	"plugins cache not loaded (corrupted)"
+water	138:22	0:0	4	"plugins cache not loaded (corrupted)"
+water	138:62	0:0	2	;
+call	140:4	140:17	2	fclose
+arg	140:12	140:17	3	file
+water	140:12	0:0	4	file
+water	140:18	0:0	2	;
+return	141:4	141:12	2	0
+water	141:11	0:0	3	0

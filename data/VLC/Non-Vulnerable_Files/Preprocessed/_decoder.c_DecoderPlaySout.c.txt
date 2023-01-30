@@ -1,0 +1,111 @@
+func	2:0	27:0	0	static int	DecoderPlaySout
+params	2:26	0:0	1	
+param	2:28	2:44	2	decoder_t *	p_dec
+param	2:46	2:68	2	block_t *	p_sout_block
+stmnts	0:0	26:4	1	
+decl	4:4	4:49	2	decoder_owner_sys_t	*p_owner
+op	4:33	0:0	2	=
+water	4:35	0:0	2	p_dec
+op	4:40	0:0	2	->
+water	4:42	0:0	2	p_owner
+call	5:4	5:29	2	assert
+arg	5:12	5:29	3	p_owner->p_clock
+water	5:12	0:0	4	p_owner
+op	5:19	0:0	4	->
+water	5:21	0:0	4	p_clock
+water	5:30	0:0	2	;
+call	6:4	6:34	2	assert
+arg	6:12	6:34	3	!p_sout_block->p_next
+op	6:12	0:0	4	!
+water	6:13	0:0	4	p_sout_block
+op	6:25	0:0	4	->
+water	6:27	0:0	4	p_next
+water	6:35	0:0	2	;
+call	7:4	7:35	2	vlc_mutex_lock
+arg	7:20	7:35	3	&p_owner->lock
+op	7:20	0:0	4	&
+water	7:21	0:0	4	p_owner
+op	7:28	0:0	4	->
+water	7:30	0:0	4	lock
+water	7:36	0:0	2	;
+if	8:4	12:4	2	(p_owner -> b_waiting)
+cond	8:8	8:17	3	p_owner -> b_waiting
+water	8:8	0:0	4	p_owner
+op	8:15	0:0	4	->
+water	8:17	0:0	4	b_waiting
+stmts	9:4	12:4	3	
+water	9:4	0:0	4	{
+water	10:8	0:0	4	p_owner
+op	10:15	0:0	4	->
+water	10:17	0:0	4	b_has_data
+op	10:28	0:0	4	=
+water	10:30	0:0	4	true
+water	10:34	0:0	4	;
+call	11:8	11:52	4	vlc_cond_signal
+arg	11:25	11:52	5	&p_owner->wait_acknowledge
+op	11:25	0:0	6	&
+water	11:26	0:0	6	p_owner
+op	11:33	0:0	6	->
+water	11:35	0:0	6	wait_acknowledge
+water	11:53	0:0	4	;
+water	12:4	0:0	4	}
+decl	13:4	13:47	2	bool	b_reject
+op	13:18	0:0	2	=
+call	13:20	13:46	3	DecoderWaitUnblock
+arg	13:40	13:46	4	p_dec
+water	13:40	0:0	5	p_dec
+call	14:4	15:59	2	DecoderFixTs
+arg	14:18	14:23	3	p_dec
+water	14:18	0:0	4	p_dec
+arg	14:25	14:45	3	&p_sout_block->i_dts
+op	14:25	0:0	4	&
+water	14:26	0:0	4	p_sout_block
+op	14:38	0:0	4	->
+water	14:40	0:0	4	i_dts
+arg	14:47	14:67	3	&p_sout_block->i_pts
+op	14:47	0:0	4	&
+water	14:48	0:0	4	p_sout_block
+op	14:60	0:0	4	->
+water	14:62	0:0	4	i_pts
+arg	15:18	15:41	3	&p_sout_block->i_length
+op	15:18	0:0	4	&
+water	15:19	0:0	4	p_sout_block
+op	15:31	0:0	4	->
+water	15:33	0:0	4	i_length
+arg	15:43	15:47	3	NULL
+water	15:43	0:0	4	NULL
+arg	15:49	15:59	3	INT64_MAX
+water	15:49	0:0	4	INT64_MAX
+water	15:60	0:0	2	;
+call	16:4	16:37	2	vlc_mutex_unlock
+arg	16:22	16:37	3	&p_owner->lock
+op	16:22	0:0	4	&
+water	16:23	0:0	4	p_owner
+op	16:30	0:0	4	->
+water	16:32	0:0	4	lock
+water	16:38	0:0	2	;
+if	17:4	21:4	2	(! b_reject)
+cond	17:8	17:9	3	! b_reject
+op	17:8	0:0	4	!
+water	17:9	0:0	4	b_reject
+stmts	18:4	21:4	3	
+water	18:4	0:0	4	{
+return	20:8	20:74	4	sout_InputSendBuffer(p_owner->p_sout_input,p_sout_block)
+call	20:15	20:73	5	sout_InputSendBuffer
+arg	20:37	20:58	6	p_owner->p_sout_input
+water	20:37	0:0	7	p_owner
+op	20:44	0:0	7	->
+water	20:46	0:0	7	p_sout_input
+arg	20:60	20:73	6	p_sout_block
+water	20:60	0:0	7	p_sout_block
+water	21:4	0:0	4	}
+else	22:4	26:4	2
+stmts	23:4	26:4	3	
+water	23:4	0:0	4	{
+call	24:8	24:36	4	block_Release
+arg	24:23	24:36	5	p_sout_block
+water	24:23	0:0	6	p_sout_block
+water	24:37	0:0	4	;
+return	25:8	25:27	4	VLC_EGENERIC
+water	25:15	0:0	5	VLC_EGENERIC
+water	26:4	0:0	4	}

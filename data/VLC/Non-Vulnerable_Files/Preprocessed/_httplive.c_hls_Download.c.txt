@@ -1,0 +1,266 @@
+func	2:0	60:0	0	static int	hls_Download
+params	2:23	0:0	1	
+param	2:24	2:35	2	stream_t *	s
+param	2:37	2:55	2	segment_t *	segment
+stmnts	0:0	59:19	1	
+decl	4:4	4:34	2	stream_sys_t	*p_sys
+op	4:24	0:0	2	=
+water	4:26	0:0	2	s
+op	4:27	0:0	2	->
+water	4:29	0:0	2	p_sys
+call	5:4	5:18	2	assert
+arg	5:11	5:18	3	segment
+water	5:11	0:0	4	segment
+water	5:19	0:0	2	;
+decl	6:4	6:51	2	stream_t	*p_ts
+op	6:19	0:0	2	=
+call	6:21	6:50	3	stream_UrlNew
+arg	6:35	6:36	4	s
+water	6:35	0:0	5	s
+arg	6:38	6:50	4	segment->url
+water	6:38	0:0	5	segment
+op	6:45	0:0	5	->
+water	6:47	0:0	5	url
+if	7:4	8:27	2	(p_ts == NULL)
+cond	7:8	7:16	3	p_ts == NULL
+water	7:8	0:0	4	p_ts
+op	7:13	0:0	4	==
+water	7:16	0:0	4	NULL
+stmts	8:8	8:27	3	
+return	8:8	8:27	4	VLC_EGENERIC
+water	8:15	0:0	5	VLC_EGENERIC
+decl	9:4	9:36	2	int64_t	size
+op	9:17	0:0	2	=
+call	9:19	9:35	3	stream_Size
+arg	9:31	9:35	4	p_ts
+water	9:31	0:0	5	p_ts
+if	10:4	11:16	2	(size < 0)
+cond	10:8	10:15	3	size < 0
+water	10:8	0:0	4	size
+op	10:13	0:0	4	<
+water	10:15	0:0	4	0
+stmts	11:8	11:16	3	
+water	11:8	0:0	4	size
+op	11:13	0:0	4	=
+water	11:15	0:0	4	0
+water	11:16	0:0	4	;
+water	12:4	0:0	2	unsigned
+water	12:13	0:0	2	i_total_read
+op	12:26	0:0	2	=
+water	12:28	0:0	2	0
+water	12:29	0:0	2	;
+decl	13:4	13:30	2	int	i_return
+op	13:17	0:0	2	=
+water	13:19	0:0	2	VLC_SUCCESS
+decl	14:4	14:70	2	block_t	*p_segment_data
+op	14:28	0:0	2	=
+call	14:30	14:69	3	block_Alloc
+arg	14:42	14:69	4	size?size:HLS_READ_SIZE
+water	14:42	0:0	5	size
+water	14:47	0:0	5	?
+water	14:49	0:0	5	size
+water	14:54	0:0	5	:
+water	14:56	0:0	5	HLS_READ_SIZE
+if	15:4	19:4	2	(! p_segment_data)
+cond	15:8	15:9	3	! p_segment_data
+op	15:8	0:0	4	!
+water	15:9	0:0	4	p_segment_data
+stmts	16:4	19:4	3	
+water	16:4	0:0	4	{
+water	17:8	0:0	4	i_return
+op	17:17	0:0	4	=
+water	17:19	0:0	4	VLC_ENOMEM
+water	17:29	0:0	4	;
+goto	18:8	18:16	4	end
+water	18:13	0:0	5	end
+water	19:4	0:0	4	}
+for	20:4	54:4	2	(;;)
+forinit	20:9	20:9	3	;
+water	20:9	0:0	4	;
+cond	0:0	0:0	3	
+forexpr	0:0	0:0	3	
+stmts	21:4	54:4	3	
+water	21:4	0:0	4	{
+decl	26:8	26:86	4	uint64_t	i_toread
+op	26:26	0:0	4	=
+water	26:28	0:0	4	(
+water	26:29	0:0	4	size
+op	26:34	0:0	4	>
+water	26:36	0:0	4	0
+water	26:37	0:0	4	)
+water	26:39	0:0	4	?
+water	26:41	0:0	4	(
+water	26:42	0:0	4	uint64_t
+water	26:50	0:0	4	)
+water	26:52	0:0	4	size
+op	26:57	0:0	4	-
+water	26:59	0:0	4	i_total_read
+water	26:71	0:0	4	:
+water	26:73	0:0	4	HLS_READ_SIZE
+if	27:8	39:8	4	(i_total_read + i_toread > p_segment_data -> i_buffer)
+cond	27:12	27:54	5	i_total_read + i_toread > p_segment_data -> i_buffer
+water	27:12	0:0	6	i_total_read
+op	27:25	0:0	6	+
+water	27:27	0:0	6	i_toread
+op	27:36	0:0	6	>
+water	27:38	0:0	6	p_segment_data
+op	27:52	0:0	6	->
+water	27:54	0:0	6	i_buffer
+stmts	28:8	39:8	5	
+water	28:8	0:0	6	{
+call	29:12	29:73	6	msg_Dbg
+arg	29:20	29:21	7	s
+water	29:20	0:0	8	s
+arg	29:23	29:48	7	"size changed to %"PRIu64
+water	29:23	0:0	8	"size changed to %"
+water	29:42	0:0	8	PRIu64
+arg	29:50	29:73	7	i_total_read+i_toread
+water	29:50	0:0	8	i_total_read
+op	29:63	0:0	8	+
+water	29:65	0:0	8	i_toread
+water	29:74	0:0	6	;
+decl	30:12	30:96	6	block_t	*p_realloc_block
+op	30:37	0:0	6	=
+call	30:39	30:95	7	block_Realloc
+arg	30:53	30:67	8	p_segment_data
+water	30:53	0:0	9	p_segment_data
+arg	30:69	30:70	8	0
+water	30:69	0:0	9	0
+arg	30:72	30:95	8	i_total_read+i_toread
+water	30:72	0:0	9	i_total_read
+op	30:85	0:0	9	+
+water	30:87	0:0	9	i_toread
+if	31:12	37:12	6	(p_realloc_block == NULL)
+cond	31:16	31:35	7	p_realloc_block == NULL
+water	31:16	0:0	8	p_realloc_block
+op	31:32	0:0	8	==
+water	31:35	0:0	8	NULL
+stmts	32:12	37:12	7	
+water	32:12	0:0	8	{
+if	33:16	34:49	8	(p_segment_data)
+cond	33:19	33:19	9	p_segment_data
+water	33:19	0:0	10	p_segment_data
+stmts	34:20	34:49	9	
+call	34:20	34:48	10	block_Release
+arg	34:34	34:48	11	p_segment_data
+water	34:34	0:0	12	p_segment_data
+water	34:49	0:0	10	;
+water	35:16	0:0	8	i_return
+op	35:25	0:0	8	=
+water	35:27	0:0	8	VLC_ENOMEM
+water	35:37	0:0	8	;
+goto	36:16	36:24	8	end
+water	36:21	0:0	9	end
+water	37:12	0:0	8	}
+water	38:12	0:0	6	p_segment_data
+op	38:27	0:0	6	=
+water	38:29	0:0	6	p_realloc_block
+water	38:44	0:0	6	;
+water	39:8	0:0	6	}
+decl	40:8	40:37	4	int	i_canc
+op	40:19	0:0	4	=
+call	40:21	40:36	5	vlc_savecancel
+decl	41:8	42:90	4	int	i_length
+op	41:21	0:0	4	=
+call	41:23	42:89	5	stream_Read
+arg	41:35	41:39	6	p_ts
+water	41:35	0:0	7	p_ts
+arg	41:41	41:80	6	&p_segment_data->p_buffer[i_total_read]
+op	41:41	0:0	7	&
+water	41:42	0:0	7	p_segment_data
+op	41:56	0:0	7	->
+water	41:58	0:0	7	p_buffer
+op	41:66	0:0	7	[
+water	41:67	0:0	7	i_total_read
+op	41:79	0:0	7	]
+arg	42:35	42:89	6	(i_toread>=HLS_READ_SIZE)?HLS_READ_SIZE:i_toread
+water	42:35	0:0	7	(
+water	42:36	0:0	7	i_toread
+op	42:45	0:0	7	>=
+water	42:48	0:0	7	HLS_READ_SIZE
+water	42:61	0:0	7	)
+water	42:63	0:0	7	?
+water	42:65	0:0	7	HLS_READ_SIZE
+water	42:79	0:0	7	:
+water	42:81	0:0	7	i_toread
+call	43:8	43:32	4	vlc_restorecancel
+arg	43:26	43:32	5	i_canc
+water	43:26	0:0	6	i_canc
+water	43:33	0:0	4	;
+if	44:8	50:8	4	(i_length <= 0)
+cond	44:12	44:24	5	i_length <= 0
+water	44:12	0:0	6	i_length
+op	44:21	0:0	6	<=
+water	44:24	0:0	6	0
+stmts	45:8	50:8	5	
+water	45:8	0:0	6	{
+if	46:12	47:89	6	(size > 0 && i_total_read < size)
+cond	46:15	46:42	7	size > 0 && i_total_read < size
+water	46:15	0:0	8	size
+op	46:20	0:0	8	>
+water	46:22	0:0	8	0
+op	46:24	0:0	8	&&
+water	46:27	0:0	8	i_total_read
+op	46:40	0:0	8	<
+water	46:42	0:0	8	size
+stmts	47:16	47:89	7	
+call	47:16	47:88	8	msg_Warn
+arg	47:25	47:26	9	s
+water	47:25	0:0	10	s
+arg	47:28	47:60	9	"segment read %"PRIu64"/%"PRIu64
+water	47:28	0:0	10	"segment read %"
+water	47:44	0:0	10	PRIu64
+water	47:50	0:0	10	"/%"
+water	47:54	0:0	10	PRIu64
+arg	47:62	47:81	9	size-i_total_read
+water	47:62	0:0	10	size
+op	47:67	0:0	10	-
+water	47:69	0:0	10	i_total_read
+arg	47:83	47:88	9	size
+water	47:83	0:0	10	size
+water	47:89	0:0	8	;
+water	48:12	0:0	6	p_segment_data
+op	48:26	0:0	6	->
+water	48:28	0:0	6	i_buffer
+op	48:37	0:0	6	=
+water	48:39	0:0	6	i_total_read
+water	48:51	0:0	6	;
+break	49:12	49:17	6	
+water	50:8	0:0	6	}
+water	51:8	0:0	4	i_total_read
+op	51:21	0:0	4	+=
+water	51:24	0:0	4	i_length
+water	51:32	0:0	4	;
+if	52:8	53:17	4	(atomic_load (& p_sys -> closing ))
+cond	52:12	52:39	5	atomic_load (& p_sys -> closing )
+call	52:12	52:39	6	atomic_load
+arg	52:24	52:39	7	&p_sys->closing
+op	52:24	0:0	8	&
+water	52:25	0:0	8	p_sys
+op	52:30	0:0	8	->
+water	52:32	0:0	8	closing
+stmts	53:12	53:17	5	
+break	53:12	53:17	6	
+water	54:4	0:0	4	}
+water	54:5	0:0	2	;
+water	55:4	0:0	2	segment
+op	55:11	0:0	2	->
+water	55:13	0:0	2	data
+op	55:18	0:0	2	=
+water	55:20	0:0	2	p_segment_data
+water	55:34	0:0	2	;
+water	56:4	0:0	2	segment
+op	56:11	0:0	2	->
+water	56:13	0:0	2	size
+op	56:18	0:0	2	=
+water	56:20	0:0	2	p_segment_data
+op	56:34	0:0	2	->
+water	56:36	0:0	2	i_buffer
+water	56:44	0:0	2	;
+label	57:0	57:3	2	end :
+call	58:4	58:22	2	stream_Delete
+arg	58:18	58:22	3	p_ts
+water	58:18	0:0	4	p_ts
+water	58:23	0:0	2	;
+return	59:4	59:19	2	i_return
+water	59:11	0:0	3	i_return

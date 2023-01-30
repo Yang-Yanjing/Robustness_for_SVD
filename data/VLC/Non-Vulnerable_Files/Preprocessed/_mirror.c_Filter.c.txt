@@ -1,0 +1,117 @@
+func	2:0	26:0	0	static picture_t *	Filter
+params	2:24	0:0	1	
+param	2:26	2:44	2	filter_t *	p_filter
+param	2:46	2:63	2	picture_t *	p_pic
+stmnts	0:0	25:48	1	
+decl	4:4	4:23	2	picture_t	*p_outpic
+decl	5:4	5:42	2	bool	b_vertical_split
+water	5:25	0:0	2	,
+decl	5:4	5:42	2	bool	b_left_to_right
+decl	6:4	6:15	2	int	i_index
+if	7:4	7:28	2	(! p_pic)
+cond	7:8	7:9	3	! p_pic
+op	7:8	0:0	4	!
+water	7:9	0:0	4	p_pic
+stmts	7:17	7:28	3	
+return	7:17	7:28	4	NULL
+water	7:24	0:0	5	NULL
+decl	8:4	8:41	2	filter_sys_t	*p_sys
+op	8:24	0:0	2	=
+water	8:26	0:0	2	p_filter
+op	8:34	0:0	2	->
+water	8:36	0:0	2	p_sys
+water	9:4	0:0	2	b_vertical_split
+op	9:21	0:0	2	=
+op	9:23	0:0	2	!
+call	9:24	9:53	2	atomic_load
+arg	9:37	9:53	3	&p_sys->i_split
+op	9:37	0:0	4	&
+water	9:38	0:0	4	p_sys
+op	9:43	0:0	4	->
+water	9:45	0:0	4	i_split
+water	9:54	0:0	2	;
+water	10:4	0:0	2	b_left_to_right
+op	10:20	0:0	2	=
+op	10:22	0:0	2	!
+call	10:23	10:56	2	atomic_load
+arg	10:36	10:56	3	&p_sys->i_direction
+op	10:36	0:0	4	&
+water	10:37	0:0	4	p_sys
+op	10:42	0:0	4	->
+water	10:44	0:0	4	i_direction
+water	10:57	0:0	2	;
+water	11:4	0:0	2	p_outpic
+op	11:13	0:0	2	=
+call	11:15	11:43	2	filter_NewPicture
+arg	11:34	11:43	3	p_filter
+water	11:34	0:0	4	p_filter
+water	11:44	0:0	2	;
+if	12:4	17:4	2	(! p_outpic)
+cond	12:8	12:9	3	! p_outpic
+op	12:8	0:0	4	!
+water	12:9	0:0	4	p_outpic
+stmts	13:4	17:4	3	
+water	13:4	0:0	4	{
+call	14:8	14:55	4	msg_Warn
+arg	14:18	14:26	5	p_filter
+water	14:18	0:0	6	p_filter
+arg	14:28	14:55	5	"can't get output picture"
+water	14:28	0:0	6	"can't get output picture"
+water	14:56	0:0	4	;
+call	15:8	15:31	4	picture_Release
+arg	15:25	15:31	5	p_pic
+water	15:25	0:0	6	p_pic
+water	15:32	0:0	4	;
+return	16:8	16:19	4	NULL
+water	16:15	0:0	5	NULL
+water	17:4	0:0	4	}
+for	18:4	24:4	2	(i_index = 0 ;i_index < p_pic -> i_planes;i_index ++)
+forinit	18:9	18:21	3	i_index = 0 ;
+water	18:9	0:0	4	i_index
+op	18:17	0:0	4	=
+water	18:19	0:0	4	0
+water	18:21	0:0	4	;
+cond	18:23	18:40	3	i_index < p_pic -> i_planes
+water	18:23	0:0	4	i_index
+op	18:31	0:0	4	<
+water	18:33	0:0	4	p_pic
+op	18:38	0:0	4	->
+water	18:40	0:0	4	i_planes
+forexpr	18:51	18:58	3	i_index ++
+water	18:51	0:0	4	i_index
+op	18:58	0:0	4	++
+stmts	19:4	24:4	3	
+water	19:4	0:0	4	{
+if	20:8	21:71	4	(b_vertical_split)
+cond	20:13	20:13	5	b_vertical_split
+water	20:13	0:0	6	b_vertical_split
+stmts	21:12	21:71	5	
+call	21:12	21:70	6	VerticalMirror
+arg	21:28	21:33	7	p_pic
+water	21:28	0:0	8	p_pic
+arg	21:35	21:43	7	p_outpic
+water	21:35	0:0	8	p_outpic
+arg	21:45	21:52	7	i_index
+water	21:45	0:0	8	i_index
+arg	21:54	21:70	7	b_left_to_right
+water	21:54	0:0	8	b_left_to_right
+water	21:71	0:0	6	;
+else	22:8	23:73	4
+stmts	23:12	23:73	5	
+call	23:12	23:72	6	HorizontalMirror
+arg	23:30	23:35	7	p_pic
+water	23:30	0:0	8	p_pic
+arg	23:37	23:45	7	p_outpic
+water	23:37	0:0	8	p_outpic
+arg	23:47	23:54	7	i_index
+water	23:47	0:0	8	i_index
+arg	23:56	23:72	7	b_left_to_right
+water	23:56	0:0	8	b_left_to_right
+water	23:73	0:0	6	;
+water	24:4	0:0	4	}
+return	25:4	25:48	2	CopyInfoAndRelease(p_outpic,p_pic)
+call	25:11	25:47	3	CopyInfoAndRelease
+arg	25:31	25:39	4	p_outpic
+water	25:31	0:0	5	p_outpic
+arg	25:41	25:47	4	p_pic
+water	25:41	0:0	5	p_pic

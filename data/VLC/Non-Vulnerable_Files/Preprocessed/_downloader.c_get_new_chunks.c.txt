@@ -1,0 +1,316 @@
+func	2:0	67:0	0	static int	get_new_chunks
+params	2:25	0:0	1	
+param	2:27	2:38	2	stream_t *	s
+param	2:40	2:52	2	chunk_t *	ck
+stmnts	0:0	66:22	1	
+decl	4:4	4:34	2	stream_sys_t	*p_sys
+op	4:24	0:0	2	=
+water	4:26	0:0	2	s
+op	4:27	0:0	2	->
+water	4:29	0:0	2	p_sys
+decl	5:4	5:29	2	uint8_t	*slice
+op	5:19	0:0	2	=
+water	5:21	0:0	2	ck
+op	5:23	0:0	2	->
+water	5:25	0:0	2	data
+if	6:4	7:27	2	(! slice)
+cond	6:8	6:9	3	! slice
+op	6:8	0:0	4	!
+water	6:9	0:0	4	slice
+stmts	7:8	7:27	3	
+return	7:8	7:27	4	VLC_EGENERIC
+water	7:15	0:0	5	VLC_EGENERIC
+decl	8:4	8:35	2	uint8_t	version
+water	8:19	0:0	2	,
+decl	8:4	8:35	2	uint8_t	fragment_count
+decl	9:4	9:30	2	uint32_t	size
+water	9:17	0:0	2	,
+decl	9:4	9:30	2	uint32_t	type
+water	9:23	0:0	2	,
+decl	9:4	9:30	2	uint32_t	flags
+decl	10:4	10:21	2	sms_stream_t	*sms
+decl	11:4	11:15	2	UUID_t	uuid
+decl	12:4	12:32	2	TfrfBoxDataFields_t	*tfrf_df
+water	13:4	0:0	2	sms
+op	13:8	0:0	2	=
+call	13:10	13:40	2	SMS_GET_SELECTED_ST
+arg	13:31	13:40	3	ck->type
+water	13:31	0:0	4	ck
+op	13:33	0:0	4	->
+water	13:35	0:0	4	type
+water	13:41	0:0	2	;
+call	14:4	14:24	2	SMS_GET4BYTES
+arg	14:19	14:24	3	size
+water	14:19	0:0	4	size
+water	14:25	0:0	2	;
+call	15:4	15:24	2	SMS_GETFOURCC
+arg	15:19	15:24	3	type
+water	15:19	0:0	4	type
+water	15:25	0:0	2	;
+call	16:4	16:30	2	assert
+arg	16:12	16:30	3	type==ATOM_moof
+water	16:12	0:0	4	type
+op	16:17	0:0	4	==
+water	16:20	0:0	4	ATOM_moof
+water	16:31	0:0	2	;
+call	17:4	17:24	2	SMS_GET4BYTES
+arg	17:19	17:24	3	size
+water	17:19	0:0	4	size
+water	17:25	0:0	2	;
+call	18:4	18:24	2	SMS_GETFOURCC
+arg	18:19	18:24	3	type
+water	18:19	0:0	4	type
+water	18:25	0:0	2	;
+call	19:4	19:30	2	assert
+arg	19:12	19:30	3	type==ATOM_mfhd
+water	19:12	0:0	4	type
+op	19:17	0:0	4	==
+water	19:20	0:0	4	ATOM_mfhd
+water	19:31	0:0	2	;
+water	20:4	0:0	2	slice
+op	20:10	0:0	2	+=
+water	20:13	0:0	2	size
+op	20:18	0:0	2	-
+water	20:20	0:0	2	8
+water	20:21	0:0	2	;
+call	21:4	21:24	2	SMS_GET4BYTES
+arg	21:19	21:24	3	size
+water	21:19	0:0	4	size
+water	21:25	0:0	2	;
+call	22:4	22:24	2	SMS_GETFOURCC
+arg	22:19	22:24	3	type
+water	22:19	0:0	4	type
+water	22:25	0:0	2	;
+call	23:4	23:30	2	assert
+arg	23:12	23:30	3	type==ATOM_traf
+water	23:12	0:0	4	type
+op	23:17	0:0	4	==
+water	23:20	0:0	4	ATOM_traf
+water	23:31	0:0	2	;
+for	24:4	41:4	2	(;;)
+forinit	24:8	24:8	3	;
+water	24:8	0:0	4	;
+cond	0:0	0:0	3	
+forexpr	0:0	0:0	3	
+stmts	25:4	41:4	3	
+water	25:4	0:0	4	{
+call	26:8	26:28	4	SMS_GET4BYTES
+arg	26:23	26:28	5	size
+water	26:23	0:0	6	size
+water	26:29	0:0	4	;
+call	27:8	27:25	4	assert
+arg	27:16	27:25	5	size>1
+water	27:16	0:0	6	size
+op	27:21	0:0	6	>
+water	27:23	0:0	6	1
+water	27:26	0:0	4	;
+call	28:8	28:28	4	SMS_GETFOURCC
+arg	28:23	28:28	5	type
+water	28:23	0:0	6	type
+water	28:29	0:0	4	;
+if	29:8	33:8	4	(type == ATOM_mdat)
+cond	29:12	29:20	5	type == ATOM_mdat
+water	29:12	0:0	6	type
+op	29:17	0:0	6	==
+water	29:20	0:0	6	ATOM_mdat
+stmts	30:8	33:8	5	
+water	30:8	0:0	6	{
+call	31:12	31:48	6	msg_Err
+arg	31:21	31:22	7	s
+water	31:21	0:0	8	s
+arg	31:24	31:48	7	"No uuid box found :-("
+water	31:24	0:0	8	"No uuid box found :-("
+water	31:49	0:0	6	;
+return	32:12	32:31	6	VLC_EGENERIC
+water	32:19	0:0	7	VLC_EGENERIC
+water	33:8	0:0	6	}
+else	34:8	39:8	4
+stmts	34:13	39:8	5	
+if	34:13	39:8	6	(type == ATOM_uuid)
+cond	34:17	34:25	7	type == ATOM_uuid
+water	34:17	0:0	8	type
+op	34:22	0:0	8	==
+water	34:25	0:0	8	ATOM_uuid
+stmts	35:8	39:8	7	
+water	35:8	0:0	8	{
+call	36:12	36:33	8	GetUUID
+arg	36:21	36:26	9	&uuid
+op	36:21	0:0	10	&
+water	36:22	0:0	10	uuid
+arg	36:28	36:33	9	slice
+water	36:28	0:0	10	slice
+water	36:34	0:0	8	;
+if	37:12	38:21	8	(!CmpUUID (& uuid ,& TfrfBoxUUID ))
+cond	37:16	37:46	9	!CmpUUID (& uuid ,& TfrfBoxUUID )
+op	37:16	0:0	10	!
+call	37:17	37:46	10	CmpUUID
+arg	37:26	37:31	11	&uuid
+op	37:26	0:0	12	&
+water	37:27	0:0	12	uuid
+arg	37:33	37:46	11	&TfrfBoxUUID
+op	37:33	0:0	12	&
+water	37:34	0:0	12	TfrfBoxUUID
+stmts	38:16	38:21	9	
+break	38:16	38:21	10	
+water	39:8	0:0	8	}
+water	40:8	0:0	4	slice
+op	40:14	0:0	4	+=
+water	40:17	0:0	4	size
+op	40:22	0:0	4	-
+water	40:24	0:0	4	8
+water	40:25	0:0	4	;
+water	41:4	0:0	4	}
+water	42:4	0:0	2	slice
+op	42:10	0:0	2	+=
+water	42:13	0:0	2	16
+water	42:15	0:0	2	;
+call	43:4	43:26	2	SMS_GET1BYTE
+arg	43:18	43:26	3	version
+water	43:18	0:0	4	version
+water	43:27	0:0	2	;
+call	44:4	44:25	2	SMS_GET3BYTES
+arg	44:19	44:25	3	flags
+water	44:19	0:0	4	flags
+water	44:26	0:0	2	;
+call	45:4	45:33	2	SMS_GET1BYTE
+arg	45:18	45:33	3	fragment_count
+water	45:18	0:0	4	fragment_count
+water	45:34	0:0	2	;
+water	46:4	0:0	2	tfrf_df
+op	46:12	0:0	2	=
+call	46:14	46:68	2	calloc
+arg	46:22	46:36	3	fragment_count
+water	46:22	0:0	4	fragment_count
+arg	46:38	46:68	3	sizeof(TfrfBoxDataFields_t)
+op	46:38	0:0	4	sizeof
+water	46:44	0:0	4	(
+water	46:46	0:0	4	TfrfBoxDataFields_t
+water	46:66	0:0	4	)
+water	46:69	0:0	2	;
+if	47:4	48:27	2	(unlikely (tfrf_df == NULL ))
+cond	47:8	47:34	3	unlikely (tfrf_df == NULL )
+call	47:8	47:34	4	unlikely
+arg	47:18	47:34	5	tfrf_df==NULL
+water	47:18	0:0	6	tfrf_df
+op	47:26	0:0	6	==
+water	47:29	0:0	6	NULL
+stmts	48:8	48:27	3	
+return	48:8	48:27	4	VLC_EGENERIC
+water	48:15	0:0	5	VLC_EGENERIC
+for	49:4	53:4	2	( uint8_t i = 0 ;i < fragment_count;i ++)
+forinit	0:0	49:22	3	 uint8_t i = 0 ;
+decl	49:9	49:22	4	uint8_t	i
+op	49:19	0:0	4	=
+water	49:21	0:0	4	0
+cond	49:24	49:28	3	i < fragment_count
+water	49:24	0:0	4	i
+op	49:26	0:0	4	<
+water	49:28	0:0	4	fragment_count
+forexpr	49:44	49:45	3	i ++
+water	49:44	0:0	4	i
+op	49:45	0:0	4	++
+stmts	50:4	53:4	3	
+water	50:4	0:0	4	{
+call	51:8	51:57	4	SMS_GET4or8BYTES
+arg	51:26	51:57	5	tfrf_df[i].i_fragment_abs_time
+water	51:26	0:0	6	tfrf_df
+op	51:33	0:0	6	[
+water	51:34	0:0	6	i
+op	51:35	0:0	6	]
+op	51:36	0:0	6	.
+water	51:37	0:0	6	i_fragment_abs_time
+water	51:58	0:0	4	;
+call	52:8	52:57	4	SMS_GET4or8BYTES
+arg	52:26	52:57	5	tfrf_df[i].i_fragment_duration
+water	52:26	0:0	6	tfrf_df
+op	52:33	0:0	6	[
+water	52:34	0:0	6	i
+op	52:35	0:0	6	]
+op	52:36	0:0	6	.
+water	52:37	0:0	6	i_fragment_duration
+water	52:58	0:0	4	;
+water	53:4	0:0	4	}
+call	54:4	55:68	2	msg_Dbg
+arg	54:13	54:14	3	s
+water	54:13	0:0	4	s
+arg	54:16	55:35	3	"read box: \"tfrf\" version %d, flags 0x%x, ""fragment count %"PRIu8
+water	54:16	0:0	4	"read box: \"tfrf\" version %d, flags 0x%x, "
+water	55:12	0:0	4	"fragment count %"
+water	55:30	0:0	4	PRIu8
+arg	55:37	55:44	3	version
+water	55:37	0:0	4	version
+arg	55:46	55:51	3	flags
+water	55:46	0:0	4	flags
+arg	55:53	55:68	3	fragment_count
+water	55:53	0:0	4	fragment_count
+water	55:69	0:0	2	;
+for	56:4	64:4	2	( uint8_t i = 0 ;i < fragment_count;i ++)
+forinit	0:0	56:22	3	 uint8_t i = 0 ;
+decl	56:9	56:22	4	uint8_t	i
+op	56:19	0:0	4	=
+water	56:21	0:0	4	0
+cond	56:24	56:28	3	i < fragment_count
+water	56:24	0:0	4	i
+op	56:26	0:0	4	<
+water	56:28	0:0	4	fragment_count
+forexpr	56:44	56:45	3	i ++
+water	56:44	0:0	4	i
+op	56:45	0:0	4	++
+stmts	57:4	64:4	3	
+water	57:4	0:0	4	{
+decl	58:8	58:52	4	int64_t	dur
+op	58:20	0:0	4	=
+water	58:22	0:0	4	tfrf_df
+op	58:29	0:0	4	[
+water	58:30	0:0	4	i
+op	58:31	0:0	4	]
+op	58:32	0:0	4	.
+water	58:33	0:0	4	i_fragment_duration
+decl	59:8	59:54	4	int64_t	stime
+op	59:22	0:0	4	=
+water	59:24	0:0	4	tfrf_df
+op	59:31	0:0	4	[
+water	59:32	0:0	4	i
+op	59:33	0:0	4	]
+op	59:34	0:0	4	.
+water	59:35	0:0	4	i_fragment_abs_time
+call	60:8	61:59	4	msg_Dbg
+arg	60:17	60:18	5	s
+water	60:17	0:0	6	s
+arg	60:20	61:47	5	"\"tfrf\" fragment duration %"PRIu64", ""fragment abs time %"PRIu64
+water	60:20	0:0	6	"\"tfrf\" fragment duration %"
+water	60:50	0:0	6	PRIu64
+water	60:56	0:0	6	", "
+water	61:20	0:0	6	"fragment abs time %"
+water	61:41	0:0	6	PRIu64
+arg	61:49	61:52	5	dur
+water	61:49	0:0	6	dur
+arg	61:54	61:59	5	stime
+water	61:54	0:0	6	stime
+water	61:60	0:0	4	;
+if	62:8	63:40	4	(!chunk_Get (sms ,stime + dur ))
+cond	62:12	62:41	5	!chunk_Get (sms ,stime + dur )
+op	62:12	0:0	6	!
+call	62:13	62:41	6	chunk_Get
+arg	62:24	62:27	7	sms
+water	62:24	0:0	8	sms
+arg	62:29	62:41	7	stime+dur
+water	62:29	0:0	8	stime
+op	62:35	0:0	8	+
+water	62:37	0:0	8	dur
+stmts	63:12	63:40	5	
+call	63:12	63:39	6	chunk_New
+arg	63:23	63:26	7	sms
+water	63:23	0:0	8	sms
+arg	63:28	63:31	7	dur
+water	63:28	0:0	8	dur
+arg	63:33	63:39	7	stime
+water	63:33	0:0	8	stime
+water	63:40	0:0	6	;
+water	64:4	0:0	4	}
+call	65:4	65:18	2	free
+arg	65:10	65:18	3	tfrf_df
+water	65:10	0:0	4	tfrf_df
+water	65:19	0:0	2	;
+return	66:4	66:22	2	VLC_SUCCESS
+water	66:11	0:0	3	VLC_SUCCESS

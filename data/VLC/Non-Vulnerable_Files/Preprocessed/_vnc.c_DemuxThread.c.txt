@@ -1,0 +1,204 @@
+func	2:0	44:0	0	static void *	DemuxThread
+params	2:24	0:0	1	
+param	2:26	2:39	2	void *	p_data
+stmnts	0:0	43:15	1	
+decl	4:4	4:41	2	demux_t	*p_demux
+op	4:21	0:0	2	=
+water	4:23	0:0	2	(
+water	4:24	0:0	2	demux_t
+op	4:32	0:0	2	*
+water	4:33	0:0	2	)
+water	4:35	0:0	2	p_data
+decl	5:4	5:40	2	demux_sys_t	*p_sys
+op	5:24	0:0	2	=
+water	5:26	0:0	2	p_demux
+op	5:33	0:0	2	->
+water	5:35	0:0	2	p_sys
+decl	6:4	6:65	2	mtime_t	i_next_frame_date
+op	6:30	0:0	2	=
+call	6:32	6:38	3	mdate
+op	6:40	0:0	2	+
+water	6:42	0:0	2	p_sys
+op	6:47	0:0	2	->
+water	6:49	0:0	2	i_frame_interval
+decl	7:4	7:16	2	int	i_status
+for	8:4	42:4	2	(;;)
+forinit	8:8	8:8	3	;
+water	8:8	0:0	4	;
+cond	0:0	0:0	3	
+forexpr	0:0	0:0	3	
+stmts	9:4	42:4	3	
+water	9:4	0:0	4	{
+water	10:8	0:0	4	p_sys
+op	10:13	0:0	4	->
+water	10:15	0:0	4	i_cancel_state
+op	10:30	0:0	4	=
+call	10:32	10:47	4	vlc_savecancel
+water	10:48	0:0	4	;
+water	11:8	0:0	4	i_status
+op	11:17	0:0	4	=
+call	11:19	11:76	4	WaitForMessage
+arg	11:35	11:50	5	p_sys->p_client
+water	11:35	0:0	6	p_sys
+op	11:40	0:0	6	->
+water	11:42	0:0	6	p_client
+arg	11:52	11:76	5	p_sys->i_frame_interval
+water	11:52	0:0	6	p_sys
+op	11:57	0:0	6	->
+water	11:59	0:0	6	i_frame_interval
+water	11:77	0:0	4	;
+call	12:8	12:49	4	vlc_restorecancel
+arg	12:27	12:49	5	p_sys->i_cancel_state
+water	12:27	0:0	6	p_sys
+op	12:32	0:0	6	->
+water	12:34	0:0	6	i_cancel_state
+water	12:50	0:0	4	;
+call	15:8	15:33	4	mwait
+arg	15:15	15:33	5	i_next_frame_date
+water	15:15	0:0	6	i_next_frame_date
+water	15:34	0:0	4	;
+water	16:8	0:0	4	i_next_frame_date
+op	16:26	0:0	4	+=
+water	16:29	0:0	4	p_sys
+op	16:34	0:0	4	->
+water	16:36	0:0	4	i_frame_interval
+water	16:52	0:0	4	;
+if	17:8	41:8	4	(i_status > 0)
+cond	17:13	17:24	5	i_status > 0
+water	17:13	0:0	6	i_status
+op	17:22	0:0	6	>
+water	17:24	0:0	6	0
+stmts	18:8	41:8	5	
+water	18:8	0:0	6	{
+water	19:12	0:0	6	p_sys
+op	19:17	0:0	6	->
+water	19:19	0:0	6	p_client
+op	19:27	0:0	6	->
+water	19:29	0:0	6	frameBuffer
+op	19:41	0:0	6	=
+water	19:43	0:0	6	p_sys
+op	19:48	0:0	6	->
+water	19:50	0:0	6	p_block
+op	19:57	0:0	6	->
+water	19:59	0:0	6	p_buffer
+water	19:67	0:0	6	;
+water	20:12	0:0	6	p_sys
+op	20:17	0:0	6	->
+water	20:19	0:0	6	i_cancel_state
+op	20:34	0:0	6	=
+call	20:36	20:51	6	vlc_savecancel
+water	20:52	0:0	6	;
+water	21:12	0:0	6	i_status
+op	21:21	0:0	6	=
+call	21:23	21:63	6	HandleRFBServerMessage
+arg	21:47	21:63	7	p_sys->p_client
+water	21:47	0:0	8	p_sys
+op	21:52	0:0	8	->
+water	21:54	0:0	8	p_client
+water	21:64	0:0	6	;
+call	22:12	22:53	6	vlc_restorecancel
+arg	22:31	22:53	7	p_sys->i_cancel_state
+water	22:31	0:0	8	p_sys
+op	22:36	0:0	8	->
+water	22:38	0:0	8	i_cancel_state
+water	22:54	0:0	6	;
+if	23:12	29:12	6	(! i_status)
+cond	23:17	23:19	7	! i_status
+op	23:17	0:0	8	!
+water	23:19	0:0	8	i_status
+stmts	24:12	29:12	7	
+water	24:12	0:0	8	{
+call	25:16	25:80	8	msg_Warn
+arg	25:26	25:33	9	p_demux
+water	25:26	0:0	10	p_demux
+arg	25:35	25:80	9	"Cannot get announced data. Server closed ?"
+water	25:35	0:0	10	"Cannot get announced data. Server closed ?"
+water	25:81	0:0	8	;
+call	26:16	26:52	8	es_out_Del
+arg	26:28	26:40	9	p_demux->out
+water	26:28	0:0	10	p_demux
+op	26:35	0:0	10	->
+water	26:37	0:0	10	out
+arg	26:42	26:52	9	p_sys->es
+water	26:42	0:0	10	p_sys
+op	26:47	0:0	10	->
+water	26:49	0:0	10	es
+water	26:53	0:0	8	;
+water	27:16	0:0	8	p_sys
+op	27:21	0:0	8	->
+water	27:23	0:0	8	es
+op	27:26	0:0	8	=
+water	27:28	0:0	8	NULL
+water	27:32	0:0	8	;
+return	28:16	28:27	8	NULL
+water	28:23	0:0	9	NULL
+water	29:12	0:0	8	}
+else	30:12	40:12	6
+stmts	31:12	40:12	7	
+water	31:12	0:0	8	{
+decl	32:16	32:68	8	block_t	*p_block
+op	32:33	0:0	8	=
+call	32:35	32:67	9	block_Duplicate
+arg	32:52	32:67	10	p_sys->p_block
+water	32:52	0:0	11	p_sys
+op	32:57	0:0	11	->
+water	32:59	0:0	11	p_block
+if	33:16	39:16	8	(p_block)
+cond	33:21	33:21	9	p_block
+water	33:21	0:0	10	p_block
+stmts	34:16	39:16	9	
+water	34:16	0:0	10	{
+water	35:20	0:0	10	p_sys
+op	35:25	0:0	10	->
+water	35:27	0:0	10	p_block
+op	35:34	0:0	10	->
+water	35:36	0:0	10	i_dts
+op	35:42	0:0	10	=
+water	35:44	0:0	10	p_sys
+op	35:49	0:0	10	->
+water	35:51	0:0	10	p_block
+op	35:58	0:0	10	->
+water	35:60	0:0	10	i_pts
+op	35:66	0:0	10	=
+call	35:68	35:74	10	mdate
+water	35:75	0:0	10	;
+call	36:20	36:88	10	es_out_Control
+arg	36:36	36:48	11	p_demux->out
+water	36:36	0:0	12	p_demux
+op	36:43	0:0	12	->
+water	36:45	0:0	12	out
+arg	36:50	36:64	11	ES_OUT_SET_PCR
+water	36:50	0:0	12	ES_OUT_SET_PCR
+arg	36:66	36:88	11	p_sys->p_block->i_pts
+water	36:66	0:0	12	p_sys
+op	36:71	0:0	12	->
+water	36:73	0:0	12	p_block
+op	36:80	0:0	12	->
+water	36:82	0:0	12	i_pts
+water	36:89	0:0	10	;
+call	37:20	37:73	10	es_out_Send
+arg	37:33	37:45	11	p_demux->out
+water	37:33	0:0	12	p_demux
+op	37:40	0:0	12	->
+water	37:42	0:0	12	out
+arg	37:47	37:56	11	p_sys->es
+water	37:47	0:0	12	p_sys
+op	37:52	0:0	12	->
+water	37:54	0:0	12	es
+arg	37:58	37:73	11	p_sys->p_block
+water	37:58	0:0	12	p_sys
+op	37:63	0:0	12	->
+water	37:65	0:0	12	p_block
+water	37:74	0:0	10	;
+water	38:20	0:0	10	p_sys
+op	38:25	0:0	10	->
+water	38:27	0:0	10	p_block
+op	38:35	0:0	10	=
+water	38:37	0:0	10	p_block
+water	38:44	0:0	10	;
+water	39:16	0:0	10	}
+water	40:12	0:0	8	}
+water	41:8	0:0	6	}
+water	42:4	0:0	4	}
+return	43:4	43:15	2	NULL
+water	43:11	0:0	3	NULL

@@ -1,0 +1,533 @@
+func	2:0	90:0	0	static int	SkipFile
+params	2:19	0:0	1	
+param	2:20	2:31	2	stream_t *	s
+param	2:33	2:43	2	int *	count
+param	2:45	2:63	2	rar_file_t * * *	file
+param	3:20	3:42	2	const rar_block_t *	hdr
+param	3:44	3:66	2	const char *	volume_mrl
+stmnts	0:0	89:22	1	
+decl	5:4	5:23	2	const uint8_t	*peek
+decl	6:4	6:23	2	int	min_size
+op	6:17	0:0	2	=
+water	6:19	0:0	2	7
+op	6:20	0:0	2	+
+water	6:21	0:0	2	21
+if	7:4	8:21	2	(hdr -> flags & RAR_BLOCK_FILE_HAS_HIGH)
+cond	7:8	7:21	3	hdr -> flags & RAR_BLOCK_FILE_HAS_HIGH
+water	7:8	0:0	4	hdr
+op	7:11	0:0	4	->
+water	7:13	0:0	4	flags
+op	7:19	0:0	4	&
+water	7:21	0:0	4	RAR_BLOCK_FILE_HAS_HIGH
+stmts	8:8	8:21	3	
+water	8:8	0:0	4	min_size
+op	8:17	0:0	4	+=
+water	8:20	0:0	4	8
+water	8:21	0:0	4	;
+if	9:4	10:27	2	(hdr -> size < ( unsigned ) min_size)
+cond	9:8	9:30	3	hdr -> size < ( unsigned ) min_size
+water	9:8	0:0	4	hdr
+op	9:11	0:0	4	->
+water	9:13	0:0	4	size
+op	9:18	0:0	4	<
+water	9:20	0:0	4	(
+water	9:21	0:0	4	unsigned
+water	9:29	0:0	4	)
+water	9:30	0:0	4	min_size
+stmts	10:8	10:27	3	
+return	10:8	10:27	4	VLC_EGENERIC
+water	10:15	0:0	5	VLC_EGENERIC
+if	11:4	12:27	2	(stream_Peek (s ,& peek ,min_size ) < min_size)
+cond	11:8	11:42	3	stream_Peek (s ,& peek ,min_size ) < min_size
+call	11:8	11:38	4	stream_Peek
+arg	11:20	11:21	5	s
+water	11:20	0:0	6	s
+arg	11:23	11:28	5	&peek
+op	11:23	0:0	6	&
+water	11:24	0:0	6	peek
+arg	11:30	11:38	5	min_size
+water	11:30	0:0	6	min_size
+op	11:40	0:0	4	<
+water	11:42	0:0	4	min_size
+stmts	12:8	12:27	3	
+return	12:8	12:27	4	VLC_EGENERIC
+water	12:15	0:0	5	VLC_EGENERIC
+decl	14:4	14:48	2	uint32_t	file_size_low
+op	14:27	0:0	2	=
+call	14:29	14:47	3	GetDWLE
+arg	14:37	14:47	4	&peek[7+4]
+op	14:37	0:0	5	&
+water	14:38	0:0	5	peek
+op	14:42	0:0	5	[
+water	14:43	0:0	5	7
+op	14:44	0:0	5	+
+water	14:45	0:0	5	4
+op	14:46	0:0	5	]
+decl	15:4	15:32	2	uint8_t	method
+op	15:20	0:0	2	=
+water	15:22	0:0	2	peek
+op	15:26	0:0	2	[
+water	15:27	0:0	2	7
+op	15:28	0:0	2	+
+water	15:29	0:0	2	18
+op	15:31	0:0	2	]
+decl	16:4	16:44	2	uint16_t	name_size
+op	16:23	0:0	2	=
+call	16:25	16:43	3	GetWLE
+arg	16:32	16:43	4	&peek[7+19]
+op	16:32	0:0	5	&
+water	16:33	0:0	5	peek
+op	16:37	0:0	5	[
+water	16:38	0:0	5	7
+op	16:39	0:0	5	+
+water	16:40	0:0	5	19
+op	16:42	0:0	5	]
+decl	17:4	17:31	2	uint32_t	file_size_high
+op	17:28	0:0	2	=
+water	17:30	0:0	2	0
+if	18:4	19:45	2	(hdr -> flags & RAR_BLOCK_FILE_HAS_HIGH)
+cond	18:8	18:21	3	hdr -> flags & RAR_BLOCK_FILE_HAS_HIGH
+water	18:8	0:0	4	hdr
+op	18:11	0:0	4	->
+water	18:13	0:0	4	flags
+op	18:19	0:0	4	&
+water	18:21	0:0	4	RAR_BLOCK_FILE_HAS_HIGH
+stmts	19:8	19:45	3	
+water	19:8	0:0	4	file_size_high
+op	19:23	0:0	4	=
+call	19:25	19:44	4	GetDWLE
+arg	19:33	19:44	5	&peek[7+29]
+op	19:33	0:0	6	&
+water	19:34	0:0	6	peek
+op	19:38	0:0	6	[
+water	19:39	0:0	6	7
+op	19:40	0:0	6	+
+water	19:41	0:0	6	29
+op	19:43	0:0	6	]
+water	19:45	0:0	4	;
+decl	20:4	20:79	2	const uint64_t	file_size
+op	20:29	0:0	2	=
+water	20:31	0:0	2	(
+water	20:32	0:0	2	(
+water	20:33	0:0	2	uint64_t
+water	20:41	0:0	2	)
+water	20:42	0:0	2	file_size_high
+op	20:57	0:0	2	<<
+water	20:60	0:0	2	32
+water	20:62	0:0	2	)
+op	20:64	0:0	2	|
+water	20:66	0:0	2	file_size_low
+decl	21:4	21:41	2	char	*name
+op	21:15	0:0	2	=
+call	21:17	21:40	3	calloc
+arg	21:24	21:25	4	1
+water	21:24	0:0	5	1
+arg	21:27	21:40	4	name_size+1
+water	21:27	0:0	5	name_size
+op	21:37	0:0	5	+
+water	21:39	0:0	5	1
+if	22:4	23:27	2	(! name)
+cond	22:8	22:9	3	! name
+op	22:8	0:0	4	!
+water	22:9	0:0	4	name
+stmts	23:8	23:27	3	
+return	23:8	23:27	4	VLC_EGENERIC
+water	23:15	0:0	5	VLC_EGENERIC
+decl	24:4	24:84	2	const int	name_offset
+op	24:26	0:0	2	=
+water	24:28	0:0	2	(
+water	24:29	0:0	2	hdr
+op	24:32	0:0	2	->
+water	24:34	0:0	2	flags
+op	24:40	0:0	2	&
+water	24:42	0:0	2	RAR_BLOCK_FILE_HAS_HIGH
+water	24:65	0:0	2	)
+water	24:67	0:0	2	?
+water	24:69	0:0	2	(
+water	24:70	0:0	2	7
+op	24:71	0:0	2	+
+water	24:72	0:0	2	33
+water	24:74	0:0	2	)
+water	24:76	0:0	2	:
+water	24:78	0:0	2	(
+water	24:79	0:0	2	7
+op	24:80	0:0	2	+
+water	24:81	0:0	2	25
+water	24:83	0:0	2	)
+if	25:4	32:4	2	(name_offset + name_size <= hdr -> size)
+cond	25:8	25:40	3	name_offset + name_size <= hdr -> size
+water	25:8	0:0	4	name_offset
+op	25:20	0:0	4	+
+water	25:22	0:0	4	name_size
+op	25:32	0:0	4	<=
+water	25:35	0:0	4	hdr
+op	25:38	0:0	4	->
+water	25:40	0:0	4	size
+stmts	25:46	32:4	3	
+water	25:46	0:0	4	{
+decl	26:8	26:52	4	const int	max_size
+op	26:27	0:0	4	=
+water	26:29	0:0	4	name_offset
+op	26:41	0:0	4	+
+water	26:43	0:0	4	name_size
+if	27:8	30:8	4	(stream_Peek (s ,& peek ,max_size ) < max_size)
+cond	27:12	27:46	5	stream_Peek (s ,& peek ,max_size ) < max_size
+call	27:12	27:42	6	stream_Peek
+arg	27:24	27:25	7	s
+water	27:24	0:0	8	s
+arg	27:27	27:32	7	&peek
+op	27:27	0:0	8	&
+water	27:28	0:0	8	peek
+arg	27:34	27:42	7	max_size
+water	27:34	0:0	8	max_size
+op	27:44	0:0	6	<
+water	27:46	0:0	6	max_size
+stmts	27:56	30:8	5	
+water	27:56	0:0	6	{
+call	28:12	28:21	6	free
+arg	28:17	28:21	7	name
+water	28:17	0:0	8	name
+water	28:22	0:0	6	;
+return	29:12	29:31	6	VLC_EGENERIC
+water	29:19	0:0	7	VLC_EGENERIC
+water	30:8	0:0	6	}
+call	31:8	31:50	4	memcpy
+arg	31:15	31:19	5	name
+water	31:15	0:0	6	name
+arg	31:21	31:39	5	&peek[name_offset]
+op	31:21	0:0	6	&
+water	31:22	0:0	6	peek
+op	31:26	0:0	6	[
+water	31:27	0:0	6	name_offset
+op	31:38	0:0	6	]
+arg	31:41	31:50	5	name_size
+water	31:41	0:0	6	name_size
+water	31:51	0:0	4	;
+water	32:4	0:0	4	}
+decl	33:4	33:30	2	rar_file_t	*current
+op	33:24	0:0	2	=
+water	33:26	0:0	2	NULL
+if	34:4	37:4	2	(method != 0 x30)
+cond	34:8	34:19	3	method != 0 x30
+water	34:8	0:0	4	method
+op	34:15	0:0	4	!=
+water	34:18	0:0	4	0
+water	34:19	0:0	4	x30
+stmts	34:24	37:4	3	
+water	34:24	0:0	4	{
+call	35:8	35:79	4	msg_Dbg
+arg	35:16	35:17	5	s
+water	35:16	0:0	6	s
+arg	35:19	35:65	5	"Ignoring compressed file %s (method=0x%2.2x)"
+water	35:19	0:0	6	"Ignoring compressed file %s (method=0x%2.2x)"
+arg	35:67	35:71	5	name
+water	35:67	0:0	6	name
+arg	35:73	35:79	5	method
+water	35:73	0:0	6	method
+water	35:80	0:0	4	;
+goto	36:8	36:17	4	exit
+water	36:13	0:0	5	exit
+water	37:4	0:0	4	}
+if	39:4	40:37	2	(* count > 0)
+cond	39:8	39:17	3	* count > 0
+op	39:8	0:0	4	*
+water	39:9	0:0	4	count
+op	39:15	0:0	4	>
+water	39:17	0:0	4	0
+stmts	40:8	40:37	3	
+water	40:8	0:0	4	current
+op	40:16	0:0	4	=
+water	40:18	0:0	4	(
+op	40:19	0:0	4	*
+water	40:20	0:0	4	file
+water	40:24	0:0	4	)
+op	40:25	0:0	4	[
+op	40:26	0:0	4	*
+water	40:27	0:0	4	count
+op	40:33	0:0	4	-
+water	40:35	0:0	4	1
+op	40:36	0:0	4	]
+water	40:37	0:0	4	;
+if	41:4	45:22	2	(current && ( current -> is_complete ||strcmp (current -> name ,name ) || ( hdr -> flags & RAR_BLOCK_FILE_HAS_PREVIOUS ) == 0 ))
+cond	41:8	44:57	3	current && ( current -> is_complete ||strcmp (current -> name ,name ) || ( hdr -> flags & RAR_BLOCK_FILE_HAS_PREVIOUS ) == 0 )
+water	41:8	0:0	4	current
+op	41:16	0:0	4	&&
+water	42:8	0:0	4	(
+water	42:9	0:0	4	current
+op	42:16	0:0	4	->
+water	42:18	0:0	4	is_complete
+op	42:30	0:0	4	||
+call	43:10	43:36	4	strcmp
+arg	43:17	43:30	5	current->name
+water	43:17	0:0	6	current
+op	43:24	0:0	6	->
+water	43:26	0:0	6	name
+arg	43:32	43:36	5	name
+water	43:32	0:0	6	name
+op	43:38	0:0	4	||
+water	44:10	0:0	4	(
+water	44:11	0:0	4	hdr
+op	44:14	0:0	4	->
+water	44:16	0:0	4	flags
+op	44:22	0:0	4	&
+water	44:24	0:0	4	RAR_BLOCK_FILE_HAS_PREVIOUS
+water	44:51	0:0	4	)
+op	44:53	0:0	4	==
+water	44:56	0:0	4	0
+water	44:57	0:0	4	)
+stmts	45:8	45:22	3	
+water	45:8	0:0	4	current
+op	45:16	0:0	4	=
+water	45:18	0:0	4	NULL
+water	45:22	0:0	4	;
+if	46:4	59:4	2	(! current)
+cond	46:8	46:9	3	! current
+op	46:8	0:0	4	!
+water	46:9	0:0	4	current
+stmts	46:18	59:4	3	
+water	46:18	0:0	4	{
+if	47:8	48:21	4	(hdr -> flags & RAR_BLOCK_FILE_HAS_PREVIOUS)
+cond	47:12	47:25	5	hdr -> flags & RAR_BLOCK_FILE_HAS_PREVIOUS
+water	47:12	0:0	6	hdr
+op	47:15	0:0	6	->
+water	47:17	0:0	6	flags
+op	47:23	0:0	6	&
+water	47:25	0:0	6	RAR_BLOCK_FILE_HAS_PREVIOUS
+stmts	48:12	48:21	5	
+goto	48:12	48:21	6	exit
+water	48:17	0:0	7	exit
+water	49:8	0:0	4	current
+op	49:16	0:0	4	=
+call	49:18	49:41	4	malloc
+arg	49:25	49:41	5	sizeof(*current)
+op	49:25	0:0	6	sizeof
+water	49:31	0:0	6	(
+op	49:32	0:0	6	*
+water	49:33	0:0	6	current
+water	49:40	0:0	6	)
+water	49:42	0:0	4	;
+if	50:8	51:21	4	(! current)
+cond	50:12	50:13	5	! current
+op	50:12	0:0	6	!
+water	50:13	0:0	6	current
+stmts	51:12	51:21	5	
+goto	51:12	51:21	6	exit
+water	51:17	0:0	7	exit
+call	52:8	52:41	4	TAB_APPEND
+arg	52:19	52:25	5	*count
+op	52:19	0:0	6	*
+water	52:20	0:0	6	count
+arg	52:27	52:32	5	*file
+op	52:27	0:0	6	*
+water	52:28	0:0	6	file
+arg	52:34	52:41	5	current
+water	52:34	0:0	6	current
+water	52:42	0:0	4	;
+water	53:8	0:0	4	current
+op	53:15	0:0	4	->
+water	53:17	0:0	4	name
+op	53:22	0:0	4	=
+water	53:24	0:0	4	name
+water	53:28	0:0	4	;
+water	54:8	0:0	4	current
+op	54:15	0:0	4	->
+water	54:17	0:0	4	size
+op	54:22	0:0	4	=
+water	54:24	0:0	4	file_size
+water	54:33	0:0	4	;
+water	55:8	0:0	4	current
+op	55:15	0:0	4	->
+water	55:17	0:0	4	is_complete
+op	55:29	0:0	4	=
+water	55:31	0:0	4	false
+water	55:36	0:0	4	;
+water	56:8	0:0	4	current
+op	56:15	0:0	4	->
+water	56:17	0:0	4	real_size
+op	56:27	0:0	4	=
+water	56:29	0:0	4	0
+water	56:30	0:0	4	;
+call	57:8	57:53	4	TAB_INIT
+arg	57:17	57:37	5	current->chunk_count
+water	57:17	0:0	6	current
+op	57:24	0:0	6	->
+water	57:26	0:0	6	chunk_count
+arg	57:39	57:53	5	current->chunk
+water	57:39	0:0	6	current
+op	57:46	0:0	6	->
+water	57:48	0:0	6	chunk
+water	57:54	0:0	4	;
+water	58:8	0:0	4	name
+op	58:13	0:0	4	=
+water	58:15	0:0	4	NULL
+water	58:19	0:0	4	;
+water	59:4	0:0	4	}
+decl	61:4	61:52	2	rar_file_chunk_t	*chunk
+op	61:28	0:0	2	=
+call	61:30	61:51	3	malloc
+arg	61:37	61:51	4	sizeof(*chunk)
+op	61:37	0:0	5	sizeof
+water	61:43	0:0	5	(
+op	61:44	0:0	5	*
+water	61:45	0:0	5	chunk
+water	61:50	0:0	5	)
+if	62:4	74:4	2	(chunk)
+cond	62:8	62:8	3	chunk
+water	62:8	0:0	4	chunk
+stmts	62:15	74:4	3	
+water	62:15	0:0	4	{
+water	63:8	0:0	4	chunk
+op	63:13	0:0	4	->
+water	63:15	0:0	4	mrl
+op	63:19	0:0	4	=
+call	63:21	63:38	4	strdup
+arg	63:28	63:38	5	volume_mrl
+water	63:28	0:0	6	volume_mrl
+water	63:39	0:0	4	;
+water	64:8	0:0	4	chunk
+op	64:13	0:0	4	->
+water	64:15	0:0	4	offset
+op	64:22	0:0	4	=
+call	64:24	64:37	4	stream_Tell
+arg	64:36	64:37	5	s
+water	64:36	0:0	6	s
+op	64:39	0:0	4	+
+water	64:41	0:0	4	hdr
+op	64:44	0:0	4	->
+water	64:46	0:0	4	size
+water	64:50	0:0	4	;
+water	65:8	0:0	4	chunk
+op	65:13	0:0	4	->
+water	65:15	0:0	4	size
+op	65:20	0:0	4	=
+water	65:22	0:0	4	hdr
+op	65:25	0:0	4	->
+water	65:27	0:0	4	add_size
+water	65:35	0:0	4	;
+water	66:8	0:0	4	chunk
+op	66:13	0:0	4	->
+water	66:15	0:0	4	cummulated_size
+op	66:31	0:0	4	=
+water	66:33	0:0	4	0
+water	66:34	0:0	4	;
+if	67:8	71:8	4	(current -> chunk_count > 0)
+cond	67:12	67:35	5	current -> chunk_count > 0
+water	67:12	0:0	6	current
+op	67:19	0:0	6	->
+water	67:21	0:0	6	chunk_count
+op	67:33	0:0	6	>
+water	67:35	0:0	6	0
+stmts	67:38	71:8	5	
+water	67:38	0:0	6	{
+decl	68:12	68:79	6	rar_file_chunk_t	*previous
+op	68:39	0:0	6	=
+water	68:41	0:0	6	current
+op	68:48	0:0	6	->
+water	68:50	0:0	6	chunk
+op	68:55	0:0	6	[
+water	68:56	0:0	6	current
+op	68:63	0:0	6	->
+water	68:65	0:0	6	chunk_count
+op	68:76	0:0	6	-
+water	68:77	0:0	6	1
+op	68:78	0:0	6	]
+water	69:12	0:0	6	chunk
+op	69:17	0:0	6	->
+water	69:19	0:0	6	cummulated_size
+op	69:35	0:0	6	+=
+water	69:38	0:0	6	previous
+op	69:46	0:0	6	->
+water	69:48	0:0	6	cummulated_size
+op	69:64	0:0	6	+
+water	70:38	0:0	6	previous
+op	70:46	0:0	6	->
+water	70:48	0:0	6	size
+water	70:52	0:0	6	;
+water	71:8	0:0	6	}
+call	72:8	72:62	4	TAB_APPEND
+arg	72:19	72:39	5	current->chunk_count
+water	72:19	0:0	6	current
+op	72:26	0:0	6	->
+water	72:28	0:0	6	chunk_count
+arg	72:41	72:55	5	current->chunk
+water	72:41	0:0	6	current
+op	72:48	0:0	6	->
+water	72:50	0:0	6	chunk
+arg	72:57	72:62	5	chunk
+water	72:57	0:0	6	chunk
+water	72:63	0:0	4	;
+water	73:8	0:0	4	current
+op	73:15	0:0	4	->
+water	73:17	0:0	4	real_size
+op	73:27	0:0	4	+=
+water	73:30	0:0	4	hdr
+op	73:33	0:0	4	->
+water	73:35	0:0	4	add_size
+water	73:43	0:0	4	;
+water	74:4	0:0	4	}
+if	75:4	76:35	2	(( hdr -> flags & RAR_BLOCK_FILE_HAS_NEXT ) == 0)
+cond	75:8	75:50	3	( hdr -> flags & RAR_BLOCK_FILE_HAS_NEXT ) == 0
+water	75:8	0:0	4	(
+water	75:9	0:0	4	hdr
+op	75:12	0:0	4	->
+water	75:14	0:0	4	flags
+op	75:20	0:0	4	&
+water	75:22	0:0	4	RAR_BLOCK_FILE_HAS_NEXT
+water	75:45	0:0	4	)
+op	75:47	0:0	4	==
+water	75:50	0:0	4	0
+stmts	76:8	76:35	3	
+water	76:8	0:0	4	current
+op	76:15	0:0	4	->
+water	76:17	0:0	4	is_complete
+op	76:29	0:0	4	=
+water	76:31	0:0	4	true
+water	76:35	0:0	4	;
+label	77:0	77:4	2	exit :
+call	79:4	79:13	2	free
+arg	79:9	79:13	3	name
+water	79:9	0:0	4	name
+water	79:14	0:0	2	;
+if	81:4	86:4	2	(current)
+cond	81:8	81:8	3	current
+water	81:8	0:0	4	current
+stmts	81:17	86:4	3	
+water	81:17	0:0	4	{
+decl	82:8	82:29	4	bool	can_seek
+op	82:22	0:0	4	=
+water	82:24	0:0	4	false
+call	83:8	83:52	4	stream_Control
+arg	83:23	83:24	5	s
+water	83:23	0:0	6	s
+arg	83:26	83:41	5	STREAM_CAN_SEEK
+water	83:26	0:0	6	STREAM_CAN_SEEK
+arg	83:43	83:52	5	&can_seek
+op	83:43	0:0	6	&
+water	83:44	0:0	6	can_seek
+water	83:53	0:0	4	;
+if	84:8	85:31	4	(! can_seek && current -> size > 0)
+cond	84:12	84:41	5	! can_seek && current -> size > 0
+op	84:12	0:0	6	!
+water	84:13	0:0	6	can_seek
+op	84:22	0:0	6	&&
+water	84:25	0:0	6	current
+op	84:32	0:0	6	->
+water	84:34	0:0	6	size
+op	84:39	0:0	6	>
+water	84:41	0:0	6	0
+stmts	85:12	85:31	5	
+return	85:12	85:31	6	VLC_EGENERIC
+water	85:19	0:0	7	VLC_EGENERIC
+water	86:4	0:0	4	}
+if	87:4	88:27	2	(SkipBlock (s ,hdr ))
+cond	87:8	87:24	3	SkipBlock (s ,hdr )
+call	87:8	87:24	4	SkipBlock
+arg	87:18	87:19	5	s
+water	87:18	0:0	6	s
+arg	87:21	87:24	5	hdr
+water	87:21	0:0	6	hdr
+stmts	88:8	88:27	3	
+return	88:8	88:27	4	VLC_EGENERIC
+water	88:15	0:0	5	VLC_EGENERIC
+return	89:4	89:22	2	VLC_SUCCESS
+water	89:11	0:0	3	VLC_SUCCESS

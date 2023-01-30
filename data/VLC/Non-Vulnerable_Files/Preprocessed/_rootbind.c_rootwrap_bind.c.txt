@@ -1,0 +1,278 @@
+func	2:0	62:0	0	int	rootwrap_bind
+params	2:18	0:0	1	
+param	2:19	2:29	2	int	family
+param	2:31	2:43	2	int	socktype
+param	2:45	2:57	2	int	protocol
+param	3:19	3:46	2	const struct sockaddr *	addr
+param	3:48	3:59	2	size_t	alen
+stmnts	6:4	61:13	1	
+water	6:4	0:0	2	static
+water	6:11	0:0	2	pthread_mutex_t
+water	6:27	0:0	2	mutex
+op	6:33	0:0	2	=
+water	6:35	0:0	2	PTHREAD_MUTEX_INITIALIZER
+water	6:60	0:0	2	;
+decl	7:4	7:30	2	struct sockaddr_storage	ss
+decl	8:4	8:21	2	int	fd
+water	8:10	0:0	2	,
+decl	8:4	8:21	2	int	sock
+op	8:17	0:0	2	=
+op	8:19	0:0	2	-
+water	8:20	0:0	2	1
+decl	9:4	9:54	2	const char	*sockenv
+op	9:24	0:0	2	=
+call	9:26	9:53	3	getenv
+arg	9:34	9:53	4	"VLC_ROOTWRAP_SOCK"
+water	9:34	0:0	5	"VLC_ROOTWRAP_SOCK"
+if	10:4	11:29	2	(sockenv != NULL)
+cond	10:8	10:19	3	sockenv != NULL
+water	10:8	0:0	4	sockenv
+op	10:16	0:0	4	!=
+water	10:19	0:0	4	NULL
+stmts	11:8	11:29	3	
+water	11:8	0:0	4	sock
+op	11:13	0:0	4	=
+call	11:15	11:28	4	atoi
+arg	11:21	11:28	5	sockenv
+water	11:21	0:0	6	sockenv
+water	11:29	0:0	4	;
+if	12:4	16:4	2	(sock == - 1)
+cond	12:8	12:17	3	sock == - 1
+water	12:8	0:0	4	sock
+op	12:13	0:0	4	==
+op	12:16	0:0	4	-
+water	12:17	0:0	4	1
+stmts	13:4	16:4	3	
+water	13:4	0:0	4	{
+water	14:8	0:0	4	errno
+op	14:14	0:0	4	=
+water	14:16	0:0	4	EACCES
+water	14:22	0:0	4	;
+return	15:8	15:17	4	-1
+op	15:15	0:0	5	-
+water	15:16	0:0	5	1
+water	16:4	0:0	4	}
+switch	17:4	38:4	2	(family)
+cond	17:12	17:12	3	family
+water	17:12	0:0	4	family
+stmts	18:4	38:4	3	
+water	18:4	0:0	4	{
+label	19:8	19:20	4	case AF_INET :
+if	20:12	24:12	4	(alen < sizeof ( struct sockaddr_in ))
+cond	20:16	20:49	5	alen < sizeof ( struct sockaddr_in )
+water	20:16	0:0	6	alen
+op	20:21	0:0	6	<
+op	20:23	0:0	6	sizeof
+water	20:30	0:0	6	(
+water	20:31	0:0	6	struct
+water	20:38	0:0	6	sockaddr_in
+water	20:49	0:0	6	)
+stmts	21:12	24:12	5	
+water	21:12	0:0	6	{
+water	22:16	0:0	6	errno
+op	22:22	0:0	6	=
+water	22:24	0:0	6	EINVAL
+water	22:30	0:0	6	;
+return	23:16	23:25	6	-1
+op	23:23	0:0	7	-
+water	23:24	0:0	7	1
+water	24:12	0:0	6	}
+break	25:12	25:17	4	
+label	27:8	27:21	4	case AF_INET6 :
+if	28:12	32:12	4	(alen < sizeof ( struct sockaddr_in6 ))
+cond	28:16	28:50	5	alen < sizeof ( struct sockaddr_in6 )
+water	28:16	0:0	6	alen
+op	28:21	0:0	6	<
+op	28:23	0:0	6	sizeof
+water	28:30	0:0	6	(
+water	28:31	0:0	6	struct
+water	28:38	0:0	6	sockaddr_in6
+water	28:50	0:0	6	)
+stmts	29:12	32:12	5	
+water	29:12	0:0	6	{
+water	30:16	0:0	6	errno
+op	30:22	0:0	6	=
+water	30:24	0:0	6	EINVAL
+water	30:30	0:0	6	;
+return	31:16	31:25	6	-1
+op	31:23	0:0	7	-
+water	31:24	0:0	7	1
+water	32:12	0:0	6	}
+break	33:12	33:17	4	
+label	35:8	35:15	4	default :
+water	36:12	0:0	4	errno
+op	36:18	0:0	4	=
+water	36:20	0:0	4	EAFNOSUPPORT
+water	36:32	0:0	4	;
+return	37:12	37:21	4	-1
+op	37:19	0:0	5	-
+water	37:20	0:0	5	1
+water	38:4	0:0	4	}
+if	39:4	43:4	2	(family != addr -> sa_family)
+cond	39:8	39:24	3	family != addr -> sa_family
+water	39:8	0:0	4	family
+op	39:15	0:0	4	!=
+water	39:18	0:0	4	addr
+op	39:22	0:0	4	->
+water	39:24	0:0	4	sa_family
+stmts	40:4	43:4	3	
+water	40:4	0:0	4	{
+water	41:8	0:0	4	errno
+op	41:14	0:0	4	=
+water	41:16	0:0	4	EAFNOSUPPORT
+water	41:28	0:0	4	;
+return	42:8	42:17	4	-1
+op	42:15	0:0	5	-
+water	42:16	0:0	5	1
+water	43:4	0:0	4	}
+if	45:4	50:4	2	(( socktype != SOCK_STREAM ) || ( protocol && ( protocol != IPPROTO_TCP ) ))
+cond	45:8	46:46	3	( socktype != SOCK_STREAM ) || ( protocol && ( protocol != IPPROTO_TCP ) )
+water	45:8	0:0	4	(
+water	45:9	0:0	4	socktype
+op	45:18	0:0	4	!=
+water	45:21	0:0	4	SOCK_STREAM
+water	45:32	0:0	4	)
+op	46:5	0:0	4	||
+water	46:8	0:0	4	(
+water	46:9	0:0	4	protocol
+op	46:18	0:0	4	&&
+water	46:21	0:0	4	(
+water	46:22	0:0	4	protocol
+op	46:31	0:0	4	!=
+water	46:34	0:0	4	IPPROTO_TCP
+water	46:45	0:0	4	)
+water	46:46	0:0	4	)
+stmts	47:4	50:4	3	
+water	47:4	0:0	4	{
+water	48:8	0:0	4	errno
+op	48:14	0:0	4	=
+water	48:16	0:0	4	EACCES
+water	48:22	0:0	4	;
+return	49:8	49:17	4	-1
+op	49:15	0:0	5	-
+water	49:16	0:0	5	1
+water	50:4	0:0	4	}
+call	51:4	51:31	2	memset
+arg	51:12	51:15	3	&ss
+op	51:12	0:0	4	&
+water	51:13	0:0	4	ss
+arg	51:17	51:18	3	0
+water	51:17	0:0	4	0
+arg	51:20	51:31	3	sizeof(ss)
+op	51:20	0:0	4	sizeof
+water	51:27	0:0	4	(
+water	51:28	0:0	4	ss
+water	51:30	0:0	4	)
+water	51:32	0:0	2	;
+call	52:4	52:64	2	memcpy
+arg	52:12	52:15	3	&ss
+op	52:12	0:0	4	&
+water	52:13	0:0	4	ss
+arg	52:17	52:21	3	addr
+water	52:17	0:0	4	addr
+arg	52:23	52:64	3	(alen>sizeof(ss))?sizeof(ss):alen
+water	52:23	0:0	4	(
+water	52:24	0:0	4	alen
+op	52:29	0:0	4	>
+op	52:31	0:0	4	sizeof
+water	52:38	0:0	4	(
+water	52:39	0:0	4	ss
+water	52:41	0:0	4	)
+water	52:42	0:0	4	)
+water	52:44	0:0	4	?
+op	52:46	0:0	4	sizeof
+water	52:53	0:0	4	(
+water	52:54	0:0	4	ss
+water	52:56	0:0	4	)
+water	52:58	0:0	4	:
+water	52:60	0:0	4	alen
+water	52:65	0:0	2	;
+call	53:4	53:30	2	pthread_mutex_lock
+arg	53:24	53:30	3	&mutex
+op	53:24	0:0	4	&
+water	53:25	0:0	4	mutex
+water	53:31	0:0	2	;
+if	54:4	58:4	2	(send (sock ,& ss ,sizeof ( ss ) ,0 ) != sizeof ( ss ))
+cond	54:8	54:54	3	send (sock ,& ss ,sizeof ( ss ) ,0 ) != sizeof ( ss )
+call	54:8	54:39	4	send
+arg	54:14	54:18	5	sock
+water	54:14	0:0	6	sock
+arg	54:20	54:23	5	&ss
+op	54:20	0:0	6	&
+water	54:21	0:0	6	ss
+arg	54:25	54:36	5	sizeof(ss)
+op	54:25	0:0	6	sizeof
+water	54:32	0:0	6	(
+water	54:33	0:0	6	ss
+water	54:35	0:0	6	)
+arg	54:38	54:39	5	0
+water	54:38	0:0	6	0
+op	54:41	0:0	4	!=
+op	54:44	0:0	4	sizeof
+water	54:51	0:0	4	(
+water	54:52	0:0	4	ss
+water	54:54	0:0	4	)
+stmts	55:4	58:4	3	
+water	55:4	0:0	4	{
+call	56:8	56:36	4	pthread_mutex_unlock
+arg	56:30	56:36	5	&mutex
+op	56:30	0:0	6	&
+water	56:31	0:0	6	mutex
+water	56:37	0:0	4	;
+return	57:8	57:17	4	-1
+op	57:15	0:0	5	-
+water	57:16	0:0	5	1
+water	58:4	0:0	4	}
+water	59:4	0:0	2	fd
+op	59:7	0:0	2	=
+call	59:9	59:22	2	recv_fd
+arg	59:18	59:22	3	sock
+water	59:18	0:0	4	sock
+water	59:23	0:0	2	;
+call	60:4	60:32	2	pthread_mutex_unlock
+arg	60:26	60:32	3	&mutex
+op	60:26	0:0	4	&
+water	60:27	0:0	4	mutex
+water	60:33	0:0	2	;
+return	61:4	61:13	2	fd
+water	61:11	0:0	3	fd
+func	64:0	74:0	0	int	rootwrap_bind
+params	64:18	0:0	1	
+param	64:19	64:29	2	int	family
+param	64:31	64:43	2	int	socktype
+param	64:45	64:57	2	int	protocol
+param	65:19	65:46	2	const struct sockaddr *	addr
+param	65:48	65:59	2	size_t	alen
+stmnts	67:4	73:13	1	
+water	67:4	0:0	2	(
+water	67:5	0:0	2	void
+water	67:9	0:0	2	)
+water	67:10	0:0	2	family
+water	67:16	0:0	2	;
+water	68:4	0:0	2	(
+water	68:5	0:0	2	void
+water	68:9	0:0	2	)
+water	68:10	0:0	2	socktype
+water	68:18	0:0	2	;
+water	69:4	0:0	2	(
+water	69:5	0:0	2	void
+water	69:9	0:0	2	)
+water	69:10	0:0	2	protocol
+water	69:18	0:0	2	;
+water	70:4	0:0	2	(
+water	70:5	0:0	2	void
+water	70:9	0:0	2	)
+water	70:10	0:0	2	addr
+water	70:14	0:0	2	;
+water	71:4	0:0	2	(
+water	71:5	0:0	2	void
+water	71:9	0:0	2	)
+water	71:10	0:0	2	alen
+water	71:14	0:0	2	;
+water	72:4	0:0	2	errno
+op	72:10	0:0	2	=
+water	72:12	0:0	2	EACCES
+water	72:18	0:0	2	;
+return	73:4	73:13	2	-1
+op	73:11	0:0	3	-
+water	73:12	0:0	3	1

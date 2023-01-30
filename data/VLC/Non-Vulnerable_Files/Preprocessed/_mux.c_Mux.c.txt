@@ -1,0 +1,198 @@
+func	2:0	41:0	0	static int	Mux
+params	2:14	0:0	1	
+param	2:16	2:34	2	sout_mux_t *	p_mux
+stmnts	0:0	40:22	1	
+decl	4:4	4:40	2	sout_mux_sys_t	*p_sys
+op	4:26	0:0	2	=
+water	4:28	0:0	2	p_mux
+op	4:33	0:0	2	->
+water	4:35	0:0	2	p_sys
+if	5:4	5:44	2	(p_sys -> b_error)
+cond	5:8	5:15	3	p_sys -> b_error
+water	5:8	0:0	4	p_sys
+op	5:13	0:0	4	->
+water	5:15	0:0	4	b_error
+stmts	5:25	5:44	3	
+return	5:25	5:44	4	VLC_EGENERIC
+water	5:32	0:0	5	VLC_EGENERIC
+if	6:4	31:4	2	(p_sys -> b_write_header)
+cond	6:8	6:15	3	p_sys -> b_write_header
+water	6:8	0:0	4	p_sys
+op	6:13	0:0	4	->
+water	6:15	0:0	4	b_write_header
+stmts	7:4	31:4	3	
+water	7:4	0:0	4	{
+decl	8:8	8:17	4	int	error
+call	9:8	9:41	4	msg_Dbg
+arg	9:17	9:22	5	p_mux
+water	9:17	0:0	6	p_mux
+arg	9:24	9:41	5	"writing header"
+water	9:24	0:0	6	"writing header"
+water	9:42	0:0	4	;
+decl	10:8	10:80	4	char	*psz_opts
+op	10:23	0:0	4	=
+call	10:25	10:79	5	var_GetNonEmptyString
+arg	10:48	10:53	6	p_mux
+water	10:48	0:0	7	p_mux
+arg	10:55	10:79	6	"sout-avformat-options"
+water	10:55	0:0	7	"sout-avformat-options"
+decl	11:8	11:36	4	AVDictionary	*options
+op	11:30	0:0	4	=
+water	11:32	0:0	4	NULL
+if	12:8	13:50	4	(psz_opts && * psz_opts)
+cond	12:12	12:25	5	psz_opts && * psz_opts
+water	12:12	0:0	6	psz_opts
+op	12:21	0:0	6	&&
+op	12:24	0:0	6	*
+water	12:25	0:0	6	psz_opts
+stmts	13:12	13:50	5	
+water	13:12	0:0	6	options
+op	13:20	0:0	6	=
+call	13:22	13:49	6	vlc_av_get_options
+arg	13:41	13:49	7	psz_opts
+water	13:41	0:0	8	psz_opts
+water	13:50	0:0	6	;
+call	14:8	14:21	4	free
+arg	14:13	14:21	5	psz_opts
+water	14:13	0:0	6	psz_opts
+water	14:22	0:0	4	;
+water	15:8	0:0	4	error
+op	15:14	0:0	4	=
+call	15:16	15:75	4	avformat_write_header
+arg	15:39	15:48	5	p_sys->oc
+water	15:39	0:0	6	p_sys
+op	15:44	0:0	6	->
+water	15:46	0:0	6	oc
+arg	15:50	15:75	5	options?&options:NULL
+water	15:50	0:0	6	options
+water	15:58	0:0	6	?
+op	15:60	0:0	6	&
+water	15:61	0:0	6	options
+water	15:69	0:0	6	:
+water	15:71	0:0	6	NULL
+water	15:76	0:0	4	;
+decl	16:8	16:35	4	AVDictionaryEntry	*t
+op	16:29	0:0	4	=
+water	16:31	0:0	4	NULL
+while	17:8	19:8	4	(( t =av_dict_get (options ,"" ,t ,AV_DICT_IGNORE_SUFFIX ) ))
+cond	17:15	17:70	5	( t =av_dict_get (options ,"" ,t ,AV_DICT_IGNORE_SUFFIX ) )
+water	17:15	0:0	6	(
+water	17:16	0:0	6	t
+op	17:18	0:0	6	=
+call	17:20	17:69	6	av_dict_get
+arg	17:32	17:39	7	options
+water	17:32	0:0	8	options
+arg	17:41	17:43	7	""
+water	17:41	0:0	8	""
+arg	17:45	17:46	7	t
+water	17:45	0:0	8	t
+arg	17:48	17:69	7	AV_DICT_IGNORE_SUFFIX
+water	17:48	0:0	8	AV_DICT_IGNORE_SUFFIX
+water	17:70	0:0	6	)
+stmts	17:73	19:8	5	
+water	17:73	0:0	6	{
+call	18:12	18:60	6	msg_Err
+arg	18:21	18:26	7	p_mux
+water	18:21	0:0	8	p_mux
+arg	18:28	18:51	7	"Unknown option \"%s\""
+water	18:28	0:0	8	"Unknown option \"%s\""
+arg	18:53	18:60	7	t->key
+water	18:53	0:0	8	t
+op	18:54	0:0	8	->
+water	18:56	0:0	8	key
+water	18:61	0:0	6	;
+water	19:8	0:0	6	}
+call	20:8	20:29	4	av_dict_free
+arg	20:21	20:29	5	&options
+op	20:21	0:0	6	&
+water	20:22	0:0	6	options
+water	20:30	0:0	4	;
+if	21:8	28:8	4	(error < 0)
+cond	21:12	21:20	5	error < 0
+water	21:12	0:0	6	error
+op	21:18	0:0	6	<
+water	21:20	0:0	6	0
+stmts	22:8	28:8	5	
+water	22:8	0:0	6	{
+call	23:12	24:54	6	msg_Err
+arg	23:21	23:26	7	p_mux
+water	23:21	0:0	8	p_mux
+arg	23:28	23:56	7	"could not write header: %s"
+water	23:28	0:0	8	"could not write header: %s"
+arg	24:21	24:54	7	vlc_strerror_c(AVUNERROR(error))
+call	24:21	24:52	8	vlc_strerror_c
+arg	24:36	24:52	9	AVUNERROR(error)
+call	24:36	24:51	10	AVUNERROR
+arg	24:46	24:51	11	error
+water	24:46	0:0	12	error
+water	24:55	0:0	6	;
+water	25:12	0:0	6	p_sys
+op	25:17	0:0	6	->
+water	25:19	0:0	6	b_write_header
+op	25:34	0:0	6	=
+water	25:36	0:0	6	false
+water	25:41	0:0	6	;
+water	26:12	0:0	6	p_sys
+op	26:17	0:0	6	->
+water	26:19	0:0	6	b_error
+op	26:27	0:0	6	=
+water	26:29	0:0	6	true
+water	26:33	0:0	6	;
+return	27:12	27:31	6	VLC_EGENERIC
+water	27:19	0:0	7	VLC_EGENERIC
+water	28:8	0:0	6	}
+call	29:8	29:34	4	avio_flush
+arg	29:20	29:34	5	p_sys->oc->pb
+water	29:20	0:0	6	p_sys
+op	29:25	0:0	6	->
+water	29:27	0:0	6	oc
+op	29:29	0:0	6	->
+water	29:31	0:0	6	pb
+water	29:35	0:0	4	;
+water	30:8	0:0	4	p_sys
+op	30:13	0:0	4	->
+water	30:15	0:0	4	b_write_header
+op	30:30	0:0	4	=
+water	30:32	0:0	4	false
+water	30:37	0:0	4	;
+water	31:4	0:0	4	}
+for	32:4	39:4	2	(;;)
+forinit	32:9	32:9	3	;
+water	32:9	0:0	4	;
+cond	0:0	0:0	3	
+forexpr	0:0	0:0	3	
+stmts	33:4	39:4	3	
+water	33:4	0:0	4	{
+decl	34:8	34:21	4	mtime_t	i_dts
+decl	35:8	35:60	4	int	i_stream
+op	35:21	0:0	4	=
+call	35:23	35:59	5	sout_MuxGetStream
+arg	35:42	35:47	6	p_mux
+water	35:42	0:0	7	p_mux
+arg	35:49	35:50	6	1
+water	35:49	0:0	7	1
+arg	35:52	35:59	6	&i_dts
+op	35:52	0:0	7	&
+water	35:53	0:0	7	i_dts
+if	36:8	37:30	4	(i_stream < 0)
+cond	36:12	36:23	5	i_stream < 0
+water	36:12	0:0	6	i_stream
+op	36:21	0:0	6	<
+water	36:23	0:0	6	0
+stmts	37:12	37:30	5	
+return	37:12	37:30	6	VLC_SUCCESS
+water	37:19	0:0	7	VLC_SUCCESS
+call	38:8	38:52	4	MuxBlock
+arg	38:18	38:23	5	p_mux
+water	38:18	0:0	6	p_mux
+arg	38:25	38:52	5	p_mux->pp_inputs[i_stream]
+water	38:25	0:0	6	p_mux
+op	38:30	0:0	6	->
+water	38:32	0:0	6	pp_inputs
+op	38:41	0:0	6	[
+water	38:42	0:0	6	i_stream
+op	38:50	0:0	6	]
+water	38:53	0:0	4	;
+water	39:4	0:0	4	}
+return	40:4	40:22	2	VLC_SUCCESS
+water	40:11	0:0	3	VLC_SUCCESS

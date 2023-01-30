@@ -1,0 +1,270 @@
+func	2:0	62:0	0	static void	DecoderPlayVideo
+params	2:28	0:0	1	
+param	2:30	2:46	2	decoder_t *	p_dec
+param	2:48	2:68	2	picture_t *	p_picture
+param	3:30	3:48	2	int *	pi_played_sum
+param	3:50	3:67	2	int *	pi_lost_sum
+stmnts	0:0	61:30	1	
+decl	5:4	5:49	2	decoder_owner_sys_t	*p_owner
+op	5:33	0:0	2	=
+water	5:35	0:0	2	p_dec
+op	5:40	0:0	2	->
+water	5:42	0:0	2	p_owner
+decl	6:4	6:44	2	vout_thread_t	*p_vout
+op	6:27	0:0	2	=
+water	6:29	0:0	2	p_owner
+op	6:36	0:0	2	->
+water	6:38	0:0	2	p_vout
+if	7:4	13:4	2	(p_picture -> date <= VLC_TS_INVALID)
+cond	7:8	7:27	3	p_picture -> date <= VLC_TS_INVALID
+water	7:8	0:0	4	p_picture
+op	7:17	0:0	4	->
+water	7:19	0:0	4	date
+op	7:24	0:0	4	<=
+water	7:27	0:0	4	VLC_TS_INVALID
+stmts	8:4	13:4	3	
+water	8:4	0:0	4	{
+call	9:8	9:59	4	msg_Warn
+arg	9:18	9:23	5	p_dec
+water	9:18	0:0	6	p_dec
+arg	9:25	9:59	5	"non-dated video buffer received"
+water	9:25	0:0	6	"non-dated video buffer received"
+water	9:60	0:0	4	;
+op	10:8	0:0	4	*
+water	10:9	0:0	4	pi_lost_sum
+op	10:21	0:0	4	+=
+water	10:24	0:0	4	1
+water	10:25	0:0	4	;
+call	11:8	11:47	4	vout_ReleasePicture
+arg	11:29	11:35	5	p_vout
+water	11:29	0:0	6	p_vout
+arg	11:37	11:47	5	p_picture
+water	11:37	0:0	6	p_picture
+water	11:48	0:0	4	;
+return	12:8	12:14	4	
+water	13:4	0:0	4	}
+call	15:4	15:35	2	vlc_mutex_lock
+arg	15:20	15:35	3	&p_owner->lock
+op	15:20	0:0	4	&
+water	15:21	0:0	4	p_owner
+op	15:28	0:0	4	->
+water	15:30	0:0	4	lock
+water	15:36	0:0	2	;
+if	16:4	20:4	2	(p_owner -> b_waiting && ! p_owner -> b_first)
+cond	16:8	16:40	3	p_owner -> b_waiting && ! p_owner -> b_first
+water	16:8	0:0	4	p_owner
+op	16:15	0:0	4	->
+water	16:17	0:0	4	b_waiting
+op	16:27	0:0	4	&&
+op	16:30	0:0	4	!
+water	16:31	0:0	4	p_owner
+op	16:38	0:0	4	->
+water	16:40	0:0	4	b_first
+stmts	17:4	20:4	3	
+water	17:4	0:0	4	{
+water	18:8	0:0	4	p_owner
+op	18:15	0:0	4	->
+water	18:17	0:0	4	b_has_data
+op	18:28	0:0	4	=
+water	18:30	0:0	4	true
+water	18:34	0:0	4	;
+call	19:8	19:52	4	vlc_cond_signal
+arg	19:25	19:52	5	&p_owner->wait_acknowledge
+op	19:25	0:0	6	&
+water	19:26	0:0	6	p_owner
+op	19:33	0:0	6	->
+water	19:35	0:0	6	wait_acknowledge
+water	19:53	0:0	4	;
+water	20:4	0:0	4	}
+decl	21:4	21:71	2	bool	b_first_after_wait
+op	21:28	0:0	2	=
+water	21:30	0:0	2	p_owner
+op	21:37	0:0	2	->
+water	21:39	0:0	2	b_waiting
+op	21:49	0:0	2	&&
+water	21:52	0:0	2	p_owner
+op	21:59	0:0	2	->
+water	21:61	0:0	2	b_has_data
+decl	22:4	22:47	2	bool	b_reject
+op	22:18	0:0	2	=
+call	22:20	22:46	3	DecoderWaitUnblock
+arg	22:40	22:46	4	p_dec
+water	22:40	0:0	5	p_dec
+if	23:4	29:4	2	(p_owner -> b_waiting)
+cond	23:8	23:17	3	p_owner -> b_waiting
+water	23:8	0:0	4	p_owner
+op	23:15	0:0	4	->
+water	23:17	0:0	4	b_waiting
+stmts	24:4	29:4	3	
+water	24:4	0:0	4	{
+call	25:8	25:33	4	assert
+arg	25:16	25:33	5	p_owner->b_first
+water	25:16	0:0	6	p_owner
+op	25:23	0:0	6	->
+water	25:25	0:0	6	b_first
+water	25:34	0:0	4	;
+call	26:8	26:49	4	msg_Dbg
+arg	26:17	26:22	5	p_dec
+water	26:17	0:0	6	p_dec
+arg	26:24	26:49	5	"Received first picture"
+water	26:24	0:0	6	"Received first picture"
+water	26:50	0:0	4	;
+water	27:8	0:0	4	p_owner
+op	27:15	0:0	4	->
+water	27:17	0:0	4	b_first
+op	27:25	0:0	4	=
+water	27:27	0:0	4	false
+water	27:32	0:0	4	;
+water	28:8	0:0	4	p_picture
+op	28:17	0:0	4	->
+water	28:19	0:0	4	b_force
+op	28:27	0:0	4	=
+water	28:29	0:0	4	true
+water	28:33	0:0	4	;
+water	29:4	0:0	4	}
+decl	30:4	30:57	2	const bool	b_dated
+op	30:23	0:0	2	=
+water	30:25	0:0	2	p_picture
+op	30:34	0:0	2	->
+water	30:36	0:0	2	date
+op	30:41	0:0	2	>
+water	30:43	0:0	2	VLC_TS_INVALID
+decl	31:4	31:35	2	int	i_rate
+op	31:15	0:0	2	=
+water	31:17	0:0	2	INPUT_RATE_DEFAULT
+call	32:4	33:53	2	DecoderFixTs
+arg	32:18	32:23	3	p_dec
+water	32:18	0:0	4	p_dec
+arg	32:25	32:41	3	&p_picture->date
+op	32:25	0:0	4	&
+water	32:26	0:0	4	p_picture
+op	32:35	0:0	4	->
+water	32:37	0:0	4	date
+arg	32:43	32:47	3	NULL
+water	32:43	0:0	4	NULL
+arg	32:49	32:53	3	NULL
+water	32:49	0:0	4	NULL
+arg	33:18	33:25	3	&i_rate
+op	33:18	0:0	4	&
+water	33:19	0:0	4	i_rate
+arg	33:27	33:53	3	DECODER_BOGUS_VIDEO_DELAY
+water	33:27	0:0	4	DECODER_BOGUS_VIDEO_DELAY
+water	33:54	0:0	2	;
+call	34:4	34:37	2	vlc_mutex_unlock
+arg	34:22	34:37	3	&p_owner->lock
+op	34:22	0:0	4	&
+water	34:23	0:0	4	p_owner
+op	34:30	0:0	4	->
+water	34:32	0:0	4	lock
+water	34:38	0:0	2	;
+if	36:4	37:23	2	(! p_picture -> b_force && p_picture -> date <= VLC_TS_INVALID)
+cond	36:8	36:50	3	! p_picture -> b_force && p_picture -> date <= VLC_TS_INVALID
+op	36:8	0:0	4	!
+water	36:9	0:0	4	p_picture
+op	36:18	0:0	4	->
+water	36:20	0:0	4	b_force
+op	36:28	0:0	4	&&
+water	36:31	0:0	4	p_picture
+op	36:40	0:0	4	->
+water	36:42	0:0	4	date
+op	36:47	0:0	4	<=
+water	36:50	0:0	4	VLC_TS_INVALID
+stmts	37:8	37:23	3	
+water	37:8	0:0	4	b_reject
+op	37:17	0:0	4	=
+water	37:19	0:0	4	true
+water	37:23	0:0	4	;
+if	38:4	47:4	2	(! b_reject)
+cond	38:8	38:9	3	! b_reject
+op	38:8	0:0	4	!
+water	38:9	0:0	4	b_reject
+stmts	39:4	47:4	3	
+water	39:4	0:0	4	{
+if	40:8	45:8	4	(i_rate != p_owner -> i_last_rate || b_first_after_wait)
+cond	40:12	40:46	5	i_rate != p_owner -> i_last_rate || b_first_after_wait
+water	40:12	0:0	6	i_rate
+op	40:19	0:0	6	!=
+water	40:22	0:0	6	p_owner
+op	40:29	0:0	6	->
+water	40:31	0:0	6	i_last_rate
+op	40:43	0:0	6	||
+water	40:46	0:0	6	b_first_after_wait
+stmts	41:8	45:8	5	
+water	41:8	0:0	6	{
+call	43:12	43:48	6	vout_Flush
+arg	43:24	43:30	7	p_vout
+water	43:24	0:0	8	p_vout
+arg	43:32	43:48	7	p_picture->date
+water	43:32	0:0	8	p_picture
+op	43:41	0:0	8	->
+water	43:43	0:0	8	date
+water	43:49	0:0	6	;
+water	44:12	0:0	6	p_owner
+op	44:19	0:0	6	->
+water	44:21	0:0	6	i_last_rate
+op	44:33	0:0	6	=
+water	44:35	0:0	6	i_rate
+water	44:41	0:0	6	;
+water	45:8	0:0	6	}
+call	46:8	46:43	4	vout_PutPicture
+arg	46:25	46:31	5	p_vout
+water	46:25	0:0	6	p_vout
+arg	46:33	46:43	5	p_picture
+water	46:33	0:0	6	p_picture
+water	46:44	0:0	4	;
+water	47:4	0:0	4	}
+else	48:4	56:4	2
+stmts	49:4	56:4	3	
+water	49:4	0:0	4	{
+if	50:8	51:54	4	(b_dated)
+cond	50:12	50:12	5	b_dated
+water	50:12	0:0	6	b_dated
+stmts	51:12	51:54	5	
+call	51:12	51:53	6	msg_Warn
+arg	51:22	51:27	7	p_dec
+water	51:22	0:0	8	p_dec
+arg	51:29	51:53	7	"early picture skipped"
+water	51:29	0:0	8	"early picture skipped"
+water	51:54	0:0	6	;
+else	52:8	53:64	4
+stmts	53:12	53:64	5	
+call	53:12	53:63	6	msg_Warn
+arg	53:22	53:27	7	p_dec
+water	53:22	0:0	8	p_dec
+arg	53:29	53:63	7	"non-dated video buffer received"
+water	53:29	0:0	8	"non-dated video buffer received"
+water	53:64	0:0	6	;
+op	54:8	0:0	4	*
+water	54:9	0:0	4	pi_lost_sum
+op	54:21	0:0	4	+=
+water	54:24	0:0	4	1
+water	54:25	0:0	4	;
+call	55:8	55:47	4	vout_ReleasePicture
+arg	55:29	55:35	5	p_vout
+water	55:29	0:0	6	p_vout
+arg	55:37	55:47	5	p_picture
+water	55:37	0:0	6	p_picture
+water	55:48	0:0	4	;
+water	56:4	0:0	4	}
+decl	57:4	57:21	2	int	i_tmp_display
+decl	58:4	58:18	2	int	i_tmp_lost
+call	59:4	59:64	2	vout_GetResetStatistic
+arg	59:28	59:34	3	p_vout
+water	59:28	0:0	4	p_vout
+arg	59:36	59:50	3	&i_tmp_display
+op	59:36	0:0	4	&
+water	59:37	0:0	4	i_tmp_display
+arg	59:52	59:64	3	&i_tmp_lost
+op	59:52	0:0	4	&
+water	59:53	0:0	4	i_tmp_lost
+water	59:65	0:0	2	;
+op	60:4	0:0	2	*
+water	60:5	0:0	2	pi_played_sum
+op	60:19	0:0	2	+=
+water	60:22	0:0	2	i_tmp_display
+water	60:35	0:0	2	;
+op	61:4	0:0	2	*
+water	61:5	0:0	2	pi_lost_sum
+op	61:17	0:0	2	+=
+water	61:20	0:0	2	i_tmp_lost
+water	61:30	0:0	2	;

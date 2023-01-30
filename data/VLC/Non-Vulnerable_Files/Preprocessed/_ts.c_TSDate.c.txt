@@ -1,0 +1,218 @@
+func	2:0	47:0	0	static void	TSDate
+params	2:18	0:0	1	
+param	2:20	2:37	2	sout_mux_t *	p_mux
+param	2:39	2:70	2	sout_buffer_chain_t *	p_chain_ts
+param	3:20	3:40	2	mtime_t	i_pcr_length
+param	3:42	3:60	2	mtime_t	i_pcr_dts
+stmnts	0:0	46:4	1	
+decl	5:4	5:41	2	sout_mux_sys_t	*p_sys
+op	5:27	0:0	2	=
+water	5:29	0:0	2	p_mux
+op	5:34	0:0	2	->
+water	5:36	0:0	2	p_sys
+decl	6:4	6:44	2	int	i_packet_count
+op	6:23	0:0	2	=
+water	6:25	0:0	2	p_chain_ts
+op	6:35	0:0	2	->
+water	6:37	0:0	2	i_depth
+if	7:4	18:4	2	(i_pcr_length / 1000 > 0)
+cond	7:9	7:31	3	i_pcr_length / 1000 > 0
+water	7:9	0:0	4	i_pcr_length
+op	7:22	0:0	4	/
+water	7:24	0:0	4	1000
+op	7:29	0:0	4	>
+water	7:31	0:0	4	0
+stmts	8:4	18:4	3	
+water	8:4	0:0	4	{
+decl	9:8	10:59	4	int	i_bitrate
+op	9:22	0:0	4	=
+water	9:24	0:0	4	(
+water	9:25	0:0	4	(
+water	9:26	0:0	4	uint64_t
+water	9:34	0:0	4	)
+water	9:35	0:0	4	i_packet_count
+op	9:50	0:0	4	*
+water	9:52	0:0	4	188
+op	9:56	0:0	4	*
+water	9:58	0:0	4	8000
+water	9:62	0:0	4	)
+op	10:26	0:0	4	/
+call	10:28	10:58	5	(uint64_t)
+arg	10:39	10:58	6	i_pcr_length/1000
+water	10:39	0:0	7	i_pcr_length
+op	10:52	0:0	7	/
+water	10:54	0:0	7	1000
+if	11:8	17:8	4	(p_sys -> i_bitrate_max && p_sys -> i_bitrate_max < i_bitrate)
+cond	11:13	11:60	5	p_sys -> i_bitrate_max && p_sys -> i_bitrate_max < i_bitrate
+water	11:13	0:0	6	p_sys
+op	11:18	0:0	6	->
+water	11:20	0:0	6	i_bitrate_max
+op	11:34	0:0	6	&&
+water	11:37	0:0	6	p_sys
+op	11:42	0:0	6	->
+water	11:44	0:0	6	i_bitrate_max
+op	11:58	0:0	6	<
+water	11:60	0:0	6	i_bitrate
+stmts	12:8	17:8	5	
+water	12:8	0:0	6	{
+call	13:12	16:61	6	msg_Warn
+arg	13:22	13:27	7	p_mux
+water	13:22	0:0	8	p_mux
+arg	13:29	14:61	7	"max bitrate exceeded at %"PRId64" (%d bi/s for %d pkt in %"PRId64" us)"
+water	13:29	0:0	8	"max bitrate exceeded at %"
+water	13:56	0:0	8	PRId64
+water	14:22	0:0	8	" (%d bi/s for %d pkt in %"
+water	14:49	0:0	8	PRId64
+water	14:55	0:0	8	" us)"
+arg	15:22	15:74	7	i_pcr_dts+p_sys->i_shaping_delay*3/2-mdate()
+water	15:22	0:0	8	i_pcr_dts
+op	15:32	0:0	8	+
+water	15:34	0:0	8	p_sys
+op	15:39	0:0	8	->
+water	15:41	0:0	8	i_shaping_delay
+op	15:57	0:0	8	*
+water	15:59	0:0	8	3
+op	15:61	0:0	8	/
+water	15:63	0:0	8	2
+op	15:65	0:0	8	-
+call	15:67	15:73	8	mdate
+arg	16:22	16:31	7	i_bitrate
+water	16:22	0:0	8	i_bitrate
+arg	16:33	16:47	7	i_packet_count
+water	16:33	0:0	8	i_packet_count
+arg	16:49	16:61	7	i_pcr_length
+water	16:49	0:0	8	i_pcr_length
+water	16:62	0:0	6	;
+water	17:8	0:0	6	}
+water	18:4	0:0	4	}
+else	19:4	24:4	2
+stmts	20:4	24:4	3	
+water	20:4	0:0	4	{
+water	23:8	0:0	4	i_pcr_length
+op	23:21	0:0	4	=
+water	23:23	0:0	4	i_packet_count
+water	23:37	0:0	4	;
+water	24:4	0:0	4	}
+for	26:4	46:4	2	( int i = 0 ;i < i_packet_count;i ++)
+forinit	0:0	26:18	3	 int i = 0 ;
+decl	26:9	26:18	4	int	i
+op	26:15	0:0	4	=
+water	26:17	0:0	4	0
+cond	26:20	26:24	3	i < i_packet_count
+water	26:20	0:0	4	i
+op	26:22	0:0	4	<
+water	26:24	0:0	4	i_packet_count
+forexpr	26:40	26:41	3	i ++
+water	26:40	0:0	4	i
+op	26:41	0:0	4	++
+stmts	27:4	46:4	3	
+water	27:4	0:0	4	{
+decl	28:8	28:52	4	block_t	*p_ts
+op	28:22	0:0	4	=
+call	28:24	28:51	5	BufferChainGet
+arg	28:40	28:51	6	p_chain_ts
+water	28:40	0:0	7	p_chain_ts
+decl	29:8	29:73	4	mtime_t	i_new_dts
+op	29:26	0:0	4	=
+water	29:28	0:0	4	i_pcr_dts
+op	29:38	0:0	4	+
+water	29:40	0:0	4	i_pcr_length
+op	29:53	0:0	4	*
+water	29:55	0:0	4	i
+op	29:57	0:0	4	/
+water	29:59	0:0	4	i_packet_count
+water	30:8	0:0	4	p_ts
+op	30:12	0:0	4	->
+water	30:14	0:0	4	i_dts
+op	30:23	0:0	4	=
+water	30:25	0:0	4	i_new_dts
+water	30:34	0:0	4	;
+water	31:8	0:0	4	p_ts
+op	31:12	0:0	4	->
+water	31:14	0:0	4	i_length
+op	31:23	0:0	4	=
+water	31:25	0:0	4	i_pcr_length
+op	31:38	0:0	4	/
+water	31:40	0:0	4	i_packet_count
+water	31:54	0:0	4	;
+if	32:8	36:8	4	(p_ts -> i_flags & BLOCK_FLAG_CLOCK)
+cond	32:12	32:28	5	p_ts -> i_flags & BLOCK_FLAG_CLOCK
+water	32:12	0:0	6	p_ts
+op	32:16	0:0	6	->
+water	32:18	0:0	6	i_flags
+op	32:26	0:0	6	&
+water	32:28	0:0	6	BLOCK_FLAG_CLOCK
+stmts	33:8	36:8	5	
+water	33:8	0:0	6	{
+call	35:12	35:61	6	TSSetPCR
+arg	35:22	35:26	7	p_ts
+water	35:22	0:0	8	p_ts
+arg	35:28	35:61	7	p_ts->i_dts-p_sys->i_dts_delay
+water	35:28	0:0	8	p_ts
+op	35:32	0:0	8	->
+water	35:34	0:0	8	i_dts
+op	35:40	0:0	8	-
+water	35:42	0:0	8	p_sys
+op	35:47	0:0	8	->
+water	35:49	0:0	8	i_dts_delay
+water	35:62	0:0	6	;
+water	36:8	0:0	6	}
+if	37:8	42:8	4	(p_ts -> i_flags & BLOCK_FLAG_SCRAMBLED)
+cond	37:12	37:28	5	p_ts -> i_flags & BLOCK_FLAG_SCRAMBLED
+water	37:12	0:0	6	p_ts
+op	37:16	0:0	6	->
+water	37:18	0:0	6	i_flags
+op	37:26	0:0	6	&
+water	37:28	0:0	6	BLOCK_FLAG_SCRAMBLED
+stmts	38:8	42:8	5	
+water	38:8	0:0	6	{
+call	39:12	39:45	6	vlc_mutex_lock
+arg	39:28	39:45	7	&p_sys->csa_lock
+op	39:28	0:0	8	&
+water	39:29	0:0	8	p_sys
+op	39:34	0:0	8	->
+water	39:36	0:0	8	csa_lock
+water	39:46	0:0	6	;
+call	40:12	40:75	6	csa_Encrypt
+arg	40:25	40:35	7	p_sys->csa
+water	40:25	0:0	8	p_sys
+op	40:30	0:0	8	->
+water	40:32	0:0	8	csa
+arg	40:37	40:51	7	p_ts->p_buffer
+water	40:37	0:0	8	p_ts
+op	40:41	0:0	8	->
+water	40:43	0:0	8	p_buffer
+arg	40:53	40:75	7	p_sys->i_csa_pkt_size
+water	40:53	0:0	8	p_sys
+op	40:58	0:0	8	->
+water	40:60	0:0	8	i_csa_pkt_size
+water	40:76	0:0	6	;
+call	41:12	41:47	6	vlc_mutex_unlock
+arg	41:30	41:47	7	&p_sys->csa_lock
+op	41:30	0:0	8	&
+water	41:31	0:0	8	p_sys
+op	41:36	0:0	8	->
+water	41:38	0:0	8	csa_lock
+water	41:48	0:0	6	;
+water	42:8	0:0	6	}
+water	44:8	0:0	4	p_ts
+op	44:12	0:0	4	->
+water	44:14	0:0	4	i_dts
+op	44:20	0:0	4	+=
+water	44:23	0:0	4	p_sys
+op	44:28	0:0	4	->
+water	44:30	0:0	4	i_shaping_delay
+op	44:46	0:0	4	*
+water	44:48	0:0	4	3
+op	44:50	0:0	4	/
+water	44:52	0:0	4	2
+water	44:53	0:0	4	;
+call	45:8	45:51	4	sout_AccessOutWrite
+arg	45:29	45:44	5	p_mux->p_access
+water	45:29	0:0	6	p_mux
+op	45:34	0:0	6	->
+water	45:36	0:0	6	p_access
+arg	45:46	45:51	5	p_ts
+water	45:46	0:0	6	p_ts
+water	45:52	0:0	4	;
+water	46:4	0:0	4	}

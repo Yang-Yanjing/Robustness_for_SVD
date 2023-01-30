@@ -1,0 +1,229 @@
+func	2:0	47:0	0	static uint8_t *	CAPMTBuild
+params	2:26	0:0	1	
+param	2:28	2:41	2	cam_t *	p_cam
+param	2:43	2:59	2	int	i_session_id
+param	3:28	3:47	2	dvbpsi_pmt_t *	p_pmt
+param	3:49	3:67	2	uint8_t	i_list_mgt
+param	4:28	4:41	2	uint8_t	i_cmd
+param	4:43	4:62	2	int *	pi_capmt_size
+stmnts	0:0	46:18	1	
+decl	6:4	7:65	2	system_ids_t	*p_ids
+op	6:24	0:0	2	=
+water	7:8	0:0	2	(
+water	7:9	0:0	2	system_ids_t
+op	7:22	0:0	2	*
+water	7:23	0:0	2	)
+water	7:24	0:0	2	p_cam
+op	7:29	0:0	2	->
+water	7:31	0:0	2	p_sessions
+op	7:41	0:0	2	[
+water	7:42	0:0	2	i_session_id
+op	7:55	0:0	2	-
+water	7:57	0:0	2	1
+op	7:58	0:0	2	]
+op	7:59	0:0	2	.
+water	7:60	0:0	2	p_sys
+decl	8:4	8:25	2	dvbpsi_pmt_es_t	*p_es
+decl	9:4	9:38	2	int	i_cad_size
+water	9:18	0:0	2	,
+decl	9:4	9:38	2	int	i_cad_program_size
+decl	10:4	10:20	2	uint8_t	*p_capmt
+water	11:4	0:0	2	i_cad_size
+op	11:15	0:0	2	=
+water	11:17	0:0	2	i_cad_program_size
+op	11:36	0:0	2	=
+call	12:12	12:57	2	GetCADSize
+arg	12:24	12:29	3	p_ids
+water	12:24	0:0	4	p_ids
+arg	12:31	12:57	3	p_pmt->p_first_descriptor
+water	12:31	0:0	4	p_pmt
+op	12:36	0:0	4	->
+water	12:38	0:0	4	p_first_descriptor
+water	12:58	0:0	2	;
+for	13:4	16:4	2	(p_es = p_pmt -> p_first_es ;p_es != NULL;p_es = p_es -> p_next)
+forinit	13:9	13:33	3	p_es = p_pmt -> p_first_es ;
+water	13:9	0:0	4	p_es
+op	13:14	0:0	4	=
+water	13:16	0:0	4	p_pmt
+op	13:21	0:0	4	->
+water	13:23	0:0	4	p_first_es
+water	13:33	0:0	4	;
+cond	13:35	13:43	3	p_es != NULL
+water	13:35	0:0	4	p_es
+op	13:40	0:0	4	!=
+water	13:43	0:0	4	NULL
+forexpr	13:49	13:62	3	p_es = p_es -> p_next
+water	13:49	0:0	4	p_es
+op	13:54	0:0	4	=
+water	13:56	0:0	4	p_es
+op	13:60	0:0	4	->
+water	13:62	0:0	4	p_next
+stmts	14:4	16:4	3	
+water	14:4	0:0	4	{
+water	15:8	0:0	4	i_cad_size
+op	15:19	0:0	4	+=
+call	15:22	15:66	4	GetCADSize
+arg	15:34	15:39	5	p_ids
+water	15:34	0:0	6	p_ids
+arg	15:41	15:66	5	p_es->p_first_descriptor
+water	15:41	0:0	6	p_es
+op	15:45	0:0	6	->
+water	15:47	0:0	6	p_first_descriptor
+water	15:67	0:0	4	;
+water	16:4	0:0	4	}
+if	17:4	24:4	2	(! i_cad_size)
+cond	17:9	17:10	3	! i_cad_size
+op	17:9	0:0	4	!
+water	17:10	0:0	4	i_cad_size
+stmts	18:4	24:4	3	
+water	18:4	0:0	4	{
+call	19:8	21:56	4	msg_Warn
+arg	19:18	19:28	5	p_cam->obj
+water	19:18	0:0	6	p_cam
+op	19:23	0:0	6	->
+water	19:25	0:0	6	obj
+arg	20:18	20:76	5	"no compatible scrambling system for SID %d on session %d"
+water	20:18	0:0	6	"no compatible scrambling system for SID %d on session %d"
+arg	21:18	21:41	5	p_pmt->i_program_number
+water	21:18	0:0	6	p_pmt
+op	21:23	0:0	6	->
+water	21:25	0:0	6	i_program_number
+arg	21:43	21:56	5	i_session_id
+water	21:43	0:0	6	i_session_id
+water	21:57	0:0	4	;
+op	22:8	0:0	4	*
+water	22:9	0:0	4	pi_capmt_size
+op	22:23	0:0	4	=
+water	22:25	0:0	4	0
+water	22:26	0:0	4	;
+return	23:8	23:19	4	NULL
+water	23:15	0:0	5	NULL
+water	24:4	0:0	4	}
+water	25:4	0:0	2	p_capmt
+op	25:12	0:0	2	=
+call	25:14	27:60	2	CAPMTHeader
+arg	25:27	25:32	3	p_ids
+water	25:27	0:0	4	p_ids
+arg	25:34	25:44	3	i_list_mgt
+water	25:34	0:0	4	i_list_mgt
+arg	25:46	25:69	3	p_pmt->i_program_number
+water	25:46	0:0	4	p_pmt
+op	25:51	0:0	4	->
+water	25:53	0:0	4	i_program_number
+arg	26:27	26:43	3	p_pmt->i_version
+water	26:27	0:0	4	p_pmt
+op	26:32	0:0	4	->
+water	26:34	0:0	4	i_version
+arg	26:45	26:63	3	i_cad_program_size
+water	26:45	0:0	4	i_cad_program_size
+arg	27:27	27:52	3	p_pmt->p_first_descriptor
+water	27:27	0:0	4	p_pmt
+op	27:32	0:0	4	->
+water	27:34	0:0	4	p_first_descriptor
+arg	27:54	27:60	3	i_cmd
+water	27:54	0:0	4	i_cmd
+water	27:61	0:0	2	;
+if	28:4	29:47	2	(i_cad_program_size)
+cond	28:9	28:9	3	i_cad_program_size
+water	28:9	0:0	4	i_cad_program_size
+stmts	29:8	29:47	3	
+op	29:8	0:0	4	*
+water	29:9	0:0	4	pi_capmt_size
+op	29:23	0:0	4	=
+water	29:25	0:0	4	7
+op	29:27	0:0	4	+
+water	29:29	0:0	4	i_cad_program_size
+water	29:47	0:0	4	;
+else	30:4	31:26	2
+stmts	31:8	31:26	3	
+op	31:8	0:0	4	*
+water	31:9	0:0	4	pi_capmt_size
+op	31:23	0:0	4	=
+water	31:25	0:0	4	6
+water	31:26	0:0	4	;
+for	32:4	45:4	2	(p_es = p_pmt -> p_first_es ;p_es != NULL;p_es = p_es -> p_next)
+forinit	32:9	32:33	3	p_es = p_pmt -> p_first_es ;
+water	32:9	0:0	4	p_es
+op	32:14	0:0	4	=
+water	32:16	0:0	4	p_pmt
+op	32:21	0:0	4	->
+water	32:23	0:0	4	p_first_es
+water	32:33	0:0	4	;
+cond	32:35	32:43	3	p_es != NULL
+water	32:35	0:0	4	p_es
+op	32:40	0:0	4	!=
+water	32:43	0:0	4	NULL
+forexpr	32:49	32:62	3	p_es = p_es -> p_next
+water	32:49	0:0	4	p_es
+op	32:54	0:0	4	=
+water	32:56	0:0	4	p_es
+op	32:60	0:0	4	->
+water	32:62	0:0	4	p_next
+stmts	33:4	45:4	3	
+water	33:4	0:0	4	{
+water	34:8	0:0	4	i_cad_size
+op	34:19	0:0	4	=
+call	34:21	34:65	4	GetCADSize
+arg	34:33	34:38	5	p_ids
+water	34:33	0:0	6	p_ids
+arg	34:40	34:65	5	p_es->p_first_descriptor
+water	34:40	0:0	6	p_es
+op	34:44	0:0	6	->
+water	34:46	0:0	6	p_first_descriptor
+water	34:66	0:0	4	;
+if	35:8	44:8	4	(i_cad_size || i_cad_program_size)
+cond	35:13	35:27	5	i_cad_size || i_cad_program_size
+water	35:13	0:0	6	i_cad_size
+op	35:24	0:0	6	||
+water	35:27	0:0	6	i_cad_program_size
+stmts	36:8	44:8	5	
+water	36:8	0:0	6	{
+water	37:12	0:0	6	p_capmt
+op	37:20	0:0	6	=
+call	37:22	39:63	6	CAPMTES
+arg	37:31	37:36	7	p_ids
+water	37:31	0:0	8	p_ids
+arg	37:38	37:45	7	p_capmt
+water	37:38	0:0	8	p_capmt
+arg	37:47	37:61	7	*pi_capmt_size
+op	37:47	0:0	8	*
+water	37:48	0:0	8	pi_capmt_size
+arg	37:63	37:75	7	p_es->i_type
+water	37:63	0:0	8	p_es
+op	37:67	0:0	8	->
+water	37:69	0:0	8	i_type
+arg	38:31	38:42	7	p_es->i_pid
+water	38:31	0:0	8	p_es
+op	38:35	0:0	8	->
+water	38:37	0:0	8	i_pid
+arg	38:44	38:54	7	i_cad_size
+water	38:44	0:0	8	i_cad_size
+arg	39:31	39:55	7	p_es->p_first_descriptor
+water	39:31	0:0	8	p_es
+op	39:35	0:0	8	->
+water	39:37	0:0	8	p_first_descriptor
+arg	39:57	39:63	7	i_cmd
+water	39:57	0:0	8	i_cmd
+water	39:64	0:0	6	;
+if	40:12	41:48	6	(i_cad_size)
+cond	40:17	40:17	7	i_cad_size
+water	40:17	0:0	8	i_cad_size
+stmts	41:16	41:48	7	
+op	41:16	0:0	8	*
+water	41:17	0:0	8	pi_capmt_size
+op	41:31	0:0	8	+=
+water	41:34	0:0	8	6
+op	41:36	0:0	8	+
+water	41:38	0:0	8	i_cad_size
+water	41:48	0:0	8	;
+else	42:12	43:35	6
+stmts	43:16	43:35	7	
+op	43:16	0:0	8	*
+water	43:17	0:0	8	pi_capmt_size
+op	43:31	0:0	8	+=
+water	43:34	0:0	8	5
+water	43:35	0:0	8	;
+water	44:8	0:0	6	}
+water	45:4	0:0	4	}
+return	46:4	46:18	2	p_capmt
+water	46:11	0:0	3	p_capmt

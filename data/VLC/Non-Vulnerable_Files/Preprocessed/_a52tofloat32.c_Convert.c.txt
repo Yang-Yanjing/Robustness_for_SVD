@@ -1,0 +1,341 @@
+func	2:0	68:0	0	static block_t *	Convert
+params	2:23	0:0	1	
+param	2:25	2:43	2	filter_t *	p_filter
+param	2:45	2:63	2	block_t *	p_in_buf
+stmnts	0:0	67:20	1	
+decl	4:4	4:41	2	filter_sys_t	*p_sys
+op	4:24	0:0	2	=
+water	4:26	0:0	2	p_filter
+op	4:34	0:0	2	->
+water	4:36	0:0	2	p_sys
+decl	6:4	6:39	2	sample_t	i_sample_level
+op	6:28	0:0	2	=
+water	6:30	0:0	2	(
+water	6:31	0:0	2	1
+op	6:33	0:0	2	<<
+water	6:36	0:0	2	24
+water	6:38	0:0	2	)
+decl	8:4	8:31	2	sample_t	i_sample_level
+op	8:28	0:0	2	=
+water	8:30	0:0	2	1
+decl	10:4	10:32	2	int	i_flags
+op	10:16	0:0	2	=
+water	10:18	0:0	2	p_sys
+op	10:23	0:0	2	->
+water	10:25	0:0	2	i_flags
+decl	11:4	11:76	2	size_t	i_bytes_per_block
+op	11:29	0:0	2	=
+water	11:31	0:0	2	256
+op	11:35	0:0	2	*
+water	11:37	0:0	2	p_sys
+op	11:42	0:0	2	->
+water	11:44	0:0	2	i_nb_channels
+op	11:58	0:0	2	*
+op	11:60	0:0	2	sizeof
+water	11:66	0:0	2	(
+water	11:67	0:0	2	sample_t
+water	11:75	0:0	2	)
+decl	12:4	12:61	2	block_t	*p_out_buf
+op	12:23	0:0	2	=
+call	12:25	12:60	3	block_Alloc
+arg	12:38	12:60	4	6*i_bytes_per_block
+water	12:38	0:0	5	6
+op	12:40	0:0	5	*
+water	12:42	0:0	5	i_bytes_per_block
+if	13:4	14:16	2	(unlikely (p_out_buf == NULL ))
+cond	13:8	13:34	3	unlikely (p_out_buf == NULL )
+call	13:8	13:34	4	unlikely
+arg	13:17	13:34	5	p_out_buf==NULL
+water	13:17	0:0	6	p_out_buf
+op	13:27	0:0	6	==
+water	13:30	0:0	6	NULL
+stmts	14:8	14:16	3	
+goto	14:8	14:16	4	out
+water	14:13	0:0	5	out
+call	16:4	17:44	2	a52_frame
+arg	16:15	16:30	3	p_sys->p_liba52
+water	16:15	0:0	4	p_sys
+op	16:20	0:0	4	->
+water	16:22	0:0	4	p_liba52
+arg	16:32	16:50	3	p_in_buf->p_buffer
+water	16:32	0:0	4	p_in_buf
+op	16:40	0:0	4	->
+water	16:42	0:0	4	p_buffer
+arg	17:15	17:23	3	&i_flags
+op	17:15	0:0	4	&
+water	17:16	0:0	4	i_flags
+arg	17:25	17:40	3	&i_sample_level
+op	17:25	0:0	4	&
+water	17:26	0:0	4	i_sample_level
+arg	17:42	17:44	3	0
+water	17:42	0:0	4	0
+water	17:45	0:0	2	;
+if	18:4	26:4	2	(( i_flags & A52_CHANNEL_MASK ) != ( p_sys -> i_flags & A52_CHANNEL_MASK ) && ! p_sys -> b_dontwarn)
+cond	18:9	19:21	3	( i_flags & A52_CHANNEL_MASK ) != ( p_sys -> i_flags & A52_CHANNEL_MASK ) && ! p_sys -> b_dontwarn
+water	18:9	0:0	4	(
+water	18:10	0:0	4	i_flags
+op	18:18	0:0	4	&
+water	18:20	0:0	4	A52_CHANNEL_MASK
+water	18:36	0:0	4	)
+op	18:38	0:0	4	!=
+water	18:41	0:0	4	(
+water	18:42	0:0	4	p_sys
+op	18:47	0:0	4	->
+water	18:49	0:0	4	i_flags
+op	18:57	0:0	4	&
+water	18:59	0:0	4	A52_CHANNEL_MASK
+water	18:75	0:0	4	)
+op	19:10	0:0	4	&&
+op	19:13	0:0	4	!
+water	19:14	0:0	4	p_sys
+op	19:19	0:0	4	->
+water	19:21	0:0	4	b_dontwarn
+stmts	20:4	26:4	3	
+water	20:4	0:0	4	{
+call	21:8	24:45	4	msg_Warn
+arg	21:18	21:26	5	p_filter
+water	21:18	0:0	6	p_filter
+arg	22:18	22:71	5	"liba52 couldn't do the requested downmix 0x%x->0x%x"
+water	22:18	0:0	6	"liba52 couldn't do the requested downmix 0x%x->0x%x"
+arg	23:18	23:52	5	p_sys->i_flags&A52_CHANNEL_MASK
+water	23:18	0:0	6	p_sys
+op	23:23	0:0	6	->
+water	23:25	0:0	6	i_flags
+op	23:34	0:0	6	&
+water	23:36	0:0	6	A52_CHANNEL_MASK
+arg	24:18	24:45	5	i_flags&A52_CHANNEL_MASK
+water	24:18	0:0	6	i_flags
+op	24:26	0:0	6	&
+water	24:28	0:0	6	A52_CHANNEL_MASK
+water	24:46	0:0	4	;
+water	25:8	0:0	4	p_sys
+op	25:13	0:0	4	->
+water	25:15	0:0	4	b_dontwarn
+op	25:26	0:0	4	=
+water	25:28	0:0	4	1
+water	25:29	0:0	4	;
+water	26:4	0:0	4	}
+if	27:4	30:4	2	(! p_sys -> b_dynrng)
+cond	27:8	27:16	3	! p_sys -> b_dynrng
+op	27:8	0:0	4	!
+water	27:9	0:0	4	p_sys
+op	27:14	0:0	4	->
+water	27:16	0:0	4	b_dynrng
+stmts	28:4	30:4	3	
+water	28:4	0:0	4	{
+call	29:8	29:48	4	a52_dynrng
+arg	29:20	29:35	5	p_sys->p_liba52
+water	29:20	0:0	6	p_sys
+op	29:25	0:0	6	->
+water	29:27	0:0	6	p_liba52
+arg	29:37	29:41	5	NULL
+water	29:37	0:0	6	NULL
+arg	29:43	29:48	5	NULL
+water	29:43	0:0	6	NULL
+water	29:49	0:0	4	;
+water	30:4	0:0	4	}
+for	31:4	60:4	2	(unsigned i = 0 ;i < 6;i ++)
+forinit	31:9	31:23	3	unsigned i = 0 ;
+water	31:9	0:0	4	unsigned
+water	31:18	0:0	4	i
+op	31:20	0:0	4	=
+water	31:22	0:0	4	0
+water	31:23	0:0	4	;
+cond	31:25	31:29	3	i < 6
+water	31:25	0:0	4	i
+op	31:27	0:0	4	<
+water	31:29	0:0	4	6
+forexpr	31:32	31:33	3	i ++
+water	31:32	0:0	4	i
+op	31:33	0:0	4	++
+stmts	32:4	60:4	3	
+water	32:4	0:0	4	{
+decl	33:8	33:28	4	sample_t	*p_samples
+if	34:8	37:8	4	(a52_block (p_sys -> p_liba52 ))
+cond	34:12	34:39	5	a52_block (p_sys -> p_liba52 )
+call	34:12	34:39	6	a52_block
+arg	34:23	34:39	7	p_sys->p_liba52
+water	34:23	0:0	8	p_sys
+op	34:28	0:0	8	->
+water	34:30	0:0	8	p_liba52
+stmts	35:8	37:8	5	
+water	35:8	0:0	6	{
+call	36:12	36:67	6	msg_Warn
+arg	36:22	36:30	7	p_filter
+water	36:22	0:0	8	p_filter
+arg	36:32	36:63	7	"a52_block failed for block %d"
+water	36:32	0:0	8	"a52_block failed for block %d"
+arg	36:65	36:67	7	i
+water	36:65	0:0	8	i
+water	36:68	0:0	6	;
+water	37:8	0:0	6	}
+water	38:8	0:0	4	p_samples
+op	38:18	0:0	4	=
+call	38:20	38:49	4	a52_samples
+arg	38:33	38:49	5	p_sys->p_liba52
+water	38:33	0:0	6	p_sys
+op	38:38	0:0	6	->
+water	38:40	0:0	6	p_liba52
+water	38:50	0:0	4	;
+if	39:8	47:8	4	(( ( p_sys -> i_flags & A52_CHANNEL_MASK ) == A52_CHANNEL1 || ( p_sys -> i_flags & A52_CHANNEL_MASK ) == A52_CHANNEL2 || ( p_sys -> i_flags & A52_CHANNEL_MASK ) == A52_MONO ) && ( p_filter -> fmt_out . audio . i_physical_channels & ( AOUT_CHAN_LEFT | AOUT_CHAN_RIGHT ) ))
+cond	39:13	43:55	5	( ( p_sys -> i_flags & A52_CHANNEL_MASK ) == A52_CHANNEL1 || ( p_sys -> i_flags & A52_CHANNEL_MASK ) == A52_CHANNEL2 || ( p_sys -> i_flags & A52_CHANNEL_MASK ) == A52_MONO ) && ( p_filter -> fmt_out . audio . i_physical_channels & ( AOUT_CHAN_LEFT | AOUT_CHAN_RIGHT ) )
+water	39:13	0:0	6	(
+water	39:14	0:0	6	(
+water	39:15	0:0	6	p_sys
+op	39:20	0:0	6	->
+water	39:22	0:0	6	i_flags
+op	39:30	0:0	6	&
+water	39:32	0:0	6	A52_CHANNEL_MASK
+water	39:48	0:0	6	)
+op	39:50	0:0	6	==
+water	39:53	0:0	6	A52_CHANNEL1
+op	40:15	0:0	6	||
+water	40:18	0:0	6	(
+water	40:19	0:0	6	p_sys
+op	40:24	0:0	6	->
+water	40:26	0:0	6	i_flags
+op	40:34	0:0	6	&
+water	40:36	0:0	6	A52_CHANNEL_MASK
+water	40:52	0:0	6	)
+op	40:54	0:0	6	==
+water	40:57	0:0	6	A52_CHANNEL2
+op	41:15	0:0	6	||
+water	41:18	0:0	6	(
+water	41:19	0:0	6	p_sys
+op	41:24	0:0	6	->
+water	41:26	0:0	6	i_flags
+op	41:34	0:0	6	&
+water	41:36	0:0	6	A52_CHANNEL_MASK
+water	41:52	0:0	6	)
+op	41:54	0:0	6	==
+water	41:57	0:0	6	A52_MONO
+water	41:65	0:0	6	)
+op	42:14	0:0	6	&&
+water	42:17	0:0	6	(
+water	42:18	0:0	6	p_filter
+op	42:26	0:0	6	->
+water	42:28	0:0	6	fmt_out
+op	42:35	0:0	6	.
+water	42:36	0:0	6	audio
+op	42:41	0:0	6	.
+water	42:42	0:0	6	i_physical_channels
+op	43:19	0:0	6	&
+water	43:21	0:0	6	(
+water	43:22	0:0	6	AOUT_CHAN_LEFT
+op	43:37	0:0	6	|
+water	43:39	0:0	6	AOUT_CHAN_RIGHT
+water	43:54	0:0	6	)
+water	43:55	0:0	6	)
+stmts	44:8	47:8	5	
+water	44:8	0:0	6	{
+call	45:12	46:33	6	Duplicate
+arg	45:23	45:80	7	(sample_t*)(p_out_buf->p_buffer+i*i_bytes_per_block)
+call	45:23	45:79	8	(sample_t*)
+arg	45:36	45:79	9	p_out_buf->p_buffer+i*i_bytes_per_block
+water	45:36	0:0	10	p_out_buf
+op	45:45	0:0	10	->
+water	45:47	0:0	10	p_buffer
+op	45:56	0:0	10	+
+water	45:58	0:0	10	i
+op	45:60	0:0	10	*
+water	45:62	0:0	10	i_bytes_per_block
+arg	46:23	46:33	7	p_samples
+water	46:23	0:0	8	p_samples
+water	46:34	0:0	6	;
+water	47:8	0:0	6	}
+else	48:8	53:8	4
+stmts	48:13	53:8	5	
+if	48:13	53:8	6	(p_filter -> fmt_out . audio . i_original_channels & AOUT_CHAN_REVERSESTEREO)
+cond	48:18	49:22	7	p_filter -> fmt_out . audio . i_original_channels & AOUT_CHAN_REVERSESTEREO
+water	48:18	0:0	8	p_filter
+op	48:26	0:0	8	->
+water	48:28	0:0	8	fmt_out
+op	48:35	0:0	8	.
+water	48:36	0:0	8	audio
+op	48:41	0:0	8	.
+water	48:42	0:0	8	i_original_channels
+op	49:20	0:0	8	&
+water	49:22	0:0	8	AOUT_CHAN_REVERSESTEREO
+stmts	50:8	53:8	7	
+water	50:8	0:0	8	{
+call	51:12	52:32	8	Exchange
+arg	51:22	51:79	9	(sample_t*)(p_out_buf->p_buffer+i*i_bytes_per_block)
+call	51:22	51:78	10	(sample_t*)
+arg	51:35	51:78	11	p_out_buf->p_buffer+i*i_bytes_per_block
+water	51:35	0:0	12	p_out_buf
+op	51:44	0:0	12	->
+water	51:46	0:0	12	p_buffer
+op	51:55	0:0	12	+
+water	51:57	0:0	12	i
+op	51:59	0:0	12	*
+water	51:61	0:0	12	i_bytes_per_block
+arg	52:22	52:32	9	p_samples
+water	52:22	0:0	10	p_samples
+water	52:33	0:0	8	;
+water	53:8	0:0	8	}
+else	54:8	59:8	4
+stmts	55:8	59:8	5	
+water	55:8	0:0	6	{
+call	57:12	58:77	6	Interleave
+arg	57:24	57:81	7	(sample_t*)(p_out_buf->p_buffer+i*i_bytes_per_block)
+call	57:24	57:80	8	(sample_t*)
+arg	57:37	57:80	9	p_out_buf->p_buffer+i*i_bytes_per_block
+water	57:37	0:0	10	p_out_buf
+op	57:46	0:0	10	->
+water	57:48	0:0	10	p_buffer
+op	57:57	0:0	10	+
+water	57:59	0:0	10	i
+op	57:61	0:0	10	*
+water	57:63	0:0	10	i_bytes_per_block
+arg	58:24	58:33	7	p_samples
+water	58:24	0:0	8	p_samples
+arg	58:35	58:55	7	p_sys->i_nb_channels
+water	58:35	0:0	8	p_sys
+op	58:40	0:0	8	->
+water	58:42	0:0	8	i_nb_channels
+arg	58:57	58:77	7	p_sys->pi_chan_table
+water	58:57	0:0	8	p_sys
+op	58:62	0:0	8	->
+water	58:64	0:0	8	pi_chan_table
+water	58:78	0:0	6	;
+water	59:8	0:0	6	}
+water	60:4	0:0	4	}
+water	61:4	0:0	2	p_out_buf
+op	61:13	0:0	2	->
+water	61:15	0:0	2	i_nb_samples
+op	61:28	0:0	2	=
+water	61:30	0:0	2	p_in_buf
+op	61:38	0:0	2	->
+water	61:40	0:0	2	i_nb_samples
+water	61:52	0:0	2	;
+water	62:4	0:0	2	p_out_buf
+op	62:13	0:0	2	->
+water	62:15	0:0	2	i_dts
+op	62:21	0:0	2	=
+water	62:23	0:0	2	p_in_buf
+op	62:31	0:0	2	->
+water	62:33	0:0	2	i_dts
+water	62:38	0:0	2	;
+water	63:4	0:0	2	p_out_buf
+op	63:13	0:0	2	->
+water	63:15	0:0	2	i_pts
+op	63:21	0:0	2	=
+water	63:23	0:0	2	p_in_buf
+op	63:31	0:0	2	->
+water	63:33	0:0	2	i_pts
+water	63:38	0:0	2	;
+water	64:4	0:0	2	p_out_buf
+op	64:13	0:0	2	->
+water	64:15	0:0	2	i_length
+op	64:24	0:0	2	=
+water	64:26	0:0	2	p_in_buf
+op	64:34	0:0	2	->
+water	64:36	0:0	2	i_length
+water	64:44	0:0	2	;
+label	65:0	65:3	2	out :
+call	66:4	66:28	2	block_Release
+arg	66:19	66:28	3	p_in_buf
+water	66:19	0:0	4	p_in_buf
+water	66:29	0:0	2	;
+return	67:4	67:20	2	p_out_buf
+water	67:11	0:0	3	p_out_buf

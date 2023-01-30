@@ -1,0 +1,90 @@
+func	2:0	21:0	0	static int	st_ServerSessionOpen
+params	2:32	0:0	1	
+param	2:33	2:53	2	vlc_tls_creds_t *	crd
+param	2:55	2:73	2	vlc_tls_t *	session
+param	3:33	3:39	2	int	fd
+param	3:41	3:61	2	const char *	hostname
+stmnts	4:4	20:23	1	
+call	4:4	4:23	2	VLC_UNUSED
+arg	4:15	4:23	3	hostname
+water	4:15	0:0	4	hostname
+water	4:24	0:0	2	;
+call	5:4	5:46	2	msg_Dbg
+arg	5:12	5:19	3	session
+water	5:12	0:0	4	session
+arg	5:21	5:46	3	"open TLS server session"
+water	5:21	0:0	4	"open TLS server session"
+water	5:47	0:0	2	;
+decl	6:4	6:58	2	int	ret
+op	6:12	0:0	2	=
+call	6:14	6:57	3	st_SessionOpenCommon
+arg	6:35	6:38	4	crd
+water	6:35	0:0	5	crd
+arg	6:40	6:47	4	session
+water	6:40	0:0	5	session
+arg	6:49	6:51	4	fd
+water	6:49	0:0	5	fd
+arg	6:53	6:57	4	true
+water	6:53	0:0	5	true
+if	7:4	9:4	2	(ret != noErr)
+cond	7:8	7:15	3	ret != noErr
+water	7:8	0:0	4	ret
+op	7:12	0:0	4	!=
+water	7:15	0:0	4	noErr
+stmts	7:22	9:4	3	
+water	7:22	0:0	4	{
+goto	8:8	8:18	4	error
+water	8:13	0:0	5	error
+water	9:4	0:0	4	}
+decl	10:4	10:37	2	vlc_tls_sys_t	*sys
+op	10:23	0:0	2	=
+water	10:25	0:0	2	session
+op	10:32	0:0	2	->
+water	10:34	0:0	2	sys
+water	11:4	0:0	2	sys
+op	11:7	0:0	2	->
+water	11:9	0:0	2	b_server_mode
+op	11:23	0:0	2	=
+water	11:25	0:0	2	true
+water	11:29	0:0	2	;
+water	12:4	0:0	2	ret
+op	12:8	0:0	2	=
+call	12:10	12:71	2	SSLSetCertificate
+arg	12:28	12:42	3	sys->p_context
+water	12:28	0:0	4	sys
+op	12:31	0:0	4	->
+water	12:33	0:0	4	p_context
+arg	12:44	12:71	3	crd->sys->server_cert_chain
+water	12:44	0:0	4	crd
+op	12:47	0:0	4	->
+water	12:49	0:0	4	sys
+op	12:52	0:0	4	->
+water	12:54	0:0	4	server_cert_chain
+water	12:72	0:0	2	;
+if	13:4	16:4	2	(ret != noErr)
+cond	13:8	13:15	3	ret != noErr
+water	13:8	0:0	4	ret
+op	13:12	0:0	4	!=
+water	13:15	0:0	4	noErr
+stmts	13:22	16:4	3	
+water	13:22	0:0	4	{
+call	14:8	14:56	4	msg_Err
+arg	14:16	14:23	5	session
+water	14:16	0:0	6	session
+arg	14:25	14:56	5	"cannot set server certificate"
+water	14:25	0:0	6	"cannot set server certificate"
+water	14:57	0:0	4	;
+goto	15:8	15:18	4	error
+water	15:13	0:0	5	error
+water	16:4	0:0	4	}
+return	17:4	17:22	2	VLC_SUCCESS
+water	17:11	0:0	3	VLC_SUCCESS
+label	18:0	18:5	2	error :
+call	19:4	19:32	2	st_SessionClose
+arg	19:20	19:23	3	crd
+water	19:20	0:0	4	crd
+arg	19:25	19:32	3	session
+water	19:25	0:0	4	session
+water	19:33	0:0	2	;
+return	20:4	20:23	2	VLC_EGENERIC
+water	20:11	0:0	3	VLC_EGENERIC

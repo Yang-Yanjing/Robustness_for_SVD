@@ -1,0 +1,252 @@
+func	2:0	48:0	0	static void *	Slave
+params	2:18	0:0	1	
+param	2:19	2:31	2	void *	handle
+stmnts	0:0	47:15	1	
+decl	4:4	4:32	2	intf_thread_t	*intf
+op	4:24	0:0	2	=
+water	4:26	0:0	2	handle
+decl	5:4	5:33	2	intf_sys_t	*sys
+op	5:20	0:0	2	=
+water	5:22	0:0	2	intf
+op	5:26	0:0	2	->
+water	5:28	0:0	2	p_sys
+for	6:4	46:4	2	(;;)
+forinit	6:9	6:9	3	;
+water	6:9	0:0	4	;
+cond	0:0	0:0	3	
+forexpr	0:0	0:0	3	
+stmts	6:13	46:4	3	
+water	6:13	0:0	4	{
+decl	7:8	7:64	4	struct pollfd	ufd
+op	7:26	0:0	4	=
+water	7:28	0:0	4	{
+op	7:30	0:0	4	.
+water	7:31	0:0	4	fd
+op	7:34	0:0	4	=
+water	7:36	0:0	4	sys
+op	7:39	0:0	4	->
+water	7:41	0:0	4	fd
+water	7:43	0:0	4	,
+op	7:45	0:0	4	.
+water	7:46	0:0	4	events
+op	7:53	0:0	4	=
+water	7:55	0:0	4	POLLIN
+water	7:61	0:0	4	,
+water	7:63	0:0	4	}
+decl	8:8	8:24	4	uint64_t	data[2]
+decl	9:8	9:49	4	mtime_t	system
+op	9:23	0:0	4	=
+call	9:25	9:48	5	GetPcrSystem
+arg	9:38	9:48	6	sys->input
+water	9:38	0:0	7	sys
+op	9:41	0:0	7	->
+water	9:43	0:0	7	input
+if	10:8	11:21	4	(system < 0)
+cond	10:12	10:21	5	system < 0
+water	10:12	0:0	6	system
+op	10:19	0:0	6	<
+water	10:21	0:0	6	0
+stmts	11:12	11:21	5	
+goto	11:12	11:21	6	wait
+water	11:17	0:0	7	wait
+water	13:8	0:0	4	data
+op	13:12	0:0	4	[
+water	13:13	0:0	4	0
+op	13:14	0:0	4	]
+op	13:16	0:0	4	=
+call	13:18	13:31	4	hton64
+arg	13:25	13:31	5	system
+water	13:25	0:0	6	system
+water	13:32	0:0	4	;
+decl	14:8	14:41	4	const mtime_t	send_date
+op	14:32	0:0	4	=
+call	14:34	14:40	5	mdate
+if	15:8	16:21	4	(send (sys -> fd ,data ,sizeof ( data [ 0 ] ) ,0 ) <= 0)
+cond	15:12	15:55	5	send (sys -> fd ,data ,sizeof ( data [ 0 ] ) ,0 ) <= 0
+call	15:12	15:50	6	send
+arg	15:17	15:24	7	sys->fd
+water	15:17	0:0	8	sys
+op	15:20	0:0	8	->
+water	15:22	0:0	8	fd
+arg	15:26	15:30	7	data
+water	15:26	0:0	8	data
+arg	15:32	15:47	7	sizeof(data[0])
+op	15:32	0:0	8	sizeof
+water	15:38	0:0	8	(
+water	15:39	0:0	8	data
+op	15:43	0:0	8	[
+water	15:44	0:0	8	0
+op	15:45	0:0	8	]
+water	15:46	0:0	8	)
+arg	15:49	15:50	7	0
+water	15:49	0:0	8	0
+op	15:52	0:0	6	<=
+water	15:55	0:0	6	0
+stmts	16:12	16:21	5	
+goto	16:12	16:21	6	wait
+water	16:17	0:0	7	wait
+if	18:8	19:20	4	(poll (& ufd ,1 ,sys -> timeout ) <= 0)
+cond	18:12	18:43	5	poll (& ufd ,1 ,sys -> timeout ) <= 0
+call	18:12	18:38	6	poll
+arg	18:17	18:21	7	&ufd
+op	18:17	0:0	8	&
+water	18:18	0:0	8	ufd
+arg	18:23	18:24	7	1
+water	18:23	0:0	8	1
+arg	18:26	18:38	7	sys->timeout
+water	18:26	0:0	8	sys
+op	18:29	0:0	8	->
+water	18:31	0:0	8	timeout
+op	18:40	0:0	6	<=
+water	18:43	0:0	6	0
+stmts	19:12	19:20	5	
+continue	19:12	19:20	6	
+decl	20:8	20:44	4	const mtime_t	receive_date
+op	20:35	0:0	4	=
+call	20:37	20:43	5	mdate
+if	21:8	22:21	4	(recv (sys -> fd ,data ,sizeof ( data ) ,0 ) <= 0)
+cond	21:12	21:52	5	recv (sys -> fd ,data ,sizeof ( data ) ,0 ) <= 0
+call	21:12	21:47	6	recv
+arg	21:17	21:24	7	sys->fd
+water	21:17	0:0	8	sys
+op	21:20	0:0	8	->
+water	21:22	0:0	8	fd
+arg	21:26	21:30	7	data
+water	21:26	0:0	8	data
+arg	21:32	21:44	7	sizeof(data)
+op	21:32	0:0	8	sizeof
+water	21:38	0:0	8	(
+water	21:39	0:0	8	data
+water	21:43	0:0	8	)
+arg	21:46	21:47	7	0
+water	21:46	0:0	8	0
+op	21:49	0:0	6	<=
+water	21:52	0:0	6	0
+stmts	22:12	22:21	5	
+goto	22:12	22:21	6	wait
+water	22:17	0:0	7	wait
+decl	23:8	23:53	4	const mtime_t	master_date
+op	23:36	0:0	4	=
+call	23:38	23:52	5	ntoh64
+arg	23:45	23:52	6	data[0]
+water	23:45	0:0	7	data
+op	23:49	0:0	7	[
+water	23:50	0:0	7	0
+op	23:51	0:0	7	]
+decl	24:8	24:53	4	const mtime_t	master_system
+op	24:36	0:0	4	=
+call	24:38	24:52	5	ntoh64
+arg	24:45	24:52	6	data[1]
+water	24:45	0:0	7	data
+op	24:49	0:0	7	[
+water	24:50	0:0	7	1
+op	24:51	0:0	7	]
+decl	25:8	26:80	4	const mtime_t	diff_date
+op	25:32	0:0	4	=
+water	25:34	0:0	4	receive_date
+op	25:47	0:0	4	-
+water	26:34	0:0	4	(
+water	26:35	0:0	4	(
+water	26:36	0:0	4	receive_date
+op	26:49	0:0	4	-
+water	26:51	0:0	4	send_date
+water	26:60	0:0	4	)
+op	26:62	0:0	4	/
+water	26:64	0:0	4	2
+op	26:66	0:0	4	+
+water	26:68	0:0	4	master_date
+water	26:79	0:0	4	)
+if	27:8	43:8	4	(master_system > 0)
+cond	27:12	27:28	5	master_system > 0
+water	27:12	0:0	6	master_system
+op	27:26	0:0	6	>
+water	27:28	0:0	6	0
+stmts	27:31	43:8	5	
+water	27:31	0:0	6	{
+decl	28:12	28:39	6	int	canc
+op	28:21	0:0	6	=
+call	28:23	28:38	7	vlc_savecancel
+decl	29:12	29:33	6	mtime_t	client_system
+if	30:12	41:12	6	(!input_GetPcrSystem (sys -> input ,& client_system ,NULL ))
+cond	30:16	30:68	7	!input_GetPcrSystem (sys -> input ,& client_system ,NULL )
+op	30:16	0:0	8	!
+call	30:17	30:68	8	input_GetPcrSystem
+arg	30:36	30:46	9	sys->input
+water	30:36	0:0	10	sys
+op	30:39	0:0	10	->
+water	30:41	0:0	10	input
+arg	30:48	30:62	9	&client_system
+op	30:48	0:0	10	&
+water	30:49	0:0	10	client_system
+arg	30:64	30:68	9	NULL
+water	30:64	0:0	10	NULL
+stmts	30:71	41:12	7	
+water	30:71	0:0	8	{
+decl	31:16	31:85	8	const mtime_t	diff_system
+op	31:42	0:0	8	=
+water	31:44	0:0	8	client_system
+op	31:58	0:0	8	-
+water	31:60	0:0	8	master_system
+op	31:74	0:0	8	-
+water	31:76	0:0	8	diff_date
+if	32:16	40:16	8	(diff_system != 0)
+cond	32:20	32:35	9	diff_system != 0
+water	32:20	0:0	10	diff_system
+op	32:32	0:0	10	!=
+water	32:35	0:0	10	0
+stmts	32:38	40:16	9	
+water	32:38	0:0	10	{
+call	33:20	33:85	10	input_ModifyPcrSystem
+arg	33:42	33:52	11	sys->input
+water	33:42	0:0	12	sys
+op	33:45	0:0	12	->
+water	33:47	0:0	12	input
+arg	33:54	33:58	11	true
+water	33:54	0:0	12	true
+arg	33:60	33:85	11	master_system-diff_date
+water	33:60	0:0	12	master_system
+op	33:74	0:0	12	-
+water	33:76	0:0	12	diff_date
+water	33:86	0:0	10	;
+call	35:20	38:51	10	msg_Dbg
+arg	35:28	35:32	11	intf
+water	35:28	0:0	12	intf
+arg	35:34	36:70	11	"Slave clockref: %"PRId64" -> %"PRId64" -> %"PRId64","" clock diff: %"PRId64", diff: %"PRId64""
+water	35:34	0:0	12	"Slave clockref: %"
+water	35:53	0:0	12	PRId64
+water	35:59	0:0	12	" -> %"
+water	35:66	0:0	12	PRId64
+water	35:72	0:0	12	" -> %"
+water	35:79	0:0	12	PRId64
+water	35:85	0:0	12	","
+water	36:29	0:0	12	" clock diff: %"
+water	36:45	0:0	12	PRId64
+water	36:51	0:0	12	", diff: %"
+water	36:62	0:0	12	PRId64
+water	36:68	0:0	12	""
+arg	37:29	37:35	11	system
+water	37:29	0:0	12	system
+arg	37:37	37:50	11	master_system
+water	37:37	0:0	12	master_system
+arg	37:52	37:65	11	client_system
+water	37:52	0:0	12	client_system
+arg	38:29	38:40	11	diff_system
+water	38:29	0:0	12	diff_system
+arg	38:42	38:51	11	diff_date
+water	38:42	0:0	12	diff_date
+water	38:52	0:0	10	;
+water	40:16	0:0	10	}
+water	41:12	0:0	8	}
+call	42:12	42:34	6	vlc_restorecancel
+arg	42:30	42:34	7	canc
+water	42:30	0:0	8	canc
+water	42:35	0:0	6	;
+water	43:8	0:0	6	}
+label	44:4	44:8	4	wait :
+call	45:8	45:30	4	msleep
+arg	45:15	45:30	5	INTF_IDLE_SLEEP
+water	45:15	0:0	6	INTF_IDLE_SLEEP
+water	45:31	0:0	4	;
+water	46:4	0:0	4	}
+return	47:4	47:15	2	NULL
+water	47:11	0:0	3	NULL

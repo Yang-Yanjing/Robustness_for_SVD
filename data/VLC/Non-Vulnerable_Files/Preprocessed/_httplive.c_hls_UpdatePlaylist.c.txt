@@ -1,0 +1,499 @@
+func	2:0	84:0	0	static int	hls_UpdatePlaylist
+params	2:29	0:0	1	
+param	2:30	2:41	2	stream_t *	s
+param	2:43	2:64	2	hls_stream_t *	hls_new
+param	2:66	2:87	2	hls_stream_t *	hls_old
+param	2:89	2:110	2	bool *	stream_appended
+stmnts	0:0	83:22	1	
+decl	4:4	4:50	2	int	count
+op	4:14	0:0	2	=
+call	4:16	4:49	3	vlc_array_count
+arg	4:32	4:49	4	hls_new->segments
+water	4:32	0:0	5	hls_new
+op	4:39	0:0	5	->
+water	4:41	0:0	5	segments
+call	5:4	6:51	2	msg_Dbg
+arg	5:12	5:13	3	s
+water	5:12	0:0	4	s
+arg	5:15	5:89	3	"updating hls stream (program-id=%d, bandwidth=%"PRIu64") has %d segments"
+water	5:15	0:0	4	"updating hls stream (program-id=%d, bandwidth=%"
+water	5:64	0:0	4	PRIu64
+water	5:70	0:0	4	") has %d segments"
+arg	6:13	6:24	3	hls_new->id
+water	6:13	0:0	4	hls_new
+op	6:20	0:0	4	->
+water	6:22	0:0	4	id
+arg	6:26	6:44	3	hls_new->bandwidth
+water	6:26	0:0	4	hls_new
+op	6:33	0:0	4	->
+water	6:35	0:0	4	bandwidth
+arg	6:46	6:51	3	count
+water	6:46	0:0	4	count
+water	6:52	0:0	2	;
+call	7:4	7:33	2	vlc_mutex_lock
+arg	7:19	7:33	3	&hls_old->lock
+op	7:19	0:0	4	&
+water	7:20	0:0	4	hls_old
+op	7:27	0:0	4	->
+water	7:29	0:0	4	lock
+water	7:34	0:0	2	;
+water	8:4	0:0	2	hls_old
+op	8:11	0:0	2	->
+water	8:13	0:0	2	max_segment_length
+op	8:31	0:0	2	=
+op	8:32	0:0	2	-
+water	8:33	0:0	2	1
+water	8:34	0:0	2	;
+for	9:4	76:4	2	( int n = 0 ;n < count;n ++)
+forinit	0:0	9:18	3	 int n = 0 ;
+decl	9:9	9:18	4	int	n
+op	9:15	0:0	4	=
+water	9:17	0:0	4	0
+cond	9:20	9:24	3	n < count
+water	9:20	0:0	4	n
+op	9:22	0:0	4	<
+water	9:24	0:0	4	count
+forexpr	9:31	9:32	3	n ++
+water	9:31	0:0	4	n
+op	9:32	0:0	4	++
+stmts	10:4	76:4	3	
+water	10:4	0:0	4	{
+decl	11:8	11:53	4	segment_t	*p
+op	11:21	0:0	4	=
+call	11:23	11:52	5	segment_GetSegment
+arg	11:42	11:49	6	hls_new
+water	11:42	0:0	7	hls_new
+arg	11:51	11:52	6	n
+water	11:51	0:0	7	n
+if	12:8	13:20	4	(p == NULL)
+cond	12:12	12:17	5	p == NULL
+water	12:12	0:0	6	p
+op	12:14	0:0	6	==
+water	12:17	0:0	6	NULL
+stmts	13:12	13:20	5	
+continue	13:12	13:20	6	
+decl	14:8	14:63	4	segment_t	*segment
+op	14:27	0:0	4	=
+call	14:29	14:62	5	segment_Find
+arg	14:42	14:49	6	hls_old
+water	14:42	0:0	7	hls_old
+arg	14:51	14:62	6	p->sequence
+water	14:51	0:0	7	p
+op	14:52	0:0	7	->
+water	14:54	0:0	7	sequence
+if	15:8	54:8	4	(segment)
+cond	15:12	15:12	5	segment
+water	15:12	0:0	6	segment
+stmts	16:8	54:8	5	
+water	16:8	0:0	6	{
+call	17:12	17:41	6	vlc_mutex_lock
+arg	17:27	17:41	7	&segment->lock
+op	17:27	0:0	8	&
+water	17:28	0:0	8	segment
+op	17:35	0:0	8	->
+water	17:37	0:0	8	lock
+water	17:42	0:0	6	;
+call	18:12	18:25	6	assert
+arg	18:19	18:25	7	p->url
+water	18:19	0:0	8	p
+op	18:20	0:0	8	->
+water	18:22	0:0	8	url
+water	18:26	0:0	6	;
+call	19:12	19:31	6	assert
+arg	19:19	19:31	7	segment->url
+water	19:19	0:0	8	segment
+op	19:26	0:0	8	->
+water	19:28	0:0	8	url
+water	19:32	0:0	6	;
+if	21:12	51:12	6	(( p -> sequence != segment -> sequence ) || ( p -> duration != segment -> duration ) || (strcmp (p -> url ,segment -> url ) != 0 ))
+cond	21:16	23:50	7	( p -> sequence != segment -> sequence ) || ( p -> duration != segment -> duration ) || (strcmp (p -> url ,segment -> url ) != 0 )
+water	21:16	0:0	8	(
+water	21:17	0:0	8	p
+op	21:18	0:0	8	->
+water	21:20	0:0	8	sequence
+op	21:29	0:0	8	!=
+water	21:32	0:0	8	segment
+op	21:39	0:0	8	->
+water	21:41	0:0	8	sequence
+water	21:49	0:0	8	)
+op	21:51	0:0	8	||
+water	22:16	0:0	8	(
+water	22:17	0:0	8	p
+op	22:18	0:0	8	->
+water	22:20	0:0	8	duration
+op	22:29	0:0	8	!=
+water	22:32	0:0	8	segment
+op	22:39	0:0	8	->
+water	22:41	0:0	8	duration
+water	22:49	0:0	8	)
+op	22:51	0:0	8	||
+water	23:16	0:0	8	(
+call	23:17	23:44	8	strcmp
+arg	23:24	23:30	9	p->url
+water	23:24	0:0	10	p
+op	23:25	0:0	10	->
+water	23:27	0:0	10	url
+arg	23:32	23:44	9	segment->url
+water	23:32	0:0	10	segment
+op	23:39	0:0	10	->
+water	23:41	0:0	10	url
+op	23:46	0:0	8	!=
+water	23:49	0:0	8	0
+water	23:50	0:0	8	)
+stmts	24:12	51:12	7	
+water	24:12	0:0	8	{
+call	25:16	25:87	8	msg_Warn
+arg	25:25	25:26	9	s
+water	25:25	0:0	10	s
+arg	25:28	25:87	9	"existing segment found with different content - resetting"
+water	25:28	0:0	10	"existing segment found with different content - resetting"
+water	25:88	0:0	8	;
+call	26:16	26:88	8	msg_Warn
+arg	26:25	26:26	9	s
+water	26:25	0:0	10	s
+arg	26:28	26:56	9	"- sequence: new=%d, old=%d"
+water	26:28	0:0	10	"- sequence: new=%d, old=%d"
+arg	26:58	26:69	9	p->sequence
+water	26:58	0:0	10	p
+op	26:59	0:0	10	->
+water	26:61	0:0	10	sequence
+arg	26:71	26:88	9	segment->sequence
+water	26:71	0:0	10	segment
+op	26:78	0:0	10	->
+water	26:80	0:0	10	sequence
+water	26:89	0:0	8	;
+call	27:16	27:88	8	msg_Warn
+arg	27:25	27:26	9	s
+water	27:25	0:0	10	s
+arg	27:28	27:56	9	"- duration: new=%d, old=%d"
+water	27:28	0:0	10	"- duration: new=%d, old=%d"
+arg	27:58	27:69	9	p->duration
+water	27:58	0:0	10	p
+op	27:59	0:0	10	->
+water	27:61	0:0	10	duration
+arg	27:71	27:88	9	segment->duration
+water	27:71	0:0	10	segment
+op	27:78	0:0	10	->
+water	27:80	0:0	10	duration
+water	27:89	0:0	8	;
+call	28:16	28:52	8	msg_Warn
+arg	28:25	28:26	9	s
+water	28:25	0:0	10	s
+arg	28:28	28:44	9	"- file: new=%s"
+water	28:28	0:0	10	"- file: new=%s"
+arg	28:46	28:52	9	p->url
+water	28:46	0:0	10	p
+op	28:47	0:0	10	->
+water	28:49	0:0	10	url
+water	28:53	0:0	8	;
+call	29:16	29:58	8	msg_Warn
+arg	29:25	29:26	9	s
+water	29:25	0:0	10	s
+arg	29:28	29:44	9	"        old=%s"
+water	29:28	0:0	10	"        old=%s"
+arg	29:46	29:58	9	segment->url
+water	29:46	0:0	10	segment
+op	29:53	0:0	10	->
+water	29:55	0:0	10	url
+water	29:59	0:0	8	;
+water	31:16	0:0	8	segment
+op	31:23	0:0	8	->
+water	31:25	0:0	8	sequence
+op	31:34	0:0	8	=
+water	31:36	0:0	8	p
+op	31:37	0:0	8	->
+water	31:39	0:0	8	sequence
+water	31:47	0:0	8	;
+water	32:16	0:0	8	segment
+op	32:23	0:0	8	->
+water	32:25	0:0	8	duration
+op	32:34	0:0	8	=
+water	32:36	0:0	8	p
+op	32:37	0:0	8	->
+water	32:39	0:0	8	duration
+water	32:47	0:0	8	;
+call	33:16	33:33	8	free
+arg	33:21	33:33	9	segment->url
+water	33:21	0:0	10	segment
+op	33:28	0:0	10	->
+water	33:30	0:0	10	url
+water	33:34	0:0	8	;
+water	34:16	0:0	8	segment
+op	34:23	0:0	8	->
+water	34:25	0:0	8	url
+op	34:29	0:0	8	=
+call	34:31	34:44	8	strdup
+arg	34:38	34:44	9	p->url
+water	34:38	0:0	10	p
+op	34:39	0:0	10	->
+water	34:41	0:0	10	url
+water	34:45	0:0	8	;
+if	35:16	41:16	8	(segment -> url == NULL)
+cond	35:21	35:37	9	segment -> url == NULL
+water	35:21	0:0	10	segment
+op	35:28	0:0	10	->
+water	35:30	0:0	10	url
+op	35:34	0:0	10	==
+water	35:37	0:0	10	NULL
+stmts	36:16	41:16	9	
+water	36:16	0:0	10	{
+call	37:20	37:87	10	msg_Err
+arg	37:28	37:29	11	s
+water	37:28	0:0	12	s
+arg	37:31	37:73	11	"Failed updating segment %d - skipping it"
+water	37:31	0:0	12	"Failed updating segment %d - skipping it"
+arg	37:76	37:87	11	p->sequence
+water	37:76	0:0	12	p
+op	37:77	0:0	12	->
+water	37:79	0:0	12	sequence
+water	37:88	0:0	10	;
+call	38:20	38:34	10	segment_Free
+arg	38:33	38:34	11	p
+water	38:33	0:0	12	p
+water	38:35	0:0	10	;
+call	39:20	39:51	10	vlc_mutex_unlock
+arg	39:37	39:51	11	&segment->lock
+op	39:37	0:0	12	&
+water	39:38	0:0	12	segment
+op	39:45	0:0	12	->
+water	39:47	0:0	12	lock
+water	39:52	0:0	10	;
+continue	40:20	40:28	10	
+water	41:16	0:0	10	}
+if	43:16	48:16	8	(( p -> psz_key_path || p -> b_key_loaded ) && segment -> data)
+cond	43:20	44:29	9	( p -> psz_key_path || p -> b_key_loaded ) && segment -> data
+water	43:20	0:0	10	(
+water	43:21	0:0	10	p
+op	43:22	0:0	10	->
+water	43:24	0:0	10	psz_key_path
+op	43:37	0:0	10	||
+water	43:40	0:0	10	p
+op	43:41	0:0	10	->
+water	43:43	0:0	10	b_key_loaded
+water	43:55	0:0	10	)
+op	43:57	0:0	10	&&
+water	44:20	0:0	10	segment
+op	44:27	0:0	10	->
+water	44:29	0:0	10	data
+stmts	45:16	48:16	9	
+water	45:16	0:0	10	{
+call	46:20	46:47	10	block_Release
+arg	46:34	46:47	11	segment->data
+water	46:34	0:0	12	segment
+op	46:41	0:0	12	->
+water	46:43	0:0	12	data
+water	46:48	0:0	10	;
+water	47:20	0:0	10	segment
+op	47:27	0:0	10	->
+water	47:29	0:0	10	data
+op	47:34	0:0	10	=
+water	47:36	0:0	10	NULL
+water	47:40	0:0	10	;
+water	48:16	0:0	10	}
+call	49:16	49:42	8	free
+arg	49:21	49:42	9	segment->psz_key_path
+water	49:21	0:0	10	segment
+op	49:28	0:0	10	->
+water	49:30	0:0	10	psz_key_path
+water	49:43	0:0	8	;
+water	50:16	0:0	8	segment
+op	50:23	0:0	8	->
+water	50:25	0:0	8	psz_key_path
+op	50:38	0:0	8	=
+water	50:40	0:0	8	p
+op	50:41	0:0	8	->
+water	50:43	0:0	8	psz_key_path
+water	50:56	0:0	8	?
+call	50:58	50:80	8	strdup
+arg	50:65	50:80	9	p->psz_key_path
+water	50:65	0:0	10	p
+op	50:66	0:0	10	->
+water	50:68	0:0	10	psz_key_path
+water	50:82	0:0	8	:
+water	50:84	0:0	8	NULL
+water	50:88	0:0	8	;
+water	51:12	0:0	8	}
+call	52:12	52:26	6	segment_Free
+arg	52:25	52:26	7	p
+water	52:25	0:0	8	p
+water	52:27	0:0	6	;
+call	53:12	53:43	6	vlc_mutex_unlock
+arg	53:29	53:43	7	&segment->lock
+op	53:29	0:0	8	&
+water	53:30	0:0	8	segment
+op	53:37	0:0	8	->
+water	53:39	0:0	8	lock
+water	53:44	0:0	6	;
+water	54:8	0:0	6	}
+else	55:8	75:8	4
+stmts	56:8	75:8	5	
+water	56:8	0:0	6	{
+decl	57:12	57:61	6	int	last
+op	57:21	0:0	6	=
+call	57:23	57:56	7	vlc_array_count
+arg	57:39	57:56	8	hls_old->segments
+water	57:39	0:0	9	hls_old
+op	57:46	0:0	9	->
+water	57:48	0:0	9	segments
+op	57:58	0:0	6	-
+water	57:60	0:0	6	1
+decl	58:12	58:60	6	segment_t	*l
+op	58:25	0:0	6	=
+call	58:27	58:59	7	segment_GetSegment
+arg	58:46	58:53	8	hls_old
+water	58:46	0:0	9	hls_old
+arg	58:55	58:59	8	last
+water	58:55	0:0	9	last
+if	59:12	63:12	6	(l == NULL)
+cond	59:16	59:21	7	l == NULL
+water	59:16	0:0	8	l
+op	59:18	0:0	8	==
+water	59:21	0:0	8	NULL
+stmts	59:27	63:12	7	
+water	59:27	0:0	8	{
+call	60:16	60:47	8	vlc_mutex_unlock
+arg	60:33	60:47	9	&hls_old->lock
+op	60:33	0:0	10	&
+water	60:34	0:0	10	hls_old
+op	60:41	0:0	10	->
+water	60:43	0:0	10	lock
+water	60:48	0:0	8	;
+call	61:16	61:30	8	segment_Free
+arg	61:29	61:30	9	p
+water	61:29	0:0	10	p
+water	61:31	0:0	8	;
+continue	62:16	62:24	8	
+water	63:12	0:0	8	}
+if	64:12	68:12	6	(( l -> sequence + 1 ) != p -> sequence)
+cond	64:16	64:40	7	( l -> sequence + 1 ) != p -> sequence
+water	64:16	0:0	8	(
+water	64:17	0:0	8	l
+op	64:18	0:0	8	->
+water	64:20	0:0	8	sequence
+op	64:29	0:0	8	+
+water	64:31	0:0	8	1
+water	64:32	0:0	8	)
+op	64:34	0:0	8	!=
+water	64:37	0:0	8	p
+op	64:38	0:0	8	->
+water	64:40	0:0	8	sequence
+stmts	65:12	68:12	7	
+water	65:12	0:0	8	{
+call	66:16	67:50	8	msg_Err
+arg	66:24	66:25	9	s
+water	66:24	0:0	10	s
+arg	66:27	66:78	9	"gap in sequence numbers found: new=%d expected %d"
+water	66:27	0:0	10	"gap in sequence numbers found: new=%d expected %d"
+arg	67:24	67:35	9	p->sequence
+water	67:24	0:0	10	p
+op	67:25	0:0	10	->
+water	67:27	0:0	10	sequence
+arg	67:37	67:50	9	l->sequence+1
+water	67:37	0:0	10	l
+op	67:38	0:0	10	->
+water	67:40	0:0	10	sequence
+op	67:48	0:0	10	+
+water	67:49	0:0	10	1
+water	67:51	0:0	8	;
+water	68:12	0:0	8	}
+call	69:12	69:49	6	vlc_array_append
+arg	69:29	69:46	7	hls_old->segments
+water	69:29	0:0	8	hls_old
+op	69:36	0:0	8	->
+water	69:38	0:0	8	segments
+arg	69:48	69:49	7	p
+water	69:48	0:0	8	p
+water	69:50	0:0	6	;
+call	70:12	70:59	6	msg_Dbg
+arg	70:20	70:21	7	s
+water	70:20	0:0	8	s
+arg	70:23	70:46	7	"- segment %d appended"
+water	70:23	0:0	8	"- segment %d appended"
+arg	70:48	70:59	7	p->sequence
+water	70:48	0:0	8	p
+op	70:49	0:0	8	->
+water	70:51	0:0	8	sequence
+water	70:60	0:0	6	;
+water	71:12	0:0	6	hls_old
+op	71:19	0:0	6	->
+water	71:21	0:0	6	max_segment_length
+op	71:40	0:0	6	=
+call	71:42	71:88	6	__MAX
+arg	71:48	71:75	7	hls_old->max_segment_length
+water	71:48	0:0	8	hls_old
+op	71:55	0:0	8	->
+water	71:57	0:0	8	max_segment_length
+arg	71:77	71:88	7	p->duration
+water	71:77	0:0	8	p
+op	71:78	0:0	8	->
+water	71:80	0:0	8	duration
+water	71:89	0:0	6	;
+call	72:12	72:86	6	msg_Dbg
+arg	72:20	72:21	7	s
+water	72:20	0:0	8	s
+arg	72:23	72:57	7	"  - segments new max duration %d"
+water	72:23	0:0	8	"  - segments new max duration %d"
+arg	72:59	72:86	7	hls_old->max_segment_length
+water	72:59	0:0	8	hls_old
+op	72:66	0:0	8	->
+water	72:68	0:0	8	max_segment_length
+water	72:87	0:0	6	;
+op	74:12	0:0	6	*
+water	74:13	0:0	6	stream_appended
+op	74:29	0:0	6	=
+water	74:31	0:0	6	true
+water	74:35	0:0	6	;
+water	75:8	0:0	6	}
+water	76:4	0:0	4	}
+water	78:4	0:0	2	hls_old
+op	78:11	0:0	2	->
+water	78:13	0:0	2	sequence
+op	78:22	0:0	2	=
+water	78:24	0:0	2	hls_new
+op	78:31	0:0	2	->
+water	78:33	0:0	2	sequence
+water	78:41	0:0	2	;
+water	79:4	0:0	2	hls_old
+op	79:11	0:0	2	->
+water	79:13	0:0	2	duration
+op	79:22	0:0	2	=
+water	79:24	0:0	2	(
+water	79:25	0:0	2	hls_new
+op	79:32	0:0	2	->
+water	79:34	0:0	2	duration
+op	79:43	0:0	2	==
+op	79:46	0:0	2	-
+water	79:47	0:0	2	1
+water	79:48	0:0	2	)
+water	79:50	0:0	2	?
+water	79:52	0:0	2	hls_old
+op	79:59	0:0	2	->
+water	79:61	0:0	2	duration
+water	79:70	0:0	2	:
+water	79:72	0:0	2	hls_new
+op	79:79	0:0	2	->
+water	79:81	0:0	2	duration
+water	79:89	0:0	2	;
+water	80:4	0:0	2	hls_old
+op	80:11	0:0	2	->
+water	80:13	0:0	2	b_cache
+op	80:21	0:0	2	=
+water	80:23	0:0	2	hls_new
+op	80:30	0:0	2	->
+water	80:32	0:0	2	b_cache
+water	80:39	0:0	2	;
+call	81:4	81:35	2	vlc_mutex_unlock
+arg	81:21	81:35	3	&hls_old->lock
+op	81:21	0:0	4	&
+water	81:22	0:0	4	hls_old
+op	81:29	0:0	4	->
+water	81:31	0:0	4	lock
+water	81:36	0:0	2	;
+call	82:4	82:37	2	vlc_array_clear
+arg	82:20	82:37	3	hls_new->segments
+water	82:20	0:0	4	hls_new
+op	82:27	0:0	4	->
+water	82:29	0:0	4	segments
+water	82:38	0:0	2	;
+return	83:4	83:22	2	VLC_SUCCESS
+water	83:11	0:0	3	VLC_SUCCESS

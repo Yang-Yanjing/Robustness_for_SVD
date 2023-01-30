@@ -1,0 +1,240 @@
+func	1:0	49:2	0	static int	reverseSamplesBytes
+params	2:20	0:0	1	
+param	2:21	2:31	2	uint16	spp
+param	2:33	2:43	2	uint16	bps
+param	2:45	2:57	2	uint32	width
+param	3:21	3:31	2	uint8 *	src
+param	3:33	3:43	2	uint8 *	dst
+stmnts	0:0	48:12	1	
+decl	5:2	5:7	2	int	i
+decl	6:2	6:42	2	uint32	col
+water	6:13	0:0	2	,
+decl	6:2	6:42	2	uint32	bytes_per_pixel
+water	6:30	0:0	2	,
+decl	6:2	6:42	2	uint32	col_offset
+decl	7:2	7:19	2	uint8	bytebuff1
+decl	8:2	8:28	2	unsigned char	swapbuff[32]
+if	9:2	13:4	2	(( src == NULL ) || ( dst == NULL ))
+cond	9:6	9:35	3	( src == NULL ) || ( dst == NULL )
+water	9:6	0:0	4	(
+water	9:7	0:0	4	src
+op	9:11	0:0	4	==
+water	9:14	0:0	4	NULL
+water	9:18	0:0	4	)
+op	9:20	0:0	4	||
+water	9:23	0:0	4	(
+water	9:24	0:0	4	dst
+op	9:28	0:0	4	==
+water	9:31	0:0	4	NULL
+water	9:35	0:0	4	)
+stmts	10:4	13:4	3	
+water	10:4	0:0	4	{
+call	11:4	11:68	4	TIFFError
+arg	11:14	11:35	5	"reverseSamplesBytes"
+water	11:14	0:0	6	"reverseSamplesBytes"
+arg	11:36	11:68	5	"Invalid input or output buffer"
+water	11:36	0:0	6	"Invalid input or output buffer"
+water	11:69	0:0	4	;
+return	12:4	12:14	4	(1)
+water	12:11	0:0	5	(
+water	12:12	0:0	5	1
+water	12:13	0:0	5	)
+water	13:4	0:0	4	}
+water	14:2	0:0	2	bytes_per_pixel
+op	14:19	0:0	2	=
+water	14:21	0:0	2	(
+water	14:22	0:0	2	(
+water	14:23	0:0	2	bps
+op	14:27	0:0	2	*
+water	14:29	0:0	2	spp
+water	14:32	0:0	2	)
+op	14:34	0:0	2	+
+water	14:36	0:0	2	7
+water	14:37	0:0	2	)
+op	14:39	0:0	2	/
+water	14:41	0:0	2	8
+water	14:42	0:0	2	;
+if	15:2	19:2	2	(bytes_per_pixel > sizeof ( swapbuff ))
+cond	15:6	15:39	3	bytes_per_pixel > sizeof ( swapbuff )
+water	15:6	0:0	4	bytes_per_pixel
+op	15:22	0:0	4	>
+op	15:24	0:0	4	sizeof
+water	15:30	0:0	4	(
+water	15:31	0:0	4	swapbuff
+water	15:39	0:0	4	)
+stmts	16:2	19:2	3	
+water	16:2	0:0	4	{
+call	17:4	17:63	4	TIFFError
+arg	17:14	17:35	5	"reverseSamplesBytes"
+water	17:14	0:0	6	"reverseSamplesBytes"
+arg	17:36	17:63	5	"bytes_per_pixel too large"
+water	17:36	0:0	6	"bytes_per_pixel too large"
+water	17:64	0:0	4	;
+return	18:4	18:14	4	(1)
+water	18:11	0:0	5	(
+water	18:12	0:0	5	1
+water	18:13	0:0	5	)
+water	19:2	0:0	4	}
+switch	20:2	47:5	2	(bps / 8)
+cond	20:10	20:16	3	bps / 8
+water	20:10	0:0	4	bps
+op	20:14	0:0	4	/
+water	20:16	0:0	4	8
+stmts	21:5	47:5	3	
+water	21:5	0:0	4	{
+label	22:5	22:11	4	case 8 :
+label	23:5	23:11	4	case 4 :
+label	24:5	24:11	4	case 3 :
+label	25:5	25:11	4	case 2 :
+for	25:13	31:15	4	(col = 0 ;col < ( width / 2 );col ++)
+forinit	25:18	25:25	5	col = 0 ;
+water	25:18	0:0	6	col
+op	25:22	0:0	6	=
+water	25:24	0:0	6	0
+water	25:25	0:0	6	;
+cond	25:27	25:43	5	col < ( width / 2 )
+water	25:27	0:0	6	col
+op	25:31	0:0	6	<
+water	25:33	0:0	6	(
+water	25:34	0:0	6	width
+op	25:40	0:0	6	/
+water	25:42	0:0	6	2
+water	25:43	0:0	6	)
+forexpr	25:46	25:49	5	col ++
+water	25:46	0:0	6	col
+op	25:49	0:0	6	++
+stmts	26:15	31:15	5	
+water	26:15	0:0	6	{
+water	27:8	0:0	6	col_offset
+op	27:19	0:0	6	=
+water	27:21	0:0	6	col
+op	27:25	0:0	6	*
+water	27:27	0:0	6	bytes_per_pixel
+water	27:42	0:0	6	;
+call	28:8	28:64	6	_TIFFmemcpy
+arg	28:21	28:29	7	swapbuff
+water	28:21	0:0	8	swapbuff
+arg	28:31	28:47	7	src+col_offset
+water	28:31	0:0	8	src
+op	28:35	0:0	8	+
+water	28:37	0:0	8	col_offset
+arg	28:49	28:64	7	bytes_per_pixel
+water	28:49	0:0	8	bytes_per_pixel
+water	28:65	0:0	6	;
+call	29:8	29:90	6	_TIFFmemcpy
+arg	29:21	29:37	7	src+col_offset
+water	29:21	0:0	8	src
+op	29:25	0:0	8	+
+water	29:27	0:0	8	col_offset
+arg	29:39	29:73	7	dst-col_offset-bytes_per_pixel
+water	29:39	0:0	8	dst
+op	29:43	0:0	8	-
+water	29:45	0:0	8	col_offset
+op	29:56	0:0	8	-
+water	29:58	0:0	8	bytes_per_pixel
+arg	29:75	29:90	7	bytes_per_pixel
+water	29:75	0:0	8	bytes_per_pixel
+water	29:91	0:0	6	;
+call	30:8	30:82	6	_TIFFmemcpy
+arg	30:21	30:55	7	dst-col_offset-bytes_per_pixel
+water	30:21	0:0	8	dst
+op	30:25	0:0	8	-
+water	30:27	0:0	8	col_offset
+op	30:38	0:0	8	-
+water	30:40	0:0	8	bytes_per_pixel
+arg	30:57	30:65	7	swapbuff
+water	30:57	0:0	8	swapbuff
+arg	30:67	30:82	7	bytes_per_pixel
+water	30:67	0:0	8	bytes_per_pixel
+water	30:83	0:0	6	;
+water	31:15	0:0	6	}
+break	32:6	32:11	4	
+label	33:5	33:11	4	case 1 :
+for	34:13	43:16	4	(col = 0 ;col < ( width / 2 );col ++)
+forinit	34:18	34:25	5	col = 0 ;
+water	34:18	0:0	6	col
+op	34:22	0:0	6	=
+water	34:24	0:0	6	0
+water	34:25	0:0	6	;
+cond	34:27	34:43	5	col < ( width / 2 )
+water	34:27	0:0	6	col
+op	34:31	0:0	6	<
+water	34:33	0:0	6	(
+water	34:34	0:0	6	width
+op	34:40	0:0	6	/
+water	34:42	0:0	6	2
+water	34:43	0:0	6	)
+forexpr	34:46	34:49	5	col ++
+water	34:46	0:0	6	col
+op	34:49	0:0	6	++
+stmts	35:15	43:16	5	
+water	35:15	0:0	6	{
+for	36:8	41:4	6	(i = 0 ;i < spp;i ++)
+forinit	36:13	36:18	7	i = 0 ;
+water	36:13	0:0	8	i
+op	36:15	0:0	8	=
+water	36:17	0:0	8	0
+water	36:18	0:0	8	;
+cond	36:20	36:24	7	i < spp
+water	36:20	0:0	8	i
+op	36:22	0:0	8	<
+water	36:24	0:0	8	spp
+forexpr	36:29	36:30	7	i ++
+water	36:29	0:0	8	i
+op	36:30	0:0	8	++
+stmts	37:18	41:4	7	
+water	37:18	0:0	8	{
+water	38:4	0:0	8	bytebuff1
+op	38:14	0:0	8	=
+op	38:16	0:0	8	*
+water	38:17	0:0	8	src
+water	38:20	0:0	8	;
+op	39:4	0:0	8	*
+water	39:5	0:0	8	src
+op	39:8	0:0	8	++
+op	39:11	0:0	8	=
+op	39:13	0:0	8	*
+water	39:14	0:0	8	(
+water	39:15	0:0	8	dst
+op	39:19	0:0	8	-
+water	39:21	0:0	8	spp
+op	39:25	0:0	8	+
+water	39:27	0:0	8	i
+water	39:28	0:0	8	)
+water	39:29	0:0	8	;
+op	40:18	0:0	8	*
+water	40:19	0:0	8	(
+water	40:20	0:0	8	dst
+op	40:24	0:0	8	-
+water	40:26	0:0	8	spp
+op	40:30	0:0	8	+
+water	40:32	0:0	8	i
+water	40:33	0:0	8	)
+op	40:35	0:0	8	=
+water	40:37	0:0	8	bytebuff1
+water	40:46	0:0	8	;
+water	41:4	0:0	8	}
+water	42:2	0:0	6	dst
+op	42:6	0:0	6	-=
+water	42:9	0:0	6	spp
+water	42:12	0:0	6	;
+water	43:16	0:0	6	}
+break	44:6	44:11	4	
+label	45:5	45:12	4	default :
+call	45:14	45:77	4	TIFFError
+arg	45:24	45:45	5	"reverseSamplesBytes"
+water	45:24	0:0	6	"reverseSamplesBytes"
+arg	45:46	45:72	5	"Unsupported bit depth %d"
+water	45:46	0:0	6	"Unsupported bit depth %d"
+arg	45:74	45:77	5	bps
+water	45:74	0:0	6	bps
+water	45:78	0:0	4	;
+return	46:7	46:17	4	(1)
+water	46:14	0:0	5	(
+water	46:15	0:0	5	1
+water	46:16	0:0	5	)
+water	47:5	0:0	4	}
+return	48:2	48:12	2	(0)
+water	48:9	0:0	3	(
+water	48:10	0:0	3	0
+water	48:11	0:0	3	)

@@ -1,0 +1,863 @@
+func	2:0	178:0	0	static picture_t *	DecodeVideo
+params	2:29	0:0	1	
+param	2:31	2:47	2	decoder_t *	p_dec
+param	2:49	2:68	2	block_t * *	pp_block
+stmnts	0:0	177:15	1	
+decl	4:4	4:39	2	decoder_sys_t	*p_sys
+op	4:25	0:0	2	=
+water	4:27	0:0	2	p_dec
+op	4:32	0:0	2	->
+water	4:34	0:0	2	p_sys
+decl	5:4	5:40	2	picture_t	*p_pic
+op	5:21	0:0	2	=
+water	5:23	0:0	2	NULL
+water	5:27	0:0	2	,
+decl	5:4	5:40	2	picture_t	*p_next_pic
+decl	6:4	6:27	2	OMX_ERRORTYPE	omx_error
+decl	7:4	7:18	2	unsigned int	i
+decl	8:4	8:34	2	OMX_BUFFERHEADERTYPE	*p_header
+decl	9:4	9:20	2	block_t	*p_block
+decl	10:4	10:24	2	int	i_input_used
+op	10:21	0:0	2	=
+water	10:23	0:0	2	0
+decl	11:4	11:52	2	struct H264ConvertState	convert_state
+op	11:42	0:0	2	=
+water	11:44	0:0	2	{
+water	11:46	0:0	2	0
+water	11:47	0:0	2	,
+water	11:49	0:0	2	0
+water	11:51	0:0	2	}
+if	12:4	13:19	2	(! pp_block || ! * pp_block)
+cond	12:8	12:23	3	! pp_block || ! * pp_block
+op	12:8	0:0	4	!
+water	12:9	0:0	4	pp_block
+op	12:18	0:0	4	||
+op	12:21	0:0	4	!
+op	12:22	0:0	4	*
+water	12:23	0:0	4	pp_block
+stmts	13:8	13:19	3	
+return	13:8	13:19	4	NULL
+water	13:15	0:0	5	NULL
+water	14:4	0:0	2	p_block
+op	14:12	0:0	2	=
+op	14:14	0:0	2	*
+water	14:15	0:0	2	pp_block
+water	14:23	0:0	2	;
+if	16:4	21:4	2	(p_sys -> b_error)
+cond	16:7	16:14	3	p_sys -> b_error
+water	16:7	0:0	4	p_sys
+op	16:12	0:0	4	->
+water	16:14	0:0	4	b_error
+stmts	17:4	21:4	3	
+water	17:4	0:0	4	{
+call	18:8	18:46	4	msg_Dbg
+arg	18:16	18:21	5	p_dec
+water	18:16	0:0	6	p_dec
+arg	18:23	18:46	5	"error during decoding"
+water	18:23	0:0	6	"error during decoding"
+water	18:47	0:0	4	;
+call	19:8	19:31	4	block_Release
+arg	19:23	19:31	5	p_block
+water	19:23	0:0	6	p_block
+water	19:32	0:0	4	;
+return	20:8	20:16	4	0
+water	20:15	0:0	5	0
+water	21:4	0:0	4	}
+if	22:4	33:4	2	(p_block -> i_flags & ( BLOCK_FLAG_DISCONTINUITY | BLOCK_FLAG_CORRUPTED ))
+cond	22:8	22:73	3	p_block -> i_flags & ( BLOCK_FLAG_DISCONTINUITY | BLOCK_FLAG_CORRUPTED )
+water	22:8	0:0	4	p_block
+op	22:15	0:0	4	->
+water	22:17	0:0	4	i_flags
+op	22:25	0:0	4	&
+water	22:27	0:0	4	(
+water	22:28	0:0	4	BLOCK_FLAG_DISCONTINUITY
+op	22:52	0:0	4	|
+water	22:53	0:0	4	BLOCK_FLAG_CORRUPTED
+water	22:73	0:0	4	)
+stmts	23:4	33:4	3	
+water	23:4	0:0	4	{
+call	24:8	24:31	4	block_Release
+arg	24:23	24:31	5	p_block
+water	24:23	0:0	6	p_block
+water	24:32	0:0	4	;
+if	25:8	30:8	4	(! p_sys -> in . b_flushed)
+cond	25:11	25:22	5	! p_sys -> in . b_flushed
+op	25:11	0:0	6	!
+water	25:12	0:0	6	p_sys
+op	25:17	0:0	6	->
+water	25:19	0:0	6	in
+op	25:21	0:0	6	.
+water	25:22	0:0	6	b_flushed
+stmts	26:8	30:8	5	
+water	26:8	0:0	6	{
+call	27:12	27:37	6	msg_Dbg
+arg	27:20	27:25	7	p_dec
+water	27:20	0:0	8	p_dec
+arg	27:27	27:37	7	"flushing"
+water	27:27	0:0	8	"flushing"
+water	27:38	0:0	6	;
+call	28:12	29:64	6	OMX_SendCommand
+arg	28:29	28:46	7	p_sys->omx_handle
+water	28:29	0:0	8	p_sys
+op	28:34	0:0	8	->
+water	28:36	0:0	8	omx_handle
+arg	28:48	28:64	7	OMX_CommandFlush
+water	28:48	0:0	8	OMX_CommandFlush
+arg	29:29	29:60	7	p_sys->in.definition.nPortIndex
+water	29:29	0:0	8	p_sys
+op	29:34	0:0	8	->
+water	29:36	0:0	8	in
+op	29:38	0:0	8	.
+water	29:39	0:0	8	definition
+op	29:49	0:0	8	.
+water	29:50	0:0	8	nPortIndex
+arg	29:62	29:64	7	0
+water	29:62	0:0	8	0
+water	29:65	0:0	6	;
+water	30:8	0:0	6	}
+water	31:8	0:0	4	p_sys
+op	31:13	0:0	4	->
+water	31:15	0:0	4	in
+op	31:17	0:0	4	.
+water	31:18	0:0	4	b_flushed
+op	31:28	0:0	4	=
+water	31:30	0:0	4	true
+water	31:34	0:0	4	;
+return	32:8	32:19	4	NULL
+water	32:15	0:0	5	NULL
+water	33:4	0:0	4	}
+if	39:4	45:4	2	(( p_dec -> fmt_in . video . i_sar_num != 0 && p_dec -> fmt_in . video . i_sar_den != 0 ) && ( p_dec -> fmt_out . video . i_sar_num == 0 || p_dec -> fmt_out . video . i_sar_den == 0 || ! p_sys -> b_aspect_ratio_handled ))
+cond	39:7	41:43	3	( p_dec -> fmt_in . video . i_sar_num != 0 && p_dec -> fmt_in . video . i_sar_den != 0 ) && ( p_dec -> fmt_out . video . i_sar_num == 0 || p_dec -> fmt_out . video . i_sar_den == 0 || ! p_sys -> b_aspect_ratio_handled )
+water	39:7	0:0	4	(
+water	39:8	0:0	4	p_dec
+op	39:13	0:0	4	->
+water	39:15	0:0	4	fmt_in
+op	39:21	0:0	4	.
+water	39:22	0:0	4	video
+op	39:27	0:0	4	.
+water	39:28	0:0	4	i_sar_num
+op	39:38	0:0	4	!=
+water	39:41	0:0	4	0
+op	39:43	0:0	4	&&
+water	39:46	0:0	4	p_dec
+op	39:51	0:0	4	->
+water	39:53	0:0	4	fmt_in
+op	39:59	0:0	4	.
+water	39:60	0:0	4	video
+op	39:65	0:0	4	.
+water	39:66	0:0	4	i_sar_den
+op	39:76	0:0	4	!=
+water	39:79	0:0	4	0
+water	39:80	0:0	4	)
+op	39:82	0:0	4	&&
+water	40:7	0:0	4	(
+water	40:8	0:0	4	p_dec
+op	40:13	0:0	4	->
+water	40:15	0:0	4	fmt_out
+op	40:22	0:0	4	.
+water	40:23	0:0	4	video
+op	40:28	0:0	4	.
+water	40:29	0:0	4	i_sar_num
+op	40:39	0:0	4	==
+water	40:42	0:0	4	0
+op	40:44	0:0	4	||
+water	40:47	0:0	4	p_dec
+op	40:52	0:0	4	->
+water	40:54	0:0	4	fmt_out
+op	40:61	0:0	4	.
+water	40:62	0:0	4	video
+op	40:67	0:0	4	.
+water	40:68	0:0	4	i_sar_den
+op	40:78	0:0	4	==
+water	40:81	0:0	4	0
+op	40:83	0:0	4	||
+op	41:13	0:0	4	!
+water	41:14	0:0	4	p_sys
+op	41:19	0:0	4	->
+water	41:21	0:0	4	b_aspect_ratio_handled
+water	41:43	0:0	4	)
+stmts	42:4	45:4	3	
+water	42:4	0:0	4	{
+water	43:8	0:0	4	p_dec
+op	43:13	0:0	4	->
+water	43:15	0:0	4	fmt_out
+op	43:22	0:0	4	.
+water	43:23	0:0	4	video
+op	43:28	0:0	4	.
+water	43:29	0:0	4	i_sar_num
+op	43:39	0:0	4	=
+water	43:41	0:0	4	p_dec
+op	43:46	0:0	4	->
+water	43:48	0:0	4	fmt_in
+op	43:54	0:0	4	.
+water	43:55	0:0	4	video
+op	43:60	0:0	4	.
+water	43:61	0:0	4	i_sar_num
+water	43:70	0:0	4	;
+water	44:8	0:0	4	p_dec
+op	44:13	0:0	4	->
+water	44:15	0:0	4	fmt_out
+op	44:22	0:0	4	.
+water	44:23	0:0	4	video
+op	44:28	0:0	4	.
+water	44:29	0:0	4	i_sar_den
+op	44:39	0:0	4	=
+water	44:41	0:0	4	p_dec
+op	44:46	0:0	4	->
+water	44:48	0:0	4	fmt_in
+op	44:54	0:0	4	.
+water	44:55	0:0	4	video
+op	44:60	0:0	4	.
+water	44:61	0:0	4	i_sar_den
+water	44:70	0:0	4	;
+water	45:4	0:0	4	}
+while	47:4	95:4	2	(! p_pic)
+cond	47:10	47:11	3	! p_pic
+op	47:10	0:0	4	!
+water	47:11	0:0	4	p_pic
+stmts	48:4	95:4	3	
+water	48:4	0:0	4	{
+call	49:8	49:48	4	OMX_FIFO_PEEK
+arg	49:22	49:38	5	&p_sys->out.fifo
+op	49:22	0:0	6	&
+water	49:23	0:0	6	p_sys
+op	49:28	0:0	6	->
+water	49:30	0:0	6	out
+op	49:33	0:0	6	.
+water	49:34	0:0	6	fifo
+arg	49:40	49:48	5	p_header
+water	49:40	0:0	6	p_header
+water	49:49	0:0	4	;
+if	50:8	50:27	4	(! p_header)
+cond	50:11	50:12	5	! p_header
+op	50:11	0:0	6	!
+water	50:12	0:0	6	p_header
+stmts	50:22	50:27	5	
+break	50:22	50:27	6	
+if	51:8	56:8	4	(p_sys -> out . b_update_def)
+cond	51:11	51:22	5	p_sys -> out . b_update_def
+water	51:11	0:0	6	p_sys
+op	51:16	0:0	6	->
+water	51:18	0:0	6	out
+op	51:21	0:0	6	.
+water	51:22	0:0	6	b_update_def
+stmts	52:8	56:8	5	
+water	52:8	0:0	6	{
+water	53:12	0:0	6	omx_error
+op	53:22	0:0	6	=
+call	53:24	53:78	6	GetPortDefinition
+arg	53:42	53:47	7	p_dec
+water	53:42	0:0	8	p_dec
+arg	53:49	53:60	7	&p_sys->out
+op	53:49	0:0	8	&
+water	53:50	0:0	8	p_sys
+op	53:55	0:0	8	->
+water	53:57	0:0	8	out
+arg	53:62	53:78	7	p_sys->out.p_fmt
+water	53:62	0:0	8	p_sys
+op	53:67	0:0	8	->
+water	53:69	0:0	8	out
+op	53:72	0:0	8	.
+water	53:73	0:0	8	p_fmt
+water	53:79	0:0	6	;
+water	54:12	0:0	6	p_sys
+op	54:17	0:0	6	->
+water	54:19	0:0	6	out
+op	54:22	0:0	6	.
+water	54:23	0:0	6	b_update_def
+op	54:36	0:0	6	=
+water	54:38	0:0	6	0
+water	54:39	0:0	6	;
+call	55:12	55:61	6	CHECK_ERROR
+arg	55:24	55:33	7	omx_error
+water	55:24	0:0	8	omx_error
+arg	55:35	55:61	7	"GetPortDefinition failed"
+water	55:35	0:0	8	"GetPortDefinition failed"
+water	55:62	0:0	6	;
+water	56:8	0:0	6	}
+if	57:8	76:8	4	(p_header -> nFilledLen)
+cond	57:11	57:21	5	p_header -> nFilledLen
+water	57:11	0:0	6	p_header
+op	57:19	0:0	6	->
+water	57:21	0:0	6	nFilledLen
+stmts	58:8	76:8	5	
+water	58:8	0:0	6	{
+water	59:12	0:0	6	p_pic
+op	59:18	0:0	6	=
+water	59:20	0:0	6	p_header
+op	59:28	0:0	6	->
+water	59:30	0:0	6	pAppPrivate
+water	59:41	0:0	6	;
+if	60:12	71:12	6	(! p_pic)
+cond	60:15	60:16	7	! p_pic
+op	60:15	0:0	8	!
+water	60:16	0:0	8	p_pic
+stmts	61:12	71:12	7	
+water	61:12	0:0	8	{
+water	64:16	0:0	8	p_pic
+op	64:22	0:0	8	=
+call	64:24	64:50	8	decoder_NewPicture
+arg	64:44	64:50	9	p_dec
+water	64:44	0:0	10	p_dec
+water	64:51	0:0	8	;
+if	65:16	70:78	8	(p_pic)
+cond	65:20	65:20	9	p_pic
+water	65:20	0:0	10	p_pic
+stmts	66:20	70:78	9	
+call	66:20	70:77	10	CopyOmxPicture
+arg	66:35	66:82	11	p_sys->out.definition.format.video.eColorFormat
+water	66:35	0:0	12	p_sys
+op	66:40	0:0	12	->
+water	66:42	0:0	12	out
+op	66:45	0:0	12	.
+water	66:46	0:0	12	definition
+op	66:56	0:0	12	.
+water	66:57	0:0	12	format
+op	66:63	0:0	12	.
+water	66:64	0:0	12	video
+op	66:69	0:0	12	.
+water	66:70	0:0	12	eColorFormat
+arg	67:35	67:40	11	p_pic
+water	67:35	0:0	12	p_pic
+arg	67:42	67:89	11	p_sys->out.definition.format.video.nSliceHeight
+water	67:42	0:0	12	p_sys
+op	67:47	0:0	12	->
+water	67:49	0:0	12	out
+op	67:52	0:0	12	.
+water	67:53	0:0	12	definition
+op	67:63	0:0	12	.
+water	67:64	0:0	12	format
+op	67:70	0:0	12	.
+water	67:71	0:0	12	video
+op	67:76	0:0	12	.
+water	67:77	0:0	12	nSliceHeight
+arg	68:35	68:60	11	p_sys->out.i_frame_stride
+water	68:35	0:0	12	p_sys
+op	68:40	0:0	12	->
+water	68:42	0:0	12	out
+op	68:45	0:0	12	.
+water	68:46	0:0	12	i_frame_stride
+arg	69:35	69:72	11	p_header->pBuffer+p_header->nOffset
+water	69:35	0:0	12	p_header
+op	69:43	0:0	12	->
+water	69:45	0:0	12	pBuffer
+op	69:53	0:0	12	+
+water	69:55	0:0	12	p_header
+op	69:63	0:0	12	->
+water	69:65	0:0	12	nOffset
+arg	70:35	70:71	11	p_sys->out.i_frame_stride_chroma_div
+water	70:35	0:0	12	p_sys
+op	70:40	0:0	12	->
+water	70:42	0:0	12	out
+op	70:45	0:0	12	.
+water	70:46	0:0	12	i_frame_stride_chroma_div
+arg	70:73	70:77	11	NULL
+water	70:73	0:0	12	NULL
+water	70:78	0:0	10	;
+water	71:12	0:0	8	}
+if	72:12	73:64	6	(p_pic)
+cond	72:16	72:16	7	p_pic
+water	72:16	0:0	8	p_pic
+stmts	73:16	73:64	7	
+water	73:16	0:0	8	p_pic
+op	73:21	0:0	8	->
+water	73:23	0:0	8	date
+op	73:28	0:0	8	=
+call	73:30	73:63	8	FromOmxTicks
+arg	73:43	73:63	9	p_header->nTimeStamp
+water	73:43	0:0	10	p_header
+op	73:51	0:0	10	->
+water	73:53	0:0	10	nTimeStamp
+water	73:64	0:0	8	;
+water	74:12	0:0	6	p_header
+op	74:20	0:0	6	->
+water	74:22	0:0	6	nFilledLen
+op	74:33	0:0	6	=
+water	74:35	0:0	6	0
+water	74:36	0:0	6	;
+water	75:12	0:0	6	p_header
+op	75:20	0:0	6	->
+water	75:22	0:0	6	pAppPrivate
+op	75:34	0:0	6	=
+water	75:36	0:0	6	0
+water	75:37	0:0	6	;
+water	76:8	0:0	6	}
+if	78:8	86:8	4	(p_sys -> out . b_direct && ! p_header -> pAppPrivate)
+cond	78:11	78:45	5	p_sys -> out . b_direct && ! p_header -> pAppPrivate
+water	78:11	0:0	6	p_sys
+op	78:16	0:0	6	->
+water	78:18	0:0	6	out
+op	78:21	0:0	6	.
+water	78:22	0:0	6	b_direct
+op	78:31	0:0	6	&&
+op	78:34	0:0	6	!
+water	78:35	0:0	6	p_header
+op	78:43	0:0	6	->
+water	78:45	0:0	6	pAppPrivate
+stmts	79:8	86:8	5	
+water	79:8	0:0	6	{
+water	80:12	0:0	6	p_next_pic
+op	80:23	0:0	6	=
+call	80:25	80:51	6	decoder_NewPicture
+arg	80:45	80:51	7	p_dec
+water	80:45	0:0	8	p_dec
+water	80:52	0:0	6	;
+if	81:12	81:33	6	(! p_next_pic)
+cond	81:15	81:16	7	! p_next_pic
+op	81:15	0:0	8	!
+water	81:16	0:0	8	p_next_pic
+stmts	81:28	81:33	7	
+break	81:28	81:33	8	
+call	82:12	82:51	6	OMX_FIFO_GET
+arg	82:25	82:41	7	&p_sys->out.fifo
+op	82:25	0:0	8	&
+water	82:26	0:0	8	p_sys
+op	82:31	0:0	8	->
+water	82:33	0:0	8	out
+op	82:36	0:0	8	.
+water	82:37	0:0	8	fifo
+arg	82:43	82:51	7	p_header
+water	82:43	0:0	8	p_header
+water	82:52	0:0	6	;
+water	83:12	0:0	6	p_header
+op	83:20	0:0	6	->
+water	83:22	0:0	6	pAppPrivate
+op	83:34	0:0	6	=
+water	83:36	0:0	6	p_next_pic
+water	83:46	0:0	6	;
+water	84:12	0:0	6	p_header
+op	84:20	0:0	6	->
+water	84:22	0:0	6	pInputPortPrivate
+op	84:40	0:0	6	=
+water	84:42	0:0	6	p_header
+op	84:50	0:0	6	->
+water	84:52	0:0	6	pBuffer
+water	84:59	0:0	6	;
+water	85:12	0:0	6	p_header
+op	85:20	0:0	6	->
+water	85:22	0:0	6	pBuffer
+op	85:30	0:0	6	=
+water	85:32	0:0	6	p_next_pic
+op	85:42	0:0	6	->
+water	85:44	0:0	6	p
+op	85:45	0:0	6	[
+water	85:46	0:0	6	0
+op	85:47	0:0	6	]
+op	85:48	0:0	6	.
+water	85:49	0:0	6	p_pixels
+water	85:57	0:0	6	;
+water	86:8	0:0	6	}
+else	87:8	90:8	4
+stmts	88:8	90:8	5	
+water	88:8	0:0	6	{
+call	89:12	89:51	6	OMX_FIFO_GET
+arg	89:25	89:41	7	&p_sys->out.fifo
+op	89:25	0:0	8	&
+water	89:26	0:0	8	p_sys
+op	89:31	0:0	8	->
+water	89:33	0:0	8	out
+op	89:36	0:0	8	.
+water	89:37	0:0	8	fifo
+arg	89:43	89:51	7	p_header
+water	89:43	0:0	8	p_header
+water	89:52	0:0	6	;
+water	90:8	0:0	6	}
+call	92:8	92:77	4	msg_Dbg
+arg	92:17	92:22	5	p_dec
+water	92:17	0:0	6	p_dec
+arg	92:24	92:47	5	"FillThisBuffer %p, %p"
+water	92:24	0:0	6	"FillThisBuffer %p, %p"
+arg	92:49	92:57	5	p_header
+water	92:49	0:0	6	p_header
+arg	92:59	92:77	5	p_header->pBuffer
+water	92:59	0:0	6	p_header
+op	92:67	0:0	6	->
+water	92:69	0:0	6	pBuffer
+water	92:78	0:0	4	;
+call	94:8	94:54	4	OMX_FillThisBuffer
+arg	94:27	94:44	5	p_sys->omx_handle
+water	94:27	0:0	6	p_sys
+op	94:32	0:0	6	->
+water	94:34	0:0	6	omx_handle
+arg	94:46	94:54	5	p_header
+water	94:46	0:0	6	p_header
+water	94:55	0:0	4	;
+water	95:4	0:0	4	}
+label	96:0	96:10	2	more_input :
+call	98:4	98:58	2	OMX_FIFO_GET_TIMEOUT
+arg	98:25	98:40	3	&p_sys->in.fifo
+op	98:25	0:0	4	&
+water	98:26	0:0	4	p_sys
+op	98:31	0:0	4	->
+water	98:33	0:0	4	in
+op	98:35	0:0	4	.
+water	98:36	0:0	4	fifo
+arg	98:42	98:50	3	p_header
+water	98:42	0:0	4	p_header
+arg	98:52	98:58	3	200000
+water	98:52	0:0	4	200000
+water	98:59	0:0	2	;
+if	99:4	102:4	2	(p_header && p_header -> nFlags & SENTINEL_FLAG)
+cond	99:8	99:39	3	p_header && p_header -> nFlags & SENTINEL_FLAG
+water	99:8	0:0	4	p_header
+op	99:17	0:0	4	&&
+water	99:20	0:0	4	p_header
+op	99:28	0:0	4	->
+water	99:30	0:0	4	nFlags
+op	99:37	0:0	4	&
+water	99:39	0:0	4	SENTINEL_FLAG
+stmts	99:54	102:4	3	
+water	99:54	0:0	4	{
+call	100:8	100:21	4	free
+arg	100:13	100:21	5	p_header
+water	100:13	0:0	6	p_header
+water	100:22	0:0	4	;
+goto	101:8	101:21	4	reconfig
+water	101:13	0:0	5	reconfig
+water	102:4	0:0	4	}
+if	103:4	155:4	2	(p_header)
+cond	103:7	103:7	3	p_header
+water	103:7	0:0	4	p_header
+stmts	104:4	155:4	3	
+water	104:4	0:0	4	{
+decl	105:8	105:32	4	bool	decode_more
+op	105:25	0:0	4	=
+water	105:27	0:0	4	false
+water	106:8	0:0	4	p_header
+op	106:16	0:0	4	->
+water	106:18	0:0	4	nFilledLen
+op	106:29	0:0	4	=
+water	106:31	0:0	4	p_block
+op	106:38	0:0	4	->
+water	106:40	0:0	4	i_buffer
+op	106:49	0:0	4	-
+water	106:51	0:0	4	i_input_used
+water	106:63	0:0	4	;
+water	107:8	0:0	4	p_header
+op	107:16	0:0	4	->
+water	107:18	0:0	4	nOffset
+op	107:26	0:0	4	=
+water	107:28	0:0	4	0
+water	107:29	0:0	4	;
+water	108:8	0:0	4	p_header
+op	108:16	0:0	4	->
+water	108:18	0:0	4	nFlags
+op	108:25	0:0	4	=
+water	108:27	0:0	4	OMX_BUFFERFLAG_ENDOFFRAME
+water	108:52	0:0	4	;
+if	109:8	110:61	4	(p_sys -> b_use_pts && p_block -> i_pts)
+cond	109:12	109:41	5	p_sys -> b_use_pts && p_block -> i_pts
+water	109:12	0:0	6	p_sys
+op	109:17	0:0	6	->
+water	109:19	0:0	6	b_use_pts
+op	109:29	0:0	6	&&
+water	109:32	0:0	6	p_block
+op	109:39	0:0	6	->
+water	109:41	0:0	6	i_pts
+stmts	110:12	110:61	5	
+water	110:12	0:0	6	p_header
+op	110:20	0:0	6	->
+water	110:22	0:0	6	nTimeStamp
+op	110:33	0:0	6	=
+call	110:35	110:60	6	ToOmxTicks
+arg	110:46	110:60	7	p_block->i_pts
+water	110:46	0:0	8	p_block
+op	110:53	0:0	8	->
+water	110:55	0:0	8	i_pts
+water	110:61	0:0	6	;
+else	111:8	112:61	4
+stmts	112:12	112:61	5	
+water	112:12	0:0	6	p_header
+op	112:20	0:0	6	->
+water	112:22	0:0	6	nTimeStamp
+op	112:33	0:0	6	=
+call	112:35	112:60	6	ToOmxTicks
+arg	112:46	112:60	7	p_block->i_dts
+water	112:46	0:0	8	p_block
+op	112:53	0:0	8	->
+water	112:55	0:0	8	i_dts
+water	112:61	0:0	6	;
+if	115:8	121:8	4	(p_sys -> in . b_direct)
+cond	115:11	115:21	5	p_sys -> in . b_direct
+water	115:11	0:0	6	p_sys
+op	115:16	0:0	6	->
+water	115:18	0:0	6	in
+op	115:20	0:0	6	.
+water	115:21	0:0	6	b_direct
+stmts	116:8	121:8	5	
+water	116:8	0:0	6	{
+water	117:12	0:0	6	p_header
+op	117:20	0:0	6	->
+water	117:22	0:0	6	pOutputPortPrivate
+op	117:41	0:0	6	=
+water	117:43	0:0	6	p_header
+op	117:51	0:0	6	->
+water	117:53	0:0	6	pBuffer
+water	117:60	0:0	6	;
+water	118:12	0:0	6	p_header
+op	118:20	0:0	6	->
+water	118:22	0:0	6	pBuffer
+op	118:30	0:0	6	=
+water	118:32	0:0	6	p_block
+op	118:39	0:0	6	->
+water	118:41	0:0	6	p_buffer
+water	118:49	0:0	6	;
+water	119:12	0:0	6	p_header
+op	119:20	0:0	6	->
+water	119:22	0:0	6	pAppPrivate
+op	119:34	0:0	6	=
+water	119:36	0:0	6	p_block
+water	119:43	0:0	6	;
+water	120:12	0:0	6	i_input_used
+op	120:25	0:0	6	=
+water	120:27	0:0	6	p_header
+op	120:35	0:0	6	->
+water	120:37	0:0	6	nFilledLen
+water	120:47	0:0	6	;
+water	121:8	0:0	6	}
+else	122:8	139:8	4
+stmts	123:8	139:8	5	
+water	123:8	0:0	6	{
+if	124:12	127:12	6	(p_header -> nFilledLen > p_header -> nAllocLen)
+cond	124:15	124:48	7	p_header -> nFilledLen > p_header -> nAllocLen
+water	124:15	0:0	8	p_header
+op	124:23	0:0	8	->
+water	124:25	0:0	8	nFilledLen
+op	124:36	0:0	8	>
+water	124:38	0:0	8	p_header
+op	124:46	0:0	8	->
+water	124:48	0:0	8	nAllocLen
+stmts	125:12	127:12	7	
+water	125:12	0:0	8	{
+water	126:16	0:0	8	p_header
+op	126:24	0:0	8	->
+water	126:26	0:0	8	nFilledLen
+op	126:37	0:0	8	=
+water	126:39	0:0	8	p_header
+op	126:47	0:0	8	->
+water	126:49	0:0	8	nAllocLen
+water	126:58	0:0	8	;
+water	127:12	0:0	8	}
+call	128:12	128:92	6	memcpy
+arg	128:19	128:36	7	p_header->pBuffer
+water	128:19	0:0	8	p_header
+op	128:27	0:0	8	->
+water	128:29	0:0	8	pBuffer
+arg	128:38	128:70	7	p_block->p_buffer+i_input_used
+water	128:38	0:0	8	p_block
+op	128:45	0:0	8	->
+water	128:47	0:0	8	p_buffer
+op	128:56	0:0	8	+
+water	128:58	0:0	8	i_input_used
+arg	128:72	128:92	7	p_header->nFilledLen
+water	128:72	0:0	8	p_header
+op	128:80	0:0	8	->
+water	128:82	0:0	8	nFilledLen
+water	128:93	0:0	6	;
+water	129:12	0:0	6	i_input_used
+op	129:25	0:0	6	+=
+water	129:28	0:0	6	p_header
+op	129:36	0:0	6	->
+water	129:38	0:0	6	nFilledLen
+water	129:48	0:0	6	;
+if	130:12	133:12	6	(i_input_used == p_block -> i_buffer)
+cond	130:16	130:41	7	i_input_used == p_block -> i_buffer
+water	130:16	0:0	8	i_input_used
+op	130:29	0:0	8	==
+water	130:32	0:0	8	p_block
+op	130:39	0:0	8	->
+water	130:41	0:0	8	i_buffer
+stmts	131:12	133:12	7	
+water	131:12	0:0	8	{
+call	132:16	132:37	8	block_Release
+arg	132:30	132:37	9	p_block
+water	132:30	0:0	10	p_block
+water	132:38	0:0	8	;
+water	133:12	0:0	8	}
+else	134:12	138:12	6
+stmts	135:12	138:12	7	
+water	135:12	0:0	8	{
+water	136:16	0:0	8	decode_more
+op	136:28	0:0	8	=
+water	136:30	0:0	8	true
+water	136:34	0:0	8	;
+water	137:16	0:0	8	p_header
+op	137:24	0:0	8	->
+water	137:26	0:0	8	nFlags
+op	137:33	0:0	8	&=
+water	137:36	0:0	8	~OMX_BUFFERFLAG_ENDOFFRAME
+water	137:62	0:0	8	;
+water	138:12	0:0	8	}
+water	139:8	0:0	6	}
+call	143:8	144:73	4	convert_h264_to_annexb
+arg	143:32	143:49	5	p_header->pBuffer
+water	143:32	0:0	6	p_header
+op	143:40	0:0	6	->
+water	143:42	0:0	6	pBuffer
+arg	143:51	143:71	5	p_header->nFilledLen
+water	143:51	0:0	6	p_header
+op	143:59	0:0	6	->
+water	143:61	0:0	6	nFilledLen
+arg	144:32	144:56	5	p_sys->i_nal_size_length
+water	144:32	0:0	6	p_sys
+op	144:37	0:0	6	->
+water	144:39	0:0	6	i_nal_size_length
+arg	144:58	144:73	5	&convert_state
+op	144:58	0:0	6	&
+water	144:59	0:0	6	convert_state
+water	144:74	0:0	4	;
+call	146:8	147:79	4	msg_Dbg
+arg	146:17	146:22	5	p_dec
+water	146:17	0:0	6	p_dec
+arg	146:24	146:61	5	"EmptyThisBuffer %p, %p, %i, %"PRId64
+water	146:24	0:0	6	"EmptyThisBuffer %p, %p, %i, %"
+water	146:55	0:0	6	PRId64
+arg	146:63	146:71	5	p_header
+water	146:63	0:0	6	p_header
+arg	146:73	146:90	5	p_header->pBuffer
+water	146:73	0:0	6	p_header
+op	146:81	0:0	6	->
+water	146:83	0:0	6	pBuffer
+arg	147:17	147:42	5	(int)p_header->nFilledLen
+water	147:17	0:0	6	(
+water	147:18	0:0	6	int
+water	147:21	0:0	6	)
+water	147:22	0:0	6	p_header
+op	147:30	0:0	6	->
+water	147:32	0:0	6	nFilledLen
+arg	147:44	147:79	5	FromOmxTicks(p_header->nTimeStamp)
+call	147:44	147:77	6	FromOmxTicks
+arg	147:57	147:77	7	p_header->nTimeStamp
+water	147:57	0:0	8	p_header
+op	147:65	0:0	8	->
+water	147:67	0:0	8	nTimeStamp
+water	147:80	0:0	4	;
+call	149:8	149:55	4	OMX_EmptyThisBuffer
+arg	149:28	149:45	5	p_sys->omx_handle
+water	149:28	0:0	6	p_sys
+op	149:33	0:0	6	->
+water	149:35	0:0	6	omx_handle
+arg	149:47	149:55	5	p_header
+water	149:47	0:0	6	p_header
+water	149:56	0:0	4	;
+water	150:8	0:0	4	p_sys
+op	150:13	0:0	4	->
+water	150:15	0:0	4	in
+op	150:17	0:0	4	.
+water	150:18	0:0	4	b_flushed
+op	150:28	0:0	4	=
+water	150:30	0:0	4	false
+water	150:35	0:0	4	;
+if	151:8	152:27	4	(decode_more)
+cond	151:12	151:12	5	decode_more
+water	151:12	0:0	6	decode_more
+stmts	152:12	152:27	5	
+goto	152:12	152:27	6	more_input
+water	152:17	0:0	7	more_input
+else	153:8	154:28	4
+stmts	154:12	154:28	5	
+op	154:12	0:0	6	*
+water	154:13	0:0	6	pp_block
+op	154:22	0:0	6	=
+water	154:24	0:0	6	NULL
+water	154:28	0:0	6	;
+water	155:4	0:0	4	}
+label	156:0	156:8	2	reconfig :
+for	158:4	173:4	2	(i = 0 ;i < p_sys -> ports;i ++)
+forinit	158:8	158:13	3	i = 0 ;
+water	158:8	0:0	4	i
+op	158:10	0:0	4	=
+water	158:12	0:0	4	0
+water	158:13	0:0	4	;
+cond	158:15	158:26	3	i < p_sys -> ports
+water	158:15	0:0	4	i
+op	158:17	0:0	4	<
+water	158:19	0:0	4	p_sys
+op	158:24	0:0	4	->
+water	158:26	0:0	4	ports
+forexpr	158:33	158:34	3	i ++
+water	158:33	0:0	4	i
+op	158:34	0:0	4	++
+stmts	159:4	173:4	3	
+water	159:4	0:0	4	{
+decl	160:8	160:44	4	OmxPort	*p_port
+op	160:24	0:0	4	=
+op	160:26	0:0	4	&
+water	160:27	0:0	4	p_sys
+op	160:32	0:0	4	->
+water	160:34	0:0	4	p_ports
+op	160:41	0:0	4	[
+water	160:42	0:0	4	i
+op	160:43	0:0	4	]
+if	161:8	166:8	4	(p_port -> b_reconfigure)
+cond	161:11	161:19	5	p_port -> b_reconfigure
+water	161:11	0:0	6	p_port
+op	161:17	0:0	6	->
+water	161:19	0:0	6	b_reconfigure
+stmts	162:8	166:8	5	
+water	162:8	0:0	6	{
+water	163:12	0:0	6	omx_error
+op	163:22	0:0	6	=
+call	163:24	163:53	6	PortReconfigure
+arg	163:40	163:45	7	p_dec
+water	163:40	0:0	8	p_dec
+arg	163:47	163:53	7	p_port
+water	163:47	0:0	8	p_port
+water	163:54	0:0	6	;
+water	164:12	0:0	6	p_port
+op	164:18	0:0	6	->
+water	164:20	0:0	6	b_reconfigure
+op	164:34	0:0	6	=
+water	164:36	0:0	6	0
+water	164:37	0:0	6	;
+call	165:12	165:59	6	CHECK_ERROR
+arg	165:24	165:33	7	omx_error
+water	165:24	0:0	8	omx_error
+arg	165:35	165:59	7	"PortReconfigure failed"
+water	165:35	0:0	8	"PortReconfigure failed"
+water	165:60	0:0	6	;
+water	166:8	0:0	6	}
+if	167:8	172:8	4	(p_port -> b_update_def)
+cond	167:11	167:19	5	p_port -> b_update_def
+water	167:11	0:0	6	p_port
+op	167:17	0:0	6	->
+water	167:19	0:0	6	b_update_def
+stmts	168:8	172:8	5	
+water	168:8	0:0	6	{
+water	169:12	0:0	6	omx_error
+op	169:22	0:0	6	=
+call	169:24	169:70	6	GetPortDefinition
+arg	169:42	169:47	7	p_dec
+water	169:42	0:0	8	p_dec
+arg	169:49	169:55	7	p_port
+water	169:49	0:0	8	p_port
+arg	169:57	169:70	7	p_port->p_fmt
+water	169:57	0:0	8	p_port
+op	169:63	0:0	8	->
+water	169:65	0:0	8	p_fmt
+water	169:71	0:0	6	;
+water	170:12	0:0	6	p_port
+op	170:18	0:0	6	->
+water	170:20	0:0	6	b_update_def
+op	170:33	0:0	6	=
+water	170:35	0:0	6	0
+water	170:36	0:0	6	;
+call	171:12	171:61	6	CHECK_ERROR
+arg	171:24	171:33	7	omx_error
+water	171:24	0:0	8	omx_error
+arg	171:35	171:61	7	"GetPortDefinition failed"
+water	171:35	0:0	8	"GetPortDefinition failed"
+water	171:62	0:0	6	;
+water	172:8	0:0	6	}
+water	173:4	0:0	4	}
+return	174:4	174:16	2	p_pic
+water	174:11	0:0	3	p_pic
+label	175:0	175:5	2	error :
+water	176:4	0:0	2	p_sys
+op	176:9	0:0	2	->
+water	176:11	0:0	2	b_error
+op	176:19	0:0	2	=
+water	176:21	0:0	2	true
+water	176:25	0:0	2	;
+return	177:4	177:15	2	NULL
+water	177:11	0:0	3	NULL

@@ -1,0 +1,126 @@
+func	1:0	31:0	0	static int	cpImage
+params	2:7	0:0	1	
+param	2:8	2:16	2	TIFF *	in
+param	2:18	2:27	2	TIFF *	out
+param	2:29	2:41	2	readFunc	fin
+param	2:43	2:57	2	writeFunc	fout
+param	3:1	3:19	2	uint32	imagelength
+param	3:21	3:38	2	uint32	imagewidth
+param	3:40	3:53	2	tsample_t	spp
+stmnts	0:0	30:14	1	
+decl	5:1	5:15	2	int	status
+op	5:12	0:0	2	=
+water	5:14	0:0	2	0
+decl	6:1	6:19	2	tdata_t	buf
+op	6:13	0:0	2	=
+water	6:15	0:0	2	NULL
+decl	7:1	7:50	2	tsize_t	scanlinesize
+op	7:22	0:0	2	=
+call	7:24	7:49	3	TIFFRasterScanlineSize
+arg	7:47	7:49	4	in
+water	7:47	0:0	5	in
+decl	8:1	8:52	2	tsize_t	bytes
+op	8:15	0:0	2	=
+water	8:17	0:0	2	scanlinesize
+op	8:30	0:0	2	*
+water	8:32	0:0	2	(
+water	8:33	0:0	2	tsize_t
+water	8:40	0:0	2	)
+water	8:41	0:0	2	imagelength
+if	12:1	27:1	2	(scanlinesize && imagelength && bytes / ( tsize_t ) imagelength == scanlinesize)
+cond	12:5	14:40	3	scanlinesize && imagelength && bytes / ( tsize_t ) imagelength == scanlinesize
+water	12:5	0:0	4	scanlinesize
+op	13:5	0:0	4	&&
+water	13:8	0:0	4	imagelength
+op	14:5	0:0	4	&&
+water	14:8	0:0	4	bytes
+op	14:14	0:0	4	/
+water	14:16	0:0	4	(
+water	14:17	0:0	4	tsize_t
+water	14:24	0:0	4	)
+water	14:25	0:0	4	imagelength
+op	14:37	0:0	4	==
+water	14:40	0:0	4	scanlinesize
+stmts	14:54	27:1	3	
+water	14:54	0:0	4	{
+water	15:2	0:0	4	buf
+op	15:6	0:0	4	=
+call	15:8	15:25	4	_TIFFmalloc
+arg	15:20	15:25	5	bytes
+water	15:20	0:0	6	bytes
+water	15:26	0:0	4	;
+if	16:2	23:2	4	(buf)
+cond	16:6	16:6	5	buf
+water	16:6	0:0	6	buf
+stmts	16:11	23:2	5	
+water	16:11	0:0	6	{
+if	17:3	21:3	6	(( * fin ) (in ,( uint8 * ) buf ,imagelength ,imagewidth ,spp ))
+cond	17:7	18:22	7	( * fin ) (in ,( uint8 * ) buf ,imagelength ,imagewidth ,spp )
+call	17:7	18:22	8	(*fin)
+arg	17:14	17:16	9	in
+water	17:14	0:0	10	in
+arg	17:18	17:29	9	(uint8*)buf
+water	17:18	0:0	10	(
+water	17:19	0:0	10	uint8
+op	17:24	0:0	10	*
+water	17:25	0:0	10	)
+water	17:26	0:0	10	buf
+arg	17:31	17:42	9	imagelength
+water	17:31	0:0	10	imagelength
+arg	18:7	18:17	9	imagewidth
+water	18:7	0:0	10	imagewidth
+arg	18:19	18:22	9	spp
+water	18:19	0:0	10	spp
+stmts	18:25	21:3	7	
+water	18:25	0:0	8	{
+water	19:4	0:0	8	status
+op	19:11	0:0	8	=
+call	19:13	20:36	8	(*fout)
+arg	19:21	19:24	9	out
+water	19:21	0:0	10	out
+arg	19:26	19:37	9	(uint8*)buf
+water	19:26	0:0	10	(
+water	19:27	0:0	10	uint8
+op	19:32	0:0	10	*
+water	19:33	0:0	10	)
+water	19:34	0:0	10	buf
+arg	20:8	20:19	9	imagelength
+water	20:8	0:0	10	imagelength
+arg	20:21	20:31	9	imagewidth
+water	20:21	0:0	10	imagewidth
+arg	20:33	20:36	9	spp
+water	20:33	0:0	10	spp
+water	20:37	0:0	8	;
+water	21:3	0:0	8	}
+call	22:3	22:16	6	_TIFFfree
+arg	22:13	22:16	7	buf
+water	22:13	0:0	8	buf
+water	22:17	0:0	6	;
+water	23:2	0:0	6	}
+else	23:4	26:2	4
+stmts	23:9	26:2	5	
+water	23:9	0:0	6	{
+call	24:3	25:53	6	TIFFError
+arg	24:13	24:29	7	TIFFFileName(in)
+call	24:13	24:28	8	TIFFFileName
+arg	24:26	24:28	9	in
+water	24:26	0:0	10	in
+arg	25:7	25:53	7	"Error, can't allocate space for image buffer"
+water	25:7	0:0	8	"Error, can't allocate space for image buffer"
+water	25:54	0:0	6	;
+water	26:2	0:0	6	}
+water	27:1	0:0	4	}
+else	27:3	29:1	2
+stmts	27:8	29:1	3	
+water	27:8	0:0	4	{
+call	28:2	28:64	4	TIFFError
+arg	28:12	28:28	5	TIFFFileName(in)
+call	28:12	28:27	6	TIFFFileName
+arg	28:25	28:27	7	in
+water	28:25	0:0	8	in
+arg	28:30	28:64	5	"Error, no space for image buffer"
+water	28:30	0:0	6	"Error, no space for image buffer"
+water	28:65	0:0	4	;
+water	29:1	0:0	4	}
+return	30:1	30:14	2	status
+water	30:8	0:0	3	status

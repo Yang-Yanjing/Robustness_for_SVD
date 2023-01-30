@@ -1,0 +1,1325 @@
+func	2:0	283:0	0	static int	Demux
+params	2:16	0:0	1	
+param	2:18	2:35	2	demux_t *	p_demux
+stmnts	0:0	282:12	1	
+decl	4:4	4:39	2	demux_sys_t	*p_sys
+op	4:23	0:0	2	=
+water	4:25	0:0	2	p_demux
+op	4:32	0:0	2	->
+water	4:34	0:0	2	p_sys
+decl	5:4	5:36	2	uint8_t	buffer[DVD_VIDEO_LB_LEN]
+decl	6:4	6:28	2	uint8_t	*packet
+op	6:20	0:0	2	=
+water	6:22	0:0	2	buffer
+decl	7:4	7:15	2	int	i_event
+decl	8:4	8:13	2	int	i_len
+decl	9:4	9:26	2	dvdnav_status_t	status
+if	10:4	12:54	2	(p_sys -> b_readahead)
+cond	10:8	10:15	3	p_sys -> b_readahead
+water	10:8	0:0	4	p_sys
+op	10:13	0:0	4	->
+water	10:15	0:0	4	b_readahead
+stmts	11:8	12:54	3	
+water	11:8	0:0	4	status
+op	11:15	0:0	4	=
+call	11:17	12:53	4	dvdnav_get_next_cache_block
+arg	11:46	11:59	5	p_sys->dvdnav
+water	11:46	0:0	6	p_sys
+op	11:51	0:0	6	->
+water	11:53	0:0	6	dvdnav
+arg	11:61	11:68	5	&packet
+op	11:61	0:0	6	&
+water	11:62	0:0	6	packet
+arg	11:70	11:78	5	&i_event
+op	11:70	0:0	6	&
+water	11:71	0:0	6	i_event
+arg	12:46	12:53	5	&i_len
+op	12:46	0:0	6	&
+water	12:47	0:0	6	i_len
+water	12:54	0:0	4	;
+else	13:4	15:48	2
+stmts	14:8	15:48	3	
+water	14:8	0:0	4	status
+op	14:15	0:0	4	=
+call	14:17	15:47	4	dvdnav_get_next_block
+arg	14:40	14:53	5	p_sys->dvdnav
+water	14:40	0:0	6	p_sys
+op	14:45	0:0	6	->
+water	14:47	0:0	6	dvdnav
+arg	14:55	14:61	5	packet
+water	14:55	0:0	6	packet
+arg	14:63	14:71	5	&i_event
+op	14:63	0:0	6	&
+water	14:64	0:0	6	i_event
+arg	15:40	15:47	5	&i_len
+op	15:40	0:0	6	&
+water	15:41	0:0	6	i_len
+water	15:48	0:0	4	;
+if	16:4	26:4	2	(status == DVDNAV_STATUS_ERR)
+cond	16:8	16:18	3	status == DVDNAV_STATUS_ERR
+water	16:8	0:0	4	status
+op	16:15	0:0	4	==
+water	16:18	0:0	4	DVDNAV_STATUS_ERR
+stmts	17:4	26:4	3	
+water	17:4	0:0	4	{
+call	18:8	19:56	4	msg_Warn
+arg	18:18	18:25	5	p_demux
+water	18:18	0:0	6	p_demux
+arg	18:27	18:55	5	"cannot get next block (%s)"
+water	18:27	0:0	6	"cannot get next block (%s)"
+arg	19:18	19:56	5	dvdnav_err_to_string(p_sys->dvdnav)
+call	19:18	19:54	6	dvdnav_err_to_string
+arg	19:40	19:54	7	p_sys->dvdnav
+water	19:40	0:0	8	p_sys
+op	19:45	0:0	8	->
+water	19:47	0:0	8	dvdnav
+water	19:57	0:0	4	;
+if	20:8	24:8	4	(p_demux -> info . i_title == 0)
+cond	20:12	20:37	5	p_demux -> info . i_title == 0
+water	20:12	0:0	6	p_demux
+op	20:19	0:0	6	->
+water	20:21	0:0	6	info
+op	20:25	0:0	6	.
+water	20:26	0:0	6	i_title
+op	20:34	0:0	6	==
+water	20:37	0:0	6	0
+stmts	21:8	24:8	5	
+water	21:8	0:0	6	{
+call	22:12	22:55	6	msg_Dbg
+arg	22:21	22:28	7	p_demux
+water	22:21	0:0	8	p_demux
+arg	22:30	22:55	7	"jumping to first title"
+water	22:30	0:0	8	"jumping to first title"
+water	22:56	0:0	6	;
+return	23:12	23:89	6	ControlInternal(p_demux,DEMUX_SET_TITLE,1)==VLC_SUCCESS?1:-1
+call	23:19	23:64	7	ControlInternal
+arg	23:36	23:43	8	p_demux
+water	23:36	0:0	9	p_demux
+arg	23:45	23:60	8	DEMUX_SET_TITLE
+water	23:45	0:0	9	DEMUX_SET_TITLE
+arg	23:62	23:64	8	1
+water	23:62	0:0	9	1
+op	23:66	0:0	7	==
+water	23:69	0:0	7	VLC_SUCCESS
+water	23:81	0:0	7	?
+water	23:83	0:0	7	1
+water	23:85	0:0	7	:
+op	23:87	0:0	7	-
+water	23:88	0:0	7	1
+water	24:8	0:0	6	}
+return	25:8	25:17	4	-1
+op	25:15	0:0	5	-
+water	25:16	0:0	5	1
+water	26:4	0:0	4	}
+switch	27:4	279:4	2	(i_event)
+cond	27:12	27:12	3	i_event
+water	27:12	0:0	4	i_event
+stmts	28:4	279:4	3	
+water	28:4	0:0	4	{
+label	29:4	29:24	4	case DVDNAV_BLOCK_OK :
+call	30:8	30:43	4	vlc_mutex_lock
+arg	30:24	30:43	5	&p_sys->still.lock
+op	30:24	0:0	6	&
+water	30:25	0:0	6	p_sys
+op	30:30	0:0	6	->
+water	30:32	0:0	6	still
+op	30:37	0:0	6	.
+water	30:38	0:0	6	lock
+water	30:44	0:0	4	;
+call	31:8	31:60	4	vlc_timer_schedule
+arg	31:28	31:46	5	p_sys->still.timer
+water	31:28	0:0	6	p_sys
+op	31:33	0:0	6	->
+water	31:35	0:0	6	still
+op	31:40	0:0	6	.
+water	31:41	0:0	6	timer
+arg	31:48	31:53	5	false
+water	31:48	0:0	6	false
+arg	31:55	31:56	5	0
+water	31:55	0:0	6	0
+arg	31:58	31:60	5	0
+water	31:58	0:0	6	0
+water	31:61	0:0	4	;
+water	32:8	0:0	4	p_sys
+op	32:13	0:0	4	->
+water	32:15	0:0	4	still
+op	32:20	0:0	4	.
+water	32:21	0:0	4	b_enabled
+op	32:31	0:0	4	=
+water	32:33	0:0	4	false
+water	32:38	0:0	4	;
+call	33:8	33:45	4	vlc_mutex_unlock
+arg	33:26	33:45	5	&p_sys->still.lock
+op	33:26	0:0	6	&
+water	33:27	0:0	6	p_sys
+op	33:32	0:0	6	->
+water	33:34	0:0	6	still
+op	33:39	0:0	6	.
+water	33:40	0:0	6	lock
+water	33:46	0:0	4	;
+if	34:8	38:8	4	(p_sys -> b_reset_pcr)
+cond	34:12	34:19	5	p_sys -> b_reset_pcr
+water	34:12	0:0	6	p_sys
+op	34:17	0:0	6	->
+water	34:19	0:0	6	b_reset_pcr
+stmts	35:8	38:8	5	
+water	35:8	0:0	6	{
+call	36:12	36:59	6	es_out_Control
+arg	36:28	36:40	7	p_demux->out
+water	36:28	0:0	8	p_demux
+op	36:35	0:0	8	->
+water	36:37	0:0	8	out
+arg	36:42	36:59	7	ES_OUT_RESET_PCR
+water	36:42	0:0	8	ES_OUT_RESET_PCR
+water	36:60	0:0	6	;
+water	37:12	0:0	6	p_sys
+op	37:17	0:0	6	->
+water	37:19	0:0	6	b_reset_pcr
+op	37:31	0:0	6	=
+water	37:33	0:0	6	false
+water	37:38	0:0	6	;
+water	38:8	0:0	6	}
+call	39:8	39:43	4	DemuxBlock
+arg	39:20	39:27	5	p_demux
+water	39:20	0:0	6	p_demux
+arg	39:29	39:35	5	packet
+water	39:29	0:0	6	packet
+arg	39:37	39:43	5	i_len
+water	39:37	0:0	6	i_len
+water	39:44	0:0	4	;
+if	40:8	45:8	4	(p_sys -> i_vobu_index > 0)
+cond	40:12	40:34	5	p_sys -> i_vobu_index > 0
+water	40:12	0:0	6	p_sys
+op	40:17	0:0	6	->
+water	40:19	0:0	6	i_vobu_index
+op	40:32	0:0	6	>
+water	40:34	0:0	6	0
+stmts	41:8	45:8	5	
+water	41:8	0:0	6	{
+if	42:12	43:42	6	(p_sys -> i_vobu_flush == p_sys -> i_vobu_index)
+cond	42:16	42:46	7	p_sys -> i_vobu_flush == p_sys -> i_vobu_index
+water	42:16	0:0	8	p_sys
+op	42:21	0:0	8	->
+water	42:23	0:0	8	i_vobu_flush
+op	42:36	0:0	8	==
+water	42:39	0:0	8	p_sys
+op	42:44	0:0	8	->
+water	42:46	0:0	8	i_vobu_index
+stmts	43:16	43:42	7	
+call	43:16	43:41	8	DemuxForceStill
+arg	43:33	43:41	9	p_demux
+water	43:33	0:0	10	p_demux
+water	43:42	0:0	8	;
+water	44:12	0:0	6	p_sys
+op	44:17	0:0	6	->
+water	44:19	0:0	6	i_vobu_index
+op	44:31	0:0	6	++
+water	44:33	0:0	6	;
+water	45:8	0:0	6	}
+break	46:8	46:13	4	
+label	47:4	47:19	4	case DVDNAV_NOP :
+call	48:8	48:39	4	msg_Dbg
+arg	48:17	48:24	5	p_demux
+water	48:17	0:0	6	p_demux
+arg	48:26	48:39	5	"DVDNAV_NOP"
+water	48:26	0:0	6	"DVDNAV_NOP"
+water	48:40	0:0	4	;
+break	49:8	49:13	4	
+label	50:4	50:27	4	case DVDNAV_STILL_FRAME :
+water	51:4	0:0	4	{
+decl	52:8	52:67	4	dvdnav_still_event_t	*event
+op	52:36	0:0	4	=
+water	52:38	0:0	4	(
+water	52:39	0:0	4	dvdnav_still_event_t
+op	52:59	0:0	4	*
+water	52:60	0:0	4	)
+water	52:61	0:0	4	packet
+decl	53:8	53:33	4	bool	b_still_init
+op	53:26	0:0	4	=
+water	53:28	0:0	4	false
+call	54:8	54:43	4	vlc_mutex_lock
+arg	54:24	54:43	5	&p_sys->still.lock
+op	54:24	0:0	6	&
+water	54:25	0:0	6	p_sys
+op	54:30	0:0	6	->
+water	54:32	0:0	6	still
+op	54:37	0:0	6	.
+water	54:38	0:0	6	lock
+water	54:44	0:0	4	;
+if	55:8	66:8	4	(! p_sys -> still . b_enabled)
+cond	55:12	55:26	5	! p_sys -> still . b_enabled
+op	55:12	0:0	6	!
+water	55:13	0:0	6	p_sys
+op	55:18	0:0	6	->
+water	55:20	0:0	6	still
+op	55:25	0:0	6	.
+water	55:26	0:0	6	b_enabled
+stmts	56:8	66:8	5	
+water	56:8	0:0	6	{
+call	57:12	57:51	6	msg_Dbg
+arg	57:21	57:28	7	p_demux
+water	57:21	0:0	8	p_demux
+arg	57:30	57:51	7	"DVDNAV_STILL_FRAME"
+water	57:30	0:0	8	"DVDNAV_STILL_FRAME"
+water	57:52	0:0	6	;
+call	58:12	58:66	6	msg_Dbg
+arg	58:21	58:28	7	p_demux
+water	58:21	0:0	8	p_demux
+arg	58:30	58:50	7	"     - length=0x%x"
+water	58:30	0:0	8	"     - length=0x%x"
+arg	58:52	58:66	7	event->length
+water	58:52	0:0	8	event
+op	58:57	0:0	8	->
+water	58:59	0:0	8	length
+water	58:67	0:0	6	;
+water	59:12	0:0	6	p_sys
+op	59:17	0:0	6	->
+water	59:19	0:0	6	still
+op	59:24	0:0	6	.
+water	59:25	0:0	6	b_enabled
+op	59:35	0:0	6	=
+water	59:37	0:0	6	true
+water	59:41	0:0	6	;
+if	60:12	64:12	6	(event -> length != 0 xff && p_sys -> still . b_created)
+cond	60:16	60:54	7	event -> length != 0 xff && p_sys -> still . b_created
+water	60:16	0:0	8	event
+op	60:21	0:0	8	->
+water	60:23	0:0	8	length
+op	60:30	0:0	8	!=
+water	60:33	0:0	8	0
+water	60:34	0:0	8	xff
+op	60:38	0:0	8	&&
+water	60:41	0:0	8	p_sys
+op	60:46	0:0	8	->
+water	60:48	0:0	8	still
+op	60:53	0:0	8	.
+water	60:54	0:0	8	b_created
+stmts	61:12	64:12	7	
+water	61:12	0:0	8	{
+decl	62:16	62:58	8	mtime_t	delay
+op	62:30	0:0	8	=
+water	62:32	0:0	8	event
+op	62:37	0:0	8	->
+water	62:39	0:0	8	length
+op	62:46	0:0	8	*
+water	62:48	0:0	8	CLOCK_FREQ
+call	63:16	63:72	8	vlc_timer_schedule
+arg	63:36	63:54	9	p_sys->still.timer
+water	63:36	0:0	10	p_sys
+op	63:41	0:0	10	->
+water	63:43	0:0	10	still
+op	63:48	0:0	10	.
+water	63:49	0:0	10	timer
+arg	63:56	63:61	9	false
+water	63:56	0:0	10	false
+arg	63:63	63:68	9	delay
+water	63:63	0:0	10	delay
+arg	63:70	63:72	9	0
+water	63:70	0:0	10	0
+water	63:73	0:0	8	;
+water	64:12	0:0	8	}
+water	65:12	0:0	6	b_still_init
+op	65:25	0:0	6	=
+water	65:27	0:0	6	true
+water	65:31	0:0	6	;
+water	66:8	0:0	6	}
+call	67:8	67:45	4	vlc_mutex_unlock
+arg	67:26	67:45	5	&p_sys->still.lock
+op	67:26	0:0	6	&
+water	67:27	0:0	6	p_sys
+op	67:32	0:0	6	->
+water	67:34	0:0	6	still
+op	67:39	0:0	6	.
+water	67:40	0:0	6	lock
+water	67:46	0:0	4	;
+if	68:8	72:8	4	(b_still_init)
+cond	68:12	68:12	5	b_still_init
+water	68:12	0:0	6	b_still_init
+stmts	69:8	72:8	5	
+water	69:8	0:0	6	{
+call	70:12	70:37	6	DemuxForceStill
+arg	70:29	70:37	7	p_demux
+water	70:29	0:0	8	p_demux
+water	70:38	0:0	6	;
+water	71:12	0:0	6	p_sys
+op	71:17	0:0	6	->
+water	71:19	0:0	6	b_reset_pcr
+op	71:31	0:0	6	=
+water	71:33	0:0	6	true
+water	71:37	0:0	6	;
+water	72:8	0:0	6	}
+call	73:8	73:22	4	msleep
+arg	73:16	73:22	5	40000
+water	73:16	0:0	6	40000
+water	73:23	0:0	4	;
+break	74:8	74:13	4	
+water	75:4	0:0	4	}
+label	76:4	76:31	4	case DVDNAV_SPU_CLUT_CHANGE :
+water	77:4	0:0	4	{
+decl	78:8	78:13	4	int	i
+call	79:8	79:51	4	msg_Dbg
+arg	79:17	79:24	5	p_demux
+water	79:17	0:0	6	p_demux
+arg	79:26	79:51	5	"DVDNAV_SPU_CLUT_CHANGE"
+water	79:26	0:0	6	"DVDNAV_SPU_CLUT_CHANGE"
+water	79:52	0:0	4	;
+call	81:8	81:61	4	memcpy
+arg	81:16	81:27	5	p_sys->clut
+water	81:16	0:0	6	p_sys
+op	81:21	0:0	6	->
+water	81:23	0:0	6	clut
+arg	81:29	81:35	5	packet
+water	81:29	0:0	6	packet
+arg	81:37	81:61	5	16*sizeof(uint32_t)
+water	81:37	0:0	6	16
+op	81:40	0:0	6	*
+op	81:42	0:0	6	sizeof
+water	81:48	0:0	6	(
+water	81:50	0:0	6	uint32_t
+water	81:59	0:0	6	)
+water	81:62	0:0	4	;
+for	83:8	87:8	4	(i = 0 ;i < 0 x1f;i ++)
+forinit	83:13	83:18	5	i = 0 ;
+water	83:13	0:0	6	i
+op	83:15	0:0	6	=
+water	83:17	0:0	6	0
+water	83:18	0:0	6	;
+cond	83:20	83:25	5	i < 0 x1f
+water	83:20	0:0	6	i
+op	83:22	0:0	6	<
+water	83:24	0:0	6	0
+water	83:25	0:0	6	x1f
+forexpr	83:30	83:31	5	i ++
+water	83:30	0:0	6	i
+op	83:31	0:0	6	++
+stmts	84:8	87:8	5	
+water	84:8	0:0	6	{
+if	85:12	86:44	6	(dvdnav_spu_stream_to_lang (p_sys -> dvdnav ,i ) != 0 xffff)
+cond	85:16	85:66	7	dvdnav_spu_stream_to_lang (p_sys -> dvdnav ,i ) != 0 xffff
+call	85:16	85:60	8	dvdnav_spu_stream_to_lang
+arg	85:43	85:56	9	p_sys->dvdnav
+water	85:43	0:0	10	p_sys
+op	85:48	0:0	10	->
+water	85:50	0:0	10	dvdnav
+arg	85:58	85:60	9	i
+water	85:58	0:0	10	i
+op	85:62	0:0	8	!=
+water	85:65	0:0	8	0
+water	85:66	0:0	8	xffff
+stmts	86:16	86:44	7	
+call	86:16	86:43	8	ESNew
+arg	86:23	86:30	9	p_demux
+water	86:23	0:0	10	p_demux
+arg	86:32	86:43	9	0xbd20+i
+water	86:32	0:0	10	0
+water	86:33	0:0	10	xbd20
+op	86:39	0:0	10	+
+water	86:41	0:0	10	i
+water	86:44	0:0	8	;
+water	87:8	0:0	6	}
+break	89:8	89:13	4	
+water	90:4	0:0	4	}
+label	91:4	91:33	4	case DVDNAV_SPU_STREAM_CHANGE :
+water	92:4	0:0	4	{
+decl	93:8	94:53	4	dvdnav_spu_stream_change_event_t	*event
+op	93:48	0:0	4	=
+water	94:12	0:0	4	(
+water	94:13	0:0	4	dvdnav_spu_stream_change_event_t
+op	94:45	0:0	4	*
+water	94:46	0:0	4	)
+water	94:47	0:0	4	packet
+decl	95:8	95:13	4	int	i
+call	96:8	96:53	4	msg_Dbg
+arg	96:17	96:24	5	p_demux
+water	96:17	0:0	6	p_demux
+arg	96:26	96:53	5	"DVDNAV_SPU_STREAM_CHANGE"
+water	96:26	0:0	6	"DVDNAV_SPU_STREAM_CHANGE"
+water	96:54	0:0	4	;
+call	97:8	98:38	4	msg_Dbg
+arg	97:17	97:24	5	p_demux
+water	97:17	0:0	6	p_demux
+arg	97:26	97:51	5	"     - physical_wide=%d"
+water	97:26	0:0	6	"     - physical_wide=%d"
+arg	98:17	98:38	5	event->physical_wide
+water	98:17	0:0	6	event
+op	98:22	0:0	6	->
+water	98:24	0:0	6	physical_wide
+water	98:39	0:0	4	;
+call	99:8	100:42	4	msg_Dbg
+arg	99:17	99:24	5	p_demux
+water	99:17	0:0	6	p_demux
+arg	99:26	99:56	5	"     - physical_letterbox=%d"
+water	99:26	0:0	6	"     - physical_letterbox=%d"
+arg	100:17	100:42	5	event->physical_letterbox
+water	100:17	0:0	6	event
+op	100:22	0:0	6	->
+water	100:24	0:0	6	physical_letterbox
+water	100:43	0:0	4	;
+call	101:8	102:42	4	msg_Dbg
+arg	101:17	101:24	5	p_demux
+water	101:17	0:0	6	p_demux
+arg	101:26	101:55	5	"     - physical_pan_scan=%d"
+water	101:26	0:0	6	"     - physical_pan_scan=%d"
+arg	102:17	102:42	5	event->physical_pan_scan
+water	102:17	0:0	6	event
+op	102:22	0:0	6	->
+water	102:24	0:0	6	physical_pan_scan
+water	102:43	0:0	4	;
+call	103:8	103:34	4	ESSubtitleUpdate
+arg	103:26	103:34	5	p_demux
+water	103:26	0:0	6	p_demux
+water	103:35	0:0	4	;
+water	104:8	0:0	4	p_sys
+op	104:13	0:0	4	->
+water	104:15	0:0	4	b_spu_change
+op	104:28	0:0	4	=
+water	104:30	0:0	4	true
+water	104:34	0:0	4	;
+for	106:8	110:8	4	(i = 0 ;i < 0 x1f;i ++)
+forinit	106:13	106:18	5	i = 0 ;
+water	106:13	0:0	6	i
+op	106:15	0:0	6	=
+water	106:17	0:0	6	0
+water	106:18	0:0	6	;
+cond	106:20	106:25	5	i < 0 x1f
+water	106:20	0:0	6	i
+op	106:22	0:0	6	<
+water	106:24	0:0	6	0
+water	106:25	0:0	6	x1f
+forexpr	106:30	106:31	5	i ++
+water	106:30	0:0	6	i
+op	106:31	0:0	6	++
+stmts	107:8	110:8	5	
+water	107:8	0:0	6	{
+if	108:12	109:44	6	(dvdnav_spu_stream_to_lang (p_sys -> dvdnav ,i ) != 0 xffff)
+cond	108:16	108:66	7	dvdnav_spu_stream_to_lang (p_sys -> dvdnav ,i ) != 0 xffff
+call	108:16	108:60	8	dvdnav_spu_stream_to_lang
+arg	108:43	108:56	9	p_sys->dvdnav
+water	108:43	0:0	10	p_sys
+op	108:48	0:0	10	->
+water	108:50	0:0	10	dvdnav
+arg	108:58	108:60	9	i
+water	108:58	0:0	10	i
+op	108:62	0:0	8	!=
+water	108:65	0:0	8	0
+water	108:66	0:0	8	xffff
+stmts	109:16	109:44	7	
+call	109:16	109:43	8	ESNew
+arg	109:23	109:30	9	p_demux
+water	109:23	0:0	10	p_demux
+arg	109:32	109:43	9	0xbd20+i
+water	109:32	0:0	10	0
+water	109:33	0:0	10	xbd20
+op	109:39	0:0	10	+
+water	109:41	0:0	10	i
+water	109:44	0:0	8	;
+water	110:8	0:0	6	}
+break	112:8	112:13	4	
+water	113:4	0:0	4	}
+label	114:4	114:35	4	case DVDNAV_AUDIO_STREAM_CHANGE :
+water	115:4	0:0	4	{
+decl	116:8	117:55	4	dvdnav_audio_stream_change_event_t	*event
+op	116:50	0:0	4	=
+water	117:12	0:0	4	(
+water	117:13	0:0	4	dvdnav_audio_stream_change_event_t
+op	117:47	0:0	4	*
+water	117:48	0:0	4	)
+water	117:49	0:0	4	packet
+call	118:8	118:55	4	msg_Dbg
+arg	118:17	118:24	5	p_demux
+water	118:17	0:0	6	p_demux
+arg	118:26	118:55	5	"DVDNAV_AUDIO_STREAM_CHANGE"
+water	118:26	0:0	6	"DVDNAV_AUDIO_STREAM_CHANGE"
+water	118:56	0:0	4	;
+call	119:8	119:64	4	msg_Dbg
+arg	119:17	119:24	5	p_demux
+water	119:17	0:0	6	p_demux
+arg	119:26	119:46	5	"     - physical=%d"
+water	119:26	0:0	6	"     - physical=%d"
+arg	119:48	119:64	5	event->physical
+water	119:48	0:0	6	event
+op	119:53	0:0	6	->
+water	119:55	0:0	6	physical
+water	119:65	0:0	4	;
+break	121:8	121:13	4	
+water	122:4	0:0	4	}
+label	123:4	123:26	4	case DVDNAV_VTS_CHANGE :
+water	124:4	0:0	4	{
+decl	125:8	125:27	4	int32_t	i_title
+op	125:24	0:0	4	=
+water	125:26	0:0	4	0
+decl	126:8	126:27	4	int32_t	i_part
+op	126:24	0:0	4	=
+water	126:26	0:0	4	0
+decl	127:8	127:13	4	int	i
+decl	128:8	128:77	4	dvdnav_vts_change_event_t	*event
+op	128:41	0:0	4	=
+water	128:43	0:0	4	(
+water	128:44	0:0	4	dvdnav_vts_change_event_t
+op	128:69	0:0	4	*
+water	128:70	0:0	4	)
+water	128:71	0:0	4	packet
+call	129:8	129:46	4	msg_Dbg
+arg	129:17	129:24	5	p_demux
+water	129:17	0:0	6	p_demux
+arg	129:26	129:46	5	"DVDNAV_VTS_CHANGE"
+water	129:26	0:0	6	"DVDNAV_VTS_CHANGE"
+water	129:47	0:0	4	;
+call	130:8	130:60	4	msg_Dbg
+arg	130:17	130:24	5	p_demux
+water	130:17	0:0	6	p_demux
+arg	130:26	130:42	5	"     - vtsN=%d"
+water	130:26	0:0	6	"     - vtsN=%d"
+arg	130:44	130:60	5	event->new_vtsN
+water	130:44	0:0	6	event
+op	130:49	0:0	6	->
+water	130:51	0:0	6	new_vtsN
+water	130:61	0:0	4	;
+call	131:8	131:64	4	msg_Dbg
+arg	131:17	131:24	5	p_demux
+water	131:17	0:0	6	p_demux
+arg	131:26	131:44	5	"     - domain=%d"
+water	131:26	0:0	6	"     - domain=%d"
+arg	131:46	131:64	5	event->new_domain
+water	131:46	0:0	6	event
+op	131:51	0:0	6	->
+water	131:53	0:0	6	new_domain
+water	131:65	0:0	4	;
+call	133:8	133:55	4	es_out_Control
+arg	133:24	133:36	5	p_demux->out
+water	133:24	0:0	6	p_demux
+op	133:31	0:0	6	->
+water	133:33	0:0	6	out
+arg	133:38	133:55	5	ES_OUT_RESET_PCR
+water	133:38	0:0	6	ES_OUT_RESET_PCR
+water	133:56	0:0	4	;
+for	134:8	143:8	4	(i = 0 ;i < PS_TK_COUNT;i ++)
+forinit	134:13	134:18	5	i = 0 ;
+water	134:13	0:0	6	i
+op	134:15	0:0	6	=
+water	134:17	0:0	6	0
+water	134:18	0:0	6	;
+cond	134:20	134:24	5	i < PS_TK_COUNT
+water	134:20	0:0	6	i
+op	134:22	0:0	6	<
+water	134:24	0:0	6	PS_TK_COUNT
+forexpr	134:37	134:38	5	i ++
+water	134:37	0:0	6	i
+op	134:38	0:0	6	++
+stmts	135:8	143:8	5	
+water	135:8	0:0	6	{
+decl	136:12	136:42	6	ps_track_t	*tk
+op	136:27	0:0	6	=
+op	136:29	0:0	6	&
+water	136:30	0:0	6	p_sys
+op	136:35	0:0	6	->
+water	136:37	0:0	6	tk
+op	136:39	0:0	6	[
+water	136:40	0:0	6	i
+op	136:41	0:0	6	]
+if	137:12	141:12	6	(tk -> b_seen)
+cond	137:16	137:20	7	tk -> b_seen
+water	137:16	0:0	8	tk
+op	137:18	0:0	8	->
+water	137:20	0:0	8	b_seen
+stmts	138:12	141:12	7	
+water	138:12	0:0	8	{
+call	139:16	139:42	8	es_format_Clean
+arg	139:33	139:42	9	&tk->fmt
+op	139:33	0:0	10	&
+water	139:34	0:0	10	tk
+op	139:36	0:0	10	->
+water	139:38	0:0	10	fmt
+water	139:43	0:0	8	;
+if	140:16	140:63	8	(tk -> es)
+cond	140:20	140:24	9	tk -> es
+water	140:20	0:0	10	tk
+op	140:22	0:0	10	->
+water	140:24	0:0	10	es
+stmts	140:29	140:63	9	
+call	140:29	140:62	10	es_out_Del
+arg	140:41	140:53	11	p_demux->out
+water	140:41	0:0	12	p_demux
+op	140:48	0:0	12	->
+water	140:50	0:0	12	out
+arg	140:55	140:62	11	tk->es
+water	140:55	0:0	12	tk
+op	140:57	0:0	12	->
+water	140:59	0:0	12	es
+water	140:63	0:0	10	;
+water	141:12	0:0	8	}
+water	142:12	0:0	6	tk
+op	142:14	0:0	6	->
+water	142:16	0:0	6	b_seen
+op	142:23	0:0	6	=
+water	142:25	0:0	6	false
+water	142:30	0:0	6	;
+water	143:8	0:0	6	}
+decl	144:8	144:34	4	uint32_t	i_width
+water	144:24	0:0	4	,
+decl	144:8	144:34	4	uint32_t	i_height
+if	145:8	147:34	4	(dvdnav_get_video_resolution (p_sys -> dvdnav ,& i_width ,& i_height ))
+cond	145:12	146:61	5	dvdnav_get_video_resolution (p_sys -> dvdnav ,& i_width ,& i_height )
+call	145:12	146:61	6	dvdnav_get_video_resolution
+arg	145:41	145:54	7	p_sys->dvdnav
+water	145:41	0:0	8	p_sys
+op	145:46	0:0	8	->
+water	145:48	0:0	8	dvdnav
+arg	146:41	146:49	7	&i_width
+op	146:41	0:0	8	&
+water	146:42	0:0	8	i_width
+arg	146:51	146:61	7	&i_height
+op	146:51	0:0	8	&
+water	146:52	0:0	8	i_height
+stmts	147:12	147:34	5	
+water	147:12	0:0	6	i_width
+op	147:20	0:0	6	=
+water	147:22	0:0	6	i_height
+op	147:31	0:0	6	=
+water	147:33	0:0	6	0
+water	147:34	0:0	6	;
+switch	148:8	162:8	4	(dvdnav_get_video_aspect (p_sys -> dvdnav ))
+cond	148:16	148:55	5	dvdnav_get_video_aspect (p_sys -> dvdnav )
+call	148:16	148:55	6	dvdnav_get_video_aspect
+arg	148:41	148:55	7	p_sys->dvdnav
+water	148:41	0:0	8	p_sys
+op	148:46	0:0	8	->
+water	148:48	0:0	8	dvdnav
+stmts	149:8	162:8	5	
+water	149:8	0:0	6	{
+label	150:8	150:14	6	case 0 :
+water	151:12	0:0	6	p_sys
+op	151:17	0:0	6	->
+water	151:19	0:0	6	sar
+op	151:22	0:0	6	.
+water	151:23	0:0	6	i_num
+op	151:29	0:0	6	=
+water	151:31	0:0	6	4
+op	151:33	0:0	6	*
+water	151:35	0:0	6	i_height
+water	151:43	0:0	6	;
+water	152:12	0:0	6	p_sys
+op	152:17	0:0	6	->
+water	152:19	0:0	6	sar
+op	152:22	0:0	6	.
+water	152:23	0:0	6	i_den
+op	152:29	0:0	6	=
+water	152:31	0:0	6	3
+op	152:33	0:0	6	*
+water	152:35	0:0	6	i_width
+water	152:42	0:0	6	;
+break	153:12	153:17	6	
+label	154:8	154:14	6	case 3 :
+water	155:12	0:0	6	p_sys
+op	155:17	0:0	6	->
+water	155:19	0:0	6	sar
+op	155:22	0:0	6	.
+water	155:23	0:0	6	i_num
+op	155:29	0:0	6	=
+water	155:31	0:0	6	16
+op	155:34	0:0	6	*
+water	155:36	0:0	6	i_height
+water	155:44	0:0	6	;
+water	156:12	0:0	6	p_sys
+op	156:17	0:0	6	->
+water	156:19	0:0	6	sar
+op	156:22	0:0	6	.
+water	156:23	0:0	6	i_den
+op	156:29	0:0	6	=
+water	156:32	0:0	6	9
+op	156:34	0:0	6	*
+water	156:36	0:0	6	i_width
+water	156:43	0:0	6	;
+break	157:12	157:17	6	
+label	158:8	158:15	6	default :
+water	159:12	0:0	6	p_sys
+op	159:17	0:0	6	->
+water	159:19	0:0	6	sar
+op	159:22	0:0	6	.
+water	159:23	0:0	6	i_num
+op	159:29	0:0	6	=
+water	159:31	0:0	6	0
+water	159:32	0:0	6	;
+water	160:12	0:0	6	p_sys
+op	160:17	0:0	6	->
+water	160:19	0:0	6	sar
+op	160:22	0:0	6	.
+water	160:23	0:0	6	i_den
+op	160:29	0:0	6	=
+water	160:31	0:0	6	0
+water	160:32	0:0	6	;
+break	161:12	161:17	6	
+water	162:8	0:0	6	}
+if	163:8	172:8	4	(dvdnav_current_title_info (p_sys -> dvdnav ,& i_title ,& i_part ) == DVDNAV_STATUS_OK)
+cond	163:12	164:52	5	dvdnav_current_title_info (p_sys -> dvdnav ,& i_title ,& i_part ) == DVDNAV_STATUS_OK
+call	163:12	164:47	6	dvdnav_current_title_info
+arg	163:39	163:52	7	p_sys->dvdnav
+water	163:39	0:0	8	p_sys
+op	163:44	0:0	8	->
+water	163:46	0:0	8	dvdnav
+arg	163:54	163:62	7	&i_title
+op	163:54	0:0	8	&
+water	163:55	0:0	8	i_title
+arg	164:39	164:47	7	&i_part
+op	164:39	0:0	8	&
+water	164:40	0:0	8	i_part
+op	164:49	0:0	6	==
+water	164:52	0:0	6	DVDNAV_STATUS_OK
+stmts	165:8	172:8	5	
+water	165:8	0:0	6	{
+if	166:12	171:12	6	(i_title >= 0 && i_title < p_sys -> i_title && p_demux -> info . i_title != i_title)
+cond	166:16	167:41	7	i_title >= 0 && i_title < p_sys -> i_title && p_demux -> info . i_title != i_title
+water	166:16	0:0	8	i_title
+op	166:24	0:0	8	>=
+water	166:27	0:0	8	0
+op	166:29	0:0	8	&&
+water	166:32	0:0	8	i_title
+op	166:40	0:0	8	<
+water	166:42	0:0	8	p_sys
+op	166:47	0:0	8	->
+water	166:49	0:0	8	i_title
+op	166:57	0:0	8	&&
+water	167:16	0:0	8	p_demux
+op	167:23	0:0	8	->
+water	167:25	0:0	8	info
+op	167:29	0:0	8	.
+water	167:30	0:0	8	i_title
+op	167:38	0:0	8	!=
+water	167:41	0:0	8	i_title
+stmts	168:12	171:12	7	
+water	168:12	0:0	8	{
+water	169:16	0:0	8	p_demux
+op	169:23	0:0	8	->
+water	169:25	0:0	8	info
+op	169:29	0:0	8	.
+water	169:30	0:0	8	i_update
+op	169:39	0:0	8	|=
+water	169:42	0:0	8	INPUT_UPDATE_TITLE
+water	169:60	0:0	8	;
+water	170:16	0:0	8	p_demux
+op	170:23	0:0	8	->
+water	170:25	0:0	8	info
+op	170:29	0:0	8	.
+water	170:30	0:0	8	i_title
+op	170:38	0:0	8	=
+water	170:40	0:0	8	i_title
+water	170:47	0:0	8	;
+water	171:12	0:0	8	}
+water	172:8	0:0	6	}
+break	173:8	173:13	4	
+water	174:4	0:0	4	}
+label	175:4	175:27	4	case DVDNAV_CELL_CHANGE :
+water	176:4	0:0	4	{
+decl	177:8	177:27	4	int32_t	i_title
+op	177:24	0:0	4	=
+water	177:26	0:0	4	0
+decl	178:8	178:27	4	int32_t	i_part
+op	178:24	0:0	4	=
+water	178:26	0:0	4	0
+decl	179:8	180:47	4	dvdnav_cell_change_event_t	*event
+op	179:42	0:0	4	=
+water	180:12	0:0	4	(
+water	180:13	0:0	4	dvdnav_cell_change_event_t
+op	180:39	0:0	4	*
+water	180:40	0:0	4	)
+water	180:41	0:0	4	packet
+call	181:8	181:47	4	msg_Dbg
+arg	181:17	181:24	5	p_demux
+water	181:17	0:0	6	p_demux
+arg	181:26	181:47	5	"DVDNAV_CELL_CHANGE"
+water	181:26	0:0	6	"DVDNAV_CELL_CHANGE"
+water	181:48	0:0	4	;
+call	182:8	182:58	4	msg_Dbg
+arg	182:17	182:24	5	p_demux
+water	182:17	0:0	6	p_demux
+arg	182:26	182:43	5	"     - cellN=%d"
+water	182:26	0:0	6	"     - cellN=%d"
+arg	182:45	182:58	5	event->cellN
+water	182:45	0:0	6	event
+op	182:50	0:0	6	->
+water	182:52	0:0	6	cellN
+water	182:59	0:0	4	;
+call	183:8	183:54	4	msg_Dbg
+arg	183:17	183:24	5	p_demux
+water	183:17	0:0	6	p_demux
+arg	183:26	183:41	5	"     - pgN=%d"
+water	183:26	0:0	6	"     - pgN=%d"
+arg	183:43	183:54	5	event->pgN
+water	183:43	0:0	6	event
+op	183:48	0:0	6	->
+water	183:50	0:0	6	pgN
+water	183:55	0:0	4	;
+call	184:8	184:75	4	msg_Dbg
+arg	184:17	184:24	5	p_demux
+water	184:17	0:0	6	p_demux
+arg	184:26	184:54	5	"     - cell_length=%"PRId64
+water	184:26	0:0	6	"     - cell_length=%"
+water	184:48	0:0	6	PRId64
+arg	184:56	184:75	5	event->cell_length
+water	184:56	0:0	6	event
+op	184:61	0:0	6	->
+water	184:63	0:0	6	cell_length
+water	184:76	0:0	4	;
+call	185:8	185:71	4	msg_Dbg
+arg	185:17	185:24	5	p_demux
+water	185:17	0:0	6	p_demux
+arg	185:26	185:52	5	"     - pg_length=%"PRId64
+water	185:26	0:0	6	"     - pg_length=%"
+water	185:46	0:0	6	PRId64
+arg	185:54	185:71	5	event->pg_length
+water	185:54	0:0	6	event
+op	185:59	0:0	6	->
+water	185:61	0:0	6	pg_length
+water	185:72	0:0	4	;
+call	186:8	186:73	4	msg_Dbg
+arg	186:17	186:24	5	p_demux
+water	186:17	0:0	6	p_demux
+arg	186:26	186:53	5	"     - pgc_length=%"PRId64
+water	186:26	0:0	6	"     - pgc_length=%"
+water	186:47	0:0	6	PRId64
+arg	186:55	186:73	5	event->pgc_length
+water	186:55	0:0	6	event
+op	186:60	0:0	6	->
+water	186:62	0:0	6	pgc_length
+water	186:74	0:0	4	;
+call	187:8	187:73	4	msg_Dbg
+arg	187:17	187:24	5	p_demux
+water	187:17	0:0	6	p_demux
+arg	187:26	187:53	5	"     - cell_start=%"PRId64
+water	187:26	0:0	6	"     - cell_start=%"
+water	187:47	0:0	6	PRId64
+arg	187:55	187:73	5	event->cell_start
+water	187:55	0:0	6	event
+op	187:60	0:0	6	->
+water	187:62	0:0	6	cell_start
+water	187:74	0:0	4	;
+call	188:8	188:69	4	msg_Dbg
+arg	188:17	188:24	5	p_demux
+water	188:17	0:0	6	p_demux
+arg	188:26	188:51	5	"     - pg_start=%"PRId64
+water	188:26	0:0	6	"     - pg_start=%"
+water	188:45	0:0	6	PRId64
+arg	188:53	188:69	5	event->pg_start
+water	188:53	0:0	6	event
+op	188:58	0:0	6	->
+water	188:60	0:0	6	pg_start
+water	188:70	0:0	4	;
+water	190:8	0:0	4	p_sys
+op	190:13	0:0	4	->
+water	190:15	0:0	4	i_pgc_length
+op	190:28	0:0	4	=
+water	190:30	0:0	4	event
+op	190:35	0:0	4	->
+water	190:37	0:0	4	pgc_length
+op	190:48	0:0	4	/
+water	190:50	0:0	4	90
+op	190:53	0:0	4	*
+water	190:55	0:0	4	1000
+water	190:59	0:0	4	;
+water	191:8	0:0	4	p_sys
+op	191:13	0:0	4	->
+water	191:15	0:0	4	i_vobu_index
+op	191:28	0:0	4	=
+water	191:30	0:0	4	0
+water	191:31	0:0	4	;
+water	192:8	0:0	4	p_sys
+op	192:13	0:0	4	->
+water	192:15	0:0	4	i_vobu_flush
+op	192:28	0:0	4	=
+water	192:30	0:0	4	0
+water	192:31	0:0	4	;
+if	194:8	207:8	4	(dvdnav_current_title_info (p_sys -> dvdnav ,& i_title ,& i_part ) == DVDNAV_STATUS_OK)
+cond	194:12	195:52	5	dvdnav_current_title_info (p_sys -> dvdnav ,& i_title ,& i_part ) == DVDNAV_STATUS_OK
+call	194:12	195:47	6	dvdnav_current_title_info
+arg	194:39	194:52	7	p_sys->dvdnav
+water	194:39	0:0	8	p_sys
+op	194:44	0:0	8	->
+water	194:46	0:0	8	dvdnav
+arg	194:54	194:62	7	&i_title
+op	194:54	0:0	8	&
+water	194:55	0:0	8	i_title
+arg	195:39	195:47	7	&i_part
+op	195:39	0:0	8	&
+water	195:40	0:0	8	i_part
+op	195:49	0:0	6	==
+water	195:52	0:0	6	DVDNAV_STATUS_OK
+stmts	196:8	207:8	5	
+water	196:8	0:0	6	{
+if	197:12	206:12	6	(i_title >= 0 && i_title < p_sys -> i_title)
+cond	197:16	197:49	7	i_title >= 0 && i_title < p_sys -> i_title
+water	197:16	0:0	8	i_title
+op	197:24	0:0	8	>=
+water	197:27	0:0	8	0
+op	197:29	0:0	8	&&
+water	197:32	0:0	8	i_title
+op	197:40	0:0	8	<
+water	197:42	0:0	8	p_sys
+op	197:47	0:0	8	->
+water	197:49	0:0	8	i_title
+stmts	198:12	206:12	7	
+water	198:12	0:0	8	{
+water	199:16	0:0	8	p_demux
+op	199:23	0:0	8	->
+water	199:25	0:0	8	info
+op	199:29	0:0	8	.
+water	199:30	0:0	8	i_update
+op	199:39	0:0	8	|=
+water	199:42	0:0	8	INPUT_UPDATE_TITLE
+water	199:60	0:0	8	;
+water	200:16	0:0	8	p_demux
+op	200:23	0:0	8	->
+water	200:25	0:0	8	info
+op	200:29	0:0	8	.
+water	200:30	0:0	8	i_title
+op	200:38	0:0	8	=
+water	200:40	0:0	8	i_title
+water	200:47	0:0	8	;
+if	201:16	205:16	8	(i_part >= 1 && i_part <= p_sys -> title [ i_title ] -> i_seekpoint)
+cond	201:20	201:68	9	i_part >= 1 && i_part <= p_sys -> title [ i_title ] -> i_seekpoint
+water	201:20	0:0	10	i_part
+op	201:27	0:0	10	>=
+water	201:30	0:0	10	1
+op	201:32	0:0	10	&&
+water	201:35	0:0	10	i_part
+op	201:42	0:0	10	<=
+water	201:45	0:0	10	p_sys
+op	201:50	0:0	10	->
+water	201:52	0:0	10	title
+op	201:57	0:0	10	[
+water	201:58	0:0	10	i_title
+op	201:65	0:0	10	]
+op	201:66	0:0	10	->
+water	201:68	0:0	10	i_seekpoint
+stmts	202:16	205:16	9	
+water	202:16	0:0	10	{
+water	203:20	0:0	10	p_demux
+op	203:27	0:0	10	->
+water	203:29	0:0	10	info
+op	203:33	0:0	10	.
+water	203:34	0:0	10	i_update
+op	203:43	0:0	10	|=
+water	203:46	0:0	10	INPUT_UPDATE_SEEKPOINT
+water	203:68	0:0	10	;
+water	204:20	0:0	10	p_demux
+op	204:27	0:0	10	->
+water	204:29	0:0	10	info
+op	204:33	0:0	10	.
+water	204:34	0:0	10	i_seekpoint
+op	204:46	0:0	10	=
+water	204:48	0:0	10	i_part
+op	204:55	0:0	10	-
+water	204:57	0:0	10	1
+water	204:58	0:0	10	;
+water	205:16	0:0	10	}
+water	206:12	0:0	8	}
+water	207:8	0:0	6	}
+break	208:8	208:13	4	
+water	209:4	0:0	4	}
+label	210:4	210:26	4	case DVDNAV_NAV_PACKET :
+water	211:4	0:0	4	{
+water	212:8	0:0	4	p_sys
+op	212:13	0:0	4	->
+water	212:15	0:0	4	i_vobu_index
+op	212:28	0:0	4	=
+water	212:30	0:0	4	1
+water	212:31	0:0	4	;
+water	213:8	0:0	4	p_sys
+op	213:13	0:0	4	->
+water	213:15	0:0	4	i_vobu_flush
+op	213:28	0:0	4	=
+water	213:30	0:0	4	0
+water	213:31	0:0	4	;
+decl	215:8	215:87	4	const pci_gi_t	*p_pci_gi
+op	215:33	0:0	4	=
+call	215:35	215:78	5	&dvdnav_get_current_nav_pci
+arg	215:64	215:78	6	p_sys->dvdnav
+water	215:64	0:0	7	p_sys
+op	215:69	0:0	7	->
+water	215:71	0:0	7	dvdnav
+op	215:79	0:0	4	->
+water	215:81	0:0	4	pci_gi
+if	216:8	225:8	4	(p_pci_gi -> vobu_se_e_ptm != 0 && p_pci_gi -> vobu_se_e_ptm < p_pci_gi -> vobu_e_ptm)
+cond	216:12	216:80	5	p_pci_gi -> vobu_se_e_ptm != 0 && p_pci_gi -> vobu_se_e_ptm < p_pci_gi -> vobu_e_ptm
+water	216:12	0:0	6	p_pci_gi
+op	216:20	0:0	6	->
+water	216:22	0:0	6	vobu_se_e_ptm
+op	216:36	0:0	6	!=
+water	216:39	0:0	6	0
+op	216:41	0:0	6	&&
+water	216:44	0:0	6	p_pci_gi
+op	216:52	0:0	6	->
+water	216:54	0:0	6	vobu_se_e_ptm
+op	216:68	0:0	6	<
+water	216:70	0:0	6	p_pci_gi
+op	216:78	0:0	6	->
+water	216:80	0:0	6	vobu_e_ptm
+stmts	217:8	225:8	5	
+water	217:8	0:0	6	{
+decl	218:12	218:91	6	const dsi_gi_t	*p_dsi_gi
+op	218:37	0:0	6	=
+call	218:39	218:82	7	&dvdnav_get_current_nav_dsi
+arg	218:68	218:82	8	p_sys->dvdnav
+water	218:68	0:0	9	p_sys
+op	218:73	0:0	9	->
+water	218:75	0:0	9	dvdnav
+op	218:83	0:0	6	->
+water	218:85	0:0	6	dsi_gi
+if	219:12	220:62	6	(p_dsi_gi -> vobu_3rdref_ea != 0)
+cond	219:16	219:44	7	p_dsi_gi -> vobu_3rdref_ea != 0
+water	219:16	0:0	8	p_dsi_gi
+op	219:24	0:0	8	->
+water	219:26	0:0	8	vobu_3rdref_ea
+op	219:41	0:0	8	!=
+water	219:44	0:0	8	0
+stmts	220:16	220:62	7	
+water	220:16	0:0	8	p_sys
+op	220:21	0:0	8	->
+water	220:23	0:0	8	i_vobu_flush
+op	220:36	0:0	8	=
+water	220:38	0:0	8	p_dsi_gi
+op	220:46	0:0	8	->
+water	220:48	0:0	8	vobu_3rdref_ea
+water	220:62	0:0	8	;
+else	221:12	222:62	6
+stmts	221:17	222:62	7	
+if	221:17	222:62	8	(p_dsi_gi -> vobu_2ndref_ea != 0)
+cond	221:21	221:49	9	p_dsi_gi -> vobu_2ndref_ea != 0
+water	221:21	0:0	10	p_dsi_gi
+op	221:29	0:0	10	->
+water	221:31	0:0	10	vobu_2ndref_ea
+op	221:46	0:0	10	!=
+water	221:49	0:0	10	0
+stmts	222:16	222:62	9	
+water	222:16	0:0	10	p_sys
+op	222:21	0:0	10	->
+water	222:23	0:0	10	i_vobu_flush
+op	222:36	0:0	10	=
+water	222:38	0:0	10	p_dsi_gi
+op	222:46	0:0	10	->
+water	222:48	0:0	10	vobu_2ndref_ea
+water	222:62	0:0	10	;
+else	223:12	224:62	6
+stmts	223:17	224:62	7	
+if	223:17	224:62	8	(p_dsi_gi -> vobu_1stref_ea != 0)
+cond	223:21	223:49	9	p_dsi_gi -> vobu_1stref_ea != 0
+water	223:21	0:0	10	p_dsi_gi
+op	223:29	0:0	10	->
+water	223:31	0:0	10	vobu_1stref_ea
+op	223:46	0:0	10	!=
+water	223:49	0:0	10	0
+stmts	224:16	224:62	9	
+water	224:16	0:0	10	p_sys
+op	224:21	0:0	10	->
+water	224:23	0:0	10	i_vobu_flush
+op	224:36	0:0	10	=
+water	224:38	0:0	10	p_dsi_gi
+op	224:46	0:0	10	->
+water	224:48	0:0	10	vobu_1stref_ea
+water	224:62	0:0	10	;
+water	225:8	0:0	6	}
+call	227:8	227:46	4	msg_Dbg
+arg	227:17	227:24	5	p_demux
+water	227:17	0:0	6	p_demux
+arg	227:26	227:46	5	"DVDNAV_NAV_PACKET"
+water	227:26	0:0	6	"DVDNAV_NAV_PACKET"
+water	227:47	0:0	4	;
+call	234:8	234:43	4	DemuxBlock
+arg	234:20	234:27	5	p_demux
+water	234:20	0:0	6	p_demux
+arg	234:29	234:35	5	packet
+water	234:29	0:0	6	packet
+arg	234:37	234:43	5	i_len
+water	234:37	0:0	6	i_len
+water	234:44	0:0	4	;
+if	235:8	239:8	4	(p_sys -> b_spu_change)
+cond	235:12	235:19	5	p_sys -> b_spu_change
+water	235:12	0:0	6	p_sys
+op	235:17	0:0	6	->
+water	235:19	0:0	6	b_spu_change
+stmts	236:8	239:8	5	
+water	236:8	0:0	6	{
+call	237:12	237:41	6	ButtonUpdate
+arg	237:26	237:33	7	p_demux
+water	237:26	0:0	8	p_demux
+arg	237:35	237:41	7	false
+water	237:35	0:0	8	false
+water	237:42	0:0	6	;
+water	238:12	0:0	6	p_sys
+op	238:17	0:0	6	->
+water	238:19	0:0	6	b_spu_change
+op	238:32	0:0	6	=
+water	238:34	0:0	6	false
+water	238:39	0:0	6	;
+water	239:8	0:0	6	}
+break	240:8	240:13	4	
+water	241:4	0:0	4	}
+label	242:4	242:20	4	case DVDNAV_STOP :
+call	243:8	243:40	4	msg_Dbg
+arg	243:17	243:24	5	p_demux
+water	243:17	0:0	6	p_demux
+arg	243:26	243:40	5	"DVDNAV_STOP"
+water	243:26	0:0	6	"DVDNAV_STOP"
+water	243:41	0:0	4	;
+if	244:8	245:60	4	(p_sys -> b_readahead)
+cond	244:12	244:19	5	p_sys -> b_readahead
+water	244:12	0:0	6	p_sys
+op	244:17	0:0	6	->
+water	244:19	0:0	6	b_readahead
+stmts	245:12	245:60	5	
+call	245:12	245:59	6	dvdnav_free_cache_block
+arg	245:37	245:50	7	p_sys->dvdnav
+water	245:37	0:0	8	p_sys
+op	245:42	0:0	8	->
+water	245:44	0:0	8	dvdnav
+arg	245:52	245:59	7	packet
+water	245:52	0:0	8	packet
+water	245:60	0:0	6	;
+return	246:8	246:16	4	0
+water	246:15	0:0	5	0
+label	247:4	247:25	4	case DVDNAV_HIGHLIGHT :
+water	248:4	0:0	4	{
+decl	249:8	249:75	4	dvdnav_highlight_event_t	*event
+op	249:40	0:0	4	=
+water	249:42	0:0	4	(
+water	249:43	0:0	4	dvdnav_highlight_event_t
+op	249:67	0:0	4	*
+water	249:68	0:0	4	)
+water	249:69	0:0	4	packet
+call	250:8	250:45	4	msg_Dbg
+arg	250:17	250:24	5	p_demux
+water	250:17	0:0	6	p_demux
+arg	250:26	250:45	5	"DVDNAV_HIGHLIGHT"
+water	250:26	0:0	6	"DVDNAV_HIGHLIGHT"
+water	250:46	0:0	4	;
+call	251:8	251:62	4	msg_Dbg
+arg	251:17	251:24	5	p_demux
+water	251:17	0:0	6	p_demux
+arg	251:26	251:45	5	"     - display=%d"
+water	251:26	0:0	6	"     - display=%d"
+arg	251:47	251:62	5	event->display
+water	251:47	0:0	6	event
+op	251:52	0:0	6	->
+water	251:54	0:0	6	display
+water	251:63	0:0	4	;
+call	252:8	252:62	4	msg_Dbg
+arg	252:17	252:24	5	p_demux
+water	252:17	0:0	6	p_demux
+arg	252:26	252:45	5	"     - buttonN=%d"
+water	252:26	0:0	6	"     - buttonN=%d"
+arg	252:47	252:62	5	event->buttonN
+water	252:47	0:0	6	event
+op	252:52	0:0	6	->
+water	252:54	0:0	6	buttonN
+water	252:63	0:0	4	;
+call	253:8	253:37	4	ButtonUpdate
+arg	253:22	253:29	5	p_demux
+water	253:22	0:0	6	p_demux
+arg	253:31	253:37	5	false
+water	253:31	0:0	6	false
+water	253:38	0:0	4	;
+break	254:8	254:13	4	
+water	255:4	0:0	4	}
+label	256:4	256:27	4	case DVDNAV_HOP_CHANNEL :
+call	257:8	257:47	4	msg_Dbg
+arg	257:17	257:24	5	p_demux
+water	257:17	0:0	6	p_demux
+arg	257:26	257:47	5	"DVDNAV_HOP_CHANNEL"
+water	257:26	0:0	6	"DVDNAV_HOP_CHANNEL"
+water	257:48	0:0	4	;
+water	258:8	0:0	4	p_sys
+op	258:13	0:0	4	->
+water	258:15	0:0	4	i_vobu_index
+op	258:28	0:0	4	=
+water	258:30	0:0	4	0
+water	258:31	0:0	4	;
+water	259:8	0:0	4	p_sys
+op	259:13	0:0	4	->
+water	259:15	0:0	4	i_vobu_flush
+op	259:28	0:0	4	=
+water	259:30	0:0	4	0
+water	259:31	0:0	4	;
+call	260:8	260:55	4	es_out_Control
+arg	260:24	260:36	5	p_demux->out
+water	260:24	0:0	6	p_demux
+op	260:31	0:0	6	->
+water	260:33	0:0	6	out
+arg	260:38	260:55	5	ES_OUT_RESET_PCR
+water	260:38	0:0	6	ES_OUT_RESET_PCR
+water	260:56	0:0	4	;
+break	261:8	261:13	4	
+label	262:4	262:20	4	case DVDNAV_WAIT :
+call	263:8	263:40	4	msg_Dbg
+arg	263:17	263:24	5	p_demux
+water	263:17	0:0	6	p_demux
+arg	263:26	263:40	5	"DVDNAV_WAIT"
+water	263:26	0:0	6	"DVDNAV_WAIT"
+water	263:41	0:0	4	;
+decl	264:8	264:20	4	bool	b_empty
+call	265:8	265:65	4	es_out_Control
+arg	265:24	265:36	5	p_demux->out
+water	265:24	0:0	6	p_demux
+op	265:31	0:0	6	->
+water	265:33	0:0	6	out
+arg	265:38	265:54	5	ES_OUT_GET_EMPTY
+water	265:38	0:0	6	ES_OUT_GET_EMPTY
+arg	265:56	265:65	5	&b_empty
+op	265:56	0:0	6	&
+water	265:57	0:0	6	b_empty
+water	265:66	0:0	4	;
+if	266:8	269:8	4	(! b_empty)
+cond	266:12	266:13	5	! b_empty
+op	266:12	0:0	6	!
+water	266:13	0:0	6	b_empty
+stmts	267:8	269:8	5	
+water	267:8	0:0	6	{
+call	268:12	268:28	6	msleep
+arg	268:20	268:28	7	40*1000
+water	268:20	0:0	8	40
+op	268:22	0:0	8	*
+water	268:23	0:0	8	1000
+water	268:29	0:0	6	;
+water	269:8	0:0	6	}
+else	270:8	274:8	4
+stmts	271:8	274:8	5	
+water	271:8	0:0	6	{
+call	272:12	272:44	6	dvdnav_wait_skip
+arg	272:30	272:44	7	p_sys->dvdnav
+water	272:30	0:0	8	p_sys
+op	272:35	0:0	8	->
+water	272:37	0:0	8	dvdnav
+water	272:45	0:0	6	;
+water	273:12	0:0	6	p_sys
+op	273:17	0:0	6	->
+water	273:19	0:0	6	b_reset_pcr
+op	273:31	0:0	6	=
+water	273:33	0:0	6	true
+water	273:37	0:0	6	;
+water	274:8	0:0	6	}
+break	275:8	275:13	4	
+label	276:4	276:11	4	default :
+call	277:8	277:59	4	msg_Warn
+arg	277:18	277:25	5	p_demux
+water	277:18	0:0	6	p_demux
+arg	277:27	277:49	5	"Unknown event (0x%x)"
+water	277:27	0:0	6	"Unknown event (0x%x)"
+arg	277:51	277:59	5	i_event
+water	277:51	0:0	6	i_event
+water	277:60	0:0	4	;
+break	278:8	278:13	4	
+water	279:4	0:0	4	}
+if	280:4	281:56	2	(p_sys -> b_readahead)
+cond	280:8	280:15	3	p_sys -> b_readahead
+water	280:8	0:0	4	p_sys
+op	280:13	0:0	4	->
+water	280:15	0:0	4	b_readahead
+stmts	281:8	281:56	3	
+call	281:8	281:55	4	dvdnav_free_cache_block
+arg	281:33	281:46	5	p_sys->dvdnav
+water	281:33	0:0	6	p_sys
+op	281:38	0:0	6	->
+water	281:40	0:0	6	dvdnav
+arg	281:48	281:55	5	packet
+water	281:48	0:0	6	packet
+water	281:56	0:0	4	;
+return	282:4	282:12	2	1
+water	282:11	0:0	3	1

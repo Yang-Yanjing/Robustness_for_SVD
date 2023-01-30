@@ -1,0 +1,358 @@
+func	2:0	92:0	0	static int64_t	find_first_page_granule
+params	2:38	0:0	1	
+param	2:40	2:56	2	demux_t *	p_demux
+param	3:32	3:46	2	int64_t	i_pos1
+param	3:48	3:62	2	int64_t	i_pos2
+param	4:32	4:58	2	logical_stream_t *	p_stream
+param	5:32	5:54	2	int64_t *	i_granulepos
+stmnts	0:0	91:4	1	
+decl	7:4	7:20	2	int64_t	i_result
+op	8:4	0:0	2	*
+water	8:5	0:0	2	i_granulepos
+op	8:18	0:0	2	=
+op	8:20	0:0	2	-
+water	8:21	0:0	2	1
+water	8:22	0:0	2	;
+decl	9:4	9:49	2	int64_t	i_bytes_to_read
+op	9:28	0:0	2	=
+water	9:30	0:0	2	i_pos2
+op	9:37	0:0	2	-
+water	9:39	0:0	2	i_pos1
+op	9:46	0:0	2	+
+water	9:48	0:0	2	1
+decl	10:4	10:24	2	int64_t	i_bytes_read
+decl	11:4	11:31	2	int64_t	i_pages_checked
+op	11:28	0:0	2	=
+water	11:30	0:0	2	0
+decl	12:4	12:29	2	int64_t	i_packets_checked
+decl	13:4	13:40	2	demux_sys_t	*p_sys
+op	13:24	0:0	2	=
+water	13:26	0:0	2	p_demux
+op	13:33	0:0	2	->
+water	13:35	0:0	2	p_sys
+decl	14:4	14:17	2	ogg_packet	op
+call	15:4	15:31	2	seek_byte
+arg	15:15	15:22	3	p_demux
+water	15:15	0:0	4	p_demux
+arg	15:24	15:31	3	i_pos1
+water	15:24	0:0	4	i_pos1
+water	15:32	0:0	2	;
+if	16:4	17:38	2	(i_pos1 == p_stream -> i_data_start)
+cond	16:9	16:29	3	i_pos1 == p_stream -> i_data_start
+water	16:9	0:0	4	i_pos1
+op	16:16	0:0	4	==
+water	16:19	0:0	4	p_stream
+op	16:27	0:0	4	->
+water	16:29	0:0	4	i_data_start
+stmts	17:8	17:38	3	
+return	17:8	17:38	4	p_sys->i_input_position
+water	17:15	0:0	5	p_sys
+op	17:20	0:0	5	->
+water	17:22	0:0	5	i_input_position
+if	18:4	18:90	2	(i_bytes_to_read > OGGSEEK_BYTES_TO_READ)
+cond	18:9	18:27	3	i_bytes_to_read > OGGSEEK_BYTES_TO_READ
+water	18:9	0:0	4	i_bytes_to_read
+op	18:25	0:0	4	>
+water	18:27	0:0	4	OGGSEEK_BYTES_TO_READ
+stmts	18:51	18:90	3	
+water	18:51	0:0	4	i_bytes_to_read
+op	18:67	0:0	4	=
+water	18:69	0:0	4	OGGSEEK_BYTES_TO_READ
+water	18:90	0:0	4	;
+while	19:4	48:4	2	(1)
+cond	19:12	19:12	3	1
+water	19:12	0:0	4	1
+stmts	20:4	48:4	3	
+water	20:4	0:0	4	{
+if	21:8	25:8	4	(p_sys -> i_input_position >= i_pos2)
+cond	21:13	21:40	5	p_sys -> i_input_position >= i_pos2
+water	21:13	0:0	6	p_sys
+op	21:18	0:0	6	->
+water	21:20	0:0	6	i_input_position
+op	21:37	0:0	6	>=
+water	21:40	0:0	6	i_pos2
+stmts	22:8	25:8	5	
+water	22:8	0:0	6	{
+return	24:12	24:21	6	-1
+op	24:19	0:0	7	-
+water	24:20	0:0	7	1
+water	25:8	0:0	6	}
+if	27:8	31:8	4	(! ( i_bytes_read =get_data (p_demux ,i_bytes_to_read ) ))
+cond	27:13	27:69	5	! ( i_bytes_read =get_data (p_demux ,i_bytes_to_read ) )
+op	27:13	0:0	6	!
+water	27:15	0:0	6	(
+water	27:17	0:0	6	i_bytes_read
+op	27:30	0:0	6	=
+call	27:32	27:67	6	get_data
+arg	27:42	27:49	7	p_demux
+water	27:42	0:0	8	p_demux
+arg	27:51	27:67	7	i_bytes_to_read
+water	27:51	0:0	8	i_bytes_to_read
+water	27:69	0:0	6	)
+stmts	28:8	31:8	5	
+water	28:8	0:0	6	{
+return	30:12	30:21	6	-1
+op	30:19	0:0	7	-
+water	30:20	0:0	7	1
+water	31:8	0:0	6	}
+water	32:8	0:0	4	i_bytes_to_read
+op	32:24	0:0	4	=
+water	32:26	0:0	4	OGGSEEK_BYTES_TO_READ
+water	32:47	0:0	4	;
+water	33:8	0:0	4	i_result
+op	33:17	0:0	4	=
+call	33:19	33:71	4	ogg_sync_pageseek
+arg	33:38	33:48	5	&p_sys->oy
+op	33:38	0:0	6	&
+water	33:39	0:0	6	p_sys
+op	33:44	0:0	6	->
+water	33:46	0:0	6	oy
+arg	33:50	33:71	5	&p_sys->current_page
+op	33:50	0:0	6	&
+water	33:51	0:0	6	p_sys
+op	33:56	0:0	6	->
+water	33:58	0:0	6	current_page
+water	33:72	0:0	4	;
+if	34:8	40:8	4	(i_result < 0)
+cond	34:13	34:24	5	i_result < 0
+water	34:13	0:0	6	i_result
+op	34:22	0:0	6	<
+water	34:24	0:0	6	0
+stmts	35:8	40:8	5	
+water	35:8	0:0	6	{
+water	37:12	0:0	6	p_sys
+op	37:17	0:0	6	->
+water	37:19	0:0	6	i_input_position
+op	37:36	0:0	6	-=
+water	37:39	0:0	6	i_result
+water	37:47	0:0	6	;
+water	38:12	0:0	6	i_pos1
+op	38:19	0:0	6	=
+water	38:21	0:0	6	p_sys
+op	38:26	0:0	6	->
+water	38:28	0:0	6	i_input_position
+water	38:44	0:0	6	;
+continue	39:12	39:20	6	
+water	40:8	0:0	6	}
+if	41:8	46:8	4	(i_result > 0 || ( i_result == 0 && p_sys -> oy . fill > 3 && !strncmp (( char * ) p_sys -> oy . data ,"OggS" ,4 ) ))
+cond	41:13	42:79	5	i_result > 0 || ( i_result == 0 && p_sys -> oy . fill > 3 && !strncmp (( char * ) p_sys -> oy . data ,"OggS" ,4 ) )
+water	41:13	0:0	6	i_result
+op	41:22	0:0	6	>
+water	41:24	0:0	6	0
+op	41:26	0:0	6	||
+water	41:29	0:0	6	(
+water	41:31	0:0	6	i_result
+op	41:40	0:0	6	==
+water	41:43	0:0	6	0
+op	41:45	0:0	6	&&
+water	41:48	0:0	6	p_sys
+op	41:53	0:0	6	->
+water	41:55	0:0	6	oy
+op	41:57	0:0	6	.
+water	41:58	0:0	6	fill
+op	41:63	0:0	6	>
+water	41:65	0:0	6	3
+op	41:67	0:0	6	&&
+op	42:31	0:0	6	!
+call	42:33	42:77	6	strncmp
+arg	42:42	42:64	7	(char*)p_sys->oy.data
+water	42:42	0:0	8	(
+water	42:43	0:0	8	char
+op	42:48	0:0	8	*
+water	42:49	0:0	8	)
+water	42:50	0:0	8	p_sys
+op	42:55	0:0	8	->
+water	42:57	0:0	8	oy
+op	42:59	0:0	8	.
+water	42:60	0:0	8	data
+arg	42:66	42:73	7	"OggS"
+water	42:66	0:0	8	"OggS"
+arg	42:75	42:77	7	4
+water	42:75	0:0	8	4
+water	42:79	0:0	6	)
+stmts	43:8	46:8	5	
+water	43:8	0:0	6	{
+water	44:12	0:0	6	i_pos1
+op	44:19	0:0	6	=
+water	44:21	0:0	6	p_sys
+op	44:26	0:0	6	->
+water	44:28	0:0	6	i_input_position
+water	44:44	0:0	6	;
+break	45:12	45:17	6	
+water	46:8	0:0	6	}
+water	47:8	0:0	4	p_sys
+op	47:13	0:0	4	->
+water	47:15	0:0	4	i_input_position
+op	47:32	0:0	4	+=
+water	47:35	0:0	4	i_bytes_read
+water	47:47	0:0	4	;
+water	48:4	0:0	4	}
+water	48:5	0:0	2	;
+call	49:4	49:48	2	seek_byte
+arg	49:15	49:22	3	p_demux
+water	49:15	0:0	4	p_demux
+arg	49:24	49:48	3	p_sys->i_input_position
+water	49:24	0:0	4	p_sys
+op	49:29	0:0	4	->
+water	49:31	0:0	4	i_input_position
+water	49:49	0:0	2	;
+call	50:4	50:36	2	ogg_stream_reset
+arg	50:22	50:36	3	&p_stream->os
+op	50:22	0:0	4	&
+water	50:23	0:0	4	p_stream
+op	50:31	0:0	4	->
+water	50:33	0:0	4	os
+water	50:37	0:0	2	;
+while	51:4	91:4	2	(1)
+cond	51:11	51:11	3	1
+water	51:11	0:0	4	1
+stmts	52:4	91:4	3	
+water	52:4	0:0	4	{
+if	53:8	57:8	4	(p_sys -> i_input_position >= i_pos2)
+cond	53:13	53:40	5	p_sys -> i_input_position >= i_pos2
+water	53:13	0:0	6	p_sys
+op	53:18	0:0	6	->
+water	53:20	0:0	6	i_input_position
+op	53:37	0:0	6	>=
+water	53:40	0:0	6	i_pos2
+stmts	54:8	57:8	5	
+water	54:8	0:0	6	{
+return	56:12	56:42	6	p_sys->i_input_position
+water	56:19	0:0	7	p_sys
+op	56:24	0:0	7	->
+water	56:26	0:0	7	i_input_position
+water	57:8	0:0	6	}
+water	58:8	0:0	4	p_sys
+op	58:13	0:0	4	->
+water	58:15	0:0	4	b_page_waiting
+op	58:30	0:0	4	=
+water	58:32	0:0	4	false
+water	58:37	0:0	4	;
+if	59:8	63:8	4	(! ( i_result =oggseek_read_page (p_demux ) ))
+cond	59:13	59:57	5	! ( i_result =oggseek_read_page (p_demux ) )
+op	59:13	0:0	6	!
+water	59:15	0:0	6	(
+water	59:17	0:0	6	i_result
+op	59:26	0:0	6	=
+call	59:28	59:55	6	oggseek_read_page
+arg	59:47	59:55	7	p_demux
+water	59:47	0:0	8	p_demux
+water	59:57	0:0	6	)
+stmts	60:8	63:8	5	
+water	60:8	0:0	6	{
+return	62:12	62:42	6	p_sys->i_input_position
+water	62:19	0:0	7	p_sys
+op	62:24	0:0	7	->
+water	62:26	0:0	7	i_input_position
+water	63:8	0:0	6	}
+if	64:8	69:8	4	(ogg_page_granulepos (& p_sys -> current_page ) <= 0)
+cond	64:13	64:60	5	ogg_page_granulepos (& p_sys -> current_page ) <= 0
+call	64:13	64:55	6	ogg_page_granulepos
+arg	64:34	64:55	7	&p_sys->current_page
+op	64:34	0:0	8	&
+water	64:35	0:0	8	p_sys
+op	64:40	0:0	8	->
+water	64:42	0:0	8	current_page
+op	64:57	0:0	6	<=
+water	64:60	0:0	6	0
+stmts	65:8	69:8	5	
+water	65:8	0:0	6	{
+water	66:12	0:0	6	p_sys
+op	66:17	0:0	6	->
+water	66:19	0:0	6	i_input_position
+op	66:36	0:0	6	+=
+water	66:39	0:0	6	i_result
+water	66:47	0:0	6	;
+water	67:12	0:0	6	i_bytes_to_read
+op	67:28	0:0	6	+=
+water	67:31	0:0	6	OGGSEEK_BYTES_TO_READ
+water	67:52	0:0	6	;
+continue	68:12	68:20	6	
+water	69:8	0:0	6	}
+if	71:8	77:8	4	(ogg_stream_pagein (& p_stream -> os ,& p_sys -> current_page ) != 0)
+cond	71:13	71:73	5	ogg_stream_pagein (& p_stream -> os ,& p_sys -> current_page ) != 0
+call	71:13	71:68	6	ogg_stream_pagein
+arg	71:32	71:45	7	&p_stream->os
+op	71:32	0:0	8	&
+water	71:33	0:0	8	p_stream
+op	71:41	0:0	8	->
+water	71:43	0:0	8	os
+arg	71:47	71:68	7	&p_sys->current_page
+op	71:47	0:0	8	&
+water	71:48	0:0	8	p_sys
+op	71:53	0:0	8	->
+water	71:55	0:0	8	current_page
+op	71:70	0:0	6	!=
+water	71:73	0:0	6	0
+stmts	72:8	77:8	5	
+water	72:8	0:0	6	{
+water	74:12	0:0	6	p_sys
+op	74:17	0:0	6	->
+water	74:19	0:0	6	i_input_position
+op	74:36	0:0	6	+=
+water	74:39	0:0	6	i_result
+water	74:47	0:0	6	;
+if	75:12	75:69	6	(! i_pages_checked)
+cond	75:17	75:19	7	! i_pages_checked
+op	75:17	0:0	8	!
+water	75:19	0:0	8	i_pages_checked
+stmts	75:37	75:69	7	
+water	75:37	0:0	8	i_pos1
+op	75:44	0:0	8	=
+water	75:46	0:0	8	p_sys
+op	75:51	0:0	8	->
+water	75:53	0:0	8	i_input_position
+water	75:69	0:0	8	;
+continue	76:12	76:20	6	
+water	77:8	0:0	6	}
+water	78:8	0:0	4	i_pages_checked
+op	78:23	0:0	4	++
+water	78:25	0:0	4	;
+water	79:8	0:0	4	i_packets_checked
+op	79:26	0:0	4	=
+water	79:28	0:0	4	0
+water	79:29	0:0	4	;
+while	80:8	83:8	4	(ogg_stream_packetout (& p_stream -> os ,& op ) > 0)
+cond	80:16	80:61	5	ogg_stream_packetout (& p_stream -> os ,& op ) > 0
+call	80:16	80:57	6	ogg_stream_packetout
+arg	80:38	80:51	7	&p_stream->os
+op	80:38	0:0	8	&
+water	80:39	0:0	8	p_stream
+op	80:47	0:0	8	->
+water	80:49	0:0	8	os
+arg	80:53	80:57	7	&op
+op	80:53	0:0	8	&
+water	80:54	0:0	8	op
+op	80:59	0:0	6	>
+water	80:61	0:0	6	0
+stmts	81:8	83:8	5	
+water	81:8	0:0	6	{
+water	82:12	0:0	6	i_packets_checked
+op	82:29	0:0	6	++
+water	82:31	0:0	6	;
+water	83:8	0:0	6	}
+if	84:8	88:8	4	(i_packets_checked)
+cond	84:13	84:13	5	i_packets_checked
+water	84:13	0:0	6	i_packets_checked
+stmts	85:8	88:8	5	
+water	85:8	0:0	6	{
+op	86:12	0:0	6	*
+water	86:13	0:0	6	i_granulepos
+op	86:26	0:0	6	=
+call	86:28	86:70	6	ogg_page_granulepos
+arg	86:49	86:70	7	&p_sys->current_page
+op	86:49	0:0	8	&
+water	86:50	0:0	8	p_sys
+op	86:55	0:0	8	->
+water	86:57	0:0	8	current_page
+water	86:71	0:0	6	;
+return	87:12	87:25	6	i_pos1
+water	87:19	0:0	7	i_pos1
+water	88:8	0:0	6	}
+water	90:8	0:0	4	p_sys
+op	90:13	0:0	4	->
+water	90:15	0:0	4	i_input_position
+op	90:32	0:0	4	+=
+water	90:35	0:0	4	i_result
+water	90:43	0:0	4	;
+water	91:4	0:0	4	}

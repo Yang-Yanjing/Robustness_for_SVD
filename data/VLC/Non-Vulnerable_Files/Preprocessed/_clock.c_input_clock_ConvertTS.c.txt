@@ -1,0 +1,222 @@
+func	2:0	47:0	0	int	input_clock_ConvertTS
+params	2:25	0:0	1	
+param	2:27	2:49	2	vlc_object_t *	p_object
+param	2:51	2:68	2	input_clock_t *	cl
+param	3:27	3:39	2	int *	pi_rate
+param	3:41	3:56	2	mtime_t *	pi_ts0
+param	3:58	3:73	2	mtime_t *	pi_ts1
+param	4:27	4:46	2	mtime_t	i_ts_bound
+stmnts	6:4	46:22	1	
+call	6:4	6:19	2	assert
+arg	6:12	6:19	3	pi_ts0
+water	6:12	0:0	4	pi_ts0
+water	6:20	0:0	2	;
+call	7:4	7:30	2	vlc_mutex_lock
+arg	7:20	7:30	3	&cl->lock
+op	7:20	0:0	4	&
+water	7:21	0:0	4	cl
+op	7:23	0:0	4	->
+water	7:25	0:0	4	lock
+water	7:31	0:0	2	;
+if	8:4	9:29	2	(pi_rate)
+cond	8:8	8:8	3	pi_rate
+water	8:8	0:0	4	pi_rate
+stmts	9:8	9:29	3	
+op	9:8	0:0	4	*
+water	9:9	0:0	4	pi_rate
+op	9:17	0:0	4	=
+water	9:19	0:0	4	cl
+op	9:21	0:0	4	->
+water	9:23	0:0	4	i_rate
+water	9:29	0:0	4	;
+if	10:4	17:4	2	(! cl -> b_has_reference)
+cond	10:8	10:13	3	! cl -> b_has_reference
+op	10:8	0:0	4	!
+water	10:9	0:0	4	cl
+op	10:11	0:0	4	->
+water	10:13	0:0	4	b_has_reference
+stmts	11:4	17:4	3	
+water	11:4	0:0	4	{
+call	12:8	12:36	4	vlc_mutex_unlock
+arg	12:26	12:36	5	&cl->lock
+op	12:26	0:0	6	&
+water	12:27	0:0	6	cl
+op	12:29	0:0	6	->
+water	12:31	0:0	6	lock
+water	12:37	0:0	4	;
+op	13:8	0:0	4	*
+water	13:9	0:0	4	pi_ts0
+op	13:16	0:0	4	=
+water	13:18	0:0	4	VLC_TS_INVALID
+water	13:32	0:0	4	;
+if	14:8	15:36	4	(pi_ts1)
+cond	14:12	14:12	5	pi_ts1
+water	14:12	0:0	6	pi_ts1
+stmts	15:12	15:36	5	
+op	15:12	0:0	6	*
+water	15:13	0:0	6	pi_ts1
+op	15:20	0:0	6	=
+water	15:22	0:0	6	VLC_TS_INVALID
+water	15:36	0:0	6	;
+return	16:8	16:27	4	VLC_EGENERIC
+water	16:15	0:0	5	VLC_EGENERIC
+water	17:4	0:0	4	}
+decl	19:4	19:93	2	const mtime_t	i_ts_buffering
+op	19:33	0:0	2	=
+water	19:35	0:0	2	cl
+op	19:37	0:0	2	->
+water	19:39	0:0	2	i_buffering_duration
+op	19:60	0:0	2	*
+water	19:62	0:0	2	cl
+op	19:64	0:0	2	->
+water	19:66	0:0	2	i_rate
+op	19:73	0:0	2	/
+water	19:75	0:0	2	INPUT_RATE_DEFAULT
+decl	20:4	20:71	2	const mtime_t	i_ts_delay
+op	20:29	0:0	2	=
+water	20:31	0:0	2	cl
+op	20:33	0:0	2	->
+water	20:35	0:0	2	i_pts_delay
+op	20:47	0:0	2	+
+call	20:49	20:70	3	ClockGetTsOffset
+arg	20:67	20:70	4	cl
+water	20:67	0:0	5	cl
+if	22:4	28:4	2	(* pi_ts0 > VLC_TS_INVALID)
+cond	22:8	22:18	3	* pi_ts0 > VLC_TS_INVALID
+op	22:8	0:0	4	*
+water	22:9	0:0	4	pi_ts0
+op	22:16	0:0	4	>
+water	22:18	0:0	4	VLC_TS_INVALID
+stmts	23:4	28:4	3	
+water	23:4	0:0	4	{
+op	24:8	0:0	4	*
+water	24:9	0:0	4	pi_ts0
+op	24:16	0:0	4	=
+call	24:18	24:74	4	ClockStreamToSystem
+arg	24:39	24:41	5	cl
+water	24:39	0:0	6	cl
+arg	24:43	24:74	5	*pi_ts0+AvgGet(&cl->drift)
+op	24:43	0:0	6	*
+water	24:44	0:0	6	pi_ts0
+op	24:51	0:0	6	+
+call	24:53	24:72	6	AvgGet
+arg	24:61	24:72	7	&cl->drift
+op	24:61	0:0	8	&
+water	24:62	0:0	8	cl
+op	24:64	0:0	8	->
+water	24:66	0:0	8	drift
+water	24:75	0:0	4	;
+if	25:8	26:34	4	(* pi_ts0 > cl -> i_ts_max)
+cond	25:12	25:26	5	* pi_ts0 > cl -> i_ts_max
+op	25:12	0:0	6	*
+water	25:13	0:0	6	pi_ts0
+op	25:20	0:0	6	>
+water	25:22	0:0	6	cl
+op	25:24	0:0	6	->
+water	25:26	0:0	6	i_ts_max
+stmts	26:12	26:34	5	
+water	26:12	0:0	6	cl
+op	26:14	0:0	6	->
+water	26:16	0:0	6	i_ts_max
+op	26:25	0:0	6	=
+op	26:27	0:0	6	*
+water	26:28	0:0	6	pi_ts0
+water	26:34	0:0	6	;
+op	27:8	0:0	4	*
+water	27:9	0:0	4	pi_ts0
+op	27:16	0:0	4	+=
+water	27:19	0:0	4	i_ts_delay
+water	27:29	0:0	4	;
+water	28:4	0:0	4	}
+if	30:4	34:4	2	(pi_ts1 && * pi_ts1 > VLC_TS_INVALID)
+cond	30:8	30:28	3	pi_ts1 && * pi_ts1 > VLC_TS_INVALID
+water	30:8	0:0	4	pi_ts1
+op	30:15	0:0	4	&&
+op	30:18	0:0	4	*
+water	30:19	0:0	4	pi_ts1
+op	30:26	0:0	4	>
+water	30:28	0:0	4	VLC_TS_INVALID
+stmts	31:4	34:4	3	
+water	31:4	0:0	4	{
+op	32:8	0:0	4	*
+water	32:9	0:0	4	pi_ts1
+op	32:16	0:0	4	=
+call	32:18	32:74	4	ClockStreamToSystem
+arg	32:39	32:41	5	cl
+water	32:39	0:0	6	cl
+arg	32:43	32:74	5	*pi_ts1+AvgGet(&cl->drift)
+op	32:43	0:0	6	*
+water	32:44	0:0	6	pi_ts1
+op	32:51	0:0	6	+
+call	32:53	32:72	6	AvgGet
+arg	32:61	32:72	7	&cl->drift
+op	32:61	0:0	8	&
+water	32:62	0:0	8	cl
+op	32:64	0:0	8	->
+water	32:66	0:0	8	drift
+op	32:76	0:0	4	+
+water	33:18	0:0	4	i_ts_delay
+water	33:28	0:0	4	;
+water	34:4	0:0	4	}
+call	35:4	35:32	2	vlc_mutex_unlock
+arg	35:22	35:32	3	&cl->lock
+op	35:22	0:0	4	&
+water	35:23	0:0	4	cl
+op	35:25	0:0	4	->
+water	35:27	0:0	4	lock
+water	35:33	0:0	2	;
+if	37:4	45:4	2	(i_ts_bound != INT64_MAX && * pi_ts0 > VLC_TS_INVALID)
+cond	37:8	37:45	3	i_ts_bound != INT64_MAX && * pi_ts0 > VLC_TS_INVALID
+water	37:8	0:0	4	i_ts_bound
+op	37:19	0:0	4	!=
+water	37:22	0:0	4	INT64_MAX
+op	37:32	0:0	4	&&
+op	37:35	0:0	4	*
+water	37:36	0:0	4	pi_ts0
+op	37:43	0:0	4	>
+water	37:45	0:0	4	VLC_TS_INVALID
+stmts	37:61	45:4	3	
+water	37:61	0:0	4	{
+if	38:8	44:8	4	(* pi_ts0 >=mdate ( ) + i_ts_delay + i_ts_buffering + i_ts_bound)
+cond	38:12	38:63	5	* pi_ts0 >=mdate ( ) + i_ts_delay + i_ts_buffering + i_ts_bound
+op	38:12	0:0	6	*
+water	38:13	0:0	6	pi_ts0
+op	38:20	0:0	6	>=
+call	38:23	38:29	6	mdate
+op	38:31	0:0	6	+
+water	38:33	0:0	6	i_ts_delay
+op	38:44	0:0	6	+
+water	38:46	0:0	6	i_ts_buffering
+op	38:61	0:0	6	+
+water	38:63	0:0	6	i_ts_bound
+stmts	38:75	44:8	5	
+water	38:75	0:0	6	{
+call	39:12	42:54	6	vlc_Log
+arg	39:20	39:28	7	p_object
+water	39:20	0:0	8	p_object
+arg	39:30	39:41	7	VLC_MSG_ERR
+water	39:30	0:0	8	VLC_MSG_ERR
+arg	39:43	39:50	7	"clock"
+water	39:43	0:0	8	"clock"
+arg	40:16	41:45	7	"Timestamp conversion failed (delay %"PRId64", buffering ""%"PRId64", bound %"PRId64")"
+water	40:16	0:0	8	"Timestamp conversion failed (delay %"
+water	40:54	0:0	8	PRId64
+water	40:60	0:0	8	", buffering "
+water	41:16	0:0	8	"%"
+water	41:19	0:0	8	PRId64
+water	41:25	0:0	8	", bound %"
+water	41:36	0:0	8	PRId64
+water	41:42	0:0	8	")"
+arg	42:16	42:26	7	i_ts_delay
+water	42:16	0:0	8	i_ts_delay
+arg	42:28	42:42	7	i_ts_buffering
+water	42:28	0:0	8	i_ts_buffering
+arg	42:44	42:54	7	i_ts_bound
+water	42:44	0:0	8	i_ts_bound
+water	42:55	0:0	6	;
+return	43:12	43:31	6	VLC_EGENERIC
+water	43:19	0:0	7	VLC_EGENERIC
+water	44:8	0:0	6	}
+water	45:4	0:0	4	}
+return	46:4	46:22	2	VLC_SUCCESS
+water	46:11	0:0	3	VLC_SUCCESS

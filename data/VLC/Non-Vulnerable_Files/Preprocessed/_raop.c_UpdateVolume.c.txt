@@ -1,0 +1,186 @@
+func	2:0	40:0	0	static int	UpdateVolume
+params	2:23	0:0	1	
+param	2:25	2:46	2	vlc_object_t *	p_this
+stmnts	0:0	39:16	1	
+decl	4:4	4:52	2	sout_stream_t	*p_stream
+op	4:28	0:0	2	=
+water	4:30	0:0	2	(
+water	4:31	0:0	2	sout_stream_t
+op	4:44	0:0	2	*
+water	4:45	0:0	2	)
+water	4:46	0:0	2	p_this
+decl	5:4	5:46	2	sout_stream_sys_t	*p_sys
+op	5:29	0:0	2	=
+water	5:31	0:0	2	p_stream
+op	5:39	0:0	2	->
+water	5:41	0:0	2	p_sys
+decl	6:4	6:32	2	vlc_dictionary_t	req_headers
+decl	7:4	7:33	2	vlc_dictionary_t	resp_headers
+decl	8:4	8:31	2	char	*psz_parameters
+op	8:25	0:0	2	=
+water	8:27	0:0	2	NULL
+decl	9:4	9:19	2	double	d_volume
+decl	10:4	10:27	2	int	i_err
+op	10:14	0:0	2	=
+water	10:16	0:0	2	VLC_SUCCESS
+decl	11:4	11:12	2	int	i_rc
+call	12:4	12:41	2	vlc_dictionary_init
+arg	12:25	12:37	3	&req_headers
+op	12:25	0:0	4	&
+water	12:26	0:0	4	req_headers
+arg	12:39	12:41	3	0
+water	12:39	0:0	4	0
+water	12:42	0:0	2	;
+call	13:4	13:42	2	vlc_dictionary_init
+arg	13:25	13:38	3	&resp_headers
+op	13:25	0:0	4	&
+water	13:26	0:0	4	resp_headers
+arg	13:40	13:42	3	0
+water	13:40	0:0	4	0
+water	13:43	0:0	2	;
+water	16:4	0:0	2	p_sys
+op	16:9	0:0	2	->
+water	16:11	0:0	2	i_volume
+op	16:20	0:0	2	=
+call	16:22	16:56	2	VLC_CLIP
+arg	16:32	16:47	3	p_sys->i_volume
+water	16:32	0:0	4	p_sys
+op	16:37	0:0	4	->
+water	16:39	0:0	4	i_volume
+arg	16:49	16:50	3	0
+water	16:49	0:0	4	0
+arg	16:52	16:56	3	255
+water	16:52	0:0	4	255
+water	16:57	0:0	2	;
+if	17:4	18:25	2	(p_sys -> i_volume == 0)
+cond	17:9	17:28	3	p_sys -> i_volume == 0
+water	17:9	0:0	4	p_sys
+op	17:14	0:0	4	->
+water	17:16	0:0	4	i_volume
+op	17:25	0:0	4	==
+water	17:28	0:0	4	0
+stmts	18:8	18:25	3	
+water	18:8	0:0	4	d_volume
+op	18:17	0:0	4	=
+op	18:19	0:0	4	-
+water	18:20	0:0	4	144
+op	18:23	0:0	4	.
+water	18:24	0:0	4	0
+water	18:25	0:0	4	;
+else	19:4	20:71	2
+stmts	20:8	20:71	3	
+water	20:8	0:0	4	d_volume
+op	20:17	0:0	4	=
+op	20:19	0:0	4	-
+water	20:20	0:0	4	30
+op	20:23	0:0	4	+
+water	20:25	0:0	4	(
+water	20:27	0:0	4	(
+water	20:29	0:0	4	(
+water	20:30	0:0	4	double
+water	20:36	0:0	4	)
+water	20:37	0:0	4	p_sys
+op	20:42	0:0	4	->
+water	20:44	0:0	4	i_volume
+water	20:53	0:0	4	)
+op	20:55	0:0	4	*
+water	20:57	0:0	4	30
+op	20:59	0:0	4	.
+water	20:60	0:0	4	0
+op	20:62	0:0	4	/
+water	20:64	0:0	4	255
+op	20:67	0:0	4	.
+water	20:68	0:0	4	0
+water	20:70	0:0	4	)
+water	20:71	0:0	4	;
+water	22:4	0:0	2	i_rc
+op	22:9	0:0	2	=
+call	22:11	22:71	2	us_asprintf
+arg	22:24	22:39	3	&psz_parameters
+op	22:24	0:0	4	&
+water	22:25	0:0	4	psz_parameters
+arg	22:41	22:60	3	"volume: %0.6f\r\n"
+water	22:41	0:0	4	"volume: %0.6f\r\n"
+arg	22:62	22:71	3	d_volume
+water	22:62	0:0	4	d_volume
+water	22:72	0:0	2	;
+if	23:4	27:4	2	(i_rc < 0)
+cond	23:9	23:16	3	i_rc < 0
+water	23:9	0:0	4	i_rc
+op	23:14	0:0	4	<
+water	23:16	0:0	4	0
+stmts	24:4	27:4	3	
+water	24:4	0:0	4	{
+water	25:8	0:0	4	i_err
+op	25:14	0:0	4	=
+water	25:16	0:0	4	VLC_ENOMEM
+water	25:26	0:0	4	;
+goto	26:8	26:18	4	error
+water	26:13	0:0	5	error
+water	27:4	0:0	4	}
+call	28:4	29:54	2	vlc_dictionary_insert
+arg	28:27	28:39	3	&req_headers
+op	28:27	0:0	4	&
+water	28:28	0:0	4	req_headers
+arg	28:41	28:50	3	"Session"
+water	28:41	0:0	4	"Session"
+arg	29:27	29:54	3	(void*)p_sys->psz_session
+water	29:27	0:0	4	(
+water	29:28	0:0	4	void
+op	29:33	0:0	4	*
+water	29:34	0:0	4	)
+water	29:35	0:0	4	p_sys
+op	29:40	0:0	4	->
+water	29:42	0:0	4	psz_session
+water	29:55	0:0	2	;
+water	30:4	0:0	2	i_err
+op	30:10	0:0	2	=
+call	30:12	32:53	2	ExecRequest
+arg	30:25	30:31	3	p_this
+water	30:25	0:0	4	p_this
+arg	30:33	30:48	3	"SET_PARAMETER"
+water	30:33	0:0	4	"SET_PARAMETER"
+arg	31:25	31:42	3	"text/parameters"
+water	31:25	0:0	4	"text/parameters"
+arg	31:44	31:58	3	psz_parameters
+water	31:44	0:0	4	psz_parameters
+arg	32:25	32:37	3	&req_headers
+op	32:25	0:0	4	&
+water	32:26	0:0	4	req_headers
+arg	32:39	32:53	3	&resp_headers
+op	32:39	0:0	4	&
+water	32:40	0:0	4	resp_headers
+water	32:54	0:0	2	;
+if	33:4	34:18	2	(i_err != VLC_SUCCESS)
+cond	33:9	33:18	3	i_err != VLC_SUCCESS
+water	33:9	0:0	4	i_err
+op	33:15	0:0	4	!=
+water	33:18	0:0	4	VLC_SUCCESS
+stmts	34:8	34:18	3	
+goto	34:8	34:18	4	error
+water	34:13	0:0	5	error
+label	35:0	35:5	2	error :
+call	36:4	36:51	2	vlc_dictionary_clear
+arg	36:26	36:38	3	&req_headers
+op	36:26	0:0	4	&
+water	36:27	0:0	4	req_headers
+arg	36:40	36:44	3	NULL
+water	36:40	0:0	4	NULL
+arg	36:46	36:51	3	NULL
+water	36:46	0:0	4	NULL
+water	36:52	0:0	2	;
+call	37:4	37:58	2	vlc_dictionary_clear
+arg	37:26	37:39	3	&resp_headers
+op	37:26	0:0	4	&
+water	37:27	0:0	4	resp_headers
+arg	37:41	37:51	3	FreeHeader
+water	37:41	0:0	4	FreeHeader
+arg	37:53	37:58	3	NULL
+water	37:53	0:0	4	NULL
+water	37:59	0:0	2	;
+call	38:4	38:25	2	free
+arg	38:10	38:25	3	psz_parameters
+water	38:10	0:0	4	psz_parameters
+water	38:26	0:0	2	;
+return	39:4	39:16	2	i_err
+water	39:11	0:0	3	i_err

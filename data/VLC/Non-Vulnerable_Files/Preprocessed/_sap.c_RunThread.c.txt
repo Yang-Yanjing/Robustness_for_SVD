@@ -1,0 +1,135 @@
+func	2:0	25:0	0	static void *	RunThread
+params	2:23	0:0	1	
+param	2:24	2:34	2	void *	self
+stmnts	0:0	24:14	1	
+decl	4:4	4:30	2	sap_address_t	*addr
+op	4:24	0:0	2	=
+water	4:26	0:0	2	self
+call	5:4	5:31	2	vlc_mutex_lock
+arg	5:20	5:31	3	&addr->lock
+op	5:20	0:0	4	&
+water	5:21	0:0	4	addr
+op	5:25	0:0	4	->
+water	5:27	0:0	4	lock
+water	5:32	0:0	2	;
+call	6:4	6:35	2	mutex_cleanup_push
+arg	6:24	6:35	3	&addr->lock
+op	6:24	0:0	4	&
+water	6:25	0:0	4	addr
+op	6:29	0:0	4	->
+water	6:31	0:0	4	lock
+water	6:36	0:0	2	;
+for	7:4	22:4	2	(;;)
+forinit	7:9	7:9	3	;
+water	7:9	0:0	4	;
+cond	0:0	0:0	3	
+forexpr	0:0	0:0	3	
+stmts	8:4	22:4	3	
+water	8:4	0:0	4	{
+decl	9:8	9:32	4	sap_session_t	*p_session
+decl	10:8	10:24	4	mtime_t	deadline
+while	11:8	12:52	4	(addr -> first == NULL)
+cond	11:15	11:30	5	addr -> first == NULL
+water	11:15	0:0	6	addr
+op	11:19	0:0	6	->
+water	11:21	0:0	6	first
+op	11:27	0:0	6	==
+water	11:30	0:0	6	NULL
+stmts	12:12	12:52	5	
+call	12:12	12:51	6	vlc_cond_wait
+arg	12:27	12:38	7	&addr->wait
+op	12:27	0:0	8	&
+water	12:28	0:0	8	addr
+op	12:32	0:0	8	->
+water	12:34	0:0	8	wait
+arg	12:40	12:51	7	&addr->lock
+op	12:40	0:0	8	&
+water	12:41	0:0	8	addr
+op	12:45	0:0	8	->
+water	12:47	0:0	8	lock
+water	12:52	0:0	6	;
+call	13:8	13:39	4	assert
+arg	13:16	13:39	5	addr->session_count>0
+water	13:16	0:0	6	addr
+op	13:20	0:0	6	->
+water	13:22	0:0	6	session_count
+op	13:36	0:0	6	>
+water	13:38	0:0	6	0
+water	13:40	0:0	4	;
+water	14:8	0:0	4	deadline
+op	14:17	0:0	4	=
+call	14:19	14:26	4	mdate
+water	14:27	0:0	4	;
+for	15:8	21:8	4	(p_session = addr -> first ;p_session;p_session = p_session -> next)
+forinit	15:13	15:36	5	p_session = addr -> first ;
+water	15:13	0:0	6	p_session
+op	15:23	0:0	6	=
+water	15:25	0:0	6	addr
+op	15:29	0:0	6	->
+water	15:31	0:0	6	first
+water	15:36	0:0	6	;
+cond	15:38	15:38	5	p_session
+water	15:38	0:0	6	p_session
+forexpr	15:49	15:72	5	p_session = p_session -> next
+water	15:49	0:0	6	p_session
+op	15:59	0:0	6	=
+water	15:61	0:0	6	p_session
+op	15:70	0:0	6	->
+water	15:72	0:0	6	next
+stmts	16:8	21:8	5	
+water	16:8	0:0	6	{
+call	17:12	17:65	6	send
+arg	17:18	17:26	7	addr->fd
+water	17:18	0:0	8	addr
+op	17:22	0:0	8	->
+water	17:24	0:0	8	fd
+arg	17:28	17:43	7	p_session->data
+water	17:28	0:0	8	p_session
+op	17:37	0:0	8	->
+water	17:39	0:0	8	data
+arg	17:45	17:62	7	p_session->length
+water	17:45	0:0	8	p_session
+op	17:54	0:0	8	->
+water	17:56	0:0	8	length
+arg	17:64	17:65	7	0
+water	17:64	0:0	8	0
+water	17:66	0:0	6	;
+water	18:12	0:0	6	deadline
+op	18:21	0:0	6	+=
+water	18:24	0:0	6	addr
+op	18:28	0:0	6	->
+water	18:30	0:0	6	interval
+op	18:39	0:0	6	*
+water	18:41	0:0	6	CLOCK_FREQ
+op	18:52	0:0	6	/
+water	18:54	0:0	6	addr
+op	18:58	0:0	6	->
+water	18:60	0:0	6	session_count
+water	18:73	0:0	6	;
+if	19:12	20:21	6	(vlc_cond_timedwait (& addr -> wait ,& addr -> lock ,deadline ) == 0)
+cond	19:16	19:75	7	vlc_cond_timedwait (& addr -> wait ,& addr -> lock ,deadline ) == 0
+call	19:16	19:70	8	vlc_cond_timedwait
+arg	19:36	19:47	9	&addr->wait
+op	19:36	0:0	10	&
+water	19:37	0:0	10	addr
+op	19:41	0:0	10	->
+water	19:43	0:0	10	wait
+arg	19:49	19:60	9	&addr->lock
+op	19:49	0:0	10	&
+water	19:50	0:0	10	addr
+op	19:54	0:0	10	->
+water	19:56	0:0	10	lock
+arg	19:62	19:70	9	deadline
+water	19:62	0:0	10	deadline
+op	19:72	0:0	8	==
+water	19:75	0:0	8	0
+stmts	20:16	20:21	7	
+break	20:16	20:21	8	
+water	21:8	0:0	6	}
+water	22:4	0:0	4	}
+call	23:4	23:21	2	vlc_cleanup_pop
+water	23:22	0:0	2	;
+call	24:4	24:13	2	assert
+arg	24:12	24:13	3	0
+water	24:12	0:0	4	0
+water	24:14	0:0	2	;

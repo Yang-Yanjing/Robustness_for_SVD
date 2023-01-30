@@ -1,0 +1,138 @@
+func	2:0	32:0	0	static void	DecoderPlaySpu
+params	2:26	0:0	1	
+param	2:28	2:44	2	decoder_t *	p_dec
+param	2:46	2:69	2	subpicture_t *	p_subpic
+stmnts	0:0	31:37	1	
+decl	4:4	4:49	2	decoder_owner_sys_t	*p_owner
+op	4:33	0:0	2	=
+water	4:35	0:0	2	p_dec
+op	4:40	0:0	2	->
+water	4:42	0:0	2	p_owner
+decl	5:4	5:47	2	vout_thread_t	*p_vout
+op	5:26	0:0	2	=
+water	5:28	0:0	2	p_owner
+op	5:35	0:0	2	->
+water	5:37	0:0	2	p_spu_vout
+if	7:4	12:4	2	(p_subpic -> i_start <= VLC_TS_INVALID)
+cond	7:8	7:29	3	p_subpic -> i_start <= VLC_TS_INVALID
+water	7:8	0:0	4	p_subpic
+op	7:16	0:0	4	->
+water	7:18	0:0	4	i_start
+op	7:26	0:0	4	<=
+water	7:29	0:0	4	VLC_TS_INVALID
+stmts	8:4	12:4	3	
+water	8:4	0:0	4	{
+call	9:8	9:57	4	msg_Warn
+arg	9:18	9:23	5	p_dec
+water	9:18	0:0	6	p_dec
+arg	9:25	9:57	5	"non-dated spu buffer received"
+water	9:25	0:0	6	"non-dated spu buffer received"
+water	9:58	0:0	4	;
+call	10:8	10:36	4	subpicture_Delete
+arg	10:27	10:36	5	p_subpic
+water	10:27	0:0	6	p_subpic
+water	10:37	0:0	4	;
+return	11:8	11:14	4	
+water	12:4	0:0	4	}
+call	14:4	14:35	2	vlc_mutex_lock
+arg	14:20	14:35	3	&p_owner->lock
+op	14:20	0:0	4	&
+water	14:21	0:0	4	p_owner
+op	14:28	0:0	4	->
+water	14:30	0:0	4	lock
+water	14:36	0:0	2	;
+if	15:4	19:4	2	(p_owner -> b_waiting)
+cond	15:8	15:17	3	p_owner -> b_waiting
+water	15:8	0:0	4	p_owner
+op	15:15	0:0	4	->
+water	15:17	0:0	4	b_waiting
+stmts	16:4	19:4	3	
+water	16:4	0:0	4	{
+water	17:8	0:0	4	p_owner
+op	17:15	0:0	4	->
+water	17:17	0:0	4	b_has_data
+op	17:28	0:0	4	=
+water	17:30	0:0	4	true
+water	17:34	0:0	4	;
+call	18:8	18:52	4	vlc_cond_signal
+arg	18:25	18:52	5	&p_owner->wait_acknowledge
+op	18:25	0:0	6	&
+water	18:26	0:0	6	p_owner
+op	18:33	0:0	6	->
+water	18:35	0:0	6	wait_acknowledge
+water	18:53	0:0	4	;
+water	19:4	0:0	4	}
+decl	20:4	20:47	2	bool	b_reject
+op	20:18	0:0	2	=
+call	20:20	20:46	3	DecoderWaitUnblock
+arg	20:40	20:46	4	p_dec
+water	20:40	0:0	5	p_dec
+call	21:4	22:34	2	DecoderFixTs
+arg	21:18	21:23	3	p_dec
+water	21:18	0:0	4	p_dec
+arg	21:25	21:43	3	&p_subpic->i_start
+op	21:25	0:0	4	&
+water	21:26	0:0	4	p_subpic
+op	21:34	0:0	4	->
+water	21:36	0:0	4	i_start
+arg	21:45	21:62	3	&p_subpic->i_stop
+op	21:45	0:0	4	&
+water	21:46	0:0	4	p_subpic
+op	21:54	0:0	4	->
+water	21:56	0:0	4	i_stop
+arg	21:64	21:68	3	NULL
+water	21:64	0:0	4	NULL
+arg	22:18	22:22	3	NULL
+water	22:18	0:0	4	NULL
+arg	22:24	22:34	3	INT64_MAX
+water	22:24	0:0	4	INT64_MAX
+water	22:35	0:0	2	;
+if	23:4	24:23	2	(p_subpic -> i_start <= VLC_TS_INVALID)
+cond	23:8	23:29	3	p_subpic -> i_start <= VLC_TS_INVALID
+water	23:8	0:0	4	p_subpic
+op	23:16	0:0	4	->
+water	23:18	0:0	4	i_start
+op	23:26	0:0	4	<=
+water	23:29	0:0	4	VLC_TS_INVALID
+stmts	24:8	24:23	3	
+water	24:8	0:0	4	b_reject
+op	24:17	0:0	4	=
+water	24:19	0:0	4	true
+water	24:23	0:0	4	;
+call	25:4	26:62	2	DecoderWaitDate
+arg	25:21	25:26	3	p_dec
+water	25:21	0:0	4	p_dec
+arg	25:28	25:37	3	&b_reject
+op	25:28	0:0	4	&
+water	25:29	0:0	4	b_reject
+arg	26:21	26:62	3	p_subpic->i_start-SPU_MAX_PREPARE_TIME
+water	26:21	0:0	4	p_subpic
+op	26:29	0:0	4	->
+water	26:31	0:0	4	i_start
+op	26:39	0:0	4	-
+water	26:41	0:0	4	SPU_MAX_PREPARE_TIME
+water	26:63	0:0	2	;
+call	27:4	27:37	2	vlc_mutex_unlock
+arg	27:22	27:37	3	&p_owner->lock
+op	27:22	0:0	4	&
+water	27:23	0:0	4	p_owner
+op	27:30	0:0	4	->
+water	27:32	0:0	4	lock
+water	27:38	0:0	2	;
+if	28:4	29:46	2	(! b_reject)
+cond	28:8	28:9	3	! b_reject
+op	28:8	0:0	4	!
+water	28:9	0:0	4	b_reject
+stmts	29:8	29:46	3	
+call	29:8	29:45	4	vout_PutSubpicture
+arg	29:28	29:34	5	p_vout
+water	29:28	0:0	6	p_vout
+arg	29:36	29:45	5	p_subpic
+water	29:36	0:0	6	p_subpic
+water	29:46	0:0	4	;
+else	30:4	31:37	2
+stmts	31:8	31:37	3	
+call	31:8	31:36	4	subpicture_Delete
+arg	31:27	31:36	5	p_subpic
+water	31:27	0:0	6	p_subpic
+water	31:37	0:0	4	;

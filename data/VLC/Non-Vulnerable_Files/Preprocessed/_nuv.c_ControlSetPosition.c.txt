@@ -1,0 +1,196 @@
+func	2:0	46:0	0	static int	ControlSetPosition
+params	2:29	0:0	1	
+param	2:31	2:47	2	demux_t *	p_demux
+param	2:49	2:62	2	int64_t	i_pos
+param	2:64	2:77	2	bool	b_guess
+stmnts	0:0	45:22	1	
+decl	4:4	4:40	2	demux_sys_t	*p_sys
+op	4:24	0:0	2	=
+water	4:26	0:0	2	p_demux
+op	4:33	0:0	2	->
+water	4:35	0:0	2	p_sys
+if	5:4	6:27	2	(i_pos < 0)
+cond	5:8	5:16	3	i_pos < 0
+water	5:8	0:0	4	i_pos
+op	5:14	0:0	4	<
+water	5:16	0:0	4	0
+stmts	6:8	6:27	3	
+return	6:8	6:27	4	VLC_EGENERIC
+water	6:15	0:0	5	VLC_EGENERIC
+if	8:4	12:4	2	(p_sys -> b_seekable && ! b_guess)
+cond	8:8	8:30	3	p_sys -> b_seekable && ! b_guess
+water	8:8	0:0	4	p_sys
+op	8:13	0:0	4	->
+water	8:15	0:0	4	b_seekable
+op	8:26	0:0	4	&&
+op	8:29	0:0	4	!
+water	8:30	0:0	4	b_guess
+stmts	9:4	12:4	3	
+water	9:4	0:0	4	{
+if	10:8	11:31	4	(stream_Seek (p_demux -> s ,i_pos ))
+cond	10:12	10:43	5	stream_Seek (p_demux -> s ,i_pos )
+call	10:12	10:43	6	stream_Seek
+arg	10:25	10:35	7	p_demux->s
+water	10:25	0:0	8	p_demux
+op	10:32	0:0	8	->
+water	10:34	0:0	8	s
+arg	10:37	10:43	7	i_pos
+water	10:37	0:0	8	i_pos
+stmts	11:12	11:31	5	
+return	11:12	11:31	6	VLC_EGENERIC
+water	11:19	0:0	7	VLC_EGENERIC
+water	12:4	0:0	4	}
+else	13:4	25:4	2
+stmts	14:4	25:4	3	
+water	14:4	0:0	4	{
+if	16:8	19:8	4	(i_pos >stream_Tell (p_demux -> s ))
+cond	16:12	16:44	5	i_pos >stream_Tell (p_demux -> s )
+water	16:12	0:0	6	i_pos
+op	16:18	0:0	6	>
+call	16:20	16:44	6	stream_Tell
+arg	16:33	16:44	7	p_demux->s
+water	16:33	0:0	8	p_demux
+op	16:40	0:0	8	->
+water	16:42	0:0	8	s
+stmts	17:8	19:8	5	
+water	17:8	0:0	6	{
+call	18:12	18:71	6	msg_Dbg
+arg	18:21	18:28	7	p_demux
+water	18:21	0:0	8	p_demux
+arg	18:30	18:71	7	"unable to seek, skipping frames (slow)"
+water	18:30	0:0	8	"unable to seek, skipping frames (slow)"
+water	18:72	0:0	6	;
+water	19:8	0:0	6	}
+else	20:8	24:8	4
+stmts	21:8	24:8	5	
+water	21:8	0:0	6	{
+call	22:12	22:82	6	msg_Warn
+arg	22:22	22:29	7	p_demux
+water	22:22	0:0	8	p_demux
+arg	22:31	22:82	7	"unable to seek, only forward seeking is possible"
+water	22:31	0:0	8	"unable to seek, only forward seeking is possible"
+water	22:83	0:0	6	;
+return	23:12	23:31	6	VLC_EGENERIC
+water	23:19	0:0	7	VLC_EGENERIC
+water	24:8	0:0	6	}
+water	25:4	0:0	4	}
+while	26:4	44:4	2	(vlc_object_alive (p_demux ))
+cond	26:11	26:36	3	vlc_object_alive (p_demux )
+call	26:11	26:36	4	vlc_object_alive
+arg	26:29	26:36	5	p_demux
+water	26:29	0:0	6	p_demux
+stmts	27:4	44:4	3	
+water	27:4	0:0	4	{
+decl	28:8	28:25	4	frame_header_t	fh
+decl	29:8	29:22	4	int64_t	i_tell
+if	30:8	31:17	4	(( i_tell =stream_Tell (p_demux -> s ) ) >= i_pos)
+cond	30:12	30:54	5	( i_tell =stream_Tell (p_demux -> s ) ) >= i_pos
+water	30:12	0:0	6	(
+water	30:14	0:0	6	i_tell
+op	30:21	0:0	6	=
+call	30:23	30:47	6	stream_Tell
+arg	30:36	30:47	7	p_demux->s
+water	30:36	0:0	8	p_demux
+op	30:43	0:0	8	->
+water	30:45	0:0	8	s
+water	30:49	0:0	6	)
+op	30:51	0:0	6	>=
+water	30:54	0:0	6	i_pos
+stmts	31:12	31:17	5	
+break	31:12	31:17	6	
+if	32:8	33:31	4	(FrameHeaderLoad (p_demux ,& fh ))
+cond	32:12	32:42	5	FrameHeaderLoad (p_demux ,& fh )
+call	32:12	32:42	6	FrameHeaderLoad
+arg	32:29	32:36	7	p_demux
+water	32:29	0:0	8	p_demux
+arg	32:38	32:42	7	&fh
+op	32:38	0:0	8	&
+water	32:39	0:0	8	fh
+stmts	33:12	33:31	5	
+return	33:12	33:31	6	VLC_EGENERIC
+water	33:19	0:0	7	VLC_EGENERIC
+if	34:8	38:8	4	(fh . i_type == 'A' || fh . i_type == 'V')
+cond	34:12	34:45	5	fh . i_type == 'A' || fh . i_type == 'V'
+water	34:12	0:0	6	fh
+op	34:14	0:0	6	.
+water	34:15	0:0	6	i_type
+op	34:22	0:0	6	==
+water	34:25	0:0	6	'A'
+op	34:29	0:0	6	||
+water	34:32	0:0	6	fh
+op	34:34	0:0	6	.
+water	34:35	0:0	6	i_type
+op	34:42	0:0	6	==
+water	34:45	0:0	6	'V'
+stmts	35:8	38:8	5	
+water	35:8	0:0	6	{
+if	36:12	37:84	6	(! fh . i_keyframe && ! p_sys -> b_index)
+cond	36:16	36:42	7	! fh . i_keyframe && ! p_sys -> b_index
+op	36:16	0:0	8	!
+water	36:17	0:0	8	fh
+op	36:19	0:0	8	.
+water	36:20	0:0	8	i_keyframe
+op	36:31	0:0	8	&&
+op	36:34	0:0	8	!
+water	36:35	0:0	8	p_sys
+op	36:40	0:0	8	->
+water	36:42	0:0	8	b_index
+stmts	37:16	37:84	7	
+call	37:16	37:83	8	demux_IndexAppend
+arg	37:35	37:46	9	&p_sys->idx
+op	37:35	0:0	10	&
+water	37:36	0:0	10	p_sys
+op	37:41	0:0	10	->
+water	37:43	0:0	10	idx
+arg	37:47	37:74	9	(int64_t)fh.i_timecode*1000
+water	37:47	0:0	10	(
+water	37:48	0:0	10	int64_t
+water	37:55	0:0	10	)
+water	37:56	0:0	10	fh
+op	37:58	0:0	10	.
+water	37:59	0:0	10	i_timecode
+op	37:69	0:0	10	*
+water	37:70	0:0	10	1000
+arg	37:76	37:83	9	i_tell
+water	37:76	0:0	10	i_tell
+water	37:84	0:0	8	;
+water	38:8	0:0	6	}
+if	39:8	43:8	4	(fh . i_type != 'R' && fh . i_length > 0)
+cond	39:12	39:46	5	fh . i_type != 'R' && fh . i_length > 0
+water	39:12	0:0	6	fh
+op	39:14	0:0	6	.
+water	39:15	0:0	6	i_type
+op	39:22	0:0	6	!=
+water	39:25	0:0	6	'R'
+op	39:29	0:0	6	&&
+water	39:32	0:0	6	fh
+op	39:34	0:0	6	.
+water	39:35	0:0	6	i_length
+op	39:44	0:0	6	>
+water	39:46	0:0	6	0
+stmts	40:8	43:8	5	
+water	40:8	0:0	6	{
+if	41:12	42:35	6	(stream_Read (p_demux -> s ,NULL ,fh . i_length ) != fh . i_length)
+cond	41:16	41:67	7	stream_Read (p_demux -> s ,NULL ,fh . i_length ) != fh . i_length
+call	41:16	41:59	8	stream_Read
+arg	41:29	41:39	9	p_demux->s
+water	41:29	0:0	10	p_demux
+op	41:36	0:0	10	->
+water	41:38	0:0	10	s
+arg	41:41	41:45	9	NULL
+water	41:41	0:0	10	NULL
+arg	41:47	41:59	9	fh.i_length
+water	41:47	0:0	10	fh
+op	41:49	0:0	10	.
+water	41:50	0:0	10	i_length
+op	41:61	0:0	8	!=
+water	41:64	0:0	8	fh
+op	41:66	0:0	8	.
+water	41:67	0:0	8	i_length
+stmts	42:16	42:35	7	
+return	42:16	42:35	8	VLC_EGENERIC
+water	42:23	0:0	9	VLC_EGENERIC
+water	43:8	0:0	6	}
+water	44:4	0:0	4	}
+return	45:4	45:22	2	VLC_SUCCESS
+water	45:11	0:0	3	VLC_SUCCESS

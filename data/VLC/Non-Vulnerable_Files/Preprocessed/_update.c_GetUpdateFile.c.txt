@@ -1,0 +1,847 @@
+func	2:0	173:0	0	static bool	GetUpdateFile
+params	2:25	0:0	1	
+param	2:27	2:46	2	update_t *	p_update
+stmnts	0:0	172:16	1	
+decl	4:4	4:29	2	stream_t	*p_stream
+op	4:23	0:0	2	=
+water	4:25	0:0	2	NULL
+decl	5:4	5:33	2	char	*psz_version_line
+op	5:27	0:0	2	=
+water	5:29	0:0	2	NULL
+decl	6:4	6:32	2	char	*psz_update_data
+op	6:26	0:0	2	=
+water	6:28	0:0	2	NULL
+water	7:4	0:0	2	p_stream
+op	7:13	0:0	2	=
+call	7:15	7:72	2	stream_UrlNew
+arg	7:30	7:48	3	p_update->p_libvlc
+water	7:30	0:0	4	p_update
+op	7:38	0:0	4	->
+water	7:40	0:0	4	p_libvlc
+arg	7:50	7:72	3	UPDATE_VLC_STATUS_URL
+water	7:50	0:0	4	UPDATE_VLC_STATUS_URL
+water	7:73	0:0	2	;
+if	8:4	13:4	2	(! p_stream)
+cond	8:8	8:9	3	! p_stream
+op	8:8	0:0	4	!
+water	8:9	0:0	4	p_stream
+stmts	9:4	13:4	3	
+water	9:4	0:0	4	{
+call	10:8	11:39	4	msg_Err
+arg	10:17	10:35	5	p_update->p_libvlc
+water	10:17	0:0	6	p_update
+op	10:25	0:0	6	->
+water	10:27	0:0	6	p_libvlc
+arg	10:37	10:68	5	"Failed to open %s for reading"
+water	10:37	0:0	6	"Failed to open %s for reading"
+arg	11:17	11:39	5	UPDATE_VLC_STATUS_URL
+water	11:17	0:0	6	UPDATE_VLC_STATUS_URL
+water	11:40	0:0	4	;
+goto	12:8	12:18	4	error
+water	12:13	0:0	5	error
+water	13:4	0:0	4	}
+decl	14:4	14:50	2	const int64_t	i_read
+op	14:25	0:0	2	=
+call	14:27	14:49	3	stream_Size
+arg	14:40	14:49	4	p_stream
+water	14:40	0:0	5	p_stream
+if	15:4	19:4	2	(i_read < 0 || i_read >= UINT16_MAX)
+cond	15:8	15:32	3	i_read < 0 || i_read >= UINT16_MAX
+water	15:8	0:0	4	i_read
+op	15:15	0:0	4	<
+water	15:17	0:0	4	0
+op	15:19	0:0	4	||
+water	15:22	0:0	4	i_read
+op	15:29	0:0	4	>=
+water	15:32	0:0	4	UINT16_MAX
+stmts	16:4	19:4	3	
+water	16:4	0:0	4	{
+call	17:8	17:59	4	msg_Err
+arg	17:16	17:34	5	p_update->p_libvlc
+water	17:16	0:0	6	p_update
+op	17:24	0:0	6	->
+water	17:26	0:0	6	p_libvlc
+arg	17:36	17:59	5	"Status file too large"
+water	17:36	0:0	6	"Status file too large"
+water	17:60	0:0	4	;
+goto	18:8	18:18	4	error
+water	18:13	0:0	5	error
+water	19:4	0:0	4	}
+water	20:4	0:0	2	psz_update_data
+op	20:20	0:0	2	=
+call	20:22	20:41	2	malloc
+arg	20:30	20:41	3	i_read+1
+water	20:30	0:0	4	i_read
+op	20:37	0:0	4	+
+water	20:39	0:0	4	1
+water	20:42	0:0	2	;
+if	21:4	22:18	2	(! psz_update_data)
+cond	21:8	21:9	3	! psz_update_data
+op	21:8	0:0	4	!
+water	21:9	0:0	4	psz_update_data
+stmts	22:8	22:18	3	
+goto	22:8	22:18	4	error
+water	22:13	0:0	5	error
+if	23:4	28:4	2	(stream_Read (p_stream ,psz_update_data ,i_read ) != i_read)
+cond	23:8	23:60	3	stream_Read (p_stream ,psz_update_data ,i_read ) != i_read
+call	23:8	23:55	4	stream_Read
+arg	23:21	23:29	5	p_stream
+water	23:21	0:0	6	p_stream
+arg	23:31	23:46	5	psz_update_data
+water	23:31	0:0	6	psz_update_data
+arg	23:48	23:55	5	i_read
+water	23:48	0:0	6	i_read
+op	23:57	0:0	4	!=
+water	23:60	0:0	4	i_read
+stmts	24:4	28:4	3	
+water	24:4	0:0	4	{
+call	25:8	26:38	4	msg_Err
+arg	25:17	25:35	5	p_update->p_libvlc
+water	25:17	0:0	6	p_update
+op	25:25	0:0	6	->
+water	25:27	0:0	6	p_libvlc
+arg	25:37	25:71	5	"Couldn't download update file %s"
+water	25:37	0:0	6	"Couldn't download update file %s"
+arg	26:16	26:38	5	UPDATE_VLC_STATUS_URL
+water	26:16	0:0	6	UPDATE_VLC_STATUS_URL
+water	26:39	0:0	4	;
+goto	27:8	27:18	4	error
+water	27:13	0:0	5	error
+water	28:4	0:0	4	}
+water	29:4	0:0	2	psz_update_data
+op	29:19	0:0	2	[
+water	29:20	0:0	2	i_read
+op	29:26	0:0	2	]
+op	29:28	0:0	2	=
+water	29:30	0:0	2	'\0'
+water	29:34	0:0	2	;
+call	30:4	30:28	2	stream_Delete
+arg	30:19	30:28	3	p_stream
+water	30:19	0:0	4	p_stream
+water	30:29	0:0	2	;
+water	31:4	0:0	2	p_stream
+op	31:13	0:0	2	=
+water	31:15	0:0	2	NULL
+water	31:19	0:0	2	;
+decl	33:4	33:50	2	char	*psz_update_data_parser
+op	33:33	0:0	2	=
+water	33:35	0:0	2	psz_update_data
+decl	34:4	34:53	2	size_t	i_len
+op	34:17	0:0	2	=
+call	34:19	34:52	3	strcspn
+arg	34:28	34:43	4	psz_update_data
+water	34:28	0:0	5	psz_update_data
+arg	34:45	34:52	4	"\r\n"
+water	34:45	0:0	5	"\r\n"
+water	35:4	0:0	2	psz_update_data_parser
+op	35:27	0:0	2	+=
+water	35:30	0:0	2	i_len
+water	35:35	0:0	2	;
+while	36:4	37:32	2	(* psz_update_data_parser == '\r' || * psz_update_data_parser == '\n')
+cond	36:11	36:73	3	* psz_update_data_parser == '\r' || * psz_update_data_parser == '\n'
+op	36:11	0:0	4	*
+water	36:12	0:0	4	psz_update_data_parser
+op	36:35	0:0	4	==
+water	36:38	0:0	4	'\r'
+op	36:43	0:0	4	||
+op	36:46	0:0	4	*
+water	36:47	0:0	4	psz_update_data_parser
+op	36:70	0:0	4	==
+water	36:73	0:0	4	'\n'
+stmts	37:8	37:32	3	
+water	37:8	0:0	4	psz_update_data_parser
+op	37:30	0:0	4	++
+water	37:32	0:0	4	;
+if	38:4	39:18	2	(! ( psz_version_line =malloc (i_len + 1 ) ))
+cond	38:8	38:47	3	! ( psz_version_line =malloc (i_len + 1 ) )
+op	38:8	0:0	4	!
+water	38:9	0:0	4	(
+water	38:10	0:0	4	psz_version_line
+op	38:27	0:0	4	=
+call	38:29	38:46	4	malloc
+arg	38:37	38:46	5	i_len+1
+water	38:37	0:0	6	i_len
+op	38:43	0:0	6	+
+water	38:45	0:0	6	1
+water	38:47	0:0	4	)
+stmts	39:8	39:18	3	
+goto	39:8	39:18	4	error
+water	39:13	0:0	5	error
+call	40:4	40:54	2	strncpy
+arg	40:13	40:29	3	psz_version_line
+water	40:13	0:0	4	psz_version_line
+arg	40:31	40:46	3	psz_update_data
+water	40:31	0:0	4	psz_update_data
+arg	40:48	40:54	3	i_len
+water	40:48	0:0	4	i_len
+water	40:55	0:0	2	;
+water	41:4	0:0	2	psz_version_line
+op	41:20	0:0	2	[
+water	41:21	0:0	2	i_len
+op	41:26	0:0	2	]
+op	41:28	0:0	2	=
+water	41:30	0:0	2	'\0'
+water	41:34	0:0	2	;
+water	42:4	0:0	2	p_update
+op	42:12	0:0	2	->
+water	42:14	0:0	2	release
+op	42:21	0:0	2	.
+water	42:22	0:0	2	i_extra
+op	42:30	0:0	2	=
+water	42:32	0:0	2	0
+water	42:33	0:0	2	;
+decl	43:4	45:78	2	int	ret
+op	43:12	0:0	2	=
+call	43:14	45:77	3	sscanf
+arg	43:22	43:38	4	psz_version_line
+water	43:22	0:0	5	psz_version_line
+arg	43:40	43:53	4	"%i.%i.%i.%i"
+water	43:40	0:0	5	"%i.%i.%i.%i"
+arg	44:20	44:46	4	&p_update->release.i_major
+op	44:20	0:0	5	&
+water	44:21	0:0	5	p_update
+op	44:29	0:0	5	->
+water	44:31	0:0	5	release
+op	44:38	0:0	5	.
+water	44:39	0:0	5	i_major
+arg	44:48	44:74	4	&p_update->release.i_minor
+op	44:48	0:0	5	&
+water	44:49	0:0	5	p_update
+op	44:57	0:0	5	->
+water	44:59	0:0	5	release
+op	44:66	0:0	5	.
+water	44:67	0:0	5	i_minor
+arg	45:20	45:49	4	&p_update->release.i_revision
+op	45:20	0:0	5	&
+water	45:21	0:0	5	p_update
+op	45:29	0:0	5	->
+water	45:31	0:0	5	release
+op	45:38	0:0	5	.
+water	45:39	0:0	5	i_revision
+arg	45:51	45:77	4	&p_update->release.i_extra
+op	45:51	0:0	5	&
+water	45:52	0:0	5	p_update
+op	45:60	0:0	5	->
+water	45:62	0:0	5	release
+op	45:69	0:0	5	.
+water	45:70	0:0	5	i_extra
+if	46:4	50:4	2	(ret != 3 && ret != 4)
+cond	46:8	46:27	3	ret != 3 && ret != 4
+water	46:8	0:0	4	ret
+op	46:12	0:0	4	!=
+water	46:15	0:0	4	3
+op	46:17	0:0	4	&&
+water	46:20	0:0	4	ret
+op	46:24	0:0	4	!=
+water	46:27	0:0	4	4
+stmts	47:4	50:4	3	
+water	47:4	0:0	4	{
+call	48:12	48:73	4	msg_Err
+arg	48:21	48:39	5	p_update->p_libvlc
+water	48:21	0:0	6	p_update
+op	48:29	0:0	6	->
+water	48:31	0:0	6	p_libvlc
+arg	48:41	48:73	5	"Update version false formated"
+water	48:41	0:0	6	"Update version false formated"
+water	48:74	0:0	4	;
+goto	49:12	49:22	4	error
+water	49:17	0:0	5	error
+water	50:4	0:0	4	}
+water	52:4	0:0	2	i_len
+op	52:10	0:0	2	=
+call	52:12	52:52	2	strcspn
+arg	52:21	52:43	3	psz_update_data_parser
+water	52:21	0:0	4	psz_update_data_parser
+arg	52:45	52:52	3	"\r\n"
+water	52:45	0:0	4	"\r\n"
+water	52:53	0:0	2	;
+if	53:4	58:4	2	(i_len == 0)
+cond	53:8	53:17	3	i_len == 0
+water	53:8	0:0	4	i_len
+op	53:14	0:0	4	==
+water	53:17	0:0	4	0
+stmts	54:4	58:4	3	
+water	54:4	0:0	4	{
+call	55:8	56:39	4	msg_Err
+arg	55:17	55:35	5	p_update->p_libvlc
+water	55:17	0:0	6	p_update
+op	55:25	0:0	6	->
+water	55:27	0:0	6	p_libvlc
+arg	55:37	55:79	5	"Update file %s is corrupted: URL missing"
+water	55:37	0:0	6	"Update file %s is corrupted: URL missing"
+arg	56:17	56:39	5	UPDATE_VLC_STATUS_URL
+water	56:17	0:0	6	UPDATE_VLC_STATUS_URL
+water	56:40	0:0	4	;
+goto	57:8	57:18	4	error
+water	57:13	0:0	5	error
+water	58:4	0:0	4	}
+if	59:4	60:18	2	(! ( p_update -> release . psz_url =malloc (i_len + 1 ) ))
+cond	59:8	59:56	3	! ( p_update -> release . psz_url =malloc (i_len + 1 ) )
+op	59:8	0:0	4	!
+water	59:9	0:0	4	(
+water	59:10	0:0	4	p_update
+op	59:18	0:0	4	->
+water	59:20	0:0	4	release
+op	59:27	0:0	4	.
+water	59:28	0:0	4	psz_url
+op	59:36	0:0	4	=
+call	59:38	59:55	4	malloc
+arg	59:46	59:55	5	i_len+1
+water	59:46	0:0	6	i_len
+op	59:52	0:0	6	+
+water	59:54	0:0	6	1
+water	59:56	0:0	4	)
+stmts	60:8	60:18	3	
+goto	60:8	60:18	4	error
+water	60:13	0:0	5	error
+call	61:4	61:70	2	strncpy
+arg	61:13	61:38	3	p_update->release.psz_url
+water	61:13	0:0	4	p_update
+op	61:21	0:0	4	->
+water	61:23	0:0	4	release
+op	61:30	0:0	4	.
+water	61:31	0:0	4	psz_url
+arg	61:40	61:62	3	psz_update_data_parser
+water	61:40	0:0	4	psz_update_data_parser
+arg	61:64	61:70	3	i_len
+water	61:64	0:0	4	i_len
+water	61:71	0:0	2	;
+water	62:4	0:0	2	p_update
+op	62:12	0:0	2	->
+water	62:14	0:0	2	release
+op	62:21	0:0	2	.
+water	62:22	0:0	2	psz_url
+op	62:29	0:0	2	[
+water	62:30	0:0	2	i_len
+op	62:35	0:0	2	]
+op	62:37	0:0	2	=
+water	62:39	0:0	2	'\0'
+water	62:43	0:0	2	;
+water	63:4	0:0	2	psz_update_data_parser
+op	63:27	0:0	2	+=
+water	63:30	0:0	2	i_len
+water	63:35	0:0	2	;
+while	64:4	65:32	2	(* psz_update_data_parser == '\r' || * psz_update_data_parser == '\n')
+cond	64:11	64:73	3	* psz_update_data_parser == '\r' || * psz_update_data_parser == '\n'
+op	64:11	0:0	4	*
+water	64:12	0:0	4	psz_update_data_parser
+op	64:35	0:0	4	==
+water	64:38	0:0	4	'\r'
+op	64:43	0:0	4	||
+op	64:46	0:0	4	*
+water	64:47	0:0	4	psz_update_data_parser
+op	64:70	0:0	4	==
+water	64:73	0:0	4	'\n'
+stmts	65:8	65:32	3	
+water	65:8	0:0	4	psz_update_data_parser
+op	65:30	0:0	4	++
+water	65:32	0:0	4	;
+water	67:4	0:0	2	i_len
+op	67:10	0:0	2	=
+call	67:12	67:43	2	strlen
+arg	67:20	67:43	3	psz_update_data_parser
+water	67:20	0:0	4	psz_update_data_parser
+water	67:44	0:0	2	;
+if	68:4	74:4	2	(i_len == 0)
+cond	68:8	68:17	3	i_len == 0
+water	68:8	0:0	4	i_len
+op	68:14	0:0	4	==
+water	68:17	0:0	4	0
+stmts	69:4	74:4	3	
+water	69:4	0:0	4	{
+call	70:8	72:38	4	msg_Err
+arg	70:17	70:35	5	p_update->p_libvlc
+water	70:17	0:0	6	p_update
+op	70:25	0:0	6	->
+water	70:27	0:0	6	p_libvlc
+arg	71:16	71:66	5	"Update file %s is corrupted: description missing"
+water	71:16	0:0	6	"Update file %s is corrupted: description missing"
+arg	72:16	72:38	5	UPDATE_VLC_STATUS_URL
+water	72:16	0:0	6	UPDATE_VLC_STATUS_URL
+water	72:39	0:0	4	;
+goto	73:8	73:18	4	error
+water	73:13	0:0	5	error
+water	74:4	0:0	4	}
+if	75:4	76:18	2	(! ( p_update -> release . psz_desc =malloc (i_len + 1 ) ))
+cond	75:8	75:57	3	! ( p_update -> release . psz_desc =malloc (i_len + 1 ) )
+op	75:8	0:0	4	!
+water	75:9	0:0	4	(
+water	75:10	0:0	4	p_update
+op	75:18	0:0	4	->
+water	75:20	0:0	4	release
+op	75:27	0:0	4	.
+water	75:28	0:0	4	psz_desc
+op	75:37	0:0	4	=
+call	75:39	75:56	4	malloc
+arg	75:47	75:56	5	i_len+1
+water	75:47	0:0	6	i_len
+op	75:53	0:0	6	+
+water	75:55	0:0	6	1
+water	75:57	0:0	4	)
+stmts	76:8	76:18	3	
+goto	76:8	76:18	4	error
+water	76:13	0:0	5	error
+call	77:4	77:71	2	strncpy
+arg	77:13	77:39	3	p_update->release.psz_desc
+water	77:13	0:0	4	p_update
+op	77:21	0:0	4	->
+water	77:23	0:0	4	release
+op	77:30	0:0	4	.
+water	77:31	0:0	4	psz_desc
+arg	77:41	77:63	3	psz_update_data_parser
+water	77:41	0:0	4	psz_update_data_parser
+arg	77:65	77:71	3	i_len
+water	77:65	0:0	4	i_len
+water	77:72	0:0	2	;
+water	78:4	0:0	2	p_update
+op	78:12	0:0	2	->
+water	78:14	0:0	2	release
+op	78:21	0:0	2	.
+water	78:22	0:0	2	psz_desc
+op	78:30	0:0	2	[
+water	78:31	0:0	2	i_len
+op	78:36	0:0	2	]
+op	78:38	0:0	2	=
+water	78:40	0:0	2	'\0'
+water	78:44	0:0	2	;
+decl	81:4	81:27	2	signature_packet_t	sign
+if	82:4	87:4	2	(download_signature (VLC_OBJECT (p_update -> p_libvlc ) ,& sign ,UPDATE_VLC_STATUS_URL ) != VLC_SUCCESS)
+cond	82:8	83:39	3	download_signature (VLC_OBJECT (p_update -> p_libvlc ) ,& sign ,UPDATE_VLC_STATUS_URL ) != VLC_SUCCESS
+call	82:8	83:34	4	download_signature
+arg	82:28	82:60	5	VLC_OBJECT(p_update->p_libvlc)
+call	82:28	82:59	6	VLC_OBJECT
+arg	82:40	82:59	7	p_update->p_libvlc
+water	82:40	0:0	8	p_update
+op	82:48	0:0	8	->
+water	82:50	0:0	8	p_libvlc
+arg	82:62	82:67	5	&sign
+op	82:62	0:0	6	&
+water	82:63	0:0	6	sign
+arg	83:12	83:34	5	UPDATE_VLC_STATUS_URL
+water	83:12	0:0	6	UPDATE_VLC_STATUS_URL
+op	83:36	0:0	4	!=
+water	83:39	0:0	4	VLC_SUCCESS
+stmts	84:4	87:4	3	
+water	84:4	0:0	4	{
+call	85:8	85:82	4	msg_Err
+arg	85:17	85:35	5	p_update->p_libvlc
+water	85:17	0:0	6	p_update
+op	85:25	0:0	6	->
+water	85:27	0:0	6	p_libvlc
+arg	85:37	85:82	5	"Couldn't download signature of status file"
+water	85:37	0:0	6	"Couldn't download signature of status file"
+water	85:83	0:0	4	;
+goto	86:8	86:18	4	error
+water	86:13	0:0	5	error
+water	87:4	0:0	4	}
+if	88:4	92:4	2	(sign . type != BINARY_SIGNATURE && sign . type != TEXT_SIGNATURE)
+cond	88:8	88:54	3	sign . type != BINARY_SIGNATURE && sign . type != TEXT_SIGNATURE
+water	88:8	0:0	4	sign
+op	88:12	0:0	4	.
+water	88:13	0:0	4	type
+op	88:18	0:0	4	!=
+water	88:21	0:0	4	BINARY_SIGNATURE
+op	88:38	0:0	4	&&
+water	88:41	0:0	4	sign
+op	88:45	0:0	4	.
+water	88:46	0:0	4	type
+op	88:51	0:0	4	!=
+water	88:54	0:0	4	TEXT_SIGNATURE
+stmts	89:4	92:4	3	
+water	89:4	0:0	4	{
+call	90:8	90:62	4	msg_Err
+arg	90:17	90:35	5	p_update->p_libvlc
+water	90:17	0:0	6	p_update
+op	90:25	0:0	6	->
+water	90:27	0:0	6	p_libvlc
+arg	90:37	90:62	5	"Invalid signature type"
+water	90:37	0:0	6	"Invalid signature type"
+water	90:63	0:0	4	;
+goto	91:8	91:18	4	error
+water	91:13	0:0	5	error
+water	92:4	0:0	4	}
+water	93:4	0:0	2	p_update
+op	93:12	0:0	2	->
+water	93:14	0:0	2	p_pkey
+op	93:21	0:0	2	=
+water	93:23	0:0	2	(
+water	93:24	0:0	2	public_key_t
+op	93:36	0:0	2	*
+water	93:37	0:0	2	)
+call	93:38	93:69	2	malloc
+arg	93:46	93:69	3	sizeof(public_key_t)
+op	93:46	0:0	4	sizeof
+water	93:52	0:0	4	(
+water	93:54	0:0	4	public_key_t
+water	93:67	0:0	4	)
+water	93:70	0:0	2	;
+if	94:4	95:18	2	(! p_update -> p_pkey)
+cond	94:8	94:19	3	! p_update -> p_pkey
+op	94:8	0:0	4	!
+water	94:9	0:0	4	p_update
+op	94:17	0:0	4	->
+water	94:19	0:0	4	p_pkey
+stmts	95:8	95:18	3	
+goto	95:8	95:18	4	error
+water	95:13	0:0	5	error
+if	96:4	102:4	2	(parse_public_key (videolan_public_key ,sizeof ( videolan_public_key ) ,p_update -> p_pkey ,NULL ) != VLC_SUCCESS)
+cond	96:8	97:52	3	parse_public_key (videolan_public_key ,sizeof ( videolan_public_key ) ,p_update -> p_pkey ,NULL ) != VLC_SUCCESS
+call	96:8	97:47	4	parse_public_key
+arg	96:26	96:45	5	videolan_public_key
+water	96:26	0:0	6	videolan_public_key
+arg	96:47	96:76	5	sizeof(videolan_public_key)
+op	96:47	0:0	6	sizeof
+water	96:53	0:0	6	(
+water	96:55	0:0	6	videolan_public_key
+water	96:75	0:0	6	)
+arg	97:24	97:40	5	p_update->p_pkey
+water	97:24	0:0	6	p_update
+op	97:32	0:0	6	->
+water	97:34	0:0	6	p_pkey
+arg	97:42	97:47	5	NULL
+water	97:42	0:0	6	NULL
+op	97:49	0:0	4	!=
+water	97:52	0:0	4	VLC_SUCCESS
+stmts	98:4	102:4	3	
+water	98:4	0:0	4	{
+call	99:8	99:106	4	msg_Err
+arg	99:17	99:35	5	p_update->p_libvlc
+water	99:17	0:0	6	p_update
+op	99:25	0:0	6	->
+water	99:27	0:0	6	p_libvlc
+arg	99:37	99:106	5	"Couldn't parse embedded public key, something went really wrong..."
+water	99:37	0:0	6	"Couldn't parse embedded public key, something went really wrong..."
+water	99:107	0:0	4	;
+call	100:8	100:35	4	FREENULL
+arg	100:18	100:35	5	p_update->p_pkey
+water	100:18	0:0	6	p_update
+op	100:26	0:0	6	->
+water	100:28	0:0	6	p_pkey
+water	100:36	0:0	4	;
+goto	101:8	101:18	4	error
+water	101:13	0:0	5	error
+water	102:4	0:0	4	}
+call	103:4	103:68	2	memcpy
+arg	103:12	103:36	3	p_update->p_pkey->longid
+water	103:12	0:0	4	p_update
+op	103:20	0:0	4	->
+water	103:22	0:0	4	p_pkey
+op	103:28	0:0	4	->
+water	103:30	0:0	4	longid
+arg	103:38	103:64	3	videolan_public_key_longid
+water	103:38	0:0	4	videolan_public_key_longid
+arg	103:66	103:68	3	8
+water	103:66	0:0	4	8
+water	103:69	0:0	2	;
+if	104:4	138:4	2	(memcmp (sign . issuer_longid ,p_update -> p_pkey -> longid ,8 ) != 0)
+cond	104:8	104:70	3	memcmp (sign . issuer_longid ,p_update -> p_pkey -> longid ,8 ) != 0
+call	104:8	104:65	4	memcmp
+arg	104:16	104:34	5	sign.issuer_longid
+water	104:16	0:0	6	sign
+op	104:20	0:0	6	.
+water	104:21	0:0	6	issuer_longid
+arg	104:36	104:61	5	p_update->p_pkey->longid
+water	104:36	0:0	6	p_update
+op	104:44	0:0	6	->
+water	104:46	0:0	6	p_pkey
+op	104:52	0:0	6	->
+water	104:54	0:0	6	longid
+arg	104:63	104:65	5	8
+water	104:63	0:0	6	8
+op	104:67	0:0	4	!=
+water	104:70	0:0	4	0
+stmts	105:4	138:4	3	
+water	105:4	0:0	4	{
+call	106:8	106:68	4	msg_Dbg
+arg	106:17	106:35	5	p_update->p_libvlc
+water	106:17	0:0	6	p_update
+op	106:25	0:0	6	->
+water	106:27	0:0	6	p_libvlc
+arg	106:37	106:68	5	"Need to download the GPG key"
+water	106:37	0:0	6	"Need to download the GPG key"
+water	106:69	0:0	4	;
+decl	107:8	109:64	4	public_key_t	*p_new_pkey
+op	107:33	0:0	4	=
+call	107:35	109:63	5	download_key
+arg	108:16	108:46	6	VLC_OBJECT(p_update->p_libvlc)
+call	108:16	108:45	7	VLC_OBJECT
+arg	108:27	108:45	8	p_update->p_libvlc
+water	108:27	0:0	9	p_update
+op	108:35	0:0	9	->
+water	108:37	0:0	9	p_libvlc
+arg	109:16	109:34	6	sign.issuer_longid
+water	109:16	0:0	7	sign
+op	109:20	0:0	7	.
+water	109:21	0:0	7	issuer_longid
+arg	109:36	109:63	6	videolan_public_key_longid
+water	109:36	0:0	7	videolan_public_key_longid
+if	110:8	115:8	4	(! p_new_pkey)
+cond	110:12	110:13	5	! p_new_pkey
+op	110:12	0:0	6	!
+water	110:13	0:0	6	p_new_pkey
+stmts	111:8	115:8	5	
+water	111:8	0:0	6	{
+call	112:12	112:69	6	msg_Err
+arg	112:21	112:39	7	p_update->p_libvlc
+water	112:21	0:0	8	p_update
+op	112:29	0:0	8	->
+water	112:31	0:0	8	p_libvlc
+arg	112:41	112:69	7	"Couldn't download GPG key"
+water	112:41	0:0	8	"Couldn't download GPG key"
+water	112:70	0:0	6	;
+call	113:12	113:39	6	FREENULL
+arg	113:22	113:39	7	p_update->p_pkey
+water	113:22	0:0	8	p_update
+op	113:30	0:0	8	->
+water	113:32	0:0	8	p_pkey
+water	113:40	0:0	6	;
+goto	114:12	114:22	6	error
+water	114:17	0:0	7	error
+water	115:8	0:0	6	}
+decl	116:8	116:60	4	uint8_t	*p_hash
+op	116:24	0:0	4	=
+call	116:26	116:59	5	hash_from_public_key
+arg	116:48	116:59	6	p_new_pkey
+water	116:48	0:0	7	p_new_pkey
+if	117:8	123:8	4	(! p_hash)
+cond	117:12	117:13	5	! p_hash
+op	117:12	0:0	6	!
+water	117:13	0:0	6	p_hash
+stmts	118:8	123:8	5	
+water	118:8	0:0	6	{
+call	119:12	119:68	6	msg_Err
+arg	119:21	119:39	7	p_update->p_libvlc
+water	119:21	0:0	8	p_update
+op	119:29	0:0	8	->
+water	119:31	0:0	8	p_libvlc
+arg	119:41	119:68	7	"Failed to hash signature"
+water	119:41	0:0	8	"Failed to hash signature"
+water	119:69	0:0	6	;
+call	120:12	120:29	6	free
+arg	120:18	120:29	7	p_new_pkey
+water	120:18	0:0	8	p_new_pkey
+water	120:30	0:0	6	;
+call	121:12	121:39	6	FREENULL
+arg	121:22	121:39	7	p_update->p_pkey
+water	121:22	0:0	8	p_update
+op	121:30	0:0	8	->
+water	121:32	0:0	8	p_pkey
+water	121:40	0:0	6	;
+goto	122:12	122:22	6	error
+water	122:17	0:0	7	error
+water	123:8	0:0	6	}
+if	124:8	131:8	4	(verify_signature (& p_new_pkey -> sig ,& p_update -> p_pkey -> key ,p_hash ) == VLC_SUCCESS)
+cond	124:12	125:56	5	verify_signature (& p_new_pkey -> sig ,& p_update -> p_pkey -> key ,p_hash ) == VLC_SUCCESS
+call	124:12	125:51	6	verify_signature
+arg	124:30	124:46	7	&p_new_pkey->sig
+op	124:30	0:0	8	&
+water	124:31	0:0	8	p_new_pkey
+op	124:41	0:0	8	->
+water	124:43	0:0	8	sig
+arg	125:20	125:42	7	&p_update->p_pkey->key
+op	125:20	0:0	8	&
+water	125:21	0:0	8	p_update
+op	125:29	0:0	8	->
+water	125:31	0:0	8	p_pkey
+op	125:37	0:0	8	->
+water	125:39	0:0	8	key
+arg	125:44	125:51	7	p_hash
+water	125:44	0:0	8	p_hash
+op	125:53	0:0	6	==
+water	125:56	0:0	6	VLC_SUCCESS
+stmts	126:8	131:8	5	
+water	126:8	0:0	6	{
+call	127:12	127:25	6	free
+arg	127:18	127:25	7	p_hash
+water	127:18	0:0	8	p_hash
+water	127:26	0:0	6	;
+call	128:12	128:62	6	msg_Info
+arg	128:22	128:40	7	p_update->p_libvlc
+water	128:22	0:0	8	p_update
+op	128:30	0:0	8	->
+water	128:32	0:0	8	p_libvlc
+arg	128:42	128:62	7	"Key authenticated"
+water	128:42	0:0	8	"Key authenticated"
+water	128:63	0:0	6	;
+call	129:12	129:35	6	free
+arg	129:18	129:35	7	p_update->p_pkey
+water	129:18	0:0	8	p_update
+op	129:26	0:0	8	->
+water	129:28	0:0	8	p_pkey
+water	129:36	0:0	6	;
+water	130:12	0:0	6	p_update
+op	130:20	0:0	6	->
+water	130:22	0:0	6	p_pkey
+op	130:29	0:0	6	=
+water	130:31	0:0	6	p_new_pkey
+water	130:41	0:0	6	;
+water	131:8	0:0	6	}
+else	132:8	137:8	4
+stmts	133:8	137:8	5	
+water	133:8	0:0	6	{
+call	134:12	134:25	6	free
+arg	134:18	134:25	7	p_hash
+water	134:18	0:0	8	p_hash
+water	134:26	0:0	6	;
+call	135:12	135:67	6	msg_Err
+arg	135:21	135:39	7	p_update->p_libvlc
+water	135:21	0:0	8	p_update
+op	135:29	0:0	8	->
+water	135:31	0:0	8	p_libvlc
+arg	135:41	135:67	7	"Key signature invalid !"
+water	135:41	0:0	8	"Key signature invalid !"
+water	135:68	0:0	6	;
+goto	136:12	136:22	6	error
+water	136:17	0:0	7	error
+water	137:8	0:0	6	}
+water	138:4	0:0	4	}
+decl	139:4	139:62	2	uint8_t	*p_hash
+op	139:20	0:0	2	=
+call	139:22	139:61	3	hash_from_text
+arg	139:38	139:53	4	psz_update_data
+water	139:38	0:0	5	psz_update_data
+arg	139:55	139:61	4	&sign
+op	139:55	0:0	5	&
+water	139:56	0:0	5	sign
+if	140:4	144:4	2	(! p_hash)
+cond	140:8	140:9	3	! p_hash
+op	140:8	0:0	4	!
+water	140:9	0:0	4	p_hash
+stmts	141:4	144:4	3	
+water	141:4	0:0	4	{
+call	142:8	142:75	4	msg_Warn
+arg	142:18	142:36	5	p_update->p_libvlc
+water	142:18	0:0	6	p_update
+op	142:26	0:0	6	->
+water	142:28	0:0	6	p_libvlc
+arg	142:38	142:75	5	"Can't compute hash for status file"
+water	142:38	0:0	6	"Can't compute hash for status file"
+water	142:76	0:0	4	;
+goto	143:8	143:18	4	error
+water	143:13	0:0	5	error
+water	144:4	0:0	4	}
+else	145:4	151:4	2
+stmts	145:9	151:4	3	
+if	145:9	151:4	4	(p_hash [ 0 ] != sign . hash_verification [ 0 ] || p_hash [ 1 ] != sign . hash_verification [ 1 ])
+cond	145:13	146:45	5	p_hash [ 0 ] != sign . hash_verification [ 0 ] || p_hash [ 1 ] != sign . hash_verification [ 1 ]
+water	145:13	0:0	6	p_hash
+op	145:19	0:0	6	[
+water	145:20	0:0	6	0
+op	145:21	0:0	6	]
+op	145:23	0:0	6	!=
+water	145:26	0:0	6	sign
+op	145:30	0:0	6	.
+water	145:31	0:0	6	hash_verification
+op	145:48	0:0	6	[
+water	145:49	0:0	6	0
+op	145:50	0:0	6	]
+op	145:52	0:0	6	||
+water	146:8	0:0	6	p_hash
+op	146:14	0:0	6	[
+water	146:15	0:0	6	1
+op	146:16	0:0	6	]
+op	146:18	0:0	6	!=
+water	146:21	0:0	6	sign
+op	146:25	0:0	6	.
+water	146:26	0:0	6	hash_verification
+op	146:43	0:0	6	[
+water	146:44	0:0	6	1
+op	146:45	0:0	6	]
+stmts	147:4	151:4	5	
+water	147:4	0:0	6	{
+call	148:8	148:65	6	msg_Warn
+arg	148:18	148:36	7	p_update->p_libvlc
+water	148:18	0:0	8	p_update
+op	148:26	0:0	8	->
+water	148:28	0:0	8	p_libvlc
+arg	148:38	148:65	7	"Bad hash for status file"
+water	148:38	0:0	8	"Bad hash for status file"
+water	148:66	0:0	6	;
+call	149:8	149:21	6	free
+arg	149:14	149:21	7	p_hash
+water	149:14	0:0	8	p_hash
+water	149:22	0:0	6	;
+goto	150:8	150:18	6	error
+water	150:13	0:0	7	error
+water	151:4	0:0	6	}
+else	152:4	158:4	2
+stmts	152:9	158:4	3	
+if	152:9	158:4	4	(verify_signature (& sign ,& p_update -> p_pkey -> key ,p_hash ) != VLC_SUCCESS)
+cond	152:13	153:15	5	verify_signature (& sign ,& p_update -> p_pkey -> key ,p_hash ) != VLC_SUCCESS
+call	152:13	152:69	6	verify_signature
+arg	152:31	152:36	7	&sign
+op	152:31	0:0	8	&
+water	152:32	0:0	8	sign
+arg	152:38	152:60	7	&p_update->p_pkey->key
+op	152:38	0:0	8	&
+water	152:39	0:0	8	p_update
+op	152:47	0:0	8	->
+water	152:49	0:0	8	p_pkey
+op	152:55	0:0	8	->
+water	152:57	0:0	8	key
+arg	152:62	152:69	7	p_hash
+water	152:62	0:0	8	p_hash
+op	153:12	0:0	6	!=
+water	153:15	0:0	6	VLC_SUCCESS
+stmts	154:4	158:4	5	
+water	154:4	0:0	6	{
+call	155:8	155:69	6	msg_Err
+arg	155:17	155:35	7	p_update->p_libvlc
+water	155:17	0:0	8	p_update
+op	155:25	0:0	8	->
+water	155:27	0:0	8	p_libvlc
+arg	155:37	155:69	7	"BAD SIGNATURE for status file"
+water	155:37	0:0	8	"BAD SIGNATURE for status file"
+water	155:70	0:0	6	;
+call	156:8	156:21	6	free
+arg	156:14	156:21	7	p_hash
+water	156:14	0:0	8	p_hash
+water	156:22	0:0	6	;
+goto	157:8	157:18	6	error
+water	157:13	0:0	7	error
+water	158:4	0:0	6	}
+else	159:4	166:4	2
+stmts	160:4	166:4	3	
+water	160:4	0:0	4	{
+call	161:8	161:66	4	msg_Info
+arg	161:18	161:36	5	p_update->p_libvlc
+water	161:18	0:0	6	p_update
+op	161:26	0:0	6	->
+water	161:28	0:0	6	p_libvlc
+arg	161:38	161:66	5	"Status file authenticated"
+water	161:38	0:0	6	"Status file authenticated"
+water	161:67	0:0	4	;
+call	162:8	162:21	4	free
+arg	162:14	162:21	5	p_hash
+water	162:14	0:0	6	p_hash
+water	162:22	0:0	4	;
+call	163:8	163:31	4	free
+arg	163:14	163:31	5	psz_version_line
+water	163:14	0:0	6	psz_version_line
+water	163:32	0:0	4	;
+call	164:8	164:30	4	free
+arg	164:14	164:30	5	psz_update_data
+water	164:14	0:0	6	psz_update_data
+water	164:31	0:0	4	;
+return	165:8	165:19	4	true
+water	165:15	0:0	5	true
+water	166:4	0:0	4	}
+label	167:0	167:5	2	error :
+if	168:4	169:33	2	(p_stream)
+cond	168:8	168:8	3	p_stream
+water	168:8	0:0	4	p_stream
+stmts	169:8	169:33	3	
+call	169:8	169:32	4	stream_Delete
+arg	169:23	169:32	5	p_stream
+water	169:23	0:0	6	p_stream
+water	169:33	0:0	4	;
+call	170:4	170:27	2	free
+arg	170:10	170:27	3	psz_version_line
+water	170:10	0:0	4	psz_version_line
+water	170:28	0:0	2	;
+call	171:4	171:26	2	free
+arg	171:10	171:26	3	psz_update_data
+water	171:10	0:0	4	psz_update_data
+water	171:27	0:0	2	;
+return	172:4	172:16	2	false
+water	172:11	0:0	3	false

@@ -1,0 +1,158 @@
+func	2:0	44:0	0	static ssize_t	Read
+params	2:19	0:0	1	
+param	2:21	2:39	2	access_t *	p_access
+param	2:41	2:58	2	uint8_t *	p_buffer
+param	2:60	2:73	2	size_t	i_len
+stmnts	0:0	43:4	1	
+decl	4:4	4:41	2	access_sys_t	*p_sys
+op	4:24	0:0	2	=
+water	4:26	0:0	2	p_access
+op	4:34	0:0	2	->
+water	4:36	0:0	2	p_sys
+if	5:4	10:4	2	(p_sys -> fd == - 1)
+cond	5:8	5:22	3	p_sys -> fd == - 1
+water	5:8	0:0	4	p_sys
+op	5:13	0:0	4	->
+water	5:15	0:0	4	fd
+op	5:18	0:0	4	==
+op	5:21	0:0	4	-
+water	5:22	0:0	4	1
+stmts	6:4	10:4	3	
+water	6:4	0:0	4	{
+water	8:8	0:0	4	p_access
+op	8:16	0:0	4	->
+water	8:18	0:0	4	info
+op	8:22	0:0	4	.
+water	8:23	0:0	4	b_eof
+op	8:29	0:0	4	=
+water	8:31	0:0	4	true
+water	8:35	0:0	4	;
+return	9:8	9:16	4	0
+water	9:15	0:0	5	0
+water	10:4	0:0	4	}
+decl	11:4	11:54	2	ssize_t	i_ret
+op	11:18	0:0	2	=
+call	11:20	11:53	3	read
+arg	11:26	11:35	4	p_sys->fd
+water	11:26	0:0	5	p_sys
+op	11:31	0:0	5	->
+water	11:33	0:0	5	fd
+arg	11:37	11:45	4	p_buffer
+water	11:37	0:0	5	p_buffer
+arg	11:47	11:53	4	i_len
+water	11:47	0:0	5	i_len
+if	12:4	19:4	2	(i_ret > 0)
+cond	12:8	12:16	3	i_ret > 0
+water	12:8	0:0	4	i_ret
+op	12:14	0:0	4	>
+water	12:16	0:0	4	0
+stmts	13:4	19:4	3	
+water	13:4	0:0	4	{
+water	15:8	0:0	4	p_access
+op	15:16	0:0	4	->
+water	15:18	0:0	4	info
+op	15:22	0:0	4	.
+water	15:23	0:0	4	i_pos
+op	15:29	0:0	4	+=
+water	15:32	0:0	4	i_ret
+water	15:37	0:0	4	;
+call	16:8	16:33	4	UpdateFileSize
+arg	16:24	16:33	5	p_access
+water	16:24	0:0	6	p_access
+water	16:34	0:0	4	;
+call	17:8	17:32	4	FindSeekpoint
+arg	17:23	17:32	5	p_access
+water	17:23	0:0	6	p_access
+water	17:33	0:0	4	;
+return	18:8	18:20	4	i_ret
+water	18:15	0:0	5	i_ret
+water	19:4	0:0	4	}
+else	20:4	28:4	2
+stmts	20:9	28:4	3	
+if	20:9	28:4	4	(i_ret == 0)
+cond	20:13	20:22	5	i_ret == 0
+water	20:13	0:0	6	i_ret
+op	20:19	0:0	6	==
+water	20:22	0:0	6	0
+stmts	21:4	28:4	5	
+water	21:4	0:0	6	{
+if	23:8	24:38	6	(p_sys -> i_current_file >= FILE_COUNT - 1)
+cond	23:12	23:50	7	p_sys -> i_current_file >= FILE_COUNT - 1
+water	23:12	0:0	8	p_sys
+op	23:17	0:0	8	->
+water	23:19	0:0	8	i_current_file
+op	23:34	0:0	8	>=
+water	23:37	0:0	8	FILE_COUNT
+op	23:48	0:0	8	-
+water	23:50	0:0	8	1
+stmts	24:12	24:38	7	
+call	24:12	24:37	8	ImportNextFile
+arg	24:28	24:37	9	p_access
+water	24:28	0:0	10	p_access
+water	24:38	0:0	8	;
+call	26:8	26:56	6	SwitchFile
+arg	26:20	26:28	7	p_access
+water	26:20	0:0	8	p_access
+arg	26:30	26:56	7	p_sys->i_current_file+1
+water	26:30	0:0	8	p_sys
+op	26:35	0:0	8	->
+water	26:37	0:0	8	i_current_file
+op	26:52	0:0	8	+
+water	26:54	0:0	8	1
+water	26:57	0:0	6	;
+return	27:8	27:17	6	-1
+op	27:15	0:0	7	-
+water	27:16	0:0	7	1
+water	28:4	0:0	6	}
+else	29:4	33:4	2
+stmts	29:9	33:4	3	
+if	29:9	33:4	4	(errno == EINTR)
+cond	29:13	29:22	5	errno == EINTR
+water	29:13	0:0	6	errno
+op	29:19	0:0	6	==
+water	29:22	0:0	6	EINTR
+stmts	30:4	33:4	5	
+water	30:4	0:0	6	{
+return	32:8	32:17	6	-1
+op	32:15	0:0	7	-
+water	32:16	0:0	7	1
+water	33:4	0:0	6	}
+else	34:4	43:4	2
+stmts	35:4	43:4	3	
+water	35:4	0:0	4	{
+call	37:8	37:72	4	msg_Err
+arg	37:17	37:25	5	p_access
+water	37:17	0:0	6	p_access
+arg	37:27	37:48	5	"failed to read (%s)"
+water	37:27	0:0	6	"failed to read (%s)"
+arg	37:50	37:72	5	vlc_strerror_c(errno)
+call	37:50	37:70	6	vlc_strerror_c
+arg	37:65	37:70	7	errno
+water	37:65	0:0	8	errno
+water	37:73	0:0	4	;
+call	38:8	40:42	4	dialog_Fatal
+arg	38:22	38:30	5	p_access
+water	38:22	0:0	6	p_access
+arg	38:32	38:56	5	_("File reading failed")
+call	38:32	38:55	6	_
+arg	38:34	38:55	7	"File reading failed"
+water	38:34	0:0	8	"File reading failed"
+arg	39:22	39:60	5	_("VLC could not read the file (%s).")
+call	39:22	39:59	6	_
+arg	39:24	39:59	7	"VLC could not read the file (%s)."
+water	39:24	0:0	8	"VLC could not read the file (%s)."
+arg	40:22	40:42	5	vlc_strerror(errno)
+call	40:22	40:40	6	vlc_strerror
+arg	40:35	40:40	7	errno
+water	40:35	0:0	8	errno
+water	40:43	0:0	4	;
+call	41:8	41:33	4	SwitchFile
+arg	41:20	41:28	5	p_access
+water	41:20	0:0	6	p_access
+arg	41:30	41:33	5	-1
+op	41:30	0:0	6	-
+water	41:31	0:0	6	1
+water	41:34	0:0	4	;
+return	42:8	42:16	4	0
+water	42:15	0:0	5	0
+water	43:4	0:0	4	}

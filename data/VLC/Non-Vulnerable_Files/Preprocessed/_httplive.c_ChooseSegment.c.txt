@@ -1,0 +1,158 @@
+func	2:0	37:0	0	static int	ChooseSegment
+params	2:24	0:0	1	
+param	2:25	2:36	2	stream_t *	s
+param	2:38	2:55	2	const int	current
+stmnts	0:0	36:17	1	
+decl	4:4	4:50	2	stream_sys_t	*p_sys
+op	4:24	0:0	2	=
+water	4:26	0:0	2	(
+water	4:27	0:0	2	stream_sys_t
+op	4:40	0:0	2	*
+water	4:41	0:0	2	)
+water	4:42	0:0	2	s
+op	4:43	0:0	2	->
+water	4:45	0:0	2	p_sys
+decl	5:4	5:59	2	hls_stream_t	*hls
+op	5:22	0:0	2	=
+call	5:24	5:58	3	hls_Get
+arg	5:32	5:49	4	p_sys->hls_stream
+water	5:32	0:0	5	p_sys
+op	5:37	0:0	5	->
+water	5:39	0:0	5	hls_stream
+arg	5:51	5:58	4	current
+water	5:51	0:0	5	current
+if	6:4	6:29	2	(hls == NULL)
+cond	6:8	6:15	3	hls == NULL
+water	6:8	0:0	4	hls
+op	6:12	0:0	4	==
+water	6:15	0:0	4	NULL
+stmts	6:21	6:29	3	
+return	6:21	6:29	4	0
+water	6:28	0:0	5	0
+decl	10:4	10:18	2	int	wanted
+op	10:15	0:0	2	=
+water	10:17	0:0	2	0
+decl	11:4	11:20	2	int	duration
+op	11:17	0:0	2	=
+water	11:19	0:0	2	0
+decl	12:4	12:20	2	int	sequence
+op	12:17	0:0	2	=
+water	12:19	0:0	2	0
+decl	13:4	13:46	2	int	count
+op	13:14	0:0	2	=
+call	13:16	13:45	3	vlc_array_count
+arg	13:32	13:45	4	hls->segments
+water	13:32	0:0	5	hls
+op	13:35	0:0	5	->
+water	13:37	0:0	5	segments
+decl	14:4	14:42	2	int	i
+op	14:10	0:0	2	=
+water	14:12	0:0	2	p_sys
+op	14:17	0:0	2	->
+water	14:19	0:0	2	b_live
+water	14:26	0:0	2	?
+water	14:28	0:0	2	count
+op	14:34	0:0	2	-
+water	14:36	0:0	2	1
+water	14:38	0:0	2	:
+op	14:40	0:0	2	-
+water	14:41	0:0	2	1
+while	16:4	34:4	2	(( i >= 0 ) && ( i < count ))
+cond	16:10	16:32	3	( i >= 0 ) && ( i < count )
+water	16:10	0:0	4	(
+water	16:11	0:0	4	i
+op	16:13	0:0	4	>=
+water	16:16	0:0	4	0
+water	16:17	0:0	4	)
+op	16:19	0:0	4	&&
+water	16:22	0:0	4	(
+water	16:23	0:0	4	i
+op	16:25	0:0	4	<
+water	16:27	0:0	4	count
+water	16:32	0:0	4	)
+stmts	17:4	34:4	3	
+water	17:4	0:0	4	{
+decl	18:8	18:55	4	segment_t	*segment
+op	18:27	0:0	4	=
+call	18:29	18:54	5	segment_GetSegment
+arg	18:48	18:51	6	hls
+water	18:48	0:0	7	hls
+arg	18:53	18:54	6	i
+water	18:53	0:0	7	i
+call	19:8	19:22	4	assert
+arg	19:15	19:22	5	segment
+water	19:15	0:0	6	segment
+water	19:23	0:0	4	;
+if	20:8	24:8	4	(segment -> duration > hls -> duration)
+cond	20:12	20:37	5	segment -> duration > hls -> duration
+water	20:12	0:0	6	segment
+op	20:19	0:0	6	->
+water	20:21	0:0	6	duration
+op	20:30	0:0	6	>
+water	20:32	0:0	6	hls
+op	20:35	0:0	6	->
+water	20:37	0:0	6	duration
+stmts	21:8	24:8	5	
+water	21:8	0:0	6	{
+call	22:12	23:52	6	msg_Err
+arg	22:20	22:21	7	s
+water	22:20	0:0	8	s
+arg	22:23	22:82	7	"EXTINF:%d duration is larger than EXT-X-TARGETDURATION:%d"
+water	22:23	0:0	8	"EXTINF:%d duration is larger than EXT-X-TARGETDURATION:%d"
+arg	23:20	23:37	7	segment->duration
+water	23:20	0:0	8	segment
+op	23:27	0:0	8	->
+water	23:29	0:0	8	duration
+arg	23:39	23:52	7	hls->duration
+water	23:39	0:0	8	hls
+op	23:42	0:0	8	->
+water	23:44	0:0	8	duration
+water	23:53	0:0	6	;
+water	24:8	0:0	6	}
+water	25:8	0:0	4	duration
+op	25:17	0:0	4	+=
+water	25:20	0:0	4	segment
+op	25:27	0:0	4	->
+water	25:29	0:0	4	duration
+water	25:37	0:0	4	;
+if	26:8	32:8	4	(duration >= 3 * hls -> duration)
+cond	26:12	26:33	5	duration >= 3 * hls -> duration
+water	26:12	0:0	6	duration
+op	26:21	0:0	6	>=
+water	26:24	0:0	6	3
+op	26:26	0:0	6	*
+water	26:28	0:0	6	hls
+op	26:31	0:0	6	->
+water	26:33	0:0	6	duration
+stmts	27:8	32:8	5	
+water	27:8	0:0	6	{
+water	29:12	0:0	6	wanted
+op	29:19	0:0	6	=
+water	29:21	0:0	6	i
+water	29:22	0:0	6	;
+water	30:12	0:0	6	sequence
+op	30:21	0:0	6	=
+water	30:23	0:0	6	segment
+op	30:30	0:0	6	->
+water	30:32	0:0	6	sequence
+water	30:40	0:0	6	;
+break	31:12	31:17	6	
+water	32:8	0:0	6	}
+water	33:8	0:0	4	i
+op	33:9	0:0	4	--
+water	33:12	0:0	4	;
+water	34:4	0:0	4	}
+call	35:4	35:76	2	msg_Dbg
+arg	35:12	35:13	3	s
+water	35:12	0:0	4	s
+arg	35:15	35:51	3	"Choose segment %d/%d (sequence=%d)"
+water	35:15	0:0	4	"Choose segment %d/%d (sequence=%d)"
+arg	35:53	35:59	3	wanted
+water	35:53	0:0	4	wanted
+arg	35:61	35:66	3	count
+water	35:61	0:0	4	count
+arg	35:68	35:76	3	sequence
+water	35:68	0:0	4	sequence
+water	35:77	0:0	2	;
+return	36:4	36:17	2	wanted
+water	36:11	0:0	3	wanted

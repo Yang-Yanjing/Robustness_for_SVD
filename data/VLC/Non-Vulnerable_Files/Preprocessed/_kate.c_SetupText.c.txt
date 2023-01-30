@@ -1,0 +1,125 @@
+func	2:0	37:0	0	static void	SetupText
+params	2:21	0:0	1	
+param	2:23	2:39	2	decoder_t *	p_dec
+param	2:41	2:60	2	subpicture_t *	p_spu
+param	2:62	2:83	2	const kate_event *	ev
+stmnts	0:0	36:4	1	
+decl	4:4	4:39	2	decoder_sys_t	*p_sys
+op	4:25	0:0	2	=
+water	4:27	0:0	2	p_dec
+op	4:32	0:0	2	->
+water	4:34	0:0	2	p_sys
+if	5:4	9:4	2	(ev -> text_encoding != kate_utf8)
+cond	5:8	5:29	3	ev -> text_encoding != kate_utf8
+water	5:8	0:0	4	ev
+op	5:10	0:0	4	->
+water	5:12	0:0	4	text_encoding
+op	5:26	0:0	4	!=
+water	5:29	0:0	4	kate_utf8
+stmts	6:4	9:4	3	
+water	6:4	0:0	4	{
+call	7:8	7:66	4	msg_Warn
+arg	7:18	7:23	5	p_dec
+water	7:18	0:0	6	p_dec
+arg	7:25	7:66	5	"Text isn't UTF-8, unsupported, ignored"
+water	7:25	0:0	6	"Text isn't UTF-8, unsupported, ignored"
+water	7:67	0:0	4	;
+return	8:8	8:14	4	
+water	9:4	0:0	4	}
+switch	10:4	36:4	2	(ev -> text_markup_type)
+cond	10:12	10:16	3	ev -> text_markup_type
+water	10:12	0:0	4	ev
+op	10:14	0:0	4	->
+water	10:16	0:0	4	text_markup_type
+stmts	11:4	36:4	3	
+water	11:4	0:0	4	{
+label	12:8	12:29	4	case kate_markup_none :
+water	13:12	0:0	4	p_spu
+op	13:17	0:0	4	->
+water	13:19	0:0	4	p_region
+op	13:27	0:0	4	->
+water	13:29	0:0	4	psz_text
+op	13:38	0:0	4	=
+call	13:40	13:57	4	strdup
+arg	13:48	13:57	5	ev->text
+water	13:48	0:0	6	ev
+op	13:50	0:0	6	->
+water	13:52	0:0	6	text
+water	13:58	0:0	4	;
+break	14:12	14:17	4	
+label	15:8	15:31	4	case kate_markup_simple :
+if	16:12	25:12	4	(p_sys -> b_formatted)
+cond	16:16	16:23	5	p_sys -> b_formatted
+water	16:16	0:0	6	p_sys
+op	16:21	0:0	6	->
+water	16:23	0:0	6	b_formatted
+stmts	17:12	25:12	5	
+water	17:12	0:0	6	{
+decl	19:16	19:35	6	char	*buffer
+op	19:29	0:0	6	=
+water	19:31	0:0	6	NULL
+if	20:16	23:16	6	(asprintf (& buffer ,"<text>%s</text>" ,ev -> text ) >= 0)
+cond	20:20	20:72	7	asprintf (& buffer ,"<text>%s</text>" ,ev -> text ) >= 0
+call	20:20	20:67	8	asprintf
+arg	20:30	20:37	9	&buffer
+op	20:30	0:0	10	&
+water	20:31	0:0	10	buffer
+arg	20:39	20:56	9	"<text>%s</text>"
+water	20:39	0:0	10	"<text>%s</text>"
+arg	20:58	20:67	9	ev->text
+water	20:58	0:0	10	ev
+op	20:60	0:0	10	->
+water	20:62	0:0	10	text
+op	20:69	0:0	8	>=
+water	20:72	0:0	8	0
+stmts	21:16	23:16	7	
+water	21:16	0:0	8	{
+water	22:20	0:0	8	p_spu
+op	22:25	0:0	8	->
+water	22:27	0:0	8	p_region
+op	22:35	0:0	8	->
+water	22:37	0:0	8	psz_html
+op	22:46	0:0	8	=
+water	22:48	0:0	8	buffer
+water	22:54	0:0	8	;
+water	23:16	0:0	8	}
+break	24:16	24:21	6	
+water	25:12	0:0	6	}
+label	27:8	27:15	4	default :
+water	29:12	0:0	4	{
+decl	30:16	30:47	4	char	*copy
+op	30:27	0:0	4	=
+call	30:29	30:46	5	strdup
+arg	30:37	30:46	6	ev->text
+water	30:37	0:0	7	ev
+op	30:39	0:0	7	->
+water	30:41	0:0	7	text
+decl	31:16	31:48	4	size_t	len0
+op	31:28	0:0	4	=
+call	31:30	31:43	5	strlen
+arg	31:38	31:43	6	copy
+water	31:38	0:0	7	copy
+op	31:45	0:0	4	+
+water	31:47	0:0	4	1
+call	32:16	32:72	4	kate_text_remove_markup
+arg	32:41	32:58	5	ev->text_encoding
+water	32:41	0:0	6	ev
+op	32:43	0:0	6	->
+water	32:45	0:0	6	text_encoding
+arg	32:60	32:64	5	copy
+water	32:60	0:0	6	copy
+arg	32:66	32:72	5	&len0
+op	32:66	0:0	6	&
+water	32:67	0:0	6	len0
+water	32:73	0:0	4	;
+water	33:16	0:0	4	p_spu
+op	33:21	0:0	4	->
+water	33:23	0:0	4	p_region
+op	33:31	0:0	4	->
+water	33:33	0:0	4	psz_text
+op	33:42	0:0	4	=
+water	33:44	0:0	4	copy
+water	33:48	0:0	4	;
+water	34:12	0:0	4	}
+break	35:12	35:17	4	
+water	36:4	0:0	4	}

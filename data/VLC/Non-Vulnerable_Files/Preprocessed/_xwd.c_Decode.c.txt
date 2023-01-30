@@ -1,0 +1,427 @@
+func	2:0	86:0	0	static picture_t *	Decode
+params	2:25	0:0	1	
+param	2:26	2:40	2	decoder_t *	dec
+param	2:42	2:54	2	block_t * *	pp
+stmnts	0:0	85:14	1	
+decl	4:4	4:25	2	picture_t	*pic
+op	4:19	0:0	2	=
+water	4:21	0:0	2	NULL
+if	5:4	6:19	2	(pp == NULL)
+cond	5:8	5:14	3	pp == NULL
+water	5:8	0:0	4	pp
+op	5:11	0:0	4	==
+water	5:14	0:0	4	NULL
+stmts	6:8	6:19	3	
+return	6:8	6:19	4	NULL
+water	6:15	0:0	5	NULL
+decl	7:4	7:24	2	block_t	*block
+op	7:19	0:0	2	=
+op	7:21	0:0	2	*
+water	7:22	0:0	2	pp
+if	8:4	9:19	2	(block == NULL)
+cond	8:8	8:17	3	block == NULL
+water	8:8	0:0	4	block
+op	8:14	0:0	4	==
+water	8:17	0:0	4	NULL
+stmts	9:8	9:19	3	
+return	9:8	9:19	4	NULL
+water	9:15	0:0	5	NULL
+op	10:4	0:0	2	*
+water	10:5	0:0	2	pp
+op	10:8	0:0	2	=
+water	10:10	0:0	2	NULL
+water	10:14	0:0	2	;
+if	11:4	12:17	2	(block -> i_pts <= VLC_TS_INVALID)
+cond	11:8	11:24	3	block -> i_pts <= VLC_TS_INVALID
+water	11:8	0:0	4	block
+op	11:13	0:0	4	->
+water	11:15	0:0	4	i_pts
+op	11:21	0:0	4	<=
+water	11:24	0:0	4	VLC_TS_INVALID
+stmts	12:8	12:17	3	
+goto	12:8	12:17	4	drop
+water	12:13	0:0	5	drop
+if	13:4	14:17	2	(block -> i_buffer < sz_XWDheader)
+cond	13:8	13:26	3	block -> i_buffer < sz_XWDheader
+water	13:8	0:0	4	block
+op	13:13	0:0	4	->
+water	13:15	0:0	4	i_buffer
+op	13:24	0:0	4	<
+water	13:26	0:0	4	sz_XWDheader
+stmts	14:8	14:17	3	
+goto	14:8	14:17	4	drop
+water	14:13	0:0	5	drop
+decl	16:4	16:60	2	const XWDFileHeader	*hdr
+op	16:29	0:0	2	=
+water	16:31	0:0	2	(
+water	16:32	0:0	2	const
+water	16:38	0:0	2	void
+op	16:43	0:0	2	*
+water	16:44	0:0	2	)
+water	16:45	0:0	2	block
+op	16:50	0:0	2	->
+water	16:52	0:0	2	p_buffer
+decl	17:4	17:45	2	uint32_t	hdrlen
+op	17:20	0:0	2	=
+call	17:22	17:44	3	ntohl
+arg	17:28	17:44	4	hdr->header_size
+water	17:28	0:0	5	hdr
+op	17:31	0:0	5	->
+water	17:33	0:0	5	header_size
+if	18:4	21:17	2	(hdrlen < sz_XWDheader ||ntohl (hdr -> file_version ) < XWD_FILE_VERSION ||ntohl (hdr -> pixmap_format ) != 2)
+cond	18:8	20:37	3	hdrlen < sz_XWDheader ||ntohl (hdr -> file_version ) < XWD_FILE_VERSION ||ntohl (hdr -> pixmap_format ) != 2
+water	18:8	0:0	4	hdrlen
+op	18:15	0:0	4	<
+water	18:17	0:0	4	sz_XWDheader
+op	19:5	0:0	4	||
+call	19:8	19:31	4	ntohl
+arg	19:14	19:31	5	hdr->file_version
+water	19:14	0:0	6	hdr
+op	19:17	0:0	6	->
+water	19:19	0:0	6	file_version
+op	19:33	0:0	4	<
+water	19:35	0:0	4	XWD_FILE_VERSION
+op	20:5	0:0	4	||
+call	20:8	20:32	4	ntohl
+arg	20:14	20:32	5	hdr->pixmap_format
+water	20:14	0:0	6	hdr
+op	20:17	0:0	6	->
+water	20:19	0:0	6	pixmap_format
+op	20:34	0:0	4	!=
+water	20:37	0:0	4	2
+stmts	21:8	21:17	3	
+goto	21:8	21:17	4	drop
+water	21:13	0:0	5	drop
+water	22:4	0:0	2	hdrlen
+op	22:11	0:0	2	+=
+call	22:14	22:32	2	ntohl
+arg	22:20	22:32	3	hdr->ncolors
+water	22:20	0:0	4	hdr
+op	22:23	0:0	4	->
+water	22:25	0:0	4	ncolors
+op	22:34	0:0	2	*
+water	22:36	0:0	2	sz_XWDColor
+water	22:47	0:0	2	;
+if	23:4	24:17	2	(hdrlen > block -> i_buffer)
+cond	23:8	23:24	3	hdrlen > block -> i_buffer
+water	23:8	0:0	4	hdrlen
+op	23:15	0:0	4	>
+water	23:17	0:0	4	block
+op	23:22	0:0	4	->
+water	23:24	0:0	4	i_buffer
+stmts	24:8	24:17	3	
+goto	24:8	24:17	4	drop
+water	24:13	0:0	5	drop
+water	25:4	0:0	2	block
+op	25:9	0:0	2	->
+water	25:11	0:0	2	p_buffer
+op	25:20	0:0	2	+=
+water	25:23	0:0	2	hdrlen
+water	25:29	0:0	2	;
+water	26:4	0:0	2	block
+op	26:9	0:0	2	->
+water	26:11	0:0	2	i_buffer
+op	26:20	0:0	2	-=
+water	26:23	0:0	2	hdrlen
+water	26:29	0:0	2	;
+decl	28:4	28:27	2	vlc_fourcc_t	chroma
+op	28:24	0:0	2	=
+water	28:26	0:0	2	0
+switch	29:4	54:4	2	(ntohl (hdr -> pixmap_depth ))
+cond	29:12	29:35	3	ntohl (hdr -> pixmap_depth )
+call	29:12	29:35	4	ntohl
+arg	29:18	29:35	5	hdr->pixmap_depth
+water	29:18	0:0	6	hdr
+op	29:21	0:0	6	->
+water	29:23	0:0	6	pixmap_depth
+stmts	30:4	54:4	3	
+water	30:4	0:0	4	{
+label	31:8	31:14	4	case 8 :
+if	32:12	33:39	4	(ntohl (hdr -> bits_per_pixel ) == 8)
+cond	32:16	32:46	5	ntohl (hdr -> bits_per_pixel ) == 8
+call	32:16	32:41	6	ntohl
+arg	32:22	32:41	7	hdr->bits_per_pixel
+water	32:22	0:0	8	hdr
+op	32:25	0:0	8	->
+water	32:27	0:0	8	bits_per_pixel
+op	32:43	0:0	6	==
+water	32:46	0:0	6	8
+stmts	33:16	33:39	5	
+water	33:16	0:0	6	chroma
+op	33:23	0:0	6	=
+water	33:25	0:0	6	VLC_CODEC_RGB8
+water	33:39	0:0	6	;
+break	34:12	34:17	4	
+label	35:8	35:15	4	case 15 :
+if	36:12	37:40	4	(ntohl (hdr -> bits_per_pixel ) == 16)
+cond	36:16	36:46	5	ntohl (hdr -> bits_per_pixel ) == 16
+call	36:16	36:41	6	ntohl
+arg	36:22	36:41	7	hdr->bits_per_pixel
+water	36:22	0:0	8	hdr
+op	36:25	0:0	8	->
+water	36:27	0:0	8	bits_per_pixel
+op	36:43	0:0	6	==
+water	36:46	0:0	6	16
+stmts	37:16	37:40	5	
+water	37:16	0:0	6	chroma
+op	37:23	0:0	6	=
+water	37:25	0:0	6	VLC_CODEC_RGB15
+water	37:40	0:0	6	;
+break	38:12	38:17	4	
+label	39:8	39:15	4	case 16 :
+if	40:12	41:40	4	(ntohl (hdr -> bits_per_pixel ) == 16)
+cond	40:16	40:46	5	ntohl (hdr -> bits_per_pixel ) == 16
+call	40:16	40:41	6	ntohl
+arg	40:22	40:41	7	hdr->bits_per_pixel
+water	40:22	0:0	8	hdr
+op	40:25	0:0	8	->
+water	40:27	0:0	8	bits_per_pixel
+op	40:43	0:0	6	==
+water	40:46	0:0	6	16
+stmts	41:16	41:40	5	
+water	41:16	0:0	6	chroma
+op	41:23	0:0	6	=
+water	41:25	0:0	6	VLC_CODEC_RGB16
+water	41:40	0:0	6	;
+break	42:12	42:17	4	
+label	43:8	43:15	4	case 24 :
+switch	44:12	48:12	4	(ntohl (hdr -> bits_per_pixel ))
+cond	44:20	44:45	5	ntohl (hdr -> bits_per_pixel )
+call	44:20	44:45	6	ntohl
+arg	44:26	44:45	7	hdr->bits_per_pixel
+water	44:26	0:0	8	hdr
+op	44:29	0:0	8	->
+water	44:31	0:0	8	bits_per_pixel
+stmts	45:12	48:12	5	
+water	45:12	0:0	6	{
+label	46:16	46:23	6	case 32 :
+water	46:25	0:0	6	chroma
+op	46:32	0:0	6	=
+water	46:34	0:0	6	VLC_CODEC_RGB32
+water	46:49	0:0	6	;
+break	46:51	46:56	6	
+label	47:16	47:23	6	case 24 :
+water	47:25	0:0	6	chroma
+op	47:32	0:0	6	=
+water	47:34	0:0	6	VLC_CODEC_RGB24
+water	47:49	0:0	6	;
+break	47:51	47:56	6	
+water	48:12	0:0	6	}
+break	49:12	49:17	4	
+label	50:8	50:15	4	case 32 :
+if	51:12	52:39	4	(ntohl (hdr -> bits_per_pixel ) == 32)
+cond	51:16	51:46	5	ntohl (hdr -> bits_per_pixel ) == 32
+call	51:16	51:41	6	ntohl
+arg	51:22	51:41	7	hdr->bits_per_pixel
+water	51:22	0:0	8	hdr
+op	51:25	0:0	8	->
+water	51:27	0:0	8	bits_per_pixel
+op	51:43	0:0	6	==
+water	51:46	0:0	6	32
+stmts	52:16	52:39	5	
+water	52:16	0:0	6	chroma
+op	52:23	0:0	6	=
+water	52:25	0:0	6	VLC_CODEC_ARGB
+water	52:39	0:0	6	;
+break	53:12	53:17	4	
+water	54:4	0:0	4	}
+if	56:4	57:17	2	(! chroma)
+cond	56:8	56:9	3	! chroma
+op	56:8	0:0	4	!
+water	56:9	0:0	4	chroma
+stmts	57:8	57:17	3	
+goto	57:8	57:17	4	drop
+water	57:13	0:0	5	drop
+call	58:4	62:50	2	video_format_Setup
+arg	58:23	58:42	3	&dec->fmt_out.video
+op	58:23	0:0	4	&
+water	58:24	0:0	4	dec
+op	58:27	0:0	4	->
+water	58:29	0:0	4	fmt_out
+op	58:36	0:0	4	.
+water	58:37	0:0	4	video
+arg	58:44	58:50	3	chroma
+water	58:44	0:0	4	chroma
+arg	59:23	59:47	3	ntohl(hdr->pixmap_width)
+call	59:23	59:46	4	ntohl
+arg	59:29	59:46	5	hdr->pixmap_width
+water	59:29	0:0	6	hdr
+op	59:32	0:0	6	->
+water	59:34	0:0	6	pixmap_width
+arg	59:49	59:74	3	ntohl(hdr->pixmap_height)
+call	59:49	59:73	4	ntohl
+arg	59:55	59:73	5	hdr->pixmap_height
+water	59:55	0:0	6	hdr
+op	59:58	0:0	6	->
+water	59:60	0:0	6	pixmap_height
+arg	60:23	60:47	3	ntohl(hdr->pixmap_width)
+call	60:23	60:46	4	ntohl
+arg	60:29	60:46	5	hdr->pixmap_width
+water	60:29	0:0	6	hdr
+op	60:32	0:0	6	->
+water	60:34	0:0	6	pixmap_width
+arg	60:49	60:74	3	ntohl(hdr->pixmap_height)
+call	60:49	60:73	4	ntohl
+arg	60:55	60:73	5	hdr->pixmap_height
+water	60:55	0:0	6	hdr
+op	60:58	0:0	6	->
+water	60:60	0:0	6	pixmap_height
+arg	61:23	61:50	3	dec->fmt_in.video.i_sar_num
+water	61:23	0:0	4	dec
+op	61:26	0:0	4	->
+water	61:28	0:0	4	fmt_in
+op	61:34	0:0	4	.
+water	61:35	0:0	4	video
+op	61:40	0:0	4	.
+water	61:41	0:0	4	i_sar_num
+arg	62:23	62:50	3	dec->fmt_in.video.i_sar_den
+water	62:23	0:0	4	dec
+op	62:26	0:0	4	->
+water	62:28	0:0	4	fmt_in
+op	62:34	0:0	4	.
+water	62:35	0:0	4	video
+op	62:40	0:0	4	.
+water	62:41	0:0	4	i_sar_den
+water	62:51	0:0	2	;
+decl	63:4	64:67	2	const size_t	copy
+op	63:22	0:0	2	=
+water	63:24	0:0	2	dec
+op	63:27	0:0	2	->
+water	63:29	0:0	2	fmt_out
+op	63:36	0:0	2	.
+water	63:37	0:0	2	video
+op	63:42	0:0	2	.
+water	63:43	0:0	2	i_width
+op	64:24	0:0	2	*
+water	64:26	0:0	2	(
+water	64:27	0:0	2	dec
+op	64:30	0:0	2	->
+water	64:32	0:0	2	fmt_out
+op	64:39	0:0	2	.
+water	64:40	0:0	2	video
+op	64:45	0:0	2	.
+water	64:46	0:0	2	i_bits_per_pixel
+op	64:63	0:0	2	/
+water	64:65	0:0	2	8
+water	64:66	0:0	2	)
+decl	65:4	65:53	2	const uint32_t	pitch
+op	65:25	0:0	2	=
+call	65:27	65:52	3	ntohl
+arg	65:33	65:52	4	hdr->bytes_per_line
+water	65:33	0:0	5	hdr
+op	65:36	0:0	5	->
+water	65:38	0:0	5	bytes_per_line
+if	67:4	69:17	2	(pitch < copy || ( block -> i_buffer / pitch ) < dec -> fmt_out . video . i_height)
+cond	67:8	68:55	3	pitch < copy || ( block -> i_buffer / pitch ) < dec -> fmt_out . video . i_height
+water	67:8	0:0	4	pitch
+op	67:14	0:0	4	<
+water	67:16	0:0	4	copy
+op	68:5	0:0	4	||
+water	68:8	0:0	4	(
+water	68:9	0:0	4	block
+op	68:14	0:0	4	->
+water	68:16	0:0	4	i_buffer
+op	68:25	0:0	4	/
+water	68:27	0:0	4	pitch
+water	68:32	0:0	4	)
+op	68:34	0:0	4	<
+water	68:36	0:0	4	dec
+op	68:39	0:0	4	->
+water	68:41	0:0	4	fmt_out
+op	68:48	0:0	4	.
+water	68:49	0:0	4	video
+op	68:54	0:0	4	.
+water	68:55	0:0	4	i_height
+stmts	69:8	69:17	3	
+goto	69:8	69:17	4	drop
+water	69:13	0:0	5	drop
+water	70:4	0:0	2	pic
+op	70:8	0:0	2	=
+call	70:10	70:32	2	decoder_NewPicture
+arg	70:29	70:32	3	dec
+water	70:29	0:0	4	dec
+water	70:33	0:0	2	;
+if	71:4	72:17	2	(pic == NULL)
+cond	71:8	71:15	3	pic == NULL
+water	71:8	0:0	4	pic
+op	71:12	0:0	4	==
+water	71:15	0:0	4	NULL
+stmts	72:8	72:17	3	
+goto	72:8	72:17	4	drop
+water	72:13	0:0	5	drop
+decl	73:4	73:39	2	const uint8_t	*in
+op	73:22	0:0	2	=
+water	73:24	0:0	2	block
+op	73:29	0:0	2	->
+water	73:31	0:0	2	p_buffer
+decl	74:4	74:35	2	uint8_t	*out
+op	74:17	0:0	2	=
+water	74:19	0:0	2	pic
+op	74:22	0:0	2	->
+water	74:24	0:0	2	p
+op	74:25	0:0	2	->
+water	74:27	0:0	2	p_pixels
+for	75:4	80:4	2	(unsigned i = 0 ;i < dec -> fmt_out . video . i_height;i ++)
+forinit	75:9	75:23	3	unsigned i = 0 ;
+water	75:9	0:0	4	unsigned
+water	75:18	0:0	4	i
+op	75:20	0:0	4	=
+water	75:22	0:0	4	0
+water	75:23	0:0	4	;
+cond	75:25	75:48	3	i < dec -> fmt_out . video . i_height
+water	75:25	0:0	4	i
+op	75:27	0:0	4	<
+water	75:29	0:0	4	dec
+op	75:32	0:0	4	->
+water	75:34	0:0	4	fmt_out
+op	75:41	0:0	4	.
+water	75:42	0:0	4	video
+op	75:47	0:0	4	.
+water	75:48	0:0	4	i_height
+forexpr	75:58	75:59	3	i ++
+water	75:58	0:0	4	i
+op	75:59	0:0	4	++
+stmts	76:4	80:4	3	
+water	76:4	0:0	4	{
+call	77:8	77:28	4	memcpy
+arg	77:15	77:18	5	out
+water	77:15	0:0	6	out
+arg	77:20	77:22	5	in
+water	77:20	0:0	6	in
+arg	77:24	77:28	5	copy
+water	77:24	0:0	6	copy
+water	77:29	0:0	4	;
+water	78:8	0:0	4	in
+op	78:11	0:0	4	+=
+water	78:14	0:0	4	pitch
+water	78:19	0:0	4	;
+water	79:8	0:0	4	out
+op	79:12	0:0	4	+=
+water	79:15	0:0	4	pic
+op	79:18	0:0	4	->
+water	79:20	0:0	4	p
+op	79:21	0:0	4	->
+water	79:23	0:0	4	i_pitch
+water	79:30	0:0	4	;
+water	80:4	0:0	4	}
+water	81:4	0:0	2	pic
+op	81:7	0:0	2	->
+water	81:9	0:0	2	date
+op	81:14	0:0	2	=
+water	81:16	0:0	2	block
+op	81:21	0:0	2	->
+water	81:23	0:0	2	i_pts
+water	81:28	0:0	2	;
+water	82:4	0:0	2	pic
+op	82:7	0:0	2	->
+water	82:9	0:0	2	b_progressive
+op	82:23	0:0	2	=
+water	82:25	0:0	2	true
+water	82:29	0:0	2	;
+label	83:0	83:4	2	drop :
+call	84:4	84:23	2	block_Release
+arg	84:18	84:23	3	block
+water	84:18	0:0	4	block
+water	84:24	0:0	2	;
+return	85:4	85:14	2	pic
+water	85:11	0:0	3	pic

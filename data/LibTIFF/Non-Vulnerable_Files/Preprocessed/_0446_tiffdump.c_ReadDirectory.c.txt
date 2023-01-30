@@ -1,0 +1,1090 @@
+func	1:0	243:0	0	static uint64	ReadDirectory
+params	2:13	0:0	1	
+param	2:14	2:20	2	int	fd
+param	2:22	2:37	2	unsigned int	ix
+param	2:39	2:49	2	uint64	off
+stmnts	0:0	242:20	1	
+decl	4:1	4:16	2	uint16	dircount
+decl	5:1	5:20	2	uint32	direntrysize
+decl	6:1	6:20	2	void	*dirmem
+op	6:14	0:0	2	=
+water	6:16	0:0	2	NULL
+decl	7:1	7:22	2	uint64	nextdiroff
+op	7:19	0:0	2	=
+water	7:21	0:0	2	0
+decl	8:1	8:9	2	uint32	n
+decl	9:1	9:10	2	uint8	*dp
+if	10:1	11:11	2	(off == 0)
+cond	10:5	10:12	3	off == 0
+water	10:5	0:0	4	off
+op	10:9	0:0	4	==
+water	10:12	0:0	4	0
+stmts	11:2	11:11	3	
+goto	11:2	11:11	4	done
+water	11:7	0:0	5	done
+if	12:1	15:1	2	(_TIFF_lseek_f (fd ,( _TIFF_off_t ) off ,SEEK_SET ) != ( _TIFF_off_t ) off)
+cond	12:5	12:67	3	_TIFF_lseek_f (fd ,( _TIFF_off_t ) off ,SEEK_SET ) != ( _TIFF_off_t ) off
+call	12:5	12:49	4	_TIFF_lseek_f
+arg	12:19	12:21	5	fd
+water	12:19	0:0	6	fd
+arg	12:23	12:39	5	(_TIFF_off_t)off
+water	12:23	0:0	6	(
+water	12:24	0:0	6	_TIFF_off_t
+water	12:35	0:0	6	)
+water	12:36	0:0	6	off
+arg	12:41	12:49	5	SEEK_SET
+water	12:41	0:0	6	SEEK_SET
+op	12:51	0:0	4	!=
+water	12:54	0:0	4	(
+water	12:55	0:0	4	_TIFF_off_t
+water	12:66	0:0	4	)
+water	12:67	0:0	4	off
+stmts	12:72	15:1	3	
+water	12:72	0:0	4	{
+call	13:2	13:45	4	Fatal
+arg	13:8	13:45	5	"Seek error accessing TIFF directory"
+water	13:8	0:0	6	"Seek error accessing TIFF directory"
+water	13:46	0:0	4	;
+goto	14:2	14:11	4	done
+water	14:7	0:0	5	done
+water	15:1	0:0	4	}
+if	16:1	24:1	2	(! bigtiff)
+cond	16:5	16:6	3	! bigtiff
+op	16:5	0:0	4	!
+water	16:6	0:0	4	bigtiff
+stmts	16:15	24:1	3	
+water	16:15	0:0	4	{
+if	17:2	20:2	4	(read (fd ,( char * ) & dircount ,sizeof ( uint16 ) ) != sizeof ( uint16 ))
+cond	17:6	17:68	5	read (fd ,( char * ) & dircount ,sizeof ( uint16 ) ) != sizeof ( uint16 )
+call	17:6	17:49	6	read
+arg	17:11	17:13	7	fd
+water	17:11	0:0	8	fd
+arg	17:15	17:32	7	(char*)&dircount
+water	17:15	0:0	8	(
+water	17:16	0:0	8	char
+op	17:20	0:0	8	*
+water	17:21	0:0	8	)
+op	17:23	0:0	8	&
+water	17:24	0:0	8	dircount
+arg	17:34	17:49	7	sizeof(uint16)
+op	17:34	0:0	8	sizeof
+water	17:41	0:0	8	(
+water	17:42	0:0	8	uint16
+water	17:48	0:0	8	)
+op	17:51	0:0	6	!=
+op	17:54	0:0	6	sizeof
+water	17:61	0:0	6	(
+water	17:62	0:0	6	uint16
+water	17:68	0:0	6	)
+stmts	17:71	20:2	5	
+water	17:71	0:0	6	{
+call	18:3	18:30	6	ReadError
+arg	18:13	18:30	7	"directory count"
+water	18:13	0:0	8	"directory count"
+water	18:31	0:0	6	;
+goto	19:3	19:12	6	done
+water	19:8	0:0	7	done
+water	20:2	0:0	6	}
+if	21:2	22:27	4	(swabflag)
+cond	21:6	21:6	5	swabflag
+water	21:6	0:0	6	swabflag
+stmts	22:3	22:27	5	
+call	22:3	22:26	6	TIFFSwabShort
+arg	22:17	22:26	7	&dircount
+op	22:17	0:0	8	&
+water	22:18	0:0	8	dircount
+water	22:27	0:0	6	;
+water	23:2	0:0	4	direntrysize
+op	23:15	0:0	4	=
+water	23:17	0:0	4	12
+water	23:19	0:0	4	;
+water	24:1	0:0	4	}
+else	24:3	38:1	2
+stmts	24:8	38:1	3	
+water	24:8	0:0	4	{
+decl	25:2	25:23	4	uint64	dircount64
+op	25:20	0:0	4	=
+water	25:22	0:0	4	0
+if	26:2	29:2	4	(read (fd ,( char * ) & dircount64 ,sizeof ( uint64 ) ) != sizeof ( uint64 ))
+cond	26:6	26:70	5	read (fd ,( char * ) & dircount64 ,sizeof ( uint64 ) ) != sizeof ( uint64 )
+call	26:6	26:51	6	read
+arg	26:11	26:13	7	fd
+water	26:11	0:0	8	fd
+arg	26:15	26:34	7	(char*)&dircount64
+water	26:15	0:0	8	(
+water	26:16	0:0	8	char
+op	26:20	0:0	8	*
+water	26:21	0:0	8	)
+op	26:23	0:0	8	&
+water	26:24	0:0	8	dircount64
+arg	26:36	26:51	7	sizeof(uint64)
+op	26:36	0:0	8	sizeof
+water	26:43	0:0	8	(
+water	26:44	0:0	8	uint64
+water	26:50	0:0	8	)
+op	26:53	0:0	6	!=
+op	26:56	0:0	6	sizeof
+water	26:63	0:0	6	(
+water	26:64	0:0	6	uint64
+water	26:70	0:0	6	)
+stmts	26:73	29:2	5	
+water	26:73	0:0	6	{
+call	27:3	27:30	6	ReadError
+arg	27:13	27:30	7	"directory count"
+water	27:13	0:0	8	"directory count"
+water	27:31	0:0	6	;
+goto	28:3	28:12	6	done
+water	28:8	0:0	7	done
+water	29:2	0:0	6	}
+if	30:2	31:29	4	(swabflag)
+cond	30:6	30:6	5	swabflag
+water	30:6	0:0	6	swabflag
+stmts	31:3	31:29	5	
+call	31:3	31:28	6	TIFFSwabLong8
+arg	31:17	31:28	7	&dircount64
+op	31:17	0:0	8	&
+water	31:18	0:0	8	dircount64
+water	31:29	0:0	6	;
+if	32:2	35:2	4	(dircount64 > 0 xFFFF)
+cond	32:6	32:18	5	dircount64 > 0 xFFFF
+water	32:6	0:0	6	dircount64
+op	32:16	0:0	6	>
+water	32:17	0:0	6	0
+water	32:18	0:0	6	xFFFF
+stmts	32:25	35:2	5	
+water	32:25	0:0	6	{
+call	33:3	33:49	6	Error
+arg	33:9	33:49	7	"Sanity check on directory count failed"
+water	33:9	0:0	8	"Sanity check on directory count failed"
+water	33:50	0:0	6	;
+goto	34:3	34:12	6	done
+water	34:8	0:0	7	done
+water	35:2	0:0	6	}
+water	36:2	0:0	4	dircount
+op	36:11	0:0	4	=
+water	36:13	0:0	4	(
+water	36:14	0:0	4	uint16
+water	36:20	0:0	4	)
+water	36:21	0:0	4	dircount64
+water	36:31	0:0	4	;
+water	37:2	0:0	4	direntrysize
+op	37:15	0:0	4	=
+water	37:17	0:0	4	20
+water	37:19	0:0	4	;
+water	38:1	0:0	4	}
+water	39:1	0:0	2	dirmem
+op	39:8	0:0	2	=
+call	39:10	39:70	2	_TIFFmalloc
+arg	39:22	39:70	3	TIFFSafeMultiply(tmsize_t,dircount,direntrysize)
+call	39:22	39:69	4	TIFFSafeMultiply
+arg	39:39	39:47	5	tmsize_t
+water	39:39	0:0	6	tmsize_t
+arg	39:48	39:56	5	dircount
+water	39:48	0:0	6	dircount
+arg	39:57	39:69	5	direntrysize
+water	39:57	0:0	6	direntrysize
+water	39:71	0:0	2	;
+if	40:1	43:1	2	(dirmem == NULL)
+cond	40:5	40:15	3	dirmem == NULL
+water	40:5	0:0	4	dirmem
+op	40:12	0:0	4	==
+water	40:15	0:0	4	NULL
+stmts	40:21	43:1	3	
+water	40:21	0:0	4	{
+call	41:2	41:37	4	Fatal
+arg	41:8	41:37	5	"No space for TIFF directory"
+water	41:8	0:0	6	"No space for TIFF directory"
+water	41:38	0:0	4	;
+goto	42:2	42:11	4	done
+water	42:7	0:0	5	done
+water	43:1	0:0	4	}
+water	44:1	0:0	2	n
+op	44:3	0:0	2	=
+call	44:5	44:51	2	read
+arg	44:10	44:12	3	fd
+water	44:10	0:0	4	fd
+arg	44:14	44:28	3	(char*)dirmem
+water	44:14	0:0	4	(
+water	44:15	0:0	4	char
+op	44:19	0:0	4	*
+water	44:20	0:0	4	)
+water	44:22	0:0	4	dirmem
+arg	44:30	44:51	3	dircount*direntrysize
+water	44:30	0:0	4	dircount
+op	44:38	0:0	4	*
+water	44:39	0:0	4	direntrysize
+water	44:52	0:0	2	;
+if	45:1	57:1	2	(n != dircount * direntrysize)
+cond	45:5	45:19	3	n != dircount * direntrysize
+water	45:5	0:0	4	n
+op	45:7	0:0	4	!=
+water	45:10	0:0	4	dircount
+op	45:18	0:0	4	*
+water	45:19	0:0	4	direntrysize
+stmts	45:33	57:1	3	
+water	45:33	0:0	4	{
+water	46:2	0:0	4	n
+op	46:4	0:0	4	/=
+water	46:7	0:0	4	direntrysize
+water	46:19	0:0	4	;
+call	47:2	50:58	4	Error
+arg	49:5	49:70	5	"Could only read %lu of %u entries in directory at offset %#I64x"
+water	49:5	0:0	6	"Could only read %lu of %u entries in directory at offset %#I64x"
+arg	50:8	50:24	5	(unsignedlong)n
+water	50:8	0:0	6	(
+water	50:9	0:0	6	unsigned
+water	50:18	0:0	6	long
+water	50:22	0:0	6	)
+water	50:23	0:0	6	n
+arg	50:26	50:34	5	dircount
+water	50:26	0:0	6	dircount
+arg	50:36	50:58	5	(unsigned__int64)off
+water	50:36	0:0	6	(
+water	50:37	0:0	6	unsigned
+water	50:46	0:0	6	__int64
+water	50:53	0:0	6	)
+water	50:55	0:0	6	off
+water	50:59	0:0	4	;
+water	52:5	0:0	4	"Could only read %lu of %u entries in directory at offset %#llx"
+water	52:69	0:0	4	,
+water	53:8	0:0	4	(
+water	53:9	0:0	4	unsigned
+water	53:18	0:0	4	long
+water	53:22	0:0	4	)
+water	53:23	0:0	4	n
+water	53:24	0:0	4	,
+water	53:26	0:0	4	dircount
+water	53:34	0:0	4	,
+water	53:36	0:0	4	(
+water	53:37	0:0	4	unsigned
+water	53:46	0:0	4	long
+water	53:51	0:0	4	long
+water	53:55	0:0	4	)
+water	53:57	0:0	4	off
+water	53:60	0:0	4	)
+water	53:61	0:0	4	;
+water	55:2	0:0	4	dircount
+op	55:11	0:0	4	=
+water	55:13	0:0	4	n
+water	55:14	0:0	4	;
+water	56:2	0:0	4	nextdiroff
+op	56:13	0:0	4	=
+water	56:15	0:0	4	0
+water	56:16	0:0	4	;
+water	57:1	0:0	4	}
+else	57:3	71:1	2
+stmts	57:8	71:1	3	
+water	57:8	0:0	4	{
+if	58:2	65:2	4	(! bigtiff)
+cond	58:6	58:7	5	! bigtiff
+op	58:6	0:0	6	!
+water	58:7	0:0	6	bigtiff
+stmts	58:16	65:2	5	
+water	58:16	0:0	6	{
+decl	59:3	59:22	6	uint32	nextdiroff32
+if	60:3	61:20	6	(read (fd ,( char * ) & nextdiroff32 ,sizeof ( uint32 ) ) != sizeof ( uint32 ))
+cond	60:7	60:73	7	read (fd ,( char * ) & nextdiroff32 ,sizeof ( uint32 ) ) != sizeof ( uint32 )
+call	60:7	60:54	8	read
+arg	60:12	60:14	9	fd
+water	60:12	0:0	10	fd
+arg	60:16	60:37	9	(char*)&nextdiroff32
+water	60:16	0:0	10	(
+water	60:17	0:0	10	char
+op	60:21	0:0	10	*
+water	60:22	0:0	10	)
+op	60:24	0:0	10	&
+water	60:25	0:0	10	nextdiroff32
+arg	60:39	60:54	9	sizeof(uint32)
+op	60:39	0:0	10	sizeof
+water	60:46	0:0	10	(
+water	60:47	0:0	10	uint32
+water	60:53	0:0	10	)
+op	60:56	0:0	8	!=
+op	60:59	0:0	8	sizeof
+water	60:66	0:0	8	(
+water	60:67	0:0	8	uint32
+water	60:73	0:0	8	)
+stmts	61:4	61:20	7	
+water	61:4	0:0	8	nextdiroff32
+op	61:17	0:0	8	=
+water	61:19	0:0	8	0
+water	61:20	0:0	8	;
+if	62:3	63:31	6	(swabflag)
+cond	62:7	62:7	7	swabflag
+water	62:7	0:0	8	swabflag
+stmts	63:4	63:31	7	
+call	63:4	63:30	8	TIFFSwabLong
+arg	63:17	63:30	9	&nextdiroff32
+op	63:17	0:0	10	&
+water	63:18	0:0	10	nextdiroff32
+water	63:31	0:0	8	;
+water	64:3	0:0	6	nextdiroff
+op	64:14	0:0	6	=
+water	64:16	0:0	6	nextdiroff32
+water	64:28	0:0	6	;
+water	65:2	0:0	6	}
+else	65:4	70:2	4
+stmts	65:9	70:2	5	
+water	65:9	0:0	6	{
+if	66:3	67:18	6	(read (fd ,( char * ) & nextdiroff ,sizeof ( uint64 ) ) != sizeof ( uint64 ))
+cond	66:7	66:71	7	read (fd ,( char * ) & nextdiroff ,sizeof ( uint64 ) ) != sizeof ( uint64 )
+call	66:7	66:52	8	read
+arg	66:12	66:14	9	fd
+water	66:12	0:0	10	fd
+arg	66:16	66:35	9	(char*)&nextdiroff
+water	66:16	0:0	10	(
+water	66:17	0:0	10	char
+op	66:21	0:0	10	*
+water	66:22	0:0	10	)
+op	66:24	0:0	10	&
+water	66:25	0:0	10	nextdiroff
+arg	66:37	66:52	9	sizeof(uint64)
+op	66:37	0:0	10	sizeof
+water	66:44	0:0	10	(
+water	66:45	0:0	10	uint64
+water	66:51	0:0	10	)
+op	66:54	0:0	8	!=
+op	66:57	0:0	8	sizeof
+water	66:64	0:0	8	(
+water	66:65	0:0	8	uint64
+water	66:71	0:0	8	)
+stmts	67:4	67:18	7	
+water	67:4	0:0	8	nextdiroff
+op	67:15	0:0	8	=
+water	67:17	0:0	8	0
+water	67:18	0:0	8	;
+if	68:3	69:30	6	(swabflag)
+cond	68:7	68:7	7	swabflag
+water	68:7	0:0	8	swabflag
+stmts	69:4	69:30	7	
+call	69:4	69:29	8	TIFFSwabLong8
+arg	69:18	69:29	9	&nextdiroff
+op	69:18	0:0	10	&
+water	69:19	0:0	10	nextdiroff
+water	69:30	0:0	8	;
+water	70:2	0:0	6	}
+water	71:1	0:0	4	}
+call	73:1	75:63	2	printf
+arg	73:8	73:67	3	"Directory %u: offset %I64u (%#I64x) next %I64u (%#I64x)\n"
+water	73:8	0:0	4	"Directory %u: offset %I64u (%#I64x) next %I64u (%#I64x)\n"
+arg	73:69	73:71	3	ix
+water	73:69	0:0	4	ix
+arg	74:5	74:26	3	(unsigned__int64)off
+water	74:5	0:0	4	(
+water	74:6	0:0	4	unsigned
+water	74:15	0:0	4	__int64
+water	74:22	0:0	4	)
+water	74:23	0:0	4	off
+arg	74:28	74:49	3	(unsigned__int64)off
+water	74:28	0:0	4	(
+water	74:29	0:0	4	unsigned
+water	74:38	0:0	4	__int64
+water	74:45	0:0	4	)
+water	74:46	0:0	4	off
+arg	75:5	75:33	3	(unsigned__int64)nextdiroff
+water	75:5	0:0	4	(
+water	75:6	0:0	4	unsigned
+water	75:15	0:0	4	__int64
+water	75:22	0:0	4	)
+water	75:23	0:0	4	nextdiroff
+arg	75:35	75:63	3	(unsigned__int64)nextdiroff
+water	75:35	0:0	4	(
+water	75:36	0:0	4	unsigned
+water	75:45	0:0	4	__int64
+water	75:52	0:0	4	)
+water	75:53	0:0	4	nextdiroff
+water	75:64	0:0	2	;
+call	77:1	79:67	2	printf
+arg	77:8	77:63	3	"Directory %u: offset %llu (%#llx) next %llu (%#llx)\n"
+water	77:8	0:0	4	"Directory %u: offset %llu (%#llx) next %llu (%#llx)\n"
+arg	77:65	77:67	3	ix
+water	77:65	0:0	4	ix
+arg	78:5	78:28	3	(unsignedlonglong)off
+water	78:5	0:0	4	(
+water	78:6	0:0	4	unsigned
+water	78:15	0:0	4	long
+water	78:20	0:0	4	long
+water	78:24	0:0	4	)
+water	78:25	0:0	4	off
+arg	78:30	78:53	3	(unsignedlonglong)off
+water	78:30	0:0	4	(
+water	78:31	0:0	4	unsigned
+water	78:40	0:0	4	long
+water	78:45	0:0	4	long
+water	78:49	0:0	4	)
+water	78:50	0:0	4	off
+arg	79:5	79:35	3	(unsignedlonglong)nextdiroff
+water	79:5	0:0	4	(
+water	79:6	0:0	4	unsigned
+water	79:15	0:0	4	long
+water	79:20	0:0	4	long
+water	79:24	0:0	4	)
+water	79:25	0:0	4	nextdiroff
+arg	79:37	79:67	3	(unsignedlonglong)nextdiroff
+water	79:37	0:0	4	(
+water	79:38	0:0	4	unsigned
+water	79:47	0:0	4	long
+water	79:52	0:0	4	long
+water	79:56	0:0	4	)
+water	79:57	0:0	4	nextdiroff
+water	79:68	0:0	2	;
+for	81:1	238:1	2	(dp = ( uint8 * ) dirmem , n = dircount ;n > 0;n --)
+forinit	81:6	81:39	3	dp = ( uint8 * ) dirmem , n = dircount ;
+water	81:6	0:0	4	dp
+op	81:9	0:0	4	=
+water	81:11	0:0	4	(
+water	81:12	0:0	4	uint8
+op	81:17	0:0	4	*
+water	81:18	0:0	4	)
+water	81:19	0:0	4	dirmem
+water	81:25	0:0	4	,
+water	81:27	0:0	4	n
+op	81:29	0:0	4	=
+water	81:31	0:0	4	dircount
+water	81:39	0:0	4	;
+cond	81:41	81:45	3	n > 0
+water	81:41	0:0	4	n
+op	81:43	0:0	4	>
+water	81:45	0:0	4	0
+forexpr	81:48	81:49	3	n --
+water	81:48	0:0	4	n
+op	81:49	0:0	4	--
+stmts	81:53	238:1	3	
+water	81:53	0:0	4	{
+decl	82:2	82:12	4	uint16	tag
+decl	83:2	83:13	4	uint16	type
+decl	84:2	84:18	4	uint16	typewidth
+decl	85:2	85:14	4	uint64	count
+decl	86:2	86:17	4	uint64	datasize
+decl	87:2	87:14	4	int	datafits
+decl	88:2	88:15	4	void	*datamem
+decl	89:2	89:19	4	uint64	dataoffset
+decl	90:2	90:19	4	int	datatruncated
+decl	91:16	91:36	4	int	datasizeoverflow
+water	92:2	0:0	4	tag
+op	92:6	0:0	4	=
+op	92:8	0:0	4	*
+water	92:9	0:0	4	(
+water	92:10	0:0	4	uint16
+op	92:16	0:0	4	*
+water	92:17	0:0	4	)
+water	92:18	0:0	4	dp
+water	92:20	0:0	4	;
+if	93:2	94:22	4	(swabflag)
+cond	93:6	93:6	5	swabflag
+water	93:6	0:0	6	swabflag
+stmts	94:3	94:22	5	
+call	94:3	94:21	6	TIFFSwabShort
+arg	94:17	94:21	7	&tag
+op	94:17	0:0	8	&
+water	94:18	0:0	8	tag
+water	94:22	0:0	6	;
+water	95:2	0:0	4	dp
+op	95:5	0:0	4	+=
+op	95:8	0:0	4	sizeof
+water	95:14	0:0	4	(
+water	95:15	0:0	4	uint16
+water	95:21	0:0	4	)
+water	95:22	0:0	4	;
+water	96:2	0:0	4	type
+op	96:7	0:0	4	=
+op	96:9	0:0	4	*
+water	96:10	0:0	4	(
+water	96:11	0:0	4	uint16
+op	96:17	0:0	4	*
+water	96:18	0:0	4	)
+water	96:19	0:0	4	dp
+water	96:21	0:0	4	;
+water	97:2	0:0	4	dp
+op	97:5	0:0	4	+=
+op	97:8	0:0	4	sizeof
+water	97:14	0:0	4	(
+water	97:15	0:0	4	uint16
+water	97:21	0:0	4	)
+water	97:22	0:0	4	;
+if	98:2	99:23	4	(swabflag)
+cond	98:6	98:6	5	swabflag
+water	98:6	0:0	6	swabflag
+stmts	99:3	99:23	5	
+call	99:3	99:22	6	TIFFSwabShort
+arg	99:17	99:22	7	&type
+op	99:17	0:0	8	&
+water	99:18	0:0	8	type
+water	99:23	0:0	6	;
+call	100:2	100:22	4	PrintTag
+arg	100:11	100:17	5	stdout
+water	100:11	0:0	6	stdout
+arg	100:19	100:22	5	tag
+water	100:19	0:0	6	tag
+water	100:23	0:0	4	;
+call	101:2	101:13	4	putchar
+arg	101:10	101:13	5	' '
+water	101:10	0:0	6	' '
+water	101:14	0:0	4	;
+call	102:2	102:24	4	PrintType
+arg	102:12	102:18	5	stdout
+water	102:12	0:0	6	stdout
+arg	102:20	102:24	5	type
+water	102:20	0:0	6	type
+water	102:25	0:0	4	;
+call	103:2	103:13	4	putchar
+arg	103:10	103:13	5	' '
+water	103:10	0:0	6	' '
+water	103:14	0:0	4	;
+if	104:2	112:2	4	(! bigtiff)
+cond	104:6	104:7	5	! bigtiff
+op	104:6	0:0	6	!
+water	104:7	0:0	6	bigtiff
+stmts	105:2	112:2	5	
+water	105:2	0:0	6	{
+decl	106:3	106:17	6	uint32	count32
+water	107:3	0:0	6	count32
+op	107:11	0:0	6	=
+op	107:13	0:0	6	*
+water	107:14	0:0	6	(
+water	107:15	0:0	6	uint32
+op	107:21	0:0	6	*
+water	107:22	0:0	6	)
+water	107:23	0:0	6	dp
+water	107:25	0:0	6	;
+if	108:3	109:26	6	(swabflag)
+cond	108:7	108:7	7	swabflag
+water	108:7	0:0	8	swabflag
+stmts	109:4	109:26	7	
+call	109:4	109:25	8	TIFFSwabLong
+arg	109:17	109:25	9	&count32
+op	109:17	0:0	10	&
+water	109:18	0:0	10	count32
+water	109:26	0:0	8	;
+water	110:3	0:0	6	dp
+op	110:6	0:0	6	+=
+op	110:9	0:0	6	sizeof
+water	110:15	0:0	6	(
+water	110:16	0:0	6	uint32
+water	110:22	0:0	6	)
+water	110:23	0:0	6	;
+water	111:3	0:0	6	count
+op	111:9	0:0	6	=
+water	111:11	0:0	6	count32
+water	111:18	0:0	6	;
+water	112:2	0:0	6	}
+else	113:2	119:2	4
+stmts	114:2	119:2	5	
+water	114:2	0:0	6	{
+call	115:3	115:36	6	memcpy
+arg	115:10	115:16	7	&count
+op	115:10	0:0	8	&
+water	115:11	0:0	8	count
+arg	115:18	115:20	7	dp
+water	115:18	0:0	8	dp
+arg	115:22	115:36	7	sizeof(uint64)
+op	115:22	0:0	8	sizeof
+water	115:28	0:0	8	(
+water	115:29	0:0	8	uint64
+water	115:35	0:0	8	)
+water	115:37	0:0	6	;
+if	116:3	117:25	6	(swabflag)
+cond	116:7	116:7	7	swabflag
+water	116:7	0:0	8	swabflag
+stmts	117:4	117:25	7	
+call	117:4	117:24	8	TIFFSwabLong8
+arg	117:18	117:24	9	&count
+op	117:18	0:0	10	&
+water	117:19	0:0	10	count
+water	117:25	0:0	8	;
+water	118:3	0:0	6	dp
+op	118:6	0:0	6	+=
+op	118:9	0:0	6	sizeof
+water	118:15	0:0	6	(
+water	118:16	0:0	6	uint64
+water	118:22	0:0	6	)
+water	118:23	0:0	6	;
+water	119:2	0:0	6	}
+call	121:2	121:42	4	printf
+arg	121:9	121:17	5	"%I64u<"
+water	121:9	0:0	6	"%I64u<"
+arg	121:19	121:42	5	(unsigned__int64)count
+water	121:19	0:0	6	(
+water	121:20	0:0	6	unsigned
+water	121:29	0:0	6	__int64
+water	121:36	0:0	6	)
+water	121:37	0:0	6	count
+water	121:43	0:0	4	;
+call	123:2	123:43	4	printf
+arg	123:9	123:16	5	"%llu<"
+water	123:9	0:0	6	"%llu<"
+arg	123:18	123:43	5	(unsignedlonglong)count
+water	123:18	0:0	6	(
+water	123:19	0:0	6	unsigned
+water	123:28	0:0	6	long
+water	123:33	0:0	6	long
+water	123:37	0:0	6	)
+water	123:38	0:0	6	count
+water	123:44	0:0	4	;
+if	125:2	126:16	4	(type >= NWIDTHS)
+cond	125:6	125:14	5	type >= NWIDTHS
+water	125:6	0:0	6	type
+op	125:11	0:0	6	>=
+water	125:14	0:0	6	NWIDTHS
+stmts	126:3	126:16	5	
+water	126:3	0:0	6	typewidth
+op	126:13	0:0	6	=
+water	126:15	0:0	6	0
+water	126:16	0:0	6	;
+else	127:2	128:30	4
+stmts	128:3	128:30	5	
+water	128:3	0:0	6	typewidth
+op	128:13	0:0	6	=
+water	128:15	0:0	6	datawidth
+op	128:24	0:0	6	[
+water	128:25	0:0	6	type
+op	128:29	0:0	6	]
+water	128:30	0:0	6	;
+water	129:2	0:0	4	datasize
+op	129:11	0:0	4	=
+call	129:13	129:54	4	TIFFSafeMultiply
+arg	129:30	129:38	5	tmsize_t
+water	129:30	0:0	6	tmsize_t
+arg	129:39	129:44	5	count
+water	129:39	0:0	6	count
+arg	129:45	129:54	5	typewidth
+water	129:45	0:0	6	typewidth
+water	129:55	0:0	4	;
+water	130:16	0:0	4	datasizeoverflow
+op	130:33	0:0	4	=
+water	130:35	0:0	4	(
+water	130:36	0:0	4	typewidth
+op	130:46	0:0	4	>
+water	130:48	0:0	4	0
+op	130:50	0:0	4	&&
+water	130:53	0:0	4	datasize
+op	130:62	0:0	4	/
+water	130:64	0:0	4	typewidth
+op	130:74	0:0	4	!=
+water	130:77	0:0	4	count
+water	130:82	0:0	4	)
+water	130:83	0:0	4	;
+water	131:2	0:0	4	datafits
+op	131:11	0:0	4	=
+water	131:13	0:0	4	1
+water	131:14	0:0	4	;
+water	132:2	0:0	4	datamem
+op	132:10	0:0	4	=
+water	132:12	0:0	4	dp
+water	132:14	0:0	4	;
+water	133:2	0:0	4	dataoffset
+op	133:13	0:0	4	=
+water	133:15	0:0	4	0
+water	133:16	0:0	4	;
+water	134:2	0:0	4	datatruncated
+op	134:16	0:0	4	=
+water	134:18	0:0	4	0
+water	134:19	0:0	4	;
+if	135:2	148:2	4	(! bigtiff)
+cond	135:6	135:7	5	! bigtiff
+op	135:6	0:0	6	!
+water	135:7	0:0	6	bigtiff
+stmts	136:2	148:2	5	
+water	136:2	0:0	6	{
+if	137:3	146:3	6	(datasizeoverflow || datasize > 4)
+cond	137:7	137:36	7	datasizeoverflow || datasize > 4
+water	137:7	0:0	8	datasizeoverflow
+op	137:24	0:0	8	||
+water	137:27	0:0	8	datasize
+op	137:35	0:0	8	>
+water	137:36	0:0	8	4
+stmts	138:3	146:3	7	
+water	138:3	0:0	8	{
+decl	139:4	139:23	8	uint32	dataoffset32
+water	140:4	0:0	8	datafits
+op	140:13	0:0	8	=
+water	140:15	0:0	8	0
+water	140:16	0:0	8	;
+water	141:4	0:0	8	datamem
+op	141:12	0:0	8	=
+water	141:14	0:0	8	NULL
+water	141:18	0:0	8	;
+water	142:4	0:0	8	dataoffset32
+op	142:17	0:0	8	=
+op	142:19	0:0	8	*
+water	142:20	0:0	8	(
+water	142:21	0:0	8	uint32
+op	142:27	0:0	8	*
+water	142:28	0:0	8	)
+water	142:29	0:0	8	dp
+water	142:31	0:0	8	;
+if	143:4	144:32	8	(swabflag)
+cond	143:8	143:8	9	swabflag
+water	143:8	0:0	10	swabflag
+stmts	144:5	144:32	9	
+call	144:5	144:31	10	TIFFSwabLong
+arg	144:18	144:31	11	&dataoffset32
+op	144:18	0:0	12	&
+water	144:19	0:0	12	dataoffset32
+water	144:32	0:0	10	;
+water	145:4	0:0	8	dataoffset
+op	145:15	0:0	8	=
+water	145:17	0:0	8	dataoffset32
+water	145:29	0:0	8	;
+water	146:3	0:0	8	}
+water	147:3	0:0	6	dp
+op	147:6	0:0	6	+=
+op	147:9	0:0	6	sizeof
+water	147:15	0:0	6	(
+water	147:16	0:0	6	uint32
+water	147:22	0:0	6	)
+water	147:23	0:0	6	;
+water	148:2	0:0	6	}
+else	149:2	160:2	4
+stmts	150:2	160:2	5	
+water	150:2	0:0	6	{
+if	151:3	158:3	6	(datasizeoverflow || datasize > 8)
+cond	151:7	151:36	7	datasizeoverflow || datasize > 8
+water	151:7	0:0	8	datasizeoverflow
+op	151:24	0:0	8	||
+water	151:27	0:0	8	datasize
+op	151:35	0:0	8	>
+water	151:36	0:0	8	8
+stmts	152:3	158:3	7	
+water	152:3	0:0	8	{
+water	153:4	0:0	8	datafits
+op	153:13	0:0	8	=
+water	153:15	0:0	8	0
+water	153:16	0:0	8	;
+water	154:4	0:0	8	datamem
+op	154:12	0:0	8	=
+water	154:14	0:0	8	NULL
+water	154:18	0:0	8	;
+water	155:4	0:0	8	dataoffset
+op	155:15	0:0	8	=
+op	155:17	0:0	8	*
+water	155:18	0:0	8	(
+water	155:19	0:0	8	uint64
+op	155:25	0:0	8	*
+water	155:26	0:0	8	)
+water	155:27	0:0	8	dp
+water	155:29	0:0	8	;
+if	156:4	157:31	8	(swabflag)
+cond	156:8	156:8	9	swabflag
+water	156:8	0:0	10	swabflag
+stmts	157:5	157:31	9	
+call	157:5	157:30	10	TIFFSwabLong8
+arg	157:19	157:30	11	&dataoffset
+op	157:19	0:0	12	&
+water	157:20	0:0	12	dataoffset
+water	157:31	0:0	10	;
+water	158:3	0:0	8	}
+water	159:3	0:0	6	dp
+op	159:6	0:0	6	+=
+op	159:9	0:0	6	sizeof
+water	159:15	0:0	6	(
+water	159:16	0:0	6	uint64
+water	159:22	0:0	6	)
+water	159:23	0:0	6	;
+water	160:2	0:0	6	}
+if	161:2	166:2	4	(datasizeoverflow || datasize > 0 x10000)
+cond	161:6	161:36	5	datasizeoverflow || datasize > 0 x10000
+water	161:6	0:0	6	datasizeoverflow
+op	161:23	0:0	6	||
+water	161:26	0:0	6	datasize
+op	161:34	0:0	6	>
+water	161:35	0:0	6	0
+water	161:36	0:0	6	x10000
+stmts	162:2	166:2	5	
+water	162:2	0:0	6	{
+water	163:3	0:0	6	datatruncated
+op	163:17	0:0	6	=
+water	163:19	0:0	6	1
+water	163:20	0:0	6	;
+water	164:3	0:0	6	count
+op	164:9	0:0	6	=
+water	164:11	0:0	6	0
+water	164:12	0:0	6	x10000
+op	164:18	0:0	6	/
+water	164:19	0:0	6	typewidth
+water	164:28	0:0	6	;
+water	165:3	0:0	6	datasize
+op	165:12	0:0	6	=
+call	165:14	165:55	6	TIFFSafeMultiply
+arg	165:31	165:39	7	tmsize_t
+water	165:31	0:0	8	tmsize_t
+arg	165:40	165:45	7	count
+water	165:40	0:0	8	count
+arg	165:46	165:55	7	typewidth
+water	165:46	0:0	8	typewidth
+water	165:56	0:0	6	;
+water	166:2	0:0	6	}
+if	167:2	172:2	4	(count > maxitems)
+cond	167:6	167:12	5	count > maxitems
+water	167:6	0:0	6	count
+op	167:11	0:0	6	>
+water	167:12	0:0	6	maxitems
+stmts	168:2	172:2	5	
+water	168:2	0:0	6	{
+water	169:3	0:0	6	datatruncated
+op	169:17	0:0	6	=
+water	169:19	0:0	6	1
+water	169:20	0:0	6	;
+water	170:3	0:0	6	count
+op	170:9	0:0	6	=
+water	170:11	0:0	6	maxitems
+water	170:19	0:0	6	;
+water	171:24	0:0	6	datasize
+op	171:33	0:0	6	=
+call	171:35	171:76	6	TIFFSafeMultiply
+arg	171:52	171:60	7	tmsize_t
+water	171:52	0:0	8	tmsize_t
+arg	171:61	171:66	7	count
+water	171:61	0:0	8	count
+arg	171:67	171:76	7	typewidth
+water	171:67	0:0	8	typewidth
+water	171:77	0:0	6	;
+water	172:2	0:0	6	}
+if	173:2	194:2	4	(! datafits)
+cond	173:6	173:7	5	! datafits
+op	173:6	0:0	6	!
+water	173:7	0:0	6	datafits
+stmts	174:2	194:2	5	
+water	174:2	0:0	6	{
+water	175:3	0:0	6	datamem
+op	175:11	0:0	6	=
+call	175:13	175:33	6	_TIFFmalloc
+arg	175:25	175:33	7	datasize
+water	175:25	0:0	8	datasize
+water	175:34	0:0	6	;
+if	176:3	192:3	6	(datamem)
+cond	176:7	176:7	7	datamem
+water	176:7	0:0	8	datamem
+stmts	176:16	192:3	7	
+water	176:16	0:0	8	{
+if	177:4	184:4	8	(_TIFF_lseek_f (fd ,( _TIFF_off_t ) dataoffset ,0 ) != ( _TIFF_off_t ) dataoffset)
+cond	177:8	178:21	9	_TIFF_lseek_f (fd ,( _TIFF_off_t ) dataoffset ,0 ) != ( _TIFF_off_t ) dataoffset
+call	177:8	177:52	10	_TIFF_lseek_f
+arg	177:22	177:24	11	fd
+water	177:22	0:0	12	fd
+arg	177:26	177:49	11	(_TIFF_off_t)dataoffset
+water	177:26	0:0	12	(
+water	177:27	0:0	12	_TIFF_off_t
+water	177:38	0:0	12	)
+water	177:39	0:0	12	dataoffset
+arg	177:51	177:52	11	0
+water	177:51	0:0	12	0
+op	177:54	0:0	10	!=
+water	178:8	0:0	10	(
+water	178:9	0:0	10	_TIFF_off_t
+water	178:20	0:0	10	)
+water	178:21	0:0	10	dataoffset
+stmts	179:4	184:4	9	
+water	179:4	0:0	10	{
+call	180:5	181:44	10	Error
+arg	181:4	181:39	11	"Seek error accessing tag %u value"
+water	181:4	0:0	12	"Seek error accessing tag %u value"
+arg	181:41	181:44	11	tag
+water	181:41	0:0	12	tag
+water	181:45	0:0	10	;
+call	182:5	182:22	10	_TIFFfree
+arg	182:15	182:22	11	datamem
+water	182:15	0:0	12	datamem
+water	182:23	0:0	10	;
+water	183:5	0:0	10	datamem
+op	183:13	0:0	10	=
+water	183:15	0:0	10	NULL
+water	183:19	0:0	10	;
+water	184:4	0:0	10	}
+else	185:4	191:4	8
+stmts	185:9	191:4	9	
+if	185:9	191:4	10	(read (fd ,datamem ,( size_t ) datasize ) != ( TIFF_SSIZE_T ) datasize)
+cond	185:13	185:66	11	read (fd ,datamem ,( size_t ) datasize ) != ( TIFF_SSIZE_T ) datasize
+call	185:13	185:47	12	read
+arg	185:18	185:20	13	fd
+water	185:18	0:0	14	fd
+arg	185:22	185:29	13	datamem
+water	185:22	0:0	14	datamem
+arg	185:31	185:47	13	(size_t)datasize
+water	185:31	0:0	14	(
+water	185:32	0:0	14	size_t
+water	185:38	0:0	14	)
+water	185:39	0:0	14	datasize
+op	185:49	0:0	12	!=
+water	185:52	0:0	12	(
+water	185:53	0:0	12	TIFF_SSIZE_T
+water	185:65	0:0	12	)
+water	185:66	0:0	12	datasize
+stmts	186:4	191:4	11	
+water	186:4	0:0	12	{
+call	187:5	188:44	12	Error
+arg	188:4	188:39	13	"Read error accessing tag %u value"
+water	188:4	0:0	14	"Read error accessing tag %u value"
+arg	188:41	188:44	13	tag
+water	188:41	0:0	14	tag
+water	188:45	0:0	12	;
+call	189:5	189:22	12	_TIFFfree
+arg	189:15	189:22	13	datamem
+water	189:15	0:0	14	datamem
+water	189:23	0:0	12	;
+water	190:5	0:0	12	datamem
+op	190:13	0:0	12	=
+water	190:15	0:0	12	NULL
+water	190:19	0:0	12	;
+water	191:4	0:0	12	}
+water	192:3	0:0	8	}
+else	192:5	193:45	6
+stmts	193:4	193:45	7	
+call	193:4	193:44	8	Error
+arg	193:10	193:40	9	"No space for data for tag %u"
+water	193:10	0:0	10	"No space for data for tag %u"
+arg	193:41	193:44	9	tag
+water	193:41	0:0	10	tag
+water	193:45	0:0	8	;
+water	194:2	0:0	6	}
+if	195:2	236:2	4	(datamem)
+cond	195:6	195:6	5	datamem
+water	195:6	0:0	6	datamem
+stmts	196:2	236:2	5	
+water	196:2	0:0	6	{
+if	197:3	227:3	6	(swabflag)
+cond	197:7	197:7	7	swabflag
+water	197:7	0:0	8	swabflag
+stmts	198:3	227:3	7	
+water	198:3	0:0	8	{
+switch	199:4	226:4	8	(type)
+cond	199:12	199:12	9	type
+water	199:12	0:0	10	type
+stmts	200:4	226:4	9	
+water	200:4	0:0	10	{
+label	201:5	201:19	10	case TIFF_BYTE :
+label	202:5	202:20	10	case TIFF_ASCII :
+label	203:5	203:20	10	case TIFF_SBYTE :
+label	204:5	204:24	10	case TIFF_UNDEFINED :
+break	205:6	205:11	10	
+label	206:5	206:20	10	case TIFF_SHORT :
+label	207:5	207:21	10	case TIFF_SSHORT :
+call	208:6	208:59	10	TIFFSwabArrayOfShort
+arg	208:27	208:43	11	(uint16*)datamem
+water	208:27	0:0	12	(
+water	208:28	0:0	12	uint16
+op	208:34	0:0	12	*
+water	208:35	0:0	12	)
+water	208:36	0:0	12	datamem
+arg	208:44	208:59	11	(tmsize_t)count
+water	208:44	0:0	12	(
+water	208:45	0:0	12	tmsize_t
+water	208:53	0:0	12	)
+water	208:54	0:0	12	count
+water	208:60	0:0	10	;
+break	209:6	209:11	10	
+label	210:5	210:19	10	case TIFF_LONG :
+label	211:5	211:20	10	case TIFF_SLONG :
+label	212:5	212:20	10	case TIFF_FLOAT :
+label	213:5	213:18	10	case TIFF_IFD :
+call	214:6	214:58	10	TIFFSwabArrayOfLong
+arg	214:26	214:42	11	(uint32*)datamem
+water	214:26	0:0	12	(
+water	214:27	0:0	12	uint32
+op	214:33	0:0	12	*
+water	214:34	0:0	12	)
+water	214:35	0:0	12	datamem
+arg	214:43	214:58	11	(tmsize_t)count
+water	214:43	0:0	12	(
+water	214:44	0:0	12	tmsize_t
+water	214:52	0:0	12	)
+water	214:53	0:0	12	count
+water	214:59	0:0	10	;
+break	215:6	215:11	10	
+label	216:5	216:23	10	case TIFF_RATIONAL :
+label	217:5	217:24	10	case TIFF_SRATIONAL :
+call	218:6	218:60	10	TIFFSwabArrayOfLong
+arg	218:26	218:42	11	(uint32*)datamem
+water	218:26	0:0	12	(
+water	218:27	0:0	12	uint32
+op	218:33	0:0	12	*
+water	218:34	0:0	12	)
+water	218:35	0:0	12	datamem
+arg	218:43	218:60	11	(tmsize_t)count*2
+water	218:43	0:0	12	(
+water	218:44	0:0	12	tmsize_t
+water	218:52	0:0	12	)
+water	218:53	0:0	12	count
+op	218:58	0:0	12	*
+water	218:59	0:0	12	2
+water	218:61	0:0	10	;
+break	219:6	219:11	10	
+label	220:5	220:21	10	case TIFF_DOUBLE :
+label	221:5	221:20	10	case TIFF_LONG8 :
+label	222:5	222:21	10	case TIFF_SLONG8 :
+label	223:5	223:19	10	case TIFF_IFD8 :
+call	224:6	224:59	10	TIFFSwabArrayOfLong8
+arg	224:27	224:43	11	(uint64*)datamem
+water	224:27	0:0	12	(
+water	224:28	0:0	12	uint64
+op	224:34	0:0	12	*
+water	224:35	0:0	12	)
+water	224:36	0:0	12	datamem
+arg	224:44	224:59	11	(tmsize_t)count
+water	224:44	0:0	12	(
+water	224:45	0:0	12	tmsize_t
+water	224:53	0:0	12	)
+water	224:54	0:0	12	count
+water	224:60	0:0	10	;
+break	225:6	225:11	10	
+water	226:4	0:0	10	}
+water	227:3	0:0	8	}
+call	228:3	228:46	6	PrintData
+arg	228:13	228:19	7	stdout
+water	228:13	0:0	8	stdout
+arg	228:20	228:24	7	type
+water	228:20	0:0	8	type
+arg	228:25	228:38	7	(uint32)count
+water	228:25	0:0	8	(
+water	228:26	0:0	8	uint32
+water	228:32	0:0	8	)
+water	228:33	0:0	8	count
+arg	228:39	228:46	7	datamem
+water	228:39	0:0	8	datamem
+water	228:47	0:0	6	;
+if	229:3	230:18	6	(datatruncated)
+cond	229:7	229:7	7	datatruncated
+water	229:7	0:0	8	datatruncated
+stmts	230:4	230:18	7	
+call	230:4	230:17	8	printf
+arg	230:11	230:17	9	" ..."
+water	230:11	0:0	10	" ..."
+water	230:18	0:0	8	;
+if	231:3	235:32	6	(! datafits)
+cond	231:7	231:8	7	! datafits
+op	231:7	0:0	8	!
+water	231:8	0:0	8	datafits
+stmts	232:32	235:32	7	
+water	232:32	0:0	8	{
+call	233:40	233:57	8	_TIFFfree
+arg	233:50	233:57	9	datamem
+water	233:50	0:0	10	datamem
+water	233:58	0:0	8	;
+water	234:40	0:0	8	datamem
+op	234:48	0:0	8	=
+water	234:50	0:0	8	NULL
+water	234:54	0:0	8	;
+water	235:32	0:0	8	}
+water	236:2	0:0	6	}
+call	237:2	237:14	4	printf
+arg	237:9	237:14	5	">\n"
+water	237:9	0:0	6	">\n"
+water	237:15	0:0	4	;
+water	238:1	0:0	4	}
+label	239:0	239:4	2	done :
+if	240:1	241:27	2	(dirmem)
+cond	240:5	240:5	3	dirmem
+water	240:5	0:0	4	dirmem
+stmts	241:2	241:27	3	
+call	241:2	241:26	4	_TIFFfree
+arg	241:12	241:26	5	(char*)dirmem
+water	241:12	0:0	6	(
+water	241:13	0:0	6	char
+op	241:18	0:0	6	*
+water	241:19	0:0	6	)
+water	241:20	0:0	6	dirmem
+water	241:27	0:0	4	;
+return	242:1	242:20	2	(nextdiroff)
+water	242:8	0:0	3	(
+water	242:9	0:0	3	nextdiroff
+water	242:19	0:0	3	)

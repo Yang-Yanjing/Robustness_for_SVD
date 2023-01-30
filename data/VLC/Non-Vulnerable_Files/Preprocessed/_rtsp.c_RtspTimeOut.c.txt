@@ -1,0 +1,119 @@
+func	2:0	23:0	0	static void	RtspTimeOut
+params	2:23	0:0	1	
+param	2:25	2:36	2	void *	data
+stmnts	0:0	22:33	1	
+decl	4:4	4:30	2	rtsp_stream_t	*rtsp
+op	4:24	0:0	2	=
+water	4:26	0:0	2	data
+call	5:4	5:30	2	vlc_mutex_lock
+arg	5:19	5:30	3	&rtsp->lock
+op	5:19	0:0	4	&
+water	5:20	0:0	4	rtsp
+op	5:24	0:0	4	->
+water	5:26	0:0	4	lock
+water	5:31	0:0	2	;
+decl	6:4	6:25	2	mtime_t	now
+op	6:16	0:0	2	=
+call	6:18	6:24	3	mdate
+for	7:4	20:4	2	( int i = rtsp -> sessionc - 1 ;i >= 0;i --)
+forinit	0:0	7:35	3	 int i = rtsp -> sessionc - 1 ;
+decl	7:9	7:35	4	int	i
+op	7:15	0:0	4	=
+water	7:17	0:0	4	rtsp
+op	7:21	0:0	4	->
+water	7:23	0:0	4	sessionc
+op	7:32	0:0	4	-
+water	7:34	0:0	4	1
+cond	7:37	7:42	3	i >= 0
+water	7:37	0:0	4	i
+op	7:39	0:0	4	>=
+water	7:42	0:0	4	0
+forexpr	7:45	7:46	3	i --
+water	7:45	0:0	4	i
+op	7:46	0:0	4	--
+stmts	8:4	20:4	3	
+water	8:4	0:0	4	{
+if	9:8	19:8	4	(rtsp -> sessionv [ i ] -> last_seen + rtsp -> timeout * CLOCK_FREQ < now)
+cond	9:12	9:72	5	rtsp -> sessionv [ i ] -> last_seen + rtsp -> timeout * CLOCK_FREQ < now
+water	9:12	0:0	6	rtsp
+op	9:16	0:0	6	->
+water	9:18	0:0	6	sessionv
+op	9:26	0:0	6	[
+water	9:27	0:0	6	i
+op	9:28	0:0	6	]
+op	9:29	0:0	6	->
+water	9:31	0:0	6	last_seen
+op	9:41	0:0	6	+
+water	9:43	0:0	6	rtsp
+op	9:47	0:0	6	->
+water	9:49	0:0	6	timeout
+op	9:57	0:0	6	*
+water	9:59	0:0	6	CLOCK_FREQ
+op	9:70	0:0	6	<
+water	9:72	0:0	6	now
+stmts	10:8	19:8	5	
+water	10:8	0:0	6	{
+if	11:12	17:12	6	(rtsp -> vod_media != NULL)
+cond	11:16	11:35	7	rtsp -> vod_media != NULL
+water	11:16	0:0	8	rtsp
+op	11:20	0:0	8	->
+water	11:22	0:0	8	vod_media
+op	11:32	0:0	8	!=
+water	11:35	0:0	8	NULL
+stmts	12:12	17:12	7	
+water	12:12	0:0	8	{
+decl	13:16	13:35	8	char	psz_sesbuf[17]
+call	14:16	15:48	8	snprintf
+arg	14:26	14:36	9	psz_sesbuf
+water	14:26	0:0	10	psz_sesbuf
+arg	14:38	14:58	9	sizeof(psz_sesbuf)
+op	14:38	0:0	10	sizeof
+water	14:44	0:0	10	(
+water	14:46	0:0	10	psz_sesbuf
+water	14:57	0:0	10	)
+arg	14:60	14:69	9	"%"PRIx64
+water	14:60	0:0	10	"%"
+water	14:63	0:0	10	PRIx64
+arg	15:26	15:48	9	rtsp->sessionv[i]->id
+water	15:26	0:0	10	rtsp
+op	15:30	0:0	10	->
+water	15:32	0:0	10	sessionv
+op	15:40	0:0	10	[
+water	15:41	0:0	10	i
+op	15:42	0:0	10	]
+op	15:43	0:0	10	->
+water	15:45	0:0	10	id
+water	15:49	0:0	8	;
+call	16:16	16:52	8	vod_stop
+arg	16:25	16:40	9	rtsp->vod_media
+water	16:25	0:0	10	rtsp
+op	16:29	0:0	10	->
+water	16:31	0:0	10	vod_media
+arg	16:42	16:52	9	psz_sesbuf
+water	16:42	0:0	10	psz_sesbuf
+water	16:53	0:0	8	;
+water	17:12	0:0	8	}
+call	18:12	18:49	6	RtspClientDel
+arg	18:26	18:30	7	rtsp
+water	18:26	0:0	8	rtsp
+arg	18:32	18:49	7	rtsp->sessionv[i]
+water	18:32	0:0	8	rtsp
+op	18:36	0:0	8	->
+water	18:38	0:0	8	sessionv
+op	18:46	0:0	8	[
+water	18:47	0:0	8	i
+op	18:48	0:0	8	]
+water	18:50	0:0	6	;
+water	19:8	0:0	6	}
+water	20:4	0:0	4	}
+call	21:4	21:24	2	RtspUpdateTimer
+arg	21:20	21:24	3	rtsp
+water	21:20	0:0	4	rtsp
+water	21:25	0:0	2	;
+call	22:4	22:32	2	vlc_mutex_unlock
+arg	22:21	22:32	3	&rtsp->lock
+op	22:21	0:0	4	&
+water	22:22	0:0	4	rtsp
+op	22:26	0:0	4	->
+water	22:28	0:0	4	lock
+water	22:33	0:0	2	;

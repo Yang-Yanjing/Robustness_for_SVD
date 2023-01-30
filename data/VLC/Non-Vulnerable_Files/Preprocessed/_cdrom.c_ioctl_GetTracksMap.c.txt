@@ -1,0 +1,1134 @@
+func	2:0	230:0	0	int	ioctl_GetTracksMap
+params	2:22	0:0	1	
+param	2:24	2:44	2	vlc_object_t *	p_this
+param	2:46	2:70	2	const vcddev_t *	p_vcddev
+param	3:24	3:41	2	int * *	pp_sectors
+stmnts	0:0	229:4	1	
+decl	5:4	5:20	2	int	i_tracks
+op	5:17	0:0	2	=
+water	5:19	0:0	2	0
+if	6:4	21:4	2	(p_vcddev -> i_vcdimage_handle != - 1)
+cond	6:8	6:40	3	p_vcddev -> i_vcdimage_handle != - 1
+water	6:8	0:0	4	p_vcddev
+op	6:16	0:0	4	->
+water	6:18	0:0	4	i_vcdimage_handle
+op	6:36	0:0	4	!=
+op	6:39	0:0	4	-
+water	6:40	0:0	4	1
+stmts	7:4	21:4	3	
+water	7:4	0:0	4	{
+water	11:8	0:0	4	i_tracks
+op	11:17	0:0	4	=
+water	11:19	0:0	4	p_vcddev
+op	11:27	0:0	4	->
+water	11:29	0:0	4	i_tracks
+water	11:37	0:0	4	;
+if	12:8	19:8	4	(pp_sectors)
+cond	12:12	12:12	5	pp_sectors
+water	12:12	0:0	6	pp_sectors
+stmts	13:8	19:8	5	
+water	13:8	0:0	6	{
+op	14:12	0:0	6	*
+water	14:13	0:0	6	pp_sectors
+op	14:24	0:0	6	=
+call	14:26	14:69	6	calloc
+arg	14:34	14:46	7	i_tracks+1
+water	14:34	0:0	8	i_tracks
+op	14:43	0:0	8	+
+water	14:45	0:0	8	1
+arg	14:48	14:69	7	sizeof(**pp_sectors)
+op	14:48	0:0	8	sizeof
+water	14:54	0:0	8	(
+op	14:55	0:0	8	*
+op	14:56	0:0	8	*
+water	14:57	0:0	8	pp_sectors
+water	14:67	0:0	8	)
+water	14:70	0:0	6	;
+if	15:12	16:24	6	(* pp_sectors == NULL)
+cond	15:16	15:31	7	* pp_sectors == NULL
+op	15:16	0:0	8	*
+water	15:17	0:0	8	pp_sectors
+op	15:28	0:0	8	==
+water	15:31	0:0	8	NULL
+stmts	16:16	16:24	7	
+return	16:16	16:24	8	0
+water	16:23	0:0	9	0
+call	17:12	18:58	6	memcpy
+arg	17:20	17:31	7	*pp_sectors
+op	17:20	0:0	8	*
+water	17:21	0:0	8	pp_sectors
+arg	17:33	17:52	7	p_vcddev->p_sectors
+water	17:33	0:0	8	p_vcddev
+op	17:41	0:0	8	->
+water	17:43	0:0	8	p_sectors
+arg	18:20	18:58	7	(i_tracks+1)*sizeof(**pp_sectors)
+water	18:20	0:0	8	(
+water	18:21	0:0	8	i_tracks
+op	18:30	0:0	8	+
+water	18:32	0:0	8	1
+water	18:33	0:0	8	)
+op	18:35	0:0	8	*
+op	18:37	0:0	8	sizeof
+water	18:43	0:0	8	(
+op	18:44	0:0	8	*
+op	18:45	0:0	8	*
+water	18:46	0:0	8	pp_sectors
+water	18:56	0:0	8	)
+water	18:59	0:0	6	;
+water	19:8	0:0	6	}
+return	20:8	20:23	4	i_tracks
+water	20:15	0:0	5	i_tracks
+water	21:4	0:0	4	}
+else	22:4	229:4	2
+stmts	23:4	229:4	3	
+water	23:4	0:0	4	{
+decl	28:8	28:19	4	CDTOC	*pTOC
+decl	29:8	29:25	4	int	i_descriptors
+if	30:8	34:8	4	(( pTOC =darwin_getTOC (p_this ,p_vcddev ) ) == NULL)
+cond	30:12	30:60	5	( pTOC =darwin_getTOC (p_this ,p_vcddev ) ) == NULL
+water	30:12	0:0	6	(
+water	30:14	0:0	6	pTOC
+op	30:19	0:0	6	=
+call	30:21	30:53	6	darwin_getTOC
+arg	30:36	30:42	7	p_this
+water	30:36	0:0	8	p_this
+arg	30:44	30:53	7	p_vcddev
+water	30:44	0:0	8	p_vcddev
+water	30:55	0:0	6	)
+op	30:57	0:0	6	==
+water	30:60	0:0	6	NULL
+stmts	31:8	34:8	5	
+water	31:8	0:0	6	{
+call	32:12	32:53	6	msg_Err
+arg	32:21	32:27	7	p_this
+water	32:21	0:0	8	p_this
+arg	32:29	32:53	7	"failed to get the TOC"
+water	32:29	0:0	8	"failed to get the TOC"
+water	32:54	0:0	6	;
+return	33:12	33:20	6	0
+water	33:19	0:0	7	0
+water	34:8	0:0	6	}
+water	35:8	0:0	4	i_descriptors
+op	35:22	0:0	4	=
+call	35:24	35:54	4	CDTOCGetDescriptorCount
+arg	35:49	35:54	5	pTOC
+water	35:49	0:0	6	pTOC
+water	35:55	0:0	4	;
+water	36:8	0:0	4	i_tracks
+op	36:17	0:0	4	=
+call	36:19	36:65	4	darwin_getNumberOfTracks
+arg	36:45	36:49	5	pTOC
+water	36:45	0:0	6	pTOC
+arg	36:51	36:65	5	i_descriptors
+water	36:51	0:0	6	i_descriptors
+water	36:66	0:0	4	;
+if	37:8	69:8	4	(pp_sectors)
+cond	37:12	37:12	5	pp_sectors
+water	37:12	0:0	6	pp_sectors
+stmts	38:8	69:8	5	
+water	38:8	0:0	6	{
+decl	39:12	39:33	6	int	i
+water	39:17	0:0	6	,
+decl	39:12	39:33	6	int	i_leadout
+op	39:29	0:0	6	=
+op	39:31	0:0	6	-
+water	39:32	0:0	6	1
+decl	40:12	40:46	6	CDTOCDescriptor	*pTrackDescriptors
+decl	41:12	41:24	6	u_char	track
+op	42:12	0:0	6	*
+water	42:13	0:0	6	pp_sectors
+op	42:24	0:0	6	=
+call	42:26	42:69	6	calloc
+arg	42:34	42:46	7	i_tracks+1
+water	42:34	0:0	8	i_tracks
+op	42:43	0:0	8	+
+water	42:45	0:0	8	1
+arg	42:48	42:69	7	sizeof(**pp_sectors)
+op	42:48	0:0	8	sizeof
+water	42:54	0:0	8	(
+op	42:55	0:0	8	*
+op	42:56	0:0	8	*
+water	42:57	0:0	8	pp_sectors
+water	42:67	0:0	8	)
+water	42:70	0:0	6	;
+if	43:12	47:12	6	(* pp_sectors == NULL)
+cond	43:16	43:31	7	* pp_sectors == NULL
+op	43:16	0:0	8	*
+water	43:17	0:0	8	pp_sectors
+op	43:28	0:0	8	==
+water	43:31	0:0	8	NULL
+stmts	44:12	47:12	7	
+water	44:12	0:0	8	{
+call	45:16	45:37	8	darwin_freeTOC
+arg	45:32	45:37	9	pTOC
+water	45:32	0:0	10	pTOC
+water	45:38	0:0	8	;
+return	46:16	46:24	8	0
+water	46:23	0:0	9	0
+water	47:12	0:0	8	}
+water	48:12	0:0	6	pTrackDescriptors
+op	48:30	0:0	6	=
+water	48:32	0:0	6	pTOC
+op	48:36	0:0	6	->
+water	48:38	0:0	6	descriptors
+water	48:49	0:0	6	;
+for	49:12	58:12	6	(i_tracks = 0 , i = 0 ;i < i_descriptors;i ++)
+forinit	49:17	49:36	7	i_tracks = 0 , i = 0 ;
+water	49:17	0:0	8	i_tracks
+op	49:26	0:0	8	=
+water	49:28	0:0	8	0
+water	49:29	0:0	8	,
+water	49:31	0:0	8	i
+op	49:33	0:0	8	=
+water	49:35	0:0	8	0
+water	49:36	0:0	8	;
+cond	49:38	49:42	7	i < i_descriptors
+water	49:38	0:0	8	i
+op	49:40	0:0	8	<
+water	49:42	0:0	8	i_descriptors
+forexpr	49:57	49:58	7	i ++
+water	49:57	0:0	8	i
+op	49:58	0:0	8	++
+stmts	50:12	58:12	7	
+water	50:12	0:0	8	{
+water	51:16	0:0	8	track
+op	51:22	0:0	8	=
+water	51:24	0:0	8	pTrackDescriptors
+op	51:41	0:0	8	[
+water	51:42	0:0	8	i
+op	51:43	0:0	8	]
+op	51:44	0:0	8	.
+water	51:45	0:0	8	point
+water	51:50	0:0	8	;
+if	52:16	53:33	8	(track == 0 xA2)
+cond	52:20	52:30	9	track == 0 xA2
+water	52:20	0:0	10	track
+op	52:26	0:0	10	==
+water	52:29	0:0	10	0
+water	52:30	0:0	10	xA2
+stmts	53:20	53:33	9	
+water	53:20	0:0	10	i_leadout
+op	53:30	0:0	10	=
+water	53:32	0:0	10	i
+water	53:33	0:0	10	;
+if	54:16	55:28	8	(track > CD_MAX_TRACK_NO || track < CD_MIN_TRACK_NO)
+cond	54:20	54:55	9	track > CD_MAX_TRACK_NO || track < CD_MIN_TRACK_NO
+water	54:20	0:0	10	track
+op	54:26	0:0	10	>
+water	54:28	0:0	10	CD_MAX_TRACK_NO
+op	54:44	0:0	10	||
+water	54:47	0:0	10	track
+op	54:53	0:0	10	<
+water	54:55	0:0	10	CD_MIN_TRACK_NO
+stmts	55:20	55:28	9	
+continue	55:20	55:28	10	
+water	56:16	0:0	8	(
+op	56:17	0:0	8	*
+water	56:18	0:0	8	pp_sectors
+water	56:28	0:0	8	)
+op	56:29	0:0	8	[
+water	56:30	0:0	8	i_tracks
+op	56:38	0:0	8	++
+op	56:40	0:0	8	]
+op	56:42	0:0	8	=
+call	57:20	57:62	8	CDConvertMSFToLBA
+arg	57:39	57:62	9	pTrackDescriptors[i].p
+water	57:39	0:0	10	pTrackDescriptors
+op	57:56	0:0	10	[
+water	57:57	0:0	10	i
+op	57:58	0:0	10	]
+op	57:59	0:0	10	.
+water	57:60	0:0	10	p
+water	57:63	0:0	8	;
+water	58:12	0:0	8	}
+if	59:12	65:12	6	(i_leadout == - 1)
+cond	59:16	59:30	7	i_leadout == - 1
+water	59:16	0:0	8	i_leadout
+op	59:26	0:0	8	==
+op	59:29	0:0	8	-
+water	59:30	0:0	8	1
+stmts	60:12	65:12	7	
+water	60:12	0:0	8	{
+call	61:16	61:53	8	msg_Err
+arg	61:25	61:31	9	p_this
+water	61:25	0:0	10	p_this
+arg	61:33	61:53	9	"leadout not found"
+water	61:33	0:0	10	"leadout not found"
+water	61:54	0:0	8	;
+call	62:16	62:34	8	free
+arg	62:22	62:34	9	*pp_sectors
+op	62:22	0:0	10	*
+water	62:23	0:0	10	pp_sectors
+water	62:35	0:0	8	;
+call	63:16	63:37	8	darwin_freeTOC
+arg	63:32	63:37	9	pTOC
+water	63:32	0:0	10	pTOC
+water	63:38	0:0	8	;
+return	64:16	64:24	8	0
+water	64:23	0:0	9	0
+water	65:12	0:0	8	}
+water	67:12	0:0	6	(
+op	67:13	0:0	6	*
+water	67:14	0:0	6	pp_sectors
+water	67:24	0:0	6	)
+op	67:25	0:0	6	[
+water	67:26	0:0	6	i_tracks
+op	67:34	0:0	6	]
+op	67:36	0:0	6	=
+call	68:16	68:66	6	CDConvertMSFToLBA
+arg	68:35	68:66	7	pTrackDescriptors[i_leadout].p
+water	68:35	0:0	8	pTrackDescriptors
+op	68:52	0:0	8	[
+water	68:53	0:0	8	i_leadout
+op	68:62	0:0	8	]
+op	68:63	0:0	8	.
+water	68:64	0:0	8	p
+water	68:67	0:0	6	;
+water	69:8	0:0	6	}
+call	70:8	70:29	4	darwin_freeTOC
+arg	70:24	70:29	5	pTOC
+water	70:24	0:0	6	pTOC
+water	70:30	0:0	4	;
+decl	72:8	72:29	4	DWORD	dwBytesReturned
+decl	73:8	73:27	4	CDROM_TOC	cdrom_toc
+if	74:8	80:8	4	(DeviceIoControl (p_vcddev -> h_device_handle ,IOCTL_CDROM_READ_TOC ,NULL ,0 ,& cdrom_toc ,sizeof ( CDROM_TOC ) ,& dwBytesReturned ,NULL ) == 0)
+cond	74:12	76:57	5	DeviceIoControl (p_vcddev -> h_device_handle ,IOCTL_CDROM_READ_TOC ,NULL ,0 ,& cdrom_toc ,sizeof ( CDROM_TOC ) ,& dwBytesReturned ,NULL ) == 0
+call	74:12	76:52	6	DeviceIoControl
+arg	74:29	74:54	7	p_vcddev->h_device_handle
+water	74:29	0:0	8	p_vcddev
+op	74:37	0:0	8	->
+water	74:39	0:0	8	h_device_handle
+arg	74:56	74:76	7	IOCTL_CDROM_READ_TOC
+water	74:56	0:0	8	IOCTL_CDROM_READ_TOC
+arg	75:29	75:33	7	NULL
+water	75:29	0:0	8	NULL
+arg	75:35	75:36	7	0
+water	75:35	0:0	8	0
+arg	75:38	75:48	7	&cdrom_toc
+op	75:38	0:0	8	&
+water	75:39	0:0	8	cdrom_toc
+arg	75:50	75:67	7	sizeof(CDROM_TOC)
+op	75:50	0:0	8	sizeof
+water	75:56	0:0	8	(
+water	75:57	0:0	8	CDROM_TOC
+water	75:66	0:0	8	)
+arg	76:29	76:45	7	&dwBytesReturned
+op	76:29	0:0	8	&
+water	76:30	0:0	8	dwBytesReturned
+arg	76:47	76:52	7	NULL
+water	76:47	0:0	8	NULL
+op	76:54	0:0	6	==
+water	76:57	0:0	6	0
+stmts	77:8	80:8	5	
+water	77:8	0:0	6	{
+call	78:12	78:53	6	msg_Err
+arg	78:21	78:27	7	p_this
+water	78:21	0:0	8	p_this
+arg	78:29	78:53	7	"could not read TOCHDR"
+water	78:29	0:0	8	"could not read TOCHDR"
+water	78:54	0:0	6	;
+return	79:12	79:20	6	0
+water	79:19	0:0	7	0
+water	80:8	0:0	6	}
+water	81:8	0:0	4	i_tracks
+op	81:17	0:0	4	=
+water	81:19	0:0	4	cdrom_toc
+op	81:28	0:0	4	.
+water	81:29	0:0	4	LastTrack
+op	81:39	0:0	4	-
+water	81:41	0:0	4	cdrom_toc
+op	81:50	0:0	4	.
+water	81:51	0:0	4	FirstTrack
+op	81:62	0:0	4	+
+water	81:64	0:0	4	1
+water	81:65	0:0	4	;
+if	82:8	95:8	4	(pp_sectors)
+cond	82:12	82:12	5	pp_sectors
+water	82:12	0:0	6	pp_sectors
+stmts	83:8	95:8	5	
+water	83:8	0:0	6	{
+op	84:12	0:0	6	*
+water	84:13	0:0	6	pp_sectors
+op	84:24	0:0	6	=
+call	84:26	84:69	6	calloc
+arg	84:34	84:46	7	i_tracks+1
+water	84:34	0:0	8	i_tracks
+op	84:43	0:0	8	+
+water	84:45	0:0	8	1
+arg	84:48	84:69	7	sizeof(**pp_sectors)
+op	84:48	0:0	8	sizeof
+water	84:54	0:0	8	(
+op	84:55	0:0	8	*
+op	84:56	0:0	8	*
+water	84:57	0:0	8	pp_sectors
+water	84:67	0:0	8	)
+water	84:70	0:0	6	;
+if	85:12	86:24	6	(* pp_sectors == NULL)
+cond	85:16	85:31	7	* pp_sectors == NULL
+op	85:16	0:0	8	*
+water	85:17	0:0	8	pp_sectors
+op	85:28	0:0	8	==
+water	85:31	0:0	8	NULL
+stmts	86:16	86:24	7	
+return	86:16	86:24	8	0
+water	86:23	0:0	9	0
+for	87:12	94:13	6	( int i = 0 ;i <= i_tracks;i ++)
+forinit	0:0	87:27	7	 int i = 0 ;
+decl	87:17	87:27	8	int	i
+op	87:23	0:0	8	=
+water	87:25	0:0	8	0
+cond	87:29	87:34	7	i <= i_tracks
+water	87:29	0:0	8	i
+op	87:31	0:0	8	<=
+water	87:34	0:0	8	i_tracks
+forexpr	87:45	87:46	7	i ++
+water	87:45	0:0	8	i
+op	87:46	0:0	8	++
+stmts	88:12	94:13	7	
+water	88:12	0:0	8	{
+water	89:16	0:0	8	(
+op	89:17	0:0	8	*
+water	89:18	0:0	8	pp_sectors
+water	89:28	0:0	8	)
+op	89:29	0:0	8	[
+water	89:31	0:0	8	i
+op	89:33	0:0	8	]
+op	89:35	0:0	8	=
+call	89:37	92:77	8	MSF_TO_LBA2
+arg	90:43	90:76	9	cdrom_toc.TrackData[i].Address[1]
+water	90:43	0:0	10	cdrom_toc
+op	90:52	0:0	10	.
+water	90:53	0:0	10	TrackData
+op	90:62	0:0	10	[
+water	90:63	0:0	10	i
+op	90:64	0:0	10	]
+op	90:65	0:0	10	.
+water	90:66	0:0	10	Address
+op	90:73	0:0	10	[
+water	90:74	0:0	10	1
+op	90:75	0:0	10	]
+arg	91:43	91:76	9	cdrom_toc.TrackData[i].Address[2]
+water	91:43	0:0	10	cdrom_toc
+op	91:52	0:0	10	.
+water	91:53	0:0	10	TrackData
+op	91:62	0:0	10	[
+water	91:63	0:0	10	i
+op	91:64	0:0	10	]
+op	91:65	0:0	10	.
+water	91:66	0:0	10	Address
+op	91:73	0:0	10	[
+water	91:74	0:0	10	2
+op	91:75	0:0	10	]
+arg	92:43	92:77	9	cdrom_toc.TrackData[i].Address[3]
+water	92:43	0:0	10	cdrom_toc
+op	92:52	0:0	10	.
+water	92:53	0:0	10	TrackData
+op	92:62	0:0	10	[
+water	92:63	0:0	10	i
+op	92:64	0:0	10	]
+op	92:65	0:0	10	.
+water	92:66	0:0	10	Address
+op	92:73	0:0	10	[
+water	92:74	0:0	10	3
+op	92:75	0:0	10	]
+water	92:78	0:0	8	;
+call	93:16	93:73	8	msg_Dbg
+arg	93:25	93:31	9	p_this
+water	93:25	0:0	10	p_this
+arg	93:33	93:52	9	"p_sectors: %i, %i"
+water	93:33	0:0	10	"p_sectors: %i, %i"
+arg	93:54	93:55	9	i
+water	93:54	0:0	10	i
+arg	93:57	93:73	9	(*pp_sectors)[i]
+water	93:57	0:0	10	(
+op	93:58	0:0	10	*
+water	93:59	0:0	10	pp_sectors
+water	93:69	0:0	10	)
+op	93:70	0:0	10	[
+water	93:71	0:0	10	i
+op	93:72	0:0	10	]
+water	93:74	0:0	8	;
+water	94:13	0:0	8	}
+water	95:8	0:0	6	}
+decl	97:8	97:62	4	cdrom_get_tochdr_t	get_tochdr
+op	97:38	0:0	4	=
+water	97:40	0:0	4	{
+water	97:41	0:0	4	{
+water	97:42	0:0	4	'C'
+water	97:45	0:0	4	,
+water	97:47	0:0	4	'D'
+water	97:50	0:0	4	,
+water	97:52	0:0	4	'0'
+water	97:55	0:0	4	,
+water	97:57	0:0	4	'1'
+water	97:60	0:0	4	}
+water	97:61	0:0	4	}
+decl	98:8	98:33	4	cdrom_tochdr_t	tochdr
+decl	99:8	99:23	4	ULONG	param_len
+decl	100:8	100:22	4	ULONG	data_len
+decl	101:8	101:16	4	ULONG	rc
+water	102:8	0:0	4	rc
+op	102:11	0:0	4	=
+call	102:13	105:63	4	DosDevIOCtl
+arg	102:26	102:39	5	p_vcddev->hcd
+water	102:26	0:0	6	p_vcddev
+op	102:34	0:0	6	->
+water	102:36	0:0	6	hcd
+arg	102:41	102:57	5	IOCTL_CDROMAUDIO
+water	102:41	0:0	6	IOCTL_CDROMAUDIO
+arg	103:26	103:49	5	CDROMAUDIO_GETAUDIODISK
+water	103:26	0:0	6	CDROMAUDIO_GETAUDIODISK
+arg	104:26	104:37	5	&get_tochdr
+op	104:26	0:0	6	&
+water	104:27	0:0	6	get_tochdr
+arg	104:39	104:59	5	sizeof(get_tochdr)
+op	104:39	0:0	6	sizeof
+water	104:45	0:0	6	(
+water	104:47	0:0	6	get_tochdr
+water	104:58	0:0	6	)
+arg	104:61	104:71	5	&param_len
+op	104:61	0:0	6	&
+water	104:62	0:0	6	param_len
+arg	105:26	105:33	5	&tochdr
+op	105:26	0:0	6	&
+water	105:27	0:0	6	tochdr
+arg	105:35	105:51	5	sizeof(tochdr)
+op	105:35	0:0	6	sizeof
+water	105:41	0:0	6	(
+water	105:43	0:0	6	tochdr
+water	105:50	0:0	6	)
+arg	105:53	105:63	5	&data_len
+op	105:53	0:0	6	&
+water	105:54	0:0	6	data_len
+water	105:64	0:0	4	;
+if	106:8	110:8	4	(rc)
+cond	106:12	106:12	5	rc
+water	106:12	0:0	6	rc
+stmts	107:8	110:8	5	
+water	107:8	0:0	6	{
+call	108:12	108:53	6	msg_Err
+arg	108:21	108:27	7	p_this
+water	108:21	0:0	8	p_this
+arg	108:29	108:53	7	"could not read TOCHDR"
+water	108:29	0:0	8	"could not read TOCHDR"
+water	108:54	0:0	6	;
+return	109:12	109:20	6	0
+water	109:19	0:0	7	0
+water	110:8	0:0	6	}
+water	111:8	0:0	4	i_tracks
+op	111:17	0:0	4	=
+water	111:19	0:0	4	tochdr
+op	111:25	0:0	4	.
+water	111:26	0:0	4	last_track
+op	111:37	0:0	4	-
+water	111:39	0:0	4	tochdr
+op	111:45	0:0	4	.
+water	111:46	0:0	4	first_track
+op	111:58	0:0	4	+
+water	111:60	0:0	4	1
+water	111:61	0:0	4	;
+if	112:8	145:8	4	(pp_sectors)
+cond	112:12	112:12	5	pp_sectors
+water	112:12	0:0	6	pp_sectors
+stmts	113:8	145:8	5	
+water	113:8	0:0	6	{
+decl	114:12	114:66	6	cdrom_get_track_t	get_track
+op	114:40	0:0	6	=
+water	114:42	0:0	6	{
+water	114:43	0:0	6	{
+water	114:44	0:0	6	'C'
+water	114:47	0:0	6	,
+water	114:49	0:0	6	'D'
+water	114:52	0:0	6	,
+water	114:54	0:0	6	'0'
+water	114:57	0:0	6	,
+water	114:59	0:0	6	'1'
+water	114:62	0:0	6	}
+water	114:63	0:0	6	,
+water	114:65	0:0	6	}
+decl	115:12	115:31	6	cdrom_track_t	track
+decl	116:12	116:17	6	int	i
+op	117:12	0:0	6	*
+water	117:13	0:0	6	pp_sectors
+op	117:24	0:0	6	=
+call	117:26	117:69	6	calloc
+arg	117:34	117:46	7	i_tracks+1
+water	117:34	0:0	8	i_tracks
+op	117:43	0:0	8	+
+water	117:45	0:0	8	1
+arg	117:48	117:69	7	sizeof(**pp_sectors)
+op	117:48	0:0	8	sizeof
+water	117:54	0:0	8	(
+op	117:55	0:0	8	*
+op	117:56	0:0	8	*
+water	117:57	0:0	8	pp_sectors
+water	117:67	0:0	8	)
+water	117:70	0:0	6	;
+if	118:12	119:24	6	(* pp_sectors == NULL)
+cond	118:16	118:31	7	* pp_sectors == NULL
+op	118:16	0:0	8	*
+water	118:17	0:0	8	pp_sectors
+op	118:28	0:0	8	==
+water	118:31	0:0	8	NULL
+stmts	119:16	119:24	7	
+return	119:16	119:24	8	0
+water	119:23	0:0	9	0
+for	120:12	138:12	6	(i = 0 ;i < i_tracks;i ++)
+forinit	120:17	120:23	7	i = 0 ;
+water	120:17	0:0	8	i
+op	120:19	0:0	8	=
+water	120:21	0:0	8	0
+water	120:23	0:0	8	;
+cond	120:25	120:29	7	i < i_tracks
+water	120:25	0:0	8	i
+op	120:27	0:0	8	<
+water	120:29	0:0	8	i_tracks
+forexpr	120:40	120:41	7	i ++
+water	120:40	0:0	8	i
+op	120:41	0:0	8	++
+stmts	121:12	138:12	7	
+water	121:12	0:0	8	{
+water	122:16	0:0	8	get_track
+op	122:25	0:0	8	.
+water	122:26	0:0	8	track
+op	122:32	0:0	8	=
+water	122:34	0:0	8	tochdr
+op	122:40	0:0	8	.
+water	122:41	0:0	8	first_track
+op	122:53	0:0	8	+
+water	122:55	0:0	8	i
+water	122:56	0:0	8	;
+water	123:16	0:0	8	rc
+op	123:19	0:0	8	=
+call	123:21	126:67	8	DosDevIOCtl
+arg	123:34	123:47	9	p_vcddev->hcd
+water	123:34	0:0	10	p_vcddev
+op	123:42	0:0	10	->
+water	123:44	0:0	10	hcd
+arg	123:49	123:65	9	IOCTL_CDROMAUDIO
+water	123:49	0:0	10	IOCTL_CDROMAUDIO
+arg	124:34	124:58	9	CDROMAUDIO_GETAUDIOTRACK
+water	124:34	0:0	10	CDROMAUDIO_GETAUDIOTRACK
+arg	125:34	125:44	9	&get_track
+op	125:34	0:0	10	&
+water	125:35	0:0	10	get_track
+arg	125:46	125:63	9	sizeof(get_track)
+op	125:46	0:0	10	sizeof
+water	125:52	0:0	10	(
+water	125:53	0:0	10	get_track
+water	125:62	0:0	10	)
+arg	125:65	125:75	9	&param_len
+op	125:65	0:0	10	&
+water	125:66	0:0	10	param_len
+arg	126:34	126:40	9	&track
+op	126:34	0:0	10	&
+water	126:35	0:0	10	track
+arg	126:42	126:55	9	sizeof(track)
+op	126:42	0:0	10	sizeof
+water	126:48	0:0	10	(
+water	126:49	0:0	10	track
+water	126:54	0:0	10	)
+arg	126:57	126:67	9	&data_len
+op	126:57	0:0	10	&
+water	126:58	0:0	10	data_len
+water	126:68	0:0	8	;
+if	127:16	132:16	8	(rc)
+cond	127:20	127:20	9	rc
+water	127:20	0:0	10	rc
+stmts	128:16	132:16	9	
+water	128:16	0:0	10	{
+call	129:20	130:45	10	msg_Err
+arg	129:29	129:35	11	p_this
+water	129:29	0:0	12	p_this
+arg	129:37	129:62	11	"could not read %d track"
+water	129:37	0:0	12	"could not read %d track"
+arg	130:29	130:45	11	get_track.track
+water	130:29	0:0	12	get_track
+op	130:38	0:0	12	.
+water	130:39	0:0	12	track
+water	130:46	0:0	10	;
+return	131:20	131:28	10	0
+water	131:27	0:0	11	0
+water	132:16	0:0	10	}
+water	133:16	0:0	8	(
+op	133:17	0:0	8	*
+water	133:18	0:0	8	pp_sectors
+water	133:28	0:0	8	)
+op	133:29	0:0	8	[
+water	133:31	0:0	8	i
+op	133:33	0:0	8	]
+op	133:35	0:0	8	=
+call	133:37	136:57	8	MSF_TO_LBA2
+arg	134:39	134:57	9	track.start.minute
+water	134:39	0:0	10	track
+op	134:44	0:0	10	.
+water	134:45	0:0	10	start
+op	134:50	0:0	10	.
+water	134:51	0:0	10	minute
+arg	135:39	135:57	9	track.start.second
+water	135:39	0:0	10	track
+op	135:44	0:0	10	.
+water	135:45	0:0	10	start
+op	135:50	0:0	10	.
+water	135:51	0:0	10	second
+arg	136:39	136:57	9	track.start.frame
+water	136:39	0:0	10	track
+op	136:44	0:0	10	.
+water	136:45	0:0	10	start
+op	136:50	0:0	10	.
+water	136:51	0:0	10	frame
+water	136:58	0:0	8	;
+call	137:16	137:73	8	msg_Dbg
+arg	137:25	137:31	9	p_this
+water	137:25	0:0	10	p_this
+arg	137:33	137:52	9	"p_sectors: %i, %i"
+water	137:33	0:0	10	"p_sectors: %i, %i"
+arg	137:54	137:55	9	i
+water	137:54	0:0	10	i
+arg	137:57	137:73	9	(*pp_sectors)[i]
+water	137:57	0:0	10	(
+op	137:58	0:0	10	*
+water	137:59	0:0	10	pp_sectors
+water	137:69	0:0	10	)
+op	137:70	0:0	10	[
+water	137:71	0:0	10	i
+op	137:72	0:0	10	]
+water	137:74	0:0	8	;
+water	138:12	0:0	8	}
+water	140:12	0:0	6	(
+op	140:13	0:0	6	*
+water	140:14	0:0	6	pp_sectors
+water	140:24	0:0	6	)
+op	140:25	0:0	6	[
+water	140:27	0:0	6	i
+op	140:29	0:0	6	]
+op	140:31	0:0	6	=
+call	140:33	143:57	6	MSF_TO_LBA2
+arg	141:35	141:57	7	tochdr.lead_out.minute
+water	141:35	0:0	8	tochdr
+op	141:41	0:0	8	.
+water	141:42	0:0	8	lead_out
+op	141:50	0:0	8	.
+water	141:51	0:0	8	minute
+arg	142:35	142:57	7	tochdr.lead_out.second
+water	142:35	0:0	8	tochdr
+op	142:41	0:0	8	.
+water	142:42	0:0	8	lead_out
+op	142:50	0:0	8	.
+water	142:51	0:0	8	second
+arg	143:35	143:57	7	tochdr.lead_out.frame
+water	143:35	0:0	8	tochdr
+op	143:41	0:0	8	.
+water	143:42	0:0	8	lead_out
+op	143:50	0:0	8	.
+water	143:51	0:0	8	frame
+water	143:58	0:0	6	;
+call	144:12	144:69	6	msg_Dbg
+arg	144:21	144:27	7	p_this
+water	144:21	0:0	8	p_this
+arg	144:29	144:48	7	"p_sectors: %i, %i"
+water	144:29	0:0	8	"p_sectors: %i, %i"
+arg	144:50	144:51	7	i
+water	144:50	0:0	8	i
+arg	144:53	144:69	7	(*pp_sectors)[i]
+water	144:53	0:0	8	(
+op	144:54	0:0	8	*
+water	144:55	0:0	8	pp_sectors
+water	144:65	0:0	8	)
+op	144:66	0:0	8	[
+water	144:67	0:0	8	i
+op	144:68	0:0	8	]
+water	144:70	0:0	6	;
+water	145:8	0:0	6	}
+op	147:7	0:0	4	||
+call	147:10	147:48	4	defined
+arg	147:19	147:48	5	HAVE_SCSIREQ_IN_SYS_SCSIIO_H
+water	147:19	0:0	6	HAVE_SCSIREQ_IN_SYS_SCSIIO_H
+water	148:8	0:0	4	struct
+water	148:15	0:0	4	ioc_toc_header
+water	148:30	0:0	4	tochdr
+water	148:36	0:0	4	;
+decl	149:8	149:45	4	struct ioc_read_toc_entry	toc_entries
+if	150:8	155:8	4	(ioctl (p_vcddev -> i_device_handle ,CDIOREADTOCHEADER ,& tochdr ) == - 1)
+cond	150:12	151:16	5	ioctl (p_vcddev -> i_device_handle ,CDIOREADTOCHEADER ,& tochdr ) == - 1
+call	150:12	150:73	6	ioctl
+arg	150:19	150:44	7	p_vcddev->i_device_handle
+water	150:19	0:0	8	p_vcddev
+op	150:27	0:0	8	->
+water	150:29	0:0	8	i_device_handle
+arg	150:46	150:63	7	CDIOREADTOCHEADER
+water	150:46	0:0	8	CDIOREADTOCHEADER
+arg	150:65	150:73	7	&tochdr
+op	150:65	0:0	8	&
+water	150:66	0:0	8	tochdr
+op	151:12	0:0	6	==
+op	151:15	0:0	6	-
+water	151:16	0:0	6	1
+stmts	152:8	155:8	5	
+water	152:8	0:0	6	{
+call	153:12	153:53	6	msg_Err
+arg	153:21	153:27	7	p_this
+water	153:21	0:0	8	p_this
+arg	153:29	153:53	7	"could not read TOCHDR"
+water	153:29	0:0	8	"could not read TOCHDR"
+water	153:54	0:0	6	;
+return	154:12	154:20	6	0
+water	154:19	0:0	7	0
+water	155:8	0:0	6	}
+water	156:8	0:0	4	i_tracks
+op	156:17	0:0	4	=
+water	156:19	0:0	4	tochdr
+op	156:25	0:0	4	.
+water	156:26	0:0	4	ending_track
+op	156:39	0:0	4	-
+water	156:41	0:0	4	tochdr
+op	156:47	0:0	4	.
+water	156:48	0:0	4	starting_track
+op	156:63	0:0	4	+
+water	156:65	0:0	4	1
+water	156:66	0:0	4	;
+if	157:8	193:8	4	(pp_sectors)
+cond	157:12	157:12	5	pp_sectors
+water	157:12	0:0	6	pp_sectors
+stmts	158:8	193:8	5	
+water	158:8	0:0	6	{
+decl	159:13	159:18	6	int	i
+op	160:13	0:0	6	*
+water	160:14	0:0	6	pp_sectors
+op	160:25	0:0	6	=
+call	160:27	160:70	6	calloc
+arg	160:35	160:47	7	i_tracks+1
+water	160:35	0:0	8	i_tracks
+op	160:44	0:0	8	+
+water	160:46	0:0	8	1
+arg	160:49	160:70	7	sizeof(**pp_sectors)
+op	160:49	0:0	8	sizeof
+water	160:55	0:0	8	(
+op	160:56	0:0	8	*
+op	160:57	0:0	8	*
+water	160:58	0:0	8	pp_sectors
+water	160:68	0:0	8	)
+water	160:71	0:0	6	;
+if	161:13	162:25	6	(* pp_sectors == NULL)
+cond	161:17	161:32	7	* pp_sectors == NULL
+op	161:17	0:0	8	*
+water	161:18	0:0	8	pp_sectors
+op	161:29	0:0	8	==
+water	161:32	0:0	8	NULL
+stmts	162:17	162:25	7	
+return	162:17	162:25	8	0
+water	162:24	0:0	9	0
+water	163:13	0:0	6	toc_entries
+op	163:24	0:0	6	.
+water	163:25	0:0	6	address_format
+op	163:40	0:0	6	=
+water	163:42	0:0	6	CD_LBA_FORMAT
+water	163:55	0:0	6	;
+water	164:13	0:0	6	toc_entries
+op	164:24	0:0	6	.
+water	164:25	0:0	6	starting_track
+op	164:40	0:0	6	=
+water	164:42	0:0	6	0
+water	164:43	0:0	6	;
+water	165:13	0:0	6	toc_entries
+op	165:24	0:0	6	.
+water	165:25	0:0	6	data_len
+op	165:34	0:0	6	=
+water	165:36	0:0	6	(
+water	165:38	0:0	6	i_tracks
+op	165:47	0:0	6	+
+water	165:49	0:0	6	1
+water	165:51	0:0	6	)
+op	165:53	0:0	6	*
+op	166:40	0:0	6	sizeof
+water	166:46	0:0	6	(
+water	166:48	0:0	6	struct
+water	166:55	0:0	6	cd_toc_entry
+water	166:68	0:0	6	)
+water	166:69	0:0	6	;
+water	167:13	0:0	6	toc_entries
+op	167:24	0:0	6	.
+water	167:25	0:0	6	data
+op	167:30	0:0	6	=
+water	167:32	0:0	6	(
+water	167:33	0:0	6	struct
+water	167:40	0:0	6	cd_toc_entry
+op	167:53	0:0	6	*
+water	167:54	0:0	6	)
+call	168:36	168:65	6	malloc
+arg	168:44	168:65	7	toc_entries.data_len
+water	168:44	0:0	8	toc_entries
+op	168:55	0:0	8	.
+water	168:56	0:0	8	data_len
+water	168:66	0:0	6	;
+if	169:13	173:13	6	(toc_entries . data == NULL)
+cond	169:17	169:37	7	toc_entries . data == NULL
+water	169:17	0:0	8	toc_entries
+op	169:28	0:0	8	.
+water	169:29	0:0	8	data
+op	169:34	0:0	8	==
+water	169:37	0:0	8	NULL
+stmts	170:13	173:13	7	
+water	170:13	0:0	8	{
+call	171:17	171:35	8	free
+arg	171:23	171:35	9	*pp_sectors
+op	171:23	0:0	10	*
+water	171:24	0:0	10	pp_sectors
+water	171:36	0:0	8	;
+return	172:17	172:25	8	0
+water	172:24	0:0	9	0
+water	173:13	0:0	8	}
+if	175:13	182:13	6	(ioctl (p_vcddev -> i_device_handle ,CDIOREADTOCENTRYS ,& toc_entries ) == - 1)
+cond	175:17	176:43	7	ioctl (p_vcddev -> i_device_handle ,CDIOREADTOCENTRYS ,& toc_entries ) == - 1
+call	175:17	176:37	8	ioctl
+arg	175:24	175:49	9	p_vcddev->i_device_handle
+water	175:24	0:0	10	p_vcddev
+op	175:32	0:0	10	->
+water	175:34	0:0	10	i_device_handle
+arg	175:51	175:68	9	CDIOREADTOCENTRYS
+water	175:51	0:0	10	CDIOREADTOCENTRYS
+arg	176:24	176:37	9	&toc_entries
+op	176:24	0:0	10	&
+water	176:25	0:0	10	toc_entries
+op	176:39	0:0	8	==
+op	176:42	0:0	8	-
+water	176:43	0:0	8	1
+stmts	177:13	182:13	7	
+water	177:13	0:0	8	{
+call	178:17	178:59	8	msg_Err
+arg	178:26	178:32	9	p_this
+water	178:26	0:0	10	p_this
+arg	178:34	178:59	9	"could not read the TOC"
+water	178:34	0:0	10	"could not read the TOC"
+water	178:60	0:0	8	;
+call	179:17	179:35	8	free
+arg	179:23	179:35	9	*pp_sectors
+op	179:23	0:0	10	*
+water	179:24	0:0	10	pp_sectors
+water	179:36	0:0	8	;
+call	180:17	180:40	8	free
+arg	180:23	180:40	9	toc_entries.data
+water	180:23	0:0	10	toc_entries
+op	180:34	0:0	10	.
+water	180:35	0:0	10	data
+water	180:41	0:0	8	;
+return	181:17	181:25	8	0
+water	181:24	0:0	9	0
+water	182:13	0:0	8	}
+for	184:13	192:13	6	(i = 0 ;i <= i_tracks;i ++)
+forinit	184:18	184:24	7	i = 0 ;
+water	184:18	0:0	8	i
+op	184:20	0:0	8	=
+water	184:22	0:0	8	0
+water	184:24	0:0	8	;
+cond	184:26	184:31	7	i <= i_tracks
+water	184:26	0:0	8	i
+op	184:28	0:0	8	<=
+water	184:31	0:0	8	i_tracks
+forexpr	184:42	184:43	7	i ++
+water	184:42	0:0	8	i
+op	184:43	0:0	8	++
+stmts	185:13	192:13	7	
+water	185:13	0:0	8	{
+water	188:17	0:0	8	(
+op	188:18	0:0	8	*
+water	188:19	0:0	8	pp_sectors
+water	188:29	0:0	8	)
+op	188:30	0:0	8	[
+water	188:32	0:0	8	i
+op	188:34	0:0	8	]
+op	188:36	0:0	8	=
+water	188:38	0:0	8	toc_entries
+op	188:49	0:0	8	.
+water	188:50	0:0	8	data
+op	188:54	0:0	8	[
+water	188:55	0:0	8	i
+op	188:56	0:0	8	]
+op	188:57	0:0	8	.
+water	188:58	0:0	8	addr
+op	188:62	0:0	8	.
+water	188:63	0:0	8	lba
+water	188:66	0:0	8	;
+water	190:17	0:0	8	(
+op	190:18	0:0	8	*
+water	190:19	0:0	8	pp_sectors
+water	190:29	0:0	8	)
+op	190:30	0:0	8	[
+water	190:32	0:0	8	i
+op	190:34	0:0	8	]
+op	190:36	0:0	8	=
+call	190:38	190:74	8	ntohl
+arg	190:45	190:74	9	toc_entries.data[i].addr.lba
+water	190:45	0:0	10	toc_entries
+op	190:56	0:0	10	.
+water	190:57	0:0	10	data
+op	190:61	0:0	10	[
+water	190:62	0:0	10	i
+op	190:63	0:0	10	]
+op	190:64	0:0	10	.
+water	190:65	0:0	10	addr
+op	190:69	0:0	10	.
+water	190:70	0:0	10	lba
+water	190:75	0:0	8	;
+water	192:13	0:0	8	}
+water	193:8	0:0	6	}
+decl	195:8	195:36	4	struct cdrom_tochdr	tochdr
+decl	196:8	196:36	4	struct cdrom_tocentry	tocent
+if	198:8	203:8	4	(ioctl (p_vcddev -> i_device_handle ,CDROMREADTOCHDR ,& tochdr ) == - 1)
+cond	198:12	199:16	5	ioctl (p_vcddev -> i_device_handle ,CDROMREADTOCHDR ,& tochdr ) == - 1
+call	198:12	198:71	6	ioctl
+arg	198:19	198:44	7	p_vcddev->i_device_handle
+water	198:19	0:0	8	p_vcddev
+op	198:27	0:0	8	->
+water	198:29	0:0	8	i_device_handle
+arg	198:46	198:61	7	CDROMREADTOCHDR
+water	198:46	0:0	8	CDROMREADTOCHDR
+arg	198:63	198:71	7	&tochdr
+op	198:63	0:0	8	&
+water	198:64	0:0	8	tochdr
+op	199:12	0:0	6	==
+op	199:15	0:0	6	-
+water	199:16	0:0	6	1
+stmts	200:8	203:8	5	
+water	200:8	0:0	6	{
+call	201:12	201:53	6	msg_Err
+arg	201:21	201:27	7	p_this
+water	201:21	0:0	8	p_this
+arg	201:29	201:53	7	"could not read TOCHDR"
+water	201:29	0:0	8	"could not read TOCHDR"
+water	201:54	0:0	6	;
+return	202:12	202:20	6	0
+water	202:19	0:0	7	0
+water	203:8	0:0	6	}
+water	204:8	0:0	4	i_tracks
+op	204:17	0:0	4	=
+water	204:19	0:0	4	tochdr
+op	204:25	0:0	4	.
+water	204:26	0:0	4	cdth_trk1
+op	204:36	0:0	4	-
+water	204:38	0:0	4	tochdr
+op	204:44	0:0	4	.
+water	204:45	0:0	4	cdth_trk0
+op	204:55	0:0	4	+
+water	204:57	0:0	4	1
+water	204:58	0:0	4	;
+if	205:8	226:8	4	(pp_sectors)
+cond	205:12	205:12	5	pp_sectors
+water	205:12	0:0	6	pp_sectors
+stmts	206:8	226:8	5	
+water	206:8	0:0	6	{
+decl	207:12	207:17	6	int	i
+op	208:12	0:0	6	*
+water	208:13	0:0	6	pp_sectors
+op	208:24	0:0	6	=
+call	208:26	208:69	6	calloc
+arg	208:34	208:46	7	i_tracks+1
+water	208:34	0:0	8	i_tracks
+op	208:43	0:0	8	+
+water	208:45	0:0	8	1
+arg	208:48	208:69	7	sizeof(**pp_sectors)
+op	208:48	0:0	8	sizeof
+water	208:54	0:0	8	(
+op	208:55	0:0	8	*
+op	208:56	0:0	8	*
+water	208:57	0:0	8	pp_sectors
+water	208:67	0:0	8	)
+water	208:70	0:0	6	;
+if	209:12	210:24	6	(* pp_sectors == NULL)
+cond	209:16	209:31	7	* pp_sectors == NULL
+op	209:16	0:0	8	*
+water	209:17	0:0	8	pp_sectors
+op	209:28	0:0	8	==
+water	209:31	0:0	8	NULL
+stmts	210:16	210:24	7	
+return	210:16	210:24	8	0
+water	210:23	0:0	9	0
+for	212:12	225:12	6	(i = 0 ;i <= i_tracks;i ++)
+forinit	212:17	212:23	7	i = 0 ;
+water	212:17	0:0	8	i
+op	212:19	0:0	8	=
+water	212:21	0:0	8	0
+water	212:23	0:0	8	;
+cond	212:25	212:30	7	i <= i_tracks
+water	212:25	0:0	8	i
+op	212:27	0:0	8	<=
+water	212:30	0:0	8	i_tracks
+forexpr	212:41	212:42	7	i ++
+water	212:41	0:0	8	i
+op	212:42	0:0	8	++
+stmts	213:12	225:12	7	
+water	213:12	0:0	8	{
+water	214:16	0:0	8	tocent
+op	214:22	0:0	8	.
+water	214:23	0:0	8	cdte_format
+op	214:35	0:0	8	=
+water	214:37	0:0	8	CDROM_LBA
+water	214:46	0:0	8	;
+water	215:16	0:0	8	tocent
+op	215:22	0:0	8	.
+water	215:23	0:0	8	cdte_track
+op	215:34	0:0	8	=
+water	216:20	0:0	8	(
+water	216:22	0:0	8	i
+op	216:24	0:0	8	==
+water	216:27	0:0	8	i_tracks
+water	216:36	0:0	8	)
+water	216:38	0:0	8	?
+water	216:40	0:0	8	CDROM_LEADOUT
+water	216:54	0:0	8	:
+water	216:56	0:0	8	tochdr
+op	216:62	0:0	8	.
+water	216:63	0:0	8	cdth_trk0
+op	216:73	0:0	8	+
+water	216:75	0:0	8	i
+water	216:76	0:0	8	;
+if	217:16	223:16	8	(ioctl (p_vcddev -> i_device_handle ,CDROMREADTOCENTRY ,& tocent ) == - 1)
+cond	217:20	218:41	9	ioctl (p_vcddev -> i_device_handle ,CDROMREADTOCENTRY ,& tocent ) == - 1
+call	217:20	218:35	10	ioctl
+arg	217:27	217:52	11	p_vcddev->i_device_handle
+water	217:27	0:0	12	p_vcddev
+op	217:35	0:0	12	->
+water	217:37	0:0	12	i_device_handle
+arg	217:54	217:71	11	CDROMREADTOCENTRY
+water	217:54	0:0	12	CDROMREADTOCENTRY
+arg	218:27	218:35	11	&tocent
+op	218:27	0:0	12	&
+water	218:28	0:0	12	tocent
+op	218:37	0:0	10	==
+op	218:40	0:0	10	-
+water	218:41	0:0	10	1
+stmts	219:16	223:16	9	
+water	219:16	0:0	10	{
+call	220:20	220:63	10	msg_Err
+arg	220:29	220:35	11	p_this
+water	220:29	0:0	12	p_this
+arg	220:37	220:63	11	"could not read TOCENTRY"
+water	220:37	0:0	12	"could not read TOCENTRY"
+water	220:64	0:0	10	;
+call	221:20	221:38	10	free
+arg	221:26	221:38	11	*pp_sectors
+op	221:26	0:0	12	*
+water	221:27	0:0	12	pp_sectors
+water	221:39	0:0	10	;
+return	222:20	222:28	10	0
+water	222:27	0:0	11	0
+water	223:16	0:0	10	}
+water	224:16	0:0	8	(
+op	224:17	0:0	8	*
+water	224:18	0:0	8	pp_sectors
+water	224:28	0:0	8	)
+op	224:29	0:0	8	[
+water	224:31	0:0	8	i
+op	224:33	0:0	8	]
+op	224:35	0:0	8	=
+water	224:37	0:0	8	tocent
+op	224:43	0:0	8	.
+water	224:44	0:0	8	cdte_addr
+op	224:53	0:0	8	.
+water	224:54	0:0	8	lba
+water	224:57	0:0	8	;
+water	225:12	0:0	8	}
+water	226:8	0:0	6	}
+return	228:8	228:23	4	i_tracks
+water	228:15	0:0	5	i_tracks
+water	229:4	0:0	4	}

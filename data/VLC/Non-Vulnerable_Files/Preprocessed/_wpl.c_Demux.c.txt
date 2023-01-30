@@ -1,0 +1,164 @@
+func	2:0	38:0	0	static int	Demux
+params	2:16	0:0	1	
+param	2:18	2:35	2	demux_t *	p_demux
+stmnts	0:0	37:12	1	
+decl	4:4	4:24	2	char	*psz_line
+decl	5:4	5:59	2	input_item_t	*p_current_input
+op	5:34	0:0	2	=
+call	5:36	5:58	3	GetCurrentItem
+arg	5:51	5:58	4	p_demux
+water	5:51	0:0	5	p_demux
+decl	6:4	6:77	2	input_item_node_t	*p_subitems
+op	6:34	0:0	2	=
+call	6:36	6:76	3	input_item_node_Create
+arg	6:60	6:76	4	p_current_input
+water	6:60	0:0	5	p_current_input
+while	7:4	33:4	2	(( psz_line =stream_ReadLine (p_demux -> s ) ))
+cond	7:11	7:52	3	( psz_line =stream_ReadLine (p_demux -> s ) )
+water	7:11	0:0	4	(
+water	7:12	0:0	4	psz_line
+op	7:21	0:0	4	=
+call	7:23	7:51	4	stream_ReadLine
+arg	7:40	7:51	5	p_demux->s
+water	7:40	0:0	6	p_demux
+op	7:47	0:0	6	->
+water	7:49	0:0	6	s
+water	7:52	0:0	4	)
+stmts	8:4	33:4	3	
+water	8:4	0:0	4	{
+decl	9:8	9:34	4	char	*psz_parse
+op	9:24	0:0	4	=
+water	9:26	0:0	4	psz_line
+while	11:8	13:23	4	(* psz_parse == ' ' || * psz_parse == '\t' || * psz_parse == '\n' || * psz_parse == '\r')
+cond	11:15	12:51	5	* psz_parse == ' ' || * psz_parse == '\t' || * psz_parse == '\n' || * psz_parse == '\r'
+op	11:15	0:0	6	*
+water	11:16	0:0	6	psz_parse
+op	11:26	0:0	6	==
+water	11:29	0:0	6	' '
+op	11:34	0:0	6	||
+op	11:37	0:0	6	*
+water	11:38	0:0	6	psz_parse
+op	11:48	0:0	6	==
+water	11:51	0:0	6	'\t'
+op	11:56	0:0	6	||
+op	12:15	0:0	6	*
+water	12:16	0:0	6	psz_parse
+op	12:26	0:0	6	==
+water	12:29	0:0	6	'\n'
+op	12:34	0:0	6	||
+op	12:37	0:0	6	*
+water	12:38	0:0	6	psz_parse
+op	12:48	0:0	6	==
+water	12:51	0:0	6	'\r'
+stmts	13:12	13:23	5	
+water	13:12	0:0	6	psz_parse
+op	13:21	0:0	6	++
+water	13:23	0:0	6	;
+if	15:8	30:8	4	(!strncasecmp (psz_parse ,"<media src=\"" ,strlen ("<media src=\"" ) ))
+cond	15:12	15:80	5	!strncasecmp (psz_parse ,"<media src=\"" ,strlen ("<media src=\"" ) )
+op	15:12	0:0	6	!
+call	15:13	15:80	6	strncasecmp
+arg	15:26	15:35	7	psz_parse
+water	15:26	0:0	8	psz_parse
+arg	15:37	15:52	7	"<media src=\""
+water	15:37	0:0	8	"<media src=\""
+arg	15:54	15:80	7	strlen("<media src=\"")
+call	15:54	15:78	8	strlen
+arg	15:62	15:78	9	"<media src=\""
+water	15:62	0:0	10	"<media src=\""
+stmts	16:8	30:8	5	
+water	16:8	0:0	6	{
+decl	17:12	17:65	6	char	*psz_uri
+op	17:26	0:0	6	=
+water	17:28	0:0	6	psz_parse
+op	17:38	0:0	6	+
+call	17:40	17:64	7	strlen
+arg	17:48	17:64	8	"<media src=\""
+water	17:48	0:0	9	"<media src=\""
+water	18:12	0:0	6	psz_parse
+op	18:22	0:0	6	=
+call	18:24	18:45	6	strchr
+arg	18:32	18:39	7	psz_uri
+water	18:32	0:0	8	psz_uri
+arg	18:41	18:45	7	'"'
+water	18:41	0:0	8	'"'
+water	18:46	0:0	6	;
+if	19:12	29:12	6	(psz_parse != NULL)
+cond	19:16	19:29	7	psz_parse != NULL
+water	19:16	0:0	8	psz_parse
+op	19:26	0:0	8	!=
+water	19:29	0:0	8	NULL
+stmts	20:12	29:12	7	
+water	20:12	0:0	8	{
+decl	21:16	21:37	8	input_item_t	*p_input
+op	22:16	0:0	8	*
+water	22:17	0:0	8	psz_parse
+op	22:27	0:0	8	=
+water	22:29	0:0	8	'\0'
+water	22:33	0:0	8	;
+call	23:16	23:51	8	resolve_xml_special_chars
+arg	23:43	23:51	9	psz_uri
+water	23:43	0:0	10	psz_uri
+water	23:52	0:0	8	;
+water	24:16	0:0	8	psz_uri
+op	24:24	0:0	8	=
+call	24:26	24:74	8	ProcessMRL
+arg	24:38	24:45	9	psz_uri
+water	24:38	0:0	10	psz_uri
+arg	24:47	24:74	9	p_demux->p_sys->psz_prefix
+water	24:47	0:0	10	p_demux
+op	24:54	0:0	10	->
+water	24:56	0:0	10	p_sys
+op	24:61	0:0	10	->
+water	24:63	0:0	10	psz_prefix
+water	24:75	0:0	8	;
+water	25:16	0:0	8	p_input
+op	25:24	0:0	8	=
+call	25:26	26:55	8	input_item_NewExt
+arg	25:45	25:52	9	psz_uri
+water	25:45	0:0	10	psz_uri
+arg	25:54	25:61	9	psz_uri
+water	25:54	0:0	10	psz_uri
+arg	26:40	26:41	9	0
+water	26:40	0:0	10	0
+arg	26:43	26:47	9	NULL
+water	26:43	0:0	10	NULL
+arg	26:49	26:50	9	0
+water	26:49	0:0	10	0
+arg	26:52	26:55	9	-1
+op	26:52	0:0	10	-
+water	26:53	0:0	10	1
+water	26:56	0:0	8	;
+call	27:16	27:64	8	input_item_node_AppendItem
+arg	27:44	27:54	9	p_subitems
+water	27:44	0:0	10	p_subitems
+arg	27:56	27:64	9	p_input
+water	27:56	0:0	10	p_input
+water	27:65	0:0	8	;
+call	28:16	28:39	8	vlc_gc_decref
+arg	28:31	28:39	9	p_input
+water	28:31	0:0	10	p_input
+water	28:40	0:0	8	;
+water	29:12	0:0	8	}
+water	30:8	0:0	6	}
+call	32:8	32:23	4	free
+arg	32:14	32:23	5	psz_line
+water	32:14	0:0	6	psz_line
+water	32:24	0:0	4	;
+water	33:4	0:0	4	}
+call	34:4	34:46	2	input_item_node_PostAndDelete
+arg	34:35	34:46	3	p_subitems
+water	34:35	0:0	4	p_subitems
+water	34:47	0:0	2	;
+call	35:4	35:33	2	vlc_gc_decref
+arg	35:18	35:33	3	p_current_input
+water	35:18	0:0	4	p_current_input
+water	35:34	0:0	2	;
+call	36:4	36:42	2	var_Destroy
+arg	36:17	36:24	3	p_demux
+water	36:17	0:0	4	p_demux
+arg	36:26	36:42	3	"wpl-extvlcopt"
+water	36:26	0:0	4	"wpl-extvlcopt"
+water	36:43	0:0	2	;
+return	37:4	37:12	2	0
+water	37:11	0:0	3	0

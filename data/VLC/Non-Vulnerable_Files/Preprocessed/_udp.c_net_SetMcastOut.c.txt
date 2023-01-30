@@ -1,0 +1,115 @@
+func	2:0	36:0	0	static int	net_SetMcastOut
+params	2:27	0:0	1	
+param	2:28	2:48	2	vlc_object_t *	p_this
+param	2:50	2:56	2	int	fd
+param	2:58	2:68	2	int	family
+param	3:28	3:45	2	const char *	iface
+stmnts	0:0	35:13	1	
+decl	5:4	5:38	2	int	scope
+op	5:14	0:0	2	=
+call	5:16	5:37	3	if_nametoindex
+arg	5:32	5:37	4	iface
+water	5:32	0:0	5	iface
+if	6:4	10:4	2	(scope == 0)
+cond	6:8	6:17	3	scope == 0
+water	6:8	0:0	4	scope
+op	6:14	0:0	4	==
+water	6:17	0:0	4	0
+stmts	7:4	10:4	3	
+water	7:4	0:0	4	{
+call	8:8	8:65	4	msg_Err
+arg	8:17	8:23	5	p_this
+water	8:17	0:0	6	p_this
+arg	8:25	8:58	5	"invalid multicast interface: %s"
+water	8:25	0:0	6	"invalid multicast interface: %s"
+arg	8:60	8:65	5	iface
+water	8:60	0:0	6	iface
+water	8:66	0:0	4	;
+return	9:8	9:17	4	-1
+op	9:15	0:0	5	-
+water	9:16	0:0	5	1
+water	10:4	0:0	4	}
+switch	11:4	32:4	2	(family)
+cond	11:12	11:12	3	family
+water	11:12	0:0	4	family
+stmts	12:4	32:4	3	
+water	12:4	0:0	4	{
+label	14:8	14:21	4	case AF_INET6 :
+if	15:12	17:24	4	(setsockopt (fd ,SOL_IPV6 ,IPV6_MULTICAST_IF ,& scope ,sizeof ( scope ) ) == 0)
+cond	15:16	16:55	5	setsockopt (fd ,SOL_IPV6 ,IPV6_MULTICAST_IF ,& scope ,sizeof ( scope ) ) == 0
+call	15:16	16:50	6	setsockopt
+arg	15:28	15:30	7	fd
+water	15:28	0:0	8	fd
+arg	15:32	15:40	7	SOL_IPV6
+water	15:32	0:0	8	SOL_IPV6
+arg	15:42	15:59	7	IPV6_MULTICAST_IF
+water	15:42	0:0	8	IPV6_MULTICAST_IF
+arg	16:28	16:34	7	&scope
+op	16:28	0:0	8	&
+water	16:29	0:0	8	scope
+arg	16:36	16:50	7	sizeof(scope)
+op	16:36	0:0	8	sizeof
+water	16:43	0:0	8	(
+water	16:44	0:0	8	scope
+water	16:49	0:0	8	)
+op	16:52	0:0	6	==
+water	16:55	0:0	6	0
+stmts	17:16	17:24	5	
+return	17:16	17:24	6	0
+water	17:23	0:0	7	0
+break	18:12	18:17	4	
+label	21:8	21:20	4	case AF_INET :
+water	22:8	0:0	4	{
+decl	23:12	23:58	4	struct ip_mreqn	req
+op	23:32	0:0	4	=
+water	23:34	0:0	4	{
+op	23:36	0:0	4	.
+water	23:37	0:0	4	imr_ifindex
+op	23:49	0:0	4	=
+water	23:51	0:0	4	scope
+water	23:57	0:0	4	}
+if	24:12	26:24	4	(setsockopt (fd ,SOL_IP ,IP_MULTICAST_IF ,& req ,sizeof ( req ) ) == 0)
+cond	24:16	25:51	5	setsockopt (fd ,SOL_IP ,IP_MULTICAST_IF ,& req ,sizeof ( req ) ) == 0
+call	24:16	25:46	6	setsockopt
+arg	24:28	24:30	7	fd
+water	24:28	0:0	8	fd
+arg	24:32	24:38	7	SOL_IP
+water	24:32	0:0	8	SOL_IP
+arg	24:40	24:55	7	IP_MULTICAST_IF
+water	24:40	0:0	8	IP_MULTICAST_IF
+arg	25:28	25:32	7	&req
+op	25:28	0:0	8	&
+water	25:29	0:0	8	req
+arg	25:34	25:46	7	sizeof(req)
+op	25:34	0:0	8	sizeof
+water	25:41	0:0	8	(
+water	25:42	0:0	8	req
+water	25:45	0:0	8	)
+op	25:48	0:0	6	==
+water	25:51	0:0	6	0
+stmts	26:16	26:24	5	
+return	26:16	26:24	6	0
+water	26:23	0:0	7	0
+break	27:12	27:17	4	
+water	28:8	0:0	4	}
+label	30:8	30:15	4	default :
+water	31:12	0:0	4	errno
+op	31:18	0:0	4	=
+water	31:20	0:0	4	EAFNOSUPPORT
+water	31:32	0:0	4	;
+water	32:4	0:0	4	}
+call	33:4	34:34	2	msg_Err
+arg	33:13	33:19	3	p_this
+water	33:13	0:0	4	p_this
+arg	33:21	33:62	3	"cannot force multicast interface %s: %s"
+water	33:21	0:0	4	"cannot force multicast interface %s: %s"
+arg	33:64	33:69	3	iface
+water	33:64	0:0	4	iface
+arg	34:13	34:34	3	vlc_strerror_c(errno)
+call	34:13	34:33	4	vlc_strerror_c
+arg	34:28	34:33	5	errno
+water	34:28	0:0	6	errno
+water	34:35	0:0	2	;
+return	35:4	35:13	2	-1
+op	35:11	0:0	3	-
+water	35:12	0:0	3	1

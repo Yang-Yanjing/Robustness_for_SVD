@@ -1,0 +1,533 @@
+func	2:0	115:0	0	static int	ProcessOutputStream
+params	2:30	0:0	1	
+param	2:31	2:47	2	decoder_t *	p_dec
+param	2:49	2:64	2	DWORD	stream_id
+param	2:66	2:79	2	void * *	result
+stmnts	0:0	114:23	1	
+decl	4:4	4:39	2	decoder_sys_t	*p_sys
+op	4:25	0:0	2	=
+water	4:27	0:0	2	p_dec
+op	4:32	0:0	2	->
+water	4:34	0:0	2	p_sys
+decl	5:4	5:14	2	HRESULT	hr
+decl	6:4	6:29	2	picture_t	*picture
+op	6:23	0:0	2	=
+water	6:25	0:0	2	NULL
+decl	7:4	7:31	2	block_t	*aout_buffer
+op	7:25	0:0	2	=
+water	7:27	0:0	2	NULL
+op	8:4	0:0	2	*
+water	8:5	0:0	2	result
+op	8:12	0:0	2	=
+water	8:14	0:0	2	NULL
+water	8:18	0:0	2	;
+decl	9:4	9:27	2	DWORD	output_status
+op	9:24	0:0	2	=
+water	9:26	0:0	2	0
+decl	10:4	10:87	2	MFT_OUTPUT_DATA_BUFFER	output_buffer
+op	10:41	0:0	2	=
+water	10:43	0:0	2	{
+water	10:45	0:0	2	stream_id
+water	10:54	0:0	2	,
+water	10:56	0:0	2	p_sys
+op	10:61	0:0	2	->
+water	10:63	0:0	2	output_sample
+water	10:76	0:0	2	,
+water	10:78	0:0	2	0
+water	10:79	0:0	2	,
+water	10:81	0:0	2	NULL
+water	10:86	0:0	2	}
+water	11:4	0:0	2	hr
+op	11:7	0:0	2	=
+call	11:9	11:84	2	IMFTransform_ProcessOutput
+arg	11:36	11:46	3	p_sys->mft
+water	11:36	0:0	4	p_sys
+op	11:41	0:0	4	->
+water	11:43	0:0	4	mft
+arg	11:48	11:49	3	0
+water	11:48	0:0	4	0
+arg	11:51	11:52	3	1
+water	11:51	0:0	4	1
+arg	11:54	11:68	3	&output_buffer
+op	11:54	0:0	4	&
+water	11:55	0:0	4	output_buffer
+arg	11:70	11:84	3	&output_status
+op	11:70	0:0	4	&
+water	11:71	0:0	4	output_status
+water	11:85	0:0	2	;
+if	12:4	13:52	2	(output_buffer . pEvents)
+cond	12:8	12:22	3	output_buffer . pEvents
+water	12:8	0:0	4	output_buffer
+op	12:21	0:0	4	.
+water	12:22	0:0	4	pEvents
+stmts	13:8	13:52	3	
+call	13:8	13:51	4	IMFCollection_Release
+arg	13:30	13:51	5	output_buffer.pEvents
+water	13:30	0:0	6	output_buffer
+op	13:43	0:0	6	.
+water	13:44	0:0	6	pEvents
+water	13:52	0:0	4	;
+decl	15:4	15:52	2	IMFSample	*output_sample
+op	15:29	0:0	2	=
+water	15:31	0:0	2	output_buffer
+op	15:44	0:0	2	.
+water	15:45	0:0	2	pSample
+if	16:4	78:4	2	(hr == S_OK)
+cond	16:8	16:14	3	hr == S_OK
+water	16:8	0:0	4	hr
+op	16:11	0:0	4	==
+water	16:14	0:0	4	S_OK
+stmts	17:4	78:4	3	
+water	17:4	0:0	4	{
+if	18:8	19:30	4	(! output_sample)
+cond	18:12	18:13	5	! output_sample
+op	18:12	0:0	6	!
+water	18:13	0:0	6	output_sample
+stmts	19:12	19:30	5	
+return	19:12	19:30	6	VLC_SUCCESS
+water	19:19	0:0	7	VLC_SUCCESS
+decl	20:8	20:28	4	LONGLONG	sample_time
+water	21:8	0:0	4	hr
+op	21:11	0:0	4	=
+call	21:13	21:64	4	IMFSample_GetSampleTime
+arg	21:37	21:50	5	output_sample
+water	21:37	0:0	6	output_sample
+arg	21:52	21:64	5	&sample_time
+op	21:52	0:0	6	&
+water	21:53	0:0	6	sample_time
+water	21:65	0:0	4	;
+if	22:8	23:22	4	(FAILED (hr ))
+cond	22:12	22:21	5	FAILED (hr )
+call	22:12	22:21	6	FAILED
+arg	22:19	22:21	7	hr
+water	22:19	0:0	8	hr
+stmts	23:12	23:22	5	
+goto	23:12	23:22	6	error
+water	23:17	0:0	7	error
+water	25:8	0:0	4	sample_time
+op	25:20	0:0	4	/=
+water	25:23	0:0	4	10
+water	25:25	0:0	4	;
+decl	26:8	26:30	4	DWORD	total_length
+op	26:27	0:0	4	=
+water	26:29	0:0	4	0
+water	27:8	0:0	4	hr
+op	27:11	0:0	4	=
+call	27:13	27:66	4	IMFSample_GetTotalLength
+arg	27:38	27:51	5	output_sample
+water	27:38	0:0	6	output_sample
+arg	27:53	27:66	5	&total_length
+op	27:53	0:0	6	&
+water	27:54	0:0	6	total_length
+water	27:67	0:0	4	;
+if	28:8	29:22	4	(FAILED (hr ))
+cond	28:12	28:21	5	FAILED (hr )
+call	28:12	28:21	6	FAILED
+arg	28:19	28:21	7	hr
+water	28:19	0:0	8	hr
+stmts	29:12	29:22	5	
+goto	29:12	29:22	6	error
+water	29:17	0:0	7	error
+if	30:8	39:8	4	(p_dec -> fmt_in . i_cat == VIDEO_ES)
+cond	30:12	30:35	5	p_dec -> fmt_in . i_cat == VIDEO_ES
+water	30:12	0:0	6	p_dec
+op	30:17	0:0	6	->
+water	30:19	0:0	6	fmt_in
+op	30:25	0:0	6	.
+water	30:26	0:0	6	i_cat
+op	30:32	0:0	6	==
+water	30:35	0:0	6	VIDEO_ES
+stmts	31:8	39:8	5	
+water	31:8	0:0	6	{
+water	32:12	0:0	6	picture
+op	32:20	0:0	6	=
+call	32:22	32:46	6	decoder_NewPicture
+arg	32:41	32:46	7	p_dec
+water	32:41	0:0	8	p_dec
+water	32:47	0:0	6	;
+if	33:12	34:34	6	(! picture)
+cond	33:16	33:17	7	! picture
+op	33:16	0:0	8	!
+water	33:17	0:0	8	picture
+stmts	34:16	34:34	7	
+return	34:16	34:34	8	VLC_SUCCESS
+water	34:23	0:0	9	VLC_SUCCESS
+decl	35:12	35:37	6	UINT32	interlaced
+op	35:30	0:0	6	=
+water	35:32	0:0	6	false
+water	36:12	0:0	6	hr
+op	36:15	0:0	6	=
+call	36:17	36:94	6	IMFSample_GetUINT32
+arg	36:37	36:50	7	output_sample
+water	36:37	0:0	8	output_sample
+arg	36:52	36:81	7	&MFSampleExtension_Interlaced
+op	36:52	0:0	8	&
+water	36:53	0:0	8	MFSampleExtension_Interlaced
+arg	36:83	36:94	7	&interlaced
+op	36:83	0:0	8	&
+water	36:84	0:0	8	interlaced
+water	36:95	0:0	6	;
+water	37:12	0:0	6	picture
+op	37:19	0:0	6	->
+water	37:21	0:0	6	b_progressive
+op	37:35	0:0	6	=
+op	37:37	0:0	6	!
+water	37:38	0:0	6	interlaced
+water	37:48	0:0	6	;
+water	38:12	0:0	6	picture
+op	38:19	0:0	6	->
+water	38:21	0:0	6	date
+op	38:26	0:0	6	=
+water	38:28	0:0	6	sample_time
+water	38:39	0:0	6	;
+water	39:8	0:0	6	}
+else	40:8	51:8	4
+stmts	41:8	51:8	5	
+water	41:8	0:0	6	{
+if	42:12	43:26	6	(p_dec -> fmt_out . audio . i_bitspersample == 0 || p_dec -> fmt_out . audio . i_channels == 0)
+cond	42:16	42:96	7	p_dec -> fmt_out . audio . i_bitspersample == 0 || p_dec -> fmt_out . audio . i_channels == 0
+water	42:16	0:0	8	p_dec
+op	42:21	0:0	8	->
+water	42:23	0:0	8	fmt_out
+op	42:30	0:0	8	.
+water	42:31	0:0	8	audio
+op	42:36	0:0	8	.
+water	42:37	0:0	8	i_bitspersample
+op	42:53	0:0	8	==
+water	42:56	0:0	8	0
+op	42:58	0:0	8	||
+water	42:61	0:0	8	p_dec
+op	42:66	0:0	8	->
+water	42:68	0:0	8	fmt_out
+op	42:75	0:0	8	.
+water	42:76	0:0	8	audio
+op	42:81	0:0	8	.
+water	42:82	0:0	8	i_channels
+op	42:93	0:0	8	==
+water	42:96	0:0	8	0
+stmts	43:16	43:26	7	
+goto	43:16	43:26	8	error
+water	43:21	0:0	9	error
+decl	44:12	44:117	6	int	samples
+op	44:24	0:0	6	=
+water	44:26	0:0	6	total_length
+op	44:39	0:0	6	/
+water	44:41	0:0	6	(
+water	44:42	0:0	6	p_dec
+op	44:47	0:0	6	->
+water	44:49	0:0	6	fmt_out
+op	44:56	0:0	6	.
+water	44:57	0:0	6	audio
+op	44:62	0:0	6	.
+water	44:63	0:0	6	i_bitspersample
+op	44:79	0:0	6	*
+water	44:81	0:0	6	p_dec
+op	44:86	0:0	6	->
+water	44:88	0:0	6	fmt_out
+op	44:95	0:0	6	.
+water	44:96	0:0	6	audio
+op	44:101	0:0	6	.
+water	44:102	0:0	6	i_channels
+op	44:113	0:0	6	/
+water	44:115	0:0	6	8
+water	44:116	0:0	6	)
+water	45:12	0:0	6	aout_buffer
+op	45:24	0:0	6	=
+call	45:26	45:63	6	decoder_NewAudioBuffer
+arg	45:49	45:54	7	p_dec
+water	45:49	0:0	8	p_dec
+arg	45:56	45:63	7	samples
+water	45:56	0:0	8	samples
+water	45:64	0:0	6	;
+if	46:12	47:34	6	(! aout_buffer)
+cond	46:16	46:17	7	! aout_buffer
+op	46:16	0:0	8	!
+water	46:17	0:0	8	aout_buffer
+stmts	47:16	47:34	7	
+return	47:16	47:34	8	VLC_SUCCESS
+water	47:23	0:0	9	VLC_SUCCESS
+if	48:12	49:26	6	(aout_buffer -> i_buffer < total_length)
+cond	48:16	48:40	7	aout_buffer -> i_buffer < total_length
+water	48:16	0:0	8	aout_buffer
+op	48:27	0:0	8	->
+water	48:29	0:0	8	i_buffer
+op	48:38	0:0	8	<
+water	48:40	0:0	8	total_length
+stmts	49:16	49:26	7	
+goto	49:16	49:26	8	error
+water	49:21	0:0	9	error
+water	50:12	0:0	6	aout_buffer
+op	50:23	0:0	6	->
+water	50:25	0:0	6	i_pts
+op	50:31	0:0	6	=
+water	50:33	0:0	6	sample_time
+water	50:44	0:0	6	;
+water	51:8	0:0	6	}
+decl	52:8	52:50	4	IMFMediaBuffer	*output_media_buffer
+op	52:44	0:0	4	=
+water	52:46	0:0	4	NULL
+water	53:8	0:0	4	hr
+op	53:11	0:0	4	=
+call	53:13	53:78	4	IMFSample_GetBufferByIndex
+arg	53:40	53:53	5	output_sample
+water	53:40	0:0	6	output_sample
+arg	53:55	53:56	5	0
+water	53:55	0:0	6	0
+arg	53:58	53:78	5	&output_media_buffer
+op	53:58	0:0	6	&
+water	53:59	0:0	6	output_media_buffer
+water	53:79	0:0	4	;
+decl	54:8	54:26	4	BYTE	*buffer_start
+water	55:8	0:0	4	hr
+op	55:11	0:0	4	=
+call	55:13	55:79	4	IMFMediaBuffer_Lock
+arg	55:33	55:52	5	output_media_buffer
+water	55:33	0:0	6	output_media_buffer
+arg	55:54	55:67	5	&buffer_start
+op	55:54	0:0	6	&
+water	55:55	0:0	6	buffer_start
+arg	55:69	55:73	5	NULL
+water	55:69	0:0	6	NULL
+arg	55:75	55:79	5	NULL
+water	55:75	0:0	6	NULL
+water	55:80	0:0	4	;
+if	56:8	57:22	4	(FAILED (hr ))
+cond	56:12	56:21	5	FAILED (hr )
+call	56:12	56:21	6	FAILED
+arg	56:19	56:21	7	hr
+water	56:19	0:0	8	hr
+stmts	57:12	57:22	5	
+goto	57:12	57:22	6	error
+water	57:17	0:0	7	error
+if	58:8	59:60	4	(p_dec -> fmt_in . i_cat == VIDEO_ES)
+cond	58:12	58:35	5	p_dec -> fmt_in . i_cat == VIDEO_ES
+water	58:12	0:0	6	p_dec
+op	58:17	0:0	6	->
+water	58:19	0:0	6	fmt_in
+op	58:25	0:0	6	.
+water	58:26	0:0	6	i_cat
+op	58:32	0:0	6	==
+water	58:35	0:0	6	VIDEO_ES
+stmts	59:12	59:60	5	
+call	59:12	59:59	6	CopyPackedBufferToPicture
+arg	59:38	59:45	7	picture
+water	59:38	0:0	8	picture
+arg	59:47	59:59	7	buffer_start
+water	59:47	0:0	8	buffer_start
+water	59:60	0:0	6	;
+else	60:8	61:69	4
+stmts	61:12	61:69	5	
+call	61:12	61:68	6	memcpy
+arg	61:19	61:40	7	aout_buffer->p_buffer
+water	61:19	0:0	8	aout_buffer
+op	61:30	0:0	8	->
+water	61:32	0:0	8	p_buffer
+arg	61:42	61:54	7	buffer_start
+water	61:42	0:0	8	buffer_start
+arg	61:56	61:68	7	total_length
+water	61:56	0:0	8	total_length
+water	61:69	0:0	6	;
+water	62:8	0:0	4	hr
+op	62:11	0:0	4	=
+call	62:13	62:54	4	IMFMediaBuffer_Unlock
+arg	62:35	62:54	5	output_media_buffer
+water	62:35	0:0	6	output_media_buffer
+water	62:55	0:0	4	;
+call	63:8	63:45	4	IMFSample_Release
+arg	63:26	63:45	5	output_media_buffer
+water	63:26	0:0	6	output_media_buffer
+water	63:46	0:0	4	;
+if	64:8	65:22	4	(FAILED (hr ))
+cond	64:12	64:21	5	FAILED (hr )
+call	64:12	64:21	6	FAILED
+arg	64:19	64:21	7	hr
+water	64:19	0:0	8	hr
+stmts	65:12	65:22	5	
+goto	65:12	65:22	6	error
+water	65:17	0:0	7	error
+if	66:8	72:8	4	(p_sys -> output_sample)
+cond	66:12	66:19	5	p_sys -> output_sample
+water	66:12	0:0	6	p_sys
+op	66:17	0:0	6	->
+water	66:19	0:0	6	output_sample
+stmts	67:8	72:8	5	
+water	67:8	0:0	6	{
+water	69:12	0:0	6	hr
+op	69:15	0:0	6	=
+call	69:17	69:71	6	IMFMediaBuffer_SetCurrentLength
+arg	69:49	69:68	7	output_media_buffer
+water	69:49	0:0	8	output_media_buffer
+arg	69:70	69:71	7	0
+water	69:70	0:0	8	0
+water	69:72	0:0	6	;
+if	70:12	71:26	6	(FAILED (hr ))
+cond	70:16	70:25	7	FAILED (hr )
+call	70:16	70:25	8	FAILED
+arg	70:23	70:25	9	hr
+water	70:23	0:0	10	hr
+stmts	71:16	71:26	7	
+goto	71:16	71:26	8	error
+water	71:21	0:0	9	error
+water	72:8	0:0	6	}
+else	73:8	77:8	4
+stmts	74:8	77:8	5	
+water	74:8	0:0	6	{
+call	76:12	76:43	6	IMFSample_Release
+arg	76:30	76:43	7	output_sample
+water	76:30	0:0	8	output_sample
+water	76:44	0:0	6	;
+water	77:8	0:0	6	}
+water	78:4	0:0	4	}
+else	79:4	92:4	2
+stmts	79:9	92:4	3	
+if	79:9	92:4	4	(hr == MF_E_TRANSFORM_STREAM_CHANGE || hr == MF_E_TRANSFORM_TYPE_NOT_SET)
+cond	79:13	79:57	5	hr == MF_E_TRANSFORM_STREAM_CHANGE || hr == MF_E_TRANSFORM_TYPE_NOT_SET
+water	79:13	0:0	6	hr
+op	79:16	0:0	6	==
+water	79:19	0:0	6	MF_E_TRANSFORM_STREAM_CHANGE
+op	79:48	0:0	6	||
+water	79:51	0:0	6	hr
+op	79:54	0:0	6	==
+water	79:57	0:0	6	MF_E_TRANSFORM_TYPE_NOT_SET
+stmts	80:4	92:4	5	
+water	80:4	0:0	6	{
+if	81:8	82:52	6	(p_sys -> output_type)
+cond	81:12	81:19	7	p_sys -> output_type
+water	81:12	0:0	8	p_sys
+op	81:17	0:0	8	->
+water	81:19	0:0	8	output_type
+stmts	82:12	82:52	7	
+call	82:12	82:51	8	IMFMediaType_Release
+arg	82:33	82:51	9	p_sys->output_type
+water	82:33	0:0	10	p_sys
+op	82:38	0:0	10	->
+water	82:40	0:0	10	output_type
+water	82:52	0:0	8	;
+if	83:8	84:22	6	(SetOutputType (p_dec ,p_sys -> output_stream_id ,& p_sys -> output_type ))
+cond	83:12	83:77	7	SetOutputType (p_dec ,p_sys -> output_stream_id ,& p_sys -> output_type )
+call	83:12	83:77	8	SetOutputType
+arg	83:26	83:31	9	p_dec
+water	83:26	0:0	10	p_dec
+arg	83:33	83:56	9	p_sys->output_stream_id
+water	83:33	0:0	10	p_sys
+op	83:38	0:0	10	->
+water	83:40	0:0	10	output_stream_id
+arg	83:58	83:77	9	&p_sys->output_type
+op	83:58	0:0	10	&
+water	83:59	0:0	10	p_sys
+op	83:64	0:0	10	->
+water	83:66	0:0	10	output_type
+stmts	84:12	84:22	7	
+goto	84:12	84:22	8	error
+water	84:17	0:0	9	error
+if	86:8	87:51	6	(p_sys -> output_sample)
+cond	86:12	86:19	7	p_sys -> output_sample
+water	86:12	0:0	8	p_sys
+op	86:17	0:0	8	->
+water	86:19	0:0	8	output_sample
+stmts	87:12	87:51	7	
+call	87:12	87:50	8	IMFSample_Release
+arg	87:30	87:50	9	p_sys->output_sample
+water	87:30	0:0	10	p_sys
+op	87:35	0:0	10	->
+water	87:37	0:0	10	output_sample
+water	87:51	0:0	8	;
+water	88:8	0:0	6	p_sys
+op	88:13	0:0	6	->
+water	88:15	0:0	6	output_sample
+op	88:29	0:0	6	=
+water	88:31	0:0	6	NULL
+water	88:35	0:0	6	;
+if	89:8	90:22	6	(AllocateOutputSample (p_dec ,0 ,& p_sys -> output_sample ))
+cond	89:12	89:64	7	AllocateOutputSample (p_dec ,0 ,& p_sys -> output_sample )
+call	89:12	89:64	8	AllocateOutputSample
+arg	89:33	89:38	9	p_dec
+water	89:33	0:0	10	p_dec
+arg	89:40	89:41	9	0
+water	89:40	0:0	10	0
+arg	89:43	89:64	9	&p_sys->output_sample
+op	89:43	0:0	10	&
+water	89:44	0:0	10	p_sys
+op	89:49	0:0	10	->
+water	89:51	0:0	10	output_sample
+stmts	90:12	90:22	7	
+goto	90:12	90:22	8	error
+water	90:17	0:0	9	error
+return	91:8	91:26	6	VLC_SUCCESS
+water	91:15	0:0	7	VLC_SUCCESS
+water	92:4	0:0	6	}
+else	93:4	96:4	2
+stmts	93:9	96:4	3	
+if	93:9	96:4	4	(hr == MF_E_TRANSFORM_NEED_MORE_INPUT)
+cond	93:13	93:19	5	hr == MF_E_TRANSFORM_NEED_MORE_INPUT
+water	93:13	0:0	6	hr
+op	93:16	0:0	6	==
+water	93:19	0:0	6	MF_E_TRANSFORM_NEED_MORE_INPUT
+stmts	94:4	96:4	5	
+water	94:4	0:0	6	{
+return	95:8	95:26	6	VLC_SUCCESS
+water	95:15	0:0	7	VLC_SUCCESS
+water	96:4	0:0	6	}
+else	97:4	102:4	2
+stmts	98:4	102:4	3	
+water	98:4	0:0	4	{
+call	99:8	100:18	4	msg_Err
+arg	99:16	99:21	5	p_dec
+water	99:16	0:0	6	p_dec
+arg	99:23	99:78	5	"Unexpected error in IMFTransform::ProcessOutput: %#lx"
+water	99:23	0:0	6	"Unexpected error in IMFTransform::ProcessOutput: %#lx"
+arg	100:16	100:18	5	hr
+water	100:16	0:0	6	hr
+water	100:19	0:0	4	;
+goto	101:8	101:18	4	error
+water	101:13	0:0	5	error
+water	102:4	0:0	4	}
+if	103:4	104:25	2	(p_dec -> fmt_in . i_cat == VIDEO_ES)
+cond	103:8	103:31	3	p_dec -> fmt_in . i_cat == VIDEO_ES
+water	103:8	0:0	4	p_dec
+op	103:13	0:0	4	->
+water	103:15	0:0	4	fmt_in
+op	103:21	0:0	4	.
+water	103:22	0:0	4	i_cat
+op	103:28	0:0	4	==
+water	103:31	0:0	4	VIDEO_ES
+stmts	104:8	104:25	3	
+op	104:8	0:0	4	*
+water	104:9	0:0	4	result
+op	104:16	0:0	4	=
+water	104:18	0:0	4	picture
+water	104:25	0:0	4	;
+else	105:4	106:29	2
+stmts	106:8	106:29	3	
+op	106:8	0:0	4	*
+water	106:9	0:0	4	result
+op	106:16	0:0	4	=
+water	106:18	0:0	4	aout_buffer
+water	106:29	0:0	4	;
+return	107:4	107:22	2	VLC_SUCCESS
+water	107:11	0:0	3	VLC_SUCCESS
+label	108:0	108:5	2	error :
+call	109:4	109:51	2	msg_Err
+arg	109:12	109:17	3	p_dec
+water	109:12	0:0	4	p_dec
+arg	109:19	109:51	3	"Error in ProcessOutputStream()"
+water	109:19	0:0	4	"Error in ProcessOutputStream()"
+water	109:52	0:0	2	;
+if	110:4	111:32	2	(picture)
+cond	110:8	110:8	3	picture
+water	110:8	0:0	4	picture
+stmts	111:8	111:32	3	
+call	111:8	111:31	4	picture_Release
+arg	111:24	111:31	5	picture
+water	111:24	0:0	6	picture
+water	111:32	0:0	4	;
+if	112:4	113:34	2	(aout_buffer)
+cond	112:8	112:8	3	aout_buffer
+water	112:8	0:0	4	aout_buffer
+stmts	113:8	113:34	3	
+call	113:8	113:33	4	block_Release
+arg	113:22	113:33	5	aout_buffer
+water	113:22	0:0	6	aout_buffer
+water	113:34	0:0	4	;
+return	114:4	114:23	2	VLC_EGENERIC
+water	114:11	0:0	3	VLC_EGENERIC

@@ -1,0 +1,664 @@
+func	2:0	222:0	0	static bool	IVTCOutputOrDropFrame
+params	2:33	0:0	1	
+param	2:35	2:53	2	filter_t *	p_filter
+param	2:55	2:72	2	picture_t *	p_dst
+stmnts	4:4	221:15	1	
+call	4:4	4:29	2	assert
+arg	4:12	4:29	3	p_filter!=NULL
+water	4:12	0:0	4	p_filter
+op	4:21	0:0	4	!=
+water	4:24	0:0	4	NULL
+water	4:30	0:0	2	;
+call	5:4	5:26	2	assert
+arg	5:12	5:26	3	p_dst!=NULL
+water	5:12	0:0	4	p_dst
+op	5:18	0:0	4	!=
+water	5:21	0:0	4	NULL
+water	5:27	0:0	2	;
+decl	6:4	6:41	2	filter_sys_t	*p_sys
+op	6:24	0:0	2	=
+water	6:26	0:0	2	p_filter
+op	6:34	0:0	2	->
+water	6:36	0:0	2	p_sys
+decl	7:4	7:38	2	ivtc_sys_t	*p_ivtc
+op	7:24	0:0	2	=
+op	7:26	0:0	2	&
+water	7:27	0:0	2	p_sys
+op	7:32	0:0	2	->
+water	7:34	0:0	2	ivtc
+decl	8:4	8:36	2	mtime_t	t_final
+op	8:20	0:0	2	=
+water	8:22	0:0	2	VLC_TS_INVALID
+decl	9:4	9:44	2	picture_t	*p_curr
+op	9:22	0:0	2	=
+water	9:24	0:0	2	p_sys
+op	9:29	0:0	2	->
+water	9:31	0:0	2	pp_history
+op	9:41	0:0	2	[
+water	9:42	0:0	2	1
+op	9:43	0:0	2	]
+decl	10:4	10:44	2	picture_t	*p_next
+op	10:22	0:0	2	=
+water	10:24	0:0	2	p_sys
+op	10:29	0:0	2	->
+water	10:31	0:0	2	pp_history
+op	10:41	0:0	2	[
+water	10:42	0:0	2	2
+op	10:43	0:0	2	]
+call	11:4	11:27	2	assert
+arg	11:12	11:27	3	p_next!=NULL
+water	11:12	0:0	4	p_next
+op	11:19	0:0	4	!=
+water	11:22	0:0	4	NULL
+water	11:28	0:0	2	;
+call	12:4	12:27	2	assert
+arg	12:12	12:27	3	p_curr!=NULL
+water	12:12	0:0	4	p_curr
+op	12:19	0:0	4	!=
+water	12:22	0:0	4	NULL
+water	12:28	0:0	2	;
+decl	22:4	22:27	2	int	i_result_score
+op	22:23	0:0	2	=
+op	22:25	0:0	2	-
+water	22:26	0:0	2	1
+decl	23:4	23:10	2	int	op
+if	24:4	157:4	2	(p_ivtc -> i_mode == IVTC_MODE_TELECINED_NTSC_HARD)
+cond	24:8	24:26	3	p_ivtc -> i_mode == IVTC_MODE_TELECINED_NTSC_HARD
+water	24:8	0:0	4	p_ivtc
+op	24:14	0:0	4	->
+water	24:16	0:0	4	i_mode
+op	24:23	0:0	4	==
+water	24:26	0:0	4	IVTC_MODE_TELECINED_NTSC_HARD
+stmts	25:4	157:4	3	
+water	25:4	0:0	4	{
+if	29:8	80:8	4	(p_ivtc -> b_sequence_valid)
+cond	29:12	29:20	5	p_ivtc -> b_sequence_valid
+water	29:12	0:0	6	p_ivtc
+op	29:18	0:0	6	->
+water	29:20	0:0	6	b_sequence_valid
+stmts	30:8	80:8	5	
+water	30:8	0:0	6	{
+call	31:12	31:65	6	assert
+arg	31:20	31:65	7	p_ivtc->i_cadence_pos!=CADENCE_POS_INVALID
+water	31:20	0:0	8	p_ivtc
+op	31:26	0:0	8	->
+water	31:28	0:0	8	i_cadence_pos
+op	31:42	0:0	8	!=
+water	31:45	0:0	8	CADENCE_POS_INVALID
+water	31:66	0:0	6	;
+call	32:12	32:49	6	assert
+arg	32:20	32:49	7	p_ivtc->i_tfd!=TFD_INVALID
+water	32:20	0:0	8	p_ivtc
+op	32:26	0:0	8	->
+water	32:28	0:0	8	i_tfd
+op	32:34	0:0	8	!=
+water	32:37	0:0	8	TFD_INVALID
+water	32:50	0:0	6	;
+water	34:12	0:0	6	op
+op	34:15	0:0	6	=
+water	34:17	0:0	6	pi_reconstruction_ops
+op	34:38	0:0	6	[
+water	34:39	0:0	6	p_ivtc
+op	34:45	0:0	6	->
+water	34:47	0:0	6	i_tfd
+op	34:52	0:0	6	]
+op	34:53	0:0	6	[
+water	34:54	0:0	6	p_ivtc
+op	34:60	0:0	6	->
+water	34:62	0:0	6	i_cadence_pos
+op	34:75	0:0	6	]
+water	34:76	0:0	6	;
+if	35:12	41:12	6	(op == IVTC_OP_DROP_FRAME)
+cond	35:16	35:22	7	op == IVTC_OP_DROP_FRAME
+water	35:16	0:0	8	op
+op	35:19	0:0	8	==
+water	35:22	0:0	8	IVTC_OP_DROP_FRAME
+stmts	36:12	41:12	7	
+water	36:12	0:0	8	{
+water	38:16	0:0	8	p_ivtc
+op	38:22	0:0	8	->
+water	38:24	0:0	8	i_cadence_pos
+op	38:38	0:0	8	=
+water	38:40	0:0	8	(
+water	38:41	0:0	8	p_ivtc
+op	38:47	0:0	8	->
+water	38:49	0:0	8	i_cadence_pos
+op	38:63	0:0	8	+
+water	38:65	0:0	8	1
+water	38:66	0:0	8	)
+op	38:68	0:0	8	%
+water	38:70	0:0	8	5
+water	38:71	0:0	8	;
+return	40:16	40:28	8	false
+water	40:23	0:0	9	false
+water	41:12	0:0	8	}
+else	42:12	79:12	6
+stmts	43:12	79:12	7	
+water	43:12	0:0	8	{
+if	44:16	45:71	8	(op == IVTC_OP_COPY_N)
+cond	44:20	44:26	9	op == IVTC_OP_COPY_N
+water	44:20	0:0	10	op
+op	44:23	0:0	10	==
+water	44:26	0:0	10	IVTC_OP_COPY_N
+stmts	45:20	45:71	9	
+water	45:20	0:0	10	i_result_score
+op	45:35	0:0	10	=
+water	45:37	0:0	10	p_ivtc
+op	45:43	0:0	10	->
+water	45:45	0:0	10	pi_scores
+op	45:54	0:0	10	[
+water	45:55	0:0	10	FIELD_PAIR_TNBN
+op	45:70	0:0	10	]
+water	45:71	0:0	10	;
+else	46:16	47:71	8
+stmts	46:21	47:71	9	
+if	46:21	47:71	10	(op == IVTC_OP_COPY_C)
+cond	46:25	46:31	11	op == IVTC_OP_COPY_C
+water	46:25	0:0	12	op
+op	46:28	0:0	12	==
+water	46:31	0:0	12	IVTC_OP_COPY_C
+stmts	47:20	47:71	11	
+water	47:20	0:0	12	i_result_score
+op	47:35	0:0	12	=
+water	47:37	0:0	12	p_ivtc
+op	47:43	0:0	12	->
+water	47:45	0:0	12	pi_scores
+op	47:54	0:0	12	[
+water	47:55	0:0	12	FIELD_PAIR_TCBC
+op	47:70	0:0	12	]
+water	47:71	0:0	12	;
+else	48:16	49:71	8
+stmts	48:21	49:71	9	
+if	48:21	49:71	10	(op == IVTC_OP_COMPOSE_TNBC)
+cond	48:25	48:31	11	op == IVTC_OP_COMPOSE_TNBC
+water	48:25	0:0	12	op
+op	48:28	0:0	12	==
+water	48:31	0:0	12	IVTC_OP_COMPOSE_TNBC
+stmts	49:20	49:71	11	
+water	49:20	0:0	12	i_result_score
+op	49:35	0:0	12	=
+water	49:37	0:0	12	p_ivtc
+op	49:43	0:0	12	->
+water	49:45	0:0	12	pi_scores
+op	49:54	0:0	12	[
+water	49:55	0:0	12	FIELD_PAIR_TNBC
+op	49:70	0:0	12	]
+water	49:71	0:0	12	;
+else	50:16	51:71	8
+stmts	50:21	51:71	9	
+if	50:21	51:71	10	(op == IVTC_OP_COMPOSE_TCBN)
+cond	50:25	50:31	11	op == IVTC_OP_COMPOSE_TCBN
+water	50:25	0:0	12	op
+op	50:28	0:0	12	==
+water	50:31	0:0	12	IVTC_OP_COMPOSE_TCBN
+stmts	51:20	51:71	11	
+water	51:20	0:0	12	i_result_score
+op	51:35	0:0	12	=
+water	51:37	0:0	12	p_ivtc
+op	51:43	0:0	12	->
+water	51:45	0:0	12	pi_scores
+op	51:54	0:0	12	[
+water	51:55	0:0	12	FIELD_PAIR_TCBN
+op	51:70	0:0	12	]
+water	51:71	0:0	12	;
+decl	55:16	55:29	8	int	i_avg
+op	55:26	0:0	8	=
+water	55:28	0:0	8	0
+for	56:16	57:55	8	( int i = 0 ;i < IVTC_DETECTION_HISTORY_SIZE;i ++)
+forinit	0:0	56:30	9	 int i = 0 ;
+decl	56:21	56:30	10	int	i
+op	56:27	0:0	10	=
+water	56:29	0:0	10	0
+cond	56:32	56:36	9	i < IVTC_DETECTION_HISTORY_SIZE
+water	56:32	0:0	10	i
+op	56:34	0:0	10	<
+water	56:36	0:0	10	IVTC_DETECTION_HISTORY_SIZE
+forexpr	56:65	56:66	9	i ++
+water	56:65	0:0	10	i
+op	56:66	0:0	10	++
+stmts	57:20	57:55	9	
+water	57:20	0:0	10	i_avg
+op	57:26	0:0	10	+=
+water	57:29	0:0	10	p_ivtc
+op	57:35	0:0	10	->
+water	57:37	0:0	10	pi_final_scores
+op	57:52	0:0	10	[
+water	57:53	0:0	10	i
+op	57:54	0:0	10	]
+water	57:55	0:0	10	;
+water	58:16	0:0	8	i_avg
+op	58:22	0:0	8	/=
+water	58:25	0:0	8	IVTC_DETECTION_HISTORY_SIZE
+water	58:52	0:0	8	;
+if	61:16	78:16	8	(i_result_score > 1000 && i_result_score > 2 * i_avg)
+cond	61:20	61:66	9	i_result_score > 1000 && i_result_score > 2 * i_avg
+water	61:20	0:0	10	i_result_score
+op	61:35	0:0	10	>
+water	61:37	0:0	10	1000
+op	61:43	0:0	10	&&
+water	61:47	0:0	10	i_result_score
+op	61:62	0:0	10	>
+water	61:64	0:0	10	2
+op	61:65	0:0	10	*
+water	61:66	0:0	10	i_avg
+stmts	62:16	78:16	9	
+water	62:16	0:0	10	{
+water	65:20	0:0	10	p_ivtc
+op	65:26	0:0	10	->
+water	65:28	0:0	10	b_sequence_valid
+op	65:45	0:0	10	=
+water	65:47	0:0	10	false
+water	65:52	0:0	10	;
+call	66:20	69:61	10	msg_Dbg
+arg	66:29	66:37	11	p_filter
+water	66:29	0:0	12	p_filter
+arg	66:39	68:61	11	"Rejected cadence-based frame ""construction: interlace score %d ""(running average %d)"
+water	66:39	0:0	12	"Rejected cadence-based frame "
+water	67:39	0:0	12	"construction: interlace score %d "
+water	68:39	0:0	12	"(running average %d)"
+arg	69:39	69:53	11	i_result_score
+water	69:39	0:0	12	i_result_score
+arg	69:55	69:61	11	i_avg
+water	69:55	0:0	12	i_avg
+water	69:62	0:0	10	;
+water	77:20	0:0	10	p_ivtc
+op	77:26	0:0	10	->
+water	77:28	0:0	10	pi_v_raw
+op	77:36	0:0	10	[
+water	77:37	0:0	10	IVTC_LATEST
+op	77:48	0:0	10	]
+op	77:50	0:0	10	=
+water	77:52	0:0	10	VEKTOR_CADENCE_POS_ALL
+water	77:74	0:0	10	;
+water	78:16	0:0	10	}
+water	79:12	0:0	8	}
+water	80:8	0:0	6	}
+if	86:8	126:8	4	(! p_ivtc -> b_sequence_valid)
+cond	86:12	86:21	5	! p_ivtc -> b_sequence_valid
+op	86:12	0:0	6	!
+water	86:13	0:0	6	p_ivtc
+op	86:19	0:0	6	->
+water	86:21	0:0	6	b_sequence_valid
+stmts	87:8	126:8	5	
+water	87:8	0:0	6	{
+decl	97:12	97:57	6	int	tnbn
+op	97:21	0:0	6	=
+water	97:23	0:0	6	p_ivtc
+op	97:29	0:0	6	->
+water	97:31	0:0	6	pi_scores
+op	97:40	0:0	6	[
+water	97:41	0:0	6	FIELD_PAIR_TNBN
+op	97:56	0:0	6	]
+decl	98:12	98:57	6	int	tnbc
+op	98:21	0:0	6	=
+water	98:23	0:0	6	p_ivtc
+op	98:29	0:0	6	->
+water	98:31	0:0	6	pi_scores
+op	98:40	0:0	6	[
+water	98:41	0:0	6	FIELD_PAIR_TNBC
+op	98:56	0:0	6	]
+decl	99:12	99:57	6	int	tcbn
+op	99:21	0:0	6	=
+water	99:23	0:0	6	p_ivtc
+op	99:29	0:0	6	->
+water	99:31	0:0	6	pi_scores
+op	99:40	0:0	6	[
+water	99:41	0:0	6	FIELD_PAIR_TCBN
+op	99:56	0:0	6	]
+if	100:12	112:12	6	(p_next -> b_top_field_first)
+cond	100:16	100:24	7	p_next -> b_top_field_first
+water	100:16	0:0	8	p_next
+op	100:22	0:0	8	->
+water	100:24	0:0	8	b_top_field_first
+stmts	101:12	112:12	7	
+water	101:12	0:0	8	{
+if	102:16	106:16	8	(tnbn <= tnbc)
+cond	102:20	102:28	9	tnbn <= tnbc
+water	102:20	0:0	10	tnbn
+op	102:25	0:0	10	<=
+water	102:28	0:0	10	tnbc
+stmts	103:16	106:16	9	
+water	103:16	0:0	10	{
+water	104:20	0:0	10	op
+op	104:23	0:0	10	=
+water	104:25	0:0	10	IVTC_OP_COPY_N
+water	104:39	0:0	10	;
+water	105:20	0:0	10	i_result_score
+op	105:35	0:0	10	=
+water	105:37	0:0	10	tnbn
+water	105:41	0:0	10	;
+water	106:16	0:0	10	}
+else	107:16	111:16	8
+stmts	108:16	111:16	9	
+water	108:16	0:0	10	{
+water	109:20	0:0	10	op
+op	109:23	0:0	10	=
+water	109:25	0:0	10	IVTC_OP_COMPOSE_TNBC
+water	109:45	0:0	10	;
+water	110:20	0:0	10	i_result_score
+op	110:35	0:0	10	=
+water	110:37	0:0	10	tnbc
+water	110:41	0:0	10	;
+water	111:16	0:0	10	}
+water	112:12	0:0	8	}
+else	113:12	125:12	6
+stmts	114:12	125:12	7	
+water	114:12	0:0	8	{
+if	115:16	119:16	8	(tnbn <= tcbn)
+cond	115:20	115:28	9	tnbn <= tcbn
+water	115:20	0:0	10	tnbn
+op	115:25	0:0	10	<=
+water	115:28	0:0	10	tcbn
+stmts	116:16	119:16	9	
+water	116:16	0:0	10	{
+water	117:20	0:0	10	op
+op	117:23	0:0	10	=
+water	117:25	0:0	10	IVTC_OP_COPY_N
+water	117:39	0:0	10	;
+water	118:20	0:0	10	i_result_score
+op	118:35	0:0	10	=
+water	118:37	0:0	10	tnbn
+water	118:41	0:0	10	;
+water	119:16	0:0	10	}
+else	120:16	124:16	8
+stmts	121:16	124:16	9	
+water	121:16	0:0	10	{
+water	122:20	0:0	10	op
+op	122:23	0:0	10	=
+water	122:25	0:0	10	IVTC_OP_COMPOSE_TCBN
+water	122:45	0:0	10	;
+water	123:20	0:0	10	i_result_score
+op	123:35	0:0	10	=
+water	123:37	0:0	10	tcbn
+water	123:41	0:0	10	;
+water	124:16	0:0	10	}
+water	125:12	0:0	8	}
+water	126:8	0:0	6	}
+if	133:8	143:8	4	(p_ivtc -> b_sequence_valid)
+cond	133:12	133:20	5	p_ivtc -> b_sequence_valid
+water	133:12	0:0	6	p_ivtc
+op	133:18	0:0	6	->
+water	133:20	0:0	6	b_sequence_valid
+stmts	134:8	143:8	5	
+water	134:8	0:0	6	{
+decl	138:12	138:78	6	int	i_timestamp_delta
+op	138:34	0:0	6	=
+water	138:36	0:0	6	pi_timestamp_deltas
+op	138:55	0:0	6	[
+water	138:56	0:0	6	p_ivtc
+op	138:62	0:0	6	->
+water	138:64	0:0	6	i_cadence_pos
+op	138:77	0:0	6	]
+call	139:12	139:43	6	assert
+arg	139:20	139:43	7	i_timestamp_delta>=0
+water	139:20	0:0	8	i_timestamp_delta
+op	139:38	0:0	8	>=
+water	139:41	0:0	8	0
+water	139:44	0:0	6	;
+water	141:12	0:0	6	t_final
+op	141:20	0:0	6	=
+water	141:22	0:0	6	p_curr
+op	141:28	0:0	6	->
+water	141:30	0:0	6	date
+op	142:20	0:0	6	+
+water	142:22	0:0	6	(
+water	142:23	0:0	6	p_next
+op	142:29	0:0	6	->
+water	142:31	0:0	6	date
+op	142:36	0:0	6	-
+water	142:38	0:0	6	p_curr
+op	142:44	0:0	6	->
+water	142:46	0:0	6	date
+water	142:50	0:0	6	)
+op	142:51	0:0	6	*
+water	142:52	0:0	6	i_timestamp_delta
+op	142:69	0:0	6	/
+water	142:70	0:0	6	4
+water	142:71	0:0	6	;
+water	143:8	0:0	6	}
+else	144:8	154:8	4
+stmts	152:8	154:8	5	
+water	152:8	0:0	6	{
+water	153:12	0:0	6	t_final
+op	153:20	0:0	6	=
+water	153:22	0:0	6	p_curr
+op	153:28	0:0	6	->
+water	153:30	0:0	6	date
+water	153:34	0:0	6	;
+water	154:8	0:0	6	}
+water	156:8	0:0	4	p_ivtc
+op	156:14	0:0	4	->
+water	156:16	0:0	4	i_cadence_pos
+op	156:30	0:0	4	=
+water	156:32	0:0	4	(
+water	156:33	0:0	4	p_ivtc
+op	156:39	0:0	4	->
+water	156:41	0:0	4	i_cadence_pos
+op	156:55	0:0	4	+
+water	156:57	0:0	4	1
+water	156:58	0:0	4	)
+op	156:60	0:0	4	%
+water	156:62	0:0	4	5
+water	156:63	0:0	4	;
+water	157:4	0:0	4	}
+else	158:4	186:4	2
+stmts	158:9	186:4	3	
+if	158:9	186:4	4	(p_ivtc -> i_mode == IVTC_MODE_TELECINED_NTSC_SOFT)
+cond	158:13	158:31	5	p_ivtc -> i_mode == IVTC_MODE_TELECINED_NTSC_SOFT
+water	158:13	0:0	6	p_ivtc
+op	158:19	0:0	6	->
+water	158:21	0:0	6	i_mode
+op	158:28	0:0	6	==
+water	158:31	0:0	6	IVTC_MODE_TELECINED_NTSC_SOFT
+stmts	159:4	186:4	5	
+water	159:4	0:0	6	{
+water	168:8	0:0	6	op
+op	168:11	0:0	6	=
+water	168:13	0:0	6	IVTC_OP_COPY_C
+water	168:27	0:0	6	;
+water	169:8	0:0	6	i_result_score
+op	169:23	0:0	6	=
+water	169:25	0:0	6	p_ivtc
+op	169:31	0:0	6	->
+water	169:33	0:0	6	pi_scores
+op	169:42	0:0	6	[
+water	169:43	0:0	6	FIELD_PAIR_TCBC
+op	169:58	0:0	6	]
+water	169:59	0:0	6	;
+if	175:8	181:8	6	(p_curr -> i_nb_fields == 3)
+cond	175:12	175:35	7	p_curr -> i_nb_fields == 3
+water	175:12	0:0	8	p_curr
+op	175:18	0:0	8	->
+water	175:20	0:0	8	i_nb_fields
+op	175:32	0:0	8	==
+water	175:35	0:0	8	3
+stmts	176:8	181:8	7	
+water	176:8	0:0	8	{
+decl	179:12	179:78	8	mtime_t	i_half_field_dur
+op	179:37	0:0	8	=
+water	179:39	0:0	8	(
+water	179:41	0:0	8	(
+water	179:42	0:0	8	p_next
+op	179:48	0:0	8	->
+water	179:50	0:0	8	date
+op	179:55	0:0	8	-
+water	179:57	0:0	8	p_curr
+op	179:63	0:0	8	->
+water	179:65	0:0	8	date
+water	179:69	0:0	8	)
+op	179:70	0:0	8	/
+water	179:71	0:0	8	3
+water	179:73	0:0	8	)
+op	179:75	0:0	8	/
+water	179:77	0:0	8	2
+water	180:12	0:0	8	t_final
+op	180:20	0:0	8	=
+water	180:22	0:0	8	p_curr
+op	180:28	0:0	8	->
+water	180:30	0:0	8	date
+op	180:35	0:0	8	+
+water	180:37	0:0	8	i_half_field_dur
+water	180:53	0:0	8	;
+water	181:8	0:0	8	}
+else	182:8	185:8	6
+stmts	183:8	185:8	7	
+water	183:8	0:0	8	{
+water	184:12	0:0	8	t_final
+op	184:20	0:0	8	=
+water	184:22	0:0	8	p_curr
+op	184:28	0:0	8	->
+water	184:30	0:0	8	date
+water	184:34	0:0	8	;
+water	185:8	0:0	8	}
+water	186:4	0:0	6	}
+else	187:4	194:4	2
+stmts	188:4	194:4	3	
+water	188:4	0:0	4	{
+water	189:8	0:0	4	op
+op	189:11	0:0	4	=
+water	189:13	0:0	4	IVTC_OP_COPY_N
+water	189:27	0:0	4	;
+water	190:8	0:0	4	i_result_score
+op	190:23	0:0	4	=
+water	190:25	0:0	4	p_ivtc
+op	190:31	0:0	4	->
+water	190:33	0:0	4	pi_scores
+op	190:42	0:0	4	[
+water	190:43	0:0	4	FIELD_PAIR_TNBN
+op	190:58	0:0	4	]
+water	190:59	0:0	4	;
+water	193:8	0:0	4	t_final
+op	193:16	0:0	4	=
+water	193:18	0:0	4	p_next
+op	193:24	0:0	4	->
+water	193:26	0:0	4	date
+water	193:30	0:0	4	;
+water	194:4	0:0	4	}
+call	197:4	197:37	2	assert
+arg	197:12	197:37	3	op!=IVTC_OP_DROP_FRAME
+water	197:12	0:0	4	op
+op	197:15	0:0	4	!=
+water	197:18	0:0	4	IVTC_OP_DROP_FRAME
+water	197:38	0:0	2	;
+if	199:4	200:37	2	(op == IVTC_OP_COPY_N)
+cond	199:8	199:14	3	op == IVTC_OP_COPY_N
+water	199:8	0:0	4	op
+op	199:11	0:0	4	==
+water	199:14	0:0	4	IVTC_OP_COPY_N
+stmts	200:8	200:37	3	
+call	200:8	200:36	4	picture_Copy
+arg	200:22	200:27	5	p_dst
+water	200:22	0:0	6	p_dst
+arg	200:29	200:36	5	p_next
+water	200:29	0:0	6	p_next
+water	200:37	0:0	4	;
+else	201:4	202:37	2
+stmts	201:9	202:37	3	
+if	201:9	202:37	4	(op == IVTC_OP_COPY_C)
+cond	201:13	201:19	5	op == IVTC_OP_COPY_C
+water	201:13	0:0	6	op
+op	201:16	0:0	6	==
+water	201:19	0:0	6	IVTC_OP_COPY_C
+stmts	202:8	202:37	5	
+call	202:8	202:36	6	picture_Copy
+arg	202:22	202:27	7	p_dst
+water	202:22	0:0	8	p_dst
+arg	202:29	202:36	7	p_curr
+water	202:29	0:0	8	p_curr
+water	202:37	0:0	6	;
+else	203:4	204:74	2
+stmts	203:9	204:74	3	
+if	203:9	204:74	4	(op == IVTC_OP_COMPOSE_TNBC)
+cond	203:13	203:19	5	op == IVTC_OP_COMPOSE_TNBC
+water	203:13	0:0	6	op
+op	203:16	0:0	6	==
+water	203:19	0:0	6	IVTC_OP_COMPOSE_TNBC
+stmts	204:8	204:74	5	
+call	204:8	204:73	6	ComposeFrame
+arg	204:22	204:30	7	p_filter
+water	204:22	0:0	8	p_filter
+arg	204:32	204:37	7	p_dst
+water	204:32	0:0	8	p_dst
+arg	204:39	204:45	7	p_next
+water	204:39	0:0	8	p_next
+arg	204:47	204:53	7	p_curr
+water	204:47	0:0	8	p_curr
+arg	204:55	204:65	7	CC_ALTLINE
+water	204:55	0:0	8	CC_ALTLINE
+arg	204:67	204:73	7	false
+water	204:67	0:0	8	false
+water	204:74	0:0	6	;
+else	205:4	206:74	2
+stmts	205:9	206:74	3	
+if	205:9	206:74	4	(op == IVTC_OP_COMPOSE_TCBN)
+cond	205:13	205:19	5	op == IVTC_OP_COMPOSE_TCBN
+water	205:13	0:0	6	op
+op	205:16	0:0	6	==
+water	205:19	0:0	6	IVTC_OP_COMPOSE_TCBN
+stmts	206:8	206:74	5	
+call	206:8	206:73	6	ComposeFrame
+arg	206:22	206:30	7	p_filter
+water	206:22	0:0	8	p_filter
+arg	206:32	206:37	7	p_dst
+water	206:32	0:0	8	p_dst
+arg	206:39	206:45	7	p_curr
+water	206:39	0:0	8	p_curr
+arg	206:47	206:53	7	p_next
+water	206:47	0:0	8	p_next
+arg	206:55	206:65	7	CC_ALTLINE
+water	206:55	0:0	8	CC_ALTLINE
+arg	206:67	206:73	7	false
+water	206:67	0:0	8	false
+water	206:74	0:0	6	;
+for	213:4	214:65	2	( int i = 1 ;i < IVTC_DETECTION_HISTORY_SIZE;i ++)
+forinit	0:0	213:18	3	 int i = 1 ;
+decl	213:9	213:18	4	int	i
+op	213:15	0:0	4	=
+water	213:17	0:0	4	1
+cond	213:20	213:24	3	i < IVTC_DETECTION_HISTORY_SIZE
+water	213:20	0:0	4	i
+op	213:22	0:0	4	<
+water	213:24	0:0	4	IVTC_DETECTION_HISTORY_SIZE
+forexpr	213:53	213:54	3	i ++
+water	213:53	0:0	4	i
+op	213:54	0:0	4	++
+stmts	214:8	214:65	3	
+water	214:8	0:0	4	p_ivtc
+op	214:14	0:0	4	->
+water	214:16	0:0	4	pi_final_scores
+op	214:31	0:0	4	[
+water	214:32	0:0	4	i
+op	214:33	0:0	4	-
+water	214:34	0:0	4	1
+op	214:35	0:0	4	]
+op	214:37	0:0	4	=
+water	214:39	0:0	4	p_ivtc
+op	214:45	0:0	4	->
+water	214:47	0:0	4	pi_final_scores
+op	214:62	0:0	4	[
+water	214:63	0:0	4	i
+op	214:64	0:0	4	]
+water	214:65	0:0	4	;
+water	215:4	0:0	2	p_ivtc
+op	215:10	0:0	2	->
+water	215:12	0:0	2	pi_final_scores
+op	215:27	0:0	2	[
+water	215:28	0:0	2	IVTC_LATEST
+op	215:39	0:0	2	]
+op	215:41	0:0	2	=
+water	215:43	0:0	2	i_result_score
+water	215:57	0:0	2	;
+if	219:4	220:29	2	(t_final > VLC_TS_INVALID)
+cond	219:8	219:18	3	t_final > VLC_TS_INVALID
+water	219:8	0:0	4	t_final
+op	219:16	0:0	4	>
+water	219:18	0:0	4	VLC_TS_INVALID
+stmts	220:8	220:29	3	
+water	220:8	0:0	4	p_dst
+op	220:13	0:0	4	->
+water	220:15	0:0	4	date
+op	220:20	0:0	4	=
+water	220:22	0:0	4	t_final
+water	220:29	0:0	4	;
+return	221:4	221:15	2	true
+water	221:11	0:0	3	true

@@ -1,0 +1,246 @@
+func	2:0	61:0	0	int	XCB_picture_Alloc
+params	2:22	0:0	1	
+param	2:23	2:41	2	vout_display_t *	vd
+param	2:43	2:66	2	picture_resource_t *	res
+param	3:23	3:34	2	size_t	size
+param	3:36	3:58	2	xcb_connection_t *	conn
+param	4:23	4:44	2	xcb_shm_seg_t	segment
+stmnts	0:0	60:12	1	
+decl	8:4	8:60	2	int	id
+op	8:11	0:0	2	=
+call	8:13	8:59	3	shmget
+arg	8:21	8:32	4	IPC_PRIVATE
+water	8:21	0:0	5	IPC_PRIVATE
+arg	8:34	8:38	4	size
+water	8:34	0:0	5	size
+arg	8:40	8:59	4	IPC_CREAT|S_IRWXU
+water	8:40	0:0	5	IPC_CREAT
+op	8:50	0:0	5	|
+water	8:52	0:0	5	S_IRWXU
+if	9:4	14:4	2	(id == - 1)
+cond	9:8	9:15	3	id == - 1
+water	9:8	0:0	4	id
+op	9:11	0:0	4	==
+op	9:14	0:0	4	-
+water	9:15	0:0	4	1
+stmts	10:4	14:4	3	
+water	10:4	0:0	4	{
+call	11:8	12:38	4	msg_Err
+arg	11:17	11:19	5	vd
+water	11:17	0:0	6	vd
+arg	11:21	11:57	5	"shared memory allocation error: %s"
+water	11:21	0:0	6	"shared memory allocation error: %s"
+arg	12:17	12:38	5	vlc_strerror_c(errno)
+call	12:17	12:37	6	vlc_strerror_c
+arg	12:32	12:37	7	errno
+water	12:32	0:0	8	errno
+water	12:39	0:0	4	;
+return	13:8	13:17	4	-1
+op	13:15	0:0	5	-
+water	13:16	0:0	5	1
+water	14:4	0:0	4	}
+decl	16:4	16:52	2	void	*shm
+op	16:14	0:0	2	=
+call	16:16	16:51	3	shmat
+arg	16:23	16:25	4	id
+water	16:23	0:0	5	id
+arg	16:27	16:31	4	NULL
+water	16:27	0:0	5	NULL
+arg	16:33	16:51	4	0
+water	16:33	0:0	5	0
+if	17:4	23:4	2	(- 1 == ( intptr_t ) shm)
+cond	17:8	17:24	3	- 1 == ( intptr_t ) shm
+op	17:8	0:0	4	-
+water	17:9	0:0	4	1
+op	17:11	0:0	4	==
+water	17:14	0:0	4	(
+water	17:15	0:0	4	intptr_t
+water	17:23	0:0	4	)
+water	17:24	0:0	4	shm
+stmts	18:4	23:4	3	
+water	18:4	0:0	4	{
+call	19:8	20:38	4	msg_Err
+arg	19:17	19:19	5	vd
+water	19:17	0:0	6	vd
+arg	19:21	19:57	5	"shared memory attachment error: %s"
+water	19:21	0:0	6	"shared memory attachment error: %s"
+arg	20:17	20:38	5	vlc_strerror_c(errno)
+call	20:17	20:37	6	vlc_strerror_c
+arg	20:32	20:37	7	errno
+water	20:32	0:0	8	errno
+water	20:39	0:0	4	;
+call	21:8	21:31	4	shmctl
+arg	21:16	21:18	5	id
+water	21:16	0:0	6	id
+arg	21:20	21:28	5	IPC_RMID
+water	21:20	0:0	6	IPC_RMID
+arg	21:30	21:31	5	0
+water	21:30	0:0	6	0
+water	21:32	0:0	4	;
+return	22:8	22:17	4	-1
+op	22:15	0:0	5	-
+water	22:16	0:0	5	1
+water	23:4	0:0	4	}
+if	24:4	48:4	2	(segment != 0)
+cond	24:8	24:19	3	segment != 0
+water	24:8	0:0	4	segment
+op	24:16	0:0	4	!=
+water	24:19	0:0	4	0
+stmts	25:4	48:4	3	
+water	25:4	0:0	4	{
+decl	26:8	26:76	4	xcb_void_cookie_t	ck
+op	26:29	0:0	4	=
+call	26:31	26:75	5	xcb_shm_attach_checked
+arg	26:55	26:59	6	conn
+water	26:55	0:0	7	conn
+arg	26:61	26:68	6	segment
+water	26:61	0:0	7	segment
+arg	26:70	26:72	6	id
+water	26:70	0:0	7	id
+arg	26:74	26:75	6	1
+water	26:74	0:0	7	1
+switch	27:8	47:8	4	(XCB_error_Check (vd ,conn ,"shared memory server-side error" ,ck ))
+cond	27:16	28:35	5	XCB_error_Check (vd ,conn ,"shared memory server-side error" ,ck )
+call	27:16	28:35	6	XCB_error_Check
+arg	27:33	27:35	7	vd
+water	27:33	0:0	8	vd
+arg	27:37	27:41	7	conn
+water	27:37	0:0	8	conn
+arg	27:43	27:76	7	"shared memory server-side error"
+water	27:43	0:0	8	"shared memory server-side error"
+arg	28:33	28:35	7	ck
+water	28:33	0:0	8	ck
+stmts	29:8	47:8	5	
+water	29:8	0:0	6	{
+label	30:12	30:18	6	case 0 :
+break	31:16	31:21	6	
+label	32:12	32:27	6	case XCB_ACCESS :
+water	33:12	0:0	6	{
+decl	34:16	34:35	6	struct shmid_ds	buf
+call	36:16	36:42	6	shmctl
+arg	36:24	36:26	7	id
+water	36:24	0:0	8	id
+arg	36:28	36:36	7	IPC_STAT
+water	36:28	0:0	8	IPC_STAT
+arg	36:38	36:42	7	&buf
+op	36:38	0:0	8	&
+water	36:39	0:0	8	buf
+water	36:43	0:0	6	;
+water	37:16	0:0	6	buf
+op	37:19	0:0	6	.
+water	37:20	0:0	6	shm_perm
+op	37:28	0:0	6	.
+water	37:29	0:0	6	mode
+op	37:34	0:0	6	|=
+water	37:37	0:0	6	S_IRGRP
+op	37:44	0:0	6	|
+water	37:45	0:0	6	S_IROTH
+water	37:52	0:0	6	;
+call	38:16	38:41	6	shmctl
+arg	38:24	38:26	7	id
+water	38:24	0:0	8	id
+arg	38:28	38:35	7	IPC_SET
+water	38:28	0:0	8	IPC_SET
+arg	38:37	38:41	7	&buf
+op	38:37	0:0	8	&
+water	38:38	0:0	8	buf
+water	38:42	0:0	6	;
+water	39:16	0:0	6	ck
+op	39:19	0:0	6	=
+call	39:21	39:65	6	xcb_shm_attach_checked
+arg	39:45	39:49	7	conn
+water	39:45	0:0	8	conn
+arg	39:51	39:58	7	segment
+water	39:51	0:0	8	segment
+arg	39:60	39:62	7	id
+water	39:60	0:0	8	id
+arg	39:64	39:65	7	1
+water	39:64	0:0	8	1
+water	39:66	0:0	6	;
+if	40:16	41:25	6	(XCB_error_Check (vd ,conn ,"same error on retry" ,ck ) == 0)
+cond	40:20	40:77	7	XCB_error_Check (vd ,conn ,"same error on retry" ,ck ) == 0
+call	40:20	40:72	8	XCB_error_Check
+arg	40:37	40:39	9	vd
+water	40:37	0:0	10	vd
+arg	40:41	40:45	9	conn
+water	40:41	0:0	10	conn
+arg	40:47	40:68	9	"same error on retry"
+water	40:47	0:0	10	"same error on retry"
+arg	40:70	40:72	9	ck
+water	40:70	0:0	10	ck
+op	40:74	0:0	8	==
+water	40:77	0:0	8	0
+stmts	41:20	41:25	7	
+break	41:20	41:25	8	
+water	43:12	0:0	6	}
+label	44:12	44:19	6	default :
+call	45:16	45:70	6	msg_Info
+arg	45:26	45:28	7	vd
+water	45:26	0:0	8	vd
+arg	45:30	45:70	7	"using buggy X11 server - SSH proxying?"
+water	45:30	0:0	8	"using buggy X11 server - SSH proxying?"
+water	45:71	0:0	6	;
+water	46:16	0:0	6	segment
+op	46:24	0:0	6	=
+water	46:26	0:0	6	0
+water	46:27	0:0	6	;
+water	47:8	0:0	6	}
+water	48:4	0:0	4	}
+call	49:4	49:30	2	shmctl
+arg	49:12	49:14	3	id
+water	49:12	0:0	4	id
+arg	49:16	49:24	3	IPC_RMID
+water	49:16	0:0	4	IPC_RMID
+arg	49:26	49:30	3	NULL
+water	49:26	0:0	4	NULL
+water	49:31	0:0	2	;
+call	51:4	51:24	2	assert
+arg	51:12	51:24	3	segment==0
+water	51:12	0:0	4	segment
+op	51:20	0:0	4	==
+water	51:23	0:0	4	0
+water	51:25	0:0	2	;
+decl	53:4	53:29	2	void	*shm
+op	53:14	0:0	2	=
+call	53:16	53:28	3	malloc
+arg	53:24	53:28	4	size
+water	53:24	0:0	5	size
+if	54:4	55:17	2	(unlikely (shm == NULL ))
+cond	54:8	54:28	3	unlikely (shm == NULL )
+call	54:8	54:28	4	unlikely
+arg	54:17	54:28	5	shm==NULL
+water	54:17	0:0	6	shm
+op	54:21	0:0	6	==
+water	54:24	0:0	6	NULL
+stmts	55:8	55:17	3	
+return	55:8	55:17	4	-1
+op	55:15	0:0	5	-
+water	55:16	0:0	5	1
+water	57:4	0:0	2	res
+op	57:7	0:0	2	->
+water	57:9	0:0	2	p_sys
+op	57:15	0:0	2	=
+call	57:17	57:35	2	(void*)
+arg	57:26	57:35	3	uintptr_t
+water	57:26	0:0	4	uintptr_t
+water	57:36	0:0	2	segment
+water	57:43	0:0	2	;
+water	58:4	0:0	2	res
+op	58:7	0:0	2	->
+water	58:9	0:0	2	pf_destroy
+op	58:20	0:0	2	=
+water	58:22	0:0	2	XCB_picture_Destroy
+water	58:41	0:0	2	;
+water	59:4	0:0	2	res
+op	59:7	0:0	2	->
+water	59:9	0:0	2	p
+op	59:10	0:0	2	[
+water	59:11	0:0	2	0
+op	59:12	0:0	2	]
+op	59:13	0:0	2	.
+water	59:14	0:0	2	p_pixels
+op	59:23	0:0	2	=
+water	59:25	0:0	2	shm
+water	59:28	0:0	2	;
+return	60:4	60:12	2	0
+water	60:11	0:0	3	0

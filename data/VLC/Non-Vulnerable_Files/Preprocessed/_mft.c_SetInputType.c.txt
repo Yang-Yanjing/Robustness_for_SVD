@@ -1,0 +1,549 @@
+func	2:0	110:0	0	static int	SetInputType
+params	2:23	0:0	1	
+param	2:24	2:40	2	decoder_t *	p_dec
+param	2:42	2:57	2	DWORD	stream_id
+param	2:59	2:80	2	IMFMediaType * *	result
+stmnts	0:0	109:23	1	
+decl	4:4	4:39	2	decoder_sys_t	*p_sys
+op	4:25	0:0	2	=
+water	4:27	0:0	2	p_dec
+op	4:32	0:0	2	->
+water	4:34	0:0	2	p_sys
+decl	5:4	5:14	2	HRESULT	hr
+op	6:4	0:0	2	*
+water	6:5	0:0	2	result
+op	6:12	0:0	2	=
+water	6:14	0:0	2	NULL
+water	6:18	0:0	2	;
+decl	7:4	7:41	2	IMFMediaType	*input_media_type
+op	7:35	0:0	2	=
+water	7:37	0:0	2	NULL
+decl	9:4	9:28	2	int	input_type_index
+op	9:25	0:0	2	=
+water	9:27	0:0	2	0
+decl	10:4	10:22	2	bool	found
+op	10:15	0:0	2	=
+water	10:17	0:0	2	false
+for	11:4	33:4	2	( int i = 0 ;! found;++ i)
+forinit	0:0	11:18	3	 int i = 0 ;
+decl	11:9	11:18	4	int	i
+op	11:15	0:0	4	=
+water	11:17	0:0	4	0
+cond	11:20	11:21	3	! found
+op	11:20	0:0	4	!
+water	11:21	0:0	4	found
+forexpr	11:28	11:30	3	++ i
+op	11:28	0:0	4	++
+water	11:30	0:0	4	i
+stmts	12:4	33:4	3	
+water	12:4	0:0	4	{
+water	13:8	0:0	4	hr
+op	13:11	0:0	4	=
+call	13:13	13:91	4	IMFTransform_GetInputAvailableType
+arg	13:48	13:58	5	p_sys->mft
+water	13:48	0:0	6	p_sys
+op	13:53	0:0	6	->
+water	13:55	0:0	6	mft
+arg	13:60	13:69	5	stream_id
+water	13:60	0:0	6	stream_id
+arg	13:71	13:72	5	i
+water	13:71	0:0	6	i
+arg	13:74	13:91	5	&input_media_type
+op	13:74	0:0	6	&
+water	13:75	0:0	6	input_media_type
+water	13:92	0:0	4	;
+if	14:8	15:17	4	(hr == MF_E_NO_MORE_TYPES)
+cond	14:12	14:18	5	hr == MF_E_NO_MORE_TYPES
+water	14:12	0:0	6	hr
+op	14:15	0:0	6	==
+water	14:18	0:0	6	MF_E_NO_MORE_TYPES
+stmts	15:12	15:17	5	
+break	15:12	15:17	6	
+else	16:8	20:8	4
+stmts	16:13	20:8	5	
+if	16:13	20:8	6	(hr == MF_E_TRANSFORM_TYPE_NOT_SET)
+cond	16:17	16:23	7	hr == MF_E_TRANSFORM_TYPE_NOT_SET
+water	16:17	0:0	8	hr
+op	16:20	0:0	8	==
+water	16:23	0:0	8	MF_E_TRANSFORM_TYPE_NOT_SET
+stmts	17:8	20:8	7	
+water	17:8	0:0	8	{
+return	19:12	19:30	8	VLC_SUCCESS
+water	19:19	0:0	9	VLC_SUCCESS
+water	20:8	0:0	8	}
+else	21:8	22:22	4
+stmts	21:13	22:22	5	
+if	21:13	22:22	6	(FAILED (hr ))
+cond	21:17	21:26	7	FAILED (hr )
+call	21:17	21:26	8	FAILED
+arg	21:24	21:26	9	hr
+water	21:24	0:0	10	hr
+stmts	22:12	22:22	7	
+goto	22:12	22:22	8	error
+water	22:17	0:0	9	error
+decl	23:8	23:20	4	GUID	subtype
+water	24:8	0:0	4	hr
+op	24:11	0:0	4	=
+call	24:13	24:76	4	IMFMediaType_GetGUID
+arg	24:34	24:50	5	input_media_type
+water	24:34	0:0	6	input_media_type
+arg	24:52	24:66	5	&MF_MT_SUBTYPE
+op	24:52	0:0	6	&
+water	24:53	0:0	6	MF_MT_SUBTYPE
+arg	24:68	24:76	5	&subtype
+op	24:68	0:0	6	&
+water	24:69	0:0	6	subtype
+water	24:77	0:0	4	;
+if	25:8	26:22	4	(FAILED (hr ))
+cond	25:12	25:21	5	FAILED (hr )
+call	25:12	25:21	6	FAILED
+arg	25:19	25:21	7	hr
+water	25:19	0:0	8	hr
+stmts	26:12	26:22	5	
+goto	26:12	26:22	6	error
+water	26:17	0:0	7	error
+if	27:8	28:24	4	(IsEqualGUID (& subtype ,p_sys -> subtype ))
+cond	27:12	27:48	5	IsEqualGUID (& subtype ,p_sys -> subtype )
+call	27:12	27:48	6	IsEqualGUID
+arg	27:24	27:32	7	&subtype
+op	27:24	0:0	8	&
+water	27:25	0:0	8	subtype
+arg	27:34	27:48	7	p_sys->subtype
+water	27:34	0:0	8	p_sys
+op	27:39	0:0	8	->
+water	27:41	0:0	8	subtype
+stmts	28:12	28:24	5	
+water	28:12	0:0	6	found
+op	28:18	0:0	6	=
+water	28:20	0:0	6	true
+water	28:24	0:0	6	;
+if	29:8	30:32	4	(found)
+cond	29:12	29:12	5	found
+water	29:12	0:0	6	found
+stmts	30:12	30:32	5	
+water	30:12	0:0	6	input_type_index
+op	30:29	0:0	6	=
+water	30:31	0:0	6	i
+water	30:32	0:0	6	;
+call	31:8	31:45	4	IMFMediaType_Release
+arg	31:29	31:45	5	input_media_type
+water	31:29	0:0	6	input_media_type
+water	31:46	0:0	4	;
+water	32:8	0:0	4	input_media_type
+op	32:25	0:0	4	=
+water	32:27	0:0	4	NULL
+water	32:31	0:0	4	;
+water	33:4	0:0	4	}
+if	34:4	35:18	2	(! found)
+cond	34:8	34:9	3	! found
+op	34:8	0:0	4	!
+water	34:9	0:0	4	found
+stmts	35:8	35:18	3	
+goto	35:8	35:18	4	error
+water	35:13	0:0	5	error
+water	36:4	0:0	2	hr
+op	36:7	0:0	2	=
+call	36:9	36:102	2	IMFTransform_GetInputAvailableType
+arg	36:44	36:54	3	p_sys->mft
+water	36:44	0:0	4	p_sys
+op	36:49	0:0	4	->
+water	36:51	0:0	4	mft
+arg	36:56	36:65	3	stream_id
+water	36:56	0:0	4	stream_id
+arg	36:67	36:83	3	input_type_index
+water	36:67	0:0	4	input_type_index
+arg	36:85	36:102	3	&input_media_type
+op	36:85	0:0	4	&
+water	36:86	0:0	4	input_media_type
+water	36:103	0:0	2	;
+if	37:4	38:18	2	(FAILED (hr ))
+cond	37:8	37:17	3	FAILED (hr )
+call	37:8	37:17	4	FAILED
+arg	37:15	37:17	5	hr
+water	37:15	0:0	6	hr
+stmts	38:8	38:18	3	
+goto	38:8	38:18	4	error
+water	38:13	0:0	5	error
+if	39:4	47:4	2	(p_dec -> fmt_in . i_cat == VIDEO_ES)
+cond	39:8	39:31	3	p_dec -> fmt_in . i_cat == VIDEO_ES
+water	39:8	0:0	4	p_dec
+op	39:13	0:0	4	->
+water	39:15	0:0	4	fmt_in
+op	39:21	0:0	4	.
+water	39:22	0:0	4	i_cat
+op	39:28	0:0	4	==
+water	39:31	0:0	4	VIDEO_ES
+stmts	40:4	47:4	3	
+water	40:4	0:0	4	{
+decl	41:8	41:50	4	UINT64	width
+op	41:21	0:0	4	=
+water	41:23	0:0	4	p_dec
+op	41:28	0:0	4	->
+water	41:30	0:0	4	fmt_in
+op	41:36	0:0	4	.
+water	41:37	0:0	4	video
+op	41:42	0:0	4	.
+water	41:43	0:0	4	i_width
+decl	42:8	42:52	4	UINT64	height
+op	42:22	0:0	4	=
+water	42:24	0:0	4	p_dec
+op	42:29	0:0	4	->
+water	42:31	0:0	4	fmt_in
+op	42:37	0:0	4	.
+water	42:38	0:0	4	video
+op	42:43	0:0	4	.
+water	42:44	0:0	4	i_height
+decl	43:8	43:50	4	UINT64	frame_size
+op	43:26	0:0	4	=
+water	43:28	0:0	4	(
+water	43:29	0:0	4	width
+op	43:35	0:0	4	<<
+water	43:38	0:0	4	32
+water	43:40	0:0	4	)
+op	43:42	0:0	4	|
+water	43:44	0:0	4	height
+water	44:8	0:0	4	hr
+op	44:11	0:0	4	=
+call	44:13	44:83	4	IMFMediaType_SetUINT64
+arg	44:36	44:52	5	input_media_type
+water	44:36	0:0	6	input_media_type
+arg	44:54	44:71	5	&MF_MT_FRAME_SIZE
+op	44:54	0:0	6	&
+water	44:55	0:0	6	MF_MT_FRAME_SIZE
+arg	44:73	44:83	5	frame_size
+water	44:73	0:0	6	frame_size
+water	44:84	0:0	4	;
+if	45:8	46:22	4	(FAILED (hr ))
+cond	45:12	45:21	5	FAILED (hr )
+call	45:12	45:21	6	FAILED
+arg	45:19	45:21	7	hr
+water	45:19	0:0	8	hr
+stmts	46:12	46:22	5	
+goto	46:12	46:22	6	error
+water	46:17	0:0	7	error
+water	47:4	0:0	4	}
+else	48:4	83:4	2
+stmts	49:4	83:4	3	
+water	49:4	0:0	4	{
+water	50:8	0:0	4	hr
+op	50:11	0:0	4	=
+call	50:13	50:108	4	IMFMediaType_SetUINT32
+arg	50:36	50:52	5	input_media_type
+water	50:36	0:0	6	input_media_type
+arg	50:54	50:85	5	&MF_MT_ORIGINAL_WAVE_FORMAT_TAG
+op	50:54	0:0	6	&
+water	50:55	0:0	6	MF_MT_ORIGINAL_WAVE_FORMAT_TAG
+arg	50:87	50:108	5	p_sys->subtype->Data1
+water	50:87	0:0	6	p_sys
+op	50:92	0:0	6	->
+water	50:94	0:0	6	subtype
+op	50:101	0:0	6	->
+water	50:103	0:0	6	Data1
+water	50:109	0:0	4	;
+if	51:8	52:22	4	(FAILED (hr ))
+cond	51:12	51:21	5	FAILED (hr )
+call	51:12	51:21	6	FAILED
+arg	51:19	51:21	7	hr
+water	51:19	0:0	8	hr
+stmts	52:12	52:22	5	
+goto	52:12	52:22	6	error
+water	52:17	0:0	7	error
+if	53:8	58:8	4	(p_dec -> fmt_in . audio . i_rate)
+cond	53:12	53:32	5	p_dec -> fmt_in . audio . i_rate
+water	53:12	0:0	6	p_dec
+op	53:17	0:0	6	->
+water	53:19	0:0	6	fmt_in
+op	53:25	0:0	6	.
+water	53:26	0:0	6	audio
+op	53:31	0:0	6	.
+water	53:32	0:0	6	i_rate
+stmts	54:8	58:8	5	
+water	54:8	0:0	6	{
+water	55:12	0:0	6	hr
+op	55:15	0:0	6	=
+call	55:17	55:117	6	IMFMediaType_SetUINT32
+arg	55:40	55:56	7	input_media_type
+water	55:40	0:0	8	input_media_type
+arg	55:58	55:89	7	&MF_MT_AUDIO_SAMPLES_PER_SECOND
+op	55:58	0:0	8	&
+water	55:59	0:0	8	MF_MT_AUDIO_SAMPLES_PER_SECOND
+arg	55:91	55:117	7	p_dec->fmt_in.audio.i_rate
+water	55:91	0:0	8	p_dec
+op	55:96	0:0	8	->
+water	55:98	0:0	8	fmt_in
+op	55:104	0:0	8	.
+water	55:105	0:0	8	audio
+op	55:110	0:0	8	.
+water	55:111	0:0	8	i_rate
+water	55:118	0:0	6	;
+if	56:12	57:26	6	(FAILED (hr ))
+cond	56:16	56:25	7	FAILED (hr )
+call	56:16	56:25	8	FAILED
+arg	56:23	56:25	9	hr
+water	56:23	0:0	10	hr
+stmts	57:16	57:26	7	
+goto	57:16	57:26	8	error
+water	57:21	0:0	9	error
+water	58:8	0:0	6	}
+if	59:8	64:8	4	(p_dec -> fmt_in . audio . i_channels)
+cond	59:12	59:32	5	p_dec -> fmt_in . audio . i_channels
+water	59:12	0:0	6	p_dec
+op	59:17	0:0	6	->
+water	59:19	0:0	6	fmt_in
+op	59:25	0:0	6	.
+water	59:26	0:0	6	audio
+op	59:31	0:0	6	.
+water	59:32	0:0	6	i_channels
+stmts	60:8	64:8	5	
+water	60:8	0:0	6	{
+water	61:12	0:0	6	hr
+op	61:15	0:0	6	=
+call	61:17	61:115	6	IMFMediaType_SetUINT32
+arg	61:40	61:56	7	input_media_type
+water	61:40	0:0	8	input_media_type
+arg	61:58	61:83	7	&MF_MT_AUDIO_NUM_CHANNELS
+op	61:58	0:0	8	&
+water	61:59	0:0	8	MF_MT_AUDIO_NUM_CHANNELS
+arg	61:85	61:115	7	p_dec->fmt_in.audio.i_channels
+water	61:85	0:0	8	p_dec
+op	61:90	0:0	8	->
+water	61:92	0:0	8	fmt_in
+op	61:98	0:0	8	.
+water	61:99	0:0	8	audio
+op	61:104	0:0	8	.
+water	61:105	0:0	8	i_channels
+water	61:116	0:0	6	;
+if	62:12	63:26	6	(FAILED (hr ))
+cond	62:16	62:25	7	FAILED (hr )
+call	62:16	62:25	8	FAILED
+arg	62:23	62:25	9	hr
+water	62:23	0:0	10	hr
+stmts	63:16	63:26	7	
+goto	63:16	63:26	8	error
+water	63:21	0:0	9	error
+water	64:8	0:0	6	}
+if	65:8	70:8	4	(p_dec -> fmt_in . audio . i_bitspersample)
+cond	65:12	65:32	5	p_dec -> fmt_in . audio . i_bitspersample
+water	65:12	0:0	6	p_dec
+op	65:17	0:0	6	->
+water	65:19	0:0	6	fmt_in
+op	65:25	0:0	6	.
+water	65:26	0:0	6	audio
+op	65:31	0:0	6	.
+water	65:32	0:0	6	i_bitspersample
+stmts	66:8	70:8	5	
+water	66:8	0:0	6	{
+water	67:12	0:0	6	hr
+op	67:15	0:0	6	=
+call	67:17	67:123	6	IMFMediaType_SetUINT32
+arg	67:40	67:56	7	input_media_type
+water	67:40	0:0	8	input_media_type
+arg	67:58	67:86	7	&MF_MT_AUDIO_BITS_PER_SAMPLE
+op	67:58	0:0	8	&
+water	67:59	0:0	8	MF_MT_AUDIO_BITS_PER_SAMPLE
+arg	67:88	67:123	7	p_dec->fmt_in.audio.i_bitspersample
+water	67:88	0:0	8	p_dec
+op	67:93	0:0	8	->
+water	67:95	0:0	8	fmt_in
+op	67:101	0:0	8	.
+water	67:102	0:0	8	audio
+op	67:107	0:0	8	.
+water	67:108	0:0	8	i_bitspersample
+water	67:124	0:0	6	;
+if	68:12	69:26	6	(FAILED (hr ))
+cond	68:16	68:25	7	FAILED (hr )
+call	68:16	68:25	8	FAILED
+arg	68:23	68:25	9	hr
+water	68:23	0:0	10	hr
+stmts	69:16	69:26	7	
+goto	69:16	69:26	8	error
+water	69:21	0:0	9	error
+water	70:8	0:0	6	}
+if	71:8	76:8	4	(p_dec -> fmt_in . audio . i_blockalign)
+cond	71:12	71:32	5	p_dec -> fmt_in . audio . i_blockalign
+water	71:12	0:0	6	p_dec
+op	71:17	0:0	6	->
+water	71:19	0:0	6	fmt_in
+op	71:25	0:0	6	.
+water	71:26	0:0	6	audio
+op	71:31	0:0	6	.
+water	71:32	0:0	6	i_blockalign
+stmts	72:8	76:8	5	
+water	72:8	0:0	6	{
+water	73:12	0:0	6	hr
+op	73:15	0:0	6	=
+call	73:17	73:120	6	IMFMediaType_SetUINT32
+arg	73:40	73:56	7	input_media_type
+water	73:40	0:0	8	input_media_type
+arg	73:58	73:86	7	&MF_MT_AUDIO_BLOCK_ALIGNMENT
+op	73:58	0:0	8	&
+water	73:59	0:0	8	MF_MT_AUDIO_BLOCK_ALIGNMENT
+arg	73:88	73:120	7	p_dec->fmt_in.audio.i_blockalign
+water	73:88	0:0	8	p_dec
+op	73:93	0:0	8	->
+water	73:95	0:0	8	fmt_in
+op	73:101	0:0	8	.
+water	73:102	0:0	8	audio
+op	73:107	0:0	8	.
+water	73:108	0:0	8	i_blockalign
+water	73:121	0:0	6	;
+if	74:12	75:26	6	(FAILED (hr ))
+cond	74:16	74:25	7	FAILED (hr )
+call	74:16	74:25	8	FAILED
+arg	74:23	74:25	9	hr
+water	74:23	0:0	10	hr
+stmts	75:16	75:26	7	
+goto	75:16	75:26	8	error
+water	75:21	0:0	9	error
+water	76:8	0:0	6	}
+if	77:8	82:8	4	(p_dec -> fmt_in . i_bitrate)
+cond	77:12	77:26	5	p_dec -> fmt_in . i_bitrate
+water	77:12	0:0	6	p_dec
+op	77:17	0:0	6	->
+water	77:19	0:0	6	fmt_in
+op	77:25	0:0	6	.
+water	77:26	0:0	6	i_bitrate
+stmts	78:8	82:8	5	
+water	78:8	0:0	6	{
+water	79:12	0:0	6	hr
+op	79:15	0:0	6	=
+call	79:17	79:120	6	IMFMediaType_SetUINT32
+arg	79:40	79:56	7	input_media_type
+water	79:40	0:0	8	input_media_type
+arg	79:58	79:91	7	&MF_MT_AUDIO_AVG_BYTES_PER_SECOND
+op	79:58	0:0	8	&
+water	79:59	0:0	8	MF_MT_AUDIO_AVG_BYTES_PER_SECOND
+arg	79:93	79:120	7	p_dec->fmt_in.i_bitrate/8
+water	79:93	0:0	8	p_dec
+op	79:98	0:0	8	->
+water	79:100	0:0	8	fmt_in
+op	79:106	0:0	8	.
+water	79:107	0:0	8	i_bitrate
+op	79:117	0:0	8	/
+water	79:119	0:0	8	8
+water	79:121	0:0	6	;
+if	80:12	81:26	6	(FAILED (hr ))
+cond	80:16	80:25	7	FAILED (hr )
+call	80:16	80:25	8	FAILED
+arg	80:23	80:25	9	hr
+water	80:23	0:0	10	hr
+stmts	81:16	81:26	7	
+goto	81:16	81:26	8	error
+water	81:21	0:0	9	error
+water	82:8	0:0	6	}
+water	83:4	0:0	4	}
+if	84:4	99:4	2	(p_dec -> fmt_in . i_extra > 0)
+cond	84:8	84:32	3	p_dec -> fmt_in . i_extra > 0
+water	84:8	0:0	4	p_dec
+op	84:13	0:0	4	->
+water	84:15	0:0	4	fmt_in
+op	84:21	0:0	4	.
+water	84:22	0:0	4	i_extra
+op	84:30	0:0	4	>
+water	84:32	0:0	4	0
+stmts	85:4	99:4	3	
+water	85:4	0:0	4	{
+decl	86:8	86:28	4	UINT32	blob_size
+op	86:25	0:0	4	=
+water	86:27	0:0	4	0
+water	87:8	0:0	4	hr
+op	87:11	0:0	4	=
+call	87:13	87:84	4	IMFMediaType_GetBlobSize
+arg	87:38	87:54	5	input_media_type
+water	87:38	0:0	6	input_media_type
+arg	87:56	87:72	5	&MF_MT_USER_DATA
+op	87:56	0:0	6	&
+water	87:57	0:0	6	MF_MT_USER_DATA
+arg	87:74	87:84	5	&blob_size
+op	87:74	0:0	6	&
+water	87:75	0:0	6	blob_size
+water	87:85	0:0	4	;
+if	92:8	98:8	4	(hr == MF_E_ATTRIBUTENOTFOUND)
+cond	92:12	92:18	5	hr == MF_E_ATTRIBUTENOTFOUND
+water	92:12	0:0	6	hr
+op	92:15	0:0	6	==
+water	92:18	0:0	6	MF_E_ATTRIBUTENOTFOUND
+stmts	93:8	98:8	5	
+water	93:8	0:0	6	{
+water	94:12	0:0	6	hr
+op	94:15	0:0	6	=
+call	94:17	95:96	6	IMFMediaType_SetBlob
+arg	94:38	94:54	7	input_media_type
+water	94:38	0:0	8	input_media_type
+arg	94:56	94:72	7	&MF_MT_USER_DATA
+op	94:56	0:0	8	&
+water	94:57	0:0	8	MF_MT_USER_DATA
+arg	95:38	95:73	7	(constUINT8*)p_dec->fmt_in.p_extra
+water	95:38	0:0	8	(
+water	95:39	0:0	8	const
+water	95:45	0:0	8	UINT8
+op	95:50	0:0	8	*
+water	95:51	0:0	8	)
+water	95:52	0:0	8	p_dec
+op	95:57	0:0	8	->
+water	95:59	0:0	8	fmt_in
+op	95:65	0:0	8	.
+water	95:66	0:0	8	p_extra
+arg	95:75	95:96	7	p_dec->fmt_in.i_extra
+water	95:75	0:0	8	p_dec
+op	95:80	0:0	8	->
+water	95:82	0:0	8	fmt_in
+op	95:88	0:0	8	.
+water	95:89	0:0	8	i_extra
+water	95:97	0:0	6	;
+if	96:12	97:26	6	(FAILED (hr ))
+cond	96:16	96:25	7	FAILED (hr )
+call	96:16	96:25	8	FAILED
+arg	96:23	96:25	9	hr
+water	96:23	0:0	10	hr
+stmts	97:16	97:26	7	
+goto	97:16	97:26	8	error
+water	97:21	0:0	9	error
+water	98:8	0:0	6	}
+water	99:4	0:0	4	}
+water	100:4	0:0	2	hr
+op	100:7	0:0	2	=
+call	100:9	100:77	2	IMFTransform_SetInputType
+arg	100:35	100:45	3	p_sys->mft
+water	100:35	0:0	4	p_sys
+op	100:40	0:0	4	->
+water	100:42	0:0	4	mft
+arg	100:47	100:56	3	stream_id
+water	100:47	0:0	4	stream_id
+arg	100:58	100:74	3	input_media_type
+water	100:58	0:0	4	input_media_type
+arg	100:76	100:77	3	0
+water	100:76	0:0	4	0
+water	100:78	0:0	2	;
+if	101:4	102:18	2	(FAILED (hr ))
+cond	101:8	101:17	3	FAILED (hr )
+call	101:8	101:17	4	FAILED
+arg	101:15	101:17	5	hr
+water	101:15	0:0	6	hr
+stmts	102:8	102:18	3	
+goto	102:8	102:18	4	error
+water	102:13	0:0	5	error
+op	103:4	0:0	2	*
+water	103:5	0:0	2	result
+op	103:12	0:0	2	=
+water	103:14	0:0	2	input_media_type
+water	103:30	0:0	2	;
+return	104:4	104:22	2	VLC_SUCCESS
+water	104:11	0:0	3	VLC_SUCCESS
+label	105:0	105:5	2	error :
+call	106:4	106:44	2	msg_Err
+arg	106:12	106:17	3	p_dec
+water	106:12	0:0	4	p_dec
+arg	106:19	106:44	3	"Error in SetInputType()"
+water	106:19	0:0	4	"Error in SetInputType()"
+water	106:45	0:0	2	;
+if	107:4	108:46	2	(input_media_type)
+cond	107:8	107:8	3	input_media_type
+water	107:8	0:0	4	input_media_type
+stmts	108:8	108:46	3	
+call	108:8	108:45	4	IMFMediaType_Release
+arg	108:29	108:45	5	input_media_type
+water	108:29	0:0	6	input_media_type
+water	108:46	0:0	4	;
+return	109:4	109:23	2	VLC_EGENERIC
+water	109:11	0:0	3	VLC_EGENERIC

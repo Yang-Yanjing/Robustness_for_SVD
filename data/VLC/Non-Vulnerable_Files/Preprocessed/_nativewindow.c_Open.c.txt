@@ -1,0 +1,151 @@
+func	2:0	34:0	0	static int	Open
+params	2:15	0:0	1	
+param	2:16	2:34	2	vout_window_t *	wnd
+param	2:36	2:64	2	const vout_window_cfg_t *	cfg
+stmnts	0:0	33:23	1	
+decl	4:4	4:54	2	vout_window_sys_t	*p_sys
+op	4:29	0:0	2	=
+call	4:31	4:53	3	malloc
+arg	4:38	4:53	4	sizeof(*p_sys)
+op	4:38	0:0	5	sizeof
+water	4:45	0:0	5	(
+op	4:46	0:0	5	*
+water	4:47	0:0	5	p_sys
+water	4:52	0:0	5	)
+if	5:4	6:25	2	(p_sys == NULL)
+cond	5:8	5:17	3	p_sys == NULL
+water	5:8	0:0	4	p_sys
+op	5:14	0:0	4	==
+water	5:17	0:0	4	NULL
+stmts	6:8	6:25	3	
+return	6:8	6:25	4	VLC_ENOMEM
+water	6:15	0:0	5	VLC_ENOMEM
+water	7:4	0:0	2	p_sys
+op	7:9	0:0	2	->
+water	7:11	0:0	2	p_library
+op	7:21	0:0	2	=
+call	7:23	7:64	2	LoadNativeWindowAPI
+arg	7:43	7:64	3	&p_sys->native_window
+op	7:43	0:0	4	&
+water	7:44	0:0	4	p_sys
+op	7:49	0:0	4	->
+water	7:51	0:0	4	native_window
+water	7:65	0:0	2	;
+if	8:4	12:4	2	(p_sys -> p_library == NULL)
+cond	8:8	8:28	3	p_sys -> p_library == NULL
+water	8:8	0:0	4	p_sys
+op	8:13	0:0	4	->
+water	8:15	0:0	4	p_library
+op	8:25	0:0	4	==
+water	8:28	0:0	4	NULL
+stmts	9:4	12:4	3	
+water	9:4	0:0	4	{
+call	10:8	10:18	4	free
+arg	10:13	10:18	5	p_sys
+water	10:13	0:0	6	p_sys
+water	10:19	0:0	4	;
+return	11:8	11:27	4	VLC_EGENERIC
+water	11:15	0:0	5	VLC_EGENERIC
+water	12:4	0:0	4	}
+decl	14:4	14:60	2	jobject	javaSurface
+op	14:24	0:0	2	=
+call	14:26	14:59	3	jni_LockAndGetAndroidJavaSurface
+if	15:4	16:18	2	(javaSurface == NULL)
+cond	15:8	15:23	3	javaSurface == NULL
+water	15:8	0:0	4	javaSurface
+op	15:20	0:0	4	==
+water	15:23	0:0	4	NULL
+stmts	16:8	16:18	3	
+goto	16:8	16:18	4	error
+water	16:13	0:0	5	error
+decl	17:4	17:17	2	JNIEnv	*p_env
+call	18:4	18:41	2	jni_attach_thread
+arg	18:22	18:28	3	&p_env
+op	18:22	0:0	4	&
+water	18:23	0:0	4	p_env
+arg	18:30	18:41	3	THREAD_NAME
+water	18:30	0:0	4	THREAD_NAME
+water	18:42	0:0	2	;
+water	19:4	0:0	2	p_sys
+op	19:9	0:0	2	->
+water	19:11	0:0	2	window
+op	19:18	0:0	2	=
+call	19:20	19:74	2	p_sys->native_window.winFromSurface
+arg	19:56	19:61	3	p_env
+water	19:56	0:0	4	p_env
+arg	19:63	19:74	3	javaSurface
+water	19:63	0:0	4	javaSurface
+water	19:75	0:0	2	;
+call	20:4	20:22	2	jni_detach_thread
+water	20:23	0:0	2	;
+call	21:4	21:29	2	jni_UnlockAndroidSurface
+water	21:30	0:0	2	;
+if	22:4	23:18	2	(p_sys -> window == NULL)
+cond	22:8	22:25	3	p_sys -> window == NULL
+water	22:8	0:0	4	p_sys
+op	22:13	0:0	4	->
+water	22:15	0:0	4	window
+op	22:22	0:0	4	==
+water	22:25	0:0	4	NULL
+stmts	23:8	23:18	3	
+goto	23:8	23:18	4	error
+water	23:13	0:0	5	error
+water	24:4	0:0	2	wnd
+op	24:7	0:0	2	->
+water	24:9	0:0	2	handle
+op	24:15	0:0	2	.
+water	24:16	0:0	2	anativewindow
+op	24:30	0:0	2	=
+water	24:32	0:0	2	p_sys
+op	24:37	0:0	2	->
+water	24:39	0:0	2	window
+water	24:45	0:0	2	;
+water	25:4	0:0	2	wnd
+op	25:7	0:0	2	->
+water	25:9	0:0	2	control
+op	25:17	0:0	2	=
+water	25:19	0:0	2	Control
+water	25:26	0:0	2	;
+water	26:4	0:0	2	wnd
+op	26:7	0:0	2	->
+water	26:9	0:0	2	sys
+op	26:13	0:0	2	=
+water	26:15	0:0	2	p_sys
+water	26:20	0:0	2	;
+call	28:4	28:84	2	jni_SetAndroidSurfaceSize
+arg	28:30	28:40	3	cfg->width
+water	28:30	0:0	4	cfg
+op	28:33	0:0	4	->
+water	28:35	0:0	4	width
+arg	28:42	28:53	3	cfg->height
+water	28:42	0:0	4	cfg
+op	28:45	0:0	4	->
+water	28:47	0:0	4	height
+arg	28:55	28:65	3	cfg->width
+water	28:55	0:0	4	cfg
+op	28:58	0:0	4	->
+water	28:60	0:0	4	width
+arg	28:67	28:78	3	cfg->height
+water	28:67	0:0	4	cfg
+op	28:70	0:0	4	->
+water	28:72	0:0	4	height
+arg	28:80	28:81	3	1
+water	28:80	0:0	4	1
+arg	28:83	28:84	3	1
+water	28:83	0:0	4	1
+water	28:85	0:0	2	;
+return	29:4	29:22	2	VLC_SUCCESS
+water	29:11	0:0	3	VLC_SUCCESS
+label	30:0	30:5	2	error :
+call	31:4	31:28	2	dlclose
+arg	31:12	31:28	3	p_sys->p_library
+water	31:12	0:0	4	p_sys
+op	31:17	0:0	4	->
+water	31:19	0:0	4	p_library
+water	31:29	0:0	2	;
+call	32:4	32:14	2	free
+arg	32:9	32:14	3	p_sys
+water	32:9	0:0	4	p_sys
+water	32:15	0:0	2	;
+return	33:4	33:23	2	VLC_EGENERIC
+water	33:11	0:0	3	VLC_EGENERIC

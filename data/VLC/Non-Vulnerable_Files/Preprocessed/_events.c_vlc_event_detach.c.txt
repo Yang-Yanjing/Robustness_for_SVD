@@ -1,0 +1,103 @@
+func	2:0	34:0	0	void	vlc_event_detach
+params	2:21	0:0	1	
+param	2:23	2:48	2	vlc_event_manager_t *	p_em
+param	3:23	3:50	2	vlc_event_type_t	event_type
+param	4:23	4:55	2	vlc_event_callback_t	pf_callback
+param	5:23	5:41	2	void *	p_user_data
+stmnts	0:0	33:15	1	
+decl	7:4	7:49	2	vlc_event_listeners_group_t	*listeners_group
+decl	8:4	8:42	2	struct vlc_event_listener_t	*listener
+call	9:4	9:46	2	vlc_mutex_lock
+arg	9:20	9:46	3	&p_em->event_sending_lock
+op	9:20	0:0	4	&
+water	9:21	0:0	4	p_em
+op	9:25	0:0	4	->
+water	9:27	0:0	4	event_sending_lock
+water	9:47	0:0	2	;
+call	10:4	10:39	2	vlc_mutex_lock
+arg	10:20	10:39	3	&p_em->object_lock
+op	10:20	0:0	4	&
+water	10:21	0:0	4	p_em
+op	10:25	0:0	4	->
+water	10:27	0:0	4	object_lock
+water	10:40	0:0	2	;
+call	11:4	11:59	2	FOREACH_ARRAY
+arg	11:19	11:34	3	listeners_group
+water	11:19	0:0	4	listeners_group
+arg	11:36	11:59	3	p_em->listeners_groups
+water	11:36	0:0	4	p_em
+op	11:40	0:0	4	->
+water	11:42	0:0	4	listeners_groups
+water	12:8	0:0	2	if
+water	12:10	0:0	2	(
+water	12:12	0:0	2	listeners_group
+op	12:27	0:0	2	->
+water	12:29	0:0	2	event_type
+op	12:40	0:0	2	==
+water	12:43	0:0	2	event_type
+water	12:54	0:0	2	)
+water	13:8	0:0	2	{
+call	14:12	14:64	2	FOREACH_ARRAY
+arg	14:27	14:35	3	listener
+water	14:27	0:0	4	listener
+arg	14:37	14:64	3	listeners_group->listeners
+water	14:37	0:0	4	listeners_group
+op	14:52	0:0	4	->
+water	14:54	0:0	4	listeners
+water	15:16	0:0	2	if
+water	15:18	0:0	2	(
+water	15:20	0:0	2	listener
+op	15:28	0:0	2	->
+water	15:30	0:0	2	pf_callback
+op	15:42	0:0	2	==
+water	15:45	0:0	2	pf_callback
+op	15:57	0:0	2	&&
+water	16:20	0:0	2	listener
+op	16:28	0:0	2	->
+water	16:30	0:0	2	p_user_data
+op	16:42	0:0	2	==
+water	16:45	0:0	2	p_user_data
+water	16:57	0:0	2	)
+water	17:16	0:0	2	{
+water	20:20	0:0	2	listeners_group
+op	20:35	0:0	2	->
+water	20:37	0:0	2	b_sublistener_removed
+op	20:59	0:0	2	=
+water	20:61	0:0	2	true
+water	20:65	0:0	2	;
+call	22:20	24:51	2	ARRAY_REMOVE
+arg	22:34	22:60	3	listeners_group->listeners
+water	22:34	0:0	4	listeners_group
+op	22:49	0:0	4	->
+water	22:51	0:0	4	listeners
+arg	23:24	24:51	3	fe_idx
+water	23:24	0:0	4	fe_idx
+water	24:52	0:0	2	;
+call	25:20	25:35	2	free
+arg	25:26	25:35	3	listener
+water	25:26	0:0	4	listener
+water	25:36	0:0	2	;
+call	26:20	26:64	2	vlc_mutex_unlock
+arg	26:38	26:64	3	&p_em->event_sending_lock
+op	26:38	0:0	4	&
+water	26:39	0:0	4	p_em
+op	26:43	0:0	4	->
+water	26:45	0:0	4	event_sending_lock
+water	26:65	0:0	2	;
+call	27:20	27:57	2	vlc_mutex_unlock
+arg	27:38	27:57	3	&p_em->object_lock
+op	27:38	0:0	4	&
+water	27:39	0:0	4	p_em
+op	27:43	0:0	4	->
+water	27:45	0:0	4	object_lock
+water	27:58	0:0	2	;
+water	28:20	0:0	2	return
+water	28:26	0:0	2	;
+water	29:16	0:0	2	}
+call	30:12	30:24	2	FOREACH_END
+water	31:8	0:0	2	}
+call	32:4	32:16	2	FOREACH_END
+call	33:4	33:14	2	assert
+arg	33:12	33:14	3	0
+water	33:12	0:0	4	0
+water	33:15	0:0	2	;

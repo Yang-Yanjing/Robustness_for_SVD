@@ -1,0 +1,152 @@
+func	2:0	43:0	0	static int	ReadHeader
+params	2:21	0:0	1	
+param	2:23	2:43	2	vlc_object_t *	p_this
+param	3:23	3:55	2	vlc_dictionary_t *	p_resp_headers
+param	4:23	4:33	2	int *	done
+stmnts	0:0	42:16	1	
+decl	6:4	6:52	2	sout_stream_t	*p_stream
+op	6:28	0:0	2	=
+water	6:30	0:0	2	(
+water	6:31	0:0	2	sout_stream_t
+op	6:44	0:0	2	*
+water	6:45	0:0	2	)
+water	6:46	0:0	2	p_this
+decl	7:4	7:46	2	sout_stream_sys_t	*p_sys
+op	7:29	0:0	2	=
+water	7:31	0:0	2	p_stream
+op	7:39	0:0	2	->
+water	7:41	0:0	2	p_sys
+decl	8:4	8:29	2	char	*psz_original
+op	8:23	0:0	2	=
+water	8:25	0:0	2	NULL
+decl	9:4	9:25	2	char	*psz_line
+op	9:19	0:0	2	=
+water	9:21	0:0	2	NULL
+decl	10:4	10:19	2	char	*psz_token
+decl	11:4	11:18	2	char	*psz_next
+decl	12:4	12:18	2	char	*psz_name
+decl	13:4	13:19	2	char	*psz_value
+decl	14:4	14:27	2	int	i_err
+op	14:14	0:0	2	=
+water	14:16	0:0	2	VLC_SUCCESS
+water	15:4	0:0	2	psz_line
+op	15:13	0:0	2	=
+call	15:15	15:59	2	net_Gets
+arg	15:25	15:31	3	p_this
+water	15:25	0:0	4	p_this
+arg	15:33	15:52	3	p_sys->i_control_fd
+water	15:33	0:0	4	p_sys
+op	15:38	0:0	4	->
+water	15:40	0:0	4	i_control_fd
+arg	15:54	15:59	3	NULL
+water	15:54	0:0	4	NULL
+water	15:60	0:0	2	;
+if	16:4	20:4	2	(! psz_line)
+cond	16:9	16:10	3	! psz_line
+op	16:9	0:0	4	!
+water	16:10	0:0	4	psz_line
+stmts	17:4	20:4	3	
+water	17:4	0:0	4	{
+water	18:8	0:0	4	i_err
+op	18:14	0:0	4	=
+water	18:16	0:0	4	VLC_EGENERIC
+water	18:28	0:0	4	;
+goto	19:8	19:18	4	error
+water	19:13	0:0	5	error
+water	20:4	0:0	4	}
+if	22:4	23:17	2	(psz_line [ 0 ] == '\0')
+cond	22:9	22:24	3	psz_line [ 0 ] == '\0'
+water	22:9	0:0	4	psz_line
+op	22:17	0:0	4	[
+water	22:18	0:0	4	0
+op	22:19	0:0	4	]
+op	22:21	0:0	4	==
+water	22:24	0:0	4	'\0'
+stmts	23:8	23:17	3	
+op	23:8	0:0	4	*
+water	23:9	0:0	4	done
+op	23:14	0:0	4	=
+water	23:16	0:0	4	1
+water	23:17	0:0	4	;
+else	24:4	38:4	2
+stmts	25:4	38:4	3	
+water	25:4	0:0	4	{
+water	26:8	0:0	4	psz_original
+op	26:21	0:0	4	=
+call	26:23	26:40	4	strdup
+arg	26:31	26:40	5	psz_line
+water	26:31	0:0	6	psz_line
+water	26:41	0:0	4	;
+water	27:8	0:0	4	psz_next
+op	27:17	0:0	4	=
+water	27:19	0:0	4	psz_line
+water	27:27	0:0	4	;
+water	28:8	0:0	4	psz_token
+op	28:18	0:0	4	=
+call	28:20	28:55	4	strsep
+arg	28:28	28:37	5	&psz_next
+op	28:28	0:0	6	&
+water	28:29	0:0	6	psz_next
+arg	28:39	28:55	5	psz_delim_colon
+water	28:39	0:0	6	psz_delim_colon
+water	28:56	0:0	4	;
+if	29:8	34:8	4	(! psz_token || psz_next [ 0 ] != ' ')
+cond	29:13	29:42	5	! psz_token || psz_next [ 0 ] != ' '
+op	29:13	0:0	6	!
+water	29:14	0:0	6	psz_token
+op	29:24	0:0	6	||
+water	29:27	0:0	6	psz_next
+op	29:35	0:0	6	[
+water	29:36	0:0	6	0
+op	29:37	0:0	6	]
+op	29:39	0:0	6	!=
+water	29:42	0:0	6	' '
+stmts	30:8	34:8	5	
+water	30:8	0:0	6	{
+call	31:12	31:72	6	msg_Err
+arg	31:21	31:27	7	p_this
+water	31:21	0:0	8	p_this
+arg	31:29	31:57	7	"Invalid header format (%s)"
+water	31:29	0:0	8	"Invalid header format (%s)"
+arg	31:59	31:72	7	psz_original
+water	31:59	0:0	8	psz_original
+water	31:73	0:0	6	;
+water	32:12	0:0	6	i_err
+op	32:18	0:0	6	=
+water	32:20	0:0	6	VLC_EGENERIC
+water	32:32	0:0	6	;
+goto	33:12	33:22	6	error
+water	33:17	0:0	7	error
+water	34:8	0:0	6	}
+water	35:8	0:0	4	psz_name
+op	35:17	0:0	4	=
+water	35:19	0:0	4	psz_token
+water	35:28	0:0	4	;
+water	36:8	0:0	4	psz_value
+op	36:18	0:0	4	=
+water	36:20	0:0	4	psz_next
+op	36:29	0:0	4	+
+water	36:31	0:0	4	1
+water	36:32	0:0	4	;
+call	37:8	37:77	4	vlc_dictionary_insert
+arg	37:31	37:45	5	p_resp_headers
+water	37:31	0:0	6	p_resp_headers
+arg	37:47	37:55	5	psz_name
+water	37:47	0:0	6	psz_name
+arg	37:57	37:77	5	strdup(psz_value)
+call	37:57	37:75	6	strdup
+arg	37:65	37:75	7	psz_value
+water	37:65	0:0	8	psz_value
+water	37:78	0:0	4	;
+water	38:4	0:0	4	}
+label	39:0	39:5	2	error :
+call	40:4	40:23	2	free
+arg	40:10	40:23	3	psz_original
+water	40:10	0:0	4	psz_original
+water	40:24	0:0	2	;
+call	41:4	41:19	2	free
+arg	41:10	41:19	3	psz_line
+water	41:10	0:0	4	psz_line
+water	41:20	0:0	2	;
+return	42:4	42:16	2	i_err
+water	42:11	0:0	3	i_err

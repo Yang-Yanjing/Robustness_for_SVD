@@ -1,0 +1,131 @@
+func	2:0	31:0	0	static int	get_HTTPLiveMetaPlaylist
+params	2:35	0:0	1	
+param	2:36	2:47	2	stream_t *	s
+param	2:49	2:70	2	vlc_array_t * *	streams
+stmnts	0:0	30:14	1	
+decl	4:4	4:34	2	stream_sys_t	*p_sys
+op	4:24	0:0	2	=
+water	4:26	0:0	2	s
+op	4:27	0:0	2	->
+water	4:29	0:0	2	p_sys
+call	5:4	5:19	2	assert
+arg	5:11	5:19	3	*streams
+op	5:11	0:0	4	*
+water	5:12	0:0	4	streams
+water	5:20	0:0	2	;
+decl	6:4	6:26	2	int	err
+op	6:12	0:0	2	=
+water	6:14	0:0	2	VLC_EGENERIC
+for	8:4	29:4	2	( int i = 0 ;i <vlc_array_count (p_sys -> hls_stream );i ++)
+forinit	0:0	8:18	3	 int i = 0 ;
+decl	8:9	8:18	4	int	i
+op	8:15	0:0	4	=
+water	8:17	0:0	4	0
+cond	8:20	8:57	3	i <vlc_array_count (p_sys -> hls_stream )
+water	8:20	0:0	4	i
+op	8:22	0:0	4	<
+call	8:24	8:57	4	vlc_array_count
+arg	8:40	8:57	5	p_sys->hls_stream
+water	8:40	0:0	6	p_sys
+op	8:45	0:0	6	->
+water	8:47	0:0	6	hls_stream
+forexpr	8:60	8:61	3	i ++
+water	8:60	0:0	4	i
+op	8:61	0:0	4	++
+stmts	9:4	29:4	3	
+water	9:4	0:0	4	{
+decl	10:8	10:31	4	hls_stream_t	*src
+water	10:25	0:0	4	,
+decl	10:8	10:31	4	hls_stream_t	*dst
+water	11:8	0:0	4	src
+op	11:12	0:0	4	=
+call	11:14	11:42	4	hls_Get
+arg	11:22	11:39	5	p_sys->hls_stream
+water	11:22	0:0	6	p_sys
+op	11:27	0:0	6	->
+water	11:29	0:0	6	hls_stream
+arg	11:41	11:42	5	i
+water	11:41	0:0	6	i
+water	11:43	0:0	4	;
+if	12:8	13:31	4	(src == NULL)
+cond	12:12	12:19	5	src == NULL
+water	12:12	0:0	6	src
+op	12:16	0:0	6	==
+water	12:19	0:0	6	NULL
+stmts	13:12	13:31	5	
+return	13:12	13:31	6	VLC_EGENERIC
+water	13:19	0:0	7	VLC_EGENERIC
+water	14:8	0:0	4	dst
+op	14:12	0:0	4	=
+call	14:14	14:33	4	hls_Copy
+arg	14:23	14:26	5	src
+water	14:23	0:0	6	src
+arg	14:28	14:33	5	false
+water	14:28	0:0	6	false
+water	14:34	0:0	4	;
+if	15:8	16:29	4	(dst == NULL)
+cond	15:12	15:19	5	dst == NULL
+water	15:12	0:0	6	dst
+op	15:16	0:0	6	==
+water	15:19	0:0	6	NULL
+stmts	16:12	16:29	5	
+return	16:12	16:29	6	VLC_ENOMEM
+water	16:19	0:0	7	VLC_ENOMEM
+call	17:8	17:38	4	vlc_array_append
+arg	17:25	17:33	5	*streams
+op	17:25	0:0	6	*
+water	17:26	0:0	6	streams
+arg	17:35	17:38	5	dst
+water	17:35	0:0	6	dst
+water	17:39	0:0	4	;
+decl	19:8	19:27	4	uint8_t	*buf
+op	19:21	0:0	4	=
+water	19:23	0:0	4	NULL
+decl	20:8	20:59	4	ssize_t	len
+op	20:20	0:0	4	=
+call	20:22	20:58	5	read_M3U8_from_url
+arg	20:41	20:42	6	s
+water	20:41	0:0	7	s
+arg	20:44	20:52	6	dst->url
+water	20:44	0:0	7	dst
+op	20:47	0:0	7	->
+water	20:49	0:0	7	url
+arg	20:54	20:58	6	&buf
+op	20:54	0:0	7	&
+water	20:55	0:0	7	buf
+if	21:8	22:30	4	(len < 0)
+cond	21:12	21:18	5	len < 0
+water	21:12	0:0	6	len
+op	21:16	0:0	6	<
+water	21:18	0:0	6	0
+stmts	22:12	22:30	5	
+water	22:12	0:0	6	err
+op	22:16	0:0	6	=
+water	22:18	0:0	6	VLC_EGENERIC
+water	22:30	0:0	6	;
+else	23:8	28:8	4
+stmts	24:8	28:8	5	
+water	24:8	0:0	6	{
+water	26:12	0:0	6	err
+op	26:16	0:0	6	=
+call	26:18	26:57	6	parse_M3U8
+arg	26:29	26:30	7	s
+water	26:29	0:0	8	s
+arg	26:32	26:40	7	*streams
+op	26:32	0:0	8	*
+water	26:33	0:0	8	streams
+arg	26:42	26:45	7	buf
+water	26:42	0:0	8	buf
+arg	26:47	26:50	7	len
+water	26:47	0:0	8	len
+arg	26:52	26:57	7	false
+water	26:52	0:0	8	false
+water	26:58	0:0	6	;
+call	27:12	27:20	6	free
+arg	27:17	27:20	7	buf
+water	27:17	0:0	8	buf
+water	27:21	0:0	6	;
+water	28:8	0:0	6	}
+water	29:4	0:0	4	}
+return	30:4	30:14	2	err
+water	30:11	0:0	3	err

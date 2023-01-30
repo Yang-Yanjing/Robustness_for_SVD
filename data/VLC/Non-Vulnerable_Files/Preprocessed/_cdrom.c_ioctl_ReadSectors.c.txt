@@ -1,0 +1,924 @@
+func	2:0	183:0	0	int	ioctl_ReadSectors
+params	2:21	0:0	1	
+param	2:23	2:43	2	vlc_object_t *	p_this
+param	2:45	2:69	2	const vcddev_t *	p_vcddev
+param	3:23	3:35	2	int	i_sector
+param	3:37	3:54	2	uint8_t *	p_buffer
+param	3:56	3:64	2	int	i_nb
+param	3:66	3:77	2	int	i_type
+stmnts	0:0	182:16	1	
+decl	5:4	5:20	2	uint8_t	*p_block
+decl	6:4	6:9	2	int	i
+if	7:4	8:50	2	(i_type == VCD_TYPE)
+cond	7:8	7:18	3	i_type == VCD_TYPE
+water	7:8	0:0	4	i_type
+op	7:15	0:0	4	==
+water	7:18	0:0	4	VCD_TYPE
+stmts	8:8	8:50	3	
+water	8:8	0:0	4	p_block
+op	8:16	0:0	4	=
+call	8:18	8:49	4	malloc
+arg	8:26	8:49	5	VCD_SECTOR_SIZE*i_nb
+water	8:26	0:0	6	VCD_SECTOR_SIZE
+op	8:42	0:0	6	*
+water	8:44	0:0	6	i_nb
+water	8:50	0:0	4	;
+else	9:4	10:26	2
+stmts	10:8	10:26	3	
+water	10:8	0:0	4	p_block
+op	10:16	0:0	4	=
+water	10:18	0:0	4	p_buffer
+water	10:26	0:0	4	;
+if	11:4	28:4	2	(p_vcddev -> i_vcdimage_handle != - 1)
+cond	11:8	11:40	3	p_vcddev -> i_vcdimage_handle != - 1
+water	11:8	0:0	4	p_vcddev
+op	11:16	0:0	4	->
+water	11:18	0:0	4	i_vcdimage_handle
+op	11:36	0:0	4	!=
+op	11:39	0:0	4	-
+water	11:40	0:0	4	1
+stmts	12:4	28:4	3	
+water	12:4	0:0	4	{
+if	16:8	21:8	4	(lseek (p_vcddev -> i_vcdimage_handle ,i_sector * VCD_SECTOR_SIZE ,SEEK_SET ) == - 1)
+cond	16:12	17:34	5	lseek (p_vcddev -> i_vcdimage_handle ,i_sector * VCD_SECTOR_SIZE ,SEEK_SET ) == - 1
+call	16:12	17:28	6	lseek
+arg	16:19	16:46	7	p_vcddev->i_vcdimage_handle
+water	16:19	0:0	8	p_vcddev
+op	16:27	0:0	8	->
+water	16:29	0:0	8	i_vcdimage_handle
+arg	16:48	16:74	7	i_sector*VCD_SECTOR_SIZE
+water	16:48	0:0	8	i_sector
+op	16:57	0:0	8	*
+water	16:59	0:0	8	VCD_SECTOR_SIZE
+arg	17:19	17:28	7	SEEK_SET
+water	17:19	0:0	8	SEEK_SET
+op	17:30	0:0	6	==
+op	17:33	0:0	6	-
+water	17:34	0:0	6	1
+stmts	18:8	21:8	5	
+water	18:8	0:0	6	{
+call	19:12	19:70	6	msg_Err
+arg	19:21	19:27	7	p_this
+water	19:21	0:0	8	p_this
+arg	19:29	19:59	7	"Could not lseek to sector %d"
+water	19:29	0:0	8	"Could not lseek to sector %d"
+arg	19:61	19:70	7	i_sector
+water	19:61	0:0	8	i_sector
+water	19:71	0:0	6	;
+goto	20:12	20:22	6	error
+water	20:17	0:0	7	error
+water	21:8	0:0	6	}
+if	22:8	27:8	4	(read (p_vcddev -> i_vcdimage_handle ,p_block ,VCD_SECTOR_SIZE * i_nb ) == - 1)
+cond	22:12	23:16	5	read (p_vcddev -> i_vcdimage_handle ,p_block ,VCD_SECTOR_SIZE * i_nb ) == - 1
+call	22:12	22:78	6	read
+arg	22:18	22:45	7	p_vcddev->i_vcdimage_handle
+water	22:18	0:0	8	p_vcddev
+op	22:26	0:0	8	->
+water	22:28	0:0	8	i_vcdimage_handle
+arg	22:47	22:54	7	p_block
+water	22:47	0:0	8	p_block
+arg	22:56	22:78	7	VCD_SECTOR_SIZE*i_nb
+water	22:56	0:0	8	VCD_SECTOR_SIZE
+op	22:72	0:0	8	*
+water	22:74	0:0	8	i_nb
+op	23:12	0:0	6	==
+op	23:15	0:0	6	-
+water	23:16	0:0	6	1
+stmts	24:8	27:8	5	
+water	24:8	0:0	6	{
+call	25:12	25:66	6	msg_Err
+arg	25:21	25:27	7	p_this
+water	25:21	0:0	8	p_this
+arg	25:29	25:55	7	"Could not read sector %d"
+water	25:29	0:0	8	"Could not read sector %d"
+arg	25:57	25:66	7	i_sector
+water	25:57	0:0	8	i_sector
+water	25:67	0:0	6	;
+goto	26:12	26:22	6	error
+water	26:17	0:0	7	error
+water	27:8	0:0	6	}
+water	28:4	0:0	4	}
+else	29:4	165:4	2
+stmts	30:4	165:4	3	
+water	30:4	0:0	4	{
+decl	35:8	35:28	4	dk_cd_read_t	cd_read
+call	36:8	36:45	4	memset
+arg	36:16	36:24	5	&cd_read
+op	36:16	0:0	6	&
+water	36:17	0:0	6	cd_read
+arg	36:26	36:27	5	0
+water	36:26	0:0	6	0
+arg	36:29	36:45	5	sizeof(cd_read)
+op	36:29	0:0	6	sizeof
+water	36:35	0:0	6	(
+water	36:36	0:0	6	cd_read
+water	36:43	0:0	6	)
+water	36:46	0:0	4	;
+water	37:8	0:0	4	cd_read
+op	37:15	0:0	4	.
+water	37:16	0:0	4	offset
+op	37:23	0:0	4	=
+water	37:25	0:0	4	i_sector
+op	37:34	0:0	4	*
+water	37:36	0:0	4	VCD_SECTOR_SIZE
+water	37:51	0:0	4	;
+water	38:8	0:0	4	cd_read
+op	38:15	0:0	4	.
+water	38:16	0:0	4	sectorArea
+op	38:27	0:0	4	=
+water	38:29	0:0	4	kCDSectorAreaSync
+op	38:47	0:0	4	|
+water	38:49	0:0	4	kCDSectorAreaHeader
+op	38:69	0:0	4	|
+water	39:29	0:0	4	kCDSectorAreaSubHeader
+op	39:52	0:0	4	|
+water	39:54	0:0	4	kCDSectorAreaUser
+op	39:72	0:0	4	|
+water	40:29	0:0	4	kCDSectorAreaAuxiliary
+water	40:51	0:0	4	;
+water	41:8	0:0	4	cd_read
+op	41:15	0:0	4	.
+water	41:16	0:0	4	sectorType
+op	41:27	0:0	4	=
+water	41:29	0:0	4	kCDSectorTypeUnknown
+water	41:49	0:0	4	;
+water	42:8	0:0	4	cd_read
+op	42:15	0:0	4	.
+water	42:16	0:0	4	buffer
+op	42:23	0:0	4	=
+water	42:25	0:0	4	p_block
+water	42:32	0:0	4	;
+water	43:8	0:0	4	cd_read
+op	43:15	0:0	4	.
+water	43:16	0:0	4	bufferLength
+op	43:29	0:0	4	=
+water	43:31	0:0	4	VCD_SECTOR_SIZE
+op	43:47	0:0	4	*
+water	43:49	0:0	4	i_nb
+water	43:53	0:0	4	;
+if	44:8	48:8	4	(ioctl (p_vcddev -> i_device_handle ,DKIOCCDREAD ,& cd_read ) == - 1)
+cond	44:12	44:74	5	ioctl (p_vcddev -> i_device_handle ,DKIOCCDREAD ,& cd_read ) == - 1
+call	44:12	44:68	6	ioctl
+arg	44:19	44:44	7	p_vcddev->i_device_handle
+water	44:19	0:0	8	p_vcddev
+op	44:27	0:0	8	->
+water	44:29	0:0	8	i_device_handle
+arg	44:46	44:57	7	DKIOCCDREAD
+water	44:46	0:0	8	DKIOCCDREAD
+arg	44:59	44:68	7	&cd_read
+op	44:59	0:0	8	&
+water	44:60	0:0	8	cd_read
+op	44:70	0:0	6	==
+op	44:73	0:0	6	-
+water	44:74	0:0	6	1
+stmts	45:8	48:8	5	
+water	45:8	0:0	6	{
+call	46:12	46:65	6	msg_Err
+arg	46:21	46:27	7	p_this
+water	46:21	0:0	8	p_this
+arg	46:29	46:54	7	"could not read block %d"
+water	46:29	0:0	8	"could not read block %d"
+arg	46:56	46:65	7	i_sector
+water	46:56	0:0	8	i_sector
+water	46:66	0:0	6	;
+goto	47:12	47:22	6	error
+water	47:17	0:0	7	error
+water	48:8	0:0	6	}
+decl	50:8	50:29	4	DWORD	dwBytesReturned
+decl	51:8	51:31	4	RAW_READ_INFO	cdrom_raw
+water	53:8	0:0	4	cdrom_raw
+op	53:17	0:0	4	.
+water	53:18	0:0	4	DiskOffset
+op	53:28	0:0	4	.
+water	53:29	0:0	4	QuadPart
+op	53:38	0:0	4	=
+water	53:40	0:0	4	CD_SECTOR_SIZE
+op	53:55	0:0	4	*
+water	53:57	0:0	4	i_sector
+water	53:65	0:0	4	;
+water	54:8	0:0	4	cdrom_raw
+op	54:17	0:0	4	.
+water	54:18	0:0	4	SectorCount
+op	54:30	0:0	4	=
+water	54:32	0:0	4	i_nb
+water	54:36	0:0	4	;
+water	55:8	0:0	4	cdrom_raw
+op	55:17	0:0	4	.
+water	55:18	0:0	4	TrackMode
+op	55:28	0:0	4	=
+water	55:31	0:0	4	i_type
+op	55:38	0:0	4	==
+water	55:41	0:0	4	VCD_TYPE
+water	55:50	0:0	4	?
+water	55:52	0:0	4	XAForm2
+water	55:60	0:0	4	:
+water	55:62	0:0	4	CDDA
+water	55:66	0:0	4	;
+if	56:8	73:8	4	(DeviceIoControl (p_vcddev -> h_device_handle ,IOCTL_CDROM_RAW_READ ,& cdrom_raw ,sizeof ( RAW_READ_INFO ) ,p_block ,VCD_SECTOR_SIZE * i_nb ,& dwBytesReturned ,NULL ) == 0)
+cond	56:12	59:39	5	DeviceIoControl (p_vcddev -> h_device_handle ,IOCTL_CDROM_RAW_READ ,& cdrom_raw ,sizeof ( RAW_READ_INFO ) ,p_block ,VCD_SECTOR_SIZE * i_nb ,& dwBytesReturned ,NULL ) == 0
+call	56:12	59:34	6	DeviceIoControl
+arg	56:29	56:54	7	p_vcddev->h_device_handle
+water	56:29	0:0	8	p_vcddev
+op	56:37	0:0	8	->
+water	56:39	0:0	8	h_device_handle
+arg	56:56	56:76	7	IOCTL_CDROM_RAW_READ
+water	56:56	0:0	8	IOCTL_CDROM_RAW_READ
+arg	57:29	57:39	7	&cdrom_raw
+op	57:29	0:0	8	&
+water	57:30	0:0	8	cdrom_raw
+arg	57:41	57:62	7	sizeof(RAW_READ_INFO)
+op	57:41	0:0	8	sizeof
+water	57:47	0:0	8	(
+water	57:48	0:0	8	RAW_READ_INFO
+water	57:61	0:0	8	)
+arg	57:64	57:71	7	p_block
+water	57:64	0:0	8	p_block
+arg	58:29	58:51	7	VCD_SECTOR_SIZE*i_nb
+water	58:29	0:0	8	VCD_SECTOR_SIZE
+op	58:45	0:0	8	*
+water	58:47	0:0	8	i_nb
+arg	58:53	58:69	7	&dwBytesReturned
+op	58:53	0:0	8	&
+water	58:54	0:0	8	dwBytesReturned
+arg	59:29	59:34	7	NULL
+water	59:29	0:0	8	NULL
+op	59:36	0:0	6	==
+water	59:39	0:0	6	0
+stmts	60:8	73:8	5	
+water	60:8	0:0	6	{
+if	61:12	71:12	6	(i_type == VCD_TYPE)
+cond	61:16	61:26	7	i_type == VCD_TYPE
+water	61:16	0:0	8	i_type
+op	61:23	0:0	8	==
+water	61:26	0:0	8	VCD_TYPE
+stmts	62:12	71:12	7	
+water	62:12	0:0	8	{
+water	64:16	0:0	8	cdrom_raw
+op	64:25	0:0	8	.
+water	64:26	0:0	8	TrackMode
+op	64:36	0:0	8	=
+water	64:38	0:0	8	YellowMode2
+water	64:49	0:0	8	;
+if	65:16	70:30	8	(DeviceIoControl (p_vcddev -> h_device_handle ,IOCTL_CDROM_RAW_READ ,& cdrom_raw ,sizeof ( RAW_READ_INFO ) ,p_block ,VCD_SECTOR_SIZE * i_nb ,& dwBytesReturned ,NULL ) == 0)
+cond	65:20	69:47	9	DeviceIoControl (p_vcddev -> h_device_handle ,IOCTL_CDROM_RAW_READ ,& cdrom_raw ,sizeof ( RAW_READ_INFO ) ,p_block ,VCD_SECTOR_SIZE * i_nb ,& dwBytesReturned ,NULL ) == 0
+call	65:20	69:42	10	DeviceIoControl
+arg	65:37	65:62	11	p_vcddev->h_device_handle
+water	65:37	0:0	12	p_vcddev
+op	65:45	0:0	12	->
+water	65:47	0:0	12	h_device_handle
+arg	66:37	66:57	11	IOCTL_CDROM_RAW_READ
+water	66:37	0:0	12	IOCTL_CDROM_RAW_READ
+arg	66:59	66:69	11	&cdrom_raw
+op	66:59	0:0	12	&
+water	66:60	0:0	12	cdrom_raw
+arg	67:37	67:58	11	sizeof(RAW_READ_INFO)
+op	67:37	0:0	12	sizeof
+water	67:43	0:0	12	(
+water	67:44	0:0	12	RAW_READ_INFO
+water	67:57	0:0	12	)
+arg	67:60	67:67	11	p_block
+water	67:60	0:0	12	p_block
+arg	68:37	68:59	11	VCD_SECTOR_SIZE*i_nb
+water	68:37	0:0	12	VCD_SECTOR_SIZE
+op	68:53	0:0	12	*
+water	68:55	0:0	12	i_nb
+arg	68:61	68:77	11	&dwBytesReturned
+op	68:61	0:0	12	&
+water	68:62	0:0	12	dwBytesReturned
+arg	69:37	69:42	11	NULL
+water	69:37	0:0	12	NULL
+op	69:44	0:0	10	==
+water	69:47	0:0	10	0
+stmts	70:20	70:30	9	
+goto	70:20	70:30	10	error
+water	70:25	0:0	11	error
+water	71:12	0:0	8	}
+else	72:12	72:26	6
+stmts	72:17	72:26	7	
+return	72:17	72:26	8	-1
+op	72:24	0:0	9	-
+water	72:25	0:0	9	1
+water	73:8	0:0	6	}
+decl	75:8	75:60	4	cdrom_readlong_t	readlong
+op	75:34	0:0	4	=
+water	75:36	0:0	4	{
+water	75:37	0:0	4	{
+water	75:38	0:0	4	'C'
+water	75:41	0:0	4	,
+water	75:43	0:0	4	'D'
+water	75:46	0:0	4	,
+water	75:48	0:0	4	'0'
+water	75:51	0:0	4	,
+water	75:53	0:0	4	'1'
+water	75:56	0:0	4	}
+water	75:57	0:0	4	,
+water	75:59	0:0	4	}
+decl	76:8	76:23	4	ULONG	param_len
+decl	77:8	77:22	4	ULONG	data_len
+decl	78:8	78:16	4	ULONG	rc
+water	79:8	0:0	4	readlong
+op	79:16	0:0	4	.
+water	79:17	0:0	4	addr_mode
+op	79:27	0:0	4	=
+water	79:29	0:0	4	0
+water	79:30	0:0	4	;
+water	80:8	0:0	4	readlong
+op	80:16	0:0	4	.
+water	80:17	0:0	4	sectors
+op	80:27	0:0	4	=
+water	80:29	0:0	4	i_nb
+water	80:33	0:0	4	;
+water	81:8	0:0	4	readlong
+op	81:16	0:0	4	.
+water	81:17	0:0	4	start
+op	81:27	0:0	4	=
+water	81:29	0:0	4	i_sector
+water	81:37	0:0	4	;
+water	82:8	0:0	4	rc
+op	82:11	0:0	4	=
+call	82:13	84:69	4	DosDevIOCtl
+arg	82:26	82:39	5	p_vcddev->hcd
+water	82:26	0:0	6	p_vcddev
+op	82:34	0:0	6	->
+water	82:36	0:0	6	hcd
+arg	82:41	82:56	5	IOCTL_CDROMDISK
+water	82:41	0:0	6	IOCTL_CDROMDISK
+arg	82:58	82:76	5	CDROMDISK_READLONG
+water	82:58	0:0	6	CDROMDISK_READLONG
+arg	83:26	83:35	5	&readlong
+op	83:26	0:0	6	&
+water	83:27	0:0	6	readlong
+arg	83:37	83:55	5	sizeof(readlong)
+op	83:37	0:0	6	sizeof
+water	83:43	0:0	6	(
+water	83:45	0:0	6	readlong
+water	83:54	0:0	6	)
+arg	83:57	83:67	5	&param_len
+op	83:57	0:0	6	&
+water	83:58	0:0	6	param_len
+arg	84:26	84:33	5	p_block
+water	84:26	0:0	6	p_block
+arg	84:35	84:57	5	VCD_SECTOR_SIZE*i_nb
+water	84:35	0:0	6	VCD_SECTOR_SIZE
+op	84:51	0:0	6	*
+water	84:53	0:0	6	i_nb
+arg	84:59	84:69	5	&data_len
+op	84:59	0:0	6	&
+water	84:60	0:0	6	data_len
+water	84:70	0:0	4	;
+if	85:8	89:8	4	(rc)
+cond	85:12	85:12	5	rc
+water	85:12	0:0	6	rc
+stmts	86:8	89:8	5	
+water	86:8	0:0	6	{
+call	87:12	87:65	6	msg_Err
+arg	87:21	87:27	7	p_this
+water	87:21	0:0	8	p_this
+arg	87:29	87:54	7	"could not read block %d"
+water	87:29	0:0	8	"could not read block %d"
+arg	87:56	87:65	7	i_sector
+water	87:56	0:0	8	i_sector
+water	87:66	0:0	6	;
+goto	88:12	88:22	6	error
+water	88:17	0:0	7	error
+water	89:8	0:0	6	}
+decl	91:8	91:26	4	struct scsireq	sc
+decl	92:8	92:17	4	int	i_ret
+call	93:8	93:35	4	memset
+arg	93:16	93:19	5	&sc
+op	93:16	0:0	6	&
+water	93:17	0:0	6	sc
+arg	93:21	93:22	5	0
+water	93:21	0:0	6	0
+arg	93:24	93:35	5	sizeof(sc)
+op	93:24	0:0	6	sizeof
+water	93:30	0:0	6	(
+water	93:31	0:0	6	sc
+water	93:33	0:0	6	)
+water	93:36	0:0	4	;
+water	94:8	0:0	4	sc
+op	94:10	0:0	4	.
+water	94:11	0:0	4	cmd
+op	94:14	0:0	4	[
+water	94:15	0:0	4	0
+op	94:16	0:0	4	]
+op	94:18	0:0	4	=
+water	94:20	0:0	4	0
+water	94:21	0:0	4	xBE
+water	94:24	0:0	4	;
+water	95:8	0:0	4	sc
+op	95:10	0:0	4	.
+water	95:11	0:0	4	cmd
+op	95:14	0:0	4	[
+water	95:15	0:0	4	1
+op	95:16	0:0	4	]
+op	95:18	0:0	4	=
+water	95:20	0:0	4	i_type
+op	95:27	0:0	4	==
+water	95:30	0:0	4	VCD_TYPE
+water	95:39	0:0	4	?
+water	95:41	0:0	4	SECTOR_TYPE_MODE2_FORM2
+water	95:64	0:0	4	:
+water	96:41	0:0	4	SECTOR_TYPE_CDDA
+water	96:57	0:0	4	;
+water	97:8	0:0	4	sc
+op	97:10	0:0	4	.
+water	97:11	0:0	4	cmd
+op	97:14	0:0	4	[
+water	97:15	0:0	4	2
+op	97:16	0:0	4	]
+op	97:18	0:0	4	=
+water	97:20	0:0	4	(
+water	97:21	0:0	4	i_sector
+op	97:30	0:0	4	>>
+water	97:33	0:0	4	24
+water	97:35	0:0	4	)
+op	97:37	0:0	4	&
+water	97:39	0:0	4	0
+water	97:40	0:0	4	xff
+water	97:43	0:0	4	;
+water	98:8	0:0	4	sc
+op	98:10	0:0	4	.
+water	98:11	0:0	4	cmd
+op	98:14	0:0	4	[
+water	98:15	0:0	4	3
+op	98:16	0:0	4	]
+op	98:18	0:0	4	=
+water	98:20	0:0	4	(
+water	98:21	0:0	4	i_sector
+op	98:30	0:0	4	>>
+water	98:33	0:0	4	16
+water	98:35	0:0	4	)
+op	98:37	0:0	4	&
+water	98:39	0:0	4	0
+water	98:40	0:0	4	xff
+water	98:43	0:0	4	;
+water	99:8	0:0	4	sc
+op	99:10	0:0	4	.
+water	99:11	0:0	4	cmd
+op	99:14	0:0	4	[
+water	99:15	0:0	4	4
+op	99:16	0:0	4	]
+op	99:18	0:0	4	=
+water	99:20	0:0	4	(
+water	99:21	0:0	4	i_sector
+op	99:30	0:0	4	>>
+water	99:34	0:0	4	8
+water	99:35	0:0	4	)
+op	99:37	0:0	4	&
+water	99:39	0:0	4	0
+water	99:40	0:0	4	xff
+water	99:43	0:0	4	;
+water	100:8	0:0	4	sc
+op	100:10	0:0	4	.
+water	100:11	0:0	4	cmd
+op	100:14	0:0	4	[
+water	100:15	0:0	4	5
+op	100:16	0:0	4	]
+op	100:18	0:0	4	=
+water	100:20	0:0	4	(
+water	100:21	0:0	4	i_sector
+op	100:30	0:0	4	>>
+water	100:34	0:0	4	0
+water	100:35	0:0	4	)
+op	100:37	0:0	4	&
+water	100:39	0:0	4	0
+water	100:40	0:0	4	xff
+water	100:43	0:0	4	;
+water	101:8	0:0	4	sc
+op	101:10	0:0	4	.
+water	101:11	0:0	4	cmd
+op	101:14	0:0	4	[
+water	101:15	0:0	4	6
+op	101:16	0:0	4	]
+op	101:18	0:0	4	=
+water	101:20	0:0	4	(
+water	101:21	0:0	4	i_nb
+op	101:26	0:0	4	>>
+water	101:29	0:0	4	16
+water	101:31	0:0	4	)
+op	101:33	0:0	4	&
+water	101:35	0:0	4	0
+water	101:36	0:0	4	xff
+water	101:39	0:0	4	;
+water	102:8	0:0	4	sc
+op	102:10	0:0	4	.
+water	102:11	0:0	4	cmd
+op	102:14	0:0	4	[
+water	102:15	0:0	4	7
+op	102:16	0:0	4	]
+op	102:18	0:0	4	=
+water	102:20	0:0	4	(
+water	102:21	0:0	4	i_nb
+op	102:26	0:0	4	>>
+water	102:30	0:0	4	8
+water	102:31	0:0	4	)
+op	102:33	0:0	4	&
+water	102:35	0:0	4	0
+water	102:36	0:0	4	xff
+water	102:39	0:0	4	;
+water	103:8	0:0	4	sc
+op	103:10	0:0	4	.
+water	103:11	0:0	4	cmd
+op	103:14	0:0	4	[
+water	103:15	0:0	4	8
+op	103:16	0:0	4	]
+op	103:18	0:0	4	=
+water	103:20	0:0	4	(
+water	103:21	0:0	4	i_nb
+water	103:31	0:0	4	)
+op	103:33	0:0	4	&
+water	103:35	0:0	4	0
+water	103:36	0:0	4	xff
+water	103:39	0:0	4	;
+water	104:8	0:0	4	sc
+op	104:10	0:0	4	.
+water	104:11	0:0	4	cmd
+op	104:14	0:0	4	[
+water	104:15	0:0	4	9
+op	104:16	0:0	4	]
+op	104:18	0:0	4	=
+water	104:20	0:0	4	i_type
+op	104:27	0:0	4	==
+water	104:30	0:0	4	VCD_TYPE
+water	104:39	0:0	4	?
+water	104:41	0:0	4	READ_CD_RAW_MODE2
+water	104:59	0:0	4	:
+water	104:61	0:0	4	READ_CD_USERDATA
+water	104:77	0:0	4	;
+water	105:8	0:0	4	sc
+op	105:10	0:0	4	.
+water	105:11	0:0	4	cmd
+op	105:14	0:0	4	[
+water	105:15	0:0	4	10
+op	105:17	0:0	4	]
+op	105:19	0:0	4	=
+water	105:21	0:0	4	0
+water	105:22	0:0	4	;
+water	106:8	0:0	4	sc
+op	106:10	0:0	4	.
+water	106:11	0:0	4	cmdlen
+op	106:18	0:0	4	=
+water	106:20	0:0	4	12
+water	106:22	0:0	4	;
+water	107:8	0:0	4	sc
+op	107:10	0:0	4	.
+water	107:11	0:0	4	databuf
+op	107:19	0:0	4	=
+water	107:21	0:0	4	(
+water	107:22	0:0	4	caddr_t
+water	107:29	0:0	4	)
+water	107:30	0:0	4	p_block
+water	107:37	0:0	4	;
+water	108:8	0:0	4	sc
+op	108:10	0:0	4	.
+water	108:11	0:0	4	datalen
+op	108:19	0:0	4	=
+water	108:21	0:0	4	VCD_SECTOR_SIZE
+op	108:37	0:0	4	*
+water	108:39	0:0	4	i_nb
+water	108:43	0:0	4	;
+water	109:8	0:0	4	sc
+op	109:10	0:0	4	.
+water	109:11	0:0	4	senselen
+op	109:20	0:0	4	=
+op	109:22	0:0	4	sizeof
+water	109:28	0:0	4	(
+water	109:30	0:0	4	sc
+op	109:32	0:0	4	.
+water	109:33	0:0	4	sense
+water	109:39	0:0	4	)
+water	109:40	0:0	4	;
+water	110:8	0:0	4	sc
+op	110:10	0:0	4	.
+water	110:11	0:0	4	flags
+op	110:17	0:0	4	=
+water	110:19	0:0	4	SCCMD_READ
+water	110:29	0:0	4	;
+water	111:8	0:0	4	sc
+op	111:10	0:0	4	.
+water	111:11	0:0	4	timeout
+op	111:19	0:0	4	=
+water	111:21	0:0	4	10000
+water	111:26	0:0	4	;
+water	112:8	0:0	4	i_ret
+op	112:14	0:0	4	=
+call	112:16	112:68	4	ioctl
+arg	112:23	112:48	5	p_vcddev->i_device_handle
+water	112:23	0:0	6	p_vcddev
+op	112:31	0:0	6	->
+water	112:33	0:0	6	i_device_handle
+arg	112:50	112:62	5	SCIOCCOMMAND
+water	112:50	0:0	6	SCIOCCOMMAND
+arg	112:64	112:68	5	&sc
+op	112:64	0:0	6	&
+water	112:65	0:0	6	sc
+water	112:69	0:0	4	;
+if	113:8	117:8	4	(i_ret == - 1)
+cond	113:12	113:22	5	i_ret == - 1
+water	113:12	0:0	6	i_ret
+op	113:18	0:0	6	==
+op	113:21	0:0	6	-
+water	113:22	0:0	6	1
+stmts	114:8	117:8	5	
+water	114:8	0:0	6	{
+call	115:12	115:51	6	msg_Err
+arg	115:21	115:27	7	p_this
+water	115:21	0:0	8	p_this
+arg	115:29	115:51	7	"SCIOCCOMMAND failed"
+water	115:29	0:0	8	"SCIOCCOMMAND failed"
+water	115:52	0:0	6	;
+goto	116:12	116:22	6	error
+water	116:17	0:0	7	error
+water	117:8	0:0	6	}
+if	118:8	123:8	4	(sc . retsts || sc . error)
+cond	118:12	118:28	5	sc . retsts || sc . error
+water	118:12	0:0	6	sc
+op	118:14	0:0	6	.
+water	118:15	0:0	6	retsts
+op	118:22	0:0	6	||
+water	118:25	0:0	6	sc
+op	118:27	0:0	6	.
+water	118:28	0:0	6	error
+stmts	119:8	123:8	5	
+water	119:8	0:0	6	{
+call	120:12	121:49	6	msg_Err
+arg	120:21	120:27	7	p_this
+water	120:21	0:0	8	p_this
+arg	120:29	120:70	7	"SCSI command failed: status %d error %d"
+water	120:29	0:0	8	"SCSI command failed: status %d error %d"
+arg	121:29	121:38	7	sc.retsts
+water	121:29	0:0	8	sc
+op	121:31	0:0	8	.
+water	121:32	0:0	8	retsts
+arg	121:40	121:49	7	sc.error
+water	121:40	0:0	8	sc
+op	121:42	0:0	8	.
+water	121:43	0:0	8	error
+water	121:50	0:0	6	;
+goto	122:12	122:22	6	error
+water	122:17	0:0	7	error
+water	123:8	0:0	6	}
+decl	125:8	125:36	4	int	i_size
+op	125:19	0:0	4	=
+water	125:21	0:0	4	VCD_SECTOR_SIZE
+if	126:8	131:8	4	(ioctl (p_vcddev -> i_device_handle ,CDRIOCSETBLOCKSIZE ,& i_size ) == - 1)
+cond	126:12	127:16	5	ioctl (p_vcddev -> i_device_handle ,CDRIOCSETBLOCKSIZE ,& i_size ) == - 1
+call	126:12	126:74	6	ioctl
+arg	126:19	126:44	7	p_vcddev->i_device_handle
+water	126:19	0:0	8	p_vcddev
+op	126:27	0:0	8	->
+water	126:29	0:0	8	i_device_handle
+arg	126:46	126:64	7	CDRIOCSETBLOCKSIZE
+water	126:46	0:0	8	CDRIOCSETBLOCKSIZE
+arg	126:66	126:74	7	&i_size
+op	126:66	0:0	8	&
+water	126:67	0:0	8	i_size
+op	127:12	0:0	6	==
+op	127:15	0:0	6	-
+water	127:16	0:0	6	1
+stmts	128:8	131:8	5	
+water	128:8	0:0	6	{
+call	129:12	129:56	6	msg_Err
+arg	129:21	129:27	7	p_this
+water	129:21	0:0	8	p_this
+arg	129:29	129:56	7	"Could not set block size"
+water	129:29	0:0	8	"Could not set block size"
+water	129:57	0:0	6	;
+goto	130:12	130:22	6	error
+water	130:17	0:0	7	error
+water	131:8	0:0	6	}
+if	132:8	137:8	4	(lseek (p_vcddev -> i_device_handle ,i_sector * VCD_SECTOR_SIZE ,SEEK_SET ) == - 1)
+cond	132:12	133:62	5	lseek (p_vcddev -> i_device_handle ,i_sector * VCD_SECTOR_SIZE ,SEEK_SET ) == - 1
+call	132:12	133:56	6	lseek
+arg	132:19	132:44	7	p_vcddev->i_device_handle
+water	132:19	0:0	8	p_vcddev
+op	132:27	0:0	8	->
+water	132:29	0:0	8	i_device_handle
+arg	133:19	133:45	7	i_sector*VCD_SECTOR_SIZE
+water	133:19	0:0	8	i_sector
+op	133:28	0:0	8	*
+water	133:30	0:0	8	VCD_SECTOR_SIZE
+arg	133:47	133:56	7	SEEK_SET
+water	133:47	0:0	8	SEEK_SET
+op	133:58	0:0	6	==
+op	133:61	0:0	6	-
+water	133:62	0:0	6	1
+stmts	134:8	137:8	5	
+water	134:8	0:0	6	{
+call	135:12	135:70	6	msg_Err
+arg	135:21	135:27	7	p_this
+water	135:21	0:0	8	p_this
+arg	135:29	135:59	7	"Could not lseek to sector %d"
+water	135:29	0:0	8	"Could not lseek to sector %d"
+arg	135:61	135:70	7	i_sector
+water	135:61	0:0	8	i_sector
+water	135:71	0:0	6	;
+goto	136:12	136:22	6	error
+water	136:17	0:0	7	error
+water	137:8	0:0	6	}
+if	138:8	143:8	4	(read (p_vcddev -> i_device_handle ,p_block ,VCD_SECTOR_SIZE * i_nb ) == - 1)
+cond	138:12	139:56	5	read (p_vcddev -> i_device_handle ,p_block ,VCD_SECTOR_SIZE * i_nb ) == - 1
+call	138:12	139:50	6	read
+arg	138:18	138:43	7	p_vcddev->i_device_handle
+water	138:18	0:0	8	p_vcddev
+op	138:26	0:0	8	->
+water	138:28	0:0	8	i_device_handle
+arg	139:18	139:25	7	p_block
+water	139:18	0:0	8	p_block
+arg	139:27	139:50	7	VCD_SECTOR_SIZE*i_nb
+water	139:27	0:0	8	VCD_SECTOR_SIZE
+op	139:43	0:0	8	*
+water	139:45	0:0	8	i_nb
+op	139:52	0:0	6	==
+op	139:55	0:0	6	-
+water	139:56	0:0	6	1
+stmts	140:8	143:8	5	
+water	140:8	0:0	6	{
+call	141:12	141:66	6	msg_Err
+arg	141:21	141:27	7	p_this
+water	141:21	0:0	8	p_this
+arg	141:29	141:55	7	"Could not read sector %d"
+water	141:29	0:0	8	"Could not read sector %d"
+arg	141:57	141:66	7	i_sector
+water	141:57	0:0	8	i_sector
+water	141:67	0:0	6	;
+goto	142:12	142:22	6	error
+water	142:17	0:0	7	error
+water	143:8	0:0	6	}
+for	145:8	163:8	4	(i = 0 ;i < i_nb;i ++)
+forinit	145:13	145:18	5	i = 0 ;
+water	145:13	0:0	6	i
+op	145:15	0:0	6	=
+water	145:17	0:0	6	0
+water	145:18	0:0	6	;
+cond	145:20	145:24	5	i < i_nb
+water	145:20	0:0	6	i
+op	145:22	0:0	6	<
+water	145:24	0:0	6	i_nb
+forexpr	145:30	145:31	5	i ++
+water	145:30	0:0	6	i
+op	145:31	0:0	6	++
+stmts	146:8	163:8	5	
+water	146:8	0:0	6	{
+decl	147:12	147:54	6	int	i_dummy
+op	147:24	0:0	6	=
+water	147:26	0:0	6	i_sector
+op	147:35	0:0	6	+
+water	147:37	0:0	6	i
+op	147:39	0:0	6	+
+water	147:41	0:0	6	2
+op	147:43	0:0	6	*
+water	147:45	0:0	6	CD_FRAMES
+water	149:12	0:0	6	p_msf
+op	149:17	0:0	6	->
+water	149:19	0:0	6	minute
+op	149:26	0:0	6	=
+water	149:30	0:0	6	i_dummy
+op	149:38	0:0	6	/
+water	149:40	0:0	6	(
+water	149:41	0:0	6	CD_FRAMES
+op	149:51	0:0	6	*
+water	149:53	0:0	6	CD_SECS
+water	149:60	0:0	6	)
+water	149:61	0:0	6	;
+water	150:12	0:0	6	p_msf
+op	150:17	0:0	6	->
+water	150:19	0:0	6	second
+op	150:26	0:0	6	=
+water	150:28	0:0	6	(
+water	150:30	0:0	6	i_dummy
+op	150:38	0:0	6	%
+water	150:40	0:0	6	(
+water	150:41	0:0	6	CD_FRAMES
+op	150:51	0:0	6	*
+water	150:53	0:0	6	CD_SECS
+water	150:60	0:0	6	)
+water	150:62	0:0	6	)
+op	150:64	0:0	6	/
+water	150:66	0:0	6	CD_FRAMES
+water	150:75	0:0	6	;
+water	151:12	0:0	6	p_msf
+op	151:17	0:0	6	->
+water	151:19	0:0	6	frame
+op	151:25	0:0	6	=
+water	151:28	0:0	6	(
+water	151:30	0:0	6	i_dummy
+op	151:38	0:0	6	%
+water	151:40	0:0	6	(
+water	151:41	0:0	6	CD_FRAMES
+op	151:51	0:0	6	*
+water	151:53	0:0	6	CD_SECS
+water	151:60	0:0	6	)
+water	151:62	0:0	6	)
+op	151:64	0:0	6	%
+water	151:66	0:0	6	CD_FRAMES
+water	151:75	0:0	6	;
+if	153:12	162:12	6	(ioctl (p_vcddev -> i_device_handle ,CDROMREADRAW ,p_block + i * VCD_SECTOR_SIZE ) == - 1)
+cond	153:16	154:59	7	ioctl (p_vcddev -> i_device_handle ,CDROMREADRAW ,p_block + i * VCD_SECTOR_SIZE ) == - 1
+call	153:16	154:53	8	ioctl
+arg	153:23	153:48	9	p_vcddev->i_device_handle
+water	153:23	0:0	10	p_vcddev
+op	153:31	0:0	10	->
+water	153:33	0:0	10	i_device_handle
+arg	153:50	153:62	9	CDROMREADRAW
+water	153:50	0:0	10	CDROMREADRAW
+arg	154:23	154:53	9	p_block+i*VCD_SECTOR_SIZE
+water	154:23	0:0	10	p_block
+op	154:31	0:0	10	+
+water	154:33	0:0	10	i
+op	154:35	0:0	10	*
+water	154:37	0:0	10	VCD_SECTOR_SIZE
+op	154:55	0:0	8	==
+op	154:58	0:0	8	-
+water	154:59	0:0	8	1
+stmts	155:12	162:12	7	
+water	155:12	0:0	8	{
+call	156:16	157:34	8	msg_Err
+arg	156:25	156:31	9	p_this
+water	156:25	0:0	10	p_this
+arg	156:33	156:68	9	"could not read block %i from disc"
+water	156:33	0:0	10	"could not read block %i from disc"
+arg	157:25	157:34	9	i_sector
+water	157:25	0:0	10	i_sector
+water	157:35	0:0	8	;
+if	158:16	159:30	8	(i == 0)
+cond	158:20	158:25	9	i == 0
+water	158:20	0:0	10	i
+op	158:22	0:0	10	==
+water	158:25	0:0	10	0
+stmts	159:20	159:30	9	
+goto	159:20	159:30	10	error
+water	159:25	0:0	11	error
+else	160:16	161:25	8
+stmts	161:20	161:25	9	
+break	161:20	161:25	10	
+water	162:12	0:0	8	}
+water	163:8	0:0	6	}
+water	165:4	0:0	4	}
+if	168:4	177:4	2	(i_type == VCD_TYPE)
+cond	168:8	168:18	3	i_type == VCD_TYPE
+water	168:8	0:0	4	i_type
+op	168:15	0:0	4	==
+water	168:18	0:0	4	VCD_TYPE
+stmts	169:4	177:4	3	
+water	169:4	0:0	4	{
+for	170:8	175:8	4	(i = 0 ;i < i_nb;i ++)
+forinit	170:13	170:18	5	i = 0 ;
+water	170:13	0:0	6	i
+op	170:15	0:0	6	=
+water	170:17	0:0	6	0
+water	170:18	0:0	6	;
+cond	170:20	170:24	5	i < i_nb
+water	170:20	0:0	6	i
+op	170:22	0:0	6	<
+water	170:24	0:0	6	i_nb
+forexpr	170:30	170:31	5	i ++
+water	170:30	0:0	6	i
+op	170:31	0:0	6	++
+stmts	171:8	175:8	5	
+water	171:8	0:0	6	{
+call	172:12	174:34	6	memcpy
+arg	172:20	172:48	7	p_buffer+i*VCD_DATA_SIZE
+water	172:20	0:0	8	p_buffer
+op	172:29	0:0	8	+
+water	172:31	0:0	8	i
+op	172:33	0:0	8	*
+water	172:35	0:0	8	VCD_DATA_SIZE
+arg	173:20	173:66	7	p_block+i*VCD_SECTOR_SIZE+VCD_DATA_START
+water	173:20	0:0	8	p_block
+op	173:28	0:0	8	+
+water	173:30	0:0	8	i
+op	173:32	0:0	8	*
+water	173:34	0:0	8	VCD_SECTOR_SIZE
+op	173:50	0:0	8	+
+water	173:52	0:0	8	VCD_DATA_START
+arg	174:20	174:34	7	VCD_DATA_SIZE
+water	174:20	0:0	8	VCD_DATA_SIZE
+water	174:35	0:0	6	;
+water	175:8	0:0	6	}
+call	176:8	176:22	4	free
+arg	176:14	176:22	5	p_block
+water	176:14	0:0	6	p_block
+water	176:23	0:0	4	;
+water	177:4	0:0	4	}
+return	178:4	178:15	2	(0)
+water	178:10	0:0	3	(
+water	178:12	0:0	3	0
+water	178:14	0:0	3	)
+label	179:0	179:5	2	error :
+if	180:4	181:23	2	(i_type == VCD_TYPE)
+cond	180:8	180:18	3	i_type == VCD_TYPE
+water	180:8	0:0	4	i_type
+op	180:15	0:0	4	==
+water	180:18	0:0	4	VCD_TYPE
+stmts	181:8	181:23	3	
+call	181:8	181:22	4	free
+arg	181:14	181:22	5	p_block
+water	181:14	0:0	6	p_block
+water	181:23	0:0	4	;
+return	182:4	182:16	2	(-1)
+water	182:10	0:0	3	(
+op	182:12	0:0	3	-
+water	182:13	0:0	3	1
+water	182:15	0:0	3	)

@@ -1,0 +1,511 @@
+func	2:0	105:0	0	static int	StartAnalog
+params	2:22	0:0	1	
+param	2:23	2:45	2	audio_output_t *	p_aout
+param	2:47	2:73	2	audio_sample_format_t *	fmt
+stmnts	0:0	104:15	1	
+decl	4:4	4:52	2	struct aout_sys_t	*p_sys
+op	4:39	0:0	2	=
+water	4:41	0:0	2	p_aout
+op	4:47	0:0	2	->
+water	4:49	0:0	2	sys
+decl	5:4	5:48	2	UInt32	i_param_size
+op	5:45	0:0	2	=
+water	5:47	0:0	2	0
+decl	6:4	6:36	2	AudioComponentDescription	desc
+decl	7:4	7:40	2	AURenderCallbackStruct	callback
+decl	8:4	8:19	2	OSStatus	status
+water	10:4	0:0	2	desc
+op	10:8	0:0	2	.
+water	10:9	0:0	2	componentType
+op	10:23	0:0	2	=
+water	10:25	0:0	2	kAudioUnitType_Output
+water	10:46	0:0	2	;
+water	11:4	0:0	2	desc
+op	11:8	0:0	2	.
+water	11:9	0:0	2	componentSubType
+op	11:26	0:0	2	=
+water	11:28	0:0	2	kAudioUnitSubType_RemoteIO
+water	11:54	0:0	2	;
+water	12:4	0:0	2	desc
+op	12:8	0:0	2	.
+water	12:9	0:0	2	componentManufacturer
+op	12:31	0:0	2	=
+water	12:33	0:0	2	kAudioUnitManufacturer_Apple
+water	12:61	0:0	2	;
+water	13:4	0:0	2	desc
+op	13:8	0:0	2	.
+water	13:9	0:0	2	componentFlags
+op	13:24	0:0	2	=
+water	13:26	0:0	2	0
+water	13:27	0:0	2	;
+water	14:4	0:0	2	desc
+op	14:8	0:0	2	.
+water	14:9	0:0	2	componentFlagsMask
+op	14:28	0:0	2	=
+water	14:30	0:0	2	0
+water	14:31	0:0	2	;
+water	15:4	0:0	2	p_sys
+op	15:9	0:0	2	->
+water	15:11	0:0	2	au_component
+op	15:24	0:0	2	=
+call	15:26	15:60	2	AudioComponentFindNext
+arg	15:49	15:53	3	NULL
+water	15:49	0:0	4	NULL
+arg	15:55	15:60	3	&desc
+op	15:55	0:0	4	&
+water	15:56	0:0	4	desc
+water	15:61	0:0	2	;
+if	16:4	19:4	2	(p_sys -> au_component == NULL)
+cond	16:8	16:31	3	p_sys -> au_component == NULL
+water	16:8	0:0	4	p_sys
+op	16:13	0:0	4	->
+water	16:15	0:0	4	au_component
+op	16:28	0:0	4	==
+water	16:31	0:0	4	NULL
+stmts	16:37	19:4	3	
+water	16:37	0:0	4	{
+call	17:8	17:61	4	msg_Warn
+arg	17:17	17:23	5	p_aout
+water	17:17	0:0	6	p_aout
+arg	17:25	17:61	5	"we cannot find our audio component"
+water	17:25	0:0	6	"we cannot find our audio component"
+water	17:62	0:0	4	;
+return	18:8	18:20	4	false
+water	18:15	0:0	5	false
+water	19:4	0:0	4	}
+water	20:4	0:0	2	status
+op	20:11	0:0	2	=
+call	20:13	20:75	2	AudioComponentInstanceNew
+arg	20:39	20:58	3	p_sys->au_component
+water	20:39	0:0	4	p_sys
+op	20:44	0:0	4	->
+water	20:46	0:0	4	au_component
+arg	20:60	20:75	3	&p_sys->au_unit
+op	20:60	0:0	4	&
+water	20:61	0:0	4	p_sys
+op	20:66	0:0	4	->
+water	20:68	0:0	4	au_unit
+water	20:76	0:0	2	;
+if	21:4	24:4	2	(status != noErr)
+cond	21:8	21:18	3	status != noErr
+water	21:8	0:0	4	status
+op	21:15	0:0	4	!=
+water	21:18	0:0	4	noErr
+stmts	21:25	24:4	3	
+water	21:25	0:0	4	{
+call	22:8	22:79	4	msg_Warn
+arg	22:17	22:23	5	p_aout
+water	22:17	0:0	6	p_aout
+arg	22:25	22:66	5	"we cannot open our audio component (%i)"
+water	22:25	0:0	6	"we cannot open our audio component (%i)"
+arg	22:68	22:79	5	(int)status
+water	22:68	0:0	6	(
+water	22:69	0:0	6	int
+water	22:72	0:0	6	)
+water	22:73	0:0	6	status
+water	22:80	0:0	4	;
+return	23:8	23:20	4	false
+water	23:15	0:0	5	false
+water	24:4	0:0	4	}
+decl	25:4	25:19	2	UInt32	flag
+op	25:16	0:0	2	=
+water	25:18	0:0	2	1
+water	26:4	0:0	2	status
+op	26:11	0:0	2	=
+call	26:13	31:46	2	AudioUnitSetProperty
+arg	26:34	26:48	3	p_sys->au_unit
+water	26:34	0:0	4	p_sys
+op	26:39	0:0	4	->
+water	26:41	0:0	4	au_unit
+arg	27:34	27:67	3	kAudioOutputUnitProperty_EnableIO
+water	27:34	0:0	4	kAudioOutputUnitProperty_EnableIO
+arg	28:34	28:56	3	kAudioUnitScope_Output
+water	28:34	0:0	4	kAudioUnitScope_Output
+arg	29:34	29:35	3	0
+water	29:34	0:0	4	0
+arg	30:34	30:39	3	&flag
+op	30:34	0:0	4	&
+water	30:35	0:0	4	flag
+arg	31:34	31:46	3	sizeof(flag)
+op	31:34	0:0	4	sizeof
+water	31:40	0:0	4	(
+water	31:41	0:0	4	flag
+water	31:45	0:0	4	)
+water	31:47	0:0	2	;
+if	32:4	33:67	2	(status != noErr)
+cond	32:8	32:18	3	status != noErr
+water	32:8	0:0	4	status
+op	32:15	0:0	4	!=
+water	32:18	0:0	4	noErr
+stmts	33:8	33:67	3	
+call	33:8	33:66	4	msg_Warn
+arg	33:17	33:23	5	p_aout
+water	33:17	0:0	6	p_aout
+arg	33:25	33:53	5	"failed to set IO mode (%i)"
+water	33:25	0:0	6	"failed to set IO mode (%i)"
+arg	33:55	33:66	5	(int)status
+water	33:55	0:0	6	(
+water	33:56	0:0	6	int
+water	33:59	0:0	6	)
+water	33:60	0:0	6	status
+water	33:67	0:0	4	;
+decl	35:4	35:49	2	AudioStreamBasicDescription	streamDescription
+water	36:4	0:0	2	streamDescription
+op	36:21	0:0	2	.
+water	36:22	0:0	2	mSampleRate
+op	36:34	0:0	2	=
+water	36:36	0:0	2	fmt
+op	36:39	0:0	2	->
+water	36:41	0:0	2	i_rate
+water	36:47	0:0	2	;
+water	37:4	0:0	2	fmt
+op	37:7	0:0	2	->
+water	37:9	0:0	2	i_format
+op	37:18	0:0	2	=
+water	37:20	0:0	2	VLC_CODEC_FL32
+water	37:34	0:0	2	;
+water	38:4	0:0	2	fmt
+op	38:7	0:0	2	->
+water	38:9	0:0	2	i_physical_channels
+op	38:29	0:0	2	=
+water	38:31	0:0	2	fmt
+op	38:34	0:0	2	->
+water	38:36	0:0	2	i_original_channels
+op	38:56	0:0	2	=
+water	38:58	0:0	2	AOUT_CHANS_STEREO
+water	38:75	0:0	2	;
+water	39:4	0:0	2	streamDescription
+op	39:21	0:0	2	.
+water	39:22	0:0	2	mFormatID
+op	39:32	0:0	2	=
+water	39:34	0:0	2	kAudioFormatLinearPCM
+water	39:55	0:0	2	;
+water	40:4	0:0	2	streamDescription
+op	40:21	0:0	2	.
+water	40:22	0:0	2	mFormatFlags
+op	40:35	0:0	2	=
+water	40:37	0:0	2	kAudioFormatFlagsNativeFloatPacked
+water	40:71	0:0	2	;
+water	41:4	0:0	2	streamDescription
+op	41:21	0:0	2	.
+water	41:22	0:0	2	mChannelsPerFrame
+op	41:40	0:0	2	=
+call	41:42	41:67	2	aout_FormatNbChannels
+arg	41:64	41:67	3	fmt
+water	41:64	0:0	4	fmt
+water	41:68	0:0	2	;
+water	42:4	0:0	2	streamDescription
+op	42:21	0:0	2	.
+water	42:22	0:0	2	mFramesPerPacket
+op	42:39	0:0	2	=
+water	42:41	0:0	2	1
+water	42:42	0:0	2	;
+water	43:4	0:0	2	streamDescription
+op	43:21	0:0	2	.
+water	43:22	0:0	2	mBitsPerChannel
+op	43:38	0:0	2	=
+water	43:40	0:0	2	32
+water	43:42	0:0	2	;
+water	44:4	0:0	2	streamDescription
+op	44:21	0:0	2	.
+water	44:22	0:0	2	mBytesPerFrame
+op	44:37	0:0	2	=
+water	44:39	0:0	2	streamDescription
+op	44:56	0:0	2	.
+water	44:57	0:0	2	mBitsPerChannel
+op	44:73	0:0	2	*
+water	44:75	0:0	2	streamDescription
+op	44:92	0:0	2	.
+water	44:93	0:0	2	mChannelsPerFrame
+op	44:111	0:0	2	/
+water	44:113	0:0	2	8
+water	44:114	0:0	2	;
+water	45:4	0:0	2	streamDescription
+op	45:21	0:0	2	.
+water	45:22	0:0	2	mBytesPerPacket
+op	45:38	0:0	2	=
+water	45:40	0:0	2	streamDescription
+op	45:57	0:0	2	.
+water	45:58	0:0	2	mBytesPerFrame
+op	45:73	0:0	2	*
+water	45:75	0:0	2	streamDescription
+op	45:92	0:0	2	.
+water	45:93	0:0	2	mFramesPerPacket
+water	45:109	0:0	2	;
+water	46:4	0:0	2	i_param_size
+op	46:17	0:0	2	=
+op	46:19	0:0	2	sizeof
+water	46:25	0:0	2	(
+water	46:26	0:0	2	streamDescription
+water	46:43	0:0	2	)
+water	46:44	0:0	2	;
+water	47:4	0:0	2	p_sys
+op	47:9	0:0	2	->
+water	47:11	0:0	2	i_rate
+op	47:18	0:0	2	=
+water	47:20	0:0	2	fmt
+op	47:23	0:0	2	->
+water	47:25	0:0	2	i_rate
+water	47:31	0:0	2	;
+water	49:4	0:0	2	i_param_size
+op	49:17	0:0	2	=
+op	49:19	0:0	2	sizeof
+water	49:25	0:0	2	(
+water	49:26	0:0	2	AudioStreamBasicDescription
+water	49:53	0:0	2	)
+water	49:54	0:0	2	;
+water	50:4	0:0	2	status
+op	50:11	0:0	2	=
+call	50:13	55:46	2	AudioUnitSetProperty
+arg	50:34	50:48	3	p_sys->au_unit
+water	50:34	0:0	4	p_sys
+op	50:39	0:0	4	->
+water	50:41	0:0	4	au_unit
+arg	51:34	51:65	3	kAudioUnitProperty_StreamFormat
+water	51:34	0:0	4	kAudioUnitProperty_StreamFormat
+arg	52:34	52:55	3	kAudioUnitScope_Input
+water	52:34	0:0	4	kAudioUnitScope_Input
+arg	53:34	53:35	3	0
+water	53:34	0:0	4	0
+arg	54:34	54:52	3	&streamDescription
+op	54:34	0:0	4	&
+water	54:35	0:0	4	streamDescription
+arg	55:34	55:46	3	i_param_size
+water	55:34	0:0	4	i_param_size
+water	55:47	0:0	2	;
+if	56:4	59:4	2	(status != noErr)
+cond	56:8	56:18	3	status != noErr
+water	56:8	0:0	4	status
+op	56:15	0:0	4	!=
+water	56:18	0:0	4	noErr
+stmts	56:25	59:4	3	
+water	56:25	0:0	4	{
+call	57:8	57:71	4	msg_Err
+arg	57:16	57:22	5	p_aout
+water	57:16	0:0	6	p_aout
+arg	57:24	57:58	5	"failed to set stream format (%i)"
+water	57:24	0:0	6	"failed to set stream format (%i)"
+arg	57:60	57:71	5	(int)status
+water	57:60	0:0	6	(
+water	57:61	0:0	6	int
+water	57:64	0:0	6	)
+water	57:65	0:0	6	status
+water	57:72	0:0	4	;
+return	58:8	58:20	4	false
+water	58:15	0:0	5	false
+water	59:4	0:0	4	}
+call	60:4	60:83	2	msg_Dbg
+arg	60:12	60:18	3	p_aout
+water	60:12	0:0	4	p_aout
+arg	60:20	60:83	3	STREAM_FORMAT_MSG("we set the AU format: ",streamDescription)
+call	60:20	60:82	4	STREAM_FORMAT_MSG
+arg	60:38	60:63	5	"we set the AU format: "
+water	60:38	0:0	6	"we set the AU format: "
+arg	60:65	60:82	5	streamDescription
+water	60:65	0:0	6	streamDescription
+water	60:84	0:0	2	;
+water	62:4	0:0	2	status
+op	62:11	0:0	2	=
+call	62:13	67:47	2	AudioUnitGetProperty
+arg	62:34	62:48	3	p_sys->au_unit
+water	62:34	0:0	4	p_sys
+op	62:39	0:0	4	->
+water	62:41	0:0	4	au_unit
+arg	63:34	63:65	3	kAudioUnitProperty_StreamFormat
+water	63:34	0:0	4	kAudioUnitProperty_StreamFormat
+arg	64:34	64:55	3	kAudioUnitScope_Input
+water	64:34	0:0	4	kAudioUnitScope_Input
+arg	65:34	65:35	3	0
+water	65:34	0:0	4	0
+arg	66:34	66:52	3	&streamDescription
+op	66:34	0:0	4	&
+water	66:35	0:0	4	streamDescription
+arg	67:34	67:47	3	&i_param_size
+op	67:34	0:0	4	&
+water	67:35	0:0	4	i_param_size
+water	67:48	0:0	2	;
+if	68:4	69:76	2	(status != noErr)
+cond	68:8	68:18	3	status != noErr
+water	68:8	0:0	4	status
+op	68:15	0:0	4	!=
+water	68:18	0:0	4	noErr
+stmts	69:8	69:76	3	
+call	69:8	69:75	4	msg_Warn
+arg	69:17	69:23	5	p_aout
+water	69:17	0:0	6	p_aout
+arg	69:25	69:62	5	"failed to verify stream format (%i)"
+water	69:25	0:0	6	"failed to verify stream format (%i)"
+arg	69:64	69:75	5	(int)status
+water	69:64	0:0	6	(
+water	69:65	0:0	6	int
+water	69:68	0:0	6	)
+water	69:69	0:0	6	status
+water	69:76	0:0	4	;
+call	70:4	70:89	2	msg_Dbg
+arg	70:12	70:18	3	p_aout
+water	70:12	0:0	4	p_aout
+arg	70:20	70:89	3	STREAM_FORMAT_MSG("the actual set AU format is ",streamDescription)
+call	70:20	70:88	4	STREAM_FORMAT_MSG
+arg	70:38	70:69	5	"the actual set AU format is "
+water	70:38	0:0	6	"the actual set AU format is "
+arg	70:71	70:88	5	streamDescription
+water	70:71	0:0	6	streamDescription
+water	70:90	0:0	2	;
+call	72:4	72:26	2	aout_FormatPrepare
+arg	72:23	72:26	3	fmt
+water	72:23	0:0	4	fmt
+water	72:27	0:0	2	;
+water	74:4	0:0	2	callback
+op	74:12	0:0	2	.
+water	74:13	0:0	2	inputProc
+op	74:23	0:0	2	=
+water	74:25	0:0	2	(
+water	74:26	0:0	2	AURenderCallback
+water	74:42	0:0	2	)
+water	74:44	0:0	2	RenderCallback
+water	74:58	0:0	2	;
+water	75:4	0:0	2	callback
+op	75:12	0:0	2	.
+water	75:13	0:0	2	inputProcRefCon
+op	75:29	0:0	2	=
+water	75:31	0:0	2	p_aout
+water	75:37	0:0	2	;
+water	76:4	0:0	2	status
+op	76:11	0:0	2	=
+call	76:13	79:58	2	AudioUnitSetProperty
+arg	76:34	76:48	3	p_sys->au_unit
+water	76:34	0:0	4	p_sys
+op	76:39	0:0	4	->
+water	76:41	0:0	4	au_unit
+arg	77:28	77:64	3	kAudioUnitProperty_SetRenderCallback
+water	77:28	0:0	4	kAudioUnitProperty_SetRenderCallback
+arg	78:28	78:49	3	kAudioUnitScope_Input
+water	78:28	0:0	4	kAudioUnitScope_Input
+arg	79:28	79:29	3	0
+water	79:28	0:0	4	0
+arg	79:31	79:40	3	&callback
+op	79:31	0:0	4	&
+water	79:32	0:0	4	callback
+arg	79:42	79:58	3	sizeof(callback)
+op	79:42	0:0	4	sizeof
+water	79:48	0:0	4	(
+water	79:49	0:0	4	callback
+water	79:57	0:0	4	)
+water	79:59	0:0	2	;
+if	80:4	83:4	2	(status != noErr)
+cond	80:8	80:18	3	status != noErr
+water	80:8	0:0	4	status
+op	80:15	0:0	4	!=
+water	80:18	0:0	4	noErr
+stmts	80:25	83:4	3	
+water	80:25	0:0	4	{
+call	81:8	81:72	4	msg_Err
+arg	81:16	81:22	5	p_aout
+water	81:16	0:0	6	p_aout
+arg	81:24	81:59	5	"render callback setup failed (%i)"
+water	81:24	0:0	6	"render callback setup failed (%i)"
+arg	81:61	81:72	5	(int)status
+water	81:61	0:0	6	(
+water	81:62	0:0	6	int
+water	81:65	0:0	6	)
+water	81:66	0:0	6	status
+water	81:73	0:0	4	;
+return	82:8	82:20	4	false
+water	82:15	0:0	5	false
+water	83:4	0:0	4	}
+call	85:4	85:117	2	TPCircularBufferInit
+arg	85:25	85:48	3	&p_sys->circular_buffer
+op	85:25	0:0	4	&
+water	85:26	0:0	4	p_sys
+op	85:31	0:0	4	->
+water	85:33	0:0	4	circular_buffer
+arg	85:50	85:117	3	AUDIO_BUFFER_SIZE_IN_SECONDS*fmt->i_rate*fmt->i_bytes_per_frame
+water	85:50	0:0	4	AUDIO_BUFFER_SIZE_IN_SECONDS
+op	85:79	0:0	4	*
+water	85:81	0:0	4	fmt
+op	85:84	0:0	4	->
+water	85:86	0:0	4	i_rate
+op	85:93	0:0	4	*
+water	85:95	0:0	4	fmt
+op	85:98	0:0	4	->
+water	85:100	0:0	4	i_bytes_per_frame
+water	85:118	0:0	2	;
+call	87:4	90:32	2	AudioSessionInitialize
+arg	87:28	87:32	3	NULL
+water	87:28	0:0	4	NULL
+arg	88:28	88:49	3	kCFRunLoopCommonModes
+water	88:28	0:0	4	kCFRunLoopCommonModes
+arg	89:28	89:32	3	NULL
+water	89:28	0:0	4	NULL
+arg	90:28	90:32	3	NULL
+water	90:28	0:0	4	NULL
+water	90:33	0:0	2	;
+decl	92:4	92:64	2	UInt32	sessionCategory
+op	92:27	0:0	2	=
+water	92:29	0:0	2	kAudioSessionCategory_MediaPlayback
+call	93:4	93:105	2	AudioSessionSetProperty
+arg	93:28	93:63	3	kAudioSessionProperty_AudioCategory
+water	93:28	0:0	4	kAudioSessionProperty_AudioCategory
+arg	93:65	93:88	3	sizeof(sessionCategory)
+op	93:65	0:0	4	sizeof
+water	93:71	0:0	4	(
+water	93:72	0:0	4	sessionCategory
+water	93:87	0:0	4	)
+arg	93:89	93:105	3	&sessionCategory
+op	93:89	0:0	4	&
+water	93:90	0:0	4	sessionCategory
+water	93:106	0:0	2	;
+call	94:4	94:30	2	AudioSessionSetActive
+arg	94:26	94:30	3	true
+water	94:26	0:0	4	true
+water	94:31	0:0	2	;
+water	96:4	0:0	2	status
+op	96:11	0:0	2	=
+call	96:13	96:47	2	AudioUnitInitialize
+arg	96:33	96:47	3	p_sys->au_unit
+water	96:33	0:0	4	p_sys
+op	96:38	0:0	4	->
+water	96:40	0:0	4	au_unit
+water	96:48	0:0	2	;
+if	97:4	100:4	2	(status != noErr)
+cond	97:8	97:18	3	status != noErr
+water	97:8	0:0	4	status
+op	97:15	0:0	4	!=
+water	97:18	0:0	4	noErr
+stmts	97:25	100:4	3	
+water	97:25	0:0	4	{
+call	98:8	98:68	4	msg_Err
+arg	98:16	98:22	5	p_aout
+water	98:16	0:0	6	p_aout
+arg	98:24	98:55	5	"failed to init AudioUnit (%i)"
+water	98:24	0:0	6	"failed to init AudioUnit (%i)"
+arg	98:57	98:68	5	(int)status
+water	98:57	0:0	6	(
+water	98:58	0:0	6	int
+water	98:61	0:0	6	)
+water	98:62	0:0	6	status
+water	98:69	0:0	4	;
+return	99:8	99:20	4	false
+water	99:15	0:0	5	false
+water	100:4	0:0	4	}
+water	102:4	0:0	2	status
+op	102:11	0:0	2	=
+call	102:13	102:48	2	AudioOutputUnitStart
+arg	102:34	102:48	3	p_sys->au_unit
+water	102:34	0:0	4	p_sys
+op	102:39	0:0	4	->
+water	102:41	0:0	4	au_unit
+water	102:49	0:0	2	;
+call	103:4	103:64	2	msg_Dbg
+arg	103:12	103:18	3	p_aout
+water	103:12	0:0	4	p_aout
+arg	103:20	103:51	3	"audio output unit started: %i"
+water	103:20	0:0	4	"audio output unit started: %i"
+arg	103:53	103:64	3	(int)status
+water	103:53	0:0	4	(
+water	103:54	0:0	4	int
+water	103:57	0:0	4	)
+water	103:58	0:0	4	status
+water	103:65	0:0	2	;
+return	104:4	104:15	2	true
+water	104:11	0:0	3	true

@@ -1,0 +1,110 @@
+func	2:0	29:0	0	void	sout_MuxDeleteStream
+params	2:25	0:0	1	
+param	2:27	2:44	2	sout_mux_t *	p_mux
+param	2:46	2:68	2	sout_input_t *	p_input
+stmnts	0:0	28:4	1	
+decl	4:4	4:15	2	int	i_index
+if	5:4	12:4	2	(p_mux -> b_waiting_stream &&block_FifoCount (p_input -> p_fifo ) > 0)
+cond	5:8	6:45	3	p_mux -> b_waiting_stream &&block_FifoCount (p_input -> p_fifo ) > 0
+water	5:8	0:0	4	p_mux
+op	5:13	0:0	4	->
+water	5:15	0:0	4	b_waiting_stream
+op	6:5	0:0	4	&&
+call	6:8	6:41	4	block_FifoCount
+arg	6:25	6:41	5	p_input->p_fifo
+water	6:25	0:0	6	p_input
+op	6:32	0:0	6	->
+water	6:34	0:0	6	p_fifo
+op	6:43	0:0	4	>
+water	6:45	0:0	4	0
+stmts	7:4	12:4	3	
+water	7:4	0:0	4	{
+water	10:8	0:0	4	p_mux
+op	10:13	0:0	4	->
+water	10:15	0:0	4	b_waiting_stream
+op	10:32	0:0	4	=
+water	10:34	0:0	4	false
+water	10:39	0:0	4	;
+call	11:8	11:29	4	p_mux->pf_mux
+arg	11:23	11:29	5	p_mux
+water	11:23	0:0	6	p_mux
+water	11:30	0:0	4	;
+water	12:4	0:0	4	}
+call	13:4	13:69	2	TAB_FIND
+arg	13:14	13:32	3	p_mux->i_nb_inputs
+water	13:14	0:0	4	p_mux
+op	13:19	0:0	4	->
+water	13:21	0:0	4	i_nb_inputs
+arg	13:34	13:50	3	p_mux->pp_inputs
+water	13:34	0:0	4	p_mux
+op	13:39	0:0	4	->
+water	13:41	0:0	4	pp_inputs
+arg	13:52	13:59	3	p_input
+water	13:52	0:0	4	p_input
+arg	13:61	13:69	3	i_index
+water	13:61	0:0	4	i_index
+water	13:70	0:0	2	;
+if	14:4	28:4	2	(i_index >= 0)
+cond	14:8	14:19	3	i_index >= 0
+water	14:8	0:0	4	i_index
+op	14:16	0:0	4	>=
+water	14:19	0:0	4	0
+stmts	15:4	28:4	3	
+water	15:4	0:0	4	{
+if	16:8	19:8	4	(p_mux -> pf_delstream (p_mux ,p_input ) < 0)
+cond	16:12	16:52	5	p_mux -> pf_delstream (p_mux ,p_input ) < 0
+call	16:12	16:48	6	p_mux->pf_delstream
+arg	16:33	16:38	7	p_mux
+water	16:33	0:0	8	p_mux
+arg	16:40	16:48	7	p_input
+water	16:40	0:0	8	p_input
+op	16:50	0:0	6	<
+water	16:52	0:0	6	0
+stmts	17:8	19:8	5	
+water	17:8	0:0	6	{
+call	18:12	18:65	6	msg_Err
+arg	18:21	18:26	7	p_mux
+water	18:21	0:0	8	p_mux
+arg	18:28	18:65	7	"cannot delete this stream from mux"
+water	18:28	0:0	8	"cannot delete this stream from mux"
+water	18:66	0:0	6	;
+water	19:8	0:0	6	}
+call	21:8	21:66	4	TAB_REMOVE
+arg	21:20	21:38	5	p_mux->i_nb_inputs
+water	21:20	0:0	6	p_mux
+op	21:25	0:0	6	->
+water	21:27	0:0	6	i_nb_inputs
+arg	21:40	21:56	5	p_mux->pp_inputs
+water	21:40	0:0	6	p_mux
+op	21:45	0:0	6	->
+water	21:47	0:0	6	pp_inputs
+arg	21:58	21:66	5	p_input
+water	21:58	0:0	6	p_input
+water	21:67	0:0	4	;
+if	22:8	25:8	4	(p_mux -> i_nb_inputs == 0)
+cond	22:12	22:34	5	p_mux -> i_nb_inputs == 0
+water	22:12	0:0	6	p_mux
+op	22:17	0:0	6	->
+water	22:19	0:0	6	i_nb_inputs
+op	22:31	0:0	6	==
+water	22:34	0:0	6	0
+stmts	23:8	25:8	5	
+water	23:8	0:0	6	{
+call	24:12	24:66	6	msg_Warn
+arg	24:22	24:27	7	p_mux
+water	24:22	0:0	8	p_mux
+arg	24:29	24:66	7	"no more input streams for this mux"
+water	24:29	0:0	8	"no more input streams for this mux"
+water	24:67	0:0	6	;
+water	25:8	0:0	6	}
+call	26:8	26:43	4	block_FifoRelease
+arg	26:27	26:43	5	p_input->p_fifo
+water	26:27	0:0	6	p_input
+op	26:34	0:0	6	->
+water	26:36	0:0	6	p_fifo
+water	26:44	0:0	4	;
+call	27:8	27:22	4	free
+arg	27:14	27:22	5	p_input
+water	27:14	0:0	6	p_input
+water	27:23	0:0	4	;
+water	28:4	0:0	4	}

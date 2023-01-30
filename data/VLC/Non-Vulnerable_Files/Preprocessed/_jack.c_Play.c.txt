@@ -1,0 +1,109 @@
+func	2:0	23:0	0	static void	Play
+params	2:17	0:0	1	
+param	2:18	2:41	2	audio_output_t *	p_aout
+param	2:43	2:60	2	block_t *	p_block
+stmnts	0:0	22:26	1	
+decl	4:4	4:42	2	struct aout_sys_t	*p_sys
+op	4:29	0:0	2	=
+water	4:31	0:0	2	p_aout
+op	4:37	0:0	2	->
+water	4:39	0:0	2	sys
+decl	5:4	5:52	2	jack_ringbuffer_t	*rb
+op	5:26	0:0	2	=
+water	5:28	0:0	2	p_sys
+op	5:33	0:0	2	->
+water	5:35	0:0	2	p_jack_ringbuffer
+decl	6:4	6:76	2	const size_t	bytes_per_frame
+op	6:33	0:0	2	=
+water	6:35	0:0	2	p_sys
+op	6:40	0:0	2	->
+water	6:42	0:0	2	i_channels
+op	6:53	0:0	2	*
+op	6:55	0:0	2	sizeof
+water	6:61	0:0	2	(
+water	6:62	0:0	2	jack_sample_t
+water	6:75	0:0	2	)
+while	7:4	21:4	2	(p_block -> i_buffer > 0)
+cond	7:11	7:31	3	p_block -> i_buffer > 0
+water	7:11	0:0	4	p_block
+op	7:18	0:0	4	->
+water	7:20	0:0	4	i_buffer
+op	7:29	0:0	4	>
+water	7:31	0:0	4	0
+stmts	7:34	21:4	3	
+water	7:34	0:0	4	{
+decl	9:8	9:66	4	const size_t	write_space
+op	9:33	0:0	4	=
+call	9:35	9:65	5	jack_ringbuffer_write_space
+arg	9:63	9:65	6	rb
+water	9:63	0:0	7	rb
+decl	10:8	11:43	4	const size_t	bytes
+op	10:27	0:0	4	=
+water	10:29	0:0	4	p_block
+op	10:36	0:0	4	->
+water	10:38	0:0	4	i_buffer
+op	10:47	0:0	4	<
+water	10:49	0:0	4	write_space
+water	10:61	0:0	4	?
+water	11:12	0:0	4	p_block
+op	11:19	0:0	4	->
+water	11:21	0:0	4	i_buffer
+water	11:30	0:0	4	:
+water	11:32	0:0	4	write_space
+if	13:8	17:8	4	(unlikely (bytes == 0 ))
+cond	13:12	13:33	5	unlikely (bytes == 0 )
+call	13:12	13:33	6	unlikely
+arg	13:22	13:33	7	bytes==0
+water	13:22	0:0	8	bytes
+op	13:28	0:0	8	==
+water	13:31	0:0	8	0
+stmts	13:37	17:8	5	
+water	13:37	0:0	6	{
+call	14:12	15:57	6	msg_Warn
+arg	14:22	14:28	7	p_aout
+water	14:22	0:0	8	p_aout
+arg	14:30	14:67	7	"%"PRIuPTR" frames of audio dropped"
+water	14:30	0:0	8	"%"
+water	14:33	0:0	8	PRIuPTR
+water	14:41	0:0	8	" frames of audio dropped"
+arg	15:20	15:57	7	p_block->i_buffer/bytes_per_frame
+water	15:20	0:0	8	p_block
+op	15:27	0:0	8	->
+water	15:29	0:0	8	i_buffer
+op	15:38	0:0	8	/
+water	15:41	0:0	8	bytes_per_frame
+water	15:58	0:0	6	;
+break	16:12	16:17	6	
+water	17:8	0:0	6	}
+call	18:8	18:75	4	jack_ringbuffer_write
+arg	18:31	18:33	5	rb
+water	18:31	0:0	6	rb
+arg	18:35	18:67	5	(constchar*)p_block->p_buffer
+water	18:35	0:0	6	(
+water	18:36	0:0	6	const
+water	18:42	0:0	6	char
+op	18:47	0:0	6	*
+water	18:48	0:0	6	)
+water	18:50	0:0	6	p_block
+op	18:57	0:0	6	->
+water	18:59	0:0	6	p_buffer
+arg	18:69	18:75	5	bytes
+water	18:69	0:0	6	bytes
+water	18:76	0:0	4	;
+water	19:8	0:0	4	p_block
+op	19:15	0:0	4	->
+water	19:17	0:0	4	p_buffer
+op	19:26	0:0	4	+=
+water	19:29	0:0	4	bytes
+water	19:34	0:0	4	;
+water	20:8	0:0	4	p_block
+op	20:15	0:0	4	->
+water	20:17	0:0	4	i_buffer
+op	20:26	0:0	4	-=
+water	20:29	0:0	4	bytes
+water	20:34	0:0	4	;
+water	21:4	0:0	4	}
+call	22:4	22:25	2	block_Release
+arg	22:18	22:25	3	p_block
+water	22:18	0:0	4	p_block
+water	22:26	0:0	2	;

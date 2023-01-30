@@ -1,0 +1,442 @@
+func	2:0	73:0	0	static void	Stop
+params	2:16	0:0	1	
+param	2:17	2:39	2	audio_output_t *	p_aout
+stmnts	0:0	72:52	1	
+decl	4:4	4:44	2	struct aout_sys_t	*p_sys
+op	4:31	0:0	2	=
+water	4:33	0:0	2	p_aout
+op	4:39	0:0	2	->
+water	4:41	0:0	2	sys
+decl	5:4	5:35	2	OSStatus	err
+op	5:28	0:0	2	=
+water	5:30	0:0	2	noErr
+decl	6:4	6:40	2	UInt32	i_param_size
+op	6:37	0:0	2	=
+water	6:39	0:0	2	0
+call	7:4	7:47	2	msg_Dbg
+arg	7:12	7:18	3	p_aout
+water	7:12	0:0	4	p_aout
+arg	7:20	7:47	3	"Stopping the auhal module"
+water	7:20	0:0	4	"Stopping the auhal module"
+water	7:48	0:0	2	;
+if	8:4	12:4	2	(p_sys -> au_unit)
+cond	8:8	8:15	3	p_sys -> au_unit
+water	8:8	0:0	4	p_sys
+op	8:13	0:0	4	->
+water	8:15	0:0	4	au_unit
+stmts	8:24	12:4	3	
+water	8:24	0:0	4	{
+call	9:8	9:56	4	verify_noerr
+arg	9:21	9:56	5	AudioOutputUnitStop(p_sys->au_unit)
+call	9:21	9:55	6	AudioOutputUnitStop
+arg	9:41	9:55	7	p_sys->au_unit
+water	9:41	0:0	8	p_sys
+op	9:46	0:0	8	->
+water	9:48	0:0	8	au_unit
+water	9:57	0:0	4	;
+call	10:8	10:58	4	verify_noerr
+arg	10:21	10:58	5	AudioUnitUninitialize(p_sys->au_unit)
+call	10:21	10:57	6	AudioUnitUninitialize
+arg	10:43	10:57	7	p_sys->au_unit
+water	10:43	0:0	8	p_sys
+op	10:48	0:0	8	->
+water	10:50	0:0	8	au_unit
+water	10:59	0:0	4	;
+call	11:8	11:66	4	verify_noerr
+arg	11:21	11:66	5	AudioComponentInstanceDispose(p_sys->au_unit)
+call	11:21	11:65	6	AudioComponentInstanceDispose
+arg	11:51	11:65	7	p_sys->au_unit
+water	11:51	0:0	8	p_sys
+op	11:56	0:0	8	->
+water	11:58	0:0	8	au_unit
+water	11:67	0:0	4	;
+water	12:4	0:0	4	}
+if	13:4	45:4	2	(p_sys -> b_digital)
+cond	13:8	13:15	3	p_sys -> b_digital
+water	13:8	0:0	4	p_sys
+op	13:13	0:0	4	->
+water	13:15	0:0	4	b_digital
+stmts	13:26	45:4	3	
+water	13:26	0:0	4	{
+water	15:8	0:0	4	err
+op	15:12	0:0	4	=
+call	15:14	16:46	4	AudioDeviceStop
+arg	15:30	15:51	5	p_sys->i_selected_dev
+water	15:30	0:0	6	p_sys
+op	15:35	0:0	6	->
+water	15:37	0:0	6	i_selected_dev
+arg	16:31	16:46	5	p_sys->i_procID
+water	16:31	0:0	6	p_sys
+op	16:36	0:0	6	->
+water	16:38	0:0	6	i_procID
+water	16:47	0:0	4	;
+if	17:8	18:80	4	(err != noErr)
+cond	17:12	17:19	5	err != noErr
+water	17:12	0:0	6	err
+op	17:16	0:0	6	!=
+water	17:19	0:0	6	noErr
+stmts	18:12	18:80	5	
+call	18:12	18:79	6	msg_Err
+arg	18:20	18:26	7	p_aout
+water	18:20	0:0	8	p_aout
+arg	18:28	18:65	7	"Failed to stop audio device [%4.4s]"
+water	18:28	0:0	8	"Failed to stop audio device [%4.4s]"
+arg	18:67	18:79	7	(char*)&err
+water	18:67	0:0	8	(
+water	18:68	0:0	8	char
+op	18:73	0:0	8	*
+water	18:74	0:0	8	)
+op	18:75	0:0	8	&
+water	18:76	0:0	8	err
+water	18:80	0:0	6	;
+water	20:8	0:0	4	err
+op	20:12	0:0	4	=
+call	20:14	21:57	4	AudioDeviceDestroyIOProcID
+arg	20:41	20:62	5	p_sys->i_selected_dev
+water	20:41	0:0	6	p_sys
+op	20:46	0:0	6	->
+water	20:48	0:0	6	i_selected_dev
+arg	21:42	21:57	5	p_sys->i_procID
+water	21:42	0:0	6	p_sys
+op	21:47	0:0	6	->
+water	21:49	0:0	6	i_procID
+water	21:58	0:0	4	;
+if	22:8	23:81	4	(err != noErr)
+cond	22:12	22:19	5	err != noErr
+water	22:12	0:0	6	err
+op	22:16	0:0	6	!=
+water	22:19	0:0	6	noErr
+stmts	23:12	23:81	5	
+call	23:12	23:80	6	msg_Err
+arg	23:20	23:26	7	p_aout
+water	23:20	0:0	8	p_aout
+arg	23:28	23:66	7	"Failed to destroy Process ID [%4.4s]"
+water	23:28	0:0	8	"Failed to destroy Process ID [%4.4s]"
+arg	23:68	23:80	7	(char*)&err
+water	23:68	0:0	8	(
+water	23:69	0:0	8	char
+op	23:74	0:0	8	*
+water	23:75	0:0	8	)
+op	23:76	0:0	8	&
+water	23:77	0:0	8	err
+water	23:81	0:0	6	;
+if	24:8	28:8	4	(p_sys -> b_revert)
+cond	24:12	24:19	5	p_sys -> b_revert
+water	24:12	0:0	6	p_sys
+op	24:17	0:0	6	->
+water	24:19	0:0	6	b_revert
+stmts	24:29	28:8	5	
+water	24:29	0:0	6	{
+if	25:12	27:12	6	(!AudioStreamChangeFormat (p_aout ,p_sys -> i_stream_id ,p_sys -> sfmt_revert ))
+cond	25:16	25:87	7	!AudioStreamChangeFormat (p_aout ,p_sys -> i_stream_id ,p_sys -> sfmt_revert )
+op	25:16	0:0	8	!
+call	25:17	25:87	8	AudioStreamChangeFormat
+arg	25:41	25:47	9	p_aout
+water	25:41	0:0	10	p_aout
+arg	25:49	25:67	9	p_sys->i_stream_id
+water	25:49	0:0	10	p_sys
+op	25:54	0:0	10	->
+water	25:56	0:0	10	i_stream_id
+arg	25:69	25:87	9	p_sys->sfmt_revert
+water	25:69	0:0	10	p_sys
+op	25:74	0:0	10	->
+water	25:76	0:0	10	sfmt_revert
+stmts	25:90	27:12	7	
+water	25:90	0:0	8	{
+call	26:16	26:73	8	msg_Err
+arg	26:24	26:30	9	p_aout
+water	26:24	0:0	10	p_aout
+arg	26:32	26:73	9	"failed to revert stream format in close"
+water	26:32	0:0	10	"failed to revert stream format in close"
+water	26:74	0:0	8	;
+water	27:12	0:0	8	}
+water	28:8	0:0	6	}
+if	29:8	44:8	4	(p_sys -> b_changed_mixing && p_sys -> sfmt_revert . mFormatID != kAudioFormat60958AC3)
+cond	29:12	29:71	5	p_sys -> b_changed_mixing && p_sys -> sfmt_revert . mFormatID != kAudioFormat60958AC3
+water	29:12	0:0	6	p_sys
+op	29:17	0:0	6	->
+water	29:19	0:0	6	b_changed_mixing
+op	29:36	0:0	6	&&
+water	29:39	0:0	6	p_sys
+op	29:44	0:0	6	->
+water	29:46	0:0	6	sfmt_revert
+op	29:57	0:0	6	.
+water	29:58	0:0	6	mFormatID
+op	29:68	0:0	6	!=
+water	29:71	0:0	6	kAudioFormat60958AC3
+stmts	29:93	44:8	5	
+water	29:93	0:0	6	{
+decl	30:12	30:21	6	int	b_mix
+decl	31:12	31:39	6	Boolean	b_writeable
+op	31:32	0:0	6	=
+water	31:34	0:0	6	false
+water	32:12	0:0	6	i_param_size
+op	32:25	0:0	6	=
+op	32:27	0:0	6	sizeof
+water	32:33	0:0	6	(
+water	32:34	0:0	6	int
+water	32:37	0:0	6	)
+water	32:38	0:0	6	;
+decl	34:12	34:181	6	AudioObjectPropertyAddress	audioDeviceSupportsMixingAddress
+op	34:72	0:0	6	=
+water	34:74	0:0	6	{
+water	34:76	0:0	6	kAudioDevicePropertySupportsMixing
+water	34:111	0:0	6	,
+water	34:113	0:0	6	kAudioDevicePropertyScopeOutput
+water	34:144	0:0	6	,
+water	34:146	0:0	6	kAudioObjectPropertyElementMaster
+water	34:180	0:0	6	}
+water	35:12	0:0	6	err
+op	35:16	0:0	6	=
+call	35:18	35:118	6	AudioObjectIsPropertySettable
+arg	35:48	35:69	7	p_sys->i_selected_dev
+water	35:48	0:0	8	p_sys
+op	35:53	0:0	8	->
+water	35:55	0:0	8	i_selected_dev
+arg	35:71	35:104	7	&audioDeviceSupportsMixingAddress
+op	35:71	0:0	8	&
+water	35:72	0:0	8	audioDeviceSupportsMixingAddress
+arg	35:106	35:118	7	&b_writeable
+op	35:106	0:0	8	&
+water	35:107	0:0	8	b_writeable
+water	35:119	0:0	6	;
+water	36:12	0:0	6	err
+op	36:16	0:0	6	=
+call	36:18	36:133	6	AudioObjectGetPropertyData
+arg	36:45	36:66	7	p_sys->i_selected_dev
+water	36:45	0:0	8	p_sys
+op	36:50	0:0	8	->
+water	36:52	0:0	8	i_selected_dev
+arg	36:68	36:101	7	&audioDeviceSupportsMixingAddress
+op	36:68	0:0	8	&
+water	36:69	0:0	8	audioDeviceSupportsMixingAddress
+arg	36:103	36:104	7	0
+water	36:103	0:0	8	0
+arg	36:106	36:110	7	NULL
+water	36:106	0:0	8	NULL
+arg	36:112	36:125	7	&i_param_size
+op	36:112	0:0	8	&
+water	36:113	0:0	8	i_param_size
+arg	36:127	36:133	7	&b_mix
+op	36:127	0:0	8	&
+water	36:128	0:0	8	b_mix
+water	36:134	0:0	6	;
+if	37:12	41:12	6	(err == noErr && b_writeable)
+cond	37:16	37:32	7	err == noErr && b_writeable
+water	37:16	0:0	8	err
+op	37:20	0:0	8	==
+water	37:23	0:0	8	noErr
+op	37:29	0:0	8	&&
+water	37:32	0:0	8	b_writeable
+stmts	37:45	41:12	7	
+water	37:45	0:0	8	{
+call	38:16	38:55	8	msg_Dbg
+arg	38:24	38:30	9	p_aout
+water	38:24	0:0	10	p_aout
+arg	38:32	38:48	9	"mixable is: %d"
+water	38:32	0:0	10	"mixable is: %d"
+arg	38:50	38:55	9	b_mix
+water	38:50	0:0	10	b_mix
+water	38:56	0:0	8	;
+water	39:16	0:0	8	b_mix
+op	39:22	0:0	8	=
+water	39:24	0:0	8	1
+water	39:25	0:0	8	;
+water	40:16	0:0	8	err
+op	40:20	0:0	8	=
+call	40:22	40:136	8	AudioObjectSetPropertyData
+arg	40:49	40:70	9	p_sys->i_selected_dev
+water	40:49	0:0	10	p_sys
+op	40:54	0:0	10	->
+water	40:56	0:0	10	i_selected_dev
+arg	40:72	40:105	9	&audioDeviceSupportsMixingAddress
+op	40:72	0:0	10	&
+water	40:73	0:0	10	audioDeviceSupportsMixingAddress
+arg	40:107	40:108	9	0
+water	40:107	0:0	10	0
+arg	40:110	40:114	9	NULL
+water	40:110	0:0	10	NULL
+arg	40:116	40:128	9	i_param_size
+water	40:116	0:0	10	i_param_size
+arg	40:130	40:136	9	&b_mix
+op	40:130	0:0	10	&
+water	40:131	0:0	10	b_mix
+water	40:137	0:0	8	;
+water	41:12	0:0	8	}
+if	42:12	43:81	6	(err != noErr)
+cond	42:16	42:23	7	err != noErr
+water	42:16	0:0	8	err
+op	42:20	0:0	8	!=
+water	42:23	0:0	8	noErr
+stmts	43:16	43:81	7	
+call	43:16	43:80	8	msg_Err
+arg	43:24	43:30	9	p_aout
+water	43:24	0:0	10	p_aout
+arg	43:32	43:66	9	"failed to re-set mixmode [%4.4s]"
+water	43:32	0:0	10	"failed to re-set mixmode [%4.4s]"
+arg	43:68	43:80	9	(char*)&err
+water	43:68	0:0	10	(
+water	43:69	0:0	10	char
+op	43:74	0:0	10	*
+water	43:75	0:0	10	)
+op	43:76	0:0	10	&
+water	43:77	0:0	10	err
+water	43:81	0:0	8	;
+water	44:8	0:0	6	}
+water	45:4	0:0	4	}
+if	46:4	61:4	2	(p_sys -> i_hog_pid ==getpid ( ))
+cond	46:8	46:35	3	p_sys -> i_hog_pid ==getpid ( )
+water	46:8	0:0	4	p_sys
+op	46:13	0:0	4	->
+water	46:15	0:0	4	i_hog_pid
+op	46:25	0:0	4	==
+call	46:28	46:35	4	getpid
+stmts	46:38	61:4	3	
+water	46:38	0:0	4	{
+water	47:8	0:0	4	p_sys
+op	47:13	0:0	4	->
+water	47:15	0:0	4	i_hog_pid
+op	47:25	0:0	4	=
+op	47:27	0:0	4	-
+water	47:28	0:0	4	1
+water	47:29	0:0	4	;
+water	48:8	0:0	4	i_param_size
+op	48:21	0:0	4	=
+op	48:23	0:0	4	sizeof
+water	48:29	0:0	4	(
+water	48:30	0:0	4	p_sys
+op	48:35	0:0	4	->
+water	48:37	0:0	4	i_hog_pid
+water	48:46	0:0	4	)
+water	48:47	0:0	4	;
+decl	49:8	51:47	4	AudioObjectPropertyAddress	audioDeviceHogModeAddress
+op	49:61	0:0	4	=
+water	49:63	0:0	4	{
+water	49:65	0:0	4	kAudioDevicePropertyHogMode
+water	49:92	0:0	4	,
+water	50:12	0:0	4	kAudioDevicePropertyScopeOutput
+water	50:43	0:0	4	,
+water	51:12	0:0	4	kAudioObjectPropertyElementMaster
+water	51:46	0:0	4	}
+water	56:8	0:0	4	p_sys
+op	56:13	0:0	4	->
+water	56:15	0:0	4	b_ignore_streams_changed_callback
+op	56:49	0:0	4	=
+water	56:51	0:0	4	true
+water	56:55	0:0	4	;
+water	57:8	0:0	4	err
+op	57:12	0:0	4	=
+call	57:14	57:132	4	AudioObjectSetPropertyData
+arg	57:41	57:62	5	p_sys->i_selected_dev
+water	57:41	0:0	6	p_sys
+op	57:46	0:0	6	->
+water	57:48	0:0	6	i_selected_dev
+arg	57:64	57:90	5	&audioDeviceHogModeAddress
+op	57:64	0:0	6	&
+water	57:65	0:0	6	audioDeviceHogModeAddress
+arg	57:92	57:93	5	0
+water	57:92	0:0	6	0
+arg	57:95	57:99	5	NULL
+water	57:95	0:0	6	NULL
+arg	57:101	57:113	5	i_param_size
+water	57:101	0:0	6	i_param_size
+arg	57:115	57:132	5	&p_sys->i_hog_pid
+op	57:115	0:0	6	&
+water	57:116	0:0	6	p_sys
+op	57:121	0:0	6	->
+water	57:123	0:0	6	i_hog_pid
+water	57:133	0:0	4	;
+water	58:8	0:0	4	p_sys
+op	58:13	0:0	4	->
+water	58:15	0:0	4	b_ignore_streams_changed_callback
+op	58:49	0:0	4	=
+water	58:51	0:0	4	false
+water	58:56	0:0	4	;
+if	59:8	60:78	4	(err != noErr)
+cond	59:12	59:19	5	err != noErr
+water	59:12	0:0	6	err
+op	59:16	0:0	6	!=
+water	59:19	0:0	6	noErr
+stmts	60:12	60:78	5	
+call	60:12	60:77	6	msg_Err
+arg	60:20	60:26	7	p_aout
+water	60:20	0:0	8	p_aout
+arg	60:28	60:63	7	"Failed to release hogmode [%4.4s]"
+water	60:28	0:0	8	"Failed to release hogmode [%4.4s]"
+arg	60:65	60:77	7	(char*)&err
+water	60:65	0:0	8	(
+water	60:66	0:0	8	char
+op	60:71	0:0	8	*
+water	60:72	0:0	8	)
+op	60:73	0:0	8	&
+water	60:74	0:0	8	err
+water	60:78	0:0	6	;
+water	61:4	0:0	4	}
+decl	63:4	63:157	2	AudioObjectPropertyAddress	deviceAliveAddress
+op	63:50	0:0	2	=
+water	63:52	0:0	2	{
+water	63:54	0:0	2	kAudioDevicePropertyDeviceIsAlive
+water	63:87	0:0	2	,
+water	63:89	0:0	2	kAudioObjectPropertyScopeGlobal
+water	63:120	0:0	2	,
+water	63:122	0:0	2	kAudioObjectPropertyElementMaster
+water	63:156	0:0	2	}
+water	64:4	0:0	2	err
+op	64:8	0:0	2	=
+call	64:10	64:123	2	AudioObjectRemovePropertyListener
+arg	64:44	64:65	3	p_sys->i_selected_dev
+water	64:44	0:0	4	p_sys
+op	64:49	0:0	4	->
+water	64:51	0:0	4	i_selected_dev
+arg	64:67	64:86	3	&deviceAliveAddress
+op	64:67	0:0	4	&
+water	64:68	0:0	4	deviceAliveAddress
+arg	64:88	64:107	3	DeviceAliveListener
+water	64:88	0:0	4	DeviceAliveListener
+arg	64:109	64:123	3	(void*)p_aout
+water	64:109	0:0	4	(
+water	64:110	0:0	4	void
+op	64:115	0:0	4	*
+water	64:116	0:0	4	)
+water	64:117	0:0	4	p_aout
+water	64:124	0:0	2	;
+if	65:4	68:4	2	(err != noErr)
+cond	65:8	65:15	3	err != noErr
+water	65:8	0:0	4	err
+op	65:12	0:0	4	!=
+water	65:15	0:0	4	noErr
+stmts	65:22	68:4	3	
+water	65:22	0:0	4	{
+call	67:8	67:91	4	msg_Warn
+arg	67:17	67:23	5	p_aout
+water	67:17	0:0	6	p_aout
+arg	67:25	67:77	5	"failed to remove audio device life checker [%4.4s]"
+water	67:25	0:0	6	"failed to remove audio device life checker [%4.4s]"
+arg	67:79	67:91	5	(char*)&err
+water	67:79	0:0	6	(
+water	67:80	0:0	6	char
+op	67:85	0:0	6	*
+water	67:86	0:0	6	)
+op	67:87	0:0	6	&
+water	67:88	0:0	6	err
+water	67:92	0:0	4	;
+water	68:4	0:0	4	}
+water	69:4	0:0	2	p_sys
+op	69:9	0:0	2	->
+water	69:11	0:0	2	i_bytes_per_sample
+op	69:30	0:0	2	=
+water	69:32	0:0	2	0
+water	69:33	0:0	2	;
+water	70:4	0:0	2	p_sys
+op	70:9	0:0	2	->
+water	70:11	0:0	2	b_digital
+op	70:21	0:0	2	=
+water	70:23	0:0	2	false
+water	70:28	0:0	2	;
+call	72:4	72:51	2	TPCircularBufferCleanup
+arg	72:28	72:51	3	&p_sys->circular_buffer
+op	72:28	0:0	4	&
+water	72:29	0:0	4	p_sys
+op	72:34	0:0	4	->
+water	72:36	0:0	4	circular_buffer
+water	72:52	0:0	2	;

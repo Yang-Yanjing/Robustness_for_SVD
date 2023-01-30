@@ -1,0 +1,569 @@
+func	2:0	128:0	0	void	xiph_decode
+params	2:17	0:0	1	
+param	2:18	2:32	2	demux_t *	demux
+param	2:34	2:44	2	void *	data
+param	2:46	2:60	2	block_t *	block
+stmnts	0:0	127:25	1	
+decl	4:4	4:27	2	rtp_xiph_t	*self
+op	4:21	0:0	2	=
+water	4:23	0:0	2	data
+if	5:4	6:17	2	(! data || block -> i_buffer < 4)
+cond	5:8	5:35	3	! data || block -> i_buffer < 4
+op	5:8	0:0	4	!
+water	5:9	0:0	4	data
+op	5:14	0:0	4	||
+water	5:17	0:0	4	block
+op	5:22	0:0	4	->
+water	5:24	0:0	4	i_buffer
+op	5:33	0:0	4	<
+water	5:35	0:0	4	4
+stmts	6:8	6:17	3	
+goto	6:8	6:17	4	drop
+water	6:13	0:0	5	drop
+decl	8:4	8:46	2	uint32_t	ident
+op	8:19	0:0	2	=
+call	8:21	8:45	3	GetDWBE
+arg	8:30	8:45	4	block->p_buffer
+water	8:30	0:0	5	block
+op	8:35	0:0	5	->
+water	8:37	0:0	5	p_buffer
+water	9:4	0:0	2	block
+op	9:9	0:0	2	->
+water	9:11	0:0	2	i_buffer
+op	9:20	0:0	2	-=
+water	9:23	0:0	2	4
+water	9:24	0:0	2	;
+water	10:4	0:0	2	block
+op	10:9	0:0	2	->
+water	10:11	0:0	2	p_buffer
+op	10:20	0:0	2	+=
+water	10:23	0:0	2	4
+water	10:24	0:0	2	;
+water	11:4	0:0	2	unsigned
+water	11:13	0:0	2	fragtype
+op	11:22	0:0	2	=
+water	11:24	0:0	2	(
+water	11:25	0:0	2	ident
+op	11:31	0:0	2	>>
+water	11:34	0:0	2	6
+water	11:35	0:0	2	)
+op	11:37	0:0	2	&
+water	11:39	0:0	2	3
+water	11:40	0:0	2	;
+water	12:4	0:0	2	unsigned
+water	12:13	0:0	2	datatype
+op	12:22	0:0	2	=
+water	12:24	0:0	2	(
+water	12:25	0:0	2	ident
+op	12:31	0:0	2	>>
+water	12:34	0:0	2	4
+water	12:35	0:0	2	)
+op	12:37	0:0	2	&
+water	12:39	0:0	2	3
+water	12:40	0:0	2	;
+water	13:4	0:0	2	unsigned
+water	13:13	0:0	2	pkts
+op	13:18	0:0	2	=
+water	13:20	0:0	2	(
+water	13:21	0:0	2	ident
+water	13:26	0:0	2	)
+op	13:28	0:0	2	&
+water	13:30	0:0	2	15
+water	13:32	0:0	2	;
+water	14:4	0:0	2	ident
+op	14:10	0:0	2	>>=
+water	14:14	0:0	2	8
+water	14:15	0:0	2	;
+if	16:4	23:4	2	(self -> block && ( block -> i_flags & BLOCK_FLAG_DISCONTINUITY ))
+cond	16:8	16:65	3	self -> block && ( block -> i_flags & BLOCK_FLAG_DISCONTINUITY )
+water	16:8	0:0	4	self
+op	16:12	0:0	4	->
+water	16:14	0:0	4	block
+op	16:20	0:0	4	&&
+water	16:23	0:0	4	(
+water	16:24	0:0	4	block
+op	16:29	0:0	4	->
+water	16:31	0:0	4	i_flags
+op	16:39	0:0	4	&
+water	16:41	0:0	4	BLOCK_FLAG_DISCONTINUITY
+water	16:65	0:0	4	)
+stmts	17:4	23:4	3	
+water	17:4	0:0	4	{
+call	18:8	20:61	4	msg_Warn
+arg	18:18	18:23	5	demux
+water	18:18	0:0	6	demux
+arg	18:25	20:61	5	self->vorbis?"discontinuity in fragmented Vorbis packet":"discontinuity in fragmented Theora packet"
+water	18:25	0:0	6	self
+op	18:29	0:0	6	->
+water	18:31	0:0	6	vorbis
+water	18:38	0:0	6	?
+water	19:18	0:0	6	"discontinuity in fragmented Vorbis packet"
+water	19:62	0:0	6	:
+water	20:18	0:0	6	"discontinuity in fragmented Theora packet"
+water	20:62	0:0	4	;
+call	21:8	21:34	4	block_Release
+arg	21:23	21:34	5	self->block
+water	21:23	0:0	6	self
+op	21:27	0:0	6	->
+water	21:29	0:0	6	block
+water	21:35	0:0	4	;
+water	22:8	0:0	4	self
+op	22:12	0:0	4	->
+water	22:14	0:0	4	block
+op	22:20	0:0	4	=
+water	22:22	0:0	4	NULL
+water	22:26	0:0	4	;
+water	23:4	0:0	4	}
+if	24:4	31:4	2	(fragtype <= 1)
+cond	24:8	24:20	3	fragtype <= 1
+water	24:8	0:0	4	fragtype
+op	24:17	0:0	4	<=
+water	24:20	0:0	4	1
+stmts	25:4	31:4	3	
+water	25:4	0:0	4	{
+if	26:8	30:8	4	(self -> block)
+cond	26:12	26:18	5	self -> block
+water	26:12	0:0	6	self
+op	26:16	0:0	6	->
+water	26:18	0:0	6	block
+stmts	27:8	30:8	5	
+water	27:8	0:0	6	{
+call	28:12	28:38	6	block_Release
+arg	28:27	28:38	7	self->block
+water	28:27	0:0	8	self
+op	28:31	0:0	8	->
+water	28:33	0:0	8	block
+water	28:39	0:0	6	;
+water	29:12	0:0	6	self
+op	29:16	0:0	6	->
+water	29:18	0:0	6	block
+op	29:24	0:0	6	=
+water	29:26	0:0	6	NULL
+water	29:30	0:0	6	;
+water	30:8	0:0	6	}
+water	31:4	0:0	4	}
+else	32:4	36:4	2
+stmts	33:4	36:4	3	
+water	33:4	0:0	4	{
+if	34:8	35:21	4	(! self -> block)
+cond	34:12	34:19	5	! self -> block
+op	34:12	0:0	6	!
+water	34:13	0:0	6	self
+op	34:17	0:0	6	->
+water	34:19	0:0	6	block
+stmts	35:12	35:21	5	
+goto	35:12	35:21	6	drop
+water	35:17	0:0	7	drop
+water	36:4	0:0	4	}
+if	37:4	70:4	2	(fragtype > 0)
+cond	37:8	37:19	3	fragtype > 0
+water	37:8	0:0	4	fragtype
+op	37:17	0:0	4	>
+water	37:19	0:0	4	0
+stmts	38:4	70:4	3	
+water	38:4	0:0	4	{
+if	39:8	40:21	4	(pkts > 0 || block -> i_buffer < 2)
+cond	39:12	39:42	5	pkts > 0 || block -> i_buffer < 2
+water	39:12	0:0	6	pkts
+op	39:17	0:0	6	>
+water	39:19	0:0	6	0
+op	39:21	0:0	6	||
+water	39:24	0:0	6	block
+op	39:29	0:0	6	->
+water	39:31	0:0	6	i_buffer
+op	39:40	0:0	6	<
+water	39:42	0:0	6	2
+stmts	40:12	40:21	5	
+goto	40:12	40:21	6	drop
+water	40:17	0:0	7	drop
+decl	41:8	41:49	4	size_t	fraglen
+op	41:23	0:0	4	=
+call	41:25	41:48	5	GetWBE
+arg	41:33	41:48	6	block->p_buffer
+water	41:33	0:0	7	block
+op	41:38	0:0	7	->
+water	41:40	0:0	7	p_buffer
+if	42:8	43:21	4	(block -> i_buffer < ( fraglen + 2 ))
+cond	42:12	42:42	5	block -> i_buffer < ( fraglen + 2 )
+water	42:12	0:0	6	block
+op	42:17	0:0	6	->
+water	42:19	0:0	6	i_buffer
+op	42:28	0:0	6	<
+water	42:30	0:0	6	(
+water	42:31	0:0	6	fraglen
+op	42:39	0:0	6	+
+water	42:41	0:0	6	2
+water	42:42	0:0	6	)
+stmts	43:12	43:21	5	
+goto	43:12	43:21	6	drop
+water	43:17	0:0	7	drop
+water	44:8	0:0	4	block
+op	44:13	0:0	4	->
+water	44:15	0:0	4	i_buffer
+op	44:24	0:0	4	=
+water	44:26	0:0	4	fraglen
+water	44:33	0:0	4	;
+if	45:8	49:8	4	(fragtype == 1)
+cond	45:12	45:24	5	fragtype == 1
+water	45:12	0:0	6	fragtype
+op	45:21	0:0	6	==
+water	45:24	0:0	6	1
+stmts	46:8	49:8	5	
+water	46:8	0:0	6	{
+water	47:12	0:0	6	block
+op	47:17	0:0	6	->
+water	47:19	0:0	6	i_buffer
+op	47:28	0:0	6	+=
+water	47:31	0:0	6	2
+water	47:32	0:0	6	;
+water	48:12	0:0	6	self
+op	48:16	0:0	6	->
+water	48:18	0:0	6	block
+op	48:24	0:0	6	=
+water	48:26	0:0	6	block
+water	48:31	0:0	6	;
+water	49:8	0:0	6	}
+else	50:8	62:8	4
+stmts	51:8	62:8	5	
+water	51:8	0:0	6	{
+decl	52:12	52:46	6	size_t	len
+op	52:23	0:0	6	=
+water	52:25	0:0	6	self
+op	52:29	0:0	6	->
+water	52:31	0:0	6	block
+op	52:36	0:0	6	->
+water	52:38	0:0	6	i_buffer
+water	53:12	0:0	6	self
+op	53:16	0:0	6	->
+water	53:18	0:0	6	block
+op	53:24	0:0	6	=
+call	53:26	53:70	6	block_Realloc
+arg	53:41	53:52	7	self->block
+water	53:41	0:0	8	self
+op	53:45	0:0	8	->
+water	53:47	0:0	8	block
+arg	53:54	53:55	7	0
+water	53:54	0:0	8	0
+arg	53:57	53:70	7	len+fraglen
+water	53:57	0:0	8	len
+op	53:61	0:0	8	+
+water	53:63	0:0	8	fraglen
+water	53:71	0:0	6	;
+if	54:12	58:12	6	(! self -> block)
+cond	54:16	54:23	7	! self -> block
+op	54:16	0:0	8	!
+water	54:17	0:0	8	self
+op	54:21	0:0	8	->
+water	54:23	0:0	8	block
+stmts	55:12	58:12	7	
+water	55:12	0:0	8	{
+call	56:16	56:36	8	block_Release
+arg	56:31	56:36	9	block
+water	56:31	0:0	10	block
+water	56:37	0:0	8	;
+return	57:16	57:22	8	
+water	58:12	0:0	8	}
+call	59:12	60:27	6	memcpy
+arg	59:20	59:47	7	self->block->p_buffer+len
+water	59:20	0:0	8	self
+op	59:24	0:0	8	->
+water	59:26	0:0	8	block
+op	59:31	0:0	8	->
+water	59:33	0:0	8	p_buffer
+op	59:42	0:0	8	+
+water	59:44	0:0	8	len
+arg	59:49	59:68	7	block->p_buffer+2
+water	59:49	0:0	8	block
+op	59:54	0:0	8	->
+water	59:56	0:0	8	p_buffer
+op	59:65	0:0	8	+
+water	59:67	0:0	8	2
+arg	60:20	60:27	7	fraglen
+water	60:20	0:0	8	fraglen
+water	60:28	0:0	6	;
+call	61:12	61:32	6	block_Release
+arg	61:27	61:32	7	block
+water	61:27	0:0	8	block
+water	61:33	0:0	6	;
+water	62:8	0:0	6	}
+if	63:8	64:18	4	(fragtype < 3)
+cond	63:12	63:23	5	fragtype < 3
+water	63:12	0:0	6	fragtype
+op	63:21	0:0	6	<
+water	63:23	0:0	6	3
+stmts	64:12	64:18	5	
+return	64:12	64:18	6	
+water	66:8	0:0	4	block
+op	66:14	0:0	4	=
+water	66:16	0:0	4	self
+op	66:20	0:0	4	->
+water	66:22	0:0	4	block
+water	66:27	0:0	4	;
+water	67:8	0:0	4	self
+op	67:12	0:0	4	->
+water	67:14	0:0	4	block
+op	67:20	0:0	4	=
+water	67:22	0:0	4	NULL
+water	67:26	0:0	4	;
+call	68:8	68:52	4	SetWBE
+arg	68:16	68:31	5	block->p_buffer
+water	68:16	0:0	6	block
+op	68:21	0:0	6	->
+water	68:23	0:0	6	p_buffer
+arg	68:33	68:52	5	block->i_buffer-2
+water	68:33	0:0	6	block
+op	68:38	0:0	6	->
+water	68:40	0:0	6	i_buffer
+op	68:49	0:0	6	-
+water	68:51	0:0	6	2
+water	68:53	0:0	4	;
+water	69:8	0:0	4	pkts
+op	69:13	0:0	4	=
+water	69:15	0:0	4	1
+water	69:16	0:0	4	;
+water	70:4	0:0	4	}
+while	72:4	125:4	2	(pkts > 0)
+cond	72:11	72:18	3	pkts > 0
+water	72:11	0:0	4	pkts
+op	72:16	0:0	4	>
+water	72:18	0:0	4	0
+stmts	73:4	125:4	3	
+water	73:4	0:0	4	{
+if	74:8	75:21	4	(block -> i_buffer < 2)
+cond	74:12	74:30	5	block -> i_buffer < 2
+water	74:12	0:0	6	block
+op	74:17	0:0	6	->
+water	74:19	0:0	6	i_buffer
+op	74:28	0:0	6	<
+water	74:30	0:0	6	2
+stmts	75:12	75:21	5	
+goto	75:12	75:21	6	drop
+water	75:17	0:0	7	drop
+decl	76:8	76:45	4	size_t	len
+op	76:19	0:0	4	=
+call	76:21	76:44	5	GetWBE
+arg	76:29	76:44	6	block->p_buffer
+water	76:29	0:0	7	block
+op	76:34	0:0	7	->
+water	76:36	0:0	7	p_buffer
+water	77:8	0:0	4	block
+op	77:13	0:0	4	->
+water	77:15	0:0	4	i_buffer
+op	77:24	0:0	4	-=
+water	77:27	0:0	4	2
+water	77:28	0:0	4	;
+water	78:8	0:0	4	block
+op	78:13	0:0	4	->
+water	78:15	0:0	4	p_buffer
+op	78:24	0:0	4	+=
+water	78:27	0:0	4	2
+water	78:28	0:0	4	;
+if	79:8	80:21	4	(block -> i_buffer < len)
+cond	79:12	79:30	5	block -> i_buffer < len
+water	79:12	0:0	6	block
+op	79:17	0:0	6	->
+water	79:19	0:0	6	i_buffer
+op	79:28	0:0	6	<
+water	79:30	0:0	6	len
+stmts	80:12	80:21	5	
+goto	80:12	80:21	6	drop
+water	80:17	0:0	7	drop
+switch	81:8	121:8	4	(datatype)
+cond	81:16	81:16	5	datatype
+water	81:16	0:0	6	datatype
+stmts	82:8	121:8	5	
+water	82:8	0:0	6	{
+label	83:12	83:18	6	case 0 :
+water	84:12	0:0	6	{
+if	85:16	91:16	6	(self -> ident != ident)
+cond	85:20	85:35	7	self -> ident != ident
+water	85:20	0:0	8	self
+op	85:24	0:0	8	->
+water	85:26	0:0	8	ident
+op	85:32	0:0	8	!=
+water	85:35	0:0	8	ident
+stmts	86:16	91:16	7	
+water	86:16	0:0	8	{
+call	87:20	89:75	8	msg_Warn
+arg	87:30	87:35	9	demux
+water	87:30	0:0	10	demux
+arg	87:37	89:75	9	self->vorbis?"ignoring raw Vorbis payload without configuration":"ignoring raw Theora payload without configuration"
+water	87:37	0:0	10	self
+op	87:41	0:0	10	->
+water	87:43	0:0	10	vorbis
+water	87:50	0:0	10	?
+water	88:24	0:0	10	"ignoring raw Vorbis payload without configuration"
+water	88:76	0:0	10	:
+water	89:24	0:0	10	"ignoring raw Theora payload without configuration"
+water	89:76	0:0	8	;
+break	90:20	90:25	8	
+water	91:16	0:0	8	}
+decl	92:16	92:48	6	block_t	*raw
+op	92:29	0:0	6	=
+call	92:31	92:47	7	block_Alloc
+arg	92:44	92:47	8	len
+water	92:44	0:0	9	len
+call	93:16	93:59	6	memcpy
+arg	93:24	93:37	7	raw->p_buffer
+water	93:24	0:0	8	raw
+op	93:27	0:0	8	->
+water	93:29	0:0	8	p_buffer
+arg	93:39	93:54	7	block->p_buffer
+water	93:39	0:0	8	block
+op	93:44	0:0	8	->
+water	93:46	0:0	8	p_buffer
+arg	93:56	93:59	7	len
+water	93:56	0:0	8	len
+water	93:60	0:0	6	;
+water	94:16	0:0	6	raw
+op	94:19	0:0	6	->
+water	94:21	0:0	6	i_pts
+op	94:27	0:0	6	=
+water	94:29	0:0	6	block
+op	94:34	0:0	6	->
+water	94:36	0:0	6	i_pts
+water	94:41	0:0	6	;
+call	95:16	95:50	6	codec_decode
+arg	95:30	95:35	7	demux
+water	95:30	0:0	8	demux
+arg	95:37	95:45	7	self->id
+water	95:37	0:0	8	self
+op	95:41	0:0	8	->
+water	95:43	0:0	8	id
+arg	95:47	95:50	7	raw
+water	95:47	0:0	8	raw
+water	95:51	0:0	6	;
+break	96:16	96:21	6	
+water	97:12	0:0	6	}
+label	98:12	98:18	6	case 1 :
+water	99:12	0:0	6	{
+if	100:16	101:25	6	(self -> ident == ident)
+cond	100:20	100:35	7	self -> ident == ident
+water	100:20	0:0	8	self
+op	100:24	0:0	8	->
+water	100:26	0:0	8	ident
+op	100:32	0:0	8	==
+water	100:35	0:0	8	ident
+stmts	101:20	101:25	7	
+break	101:20	101:25	8	
+decl	102:16	102:26	6	void	*extv
+decl	103:16	103:72	6	ssize_t	extc
+op	103:29	0:0	6	=
+call	103:31	103:71	7	xiph_header
+arg	103:44	103:49	8	&extv
+op	103:44	0:0	9	&
+water	103:45	0:0	9	extv
+arg	103:51	103:66	8	block->p_buffer
+water	103:51	0:0	9	block
+op	103:56	0:0	9	->
+water	103:58	0:0	9	p_buffer
+arg	103:68	103:71	8	len
+water	103:68	0:0	9	len
+if	104:16	105:25	6	(extc < 0)
+cond	104:20	104:27	7	extc < 0
+water	104:20	0:0	8	extc
+op	104:25	0:0	8	<
+water	104:27	0:0	8	0
+stmts	105:20	105:25	7	
+break	105:20	105:25	8	
+decl	106:16	106:31	6	es_format_t	fmt
+call	107:16	109:63	6	es_format_Init
+arg	107:32	107:36	7	&fmt
+op	107:32	0:0	8	&
+water	107:33	0:0	8	fmt
+arg	107:38	107:72	7	self->vorbis?AUDIO_ES:VIDEO_ES
+water	107:38	0:0	8	self
+op	107:42	0:0	8	->
+water	107:44	0:0	8	vorbis
+water	107:51	0:0	8	?
+water	107:53	0:0	8	AUDIO_ES
+water	107:62	0:0	8	:
+water	107:64	0:0	8	VIDEO_ES
+arg	108:32	109:63	7	self->vorbis?VLC_CODEC_VORBIS:VLC_CODEC_THEORA
+water	108:32	0:0	8	self
+op	108:36	0:0	8	->
+water	108:38	0:0	8	vorbis
+water	108:45	0:0	8	?
+water	108:47	0:0	8	VLC_CODEC_VORBIS
+water	109:45	0:0	8	:
+water	109:47	0:0	8	VLC_CODEC_THEORA
+water	109:64	0:0	6	;
+water	110:16	0:0	6	fmt
+op	110:19	0:0	6	.
+water	110:20	0:0	6	p_extra
+op	110:28	0:0	6	=
+water	110:30	0:0	6	extv
+water	110:34	0:0	6	;
+water	111:16	0:0	6	fmt
+op	111:19	0:0	6	.
+water	111:20	0:0	6	i_extra
+op	111:28	0:0	6	=
+water	111:30	0:0	6	extc
+water	111:34	0:0	6	;
+call	112:16	112:46	6	codec_destroy
+arg	112:31	112:36	7	demux
+water	112:31	0:0	8	demux
+arg	112:38	112:46	7	self->id
+water	112:38	0:0	8	self
+op	112:42	0:0	8	->
+water	112:44	0:0	8	id
+water	112:47	0:0	6	;
+call	113:16	116:30	6	msg_Dbg
+arg	113:25	113:30	7	demux
+water	113:25	0:0	8	demux
+arg	113:32	115:77	7	self->vorbis?"Vorbis packed configuration received (%06"PRIx32")":"Theora packed configuration received (%06"PRIx32")"
+water	113:32	0:0	8	self
+op	113:36	0:0	8	->
+water	113:38	0:0	8	vorbis
+water	113:45	0:0	8	?
+water	114:25	0:0	8	"Vorbis packed configuration received (%06"
+water	114:68	0:0	8	PRIx32
+water	114:74	0:0	8	")"
+water	114:78	0:0	8	:
+water	115:25	0:0	8	"Theora packed configuration received (%06"
+water	115:68	0:0	8	PRIx32
+water	115:74	0:0	8	")"
+arg	116:25	116:30	7	ident
+water	116:25	0:0	8	ident
+water	116:31	0:0	6	;
+water	117:16	0:0	6	self
+op	117:20	0:0	6	->
+water	117:22	0:0	6	ident
+op	117:28	0:0	6	=
+water	117:30	0:0	6	ident
+water	117:35	0:0	6	;
+water	118:16	0:0	6	self
+op	118:20	0:0	6	->
+water	118:22	0:0	6	id
+op	118:25	0:0	6	=
+call	118:27	118:50	6	codec_init
+arg	118:39	118:44	7	demux
+water	118:39	0:0	8	demux
+arg	118:46	118:50	7	&fmt
+op	118:46	0:0	8	&
+water	118:47	0:0	8	fmt
+water	118:51	0:0	6	;
+break	119:16	119:21	6	
+water	120:12	0:0	6	}
+water	121:8	0:0	6	}
+water	122:8	0:0	4	block
+op	122:13	0:0	4	->
+water	122:15	0:0	4	i_buffer
+op	122:24	0:0	4	-=
+water	122:27	0:0	4	len
+water	122:30	0:0	4	;
+water	123:8	0:0	4	block
+op	123:13	0:0	4	->
+water	123:15	0:0	4	p_buffer
+op	123:24	0:0	4	+=
+water	123:27	0:0	4	len
+water	123:30	0:0	4	;
+water	124:8	0:0	4	pkts
+op	124:12	0:0	4	--
+water	124:14	0:0	4	;
+water	125:4	0:0	4	}
+label	126:0	126:4	2	drop :
+call	127:4	127:24	2	block_Release
+arg	127:19	127:24	3	block
+water	127:19	0:0	4	block
+water	127:25	0:0	2	;

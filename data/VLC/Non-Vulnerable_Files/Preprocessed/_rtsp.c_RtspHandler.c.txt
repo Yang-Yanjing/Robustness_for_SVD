@@ -1,0 +1,2407 @@
+func	2:0	542:0	0	static int	RtspHandler
+params	2:22	0:0	1	
+param	2:24	2:43	2	rtsp_stream_t *	rtsp
+param	2:45	2:65	2	rtsp_stream_id_t *	id
+param	3:24	3:42	2	httpd_client_t *	cl
+param	4:24	4:47	2	httpd_message_t *	answer
+param	5:24	5:53	2	const httpd_message_t *	query
+stmnts	0:0	541:22	1	
+decl	7:4	7:37	2	vlc_object_t	*owner
+op	7:24	0:0	2	=
+water	7:26	0:0	2	rtsp
+op	7:30	0:0	2	->
+water	7:32	0:0	2	owner
+decl	8:4	8:23	2	char	psz_sesbuf[17]
+decl	9:4	9:40	2	const char	*psz_session
+op	9:28	0:0	2	=
+water	9:30	0:0	2	NULL
+water	9:34	0:0	2	,
+decl	9:4	9:40	2	const char	*psz
+decl	10:4	11:45	2	char	control[sizeof("rtsp://[]:12345")+NI_MAXNUMERICHOST+strlen(rtsp->psz_path)]
+decl	12:4	12:38	2	bool	vod
+op	12:13	0:0	2	=
+water	12:15	0:0	2	rtsp
+op	12:19	0:0	2	->
+water	12:21	0:0	2	vod_media
+op	12:31	0:0	2	!=
+water	12:34	0:0	2	NULL
+decl	13:4	13:14	2	time_t	now
+call	14:4	14:14	2	time
+arg	14:10	14:14	3	&now
+op	14:10	0:0	4	&
+water	14:11	0:0	4	now
+water	14:15	0:0	2	;
+if	15:4	16:26	2	(answer == NULL || query == NULL || cl == NULL)
+cond	15:8	15:49	3	answer == NULL || query == NULL || cl == NULL
+water	15:8	0:0	4	answer
+op	15:15	0:0	4	==
+water	15:18	0:0	4	NULL
+op	15:23	0:0	4	||
+water	15:26	0:0	4	query
+op	15:32	0:0	4	==
+water	15:35	0:0	4	NULL
+op	15:40	0:0	4	||
+water	15:43	0:0	4	cl
+op	15:46	0:0	4	==
+water	15:49	0:0	4	NULL
+stmts	16:8	16:26	3	
+return	16:8	16:26	4	VLC_SUCCESS
+water	16:15	0:0	5	VLC_SUCCESS
+else	17:4	30:4	2
+stmts	18:4	30:4	3	
+water	18:4	0:0	4	{
+decl	20:8	20:40	4	char	ip[NI_MAXNUMERICHOST]
+water	20:34	0:0	4	,
+decl	20:8	20:40	4	char	*ptr
+decl	21:8	21:16	4	int	port
+call	22:8	22:38	4	httpd_ServerIP
+arg	22:24	22:26	5	cl
+water	22:24	0:0	6	cl
+arg	22:28	22:30	5	ip
+water	22:28	0:0	6	ip
+arg	22:32	22:38	5	&port
+op	22:32	0:0	6	&
+water	22:33	0:0	6	port
+water	22:39	0:0	4	;
+water	23:8	0:0	4	ptr
+op	23:12	0:0	4	=
+call	23:14	23:30	4	strchr
+arg	23:22	23:24	5	ip
+water	23:22	0:0	6	ip
+arg	23:26	23:30	5	'%'
+water	23:26	0:0	6	'%'
+water	23:31	0:0	4	;
+if	24:8	25:23	4	(ptr != NULL)
+cond	24:12	24:19	5	ptr != NULL
+water	24:12	0:0	6	ptr
+op	24:16	0:0	6	!=
+water	24:19	0:0	6	NULL
+stmts	25:12	25:23	5	
+op	25:12	0:0	6	*
+water	25:13	0:0	6	ptr
+op	25:17	0:0	6	=
+water	25:19	0:0	6	'\0'
+water	25:23	0:0	6	;
+if	26:8	27:76	4	(strchr (ip ,':' ) != NULL)
+cond	26:12	26:33	5	strchr (ip ,':' ) != NULL
+call	26:12	26:28	6	strchr
+arg	26:20	26:22	7	ip
+water	26:20	0:0	8	ip
+arg	26:24	26:28	7	':'
+water	26:24	0:0	8	':'
+op	26:30	0:0	6	!=
+water	26:33	0:0	6	NULL
+stmts	27:12	27:76	5	
+call	27:12	27:75	6	sprintf
+arg	27:21	27:28	7	control
+water	27:21	0:0	8	control
+arg	27:30	27:48	7	"rtsp://[%s]:%d%s"
+water	27:30	0:0	8	"rtsp://[%s]:%d%s"
+arg	27:50	27:52	7	ip
+water	27:50	0:0	8	ip
+arg	27:54	27:58	7	port
+water	27:54	0:0	8	port
+arg	27:60	27:75	7	rtsp->psz_path
+water	27:60	0:0	8	rtsp
+op	27:64	0:0	8	->
+water	27:66	0:0	8	psz_path
+water	27:76	0:0	6	;
+else	28:8	29:74	4
+stmts	29:12	29:74	5	
+call	29:12	29:73	6	sprintf
+arg	29:21	29:28	7	control
+water	29:21	0:0	8	control
+arg	29:30	29:46	7	"rtsp://%s:%d%s"
+water	29:30	0:0	8	"rtsp://%s:%d%s"
+arg	29:48	29:50	7	ip
+water	29:48	0:0	8	ip
+arg	29:52	29:56	7	port
+water	29:52	0:0	8	port
+arg	29:58	29:73	7	rtsp->psz_path
+water	29:58	0:0	8	rtsp
+op	29:62	0:0	8	->
+water	29:64	0:0	8	psz_path
+water	29:74	0:0	6	;
+water	30:4	0:0	4	}
+water	32:4	0:0	2	answer
+op	32:10	0:0	2	->
+water	32:12	0:0	2	i_proto
+op	32:20	0:0	2	=
+water	32:22	0:0	2	HTTPD_PROTO_RTSP
+water	32:38	0:0	2	;
+water	33:4	0:0	2	answer
+op	33:10	0:0	2	->
+water	33:12	0:0	2	i_version
+op	33:21	0:0	2	=
+water	33:23	0:0	2	0
+water	33:24	0:0	2	;
+water	34:4	0:0	2	answer
+op	34:10	0:0	2	->
+water	34:12	0:0	2	i_type
+op	34:21	0:0	2	=
+water	34:23	0:0	2	HTTPD_MSG_ANSWER
+water	34:39	0:0	2	;
+water	35:4	0:0	2	answer
+op	35:10	0:0	2	->
+water	35:12	0:0	2	i_body
+op	35:19	0:0	2	=
+water	35:21	0:0	2	0
+water	35:22	0:0	2	;
+water	36:4	0:0	2	answer
+op	36:10	0:0	2	->
+water	36:12	0:0	2	p_body
+op	36:19	0:0	2	=
+water	36:21	0:0	2	NULL
+water	36:25	0:0	2	;
+call	37:4	37:54	2	httpd_MsgAdd
+arg	37:18	37:24	3	answer
+water	37:18	0:0	4	answer
+arg	37:26	37:34	3	"Server"
+water	37:26	0:0	4	"Server"
+arg	37:36	37:44	3	"VLC/%s"
+water	37:36	0:0	4	"VLC/%s"
+arg	37:46	37:54	3	VERSION
+water	37:46	0:0	4	VERSION
+water	37:55	0:0	2	;
+decl	39:4	39:16	2	struct tm	ut
+if	40:4	50:4	2	(gmtime_r (& now ,& ut ) != NULL)
+cond	40:8	40:32	3	gmtime_r (& now ,& ut ) != NULL
+call	40:8	40:27	4	gmtime_r
+arg	40:18	40:22	5	&now
+op	40:18	0:0	6	&
+water	40:19	0:0	6	now
+arg	40:24	40:27	5	&ut
+op	40:24	0:0	6	&
+water	40:25	0:0	6	ut
+op	40:29	0:0	4	!=
+water	40:32	0:0	4	NULL
+stmts	41:4	50:4	3	
+water	41:4	0:0	4	{
+water	42:8	0:0	4	static
+water	42:15	0:0	4	const
+water	42:21	0:0	4	char
+water	42:26	0:0	4	wdays
+op	42:31	0:0	4	[
+water	42:32	0:0	4	7
+op	42:33	0:0	4	]
+op	42:34	0:0	4	[
+water	42:35	0:0	4	4
+op	42:36	0:0	4	]
+op	42:38	0:0	4	=
+water	42:40	0:0	4	{
+water	43:12	0:0	4	"Sun"
+water	43:17	0:0	4	,
+water	43:19	0:0	4	"Mon"
+water	43:24	0:0	4	,
+water	43:26	0:0	4	"Tue"
+water	43:31	0:0	4	,
+water	43:33	0:0	4	"Wed"
+water	43:38	0:0	4	,
+water	43:40	0:0	4	"Thu"
+water	43:45	0:0	4	,
+water	43:47	0:0	4	"Fri"
+water	43:52	0:0	4	,
+water	43:54	0:0	4	"Sat"
+water	43:60	0:0	4	}
+water	43:61	0:0	4	;
+water	44:8	0:0	4	static
+water	44:15	0:0	4	const
+water	44:21	0:0	4	char
+water	44:26	0:0	4	mons
+op	44:30	0:0	4	[
+water	44:31	0:0	4	12
+op	44:33	0:0	4	]
+op	44:34	0:0	4	[
+water	44:35	0:0	4	4
+op	44:36	0:0	4	]
+op	44:38	0:0	4	=
+water	44:40	0:0	4	{
+water	45:12	0:0	4	"Jan"
+water	45:17	0:0	4	,
+water	45:19	0:0	4	"Feb"
+water	45:24	0:0	4	,
+water	45:26	0:0	4	"Mar"
+water	45:31	0:0	4	,
+water	45:33	0:0	4	"Apr"
+water	45:38	0:0	4	,
+water	45:40	0:0	4	"May"
+water	45:45	0:0	4	,
+water	45:47	0:0	4	"Jun"
+water	45:52	0:0	4	,
+water	46:12	0:0	4	"Jul"
+water	46:17	0:0	4	,
+water	46:19	0:0	4	"Aug"
+water	46:24	0:0	4	,
+water	46:26	0:0	4	"Sep"
+water	46:31	0:0	4	,
+water	46:33	0:0	4	"Oct"
+water	46:38	0:0	4	,
+water	46:40	0:0	4	"Nov"
+water	46:45	0:0	4	,
+water	46:47	0:0	4	"Dec"
+water	46:53	0:0	4	}
+water	46:54	0:0	4	;
+call	47:8	49:73	4	httpd_MsgAdd
+arg	47:22	47:28	5	answer
+water	47:22	0:0	6	answer
+arg	47:30	47:36	5	"Date"
+water	47:30	0:0	6	"Date"
+arg	47:38	47:75	5	"%s, %02u %s %04u %02u:%02u:%02u GMT"
+water	47:38	0:0	6	"%s, %02u %s %04u %02u:%02u:%02u GMT"
+arg	48:22	48:39	5	wdays[ut.tm_wday]
+water	48:22	0:0	6	wdays
+op	48:27	0:0	6	[
+water	48:28	0:0	6	ut
+op	48:30	0:0	6	.
+water	48:31	0:0	6	tm_wday
+op	48:38	0:0	6	]
+arg	48:41	48:51	5	ut.tm_mday
+water	48:41	0:0	6	ut
+op	48:43	0:0	6	.
+water	48:44	0:0	6	tm_mday
+arg	48:53	48:68	5	mons[ut.tm_mon]
+water	48:53	0:0	6	mons
+op	48:57	0:0	6	[
+water	48:58	0:0	6	ut
+op	48:60	0:0	6	.
+water	48:61	0:0	6	tm_mon
+op	48:67	0:0	6	]
+arg	49:22	49:39	5	1900+ut.tm_year
+water	49:22	0:0	6	1900
+op	49:27	0:0	6	+
+water	49:29	0:0	6	ut
+op	49:31	0:0	6	.
+water	49:32	0:0	6	tm_year
+arg	49:41	49:51	5	ut.tm_hour
+water	49:41	0:0	6	ut
+op	49:43	0:0	6	.
+water	49:44	0:0	6	tm_hour
+arg	49:53	49:62	5	ut.tm_min
+water	49:53	0:0	6	ut
+op	49:55	0:0	6	.
+water	49:56	0:0	6	tm_min
+arg	49:64	49:73	5	ut.tm_sec
+water	49:64	0:0	6	ut
+op	49:66	0:0	6	.
+water	49:67	0:0	6	tm_sec
+water	49:74	0:0	4	;
+water	50:4	0:0	4	}
+if	51:4	54:4	2	(query -> i_proto != HTTPD_PROTO_RTSP)
+cond	51:8	51:26	3	query -> i_proto != HTTPD_PROTO_RTSP
+water	51:8	0:0	4	query
+op	51:13	0:0	4	->
+water	51:15	0:0	4	i_proto
+op	51:23	0:0	4	!=
+water	51:26	0:0	4	HTTPD_PROTO_RTSP
+stmts	52:4	54:4	3	
+water	52:4	0:0	4	{
+water	53:8	0:0	4	answer
+op	53:14	0:0	4	->
+water	53:16	0:0	4	i_status
+op	53:25	0:0	4	=
+water	53:27	0:0	4	505
+water	53:30	0:0	4	;
+water	54:4	0:0	4	}
+else	55:4	61:4	2
+stmts	56:4	61:4	3	
+if	56:4	61:4	4	(httpd_MsgGet (query ,"Require" ) != NULL)
+cond	56:8	56:44	5	httpd_MsgGet (query ,"Require" ) != NULL
+call	56:8	56:39	6	httpd_MsgGet
+arg	56:22	56:27	7	query
+water	56:22	0:0	8	query
+arg	56:29	56:39	7	"Require"
+water	56:29	0:0	8	"Require"
+op	56:41	0:0	6	!=
+water	56:44	0:0	6	NULL
+stmts	57:4	61:4	5	
+water	57:4	0:0	6	{
+water	58:8	0:0	6	answer
+op	58:14	0:0	6	->
+water	58:16	0:0	6	i_status
+op	58:25	0:0	6	=
+water	58:27	0:0	6	551
+water	58:30	0:0	6	;
+call	59:8	60:55	6	httpd_MsgAdd
+arg	59:22	59:28	7	answer
+water	59:22	0:0	8	answer
+arg	59:30	59:43	7	"Unsupported"
+water	59:30	0:0	8	"Unsupported"
+arg	59:45	59:49	7	"%s"
+water	59:45	0:0	8	"%s"
+arg	60:22	60:55	7	httpd_MsgGet(query,"Require")
+call	60:22	60:53	8	httpd_MsgGet
+arg	60:36	60:41	9	query
+water	60:36	0:0	10	query
+arg	60:43	60:53	9	"Require"
+water	60:43	0:0	10	"Require"
+water	60:56	0:0	6	;
+water	61:4	0:0	6	}
+else	62:4	524:4	2
+stmts	63:4	524:4	3	
+switch	63:4	524:4	4	(query -> i_type)
+cond	63:12	63:19	5	query -> i_type
+water	63:12	0:0	6	query
+op	63:17	0:0	6	->
+water	63:19	0:0	6	i_type
+stmts	64:4	524:4	5	
+water	64:4	0:0	6	{
+label	65:8	65:31	6	case HTTPD_MSG_DESCRIBE :
+water	66:8	0:0	6	{
+if	67:12	71:12	6	(id != NULL)
+cond	67:16	67:22	7	id != NULL
+water	67:16	0:0	8	id
+op	67:19	0:0	8	!=
+water	67:22	0:0	8	NULL
+stmts	68:12	71:12	7	
+water	68:12	0:0	8	{
+water	69:16	0:0	8	answer
+op	69:22	0:0	8	->
+water	69:24	0:0	8	i_status
+op	69:33	0:0	8	=
+water	69:35	0:0	8	460
+water	69:38	0:0	8	;
+break	70:16	70:21	8	
+water	71:12	0:0	8	}
+water	72:12	0:0	6	answer
+op	72:18	0:0	6	->
+water	72:20	0:0	6	i_status
+op	72:29	0:0	6	=
+water	72:31	0:0	6	200
+water	72:34	0:0	6	;
+call	73:12	73:75	6	httpd_MsgAdd
+arg	73:26	73:32	7	answer
+water	73:26	0:0	8	answer
+arg	73:34	73:48	7	"Content-Type"
+water	73:34	0:0	8	"Content-Type"
+arg	73:51	73:55	7	"%s"
+water	73:51	0:0	8	"%s"
+arg	73:57	73:75	7	"application/sdp"
+water	73:57	0:0	8	"application/sdp"
+water	73:76	0:0	6	;
+call	74:12	74:65	6	httpd_MsgAdd
+arg	74:26	74:32	7	answer
+water	74:26	0:0	8	answer
+arg	74:34	74:48	7	"Content-Base"
+water	74:34	0:0	8	"Content-Base"
+arg	74:51	74:55	7	"%s"
+water	74:51	0:0	8	"%s"
+arg	74:57	74:65	7	control
+water	74:57	0:0	8	control
+water	74:66	0:0	6	;
+water	75:12	0:0	6	answer
+op	75:18	0:0	6	->
+water	75:20	0:0	6	p_body
+op	75:27	0:0	6	=
+call	75:29	77:63	6	(uint8_t*)
+arg	75:43	77:63	7	vod?SDPGenerateVoD(rtsp->vod_media,control):SDPGenerate((sout_stream_t*)owner,control)
+water	75:43	0:0	8	vod
+water	75:47	0:0	8	?
+call	76:16	76:57	8	SDPGenerateVoD
+arg	76:32	76:47	9	rtsp->vod_media
+water	76:32	0:0	10	rtsp
+op	76:36	0:0	10	->
+water	76:38	0:0	10	vod_media
+arg	76:49	76:57	9	control
+water	76:49	0:0	10	control
+water	76:59	0:0	8	:
+call	77:16	77:61	8	SDPGenerate
+arg	77:29	77:51	9	(sout_stream_t*)owner
+water	77:29	0:0	10	(
+water	77:30	0:0	10	sout_stream_t
+op	77:44	0:0	10	*
+water	77:45	0:0	10	)
+water	77:46	0:0	10	owner
+arg	77:53	77:61	9	control
+water	77:53	0:0	10	control
+water	77:64	0:0	6	;
+if	78:12	79:65	6	(answer -> p_body != NULL)
+cond	78:16	78:34	7	answer -> p_body != NULL
+water	78:16	0:0	8	answer
+op	78:22	0:0	8	->
+water	78:24	0:0	8	p_body
+op	78:31	0:0	8	!=
+water	78:34	0:0	8	NULL
+stmts	79:16	79:65	7	
+water	79:16	0:0	8	answer
+op	79:22	0:0	8	->
+water	79:24	0:0	8	i_body
+op	79:31	0:0	8	=
+call	79:33	79:64	8	strlen
+arg	79:41	79:64	9	(char*)answer->p_body
+water	79:41	0:0	10	(
+water	79:42	0:0	10	char
+op	79:47	0:0	10	*
+water	79:48	0:0	10	)
+water	79:49	0:0	10	answer
+op	79:55	0:0	10	->
+water	79:57	0:0	10	p_body
+water	79:65	0:0	8	;
+else	80:12	81:38	6
+stmts	81:16	81:38	7	
+water	81:16	0:0	8	answer
+op	81:22	0:0	8	->
+water	81:24	0:0	8	i_status
+op	81:33	0:0	8	=
+water	81:35	0:0	8	500
+water	81:38	0:0	8	;
+break	82:12	82:17	6	
+water	83:8	0:0	6	}
+label	84:8	84:28	6	case HTTPD_MSG_SETUP :
+if	86:12	90:12	6	(id == NULL)
+cond	86:16	86:22	7	id == NULL
+water	86:16	0:0	8	id
+op	86:19	0:0	8	==
+water	86:22	0:0	8	NULL
+stmts	87:12	90:12	7	
+water	87:12	0:0	8	{
+water	88:16	0:0	8	answer
+op	88:22	0:0	8	->
+water	88:24	0:0	8	i_status
+op	88:33	0:0	8	=
+water	88:35	0:0	8	459
+water	88:38	0:0	8	;
+break	89:16	89:21	8	
+water	90:12	0:0	8	}
+water	91:12	0:0	6	psz_session
+op	91:24	0:0	6	=
+call	91:26	91:57	6	httpd_MsgGet
+arg	91:40	91:45	7	query
+water	91:40	0:0	8	query
+arg	91:47	91:57	7	"Session"
+water	91:47	0:0	8	"Session"
+water	91:58	0:0	6	;
+water	92:12	0:0	6	answer
+op	92:18	0:0	6	->
+water	92:20	0:0	6	i_status
+op	92:29	0:0	6	=
+water	92:31	0:0	6	461
+water	92:34	0:0	6	;
+for	93:12	296:12	6	( const char * tpt =httpd_MsgGet (query ,"Transport" ) ;tpt != NULL;tpt =transport_next (tpt ))
+forinit	0:0	93:69	7	 const char * tpt =httpd_MsgGet (query ,"Transport" ) ;
+decl	93:17	93:69	8	const char	*tpt
+op	93:33	0:0	8	=
+call	93:35	93:68	9	httpd_MsgGet
+arg	93:49	93:54	10	query
+water	93:49	0:0	11	query
+arg	93:56	93:68	10	"Transport"
+water	93:56	0:0	11	"Transport"
+cond	94:17	94:24	7	tpt != NULL
+water	94:17	0:0	8	tpt
+op	94:21	0:0	8	!=
+water	94:24	0:0	8	NULL
+forexpr	95:17	95:43	7	tpt =transport_next (tpt )
+water	95:17	0:0	8	tpt
+op	95:21	0:0	8	=
+call	95:23	95:43	8	transport_next
+arg	95:39	95:43	9	tpt
+water	95:39	0:0	10	tpt
+stmts	96:12	296:12	7	
+water	96:12	0:0	8	{
+decl	97:16	97:57	8	bool	b_multicast
+op	97:33	0:0	8	=
+water	97:35	0:0	8	true
+water	97:39	0:0	8	,
+decl	97:16	97:57	8	bool	b_unsupp
+op	97:50	0:0	8	=
+water	97:52	0:0	8	false
+water	98:16	0:0	8	unsigned
+water	98:25	0:0	8	loport
+op	98:32	0:0	8	=
+water	98:34	0:0	8	5004
+water	98:38	0:0	8	,
+water	98:40	0:0	8	hiport
+water	98:46	0:0	8	;
+if	101:16	102:28	8	(strncmp (tpt ,"RTP/AVP" ,7 ))
+cond	101:20	101:47	9	strncmp (tpt ,"RTP/AVP" ,7 )
+call	101:20	101:47	10	strncmp
+arg	101:29	101:32	11	tpt
+water	101:29	0:0	12	tpt
+arg	101:34	101:43	11	"RTP/AVP"
+water	101:34	0:0	12	"RTP/AVP"
+arg	101:45	101:47	11	7
+water	101:45	0:0	12	7
+stmts	102:20	102:28	9	
+continue	102:20	102:28	10	
+water	103:16	0:0	8	tpt
+op	103:20	0:0	8	+=
+water	103:23	0:0	8	7
+water	103:24	0:0	8	;
+if	104:16	105:28	8	(strncmp (tpt ,"/UDP" ,4 ) == 0)
+cond	104:20	104:49	9	strncmp (tpt ,"/UDP" ,4 ) == 0
+call	104:20	104:44	10	strncmp
+arg	104:29	104:32	11	tpt
+water	104:29	0:0	12	tpt
+arg	104:34	104:40	11	"/UDP"
+water	104:34	0:0	12	"/UDP"
+arg	104:42	104:44	11	4
+water	104:42	0:0	12	4
+op	104:46	0:0	10	==
+water	104:49	0:0	10	0
+stmts	105:20	105:28	9	
+water	105:20	0:0	10	tpt
+op	105:24	0:0	10	+=
+water	105:27	0:0	10	4
+water	105:28	0:0	10	;
+if	106:16	107:28	8	(strchr (";," ,* tpt ) == NULL)
+cond	106:20	106:44	9	strchr (";," ,* tpt ) == NULL
+call	106:20	106:39	10	strchr
+arg	106:28	106:32	11	";,"
+water	106:28	0:0	12	";,"
+arg	106:34	106:39	11	*tpt
+op	106:34	0:0	12	*
+water	106:35	0:0	12	tpt
+op	106:41	0:0	10	==
+water	106:44	0:0	10	NULL
+stmts	107:20	107:28	9	
+continue	107:20	107:28	10	
+for	109:16	157:16	8	( const char * opt =parameter_next (tpt ) ;opt != NULL;opt =parameter_next (opt ))
+forinit	0:0	109:60	9	 const char * opt =parameter_next (tpt ) ;
+decl	109:21	109:60	10	const char	*opt
+op	109:37	0:0	10	=
+call	109:39	109:59	11	parameter_next
+arg	109:55	109:59	12	tpt
+water	109:55	0:0	13	tpt
+cond	110:21	110:28	9	opt != NULL
+water	110:21	0:0	10	opt
+op	110:25	0:0	10	!=
+water	110:28	0:0	10	NULL
+forexpr	111:21	111:47	9	opt =parameter_next (opt )
+water	111:21	0:0	10	opt
+op	111:25	0:0	10	=
+call	111:27	111:47	10	parameter_next
+arg	111:43	111:47	11	opt
+water	111:43	0:0	12	opt
+stmts	112:16	157:16	9	
+water	112:16	0:0	10	{
+if	113:20	114:42	10	(strncmp (opt ,"multicast" ,9 ) == 0)
+cond	113:24	113:58	11	strncmp (opt ,"multicast" ,9 ) == 0
+call	113:24	113:53	12	strncmp
+arg	113:33	113:36	13	opt
+water	113:33	0:0	14	opt
+arg	113:38	113:49	13	"multicast"
+water	113:38	0:0	14	"multicast"
+arg	113:51	113:53	13	9
+water	113:51	0:0	14	9
+op	113:55	0:0	12	==
+water	113:58	0:0	12	0
+stmts	114:24	114:42	11	
+water	114:24	0:0	12	b_multicast
+op	114:36	0:0	12	=
+water	114:38	0:0	12	true
+water	114:42	0:0	12	;
+else	115:20	117:43	10
+stmts	116:20	117:43	11	
+if	116:20	117:43	12	(strncmp (opt ,"unicast" ,7 ) == 0)
+cond	116:24	116:56	13	strncmp (opt ,"unicast" ,7 ) == 0
+call	116:24	116:51	14	strncmp
+arg	116:33	116:36	15	opt
+water	116:33	0:0	16	opt
+arg	116:38	116:47	15	"unicast"
+water	116:38	0:0	16	"unicast"
+arg	116:49	116:51	15	7
+water	116:49	0:0	16	7
+op	116:53	0:0	14	==
+water	116:56	0:0	14	0
+stmts	117:24	117:43	13	
+water	117:24	0:0	14	b_multicast
+op	117:36	0:0	14	=
+water	117:38	0:0	14	false
+water	117:43	0:0	14	;
+else	118:20	121:24	10
+stmts	119:20	121:24	11	
+if	119:20	121:24	12	(sscanf (opt ,"client_port=%u-%u" ,& loport ,& hiport ) == 2)
+cond	119:24	120:35	13	sscanf (opt ,"client_port=%u-%u" ,& loport ,& hiport ) == 2
+call	119:24	119:75	14	sscanf
+arg	119:32	119:35	15	opt
+water	119:32	0:0	16	opt
+arg	119:37	119:56	15	"client_port=%u-%u"
+water	119:37	0:0	16	"client_port=%u-%u"
+arg	119:58	119:65	15	&loport
+op	119:58	0:0	16	&
+water	119:59	0:0	16	loport
+arg	119:67	119:75	15	&hiport
+op	119:67	0:0	16	&
+water	119:68	0:0	16	hiport
+op	120:32	0:0	14	==
+water	120:35	0:0	14	2
+stmts	121:24	121:24	13	
+water	121:24	0:0	14	;
+else	122:20	132:20	10
+stmts	123:20	132:20	11	
+if	123:20	132:20	12	(strncmp (opt ,"mode=" ,5 ) == 0)
+cond	123:24	123:54	13	strncmp (opt ,"mode=" ,5 ) == 0
+call	123:24	123:49	14	strncmp
+arg	123:33	123:36	15	opt
+water	123:33	0:0	16	opt
+arg	123:38	123:45	15	"mode="
+water	123:38	0:0	16	"mode="
+arg	123:47	123:49	15	5
+water	123:47	0:0	16	5
+op	123:51	0:0	14	==
+water	123:54	0:0	14	0
+stmts	124:20	132:20	13	
+water	124:20	0:0	14	{
+if	125:24	131:24	14	(strncasecmp (opt + 5 ,"play" ,4 ) &&strncasecmp (opt + 5 ,"\"PLAY\"" ,6 ))
+cond	125:28	126:64	15	strncasecmp (opt + 5 ,"play" ,4 ) &&strncasecmp (opt + 5 ,"\"PLAY\"" ,6 )
+call	125:28	125:60	16	strncasecmp
+arg	125:41	125:48	17	opt+5
+water	125:41	0:0	18	opt
+op	125:45	0:0	18	+
+water	125:47	0:0	18	5
+arg	125:50	125:56	17	"play"
+water	125:50	0:0	18	"play"
+arg	125:58	125:60	17	4
+water	125:58	0:0	18	4
+op	126:25	0:0	16	&&
+call	126:28	126:64	16	strncasecmp
+arg	126:41	126:48	17	opt+5
+water	126:41	0:0	18	opt
+op	126:45	0:0	18	+
+water	126:47	0:0	18	5
+arg	126:50	126:60	17	"\"PLAY\""
+water	126:50	0:0	18	"\"PLAY\""
+arg	126:62	126:64	17	6
+water	126:62	0:0	18	6
+stmts	127:24	131:24	15	
+water	127:24	0:0	16	{
+water	129:28	0:0	16	b_unsupp
+op	129:37	0:0	16	=
+water	129:39	0:0	16	true
+water	129:43	0:0	16	;
+break	130:28	130:33	16	
+water	131:24	0:0	16	}
+water	132:20	0:0	14	}
+else	133:20	138:20	10
+stmts	134:20	138:20	11	
+if	134:20	138:20	12	(strncmp (opt ,"destination=" ,12 ) == 0)
+cond	134:24	134:61	13	strncmp (opt ,"destination=" ,12 ) == 0
+call	134:24	134:56	14	strncmp
+arg	134:33	134:36	15	opt
+water	134:33	0:0	16	opt
+arg	134:37	134:51	15	"destination="
+water	134:37	0:0	16	"destination="
+arg	134:53	134:56	15	12
+water	134:53	0:0	16	12
+op	134:58	0:0	14	==
+water	134:61	0:0	14	0
+stmts	135:20	138:20	13	
+water	135:20	0:0	14	{
+water	136:24	0:0	14	answer
+op	136:30	0:0	14	->
+water	136:32	0:0	14	i_status
+op	136:41	0:0	14	=
+water	136:43	0:0	14	403
+water	136:46	0:0	14	;
+water	137:24	0:0	14	b_unsupp
+op	137:33	0:0	14	=
+water	137:35	0:0	14	true
+water	137:39	0:0	14	;
+water	138:20	0:0	14	}
+else	139:20	156:20	10
+stmts	140:20	156:20	11	
+water	140:20	0:0	12	{
+water	154:24	0:0	12	b_unsupp
+op	154:33	0:0	12	=
+water	154:35	0:0	12	true
+water	154:39	0:0	12	;
+break	155:24	155:29	12	
+water	156:20	0:0	12	}
+water	157:16	0:0	10	}
+if	158:16	159:28	8	(b_unsupp)
+cond	158:20	158:20	9	b_unsupp
+water	158:20	0:0	10	b_unsupp
+stmts	159:20	159:28	9	
+continue	159:20	159:28	10	
+if	160:16	185:16	8	(b_multicast)
+cond	160:20	160:20	9	b_multicast
+water	160:20	0:0	10	b_multicast
+stmts	161:16	185:16	9	
+water	161:16	0:0	10	{
+decl	162:20	162:47	10	char	dst[NI_MAXNUMERICHOST]
+decl	163:20	163:34	10	int	dport
+water	163:29	0:0	10	,
+decl	163:20	163:34	10	int	ttl
+if	164:20	165:32	10	(id -> mcast_fd == - 1)
+cond	164:24	164:41	11	id -> mcast_fd == - 1
+water	164:24	0:0	12	id
+op	164:26	0:0	12	->
+water	164:28	0:0	12	mcast_fd
+op	164:37	0:0	12	==
+op	164:40	0:0	12	-
+water	164:41	0:0	12	1
+stmts	165:24	165:32	11	
+continue	165:24	165:32	12	
+call	166:20	166:64	10	net_GetPeerAddress
+arg	166:39	166:51	11	id->mcast_fd
+water	166:39	0:0	12	id
+op	166:41	0:0	12	->
+water	166:43	0:0	12	mcast_fd
+arg	166:53	166:56	11	dst
+water	166:53	0:0	12	dst
+arg	166:58	166:64	11	&dport
+op	166:58	0:0	12	&
+water	166:59	0:0	12	dport
+water	166:65	0:0	10	;
+water	167:20	0:0	10	ttl
+op	167:24	0:0	10	=
+call	167:26	167:57	10	var_InheritInteger
+arg	167:45	167:50	11	owner
+water	167:45	0:0	12	owner
+arg	167:52	167:57	11	"ttl"
+water	167:52	0:0	12	"ttl"
+water	167:58	0:0	10	;
+if	168:20	171:31	10	(ttl <= 0)
+cond	168:24	168:31	11	ttl <= 0
+water	168:24	0:0	12	ttl
+op	168:28	0:0	12	<=
+water	168:31	0:0	12	0
+stmts	171:24	171:31	11	
+water	171:24	0:0	12	ttl
+op	171:28	0:0	12	=
+water	171:30	0:0	12	1
+water	171:31	0:0	12	;
+if	172:20	178:20	10	(psz_session == NULL)
+cond	172:24	172:39	11	psz_session == NULL
+water	172:24	0:0	12	psz_session
+op	172:36	0:0	12	==
+water	172:39	0:0	12	NULL
+stmts	173:20	178:20	11	
+water	173:20	0:0	12	{
+call	175:24	176:48	12	snprintf
+arg	175:34	175:44	13	psz_sesbuf
+water	175:34	0:0	14	psz_sesbuf
+arg	175:46	175:66	13	sizeof(psz_sesbuf)
+op	175:46	0:0	14	sizeof
+water	175:52	0:0	14	(
+water	175:54	0:0	14	psz_sesbuf
+water	175:65	0:0	14	)
+arg	175:68	175:73	13	"%lu"
+water	175:68	0:0	14	"%lu"
+arg	176:34	176:48	13	vlc_mrand48()
+call	176:34	176:46	14	vlc_mrand48
+water	176:49	0:0	12	;
+water	177:24	0:0	12	psz_session
+op	177:36	0:0	12	=
+water	177:38	0:0	12	psz_sesbuf
+water	177:48	0:0	12	;
+water	178:20	0:0	12	}
+water	179:20	0:0	10	answer
+op	179:26	0:0	10	->
+water	179:28	0:0	10	i_status
+op	179:37	0:0	10	=
+water	179:39	0:0	10	200
+water	179:42	0:0	10	;
+call	180:20	183:61	10	httpd_MsgAdd
+arg	180:34	180:40	11	answer
+water	180:34	0:0	12	answer
+arg	180:42	180:53	11	"Transport"
+water	180:42	0:0	12	"Transport"
+arg	181:34	182:52	11	"RTP/AVP/UDP;destination=%s;port=%u-%u;""ttl=%d;mode=play"
+water	181:34	0:0	12	"RTP/AVP/UDP;destination=%s;port=%u-%u;"
+water	182:34	0:0	12	"ttl=%d;mode=play"
+arg	183:34	183:37	11	dst
+water	183:34	0:0	12	dst
+arg	183:39	183:44	11	dport
+water	183:39	0:0	12	dport
+arg	183:46	183:55	11	dport+1
+water	183:46	0:0	12	dport
+op	183:52	0:0	12	+
+water	183:54	0:0	12	1
+arg	183:57	183:61	11	ttl
+water	183:57	0:0	12	ttl
+water	183:62	0:0	10	;
+water	185:16	0:0	10	}
+else	186:16	294:16	8
+stmts	187:16	294:16	9	
+water	187:16	0:0	10	{
+decl	188:20	188:70	10	char	ip[NI_MAXNUMERICHOST]
+water	188:46	0:0	10	,
+decl	188:20	188:70	10	char	src[NI_MAXNUMERICHOST]
+decl	189:20	189:46	10	rtsp_session_t	*ses
+op	189:40	0:0	10	=
+water	189:42	0:0	10	NULL
+decl	190:20	190:33	10	int	fd
+water	190:26	0:0	10	,
+decl	190:20	190:33	10	int	sport
+decl	191:20	191:33	10	uint32_t	ssrc
+if	192:20	196:20	10	(httpd_ClientIP (cl ,ip ,NULL ) == NULL)
+cond	192:24	192:58	11	httpd_ClientIP (cl ,ip ,NULL ) == NULL
+call	192:24	192:53	12	httpd_ClientIP
+arg	192:40	192:42	13	cl
+water	192:40	0:0	14	cl
+arg	192:44	192:46	13	ip
+water	192:44	0:0	14	ip
+arg	192:48	192:53	13	NULL
+water	192:48	0:0	14	NULL
+op	192:55	0:0	12	==
+water	192:58	0:0	12	NULL
+stmts	193:20	196:20	11	
+water	193:20	0:0	12	{
+water	194:24	0:0	12	answer
+op	194:30	0:0	12	->
+water	194:32	0:0	12	i_status
+op	194:41	0:0	12	=
+water	194:43	0:0	12	500
+water	194:46	0:0	12	;
+continue	195:24	195:32	12	
+water	196:20	0:0	12	}
+water	197:20	0:0	10	fd
+op	197:23	0:0	10	=
+call	197:25	198:55	10	net_ConnectDgram
+arg	197:43	197:48	11	owner
+water	197:43	0:0	12	owner
+arg	197:50	197:52	11	ip
+water	197:50	0:0	12	ip
+arg	197:54	197:60	11	loport
+water	197:54	0:0	12	loport
+arg	197:62	197:64	11	-1
+op	197:62	0:0	12	-
+water	197:63	0:0	12	1
+arg	198:43	198:55	11	IPPROTO_UDP
+water	198:43	0:0	12	IPPROTO_UDP
+water	198:56	0:0	10	;
+if	199:20	206:20	10	(fd == - 1)
+cond	199:24	199:31	11	fd == - 1
+water	199:24	0:0	12	fd
+op	199:27	0:0	12	==
+op	199:30	0:0	12	-
+water	199:31	0:0	12	1
+stmts	200:20	206:20	11	
+water	200:20	0:0	12	{
+call	201:24	203:44	12	msg_Err
+arg	201:33	201:38	13	owner
+water	201:33	0:0	14	owner
+arg	202:33	202:74	13	"cannot create RTP socket for %s port %u"
+water	202:33	0:0	14	"cannot create RTP socket for %s port %u"
+arg	203:33	203:35	13	ip
+water	203:33	0:0	14	ip
+arg	203:37	203:44	13	loport
+water	203:37	0:0	14	loport
+water	203:45	0:0	12	;
+water	204:24	0:0	12	answer
+op	204:30	0:0	12	->
+water	204:32	0:0	12	i_status
+op	204:41	0:0	12	=
+water	204:43	0:0	12	500
+water	204:46	0:0	12	;
+continue	205:24	205:32	12	
+water	206:20	0:0	12	}
+call	208:20	209:44	10	setsockopt
+arg	208:32	208:34	11	fd
+water	208:32	0:0	12	fd
+arg	208:36	208:46	11	SOL_SOCKET
+water	208:36	0:0	12	SOL_SOCKET
+arg	208:48	208:57	11	SO_RCVBUF
+water	208:48	0:0	12	SO_RCVBUF
+arg	208:59	208:70	11	&(int){0}
+op	208:59	0:0	12	&
+water	208:60	0:0	12	(
+water	208:61	0:0	12	int
+water	208:64	0:0	12	)
+water	208:65	0:0	12	{
+water	208:67	0:0	12	0
+water	208:69	0:0	12	}
+arg	209:32	209:44	11	sizeof(int)
+op	209:32	0:0	12	sizeof
+water	209:39	0:0	12	(
+water	209:40	0:0	12	int
+water	209:43	0:0	12	)
+water	209:45	0:0	10	;
+call	210:20	210:56	10	net_GetSockAddress
+arg	210:40	210:42	11	fd
+water	210:40	0:0	12	fd
+arg	210:44	210:47	11	src
+water	210:44	0:0	12	src
+arg	210:49	210:56	11	&sport
+op	210:49	0:0	12	&
+water	210:50	0:0	12	sport
+water	210:57	0:0	10	;
+call	211:20	211:48	10	vlc_mutex_lock
+arg	211:36	211:48	11	&rtsp->lock
+op	211:36	0:0	12	&
+water	211:37	0:0	12	rtsp
+op	211:41	0:0	12	->
+water	211:43	0:0	12	lock
+water	211:49	0:0	10	;
+if	212:20	218:20	10	(psz_session == NULL)
+cond	212:24	212:39	11	psz_session == NULL
+water	212:24	0:0	12	psz_session
+op	212:36	0:0	12	==
+water	212:39	0:0	12	NULL
+stmts	213:20	218:20	11	
+water	213:20	0:0	12	{
+water	214:24	0:0	12	ses
+op	214:28	0:0	12	=
+call	214:30	214:50	12	RtspClientNew
+arg	214:45	214:50	13	rtsp
+water	214:45	0:0	14	rtsp
+water	214:51	0:0	12	;
+call	215:24	216:42	12	snprintf
+arg	215:34	215:44	13	psz_sesbuf
+water	215:34	0:0	14	psz_sesbuf
+arg	215:46	215:66	13	sizeof(psz_sesbuf)
+op	215:46	0:0	14	sizeof
+water	215:52	0:0	14	(
+water	215:54	0:0	14	psz_sesbuf
+water	215:65	0:0	14	)
+arg	215:68	215:77	13	"%"PRIx64
+water	215:68	0:0	14	"%"
+water	215:71	0:0	14	PRIx64
+arg	216:34	216:42	13	ses->id
+water	216:34	0:0	14	ses
+op	216:37	0:0	14	->
+water	216:39	0:0	14	id
+water	216:43	0:0	12	;
+water	217:24	0:0	12	psz_session
+op	217:36	0:0	12	=
+water	217:38	0:0	12	psz_sesbuf
+water	217:48	0:0	12	;
+water	218:20	0:0	12	}
+else	219:20	229:20	10
+stmts	220:20	229:20	11	
+water	220:20	0:0	12	{
+water	221:24	0:0	12	ses
+op	221:28	0:0	12	=
+call	221:30	221:63	12	RtspClientGet
+arg	221:45	221:49	13	rtsp
+water	221:45	0:0	14	rtsp
+arg	221:51	221:63	13	psz_session
+water	221:51	0:0	14	psz_session
+water	221:64	0:0	12	;
+if	222:24	228:24	12	(ses == NULL)
+cond	222:28	222:35	13	ses == NULL
+water	222:28	0:0	14	ses
+op	222:32	0:0	14	==
+water	222:35	0:0	14	NULL
+stmts	223:24	228:24	13	
+water	223:24	0:0	14	{
+water	224:28	0:0	14	answer
+op	224:34	0:0	14	->
+water	224:36	0:0	14	i_status
+op	224:45	0:0	14	=
+water	224:47	0:0	14	454
+water	224:50	0:0	14	;
+call	225:28	225:58	14	vlc_mutex_unlock
+arg	225:46	225:58	15	&rtsp->lock
+op	225:46	0:0	16	&
+water	225:47	0:0	16	rtsp
+op	225:51	0:0	16	->
+water	225:53	0:0	16	lock
+water	225:59	0:0	14	;
+call	226:28	226:42	14	net_Close
+arg	226:39	226:42	15	fd
+water	226:39	0:0	16	fd
+water	226:43	0:0	14	;
+continue	227:28	227:36	14	
+water	228:24	0:0	14	}
+water	229:20	0:0	12	}
+call	230:20	230:39	10	RtspClientAlive
+arg	230:36	230:39	11	ses
+water	230:36	0:0	12	ses
+water	230:40	0:0	10	;
+decl	231:20	231:44	10	rtsp_strack_t	*tr
+op	231:38	0:0	10	=
+water	231:40	0:0	10	NULL
+for	232:20	239:20	10	( int i = 0 ;i < ses -> trackc;i ++)
+forinit	0:0	232:34	11	 int i = 0 ;
+decl	232:25	232:34	12	int	i
+op	232:31	0:0	12	=
+water	232:33	0:0	12	0
+cond	232:36	232:45	11	i < ses -> trackc
+water	232:36	0:0	12	i
+op	232:38	0:0	12	<
+water	232:40	0:0	12	ses
+op	232:43	0:0	12	->
+water	232:45	0:0	12	trackc
+forexpr	232:53	232:54	11	i ++
+water	232:53	0:0	12	i
+op	232:54	0:0	12	++
+stmts	233:20	239:20	11	
+water	233:20	0:0	12	{
+if	234:24	238:24	12	(ses -> trackv [ i ] . id == id)
+cond	234:28	234:49	13	ses -> trackv [ i ] . id == id
+water	234:28	0:0	14	ses
+op	234:31	0:0	14	->
+water	234:33	0:0	14	trackv
+op	234:39	0:0	14	[
+water	234:40	0:0	14	i
+op	234:41	0:0	14	]
+op	234:42	0:0	14	.
+water	234:43	0:0	14	id
+op	234:46	0:0	14	==
+water	234:49	0:0	14	id
+stmts	235:24	238:24	13	
+water	235:24	0:0	14	{
+water	236:28	0:0	14	tr
+op	236:31	0:0	14	=
+water	236:33	0:0	14	ses
+op	236:36	0:0	14	->
+water	236:38	0:0	14	trackv
+op	236:45	0:0	14	+
+water	236:47	0:0	14	i
+water	236:48	0:0	14	;
+break	237:28	237:33	14	
+water	238:24	0:0	14	}
+water	239:20	0:0	12	}
+if	240:20	258:20	10	(tr == NULL)
+cond	240:24	240:30	11	tr == NULL
+water	240:24	0:0	12	tr
+op	240:27	0:0	12	==
+water	240:30	0:0	12	NULL
+stmts	241:20	258:20	11	
+water	241:20	0:0	12	{
+decl	243:24	246:62	12	rtsp_strack_t	track
+op	243:44	0:0	12	=
+water	243:46	0:0	12	{
+op	243:48	0:0	12	.
+water	243:49	0:0	12	id
+op	243:52	0:0	12	=
+water	243:54	0:0	12	id
+water	243:56	0:0	12	,
+op	244:48	0:0	12	.
+water	244:49	0:0	12	sout_id
+op	244:57	0:0	12	=
+water	244:59	0:0	12	id
+op	244:61	0:0	12	->
+water	244:63	0:0	12	sout_id
+water	244:70	0:0	12	,
+op	245:48	0:0	12	.
+water	245:49	0:0	12	setup_fd
+op	245:58	0:0	12	=
+water	245:60	0:0	12	fd
+water	245:62	0:0	12	,
+op	246:48	0:0	12	.
+water	246:49	0:0	12	rtp_fd
+op	246:56	0:0	12	=
+op	246:58	0:0	12	-
+water	246:59	0:0	12	1
+water	246:61	0:0	12	}
+if	247:24	253:24	12	(vod)
+cond	247:28	247:28	13	vod
+water	247:28	0:0	14	vod
+stmts	248:24	253:24	13	
+water	248:24	0:0	14	{
+call	249:28	250:67	14	vlc_rand_bytes
+arg	249:44	249:59	15	&track.seq_init
+op	249:44	0:0	16	&
+water	249:45	0:0	16	track
+op	249:50	0:0	16	.
+water	249:51	0:0	16	seq_init
+arg	250:44	250:67	15	sizeof(track.seq_init)
+op	250:44	0:0	16	sizeof
+water	250:51	0:0	16	(
+water	250:52	0:0	16	track
+op	250:57	0:0	16	.
+water	250:58	0:0	16	seq_init
+water	250:66	0:0	16	)
+water	250:68	0:0	14	;
+call	251:28	251:76	14	vlc_rand_bytes
+arg	251:44	251:55	15	&track.ssrc
+op	251:44	0:0	16	&
+water	251:45	0:0	16	track
+op	251:50	0:0	16	.
+water	251:51	0:0	16	ssrc
+arg	251:57	251:76	15	sizeof(track.ssrc)
+op	251:57	0:0	16	sizeof
+water	251:64	0:0	16	(
+water	251:65	0:0	16	track
+op	251:70	0:0	16	.
+water	251:71	0:0	16	ssrc
+water	251:75	0:0	16	)
+water	251:77	0:0	14	;
+water	252:28	0:0	14	ssrc
+op	252:33	0:0	14	=
+water	252:35	0:0	14	track
+op	252:40	0:0	14	.
+water	252:41	0:0	14	ssrc
+water	252:45	0:0	14	;
+water	253:24	0:0	14	}
+else	254:24	255:43	12
+stmts	255:28	255:43	13	
+water	255:28	0:0	14	ssrc
+op	255:33	0:0	14	=
+water	255:35	0:0	14	id
+op	255:37	0:0	14	->
+water	255:39	0:0	14	ssrc
+water	255:43	0:0	14	;
+call	256:24	257:43	12	INSERT_ELEM
+arg	256:37	256:48	13	ses->trackv
+water	256:37	0:0	14	ses
+op	256:40	0:0	14	->
+water	256:42	0:0	14	trackv
+arg	256:50	256:61	13	ses->trackc
+water	256:50	0:0	14	ses
+op	256:53	0:0	14	->
+water	256:55	0:0	14	trackc
+arg	256:63	256:74	13	ses->trackc
+water	256:63	0:0	14	ses
+op	256:66	0:0	14	->
+water	256:68	0:0	14	trackc
+arg	257:37	257:43	13	track
+water	257:37	0:0	14	track
+water	257:44	0:0	12	;
+water	258:20	0:0	12	}
+else	259:20	265:20	10
+stmts	259:25	265:20	11	
+if	259:25	265:20	12	(tr -> setup_fd == - 1)
+cond	259:29	259:46	13	tr -> setup_fd == - 1
+water	259:29	0:0	14	tr
+op	259:31	0:0	14	->
+water	259:33	0:0	14	setup_fd
+op	259:42	0:0	14	==
+op	259:45	0:0	14	-
+water	259:46	0:0	14	1
+stmts	260:20	265:20	13	
+water	260:20	0:0	14	{
+water	263:24	0:0	14	tr
+op	263:26	0:0	14	->
+water	263:28	0:0	14	setup_fd
+op	263:37	0:0	14	=
+water	263:39	0:0	14	fd
+water	263:41	0:0	14	;
+water	264:24	0:0	14	ssrc
+op	264:29	0:0	14	=
+water	264:31	0:0	14	tr
+op	264:33	0:0	14	->
+water	264:35	0:0	14	ssrc
+water	264:39	0:0	14	;
+water	265:20	0:0	14	}
+else	266:20	275:20	10
+stmts	267:20	275:20	11	
+water	267:20	0:0	12	{
+call	271:24	271:54	12	vlc_mutex_unlock
+arg	271:42	271:54	13	&rtsp->lock
+op	271:42	0:0	14	&
+water	271:43	0:0	14	rtsp
+op	271:47	0:0	14	->
+water	271:49	0:0	14	lock
+water	271:55	0:0	12	;
+water	272:24	0:0	12	answer
+op	272:30	0:0	12	->
+water	272:32	0:0	12	i_status
+op	272:41	0:0	12	=
+water	272:43	0:0	12	455
+water	272:46	0:0	12	;
+call	273:24	273:38	12	net_Close
+arg	273:35	273:38	13	fd
+water	273:35	0:0	14	fd
+water	273:39	0:0	12	;
+break	274:24	274:29	12	
+water	275:20	0:0	12	}
+call	276:20	276:50	10	vlc_mutex_unlock
+arg	276:38	276:50	11	&rtsp->lock
+op	276:38	0:0	12	&
+water	276:39	0:0	12	rtsp
+op	276:43	0:0	12	->
+water	276:45	0:0	12	lock
+water	276:51	0:0	10	;
+call	277:20	277:49	10	httpd_ServerIP
+arg	277:36	277:38	11	cl
+water	277:36	0:0	12	cl
+arg	277:40	277:42	11	ip
+water	277:40	0:0	12	ip
+arg	277:44	277:49	11	NULL
+water	277:44	0:0	12	NULL
+water	277:50	0:0	10	;
+if	280:20	284:20	10	(strcmp (src ,ip ))
+cond	280:24	280:40	11	strcmp (src ,ip )
+call	280:24	280:40	12	strcmp
+arg	280:32	280:35	13	src
+water	280:32	0:0	14	src
+arg	280:37	280:40	13	ip
+water	280:37	0:0	14	ip
+stmts	281:20	284:20	11	
+water	281:20	0:0	12	{
+decl	282:24	282:54	12	char	*ptr
+op	282:34	0:0	12	=
+call	282:36	282:53	13	strchr
+arg	282:44	282:47	14	src
+water	282:44	0:0	15	src
+arg	282:49	282:53	14	'%'
+water	282:49	0:0	15	'%'
+if	283:24	283:53	12	(ptr != NULL)
+cond	283:28	283:35	13	ptr != NULL
+water	283:28	0:0	14	ptr
+op	283:32	0:0	14	!=
+water	283:35	0:0	14	NULL
+stmts	283:42	283:53	13	
+op	283:42	0:0	14	*
+water	283:43	0:0	14	ptr
+op	283:47	0:0	14	=
+water	283:49	0:0	14	'\0'
+water	283:53	0:0	14	;
+water	284:20	0:0	12	}
+else	285:20	286:37	10
+stmts	286:24	286:37	11	
+water	286:24	0:0	12	src
+op	286:27	0:0	12	[
+water	286:28	0:0	12	0
+op	286:29	0:0	12	]
+op	286:31	0:0	12	=
+water	286:33	0:0	12	'\0'
+water	286:37	0:0	12	;
+call	287:20	292:77	10	httpd_MsgAdd
+arg	287:34	287:40	11	answer
+water	287:34	0:0	12	answer
+arg	287:42	287:53	11	"Transport"
+water	287:42	0:0	12	"Transport"
+arg	288:34	290:55	11	"RTP/AVP/UDP;unicast%s%s;""client_port=%u-%u;server_port=%u-%u;""ssrc=%08X;mode=play"
+water	288:34	0:0	12	"RTP/AVP/UDP;unicast%s%s;"
+water	289:34	0:0	12	"client_port=%u-%u;server_port=%u-%u;"
+water	290:34	0:0	12	"ssrc=%08X;mode=play"
+arg	291:34	291:58	11	src[0]?";source=":""
+water	291:34	0:0	12	src
+op	291:37	0:0	12	[
+water	291:38	0:0	12	0
+op	291:39	0:0	12	]
+water	291:41	0:0	12	?
+water	291:43	0:0	12	";source="
+water	291:54	0:0	12	:
+water	291:56	0:0	12	""
+arg	291:60	291:63	11	src
+water	291:60	0:0	12	src
+arg	292:34	292:40	11	loport
+water	292:34	0:0	12	loport
+arg	292:42	292:52	11	loport+1
+water	292:42	0:0	12	loport
+op	292:49	0:0	12	+
+water	292:51	0:0	12	1
+arg	292:54	292:59	11	sport
+water	292:54	0:0	12	sport
+arg	292:61	292:70	11	sport+1
+water	292:61	0:0	12	sport
+op	292:67	0:0	12	+
+water	292:69	0:0	12	1
+arg	292:72	292:77	11	ssrc
+water	292:72	0:0	12	ssrc
+water	292:78	0:0	10	;
+water	293:20	0:0	10	answer
+op	293:26	0:0	10	->
+water	293:28	0:0	10	i_status
+op	293:37	0:0	10	=
+water	293:39	0:0	10	200
+water	293:42	0:0	10	;
+water	294:16	0:0	10	}
+break	295:16	295:21	8	
+water	296:12	0:0	8	}
+break	297:12	297:17	6	
+label	298:8	298:27	6	case HTTPD_MSG_PLAY :
+water	299:8	0:0	6	{
+decl	300:12	300:31	6	rtsp_session_t	*ses
+water	301:12	0:0	6	answer
+op	301:18	0:0	6	->
+water	301:20	0:0	6	i_status
+op	301:29	0:0	6	=
+water	301:31	0:0	6	200
+water	301:34	0:0	6	;
+water	302:12	0:0	6	psz_session
+op	302:24	0:0	6	=
+call	302:26	302:57	6	httpd_MsgGet
+arg	302:40	302:45	7	query
+water	302:40	0:0	8	query
+arg	302:47	302:57	7	"Session"
+water	302:47	0:0	8	"Session"
+water	302:58	0:0	6	;
+decl	303:12	303:45	6	int64_t	start
+op	303:26	0:0	6	=
+op	303:28	0:0	6	-
+water	303:29	0:0	6	1
+water	303:30	0:0	6	,
+decl	303:12	303:45	6	int64_t	end
+op	303:36	0:0	6	=
+op	303:38	0:0	6	-
+water	303:39	0:0	6	1
+water	303:40	0:0	6	,
+decl	303:12	303:45	6	int64_t	npt
+decl	304:12	304:61	6	const char	*range
+op	304:30	0:0	6	=
+call	304:32	304:60	7	httpd_MsgGet
+arg	304:46	304:51	8	query
+water	304:46	0:0	9	query
+arg	304:53	304:60	8	"Range"
+water	304:53	0:0	9	"Range"
+if	305:12	337:12	6	(range != NULL)
+cond	305:16	305:25	7	range != NULL
+water	305:16	0:0	8	range
+op	305:22	0:0	8	!=
+water	305:25	0:0	8	NULL
+stmts	306:12	337:12	7	
+water	306:12	0:0	8	{
+if	307:16	311:16	8	(strncmp (range ,"npt=" ,4 ))
+cond	307:20	307:45	9	strncmp (range ,"npt=" ,4 )
+call	307:20	307:45	10	strncmp
+arg	307:29	307:34	11	range
+water	307:29	0:0	12	range
+arg	307:36	307:42	11	"npt="
+water	307:36	0:0	12	"npt="
+arg	307:44	307:45	11	4
+water	307:44	0:0	12	4
+stmts	308:16	311:16	9	
+water	308:16	0:0	10	{
+water	309:20	0:0	10	answer
+op	309:26	0:0	10	->
+water	309:28	0:0	10	i_status
+op	309:37	0:0	10	=
+water	309:39	0:0	10	501
+water	309:42	0:0	10	;
+break	310:20	310:25	10	
+water	311:16	0:0	10	}
+water	312:16	0:0	8	start
+op	312:22	0:0	8	=
+call	312:24	312:43	8	ParseNPT
+arg	312:34	312:43	9	range+4
+water	312:34	0:0	10	range
+op	312:40	0:0	10	+
+water	312:42	0:0	10	4
+water	312:44	0:0	8	;
+water	313:16	0:0	8	range
+op	313:22	0:0	8	=
+call	313:24	313:41	8	strchr
+arg	313:31	313:36	9	range
+water	313:31	0:0	10	range
+arg	313:38	313:41	9	'-'
+water	313:38	0:0	10	'-'
+water	313:42	0:0	8	;
+if	314:16	315:46	8	(range != NULL && * ( range + 1 ))
+cond	314:20	314:48	9	range != NULL && * ( range + 1 )
+water	314:20	0:0	10	range
+op	314:26	0:0	10	!=
+water	314:29	0:0	10	NULL
+op	314:34	0:0	10	&&
+op	314:37	0:0	10	*
+water	314:38	0:0	10	(
+water	314:39	0:0	10	range
+op	314:45	0:0	10	+
+water	314:47	0:0	10	1
+water	314:48	0:0	10	)
+stmts	315:20	315:46	9	
+water	315:20	0:0	10	end
+op	315:24	0:0	10	=
+call	315:26	315:45	10	ParseNPT
+arg	315:36	315:45	11	range+1
+water	315:36	0:0	12	range
+op	315:42	0:0	12	+
+water	315:44	0:0	12	1
+water	315:46	0:0	10	;
+if	316:16	320:16	8	(end >= 0 && end < start)
+cond	316:20	316:38	9	end >= 0 && end < start
+water	316:20	0:0	10	end
+op	316:24	0:0	10	>=
+water	316:27	0:0	10	0
+op	316:29	0:0	10	&&
+water	316:32	0:0	10	end
+op	316:36	0:0	10	<
+water	316:38	0:0	10	start
+stmts	317:16	320:16	9	
+water	317:16	0:0	10	{
+water	318:20	0:0	10	answer
+op	318:26	0:0	10	->
+water	318:28	0:0	10	i_status
+op	318:37	0:0	10	=
+water	318:39	0:0	10	457
+water	318:42	0:0	10	;
+break	319:20	319:25	10	
+water	320:16	0:0	10	}
+if	321:16	329:16	8	(vod)
+cond	321:20	321:20	9	vod
+water	321:20	0:0	10	vod
+stmts	322:16	329:16	9	
+water	322:16	0:0	10	{
+if	323:20	328:20	10	(vod_check_range (rtsp -> vod_media ,psz_session ,start ,end ) != VLC_SUCCESS)
+cond	323:24	324:55	11	vod_check_range (rtsp -> vod_media ,psz_session ,start ,end ) != VLC_SUCCESS
+call	323:24	324:50	12	vod_check_range
+arg	323:40	323:55	13	rtsp->vod_media
+water	323:40	0:0	14	rtsp
+op	323:44	0:0	14	->
+water	323:46	0:0	14	vod_media
+arg	323:57	323:68	13	psz_session
+water	323:57	0:0	14	psz_session
+arg	324:40	324:45	13	start
+water	324:40	0:0	14	start
+arg	324:47	324:50	13	end
+water	324:47	0:0	14	end
+op	324:52	0:0	12	!=
+water	324:55	0:0	12	VLC_SUCCESS
+stmts	325:20	328:20	11	
+water	325:20	0:0	12	{
+water	326:24	0:0	12	answer
+op	326:30	0:0	12	->
+water	326:32	0:0	12	i_status
+op	326:41	0:0	12	=
+water	326:43	0:0	12	457
+water	326:46	0:0	12	;
+break	327:24	327:29	12	
+water	328:20	0:0	12	}
+water	329:16	0:0	10	}
+else	332:16	336:16	8
+stmts	332:21	336:16	9	
+if	332:21	336:16	10	(start > 0 || end >= 0)
+cond	332:25	332:45	11	start > 0 || end >= 0
+water	332:25	0:0	12	start
+op	332:31	0:0	12	>
+water	332:33	0:0	12	0
+op	332:35	0:0	12	||
+water	332:38	0:0	12	end
+op	332:42	0:0	12	>=
+water	332:45	0:0	12	0
+stmts	333:16	336:16	11	
+water	333:16	0:0	12	{
+water	334:20	0:0	12	answer
+op	334:26	0:0	12	->
+water	334:28	0:0	12	i_status
+op	334:37	0:0	12	=
+water	334:39	0:0	12	456
+water	334:42	0:0	12	;
+break	335:20	335:25	12	
+water	336:16	0:0	12	}
+water	337:12	0:0	8	}
+call	338:12	338:40	6	vlc_mutex_lock
+arg	338:28	338:40	7	&rtsp->lock
+op	338:28	0:0	8	&
+water	338:29	0:0	8	rtsp
+op	338:33	0:0	8	->
+water	338:35	0:0	8	lock
+water	338:41	0:0	6	;
+water	339:12	0:0	6	ses
+op	339:16	0:0	6	=
+call	339:18	339:51	6	RtspClientGet
+arg	339:33	339:37	7	rtsp
+water	339:33	0:0	8	rtsp
+arg	339:39	339:51	7	psz_session
+water	339:39	0:0	8	psz_session
+water	339:52	0:0	6	;
+if	340:12	406:12	6	(ses != NULL)
+cond	340:16	340:23	7	ses != NULL
+water	340:16	0:0	8	ses
+op	340:20	0:0	8	!=
+water	340:23	0:0	8	NULL
+stmts	341:12	406:12	7	
+water	341:12	0:0	8	{
+decl	342:16	344:52	8	char	info[ses->trackc*(strlen(control)+TRACK_PATH_SIZE+sizeof("url=;seq=65535;rtptime=4294967295, ")-1)+1]
+decl	345:16	345:34	8	size_t	infolen
+op	345:31	0:0	8	=
+water	345:33	0:0	8	0
+call	346:16	346:35	8	RtspClientAlive
+arg	346:32	346:35	9	ses
+water	346:32	0:0	10	ses
+water	346:36	0:0	8	;
+decl	347:16	347:52	8	sout_stream_id_sys_t	*sout_id
+op	347:46	0:0	8	=
+water	347:48	0:0	8	NULL
+if	348:16	358:16	8	(vod)
+cond	348:20	348:20	9	vod
+water	348:20	0:0	10	vod
+stmts	349:16	358:16	9	
+water	349:16	0:0	10	{
+for	352:20	357:20	10	( int i = 0 ;i < ses -> trackc;i ++)
+forinit	0:0	352:34	11	 int i = 0 ;
+decl	352:25	352:34	12	int	i
+op	352:31	0:0	12	=
+water	352:33	0:0	12	0
+cond	352:36	352:45	11	i < ses -> trackc
+water	352:36	0:0	12	i
+op	352:38	0:0	12	<
+water	352:40	0:0	12	ses
+op	352:43	0:0	12	->
+water	352:45	0:0	12	trackc
+forexpr	352:53	352:54	11	i ++
+water	352:53	0:0	12	i
+op	352:54	0:0	12	++
+stmts	353:20	357:20	11	
+water	353:20	0:0	12	{
+water	354:24	0:0	12	sout_id
+op	354:32	0:0	12	=
+water	354:34	0:0	12	ses
+op	354:37	0:0	12	->
+water	354:39	0:0	12	trackv
+op	354:45	0:0	12	[
+water	354:46	0:0	12	i
+op	354:47	0:0	12	]
+op	354:48	0:0	12	.
+water	354:49	0:0	12	sout_id
+water	354:56	0:0	12	;
+if	355:24	356:33	12	(sout_id != NULL)
+cond	355:28	355:39	13	sout_id != NULL
+water	355:28	0:0	14	sout_id
+op	355:36	0:0	14	!=
+water	355:39	0:0	14	NULL
+stmts	356:28	356:33	13	
+break	356:28	356:33	14	
+water	357:20	0:0	12	}
+water	358:16	0:0	10	}
+decl	359:16	361:58	8	int64_t	ts
+op	359:27	0:0	8	=
+call	359:29	361:57	9	rtp_get_ts
+arg	359:40	359:75	10	vod?NULL:(sout_stream_t*)owner
+water	359:40	0:0	11	vod
+water	359:44	0:0	11	?
+water	359:46	0:0	11	NULL
+water	359:51	0:0	11	:
+water	359:53	0:0	11	(
+water	359:54	0:0	11	sout_stream_t
+op	359:68	0:0	11	*
+water	359:69	0:0	11	)
+water	359:70	0:0	11	owner
+arg	360:40	360:47	10	sout_id
+water	360:40	0:0	11	sout_id
+arg	360:49	360:64	10	rtsp->vod_media
+water	360:49	0:0	11	rtsp
+op	360:53	0:0	11	->
+water	360:55	0:0	11	vod_media
+arg	360:66	360:77	10	psz_session
+water	360:66	0:0	11	psz_session
+arg	361:40	361:57	10	vod?NULL:&npt
+water	361:40	0:0	11	vod
+water	361:44	0:0	11	?
+water	361:46	0:0	11	NULL
+water	361:51	0:0	11	:
+op	361:53	0:0	11	&
+water	361:54	0:0	11	npt
+for	362:16	400:16	8	( int i = 0 ;i < ses -> trackc;i ++)
+forinit	0:0	362:30	9	 int i = 0 ;
+decl	362:21	362:30	10	int	i
+op	362:27	0:0	10	=
+water	362:29	0:0	10	0
+cond	362:32	362:41	9	i < ses -> trackc
+water	362:32	0:0	10	i
+op	362:34	0:0	10	<
+water	362:36	0:0	10	ses
+op	362:39	0:0	10	->
+water	362:41	0:0	10	trackc
+forexpr	362:49	362:50	9	i ++
+water	362:49	0:0	10	i
+op	362:50	0:0	10	++
+stmts	363:16	400:16	9	
+water	363:16	0:0	10	{
+decl	364:20	364:55	10	rtsp_strack_t	*tr
+op	364:38	0:0	10	=
+water	364:40	0:0	10	ses
+op	364:43	0:0	10	->
+water	364:45	0:0	10	trackv
+op	364:52	0:0	10	+
+water	364:54	0:0	10	i
+if	365:20	399:20	10	(( id == NULL ) || ( tr -> id == id ))
+cond	365:24	365:57	11	( id == NULL ) || ( tr -> id == id )
+water	365:24	0:0	12	(
+water	365:26	0:0	12	id
+op	365:29	0:0	12	==
+water	365:32	0:0	12	NULL
+water	365:37	0:0	12	)
+op	365:39	0:0	12	||
+water	365:42	0:0	12	(
+water	365:44	0:0	12	tr
+op	365:46	0:0	12	->
+water	365:48	0:0	12	id
+op	365:51	0:0	12	==
+water	365:54	0:0	12	id
+water	365:57	0:0	12	)
+stmts	366:20	399:20	11	
+water	366:20	0:0	12	{
+if	367:24	369:36	12	(tr -> setup_fd == - 1)
+cond	367:28	367:45	13	tr -> setup_fd == - 1
+water	367:28	0:0	14	tr
+op	367:30	0:0	14	->
+water	367:32	0:0	14	setup_fd
+op	367:41	0:0	14	==
+op	367:44	0:0	14	-
+water	367:45	0:0	14	1
+stmts	369:28	369:36	13	
+continue	369:28	369:36	14	
+decl	370:24	370:36	12	uint16_t	seq
+if	371:24	386:24	12	(tr -> rtp_fd == - 1)
+cond	371:28	371:43	13	tr -> rtp_fd == - 1
+water	371:28	0:0	14	tr
+op	371:30	0:0	14	->
+water	371:32	0:0	14	rtp_fd
+op	371:39	0:0	14	==
+op	371:42	0:0	14	-
+water	371:43	0:0	14	1
+stmts	372:24	386:24	13	
+water	372:24	0:0	14	{
+if	374:28	376:50	14	(tr -> sout_id == NULL)
+cond	374:32	374:47	15	tr -> sout_id == NULL
+water	374:32	0:0	16	tr
+op	374:34	0:0	16	->
+water	374:36	0:0	16	sout_id
+op	374:44	0:0	16	==
+water	374:47	0:0	16	NULL
+stmts	376:32	376:50	15	
+water	376:32	0:0	16	seq
+op	376:36	0:0	16	=
+water	376:38	0:0	16	tr
+op	376:40	0:0	16	->
+water	376:42	0:0	16	seq_init
+water	376:50	0:0	16	;
+else	377:28	385:28	14
+stmts	378:28	385:28	15	
+water	378:28	0:0	16	{
+water	380:32	0:0	16	tr
+op	380:34	0:0	16	->
+water	380:36	0:0	16	rtp_fd
+op	380:43	0:0	16	=
+call	380:45	380:68	16	dup_socket
+arg	380:56	380:68	17	tr->setup_fd
+water	380:56	0:0	18	tr
+op	380:58	0:0	18	->
+water	380:60	0:0	18	setup_fd
+water	380:69	0:0	16	;
+if	381:32	382:44	16	(tr -> rtp_fd == - 1)
+cond	381:36	381:51	17	tr -> rtp_fd == - 1
+water	381:36	0:0	18	tr
+op	381:38	0:0	18	->
+water	381:40	0:0	18	rtp_fd
+op	381:47	0:0	18	==
+op	381:50	0:0	18	-
+water	381:51	0:0	18	1
+stmts	382:36	382:44	17	
+continue	382:36	382:44	18	
+call	383:32	384:58	16	rtp_add_sink
+arg	383:46	383:57	17	tr->sout_id
+water	383:46	0:0	18	tr
+op	383:48	0:0	18	->
+water	383:50	0:0	18	sout_id
+arg	383:59	383:69	17	tr->rtp_fd
+water	383:59	0:0	18	tr
+op	383:61	0:0	18	->
+water	383:63	0:0	18	rtp_fd
+arg	384:46	384:51	17	false
+water	384:46	0:0	18	false
+arg	384:53	384:58	17	&seq
+op	384:53	0:0	18	&
+water	384:54	0:0	18	seq
+water	384:59	0:0	16	;
+water	385:28	0:0	16	}
+water	386:24	0:0	14	}
+else	387:24	392:24	12
+stmts	388:24	392:24	13	
+water	388:24	0:0	14	{
+call	390:28	390:56	14	assert
+arg	390:36	390:56	15	tr->sout_id!=NULL
+water	390:36	0:0	16	tr
+op	390:38	0:0	16	->
+water	390:40	0:0	16	sout_id
+op	390:48	0:0	16	!=
+water	390:51	0:0	16	NULL
+water	390:57	0:0	14	;
+water	391:28	0:0	14	seq
+op	391:32	0:0	14	=
+call	391:34	391:59	14	rtp_get_seq
+arg	391:47	391:59	15	tr->sout_id
+water	391:47	0:0	16	tr
+op	391:49	0:0	16	->
+water	391:51	0:0	16	sout_id
+water	391:60	0:0	14	;
+water	392:24	0:0	14	}
+decl	393:24	393:74	12	char	*url
+op	393:34	0:0	12	=
+call	393:36	393:73	13	RtspAppendTrackPath
+arg	393:57	393:63	14	tr->id
+water	393:57	0:0	15	tr
+op	393:59	0:0	15	->
+water	393:61	0:0	15	id
+arg	393:65	393:73	14	control
+water	393:65	0:0	15	control
+water	394:24	0:0	12	infolen
+op	394:32	0:0	12	+=
+call	394:35	397:77	12	sprintf
+arg	394:44	394:58	13	info+infolen
+water	394:44	0:0	14	info
+op	394:49	0:0	14	+
+water	394:51	0:0	14	infolen
+arg	395:36	395:64	13	"url=%s;seq=%u;rtptime=%u, "
+water	395:36	0:0	14	"url=%s;seq=%u;rtptime=%u, "
+arg	396:36	396:58	13	url!=NULL?url:""
+water	396:36	0:0	14	url
+op	396:40	0:0	14	!=
+water	396:43	0:0	14	NULL
+water	396:48	0:0	14	?
+water	396:50	0:0	14	url
+water	396:54	0:0	14	:
+water	396:56	0:0	14	""
+arg	396:60	396:63	13	seq
+water	396:60	0:0	14	seq
+arg	397:36	397:77	13	rtp_compute_ts(tr->id->clock_rate,ts)
+call	397:36	397:75	14	rtp_compute_ts
+arg	397:52	397:70	15	tr->id->clock_rate
+water	397:52	0:0	16	tr
+op	397:54	0:0	16	->
+water	397:56	0:0	16	id
+op	397:58	0:0	16	->
+water	397:60	0:0	16	clock_rate
+arg	397:72	397:75	15	ts
+water	397:72	0:0	16	ts
+water	397:78	0:0	12	;
+call	398:24	398:34	12	free
+arg	398:30	398:34	13	url
+water	398:30	0:0	14	url
+water	398:35	0:0	12	;
+water	399:20	0:0	12	}
+water	400:16	0:0	10	}
+if	401:16	405:16	8	(infolen > 0)
+cond	401:20	401:30	9	infolen > 0
+water	401:20	0:0	10	infolen
+op	401:28	0:0	10	>
+water	401:30	0:0	10	0
+stmts	402:16	405:16	9	
+water	402:16	0:0	10	{
+water	403:20	0:0	10	info
+op	403:24	0:0	10	[
+water	403:25	0:0	10	infolen
+op	403:33	0:0	10	-
+water	403:35	0:0	10	2
+op	403:36	0:0	10	]
+op	403:38	0:0	10	=
+water	403:40	0:0	10	'\0'
+water	403:44	0:0	10	;
+call	404:20	404:65	10	httpd_MsgAdd
+arg	404:34	404:40	11	answer
+water	404:34	0:0	12	answer
+arg	404:42	404:52	11	"RTP-Info"
+water	404:42	0:0	12	"RTP-Info"
+arg	404:54	404:58	11	"%s"
+water	404:54	0:0	12	"%s"
+arg	404:60	404:65	11	info
+water	404:60	0:0	12	info
+water	404:66	0:0	10	;
+water	405:16	0:0	10	}
+water	406:12	0:0	8	}
+call	407:12	407:42	6	vlc_mutex_unlock
+arg	407:30	407:42	7	&rtsp->lock
+op	407:30	0:0	8	&
+water	407:31	0:0	8	rtsp
+op	407:35	0:0	8	->
+water	407:37	0:0	8	lock
+water	407:43	0:0	6	;
+if	408:12	417:12	6	(ses != NULL)
+cond	408:16	408:23	7	ses != NULL
+water	408:16	0:0	8	ses
+op	408:20	0:0	8	!=
+water	408:23	0:0	8	NULL
+stmts	409:12	417:12	7	
+water	409:12	0:0	8	{
+if	410:16	414:16	8	(vod)
+cond	410:20	410:20	9	vod
+water	410:20	0:0	10	vod
+stmts	411:16	414:16	9	
+water	411:16	0:0	10	{
+call	412:20	412:70	10	vod_play
+arg	412:29	412:44	11	rtsp->vod_media
+water	412:29	0:0	12	rtsp
+op	412:33	0:0	12	->
+water	412:35	0:0	12	vod_media
+arg	412:46	412:57	11	psz_session
+water	412:46	0:0	12	psz_session
+arg	412:59	412:65	11	&start
+op	412:59	0:0	12	&
+water	412:60	0:0	12	start
+arg	412:67	412:70	11	end
+water	412:67	0:0	12	end
+water	412:71	0:0	10	;
+water	413:20	0:0	10	npt
+op	413:24	0:0	10	=
+water	413:26	0:0	10	start
+water	413:31	0:0	10	;
+water	414:16	0:0	10	}
+decl	415:16	415:56	8	double	f_npt
+op	415:29	0:0	8	=
+water	415:31	0:0	8	(
+water	415:32	0:0	8	double
+water	415:38	0:0	8	)
+water	415:40	0:0	8	npt
+op	415:44	0:0	8	/
+water	415:46	0:0	8	CLOCK_FREQ
+call	416:16	416:64	8	httpd_MsgAdd
+arg	416:30	416:36	9	answer
+water	416:30	0:0	10	answer
+arg	416:38	416:45	9	"Range"
+water	416:38	0:0	10	"Range"
+arg	416:47	416:56	9	"npt=%f-"
+water	416:47	0:0	10	"npt=%f-"
+arg	416:58	416:64	9	f_npt
+water	416:58	0:0	10	f_npt
+water	416:65	0:0	8	;
+water	417:12	0:0	8	}
+if	418:12	419:53	6	(httpd_MsgGet (query ,"Scale" ) != NULL)
+cond	418:16	418:50	7	httpd_MsgGet (query ,"Scale" ) != NULL
+call	418:16	418:45	8	httpd_MsgGet
+arg	418:30	418:35	9	query
+water	418:30	0:0	10	query
+arg	418:37	418:45	9	"Scale"
+water	418:37	0:0	10	"Scale"
+op	418:47	0:0	8	!=
+water	418:50	0:0	8	NULL
+stmts	419:16	419:53	7	
+call	419:16	419:52	8	httpd_MsgAdd
+arg	419:30	419:36	9	answer
+water	419:30	0:0	10	answer
+arg	419:38	419:45	9	"Scale"
+water	419:38	0:0	10	"Scale"
+arg	419:47	419:52	9	"1."
+water	419:47	0:0	10	"1."
+water	419:53	0:0	8	;
+break	420:12	420:17	6	
+water	421:8	0:0	6	}
+label	422:8	422:28	6	case HTTPD_MSG_PAUSE :
+water	423:8	0:0	6	{
+if	424:12	430:12	6	(id == NULL && ! vod)
+cond	424:16	424:31	7	id == NULL && ! vod
+water	424:16	0:0	8	id
+op	424:19	0:0	8	==
+water	424:22	0:0	8	NULL
+op	424:27	0:0	8	&&
+op	424:30	0:0	8	!
+water	424:31	0:0	8	vod
+stmts	425:12	430:12	7	
+water	425:12	0:0	8	{
+water	426:16	0:0	8	answer
+op	426:22	0:0	8	->
+water	426:24	0:0	8	i_status
+op	426:33	0:0	8	=
+water	426:35	0:0	8	405
+water	426:38	0:0	8	;
+call	427:16	428:72	8	httpd_MsgAdd
+arg	427:30	427:36	9	answer
+water	427:30	0:0	10	answer
+arg	427:38	427:45	9	"Allow"
+water	427:38	0:0	10	"Allow"
+arg	428:30	428:72	9	"DESCRIBE, TEARDOWN, PLAY, GET_PARAMETER"
+water	428:30	0:0	10	"DESCRIBE, TEARDOWN, PLAY, GET_PARAMETER"
+water	428:73	0:0	8	;
+break	429:16	429:21	8	
+water	430:12	0:0	8	}
+decl	431:12	431:31	6	rtsp_session_t	*ses
+water	432:12	0:0	6	answer
+op	432:18	0:0	6	->
+water	432:20	0:0	6	i_status
+op	432:29	0:0	6	=
+water	432:31	0:0	6	200
+water	432:34	0:0	6	;
+water	433:12	0:0	6	psz_session
+op	433:24	0:0	6	=
+call	433:26	433:57	6	httpd_MsgGet
+arg	433:40	433:45	7	query
+water	433:40	0:0	8	query
+arg	433:47	433:57	7	"Session"
+water	433:47	0:0	8	"Session"
+water	433:58	0:0	6	;
+call	434:12	434:40	6	vlc_mutex_lock
+arg	434:28	434:40	7	&rtsp->lock
+op	434:28	0:0	8	&
+water	434:29	0:0	8	rtsp
+op	434:33	0:0	8	->
+water	434:35	0:0	8	lock
+water	434:41	0:0	6	;
+water	435:12	0:0	6	ses
+op	435:16	0:0	6	=
+call	435:18	435:51	6	RtspClientGet
+arg	435:33	435:37	7	rtsp
+water	435:33	0:0	8	rtsp
+arg	435:39	435:51	7	psz_session
+water	435:39	0:0	8	psz_session
+water	435:52	0:0	6	;
+if	436:12	461:12	6	(ses != NULL)
+cond	436:16	436:23	7	ses != NULL
+water	436:16	0:0	8	ses
+op	436:20	0:0	8	!=
+water	436:23	0:0	8	NULL
+stmts	437:12	461:12	7	
+water	437:12	0:0	8	{
+if	438:16	459:16	8	(id != NULL)
+cond	438:20	438:26	9	id != NULL
+water	438:20	0:0	10	id
+op	438:23	0:0	10	!=
+water	438:26	0:0	10	NULL
+stmts	439:16	459:16	9	
+water	439:16	0:0	10	{
+decl	440:20	440:38	10	bool	found
+op	440:31	0:0	10	=
+water	440:33	0:0	10	false
+for	441:20	456:20	10	( int i = 0 ;i < ses -> trackc;i ++)
+forinit	0:0	441:34	11	 int i = 0 ;
+decl	441:25	441:34	12	int	i
+op	441:31	0:0	12	=
+water	441:33	0:0	12	0
+cond	441:36	441:45	11	i < ses -> trackc
+water	441:36	0:0	12	i
+op	441:38	0:0	12	<
+water	441:40	0:0	12	ses
+op	441:43	0:0	12	->
+water	441:45	0:0	12	trackc
+forexpr	441:53	441:54	11	i ++
+water	441:53	0:0	12	i
+op	441:54	0:0	12	++
+stmts	442:20	456:20	11	
+water	442:20	0:0	12	{
+decl	443:24	443:59	12	rtsp_strack_t	*tr
+op	443:42	0:0	12	=
+water	443:44	0:0	12	ses
+op	443:47	0:0	12	->
+water	443:49	0:0	12	trackv
+op	443:56	0:0	12	+
+water	443:58	0:0	12	i
+water	443:60	0:0	12	;
+if	444:24	455:24	12	(tr -> id == id)
+cond	444:28	444:38	13	tr -> id == id
+water	444:28	0:0	14	tr
+op	444:30	0:0	14	->
+water	444:32	0:0	14	id
+op	444:35	0:0	14	==
+water	444:38	0:0	14	id
+stmts	445:24	455:24	13	
+water	445:24	0:0	14	{
+if	446:28	447:37	14	(tr -> setup_fd == - 1)
+cond	446:32	446:49	15	tr -> setup_fd == - 1
+water	446:32	0:0	16	tr
+op	446:34	0:0	16	->
+water	446:36	0:0	16	setup_fd
+op	446:45	0:0	16	==
+op	446:48	0:0	16	-
+water	446:49	0:0	16	1
+stmts	447:32	447:37	15	
+break	447:32	447:37	16	
+water	448:28	0:0	14	found
+op	448:34	0:0	14	=
+water	448:36	0:0	14	true
+water	448:40	0:0	14	;
+if	449:28	453:28	14	(tr -> rtp_fd != - 1)
+cond	449:32	449:47	15	tr -> rtp_fd != - 1
+water	449:32	0:0	16	tr
+op	449:34	0:0	16	->
+water	449:36	0:0	16	rtp_fd
+op	449:43	0:0	16	!=
+op	449:46	0:0	16	-
+water	449:47	0:0	16	1
+stmts	450:28	453:28	15	
+water	450:28	0:0	16	{
+call	451:32	451:68	16	rtp_del_sink
+arg	451:45	451:56	17	tr->sout_id
+water	451:45	0:0	18	tr
+op	451:47	0:0	18	->
+water	451:49	0:0	18	sout_id
+arg	451:58	451:68	17	tr->rtp_fd
+water	451:58	0:0	18	tr
+op	451:60	0:0	18	->
+water	451:62	0:0	18	rtp_fd
+water	451:69	0:0	16	;
+water	452:32	0:0	16	tr
+op	452:34	0:0	16	->
+water	452:36	0:0	16	rtp_fd
+op	452:43	0:0	16	=
+op	452:45	0:0	16	-
+water	452:46	0:0	16	1
+water	452:47	0:0	16	;
+water	453:28	0:0	16	}
+break	454:28	454:33	14	
+water	455:24	0:0	14	}
+water	456:20	0:0	12	}
+if	457:20	458:46	10	(! found)
+cond	457:24	457:25	11	! found
+op	457:24	0:0	12	!
+water	457:25	0:0	12	found
+stmts	458:24	458:46	11	
+water	458:24	0:0	12	answer
+op	458:30	0:0	12	->
+water	458:32	0:0	12	i_status
+op	458:41	0:0	12	=
+water	458:43	0:0	12	455
+water	458:46	0:0	12	;
+water	459:16	0:0	10	}
+call	460:16	460:35	8	RtspClientAlive
+arg	460:32	460:35	9	ses
+water	460:32	0:0	10	ses
+water	460:36	0:0	8	;
+water	461:12	0:0	8	}
+call	462:12	462:42	6	vlc_mutex_unlock
+arg	462:30	462:42	7	&rtsp->lock
+op	462:30	0:0	8	&
+water	462:31	0:0	8	rtsp
+op	462:35	0:0	8	->
+water	462:37	0:0	8	lock
+water	462:43	0:0	6	;
+if	463:12	470:12	6	(ses != NULL && id == NULL)
+cond	463:16	463:37	7	ses != NULL && id == NULL
+water	463:16	0:0	8	ses
+op	463:20	0:0	8	!=
+water	463:23	0:0	8	NULL
+op	463:28	0:0	8	&&
+water	463:31	0:0	8	id
+op	463:34	0:0	8	==
+water	463:37	0:0	8	NULL
+stmts	464:12	470:12	7	
+water	464:12	0:0	8	{
+call	465:16	465:26	8	assert
+arg	465:23	465:26	9	vod
+water	465:23	0:0	10	vod
+water	465:27	0:0	8	;
+decl	466:16	466:31	8	int64_t	npt
+op	466:28	0:0	8	=
+water	466:30	0:0	8	0
+call	467:16	467:60	8	vod_pause
+arg	467:26	467:41	9	rtsp->vod_media
+water	467:26	0:0	10	rtsp
+op	467:30	0:0	10	->
+water	467:32	0:0	10	vod_media
+arg	467:43	467:54	9	psz_session
+water	467:43	0:0	10	psz_session
+arg	467:56	467:60	9	&npt
+op	467:56	0:0	10	&
+water	467:57	0:0	10	npt
+water	467:61	0:0	8	;
+decl	468:16	468:56	8	double	f_npt
+op	468:29	0:0	8	=
+water	468:31	0:0	8	(
+water	468:32	0:0	8	double
+water	468:38	0:0	8	)
+water	468:40	0:0	8	npt
+op	468:44	0:0	8	/
+water	468:46	0:0	8	CLOCK_FREQ
+call	469:16	469:64	8	httpd_MsgAdd
+arg	469:30	469:36	9	answer
+water	469:30	0:0	10	answer
+arg	469:38	469:45	9	"Range"
+water	469:38	0:0	10	"Range"
+arg	469:47	469:56	9	"npt=%f-"
+water	469:47	0:0	10	"npt=%f-"
+arg	469:58	469:64	9	f_npt
+water	469:58	0:0	10	f_npt
+water	469:65	0:0	8	;
+water	470:12	0:0	8	}
+break	471:12	471:17	6	
+water	472:8	0:0	6	}
+label	473:8	473:35	6	case HTTPD_MSG_GETPARAMETER :
+if	474:12	478:12	6	(query -> i_body > 0)
+cond	474:16	474:32	7	query -> i_body > 0
+water	474:16	0:0	8	query
+op	474:21	0:0	8	->
+water	474:23	0:0	8	i_body
+op	474:30	0:0	8	>
+water	474:32	0:0	8	0
+stmts	475:12	478:12	7	
+water	475:12	0:0	8	{
+water	476:16	0:0	8	answer
+op	476:22	0:0	8	->
+water	476:24	0:0	8	i_status
+op	476:33	0:0	8	=
+water	476:35	0:0	8	451
+water	476:38	0:0	8	;
+break	477:16	477:21	8	
+water	478:12	0:0	8	}
+water	479:12	0:0	6	psz_session
+op	479:24	0:0	6	=
+call	479:26	479:57	6	httpd_MsgGet
+arg	479:40	479:45	7	query
+water	479:40	0:0	8	query
+arg	479:47	479:57	7	"Session"
+water	479:47	0:0	8	"Session"
+water	479:58	0:0	6	;
+water	480:12	0:0	6	answer
+op	480:18	0:0	6	->
+water	480:20	0:0	6	i_status
+op	480:29	0:0	6	=
+water	480:31	0:0	6	200
+water	480:34	0:0	6	;
+call	481:12	481:40	6	vlc_mutex_lock
+arg	481:28	481:40	7	&rtsp->lock
+op	481:28	0:0	8	&
+water	481:29	0:0	8	rtsp
+op	481:33	0:0	8	->
+water	481:35	0:0	8	lock
+water	481:41	0:0	6	;
+decl	482:12	482:68	6	rtsp_session_t	*ses
+op	482:32	0:0	6	=
+call	482:34	482:67	7	RtspClientGet
+arg	482:49	482:53	8	rtsp
+water	482:49	0:0	9	rtsp
+arg	482:55	482:67	8	psz_session
+water	482:55	0:0	9	psz_session
+if	483:12	484:36	6	(ses != NULL)
+cond	483:16	483:23	7	ses != NULL
+water	483:16	0:0	8	ses
+op	483:20	0:0	8	!=
+water	483:23	0:0	8	NULL
+stmts	484:16	484:36	7	
+call	484:16	484:35	8	RtspClientAlive
+arg	484:32	484:35	9	ses
+water	484:32	0:0	10	ses
+water	484:36	0:0	8	;
+call	485:12	485:42	6	vlc_mutex_unlock
+arg	485:30	485:42	7	&rtsp->lock
+op	485:30	0:0	8	&
+water	485:31	0:0	8	rtsp
+op	485:35	0:0	8	->
+water	485:37	0:0	8	lock
+water	485:43	0:0	6	;
+break	486:12	486:17	6	
+label	487:8	487:31	6	case HTTPD_MSG_TEARDOWN :
+water	488:8	0:0	6	{
+decl	489:12	489:31	6	rtsp_session_t	*ses
+water	490:12	0:0	6	answer
+op	490:18	0:0	6	->
+water	490:20	0:0	6	i_status
+op	490:29	0:0	6	=
+water	490:31	0:0	6	200
+water	490:34	0:0	6	;
+water	491:12	0:0	6	psz_session
+op	491:24	0:0	6	=
+call	491:26	491:57	6	httpd_MsgGet
+arg	491:40	491:45	7	query
+water	491:40	0:0	8	query
+arg	491:47	491:57	7	"Session"
+water	491:47	0:0	8	"Session"
+water	491:58	0:0	6	;
+call	492:12	492:40	6	vlc_mutex_lock
+arg	492:28	492:40	7	&rtsp->lock
+op	492:28	0:0	8	&
+water	492:29	0:0	8	rtsp
+op	492:33	0:0	8	->
+water	492:35	0:0	8	lock
+water	492:41	0:0	6	;
+water	493:12	0:0	6	ses
+op	493:16	0:0	6	=
+call	493:18	493:51	6	RtspClientGet
+arg	493:33	493:37	7	rtsp
+water	493:33	0:0	8	rtsp
+arg	493:39	493:51	7	psz_session
+water	493:39	0:0	8	psz_session
+water	493:52	0:0	6	;
+if	494:12	518:12	6	(ses != NULL)
+cond	494:16	494:23	7	ses != NULL
+water	494:16	0:0	8	ses
+op	494:20	0:0	8	!=
+water	494:23	0:0	8	NULL
+stmts	495:12	518:12	7	
+water	495:12	0:0	8	{
+if	496:16	502:16	8	(id == NULL)
+cond	496:20	496:26	9	id == NULL
+water	496:20	0:0	10	id
+op	496:23	0:0	10	==
+water	496:26	0:0	10	NULL
+stmts	497:16	502:16	9	
+water	497:16	0:0	10	{
+call	498:20	498:45	10	RtspClientDel
+arg	498:35	498:39	11	rtsp
+water	498:35	0:0	12	rtsp
+arg	498:41	498:45	11	ses
+water	498:41	0:0	12	ses
+water	498:46	0:0	10	;
+if	499:20	500:62	10	(vod)
+cond	499:24	499:24	11	vod
+water	499:24	0:0	12	vod
+stmts	500:24	500:62	11	
+call	500:24	500:61	12	vod_stop
+arg	500:33	500:48	13	rtsp->vod_media
+water	500:33	0:0	14	rtsp
+op	500:37	0:0	14	->
+water	500:39	0:0	14	vod_media
+arg	500:50	500:61	13	psz_session
+water	500:50	0:0	14	psz_session
+water	500:62	0:0	12	;
+call	501:20	501:40	10	RtspUpdateTimer
+arg	501:36	501:40	11	rtsp
+water	501:36	0:0	12	rtsp
+water	501:41	0:0	10	;
+water	502:16	0:0	10	}
+else	503:16	517:16	8
+stmts	504:16	517:16	9	
+water	504:16	0:0	10	{
+for	505:20	515:20	10	( int i = 0 ;i < ses -> trackc;i ++)
+forinit	0:0	505:34	11	 int i = 0 ;
+decl	505:25	505:34	12	int	i
+op	505:31	0:0	12	=
+water	505:33	0:0	12	0
+cond	505:36	505:45	11	i < ses -> trackc
+water	505:36	0:0	12	i
+op	505:38	0:0	12	<
+water	505:40	0:0	12	ses
+op	505:43	0:0	12	->
+water	505:45	0:0	12	trackc
+forexpr	505:53	505:54	11	i ++
+water	505:53	0:0	12	i
+op	505:54	0:0	12	++
+stmts	506:20	515:20	11	
+water	506:20	0:0	12	{
+if	507:24	514:24	12	(ses -> trackv [ i ] . id == id)
+cond	507:28	507:49	13	ses -> trackv [ i ] . id == id
+water	507:28	0:0	14	ses
+op	507:31	0:0	14	->
+water	507:33	0:0	14	trackv
+op	507:39	0:0	14	[
+water	507:40	0:0	14	i
+op	507:41	0:0	14	]
+op	507:42	0:0	14	.
+water	507:43	0:0	14	id
+op	507:46	0:0	14	==
+water	507:49	0:0	14	id
+stmts	508:24	514:24	13	
+water	508:24	0:0	14	{
+call	509:28	509:60	14	RtspTrackClose
+arg	509:44	509:60	15	&ses->trackv[i]
+op	509:44	0:0	16	&
+water	509:45	0:0	16	ses
+op	509:48	0:0	16	->
+water	509:50	0:0	16	trackv
+op	509:56	0:0	16	[
+water	509:57	0:0	16	i
+op	509:58	0:0	16	]
+water	509:61	0:0	14	;
+if	512:28	513:74	14	(! ( vod && ses -> trackv [ i ] . sout_id != NULL ))
+cond	512:32	512:71	15	! ( vod && ses -> trackv [ i ] . sout_id != NULL )
+op	512:32	0:0	16	!
+water	512:33	0:0	16	(
+water	512:34	0:0	16	vod
+op	512:38	0:0	16	&&
+water	512:41	0:0	16	ses
+op	512:44	0:0	16	->
+water	512:46	0:0	16	trackv
+op	512:52	0:0	16	[
+water	512:53	0:0	16	i
+op	512:54	0:0	16	]
+op	512:55	0:0	16	.
+water	512:56	0:0	16	sout_id
+op	512:64	0:0	16	!=
+water	512:67	0:0	16	NULL
+water	512:71	0:0	16	)
+stmts	513:32	513:74	15	
+call	513:32	513:73	16	REMOVE_ELEM
+arg	513:45	513:56	17	ses->trackv
+water	513:45	0:0	18	ses
+op	513:48	0:0	18	->
+water	513:50	0:0	18	trackv
+arg	513:58	513:69	17	ses->trackc
+water	513:58	0:0	18	ses
+op	513:61	0:0	18	->
+water	513:63	0:0	18	trackc
+arg	513:71	513:73	17	i
+water	513:71	0:0	18	i
+water	513:74	0:0	16	;
+water	514:24	0:0	14	}
+water	515:20	0:0	12	}
+call	516:20	516:39	10	RtspClientAlive
+arg	516:36	516:39	11	ses
+water	516:36	0:0	12	ses
+water	516:40	0:0	10	;
+water	517:16	0:0	10	}
+water	518:12	0:0	8	}
+call	519:12	519:42	6	vlc_mutex_unlock
+arg	519:30	519:42	7	&rtsp->lock
+op	519:30	0:0	8	&
+water	519:31	0:0	8	rtsp
+op	519:35	0:0	8	->
+water	519:37	0:0	8	lock
+water	519:43	0:0	6	;
+break	520:12	520:17	6	
+water	521:8	0:0	6	}
+label	522:8	522:15	6	default :
+return	523:12	523:31	6	VLC_EGENERIC
+water	523:19	0:0	7	VLC_EGENERIC
+water	524:4	0:0	6	}
+if	525:4	532:4	2	(psz_session)
+cond	525:8	525:8	3	psz_session
+water	525:8	0:0	4	psz_session
+stmts	526:4	532:4	3	
+water	526:4	0:0	4	{
+if	527:8	529:77	4	(rtsp -> timeout > 0)
+cond	527:12	527:28	5	rtsp -> timeout > 0
+water	527:12	0:0	6	rtsp
+op	527:16	0:0	6	->
+water	527:18	0:0	6	timeout
+op	527:26	0:0	6	>
+water	527:28	0:0	6	0
+stmts	528:12	529:77	5	
+call	528:12	529:76	6	httpd_MsgAdd
+arg	528:26	528:32	7	answer
+water	528:26	0:0	8	answer
+arg	528:34	528:43	7	"Session"
+water	528:34	0:0	8	"Session"
+arg	528:45	528:60	7	"%s;timeout=%d"
+water	528:45	0:0	8	"%s;timeout=%d"
+arg	528:62	528:73	7	psz_session
+water	528:62	0:0	8	psz_session
+arg	529:62	529:76	7	rtsp->timeout
+water	529:62	0:0	8	rtsp
+op	529:66	0:0	8	->
+water	529:68	0:0	8	timeout
+water	529:77	0:0	6	;
+else	530:8	531:64	4
+stmts	531:12	531:64	5	
+call	531:12	531:63	6	httpd_MsgAdd
+arg	531:26	531:32	7	answer
+water	531:26	0:0	8	answer
+arg	531:34	531:43	7	"Session"
+water	531:34	0:0	8	"Session"
+arg	531:45	531:49	7	"%s"
+water	531:45	0:0	8	"%s"
+arg	531:51	531:63	7	psz_session
+water	531:51	0:0	8	psz_session
+water	531:64	0:0	6	;
+water	532:4	0:0	4	}
+call	533:4	533:65	2	httpd_MsgAdd
+arg	533:18	533:24	3	answer
+water	533:18	0:0	4	answer
+arg	533:26	533:42	3	"Content-Length"
+water	533:26	0:0	4	"Content-Length"
+arg	533:44	533:48	3	"%d"
+water	533:44	0:0	4	"%d"
+arg	533:50	533:65	3	answer->i_body
+water	533:50	0:0	4	answer
+op	533:56	0:0	4	->
+water	533:58	0:0	4	i_body
+water	533:66	0:0	2	;
+call	534:4	534:54	2	httpd_MsgAdd
+arg	534:18	534:24	3	answer
+water	534:18	0:0	4	answer
+arg	534:26	534:41	3	"Cache-Control"
+water	534:26	0:0	4	"Cache-Control"
+arg	534:43	534:54	3	"no-cache"
+water	534:43	0:0	4	"no-cache"
+water	534:55	0:0	2	;
+water	535:4	0:0	2	psz
+op	535:8	0:0	2	=
+call	535:10	535:38	2	httpd_MsgGet
+arg	535:24	535:29	3	query
+water	535:24	0:0	4	query
+arg	535:31	535:38	3	"Cseq"
+water	535:31	0:0	4	"Cseq"
+water	535:39	0:0	2	;
+if	536:4	537:49	2	(psz != NULL)
+cond	536:8	536:15	3	psz != NULL
+water	536:8	0:0	4	psz
+op	536:12	0:0	4	!=
+water	536:15	0:0	4	NULL
+stmts	537:8	537:49	3	
+call	537:8	537:48	4	httpd_MsgAdd
+arg	537:22	537:28	5	answer
+water	537:22	0:0	6	answer
+arg	537:30	537:36	5	"Cseq"
+water	537:30	0:0	6	"Cseq"
+arg	537:38	537:42	5	"%s"
+water	537:38	0:0	6	"%s"
+arg	537:44	537:48	5	psz
+water	537:44	0:0	6	psz
+water	537:49	0:0	4	;
+water	538:4	0:0	2	psz
+op	538:8	0:0	2	=
+call	538:10	538:43	2	httpd_MsgGet
+arg	538:24	538:29	3	query
+water	538:24	0:0	4	query
+arg	538:31	538:43	3	"Timestamp"
+water	538:31	0:0	4	"Timestamp"
+water	538:44	0:0	2	;
+if	539:4	540:54	2	(psz != NULL)
+cond	539:8	539:15	3	psz != NULL
+water	539:8	0:0	4	psz
+op	539:12	0:0	4	!=
+water	539:15	0:0	4	NULL
+stmts	540:8	540:54	3	
+call	540:8	540:53	4	httpd_MsgAdd
+arg	540:22	540:28	5	answer
+water	540:22	0:0	6	answer
+arg	540:30	540:41	5	"Timestamp"
+water	540:30	0:0	6	"Timestamp"
+arg	540:43	540:47	5	"%s"
+water	540:43	0:0	6	"%s"
+arg	540:49	540:53	5	psz
+water	540:49	0:0	6	psz
+water	540:54	0:0	4	;
+return	541:4	541:22	2	VLC_SUCCESS
+water	541:11	0:0	3	VLC_SUCCESS

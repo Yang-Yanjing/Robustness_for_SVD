@@ -1,0 +1,350 @@
+func	2:0	76:0	0	void	input_clock_Update
+params	2:23	0:0	1	
+param	2:25	2:42	2	input_clock_t *	cl
+param	2:44	2:63	2	vlc_object_t *	p_log
+param	3:25	3:38	2	bool *	pb_late
+param	4:25	4:48	2	bool	b_can_pace_control
+param	4:50	4:74	2	bool	b_buffering_allowed
+param	5:25	5:44	2	mtime_t	i_ck_stream
+param	5:46	5:66	2	mtime_t	i_ck_system
+stmnts	0:0	75:33	1	
+decl	7:4	7:34	2	bool	b_reset_reference
+op	7:27	0:0	2	=
+water	7:29	0:0	2	false
+call	8:4	8:73	2	assert
+arg	8:12	8:73	3	i_ck_stream>VLC_TS_INVALID&&i_ck_system>VLC_TS_INVALID
+water	8:12	0:0	4	i_ck_stream
+op	8:24	0:0	4	>
+water	8:26	0:0	4	VLC_TS_INVALID
+op	8:41	0:0	4	&&
+water	8:44	0:0	4	i_ck_system
+op	8:56	0:0	4	>
+water	8:58	0:0	4	VLC_TS_INVALID
+water	8:74	0:0	2	;
+call	9:4	9:30	2	vlc_mutex_lock
+arg	9:20	9:30	3	&cl->lock
+op	9:20	0:0	4	&
+water	9:21	0:0	4	cl
+op	9:23	0:0	4	->
+water	9:25	0:0	4	lock
+water	9:31	0:0	2	;
+if	10:4	14:4	2	(! cl -> b_has_reference)
+cond	10:8	10:13	3	! cl -> b_has_reference
+op	10:8	0:0	4	!
+water	10:9	0:0	4	cl
+op	10:11	0:0	4	->
+water	10:13	0:0	4	b_has_reference
+stmts	11:4	14:4	3	
+water	11:4	0:0	4	{
+water	13:8	0:0	4	b_reset_reference
+op	13:25	0:0	4	=
+water	13:27	0:0	4	true
+water	13:31	0:0	4	;
+water	14:4	0:0	4	}
+else	15:4	27:4	2
+stmts	15:9	27:4	3	
+if	15:9	27:4	4	(cl -> last . i_stream > VLC_TS_INVALID && ( ( cl -> last . i_stream - i_ck_stream ) > CR_MAX_GAP || ( cl -> last . i_stream - i_ck_stream ) < - CR_MAX_GAP ))
+cond	15:13	17:63	5	cl -> last . i_stream > VLC_TS_INVALID && ( ( cl -> last . i_stream - i_ck_stream ) > CR_MAX_GAP || ( cl -> last . i_stream - i_ck_stream ) < - CR_MAX_GAP )
+water	15:13	0:0	6	cl
+op	15:15	0:0	6	->
+water	15:17	0:0	6	last
+op	15:21	0:0	6	.
+water	15:22	0:0	6	i_stream
+op	15:31	0:0	6	>
+water	15:33	0:0	6	VLC_TS_INVALID
+op	15:48	0:0	6	&&
+water	16:13	0:0	6	(
+water	16:15	0:0	6	(
+water	16:16	0:0	6	cl
+op	16:18	0:0	6	->
+water	16:20	0:0	6	last
+op	16:24	0:0	6	.
+water	16:25	0:0	6	i_stream
+op	16:34	0:0	6	-
+water	16:36	0:0	6	i_ck_stream
+water	16:47	0:0	6	)
+op	16:49	0:0	6	>
+water	16:51	0:0	6	CR_MAX_GAP
+op	16:62	0:0	6	||
+water	17:15	0:0	6	(
+water	17:16	0:0	6	cl
+op	17:18	0:0	6	->
+water	17:20	0:0	6	last
+op	17:24	0:0	6	.
+water	17:25	0:0	6	i_stream
+op	17:34	0:0	6	-
+water	17:36	0:0	6	i_ck_stream
+water	17:47	0:0	6	)
+op	17:49	0:0	6	<
+op	17:51	0:0	6	-
+water	17:52	0:0	6	CR_MAX_GAP
+water	17:63	0:0	6	)
+stmts	18:4	27:4	5	
+water	18:4	0:0	6	{
+call	22:8	22:70	6	msg_Warn
+arg	22:18	22:23	7	p_log
+water	22:18	0:0	8	p_log
+arg	22:25	22:70	7	"clock gap, unexpected stream discontinuity"
+water	22:25	0:0	8	"clock gap, unexpected stream discontinuity"
+water	22:71	0:0	6	;
+water	23:8	0:0	6	cl
+op	23:10	0:0	6	->
+water	23:12	0:0	6	i_ts_max
+op	23:21	0:0	6	=
+water	23:23	0:0	6	VLC_TS_INVALID
+water	23:37	0:0	6	;
+call	25:8	25:103	6	msg_Warn
+arg	25:18	25:23	7	p_log
+water	25:18	0:0	8	p_log
+arg	25:25	25:103	7	"feeding synchro with a new reference point trying to recover from clock gap"
+water	25:25	0:0	8	"feeding synchro with a new reference point trying to recover from clock gap"
+water	25:104	0:0	6	;
+water	26:8	0:0	6	b_reset_reference
+op	26:25	0:0	6	=
+water	26:27	0:0	6	true
+water	26:31	0:0	6	;
+water	27:4	0:0	6	}
+if	29:4	38:4	2	(b_reset_reference)
+cond	29:8	29:8	3	b_reset_reference
+water	29:8	0:0	4	b_reset_reference
+stmts	30:4	38:4	3	
+water	30:4	0:0	4	{
+water	31:8	0:0	4	cl
+op	31:10	0:0	4	->
+water	31:12	0:0	4	i_next_drift_update
+op	31:32	0:0	4	=
+water	31:34	0:0	4	VLC_TS_INVALID
+water	31:48	0:0	4	;
+call	32:8	32:29	4	AvgReset
+arg	32:18	32:29	5	&cl->drift
+op	32:18	0:0	6	&
+water	32:19	0:0	6	cl
+op	32:21	0:0	6	->
+water	32:23	0:0	6	drift
+water	32:30	0:0	4	;
+water	34:8	0:0	4	cl
+op	34:10	0:0	4	->
+water	34:12	0:0	4	b_has_reference
+op	34:28	0:0	4	=
+water	34:30	0:0	4	true
+water	34:34	0:0	4	;
+water	35:8	0:0	4	cl
+op	35:10	0:0	4	->
+water	35:12	0:0	4	ref
+op	35:16	0:0	4	=
+call	35:18	36:91	4	clock_point_Create
+arg	35:38	35:49	5	i_ck_stream
+water	35:38	0:0	6	i_ck_stream
+arg	36:38	36:91	5	__MAX(cl->i_ts_max+CR_MEAN_PTS_GAP,i_ck_system)
+call	36:38	36:89	6	__MAX
+arg	36:45	36:75	7	cl->i_ts_max+CR_MEAN_PTS_GAP
+water	36:45	0:0	8	cl
+op	36:47	0:0	8	->
+water	36:49	0:0	8	i_ts_max
+op	36:58	0:0	8	+
+water	36:60	0:0	8	CR_MEAN_PTS_GAP
+arg	36:77	36:89	7	i_ck_system
+water	36:77	0:0	8	i_ck_system
+water	36:92	0:0	4	;
+water	37:8	0:0	4	cl
+op	37:10	0:0	4	->
+water	37:12	0:0	4	b_has_external_clock
+op	37:33	0:0	4	=
+water	37:35	0:0	4	false
+water	37:40	0:0	4	;
+water	38:4	0:0	4	}
+if	41:4	46:4	2	(! b_can_pace_control && cl -> i_next_drift_update < i_ck_system)
+cond	41:8	41:57	3	! b_can_pace_control && cl -> i_next_drift_update < i_ck_system
+op	41:8	0:0	4	!
+water	41:9	0:0	4	b_can_pace_control
+op	41:28	0:0	4	&&
+water	41:31	0:0	4	cl
+op	41:33	0:0	4	->
+water	41:35	0:0	4	i_next_drift_update
+op	41:55	0:0	4	<
+water	41:57	0:0	4	i_ck_system
+stmts	42:4	46:4	3	
+water	42:4	0:0	4	{
+decl	43:8	43:74	4	const mtime_t	i_converted
+op	43:34	0:0	4	=
+call	43:36	43:73	5	ClockSystemToStream
+arg	43:57	43:59	6	cl
+water	43:57	0:0	7	cl
+arg	43:61	43:73	6	i_ck_system
+water	43:61	0:0	7	i_ck_system
+call	44:8	44:57	4	AvgUpdate
+arg	44:19	44:29	5	&cl->drift
+op	44:19	0:0	6	&
+water	44:20	0:0	6	cl
+op	44:22	0:0	6	->
+water	44:24	0:0	6	drift
+arg	44:31	44:57	5	i_converted-i_ck_stream
+water	44:31	0:0	6	i_converted
+op	44:43	0:0	6	-
+water	44:45	0:0	6	i_ck_stream
+water	44:58	0:0	4	;
+water	45:8	0:0	4	cl
+op	45:10	0:0	4	->
+water	45:12	0:0	4	i_next_drift_update
+op	45:32	0:0	4	=
+water	45:34	0:0	4	i_ck_system
+op	45:46	0:0	4	+
+water	45:48	0:0	4	CLOCK_FREQ
+op	45:58	0:0	4	/
+water	45:59	0:0	4	5
+water	45:60	0:0	4	;
+water	46:4	0:0	4	}
+if	48:4	51:4	2	(! b_can_pace_control || b_reset_reference)
+cond	48:8	48:31	3	! b_can_pace_control || b_reset_reference
+op	48:8	0:0	4	!
+water	48:9	0:0	4	b_can_pace_control
+op	48:28	0:0	4	||
+water	48:31	0:0	4	b_reset_reference
+stmts	49:4	51:4	3	
+water	49:4	0:0	4	{
+water	50:8	0:0	4	cl
+op	50:10	0:0	4	->
+water	50:12	0:0	4	i_buffering_duration
+op	50:33	0:0	4	=
+water	50:35	0:0	4	0
+water	50:36	0:0	4	;
+water	51:4	0:0	4	}
+else	52:4	61:4	2
+stmts	52:9	61:4	3	
+if	52:9	61:4	4	(b_buffering_allowed)
+cond	52:13	52:13	5	b_buffering_allowed
+water	52:13	0:0	6	b_buffering_allowed
+stmts	53:4	61:4	5	
+water	53:4	0:0	6	{
+decl	57:8	57:78	6	const mtime_t	i_duration
+op	57:33	0:0	6	=
+call	57:35	57:77	7	__MAX
+arg	57:42	57:73	8	i_ck_stream-cl->last.i_stream
+water	57:42	0:0	9	i_ck_stream
+op	57:54	0:0	9	-
+water	57:56	0:0	9	cl
+op	57:58	0:0	9	->
+water	57:60	0:0	9	last
+op	57:64	0:0	9	.
+water	57:65	0:0	9	i_stream
+arg	57:75	57:77	8	0
+water	57:75	0:0	9	0
+water	58:8	0:0	6	cl
+op	58:10	0:0	6	->
+water	58:12	0:0	6	i_buffering_duration
+op	58:33	0:0	6	+=
+water	58:36	0:0	6	(
+water	58:38	0:0	6	i_duration
+op	58:49	0:0	6	*
+water	58:51	0:0	6	CR_BUFFERING_RATE
+op	58:69	0:0	6	+
+water	58:71	0:0	6	255
+water	58:75	0:0	6	)
+op	58:77	0:0	6	/
+water	58:79	0:0	6	256
+water	58:82	0:0	6	;
+if	59:8	60:58	6	(cl -> i_buffering_duration > CR_BUFFERING_TARGET)
+cond	59:12	59:39	7	cl -> i_buffering_duration > CR_BUFFERING_TARGET
+water	59:12	0:0	8	cl
+op	59:14	0:0	8	->
+water	59:16	0:0	8	i_buffering_duration
+op	59:37	0:0	8	>
+water	59:39	0:0	8	CR_BUFFERING_TARGET
+stmts	60:12	60:58	7	
+water	60:12	0:0	8	cl
+op	60:14	0:0	8	->
+water	60:16	0:0	8	i_buffering_duration
+op	60:37	0:0	8	=
+water	60:39	0:0	8	CR_BUFFERING_TARGET
+water	60:58	0:0	8	;
+water	61:4	0:0	6	}
+water	64:4	0:0	2	cl
+op	64:6	0:0	2	->
+water	64:8	0:0	2	last
+op	64:13	0:0	2	=
+call	64:15	64:60	2	clock_point_Create
+arg	64:35	64:46	3	i_ck_stream
+water	64:35	0:0	4	i_ck_stream
+arg	64:48	64:60	3	i_ck_system
+water	64:48	0:0	4	i_ck_system
+water	64:61	0:0	2	;
+decl	67:4	67:99	2	const mtime_t	i_system_expected
+op	67:36	0:0	2	=
+call	67:38	67:98	3	ClockStreamToSystem
+arg	67:59	67:61	4	cl
+water	67:59	0:0	5	cl
+arg	67:63	67:98	4	i_ck_stream+AvgGet(&cl->drift)
+water	67:63	0:0	5	i_ck_stream
+op	67:75	0:0	5	+
+call	67:77	67:96	5	AvgGet
+arg	67:85	67:96	6	&cl->drift
+op	67:85	0:0	7	&
+water	67:86	0:0	7	cl
+op	67:88	0:0	7	->
+water	67:90	0:0	7	drift
+decl	68:4	68:80	2	const mtime_t	i_late
+op	68:25	0:0	2	=
+water	68:27	0:0	2	(
+water	68:29	0:0	2	i_ck_system
+op	68:41	0:0	2	-
+water	68:43	0:0	2	cl
+op	68:45	0:0	2	->
+water	68:47	0:0	2	i_pts_delay
+water	68:59	0:0	2	)
+op	68:61	0:0	2	-
+water	68:63	0:0	2	i_system_expected
+op	69:4	0:0	2	*
+water	69:5	0:0	2	pb_late
+op	69:13	0:0	2	=
+water	69:15	0:0	2	i_late
+op	69:22	0:0	2	>
+water	69:24	0:0	2	0
+water	69:25	0:0	2	;
+if	70:4	74:4	2	(i_late > 0)
+cond	70:8	70:17	3	i_late > 0
+water	70:8	0:0	4	i_late
+op	70:15	0:0	4	>
+water	70:17	0:0	4	0
+stmts	71:4	74:4	3	
+water	71:4	0:0	4	{
+water	72:8	0:0	4	cl
+op	72:10	0:0	4	->
+water	72:12	0:0	4	late
+op	72:16	0:0	4	.
+water	72:17	0:0	4	pi_value
+op	72:25	0:0	4	[
+water	72:26	0:0	4	cl
+op	72:28	0:0	4	->
+water	72:30	0:0	4	late
+op	72:34	0:0	4	.
+water	72:35	0:0	4	i_index
+op	72:42	0:0	4	]
+op	72:44	0:0	4	=
+water	72:46	0:0	4	i_late
+water	72:52	0:0	4	;
+water	73:8	0:0	4	cl
+op	73:10	0:0	4	->
+water	73:12	0:0	4	late
+op	73:16	0:0	4	.
+water	73:17	0:0	4	i_index
+op	73:25	0:0	4	=
+water	73:27	0:0	4	(
+water	73:29	0:0	4	cl
+op	73:31	0:0	4	->
+water	73:33	0:0	4	late
+op	73:37	0:0	4	.
+water	73:38	0:0	4	i_index
+op	73:46	0:0	4	+
+water	73:48	0:0	4	1
+water	73:50	0:0	4	)
+op	73:52	0:0	4	%
+water	73:54	0:0	4	INPUT_CLOCK_LATE_COUNT
+water	73:76	0:0	4	;
+water	74:4	0:0	4	}
+call	75:4	75:32	2	vlc_mutex_unlock
+arg	75:22	75:32	3	&cl->lock
+op	75:22	0:0	4	&
+water	75:23	0:0	4	cl
+op	75:25	0:0	4	->
+water	75:27	0:0	4	lock
+water	75:33	0:0	2	;

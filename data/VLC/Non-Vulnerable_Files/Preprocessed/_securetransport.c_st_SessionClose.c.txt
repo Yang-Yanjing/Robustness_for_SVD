@@ -1,0 +1,85 @@
+func	2:0	22:0	0	static void	st_SessionClose
+params	2:28	0:0	1	
+param	2:29	2:49	2	vlc_tls_creds_t *	crd
+param	2:51	2:69	2	vlc_tls_t *	session
+stmnts	3:4	21:13	1	
+call	3:4	3:18	2	VLC_UNUSED
+arg	3:15	3:18	3	crd
+water	3:15	0:0	4	crd
+water	3:19	0:0	2	;
+decl	4:4	4:37	2	vlc_tls_sys_t	*sys
+op	4:23	0:0	2	=
+water	4:25	0:0	2	session
+op	4:32	0:0	2	->
+water	4:34	0:0	2	sys
+call	5:4	5:40	2	msg_Dbg
+arg	5:12	5:19	3	session
+water	5:12	0:0	4	session
+arg	5:21	5:40	3	"close TLS session"
+water	5:21	0:0	4	"close TLS session"
+water	5:41	0:0	2	;
+if	6:4	20:4	2	(sys -> p_context)
+cond	6:8	6:13	3	sys -> p_context
+water	6:8	0:0	4	sys
+op	6:11	0:0	4	->
+water	6:13	0:0	4	p_context
+stmts	6:24	20:4	3	
+water	6:24	0:0	4	{
+if	7:8	12:8	4	(sys -> b_handshaked)
+cond	7:12	7:17	5	sys -> b_handshaked
+water	7:12	0:0	6	sys
+op	7:15	0:0	6	->
+water	7:17	0:0	6	b_handshaked
+stmts	7:31	12:8	5	
+water	7:31	0:0	6	{
+decl	8:12	8:51	6	OSStatus	ret
+op	8:25	0:0	6	=
+call	8:27	8:50	7	SSLClose
+arg	8:36	8:50	8	sys->p_context
+water	8:36	0:0	9	sys
+op	8:39	0:0	9	->
+water	8:41	0:0	9	p_context
+if	9:12	11:12	6	(ret != noErr)
+cond	9:16	9:23	7	ret != noErr
+water	9:16	0:0	8	ret
+op	9:20	0:0	8	!=
+water	9:23	0:0	8	noErr
+stmts	9:30	11:12	7	
+water	9:30	0:0	8	{
+call	10:16	10:60	8	msg_Warn
+arg	10:25	10:32	9	session
+water	10:25	0:0	10	session
+arg	10:34	10:60	9	"Cannot close ssl context"
+water	10:34	0:0	10	"Cannot close ssl context"
+water	10:61	0:0	8	;
+water	11:12	0:0	8	}
+water	12:8	0:0	6	}
+call	14:8	14:32	4	CFRelease
+arg	14:18	14:32	5	sys->p_context
+water	14:18	0:0	6	sys
+op	14:21	0:0	6	->
+water	14:23	0:0	6	p_context
+water	14:33	0:0	4	;
+if	16:8	18:8	4	(SSLDisposeContext (sys -> p_context ) != noErr)
+cond	16:12	16:49	5	SSLDisposeContext (sys -> p_context ) != noErr
+call	16:12	16:44	6	SSLDisposeContext
+arg	16:30	16:44	7	sys->p_context
+water	16:30	0:0	8	sys
+op	16:33	0:0	8	->
+water	16:35	0:0	8	p_context
+op	16:46	0:0	6	!=
+water	16:49	0:0	6	noErr
+stmts	16:56	18:8	5	
+water	16:56	0:0	6	{
+call	17:12	17:53	6	msg_Err
+arg	17:20	17:27	7	session
+water	17:20	0:0	8	session
+arg	17:29	17:53	7	"error deleting context"
+water	17:29	0:0	8	"error deleting context"
+water	17:54	0:0	6	;
+water	18:8	0:0	6	}
+water	20:4	0:0	4	}
+call	21:4	21:12	2	free
+arg	21:9	21:12	3	sys
+water	21:9	0:0	4	sys
+water	21:13	0:0	2	;

@@ -1,0 +1,82 @@
+decl	1:7	1:53	0	vlc_mutex_t	single_instance
+op	1:35	0:0	0	=
+water	1:37	0:0	0	VLC_STATIC_MUTEX
+func	2:0	15:0	0	static inline void *	LoadSurface
+params	2:31	0:0	1	
+param	2:32	2:51	2	const char *	psz_lib
+param	2:53	2:76	2	vout_display_sys_t *	sys
+stmnts	0:0	14:15	1	
+decl	4:4	4:47	2	void	*p_library
+op	4:20	0:0	2	=
+call	4:22	4:46	3	dlopen
+arg	4:29	4:36	4	psz_lib
+water	4:29	0:0	5	psz_lib
+arg	4:38	4:46	4	RTLD_NOW
+water	4:38	0:0	5	RTLD_NOW
+if	5:4	6:19	2	(! p_library)
+cond	5:8	5:9	3	! p_library
+op	5:8	0:0	4	!
+water	5:9	0:0	4	p_library
+stmts	6:8	6:19	3	
+return	6:8	6:19	4	NULL
+water	6:15	0:0	5	NULL
+water	7:4	0:0	2	sys
+op	7:7	0:0	2	->
+water	7:9	0:0	2	s_lock
+op	7:16	0:0	2	=
+call	7:18	7:69	2	(Surface_lock)
+arg	7:33	7:69	3	dlsym(p_library,ANDROID_SYM_S_LOCK)
+call	7:33	7:68	4	dlsym
+arg	7:39	7:48	5	p_library
+water	7:39	0:0	6	p_library
+arg	7:50	7:68	5	ANDROID_SYM_S_LOCK
+water	7:50	0:0	6	ANDROID_SYM_S_LOCK
+water	7:70	0:0	2	;
+water	8:4	0:0	2	sys
+op	8:7	0:0	2	->
+water	8:9	0:0	2	s_lock2
+op	8:17	0:0	2	=
+call	8:19	8:72	2	(Surface_lock2)
+arg	8:35	8:72	3	dlsym(p_library,ANDROID_SYM_S_LOCK2)
+call	8:35	8:71	4	dlsym
+arg	8:41	8:50	5	p_library
+water	8:41	0:0	6	p_library
+arg	8:52	8:71	5	ANDROID_SYM_S_LOCK2
+water	8:52	0:0	6	ANDROID_SYM_S_LOCK2
+water	8:73	0:0	2	;
+water	9:4	0:0	2	sys
+op	9:7	0:0	2	->
+water	9:9	0:0	2	s_unlockAndPost
+op	9:25	0:0	2	=
+call	10:8	10:70	2	(Surface_unlockAndPost)
+arg	10:32	10:70	3	dlsym(p_library,ANDROID_SYM_S_UNLOCK)
+call	10:32	10:69	4	dlsym
+arg	10:38	10:47	5	p_library
+water	10:38	0:0	6	p_library
+arg	10:49	10:69	5	ANDROID_SYM_S_UNLOCK
+water	10:49	0:0	6	ANDROID_SYM_S_UNLOCK
+water	10:71	0:0	2	;
+if	11:4	12:24	2	(( sys -> s_lock || sys -> s_lock2 ) && sys -> s_unlockAndPost)
+cond	11:8	11:46	3	( sys -> s_lock || sys -> s_lock2 ) && sys -> s_unlockAndPost
+water	11:8	0:0	4	(
+water	11:9	0:0	4	sys
+op	11:12	0:0	4	->
+water	11:14	0:0	4	s_lock
+op	11:21	0:0	4	||
+water	11:24	0:0	4	sys
+op	11:27	0:0	4	->
+water	11:29	0:0	4	s_lock2
+water	11:36	0:0	4	)
+op	11:38	0:0	4	&&
+water	11:41	0:0	4	sys
+op	11:44	0:0	4	->
+water	11:46	0:0	4	s_unlockAndPost
+stmts	12:8	12:24	3	
+return	12:8	12:24	4	p_library
+water	12:15	0:0	5	p_library
+call	13:4	13:21	2	dlclose
+arg	13:12	13:21	3	p_library
+water	13:12	0:0	4	p_library
+water	13:22	0:0	2	;
+return	14:4	14:15	2	NULL
+water	14:11	0:0	3	NULL

@@ -1,0 +1,899 @@
+func	2:0	196:0	0	static void *	update_DownloadReal
+params	2:32	0:0	1	
+param	2:34	2:44	2	void *	obj
+stmnts	0:0	195:15	1	
+decl	4:4	4:69	2	update_download_thread_t	*p_udt
+op	4:36	0:0	2	=
+water	4:38	0:0	2	(
+water	4:39	0:0	2	update_download_thread_t
+op	4:64	0:0	2	*
+water	4:65	0:0	2	)
+water	4:66	0:0	2	obj
+decl	5:4	5:44	2	dialog_progress_bar_t	*p_progress
+op	5:38	0:0	2	=
+water	5:40	0:0	2	NULL
+water	6:4	0:0	2	long
+water	6:9	0:0	2	int
+water	6:13	0:0	2	l_size
+water	6:19	0:0	2	;
+water	7:4	0:0	2	long
+water	7:9	0:0	2	int
+water	7:13	0:0	2	l_downloaded
+op	7:26	0:0	2	=
+water	7:28	0:0	2	0
+water	7:29	0:0	2	;
+decl	8:4	8:20	2	float	f_progress
+decl	9:4	9:20	2	char	*psz_status
+decl	10:4	10:31	2	char	*psz_downloaded
+op	10:25	0:0	2	=
+water	10:27	0:0	2	NULL
+decl	11:4	11:25	2	char	*psz_size
+op	11:19	0:0	2	=
+water	11:21	0:0	2	NULL
+decl	12:4	12:29	2	char	*psz_destfile
+op	12:23	0:0	2	=
+water	12:25	0:0	2	NULL
+decl	13:4	13:32	2	char	*psz_tmpdestfile
+op	13:26	0:0	2	=
+water	13:28	0:0	2	NULL
+decl	14:4	14:23	2	FILE	*p_file
+op	14:17	0:0	2	=
+water	14:19	0:0	2	NULL
+decl	15:4	15:29	2	stream_t	*p_stream
+op	15:23	0:0	2	=
+water	15:25	0:0	2	NULL
+decl	16:4	16:25	2	void	*p_buffer
+op	16:19	0:0	2	=
+water	16:21	0:0	2	NULL
+decl	17:4	17:14	2	int	i_read
+decl	18:4	18:12	2	int	canc
+decl	19:4	19:40	2	update_t	*p_update
+op	19:23	0:0	2	=
+water	19:25	0:0	2	p_udt
+op	19:30	0:0	2	->
+water	19:32	0:0	2	p_update
+decl	20:4	20:42	2	char	*psz_destdir
+op	20:22	0:0	2	=
+water	20:24	0:0	2	p_udt
+op	20:29	0:0	2	->
+water	20:31	0:0	2	psz_destdir
+call	21:4	21:69	2	msg_Dbg
+arg	21:13	21:18	3	p_udt
+water	21:13	0:0	4	p_udt
+arg	21:20	21:41	3	"Opening Stream '%s'"
+water	21:20	0:0	4	"Opening Stream '%s'"
+arg	21:43	21:69	3	p_update->release.psz_url
+water	21:43	0:0	4	p_update
+op	21:51	0:0	4	->
+water	21:53	0:0	4	release
+op	21:60	0:0	4	.
+water	21:61	0:0	4	psz_url
+water	21:70	0:0	2	;
+water	22:4	0:0	2	canc
+op	22:9	0:0	2	=
+call	22:11	22:27	2	vlc_savecancel
+water	22:28	0:0	2	;
+water	24:4	0:0	2	p_stream
+op	24:13	0:0	2	=
+call	24:15	24:63	2	stream_UrlNew
+arg	24:30	24:35	3	p_udt
+water	24:30	0:0	4	p_udt
+arg	24:37	24:63	3	p_update->release.psz_url
+water	24:37	0:0	4	p_update
+op	24:45	0:0	4	->
+water	24:47	0:0	4	release
+op	24:54	0:0	4	.
+water	24:55	0:0	4	psz_url
+water	24:64	0:0	2	;
+if	25:4	29:4	2	(! p_stream)
+cond	25:8	25:9	3	! p_stream
+op	25:8	0:0	4	!
+water	25:9	0:0	4	p_stream
+stmts	26:4	29:4	3	
+water	26:4	0:0	4	{
+call	27:8	27:83	4	msg_Err
+arg	27:17	27:22	5	p_udt
+water	27:17	0:0	6	p_udt
+arg	27:24	27:55	5	"Failed to open %s for reading"
+water	27:24	0:0	6	"Failed to open %s for reading"
+arg	27:57	27:83	5	p_update->release.psz_url
+water	27:57	0:0	6	p_update
+op	27:65	0:0	6	->
+water	27:67	0:0	6	release
+op	27:74	0:0	6	.
+water	27:75	0:0	6	psz_url
+water	27:84	0:0	4	;
+goto	28:8	28:16	4	end
+water	28:13	0:0	5	end
+water	29:4	0:0	4	}
+water	31:4	0:0	2	l_size
+op	31:11	0:0	2	=
+call	31:13	31:35	2	stream_Size
+arg	31:26	31:35	3	p_stream
+water	31:26	0:0	4	p_stream
+water	31:36	0:0	2	;
+water	33:4	0:0	2	psz_tmpdestfile
+op	33:20	0:0	2	=
+call	33:22	33:62	2	strrchr
+arg	33:31	33:56	3	p_update->release.psz_url
+water	33:31	0:0	4	p_update
+op	33:39	0:0	4	->
+water	33:41	0:0	4	release
+op	33:48	0:0	4	.
+water	33:49	0:0	4	psz_url
+arg	33:58	33:62	3	'/'
+water	33:58	0:0	4	'/'
+water	33:63	0:0	2	;
+if	34:4	39:4	2	(! psz_tmpdestfile)
+cond	34:8	34:9	3	! psz_tmpdestfile
+op	34:8	0:0	4	!
+water	34:9	0:0	4	psz_tmpdestfile
+stmts	35:4	39:4	3	
+water	35:4	0:0	4	{
+call	36:8	37:43	4	msg_Err
+arg	36:17	36:22	5	p_udt
+water	36:17	0:0	6	p_udt
+arg	36:24	36:54	5	"The URL %s is badly formated"
+water	36:24	0:0	6	"The URL %s is badly formated"
+arg	37:17	37:43	5	p_update->release.psz_url
+water	37:17	0:0	6	p_update
+op	37:25	0:0	6	->
+water	37:27	0:0	6	release
+op	37:34	0:0	6	.
+water	37:35	0:0	6	psz_url
+water	37:44	0:0	4	;
+goto	38:8	38:16	4	end
+water	38:13	0:0	5	end
+water	39:4	0:0	4	}
+water	40:4	0:0	2	psz_tmpdestfile
+op	40:19	0:0	2	++
+water	40:21	0:0	2	;
+if	41:4	42:16	2	(asprintf (& psz_destfile ,"%s%s" ,psz_destdir ,psz_tmpdestfile ) == - 1)
+cond	41:8	41:76	3	asprintf (& psz_destfile ,"%s%s" ,psz_destdir ,psz_tmpdestfile ) == - 1
+call	41:8	41:70	4	asprintf
+arg	41:18	41:31	5	&psz_destfile
+op	41:18	0:0	6	&
+water	41:19	0:0	6	psz_destfile
+arg	41:33	41:39	5	"%s%s"
+water	41:33	0:0	6	"%s%s"
+arg	41:41	41:52	5	psz_destdir
+water	41:41	0:0	6	psz_destdir
+arg	41:54	41:70	5	psz_tmpdestfile
+water	41:54	0:0	6	psz_tmpdestfile
+op	41:72	0:0	4	==
+op	41:75	0:0	4	-
+water	41:76	0:0	4	1
+stmts	42:8	42:16	3	
+goto	42:8	42:16	4	end
+water	42:13	0:0	5	end
+water	43:4	0:0	2	p_file
+op	43:11	0:0	2	=
+call	43:13	43:42	2	vlc_fopen
+arg	43:24	43:36	3	psz_destfile
+water	43:24	0:0	4	psz_destfile
+arg	43:38	43:42	3	"w"
+water	43:38	0:0	4	"w"
+water	43:43	0:0	2	;
+if	44:4	51:4	2	(! p_file)
+cond	44:8	44:9	3	! p_file
+op	44:8	0:0	4	!
+water	44:9	0:0	4	p_file
+stmts	45:4	51:4	3	
+water	45:4	0:0	4	{
+call	46:8	46:70	4	msg_Err
+arg	46:17	46:22	5	p_udt
+water	46:17	0:0	6	p_udt
+arg	46:24	46:55	5	"Failed to open %s for writing"
+water	46:24	0:0	6	"Failed to open %s for writing"
+arg	46:57	46:70	5	psz_destfile
+water	46:57	0:0	6	psz_destfile
+water	46:71	0:0	4	;
+call	47:8	49:26	4	dialog_FatalWait
+arg	47:26	47:31	5	p_udt
+water	47:26	0:0	6	p_udt
+arg	47:33	47:56	5	_("Saving file failed")
+call	47:33	47:55	6	_
+arg	47:35	47:55	7	"Saving file failed"
+water	47:35	0:0	8	"Saving file failed"
+arg	48:12	48:50	5	_("Failed to open \"%s\" for writing")
+call	48:12	48:49	6	_
+arg	48:14	48:49	7	"Failed to open \"%s\" for writing"
+water	48:14	0:0	8	"Failed to open \"%s\" for writing"
+arg	49:13	49:26	5	psz_destfile
+water	49:13	0:0	6	psz_destfile
+water	49:27	0:0	4	;
+goto	50:8	50:16	4	end
+water	50:13	0:0	5	end
+water	51:4	0:0	4	}
+water	53:4	0:0	2	p_buffer
+op	53:13	0:0	2	=
+water	53:15	0:0	2	(
+water	53:16	0:0	2	void
+op	53:21	0:0	2	*
+water	53:22	0:0	2	)
+call	53:23	53:39	2	malloc
+arg	53:31	53:39	3	1<<10
+water	53:31	0:0	4	1
+op	53:33	0:0	4	<<
+water	53:36	0:0	4	10
+water	53:40	0:0	2	;
+if	54:4	55:16	2	(unlikely (p_buffer == NULL ))
+cond	54:8	54:33	3	unlikely (p_buffer == NULL )
+call	54:8	54:33	4	unlikely
+arg	54:17	54:33	5	p_buffer==NULL
+water	54:17	0:0	6	p_buffer
+op	54:26	0:0	6	==
+water	54:29	0:0	6	NULL
+stmts	55:8	55:16	3	
+goto	55:8	55:16	4	end
+water	55:13	0:0	5	end
+call	56:4	56:73	2	msg_Dbg
+arg	56:13	56:18	3	p_udt
+water	56:13	0:0	4	p_udt
+arg	56:20	56:45	3	"Downloading Stream '%s'"
+water	56:20	0:0	4	"Downloading Stream '%s'"
+arg	56:47	56:73	3	p_update->release.psz_url
+water	56:47	0:0	4	p_update
+op	56:55	0:0	4	->
+water	56:57	0:0	4	release
+op	56:64	0:0	4	.
+water	56:65	0:0	4	psz_url
+water	56:74	0:0	2	;
+water	57:4	0:0	2	psz_size
+op	57:13	0:0	2	=
+call	57:15	57:32	2	size_str
+arg	57:25	57:32	3	l_size
+water	57:25	0:0	4	l_size
+water	57:33	0:0	2	;
+if	58:4	60:16	2	(asprintf (& psz_status ,_ ("%s\nDownloading... %s/%s %.1f%% done" ) ,p_update -> release . psz_url ,"0.0" ,psz_size ,0 . 0 ) == - 1)
+cond	58:8	59:62	3	asprintf (& psz_status ,_ ("%s\nDownloading... %s/%s %.1f%% done" ) ,p_update -> release . psz_url ,"0.0" ,psz_size ,0 . 0 ) == - 1
+call	58:8	59:56	4	asprintf
+arg	58:18	58:29	5	&psz_status
+op	58:18	0:0	6	&
+water	58:19	0:0	6	psz_status
+arg	58:31	58:72	5	_("%s\nDownloading... %s/%s %.1f%% done")
+call	58:31	58:71	6	_
+arg	58:33	58:71	7	"%s\nDownloading... %s/%s %.1f%% done"
+water	58:33	0:0	8	"%s\nDownloading... %s/%s %.1f%% done"
+arg	59:8	59:33	5	p_update->release.psz_url
+water	59:8	0:0	6	p_update
+op	59:16	0:0	6	->
+water	59:18	0:0	6	release
+op	59:25	0:0	6	.
+water	59:26	0:0	6	psz_url
+arg	59:35	59:40	5	"0.0"
+water	59:35	0:0	6	"0.0"
+arg	59:42	59:50	5	psz_size
+water	59:42	0:0	6	psz_size
+arg	59:52	59:56	5	0.0
+water	59:52	0:0	6	0
+op	59:53	0:0	6	.
+water	59:54	0:0	6	0
+op	59:58	0:0	4	==
+op	59:61	0:0	4	-
+water	59:62	0:0	4	1
+stmts	60:8	60:16	3	
+goto	60:8	60:16	4	end
+water	60:13	0:0	5	end
+water	61:4	0:0	2	p_progress
+op	61:15	0:0	2	=
+call	61:17	62:64	2	dialog_ProgressCreate
+arg	61:40	61:45	3	p_udt
+water	61:40	0:0	4	p_udt
+arg	61:47	61:68	3	_("Downloading ...")
+call	61:47	61:67	4	_
+arg	61:50	61:67	5	"Downloading ..."
+water	61:50	0:0	6	"Downloading ..."
+arg	62:40	62:50	3	psz_status
+water	62:40	0:0	4	psz_status
+arg	62:52	62:64	3	_("Cancel")
+call	62:52	62:62	4	_
+arg	62:54	62:62	5	"Cancel"
+water	62:54	0:0	6	"Cancel"
+water	62:65	0:0	2	;
+call	63:4	63:21	2	free
+arg	63:10	63:21	3	psz_status
+water	63:10	0:0	4	psz_status
+water	63:22	0:0	2	;
+if	64:4	65:16	2	(p_progress == NULL)
+cond	64:8	64:22	3	p_progress == NULL
+water	64:8	0:0	4	p_progress
+op	64:19	0:0	4	==
+water	64:22	0:0	4	NULL
+stmts	65:8	65:16	3	
+goto	65:8	65:16	4	end
+water	65:13	0:0	5	end
+while	66:4	86:4	2	(!atomic_load (& p_udt -> aborted ) && ( i_read =stream_Read (p_stream ,p_buffer ,1 << 10 ) ) && !dialog_ProgressCancelled (p_progress ))
+cond	66:11	68:49	3	!atomic_load (& p_udt -> aborted ) && ( i_read =stream_Read (p_stream ,p_buffer ,1 << 10 ) ) && !dialog_ProgressCancelled (p_progress )
+op	66:11	0:0	4	!
+call	66:12	66:41	4	atomic_load
+arg	66:25	66:41	5	&p_udt->aborted
+op	66:25	0:0	6	&
+water	66:26	0:0	6	p_udt
+op	66:31	0:0	6	->
+water	66:33	0:0	6	aborted
+op	66:43	0:0	4	&&
+water	67:11	0:0	4	(
+water	67:13	0:0	4	i_read
+op	67:20	0:0	4	=
+call	67:22	67:63	4	stream_Read
+arg	67:35	67:43	5	p_stream
+water	67:35	0:0	6	p_stream
+arg	67:45	67:53	5	p_buffer
+water	67:45	0:0	6	p_buffer
+arg	67:55	67:63	5	1<<10
+water	67:55	0:0	6	1
+op	67:57	0:0	6	<<
+water	67:60	0:0	6	10
+water	67:65	0:0	4	)
+op	67:67	0:0	4	&&
+op	68:11	0:0	4	!
+call	68:12	68:49	4	dialog_ProgressCancelled
+arg	68:38	68:49	5	p_progress
+water	68:38	0:0	6	p_progress
+stmts	69:4	86:4	3	
+water	69:4	0:0	4	{
+if	70:8	74:8	4	(fwrite (p_buffer ,i_read ,1 ,p_file ) < 1)
+cond	70:12	70:52	5	fwrite (p_buffer ,i_read ,1 ,p_file ) < 1
+call	70:12	70:48	6	fwrite
+arg	70:20	70:28	7	p_buffer
+water	70:20	0:0	8	p_buffer
+arg	70:30	70:36	7	i_read
+water	70:30	0:0	8	i_read
+arg	70:38	70:39	7	1
+water	70:38	0:0	8	1
+arg	70:41	70:48	7	p_file
+water	70:41	0:0	8	p_file
+op	70:50	0:0	6	<
+water	70:52	0:0	6	1
+stmts	71:8	74:8	5	
+water	71:8	0:0	6	{
+call	72:12	72:68	6	msg_Err
+arg	72:21	72:26	7	p_udt
+water	72:21	0:0	8	p_udt
+arg	72:28	72:53	7	"Failed to write into %s"
+water	72:28	0:0	8	"Failed to write into %s"
+arg	72:55	72:68	7	psz_destfile
+water	72:55	0:0	8	psz_destfile
+water	72:69	0:0	6	;
+break	73:12	73:17	6	
+water	74:8	0:0	6	}
+water	75:8	0:0	4	l_downloaded
+op	75:21	0:0	4	+=
+water	75:24	0:0	4	i_read
+water	75:30	0:0	4	;
+water	76:8	0:0	4	psz_downloaded
+op	76:23	0:0	4	=
+call	76:25	76:48	4	size_str
+arg	76:35	76:48	5	l_downloaded
+water	76:35	0:0	6	l_downloaded
+water	76:49	0:0	4	;
+water	77:8	0:0	4	f_progress
+op	77:19	0:0	4	=
+water	77:21	0:0	4	(
+water	77:22	0:0	4	float
+water	77:27	0:0	4	)
+water	77:28	0:0	4	l_downloaded
+op	77:40	0:0	4	/
+water	77:41	0:0	4	(
+water	77:42	0:0	4	float
+water	77:47	0:0	4	)
+water	77:48	0:0	4	l_size
+water	77:54	0:0	4	;
+if	78:8	84:8	4	(asprintf (& psz_status ,_ ("%s\nDownloading... %s/%s - %.1f%% done" ) ,p_update -> release . psz_url ,psz_downloaded ,psz_size ,f_progress * 100 ) != - 1)
+cond	78:12	80:43	5	asprintf (& psz_status ,_ ("%s\nDownloading... %s/%s - %.1f%% done" ) ,p_update -> release . psz_url ,psz_downloaded ,psz_size ,f_progress * 100 ) != - 1
+call	78:12	80:37	6	asprintf
+arg	78:22	78:33	7	&psz_status
+op	78:22	0:0	8	&
+water	78:23	0:0	8	psz_status
+arg	78:35	78:80	7	_("%s\nDownloading... %s/%s - %.1f%% done")
+call	78:35	78:79	8	_
+arg	78:38	78:79	9	"%s\nDownloading... %s/%s - %.1f%% done"
+water	78:38	0:0	10	"%s\nDownloading... %s/%s - %.1f%% done"
+arg	79:22	79:47	7	p_update->release.psz_url
+water	79:22	0:0	8	p_update
+op	79:30	0:0	8	->
+water	79:32	0:0	8	release
+op	79:39	0:0	8	.
+water	79:40	0:0	8	psz_url
+arg	79:49	79:63	7	psz_downloaded
+water	79:49	0:0	8	psz_downloaded
+arg	79:65	79:73	7	psz_size
+water	79:65	0:0	8	psz_size
+arg	80:22	80:37	7	f_progress*100
+water	80:22	0:0	8	f_progress
+op	80:32	0:0	8	*
+water	80:33	0:0	8	100
+op	80:39	0:0	6	!=
+op	80:42	0:0	6	-
+water	80:43	0:0	6	1
+stmts	81:8	84:8	5	
+water	81:8	0:0	6	{
+call	82:12	82:67	6	dialog_ProgressSet
+arg	82:32	82:42	7	p_progress
+water	82:32	0:0	8	p_progress
+arg	82:44	82:54	7	psz_status
+water	82:44	0:0	8	psz_status
+arg	82:56	82:67	7	f_progress
+water	82:56	0:0	8	f_progress
+water	82:68	0:0	6	;
+call	83:12	83:29	6	free
+arg	83:18	83:29	7	psz_status
+water	83:18	0:0	8	psz_status
+water	83:30	0:0	6	;
+water	84:8	0:0	6	}
+call	85:8	85:29	4	free
+arg	85:14	85:29	5	psz_downloaded
+water	85:14	0:0	6	psz_downloaded
+water	85:30	0:0	4	;
+water	86:4	0:0	4	}
+call	88:4	88:19	2	fclose
+arg	88:12	88:19	3	p_file
+water	88:12	0:0	4	p_file
+water	88:20	0:0	2	;
+water	89:4	0:0	2	p_file
+op	89:11	0:0	2	=
+water	89:13	0:0	2	NULL
+water	89:17	0:0	2	;
+if	90:4	95:4	2	(!atomic_load (& p_udt -> aborted ) && !dialog_ProgressCancelled (p_progress ))
+cond	90:8	91:46	3	!atomic_load (& p_udt -> aborted ) && !dialog_ProgressCancelled (p_progress )
+op	90:8	0:0	4	!
+call	90:9	90:38	4	atomic_load
+arg	90:22	90:38	5	&p_udt->aborted
+op	90:22	0:0	6	&
+water	90:23	0:0	6	p_udt
+op	90:28	0:0	6	->
+water	90:30	0:0	6	aborted
+op	90:40	0:0	4	&&
+op	91:8	0:0	4	!
+call	91:9	91:46	4	dialog_ProgressCancelled
+arg	91:35	91:46	5	p_progress
+water	91:35	0:0	6	p_progress
+stmts	92:4	95:4	3	
+water	92:4	0:0	4	{
+call	93:8	93:43	4	dialog_ProgressDestroy
+arg	93:32	93:43	5	p_progress
+water	93:32	0:0	6	p_progress
+water	93:44	0:0	4	;
+water	94:8	0:0	4	p_progress
+op	94:19	0:0	4	=
+water	94:21	0:0	4	NULL
+water	94:25	0:0	4	;
+water	95:4	0:0	4	}
+else	96:4	100:4	2
+stmts	97:4	100:4	3	
+water	97:4	0:0	4	{
+call	98:8	98:33	4	vlc_unlink
+arg	98:20	98:33	5	psz_destfile
+water	98:20	0:0	6	psz_destfile
+water	98:34	0:0	4	;
+goto	99:8	99:16	4	end
+water	99:13	0:0	5	end
+water	100:4	0:0	4	}
+decl	101:4	101:27	2	signature_packet_t	sign
+if	102:4	112:4	2	(download_signature (VLC_OBJECT (p_udt ) ,& sign ,p_update -> release . psz_url ) != VLC_SUCCESS)
+cond	102:8	103:43	3	download_signature (VLC_OBJECT (p_udt ) ,& sign ,p_update -> release . psz_url ) != VLC_SUCCESS
+call	102:8	103:38	4	download_signature
+arg	102:28	102:47	5	VLC_OBJECT(p_udt)
+call	102:28	102:46	6	VLC_OBJECT
+arg	102:40	102:46	7	p_udt
+water	102:40	0:0	8	p_udt
+arg	102:49	102:54	5	&sign
+op	102:49	0:0	6	&
+water	102:50	0:0	6	sign
+arg	103:12	103:38	5	p_update->release.psz_url
+water	103:12	0:0	6	p_update
+op	103:20	0:0	6	->
+water	103:22	0:0	6	release
+op	103:29	0:0	6	.
+water	103:30	0:0	6	psz_url
+op	103:40	0:0	4	!=
+water	103:43	0:0	4	VLC_SUCCESS
+stmts	104:4	112:4	3	
+water	104:4	0:0	4	{
+call	105:8	105:33	4	vlc_unlink
+arg	105:20	105:33	5	psz_destfile
+water	105:20	0:0	6	psz_destfile
+water	105:34	0:0	4	;
+call	106:8	109:25	4	dialog_FatalWait
+arg	106:26	106:31	5	p_udt
+water	106:26	0:0	6	p_udt
+arg	106:33	106:64	5	_("File could not be verified")
+call	106:33	106:63	6	_
+arg	106:35	106:63	7	"File could not be verified"
+water	106:35	0:0	8	"File could not be verified"
+arg	107:12	108:66	5	_("It was not possible to download a cryptographic signature for ""the downloaded file \"%s\". Thus, it was deleted.")
+call	107:12	108:65	6	_
+arg	107:14	108:65	7	"It was not possible to download a cryptographic signature for ""the downloaded file \"%s\". Thus, it was deleted."
+water	107:14	0:0	8	"It was not possible to download a cryptographic signature for "
+water	108:14	0:0	8	"the downloaded file \"%s\". Thus, it was deleted."
+arg	109:12	109:25	5	psz_destfile
+water	109:12	0:0	6	psz_destfile
+water	109:26	0:0	4	;
+call	110:8	110:73	4	msg_Err
+arg	110:17	110:22	5	p_udt
+water	110:17	0:0	6	p_udt
+arg	110:24	110:73	5	"Couldn't download signature of downloaded file"
+water	110:24	0:0	6	"Couldn't download signature of downloaded file"
+water	110:74	0:0	4	;
+goto	111:8	111:16	4	end
+water	111:13	0:0	5	end
+water	112:4	0:0	4	}
+if	113:4	123:4	2	(memcmp (sign . issuer_longid ,p_update -> p_pkey -> longid ,8 ))
+cond	113:8	113:64	3	memcmp (sign . issuer_longid ,p_update -> p_pkey -> longid ,8 )
+call	113:8	113:64	4	memcmp
+arg	113:16	113:34	5	sign.issuer_longid
+water	113:16	0:0	6	sign
+op	113:20	0:0	6	.
+water	113:21	0:0	6	issuer_longid
+arg	113:36	113:60	5	p_update->p_pkey->longid
+water	113:36	0:0	6	p_update
+op	113:44	0:0	6	->
+water	113:46	0:0	6	p_pkey
+op	113:52	0:0	6	->
+water	113:54	0:0	6	longid
+arg	113:62	113:64	5	8
+water	113:62	0:0	6	8
+stmts	114:4	123:4	3	
+water	114:4	0:0	4	{
+call	115:8	115:33	4	vlc_unlink
+arg	115:20	115:33	5	psz_destfile
+water	115:20	0:0	6	psz_destfile
+water	115:34	0:0	4	;
+call	116:8	116:51	4	msg_Err
+arg	116:17	116:22	5	p_udt
+water	116:17	0:0	6	p_udt
+arg	116:24	116:51	5	"Invalid signature issuer"
+water	116:24	0:0	6	"Invalid signature issuer"
+water	116:52	0:0	4	;
+call	117:8	121:25	4	dialog_FatalWait
+arg	117:26	117:31	5	p_udt
+water	117:26	0:0	6	p_udt
+arg	117:33	117:55	5	_("Invalid signature")
+call	117:33	117:54	6	_
+arg	117:35	117:54	7	"Invalid signature"
+water	117:35	0:0	8	"Invalid signature"
+arg	118:12	120:34	5	_("The cryptographic signature for the downloaded file \"%s\" was ""invalid and could not be used to securely verify it. Thus, the ""file was deleted.")
+call	118:12	120:33	6	_
+arg	118:14	120:33	7	"The cryptographic signature for the downloaded file \"%s\" was ""invalid and could not be used to securely verify it. Thus, the ""file was deleted."
+water	118:14	0:0	8	"The cryptographic signature for the downloaded file \"%s\" was "
+water	119:14	0:0	8	"invalid and could not be used to securely verify it. Thus, the "
+water	120:14	0:0	8	"file was deleted."
+arg	121:12	121:25	5	psz_destfile
+water	121:12	0:0	6	psz_destfile
+water	121:26	0:0	4	;
+goto	122:8	122:16	4	end
+water	122:13	0:0	5	end
+water	123:4	0:0	4	}
+if	124:4	134:4	2	(sign . type != BINARY_SIGNATURE)
+cond	124:8	124:21	3	sign . type != BINARY_SIGNATURE
+water	124:8	0:0	4	sign
+op	124:12	0:0	4	.
+water	124:13	0:0	4	type
+op	124:18	0:0	4	!=
+water	124:21	0:0	4	BINARY_SIGNATURE
+stmts	125:4	134:4	3	
+water	125:4	0:0	4	{
+call	126:8	126:33	4	vlc_unlink
+arg	126:20	126:33	5	psz_destfile
+water	126:20	0:0	6	psz_destfile
+water	126:34	0:0	4	;
+call	127:8	127:49	4	msg_Err
+arg	127:17	127:22	5	p_udt
+water	127:17	0:0	6	p_udt
+arg	127:24	127:49	5	"Invalid signature type"
+water	127:24	0:0	6	"Invalid signature type"
+water	127:50	0:0	4	;
+call	128:8	132:25	4	dialog_FatalWait
+arg	128:26	128:31	5	p_udt
+water	128:26	0:0	6	p_udt
+arg	128:33	128:55	5	_("Invalid signature")
+call	128:33	128:54	6	_
+arg	128:35	128:54	7	"Invalid signature"
+water	128:35	0:0	8	"Invalid signature"
+arg	129:12	131:34	5	_("The cryptographic signature for the downloaded file \"%s\" was ""invalid and could not be used to securely verify it. Thus, the ""file was deleted.")
+call	129:12	131:33	6	_
+arg	129:14	131:33	7	"The cryptographic signature for the downloaded file \"%s\" was ""invalid and could not be used to securely verify it. Thus, the ""file was deleted."
+water	129:14	0:0	8	"The cryptographic signature for the downloaded file \"%s\" was "
+water	130:14	0:0	8	"invalid and could not be used to securely verify it. Thus, the "
+water	131:14	0:0	8	"file was deleted."
+arg	132:12	132:25	5	psz_destfile
+water	132:12	0:0	6	psz_destfile
+water	132:26	0:0	4	;
+goto	133:8	133:16	4	end
+water	133:13	0:0	5	end
+water	134:4	0:0	4	}
+decl	135:4	135:59	2	uint8_t	*p_hash
+op	135:20	0:0	2	=
+call	135:22	135:58	3	hash_from_file
+arg	135:38	135:50	4	psz_destfile
+water	135:38	0:0	5	psz_destfile
+arg	135:52	135:58	4	&sign
+op	135:52	0:0	5	&
+water	135:53	0:0	5	sign
+if	136:4	145:4	2	(! p_hash)
+cond	136:8	136:9	3	! p_hash
+op	136:8	0:0	4	!
+water	136:9	0:0	4	p_hash
+stmts	137:4	145:4	3	
+water	137:4	0:0	4	{
+call	138:8	138:58	4	msg_Err
+arg	138:17	138:22	5	p_udt
+water	138:17	0:0	6	p_udt
+arg	138:24	138:43	5	"Unable to hash %s"
+water	138:24	0:0	6	"Unable to hash %s"
+arg	138:45	138:58	5	psz_destfile
+water	138:45	0:0	6	psz_destfile
+water	138:59	0:0	4	;
+call	139:8	139:33	4	vlc_unlink
+arg	139:20	139:33	5	psz_destfile
+water	139:20	0:0	6	psz_destfile
+water	139:34	0:0	4	;
+call	140:8	143:25	4	dialog_FatalWait
+arg	140:26	140:31	5	p_udt
+water	140:26	0:0	6	p_udt
+arg	140:33	140:57	5	_("File not verifiable")
+call	140:33	140:56	6	_
+arg	140:35	140:56	7	"File not verifiable"
+water	140:35	0:0	8	"File not verifiable"
+arg	141:12	142:47	5	_("It was not possible to securely verify the downloaded file"" \"%s\". Thus, it was deleted.")
+call	141:12	142:46	6	_
+arg	141:14	142:46	7	"It was not possible to securely verify the downloaded file"" \"%s\". Thus, it was deleted."
+water	141:14	0:0	8	"It was not possible to securely verify the downloaded file"
+water	142:14	0:0	8	" \"%s\". Thus, it was deleted."
+arg	143:12	143:25	5	psz_destfile
+water	143:12	0:0	6	psz_destfile
+water	143:26	0:0	4	;
+goto	144:8	144:16	4	end
+water	144:13	0:0	5	end
+water	145:4	0:0	4	}
+if	146:4	156:4	2	(p_hash [ 0 ] != sign . hash_verification [ 0 ] || p_hash [ 1 ] != sign . hash_verification [ 1 ])
+cond	146:8	147:45	3	p_hash [ 0 ] != sign . hash_verification [ 0 ] || p_hash [ 1 ] != sign . hash_verification [ 1 ]
+water	146:8	0:0	4	p_hash
+op	146:14	0:0	4	[
+water	146:15	0:0	4	0
+op	146:16	0:0	4	]
+op	146:18	0:0	4	!=
+water	146:21	0:0	4	sign
+op	146:25	0:0	4	.
+water	146:26	0:0	4	hash_verification
+op	146:43	0:0	4	[
+water	146:44	0:0	4	0
+op	146:45	0:0	4	]
+op	146:47	0:0	4	||
+water	147:8	0:0	4	p_hash
+op	147:14	0:0	4	[
+water	147:15	0:0	4	1
+op	147:16	0:0	4	]
+op	147:18	0:0	4	!=
+water	147:21	0:0	4	sign
+op	147:25	0:0	4	.
+water	147:26	0:0	4	hash_verification
+op	147:43	0:0	4	[
+water	147:44	0:0	4	1
+op	147:45	0:0	4	]
+stmts	148:4	156:4	3	
+water	148:4	0:0	4	{
+call	149:8	149:33	4	vlc_unlink
+arg	149:20	149:33	5	psz_destfile
+water	149:20	0:0	6	psz_destfile
+water	149:34	0:0	4	;
+call	150:8	152:26	4	dialog_FatalWait
+arg	150:26	150:31	5	p_udt
+water	150:26	0:0	6	p_udt
+arg	150:33	150:52	5	_("File corrupted")
+call	150:33	150:51	6	_
+arg	150:35	150:51	7	"File corrupted"
+water	150:35	0:0	8	"File corrupted"
+arg	151:12	151:76	5	_("Downloaded file \"%s\" was corrupted. Thus, it was deleted.")
+call	151:12	151:75	6	_
+arg	151:14	151:75	7	"Downloaded file \"%s\" was corrupted. Thus, it was deleted."
+water	151:14	0:0	8	"Downloaded file \"%s\" was corrupted. Thus, it was deleted."
+arg	152:13	152:26	5	psz_destfile
+water	152:13	0:0	6	psz_destfile
+water	152:27	0:0	4	;
+call	153:8	153:56	4	msg_Err
+arg	153:17	153:22	5	p_udt
+water	153:17	0:0	6	p_udt
+arg	153:24	153:41	5	"Bad hash for %s"
+water	153:24	0:0	6	"Bad hash for %s"
+arg	153:43	153:56	5	psz_destfile
+water	153:43	0:0	6	psz_destfile
+water	153:57	0:0	4	;
+call	154:8	154:21	4	free
+arg	154:14	154:21	5	p_hash
+water	154:14	0:0	6	p_hash
+water	154:22	0:0	4	;
+goto	155:8	155:16	4	end
+water	155:13	0:0	5	end
+water	156:4	0:0	4	}
+if	157:4	167:4	2	(verify_signature (& sign ,& p_update -> p_pkey -> key ,p_hash ) != VLC_SUCCESS)
+cond	157:8	158:15	3	verify_signature (& sign ,& p_update -> p_pkey -> key ,p_hash ) != VLC_SUCCESS
+call	157:8	157:64	4	verify_signature
+arg	157:26	157:31	5	&sign
+op	157:26	0:0	6	&
+water	157:27	0:0	6	sign
+arg	157:33	157:55	5	&p_update->p_pkey->key
+op	157:33	0:0	6	&
+water	157:34	0:0	6	p_update
+op	157:42	0:0	6	->
+water	157:44	0:0	6	p_pkey
+op	157:50	0:0	6	->
+water	157:52	0:0	6	key
+arg	157:57	157:64	5	p_hash
+water	157:57	0:0	6	p_hash
+op	158:12	0:0	4	!=
+water	158:15	0:0	4	VLC_SUCCESS
+stmts	159:4	167:4	3	
+water	159:4	0:0	4	{
+call	160:8	160:33	4	vlc_unlink
+arg	160:20	160:33	5	psz_destfile
+water	160:20	0:0	6	psz_destfile
+water	160:34	0:0	4	;
+call	161:8	163:26	4	dialog_FatalWait
+arg	161:26	161:31	5	p_udt
+water	161:26	0:0	6	p_udt
+arg	161:33	161:52	5	_("File corrupted")
+call	161:33	161:51	6	_
+arg	161:35	161:51	7	"File corrupted"
+water	161:35	0:0	8	"File corrupted"
+arg	162:12	162:76	5	_("Downloaded file \"%s\" was corrupted. Thus, it was deleted.")
+call	162:12	162:75	6	_
+arg	162:14	162:75	7	"Downloaded file \"%s\" was corrupted. Thus, it was deleted."
+water	162:14	0:0	8	"Downloaded file \"%s\" was corrupted. Thus, it was deleted."
+arg	163:13	163:26	5	psz_destfile
+water	163:13	0:0	6	psz_destfile
+water	163:27	0:0	4	;
+call	164:8	164:61	4	msg_Err
+arg	164:17	164:22	5	p_udt
+water	164:17	0:0	6	p_udt
+arg	164:24	164:46	5	"BAD SIGNATURE for %s"
+water	164:24	0:0	6	"BAD SIGNATURE for %s"
+arg	164:48	164:61	5	psz_destfile
+water	164:48	0:0	6	psz_destfile
+water	164:62	0:0	4	;
+call	165:8	165:21	4	free
+arg	165:14	165:21	5	p_hash
+water	165:14	0:0	6	p_hash
+water	165:22	0:0	4	;
+goto	166:8	166:16	4	end
+water	166:13	0:0	5	end
+water	167:4	0:0	4	}
+call	168:4	168:54	2	msg_Info
+arg	168:14	168:19	3	p_udt
+water	168:14	0:0	4	p_udt
+arg	168:21	168:39	3	"%s authenticated"
+water	168:21	0:0	4	"%s authenticated"
+arg	168:41	168:54	3	psz_destfile
+water	168:41	0:0	4	psz_destfile
+water	168:55	0:0	2	;
+call	169:4	169:17	2	free
+arg	169:10	169:17	3	p_hash
+water	169:10	0:0	4	p_hash
+water	169:18	0:0	2	;
+decl	171:4	173:36	2	int	answer
+op	171:15	0:0	2	=
+call	171:17	173:35	3	dialog_Question
+arg	171:34	171:39	4	p_udt
+water	171:34	0:0	5	p_udt
+arg	171:41	171:69	4	_("Update VLC media player")
+call	171:41	171:68	5	_
+arg	171:43	171:68	6	"Update VLC media player"
+water	171:43	0:0	7	"Update VLC media player"
+arg	172:4	172:98	4	_("The new version was successfully downloaded. Do you want to close VLC and install it now?")
+call	172:4	172:97	5	_
+arg	172:6	172:97	6	"The new version was successfully downloaded. Do you want to close VLC and install it now?"
+water	172:6	0:0	7	"The new version was successfully downloaded. Do you want to close VLC and install it now?"
+arg	173:4	173:16	4	_("Install")
+call	173:4	173:15	5	_
+arg	173:6	173:15	6	"Install"
+water	173:6	0:0	7	"Install"
+arg	173:18	173:29	4	_("Cancel")
+call	173:18	173:28	5	_
+arg	173:20	173:28	6	"Cancel"
+water	173:20	0:0	7	"Cancel"
+arg	173:31	173:35	4	NULL
+water	173:31	0:0	5	NULL
+if	174:4	181:4	2	(answer == 1)
+cond	174:7	174:17	3	answer == 1
+water	174:7	0:0	4	answer
+op	174:14	0:0	4	==
+water	174:17	0:0	4	1
+stmts	175:4	181:4	3	
+water	175:4	0:0	4	{
+decl	176:8	176:39	4	wchar_t	psz_wdestfile[MAX_PATH]
+call	177:8	177:83	4	MultiByteToWideChar
+arg	177:29	177:36	5	CP_UTF8
+water	177:29	0:0	6	CP_UTF8
+arg	177:38	177:39	5	0
+water	177:38	0:0	6	0
+arg	177:41	177:53	5	psz_destfile
+water	177:41	0:0	6	psz_destfile
+arg	177:55	177:57	5	-1
+op	177:55	0:0	6	-
+water	177:56	0:0	6	1
+arg	177:59	177:72	5	psz_wdestfile
+water	177:59	0:0	6	psz_wdestfile
+arg	177:74	177:83	5	MAX_PATH
+water	177:74	0:0	6	MAX_PATH
+water	177:84	0:0	4	;
+water	178:8	0:0	4	answer
+op	178:15	0:0	4	=
+water	178:17	0:0	4	(
+water	178:18	0:0	4	int
+water	178:21	0:0	4	)
+call	178:22	178:86	4	ShellExecuteW
+arg	178:37	178:41	5	NULL
+water	178:37	0:0	6	NULL
+arg	178:43	178:50	5	L"open"
+water	178:43	0:0	6	L
+water	178:44	0:0	6	"open"
+arg	178:52	178:65	5	psz_wdestfile
+water	178:52	0:0	6	psz_wdestfile
+arg	178:67	178:71	5	NULL
+water	178:67	0:0	6	NULL
+arg	178:73	178:77	5	NULL
+water	178:73	0:0	6	NULL
+arg	178:79	178:86	5	SW_SHOW
+water	178:79	0:0	6	SW_SHOW
+water	178:87	0:0	4	;
+if	179:8	180:40	4	(answer > 32)
+cond	179:11	179:20	5	answer > 32
+water	179:11	0:0	6	answer
+op	179:18	0:0	6	>
+water	179:20	0:0	6	32
+stmts	180:12	180:40	5	
+call	180:12	180:39	6	libvlc_Quit
+arg	180:24	180:39	7	p_udt->p_libvlc
+water	180:24	0:0	8	p_udt
+op	180:29	0:0	8	->
+water	180:31	0:0	8	p_libvlc
+water	180:40	0:0	6	;
+water	181:4	0:0	4	}
+label	183:0	183:3	2	end :
+if	184:4	185:44	2	(p_progress)
+cond	184:8	184:8	3	p_progress
+water	184:8	0:0	4	p_progress
+stmts	185:8	185:44	3	
+call	185:8	185:43	4	dialog_ProgressDestroy
+arg	185:32	185:43	5	p_progress
+water	185:32	0:0	6	p_progress
+water	185:44	0:0	4	;
+if	186:4	187:33	2	(p_stream)
+cond	186:8	186:8	3	p_stream
+water	186:8	0:0	4	p_stream
+stmts	187:8	187:33	3	
+call	187:8	187:32	4	stream_Delete
+arg	187:23	187:32	5	p_stream
+water	187:23	0:0	6	p_stream
+water	187:33	0:0	4	;
+if	188:4	189:24	2	(p_file)
+cond	188:8	188:8	3	p_file
+water	188:8	0:0	4	p_file
+stmts	189:8	189:24	3	
+call	189:8	189:23	4	fclose
+arg	189:16	189:23	5	p_file
+water	189:16	0:0	6	p_file
+water	189:24	0:0	4	;
+call	190:4	190:22	2	free
+arg	190:10	190:22	3	psz_destdir
+water	190:10	0:0	4	psz_destdir
+water	190:23	0:0	2	;
+call	191:4	191:23	2	free
+arg	191:10	191:23	3	psz_destfile
+water	191:10	0:0	4	psz_destfile
+water	191:24	0:0	2	;
+call	192:4	192:19	2	free
+arg	192:10	192:19	3	p_buffer
+water	192:10	0:0	4	p_buffer
+water	192:20	0:0	2	;
+call	193:4	193:19	2	free
+arg	193:10	193:19	3	psz_size
+water	193:10	0:0	4	psz_size
+water	193:20	0:0	2	;
+call	194:4	194:28	2	vlc_restorecancel
+arg	194:23	194:28	3	canc
+water	194:23	0:0	4	canc
+water	194:29	0:0	2	;
+return	195:4	195:15	2	NULL
+water	195:11	0:0	3	NULL

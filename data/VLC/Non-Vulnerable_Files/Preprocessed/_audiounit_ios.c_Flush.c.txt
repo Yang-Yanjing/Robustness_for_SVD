@@ -1,0 +1,90 @@
+func	2:0	19:0	0	static void	Flush
+params	2:17	0:0	1	
+param	2:18	2:40	2	audio_output_t *	p_aout
+param	2:42	2:51	2	bool	wait
+stmnts	0:0	18:34	1	
+decl	4:4	4:42	2	struct aout_sys_t	*p_sys
+op	4:29	0:0	2	=
+water	4:31	0:0	2	p_aout
+op	4:37	0:0	2	->
+water	4:39	0:0	2	sys
+decl	5:4	5:26	2	int32_t	availableBytes
+call	6:4	6:31	2	vlc_mutex_lock
+arg	6:19	6:31	3	&p_sys->lock
+op	6:19	0:0	4	&
+water	6:20	0:0	4	p_sys
+op	6:25	0:0	4	->
+water	6:27	0:0	4	lock
+water	6:32	0:0	2	;
+call	7:4	7:65	2	TPCircularBufferTail
+arg	7:25	7:48	3	&p_sys->circular_buffer
+op	7:25	0:0	4	&
+water	7:26	0:0	4	p_sys
+op	7:31	0:0	4	->
+water	7:33	0:0	4	circular_buffer
+arg	7:50	7:65	3	&availableBytes
+op	7:50	0:0	4	&
+water	7:51	0:0	4	availableBytes
+water	7:66	0:0	2	;
+if	8:4	13:4	2	(wait)
+cond	8:8	8:8	3	wait
+water	8:8	0:0	4	wait
+stmts	8:14	13:4	3	
+water	8:14	0:0	4	{
+while	9:8	12:8	4	(availableBytes > 0)
+cond	9:15	9:32	5	availableBytes > 0
+water	9:15	0:0	6	availableBytes
+op	9:30	0:0	6	>
+water	9:32	0:0	6	0
+stmts	9:35	12:8	5	
+water	9:35	0:0	6	{
+call	10:12	10:52	6	vlc_cond_wait
+arg	10:26	10:38	7	&p_sys->cond
+op	10:26	0:0	8	&
+water	10:27	0:0	8	p_sys
+op	10:32	0:0	8	->
+water	10:34	0:0	8	cond
+arg	10:40	10:52	7	&p_sys->lock
+op	10:40	0:0	8	&
+water	10:41	0:0	8	p_sys
+op	10:46	0:0	8	->
+water	10:48	0:0	8	lock
+water	10:53	0:0	6	;
+call	11:12	11:73	6	TPCircularBufferTail
+arg	11:33	11:56	7	&p_sys->circular_buffer
+op	11:33	0:0	8	&
+water	11:34	0:0	8	p_sys
+op	11:39	0:0	8	->
+water	11:41	0:0	8	circular_buffer
+arg	11:58	11:73	7	&availableBytes
+op	11:58	0:0	8	&
+water	11:59	0:0	8	availableBytes
+water	11:74	0:0	6	;
+water	12:8	0:0	6	}
+water	13:4	0:0	4	}
+else	13:6	17:4	2
+stmts	13:11	17:4	3	
+water	13:11	0:0	4	{
+if	15:8	16:64	4	(availableBytes > 0)
+cond	15:12	15:29	5	availableBytes > 0
+water	15:12	0:0	6	availableBytes
+op	15:27	0:0	6	>
+water	15:29	0:0	6	0
+stmts	16:12	16:64	5	
+call	16:12	16:63	6	TPCircularBufferClear
+arg	16:34	16:63	7	&p_aout->sys->circular_buffer
+op	16:34	0:0	8	&
+water	16:35	0:0	8	p_aout
+op	16:41	0:0	8	->
+water	16:43	0:0	8	sys
+op	16:46	0:0	8	->
+water	16:48	0:0	8	circular_buffer
+water	16:64	0:0	6	;
+water	17:4	0:0	4	}
+call	18:4	18:33	2	vlc_mutex_unlock
+arg	18:21	18:33	3	&p_sys->lock
+op	18:21	0:0	4	&
+water	18:22	0:0	4	p_sys
+op	18:27	0:0	4	->
+water	18:29	0:0	4	lock
+water	18:34	0:0	2	;

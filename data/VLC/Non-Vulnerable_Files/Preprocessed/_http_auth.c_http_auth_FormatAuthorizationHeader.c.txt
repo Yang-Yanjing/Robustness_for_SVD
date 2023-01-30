@@ -1,0 +1,373 @@
+func	2:0	92:0	0	char *	http_auth_FormatAuthorizationHeader
+params	2:41	0:0	1	
+param	3:8	3:28	2	vlc_object_t *	p_this
+param	3:30	3:49	2	http_auth_t *	p_auth
+param	4:8	4:30	2	const char *	psz_method
+param	4:32	4:52	2	const char *	psz_path
+param	5:8	5:32	2	const char *	psz_username
+param	5:34	5:59	2	const char *	psz_password
+stmnts	0:0	91:21	1	
+decl	7:4	7:27	2	char	*psz_result
+op	7:21	0:0	2	=
+water	7:23	0:0	2	NULL
+decl	8:4	8:27	2	char	*psz_buffer
+op	8:21	0:0	2	=
+water	8:23	0:0	2	NULL
+decl	9:4	9:27	2	char	*psz_base64
+op	9:21	0:0	2	=
+water	9:23	0:0	2	NULL
+decl	10:4	10:12	2	int	i_rc
+if	11:4	74:4	2	(p_auth -> psz_nonce)
+cond	11:9	11:17	3	p_auth -> psz_nonce
+water	11:9	0:0	4	p_auth
+op	11:15	0:0	4	->
+water	11:17	0:0	4	psz_nonce
+stmts	12:4	74:4	3	
+water	12:4	0:0	4	{
+if	14:8	21:8	4	(p_auth -> psz_algorithm &&strcmp (p_auth -> psz_algorithm ,"MD5" ) != 0 &&strcmp (p_auth -> psz_algorithm ,"MD5-sess" ) != 0)
+cond	14:13	16:60	5	p_auth -> psz_algorithm &&strcmp (p_auth -> psz_algorithm ,"MD5" ) != 0 &&strcmp (p_auth -> psz_algorithm ,"MD5-sess" ) != 0
+water	14:13	0:0	6	p_auth
+op	14:19	0:0	6	->
+water	14:21	0:0	6	psz_algorithm
+op	14:35	0:0	6	&&
+call	15:13	15:50	6	strcmp
+arg	15:21	15:42	7	p_auth->psz_algorithm
+water	15:21	0:0	8	p_auth
+op	15:27	0:0	8	->
+water	15:29	0:0	8	psz_algorithm
+arg	15:44	15:50	7	"MD5"
+water	15:44	0:0	8	"MD5"
+op	15:52	0:0	6	!=
+water	15:55	0:0	6	0
+op	15:57	0:0	6	&&
+call	16:13	16:55	6	strcmp
+arg	16:21	16:42	7	p_auth->psz_algorithm
+water	16:21	0:0	8	p_auth
+op	16:27	0:0	8	->
+water	16:29	0:0	8	psz_algorithm
+arg	16:44	16:55	7	"MD5-sess"
+water	16:44	0:0	8	"MD5-sess"
+op	16:57	0:0	6	!=
+water	16:60	0:0	6	0
+stmts	17:8	21:8	5	
+water	17:8	0:0	6	{
+call	18:12	19:69	6	msg_Err
+arg	18:21	18:27	7	p_this
+water	18:21	0:0	8	p_this
+arg	18:29	19:45	7	"Digest Access Authentication: ""Unknown algorithm '%s'"
+water	18:29	0:0	8	"Digest Access Authentication: "
+water	19:21	0:0	8	"Unknown algorithm '%s'"
+arg	19:47	19:69	7	p_auth->psz_algorithm
+water	19:47	0:0	8	p_auth
+op	19:53	0:0	8	->
+water	19:55	0:0	8	psz_algorithm
+water	19:70	0:0	6	;
+goto	20:12	20:22	6	error
+water	20:17	0:0	7	error
+water	21:8	0:0	6	}
+if	22:8	28:8	4	(p_auth -> psz_qop != NULL || p_auth -> psz_cnonce == NULL)
+cond	22:13	22:62	5	p_auth -> psz_qop != NULL || p_auth -> psz_cnonce == NULL
+water	22:13	0:0	6	p_auth
+op	22:19	0:0	6	->
+water	22:21	0:0	6	psz_qop
+op	22:29	0:0	6	!=
+water	22:32	0:0	6	NULL
+op	22:37	0:0	6	||
+water	22:40	0:0	6	p_auth
+op	22:46	0:0	6	->
+water	22:48	0:0	6	psz_cnonce
+op	22:59	0:0	6	==
+water	22:62	0:0	6	NULL
+stmts	23:8	28:8	5	
+water	23:8	0:0	6	{
+call	24:12	24:37	6	free
+arg	24:18	24:37	7	p_auth->psz_cnonce
+water	24:18	0:0	8	p_auth
+op	24:24	0:0	8	->
+water	24:26	0:0	8	psz_cnonce
+water	24:38	0:0	6	;
+water	25:12	0:0	6	p_auth
+op	25:18	0:0	6	->
+water	25:20	0:0	6	psz_cnonce
+op	25:31	0:0	6	=
+call	25:33	25:48	6	GenerateCnonce
+water	25:49	0:0	6	;
+if	26:12	27:26	6	(p_auth -> psz_cnonce == NULL)
+cond	26:17	26:39	7	p_auth -> psz_cnonce == NULL
+water	26:17	0:0	8	p_auth
+op	26:23	0:0	8	->
+water	26:25	0:0	8	psz_cnonce
+op	26:36	0:0	8	==
+water	26:39	0:0	8	NULL
+stmts	27:16	27:26	7	
+goto	27:16	27:26	8	error
+water	27:21	0:0	9	error
+water	28:8	0:0	6	}
+op	29:8	0:0	4	++
+water	29:10	0:0	4	p_auth
+op	29:16	0:0	4	->
+water	29:18	0:0	4	i_nonce
+water	29:25	0:0	4	;
+water	30:8	0:0	4	psz_buffer
+op	30:19	0:0	4	=
+call	30:21	31:60	4	AuthDigest
+arg	30:33	30:39	5	p_this
+water	30:33	0:0	6	p_this
+arg	30:41	30:47	5	p_auth
+water	30:41	0:0	6	p_auth
+arg	30:49	30:59	5	psz_method
+water	30:49	0:0	6	psz_method
+arg	30:61	30:69	5	psz_path
+water	30:61	0:0	6	psz_path
+arg	31:33	31:45	5	psz_username
+water	31:33	0:0	6	psz_username
+arg	31:47	31:60	5	psz_password
+water	31:47	0:0	6	psz_password
+water	31:61	0:0	4	;
+if	32:8	33:22	4	(psz_buffer == NULL)
+cond	32:13	32:27	5	psz_buffer == NULL
+water	32:13	0:0	6	psz_buffer
+op	32:24	0:0	6	==
+water	32:27	0:0	6	NULL
+stmts	33:12	33:22	5	
+goto	33:12	33:22	6	error
+water	33:17	0:0	7	error
+water	34:8	0:0	4	i_rc
+op	34:13	0:0	4	=
+call	34:15	71:8	4	asprintf
+arg	34:25	34:36	5	&psz_result
+op	34:25	0:0	6	&
+water	34:26	0:0	6	psz_result
+arg	35:12	47:22	5	"Digest ""username=\"%s\", ""realm=\"%s\", ""nonce=\"%s\", ""uri=\"%s\", ""response=\"%s\", ""%s%s%s""%s%s%s""%s%s%s""%s%s%s""%s%08x%s"
+water	35:12	0:0	6	"Digest "
+water	37:12	0:0	6	"username=\"%s\", "
+water	38:12	0:0	6	"realm=\"%s\", "
+water	39:12	0:0	6	"nonce=\"%s\", "
+water	40:12	0:0	6	"uri=\"%s\", "
+water	41:12	0:0	6	"response=\"%s\", "
+water	43:12	0:0	6	"%s%s%s"
+water	44:12	0:0	6	"%s%s%s"
+water	45:12	0:0	6	"%s%s%s"
+water	46:12	0:0	6	"%s%s%s"
+water	47:12	0:0	6	"%s%08x%s"
+arg	49:12	49:24	5	psz_username
+water	49:12	0:0	6	psz_username
+arg	50:12	50:29	5	p_auth->psz_realm
+water	50:12	0:0	6	p_auth
+op	50:18	0:0	6	->
+water	50:20	0:0	6	psz_realm
+arg	51:12	51:29	5	p_auth->psz_nonce
+water	51:12	0:0	6	p_auth
+op	51:18	0:0	6	->
+water	51:20	0:0	6	psz_nonce
+arg	52:12	52:37	5	psz_path?psz_path:"/"
+water	52:12	0:0	6	psz_path
+water	52:21	0:0	6	?
+water	52:23	0:0	6	psz_path
+water	52:32	0:0	6	:
+water	52:34	0:0	6	"/"
+arg	53:12	53:22	5	psz_buffer
+water	53:12	0:0	6	psz_buffer
+arg	55:12	55:55	5	p_auth->psz_algorithm?"algorithm=\"":""
+water	55:12	0:0	6	p_auth
+op	55:18	0:0	6	->
+water	55:20	0:0	6	psz_algorithm
+water	55:34	0:0	6	?
+water	55:36	0:0	6	"algorithm=\""
+water	55:51	0:0	6	:
+water	55:53	0:0	6	""
+arg	56:12	56:62	5	p_auth->psz_algorithm?p_auth->psz_algorithm:""
+water	56:12	0:0	6	p_auth
+op	56:18	0:0	6	->
+water	56:20	0:0	6	psz_algorithm
+water	56:34	0:0	6	?
+water	56:36	0:0	6	p_auth
+op	56:42	0:0	6	->
+water	56:44	0:0	6	psz_algorithm
+water	56:58	0:0	6	:
+water	56:60	0:0	6	""
+arg	57:12	57:47	5	p_auth->psz_algorithm?"\", ":""
+water	57:12	0:0	6	p_auth
+op	57:18	0:0	6	->
+water	57:20	0:0	6	psz_algorithm
+water	57:34	0:0	6	?
+water	57:36	0:0	6	"\", "
+water	57:43	0:0	6	:
+water	57:45	0:0	6	""
+arg	58:12	58:49	5	p_auth->psz_cnonce?"cnonce=\"":""
+water	58:12	0:0	6	p_auth
+op	58:18	0:0	6	->
+water	58:20	0:0	6	psz_cnonce
+water	58:31	0:0	6	?
+water	58:33	0:0	6	"cnonce=\""
+water	58:45	0:0	6	:
+water	58:47	0:0	6	""
+arg	59:12	59:56	5	p_auth->psz_cnonce?p_auth->psz_cnonce:""
+water	59:12	0:0	6	p_auth
+op	59:18	0:0	6	->
+water	59:20	0:0	6	psz_cnonce
+water	59:31	0:0	6	?
+water	59:33	0:0	6	p_auth
+op	59:39	0:0	6	->
+water	59:41	0:0	6	psz_cnonce
+water	59:52	0:0	6	:
+water	59:54	0:0	6	""
+arg	60:12	60:44	5	p_auth->psz_cnonce?"\", ":""
+water	60:12	0:0	6	p_auth
+op	60:18	0:0	6	->
+water	60:20	0:0	6	psz_cnonce
+water	60:31	0:0	6	?
+water	60:33	0:0	6	"\", "
+water	60:40	0:0	6	:
+water	60:42	0:0	6	""
+arg	61:12	61:49	5	p_auth->psz_opaque?"opaque=\"":""
+water	61:12	0:0	6	p_auth
+op	61:18	0:0	6	->
+water	61:20	0:0	6	psz_opaque
+water	61:31	0:0	6	?
+water	61:33	0:0	6	"opaque=\""
+water	61:45	0:0	6	:
+water	61:47	0:0	6	""
+arg	62:12	62:56	5	p_auth->psz_opaque?p_auth->psz_opaque:""
+water	62:12	0:0	6	p_auth
+op	62:18	0:0	6	->
+water	62:20	0:0	6	psz_opaque
+water	62:31	0:0	6	?
+water	62:33	0:0	6	p_auth
+op	62:39	0:0	6	->
+water	62:41	0:0	6	psz_opaque
+water	62:52	0:0	6	:
+water	62:54	0:0	6	""
+arg	63:12	63:44	5	p_auth->psz_opaque?"\", ":""
+water	63:12	0:0	6	p_auth
+op	63:18	0:0	6	->
+water	63:20	0:0	6	psz_opaque
+water	63:31	0:0	6	?
+water	63:33	0:0	6	"\", "
+water	63:40	0:0	6	:
+water	63:42	0:0	6	""
+arg	64:12	64:43	5	p_auth->psz_qop?"qop=\"":""
+water	64:12	0:0	6	p_auth
+op	64:18	0:0	6	->
+water	64:20	0:0	6	psz_qop
+water	64:28	0:0	6	?
+water	64:30	0:0	6	"qop=\""
+water	64:39	0:0	6	:
+water	64:41	0:0	6	""
+arg	65:12	65:50	5	p_auth->psz_qop?p_auth->psz_qop:""
+water	65:12	0:0	6	p_auth
+op	65:18	0:0	6	->
+water	65:20	0:0	6	psz_qop
+water	65:28	0:0	6	?
+water	65:30	0:0	6	p_auth
+op	65:36	0:0	6	->
+water	65:38	0:0	6	psz_qop
+water	65:46	0:0	6	:
+water	65:48	0:0	6	""
+arg	66:12	66:41	5	p_auth->psz_qop?"\", ":""
+water	66:12	0:0	6	p_auth
+op	66:18	0:0	6	->
+water	66:20	0:0	6	psz_qop
+water	66:28	0:0	6	?
+water	66:30	0:0	6	"\", "
+water	66:37	0:0	6	:
+water	66:39	0:0	6	""
+arg	68:12	68:53	5	p_auth->i_nonce?"nc=\"":"uglyhack=\""
+water	68:12	0:0	6	p_auth
+op	68:18	0:0	6	->
+water	68:20	0:0	6	i_nonce
+water	68:28	0:0	6	?
+water	68:30	0:0	6	"nc=\""
+water	68:38	0:0	6	:
+water	68:40	0:0	6	"uglyhack=\""
+arg	69:12	69:27	5	p_auth->i_nonce
+water	69:12	0:0	6	p_auth
+op	69:18	0:0	6	->
+water	69:20	0:0	6	i_nonce
+arg	70:12	71:8	5	p_auth->i_nonce?"\"":"\""
+water	70:12	0:0	6	p_auth
+op	70:18	0:0	6	->
+water	70:20	0:0	6	i_nonce
+water	70:28	0:0	6	?
+water	70:30	0:0	6	"\""
+water	70:35	0:0	6	:
+water	70:37	0:0	6	"\""
+water	71:9	0:0	4	;
+if	72:8	73:22	4	(i_rc < 0)
+cond	72:13	72:20	5	i_rc < 0
+water	72:13	0:0	6	i_rc
+op	72:18	0:0	6	<
+water	72:20	0:0	6	0
+stmts	73:12	73:22	5	
+goto	73:12	73:22	6	error
+water	73:17	0:0	7	error
+water	74:4	0:0	4	}
+else	75:4	87:4	2
+stmts	76:4	87:4	3	
+water	76:4	0:0	4	{
+water	78:8	0:0	4	i_rc
+op	78:13	0:0	4	=
+call	78:15	78:74	4	asprintf
+arg	78:25	78:36	5	&psz_buffer
+op	78:25	0:0	6	&
+water	78:26	0:0	6	psz_buffer
+arg	78:38	78:45	5	"%s:%s"
+water	78:38	0:0	6	"%s:%s"
+arg	78:47	78:59	5	psz_username
+water	78:47	0:0	6	psz_username
+arg	78:61	78:74	5	psz_password
+water	78:61	0:0	6	psz_password
+water	78:75	0:0	4	;
+if	79:8	80:22	4	(i_rc < 0)
+cond	79:13	79:20	5	i_rc < 0
+water	79:13	0:0	6	i_rc
+op	79:18	0:0	6	<
+water	79:20	0:0	6	0
+stmts	80:12	80:22	5	
+goto	80:12	80:22	6	error
+water	80:17	0:0	7	error
+water	81:8	0:0	4	psz_base64
+op	81:19	0:0	4	=
+call	81:21	81:48	4	vlc_b64_encode
+arg	81:37	81:48	5	psz_buffer
+water	81:37	0:0	6	psz_buffer
+water	81:49	0:0	4	;
+if	82:8	83:22	4	(psz_base64 == NULL)
+cond	82:13	82:27	5	psz_base64 == NULL
+water	82:13	0:0	6	psz_base64
+op	82:24	0:0	6	==
+water	82:27	0:0	6	NULL
+stmts	83:12	83:22	5	
+goto	83:12	83:22	6	error
+water	83:17	0:0	7	error
+water	84:8	0:0	4	i_rc
+op	84:13	0:0	4	=
+call	84:15	84:61	4	asprintf
+arg	84:25	84:36	5	&psz_result
+op	84:25	0:0	6	&
+water	84:26	0:0	6	psz_result
+arg	84:38	84:48	5	"Basic %s"
+water	84:38	0:0	6	"Basic %s"
+arg	84:50	84:61	5	psz_base64
+water	84:50	0:0	6	psz_base64
+water	84:62	0:0	4	;
+if	85:8	86:22	4	(i_rc < 0)
+cond	85:13	85:20	5	i_rc < 0
+water	85:13	0:0	6	i_rc
+op	85:18	0:0	6	<
+water	85:20	0:0	6	0
+stmts	86:12	86:22	5	
+goto	86:12	86:22	6	error
+water	86:17	0:0	7	error
+water	87:4	0:0	4	}
+label	88:0	88:5	2	error :
+call	89:4	89:21	2	free
+arg	89:10	89:21	3	psz_buffer
+water	89:10	0:0	4	psz_buffer
+water	89:22	0:0	2	;
+call	90:4	90:21	2	free
+arg	90:10	90:21	3	psz_base64
+water	90:10	0:0	4	psz_base64
+water	90:22	0:0	2	;
+return	91:4	91:21	2	psz_result
+water	91:11	0:0	3	psz_result

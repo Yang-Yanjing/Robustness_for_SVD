@@ -1,0 +1,158 @@
+func	2:0	34:0	0	vlc_tls_t *	vlc_tls_ClientSessionCreate
+params	2:39	0:0	1	
+param	2:40	2:60	2	vlc_tls_creds_t *	crd
+param	2:62	2:68	2	int	fd
+param	3:40	3:56	2	const char *	host
+param	3:58	3:77	2	const char *	service
+stmnts	0:0	33:18	1	
+decl	5:4	5:62	2	vlc_tls_t	*session
+op	5:23	0:0	2	=
+call	5:25	5:61	3	vlc_tls_SessionCreate
+arg	5:48	5:51	4	crd
+water	5:48	0:0	5	crd
+arg	5:53	5:55	4	fd
+water	5:53	0:0	5	fd
+arg	5:57	5:61	4	host
+water	5:57	0:0	5	host
+if	6:4	7:19	2	(session == NULL)
+cond	6:8	6:19	3	session == NULL
+water	6:8	0:0	4	session
+op	6:16	0:0	4	==
+water	6:19	0:0	4	NULL
+stmts	7:8	7:19	3	
+return	7:8	7:19	4	NULL
+water	7:15	0:0	5	NULL
+decl	8:4	8:31	2	mtime_t	deadline
+op	8:21	0:0	2	=
+call	8:23	8:30	3	mdate
+water	9:4	0:0	2	deadline
+op	9:13	0:0	2	+=
+call	9:16	9:55	2	var_InheritInteger
+arg	9:36	9:39	3	crd
+water	9:36	0:0	4	crd
+arg	9:41	9:55	3	"ipv4-timeout"
+water	9:41	0:0	4	"ipv4-timeout"
+op	9:57	0:0	2	*
+water	9:59	0:0	2	1000
+water	9:63	0:0	2	;
+decl	10:4	10:24	2	struct pollfd	ufd[1]
+water	11:4	0:0	2	ufd
+op	11:7	0:0	2	[
+water	11:8	0:0	2	0
+op	11:9	0:0	2	]
+op	11:10	0:0	2	.
+water	11:11	0:0	2	fd
+op	11:14	0:0	2	=
+water	11:16	0:0	2	fd
+water	11:18	0:0	2	;
+decl	12:4	12:11	2	int	val
+while	13:4	26:4	2	(( val =vlc_tls_SessionHandshake (session ,host ,service ) ) > 0)
+cond	13:11	13:71	3	( val =vlc_tls_SessionHandshake (session ,host ,service ) ) > 0
+water	13:11	0:0	4	(
+water	13:12	0:0	4	val
+op	13:16	0:0	4	=
+call	13:18	13:66	4	vlc_tls_SessionHandshake
+arg	13:44	13:51	5	session
+water	13:44	0:0	6	session
+arg	13:53	13:57	5	host
+water	13:53	0:0	6	host
+arg	13:59	13:66	5	service
+water	13:59	0:0	6	service
+water	13:67	0:0	4	)
+op	13:69	0:0	4	>
+water	13:71	0:0	4	0
+stmts	14:4	26:4	3	
+water	14:4	0:0	4	{
+decl	15:8	15:30	4	mtime_t	now
+op	15:20	0:0	4	=
+call	15:22	15:29	5	mdate
+if	16:8	17:25	4	(now > deadline)
+cond	16:12	16:18	5	now > deadline
+water	16:12	0:0	6	now
+op	16:16	0:0	6	>
+water	16:18	0:0	6	deadline
+stmts	17:11	17:25	5	
+water	17:11	0:0	6	now
+op	17:15	0:0	6	=
+water	17:17	0:0	6	deadline
+water	17:25	0:0	6	;
+call	18:8	18:24	4	assert
+arg	18:16	18:24	5	val<=2
+water	18:16	0:0	6	val
+op	18:20	0:0	6	<=
+water	18:23	0:0	6	2
+water	18:25	0:0	4	;
+water	19:8	0:0	4	ufd
+op	19:11	0:0	4	[
+water	19:12	0:0	4	0
+op	19:13	0:0	4	]
+op	19:15	0:0	4	.
+water	19:16	0:0	4	events
+op	19:23	0:0	4	=
+water	19:25	0:0	4	(
+water	19:26	0:0	4	val
+op	19:30	0:0	4	==
+water	19:33	0:0	4	1
+water	19:34	0:0	4	)
+water	19:36	0:0	4	?
+water	19:38	0:0	4	POLLIN
+water	19:45	0:0	4	:
+water	19:47	0:0	4	POLLOUT
+water	19:54	0:0	4	;
+if	20:8	25:8	4	(poll (ufd ,1 ,( deadline - now ) / 1000 ) == 0)
+cond	20:12	20:54	5	poll (ufd ,1 ,( deadline - now ) / 1000 ) == 0
+call	20:12	20:49	6	poll
+arg	20:18	20:21	7	ufd
+water	20:18	0:0	8	ufd
+arg	20:23	20:24	7	1
+water	20:23	0:0	8	1
+arg	20:26	20:49	7	(deadline-now)/1000
+water	20:26	0:0	8	(
+water	20:27	0:0	8	deadline
+op	20:36	0:0	8	-
+water	20:38	0:0	8	now
+water	20:41	0:0	8	)
+op	20:43	0:0	8	/
+water	20:45	0:0	8	1000
+op	20:51	0:0	6	==
+water	20:54	0:0	6	0
+stmts	21:8	25:8	5	
+water	21:8	0:0	6	{
+call	22:12	22:68	6	msg_Err
+arg	22:21	22:28	7	session
+water	22:21	0:0	8	session
+arg	22:30	22:68	7	"TLS client session handshake timeout"
+water	22:30	0:0	8	"TLS client session handshake timeout"
+water	22:69	0:0	6	;
+water	23:12	0:0	6	val
+op	23:16	0:0	6	=
+op	23:18	0:0	6	-
+water	23:19	0:0	6	1
+water	23:20	0:0	6	;
+break	24:12	24:17	6	
+water	25:8	0:0	6	}
+water	26:4	0:0	4	}
+if	27:4	32:4	2	(val != 0)
+cond	27:8	27:15	3	val != 0
+water	27:8	0:0	4	val
+op	27:12	0:0	4	!=
+water	27:15	0:0	4	0
+stmts	28:4	32:4	3	
+water	28:4	0:0	4	{
+call	29:8	29:62	4	msg_Err
+arg	29:17	29:24	5	session
+water	29:17	0:0	6	session
+arg	29:26	29:62	5	"TLS client session handshake error"
+water	29:26	0:0	6	"TLS client session handshake error"
+water	29:63	0:0	4	;
+call	30:8	30:38	4	vlc_tls_SessionDelete
+arg	30:31	30:38	5	session
+water	30:31	0:0	6	session
+water	30:39	0:0	4	;
+water	31:8	0:0	4	session
+op	31:16	0:0	4	=
+water	31:18	0:0	4	NULL
+water	31:22	0:0	4	;
+water	32:4	0:0	4	}
+return	33:4	33:18	2	session
+water	33:11	0:0	3	session

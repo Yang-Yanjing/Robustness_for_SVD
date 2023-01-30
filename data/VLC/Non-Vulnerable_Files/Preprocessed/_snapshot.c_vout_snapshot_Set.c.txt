@@ -1,0 +1,85 @@
+func	2:0	20:0	0	void	vout_snapshot_Set
+params	2:22	0:0	1	
+param	2:23	2:44	2	vout_snapshot_t *	snap
+param	3:23	3:48	2	const video_format_t *	fmt
+param	4:23	4:47	2	const picture_t *	picture
+stmnts	6:4	19:33	1	
+if	6:4	7:30	2	(! fmt)
+cond	6:8	6:9	3	! fmt
+op	6:8	0:0	4	!
+water	6:9	0:0	4	fmt
+stmts	7:8	7:30	3	
+water	7:8	0:0	4	fmt
+op	7:12	0:0	4	=
+op	7:14	0:0	4	&
+water	7:15	0:0	4	picture
+op	7:22	0:0	4	->
+water	7:24	0:0	4	format
+water	7:30	0:0	4	;
+call	8:4	8:30	2	vlc_mutex_lock
+arg	8:19	8:30	3	&snap->lock
+op	8:19	0:0	4	&
+water	8:20	0:0	4	snap
+op	8:24	0:0	4	->
+water	8:26	0:0	4	lock
+water	8:31	0:0	2	;
+while	9:4	17:4	2	(snap -> request_count > 0)
+cond	9:11	9:33	3	snap -> request_count > 0
+water	9:11	0:0	4	snap
+op	9:15	0:0	4	->
+water	9:17	0:0	4	request_count
+op	9:31	0:0	4	>
+water	9:33	0:0	4	0
+stmts	9:36	17:4	3	
+water	9:36	0:0	4	{
+decl	10:8	10:51	4	picture_t	*dup
+op	10:23	0:0	4	=
+call	10:25	10:50	5	picture_NewFromFormat
+arg	10:47	10:50	6	fmt
+water	10:47	0:0	7	fmt
+if	11:8	12:17	4	(! dup)
+cond	11:12	11:13	5	! dup
+op	11:12	0:0	6	!
+water	11:13	0:0	6	dup
+stmts	12:12	12:17	5	
+break	12:12	12:17	6	
+call	13:8	13:33	4	picture_Copy
+arg	13:21	13:24	5	dup
+water	13:21	0:0	6	dup
+arg	13:26	13:33	5	picture
+water	13:26	0:0	6	picture
+water	13:34	0:0	4	;
+water	14:8	0:0	4	dup
+op	14:11	0:0	4	->
+water	14:13	0:0	4	p_next
+op	14:20	0:0	4	=
+water	14:22	0:0	4	snap
+op	14:26	0:0	4	->
+water	14:28	0:0	4	picture
+water	14:35	0:0	4	;
+water	15:8	0:0	4	snap
+op	15:12	0:0	4	->
+water	15:14	0:0	4	picture
+op	15:22	0:0	4	=
+water	15:24	0:0	4	dup
+water	15:27	0:0	4	;
+water	16:8	0:0	4	snap
+op	16:12	0:0	4	->
+water	16:14	0:0	4	request_count
+op	16:27	0:0	4	--
+water	16:29	0:0	4	;
+water	17:4	0:0	4	}
+call	18:4	18:34	2	vlc_cond_broadcast
+arg	18:23	18:34	3	&snap->wait
+op	18:23	0:0	4	&
+water	18:24	0:0	4	snap
+op	18:28	0:0	4	->
+water	18:30	0:0	4	wait
+water	18:35	0:0	2	;
+call	19:4	19:32	2	vlc_mutex_unlock
+arg	19:21	19:32	3	&snap->lock
+op	19:21	0:0	4	&
+water	19:22	0:0	4	snap
+op	19:26	0:0	4	->
+water	19:28	0:0	4	lock
+water	19:33	0:0	2	;

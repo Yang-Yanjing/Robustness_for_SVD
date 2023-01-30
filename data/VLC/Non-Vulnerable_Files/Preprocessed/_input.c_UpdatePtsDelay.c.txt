@@ -1,0 +1,136 @@
+func	2:0	23:0	0	static void	UpdatePtsDelay
+params	2:26	0:0	1	
+param	2:28	2:52	2	input_thread_t *	p_input
+stmnts	0:0	22:74	1	
+decl	4:4	4:46	2	input_thread_private_t	*p_sys
+op	4:34	0:0	2	=
+water	4:36	0:0	2	p_input
+op	4:43	0:0	2	->
+water	4:45	0:0	2	p
+decl	6:4	6:50	2	mtime_t	i_pts_delay
+op	6:24	0:0	2	=
+water	6:26	0:0	2	p_sys
+op	6:31	0:0	2	->
+water	6:33	0:0	2	input
+op	6:38	0:0	2	.
+water	6:39	0:0	2	i_pts_delay
+for	7:4	8:72	2	( int i = 0 ;i < p_sys -> i_slave;i ++)
+forinit	0:0	7:18	3	 int i = 0 ;
+decl	7:9	7:18	4	int	i
+op	7:15	0:0	4	=
+water	7:17	0:0	4	0
+cond	7:20	7:31	3	i < p_sys -> i_slave
+water	7:20	0:0	4	i
+op	7:22	0:0	4	<
+water	7:24	0:0	4	p_sys
+op	7:29	0:0	4	->
+water	7:31	0:0	4	i_slave
+forexpr	7:40	7:41	3	i ++
+water	7:40	0:0	4	i
+op	7:41	0:0	4	++
+stmts	8:8	8:72	3	
+water	8:8	0:0	4	i_pts_delay
+op	8:20	0:0	4	=
+call	8:22	8:71	4	__MAX
+arg	8:29	8:40	5	i_pts_delay
+water	8:29	0:0	6	i_pts_delay
+arg	8:42	8:71	5	p_sys->slave[i]->i_pts_delay
+water	8:42	0:0	6	p_sys
+op	8:47	0:0	6	->
+water	8:49	0:0	6	slave
+op	8:54	0:0	6	[
+water	8:55	0:0	6	i
+op	8:56	0:0	6	]
+op	8:57	0:0	6	->
+water	8:59	0:0	6	i_pts_delay
+water	8:72	0:0	4	;
+if	9:4	10:23	2	(i_pts_delay < 0)
+cond	9:8	9:22	3	i_pts_delay < 0
+water	9:8	0:0	4	i_pts_delay
+op	9:20	0:0	4	<
+water	9:22	0:0	4	0
+stmts	10:8	10:23	3	
+water	10:8	0:0	4	i_pts_delay
+op	10:20	0:0	4	=
+water	10:22	0:0	4	0
+water	10:23	0:0	4	;
+decl	12:4	12:71	2	const mtime_t	i_audio_delay
+op	12:32	0:0	2	=
+call	12:34	12:70	3	var_GetTime
+arg	12:47	12:54	4	p_input
+water	12:47	0:0	5	p_input
+arg	12:56	12:70	4	"audio-delay"
+water	12:56	0:0	5	"audio-delay"
+decl	13:4	13:69	2	const mtime_t	i_spu_delay
+op	13:32	0:0	2	=
+call	13:34	13:68	3	var_GetTime
+arg	13:47	13:54	4	p_input
+water	13:47	0:0	5	p_input
+arg	13:56	13:68	4	"spu-delay"
+water	13:56	0:0	5	"spu-delay"
+decl	14:4	14:69	2	const mtime_t	i_extra_delay
+op	14:32	0:0	2	=
+call	14:34	14:68	3	__MIN
+arg	14:41	14:54	4	i_audio_delay
+water	14:41	0:0	5	i_audio_delay
+arg	14:56	14:68	4	i_spu_delay
+water	14:56	0:0	5	i_spu_delay
+if	15:4	16:36	2	(i_extra_delay < 0)
+cond	15:8	15:24	3	i_extra_delay < 0
+water	15:8	0:0	4	i_extra_delay
+op	15:22	0:0	4	<
+water	15:24	0:0	4	0
+stmts	16:8	16:36	3	
+water	16:8	0:0	4	i_pts_delay
+op	16:20	0:0	4	-=
+water	16:23	0:0	4	i_extra_delay
+water	16:36	0:0	4	;
+decl	18:4	18:102	2	const int	i_cr_average
+op	18:27	0:0	2	=
+call	18:29	18:67	3	var_GetInteger
+arg	18:45	18:52	4	p_input
+water	18:45	0:0	5	p_input
+arg	18:54	18:67	4	"cr-average"
+water	18:54	0:0	5	"cr-average"
+op	18:69	0:0	2	*
+water	18:71	0:0	2	i_pts_delay
+op	18:83	0:0	2	/
+water	18:85	0:0	2	DEFAULT_PTS_DELAY
+call	20:4	20:75	2	es_out_SetDelay
+arg	20:21	20:49	3	p_input->p->p_es_out_display
+water	20:21	0:0	4	p_input
+op	20:28	0:0	4	->
+water	20:30	0:0	4	p
+op	20:31	0:0	4	->
+water	20:33	0:0	4	p_es_out_display
+arg	20:51	20:59	3	AUDIO_ES
+water	20:51	0:0	4	AUDIO_ES
+arg	20:61	20:75	3	i_audio_delay
+water	20:61	0:0	4	i_audio_delay
+water	20:76	0:0	2	;
+call	21:4	21:71	2	es_out_SetDelay
+arg	21:21	21:49	3	p_input->p->p_es_out_display
+water	21:21	0:0	4	p_input
+op	21:28	0:0	4	->
+water	21:30	0:0	4	p
+op	21:31	0:0	4	->
+water	21:33	0:0	4	p_es_out_display
+arg	21:51	21:57	3	SPU_ES
+water	21:51	0:0	4	SPU_ES
+arg	21:59	21:71	3	i_spu_delay
+water	21:59	0:0	4	i_spu_delay
+water	21:72	0:0	2	;
+call	22:4	22:73	2	es_out_SetJitter
+arg	22:22	22:42	3	p_input->p->p_es_out
+water	22:22	0:0	4	p_input
+op	22:29	0:0	4	->
+water	22:31	0:0	4	p
+op	22:32	0:0	4	->
+water	22:34	0:0	4	p_es_out
+arg	22:44	22:55	3	i_pts_delay
+water	22:44	0:0	4	i_pts_delay
+arg	22:57	22:58	3	0
+water	22:57	0:0	4	0
+arg	22:60	22:73	3	i_cr_average
+water	22:60	0:0	4	i_cr_average
+water	22:74	0:0	2	;

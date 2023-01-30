@@ -1,0 +1,637 @@
+func	2:0	168:0	0	int	config_SaveConfigFile
+params	2:26	0:0	1	
+param	2:27	2:47	2	vlc_object_t *	p_this
+stmnts	4:4	167:13	1	
+if	4:4	8:4	2	(config_PrepareDir (p_this ))
+cond	4:8	4:34	3	config_PrepareDir (p_this )
+call	4:8	4:34	4	config_PrepareDir
+arg	4:27	4:34	5	p_this
+water	4:27	0:0	6	p_this
+stmts	5:4	8:4	3	
+water	5:4	0:0	4	{
+call	6:8	6:54	4	msg_Err
+arg	6:17	6:23	5	p_this
+water	6:17	0:0	6	p_this
+arg	6:25	6:54	5	"no configuration directory"
+water	6:25	0:0	6	"no configuration directory"
+water	6:55	0:0	4	;
+return	7:8	7:17	4	-1
+op	7:15	0:0	5	-
+water	7:16	0:0	5	1
+water	8:4	0:0	4	}
+decl	12:4	12:19	2	char	*temporary
+decl	13:4	13:51	2	char	*permanent
+op	13:20	0:0	2	=
+call	13:22	13:50	3	config_GetConfigFile
+arg	13:44	13:50	4	p_this
+water	13:44	0:0	5	p_this
+if	14:4	15:17	2	(permanent == NULL)
+cond	14:8	14:21	3	permanent == NULL
+water	14:8	0:0	4	permanent
+op	14:18	0:0	4	==
+water	14:21	0:0	4	NULL
+stmts	15:8	15:17	3	
+return	15:8	15:17	4	-1
+op	15:15	0:0	5	-
+water	15:16	0:0	5	1
+if	16:4	20:4	2	(asprintf (& temporary ,"%s.%u" ,permanent ,getpid ( ) ) == - 1)
+cond	16:8	16:65	3	asprintf (& temporary ,"%s.%u" ,permanent ,getpid ( ) ) == - 1
+call	16:8	16:59	4	asprintf
+arg	16:18	16:28	5	&temporary
+op	16:18	0:0	6	&
+water	16:19	0:0	6	temporary
+arg	16:30	16:37	5	"%s.%u"
+water	16:30	0:0	6	"%s.%u"
+arg	16:39	16:48	5	permanent
+water	16:39	0:0	6	permanent
+arg	16:50	16:59	5	getpid()
+call	16:50	16:58	6	getpid
+op	16:61	0:0	4	==
+op	16:64	0:0	4	-
+water	16:65	0:0	4	1
+stmts	17:4	20:4	3	
+water	17:4	0:0	4	{
+call	18:8	18:23	4	free
+arg	18:14	18:23	5	permanent
+water	18:14	0:0	6	permanent
+water	18:24	0:0	4	;
+return	19:8	19:17	4	-1
+op	19:15	0:0	5	-
+water	19:16	0:0	5	1
+water	20:4	0:0	4	}
+else	21:4	32:4	2
+stmts	22:4	32:4	3	
+water	22:4	0:0	4	{
+decl	23:8	23:22	4	struct stat	st
+if	27:8	31:8	4	(stat (permanent ,& st ) == 0 && ! ( st . st_mode & S_IWUSR ))
+cond	27:12	27:64	5	stat (permanent ,& st ) == 0 && ! ( st . st_mode & S_IWUSR )
+call	27:12	27:32	6	stat
+arg	27:18	27:27	7	permanent
+water	27:18	0:0	8	permanent
+arg	27:29	27:32	7	&st
+op	27:29	0:0	8	&
+water	27:30	0:0	8	st
+op	27:34	0:0	6	==
+water	27:37	0:0	6	0
+op	27:39	0:0	6	&&
+op	27:42	0:0	6	!
+water	27:43	0:0	6	(
+water	27:44	0:0	6	st
+op	27:46	0:0	6	.
+water	27:47	0:0	6	st_mode
+op	27:55	0:0	6	&
+water	27:57	0:0	6	S_IWUSR
+water	27:64	0:0	6	)
+stmts	28:8	31:8	5	
+water	28:8	0:0	6	{
+call	29:12	29:62	6	msg_Err
+arg	29:21	29:27	7	p_this
+water	29:21	0:0	8	p_this
+arg	29:29	29:62	7	"configuration file is read-only"
+water	29:29	0:0	8	"configuration file is read-only"
+water	29:63	0:0	6	;
+goto	30:12	30:22	6	error
+water	30:17	0:0	7	error
+water	31:8	0:0	6	}
+water	32:4	0:0	4	}
+call	34:4	34:35	2	vlc_rwlock_rdlock
+arg	34:23	34:35	3	&config_lock
+op	34:23	0:0	4	&
+water	34:24	0:0	4	config_lock
+water	34:36	0:0	2	;
+water	37:4	0:0	2	static
+water	37:11	0:0	2	vlc_mutex_t
+water	37:23	0:0	2	lock
+op	37:28	0:0	2	=
+water	37:30	0:0	2	VLC_STATIC_MUTEX
+water	37:46	0:0	2	;
+call	38:4	38:25	2	vlc_mutex_lock
+arg	38:20	38:25	3	&lock
+op	38:20	0:0	4	&
+water	38:21	0:0	4	lock
+water	38:26	0:0	2	;
+decl	39:4	39:76	2	int	fd
+op	39:11	0:0	2	=
+call	39:13	39:75	3	vlc_open
+arg	39:23	39:32	4	temporary
+water	39:23	0:0	5	temporary
+arg	39:34	39:58	4	O_CREAT|O_WRONLY|O_TRUNC
+water	39:34	0:0	5	O_CREAT
+op	39:41	0:0	5	|
+water	39:42	0:0	5	O_WRONLY
+op	39:50	0:0	5	|
+water	39:51	0:0	5	O_TRUNC
+arg	39:60	39:75	4	S_IRUSR|S_IWUSR
+water	39:60	0:0	5	S_IRUSR
+op	39:67	0:0	5	|
+water	39:68	0:0	5	S_IWUSR
+if	40:4	45:4	2	(fd == - 1)
+cond	40:8	40:15	3	fd == - 1
+water	40:8	0:0	4	fd
+op	40:11	0:0	4	==
+op	40:14	0:0	4	-
+water	40:15	0:0	4	1
+stmts	41:4	45:4	3	
+water	41:4	0:0	4	{
+call	42:8	42:39	4	vlc_rwlock_unlock
+arg	42:27	42:39	5	&config_lock
+op	42:27	0:0	6	&
+water	42:28	0:0	6	config_lock
+water	42:40	0:0	4	;
+call	43:8	43:31	4	vlc_mutex_unlock
+arg	43:26	43:31	5	&lock
+op	43:26	0:0	6	&
+water	43:27	0:0	6	lock
+water	43:32	0:0	4	;
+goto	44:8	44:18	4	error
+water	44:13	0:0	5	error
+water	45:4	0:0	4	}
+decl	46:4	46:34	2	FILE	*file
+op	46:15	0:0	2	=
+call	46:17	46:33	3	fdopen
+arg	46:25	46:27	4	fd
+water	46:25	0:0	5	fd
+arg	46:29	46:33	4	"wt"
+water	46:29	0:0	5	"wt"
+if	47:4	55:4	2	(file == NULL)
+cond	47:8	47:16	3	file == NULL
+water	47:8	0:0	4	file
+op	47:13	0:0	4	==
+water	47:16	0:0	4	NULL
+stmts	48:4	55:4	3	
+water	48:4	0:0	4	{
+call	49:8	50:38	4	msg_Err
+arg	49:17	49:23	5	p_this
+water	49:17	0:0	6	p_this
+arg	49:25	49:63	5	"cannot create configuration file: %s"
+water	49:25	0:0	6	"cannot create configuration file: %s"
+arg	50:17	50:38	5	vlc_strerror_c(errno)
+call	50:17	50:37	6	vlc_strerror_c
+arg	50:32	50:37	7	errno
+water	50:32	0:0	8	errno
+water	50:39	0:0	4	;
+call	51:8	51:39	4	vlc_rwlock_unlock
+arg	51:27	51:39	5	&config_lock
+op	51:27	0:0	6	&
+water	51:28	0:0	6	config_lock
+water	51:40	0:0	4	;
+call	52:8	52:17	4	close
+arg	52:15	52:17	5	fd
+water	52:15	0:0	6	fd
+water	52:18	0:0	4	;
+call	53:8	53:31	4	vlc_mutex_unlock
+arg	53:26	53:31	5	&lock
+op	53:26	0:0	6	&
+water	53:27	0:0	6	lock
+water	53:32	0:0	4	;
+goto	54:8	54:18	4	error
+water	54:13	0:0	5	error
+water	55:4	0:0	4	}
+call	56:4	64:13	2	fprintf
+arg	56:13	56:17	3	file
+water	56:13	0:0	4	file
+arg	57:8	64:13	3	"\xEF\xBB\xBF###\n""###  "PACKAGE_NAME" "PACKAGE_VERSION"\n""###\n""\n""###\n""### lines beginning with a '#' character are comments\n""###\n""\n"
+water	57:8	0:0	4	"\xEF\xBB\xBF###\n"
+water	58:8	0:0	4	"###  "
+water	58:15	0:0	4	PACKAGE_NAME
+water	58:27	0:0	4	" "
+water	58:30	0:0	4	PACKAGE_VERSION
+water	58:45	0:0	4	"\n"
+water	59:8	0:0	4	"###\n"
+water	60:8	0:0	4	"\n"
+water	61:8	0:0	4	"###\n"
+water	62:8	0:0	4	"### lines beginning with a '#' character are comments\n"
+water	63:8	0:0	4	"###\n"
+water	64:8	0:0	4	"\n"
+water	64:14	0:0	2	;
+decl	66:4	66:57	2	locale_t	loc
+op	66:17	0:0	2	=
+call	66:19	66:56	3	newlocale
+arg	66:30	66:45	4	LC_NUMERIC_MASK
+water	66:30	0:0	5	LC_NUMERIC_MASK
+arg	66:47	66:50	4	"C"
+water	66:47	0:0	5	"C"
+arg	66:52	66:56	4	NULL
+water	66:52	0:0	5	NULL
+decl	67:4	67:38	2	locale_t	baseloc
+op	67:21	0:0	2	=
+call	67:23	67:37	3	uselocale
+arg	67:34	67:37	4	loc
+water	67:34	0:0	5	loc
+decl	72:4	72:16	2	size_t	count
+decl	73:4	73:46	2	module_t	**list
+op	73:20	0:0	2	=
+call	73:22	73:45	3	module_list_get
+arg	73:39	73:45	4	&count
+op	73:39	0:0	5	&
+water	73:40	0:0	5	count
+for	74:4	122:4	2	( size_t i = 0 ;i < count;i ++)
+forinit	0:0	74:21	3	 size_t i = 0 ;
+decl	74:9	74:21	4	size_t	i
+op	74:18	0:0	4	=
+water	74:20	0:0	4	0
+cond	74:23	74:27	3	i < count
+water	74:23	0:0	4	i
+op	74:25	0:0	4	<
+water	74:27	0:0	4	count
+forexpr	74:34	74:35	3	i ++
+water	74:34	0:0	4	i
+op	74:35	0:0	4	++
+stmts	75:4	122:4	3	
+water	75:4	0:0	4	{
+decl	76:8	76:36	4	module_t	*p_parser
+op	76:27	0:0	4	=
+water	76:29	0:0	4	list
+op	76:33	0:0	4	[
+water	76:34	0:0	4	i
+op	76:35	0:0	4	]
+decl	77:8	77:39	4	module_config_t	*p_item
+water	77:31	0:0	4	,
+decl	77:8	77:39	4	module_config_t	*p_end
+if	78:8	79:20	4	(! p_parser -> i_config_items)
+cond	78:12	78:23	5	! p_parser -> i_config_items
+op	78:12	0:0	6	!
+water	78:13	0:0	6	p_parser
+op	78:21	0:0	6	->
+water	78:23	0:0	6	i_config_items
+stmts	79:12	79:20	5	
+continue	79:12	79:20	6	
+call	80:8	80:60	4	fprintf
+arg	80:17	80:21	5	file
+water	80:17	0:0	6	file
+arg	80:23	80:29	5	"[%s]"
+water	80:23	0:0	6	"[%s]"
+arg	80:31	80:60	5	module_get_object(p_parser)
+call	80:31	80:58	6	module_get_object
+arg	80:50	80:58	7	p_parser
+water	80:50	0:0	8	p_parser
+water	80:61	0:0	4	;
+if	81:8	82:64	4	(p_parser -> psz_longname)
+cond	81:12	81:22	5	p_parser -> psz_longname
+water	81:12	0:0	6	p_parser
+op	81:20	0:0	6	->
+water	81:22	0:0	6	psz_longname
+stmts	82:12	82:64	5	
+call	82:12	82:63	6	fprintf
+arg	82:21	82:25	7	file
+water	82:21	0:0	8	file
+arg	82:27	82:38	7	" # %s\n\n"
+water	82:27	0:0	8	" # %s\n\n"
+arg	82:40	82:63	7	p_parser->psz_longname
+water	82:40	0:0	8	p_parser
+op	82:48	0:0	8	->
+water	82:50	0:0	8	psz_longname
+water	82:64	0:0	6	;
+else	83:8	84:35	4
+stmts	84:12	84:35	5	
+call	84:12	84:34	6	fprintf
+arg	84:21	84:25	7	file
+water	84:21	0:0	8	file
+arg	84:27	84:34	7	"\n\n"
+water	84:27	0:0	8	"\n\n"
+water	84:35	0:0	6	;
+for	85:8	121:8	4	(p_item = p_parser -> p_config , p_end = p_item + p_parser -> confsize ;p_item < p_end;p_item ++)
+forinit	85:13	85:77	5	p_item = p_parser -> p_config , p_end = p_item + p_parser -> confsize ;
+water	85:13	0:0	6	p_item
+op	85:20	0:0	6	=
+water	85:22	0:0	6	p_parser
+op	85:30	0:0	6	->
+water	85:32	0:0	6	p_config
+water	85:40	0:0	6	,
+water	85:42	0:0	6	p_end
+op	85:48	0:0	6	=
+water	85:50	0:0	6	p_item
+op	85:57	0:0	6	+
+water	85:59	0:0	6	p_parser
+op	85:67	0:0	6	->
+water	85:69	0:0	6	confsize
+water	85:77	0:0	6	;
+cond	86:13	86:22	5	p_item < p_end
+water	86:13	0:0	6	p_item
+op	86:20	0:0	6	<
+water	86:22	0:0	6	p_end
+forexpr	87:13	87:19	5	p_item ++
+water	87:13	0:0	6	p_item
+op	87:19	0:0	6	++
+stmts	88:8	121:8	5	
+water	88:8	0:0	6	{
+if	89:12	92:24	6	(!CONFIG_ITEM (p_item -> i_type ) || p_item -> b_removed || p_item -> b_unsaveable)
+cond	89:16	91:24	7	!CONFIG_ITEM (p_item -> i_type ) || p_item -> b_removed || p_item -> b_unsaveable
+op	89:16	0:0	8	!
+call	89:17	89:43	8	CONFIG_ITEM
+arg	89:29	89:43	9	p_item->i_type
+water	89:29	0:0	10	p_item
+op	89:35	0:0	10	->
+water	89:37	0:0	10	i_type
+op	90:13	0:0	8	||
+water	90:16	0:0	8	p_item
+op	90:22	0:0	8	->
+water	90:24	0:0	8	b_removed
+op	91:13	0:0	8	||
+water	91:16	0:0	8	p_item
+op	91:22	0:0	8	->
+water	91:24	0:0	8	b_unsaveable
+stmts	92:16	92:24	7	
+continue	92:16	92:24	8	
+if	93:12	101:12	6	(IsConfigIntegerType (p_item -> i_type ))
+cond	93:16	93:51	7	IsConfigIntegerType (p_item -> i_type )
+call	93:16	93:51	8	IsConfigIntegerType
+arg	93:37	93:51	9	p_item->i_type
+water	93:37	0:0	10	p_item
+op	93:43	0:0	10	->
+water	93:45	0:0	10	i_type
+stmts	94:12	101:12	7	
+water	94:12	0:0	8	{
+decl	95:16	95:45	8	int64_t	val
+op	95:28	0:0	8	=
+water	95:30	0:0	8	p_item
+op	95:36	0:0	8	->
+water	95:38	0:0	8	value
+op	95:43	0:0	8	.
+water	95:44	0:0	8	i
+call	96:16	100:62	8	config_Write
+arg	96:30	96:34	9	file
+water	96:30	0:0	10	file
+arg	96:36	96:52	9	p_item->psz_text
+water	96:36	0:0	10	p_item
+op	96:42	0:0	10	->
+water	96:44	0:0	10	psz_text
+arg	97:29	98:65	9	(CONFIG_CLASS(p_item->i_type)==CONFIG_ITEM_BOOL)?N_("boolean"):N_("integer")
+water	97:29	0:0	10	(
+call	97:30	97:57	10	CONFIG_CLASS
+arg	97:43	97:57	11	p_item->i_type
+water	97:43	0:0	12	p_item
+op	97:49	0:0	12	->
+water	97:51	0:0	12	i_type
+op	97:59	0:0	10	==
+water	97:62	0:0	10	CONFIG_ITEM_BOOL
+water	97:78	0:0	10	)
+water	98:34	0:0	10	?
+call	98:36	98:48	10	N_
+arg	98:39	98:48	11	"boolean"
+water	98:39	0:0	12	"boolean"
+water	98:50	0:0	10	:
+call	98:52	98:64	10	N_
+arg	98:55	98:64	11	"integer"
+water	98:55	0:0	12	"integer"
+arg	99:30	99:51	9	val==p_item->orig.i
+water	99:30	0:0	10	val
+op	99:34	0:0	10	==
+water	99:37	0:0	10	p_item
+op	99:43	0:0	10	->
+water	99:45	0:0	10	orig
+op	99:49	0:0	10	.
+water	99:50	0:0	10	i
+arg	100:30	100:46	9	p_item->psz_name
+water	100:30	0:0	10	p_item
+op	100:36	0:0	10	->
+water	100:38	0:0	10	psz_name
+arg	100:48	100:57	9	"%"PRId64
+water	100:48	0:0	10	"%"
+water	100:51	0:0	10	PRId64
+arg	100:59	100:62	9	val
+water	100:59	0:0	10	val
+water	100:63	0:0	8	;
+water	101:12	0:0	8	}
+else	102:12	109:12	6
+stmts	103:12	109:12	7	
+if	103:12	109:12	8	(IsConfigFloatType (p_item -> i_type ))
+cond	103:16	103:49	9	IsConfigFloatType (p_item -> i_type )
+call	103:16	103:49	10	IsConfigFloatType
+arg	103:35	103:49	11	p_item->i_type
+water	103:35	0:0	12	p_item
+op	103:41	0:0	12	->
+water	103:43	0:0	12	i_type
+stmts	104:12	109:12	9	
+water	104:12	0:0	10	{
+decl	105:16	105:43	10	float	val
+op	105:26	0:0	10	=
+water	105:28	0:0	10	p_item
+op	105:34	0:0	10	->
+water	105:36	0:0	10	value
+op	105:41	0:0	10	.
+water	105:42	0:0	10	f
+call	106:16	108:57	10	config_Write
+arg	106:30	106:34	11	file
+water	106:30	0:0	12	file
+arg	106:36	106:52	11	p_item->psz_text
+water	106:36	0:0	12	p_item
+op	106:42	0:0	12	->
+water	106:44	0:0	12	psz_text
+arg	106:54	106:65	11	N_("float")
+call	106:54	106:64	12	N_
+arg	106:57	106:64	13	"float"
+water	106:57	0:0	14	"float"
+arg	107:30	107:51	11	val==p_item->orig.f
+water	107:30	0:0	12	val
+op	107:34	0:0	12	==
+water	107:37	0:0	12	p_item
+op	107:43	0:0	12	->
+water	107:45	0:0	12	orig
+op	107:49	0:0	12	.
+water	107:50	0:0	12	f
+arg	108:30	108:46	11	p_item->psz_name
+water	108:30	0:0	12	p_item
+op	108:36	0:0	12	->
+water	108:38	0:0	12	psz_name
+arg	108:48	108:52	11	"%f"
+water	108:48	0:0	12	"%f"
+arg	108:54	108:57	11	val
+water	108:54	0:0	12	val
+water	108:58	0:0	10	;
+water	109:12	0:0	10	}
+else	110:12	120:12	6
+stmts	111:12	120:12	7	
+water	111:12	0:0	8	{
+decl	112:16	112:57	8	const char	*psz_value
+op	112:38	0:0	8	=
+water	112:40	0:0	8	p_item
+op	112:46	0:0	8	->
+water	112:48	0:0	8	value
+op	112:53	0:0	8	.
+water	112:54	0:0	8	psz
+decl	113:16	113:29	8	bool	modified
+call	114:16	114:59	8	assert
+arg	114:24	114:59	9	IsConfigStringType(p_item->i_type)
+call	114:24	114:58	10	IsConfigStringType
+arg	114:44	114:58	11	p_item->i_type
+water	114:44	0:0	12	p_item
+op	114:50	0:0	12	->
+water	114:52	0:0	12	i_type
+water	114:60	0:0	8	;
+water	115:16	0:0	8	modified
+op	115:25	0:0	8	=
+op	115:27	0:0	8	!
+op	115:28	0:0	8	!
+call	115:29	116:77	8	strcmp
+arg	115:37	115:63	9	psz_value?psz_value:""
+water	115:37	0:0	10	psz_value
+water	115:47	0:0	10	?
+water	115:49	0:0	10	psz_value
+water	115:59	0:0	10	:
+water	115:61	0:0	10	""
+arg	116:37	116:77	9	p_item->orig.psz?p_item->orig.psz:""
+water	116:37	0:0	10	p_item
+op	116:43	0:0	10	->
+water	116:45	0:0	10	orig
+op	116:49	0:0	10	.
+water	116:50	0:0	10	psz
+water	116:54	0:0	10	?
+water	116:56	0:0	10	p_item
+op	116:62	0:0	10	->
+water	116:64	0:0	10	orig
+op	116:68	0:0	10	.
+water	116:69	0:0	10	psz
+water	116:73	0:0	10	:
+water	116:75	0:0	10	""
+water	116:78	0:0	8	;
+call	117:16	119:56	8	config_Write
+arg	117:30	117:34	9	file
+water	117:30	0:0	10	file
+arg	117:36	117:52	9	p_item->psz_text
+water	117:36	0:0	10	p_item
+op	117:42	0:0	10	->
+water	117:44	0:0	10	psz_text
+arg	117:54	117:66	9	N_("string")
+call	117:54	117:65	10	N_
+arg	117:57	117:65	11	"string"
+water	117:57	0:0	12	"string"
+arg	118:30	118:39	9	!modified
+op	118:30	0:0	10	!
+water	118:31	0:0	10	modified
+arg	118:41	118:57	9	p_item->psz_name
+water	118:41	0:0	10	p_item
+op	118:47	0:0	10	->
+water	118:49	0:0	10	psz_name
+arg	118:59	118:63	9	"%s"
+water	118:59	0:0	10	"%s"
+arg	119:30	119:56	9	psz_value?psz_value:""
+water	119:30	0:0	10	psz_value
+water	119:40	0:0	10	?
+water	119:42	0:0	10	psz_value
+water	119:52	0:0	10	:
+water	119:54	0:0	10	""
+water	119:57	0:0	8	;
+water	120:12	0:0	8	}
+water	121:8	0:0	6	}
+water	122:4	0:0	4	}
+call	123:4	123:35	2	vlc_rwlock_unlock
+arg	123:23	123:35	3	&config_lock
+op	123:23	0:0	4	&
+water	123:24	0:0	4	config_lock
+water	123:36	0:0	2	;
+call	124:4	124:26	2	module_list_free
+arg	124:22	124:26	3	list
+water	124:22	0:0	4	list
+water	124:27	0:0	2	;
+if	125:4	129:4	2	(loc != ( locale_t ) 0)
+cond	125:8	125:25	3	loc != ( locale_t ) 0
+water	125:8	0:0	4	loc
+op	125:12	0:0	4	!=
+water	125:15	0:0	4	(
+water	125:16	0:0	4	locale_t
+water	125:24	0:0	4	)
+water	125:25	0:0	4	0
+stmts	126:4	129:4	3	
+water	126:4	0:0	4	{
+call	127:8	127:26	4	uselocale
+arg	127:19	127:26	5	baseloc
+water	127:19	0:0	6	baseloc
+water	127:27	0:0	4	;
+call	128:8	128:23	4	freelocale
+arg	128:20	128:23	5	loc
+water	128:20	0:0	6	loc
+water	128:24	0:0	4	;
+water	129:4	0:0	4	}
+call	133:4	133:16	2	fflush
+arg	133:12	133:16	3	file
+water	133:12	0:0	4	file
+water	133:17	0:0	2	;
+if	134:4	141:4	2	(ferror (file ))
+cond	134:8	134:20	3	ferror (file )
+call	134:8	134:20	4	ferror
+arg	134:16	134:20	5	file
+water	134:16	0:0	6	file
+stmts	135:4	141:4	3	
+water	135:4	0:0	4	{
+call	136:8	136:29	4	vlc_unlink
+arg	136:20	136:29	5	temporary
+water	136:20	0:0	6	temporary
+water	136:30	0:0	4	;
+call	137:8	137:31	4	vlc_mutex_unlock
+arg	137:26	137:31	5	&lock
+op	137:26	0:0	6	&
+water	137:27	0:0	6	lock
+water	137:32	0:0	4	;
+call	138:8	138:58	4	msg_Err
+arg	138:17	138:23	5	p_this
+water	138:17	0:0	6	p_this
+arg	138:25	138:58	5	"cannot write configuration file"
+water	138:25	0:0	6	"cannot write configuration file"
+water	138:59	0:0	4	;
+call	139:8	139:20	4	fclose
+arg	139:16	139:20	5	file
+water	139:16	0:0	6	file
+water	139:21	0:0	4	;
+goto	140:8	140:18	4	error
+water	140:13	0:0	5	error
+water	141:4	0:0	4	}
+call	143:4	143:13	2	fsync
+arg	143:11	143:13	3	fd
+water	143:11	0:0	4	fd
+water	143:14	0:0	2	;
+call	145:4	145:17	2	fdatasync
+arg	145:15	145:17	3	fd
+water	145:15	0:0	4	fd
+water	145:18	0:0	2	;
+call	149:4	149:16	2	fclose
+arg	149:12	149:16	3	file
+water	149:12	0:0	4	file
+water	149:17	0:0	2	;
+call	150:4	150:25	2	vlc_unlink
+arg	150:16	150:25	3	permanent
+water	150:16	0:0	4	permanent
+water	150:26	0:0	2	;
+if	153:4	154:30	2	(vlc_rename (temporary ,permanent ))
+cond	153:8	153:40	3	vlc_rename (temporary ,permanent )
+call	153:8	153:40	4	vlc_rename
+arg	153:20	153:29	5	temporary
+water	153:20	0:0	6	temporary
+arg	153:31	153:40	5	permanent
+water	153:31	0:0	6	permanent
+stmts	154:8	154:30	3	
+call	154:8	154:29	4	vlc_unlink
+arg	154:20	154:29	5	temporary
+water	154:20	0:0	6	temporary
+water	154:30	0:0	4	;
+call	157:4	157:27	2	vlc_mutex_unlock
+arg	157:22	157:27	3	&lock
+op	157:22	0:0	4	&
+water	157:23	0:0	4	lock
+water	157:28	0:0	2	;
+call	159:4	159:16	2	fclose
+arg	159:12	159:16	3	file
+water	159:12	0:0	4	file
+water	159:17	0:0	2	;
+call	161:4	161:19	2	free
+arg	161:10	161:19	3	temporary
+water	161:10	0:0	4	temporary
+water	161:20	0:0	2	;
+call	162:4	162:19	2	free
+arg	162:10	162:19	3	permanent
+water	162:10	0:0	4	permanent
+water	162:20	0:0	2	;
+return	163:4	163:12	2	0
+water	163:11	0:0	3	0
+label	164:0	164:5	2	error :
+call	165:4	165:19	2	free
+arg	165:10	165:19	3	temporary
+water	165:10	0:0	4	temporary
+water	165:20	0:0	2	;
+call	166:4	166:19	2	free
+arg	166:10	166:19	3	permanent
+water	166:10	0:0	4	permanent
+water	166:20	0:0	2	;
+return	167:4	167:13	2	-1
+op	167:11	0:0	3	-
+water	167:12	0:0	3	1

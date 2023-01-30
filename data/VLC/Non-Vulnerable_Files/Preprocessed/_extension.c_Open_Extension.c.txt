@@ -1,0 +1,116 @@
+func	2:0	26:0	0	int	Open_Extension
+params	2:18	0:0	1	
+param	2:20	2:41	2	vlc_object_t *	p_this
+stmnts	4:4	25:22	1	
+call	4:4	4:52	2	msg_Dbg
+arg	4:13	4:19	3	p_this
+water	4:13	0:0	4	p_this
+arg	4:21	4:52	3	"Opening Lua Extension module"
+water	4:21	0:0	4	"Opening Lua Extension module"
+water	4:53	0:0	2	;
+decl	5:4	5:66	2	extensions_manager_t	*p_mgr
+op	5:32	0:0	2	=
+water	5:34	0:0	2	(
+water	5:36	0:0	2	extensions_manager_t
+op	5:56	0:0	2	*
+water	5:58	0:0	2	)
+water	5:60	0:0	2	p_this
+water	6:4	0:0	2	p_mgr
+op	6:9	0:0	2	->
+water	6:11	0:0	2	pf_control
+op	6:22	0:0	2	=
+water	6:24	0:0	2	Control
+water	6:31	0:0	2	;
+decl	7:4	8:67	2	extensions_manager_sys_t	*p_sys
+op	7:36	0:0	2	=
+water	7:38	0:0	2	(
+water	7:40	0:0	2	extensions_manager_sys_t
+op	7:64	0:0	2	*
+water	7:66	0:0	2	)
+call	8:20	8:66	3	calloc
+arg	8:28	8:29	4	1
+water	8:28	0:0	5	1
+arg	8:31	8:66	4	sizeof(extensions_manager_sys_t)
+op	8:31	0:0	5	sizeof
+water	8:37	0:0	5	(
+water	8:39	0:0	5	extensions_manager_sys_t
+water	8:64	0:0	5	)
+if	9:4	9:34	2	(! p_sys)
+cond	9:8	9:9	3	! p_sys
+op	9:8	0:0	4	!
+water	9:9	0:0	4	p_sys
+stmts	9:17	9:34	3	
+return	9:17	9:34	4	VLC_ENOMEM
+water	9:24	0:0	5	VLC_ENOMEM
+water	10:4	0:0	2	p_mgr
+op	10:9	0:0	2	->
+water	10:11	0:0	2	p_sys
+op	10:17	0:0	2	=
+water	10:19	0:0	2	p_sys
+water	10:24	0:0	2	;
+call	11:4	11:44	2	ARRAY_INIT
+arg	11:16	11:44	3	p_sys->activated_extensions
+water	11:16	0:0	4	p_sys
+op	11:21	0:0	4	->
+water	11:23	0:0	4	activated_extensions
+water	11:45	0:0	2	;
+call	12:4	12:34	2	ARRAY_INIT
+arg	12:16	12:34	3	p_mgr->extensions
+water	12:16	0:0	4	p_mgr
+op	12:21	0:0	4	->
+water	12:23	0:0	4	extensions
+water	12:35	0:0	2	;
+call	13:4	13:33	2	vlc_mutex_init
+arg	13:20	13:33	3	&p_mgr->lock
+op	13:20	0:0	4	&
+water	13:21	0:0	4	p_mgr
+op	13:26	0:0	4	->
+water	13:28	0:0	4	lock
+water	13:34	0:0	2	;
+call	14:4	14:40	2	vlc_mutex_init
+arg	14:20	14:40	3	&p_mgr->p_sys->lock
+op	14:20	0:0	4	&
+water	14:21	0:0	4	p_mgr
+op	14:26	0:0	4	->
+water	14:28	0:0	4	p_sys
+op	14:33	0:0	4	->
+water	14:35	0:0	4	lock
+water	14:41	0:0	2	;
+if	16:4	20:4	2	(ScanExtensions (p_mgr ) != VLC_SUCCESS)
+cond	16:8	16:35	3	ScanExtensions (p_mgr ) != VLC_SUCCESS
+call	16:8	16:30	4	ScanExtensions
+arg	16:24	16:30	5	p_mgr
+water	16:24	0:0	6	p_mgr
+op	16:32	0:0	4	!=
+water	16:35	0:0	4	VLC_SUCCESS
+stmts	17:4	20:4	3	
+water	17:4	0:0	4	{
+call	18:8	18:56	4	msg_Err
+arg	18:17	18:22	5	p_mgr
+water	18:17	0:0	6	p_mgr
+arg	18:24	18:56	5	"Can't load extensions modules"
+water	18:24	0:0	6	"Can't load extensions modules"
+water	18:57	0:0	4	;
+return	19:8	19:27	4	VLC_EGENERIC
+water	19:15	0:0	5	VLC_EGENERIC
+water	20:4	0:0	4	}
+call	22:4	22:56	2	var_Create
+arg	22:16	22:22	3	p_this
+water	22:16	0:0	4	p_this
+arg	22:24	22:38	3	"dialog-event"
+water	22:24	0:0	4	"dialog-event"
+arg	22:40	22:56	3	VLC_VAR_ADDRESS
+water	22:40	0:0	4	VLC_VAR_ADDRESS
+water	22:57	0:0	2	;
+call	23:4	24:60	2	var_AddCallback
+arg	23:21	23:27	3	p_this
+water	23:21	0:0	4	p_this
+arg	23:29	23:43	3	"dialog-event"
+water	23:29	0:0	4	"dialog-event"
+arg	24:21	24:53	3	vlclua_extension_dialog_callback
+water	24:21	0:0	4	vlclua_extension_dialog_callback
+arg	24:55	24:60	3	NULL
+water	24:55	0:0	4	NULL
+water	24:61	0:0	2	;
+return	25:4	25:22	2	VLC_SUCCESS
+water	25:11	0:0	3	VLC_SUCCESS

@@ -1,0 +1,95 @@
+func	2:0	28:0	0	static picture_t *	Filter
+params	2:24	0:0	1	
+param	2:25	2:43	2	filter_t *	p_filter
+param	2:45	2:61	2	picture_t *	p_pic
+stmnts	0:0	27:46	1	
+decl	4:4	4:41	2	filter_sys_t	*p_sys
+op	4:24	0:0	2	=
+water	4:26	0:0	2	p_filter
+op	4:34	0:0	2	->
+water	4:36	0:0	2	p_sys
+if	5:4	6:19	2	(! p_pic)
+cond	5:8	5:9	3	! p_pic
+op	5:8	0:0	4	!
+water	5:9	0:0	4	p_pic
+stmts	6:8	6:19	3	
+return	6:8	6:19	4	NULL
+water	6:15	0:0	5	NULL
+decl	7:4	7:53	2	picture_t	*p_outpic
+op	7:24	0:0	2	=
+call	7:26	7:52	3	filter_NewPicture
+arg	7:44	7:52	4	p_filter
+water	7:44	0:0	5	p_filter
+if	8:4	12:4	2	(! p_outpic)
+cond	8:8	8:9	3	! p_outpic
+op	8:8	0:0	4	!
+water	8:9	0:0	4	p_outpic
+stmts	9:4	12:4	3	
+water	9:4	0:0	4	{
+call	10:8	10:29	4	picture_Release
+arg	10:24	10:29	5	p_pic
+water	10:24	0:0	6	p_pic
+water	10:30	0:0	4	;
+return	11:8	11:19	4	NULL
+water	11:15	0:0	5	NULL
+water	12:4	0:0	4	}
+switch	13:4	26:4	2	(p_pic -> format . i_chroma)
+cond	13:12	13:26	3	p_pic -> format . i_chroma
+water	13:12	0:0	4	p_pic
+op	13:17	0:0	4	->
+water	13:19	0:0	4	format
+op	13:25	0:0	4	.
+water	13:26	0:0	4	i_chroma
+stmts	14:4	26:4	3	
+water	14:4	0:0	4	{
+label	15:8	15:27	4	case VLC_CODEC_I420 :
+label	16:8	16:27	4	case VLC_CODEC_J420 :
+label	17:8	17:27	4	case VLC_CODEC_YV12 :
+call	18:12	19:65	4	combine_side_by_side_yuv420
+arg	18:40	18:45	5	p_pic
+water	18:40	0:0	6	p_pic
+arg	18:47	18:55	5	p_outpic
+water	18:47	0:0	6	p_outpic
+arg	19:40	19:51	5	p_sys->left
+water	19:40	0:0	6	p_sys
+op	19:45	0:0	6	->
+water	19:47	0:0	6	left
+arg	19:53	19:65	5	p_sys->right
+water	19:53	0:0	6	p_sys
+op	19:58	0:0	6	->
+water	19:60	0:0	6	right
+water	19:66	0:0	4	;
+break	20:12	20:17	4	
+label	21:8	21:15	4	default :
+call	22:12	23:53	4	msg_Warn
+arg	22:21	22:29	5	p_filter
+water	22:21	0:0	6	p_filter
+arg	22:31	22:65	5	"Unsupported input chroma (%4.4s)"
+water	22:31	0:0	6	"Unsupported input chroma (%4.4s)"
+arg	23:21	23:53	5	(char*)&(p_pic->format.i_chroma)
+water	23:21	0:0	6	(
+water	23:22	0:0	6	char
+op	23:26	0:0	6	*
+water	23:27	0:0	6	)
+op	23:28	0:0	6	&
+water	23:29	0:0	6	(
+water	23:30	0:0	6	p_pic
+op	23:35	0:0	6	->
+water	23:37	0:0	6	format
+op	23:43	0:0	6	.
+water	23:44	0:0	6	i_chroma
+water	23:52	0:0	6	)
+water	23:54	0:0	4	;
+call	24:12	24:33	4	picture_Release
+arg	24:28	24:33	5	p_pic
+water	24:28	0:0	6	p_pic
+water	24:34	0:0	4	;
+return	25:12	25:23	4	NULL
+water	25:19	0:0	5	NULL
+water	26:4	0:0	4	}
+return	27:4	27:46	2	CopyInfoAndRelease(p_outpic,p_pic)
+call	27:11	27:45	3	CopyInfoAndRelease
+arg	27:30	27:38	4	p_outpic
+water	27:30	0:0	5	p_outpic
+arg	27:40	27:45	4	p_pic
+water	27:40	0:0	5	p_pic

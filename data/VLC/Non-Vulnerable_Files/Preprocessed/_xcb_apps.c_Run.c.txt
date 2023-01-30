@@ -1,0 +1,128 @@
+func	2:0	30:0	0	static void *	Run
+params	2:17	0:0	1	
+param	2:18	2:28	2	void *	data
+stmnts	0:0	29:15	1	
+decl	4:4	4:35	2	services_discovery_t	*sd
+op	4:29	0:0	2	=
+water	4:31	0:0	2	data
+decl	5:4	5:47	2	services_discovery_sys_t	*p_sys
+op	5:36	0:0	2	=
+water	5:38	0:0	2	sd
+op	5:40	0:0	2	->
+water	5:42	0:0	2	p_sys
+decl	6:4	6:40	2	xcb_connection_t	*conn
+op	6:27	0:0	2	=
+water	6:29	0:0	2	p_sys
+op	6:34	0:0	2	->
+water	6:36	0:0	2	conn
+decl	7:4	7:43	2	int	fd
+op	7:11	0:0	2	=
+call	7:13	7:42	3	xcb_get_file_descriptor
+arg	7:38	7:42	4	conn
+water	7:38	0:0	5	conn
+if	8:4	9:19	2	(fd == - 1)
+cond	8:8	8:15	3	fd == - 1
+water	8:8	0:0	4	fd
+op	8:11	0:0	4	==
+op	8:14	0:0	4	-
+water	8:15	0:0	4	1
+stmts	9:8	9:19	3	
+return	9:8	9:19	4	NULL
+water	9:15	0:0	5	NULL
+while	10:4	28:4	2	(!xcb_connection_has_error (conn ))
+cond	10:11	10:42	3	!xcb_connection_has_error (conn )
+op	10:11	0:0	4	!
+call	10:12	10:42	4	xcb_connection_has_error
+arg	10:38	10:42	5	conn
+water	10:38	0:0	6	conn
+stmts	11:4	28:4	3	
+water	11:4	0:0	4	{
+decl	12:8	12:31	4	xcb_generic_event_t	*ev
+decl	13:8	13:59	4	struct pollfd	ufd
+op	13:26	0:0	4	=
+water	13:28	0:0	4	{
+op	13:30	0:0	4	.
+water	13:31	0:0	4	fd
+op	13:34	0:0	4	=
+water	13:36	0:0	4	fd
+water	13:38	0:0	4	,
+op	13:40	0:0	4	.
+water	13:41	0:0	4	events
+op	13:48	0:0	4	=
+water	13:50	0:0	4	POLLIN
+water	13:56	0:0	4	,
+water	13:58	0:0	4	}
+call	14:8	14:25	4	poll
+arg	14:14	14:18	5	&ufd
+op	14:14	0:0	6	&
+water	14:15	0:0	6	ufd
+arg	14:20	14:21	5	1
+water	14:20	0:0	6	1
+arg	14:23	14:25	5	-1
+op	14:23	0:0	6	-
+water	14:24	0:0	6	1
+water	14:26	0:0	4	;
+decl	15:8	15:36	4	int	canc
+op	15:17	0:0	4	=
+call	15:19	15:35	5	vlc_savecancel
+while	16:8	26:8	4	(( ev =xcb_poll_for_event (conn ) ) != NULL)
+cond	16:15	16:51	5	( ev =xcb_poll_for_event (conn ) ) != NULL
+water	16:15	0:0	6	(
+water	16:16	0:0	6	ev
+op	16:19	0:0	6	=
+call	16:21	16:45	6	xcb_poll_for_event
+arg	16:41	16:45	7	conn
+water	16:41	0:0	8	conn
+water	16:46	0:0	6	)
+op	16:48	0:0	6	!=
+water	16:51	0:0	6	NULL
+stmts	17:8	26:8	5	
+water	17:8	0:0	6	{
+if	18:12	24:12	6	(( ev -> response_type & 0 x7F ) == XCB_PROPERTY_NOTIFY)
+cond	18:16	18:46	7	( ev -> response_type & 0 x7F ) == XCB_PROPERTY_NOTIFY
+water	18:16	0:0	8	(
+water	18:17	0:0	8	ev
+op	18:19	0:0	8	->
+water	18:21	0:0	8	response_type
+op	18:35	0:0	8	&
+water	18:37	0:0	8	0
+water	18:38	0:0	8	x7F
+water	18:41	0:0	8	)
+op	18:43	0:0	8	==
+water	18:46	0:0	8	XCB_PROPERTY_NOTIFY
+stmts	19:12	24:12	7	
+water	19:12	0:0	8	{
+decl	20:17	21:54	8	const xcb_property_notify_event_t	*pn
+op	20:55	0:0	8	=
+water	21:21	0:0	8	(
+water	21:22	0:0	8	xcb_property_notify_event_t
+op	21:50	0:0	8	*
+water	21:51	0:0	8	)
+water	21:52	0:0	8	ev
+if	22:17	23:36	8	(pn -> atom == p_sys -> net_client_list)
+cond	22:21	22:40	9	pn -> atom == p_sys -> net_client_list
+water	22:21	0:0	10	pn
+op	22:23	0:0	10	->
+water	22:25	0:0	10	atom
+op	22:30	0:0	10	==
+water	22:33	0:0	10	p_sys
+op	22:38	0:0	10	->
+water	22:40	0:0	10	net_client_list
+stmts	23:21	23:36	9	
+call	23:21	23:35	10	UpdateApps
+arg	23:33	23:35	11	sd
+water	23:33	0:0	12	sd
+water	23:36	0:0	10	;
+water	24:12	0:0	8	}
+call	25:12	25:20	6	free
+arg	25:18	25:20	7	ev
+water	25:18	0:0	8	ev
+water	25:21	0:0	6	;
+water	26:8	0:0	6	}
+call	27:8	27:31	4	vlc_restorecancel
+arg	27:27	27:31	5	canc
+water	27:27	0:0	6	canc
+water	27:32	0:0	4	;
+water	28:4	0:0	4	}
+return	29:4	29:15	2	NULL
+water	29:11	0:0	3	NULL

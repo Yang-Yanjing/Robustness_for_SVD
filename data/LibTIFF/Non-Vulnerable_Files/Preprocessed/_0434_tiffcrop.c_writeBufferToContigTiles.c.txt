@@ -1,0 +1,444 @@
+func	2:0	84:2	0	static int	writeBufferToContigTiles
+params	2:36	0:0	1	
+param	2:37	2:46	2	TIFF *	out
+param	2:48	2:58	2	uint8 *	buf
+param	2:60	2:78	2	uint32	imagelength
+param	3:11	3:28	2	uint32	imagewidth
+param	3:30	3:43	2	tsample_t	spp
+param	4:39	4:61	2	struct dump_opts *	dump
+stmnts	0:0	83:10	1	
+decl	6:2	6:12	2	uint16	bps
+decl	7:2	7:15	2	uint32	tl
+water	7:11	0:0	2	,
+decl	7:2	7:15	2	uint32	tw
+decl	8:2	8:29	2	uint32	row
+water	8:12	0:0	2	,
+decl	8:2	8:29	2	uint32	col
+water	8:17	0:0	2	,
+decl	8:2	8:29	2	uint32	nrow
+water	8:23	0:0	2	,
+decl	8:2	8:29	2	uint32	ncol
+decl	9:2	9:32	2	uint32	src_rowsize
+water	9:20	0:0	2	,
+decl	9:2	9:32	2	uint32	col_offset
+decl	10:2	10:45	2	uint32	tile_rowsize
+op	10:23	0:0	2	=
+call	10:25	10:44	3	TIFFTileRowSize
+arg	10:41	10:44	4	out
+water	10:41	0:0	5	out
+decl	11:2	11:28	2	uint8	*bufp
+op	11:14	0:0	2	=
+water	11:16	0:0	2	(
+water	11:17	0:0	2	uint8
+op	11:22	0:0	2	*
+water	11:23	0:0	2	)
+water	11:25	0:0	2	buf
+decl	12:2	12:27	2	tsize_t	tile_buffsize
+op	12:24	0:0	2	=
+water	12:26	0:0	2	0
+decl	13:2	13:38	2	tsize_t	tilesize
+op	13:19	0:0	2	=
+call	13:21	13:37	3	TIFFTileSize
+arg	13:34	13:37	4	out
+water	13:34	0:0	5	out
+decl	14:2	14:31	2	unsigned char	*tilebuf
+op	14:25	0:0	2	=
+water	14:27	0:0	2	NULL
+if	15:2	18:14	2	(!TIFFGetField (out ,TIFFTAG_TILELENGTH ,& tl ) || !TIFFGetField (out ,TIFFTAG_TILEWIDTH ,& tw ) || !TIFFGetField (out ,TIFFTAG_BITSPERSAMPLE ,& bps ))
+cond	15:6	17:52	3	!TIFFGetField (out ,TIFFTAG_TILELENGTH ,& tl ) || !TIFFGetField (out ,TIFFTAG_TILEWIDTH ,& tw ) || !TIFFGetField (out ,TIFFTAG_BITSPERSAMPLE ,& bps )
+op	15:6	0:0	4	!
+call	15:7	15:48	4	TIFFGetField
+arg	15:20	15:23	5	out
+water	15:20	0:0	6	out
+arg	15:25	15:43	5	TIFFTAG_TILELENGTH
+water	15:25	0:0	6	TIFFTAG_TILELENGTH
+arg	15:45	15:48	5	&tl
+op	15:45	0:0	6	&
+water	15:46	0:0	6	tl
+op	15:50	0:0	4	||
+op	16:6	0:0	4	!
+call	16:7	16:47	4	TIFFGetField
+arg	16:20	16:23	5	out
+water	16:20	0:0	6	out
+arg	16:25	16:42	5	TIFFTAG_TILEWIDTH
+water	16:25	0:0	6	TIFFTAG_TILEWIDTH
+arg	16:44	16:47	5	&tw
+op	16:44	0:0	6	&
+water	16:45	0:0	6	tw
+op	16:49	0:0	4	||
+op	17:6	0:0	4	!
+call	17:7	17:52	4	TIFFGetField
+arg	17:20	17:23	5	out
+water	17:20	0:0	6	out
+arg	17:25	17:46	5	TIFFTAG_BITSPERSAMPLE
+water	17:25	0:0	6	TIFFTAG_BITSPERSAMPLE
+arg	17:48	17:52	5	&bps
+op	17:48	0:0	6	&
+water	17:49	0:0	6	bps
+stmts	18:6	18:14	3	
+return	18:6	18:14	4	1
+water	18:13	0:0	5	1
+if	19:2	23:2	2	(tilesize == 0 || tile_rowsize == 0 || tl == 0 || tw == 0)
+cond	19:6	19:61	3	tilesize == 0 || tile_rowsize == 0 || tl == 0 || tw == 0
+water	19:6	0:0	4	tilesize
+op	19:15	0:0	4	==
+water	19:18	0:0	4	0
+op	19:20	0:0	4	||
+water	19:23	0:0	4	tile_rowsize
+op	19:36	0:0	4	==
+water	19:39	0:0	4	0
+op	19:41	0:0	4	||
+water	19:44	0:0	4	tl
+op	19:47	0:0	4	==
+water	19:50	0:0	4	0
+op	19:52	0:0	4	||
+water	19:55	0:0	4	tw
+op	19:58	0:0	4	==
+water	19:61	0:0	4	0
+stmts	20:2	23:2	3	
+water	20:2	0:0	4	{
+call	21:4	21:104	4	TIFFError
+arg	21:14	21:40	5	"writeBufferToContigTiles"
+water	21:14	0:0	6	"writeBufferToContigTiles"
+arg	21:42	21:104	5	"Tile size, tile row size, tile width, or tile length is zero"
+water	21:42	0:0	6	"Tile size, tile row size, tile width, or tile length is zero"
+water	21:105	0:0	4	;
+call	22:4	22:11	4	exit
+arg	22:9	22:11	5	-1
+op	22:9	0:0	6	-
+water	22:10	0:0	6	1
+water	22:12	0:0	4	;
+water	23:2	0:0	4	}
+water	24:2	0:0	2	tile_buffsize
+op	24:16	0:0	2	=
+water	24:18	0:0	2	tilesize
+water	24:26	0:0	2	;
+if	25:2	38:4	2	(tilesize <( tsize_t ) (tl * tile_rowsize ))
+cond	25:6	25:44	3	tilesize <( tsize_t ) (tl * tile_rowsize )
+water	25:6	0:0	4	tilesize
+op	25:15	0:0	4	<
+call	25:17	25:44	4	(tsize_t)
+arg	25:27	25:44	5	tl*tile_rowsize
+water	25:27	0:0	6	tl
+op	25:30	0:0	6	*
+water	25:32	0:0	6	tile_rowsize
+stmts	26:4	38:4	3	
+water	26:4	0:0	4	{
+call	28:4	30:41	4	TIFFError
+arg	28:14	28:40	5	"writeBufferToContigTiles"
+water	28:14	0:0	6	"writeBufferToContigTiles"
+arg	29:7	29:66	5	"Tilesize %lu is too small, using alternate calculation %u"
+water	29:7	0:0	6	"Tilesize %lu is too small, using alternate calculation %u"
+arg	30:14	30:22	5	tilesize
+water	30:14	0:0	6	tilesize
+arg	30:24	30:41	5	tl*tile_rowsize
+water	30:24	0:0	6	tl
+op	30:27	0:0	6	*
+water	30:29	0:0	6	tile_rowsize
+water	30:42	0:0	4	;
+water	32:4	0:0	4	tile_buffsize
+op	32:18	0:0	4	=
+water	32:20	0:0	4	tl
+op	32:23	0:0	4	*
+water	32:25	0:0	4	tile_rowsize
+water	32:37	0:0	4	;
+if	33:4	37:4	4	(tl != tile_buffsize / tile_rowsize)
+cond	33:8	33:30	5	tl != tile_buffsize / tile_rowsize
+water	33:8	0:0	6	tl
+op	33:11	0:0	6	!=
+water	33:14	0:0	6	tile_buffsize
+op	33:28	0:0	6	/
+water	33:30	0:0	6	tile_rowsize
+stmts	34:4	37:4	5	
+water	34:4	0:0	6	{
+call	35:1	35:86	6	TIFFError
+arg	35:11	35:37	7	"writeBufferToContigTiles"
+water	35:11	0:0	8	"writeBufferToContigTiles"
+arg	35:39	35:86	7	"Integer overflow when calculating buffer size"
+water	35:39	0:0	8	"Integer overflow when calculating buffer size"
+water	35:87	0:0	6	;
+call	36:1	36:8	6	exit
+arg	36:6	36:8	7	-1
+op	36:6	0:0	8	-
+water	36:7	0:0	8	1
+water	36:9	0:0	6	;
+water	37:4	0:0	6	}
+water	38:4	0:0	4	}
+if	39:2	46:2	2	(imagewidth == 0 || ( uint32 ) bps * ( uint32 ) spp > TIFF_UINT32_MAX / imagewidth || bps * spp * imagewidth > TIFF_UINT32_MAX - 7 U)
+cond	39:6	41:50	3	imagewidth == 0 || ( uint32 ) bps * ( uint32 ) spp > TIFF_UINT32_MAX / imagewidth || bps * spp * imagewidth > TIFF_UINT32_MAX - 7 U
+water	39:6	0:0	4	imagewidth
+op	39:17	0:0	4	==
+water	39:20	0:0	4	0
+op	39:22	0:0	4	||
+water	40:6	0:0	4	(
+water	40:7	0:0	4	uint32
+water	40:13	0:0	4	)
+water	40:14	0:0	4	bps
+op	40:18	0:0	4	*
+water	40:20	0:0	4	(
+water	40:21	0:0	4	uint32
+water	40:27	0:0	4	)
+water	40:28	0:0	4	spp
+op	40:32	0:0	4	>
+water	40:34	0:0	4	TIFF_UINT32_MAX
+op	40:50	0:0	4	/
+water	40:52	0:0	4	imagewidth
+op	40:63	0:0	4	||
+water	41:6	0:0	4	bps
+op	41:10	0:0	4	*
+water	41:12	0:0	4	spp
+op	41:16	0:0	4	*
+water	41:18	0:0	4	imagewidth
+op	41:29	0:0	4	>
+water	41:31	0:0	4	TIFF_UINT32_MAX
+op	41:47	0:0	4	-
+water	41:49	0:0	4	7
+water	41:50	0:0	4	U
+stmts	42:2	46:2	3	
+water	42:2	0:0	4	{
+call	43:6	44:80	4	TIFFError
+arg	43:16	43:33	5	TIFFFileName(out)
+call	43:16	43:32	6	TIFFFileName
+arg	43:29	43:32	7	out
+water	43:29	0:0	8	out
+arg	44:12	44:80	5	"Error, uint32 overflow when computing (imagewidth * bps * spp) + 7"
+water	44:12	0:0	6	"Error, uint32 overflow when computing (imagewidth * bps * spp) + 7"
+water	44:81	0:0	4	;
+return	45:6	45:14	4	1
+water	45:13	0:0	5	1
+water	46:2	0:0	4	}
+water	47:2	0:0	2	src_rowsize
+op	47:14	0:0	2	=
+water	47:16	0:0	2	(
+water	47:17	0:0	2	(
+water	47:18	0:0	2	imagewidth
+op	47:29	0:0	2	*
+water	47:31	0:0	2	spp
+op	47:35	0:0	2	*
+water	47:37	0:0	2	bps
+water	47:40	0:0	2	)
+op	47:42	0:0	2	+
+water	47:44	0:0	2	7
+water	47:45	0:0	2	U
+water	47:46	0:0	2	)
+op	47:48	0:0	2	/
+water	47:50	0:0	2	8
+water	47:51	0:0	2	;
+water	48:2	0:0	2	tilebuf
+op	48:10	0:0	2	=
+call	48:12	48:37	2	_TIFFmalloc
+arg	48:24	48:37	3	tile_buffsize
+water	48:24	0:0	4	tile_buffsize
+water	48:38	0:0	2	;
+if	49:2	50:12	2	(tilebuf == 0)
+cond	49:6	49:17	3	tilebuf == 0
+water	49:6	0:0	4	tilebuf
+op	49:14	0:0	4	==
+water	49:17	0:0	4	0
+stmts	50:4	50:12	3	
+return	50:4	50:12	4	1
+water	50:11	0:0	5	1
+for	51:2	81:4	2	(row = 0 ;row < imagelength;row += tl)
+forinit	51:7	51:14	3	row = 0 ;
+water	51:7	0:0	4	row
+op	51:11	0:0	4	=
+water	51:13	0:0	4	0
+water	51:14	0:0	4	;
+cond	51:16	51:22	3	row < imagelength
+water	51:16	0:0	4	row
+op	51:20	0:0	4	<
+water	51:22	0:0	4	imagelength
+forexpr	51:35	51:42	3	row += tl
+water	51:35	0:0	4	row
+op	51:39	0:0	4	+=
+water	51:42	0:0	4	tl
+stmts	52:4	81:4	3	
+water	52:4	0:0	4	{
+water	53:4	0:0	4	nrow
+op	53:9	0:0	4	=
+water	53:11	0:0	4	(
+water	53:12	0:0	4	row
+op	53:16	0:0	4	+
+water	53:18	0:0	4	tl
+op	53:21	0:0	4	>
+water	53:23	0:0	4	imagelength
+water	53:34	0:0	4	)
+water	53:36	0:0	4	?
+water	53:38	0:0	4	imagelength
+op	53:50	0:0	4	-
+water	53:52	0:0	4	row
+water	53:56	0:0	4	:
+water	53:58	0:0	4	tl
+water	53:60	0:0	4	;
+for	54:4	80:6	4	(col = 0 ;col < imagewidth;col += tw)
+forinit	54:9	54:16	5	col = 0 ;
+water	54:9	0:0	6	col
+op	54:13	0:0	6	=
+water	54:15	0:0	6	0
+water	54:16	0:0	6	;
+cond	54:18	54:24	5	col < imagewidth
+water	54:18	0:0	6	col
+op	54:22	0:0	6	<
+water	54:24	0:0	6	imagewidth
+forexpr	54:36	54:43	5	col += tw
+water	54:36	0:0	6	col
+op	54:40	0:0	6	+=
+water	54:43	0:0	6	tw
+stmts	55:6	80:6	5	
+water	55:6	0:0	6	{
+if	57:6	58:24	6	(col + tw > imagewidth)
+cond	57:10	57:21	7	col + tw > imagewidth
+water	57:10	0:0	8	col
+op	57:14	0:0	8	+
+water	57:16	0:0	8	tw
+op	57:19	0:0	8	>
+water	57:21	0:0	8	imagewidth
+stmts	58:1	58:24	7	
+water	58:1	0:0	8	ncol
+op	58:6	0:0	8	=
+water	58:8	0:0	8	imagewidth
+op	58:19	0:0	8	-
+water	58:21	0:0	8	col
+water	58:24	0:0	8	;
+else	59:6	60:17	6
+stmts	60:8	60:17	7	
+water	60:8	0:0	8	ncol
+op	60:13	0:0	8	=
+water	60:15	0:0	8	tw
+water	60:17	0:0	8	;
+water	61:6	0:0	6	col_offset
+op	61:17	0:0	6	=
+water	61:19	0:0	6	(
+water	61:20	0:0	6	(
+water	61:21	0:0	6	(
+water	61:22	0:0	6	col
+op	61:26	0:0	6	*
+water	61:28	0:0	6	bps
+op	61:32	0:0	6	*
+water	61:34	0:0	6	spp
+water	61:37	0:0	6	)
+op	61:39	0:0	6	+
+water	61:41	0:0	6	7
+water	61:42	0:0	6	)
+op	61:44	0:0	6	/
+water	61:46	0:0	6	8
+water	61:47	0:0	6	)
+water	61:48	0:0	6	;
+water	62:6	0:0	6	bufp
+op	62:11	0:0	6	=
+water	62:13	0:0	6	buf
+op	62:17	0:0	6	+
+water	62:19	0:0	6	(
+water	62:20	0:0	6	row
+op	62:24	0:0	6	*
+water	62:26	0:0	6	src_rowsize
+water	62:37	0:0	6	)
+op	62:39	0:0	6	+
+water	62:41	0:0	6	col_offset
+water	62:51	0:0	6	;
+if	63:6	71:8	6	(extractContigSamplesToTileBuffer (tilebuf ,bufp ,nrow ,ncol ,imagewidth ,tw ,0 ,spp ,spp ,bps ,dump ) > 0)
+cond	63:10	64:38	7	extractContigSamplesToTileBuffer (tilebuf ,bufp ,nrow ,ncol ,imagewidth ,tw ,0 ,spp ,spp ,bps ,dump ) > 0
+call	63:10	64:34	8	extractContigSamplesToTileBuffer
+arg	63:43	63:50	9	tilebuf
+water	63:43	0:0	10	tilebuf
+arg	63:52	63:56	9	bufp
+water	63:52	0:0	10	bufp
+arg	63:58	63:62	9	nrow
+water	63:58	0:0	10	nrow
+arg	63:64	63:68	9	ncol
+water	63:64	0:0	10	ncol
+arg	63:70	63:80	9	imagewidth
+water	63:70	0:0	10	imagewidth
+arg	64:8	64:10	9	tw
+water	64:8	0:0	10	tw
+arg	64:12	64:13	9	0
+water	64:12	0:0	10	0
+arg	64:15	64:18	9	spp
+water	64:15	0:0	10	spp
+arg	64:20	64:23	9	spp
+water	64:20	0:0	10	spp
+arg	64:25	64:28	9	bps
+water	64:25	0:0	10	bps
+arg	64:30	64:34	9	dump
+water	64:30	0:0	10	dump
+op	64:36	0:0	8	>
+water	64:38	0:0	8	0
+stmts	65:8	71:8	7	
+water	65:8	0:0	8	{
+call	66:1	68:57	8	TIFFError
+arg	66:11	66:37	9	"writeBufferToContigTiles"
+water	66:11	0:0	10	"writeBufferToContigTiles"
+arg	67:18	67:71	9	"Unable to extract data to tile for row %lu, col %lu"
+water	67:18	0:0	10	"Unable to extract data to tile for row %lu, col %lu"
+arg	68:18	68:37	9	(unsignedlong)row
+water	68:18	0:0	10	(
+water	68:19	0:0	10	unsigned
+water	68:28	0:0	10	long
+water	68:32	0:0	10	)
+water	68:34	0:0	10	row
+arg	68:39	68:57	9	(unsignedlong)col
+water	68:39	0:0	10	(
+water	68:40	0:0	10	unsigned
+water	68:49	0:0	10	long
+water	68:53	0:0	10	)
+water	68:54	0:0	10	col
+water	68:58	0:0	8	;
+call	69:1	69:18	8	_TIFFfree
+arg	69:11	69:18	9	tilebuf
+water	69:11	0:0	10	tilebuf
+water	69:19	0:0	8	;
+return	70:1	70:9	8	1
+water	70:8	0:0	9	1
+water	71:8	0:0	8	}
+if	72:6	79:1	6	(TIFFWriteTile (out ,tilebuf ,col ,row ,0 ,0 ) < 0)
+cond	72:10	72:56	7	TIFFWriteTile (out ,tilebuf ,col ,row ,0 ,0 ) < 0
+call	72:10	72:52	8	TIFFWriteTile
+arg	72:24	72:27	9	out
+water	72:24	0:0	10	out
+arg	72:29	72:36	9	tilebuf
+water	72:29	0:0	10	tilebuf
+arg	72:38	72:41	9	col
+water	72:38	0:0	10	col
+arg	72:43	72:46	9	row
+water	72:43	0:0	10	row
+arg	72:48	72:49	9	0
+water	72:48	0:0	10	0
+arg	72:51	72:52	9	0
+water	72:51	0:0	10	0
+op	72:54	0:0	8	<
+water	72:56	0:0	8	0
+stmts	73:8	79:1	7	
+water	73:8	0:0	8	{
+call	74:1	76:51	8	TIFFError
+arg	74:11	74:37	9	"writeBufferToContigTiles"
+water	74:11	0:0	10	"writeBufferToContigTiles"
+arg	75:11	75:41	9	"Cannot write tile at %lu %lu"
+water	75:11	0:0	10	"Cannot write tile at %lu %lu"
+arg	76:11	76:30	9	(unsignedlong)col
+water	76:11	0:0	10	(
+water	76:12	0:0	10	unsigned
+water	76:21	0:0	10	long
+water	76:25	0:0	10	)
+water	76:27	0:0	10	col
+arg	76:32	76:51	9	(unsignedlong)row
+water	76:32	0:0	10	(
+water	76:33	0:0	10	unsigned
+water	76:42	0:0	10	long
+water	76:46	0:0	10	)
+water	76:48	0:0	10	row
+water	76:52	0:0	8	;
+call	77:2	77:19	8	_TIFFfree
+arg	77:12	77:19	9	tilebuf
+water	77:12	0:0	10	tilebuf
+water	77:20	0:0	8	;
+return	78:1	78:9	8	1
+water	78:8	0:0	9	1
+water	79:1	0:0	8	}
+water	80:6	0:0	6	}
+water	81:4	0:0	4	}
+call	82:2	82:19	2	_TIFFfree
+arg	82:12	82:19	3	tilebuf
+water	82:12	0:0	4	tilebuf
+water	82:20	0:0	2	;
+return	83:2	83:10	2	0
+water	83:9	0:0	3	0

@@ -1,0 +1,673 @@
+func	2:0	117:0	0	static void	RebuildDeviceList
+params	2:29	0:0	1	
+param	2:30	2:53	2	audio_output_t *	p_aout
+stmnts	0:0	116:19	1	
+decl	4:4	4:35	2	OSStatus	err
+op	4:28	0:0	2	=
+water	4:30	0:0	2	noErr
+decl	5:4	5:40	2	UInt32	propertySize
+op	5:37	0:0	2	=
+water	5:39	0:0	2	0
+decl	6:4	6:34	2	AudioObjectID	*deviceIDs
+decl	7:4	7:39	2	UInt32	numberOfDevices
+decl	8:4	8:44	2	CFMutableArrayRef	currentListOfDevices
+decl	9:4	9:44	2	struct aout_sys_t	*p_sys
+op	9:31	0:0	2	=
+water	9:33	0:0	2	p_aout
+op	9:39	0:0	2	->
+water	9:41	0:0	2	sys
+call	10:4	10:41	2	msg_Dbg
+arg	10:12	10:18	3	p_aout
+water	10:12	0:0	4	p_aout
+arg	10:20	10:41	3	"Rebuild device list"
+water	10:20	0:0	4	"Rebuild device list"
+water	10:42	0:0	2	;
+call	11:4	11:59	2	ReportDevice
+arg	11:17	11:23	3	p_aout
+water	11:17	0:0	4	p_aout
+arg	11:25	11:26	3	0
+water	11:25	0:0	4	0
+arg	11:28	11:59	3	_("System Sound Output Device")
+call	11:28	11:58	4	_
+arg	11:30	11:58	5	"System Sound Output Device"
+water	11:30	0:0	6	"System Sound Output Device"
+water	11:60	0:0	2	;
+water	13:4	0:0	2	currentListOfDevices
+op	13:25	0:0	2	=
+call	13:27	13:94	2	CFArrayCreateMutable
+arg	13:48	13:67	3	kCFAllocatorDefault
+water	13:48	0:0	4	kCFAllocatorDefault
+arg	13:69	13:70	3	0
+water	13:69	0:0	4	0
+arg	13:72	13:94	3	&kCFTypeArrayCallBacks
+op	13:72	0:0	4	&
+water	13:73	0:0	4	kCFTypeArrayCallBacks
+water	13:95	0:0	2	;
+decl	15:4	15:154	2	AudioObjectPropertyAddress	audioDevicesAddress
+op	15:51	0:0	2	=
+water	15:53	0:0	2	{
+water	15:55	0:0	2	kAudioHardwarePropertyDevices
+water	15:84	0:0	2	,
+water	15:86	0:0	2	kAudioObjectPropertyScopeGlobal
+water	15:117	0:0	2	,
+water	15:119	0:0	2	kAudioObjectPropertyElementMaster
+water	15:153	0:0	2	}
+water	16:4	0:0	2	err
+op	16:8	0:0	2	=
+call	16:10	16:111	2	AudioObjectGetPropertyDataSize
+arg	16:41	16:65	3	kAudioObjectSystemObject
+water	16:41	0:0	4	kAudioObjectSystemObject
+arg	16:67	16:87	3	&audioDevicesAddress
+op	16:67	0:0	4	&
+water	16:68	0:0	4	audioDevicesAddress
+arg	16:89	16:90	3	0
+water	16:89	0:0	4	0
+arg	16:92	16:96	3	NULL
+water	16:92	0:0	4	NULL
+arg	16:98	16:111	3	&propertySize
+op	16:98	0:0	4	&
+water	16:99	0:0	4	propertySize
+water	16:112	0:0	2	;
+if	17:4	21:4	2	(err != noErr)
+cond	17:8	17:15	3	err != noErr
+water	17:8	0:0	4	err
+op	17:12	0:0	4	!=
+water	17:15	0:0	4	noErr
+stmts	17:22	21:4	3	
+water	17:22	0:0	4	{
+call	18:8	18:80	4	msg_Err
+arg	18:16	18:22	5	p_aout
+water	18:16	0:0	6	p_aout
+arg	18:24	18:66	5	"Could not get number of devices: [%4.4s]"
+water	18:24	0:0	6	"Could not get number of devices: [%4.4s]"
+arg	18:68	18:80	5	(char*)&err
+water	18:68	0:0	6	(
+water	18:69	0:0	6	char
+op	18:74	0:0	6	*
+water	18:75	0:0	6	)
+op	18:76	0:0	6	&
+water	18:77	0:0	6	err
+water	18:81	0:0	4	;
+call	19:8	19:38	4	CFRelease
+arg	19:18	19:38	5	currentListOfDevices
+water	19:18	0:0	6	currentListOfDevices
+water	19:39	0:0	4	;
+return	20:8	20:14	4	
+water	21:4	0:0	4	}
+water	22:4	0:0	2	numberOfDevices
+op	22:20	0:0	2	=
+water	22:22	0:0	2	propertySize
+op	22:35	0:0	2	/
+op	22:37	0:0	2	sizeof
+water	22:43	0:0	2	(
+water	22:44	0:0	2	AudioDeviceID
+water	22:57	0:0	2	)
+water	22:58	0:0	2	;
+if	23:4	27:4	2	(numberOfDevices < 1)
+cond	23:8	23:26	3	numberOfDevices < 1
+water	23:8	0:0	4	numberOfDevices
+op	23:24	0:0	4	<
+water	23:26	0:0	4	1
+stmts	23:29	27:4	3	
+water	23:29	0:0	4	{
+call	24:8	24:56	4	msg_Err
+arg	24:16	24:22	5	p_aout
+water	24:16	0:0	6	p_aout
+arg	24:24	24:56	5	"No audio output devices found."
+water	24:24	0:0	6	"No audio output devices found."
+water	24:57	0:0	4	;
+call	25:8	25:38	4	CFRelease
+arg	25:18	25:38	5	currentListOfDevices
+water	25:18	0:0	6	currentListOfDevices
+water	25:39	0:0	4	;
+return	26:8	26:14	4	
+water	27:4	0:0	4	}
+call	28:4	28:63	2	msg_Dbg
+arg	28:12	28:18	3	p_aout
+water	28:12	0:0	4	p_aout
+arg	28:20	28:46	3	"found %i audio device(s)"
+water	28:20	0:0	4	"found %i audio device(s)"
+arg	28:48	28:63	3	numberOfDevices
+water	28:48	0:0	4	numberOfDevices
+water	28:64	0:0	2	;
+water	30:4	0:0	2	deviceIDs
+op	30:14	0:0	2	=
+water	30:16	0:0	2	(
+water	30:17	0:0	2	AudioDeviceID
+op	30:31	0:0	2	*
+water	30:32	0:0	2	)
+call	30:33	30:78	2	calloc
+arg	30:40	30:55	3	numberOfDevices
+water	30:40	0:0	4	numberOfDevices
+arg	30:57	30:78	3	sizeof(AudioDeviceID)
+op	30:57	0:0	4	sizeof
+water	30:63	0:0	4	(
+water	30:64	0:0	4	AudioDeviceID
+water	30:77	0:0	4	)
+water	30:79	0:0	2	;
+if	31:4	34:4	2	(deviceIDs == NULL)
+cond	31:8	31:21	3	deviceIDs == NULL
+water	31:8	0:0	4	deviceIDs
+op	31:18	0:0	4	==
+water	31:21	0:0	4	NULL
+stmts	31:27	34:4	3	
+water	31:27	0:0	4	{
+call	32:8	32:38	4	CFRelease
+arg	32:18	32:38	5	currentListOfDevices
+water	32:18	0:0	6	currentListOfDevices
+water	32:39	0:0	4	;
+return	33:8	33:14	4	
+water	34:4	0:0	4	}
+water	36:4	0:0	2	err
+op	36:8	0:0	2	=
+call	36:10	36:118	2	AudioObjectGetPropertyData
+arg	36:37	36:61	3	kAudioObjectSystemObject
+water	36:37	0:0	4	kAudioObjectSystemObject
+arg	36:63	36:83	3	&audioDevicesAddress
+op	36:63	0:0	4	&
+water	36:64	0:0	4	audioDevicesAddress
+arg	36:85	36:86	3	0
+water	36:85	0:0	4	0
+arg	36:88	36:92	3	NULL
+water	36:88	0:0	4	NULL
+arg	36:94	36:107	3	&propertySize
+op	36:94	0:0	4	&
+water	36:95	0:0	4	propertySize
+arg	36:109	36:118	3	deviceIDs
+water	36:109	0:0	4	deviceIDs
+water	36:119	0:0	2	;
+if	37:4	42:4	2	(err != noErr)
+cond	37:8	37:15	3	err != noErr
+water	37:8	0:0	4	err
+op	37:12	0:0	4	!=
+water	37:15	0:0	4	noErr
+stmts	37:22	42:4	3	
+water	37:22	0:0	4	{
+call	38:8	38:76	4	msg_Err
+arg	38:16	38:22	5	p_aout
+water	38:16	0:0	6	p_aout
+arg	38:24	38:62	5	"could not get the device IDs [%4.4s]"
+water	38:24	0:0	6	"could not get the device IDs [%4.4s]"
+arg	38:64	38:76	5	(char*)&err
+water	38:64	0:0	6	(
+water	38:65	0:0	6	char
+op	38:70	0:0	6	*
+water	38:71	0:0	6	)
+op	38:72	0:0	6	&
+water	38:73	0:0	6	err
+water	38:77	0:0	4	;
+call	39:8	39:38	4	CFRelease
+arg	39:18	39:38	5	currentListOfDevices
+water	39:18	0:0	6	currentListOfDevices
+water	39:39	0:0	4	;
+call	40:8	40:22	4	free
+arg	40:13	40:22	5	deviceIDs
+water	40:13	0:0	6	deviceIDs
+water	40:23	0:0	4	;
+return	41:8	41:14	4	
+water	42:4	0:0	4	}
+decl	43:4	43:147	2	AudioObjectPropertyAddress	deviceNameAddress
+op	43:49	0:0	2	=
+water	43:51	0:0	2	{
+water	43:53	0:0	2	kAudioObjectPropertyName
+water	43:77	0:0	2	,
+water	43:79	0:0	2	kAudioObjectPropertyScopeGlobal
+water	43:110	0:0	2	,
+water	43:112	0:0	2	kAudioObjectPropertyElementMaster
+water	43:146	0:0	2	}
+for	44:4	90:4	2	( unsigned int i = 0 ;i < numberOfDevices;i ++)
+forinit	0:0	44:27	3	 unsigned int i = 0 ;
+decl	44:9	44:27	4	unsigned int	i
+op	44:24	0:0	4	=
+water	44:26	0:0	4	0
+cond	44:29	44:33	3	i < numberOfDevices
+water	44:29	0:0	4	i
+op	44:31	0:0	4	<
+water	44:33	0:0	4	numberOfDevices
+forexpr	44:50	44:51	3	i ++
+water	44:50	0:0	4	i
+op	44:51	0:0	4	++
+stmts	44:55	90:4	3	
+water	44:55	0:0	4	{
+decl	45:8	45:35	4	CFStringRef	device_name_ref
+decl	46:8	46:22	4	char	*psz_name
+decl	47:8	47:22	4	CFIndex	length
+decl	48:8	48:34	4	UInt32	i_id
+op	48:20	0:0	4	=
+water	48:22	0:0	4	deviceIDs
+op	48:31	0:0	4	[
+water	48:32	0:0	4	i
+op	48:33	0:0	4	]
+water	50:8	0:0	4	err
+op	50:12	0:0	4	=
+call	50:14	50:101	4	AudioObjectGetPropertyDataSize
+arg	50:45	50:57	5	deviceIDs[i]
+water	50:45	0:0	6	deviceIDs
+op	50:54	0:0	6	[
+water	50:55	0:0	6	i
+op	50:56	0:0	6	]
+arg	50:59	50:77	5	&deviceNameAddress
+op	50:59	0:0	6	&
+water	50:60	0:0	6	deviceNameAddress
+arg	50:79	50:80	5	0
+water	50:79	0:0	6	0
+arg	50:82	50:86	5	NULL
+water	50:82	0:0	6	NULL
+arg	50:88	50:101	5	&propertySize
+op	50:88	0:0	6	&
+water	50:89	0:0	6	propertySize
+water	50:102	0:0	4	;
+if	51:8	54:8	4	(err != noErr)
+cond	51:12	51:19	5	err != noErr
+water	51:12	0:0	6	err
+op	51:16	0:0	6	!=
+water	51:19	0:0	6	noErr
+stmts	51:26	54:8	5	
+water	51:26	0:0	6	{
+call	52:12	52:81	6	msg_Dbg
+arg	52:20	52:26	7	p_aout
+water	52:20	0:0	8	p_aout
+arg	52:28	52:67	7	"failed to get name size for device %i"
+water	52:28	0:0	8	"failed to get name size for device %i"
+arg	52:69	52:81	7	deviceIDs[i]
+water	52:69	0:0	8	deviceIDs
+op	52:78	0:0	8	[
+water	52:79	0:0	8	i
+op	52:80	0:0	8	]
+water	52:82	0:0	6	;
+continue	53:12	53:20	6	
+water	54:8	0:0	6	}
+water	56:8	0:0	4	err
+op	56:12	0:0	4	=
+call	56:14	56:115	4	AudioObjectGetPropertyData
+arg	56:41	56:53	5	deviceIDs[i]
+water	56:41	0:0	6	deviceIDs
+op	56:50	0:0	6	[
+water	56:51	0:0	6	i
+op	56:52	0:0	6	]
+arg	56:55	56:73	5	&deviceNameAddress
+op	56:55	0:0	6	&
+water	56:56	0:0	6	deviceNameAddress
+arg	56:75	56:76	5	0
+water	56:75	0:0	6	0
+arg	56:78	56:82	5	NULL
+water	56:78	0:0	6	NULL
+arg	56:84	56:97	5	&propertySize
+op	56:84	0:0	6	&
+water	56:85	0:0	6	propertySize
+arg	56:99	56:115	5	&device_name_ref
+op	56:99	0:0	6	&
+water	56:100	0:0	6	device_name_ref
+water	56:116	0:0	4	;
+if	57:8	60:8	4	(err != noErr)
+cond	57:12	57:19	5	err != noErr
+water	57:12	0:0	6	err
+op	57:16	0:0	6	!=
+water	57:19	0:0	6	noErr
+stmts	57:26	60:8	5	
+water	57:26	0:0	6	{
+call	58:12	58:76	6	msg_Dbg
+arg	58:20	58:26	7	p_aout
+water	58:20	0:0	8	p_aout
+arg	58:28	58:62	7	"failed to get name for device %i"
+water	58:28	0:0	8	"failed to get name for device %i"
+arg	58:64	58:76	7	deviceIDs[i]
+water	58:64	0:0	8	deviceIDs
+op	58:73	0:0	8	[
+water	58:74	0:0	8	i
+op	58:75	0:0	8	]
+water	58:77	0:0	6	;
+continue	59:12	59:20	6	
+water	60:8	0:0	6	}
+water	61:8	0:0	4	length
+op	61:15	0:0	4	=
+call	61:17	61:50	4	CFStringGetLength
+arg	61:35	61:50	5	device_name_ref
+water	61:35	0:0	6	device_name_ref
+water	61:51	0:0	4	;
+water	62:8	0:0	4	length
+op	62:14	0:0	4	++
+water	62:16	0:0	4	;
+water	63:8	0:0	4	psz_name
+op	63:17	0:0	4	=
+water	63:19	0:0	4	(
+water	63:20	0:0	4	char
+op	63:25	0:0	4	*
+water	63:26	0:0	4	)
+call	63:27	63:40	4	malloc
+arg	63:34	63:40	5	length
+water	63:34	0:0	6	length
+water	63:41	0:0	4	;
+call	64:8	64:83	4	CFStringGetCString
+arg	64:27	64:42	5	device_name_ref
+water	64:27	0:0	6	device_name_ref
+arg	64:44	64:52	5	psz_name
+water	64:44	0:0	6	psz_name
+arg	64:54	64:60	5	length
+water	64:54	0:0	6	length
+arg	64:62	64:83	5	kCFStringEncodingUTF8
+water	64:62	0:0	6	kCFStringEncodingUTF8
+water	64:84	0:0	4	;
+call	65:8	65:71	4	msg_Dbg
+arg	65:16	65:22	5	p_aout
+water	65:16	0:0	6	p_aout
+arg	65:24	65:47	5	"DevID: %i DevName: %s"
+water	65:24	0:0	6	"DevID: %i DevName: %s"
+arg	65:49	65:61	5	deviceIDs[i]
+water	65:49	0:0	6	deviceIDs
+op	65:58	0:0	6	[
+water	65:59	0:0	6	i
+op	65:60	0:0	6	]
+arg	65:63	65:71	5	psz_name
+water	65:63	0:0	6	psz_name
+water	65:72	0:0	4	;
+if	66:8	70:8	4	(!AudioDeviceHasOutput (deviceIDs [ i ] ))
+cond	66:12	66:46	5	!AudioDeviceHasOutput (deviceIDs [ i ] )
+op	66:12	0:0	6	!
+call	66:13	66:46	6	AudioDeviceHasOutput
+arg	66:34	66:46	7	deviceIDs[i]
+water	66:34	0:0	8	deviceIDs
+op	66:43	0:0	8	[
+water	66:44	0:0	8	i
+op	66:45	0:0	8	]
+stmts	66:49	70:8	5	
+water	66:49	0:0	6	{
+call	67:12	67:76	6	msg_Dbg
+arg	67:20	67:26	7	p_aout
+water	67:20	0:0	8	p_aout
+arg	67:28	67:66	7	"this '%s' is INPUT only. skipping..."
+water	67:28	0:0	8	"this '%s' is INPUT only. skipping..."
+arg	67:68	67:76	7	psz_name
+water	67:68	0:0	8	psz_name
+water	67:77	0:0	6	;
+call	68:12	68:25	6	free
+arg	68:17	68:25	7	psz_name
+water	68:17	0:0	8	psz_name
+water	68:26	0:0	6	;
+continue	69:12	69:20	6	
+water	70:8	0:0	6	}
+call	71:8	71:43	4	ReportDevice
+arg	71:21	71:27	5	p_aout
+water	71:21	0:0	6	p_aout
+arg	71:29	71:33	5	i_id
+water	71:29	0:0	6	i_id
+arg	71:35	71:43	5	psz_name
+water	71:35	0:0	6	psz_name
+water	71:44	0:0	4	;
+decl	72:8	72:98	4	CFNumberRef	deviceNumber
+op	72:33	0:0	4	=
+call	72:35	72:97	5	CFNumberCreate
+arg	72:50	72:69	6	kCFAllocatorDefault
+water	72:50	0:0	7	kCFAllocatorDefault
+arg	72:71	72:90	6	kCFNumberSInt32Type
+water	72:71	0:0	7	kCFNumberSInt32Type
+arg	72:92	72:97	6	&i_id
+op	72:92	0:0	7	&
+water	72:93	0:0	7	i_id
+call	73:8	73:61	4	CFArrayAppendValue
+arg	73:27	73:47	5	currentListOfDevices
+water	73:27	0:0	6	currentListOfDevices
+arg	73:49	73:61	5	deviceNumber
+water	73:49	0:0	6	deviceNumber
+water	73:62	0:0	4	;
+call	74:8	74:30	4	CFRelease
+arg	74:18	74:30	5	deviceNumber
+water	74:18	0:0	6	deviceNumber
+water	74:31	0:0	4	;
+if	75:8	85:8	4	(AudioDeviceSupportsDigital (p_aout ,deviceIDs [ i ] ))
+cond	75:12	75:59	5	AudioDeviceSupportsDigital (p_aout ,deviceIDs [ i ] )
+call	75:12	75:59	6	AudioDeviceSupportsDigital
+arg	75:39	75:45	7	p_aout
+water	75:39	0:0	8	p_aout
+arg	75:47	75:59	7	deviceIDs[i]
+water	75:47	0:0	8	deviceIDs
+op	75:56	0:0	8	[
+water	75:57	0:0	8	i
+op	75:58	0:0	8	]
+stmts	75:62	85:8	5	
+water	75:62	0:0	6	{
+call	76:12	76:68	6	msg_Dbg
+arg	76:20	76:26	7	p_aout
+water	76:20	0:0	8	p_aout
+arg	76:28	76:58	7	"'%s' supports digital output"
+water	76:28	0:0	8	"'%s' supports digital output"
+arg	76:60	76:68	7	psz_name
+water	76:60	0:0	8	psz_name
+water	76:69	0:0	6	;
+decl	77:12	77:40	6	char	*psz_encoded_name
+op	77:35	0:0	6	=
+water	77:37	0:0	6	nil
+call	78:12	78:74	6	asprintf
+arg	78:21	78:38	7	&psz_encoded_name
+op	78:21	0:0	8	&
+water	78:22	0:0	8	psz_encoded_name
+arg	78:40	78:64	7	_("%s (Encoded Output)")
+call	78:40	78:63	8	_
+arg	78:42	78:63	9	"%s (Encoded Output)"
+water	78:42	0:0	10	"%s (Encoded Output)"
+arg	78:66	78:74	7	psz_name
+water	78:66	0:0	8	psz_name
+water	78:75	0:0	6	;
+water	79:12	0:0	6	i_id
+op	79:17	0:0	6	=
+water	79:19	0:0	6	i_id
+op	79:24	0:0	6	|
+water	79:26	0:0	6	AOUT_VAR_SPDIF_FLAG
+water	79:45	0:0	6	;
+call	80:12	80:55	6	ReportDevice
+arg	80:25	80:31	7	p_aout
+water	80:25	0:0	8	p_aout
+arg	80:33	80:37	7	i_id
+water	80:33	0:0	8	i_id
+arg	80:39	80:55	7	psz_encoded_name
+water	80:39	0:0	8	psz_encoded_name
+water	80:56	0:0	6	;
+water	81:12	0:0	6	deviceNumber
+op	81:25	0:0	6	=
+call	81:27	81:89	6	CFNumberCreate
+arg	81:42	81:61	7	kCFAllocatorDefault
+water	81:42	0:0	8	kCFAllocatorDefault
+arg	81:63	81:82	7	kCFNumberSInt32Type
+water	81:63	0:0	8	kCFNumberSInt32Type
+arg	81:84	81:89	7	&i_id
+op	81:84	0:0	8	&
+water	81:85	0:0	8	i_id
+water	81:90	0:0	6	;
+call	82:12	82:65	6	CFArrayAppendValue
+arg	82:31	82:51	7	currentListOfDevices
+water	82:31	0:0	8	currentListOfDevices
+arg	82:53	82:65	7	deviceNumber
+water	82:53	0:0	8	deviceNumber
+water	82:66	0:0	6	;
+call	83:12	83:34	6	CFRelease
+arg	83:22	83:34	7	deviceNumber
+water	83:22	0:0	8	deviceNumber
+water	83:35	0:0	6	;
+call	84:12	84:33	6	free
+arg	84:17	84:33	7	psz_encoded_name
+water	84:17	0:0	8	psz_encoded_name
+water	84:34	0:0	6	;
+water	85:8	0:0	6	}
+call	87:8	87:61	4	ManageAudioStreamsCallback
+arg	87:35	87:41	5	p_aout
+water	87:35	0:0	6	p_aout
+arg	87:43	87:55	5	deviceIDs[i]
+water	87:43	0:0	6	deviceIDs
+op	87:52	0:0	6	[
+water	87:53	0:0	6	i
+op	87:54	0:0	6	]
+arg	87:57	87:61	5	true
+water	87:57	0:0	6	true
+water	87:62	0:0	4	;
+call	88:8	88:33	4	CFRelease
+arg	88:18	88:33	5	device_name_ref
+water	88:18	0:0	6	device_name_ref
+water	88:34	0:0	4	;
+call	89:8	89:21	4	free
+arg	89:13	89:21	5	psz_name
+water	89:13	0:0	6	psz_name
+water	89:22	0:0	4	;
+water	90:4	0:0	4	}
+call	91:4	91:43	2	vlc_mutex_lock
+arg	91:19	91:43	3	&p_sys->device_list_lock
+op	91:19	0:0	4	&
+water	91:20	0:0	4	p_sys
+op	91:25	0:0	4	->
+water	91:27	0:0	4	device_list_lock
+water	91:44	0:0	2	;
+decl	92:4	92:21	2	CFIndex	count
+op	92:18	0:0	2	=
+water	92:20	0:0	2	0
+if	93:4	94:51	2	(p_sys -> device_list)
+cond	93:8	93:15	3	p_sys -> device_list
+water	93:8	0:0	4	p_sys
+op	93:13	0:0	4	->
+water	93:15	0:0	4	device_list
+stmts	94:8	94:51	3	
+water	94:8	0:0	4	count
+op	94:14	0:0	4	=
+call	94:16	94:50	4	CFArrayGetCount
+arg	94:32	94:50	5	p_sys->device_list
+water	94:32	0:0	6	p_sys
+op	94:37	0:0	6	->
+water	94:39	0:0	6	device_list
+water	94:51	0:0	4	;
+decl	95:4	95:86	2	CFRange	newListSearchRange
+op	95:31	0:0	2	=
+call	95:33	95:85	3	CFRangeMake
+arg	95:45	95:46	4	0
+water	95:45	0:0	5	0
+arg	95:48	95:85	4	CFArrayGetCount(currentListOfDevices)
+call	95:48	95:84	5	CFArrayGetCount
+arg	95:64	95:84	6	currentListOfDevices
+water	95:64	0:0	7	currentListOfDevices
+if	96:4	110:4	2	(count > 0)
+cond	96:8	96:16	3	count > 0
+water	96:8	0:0	4	count
+op	96:14	0:0	4	>
+water	96:16	0:0	4	0
+stmts	96:19	110:4	3	
+water	96:19	0:0	4	{
+call	97:8	97:53	4	msg_Dbg
+arg	97:16	97:22	5	p_aout
+water	97:16	0:0	6	p_aout
+arg	97:24	97:53	5	"Looking for removed devices"
+water	97:24	0:0	6	"Looking for removed devices"
+water	97:54	0:0	4	;
+decl	98:8	98:33	4	CFNumberRef	cfn_device_id
+decl	99:8	99:27	4	int	i_device_id
+op	99:24	0:0	4	=
+water	99:26	0:0	4	0
+for	100:8	109:8	4	( CFIndex x = 0 ;x < count;x ++)
+forinit	0:0	100:26	5	 CFIndex x = 0 ;
+decl	100:13	100:26	6	CFIndex	x
+op	100:23	0:0	6	=
+water	100:25	0:0	6	0
+cond	100:28	100:32	5	x < count
+water	100:28	0:0	6	x
+op	100:30	0:0	6	<
+water	100:32	0:0	6	count
+forexpr	100:39	100:40	5	x ++
+water	100:39	0:0	6	x
+op	100:40	0:0	6	++
+stmts	100:44	109:8	5	
+water	100:44	0:0	6	{
+if	101:12	108:12	6	(!CFArrayContainsValue (currentListOfDevices ,newListSearchRange ,CFArrayGetValueAtIndex (p_sys -> device_list ,x ) ))
+cond	101:16	101:125	7	!CFArrayContainsValue (currentListOfDevices ,newListSearchRange ,CFArrayGetValueAtIndex (p_sys -> device_list ,x ) )
+op	101:16	0:0	8	!
+call	101:17	101:125	8	CFArrayContainsValue
+arg	101:38	101:58	9	currentListOfDevices
+water	101:38	0:0	10	currentListOfDevices
+arg	101:60	101:78	9	newListSearchRange
+water	101:60	0:0	10	newListSearchRange
+arg	101:80	101:125	9	CFArrayGetValueAtIndex(p_sys->device_list,x)
+call	101:80	101:124	10	CFArrayGetValueAtIndex
+arg	101:103	101:121	11	p_sys->device_list
+water	101:103	0:0	12	p_sys
+op	101:108	0:0	12	->
+water	101:110	0:0	12	device_list
+arg	101:123	101:124	11	x
+water	101:123	0:0	12	x
+stmts	101:128	108:12	7	
+water	101:128	0:0	8	{
+water	102:16	0:0	8	cfn_device_id
+op	102:30	0:0	8	=
+call	102:32	102:76	8	CFArrayGetValueAtIndex
+arg	102:55	102:73	9	p_sys->device_list
+water	102:55	0:0	10	p_sys
+op	102:60	0:0	10	->
+water	102:62	0:0	10	device_list
+arg	102:75	102:76	9	x
+water	102:75	0:0	10	x
+water	102:77	0:0	8	;
+if	103:16	107:16	8	(cfn_device_id)
+cond	103:20	103:20	9	cfn_device_id
+water	103:20	0:0	10	cfn_device_id
+stmts	103:35	107:16	9	
+water	103:35	0:0	10	{
+call	104:20	104:85	10	CFNumberGetValue
+arg	104:37	104:50	11	cfn_device_id
+water	104:37	0:0	12	cfn_device_id
+arg	104:52	104:71	11	kCFNumberSInt32Type
+water	104:52	0:0	12	kCFNumberSInt32Type
+arg	104:73	104:85	11	&i_device_id
+op	104:73	0:0	12	&
+water	104:74	0:0	12	i_device_id
+water	104:86	0:0	10	;
+call	105:20	105:100	10	msg_Dbg
+arg	105:28	105:34	11	p_aout
+water	105:28	0:0	12	p_aout
+arg	105:36	105:87	11	"Device ID %i is not found in new array, deleting."
+water	105:36	0:0	12	"Device ID %i is not found in new array, deleting."
+arg	105:89	105:100	11	i_device_id
+water	105:89	0:0	12	i_device_id
+water	105:101	0:0	10	;
+call	106:20	106:58	10	ReportDevice
+arg	106:33	106:39	11	p_aout
+water	106:33	0:0	12	p_aout
+arg	106:41	106:52	11	i_device_id
+water	106:41	0:0	12	i_device_id
+arg	106:54	106:58	11	NULL
+water	106:54	0:0	12	NULL
+water	106:59	0:0	10	;
+water	107:16	0:0	10	}
+water	108:12	0:0	8	}
+water	109:8	0:0	6	}
+water	110:4	0:0	4	}
+if	111:4	112:37	2	(p_sys -> device_list)
+cond	111:8	111:15	3	p_sys -> device_list
+water	111:8	0:0	4	p_sys
+op	111:13	0:0	4	->
+water	111:15	0:0	4	device_list
+stmts	112:8	112:37	3	
+call	112:8	112:36	4	CFRelease
+arg	112:18	112:36	5	p_sys->device_list
+water	112:18	0:0	6	p_sys
+op	112:23	0:0	6	->
+water	112:25	0:0	6	device_list
+water	112:37	0:0	4	;
+water	113:4	0:0	2	p_sys
+op	113:9	0:0	2	->
+water	113:11	0:0	2	device_list
+op	113:23	0:0	2	=
+call	113:25	113:84	2	CFArrayCreateCopy
+arg	113:43	113:62	3	kCFAllocatorDefault
+water	113:43	0:0	4	kCFAllocatorDefault
+arg	113:64	113:84	3	currentListOfDevices
+water	113:64	0:0	4	currentListOfDevices
+water	113:85	0:0	2	;
+call	114:4	114:34	2	CFRelease
+arg	114:14	114:34	3	currentListOfDevices
+water	114:14	0:0	4	currentListOfDevices
+water	114:35	0:0	2	;
+call	115:4	115:45	2	vlc_mutex_unlock
+arg	115:21	115:45	3	&p_sys->device_list_lock
+op	115:21	0:0	4	&
+water	115:22	0:0	4	p_sys
+op	115:27	0:0	4	->
+water	115:29	0:0	4	device_list_lock
+water	115:46	0:0	2	;
+call	116:4	116:18	2	free
+arg	116:9	116:18	3	deviceIDs
+water	116:9	0:0	4	deviceIDs
+water	116:19	0:0	2	;

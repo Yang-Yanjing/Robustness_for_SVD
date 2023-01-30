@@ -1,0 +1,1028 @@
+func	2:0	180:0	0	static int	ThreadDisplayRenderPicture
+params	2:37	0:0	1	
+param	2:38	2:57	2	vout_thread_t *	vout
+param	2:59	2:73	2	bool	is_forced
+stmnts	0:0	179:22	1	
+decl	4:4	4:36	2	vout_thread_sys_t	*sys
+op	4:27	0:0	2	=
+water	4:29	0:0	2	vout
+op	4:33	0:0	2	->
+water	4:35	0:0	2	p
+decl	5:4	5:44	2	vout_display_t	*vd
+op	5:23	0:0	2	=
+water	5:25	0:0	2	vout
+op	5:29	0:0	2	->
+water	5:31	0:0	2	p
+op	5:32	0:0	2	->
+water	5:34	0:0	2	display
+op	5:41	0:0	2	.
+water	5:42	0:0	2	vd
+decl	6:4	6:66	2	picture_t	*torender
+op	6:24	0:0	2	=
+call	6:26	6:65	3	picture_Hold
+arg	6:39	6:65	4	vout->p->displayed.current
+water	6:39	0:0	5	vout
+op	6:43	0:0	5	->
+water	6:45	0:0	5	p
+op	6:46	0:0	5	->
+water	6:48	0:0	5	displayed
+op	6:57	0:0	5	.
+water	6:58	0:0	5	current
+call	7:4	7:38	2	vout_chrono_Start
+arg	7:22	7:38	3	&vout->p->render
+op	7:22	0:0	4	&
+water	7:23	0:0	4	vout
+op	7:27	0:0	4	->
+water	7:29	0:0	4	p
+op	7:30	0:0	4	->
+water	7:32	0:0	4	render
+water	7:39	0:0	2	;
+call	8:4	8:40	2	vlc_mutex_lock
+arg	8:19	8:40	3	&vout->p->filter.lock
+op	8:19	0:0	4	&
+water	8:20	0:0	4	vout
+op	8:24	0:0	4	->
+water	8:26	0:0	4	p
+op	8:27	0:0	4	->
+water	8:29	0:0	4	filter
+op	8:35	0:0	4	.
+water	8:36	0:0	4	lock
+water	8:41	0:0	2	;
+decl	9:4	9:95	2	picture_t	*filtered
+op	9:24	0:0	2	=
+call	9:26	9:94	3	filter_chain_VideoFilter
+arg	9:51	9:84	4	vout->p->filter.chain_interactive
+water	9:51	0:0	5	vout
+op	9:55	0:0	5	->
+water	9:57	0:0	5	p
+op	9:58	0:0	5	->
+water	9:60	0:0	5	filter
+op	9:66	0:0	5	.
+water	9:67	0:0	5	chain_interactive
+arg	9:86	9:94	4	torender
+water	9:86	0:0	5	torender
+call	10:4	10:42	2	vlc_mutex_unlock
+arg	10:21	10:42	3	&vout->p->filter.lock
+op	10:21	0:0	4	&
+water	10:22	0:0	4	vout
+op	10:26	0:0	4	->
+water	10:28	0:0	4	p
+op	10:29	0:0	4	->
+water	10:31	0:0	4	filter
+op	10:37	0:0	4	.
+water	10:38	0:0	4	lock
+water	10:43	0:0	2	;
+if	11:4	12:27	2	(! filtered)
+cond	11:8	11:9	3	! filtered
+op	11:8	0:0	4	!
+water	11:9	0:0	4	filtered
+stmts	12:8	12:27	3	
+return	12:8	12:27	4	VLC_EGENERIC
+water	12:15	0:0	5	VLC_EGENERIC
+if	13:4	14:87	2	(filtered -> date != vout -> p -> displayed . current -> date)
+cond	13:8	13:54	3	filtered -> date != vout -> p -> displayed . current -> date
+water	13:8	0:0	4	filtered
+op	13:16	0:0	4	->
+water	13:18	0:0	4	date
+op	13:23	0:0	4	!=
+water	13:26	0:0	4	vout
+op	13:30	0:0	4	->
+water	13:32	0:0	4	p
+op	13:33	0:0	4	->
+water	13:35	0:0	4	displayed
+op	13:44	0:0	4	.
+water	13:45	0:0	4	current
+op	13:52	0:0	4	->
+water	13:54	0:0	4	date
+stmts	14:8	14:87	3	
+call	14:8	14:86	4	msg_Warn
+arg	14:17	14:21	5	vout
+water	14:17	0:0	6	vout
+arg	14:23	14:86	5	"Unsupported timestamp modifications done by chain_interactive"
+water	14:23	0:0	6	"Unsupported timestamp modifications done by chain_interactive"
+water	14:87	0:0	4	;
+decl	18:4	18:74	2	const bool	do_snapshot
+op	18:27	0:0	2	=
+call	18:29	18:73	3	vout_snapshot_IsRequested
+arg	18:55	18:73	4	&vout->p->snapshot
+op	18:55	0:0	5	&
+water	18:56	0:0	5	vout
+op	18:60	0:0	5	->
+water	18:62	0:0	5	p
+op	18:63	0:0	5	->
+water	18:65	0:0	5	snapshot
+decl	19:4	19:32	2	mtime_t	render_subtitle_date
+if	20:4	21:50	2	(vout -> p -> pause . is_on)
+cond	20:8	20:23	3	vout -> p -> pause . is_on
+water	20:8	0:0	4	vout
+op	20:12	0:0	4	->
+water	20:14	0:0	4	p
+op	20:15	0:0	4	->
+water	20:17	0:0	4	pause
+op	20:22	0:0	4	.
+water	20:23	0:0	4	is_on
+stmts	21:8	21:50	3	
+water	21:8	0:0	4	render_subtitle_date
+op	21:29	0:0	4	=
+water	21:31	0:0	4	vout
+op	21:35	0:0	4	->
+water	21:37	0:0	4	p
+op	21:38	0:0	4	->
+water	21:40	0:0	4	pause
+op	21:45	0:0	4	.
+water	21:46	0:0	4	date
+water	21:50	0:0	4	;
+else	22:4	23:76	2
+stmts	23:8	23:76	3	
+water	23:8	0:0	4	render_subtitle_date
+op	23:29	0:0	4	=
+water	23:31	0:0	4	filtered
+op	23:39	0:0	4	->
+water	23:41	0:0	4	date
+op	23:46	0:0	4	>
+water	23:48	0:0	4	1
+water	23:50	0:0	4	?
+water	23:52	0:0	4	filtered
+op	23:60	0:0	4	->
+water	23:62	0:0	4	date
+water	23:67	0:0	4	:
+call	23:69	23:75	4	mdate
+water	23:76	0:0	4	;
+decl	24:4	24:37	2	mtime_t	render_osd_date
+op	24:28	0:0	2	=
+call	24:30	24:36	3	mdate
+decl	28:4	30:60	2	const bool	do_dr_spu
+op	28:25	0:0	2	=
+op	28:27	0:0	2	!
+water	28:28	0:0	2	do_snapshot
+op	28:40	0:0	2	&&
+water	29:27	0:0	2	vd
+op	29:29	0:0	2	->
+water	29:31	0:0	2	info
+op	29:35	0:0	2	.
+water	29:36	0:0	2	subpicture_chromas
+op	29:55	0:0	2	&&
+op	30:27	0:0	2	*
+water	30:28	0:0	2	vd
+op	30:30	0:0	2	->
+water	30:32	0:0	2	info
+op	30:36	0:0	2	.
+water	30:37	0:0	2	subpicture_chromas
+op	30:56	0:0	2	!=
+water	30:59	0:0	2	0
+decl	35:4	41:110	2	const bool	do_early_spu
+op	35:28	0:0	2	=
+op	35:30	0:0	2	!
+water	35:31	0:0	2	do_dr_spu
+op	35:41	0:0	2	&&
+water	36:31	0:0	2	vd
+op	36:33	0:0	2	->
+water	36:35	0:0	2	source
+op	36:41	0:0	2	.
+water	36:42	0:0	2	orientation
+op	36:54	0:0	2	==
+water	36:57	0:0	2	ORIENT_NORMAL
+op	36:71	0:0	2	&&
+water	37:30	0:0	2	(
+water	37:31	0:0	2	vd
+op	37:33	0:0	2	->
+water	37:35	0:0	2	info
+op	37:39	0:0	2	.
+water	37:40	0:0	2	is_slow
+op	37:48	0:0	2	||
+water	38:31	0:0	2	sys
+op	38:34	0:0	2	->
+water	38:36	0:0	2	display
+op	38:43	0:0	2	.
+water	38:44	0:0	2	use_dr
+op	38:51	0:0	2	||
+water	39:31	0:0	2	do_snapshot
+op	39:43	0:0	2	||
+op	40:31	0:0	2	!
+call	40:32	40:57	3	vout_IsDisplayFiltered
+arg	40:55	40:57	4	vd
+water	40:55	0:0	5	vd
+op	40:59	0:0	2	||
+water	41:31	0:0	2	vd
+op	41:33	0:0	2	->
+water	41:35	0:0	2	fmt
+op	41:38	0:0	2	.
+water	41:39	0:0	2	i_width
+op	41:47	0:0	2	*
+water	41:49	0:0	2	vd
+op	41:51	0:0	2	->
+water	41:53	0:0	2	fmt
+op	41:56	0:0	2	.
+water	41:57	0:0	2	i_height
+op	41:66	0:0	2	<=
+water	41:69	0:0	2	vd
+op	41:71	0:0	2	->
+water	41:73	0:0	2	source
+op	41:79	0:0	2	.
+water	41:80	0:0	2	i_width
+op	41:88	0:0	2	*
+water	41:90	0:0	2	vd
+op	41:92	0:0	2	->
+water	41:94	0:0	2	source
+op	41:100	0:0	2	.
+water	41:101	0:0	2	i_height
+water	41:109	0:0	2	)
+decl	42:4	42:42	2	const vlc_fourcc_t	*subpicture_chromas
+decl	43:4	43:26	2	video_format_t	fmt_spu
+if	44:4	57:4	2	(do_dr_spu)
+cond	44:8	44:8	3	do_dr_spu
+water	44:8	0:0	4	do_dr_spu
+stmts	44:19	57:4	3	
+water	44:19	0:0	4	{
+decl	45:8	45:34	4	vout_display_place_t	place
+call	46:8	46:69	4	vout_display_PlacePicture
+arg	46:34	46:40	5	&place
+op	46:34	0:0	6	&
+water	46:35	0:0	6	place
+arg	46:42	46:53	5	&vd->source
+op	46:42	0:0	6	&
+water	46:43	0:0	6	vd
+op	46:45	0:0	6	->
+water	46:47	0:0	6	source
+arg	46:55	46:62	5	vd->cfg
+water	46:55	0:0	6	vd
+op	46:57	0:0	6	->
+water	46:59	0:0	6	cfg
+arg	46:64	46:69	5	false
+water	46:64	0:0	6	false
+water	46:70	0:0	4	;
+water	47:8	0:0	4	fmt_spu
+op	47:16	0:0	4	=
+water	47:18	0:0	4	vd
+op	47:20	0:0	4	->
+water	47:22	0:0	4	source
+water	47:28	0:0	4	;
+if	48:8	55:8	4	(fmt_spu . i_width * fmt_spu . i_height < place . width * place . height)
+cond	48:12	48:69	5	fmt_spu . i_width * fmt_spu . i_height < place . width * place . height
+water	48:12	0:0	6	fmt_spu
+op	48:19	0:0	6	.
+water	48:20	0:0	6	i_width
+op	48:28	0:0	6	*
+water	48:30	0:0	6	fmt_spu
+op	48:37	0:0	6	.
+water	48:38	0:0	6	i_height
+op	48:47	0:0	6	<
+water	48:49	0:0	6	place
+op	48:54	0:0	6	.
+water	48:55	0:0	6	width
+op	48:61	0:0	6	*
+water	48:63	0:0	6	place
+op	48:68	0:0	6	.
+water	48:69	0:0	6	height
+stmts	48:77	55:8	5	
+water	48:77	0:0	6	{
+water	49:12	0:0	6	fmt_spu
+op	49:19	0:0	6	.
+water	49:20	0:0	6	i_sar_num
+op	49:30	0:0	6	=
+water	49:32	0:0	6	vd
+op	49:34	0:0	6	->
+water	49:36	0:0	6	cfg
+op	49:39	0:0	6	->
+water	49:41	0:0	6	display
+op	49:48	0:0	6	.
+water	49:49	0:0	6	sar
+op	49:52	0:0	6	.
+water	49:53	0:0	6	num
+water	49:56	0:0	6	;
+water	50:12	0:0	6	fmt_spu
+op	50:19	0:0	6	.
+water	50:20	0:0	6	i_sar_den
+op	50:30	0:0	6	=
+water	50:32	0:0	6	vd
+op	50:34	0:0	6	->
+water	50:36	0:0	6	cfg
+op	50:39	0:0	6	->
+water	50:41	0:0	6	display
+op	50:48	0:0	6	.
+water	50:49	0:0	6	sar
+op	50:52	0:0	6	.
+water	50:53	0:0	6	den
+water	50:56	0:0	6	;
+water	51:12	0:0	6	fmt_spu
+op	51:19	0:0	6	.
+water	51:20	0:0	6	i_width
+op	51:37	0:0	6	=
+water	52:12	0:0	6	fmt_spu
+op	52:19	0:0	6	.
+water	52:20	0:0	6	i_visible_width
+op	52:37	0:0	6	=
+water	52:39	0:0	6	place
+op	52:44	0:0	6	.
+water	52:45	0:0	6	width
+water	52:50	0:0	6	;
+water	53:12	0:0	6	fmt_spu
+op	53:19	0:0	6	.
+water	53:20	0:0	6	i_height
+op	53:37	0:0	6	=
+water	54:12	0:0	6	fmt_spu
+op	54:19	0:0	6	.
+water	54:20	0:0	6	i_visible_height
+op	54:37	0:0	6	=
+water	54:39	0:0	6	place
+op	54:44	0:0	6	.
+water	54:45	0:0	6	height
+water	54:51	0:0	6	;
+water	55:8	0:0	6	}
+water	56:8	0:0	4	subpicture_chromas
+op	56:27	0:0	4	=
+water	56:29	0:0	4	vd
+op	56:31	0:0	4	->
+water	56:33	0:0	4	info
+op	56:37	0:0	4	.
+water	56:38	0:0	4	subpicture_chromas
+water	56:56	0:0	4	;
+water	57:4	0:0	4	}
+else	57:6	78:4	2
+stmts	57:11	78:4	3	
+water	57:11	0:0	4	{
+if	58:8	60:8	4	(do_early_spu)
+cond	58:12	58:12	5	do_early_spu
+water	58:12	0:0	6	do_early_spu
+stmts	58:26	60:8	5	
+water	58:26	0:0	6	{
+water	59:12	0:0	6	fmt_spu
+op	59:20	0:0	6	=
+water	59:22	0:0	6	vd
+op	59:24	0:0	6	->
+water	59:26	0:0	6	source
+water	59:32	0:0	6	;
+water	60:8	0:0	6	}
+else	60:10	64:8	4
+stmts	60:15	64:8	5	
+water	60:15	0:0	6	{
+water	61:12	0:0	6	fmt_spu
+op	61:20	0:0	6	=
+water	61:22	0:0	6	vd
+op	61:24	0:0	6	->
+water	61:26	0:0	6	fmt
+water	61:29	0:0	6	;
+water	62:12	0:0	6	fmt_spu
+op	62:19	0:0	6	.
+water	62:20	0:0	6	i_sar_num
+op	62:30	0:0	6	=
+water	62:32	0:0	6	vd
+op	62:34	0:0	6	->
+water	62:36	0:0	6	cfg
+op	62:39	0:0	6	->
+water	62:41	0:0	6	display
+op	62:48	0:0	6	.
+water	62:49	0:0	6	sar
+op	62:52	0:0	6	.
+water	62:53	0:0	6	num
+water	62:56	0:0	6	;
+water	63:12	0:0	6	fmt_spu
+op	63:19	0:0	6	.
+water	63:20	0:0	6	i_sar_den
+op	63:30	0:0	6	=
+water	63:32	0:0	6	vd
+op	63:34	0:0	6	->
+water	63:36	0:0	6	cfg
+op	63:39	0:0	6	->
+water	63:41	0:0	6	display
+op	63:48	0:0	6	.
+water	63:49	0:0	6	sar
+op	63:52	0:0	6	.
+water	63:53	0:0	6	den
+water	63:56	0:0	6	;
+water	64:8	0:0	6	}
+water	65:8	0:0	4	subpicture_chromas
+op	65:27	0:0	4	=
+water	65:29	0:0	4	NULL
+water	65:33	0:0	4	;
+if	66:8	71:8	4	(vout -> p -> spu_blend && vout -> p -> spu_blend -> fmt_out . video . i_chroma != fmt_spu . i_chroma)
+cond	66:12	67:66	5	vout -> p -> spu_blend && vout -> p -> spu_blend -> fmt_out . video . i_chroma != fmt_spu . i_chroma
+water	66:12	0:0	6	vout
+op	66:16	0:0	6	->
+water	66:18	0:0	6	p
+op	66:19	0:0	6	->
+water	66:21	0:0	6	spu_blend
+op	66:31	0:0	6	&&
+water	67:12	0:0	6	vout
+op	67:16	0:0	6	->
+water	67:18	0:0	6	p
+op	67:19	0:0	6	->
+water	67:21	0:0	6	spu_blend
+op	67:30	0:0	6	->
+water	67:32	0:0	6	fmt_out
+op	67:39	0:0	6	.
+water	67:40	0:0	6	video
+op	67:45	0:0	6	.
+water	67:46	0:0	6	i_chroma
+op	67:55	0:0	6	!=
+water	67:58	0:0	6	fmt_spu
+op	67:65	0:0	6	.
+water	67:66	0:0	6	i_chroma
+stmts	67:76	71:8	5	
+water	67:76	0:0	6	{
+call	68:12	68:49	6	filter_DeleteBlend
+arg	68:31	68:49	7	vout->p->spu_blend
+water	68:31	0:0	8	vout
+op	68:35	0:0	8	->
+water	68:37	0:0	8	p
+op	68:38	0:0	8	->
+water	68:40	0:0	8	spu_blend
+water	68:50	0:0	6	;
+water	69:12	0:0	6	vout
+op	69:16	0:0	6	->
+water	69:18	0:0	6	p
+op	69:19	0:0	6	->
+water	69:21	0:0	6	spu_blend
+op	69:31	0:0	6	=
+water	69:33	0:0	6	NULL
+water	69:37	0:0	6	;
+water	70:12	0:0	6	vout
+op	70:16	0:0	6	->
+water	70:18	0:0	6	p
+op	70:19	0:0	6	->
+water	70:21	0:0	6	spu_blend_chroma
+op	70:38	0:0	6	=
+water	70:40	0:0	6	0
+water	70:41	0:0	6	;
+water	71:8	0:0	6	}
+if	72:8	77:8	4	(! vout -> p -> spu_blend && vout -> p -> spu_blend_chroma != fmt_spu . i_chroma)
+cond	72:12	72:72	5	! vout -> p -> spu_blend && vout -> p -> spu_blend_chroma != fmt_spu . i_chroma
+op	72:12	0:0	6	!
+water	72:13	0:0	6	vout
+op	72:17	0:0	6	->
+water	72:19	0:0	6	p
+op	72:20	0:0	6	->
+water	72:22	0:0	6	spu_blend
+op	72:32	0:0	6	&&
+water	72:35	0:0	6	vout
+op	72:39	0:0	6	->
+water	72:41	0:0	6	p
+op	72:42	0:0	6	->
+water	72:44	0:0	6	spu_blend_chroma
+op	72:61	0:0	6	!=
+water	72:64	0:0	6	fmt_spu
+op	72:71	0:0	6	.
+water	72:72	0:0	6	i_chroma
+stmts	72:82	77:8	5	
+water	72:82	0:0	6	{
+water	73:12	0:0	6	vout
+op	73:16	0:0	6	->
+water	73:18	0:0	6	p
+op	73:19	0:0	6	->
+water	73:21	0:0	6	spu_blend_chroma
+op	73:38	0:0	6	=
+water	73:40	0:0	6	fmt_spu
+op	73:47	0:0	6	.
+water	73:48	0:0	6	i_chroma
+water	73:56	0:0	6	;
+water	74:12	0:0	6	vout
+op	74:16	0:0	6	->
+water	74:18	0:0	6	p
+op	74:19	0:0	6	->
+water	74:21	0:0	6	spu_blend
+op	74:31	0:0	6	=
+call	74:33	74:75	6	filter_NewBlend
+arg	74:49	74:65	7	VLC_OBJECT(vout)
+call	74:49	74:64	8	VLC_OBJECT
+arg	74:60	74:64	9	vout
+water	74:60	0:0	10	vout
+arg	74:67	74:75	7	&fmt_spu
+op	74:67	0:0	8	&
+water	74:68	0:0	8	fmt_spu
+water	74:76	0:0	6	;
+if	75:12	76:94	6	(! vout -> p -> spu_blend)
+cond	75:16	75:26	7	! vout -> p -> spu_blend
+op	75:16	0:0	8	!
+water	75:17	0:0	8	vout
+op	75:21	0:0	8	->
+water	75:23	0:0	8	p
+op	75:24	0:0	8	->
+water	75:26	0:0	8	spu_blend
+stmts	76:16	76:94	7	
+call	76:16	76:93	8	msg_Err
+arg	76:24	76:28	9	vout
+water	76:24	0:0	10	vout
+arg	76:30	76:93	9	"Failed to create blending filter, OSD/Subtitles will not work"
+water	76:30	0:0	10	"Failed to create blending filter, OSD/Subtitles will not work"
+water	76:94	0:0	8	;
+water	77:8	0:0	6	}
+water	78:4	0:0	4	}
+decl	79:4	79:30	2	video_format_t	fmt_spu_rot
+call	80:4	80:53	2	video_format_ApplyRotation
+arg	80:31	80:43	3	&fmt_spu_rot
+op	80:31	0:0	4	&
+water	80:32	0:0	4	fmt_spu_rot
+arg	80:45	80:53	3	&fmt_spu
+op	80:45	0:0	4	&
+water	80:46	0:0	4	fmt_spu
+water	80:54	0:0	2	;
+decl	81:4	85:50	2	subpicture_t	*subpic
+op	81:25	0:0	2	=
+call	81:27	85:49	3	spu_Render
+arg	81:38	81:50	4	vout->p->spu
+water	81:38	0:0	5	vout
+op	81:42	0:0	5	->
+water	81:44	0:0	5	p
+op	81:45	0:0	5	->
+water	81:47	0:0	5	spu
+arg	82:38	82:56	4	subpicture_chromas
+water	82:38	0:0	5	subpicture_chromas
+arg	82:58	82:70	4	&fmt_spu_rot
+op	82:58	0:0	5	&
+water	82:59	0:0	5	fmt_spu_rot
+arg	83:38	83:49	4	&vd->source
+op	83:38	0:0	5	&
+water	83:39	0:0	5	vd
+op	83:41	0:0	5	->
+water	83:43	0:0	5	source
+arg	84:38	84:58	4	render_subtitle_date
+water	84:38	0:0	5	render_subtitle_date
+arg	84:60	84:75	4	render_osd_date
+water	84:60	0:0	5	render_osd_date
+arg	85:38	85:49	4	do_snapshot
+water	85:38	0:0	5	do_snapshot
+decl	93:4	93:67	2	bool	is_direct
+op	93:19	0:0	2	=
+water	93:21	0:0	2	vout
+op	93:25	0:0	2	->
+water	93:27	0:0	2	p
+op	93:28	0:0	2	->
+water	93:30	0:0	2	decoder_pool
+op	93:43	0:0	2	==
+water	93:46	0:0	2	vout
+op	93:50	0:0	2	->
+water	93:52	0:0	2	p
+op	93:53	0:0	2	->
+water	93:55	0:0	2	display_pool
+decl	94:4	94:35	2	picture_t	*todisplay
+op	94:25	0:0	2	=
+water	94:27	0:0	2	filtered
+if	95:4	109:4	2	(do_early_spu && subpic)
+cond	95:8	95:24	3	do_early_spu && subpic
+water	95:8	0:0	4	do_early_spu
+op	95:21	0:0	4	&&
+water	95:24	0:0	4	subpic
+stmts	95:32	109:4	3	
+water	95:32	0:0	4	{
+decl	96:8	96:66	4	picture_t	*blent
+op	96:25	0:0	4	=
+call	96:27	96:65	5	picture_pool_Get
+arg	96:44	96:65	6	vout->p->private_pool
+water	96:44	0:0	7	vout
+op	96:48	0:0	7	->
+water	96:50	0:0	7	p
+op	96:51	0:0	7	->
+water	96:53	0:0	7	private_pool
+if	97:8	106:8	4	(blent)
+cond	97:12	97:12	5	blent
+water	97:12	0:0	6	blent
+stmts	97:19	106:8	5	
+water	97:19	0:0	6	{
+call	98:12	98:67	6	VideoFormatCopyCropAr
+arg	98:34	98:48	7	&blent->format
+op	98:34	0:0	8	&
+water	98:35	0:0	8	blent
+op	98:40	0:0	8	->
+water	98:42	0:0	8	format
+arg	98:50	98:67	7	&filtered->format
+op	98:50	0:0	8	&
+water	98:51	0:0	8	filtered
+op	98:59	0:0	8	->
+water	98:61	0:0	8	format
+water	98:68	0:0	6	;
+call	99:12	99:40	6	picture_Copy
+arg	99:25	99:30	7	blent
+water	99:25	0:0	8	blent
+arg	99:32	99:40	7	filtered
+water	99:32	0:0	8	filtered
+water	99:41	0:0	6	;
+if	100:12	104:12	6	(vout -> p -> spu_blend &&picture_BlendSubpicture (blent ,vout -> p -> spu_blend ,subpic ))
+cond	100:16	101:73	7	vout -> p -> spu_blend &&picture_BlendSubpicture (blent ,vout -> p -> spu_blend ,subpic )
+water	100:16	0:0	8	vout
+op	100:20	0:0	8	->
+water	100:22	0:0	8	p
+op	100:23	0:0	8	->
+water	100:25	0:0	8	spu_blend
+op	101:13	0:0	8	&&
+call	101:16	101:73	8	picture_BlendSubpicture
+arg	101:40	101:45	9	blent
+water	101:40	0:0	10	blent
+arg	101:47	101:65	9	vout->p->spu_blend
+water	101:47	0:0	10	vout
+op	101:51	0:0	10	->
+water	101:53	0:0	10	p
+op	101:54	0:0	10	->
+water	101:56	0:0	10	spu_blend
+arg	101:67	101:73	9	subpic
+water	101:67	0:0	10	subpic
+stmts	101:76	104:12	7	
+water	101:76	0:0	8	{
+call	102:16	102:41	8	picture_Release
+arg	102:32	102:41	9	todisplay
+water	102:32	0:0	10	todisplay
+water	102:42	0:0	8	;
+water	103:16	0:0	8	todisplay
+op	103:26	0:0	8	=
+water	103:28	0:0	8	blent
+water	103:33	0:0	8	;
+water	104:12	0:0	8	}
+else	104:14	105:38	6
+stmts	105:16	105:38	7	
+call	105:16	105:37	8	picture_Release
+arg	105:32	105:37	9	blent
+water	105:32	0:0	10	blent
+water	105:38	0:0	8	;
+water	106:8	0:0	6	}
+call	107:8	107:32	4	subpicture_Delete
+arg	107:26	107:32	5	subpic
+water	107:26	0:0	6	subpic
+water	107:33	0:0	4	;
+water	108:8	0:0	4	subpic
+op	108:15	0:0	4	=
+water	108:17	0:0	4	NULL
+water	108:21	0:0	4	;
+water	109:4	0:0	4	}
+call	110:4	110:61	2	assert
+arg	110:11	110:61	3	vout_IsDisplayFiltered(vd)==!sys->display.use_dr
+call	110:11	110:36	4	vout_IsDisplayFiltered
+arg	110:34	110:36	5	vd
+water	110:34	0:0	6	vd
+op	110:38	0:0	4	==
+op	110:41	0:0	4	!
+water	110:42	0:0	4	sys
+op	110:45	0:0	4	->
+water	110:47	0:0	4	display
+op	110:54	0:0	4	.
+water	110:55	0:0	4	use_dr
+water	110:62	0:0	2	;
+if	111:4	127:4	2	(sys -> display . use_dr && ! is_direct)
+cond	111:8	111:32	3	sys -> display . use_dr && ! is_direct
+water	111:8	0:0	4	sys
+op	111:11	0:0	4	->
+water	111:13	0:0	4	display
+op	111:20	0:0	4	.
+water	111:21	0:0	4	use_dr
+op	111:28	0:0	4	&&
+op	111:31	0:0	4	!
+water	111:32	0:0	4	is_direct
+stmts	111:43	127:4	3	
+water	111:43	0:0	4	{
+decl	112:8	112:67	4	picture_t	*direct
+op	112:26	0:0	4	=
+call	112:28	112:66	5	picture_pool_Get
+arg	112:45	112:66	6	vout->p->display_pool
+water	112:45	0:0	7	vout
+op	112:49	0:0	7	->
+water	112:51	0:0	7	p
+op	112:52	0:0	7	->
+water	112:54	0:0	7	display_pool
+if	113:8	118:8	4	(! direct)
+cond	113:12	113:13	5	! direct
+op	113:12	0:0	6	!
+water	113:13	0:0	6	direct
+stmts	113:21	118:8	5	
+water	113:21	0:0	6	{
+call	114:12	114:37	6	picture_Release
+arg	114:28	114:37	7	todisplay
+water	114:28	0:0	8	todisplay
+water	114:38	0:0	6	;
+if	115:12	116:41	6	(subpic)
+cond	115:16	115:16	7	subpic
+water	115:16	0:0	8	subpic
+stmts	116:16	116:41	7	
+call	116:16	116:40	8	subpicture_Delete
+arg	116:34	116:40	9	subpic
+water	116:34	0:0	10	subpic
+water	116:41	0:0	8	;
+return	117:12	117:31	6	VLC_EGENERIC
+water	117:19	0:0	7	VLC_EGENERIC
+water	118:8	0:0	6	}
+call	123:8	123:65	4	VideoFormatCopyCropAr
+arg	123:30	123:45	5	&direct->format
+op	123:30	0:0	6	&
+water	123:31	0:0	6	direct
+op	123:37	0:0	6	->
+water	123:39	0:0	6	format
+arg	123:47	123:65	5	&todisplay->format
+op	123:47	0:0	6	&
+water	123:48	0:0	6	todisplay
+op	123:57	0:0	6	->
+water	123:59	0:0	6	format
+water	123:66	0:0	4	;
+call	124:8	124:38	4	picture_Copy
+arg	124:21	124:27	5	direct
+water	124:21	0:0	6	direct
+arg	124:29	124:38	5	todisplay
+water	124:29	0:0	6	todisplay
+water	124:39	0:0	4	;
+call	125:8	125:33	4	picture_Release
+arg	125:24	125:33	5	todisplay
+water	125:24	0:0	6	todisplay
+water	125:34	0:0	4	;
+water	126:8	0:0	4	todisplay
+op	126:18	0:0	4	=
+water	126:20	0:0	4	direct
+water	126:26	0:0	4	;
+water	127:4	0:0	4	}
+if	131:4	132:69	2	(do_snapshot)
+cond	131:8	131:8	3	do_snapshot
+water	131:8	0:0	4	do_snapshot
+stmts	132:8	132:69	3	
+call	132:8	132:68	4	vout_snapshot_Set
+arg	132:26	132:44	5	&vout->p->snapshot
+op	132:26	0:0	6	&
+water	132:27	0:0	6	vout
+op	132:31	0:0	6	->
+water	132:33	0:0	6	p
+op	132:34	0:0	6	->
+water	132:36	0:0	6	snapshot
+arg	132:46	132:57	5	&vd->source
+op	132:46	0:0	6	&
+water	132:47	0:0	6	vd
+op	132:49	0:0	6	->
+water	132:51	0:0	6	source
+arg	132:59	132:68	5	todisplay
+water	132:59	0:0	6	todisplay
+water	132:69	0:0	4	;
+call	134:4	134:61	2	vout_UpdateDisplaySourceProperties
+arg	134:39	134:41	3	vd
+water	134:39	0:0	4	vd
+arg	134:43	134:61	3	&todisplay->format
+op	134:43	0:0	4	&
+water	134:44	0:0	4	todisplay
+op	134:53	0:0	4	->
+water	134:55	0:0	4	format
+water	134:62	0:0	2	;
+if	135:4	137:4	2	(sys -> display . use_dr)
+cond	135:8	135:21	3	sys -> display . use_dr
+water	135:8	0:0	4	sys
+op	135:11	0:0	4	->
+water	135:13	0:0	4	display
+op	135:20	0:0	4	.
+water	135:21	0:0	4	use_dr
+stmts	135:29	137:4	3	
+water	135:29	0:0	4	{
+call	136:8	136:50	4	vout_display_Prepare
+arg	136:29	136:31	5	vd
+water	136:29	0:0	6	vd
+arg	136:33	136:42	5	todisplay
+water	136:33	0:0	6	todisplay
+arg	136:44	136:50	5	subpic
+water	136:44	0:0	6	subpic
+water	136:51	0:0	4	;
+water	137:4	0:0	4	}
+else	137:6	156:4	2
+stmts	137:11	156:4	3	
+water	137:11	0:0	4	{
+water	138:8	0:0	4	sys
+op	138:11	0:0	4	->
+water	138:13	0:0	4	display
+op	138:20	0:0	4	.
+water	138:21	0:0	4	filtered
+op	138:30	0:0	4	=
+call	138:32	138:64	4	vout_FilterDisplay
+arg	138:51	138:53	5	vd
+water	138:51	0:0	6	vd
+arg	138:55	138:64	5	todisplay
+water	138:55	0:0	6	todisplay
+water	138:65	0:0	4	;
+if	139:8	143:8	4	(sys -> display . filtered)
+cond	139:12	139:25	5	sys -> display . filtered
+water	139:12	0:0	6	sys
+op	139:15	0:0	6	->
+water	139:17	0:0	6	display
+op	139:24	0:0	6	.
+water	139:25	0:0	6	filtered
+stmts	139:35	143:8	5	
+water	139:35	0:0	6	{
+if	140:12	141:90	6	(! do_dr_spu && ! do_early_spu && vout -> p -> spu_blend && subpic)
+cond	140:16	140:69	7	! do_dr_spu && ! do_early_spu && vout -> p -> spu_blend && subpic
+op	140:16	0:0	8	!
+water	140:17	0:0	8	do_dr_spu
+op	140:27	0:0	8	&&
+op	140:30	0:0	8	!
+water	140:31	0:0	8	do_early_spu
+op	140:44	0:0	8	&&
+water	140:47	0:0	8	vout
+op	140:51	0:0	8	->
+water	140:53	0:0	8	p
+op	140:54	0:0	8	->
+water	140:56	0:0	8	spu_blend
+op	140:66	0:0	8	&&
+water	140:69	0:0	8	subpic
+stmts	141:16	141:90	7	
+call	141:16	141:89	8	picture_BlendSubpicture
+arg	141:40	141:61	9	sys->display.filtered
+water	141:40	0:0	10	sys
+op	141:43	0:0	10	->
+water	141:45	0:0	10	display
+op	141:52	0:0	10	.
+water	141:53	0:0	10	filtered
+arg	141:63	141:81	9	vout->p->spu_blend
+water	141:63	0:0	10	vout
+op	141:67	0:0	10	->
+water	141:69	0:0	10	p
+op	141:70	0:0	10	->
+water	141:72	0:0	10	spu_blend
+arg	141:83	141:89	9	subpic
+water	141:83	0:0	10	subpic
+water	141:90	0:0	8	;
+call	142:12	142:85	6	vout_display_Prepare
+arg	142:33	142:35	7	vd
+water	142:33	0:0	8	vd
+arg	142:37	142:58	7	sys->display.filtered
+water	142:37	0:0	8	sys
+op	142:40	0:0	8	->
+water	142:42	0:0	8	display
+op	142:49	0:0	8	.
+water	142:50	0:0	8	filtered
+arg	142:60	142:85	7	do_dr_spu?subpic:NULL
+water	142:60	0:0	8	do_dr_spu
+water	142:70	0:0	8	?
+water	142:72	0:0	8	subpic
+water	142:79	0:0	8	:
+water	142:81	0:0	8	NULL
+water	142:86	0:0	6	;
+water	143:8	0:0	6	}
+if	144:8	148:8	4	(! do_dr_spu && subpic)
+cond	144:12	144:26	5	! do_dr_spu && subpic
+op	144:12	0:0	6	!
+water	144:13	0:0	6	do_dr_spu
+op	144:23	0:0	6	&&
+water	144:26	0:0	6	subpic
+stmts	145:8	148:8	5	
+water	145:8	0:0	6	{
+call	146:12	146:36	6	subpicture_Delete
+arg	146:30	146:36	7	subpic
+water	146:30	0:0	8	subpic
+water	146:37	0:0	6	;
+water	147:12	0:0	6	subpic
+op	147:19	0:0	6	=
+water	147:21	0:0	6	NULL
+water	147:25	0:0	6	;
+water	148:8	0:0	6	}
+if	149:8	154:8	4	(! sys -> display . filtered)
+cond	149:12	149:26	5	! sys -> display . filtered
+op	149:12	0:0	6	!
+water	149:13	0:0	6	sys
+op	149:16	0:0	6	->
+water	149:18	0:0	6	display
+op	149:25	0:0	6	.
+water	149:26	0:0	6	filtered
+stmts	150:8	154:8	5	
+water	150:8	0:0	6	{
+if	151:12	152:41	6	(subpic != NULL)
+cond	151:16	151:26	7	subpic != NULL
+water	151:16	0:0	8	subpic
+op	151:23	0:0	8	!=
+water	151:26	0:0	8	NULL
+stmts	152:16	152:41	7	
+call	152:16	152:40	8	subpicture_Delete
+arg	152:34	152:40	9	subpic
+water	152:34	0:0	10	subpic
+water	152:41	0:0	8	;
+return	153:12	153:31	6	VLC_EGENERIC
+water	153:19	0:0	7	VLC_EGENERIC
+water	154:8	0:0	6	}
+water	155:8	0:0	4	todisplay
+op	155:18	0:0	4	=
+water	155:20	0:0	4	sys
+op	155:23	0:0	4	->
+water	155:25	0:0	4	display
+op	155:32	0:0	4	.
+water	155:33	0:0	4	filtered
+water	155:41	0:0	4	;
+water	156:4	0:0	4	}
+call	157:4	157:37	2	vout_chrono_Stop
+arg	157:21	157:37	3	&vout->p->render
+op	157:21	0:0	4	&
+water	157:22	0:0	4	vout
+op	157:26	0:0	4	->
+water	157:28	0:0	4	p
+op	157:29	0:0	4	->
+water	157:31	0:0	4	render
+water	157:38	0:0	2	;
+water	159:8	0:0	2	{
+water	160:8	0:0	2	static
+water	160:15	0:0	2	int
+water	160:19	0:0	2	i
+op	160:21	0:0	2	=
+water	160:23	0:0	2	0
+water	160:24	0:0	2	;
+if	161:8	163:86	2	(( ( i ++ ) % 10 ) == 0)
+cond	161:12	161:26	3	( ( i ++ ) % 10 ) == 0
+water	161:12	0:0	4	(
+water	161:13	0:0	4	(
+water	161:14	0:0	4	i
+op	161:15	0:0	4	++
+water	161:17	0:0	4	)
+op	161:18	0:0	4	%
+water	161:19	0:0	4	10
+water	161:21	0:0	4	)
+op	161:23	0:0	4	==
+water	161:26	0:0	4	0
+stmts	162:12	163:86	3	
+call	162:12	163:85	4	msg_Info
+arg	162:21	162:25	5	vout
+water	162:21	0:0	6	vout
+arg	162:27	162:56	5	"render: avg %d ms var %d ms"
+water	162:27	0:0	6	"render: avg %d ms var %d ms"
+arg	163:21	163:52	5	(int)(vout->p->render.avg/1000)
+call	163:21	163:51	6	(int)
+arg	163:27	163:51	7	vout->p->render.avg/1000
+water	163:27	0:0	8	vout
+op	163:31	0:0	8	->
+water	163:33	0:0	8	p
+op	163:34	0:0	8	->
+water	163:36	0:0	8	render
+op	163:42	0:0	8	.
+water	163:43	0:0	8	avg
+op	163:46	0:0	8	/
+water	163:47	0:0	8	1000
+arg	163:54	163:85	5	(int)(vout->p->render.var/1000)
+call	163:54	163:84	6	(int)
+arg	163:60	163:84	7	vout->p->render.var/1000
+water	163:60	0:0	8	vout
+op	163:64	0:0	8	->
+water	163:66	0:0	8	p
+op	163:67	0:0	8	->
+water	163:69	0:0	8	render
+op	163:75	0:0	8	.
+water	163:76	0:0	8	var
+op	163:79	0:0	8	/
+water	163:80	0:0	8	1000
+water	163:86	0:0	4	;
+water	164:8	0:0	2	}
+decl	168:4	168:42	2	mtime_t	delay
+op	168:18	0:0	2	=
+water	168:20	0:0	2	direct
+op	168:26	0:0	2	->
+water	168:28	0:0	2	date
+op	168:33	0:0	2	-
+call	168:35	168:41	3	mdate
+if	169:4	170:65	2	(delay < 1000)
+cond	169:8	169:16	3	delay < 1000
+water	169:8	0:0	4	delay
+op	169:14	0:0	4	<
+water	169:16	0:0	4	1000
+stmts	170:8	170:65	3	
+call	170:8	170:64	4	msg_Warn
+arg	170:17	170:21	5	vout
+water	170:17	0:0	6	vout
+arg	170:23	170:50	5	"picture is late (%lld ms)"
+water	170:23	0:0	6	"picture is late (%lld ms)"
+arg	170:52	170:64	5	delay/1000
+water	170:52	0:0	6	delay
+op	170:58	0:0	6	/
+water	170:60	0:0	6	1000
+water	170:65	0:0	4	;
+if	172:4	173:30	2	(! is_forced)
+cond	172:8	172:9	3	! is_forced
+op	172:8	0:0	4	!
+water	172:9	0:0	4	is_forced
+stmts	173:8	173:30	3	
+call	173:8	173:29	4	mwait
+arg	173:14	173:29	5	todisplay->date
+water	173:14	0:0	6	todisplay
+op	173:23	0:0	6	->
+water	173:25	0:0	6	date
+water	173:30	0:0	4	;
+water	175:4	0:0	2	vout
+op	175:8	0:0	2	->
+water	175:10	0:0	2	p
+op	175:11	0:0	2	->
+water	175:13	0:0	2	displayed
+op	175:22	0:0	2	.
+water	175:23	0:0	2	date
+op	175:28	0:0	2	=
+call	175:30	175:36	2	mdate
+water	175:37	0:0	2	;
+call	176:4	176:46	2	vout_display_Display
+arg	176:25	176:27	3	vd
+water	176:25	0:0	4	vd
+arg	176:29	176:38	3	todisplay
+water	176:29	0:0	4	todisplay
+arg	176:40	176:46	3	subpic
+water	176:40	0:0	4	subpic
+water	176:47	0:0	2	;
+water	177:4	0:0	2	sys
+op	177:7	0:0	2	->
+water	177:9	0:0	2	display
+op	177:16	0:0	2	.
+water	177:17	0:0	2	filtered
+op	177:26	0:0	2	=
+water	177:28	0:0	2	NULL
+water	177:32	0:0	2	;
+call	178:4	178:54	2	vout_statistic_AddDisplayed
+arg	178:32	178:51	3	&vout->p->statistic
+op	178:32	0:0	4	&
+water	178:33	0:0	4	vout
+op	178:37	0:0	4	->
+water	178:39	0:0	4	p
+op	178:40	0:0	4	->
+water	178:42	0:0	4	statistic
+arg	178:53	178:54	3	1
+water	178:53	0:0	4	1
+water	178:55	0:0	2	;
+return	179:4	179:22	2	VLC_SUCCESS
+water	179:11	0:0	3	VLC_SUCCESS

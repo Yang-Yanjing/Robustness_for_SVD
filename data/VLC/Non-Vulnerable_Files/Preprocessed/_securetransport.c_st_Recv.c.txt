@@ -1,0 +1,73 @@
+func	2:0	16:0	0	static int	st_Recv
+params	2:19	0:0	1	
+param	2:20	2:32	2	void *	opaque
+param	2:34	2:43	2	void *	buf
+param	2:45	2:58	2	size_t	length
+stmnts	0:0	15:61	1	
+decl	4:4	4:31	2	vlc_tls_t	*session
+op	4:23	0:0	2	=
+water	4:25	0:0	2	opaque
+decl	5:4	5:37	2	vlc_tls_sys_t	*sys
+op	5:23	0:0	2	=
+water	5:25	0:0	2	session
+op	5:32	0:0	2	->
+water	5:34	0:0	2	sys
+decl	6:4	6:21	2	size_t	actualSize
+decl	7:4	7:68	2	OSStatus	ret
+op	7:17	0:0	2	=
+call	7:19	7:67	3	SSLRead
+arg	7:27	7:41	4	sys->p_context
+water	7:27	0:0	5	sys
+op	7:30	0:0	5	->
+water	7:32	0:0	5	p_context
+arg	7:43	7:46	4	buf
+water	7:43	0:0	5	buf
+arg	7:48	7:54	4	length
+water	7:48	0:0	5	length
+arg	7:56	7:67	4	&actualSize
+op	7:56	0:0	5	&
+water	7:57	0:0	5	actualSize
+if	8:4	9:25	2	(ret == errSSLWouldBlock && actualSize)
+cond	8:8	8:35	3	ret == errSSLWouldBlock && actualSize
+water	8:8	0:0	4	ret
+op	8:12	0:0	4	==
+water	8:15	0:0	4	errSSLWouldBlock
+op	8:32	0:0	4	&&
+water	8:35	0:0	4	actualSize
+stmts	9:8	9:25	3	
+return	9:8	9:25	4	actualSize
+water	9:15	0:0	5	actualSize
+if	11:4	14:4	2	(ret == errSSLClosedNoNotify || ret == errSSLClosedGraceful)
+cond	11:8	11:46	3	ret == errSSLClosedNoNotify || ret == errSSLClosedGraceful
+water	11:8	0:0	4	ret
+op	11:12	0:0	4	==
+water	11:15	0:0	4	errSSLClosedNoNotify
+op	11:36	0:0	4	||
+water	11:39	0:0	4	ret
+op	11:43	0:0	4	==
+water	11:46	0:0	4	errSSLClosedGraceful
+stmts	11:68	14:4	3	
+water	11:68	0:0	4	{
+call	12:8	12:67	4	msg_Dbg
+arg	12:16	12:23	5	session
+water	12:16	0:0	6	session
+arg	12:25	12:62	5	"Got close notification with code %d"
+water	12:25	0:0	6	"Got close notification with code %d"
+arg	12:64	12:67	5	ret
+water	12:64	0:0	6	ret
+water	12:68	0:0	4	;
+return	13:8	13:16	4	0
+water	13:15	0:0	5	0
+water	14:4	0:0	4	}
+return	15:4	15:61	2	ret!=noErr?st_Error(session,ret):actualSize
+water	15:11	0:0	3	ret
+op	15:15	0:0	3	!=
+water	15:18	0:0	3	noErr
+water	15:24	0:0	3	?
+call	15:26	15:47	3	st_Error
+arg	15:35	15:42	4	session
+water	15:35	0:0	5	session
+arg	15:44	15:47	4	ret
+water	15:44	0:0	5	ret
+water	15:49	0:0	3	:
+water	15:51	0:0	3	actualSize

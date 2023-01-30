@@ -1,0 +1,133 @@
+func	2:0	29:0	0	static int	parse_MediaSequence
+params	2:30	0:0	1	
+param	2:31	2:42	2	stream_t *	s
+param	2:44	2:61	2	hls_stream_t *	hls
+param	2:63	2:75	2	char *	p_read
+stmnts	4:4	28:22	1	
+call	4:4	4:14	2	assert
+arg	4:11	4:14	3	hls
+water	4:11	0:0	4	hls
+water	4:15	0:0	2	;
+decl	5:4	5:16	2	int	sequence
+decl	6:4	6:67	2	int	ret
+op	6:12	0:0	2	=
+call	6:14	6:66	3	sscanf
+arg	6:21	6:27	4	p_read
+water	6:21	0:0	5	p_read
+arg	6:29	6:55	4	"#EXT-X-MEDIA-SEQUENCE:%d"
+water	6:29	0:0	5	"#EXT-X-MEDIA-SEQUENCE:%d"
+arg	6:57	6:66	4	&sequence
+op	6:57	0:0	5	&
+water	6:58	0:0	5	sequence
+if	7:4	11:4	2	(ret != 1)
+cond	7:8	7:15	3	ret != 1
+water	7:8	0:0	4	ret
+op	7:12	0:0	4	!=
+water	7:15	0:0	4	1
+stmts	8:4	11:4	3	
+water	8:4	0:0	4	{
+call	9:8	9:55	4	msg_Err
+arg	9:16	9:17	5	s
+water	9:16	0:0	6	s
+arg	9:19	9:55	5	"expected #EXT-X-MEDIA-SEQUENCE:<s>"
+water	9:19	0:0	6	"expected #EXT-X-MEDIA-SEQUENCE:<s>"
+water	9:56	0:0	4	;
+return	10:8	10:27	4	VLC_EGENERIC
+water	10:15	0:0	5	VLC_EGENERIC
+water	11:4	0:0	4	}
+if	12:4	26:4	2	(hls -> sequence > 0)
+cond	12:8	12:24	3	hls -> sequence > 0
+water	12:8	0:0	4	hls
+op	12:11	0:0	4	->
+water	12:13	0:0	4	sequence
+op	12:22	0:0	4	>
+water	12:24	0:0	4	0
+stmts	13:4	26:4	3	
+water	13:4	0:0	4	{
+if	14:8	22:8	4	(s -> p_sys -> b_live)
+cond	14:12	14:22	5	s -> p_sys -> b_live
+water	14:12	0:0	6	s
+op	14:13	0:0	6	->
+water	14:15	0:0	6	p_sys
+op	14:20	0:0	6	->
+water	14:22	0:0	6	b_live
+stmts	15:8	22:8	5	
+water	15:8	0:0	6	{
+decl	16:12	16:66	6	hls_stream_t	*last
+op	16:31	0:0	6	=
+call	16:33	16:65	7	hls_GetLast
+arg	16:45	16:65	8	s->p_sys->hls_stream
+water	16:45	0:0	9	s
+op	16:46	0:0	9	->
+water	16:48	0:0	9	p_sys
+op	16:53	0:0	9	->
+water	16:55	0:0	9	hls_stream
+decl	17:12	17:103	6	segment_t	*last_segment
+op	17:36	0:0	6	=
+call	17:38	17:102	7	segment_GetSegment
+arg	17:58	17:62	8	last
+water	17:58	0:0	9	last
+arg	17:64	17:102	8	vlc_array_count(last->segments)-1
+call	17:64	17:96	9	vlc_array_count
+arg	17:81	17:96	10	last->segments
+water	17:81	0:0	11	last
+op	17:85	0:0	11	->
+water	17:87	0:0	11	segments
+op	17:98	0:0	9	-
+water	17:100	0:0	9	1
+if	18:12	21:61	6	(( last_segment -> sequence < sequence ) && ( sequence - last_segment -> sequence >= 1 ))
+cond	18:17	19:58	7	( last_segment -> sequence < sequence ) && ( sequence - last_segment -> sequence >= 1 )
+water	18:17	0:0	8	(
+water	18:19	0:0	8	last_segment
+op	18:31	0:0	8	->
+water	18:33	0:0	8	sequence
+op	18:42	0:0	8	<
+water	18:44	0:0	8	sequence
+water	18:52	0:0	8	)
+op	18:54	0:0	8	&&
+water	19:17	0:0	8	(
+water	19:19	0:0	8	sequence
+op	19:28	0:0	8	-
+water	19:30	0:0	8	last_segment
+op	19:42	0:0	8	->
+water	19:44	0:0	8	sequence
+op	19:53	0:0	8	>=
+water	19:56	0:0	8	1
+water	19:58	0:0	8	)
+stmts	20:16	21:61	7	
+call	20:16	21:60	8	msg_Err
+arg	20:24	20:25	9	s
+water	20:24	0:0	10	s
+arg	20:27	20:82	9	"EXT-X-MEDIA-SEQUENCE gap in playlist (new=%d, old=%d)"
+water	20:27	0:0	10	"EXT-X-MEDIA-SEQUENCE gap in playlist (new=%d, old=%d)"
+arg	21:28	21:36	9	sequence
+water	21:28	0:0	10	sequence
+arg	21:38	21:60	9	last_segment->sequence
+water	21:38	0:0	10	last_segment
+op	21:50	0:0	10	->
+water	21:52	0:0	10	sequence
+water	21:61	0:0	8	;
+water	22:8	0:0	6	}
+else	23:8	25:48	4
+stmts	24:12	25:48	5	
+call	24:12	25:47	6	msg_Err
+arg	24:20	24:21	7	s
+water	24:20	0:0	8	s
+arg	24:23	24:90	7	"EXT-X-MEDIA-SEQUENCE already present in playlist (new=%d, old=%d)"
+water	24:23	0:0	8	"EXT-X-MEDIA-SEQUENCE already present in playlist (new=%d, old=%d)"
+arg	25:24	25:32	7	sequence
+water	25:24	0:0	8	sequence
+arg	25:34	25:47	7	hls->sequence
+water	25:34	0:0	8	hls
+op	25:37	0:0	8	->
+water	25:39	0:0	8	sequence
+water	25:48	0:0	6	;
+water	26:4	0:0	4	}
+water	27:4	0:0	2	hls
+op	27:7	0:0	2	->
+water	27:9	0:0	2	sequence
+op	27:18	0:0	2	=
+water	27:20	0:0	2	sequence
+water	27:28	0:0	2	;
+return	28:4	28:22	2	VLC_SUCCESS
+water	28:11	0:0	3	VLC_SUCCESS

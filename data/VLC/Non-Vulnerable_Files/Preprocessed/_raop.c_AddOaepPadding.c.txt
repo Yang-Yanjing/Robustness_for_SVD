@@ -1,0 +1,381 @@
+func	2:0	107:0	0	static int	AddOaepPadding
+params	2:25	0:0	1	
+param	2:27	2:47	2	vlc_object_t *	p_this
+param	3:27	3:44	2	unsigned char *	EM
+param	3:46	3:74	2	const size_t	emLenWithPrefix
+param	4:27	4:49	2	const unsigned char *	M
+param	4:51	4:68	2	const size_t	mLen
+param	5:27	5:49	2	const unsigned char *	P
+param	5:51	5:69	2	const size_t	pLen
+stmnts	0:0	106:16	1	
+decl	7:4	7:33	2	const int	Hash
+op	7:19	0:0	2	=
+water	7:21	0:0	2	GCRY_MD_SHA1
+decl	8:4	8:59	2	const unsigned int	hLen
+op	8:28	0:0	2	=
+call	8:30	8:58	3	gcry_md_get_algo_dlen
+arg	8:53	8:58	4	Hash
+water	8:53	0:0	5	Hash
+decl	9:4	9:30	2	unsigned char	*seed
+op	9:24	0:0	2	=
+water	9:26	0:0	2	NULL
+decl	10:4	10:28	2	unsigned char	*DB
+op	10:22	0:0	2	=
+water	10:24	0:0	2	NULL
+decl	11:4	11:32	2	unsigned char	*dbMask
+op	11:26	0:0	2	=
+water	11:28	0:0	2	NULL
+decl	12:4	12:34	2	unsigned char	*seedMask
+op	12:28	0:0	2	=
+water	12:30	0:0	2	NULL
+decl	13:4	13:16	2	size_t	emLen
+decl	14:4	14:16	2	size_t	psLen
+decl	15:4	15:12	2	size_t	i
+decl	16:4	16:27	2	int	i_err
+op	16:14	0:0	2	=
+water	16:16	0:0	2	VLC_SUCCESS
+water	18:4	0:0	2	emLen
+op	18:10	0:0	2	=
+water	18:12	0:0	2	emLenWithPrefix
+op	18:28	0:0	2	-
+water	18:30	0:0	2	1
+water	18:31	0:0	2	;
+if	22:4	26:4	2	(mLen > ( emLen - ( 2 * hLen ) - 1 ))
+cond	22:9	22:39	3	mLen > ( emLen - ( 2 * hLen ) - 1 )
+water	22:9	0:0	4	mLen
+op	22:14	0:0	4	>
+water	22:16	0:0	4	(
+water	22:17	0:0	4	emLen
+op	22:23	0:0	4	-
+water	22:25	0:0	4	(
+water	22:26	0:0	4	2
+op	22:28	0:0	4	*
+water	22:30	0:0	4	hLen
+water	22:34	0:0	4	)
+op	22:36	0:0	4	-
+water	22:38	0:0	4	1
+water	22:39	0:0	4	)
+stmts	23:4	26:4	3	
+water	23:4	0:0	4	{
+call	24:8	24:45	4	msg_Err
+arg	24:17	24:24	5	p_this
+water	24:17	0:0	6	p_this
+arg	24:26	24:45	5	"Message too long"
+water	24:26	0:0	6	"Message too long"
+water	24:46	0:0	4	;
+goto	25:8	25:18	4	error
+water	25:13	0:0	5	error
+water	26:4	0:0	4	}
+water	31:4	0:0	2	psLen
+op	31:10	0:0	2	=
+water	31:12	0:0	2	emLen
+op	31:18	0:0	2	-
+water	31:20	0:0	2	mLen
+op	31:25	0:0	2	-
+water	31:27	0:0	2	(
+water	31:28	0:0	2	2
+op	31:30	0:0	2	*
+water	31:32	0:0	2	hLen
+water	31:36	0:0	2	)
+op	31:38	0:0	2	-
+water	31:40	0:0	2	1
+water	31:41	0:0	2	;
+water	37:4	0:0	2	DB
+op	37:7	0:0	2	=
+call	37:9	37:44	2	calloc
+arg	37:17	37:18	3	1
+water	37:17	0:0	4	1
+arg	37:20	37:44	3	hLen+psLen+1+mLen
+water	37:20	0:0	4	hLen
+op	37:25	0:0	4	+
+water	37:27	0:0	4	psLen
+op	37:33	0:0	4	+
+water	37:35	0:0	4	1
+op	37:37	0:0	4	+
+water	37:39	0:0	4	mLen
+water	37:45	0:0	2	;
+water	38:4	0:0	2	dbMask
+op	38:11	0:0	2	=
+call	38:13	38:37	2	calloc
+arg	38:21	38:22	3	1
+water	38:21	0:0	4	1
+arg	38:24	38:37	3	emLen-hLen
+water	38:24	0:0	4	emLen
+op	38:30	0:0	4	-
+water	38:32	0:0	4	hLen
+water	38:38	0:0	2	;
+water	39:4	0:0	2	seedMask
+op	39:13	0:0	2	=
+call	39:15	39:31	2	calloc
+arg	39:23	39:24	3	1
+water	39:23	0:0	4	1
+arg	39:26	39:31	3	hLen
+water	39:26	0:0	4	hLen
+water	39:32	0:0	2	;
+if	40:4	44:4	2	(DB == NULL || dbMask == NULL || seedMask == NULL)
+cond	40:9	40:53	3	DB == NULL || dbMask == NULL || seedMask == NULL
+water	40:9	0:0	4	DB
+op	40:12	0:0	4	==
+water	40:15	0:0	4	NULL
+op	40:20	0:0	4	||
+water	40:23	0:0	4	dbMask
+op	40:30	0:0	4	==
+water	40:33	0:0	4	NULL
+op	40:38	0:0	4	||
+water	40:41	0:0	4	seedMask
+op	40:50	0:0	4	==
+water	40:53	0:0	4	NULL
+stmts	41:4	44:4	3	
+water	41:4	0:0	4	{
+water	42:8	0:0	4	i_err
+op	42:14	0:0	4	=
+water	42:16	0:0	4	VLC_ENOMEM
+water	42:26	0:0	4	;
+goto	43:8	43:18	4	error
+water	43:13	0:0	5	error
+water	44:4	0:0	4	}
+call	48:4	48:43	2	gcry_md_hash_buffer
+arg	48:25	48:29	3	Hash
+water	48:25	0:0	4	Hash
+arg	48:31	48:33	3	DB
+water	48:31	0:0	4	DB
+arg	48:35	48:36	3	P
+water	48:35	0:0	4	P
+arg	48:38	48:43	3	pLen
+water	48:38	0:0	4	pLen
+water	48:44	0:0	2	;
+call	53:4	53:32	2	memset
+arg	53:12	53:21	3	DB+hLen
+water	53:12	0:0	4	DB
+op	53:15	0:0	4	+
+water	53:17	0:0	4	hLen
+arg	53:23	53:24	3	0
+water	53:23	0:0	4	0
+arg	53:26	53:32	3	psLen
+water	53:26	0:0	4	psLen
+water	53:33	0:0	2	;
+water	58:4	0:0	2	DB
+op	58:6	0:0	2	[
+water	58:7	0:0	2	hLen
+op	58:12	0:0	2	+
+water	58:14	0:0	2	psLen
+op	58:19	0:0	2	]
+op	58:21	0:0	2	=
+water	58:23	0:0	2	0
+water	58:24	0:0	2	x01
+water	58:27	0:0	2	;
+call	59:4	59:43	2	memcpy
+arg	59:12	59:33	3	DB+hLen+psLen+1
+water	59:12	0:0	4	DB
+op	59:15	0:0	4	+
+water	59:17	0:0	4	hLen
+op	59:22	0:0	4	+
+water	59:24	0:0	4	psLen
+op	59:30	0:0	4	+
+water	59:32	0:0	4	1
+arg	59:35	59:36	3	M
+water	59:35	0:0	4	M
+arg	59:38	59:43	3	mLen
+water	59:38	0:0	4	mLen
+water	59:44	0:0	2	;
+water	63:4	0:0	2	seed
+op	63:9	0:0	2	=
+call	63:11	63:55	2	gcry_random_bytes
+arg	63:30	63:34	3	hLen
+water	63:30	0:0	4	hLen
+arg	63:36	63:55	3	GCRY_STRONG_RANDOM
+water	63:36	0:0	4	GCRY_STRONG_RANDOM
+water	63:56	0:0	2	;
+if	64:4	68:4	2	(seed == NULL)
+cond	64:9	64:17	3	seed == NULL
+water	64:9	0:0	4	seed
+op	64:14	0:0	4	==
+water	64:17	0:0	4	NULL
+stmts	65:4	68:4	3	
+water	65:4	0:0	4	{
+water	66:8	0:0	4	i_err
+op	66:14	0:0	4	=
+water	66:16	0:0	4	VLC_ENOMEM
+water	66:26	0:0	4	;
+goto	67:8	67:18	4	error
+water	67:13	0:0	5	error
+water	68:4	0:0	4	}
+water	72:4	0:0	2	i_err
+op	72:10	0:0	2	=
+call	72:12	72:65	2	MGF1
+arg	72:18	72:24	3	p_this
+water	72:18	0:0	4	p_this
+arg	72:26	72:32	3	dbMask
+water	72:26	0:0	4	dbMask
+arg	72:34	72:46	3	emLen-hLen
+water	72:34	0:0	4	emLen
+op	72:40	0:0	4	-
+water	72:42	0:0	4	hLen
+arg	72:48	72:52	3	seed
+water	72:48	0:0	4	seed
+arg	72:54	72:58	3	hLen
+water	72:54	0:0	4	hLen
+arg	72:60	72:65	3	Hash
+water	72:60	0:0	4	Hash
+water	72:66	0:0	2	;
+if	73:4	74:18	2	(i_err != VLC_SUCCESS)
+cond	73:9	73:18	3	i_err != VLC_SUCCESS
+water	73:9	0:0	4	i_err
+op	73:15	0:0	4	!=
+water	73:18	0:0	4	VLC_SUCCESS
+stmts	74:8	74:18	3	
+goto	74:8	74:18	4	error
+water	74:13	0:0	5	error
+for	78:4	79:26	2	(i = 0 ;i < ( emLen - hLen );++ i)
+forinit	78:10	78:15	3	i = 0 ;
+water	78:10	0:0	4	i
+op	78:12	0:0	4	=
+water	78:14	0:0	4	0
+water	78:15	0:0	4	;
+cond	78:17	78:34	3	i < ( emLen - hLen )
+water	78:17	0:0	4	i
+op	78:19	0:0	4	<
+water	78:21	0:0	4	(
+water	78:22	0:0	4	emLen
+op	78:28	0:0	4	-
+water	78:30	0:0	4	hLen
+water	78:34	0:0	4	)
+forexpr	78:37	78:39	3	++ i
+op	78:37	0:0	4	++
+water	78:39	0:0	4	i
+stmts	79:8	79:26	3	
+water	79:8	0:0	4	DB
+op	79:10	0:0	4	[
+water	79:11	0:0	4	i
+op	79:12	0:0	4	]
+op	79:14	0:0	4	^=
+water	79:17	0:0	4	dbMask
+op	79:23	0:0	4	[
+water	79:24	0:0	4	i
+op	79:25	0:0	4	]
+water	79:26	0:0	4	;
+water	83:4	0:0	2	i_err
+op	83:10	0:0	2	=
+call	83:12	83:65	2	MGF1
+arg	83:18	83:24	3	p_this
+water	83:18	0:0	4	p_this
+arg	83:26	83:34	3	seedMask
+water	83:26	0:0	4	seedMask
+arg	83:36	83:40	3	hLen
+water	83:36	0:0	4	hLen
+arg	83:42	83:44	3	DB
+water	83:42	0:0	4	DB
+arg	83:46	83:58	3	emLen-hLen
+water	83:46	0:0	4	emLen
+op	83:52	0:0	4	-
+water	83:54	0:0	4	hLen
+arg	83:60	83:65	3	Hash
+water	83:60	0:0	4	Hash
+water	83:66	0:0	2	;
+if	84:4	85:18	2	(i_err != VLC_SUCCESS)
+cond	84:9	84:18	3	i_err != VLC_SUCCESS
+water	84:9	0:0	4	i_err
+op	84:15	0:0	4	!=
+water	84:18	0:0	4	VLC_SUCCESS
+stmts	85:8	85:18	3	
+goto	85:8	85:18	4	error
+water	85:13	0:0	5	error
+for	89:4	90:30	2	(i = 0 ;i < hLen;++ i)
+forinit	89:10	89:15	3	i = 0 ;
+water	89:10	0:0	4	i
+op	89:12	0:0	4	=
+water	89:14	0:0	4	0
+water	89:15	0:0	4	;
+cond	89:17	89:21	3	i < hLen
+water	89:17	0:0	4	i
+op	89:19	0:0	4	<
+water	89:21	0:0	4	hLen
+forexpr	89:27	89:29	3	++ i
+op	89:27	0:0	4	++
+water	89:29	0:0	4	i
+stmts	90:8	90:30	3	
+water	90:8	0:0	4	seed
+op	90:12	0:0	4	[
+water	90:13	0:0	4	i
+op	90:14	0:0	4	]
+op	90:16	0:0	4	^=
+water	90:19	0:0	4	seedMask
+op	90:27	0:0	4	[
+water	90:28	0:0	4	i
+op	90:29	0:0	4	]
+water	90:30	0:0	4	;
+call	94:4	94:70	2	assert
+arg	94:12	94:70	3	(1+hLen+(hLen+psLen+1+mLen))==emLenWithPrefix
+water	94:12	0:0	4	(
+water	94:13	0:0	4	1
+op	94:15	0:0	4	+
+water	94:17	0:0	4	hLen
+op	94:22	0:0	4	+
+water	94:24	0:0	4	(
+water	94:25	0:0	4	hLen
+op	94:30	0:0	4	+
+water	94:32	0:0	4	psLen
+op	94:38	0:0	4	+
+water	94:40	0:0	4	1
+op	94:42	0:0	4	+
+water	94:44	0:0	4	mLen
+water	94:48	0:0	4	)
+water	94:49	0:0	4	)
+op	94:51	0:0	4	==
+water	94:54	0:0	4	emLenWithPrefix
+water	94:71	0:0	2	;
+water	95:4	0:0	2	EM
+op	95:6	0:0	2	[
+water	95:7	0:0	2	0
+op	95:8	0:0	2	]
+op	95:10	0:0	2	=
+water	95:12	0:0	2	0
+water	95:13	0:0	2	x00
+water	95:16	0:0	2	;
+call	96:4	96:31	2	memcpy
+arg	96:12	96:18	3	EM+1
+water	96:12	0:0	4	EM
+op	96:15	0:0	4	+
+water	96:17	0:0	4	1
+arg	96:20	96:24	3	seed
+water	96:20	0:0	4	seed
+arg	96:26	96:31	3	hLen
+water	96:26	0:0	4	hLen
+water	96:32	0:0	2	;
+call	97:4	97:55	2	memcpy
+arg	97:12	97:25	3	EM+1+hLen
+water	97:12	0:0	4	EM
+op	97:15	0:0	4	+
+water	97:17	0:0	4	1
+op	97:19	0:0	4	+
+water	97:21	0:0	4	hLen
+arg	97:27	97:29	3	DB
+water	97:27	0:0	4	DB
+arg	97:31	97:55	3	hLen+psLen+1+mLen
+water	97:31	0:0	4	hLen
+op	97:36	0:0	4	+
+water	97:38	0:0	4	psLen
+op	97:44	0:0	4	+
+water	97:46	0:0	4	1
+op	97:48	0:0	4	+
+water	97:50	0:0	4	mLen
+water	97:56	0:0	2	;
+label	101:0	101:5	2	error :
+call	102:4	102:13	2	free
+arg	102:10	102:13	3	DB
+water	102:10	0:0	4	DB
+water	102:14	0:0	2	;
+call	103:4	103:17	2	free
+arg	103:10	103:17	3	dbMask
+water	103:10	0:0	4	dbMask
+water	103:18	0:0	2	;
+call	104:4	104:19	2	free
+arg	104:10	104:19	3	seedMask
+water	104:10	0:0	4	seedMask
+water	104:20	0:0	2	;
+call	105:4	105:15	2	free
+arg	105:10	105:15	3	seed
+water	105:10	0:0	4	seed
+water	105:16	0:0	2	;
+return	106:4	106:16	2	i_err
+water	106:11	0:0	3	i_err

@@ -1,0 +1,153 @@
+func	2:0	37:0	0	static void	Play
+params	2:17	0:0	1	
+param	2:18	2:38	2	audio_output_t *	aout
+param	2:40	2:54	2	block_t *	block
+stmnts	0:0	36:25	1	
+decl	4:4	4:31	2	aout_sys_t	*sys
+op	4:20	0:0	2	=
+water	4:22	0:0	2	aout
+op	4:26	0:0	2	->
+water	4:28	0:0	2	sys
+if	5:4	7:80	2	(sys -> chans_to_reorder != 0)
+cond	5:8	5:33	3	sys -> chans_to_reorder != 0
+water	5:8	0:0	4	sys
+op	5:11	0:0	4	->
+water	5:13	0:0	4	chans_to_reorder
+op	5:30	0:0	4	!=
+water	5:33	0:0	4	0
+stmts	6:8	7:80	3	
+call	6:8	7:79	4	aout_ChannelReorder
+arg	6:28	6:43	5	block->p_buffer
+water	6:28	0:0	6	block
+op	6:33	0:0	6	->
+water	6:35	0:0	6	p_buffer
+arg	6:45	6:60	5	block->i_buffer
+water	6:45	0:0	6	block
+op	6:50	0:0	6	->
+water	6:52	0:0	6	i_buffer
+arg	7:27	7:48	5	sys->chans_to_reorder
+water	7:27	0:0	6	sys
+op	7:30	0:0	6	->
+water	7:32	0:0	6	chans_to_reorder
+arg	7:50	7:66	5	sys->chans_table
+water	7:50	0:0	6	sys
+op	7:53	0:0	6	->
+water	7:55	0:0	6	chans_table
+arg	7:68	7:79	5	sys->format
+water	7:68	0:0	6	sys
+op	7:71	0:0	6	->
+water	7:73	0:0	6	format
+water	7:80	0:0	4	;
+decl	8:4	8:29	2	snd_pcm_t	*pcm
+op	8:19	0:0	2	=
+water	8:21	0:0	2	sys
+op	8:24	0:0	2	->
+water	8:26	0:0	2	pcm
+while	11:4	35:4	2	(block -> i_nb_samples > 0)
+cond	11:11	11:33	3	block -> i_nb_samples > 0
+water	11:11	0:0	4	block
+op	11:16	0:0	4	->
+water	11:18	0:0	4	i_nb_samples
+op	11:31	0:0	4	>
+water	11:33	0:0	4	0
+stmts	12:4	35:4	3	
+water	12:4	0:0	4	{
+decl	13:8	13:32	4	snd_pcm_sframes_t	frames
+water	14:8	0:0	4	frames
+op	14:15	0:0	4	=
+call	14:17	14:74	4	snd_pcm_writei
+arg	14:33	14:36	5	pcm
+water	14:33	0:0	6	pcm
+arg	14:38	14:53	5	block->p_buffer
+water	14:38	0:0	6	block
+op	14:43	0:0	6	->
+water	14:45	0:0	6	p_buffer
+arg	14:55	14:74	5	block->i_nb_samples
+water	14:55	0:0	6	block
+op	14:60	0:0	6	->
+water	14:62	0:0	6	i_nb_samples
+water	14:75	0:0	4	;
+if	15:8	22:8	4	(frames >= 0)
+cond	15:12	15:22	5	frames >= 0
+water	15:12	0:0	6	frames
+op	15:19	0:0	6	>=
+water	15:22	0:0	6	0
+stmts	16:8	22:8	5	
+water	16:8	0:0	6	{
+decl	17:12	17:64	6	size_t	bytes
+op	17:25	0:0	6	=
+call	17:27	17:63	7	snd_pcm_frames_to_bytes
+arg	17:52	17:55	8	pcm
+water	17:52	0:0	9	pcm
+arg	17:57	17:63	8	frames
+water	17:57	0:0	9	frames
+water	18:12	0:0	6	block
+op	18:17	0:0	6	->
+water	18:19	0:0	6	i_nb_samples
+op	18:32	0:0	6	-=
+water	18:35	0:0	6	frames
+water	18:41	0:0	6	;
+water	19:12	0:0	6	block
+op	19:17	0:0	6	->
+water	19:19	0:0	6	p_buffer
+op	19:28	0:0	6	+=
+water	19:31	0:0	6	bytes
+water	19:36	0:0	6	;
+water	20:12	0:0	6	block
+op	20:17	0:0	6	->
+water	20:19	0:0	6	i_buffer
+op	20:28	0:0	6	-=
+water	20:31	0:0	6	bytes
+water	20:36	0:0	6	;
+water	22:8	0:0	6	}
+else	23:8	34:8	4
+stmts	24:8	34:8	5	
+water	24:8	0:0	6	{
+decl	25:12	25:54	6	int	val
+op	25:20	0:0	6	=
+call	25:22	25:53	7	snd_pcm_recover
+arg	25:39	25:42	8	pcm
+water	25:39	0:0	9	pcm
+arg	25:44	25:50	8	frames
+water	25:44	0:0	9	frames
+arg	25:52	25:53	8	1
+water	25:52	0:0	9	1
+if	26:12	32:12	6	(val)
+cond	26:16	26:16	7	val
+water	26:16	0:0	8	val
+stmts	27:12	32:12	7	
+water	27:12	0:0	8	{
+call	28:16	29:43	8	msg_Err
+arg	28:25	28:29	9	aout
+water	28:25	0:0	10	aout
+arg	28:31	28:67	9	"cannot recover playback stream: %s"
+water	28:31	0:0	10	"cannot recover playback stream: %s"
+arg	29:25	29:43	9	snd_strerror(val)
+call	29:25	29:42	10	snd_strerror
+arg	29:39	29:42	11	val
+water	29:39	0:0	12	val
+water	29:44	0:0	8	;
+call	30:16	30:43	8	DumpDeviceStatus
+arg	30:34	30:38	9	aout
+water	30:34	0:0	10	aout
+arg	30:40	30:43	9	pcm
+water	30:40	0:0	10	pcm
+water	30:44	0:0	8	;
+break	31:16	31:21	8	
+water	32:12	0:0	8	}
+call	33:12	33:77	6	msg_Warn
+arg	33:22	33:26	7	aout
+water	33:22	0:0	8	aout
+arg	33:28	33:54	7	"cannot write samples: %s"
+water	33:28	0:0	8	"cannot write samples: %s"
+arg	33:56	33:77	7	snd_strerror(frames)
+call	33:56	33:76	8	snd_strerror
+arg	33:70	33:76	9	frames
+water	33:70	0:0	10	frames
+water	33:78	0:0	6	;
+water	34:8	0:0	6	}
+water	35:4	0:0	4	}
+call	36:4	36:24	2	block_Release
+arg	36:19	36:24	3	block
+water	36:19	0:0	4	block
+water	36:25	0:0	2	;

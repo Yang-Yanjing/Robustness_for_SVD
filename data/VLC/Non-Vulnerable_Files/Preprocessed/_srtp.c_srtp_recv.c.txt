@@ -1,0 +1,304 @@
+func	1:0	59:0	0	int	srtp_recv
+params	2:10	0:0	1	
+param	2:11	2:28	2	srtp_session_t *	s
+param	2:30	2:42	2	uint8_t *	buf
+param	2:44	2:56	2	size_t *	lenp
+stmnts	0:0	58:35	1	
+decl	4:4	4:22	2	size_t	len
+op	4:15	0:0	2	=
+op	4:17	0:0	2	*
+water	4:18	0:0	2	lenp
+if	5:4	6:21	2	(len < 12 u)
+cond	5:8	5:16	3	len < 12 u
+water	5:8	0:0	4	len
+op	5:12	0:0	4	<
+water	5:14	0:0	4	12
+water	5:16	0:0	4	u
+stmts	6:8	6:21	3	
+return	6:8	6:21	4	EINVAL
+water	6:15	0:0	5	EINVAL
+if	7:4	57:4	2	(! ( s -> flags & SRTP_UNAUTHENTICATED ))
+cond	7:8	7:41	3	! ( s -> flags & SRTP_UNAUTHENTICATED )
+op	7:8	0:0	4	!
+water	7:9	0:0	4	(
+water	7:10	0:0	4	s
+op	7:11	0:0	4	->
+water	7:13	0:0	4	flags
+op	7:19	0:0	4	&
+water	7:21	0:0	4	SRTP_UNAUTHENTICATED
+water	7:41	0:0	4	)
+stmts	8:4	57:4	3	
+water	8:4	0:0	4	{
+decl	9:8	9:48	4	size_t	tag_len
+op	9:23	0:0	4	=
+water	9:25	0:0	4	s
+op	9:26	0:0	4	->
+water	9:28	0:0	4	tag_len
+water	9:35	0:0	4	,
+decl	9:8	9:48	4	size_t	roc_len
+op	9:45	0:0	4	=
+water	9:47	0:0	4	0
+if	10:8	25:8	4	(rcc_mode (s ))
+cond	10:12	10:23	5	rcc_mode (s )
+call	10:12	10:23	6	rcc_mode
+arg	10:22	10:23	7	s
+water	10:22	0:0	8	s
+stmts	11:8	25:8	5	
+water	11:8	0:0	6	{
+if	12:12	19:12	6	((rtp_seq (buf ) % s -> rtp_rcc ) == 0)
+cond	12:16	12:48	7	(rtp_seq (buf ) % s -> rtp_rcc ) == 0
+water	12:16	0:0	8	(
+call	12:17	12:29	8	rtp_seq
+arg	12:26	12:29	9	buf
+water	12:26	0:0	10	buf
+op	12:31	0:0	8	%
+water	12:33	0:0	8	s
+op	12:34	0:0	8	->
+water	12:36	0:0	8	rtp_rcc
+water	12:43	0:0	8	)
+op	12:45	0:0	8	==
+water	12:48	0:0	8	0
+stmts	13:12	19:12	7	
+water	13:12	0:0	8	{
+water	14:16	0:0	8	roc_len
+op	14:24	0:0	8	=
+water	14:26	0:0	8	4
+water	14:27	0:0	8	;
+if	15:16	16:31	8	(rcc_mode (s ) == 3)
+cond	15:20	15:36	9	rcc_mode (s ) == 3
+call	15:20	15:31	10	rcc_mode
+arg	15:30	15:31	11	s
+water	15:30	0:0	12	s
+op	15:33	0:0	10	==
+water	15:36	0:0	10	3
+stmts	16:20	16:31	9	
+water	16:20	0:0	10	tag_len
+op	16:28	0:0	10	=
+water	16:30	0:0	10	0
+water	16:31	0:0	10	;
+else	17:16	18:32	8
+stmts	18:20	18:32	9	
+water	18:20	0:0	10	tag_len
+op	18:28	0:0	10	-=
+water	18:31	0:0	10	4
+water	18:32	0:0	10	;
+water	19:12	0:0	8	}
+else	20:12	24:12	6
+stmts	21:12	24:12	7	
+water	21:12	0:0	8	{
+if	22:16	23:31	8	(rcc_mode (s ) & 1)
+cond	22:20	22:35	9	rcc_mode (s ) & 1
+call	22:20	22:31	10	rcc_mode
+arg	22:30	22:31	11	s
+water	22:30	0:0	12	s
+op	22:33	0:0	10	&
+water	22:35	0:0	10	1
+stmts	23:20	23:31	9	
+water	23:20	0:0	10	tag_len
+op	23:28	0:0	10	=
+water	23:30	0:0	10	0
+water	23:31	0:0	10	;
+water	24:12	0:0	8	}
+water	25:8	0:0	6	}
+if	26:8	27:25	4	(len < ( 12 u + roc_len + tag_len ))
+cond	26:12	26:42	5	len < ( 12 u + roc_len + tag_len )
+water	26:12	0:0	6	len
+op	26:16	0:0	6	<
+water	26:18	0:0	6	(
+water	26:19	0:0	6	12
+water	26:21	0:0	6	u
+op	26:23	0:0	6	+
+water	26:25	0:0	6	roc_len
+op	26:33	0:0	6	+
+water	26:35	0:0	6	tag_len
+water	26:42	0:0	6	)
+stmts	27:12	27:25	5	
+return	27:12	27:25	6	EINVAL
+water	27:19	0:0	7	EINVAL
+water	28:8	0:0	4	len
+op	28:12	0:0	4	-=
+water	28:15	0:0	4	roc_len
+op	28:23	0:0	4	+
+water	28:25	0:0	4	tag_len
+water	28:32	0:0	4	;
+decl	29:8	29:63	4	uint32_t	roc
+op	29:21	0:0	4	=
+call	29:23	29:57	5	srtp_compute_roc
+arg	29:41	29:42	6	s
+water	29:41	0:0	7	s
+arg	29:44	29:57	6	rtp_seq(buf)
+call	29:44	29:56	7	rtp_seq
+arg	29:53	29:56	8	buf
+water	29:53	0:0	9	buf
+water	29:58	0:0	4	,
+decl	29:8	29:63	4	uint32_t	rcc
+if	30:8	35:8	4	(roc_len)
+cond	30:12	30:12	5	roc_len
+water	30:12	0:0	6	roc_len
+stmts	31:8	35:8	5	
+water	31:8	0:0	6	{
+call	32:12	32:32	6	assert
+arg	32:20	32:32	7	roc_len==4
+water	32:20	0:0	8	roc_len
+op	32:28	0:0	8	==
+water	32:31	0:0	8	4
+water	32:33	0:0	6	;
+call	33:12	33:38	6	memcpy
+arg	33:20	33:24	7	&rcc
+op	33:20	0:0	8	&
+water	33:21	0:0	8	rcc
+arg	33:26	33:35	7	buf+len
+water	33:26	0:0	8	buf
+op	33:30	0:0	8	+
+water	33:32	0:0	8	len
+arg	33:37	33:38	7	4
+water	33:37	0:0	8	4
+water	33:39	0:0	6	;
+water	34:12	0:0	6	rcc
+op	34:16	0:0	6	=
+call	34:18	34:28	6	ntohl
+arg	34:25	34:28	7	rcc
+water	34:25	0:0	8	rcc
+water	34:29	0:0	6	;
+water	35:8	0:0	6	}
+else	36:8	37:21	4
+stmts	37:12	37:21	5	
+water	37:12	0:0	6	rcc
+op	37:16	0:0	6	=
+water	37:18	0:0	6	roc
+water	37:21	0:0	6	;
+decl	38:8	38:67	4	const uint8_t	*tag
+op	38:27	0:0	4	=
+call	38:29	38:66	5	rtp_digest
+arg	38:41	38:51	6	s->rtp.mac
+water	38:41	0:0	7	s
+op	38:42	0:0	7	->
+water	38:44	0:0	7	rtp
+op	38:47	0:0	7	.
+water	38:48	0:0	7	mac
+arg	38:53	38:56	6	buf
+water	38:53	0:0	7	buf
+arg	38:58	38:61	6	len
+water	38:58	0:0	7	len
+arg	38:63	38:66	6	rcc
+water	38:63	0:0	7	rcc
+call	40:8	40:30	4	printf
+arg	40:16	40:30	5	"Computed: 0x"
+water	40:16	0:0	6	"Computed: 0x"
+water	40:31	0:0	4	;
+for	41:8	42:35	4	(unsigned i = 0 ;i < tag_len;i ++)
+forinit	41:13	41:27	5	unsigned i = 0 ;
+water	41:13	0:0	6	unsigned
+water	41:22	0:0	6	i
+op	41:24	0:0	6	=
+water	41:26	0:0	6	0
+water	41:27	0:0	6	;
+cond	41:29	41:33	5	i < tag_len
+water	41:29	0:0	6	i
+op	41:31	0:0	6	<
+water	41:33	0:0	6	tag_len
+forexpr	41:42	41:43	5	i ++
+water	41:42	0:0	6	i
+op	41:43	0:0	6	++
+stmts	42:12	42:35	5	
+call	42:12	42:34	6	printf
+arg	42:20	42:26	7	"%02x"
+water	42:20	0:0	8	"%02x"
+arg	42:28	42:34	7	tag[i]
+water	42:28	0:0	8	tag
+op	42:31	0:0	8	[
+water	42:32	0:0	8	i
+op	42:33	0:0	8	]
+water	42:35	0:0	6	;
+call	43:8	43:32	4	printf
+arg	43:16	43:32	5	"\nReceived: 0x"
+water	43:16	0:0	6	"\nReceived: 0x"
+water	43:33	0:0	4	;
+for	44:8	45:51	4	(unsigned i = 0 ;i < tag_len;i ++)
+forinit	44:13	44:27	5	unsigned i = 0 ;
+water	44:13	0:0	6	unsigned
+water	44:22	0:0	6	i
+op	44:24	0:0	6	=
+water	44:26	0:0	6	0
+water	44:27	0:0	6	;
+cond	44:29	44:33	5	i < tag_len
+water	44:29	0:0	6	i
+op	44:31	0:0	6	<
+water	44:33	0:0	6	tag_len
+forexpr	44:42	44:43	5	i ++
+water	44:42	0:0	6	i
+op	44:43	0:0	6	++
+stmts	45:12	45:51	5	
+call	45:12	45:50	6	printf
+arg	45:20	45:26	7	"%02x"
+water	45:20	0:0	8	"%02x"
+arg	45:28	45:50	7	buf[len+roc_len+i]
+water	45:28	0:0	8	buf
+op	45:31	0:0	8	[
+water	45:32	0:0	8	len
+op	45:36	0:0	8	+
+water	45:38	0:0	8	roc_len
+op	45:46	0:0	8	+
+water	45:48	0:0	8	i
+op	45:49	0:0	8	]
+water	45:51	0:0	6	;
+call	46:8	46:16	4	puts
+arg	46:14	46:16	5	""
+water	46:14	0:0	6	""
+water	46:17	0:0	4	;
+if	48:8	49:25	4	(memcmp (buf + len + roc_len ,tag ,tag_len ))
+cond	48:12	48:53	5	memcmp (buf + len + roc_len ,tag ,tag_len )
+call	48:12	48:53	6	memcmp
+arg	48:20	48:39	7	buf+len+roc_len
+water	48:20	0:0	8	buf
+op	48:24	0:0	8	+
+water	48:26	0:0	8	len
+op	48:30	0:0	8	+
+water	48:32	0:0	8	roc_len
+arg	48:41	48:44	7	tag
+water	48:41	0:0	8	tag
+arg	48:46	48:53	7	tag_len
+water	48:46	0:0	8	tag_len
+stmts	49:12	49:25	5	
+return	49:12	49:25	6	EACCES
+water	49:19	0:0	7	EACCES
+if	50:8	55:8	4	(roc_len)
+cond	50:12	50:12	5	roc_len
+water	50:12	0:0	6	roc_len
+stmts	51:8	55:8	5	
+water	51:8	0:0	6	{
+water	53:12	0:0	6	s
+op	53:13	0:0	6	->
+water	53:15	0:0	6	rtp_roc
+op	53:23	0:0	6	+=
+water	53:26	0:0	6	rcc
+op	53:30	0:0	6	-
+water	53:32	0:0	6	roc
+water	53:35	0:0	6	;
+call	54:12	54:62	6	assert
+arg	54:20	54:62	7	srtp_compute_roc(s,rtp_seq(buf))==rcc
+call	54:20	54:54	8	srtp_compute_roc
+arg	54:38	54:39	9	s
+water	54:38	0:0	10	s
+arg	54:41	54:54	9	rtp_seq(buf)
+call	54:41	54:53	10	rtp_seq
+arg	54:50	54:53	11	buf
+water	54:50	0:0	12	buf
+op	54:56	0:0	8	==
+water	54:59	0:0	8	rcc
+water	54:63	0:0	6	;
+water	55:8	0:0	6	}
+op	56:8	0:0	4	*
+water	56:9	0:0	4	lenp
+op	56:14	0:0	4	=
+water	56:16	0:0	4	len
+water	56:19	0:0	4	;
+water	57:4	0:0	4	}
+return	58:4	58:35	2	srtp_crypt(s,buf,len)
+call	58:11	58:34	3	srtp_crypt
+arg	58:23	58:24	4	s
+water	58:23	0:0	5	s
+arg	58:26	58:29	4	buf
+water	58:26	0:0	5	buf
+arg	58:31	58:34	4	len
+water	58:31	0:0	5	len

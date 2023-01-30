@@ -1,0 +1,150 @@
+func	2:0	33:0	0	int	Activate
+params	2:12	0:0	1	
+param	2:14	2:41	2	extensions_manager_t *	p_mgr
+param	2:43	2:62	2	extension_t *	p_ext
+stmnts	4:4	32:22	1	
+call	4:4	4:26	2	assert
+arg	4:12	4:26	3	p_ext!=NULL
+water	4:12	0:0	4	p_ext
+op	4:18	0:0	4	!=
+water	4:21	0:0	4	NULL
+water	4:27	0:0	2	;
+decl	5:4	5:48	2	struct extension_sys_t	*p_sys
+op	5:34	0:0	2	=
+water	5:36	0:0	2	p_ext
+op	5:41	0:0	2	->
+water	5:43	0:0	2	p_sys
+call	6:4	6:26	2	assert
+arg	6:12	6:26	3	p_sys!=NULL
+water	6:12	0:0	4	p_sys
+op	6:18	0:0	4	!=
+water	6:21	0:0	4	NULL
+water	6:27	0:0	2	;
+call	7:4	7:66	2	msg_Dbg
+arg	7:13	7:18	3	p_mgr
+water	7:13	0:0	4	p_mgr
+arg	7:20	7:47	3	"Activating extension '%s'"
+water	7:20	0:0	4	"Activating extension '%s'"
+arg	7:49	7:66	3	p_ext->psz_title
+water	7:49	0:0	4	p_ext
+op	7:54	0:0	4	->
+water	7:56	0:0	4	psz_title
+water	7:67	0:0	2	;
+if	8:4	12:4	2	(IsActivated (p_mgr ,p_ext ))
+cond	8:8	8:34	3	IsActivated (p_mgr ,p_ext )
+call	8:8	8:34	4	IsActivated
+arg	8:21	8:26	5	p_mgr
+water	8:21	0:0	6	p_mgr
+arg	8:28	8:34	5	p_ext
+water	8:28	0:0	6	p_ext
+stmts	9:4	12:4	3	
+water	9:4	0:0	4	{
+call	10:8	10:59	4	msg_Warn
+arg	10:18	10:23	5	p_mgr
+water	10:18	0:0	6	p_mgr
+arg	10:25	10:59	5	"Extension is already activated!"
+water	10:25	0:0	6	"Extension is already activated!"
+water	10:60	0:0	4	;
+return	11:8	11:27	4	VLC_EGENERIC
+water	11:15	0:0	5	VLC_EGENERIC
+water	12:4	0:0	4	}
+call	14:4	14:40	2	vlc_mutex_lock
+arg	14:20	14:40	3	&p_mgr->p_sys->lock
+op	14:20	0:0	4	&
+water	14:21	0:0	4	p_mgr
+op	14:26	0:0	4	->
+water	14:28	0:0	4	p_sys
+op	14:33	0:0	4	->
+water	14:35	0:0	4	lock
+water	14:41	0:0	2	;
+call	15:4	15:60	2	ARRAY_APPEND
+arg	15:18	15:52	3	p_mgr->p_sys->activated_extensions
+water	15:18	0:0	4	p_mgr
+op	15:23	0:0	4	->
+water	15:25	0:0	4	p_sys
+op	15:30	0:0	4	->
+water	15:32	0:0	4	activated_extensions
+arg	15:54	15:60	3	p_ext
+water	15:54	0:0	4	p_ext
+water	15:61	0:0	2	;
+call	16:4	16:42	2	vlc_mutex_unlock
+arg	16:22	16:42	3	&p_mgr->p_sys->lock
+op	16:22	0:0	4	&
+water	16:23	0:0	4	p_mgr
+op	16:28	0:0	4	->
+water	16:30	0:0	4	p_sys
+op	16:35	0:0	4	->
+water	16:37	0:0	4	lock
+water	16:43	0:0	2	;
+water	18:4	0:0	2	p_sys
+op	18:9	0:0	2	->
+water	18:11	0:0	2	command
+op	18:19	0:0	2	=
+call	18:21	18:59	2	calloc
+arg	18:29	18:30	3	1
+water	18:29	0:0	4	1
+arg	18:32	18:59	3	sizeof(structcommand_t)
+op	18:32	0:0	4	sizeof
+water	18:38	0:0	4	(
+water	18:40	0:0	4	struct
+water	18:47	0:0	4	command_t
+water	18:57	0:0	4	)
+water	18:60	0:0	2	;
+if	19:4	20:25	2	(! p_sys -> command)
+cond	19:8	19:16	3	! p_sys -> command
+op	19:8	0:0	4	!
+water	19:9	0:0	4	p_sys
+op	19:14	0:0	4	->
+water	19:16	0:0	4	command
+stmts	20:8	20:25	3	
+return	20:8	20:25	4	VLC_ENOMEM
+water	20:15	0:0	5	VLC_ENOMEM
+water	21:4	0:0	2	p_sys
+op	21:9	0:0	2	->
+water	21:11	0:0	2	command
+op	21:18	0:0	2	->
+water	21:20	0:0	2	i_command
+op	21:30	0:0	2	=
+water	21:32	0:0	2	CMD_ACTIVATE
+water	21:44	0:0	2	;
+water	23:4	0:0	2	p_sys
+op	23:9	0:0	2	->
+water	23:11	0:0	2	b_exiting
+op	23:21	0:0	2	=
+water	23:23	0:0	2	false
+water	23:28	0:0	2	;
+if	24:4	31:4	2	(vlc_clone (& p_sys -> thread ,Run ,p_ext ,VLC_THREAD_PRIORITY_LOW ) != VLC_SUCCESS)
+cond	24:8	25:11	3	vlc_clone (& p_sys -> thread ,Run ,p_ext ,VLC_THREAD_PRIORITY_LOW ) != VLC_SUCCESS
+call	24:8	24:71	4	vlc_clone
+arg	24:19	24:33	5	&p_sys->thread
+op	24:19	0:0	6	&
+water	24:20	0:0	6	p_sys
+op	24:25	0:0	6	->
+water	24:27	0:0	6	thread
+arg	24:35	24:38	5	Run
+water	24:35	0:0	6	Run
+arg	24:40	24:45	5	p_ext
+water	24:40	0:0	6	p_ext
+arg	24:47	24:71	5	VLC_THREAD_PRIORITY_LOW
+water	24:47	0:0	6	VLC_THREAD_PRIORITY_LOW
+op	25:8	0:0	4	!=
+water	25:11	0:0	4	VLC_SUCCESS
+stmts	26:4	31:4	3	
+water	26:4	0:0	4	{
+water	27:8	0:0	4	p_sys
+op	27:13	0:0	4	->
+water	27:15	0:0	4	b_exiting
+op	27:25	0:0	4	=
+water	27:27	0:0	4	true
+water	27:31	0:0	4	;
+call	29:8	29:33	4	Deactivate
+arg	29:20	29:25	5	p_mgr
+water	29:20	0:0	6	p_mgr
+arg	29:27	29:33	5	p_ext
+water	29:27	0:0	6	p_ext
+water	29:34	0:0	4	;
+return	30:8	30:25	4	VLC_ENOMEM
+water	30:15	0:0	5	VLC_ENOMEM
+water	31:4	0:0	4	}
+return	32:4	32:22	2	VLC_SUCCESS
+water	32:11	0:0	3	VLC_SUCCESS

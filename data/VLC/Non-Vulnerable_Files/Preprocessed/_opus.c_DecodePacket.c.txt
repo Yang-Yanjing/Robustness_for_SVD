@@ -1,0 +1,321 @@
+func	2:0	56:0	0	static block_t *	DecodePacket
+params	2:28	0:0	1	
+param	2:30	2:46	2	decoder_t *	p_dec
+param	2:48	2:71	2	ogg_packet *	p_oggpacket
+param	3:30	3:46	2	int	i_nb_samples
+param	3:48	3:63	2	int	i_end_trim
+stmnts	0:0	55:24	1	
+decl	5:4	5:39	2	decoder_sys_t	*p_sys
+op	5:25	0:0	2	=
+water	5:27	0:0	2	p_dec
+op	5:32	0:0	2	->
+water	5:34	0:0	2	p_sys
+if	6:4	7:19	2	(! p_oggpacket -> bytes)
+cond	6:8	6:22	3	! p_oggpacket -> bytes
+op	6:8	0:0	4	!
+water	6:9	0:0	4	p_oggpacket
+op	6:20	0:0	4	->
+water	6:22	0:0	4	bytes
+stmts	7:8	7:19	3	
+return	7:8	7:19	4	NULL
+water	7:15	0:0	5	NULL
+decl	8:4	8:11	2	int	spp
+water	9:4	0:0	2	spp
+op	9:7	0:0	2	=
+call	9:8	9:72	2	opus_packet_get_nb_frames
+arg	9:34	9:53	3	p_oggpacket->packet
+water	9:34	0:0	4	p_oggpacket
+op	9:45	0:0	4	->
+water	9:47	0:0	4	packet
+arg	9:54	9:72	3	p_oggpacket->bytes
+water	9:54	0:0	4	p_oggpacket
+op	9:65	0:0	4	->
+water	9:67	0:0	4	bytes
+water	9:73	0:0	2	;
+if	10:4	10:78	2	(spp > 0)
+cond	10:7	10:11	3	spp > 0
+water	10:7	0:0	4	spp
+op	10:10	0:0	4	>
+water	10:11	0:0	4	0
+stmts	10:13	10:78	3	
+water	10:13	0:0	4	spp
+op	10:16	0:0	4	*=
+call	10:18	10:77	4	opus_packet_get_samples_per_frame
+arg	10:52	10:71	5	p_oggpacket->packet
+water	10:52	0:0	6	p_oggpacket
+op	10:63	0:0	6	->
+water	10:65	0:0	6	packet
+arg	10:72	10:77	5	48000
+water	10:72	0:0	6	48000
+water	10:78	0:0	4	;
+if	11:4	11:38	2	(spp < 120 || spp > 120 * 48)
+cond	11:7	11:24	3	spp < 120 || spp > 120 * 48
+water	11:7	0:0	4	spp
+op	11:10	0:0	4	<
+water	11:11	0:0	4	120
+op	11:14	0:0	4	||
+water	11:16	0:0	4	spp
+op	11:19	0:0	4	>
+water	11:20	0:0	4	120
+op	11:23	0:0	4	*
+water	11:24	0:0	4	48
+stmts	11:27	11:38	3	
+return	11:27	11:38	4	NULL
+water	11:34	0:0	5	NULL
+if	14:4	15:26	2	(! i_nb_samples)
+cond	14:7	14:8	3	! i_nb_samples
+op	14:7	0:0	4	!
+water	14:8	0:0	4	i_nb_samples
+stmts	15:8	15:26	3	
+water	15:8	0:0	4	i_nb_samples
+op	15:21	0:0	4	=
+water	15:23	0:0	4	spp
+water	15:26	0:0	4	;
+decl	16:4	16:63	2	block_t	*p_aout_buffer
+op	16:26	0:0	2	=
+call	16:27	16:62	3	decoder_NewAudioBuffer
+arg	16:51	16:56	4	p_dec
+water	16:51	0:0	5	p_dec
+arg	16:58	16:62	4	spp
+water	16:58	0:0	5	spp
+if	17:4	21:4	2	(! p_aout_buffer)
+cond	17:9	17:10	3	! p_aout_buffer
+op	17:9	0:0	4	!
+water	17:10	0:0	4	p_aout_buffer
+stmts	18:4	21:4	3	
+water	18:4	0:0	4	{
+call	19:8	19:58	4	msg_Err
+arg	19:16	19:21	5	p_dec
+water	19:16	0:0	6	p_dec
+arg	19:23	19:58	5	"Oops: No new buffer was returned!"
+water	19:23	0:0	6	"Oops: No new buffer was returned!"
+water	19:59	0:0	4	;
+return	20:8	20:19	4	NULL
+water	20:15	0:0	5	NULL
+water	21:4	0:0	4	}
+water	22:4	0:0	2	spp
+op	22:7	0:0	2	=
+call	22:8	23:69	2	opus_multistream_decode_float
+arg	22:38	22:49	3	p_sys->p_st
+water	22:38	0:0	4	p_sys
+op	22:43	0:0	4	->
+water	22:45	0:0	4	p_st
+arg	22:51	22:70	3	p_oggpacket->packet
+water	22:51	0:0	4	p_oggpacket
+op	22:62	0:0	4	->
+water	22:64	0:0	4	packet
+arg	23:9	23:27	3	p_oggpacket->bytes
+water	23:9	0:0	4	p_oggpacket
+op	23:20	0:0	4	->
+water	23:22	0:0	4	bytes
+arg	23:29	23:61	3	(float*)p_aout_buffer->p_buffer
+water	23:29	0:0	4	(
+water	23:30	0:0	4	float
+op	23:36	0:0	4	*
+water	23:37	0:0	4	)
+water	23:38	0:0	4	p_aout_buffer
+op	23:51	0:0	4	->
+water	23:53	0:0	4	p_buffer
+arg	23:63	23:66	3	spp
+water	23:63	0:0	4	spp
+arg	23:68	23:69	3	0
+water	23:68	0:0	4	0
+water	23:70	0:0	2	;
+if	24:4	30:4	2	(spp < 0 || i_nb_samples <= 0 || i_end_trim >= i_nb_samples)
+cond	24:8	24:54	3	spp < 0 || i_nb_samples <= 0 || i_end_trim >= i_nb_samples
+water	24:8	0:0	4	spp
+op	24:12	0:0	4	<
+water	24:14	0:0	4	0
+op	24:16	0:0	4	||
+water	24:19	0:0	4	i_nb_samples
+op	24:32	0:0	4	<=
+water	24:35	0:0	4	0
+op	24:37	0:0	4	||
+water	24:40	0:0	4	i_end_trim
+op	24:51	0:0	4	>=
+water	24:54	0:0	4	i_nb_samples
+stmts	25:4	30:4	3	
+water	25:4	0:0	4	{
+call	26:8	26:35	4	block_Release
+arg	26:22	26:35	5	p_aout_buffer
+water	26:22	0:0	6	p_aout_buffer
+water	26:36	0:0	4	;
+if	27:8	28:56	4	(spp < 0)
+cond	27:12	27:18	5	spp < 0
+water	27:12	0:0	6	spp
+op	27:16	0:0	6	<
+water	27:18	0:0	6	0
+stmts	28:12	28:56	5	
+call	28:12	28:55	6	msg_Err
+arg	28:21	28:26	7	p_dec
+water	28:21	0:0	8	p_dec
+arg	28:28	28:55	7	"Error: corrupted stream?"
+water	28:28	0:0	8	"Error: corrupted stream?"
+water	28:56	0:0	6	;
+return	29:8	29:19	4	NULL
+water	29:15	0:0	5	NULL
+water	30:4	0:0	4	}
+water	31:4	0:0	2	p_aout_buffer
+op	31:17	0:0	2	->
+water	31:19	0:0	2	i_buffer
+op	31:28	0:0	2	=
+water	31:30	0:0	2	(
+water	31:31	0:0	2	i_nb_samples
+op	31:44	0:0	2	-
+water	31:46	0:0	2	i_end_trim
+water	31:56	0:0	2	)
+op	31:58	0:0	2	*
+water	32:30	0:0	2	p_sys
+op	32:35	0:0	2	->
+water	32:37	0:0	2	header
+op	32:43	0:0	2	.
+water	32:44	0:0	2	channels
+op	32:53	0:0	2	*
+op	32:55	0:0	2	sizeof
+water	32:61	0:0	2	(
+water	32:62	0:0	2	float
+water	32:67	0:0	2	)
+water	32:68	0:0	2	;
+if	33:4	39:4	2	(spp > i_nb_samples)
+cond	33:8	33:14	3	spp > i_nb_samples
+water	33:8	0:0	4	spp
+op	33:12	0:0	4	>
+water	33:14	0:0	4	i_nb_samples
+stmts	34:4	39:4	3	
+water	34:4	0:0	4	{
+call	35:8	38:35	4	memmove
+arg	35:16	35:39	5	p_aout_buffer->p_buffer
+water	35:16	0:0	6	p_aout_buffer
+op	35:29	0:0	6	->
+water	35:31	0:0	6	p_buffer
+arg	36:12	37:71	5	p_aout_buffer->p_buffer+(spp-i_nb_samples)*p_sys->header.channels*sizeof(float)
+water	36:12	0:0	6	p_aout_buffer
+op	36:25	0:0	6	->
+water	36:27	0:0	6	p_buffer
+op	37:12	0:0	6	+
+water	37:14	0:0	6	(
+water	37:15	0:0	6	spp
+op	37:19	0:0	6	-
+water	37:21	0:0	6	i_nb_samples
+water	37:33	0:0	6	)
+op	37:34	0:0	6	*
+water	37:35	0:0	6	p_sys
+op	37:40	0:0	6	->
+water	37:42	0:0	6	header
+op	37:48	0:0	6	.
+water	37:49	0:0	6	channels
+op	37:57	0:0	6	*
+op	37:58	0:0	6	sizeof
+water	37:64	0:0	6	(
+water	37:65	0:0	6	float
+water	37:70	0:0	6	)
+arg	38:12	38:35	5	p_aout_buffer->i_buffer
+water	38:12	0:0	6	p_aout_buffer
+op	38:25	0:0	6	->
+water	38:27	0:0	6	i_buffer
+water	38:36	0:0	4	;
+water	39:4	0:0	4	}
+water	40:4	0:0	2	i_nb_samples
+op	40:17	0:0	2	-=
+water	40:20	0:0	2	i_end_trim
+water	40:30	0:0	2	;
+if	42:4	49:4	2	(p_sys -> header . gain != 0)
+cond	42:7	42:27	3	p_sys -> header . gain != 0
+water	42:7	0:0	4	p_sys
+op	42:12	0:0	4	->
+water	42:14	0:0	4	header
+op	42:20	0:0	4	.
+water	42:21	0:0	4	gain
+op	42:25	0:0	4	!=
+water	42:27	0:0	4	0
+stmts	43:4	49:4	3	
+water	43:4	0:0	4	{
+decl	44:8	44:55	4	float	gain
+op	44:19	0:0	4	=
+call	44:21	44:54	5	pow
+arg	44:25	44:28	6	10.
+water	44:25	0:0	7	10
+op	44:27	0:0	7	.
+arg	44:30	44:54	6	p_sys->header.gain/5120.
+water	44:30	0:0	7	p_sys
+op	44:35	0:0	7	->
+water	44:37	0:0	7	header
+op	44:43	0:0	7	.
+water	44:44	0:0	7	gain
+op	44:48	0:0	7	/
+water	44:49	0:0	7	5120
+op	44:53	0:0	7	.
+decl	45:8	45:52	4	float	*buf
+op	45:19	0:0	4	=
+water	45:20	0:0	4	(
+water	45:21	0:0	4	float
+op	45:27	0:0	4	*
+water	45:28	0:0	4	)
+water	45:29	0:0	4	p_aout_buffer
+op	45:42	0:0	4	->
+water	45:44	0:0	4	p_buffer
+decl	46:8	46:13	4	int	i
+for	47:8	48:26	4	(i = 0 ;i < i_nb_samples * p_sys -> header . channels;i ++)
+forinit	47:13	47:18	5	i = 0 ;
+water	47:13	0:0	6	i
+op	47:15	0:0	6	=
+water	47:17	0:0	6	0
+water	47:18	0:0	6	;
+cond	47:20	47:51	5	i < i_nb_samples * p_sys -> header . channels
+water	47:20	0:0	6	i
+op	47:22	0:0	6	<
+water	47:24	0:0	6	i_nb_samples
+op	47:36	0:0	6	*
+water	47:37	0:0	6	p_sys
+op	47:42	0:0	6	->
+water	47:44	0:0	6	header
+op	47:50	0:0	6	.
+water	47:51	0:0	6	channels
+forexpr	47:61	47:62	5	i ++
+water	47:61	0:0	6	i
+op	47:62	0:0	6	++
+stmts	48:12	48:26	5	
+water	48:12	0:0	6	buf
+op	48:15	0:0	6	[
+water	48:16	0:0	6	i
+op	48:17	0:0	6	]
+op	48:19	0:0	6	*=
+water	48:22	0:0	6	gain
+water	48:26	0:0	6	;
+water	49:4	0:0	4	}
+water	51:4	0:0	2	p_aout_buffer
+op	51:17	0:0	2	->
+water	51:19	0:0	2	i_nb_samples
+op	51:32	0:0	2	=
+water	51:34	0:0	2	i_nb_samples
+water	51:46	0:0	2	;
+water	52:4	0:0	2	p_aout_buffer
+op	52:17	0:0	2	->
+water	52:19	0:0	2	i_pts
+op	52:25	0:0	2	=
+call	52:27	52:54	2	date_Get
+arg	52:37	52:54	3	&p_sys->end_date
+op	52:37	0:0	4	&
+water	52:38	0:0	4	p_sys
+op	52:43	0:0	4	->
+water	52:45	0:0	4	end_date
+water	52:55	0:0	2	;
+water	53:4	0:0	2	p_aout_buffer
+op	53:17	0:0	2	->
+water	53:19	0:0	2	i_length
+op	53:28	0:0	2	=
+call	53:30	53:77	2	date_Increment
+arg	53:46	53:62	3	&p_sys->end_date
+op	53:46	0:0	4	&
+water	53:47	0:0	4	p_sys
+op	53:52	0:0	4	->
+water	53:54	0:0	4	end_date
+arg	53:64	53:77	3	i_nb_samples
+water	53:64	0:0	4	i_nb_samples
+op	54:8	0:0	2	-
+water	54:10	0:0	2	p_aout_buffer
+op	54:23	0:0	2	->
+water	54:25	0:0	2	i_pts
+water	54:30	0:0	2	;
+return	55:4	55:24	2	p_aout_buffer
+water	55:11	0:0	3	p_aout_buffer

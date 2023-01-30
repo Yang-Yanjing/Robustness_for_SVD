@@ -1,0 +1,354 @@
+func	2:0	88:0	0	static int	OpenServer
+params	2:22	0:0	1	
+param	2:23	2:43	2	vlc_tls_creds_t *	crd
+param	2:45	2:61	2	const char *	cert
+param	2:63	2:78	2	const char *	key
+stmnts	0:0	87:23	1	
+decl	4:4	4:11	2	int	val
+if	5:4	6:27	2	(gnutls_Init (VLC_OBJECT (crd ) ))
+cond	5:8	5:36	3	gnutls_Init (VLC_OBJECT (crd ) )
+call	5:8	5:36	4	gnutls_Init
+arg	5:21	5:36	5	VLC_OBJECT(crd)
+call	5:21	5:35	6	VLC_OBJECT
+arg	5:32	5:35	7	crd
+water	5:32	0:0	8	crd
+stmts	6:8	6:27	3	
+return	6:8	6:27	4	VLC_EGENERIC
+water	6:15	0:0	5	VLC_EGENERIC
+decl	7:4	7:53	2	vlc_tls_creds_sys_t	*sys
+op	7:29	0:0	2	=
+call	7:31	7:52	3	malloc
+arg	7:39	7:52	4	sizeof(*sys)
+op	7:39	0:0	5	sizeof
+water	7:46	0:0	5	(
+op	7:47	0:0	5	*
+water	7:48	0:0	5	sys
+water	7:51	0:0	5	)
+if	8:4	12:4	2	(unlikely (sys == NULL ))
+cond	8:8	8:28	3	unlikely (sys == NULL )
+call	8:8	8:28	4	unlikely
+arg	8:17	8:28	5	sys==NULL
+water	8:17	0:0	6	sys
+op	8:21	0:0	6	==
+water	8:24	0:0	6	NULL
+stmts	9:4	12:4	3	
+water	9:4	0:0	4	{
+call	10:8	10:23	4	gnutls_Deinit
+water	10:24	0:0	4	;
+return	11:8	11:25	4	VLC_ENOMEM
+water	11:15	0:0	5	VLC_ENOMEM
+water	12:4	0:0	4	}
+water	13:4	0:0	2	crd
+op	13:7	0:0	2	->
+water	13:9	0:0	2	sys
+op	13:17	0:0	2	=
+water	13:19	0:0	2	sys
+water	13:22	0:0	2	;
+water	14:4	0:0	2	crd
+op	14:7	0:0	2	->
+water	14:9	0:0	2	add_CA
+op	14:17	0:0	2	=
+water	14:19	0:0	2	gnutls_AddCA
+water	14:31	0:0	2	;
+water	15:4	0:0	2	crd
+op	15:7	0:0	2	->
+water	15:9	0:0	2	add_CRL
+op	15:17	0:0	2	=
+water	15:19	0:0	2	gnutls_AddCRL
+water	15:32	0:0	2	;
+water	16:4	0:0	2	crd
+op	16:7	0:0	2	->
+water	16:9	0:0	2	open
+op	16:17	0:0	2	=
+water	16:19	0:0	2	gnutls_ServerSessionOpen
+water	16:43	0:0	2	;
+water	17:4	0:0	2	crd
+op	17:7	0:0	2	->
+water	17:9	0:0	2	close
+op	17:17	0:0	2	=
+water	17:19	0:0	2	gnutls_SessionClose
+water	17:38	0:0	2	;
+water	19:4	0:0	2	sys
+op	19:7	0:0	2	->
+water	19:9	0:0	2	handshake
+op	19:20	0:0	2	=
+water	19:22	0:0	2	gnutls_ContinueHandshake
+water	19:46	0:0	2	;
+water	21:4	0:0	2	val
+op	21:8	0:0	2	=
+call	21:10	21:66	2	gnutls_certificate_allocate_credentials
+arg	21:51	21:66	3	&sys->x509_cred
+op	21:51	0:0	4	&
+water	21:52	0:0	4	sys
+op	21:55	0:0	4	->
+water	21:57	0:0	4	x509_cred
+water	21:67	0:0	2	;
+if	22:4	29:4	2	(val != 0)
+cond	22:8	22:15	3	val != 0
+water	22:8	0:0	4	val
+op	22:12	0:0	4	!=
+water	22:15	0:0	4	0
+stmts	23:4	29:4	3	
+water	23:4	0:0	4	{
+call	24:8	25:38	4	msg_Err
+arg	24:17	24:20	5	crd
+water	24:17	0:0	6	crd
+arg	24:22	24:55	5	"cannot allocate credentials: %s"
+water	24:22	0:0	6	"cannot allocate credentials: %s"
+arg	25:17	25:38	5	gnutls_strerror(val)
+call	25:17	25:37	6	gnutls_strerror
+arg	25:34	25:37	7	val
+water	25:34	0:0	8	val
+water	25:39	0:0	4	;
+call	26:8	26:17	4	free
+arg	26:14	26:17	5	sys
+water	26:14	0:0	6	sys
+water	26:18	0:0	4	;
+call	27:8	27:23	4	gnutls_Deinit
+water	27:24	0:0	4	;
+return	28:8	28:25	4	VLC_ENOMEM
+water	28:15	0:0	5	VLC_ENOMEM
+water	29:4	0:0	4	}
+decl	30:4	30:46	2	block_t	*certblock
+op	30:23	0:0	2	=
+call	30:25	30:45	3	block_FilePath
+arg	30:41	30:45	4	cert
+water	30:41	0:0	5	cert
+if	31:4	36:4	2	(certblock == NULL)
+cond	31:8	31:21	3	certblock == NULL
+water	31:8	0:0	4	certblock
+op	31:18	0:0	4	==
+water	31:21	0:0	4	NULL
+stmts	32:4	36:4	3	
+water	32:4	0:0	4	{
+call	33:8	34:38	4	msg_Err
+arg	33:17	33:20	5	crd
+water	33:17	0:0	6	crd
+arg	33:22	33:65	5	"cannot read certificate chain from %s: %s"
+water	33:22	0:0	6	"cannot read certificate chain from %s: %s"
+arg	33:67	33:71	5	cert
+water	33:67	0:0	6	cert
+arg	34:17	34:38	5	vlc_strerror_c(errno)
+call	34:17	34:37	6	vlc_strerror_c
+arg	34:32	34:37	7	errno
+water	34:32	0:0	8	errno
+water	34:39	0:0	4	;
+goto	35:8	35:18	4	error
+water	35:13	0:0	5	error
+water	36:4	0:0	4	}
+decl	37:4	37:44	2	block_t	*keyblock
+op	37:22	0:0	2	=
+call	37:24	37:43	3	block_FilePath
+arg	37:40	37:43	4	key
+water	37:40	0:0	5	key
+if	38:4	44:4	2	(keyblock == NULL)
+cond	38:8	38:20	3	keyblock == NULL
+water	38:8	0:0	4	keyblock
+op	38:17	0:0	4	==
+water	38:20	0:0	4	NULL
+stmts	39:4	44:4	3	
+water	39:4	0:0	4	{
+call	40:8	41:38	4	msg_Err
+arg	40:17	40:20	5	crd
+water	40:17	0:0	6	crd
+arg	40:22	40:59	5	"cannot read private key from %s: %s"
+water	40:22	0:0	6	"cannot read private key from %s: %s"
+arg	40:61	40:64	5	key
+water	40:61	0:0	6	key
+arg	41:17	41:38	5	vlc_strerror_c(errno)
+call	41:17	41:37	6	vlc_strerror_c
+arg	41:32	41:37	7	errno
+water	41:32	0:0	8	errno
+water	41:39	0:0	4	;
+call	42:8	42:32	4	block_Release
+arg	42:23	42:32	5	certblock
+water	42:23	0:0	6	certblock
+water	42:33	0:0	4	;
+goto	43:8	43:18	4	error
+water	43:13	0:0	5	error
+water	44:4	0:0	4	}
+decl	45:4	51:5	2	gnutls_datum_t	pub
+op	45:23	0:0	2	=
+water	45:25	0:0	2	{
+op	46:7	0:0	2	.
+water	46:8	0:0	2	data
+op	46:13	0:0	2	=
+water	46:15	0:0	2	certblock
+op	46:24	0:0	2	->
+water	46:26	0:0	2	p_buffer
+water	46:34	0:0	2	,
+op	47:7	0:0	2	.
+water	47:8	0:0	2	size
+op	47:13	0:0	2	=
+water	47:15	0:0	2	certblock
+op	47:24	0:0	2	->
+water	47:26	0:0	2	i_buffer
+water	47:34	0:0	2	,
+water	48:4	0:0	2	}
+water	48:5	0:0	2	,
+decl	45:4	51:5	2	gnutls_datum_t	priv
+op	48:12	0:0	2	=
+water	48:14	0:0	2	{
+op	49:7	0:0	2	.
+water	49:8	0:0	2	data
+op	49:13	0:0	2	=
+water	49:15	0:0	2	keyblock
+op	49:23	0:0	2	->
+water	49:25	0:0	2	p_buffer
+water	49:33	0:0	2	,
+op	50:7	0:0	2	.
+water	50:8	0:0	2	size
+op	50:13	0:0	2	=
+water	50:15	0:0	2	keyblock
+op	50:23	0:0	2	->
+water	50:25	0:0	2	i_buffer
+water	50:33	0:0	2	,
+water	51:4	0:0	2	}
+water	52:4	0:0	2	val
+op	52:8	0:0	2	=
+call	52:10	53:67	2	gnutls_certificate_set_x509_key_mem
+arg	52:47	52:61	3	sys->x509_cred
+water	52:47	0:0	4	sys
+op	52:50	0:0	4	->
+water	52:52	0:0	4	x509_cred
+arg	52:63	52:67	3	&pub
+op	52:63	0:0	4	&
+water	52:64	0:0	4	pub
+arg	52:69	52:74	3	&priv
+op	52:69	0:0	4	&
+water	52:70	0:0	4	priv
+arg	53:48	53:67	3	GNUTLS_X509_FMT_PEM
+water	53:48	0:0	4	GNUTLS_X509_FMT_PEM
+water	53:68	0:0	2	;
+call	54:4	54:27	2	block_Release
+arg	54:19	54:27	3	keyblock
+water	54:19	0:0	4	keyblock
+water	54:28	0:0	2	;
+call	55:4	55:28	2	block_Release
+arg	55:19	55:28	3	certblock
+water	55:19	0:0	4	certblock
+water	55:29	0:0	2	;
+if	56:4	60:4	2	(val < 0)
+cond	56:8	56:14	3	val < 0
+water	56:8	0:0	4	val
+op	56:12	0:0	4	<
+water	56:14	0:0	4	0
+stmts	57:4	60:4	3	
+water	57:4	0:0	4	{
+call	58:8	58:72	4	msg_Err
+arg	58:17	58:20	5	crd
+water	58:17	0:0	6	crd
+arg	58:22	58:49	5	"cannot load X.509 key: %s"
+water	58:22	0:0	6	"cannot load X.509 key: %s"
+arg	58:51	58:72	5	gnutls_strerror(val)
+call	58:51	58:71	6	gnutls_strerror
+arg	58:68	58:71	7	val
+water	58:68	0:0	8	val
+water	58:73	0:0	4	;
+goto	59:8	59:18	4	error
+water	59:13	0:0	5	error
+water	60:4	0:0	4	}
+water	65:4	0:0	2	val
+op	65:8	0:0	2	=
+call	65:10	65:48	2	gnutls_dh_params_init
+arg	65:33	65:48	3	&sys->dh_params
+op	65:33	0:0	4	&
+water	65:34	0:0	4	sys
+op	65:37	0:0	4	->
+water	65:39	0:0	4	dh_params
+water	65:49	0:0	2	;
+if	66:4	75:4	2	(val >= 0)
+cond	66:8	66:15	3	val >= 0
+water	66:8	0:0	4	val
+op	66:12	0:0	4	>=
+water	66:15	0:0	4	0
+stmts	67:4	75:4	3	
+water	67:4	0:0	4	{
+decl	68:8	68:56	4	gnutls_sec_param_t	sec
+op	68:31	0:0	4	=
+water	68:33	0:0	4	GNUTLS_SEC_PARAM_MEDIUM
+water	69:8	0:0	4	unsigned
+water	69:17	0:0	4	bits
+op	69:22	0:0	4	=
+call	69:24	69:70	4	gnutls_sec_param_to_pk_bits
+arg	69:53	69:65	5	GNUTLS_PK_DH
+water	69:53	0:0	6	GNUTLS_PK_DH
+arg	69:67	69:70	5	sec
+water	69:67	0:0	6	sec
+water	69:71	0:0	4	;
+call	70:8	70:77	4	msg_Dbg
+arg	70:17	70:20	5	crd
+water	70:17	0:0	6	crd
+arg	70:22	70:71	5	"generating Diffie-Hellman %u-bits parameters..."
+water	70:22	0:0	6	"generating Diffie-Hellman %u-bits parameters..."
+arg	70:73	70:77	5	bits
+water	70:73	0:0	6	bits
+water	70:78	0:0	4	;
+water	71:8	0:0	4	val
+op	71:12	0:0	4	=
+call	71:14	71:62	4	gnutls_dh_params_generate2
+arg	71:42	71:56	5	sys->dh_params
+water	71:42	0:0	6	sys
+op	71:45	0:0	6	->
+water	71:47	0:0	6	dh_params
+arg	71:58	71:62	5	bits
+water	71:58	0:0	6	bits
+water	71:63	0:0	4	;
+if	72:8	74:61	4	(val == 0)
+cond	72:12	72:19	5	val == 0
+water	72:12	0:0	6	val
+op	72:16	0:0	6	==
+water	72:19	0:0	6	0
+stmts	73:12	74:61	5	
+call	73:12	74:60	6	gnutls_certificate_set_dh_params
+arg	73:46	73:60	7	sys->x509_cred
+water	73:46	0:0	8	sys
+op	73:49	0:0	8	->
+water	73:51	0:0	8	x509_cred
+arg	74:46	74:60	7	sys->dh_params
+water	74:46	0:0	8	sys
+op	74:49	0:0	8	->
+water	74:51	0:0	8	dh_params
+water	74:61	0:0	6	;
+water	75:4	0:0	4	}
+if	76:4	80:4	2	(val < 0)
+cond	76:8	76:14	3	val < 0
+water	76:8	0:0	4	val
+op	76:12	0:0	4	<
+water	76:14	0:0	4	0
+stmts	77:4	80:4	3	
+water	77:4	0:0	4	{
+call	78:8	79:38	4	msg_Err
+arg	78:17	78:20	5	crd
+water	78:17	0:0	6	crd
+arg	78:22	78:63	5	"cannot initialize DHE cipher suites: %s"
+water	78:22	0:0	6	"cannot initialize DHE cipher suites: %s"
+arg	79:17	79:38	5	gnutls_strerror(val)
+call	79:17	79:37	6	gnutls_strerror
+arg	79:34	79:37	7	val
+water	79:34	0:0	8	val
+water	79:39	0:0	4	;
+water	80:4	0:0	4	}
+call	81:4	81:45	2	msg_Dbg
+arg	81:13	81:16	3	crd
+water	81:13	0:0	4	crd
+arg	81:18	81:45	3	"ciphers parameters loaded"
+water	81:18	0:0	4	"ciphers parameters loaded"
+water	81:46	0:0	2	;
+return	82:4	82:22	2	VLC_SUCCESS
+water	82:11	0:0	3	VLC_SUCCESS
+label	83:0	83:5	2	error :
+call	84:4	84:55	2	gnutls_certificate_free_credentials
+arg	84:41	84:55	3	sys->x509_cred
+water	84:41	0:0	4	sys
+op	84:44	0:0	4	->
+water	84:46	0:0	4	x509_cred
+water	84:56	0:0	2	;
+call	85:4	85:13	2	free
+arg	85:10	85:13	3	sys
+water	85:10	0:0	4	sys
+water	85:14	0:0	2	;
+call	86:4	86:19	2	gnutls_Deinit
+water	86:20	0:0	2	;
+return	87:4	87:23	2	VLC_EGENERIC
+water	87:11	0:0	3	VLC_EGENERIC

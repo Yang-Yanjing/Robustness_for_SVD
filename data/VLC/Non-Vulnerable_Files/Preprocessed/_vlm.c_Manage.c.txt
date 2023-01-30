@@ -1,0 +1,608 @@
+func	2:0	116:0	0	static void *	Manage
+params	2:19	0:0	1	
+param	2:21	2:36	2	void *	p_object
+stmnts	0:0	115:15	1	
+decl	4:4	4:33	2	vlm_t	*vlm
+op	4:15	0:0	2	=
+water	4:17	0:0	2	(
+water	4:18	0:0	2	vlm_t
+op	4:23	0:0	2	*
+water	4:24	0:0	2	)
+water	4:25	0:0	2	p_object
+decl	5:4	5:12	2	int	i
+water	5:9	0:0	2	,
+decl	5:4	5:12	2	int	j
+decl	6:4	6:23	2	mtime_t	i_lastcheck
+decl	7:4	7:18	2	mtime_t	i_time
+decl	8:4	8:30	2	mtime_t	i_nextschedule
+op	8:27	0:0	2	=
+water	8:29	0:0	2	0
+water	9:4	0:0	2	i_lastcheck
+op	9:16	0:0	2	=
+call	9:18	9:27	2	vlm_Date
+water	9:28	0:0	2	;
+for	10:4	114:4	2	(;;)
+forinit	10:9	10:9	3	;
+water	10:9	0:0	4	;
+cond	0:0	0:0	3	
+forexpr	0:0	0:0	3	
+stmts	11:4	114:4	3	
+water	11:4	0:0	4	{
+decl	12:8	12:45	4	char	**ppsz_scheduled_commands
+op	12:39	0:0	4	=
+water	12:41	0:0	4	NULL
+decl	13:8	13:39	4	int	i_scheduled_commands
+op	13:36	0:0	4	=
+water	13:38	0:0	4	0
+decl	14:8	14:38	4	bool	scheduled_command
+op	14:31	0:0	4	=
+water	14:33	0:0	4	false
+call	15:8	15:42	4	vlc_mutex_lock
+arg	15:24	15:42	5	&vlm->lock_manage
+op	15:24	0:0	6	&
+water	15:25	0:0	6	vlm
+op	15:28	0:0	6	->
+water	15:30	0:0	6	lock_manage
+water	15:43	0:0	4	;
+call	16:8	16:46	4	mutex_cleanup_push
+arg	16:28	16:46	5	&vlm->lock_manage
+op	16:28	0:0	6	&
+water	16:29	0:0	6	vlm
+op	16:32	0:0	6	->
+water	16:34	0:0	6	lock_manage
+water	16:47	0:0	4	;
+while	17:8	23:8	4	(! vlm -> input_state_changed && ! scheduled_command)
+cond	17:15	17:45	5	! vlm -> input_state_changed && ! scheduled_command
+op	17:15	0:0	6	!
+water	17:16	0:0	6	vlm
+op	17:19	0:0	6	->
+water	17:21	0:0	6	input_state_changed
+op	17:41	0:0	6	&&
+op	17:44	0:0	6	!
+water	17:45	0:0	6	scheduled_command
+stmts	18:8	23:8	5	
+water	18:8	0:0	6	{
+if	19:12	20:115	6	(i_nextschedule)
+cond	19:16	19:16	7	i_nextschedule
+water	19:16	0:0	8	i_nextschedule
+stmts	20:16	20:115	7	
+water	20:16	0:0	8	scheduled_command
+op	20:34	0:0	8	=
+call	20:36	20:109	8	vlc_cond_timedwait
+arg	20:56	20:73	9	&vlm->wait_manage
+op	20:56	0:0	10	&
+water	20:57	0:0	10	vlm
+op	20:60	0:0	10	->
+water	20:62	0:0	10	wait_manage
+arg	20:75	20:92	9	&vlm->lock_manage
+op	20:75	0:0	10	&
+water	20:76	0:0	10	vlm
+op	20:79	0:0	10	->
+water	20:81	0:0	10	lock_manage
+arg	20:94	20:109	9	i_nextschedule
+water	20:94	0:0	10	i_nextschedule
+op	20:111	0:0	8	!=
+water	20:114	0:0	8	0
+water	20:115	0:0	8	;
+else	21:12	22:69	6
+stmts	22:16	22:69	7	
+call	22:16	22:68	8	vlc_cond_wait
+arg	22:31	22:48	9	&vlm->wait_manage
+op	22:31	0:0	10	&
+water	22:32	0:0	10	vlm
+op	22:35	0:0	10	->
+water	22:37	0:0	10	wait_manage
+arg	22:50	22:68	9	&vlm->lock_manage
+op	22:50	0:0	10	&
+water	22:51	0:0	10	vlm
+op	22:54	0:0	10	->
+water	22:56	0:0	10	lock_manage
+water	22:69	0:0	8	;
+water	23:8	0:0	6	}
+water	24:8	0:0	4	vlm
+op	24:11	0:0	4	->
+water	24:13	0:0	4	input_state_changed
+op	24:33	0:0	4	=
+water	24:35	0:0	4	false
+water	24:40	0:0	4	;
+call	25:8	25:25	4	vlc_cleanup_run
+water	25:26	0:0	4	;
+decl	26:8	26:36	4	int	canc
+op	26:17	0:0	4	=
+call	26:19	26:35	5	vlc_savecancel
+call	28:8	28:35	4	vlc_mutex_lock
+arg	28:24	28:35	5	&vlm->lock
+op	28:24	0:0	6	&
+water	28:25	0:0	6	vlm
+op	28:28	0:0	6	->
+water	28:30	0:0	6	lock
+water	28:36	0:0	4	;
+for	29:8	54:8	4	(i = 0 ;i < vlm -> i_media;i ++)
+forinit	29:13	29:18	5	i = 0 ;
+water	29:13	0:0	6	i
+op	29:15	0:0	6	=
+water	29:17	0:0	6	0
+water	29:18	0:0	6	;
+cond	29:20	29:29	5	i < vlm -> i_media
+water	29:20	0:0	6	i
+op	29:22	0:0	6	<
+water	29:24	0:0	6	vlm
+op	29:27	0:0	6	->
+water	29:29	0:0	6	i_media
+forexpr	29:38	29:39	5	i ++
+water	29:38	0:0	6	i
+op	29:39	0:0	6	++
+stmts	30:8	54:8	5	
+water	30:8	0:0	6	{
+decl	31:12	31:52	6	vlm_media_sys_t	*p_media
+op	31:37	0:0	6	=
+water	31:39	0:0	6	vlm
+op	31:42	0:0	6	->
+water	31:44	0:0	6	media
+op	31:49	0:0	6	[
+water	31:50	0:0	6	i
+op	31:51	0:0	6	]
+for	32:12	53:12	6	(j = 0 ;j < p_media -> i_instance;)
+forinit	32:17	32:22	7	j = 0 ;
+water	32:17	0:0	8	j
+op	32:19	0:0	8	=
+water	32:21	0:0	8	0
+water	32:22	0:0	8	;
+cond	32:24	32:37	7	j < p_media -> i_instance
+water	32:24	0:0	8	j
+op	32:26	0:0	8	<
+water	32:28	0:0	8	p_media
+op	32:35	0:0	8	->
+water	32:37	0:0	8	i_instance
+forexpr	0:0	0:0	7	
+stmts	33:12	53:12	7	
+water	33:12	0:0	8	{
+decl	34:16	34:75	8	vlm_media_instance_sys_t	*p_instance
+op	34:53	0:0	8	=
+water	34:55	0:0	8	p_media
+op	34:62	0:0	8	->
+water	34:64	0:0	8	instance
+op	34:72	0:0	8	[
+water	34:73	0:0	8	j
+op	34:74	0:0	8	]
+if	35:16	48:16	8	(p_instance -> p_input && ( p_instance -> p_input -> b_eof || p_instance -> p_input -> b_error ))
+cond	35:20	35:104	9	p_instance -> p_input && ( p_instance -> p_input -> b_eof || p_instance -> p_input -> b_error )
+water	35:20	0:0	10	p_instance
+op	35:30	0:0	10	->
+water	35:32	0:0	10	p_input
+op	35:40	0:0	10	&&
+water	35:43	0:0	10	(
+water	35:45	0:0	10	p_instance
+op	35:55	0:0	10	->
+water	35:57	0:0	10	p_input
+op	35:64	0:0	10	->
+water	35:66	0:0	10	b_eof
+op	35:72	0:0	10	||
+water	35:75	0:0	10	p_instance
+op	35:85	0:0	10	->
+water	35:87	0:0	10	p_input
+op	35:94	0:0	10	->
+water	35:96	0:0	10	b_error
+water	35:104	0:0	10	)
+stmts	36:16	48:16	9	
+water	36:16	0:0	10	{
+decl	37:20	37:41	10	int	i_new_input_index
+water	39:20	0:0	10	i_new_input_index
+op	39:38	0:0	10	=
+water	39:40	0:0	10	p_instance
+op	39:50	0:0	10	->
+water	39:52	0:0	10	i_index
+op	39:60	0:0	10	+
+water	39:62	0:0	10	1
+water	39:63	0:0	10	;
+if	40:20	41:45	10	(! p_media -> cfg . b_vod && p_media -> cfg . broadcast . b_loop && i_new_input_index >= p_media -> cfg . i_input)
+cond	40:24	40:114	11	! p_media -> cfg . b_vod && p_media -> cfg . broadcast . b_loop && i_new_input_index >= p_media -> cfg . i_input
+op	40:24	0:0	12	!
+water	40:25	0:0	12	p_media
+op	40:32	0:0	12	->
+water	40:34	0:0	12	cfg
+op	40:37	0:0	12	.
+water	40:38	0:0	12	b_vod
+op	40:44	0:0	12	&&
+water	40:47	0:0	12	p_media
+op	40:54	0:0	12	->
+water	40:56	0:0	12	cfg
+op	40:59	0:0	12	.
+water	40:60	0:0	12	broadcast
+op	40:69	0:0	12	.
+water	40:70	0:0	12	b_loop
+op	40:77	0:0	12	&&
+water	40:80	0:0	12	i_new_input_index
+op	40:98	0:0	12	>=
+water	40:101	0:0	12	p_media
+op	40:108	0:0	12	->
+water	40:110	0:0	12	cfg
+op	40:113	0:0	12	.
+water	40:114	0:0	12	i_input
+stmts	41:24	41:45	11	
+water	41:24	0:0	12	i_new_input_index
+op	41:42	0:0	12	=
+water	41:44	0:0	12	0
+water	41:45	0:0	12	;
+if	43:20	44:114	10	(p_media -> cfg . b_vod || i_new_input_index >= p_media -> cfg . i_input)
+cond	43:24	43:80	11	p_media -> cfg . b_vod || i_new_input_index >= p_media -> cfg . i_input
+water	43:24	0:0	12	p_media
+op	43:31	0:0	12	->
+water	43:33	0:0	12	cfg
+op	43:36	0:0	12	.
+water	43:37	0:0	12	b_vod
+op	43:43	0:0	12	||
+water	43:46	0:0	12	i_new_input_index
+op	43:64	0:0	12	>=
+water	43:67	0:0	12	p_media
+op	43:74	0:0	12	->
+water	43:76	0:0	12	cfg
+op	43:79	0:0	12	.
+water	43:80	0:0	12	i_input
+stmts	44:24	44:114	11	
+call	44:24	44:113	12	vlm_ControlInternal
+arg	44:45	44:48	13	vlm
+water	44:45	0:0	14	vlm
+arg	44:50	44:73	13	VLM_STOP_MEDIA_INSTANCE
+water	44:50	0:0	14	VLM_STOP_MEDIA_INSTANCE
+arg	44:75	44:90	13	p_media->cfg.id
+water	44:75	0:0	14	p_media
+op	44:82	0:0	14	->
+water	44:84	0:0	14	cfg
+op	44:87	0:0	14	.
+water	44:88	0:0	14	id
+arg	44:92	44:113	13	p_instance->psz_name
+water	44:92	0:0	14	p_instance
+op	44:102	0:0	14	->
+water	44:104	0:0	14	psz_name
+water	44:114	0:0	12	;
+else	45:20	46:144	10
+stmts	46:24	46:144	11	
+call	46:24	46:143	12	vlm_ControlInternal
+arg	46:45	46:48	13	vlm
+water	46:45	0:0	14	vlm
+arg	46:50	46:84	13	VLM_START_MEDIA_BROADCAST_INSTANCE
+water	46:50	0:0	14	VLM_START_MEDIA_BROADCAST_INSTANCE
+arg	46:86	46:101	13	p_media->cfg.id
+water	46:86	0:0	14	p_media
+op	46:93	0:0	14	->
+water	46:95	0:0	14	cfg
+op	46:98	0:0	14	.
+water	46:99	0:0	14	id
+arg	46:103	46:123	13	p_instance->psz_name
+water	46:103	0:0	14	p_instance
+op	46:113	0:0	14	->
+water	46:115	0:0	14	psz_name
+arg	46:125	46:143	13	i_new_input_index
+water	46:125	0:0	14	i_new_input_index
+water	46:144	0:0	12	;
+water	47:20	0:0	10	j
+op	47:22	0:0	10	=
+water	47:24	0:0	10	0
+water	47:25	0:0	10	;
+water	48:16	0:0	10	}
+else	49:16	52:16	8
+stmts	50:16	52:16	9	
+water	50:16	0:0	10	{
+water	51:20	0:0	10	j
+op	51:21	0:0	10	++
+water	51:23	0:0	10	;
+water	52:16	0:0	10	}
+water	53:12	0:0	8	}
+water	54:8	0:0	6	}
+water	56:8	0:0	4	i_time
+op	56:15	0:0	4	=
+call	56:17	56:26	4	vlm_Date
+water	56:27	0:0	4	;
+water	57:8	0:0	4	i_nextschedule
+op	57:23	0:0	4	=
+water	57:25	0:0	4	0
+water	57:26	0:0	4	;
+for	58:8	98:8	4	(i = 0 ;i < vlm -> i_schedule;i ++)
+forinit	58:13	58:18	5	i = 0 ;
+water	58:13	0:0	6	i
+op	58:15	0:0	6	=
+water	58:17	0:0	6	0
+water	58:18	0:0	6	;
+cond	58:20	58:29	5	i < vlm -> i_schedule
+water	58:20	0:0	6	i
+op	58:22	0:0	6	<
+water	58:24	0:0	6	vlm
+op	58:27	0:0	6	->
+water	58:29	0:0	6	i_schedule
+forexpr	58:41	58:42	5	i ++
+water	58:41	0:0	6	i
+op	58:42	0:0	6	++
+stmts	59:8	98:8	5	
+water	59:8	0:0	6	{
+decl	60:12	60:58	6	mtime_t	i_real_date
+op	60:32	0:0	6	=
+water	60:34	0:0	6	vlm
+op	60:37	0:0	6	->
+water	60:39	0:0	6	schedule
+op	60:47	0:0	6	[
+water	60:48	0:0	6	i
+op	60:49	0:0	6	]
+op	60:50	0:0	6	->
+water	60:52	0:0	6	i_date
+if	61:12	97:12	6	(vlm -> schedule [ i ] -> b_enabled)
+cond	61:16	61:34	7	vlm -> schedule [ i ] -> b_enabled
+water	61:16	0:0	8	vlm
+op	61:19	0:0	8	->
+water	61:21	0:0	8	schedule
+op	61:29	0:0	8	[
+water	61:30	0:0	8	i
+op	61:31	0:0	8	]
+op	61:32	0:0	8	->
+water	61:34	0:0	8	b_enabled
+stmts	62:12	97:12	7	
+water	62:12	0:0	8	{
+if	63:16	67:16	8	(vlm -> schedule [ i ] -> i_date == 0)
+cond	63:20	63:48	9	vlm -> schedule [ i ] -> i_date == 0
+water	63:20	0:0	10	vlm
+op	63:23	0:0	10	->
+water	63:25	0:0	10	schedule
+op	63:33	0:0	10	[
+water	63:34	0:0	10	i
+op	63:35	0:0	10	]
+op	63:36	0:0	10	->
+water	63:38	0:0	10	i_date
+op	63:45	0:0	10	==
+water	63:48	0:0	10	0
+stmts	64:16	67:16	9	
+water	64:16	0:0	10	{
+water	65:20	0:0	10	vlm
+op	65:23	0:0	10	->
+water	65:25	0:0	10	schedule
+op	65:33	0:0	10	[
+water	65:34	0:0	10	i
+op	65:35	0:0	10	]
+op	65:36	0:0	10	->
+water	65:38	0:0	10	i_date
+op	65:45	0:0	10	=
+water	65:47	0:0	10	(
+water	65:48	0:0	10	i_time
+op	65:55	0:0	10	/
+water	65:57	0:0	10	1000000
+water	65:64	0:0	10	)
+op	65:66	0:0	10	*
+water	65:68	0:0	10	1000000
+water	65:76	0:0	10	;
+water	66:20	0:0	10	i_real_date
+op	66:32	0:0	10	=
+water	66:34	0:0	10	i_time
+water	66:40	0:0	10	;
+water	67:16	0:0	10	}
+else	68:16	80:16	8
+stmts	68:21	80:16	9	
+if	68:21	80:16	10	(vlm -> schedule [ i ] -> i_period != 0)
+cond	68:25	68:55	11	vlm -> schedule [ i ] -> i_period != 0
+water	68:25	0:0	12	vlm
+op	68:28	0:0	12	->
+water	68:30	0:0	12	schedule
+op	68:38	0:0	12	[
+water	68:39	0:0	12	i
+op	68:40	0:0	12	]
+op	68:41	0:0	12	->
+water	68:43	0:0	12	i_period
+op	68:52	0:0	12	!=
+water	68:55	0:0	12	0
+stmts	69:16	80:16	11	
+water	69:16	0:0	12	{
+decl	70:20	70:29	12	int	j
+op	70:26	0:0	12	=
+water	70:28	0:0	12	0
+while	71:20	77:20	12	(vlm -> schedule [ i ] -> i_date + j * vlm -> schedule [ i ] -> i_period <= i_lastcheck && ( vlm -> schedule [ i ] -> i_repeat > j || vlm -> schedule [ i ] -> i_repeat == - 1 ))
+cond	71:27	74:62	13	vlm -> schedule [ i ] -> i_date + j * vlm -> schedule [ i ] -> i_period <= i_lastcheck && ( vlm -> schedule [ i ] -> i_repeat > j || vlm -> schedule [ i ] -> i_repeat == - 1 )
+water	71:27	0:0	14	vlm
+op	71:30	0:0	14	->
+water	71:32	0:0	14	schedule
+op	71:40	0:0	14	[
+water	71:41	0:0	14	i
+op	71:42	0:0	14	]
+op	71:43	0:0	14	->
+water	71:45	0:0	14	i_date
+op	71:52	0:0	14	+
+water	71:54	0:0	14	j
+op	71:56	0:0	14	*
+water	72:27	0:0	14	vlm
+op	72:30	0:0	14	->
+water	72:32	0:0	14	schedule
+op	72:40	0:0	14	[
+water	72:41	0:0	14	i
+op	72:42	0:0	14	]
+op	72:43	0:0	14	->
+water	72:45	0:0	14	i_period
+op	72:54	0:0	14	<=
+water	72:57	0:0	14	i_lastcheck
+op	72:69	0:0	14	&&
+water	73:27	0:0	14	(
+water	73:29	0:0	14	vlm
+op	73:32	0:0	14	->
+water	73:34	0:0	14	schedule
+op	73:42	0:0	14	[
+water	73:43	0:0	14	i
+op	73:44	0:0	14	]
+op	73:45	0:0	14	->
+water	73:47	0:0	14	i_repeat
+op	73:56	0:0	14	>
+water	73:58	0:0	14	j
+op	73:60	0:0	14	||
+water	74:29	0:0	14	vlm
+op	74:32	0:0	14	->
+water	74:34	0:0	14	schedule
+op	74:42	0:0	14	[
+water	74:43	0:0	14	i
+op	74:44	0:0	14	]
+op	74:45	0:0	14	->
+water	74:47	0:0	14	i_repeat
+op	74:56	0:0	14	==
+op	74:59	0:0	14	-
+water	74:60	0:0	14	1
+water	74:62	0:0	14	)
+stmts	75:20	77:20	13	
+water	75:20	0:0	14	{
+water	76:24	0:0	14	j
+op	76:25	0:0	14	++
+water	76:27	0:0	14	;
+water	77:20	0:0	14	}
+water	78:20	0:0	12	i_real_date
+op	78:32	0:0	12	=
+water	78:34	0:0	12	vlm
+op	78:37	0:0	12	->
+water	78:39	0:0	12	schedule
+op	78:47	0:0	12	[
+water	78:48	0:0	12	i
+op	78:49	0:0	12	]
+op	78:50	0:0	12	->
+water	78:52	0:0	12	i_date
+op	78:59	0:0	12	+
+water	78:61	0:0	12	j
+op	78:63	0:0	12	*
+water	79:24	0:0	12	vlm
+op	79:27	0:0	12	->
+water	79:29	0:0	12	schedule
+op	79:37	0:0	12	[
+water	79:38	0:0	12	i
+op	79:39	0:0	12	]
+op	79:40	0:0	12	->
+water	79:42	0:0	12	i_period
+water	79:50	0:0	12	;
+water	80:16	0:0	12	}
+if	81:16	92:16	8	(i_real_date <= i_time)
+cond	81:20	81:35	9	i_real_date <= i_time
+water	81:20	0:0	10	i_real_date
+op	81:32	0:0	10	<=
+water	81:35	0:0	10	i_time
+stmts	82:16	92:16	9	
+water	82:16	0:0	10	{
+if	83:20	91:20	10	(i_real_date > i_lastcheck)
+cond	83:24	83:38	11	i_real_date > i_lastcheck
+water	83:24	0:0	12	i_real_date
+op	83:36	0:0	12	>
+water	83:38	0:0	12	i_lastcheck
+stmts	84:20	91:20	11	
+water	84:20	0:0	12	{
+for	85:24	90:24	12	(j = 0 ;j < vlm -> schedule [ i ] -> i_command;j ++)
+forinit	85:29	85:34	13	j = 0 ;
+water	85:29	0:0	14	j
+op	85:31	0:0	14	=
+water	85:33	0:0	14	0
+water	85:34	0:0	14	;
+cond	85:36	85:58	13	j < vlm -> schedule [ i ] -> i_command
+water	85:36	0:0	14	j
+op	85:38	0:0	14	<
+water	85:40	0:0	14	vlm
+op	85:43	0:0	14	->
+water	85:45	0:0	14	schedule
+op	85:53	0:0	14	[
+water	85:54	0:0	14	i
+op	85:55	0:0	14	]
+op	85:56	0:0	14	->
+water	85:58	0:0	14	i_command
+forexpr	85:69	85:70	13	j ++
+water	85:69	0:0	14	j
+op	85:70	0:0	14	++
+stmts	86:24	90:24	13	
+water	86:24	0:0	14	{
+call	87:28	89:78	14	TAB_APPEND
+arg	87:40	87:60	15	i_scheduled_commands
+water	87:40	0:0	16	i_scheduled_commands
+arg	88:40	88:63	15	ppsz_scheduled_commands
+water	88:40	0:0	16	ppsz_scheduled_commands
+arg	89:40	89:78	15	strdup(vlm->schedule[i]->command[j])
+call	89:40	89:76	16	strdup
+arg	89:47	89:76	17	vlm->schedule[i]->command[j]
+water	89:47	0:0	18	vlm
+op	89:50	0:0	18	->
+water	89:52	0:0	18	schedule
+op	89:60	0:0	18	[
+water	89:61	0:0	18	i
+op	89:62	0:0	18	]
+op	89:63	0:0	18	->
+water	89:65	0:0	18	command
+op	89:72	0:0	18	[
+water	89:73	0:0	18	j
+op	89:74	0:0	18	]
+water	89:79	0:0	14	;
+water	90:24	0:0	14	}
+water	91:20	0:0	12	}
+water	92:16	0:0	10	}
+else	93:16	96:16	8
+stmts	93:21	96:16	9	
+if	93:21	96:16	10	(i_nextschedule == 0 || i_real_date < i_nextschedule)
+cond	93:25	93:62	11	i_nextschedule == 0 || i_real_date < i_nextschedule
+water	93:25	0:0	12	i_nextschedule
+op	93:40	0:0	12	==
+water	93:43	0:0	12	0
+op	93:45	0:0	12	||
+water	93:48	0:0	12	i_real_date
+op	93:60	0:0	12	<
+water	93:62	0:0	12	i_nextschedule
+stmts	94:16	96:16	11	
+water	94:16	0:0	12	{
+water	95:20	0:0	12	i_nextschedule
+op	95:35	0:0	12	=
+water	95:37	0:0	12	i_real_date
+water	95:48	0:0	12	;
+water	96:16	0:0	12	}
+water	97:12	0:0	8	}
+water	98:8	0:0	6	}
+while	99:8	110:8	4	(i_scheduled_commands)
+cond	99:15	99:15	5	i_scheduled_commands
+water	99:15	0:0	6	i_scheduled_commands
+stmts	100:8	110:8	5	
+water	100:8	0:0	6	{
+decl	101:12	101:41	6	vlm_message_t	*message
+op	101:35	0:0	6	=
+water	101:37	0:0	6	NULL
+decl	102:12	102:58	6	char	*psz_command
+op	102:30	0:0	6	=
+water	102:32	0:0	6	ppsz_scheduled_commands
+op	102:55	0:0	6	[
+water	102:56	0:0	6	0
+op	102:57	0:0	6	]
+call	103:12	103:54	6	ExecuteCommand
+arg	103:28	103:31	7	vlm
+water	103:28	0:0	8	vlm
+arg	103:33	103:44	7	psz_command
+water	103:33	0:0	8	psz_command
+arg	103:45	103:54	7	&message
+op	103:45	0:0	8	&
+water	103:46	0:0	8	message
+water	103:55	0:0	6	;
+call	105:12	105:39	6	vlm_MessageDelete
+arg	105:31	105:39	7	message
+water	105:31	0:0	8	message
+water	105:40	0:0	6	;
+call	106:12	108:36	6	TAB_REMOVE
+arg	106:24	106:44	7	i_scheduled_commands
+water	106:24	0:0	8	i_scheduled_commands
+arg	107:24	107:47	7	ppsz_scheduled_commands
+water	107:24	0:0	8	ppsz_scheduled_commands
+arg	108:24	108:36	7	psz_command
+water	108:24	0:0	8	psz_command
+water	108:37	0:0	6	;
+call	109:12	109:30	6	free
+arg	109:18	109:30	7	psz_command
+water	109:18	0:0	8	psz_command
+water	109:31	0:0	6	;
+water	110:8	0:0	6	}
+water	111:8	0:0	4	i_lastcheck
+op	111:20	0:0	4	=
+water	111:22	0:0	4	i_time
+water	111:28	0:0	4	;
+call	112:8	112:37	4	vlc_mutex_unlock
+arg	112:26	112:37	5	&vlm->lock
+op	112:26	0:0	6	&
+water	112:27	0:0	6	vlm
+op	112:30	0:0	6	->
+water	112:32	0:0	6	lock
+water	112:38	0:0	4	;
+call	113:8	113:31	4	vlc_restorecancel
+arg	113:27	113:31	5	canc
+water	113:27	0:0	6	canc
+water	113:32	0:0	4	;
+water	114:4	0:0	4	}
+return	115:4	115:15	2	NULL
+water	115:11	0:0	3	NULL

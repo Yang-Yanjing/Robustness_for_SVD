@@ -1,0 +1,263 @@
+func	2:0	50:0	0	int64_t	oggseek_read_page
+params	2:25	0:0	1	
+param	2:27	2:44	2	demux_t *	p_demux
+stmnts	0:0	49:49	1	
+decl	4:4	4:41	2	demux_sys_t	*p_ogg
+op	4:23	0:0	2	=
+water	4:25	0:0	2	p_demux
+op	4:32	0:0	2	->
+water	4:34	0:0	2	p_sys
+decl	5:4	5:41	2	uint8_t	header[PAGE_HEADER_BYTES+255]
+decl	6:4	6:15	2	int	i_nsegs
+decl	7:4	7:9	2	int	i
+decl	8:4	8:20	2	int64_t	i_in_pos
+decl	9:4	9:20	2	int64_t	i_result
+decl	10:4	10:19	2	int	i_page_size
+decl	11:4	11:13	2	char	*buf
+decl	12:4	12:40	2	demux_sys_t	*p_sys
+op	12:24	0:0	2	=
+water	12:26	0:0	2	p_demux
+op	12:33	0:0	2	->
+water	12:35	0:0	2	p_sys
+water	14:4	0:0	2	i_in_pos
+op	14:13	0:0	2	=
+water	14:15	0:0	2	p_ogg
+op	14:20	0:0	2	->
+water	14:22	0:0	2	i_input_position
+op	14:39	0:0	2	=
+call	14:41	14:65	2	stream_Tell
+arg	14:54	14:65	3	p_demux->s
+water	14:54	0:0	4	p_demux
+op	14:61	0:0	4	->
+water	14:63	0:0	4	s
+water	14:66	0:0	2	;
+if	15:4	18:4	2	(p_sys -> b_page_waiting)
+cond	15:9	15:16	3	p_sys -> b_page_waiting
+water	15:9	0:0	4	p_sys
+op	15:14	0:0	4	->
+water	15:16	0:0	4	b_page_waiting
+stmts	15:32	18:4	3	
+water	15:32	0:0	4	{
+call	16:8	16:53	4	msg_Warn
+arg	16:18	16:25	5	p_demux
+water	16:18	0:0	6	p_demux
+arg	16:27	16:53	5	"Ogg page already loaded"
+water	16:27	0:0	6	"Ogg page already loaded"
+water	16:54	0:0	4	;
+return	17:8	17:16	4	0
+water	17:15	0:0	5	0
+water	18:4	0:0	4	}
+if	19:4	24:4	2	(stream_Read (p_demux -> s ,header ,PAGE_HEADER_BYTES ) < PAGE_HEADER_BYTES)
+cond	19:9	19:65	3	stream_Read (p_demux -> s ,header ,PAGE_HEADER_BYTES ) < PAGE_HEADER_BYTES
+call	19:9	19:61	4	stream_Read
+arg	19:23	19:33	5	p_demux->s
+water	19:23	0:0	6	p_demux
+op	19:30	0:0	6	->
+water	19:32	0:0	6	s
+arg	19:35	19:41	5	header
+water	19:35	0:0	6	header
+arg	19:43	19:61	5	PAGE_HEADER_BYTES
+water	19:43	0:0	6	PAGE_HEADER_BYTES
+op	19:63	0:0	4	<
+water	19:65	0:0	4	PAGE_HEADER_BYTES
+stmts	20:4	24:4	3	
+water	20:4	0:0	4	{
+call	21:8	21:42	4	stream_Seek
+arg	21:21	21:31	5	p_demux->s
+water	21:21	0:0	6	p_demux
+op	21:28	0:0	6	->
+water	21:30	0:0	6	s
+arg	21:33	21:42	5	i_in_pos
+water	21:33	0:0	6	i_in_pos
+water	21:43	0:0	4	;
+call	22:8	22:59	4	msg_Dbg
+arg	22:18	22:25	5	p_demux
+water	22:18	0:0	6	p_demux
+arg	22:27	22:59	5	"Reached clean EOF in ogg file"
+water	22:27	0:0	6	"Reached clean EOF in ogg file"
+water	22:60	0:0	4	;
+return	23:8	23:16	4	0
+water	23:15	0:0	5	0
+water	24:4	0:0	4	}
+water	25:4	0:0	2	i_nsegs
+op	25:12	0:0	2	=
+water	25:14	0:0	2	header
+op	25:20	0:0	2	[
+water	25:22	0:0	2	PAGE_HEADER_BYTES
+op	25:40	0:0	2	-
+water	25:42	0:0	2	1
+op	25:44	0:0	2	]
+water	25:45	0:0	2	;
+if	26:4	31:4	2	(stream_Read (p_demux -> s ,header + PAGE_HEADER_BYTES ,i_nsegs ) < i_nsegs)
+cond	26:9	26:73	3	stream_Read (p_demux -> s ,header + PAGE_HEADER_BYTES ,i_nsegs ) < i_nsegs
+call	26:9	26:69	4	stream_Read
+arg	26:23	26:33	5	p_demux->s
+water	26:23	0:0	6	p_demux
+op	26:30	0:0	6	->
+water	26:32	0:0	6	s
+arg	26:35	26:59	5	header+PAGE_HEADER_BYTES
+water	26:35	0:0	6	header
+op	26:41	0:0	6	+
+water	26:42	0:0	6	PAGE_HEADER_BYTES
+arg	26:61	26:69	5	i_nsegs
+water	26:61	0:0	6	i_nsegs
+op	26:71	0:0	4	<
+water	26:73	0:0	4	i_nsegs
+stmts	27:4	31:4	3	
+water	27:4	0:0	4	{
+call	28:8	28:42	4	stream_Seek
+arg	28:21	28:31	5	p_demux->s
+water	28:21	0:0	6	p_demux
+op	28:28	0:0	6	->
+water	28:30	0:0	6	s
+arg	28:33	28:42	5	i_in_pos
+water	28:33	0:0	6	i_in_pos
+water	28:43	0:0	4	;
+call	29:8	29:61	4	msg_Warn
+arg	29:19	29:26	5	p_demux
+water	29:19	0:0	6	p_demux
+arg	29:28	29:61	5	"Reached broken EOF in ogg file"
+water	29:28	0:0	6	"Reached broken EOF in ogg file"
+water	29:62	0:0	4	;
+return	30:8	30:16	4	0
+water	30:15	0:0	5	0
+water	31:4	0:0	4	}
+water	32:4	0:0	2	i_page_size
+op	32:16	0:0	2	=
+water	32:18	0:0	2	PAGE_HEADER_BYTES
+op	32:36	0:0	2	+
+water	32:38	0:0	2	i_nsegs
+water	32:45	0:0	2	;
+for	33:4	36:4	2	(i = 0 ;i < i_nsegs;i ++)
+forinit	33:10	33:15	3	i = 0 ;
+water	33:10	0:0	4	i
+op	33:12	0:0	4	=
+water	33:14	0:0	4	0
+water	33:15	0:0	4	;
+cond	33:17	33:21	3	i < i_nsegs
+water	33:17	0:0	4	i
+op	33:19	0:0	4	<
+water	33:21	0:0	4	i_nsegs
+forexpr	33:30	33:31	3	i ++
+water	33:30	0:0	4	i
+op	33:31	0:0	4	++
+stmts	34:4	36:4	3	
+water	34:4	0:0	4	{
+water	35:8	0:0	4	i_page_size
+op	35:20	0:0	4	+=
+water	35:23	0:0	4	header
+op	35:29	0:0	4	[
+water	35:31	0:0	4	PAGE_HEADER_BYTES
+op	35:49	0:0	4	+
+water	35:51	0:0	4	i
+op	35:53	0:0	4	]
+water	35:54	0:0	4	;
+water	36:4	0:0	4	}
+call	37:4	37:31	2	ogg_sync_reset
+arg	37:20	37:31	3	&p_ogg->oy
+op	37:20	0:0	4	&
+water	37:21	0:0	4	p_ogg
+op	37:26	0:0	4	->
+water	37:28	0:0	4	oy
+water	37:32	0:0	2	;
+water	38:4	0:0	2	buf
+op	38:8	0:0	2	=
+call	38:10	38:51	2	ogg_sync_buffer
+arg	38:27	38:37	3	&p_ogg->oy
+op	38:27	0:0	4	&
+water	38:28	0:0	4	p_ogg
+op	38:33	0:0	4	->
+water	38:35	0:0	4	oy
+arg	38:39	38:51	3	i_page_size
+water	38:39	0:0	4	i_page_size
+water	38:52	0:0	2	;
+call	39:4	39:53	2	memcpy
+arg	39:12	39:15	3	buf
+water	39:12	0:0	4	buf
+arg	39:17	39:23	3	header
+water	39:17	0:0	4	header
+arg	39:25	39:53	3	PAGE_HEADER_BYTES+i_nsegs
+water	39:25	0:0	4	PAGE_HEADER_BYTES
+op	39:43	0:0	4	+
+water	39:45	0:0	4	i_nsegs
+water	39:54	0:0	2	;
+water	40:4	0:0	2	i_result
+op	40:13	0:0	2	=
+call	40:15	41:71	2	stream_Read
+arg	40:29	40:39	3	p_demux->s
+water	40:29	0:0	4	p_demux
+op	40:36	0:0	4	->
+water	40:38	0:0	4	s
+arg	40:41	40:84	3	(uint8_t*)buf+PAGE_HEADER_BYTES+i_nsegs
+water	40:41	0:0	4	(
+water	40:42	0:0	4	uint8_t
+op	40:49	0:0	4	*
+water	40:50	0:0	4	)
+water	40:51	0:0	4	buf
+op	40:55	0:0	4	+
+water	40:57	0:0	4	PAGE_HEADER_BYTES
+op	40:75	0:0	4	+
+water	40:77	0:0	4	i_nsegs
+arg	41:29	41:71	3	i_page_size-PAGE_HEADER_BYTES-i_nsegs
+water	41:29	0:0	4	i_page_size
+op	41:41	0:0	4	-
+water	41:43	0:0	4	PAGE_HEADER_BYTES
+op	41:61	0:0	4	-
+water	41:63	0:0	4	i_nsegs
+water	41:72	0:0	2	;
+call	42:4	42:71	2	ogg_sync_wrote
+arg	42:20	42:30	3	&p_ogg->oy
+op	42:20	0:0	4	&
+water	42:21	0:0	4	p_ogg
+op	42:26	0:0	4	->
+water	42:28	0:0	4	oy
+arg	42:32	42:71	3	i_result+PAGE_HEADER_BYTES+i_nsegs
+water	42:32	0:0	4	i_result
+op	42:41	0:0	4	+
+water	42:43	0:0	4	PAGE_HEADER_BYTES
+op	42:61	0:0	4	+
+water	42:63	0:0	4	i_nsegs
+water	42:72	0:0	2	;
+if	43:4	48:4	2	(ogg_sync_pageout (& p_ogg -> oy ,& p_ogg -> current_page ) != 1)
+cond	43:9	43:65	3	ogg_sync_pageout (& p_ogg -> oy ,& p_ogg -> current_page ) != 1
+call	43:9	43:60	4	ogg_sync_pageout
+arg	43:27	43:37	5	&p_ogg->oy
+op	43:27	0:0	6	&
+water	43:28	0:0	6	p_ogg
+op	43:33	0:0	6	->
+water	43:35	0:0	6	oy
+arg	43:39	43:60	5	&p_ogg->current_page
+op	43:39	0:0	6	&
+water	43:40	0:0	6	p_ogg
+op	43:45	0:0	6	->
+water	43:47	0:0	6	current_page
+op	43:62	0:0	4	!=
+water	43:65	0:0	4	1
+stmts	44:4	48:4	3	
+water	44:4	0:0	4	{
+call	45:8	46:54	4	msg_Err
+arg	45:17	45:25	5	p_demux
+water	45:17	0:0	6	p_demux
+arg	45:27	45:81	5	"Got invalid packet, read %"PRId64" of %i: %s %"PRId64
+water	45:27	0:0	6	"Got invalid packet, read %"
+water	45:55	0:0	6	PRId64
+water	45:61	0:0	6	" of %i: %s %"
+water	45:75	0:0	6	PRId64
+arg	46:17	46:25	5	i_result
+water	46:17	0:0	6	i_result
+arg	46:27	46:38	5	i_page_size
+water	46:27	0:0	6	i_page_size
+arg	46:40	46:43	5	buf
+water	46:40	0:0	6	buf
+arg	46:45	46:54	5	i_in_pos
+water	46:45	0:0	6	i_in_pos
+water	46:55	0:0	4	;
+return	47:8	47:16	4	0
+water	47:15	0:0	5	0
+water	48:4	0:0	4	}
+return	49:4	49:49	2	i_result+PAGE_HEADER_BYTES+i_nsegs
+water	49:11	0:0	3	i_result
+op	49:20	0:0	3	+
+water	49:22	0:0	3	PAGE_HEADER_BYTES
+op	49:40	0:0	3	+
+water	49:42	0:0	3	i_nsegs

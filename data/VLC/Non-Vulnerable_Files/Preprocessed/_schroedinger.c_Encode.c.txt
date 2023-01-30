@@ -1,0 +1,812 @@
+func	2:0	156:0	0	static block_t *	Encode
+params	2:22	0:0	1	
+param	2:24	2:40	2	encoder_t *	p_enc
+param	2:42	2:59	2	picture_t *	p_pic
+stmnts	0:0	155:25	1	
+decl	4:4	4:39	2	encoder_sys_t	*p_sys
+op	4:25	0:0	2	=
+water	4:27	0:0	2	p_enc
+op	4:32	0:0	2	->
+water	4:34	0:0	2	p_sys
+decl	5:4	5:44	2	block_t	*p_block
+water	5:20	0:0	2	,
+decl	5:4	5:44	2	block_t	*p_output_chain
+op	5:38	0:0	2	=
+water	5:40	0:0	2	NULL
+decl	6:4	6:23	2	SchroFrame	*p_frame
+decl	7:4	7:20	2	bool	b_go
+op	7:14	0:0	2	=
+water	7:16	0:0	2	true
+if	8:4	15:4	2	(! p_pic)
+cond	8:8	8:9	3	! p_pic
+op	8:8	0:0	4	!
+water	8:9	0:0	4	p_pic
+stmts	8:17	15:4	3	
+water	8:17	0:0	4	{
+if	9:8	10:23	4	(! p_sys -> started || p_sys -> b_eos_pulled)
+cond	9:12	9:38	5	! p_sys -> started || p_sys -> b_eos_pulled
+op	9:12	0:0	6	!
+water	9:13	0:0	6	p_sys
+op	9:18	0:0	6	->
+water	9:20	0:0	6	started
+op	9:28	0:0	6	||
+water	9:31	0:0	6	p_sys
+op	9:36	0:0	6	->
+water	9:38	0:0	6	b_eos_pulled
+stmts	10:12	10:23	5	
+return	10:12	10:23	6	NULL
+water	10:19	0:0	7	NULL
+if	11:8	14:8	4	(! p_sys -> b_eos_signalled)
+cond	11:12	11:20	5	! p_sys -> b_eos_signalled
+op	11:12	0:0	6	!
+water	11:13	0:0	6	p_sys
+op	11:18	0:0	6	->
+water	11:20	0:0	6	b_eos_signalled
+stmts	11:38	14:8	5	
+water	11:38	0:0	6	{
+water	12:12	0:0	6	p_sys
+op	12:17	0:0	6	->
+water	12:19	0:0	6	b_eos_signalled
+op	12:35	0:0	6	=
+water	12:37	0:0	6	1
+water	12:38	0:0	6	;
+call	13:12	13:56	6	schro_encoder_end_of_stream
+arg	13:41	13:56	7	p_sys->p_schro
+water	13:41	0:0	8	p_sys
+op	13:46	0:0	8	->
+water	13:48	0:0	8	p_schro
+water	13:57	0:0	6	;
+water	14:8	0:0	6	}
+water	15:4	0:0	4	}
+else	15:6	23:4	2
+stmts	15:11	23:4	3	
+water	15:11	0:0	4	{
+water	19:8	0:0	4	p_sys
+op	19:13	0:0	4	->
+water	19:15	0:0	4	p_format
+op	19:23	0:0	4	->
+water	19:25	0:0	4	interlaced
+op	19:36	0:0	4	=
+op	19:38	0:0	4	!
+water	19:39	0:0	4	p_pic
+op	19:44	0:0	4	->
+water	19:46	0:0	4	b_progressive
+water	19:59	0:0	4	;
+water	20:8	0:0	4	p_sys
+op	20:13	0:0	4	->
+water	20:15	0:0	4	p_format
+op	20:23	0:0	4	->
+water	20:25	0:0	4	top_field_first
+op	20:41	0:0	4	=
+water	20:43	0:0	4	p_pic
+op	20:48	0:0	4	->
+water	20:50	0:0	4	b_top_field_first
+water	20:67	0:0	4	;
+if	21:8	22:106	4	(p_sys -> b_auto_field_coding)
+cond	21:12	21:19	5	p_sys -> b_auto_field_coding
+water	21:12	0:0	6	p_sys
+op	21:17	0:0	6	->
+water	21:19	0:0	6	b_auto_field_coding
+stmts	22:12	22:106	5	
+call	22:12	22:105	6	schro_encoder_setting_set_double
+arg	22:46	22:60	7	p_sys->p_schro
+water	22:46	0:0	8	p_sys
+op	22:51	0:0	8	->
+water	22:53	0:0	8	p_schro
+arg	22:62	22:81	7	"interlaced_coding"
+water	22:62	0:0	8	"interlaced_coding"
+arg	22:83	22:105	7	!p_pic->b_progressive
+op	22:83	0:0	8	!
+water	22:84	0:0	8	p_pic
+op	22:89	0:0	8	->
+water	22:91	0:0	8	b_progressive
+water	22:106	0:0	6	;
+water	23:4	0:0	4	}
+if	24:4	53:4	2	(! p_sys -> started)
+cond	24:8	24:16	3	! p_sys -> started
+op	24:8	0:0	4	!
+water	24:9	0:0	4	p_sys
+op	24:14	0:0	4	->
+water	24:16	0:0	4	started
+stmts	24:26	53:4	3	
+water	24:26	0:0	4	{
+decl	25:8	25:19	4	date_t	date
+if	26:8	37:8	4	(p_pic -> format . i_chroma != p_enc -> fmt_in . i_codec)
+cond	26:12	26:52	5	p_pic -> format . i_chroma != p_enc -> fmt_in . i_codec
+water	26:12	0:0	6	p_pic
+op	26:17	0:0	6	->
+water	26:19	0:0	6	format
+op	26:25	0:0	6	.
+water	26:26	0:0	6	i_chroma
+op	26:35	0:0	6	!=
+water	26:38	0:0	6	p_enc
+op	26:43	0:0	6	->
+water	26:45	0:0	6	fmt_in
+op	26:51	0:0	6	.
+water	26:52	0:0	6	i_codec
+stmts	26:62	37:8	5	
+water	26:62	0:0	6	{
+decl	27:12	27:44	6	char	chroma_in[5]
+water	27:29	0:0	6	,
+decl	27:12	27:44	6	char	chroma_out[5]
+call	28:12	28:66	6	vlc_fourcc_to_char
+arg	28:32	28:54	7	p_pic->format.i_chroma
+water	28:32	0:0	8	p_pic
+op	28:37	0:0	8	->
+water	28:39	0:0	8	format
+op	28:45	0:0	8	.
+water	28:46	0:0	8	i_chroma
+arg	28:56	28:66	7	chroma_in
+water	28:56	0:0	8	chroma_in
+water	28:67	0:0	6	;
+water	29:12	0:0	6	chroma_in
+op	29:21	0:0	6	[
+water	29:22	0:0	6	4
+op	29:23	0:0	6	]
+op	29:26	0:0	6	=
+water	29:28	0:0	6	'\0'
+water	29:32	0:0	6	;
+water	30:12	0:0	6	chroma_out
+op	30:22	0:0	6	[
+water	30:23	0:0	6	4
+op	30:24	0:0	6	]
+op	30:26	0:0	6	=
+water	30:28	0:0	6	'\0'
+water	30:32	0:0	6	;
+call	31:12	31:66	6	vlc_fourcc_to_char
+arg	31:32	31:53	7	p_enc->fmt_in.i_codec
+water	31:32	0:0	8	p_enc
+op	31:37	0:0	8	->
+water	31:39	0:0	8	fmt_in
+op	31:45	0:0	8	.
+water	31:46	0:0	8	i_codec
+arg	31:55	31:66	7	chroma_out
+water	31:55	0:0	8	chroma_out
+water	31:67	0:0	6	;
+call	32:12	32:85	6	msg_Warn
+arg	32:22	32:27	7	p_enc
+water	32:22	0:0	8	p_enc
+arg	32:29	32:61	7	"Resetting chroma from %s to %s"
+water	32:29	0:0	8	"Resetting chroma from %s to %s"
+arg	32:63	32:73	7	chroma_out
+water	32:63	0:0	8	chroma_out
+arg	32:75	32:85	7	chroma_in
+water	32:75	0:0	8	chroma_in
+water	32:86	0:0	6	;
+if	33:12	36:12	6	(!SetEncChromaFormat (p_enc ,p_pic -> format . i_chroma ))
+cond	33:16	33:67	7	!SetEncChromaFormat (p_enc ,p_pic -> format . i_chroma )
+op	33:16	0:0	8	!
+call	33:17	33:67	8	SetEncChromaFormat
+arg	33:37	33:42	9	p_enc
+water	33:37	0:0	10	p_enc
+arg	33:44	33:67	9	p_pic->format.i_chroma
+water	33:44	0:0	10	p_pic
+op	33:49	0:0	10	->
+water	33:51	0:0	10	format
+op	33:57	0:0	10	.
+water	33:58	0:0	10	i_chroma
+stmts	33:71	36:12	7	
+water	33:71	0:0	8	{
+call	34:16	34:81	8	msg_Err
+arg	34:25	34:30	9	p_enc
+water	34:25	0:0	10	p_enc
+arg	34:32	34:69	9	"Could not reset chroma format to %s"
+water	34:32	0:0	10	"Could not reset chroma format to %s"
+arg	34:71	34:81	9	chroma_in
+water	34:71	0:0	10	chroma_in
+water	34:82	0:0	8	;
+return	35:16	35:27	8	NULL
+water	35:23	0:0	9	NULL
+water	36:12	0:0	8	}
+water	37:8	0:0	6	}
+call	38:8	38:98	4	date_Init
+arg	38:19	38:24	5	&date
+op	38:19	0:0	6	&
+water	38:20	0:0	6	date
+arg	38:26	38:58	5	p_enc->fmt_in.video.i_frame_rate
+water	38:26	0:0	6	p_enc
+op	38:31	0:0	6	->
+water	38:33	0:0	6	fmt_in
+op	38:39	0:0	6	.
+water	38:40	0:0	6	video
+op	38:45	0:0	6	.
+water	38:46	0:0	6	i_frame_rate
+arg	38:60	38:98	5	p_enc->fmt_in.video.i_frame_rate_base
+water	38:60	0:0	6	p_enc
+op	38:65	0:0	6	->
+water	38:67	0:0	6	fmt_in
+op	38:73	0:0	6	.
+water	38:74	0:0	6	video
+op	38:79	0:0	6	.
+water	38:80	0:0	6	i_frame_rate_base
+water	38:99	0:0	4	;
+call	42:8	42:33	4	date_Increment
+arg	42:24	42:29	5	&date
+op	42:24	0:0	6	&
+water	42:25	0:0	6	date
+arg	42:31	42:33	5	1
+water	42:31	0:0	6	1
+water	42:34	0:0	4	;
+water	43:8	0:0	4	p_sys
+op	43:13	0:0	4	->
+water	43:15	0:0	4	i_pts_offset
+op	43:28	0:0	4	=
+call	43:30	43:46	4	date_Get
+arg	43:40	43:46	5	&date
+op	43:40	0:0	6	&
+water	43:41	0:0	6	date
+water	43:47	0:0	4	;
+if	44:8	48:8	4	(schro_encoder_setting_get_double (p_sys -> p_schro ,"interlaced_coding" ) > 0 . 0)
+cond	44:12	44:88	5	schro_encoder_setting_get_double (p_sys -> p_schro ,"interlaced_coding" ) > 0 . 0
+call	44:12	44:82	6	schro_encoder_setting_get_double
+arg	44:46	44:60	7	p_sys->p_schro
+water	44:46	0:0	8	p_sys
+op	44:51	0:0	8	->
+water	44:53	0:0	8	p_schro
+arg	44:62	44:82	7	"interlaced_coding"
+water	44:62	0:0	8	"interlaced_coding"
+op	44:84	0:0	6	>
+water	44:86	0:0	6	0
+op	44:87	0:0	6	.
+water	44:88	0:0	6	0
+stmts	44:92	48:8	5	
+water	44:92	0:0	6	{
+call	45:12	45:31	6	date_Set
+arg	45:22	45:27	7	&date
+op	45:22	0:0	8	&
+water	45:23	0:0	8	date
+arg	45:29	45:31	7	0
+water	45:29	0:0	8	0
+water	45:32	0:0	6	;
+call	46:12	46:36	6	date_Increment
+arg	46:28	46:33	7	&date
+op	46:28	0:0	8	&
+water	46:29	0:0	8	date
+arg	46:35	46:36	7	1
+water	46:35	0:0	8	1
+water	46:37	0:0	6	;
+water	47:12	0:0	6	p_sys
+op	47:17	0:0	6	->
+water	47:19	0:0	6	i_field_time
+op	47:32	0:0	6	=
+call	47:34	47:50	6	date_Get
+arg	47:44	47:50	7	&date
+op	47:44	0:0	8	&
+water	47:45	0:0	8	date
+op	47:52	0:0	6	/
+water	47:54	0:0	6	2
+water	47:55	0:0	6	;
+water	48:8	0:0	6	}
+call	49:8	49:96	4	schro_video_format_set_std_signal_range
+arg	49:49	49:64	5	p_sys->p_format
+water	49:49	0:0	6	p_sys
+op	49:54	0:0	6	->
+water	49:56	0:0	6	p_format
+arg	49:66	49:96	5	SCHRO_SIGNAL_RANGE_8BIT_VIDEO
+water	49:66	0:0	6	SCHRO_SIGNAL_RANGE_8BIT_VIDEO
+water	49:97	0:0	4	;
+call	50:8	50:72	4	schro_encoder_set_video_format
+arg	50:40	50:54	5	p_sys->p_schro
+water	50:40	0:0	6	p_sys
+op	50:45	0:0	6	->
+water	50:47	0:0	6	p_schro
+arg	50:56	50:72	5	p_sys->p_format
+water	50:56	0:0	6	p_sys
+op	50:61	0:0	6	->
+water	50:63	0:0	6	p_format
+water	50:73	0:0	4	;
+call	51:8	51:44	4	schro_encoder_start
+arg	51:29	51:44	5	p_sys->p_schro
+water	51:29	0:0	6	p_sys
+op	51:34	0:0	6	->
+water	51:36	0:0	6	p_schro
+water	51:45	0:0	4	;
+water	52:8	0:0	4	p_sys
+op	52:13	0:0	4	->
+water	52:15	0:0	4	started
+op	52:23	0:0	4	=
+water	52:25	0:0	4	1
+water	52:26	0:0	4	;
+water	53:4	0:0	4	}
+if	54:4	88:4	2	(! p_sys -> b_eos_signalled)
+cond	54:8	54:16	3	! p_sys -> b_eos_signalled
+op	54:8	0:0	4	!
+water	54:9	0:0	4	p_sys
+op	54:14	0:0	4	->
+water	54:16	0:0	4	b_eos_signalled
+stmts	54:34	88:4	3	
+water	54:34	0:0	4	{
+call	58:8	58:28	4	picture_Hold
+arg	58:22	58:28	5	p_pic
+water	58:22	0:0	6	p_pic
+water	58:29	0:0	4	;
+water	59:8	0:0	4	p_frame
+op	59:16	0:0	4	=
+call	59:18	59:61	4	CreateSchroFrameFromInputPic
+arg	59:48	59:53	5	p_enc
+water	59:48	0:0	6	p_enc
+arg	59:55	59:61	5	p_pic
+water	59:55	0:0	6	p_pic
+water	59:62	0:0	4	;
+if	60:8	61:23	4	(! p_frame)
+cond	60:12	60:13	5	! p_frame
+op	60:12	0:0	6	!
+water	60:13	0:0	6	p_frame
+stmts	61:12	61:23	5	
+return	61:12	61:23	6	NULL
+water	61:19	0:0	7	NULL
+call	62:8	62:58	4	schro_encoder_push_frame
+arg	62:34	62:48	5	p_sys->p_schro
+water	62:34	0:0	6	p_sys
+op	62:39	0:0	6	->
+water	62:41	0:0	6	p_schro
+arg	62:50	62:58	5	p_frame
+water	62:50	0:0	6	p_frame
+water	62:59	0:0	4	;
+call	65:8	65:67	4	StorePicturePTS
+arg	65:25	65:30	5	p_enc
+water	65:25	0:0	6	p_enc
+arg	65:32	65:53	5	p_sys->i_input_picnum
+water	65:32	0:0	6	p_sys
+op	65:37	0:0	6	->
+water	65:39	0:0	6	i_input_picnum
+arg	65:55	65:67	5	p_pic->date
+water	65:55	0:0	6	p_pic
+op	65:60	0:0	6	->
+water	65:62	0:0	6	date
+water	65:68	0:0	4	;
+water	66:8	0:0	4	p_sys
+op	66:13	0:0	4	->
+water	66:15	0:0	4	i_input_picnum
+op	66:29	0:0	4	++
+water	66:31	0:0	4	;
+water	69:8	0:0	4	p_block
+op	69:16	0:0	4	=
+call	69:18	69:33	4	block_Alloc
+arg	69:31	69:33	5	1
+water	69:31	0:0	6	1
+water	69:34	0:0	4	;
+if	70:8	71:23	4	(! p_block)
+cond	70:12	70:13	5	! p_block
+op	70:12	0:0	6	!
+water	70:13	0:0	6	p_block
+stmts	71:12	71:23	5	
+return	71:12	71:23	6	NULL
+water	71:19	0:0	7	NULL
+water	72:8	0:0	4	p_block
+op	72:15	0:0	4	->
+water	72:17	0:0	4	i_dts
+op	72:23	0:0	4	=
+water	72:25	0:0	4	p_pic
+op	72:30	0:0	4	->
+water	72:32	0:0	4	date
+op	72:37	0:0	4	-
+water	72:39	0:0	4	p_sys
+op	72:44	0:0	4	->
+water	72:46	0:0	4	i_pts_offset
+water	72:58	0:0	4	;
+call	73:8	73:50	4	block_FifoPut
+arg	73:23	73:40	5	p_sys->p_dts_fifo
+water	73:23	0:0	6	p_sys
+op	73:28	0:0	6	->
+water	73:30	0:0	6	p_dts_fifo
+arg	73:42	73:50	5	p_block
+water	73:42	0:0	6	p_block
+water	73:51	0:0	4	;
+water	74:8	0:0	4	p_block
+op	74:16	0:0	4	=
+water	74:18	0:0	4	NULL
+water	74:22	0:0	4	;
+if	78:8	87:8	4	(schro_encoder_setting_get_double (p_sys -> p_schro ,"interlaced_coding" ) > 0 . 0)
+cond	78:12	78:88	5	schro_encoder_setting_get_double (p_sys -> p_schro ,"interlaced_coding" ) > 0 . 0
+call	78:12	78:82	6	schro_encoder_setting_get_double
+arg	78:46	78:60	7	p_sys->p_schro
+water	78:46	0:0	8	p_sys
+op	78:51	0:0	8	->
+water	78:53	0:0	8	p_schro
+arg	78:62	78:82	7	"interlaced_coding"
+water	78:62	0:0	8	"interlaced_coding"
+op	78:84	0:0	6	>
+water	78:86	0:0	6	0
+op	78:87	0:0	6	.
+water	78:88	0:0	6	0
+stmts	78:92	87:8	5	
+water	78:92	0:0	6	{
+call	79:12	79:93	6	StorePicturePTS
+arg	79:29	79:34	7	p_enc
+water	79:29	0:0	8	p_enc
+arg	79:36	79:57	7	p_sys->i_input_picnum
+water	79:36	0:0	8	p_sys
+op	79:41	0:0	8	->
+water	79:43	0:0	8	i_input_picnum
+arg	79:59	79:93	7	p_pic->date+p_sys->i_field_time
+water	79:59	0:0	8	p_pic
+op	79:64	0:0	8	->
+water	79:66	0:0	8	date
+op	79:71	0:0	8	+
+water	79:73	0:0	8	p_sys
+op	79:78	0:0	8	->
+water	79:80	0:0	8	i_field_time
+water	79:94	0:0	6	;
+water	80:12	0:0	6	p_sys
+op	80:17	0:0	6	->
+water	80:19	0:0	6	i_input_picnum
+op	80:33	0:0	6	++
+water	80:35	0:0	6	;
+water	81:12	0:0	6	p_block
+op	81:20	0:0	6	=
+call	81:22	81:37	6	block_Alloc
+arg	81:35	81:37	7	1
+water	81:35	0:0	8	1
+water	81:38	0:0	6	;
+if	82:12	83:27	6	(! p_block)
+cond	82:16	82:17	7	! p_block
+op	82:16	0:0	8	!
+water	82:17	0:0	8	p_block
+stmts	83:16	83:27	7	
+return	83:16	83:27	8	NULL
+water	83:23	0:0	9	NULL
+water	84:12	0:0	6	p_block
+op	84:19	0:0	6	->
+water	84:21	0:0	6	i_dts
+op	84:27	0:0	6	=
+water	84:29	0:0	6	p_pic
+op	84:34	0:0	6	->
+water	84:36	0:0	6	date
+op	84:41	0:0	6	-
+water	84:43	0:0	6	p_sys
+op	84:48	0:0	6	->
+water	84:50	0:0	6	i_pts_offset
+op	84:63	0:0	6	+
+water	84:65	0:0	6	p_sys
+op	84:70	0:0	6	->
+water	84:72	0:0	6	i_field_time
+water	84:84	0:0	6	;
+call	85:12	85:54	6	block_FifoPut
+arg	85:27	85:44	7	p_sys->p_dts_fifo
+water	85:27	0:0	8	p_sys
+op	85:32	0:0	8	->
+water	85:34	0:0	8	p_dts_fifo
+arg	85:46	85:54	7	p_block
+water	85:46	0:0	8	p_block
+water	85:55	0:0	6	;
+water	86:12	0:0	6	p_block
+op	86:20	0:0	6	=
+water	86:22	0:0	6	NULL
+water	86:26	0:0	6	;
+water	87:8	0:0	6	}
+water	88:4	0:0	4	}
+do	89:4	154:4	2	(b_go)
+cond	154:13	154:13	3	b_go
+water	154:13	0:0	4	b_go
+stmts	90:4	154:4	3	
+water	90:4	0:0	4	{
+decl	91:8	91:28	4	SchroStateEnum	state
+water	92:8	0:0	4	state
+op	92:14	0:0	4	=
+call	92:16	92:51	4	schro_encoder_wait
+arg	92:36	92:51	5	p_sys->p_schro
+water	92:36	0:0	6	p_sys
+op	92:41	0:0	6	->
+water	92:43	0:0	6	p_schro
+water	92:52	0:0	4	;
+switch	93:8	153:8	4	(state)
+cond	93:16	93:16	5	state
+water	93:16	0:0	6	state
+stmts	94:8	153:8	5	
+water	94:8	0:0	6	{
+label	95:8	95:35	6	case SCHRO_STATE_NEED_FRAME :
+water	96:12	0:0	6	b_go
+op	96:17	0:0	6	=
+water	96:19	0:0	6	false
+water	96:24	0:0	6	;
+break	97:12	97:17	6	
+label	98:8	98:30	6	case SCHRO_STATE_AGAIN :
+break	99:12	99:17	6	
+label	100:8	100:38	6	case SCHRO_STATE_END_OF_STREAM :
+water	101:12	0:0	6	p_sys
+op	101:17	0:0	6	->
+water	101:19	0:0	6	b_eos_pulled
+op	101:32	0:0	6	=
+water	101:34	0:0	6	1
+water	101:35	0:0	6	;
+water	102:12	0:0	6	b_go
+op	102:17	0:0	6	=
+water	102:19	0:0	6	false
+water	102:24	0:0	6	;
+break	103:12	103:17	6	
+label	104:8	104:36	6	case SCHRO_STATE_HAVE_BUFFER :
+water	105:8	0:0	6	{
+decl	106:12	106:34	6	SchroBuffer	*p_enc_buf
+decl	107:12	107:30	6	uint32_t	u_pic_num
+decl	108:12	108:36	6	int	i_presentation_frame
+water	109:12	0:0	6	p_enc_buf
+op	109:22	0:0	6	=
+call	109:24	109:82	6	schro_encoder_pull
+arg	109:44	109:58	7	p_sys->p_schro
+water	109:44	0:0	8	p_sys
+op	109:49	0:0	8	->
+water	109:51	0:0	8	p_schro
+arg	109:60	109:82	7	&i_presentation_frame
+op	109:60	0:0	8	&
+water	109:61	0:0	8	i_presentation_frame
+water	109:83	0:0	6	;
+water	110:12	0:0	6	p_block
+op	110:20	0:0	6	=
+call	110:22	110:53	6	block_Alloc
+arg	110:35	110:53	7	p_enc_buf->length
+water	110:35	0:0	8	p_enc_buf
+op	110:44	0:0	8	->
+water	110:46	0:0	8	length
+water	110:54	0:0	6	;
+if	111:12	112:27	6	(! p_block)
+cond	111:16	111:17	7	! p_block
+op	111:16	0:0	8	!
+water	111:17	0:0	8	p_block
+stmts	112:16	112:27	7	
+return	112:16	112:27	8	NULL
+water	112:23	0:0	9	NULL
+call	113:12	113:74	6	memcpy
+arg	113:20	113:37	7	p_block->p_buffer
+water	113:20	0:0	8	p_block
+op	113:27	0:0	8	->
+water	113:29	0:0	8	p_buffer
+arg	113:39	113:54	7	p_enc_buf->data
+water	113:39	0:0	8	p_enc_buf
+op	113:48	0:0	8	->
+water	113:50	0:0	8	data
+arg	113:56	113:74	7	p_enc_buf->length
+water	113:56	0:0	8	p_enc_buf
+op	113:65	0:0	8	->
+water	113:67	0:0	8	length
+water	113:75	0:0	6	;
+call	114:12	114:42	6	schro_buffer_unref
+arg	114:32	114:42	7	p_enc_buf
+water	114:32	0:0	8	p_enc_buf
+water	114:43	0:0	6	;
+if	116:12	138:12	6	(0 == p_block -> p_buffer [ 4 ])
+cond	116:16	116:40	7	0 == p_block -> p_buffer [ 4 ]
+water	116:16	0:0	8	0
+op	116:18	0:0	8	==
+water	116:21	0:0	8	p_block
+op	116:28	0:0	8	->
+water	116:30	0:0	8	p_buffer
+op	116:38	0:0	8	[
+water	116:39	0:0	8	4
+op	116:40	0:0	8	]
+stmts	117:12	138:12	7	
+water	117:12	0:0	8	{
+water	118:16	0:0	8	p_block
+op	118:23	0:0	8	->
+water	118:25	0:0	8	i_flags
+op	118:33	0:0	8	|=
+water	118:36	0:0	8	BLOCK_FLAG_TYPE_I
+water	118:53	0:0	8	;
+if	119:16	137:16	8	(! p_enc -> fmt_out . p_extra)
+cond	119:20	119:36	9	! p_enc -> fmt_out . p_extra
+op	119:20	0:0	10	!
+water	119:21	0:0	10	p_enc
+op	119:26	0:0	10	->
+water	119:28	0:0	10	fmt_out
+op	119:35	0:0	10	.
+water	119:36	0:0	10	p_extra
+stmts	119:46	137:16	9	
+water	119:46	0:0	10	{
+decl	120:20	120:83	10	const uint8_t	eos[]
+op	120:40	0:0	10	=
+water	120:42	0:0	10	{
+water	120:44	0:0	10	'B'
+water	120:47	0:0	10	,
+water	120:48	0:0	10	'B'
+water	120:51	0:0	10	,
+water	120:52	0:0	10	'C'
+water	120:55	0:0	10	,
+water	120:56	0:0	10	'D'
+water	120:59	0:0	10	,
+water	120:60	0:0	10	0
+water	120:61	0:0	10	x10
+water	120:64	0:0	10	,
+water	120:65	0:0	10	0
+water	120:66	0:0	10	,
+water	120:67	0:0	10	0
+water	120:68	0:0	10	,
+water	120:69	0:0	10	0
+water	120:70	0:0	10	,
+water	120:71	0:0	10	13
+water	120:73	0:0	10	,
+water	120:74	0:0	10	0
+water	120:75	0:0	10	,
+water	120:76	0:0	10	0
+water	120:77	0:0	10	,
+water	120:78	0:0	10	0
+water	120:79	0:0	10	,
+water	120:80	0:0	10	0
+water	120:82	0:0	10	}
+decl	121:20	121:67	10	uint32_t	len
+op	121:33	0:0	10	=
+call	121:35	121:66	11	GetDWBE
+arg	121:44	121:66	12	p_block->p_buffer+5
+water	121:44	0:0	13	p_block
+op	121:51	0:0	13	->
+water	121:53	0:0	13	p_buffer
+op	121:62	0:0	13	+
+water	121:64	0:0	13	5
+if	128:20	129:35	10	(len > UINT32_MAX - sizeof ( eos ))
+cond	128:24	128:55	11	len > UINT32_MAX - sizeof ( eos )
+water	128:24	0:0	12	len
+op	128:28	0:0	12	>
+water	128:30	0:0	12	UINT32_MAX
+op	128:41	0:0	12	-
+op	128:43	0:0	12	sizeof
+water	128:49	0:0	12	(
+water	128:51	0:0	12	eos
+water	128:55	0:0	12	)
+stmts	129:24	129:35	11	
+return	129:24	129:35	12	NULL
+water	129:31	0:0	13	NULL
+water	130:20	0:0	10	p_enc
+op	130:25	0:0	10	->
+water	130:27	0:0	10	fmt_out
+op	130:34	0:0	10	.
+water	130:35	0:0	10	p_extra
+op	130:43	0:0	10	=
+call	130:45	130:73	10	malloc
+arg	130:53	130:73	11	len+sizeof(eos)
+water	130:53	0:0	12	len
+op	130:57	0:0	12	+
+op	130:59	0:0	12	sizeof
+water	130:65	0:0	12	(
+water	130:67	0:0	12	eos
+water	130:71	0:0	12	)
+water	130:74	0:0	10	;
+if	131:20	132:35	10	(! p_enc -> fmt_out . p_extra)
+cond	131:24	131:40	11	! p_enc -> fmt_out . p_extra
+op	131:24	0:0	12	!
+water	131:25	0:0	12	p_enc
+op	131:30	0:0	12	->
+water	131:32	0:0	12	fmt_out
+op	131:39	0:0	12	.
+water	131:40	0:0	12	p_extra
+stmts	132:24	132:35	11	
+return	132:24	132:35	12	NULL
+water	132:31	0:0	13	NULL
+call	133:20	133:75	10	memcpy
+arg	133:28	133:50	11	p_enc->fmt_out.p_extra
+water	133:28	0:0	12	p_enc
+op	133:33	0:0	12	->
+water	133:35	0:0	12	fmt_out
+op	133:42	0:0	12	.
+water	133:43	0:0	12	p_extra
+arg	133:52	133:69	11	p_block->p_buffer
+water	133:52	0:0	12	p_block
+op	133:59	0:0	12	->
+water	133:61	0:0	12	p_buffer
+arg	133:71	133:75	11	len
+water	133:71	0:0	12	len
+water	133:76	0:0	10	;
+call	134:20	134:87	10	memcpy
+arg	134:28	134:66	11	(uint8_t*)p_enc->fmt_out.p_extra+len
+water	134:28	0:0	12	(
+water	134:29	0:0	12	uint8_t
+op	134:36	0:0	12	*
+water	134:37	0:0	12	)
+water	134:38	0:0	12	p_enc
+op	134:43	0:0	12	->
+water	134:45	0:0	12	fmt_out
+op	134:52	0:0	12	.
+water	134:53	0:0	12	p_extra
+op	134:61	0:0	12	+
+water	134:63	0:0	12	len
+arg	134:68	134:71	11	eos
+water	134:68	0:0	12	eos
+arg	134:73	134:87	11	sizeof(eos)
+op	134:73	0:0	12	sizeof
+water	134:79	0:0	12	(
+water	134:81	0:0	12	eos
+water	134:85	0:0	12	)
+water	134:88	0:0	10	;
+call	135:20	135:91	10	SetDWBE
+arg	135:29	135:85	11	(uint8_t*)p_enc->fmt_out.p_extra+len+sizeof(eos)-4
+water	135:29	0:0	12	(
+water	135:30	0:0	12	uint8_t
+op	135:37	0:0	12	*
+water	135:38	0:0	12	)
+water	135:39	0:0	12	p_enc
+op	135:44	0:0	12	->
+water	135:46	0:0	12	fmt_out
+op	135:53	0:0	12	.
+water	135:54	0:0	12	p_extra
+op	135:62	0:0	12	+
+water	135:64	0:0	12	len
+op	135:68	0:0	12	+
+op	135:70	0:0	12	sizeof
+water	135:76	0:0	12	(
+water	135:77	0:0	12	eos
+water	135:80	0:0	12	)
+op	135:82	0:0	12	-
+water	135:84	0:0	12	4
+arg	135:87	135:91	11	len
+water	135:87	0:0	12	len
+water	135:92	0:0	10	;
+water	136:20	0:0	10	p_enc
+op	136:25	0:0	10	->
+water	136:27	0:0	10	fmt_out
+op	136:34	0:0	10	.
+water	136:35	0:0	10	i_extra
+op	136:43	0:0	10	=
+water	136:45	0:0	10	len
+op	136:49	0:0	10	+
+op	136:51	0:0	10	sizeof
+water	136:57	0:0	10	(
+water	136:59	0:0	10	eos
+water	136:63	0:0	10	)
+water	136:64	0:0	10	;
+water	137:16	0:0	10	}
+water	138:12	0:0	8	}
+if	139:12	145:12	6	(ReadDiracPictureNumber (& u_pic_num ,p_block ))
+cond	139:16	139:60	7	ReadDiracPictureNumber (& u_pic_num ,p_block )
+call	139:16	139:60	8	ReadDiracPictureNumber
+arg	139:40	139:50	9	&u_pic_num
+op	139:40	0:0	10	&
+water	139:41	0:0	10	u_pic_num
+arg	139:52	139:60	9	p_block
+water	139:52	0:0	10	p_block
+stmts	139:64	145:12	7	
+water	139:64	0:0	8	{
+decl	140:16	140:73	8	block_t	*p_dts_block
+op	140:37	0:0	8	=
+call	140:39	140:72	9	block_FifoGet
+arg	140:54	140:72	10	p_sys->p_dts_fifo
+water	140:54	0:0	11	p_sys
+op	140:59	0:0	11	->
+water	140:61	0:0	11	p_dts_fifo
+water	141:16	0:0	8	p_block
+op	141:23	0:0	8	->
+water	141:25	0:0	8	i_dts
+op	141:31	0:0	8	=
+water	141:33	0:0	8	p_dts_block
+op	141:44	0:0	8	->
+water	141:46	0:0	8	i_dts
+water	141:51	0:0	8	;
+water	142:19	0:0	8	p_block
+op	142:26	0:0	8	->
+water	142:28	0:0	8	i_pts
+op	142:34	0:0	8	=
+call	142:36	142:68	8	GetPicturePTS
+arg	142:51	142:56	9	p_enc
+water	142:51	0:0	10	p_enc
+arg	142:58	142:68	9	u_pic_num
+water	142:58	0:0	10	u_pic_num
+water	142:69	0:0	8	;
+call	143:16	143:43	8	block_Release
+arg	143:31	143:43	9	p_dts_block
+water	143:31	0:0	10	p_dts_block
+water	143:44	0:0	8	;
+call	144:16	144:60	8	block_ChainAppend
+arg	144:35	144:50	9	&p_output_chain
+op	144:35	0:0	10	&
+water	144:36	0:0	10	p_output_chain
+arg	144:52	144:60	9	p_block
+water	144:52	0:0	10	p_block
+water	144:61	0:0	8	;
+water	145:12	0:0	8	}
+else	145:14	148:12	6
+stmts	145:19	148:12	7	
+water	145:19	0:0	8	{
+call	147:16	147:60	8	block_ChainAppend
+arg	147:35	147:50	9	&p_output_chain
+op	147:35	0:0	10	&
+water	147:36	0:0	10	p_output_chain
+arg	147:52	147:60	9	p_block
+water	147:52	0:0	10	p_block
+water	147:61	0:0	8	;
+water	148:12	0:0	8	}
+break	149:12	149:17	6	
+water	150:8	0:0	6	}
+label	151:8	151:15	6	default :
+break	152:12	152:17	6	
+water	153:8	0:0	6	}
+water	154:4	0:0	4	}
+water	154:19	0:0	2	;
+return	155:4	155:25	2	p_output_chain
+water	155:11	0:0	3	p_output_chain

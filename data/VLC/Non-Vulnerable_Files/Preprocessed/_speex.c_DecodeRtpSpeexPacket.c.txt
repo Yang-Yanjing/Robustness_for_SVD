@@ -1,0 +1,438 @@
+func	2:0	105:0	0	static block_t *	DecodeRtpSpeexPacket
+params	2:36	0:0	1	
+param	2:38	2:54	2	decoder_t *	p_dec
+param	2:56	2:75	2	block_t * *	pp_block
+stmnts	0:0	104:24	1	
+decl	4:4	4:42	2	block_t	*p_speex_bit_block
+op	4:31	0:0	2	=
+op	4:33	0:0	2	*
+water	4:34	0:0	2	pp_block
+decl	5:4	5:39	2	decoder_sys_t	*p_sys
+op	5:25	0:0	2	=
+water	5:27	0:0	2	p_dec
+op	5:32	0:0	2	->
+water	5:34	0:0	2	p_sys
+decl	6:4	6:26	2	block_t	*p_aout_buffer
+decl	7:4	7:20	2	int	i_decode_ret
+decl	8:4	8:35	2	unsigned int	i_speex_frame_size
+if	9:4	10:19	2	(! p_speex_bit_block || p_speex_bit_block -> i_pts <= VLC_TS_INVALID)
+cond	9:9	9:59	3	! p_speex_bit_block || p_speex_bit_block -> i_pts <= VLC_TS_INVALID
+op	9:9	0:0	4	!
+water	9:10	0:0	4	p_speex_bit_block
+op	9:28	0:0	4	||
+water	9:31	0:0	4	p_speex_bit_block
+op	9:48	0:0	4	->
+water	9:50	0:0	4	i_pts
+op	9:56	0:0	4	<=
+water	9:59	0:0	4	VLC_TS_INVALID
+stmts	10:8	10:19	3	
+return	10:8	10:19	4	NULL
+water	10:15	0:0	5	NULL
+if	15:4	55:4	2	(p_sys -> bits . buf_size == 0)
+cond	15:9	15:31	3	p_sys -> bits . buf_size == 0
+water	15:9	0:0	4	p_sys
+op	15:14	0:0	4	->
+water	15:16	0:0	4	bits
+op	15:20	0:0	4	.
+water	15:21	0:0	4	buf_size
+op	15:29	0:0	4	==
+water	15:31	0:0	4	0
+stmts	16:4	55:4	3	
+water	16:4	0:0	4	{
+water	17:8	0:0	4	p_sys
+op	17:13	0:0	4	->
+water	17:15	0:0	4	p_header
+op	17:24	0:0	4	=
+call	17:26	17:52	4	malloc
+arg	17:33	17:52	5	sizeof(SpeexHeader)
+op	17:33	0:0	6	sizeof
+water	17:39	0:0	6	(
+water	17:40	0:0	6	SpeexHeader
+water	17:51	0:0	6	)
+water	17:53	0:0	4	;
+if	18:8	22:8	4	(! p_sys -> p_header)
+cond	18:13	18:21	5	! p_sys -> p_header
+op	18:13	0:0	6	!
+water	18:14	0:0	6	p_sys
+op	18:19	0:0	6	->
+water	18:21	0:0	6	p_header
+stmts	19:8	22:8	5	
+water	19:8	0:0	6	{
+call	20:12	20:64	6	msg_Err
+arg	20:21	20:26	7	p_dec
+water	20:21	0:0	8	p_dec
+arg	20:28	20:64	7	"Could not allocate a Speex header."
+water	20:28	0:0	8	"Could not allocate a Speex header."
+water	20:65	0:0	6	;
+return	21:12	21:23	6	NULL
+water	21:19	0:0	7	NULL
+water	22:8	0:0	6	}
+decl	23:8	23:81	4	const SpeexMode	*mode
+op	23:30	0:0	4	=
+call	23:32	23:80	5	speex_lib_get_mode
+arg	23:51	23:80	6	(p_sys->rtp_rate/8000)>>1
+water	23:51	0:0	7	(
+water	23:52	0:0	7	p_sys
+op	23:57	0:0	7	->
+water	23:59	0:0	7	rtp_rate
+op	23:68	0:0	7	/
+water	23:70	0:0	7	8000
+water	23:74	0:0	7	)
+op	23:76	0:0	7	>>
+water	23:79	0:0	7	1
+call	24:8	24:68	4	speex_init_header
+arg	24:27	24:42	5	p_sys->p_header
+water	24:27	0:0	6	p_sys
+op	24:32	0:0	6	->
+water	24:34	0:0	6	p_header
+arg	24:43	24:58	5	p_sys->rtp_rate
+water	24:43	0:0	6	p_sys
+op	24:48	0:0	6	->
+water	24:50	0:0	6	rtp_rate
+arg	24:60	24:61	5	1
+water	24:60	0:0	6	1
+arg	24:63	24:68	5	mode
+water	24:63	0:0	6	mode
+water	24:69	0:0	4	;
+call	25:8	25:38	4	speex_bits_init
+arg	25:25	25:38	5	&p_sys->bits
+op	25:25	0:0	6	&
+water	25:26	0:0	6	p_sys
+op	25:31	0:0	6	->
+water	25:33	0:0	6	bits
+water	25:39	0:0	4	;
+water	26:8	0:0	4	p_sys
+op	26:13	0:0	4	->
+water	26:15	0:0	4	p_state
+op	26:23	0:0	4	=
+call	26:25	26:50	4	speex_decoder_init
+arg	26:45	26:50	5	mode
+water	26:45	0:0	6	mode
+water	26:51	0:0	4	;
+if	27:8	32:8	4	(! p_sys -> p_state)
+cond	27:13	27:21	5	! p_sys -> p_state
+op	27:13	0:0	6	!
+water	27:14	0:0	6	p_sys
+op	27:19	0:0	6	->
+water	27:21	0:0	6	p_state
+stmts	28:8	32:8	5	
+water	28:8	0:0	6	{
+call	29:12	29:66	6	msg_Err
+arg	29:21	29:26	7	p_dec
+water	29:21	0:0	8	p_dec
+arg	29:28	29:66	7	"Could not allocate a Speex decoder."
+water	29:28	0:0	8	"Could not allocate a Speex decoder."
+water	29:67	0:0	6	;
+call	30:12	30:34	6	free
+arg	30:18	30:34	7	p_sys->p_header
+water	30:18	0:0	8	p_sys
+op	30:23	0:0	8	->
+water	30:25	0:0	8	p_header
+water	30:35	0:0	6	;
+return	31:12	31:23	6	NULL
+water	31:19	0:0	7	NULL
+water	32:8	0:0	6	}
+water	37:8	0:0	4	p_sys
+op	37:13	0:0	4	->
+water	37:15	0:0	4	p_header
+op	37:23	0:0	4	->
+water	37:25	0:0	4	vbr
+op	37:29	0:0	4	=
+water	37:31	0:0	4	1
+water	37:32	0:0	4	;
+water	38:8	0:0	4	p_sys
+op	38:13	0:0	4	->
+water	38:15	0:0	4	p_header
+op	38:23	0:0	4	->
+water	38:25	0:0	4	frames_per_packet
+op	38:43	0:0	4	=
+water	38:45	0:0	4	1
+water	38:46	0:0	4	;
+water	39:8	0:0	4	p_dec
+op	39:13	0:0	4	->
+water	39:15	0:0	4	fmt_out
+op	39:22	0:0	4	.
+water	39:23	0:0	4	audio
+op	39:28	0:0	4	.
+water	39:29	0:0	4	i_channels
+op	39:40	0:0	4	=
+water	39:42	0:0	4	p_sys
+op	39:47	0:0	4	->
+water	39:49	0:0	4	p_header
+op	39:57	0:0	4	->
+water	39:59	0:0	4	nb_channels
+water	39:70	0:0	4	;
+water	40:8	0:0	4	p_dec
+op	40:13	0:0	4	->
+water	40:15	0:0	4	fmt_out
+op	40:22	0:0	4	.
+water	40:23	0:0	4	audio
+op	40:28	0:0	4	.
+water	40:29	0:0	4	i_physical_channels
+op	40:49	0:0	4	=
+water	41:8	0:0	4	p_dec
+op	41:13	0:0	4	->
+water	41:15	0:0	4	fmt_out
+op	41:22	0:0	4	.
+water	41:23	0:0	4	audio
+op	41:28	0:0	4	.
+water	41:29	0:0	4	i_original_channels
+op	41:49	0:0	4	=
+water	42:12	0:0	4	pi_channels_maps
+op	42:28	0:0	4	[
+water	42:29	0:0	4	p_sys
+op	42:34	0:0	4	->
+water	42:36	0:0	4	p_header
+op	42:44	0:0	4	->
+water	42:46	0:0	4	nb_channels
+op	42:57	0:0	4	]
+water	42:58	0:0	4	;
+water	43:8	0:0	4	p_dec
+op	43:13	0:0	4	->
+water	43:15	0:0	4	fmt_out
+op	43:22	0:0	4	.
+water	43:23	0:0	4	audio
+op	43:28	0:0	4	.
+water	43:29	0:0	4	i_rate
+op	43:36	0:0	4	=
+water	43:38	0:0	4	p_sys
+op	43:43	0:0	4	->
+water	43:45	0:0	4	p_header
+op	43:53	0:0	4	->
+water	43:55	0:0	4	rate
+water	43:59	0:0	4	;
+if	44:8	52:8	4	(speex_mode_query (& speex_nb_mode ,SPEEX_MODE_FRAME_SIZE ,& i_speex_frame_size ))
+cond	44:13	46:51	5	speex_mode_query (& speex_nb_mode ,SPEEX_MODE_FRAME_SIZE ,& i_speex_frame_size )
+call	44:13	46:51	6	speex_mode_query
+arg	44:31	44:45	7	&speex_nb_mode
+op	44:31	0:0	8	&
+water	44:32	0:0	8	speex_nb_mode
+arg	45:31	45:52	7	SPEEX_MODE_FRAME_SIZE
+water	45:31	0:0	8	SPEEX_MODE_FRAME_SIZE
+arg	46:31	46:51	7	&i_speex_frame_size
+op	46:31	0:0	8	&
+water	46:32	0:0	8	i_speex_frame_size
+stmts	47:8	52:8	5	
+water	47:8	0:0	6	{
+call	48:12	48:66	6	msg_Err
+arg	48:21	48:26	7	p_dec
+water	48:21	0:0	8	p_dec
+arg	48:28	48:66	7	"Could not determine the frame size."
+water	48:28	0:0	8	"Could not determine the frame size."
+water	48:67	0:0	6	;
+call	49:12	49:50	6	speex_decoder_destroy
+arg	49:35	49:50	7	p_sys->p_state
+water	49:35	0:0	8	p_sys
+op	49:40	0:0	8	->
+water	49:42	0:0	8	p_state
+water	49:51	0:0	6	;
+call	50:12	50:34	6	free
+arg	50:18	50:34	7	p_sys->p_header
+water	50:18	0:0	8	p_sys
+op	50:23	0:0	8	->
+water	50:25	0:0	8	p_header
+water	50:35	0:0	6	;
+return	51:12	51:23	6	NULL
+water	51:19	0:0	7	NULL
+water	52:8	0:0	6	}
+water	53:8	0:0	4	p_dec
+op	53:13	0:0	4	->
+water	53:15	0:0	4	fmt_out
+op	53:22	0:0	4	.
+water	53:23	0:0	4	audio
+op	53:28	0:0	4	.
+water	53:29	0:0	4	i_bytes_per_frame
+op	53:47	0:0	4	=
+water	53:49	0:0	4	i_speex_frame_size
+water	53:67	0:0	4	;
+call	54:8	54:60	4	date_Init
+arg	54:18	54:34	5	&p_sys->end_date
+op	54:18	0:0	6	&
+water	54:19	0:0	6	p_sys
+op	54:24	0:0	6	->
+water	54:26	0:0	6	end_date
+arg	54:36	54:57	5	p_sys->p_header->rate
+water	54:36	0:0	6	p_sys
+op	54:41	0:0	6	->
+water	54:43	0:0	6	p_header
+op	54:51	0:0	6	->
+water	54:53	0:0	6	rate
+arg	54:59	54:60	5	1
+water	54:59	0:0	6	1
+water	54:61	0:0	4	;
+water	55:4	0:0	4	}
+if	60:4	64:4	2	(! p_sys -> p_header)
+cond	60:9	60:17	3	! p_sys -> p_header
+op	60:9	0:0	4	!
+water	60:10	0:0	4	p_sys
+op	60:15	0:0	4	->
+water	60:17	0:0	4	p_header
+stmts	61:4	64:4	3	
+water	61:4	0:0	4	{
+call	62:8	62:64	4	msg_Err
+arg	62:17	62:22	5	p_dec
+water	62:17	0:0	6	p_dec
+arg	62:24	62:64	5	"There is no valid Speex header found."
+water	62:24	0:0	6	"There is no valid Speex header found."
+water	62:65	0:0	4	;
+return	63:8	63:19	4	NULL
+water	63:15	0:0	5	NULL
+water	64:4	0:0	4	}
+op	65:4	0:0	2	*
+water	65:5	0:0	2	pp_block
+op	65:14	0:0	2	=
+water	65:16	0:0	2	NULL
+water	65:20	0:0	2	;
+if	66:4	67:62	2	(!date_Get (& p_sys -> end_date ))
+cond	66:9	66:37	3	!date_Get (& p_sys -> end_date )
+op	66:9	0:0	4	!
+call	66:10	66:37	4	date_Get
+arg	66:20	66:37	5	&p_sys->end_date
+op	66:20	0:0	6	&
+water	66:21	0:0	6	p_sys
+op	66:26	0:0	6	->
+water	66:28	0:0	6	end_date
+stmts	67:8	67:62	3	
+call	67:8	67:61	4	date_Set
+arg	67:18	67:34	5	&p_sys->end_date
+op	67:18	0:0	6	&
+water	67:19	0:0	6	p_sys
+op	67:24	0:0	6	->
+water	67:26	0:0	6	end_date
+arg	67:36	67:61	5	p_speex_bit_block->i_dts
+water	67:36	0:0	6	p_speex_bit_block
+op	67:53	0:0	6	->
+water	67:55	0:0	6	i_dts
+water	67:62	0:0	4	;
+water	72:4	0:0	2	p_aout_buffer
+op	72:18	0:0	2	=
+call	72:20	73:36	2	decoder_NewAudioBuffer
+arg	72:44	72:49	3	p_dec
+water	72:44	0:0	4	p_dec
+arg	73:8	73:36	3	p_sys->p_header->frame_size
+water	73:8	0:0	4	p_sys
+op	73:13	0:0	4	->
+water	73:15	0:0	4	p_header
+op	73:23	0:0	4	->
+water	73:25	0:0	4	frame_size
+water	73:37	0:0	2	;
+if	74:4	78:4	2	(! p_aout_buffer || p_aout_buffer -> i_buffer == 0)
+cond	74:9	74:54	3	! p_aout_buffer || p_aout_buffer -> i_buffer == 0
+op	74:9	0:0	4	!
+water	74:10	0:0	4	p_aout_buffer
+op	74:24	0:0	4	||
+water	74:27	0:0	4	p_aout_buffer
+op	74:40	0:0	4	->
+water	74:42	0:0	4	i_buffer
+op	74:51	0:0	4	==
+water	74:54	0:0	4	0
+stmts	75:4	78:4	3	
+water	75:4	0:0	4	{
+call	76:8	76:58	4	msg_Err
+arg	76:16	76:21	5	p_dec
+water	76:16	0:0	6	p_dec
+arg	76:23	76:58	5	"Oops: No new buffer was returned!"
+water	76:23	0:0	6	"Oops: No new buffer was returned!"
+water	76:59	0:0	4	;
+return	77:8	77:19	4	NULL
+water	77:15	0:0	5	NULL
+water	78:4	0:0	4	}
+call	82:4	84:36	2	speex_bits_read_from
+arg	82:26	82:38	3	&p_sys->bits
+op	82:26	0:0	4	&
+water	82:27	0:0	4	p_sys
+op	82:32	0:0	4	->
+water	82:34	0:0	4	bits
+arg	83:8	83:42	3	(char*)p_speex_bit_block->p_buffer
+water	83:8	0:0	4	(
+water	83:9	0:0	4	char
+op	83:13	0:0	4	*
+water	83:14	0:0	4	)
+water	83:15	0:0	4	p_speex_bit_block
+op	83:32	0:0	4	->
+water	83:34	0:0	4	p_buffer
+arg	84:8	84:36	3	p_speex_bit_block->i_buffer
+water	84:8	0:0	4	p_speex_bit_block
+op	84:25	0:0	4	->
+water	84:27	0:0	4	i_buffer
+water	84:37	0:0	2	;
+water	89:4	0:0	2	i_decode_ret
+op	89:17	0:0	2	=
+call	89:19	90:46	2	speex_decode_int
+arg	89:37	89:51	3	p_sys->p_state
+water	89:37	0:0	4	p_sys
+op	89:42	0:0	4	->
+water	89:44	0:0	4	p_state
+arg	89:53	89:65	3	&p_sys->bits
+op	89:53	0:0	4	&
+water	89:54	0:0	4	p_sys
+op	89:59	0:0	4	->
+water	89:61	0:0	4	bits
+arg	90:12	90:46	3	(int16_t*)p_aout_buffer->p_buffer
+water	90:12	0:0	4	(
+water	90:13	0:0	4	int16_t
+op	90:20	0:0	4	*
+water	90:21	0:0	4	)
+water	90:22	0:0	4	p_aout_buffer
+op	90:35	0:0	4	->
+water	90:37	0:0	4	p_buffer
+water	90:47	0:0	2	;
+if	91:4	95:4	2	(i_decode_ret < 0)
+cond	91:9	91:24	3	i_decode_ret < 0
+water	91:9	0:0	4	i_decode_ret
+op	91:22	0:0	4	<
+water	91:24	0:0	4	0
+stmts	92:4	95:4	3	
+water	92:4	0:0	4	{
+call	93:8	93:73	4	msg_Err
+arg	93:17	93:22	5	p_dec
+water	93:17	0:0	6	p_dec
+arg	93:24	93:73	5	"Decoding failed. Perhaps we have a bad stream?"
+water	93:24	0:0	6	"Decoding failed. Perhaps we have a bad stream?"
+water	93:74	0:0	4	;
+return	94:8	94:19	4	NULL
+water	94:15	0:0	5	NULL
+water	95:4	0:0	4	}
+water	99:4	0:0	2	p_aout_buffer
+op	99:17	0:0	2	->
+water	99:19	0:0	2	i_pts
+op	99:25	0:0	2	=
+call	99:27	99:54	2	date_Get
+arg	99:37	99:54	3	&p_sys->end_date
+op	99:37	0:0	4	&
+water	99:38	0:0	4	p_sys
+op	99:43	0:0	4	->
+water	99:45	0:0	4	end_date
+water	99:55	0:0	2	;
+water	100:4	0:0	2	p_aout_buffer
+op	100:17	0:0	2	->
+water	100:19	0:0	2	i_length
+op	100:28	0:0	2	=
+call	100:30	101:36	2	date_Increment
+arg	100:46	100:62	3	&p_sys->end_date
+op	100:46	0:0	4	&
+water	100:47	0:0	4	p_sys
+op	100:52	0:0	4	->
+water	100:54	0:0	4	end_date
+arg	101:8	101:36	3	p_sys->p_header->frame_size
+water	101:8	0:0	4	p_sys
+op	101:13	0:0	4	->
+water	101:15	0:0	4	p_header
+op	101:23	0:0	4	->
+water	101:25	0:0	4	frame_size
+op	101:38	0:0	2	-
+water	101:40	0:0	2	p_aout_buffer
+op	101:53	0:0	2	->
+water	101:55	0:0	2	i_pts
+water	101:60	0:0	2	;
+water	102:4	0:0	2	p_sys
+op	102:9	0:0	2	->
+water	102:11	0:0	2	i_frame_in_packet
+op	102:28	0:0	2	++
+water	102:30	0:0	2	;
+call	103:4	103:37	2	block_Release
+arg	103:19	103:37	3	p_speex_bit_block
+water	103:19	0:0	4	p_speex_bit_block
+water	103:38	0:0	2	;
+return	104:4	104:24	2	p_aout_buffer
+water	104:11	0:0	3	p_aout_buffer

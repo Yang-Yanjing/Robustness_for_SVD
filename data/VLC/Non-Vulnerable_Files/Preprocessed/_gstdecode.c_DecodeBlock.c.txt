@@ -1,0 +1,552 @@
+func	2:0	149:0	0	static picture_t *	DecodeBlock
+params	2:29	0:0	1	
+param	2:31	2:47	2	decoder_t *	p_dec
+param	2:49	2:68	2	block_t * *	pp_block
+stmnts	0:0	148:16	1	
+decl	4:4	4:20	2	block_t	*p_block
+decl	5:4	5:27	2	picture_t	*p_pic
+op	5:21	0:0	2	=
+water	5:23	0:0	2	NULL
+decl	6:4	6:39	2	decoder_sys_t	*p_sys
+op	6:25	0:0	2	=
+water	6:27	0:0	2	p_dec
+op	6:32	0:0	2	->
+water	6:34	0:0	2	p_sys
+decl	7:4	7:21	2	GstMessage	*p_msg
+decl	8:4	8:18	2	gboolean	b_ret
+decl	9:4	9:20	2	GstBuffer	*p_buf
+if	10:4	11:19	2	(! pp_block)
+cond	10:8	10:9	3	! pp_block
+op	10:8	0:0	4	!
+water	10:9	0:0	4	pp_block
+stmts	11:8	11:19	3	
+return	11:8	11:19	4	NULL
+water	11:15	0:0	5	NULL
+water	12:4	0:0	2	p_block
+op	12:12	0:0	2	=
+op	12:14	0:0	2	*
+water	12:15	0:0	2	pp_block
+water	12:23	0:0	2	;
+if	13:4	14:27	2	(! p_block)
+cond	13:8	13:9	3	! p_block
+op	13:8	0:0	4	!
+water	13:9	0:0	4	p_block
+stmts	14:8	14:27	3	
+goto	14:8	14:27	4	check_messages
+water	14:13	0:0	5	check_messages
+if	15:4	35:4	2	(unlikely (p_block -> i_flags & ( BLOCK_FLAG_DISCONTINUITY | BLOCK_FLAG_CORRUPTED ) ))
+cond	15:8	16:43	3	unlikely (p_block -> i_flags & ( BLOCK_FLAG_DISCONTINUITY | BLOCK_FLAG_CORRUPTED ) )
+call	15:8	16:43	4	unlikely
+arg	15:18	16:43	5	p_block->i_flags&(BLOCK_FLAG_DISCONTINUITY|BLOCK_FLAG_CORRUPTED)
+water	15:18	0:0	6	p_block
+op	15:25	0:0	6	->
+water	15:27	0:0	6	i_flags
+op	15:35	0:0	6	&
+water	15:37	0:0	6	(
+water	15:38	0:0	6	BLOCK_FLAG_DISCONTINUITY
+op	15:63	0:0	6	|
+water	16:20	0:0	6	BLOCK_FLAG_CORRUPTED
+water	16:41	0:0	6	)
+stmts	17:4	35:4	3	
+water	17:4	0:0	4	{
+if	18:8	32:8	4	(p_block -> i_flags & BLOCK_FLAG_DISCONTINUITY)
+cond	18:12	18:31	5	p_block -> i_flags & BLOCK_FLAG_DISCONTINUITY
+water	18:12	0:0	6	p_block
+op	18:19	0:0	6	->
+water	18:21	0:0	6	i_flags
+op	18:29	0:0	6	&
+water	18:31	0:0	6	BLOCK_FLAG_DISCONTINUITY
+stmts	19:8	32:8	5	
+water	19:8	0:0	6	{
+decl	20:12	20:31	6	GstBuffer	*p_buffer
+water	25:12	0:0	6	b_ret
+op	25:18	0:0	6	=
+call	25:20	26:61	6	gst_element_seek_simple
+arg	25:45	25:61	7	p_sys->p_decoder
+water	25:45	0:0	8	p_sys
+op	25:50	0:0	8	->
+water	25:52	0:0	8	p_decoder
+arg	26:20	26:36	7	GST_FORMAT_BYTES
+water	26:20	0:0	8	GST_FORMAT_BYTES
+arg	26:38	26:57	7	GST_SEEK_FLAG_FLUSH
+water	26:38	0:0	8	GST_SEEK_FLAG_FLUSH
+arg	26:59	26:61	7	0
+water	26:59	0:0	8	0
+water	26:62	0:0	6	;
+call	27:12	27:60	6	msg_Dbg
+arg	27:21	27:26	7	p_dec
+water	27:21	0:0	8	p_dec
+arg	27:28	27:52	7	"new segment event : %d"
+water	27:28	0:0	8	"new segment event : %d"
+arg	27:54	27:60	7	b_ret
+water	27:54	0:0	8	b_ret
+water	27:61	0:0	6	;
+while	29:12	30:44	6	(( p_buffer =gst_atomic_queue_pop (p_sys -> p_que ) ))
+cond	29:19	29:69	7	( p_buffer =gst_atomic_queue_pop (p_sys -> p_que ) )
+water	29:19	0:0	8	(
+water	29:21	0:0	8	p_buffer
+op	29:30	0:0	8	=
+call	29:32	29:67	8	gst_atomic_queue_pop
+arg	29:54	29:67	9	p_sys->p_que
+water	29:54	0:0	10	p_sys
+op	29:59	0:0	10	->
+water	29:61	0:0	10	p_que
+water	29:69	0:0	8	)
+stmts	30:16	30:44	7	
+call	30:16	30:43	8	gst_buffer_unref
+arg	30:34	30:43	9	p_buffer
+water	30:34	0:0	10	p_buffer
+water	30:44	0:0	8	;
+water	31:12	0:0	6	p_sys
+op	31:17	0:0	6	->
+water	31:19	0:0	6	b_prerolled
+op	31:31	0:0	6	=
+water	31:33	0:0	6	false
+water	31:38	0:0	6	;
+water	32:8	0:0	6	}
+call	33:8	33:31	4	block_Release
+arg	33:23	33:31	5	p_block
+water	33:23	0:0	6	p_block
+water	33:32	0:0	4	;
+goto	34:8	34:17	4	done
+water	34:13	0:0	5	done
+water	35:4	0:0	4	}
+if	36:4	86:4	2	(likely (p_block -> i_buffer ))
+cond	36:8	36:34	3	likely (p_block -> i_buffer )
+call	36:8	36:34	4	likely
+arg	36:16	36:34	5	p_block->i_buffer
+water	36:16	0:0	6	p_block
+op	36:23	0:0	6	->
+water	36:25	0:0	6	i_buffer
+stmts	37:4	86:4	3	
+water	37:4	0:0	4	{
+water	38:8	0:0	4	p_buf
+op	38:14	0:0	4	=
+call	38:16	41:57	4	gst_buffer_new_wrapped_full
+arg	38:45	38:69	5	GST_MEMORY_FLAG_READONLY
+water	38:45	0:0	6	GST_MEMORY_FLAG_READONLY
+arg	39:16	39:32	5	p_block->p_start
+water	39:16	0:0	6	p_block
+op	39:23	0:0	6	->
+water	39:25	0:0	6	p_start
+arg	39:34	39:49	5	p_block->i_size
+water	39:34	0:0	6	p_block
+op	39:41	0:0	6	->
+water	39:43	0:0	6	i_size
+arg	40:16	40:52	5	p_block->p_buffer-p_block->p_start
+water	40:16	0:0	6	p_block
+op	40:23	0:0	6	->
+water	40:25	0:0	6	p_buffer
+op	40:34	0:0	6	-
+water	40:36	0:0	6	p_block
+op	40:43	0:0	6	->
+water	40:45	0:0	6	p_start
+arg	40:54	40:71	5	p_block->i_buffer
+water	40:54	0:0	6	p_block
+op	40:61	0:0	6	->
+water	40:63	0:0	6	i_buffer
+arg	41:16	41:23	5	p_block
+water	41:16	0:0	6	p_block
+arg	41:25	41:57	5	(GDestroyNotify)block_Release
+water	41:25	0:0	6	(
+water	41:27	0:0	6	GDestroyNotify
+water	41:42	0:0	6	)
+water	41:43	0:0	6	block_Release
+water	41:58	0:0	4	;
+if	42:8	48:8	4	(unlikely (p_buf == NULL ))
+cond	42:12	42:36	5	unlikely (p_buf == NULL )
+call	42:12	42:36	6	unlikely
+arg	42:22	42:36	7	p_buf==NULL
+water	42:22	0:0	8	p_buf
+op	42:28	0:0	8	==
+water	42:31	0:0	8	NULL
+stmts	43:8	48:8	5	
+water	43:8	0:0	6	{
+call	44:12	44:63	6	msg_Err
+arg	44:21	44:26	7	p_dec
+water	44:21	0:0	8	p_dec
+arg	44:28	44:63	7	"failed to create input gstbuffer"
+water	44:28	0:0	8	"failed to create input gstbuffer"
+water	44:64	0:0	6	;
+water	45:12	0:0	6	p_dec
+op	45:17	0:0	6	->
+water	45:19	0:0	6	b_error
+op	45:27	0:0	6	=
+water	45:29	0:0	6	true
+water	45:33	0:0	6	;
+call	46:12	46:35	6	block_Release
+arg	46:27	46:35	7	p_block
+water	46:27	0:0	8	p_block
+water	46:36	0:0	6	;
+goto	47:12	47:21	6	done
+water	47:17	0:0	7	done
+water	48:8	0:0	6	}
+if	49:8	51:45	4	(p_block -> i_dts > VLC_TS_INVALID)
+cond	49:12	49:29	5	p_block -> i_dts > VLC_TS_INVALID
+water	49:12	0:0	6	p_block
+op	49:19	0:0	6	->
+water	49:21	0:0	6	i_dts
+op	49:27	0:0	6	>
+water	49:29	0:0	6	VLC_TS_INVALID
+stmts	50:12	51:45	5	
+call	50:12	50:34	6	GST_BUFFER_DTS
+arg	50:28	50:34	7	p_buf
+water	50:28	0:0	8	p_buf
+op	50:36	0:0	6	=
+call	50:38	51:44	6	gst_util_uint64_scale
+arg	50:61	50:75	7	p_block->i_dts
+water	50:61	0:0	8	p_block
+op	50:68	0:0	8	->
+water	50:70	0:0	8	i_dts
+arg	51:20	51:30	7	GST_SECOND
+water	51:20	0:0	8	GST_SECOND
+arg	51:32	51:44	7	GST_MSECOND
+water	51:32	0:0	8	GST_MSECOND
+water	51:45	0:0	6	;
+if	52:8	53:61	4	(p_block -> i_pts <= VLC_TS_INVALID)
+cond	52:12	52:30	5	p_block -> i_pts <= VLC_TS_INVALID
+water	52:12	0:0	6	p_block
+op	52:19	0:0	6	->
+water	52:21	0:0	6	i_pts
+op	52:27	0:0	6	<=
+water	52:30	0:0	6	VLC_TS_INVALID
+stmts	53:12	53:61	5	
+call	53:12	53:34	6	GST_BUFFER_PTS
+arg	53:28	53:34	7	p_buf
+water	53:28	0:0	8	p_buf
+op	53:36	0:0	6	=
+call	53:38	53:60	6	GST_BUFFER_DTS
+arg	53:54	53:60	7	p_buf
+water	53:54	0:0	8	p_buf
+water	53:61	0:0	6	;
+else	54:8	56:45	4
+stmts	55:12	56:45	5	
+call	55:12	55:34	6	GST_BUFFER_PTS
+arg	55:28	55:34	7	p_buf
+water	55:28	0:0	8	p_buf
+op	55:36	0:0	6	=
+call	55:38	56:44	6	gst_util_uint64_scale
+arg	55:61	55:75	7	p_block->i_pts
+water	55:61	0:0	8	p_block
+op	55:68	0:0	8	->
+water	55:70	0:0	8	i_pts
+arg	56:20	56:30	7	GST_SECOND
+water	56:20	0:0	8	GST_SECOND
+arg	56:32	56:44	7	GST_MSECOND
+water	56:32	0:0	8	GST_MSECOND
+water	56:45	0:0	6	;
+if	57:8	59:64	4	(p_block -> i_length > VLC_TS_INVALID)
+cond	57:12	57:32	5	p_block -> i_length > VLC_TS_INVALID
+water	57:12	0:0	6	p_block
+op	57:19	0:0	6	->
+water	57:21	0:0	6	i_length
+op	57:30	0:0	6	>
+water	57:32	0:0	6	VLC_TS_INVALID
+stmts	58:12	59:64	5	
+call	58:12	58:39	6	GST_BUFFER_DURATION
+arg	58:33	58:39	7	p_buf
+water	58:33	0:0	8	p_buf
+op	58:41	0:0	6	=
+call	58:43	59:63	6	gst_util_uint64_scale
+arg	59:20	59:37	7	p_block->i_length
+water	59:20	0:0	8	p_block
+op	59:27	0:0	8	->
+water	59:29	0:0	8	i_length
+arg	59:39	59:49	7	GST_SECOND
+water	59:39	0:0	8	GST_SECOND
+arg	59:51	59:63	7	GST_MSECOND
+water	59:51	0:0	8	GST_MSECOND
+water	59:64	0:0	6	;
+if	60:8	64:54	4	(p_dec -> fmt_in . video . i_frame_rate && p_dec -> fmt_in . video . i_frame_rate_base)
+cond	60:12	61:36	5	p_dec -> fmt_in . video . i_frame_rate && p_dec -> fmt_in . video . i_frame_rate_base
+water	60:12	0:0	6	p_dec
+op	60:17	0:0	6	->
+water	60:19	0:0	6	fmt_in
+op	60:25	0:0	6	.
+water	60:26	0:0	6	video
+op	60:31	0:0	6	.
+water	60:32	0:0	6	i_frame_rate
+op	60:46	0:0	6	&&
+water	61:16	0:0	6	p_dec
+op	61:21	0:0	6	->
+water	61:23	0:0	6	fmt_in
+op	61:29	0:0	6	.
+water	61:30	0:0	6	video
+op	61:35	0:0	6	.
+water	61:36	0:0	6	i_frame_rate_base
+stmts	62:12	64:54	5	
+call	62:12	62:39	6	GST_BUFFER_DURATION
+arg	62:33	62:39	7	p_buf
+water	62:33	0:0	8	p_buf
+op	62:41	0:0	6	=
+call	62:43	64:53	6	gst_util_uint64_scale
+arg	62:66	62:76	7	GST_SECOND
+water	62:66	0:0	8	GST_SECOND
+arg	63:20	63:57	7	p_dec->fmt_in.video.i_frame_rate_base
+water	63:20	0:0	8	p_dec
+op	63:25	0:0	8	->
+water	63:27	0:0	8	fmt_in
+op	63:33	0:0	8	.
+water	63:34	0:0	8	video
+op	63:39	0:0	8	.
+water	63:40	0:0	8	i_frame_rate_base
+arg	64:20	64:53	7	p_dec->fmt_in.video.i_frame_rate
+water	64:20	0:0	8	p_dec
+op	64:25	0:0	8	->
+water	64:27	0:0	8	fmt_in
+op	64:33	0:0	8	.
+water	64:34	0:0	8	video
+op	64:39	0:0	8	.
+water	64:40	0:0	8	i_frame_rate
+water	64:54	0:0	6	;
+if	76:8	85:8	4	(unlikely (gst_app_src_push_buffer (GST_APP_SRC_CAST (p_sys -> p_decode_src ) ,p_buf ) != GST_FLOW_OK ))
+cond	76:12	78:35	5	unlikely (gst_app_src_push_buffer (GST_APP_SRC_CAST (p_sys -> p_decode_src ) ,p_buf ) != GST_FLOW_OK )
+call	76:12	78:35	6	unlikely
+arg	76:22	78:35	7	gst_app_src_push_buffer(GST_APP_SRC_CAST(p_sys->p_decode_src),p_buf)!=GST_FLOW_OK
+call	76:22	77:71	8	gst_app_src_push_buffer
+arg	77:24	77:63	9	GST_APP_SRC_CAST(p_sys->p_decode_src)
+call	77:24	77:62	10	GST_APP_SRC_CAST
+arg	77:42	77:62	11	p_sys->p_decode_src
+water	77:42	0:0	12	p_sys
+op	77:47	0:0	12	->
+water	77:49	0:0	12	p_decode_src
+arg	77:65	77:71	9	p_buf
+water	77:65	0:0	10	p_buf
+op	78:20	0:0	8	!=
+water	78:23	0:0	8	GST_FLOW_OK
+stmts	79:8	85:8	5	
+water	79:8	0:0	6	{
+water	82:12	0:0	6	p_dec
+op	82:17	0:0	6	->
+water	82:19	0:0	6	b_error
+op	82:27	0:0	6	=
+water	82:29	0:0	6	true
+water	82:33	0:0	6	;
+call	83:12	83:52	6	msg_Err
+arg	83:21	83:26	7	p_dec
+water	83:21	0:0	8	p_dec
+arg	83:28	83:52	7	"failed to push buffer"
+water	83:28	0:0	8	"failed to push buffer"
+water	83:53	0:0	6	;
+goto	84:12	84:21	6	done
+water	84:17	0:0	7	done
+water	85:8	0:0	6	}
+water	86:4	0:0	4	}
+else	87:4	88:32	2
+stmts	88:8	88:32	3	
+call	88:8	88:31	4	block_Release
+arg	88:23	88:31	5	p_block
+water	88:23	0:0	6	p_block
+water	88:32	0:0	4	;
+label	89:0	89:14	2	check_messages :
+water	91:4	0:0	2	p_msg
+op	91:10	0:0	2	=
+call	91:12	94:29	2	gst_bus_pop_filtered
+arg	91:34	91:46	3	p_sys->p_bus
+water	91:34	0:0	4	p_sys
+op	91:39	0:0	4	->
+water	91:41	0:0	4	p_bus
+arg	92:12	94:29	3	GST_MESSAGE_ASYNC_DONE|GST_MESSAGE_ERROR|GST_MESSAGE_EOS|GST_MESSAGE_WARNING|GST_MESSAGE_INFO
+water	92:12	0:0	4	GST_MESSAGE_ASYNC_DONE
+op	92:35	0:0	4	|
+water	92:37	0:0	4	GST_MESSAGE_ERROR
+op	92:55	0:0	4	|
+water	93:12	0:0	4	GST_MESSAGE_EOS
+op	93:28	0:0	4	|
+water	93:30	0:0	4	GST_MESSAGE_WARNING
+op	93:50	0:0	4	|
+water	94:12	0:0	4	GST_MESSAGE_INFO
+water	94:30	0:0	2	;
+if	95:4	118:4	2	(p_msg)
+cond	95:8	95:8	3	p_msg
+water	95:8	0:0	4	p_msg
+stmts	96:4	118:4	3	
+water	96:4	0:0	4	{
+switch	97:8	116:8	4	(GST_MESSAGE_TYPE (p_msg ))
+cond	97:16	97:40	5	GST_MESSAGE_TYPE (p_msg )
+call	97:16	97:40	6	GST_MESSAGE_TYPE
+arg	97:34	97:40	7	p_msg
+water	97:34	0:0	8	p_msg
+stmts	97:43	116:8	5	
+water	97:43	0:0	6	{
+label	98:8	98:28	6	case GST_MESSAGE_EOS :
+call	100:12	100:50	6	msg_Warn
+arg	100:22	100:27	7	p_dec
+water	100:22	0:0	8	p_dec
+arg	100:29	100:50	7	"got unexpected eos"
+water	100:29	0:0	8	"got unexpected eos"
+water	100:51	0:0	6	;
+break	101:12	101:17	6	
+label	103:8	103:35	6	case GST_MESSAGE_ASYNC_DONE :
+water	105:12	0:0	6	p_sys
+op	105:17	0:0	6	->
+water	105:19	0:0	6	b_prerolled
+op	105:31	0:0	6	=
+water	105:33	0:0	6	true
+water	105:37	0:0	6	;
+call	106:12	106:52	6	msg_Dbg
+arg	106:21	106:26	7	p_dec
+water	106:21	0:0	8	p_dec
+arg	106:28	106:52	7	"Pipeline is prerolled"
+water	106:28	0:0	8	"Pipeline is prerolled"
+water	106:53	0:0	6	;
+break	107:12	107:17	6	
+label	108:8	108:15	6	default :
+water	109:12	0:0	6	p_dec
+op	109:17	0:0	6	->
+water	109:19	0:0	6	b_error
+op	109:27	0:0	6	=
+call	109:29	109:63	6	default_msg_handler
+arg	109:50	109:55	7	p_dec
+water	109:50	0:0	8	p_dec
+arg	109:57	109:63	7	p_msg
+water	109:57	0:0	8	p_msg
+water	109:64	0:0	6	;
+if	110:12	114:12	6	(p_dec -> b_error)
+cond	110:16	110:23	7	p_dec -> b_error
+water	110:16	0:0	8	p_dec
+op	110:21	0:0	8	->
+water	110:23	0:0	8	b_error
+stmts	111:12	114:12	7	
+water	111:12	0:0	8	{
+call	112:16	112:41	8	gst_message_unref
+arg	112:35	112:41	9	p_msg
+water	112:35	0:0	10	p_msg
+water	112:42	0:0	8	;
+goto	113:16	113:25	8	done
+water	113:21	0:0	9	done
+water	114:12	0:0	8	}
+break	115:12	115:17	6	
+water	116:8	0:0	6	}
+call	117:8	117:33	4	gst_message_unref
+arg	117:27	117:33	5	p_msg
+water	117:27	0:0	6	p_msg
+water	117:34	0:0	4	;
+water	118:4	0:0	4	}
+if	120:4	145:4	2	(gst_atomic_queue_peek (p_sys -> p_que ))
+cond	120:8	120:44	3	gst_atomic_queue_peek (p_sys -> p_que )
+call	120:8	120:44	4	gst_atomic_queue_peek
+arg	120:31	120:44	5	p_sys->p_que
+water	120:31	0:0	6	p_sys
+op	120:36	0:0	6	->
+water	120:38	0:0	6	p_que
+stmts	121:4	145:4	3	
+water	121:4	0:0	4	{
+decl	122:8	122:27	4	GstVideoFrame	frame
+water	124:8	0:0	4	p_pic
+op	124:14	0:0	4	=
+call	124:16	124:42	4	decoder_NewPicture
+arg	124:36	124:42	5	p_dec
+water	124:36	0:0	6	p_dec
+water	124:43	0:0	4	;
+if	125:8	126:21	4	(! p_pic)
+cond	125:12	125:13	5	! p_pic
+op	125:12	0:0	6	!
+water	125:13	0:0	6	p_pic
+stmts	126:12	126:21	5	
+goto	126:12	126:21	6	done
+water	126:17	0:0	7	done
+water	127:8	0:0	4	p_buf
+op	127:14	0:0	4	=
+call	127:16	128:53	4	GST_BUFFER_CAST
+arg	128:16	128:53	5	gst_atomic_queue_pop(p_sys->p_que)
+call	128:16	128:51	6	gst_atomic_queue_pop
+arg	128:38	128:51	7	p_sys->p_que
+water	128:38	0:0	8	p_sys
+op	128:43	0:0	8	->
+water	128:45	0:0	8	p_que
+water	128:54	0:0	4	;
+if	129:8	131:70	4	(likely (GST_BUFFER_PTS_IS_VALID (p_buf ) ))
+cond	129:12	129:53	5	likely (GST_BUFFER_PTS_IS_VALID (p_buf ) )
+call	129:12	129:53	6	likely
+arg	129:20	129:53	7	GST_BUFFER_PTS_IS_VALID(p_buf)
+call	129:20	129:51	8	GST_BUFFER_PTS_IS_VALID
+arg	129:45	129:51	9	p_buf
+water	129:45	0:0	10	p_buf
+stmts	130:12	131:70	5	
+water	130:12	0:0	6	p_pic
+op	130:17	0:0	6	->
+water	130:19	0:0	6	date
+op	130:24	0:0	6	=
+call	130:26	131:69	6	gst_util_uint64_scale
+arg	131:20	131:43	7	GST_BUFFER_PTS(p_buf)
+call	131:20	131:42	8	GST_BUFFER_PTS
+arg	131:36	131:42	9	p_buf
+water	131:36	0:0	10	p_buf
+arg	131:45	131:56	7	GST_MSECOND
+water	131:45	0:0	8	GST_MSECOND
+arg	131:58	131:69	7	GST_SECOND
+water	131:58	0:0	8	GST_SECOND
+water	131:70	0:0	6	;
+else	132:8	133:60	4
+stmts	133:12	133:60	5	
+call	133:12	133:59	6	msg_Warn
+arg	133:22	133:27	7	p_dec
+water	133:22	0:0	8	p_dec
+arg	133:29	133:59	7	"Gst Buffer has no timestamp"
+water	133:29	0:0	8	"Gst Buffer has no timestamp"
+water	133:60	0:0	6	;
+if	134:8	141:8	4	(unlikely (!gst_video_frame_map (& frame ,& p_sys -> vinfo ,p_buf ,GST_MAP_READ ) ))
+cond	134:12	135:61	5	unlikely (!gst_video_frame_map (& frame ,& p_sys -> vinfo ,p_buf ,GST_MAP_READ ) )
+call	134:12	135:61	6	unlikely
+arg	134:22	135:61	7	!gst_video_frame_map(&frame,&p_sys->vinfo,p_buf,GST_MAP_READ)
+op	134:22	0:0	8	!
+call	134:23	135:59	8	gst_video_frame_map
+arg	134:44	134:50	9	&frame
+op	134:44	0:0	10	&
+water	134:45	0:0	10	frame
+arg	135:24	135:37	9	&p_sys->vinfo
+op	135:24	0:0	10	&
+water	135:25	0:0	10	p_sys
+op	135:30	0:0	10	->
+water	135:32	0:0	10	vinfo
+arg	135:39	135:44	9	p_buf
+water	135:39	0:0	10	p_buf
+arg	135:46	135:59	9	GST_MAP_READ
+water	135:46	0:0	10	GST_MAP_READ
+stmts	136:8	141:8	5	
+water	136:8	0:0	6	{
+call	137:12	137:60	6	msg_Err
+arg	137:21	137:26	7	p_dec
+water	137:21	0:0	8	p_dec
+arg	137:28	137:60	7	"failed to map gst video frame"
+water	137:28	0:0	8	"failed to map gst video frame"
+water	137:61	0:0	6	;
+call	138:12	138:36	6	gst_buffer_unref
+arg	138:30	138:36	7	p_buf
+water	138:30	0:0	8	p_buf
+water	138:37	0:0	6	;
+water	139:12	0:0	6	p_dec
+op	139:17	0:0	6	->
+water	139:19	0:0	6	b_error
+op	139:27	0:0	6	=
+water	139:29	0:0	6	true
+water	139:33	0:0	6	;
+goto	140:12	140:21	6	done
+water	140:17	0:0	7	done
+water	141:8	0:0	6	}
+call	142:8	142:39	4	gst_CopyPicture
+arg	142:25	142:30	5	p_pic
+water	142:25	0:0	6	p_pic
+arg	142:32	142:39	5	&frame
+op	142:32	0:0	6	&
+water	142:33	0:0	6	frame
+water	142:40	0:0	4	;
+call	143:8	143:38	4	gst_video_frame_unmap
+arg	143:31	143:38	5	&frame
+op	143:31	0:0	6	&
+water	143:32	0:0	6	frame
+water	143:39	0:0	4	;
+call	144:8	144:32	4	gst_buffer_unref
+arg	144:26	144:32	5	p_buf
+water	144:26	0:0	6	p_buf
+water	144:33	0:0	4	;
+water	145:4	0:0	4	}
+label	146:0	146:4	2	done :
+op	147:4	0:0	2	*
+water	147:5	0:0	2	pp_block
+op	147:14	0:0	2	=
+water	147:16	0:0	2	NULL
+water	147:20	0:0	2	;
+return	148:4	148:16	2	p_pic
+water	148:11	0:0	3	p_pic

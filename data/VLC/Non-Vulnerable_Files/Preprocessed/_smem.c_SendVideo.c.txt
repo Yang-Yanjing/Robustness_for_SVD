@@ -1,0 +1,103 @@
+func	2:0	24:0	0	static int	SendVideo
+params	2:20	0:0	1	
+param	2:22	2:45	2	sout_stream_t *	p_stream
+param	2:47	2:71	2	sout_stream_id_sys_t *	id
+param	3:22	3:40	2	block_t *	p_buffer
+stmnts	0:0	23:22	1	
+decl	5:4	5:46	2	sout_stream_sys_t	*p_sys
+op	5:29	0:0	2	=
+water	5:31	0:0	2	p_stream
+op	5:39	0:0	2	->
+water	5:41	0:0	2	p_sys
+decl	6:4	6:38	2	size_t	i_size
+op	6:18	0:0	2	=
+water	6:20	0:0	2	p_buffer
+op	6:28	0:0	2	->
+water	6:30	0:0	2	i_buffer
+decl	7:4	7:28	2	uint8_t	*p_pixels
+op	7:22	0:0	2	=
+water	7:24	0:0	2	NULL
+call	9:4	9:70	2	p_sys->pf_video_prerender_callback
+arg	9:40	9:50	3	id->p_data
+water	9:40	0:0	4	id
+op	9:42	0:0	4	->
+water	9:44	0:0	4	p_data
+arg	9:52	9:61	3	&p_pixels
+op	9:52	0:0	4	&
+water	9:53	0:0	4	p_pixels
+arg	9:63	9:70	3	i_size
+water	9:63	0:0	4	i_size
+water	9:71	0:0	2	;
+if	10:4	15:4	2	(! p_pixels)
+cond	10:8	10:9	3	! p_pixels
+op	10:8	0:0	4	!
+water	10:9	0:0	4	p_pixels
+stmts	11:4	15:4	3	
+water	11:4	0:0	4	{
+call	12:8	12:46	4	msg_Err
+arg	12:17	12:25	5	p_stream
+water	12:17	0:0	6	p_stream
+arg	12:27	12:46	5	"No buffer given!"
+water	12:27	0:0	6	"No buffer given!"
+water	12:47	0:0	4	;
+call	13:8	13:37	4	block_ChainRelease
+arg	13:28	13:37	5	p_buffer
+water	13:28	0:0	6	p_buffer
+water	13:38	0:0	4	;
+return	14:8	14:27	4	VLC_EGENERIC
+water	14:15	0:0	5	VLC_EGENERIC
+water	15:4	0:0	4	}
+call	17:4	17:49	2	memcpy
+arg	17:12	17:20	3	p_pixels
+water	17:12	0:0	4	p_pixels
+arg	17:22	17:40	3	p_buffer->p_buffer
+water	17:22	0:0	4	p_buffer
+op	17:30	0:0	4	->
+water	17:32	0:0	4	p_buffer
+arg	17:42	17:49	3	i_size
+water	17:42	0:0	4	i_size
+water	17:50	0:0	2	;
+call	19:4	21:101	2	p_sys->pf_video_postrender_callback
+arg	19:41	19:51	3	id->p_data
+water	19:41	0:0	4	id
+op	19:43	0:0	4	->
+water	19:45	0:0	4	p_data
+arg	19:53	19:61	3	p_pixels
+water	19:53	0:0	4	p_pixels
+arg	20:41	20:66	3	id->format->video.i_width
+water	20:41	0:0	4	id
+op	20:43	0:0	4	->
+water	20:45	0:0	4	format
+op	20:51	0:0	4	->
+water	20:53	0:0	4	video
+op	20:58	0:0	4	.
+water	20:59	0:0	4	i_width
+arg	20:68	20:94	3	id->format->video.i_height
+water	20:68	0:0	4	id
+op	20:70	0:0	4	->
+water	20:72	0:0	4	format
+op	20:78	0:0	4	->
+water	20:80	0:0	4	video
+op	20:85	0:0	4	.
+water	20:86	0:0	4	i_height
+arg	21:41	21:75	3	id->format->video.i_bits_per_pixel
+water	21:41	0:0	4	id
+op	21:43	0:0	4	->
+water	21:45	0:0	4	format
+op	21:51	0:0	4	->
+water	21:53	0:0	4	video
+op	21:58	0:0	4	.
+water	21:59	0:0	4	i_bits_per_pixel
+arg	21:77	21:83	3	i_size
+water	21:77	0:0	4	i_size
+arg	21:85	21:101	3	p_buffer->i_pts
+water	21:85	0:0	4	p_buffer
+op	21:93	0:0	4	->
+water	21:95	0:0	4	i_pts
+water	21:102	0:0	2	;
+call	22:4	22:33	2	block_ChainRelease
+arg	22:24	22:33	3	p_buffer
+water	22:24	0:0	4	p_buffer
+water	22:34	0:0	2	;
+return	23:4	23:22	2	VLC_SUCCESS
+water	23:11	0:0	3	VLC_SUCCESS

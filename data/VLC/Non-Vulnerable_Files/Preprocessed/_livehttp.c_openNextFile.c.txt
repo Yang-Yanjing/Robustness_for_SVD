@@ -1,0 +1,265 @@
+func	2:0	47:0	0	static ssize_t	openNextFile
+params	2:27	0:0	1	
+param	2:29	2:56	2	sout_access_out_t *	p_access
+param	2:58	2:87	2	sout_access_out_sys_t *	p_sys
+stmnts	0:0	46:13	1	
+decl	4:4	4:10	2	int	fd
+decl	5:4	5:44	2	uint32_t	i_newseg
+op	5:22	0:0	2	=
+water	5:24	0:0	2	p_sys
+op	5:29	0:0	2	->
+water	5:31	0:0	2	i_segment
+op	5:41	0:0	2	+
+water	5:43	0:0	2	1
+decl	7:4	7:86	2	output_segment_t	*segment
+op	7:30	0:0	2	=
+water	7:32	0:0	2	(
+water	7:33	0:0	2	output_segment_t
+op	7:49	0:0	2	*
+water	7:50	0:0	2	)
+call	7:51	7:85	3	calloc
+arg	7:58	7:59	4	1
+water	7:58	0:0	5	1
+arg	7:61	7:85	4	sizeof(output_segment_t)
+op	7:61	0:0	5	sizeof
+water	7:67	0:0	5	(
+water	7:68	0:0	5	output_segment_t
+water	7:84	0:0	5	)
+if	8:4	9:17	2	(unlikely (! segment ))
+cond	8:8	8:27	3	unlikely (! segment )
+call	8:8	8:27	4	unlikely
+arg	8:18	8:27	5	!segment
+op	8:18	0:0	6	!
+water	8:19	0:0	6	segment
+stmts	9:8	9:17	3	
+return	9:8	9:17	4	-1
+op	9:15	0:0	5	-
+water	9:16	0:0	5	1
+water	10:4	0:0	2	segment
+op	10:11	0:0	2	->
+water	10:13	0:0	2	i_segment_number
+op	10:30	0:0	2	=
+water	10:32	0:0	2	i_newseg
+water	10:40	0:0	2	;
+water	11:4	0:0	2	segment
+op	11:11	0:0	2	->
+water	11:13	0:0	2	psz_filename
+op	11:26	0:0	2	=
+call	11:28	11:82	2	formatSegmentPath
+arg	11:47	11:65	3	p_access->psz_path
+water	11:47	0:0	4	p_access
+op	11:55	0:0	4	->
+water	11:57	0:0	4	psz_path
+arg	11:67	11:75	3	i_newseg
+water	11:67	0:0	4	i_newseg
+arg	11:77	11:82	3	true
+water	11:77	0:0	4	true
+water	11:83	0:0	2	;
+decl	12:4	12:88	2	char	*psz_idxFormat
+op	12:24	0:0	2	=
+water	12:26	0:0	2	p_sys
+op	12:31	0:0	2	->
+water	12:33	0:0	2	psz_indexUrl
+water	12:46	0:0	2	?
+water	12:48	0:0	2	p_sys
+op	12:53	0:0	2	->
+water	12:55	0:0	2	psz_indexUrl
+water	12:68	0:0	2	:
+water	12:70	0:0	2	p_access
+op	12:78	0:0	2	->
+water	12:80	0:0	2	psz_path
+water	13:4	0:0	2	segment
+op	13:11	0:0	2	->
+water	13:13	0:0	2	psz_uri
+op	13:21	0:0	2	=
+call	13:23	13:74	2	formatSegmentPath
+arg	13:42	13:56	3	psz_idxFormat
+water	13:42	0:0	4	psz_idxFormat
+arg	13:58	13:66	3	i_newseg
+water	13:58	0:0	4	i_newseg
+arg	13:68	13:74	3	false
+water	13:68	0:0	4	false
+water	13:75	0:0	2	;
+if	14:4	19:4	2	(unlikely (! segment -> psz_filename ))
+cond	14:9	14:42	3	unlikely (! segment -> psz_filename )
+call	14:9	14:42	4	unlikely
+arg	14:19	14:42	5	!segment->psz_filename
+op	14:19	0:0	6	!
+water	14:20	0:0	6	segment
+op	14:27	0:0	6	->
+water	14:29	0:0	6	psz_filename
+stmts	15:4	19:4	3	
+water	15:4	0:0	4	{
+call	16:8	16:54	4	msg_Err
+arg	16:17	16:25	5	p_access
+water	16:17	0:0	6	p_access
+arg	16:27	16:54	5	"Format segmentpath failed"
+water	16:27	0:0	6	"Format segmentpath failed"
+water	16:55	0:0	4	;
+call	17:8	17:32	4	destroySegment
+arg	17:24	17:32	5	segment
+water	17:24	0:0	6	segment
+water	17:33	0:0	4	;
+return	18:8	18:17	4	-1
+op	18:15	0:0	5	-
+water	18:16	0:0	5	1
+water	19:4	0:0	4	}
+water	20:4	0:0	2	fd
+op	20:7	0:0	2	=
+call	20:9	21:35	2	vlc_open
+arg	20:19	20:40	3	segment->psz_filename
+water	20:19	0:0	4	segment
+op	20:26	0:0	4	->
+water	20:28	0:0	4	psz_filename
+arg	20:42	21:28	3	O_WRONLY|O_CREAT|O_LARGEFILE|O_TRUNC
+water	20:42	0:0	4	O_WRONLY
+op	20:51	0:0	4	|
+water	20:53	0:0	4	O_CREAT
+op	20:61	0:0	4	|
+water	20:63	0:0	4	O_LARGEFILE
+op	20:75	0:0	4	|
+water	21:21	0:0	4	O_TRUNC
+arg	21:30	21:35	3	0666
+water	21:30	0:0	4	0666
+water	21:36	0:0	2	;
+if	22:4	28:4	2	(fd == - 1)
+cond	22:9	22:16	3	fd == - 1
+water	22:9	0:0	4	fd
+op	22:12	0:0	4	==
+op	22:15	0:0	4	-
+water	22:16	0:0	4	1
+stmts	23:4	28:4	3	
+water	23:4	0:0	4	{
+call	24:8	25:39	4	msg_Err
+arg	24:17	24:25	5	p_access
+water	24:17	0:0	6	p_access
+arg	24:27	24:50	5	"cannot open `%s' (%s)"
+water	24:27	0:0	6	"cannot open `%s' (%s)"
+arg	24:52	24:73	5	segment->psz_filename
+water	24:52	0:0	6	segment
+op	24:59	0:0	6	->
+water	24:61	0:0	6	psz_filename
+arg	25:17	25:39	5	vlc_strerror_c(errno)
+call	25:17	25:37	6	vlc_strerror_c
+arg	25:32	25:37	7	errno
+water	25:32	0:0	8	errno
+water	25:40	0:0	4	;
+call	26:8	26:32	4	destroySegment
+arg	26:24	26:32	5	segment
+water	26:24	0:0	6	segment
+water	26:33	0:0	4	;
+return	27:8	27:17	4	-1
+op	27:15	0:0	5	-
+water	27:16	0:0	5	1
+water	28:4	0:0	4	}
+call	29:4	29:48	2	vlc_array_append
+arg	29:22	29:39	3	p_sys->segments_t
+water	29:22	0:0	4	p_sys
+op	29:27	0:0	4	->
+water	29:29	0:0	4	segments_t
+arg	29:41	29:48	3	segment
+water	29:41	0:0	4	segment
+water	29:49	0:0	2	;
+if	30:4	33:4	2	(p_sys -> psz_keyfile)
+cond	30:8	30:15	3	p_sys -> psz_keyfile
+water	30:8	0:0	4	p_sys
+op	30:13	0:0	4	->
+water	30:15	0:0	4	psz_keyfile
+stmts	31:4	33:4	3	
+water	31:4	0:0	4	{
+call	32:8	32:32	4	LoadCryptFile
+arg	32:23	32:32	5	p_access
+water	32:23	0:0	6	p_access
+water	32:33	0:0	4	;
+water	33:4	0:0	4	}
+if	34:4	40:4	2	(p_sys -> key_uri)
+cond	34:8	34:15	3	p_sys -> key_uri
+water	34:8	0:0	4	p_sys
+op	34:13	0:0	4	->
+water	34:15	0:0	4	key_uri
+stmts	35:4	40:4	3	
+water	35:4	0:0	4	{
+water	36:8	0:0	4	segment
+op	36:15	0:0	4	->
+water	36:17	0:0	4	psz_key_uri
+op	36:29	0:0	4	=
+call	36:31	36:54	4	strdup
+arg	36:39	36:54	5	p_sys->key_uri
+water	36:39	0:0	6	p_sys
+op	36:44	0:0	6	->
+water	36:46	0:0	6	key_uri
+water	36:55	0:0	4	;
+call	37:8	37:37	4	CryptKey
+arg	37:18	37:26	5	p_access
+water	37:18	0:0	6	p_access
+arg	37:28	37:37	5	i_newseg
+water	37:28	0:0	6	i_newseg
+water	37:38	0:0	4	;
+if	38:8	39:74	4	(p_sys -> b_generate_iv)
+cond	38:12	38:19	5	p_sys -> b_generate_iv
+water	38:12	0:0	6	p_sys
+op	38:17	0:0	6	->
+water	38:19	0:0	6	b_generate_iv
+stmts	39:12	39:74	5	
+call	39:12	39:73	6	memcpy
+arg	39:20	39:36	7	segment->aes_ivs
+water	39:20	0:0	8	segment
+op	39:27	0:0	8	->
+water	39:29	0:0	8	aes_ivs
+arg	39:38	39:52	7	p_sys->aes_ivs
+water	39:38	0:0	8	p_sys
+op	39:43	0:0	8	->
+water	39:45	0:0	8	aes_ivs
+arg	39:54	39:73	7	sizeof(uint8_t)*16
+op	39:54	0:0	8	sizeof
+water	39:60	0:0	8	(
+water	39:61	0:0	8	uint8_t
+water	39:68	0:0	8	)
+op	39:69	0:0	8	*
+water	39:70	0:0	8	16
+water	39:74	0:0	6	;
+water	40:4	0:0	4	}
+call	41:4	41:109	2	msg_Dbg
+arg	41:13	41:21	3	p_access
+water	41:13	0:0	4	p_access
+arg	41:23	41:75	3	"Successfully opened livehttp file: %s (%"PRIu32")"
+water	41:23	0:0	4	"Successfully opened livehttp file: %s (%"
+water	41:65	0:0	4	PRIu32
+water	41:71	0:0	4	")"
+arg	41:77	41:98	3	segment->psz_filename
+water	41:77	0:0	4	segment
+op	41:84	0:0	4	->
+water	41:86	0:0	4	psz_filename
+arg	41:100	41:109	3	i_newseg
+water	41:100	0:0	4	i_newseg
+water	41:110	0:0	2	;
+water	42:4	0:0	2	p_sys
+op	42:9	0:0	2	->
+water	42:11	0:0	2	psz_cursegPath
+op	42:26	0:0	2	=
+call	42:28	42:56	2	strdup
+arg	42:35	42:56	3	segment->psz_filename
+water	42:35	0:0	4	segment
+op	42:42	0:0	4	->
+water	42:44	0:0	4	psz_filename
+water	42:57	0:0	2	;
+water	43:4	0:0	2	p_sys
+op	43:9	0:0	2	->
+water	43:11	0:0	2	i_handle
+op	43:20	0:0	2	=
+water	43:22	0:0	2	fd
+water	43:24	0:0	2	;
+water	44:4	0:0	2	p_sys
+op	44:9	0:0	2	->
+water	44:11	0:0	2	i_segment
+op	44:21	0:0	2	=
+water	44:23	0:0	2	i_newseg
+water	44:31	0:0	2	;
+water	45:4	0:0	2	p_sys
+op	45:9	0:0	2	->
+water	45:11	0:0	2	b_segment_has_data
+op	45:30	0:0	2	=
+water	45:32	0:0	2	false
+water	45:37	0:0	2	;
+return	46:4	46:13	2	fd
+water	46:11	0:0	3	fd

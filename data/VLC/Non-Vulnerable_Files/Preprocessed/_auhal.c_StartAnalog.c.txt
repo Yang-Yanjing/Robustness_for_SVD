@@ -1,0 +1,1749 @@
+func	2:0	341:0	0	static int	StartAnalog
+params	2:22	0:0	1	
+param	2:23	2:45	2	audio_output_t *	p_aout
+param	2:47	2:73	2	audio_sample_format_t *	fmt
+stmnts	0:0	340:15	1	
+decl	4:4	4:52	2	struct aout_sys_t	*p_sys
+op	4:39	0:0	2	=
+water	4:41	0:0	2	p_aout
+op	4:47	0:0	2	->
+water	4:49	0:0	2	sys
+decl	5:4	5:43	2	OSStatus	err
+op	5:36	0:0	2	=
+water	5:38	0:0	2	noErr
+decl	6:4	6:48	2	UInt32	i_param_size
+op	6:45	0:0	2	=
+water	6:47	0:0	2	0
+decl	7:4	7:42	2	int	i_original
+decl	8:4	8:36	2	AudioComponentDescription	desc
+decl	9:4	9:44	2	AudioStreamBasicDescription	DeviceFormat
+decl	10:4	10:39	2	AudioChannelLayout	*layout
+decl	11:4	11:37	2	AURenderCallbackStruct	input
+water	12:4	0:0	2	p_aout
+op	12:10	0:0	2	->
+water	12:12	0:0	2	sys
+op	12:15	0:0	2	->
+water	12:17	0:0	2	chans_to_reorder
+op	12:34	0:0	2	=
+water	12:36	0:0	2	0
+water	12:37	0:0	2	;
+decl	13:4	13:36	2	SInt32	currentMinorSystemVersion
+if	14:4	15:54	2	(Gestalt (gestaltSystemVersionMinor ,& currentMinorSystemVersion ) != noErr)
+cond	14:7	14:73	3	Gestalt (gestaltSystemVersionMinor ,& currentMinorSystemVersion ) != noErr
+call	14:7	14:68	4	Gestalt
+arg	14:15	14:40	5	gestaltSystemVersionMinor
+water	14:15	0:0	6	gestaltSystemVersionMinor
+arg	14:42	14:68	5	&currentMinorSystemVersion
+op	14:42	0:0	6	&
+water	14:43	0:0	6	currentMinorSystemVersion
+op	14:70	0:0	4	!=
+water	14:73	0:0	4	noErr
+stmts	15:8	15:54	3	
+call	15:8	15:53	4	msg_Err
+arg	15:16	15:22	5	p_aout
+water	15:16	0:0	6	p_aout
+arg	15:24	15:53	5	"failed to check OSX version"
+water	15:24	0:0	6	"failed to check OSX version"
+water	15:54	0:0	4	;
+water	17:4	0:0	2	desc
+op	17:8	0:0	2	.
+water	17:9	0:0	2	componentType
+op	17:23	0:0	2	=
+water	17:25	0:0	2	kAudioUnitType_Output
+water	17:46	0:0	2	;
+water	18:4	0:0	2	desc
+op	18:8	0:0	2	.
+water	18:9	0:0	2	componentSubType
+op	18:26	0:0	2	=
+water	18:28	0:0	2	kAudioUnitSubType_HALOutput
+water	18:55	0:0	2	;
+water	19:4	0:0	2	desc
+op	19:8	0:0	2	.
+water	19:9	0:0	2	componentManufacturer
+op	19:31	0:0	2	=
+water	19:33	0:0	2	kAudioUnitManufacturer_Apple
+water	19:61	0:0	2	;
+water	20:4	0:0	2	desc
+op	20:8	0:0	2	.
+water	20:9	0:0	2	componentFlags
+op	20:24	0:0	2	=
+water	20:26	0:0	2	0
+water	20:27	0:0	2	;
+water	21:4	0:0	2	desc
+op	21:8	0:0	2	.
+water	21:9	0:0	2	componentFlagsMask
+op	21:28	0:0	2	=
+water	21:30	0:0	2	0
+water	21:31	0:0	2	;
+water	22:4	0:0	2	p_sys
+op	22:9	0:0	2	->
+water	22:11	0:0	2	au_component
+op	22:24	0:0	2	=
+call	22:26	22:60	2	AudioComponentFindNext
+arg	22:49	22:53	3	NULL
+water	22:49	0:0	4	NULL
+arg	22:55	22:60	3	&desc
+op	22:55	0:0	4	&
+water	22:56	0:0	4	desc
+water	22:61	0:0	2	;
+if	23:4	26:4	2	(p_sys -> au_component == NULL)
+cond	23:8	23:31	3	p_sys -> au_component == NULL
+water	23:8	0:0	4	p_sys
+op	23:13	0:0	4	->
+water	23:15	0:0	4	au_component
+op	23:28	0:0	4	==
+water	23:31	0:0	4	NULL
+stmts	23:37	26:4	3	
+water	23:37	0:0	4	{
+call	24:8	24:74	4	msg_Err
+arg	24:16	24:22	5	p_aout
+water	24:16	0:0	6	p_aout
+arg	24:24	24:74	5	"cannot find any HAL component, PCM output failed"
+water	24:24	0:0	6	"cannot find any HAL component, PCM output failed"
+water	24:75	0:0	4	;
+return	25:8	25:20	4	false
+water	25:15	0:0	5	false
+water	26:4	0:0	4	}
+water	27:4	0:0	2	err
+op	27:8	0:0	2	=
+call	27:10	27:72	2	AudioComponentInstanceNew
+arg	27:36	27:55	3	p_sys->au_component
+water	27:36	0:0	4	p_sys
+op	27:41	0:0	4	->
+water	27:43	0:0	4	au_component
+arg	27:57	27:72	3	&p_sys->au_unit
+op	27:57	0:0	4	&
+water	27:58	0:0	4	p_sys
+op	27:63	0:0	4	->
+water	27:65	0:0	4	au_unit
+water	27:73	0:0	2	;
+if	28:4	31:4	2	(err != noErr)
+cond	28:8	28:15	3	err != noErr
+water	28:8	0:0	4	err
+op	28:12	0:0	4	!=
+water	28:15	0:0	4	noErr
+stmts	28:22	31:4	3	
+water	28:22	0:0	4	{
+call	29:8	29:92	4	msg_Err
+arg	29:16	29:22	5	p_aout
+water	29:16	0:0	6	p_aout
+arg	29:24	29:78	5	"cannot open HAL component, PCM output failed [%4.4s]"
+water	29:24	0:0	6	"cannot open HAL component, PCM output failed [%4.4s]"
+arg	29:80	29:92	5	(char*)&err
+water	29:80	0:0	6	(
+water	29:81	0:0	6	char
+op	29:86	0:0	6	*
+water	29:87	0:0	6	)
+op	29:88	0:0	6	&
+water	29:89	0:0	6	err
+water	29:93	0:0	4	;
+return	30:8	30:20	4	false
+water	30:15	0:0	5	false
+water	31:4	0:0	4	}
+water	33:4	0:0	2	err
+op	33:8	0:0	2	=
+call	33:10	38:46	2	AudioUnitSetProperty
+arg	33:31	33:45	3	p_sys->au_unit
+water	33:31	0:0	4	p_sys
+op	33:36	0:0	4	->
+water	33:38	0:0	4	au_unit
+arg	34:25	34:63	3	kAudioOutputUnitProperty_CurrentDevice
+water	34:25	0:0	4	kAudioOutputUnitProperty_CurrentDevice
+arg	35:25	35:47	3	kAudioUnitScope_Global
+water	35:25	0:0	4	kAudioUnitScope_Global
+arg	36:25	36:26	3	0
+water	36:25	0:0	4	0
+arg	37:25	37:47	3	&p_sys->i_selected_dev
+op	37:25	0:0	4	&
+water	37:26	0:0	4	p_sys
+op	37:31	0:0	4	->
+water	37:33	0:0	4	i_selected_dev
+arg	38:25	38:46	3	sizeof(AudioObjectID)
+op	38:25	0:0	4	sizeof
+water	38:31	0:0	4	(
+water	38:32	0:0	4	AudioObjectID
+water	38:45	0:0	4	)
+water	38:47	0:0	2	;
+if	39:4	42:4	2	(err != noErr)
+cond	39:8	39:15	3	err != noErr
+water	39:8	0:0	4	err
+op	39:12	0:0	4	!=
+water	39:15	0:0	4	noErr
+stmts	39:22	42:4	3	
+water	39:22	0:0	4	{
+call	40:8	40:100	4	msg_Err
+arg	40:16	40:22	5	p_aout
+water	40:16	0:0	6	p_aout
+arg	40:24	40:86	5	"cannot select audio output device, PCM output failed [%4.4s]"
+water	40:24	0:0	6	"cannot select audio output device, PCM output failed [%4.4s]"
+arg	40:88	40:100	5	(char*)&err
+water	40:88	0:0	6	(
+water	40:89	0:0	6	char
+op	40:94	0:0	6	*
+water	40:95	0:0	6	)
+op	40:96	0:0	6	&
+water	40:97	0:0	6	err
+water	40:101	0:0	4	;
+return	41:8	41:20	4	false
+water	41:15	0:0	5	false
+water	42:4	0:0	4	}
+water	44:4	0:0	2	i_param_size
+op	44:17	0:0	2	=
+op	44:19	0:0	2	sizeof
+water	44:25	0:0	2	(
+water	44:26	0:0	2	AudioStreamBasicDescription
+water	44:53	0:0	2	)
+water	44:54	0:0	2	;
+water	45:4	0:0	2	err
+op	45:8	0:0	2	=
+call	45:10	50:48	2	AudioUnitGetProperty
+arg	45:31	45:45	3	p_sys->au_unit
+water	45:31	0:0	4	p_sys
+op	45:36	0:0	4	->
+water	45:38	0:0	4	au_unit
+arg	46:35	46:66	3	kAudioUnitProperty_StreamFormat
+water	46:35	0:0	4	kAudioUnitProperty_StreamFormat
+arg	47:35	47:57	3	kAudioUnitScope_Output
+water	47:35	0:0	4	kAudioUnitScope_Output
+arg	48:35	48:36	3	0
+water	48:35	0:0	4	0
+arg	49:35	49:48	3	&DeviceFormat
+op	49:35	0:0	4	&
+water	49:36	0:0	4	DeviceFormat
+arg	50:35	50:48	3	&i_param_size
+op	50:35	0:0	4	&
+water	50:36	0:0	4	i_param_size
+water	50:49	0:0	2	;
+if	51:4	54:4	2	(err != noErr)
+cond	51:8	51:15	3	err != noErr
+water	51:8	0:0	4	err
+op	51:12	0:0	4	!=
+water	51:15	0:0	4	noErr
+stmts	51:22	54:4	3	
+water	51:22	0:0	4	{
+call	52:8	52:89	4	msg_Err
+arg	52:16	52:22	5	p_aout
+water	52:16	0:0	6	p_aout
+arg	52:24	52:75	5	"failed to detect supported stream formats [%4.4s]"
+water	52:24	0:0	6	"failed to detect supported stream formats [%4.4s]"
+arg	52:77	52:89	5	(char*)&err
+water	52:77	0:0	6	(
+water	52:78	0:0	6	char
+op	52:83	0:0	6	*
+water	52:84	0:0	6	)
+op	52:85	0:0	6	&
+water	52:86	0:0	6	err
+water	52:90	0:0	4	;
+return	53:8	53:20	4	false
+water	53:15	0:0	5	false
+water	54:4	0:0	4	}
+else	54:6	55:79	2
+stmts	55:8	55:79	3	
+call	55:8	55:78	4	msg_Dbg
+arg	55:16	55:22	5	p_aout
+water	55:16	0:0	6	p_aout
+arg	55:24	55:78	5	STREAM_FORMAT_MSG("current format is: ",DeviceFormat)
+call	55:24	55:77	6	STREAM_FORMAT_MSG
+arg	55:42	55:63	7	"current format is: "
+water	55:42	0:0	8	"current format is: "
+arg	55:65	55:77	7	DeviceFormat
+water	55:65	0:0	8	DeviceFormat
+water	55:79	0:0	4	;
+water	57:4	0:0	2	err
+op	57:8	0:0	2	=
+call	57:10	62:39	2	AudioUnitGetPropertyInfo
+arg	57:35	57:49	3	p_sys->au_unit
+water	57:35	0:0	4	p_sys
+op	57:40	0:0	4	->
+water	57:42	0:0	4	au_unit
+arg	58:35	58:77	3	kAudioDevicePropertyPreferredChannelLayout
+water	58:35	0:0	4	kAudioDevicePropertyPreferredChannelLayout
+arg	59:35	59:57	3	kAudioUnitScope_Output
+water	59:35	0:0	4	kAudioUnitScope_Output
+arg	60:35	60:36	3	0
+water	60:35	0:0	4	0
+arg	61:35	61:48	3	&i_param_size
+op	61:35	0:0	4	&
+water	61:36	0:0	4	i_param_size
+arg	62:35	62:39	3	NULL
+water	62:35	0:0	4	NULL
+water	62:40	0:0	2	;
+if	63:4	137:4	2	(err == noErr)
+cond	63:8	63:15	3	err == noErr
+water	63:8	0:0	4	err
+op	63:12	0:0	4	==
+water	63:15	0:0	4	noErr
+stmts	63:22	137:4	3	
+water	63:22	0:0	4	{
+water	64:8	0:0	4	layout
+op	64:15	0:0	4	=
+water	64:17	0:0	4	(
+water	64:18	0:0	4	AudioChannelLayout
+op	64:37	0:0	4	*
+water	64:38	0:0	4	)
+call	64:39	64:58	4	malloc
+arg	64:46	64:58	5	i_param_size
+water	64:46	0:0	6	i_param_size
+water	64:59	0:0	4	;
+call	65:8	70:53	4	verify_noerr
+arg	65:21	70:53	5	AudioUnitGetProperty(p_sys->au_unit,kAudioDevicePropertyPreferredChannelLayout,kAudioUnitScope_Output,0,layout,&i_param_size)
+call	65:21	70:52	6	AudioUnitGetProperty
+arg	65:42	65:56	7	p_sys->au_unit
+water	65:42	0:0	8	p_sys
+op	65:47	0:0	8	->
+water	65:49	0:0	8	au_unit
+arg	66:39	66:81	7	kAudioDevicePropertyPreferredChannelLayout
+water	66:39	0:0	8	kAudioDevicePropertyPreferredChannelLayout
+arg	67:39	67:61	7	kAudioUnitScope_Output
+water	67:39	0:0	8	kAudioUnitScope_Output
+arg	68:39	68:40	7	0
+water	68:39	0:0	8	0
+arg	69:39	69:45	7	layout
+water	69:39	0:0	8	layout
+arg	70:39	70:52	7	&i_param_size
+op	70:39	0:0	8	&
+water	70:40	0:0	8	i_param_size
+water	70:54	0:0	4	;
+if	72:8	78:8	4	(layout -> mChannelLayoutTag == kAudioChannelLayoutTag_UseChannelBitmap)
+cond	72:12	72:41	5	layout -> mChannelLayoutTag == kAudioChannelLayoutTag_UseChannelBitmap
+water	72:12	0:0	6	layout
+op	72:18	0:0	6	->
+water	72:20	0:0	6	mChannelLayoutTag
+op	72:38	0:0	6	==
+water	72:41	0:0	6	kAudioChannelLayoutTag_UseChannelBitmap
+stmts	72:82	78:8	5	
+water	72:82	0:0	6	{
+call	74:12	77:43	6	verify_noerr
+arg	74:25	77:43	7	AudioFormatGetProperty(kAudioFormatProperty_ChannelLayoutForBitmap,sizeof(UInt32),&layout->mChannelBitmap,&i_param_size,layout)
+call	74:25	77:42	8	AudioFormatGetProperty
+arg	74:48	74:91	9	kAudioFormatProperty_ChannelLayoutForBitmap
+water	74:48	0:0	10	kAudioFormatProperty_ChannelLayoutForBitmap
+arg	75:36	75:50	9	sizeof(UInt32)
+op	75:36	0:0	10	sizeof
+water	75:42	0:0	10	(
+water	75:43	0:0	10	UInt32
+water	75:49	0:0	10	)
+arg	75:52	75:75	9	&layout->mChannelBitmap
+op	75:52	0:0	10	&
+water	75:53	0:0	10	layout
+op	75:59	0:0	10	->
+water	75:61	0:0	10	mChannelBitmap
+arg	76:36	76:49	9	&i_param_size
+op	76:36	0:0	10	&
+water	76:37	0:0	10	i_param_size
+arg	77:36	77:42	9	layout
+water	77:36	0:0	10	layout
+water	77:44	0:0	6	;
+water	78:8	0:0	6	}
+else	78:10	85:8	4
+stmts	78:15	85:8	5	
+if	78:15	85:8	6	(layout -> mChannelLayoutTag != kAudioChannelLayoutTag_UseChannelDescriptions)
+cond	78:19	78:48	7	layout -> mChannelLayoutTag != kAudioChannelLayoutTag_UseChannelDescriptions
+water	78:19	0:0	8	layout
+op	78:25	0:0	8	->
+water	78:27	0:0	8	mChannelLayoutTag
+op	78:45	0:0	8	!=
+water	78:48	0:0	8	kAudioChannelLayoutTag_UseChannelDescriptions
+stmts	79:8	85:8	7	
+water	79:8	0:0	8	{
+call	81:12	84:43	8	verify_noerr
+arg	81:25	84:43	9	AudioFormatGetProperty(kAudioFormatProperty_ChannelLayoutForTag,sizeof(AudioChannelLayoutTag),&layout->mChannelLayoutTag,&i_param_size,layout)
+call	81:25	84:42	10	AudioFormatGetProperty
+arg	81:48	81:88	11	kAudioFormatProperty_ChannelLayoutForTag
+water	81:48	0:0	12	kAudioFormatProperty_ChannelLayoutForTag
+arg	82:36	82:65	11	sizeof(AudioChannelLayoutTag)
+op	82:36	0:0	12	sizeof
+water	82:42	0:0	12	(
+water	82:43	0:0	12	AudioChannelLayoutTag
+water	82:64	0:0	12	)
+arg	82:67	82:93	11	&layout->mChannelLayoutTag
+op	82:67	0:0	12	&
+water	82:68	0:0	12	layout
+op	82:74	0:0	12	->
+water	82:76	0:0	12	mChannelLayoutTag
+arg	83:36	83:49	11	&i_param_size
+op	83:36	0:0	12	&
+water	83:37	0:0	12	i_param_size
+arg	84:36	84:42	11	layout
+water	84:36	0:0	12	layout
+water	84:44	0:0	8	;
+water	85:8	0:0	8	}
+call	86:8	86:94	4	msg_Dbg
+arg	86:16	86:22	5	p_aout
+water	86:16	0:0	6	p_aout
+arg	86:24	86:58	5	"layout of AUHAL has %i channels"
+water	86:24	0:0	6	"layout of AUHAL has %i channels"
+arg	86:60	86:94	5	layout->mNumberChannelDescriptions
+water	86:60	0:0	6	layout
+op	86:66	0:0	6	->
+water	86:68	0:0	6	mNumberChannelDescriptions
+water	86:95	0:0	4	;
+if	87:8	91:8	4	(layout -> mNumberChannelDescriptions == 0)
+cond	87:12	87:50	5	layout -> mNumberChannelDescriptions == 0
+water	87:12	0:0	6	layout
+op	87:18	0:0	6	->
+water	87:20	0:0	6	mNumberChannelDescriptions
+op	87:47	0:0	6	==
+water	87:50	0:0	6	0
+stmts	87:53	91:8	5	
+water	87:53	0:0	6	{
+call	88:12	88:68	6	msg_Err
+arg	88:20	88:26	7	p_aout
+water	88:20	0:0	8	p_aout
+arg	88:28	88:68	7	"insufficient number of output channels"
+water	88:28	0:0	8	"insufficient number of output channels"
+water	88:69	0:0	6	;
+call	89:12	89:23	6	free
+arg	89:17	89:23	7	layout
+water	89:17	0:0	8	layout
+water	89:24	0:0	6	;
+return	90:12	90:24	6	false
+water	90:19	0:0	7	false
+water	91:8	0:0	6	}
+water	93:8	0:0	4	fmt
+op	93:11	0:0	4	->
+water	93:13	0:0	4	i_physical_channels
+op	93:33	0:0	4	=
+water	93:35	0:0	4	0
+water	93:36	0:0	4	;
+water	94:8	0:0	4	i_original
+op	94:19	0:0	4	=
+water	94:21	0:0	4	fmt
+op	94:24	0:0	4	->
+water	94:26	0:0	4	i_original_channels
+op	94:46	0:0	4	&
+water	94:48	0:0	4	AOUT_CHAN_PHYSMASK
+water	94:66	0:0	4	;
+if	95:8	98:8	4	(i_original == AOUT_CHAN_CENTER || layout -> mNumberChannelDescriptions < 2)
+cond	95:12	95:83	5	i_original == AOUT_CHAN_CENTER || layout -> mNumberChannelDescriptions < 2
+water	95:12	0:0	6	i_original
+op	95:23	0:0	6	==
+water	95:26	0:0	6	AOUT_CHAN_CENTER
+op	95:43	0:0	6	||
+water	95:46	0:0	6	layout
+op	95:52	0:0	6	->
+water	95:54	0:0	6	mNumberChannelDescriptions
+op	95:81	0:0	6	<
+water	95:83	0:0	6	2
+stmts	95:86	98:8	5	
+water	95:86	0:0	6	{
+water	97:12	0:0	6	fmt
+op	97:15	0:0	6	->
+water	97:17	0:0	6	i_physical_channels
+op	97:37	0:0	6	=
+water	97:39	0:0	6	AOUT_CHAN_CENTER
+water	97:55	0:0	6	;
+water	98:8	0:0	6	}
+else	98:10	101:8	4
+stmts	98:15	101:8	5	
+if	98:15	101:8	6	(i_original == ( AOUT_CHAN_LEFT | AOUT_CHAN_RIGHT ) || layout -> mNumberChannelDescriptions < 3)
+cond	98:19	98:108	7	i_original == ( AOUT_CHAN_LEFT | AOUT_CHAN_RIGHT ) || layout -> mNumberChannelDescriptions < 3
+water	98:19	0:0	8	i_original
+op	98:30	0:0	8	==
+water	98:33	0:0	8	(
+water	98:34	0:0	8	AOUT_CHAN_LEFT
+op	98:49	0:0	8	|
+water	98:51	0:0	8	AOUT_CHAN_RIGHT
+water	98:66	0:0	8	)
+op	98:68	0:0	8	||
+water	98:71	0:0	8	layout
+op	98:77	0:0	8	->
+water	98:79	0:0	8	mNumberChannelDescriptions
+op	98:106	0:0	8	<
+water	98:108	0:0	8	3
+stmts	98:111	101:8	7	
+water	98:111	0:0	8	{
+water	100:12	0:0	8	fmt
+op	100:15	0:0	8	->
+water	100:17	0:0	8	i_physical_channels
+op	100:37	0:0	8	=
+water	100:39	0:0	8	AOUT_CHANS_STEREO
+water	100:56	0:0	8	;
+water	101:8	0:0	8	}
+else	101:10	135:8	4
+stmts	101:15	135:8	5	
+water	101:15	0:0	6	{
+water	103:12	0:0	6	static
+water	103:19	0:0	6	const
+water	103:25	0:0	6	unsigned
+water	103:34	0:0	6	i_auhal_channel_mapping
+op	103:57	0:0	6	[
+op	103:58	0:0	6	]
+op	103:60	0:0	6	=
+water	103:62	0:0	6	{
+op	104:16	0:0	6	[
+water	104:17	0:0	6	kAudioChannelLabel_Left
+op	104:40	0:0	6	]
+op	104:52	0:0	6	=
+water	104:54	0:0	6	AOUT_CHAN_LEFT
+water	104:68	0:0	6	,
+op	105:16	0:0	6	[
+water	105:17	0:0	6	kAudioChannelLabel_Right
+op	105:41	0:0	6	]
+op	105:52	0:0	6	=
+water	105:54	0:0	6	AOUT_CHAN_RIGHT
+water	105:69	0:0	6	,
+op	106:16	0:0	6	[
+water	106:17	0:0	6	kAudioChannelLabel_Center
+op	106:42	0:0	6	]
+op	106:52	0:0	6	=
+water	106:54	0:0	6	AOUT_CHAN_CENTER
+water	106:70	0:0	6	,
+op	107:16	0:0	6	[
+water	107:17	0:0	6	kAudioChannelLabel_LFEScreen
+op	107:45	0:0	6	]
+op	107:52	0:0	6	=
+water	107:54	0:0	6	AOUT_CHAN_LFE
+water	107:67	0:0	6	,
+op	108:16	0:0	6	[
+water	108:17	0:0	6	kAudioChannelLabel_LeftSurround
+op	108:48	0:0	6	]
+op	108:52	0:0	6	=
+water	108:54	0:0	6	AOUT_CHAN_REARLEFT
+water	108:72	0:0	6	,
+op	109:16	0:0	6	[
+water	109:17	0:0	6	kAudioChannelLabel_RightSurround
+op	109:49	0:0	6	]
+op	109:52	0:0	6	=
+water	109:54	0:0	6	AOUT_CHAN_REARRIGHT
+water	109:73	0:0	6	,
+op	110:16	0:0	6	[
+water	110:17	0:0	6	kAudioChannelLabel_RearSurroundLeft
+op	110:52	0:0	6	]
+op	110:55	0:0	6	=
+water	110:57	0:0	6	AOUT_CHAN_MIDDLELEFT
+water	110:77	0:0	6	,
+op	111:16	0:0	6	[
+water	111:17	0:0	6	kAudioChannelLabel_RearSurroundRight
+op	111:53	0:0	6	]
+op	111:55	0:0	6	=
+water	111:57	0:0	6	AOUT_CHAN_MIDDLERIGHT
+water	111:78	0:0	6	,
+op	112:16	0:0	6	[
+water	112:17	0:0	6	kAudioChannelLabel_CenterSurround
+op	112:50	0:0	6	]
+op	112:52	0:0	6	=
+water	112:54	0:0	6	AOUT_CHAN_REARCENTER
+water	113:12	0:0	6	}
+water	113:13	0:0	6	;
+for	115:12	126:12	6	( unsigned int i = 0 ;i < layout -> mNumberChannelDescriptions;i ++)
+forinit	0:0	115:35	7	 unsigned int i = 0 ;
+decl	115:17	115:35	8	unsigned int	i
+op	115:32	0:0	8	=
+water	115:34	0:0	8	0
+cond	115:37	115:49	7	i < layout -> mNumberChannelDescriptions
+water	115:37	0:0	8	i
+op	115:39	0:0	8	<
+water	115:41	0:0	8	layout
+op	115:47	0:0	8	->
+water	115:49	0:0	8	mNumberChannelDescriptions
+forexpr	115:77	115:78	7	i ++
+water	115:77	0:0	8	i
+op	115:78	0:0	8	++
+stmts	115:82	126:12	7	
+water	115:82	0:0	8	{
+call	117:16	117:105	8	msg_Dbg
+arg	117:24	117:30	9	p_aout
+water	117:24	0:0	10	p_aout
+arg	117:32	117:53	9	"this is channel: %d"
+water	117:32	0:0	10	"this is channel: %d"
+arg	117:55	117:105	9	(int)layout->mChannelDescriptions[i].mChannelLabel
+water	117:55	0:0	10	(
+water	117:56	0:0	10	int
+water	117:59	0:0	10	)
+water	117:60	0:0	10	layout
+op	117:66	0:0	10	->
+water	117:68	0:0	10	mChannelDescriptions
+op	117:88	0:0	10	[
+water	117:89	0:0	10	i
+op	117:90	0:0	10	]
+op	117:91	0:0	10	.
+water	117:92	0:0	10	mChannelLabel
+water	117:106	0:0	8	;
+decl	119:16	119:86	8	AudioChannelLabel	chan
+op	119:39	0:0	8	=
+water	119:41	0:0	8	layout
+op	119:47	0:0	8	->
+water	119:49	0:0	8	mChannelDescriptions
+op	119:69	0:0	8	[
+water	119:70	0:0	8	i
+op	119:71	0:0	8	]
+op	119:72	0:0	8	.
+water	119:73	0:0	8	mChannelLabel
+if	120:16	123:16	8	(chan < sizeof ( i_auhal_channel_mapping ) / sizeof ( i_auhal_channel_mapping [ 0 ] ) && i_auhal_channel_mapping [ chan ] > 0)
+cond	120:19	121:54	9	chan < sizeof ( i_auhal_channel_mapping ) / sizeof ( i_auhal_channel_mapping [ 0 ] ) && i_auhal_channel_mapping [ chan ] > 0
+water	120:19	0:0	10	chan
+op	120:24	0:0	10	<
+op	120:26	0:0	10	sizeof
+water	120:32	0:0	10	(
+water	120:33	0:0	10	i_auhal_channel_mapping
+water	120:56	0:0	10	)
+op	120:58	0:0	10	/
+op	120:60	0:0	10	sizeof
+water	120:66	0:0	10	(
+water	120:67	0:0	10	i_auhal_channel_mapping
+op	120:90	0:0	10	[
+water	120:91	0:0	10	0
+op	120:92	0:0	10	]
+water	120:93	0:0	10	)
+op	121:19	0:0	10	&&
+water	121:22	0:0	10	i_auhal_channel_mapping
+op	121:45	0:0	10	[
+water	121:46	0:0	10	chan
+op	121:50	0:0	10	]
+op	121:52	0:0	10	>
+water	121:54	0:0	10	0
+stmts	121:57	123:16	9	
+water	121:57	0:0	10	{
+water	122:20	0:0	10	fmt
+op	122:23	0:0	10	->
+water	122:25	0:0	10	i_physical_channels
+op	122:45	0:0	10	|=
+water	122:48	0:0	10	i_auhal_channel_mapping
+op	122:71	0:0	10	[
+water	122:72	0:0	10	chan
+op	122:76	0:0	10	]
+water	122:77	0:0	10	;
+water	123:16	0:0	10	}
+else	123:18	125:16	8
+stmts	123:23	125:16	9	
+water	123:23	0:0	10	{
+call	124:20	124:89	10	msg_Dbg
+arg	124:28	124:34	11	p_aout
+water	124:28	0:0	12	p_aout
+arg	124:36	124:80	11	"found nonrecognized channel %d at index %d"
+water	124:36	0:0	12	"found nonrecognized channel %d at index %d"
+arg	124:82	124:86	11	chan
+water	124:82	0:0	12	chan
+arg	124:88	124:89	11	i
+water	124:88	0:0	12	i
+water	124:90	0:0	10	;
+water	125:16	0:0	10	}
+water	126:12	0:0	8	}
+if	127:12	134:12	6	(fmt -> i_physical_channels == 0)
+cond	127:16	127:44	7	fmt -> i_physical_channels == 0
+water	127:16	0:0	8	fmt
+op	127:19	0:0	8	->
+water	127:21	0:0	8	i_physical_channels
+op	127:41	0:0	8	==
+water	127:44	0:0	8	0
+stmts	127:47	134:12	7	
+water	127:47	0:0	8	{
+water	128:16	0:0	8	fmt
+op	128:19	0:0	8	->
+water	128:21	0:0	8	i_physical_channels
+op	128:41	0:0	8	=
+water	128:43	0:0	8	AOUT_CHANS_STEREO
+water	128:60	0:0	8	;
+call	129:16	129:153	8	msg_Err
+arg	129:24	129:30	9	p_aout
+water	129:24	0:0	10	p_aout
+arg	129:32	129:153	9	"You should configure your speaker layout with Audio Midi Setup in /Applications/Utilities. VLC will output Stereo only."
+water	129:32	0:0	10	"You should configure your speaker layout with Audio Midi Setup in /Applications/Utilities. VLC will output Stereo only."
+water	129:154	0:0	8	;
+call	130:16	133:76	8	dialog_Fatal
+arg	130:29	130:35	9	p_aout
+water	130:29	0:0	10	p_aout
+arg	130:37	130:72	9	_("Audio device is not configured")
+call	130:37	130:71	10	_
+arg	130:39	130:71	11	"Audio device is not configured"
+water	130:39	0:0	12	"Audio device is not configured"
+arg	130:74	130:78	9	"%s"
+water	130:74	0:0	10	"%s"
+arg	131:32	133:76	9	_("You should configure your speaker layout with ""\"Audio Midi Setup\" in /Applications/""Utilities. VLC will output Stereo only.")
+call	131:32	133:75	10	_
+arg	131:34	133:75	11	"You should configure your speaker layout with ""\"Audio Midi Setup\" in /Applications/""Utilities. VLC will output Stereo only."
+water	131:34	0:0	12	"You should configure your speaker layout with "
+water	132:34	0:0	12	"\"Audio Midi Setup\" in /Applications/"
+water	133:34	0:0	12	"Utilities. VLC will output Stereo only."
+water	133:77	0:0	8	;
+water	134:12	0:0	8	}
+water	135:8	0:0	6	}
+call	136:8	136:19	4	free
+arg	136:13	136:19	5	layout
+water	136:13	0:0	6	layout
+water	136:20	0:0	4	;
+water	137:4	0:0	4	}
+else	137:6	140:4	2
+stmts	137:11	140:4	3	
+water	137:11	0:0	4	{
+call	138:8	138:146	4	msg_Warn
+arg	138:17	138:23	5	p_aout
+water	138:17	0:0	6	p_aout
+arg	138:25	138:132	5	"device driver does not support kAudioDevicePropertyPreferredChannelLayout - using stereo fallback [%4.4s]"
+water	138:25	0:0	6	"device driver does not support kAudioDevicePropertyPreferredChannelLayout - using stereo fallback [%4.4s]"
+arg	138:134	138:146	5	(char*)&err
+water	138:134	0:0	6	(
+water	138:135	0:0	6	char
+op	138:140	0:0	6	*
+water	138:141	0:0	6	)
+op	138:142	0:0	6	&
+water	138:143	0:0	6	err
+water	138:147	0:0	4	;
+water	139:8	0:0	4	fmt
+op	139:11	0:0	4	->
+water	139:13	0:0	4	i_physical_channels
+op	139:33	0:0	4	=
+water	139:35	0:0	4	AOUT_CHANS_STEREO
+water	139:52	0:0	4	;
+water	140:4	0:0	4	}
+water	141:4	0:0	2	fmt
+op	141:7	0:0	2	->
+water	141:9	0:0	2	i_original_channels
+op	141:29	0:0	2	=
+water	141:31	0:0	2	fmt
+op	141:34	0:0	2	->
+water	141:36	0:0	2	i_physical_channels
+water	141:55	0:0	2	;
+call	142:4	142:97	2	msg_Dbg
+arg	142:12	142:18	3	p_aout
+water	142:12	0:0	4	p_aout
+arg	142:20	142:69	3	"selected %d physical channels for device output"
+water	142:20	0:0	4	"selected %d physical channels for device output"
+arg	142:71	142:97	3	aout_FormatNbChannels(fmt)
+call	142:71	142:96	4	aout_FormatNbChannels
+arg	142:93	142:96	5	fmt
+water	142:93	0:0	6	fmt
+water	142:98	0:0	2	;
+call	143:4	143:72	2	msg_Dbg
+arg	143:12	143:18	3	p_aout
+water	143:12	0:0	4	p_aout
+arg	143:20	143:41	3	"VLC will output: %s"
+water	143:20	0:0	4	"VLC will output: %s"
+arg	143:43	143:72	3	aout_FormatPrintChannels(fmt)
+call	143:43	143:71	4	aout_FormatPrintChannels
+arg	143:68	143:71	5	fmt
+water	143:68	0:0	6	fmt
+water	143:73	0:0	2	;
+decl	145:4	145:35	2	AudioChannelLayout	input_layout
+call	146:4	146:50	2	memset
+arg	146:12	146:25	3	&input_layout
+op	146:12	0:0	4	&
+water	146:13	0:0	4	input_layout
+arg	146:27	146:28	3	0
+water	146:27	0:0	4	0
+arg	146:30	146:50	3	sizeof(input_layout)
+op	146:30	0:0	4	sizeof
+water	146:36	0:0	4	(
+water	146:37	0:0	4	input_layout
+water	146:49	0:0	4	)
+water	146:51	0:0	2	;
+decl	147:4	147:37	2	uint32_t	chans_out[AOUT_CHAN_MAX]
+switch	169:4	286:4	2	(aout_FormatNbChannels (fmt ))
+cond	169:11	169:36	3	aout_FormatNbChannels (fmt )
+call	169:11	169:36	4	aout_FormatNbChannels
+arg	169:33	169:36	5	fmt
+water	169:33	0:0	6	fmt
+stmts	169:39	286:4	3	
+water	169:39	0:0	4	{
+label	170:8	170:14	4	case 1 :
+water	171:12	0:0	4	input_layout
+op	171:24	0:0	4	.
+water	171:25	0:0	4	mChannelLayoutTag
+op	171:43	0:0	4	=
+water	171:45	0:0	4	kAudioChannelLayoutTag_Mono
+water	171:72	0:0	4	;
+break	172:12	172:17	4	
+label	173:8	173:14	4	case 2 :
+water	174:12	0:0	4	input_layout
+op	174:24	0:0	4	.
+water	174:25	0:0	4	mChannelLayoutTag
+op	174:43	0:0	4	=
+water	174:45	0:0	4	kAudioChannelLayoutTag_Stereo
+water	174:74	0:0	4	;
+break	175:12	175:17	4	
+label	176:8	176:14	4	case 3 :
+if	177:12	178:77	4	(fmt -> i_physical_channels & AOUT_CHAN_CENTER)
+cond	177:16	177:43	5	fmt -> i_physical_channels & AOUT_CHAN_CENTER
+water	177:16	0:0	6	fmt
+op	177:19	0:0	6	->
+water	177:21	0:0	6	i_physical_channels
+op	177:41	0:0	6	&
+water	177:43	0:0	6	AOUT_CHAN_CENTER
+stmts	178:16	178:77	5	
+water	178:16	0:0	6	input_layout
+op	178:28	0:0	6	.
+water	178:29	0:0	6	mChannelLayoutTag
+op	178:47	0:0	6	=
+water	178:49	0:0	6	kAudioChannelLayoutTag_DVD_7
+water	178:77	0:0	6	;
+else	179:12	180:77	4
+stmts	179:17	180:77	5	
+if	179:17	180:77	6	(fmt -> i_physical_channels & AOUT_CHAN_LFE)
+cond	179:21	179:48	7	fmt -> i_physical_channels & AOUT_CHAN_LFE
+water	179:21	0:0	8	fmt
+op	179:24	0:0	8	->
+water	179:26	0:0	8	i_physical_channels
+op	179:46	0:0	8	&
+water	179:48	0:0	8	AOUT_CHAN_LFE
+stmts	180:16	180:77	7	
+water	180:16	0:0	8	input_layout
+op	180:28	0:0	8	.
+water	180:29	0:0	8	mChannelLayoutTag
+op	180:47	0:0	8	=
+water	180:49	0:0	8	kAudioChannelLayoutTag_DVD_4
+water	180:77	0:0	8	;
+break	181:12	181:17	4	
+label	182:8	182:14	4	case 4 :
+if	183:12	184:78	4	(fmt -> i_physical_channels & ( AOUT_CHAN_CENTER | AOUT_CHAN_LFE ))
+cond	183:16	183:76	5	fmt -> i_physical_channels & ( AOUT_CHAN_CENTER | AOUT_CHAN_LFE )
+water	183:16	0:0	6	fmt
+op	183:19	0:0	6	->
+water	183:21	0:0	6	i_physical_channels
+op	183:41	0:0	6	&
+water	183:43	0:0	6	(
+water	183:44	0:0	6	AOUT_CHAN_CENTER
+op	183:61	0:0	6	|
+water	183:63	0:0	6	AOUT_CHAN_LFE
+water	183:76	0:0	6	)
+stmts	184:16	184:78	5	
+water	184:16	0:0	6	input_layout
+op	184:28	0:0	6	.
+water	184:29	0:0	6	mChannelLayoutTag
+op	184:47	0:0	6	=
+water	184:49	0:0	6	kAudioChannelLayoutTag_DVD_10
+water	184:78	0:0	6	;
+else	185:12	186:77	4
+stmts	185:17	186:77	5	
+if	185:17	186:77	6	(fmt -> i_physical_channels & ( AOUT_CHAN_REARLEFT | AOUT_CHAN_REARRIGHT ))
+cond	185:21	185:89	7	fmt -> i_physical_channels & ( AOUT_CHAN_REARLEFT | AOUT_CHAN_REARRIGHT )
+water	185:21	0:0	8	fmt
+op	185:24	0:0	8	->
+water	185:26	0:0	8	i_physical_channels
+op	185:46	0:0	8	&
+water	185:48	0:0	8	(
+water	185:49	0:0	8	AOUT_CHAN_REARLEFT
+op	185:68	0:0	8	|
+water	185:70	0:0	8	AOUT_CHAN_REARRIGHT
+water	185:89	0:0	8	)
+stmts	186:16	186:77	7	
+water	186:16	0:0	8	input_layout
+op	186:28	0:0	8	.
+water	186:29	0:0	8	mChannelLayoutTag
+op	186:47	0:0	8	=
+water	186:49	0:0	8	kAudioChannelLayoutTag_DVD_3
+water	186:77	0:0	8	;
+else	187:12	188:77	4
+stmts	187:17	188:77	5	
+if	187:17	188:77	6	(fmt -> i_physical_channels & ( AOUT_CHAN_CENTER | AOUT_CHAN_REARCENTER ))
+cond	187:21	187:88	7	fmt -> i_physical_channels & ( AOUT_CHAN_CENTER | AOUT_CHAN_REARCENTER )
+water	187:21	0:0	8	fmt
+op	187:24	0:0	8	->
+water	187:26	0:0	8	i_physical_channels
+op	187:46	0:0	8	&
+water	187:48	0:0	8	(
+water	187:49	0:0	8	AOUT_CHAN_CENTER
+op	187:66	0:0	8	|
+water	187:68	0:0	8	AOUT_CHAN_REARCENTER
+water	187:88	0:0	8	)
+stmts	188:16	188:77	7	
+water	188:16	0:0	8	input_layout
+op	188:28	0:0	8	.
+water	188:29	0:0	8	mChannelLayoutTag
+op	188:47	0:0	8	=
+water	188:49	0:0	8	kAudioChannelLayoutTag_DVD_3
+water	188:77	0:0	8	;
+break	189:12	189:17	4	
+label	190:8	190:14	4	case 5 :
+if	191:12	192:78	4	(fmt -> i_physical_channels & ( AOUT_CHAN_CENTER ))
+cond	191:16	191:60	5	fmt -> i_physical_channels & ( AOUT_CHAN_CENTER )
+water	191:16	0:0	6	fmt
+op	191:19	0:0	6	->
+water	191:21	0:0	6	i_physical_channels
+op	191:41	0:0	6	&
+water	191:43	0:0	6	(
+water	191:44	0:0	6	AOUT_CHAN_CENTER
+water	191:60	0:0	6	)
+stmts	192:16	192:78	5	
+water	192:16	0:0	6	input_layout
+op	192:28	0:0	6	.
+water	192:29	0:0	6	mChannelLayoutTag
+op	192:47	0:0	6	=
+water	192:49	0:0	6	kAudioChannelLayoutTag_DVD_19
+water	192:78	0:0	6	;
+else	193:12	194:78	4
+stmts	193:17	194:78	5	
+if	193:17	194:78	6	(fmt -> i_physical_channels & ( AOUT_CHAN_LFE ))
+cond	193:21	193:62	7	fmt -> i_physical_channels & ( AOUT_CHAN_LFE )
+water	193:21	0:0	8	fmt
+op	193:24	0:0	8	->
+water	193:26	0:0	8	i_physical_channels
+op	193:46	0:0	8	&
+water	193:48	0:0	8	(
+water	193:49	0:0	8	AOUT_CHAN_LFE
+water	193:62	0:0	8	)
+stmts	194:16	194:78	7	
+water	194:16	0:0	8	input_layout
+op	194:28	0:0	8	.
+water	194:29	0:0	8	mChannelLayoutTag
+op	194:47	0:0	8	=
+water	194:49	0:0	8	kAudioChannelLayoutTag_DVD_18
+water	194:78	0:0	8	;
+break	195:12	195:17	4	
+label	196:8	196:14	4	case 6 :
+if	197:12	208:12	4	(fmt -> i_physical_channels & ( AOUT_CHAN_LFE ))
+cond	197:16	197:57	5	fmt -> i_physical_channels & ( AOUT_CHAN_LFE )
+water	197:16	0:0	6	fmt
+op	197:19	0:0	6	->
+water	197:21	0:0	6	i_physical_channels
+op	197:41	0:0	6	&
+water	197:43	0:0	6	(
+water	197:44	0:0	6	AOUT_CHAN_LFE
+water	197:57	0:0	6	)
+stmts	197:60	208:12	5	
+water	197:60	0:0	6	{
+water	198:16	0:0	6	input_layout
+op	198:28	0:0	6	.
+water	198:29	0:0	6	mChannelLayoutTag
+op	198:47	0:0	6	=
+water	198:49	0:0	6	kAudioChannelLayoutTag_DVD_20
+water	198:78	0:0	6	;
+water	199:16	0:0	6	chans_out
+op	199:25	0:0	6	[
+water	199:26	0:0	6	0
+op	199:27	0:0	6	]
+op	199:29	0:0	6	=
+water	199:31	0:0	6	AOUT_CHAN_LEFT
+water	199:45	0:0	6	;
+water	200:16	0:0	6	chans_out
+op	200:25	0:0	6	[
+water	200:26	0:0	6	1
+op	200:27	0:0	6	]
+op	200:29	0:0	6	=
+water	200:31	0:0	6	AOUT_CHAN_RIGHT
+water	200:46	0:0	6	;
+water	201:16	0:0	6	chans_out
+op	201:25	0:0	6	[
+water	201:26	0:0	6	2
+op	201:27	0:0	6	]
+op	201:29	0:0	6	=
+water	201:31	0:0	6	AOUT_CHAN_REARLEFT
+water	201:49	0:0	6	;
+water	202:16	0:0	6	chans_out
+op	202:25	0:0	6	[
+water	202:26	0:0	6	3
+op	202:27	0:0	6	]
+op	202:29	0:0	6	=
+water	202:31	0:0	6	AOUT_CHAN_REARRIGHT
+water	202:50	0:0	6	;
+water	203:16	0:0	6	chans_out
+op	203:25	0:0	6	[
+water	203:26	0:0	6	4
+op	203:27	0:0	6	]
+op	203:29	0:0	6	=
+water	203:31	0:0	6	AOUT_CHAN_CENTER
+water	203:47	0:0	6	;
+water	204:16	0:0	6	chans_out
+op	204:25	0:0	6	[
+water	204:26	0:0	6	5
+op	204:27	0:0	6	]
+op	204:29	0:0	6	=
+water	204:31	0:0	6	AOUT_CHAN_LFE
+water	204:44	0:0	6	;
+water	205:16	0:0	6	p_aout
+op	205:22	0:0	6	->
+water	205:24	0:0	6	sys
+op	205:27	0:0	6	->
+water	205:29	0:0	6	chans_to_reorder
+op	205:46	0:0	6	=
+call	205:48	205:139	6	aout_CheckChannelReorder
+arg	205:73	205:77	7	NULL
+water	205:73	0:0	8	NULL
+arg	205:79	205:88	7	chans_out
+water	205:79	0:0	8	chans_out
+arg	205:90	205:114	7	fmt->i_physical_channels
+water	205:90	0:0	8	fmt
+op	205:93	0:0	8	->
+water	205:95	0:0	8	i_physical_channels
+arg	205:116	205:139	7	p_aout->sys->chan_table
+water	205:116	0:0	8	p_aout
+op	205:122	0:0	8	->
+water	205:124	0:0	8	sys
+op	205:127	0:0	8	->
+water	205:129	0:0	8	chan_table
+water	205:140	0:0	6	;
+if	206:16	207:79	6	(p_aout -> sys -> chans_to_reorder)
+cond	206:20	206:33	7	p_aout -> sys -> chans_to_reorder
+water	206:20	0:0	8	p_aout
+op	206:26	0:0	8	->
+water	206:28	0:0	8	sys
+op	206:31	0:0	8	->
+water	206:33	0:0	8	chans_to_reorder
+stmts	207:20	207:79	7	
+call	207:20	207:78	8	msg_Dbg
+arg	207:28	207:34	9	p_aout
+water	207:28	0:0	10	p_aout
+arg	207:36	207:78	9	"channel reordering needed for 5.1 output"
+water	207:36	0:0	10	"channel reordering needed for 5.1 output"
+water	207:79	0:0	8	;
+water	208:12	0:0	6	}
+else	208:14	219:12	4
+stmts	208:19	219:12	5	
+water	208:19	0:0	6	{
+water	209:16	0:0	6	input_layout
+op	209:28	0:0	6	.
+water	209:29	0:0	6	mChannelLayoutTag
+op	209:47	0:0	6	=
+water	209:49	0:0	6	kAudioChannelLayoutTag_AudioUnit_6_0
+water	209:85	0:0	6	;
+water	210:16	0:0	6	chans_out
+op	210:25	0:0	6	[
+water	210:26	0:0	6	0
+op	210:27	0:0	6	]
+op	210:29	0:0	6	=
+water	210:31	0:0	6	AOUT_CHAN_LEFT
+water	210:45	0:0	6	;
+water	211:16	0:0	6	chans_out
+op	211:25	0:0	6	[
+water	211:26	0:0	6	1
+op	211:27	0:0	6	]
+op	211:29	0:0	6	=
+water	211:31	0:0	6	AOUT_CHAN_RIGHT
+water	211:46	0:0	6	;
+water	212:16	0:0	6	chans_out
+op	212:25	0:0	6	[
+water	212:26	0:0	6	2
+op	212:27	0:0	6	]
+op	212:29	0:0	6	=
+water	212:31	0:0	6	AOUT_CHAN_REARLEFT
+water	212:49	0:0	6	;
+water	213:16	0:0	6	chans_out
+op	213:25	0:0	6	[
+water	213:26	0:0	6	3
+op	213:27	0:0	6	]
+op	213:29	0:0	6	=
+water	213:31	0:0	6	AOUT_CHAN_REARRIGHT
+water	213:50	0:0	6	;
+water	214:16	0:0	6	chans_out
+op	214:25	0:0	6	[
+water	214:26	0:0	6	4
+op	214:27	0:0	6	]
+op	214:29	0:0	6	=
+water	214:31	0:0	6	AOUT_CHAN_CENTER
+water	214:47	0:0	6	;
+water	215:16	0:0	6	chans_out
+op	215:25	0:0	6	[
+water	215:26	0:0	6	5
+op	215:27	0:0	6	]
+op	215:29	0:0	6	=
+water	215:31	0:0	6	AOUT_CHAN_REARCENTER
+water	215:51	0:0	6	;
+water	216:16	0:0	6	p_aout
+op	216:22	0:0	6	->
+water	216:24	0:0	6	sys
+op	216:27	0:0	6	->
+water	216:29	0:0	6	chans_to_reorder
+op	216:46	0:0	6	=
+call	216:48	216:139	6	aout_CheckChannelReorder
+arg	216:73	216:77	7	NULL
+water	216:73	0:0	8	NULL
+arg	216:79	216:88	7	chans_out
+water	216:79	0:0	8	chans_out
+arg	216:90	216:114	7	fmt->i_physical_channels
+water	216:90	0:0	8	fmt
+op	216:93	0:0	8	->
+water	216:95	0:0	8	i_physical_channels
+arg	216:116	216:139	7	p_aout->sys->chan_table
+water	216:116	0:0	8	p_aout
+op	216:122	0:0	8	->
+water	216:124	0:0	8	sys
+op	216:127	0:0	8	->
+water	216:129	0:0	8	chan_table
+water	216:140	0:0	6	;
+if	217:16	218:79	6	(p_aout -> sys -> chans_to_reorder)
+cond	217:20	217:33	7	p_aout -> sys -> chans_to_reorder
+water	217:20	0:0	8	p_aout
+op	217:26	0:0	8	->
+water	217:28	0:0	8	sys
+op	217:31	0:0	8	->
+water	217:33	0:0	8	chans_to_reorder
+stmts	218:20	218:79	7	
+call	218:20	218:78	8	msg_Dbg
+arg	218:28	218:34	9	p_aout
+water	218:28	0:0	10	p_aout
+arg	218:36	218:78	9	"channel reordering needed for 6.0 output"
+water	218:36	0:0	10	"channel reordering needed for 6.0 output"
+water	218:79	0:0	8	;
+water	219:12	0:0	6	}
+break	220:12	220:17	4	
+label	221:8	221:14	4	case 7 :
+water	222:12	0:0	4	input_layout
+op	222:24	0:0	4	.
+water	222:25	0:0	4	mChannelLayoutTag
+op	222:43	0:0	4	=
+water	222:45	0:0	4	kAudioChannelLayoutTag_MPEG_6_1_A
+water	222:78	0:0	4	;
+water	223:12	0:0	4	chans_out
+op	223:21	0:0	4	[
+water	223:22	0:0	4	0
+op	223:23	0:0	4	]
+op	223:25	0:0	4	=
+water	223:27	0:0	4	AOUT_CHAN_LEFT
+water	223:41	0:0	4	;
+water	224:12	0:0	4	chans_out
+op	224:21	0:0	4	[
+water	224:22	0:0	4	1
+op	224:23	0:0	4	]
+op	224:25	0:0	4	=
+water	224:27	0:0	4	AOUT_CHAN_RIGHT
+water	224:42	0:0	4	;
+water	225:12	0:0	4	chans_out
+op	225:21	0:0	4	[
+water	225:22	0:0	4	2
+op	225:23	0:0	4	]
+op	225:25	0:0	4	=
+water	225:27	0:0	4	AOUT_CHAN_CENTER
+water	225:43	0:0	4	;
+water	226:12	0:0	4	chans_out
+op	226:21	0:0	4	[
+water	226:22	0:0	4	3
+op	226:23	0:0	4	]
+op	226:25	0:0	4	=
+water	226:27	0:0	4	AOUT_CHAN_LFE
+water	226:40	0:0	4	;
+water	227:12	0:0	4	chans_out
+op	227:21	0:0	4	[
+water	227:22	0:0	4	4
+op	227:23	0:0	4	]
+op	227:25	0:0	4	=
+water	227:27	0:0	4	AOUT_CHAN_REARLEFT
+water	227:45	0:0	4	;
+water	228:12	0:0	4	chans_out
+op	228:21	0:0	4	[
+water	228:22	0:0	4	5
+op	228:23	0:0	4	]
+op	228:25	0:0	4	=
+water	228:27	0:0	4	AOUT_CHAN_REARRIGHT
+water	228:46	0:0	4	;
+water	229:12	0:0	4	chans_out
+op	229:21	0:0	4	[
+water	229:22	0:0	4	6
+op	229:23	0:0	4	]
+op	229:25	0:0	4	=
+water	229:27	0:0	4	AOUT_CHAN_REARCENTER
+water	229:47	0:0	4	;
+water	230:12	0:0	4	p_aout
+op	230:18	0:0	4	->
+water	230:20	0:0	4	sys
+op	230:23	0:0	4	->
+water	230:25	0:0	4	chans_to_reorder
+op	230:42	0:0	4	=
+call	230:44	230:135	4	aout_CheckChannelReorder
+arg	230:69	230:73	5	NULL
+water	230:69	0:0	6	NULL
+arg	230:75	230:84	5	chans_out
+water	230:75	0:0	6	chans_out
+arg	230:86	230:110	5	fmt->i_physical_channels
+water	230:86	0:0	6	fmt
+op	230:89	0:0	6	->
+water	230:91	0:0	6	i_physical_channels
+arg	230:112	230:135	5	p_aout->sys->chan_table
+water	230:112	0:0	6	p_aout
+op	230:118	0:0	6	->
+water	230:120	0:0	6	sys
+op	230:123	0:0	6	->
+water	230:125	0:0	6	chan_table
+water	230:136	0:0	4	;
+if	231:12	232:75	4	(p_aout -> sys -> chans_to_reorder)
+cond	231:16	231:29	5	p_aout -> sys -> chans_to_reorder
+water	231:16	0:0	6	p_aout
+op	231:22	0:0	6	->
+water	231:24	0:0	6	sys
+op	231:27	0:0	6	->
+water	231:29	0:0	6	chans_to_reorder
+stmts	232:16	232:75	5	
+call	232:16	232:74	6	msg_Dbg
+arg	232:24	232:30	7	p_aout
+water	232:24	0:0	8	p_aout
+arg	232:32	232:74	7	"channel reordering needed for 6.1 output"
+water	232:32	0:0	8	"channel reordering needed for 6.1 output"
+water	232:75	0:0	6	;
+break	233:12	233:17	4	
+label	234:8	234:14	4	case 8 :
+if	235:12	247:12	4	(fmt -> i_physical_channels & ( AOUT_CHAN_LFE ) || currentMinorSystemVersion < 7)
+cond	235:16	235:90	5	fmt -> i_physical_channels & ( AOUT_CHAN_LFE ) || currentMinorSystemVersion < 7
+water	235:16	0:0	6	fmt
+op	235:19	0:0	6	->
+water	235:21	0:0	6	i_physical_channels
+op	235:41	0:0	6	&
+water	235:43	0:0	6	(
+water	235:44	0:0	6	AOUT_CHAN_LFE
+water	235:57	0:0	6	)
+op	235:59	0:0	6	||
+water	235:62	0:0	6	currentMinorSystemVersion
+op	235:88	0:0	6	<
+water	235:90	0:0	6	7
+stmts	235:93	247:12	5	
+water	235:93	0:0	6	{
+water	236:16	0:0	6	input_layout
+op	236:28	0:0	6	.
+water	236:29	0:0	6	mChannelLayoutTag
+op	236:47	0:0	6	=
+water	236:49	0:0	6	kAudioChannelLayoutTag_MPEG_7_1_A
+water	236:82	0:0	6	;
+water	237:16	0:0	6	chans_out
+op	237:25	0:0	6	[
+water	237:26	0:0	6	0
+op	237:27	0:0	6	]
+op	237:29	0:0	6	=
+water	237:31	0:0	6	AOUT_CHAN_LEFT
+water	237:45	0:0	6	;
+water	238:16	0:0	6	chans_out
+op	238:25	0:0	6	[
+water	238:26	0:0	6	1
+op	238:27	0:0	6	]
+op	238:29	0:0	6	=
+water	238:31	0:0	6	AOUT_CHAN_RIGHT
+water	238:46	0:0	6	;
+water	239:16	0:0	6	chans_out
+op	239:25	0:0	6	[
+water	239:26	0:0	6	2
+op	239:27	0:0	6	]
+op	239:29	0:0	6	=
+water	239:31	0:0	6	AOUT_CHAN_CENTER
+water	239:47	0:0	6	;
+water	240:16	0:0	6	chans_out
+op	240:25	0:0	6	[
+water	240:26	0:0	6	3
+op	240:27	0:0	6	]
+op	240:29	0:0	6	=
+water	240:31	0:0	6	AOUT_CHAN_LFE
+water	240:44	0:0	6	;
+water	241:16	0:0	6	chans_out
+op	241:25	0:0	6	[
+water	241:26	0:0	6	4
+op	241:27	0:0	6	]
+op	241:29	0:0	6	=
+water	241:31	0:0	6	AOUT_CHAN_MIDDLELEFT
+water	241:51	0:0	6	;
+water	242:16	0:0	6	chans_out
+op	242:25	0:0	6	[
+water	242:26	0:0	6	5
+op	242:27	0:0	6	]
+op	242:29	0:0	6	=
+water	242:31	0:0	6	AOUT_CHAN_MIDDLERIGHT
+water	242:52	0:0	6	;
+water	243:16	0:0	6	chans_out
+op	243:25	0:0	6	[
+water	243:26	0:0	6	6
+op	243:27	0:0	6	]
+op	243:29	0:0	6	=
+water	243:31	0:0	6	AOUT_CHAN_REARLEFT
+water	243:49	0:0	6	;
+water	244:16	0:0	6	chans_out
+op	244:25	0:0	6	[
+water	244:26	0:0	6	7
+op	244:27	0:0	6	]
+op	244:29	0:0	6	=
+water	244:31	0:0	6	AOUT_CHAN_REARRIGHT
+water	244:50	0:0	6	;
+if	245:16	246:137	6	(! ( fmt -> i_physical_channels & ( AOUT_CHAN_LFE ) ))
+cond	245:20	245:64	7	! ( fmt -> i_physical_channels & ( AOUT_CHAN_LFE ) )
+op	245:20	0:0	8	!
+water	245:21	0:0	8	(
+water	245:22	0:0	8	fmt
+op	245:25	0:0	8	->
+water	245:27	0:0	8	i_physical_channels
+op	245:47	0:0	8	&
+water	245:49	0:0	8	(
+water	245:50	0:0	8	AOUT_CHAN_LFE
+water	245:63	0:0	8	)
+water	245:64	0:0	8	)
+stmts	246:20	246:137	7	
+call	246:20	246:136	8	msg_Warn
+arg	246:29	246:35	9	p_aout
+water	246:29	0:0	10	p_aout
+arg	246:37	246:109	9	"8.0 audio output not supported on OS X 10.%i, layout will be incorrect"
+water	246:37	0:0	10	"8.0 audio output not supported on OS X 10.%i, layout will be incorrect"
+arg	246:111	246:136	9	currentMinorSystemVersion
+water	246:111	0:0	10	currentMinorSystemVersion
+water	246:137	0:0	8	;
+water	247:12	0:0	6	}
+else	249:12	259:12	4
+stmts	249:17	259:12	5	
+water	249:17	0:0	6	{
+water	250:16	0:0	6	input_layout
+op	250:28	0:0	6	.
+water	250:29	0:0	6	mChannelLayoutTag
+op	250:47	0:0	6	=
+water	250:49	0:0	6	kAudioChannelLayoutTag_DTS_8_0_B
+water	250:81	0:0	6	;
+water	251:16	0:0	6	chans_out
+op	251:25	0:0	6	[
+water	251:26	0:0	6	0
+op	251:27	0:0	6	]
+op	251:29	0:0	6	=
+water	251:31	0:0	6	AOUT_CHAN_MIDDLELEFT
+water	251:51	0:0	6	;
+water	252:16	0:0	6	chans_out
+op	252:25	0:0	6	[
+water	252:26	0:0	6	1
+op	252:27	0:0	6	]
+op	252:29	0:0	6	=
+water	252:31	0:0	6	AOUT_CHAN_CENTER
+water	252:47	0:0	6	;
+water	253:16	0:0	6	chans_out
+op	253:25	0:0	6	[
+water	253:26	0:0	6	2
+op	253:27	0:0	6	]
+op	253:29	0:0	6	=
+water	253:31	0:0	6	AOUT_CHAN_MIDDLERIGHT
+water	253:52	0:0	6	;
+water	254:16	0:0	6	chans_out
+op	254:25	0:0	6	[
+water	254:26	0:0	6	3
+op	254:27	0:0	6	]
+op	254:29	0:0	6	=
+water	254:31	0:0	6	AOUT_CHAN_LEFT
+water	254:45	0:0	6	;
+water	255:16	0:0	6	chans_out
+op	255:25	0:0	6	[
+water	255:26	0:0	6	4
+op	255:27	0:0	6	]
+op	255:29	0:0	6	=
+water	255:31	0:0	6	AOUT_CHAN_RIGHT
+water	255:46	0:0	6	;
+water	256:16	0:0	6	chans_out
+op	256:25	0:0	6	[
+water	256:26	0:0	6	5
+op	256:27	0:0	6	]
+op	256:29	0:0	6	=
+water	256:31	0:0	6	AOUT_CHAN_REARLEFT
+water	256:49	0:0	6	;
+water	257:16	0:0	6	chans_out
+op	257:25	0:0	6	[
+water	257:26	0:0	6	6
+op	257:27	0:0	6	]
+op	257:29	0:0	6	=
+water	257:31	0:0	6	AOUT_CHAN_REARCENTER
+water	257:51	0:0	6	;
+water	258:16	0:0	6	chans_out
+op	258:25	0:0	6	[
+water	258:26	0:0	6	7
+op	258:27	0:0	6	]
+op	258:29	0:0	6	=
+water	258:31	0:0	6	AOUT_CHAN_REARRIGHT
+water	258:50	0:0	6	;
+water	259:12	0:0	6	}
+water	261:12	0:0	4	p_aout
+op	261:18	0:0	4	->
+water	261:20	0:0	4	sys
+op	261:23	0:0	4	->
+water	261:25	0:0	4	chans_to_reorder
+op	261:42	0:0	4	=
+call	261:44	261:135	4	aout_CheckChannelReorder
+arg	261:69	261:73	5	NULL
+water	261:69	0:0	6	NULL
+arg	261:75	261:84	5	chans_out
+water	261:75	0:0	6	chans_out
+arg	261:86	261:110	5	fmt->i_physical_channels
+water	261:86	0:0	6	fmt
+op	261:89	0:0	6	->
+water	261:91	0:0	6	i_physical_channels
+arg	261:112	261:135	5	p_aout->sys->chan_table
+water	261:112	0:0	6	p_aout
+op	261:118	0:0	6	->
+water	261:120	0:0	6	sys
+op	261:123	0:0	6	->
+water	261:125	0:0	6	chan_table
+water	261:136	0:0	4	;
+if	262:12	263:81	4	(p_aout -> sys -> chans_to_reorder)
+cond	262:16	262:29	5	p_aout -> sys -> chans_to_reorder
+water	262:16	0:0	6	p_aout
+op	262:22	0:0	6	->
+water	262:24	0:0	6	sys
+op	262:27	0:0	6	->
+water	262:29	0:0	6	chans_to_reorder
+stmts	263:16	263:81	5	
+call	263:16	263:80	6	msg_Dbg
+arg	263:24	263:30	7	p_aout
+water	263:24	0:0	8	p_aout
+arg	263:32	263:80	7	"channel reordering needed for 7.1 / 8.0 output"
+water	263:32	0:0	8	"channel reordering needed for 7.1 / 8.0 output"
+water	263:81	0:0	6	;
+break	264:12	264:17	4	
+label	265:8	265:14	4	case 9 :
+if	266:12	269:12	4	(currentMinorSystemVersion < 7)
+cond	266:16	266:44	5	currentMinorSystemVersion < 7
+water	266:16	0:0	6	currentMinorSystemVersion
+op	266:42	0:0	6	<
+water	266:44	0:0	6	7
+stmts	266:47	269:12	5	
+water	266:47	0:0	6	{
+call	267:16	267:106	6	msg_Warn
+arg	267:25	267:31	7	p_aout
+water	267:25	0:0	8	p_aout
+arg	267:33	267:79	7	"8.1 audio output not supported on OS X 10.%i"
+water	267:33	0:0	8	"8.1 audio output not supported on OS X 10.%i"
+arg	267:81	267:106	7	currentMinorSystemVersion
+water	267:81	0:0	8	currentMinorSystemVersion
+water	267:107	0:0	6	;
+break	268:16	268:21	6	
+water	269:12	0:0	6	}
+water	271:12	0:0	4	input_layout
+op	271:24	0:0	4	.
+water	271:25	0:0	4	mChannelLayoutTag
+op	271:43	0:0	4	=
+water	271:45	0:0	4	kAudioChannelLayoutTag_DTS_8_1_B
+water	271:77	0:0	4	;
+water	272:12	0:0	4	chans_out
+op	272:21	0:0	4	[
+water	272:22	0:0	4	0
+op	272:23	0:0	4	]
+op	272:25	0:0	4	=
+water	272:27	0:0	4	AOUT_CHAN_MIDDLELEFT
+water	272:47	0:0	4	;
+water	273:12	0:0	4	chans_out
+op	273:21	0:0	4	[
+water	273:22	0:0	4	1
+op	273:23	0:0	4	]
+op	273:25	0:0	4	=
+water	273:27	0:0	4	AOUT_CHAN_CENTER
+water	273:43	0:0	4	;
+water	274:12	0:0	4	chans_out
+op	274:21	0:0	4	[
+water	274:22	0:0	4	2
+op	274:23	0:0	4	]
+op	274:25	0:0	4	=
+water	274:27	0:0	4	AOUT_CHAN_MIDDLERIGHT
+water	274:48	0:0	4	;
+water	275:12	0:0	4	chans_out
+op	275:21	0:0	4	[
+water	275:22	0:0	4	3
+op	275:23	0:0	4	]
+op	275:25	0:0	4	=
+water	275:27	0:0	4	AOUT_CHAN_LEFT
+water	275:41	0:0	4	;
+water	276:12	0:0	4	chans_out
+op	276:21	0:0	4	[
+water	276:22	0:0	4	4
+op	276:23	0:0	4	]
+op	276:25	0:0	4	=
+water	276:27	0:0	4	AOUT_CHAN_RIGHT
+water	276:42	0:0	4	;
+water	277:12	0:0	4	chans_out
+op	277:21	0:0	4	[
+water	277:22	0:0	4	5
+op	277:23	0:0	4	]
+op	277:25	0:0	4	=
+water	277:27	0:0	4	AOUT_CHAN_REARLEFT
+water	277:45	0:0	4	;
+water	278:12	0:0	4	chans_out
+op	278:21	0:0	4	[
+water	278:22	0:0	4	6
+op	278:23	0:0	4	]
+op	278:25	0:0	4	=
+water	278:27	0:0	4	AOUT_CHAN_REARCENTER
+water	278:47	0:0	4	;
+water	279:12	0:0	4	chans_out
+op	279:21	0:0	4	[
+water	279:22	0:0	4	7
+op	279:23	0:0	4	]
+op	279:25	0:0	4	=
+water	279:27	0:0	4	AOUT_CHAN_REARRIGHT
+water	279:46	0:0	4	;
+water	280:12	0:0	4	chans_out
+op	280:21	0:0	4	[
+water	280:22	0:0	4	8
+op	280:23	0:0	4	]
+op	280:25	0:0	4	=
+water	280:27	0:0	4	AOUT_CHAN_LFE
+water	280:40	0:0	4	;
+water	281:12	0:0	4	p_aout
+op	281:18	0:0	4	->
+water	281:20	0:0	4	sys
+op	281:23	0:0	4	->
+water	281:25	0:0	4	chans_to_reorder
+op	281:42	0:0	4	=
+call	281:44	281:135	4	aout_CheckChannelReorder
+arg	281:69	281:73	5	NULL
+water	281:69	0:0	6	NULL
+arg	281:75	281:84	5	chans_out
+water	281:75	0:0	6	chans_out
+arg	281:86	281:110	5	fmt->i_physical_channels
+water	281:86	0:0	6	fmt
+op	281:89	0:0	6	->
+water	281:91	0:0	6	i_physical_channels
+arg	281:112	281:135	5	p_aout->sys->chan_table
+water	281:112	0:0	6	p_aout
+op	281:118	0:0	6	->
+water	281:120	0:0	6	sys
+op	281:123	0:0	6	->
+water	281:125	0:0	6	chan_table
+water	281:136	0:0	4	;
+if	282:12	283:75	4	(p_aout -> sys -> chans_to_reorder)
+cond	282:16	282:29	5	p_aout -> sys -> chans_to_reorder
+water	282:16	0:0	6	p_aout
+op	282:22	0:0	6	->
+water	282:24	0:0	6	sys
+op	282:27	0:0	6	->
+water	282:29	0:0	6	chans_to_reorder
+stmts	283:16	283:75	5	
+call	283:16	283:74	6	msg_Dbg
+arg	283:24	283:30	7	p_aout
+water	283:24	0:0	8	p_aout
+arg	283:32	283:74	7	"channel reordering needed for 8.1 output"
+water	283:32	0:0	8	"channel reordering needed for 8.1 output"
+water	283:75	0:0	6	;
+break	285:12	285:17	4	
+water	286:4	0:0	4	}
+water	288:4	0:0	2	DeviceFormat
+op	288:16	0:0	2	.
+water	288:17	0:0	2	mSampleRate
+op	288:29	0:0	2	=
+water	288:31	0:0	2	fmt
+op	288:34	0:0	2	->
+water	288:36	0:0	2	i_rate
+water	288:42	0:0	2	;
+water	289:4	0:0	2	DeviceFormat
+op	289:16	0:0	2	.
+water	289:17	0:0	2	mFormatID
+op	289:27	0:0	2	=
+water	289:29	0:0	2	kAudioFormatLinearPCM
+water	289:50	0:0	2	;
+water	290:4	0:0	2	p_sys
+op	290:9	0:0	2	->
+water	290:11	0:0	2	i_rate
+op	290:18	0:0	2	=
+water	290:20	0:0	2	fmt
+op	290:23	0:0	2	->
+water	290:25	0:0	2	i_rate
+water	290:31	0:0	2	;
+water	292:4	0:0	2	fmt
+op	292:7	0:0	2	->
+water	292:9	0:0	2	i_format
+op	292:18	0:0	2	=
+water	292:20	0:0	2	VLC_CODEC_FL32
+water	292:34	0:0	2	;
+water	293:4	0:0	2	DeviceFormat
+op	293:16	0:0	2	.
+water	293:17	0:0	2	mFormatFlags
+op	293:30	0:0	2	=
+water	293:32	0:0	2	kAudioFormatFlagsNativeFloatPacked
+water	293:66	0:0	2	;
+water	294:4	0:0	2	DeviceFormat
+op	294:16	0:0	2	.
+water	294:17	0:0	2	mBitsPerChannel
+op	294:33	0:0	2	=
+water	294:35	0:0	2	32
+water	294:37	0:0	2	;
+water	295:4	0:0	2	DeviceFormat
+op	295:16	0:0	2	.
+water	295:17	0:0	2	mChannelsPerFrame
+op	295:35	0:0	2	=
+call	295:37	295:62	2	aout_FormatNbChannels
+arg	295:59	295:62	3	fmt
+water	295:59	0:0	4	fmt
+water	295:63	0:0	2	;
+water	297:4	0:0	2	DeviceFormat
+op	297:16	0:0	2	.
+water	297:17	0:0	2	mFramesPerPacket
+op	297:34	0:0	2	=
+water	297:36	0:0	2	1
+water	297:37	0:0	2	;
+water	298:4	0:0	2	DeviceFormat
+op	298:16	0:0	2	.
+water	298:17	0:0	2	mBytesPerFrame
+op	298:32	0:0	2	=
+water	298:34	0:0	2	DeviceFormat
+op	298:46	0:0	2	.
+water	298:47	0:0	2	mBitsPerChannel
+op	298:63	0:0	2	*
+water	298:65	0:0	2	DeviceFormat
+op	298:77	0:0	2	.
+water	298:78	0:0	2	mChannelsPerFrame
+op	298:96	0:0	2	/
+water	298:98	0:0	2	8
+water	298:99	0:0	2	;
+water	299:4	0:0	2	DeviceFormat
+op	299:16	0:0	2	.
+water	299:17	0:0	2	mBytesPerPacket
+op	299:33	0:0	2	=
+water	299:35	0:0	2	DeviceFormat
+op	299:47	0:0	2	.
+water	299:48	0:0	2	mBytesPerFrame
+op	299:63	0:0	2	*
+water	299:65	0:0	2	DeviceFormat
+op	299:77	0:0	2	.
+water	299:78	0:0	2	mFramesPerPacket
+water	299:94	0:0	2	;
+water	301:4	0:0	2	i_param_size
+op	301:17	0:0	2	=
+op	301:19	0:0	2	sizeof
+water	301:25	0:0	2	(
+water	301:26	0:0	2	AudioStreamBasicDescription
+water	301:53	0:0	2	)
+water	301:54	0:0	2	;
+call	302:4	307:48	2	verify_noerr
+arg	302:17	307:48	3	AudioUnitSetProperty(p_sys->au_unit,kAudioUnitProperty_StreamFormat,kAudioUnitScope_Input,0,&DeviceFormat,i_param_size)
+call	302:17	307:47	4	AudioUnitSetProperty
+arg	302:38	302:52	5	p_sys->au_unit
+water	302:38	0:0	6	p_sys
+op	302:43	0:0	6	->
+water	302:45	0:0	6	au_unit
+arg	303:35	303:66	5	kAudioUnitProperty_StreamFormat
+water	303:35	0:0	6	kAudioUnitProperty_StreamFormat
+arg	304:35	304:56	5	kAudioUnitScope_Input
+water	304:35	0:0	6	kAudioUnitScope_Input
+arg	305:35	305:36	5	0
+water	305:35	0:0	6	0
+arg	306:35	306:48	5	&DeviceFormat
+op	306:35	0:0	6	&
+water	306:36	0:0	6	DeviceFormat
+arg	307:35	307:47	5	i_param_size
+water	307:35	0:0	6	i_param_size
+water	307:49	0:0	2	;
+call	308:4	308:78	2	msg_Dbg
+arg	308:12	308:18	3	p_aout
+water	308:12	0:0	4	p_aout
+arg	308:20	308:78	3	STREAM_FORMAT_MSG("we set the AU format: ",DeviceFormat)
+call	308:20	308:77	4	STREAM_FORMAT_MSG
+arg	308:38	308:63	5	"we set the AU format: "
+water	308:38	0:0	6	"we set the AU format: "
+arg	308:65	308:77	5	DeviceFormat
+water	308:65	0:0	6	DeviceFormat
+water	308:79	0:0	2	;
+call	310:4	315:49	2	verify_noerr
+arg	310:17	315:49	3	AudioUnitGetProperty(p_sys->au_unit,kAudioUnitProperty_StreamFormat,kAudioUnitScope_Input,0,&DeviceFormat,&i_param_size)
+call	310:17	315:48	4	AudioUnitGetProperty
+arg	310:38	310:52	5	p_sys->au_unit
+water	310:38	0:0	6	p_sys
+op	310:43	0:0	6	->
+water	310:45	0:0	6	au_unit
+arg	311:35	311:66	5	kAudioUnitProperty_StreamFormat
+water	311:35	0:0	6	kAudioUnitProperty_StreamFormat
+arg	312:35	312:56	5	kAudioUnitScope_Input
+water	312:35	0:0	6	kAudioUnitScope_Input
+arg	313:35	313:36	5	0
+water	313:35	0:0	6	0
+arg	314:35	314:48	5	&DeviceFormat
+op	314:35	0:0	6	&
+water	314:36	0:0	6	DeviceFormat
+arg	315:35	315:48	5	&i_param_size
+op	315:35	0:0	6	&
+water	315:36	0:0	6	i_param_size
+water	315:50	0:0	2	;
+call	316:4	316:84	2	msg_Dbg
+arg	316:12	316:18	3	p_aout
+water	316:12	0:0	4	p_aout
+arg	316:20	316:84	3	STREAM_FORMAT_MSG("the actual set AU format is ",DeviceFormat)
+call	316:20	316:83	4	STREAM_FORMAT_MSG
+arg	316:38	316:69	5	"the actual set AU format is "
+water	316:38	0:0	6	"the actual set AU format is "
+arg	316:71	316:83	5	DeviceFormat
+water	316:71	0:0	6	DeviceFormat
+water	316:85	0:0	2	;
+call	318:4	318:26	2	aout_FormatPrepare
+arg	318:23	318:26	3	fmt
+water	318:23	0:0	4	fmt
+water	318:27	0:0	2	;
+water	320:4	0:0	2	input
+op	320:9	0:0	2	.
+water	320:10	0:0	2	inputProc
+op	320:20	0:0	2	=
+water	320:22	0:0	2	(
+water	320:23	0:0	2	AURenderCallback
+water	320:39	0:0	2	)
+water	320:41	0:0	2	RenderCallbackAnalog
+water	320:61	0:0	2	;
+water	321:4	0:0	2	input
+op	321:9	0:0	2	.
+water	321:10	0:0	2	inputProcRefCon
+op	321:26	0:0	2	=
+water	321:28	0:0	2	p_aout
+water	321:34	0:0	2	;
+call	322:4	325:53	2	verify_noerr
+arg	322:17	325:53	3	AudioUnitSetProperty(p_sys->au_unit,kAudioUnitProperty_SetRenderCallback,kAudioUnitScope_Input,0,&input,sizeof(input))
+call	322:17	325:52	4	AudioUnitSetProperty
+arg	322:38	322:52	5	p_sys->au_unit
+water	322:38	0:0	6	p_sys
+op	322:43	0:0	6	->
+water	322:45	0:0	6	au_unit
+arg	323:28	323:64	5	kAudioUnitProperty_SetRenderCallback
+water	323:28	0:0	6	kAudioUnitProperty_SetRenderCallback
+arg	324:28	324:49	5	kAudioUnitScope_Input
+water	324:28	0:0	6	kAudioUnitScope_Input
+arg	325:28	325:29	5	0
+water	325:28	0:0	6	0
+arg	325:31	325:37	5	&input
+op	325:31	0:0	6	&
+water	325:32	0:0	6	input
+arg	325:39	325:52	5	sizeof(input)
+op	325:39	0:0	6	sizeof
+water	325:45	0:0	6	(
+water	325:46	0:0	6	input
+water	325:51	0:0	6	)
+water	325:54	0:0	2	;
+call	327:4	330:67	2	verify_noerr
+arg	327:17	330:67	3	AudioUnitSetProperty(p_sys->au_unit,kAudioUnitProperty_AudioChannelLayout,kAudioUnitScope_Input,0,&input_layout,sizeof(input_layout))
+call	327:17	330:66	4	AudioUnitSetProperty
+arg	327:38	327:52	5	p_sys->au_unit
+water	327:38	0:0	6	p_sys
+op	327:43	0:0	6	->
+water	327:45	0:0	6	au_unit
+arg	328:28	328:65	5	kAudioUnitProperty_AudioChannelLayout
+water	328:28	0:0	6	kAudioUnitProperty_AudioChannelLayout
+arg	329:28	329:49	5	kAudioUnitScope_Input
+water	329:28	0:0	6	kAudioUnitScope_Input
+arg	330:28	330:29	5	0
+water	330:28	0:0	6	0
+arg	330:31	330:44	5	&input_layout
+op	330:31	0:0	6	&
+water	330:32	0:0	6	input_layout
+arg	330:46	330:66	5	sizeof(input_layout)
+op	330:46	0:0	6	sizeof
+water	330:52	0:0	6	(
+water	330:53	0:0	6	input_layout
+water	330:65	0:0	6	)
+water	330:68	0:0	2	;
+call	332:4	332:52	2	verify_noerr
+arg	332:17	332:52	3	AudioUnitInitialize(p_sys->au_unit)
+call	332:17	332:51	4	AudioUnitInitialize
+arg	332:37	332:51	5	p_sys->au_unit
+water	332:37	0:0	6	p_sys
+op	332:42	0:0	6	->
+water	332:44	0:0	6	au_unit
+water	332:53	0:0	2	;
+call	334:4	335:61	2	TPCircularBufferInit
+arg	334:25	334:48	3	&p_sys->circular_buffer
+op	334:25	0:0	4	&
+water	334:26	0:0	4	p_sys
+op	334:31	0:0	4	->
+water	334:33	0:0	4	circular_buffer
+arg	334:50	335:61	3	AUDIO_BUFFER_SIZE_IN_SECONDS*fmt->i_rate*fmt->i_bytes_per_frame
+water	334:50	0:0	4	AUDIO_BUFFER_SIZE_IN_SECONDS
+op	334:79	0:0	4	*
+water	335:25	0:0	4	fmt
+op	335:28	0:0	4	->
+water	335:30	0:0	4	i_rate
+op	335:37	0:0	4	*
+water	335:39	0:0	4	fmt
+op	335:42	0:0	4	->
+water	335:44	0:0	4	i_bytes_per_frame
+water	335:62	0:0	2	;
+call	336:4	336:53	2	verify_noerr
+arg	336:17	336:53	3	AudioOutputUnitStart(p_sys->au_unit)
+call	336:17	336:52	4	AudioOutputUnitStart
+arg	336:38	336:52	5	p_sys->au_unit
+water	336:38	0:0	6	p_sys
+op	336:43	0:0	6	->
+water	336:45	0:0	6	au_unit
+water	336:54	0:0	2	;
+call	338:4	338:37	2	VolumeSet
+arg	338:14	338:20	3	p_aout
+water	338:14	0:0	4	p_aout
+arg	338:22	338:37	3	p_sys->f_volume
+water	338:22	0:0	4	p_sys
+op	338:27	0:0	4	->
+water	338:29	0:0	4	f_volume
+water	338:38	0:0	2	;
+call	339:4	339:33	2	MuteSet
+arg	339:12	339:18	3	p_aout
+water	339:12	0:0	4	p_aout
+arg	339:20	339:33	3	p_sys->b_mute
+water	339:20	0:0	4	p_sys
+op	339:25	0:0	4	->
+water	339:27	0:0	4	b_mute
+water	339:34	0:0	2	;
+return	340:4	340:15	2	true
+water	340:11	0:0	3	true

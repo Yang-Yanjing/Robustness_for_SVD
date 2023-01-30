@@ -1,0 +1,363 @@
+func	2:0	79:0	0	static int	ProcessInitialHeader
+params	2:31	0:0	1	
+param	2:33	2:49	2	decoder_t *	p_dec
+param	2:51	2:75	2	ogg_packet *	p_oggpacket
+stmnts	0:0	78:22	1	
+decl	4:4	4:39	2	decoder_sys_t	*p_sys
+op	4:25	0:0	2	=
+water	4:27	0:0	2	p_dec
+op	4:32	0:0	2	->
+water	4:34	0:0	2	p_sys
+decl	5:4	5:17	2	void	*p_state
+decl	6:4	6:25	2	SpeexHeader	*p_header
+decl	7:4	7:27	2	const SpeexMode	*p_mode
+decl	8:4	8:26	2	SpeexCallback	callback
+water	9:4	0:0	2	p_sys
+op	9:9	0:0	2	->
+water	9:11	0:0	2	p_header
+op	9:20	0:0	2	=
+water	9:22	0:0	2	p_header
+op	9:31	0:0	2	=
+call	10:8	11:51	2	speex_packet_to_header
+arg	10:32	10:59	3	(char*)p_oggpacket->packet
+water	10:32	0:0	4	(
+water	10:33	0:0	4	char
+op	10:38	0:0	4	*
+water	10:39	0:0	4	)
+water	10:40	0:0	4	p_oggpacket
+op	10:51	0:0	4	->
+water	10:53	0:0	4	packet
+arg	11:32	11:51	3	p_oggpacket->bytes
+water	11:32	0:0	4	p_oggpacket
+op	11:43	0:0	4	->
+water	11:45	0:0	4	bytes
+water	11:52	0:0	2	;
+if	12:4	16:4	2	(! p_header)
+cond	12:8	12:9	3	! p_header
+op	12:8	0:0	4	!
+water	12:9	0:0	4	p_header
+stmts	13:4	16:4	3	
+water	13:4	0:0	4	{
+call	14:8	14:51	4	msg_Err
+arg	14:17	14:22	5	p_dec
+water	14:17	0:0	6	p_dec
+arg	14:24	14:51	5	"cannot read Speex header"
+water	14:24	0:0	6	"cannot read Speex header"
+water	14:52	0:0	4	;
+return	15:8	15:27	4	VLC_EGENERIC
+water	15:15	0:0	5	VLC_EGENERIC
+water	16:4	0:0	4	}
+if	17:4	22:4	2	(p_header -> mode >= SPEEX_NB_MODES || p_header -> mode < 0)
+cond	17:8	17:61	3	p_header -> mode >= SPEEX_NB_MODES || p_header -> mode < 0
+water	17:8	0:0	4	p_header
+op	17:16	0:0	4	->
+water	17:18	0:0	4	mode
+op	17:23	0:0	4	>=
+water	17:26	0:0	4	SPEEX_NB_MODES
+op	17:41	0:0	4	||
+water	17:44	0:0	4	p_header
+op	17:52	0:0	4	->
+water	17:54	0:0	4	mode
+op	17:59	0:0	4	<
+water	17:61	0:0	4	0
+stmts	18:4	22:4	3	
+water	18:4	0:0	4	{
+call	19:8	20:61	4	msg_Err
+arg	19:17	19:22	5	p_dec
+water	19:17	0:0	6	p_dec
+arg	19:24	20:44	5	"mode number %d does not (yet/any longer) exist in ""this version of libspeex."
+water	19:24	0:0	6	"mode number %d does not (yet/any longer) exist in "
+water	20:17	0:0	6	"this version of libspeex."
+arg	20:46	20:61	5	p_header->mode
+water	20:46	0:0	6	p_header
+op	20:54	0:0	6	->
+water	20:56	0:0	6	mode
+water	20:62	0:0	4	;
+return	21:8	21:27	4	VLC_EGENERIC
+water	21:15	0:0	5	VLC_EGENERIC
+water	22:4	0:0	4	}
+water	23:4	0:0	2	p_mode
+op	23:11	0:0	2	=
+water	23:13	0:0	2	speex_mode_list
+op	23:28	0:0	2	[
+water	23:29	0:0	2	p_header
+op	23:37	0:0	2	->
+water	23:39	0:0	2	mode
+op	23:43	0:0	2	]
+water	23:44	0:0	2	;
+if	24:4	25:27	2	(p_mode == NULL)
+cond	24:8	24:18	3	p_mode == NULL
+water	24:8	0:0	4	p_mode
+op	24:15	0:0	4	==
+water	24:18	0:0	4	NULL
+stmts	25:8	25:27	3	
+return	25:8	25:27	4	VLC_EGENERIC
+water	25:15	0:0	5	VLC_EGENERIC
+if	26:4	32:4	2	(p_header -> speex_version_id > 1)
+cond	26:8	26:37	3	p_header -> speex_version_id > 1
+water	26:8	0:0	4	p_header
+op	26:16	0:0	4	->
+water	26:18	0:0	4	speex_version_id
+op	26:35	0:0	4	>
+water	26:37	0:0	4	1
+stmts	27:4	32:4	3	
+water	27:4	0:0	4	{
+call	28:8	30:44	4	msg_Err
+arg	28:17	28:22	5	p_dec
+water	28:17	0:0	6	p_dec
+arg	28:24	29:69	5	"this file was encoded with Speex bit-stream ""version %d which is not supported by this decoder."
+water	28:24	0:0	6	"this file was encoded with Speex bit-stream "
+water	29:17	0:0	6	"version %d which is not supported by this decoder."
+arg	30:17	30:44	5	p_header->speex_version_id
+water	30:17	0:0	6	p_header
+op	30:25	0:0	6	->
+water	30:27	0:0	6	speex_version_id
+water	30:45	0:0	4	;
+return	31:8	31:27	4	VLC_EGENERIC
+water	31:15	0:0	5	VLC_EGENERIC
+water	32:4	0:0	4	}
+if	33:4	37:4	2	(p_mode -> bitstream_version < p_header -> mode_bitstream_version)
+cond	33:8	33:46	3	p_mode -> bitstream_version < p_header -> mode_bitstream_version
+water	33:8	0:0	4	p_mode
+op	33:14	0:0	4	->
+water	33:16	0:0	4	bitstream_version
+op	33:34	0:0	4	<
+water	33:36	0:0	4	p_header
+op	33:44	0:0	4	->
+water	33:46	0:0	4	mode_bitstream_version
+stmts	34:4	37:4	3	
+water	34:4	0:0	4	{
+call	35:8	35:70	4	msg_Err
+arg	35:17	35:22	5	p_dec
+water	35:17	0:0	6	p_dec
+arg	35:24	35:70	5	"file encoded with a newer version of Speex."
+water	35:24	0:0	6	"file encoded with a newer version of Speex."
+water	35:71	0:0	4	;
+return	36:8	36:27	4	VLC_EGENERIC
+water	36:15	0:0	5	VLC_EGENERIC
+water	37:4	0:0	4	}
+if	38:4	42:4	2	(p_mode -> bitstream_version > p_header -> mode_bitstream_version)
+cond	38:8	38:46	3	p_mode -> bitstream_version > p_header -> mode_bitstream_version
+water	38:8	0:0	4	p_mode
+op	38:14	0:0	4	->
+water	38:16	0:0	4	bitstream_version
+op	38:34	0:0	4	>
+water	38:36	0:0	4	p_header
+op	38:44	0:0	4	->
+water	38:46	0:0	4	mode_bitstream_version
+stmts	39:4	42:4	3	
+water	39:4	0:0	4	{
+call	40:8	40:71	4	msg_Err
+arg	40:17	40:22	5	p_dec
+water	40:17	0:0	6	p_dec
+arg	40:24	40:71	5	"file encoded with an older version of Speex."
+water	40:24	0:0	6	"file encoded with an older version of Speex."
+water	40:72	0:0	4	;
+return	41:8	41:27	4	VLC_EGENERIC
+water	41:15	0:0	5	VLC_EGENERIC
+water	42:4	0:0	4	}
+call	43:4	46:44	2	msg_Dbg
+arg	43:13	43:18	3	p_dec
+water	43:13	0:0	4	p_dec
+arg	43:20	43:58	3	"Speex %d Hz audio using %s mode %s%s"
+water	43:20	0:0	4	"Speex %d Hz audio using %s mode %s%s"
+arg	44:13	44:27	3	p_header->rate
+water	44:13	0:0	4	p_header
+op	44:21	0:0	4	->
+water	44:23	0:0	4	rate
+arg	44:29	44:45	3	p_mode->modeName
+water	44:29	0:0	4	p_mode
+op	44:35	0:0	4	->
+water	44:37	0:0	4	modeName
+arg	45:13	45:67	3	(p_header->nb_channels==1)?" (mono":" (stereo"
+water	45:13	0:0	4	(
+water	45:15	0:0	4	p_header
+op	45:23	0:0	4	->
+water	45:25	0:0	4	nb_channels
+op	45:37	0:0	4	==
+water	45:40	0:0	4	1
+water	45:42	0:0	4	)
+water	45:44	0:0	4	?
+water	45:46	0:0	4	" (mono"
+water	45:55	0:0	4	:
+water	45:57	0:0	4	" (stereo"
+arg	46:13	46:44	3	p_header->vbr?", VBR)":")"
+water	46:13	0:0	4	p_header
+op	46:21	0:0	4	->
+water	46:23	0:0	4	vbr
+water	46:27	0:0	4	?
+water	46:29	0:0	4	", VBR)"
+water	46:38	0:0	4	:
+water	46:40	0:0	4	")"
+water	46:45	0:0	2	;
+call	48:4	48:34	2	speex_bits_init
+arg	48:21	48:34	3	&p_sys->bits
+op	48:21	0:0	4	&
+water	48:22	0:0	4	p_sys
+op	48:27	0:0	4	->
+water	48:29	0:0	4	bits
+water	48:35	0:0	2	;
+water	49:4	0:0	2	p_sys
+op	49:9	0:0	2	->
+water	49:11	0:0	2	p_state
+op	49:19	0:0	2	=
+water	49:21	0:0	2	p_state
+op	49:29	0:0	2	=
+call	49:31	49:58	2	speex_decoder_init
+arg	49:51	49:58	3	p_mode
+water	49:51	0:0	4	p_mode
+water	49:59	0:0	2	;
+if	50:4	54:4	2	(! p_state)
+cond	50:8	50:9	3	! p_state
+op	50:8	0:0	4	!
+water	50:9	0:0	4	p_state
+stmts	51:4	54:4	3	
+water	51:4	0:0	4	{
+call	52:8	52:56	4	msg_Err
+arg	52:17	52:22	5	p_dec
+water	52:17	0:0	6	p_dec
+arg	52:24	52:56	5	"decoder initialization failed"
+water	52:24	0:0	6	"decoder initialization failed"
+water	52:57	0:0	4	;
+return	53:8	53:27	4	VLC_EGENERIC
+water	53:15	0:0	5	VLC_EGENERIC
+water	54:4	0:0	4	}
+if	55:4	63:4	2	(p_header -> nb_channels == 2)
+cond	55:8	55:33	3	p_header -> nb_channels == 2
+water	55:8	0:0	4	p_header
+op	55:16	0:0	4	->
+water	55:18	0:0	4	nb_channels
+op	55:30	0:0	4	==
+water	55:33	0:0	4	2
+stmts	56:4	63:4	3	
+water	56:4	0:0	4	{
+decl	57:8	57:57	4	SpeexStereoState	stereo
+op	57:32	0:0	4	=
+water	57:34	0:0	4	SPEEX_STEREO_STATE_INIT
+water	58:8	0:0	4	p_sys
+op	58:13	0:0	4	->
+water	58:15	0:0	4	stereo
+op	58:22	0:0	4	=
+water	58:24	0:0	4	stereo
+water	58:30	0:0	4	;
+water	59:8	0:0	4	callback
+op	59:16	0:0	4	.
+water	59:17	0:0	4	callback_id
+op	59:29	0:0	4	=
+water	59:31	0:0	4	SPEEX_INBAND_STEREO
+water	59:50	0:0	4	;
+water	60:8	0:0	4	callback
+op	60:16	0:0	4	.
+water	60:17	0:0	4	func
+op	60:22	0:0	4	=
+water	60:24	0:0	4	speex_std_stereo_request_handler
+water	60:56	0:0	4	;
+water	61:8	0:0	4	callback
+op	61:16	0:0	4	.
+water	61:17	0:0	4	data
+op	61:22	0:0	4	=
+op	61:24	0:0	4	&
+water	61:25	0:0	4	p_sys
+op	61:30	0:0	4	->
+water	61:32	0:0	4	stereo
+water	61:38	0:0	4	;
+call	62:8	62:65	4	speex_decoder_ctl
+arg	62:27	62:34	5	p_state
+water	62:27	0:0	6	p_state
+arg	62:36	62:53	5	SPEEX_SET_HANDLER
+water	62:36	0:0	6	SPEEX_SET_HANDLER
+arg	62:55	62:65	5	&callback
+op	62:55	0:0	6	&
+water	62:56	0:0	6	callback
+water	62:66	0:0	4	;
+water	63:4	0:0	4	}
+if	64:4	70:4	2	(p_header -> nb_channels <= 0 || p_header -> nb_channels > 5)
+cond	64:8	65:32	3	p_header -> nb_channels <= 0 || p_header -> nb_channels > 5
+water	64:8	0:0	4	p_header
+op	64:16	0:0	4	->
+water	64:18	0:0	4	nb_channels
+op	64:30	0:0	4	<=
+water	64:33	0:0	4	0
+op	64:35	0:0	4	||
+water	65:8	0:0	4	p_header
+op	65:16	0:0	4	->
+water	65:18	0:0	4	nb_channels
+op	65:30	0:0	4	>
+water	65:32	0:0	4	5
+stmts	66:4	70:4	3	
+water	66:4	0:0	4	{
+call	67:8	68:39	4	msg_Err
+arg	67:17	67:22	5	p_dec
+water	67:17	0:0	6	p_dec
+arg	67:24	67:78	5	"invalid number of channels (not between 1 and 5): %i"
+water	67:24	0:0	6	"invalid number of channels (not between 1 and 5): %i"
+arg	68:17	68:39	5	p_header->nb_channels
+water	68:17	0:0	6	p_header
+op	68:25	0:0	6	->
+water	68:27	0:0	6	nb_channels
+water	68:40	0:0	4	;
+return	69:8	69:27	4	VLC_EGENERIC
+water	69:15	0:0	5	VLC_EGENERIC
+water	70:4	0:0	4	}
+water	72:4	0:0	2	p_dec
+op	72:9	0:0	2	->
+water	72:11	0:0	2	fmt_out
+op	72:18	0:0	2	.
+water	72:19	0:0	2	audio
+op	72:24	0:0	2	.
+water	72:25	0:0	2	i_physical_channels
+op	72:45	0:0	2	=
+water	73:8	0:0	2	p_dec
+op	73:13	0:0	2	->
+water	73:15	0:0	2	fmt_out
+op	73:22	0:0	2	.
+water	73:23	0:0	2	audio
+op	73:28	0:0	2	.
+water	73:29	0:0	2	i_original_channels
+op	73:49	0:0	2	=
+water	74:12	0:0	2	pi_channels_maps
+op	74:28	0:0	2	[
+water	74:29	0:0	2	p_header
+op	74:37	0:0	2	->
+water	74:39	0:0	2	nb_channels
+op	74:50	0:0	2	]
+water	74:51	0:0	2	;
+water	75:4	0:0	2	p_dec
+op	75:9	0:0	2	->
+water	75:11	0:0	2	fmt_out
+op	75:18	0:0	2	.
+water	75:19	0:0	2	audio
+op	75:24	0:0	2	.
+water	75:25	0:0	2	i_channels
+op	75:36	0:0	2	=
+water	75:38	0:0	2	p_header
+op	75:46	0:0	2	->
+water	75:48	0:0	2	nb_channels
+water	75:59	0:0	2	;
+water	76:4	0:0	2	p_dec
+op	76:9	0:0	2	->
+water	76:11	0:0	2	fmt_out
+op	76:18	0:0	2	.
+water	76:19	0:0	2	audio
+op	76:24	0:0	2	.
+water	76:25	0:0	2	i_rate
+op	76:32	0:0	2	=
+water	76:34	0:0	2	p_header
+op	76:42	0:0	2	->
+water	76:44	0:0	2	rate
+water	76:48	0:0	2	;
+call	77:4	77:51	2	date_Init
+arg	77:15	77:31	3	&p_sys->end_date
+op	77:15	0:0	4	&
+water	77:16	0:0	4	p_sys
+op	77:21	0:0	4	->
+water	77:23	0:0	4	end_date
+arg	77:33	77:47	3	p_header->rate
+water	77:33	0:0	4	p_header
+op	77:41	0:0	4	->
+water	77:43	0:0	4	rate
+arg	77:49	77:51	3	1
+water	77:49	0:0	4	1
+water	77:52	0:0	2	;
+return	78:4	78:22	2	VLC_SUCCESS
+water	78:11	0:0	3	VLC_SUCCESS

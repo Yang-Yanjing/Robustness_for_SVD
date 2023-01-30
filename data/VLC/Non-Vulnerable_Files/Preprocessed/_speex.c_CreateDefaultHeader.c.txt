@@ -1,0 +1,204 @@
+func	2:0	47:0	0	static int	CreateDefaultHeader
+params	2:30	0:0	1	
+param	2:32	2:49	2	decoder_t *	p_dec
+stmnts	0:0	46:14	1	
+decl	4:4	4:24	2	ogg_packet	oggpacket
+decl	5:4	5:57	2	SpeexHeader	*p_header
+op	5:26	0:0	2	=
+call	5:28	5:56	3	malloc
+arg	5:36	5:56	4	sizeof(SpeexHeader)
+op	5:36	0:0	5	sizeof
+water	5:42	0:0	5	(
+water	5:43	0:0	5	SpeexHeader
+water	5:54	0:0	5	)
+if	6:4	7:25	2	(! p_header)
+cond	6:8	6:9	3	! p_header
+op	6:8	0:0	4	!
+water	6:9	0:0	4	p_header
+stmts	7:8	7:25	3	
+return	7:8	7:25	4	VLC_ENOMEM
+water	7:15	0:0	5	VLC_ENOMEM
+decl	8:4	8:47	2	const int	rate
+op	8:19	0:0	2	=
+water	8:21	0:0	2	p_dec
+op	8:26	0:0	2	->
+water	8:28	0:0	2	fmt_in
+op	8:34	0:0	2	.
+water	8:35	0:0	2	audio
+op	8:40	0:0	2	.
+water	8:41	0:0	2	i_rate
+water	9:4	0:0	2	const
+water	9:10	0:0	2	unsigned
+water	9:19	0:0	2	i_mode
+op	9:26	0:0	2	=
+water	9:28	0:0	2	(
+water	9:29	0:0	2	rate
+op	9:34	0:0	2	/
+water	9:36	0:0	2	8000
+water	9:40	0:0	2	)
+op	9:42	0:0	2	>>
+water	9:45	0:0	2	1
+water	9:46	0:0	2	;
+decl	10:4	10:25	2	const SpeexMode	*mode
+decl	11:4	11:25	2	int	ret
+op	11:12	0:0	2	=
+water	11:14	0:0	2	VLC_SUCCESS
+water	12:4	0:0	2	oggpacket
+op	12:13	0:0	2	.
+water	12:14	0:0	2	packet
+op	12:21	0:0	2	=
+water	12:23	0:0	2	NULL
+water	12:27	0:0	2	;
+switch	13:4	24:4	2	(rate)
+cond	13:12	13:12	3	rate
+water	13:12	0:0	4	rate
+stmts	14:4	24:4	3	
+water	14:4	0:0	4	{
+label	15:8	15:17	4	case 8000 :
+label	16:8	16:18	4	case 16000 :
+label	17:8	17:18	4	case 32000 :
+water	18:12	0:0	4	mode
+op	18:17	0:0	4	=
+call	18:19	18:46	4	speex_lib_get_mode
+arg	18:39	18:46	5	i_mode
+water	18:39	0:0	6	i_mode
+water	18:47	0:0	4	;
+break	19:12	19:17	4	
+label	20:8	20:15	4	default :
+call	21:12	21:55	4	msg_Err
+arg	21:21	21:26	5	p_dec
+water	21:21	0:0	6	p_dec
+arg	21:28	21:48	5	"Unexpected rate %d"
+water	21:28	0:0	6	"Unexpected rate %d"
+arg	21:50	21:55	5	rate
+water	21:50	0:0	6	rate
+water	21:56	0:0	4	;
+water	22:12	0:0	4	ret
+op	22:16	0:0	4	=
+water	22:18	0:0	4	VLC_EGENERIC
+water	22:30	0:0	4	;
+goto	23:12	23:24	4	cleanup
+water	23:17	0:0	5	cleanup
+water	24:4	0:0	4	}
+call	25:4	25:76	2	speex_init_header
+arg	25:23	25:31	3	p_header
+water	25:23	0:0	4	p_header
+arg	25:33	25:37	3	rate
+water	25:33	0:0	4	rate
+arg	25:39	25:69	3	p_dec->fmt_in.audio.i_channels
+water	25:39	0:0	4	p_dec
+op	25:44	0:0	4	->
+water	25:46	0:0	4	fmt_in
+op	25:52	0:0	4	.
+water	25:53	0:0	4	audio
+op	25:58	0:0	4	.
+water	25:59	0:0	4	i_channels
+arg	25:71	25:76	3	mode
+water	25:71	0:0	4	mode
+water	25:77	0:0	2	;
+water	26:4	0:0	2	p_header
+op	26:12	0:0	2	->
+water	26:14	0:0	2	frames_per_packet
+op	26:32	0:0	2	=
+water	26:34	0:0	2	160
+op	26:38	0:0	2	<<
+water	26:41	0:0	2	i_mode
+water	26:47	0:0	2	;
+water	27:4	0:0	2	oggpacket
+op	27:13	0:0	2	.
+water	27:14	0:0	2	packet
+op	27:21	0:0	2	=
+water	27:23	0:0	2	(
+water	27:24	0:0	2	unsigned
+water	27:33	0:0	2	char
+op	27:38	0:0	2	*
+water	27:39	0:0	2	)
+call	27:41	28:37	2	speex_header_to_packet
+arg	27:65	27:73	3	p_header
+water	27:65	0:0	4	p_header
+arg	28:12	28:37	3	(int*)&oggpacket.bytes
+water	28:12	0:0	4	(
+water	28:13	0:0	4	int
+op	28:17	0:0	4	*
+water	28:18	0:0	4	)
+op	28:20	0:0	4	&
+water	28:21	0:0	4	oggpacket
+op	28:30	0:0	4	.
+water	28:31	0:0	4	bytes
+water	28:38	0:0	2	;
+if	29:4	33:4	2	(! oggpacket . packet)
+cond	29:8	29:19	3	! oggpacket . packet
+op	29:8	0:0	4	!
+water	29:9	0:0	4	oggpacket
+op	29:18	0:0	4	.
+water	29:19	0:0	4	packet
+stmts	30:4	33:4	3	
+water	30:4	0:0	4	{
+water	31:8	0:0	4	ret
+op	31:12	0:0	4	=
+water	31:14	0:0	4	VLC_ENOMEM
+water	31:24	0:0	4	;
+goto	32:8	32:20	4	cleanup
+water	32:13	0:0	5	cleanup
+water	33:4	0:0	4	}
+water	34:4	0:0	2	oggpacket
+op	34:13	0:0	2	.
+water	34:14	0:0	2	b_o_s
+op	34:20	0:0	2	=
+water	34:22	0:0	2	1
+water	34:23	0:0	2	;
+water	35:4	0:0	2	oggpacket
+op	35:13	0:0	2	.
+water	35:14	0:0	2	e_o_s
+op	35:20	0:0	2	=
+water	35:22	0:0	2	0
+water	35:23	0:0	2	;
+water	36:4	0:0	2	oggpacket
+op	36:13	0:0	2	.
+water	36:14	0:0	2	granulepos
+op	36:25	0:0	2	=
+op	36:27	0:0	2	-
+water	36:28	0:0	2	1
+water	36:29	0:0	2	;
+water	37:4	0:0	2	oggpacket
+op	37:13	0:0	2	.
+water	37:14	0:0	2	packetno
+op	37:23	0:0	2	=
+water	37:25	0:0	2	0
+water	37:26	0:0	2	;
+water	38:4	0:0	2	ret
+op	38:8	0:0	2	=
+call	38:10	38:50	2	ProcessInitialHeader
+arg	38:32	38:37	3	p_dec
+water	38:32	0:0	4	p_dec
+arg	38:39	38:50	3	&oggpacket
+op	38:39	0:0	4	&
+water	38:40	0:0	4	oggpacket
+water	38:51	0:0	2	;
+if	39:4	42:4	2	(ret != VLC_SUCCESS)
+cond	39:8	39:15	3	ret != VLC_SUCCESS
+water	39:8	0:0	4	ret
+op	39:12	0:0	4	!=
+water	39:15	0:0	4	VLC_SUCCESS
+stmts	40:4	42:4	3	
+water	40:4	0:0	4	{
+call	41:8	41:60	4	msg_Err
+arg	41:17	41:22	5	p_dec
+water	41:17	0:0	6	p_dec
+arg	41:24	41:60	5	"default Speex header is corrupted"
+water	41:24	0:0	6	"default Speex header is corrupted"
+water	41:61	0:0	4	;
+water	42:4	0:0	4	}
+label	43:0	43:7	2	cleanup :
+call	44:4	44:27	2	free
+arg	44:10	44:27	3	oggpacket.packet
+water	44:10	0:0	4	oggpacket
+op	44:19	0:0	4	.
+water	44:20	0:0	4	packet
+water	44:28	0:0	2	;
+call	45:4	45:19	2	free
+arg	45:10	45:19	3	p_header
+water	45:10	0:0	4	p_header
+water	45:20	0:0	2	;
+return	46:4	46:14	2	ret
+water	46:11	0:0	3	ret

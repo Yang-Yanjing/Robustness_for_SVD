@@ -1,0 +1,403 @@
+func	2:0	80:0	0	static void *	ThreadSend
+params	2:23	0:0	1	
+param	2:25	2:36	2	void *	data
+stmnts	0:0	79:15	1	
+decl	9:4	9:35	2	sout_stream_id_sys_t	*id
+op	9:29	0:0	2	=
+water	9:31	0:0	2	data
+water	10:4	0:0	2	unsigned
+water	10:13	0:0	2	i_caching
+op	10:23	0:0	2	=
+water	10:25	0:0	2	id
+op	10:27	0:0	2	->
+water	10:29	0:0	2	i_caching
+water	10:38	0:0	2	;
+for	11:4	78:4	2	(;;)
+forinit	11:9	11:9	3	;
+water	11:9	0:0	4	;
+cond	0:0	0:0	3	
+forexpr	0:0	0:0	3	
+stmts	12:4	78:4	3	
+water	12:4	0:0	4	{
+decl	13:8	13:50	4	block_t	*out
+op	13:21	0:0	4	=
+call	13:23	13:49	5	block_FifoGet
+arg	13:38	13:49	6	id->p_fifo
+water	13:38	0:0	7	id
+op	13:40	0:0	7	->
+water	13:42	0:0	7	p_fifo
+call	14:8	14:31	4	block_cleanup_push
+arg	14:28	14:31	5	out
+water	14:28	0:0	6	out
+water	14:32	0:0	4	;
+if	16:8	33:8	4	(id -> srtp)
+cond	16:12	16:16	5	id -> srtp
+water	16:12	0:0	6	id
+op	16:14	0:0	6	->
+water	16:16	0:0	6	srtp
+stmts	17:8	33:8	5	
+water	17:8	0:0	6	{
+decl	18:12	18:38	6	size_t	len
+op	18:23	0:0	6	=
+water	18:25	0:0	6	out
+op	18:28	0:0	6	->
+water	18:30	0:0	6	i_buffer
+water	19:12	0:0	6	out
+op	19:16	0:0	6	=
+call	19:18	19:50	6	block_Realloc
+arg	19:33	19:36	7	out
+water	19:33	0:0	8	out
+arg	19:38	19:39	7	0
+water	19:38	0:0	8	0
+arg	19:41	19:50	7	len+10
+water	19:41	0:0	8	len
+op	19:45	0:0	8	+
+water	19:47	0:0	8	10
+water	19:51	0:0	6	;
+water	20:12	0:0	6	out
+op	20:15	0:0	6	->
+water	20:17	0:0	6	i_buffer
+op	20:26	0:0	6	=
+water	20:28	0:0	6	len
+water	20:31	0:0	6	;
+decl	21:12	21:40	6	int	canc
+op	21:21	0:0	6	=
+call	21:23	21:39	7	vlc_savecancel
+decl	22:12	22:74	6	int	val
+op	22:20	0:0	6	=
+call	22:22	22:73	7	srtp_send
+arg	22:33	22:41	8	id->srtp
+water	22:33	0:0	9	id
+op	22:35	0:0	9	->
+water	22:37	0:0	9	srtp
+arg	22:43	22:56	8	out->p_buffer
+water	22:43	0:0	9	out
+op	22:46	0:0	9	->
+water	22:48	0:0	9	p_buffer
+arg	22:58	22:62	8	&len
+op	22:58	0:0	9	&
+water	22:59	0:0	9	len
+arg	22:64	22:73	8	len+10
+water	22:64	0:0	9	len
+op	22:68	0:0	9	+
+water	22:70	0:0	9	10
+call	23:12	23:35	6	vlc_restorecancel
+arg	23:31	23:35	7	canc
+water	23:31	0:0	8	canc
+water	23:36	0:0	6	;
+if	24:12	30:12	6	(val)
+cond	24:16	24:16	7	val
+water	24:16	0:0	8	val
+stmts	25:12	30:12	7	
+water	25:12	0:0	8	{
+call	26:16	27:45	8	msg_Dbg
+arg	26:25	26:37	9	id->p_stream
+water	26:25	0:0	10	id
+op	26:27	0:0	10	->
+water	26:29	0:0	10	p_stream
+arg	26:39	26:63	9	"SRTP sending error: %s"
+water	26:39	0:0	10	"SRTP sending error: %s"
+arg	27:25	27:45	9	vlc_strerror_c(val)
+call	27:25	27:43	10	vlc_strerror_c
+arg	27:40	27:43	11	val
+water	27:40	0:0	12	val
+water	27:46	0:0	8	;
+call	28:16	28:35	8	block_Release
+arg	28:31	28:35	9	out
+water	28:31	0:0	10	out
+water	28:36	0:0	8	;
+water	29:16	0:0	8	out
+op	29:20	0:0	8	=
+water	29:22	0:0	8	NULL
+water	29:26	0:0	8	;
+water	30:12	0:0	8	}
+else	31:12	32:35	6
+stmts	32:16	32:35	7	
+water	32:16	0:0	8	out
+op	32:19	0:0	8	->
+water	32:21	0:0	8	i_buffer
+op	32:30	0:0	8	=
+water	32:32	0:0	8	len
+water	32:35	0:0	8	;
+water	33:8	0:0	6	}
+if	34:8	35:42	4	(out)
+cond	34:12	34:12	5	out
+water	34:12	0:0	6	out
+stmts	35:12	35:42	5	
+call	35:12	35:41	6	mwait
+arg	35:19	35:41	7	out->i_dts+i_caching
+water	35:19	0:0	8	out
+op	35:22	0:0	8	->
+water	35:24	0:0	8	i_dts
+op	35:30	0:0	8	+
+water	35:32	0:0	8	i_caching
+water	35:42	0:0	6	;
+call	36:8	36:25	4	vlc_cleanup_pop
+water	36:26	0:0	4	;
+if	37:8	38:20	4	(out == NULL)
+cond	37:12	37:19	5	out == NULL
+water	37:12	0:0	6	out
+op	37:16	0:0	6	==
+water	37:19	0:0	6	NULL
+stmts	38:12	38:20	5	
+continue	38:12	38:20	6	
+call	40:8	40:37	4	mwait
+arg	40:15	40:37	5	out->i_dts+i_caching
+water	40:15	0:0	6	out
+op	40:18	0:0	6	->
+water	40:20	0:0	6	i_dts
+op	40:26	0:0	6	+
+water	40:28	0:0	6	i_caching
+water	40:38	0:0	4	;
+call	41:8	41:25	4	vlc_cleanup_pop
+water	41:26	0:0	4	;
+decl	43:8	43:35	4	ssize_t	len
+op	43:20	0:0	4	=
+water	43:22	0:0	4	out
+op	43:25	0:0	4	->
+water	43:27	0:0	4	i_buffer
+decl	44:8	44:36	4	int	canc
+op	44:17	0:0	4	=
+call	44:19	44:35	5	vlc_savecancel
+call	45:8	45:39	4	vlc_mutex_lock
+arg	45:24	45:39	5	&id->lock_sink
+op	45:24	0:0	6	&
+water	45:25	0:0	6	id
+op	45:27	0:0	6	->
+water	45:29	0:0	6	lock_sink
+water	45:40	0:0	4	;
+water	46:8	0:0	4	unsigned
+water	46:17	0:0	4	deadc
+op	46:23	0:0	4	=
+water	46:25	0:0	4	0
+water	46:26	0:0	4	;
+decl	47:8	47:28	4	int	deadv[id->sinkc]
+for	48:8	68:8	4	( int i = 0 ;i < id -> sinkc;i ++)
+forinit	0:0	48:22	5	 int i = 0 ;
+decl	48:13	48:22	6	int	i
+op	48:19	0:0	6	=
+water	48:21	0:0	6	0
+cond	48:24	48:32	5	i < id -> sinkc
+water	48:24	0:0	6	i
+op	48:26	0:0	6	<
+water	48:28	0:0	6	id
+op	48:30	0:0	6	->
+water	48:32	0:0	6	sinkc
+forexpr	48:39	48:40	5	i ++
+water	48:39	0:0	6	i
+op	48:40	0:0	6	++
+stmts	49:8	68:8	5	
+water	49:8	0:0	6	{
+if	51:12	53:50	6	(! id -> srtp)
+cond	51:16	51:21	7	! id -> srtp
+op	51:16	0:0	8	!
+water	51:17	0:0	8	id
+op	51:19	0:0	8	->
+water	51:21	0:0	8	srtp
+stmts	53:16	53:50	7	
+call	53:16	53:49	8	SendRTCP
+arg	53:26	53:43	9	id->sinkv[i].rtcp
+water	53:26	0:0	10	id
+op	53:28	0:0	10	->
+water	53:30	0:0	10	sinkv
+op	53:35	0:0	10	[
+water	53:36	0:0	10	i
+op	53:37	0:0	10	]
+op	53:38	0:0	10	.
+water	53:39	0:0	10	rtcp
+arg	53:45	53:49	9	out
+water	53:45	0:0	10	out
+water	53:50	0:0	8	;
+if	54:12	67:12	6	(send (id -> sinkv [ i ] . rtp_fd ,out -> p_buffer ,len ,0 ) == - 1 && net_errno != EAGAIN && net_errno != EWOULDBLOCK && net_errno != ENOBUFS && net_errno != ENOMEM)
+cond	54:16	56:53	7	send (id -> sinkv [ i ] . rtp_fd ,out -> p_buffer ,len ,0 ) == - 1 && net_errno != EAGAIN && net_errno != EWOULDBLOCK && net_errno != ENOBUFS && net_errno != ENOMEM
+call	54:16	54:65	8	send
+arg	54:22	54:41	9	id->sinkv[i].rtp_fd
+water	54:22	0:0	10	id
+op	54:24	0:0	10	->
+water	54:26	0:0	10	sinkv
+op	54:31	0:0	10	[
+water	54:32	0:0	10	i
+op	54:33	0:0	10	]
+op	54:34	0:0	10	.
+water	54:35	0:0	10	rtp_fd
+arg	54:43	54:56	9	out->p_buffer
+water	54:43	0:0	10	out
+op	54:46	0:0	10	->
+water	54:48	0:0	10	p_buffer
+arg	54:58	54:61	9	len
+water	54:58	0:0	10	len
+arg	54:63	54:65	9	0
+water	54:63	0:0	10	0
+op	54:67	0:0	8	==
+op	54:70	0:0	8	-
+water	54:71	0:0	8	1
+op	55:13	0:0	8	&&
+water	55:16	0:0	8	net_errno
+op	55:26	0:0	8	!=
+water	55:29	0:0	8	EAGAIN
+op	55:36	0:0	8	&&
+water	55:39	0:0	8	net_errno
+op	55:49	0:0	8	!=
+water	55:52	0:0	8	EWOULDBLOCK
+op	56:13	0:0	8	&&
+water	56:16	0:0	8	net_errno
+op	56:26	0:0	8	!=
+water	56:29	0:0	8	ENOBUFS
+op	56:37	0:0	8	&&
+water	56:40	0:0	8	net_errno
+op	56:50	0:0	8	!=
+water	56:53	0:0	8	ENOMEM
+stmts	57:12	67:12	7	
+water	57:12	0:0	8	{
+decl	58:16	58:24	8	int	type
+call	59:16	60:63	8	getsockopt
+arg	59:28	59:47	9	id->sinkv[i].rtp_fd
+water	59:28	0:0	10	id
+op	59:30	0:0	10	->
+water	59:32	0:0	10	sinkv
+op	59:37	0:0	10	[
+water	59:38	0:0	10	i
+op	59:39	0:0	10	]
+op	59:40	0:0	10	.
+water	59:41	0:0	10	rtp_fd
+arg	59:49	59:59	9	SOL_SOCKET
+water	59:49	0:0	10	SOL_SOCKET
+arg	59:61	59:68	9	SO_TYPE
+water	59:61	0:0	10	SO_TYPE
+arg	60:28	60:33	9	&type
+op	60:28	0:0	10	&
+water	60:29	0:0	10	type
+arg	60:35	60:63	9	&(socklen_t){sizeof(type)}
+op	60:35	0:0	10	&
+water	60:36	0:0	10	(
+water	60:37	0:0	10	socklen_t
+water	60:46	0:0	10	)
+water	60:47	0:0	10	{
+op	60:49	0:0	10	sizeof
+water	60:55	0:0	10	(
+water	60:56	0:0	10	type
+water	60:60	0:0	10	)
+water	60:62	0:0	10	}
+water	60:64	0:0	8	;
+if	61:16	63:70	8	(type == SOCK_DGRAM)
+cond	61:20	61:28	9	type == SOCK_DGRAM
+water	61:20	0:0	10	type
+op	61:25	0:0	10	==
+water	61:28	0:0	10	SOCK_DGRAM
+stmts	63:20	63:70	9	
+call	63:20	63:69	10	send
+arg	63:26	63:45	11	id->sinkv[i].rtp_fd
+water	63:26	0:0	12	id
+op	63:28	0:0	12	->
+water	63:30	0:0	12	sinkv
+op	63:35	0:0	12	[
+water	63:36	0:0	12	i
+op	63:37	0:0	12	]
+op	63:38	0:0	12	.
+water	63:39	0:0	12	rtp_fd
+arg	63:47	63:60	11	out->p_buffer
+water	63:47	0:0	12	out
+op	63:50	0:0	12	->
+water	63:52	0:0	12	p_buffer
+arg	63:62	63:65	11	len
+water	63:62	0:0	12	len
+arg	63:67	63:69	11	0
+water	63:67	0:0	12	0
+water	63:70	0:0	10	;
+else	64:16	66:56	8
+stmts	66:20	66:56	9	
+water	66:20	0:0	10	deadv
+op	66:25	0:0	10	[
+water	66:26	0:0	10	deadc
+op	66:31	0:0	10	++
+op	66:33	0:0	10	]
+op	66:35	0:0	10	=
+water	66:37	0:0	10	id
+op	66:39	0:0	10	->
+water	66:41	0:0	10	sinkv
+op	66:46	0:0	10	[
+water	66:47	0:0	10	i
+op	66:48	0:0	10	]
+op	66:49	0:0	10	.
+water	66:50	0:0	10	rtp_fd
+water	66:56	0:0	10	;
+water	67:12	0:0	8	}
+water	68:8	0:0	6	}
+water	69:8	0:0	4	id
+op	69:10	0:0	4	->
+water	69:12	0:0	4	i_seq_sent_next
+op	69:28	0:0	4	=
+call	69:30	69:67	4	ntohs
+arg	69:36	69:67	5	((uint16_t*)out->p_buffer)[1]
+water	69:36	0:0	6	(
+water	69:37	0:0	6	(
+water	69:38	0:0	6	uint16_t
+op	69:47	0:0	6	*
+water	69:48	0:0	6	)
+water	69:50	0:0	6	out
+op	69:53	0:0	6	->
+water	69:55	0:0	6	p_buffer
+water	69:63	0:0	6	)
+op	69:64	0:0	6	[
+water	69:65	0:0	6	1
+op	69:66	0:0	6	]
+op	69:69	0:0	4	+
+water	69:71	0:0	4	1
+water	69:72	0:0	4	;
+call	70:8	70:41	4	vlc_mutex_unlock
+arg	70:26	70:41	5	&id->lock_sink
+op	70:26	0:0	6	&
+water	70:27	0:0	6	id
+op	70:29	0:0	6	->
+water	70:31	0:0	6	lock_sink
+water	70:42	0:0	4	;
+call	71:8	71:27	4	block_Release
+arg	71:23	71:27	5	out
+water	71:23	0:0	6	out
+water	71:28	0:0	4	;
+for	72:8	76:8	4	(unsigned i = 0 ;i < deadc;i ++)
+forinit	72:13	72:27	5	unsigned i = 0 ;
+water	72:13	0:0	6	unsigned
+water	72:22	0:0	6	i
+op	72:24	0:0	6	=
+water	72:26	0:0	6	0
+water	72:27	0:0	6	;
+cond	72:29	72:33	5	i < deadc
+water	72:29	0:0	6	i
+op	72:31	0:0	6	<
+water	72:33	0:0	6	deadc
+forexpr	72:40	72:41	5	i ++
+water	72:40	0:0	6	i
+op	72:41	0:0	6	++
+stmts	73:8	76:8	5	
+water	73:8	0:0	6	{
+call	74:12	74:66	6	msg_Dbg
+arg	74:21	74:33	7	id->p_stream
+water	74:21	0:0	8	id
+op	74:23	0:0	8	->
+water	74:25	0:0	8	p_stream
+arg	74:35	74:55	7	"removing socket %d"
+water	74:35	0:0	8	"removing socket %d"
+arg	74:57	74:66	7	deadv[i]
+water	74:57	0:0	8	deadv
+op	74:62	0:0	8	[
+water	74:63	0:0	8	i
+op	74:64	0:0	8	]
+water	74:67	0:0	6	;
+call	75:12	75:39	6	rtp_del_sink
+arg	75:26	75:28	7	id
+water	75:26	0:0	8	id
+arg	75:30	75:39	7	deadv[i]
+water	75:30	0:0	8	deadv
+op	75:35	0:0	8	[
+water	75:36	0:0	8	i
+op	75:37	0:0	8	]
+water	75:40	0:0	6	;
+water	76:8	0:0	6	}
+call	77:8	77:31	4	vlc_restorecancel
+arg	77:27	77:31	5	canc
+water	77:27	0:0	6	canc
+water	77:32	0:0	4	;
+water	78:4	0:0	4	}
+return	79:4	79:15	2	NULL
+water	79:11	0:0	3	NULL

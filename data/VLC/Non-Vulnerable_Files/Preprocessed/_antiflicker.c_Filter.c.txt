@@ -1,0 +1,608 @@
+func	2:0	102:0	0	static picture_t *	Filter
+params	2:24	0:0	1	
+param	2:26	2:44	2	filter_t *	p_filter
+param	2:46	2:63	2	picture_t *	p_pic
+stmnts	4:4	101:48	1	
+if	4:4	4:28	2	(! p_pic)
+cond	4:8	4:9	3	! p_pic
+op	4:8	0:0	4	!
+water	4:9	0:0	4	p_pic
+stmts	4:17	4:28	3	
+return	4:17	4:28	4	NULL
+water	4:24	0:0	5	NULL
+decl	5:4	5:55	2	picture_t	*p_outpic
+op	5:24	0:0	2	=
+call	5:26	5:54	3	filter_NewPicture
+arg	5:45	5:54	4	p_filter
+water	5:45	0:0	5	p_filter
+if	6:4	10:4	2	(! p_outpic)
+cond	6:8	6:9	3	! p_outpic
+op	6:8	0:0	4	!
+water	6:9	0:0	4	p_outpic
+stmts	7:4	10:4	3	
+water	7:4	0:0	4	{
+call	8:8	8:31	4	picture_Release
+arg	8:25	8:31	5	p_pic
+water	8:25	0:0	6	p_pic
+water	8:32	0:0	4	;
+return	9:8	9:19	4	NULL
+water	9:15	0:0	5	NULL
+water	10:4	0:0	4	}
+decl	12:4	12:70	2	int	i_window_size
+op	12:22	0:0	2	=
+call	12:24	12:69	3	atomic_load
+arg	12:37	12:69	4	&p_filter->p_sys->i_window_size
+op	12:37	0:0	5	&
+water	12:38	0:0	5	p_filter
+op	12:46	0:0	5	->
+water	12:48	0:0	5	p_sys
+op	12:53	0:0	5	->
+water	12:55	0:0	5	i_window_size
+decl	13:4	13:66	2	int	i_softening
+op	13:20	0:0	2	=
+call	13:22	13:65	3	atomic_load
+arg	13:35	13:65	4	&p_filter->p_sys->i_softening
+op	13:35	0:0	5	&
+water	13:36	0:0	5	p_filter
+op	13:44	0:0	5	->
+water	13:46	0:0	5	p_sys
+op	13:51	0:0	5	->
+water	13:53	0:0	5	i_softening
+decl	14:4	14:53	2	uint8_t	*p_yplane_in
+op	14:25	0:0	2	=
+water	14:27	0:0	2	p_pic
+op	14:32	0:0	2	->
+water	14:34	0:0	2	p
+op	14:35	0:0	2	[
+water	14:36	0:0	2	Y_PLANE
+op	14:43	0:0	2	]
+op	14:44	0:0	2	.
+water	14:45	0:0	2	p_pixels
+decl	15:4	15:57	2	uint8_t	*p_yplane_out
+op	15:26	0:0	2	=
+water	15:28	0:0	2	p_outpic
+op	15:36	0:0	2	->
+water	15:38	0:0	2	p
+op	15:39	0:0	2	[
+water	15:40	0:0	2	Y_PLANE
+op	15:47	0:0	2	]
+op	15:48	0:0	2	.
+water	15:49	0:0	2	p_pixels
+decl	16:4	16:30	2	bool	scene_changed
+op	16:23	0:0	2	=
+water	16:25	0:0	2	false
+decl	17:4	17:55	2	int	i_num_lines
+op	17:20	0:0	2	=
+water	17:22	0:0	2	p_pic
+op	17:27	0:0	2	->
+water	17:29	0:0	2	p
+op	17:30	0:0	2	[
+water	17:31	0:0	2	Y_PLANE
+op	17:38	0:0	2	]
+op	17:39	0:0	2	.
+water	17:40	0:0	2	i_visible_lines
+decl	18:4	18:54	2	int	i_num_cols
+op	18:19	0:0	2	=
+water	18:21	0:0	2	p_pic
+op	18:26	0:0	2	->
+water	18:28	0:0	2	p
+op	18:29	0:0	2	[
+water	18:30	0:0	2	Y_PLANE
+op	18:37	0:0	2	]
+op	18:38	0:0	2	.
+water	18:39	0:0	2	i_visible_pitch
+decl	19:4	19:46	2	int	i_in_pitch
+op	19:19	0:0	2	=
+water	19:21	0:0	2	p_pic
+op	19:26	0:0	2	->
+water	19:28	0:0	2	p
+op	19:29	0:0	2	[
+water	19:30	0:0	2	Y_PLANE
+op	19:37	0:0	2	]
+op	19:38	0:0	2	.
+water	19:39	0:0	2	i_pitch
+decl	20:4	20:50	2	int	i_out_pitch
+op	20:20	0:0	2	=
+water	20:22	0:0	2	p_outpic
+op	20:30	0:0	2	->
+water	20:32	0:0	2	p
+op	20:33	0:0	2	[
+water	20:34	0:0	2	Y_PLANE
+op	20:41	0:0	2	]
+op	20:42	0:0	2	.
+water	20:43	0:0	2	i_pitch
+decl	22:4	22:40	2	int	lum_avg
+op	22:16	0:0	2	=
+call	22:18	22:39	3	GetLuminanceAvg
+arg	22:34	22:39	4	p_pic
+water	22:34	0:0	5	p_pic
+if	25:4	30:4	2	(abs (lum_avg - p_filter -> p_sys -> ia_luminance_data [ i_window_size - 1 ] ) > SCENE_CHANGE_THRESHOLD || p_filter -> p_sys -> ia_luminance_data [ i_window_size - 1 ] == 256)
+cond	25:8	27:68	3	abs (lum_avg - p_filter -> p_sys -> ia_luminance_data [ i_window_size - 1 ] ) > SCENE_CHANGE_THRESHOLD || p_filter -> p_sys -> ia_luminance_data [ i_window_size - 1 ] == 256
+call	25:8	26:44	4	abs
+arg	25:12	26:44	5	lum_avg-p_filter->p_sys->ia_luminance_data[i_window_size-1]
+water	25:12	0:0	6	lum_avg
+op	25:20	0:0	6	-
+water	25:22	0:0	6	p_filter
+op	25:30	0:0	6	->
+water	25:32	0:0	6	p_sys
+op	25:37	0:0	6	->
+water	26:8	0:0	6	ia_luminance_data
+op	26:25	0:0	6	[
+water	26:26	0:0	6	i_window_size
+op	26:40	0:0	6	-
+water	26:42	0:0	6	1
+op	26:43	0:0	6	]
+op	26:46	0:0	4	>
+water	26:48	0:0	4	SCENE_CHANGE_THRESHOLD
+op	27:8	0:0	4	||
+water	27:11	0:0	4	p_filter
+op	27:19	0:0	4	->
+water	27:21	0:0	4	p_sys
+op	27:26	0:0	4	->
+water	27:28	0:0	4	ia_luminance_data
+op	27:45	0:0	4	[
+water	27:46	0:0	4	i_window_size
+op	27:60	0:0	4	-
+water	27:62	0:0	4	1
+op	27:63	0:0	4	]
+op	27:65	0:0	4	==
+water	27:68	0:0	4	256
+stmts	28:4	30:4	3	
+water	28:4	0:0	4	{
+water	29:8	0:0	4	scene_changed
+op	29:22	0:0	4	=
+water	29:24	0:0	4	true
+water	29:28	0:0	4	;
+water	30:4	0:0	4	}
+if	31:4	37:4	2	(scene_changed)
+cond	31:9	31:9	3	scene_changed
+water	31:9	0:0	4	scene_changed
+stmts	32:4	37:4	3	
+water	32:4	0:0	4	{
+for	34:8	35:59	4	( int i = 0 ;i < i_window_size;++ i)
+forinit	0:0	34:22	5	 int i = 0 ;
+decl	34:13	34:22	6	int	i
+op	34:19	0:0	6	=
+water	34:21	0:0	6	0
+cond	34:24	34:28	5	i < i_window_size
+water	34:24	0:0	6	i
+op	34:26	0:0	6	<
+water	34:28	0:0	6	i_window_size
+forexpr	34:43	34:45	5	++ i
+op	34:43	0:0	6	++
+water	34:45	0:0	6	i
+stmts	35:12	35:59	5	
+water	35:12	0:0	6	p_filter
+op	35:20	0:0	6	->
+water	35:22	0:0	6	p_sys
+op	35:27	0:0	6	->
+water	35:29	0:0	6	ia_luminance_data
+op	35:46	0:0	6	[
+water	35:47	0:0	6	i
+op	35:48	0:0	6	]
+op	35:50	0:0	6	=
+water	35:52	0:0	6	lum_avg
+water	35:59	0:0	6	;
+call	36:8	36:68	4	plane_CopyPixels
+arg	36:26	36:47	5	&p_outpic->p[Y_PLANE]
+op	36:26	0:0	6	&
+water	36:27	0:0	6	p_outpic
+op	36:35	0:0	6	->
+water	36:37	0:0	6	p
+op	36:38	0:0	6	[
+water	36:39	0:0	6	Y_PLANE
+op	36:46	0:0	6	]
+arg	36:49	36:68	5	&p_pic->p[Y_PLANE]
+op	36:49	0:0	6	&
+water	36:50	0:0	6	p_pic
+op	36:55	0:0	6	->
+water	36:57	0:0	6	p
+op	36:58	0:0	6	[
+water	36:59	0:0	6	Y_PLANE
+op	36:66	0:0	6	]
+water	36:69	0:0	4	;
+water	37:4	0:0	4	}
+else	38:4	67:4	2
+stmts	39:4	67:4	3	
+water	39:4	0:0	4	{
+for	41:8	43:66	4	( int i = 0 ;i < i_window_size - 1;++ i)
+forinit	0:0	41:22	5	 int i = 0 ;
+decl	41:13	41:22	6	int	i
+op	41:19	0:0	6	=
+water	41:21	0:0	6	0
+cond	41:24	41:42	5	i < i_window_size - 1
+water	41:24	0:0	6	i
+op	41:26	0:0	6	<
+water	41:28	0:0	6	i_window_size
+op	41:41	0:0	6	-
+water	41:42	0:0	6	1
+forexpr	41:46	41:48	5	++ i
+op	41:46	0:0	6	++
+water	41:48	0:0	6	i
+stmts	42:12	43:66	5	
+water	42:12	0:0	6	p_filter
+op	42:20	0:0	6	->
+water	42:22	0:0	6	p_sys
+op	42:27	0:0	6	->
+water	42:29	0:0	6	ia_luminance_data
+op	42:46	0:0	6	[
+water	42:47	0:0	6	i
+op	42:48	0:0	6	]
+op	42:50	0:0	6	=
+water	43:27	0:0	6	p_filter
+op	43:35	0:0	6	->
+water	43:37	0:0	6	p_sys
+op	43:42	0:0	6	->
+water	43:44	0:0	6	ia_luminance_data
+op	43:61	0:0	6	[
+water	43:62	0:0	6	i
+op	43:63	0:0	6	+
+water	43:64	0:0	6	1
+op	43:65	0:0	6	]
+water	43:66	0:0	6	;
+water	44:8	0:0	4	p_filter
+op	44:16	0:0	4	->
+water	44:18	0:0	4	p_sys
+op	44:23	0:0	4	->
+water	44:25	0:0	4	ia_luminance_data
+op	44:42	0:0	4	[
+water	44:43	0:0	4	i_window_size
+op	44:57	0:0	4	-
+water	44:59	0:0	4	1
+op	44:60	0:0	4	]
+op	44:62	0:0	4	=
+water	44:64	0:0	4	lum_avg
+water	44:71	0:0	4	;
+decl	45:8	45:25	4	float	scale
+op	45:20	0:0	4	=
+water	45:22	0:0	4	1
+op	45:23	0:0	4	.
+water	45:24	0:0	4	0
+if	46:8	52:8	4	(lum_avg > 0)
+cond	46:12	46:22	5	lum_avg > 0
+water	46:12	0:0	6	lum_avg
+op	46:20	0:0	6	>
+water	46:22	0:0	6	0
+stmts	47:8	52:8	5	
+water	47:8	0:0	6	{
+decl	48:13	48:27	6	float	filt
+op	48:24	0:0	6	=
+water	48:26	0:0	6	0
+for	49:13	50:71	6	( int i = 0 ;i < i_window_size;i ++)
+forinit	0:0	49:27	7	 int i = 0 ;
+decl	49:18	49:27	8	int	i
+op	49:24	0:0	8	=
+water	49:26	0:0	8	0
+cond	49:29	49:33	7	i < i_window_size
+water	49:29	0:0	8	i
+op	49:31	0:0	8	<
+water	49:33	0:0	8	i_window_size
+forexpr	49:48	49:49	7	i ++
+water	49:48	0:0	8	i
+op	49:49	0:0	8	++
+stmts	50:18	50:71	7	
+water	50:18	0:0	8	filt
+op	50:23	0:0	8	+=
+water	50:26	0:0	8	(
+water	50:27	0:0	8	float
+water	50:32	0:0	8	)
+water	50:34	0:0	8	p_filter
+op	50:42	0:0	8	->
+water	50:44	0:0	8	p_sys
+op	50:49	0:0	8	->
+water	50:51	0:0	8	ia_luminance_data
+op	50:68	0:0	8	[
+water	50:69	0:0	8	i
+op	50:70	0:0	8	]
+water	50:71	0:0	8	;
+water	51:13	0:0	6	scale
+op	51:19	0:0	6	=
+water	51:21	0:0	6	filt
+op	51:25	0:0	6	/
+water	51:26	0:0	6	(
+water	51:27	0:0	6	i_window_size
+op	51:40	0:0	6	*
+water	51:41	0:0	6	lum_avg
+water	51:48	0:0	6	)
+water	51:49	0:0	6	;
+water	52:8	0:0	6	}
+decl	54:8	54:25	4	uint8_t	shift
+op	54:22	0:0	4	=
+water	54:24	0:0	4	8
+decl	55:8	55:57	4	int	scale_num
+op	55:22	0:0	4	=
+call	55:24	55:39	5	__MIN
+arg	55:30	55:35	6	scale
+water	55:30	0:0	7	scale
+arg	55:36	55:39	6	255
+water	55:36	0:0	7	255
+op	55:41	0:0	4	*
+water	55:43	0:0	4	(
+water	55:45	0:0	4	1
+op	55:47	0:0	4	<<
+water	55:50	0:0	4	shift
+water	55:56	0:0	4	)
+for	56:8	66:8	4	( int i_line = 0 ;i_line < i_num_lines;i_line ++)
+forinit	0:0	56:28	5	 int i_line = 0 ;
+decl	56:13	56:28	6	int	i_line
+op	56:24	0:0	6	=
+water	56:26	0:0	6	0
+cond	56:30	56:39	5	i_line < i_num_lines
+water	56:30	0:0	6	i_line
+op	56:37	0:0	6	<
+water	56:39	0:0	6	i_num_lines
+forexpr	56:53	56:59	5	i_line ++
+water	56:53	0:0	6	i_line
+op	56:59	0:0	6	++
+stmts	57:8	66:8	5	
+water	57:8	0:0	6	{
+for	58:12	65:12	6	( int i_col = 0 ;i_col < i_num_cols;i_col ++)
+forinit	0:0	58:30	7	 int i_col = 0 ;
+decl	58:17	58:30	8	int	i_col
+op	58:27	0:0	8	=
+water	58:29	0:0	8	0
+cond	58:32	58:40	7	i_col < i_num_cols
+water	58:32	0:0	8	i_col
+op	58:38	0:0	8	<
+water	58:40	0:0	8	i_num_cols
+forexpr	58:54	58:59	7	i_col ++
+water	58:54	0:0	8	i_col
+op	58:59	0:0	8	++
+stmts	59:12	65:12	7	
+water	59:12	0:0	8	{
+decl	60:16	60:73	8	uint8_t	pixel_data
+op	60:35	0:0	8	=
+water	60:37	0:0	8	p_yplane_in
+op	60:48	0:0	8	[
+water	60:49	0:0	8	i_line
+op	60:55	0:0	8	*
+water	60:56	0:0	8	i_in_pitch
+op	60:66	0:0	8	+
+water	60:67	0:0	8	i_col
+op	60:72	0:0	8	]
+decl	61:16	62:49	8	int	pixel_val
+op	61:30	0:0	8	=
+water	61:32	0:0	8	(
+water	61:34	0:0	8	scale_num
+op	61:44	0:0	8	*
+water	61:46	0:0	8	pixel_data
+op	61:57	0:0	8	+
+water	62:23	0:0	8	(
+water	62:24	0:0	8	1
+op	62:25	0:0	8	<<
+water	62:27	0:0	8	(
+water	62:28	0:0	8	shift
+op	62:34	0:0	8	-
+water	62:35	0:0	8	1
+water	62:36	0:0	8	)
+water	62:37	0:0	8	)
+water	62:39	0:0	8	)
+op	62:41	0:0	8	>>
+water	62:44	0:0	8	shift
+water	63:16	0:0	8	p_yplane_out
+op	63:28	0:0	8	[
+water	63:29	0:0	8	i_line
+op	63:35	0:0	8	*
+water	63:36	0:0	8	i_out_pitch
+op	63:47	0:0	8	+
+water	63:48	0:0	8	i_col
+op	63:53	0:0	8	]
+op	63:55	0:0	8	=
+water	64:23	0:0	8	(
+water	64:24	0:0	8	pixel_val
+op	64:33	0:0	8	>
+water	64:34	0:0	8	255
+water	64:37	0:0	8	)
+water	64:39	0:0	8	?
+water	64:41	0:0	8	255
+water	64:44	0:0	8	:
+water	64:45	0:0	8	pixel_val
+water	64:54	0:0	8	;
+water	65:12	0:0	8	}
+water	66:8	0:0	6	}
+water	67:4	0:0	4	}
+call	69:4	69:64	2	plane_CopyPixels
+arg	69:22	69:43	3	&p_outpic->p[U_PLANE]
+op	69:22	0:0	4	&
+water	69:23	0:0	4	p_outpic
+op	69:31	0:0	4	->
+water	69:33	0:0	4	p
+op	69:34	0:0	4	[
+water	69:35	0:0	4	U_PLANE
+op	69:42	0:0	4	]
+arg	69:45	69:64	3	&p_pic->p[U_PLANE]
+op	69:45	0:0	4	&
+water	69:46	0:0	4	p_pic
+op	69:51	0:0	4	->
+water	69:53	0:0	4	p
+op	69:54	0:0	4	[
+water	69:55	0:0	4	U_PLANE
+op	69:62	0:0	4	]
+water	69:65	0:0	2	;
+call	70:4	70:64	2	plane_CopyPixels
+arg	70:22	70:43	3	&p_outpic->p[V_PLANE]
+op	70:22	0:0	4	&
+water	70:23	0:0	4	p_outpic
+op	70:31	0:0	4	->
+water	70:33	0:0	4	p
+op	70:34	0:0	4	[
+water	70:35	0:0	4	V_PLANE
+op	70:42	0:0	4	]
+arg	70:45	70:64	3	&p_pic->p[V_PLANE]
+op	70:45	0:0	4	&
+water	70:46	0:0	4	p_pic
+op	70:51	0:0	4	->
+water	70:53	0:0	4	p
+op	70:54	0:0	4	[
+water	70:55	0:0	4	V_PLANE
+op	70:62	0:0	4	]
+water	70:65	0:0	2	;
+if	71:4	74:4	2	(scene_changed || i_softening == 0)
+cond	71:8	71:40	3	scene_changed || i_softening == 0
+water	71:8	0:0	4	scene_changed
+op	71:22	0:0	4	||
+water	71:25	0:0	4	i_softening
+op	71:37	0:0	4	==
+water	71:40	0:0	4	0
+stmts	72:4	74:4	3	
+water	72:4	0:0	4	{
+return	73:7	73:51	4	CopyInfoAndRelease(p_outpic,p_pic)
+call	73:14	73:50	5	CopyInfoAndRelease
+arg	73:34	73:42	6	p_outpic
+water	73:34	0:0	7	p_outpic
+arg	73:44	73:50	6	p_pic
+water	73:44	0:0	7	p_pic
+water	74:4	0:0	4	}
+decl	76:4	76:59	2	uint8_t	*p_yplane_out_old
+op	76:30	0:0	2	=
+water	76:32	0:0	2	p_filter
+op	76:40	0:0	2	->
+water	76:42	0:0	2	p_sys
+op	76:47	0:0	2	->
+water	76:49	0:0	2	p_old_data
+decl	77:4	77:54	2	int	i_video_width
+op	77:22	0:0	2	=
+water	77:24	0:0	2	p_filter
+op	77:32	0:0	2	->
+water	77:34	0:0	2	fmt_in
+op	77:40	0:0	2	.
+water	77:41	0:0	2	video
+op	77:46	0:0	2	.
+water	77:47	0:0	2	i_width
+for	78:4	100:4	2	( int i_line = 0 ;i_line < i_num_lines;i_line ++)
+forinit	0:0	78:24	3	 int i_line = 0 ;
+decl	78:9	78:24	4	int	i_line
+op	78:20	0:0	4	=
+water	78:22	0:0	4	0
+cond	78:26	78:35	3	i_line < i_num_lines
+water	78:26	0:0	4	i_line
+op	78:33	0:0	4	<
+water	78:35	0:0	4	i_num_lines
+forexpr	78:49	78:55	3	i_line ++
+water	78:49	0:0	4	i_line
+op	78:55	0:0	4	++
+stmts	79:4	100:4	3	
+water	79:4	0:0	4	{
+for	80:8	99:8	4	( int i_col = 0 ;i_col < i_num_cols;i_col ++)
+forinit	0:0	80:26	5	 int i_col = 0 ;
+decl	80:13	80:26	6	int	i_col
+op	80:23	0:0	6	=
+water	80:25	0:0	6	0
+cond	80:28	80:36	5	i_col < i_num_cols
+water	80:28	0:0	6	i_col
+op	80:34	0:0	6	<
+water	80:36	0:0	6	i_num_cols
+forexpr	80:50	80:55	5	i_col ++
+water	80:50	0:0	6	i_col
+op	80:55	0:0	6	++
+stmts	81:8	99:8	5	
+water	81:8	0:0	6	{
+decl	82:12	82:71	6	uint8_t	pixel_data
+op	82:31	0:0	6	=
+water	82:33	0:0	6	p_yplane_out
+op	82:45	0:0	6	[
+water	82:46	0:0	6	i_line
+op	82:52	0:0	6	*
+water	82:53	0:0	6	i_out_pitch
+op	82:64	0:0	6	+
+water	82:65	0:0	6	i_col
+op	82:70	0:0	6	]
+decl	83:12	83:76	6	uint8_t	pixel_old
+op	83:30	0:0	6	=
+water	83:32	0:0	6	p_yplane_out_old
+op	83:48	0:0	6	[
+water	83:49	0:0	6	i_line
+op	83:55	0:0	6	*
+water	83:56	0:0	6	i_video_width
+op	83:69	0:0	6	+
+water	83:70	0:0	6	i_col
+op	83:75	0:0	6	]
+decl	84:12	84:50	6	int	diff
+op	84:21	0:0	6	=
+call	84:23	84:49	7	abs
+arg	84:27	84:49	8	pixel_data-pixel_old
+water	84:27	0:0	9	pixel_data
+op	84:38	0:0	9	-
+water	84:40	0:0	9	pixel_old
+if	85:12	92:12	6	(diff < i_softening)
+cond	85:16	85:23	7	diff < i_softening
+water	85:16	0:0	8	diff
+op	85:21	0:0	8	<
+water	85:23	0:0	8	i_softening
+stmts	86:12	92:12	7	
+water	86:12	0:0	8	{
+if	87:16	91:16	8	(diff > ( i_softening >> 1 ))
+cond	87:20	87:44	9	diff > ( i_softening >> 1 )
+water	87:20	0:0	10	diff
+op	87:25	0:0	10	>
+water	87:27	0:0	10	(
+water	87:28	0:0	10	i_softening
+op	87:40	0:0	10	>>
+water	87:43	0:0	10	1
+water	87:44	0:0	10	)
+stmts	88:16	91:16	9	
+water	88:16	0:0	10	{
+water	89:20	0:0	10	p_yplane_out_old
+op	89:36	0:0	10	[
+water	89:37	0:0	10	i_line
+op	89:43	0:0	10	*
+water	89:44	0:0	10	i_video_width
+op	89:57	0:0	10	+
+water	89:58	0:0	10	i_col
+op	89:63	0:0	10	]
+op	89:65	0:0	10	=
+water	90:24	0:0	10	(
+water	90:25	0:0	10	(
+water	90:26	0:0	10	pixel_data
+op	90:37	0:0	10	*
+water	90:39	0:0	10	2
+water	90:40	0:0	10	)
+op	90:42	0:0	10	+
+water	90:44	0:0	10	pixel_old
+water	90:53	0:0	10	)
+op	90:55	0:0	10	/
+water	90:56	0:0	10	3
+water	90:57	0:0	10	;
+water	91:16	0:0	10	}
+water	92:12	0:0	8	}
+else	93:12	96:12	6
+stmts	94:12	96:12	7	
+water	94:12	0:0	8	{
+water	95:16	0:0	8	p_yplane_out_old
+op	95:32	0:0	8	[
+water	95:33	0:0	8	i_line
+op	95:39	0:0	8	*
+water	95:40	0:0	8	i_video_width
+op	95:53	0:0	8	+
+water	95:54	0:0	8	i_col
+op	95:59	0:0	8	]
+op	95:61	0:0	8	=
+water	95:63	0:0	8	pixel_data
+water	95:73	0:0	8	;
+water	96:12	0:0	8	}
+water	97:12	0:0	6	p_yplane_out
+op	97:24	0:0	6	[
+water	97:25	0:0	6	i_line
+op	97:31	0:0	6	*
+water	97:32	0:0	6	i_out_pitch
+op	97:43	0:0	6	+
+water	97:44	0:0	6	i_col
+op	97:49	0:0	6	]
+op	97:51	0:0	6	=
+water	98:16	0:0	6	p_yplane_out_old
+op	98:32	0:0	6	[
+water	98:33	0:0	6	i_line
+op	98:39	0:0	6	*
+water	98:40	0:0	6	i_video_width
+op	98:53	0:0	6	+
+water	98:54	0:0	6	i_col
+op	98:59	0:0	6	]
+water	98:60	0:0	6	;
+water	99:8	0:0	6	}
+water	100:4	0:0	4	}
+return	101:4	101:48	2	CopyInfoAndRelease(p_outpic,p_pic)
+call	101:11	101:47	3	CopyInfoAndRelease
+arg	101:31	101:39	4	p_outpic
+water	101:31	0:0	5	p_outpic
+arg	101:41	101:47	4	p_pic
+water	101:41	0:0	5	p_pic

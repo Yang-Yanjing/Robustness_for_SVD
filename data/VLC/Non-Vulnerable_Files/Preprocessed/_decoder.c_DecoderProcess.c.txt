@@ -1,0 +1,220 @@
+func	2:0	58:0	0	static void	DecoderProcess
+params	2:26	0:0	1	
+param	2:28	2:44	2	decoder_t *	p_dec
+param	2:46	2:63	2	block_t *	p_block
+stmnts	0:0	57:38	1	
+decl	4:4	4:72	2	decoder_owner_sys_t	*p_owner
+op	4:33	0:0	2	=
+water	4:35	0:0	2	(
+water	4:36	0:0	2	decoder_owner_sys_t
+op	4:56	0:0	2	*
+water	4:57	0:0	2	)
+water	4:58	0:0	2	p_dec
+op	4:63	0:0	2	->
+water	4:65	0:0	2	p_owner
+decl	5:4	5:86	2	const bool	b_flush_request
+op	5:31	0:0	2	=
+water	5:33	0:0	2	p_block
+op	5:41	0:0	2	&&
+water	5:44	0:0	2	(
+water	5:45	0:0	2	p_block
+op	5:52	0:0	2	->
+water	5:54	0:0	2	i_flags
+op	5:62	0:0	2	&
+water	5:64	0:0	2	BLOCK_FLAG_CORE_FLUSH
+water	5:85	0:0	2	)
+if	6:4	11:4	2	(p_dec -> b_error)
+cond	6:8	6:15	3	p_dec -> b_error
+water	6:8	0:0	4	p_dec
+op	6:13	0:0	4	->
+water	6:15	0:0	4	b_error
+stmts	7:4	11:4	3	
+water	7:4	0:0	4	{
+if	8:8	9:36	4	(p_block)
+cond	8:12	8:12	5	p_block
+water	8:12	0:0	6	p_block
+stmts	9:12	9:36	5	
+call	9:12	9:35	6	block_Release
+arg	9:27	9:35	7	p_block
+water	9:27	0:0	8	p_block
+water	9:36	0:0	6	;
+goto	10:8	10:18	4	flush
+water	10:13	0:0	5	flush
+water	11:4	0:0	4	}
+if	12:4	17:4	2	(p_block && p_block -> i_buffer <= 0)
+cond	12:8	12:40	3	p_block && p_block -> i_buffer <= 0
+water	12:8	0:0	4	p_block
+op	12:16	0:0	4	&&
+water	12:19	0:0	4	p_block
+op	12:26	0:0	4	->
+water	12:28	0:0	4	i_buffer
+op	12:37	0:0	4	<=
+water	12:40	0:0	4	0
+stmts	13:4	17:4	3	
+water	13:4	0:0	4	{
+call	14:8	14:33	4	assert
+arg	14:16	14:33	5	!b_flush_request
+op	14:16	0:0	6	!
+water	14:17	0:0	6	b_flush_request
+water	14:34	0:0	4	;
+call	15:8	15:31	4	block_Release
+arg	15:23	15:31	5	p_block
+water	15:23	0:0	6	p_block
+water	15:32	0:0	4	;
+return	16:8	16:14	4	
+water	17:4	0:0	4	}
+if	19:4	24:4	2	(p_owner -> b_packetizer)
+cond	19:8	19:17	3	p_owner -> b_packetizer
+water	19:8	0:0	4	p_owner
+op	19:15	0:0	4	->
+water	19:17	0:0	4	b_packetizer
+stmts	20:4	24:4	3	
+water	20:4	0:0	4	{
+if	21:8	22:61	4	(p_block)
+cond	21:12	21:12	5	p_block
+water	21:12	0:0	6	p_block
+stmts	22:12	22:61	5	
+water	22:12	0:0	6	p_block
+op	22:19	0:0	6	->
+water	22:21	0:0	6	i_flags
+op	22:29	0:0	6	&=
+water	22:32	0:0	6	~BLOCK_FLAG_CORE_PRIVATE_MASK
+water	22:61	0:0	6	;
+call	23:8	23:43	4	DecoderProcessSout
+arg	23:28	23:33	5	p_dec
+water	23:28	0:0	6	p_dec
+arg	23:35	23:43	5	p_block
+water	23:35	0:0	6	p_block
+water	23:44	0:0	4	;
+water	24:4	0:0	4	}
+else	25:4	53:4	2
+stmts	27:4	53:4	3	
+water	27:4	0:0	4	{
+decl	28:8	28:28	4	bool	b_flush
+op	28:21	0:0	4	=
+water	28:23	0:0	4	false
+if	29:8	35:8	4	(p_block)
+cond	29:12	29:12	5	p_block
+water	29:12	0:0	6	p_block
+stmts	30:8	35:8	5	
+water	30:8	0:0	6	{
+decl	31:12	31:71	6	const bool	b_flushing
+op	31:34	0:0	6	=
+water	31:36	0:0	6	p_owner
+op	31:43	0:0	6	->
+water	31:45	0:0	6	i_preroll_end
+op	31:59	0:0	6	==
+water	31:62	0:0	6	INT64_MAX
+call	32:12	32:67	6	DecoderUpdatePreroll
+arg	32:34	32:57	7	&p_owner->i_preroll_end
+op	32:34	0:0	8	&
+water	32:35	0:0	8	p_owner
+op	32:42	0:0	8	->
+water	32:44	0:0	8	i_preroll_end
+arg	32:59	32:67	7	p_block
+water	32:59	0:0	8	p_block
+water	32:68	0:0	6	;
+water	33:12	0:0	6	b_flush
+op	33:20	0:0	6	=
+op	33:22	0:0	6	!
+water	33:23	0:0	6	b_flushing
+op	33:34	0:0	6	&&
+water	33:37	0:0	6	b_flush_request
+water	33:52	0:0	6	;
+water	34:12	0:0	6	p_block
+op	34:19	0:0	6	->
+water	34:21	0:0	6	i_flags
+op	34:29	0:0	6	&=
+water	34:32	0:0	6	~BLOCK_FLAG_CORE_PRIVATE_MASK
+water	34:61	0:0	6	;
+water	35:8	0:0	6	}
+if	36:8	39:8	4	(p_dec -> fmt_out . i_cat == AUDIO_ES)
+cond	36:12	36:36	5	p_dec -> fmt_out . i_cat == AUDIO_ES
+water	36:12	0:0	6	p_dec
+op	36:17	0:0	6	->
+water	36:19	0:0	6	fmt_out
+op	36:26	0:0	6	.
+water	36:27	0:0	6	i_cat
+op	36:33	0:0	6	==
+water	36:36	0:0	6	AUDIO_ES
+stmts	37:8	39:8	5	
+water	37:8	0:0	6	{
+call	38:12	38:57	6	DecoderProcessAudio
+arg	38:33	38:38	7	p_dec
+water	38:33	0:0	8	p_dec
+arg	38:40	38:47	7	p_block
+water	38:40	0:0	8	p_block
+arg	38:49	38:57	7	b_flush
+water	38:49	0:0	8	b_flush
+water	38:58	0:0	6	;
+water	39:8	0:0	6	}
+else	40:8	43:8	4
+stmts	40:13	43:8	5	
+if	40:13	43:8	6	(p_dec -> fmt_out . i_cat == VIDEO_ES)
+cond	40:17	40:41	7	p_dec -> fmt_out . i_cat == VIDEO_ES
+water	40:17	0:0	8	p_dec
+op	40:22	0:0	8	->
+water	40:24	0:0	8	fmt_out
+op	40:31	0:0	8	.
+water	40:32	0:0	8	i_cat
+op	40:38	0:0	8	==
+water	40:41	0:0	8	VIDEO_ES
+stmts	41:8	43:8	7	
+water	41:8	0:0	8	{
+call	42:12	42:57	8	DecoderProcessVideo
+arg	42:33	42:38	9	p_dec
+water	42:33	0:0	10	p_dec
+arg	42:40	42:47	9	p_block
+water	42:40	0:0	10	p_block
+arg	42:49	42:57	9	b_flush
+water	42:49	0:0	10	b_flush
+water	42:58	0:0	8	;
+water	43:8	0:0	8	}
+else	44:8	47:8	4
+stmts	44:13	47:8	5	
+if	44:13	47:8	6	(p_dec -> fmt_out . i_cat == SPU_ES)
+cond	44:17	44:41	7	p_dec -> fmt_out . i_cat == SPU_ES
+water	44:17	0:0	8	p_dec
+op	44:22	0:0	8	->
+water	44:24	0:0	8	fmt_out
+op	44:31	0:0	8	.
+water	44:32	0:0	8	i_cat
+op	44:38	0:0	8	==
+water	44:41	0:0	8	SPU_ES
+stmts	45:8	47:8	7	
+water	45:8	0:0	8	{
+call	46:12	46:55	8	DecoderProcessSpu
+arg	46:31	46:36	9	p_dec
+water	46:31	0:0	10	p_dec
+arg	46:38	46:45	9	p_block
+water	46:38	0:0	10	p_block
+arg	46:47	46:55	9	b_flush
+water	46:47	0:0	10	b_flush
+water	46:56	0:0	8	;
+water	47:8	0:0	8	}
+else	48:8	52:8	4
+stmts	49:8	52:8	5	
+water	49:8	0:0	6	{
+call	50:12	50:48	6	msg_Err
+arg	50:21	50:26	7	p_dec
+water	50:21	0:0	8	p_dec
+arg	50:28	50:48	7	"unknown ES format"
+water	50:28	0:0	8	"unknown ES format"
+water	50:49	0:0	6	;
+water	51:12	0:0	6	p_dec
+op	51:17	0:0	6	->
+water	51:19	0:0	6	b_error
+op	51:27	0:0	6	=
+water	51:29	0:0	6	true
+water	51:33	0:0	6	;
+water	52:8	0:0	6	}
+water	53:4	0:0	4	}
+label	55:0	55:5	2	flush :
+if	56:4	57:38	2	(b_flush_request)
+cond	56:8	56:8	3	b_flush_request
+water	56:8	0:0	4	b_flush_request
+stmts	57:8	57:38	3	
+call	57:8	57:37	4	DecoderProcessOnFlush
+arg	57:31	57:37	5	p_dec
+water	57:31	0:0	6	p_dec
+water	57:38	0:0	4	;

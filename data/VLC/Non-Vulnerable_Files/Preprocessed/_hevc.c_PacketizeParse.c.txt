@@ -1,0 +1,213 @@
+func	2:0	48:0	0	static block_t *	PacketizeParse
+params	2:30	0:0	1	
+param	2:31	2:46	2	void *	p_private
+param	2:48	2:64	2	bool *	pb_ts_used
+param	2:66	2:82	2	block_t *	p_block
+stmnts	0:0	47:16	1	
+decl	4:4	4:32	2	decoder_t	*p_dec
+op	4:21	0:0	2	=
+water	4:23	0:0	2	p_private
+decl	5:4	5:39	2	decoder_sys_t	*p_sys
+op	5:25	0:0	2	=
+water	5:27	0:0	2	p_dec
+op	5:32	0:0	2	->
+water	5:34	0:0	2	p_sys
+decl	6:4	6:26	2	block_t	*p_nal
+op	6:20	0:0	2	=
+water	6:22	0:0	2	NULL
+while	7:4	8:27	2	(p_block -> i_buffer > 5 && p_block -> p_buffer [ p_block -> i_buffer - 1 ] == 0 x00)
+cond	7:11	7:79	3	p_block -> i_buffer > 5 && p_block -> p_buffer [ p_block -> i_buffer - 1 ] == 0 x00
+water	7:11	0:0	4	p_block
+op	7:18	0:0	4	->
+water	7:20	0:0	4	i_buffer
+op	7:29	0:0	4	>
+water	7:31	0:0	4	5
+op	7:33	0:0	4	&&
+water	7:36	0:0	4	p_block
+op	7:43	0:0	4	->
+water	7:45	0:0	4	p_buffer
+op	7:53	0:0	4	[
+water	7:54	0:0	4	p_block
+op	7:61	0:0	4	->
+water	7:63	0:0	4	i_buffer
+op	7:71	0:0	4	-
+water	7:72	0:0	4	1
+op	7:73	0:0	4	]
+op	7:75	0:0	4	==
+water	7:78	0:0	4	0
+water	7:79	0:0	4	x00
+stmts	8:8	8:27	3	
+water	8:8	0:0	4	p_block
+op	8:15	0:0	4	->
+water	8:17	0:0	4	i_buffer
+op	8:25	0:0	4	--
+water	8:27	0:0	4	;
+decl	9:4	9:11	2	bs_t	bs
+call	10:4	10:57	2	bs_init
+arg	10:12	10:15	3	&bs
+op	10:12	0:0	4	&
+water	10:13	0:0	4	bs
+arg	10:17	10:36	3	p_block->p_buffer+4
+water	10:17	0:0	4	p_block
+op	10:24	0:0	4	->
+water	10:26	0:0	4	p_buffer
+op	10:34	0:0	4	+
+water	10:35	0:0	4	4
+arg	10:38	10:57	3	p_block->i_buffer-4
+water	10:38	0:0	4	p_block
+op	10:45	0:0	4	->
+water	10:47	0:0	4	i_buffer
+op	10:55	0:0	4	-
+water	10:56	0:0	4	4
+water	10:58	0:0	2	;
+decl	12:4	12:47	2	uint32_t	forbidden_zero_bit
+op	12:32	0:0	2	=
+call	12:34	12:46	3	bs_read1
+arg	12:43	12:46	4	&bs
+op	12:43	0:0	5	&
+water	12:44	0:0	5	bs
+if	13:4	19:4	2	(forbidden_zero_bit)
+cond	13:8	13:8	3	forbidden_zero_bit
+water	13:8	0:0	4	forbidden_zero_bit
+stmts	14:4	19:4	3	
+water	14:4	0:0	4	{
+call	15:8	15:66	4	msg_Err
+arg	15:16	15:21	5	p_dec
+water	15:16	0:0	6	p_dec
+arg	15:22	15:66	5	"Forbidden zero bit not null, corrupted NAL"
+water	15:22	0:0	6	"Forbidden zero bit not null, corrupted NAL"
+water	15:67	0:0	4	;
+water	16:8	0:0	4	p_sys
+op	16:13	0:0	4	->
+water	16:15	0:0	4	p_frame
+op	16:23	0:0	4	=
+water	16:25	0:0	4	NULL
+water	16:29	0:0	4	;
+water	17:8	0:0	4	p_sys
+op	17:13	0:0	4	->
+water	17:15	0:0	4	b_vcl
+op	17:21	0:0	4	=
+water	17:23	0:0	4	false
+water	17:28	0:0	4	;
+return	18:8	18:19	4	NULL
+water	18:15	0:0	5	NULL
+water	19:4	0:0	4	}
+decl	20:4	20:39	2	uint32_t	nalu_type
+op	20:23	0:0	2	=
+call	20:25	20:38	3	bs_read
+arg	20:33	20:36	4	&bs
+op	20:33	0:0	5	&
+water	20:34	0:0	5	bs
+arg	20:37	20:38	4	6
+water	20:37	0:0	5	6
+call	21:4	21:18	2	bs_skip
+arg	21:12	21:15	3	&bs
+op	21:12	0:0	4	&
+water	21:13	0:0	4	bs
+arg	21:17	21:18	3	9
+water	21:17	0:0	4	9
+water	21:19	0:0	2	;
+if	22:4	33:4	2	(nalu_type < VPS)
+cond	22:8	22:20	3	nalu_type < VPS
+water	22:8	0:0	4	nalu_type
+op	22:18	0:0	4	<
+water	22:20	0:0	4	VPS
+stmts	23:4	33:4	3	
+water	23:4	0:0	4	{
+water	25:8	0:0	4	p_sys
+op	25:13	0:0	4	->
+water	25:15	0:0	4	b_vcl
+op	25:21	0:0	4	=
+water	25:23	0:0	4	true
+water	25:27	0:0	4	;
+decl	26:8	26:51	4	uint32_t	first_slice_in_pic
+op	26:36	0:0	4	=
+call	26:38	26:50	5	bs_read1
+arg	26:47	26:50	6	&bs
+op	26:47	0:0	7	&
+water	26:48	0:0	7	bs
+if	27:8	31:8	4	(first_slice_in_pic && p_sys -> p_frame)
+cond	27:12	27:41	5	first_slice_in_pic && p_sys -> p_frame
+water	27:12	0:0	6	first_slice_in_pic
+op	27:31	0:0	6	&&
+water	27:34	0:0	6	p_sys
+op	27:39	0:0	6	->
+water	27:41	0:0	6	p_frame
+stmts	28:8	31:8	5	
+water	28:8	0:0	6	{
+water	29:12	0:0	6	p_nal
+op	29:18	0:0	6	=
+call	29:20	29:52	6	block_ChainGather
+arg	29:38	29:52	7	p_sys->p_frame
+water	29:38	0:0	8	p_sys
+op	29:43	0:0	8	->
+water	29:45	0:0	8	p_frame
+water	29:53	0:0	6	;
+water	30:12	0:0	6	p_sys
+op	30:17	0:0	6	->
+water	30:19	0:0	6	p_frame
+op	30:27	0:0	6	=
+water	30:29	0:0	6	NULL
+water	30:33	0:0	6	;
+water	31:8	0:0	6	}
+call	32:8	32:50	4	block_ChainAppend
+arg	32:26	32:41	5	&p_sys->p_frame
+op	32:26	0:0	6	&
+water	32:27	0:0	6	p_sys
+op	32:32	0:0	6	->
+water	32:34	0:0	6	p_frame
+arg	32:43	32:50	5	p_block
+water	32:43	0:0	6	p_block
+water	32:51	0:0	4	;
+water	33:4	0:0	4	}
+else	34:4	45:4	2
+stmts	35:4	45:4	3	
+water	35:4	0:0	4	{
+if	36:8	42:8	4	(p_sys -> b_vcl)
+cond	36:12	36:19	5	p_sys -> b_vcl
+water	36:12	0:0	6	p_sys
+op	36:17	0:0	6	->
+water	36:19	0:0	6	b_vcl
+stmts	37:8	42:8	5	
+water	37:8	0:0	6	{
+water	38:12	0:0	6	p_nal
+op	38:18	0:0	6	=
+call	38:20	38:52	6	block_ChainGather
+arg	38:38	38:52	7	p_sys->p_frame
+water	38:38	0:0	8	p_sys
+op	38:43	0:0	8	->
+water	38:45	0:0	8	p_frame
+water	38:53	0:0	6	;
+water	39:12	0:0	6	p_nal
+op	39:17	0:0	6	->
+water	39:19	0:0	6	p_next
+op	39:26	0:0	6	=
+water	39:28	0:0	6	p_block
+water	39:35	0:0	6	;
+water	40:12	0:0	6	p_sys
+op	40:17	0:0	6	->
+water	40:19	0:0	6	p_frame
+op	40:27	0:0	6	=
+water	40:29	0:0	6	NULL
+water	40:33	0:0	6	;
+water	41:12	0:0	6	p_sys
+op	41:17	0:0	6	->
+water	41:19	0:0	6	b_vcl
+op	41:25	0:0	6	=
+water	41:26	0:0	6	false
+water	41:31	0:0	6	;
+water	42:8	0:0	6	}
+else	43:8	44:27	4
+stmts	44:12	44:27	5	
+water	44:12	0:0	6	p_nal
+op	44:18	0:0	6	=
+water	44:20	0:0	6	p_block
+water	44:27	0:0	6	;
+water	45:4	0:0	4	}
+op	46:4	0:0	2	*
+water	46:5	0:0	2	pb_ts_used
+op	46:16	0:0	2	=
+water	46:18	0:0	2	false
+water	46:23	0:0	2	;
+return	47:4	47:16	2	p_nal
+water	47:11	0:0	3	p_nal

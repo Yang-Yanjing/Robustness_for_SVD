@@ -1,0 +1,183 @@
+func	2:0	37:0	0	static int	DevicesEnum
+params	2:23	0:0	1	
+param	2:24	2:44	2	audio_output_t *	aout
+stmnts	0:0	36:12	1	
+decl	4:4	4:44	2	int	fd
+op	4:11	0:0	2	=
+call	4:13	4:43	3	vlc_open
+arg	4:23	4:33	4	"/dev/dsp"
+water	4:23	0:0	5	"/dev/dsp"
+arg	4:35	4:43	4	O_WRONLY
+water	4:35	0:0	5	O_WRONLY
+if	5:4	6:17	2	(fd == - 1)
+cond	5:8	5:15	3	fd == - 1
+water	5:8	0:0	4	fd
+op	5:11	0:0	4	==
+op	5:14	0:0	4	-
+water	5:15	0:0	4	1
+stmts	6:8	6:17	3	
+return	6:8	6:17	4	-1
+op	6:15	0:0	5	-
+water	6:16	0:0	5	1
+decl	7:4	7:18	2	oss_sysinfo	si
+decl	8:4	8:14	2	int	n
+op	8:10	0:0	2	=
+op	8:12	0:0	2	-
+water	8:13	0:0	2	1
+if	9:4	13:4	2	(ioctl (fd ,SNDCTL_SYSINFO ,& si ) < 0)
+cond	9:8	9:42	3	ioctl (fd ,SNDCTL_SYSINFO ,& si ) < 0
+call	9:8	9:38	4	ioctl
+arg	9:15	9:17	5	fd
+water	9:15	0:0	6	fd
+arg	9:19	9:33	5	SNDCTL_SYSINFO
+water	9:19	0:0	6	SNDCTL_SYSINFO
+arg	9:35	9:38	5	&si
+op	9:35	0:0	6	&
+water	9:36	0:0	6	si
+op	9:40	0:0	4	<
+water	9:42	0:0	4	0
+stmts	10:4	13:4	3	
+water	10:4	0:0	4	{
+call	11:8	11:73	4	msg_Err
+arg	11:17	11:21	5	aout
+water	11:17	0:0	6	aout
+arg	11:23	11:52	5	"cannot get system infos: %s"
+water	11:23	0:0	6	"cannot get system infos: %s"
+arg	11:54	11:73	5	vlc_strerror(errno)
+call	11:54	11:72	6	vlc_strerror
+arg	11:67	11:72	7	errno
+water	11:67	0:0	8	errno
+water	11:74	0:0	4	;
+goto	12:8	12:16	4	out
+water	12:13	0:0	5	out
+water	13:4	0:0	4	}
+call	14:4	15:50	2	msg_Dbg
+arg	14:13	14:17	3	aout
+water	14:13	0:0	4	aout
+arg	14:19	14:58	3	"using %s version %s (0x%06X) under %s"
+water	14:19	0:0	4	"using %s version %s (0x%06X) under %s"
+arg	14:60	14:70	3	si.product
+water	14:60	0:0	4	si
+op	14:62	0:0	4	.
+water	14:63	0:0	4	product
+arg	15:13	15:23	3	si.version
+water	15:13	0:0	4	si
+op	15:15	0:0	4	.
+water	15:16	0:0	4	version
+arg	15:25	15:38	3	si.versionnum
+water	15:25	0:0	4	si
+op	15:27	0:0	4	.
+water	15:28	0:0	4	versionnum
+arg	15:40	15:50	3	si.license
+water	15:40	0:0	4	si
+op	15:42	0:0	4	.
+water	15:43	0:0	4	license
+water	15:51	0:0	2	;
+for	16:4	33:4	2	( int i = 0 ;i < si . numaudios;i ++)
+forinit	0:0	16:18	3	 int i = 0 ;
+decl	16:9	16:18	4	int	i
+op	16:15	0:0	4	=
+water	16:17	0:0	4	0
+cond	16:20	16:27	3	i < si . numaudios
+water	16:20	0:0	4	i
+op	16:22	0:0	4	<
+water	16:24	0:0	4	si
+op	16:26	0:0	4	.
+water	16:27	0:0	4	numaudios
+forexpr	16:38	16:39	3	i ++
+water	16:38	0:0	4	i
+op	16:39	0:0	4	++
+stmts	17:4	33:4	3	
+water	17:4	0:0	4	{
+decl	18:8	18:39	4	oss_audioinfo	ai
+op	18:25	0:0	4	=
+water	18:27	0:0	4	{
+op	18:29	0:0	4	.
+water	18:30	0:0	4	dev
+op	18:34	0:0	4	=
+water	18:36	0:0	4	i
+water	18:38	0:0	4	}
+if	19:8	24:8	4	(ioctl (fd ,SNDCTL_AUDIOINFO ,& ai ) < 0)
+cond	19:12	19:48	5	ioctl (fd ,SNDCTL_AUDIOINFO ,& ai ) < 0
+call	19:12	19:44	6	ioctl
+arg	19:19	19:21	7	fd
+water	19:19	0:0	8	fd
+arg	19:23	19:39	7	SNDCTL_AUDIOINFO
+water	19:23	0:0	8	SNDCTL_AUDIOINFO
+arg	19:41	19:44	7	&ai
+op	19:41	0:0	8	&
+water	19:42	0:0	8	ai
+op	19:46	0:0	6	<
+water	19:48	0:0	6	0
+stmts	20:8	24:8	5	
+water	20:8	0:0	6	{
+call	21:12	22:43	6	msg_Warn
+arg	21:22	21:26	7	aout
+water	21:22	0:0	8	aout
+arg	21:28	21:60	7	"cannot get device %d infos: %s"
+water	21:28	0:0	8	"cannot get device %d infos: %s"
+arg	21:62	21:63	7	i
+water	21:62	0:0	8	i
+arg	22:22	22:43	7	vlc_strerror_c(errno)
+call	22:22	22:42	8	vlc_strerror_c
+arg	22:37	22:42	9	errno
+water	22:37	0:0	10	errno
+water	22:44	0:0	6	;
+continue	23:12	23:20	6	
+water	24:8	0:0	6	}
+if	25:8	26:20	4	(ai . caps & ( PCM_CAP_HIDDEN | PCM_CAP_MODEM ))
+cond	25:12	25:51	5	ai . caps & ( PCM_CAP_HIDDEN | PCM_CAP_MODEM )
+water	25:12	0:0	6	ai
+op	25:14	0:0	6	.
+water	25:15	0:0	6	caps
+op	25:20	0:0	6	&
+water	25:22	0:0	6	(
+water	25:23	0:0	6	PCM_CAP_HIDDEN
+op	25:37	0:0	6	|
+water	25:38	0:0	6	PCM_CAP_MODEM
+water	25:51	0:0	6	)
+stmts	26:12	26:20	5	
+continue	26:12	26:20	6	
+if	27:8	28:20	4	(! ( ai . caps & PCM_CAP_OUTPUT ))
+cond	27:12	27:38	5	! ( ai . caps & PCM_CAP_OUTPUT )
+op	27:12	0:0	6	!
+water	27:13	0:0	6	(
+water	27:14	0:0	6	ai
+op	27:16	0:0	6	.
+water	27:17	0:0	6	caps
+op	27:22	0:0	6	&
+water	27:24	0:0	6	PCM_CAP_OUTPUT
+water	27:38	0:0	6	)
+stmts	28:12	28:20	5	
+continue	28:12	28:20	6	
+if	29:8	30:20	4	(! ai . enabled)
+cond	29:12	29:16	5	! ai . enabled
+op	29:12	0:0	6	!
+water	29:13	0:0	6	ai
+op	29:15	0:0	6	.
+water	29:16	0:0	6	enabled
+stmts	30:12	30:20	5	
+continue	30:12	30:20	6	
+call	31:8	31:53	4	aout_HotplugReport
+arg	31:28	31:32	5	aout
+water	31:28	0:0	6	aout
+arg	31:34	31:44	5	ai.devnode
+water	31:34	0:0	6	ai
+op	31:36	0:0	6	.
+water	31:37	0:0	6	devnode
+arg	31:46	31:53	5	ai.name
+water	31:46	0:0	6	ai
+op	31:48	0:0	6	.
+water	31:49	0:0	6	name
+water	31:54	0:0	4	;
+water	32:8	0:0	4	n
+op	32:9	0:0	4	++
+water	32:11	0:0	4	;
+water	33:4	0:0	4	}
+label	34:0	34:3	2	out :
+call	35:4	35:13	2	close
+arg	35:11	35:13	3	fd
+water	35:11	0:0	4	fd
+water	35:14	0:0	2	;
+return	36:4	36:12	2	n
+water	36:11	0:0	3	n

@@ -1,0 +1,294 @@
+func	2:0	59:0	0	static int	TPDURecv
+params	2:19	0:0	1	
+param	2:21	2:33	2	cam_t *	p_cam
+param	2:35	2:49	2	uint8_t	i_slot
+param	2:51	2:66	2	uint8_t *	pi_tag
+param	3:21	3:36	2	uint8_t *	p_data
+param	3:38	3:51	2	int *	pi_size
+stmnts	0:0	58:22	1	
+decl	5:4	5:31	2	uint8_t	i_tcid
+op	5:19	0:0	2	=
+water	5:21	0:0	2	i_slot
+op	5:28	0:0	2	+
+water	5:30	0:0	2	1
+decl	6:4	6:14	2	int	i_size
+decl	7:4	7:24	2	struct pollfd	pfd[1]
+water	8:4	0:0	2	pfd
+op	8:7	0:0	2	[
+water	8:8	0:0	2	0
+op	8:9	0:0	2	]
+op	8:10	0:0	2	.
+water	8:11	0:0	2	fd
+op	8:14	0:0	2	=
+water	8:16	0:0	2	p_cam
+op	8:21	0:0	2	->
+water	8:23	0:0	2	fd
+water	8:25	0:0	2	;
+water	9:4	0:0	2	pfd
+op	9:7	0:0	2	[
+water	9:8	0:0	2	0
+op	9:9	0:0	2	]
+op	9:10	0:0	2	.
+water	9:11	0:0	2	events
+op	9:18	0:0	2	=
+water	9:20	0:0	2	POLLIN
+water	9:26	0:0	2	;
+while	10:4	15:8	2	(poll (pfd ,1 ,CAM_READ_TIMEOUT ) == - 1)
+cond	10:11	10:47	3	poll (pfd ,1 ,CAM_READ_TIMEOUT ) == - 1
+call	10:11	10:41	4	poll
+arg	10:16	10:19	5	pfd
+water	10:16	0:0	6	pfd
+arg	10:21	10:22	5	1
+water	10:21	0:0	6	1
+arg	10:24	10:41	5	CAM_READ_TIMEOUT
+water	10:24	0:0	6	CAM_READ_TIMEOUT
+op	10:43	0:0	4	==
+op	10:46	0:0	4	-
+water	10:47	0:0	4	1
+stmts	11:8	15:8	3	
+if	11:8	15:8	4	(errno != EINTR)
+cond	11:12	11:21	5	errno != EINTR
+water	11:12	0:0	6	errno
+op	11:18	0:0	6	!=
+water	11:21	0:0	6	EINTR
+stmts	12:8	15:8	5	
+water	12:8	0:0	6	{
+call	13:12	13:73	6	msg_Err
+arg	13:21	13:31	7	p_cam->obj
+water	13:21	0:0	8	p_cam
+op	13:26	0:0	8	->
+water	13:28	0:0	8	obj
+arg	13:33	13:49	7	"poll error: %s"
+water	13:33	0:0	8	"poll error: %s"
+arg	13:51	13:73	7	vlc_strerror_c(errno)
+call	13:51	13:71	8	vlc_strerror_c
+arg	13:66	13:71	9	errno
+water	13:66	0:0	10	errno
+water	13:74	0:0	6	;
+return	14:12	14:31	6	VLC_EGENERIC
+water	14:19	0:0	7	VLC_EGENERIC
+water	15:8	0:0	6	}
+if	16:4	20:4	2	(! ( pfd [ 0 ] . revents & POLLIN ))
+cond	16:9	16:34	3	! ( pfd [ 0 ] . revents & POLLIN )
+op	16:9	0:0	4	!
+water	16:10	0:0	4	(
+water	16:11	0:0	4	pfd
+op	16:14	0:0	4	[
+water	16:15	0:0	4	0
+op	16:16	0:0	4	]
+op	16:17	0:0	4	.
+water	16:18	0:0	4	revents
+op	16:26	0:0	4	&
+water	16:28	0:0	4	POLLIN
+water	16:34	0:0	4	)
+stmts	17:4	20:4	3	
+water	17:4	0:0	4	{
+call	18:8	18:56	4	msg_Err
+arg	18:17	18:27	5	p_cam->obj
+water	18:17	0:0	6	p_cam
+op	18:22	0:0	6	->
+water	18:24	0:0	6	obj
+arg	18:29	18:56	5	"CAM device poll time-out"
+water	18:29	0:0	6	"CAM device poll time-out"
+water	18:57	0:0	4	;
+return	19:8	19:27	4	VLC_EGENERIC
+water	19:15	0:0	5	VLC_EGENERIC
+water	20:4	0:0	4	}
+if	21:4	24:4	2	(pi_size == NULL)
+cond	21:9	21:20	3	pi_size == NULL
+water	21:9	0:0	4	pi_size
+op	21:17	0:0	4	==
+water	21:20	0:0	4	NULL
+stmts	22:4	24:4	3	
+water	22:4	0:0	4	{
+water	23:8	0:0	4	p_data
+op	23:15	0:0	4	=
+call	23:17	23:40	4	xmalloc
+arg	23:26	23:40	5	MAX_TPDU_SIZE
+water	23:26	0:0	6	MAX_TPDU_SIZE
+water	23:41	0:0	4	;
+water	24:4	0:0	4	}
+for	25:4	30:4	2	(;;)
+forinit	25:10	25:10	3	;
+water	25:10	0:0	4	;
+cond	0:0	0:0	3	
+forexpr	0:0	0:0	3	
+stmts	26:4	30:4	3	
+water	26:4	0:0	4	{
+water	27:8	0:0	4	i_size
+op	27:15	0:0	4	=
+call	27:17	27:56	4	read
+arg	27:23	27:32	5	p_cam->fd
+water	27:23	0:0	6	p_cam
+op	27:28	0:0	6	->
+water	27:30	0:0	6	fd
+arg	27:34	27:40	5	p_data
+water	27:34	0:0	6	p_data
+arg	27:42	27:56	5	MAX_TPDU_SIZE
+water	27:42	0:0	6	MAX_TPDU_SIZE
+water	27:57	0:0	4	;
+if	28:8	29:17	4	(i_size >= 0 || errno != EINTR)
+cond	28:13	28:37	5	i_size >= 0 || errno != EINTR
+water	28:13	0:0	6	i_size
+op	28:20	0:0	6	>=
+water	28:23	0:0	6	0
+op	28:25	0:0	6	||
+water	28:28	0:0	6	errno
+op	28:34	0:0	6	!=
+water	28:37	0:0	6	EINTR
+stmts	29:12	29:17	5	
+break	29:12	29:17	6	
+water	30:4	0:0	4	}
+if	31:4	38:4	2	(i_size < 5)
+cond	31:9	31:18	3	i_size < 5
+water	31:9	0:0	4	i_size
+op	31:16	0:0	4	<
+water	31:18	0:0	4	5
+stmts	32:4	38:4	3	
+water	32:4	0:0	4	{
+call	33:8	34:39	4	msg_Err
+arg	33:17	33:27	5	p_cam->obj
+water	33:17	0:0	6	p_cam
+op	33:22	0:0	6	->
+water	33:24	0:0	6	obj
+arg	33:29	33:67	5	"cannot read from CAM device (%d): %s"
+water	33:29	0:0	6	"cannot read from CAM device (%d): %s"
+arg	33:69	33:75	5	i_size
+water	33:69	0:0	6	i_size
+arg	34:17	34:39	5	vlc_strerror_c(errno)
+call	34:17	34:37	6	vlc_strerror_c
+arg	34:32	34:37	7	errno
+water	34:32	0:0	8	errno
+water	34:40	0:0	4	;
+if	35:8	36:26	4	(pi_size == NULL)
+cond	35:12	35:23	5	pi_size == NULL
+water	35:12	0:0	6	pi_size
+op	35:20	0:0	6	==
+water	35:23	0:0	6	NULL
+stmts	36:12	36:26	5	
+call	36:12	36:25	6	free
+arg	36:18	36:25	7	p_data
+water	36:18	0:0	8	p_data
+water	36:26	0:0	6	;
+return	37:8	37:27	4	VLC_EGENERIC
+water	37:15	0:0	5	VLC_EGENERIC
+water	38:4	0:0	4	}
+if	39:4	46:4	2	(p_data [ 1 ] != i_tcid)
+cond	39:9	39:22	3	p_data [ 1 ] != i_tcid
+water	39:9	0:0	4	p_data
+op	39:15	0:0	4	[
+water	39:16	0:0	4	1
+op	39:17	0:0	4	]
+op	39:19	0:0	4	!=
+water	39:22	0:0	4	i_tcid
+stmts	40:4	46:4	3	
+water	40:4	0:0	4	{
+call	41:8	42:35	4	msg_Err
+arg	41:17	41:27	5	p_cam->obj
+water	41:17	0:0	6	p_cam
+op	41:22	0:0	6	->
+water	41:24	0:0	6	obj
+arg	41:29	41:78	5	"invalid read from CAM device (%d instead of %d)"
+water	41:29	0:0	6	"invalid read from CAM device (%d instead of %d)"
+arg	42:17	42:26	5	p_data[1]
+water	42:17	0:0	6	p_data
+op	42:23	0:0	6	[
+water	42:24	0:0	6	1
+op	42:25	0:0	6	]
+arg	42:28	42:35	5	i_tcid
+water	42:28	0:0	6	i_tcid
+water	42:36	0:0	4	;
+if	43:8	44:26	4	(pi_size == NULL)
+cond	43:12	43:23	5	pi_size == NULL
+water	43:12	0:0	6	pi_size
+op	43:20	0:0	6	==
+water	43:23	0:0	6	NULL
+stmts	44:12	44:26	5	
+call	44:12	44:25	6	free
+arg	44:18	44:25	7	p_data
+water	44:18	0:0	8	p_data
+water	44:26	0:0	6	;
+return	45:8	45:27	4	VLC_EGENERIC
+water	45:15	0:0	5	VLC_EGENERIC
+water	46:4	0:0	4	}
+op	47:4	0:0	2	*
+water	47:5	0:0	2	pi_tag
+op	47:12	0:0	2	=
+water	47:14	0:0	2	p_data
+op	47:20	0:0	2	[
+water	47:21	0:0	2	2
+op	47:22	0:0	2	]
+water	47:23	0:0	2	;
+water	48:4	0:0	2	p_cam
+op	48:9	0:0	2	->
+water	48:11	0:0	2	pb_tc_has_data
+op	48:25	0:0	2	[
+water	48:26	0:0	2	i_slot
+op	48:32	0:0	2	]
+op	48:34	0:0	2	=
+water	48:36	0:0	2	(
+water	48:37	0:0	2	i_size
+op	48:44	0:0	2	>=
+water	48:47	0:0	2	4
+op	49:38	0:0	2	&&
+water	49:41	0:0	2	p_data
+op	49:47	0:0	2	[
+water	49:48	0:0	2	i_size
+op	49:55	0:0	2	-
+water	49:57	0:0	2	4
+op	49:58	0:0	2	]
+op	49:60	0:0	2	==
+water	49:63	0:0	2	T_SB
+op	50:38	0:0	2	&&
+water	50:41	0:0	2	p_data
+op	50:47	0:0	2	[
+water	50:48	0:0	2	i_size
+op	50:55	0:0	2	-
+water	50:57	0:0	2	3
+op	50:58	0:0	2	]
+op	50:60	0:0	2	==
+water	50:63	0:0	2	2
+op	51:38	0:0	2	&&
+water	51:41	0:0	2	(
+water	51:42	0:0	2	p_data
+op	51:48	0:0	2	[
+water	51:49	0:0	2	i_size
+op	51:56	0:0	2	-
+water	51:58	0:0	2	1
+op	51:59	0:0	2	]
+op	51:61	0:0	2	&
+water	51:63	0:0	2	DATA_INDICATOR
+water	51:77	0:0	2	)
+water	51:78	0:0	2	)
+water	52:40	0:0	2	?
+water	52:43	0:0	2	true
+water	52:48	0:0	2	:
+water	52:50	0:0	2	false
+water	52:55	0:0	2	;
+call	53:4	53:32	2	Dump
+arg	53:10	53:15	3	false
+water	53:10	0:0	4	false
+arg	53:17	53:23	3	p_data
+water	53:17	0:0	4	p_data
+arg	53:25	53:32	3	i_size
+water	53:25	0:0	4	i_size
+water	53:33	0:0	2	;
+if	54:4	55:22	2	(pi_size == NULL)
+cond	54:9	54:20	3	pi_size == NULL
+water	54:9	0:0	4	pi_size
+op	54:17	0:0	4	==
+water	54:20	0:0	4	NULL
+stmts	55:8	55:22	3	
+call	55:8	55:21	4	free
+arg	55:14	55:21	5	p_data
+water	55:14	0:0	6	p_data
+water	55:22	0:0	4	;
+else	56:4	57:25	2
+stmts	57:8	57:25	3	
+op	57:8	0:0	4	*
+water	57:9	0:0	4	pi_size
+op	57:17	0:0	4	=
+water	57:19	0:0	4	i_size
+water	57:25	0:0	4	;
+return	58:4	58:22	2	VLC_SUCCESS
+water	58:11	0:0	3	VLC_SUCCESS

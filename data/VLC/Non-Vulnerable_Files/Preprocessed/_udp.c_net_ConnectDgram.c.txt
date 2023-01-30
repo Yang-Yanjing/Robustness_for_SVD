@@ -1,0 +1,314 @@
+func	2:0	66:0	0	int	net_ConnectDgram
+params	2:20	0:0	1	
+param	2:22	2:42	2	vlc_object_t *	p_this
+param	2:44	2:64	2	const char *	psz_host
+param	2:66	2:76	2	int	i_port
+param	3:22	3:32	2	int	i_hlim
+param	3:34	3:44	2	int	proto
+stmnts	0:0	65:19	1	
+decl	5:4	9:11	2	struct addrinfo	hints
+op	5:26	0:0	2	=
+water	5:28	0:0	2	{
+op	6:8	0:0	2	.
+water	6:9	0:0	2	ai_socktype
+op	6:21	0:0	2	=
+water	6:23	0:0	2	SOCK_DGRAM
+water	6:33	0:0	2	,
+op	7:8	0:0	2	.
+water	7:9	0:0	2	ai_protocol
+op	7:21	0:0	2	=
+water	7:23	0:0	2	proto
+water	7:28	0:0	2	,
+op	8:8	0:0	2	.
+water	8:9	0:0	2	ai_flags
+op	8:18	0:0	2	=
+water	8:20	0:0	2	AI_NUMERICSERV
+op	8:35	0:0	2	|
+water	8:37	0:0	2	AI_IDN
+water	8:43	0:0	2	,
+water	9:4	0:0	2	}
+water	9:5	0:0	2	,
+decl	5:4	9:11	2	struct addrinfo	*res
+decl	10:4	10:27	2	int	i_handle
+op	10:23	0:0	2	=
+op	10:25	0:0	2	-
+water	10:26	0:0	2	1
+decl	11:4	11:31	2	bool	b_unreach
+op	11:24	0:0	2	=
+water	11:26	0:0	2	false
+if	12:4	13:52	2	(i_hlim < 0)
+cond	12:8	12:17	3	i_hlim < 0
+water	12:8	0:0	4	i_hlim
+op	12:15	0:0	4	<
+water	12:17	0:0	4	0
+stmts	13:8	13:52	3	
+water	13:8	0:0	4	i_hlim
+op	13:15	0:0	4	=
+call	13:17	13:51	4	var_InheritInteger
+arg	13:37	13:43	5	p_this
+water	13:37	0:0	6	p_this
+arg	13:45	13:51	5	"ttl"
+water	13:45	0:0	6	"ttl"
+water	13:52	0:0	4	;
+call	14:4	14:68	2	msg_Dbg
+arg	14:13	14:19	3	p_this
+water	14:13	0:0	4	p_this
+arg	14:21	14:49	3	"net: connecting to [%s]:%d"
+water	14:21	0:0	4	"net: connecting to [%s]:%d"
+arg	14:51	14:59	3	psz_host
+water	14:51	0:0	4	psz_host
+arg	14:61	14:68	3	i_port
+water	14:61	0:0	4	i_port
+water	14:69	0:0	2	;
+decl	15:4	15:62	2	int	val
+op	15:12	0:0	2	=
+call	15:14	15:61	3	vlc_getaddrinfo
+arg	15:31	15:39	4	psz_host
+water	15:31	0:0	5	psz_host
+arg	15:41	15:47	4	i_port
+water	15:41	0:0	5	i_port
+arg	15:49	15:55	4	&hints
+op	15:49	0:0	5	&
+water	15:50	0:0	5	hints
+arg	15:57	15:61	4	&res
+op	15:57	0:0	5	&
+water	15:58	0:0	5	res
+if	16:4	21:4	2	(val)
+cond	16:8	16:8	3	val
+water	16:8	0:0	4	val
+stmts	17:4	21:4	3	
+water	17:4	0:0	4	{
+call	18:8	19:35	4	msg_Err
+arg	18:17	18:23	5	p_this
+water	18:17	0:0	6	p_this
+arg	18:25	18:54	5	"cannot resolve [%s]:%d : %s"
+water	18:25	0:0	6	"cannot resolve [%s]:%d : %s"
+arg	18:56	18:64	5	psz_host
+water	18:56	0:0	6	psz_host
+arg	18:66	18:72	5	i_port
+water	18:66	0:0	6	i_port
+arg	19:17	19:35	5	gai_strerror(val)
+call	19:17	19:34	6	gai_strerror
+arg	19:31	19:34	7	val
+water	19:31	0:0	8	val
+water	19:36	0:0	4	;
+return	20:8	20:17	4	-1
+op	20:15	0:0	5	-
+water	20:16	0:0	5	1
+water	21:4	0:0	4	}
+for	22:4	56:4	2	( struct addrinfo * ptr = res ;ptr != NULL;ptr = ptr -> ai_next)
+forinit	0:0	22:35	3	 struct addrinfo * ptr = res ;
+decl	22:9	22:35	4	struct addrinfo	*ptr
+op	22:30	0:0	4	=
+water	22:32	0:0	4	res
+cond	22:37	22:44	3	ptr != NULL
+water	22:37	0:0	4	ptr
+op	22:41	0:0	4	!=
+water	22:44	0:0	4	NULL
+forexpr	22:50	22:61	3	ptr = ptr -> ai_next
+water	22:50	0:0	4	ptr
+op	22:54	0:0	4	=
+water	22:56	0:0	4	ptr
+op	22:59	0:0	4	->
+water	22:61	0:0	4	ai_next
+stmts	23:4	56:4	3	
+water	23:4	0:0	4	{
+decl	24:8	24:17	4	char	*str
+decl	25:8	26:46	4	int	fd
+op	25:15	0:0	4	=
+call	25:17	26:45	5	net_Socket
+arg	25:29	25:35	6	p_this
+water	25:29	0:0	7	p_this
+arg	25:37	25:51	6	ptr->ai_family
+water	25:37	0:0	7	ptr
+op	25:40	0:0	7	->
+water	25:42	0:0	7	ai_family
+arg	25:53	25:69	6	ptr->ai_socktype
+water	25:53	0:0	7	ptr
+op	25:56	0:0	7	->
+water	25:58	0:0	7	ai_socktype
+arg	26:29	26:45	6	ptr->ai_protocol
+water	26:29	0:0	7	ptr
+op	26:32	0:0	7	->
+water	26:34	0:0	7	ai_protocol
+if	27:8	28:20	4	(fd == - 1)
+cond	27:12	27:19	5	fd == - 1
+water	27:12	0:0	6	fd
+op	27:15	0:0	6	==
+op	27:18	0:0	6	-
+water	27:19	0:0	6	1
+stmts	28:12	28:20	5	
+continue	28:12	28:20	6	
+call	30:8	30:75	4	setsockopt
+arg	30:20	30:22	5	fd
+water	30:20	0:0	6	fd
+arg	30:24	30:34	5	SOL_SOCKET
+water	30:24	0:0	6	SOL_SOCKET
+arg	30:36	30:48	5	SO_BROADCAST
+water	30:36	0:0	6	SO_BROADCAST
+arg	30:50	30:61	5	&(int){1}
+op	30:50	0:0	6	&
+water	30:51	0:0	6	(
+water	30:52	0:0	6	int
+water	30:55	0:0	6	)
+water	30:56	0:0	6	{
+water	30:58	0:0	6	1
+water	30:60	0:0	6	}
+arg	30:63	30:75	5	sizeof(int)
+op	30:63	0:0	6	sizeof
+water	30:70	0:0	6	(
+water	30:71	0:0	6	int
+water	30:74	0:0	6	)
+water	30:76	0:0	4	;
+if	31:8	32:70	4	(i_hlim >= 0)
+cond	31:12	31:22	5	i_hlim >= 0
+water	31:12	0:0	6	i_hlim
+op	31:19	0:0	6	>=
+water	31:22	0:0	6	0
+stmts	32:12	32:70	5	
+call	32:12	32:69	6	net_SetMcastHopLimit
+arg	32:34	32:40	7	p_this
+water	32:34	0:0	8	p_this
+arg	32:42	32:44	7	fd
+water	32:42	0:0	8	fd
+arg	32:46	32:60	7	ptr->ai_family
+water	32:46	0:0	8	ptr
+op	32:49	0:0	8	->
+water	32:51	0:0	8	ai_family
+arg	32:62	32:69	7	i_hlim
+water	32:62	0:0	8	i_hlim
+water	32:70	0:0	6	;
+water	33:8	0:0	4	str
+op	33:12	0:0	4	=
+call	33:14	33:49	4	var_InheritString
+arg	33:33	33:39	5	p_this
+water	33:33	0:0	6	p_this
+arg	33:41	33:49	5	"miface"
+water	33:41	0:0	6	"miface"
+water	33:50	0:0	4	;
+if	34:8	38:8	4	(str != NULL)
+cond	34:12	34:19	5	str != NULL
+water	34:12	0:0	6	str
+op	34:16	0:0	6	!=
+water	34:19	0:0	6	NULL
+stmts	35:8	38:8	5	
+water	35:8	0:0	6	{
+call	36:12	36:60	6	net_SetMcastOut
+arg	36:29	36:35	7	p_this
+water	36:29	0:0	8	p_this
+arg	36:37	36:39	7	fd
+water	36:37	0:0	8	fd
+arg	36:41	36:55	7	ptr->ai_family
+water	36:41	0:0	8	ptr
+op	36:44	0:0	8	->
+water	36:46	0:0	8	ai_family
+arg	36:57	36:60	7	str
+water	36:57	0:0	8	str
+water	36:61	0:0	6	;
+call	37:12	37:21	6	free
+arg	37:18	37:21	7	str
+water	37:18	0:0	8	str
+water	37:22	0:0	6	;
+water	38:8	0:0	6	}
+call	39:8	39:60	4	net_SetDSCP
+arg	39:21	39:23	5	fd
+water	39:21	0:0	6	fd
+arg	39:25	39:60	5	var_InheritInteger(p_this,"dscp")
+call	39:25	39:59	6	var_InheritInteger
+arg	39:45	39:51	7	p_this
+water	39:45	0:0	8	p_this
+arg	39:53	39:59	7	"dscp"
+water	39:53	0:0	8	"dscp"
+water	39:61	0:0	4	;
+if	40:8	45:8	4	(connect (fd ,ptr -> ai_addr ,ptr -> ai_addrlen ) == 0)
+cond	40:12	40:60	5	connect (fd ,ptr -> ai_addr ,ptr -> ai_addrlen ) == 0
+call	40:12	40:55	6	connect
+arg	40:21	40:23	7	fd
+water	40:21	0:0	8	fd
+arg	40:25	40:37	7	ptr->ai_addr
+water	40:25	0:0	8	ptr
+op	40:28	0:0	8	->
+water	40:30	0:0	8	ai_addr
+arg	40:39	40:55	7	ptr->ai_addrlen
+water	40:39	0:0	8	ptr
+op	40:42	0:0	8	->
+water	40:44	0:0	8	ai_addrlen
+op	40:57	0:0	6	==
+water	40:60	0:0	6	0
+stmts	41:8	45:8	5	
+water	41:8	0:0	6	{
+water	43:12	0:0	6	i_handle
+op	43:21	0:0	6	=
+water	43:23	0:0	6	fd
+water	43:25	0:0	6	;
+break	44:12	44:17	6	
+water	45:8	0:0	6	}
+if	47:8	51:28	4	(WSAGetLastError ( ) == WSAENETUNREACH)
+cond	47:12	47:34	5	WSAGetLastError ( ) == WSAENETUNREACH
+call	47:12	47:29	6	WSAGetLastError
+op	47:31	0:0	6	==
+water	47:34	0:0	6	WSAENETUNREACH
+stmts	49:8	51:28	5	
+if	49:8	51:28	6	(errno == ENETUNREACH)
+cond	49:12	49:21	7	errno == ENETUNREACH
+water	49:12	0:0	8	errno
+op	49:18	0:0	8	==
+water	49:21	0:0	8	ENETUNREACH
+stmts	51:12	51:28	7	
+water	51:12	0:0	8	b_unreach
+op	51:22	0:0	8	=
+water	51:24	0:0	8	true
+water	51:28	0:0	8	;
+else	52:8	54:45	4
+stmts	53:12	54:45	5	
+call	53:12	54:44	6	msg_Warn
+arg	53:22	53:28	7	p_this
+water	53:22	0:0	8	p_this
+arg	53:30	53:47	7	"%s port %d : %s"
+water	53:30	0:0	8	"%s port %d : %s"
+arg	53:49	53:57	7	psz_host
+water	53:49	0:0	8	psz_host
+arg	53:59	53:65	7	i_port
+water	53:59	0:0	8	i_port
+arg	54:22	54:44	7	vlc_strerror_c(errno)
+call	54:22	54:42	8	vlc_strerror_c
+arg	54:37	54:42	9	errno
+water	54:37	0:0	10	errno
+water	54:45	0:0	6	;
+call	55:8	55:22	4	net_Close
+arg	55:19	55:22	5	fd
+water	55:19	0:0	6	fd
+water	55:23	0:0	4	;
+water	56:4	0:0	4	}
+call	57:4	57:22	2	freeaddrinfo
+arg	57:18	57:22	3	res
+water	57:18	0:0	4	res
+water	57:23	0:0	2	;
+if	58:4	64:4	2	(i_handle == - 1)
+cond	58:8	58:21	3	i_handle == - 1
+water	58:8	0:0	4	i_handle
+op	58:17	0:0	4	==
+op	58:20	0:0	4	-
+water	58:21	0:0	4	1
+stmts	59:4	64:4	3	
+water	59:4	0:0	4	{
+if	60:8	62:29	4	(b_unreach)
+cond	60:12	60:12	5	b_unreach
+water	60:12	0:0	6	b_unreach
+stmts	61:12	62:29	5	
+call	61:12	62:28	6	msg_Err
+arg	61:21	61:27	7	p_this
+water	61:21	0:0	8	p_this
+arg	61:29	61:61	7	"Host %s port %d is unreachable"
+water	61:29	0:0	8	"Host %s port %d is unreachable"
+arg	61:63	61:71	7	psz_host
+water	61:63	0:0	8	psz_host
+arg	62:21	62:28	7	i_port
+water	62:21	0:0	8	i_port
+water	62:29	0:0	6	;
+return	63:8	63:17	4	-1
+op	63:15	0:0	5	-
+water	63:16	0:0	5	1
+water	64:4	0:0	4	}
+return	65:4	65:19	2	i_handle
+water	65:11	0:0	3	i_handle

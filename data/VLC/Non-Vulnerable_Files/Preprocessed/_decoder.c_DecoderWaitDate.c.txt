@@ -1,0 +1,67 @@
+func	2:0	19:0	0	static void	DecoderWaitDate
+params	2:27	0:0	1	
+param	2:29	2:45	2	decoder_t *	p_dec
+param	3:29	3:44	2	bool *	pb_reject
+param	3:46	3:65	2	mtime_t	i_deadline
+stmnts	0:0	18:50	1	
+decl	5:4	5:49	2	decoder_owner_sys_t	*p_owner
+op	5:33	0:0	2	=
+water	5:35	0:0	2	p_dec
+op	5:40	0:0	2	->
+water	5:42	0:0	2	p_owner
+call	6:4	6:38	2	vlc_assert_locked
+arg	6:23	6:38	3	&p_owner->lock
+op	6:23	0:0	4	&
+water	6:24	0:0	4	p_owner
+op	6:31	0:0	4	->
+water	6:33	0:0	4	lock
+water	6:39	0:0	2	;
+if	7:4	8:14	2	(* pb_reject || i_deadline < 0)
+cond	7:8	7:35	3	* pb_reject || i_deadline < 0
+op	7:8	0:0	4	*
+water	7:9	0:0	4	pb_reject
+op	7:19	0:0	4	||
+water	7:22	0:0	4	i_deadline
+op	7:33	0:0	4	<
+water	7:35	0:0	4	0
+stmts	8:8	8:14	3	
+return	8:8	8:14	4	
+do	9:4	16:4	2	(vlc_cond_timedwait (& p_owner -> wait_request ,& p_owner -> lock ,i_deadline ) == 0)
+cond	17:11	18:47	3	vlc_cond_timedwait (& p_owner -> wait_request ,& p_owner -> lock ,i_deadline ) == 0
+call	17:11	18:42	4	vlc_cond_timedwait
+arg	17:31	17:53	5	&p_owner->wait_request
+op	17:31	0:0	6	&
+water	17:32	0:0	6	p_owner
+op	17:39	0:0	6	->
+water	17:41	0:0	6	wait_request
+arg	17:55	17:69	5	&p_owner->lock
+op	17:55	0:0	6	&
+water	17:56	0:0	6	p_owner
+op	17:63	0:0	6	->
+water	17:65	0:0	6	lock
+arg	18:31	18:42	5	i_deadline
+water	18:31	0:0	6	i_deadline
+op	18:44	0:0	4	==
+water	18:47	0:0	4	0
+stmts	10:4	16:4	3	
+water	10:4	0:0	4	{
+if	11:8	15:8	4	(p_owner -> b_flushing || p_owner -> b_exit)
+cond	11:12	11:44	5	p_owner -> b_flushing || p_owner -> b_exit
+water	11:12	0:0	6	p_owner
+op	11:19	0:0	6	->
+water	11:21	0:0	6	b_flushing
+op	11:32	0:0	6	||
+water	11:35	0:0	6	p_owner
+op	11:42	0:0	6	->
+water	11:44	0:0	6	b_exit
+stmts	12:8	15:8	5	
+water	12:8	0:0	6	{
+op	13:12	0:0	6	*
+water	13:13	0:0	6	pb_reject
+op	13:23	0:0	6	=
+water	13:25	0:0	6	true
+water	13:29	0:0	6	;
+break	14:12	14:17	6	
+water	15:8	0:0	6	}
+water	16:4	0:0	4	}
+water	18:50	0:0	2	;

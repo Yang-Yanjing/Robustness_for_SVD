@@ -1,0 +1,109 @@
+func	2:0	23:0	0	void	ObjectKillChildrens
+params	2:24	0:0	1	
+param	2:26	2:46	2	vlc_object_t *	p_obj
+stmnts	0:0	22:30	1	
+decl	6:4	6:56	2	vlc_object_internals_t	*priv
+op	6:33	0:0	2	=
+call	6:35	6:55	3	vlc_internals
+arg	6:50	6:55	4	p_obj
+water	6:50	0:0	5	p_obj
+if	7:4	18:4	2	(atomic_exchange (& priv -> alive ,false ))
+cond	7:8	7:44	3	atomic_exchange (& priv -> alive ,false )
+call	7:8	7:44	4	atomic_exchange
+arg	7:25	7:37	5	&priv->alive
+op	7:25	0:0	6	&
+water	7:26	0:0	6	priv
+op	7:30	0:0	6	->
+water	7:32	0:0	6	alive
+arg	7:39	7:44	5	false
+water	7:39	0:0	6	false
+stmts	8:4	18:4	3	
+water	8:4	0:0	4	{
+decl	9:8	9:14	4	int	fd
+call	10:8	10:34	4	vlc_mutex_lock
+arg	10:24	10:34	5	&pipe_lock
+op	10:24	0:0	6	&
+water	10:25	0:0	6	pipe_lock
+water	10:35	0:0	4	;
+water	11:8	0:0	4	fd
+op	11:11	0:0	4	=
+water	11:13	0:0	4	priv
+op	11:17	0:0	4	->
+water	11:19	0:0	4	pipes
+op	11:24	0:0	4	[
+water	11:25	0:0	4	1
+op	11:26	0:0	4	]
+water	11:27	0:0	4	;
+call	12:8	12:36	4	vlc_mutex_unlock
+arg	12:26	12:36	5	&pipe_lock
+op	12:26	0:0	6	&
+water	12:27	0:0	6	pipe_lock
+water	12:37	0:0	4	;
+if	13:8	17:8	4	(fd != - 1)
+cond	13:12	13:19	5	fd != - 1
+water	13:12	0:0	6	fd
+op	13:15	0:0	6	!=
+op	13:18	0:0	6	-
+water	13:19	0:0	6	1
+stmts	14:8	17:8	5	
+water	14:8	0:0	6	{
+call	15:12	15:58	6	write
+arg	15:19	15:21	7	fd
+water	15:19	0:0	8	fd
+arg	15:23	15:39	7	&(uint64_t){1}
+op	15:23	0:0	8	&
+water	15:24	0:0	8	(
+water	15:25	0:0	8	uint64_t
+water	15:33	0:0	8	)
+water	15:34	0:0	8	{
+water	15:36	0:0	8	1
+water	15:38	0:0	8	}
+arg	15:41	15:58	7	sizeof(uint64_t)
+op	15:41	0:0	8	sizeof
+water	15:48	0:0	8	(
+water	15:49	0:0	8	uint64_t
+water	15:57	0:0	8	)
+water	15:59	0:0	6	;
+call	16:12	16:55	6	msg_Dbg
+arg	16:21	16:26	7	p_obj
+water	16:21	0:0	8	p_obj
+arg	16:28	16:55	7	"object waitpipe triggered"
+water	16:28	0:0	8	"object waitpipe triggered"
+water	16:56	0:0	6	;
+water	17:8	0:0	6	}
+water	18:4	0:0	4	}
+decl	19:4	19:51	2	vlc_list_t	*p_list
+op	19:23	0:0	2	=
+call	19:25	19:50	3	vlc_list_children
+arg	19:44	19:50	4	p_obj
+water	19:44	0:0	5	p_obj
+for	20:4	21:59	2	( int i = 0 ;i < p_list -> i_count;i ++)
+forinit	0:0	20:18	3	 int i = 0 ;
+decl	20:9	20:18	4	int	i
+op	20:15	0:0	4	=
+water	20:17	0:0	4	0
+cond	20:20	20:32	3	i < p_list -> i_count
+water	20:20	0:0	4	i
+op	20:22	0:0	4	<
+water	20:24	0:0	4	p_list
+op	20:30	0:0	4	->
+water	20:32	0:0	4	i_count
+forexpr	20:41	20:42	3	i ++
+water	20:41	0:0	4	i
+op	20:42	0:0	4	++
+stmts	21:8	21:59	3	
+call	21:8	21:58	4	ObjectKillChildrens
+arg	21:29	21:58	5	p_list->p_values[i].p_object
+water	21:29	0:0	6	p_list
+op	21:35	0:0	6	->
+water	21:37	0:0	6	p_values
+op	21:45	0:0	6	[
+water	21:46	0:0	6	i
+op	21:47	0:0	6	]
+op	21:48	0:0	6	.
+water	21:49	0:0	6	p_object
+water	21:59	0:0	4	;
+call	22:4	22:29	2	vlc_list_release
+arg	22:22	22:29	3	p_list
+water	22:22	0:0	4	p_list
+water	22:30	0:0	2	;

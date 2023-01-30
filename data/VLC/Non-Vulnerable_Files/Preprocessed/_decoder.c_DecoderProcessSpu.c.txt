@@ -1,0 +1,209 @@
+func	2:0	46:0	0	static void	DecoderProcessSpu
+params	2:29	0:0	1	
+param	2:31	2:47	2	decoder_t *	p_dec
+param	2:49	2:65	2	block_t *	p_block
+param	2:67	2:80	2	bool	b_flush
+stmnts	0:0	45:4	1	
+decl	4:4	4:49	2	decoder_owner_sys_t	*p_owner
+op	4:33	0:0	2	=
+water	4:35	0:0	2	p_dec
+op	4:40	0:0	2	->
+water	4:42	0:0	2	p_owner
+decl	5:4	5:46	2	input_thread_t	*p_input
+op	5:28	0:0	2	=
+water	5:30	0:0	2	p_owner
+op	5:37	0:0	2	->
+water	5:39	0:0	2	p_input
+decl	6:4	6:25	2	vout_thread_t	*p_vout
+decl	7:4	7:23	2	subpicture_t	*p_spu
+while	8:4	37:4	2	(( p_spu =p_dec -> pf_decode_sub (p_dec ,p_block ? & p_block : NULL ) ))
+cond	8:11	8:77	3	( p_spu =p_dec -> pf_decode_sub (p_dec ,p_block ? & p_block : NULL ) )
+water	8:11	0:0	4	(
+water	8:12	0:0	4	p_spu
+op	8:18	0:0	4	=
+call	8:20	8:75	4	p_dec->pf_decode_sub
+arg	8:42	8:47	5	p_dec
+water	8:42	0:0	6	p_dec
+arg	8:49	8:75	5	p_block?&p_block:NULL
+water	8:49	0:0	6	p_block
+water	8:57	0:0	6	?
+op	8:59	0:0	6	&
+water	8:60	0:0	6	p_block
+water	8:68	0:0	6	:
+water	8:70	0:0	6	NULL
+water	8:77	0:0	4	)
+stmts	9:4	37:4	3	
+water	9:4	0:0	4	{
+if	10:8	15:8	4	(p_input != NULL)
+cond	10:12	10:23	5	p_input != NULL
+water	10:12	0:0	6	p_input
+op	10:20	0:0	6	!=
+water	10:23	0:0	6	NULL
+stmts	11:8	15:8	5	
+water	11:8	0:0	6	{
+call	12:12	12:64	6	vlc_mutex_lock
+arg	12:28	12:64	7	&p_input->p->counters.counters_lock
+op	12:28	0:0	8	&
+water	12:29	0:0	8	p_input
+op	12:36	0:0	8	->
+water	12:38	0:0	8	p
+op	12:39	0:0	8	->
+water	12:41	0:0	8	counters
+op	12:49	0:0	8	.
+water	12:50	0:0	8	counters_lock
+water	12:65	0:0	6	;
+call	13:12	13:70	6	stats_Update
+arg	13:26	13:60	7	p_input->p->counters.p_decoded_sub
+water	13:26	0:0	8	p_input
+op	13:33	0:0	8	->
+water	13:35	0:0	8	p
+op	13:36	0:0	8	->
+water	13:38	0:0	8	counters
+op	13:46	0:0	8	.
+water	13:47	0:0	8	p_decoded_sub
+arg	13:62	13:63	7	1
+water	13:62	0:0	8	1
+arg	13:65	13:70	7	NULL
+water	13:65	0:0	8	NULL
+water	13:71	0:0	6	;
+call	14:12	14:66	6	vlc_mutex_unlock
+arg	14:30	14:66	7	&p_input->p->counters.counters_lock
+op	14:30	0:0	8	&
+water	14:31	0:0	8	p_input
+op	14:38	0:0	8	->
+water	14:40	0:0	8	p
+op	14:41	0:0	8	->
+water	14:43	0:0	8	counters
+op	14:51	0:0	8	.
+water	14:52	0:0	8	counters_lock
+water	14:67	0:0	6	;
+water	15:8	0:0	6	}
+water	16:8	0:0	4	p_vout
+op	16:15	0:0	4	=
+call	16:17	16:62	4	input_resource_HoldVout
+arg	16:42	16:62	5	p_owner->p_resource
+water	16:42	0:0	6	p_owner
+op	16:49	0:0	6	->
+water	16:51	0:0	6	p_resource
+water	16:63	0:0	4	;
+if	17:8	30:8	4	(p_vout && p_owner -> p_spu_vout == p_vout)
+cond	17:12	17:45	5	p_vout && p_owner -> p_spu_vout == p_vout
+water	17:12	0:0	6	p_vout
+op	17:19	0:0	6	&&
+water	17:22	0:0	6	p_owner
+op	17:29	0:0	6	->
+water	17:31	0:0	6	p_spu_vout
+op	17:42	0:0	6	==
+water	17:45	0:0	6	p_vout
+stmts	18:8	30:8	5	
+water	18:8	0:0	6	{
+if	20:12	25:12	6	(p_spu -> i_start > VLC_TS_INVALID && p_spu -> i_start < p_owner -> i_preroll_end && ( p_spu -> i_stop <= VLC_TS_INVALID || p_spu -> i_stop < p_owner -> i_preroll_end ))
+cond	20:16	22:92	7	p_spu -> i_start > VLC_TS_INVALID && p_spu -> i_start < p_owner -> i_preroll_end && ( p_spu -> i_stop <= VLC_TS_INVALID || p_spu -> i_stop < p_owner -> i_preroll_end )
+water	20:16	0:0	8	p_spu
+op	20:21	0:0	8	->
+water	20:23	0:0	8	i_start
+op	20:31	0:0	8	>
+water	20:33	0:0	8	VLC_TS_INVALID
+op	20:48	0:0	8	&&
+water	21:16	0:0	8	p_spu
+op	21:21	0:0	8	->
+water	21:23	0:0	8	i_start
+op	21:31	0:0	8	<
+water	21:33	0:0	8	p_owner
+op	21:40	0:0	8	->
+water	21:42	0:0	8	i_preroll_end
+op	21:56	0:0	8	&&
+water	22:16	0:0	8	(
+water	22:18	0:0	8	p_spu
+op	22:23	0:0	8	->
+water	22:25	0:0	8	i_stop
+op	22:32	0:0	8	<=
+water	22:35	0:0	8	VLC_TS_INVALID
+op	22:50	0:0	8	||
+water	22:53	0:0	8	p_spu
+op	22:58	0:0	8	->
+water	22:60	0:0	8	i_stop
+op	22:67	0:0	8	<
+water	22:69	0:0	8	p_owner
+op	22:76	0:0	8	->
+water	22:78	0:0	8	i_preroll_end
+water	22:92	0:0	8	)
+stmts	23:12	25:12	7	
+water	23:12	0:0	8	{
+call	24:16	24:41	8	subpicture_Delete
+arg	24:35	24:41	9	p_spu
+water	24:35	0:0	10	p_spu
+water	24:42	0:0	8	;
+water	25:12	0:0	8	}
+else	26:12	29:12	6
+stmts	27:12	29:12	7	
+water	27:12	0:0	8	{
+call	28:16	28:45	8	DecoderPlaySpu
+arg	28:32	28:37	9	p_dec
+water	28:32	0:0	10	p_dec
+arg	28:39	28:45	9	p_spu
+water	28:39	0:0	10	p_spu
+water	28:46	0:0	8	;
+water	29:12	0:0	8	}
+water	30:8	0:0	6	}
+else	31:8	34:8	4
+stmts	32:8	34:8	5	
+water	32:8	0:0	6	{
+call	33:12	33:37	6	subpicture_Delete
+arg	33:31	33:37	7	p_spu
+water	33:31	0:0	8	p_spu
+water	33:38	0:0	6	;
+water	34:8	0:0	6	}
+if	35:8	36:40	4	(p_vout)
+cond	35:12	35:12	5	p_vout
+water	35:12	0:0	6	p_vout
+stmts	36:12	36:40	5	
+call	36:12	36:39	6	vlc_object_release
+arg	36:32	36:39	7	p_vout
+water	36:32	0:0	8	p_vout
+water	36:40	0:0	6	;
+water	37:4	0:0	4	}
+if	38:4	45:4	2	(b_flush && p_owner -> p_spu_vout)
+cond	38:8	38:28	3	b_flush && p_owner -> p_spu_vout
+water	38:8	0:0	4	b_flush
+op	38:16	0:0	4	&&
+water	38:19	0:0	4	p_owner
+op	38:26	0:0	4	->
+water	38:28	0:0	4	p_spu_vout
+stmts	39:4	45:4	3	
+water	39:4	0:0	4	{
+water	40:8	0:0	4	p_vout
+op	40:15	0:0	4	=
+call	40:17	40:62	4	input_resource_HoldVout
+arg	40:42	40:62	5	p_owner->p_resource
+water	40:42	0:0	6	p_owner
+op	40:49	0:0	6	->
+water	40:51	0:0	6	p_resource
+water	40:63	0:0	4	;
+if	41:8	42:73	4	(p_vout && p_owner -> p_spu_vout == p_vout)
+cond	41:12	41:45	5	p_vout && p_owner -> p_spu_vout == p_vout
+water	41:12	0:0	6	p_vout
+op	41:19	0:0	6	&&
+water	41:22	0:0	6	p_owner
+op	41:29	0:0	6	->
+water	41:31	0:0	6	p_spu_vout
+op	41:42	0:0	6	==
+water	41:45	0:0	6	p_vout
+stmts	42:12	42:73	5	
+call	42:12	42:72	6	vout_FlushSubpictureChannel
+arg	42:41	42:47	7	p_vout
+water	42:41	0:0	8	p_vout
+arg	42:49	42:72	7	p_owner->i_spu_channel
+water	42:49	0:0	8	p_owner
+op	42:56	0:0	8	->
+water	42:58	0:0	8	i_spu_channel
+water	42:73	0:0	6	;
+if	43:8	44:40	4	(p_vout)
+cond	43:12	43:12	5	p_vout
+water	43:12	0:0	6	p_vout
+stmts	44:12	44:40	5	
+call	44:12	44:39	6	vlc_object_release
+arg	44:32	44:39	7	p_vout
+water	44:32	0:0	8	p_vout
+water	44:40	0:0	6	;
+water	45:4	0:0	4	}

@@ -1,0 +1,132 @@
+func	2:0	25:0	0	static int	DeviceSelect
+params	2:23	0:0	1	
+param	2:24	2:44	2	audio_output_t *	aout
+param	2:46	2:60	2	const char *	id
+stmnts	0:0	24:38	1	
+decl	4:4	4:31	2	aout_sys_t	*sys
+op	4:20	0:0	2	=
+water	4:22	0:0	2	aout
+op	4:26	0:0	2	->
+water	4:28	0:0	2	sys
+decl	5:4	5:19	2	wchar_t	*device
+if	6:4	11:4	2	(id != NULL)
+cond	6:8	6:14	3	id != NULL
+water	6:8	0:0	4	id
+op	6:11	0:0	4	!=
+water	6:14	0:0	4	NULL
+stmts	7:4	11:4	3	
+water	7:4	0:0	4	{
+water	8:8	0:0	4	device
+op	8:15	0:0	4	=
+call	8:17	8:26	4	ToWide
+arg	8:24	8:26	5	id
+water	8:24	0:0	6	id
+water	8:27	0:0	4	;
+if	9:8	10:21	4	(unlikely (device == NULL ))
+cond	9:12	9:35	5	unlikely (device == NULL )
+call	9:12	9:35	6	unlikely
+arg	9:21	9:35	7	device==NULL
+water	9:21	0:0	8	device
+op	9:28	0:0	8	==
+water	9:31	0:0	8	NULL
+stmts	10:12	10:21	5	
+return	10:12	10:21	6	-1
+op	10:19	0:0	7	-
+water	10:20	0:0	7	1
+water	11:4	0:0	4	}
+else	12:4	13:31	2
+stmts	13:8	13:31	3	
+water	13:8	0:0	4	device
+op	13:15	0:0	4	=
+water	13:17	0:0	4	default_device
+water	13:31	0:0	4	;
+call	14:4	14:35	2	EnterCriticalSection
+arg	14:25	14:35	3	&sys->lock
+op	14:25	0:0	4	&
+water	14:26	0:0	4	sys
+op	14:29	0:0	4	->
+water	14:31	0:0	4	lock
+water	14:36	0:0	2	;
+call	15:4	15:30	2	assert
+arg	15:11	15:30	3	sys->device==NULL
+water	15:11	0:0	4	sys
+op	15:14	0:0	4	->
+water	15:16	0:0	4	device
+op	15:23	0:0	4	==
+water	15:26	0:0	4	NULL
+water	15:31	0:0	2	;
+water	16:4	0:0	2	sys
+op	16:7	0:0	2	->
+water	16:9	0:0	2	device
+op	16:16	0:0	2	=
+water	16:18	0:0	2	device
+water	16:24	0:0	2	;
+call	17:4	17:36	2	WakeConditionVariable
+arg	17:26	17:36	3	&sys->work
+op	17:26	0:0	4	&
+water	17:27	0:0	4	sys
+op	17:30	0:0	4	->
+water	17:32	0:0	4	work
+water	17:37	0:0	2	;
+while	18:4	19:67	2	(sys -> device != NULL)
+cond	18:11	18:26	3	sys -> device != NULL
+water	18:11	0:0	4	sys
+op	18:14	0:0	4	->
+water	18:16	0:0	4	device
+op	18:23	0:0	4	!=
+water	18:26	0:0	4	NULL
+stmts	19:8	19:67	3	
+call	19:8	19:66	4	SleepConditionVariableCS
+arg	19:33	19:44	5	&sys->ready
+op	19:33	0:0	6	&
+water	19:34	0:0	6	sys
+op	19:37	0:0	6	->
+water	19:39	0:0	6	ready
+arg	19:46	19:56	5	&sys->lock
+op	19:46	0:0	6	&
+water	19:47	0:0	6	sys
+op	19:50	0:0	6	->
+water	19:52	0:0	6	lock
+arg	19:58	19:66	5	INFINITE
+water	19:58	0:0	6	INFINITE
+water	19:67	0:0	4	;
+call	20:4	20:35	2	LeaveCriticalSection
+arg	20:25	20:35	3	&sys->lock
+op	20:25	0:0	4	&
+water	20:26	0:0	4	sys
+op	20:29	0:0	4	->
+water	20:31	0:0	4	lock
+water	20:36	0:0	2	;
+if	21:4	23:54	2	(sys -> stream != NULL && sys -> dev != NULL)
+cond	21:8	21:43	3	sys -> stream != NULL && sys -> dev != NULL
+water	21:8	0:0	4	sys
+op	21:11	0:0	4	->
+water	21:13	0:0	4	stream
+op	21:20	0:0	4	!=
+water	21:23	0:0	4	NULL
+op	21:28	0:0	4	&&
+water	21:31	0:0	4	sys
+op	21:34	0:0	4	->
+water	21:36	0:0	4	dev
+op	21:40	0:0	4	!=
+water	21:43	0:0	4	NULL
+stmts	23:8	23:54	3	
+call	23:8	23:53	4	aout_RestartRequest
+arg	23:28	23:32	5	aout
+water	23:28	0:0	6	aout
+arg	23:34	23:53	5	AOUT_RESTART_OUTPUT
+water	23:34	0:0	6	AOUT_RESTART_OUTPUT
+water	23:54	0:0	4	;
+return	24:4	24:38	2	(sys->dev!=NULL)?0:-1
+water	24:11	0:0	3	(
+water	24:12	0:0	3	sys
+op	24:15	0:0	3	->
+water	24:17	0:0	3	dev
+op	24:21	0:0	3	!=
+water	24:24	0:0	3	NULL
+water	24:28	0:0	3	)
+water	24:30	0:0	3	?
+water	24:32	0:0	3	0
+water	24:34	0:0	3	:
+op	24:36	0:0	3	-
+water	24:37	0:0	3	1

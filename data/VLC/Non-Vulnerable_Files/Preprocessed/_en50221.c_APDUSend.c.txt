@@ -1,0 +1,209 @@
+func	2:0	42:0	0	static int	APDUSend
+params	2:19	0:0	1	
+param	2:21	2:34	2	cam_t *	p_cam
+param	2:36	2:52	2	int	i_session_id
+param	2:54	2:63	2	int	i_tag
+param	3:21	3:36	2	uint8_t *	p_data
+param	3:38	3:49	2	int	i_size
+stmnts	0:0	41:16	1	
+decl	5:4	5:44	2	uint8_t	*p_apdu
+op	5:20	0:0	2	=
+call	5:22	5:43	3	xmalloc
+arg	5:31	5:43	4	i_size+12
+water	5:31	0:0	5	i_size
+op	5:38	0:0	5	+
+water	5:40	0:0	5	12
+decl	6:4	6:23	2	uint8_t	*p
+op	6:15	0:0	2	=
+water	6:17	0:0	2	p_apdu
+decl	7:4	7:19	2	ca_msg_t	ca_msg
+decl	8:4	8:13	2	int	i_ret
+op	9:4	0:0	2	*
+water	9:5	0:0	2	p
+op	9:6	0:0	2	++
+op	9:9	0:0	2	=
+water	9:11	0:0	2	(
+water	9:12	0:0	2	i_tag
+op	9:18	0:0	2	>>
+water	9:21	0:0	2	16
+water	9:23	0:0	2	)
+water	9:24	0:0	2	;
+op	10:4	0:0	2	*
+water	10:5	0:0	2	p
+op	10:6	0:0	2	++
+op	10:9	0:0	2	=
+water	10:11	0:0	2	(
+water	10:12	0:0	2	i_tag
+op	10:18	0:0	2	>>
+water	10:21	0:0	2	8
+water	10:22	0:0	2	)
+op	10:24	0:0	2	&
+water	10:26	0:0	2	0
+water	10:27	0:0	2	xff
+water	10:30	0:0	2	;
+op	11:4	0:0	2	*
+water	11:5	0:0	2	p
+op	11:6	0:0	2	++
+op	11:9	0:0	2	=
+water	11:11	0:0	2	i_tag
+op	11:17	0:0	2	&
+water	11:19	0:0	2	0
+water	11:20	0:0	2	xff
+water	11:23	0:0	2	;
+water	12:4	0:0	2	p
+op	12:6	0:0	2	=
+call	12:8	12:29	2	SetLength
+arg	12:19	12:20	3	p
+water	12:19	0:0	4	p
+arg	12:22	12:29	3	i_size
+water	12:22	0:0	4	i_size
+water	12:30	0:0	2	;
+if	13:4	14:35	2	(i_size)
+cond	13:9	13:9	3	i_size
+water	13:9	0:0	4	i_size
+stmts	14:8	14:35	3	
+call	14:8	14:34	4	memcpy
+arg	14:16	14:17	5	p
+water	14:16	0:0	6	p
+arg	14:19	14:25	5	p_data
+water	14:19	0:0	6	p_data
+arg	14:27	14:34	5	i_size
+water	14:27	0:0	6	i_size
+water	14:35	0:0	4	;
+if	15:4	18:4	2	(p_cam -> i_ca_type == CA_CI_LINK)
+cond	15:9	15:29	3	p_cam -> i_ca_type == CA_CI_LINK
+water	15:9	0:0	4	p_cam
+op	15:14	0:0	4	->
+water	15:16	0:0	4	i_ca_type
+op	15:26	0:0	4	==
+water	15:29	0:0	4	CA_CI_LINK
+stmts	16:4	18:4	3	
+water	16:4	0:0	4	{
+water	17:8	0:0	4	i_ret
+op	17:14	0:0	4	=
+call	17:16	17:75	4	SPDUSend
+arg	17:26	17:31	5	p_cam
+water	17:26	0:0	6	p_cam
+arg	17:33	17:45	5	i_session_id
+water	17:33	0:0	6	i_session_id
+arg	17:47	17:53	5	p_apdu
+water	17:47	0:0	6	p_apdu
+arg	17:55	17:75	5	i_size+p-p_apdu
+water	17:55	0:0	6	i_size
+op	17:62	0:0	6	+
+water	17:64	0:0	6	p
+op	17:66	0:0	6	-
+water	17:68	0:0	6	p_apdu
+water	17:76	0:0	4	;
+water	18:4	0:0	4	}
+else	19:4	39:4	2
+stmts	20:4	39:4	3	
+water	20:4	0:0	4	{
+if	21:8	25:8	4	(i_size + p - p_apdu > 256)
+cond	21:13	21:35	5	i_size + p - p_apdu > 256
+water	21:13	0:0	6	i_size
+op	21:20	0:0	6	+
+water	21:22	0:0	6	p
+op	21:24	0:0	6	-
+water	21:26	0:0	6	p_apdu
+op	21:33	0:0	6	>
+water	21:35	0:0	6	256
+stmts	22:8	25:8	5	
+water	22:8	0:0	6	{
+call	23:12	23:54	6	msg_Err
+arg	23:21	23:31	7	p_cam->obj
+water	23:21	0:0	8	p_cam
+op	23:26	0:0	8	->
+water	23:28	0:0	8	obj
+arg	23:33	23:54	7	"CAM: apdu overflow"
+water	23:33	0:0	8	"CAM: apdu overflow"
+water	23:55	0:0	6	;
+water	24:12	0:0	6	i_ret
+op	24:18	0:0	6	=
+water	24:20	0:0	6	VLC_EGENERIC
+water	24:32	0:0	6	;
+water	25:8	0:0	6	}
+else	26:8	38:8	4
+stmts	27:8	38:8	5	
+water	27:8	0:0	6	{
+water	28:12	0:0	6	ca_msg
+op	28:18	0:0	6	.
+water	28:19	0:0	6	length
+op	28:26	0:0	6	=
+water	28:28	0:0	6	i_size
+op	28:35	0:0	6	+
+water	28:37	0:0	6	p
+op	28:39	0:0	6	-
+water	28:41	0:0	6	p_apdu
+water	28:47	0:0	6	;
+if	29:12	29:46	6	(i_size == 0)
+cond	29:17	29:27	7	i_size == 0
+water	29:17	0:0	8	i_size
+op	29:24	0:0	8	==
+water	29:27	0:0	8	0
+stmts	29:31	29:46	7	
+water	29:31	0:0	8	ca_msg
+op	29:37	0:0	8	.
+water	29:38	0:0	8	length
+op	29:44	0:0	8	=
+water	29:45	0:0	8	3
+water	29:46	0:0	8	;
+call	30:12	30:60	6	memcpy
+arg	30:20	30:30	7	ca_msg.msg
+water	30:20	0:0	8	ca_msg
+op	30:26	0:0	8	.
+water	30:27	0:0	8	msg
+arg	30:32	30:38	7	p_apdu
+water	30:32	0:0	8	p_apdu
+arg	30:40	30:60	7	i_size+p-p_apdu
+water	30:40	0:0	8	i_size
+op	30:47	0:0	8	+
+water	30:49	0:0	8	p
+op	30:51	0:0	8	-
+water	30:53	0:0	8	p_apdu
+water	30:61	0:0	6	;
+water	31:12	0:0	6	i_ret
+op	31:18	0:0	6	=
+call	31:20	31:59	6	ioctl
+arg	31:27	31:36	7	p_cam->fd
+water	31:27	0:0	8	p_cam
+op	31:32	0:0	8	->
+water	31:34	0:0	8	fd
+arg	31:38	31:49	7	CA_SEND_MSG
+water	31:38	0:0	8	CA_SEND_MSG
+arg	31:51	31:59	7	&ca_msg
+op	31:51	0:0	8	&
+water	31:52	0:0	8	ca_msg
+water	31:60	0:0	6	;
+if	32:12	37:12	6	(i_ret < 0)
+cond	32:17	32:25	7	i_ret < 0
+water	32:17	0:0	8	i_ret
+op	32:23	0:0	8	<
+water	32:25	0:0	8	0
+stmts	33:12	37:12	7	
+water	33:12	0:0	8	{
+call	34:16	35:47	8	msg_Err
+arg	34:25	34:35	9	p_cam->obj
+water	34:25	0:0	10	p_cam
+op	34:30	0:0	10	->
+water	34:32	0:0	10	obj
+arg	34:37	34:63	9	"Error sending to CAM: %s"
+water	34:37	0:0	10	"Error sending to CAM: %s"
+arg	35:25	35:47	9	vlc_strerror_c(errno)
+call	35:25	35:45	10	vlc_strerror_c
+arg	35:40	35:45	11	errno
+water	35:40	0:0	12	errno
+water	35:48	0:0	8	;
+water	36:16	0:0	8	i_ret
+op	36:22	0:0	8	=
+water	36:24	0:0	8	VLC_EGENERIC
+water	36:36	0:0	8	;
+water	37:12	0:0	8	}
+water	38:8	0:0	6	}
+water	39:4	0:0	4	}
+call	40:4	40:17	2	free
+arg	40:10	40:17	3	p_apdu
+water	40:10	0:0	4	p_apdu
+water	40:18	0:0	2	;
+return	41:4	41:16	2	i_ret
+water	41:11	0:0	3	i_ret

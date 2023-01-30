@@ -1,0 +1,400 @@
+func	2:0	89:0	0	static void	SelectClockSource
+params	2:30	0:0	1	
+param	2:31	2:48	2	vlc_object_t *	obj
+stmnts	4:4	88:14	1	
+call	4:4	4:37	2	EnterCriticalSection
+arg	4:26	4:37	3	&clock_lock
+op	4:26	0:0	4	&
+water	4:27	0:0	4	clock_lock
+water	4:38	0:0	2	;
+if	5:4	9:4	2	(mdate_selected != mdate_giveup)
+cond	5:8	5:26	3	mdate_selected != mdate_giveup
+water	5:8	0:0	4	mdate_selected
+op	5:23	0:0	4	!=
+water	5:26	0:0	4	mdate_giveup
+stmts	6:4	9:4	3	
+water	6:4	0:0	4	{
+call	7:8	7:41	4	LeaveCriticalSection
+arg	7:30	7:41	5	&clock_lock
+op	7:30	0:0	6	&
+water	7:31	0:0	6	clock_lock
+water	7:42	0:0	4	;
+return	8:8	8:14	4	
+water	9:4	0:0	4	}
+decl	11:4	11:29	2	const char	*name
+op	11:21	0:0	2	=
+water	11:23	0:0	2	"perf"
+decl	13:4	13:35	2	const char	*name
+op	13:21	0:0	2	=
+water	13:23	0:0	2	"multimedia"
+decl	15:4	15:55	2	char	*str
+op	15:14	0:0	2	=
+call	15:16	15:54	3	var_InheritString
+arg	15:35	15:38	4	obj
+water	15:35	0:0	5	obj
+arg	15:40	15:54	4	"clock-source"
+water	15:40	0:0	5	"clock-source"
+if	16:4	17:18	2	(str != NULL)
+cond	16:8	16:15	3	str != NULL
+water	16:8	0:0	4	str
+op	16:12	0:0	4	!=
+water	16:15	0:0	4	NULL
+stmts	17:8	17:18	3	
+water	17:8	0:0	4	name
+op	17:13	0:0	4	=
+water	17:15	0:0	4	str
+water	17:18	0:0	4	;
+if	18:4	31:4	2	(!strcmp (name ,"interrupt" ))
+cond	18:8	18:34	3	!strcmp (name ,"interrupt" )
+op	18:8	0:0	4	!
+call	18:9	18:34	4	strcmp
+arg	18:17	18:21	5	name
+water	18:17	0:0	6	name
+arg	18:23	18:34	5	"interrupt"
+water	18:23	0:0	6	"interrupt"
+stmts	19:4	31:4	3	
+water	19:4	0:0	4	{
+call	20:8	20:60	4	msg_Dbg
+arg	20:17	20:20	5	obj
+water	20:17	0:0	6	obj
+arg	20:22	20:60	5	"using interrupt time as clock source"
+water	20:22	0:0	6	"using interrupt time as clock source"
+water	20:61	0:0	4	;
+decl	22:8	22:55	4	HANDLE	h
+op	22:17	0:0	4	=
+call	22:19	22:54	5	GetModuleHandle
+arg	22:36	22:54	6	_T("kernel32.dll")
+call	22:36	22:53	7	_T
+arg	22:39	22:53	8	"kernel32.dll"
+water	22:39	0:0	9	"kernel32.dll"
+if	23:8	24:20	4	(unlikely (h == NULL ))
+cond	23:12	23:30	5	unlikely (h == NULL )
+call	23:12	23:30	6	unlikely
+arg	23:21	23:30	7	h==NULL
+water	23:21	0:0	8	h
+op	23:23	0:0	8	==
+water	23:26	0:0	8	NULL
+stmts	24:12	24:20	5	
+call	24:12	24:19	6	abort
+water	24:20	0:0	6	;
+water	25:8	0:0	4	clk
+op	25:11	0:0	4	.
+water	25:12	0:0	4	interrupt
+op	25:21	0:0	4	.
+water	25:22	0:0	4	query
+op	25:28	0:0	4	=
+water	25:30	0:0	4	(
+water	25:31	0:0	4	void
+op	25:36	0:0	4	*
+water	25:37	0:0	4	)
+call	25:38	26:82	4	GetProcAddress
+arg	25:54	25:55	5	h
+water	25:54	0:0	6	h
+arg	26:54	26:82	5	"QueryUnbiasedInterruptTime"
+water	26:54	0:0	6	"QueryUnbiasedInterruptTime"
+water	26:83	0:0	4	;
+if	27:8	28:20	4	(unlikely (clk . interrupt . query == NULL ))
+cond	27:12	27:48	5	unlikely (clk . interrupt . query == NULL )
+call	27:12	27:48	6	unlikely
+arg	27:21	27:48	7	clk.interrupt.query==NULL
+water	27:21	0:0	8	clk
+op	27:24	0:0	8	.
+water	27:25	0:0	8	interrupt
+op	27:34	0:0	8	.
+water	27:35	0:0	8	query
+op	27:41	0:0	8	==
+water	27:44	0:0	8	NULL
+stmts	28:12	28:20	5	
+call	28:12	28:19	6	abort
+water	28:20	0:0	6	;
+water	30:8	0:0	4	mdate_selected
+op	30:23	0:0	4	=
+water	30:25	0:0	4	mdate_interrupt
+water	30:40	0:0	4	;
+water	31:4	0:0	4	}
+else	32:4	45:4	2
+stmts	33:4	45:4	3	
+if	33:4	45:4	4	(!strcmp (name ,"tick" ))
+cond	33:8	33:29	5	!strcmp (name ,"tick" )
+op	33:8	0:0	6	!
+call	33:9	33:29	6	strcmp
+arg	33:17	33:21	7	name
+water	33:17	0:0	8	name
+arg	33:23	33:29	7	"tick"
+water	33:23	0:0	8	"tick"
+stmts	34:4	45:4	5	
+water	34:4	0:0	6	{
+call	35:8	35:58	6	msg_Dbg
+arg	35:17	35:20	7	obj
+water	35:17	0:0	8	obj
+arg	35:22	35:58	7	"using Windows time as clock source"
+water	35:22	0:0	8	"using Windows time as clock source"
+water	35:59	0:0	6	;
+decl	37:8	37:55	6	HANDLE	h
+op	37:17	0:0	6	=
+call	37:19	37:54	7	GetModuleHandle
+arg	37:36	37:54	8	_T("kernel32.dll")
+call	37:36	37:53	9	_T
+arg	37:39	37:53	10	"kernel32.dll"
+water	37:39	0:0	11	"kernel32.dll"
+if	38:8	39:20	6	(unlikely (h == NULL ))
+cond	38:12	38:30	7	unlikely (h == NULL )
+call	38:12	38:30	8	unlikely
+arg	38:21	38:30	9	h==NULL
+water	38:21	0:0	10	h
+op	38:23	0:0	10	==
+water	38:26	0:0	10	NULL
+stmts	39:12	39:20	7	
+call	39:12	39:19	8	abort
+water	39:20	0:0	8	;
+water	40:8	0:0	6	clk
+op	40:11	0:0	6	.
+water	40:12	0:0	6	tick
+op	40:16	0:0	6	.
+water	40:17	0:0	6	get
+op	40:21	0:0	6	=
+water	40:23	0:0	6	(
+water	40:24	0:0	6	void
+op	40:29	0:0	6	*
+water	40:30	0:0	6	)
+call	40:31	40:66	6	GetProcAddress
+arg	40:47	40:48	7	h
+water	40:47	0:0	8	h
+arg	40:50	40:66	7	"GetTickCount64"
+water	40:50	0:0	8	"GetTickCount64"
+water	40:67	0:0	6	;
+if	41:8	42:20	6	(unlikely (clk . tick . get == NULL ))
+cond	41:12	41:41	7	unlikely (clk . tick . get == NULL )
+call	41:12	41:41	8	unlikely
+arg	41:21	41:41	9	clk.tick.get==NULL
+water	41:21	0:0	10	clk
+op	41:24	0:0	10	.
+water	41:25	0:0	10	tick
+op	41:29	0:0	10	.
+water	41:30	0:0	10	get
+op	41:34	0:0	10	==
+water	41:37	0:0	10	NULL
+stmts	42:12	42:20	7	
+call	42:12	42:19	8	abort
+water	42:20	0:0	8	;
+water	44:8	0:0	6	mdate_selected
+op	44:23	0:0	6	=
+water	44:25	0:0	6	mdate_tick
+water	44:35	0:0	6	;
+water	45:4	0:0	6	}
+else	47:4	64:4	2
+stmts	48:4	64:4	3	
+if	48:4	64:4	4	(!strcmp (name ,"multimedia" ))
+cond	48:8	48:35	5	!strcmp (name ,"multimedia" )
+op	48:8	0:0	6	!
+call	48:9	48:35	6	strcmp
+arg	48:17	48:21	7	name
+water	48:17	0:0	8	name
+arg	48:23	48:35	7	"multimedia"
+water	48:23	0:0	8	"multimedia"
+stmts	49:4	64:4	5	
+water	49:4	0:0	6	{
+decl	50:8	50:21	6	TIMECAPS	caps
+decl	51:8	51:59	6	HMODULE	hWinmm
+op	51:23	0:0	6	=
+call	51:25	51:58	7	GetModuleHandle
+arg	51:41	51:58	8	TEXT("winmm.dll")
+call	51:41	51:57	9	TEXT
+arg	51:46	51:57	10	"winmm.dll"
+water	51:46	0:0	11	"winmm.dll"
+if	52:8	53:21	6	(! hWinmm)
+cond	52:12	52:13	7	! hWinmm
+op	52:12	0:0	8	!
+water	52:13	0:0	8	hWinmm
+stmts	53:12	53:21	7	
+goto	53:12	53:21	8	perf
+water	53:17	0:0	9	perf
+water	54:8	0:0	6	clk
+op	54:11	0:0	6	.
+water	54:12	0:0	6	multimedia
+op	54:22	0:0	6	.
+water	54:23	0:0	6	timeGetDevCaps
+op	54:38	0:0	6	=
+water	54:40	0:0	6	(
+water	54:41	0:0	6	void
+op	54:45	0:0	6	*
+water	54:46	0:0	6	)
+call	54:47	54:86	6	GetProcAddress
+arg	54:62	54:68	7	hWinmm
+water	54:62	0:0	8	hWinmm
+arg	54:70	54:86	7	"timeGetDevCaps"
+water	54:70	0:0	8	"timeGetDevCaps"
+water	54:87	0:0	6	;
+water	55:8	0:0	6	clk
+op	55:11	0:0	6	.
+water	55:12	0:0	6	multimedia
+op	55:22	0:0	6	.
+water	55:23	0:0	6	timeGetTime
+op	55:35	0:0	6	=
+water	55:37	0:0	6	(
+water	55:38	0:0	6	void
+op	55:42	0:0	6	*
+water	55:43	0:0	6	)
+call	55:44	55:80	6	GetProcAddress
+arg	55:59	55:65	7	hWinmm
+water	55:59	0:0	8	hWinmm
+arg	55:67	55:80	7	"timeGetTime"
+water	55:67	0:0	8	"timeGetTime"
+water	55:81	0:0	6	;
+if	56:8	57:21	6	(! clk . multimedia . timeGetDevCaps || ! clk . multimedia . timeGetTime)
+cond	56:12	56:62	7	! clk . multimedia . timeGetDevCaps || ! clk . multimedia . timeGetTime
+op	56:12	0:0	8	!
+water	56:13	0:0	8	clk
+op	56:16	0:0	8	.
+water	56:17	0:0	8	multimedia
+op	56:27	0:0	8	.
+water	56:28	0:0	8	timeGetDevCaps
+op	56:43	0:0	8	||
+op	56:46	0:0	8	!
+water	56:47	0:0	8	clk
+op	56:50	0:0	8	.
+water	56:51	0:0	8	multimedia
+op	56:61	0:0	8	.
+water	56:62	0:0	8	timeGetTime
+stmts	57:12	57:21	7	
+goto	57:12	57:21	8	perf
+water	57:17	0:0	9	perf
+call	58:8	58:63	6	msg_Dbg
+arg	58:17	58:20	7	obj
+water	58:17	0:0	8	obj
+arg	58:22	58:63	7	"using multimedia timers as clock source"
+water	58:22	0:0	8	"using multimedia timers as clock source"
+water	58:64	0:0	6	;
+if	59:8	60:21	6	(clk . multimedia . timeGetDevCaps (& caps ,sizeof ( caps ) ) != MMSYSERR_NOERROR)
+cond	59:12	59:68	7	clk . multimedia . timeGetDevCaps (& caps ,sizeof ( caps ) ) != MMSYSERR_NOERROR
+call	59:12	59:63	8	clk.multimedia.timeGetDevCaps
+arg	59:43	59:48	9	&caps
+op	59:43	0:0	10	&
+water	59:44	0:0	10	caps
+arg	59:50	59:63	9	sizeof(caps)
+op	59:50	0:0	10	sizeof
+water	59:57	0:0	10	(
+water	59:58	0:0	10	caps
+water	59:62	0:0	10	)
+op	59:65	0:0	8	!=
+water	59:68	0:0	8	MMSYSERR_NOERROR
+stmts	60:12	60:21	7	
+goto	60:12	60:21	8	perf
+water	60:17	0:0	9	perf
+call	61:8	62:49	6	msg_Dbg
+arg	61:17	61:20	7	obj
+water	61:17	0:0	8	obj
+arg	61:22	61:61	7	" min period: %u ms, max period: %u ms"
+water	61:22	0:0	8	" min period: %u ms, max period: %u ms"
+arg	62:17	62:32	7	caps.wPeriodMin
+water	62:17	0:0	8	caps
+op	62:21	0:0	8	.
+water	62:22	0:0	8	wPeriodMin
+arg	62:34	62:49	7	caps.wPeriodMax
+water	62:34	0:0	8	caps
+op	62:38	0:0	8	.
+water	62:39	0:0	8	wPeriodMax
+water	62:50	0:0	6	;
+water	63:8	0:0	6	mdate_selected
+op	63:23	0:0	6	=
+water	63:25	0:0	6	mdate_multimedia
+water	63:41	0:0	6	;
+water	64:4	0:0	6	}
+else	66:4	75:4	2
+stmts	67:4	75:4	3	
+if	67:4	75:4	4	(!strcmp (name ,"perf" ))
+cond	67:8	67:29	5	!strcmp (name ,"perf" )
+op	67:8	0:0	6	!
+call	67:9	67:29	6	strcmp
+arg	67:17	67:21	7	name
+water	67:17	0:0	8	name
+arg	67:23	67:29	7	"perf"
+water	67:23	0:0	8	"perf"
+stmts	68:4	75:4	5	
+water	68:4	0:0	6	{
+label	69:4	69:8	6	perf :
+call	70:8	70:66	6	msg_Dbg
+arg	70:17	70:20	7	obj
+water	70:17	0:0	8	obj
+arg	70:22	70:66	7	"using performance counters as clock source"
+water	70:22	0:0	8	"using performance counters as clock source"
+water	70:67	0:0	6	;
+if	71:8	72:20	6	(!QueryPerformanceFrequency (& clk . perf . freq ))
+cond	71:12	71:54	7	!QueryPerformanceFrequency (& clk . perf . freq )
+op	71:12	0:0	8	!
+call	71:13	71:54	8	QueryPerformanceFrequency
+arg	71:40	71:54	9	&clk.perf.freq
+op	71:40	0:0	10	&
+water	71:41	0:0	10	clk
+op	71:44	0:0	10	.
+water	71:45	0:0	10	perf
+op	71:49	0:0	10	.
+water	71:50	0:0	10	freq
+stmts	72:12	72:20	7	
+call	72:12	72:19	8	abort
+water	72:20	0:0	8	;
+call	73:8	73:67	6	msg_Dbg
+arg	73:17	73:20	7	obj
+water	73:17	0:0	8	obj
+arg	73:22	73:43	7	" frequency: %llu Hz"
+water	73:22	0:0	8	" frequency: %llu Hz"
+arg	73:45	73:67	7	clk.perf.freq.QuadPart
+water	73:45	0:0	8	clk
+op	73:48	0:0	8	.
+water	73:49	0:0	8	perf
+op	73:53	0:0	8	.
+water	73:54	0:0	8	freq
+op	73:58	0:0	8	.
+water	73:59	0:0	8	QuadPart
+water	73:68	0:0	6	;
+water	74:8	0:0	6	mdate_selected
+op	74:23	0:0	6	=
+water	74:25	0:0	6	mdate_perf
+water	74:35	0:0	6	;
+water	75:4	0:0	6	}
+else	76:4	81:4	2
+stmts	77:4	81:4	3	
+if	77:4	81:4	4	(!strcmp (name ,"wall" ))
+cond	77:8	77:29	5	!strcmp (name ,"wall" )
+op	77:8	0:0	6	!
+call	77:9	77:29	6	strcmp
+arg	77:17	77:21	7	name
+water	77:17	0:0	8	name
+arg	77:23	77:29	7	"wall"
+water	77:23	0:0	8	"wall"
+stmts	78:4	81:4	5	
+water	78:4	0:0	6	{
+call	79:8	79:57	6	msg_Dbg
+arg	79:17	79:20	7	obj
+water	79:17	0:0	8	obj
+arg	79:22	79:57	7	"using system time as clock source"
+water	79:22	0:0	8	"using system time as clock source"
+water	79:58	0:0	6	;
+water	80:8	0:0	6	mdate_selected
+op	80:23	0:0	6	=
+water	80:25	0:0	6	mdate_wall
+water	80:35	0:0	6	;
+water	81:4	0:0	6	}
+else	82:4	86:4	2
+stmts	83:4	86:4	3	
+water	83:4	0:0	4	{
+call	84:8	84:57	4	msg_Err
+arg	84:17	84:20	5	obj
+water	84:17	0:0	6	obj
+arg	84:22	84:51	5	"invalid clock source \"%s\""
+water	84:22	0:0	6	"invalid clock source \"%s\""
+arg	84:53	84:57	5	name
+water	84:53	0:0	6	name
+water	84:58	0:0	4	;
+call	85:8	85:15	4	abort
+water	85:16	0:0	4	;
+water	86:4	0:0	4	}
+call	87:4	87:37	2	LeaveCriticalSection
+arg	87:26	87:37	3	&clock_lock
+op	87:26	0:0	4	&
+water	87:27	0:0	4	clock_lock
+water	87:38	0:0	2	;
+call	88:4	88:13	2	free
+arg	88:10	88:13	3	str
+water	88:10	0:0	4	str
+water	88:14	0:0	2	;

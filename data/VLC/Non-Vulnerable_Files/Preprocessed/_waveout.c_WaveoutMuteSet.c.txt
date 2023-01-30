@@ -1,0 +1,149 @@
+func	2:0	29:0	0	static int	WaveoutMuteSet
+params	2:25	0:0	1	
+param	2:27	2:50	2	audio_output_t *	p_aout
+param	2:52	2:62	2	bool	mute
+stmnts	0:0	28:12	1	
+decl	4:4	4:33	2	aout_sys_t	*sys
+op	4:20	0:0	2	=
+water	4:22	0:0	2	p_aout
+op	4:28	0:0	2	->
+water	4:30	0:0	2	sys
+if	5:4	10:4	2	(sys -> b_soft)
+cond	5:8	5:13	3	sys -> b_soft
+water	5:8	0:0	4	sys
+op	5:11	0:0	4	->
+water	5:13	0:0	4	b_soft
+stmts	6:4	10:4	3	
+water	6:4	0:0	4	{
+decl	7:8	7:66	4	float	gain
+op	7:19	0:0	4	=
+water	7:21	0:0	4	sys
+op	7:24	0:0	4	->
+water	7:26	0:0	4	f_volume
+op	7:35	0:0	4	*
+water	7:37	0:0	4	sys
+op	7:40	0:0	4	->
+water	7:42	0:0	4	f_volume
+op	7:51	0:0	4	*
+water	7:53	0:0	4	sys
+op	7:56	0:0	4	->
+water	7:58	0:0	4	f_volume
+if	8:8	9:21	4	(aout_GainRequest (p_aout ,mute ? 0 . f : gain ))
+cond	8:13	8:57	5	aout_GainRequest (p_aout ,mute ? 0 . f : gain )
+call	8:13	8:57	6	aout_GainRequest
+arg	8:31	8:37	7	p_aout
+water	8:31	0:0	8	p_aout
+arg	8:39	8:57	7	mute?0.f:gain
+water	8:39	0:0	8	mute
+water	8:44	0:0	8	?
+water	8:46	0:0	8	0
+op	8:47	0:0	8	.
+water	8:48	0:0	8	f
+water	8:50	0:0	8	:
+water	8:52	0:0	8	gain
+stmts	9:12	9:21	5	
+return	9:12	9:21	6	-1
+op	9:19	0:0	7	-
+water	9:20	0:0	7	1
+water	10:4	0:0	4	}
+else	11:4	23:4	2
+stmts	12:4	23:4	3	
+water	12:4	0:0	4	{
+decl	13:8	13:43	4	const HWAVEOUT	hwo
+op	13:27	0:0	4	=
+water	13:29	0:0	4	sys
+op	13:32	0:0	4	->
+water	13:34	0:0	4	h_waveout
+decl	14:8	14:71	4	uint32_t	vol
+op	14:21	0:0	4	=
+water	14:23	0:0	4	mute
+water	14:28	0:0	4	?
+water	14:30	0:0	4	0
+water	14:32	0:0	4	:
+call	14:34	14:70	5	lroundf
+arg	14:43	14:70	6	sys->f_volume*0x7fff.fp0
+water	14:43	0:0	7	sys
+op	14:46	0:0	7	->
+water	14:48	0:0	7	f_volume
+op	14:57	0:0	7	*
+water	14:59	0:0	7	0
+water	14:60	0:0	7	x7fff
+op	14:65	0:0	7	.
+water	14:66	0:0	7	fp0
+if	15:8	16:24	4	(vol > 0 xffff)
+cond	15:12	15:19	5	vol > 0 xffff
+water	15:12	0:0	6	vol
+op	15:16	0:0	6	>
+water	15:18	0:0	6	0
+water	15:19	0:0	6	xffff
+stmts	16:12	16:24	5	
+water	16:12	0:0	6	vol
+op	16:16	0:0	6	=
+water	16:18	0:0	6	0
+water	16:19	0:0	6	xffff
+water	16:24	0:0	6	;
+decl	17:8	17:65	4	MMRESULT	r
+op	17:19	0:0	4	=
+call	17:21	17:64	5	waveOutSetVolume
+arg	17:39	17:42	6	hwo
+water	17:39	0:0	7	hwo
+arg	17:44	17:64	6	vol|(vol<<16)
+water	17:44	0:0	7	vol
+op	17:48	0:0	7	|
+water	17:50	0:0	7	(
+water	17:52	0:0	7	vol
+op	17:56	0:0	7	<<
+water	17:59	0:0	7	16
+water	17:62	0:0	7	)
+if	18:8	22:8	4	(r != MMSYSERR_NOERROR)
+cond	18:12	18:17	5	r != MMSYSERR_NOERROR
+water	18:12	0:0	6	r
+op	18:14	0:0	6	!=
+water	18:17	0:0	6	MMSYSERR_NOERROR
+stmts	19:8	22:8	5	
+water	19:8	0:0	6	{
+call	20:12	20:63	6	msg_Err
+arg	20:21	20:27	7	p_aout
+water	20:21	0:0	8	p_aout
+arg	20:29	20:59	7	"waveOutSetVolume failed (%u)"
+water	20:29	0:0	8	"waveOutSetVolume failed (%u)"
+arg	20:61	20:63	7	r
+water	20:61	0:0	8	r
+water	20:64	0:0	6	;
+return	21:12	21:21	6	-1
+op	21:19	0:0	7	-
+water	21:20	0:0	7	1
+water	22:8	0:0	6	}
+water	23:4	0:0	4	}
+call	24:4	24:37	2	vlc_mutex_lock
+arg	24:19	24:37	3	&p_aout->sys->lock
+op	24:19	0:0	4	&
+water	24:20	0:0	4	p_aout
+op	24:26	0:0	4	->
+water	24:28	0:0	4	sys
+op	24:31	0:0	4	->
+water	24:33	0:0	4	lock
+water	24:38	0:0	2	;
+water	25:4	0:0	2	sys
+op	25:7	0:0	2	->
+water	25:9	0:0	2	b_mute
+op	25:16	0:0	2	=
+water	25:18	0:0	2	mute
+water	25:22	0:0	2	;
+call	26:4	26:34	2	aout_MuteReport
+arg	26:21	26:27	3	p_aout
+water	26:21	0:0	4	p_aout
+arg	26:29	26:34	3	mute
+water	26:29	0:0	4	mute
+water	26:35	0:0	2	;
+call	27:4	27:39	2	vlc_mutex_unlock
+arg	27:21	27:39	3	&p_aout->sys->lock
+op	27:21	0:0	4	&
+water	27:22	0:0	4	p_aout
+op	27:28	0:0	4	->
+water	27:30	0:0	4	sys
+op	27:33	0:0	4	->
+water	27:35	0:0	4	lock
+water	27:40	0:0	2	;
+return	28:4	28:12	2	0
+water	28:11	0:0	3	0

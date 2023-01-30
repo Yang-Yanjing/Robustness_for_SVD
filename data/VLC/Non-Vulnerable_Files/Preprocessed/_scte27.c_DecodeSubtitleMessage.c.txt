@@ -1,0 +1,295 @@
+func	2:0	71:0	0	static subpicture_t *	DecodeSubtitleMessage
+params	2:42	0:0	1	
+param	2:43	2:57	2	decoder_t *	dec
+param	3:43	3:62	2	const uint8_t *	data
+param	3:64	3:72	2	int	size
+param	4:43	4:55	2	mtime_t	date
+stmnts	6:4	70:15	1	
+if	6:4	7:18	2	(size < 12)
+cond	6:8	6:15	3	size < 12
+water	6:8	0:0	4	size
+op	6:13	0:0	4	<
+water	6:15	0:0	4	12
+stmts	7:8	7:18	3	
+goto	7:8	7:18	4	error
+water	7:13	0:0	5	error
+decl	9:4	9:43	2	bool	pre_clear_display
+op	9:27	0:0	2	=
+water	9:29	0:0	2	data
+op	9:33	0:0	2	[
+water	9:34	0:0	2	3
+op	9:35	0:0	2	]
+op	9:37	0:0	2	&
+water	9:39	0:0	2	0
+water	9:40	0:0	2	x80
+decl	10:4	10:42	2	int	display_standard
+op	10:26	0:0	2	=
+water	10:28	0:0	2	data
+op	10:32	0:0	2	[
+water	10:33	0:0	2	3
+op	10:34	0:0	2	]
+op	10:36	0:0	2	&
+water	10:38	0:0	2	0
+water	10:39	0:0	2	x1f
+decl	11:4	11:36	2	int	subtitle_type
+op	11:22	0:0	2	=
+water	11:24	0:0	2	data
+op	11:28	0:0	2	[
+water	11:29	0:0	2	8
+op	11:30	0:0	2	]
+op	11:32	0:0	2	>>
+water	11:35	0:0	2	4
+decl	12:4	12:60	2	int	display_duration
+op	12:25	0:0	2	=
+water	12:27	0:0	2	(
+water	12:28	0:0	2	(
+water	12:29	0:0	2	data
+op	12:33	0:0	2	[
+water	12:34	0:0	2	8
+op	12:35	0:0	2	]
+op	12:37	0:0	2	&
+water	12:39	0:0	2	0
+water	12:40	0:0	2	x07
+water	12:43	0:0	2	)
+op	12:45	0:0	2	<<
+water	12:48	0:0	2	8
+water	12:49	0:0	2	)
+op	12:51	0:0	2	|
+water	12:53	0:0	2	data
+op	12:57	0:0	2	[
+water	12:58	0:0	2	9
+op	12:59	0:0	2	]
+decl	13:4	13:40	2	int	block_length
+op	13:21	0:0	2	=
+call	13:23	13:39	3	GetWBE
+arg	13:30	13:39	4	&data[10]
+op	13:30	0:0	5	&
+water	13:31	0:0	5	data
+op	13:35	0:0	5	[
+water	13:36	0:0	5	10
+op	13:38	0:0	5	]
+water	14:4	0:0	2	size
+op	14:9	0:0	2	-=
+water	14:12	0:0	2	12
+water	14:14	0:0	2	;
+water	15:4	0:0	2	data
+op	15:9	0:0	2	+=
+water	15:12	0:0	2	12
+water	15:14	0:0	2	;
+if	16:4	17:18	2	(block_length > size)
+cond	16:8	16:23	3	block_length > size
+water	16:8	0:0	4	block_length
+op	16:21	0:0	4	>
+water	16:23	0:0	4	size
+stmts	17:8	17:18	3	
+goto	17:8	17:18	4	error
+water	17:13	0:0	5	error
+if	18:4	64:4	2	(subtitle_type == 1)
+cond	18:8	18:25	3	subtitle_type == 1
+water	18:8	0:0	4	subtitle_type
+op	18:22	0:0	4	==
+water	18:25	0:0	4	1
+stmts	18:28	64:4	3	
+water	18:28	0:0	4	{
+decl	19:8	19:81	4	subpicture_region_t	*region
+op	19:36	0:0	4	=
+call	19:38	19:80	5	DecodeSimpleBitmap
+arg	19:57	19:60	6	dec
+water	19:57	0:0	7	dec
+arg	19:62	19:66	6	data
+water	19:62	0:0	7	data
+arg	19:68	19:80	6	block_length
+water	19:68	0:0	7	block_length
+if	20:8	21:22	4	(! region)
+cond	20:12	20:13	5	! region
+op	20:12	0:0	6	!
+water	20:13	0:0	6	region
+stmts	21:12	21:22	5	
+goto	21:12	21:22	6	error
+water	21:17	0:0	7	error
+decl	22:8	22:60	4	subpicture_t	*sub
+op	22:26	0:0	4	=
+call	22:28	22:59	5	decoder_NewSubpicture
+arg	22:50	22:53	6	dec
+water	22:50	0:0	7	dec
+arg	22:55	22:59	6	NULL
+water	22:55	0:0	7	NULL
+if	23:8	26:8	4	(! sub)
+cond	23:12	23:13	5	! sub
+op	23:12	0:0	6	!
+water	23:13	0:0	6	sub
+stmts	23:18	26:8	5	
+water	23:18	0:0	6	{
+call	24:12	24:43	6	subpicture_region_Delete
+arg	24:37	24:43	7	region
+water	24:37	0:0	8	region
+water	24:44	0:0	6	;
+return	25:12	25:23	6	NULL
+water	25:19	0:0	7	NULL
+water	26:8	0:0	6	}
+decl	27:8	27:26	4	int	frame_duration
+switch	28:8	55:8	4	(display_standard)
+cond	28:16	28:16	5	display_standard
+water	28:16	0:0	6	display_standard
+stmts	28:34	55:8	5	
+water	28:34	0:0	6	{
+label	29:8	29:14	6	case 0 :
+water	30:12	0:0	6	sub
+op	30:15	0:0	6	->
+water	30:17	0:0	6	i_original_picture_width
+op	30:43	0:0	6	=
+water	30:45	0:0	6	720
+water	30:48	0:0	6	;
+water	31:12	0:0	6	sub
+op	31:15	0:0	6	->
+water	31:17	0:0	6	i_original_picture_height
+op	31:43	0:0	6	=
+water	31:45	0:0	6	480
+water	31:48	0:0	6	;
+water	32:12	0:0	6	frame_duration
+op	32:27	0:0	6	=
+water	32:29	0:0	6	33367
+water	32:34	0:0	6	;
+break	33:12	33:17	6	
+label	34:8	34:14	6	case 1 :
+water	35:12	0:0	6	sub
+op	35:15	0:0	6	->
+water	35:17	0:0	6	i_original_picture_width
+op	35:43	0:0	6	=
+water	35:45	0:0	6	720
+water	35:48	0:0	6	;
+water	36:12	0:0	6	sub
+op	36:15	0:0	6	->
+water	36:17	0:0	6	i_original_picture_height
+op	36:43	0:0	6	=
+water	36:45	0:0	6	576
+water	36:48	0:0	6	;
+water	37:12	0:0	6	frame_duration
+op	37:27	0:0	6	=
+water	37:29	0:0	6	40000
+water	37:34	0:0	6	;
+break	38:12	38:17	6	
+label	39:8	39:14	6	case 2 :
+water	40:12	0:0	6	sub
+op	40:15	0:0	6	->
+water	40:17	0:0	6	i_original_picture_width
+op	40:43	0:0	6	=
+water	40:45	0:0	6	1280
+water	40:49	0:0	6	;
+water	41:12	0:0	6	sub
+op	41:15	0:0	6	->
+water	41:17	0:0	6	i_original_picture_height
+op	41:43	0:0	6	=
+water	41:46	0:0	6	720
+water	41:49	0:0	6	;
+water	42:12	0:0	6	frame_duration
+op	42:27	0:0	6	=
+water	42:29	0:0	6	16683
+water	42:34	0:0	6	;
+break	43:12	43:17	6	
+label	44:8	44:14	6	case 3 :
+water	45:12	0:0	6	sub
+op	45:15	0:0	6	->
+water	45:17	0:0	6	i_original_picture_width
+op	45:43	0:0	6	=
+water	45:45	0:0	6	1920
+water	45:49	0:0	6	;
+water	46:12	0:0	6	sub
+op	46:15	0:0	6	->
+water	46:17	0:0	6	i_original_picture_height
+op	46:43	0:0	6	=
+water	46:45	0:0	6	1080
+water	46:49	0:0	6	;
+water	47:12	0:0	6	frame_duration
+op	47:27	0:0	6	=
+water	47:29	0:0	6	16683
+water	47:34	0:0	6	;
+break	48:12	48:17	6	
+label	49:8	49:15	6	default :
+call	50:12	50:52	6	msg_Warn
+arg	50:21	50:24	7	dec
+water	50:21	0:0	8	dec
+arg	50:26	50:52	7	"Unknown display standard"
+water	50:26	0:0	8	"Unknown display standard"
+water	50:53	0:0	6	;
+water	51:12	0:0	6	sub
+op	51:15	0:0	6	->
+water	51:17	0:0	6	i_original_picture_width
+op	51:43	0:0	6	=
+water	51:45	0:0	6	0
+water	51:46	0:0	6	;
+water	52:12	0:0	6	sub
+op	52:15	0:0	6	->
+water	52:17	0:0	6	i_original_picture_height
+op	52:43	0:0	6	=
+water	52:45	0:0	6	0
+water	52:46	0:0	6	;
+water	53:12	0:0	6	frame_duration
+op	53:27	0:0	6	=
+water	53:29	0:0	6	40000
+water	53:34	0:0	6	;
+break	54:12	54:17	6	
+water	55:8	0:0	6	}
+water	56:8	0:0	4	sub
+op	56:11	0:0	4	->
+water	56:13	0:0	4	b_absolute
+op	56:24	0:0	4	=
+water	56:26	0:0	4	true
+water	56:30	0:0	4	;
+if	57:8	58:100	4	(! pre_clear_display)
+cond	57:12	57:13	5	! pre_clear_display
+op	57:12	0:0	6	!
+water	57:13	0:0	6	pre_clear_display
+stmts	58:12	58:100	5	
+call	58:12	58:99	6	msg_Warn
+arg	58:21	58:24	7	dec
+water	58:21	0:0	8	dec
+arg	58:26	58:99	7	"SCTE-27 subtitles without pre_clear_display flag are not well supported"
+water	58:26	0:0	8	"SCTE-27 subtitles without pre_clear_display flag are not well supported"
+water	58:100	0:0	6	;
+water	59:8	0:0	4	sub
+op	59:11	0:0	4	->
+water	59:13	0:0	4	b_ephemer
+op	59:23	0:0	4	=
+water	59:25	0:0	4	true
+water	59:29	0:0	4	;
+water	60:8	0:0	4	sub
+op	60:11	0:0	4	->
+water	60:13	0:0	4	i_start
+op	60:21	0:0	4	=
+water	60:23	0:0	4	date
+water	60:27	0:0	4	;
+water	61:8	0:0	4	sub
+op	61:11	0:0	4	->
+water	61:13	0:0	4	i_stop
+op	61:20	0:0	4	=
+water	61:22	0:0	4	date
+op	61:27	0:0	4	+
+water	61:29	0:0	4	display_duration
+op	61:46	0:0	4	*
+water	61:48	0:0	4	frame_duration
+water	61:62	0:0	4	;
+water	62:8	0:0	4	sub
+op	62:11	0:0	4	->
+water	62:13	0:0	4	p_region
+op	62:22	0:0	4	=
+water	62:24	0:0	4	region
+water	62:30	0:0	4	;
+return	63:8	63:18	4	sub
+water	63:15	0:0	5	sub
+water	64:4	0:0	4	}
+else	64:6	67:4	2
+stmts	64:11	67:4	3	
+water	64:11	0:0	4	{
+return	66:8	66:19	4	NULL
+water	66:15	0:0	5	NULL
+water	67:4	0:0	4	}
+label	68:0	68:5	2	error :
+call	69:4	69:45	2	msg_Err
+arg	69:12	69:15	3	dec
+water	69:12	0:0	4	dec
+arg	69:17	69:45	3	"corrupted subtitle_message"
+water	69:17	0:0	4	"corrupted subtitle_message"
+water	69:46	0:0	2	;
+return	70:4	70:15	2	NULL
+water	70:11	0:0	3	NULL

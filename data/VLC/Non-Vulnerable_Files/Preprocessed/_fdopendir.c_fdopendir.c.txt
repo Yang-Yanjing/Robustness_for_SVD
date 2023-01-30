@@ -1,0 +1,109 @@
+func	2:0	46:0	0	DIR *	fdopendir
+params	2:15	0:0	1	
+param	2:16	2:22	2	int	fd
+stmnts	0:0	45:15	1	
+decl	6:4	6:34	2	int	mode
+op	6:13	0:0	2	=
+call	6:15	6:33	3	fcntl
+arg	6:22	6:24	4	fd
+water	6:22	0:0	5	fd
+arg	6:26	6:33	4	F_GETFL
+water	6:26	0:0	5	F_GETFL
+if	7:4	11:4	2	(mode == - 1 || ( mode & O_ACCMODE ) == O_WRONLY)
+cond	7:8	7:44	3	mode == - 1 || ( mode & O_ACCMODE ) == O_WRONLY
+water	7:8	0:0	4	mode
+op	7:13	0:0	4	==
+op	7:16	0:0	4	-
+water	7:17	0:0	4	1
+op	7:19	0:0	4	||
+water	7:22	0:0	4	(
+water	7:23	0:0	4	mode
+op	7:28	0:0	4	&
+water	7:30	0:0	4	O_ACCMODE
+water	7:39	0:0	4	)
+op	7:41	0:0	4	==
+water	7:44	0:0	4	O_WRONLY
+stmts	8:4	11:4	3	
+water	8:4	0:0	4	{
+water	9:8	0:0	4	errno
+op	9:14	0:0	4	=
+water	9:16	0:0	4	EBADF
+water	9:21	0:0	4	;
+return	10:8	10:19	4	NULL
+water	10:15	0:0	5	NULL
+water	11:4	0:0	4	}
+decl	14:4	14:18	2	struct stat	st
+if	15:4	16:19	2	(fstat (fd ,& st ))
+cond	15:8	15:22	3	fstat (fd ,& st )
+call	15:8	15:22	4	fstat
+arg	15:15	15:17	5	fd
+water	15:15	0:0	6	fd
+arg	15:19	15:22	5	&st
+op	15:19	0:0	6	&
+water	15:20	0:0	6	st
+stmts	16:8	16:19	3	
+return	16:8	16:19	4	NULL
+water	16:15	0:0	5	NULL
+if	17:4	21:4	2	(!S_ISDIR (st . st_mode ))
+cond	17:8	17:28	3	!S_ISDIR (st . st_mode )
+op	17:8	0:0	4	!
+call	17:9	17:28	4	S_ISDIR
+arg	17:18	17:28	5	st.st_mode
+water	17:18	0:0	6	st
+op	17:20	0:0	6	.
+water	17:21	0:0	6	st_mode
+stmts	18:4	21:4	3	
+water	18:4	0:0	4	{
+water	19:8	0:0	4	errno
+op	19:14	0:0	4	=
+water	19:16	0:0	4	ENOTDIR
+water	19:23	0:0	4	;
+return	20:8	20:19	4	NULL
+water	20:15	0:0	5	NULL
+water	21:4	0:0	4	}
+decl	24:4	24:59	2	char	path[sizeof("/proc/self/fd/")+3*sizeof(int)]
+call	25:4	25:41	2	sprintf
+arg	25:13	25:17	3	path
+water	25:13	0:0	4	path
+arg	25:19	25:37	3	"/proc/self/fd/%u"
+water	25:19	0:0	4	"/proc/self/fd/%u"
+arg	25:39	25:41	3	fd
+water	25:39	0:0	4	fd
+water	25:42	0:0	2	;
+decl	26:4	26:29	2	DIR	*dir
+op	26:13	0:0	2	=
+call	26:15	26:28	3	opendir
+arg	26:24	26:28	4	path
+water	26:24	0:0	5	path
+if	27:4	31:4	2	(dir != NULL)
+cond	27:8	27:15	3	dir != NULL
+water	27:8	0:0	4	dir
+op	27:12	0:0	4	!=
+water	27:15	0:0	4	NULL
+stmts	28:4	31:4	3	
+water	28:4	0:0	4	{
+call	29:8	29:17	4	close
+arg	29:15	29:17	5	fd
+water	29:15	0:0	6	fd
+water	29:18	0:0	4	;
+return	30:8	30:18	4	dir
+water	30:15	0:0	5	dir
+water	31:4	0:0	4	}
+switch	33:4	44:4	2	(errno)
+cond	33:12	33:12	3	errno
+water	33:12	0:0	4	errno
+stmts	34:4	44:4	3	
+water	34:4	0:0	4	{
+label	35:8	35:19	4	case EACCES :
+label	37:8	37:18	4	case ELOOP :
+label	39:8	39:25	4	case ENAMETOOLONG :
+label	40:8	40:19	4	case ENOENT :
+label	41:8	41:19	4	case EMFILE :
+label	42:8	42:19	4	case ENFILE :
+water	43:12	0:0	4	errno
+op	43:18	0:0	4	=
+water	43:20	0:0	4	EIO
+water	43:23	0:0	4	;
+water	44:4	0:0	4	}
+return	45:4	45:15	2	NULL
+water	45:11	0:0	3	NULL

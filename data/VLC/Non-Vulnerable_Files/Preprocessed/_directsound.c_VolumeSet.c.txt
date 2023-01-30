@@ -1,0 +1,159 @@
+func	2:0	31:0	0	static int	VolumeSet
+params	2:20	0:0	1	
+param	2:22	2:44	2	audio_output_t *	p_aout
+param	2:46	2:59	2	float	volume
+stmnts	0:0	30:14	1	
+decl	4:4	4:33	2	aout_sys_t	*sys
+op	4:20	0:0	2	=
+water	4:22	0:0	2	p_aout
+op	4:28	0:0	2	->
+water	4:30	0:0	2	sys
+decl	5:4	5:15	2	int	ret
+op	5:12	0:0	2	=
+water	5:14	0:0	2	0
+decl	8:4	8:62	2	float	gain
+op	8:15	0:0	2	=
+water	8:17	0:0	2	volume
+op	8:24	0:0	2	>
+water	8:26	0:0	2	1
+op	8:27	0:0	2	.
+water	8:28	0:0	2	f
+water	8:30	0:0	2	?
+water	8:32	0:0	2	volume
+op	8:39	0:0	2	*
+water	8:41	0:0	2	volume
+op	8:48	0:0	2	*
+water	8:50	0:0	2	volume
+water	8:57	0:0	2	:
+water	8:59	0:0	2	1
+op	8:60	0:0	2	.
+water	8:61	0:0	2	f
+call	9:4	9:35	2	aout_GainRequest
+arg	9:22	9:28	3	p_aout
+water	9:22	0:0	4	p_aout
+arg	9:30	9:35	3	gain
+water	9:30	0:0	4	gain
+water	9:36	0:0	2	;
+decl	11:4	11:63	2	LONG	mb
+op	11:12	0:0	2	=
+call	11:14	11:62	3	lroundf
+arg	11:23	11:62	4	6000.f*log10f(__MIN(volume,1.f))
+water	11:23	0:0	5	6000
+op	11:27	0:0	5	.
+water	11:28	0:0	5	f
+call	11:30	11:61	5	*log10f
+arg	11:40	11:61	6	__MIN(volume,1.f)
+call	11:40	11:59	7	__MIN
+arg	11:47	11:53	8	volume
+water	11:47	0:0	9	volume
+arg	11:55	11:59	8	1.f
+water	11:55	0:0	9	1
+op	11:56	0:0	9	.
+water	11:57	0:0	9	f
+call	13:4	13:73	2	static_assert
+arg	13:19	13:48	3	DSBVOLUME_MIN<DSBVOLUME_MAX
+water	13:19	0:0	4	DSBVOLUME_MIN
+op	13:33	0:0	4	<
+water	13:35	0:0	4	DSBVOLUME_MAX
+arg	13:50	13:73	3	"DSBVOLUME_* confused"
+water	13:50	0:0	4	"DSBVOLUME_* confused"
+water	13:74	0:0	2	;
+if	14:4	18:4	2	(mb > DSBVOLUME_MAX)
+cond	14:8	14:13	3	mb > DSBVOLUME_MAX
+water	14:8	0:0	4	mb
+op	14:11	0:0	4	>
+water	14:13	0:0	4	DSBVOLUME_MAX
+stmts	15:4	18:4	3	
+water	15:4	0:0	4	{
+water	16:8	0:0	4	mb
+op	16:11	0:0	4	=
+water	16:13	0:0	4	DSBVOLUME_MAX
+water	16:26	0:0	4	;
+water	17:8	0:0	4	ret
+op	17:12	0:0	4	=
+op	17:14	0:0	4	-
+water	17:15	0:0	4	1
+water	17:16	0:0	4	;
+water	18:4	0:0	4	}
+if	19:4	20:26	2	(mb <= DSBVOLUME_MIN)
+cond	19:8	19:14	3	mb <= DSBVOLUME_MIN
+water	19:8	0:0	4	mb
+op	19:11	0:0	4	<=
+water	19:14	0:0	4	DSBVOLUME_MIN
+stmts	20:8	20:26	3	
+water	20:8	0:0	4	mb
+op	20:11	0:0	4	=
+water	20:13	0:0	4	DSBVOLUME_MIN
+water	20:26	0:0	4	;
+water	21:4	0:0	2	sys
+op	21:7	0:0	2	->
+water	21:9	0:0	2	volume
+op	21:15	0:0	2	.
+water	21:16	0:0	2	mb
+op	21:19	0:0	2	=
+water	21:21	0:0	2	mb
+water	21:23	0:0	2	;
+water	22:4	0:0	2	sys
+op	22:7	0:0	2	->
+water	22:9	0:0	2	volume
+op	22:15	0:0	2	.
+water	22:16	0:0	2	volume
+op	22:23	0:0	2	=
+water	22:25	0:0	2	volume
+water	22:31	0:0	2	;
+if	23:4	25:17	2	(! sys -> volume . mute && sys -> s . p_dsbuffer != NULL &&IDirectSoundBuffer_SetVolume (sys -> s . p_dsbuffer ,mb ) != DS_OK)
+cond	23:8	24:65	3	! sys -> volume . mute && sys -> s . p_dsbuffer != NULL &&IDirectSoundBuffer_SetVolume (sys -> s . p_dsbuffer ,mb ) != DS_OK
+op	23:8	0:0	4	!
+water	23:9	0:0	4	sys
+op	23:12	0:0	4	->
+water	23:14	0:0	4	volume
+op	23:20	0:0	4	.
+water	23:21	0:0	4	mute
+op	23:26	0:0	4	&&
+water	23:29	0:0	4	sys
+op	23:32	0:0	4	->
+water	23:34	0:0	4	s
+op	23:35	0:0	4	.
+water	23:36	0:0	4	p_dsbuffer
+op	23:47	0:0	4	!=
+water	23:50	0:0	4	NULL
+op	23:55	0:0	4	&&
+call	24:8	24:60	4	IDirectSoundBuffer_SetVolume
+arg	24:38	24:55	5	sys->s.p_dsbuffer
+water	24:38	0:0	6	sys
+op	24:41	0:0	6	->
+water	24:43	0:0	6	s
+op	24:44	0:0	6	.
+water	24:45	0:0	6	p_dsbuffer
+arg	24:57	24:60	5	mb
+water	24:57	0:0	6	mb
+op	24:62	0:0	4	!=
+water	24:65	0:0	4	DS_OK
+stmts	25:8	25:17	3	
+return	25:8	25:17	4	-1
+op	25:15	0:0	5	-
+water	25:16	0:0	5	1
+call	27:4	27:38	2	aout_VolumeReport
+arg	27:23	27:29	3	p_aout
+water	27:23	0:0	4	p_aout
+arg	27:31	27:38	3	volume
+water	27:31	0:0	4	volume
+water	27:39	0:0	2	;
+if	28:4	29:59	2	(var_InheritBool (p_aout ,"volume-save" ))
+cond	28:8	28:47	3	var_InheritBool (p_aout ,"volume-save" )
+call	28:8	28:47	4	var_InheritBool
+arg	28:25	28:31	5	p_aout
+water	28:25	0:0	6	p_aout
+arg	28:33	28:47	5	"volume-save"
+water	28:33	0:0	6	"volume-save"
+stmts	29:8	29:59	3	
+call	29:8	29:58	4	config_PutFloat
+arg	29:25	29:31	5	p_aout
+water	29:25	0:0	6	p_aout
+arg	29:33	29:49	5	"directx-volume"
+water	29:33	0:0	6	"directx-volume"
+arg	29:51	29:58	5	volume
+water	29:51	0:0	6	volume
+water	29:59	0:0	4	;
+return	30:4	30:14	2	ret
+water	30:11	0:0	3	ret

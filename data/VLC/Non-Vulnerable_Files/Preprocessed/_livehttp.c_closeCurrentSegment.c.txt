@@ -1,0 +1,234 @@
+func	2:0	38:0	0	static void	closeCurrentSegment
+params	2:31	0:0	1	
+param	2:33	2:60	2	sout_access_out_t *	p_access
+param	2:62	2:90	2	sout_access_out_sys_t *	p_sys
+param	2:92	2:105	2	bool	b_isend
+stmnts	4:4	37:4	1	
+if	4:4	37:4	2	(p_sys -> i_handle >= 0)
+cond	4:9	4:28	3	p_sys -> i_handle >= 0
+water	4:9	0:0	4	p_sys
+op	4:14	0:0	4	->
+water	4:16	0:0	4	i_handle
+op	4:25	0:0	4	>=
+water	4:28	0:0	4	0
+stmts	5:4	37:4	3	
+water	5:4	0:0	4	{
+decl	6:8	6:142	4	output_segment_t	*segment
+op	6:34	0:0	4	=
+water	6:36	0:0	4	(
+water	6:37	0:0	4	output_segment_t
+op	6:54	0:0	4	*
+water	6:55	0:0	4	)
+call	6:56	6:141	5	vlc_array_item_at_index
+arg	6:81	6:98	6	p_sys->segments_t
+water	6:81	0:0	7	p_sys
+op	6:86	0:0	7	->
+water	6:88	0:0	7	segments_t
+arg	6:100	6:141	6	vlc_array_count(p_sys->segments_t)-1
+call	6:100	6:135	7	vlc_array_count
+arg	6:117	6:135	8	p_sys->segments_t
+water	6:117	0:0	9	p_sys
+op	6:122	0:0	9	->
+water	6:124	0:0	9	segments_t
+op	6:137	0:0	7	-
+water	6:139	0:0	7	1
+if	7:8	20:8	4	(p_sys -> key_uri)
+cond	7:12	7:19	5	p_sys -> key_uri
+water	7:12	0:0	6	p_sys
+op	7:17	0:0	6	->
+water	7:19	0:0	6	key_uri
+stmts	8:8	20:8	5	
+water	8:8	0:0	6	{
+decl	9:12	9:50	6	size_t	pad
+op	9:23	0:0	6	=
+water	9:25	0:0	6	16
+op	9:28	0:0	6	-
+water	9:30	0:0	6	p_sys
+op	9:35	0:0	6	->
+water	9:37	0:0	6	stuffing_size
+call	10:12	10:73	6	memset
+arg	10:19	10:63	7	&p_sys->stuffing_bytes[p_sys->stuffing_size]
+op	10:19	0:0	8	&
+water	10:20	0:0	8	p_sys
+op	10:25	0:0	8	->
+water	10:27	0:0	8	stuffing_bytes
+op	10:41	0:0	8	[
+water	10:42	0:0	8	p_sys
+op	10:47	0:0	8	->
+water	10:49	0:0	8	stuffing_size
+op	10:62	0:0	8	]
+arg	10:65	10:68	7	pad
+water	10:65	0:0	8	pad
+arg	10:70	10:73	7	pad
+water	10:70	0:0	8	pad
+water	10:74	0:0	6	;
+decl	11:12	11:104	6	gcry_error_t	err
+op	11:29	0:0	6	=
+call	11:31	11:103	7	gcry_cipher_encrypt
+arg	11:52	11:66	8	p_sys->aes_ctx
+water	11:52	0:0	9	p_sys
+op	11:57	0:0	9	->
+water	11:59	0:0	9	aes_ctx
+arg	11:68	11:89	8	p_sys->stuffing_bytes
+water	11:68	0:0	9	p_sys
+op	11:73	0:0	9	->
+water	11:75	0:0	9	stuffing_bytes
+arg	11:91	11:93	8	16
+water	11:91	0:0	9	16
+arg	11:95	11:99	8	NULL
+water	11:95	0:0	9	NULL
+arg	11:101	11:103	8	0
+water	11:101	0:0	9	0
+if	12:12	14:12	6	(err)
+cond	12:16	12:16	7	err
+water	12:16	0:0	8	err
+stmts	12:22	14:12	7	
+water	12:22	0:0	8	{
+call	13:15	13:85	8	msg_Err
+arg	13:24	13:32	9	p_access
+water	13:24	0:0	10	p_access
+arg	13:34	13:65	9	"Couldn't encrypt 16 bytes: %s"
+water	13:34	0:0	10	"Couldn't encrypt 16 bytes: %s"
+arg	13:67	13:85	9	gpg_strerror(err)
+call	13:67	13:83	10	gpg_strerror
+arg	13:80	13:83	11	err
+water	13:80	0:0	12	err
+water	13:86	0:0	8	;
+water	14:12	0:0	8	}
+else	14:14	18:12	6
+stmts	14:19	18:12	7	
+water	14:19	0:0	8	{
+decl	15:12	15:73	8	int	ret
+op	15:20	0:0	8	=
+call	15:22	15:72	9	write
+arg	15:29	15:44	10	p_sys->i_handle
+water	15:29	0:0	11	p_sys
+op	15:34	0:0	11	->
+water	15:36	0:0	11	i_handle
+arg	15:46	15:67	10	p_sys->stuffing_bytes
+water	15:46	0:0	11	p_sys
+op	15:51	0:0	11	->
+water	15:53	0:0	11	stuffing_bytes
+arg	15:69	15:72	10	16
+water	15:69	0:0	11	16
+if	16:12	17:62	8	(ret != 16)
+cond	16:16	16:23	9	ret != 16
+water	16:16	0:0	10	ret
+op	16:20	0:0	10	!=
+water	16:23	0:0	10	16
+stmts	17:16	17:62	9	
+call	17:16	17:61	10	msg_Err
+arg	17:25	17:33	11	p_access
+water	17:25	0:0	12	p_access
+arg	17:35	17:61	11	"Couldn't write 16 bytes"
+water	17:35	0:0	12	"Couldn't write 16 bytes"
+water	17:62	0:0	10	;
+water	18:12	0:0	8	}
+water	19:12	0:0	6	p_sys
+op	19:17	0:0	6	->
+water	19:19	0:0	6	stuffing_size
+op	19:33	0:0	6	=
+water	19:35	0:0	6	0
+water	19:36	0:0	6	;
+water	20:8	0:0	6	}
+call	21:8	21:31	4	close
+arg	21:15	21:31	5	p_sys->i_handle
+water	21:15	0:0	6	p_sys
+op	21:20	0:0	6	->
+water	21:22	0:0	6	i_handle
+water	21:32	0:0	4	;
+water	22:8	0:0	4	p_sys
+op	22:13	0:0	4	->
+water	22:15	0:0	4	i_handle
+op	22:24	0:0	4	=
+op	22:26	0:0	4	-
+water	22:27	0:0	4	1
+water	22:28	0:0	4	;
+if	23:8	27:8	4	(! (us_asprintf (& segment -> psz_duration ,"%.2f" ,p_sys -> f_seglen ) ))
+cond	23:12	23:79	5	! (us_asprintf (& segment -> psz_duration ,"%.2f" ,p_sys -> f_seglen ) )
+op	23:12	0:0	6	!
+water	23:14	0:0	6	(
+call	23:16	23:77	6	us_asprintf
+arg	23:29	23:51	7	&segment->psz_duration
+op	23:29	0:0	8	&
+water	23:30	0:0	8	segment
+op	23:37	0:0	8	->
+water	23:39	0:0	8	psz_duration
+arg	23:53	23:59	7	"%.2f"
+water	23:53	0:0	8	"%.2f"
+arg	23:61	23:77	7	p_sys->f_seglen
+water	23:61	0:0	8	p_sys
+op	23:66	0:0	8	->
+water	23:68	0:0	8	f_seglen
+water	23:79	0:0	6	)
+stmts	24:8	27:8	5	
+water	24:8	0:0	6	{
+call	25:12	25:72	6	msg_Err
+arg	25:21	25:29	7	p_access
+water	25:21	0:0	8	p_access
+arg	25:31	25:72	7	"Couldn't set duration on closed segment"
+water	25:31	0:0	8	"Couldn't set duration on closed segment"
+water	25:73	0:0	6	;
+return	26:12	26:18	6	
+water	27:8	0:0	6	}
+water	28:8	0:0	4	segment
+op	28:15	0:0	4	->
+water	28:17	0:0	4	f_seglength
+op	28:29	0:0	4	=
+water	28:31	0:0	4	p_sys
+op	28:36	0:0	4	->
+water	28:38	0:0	4	f_seglen
+water	28:46	0:0	4	;
+water	29:8	0:0	4	segment
+op	29:15	0:0	4	->
+water	29:17	0:0	4	i_segment_number
+op	29:34	0:0	4	=
+water	29:36	0:0	4	p_sys
+op	29:41	0:0	4	->
+water	29:43	0:0	4	i_segment
+water	29:52	0:0	4	;
+if	30:8	36:8	4	(p_sys -> psz_cursegPath)
+cond	30:13	30:20	5	p_sys -> psz_cursegPath
+water	30:13	0:0	6	p_sys
+op	30:18	0:0	6	->
+water	30:20	0:0	6	psz_cursegPath
+stmts	31:8	36:8	5	
+water	31:8	0:0	6	{
+call	32:12	32:115	6	msg_Dbg
+arg	32:21	32:29	7	p_access
+water	32:21	0:0	8	p_access
+arg	32:31	32:73	7	"LiveHttpSegmentComplete: %s (%"PRIu32")"
+water	32:31	0:0	8	"LiveHttpSegmentComplete: %s (%"
+water	32:63	0:0	8	PRIu32
+water	32:69	0:0	8	")"
+arg	32:75	32:96	7	p_sys->psz_cursegPath
+water	32:75	0:0	8	p_sys
+op	32:80	0:0	8	->
+water	32:82	0:0	8	psz_cursegPath
+arg	32:98	32:115	7	p_sys->i_segment
+water	32:98	0:0	8	p_sys
+op	32:103	0:0	8	->
+water	32:105	0:0	8	i_segment
+water	32:116	0:0	6	;
+call	33:12	33:40	6	free
+arg	33:18	33:40	7	p_sys->psz_cursegPath
+water	33:18	0:0	8	p_sys
+op	33:23	0:0	8	->
+water	33:25	0:0	8	psz_cursegPath
+water	33:41	0:0	6	;
+water	34:12	0:0	6	p_sys
+op	34:17	0:0	6	->
+water	34:19	0:0	6	psz_cursegPath
+op	34:34	0:0	6	=
+water	34:36	0:0	6	0
+water	34:37	0:0	6	;
+call	35:12	35:56	6	updateIndexAndDel
+arg	35:31	35:39	7	p_access
+water	35:31	0:0	8	p_access
+arg	35:41	35:46	7	p_sys
+water	35:41	0:0	8	p_sys
+arg	35:48	35:56	7	b_isend
+water	35:48	0:0	8	b_isend
+water	35:57	0:0	6	;
+water	36:8	0:0	6	}
+water	37:4	0:0	4	}

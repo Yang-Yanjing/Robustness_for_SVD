@@ -1,0 +1,210 @@
+func	2:0	47:0	0	static int	Demux
+params	2:16	0:0	1	
+param	2:18	2:35	2	demux_t *	p_demux
+stmnts	0:0	46:12	1	
+decl	4:4	4:39	2	demux_sys_t	*p_sys
+op	4:23	0:0	2	=
+water	4:25	0:0	2	p_demux
+op	4:32	0:0	2	->
+water	4:34	0:0	2	p_sys
+decl	5:4	5:23	2	block_t	*p_data
+decl	6:4	6:13	2	int	i_ret
+decl	8:4	8:24	2	mpc_frame_info	frame
+decl	9:4	9:18	2	mpc_status	err
+water	11:4	0:0	2	p_data
+op	11:11	0:0	2	=
+call	11:13	11:78	2	block_Alloc
+arg	11:26	11:78	3	MPC_DECODER_BUFFER_LENGTH*sizeof(MPC_SAMPLE_FORMAT)
+water	11:26	0:0	4	MPC_DECODER_BUFFER_LENGTH
+op	11:51	0:0	4	*
+op	11:52	0:0	4	sizeof
+water	11:58	0:0	4	(
+water	11:59	0:0	4	MPC_SAMPLE_FORMAT
+water	11:76	0:0	4	)
+water	11:79	0:0	2	;
+if	12:4	13:17	2	(! p_data)
+cond	12:8	12:9	3	! p_data
+op	12:8	0:0	4	!
+water	12:9	0:0	4	p_data
+stmts	13:8	13:17	3	
+return	13:8	13:17	4	-1
+op	13:15	0:0	5	-
+water	13:16	0:0	5	1
+water	15:4	0:0	2	i_ret
+op	15:10	0:0	2	=
+call	15:12	17:43	2	mpc_decoder_decode
+arg	15:32	15:47	3	&p_sys->decoder
+op	15:32	0:0	4	&
+water	15:33	0:0	4	p_sys
+op	15:38	0:0	4	->
+water	15:40	0:0	4	decoder
+arg	16:32	16:68	3	(MPC_SAMPLE_FORMAT*)p_data->p_buffer
+water	16:32	0:0	4	(
+water	16:33	0:0	4	MPC_SAMPLE_FORMAT
+op	16:50	0:0	4	*
+water	16:51	0:0	4	)
+water	16:52	0:0	4	p_data
+op	16:58	0:0	4	->
+water	16:60	0:0	4	p_buffer
+arg	17:32	17:36	3	NULL
+water	17:32	0:0	4	NULL
+arg	17:38	17:43	3	NULL
+water	17:38	0:0	4	NULL
+water	17:44	0:0	2	;
+if	18:4	22:4	2	(i_ret <= 0)
+cond	18:8	18:17	3	i_ret <= 0
+water	18:8	0:0	4	i_ret
+op	18:14	0:0	4	<=
+water	18:17	0:0	4	0
+stmts	19:4	22:4	3	
+water	19:4	0:0	4	{
+call	20:8	20:30	4	block_Release
+arg	20:23	20:30	5	p_data
+water	20:23	0:0	6	p_data
+water	20:31	0:0	4	;
+return	21:8	21:33	4	i_ret<0?-1:0
+water	21:15	0:0	5	i_ret
+op	21:21	0:0	5	<
+water	21:23	0:0	5	0
+water	21:25	0:0	5	?
+op	21:27	0:0	5	-
+water	21:28	0:0	5	1
+water	21:30	0:0	5	:
+water	21:32	0:0	5	0
+water	22:4	0:0	4	}
+water	24:4	0:0	2	frame
+op	24:9	0:0	2	.
+water	24:10	0:0	2	buffer
+op	24:17	0:0	2	=
+water	24:19	0:0	2	(
+water	24:20	0:0	2	MPC_SAMPLE_FORMAT
+op	24:37	0:0	2	*
+water	24:38	0:0	2	)
+water	24:39	0:0	2	p_data
+op	24:45	0:0	2	->
+water	24:47	0:0	2	p_buffer
+water	24:55	0:0	2	;
+water	25:4	0:0	2	err
+op	25:8	0:0	2	=
+call	25:10	25:51	2	mpc_demux_decode
+arg	25:28	25:42	3	p_sys->decoder
+water	25:28	0:0	4	p_sys
+op	25:33	0:0	4	->
+water	25:35	0:0	4	decoder
+arg	25:44	25:51	3	&frame
+op	25:44	0:0	4	&
+water	25:45	0:0	4	frame
+water	25:52	0:0	2	;
+if	26:4	30:4	2	(err != MPC_STATUS_OK)
+cond	26:8	26:15	3	err != MPC_STATUS_OK
+water	26:8	0:0	4	err
+op	26:12	0:0	4	!=
+water	26:15	0:0	4	MPC_STATUS_OK
+stmts	27:4	30:4	3	
+water	27:4	0:0	4	{
+call	28:8	28:30	4	block_Release
+arg	28:23	28:30	5	p_data
+water	28:23	0:0	6	p_data
+water	28:31	0:0	4	;
+return	29:8	29:17	4	-1
+op	29:15	0:0	5	-
+water	29:16	0:0	5	1
+water	30:4	0:0	4	}
+else	31:4	35:4	2
+stmts	31:9	35:4	3	
+if	31:9	35:4	4	(frame . bits == - 1)
+cond	31:13	31:28	5	frame . bits == - 1
+water	31:13	0:0	6	frame
+op	31:18	0:0	6	.
+water	31:19	0:0	6	bits
+op	31:24	0:0	6	==
+op	31:27	0:0	6	-
+water	31:28	0:0	6	1
+stmts	32:4	35:4	5	
+water	32:4	0:0	6	{
+call	33:8	33:30	6	block_Release
+arg	33:23	33:30	7	p_data
+water	33:23	0:0	8	p_data
+water	33:31	0:0	6	;
+return	34:8	34:16	6	0
+water	34:15	0:0	7	0
+water	35:4	0:0	6	}
+water	36:4	0:0	2	i_ret
+op	36:10	0:0	2	=
+water	36:12	0:0	2	frame
+op	36:17	0:0	2	.
+water	36:18	0:0	2	samples
+water	36:25	0:0	2	;
+water	39:4	0:0	2	p_data
+op	39:10	0:0	2	->
+water	39:12	0:0	2	i_buffer
+op	39:21	0:0	2	=
+water	39:23	0:0	2	i_ret
+op	39:29	0:0	2	*
+op	39:31	0:0	2	sizeof
+water	39:37	0:0	2	(
+water	39:38	0:0	2	MPC_SAMPLE_FORMAT
+water	39:55	0:0	2	)
+op	39:57	0:0	2	*
+water	39:59	0:0	2	p_sys
+op	39:64	0:0	2	->
+water	39:66	0:0	2	info
+op	39:70	0:0	2	.
+water	39:71	0:0	2	channels
+water	39:79	0:0	2	;
+water	40:4	0:0	2	p_data
+op	40:10	0:0	2	->
+water	40:12	0:0	2	i_dts
+op	40:18	0:0	2	=
+water	40:20	0:0	2	p_data
+op	40:26	0:0	2	->
+water	40:28	0:0	2	i_pts
+op	40:34	0:0	2	=
+water	41:12	0:0	2	VLC_TS_0
+op	41:21	0:0	2	+
+call	41:23	41:38	2	INT64_C
+arg	41:31	41:38	3	1000000
+water	41:31	0:0	4	1000000
+op	41:40	0:0	2	*
+water	41:42	0:0	2	p_sys
+op	41:47	0:0	2	->
+water	41:49	0:0	2	i_position
+op	41:60	0:0	2	/
+water	41:62	0:0	2	p_sys
+op	41:67	0:0	2	->
+water	41:69	0:0	2	info
+op	41:73	0:0	2	.
+water	41:74	0:0	2	sample_freq
+water	41:85	0:0	2	;
+call	42:4	42:64	2	es_out_Control
+arg	42:20	42:32	3	p_demux->out
+water	42:20	0:0	4	p_demux
+op	42:27	0:0	4	->
+water	42:29	0:0	4	out
+arg	42:34	42:48	3	ES_OUT_SET_PCR
+water	42:34	0:0	4	ES_OUT_SET_PCR
+arg	42:50	42:64	3	p_data->i_dts
+water	42:50	0:0	4	p_data
+op	42:56	0:0	4	->
+water	42:58	0:0	4	i_dts
+water	42:65	0:0	2	;
+call	43:4	43:51	2	es_out_Send
+arg	43:17	43:29	3	p_demux->out
+water	43:17	0:0	4	p_demux
+op	43:24	0:0	4	->
+water	43:26	0:0	4	out
+arg	43:31	43:42	3	p_sys->p_es
+water	43:31	0:0	4	p_sys
+op	43:36	0:0	4	->
+water	43:38	0:0	4	p_es
+arg	43:44	43:51	3	p_data
+water	43:44	0:0	4	p_data
+water	43:52	0:0	2	;
+water	45:4	0:0	2	p_sys
+op	45:9	0:0	2	->
+water	45:11	0:0	2	i_position
+op	45:22	0:0	2	+=
+water	45:25	0:0	2	i_ret
+water	45:30	0:0	2	;
+return	46:4	46:12	2	1
+water	46:11	0:0	3	1

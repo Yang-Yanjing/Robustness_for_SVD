@@ -1,0 +1,138 @@
+func	2:0	35:0	0	static int	OpenClient
+params	2:22	0:0	1	
+param	2:23	2:43	2	vlc_tls_creds_t *	crd
+stmnts	4:4	34:23	1	
+if	4:4	5:27	2	(gnutls_Init (VLC_OBJECT (crd ) ))
+cond	4:8	4:36	3	gnutls_Init (VLC_OBJECT (crd ) )
+call	4:8	4:36	4	gnutls_Init
+arg	4:21	4:36	5	VLC_OBJECT(crd)
+call	4:21	4:35	6	VLC_OBJECT
+arg	4:32	4:35	7	crd
+water	4:32	0:0	8	crd
+stmts	5:8	5:27	3	
+return	5:8	5:27	4	VLC_EGENERIC
+water	5:15	0:0	5	VLC_EGENERIC
+decl	6:4	6:53	2	vlc_tls_creds_sys_t	*sys
+op	6:29	0:0	2	=
+call	6:31	6:52	3	malloc
+arg	6:39	6:52	4	sizeof(*sys)
+op	6:39	0:0	5	sizeof
+water	6:46	0:0	5	(
+op	6:47	0:0	5	*
+water	6:48	0:0	5	sys
+water	6:51	0:0	5	)
+if	7:4	8:18	2	(unlikely (sys == NULL ))
+cond	7:8	7:28	3	unlikely (sys == NULL )
+call	7:8	7:28	4	unlikely
+arg	7:17	7:28	5	sys==NULL
+water	7:17	0:0	6	sys
+op	7:21	0:0	6	==
+water	7:24	0:0	6	NULL
+stmts	8:8	8:18	3	
+goto	8:8	8:18	4	error
+water	8:13	0:0	5	error
+water	9:4	0:0	2	crd
+op	9:7	0:0	2	->
+water	9:9	0:0	2	sys
+op	9:13	0:0	2	=
+water	9:15	0:0	2	sys
+water	9:18	0:0	2	;
+water	12:4	0:0	2	crd
+op	12:7	0:0	2	->
+water	12:9	0:0	2	open
+op	12:14	0:0	2	=
+water	12:16	0:0	2	gnutls_ClientSessionOpen
+water	12:40	0:0	2	;
+water	13:4	0:0	2	crd
+op	13:7	0:0	2	->
+water	13:9	0:0	2	close
+op	13:15	0:0	2	=
+water	13:17	0:0	2	gnutls_SessionClose
+water	13:36	0:0	2	;
+water	14:4	0:0	2	sys
+op	14:7	0:0	2	->
+water	14:9	0:0	2	handshake
+op	14:19	0:0	2	=
+water	14:21	0:0	2	gnutls_HandshakeAndValidate
+water	14:48	0:0	2	;
+decl	15:4	15:71	2	int	val
+op	15:12	0:0	2	=
+call	15:14	15:70	3	gnutls_certificate_allocate_credentials
+arg	15:55	15:70	4	&sys->x509_cred
+op	15:55	0:0	5	&
+water	15:56	0:0	5	sys
+op	15:59	0:0	5	->
+water	15:61	0:0	5	x509_cred
+if	16:4	21:4	2	(val != 0)
+cond	16:8	16:15	3	val != 0
+water	16:8	0:0	4	val
+op	16:12	0:0	4	!=
+water	16:15	0:0	4	0
+stmts	17:4	21:4	3	
+water	17:4	0:0	4	{
+call	18:8	19:38	4	msg_Err
+arg	18:17	18:20	5	crd
+water	18:17	0:0	6	crd
+arg	18:22	18:55	5	"cannot allocate credentials: %s"
+water	18:22	0:0	6	"cannot allocate credentials: %s"
+arg	19:17	19:38	5	gnutls_strerror(val)
+call	19:17	19:37	6	gnutls_strerror
+arg	19:34	19:37	7	val
+water	19:34	0:0	8	val
+water	19:39	0:0	4	;
+goto	20:8	20:18	4	error
+water	20:13	0:0	5	error
+water	21:4	0:0	4	}
+water	22:4	0:0	2	val
+op	22:8	0:0	2	=
+call	22:10	22:66	2	gnutls_certificate_set_x509_system_trust
+arg	22:52	22:66	3	sys->x509_cred
+water	22:52	0:0	4	sys
+op	22:55	0:0	4	->
+water	22:57	0:0	4	x509_cred
+water	22:67	0:0	2	;
+if	23:4	25:39	2	(val < 0)
+cond	23:8	23:14	3	val < 0
+water	23:8	0:0	4	val
+op	23:12	0:0	4	<
+water	23:14	0:0	4	0
+stmts	24:8	25:39	3	
+call	24:8	25:38	4	msg_Err
+arg	24:17	24:20	5	crd
+water	24:17	0:0	6	crd
+arg	24:22	24:71	5	"cannot load trusted Certificate Authorities: %s"
+water	24:22	0:0	6	"cannot load trusted Certificate Authorities: %s"
+arg	25:17	25:38	5	gnutls_strerror(val)
+call	25:17	25:37	6	gnutls_strerror
+arg	25:34	25:37	7	val
+water	25:34	0:0	8	val
+water	25:39	0:0	4	;
+else	26:4	27:51	2
+stmts	27:8	27:51	3	
+call	27:8	27:50	4	msg_Dbg
+arg	27:17	27:20	5	crd
+water	27:17	0:0	6	crd
+arg	27:22	27:45	5	"loaded %d trusted CAs"
+water	27:22	0:0	6	"loaded %d trusted CAs"
+arg	27:47	27:50	5	val
+water	27:47	0:0	6	val
+water	27:51	0:0	4	;
+call	28:4	29:75	2	gnutls_certificate_set_verify_flags
+arg	28:41	28:55	3	sys->x509_cred
+water	28:41	0:0	4	sys
+op	28:44	0:0	4	->
+water	28:46	0:0	4	x509_cred
+arg	29:41	29:75	3	GNUTLS_VERIFY_ALLOW_X509_V1_CA_CRT
+water	29:41	0:0	4	GNUTLS_VERIFY_ALLOW_X509_V1_CA_CRT
+water	29:76	0:0	2	;
+return	30:4	30:22	2	VLC_SUCCESS
+water	30:11	0:0	3	VLC_SUCCESS
+label	31:0	31:5	2	error :
+call	32:4	32:13	2	free
+arg	32:10	32:13	3	sys
+water	32:10	0:0	4	sys
+water	32:14	0:0	2	;
+call	33:4	33:19	2	gnutls_Deinit
+water	33:20	0:0	2	;
+return	34:4	34:23	2	VLC_EGENERIC
+water	34:11	0:0	3	VLC_EGENERIC

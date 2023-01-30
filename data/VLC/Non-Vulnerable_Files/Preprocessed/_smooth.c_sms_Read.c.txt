@@ -1,0 +1,302 @@
+func	2:0	60:0	0	static int	sms_Read
+params	2:19	0:0	1	
+param	2:21	2:32	2	stream_t *	s
+param	2:34	2:49	2	uint8_t *	p_read
+param	2:51	2:62	2	int	i_read
+stmnts	0:0	59:17	1	
+decl	4:4	4:34	2	stream_sys_t	*p_sys
+op	4:24	0:0	2	=
+water	4:26	0:0	2	s
+op	4:27	0:0	2	->
+water	4:29	0:0	2	p_sys
+decl	5:4	5:18	2	int	copied
+op	5:15	0:0	2	=
+water	5:17	0:0	2	0
+decl	6:4	6:25	2	chunk_t	*chunk
+op	6:19	0:0	2	=
+water	6:21	0:0	2	NULL
+do	7:4	58:4	2	(i_read > 0)
+cond	58:14	58:23	3	i_read > 0
+water	58:14	0:0	4	i_read
+op	58:21	0:0	4	>
+water	58:23	0:0	4	0
+stmts	8:4	58:4	3	
+water	8:4	0:0	4	{
+water	9:8	0:0	4	chunk
+op	9:14	0:0	4	=
+call	9:16	9:35	4	get_chunk
+arg	9:27	9:28	5	s
+water	9:27	0:0	6	s
+arg	9:30	9:35	5	true
+water	9:30	0:0	6	true
+water	9:36	0:0	4	;
+if	10:8	11:25	4	(! chunk)
+cond	10:12	10:13	5	! chunk
+op	10:12	0:0	6	!
+water	10:13	0:0	6	chunk
+stmts	11:12	11:25	5	
+return	11:12	11:25	6	copied
+water	11:19	0:0	7	copied
+if	12:8	31:8	4	(chunk -> read_pos >= ( int ) chunk -> size)
+cond	12:12	12:43	5	chunk -> read_pos >= ( int ) chunk -> size
+water	12:12	0:0	6	chunk
+op	12:17	0:0	6	->
+water	12:19	0:0	6	read_pos
+op	12:28	0:0	6	>=
+water	12:31	0:0	6	(
+water	12:32	0:0	6	int
+water	12:35	0:0	6	)
+water	12:36	0:0	6	chunk
+op	12:41	0:0	6	->
+water	12:43	0:0	6	size
+stmts	13:8	31:8	5	
+water	13:8	0:0	6	{
+if	14:12	21:12	6	(chunk -> type == VIDEO_ES || ( !SMS_GET_SELECTED_ST (VIDEO_ES ) && chunk -> type == AUDIO_ES ))
+cond	14:16	15:78	7	chunk -> type == VIDEO_ES || ( !SMS_GET_SELECTED_ST (VIDEO_ES ) && chunk -> type == AUDIO_ES )
+water	14:16	0:0	8	chunk
+op	14:21	0:0	8	->
+water	14:23	0:0	8	type
+op	14:28	0:0	8	==
+water	14:31	0:0	8	VIDEO_ES
+op	14:40	0:0	8	||
+water	15:16	0:0	8	(
+op	15:18	0:0	8	!
+call	15:19	15:49	8	SMS_GET_SELECTED_ST
+arg	15:40	15:49	9	VIDEO_ES
+water	15:40	0:0	10	VIDEO_ES
+op	15:51	0:0	8	&&
+water	15:54	0:0	8	chunk
+op	15:59	0:0	8	->
+water	15:61	0:0	8	type
+op	15:66	0:0	8	==
+water	15:69	0:0	8	AUDIO_ES
+water	15:78	0:0	8	)
+stmts	16:12	21:12	7	
+water	16:12	0:0	8	{
+call	17:16	17:59	8	vlc_mutex_lock
+arg	17:32	17:59	9	&p_sys->download.lock_wait
+op	17:32	0:0	10	&
+water	17:33	0:0	10	p_sys
+op	17:38	0:0	10	->
+water	17:40	0:0	10	download
+op	17:48	0:0	10	.
+water	17:49	0:0	10	lock_wait
+water	17:60	0:0	8	;
+water	18:16	0:0	8	p_sys
+op	18:21	0:0	8	->
+water	18:23	0:0	8	playback
+op	18:31	0:0	8	.
+water	18:32	0:0	8	toffset
+op	18:40	0:0	8	+=
+water	18:43	0:0	8	chunk
+op	18:48	0:0	8	->
+water	18:50	0:0	8	duration
+water	18:58	0:0	8	;
+call	19:16	19:61	8	vlc_mutex_unlock
+arg	19:34	19:61	9	&p_sys->download.lock_wait
+op	19:34	0:0	10	&
+water	19:35	0:0	10	p_sys
+op	19:40	0:0	10	->
+water	19:42	0:0	10	download
+op	19:50	0:0	10	.
+water	19:51	0:0	10	lock_wait
+water	19:62	0:0	8	;
+call	20:16	20:54	8	vlc_cond_signal
+arg	20:33	20:54	9	&p_sys->download.wait
+op	20:33	0:0	10	&
+water	20:34	0:0	10	p_sys
+op	20:39	0:0	10	->
+water	20:41	0:0	10	download
+op	20:49	0:0	10	.
+water	20:50	0:0	10	wait
+water	20:55	0:0	8	;
+water	21:12	0:0	8	}
+if	22:12	26:12	6	(! p_sys -> b_cache || p_sys -> b_live)
+cond	22:16	22:42	7	! p_sys -> b_cache || p_sys -> b_live
+op	22:16	0:0	8	!
+water	22:17	0:0	8	p_sys
+op	22:22	0:0	8	->
+water	22:24	0:0	8	b_cache
+op	22:32	0:0	8	||
+water	22:35	0:0	8	p_sys
+op	22:40	0:0	8	->
+water	22:42	0:0	8	b_live
+stmts	23:12	26:12	7	
+water	23:12	0:0	8	{
+call	24:16	24:38	8	FREENULL
+arg	24:26	24:38	9	chunk->data
+water	24:26	0:0	10	chunk
+op	24:31	0:0	10	->
+water	24:33	0:0	10	data
+water	24:39	0:0	8	;
+water	25:16	0:0	8	chunk
+op	25:21	0:0	8	->
+water	25:23	0:0	8	read_pos
+op	25:32	0:0	8	=
+water	25:34	0:0	8	0
+water	25:35	0:0	8	;
+water	26:12	0:0	8	}
+water	27:12	0:0	6	chunk
+op	27:17	0:0	6	->
+water	27:19	0:0	6	read_pos
+op	27:28	0:0	6	=
+water	27:30	0:0	6	0
+water	27:31	0:0	6	;
+water	28:12	0:0	6	p_sys
+op	28:17	0:0	6	->
+water	28:19	0:0	6	playback
+op	28:27	0:0	6	.
+water	28:28	0:0	6	index
+op	28:34	0:0	6	+=
+water	28:37	0:0	6	1
+water	28:38	0:0	6	;
+call	29:12	29:54	6	msg_Dbg
+arg	29:21	29:22	7	s
+water	29:21	0:0	8	s
+arg	29:24	29:54	7	"Incrementing playback index"
+water	29:24	0:0	8	"Incrementing playback index"
+water	29:55	0:0	6	;
+continue	30:12	30:20	6	
+water	31:8	0:0	6	}
+if	32:8	43:8	4	(chunk -> read_pos == 0)
+cond	32:12	32:31	5	chunk -> read_pos == 0
+water	32:12	0:0	6	chunk
+op	32:17	0:0	6	->
+water	32:19	0:0	6	read_pos
+op	32:28	0:0	6	==
+water	32:31	0:0	6	0
+stmts	33:8	43:8	5	
+water	33:8	0:0	6	{
+decl	34:12	34:70	6	const char	*verb
+op	34:29	0:0	6	=
+water	34:31	0:0	6	p_read
+op	34:38	0:0	6	==
+water	34:41	0:0	6	NULL
+water	34:46	0:0	6	?
+water	34:48	0:0	6	"skipping"
+water	34:59	0:0	6	:
+water	34:61	0:0	6	"reading"
+call	35:12	36:67	6	msg_Dbg
+arg	35:21	35:22	7	s
+water	35:21	0:0	8	s
+arg	35:24	35:57	7	"%s chunk %u (%u bytes), type %i"
+water	35:24	0:0	8	"%s chunk %u (%u bytes), type %i"
+arg	36:24	36:28	7	verb
+water	36:24	0:0	8	verb
+arg	36:30	36:45	7	chunk->sequence
+water	36:30	0:0	8	chunk
+op	36:35	0:0	8	->
+water	36:37	0:0	8	sequence
+arg	36:47	36:53	7	i_read
+water	36:47	0:0	8	i_read
+arg	36:55	36:67	7	chunk->type
+water	36:55	0:0	8	chunk
+op	36:60	0:0	8	->
+water	36:62	0:0	8	type
+water	36:68	0:0	6	;
+decl	38:12	38:25	6	uint32_t	type
+decl	39:12	39:40	6	uint8_t	*slice
+op	39:27	0:0	6	=
+water	39:29	0:0	6	chunk
+op	39:34	0:0	6	->
+water	39:36	0:0	6	data
+call	40:12	40:32	6	SMS_GET4BYTES
+arg	40:27	40:32	7	type
+water	40:27	0:0	8	type
+water	40:33	0:0	6	;
+call	41:12	41:32	6	SMS_GETFOURCC
+arg	41:27	41:32	7	type
+water	41:27	0:0	8	type
+water	41:33	0:0	6	;
+call	42:12	42:59	6	assert
+arg	42:20	42:59	7	type==ATOM_moof||type==ATOM_uuid
+water	42:20	0:0	8	type
+op	42:25	0:0	8	==
+water	42:28	0:0	8	ATOM_moof
+op	42:38	0:0	8	||
+water	42:41	0:0	8	type
+op	42:46	0:0	8	==
+water	42:49	0:0	8	ATOM_uuid
+water	42:60	0:0	6	;
+water	43:8	0:0	6	}
+decl	44:8	44:20	4	int	len
+op	44:16	0:0	4	=
+op	44:18	0:0	4	-
+water	44:19	0:0	4	1
+decl	45:8	45:52	4	uint8_t	*src
+op	45:21	0:0	4	=
+water	45:23	0:0	4	chunk
+op	45:28	0:0	4	->
+water	45:30	0:0	4	data
+op	45:35	0:0	4	+
+water	45:37	0:0	4	chunk
+op	45:42	0:0	4	->
+water	45:44	0:0	4	read_pos
+if	46:8	47:24	4	(i_read <= chunk -> size - chunk -> read_pos)
+cond	46:12	46:43	5	i_read <= chunk -> size - chunk -> read_pos
+water	46:12	0:0	6	i_read
+op	46:19	0:0	6	<=
+water	46:22	0:0	6	chunk
+op	46:27	0:0	6	->
+water	46:29	0:0	6	size
+op	46:34	0:0	6	-
+water	46:36	0:0	6	chunk
+op	46:41	0:0	6	->
+water	46:43	0:0	6	read_pos
+stmts	47:12	47:24	5	
+water	47:12	0:0	6	len
+op	47:16	0:0	6	=
+water	47:18	0:0	6	i_read
+water	47:24	0:0	6	;
+else	48:8	49:47	4
+stmts	49:12	49:47	5	
+water	49:12	0:0	6	len
+op	49:16	0:0	6	=
+water	49:18	0:0	6	chunk
+op	49:23	0:0	6	->
+water	49:25	0:0	6	size
+op	49:30	0:0	6	-
+water	49:32	0:0	6	chunk
+op	49:37	0:0	6	->
+water	49:39	0:0	6	read_pos
+water	49:47	0:0	6	;
+if	50:8	57:8	4	(len > 0)
+cond	50:12	50:18	5	len > 0
+water	50:12	0:0	6	len
+op	50:16	0:0	6	>
+water	50:18	0:0	6	0
+stmts	51:8	57:8	5	
+water	51:8	0:0	6	{
+if	52:12	53:51	6	(p_read)
+cond	52:16	52:16	7	p_read
+water	52:16	0:0	8	p_read
+stmts	53:16	53:51	7	
+call	53:16	53:50	8	memcpy
+arg	53:24	53:39	9	p_read+copied
+water	53:24	0:0	10	p_read
+op	53:31	0:0	10	+
+water	53:33	0:0	10	copied
+arg	53:41	53:44	9	src
+water	53:41	0:0	10	src
+arg	53:46	53:50	9	len
+water	53:46	0:0	10	len
+water	53:51	0:0	8	;
+water	54:12	0:0	6	chunk
+op	54:17	0:0	6	->
+water	54:19	0:0	6	read_pos
+op	54:28	0:0	6	+=
+water	54:31	0:0	6	len
+water	54:34	0:0	6	;
+water	55:12	0:0	6	copied
+op	55:19	0:0	6	+=
+water	55:22	0:0	6	len
+water	55:25	0:0	6	;
+water	56:12	0:0	6	i_read
+op	56:19	0:0	6	-=
+water	56:22	0:0	6	len
+water	56:25	0:0	6	;
+water	57:8	0:0	6	}
+water	58:4	0:0	4	}
+water	58:26	0:0	2	;
+return	59:4	59:17	2	copied
+water	59:11	0:0	3	copied

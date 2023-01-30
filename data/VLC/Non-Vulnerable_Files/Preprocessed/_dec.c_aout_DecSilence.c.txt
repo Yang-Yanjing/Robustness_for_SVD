@@ -1,0 +1,114 @@
+func	2:0	21:0	0	static void	aout_DecSilence
+params	2:28	0:0	1	
+param	2:29	2:49	2	audio_output_t *	aout
+param	2:51	2:65	2	mtime_t	length
+param	2:67	2:78	2	mtime_t	pts
+stmnts	0:0	20:33	1	
+decl	4:4	4:43	2	aout_owner_t	*owner
+op	4:24	0:0	2	=
+call	4:26	4:42	3	aout_owner
+arg	4:38	4:42	4	aout
+water	4:38	0:0	5	aout
+decl	5:4	5:59	2	const audio_sample_format_t	*fmt
+op	5:37	0:0	2	=
+op	5:39	0:0	2	&
+water	5:40	0:0	2	owner
+op	5:45	0:0	2	->
+water	5:47	0:0	2	mixer_format
+decl	6:4	6:55	2	size_t	frames
+op	6:18	0:0	2	=
+water	6:20	0:0	2	(
+water	6:21	0:0	2	fmt
+op	6:24	0:0	2	->
+water	6:26	0:0	2	i_rate
+op	6:33	0:0	2	*
+water	6:35	0:0	2	length
+water	6:41	0:0	2	)
+op	6:43	0:0	2	/
+water	6:45	0:0	2	CLOCK_FREQ
+decl	7:4	7:18	2	block_t	*block
+if	8:4	9:40	2	(AOUT_FMT_SPDIF (fmt ))
+cond	8:8	8:26	3	AOUT_FMT_SPDIF (fmt )
+call	8:8	8:26	4	AOUT_FMT_SPDIF
+arg	8:23	8:26	5	fmt
+water	8:23	0:0	6	fmt
+stmts	9:8	9:40	3	
+water	9:8	0:0	4	block
+op	9:14	0:0	4	=
+call	9:16	9:39	4	block_Alloc
+arg	9:29	9:39	5	4*frames
+water	9:29	0:0	6	4
+op	9:31	0:0	6	*
+water	9:33	0:0	6	frames
+water	9:40	0:0	4	;
+else	10:4	11:61	2
+stmts	11:8	11:61	3	
+water	11:8	0:0	4	block
+op	11:14	0:0	4	=
+call	11:16	11:60	4	block_Alloc
+arg	11:29	11:60	5	frames*fmt->i_bytes_per_frame
+water	11:29	0:0	6	frames
+op	11:36	0:0	6	*
+water	11:38	0:0	6	fmt
+op	11:41	0:0	6	->
+water	11:43	0:0	6	i_bytes_per_frame
+water	11:61	0:0	4	;
+if	12:4	13:14	2	(unlikely (block == NULL ))
+cond	12:8	12:30	3	unlikely (block == NULL )
+call	12:8	12:30	4	unlikely
+arg	12:17	12:30	5	block==NULL
+water	12:17	0:0	6	block
+op	12:23	0:0	6	==
+water	12:26	0:0	6	NULL
+stmts	13:8	13:14	3	
+return	13:8	13:14	4	
+call	14:4	14:49	2	msg_Dbg
+arg	14:13	14:17	3	aout
+water	14:13	0:0	4	aout
+arg	14:19	14:41	3	"inserting %zu zeroes"
+water	14:19	0:0	4	"inserting %zu zeroes"
+arg	14:43	14:49	3	frames
+water	14:43	0:0	4	frames
+water	14:50	0:0	2	;
+call	15:4	15:47	2	memset
+arg	15:12	15:27	3	block->p_buffer
+water	15:12	0:0	4	block
+op	15:17	0:0	4	->
+water	15:19	0:0	4	p_buffer
+arg	15:29	15:30	3	0
+water	15:29	0:0	4	0
+arg	15:32	15:47	3	block->i_buffer
+water	15:32	0:0	4	block
+op	15:37	0:0	4	->
+water	15:39	0:0	4	i_buffer
+water	15:48	0:0	2	;
+water	16:4	0:0	2	block
+op	16:9	0:0	2	->
+water	16:11	0:0	2	i_nb_samples
+op	16:24	0:0	2	=
+water	16:26	0:0	2	frames
+water	16:32	0:0	2	;
+water	17:4	0:0	2	block
+op	17:9	0:0	2	->
+water	17:11	0:0	2	i_pts
+op	17:17	0:0	2	=
+water	17:19	0:0	2	pts
+water	17:22	0:0	2	;
+water	18:4	0:0	2	block
+op	18:9	0:0	2	->
+water	18:11	0:0	2	i_dts
+op	18:17	0:0	2	=
+water	18:19	0:0	2	pts
+water	18:22	0:0	2	;
+water	19:4	0:0	2	block
+op	19:9	0:0	2	->
+water	19:11	0:0	2	i_length
+op	19:20	0:0	2	=
+water	19:22	0:0	2	length
+water	19:28	0:0	2	;
+call	20:4	20:32	2	aout_OutputPlay
+arg	20:21	20:25	3	aout
+water	20:21	0:0	4	aout
+arg	20:27	20:32	3	block
+water	20:27	0:0	4	block
+water	20:33	0:0	2	;

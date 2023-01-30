@@ -1,0 +1,245 @@
+func	2:0	40:0	0	static int	AudioStreamSupportsDigital
+params	2:37	0:0	1	
+param	2:38	2:60	2	audio_output_t *	p_aout
+param	2:62	2:87	2	AudioStreamID	i_stream_id
+stmnts	0:0	39:19	1	
+decl	4:4	4:43	2	OSStatus	err
+op	4:36	0:0	2	=
+water	4:38	0:0	2	noErr
+decl	5:4	5:48	2	UInt32	i_param_size
+op	5:45	0:0	2	=
+water	5:47	0:0	2	0
+decl	6:4	6:54	2	AudioStreamRangedDescription	*p_format_list
+op	6:48	0:0	2	=
+water	6:50	0:0	2	NULL
+decl	7:4	7:45	2	int	i_formats
+op	7:42	0:0	2	=
+water	7:44	0:0	2	0
+decl	8:4	8:48	2	bool	b_return
+op	8:41	0:0	2	=
+water	8:43	0:0	2	false
+decl	10:4	10:140	2	AudioObjectPropertyAddress	physicalFormatsAddress
+op	10:54	0:0	2	=
+water	10:56	0:0	2	{
+water	10:58	0:0	2	kAudioStreamPropertyAvailablePhysicalFormats
+water	10:102	0:0	2	,
+water	10:104	0:0	2	kAudioObjectPropertyScopeGlobal
+water	10:135	0:0	2	,
+water	10:137	0:0	2	0
+water	10:139	0:0	2	}
+water	11:4	0:0	2	err
+op	11:8	0:0	2	=
+call	11:10	11:101	2	AudioObjectGetPropertyDataSize
+arg	11:41	11:52	3	i_stream_id
+water	11:41	0:0	4	i_stream_id
+arg	11:54	11:77	3	&physicalFormatsAddress
+op	11:54	0:0	4	&
+water	11:55	0:0	4	physicalFormatsAddress
+arg	11:79	11:80	3	0
+water	11:79	0:0	4	0
+arg	11:82	11:86	3	NULL
+water	11:82	0:0	4	NULL
+arg	11:88	11:101	3	&i_param_size
+op	11:88	0:0	4	&
+water	11:89	0:0	4	i_param_size
+water	11:102	0:0	2	;
+if	12:4	15:4	2	(err != noErr)
+cond	12:8	12:15	3	err != noErr
+water	12:8	0:0	4	err
+op	12:12	0:0	4	!=
+water	12:15	0:0	4	noErr
+stmts	12:22	15:4	3	
+water	12:22	0:0	4	{
+call	13:8	13:104	4	msg_Err
+arg	13:16	13:22	5	p_aout
+water	13:16	0:0	6	p_aout
+arg	13:24	13:76	5	"could not get number of streamformats [%4.4s] (%i)"
+water	13:24	0:0	6	"could not get number of streamformats [%4.4s] (%i)"
+arg	13:78	13:90	5	(char*)&err
+water	13:78	0:0	6	(
+water	13:79	0:0	6	char
+op	13:84	0:0	6	*
+water	13:85	0:0	6	)
+op	13:86	0:0	6	&
+water	13:87	0:0	6	err
+arg	13:92	13:104	5	(int32_t)err
+water	13:92	0:0	6	(
+water	13:93	0:0	6	int32_t
+water	13:100	0:0	6	)
+water	13:101	0:0	6	err
+water	13:105	0:0	4	;
+return	14:8	14:20	4	false
+water	14:15	0:0	5	false
+water	15:4	0:0	4	}
+water	16:4	0:0	2	i_formats
+op	16:14	0:0	2	=
+water	16:16	0:0	2	i_param_size
+op	16:29	0:0	2	/
+op	16:31	0:0	2	sizeof
+water	16:37	0:0	2	(
+water	16:38	0:0	2	AudioStreamRangedDescription
+water	16:66	0:0	2	)
+water	16:67	0:0	2	;
+call	17:4	17:86	2	msg_Dbg
+arg	17:12	17:18	3	p_aout
+water	17:12	0:0	4	p_aout
+arg	17:20	17:62	3	"found %i stream formats for stream id %i"
+water	17:20	0:0	4	"found %i stream formats for stream id %i"
+arg	17:64	17:73	3	i_formats
+water	17:64	0:0	4	i_formats
+arg	17:75	17:86	3	i_stream_id
+water	17:75	0:0	4	i_stream_id
+water	17:87	0:0	2	;
+water	18:4	0:0	2	p_format_list
+op	18:18	0:0	2	=
+water	18:20	0:0	2	(
+water	18:21	0:0	2	AudioStreamRangedDescription
+op	18:50	0:0	2	*
+water	18:51	0:0	2	)
+call	18:52	18:71	2	malloc
+arg	18:59	18:71	3	i_param_size
+water	18:59	0:0	4	i_param_size
+water	18:72	0:0	2	;
+if	19:4	20:20	2	(p_format_list == NULL)
+cond	19:8	19:25	3	p_format_list == NULL
+water	19:8	0:0	4	p_format_list
+op	19:22	0:0	4	==
+water	19:25	0:0	4	NULL
+stmts	20:8	20:20	3	
+return	20:8	20:20	4	false
+water	20:15	0:0	5	false
+water	21:4	0:0	2	err
+op	21:8	0:0	2	=
+call	21:10	21:112	2	AudioObjectGetPropertyData
+arg	21:37	21:48	3	i_stream_id
+water	21:37	0:0	4	i_stream_id
+arg	21:50	21:73	3	&physicalFormatsAddress
+op	21:50	0:0	4	&
+water	21:51	0:0	4	physicalFormatsAddress
+arg	21:75	21:76	3	0
+water	21:75	0:0	4	0
+arg	21:78	21:82	3	NULL
+water	21:78	0:0	4	NULL
+arg	21:84	21:97	3	&i_param_size
+op	21:84	0:0	4	&
+water	21:85	0:0	4	i_param_size
+arg	21:99	21:112	3	p_format_list
+water	21:99	0:0	4	p_format_list
+water	21:113	0:0	2	;
+if	22:4	27:4	2	(err != noErr)
+cond	22:8	22:15	3	err != noErr
+water	22:8	0:0	4	err
+op	22:12	0:0	4	!=
+water	22:15	0:0	4	noErr
+stmts	22:22	27:4	3	
+water	22:22	0:0	4	{
+call	23:8	23:87	4	msg_Err
+arg	23:16	23:22	5	p_aout
+water	23:16	0:0	6	p_aout
+arg	23:24	23:73	5	"could not get the list of streamformats [%4.4s]"
+water	23:24	0:0	6	"could not get the list of streamformats [%4.4s]"
+arg	23:75	23:87	5	(char*)&err
+water	23:75	0:0	6	(
+water	23:76	0:0	6	char
+op	23:81	0:0	6	*
+water	23:82	0:0	6	)
+op	23:83	0:0	6	&
+water	23:84	0:0	6	err
+water	23:88	0:0	4	;
+call	24:8	24:26	4	free
+arg	24:13	24:26	5	p_format_list
+water	24:13	0:0	6	p_format_list
+water	24:27	0:0	4	;
+water	25:8	0:0	4	p_format_list
+op	25:22	0:0	4	=
+water	25:24	0:0	4	NULL
+water	25:28	0:0	4	;
+return	26:8	26:20	4	false
+water	26:15	0:0	5	false
+water	27:4	0:0	4	}
+for	28:4	37:4	2	( int i = 0 ;i < i_formats;i ++)
+forinit	0:0	28:18	3	 int i = 0 ;
+decl	28:9	28:18	4	int	i
+op	28:15	0:0	4	=
+water	28:17	0:0	4	0
+cond	28:20	28:24	3	i < i_formats
+water	28:20	0:0	4	i
+op	28:22	0:0	4	<
+water	28:24	0:0	4	i_formats
+forexpr	28:35	28:36	3	i ++
+water	28:35	0:0	4	i
+op	28:36	0:0	4	++
+stmts	28:40	37:4	3	
+water	28:40	0:0	4	{
+call	30:8	30:89	4	msg_Dbg
+arg	30:16	30:22	5	p_aout
+water	30:16	0:0	6	p_aout
+arg	30:24	30:89	5	STREAM_FORMAT_MSG("supported format: ",p_format_list[i].mFormat)
+call	30:24	30:88	6	STREAM_FORMAT_MSG
+arg	30:42	30:62	7	"supported format: "
+water	30:42	0:0	8	"supported format: "
+arg	30:64	30:88	7	p_format_list[i].mFormat
+water	30:64	0:0	8	p_format_list
+op	30:77	0:0	8	[
+water	30:78	0:0	8	i
+op	30:79	0:0	8	]
+op	30:80	0:0	8	.
+water	30:81	0:0	8	mFormat
+water	30:90	0:0	4	;
+if	32:8	36:27	4	(p_format_list [ i ] . mFormat . mFormatID == 'IAC3' || p_format_list [ i ] . mFormat . mFormatID == 'iac3' || p_format_list [ i ] . mFormat . mFormatID == kAudioFormat60958AC3 || p_format_list [ i ] . mFormat . mFormatID == kAudioFormatAC3)
+cond	32:12	35:50	5	p_format_list [ i ] . mFormat . mFormatID == 'IAC3' || p_format_list [ i ] . mFormat . mFormatID == 'iac3' || p_format_list [ i ] . mFormat . mFormatID == kAudioFormat60958AC3 || p_format_list [ i ] . mFormat . mFormatID == kAudioFormatAC3
+water	32:12	0:0	6	p_format_list
+op	32:25	0:0	6	[
+water	32:26	0:0	6	i
+op	32:27	0:0	6	]
+op	32:28	0:0	6	.
+water	32:29	0:0	6	mFormat
+op	32:36	0:0	6	.
+water	32:37	0:0	6	mFormatID
+op	32:47	0:0	6	==
+water	32:50	0:0	6	'IAC3'
+op	32:57	0:0	6	||
+water	33:12	0:0	6	p_format_list
+op	33:25	0:0	6	[
+water	33:26	0:0	6	i
+op	33:27	0:0	6	]
+op	33:28	0:0	6	.
+water	33:29	0:0	6	mFormat
+op	33:36	0:0	6	.
+water	33:37	0:0	6	mFormatID
+op	33:47	0:0	6	==
+water	33:50	0:0	6	'iac3'
+op	33:57	0:0	6	||
+water	34:12	0:0	6	p_format_list
+op	34:25	0:0	6	[
+water	34:26	0:0	6	i
+op	34:27	0:0	6	]
+op	34:28	0:0	6	.
+water	34:29	0:0	6	mFormat
+op	34:36	0:0	6	.
+water	34:37	0:0	6	mFormatID
+op	34:47	0:0	6	==
+water	34:50	0:0	6	kAudioFormat60958AC3
+op	34:71	0:0	6	||
+water	35:12	0:0	6	p_format_list
+op	35:25	0:0	6	[
+water	35:26	0:0	6	i
+op	35:27	0:0	6	]
+op	35:28	0:0	6	.
+water	35:29	0:0	6	mFormat
+op	35:36	0:0	6	.
+water	35:37	0:0	6	mFormatID
+op	35:47	0:0	6	==
+water	35:50	0:0	6	kAudioFormatAC3
+stmts	36:12	36:27	5	
+water	36:12	0:0	6	b_return
+op	36:21	0:0	6	=
+water	36:23	0:0	6	true
+water	36:27	0:0	6	;
+water	37:4	0:0	4	}
+call	38:4	38:22	2	free
+arg	38:9	38:22	3	p_format_list
+water	38:9	0:0	4	p_format_list
+water	38:23	0:0	2	;
+return	39:4	39:19	2	b_return
+water	39:11	0:0	3	b_return

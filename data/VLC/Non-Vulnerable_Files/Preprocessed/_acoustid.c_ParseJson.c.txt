@@ -1,0 +1,331 @@
+func	2:0	58:0	0	static bool	ParseJson
+params	2:21	0:0	1	
+param	2:23	2:42	2	vlc_object_t *	p_obj
+param	2:44	2:60	2	char *	psz_buffer
+param	2:62	2:92	2	acoustid_results_t *	p_results
+stmnts	0:0	57:16	1	
+decl	4:4	4:26	2	json_settings	settings
+decl	5:4	5:23	2	char	psz_error[128]
+call	6:4	6:48	2	memset
+arg	6:12	6:21	3	&settings
+op	6:12	0:0	4	&
+water	6:13	0:0	4	settings
+arg	6:23	6:24	3	0
+water	6:23	0:0	4	0
+arg	6:26	6:48	3	sizeof(json_settings)
+op	6:26	0:0	4	sizeof
+water	6:33	0:0	4	(
+water	6:34	0:0	4	json_settings
+water	6:47	0:0	4	)
+water	6:49	0:0	2	;
+decl	7:4	7:72	2	json_value	*root
+op	7:21	0:0	2	=
+call	7:23	7:71	3	json_parse_ex
+arg	7:38	7:47	4	&settings
+op	7:38	0:0	5	&
+water	7:39	0:0	5	settings
+arg	7:49	7:59	4	psz_buffer
+water	7:49	0:0	5	psz_buffer
+arg	7:61	7:71	4	psz_error
+water	7:61	0:0	5	psz_error
+if	8:4	12:4	2	(root == NULL)
+cond	8:9	8:17	3	root == NULL
+water	8:9	0:0	4	root
+op	8:14	0:0	4	==
+water	8:17	0:0	4	NULL
+stmts	9:4	12:4	3	
+water	9:4	0:0	4	{
+call	10:8	10:64	4	msg_Warn
+arg	10:18	10:23	5	p_obj
+water	10:18	0:0	6	p_obj
+arg	10:25	10:52	5	"Can't parse json data: %s"
+water	10:25	0:0	6	"Can't parse json data: %s"
+arg	10:54	10:64	5	psz_error
+water	10:54	0:0	6	psz_error
+water	10:65	0:0	4	;
+goto	11:8	11:18	4	error
+water	11:13	0:0	5	error
+water	12:4	0:0	4	}
+if	13:4	17:4	2	(root -> type != json_object)
+cond	13:9	13:23	3	root -> type != json_object
+water	13:9	0:0	4	root
+op	13:13	0:0	4	->
+water	13:15	0:0	4	type
+op	13:20	0:0	4	!=
+water	13:23	0:0	4	json_object
+stmts	14:4	17:4	3	
+water	14:4	0:0	4	{
+call	15:8	15:48	4	msg_Warn
+arg	15:18	15:23	5	p_obj
+water	15:18	0:0	6	p_obj
+arg	15:25	15:48	5	"wrong json root node"
+water	15:25	0:0	6	"wrong json root node"
+water	15:49	0:0	4	;
+goto	16:8	16:18	4	error
+water	16:13	0:0	5	error
+water	17:4	0:0	4	}
+decl	18:4	18:54	2	json_value	*node
+op	18:21	0:0	2	=
+call	18:23	18:53	3	jsongetbyname
+arg	18:38	18:42	4	root
+water	18:38	0:0	5	root
+arg	18:44	18:53	4	"status"
+water	18:44	0:0	5	"status"
+if	19:4	23:4	2	(! node || node -> type != json_string)
+cond	19:9	19:32	3	! node || node -> type != json_string
+op	19:9	0:0	4	!
+water	19:10	0:0	4	node
+op	19:15	0:0	4	||
+water	19:18	0:0	4	node
+op	19:22	0:0	4	->
+water	19:24	0:0	4	type
+op	19:29	0:0	4	!=
+water	19:32	0:0	4	json_string
+stmts	20:4	23:4	3	
+water	20:4	0:0	4	{
+call	21:8	21:60	4	msg_Warn
+arg	21:18	21:23	5	p_obj
+water	21:18	0:0	6	p_obj
+arg	21:25	21:60	5	"status node not found or invalid"
+water	21:25	0:0	6	"status node not found or invalid"
+water	21:61	0:0	4	;
+goto	22:8	22:18	4	error
+water	22:13	0:0	5	error
+water	23:4	0:0	4	}
+if	24:4	28:4	2	(strcmp (node -> u . string . ptr ,"ok" ) != 0)
+cond	24:9	24:47	3	strcmp (node -> u . string . ptr ,"ok" ) != 0
+call	24:9	24:42	4	strcmp
+arg	24:17	24:35	5	node->u.string.ptr
+water	24:17	0:0	6	node
+op	24:21	0:0	6	->
+water	24:23	0:0	6	u
+op	24:24	0:0	6	.
+water	24:25	0:0	6	string
+op	24:31	0:0	6	.
+water	24:32	0:0	6	ptr
+arg	24:37	24:42	5	"ok"
+water	24:37	0:0	6	"ok"
+op	24:44	0:0	4	!=
+water	24:47	0:0	4	0
+stmts	25:4	28:4	3	
+water	25:4	0:0	4	{
+call	26:8	26:46	4	msg_Warn
+arg	26:18	26:23	5	p_obj
+water	26:18	0:0	6	p_obj
+arg	26:25	26:46	5	"Bad request status"
+water	26:25	0:0	6	"Bad request status"
+water	26:47	0:0	4	;
+goto	27:8	27:18	4	error
+water	27:13	0:0	5	error
+water	28:4	0:0	4	}
+water	29:4	0:0	2	node
+op	29:9	0:0	2	=
+call	29:11	29:42	2	jsongetbyname
+arg	29:26	29:30	3	root
+water	29:26	0:0	4	root
+arg	29:32	29:42	3	"results"
+water	29:32	0:0	4	"results"
+water	29:43	0:0	2	;
+if	30:4	34:4	2	(! node || node -> type != json_array)
+cond	30:9	30:32	3	! node || node -> type != json_array
+op	30:9	0:0	4	!
+water	30:10	0:0	4	node
+op	30:15	0:0	4	||
+water	30:18	0:0	4	node
+op	30:22	0:0	4	->
+water	30:24	0:0	4	type
+op	30:29	0:0	4	!=
+water	30:32	0:0	4	json_array
+stmts	31:4	34:4	3	
+water	31:4	0:0	4	{
+call	32:8	32:59	4	msg_Warn
+arg	32:18	32:23	5	p_obj
+water	32:18	0:0	6	p_obj
+arg	32:25	32:59	5	"Bad results array or no results"
+water	32:25	0:0	6	"Bad results array or no results"
+water	32:60	0:0	4	;
+goto	33:8	33:18	4	error
+water	33:13	0:0	5	error
+water	34:4	0:0	4	}
+water	35:4	0:0	2	p_results
+op	35:13	0:0	2	->
+water	35:15	0:0	2	p_results
+op	35:25	0:0	2	=
+call	35:27	35:83	2	calloc
+arg	35:35	35:55	3	node->u.array.length
+water	35:35	0:0	4	node
+op	35:39	0:0	4	->
+water	35:41	0:0	4	u
+op	35:42	0:0	4	.
+water	35:43	0:0	4	array
+op	35:48	0:0	4	.
+water	35:49	0:0	4	length
+arg	35:57	35:83	3	sizeof(acoustid_result_t)
+op	35:57	0:0	4	sizeof
+water	35:63	0:0	4	(
+water	35:64	0:0	4	acoustid_result_t
+water	35:81	0:0	4	)
+water	35:84	0:0	2	;
+if	36:4	36:44	2	(! p_results -> p_results)
+cond	36:9	36:22	3	! p_results -> p_results
+op	36:9	0:0	4	!
+water	36:11	0:0	4	p_results
+op	36:20	0:0	4	->
+water	36:22	0:0	4	p_results
+stmts	36:34	36:44	3	
+goto	36:34	36:44	4	error
+water	36:39	0:0	5	error
+water	37:4	0:0	2	p_results
+op	37:13	0:0	2	->
+water	37:15	0:0	2	count
+op	37:21	0:0	2	=
+water	37:23	0:0	2	node
+op	37:27	0:0	2	->
+water	37:29	0:0	2	u
+op	37:30	0:0	2	.
+water	37:31	0:0	2	array
+op	37:36	0:0	2	.
+water	37:37	0:0	2	length
+water	37:43	0:0	2	;
+for	38:4	52:4	2	( unsigned int i = 0 ;i < node -> u . array . length;i ++)
+forinit	0:0	38:25	3	 unsigned int i = 0 ;
+decl	38:9	38:25	4	unsigned int	i
+op	38:23	0:0	4	=
+water	38:24	0:0	4	0
+cond	38:27	38:43	3	i < node -> u . array . length
+water	38:27	0:0	4	i
+op	38:28	0:0	4	<
+water	38:29	0:0	4	node
+op	38:33	0:0	4	->
+water	38:35	0:0	4	u
+op	38:36	0:0	4	.
+water	38:37	0:0	4	array
+op	38:42	0:0	4	.
+water	38:43	0:0	4	length
+forexpr	38:51	38:52	3	i ++
+water	38:51	0:0	4	i
+op	38:52	0:0	4	++
+stmts	39:4	52:4	3	
+water	39:4	0:0	4	{
+decl	40:8	40:56	4	json_value	*resultnode
+op	40:31	0:0	4	=
+water	40:33	0:0	4	node
+op	40:37	0:0	4	->
+water	40:39	0:0	4	u
+op	40:40	0:0	4	.
+water	40:41	0:0	4	array
+op	40:46	0:0	4	.
+water	40:47	0:0	4	values
+op	40:53	0:0	4	[
+water	40:54	0:0	4	i
+op	40:55	0:0	4	]
+if	41:8	51:8	4	(resultnode && resultnode -> type == json_object)
+cond	41:13	41:47	5	resultnode && resultnode -> type == json_object
+water	41:13	0:0	6	resultnode
+op	41:24	0:0	6	&&
+water	41:27	0:0	6	resultnode
+op	41:37	0:0	6	->
+water	41:39	0:0	6	type
+op	41:44	0:0	6	==
+water	41:47	0:0	6	json_object
+stmts	42:8	51:8	5	
+water	42:8	0:0	6	{
+decl	43:12	43:67	6	acoustid_result_t	*p_result
+op	43:40	0:0	6	=
+op	43:42	0:0	6	&
+water	43:44	0:0	6	p_results
+op	43:53	0:0	6	->
+water	43:55	0:0	6	p_results
+op	43:64	0:0	6	[
+water	43:65	0:0	6	i
+op	43:66	0:0	6	]
+decl	44:12	44:68	6	json_value	*value
+op	44:30	0:0	6	=
+call	44:32	44:67	7	jsongetbyname
+arg	44:47	44:57	8	resultnode
+water	44:47	0:0	9	resultnode
+arg	44:59	44:67	8	"score"
+water	44:59	0:0	9	"score"
+if	45:12	46:48	6	(value && value -> type == json_double)
+cond	45:17	45:41	7	value && value -> type == json_double
+water	45:17	0:0	8	value
+op	45:23	0:0	8	&&
+water	45:26	0:0	8	value
+op	45:31	0:0	8	->
+water	45:33	0:0	8	type
+op	45:38	0:0	8	==
+water	45:41	0:0	8	json_double
+stmts	46:16	46:48	7	
+water	46:16	0:0	8	p_result
+op	46:24	0:0	8	->
+water	46:26	0:0	8	d_score
+op	46:34	0:0	8	=
+water	46:36	0:0	8	value
+op	46:41	0:0	8	->
+water	46:43	0:0	8	u
+op	46:44	0:0	8	.
+water	46:45	0:0	8	dbl
+water	46:48	0:0	8	;
+water	47:12	0:0	6	value
+op	47:18	0:0	6	=
+call	47:20	47:52	6	jsongetbyname
+arg	47:35	47:45	7	resultnode
+water	47:35	0:0	8	resultnode
+arg	47:47	47:52	7	"id"
+water	47:47	0:0	8	"id"
+water	47:53	0:0	6	;
+if	48:12	49:64	6	(value && value -> type == json_string)
+cond	48:17	48:41	7	value && value -> type == json_string
+water	48:17	0:0	8	value
+op	48:23	0:0	8	&&
+water	48:26	0:0	8	value
+op	48:31	0:0	8	->
+water	48:33	0:0	8	type
+op	48:38	0:0	8	==
+water	48:41	0:0	8	json_string
+stmts	49:16	49:64	7	
+water	49:16	0:0	8	p_result
+op	49:24	0:0	8	->
+water	49:26	0:0	8	psz_id
+op	49:33	0:0	8	=
+call	49:35	49:63	8	strdup
+arg	49:43	49:63	9	value->u.string.ptr
+water	49:43	0:0	10	value
+op	49:48	0:0	10	->
+water	49:50	0:0	10	u
+op	49:51	0:0	10	.
+water	49:52	0:0	10	string
+op	49:58	0:0	10	.
+water	49:59	0:0	10	ptr
+water	49:64	0:0	8	;
+call	50:12	50:89	6	parse_recordings
+arg	50:30	50:35	7	p_obj
+water	50:30	0:0	8	p_obj
+arg	50:37	50:78	7	jsongetbyname(resultnode,"recordings")
+call	50:37	50:77	8	jsongetbyname
+arg	50:52	50:62	9	resultnode
+water	50:52	0:0	10	resultnode
+arg	50:64	50:77	9	"recordings"
+water	50:64	0:0	10	"recordings"
+arg	50:80	50:89	7	p_result
+water	50:80	0:0	8	p_result
+water	50:90	0:0	6	;
+water	51:8	0:0	6	}
+water	52:4	0:0	4	}
+call	53:4	53:26	2	json_value_free
+arg	53:21	53:26	3	root
+water	53:21	0:0	4	root
+water	53:27	0:0	2	;
+return	54:4	54:15	2	true
+water	54:11	0:0	3	true
+label	55:0	55:5	2	error :
+if	56:4	56:39	2	(root)
+cond	56:9	56:9	3	root
+water	56:9	0:0	4	root
+stmts	56:16	56:39	3	
+call	56:16	56:38	4	json_value_free
+arg	56:33	56:38	5	root
+water	56:33	0:0	6	root
+water	56:39	0:0	4	;
+return	57:4	57:16	2	false
+water	57:11	0:0	3	false

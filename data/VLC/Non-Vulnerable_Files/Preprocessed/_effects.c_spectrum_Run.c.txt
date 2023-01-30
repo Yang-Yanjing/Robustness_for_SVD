@@ -1,0 +1,1753 @@
+func	2:0	256:0	0	static int	spectrum_Run
+params	2:23	0:0	1	
+param	2:24	2:50	2	visual_effect_t *	p_effect
+param	2:52	2:72	2	vlc_object_t *	p_aout
+param	3:24	3:49	2	const block_t *	p_buffer
+param	3:51	3:72	2	picture_t *	p_picture
+stmnts	0:0	255:12	1	
+decl	5:4	5:44	2	spectrum_data	*p_data
+op	5:26	0:0	2	=
+water	5:28	0:0	2	p_effect
+op	5:36	0:0	2	->
+water	5:38	0:0	2	p_data
+decl	6:4	6:35	2	float	p_output[FFT_BUFFER_SIZE]
+decl	7:4	7:15	2	int	*height
+decl	8:4	8:14	2	int	*peaks
+decl	9:4	9:21	2	int	*prev_heights
+decl	10:4	10:18	2	int	i_80_bands
+decl	11:4	11:18	2	int	i_nb_bands
+decl	12:4	12:20	2	int	i_band_width
+decl	13:4	13:15	2	int	i_start
+decl	14:4	14:14	2	int	i_peak
+decl	16:4	17:52	2	const int	xscale1[]
+op	16:23	0:0	2	=
+water	16:24	0:0	2	{
+water	16:25	0:0	2	0
+water	16:26	0:0	2	,
+water	16:27	0:0	2	1
+water	16:28	0:0	2	,
+water	16:29	0:0	2	2
+water	16:30	0:0	2	,
+water	16:31	0:0	2	3
+water	16:32	0:0	2	,
+water	16:33	0:0	2	4
+water	16:34	0:0	2	,
+water	16:35	0:0	2	5
+water	16:36	0:0	2	,
+water	16:37	0:0	2	6
+water	16:38	0:0	2	,
+water	16:39	0:0	2	7
+water	16:40	0:0	2	,
+water	16:41	0:0	2	8
+water	16:42	0:0	2	,
+water	16:43	0:0	2	11
+water	16:45	0:0	2	,
+water	16:46	0:0	2	15
+water	16:48	0:0	2	,
+water	16:49	0:0	2	20
+water	16:51	0:0	2	,
+water	16:52	0:0	2	27
+water	16:54	0:0	2	,
+water	17:24	0:0	2	36
+water	17:26	0:0	2	,
+water	17:27	0:0	2	47
+water	17:29	0:0	2	,
+water	17:30	0:0	2	62
+water	17:32	0:0	2	,
+water	17:33	0:0	2	82
+water	17:35	0:0	2	,
+water	17:36	0:0	2	107
+water	17:39	0:0	2	,
+water	17:40	0:0	2	141
+water	17:43	0:0	2	,
+water	17:44	0:0	2	184
+water	17:47	0:0	2	,
+water	17:48	0:0	2	255
+water	17:51	0:0	2	}
+decl	19:4	24:49	2	const int	xscale2[]
+op	19:24	0:0	2	=
+water	20:4	0:0	2	{
+water	20:5	0:0	2	0
+water	20:6	0:0	2	,
+water	20:7	0:0	2	1
+water	20:8	0:0	2	,
+water	20:9	0:0	2	2
+water	20:10	0:0	2	,
+water	20:11	0:0	2	3
+water	20:12	0:0	2	,
+water	20:13	0:0	2	4
+water	20:14	0:0	2	,
+water	20:15	0:0	2	5
+water	20:16	0:0	2	,
+water	20:17	0:0	2	6
+water	20:18	0:0	2	,
+water	20:19	0:0	2	7
+water	20:20	0:0	2	,
+water	20:21	0:0	2	8
+water	20:22	0:0	2	,
+water	20:23	0:0	2	9
+water	20:24	0:0	2	,
+water	20:25	0:0	2	10
+water	20:27	0:0	2	,
+water	20:28	0:0	2	11
+water	20:30	0:0	2	,
+water	20:31	0:0	2	12
+water	20:33	0:0	2	,
+water	20:34	0:0	2	13
+water	20:36	0:0	2	,
+water	20:37	0:0	2	14
+water	20:39	0:0	2	,
+water	20:40	0:0	2	15
+water	20:42	0:0	2	,
+water	20:43	0:0	2	16
+water	20:45	0:0	2	,
+water	20:46	0:0	2	17
+water	20:48	0:0	2	,
+water	20:49	0:0	2	18
+water	20:51	0:0	2	,
+water	21:5	0:0	2	19
+water	21:7	0:0	2	,
+water	21:8	0:0	2	20
+water	21:10	0:0	2	,
+water	21:11	0:0	2	21
+water	21:13	0:0	2	,
+water	21:14	0:0	2	22
+water	21:16	0:0	2	,
+water	21:17	0:0	2	23
+water	21:19	0:0	2	,
+water	21:20	0:0	2	24
+water	21:22	0:0	2	,
+water	21:23	0:0	2	25
+water	21:25	0:0	2	,
+water	21:26	0:0	2	26
+water	21:28	0:0	2	,
+water	21:29	0:0	2	27
+water	21:31	0:0	2	,
+water	21:32	0:0	2	28
+water	21:34	0:0	2	,
+water	21:35	0:0	2	29
+water	21:37	0:0	2	,
+water	21:38	0:0	2	30
+water	21:40	0:0	2	,
+water	21:41	0:0	2	31
+water	21:43	0:0	2	,
+water	21:44	0:0	2	32
+water	21:46	0:0	2	,
+water	21:47	0:0	2	33
+water	21:49	0:0	2	,
+water	21:50	0:0	2	34
+water	21:52	0:0	2	,
+water	22:5	0:0	2	35
+water	22:7	0:0	2	,
+water	22:8	0:0	2	36
+water	22:10	0:0	2	,
+water	22:11	0:0	2	37
+water	22:13	0:0	2	,
+water	22:14	0:0	2	38
+water	22:16	0:0	2	,
+water	22:17	0:0	2	39
+water	22:19	0:0	2	,
+water	22:20	0:0	2	40
+water	22:22	0:0	2	,
+water	22:23	0:0	2	41
+water	22:25	0:0	2	,
+water	22:26	0:0	2	42
+water	22:28	0:0	2	,
+water	22:29	0:0	2	43
+water	22:31	0:0	2	,
+water	22:32	0:0	2	44
+water	22:34	0:0	2	,
+water	22:35	0:0	2	45
+water	22:37	0:0	2	,
+water	22:38	0:0	2	46
+water	22:40	0:0	2	,
+water	22:41	0:0	2	47
+water	22:43	0:0	2	,
+water	22:44	0:0	2	48
+water	22:46	0:0	2	,
+water	22:47	0:0	2	49
+water	22:49	0:0	2	,
+water	22:50	0:0	2	50
+water	22:52	0:0	2	,
+water	22:53	0:0	2	51
+water	22:55	0:0	2	,
+water	23:5	0:0	2	52
+water	23:7	0:0	2	,
+water	23:8	0:0	2	53
+water	23:10	0:0	2	,
+water	23:11	0:0	2	54
+water	23:13	0:0	2	,
+water	23:14	0:0	2	55
+water	23:16	0:0	2	,
+water	23:17	0:0	2	56
+water	23:19	0:0	2	,
+water	23:20	0:0	2	57
+water	23:22	0:0	2	,
+water	23:23	0:0	2	58
+water	23:25	0:0	2	,
+water	23:26	0:0	2	59
+water	23:28	0:0	2	,
+water	23:29	0:0	2	61
+water	23:31	0:0	2	,
+water	23:32	0:0	2	63
+water	23:34	0:0	2	,
+water	23:35	0:0	2	67
+water	23:37	0:0	2	,
+water	23:38	0:0	2	72
+water	23:40	0:0	2	,
+water	23:41	0:0	2	77
+water	23:43	0:0	2	,
+water	23:44	0:0	2	82
+water	23:46	0:0	2	,
+water	23:47	0:0	2	87
+water	23:49	0:0	2	,
+water	23:50	0:0	2	93
+water	23:52	0:0	2	,
+water	23:53	0:0	2	99
+water	23:55	0:0	2	,
+water	23:56	0:0	2	105
+water	23:59	0:0	2	,
+water	24:5	0:0	2	110
+water	24:8	0:0	2	,
+water	24:9	0:0	2	115
+water	24:12	0:0	2	,
+water	24:13	0:0	2	121
+water	24:16	0:0	2	,
+water	24:17	0:0	2	130
+water	24:20	0:0	2	,
+water	24:21	0:0	2	141
+water	24:24	0:0	2	,
+water	24:25	0:0	2	152
+water	24:28	0:0	2	,
+water	24:29	0:0	2	163
+water	24:32	0:0	2	,
+water	24:33	0:0	2	174
+water	24:36	0:0	2	,
+water	24:37	0:0	2	185
+water	24:40	0:0	2	,
+water	24:41	0:0	2	200
+water	24:44	0:0	2	,
+water	24:45	0:0	2	255
+water	24:48	0:0	2	}
+decl	25:4	25:21	2	const int	*xscale
+decl	26:4	26:22	2	fft_state	*p_state
+call	27:4	27:34	2	DEFINE_WIND_CONTEXT
+arg	27:25	27:34	3	wind_ctx
+water	27:25	0:0	4	wind_ctx
+water	27:35	0:0	2	;
+decl	28:4	28:21	2	int	i
+water	28:10	0:0	2	,
+decl	28:4	28:21	2	int	j
+water	28:14	0:0	2	,
+decl	28:4	28:21	2	int	y
+water	28:18	0:0	2	,
+decl	28:4	28:21	2	int	k
+decl	29:4	29:14	2	int	i_line
+decl	30:4	30:35	2	int16_t	p_dest[FFT_BUFFER_SIZE]
+decl	31:4	31:38	2	int16_t	p_buffer1[FFT_BUFFER_SIZE]
+decl	33:4	34:38	2	float	*p_buffl
+op	33:19	0:0	2	=
+water	34:12	0:0	2	(
+water	34:13	0:0	2	float
+op	34:18	0:0	2	*
+water	34:19	0:0	2	)
+water	34:20	0:0	2	p_buffer
+op	34:28	0:0	2	->
+water	34:30	0:0	2	p_buffer
+decl	35:4	35:21	2	int16_t	*p_buffs
+decl	36:4	36:24	2	int16_t	*p_s16_buff
+if	37:4	40:4	2	(! p_buffer -> i_nb_samples)
+cond	37:8	37:19	3	! p_buffer -> i_nb_samples
+op	37:8	0:0	4	!
+water	37:9	0:0	4	p_buffer
+op	37:17	0:0	4	->
+water	37:19	0:0	4	i_nb_samples
+stmts	37:33	40:4	3	
+water	37:33	0:0	4	{
+call	38:8	38:40	4	msg_Err
+arg	38:16	38:22	5	p_aout
+water	38:16	0:0	6	p_aout
+arg	38:24	38:40	5	"no samples yet"
+water	38:24	0:0	6	"no samples yet"
+water	38:41	0:0	4	;
+return	39:8	39:17	4	-1
+op	39:15	0:0	5	-
+water	39:16	0:0	5	1
+water	40:4	0:0	4	}
+if	42:4	52:4	2	(! p_data)
+cond	42:8	42:9	3	! p_data
+op	42:8	0:0	4	!
+water	42:9	0:0	4	p_data
+stmts	43:4	52:4	3	
+water	43:4	0:0	4	{
+water	44:8	0:0	4	p_effect
+op	44:16	0:0	4	->
+water	44:18	0:0	4	p_data
+op	44:25	0:0	4	=
+water	44:27	0:0	4	p_data
+op	44:34	0:0	4	=
+call	44:36	44:68	4	malloc
+arg	44:44	44:68	5	sizeof(spectrum_data)
+op	44:44	0:0	6	sizeof
+water	44:50	0:0	6	(
+water	44:52	0:0	6	spectrum_data
+water	44:66	0:0	6	)
+water	44:69	0:0	4	;
+if	45:8	46:21	4	(! p_data)
+cond	45:12	45:13	5	! p_data
+op	45:12	0:0	6	!
+water	45:13	0:0	6	p_data
+stmts	46:12	46:21	5	
+return	46:12	46:21	6	-1
+op	46:19	0:0	7	-
+water	46:20	0:0	7	1
+water	47:8	0:0	4	p_data
+op	47:14	0:0	4	->
+water	47:16	0:0	4	peaks
+op	47:22	0:0	4	=
+call	47:24	47:48	4	calloc
+arg	47:32	47:34	5	80
+water	47:32	0:0	6	80
+arg	47:36	47:48	5	sizeof(int)
+op	47:36	0:0	6	sizeof
+water	47:42	0:0	6	(
+water	47:43	0:0	6	int
+water	47:46	0:0	6	)
+water	47:49	0:0	4	;
+water	48:8	0:0	4	p_data
+op	48:14	0:0	4	->
+water	48:16	0:0	4	prev_heights
+op	48:29	0:0	4	=
+call	48:31	48:55	4	calloc
+arg	48:39	48:41	5	80
+water	48:39	0:0	6	80
+arg	48:43	48:55	5	sizeof(int)
+op	48:43	0:0	6	sizeof
+water	48:49	0:0	6	(
+water	48:50	0:0	6	int
+water	48:53	0:0	6	)
+water	48:56	0:0	4	;
+water	49:8	0:0	4	p_data
+op	49:14	0:0	4	->
+water	49:16	0:0	4	i_prev_nb_samples
+op	49:34	0:0	4	=
+water	49:36	0:0	4	0
+water	49:37	0:0	4	;
+water	50:8	0:0	4	p_data
+op	50:14	0:0	4	->
+water	50:16	0:0	4	p_prev_s16_buff
+op	50:32	0:0	4	=
+water	50:34	0:0	4	NULL
+water	50:38	0:0	4	;
+call	51:8	51:54	4	window_get_param
+arg	51:26	51:32	5	p_aout
+water	51:26	0:0	6	p_aout
+arg	51:34	51:54	5	&p_data->wind_param
+op	51:34	0:0	6	&
+water	51:35	0:0	6	p_data
+op	51:41	0:0	6	->
+water	51:43	0:0	6	wind_param
+water	51:55	0:0	4	;
+water	52:4	0:0	4	}
+water	53:4	0:0	2	peaks
+op	53:10	0:0	2	=
+water	53:12	0:0	2	(
+water	53:13	0:0	2	int
+op	53:17	0:0	2	*
+water	53:18	0:0	2	)
+water	53:19	0:0	2	p_data
+op	53:25	0:0	2	->
+water	53:27	0:0	2	peaks
+water	53:32	0:0	2	;
+water	54:4	0:0	2	prev_heights
+op	54:17	0:0	2	=
+water	54:19	0:0	2	(
+water	54:20	0:0	2	int
+op	54:24	0:0	2	*
+water	54:25	0:0	2	)
+water	54:26	0:0	2	p_data
+op	54:32	0:0	2	->
+water	54:34	0:0	2	prev_heights
+water	54:46	0:0	2	;
+if	56:4	65:4	2	(p_buffer -> i_nb_samples != p_data -> i_prev_nb_samples)
+cond	56:8	56:42	3	p_buffer -> i_nb_samples != p_data -> i_prev_nb_samples
+water	56:8	0:0	4	p_buffer
+op	56:16	0:0	4	->
+water	56:18	0:0	4	i_nb_samples
+op	56:31	0:0	4	!=
+water	56:34	0:0	4	p_data
+op	56:40	0:0	4	->
+water	56:42	0:0	4	i_prev_nb_samples
+stmts	57:4	65:4	3	
+water	57:4	0:0	4	{
+call	58:8	58:38	4	free
+arg	58:14	58:38	5	p_data->p_prev_s16_buff
+water	58:14	0:0	6	p_data
+op	58:20	0:0	6	->
+water	58:22	0:0	6	p_prev_s16_buff
+water	58:39	0:0	4	;
+water	59:8	0:0	4	p_data
+op	59:14	0:0	4	->
+water	59:16	0:0	4	p_prev_s16_buff
+op	59:32	0:0	4	=
+call	59:34	61:57	4	malloc
+arg	59:42	61:57	5	p_buffer->i_nb_samples*p_effect->i_nb_chans*sizeof(int16_t)
+water	59:42	0:0	6	p_buffer
+op	59:50	0:0	6	->
+water	59:52	0:0	6	i_nb_samples
+op	59:65	0:0	6	*
+water	60:42	0:0	6	p_effect
+op	60:50	0:0	6	->
+water	60:52	0:0	6	i_nb_chans
+op	60:63	0:0	6	*
+op	61:42	0:0	6	sizeof
+water	61:48	0:0	6	(
+water	61:49	0:0	6	int16_t
+water	61:56	0:0	6	)
+water	61:58	0:0	4	;
+water	62:8	0:0	4	p_data
+op	62:14	0:0	4	->
+water	62:16	0:0	4	i_prev_nb_samples
+op	62:34	0:0	4	=
+water	62:36	0:0	4	p_buffer
+op	62:44	0:0	4	->
+water	62:46	0:0	4	i_nb_samples
+water	62:58	0:0	4	;
+if	63:8	64:21	4	(! p_data -> p_prev_s16_buff)
+cond	63:12	63:21	5	! p_data -> p_prev_s16_buff
+op	63:12	0:0	6	!
+water	63:13	0:0	6	p_data
+op	63:19	0:0	6	->
+water	63:21	0:0	6	p_prev_s16_buff
+stmts	64:12	64:21	5	
+return	64:12	64:21	6	-1
+op	64:19	0:0	7	-
+water	64:20	0:0	7	1
+water	65:4	0:0	4	}
+water	66:4	0:0	2	p_buffs
+op	66:12	0:0	2	=
+water	66:14	0:0	2	p_s16_buff
+op	66:25	0:0	2	=
+water	66:27	0:0	2	p_data
+op	66:33	0:0	2	->
+water	66:35	0:0	2	p_prev_s16_buff
+water	66:50	0:0	2	;
+water	67:4	0:0	2	i_80_bands
+op	67:15	0:0	2	=
+call	67:17	67:63	2	var_InheritInteger
+arg	67:37	67:43	3	p_aout
+water	67:37	0:0	4	p_aout
+arg	67:45	67:63	3	"visual-80-bands"
+water	67:45	0:0	4	"visual-80-bands"
+water	67:64	0:0	2	;
+water	68:4	0:0	2	i_peak
+op	68:15	0:0	2	=
+call	68:17	68:60	2	var_InheritInteger
+arg	68:37	68:43	3	p_aout
+water	68:37	0:0	4	p_aout
+arg	68:45	68:60	3	"visual-peaks"
+water	68:45	0:0	4	"visual-peaks"
+water	68:61	0:0	2	;
+if	69:4	73:4	2	(i_80_bands != 0)
+cond	69:8	69:22	3	i_80_bands != 0
+water	69:8	0:0	4	i_80_bands
+op	69:19	0:0	4	!=
+water	69:22	0:0	4	0
+stmts	70:4	73:4	3	
+water	70:4	0:0	4	{
+water	71:8	0:0	4	xscale
+op	71:15	0:0	4	=
+water	71:17	0:0	4	xscale2
+water	71:24	0:0	4	;
+water	72:8	0:0	4	i_nb_bands
+op	72:19	0:0	4	=
+water	72:21	0:0	4	80
+water	72:23	0:0	4	;
+water	73:4	0:0	4	}
+else	74:4	78:4	2
+stmts	75:4	78:4	3	
+water	75:4	0:0	4	{
+water	76:8	0:0	4	xscale
+op	76:15	0:0	4	=
+water	76:17	0:0	4	xscale1
+water	76:24	0:0	4	;
+water	77:8	0:0	4	i_nb_bands
+op	77:19	0:0	4	=
+water	77:21	0:0	4	20
+water	77:23	0:0	4	;
+water	78:4	0:0	4	}
+water	79:4	0:0	2	height
+op	79:11	0:0	2	=
+call	79:13	79:46	2	malloc
+arg	79:21	79:46	3	i_nb_bands*sizeof(int)
+water	79:21	0:0	4	i_nb_bands
+op	79:32	0:0	4	*
+op	79:34	0:0	4	sizeof
+water	79:40	0:0	4	(
+water	79:41	0:0	4	int
+water	79:44	0:0	4	)
+water	79:47	0:0	2	;
+if	80:4	83:4	2	(! height)
+cond	80:8	80:9	3	! height
+op	80:8	0:0	4	!
+water	80:9	0:0	4	height
+stmts	81:4	83:4	3	
+water	81:4	0:0	4	{
+return	82:8	82:17	4	-1
+op	82:15	0:0	5	-
+water	82:16	0:0	5	1
+water	83:4	0:0	4	}
+for	86:4	94:4	2	(i = p_buffer -> i_nb_samples * p_effect -> i_nb_chans ;i --;)
+forinit	86:9	86:58	3	i = p_buffer -> i_nb_samples * p_effect -> i_nb_chans ;
+water	86:9	0:0	4	i
+op	86:11	0:0	4	=
+water	86:13	0:0	4	p_buffer
+op	86:21	0:0	4	->
+water	86:23	0:0	4	i_nb_samples
+op	86:36	0:0	4	*
+water	86:38	0:0	4	p_effect
+op	86:46	0:0	4	->
+water	86:48	0:0	4	i_nb_chans
+water	86:58	0:0	4	;
+cond	86:60	86:61	3	i --
+water	86:60	0:0	4	i
+op	86:61	0:0	4	--
+forexpr	0:0	0:0	3	
+stmts	87:4	94:4	3	
+water	87:4	0:0	4	{
+union	88:8	88:36	4	<anonymous_88:8>
+decl	88:16	88:23	5	float	f
+decl	88:25	88:34	5	int32_t	i
+decl	88:8	88:39	4	<anonymous_88:8>	u
+water	89:8	0:0	4	u
+op	89:9	0:0	4	.
+water	89:10	0:0	4	f
+op	89:12	0:0	4	=
+op	89:14	0:0	4	*
+water	89:15	0:0	4	p_buffl
+op	89:23	0:0	4	+
+water	89:25	0:0	4	384
+op	89:28	0:0	4	.
+water	89:29	0:0	4	0
+water	89:30	0:0	4	;
+if	90:8	90:48	4	(u . i > 0 x43c07fff)
+cond	90:11	90:19	5	u . i > 0 x43c07fff
+water	90:11	0:0	6	u
+op	90:12	0:0	6	.
+water	90:13	0:0	6	i
+op	90:15	0:0	6	>
+water	90:18	0:0	6	0
+water	90:19	0:0	6	x43c07fff
+stmts	90:31	90:48	5	
+op	90:31	0:0	6	*
+water	90:33	0:0	6	p_buffs
+op	90:41	0:0	6	=
+water	90:43	0:0	6	32767
+water	90:48	0:0	6	;
+else	91:8	91:54	4
+stmts	91:13	91:54	5	
+if	91:13	91:54	6	(u . i < 0 x43bf8000)
+cond	91:18	91:25	7	u . i < 0 x43bf8000
+water	91:18	0:0	8	u
+op	91:19	0:0	8	.
+water	91:20	0:0	8	i
+op	91:22	0:0	8	<
+water	91:24	0:0	8	0
+water	91:25	0:0	8	x43bf8000
+stmts	91:37	91:54	7	
+op	91:37	0:0	8	*
+water	91:38	0:0	8	p_buffs
+op	91:46	0:0	8	=
+op	91:48	0:0	8	-
+water	91:49	0:0	8	32768
+water	91:54	0:0	8	;
+else	92:8	92:40	4
+stmts	92:13	92:40	5	
+op	92:13	0:0	6	*
+water	92:14	0:0	6	p_buffs
+op	92:22	0:0	6	=
+water	92:24	0:0	6	u
+op	92:25	0:0	6	.
+water	92:26	0:0	6	i
+op	92:28	0:0	6	-
+water	92:30	0:0	6	0
+water	92:31	0:0	6	x43c00000
+water	92:40	0:0	6	;
+water	93:8	0:0	4	p_buffl
+op	93:15	0:0	4	++
+water	93:18	0:0	4	;
+water	93:20	0:0	4	p_buffs
+op	93:27	0:0	4	++
+water	93:30	0:0	4	;
+water	94:4	0:0	4	}
+water	95:4	0:0	2	p_state
+op	95:13	0:0	2	=
+call	95:15	95:31	2	visual_fft_init
+water	95:32	0:0	2	;
+if	96:4	101:4	2	(! p_state)
+cond	96:8	96:9	3	! p_state
+op	96:8	0:0	4	!
+water	96:9	0:0	4	p_state
+stmts	97:4	101:4	3	
+water	97:4	0:0	4	{
+call	98:8	98:21	4	free
+arg	98:14	98:21	5	height
+water	98:14	0:0	6	height
+water	98:22	0:0	4	;
+call	99:8	99:59	4	msg_Err
+arg	99:16	99:22	5	p_aout
+water	99:16	0:0	6	p_aout
+arg	99:23	99:59	5	"unable to initialize FFT transform"
+water	99:23	0:0	6	"unable to initialize FFT transform"
+water	99:60	0:0	4	;
+return	100:8	100:17	4	-1
+op	100:15	0:0	5	-
+water	100:16	0:0	5	1
+water	101:4	0:0	4	}
+if	102:4	108:4	2	(!window_init (FFT_BUFFER_SIZE ,& p_data -> wind_param ,& wind_ctx ))
+cond	102:8	102:70	3	!window_init (FFT_BUFFER_SIZE ,& p_data -> wind_param ,& wind_ctx )
+op	102:8	0:0	4	!
+call	102:9	102:70	4	window_init
+arg	102:22	102:37	5	FFT_BUFFER_SIZE
+water	102:22	0:0	6	FFT_BUFFER_SIZE
+arg	102:39	102:58	5	&p_data->wind_param
+op	102:39	0:0	6	&
+water	102:40	0:0	6	p_data
+op	102:46	0:0	6	->
+water	102:48	0:0	6	wind_param
+arg	102:60	102:70	5	&wind_ctx
+op	102:60	0:0	6	&
+water	102:61	0:0	6	wind_ctx
+stmts	103:4	108:4	3	
+water	103:4	0:0	4	{
+call	104:8	104:27	4	fft_close
+arg	104:19	104:27	5	p_state
+water	104:19	0:0	6	p_state
+water	104:28	0:0	4	;
+call	105:8	105:21	4	free
+arg	105:14	105:21	5	height
+water	105:14	0:0	6	height
+water	105:22	0:0	4	;
+call	106:8	106:56	4	msg_Err
+arg	106:16	106:22	5	p_aout
+water	106:16	0:0	6	p_aout
+arg	106:23	106:56	5	"unable to initialize FFT window"
+water	106:23	0:0	6	"unable to initialize FFT window"
+water	106:57	0:0	4	;
+return	107:8	107:17	4	-1
+op	107:15	0:0	5	-
+water	107:16	0:0	5	1
+water	108:4	0:0	4	}
+water	109:4	0:0	2	p_buffs
+op	109:12	0:0	2	=
+water	109:14	0:0	2	p_s16_buff
+water	109:24	0:0	2	;
+for	110:4	117:4	2	(i = 0 ;i < FFT_BUFFER_SIZE;i ++)
+forinit	110:10	110:16	3	i = 0 ;
+water	110:10	0:0	4	i
+op	110:12	0:0	4	=
+water	110:14	0:0	4	0
+water	110:16	0:0	4	;
+cond	110:18	110:22	3	i < FFT_BUFFER_SIZE
+water	110:18	0:0	4	i
+op	110:20	0:0	4	<
+water	110:22	0:0	4	FFT_BUFFER_SIZE
+forexpr	110:40	110:41	3	i ++
+water	110:40	0:0	4	i
+op	110:41	0:0	4	++
+stmts	111:4	117:4	3	
+water	111:4	0:0	4	{
+water	112:8	0:0	4	p_output
+op	112:16	0:0	4	[
+water	112:17	0:0	4	i
+op	112:18	0:0	4	]
+op	112:21	0:0	4	=
+water	112:23	0:0	4	0
+water	112:24	0:0	4	;
+water	113:8	0:0	4	p_buffer1
+op	113:17	0:0	4	[
+water	113:18	0:0	4	i
+op	113:19	0:0	4	]
+op	113:21	0:0	4	=
+op	113:23	0:0	4	*
+water	113:24	0:0	4	p_buffs
+water	113:31	0:0	4	;
+water	114:8	0:0	4	p_buffs
+op	114:16	0:0	4	+=
+water	114:19	0:0	4	p_effect
+op	114:27	0:0	4	->
+water	114:29	0:0	4	i_nb_chans
+water	114:39	0:0	4	;
+if	115:8	116:32	4	(p_buffs >= & p_s16_buff [ p_buffer -> i_nb_samples * p_effect -> i_nb_chans ])
+cond	115:12	115:80	5	p_buffs >= & p_s16_buff [ p_buffer -> i_nb_samples * p_effect -> i_nb_chans ]
+water	115:12	0:0	6	p_buffs
+op	115:20	0:0	6	>=
+op	115:23	0:0	6	&
+water	115:24	0:0	6	p_s16_buff
+op	115:34	0:0	6	[
+water	115:35	0:0	6	p_buffer
+op	115:43	0:0	6	->
+water	115:45	0:0	6	i_nb_samples
+op	115:58	0:0	6	*
+water	115:60	0:0	6	p_effect
+op	115:68	0:0	6	->
+water	115:70	0:0	6	i_nb_chans
+op	115:80	0:0	6	]
+stmts	116:12	116:32	5	
+water	116:12	0:0	6	p_buffs
+op	116:20	0:0	6	=
+water	116:22	0:0	6	p_s16_buff
+water	116:32	0:0	6	;
+water	117:4	0:0	4	}
+call	118:4	118:48	2	window_scale_in_place
+arg	118:27	118:36	3	p_buffer1
+water	118:27	0:0	4	p_buffer1
+arg	118:38	118:48	3	&wind_ctx
+op	118:38	0:0	4	&
+water	118:39	0:0	4	wind_ctx
+water	118:49	0:0	2	;
+call	119:4	119:45	2	fft_perform
+arg	119:17	119:26	3	p_buffer1
+water	119:17	0:0	4	p_buffer1
+arg	119:28	119:36	3	p_output
+water	119:28	0:0	4	p_output
+arg	119:38	119:45	3	p_state
+water	119:38	0:0	4	p_state
+water	119:46	0:0	2	;
+for	120:4	121:87	2	(i = 0 ;i < FFT_BUFFER_SIZE;i ++)
+forinit	120:9	120:14	3	i = 0 ;
+water	120:9	0:0	4	i
+op	120:11	0:0	4	=
+water	120:13	0:0	4	0
+water	120:14	0:0	4	;
+cond	120:16	120:19	3	i < FFT_BUFFER_SIZE
+water	120:16	0:0	4	i
+op	120:17	0:0	4	<
+water	120:19	0:0	4	FFT_BUFFER_SIZE
+forexpr	120:37	120:38	3	i ++
+water	120:37	0:0	4	i
+op	120:38	0:0	4	++
+stmts	121:8	121:87	3	
+water	121:8	0:0	4	p_dest
+op	121:14	0:0	4	[
+water	121:15	0:0	4	i
+op	121:16	0:0	4	]
+op	121:18	0:0	4	=
+water	121:20	0:0	4	p_output
+op	121:28	0:0	4	[
+water	121:29	0:0	4	i
+op	121:30	0:0	4	]
+op	121:32	0:0	4	*
+water	121:35	0:0	4	(
+water	121:37	0:0	4	2
+op	121:39	0:0	4	^
+water	121:41	0:0	4	16
+water	121:44	0:0	4	)
+op	121:46	0:0	4	/
+water	121:48	0:0	4	(
+water	121:50	0:0	4	(
+water	121:52	0:0	4	FFT_BUFFER_SIZE
+op	121:68	0:0	4	/
+water	121:70	0:0	4	2
+op	121:72	0:0	4	*
+water	121:74	0:0	4	32768
+water	121:80	0:0	4	)
+op	121:82	0:0	4	^
+water	121:84	0:0	4	2
+water	121:86	0:0	4	)
+water	121:87	0:0	4	;
+water	123:4	0:0	2	i_band_width
+op	123:17	0:0	2	=
+call	123:19	123:56	2	floor
+arg	123:26	123:56	3	p_effect->i_width/i_nb_bands
+water	123:26	0:0	4	p_effect
+op	123:34	0:0	4	->
+water	123:36	0:0	4	i_width
+op	123:44	0:0	4	/
+water	123:46	0:0	4	i_nb_bands
+water	123:57	0:0	2	;
+water	124:4	0:0	2	i_start
+op	124:12	0:0	2	=
+water	124:14	0:0	2	(
+water	124:16	0:0	2	p_effect
+op	124:24	0:0	2	->
+water	124:26	0:0	2	i_width
+op	124:34	0:0	2	-
+water	124:36	0:0	2	i_band_width
+op	124:49	0:0	2	*
+water	124:51	0:0	2	i_nb_bands
+water	124:62	0:0	2	)
+op	124:64	0:0	2	/
+water	124:66	0:0	2	2
+water	124:67	0:0	2	;
+for	125:4	251:4	2	(i = 0 ;i < i_nb_bands;i ++)
+forinit	125:10	125:16	3	i = 0 ;
+water	125:10	0:0	4	i
+op	125:12	0:0	4	=
+water	125:14	0:0	4	0
+water	125:16	0:0	4	;
+cond	125:18	125:22	3	i < i_nb_bands
+water	125:18	0:0	4	i
+op	125:20	0:0	4	<
+water	125:22	0:0	4	i_nb_bands
+forexpr	125:34	125:35	3	i ++
+water	125:34	0:0	4	i
+op	125:35	0:0	4	++
+stmts	126:4	251:4	3	
+water	126:4	0:0	4	{
+for	128:8	132:8	4	(j = xscale [ i ] , y = 0 ;j < xscale [ i + 1 ];j ++)
+forinit	128:13	128:33	5	j = xscale [ i ] , y = 0 ;
+water	128:13	0:0	6	j
+op	128:15	0:0	6	=
+water	128:17	0:0	6	xscale
+op	128:23	0:0	6	[
+water	128:24	0:0	6	i
+op	128:25	0:0	6	]
+water	128:26	0:0	6	,
+water	128:28	0:0	6	y
+op	128:30	0:0	6	=
+water	128:32	0:0	6	0
+water	128:33	0:0	6	;
+cond	128:35	128:52	5	j < xscale [ i + 1 ]
+water	128:35	0:0	6	j
+op	128:36	0:0	6	<
+water	128:38	0:0	6	xscale
+op	128:44	0:0	6	[
+water	128:46	0:0	6	i
+op	128:48	0:0	6	+
+water	128:50	0:0	6	1
+op	128:52	0:0	6	]
+forexpr	128:55	128:56	5	j ++
+water	128:55	0:0	6	j
+op	128:56	0:0	6	++
+stmts	129:8	132:8	5	
+water	129:8	0:0	6	{
+if	130:12	131:30	6	(p_dest [ j ] > y)
+cond	130:17	130:29	7	p_dest [ j ] > y
+water	130:17	0:0	8	p_dest
+op	130:23	0:0	8	[
+water	130:24	0:0	8	j
+op	130:25	0:0	8	]
+op	130:27	0:0	8	>
+water	130:29	0:0	8	y
+stmts	131:17	131:30	7	
+water	131:17	0:0	8	y
+op	131:19	0:0	8	=
+water	131:21	0:0	8	p_dest
+op	131:27	0:0	8	[
+water	131:28	0:0	8	j
+op	131:29	0:0	8	]
+water	131:30	0:0	8	;
+water	132:8	0:0	6	}
+if	134:8	139:8	4	(y != 0)
+cond	134:12	134:17	5	y != 0
+water	134:12	0:0	6	y
+op	134:14	0:0	6	!=
+water	134:17	0:0	6	0
+stmts	135:8	139:8	5	
+water	135:8	0:0	6	{
+water	136:12	0:0	6	height
+op	136:18	0:0	6	[
+water	136:19	0:0	6	i
+op	136:20	0:0	6	]
+op	136:22	0:0	6	=
+call	136:24	136:31	6	log
+arg	136:29	136:31	7	y
+water	136:29	0:0	8	y
+op	136:33	0:0	6	*
+water	136:35	0:0	6	30
+water	136:37	0:0	6	;
+if	137:12	138:31	6	(height [ i ] > 380)
+cond	137:16	137:28	7	height [ i ] > 380
+water	137:16	0:0	8	height
+op	137:22	0:0	8	[
+water	137:23	0:0	8	i
+op	137:24	0:0	8	]
+op	137:26	0:0	8	>
+water	137:28	0:0	8	380
+stmts	138:16	138:31	7	
+water	138:16	0:0	8	height
+op	138:22	0:0	8	[
+water	138:23	0:0	8	i
+op	138:24	0:0	8	]
+op	138:26	0:0	8	=
+water	138:28	0:0	8	380
+water	138:31	0:0	8	;
+water	139:8	0:0	6	}
+else	140:8	141:27	4
+stmts	141:12	141:27	5	
+water	141:12	0:0	6	height
+op	141:18	0:0	6	[
+water	141:20	0:0	6	i
+op	141:22	0:0	6	]
+op	141:24	0:0	6	=
+water	141:26	0:0	6	0
+water	141:27	0:0	6	;
+if	143:8	146:8	4	(height [ i ] > peaks [ i ])
+cond	143:12	143:31	5	height [ i ] > peaks [ i ]
+water	143:12	0:0	6	height
+op	143:18	0:0	6	[
+water	143:19	0:0	6	i
+op	143:20	0:0	6	]
+op	143:22	0:0	6	>
+water	143:24	0:0	6	peaks
+op	143:29	0:0	6	[
+water	143:30	0:0	6	i
+op	143:31	0:0	6	]
+stmts	144:8	146:8	5	
+water	144:8	0:0	6	{
+water	145:12	0:0	6	peaks
+op	145:17	0:0	6	[
+water	145:18	0:0	6	i
+op	145:19	0:0	6	]
+op	145:21	0:0	6	=
+water	145:23	0:0	6	height
+op	145:29	0:0	6	[
+water	145:30	0:0	6	i
+op	145:31	0:0	6	]
+water	145:32	0:0	6	;
+water	146:8	0:0	6	}
+else	147:8	158:8	4
+stmts	147:13	158:8	5	
+if	147:13	158:8	6	(peaks [ i ] > 0)
+cond	147:17	147:28	7	peaks [ i ] > 0
+water	147:17	0:0	8	peaks
+op	147:22	0:0	8	[
+water	147:23	0:0	8	i
+op	147:24	0:0	8	]
+op	147:26	0:0	8	>
+water	147:28	0:0	8	0
+stmts	148:8	158:8	7	
+water	148:8	0:0	8	{
+water	149:12	0:0	8	peaks
+op	149:17	0:0	8	[
+water	149:18	0:0	8	i
+op	149:19	0:0	8	]
+op	149:21	0:0	8	-=
+water	149:24	0:0	8	PEAK_SPEED
+water	149:34	0:0	8	;
+if	150:12	153:12	8	(peaks [ i ] < height [ i ])
+cond	150:16	150:35	9	peaks [ i ] < height [ i ]
+water	150:16	0:0	10	peaks
+op	150:21	0:0	10	[
+water	150:22	0:0	10	i
+op	150:23	0:0	10	]
+op	150:25	0:0	10	<
+water	150:27	0:0	10	height
+op	150:33	0:0	10	[
+water	150:34	0:0	10	i
+op	150:35	0:0	10	]
+stmts	151:12	153:12	9	
+water	151:12	0:0	10	{
+water	152:16	0:0	10	peaks
+op	152:21	0:0	10	[
+water	152:22	0:0	10	i
+op	152:23	0:0	10	]
+op	152:25	0:0	10	=
+water	152:27	0:0	10	height
+op	152:33	0:0	10	[
+water	152:34	0:0	10	i
+op	152:35	0:0	10	]
+water	152:36	0:0	10	;
+water	153:12	0:0	10	}
+if	154:12	157:12	8	(peaks [ i ] < 0)
+cond	154:16	154:27	9	peaks [ i ] < 0
+water	154:16	0:0	10	peaks
+op	154:21	0:0	10	[
+water	154:22	0:0	10	i
+op	154:23	0:0	10	]
+op	154:25	0:0	10	<
+water	154:27	0:0	10	0
+stmts	155:12	157:12	9	
+water	155:12	0:0	10	{
+water	156:16	0:0	10	peaks
+op	156:21	0:0	10	[
+water	156:22	0:0	10	i
+op	156:23	0:0	10	]
+op	156:25	0:0	10	=
+water	156:27	0:0	10	0
+water	156:28	0:0	10	;
+water	157:12	0:0	10	}
+water	158:8	0:0	8	}
+if	160:8	164:8	4	(height [ i ] <= prev_heights [ i ] - BAR_DECREASE_SPEED)
+cond	160:12	160:43	5	height [ i ] <= prev_heights [ i ] - BAR_DECREASE_SPEED
+water	160:12	0:0	6	height
+op	160:18	0:0	6	[
+water	160:19	0:0	6	i
+op	160:20	0:0	6	]
+op	160:22	0:0	6	<=
+water	160:25	0:0	6	prev_heights
+op	160:37	0:0	6	[
+water	160:38	0:0	6	i
+op	160:39	0:0	6	]
+op	160:41	0:0	6	-
+water	160:43	0:0	6	BAR_DECREASE_SPEED
+stmts	161:8	164:8	5	
+water	161:8	0:0	6	{
+water	162:12	0:0	6	height
+op	162:18	0:0	6	[
+water	162:19	0:0	6	i
+op	162:20	0:0	6	]
+op	162:22	0:0	6	=
+water	162:24	0:0	6	prev_heights
+op	162:36	0:0	6	[
+water	162:37	0:0	6	i
+op	162:38	0:0	6	]
+water	162:39	0:0	6	;
+water	163:12	0:0	6	height
+op	163:18	0:0	6	[
+water	163:19	0:0	6	i
+op	163:20	0:0	6	]
+op	163:22	0:0	6	-=
+water	163:25	0:0	6	BAR_DECREASE_SPEED
+water	163:43	0:0	6	;
+water	164:8	0:0	6	}
+water	165:8	0:0	4	prev_heights
+op	165:20	0:0	4	[
+water	165:21	0:0	4	i
+op	165:22	0:0	4	]
+op	165:24	0:0	4	=
+water	165:26	0:0	4	height
+op	165:32	0:0	4	[
+water	165:33	0:0	4	i
+op	165:34	0:0	4	]
+water	165:35	0:0	4	;
+if	166:8	211:8	4	(peaks [ i ] > 0 && i_peak)
+cond	166:12	166:28	5	peaks [ i ] > 0 && i_peak
+water	166:12	0:0	6	peaks
+op	166:17	0:0	6	[
+water	166:18	0:0	6	i
+op	166:19	0:0	6	]
+op	166:21	0:0	6	>
+water	166:23	0:0	6	0
+op	166:25	0:0	6	&&
+water	166:28	0:0	6	i_peak
+stmts	167:8	211:8	5	
+water	167:8	0:0	6	{
+if	168:12	169:49	6	(peaks [ i ] >= p_effect -> i_height)
+cond	168:16	168:38	7	peaks [ i ] >= p_effect -> i_height
+water	168:16	0:0	8	peaks
+op	168:21	0:0	8	[
+water	168:22	0:0	8	i
+op	168:23	0:0	8	]
+op	168:25	0:0	8	>=
+water	168:28	0:0	8	p_effect
+op	168:36	0:0	8	->
+water	168:38	0:0	8	i_height
+stmts	169:16	169:49	7	
+water	169:16	0:0	8	peaks
+op	169:21	0:0	8	[
+water	169:22	0:0	8	i
+op	169:23	0:0	8	]
+op	169:25	0:0	8	=
+water	169:27	0:0	8	p_effect
+op	169:35	0:0	8	->
+water	169:37	0:0	8	i_height
+op	169:46	0:0	8	-
+water	169:48	0:0	8	2
+water	169:49	0:0	8	;
+water	170:12	0:0	6	i_line
+op	170:19	0:0	6	=
+water	170:21	0:0	6	peaks
+op	170:26	0:0	6	[
+water	170:27	0:0	6	i
+op	170:28	0:0	6	]
+water	170:29	0:0	6	;
+for	171:12	210:12	6	(j = 0 ;j < i_band_width - 1;j ++)
+forinit	171:17	171:22	7	j = 0 ;
+water	171:17	0:0	8	j
+op	171:19	0:0	8	=
+water	171:21	0:0	8	0
+water	171:22	0:0	8	;
+cond	171:24	171:43	7	j < i_band_width - 1
+water	171:24	0:0	8	j
+op	171:26	0:0	8	<
+water	171:28	0:0	8	i_band_width
+op	171:41	0:0	8	-
+water	171:43	0:0	8	1
+forexpr	171:46	171:47	7	j ++
+water	171:46	0:0	8	j
+op	171:47	0:0	8	++
+stmts	172:12	210:12	7	
+water	172:12	0:0	8	{
+for	173:15	209:15	8	(k = 0 ;k < 3;k ++)
+forinit	173:20	173:25	9	k = 0 ;
+water	173:20	0:0	10	k
+op	173:22	0:0	10	=
+water	173:24	0:0	10	0
+water	173:25	0:0	10	;
+cond	173:27	173:31	9	k < 3
+water	173:27	0:0	10	k
+op	173:29	0:0	10	<
+water	173:31	0:0	10	3
+forexpr	173:34	173:36	9	k ++
+water	173:34	0:0	10	k
+op	173:36	0:0	10	++
+stmts	174:15	209:15	9	
+water	174:15	0:0	10	{
+op	176:19	0:0	10	*
+water	176:20	0:0	10	(
+water	176:21	0:0	10	p_picture
+op	176:30	0:0	10	->
+water	176:32	0:0	10	p
+op	176:33	0:0	10	[
+water	176:34	0:0	10	0
+op	176:35	0:0	10	]
+op	176:36	0:0	10	.
+water	176:37	0:0	10	p_pixels
+op	176:46	0:0	10	+
+water	177:20	0:0	10	(
+water	177:22	0:0	10	p_effect
+op	177:30	0:0	10	->
+water	177:32	0:0	10	i_height
+op	177:41	0:0	10	-
+water	177:43	0:0	10	i_line
+op	177:50	0:0	10	-
+water	177:51	0:0	10	1
+op	177:53	0:0	10	-
+water	177:54	0:0	10	k
+water	177:56	0:0	10	)
+op	177:58	0:0	10	*
+water	178:21	0:0	10	p_picture
+op	178:30	0:0	10	->
+water	178:32	0:0	10	p
+op	178:33	0:0	10	[
+water	178:34	0:0	10	0
+op	178:35	0:0	10	]
+op	178:36	0:0	10	.
+water	178:37	0:0	10	i_pitch
+op	178:45	0:0	10	+
+water	179:21	0:0	10	(
+water	179:23	0:0	10	i_start
+op	179:31	0:0	10	+
+water	179:33	0:0	10	i_band_width
+op	179:45	0:0	10	*
+water	179:46	0:0	10	i
+op	179:48	0:0	10	+
+water	179:50	0:0	10	j
+water	179:52	0:0	10	)
+water	179:54	0:0	10	)
+op	180:36	0:0	10	=
+water	180:38	0:0	10	0
+water	180:39	0:0	10	xff
+water	180:42	0:0	10	;
+op	181:19	0:0	10	*
+water	181:20	0:0	10	(
+water	181:21	0:0	10	p_picture
+op	181:30	0:0	10	->
+water	181:32	0:0	10	p
+op	181:33	0:0	10	[
+water	181:34	0:0	10	1
+op	181:35	0:0	10	]
+op	181:36	0:0	10	.
+water	181:37	0:0	10	p_pixels
+op	181:46	0:0	10	+
+water	182:20	0:0	10	(
+water	182:22	0:0	10	(
+water	182:24	0:0	10	p_effect
+op	182:32	0:0	10	->
+water	182:34	0:0	10	i_height
+op	182:43	0:0	10	-
+water	182:45	0:0	10	i_line
+water	182:52	0:0	10	)
+op	182:54	0:0	10	/
+water	182:56	0:0	10	2
+op	182:58	0:0	10	-
+water	182:60	0:0	10	1
+op	182:62	0:0	10	-
+water	182:63	0:0	10	k
+op	182:64	0:0	10	/
+water	182:65	0:0	10	2
+water	182:67	0:0	10	)
+op	182:69	0:0	10	*
+water	183:21	0:0	10	p_picture
+op	183:30	0:0	10	->
+water	183:32	0:0	10	p
+op	183:33	0:0	10	[
+water	183:34	0:0	10	1
+op	183:35	0:0	10	]
+op	183:36	0:0	10	.
+water	183:37	0:0	10	i_pitch
+op	183:45	0:0	10	+
+water	184:21	0:0	10	(
+water	184:23	0:0	10	(
+water	184:25	0:0	10	i_start
+op	184:33	0:0	10	+
+water	184:35	0:0	10	i_band_width
+op	184:48	0:0	10	*
+water	184:50	0:0	10	i
+op	184:52	0:0	10	+
+water	184:54	0:0	10	j
+water	184:56	0:0	10	)
+op	184:58	0:0	10	/
+water	184:59	0:0	10	2
+water	184:62	0:0	10	)
+water	184:64	0:0	10	)
+op	185:36	0:0	10	=
+water	185:38	0:0	10	0
+water	185:39	0:0	10	x00
+water	185:42	0:0	10	;
+if	186:19	200:19	10	(i_line + k - 0 x0f > 0)
+cond	186:23	186:43	11	i_line + k - 0 x0f > 0
+water	186:23	0:0	12	i_line
+op	186:30	0:0	12	+
+water	186:32	0:0	12	k
+op	186:34	0:0	12	-
+water	186:36	0:0	12	0
+water	186:37	0:0	12	x0f
+op	186:41	0:0	12	>
+water	186:43	0:0	12	0
+stmts	187:19	200:19	11	
+water	187:19	0:0	12	{
+if	188:23	193:59	12	(i_line + k - 0 x0f < 0 xff)
+cond	188:28	188:49	13	i_line + k - 0 x0f < 0 xff
+water	188:28	0:0	14	i_line
+op	188:35	0:0	14	+
+water	188:37	0:0	14	k
+op	188:39	0:0	14	-
+water	188:41	0:0	14	0
+water	188:42	0:0	14	x0f
+op	188:46	0:0	14	<
+water	188:48	0:0	14	0
+water	188:49	0:0	14	xff
+stmts	189:27	193:59	13	
+op	189:27	0:0	14	*
+water	189:28	0:0	14	(
+water	189:29	0:0	14	p_picture
+op	189:38	0:0	14	->
+water	189:40	0:0	14	p
+op	189:41	0:0	14	[
+water	189:42	0:0	14	2
+op	189:43	0:0	14	]
+op	189:44	0:0	14	.
+water	189:45	0:0	14	p_pixels
+op	189:55	0:0	14	+
+water	190:28	0:0	14	(
+water	190:30	0:0	14	(
+water	190:32	0:0	14	p_effect
+op	190:40	0:0	14	->
+water	190:42	0:0	14	i_height
+op	190:51	0:0	14	-
+water	190:53	0:0	14	i_line
+water	190:60	0:0	14	)
+op	190:62	0:0	14	/
+water	190:64	0:0	14	2
+op	190:66	0:0	14	-
+water	190:68	0:0	14	1
+op	190:70	0:0	14	-
+water	190:71	0:0	14	k
+op	190:72	0:0	14	/
+water	190:73	0:0	14	2
+water	190:75	0:0	14	)
+op	190:77	0:0	14	*
+water	191:29	0:0	14	p_picture
+op	191:38	0:0	14	->
+water	191:40	0:0	14	p
+op	191:41	0:0	14	[
+water	191:42	0:0	14	2
+op	191:43	0:0	14	]
+op	191:44	0:0	14	.
+water	191:45	0:0	14	i_pitch
+op	191:53	0:0	14	+
+water	192:29	0:0	14	(
+water	192:31	0:0	14	(
+water	192:33	0:0	14	i_start
+op	192:41	0:0	14	+
+water	192:43	0:0	14	i_band_width
+op	192:56	0:0	14	*
+water	192:58	0:0	14	i
+op	192:60	0:0	14	+
+water	192:62	0:0	14	j
+water	192:64	0:0	14	)
+op	192:66	0:0	14	/
+water	192:67	0:0	14	2
+water	192:70	0:0	14	)
+water	192:72	0:0	14	)
+op	193:36	0:0	14	=
+water	193:38	0:0	14	(
+water	193:40	0:0	14	i_line
+op	193:47	0:0	14	+
+water	193:49	0:0	14	k
+water	193:51	0:0	14	)
+op	193:53	0:0	14	-
+water	193:55	0:0	14	0
+water	193:56	0:0	14	x0f
+water	193:59	0:0	14	;
+else	194:23	199:42	12
+stmts	195:27	199:42	13	
+op	195:27	0:0	14	*
+water	195:28	0:0	14	(
+water	195:29	0:0	14	p_picture
+op	195:38	0:0	14	->
+water	195:40	0:0	14	p
+op	195:41	0:0	14	[
+water	195:42	0:0	14	2
+op	195:43	0:0	14	]
+op	195:44	0:0	14	.
+water	195:45	0:0	14	p_pixels
+op	195:55	0:0	14	+
+water	196:28	0:0	14	(
+water	196:30	0:0	14	(
+water	196:32	0:0	14	p_effect
+op	196:40	0:0	14	->
+water	196:42	0:0	14	i_height
+op	196:51	0:0	14	-
+water	196:53	0:0	14	i_line
+water	196:60	0:0	14	)
+op	196:62	0:0	14	/
+water	196:64	0:0	14	2
+op	196:66	0:0	14	-
+water	196:68	0:0	14	1
+op	196:70	0:0	14	-
+water	196:71	0:0	14	k
+op	196:72	0:0	14	/
+water	196:73	0:0	14	2
+water	196:75	0:0	14	)
+op	196:77	0:0	14	*
+water	197:29	0:0	14	p_picture
+op	197:38	0:0	14	->
+water	197:40	0:0	14	p
+op	197:41	0:0	14	[
+water	197:42	0:0	14	2
+op	197:43	0:0	14	]
+op	197:44	0:0	14	.
+water	197:45	0:0	14	i_pitch
+op	197:53	0:0	14	+
+water	198:29	0:0	14	(
+water	198:31	0:0	14	(
+water	198:33	0:0	14	i_start
+op	198:41	0:0	14	+
+water	198:43	0:0	14	i_band_width
+op	198:56	0:0	14	*
+water	198:58	0:0	14	i
+op	198:60	0:0	14	+
+water	198:62	0:0	14	j
+water	198:64	0:0	14	)
+op	198:66	0:0	14	/
+water	198:67	0:0	14	2
+water	198:70	0:0	14	)
+water	198:72	0:0	14	)
+op	199:36	0:0	14	=
+water	199:38	0:0	14	0
+water	199:39	0:0	14	xff
+water	199:42	0:0	14	;
+water	200:19	0:0	12	}
+else	201:19	208:19	10
+stmts	202:19	208:19	11	
+water	202:19	0:0	12	{
+op	203:24	0:0	12	*
+water	203:25	0:0	12	(
+water	203:26	0:0	12	p_picture
+op	203:35	0:0	12	->
+water	203:37	0:0	12	p
+op	203:38	0:0	12	[
+water	203:39	0:0	12	2
+op	203:40	0:0	12	]
+op	203:41	0:0	12	.
+water	203:42	0:0	12	p_pixels
+op	203:52	0:0	12	+
+water	204:25	0:0	12	(
+water	204:27	0:0	12	(
+water	204:29	0:0	12	p_effect
+op	204:37	0:0	12	->
+water	204:39	0:0	12	i_height
+op	204:48	0:0	12	-
+water	204:50	0:0	12	i_line
+water	204:57	0:0	12	)
+op	204:59	0:0	12	/
+water	204:61	0:0	12	2
+op	204:63	0:0	12	-
+water	204:65	0:0	12	1
+op	204:67	0:0	12	-
+water	204:68	0:0	12	k
+op	204:69	0:0	12	/
+water	204:70	0:0	12	2
+water	204:72	0:0	12	)
+op	204:74	0:0	12	*
+water	205:25	0:0	12	p_picture
+op	205:34	0:0	12	->
+water	205:36	0:0	12	p
+op	205:37	0:0	12	[
+water	205:38	0:0	12	2
+op	205:39	0:0	12	]
+op	205:40	0:0	12	.
+water	205:41	0:0	12	i_pitch
+op	205:49	0:0	12	+
+water	206:25	0:0	12	(
+water	206:27	0:0	12	(
+water	206:29	0:0	12	i_start
+op	206:37	0:0	12	+
+water	206:39	0:0	12	i_band_width
+op	206:52	0:0	12	*
+water	206:54	0:0	12	i
+op	206:56	0:0	12	+
+water	206:58	0:0	12	j
+water	206:60	0:0	12	)
+op	206:62	0:0	12	/
+water	206:63	0:0	12	2
+water	206:66	0:0	12	)
+water	206:68	0:0	12	)
+op	207:31	0:0	12	=
+water	207:33	0:0	12	0
+water	207:34	0:0	12	x10
+water	207:38	0:0	12	;
+water	208:19	0:0	12	}
+water	209:15	0:0	10	}
+water	210:12	0:0	8	}
+water	211:8	0:0	6	}
+if	212:8	213:50	4	(height [ i ] > p_effect -> i_height)
+cond	212:11	212:33	5	height [ i ] > p_effect -> i_height
+water	212:11	0:0	6	height
+op	212:17	0:0	6	[
+water	212:18	0:0	6	i
+op	212:19	0:0	6	]
+op	212:21	0:0	6	>
+water	212:23	0:0	6	p_effect
+op	212:31	0:0	6	->
+water	212:33	0:0	6	i_height
+stmts	213:12	213:50	5	
+water	213:12	0:0	6	height
+op	213:18	0:0	6	[
+water	213:19	0:0	6	i
+op	213:20	0:0	6	]
+op	213:22	0:0	6	=
+call	213:24	213:49	6	floor
+arg	213:30	213:49	7	p_effect->i_height
+water	213:30	0:0	8	p_effect
+op	213:38	0:0	8	->
+water	213:40	0:0	8	i_height
+water	213:50	0:0	6	;
+for	214:8	250:8	4	(i_line = 0 ;i_line < height [ i ];i_line ++)
+forinit	214:13	214:23	5	i_line = 0 ;
+water	214:13	0:0	6	i_line
+op	214:20	0:0	6	=
+water	214:22	0:0	6	0
+water	214:23	0:0	6	;
+cond	214:25	214:42	5	i_line < height [ i ]
+water	214:25	0:0	6	i_line
+op	214:32	0:0	6	<
+water	214:34	0:0	6	height
+op	214:40	0:0	6	[
+water	214:41	0:0	6	i
+op	214:42	0:0	6	]
+forexpr	214:45	214:51	5	i_line ++
+water	214:45	0:0	6	i_line
+op	214:51	0:0	6	++
+stmts	215:8	250:8	5	
+water	215:8	0:0	6	{
+for	216:12	249:12	6	(j = 0 ;j < i_band_width - 1;j ++)
+forinit	216:17	216:23	7	j = 0 ;
+water	216:17	0:0	8	j
+op	216:19	0:0	8	=
+water	216:21	0:0	8	0
+water	216:23	0:0	8	;
+cond	216:25	216:44	7	j < i_band_width - 1
+water	216:25	0:0	8	j
+op	216:27	0:0	8	<
+water	216:29	0:0	8	i_band_width
+op	216:42	0:0	8	-
+water	216:44	0:0	8	1
+forexpr	216:47	216:48	7	j ++
+water	216:47	0:0	8	j
+op	216:48	0:0	8	++
+stmts	217:12	249:12	7	
+water	217:12	0:0	8	{
+op	218:15	0:0	8	*
+water	218:16	0:0	8	(
+water	218:17	0:0	8	p_picture
+op	218:26	0:0	8	->
+water	218:28	0:0	8	p
+op	218:29	0:0	8	[
+water	218:30	0:0	8	0
+op	218:31	0:0	8	]
+op	218:32	0:0	8	.
+water	218:33	0:0	8	p_pixels
+op	218:42	0:0	8	+
+water	219:17	0:0	8	(
+water	219:18	0:0	8	p_effect
+op	219:26	0:0	8	->
+water	219:28	0:0	8	i_height
+op	219:37	0:0	8	-
+water	219:39	0:0	8	i_line
+op	219:46	0:0	8	-
+water	219:48	0:0	8	1
+water	219:49	0:0	8	)
+op	219:51	0:0	8	*
+water	220:18	0:0	8	p_picture
+op	220:27	0:0	8	->
+water	220:29	0:0	8	p
+op	220:30	0:0	8	[
+water	220:31	0:0	8	0
+op	220:32	0:0	8	]
+op	220:33	0:0	8	.
+water	220:34	0:0	8	i_pitch
+op	220:42	0:0	8	+
+water	221:18	0:0	8	(
+water	221:20	0:0	8	i_start
+op	221:28	0:0	8	+
+water	221:30	0:0	8	i_band_width
+op	221:42	0:0	8	*
+water	221:43	0:0	8	i
+op	221:45	0:0	8	+
+water	221:47	0:0	8	j
+water	221:49	0:0	8	)
+water	221:51	0:0	8	)
+op	221:53	0:0	8	=
+water	221:55	0:0	8	0
+water	221:56	0:0	8	xff
+water	221:59	0:0	8	;
+op	222:15	0:0	8	*
+water	222:16	0:0	8	(
+water	222:17	0:0	8	p_picture
+op	222:26	0:0	8	->
+water	222:28	0:0	8	p
+op	222:29	0:0	8	[
+water	222:30	0:0	8	1
+op	222:31	0:0	8	]
+op	222:32	0:0	8	.
+water	222:33	0:0	8	p_pixels
+op	222:42	0:0	8	+
+water	223:17	0:0	8	(
+water	223:19	0:0	8	(
+water	223:21	0:0	8	p_effect
+op	223:29	0:0	8	->
+water	223:31	0:0	8	i_height
+op	223:40	0:0	8	-
+water	223:42	0:0	8	i_line
+water	223:49	0:0	8	)
+op	223:51	0:0	8	/
+water	223:53	0:0	8	2
+op	223:55	0:0	8	-
+water	223:57	0:0	8	1
+water	223:58	0:0	8	)
+op	223:60	0:0	8	*
+water	224:17	0:0	8	p_picture
+op	224:26	0:0	8	->
+water	224:28	0:0	8	p
+op	224:29	0:0	8	[
+water	224:30	0:0	8	1
+op	224:31	0:0	8	]
+op	224:32	0:0	8	.
+water	224:33	0:0	8	i_pitch
+op	224:41	0:0	8	+
+water	225:17	0:0	8	(
+water	225:19	0:0	8	(
+water	225:21	0:0	8	i_start
+op	225:29	0:0	8	+
+water	225:31	0:0	8	i_band_width
+op	225:44	0:0	8	*
+water	225:46	0:0	8	i
+op	225:48	0:0	8	+
+water	225:50	0:0	8	j
+water	225:52	0:0	8	)
+op	225:54	0:0	8	/
+water	225:55	0:0	8	2
+water	225:58	0:0	8	)
+water	225:60	0:0	8	)
+op	225:62	0:0	8	=
+water	225:64	0:0	8	0
+water	225:65	0:0	8	x00
+water	225:68	0:0	8	;
+if	226:15	240:15	8	(i_line - 0 x0f > 0)
+cond	226:19	226:35	9	i_line - 0 x0f > 0
+water	226:19	0:0	10	i_line
+op	226:26	0:0	10	-
+water	226:28	0:0	10	0
+water	226:29	0:0	10	x0f
+op	226:33	0:0	10	>
+water	226:35	0:0	10	0
+stmts	227:15	240:15	9	
+water	227:15	0:0	10	{
+if	228:20	233:44	10	(i_line - 0 x0f < 0 xff)
+cond	228:24	228:41	11	i_line - 0 x0f < 0 xff
+water	228:24	0:0	12	i_line
+op	228:31	0:0	12	-
+water	228:33	0:0	12	0
+water	228:34	0:0	12	x0f
+op	228:38	0:0	12	<
+water	228:40	0:0	12	0
+water	228:41	0:0	12	xff
+stmts	229:25	233:44	11	
+op	229:25	0:0	12	*
+water	229:26	0:0	12	(
+water	229:27	0:0	12	p_picture
+op	229:36	0:0	12	->
+water	229:38	0:0	12	p
+op	229:39	0:0	12	[
+water	229:40	0:0	12	2
+op	229:41	0:0	12	]
+op	229:42	0:0	12	.
+water	229:43	0:0	12	p_pixels
+op	229:53	0:0	12	+
+water	230:27	0:0	12	(
+water	230:29	0:0	12	(
+water	230:31	0:0	12	p_effect
+op	230:39	0:0	12	->
+water	230:41	0:0	12	i_height
+op	230:50	0:0	12	-
+water	230:52	0:0	12	i_line
+water	230:59	0:0	12	)
+op	230:61	0:0	12	/
+water	230:63	0:0	12	2
+op	230:65	0:0	12	-
+water	230:67	0:0	12	1
+water	230:68	0:0	12	)
+op	230:70	0:0	12	*
+water	231:27	0:0	12	p_picture
+op	231:36	0:0	12	->
+water	231:38	0:0	12	p
+op	231:39	0:0	12	[
+water	231:40	0:0	12	2
+op	231:41	0:0	12	]
+op	231:42	0:0	12	.
+water	231:43	0:0	12	i_pitch
+op	231:51	0:0	12	+
+water	232:27	0:0	12	(
+water	232:29	0:0	12	(
+water	232:31	0:0	12	i_start
+op	232:39	0:0	12	+
+water	232:41	0:0	12	i_band_width
+op	232:54	0:0	12	*
+water	232:56	0:0	12	i
+op	232:58	0:0	12	+
+water	232:60	0:0	12	j
+water	232:62	0:0	12	)
+op	232:64	0:0	12	/
+water	232:65	0:0	12	2
+water	232:68	0:0	12	)
+water	232:70	0:0	12	)
+op	232:72	0:0	12	=
+water	233:31	0:0	12	i_line
+op	233:38	0:0	12	-
+water	233:40	0:0	12	0
+water	233:41	0:0	12	x0f
+water	233:44	0:0	12	;
+else	234:20	239:43	10
+stmts	235:25	239:43	11	
+op	235:25	0:0	12	*
+water	235:26	0:0	12	(
+water	235:27	0:0	12	p_picture
+op	235:36	0:0	12	->
+water	235:38	0:0	12	p
+op	235:39	0:0	12	[
+water	235:40	0:0	12	2
+op	235:41	0:0	12	]
+op	235:42	0:0	12	.
+water	235:43	0:0	12	p_pixels
+op	235:53	0:0	12	+
+water	236:27	0:0	12	(
+water	236:29	0:0	12	(
+water	236:31	0:0	12	p_effect
+op	236:39	0:0	12	->
+water	236:41	0:0	12	i_height
+op	236:50	0:0	12	-
+water	236:52	0:0	12	i_line
+water	236:59	0:0	12	)
+op	236:61	0:0	12	/
+water	236:63	0:0	12	2
+op	236:66	0:0	12	-
+water	236:68	0:0	12	1
+water	236:69	0:0	12	)
+op	236:71	0:0	12	*
+water	237:27	0:0	12	p_picture
+op	237:36	0:0	12	->
+water	237:38	0:0	12	p
+op	237:39	0:0	12	[
+water	237:40	0:0	12	2
+op	237:41	0:0	12	]
+op	237:42	0:0	12	.
+water	237:43	0:0	12	i_pitch
+op	237:51	0:0	12	+
+water	238:27	0:0	12	(
+water	238:29	0:0	12	(
+water	238:31	0:0	12	i_start
+op	238:39	0:0	12	+
+water	238:41	0:0	12	i_band_width
+op	238:54	0:0	12	*
+water	238:56	0:0	12	i
+op	238:58	0:0	12	+
+water	238:60	0:0	12	j
+water	238:62	0:0	12	)
+op	238:64	0:0	12	/
+water	238:65	0:0	12	2
+water	238:68	0:0	12	)
+water	238:70	0:0	12	)
+op	238:72	0:0	12	=
+water	239:39	0:0	12	0
+water	239:40	0:0	12	xff
+water	239:43	0:0	12	;
+water	240:15	0:0	10	}
+else	241:15	248:15	8
+stmts	242:15	248:15	9	
+water	242:15	0:0	10	{
+op	243:20	0:0	10	*
+water	243:21	0:0	10	(
+water	243:22	0:0	10	p_picture
+op	243:31	0:0	10	->
+water	243:33	0:0	10	p
+op	243:34	0:0	10	[
+water	243:35	0:0	10	2
+op	243:36	0:0	10	]
+op	243:37	0:0	10	.
+water	243:38	0:0	10	p_pixels
+op	243:48	0:0	10	+
+water	244:22	0:0	10	(
+water	244:24	0:0	10	(
+water	244:26	0:0	10	p_effect
+op	244:34	0:0	10	->
+water	244:36	0:0	10	i_height
+op	244:45	0:0	10	-
+water	244:47	0:0	10	i_line
+water	244:54	0:0	10	)
+op	244:56	0:0	10	/
+water	244:58	0:0	10	2
+op	244:61	0:0	10	-
+water	244:63	0:0	10	1
+water	244:64	0:0	10	)
+op	244:66	0:0	10	*
+water	245:22	0:0	10	p_picture
+op	245:31	0:0	10	->
+water	245:33	0:0	10	p
+op	245:34	0:0	10	[
+water	245:35	0:0	10	2
+op	245:36	0:0	10	]
+op	245:37	0:0	10	.
+water	245:38	0:0	10	i_pitch
+op	245:46	0:0	10	+
+water	246:22	0:0	10	(
+water	246:24	0:0	10	(
+water	246:26	0:0	10	i_start
+op	246:34	0:0	10	+
+water	246:36	0:0	10	i_band_width
+op	246:49	0:0	10	*
+water	246:51	0:0	10	i
+op	246:53	0:0	10	+
+water	246:55	0:0	10	j
+water	246:57	0:0	10	)
+op	246:59	0:0	10	/
+water	246:60	0:0	10	2
+water	246:63	0:0	10	)
+water	246:65	0:0	10	)
+op	246:67	0:0	10	=
+water	247:28	0:0	10	0
+water	247:29	0:0	10	x10
+water	247:32	0:0	10	;
+water	248:15	0:0	10	}
+water	249:12	0:0	8	}
+water	250:8	0:0	6	}
+water	251:4	0:0	4	}
+call	252:4	252:28	2	window_close
+arg	252:18	252:28	3	&wind_ctx
+op	252:18	0:0	4	&
+water	252:19	0:0	4	wind_ctx
+water	252:29	0:0	2	;
+call	253:4	253:23	2	fft_close
+arg	253:15	253:23	3	p_state
+water	253:15	0:0	4	p_state
+water	253:24	0:0	2	;
+call	254:4	254:17	2	free
+arg	254:10	254:17	3	height
+water	254:10	0:0	4	height
+water	254:18	0:0	2	;
+return	255:4	255:12	2	0
+water	255:11	0:0	3	0

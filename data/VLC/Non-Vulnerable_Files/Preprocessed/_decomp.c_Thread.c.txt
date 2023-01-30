@@ -1,0 +1,302 @@
+func	2:0	65:0	0	static void *	Thread
+params	2:20	0:0	1	
+param	2:21	2:31	2	void *	data
+stmnts	0:0	64:15	1	
+decl	4:4	4:27	2	stream_t	*stream
+op	4:21	0:0	2	=
+water	4:23	0:0	2	data
+decl	5:4	5:39	2	stream_sys_t	*p_sys
+op	5:24	0:0	2	=
+water	5:26	0:0	2	stream
+op	5:32	0:0	2	->
+water	5:34	0:0	2	p_sys
+decl	7:4	7:57	2	const ssize_t	page_mask
+op	7:28	0:0	2	=
+call	7:30	7:52	3	sysconf
+arg	7:39	7:52	4	_SC_PAGE_SIZE
+water	7:39	0:0	5	_SC_PAGE_SIZE
+op	7:54	0:0	2	-
+water	7:56	0:0	2	1
+decl	9:4	9:28	2	int	fd
+op	9:11	0:0	2	=
+water	9:13	0:0	2	p_sys
+op	9:18	0:0	2	->
+water	9:20	0:0	2	write_fd
+decl	10:4	10:22	2	bool	error
+op	10:15	0:0	2	=
+water	10:17	0:0	2	false
+do	11:4	58:4	2	(! error)
+cond	59:11	59:12	3	! error
+op	59:11	0:0	4	!
+water	59:12	0:0	4	error
+stmts	12:4	58:4	3	
+water	12:4	0:0	4	{
+decl	13:8	13:19	4	ssize_t	len
+decl	14:8	14:36	4	int	canc
+op	14:17	0:0	4	=
+call	14:19	14:35	5	vlc_savecancel
+decl	16:8	17:68	4	unsigned char	*buf
+op	16:27	0:0	4	=
+call	16:29	17:67	5	mmap
+arg	16:35	16:39	6	NULL
+water	16:35	0:0	7	NULL
+arg	16:41	16:48	6	bufsize
+water	16:41	0:0	7	bufsize
+arg	16:50	16:70	6	PROT_READ|PROT_WRITE
+water	16:50	0:0	7	PROT_READ
+op	16:59	0:0	7	|
+water	16:60	0:0	7	PROT_WRITE
+arg	17:35	17:60	6	MAP_PRIVATE|MAP_ANONYMOUS
+water	17:35	0:0	7	MAP_PRIVATE
+op	17:46	0:0	7	|
+water	17:47	0:0	7	MAP_ANONYMOUS
+arg	17:62	17:64	6	-1
+op	17:62	0:0	7	-
+water	17:63	0:0	7	1
+arg	17:66	17:67	6	0
+water	17:66	0:0	7	0
+if	18:8	19:17	4	(unlikely (buf == MAP_FAILED ))
+cond	18:12	18:38	5	unlikely (buf == MAP_FAILED )
+call	18:12	18:38	6	unlikely
+arg	18:21	18:38	7	buf==MAP_FAILED
+water	18:21	0:0	8	buf
+op	18:25	0:0	8	==
+water	18:28	0:0	8	MAP_FAILED
+stmts	19:12	19:17	5	
+break	19:12	19:17	6	
+call	20:8	20:43	4	vlc_cleanup_push
+arg	20:26	20:38	5	cleanup_mmap
+water	20:26	0:0	6	cleanup_mmap
+arg	20:40	20:43	5	buf
+water	20:40	0:0	6	buf
+water	20:44	0:0	4	;
+decl	22:8	22:45	4	unsigned char	*buf
+op	22:27	0:0	4	=
+call	22:29	22:44	5	malloc
+arg	22:37	22:44	6	bufsize
+water	22:37	0:0	7	bufsize
+if	23:8	24:17	4	(unlikely (buf == NULL ))
+cond	23:12	23:32	5	unlikely (buf == NULL )
+call	23:12	23:32	6	unlikely
+arg	23:21	23:32	7	buf==NULL
+water	23:21	0:0	8	buf
+op	23:25	0:0	8	==
+water	23:28	0:0	8	NULL
+stmts	24:12	24:17	5	
+break	24:12	24:17	6	
+call	25:8	25:35	4	vlc_cleanup_push
+arg	25:26	25:30	5	free
+water	25:26	0:0	6	free
+arg	25:32	25:35	5	buf
+water	25:32	0:0	6	buf
+water	25:36	0:0	4	;
+call	27:8	27:36	4	vlc_mutex_lock
+arg	27:24	27:36	5	&p_sys->lock
+op	27:24	0:0	6	&
+water	27:25	0:0	6	p_sys
+op	27:30	0:0	6	->
+water	27:32	0:0	6	lock
+water	27:37	0:0	4	;
+while	28:8	29:54	4	(p_sys -> paused)
+cond	28:15	28:22	5	p_sys -> paused
+water	28:15	0:0	6	p_sys
+op	28:20	0:0	6	->
+water	28:22	0:0	6	paused
+stmts	29:12	29:54	5	
+call	29:12	29:53	6	vlc_cond_wait
+arg	29:27	29:39	7	&p_sys->wait
+op	29:27	0:0	8	&
+water	29:28	0:0	8	p_sys
+op	29:33	0:0	8	->
+water	29:35	0:0	8	wait
+arg	29:41	29:53	7	&p_sys->lock
+op	29:41	0:0	8	&
+water	29:42	0:0	8	p_sys
+op	29:47	0:0	8	->
+water	29:49	0:0	8	lock
+water	29:54	0:0	6	;
+water	30:8	0:0	4	len
+op	30:12	0:0	4	=
+call	30:14	30:57	4	stream_Read
+arg	30:27	30:43	5	stream->p_source
+water	30:27	0:0	6	stream
+op	30:33	0:0	6	->
+water	30:35	0:0	6	p_source
+arg	30:45	30:48	5	buf
+water	30:45	0:0	6	buf
+arg	30:50	30:57	5	bufsize
+water	30:50	0:0	6	bufsize
+water	30:58	0:0	4	;
+call	31:8	31:38	4	vlc_mutex_unlock
+arg	31:26	31:38	5	&p_sys->lock
+op	31:26	0:0	6	&
+water	31:27	0:0	6	p_sys
+op	31:32	0:0	6	->
+water	31:34	0:0	6	lock
+water	31:39	0:0	4	;
+call	32:8	32:31	4	vlc_restorecancel
+arg	32:27	32:31	5	canc
+water	32:27	0:0	6	canc
+water	32:32	0:0	4	;
+water	33:8	0:0	4	error
+op	33:14	0:0	4	=
+water	33:16	0:0	4	len
+op	33:20	0:0	4	<=
+water	33:23	0:0	4	0
+water	33:24	0:0	4	;
+for	34:8	56:8	4	( ssize_t i = 0 ,j ;i < len;i += j)
+forinit	0:0	34:29	5	 ssize_t i = 0 ,j ;
+decl	34:13	34:29	6	ssize_t	i
+op	34:23	0:0	6	=
+water	34:25	0:0	6	0
+water	34:26	0:0	6	,
+decl	34:13	34:29	6	ssize_t	j
+cond	34:31	34:35	5	i < len
+water	34:31	0:0	6	i
+op	34:33	0:0	6	<
+water	34:35	0:0	6	len
+forexpr	34:40	34:45	5	i += j
+water	34:40	0:0	6	i
+op	34:42	0:0	6	+=
+water	34:45	0:0	6	j
+stmts	35:8	56:8	5	
+water	35:8	0:0	6	{
+if	37:12	38:48	6	(( len - i ) <= page_mask)
+cond	37:16	37:29	7	( len - i ) <= page_mask
+water	37:16	0:0	8	(
+water	37:17	0:0	8	len
+op	37:21	0:0	8	-
+water	37:23	0:0	8	i
+water	37:24	0:0	8	)
+op	37:26	0:0	8	<=
+water	37:29	0:0	8	page_mask
+stmts	38:16	38:48	7	
+water	38:16	0:0	8	j
+op	38:18	0:0	8	=
+call	38:20	38:47	8	write
+arg	38:27	38:29	9	fd
+water	38:27	0:0	10	fd
+arg	38:31	38:38	9	buf+i
+water	38:31	0:0	10	buf
+op	38:35	0:0	10	+
+water	38:37	0:0	10	i
+arg	38:40	38:47	9	len-i
+water	38:40	0:0	10	len
+op	38:44	0:0	10	-
+water	38:46	0:0	10	i
+water	38:48	0:0	8	;
+else	39:12	43:12	6
+stmts	40:12	43:12	7	
+water	40:12	0:0	8	{
+decl	41:16	41:71	8	struct iovec	iov
+op	41:33	0:0	8	=
+water	41:35	0:0	8	{
+water	41:37	0:0	8	buf
+op	41:41	0:0	8	+
+water	41:43	0:0	8	i
+water	41:44	0:0	8	,
+water	41:46	0:0	8	(
+water	41:47	0:0	8	len
+op	41:51	0:0	8	-
+water	41:53	0:0	8	i
+water	41:54	0:0	8	)
+op	41:56	0:0	8	&
+water	41:58	0:0	8	~page_mask
+water	41:68	0:0	8	,
+water	41:70	0:0	8	}
+water	42:16	0:0	8	j
+op	42:18	0:0	8	=
+call	42:20	42:56	8	vmsplice
+arg	42:30	42:32	9	fd
+water	42:30	0:0	10	fd
+arg	42:34	42:38	9	&iov
+op	42:34	0:0	10	&
+water	42:35	0:0	10	iov
+arg	42:40	42:41	9	1
+water	42:40	0:0	10	1
+arg	42:43	42:56	9	SPLICE_F_GIFT
+water	42:43	0:0	10	SPLICE_F_GIFT
+water	42:57	0:0	8	;
+water	43:12	0:0	8	}
+if	44:12	46:44	6	(j == - 1 && errno == ENOSYS)
+cond	44:16	44:36	7	j == - 1 && errno == ENOSYS
+water	44:16	0:0	8	j
+op	44:18	0:0	8	==
+op	44:21	0:0	8	-
+water	44:22	0:0	8	1
+op	44:24	0:0	8	&&
+water	44:27	0:0	8	errno
+op	44:33	0:0	8	==
+water	44:36	0:0	8	ENOSYS
+stmts	46:12	46:44	7	
+water	46:12	0:0	8	j
+op	46:14	0:0	8	=
+call	46:16	46:43	8	write
+arg	46:23	46:25	9	fd
+water	46:23	0:0	10	fd
+arg	46:27	46:34	9	buf+i
+water	46:27	0:0	10	buf
+op	46:31	0:0	10	+
+water	46:33	0:0	10	i
+arg	46:36	46:43	9	len-i
+water	46:36	0:0	10	len
+op	46:40	0:0	10	-
+water	46:42	0:0	10	i
+water	46:44	0:0	8	;
+if	47:12	55:12	6	(j <= 0)
+cond	47:16	47:21	7	j <= 0
+water	47:16	0:0	8	j
+op	47:18	0:0	8	<=
+water	47:21	0:0	8	0
+stmts	48:12	55:12	7	
+water	48:12	0:0	8	{
+if	49:16	50:33	8	(j == 0)
+cond	49:20	49:25	9	j == 0
+water	49:20	0:0	10	j
+op	49:22	0:0	10	==
+water	49:25	0:0	10	0
+stmts	50:20	50:33	9	
+water	50:20	0:0	10	errno
+op	50:26	0:0	10	=
+water	50:28	0:0	10	EPIPE
+water	50:33	0:0	10	;
+call	51:16	52:46	8	msg_Err
+arg	51:25	51:31	9	stream
+water	51:25	0:0	10	stream
+arg	51:33	51:56	9	"cannot write data: %s"
+water	51:33	0:0	10	"cannot write data: %s"
+arg	52:25	52:46	9	vlc_strerror_c(errno)
+call	52:25	52:45	10	vlc_strerror_c
+arg	52:40	52:45	11	errno
+water	52:40	0:0	12	errno
+water	52:47	0:0	8	;
+water	53:16	0:0	8	error
+op	53:22	0:0	8	=
+water	53:24	0:0	8	true
+water	53:28	0:0	8	;
+break	54:16	54:21	8	
+water	55:12	0:0	8	}
+water	56:8	0:0	6	}
+call	57:8	57:25	4	vlc_cleanup_run
+water	57:26	0:0	4	;
+water	58:4	0:0	4	}
+water	59:18	0:0	2	;
+call	60:4	60:47	2	msg_Dbg
+arg	60:13	60:19	3	stream
+water	60:13	0:0	4	stream
+arg	60:21	60:47	3	"compressed stream at EOF"
+water	60:21	0:0	4	"compressed stream at EOF"
+water	60:48	0:0	2	;
+water	62:4	0:0	2	p_sys
+op	62:9	0:0	2	->
+water	62:11	0:0	2	write_fd
+op	62:20	0:0	2	=
+op	62:22	0:0	2	-
+water	62:23	0:0	2	1
+water	62:24	0:0	2	;
+call	63:4	63:13	2	close
+arg	63:11	63:13	3	fd
+water	63:11	0:0	4	fd
+water	63:14	0:0	2	;
+return	64:4	64:15	2	NULL
+water	64:11	0:0	3	NULL

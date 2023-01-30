@@ -1,0 +1,506 @@
+func	2:0	86:0	0	static block_t *	Encode
+params	2:22	0:0	1	
+param	2:23	2:38	2	encoder_t *	this
+param	2:40	2:54	2	picture_t *	pic
+stmnts	0:0	85:16	1	
+decl	4:4	4:42	2	encoder_t	*enc
+op	4:23	0:0	2	=
+water	4:25	0:0	2	(
+water	4:26	0:0	2	encoder_t
+op	4:36	0:0	2	*
+water	4:37	0:0	2	)
+water	4:38	0:0	2	this
+decl	5:4	5:35	2	encoder_sys_t	*sys
+op	5:23	0:0	2	=
+water	5:25	0:0	2	enc
+op	5:28	0:0	2	->
+water	5:30	0:0	2	p_sys
+decl	6:4	6:30	2	async_task_t	*task
+op	6:24	0:0	2	=
+water	6:26	0:0	2	NULL
+decl	7:4	7:31	2	block_t	*block
+op	7:25	0:0	2	=
+water	7:27	0:0	2	NULL
+decl	8:4	8:34	2	mfxFrameSurface1	*frame
+op	8:28	0:0	2	=
+water	8:30	0:0	2	NULL
+decl	9:4	9:24	2	mfxStatus	sts
+if	10:4	28:4	2	(pic)
+cond	10:8	10:8	3	pic
+water	10:8	0:0	4	pic
+stmts	10:13	28:4	3	
+water	10:13	0:0	4	{
+if	14:8	15:39	4	(! sys -> offset_pts)
+cond	14:12	14:18	5	! sys -> offset_pts
+op	14:12	0:0	6	!
+water	14:13	0:0	6	sys
+op	14:16	0:0	6	->
+water	14:18	0:0	6	offset_pts
+stmts	15:12	15:39	5	
+water	15:12	0:0	6	sys
+op	15:15	0:0	6	->
+water	15:17	0:0	6	offset_pts
+op	15:28	0:0	6	=
+water	15:30	0:0	6	pic
+op	15:33	0:0	6	->
+water	15:35	0:0	6	date
+water	15:39	0:0	6	;
+water	16:8	0:0	4	pic
+op	16:11	0:0	4	->
+water	16:13	0:0	4	date
+op	16:18	0:0	4	-=
+water	16:21	0:0	4	sys
+op	16:24	0:0	4	->
+water	16:26	0:0	4	offset_pts
+water	16:36	0:0	4	;
+water	17:8	0:0	4	frame
+op	17:14	0:0	4	=
+call	17:16	17:52	4	qsv_frame_pool_Get
+arg	17:35	17:47	5	&sys->frames
+op	17:35	0:0	6	&
+water	17:36	0:0	6	sys
+op	17:39	0:0	6	->
+water	17:41	0:0	6	frames
+arg	17:49	17:52	5	pic
+water	17:49	0:0	6	pic
+water	17:53	0:0	4	;
+if	18:8	21:8	4	(! frame)
+cond	18:12	18:13	5	! frame
+op	18:12	0:0	6	!
+water	18:13	0:0	6	frame
+stmts	18:20	21:8	5	
+water	18:20	0:0	6	{
+call	19:12	19:74	6	msg_Warn
+arg	19:21	19:24	7	enc
+water	19:21	0:0	8	enc
+arg	19:26	19:74	7	"Unable to find an unlocked surface in the pool"
+water	19:26	0:0	8	"Unable to find an unlocked surface in the pool"
+water	19:75	0:0	6	;
+return	20:12	20:23	6	NULL
+water	20:19	0:0	7	NULL
+water	21:8	0:0	6	}
+for	23:8	27:12	4	( size_t i = 0 ;i < sys -> async_depth;i ++)
+forinit	0:0	23:25	5	 size_t i = 0 ;
+decl	23:13	23:25	6	size_t	i
+op	23:22	0:0	6	=
+water	23:24	0:0	6	0
+cond	23:27	23:36	5	i < sys -> async_depth
+water	23:27	0:0	6	i
+op	23:29	0:0	6	<
+water	23:31	0:0	6	sys
+op	23:34	0:0	6	->
+water	23:36	0:0	6	async_depth
+forexpr	23:49	23:50	5	i ++
+water	23:49	0:0	6	i
+op	23:50	0:0	6	++
+stmts	24:12	27:12	5	
+if	24:12	27:12	6	(( sys -> tasks + ( i + sys -> first_task ) % sys -> async_depth ) -> syncp == 0)
+cond	24:16	24:82	7	( sys -> tasks + ( i + sys -> first_task ) % sys -> async_depth ) -> syncp == 0
+water	24:16	0:0	8	(
+water	24:17	0:0	8	sys
+op	24:20	0:0	8	->
+water	24:22	0:0	8	tasks
+op	24:28	0:0	8	+
+water	24:30	0:0	8	(
+water	24:31	0:0	8	i
+op	24:33	0:0	8	+
+water	24:35	0:0	8	sys
+op	24:38	0:0	8	->
+water	24:40	0:0	8	first_task
+water	24:50	0:0	8	)
+op	24:52	0:0	8	%
+water	24:54	0:0	8	sys
+op	24:57	0:0	8	->
+water	24:59	0:0	8	async_depth
+water	24:70	0:0	8	)
+op	24:71	0:0	8	->
+water	24:73	0:0	8	syncp
+op	24:79	0:0	8	==
+water	24:82	0:0	8	0
+stmts	24:85	27:12	7	
+water	24:85	0:0	8	{
+water	25:16	0:0	8	task
+op	25:21	0:0	8	=
+water	25:23	0:0	8	sys
+op	25:26	0:0	8	->
+water	25:28	0:0	8	tasks
+op	25:34	0:0	8	+
+water	25:36	0:0	8	(
+water	25:37	0:0	8	i
+op	25:39	0:0	8	+
+water	25:41	0:0	8	sys
+op	25:44	0:0	8	->
+water	25:46	0:0	8	first_task
+water	25:56	0:0	8	)
+op	25:58	0:0	8	%
+water	25:60	0:0	8	sys
+op	25:63	0:0	8	->
+water	25:65	0:0	8	async_depth
+water	25:76	0:0	8	;
+break	26:16	26:21	8	
+water	27:12	0:0	8	}
+water	28:4	0:0	4	}
+else	28:6	30:40	2
+stmts	30:8	30:40	3	
+call	30:8	30:39	4	msg_Dbg
+arg	30:16	30:19	5	enc
+water	30:16	0:0	6	enc
+arg	30:21	30:39	5	"Emptying encoder"
+water	30:21	0:0	6	"Emptying encoder"
+water	30:40	0:0	4	;
+if	32:4	58:4	2	(! task)
+cond	32:8	32:9	3	! task
+op	32:8	0:0	4	!
+water	32:9	0:0	4	task
+stmts	32:15	58:4	3	
+water	32:15	0:0	4	{
+water	33:8	0:0	4	task
+op	33:13	0:0	4	=
+water	33:15	0:0	4	sys
+op	33:18	0:0	4	->
+water	33:20	0:0	4	tasks
+op	33:26	0:0	4	+
+water	33:28	0:0	4	sys
+op	33:31	0:0	4	->
+water	33:33	0:0	4	first_task
+water	33:43	0:0	4	;
+if	35:8	52:8	4	(MFXVideoCORE_SyncOperation (sys -> session ,task -> syncp ,QSV_SYNCPOINT_WAIT ) == MFX_ERR_NONE)
+cond	35:12	35:89	5	MFXVideoCORE_SyncOperation (sys -> session ,task -> syncp ,QSV_SYNCPOINT_WAIT ) == MFX_ERR_NONE
+call	35:12	35:84	6	MFXVideoCORE_SyncOperation
+arg	35:39	35:51	7	sys->session
+water	35:39	0:0	8	sys
+op	35:42	0:0	8	->
+water	35:44	0:0	8	session
+arg	35:53	35:64	7	task->syncp
+water	35:53	0:0	8	task
+op	35:57	0:0	8	->
+water	35:59	0:0	8	syncp
+arg	35:66	35:84	7	QSV_SYNCPOINT_WAIT
+water	35:66	0:0	8	QSV_SYNCPOINT_WAIT
+op	35:86	0:0	6	==
+water	35:89	0:0	6	MFX_ERR_NONE
+stmts	35:103	52:8	5	
+water	35:103	0:0	6	{
+water	36:12	0:0	6	block
+op	36:18	0:0	6	=
+water	36:20	0:0	6	task
+op	36:24	0:0	6	->
+water	36:26	0:0	6	block
+water	36:31	0:0	6	;
+water	37:12	0:0	6	block
+op	37:17	0:0	6	->
+water	37:19	0:0	6	i_buffer
+op	37:28	0:0	6	=
+water	37:30	0:0	6	task
+op	37:34	0:0	6	->
+water	37:36	0:0	6	bs
+op	37:38	0:0	6	.
+water	37:39	0:0	6	DataLength
+water	37:49	0:0	6	;
+water	38:12	0:0	6	block
+op	38:17	0:0	6	->
+water	38:19	0:0	6	p_buffer
+op	38:28	0:0	6	+=
+water	38:31	0:0	6	task
+op	38:35	0:0	6	->
+water	38:37	0:0	6	bs
+op	38:39	0:0	6	.
+water	38:40	0:0	6	DataOffset
+water	38:50	0:0	6	;
+call	39:12	39:55	6	qsv_set_block_ts
+arg	39:29	39:32	7	enc
+water	39:29	0:0	8	enc
+arg	39:34	39:37	7	sys
+water	39:34	0:0	8	sys
+arg	39:39	39:44	7	block
+water	39:39	0:0	8	block
+arg	39:46	39:55	7	&task->bs
+op	39:46	0:0	8	&
+water	39:47	0:0	8	task
+op	39:51	0:0	8	->
+water	39:53	0:0	8	bs
+water	39:56	0:0	6	;
+call	40:12	40:57	6	qsv_set_block_flags
+arg	40:32	40:37	7	block
+water	40:32	0:0	8	block
+arg	40:39	40:57	7	task->bs.FrameType
+water	40:39	0:0	8	task
+op	40:43	0:0	8	->
+water	40:45	0:0	8	bs
+op	40:47	0:0	8	.
+water	40:48	0:0	8	FrameType
+water	40:58	0:0	6	;
+water	45:12	0:0	6	block
+op	45:17	0:0	6	->
+water	45:19	0:0	6	i_length
+op	45:28	0:0	6	=
+water	45:30	0:0	6	CLOCK_FREQ
+op	45:41	0:0	6	*
+water	46:16	0:0	6	enc
+op	46:19	0:0	6	->
+water	46:21	0:0	6	fmt_in
+op	46:27	0:0	6	.
+water	46:28	0:0	6	video
+op	46:33	0:0	6	.
+water	46:34	0:0	6	i_frame_rate_base
+op	46:52	0:0	6	/
+water	47:16	0:0	6	enc
+op	47:19	0:0	6	->
+water	47:21	0:0	6	fmt_in
+op	47:27	0:0	6	.
+water	47:28	0:0	6	video
+op	47:33	0:0	6	.
+water	47:34	0:0	6	i_frame_rate
+water	47:46	0:0	6	;
+if	49:12	50:62	6	(task -> bs . DecodeTimeStamp < - 10000)
+cond	49:16	49:44	7	task -> bs . DecodeTimeStamp < - 10000
+water	49:16	0:0	8	task
+op	49:20	0:0	8	->
+water	49:22	0:0	8	bs
+op	49:24	0:0	8	.
+water	49:25	0:0	8	DecodeTimeStamp
+op	49:41	0:0	8	<
+op	49:43	0:0	8	-
+water	49:44	0:0	8	10000
+stmts	50:16	50:62	7	
+water	50:16	0:0	8	block
+op	50:21	0:0	8	->
+water	50:23	0:0	8	i_dts
+op	50:29	0:0	8	=
+water	50:31	0:0	8	sys
+op	50:34	0:0	8	->
+water	50:36	0:0	8	last_dts
+op	50:45	0:0	8	+
+water	50:47	0:0	8	block
+op	50:52	0:0	8	->
+water	50:54	0:0	8	i_length
+water	50:62	0:0	8	;
+water	51:12	0:0	6	sys
+op	51:15	0:0	6	->
+water	51:17	0:0	6	last_dts
+op	51:26	0:0	6	=
+water	51:28	0:0	6	block
+op	51:33	0:0	6	->
+water	51:35	0:0	6	i_dts
+water	51:40	0:0	6	;
+water	52:8	0:0	6	}
+else	52:10	54:101	4
+stmts	53:12	54:101	5	
+call	53:12	54:100	6	msg_Err
+arg	53:20	53:23	7	enc
+water	53:20	0:0	8	enc
+arg	53:25	54:100	7	"SyncOperation failed, outputting garbage data. ""Updating your drivers and/or changing the encoding settings might resolve this"
+water	53:25	0:0	8	"SyncOperation failed, outputting garbage data. "
+water	54:20	0:0	8	"Updating your drivers and/or changing the encoding settings might resolve this"
+water	54:101	0:0	6	;
+water	56:8	0:0	4	task
+op	56:12	0:0	4	->
+water	56:14	0:0	4	syncp
+op	56:20	0:0	4	=
+water	56:22	0:0	4	0
+water	56:23	0:0	4	;
+water	57:8	0:0	4	sys
+op	57:11	0:0	4	->
+water	57:13	0:0	4	first_task
+op	57:24	0:0	4	=
+water	57:26	0:0	4	(
+water	57:27	0:0	4	sys
+op	57:30	0:0	4	->
+water	57:32	0:0	4	first_task
+op	57:43	0:0	4	+
+water	57:45	0:0	4	1
+water	57:46	0:0	4	)
+op	57:48	0:0	4	%
+water	57:50	0:0	4	sys
+op	57:53	0:0	4	->
+water	57:55	0:0	4	async_depth
+water	57:66	0:0	4	;
+water	58:4	0:0	4	}
+if	60:4	63:4	2	(! ( task -> block =block_Alloc (sys -> params . mfx . BufferSizeInKB * 1000 ) ))
+cond	60:8	60:74	3	! ( task -> block =block_Alloc (sys -> params . mfx . BufferSizeInKB * 1000 ) )
+op	60:8	0:0	4	!
+water	60:9	0:0	4	(
+water	60:10	0:0	4	task
+op	60:14	0:0	4	->
+water	60:16	0:0	4	block
+op	60:22	0:0	4	=
+call	60:24	60:73	4	block_Alloc
+arg	60:36	60:73	5	sys->params.mfx.BufferSizeInKB*1000
+water	60:36	0:0	6	sys
+op	60:39	0:0	6	->
+water	60:41	0:0	6	params
+op	60:47	0:0	6	.
+water	60:48	0:0	6	mfx
+op	60:51	0:0	6	.
+water	60:52	0:0	6	BufferSizeInKB
+op	60:67	0:0	6	*
+water	60:69	0:0	6	1000
+water	60:74	0:0	4	)
+stmts	60:77	63:4	3	
+water	60:77	0:0	4	{
+call	61:8	61:66	4	msg_Err
+arg	61:16	61:19	5	enc
+water	61:16	0:0	6	enc
+arg	61:21	61:66	5	"Unable to allocate block for encoder output"
+water	61:21	0:0	6	"Unable to allocate block for encoder output"
+water	61:67	0:0	4	;
+return	62:8	62:19	4	NULL
+water	62:15	0:0	5	NULL
+water	63:4	0:0	4	}
+call	64:4	64:41	2	memset
+arg	64:11	64:20	3	&task->bs
+op	64:11	0:0	4	&
+water	64:12	0:0	4	task
+op	64:16	0:0	4	->
+water	64:18	0:0	4	bs
+arg	64:22	64:23	3	0
+water	64:22	0:0	4	0
+arg	64:25	64:41	3	sizeof(task->bs)
+op	64:25	0:0	4	sizeof
+water	64:31	0:0	4	(
+water	64:32	0:0	4	task
+op	64:36	0:0	4	->
+water	64:38	0:0	4	bs
+water	64:40	0:0	4	)
+water	64:42	0:0	2	;
+water	65:4	0:0	2	task
+op	65:8	0:0	2	->
+water	65:10	0:0	2	bs
+op	65:12	0:0	2	.
+water	65:13	0:0	2	MaxLength
+op	65:23	0:0	2	=
+water	65:25	0:0	2	sys
+op	65:28	0:0	2	->
+water	65:30	0:0	2	params
+op	65:36	0:0	2	.
+water	65:37	0:0	2	mfx
+op	65:40	0:0	2	.
+water	65:41	0:0	2	BufferSizeInKB
+op	65:56	0:0	2	*
+water	65:58	0:0	2	1000
+water	65:62	0:0	2	;
+water	66:4	0:0	2	task
+op	66:8	0:0	2	->
+water	66:10	0:0	2	bs
+op	66:12	0:0	2	.
+water	66:13	0:0	2	Data
+op	66:18	0:0	2	=
+water	66:20	0:0	2	task
+op	66:24	0:0	2	->
+water	66:26	0:0	2	block
+op	66:31	0:0	2	->
+water	66:33	0:0	2	p_buffer
+water	66:41	0:0	2	;
+for	67:4	74:4	2	(;;)
+forinit	67:9	67:9	3	;
+water	67:9	0:0	4	;
+cond	0:0	0:0	3	
+forexpr	0:0	0:0	3	
+stmts	67:13	74:4	3	
+water	67:13	0:0	4	{
+water	68:8	0:0	4	sts
+op	68:12	0:0	4	=
+call	68:14	68:93	4	MFXVideoENCODE_EncodeFrameAsync
+arg	68:46	68:58	5	sys->session
+water	68:46	0:0	6	sys
+op	68:49	0:0	6	->
+water	68:51	0:0	6	session
+arg	68:60	68:61	5	0
+water	68:60	0:0	6	0
+arg	68:63	68:68	5	frame
+water	68:63	0:0	6	frame
+arg	68:70	68:79	5	&task->bs
+op	68:70	0:0	6	&
+water	68:71	0:0	6	task
+op	68:75	0:0	6	->
+water	68:77	0:0	6	bs
+arg	68:81	68:93	5	&task->syncp
+op	68:81	0:0	6	&
+water	68:82	0:0	6	task
+op	68:86	0:0	6	->
+water	68:88	0:0	6	syncp
+water	68:94	0:0	4	;
+if	69:8	70:17	4	(sts != MFX_WRN_DEVICE_BUSY)
+cond	69:12	69:19	5	sts != MFX_WRN_DEVICE_BUSY
+water	69:12	0:0	6	sts
+op	69:16	0:0	6	!=
+water	69:19	0:0	6	MFX_WRN_DEVICE_BUSY
+stmts	70:12	70:17	5	
+break	70:12	70:17	6	
+if	71:8	72:64	4	(sys -> busy_warn_counter ++ % 16 == 0)
+cond	71:12	71:45	5	sys -> busy_warn_counter ++ % 16 == 0
+water	71:12	0:0	6	sys
+op	71:15	0:0	6	->
+water	71:17	0:0	6	busy_warn_counter
+op	71:34	0:0	6	++
+op	71:37	0:0	6	%
+water	71:39	0:0	6	16
+op	71:42	0:0	6	==
+water	71:45	0:0	6	0
+stmts	72:12	72:64	5	
+call	72:12	72:63	6	msg_Dbg
+arg	72:20	72:23	7	enc
+water	72:20	0:0	8	enc
+arg	72:25	72:63	7	"Device is busy, let's wait and retry"
+water	72:25	0:0	8	"Device is busy, let's wait and retry"
+water	72:64	0:0	6	;
+call	73:8	73:32	4	msleep
+arg	73:15	73:32	5	QSV_BUSYWAIT_TIME
+water	73:15	0:0	6	QSV_BUSYWAIT_TIME
+water	73:33	0:0	4	;
+water	74:4	0:0	4	}
+if	76:4	78:71	2	(sts == MFX_ERR_MORE_DATA)
+cond	76:8	76:15	3	sts == MFX_ERR_MORE_DATA
+water	76:8	0:0	4	sts
+op	76:12	0:0	4	==
+water	76:15	0:0	4	MFX_ERR_MORE_DATA
+stmts	77:8	78:71	3	
+if	77:8	78:71	4	(pic)
+cond	77:12	77:12	5	pic
+water	77:12	0:0	6	pic
+stmts	78:12	78:71	5	
+call	78:12	78:70	6	msg_Dbg
+arg	78:20	78:23	7	enc
+water	78:20	0:0	8	enc
+arg	78:25	78:70	7	"Encoder feeding phase, more data is needed."
+water	78:25	0:0	8	"Encoder feeding phase, more data is needed."
+water	78:71	0:0	6	;
+else	79:8	80:44	2
+stmts	80:12	80:44	3	
+call	80:12	80:43	4	msg_Dbg
+arg	80:20	80:23	5	enc
+water	80:20	0:0	6	enc
+arg	80:25	80:43	5	"Encoder is empty"
+water	80:25	0:0	6	"Encoder is empty"
+water	80:44	0:0	4	;
+else	81:4	84:4	2
+stmts	81:9	84:4	3	
+if	81:9	84:4	4	(sts < MFX_ERR_NONE)
+cond	81:13	81:19	5	sts < MFX_ERR_NONE
+water	81:13	0:0	6	sts
+op	81:17	0:0	6	<
+water	81:19	0:0	6	MFX_ERR_NONE
+stmts	81:33	84:4	5	
+water	81:33	0:0	6	{
+call	82:8	82:78	6	msg_Err
+arg	82:16	82:19	7	enc
+water	82:16	0:0	8	enc
+arg	82:21	82:73	7	"Encoder not ready or error (%d), trying a reset..."
+water	82:21	0:0	8	"Encoder not ready or error (%d), trying a reset..."
+arg	82:75	82:78	7	sts
+water	82:75	0:0	8	sts
+water	82:79	0:0	6	;
+call	83:8	83:55	6	MFXVideoENCODE_Reset
+arg	83:29	83:41	7	sys->session
+water	83:29	0:0	8	sys
+op	83:32	0:0	8	->
+water	83:34	0:0	8	session
+arg	83:43	83:55	7	&sys->params
+op	83:43	0:0	8	&
+water	83:44	0:0	8	sys
+op	83:47	0:0	8	->
+water	83:49	0:0	8	params
+water	83:56	0:0	6	;
+water	84:4	0:0	6	}
+return	85:4	85:16	2	block
+water	85:11	0:0	3	block

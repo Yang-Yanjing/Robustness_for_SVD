@@ -1,0 +1,776 @@
+func	2:0	151:4	0	static int	Demux
+params	2:16	0:0	1	
+param	2:18	2:35	2	demux_t *	p_demux
+stmnts	0:0	150:51	1	
+decl	4:4	4:30	2	xml_reader_t	*p_xml_reader
+decl	5:4	5:20	2	const char	*node
+decl	6:4	6:25	2	input_item_t	*p_input
+decl	7:4	7:18	2	int	i_ret
+op	7:14	0:0	2	=
+op	7:16	0:0	2	-
+water	7:17	0:0	2	1
+decl	9:4	9:27	2	bool	b_autoplay
+op	9:20	0:0	2	=
+water	9:22	0:0	2	false
+decl	10:4	10:27	2	bool	b_controler
+op	10:21	0:0	2	=
+water	10:23	0:0	2	true
+decl	11:4	11:39	2	qtl_fullscreen_t	fullscreen
+op	11:32	0:0	2	=
+water	11:34	0:0	2	false
+decl	12:4	12:25	2	char	*psz_href
+op	12:19	0:0	2	=
+water	12:21	0:0	2	NULL
+decl	13:4	13:28	2	bool	b_kioskmode
+op	13:21	0:0	2	=
+water	13:23	0:0	2	false
+decl	14:4	14:32	2	qtl_loop_t	loop
+op	14:20	0:0	2	=
+water	14:22	0:0	2	LOOP_FALSE
+decl	15:4	15:22	2	int	i_movieid
+op	15:18	0:0	2	=
+op	15:20	0:0	2	-
+water	15:21	0:0	2	1
+decl	16:4	16:30	2	char	*psz_moviename
+op	16:24	0:0	2	=
+water	16:26	0:0	2	NULL
+decl	17:4	17:33	2	bool	b_playeveryframe
+op	17:26	0:0	2	=
+water	17:28	0:0	2	false
+decl	18:4	18:27	2	char	*psz_qtnext
+op	18:21	0:0	2	=
+water	18:23	0:0	2	NULL
+decl	19:4	19:31	2	bool	b_quitwhendone
+op	19:24	0:0	2	=
+water	19:26	0:0	2	false
+decl	20:4	20:24	2	char	*psz_src
+op	20:18	0:0	2	=
+water	20:20	0:0	2	NULL
+decl	21:4	21:29	2	char	*psz_mimetype
+op	21:23	0:0	2	=
+water	21:25	0:0	2	NULL
+decl	22:4	22:22	2	int	i_volume
+op	22:17	0:0	2	=
+water	22:19	0:0	2	100
+decl	23:4	23:59	2	input_item_t	*p_current_input
+op	23:34	0:0	2	=
+call	23:36	23:58	3	GetCurrentItem
+arg	23:51	23:58	4	p_demux
+water	23:51	0:0	5	p_demux
+water	24:4	0:0	2	p_xml_reader
+op	24:17	0:0	2	=
+call	24:19	24:57	2	xml_ReaderCreate
+arg	24:37	24:44	3	p_demux
+water	24:37	0:0	4	p_demux
+arg	24:46	24:57	3	p_demux->s
+water	24:46	0:0	4	p_demux
+op	24:53	0:0	4	->
+water	24:55	0:0	4	s
+water	24:58	0:0	2	;
+if	25:4	26:18	2	(! p_xml_reader)
+cond	25:8	25:9	3	! p_xml_reader
+op	25:8	0:0	4	!
+water	25:9	0:0	4	p_xml_reader
+stmts	26:8	26:18	3	
+goto	26:8	26:18	4	error
+water	26:13	0:0	5	error
+if	28:4	40:4	2	(xml_ReaderNextNode (p_xml_reader ,& node ) != XML_READER_STARTELEM ||strcmp (node ,"embed" ))
+cond	28:8	29:30	3	xml_ReaderNextNode (p_xml_reader ,& node ) != XML_READER_STARTELEM ||strcmp (node ,"embed" )
+call	28:8	28:48	4	xml_ReaderNextNode
+arg	28:28	28:40	5	p_xml_reader
+water	28:28	0:0	6	p_xml_reader
+arg	28:42	28:48	5	&node
+op	28:42	0:0	6	&
+water	28:43	0:0	6	node
+op	28:50	0:0	4	!=
+water	28:53	0:0	4	XML_READER_STARTELEM
+op	29:5	0:0	4	||
+call	29:8	29:30	4	strcmp
+arg	29:16	29:20	5	node
+water	29:16	0:0	6	node
+arg	29:22	29:30	5	"embed"
+water	29:22	0:0	6	"embed"
+stmts	30:4	40:4	3	
+water	30:4	0:0	4	{
+call	31:8	31:57	4	msg_Err
+arg	31:17	31:24	5	p_demux
+water	31:17	0:0	6	p_demux
+arg	31:26	31:50	5	"invalid root node <%s>"
+water	31:26	0:0	6	"invalid root node <%s>"
+arg	31:52	31:57	5	node
+water	31:52	0:0	6	node
+water	31:58	0:0	4	;
+call	33:8	33:57	4	msg_Dbg
+arg	33:17	33:24	5	p_demux
+water	33:17	0:0	6	p_demux
+arg	33:26	33:57	5	"trying to read one more node"
+water	33:26	0:0	6	"trying to read one more node"
+water	33:58	0:0	4	;
+if	34:8	39:8	4	(xml_ReaderNextNode (p_xml_reader ,& node ) != XML_READER_STARTELEM ||strcmp (node ,"embed" ))
+cond	34:12	35:34	5	xml_ReaderNextNode (p_xml_reader ,& node ) != XML_READER_STARTELEM ||strcmp (node ,"embed" )
+call	34:12	34:52	6	xml_ReaderNextNode
+arg	34:32	34:44	7	p_xml_reader
+water	34:32	0:0	8	p_xml_reader
+arg	34:46	34:52	7	&node
+op	34:46	0:0	8	&
+water	34:47	0:0	8	node
+op	34:54	0:0	6	!=
+water	34:57	0:0	6	XML_READER_STARTELEM
+op	35:9	0:0	6	||
+call	35:12	35:34	6	strcmp
+arg	35:20	35:24	7	node
+water	35:20	0:0	8	node
+arg	35:26	35:34	7	"embed"
+water	35:26	0:0	8	"embed"
+stmts	36:8	39:8	5	
+water	36:8	0:0	6	{
+call	37:12	37:61	6	msg_Err
+arg	37:21	37:28	7	p_demux
+water	37:21	0:0	8	p_demux
+arg	37:30	37:54	7	"invalid root node <%s>"
+water	37:30	0:0	8	"invalid root node <%s>"
+arg	37:56	37:61	7	node
+water	37:56	0:0	8	node
+water	37:62	0:0	6	;
+goto	38:12	38:22	6	error
+water	38:17	0:0	7	error
+water	39:8	0:0	6	}
+water	40:4	0:0	4	}
+decl	41:4	41:32	2	const char	*attrname
+water	41:24	0:0	2	,
+decl	41:4	41:32	2	const char	*value
+while	42:4	108:4	2	(( attrname =xml_ReaderNextAttr (p_xml_reader ,& value ) ) != NULL)
+cond	42:11	42:70	3	( attrname =xml_ReaderNextAttr (p_xml_reader ,& value ) ) != NULL
+water	42:11	0:0	4	(
+water	42:12	0:0	4	attrname
+op	42:21	0:0	4	=
+call	42:23	42:64	4	xml_ReaderNextAttr
+arg	42:43	42:55	5	p_xml_reader
+water	42:43	0:0	6	p_xml_reader
+arg	42:57	42:64	5	&value
+op	42:57	0:0	6	&
+water	42:58	0:0	6	value
+water	42:65	0:0	4	)
+op	42:67	0:0	4	!=
+water	42:70	0:0	4	NULL
+stmts	43:4	108:4	3	
+water	43:4	0:0	4	{
+if	44:8	45:49	4	(!strcmp (attrname ,"autoplay" ))
+cond	44:12	44:42	5	!strcmp (attrname ,"autoplay" )
+op	44:12	0:0	6	!
+call	44:13	44:42	6	strcmp
+arg	44:21	44:29	7	attrname
+water	44:21	0:0	8	attrname
+arg	44:31	44:42	7	"autoplay"
+water	44:31	0:0	8	"autoplay"
+stmts	45:12	45:49	5	
+water	45:12	0:0	6	b_autoplay
+op	45:23	0:0	6	=
+op	45:25	0:0	6	!
+call	45:26	45:48	6	strcmp
+arg	45:34	45:39	7	value
+water	45:34	0:0	8	value
+arg	45:41	45:48	7	"true"
+water	45:41	0:0	8	"true"
+water	45:49	0:0	6	;
+else	46:8	47:54	4
+stmts	46:13	47:54	5	
+if	46:13	47:54	6	(!strcmp (attrname ,"controler" ))
+cond	46:17	46:48	7	!strcmp (attrname ,"controler" )
+op	46:17	0:0	8	!
+call	46:18	46:48	8	strcmp
+arg	46:26	46:34	9	attrname
+water	46:26	0:0	10	attrname
+arg	46:36	46:48	9	"controler"
+water	46:36	0:0	10	"controler"
+stmts	47:12	47:54	7	
+water	47:12	0:0	8	b_controler
+op	47:24	0:0	8	=
+op	47:26	0:0	8	!
+call	47:27	47:53	8	strcmp
+arg	47:35	47:43	9	attrname
+water	47:35	0:0	10	attrname
+arg	47:45	47:53	9	"false"
+water	47:45	0:0	10	"false"
+water	47:54	0:0	8	;
+else	48:8	60:8	4
+stmts	48:13	60:8	5	
+if	48:13	60:8	6	(!strcmp (attrname ,"fullscreen" ))
+cond	48:17	48:49	7	!strcmp (attrname ,"fullscreen" )
+op	48:17	0:0	8	!
+call	48:18	48:49	8	strcmp
+arg	48:26	48:34	9	attrname
+water	48:26	0:0	10	attrname
+arg	48:36	48:49	9	"fullscreen"
+water	48:36	0:0	10	"fullscreen"
+stmts	49:8	60:8	7	
+water	49:8	0:0	8	{
+if	50:12	51:46	8	(!strcmp (value ,"double" ))
+cond	50:16	50:41	9	!strcmp (value ,"double" )
+op	50:16	0:0	10	!
+call	50:17	50:41	10	strcmp
+arg	50:25	50:30	11	value
+water	50:25	0:0	12	value
+arg	50:32	50:41	11	"double"
+water	50:32	0:0	12	"double"
+stmts	51:16	51:46	9	
+water	51:16	0:0	10	fullscreen
+op	51:27	0:0	10	=
+water	51:29	0:0	10	FULLSCREEN_DOUBLE
+water	51:46	0:0	10	;
+else	52:12	53:44	8
+stmts	52:17	53:44	9	
+if	52:17	53:44	10	(!strcmp (value ,"half" ))
+cond	52:21	52:44	11	!strcmp (value ,"half" )
+op	52:21	0:0	12	!
+call	52:22	52:44	12	strcmp
+arg	52:30	52:35	13	value
+water	52:30	0:0	14	value
+arg	52:37	52:44	13	"half"
+water	52:37	0:0	14	"half"
+stmts	53:16	53:44	11	
+water	53:16	0:0	12	fullscreen
+op	53:27	0:0	12	=
+water	53:29	0:0	12	FULLSCREEN_HALF
+water	53:44	0:0	12	;
+else	54:12	55:47	8
+stmts	54:17	55:47	9	
+if	54:17	55:47	10	(!strcmp (value ,"current" ))
+cond	54:21	54:47	11	!strcmp (value ,"current" )
+op	54:21	0:0	12	!
+call	54:22	54:47	12	strcmp
+arg	54:30	54:35	13	value
+water	54:30	0:0	14	value
+arg	54:37	54:47	13	"current"
+water	54:37	0:0	14	"current"
+stmts	55:16	55:47	11	
+water	55:16	0:0	12	fullscreen
+op	55:27	0:0	12	=
+water	55:29	0:0	12	FULLSCREEN_CURRENT
+water	55:47	0:0	12	;
+else	56:12	57:44	8
+stmts	56:17	57:44	9	
+if	56:17	57:44	10	(!strcmp (value ,"full" ))
+cond	56:21	56:44	11	!strcmp (value ,"full" )
+op	56:21	0:0	12	!
+call	56:22	56:44	12	strcmp
+arg	56:30	56:35	13	value
+water	56:30	0:0	14	value
+arg	56:37	56:44	13	"full"
+water	56:37	0:0	14	"full"
+stmts	57:16	57:44	11	
+water	57:16	0:0	12	fullscreen
+op	57:27	0:0	12	=
+water	57:29	0:0	12	FULLSCREEN_FULL
+water	57:44	0:0	12	;
+else	58:12	59:46	8
+stmts	59:16	59:46	9	
+water	59:16	0:0	10	fullscreen
+op	59:27	0:0	10	=
+water	59:29	0:0	10	FULLSCREEN_NORMAL
+water	59:46	0:0	10	;
+water	60:8	0:0	8	}
+else	61:8	65:8	4
+stmts	61:13	65:8	5	
+if	61:13	65:8	6	(!strcmp (attrname ,"href" ))
+cond	61:17	61:43	7	!strcmp (attrname ,"href" )
+op	61:17	0:0	8	!
+call	61:18	61:43	8	strcmp
+arg	61:26	61:34	9	attrname
+water	61:26	0:0	10	attrname
+arg	61:36	61:43	9	"href"
+water	61:36	0:0	10	"href"
+stmts	62:8	65:8	7	
+water	62:8	0:0	8	{
+call	63:12	63:27	8	free
+arg	63:18	63:27	9	psz_href
+water	63:18	0:0	10	psz_href
+water	63:28	0:0	8	;
+water	64:12	0:0	8	psz_href
+op	64:21	0:0	8	=
+call	64:23	64:37	8	strdup
+arg	64:31	64:37	9	value
+water	64:31	0:0	10	value
+water	64:38	0:0	8	;
+water	65:8	0:0	8	}
+else	66:8	67:50	4
+stmts	66:13	67:50	5	
+if	66:13	67:50	6	(!strcmp (attrname ,"kioskmode" ))
+cond	66:17	66:48	7	!strcmp (attrname ,"kioskmode" )
+op	66:17	0:0	8	!
+call	66:18	66:48	8	strcmp
+arg	66:26	66:34	9	attrname
+water	66:26	0:0	10	attrname
+arg	66:36	66:48	9	"kioskmode"
+water	66:36	0:0	10	"kioskmode"
+stmts	67:12	67:50	7	
+water	67:12	0:0	8	b_kioskmode
+op	67:24	0:0	8	=
+op	67:26	0:0	8	!
+call	67:27	67:49	8	strcmp
+arg	67:35	67:40	9	value
+water	67:35	0:0	10	value
+arg	67:42	67:49	9	"true"
+water	67:42	0:0	10	"true"
+water	67:50	0:0	8	;
+else	68:8	76:8	4
+stmts	68:13	76:8	5	
+if	68:13	76:8	6	(!strcmp (attrname ,"loop" ))
+cond	68:17	68:43	7	!strcmp (attrname ,"loop" )
+op	68:17	0:0	8	!
+call	68:18	68:43	8	strcmp
+arg	68:26	68:34	9	attrname
+water	68:26	0:0	10	attrname
+arg	68:36	68:43	9	"loop"
+water	68:36	0:0	10	"loop"
+stmts	69:8	76:8	7	
+water	69:8	0:0	8	{
+if	70:12	71:32	8	(!strcmp (value ,"true" ))
+cond	70:16	70:39	9	!strcmp (value ,"true" )
+op	70:16	0:0	10	!
+call	70:17	70:39	10	strcmp
+arg	70:25	70:30	11	value
+water	70:25	0:0	12	value
+arg	70:32	70:39	11	"true"
+water	70:32	0:0	12	"true"
+stmts	71:16	71:32	9	
+water	71:16	0:0	10	loop
+op	71:21	0:0	10	=
+water	71:23	0:0	10	LOOP_TRUE
+water	71:32	0:0	10	;
+else	72:12	73:38	8
+stmts	72:17	73:38	9	
+if	72:17	73:38	10	(!strcmp (value ,"palindrome" ))
+cond	72:21	72:50	11	!strcmp (value ,"palindrome" )
+op	72:21	0:0	12	!
+call	72:22	72:50	12	strcmp
+arg	72:30	72:35	13	value
+water	72:30	0:0	14	value
+arg	72:37	72:50	13	"palindrome"
+water	72:37	0:0	14	"palindrome"
+stmts	73:16	73:38	11	
+water	73:16	0:0	12	loop
+op	73:21	0:0	12	=
+water	73:23	0:0	12	LOOP_PALINDROME
+water	73:38	0:0	12	;
+else	74:12	75:33	8
+stmts	75:16	75:33	9	
+water	75:16	0:0	10	loop
+op	75:21	0:0	10	=
+water	75:23	0:0	10	LOOP_FALSE
+water	75:33	0:0	10	;
+water	76:8	0:0	8	}
+else	77:8	78:37	4
+stmts	77:13	78:37	5	
+if	77:13	78:37	6	(!strcmp (attrname ,"movieid" ))
+cond	77:17	77:46	7	!strcmp (attrname ,"movieid" )
+op	77:17	0:0	8	!
+call	77:18	77:46	8	strcmp
+arg	77:26	77:34	9	attrname
+water	77:26	0:0	10	attrname
+arg	77:36	77:46	9	"movieid"
+water	77:36	0:0	10	"movieid"
+stmts	78:12	78:37	7	
+water	78:12	0:0	8	i_movieid
+op	78:22	0:0	8	=
+call	78:24	78:36	8	atoi
+arg	78:30	78:36	9	value
+water	78:30	0:0	10	value
+water	78:37	0:0	8	;
+else	79:8	83:8	4
+stmts	79:13	83:8	5	
+if	79:13	83:8	6	(!strcmp (attrname ,"moviename" ))
+cond	79:17	79:48	7	!strcmp (attrname ,"moviename" )
+op	79:17	0:0	8	!
+call	79:18	79:48	8	strcmp
+arg	79:26	79:34	9	attrname
+water	79:26	0:0	10	attrname
+arg	79:36	79:48	9	"moviename"
+water	79:36	0:0	10	"moviename"
+stmts	80:8	83:8	7	
+water	80:8	0:0	8	{
+call	81:12	81:32	8	free
+arg	81:18	81:32	9	psz_moviename
+water	81:18	0:0	10	psz_moviename
+water	81:33	0:0	8	;
+water	82:12	0:0	8	psz_moviename
+op	82:26	0:0	8	=
+call	82:28	82:42	8	strdup
+arg	82:36	82:42	9	value
+water	82:36	0:0	10	value
+water	82:43	0:0	8	;
+water	83:8	0:0	8	}
+else	84:8	85:55	4
+stmts	84:13	85:55	5	
+if	84:13	85:55	6	(!strcmp (attrname ,"playeveryframe" ))
+cond	84:17	84:53	7	!strcmp (attrname ,"playeveryframe" )
+op	84:17	0:0	8	!
+call	84:18	84:53	8	strcmp
+arg	84:26	84:34	9	attrname
+water	84:26	0:0	10	attrname
+arg	84:36	84:53	9	"playeveryframe"
+water	84:36	0:0	10	"playeveryframe"
+stmts	85:12	85:55	7	
+water	85:12	0:0	8	b_playeveryframe
+op	85:29	0:0	8	=
+op	85:31	0:0	8	!
+call	85:32	85:54	8	strcmp
+arg	85:40	85:45	9	value
+water	85:40	0:0	10	value
+arg	85:47	85:54	9	"true"
+water	85:47	0:0	10	"true"
+water	85:55	0:0	8	;
+else	86:8	90:8	4
+stmts	86:13	90:8	5	
+if	86:13	90:8	6	(!strcmp (attrname ,"qtnext" ))
+cond	86:17	86:45	7	!strcmp (attrname ,"qtnext" )
+op	86:17	0:0	8	!
+call	86:18	86:45	8	strcmp
+arg	86:26	86:34	9	attrname
+water	86:26	0:0	10	attrname
+arg	86:36	86:45	9	"qtnext"
+water	86:36	0:0	10	"qtnext"
+stmts	87:8	90:8	7	
+water	87:8	0:0	8	{
+call	88:12	88:29	8	free
+arg	88:18	88:29	9	psz_qtnext
+water	88:18	0:0	10	psz_qtnext
+water	88:30	0:0	8	;
+water	89:12	0:0	8	psz_qtnext
+op	89:23	0:0	8	=
+call	89:25	89:39	8	strdup
+arg	89:33	89:39	9	value
+water	89:33	0:0	10	value
+water	89:40	0:0	8	;
+water	90:8	0:0	8	}
+else	91:8	92:53	4
+stmts	91:13	92:53	5	
+if	91:13	92:53	6	(!strcmp (attrname ,"quitwhendone" ))
+cond	91:17	91:51	7	!strcmp (attrname ,"quitwhendone" )
+op	91:17	0:0	8	!
+call	91:18	91:51	8	strcmp
+arg	91:26	91:34	9	attrname
+water	91:26	0:0	10	attrname
+arg	91:36	91:51	9	"quitwhendone"
+water	91:36	0:0	10	"quitwhendone"
+stmts	92:12	92:53	7	
+water	92:12	0:0	8	b_quitwhendone
+op	92:27	0:0	8	=
+op	92:29	0:0	8	!
+call	92:30	92:52	8	strcmp
+arg	92:38	92:43	9	value
+water	92:38	0:0	10	value
+arg	92:45	92:52	9	"true"
+water	92:45	0:0	10	"true"
+water	92:53	0:0	8	;
+else	93:8	97:8	4
+stmts	93:13	97:8	5	
+if	93:13	97:8	6	(!strcmp (attrname ,"src" ))
+cond	93:17	93:42	7	!strcmp (attrname ,"src" )
+op	93:17	0:0	8	!
+call	93:18	93:42	8	strcmp
+arg	93:26	93:34	9	attrname
+water	93:26	0:0	10	attrname
+arg	93:36	93:42	9	"src"
+water	93:36	0:0	10	"src"
+stmts	94:8	97:8	7	
+water	94:8	0:0	8	{
+call	95:12	95:26	8	free
+arg	95:18	95:26	9	psz_src
+water	95:18	0:0	10	psz_src
+water	95:27	0:0	8	;
+water	96:12	0:0	8	psz_src
+op	96:20	0:0	8	=
+call	96:22	96:36	8	strdup
+arg	96:30	96:36	9	value
+water	96:30	0:0	10	value
+water	96:37	0:0	8	;
+water	97:8	0:0	8	}
+else	98:8	102:8	4
+stmts	98:13	102:8	5	
+if	98:13	102:8	6	(!strcmp (attrname ,"mimetype" ))
+cond	98:17	98:47	7	!strcmp (attrname ,"mimetype" )
+op	98:17	0:0	8	!
+call	98:18	98:47	8	strcmp
+arg	98:26	98:34	9	attrname
+water	98:26	0:0	10	attrname
+arg	98:36	98:47	9	"mimetype"
+water	98:36	0:0	10	"mimetype"
+stmts	99:8	102:8	7	
+water	99:8	0:0	8	{
+call	100:12	100:31	8	free
+arg	100:18	100:31	9	psz_mimetype
+water	100:18	0:0	10	psz_mimetype
+water	100:32	0:0	8	;
+water	101:12	0:0	8	psz_mimetype
+op	101:25	0:0	8	=
+call	101:27	101:41	8	strdup
+arg	101:35	101:41	9	value
+water	101:35	0:0	10	value
+water	101:42	0:0	8	;
+water	102:8	0:0	8	}
+else	103:8	104:36	4
+stmts	103:13	104:36	5	
+if	103:13	104:36	6	(!strcmp (attrname ,"volume" ))
+cond	103:17	103:45	7	!strcmp (attrname ,"volume" )
+op	103:17	0:0	8	!
+call	103:18	103:45	8	strcmp
+arg	103:26	103:34	9	attrname
+water	103:26	0:0	10	attrname
+arg	103:36	103:45	9	"volume"
+water	103:36	0:0	10	"volume"
+stmts	104:12	104:36	7	
+water	104:12	0:0	8	i_volume
+op	104:21	0:0	8	=
+call	104:23	104:35	8	atoi
+arg	104:29	104:35	9	value
+water	104:29	0:0	10	value
+water	104:36	0:0	8	;
+else	105:8	107:38	4
+stmts	106:12	107:38	5	
+call	106:12	107:37	6	msg_Dbg
+arg	106:21	106:28	7	p_demux
+water	106:21	0:0	8	p_demux
+arg	106:30	106:70	7	"Attribute %s with value %s isn't valid"
+water	106:30	0:0	8	"Attribute %s with value %s isn't valid"
+arg	107:21	107:29	7	attrname
+water	107:21	0:0	8	attrname
+arg	107:31	107:37	7	value
+water	107:31	0:0	8	value
+water	107:38	0:0	6	;
+water	108:4	0:0	4	}
+call	109:4	110:42	2	msg_Dbg
+arg	109:13	109:20	3	p_demux
+water	109:13	0:0	4	p_demux
+arg	109:22	109:52	3	"autoplay: %s (unused by VLC)"
+water	109:22	0:0	4	"autoplay: %s (unused by VLC)"
+arg	110:13	110:42	3	b_autoplay?"true":"false"
+water	110:13	0:0	4	b_autoplay
+water	110:24	0:0	4	?
+water	110:26	0:0	4	"true"
+water	110:32	0:0	4	:
+water	110:34	0:0	4	"false"
+water	110:43	0:0	2	;
+call	111:4	112:43	2	msg_Dbg
+arg	111:13	111:20	3	p_demux
+water	111:13	0:0	4	p_demux
+arg	111:22	111:53	3	"controler: %s (unused by VLC)"
+water	111:22	0:0	4	"controler: %s (unused by VLC)"
+arg	112:13	112:43	3	b_controler?"true":"false"
+water	112:13	0:0	4	b_controler
+water	112:25	0:0	4	?
+water	112:27	0:0	4	"true"
+water	112:33	0:0	4	:
+water	112:35	0:0	4	"false"
+water	112:44	0:0	2	;
+call	113:4	114:41	2	msg_Dbg
+arg	113:13	113:20	3	p_demux
+water	113:13	0:0	4	p_demux
+arg	113:22	113:54	3	"fullscreen: %s (unused by VLC)"
+water	113:22	0:0	4	"fullscreen: %s (unused by VLC)"
+arg	114:13	114:41	3	ppsz_fullscreen[fullscreen]
+water	114:13	0:0	4	ppsz_fullscreen
+op	114:28	0:0	4	[
+water	114:29	0:0	4	fullscreen
+op	114:39	0:0	4	]
+water	114:42	0:0	2	;
+call	115:4	115:43	2	msg_Dbg
+arg	115:13	115:20	3	p_demux
+water	115:13	0:0	4	p_demux
+arg	115:22	115:32	3	"href: %s"
+water	115:22	0:0	4	"href: %s"
+arg	115:34	115:43	3	psz_href
+water	115:34	0:0	4	psz_href
+water	115:44	0:0	2	;
+call	116:4	117:42	2	msg_Dbg
+arg	116:13	116:20	3	p_demux
+water	116:13	0:0	4	p_demux
+arg	116:22	116:53	3	"kioskmode: %s (unused by VLC)"
+water	116:22	0:0	4	"kioskmode: %s (unused by VLC)"
+arg	117:13	117:42	3	b_kioskmode?"true":"false"
+water	117:13	0:0	4	b_kioskmode
+water	117:25	0:0	4	?
+water	117:27	0:0	4	"true"
+water	117:33	0:0	4	:
+water	117:34	0:0	4	"false"
+water	117:43	0:0	2	;
+call	118:4	118:66	2	msg_Dbg
+arg	118:13	118:20	3	p_demux
+water	118:13	0:0	4	p_demux
+arg	118:22	118:48	3	"loop: %s (unused by VLC)"
+water	118:22	0:0	4	"loop: %s (unused by VLC)"
+arg	118:50	118:66	3	ppsz_loop[loop]
+water	118:50	0:0	4	ppsz_loop
+op	118:59	0:0	4	[
+water	118:60	0:0	4	loop
+op	118:64	0:0	4	]
+water	118:67	0:0	2	;
+call	119:4	119:63	2	msg_Dbg
+arg	119:13	119:20	3	p_demux
+water	119:13	0:0	4	p_demux
+arg	119:22	119:51	3	"movieid: %d (unused by VLC)"
+water	119:22	0:0	4	"movieid: %d (unused by VLC)"
+arg	119:53	119:63	3	i_movieid
+water	119:53	0:0	4	i_movieid
+water	119:64	0:0	2	;
+call	120:4	120:53	2	msg_Dbg
+arg	120:13	120:20	3	p_demux
+water	120:13	0:0	4	p_demux
+arg	120:22	120:37	3	"moviename: %s"
+water	120:22	0:0	4	"moviename: %s"
+arg	120:39	120:53	3	psz_moviename
+water	120:39	0:0	4	psz_moviename
+water	120:54	0:0	2	;
+call	121:4	122:47	2	msg_Dbg
+arg	121:13	121:20	3	p_demux
+water	121:13	0:0	4	p_demux
+arg	121:22	121:57	3	"playeverframe: %s (unused by VLC)"
+water	121:22	0:0	4	"playeverframe: %s (unused by VLC)"
+arg	122:13	122:47	3	b_playeveryframe?"true":"false"
+water	122:13	0:0	4	b_playeveryframe
+water	122:30	0:0	4	?
+water	122:32	0:0	4	"true"
+water	122:38	0:0	4	:
+water	122:39	0:0	4	"false"
+water	122:48	0:0	2	;
+call	123:4	123:47	2	msg_Dbg
+arg	123:13	123:20	3	p_demux
+water	123:13	0:0	4	p_demux
+arg	123:22	123:34	3	"qtnext: %s"
+water	123:22	0:0	4	"qtnext: %s"
+arg	123:36	123:47	3	psz_qtnext
+water	123:36	0:0	4	psz_qtnext
+water	123:48	0:0	2	;
+call	124:4	125:45	2	msg_Dbg
+arg	124:13	124:20	3	p_demux
+water	124:13	0:0	4	p_demux
+arg	124:22	124:56	3	"quitwhendone: %s (unused by VLC)"
+water	124:22	0:0	4	"quitwhendone: %s (unused by VLC)"
+arg	125:13	125:45	3	b_quitwhendone?"true":"false"
+water	125:13	0:0	4	b_quitwhendone
+water	125:28	0:0	4	?
+water	125:30	0:0	4	"true"
+water	125:36	0:0	4	:
+water	125:37	0:0	4	"false"
+water	125:46	0:0	2	;
+call	126:4	126:41	2	msg_Dbg
+arg	126:13	126:20	3	p_demux
+water	126:13	0:0	4	p_demux
+arg	126:22	126:31	3	"src: %s"
+water	126:22	0:0	4	"src: %s"
+arg	126:33	126:41	3	psz_src
+water	126:33	0:0	4	psz_src
+water	126:42	0:0	2	;
+call	127:4	127:51	2	msg_Dbg
+arg	127:13	127:20	3	p_demux
+water	127:13	0:0	4	p_demux
+arg	127:22	127:36	3	"mimetype: %s"
+water	127:22	0:0	4	"mimetype: %s"
+arg	127:38	127:51	3	psz_mimetype
+water	127:38	0:0	4	psz_mimetype
+water	127:52	0:0	2	;
+call	128:4	128:61	2	msg_Dbg
+arg	128:13	128:20	3	p_demux
+water	128:13	0:0	4	p_demux
+arg	128:22	128:50	3	"volume: %d (unused by VLC)"
+water	128:22	0:0	4	"volume: %d (unused by VLC)"
+arg	128:52	128:61	3	i_volume
+water	128:52	0:0	4	i_volume
+water	128:62	0:0	2	;
+if	129:4	132:4	2	(! psz_src)
+cond	129:8	129:9	3	! psz_src
+op	129:8	0:0	4	!
+water	129:9	0:0	4	psz_src
+stmts	130:4	132:4	3	
+water	130:4	0:0	4	{
+call	131:8	131:64	4	msg_Err
+arg	131:17	131:24	5	p_demux
+water	131:17	0:0	6	p_demux
+arg	131:26	131:64	5	"Mandatory attribute 'src' not found"
+water	131:26	0:0	6	"Mandatory attribute 'src' not found"
+water	131:65	0:0	4	;
+water	132:4	0:0	4	}
+else	133:4	138:75	2
+stmts	134:4	138:75	3	
+water	134:4	0:0	4	{
+decl	135:8	135:81	4	input_item_node_t	*p_subitems
+op	135:38	0:0	4	=
+call	135:40	135:80	5	input_item_node_Create
+arg	135:64	135:80	6	p_current_input
+water	135:64	0:0	7	p_current_input
+water	136:8	0:0	4	p_input
+op	136:16	0:0	4	=
+call	136:18	136:57	4	input_item_New
+arg	136:34	136:41	5	psz_src
+water	136:34	0:0	6	psz_src
+arg	136:43	136:57	5	psz_moviename
+water	136:43	0:0	6	psz_moviename
+water	136:58	0:0	4	;
+water	138:20	0:0	4	p_input
+water	138:27	0:0	4	,
+water	138:29	0:0	4	"QuickTime Media Link"
+water	138:51	0:0	4	,
+water	138:53	0:0	4	type
+water	138:57	0:0	4	,
+water	138:59	0:0	4	"%s"
+water	138:63	0:0	4	,
+water	138:65	0:0	4	field
+water	138:71	0:0	4	)
+water	138:73	0:0	4	;
+water	138:75	0:0	4	}
+call	139:8	139:36	2	SADD_INFO
+arg	139:19	139:25	3	"href"
+water	139:19	0:0	4	"href"
+arg	139:27	139:36	3	psz_href
+water	139:27	0:0	4	psz_href
+water	139:37	0:0	2	;
+call	140:8	140:43	2	SADD_INFO
+arg	140:19	140:28	3	_("Mime")
+call	140:19	140:27	4	_
+arg	140:21	140:27	5	"Mime"
+water	140:21	0:0	6	"Mime"
+arg	140:30	140:43	3	psz_mimetype
+water	140:30	0:0	4	psz_mimetype
+water	140:44	0:0	2	;
+call	141:8	141:56	2	input_item_node_AppendItem
+arg	141:36	141:46	3	p_subitems
+water	141:36	0:0	4	p_subitems
+arg	141:48	141:56	3	p_input
+water	141:48	0:0	4	p_input
+water	141:57	0:0	2	;
+call	142:8	142:31	2	vlc_gc_decref
+arg	142:23	142:31	3	p_input
+water	142:23	0:0	4	p_input
+water	142:32	0:0	2	;
+if	143:8	149:8	2	(psz_qtnext)
+cond	143:12	143:12	3	psz_qtnext
+water	143:12	0:0	4	psz_qtnext
+stmts	144:8	149:8	3	
+water	144:8	0:0	4	{
+call	145:12	145:50	4	resolve_xml_special_chars
+arg	145:39	145:50	5	psz_qtnext
+water	145:39	0:0	6	psz_qtnext
+water	145:51	0:0	4	;
+water	146:12	0:0	4	p_input
+op	146:20	0:0	4	=
+call	146:22	146:55	4	input_item_New
+arg	146:38	146:48	5	psz_qtnext
+water	146:38	0:0	6	psz_qtnext
+arg	146:50	146:55	5	NULL
+water	146:50	0:0	6	NULL
+water	146:56	0:0	4	;
+call	147:12	147:60	4	input_item_node_AppendItem
+arg	147:40	147:50	5	p_subitems
+water	147:40	0:0	6	p_subitems
+arg	147:52	147:60	5	p_input
+water	147:52	0:0	6	p_input
+water	147:61	0:0	4	;
+call	148:12	148:35	4	vlc_gc_decref
+arg	148:27	148:35	5	p_input
+water	148:27	0:0	6	p_input
+water	148:36	0:0	4	;
+water	149:8	0:0	4	}
+call	150:8	150:50	2	input_item_node_PostAndDelete
+arg	150:39	150:50	3	p_subitems
+water	150:39	0:0	4	p_subitems
+water	150:51	0:0	2	;

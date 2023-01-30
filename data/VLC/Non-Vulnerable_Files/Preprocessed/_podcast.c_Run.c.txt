@@ -1,0 +1,198 @@
+func	2:0	40:0	0	static void *	Run
+params	2:16	0:0	1	
+param	2:18	2:29	2	void *	data
+stmnts	0:0	39:13	1	
+decl	4:4	4:37	2	services_discovery_t	*p_sd
+op	4:31	0:0	2	=
+water	4:33	0:0	2	data
+decl	5:4	5:50	2	services_discovery_sys_t	*p_sys
+op	5:37	0:0	2	=
+water	5:39	0:0	2	p_sd
+op	5:43	0:0	2	->
+water	5:45	0:0	2	p_sys
+call	6:4	6:33	2	vlc_mutex_lock
+arg	6:20	6:33	3	&p_sys->lock
+op	6:20	0:0	4	&
+water	6:21	0:0	4	p_sys
+op	6:26	0:0	4	->
+water	6:28	0:0	4	lock
+water	6:34	0:0	2	;
+call	7:4	7:37	2	mutex_cleanup_push
+arg	7:24	7:37	3	&p_sys->lock
+op	7:24	0:0	4	&
+water	7:25	0:0	4	p_sys
+op	7:30	0:0	4	->
+water	7:32	0:0	4	lock
+water	7:38	0:0	2	;
+for	8:4	37:4	2	(;;)
+forinit	8:9	8:9	3	;
+water	8:9	0:0	4	;
+cond	0:0	0:0	3	
+forexpr	0:0	0:0	3	
+stmts	9:4	37:4	3	
+water	9:4	0:0	4	{
+while	10:8	11:55	4	(! p_sys -> b_update)
+cond	10:15	10:23	5	! p_sys -> b_update
+op	10:15	0:0	6	!
+water	10:16	0:0	6	p_sys
+op	10:21	0:0	6	->
+water	10:23	0:0	6	b_update
+stmts	11:12	11:55	5	
+call	11:12	11:54	6	vlc_cond_wait
+arg	11:27	11:39	7	&p_sys->wait
+op	11:27	0:0	8	&
+water	11:28	0:0	8	p_sys
+op	11:33	0:0	8	->
+water	11:35	0:0	8	wait
+arg	11:41	11:54	7	&p_sys->lock
+op	11:41	0:0	8	&
+water	11:42	0:0	8	p_sys
+op	11:47	0:0	8	->
+water	11:49	0:0	8	lock
+water	11:55	0:0	6	;
+decl	12:8	12:36	4	int	canc
+op	12:17	0:0	4	=
+call	12:19	12:35	5	vlc_savecancel
+call	13:8	13:41	4	msg_Dbg
+arg	13:17	13:21	5	p_sd
+water	13:17	0:0	6	p_sd
+arg	13:23	13:41	5	"Update required"
+water	13:23	0:0	6	"Update required"
+water	13:42	0:0	4	;
+if	14:8	20:8	4	(p_sys -> update_type == UPDATE_URLS)
+cond	14:12	14:34	5	p_sys -> update_type == UPDATE_URLS
+water	14:12	0:0	6	p_sys
+op	14:17	0:0	6	->
+water	14:19	0:0	6	update_type
+op	14:31	0:0	6	==
+water	14:34	0:0	6	UPDATE_URLS
+stmts	15:8	20:8	5	
+water	15:8	0:0	6	{
+decl	16:12	17:68	6	char	*psz_urls
+op	16:27	0:0	6	=
+call	16:29	17:67	7	var_GetNonEmptyString
+arg	16:52	16:66	8	p_sd->p_parent
+water	16:52	0:0	9	p_sd
+op	16:56	0:0	9	->
+water	16:58	0:0	9	p_parent
+arg	17:52	17:67	8	"podcast-urls"
+water	17:52	0:0	9	"podcast-urls"
+call	18:12	18:38	6	ParseUrls
+arg	18:23	18:27	7	p_sd
+water	18:23	0:0	8	p_sd
+arg	18:29	18:38	7	psz_urls
+water	18:29	0:0	8	psz_urls
+water	18:39	0:0	6	;
+call	19:12	19:27	6	free
+arg	19:18	19:27	7	psz_urls
+water	19:18	0:0	8	psz_urls
+water	19:28	0:0	6	;
+water	20:8	0:0	6	}
+else	21:8	22:32	4
+stmts	21:13	22:32	5	
+if	21:13	22:32	6	(p_sys -> update_type == UPDATE_REQUEST)
+cond	21:17	21:39	7	p_sys -> update_type == UPDATE_REQUEST
+water	21:17	0:0	8	p_sys
+op	21:22	0:0	8	->
+water	21:24	0:0	8	update_type
+op	21:36	0:0	8	==
+water	21:39	0:0	8	UPDATE_REQUEST
+stmts	22:12	22:32	7	
+call	22:12	22:31	8	ParseRequest
+arg	22:26	22:31	9	p_sd
+water	22:26	0:0	10	p_sd
+water	22:32	0:0	8	;
+water	23:8	0:0	4	p_sys
+op	23:13	0:0	4	->
+water	23:15	0:0	4	b_update
+op	23:24	0:0	4	=
+water	23:26	0:0	4	false
+water	23:31	0:0	4	;
+for	24:8	35:8	4	( int i = 0 ;i < p_sd -> p_sys -> i_input;i ++)
+forinit	0:0	24:22	5	 int i = 0 ;
+decl	24:13	24:22	6	int	i
+op	24:19	0:0	6	=
+water	24:21	0:0	6	0
+cond	24:24	24:41	5	i < p_sd -> p_sys -> i_input
+water	24:24	0:0	6	i
+op	24:26	0:0	6	<
+water	24:28	0:0	6	p_sd
+op	24:32	0:0	6	->
+water	24:34	0:0	6	p_sys
+op	24:39	0:0	6	->
+water	24:41	0:0	6	i_input
+forexpr	24:50	24:51	5	i ++
+water	24:50	0:0	6	i
+op	24:51	0:0	6	++
+stmts	25:8	35:8	5	
+water	25:8	0:0	6	{
+decl	26:12	26:62	6	input_thread_t	*p_input
+op	26:36	0:0	6	=
+water	26:38	0:0	6	p_sd
+op	26:42	0:0	6	->
+water	26:44	0:0	6	p_sys
+op	26:49	0:0	6	->
+water	26:51	0:0	6	pp_input
+op	26:59	0:0	6	[
+water	26:60	0:0	6	i
+op	26:61	0:0	6	]
+if	27:12	34:12	6	(p_input -> b_eof || p_input -> b_error)
+cond	27:16	27:43	7	p_input -> b_eof || p_input -> b_error
+water	27:16	0:0	8	p_input
+op	27:23	0:0	8	->
+water	27:25	0:0	8	b_eof
+op	27:31	0:0	8	||
+water	27:34	0:0	8	p_input
+op	27:41	0:0	8	->
+water	27:43	0:0	8	b_error
+stmts	28:12	34:12	7	
+water	28:12	0:0	8	{
+call	29:16	29:43	8	input_Stop
+arg	29:28	29:35	9	p_input
+water	29:28	0:0	10	p_input
+arg	29:37	29:43	9	false
+water	29:37	0:0	10	false
+water	29:44	0:0	8	;
+call	30:16	30:37	8	input_Close
+arg	30:29	30:37	9	p_input
+water	30:29	0:0	10	p_input
+water	30:38	0:0	8	;
+water	31:16	0:0	8	p_sd
+op	31:20	0:0	8	->
+water	31:22	0:0	8	p_sys
+op	31:27	0:0	8	->
+water	31:29	0:0	8	pp_input
+op	31:37	0:0	8	[
+water	31:38	0:0	8	i
+op	31:39	0:0	8	]
+op	31:41	0:0	8	=
+water	31:43	0:0	8	NULL
+water	31:47	0:0	8	;
+call	32:16	32:64	8	REMOVE_ELEM
+arg	32:29	32:44	9	p_sys->pp_input
+water	32:29	0:0	10	p_sys
+op	32:34	0:0	10	->
+water	32:36	0:0	10	pp_input
+arg	32:46	32:60	9	p_sys->i_input
+water	32:46	0:0	10	p_sys
+op	32:51	0:0	10	->
+water	32:53	0:0	10	i_input
+arg	32:62	32:64	9	i
+water	32:62	0:0	10	i
+water	32:65	0:0	8	;
+water	33:16	0:0	8	i
+op	33:17	0:0	8	--
+water	33:19	0:0	8	;
+water	34:12	0:0	8	}
+water	35:8	0:0	6	}
+call	36:8	36:31	4	vlc_restorecancel
+arg	36:27	36:31	5	canc
+water	36:27	0:0	6	canc
+water	36:32	0:0	4	;
+water	37:4	0:0	4	}
+call	38:4	38:20	2	vlc_cleanup_pop
+water	38:21	0:0	2	;
+call	39:4	39:12	2	assert
+arg	39:11	39:12	3	0
+water	39:11	0:0	4	0
+water	39:13	0:0	2	;

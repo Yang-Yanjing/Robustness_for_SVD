@@ -1,0 +1,434 @@
+func	2:0	75:0	0	static block_t *	EncodeFrames
+params	2:28	0:0	1	
+param	2:30	2:46	2	encoder_t *	p_enc
+param	2:48	2:68	2	block_t *	p_aout_buf
+stmnts	0:0	74:24	1	
+decl	4:4	4:39	2	encoder_sys_t	*p_sys
+op	4:25	0:0	2	=
+water	4:27	0:0	2	p_enc
+op	4:32	0:0	2	->
+water	4:34	0:0	2	p_sys
+decl	5:4	5:55	2	block_t	*p_first_block
+op	5:27	0:0	2	=
+water	5:29	0:0	2	NULL
+water	5:33	0:0	2	,
+decl	5:4	5:55	2	block_t	*p_last_block
+op	5:49	0:0	2	=
+water	5:51	0:0	2	NULL
+if	6:4	6:58	2	(! p_aout_buf || ! p_aout_buf -> i_buffer)
+cond	6:8	6:36	3	! p_aout_buf || ! p_aout_buf -> i_buffer
+op	6:8	0:0	4	!
+water	6:9	0:0	4	p_aout_buf
+op	6:20	0:0	4	||
+op	6:23	0:0	4	!
+water	6:24	0:0	4	p_aout_buf
+op	6:34	0:0	4	->
+water	6:36	0:0	4	i_buffer
+stmts	6:47	6:58	3	
+return	6:47	6:58	4	NULL
+water	6:54	0:0	5	NULL
+decl	7:4	8:30	2	const int	i_num_frames
+op	7:27	0:0	2	=
+water	7:29	0:0	2	(
+water	7:31	0:0	2	p_sys
+op	7:36	0:0	2	->
+water	7:38	0:0	2	i_buffer_used
+op	7:52	0:0	2	+
+water	7:54	0:0	2	p_aout_buf
+op	7:64	0:0	2	->
+water	7:66	0:0	2	i_nb_samples
+water	7:79	0:0	2	)
+op	7:81	0:0	2	/
+water	8:8	0:0	2	p_sys
+op	8:13	0:0	2	->
+water	8:15	0:0	2	i_frame_samples
+decl	9:4	10:30	2	const int	i_leftover_samples
+op	9:33	0:0	2	=
+water	9:35	0:0	2	(
+water	9:37	0:0	2	p_sys
+op	9:42	0:0	2	->
+water	9:44	0:0	2	i_buffer_used
+op	9:58	0:0	2	+
+water	9:60	0:0	2	p_aout_buf
+op	9:70	0:0	2	->
+water	9:72	0:0	2	i_nb_samples
+water	9:85	0:0	2	)
+op	9:87	0:0	2	%
+water	10:8	0:0	2	p_sys
+op	10:13	0:0	2	->
+water	10:15	0:0	2	i_frame_samples
+decl	11:4	11:97	2	const int	i_frame_size
+op	11:27	0:0	2	=
+water	11:29	0:0	2	p_sys
+op	11:34	0:0	2	->
+water	11:36	0:0	2	i_frame_samples
+op	11:52	0:0	2	*
+water	11:54	0:0	2	p_sys
+op	11:59	0:0	2	->
+water	11:61	0:0	2	i_channels
+op	11:72	0:0	2	*
+water	11:74	0:0	2	2
+op	11:76	0:0	2	+
+water	11:78	0:0	2	LPCM_VOB_HEADER_LEN
+decl	12:4	12:52	2	const int	i_start_offset
+op	12:29	0:0	2	=
+op	12:31	0:0	2	-
+water	12:32	0:0	2	p_sys
+op	12:37	0:0	2	->
+water	12:39	0:0	2	i_buffer_used
+decl	13:4	13:27	2	uint8_t	i_freq_code
+op	13:24	0:0	2	=
+water	13:26	0:0	2	0
+switch	14:4	29:4	2	(p_sys -> i_rate)
+cond	14:12	14:19	3	p_sys -> i_rate
+water	14:12	0:0	4	p_sys
+op	14:17	0:0	4	->
+water	14:19	0:0	4	i_rate
+stmts	14:28	29:4	3	
+water	14:28	0:0	4	{
+label	15:4	15:14	4	case 48000 :
+water	16:8	0:0	4	i_freq_code
+op	16:20	0:0	4	=
+water	16:22	0:0	4	0
+water	16:23	0:0	4	;
+break	17:8	17:13	4	
+label	18:4	18:14	4	case 96000 :
+water	19:8	0:0	4	i_freq_code
+op	19:20	0:0	4	=
+water	19:22	0:0	4	1
+water	19:23	0:0	4	;
+break	20:8	20:13	4	
+label	21:4	21:14	4	case 44100 :
+water	22:8	0:0	4	i_freq_code
+op	22:20	0:0	4	=
+water	22:22	0:0	4	2
+water	22:23	0:0	4	;
+break	23:8	23:13	4	
+label	24:4	24:14	4	case 32000 :
+water	25:8	0:0	4	i_freq_code
+op	25:20	0:0	4	=
+water	25:22	0:0	4	3
+water	25:23	0:0	4	;
+break	26:8	26:13	4	
+label	27:4	27:11	4	default :
+call	28:8	28:16	4	assert
+arg	28:15	28:16	5	0
+water	28:15	0:0	6	0
+water	28:17	0:0	4	;
+water	29:4	0:0	4	}
+decl	30:4	30:28	2	int	i_bytes_consumed
+op	30:25	0:0	2	=
+water	30:27	0:0	2	0
+for	31:4	69:4	2	( int i = 0 ;i < i_num_frames;++ i)
+forinit	0:0	31:19	3	 int i = 0 ;
+decl	31:10	31:19	4	int	i
+op	31:16	0:0	4	=
+water	31:18	0:0	4	0
+cond	31:21	31:25	3	i < i_num_frames
+water	31:21	0:0	4	i
+op	31:23	0:0	4	<
+water	31:25	0:0	4	i_num_frames
+forexpr	31:39	31:41	3	++ i
+op	31:39	0:0	4	++
+water	31:41	0:0	4	i
+stmts	32:4	69:4	3	
+water	32:4	0:0	4	{
+decl	33:8	33:54	4	block_t	*p_block
+op	33:25	0:0	4	=
+call	33:27	33:53	5	block_Alloc
+arg	33:40	33:53	6	i_frame_size
+water	33:40	0:0	7	i_frame_size
+if	34:8	35:23	4	(! p_block)
+cond	34:12	34:13	5	! p_block
+op	34:12	0:0	6	!
+water	34:13	0:0	6	p_block
+stmts	35:12	35:23	5	
+return	35:12	35:23	6	NULL
+water	35:19	0:0	7	NULL
+decl	36:8	36:53	4	uint8_t	*frame
+op	36:23	0:0	4	=
+water	36:25	0:0	4	(
+water	36:26	0:0	4	uint8_t
+op	36:34	0:0	4	*
+water	36:35	0:0	4	)
+water	36:36	0:0	4	p_block
+op	36:43	0:0	4	->
+water	36:45	0:0	4	p_buffer
+water	37:8	0:0	4	frame
+op	37:13	0:0	4	[
+water	37:14	0:0	4	0
+op	37:15	0:0	4	]
+op	37:17	0:0	4	=
+water	37:19	0:0	4	1
+water	37:20	0:0	4	;
+water	38:8	0:0	4	frame
+op	38:13	0:0	4	[
+water	38:14	0:0	4	1
+op	38:15	0:0	4	]
+op	38:17	0:0	4	=
+water	38:19	0:0	4	0
+water	38:20	0:0	4	;
+water	39:8	0:0	4	frame
+op	39:13	0:0	4	[
+water	39:14	0:0	4	2
+op	39:15	0:0	4	]
+op	39:17	0:0	4	=
+water	39:19	0:0	4	0
+water	39:20	0:0	4	;
+water	40:8	0:0	4	frame
+op	40:13	0:0	4	[
+water	40:14	0:0	4	3
+op	40:15	0:0	4	]
+op	40:17	0:0	4	=
+water	40:19	0:0	4	(
+water	40:20	0:0	4	p_sys
+op	40:25	0:0	4	->
+water	40:27	0:0	4	i_frame_num
+op	40:39	0:0	4	+
+water	40:41	0:0	4	i
+water	40:42	0:0	4	)
+op	40:44	0:0	4	&
+water	40:46	0:0	4	0
+water	40:47	0:0	4	x1f
+water	40:50	0:0	4	;
+water	41:8	0:0	4	frame
+op	41:13	0:0	4	[
+water	41:14	0:0	4	4
+op	41:15	0:0	4	]
+op	41:17	0:0	4	=
+water	41:19	0:0	4	(
+water	41:20	0:0	4	i_freq_code
+op	41:32	0:0	4	<<
+water	41:35	0:0	4	4
+water	41:36	0:0	4	)
+op	41:38	0:0	4	|
+water	41:40	0:0	4	(
+water	41:41	0:0	4	p_sys
+op	41:46	0:0	4	->
+water	41:48	0:0	4	i_channels
+op	41:59	0:0	4	-
+water	41:61	0:0	4	1
+water	41:62	0:0	4	)
+water	41:63	0:0	4	;
+water	42:8	0:0	4	frame
+op	42:13	0:0	4	[
+water	42:14	0:0	4	5
+op	42:15	0:0	4	]
+op	42:17	0:0	4	=
+water	42:19	0:0	4	0
+water	42:20	0:0	4	x80
+water	42:23	0:0	4	;
+decl	43:8	43:83	4	const int	i_consume_samples
+op	43:36	0:0	4	=
+water	43:38	0:0	4	p_sys
+op	43:43	0:0	4	->
+water	43:45	0:0	4	i_frame_samples
+op	43:61	0:0	4	-
+water	43:63	0:0	4	p_sys
+op	43:68	0:0	4	->
+water	43:70	0:0	4	i_buffer_used
+decl	44:8	44:77	4	const int	i_kept_bytes
+op	44:31	0:0	4	=
+water	44:33	0:0	4	p_sys
+op	44:38	0:0	4	->
+water	44:40	0:0	4	i_buffer_used
+op	44:54	0:0	4	*
+water	44:56	0:0	4	p_sys
+op	44:61	0:0	4	->
+water	44:63	0:0	4	i_channels
+op	44:74	0:0	4	*
+water	44:76	0:0	4	2
+decl	45:8	45:77	4	const int	i_consume_bytes
+op	45:34	0:0	4	=
+water	45:36	0:0	4	i_consume_samples
+op	45:54	0:0	4	*
+water	45:56	0:0	4	p_sys
+op	45:61	0:0	4	->
+water	45:63	0:0	4	i_channels
+op	45:74	0:0	4	*
+water	45:76	0:0	4	2
+call	47:8	47:57	4	memcpy
+arg	47:16	47:25	5	frame+6
+water	47:16	0:0	6	frame
+op	47:22	0:0	6	+
+water	47:24	0:0	6	6
+arg	47:27	47:42	5	p_sys->p_buffer
+water	47:27	0:0	6	p_sys
+op	47:32	0:0	6	->
+water	47:34	0:0	6	p_buffer
+arg	47:44	47:57	5	i_kept_bytes
+water	47:44	0:0	6	i_kept_bytes
+water	47:58	0:0	4	;
+call	48:8	49:32	4	memcpy
+arg	48:16	48:40	5	frame+6+i_kept_bytes
+water	48:16	0:0	6	frame
+op	48:22	0:0	6	+
+water	48:24	0:0	6	6
+op	48:26	0:0	6	+
+water	48:28	0:0	6	i_kept_bytes
+arg	48:42	48:81	5	p_aout_buf->p_buffer+i_bytes_consumed
+water	48:42	0:0	6	p_aout_buf
+op	48:52	0:0	6	->
+water	48:54	0:0	6	p_buffer
+op	48:63	0:0	6	+
+water	48:65	0:0	6	i_bytes_consumed
+arg	49:16	49:32	5	i_consume_bytes
+water	49:16	0:0	6	i_consume_bytes
+water	49:33	0:0	4	;
+call	51:8	51:55	4	swab
+arg	51:14	51:29	5	p_sys->p_buffer
+water	51:14	0:0	6	p_sys
+op	51:19	0:0	6	->
+water	51:21	0:0	6	p_buffer
+arg	51:31	51:40	5	frame+6
+water	51:31	0:0	6	frame
+op	51:37	0:0	6	+
+water	51:39	0:0	6	6
+arg	51:42	51:55	5	i_kept_bytes
+water	51:42	0:0	6	i_kept_bytes
+water	51:56	0:0	4	;
+call	52:8	53:30	4	swab
+arg	52:14	52:53	5	p_aout_buf->p_buffer+i_bytes_consumed
+water	52:14	0:0	6	p_aout_buf
+op	52:24	0:0	6	->
+water	52:26	0:0	6	p_buffer
+op	52:35	0:0	6	+
+water	52:37	0:0	6	i_bytes_consumed
+arg	52:55	52:79	5	frame+6+i_kept_bytes
+water	52:55	0:0	6	frame
+op	52:61	0:0	6	+
+water	52:63	0:0	6	6
+op	52:65	0:0	6	+
+water	52:67	0:0	6	i_kept_bytes
+arg	53:14	53:30	5	i_consume_bytes
+water	53:14	0:0	6	i_consume_bytes
+water	53:31	0:0	4	;
+water	55:8	0:0	4	p_sys
+op	55:13	0:0	4	->
+water	55:15	0:0	4	i_frame_num
+op	55:26	0:0	4	++
+water	55:28	0:0	4	;
+water	56:8	0:0	4	p_sys
+op	56:13	0:0	4	->
+water	56:15	0:0	4	i_buffer_used
+op	56:29	0:0	4	=
+water	56:31	0:0	4	0
+water	56:32	0:0	4	;
+water	57:8	0:0	4	i_bytes_consumed
+op	57:25	0:0	4	+=
+water	57:28	0:0	4	i_consume_bytes
+water	57:43	0:0	4	;
+decl	59:8	60:86	4	mtime_t	this_pts
+op	59:25	0:0	4	=
+water	59:27	0:0	4	p_aout_buf
+op	59:37	0:0	4	->
+water	59:39	0:0	4	i_pts
+op	59:45	0:0	4	+
+water	60:12	0:0	4	(
+water	60:13	0:0	4	i
+op	60:15	0:0	4	*
+water	60:17	0:0	4	p_sys
+op	60:22	0:0	4	->
+water	60:24	0:0	4	i_frame_samples
+op	60:40	0:0	4	+
+water	60:42	0:0	4	i_start_offset
+water	60:56	0:0	4	)
+op	60:58	0:0	4	*
+water	60:60	0:0	4	CLOCK_FREQ
+op	60:71	0:0	4	/
+water	60:73	0:0	4	p_sys
+op	60:78	0:0	4	->
+water	60:80	0:0	4	i_rate
+decl	61:8	62:92	4	mtime_t	next_pts
+op	61:25	0:0	4	=
+water	61:27	0:0	4	p_aout_buf
+op	61:37	0:0	4	->
+water	61:39	0:0	4	i_pts
+op	61:45	0:0	4	+
+water	62:12	0:0	4	(
+water	62:13	0:0	4	(
+water	62:14	0:0	4	i
+op	62:16	0:0	4	+
+water	62:18	0:0	4	1
+water	62:19	0:0	4	)
+op	62:21	0:0	4	*
+water	62:23	0:0	4	p_sys
+op	62:28	0:0	4	->
+water	62:30	0:0	4	i_frame_samples
+op	62:46	0:0	4	+
+water	62:48	0:0	4	i_start_offset
+water	62:62	0:0	4	)
+op	62:64	0:0	4	*
+water	62:66	0:0	4	CLOCK_FREQ
+op	62:77	0:0	4	/
+water	62:79	0:0	4	p_sys
+op	62:84	0:0	4	->
+water	62:86	0:0	4	i_rate
+water	63:8	0:0	4	p_block
+op	63:15	0:0	4	->
+water	63:17	0:0	4	i_pts
+op	63:23	0:0	4	=
+water	63:25	0:0	4	p_block
+op	63:32	0:0	4	->
+water	63:34	0:0	4	i_dts
+op	63:40	0:0	4	=
+water	63:42	0:0	4	this_pts
+water	63:50	0:0	4	;
+water	64:8	0:0	4	p_block
+op	64:15	0:0	4	->
+water	64:17	0:0	4	i_length
+op	64:26	0:0	4	=
+water	64:28	0:0	4	next_pts
+op	64:37	0:0	4	-
+water	64:39	0:0	4	this_pts
+water	64:47	0:0	4	;
+if	65:8	66:50	4	(! p_first_block)
+cond	65:12	65:13	5	! p_first_block
+op	65:12	0:0	6	!
+water	65:13	0:0	6	p_first_block
+stmts	66:12	66:50	5	
+water	66:12	0:0	6	p_first_block
+op	66:26	0:0	6	=
+water	66:28	0:0	6	p_last_block
+op	66:41	0:0	6	=
+water	66:43	0:0	6	p_block
+water	66:50	0:0	6	;
+else	67:8	68:57	4
+stmts	68:12	68:57	5	
+water	68:12	0:0	6	p_last_block
+op	68:25	0:0	6	=
+water	68:27	0:0	6	p_last_block
+op	68:39	0:0	6	->
+water	68:41	0:0	6	p_next
+op	68:48	0:0	6	=
+water	68:50	0:0	6	p_block
+water	68:57	0:0	6	;
+water	69:4	0:0	4	}
+call	70:4	72:55	2	memcpy
+arg	70:12	70:27	3	p_sys->p_buffer
+water	70:12	0:0	4	p_sys
+op	70:17	0:0	4	->
+water	70:19	0:0	4	p_buffer
+arg	71:12	71:51	3	p_aout_buf->p_buffer+i_bytes_consumed
+water	71:12	0:0	4	p_aout_buf
+op	71:22	0:0	4	->
+water	71:24	0:0	4	p_buffer
+op	71:33	0:0	4	+
+water	71:35	0:0	4	i_bytes_consumed
+arg	72:12	72:55	3	i_leftover_samples*p_sys->i_channels*2
+water	72:12	0:0	4	i_leftover_samples
+op	72:31	0:0	4	*
+water	72:33	0:0	4	p_sys
+op	72:38	0:0	4	->
+water	72:40	0:0	4	i_channels
+op	72:51	0:0	4	*
+water	72:53	0:0	4	2
+water	72:56	0:0	2	;
+water	73:4	0:0	2	p_sys
+op	73:9	0:0	2	->
+water	73:11	0:0	2	i_buffer_used
+op	73:25	0:0	2	=
+water	73:27	0:0	2	i_leftover_samples
+water	73:45	0:0	2	;
+return	74:4	74:24	2	p_first_block
+water	74:11	0:0	3	p_first_block

@@ -1,0 +1,442 @@
+func	2:0	109:0	0	int *	net_Listen
+params	2:16	0:0	1	
+param	2:17	2:37	2	vlc_object_t *	p_this
+param	2:39	2:59	2	const char *	psz_host
+param	3:17	3:27	2	int	i_port
+param	3:29	3:37	2	int	type
+param	3:39	3:51	2	int	protocol
+stmnts	0:0	108:16	1	
+decl	5:4	9:11	2	struct addrinfo	hints
+op	5:26	0:0	2	=
+water	5:28	0:0	2	{
+op	6:8	0:0	2	.
+water	6:9	0:0	2	ai_socktype
+op	6:21	0:0	2	=
+water	6:23	0:0	2	type
+water	6:27	0:0	2	,
+op	7:8	0:0	2	.
+water	7:9	0:0	2	ai_protocol
+op	7:21	0:0	2	=
+water	7:23	0:0	2	protocol
+water	7:31	0:0	2	,
+op	8:8	0:0	2	.
+water	8:9	0:0	2	ai_flags
+op	8:18	0:0	2	=
+water	8:20	0:0	2	AI_PASSIVE
+op	8:31	0:0	2	|
+water	8:33	0:0	2	AI_NUMERICSERV
+op	8:48	0:0	2	|
+water	8:50	0:0	2	AI_IDN
+water	8:56	0:0	2	,
+water	9:4	0:0	2	}
+water	9:5	0:0	2	,
+decl	5:4	9:11	2	struct addrinfo	*res
+call	10:4	11:56	2	msg_Dbg
+arg	10:13	10:19	3	p_this
+water	10:13	0:0	4	p_this
+arg	10:21	10:51	3	"net: listening to %s port %d"
+water	10:21	0:0	4	"net: listening to %s port %d"
+arg	11:13	11:48	3	(psz_host!=NULL)?psz_host:"*"
+water	11:13	0:0	4	(
+water	11:14	0:0	4	psz_host
+op	11:23	0:0	4	!=
+water	11:26	0:0	4	NULL
+water	11:30	0:0	4	)
+water	11:32	0:0	4	?
+water	11:34	0:0	4	psz_host
+water	11:43	0:0	4	:
+water	11:45	0:0	4	"*"
+arg	11:50	11:56	3	i_port
+water	11:50	0:0	4	i_port
+water	11:57	0:0	2	;
+decl	12:4	12:64	2	int	i_val
+op	12:14	0:0	2	=
+call	12:16	12:63	3	vlc_getaddrinfo
+arg	12:33	12:41	4	psz_host
+water	12:33	0:0	5	psz_host
+arg	12:43	12:49	4	i_port
+water	12:43	0:0	5	i_port
+arg	12:51	12:57	4	&hints
+op	12:51	0:0	5	&
+water	12:52	0:0	5	hints
+arg	12:59	12:63	4	&res
+op	12:59	0:0	5	&
+water	12:60	0:0	5	res
+if	13:4	19:4	2	(i_val)
+cond	13:8	13:8	3	i_val
+water	13:8	0:0	4	i_val
+stmts	14:4	19:4	3	
+water	14:4	0:0	4	{
+call	15:8	17:37	4	msg_Err
+arg	15:17	15:23	5	p_this
+water	15:17	0:0	6	p_this
+arg	15:25	15:57	5	"Cannot resolve %s port %d : %s"
+water	15:25	0:0	6	"Cannot resolve %s port %d : %s"
+arg	16:17	16:51	5	(psz_host!=NULL)?psz_host:""
+water	16:17	0:0	6	(
+water	16:18	0:0	6	psz_host
+op	16:27	0:0	6	!=
+water	16:30	0:0	6	NULL
+water	16:34	0:0	6	)
+water	16:36	0:0	6	?
+water	16:38	0:0	6	psz_host
+water	16:47	0:0	6	:
+water	16:49	0:0	6	""
+arg	16:53	16:59	5	i_port
+water	16:53	0:0	6	i_port
+arg	17:17	17:37	5	gai_strerror(i_val)
+call	17:17	17:36	6	gai_strerror
+arg	17:31	17:36	7	i_val
+water	17:31	0:0	8	i_val
+water	17:38	0:0	4	;
+return	18:8	18:19	4	NULL
+water	18:15	0:0	5	NULL
+water	19:4	0:0	4	}
+decl	20:4	20:21	2	int	*sockv
+op	20:15	0:0	2	=
+water	20:17	0:0	2	NULL
+water	21:4	0:0	2	unsigned
+water	21:13	0:0	2	sockc
+op	21:19	0:0	2	=
+water	21:21	0:0	2	0
+water	21:22	0:0	2	;
+for	22:4	104:4	2	( struct addrinfo * ptr = res ;ptr != NULL;ptr = ptr -> ai_next)
+forinit	0:0	22:35	3	 struct addrinfo * ptr = res ;
+decl	22:9	22:35	4	struct addrinfo	*ptr
+op	22:30	0:0	4	=
+water	22:32	0:0	4	res
+cond	22:37	22:44	3	ptr != NULL
+water	22:37	0:0	4	ptr
+op	22:41	0:0	4	!=
+water	22:44	0:0	4	NULL
+forexpr	22:50	22:61	3	ptr = ptr -> ai_next
+water	22:50	0:0	4	ptr
+op	22:54	0:0	4	=
+water	22:56	0:0	4	ptr
+op	22:59	0:0	4	->
+water	22:61	0:0	4	ai_next
+stmts	23:4	104:4	3	
+water	23:4	0:0	4	{
+decl	24:8	25:46	4	int	fd
+op	24:15	0:0	4	=
+call	24:17	25:45	5	net_Socket
+arg	24:29	24:35	6	p_this
+water	24:29	0:0	7	p_this
+arg	24:37	24:51	6	ptr->ai_family
+water	24:37	0:0	7	ptr
+op	24:40	0:0	7	->
+water	24:42	0:0	7	ai_family
+arg	24:53	24:69	6	ptr->ai_socktype
+water	24:53	0:0	7	ptr
+op	24:56	0:0	7	->
+water	24:58	0:0	7	ai_socktype
+arg	25:29	25:45	6	ptr->ai_protocol
+water	25:29	0:0	7	ptr
+op	25:32	0:0	7	->
+water	25:34	0:0	7	ai_protocol
+if	26:8	30:8	4	(fd == - 1)
+cond	26:12	26:19	5	fd == - 1
+water	26:12	0:0	6	fd
+op	26:15	0:0	6	==
+op	26:18	0:0	6	-
+water	26:19	0:0	6	1
+stmts	27:8	30:8	5	
+water	27:8	0:0	6	{
+call	28:12	28:74	6	msg_Dbg
+arg	28:21	28:27	7	p_this
+water	28:21	0:0	8	p_this
+arg	28:29	28:47	7	"socket error: %s"
+water	28:29	0:0	8	"socket error: %s"
+arg	28:49	28:74	7	vlc_strerror_c(net_errno)
+call	28:49	28:73	8	vlc_strerror_c
+arg	28:64	28:73	9	net_errno
+water	28:64	0:0	10	net_errno
+water	28:75	0:0	6	;
+continue	29:12	29:20	6	
+water	30:8	0:0	6	}
+if	39:8	49:8	4	(net_SockAddrIsMulticast (ptr -> ai_addr ,ptr -> ai_addrlen ) && ( sizeof ( struct sockaddr_storage ) >= ptr -> ai_addrlen ))
+cond	39:12	40:64	5	net_SockAddrIsMulticast (ptr -> ai_addr ,ptr -> ai_addrlen ) && ( sizeof ( struct sockaddr_storage ) >= ptr -> ai_addrlen )
+call	39:12	39:66	6	net_SockAddrIsMulticast
+arg	39:37	39:49	7	ptr->ai_addr
+water	39:37	0:0	8	ptr
+op	39:40	0:0	8	->
+water	39:42	0:0	8	ai_addr
+arg	39:51	39:66	7	ptr->ai_addrlen
+water	39:51	0:0	8	ptr
+op	39:54	0:0	8	->
+water	39:56	0:0	8	ai_addrlen
+op	40:9	0:0	6	&&
+water	40:12	0:0	6	(
+op	40:13	0:0	6	sizeof
+water	40:20	0:0	6	(
+water	40:21	0:0	6	struct
+water	40:28	0:0	6	sockaddr_storage
+water	40:44	0:0	6	)
+op	40:46	0:0	6	>=
+water	40:49	0:0	6	ptr
+op	40:52	0:0	6	->
+water	40:54	0:0	6	ai_addrlen
+water	40:64	0:0	6	)
+stmts	41:8	49:8	5	
+water	41:8	0:0	6	{
+decl	43:12	47:13	6	struct sockaddr_in6	dumb
+op	43:37	0:0	6	=
+water	44:12	0:0	6	{
+op	45:16	0:0	6	.
+water	45:17	0:0	6	sin6_family
+op	45:29	0:0	6	=
+water	45:31	0:0	6	ptr
+op	45:34	0:0	6	->
+water	45:36	0:0	6	ai_addr
+op	45:43	0:0	6	->
+water	45:45	0:0	6	sa_family
+water	45:54	0:0	6	,
+op	46:16	0:0	6	.
+water	46:17	0:0	6	sin6_port
+op	46:27	0:0	6	=
+water	46:30	0:0	6	(
+call	46:31	46:66	7	(structsockaddr_in*)
+arg	46:54	46:66	8	ptr->ai_addr
+water	46:54	0:0	9	ptr
+op	46:57	0:0	9	->
+water	46:59	0:0	9	ai_addr
+water	46:67	0:0	6	)
+op	46:68	0:0	6	->
+water	46:70	0:0	6	sin_port
+water	47:12	0:0	6	}
+call	48:12	48:63	6	bind
+arg	48:18	48:20	7	fd
+water	48:18	0:0	8	fd
+arg	48:22	48:46	7	(structsockaddr*)&dumb
+water	48:22	0:0	8	(
+water	48:23	0:0	8	struct
+water	48:30	0:0	8	sockaddr
+op	48:39	0:0	8	*
+water	48:40	0:0	8	)
+op	48:41	0:0	8	&
+water	48:42	0:0	8	dumb
+arg	48:48	48:63	7	ptr->ai_addrlen
+water	48:48	0:0	8	ptr
+op	48:51	0:0	8	->
+water	48:53	0:0	8	ai_addrlen
+water	48:64	0:0	6	;
+water	49:8	0:0	6	}
+else	50:8	70:8	4
+stmts	52:8	70:8	5	
+if	52:8	70:8	6	(bind (fd ,ptr -> ai_addr ,ptr -> ai_addrlen ))
+cond	52:12	52:51	7	bind (fd ,ptr -> ai_addr ,ptr -> ai_addrlen )
+call	52:12	52:51	8	bind
+arg	52:18	52:20	9	fd
+water	52:18	0:0	10	fd
+arg	52:22	52:34	9	ptr->ai_addr
+water	52:22	0:0	10	ptr
+op	52:25	0:0	10	->
+water	52:27	0:0	10	ai_addr
+arg	52:36	52:51	9	ptr->ai_addrlen
+water	52:36	0:0	10	ptr
+op	52:39	0:0	10	->
+water	52:41	0:0	10	ai_addrlen
+stmts	53:8	70:8	7	
+water	53:8	0:0	8	{
+call	54:12	54:25	8	net_Close
+arg	54:23	54:25	9	fd
+water	54:23	0:0	10	fd
+water	54:26	0:0	8	;
+water	56:12	0:0	8	fd
+op	56:15	0:0	8	=
+call	56:17	58:61	8	rootwrap_bind
+arg	56:32	56:46	9	ptr->ai_family
+water	56:32	0:0	10	ptr
+op	56:35	0:0	10	->
+water	56:37	0:0	10	ai_family
+arg	56:48	56:64	9	ptr->ai_socktype
+water	56:48	0:0	10	ptr
+op	56:51	0:0	10	->
+water	56:53	0:0	10	ai_socktype
+arg	57:32	57:48	9	ptr->ai_protocol
+water	57:32	0:0	10	ptr
+op	57:35	0:0	10	->
+water	57:37	0:0	10	ai_protocol
+arg	58:32	58:44	9	ptr->ai_addr
+water	58:32	0:0	10	ptr
+op	58:35	0:0	10	->
+water	58:37	0:0	10	ai_addr
+arg	58:46	58:61	9	ptr->ai_addrlen
+water	58:46	0:0	10	ptr
+op	58:49	0:0	10	->
+water	58:51	0:0	10	ai_addrlen
+water	58:62	0:0	8	;
+if	59:12	62:12	8	(fd != - 1)
+cond	59:16	59:23	9	fd != - 1
+water	59:16	0:0	10	fd
+op	59:19	0:0	10	!=
+op	59:22	0:0	10	-
+water	59:23	0:0	10	1
+stmts	60:12	62:12	9	
+water	60:12	0:0	10	{
+call	61:16	61:66	10	msg_Dbg
+arg	61:25	61:31	11	p_this
+water	61:25	0:0	12	p_this
+arg	61:33	61:62	11	"got socket %d from rootwrap"
+water	61:33	0:0	12	"got socket %d from rootwrap"
+arg	61:64	61:66	11	fd
+water	61:64	0:0	12	fd
+water	61:67	0:0	10	;
+water	62:12	0:0	10	}
+else	63:12	69:12	8
+stmts	65:12	69:12	9	
+water	65:12	0:0	10	{
+call	66:16	67:50	10	msg_Err
+arg	66:25	66:31	11	p_this
+water	66:25	0:0	12	p_this
+arg	66:33	66:56	11	"socket bind error: %s"
+water	66:33	0:0	12	"socket bind error: %s"
+arg	67:25	67:50	11	vlc_strerror_c(net_errno)
+call	67:25	67:49	12	vlc_strerror_c
+arg	67:40	67:49	13	net_errno
+water	67:40	0:0	14	net_errno
+water	67:51	0:0	10	;
+continue	68:16	68:24	10	
+water	69:12	0:0	10	}
+water	70:8	0:0	8	}
+if	71:8	78:8	4	(net_SockAddrIsMulticast (ptr -> ai_addr ,ptr -> ai_addrlen ))
+cond	71:12	71:66	5	net_SockAddrIsMulticast (ptr -> ai_addr ,ptr -> ai_addrlen )
+call	71:12	71:66	6	net_SockAddrIsMulticast
+arg	71:37	71:49	7	ptr->ai_addr
+water	71:37	0:0	8	ptr
+op	71:40	0:0	8	->
+water	71:42	0:0	8	ai_addr
+arg	71:51	71:66	7	ptr->ai_addrlen
+water	71:51	0:0	8	ptr
+op	71:54	0:0	8	->
+water	71:56	0:0	8	ai_addrlen
+stmts	72:8	78:8	5	
+water	72:8	0:0	6	{
+if	73:12	77:12	6	(net_Subscribe (p_this ,fd ,ptr -> ai_addr ,ptr -> ai_addrlen ))
+cond	73:16	73:72	7	net_Subscribe (p_this ,fd ,ptr -> ai_addr ,ptr -> ai_addrlen )
+call	73:16	73:72	8	net_Subscribe
+arg	73:31	73:37	9	p_this
+water	73:31	0:0	10	p_this
+arg	73:39	73:41	9	fd
+water	73:39	0:0	10	fd
+arg	73:43	73:55	9	ptr->ai_addr
+water	73:43	0:0	10	ptr
+op	73:46	0:0	10	->
+water	73:48	0:0	10	ai_addr
+arg	73:57	73:72	9	ptr->ai_addrlen
+water	73:57	0:0	10	ptr
+op	73:60	0:0	10	->
+water	73:62	0:0	10	ai_addrlen
+stmts	74:12	77:12	7	
+water	74:12	0:0	8	{
+call	75:16	75:29	8	net_Close
+arg	75:27	75:29	9	fd
+water	75:27	0:0	10	fd
+water	75:30	0:0	8	;
+continue	76:16	76:24	8	
+water	77:12	0:0	8	}
+water	78:8	0:0	6	}
+switch	80:8	95:8	4	(ptr -> ai_socktype)
+cond	80:16	80:21	5	ptr -> ai_socktype
+water	80:16	0:0	6	ptr
+op	80:19	0:0	6	->
+water	80:21	0:0	6	ai_socktype
+stmts	81:8	95:8	5	
+water	81:8	0:0	6	{
+label	82:12	82:28	6	case SOCK_STREAM :
+label	83:12	83:25	6	case SOCK_RDM :
+label	84:12	84:31	6	case SOCK_SEQPACKET :
+label	86:12	86:26	6	case SOCK_DCCP :
+if	88:16	94:16	6	(listen (fd ,INT_MAX ))
+cond	88:20	88:39	7	listen (fd ,INT_MAX )
+call	88:20	88:39	8	listen
+arg	88:28	88:30	9	fd
+water	88:28	0:0	10	fd
+arg	88:32	88:39	9	INT_MAX
+water	88:32	0:0	10	INT_MAX
+stmts	89:16	94:16	7	
+water	89:16	0:0	8	{
+call	90:20	91:54	8	msg_Err
+arg	90:29	90:35	9	p_this
+water	90:29	0:0	10	p_this
+arg	90:37	90:62	9	"socket listen error: %s"
+water	90:37	0:0	10	"socket listen error: %s"
+arg	91:29	91:54	9	vlc_strerror_c(net_errno)
+call	91:29	91:53	10	vlc_strerror_c
+arg	91:44	91:53	11	net_errno
+water	91:44	0:0	12	net_errno
+water	91:55	0:0	8	;
+call	92:20	92:33	8	net_Close
+arg	92:31	92:33	9	fd
+water	92:31	0:0	10	fd
+water	92:34	0:0	8	;
+continue	93:20	93:28	8	
+water	94:16	0:0	8	}
+water	95:8	0:0	6	}
+decl	96:8	96:72	4	int	*nsockv
+op	96:20	0:0	4	=
+water	96:22	0:0	4	(
+water	96:23	0:0	4	int
+op	96:27	0:0	4	*
+water	96:28	0:0	4	)
+call	96:29	96:71	5	realloc
+arg	96:38	96:43	6	sockv
+water	96:38	0:0	7	sockv
+arg	96:45	96:71	6	(sockc+2)*sizeof(int)
+water	96:45	0:0	7	(
+water	96:46	0:0	7	sockc
+op	96:52	0:0	7	+
+water	96:54	0:0	7	2
+water	96:55	0:0	7	)
+op	96:57	0:0	7	*
+op	96:59	0:0	7	sizeof
+water	96:66	0:0	7	(
+water	96:67	0:0	7	int
+water	96:70	0:0	7	)
+if	97:8	101:8	4	(nsockv != NULL)
+cond	97:12	97:22	5	nsockv != NULL
+water	97:12	0:0	6	nsockv
+op	97:19	0:0	6	!=
+water	97:22	0:0	6	NULL
+stmts	98:8	101:8	5	
+water	98:8	0:0	6	{
+water	99:12	0:0	6	nsockv
+op	99:18	0:0	6	[
+water	99:19	0:0	6	sockc
+op	99:24	0:0	6	++
+op	99:26	0:0	6	]
+op	99:28	0:0	6	=
+water	99:30	0:0	6	fd
+water	99:32	0:0	6	;
+water	100:12	0:0	6	sockv
+op	100:18	0:0	6	=
+water	100:20	0:0	6	nsockv
+water	100:26	0:0	6	;
+water	101:8	0:0	6	}
+else	102:8	103:26	4
+stmts	103:12	103:26	5	
+call	103:12	103:25	6	net_Close
+arg	103:23	103:25	7	fd
+water	103:23	0:0	8	fd
+water	103:26	0:0	6	;
+water	104:4	0:0	4	}
+call	105:4	105:21	2	freeaddrinfo
+arg	105:18	105:21	3	res
+water	105:18	0:0	4	res
+water	105:22	0:0	2	;
+if	106:4	107:25	2	(sockv != NULL)
+cond	106:8	106:17	3	sockv != NULL
+water	106:8	0:0	4	sockv
+op	106:14	0:0	4	!=
+water	106:17	0:0	4	NULL
+stmts	107:8	107:25	3	
+water	107:8	0:0	4	sockv
+op	107:13	0:0	4	[
+water	107:14	0:0	4	sockc
+op	107:19	0:0	4	]
+op	107:21	0:0	4	=
+op	107:23	0:0	4	-
+water	107:24	0:0	4	1
+water	107:25	0:0	4	;
+return	108:4	108:16	2	sockv
+water	108:11	0:0	3	sockv

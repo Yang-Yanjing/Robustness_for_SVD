@@ -1,0 +1,856 @@
+func	2:0	174:0	0	char * *	subtitles_Detect
+params	2:23	0:0	1	
+param	2:25	2:47	2	input_thread_t *	p_this
+param	2:49	2:63	2	char *	psz_path
+param	3:25	3:50	2	const char *	psz_name_org
+stmnts	0:0	173:18	1	
+decl	5:4	5:66	2	int	i_fuzzy
+op	5:16	0:0	2	=
+call	5:18	5:65	3	var_GetInteger
+arg	5:34	5:40	4	p_this
+water	5:34	0:0	5	p_this
+arg	5:42	5:65	4	"sub-autodetect-fuzzy"
+water	5:42	0:0	5	"sub-autodetect-fuzzy"
+if	6:4	7:19	2	(i_fuzzy == 0)
+cond	6:9	6:20	3	i_fuzzy == 0
+water	6:9	0:0	4	i_fuzzy
+op	6:17	0:0	4	==
+water	6:20	0:0	4	0
+stmts	7:8	7:19	3	
+return	7:8	7:19	4	NULL
+water	7:15	0:0	5	NULL
+decl	8:4	8:46	2	int	j
+water	8:9	0:0	2	,
+decl	8:4	8:46	2	int	i_result2
+water	8:20	0:0	2	,
+decl	8:4	8:46	2	int	i_sub_count
+water	8:33	0:0	2	,
+decl	8:4	8:46	2	int	i_fname_len
+decl	9:4	9:52	2	char	*f_fname_noext
+op	9:24	0:0	2	=
+water	9:26	0:0	2	NULL
+water	9:30	0:0	2	,
+decl	9:4	9:52	2	char	*f_fname_trim
+op	9:46	0:0	2	=
+water	9:48	0:0	2	NULL
+decl	10:4	10:18	2	char	**subdirs
+decl	11:4	11:30	2	vlc_subfn_t	*result
+op	11:24	0:0	2	=
+water	11:26	0:0	2	NULL
+decl	12:4	12:18	2	char	**result2
+if	13:4	14:19	2	(! psz_name_org)
+cond	13:8	13:9	3	! psz_name_org
+op	13:8	0:0	4	!
+water	13:9	0:0	4	psz_name_org
+stmts	14:8	14:19	3	
+return	14:8	14:19	4	NULL
+water	14:15	0:0	5	NULL
+decl	15:4	15:47	2	char	*psz_fname
+op	15:20	0:0	2	=
+call	15:22	15:46	3	make_path
+arg	15:33	15:46	4	psz_name_org
+water	15:33	0:0	5	psz_name_org
+if	16:4	17:19	2	(! psz_fname)
+cond	16:8	16:9	3	! psz_fname
+op	16:8	0:0	4	!
+water	16:9	0:0	4	psz_fname
+stmts	17:8	17:19	3	
+return	17:8	17:19	4	NULL
+water	17:15	0:0	5	NULL
+decl	19:4	19:37	2	char	*f_dir
+op	19:16	0:0	2	=
+call	19:18	19:36	3	strdup
+arg	19:26	19:36	4	psz_fname
+water	19:26	0:0	5	psz_fname
+if	20:4	24:4	2	(f_dir == NULL)
+cond	20:8	20:17	3	f_dir == NULL
+water	20:8	0:0	4	f_dir
+op	20:14	0:0	4	==
+water	20:17	0:0	4	NULL
+stmts	21:4	24:4	3	
+water	21:4	0:0	4	{
+call	22:8	22:24	4	free
+arg	22:14	22:24	5	psz_fname
+water	22:14	0:0	6	psz_fname
+water	22:25	0:0	4	;
+return	23:8	23:19	4	NULL
+water	23:15	0:0	5	NULL
+water	24:4	0:0	4	}
+decl	25:4	25:60	2	const char	*f_fname
+op	25:24	0:0	2	=
+call	25:26	25:59	3	strrchr
+arg	25:35	25:44	4	psz_fname
+water	25:35	0:0	5	psz_fname
+arg	25:46	25:59	4	DIR_SEP_CHAR
+water	25:46	0:0	5	DIR_SEP_CHAR
+if	26:4	31:4	2	(! f_fname)
+cond	26:8	26:9	3	! f_fname
+op	26:8	0:0	4	!
+water	26:9	0:0	4	f_fname
+stmts	27:4	31:4	3	
+water	27:4	0:0	4	{
+call	28:8	28:20	4	free
+arg	28:14	28:20	5	f_dir
+water	28:14	0:0	6	f_dir
+water	28:21	0:0	4	;
+call	29:8	29:24	4	free
+arg	29:14	29:24	5	psz_fname
+water	29:14	0:0	6	psz_fname
+water	29:25	0:0	4	;
+return	30:8	30:19	4	NULL
+water	30:15	0:0	5	NULL
+water	31:4	0:0	4	}
+water	32:4	0:0	2	f_fname
+op	32:11	0:0	2	++
+water	32:13	0:0	2	;
+water	33:4	0:0	2	f_dir
+op	33:9	0:0	2	[
+water	33:10	0:0	2	f_fname
+op	33:18	0:0	2	-
+water	33:20	0:0	2	psz_fname
+op	33:29	0:0	2	]
+op	33:31	0:0	2	=
+water	33:33	0:0	2	0
+water	33:34	0:0	2	;
+water	34:4	0:0	2	i_fname_len
+op	34:16	0:0	2	=
+call	34:18	34:34	2	strlen
+arg	34:26	34:34	3	f_fname
+water	34:26	0:0	4	f_fname
+water	34:35	0:0	2	;
+water	35:4	0:0	2	f_fname_noext
+op	35:18	0:0	2	=
+call	35:20	35:42	2	malloc
+arg	35:27	35:42	3	i_fname_len+1
+water	35:27	0:0	4	i_fname_len
+op	35:39	0:0	4	+
+water	35:41	0:0	4	1
+water	35:43	0:0	2	;
+water	36:4	0:0	2	f_fname_trim
+op	36:17	0:0	2	=
+call	36:19	36:42	2	malloc
+arg	36:26	36:42	3	i_fname_len+1
+water	36:26	0:0	4	i_fname_len
+op	36:38	0:0	4	+
+water	36:40	0:0	4	1
+water	36:43	0:0	2	;
+if	37:4	44:4	2	(! f_fname_noext || ! f_fname_trim)
+cond	37:8	37:27	3	! f_fname_noext || ! f_fname_trim
+op	37:8	0:0	4	!
+water	37:9	0:0	4	f_fname_noext
+op	37:23	0:0	4	||
+op	37:26	0:0	4	!
+water	37:27	0:0	4	f_fname_trim
+stmts	38:4	44:4	3	
+water	38:4	0:0	4	{
+call	39:8	39:20	4	free
+arg	39:14	39:20	5	f_dir
+water	39:14	0:0	6	f_dir
+water	39:21	0:0	4	;
+call	40:8	40:28	4	free
+arg	40:14	40:28	5	f_fname_noext
+water	40:14	0:0	6	f_fname_noext
+water	40:29	0:0	4	;
+call	41:8	41:27	4	free
+arg	41:14	41:27	5	f_fname_trim
+water	41:14	0:0	6	f_fname_trim
+water	41:28	0:0	4	;
+call	42:8	42:24	4	free
+arg	42:14	42:24	5	psz_fname
+water	42:14	0:0	6	psz_fname
+water	42:25	0:0	4	;
+return	43:8	43:19	4	NULL
+water	43:15	0:0	5	NULL
+water	44:4	0:0	4	}
+call	45:4	45:45	2	strcpy_strip_ext
+arg	45:22	45:35	3	f_fname_noext
+water	45:22	0:0	4	f_fname_noext
+arg	45:37	45:45	3	f_fname
+water	45:37	0:0	4	f_fname
+water	45:46	0:0	2	;
+call	46:4	46:45	2	strcpy_trim
+arg	46:17	46:29	3	f_fname_trim
+water	46:17	0:0	4	f_fname_trim
+arg	46:31	46:45	3	f_fname_noext
+water	46:31	0:0	4	f_fname_noext
+water	46:46	0:0	2	;
+water	47:4	0:0	2	result
+op	47:11	0:0	2	=
+call	47:13	47:63	2	calloc
+arg	47:21	47:41	3	MAX_SUBTITLE_FILES+1
+water	47:21	0:0	4	MAX_SUBTITLE_FILES
+op	47:39	0:0	4	+
+water	47:40	0:0	4	1
+arg	47:43	47:63	3	sizeof(vlc_subfn_t)
+op	47:43	0:0	4	sizeof
+water	47:49	0:0	4	(
+water	47:50	0:0	4	vlc_subfn_t
+water	47:61	0:0	4	)
+water	47:64	0:0	2	;
+water	48:4	0:0	2	subdirs
+op	48:12	0:0	2	=
+call	48:14	48:45	2	paths_to_list
+arg	48:29	48:34	3	f_dir
+water	48:29	0:0	4	f_dir
+arg	48:36	48:45	3	psz_path
+water	48:36	0:0	4	psz_path
+water	48:46	0:0	2	;
+for	49:4	124:4	2	(j = - 1 , i_sub_count = 0 ;( j == - 1 ) || ( j >= 0 && subdirs != NULL && subdirs [ j ] != NULL );j ++)
+forinit	49:9	49:32	3	j = - 1 , i_sub_count = 0 ;
+water	49:9	0:0	4	j
+op	49:11	0:0	4	=
+op	49:13	0:0	4	-
+water	49:14	0:0	4	1
+water	49:15	0:0	4	,
+water	49:17	0:0	4	i_sub_count
+op	49:29	0:0	4	=
+water	49:31	0:0	4	0
+water	49:32	0:0	4	;
+cond	49:34	49:97	3	( j == - 1 ) || ( j >= 0 && subdirs != NULL && subdirs [ j ] != NULL )
+water	49:34	0:0	4	(
+water	49:35	0:0	4	j
+op	49:37	0:0	4	==
+op	49:40	0:0	4	-
+water	49:41	0:0	4	1
+water	49:42	0:0	4	)
+op	49:44	0:0	4	||
+water	49:47	0:0	4	(
+water	49:49	0:0	4	j
+op	49:51	0:0	4	>=
+water	49:54	0:0	4	0
+op	49:56	0:0	4	&&
+water	49:59	0:0	4	subdirs
+op	49:67	0:0	4	!=
+water	49:70	0:0	4	NULL
+op	49:75	0:0	4	&&
+water	49:78	0:0	4	subdirs
+op	49:85	0:0	4	[
+water	49:86	0:0	4	j
+op	49:87	0:0	4	]
+op	49:89	0:0	4	!=
+water	49:92	0:0	4	NULL
+water	49:97	0:0	4	)
+forexpr	49:100	49:101	3	j ++
+water	49:100	0:0	4	j
+op	49:101	0:0	4	++
+stmts	50:4	124:4	3	
+water	50:4	0:0	4	{
+decl	51:8	51:58	4	const char	*psz_dir
+op	51:28	0:0	4	=
+water	51:30	0:0	4	(
+water	51:31	0:0	4	j
+op	51:33	0:0	4	<
+water	51:35	0:0	4	0
+water	51:36	0:0	4	)
+water	51:38	0:0	4	?
+water	51:40	0:0	4	f_dir
+water	51:46	0:0	4	:
+water	51:48	0:0	4	subdirs
+op	51:55	0:0	4	[
+water	51:56	0:0	4	j
+op	51:57	0:0	4	]
+if	52:8	53:20	4	(psz_dir == NULL || ( j >= 0 && !strcmp (psz_dir ,f_dir ) ))
+cond	52:12	52:69	5	psz_dir == NULL || ( j >= 0 && !strcmp (psz_dir ,f_dir ) )
+water	52:12	0:0	6	psz_dir
+op	52:20	0:0	6	==
+water	52:23	0:0	6	NULL
+op	52:28	0:0	6	||
+water	52:31	0:0	6	(
+water	52:33	0:0	6	j
+op	52:35	0:0	6	>=
+water	52:38	0:0	6	0
+op	52:40	0:0	6	&&
+op	52:43	0:0	6	!
+call	52:44	52:67	6	strcmp
+arg	52:52	52:59	7	psz_dir
+water	52:52	0:0	8	psz_dir
+arg	52:61	52:67	7	f_dir
+water	52:61	0:0	8	f_dir
+water	52:69	0:0	6	)
+stmts	53:12	53:20	5	
+continue	53:12	53:20	6	
+decl	55:8	55:41	4	DIR	*dir
+op	55:17	0:0	4	=
+call	55:19	55:40	5	vlc_opendir
+arg	55:32	55:40	6	psz_dir
+water	55:32	0:0	7	psz_dir
+if	56:8	57:20	4	(dir == NULL)
+cond	56:12	56:19	5	dir == NULL
+water	56:12	0:0	6	dir
+op	56:16	0:0	6	==
+water	56:19	0:0	6	NULL
+stmts	57:12	57:20	5	
+continue	57:12	57:20	6	
+call	58:8	58:70	4	msg_Dbg
+arg	58:17	58:23	5	p_this
+water	58:17	0:0	6	p_this
+arg	58:25	58:60	5	"looking for a subtitle file in %s"
+water	58:25	0:0	6	"looking for a subtitle file in %s"
+arg	58:62	58:70	5	psz_dir
+water	58:62	0:0	6	psz_dir
+water	58:71	0:0	4	;
+decl	59:8	59:28	4	const char	*psz_name
+while	60:8	122:8	4	(( psz_name =vlc_readdir (dir ) ) && i_sub_count < MAX_SUBTITLE_FILES)
+cond	60:15	60:64	5	( psz_name =vlc_readdir (dir ) ) && i_sub_count < MAX_SUBTITLE_FILES
+water	60:15	0:0	6	(
+water	60:16	0:0	6	psz_name
+op	60:25	0:0	6	=
+call	60:27	60:44	6	vlc_readdir
+arg	60:40	60:44	7	dir
+water	60:40	0:0	8	dir
+water	60:45	0:0	6	)
+op	60:47	0:0	6	&&
+water	60:50	0:0	6	i_sub_count
+op	60:62	0:0	6	<
+water	60:64	0:0	6	MAX_SUBTITLE_FILES
+stmts	61:8	122:8	5	
+water	61:8	0:0	6	{
+if	62:12	63:24	6	(psz_name [ 0 ] == '.' || !subtitles_Filter (psz_name ))
+cond	62:16	62:66	7	psz_name [ 0 ] == '.' || !subtitles_Filter (psz_name )
+water	62:16	0:0	8	psz_name
+op	62:24	0:0	8	[
+water	62:25	0:0	8	0
+op	62:26	0:0	8	]
+op	62:28	0:0	8	==
+water	62:31	0:0	8	'.'
+op	62:35	0:0	8	||
+op	62:38	0:0	8	!
+call	62:39	62:66	8	subtitles_Filter
+arg	62:57	62:66	9	psz_name
+water	62:57	0:0	10	psz_name
+stmts	63:16	63:24	7	
+continue	63:16	63:24	8	
+decl	64:12	64:56	6	char	tmp_fname_noext[strlen(psz_name)+1]
+decl	65:12	65:55	6	char	tmp_fname_trim[strlen(psz_name)+1]
+decl	66:12	66:54	6	char	tmp_fname_ext[strlen(psz_name)+1]
+decl	67:12	67:27	6	const char	*tmp
+decl	68:12	68:42	6	int	i_prio
+op	68:23	0:0	6	=
+water	68:25	0:0	6	SUB_PRIORITY_NONE
+call	70:12	70:56	6	strcpy_strip_ext
+arg	70:30	70:45	7	tmp_fname_noext
+water	70:30	0:0	8	tmp_fname_noext
+arg	70:47	70:56	7	psz_name
+water	70:47	0:0	8	psz_name
+water	70:57	0:0	6	;
+call	71:12	71:52	6	strcpy_get_ext
+arg	71:28	71:41	7	tmp_fname_ext
+water	71:28	0:0	8	tmp_fname_ext
+arg	71:43	71:52	7	psz_name
+water	71:43	0:0	8	psz_name
+water	71:53	0:0	6	;
+call	72:12	72:57	6	strcpy_trim
+arg	72:25	72:39	7	tmp_fname_trim
+water	72:25	0:0	8	tmp_fname_trim
+arg	72:41	72:57	7	tmp_fname_noext
+water	72:41	0:0	8	tmp_fname_noext
+water	72:58	0:0	6	;
+if	73:12	77:12	6	(!strcmp (tmp_fname_trim ,f_fname_trim ))
+cond	73:16	73:54	7	!strcmp (tmp_fname_trim ,f_fname_trim )
+op	73:16	0:0	8	!
+call	73:17	73:54	8	strcmp
+arg	73:25	73:39	9	tmp_fname_trim
+water	73:25	0:0	10	tmp_fname_trim
+arg	73:41	73:54	9	f_fname_trim
+water	73:41	0:0	10	f_fname_trim
+stmts	74:12	77:12	7	
+water	74:12	0:0	8	{
+water	76:16	0:0	8	i_prio
+op	76:23	0:0	8	=
+water	76:25	0:0	8	SUB_PRIORITY_MATCH_ALL
+water	76:47	0:0	8	;
+water	77:12	0:0	8	}
+else	78:12	93:12	6
+stmts	78:17	93:12	7	
+if	78:17	93:12	8	(( tmp =strstr (tmp_fname_trim ,f_fname_trim ) ))
+cond	78:21	78:66	9	( tmp =strstr (tmp_fname_trim ,f_fname_trim ) )
+water	78:21	0:0	10	(
+water	78:22	0:0	10	tmp
+op	78:26	0:0	10	=
+call	78:28	78:65	10	strstr
+arg	78:36	78:50	11	tmp_fname_trim
+water	78:36	0:0	12	tmp_fname_trim
+arg	78:52	78:65	11	f_fname_trim
+water	78:52	0:0	12	f_fname_trim
+water	78:66	0:0	10	)
+stmts	79:12	93:12	9	
+water	79:12	0:0	10	{
+water	81:16	0:0	10	tmp
+op	81:20	0:0	10	+=
+call	81:23	81:44	10	strlen
+arg	81:31	81:44	11	f_fname_trim
+water	81:31	0:0	12	f_fname_trim
+water	81:45	0:0	10	;
+if	82:16	86:16	10	(whiteonly (tmp ))
+cond	82:20	82:35	11	whiteonly (tmp )
+call	82:20	82:35	12	whiteonly
+arg	82:31	82:35	13	tmp
+water	82:31	0:0	14	tmp
+stmts	83:16	86:16	11	
+water	83:16	0:0	12	{
+water	85:20	0:0	12	i_prio
+op	85:27	0:0	12	=
+water	85:29	0:0	12	SUB_PRIORITY_MATCH_RIGHT
+water	85:53	0:0	12	;
+water	86:16	0:0	12	}
+else	87:16	92:16	10
+stmts	88:16	92:16	11	
+water	88:16	0:0	12	{
+water	91:20	0:0	12	i_prio
+op	91:27	0:0	12	=
+water	91:29	0:0	12	SUB_PRIORITY_MATCH_LEFT
+water	91:52	0:0	12	;
+water	92:16	0:0	12	}
+water	93:12	0:0	10	}
+else	94:12	98:12	6
+stmts	94:17	98:12	7	
+if	94:17	98:12	8	(j == - 1)
+cond	94:21	94:27	9	j == - 1
+water	94:21	0:0	10	j
+op	94:23	0:0	10	==
+op	94:26	0:0	10	-
+water	94:27	0:0	10	1
+stmts	95:12	98:12	9	
+water	95:12	0:0	10	{
+water	97:16	0:0	10	i_prio
+op	97:23	0:0	10	=
+water	97:25	0:0	10	SUB_PRIORITY_MATCH_NONE
+water	97:48	0:0	10	;
+water	98:12	0:0	10	}
+if	99:12	121:12	6	(i_prio >= i_fuzzy)
+cond	99:16	99:26	7	i_prio >= i_fuzzy
+water	99:16	0:0	8	i_prio
+op	99:23	0:0	8	>=
+water	99:26	0:0	8	i_fuzzy
+stmts	100:12	121:12	7	
+water	100:12	0:0	8	{
+decl	101:16	101:73	8	char	psz_path[strlen(psz_dir)+strlen(psz_name)+2]
+decl	102:16	102:30	8	struct stat	st
+call	103:16	103:70	8	sprintf
+arg	103:25	103:33	9	psz_path
+water	103:25	0:0	10	psz_path
+arg	103:35	103:50	9	"%s"DIR_SEP"%s"
+water	103:35	0:0	10	"%s"
+water	103:39	0:0	10	DIR_SEP
+water	103:46	0:0	10	"%s"
+arg	103:52	103:59	9	psz_dir
+water	103:52	0:0	10	psz_dir
+arg	103:61	103:70	9	psz_name
+water	103:61	0:0	10	psz_name
+water	103:71	0:0	8	;
+if	104:16	105:28	8	(!strcmp (psz_path ,psz_fname ))
+cond	104:20	104:49	9	!strcmp (psz_path ,psz_fname )
+op	104:20	0:0	10	!
+call	104:21	104:49	10	strcmp
+arg	104:29	104:37	11	psz_path
+water	104:29	0:0	12	psz_path
+arg	104:39	104:49	11	psz_fname
+water	104:39	0:0	12	psz_fname
+stmts	105:20	105:28	9	
+continue	105:20	105:28	10	
+if	106:16	115:16	8	(!vlc_stat (psz_path ,& st ) &&S_ISREG (st . st_mode ) && result)
+cond	106:20	106:75	9	!vlc_stat (psz_path ,& st ) &&S_ISREG (st . st_mode ) && result
+op	106:20	0:0	10	!
+call	106:21	106:45	10	vlc_stat
+arg	106:31	106:39	11	psz_path
+water	106:31	0:0	12	psz_path
+arg	106:41	106:45	11	&st
+op	106:41	0:0	12	&
+water	106:42	0:0	12	st
+op	106:47	0:0	10	&&
+call	106:50	106:70	10	S_ISREG
+arg	106:59	106:70	11	st.st_mode
+water	106:59	0:0	12	st
+op	106:61	0:0	12	.
+water	106:62	0:0	12	st_mode
+op	106:72	0:0	10	&&
+water	106:75	0:0	10	result
+stmts	107:16	115:16	9	
+water	107:16	0:0	10	{
+call	108:20	110:45	10	msg_Dbg
+arg	108:29	108:35	11	p_this
+water	108:29	0:0	12	p_this
+arg	109:28	109:72	11	"autodetected subtitle: %s with priority %d"
+water	109:28	0:0	12	"autodetected subtitle: %s with priority %d"
+arg	110:28	110:36	11	psz_path
+water	110:28	0:0	12	psz_path
+arg	110:38	110:45	11	i_prio
+water	110:38	0:0	12	i_prio
+water	110:46	0:0	10	;
+water	111:20	0:0	10	result
+op	111:26	0:0	10	[
+water	111:27	0:0	10	i_sub_count
+op	111:38	0:0	10	]
+op	111:39	0:0	10	.
+water	111:40	0:0	10	priority
+op	111:49	0:0	10	=
+water	111:51	0:0	10	i_prio
+water	111:57	0:0	10	;
+water	112:20	0:0	10	result
+op	112:26	0:0	10	[
+water	112:27	0:0	10	i_sub_count
+op	112:38	0:0	10	]
+op	112:39	0:0	10	.
+water	112:40	0:0	10	psz_fname
+op	112:50	0:0	10	=
+call	112:52	112:69	10	strdup
+arg	112:60	112:69	11	psz_path
+water	112:60	0:0	12	psz_path
+water	112:70	0:0	10	;
+water	113:20	0:0	10	result
+op	113:26	0:0	10	[
+water	113:27	0:0	10	i_sub_count
+op	113:38	0:0	10	]
+op	113:39	0:0	10	.
+water	113:40	0:0	10	psz_ext
+op	113:48	0:0	10	=
+call	113:50	113:70	10	strdup
+arg	113:57	113:70	11	tmp_fname_ext
+water	113:57	0:0	12	tmp_fname_ext
+water	113:71	0:0	10	;
+water	114:20	0:0	10	i_sub_count
+op	114:31	0:0	10	++
+water	114:33	0:0	10	;
+water	115:16	0:0	10	}
+else	116:16	120:16	8
+stmts	117:16	120:16	9	
+water	117:16	0:0	10	{
+call	118:20	119:46	10	msg_Dbg
+arg	118:29	118:35	11	p_this
+water	118:29	0:0	12	p_this
+arg	118:37	118:96	11	"stat failed (autodetecting subtitle: %s with priority %d)"
+water	118:37	0:0	12	"stat failed (autodetecting subtitle: %s with priority %d)"
+arg	119:29	119:37	11	psz_path
+water	119:29	0:0	12	psz_path
+arg	119:39	119:46	11	i_prio
+water	119:39	0:0	12	i_prio
+water	119:47	0:0	10	;
+water	120:16	0:0	10	}
+water	121:12	0:0	8	}
+water	122:8	0:0	6	}
+call	123:8	123:22	4	closedir
+arg	123:18	123:22	5	dir
+water	123:18	0:0	6	dir
+water	123:23	0:0	4	;
+water	124:4	0:0	4	}
+if	125:4	130:4	2	(subdirs)
+cond	125:8	125:8	3	subdirs
+water	125:8	0:0	4	subdirs
+stmts	126:4	130:4	3	
+water	126:4	0:0	4	{
+for	127:8	128:30	4	(j = 0 ;subdirs [ j ];j ++)
+forinit	127:13	127:18	5	j = 0 ;
+water	127:13	0:0	6	j
+op	127:15	0:0	6	=
+water	127:17	0:0	6	0
+water	127:18	0:0	6	;
+cond	127:20	127:29	5	subdirs [ j ]
+water	127:20	0:0	6	subdirs
+op	127:27	0:0	6	[
+water	127:28	0:0	6	j
+op	127:29	0:0	6	]
+forexpr	127:32	127:33	5	j ++
+water	127:32	0:0	6	j
+op	127:33	0:0	6	++
+stmts	128:12	128:30	5	
+call	128:12	128:29	6	free
+arg	128:18	128:29	7	subdirs[j]
+water	128:18	0:0	8	subdirs
+op	128:25	0:0	8	[
+water	128:26	0:0	8	j
+op	128:27	0:0	8	]
+water	128:30	0:0	6	;
+call	129:8	129:22	4	free
+arg	129:14	129:22	5	subdirs
+water	129:14	0:0	6	subdirs
+water	129:23	0:0	4	;
+water	130:4	0:0	4	}
+call	131:4	131:16	2	free
+arg	131:10	131:16	3	f_dir
+water	131:10	0:0	4	f_dir
+water	131:17	0:0	2	;
+call	132:4	132:23	2	free
+arg	132:10	132:23	3	f_fname_trim
+water	132:10	0:0	4	f_fname_trim
+water	132:24	0:0	2	;
+call	133:4	133:24	2	free
+arg	133:10	133:24	3	f_fname_noext
+water	133:10	0:0	4	f_fname_noext
+water	133:25	0:0	2	;
+call	134:4	134:20	2	free
+arg	134:10	134:20	3	psz_fname
+water	134:10	0:0	4	psz_fname
+water	134:21	0:0	2	;
+if	135:4	136:19	2	(! result)
+cond	135:8	135:9	3	! result
+op	135:8	0:0	4	!
+water	135:9	0:0	4	result
+stmts	136:8	136:19	3	
+return	136:8	136:19	4	NULL
+water	136:15	0:0	5	NULL
+call	137:4	137:74	2	qsort
+arg	137:11	137:17	3	result
+water	137:11	0:0	4	result
+arg	137:19	137:30	3	i_sub_count
+water	137:19	0:0	4	i_sub_count
+arg	137:32	137:51	3	sizeof(vlc_subfn_t)
+op	137:32	0:0	4	sizeof
+water	137:38	0:0	4	(
+water	137:39	0:0	4	vlc_subfn_t
+water	137:50	0:0	4	)
+arg	137:53	137:74	3	compare_sub_priority
+water	137:53	0:0	4	compare_sub_priority
+water	137:75	0:0	2	;
+water	138:4	0:0	2	result2
+op	138:12	0:0	2	=
+call	138:14	138:53	2	calloc
+arg	138:22	138:37	3	i_sub_count+1
+water	138:22	0:0	4	i_sub_count
+op	138:34	0:0	4	+
+water	138:36	0:0	4	1
+arg	138:39	138:53	3	sizeof(char*)
+op	138:39	0:0	4	sizeof
+water	138:45	0:0	4	(
+water	138:46	0:0	4	char
+op	138:50	0:0	4	*
+water	138:51	0:0	4	)
+water	138:54	0:0	2	;
+for	139:4	166:4	2	(j = 0 , i_result2 = 0 ;j < i_sub_count && result2 != NULL;j ++)
+forinit	139:9	139:29	3	j = 0 , i_result2 = 0 ;
+water	139:9	0:0	4	j
+op	139:11	0:0	4	=
+water	139:13	0:0	4	0
+water	139:14	0:0	4	,
+water	139:16	0:0	4	i_result2
+op	139:26	0:0	4	=
+water	139:28	0:0	4	0
+water	139:29	0:0	4	;
+cond	139:31	139:61	3	j < i_sub_count && result2 != NULL
+water	139:31	0:0	4	j
+op	139:33	0:0	4	<
+water	139:35	0:0	4	i_sub_count
+op	139:47	0:0	4	&&
+water	139:50	0:0	4	result2
+op	139:58	0:0	4	!=
+water	139:61	0:0	4	NULL
+forexpr	139:67	139:68	3	j ++
+water	139:67	0:0	4	j
+op	139:68	0:0	4	++
+stmts	140:4	166:4	3	
+water	140:4	0:0	4	{
+decl	141:8	141:29	4	bool	b_reject
+op	141:22	0:0	4	=
+water	141:24	0:0	4	false
+if	142:8	143:17	4	(! result [ j ] . psz_fname || ! result [ j ] . psz_ext)
+cond	142:12	142:47	5	! result [ j ] . psz_fname || ! result [ j ] . psz_ext
+op	142:12	0:0	6	!
+water	142:13	0:0	6	result
+op	142:19	0:0	6	[
+water	142:20	0:0	6	j
+op	142:21	0:0	6	]
+op	142:22	0:0	6	.
+water	142:23	0:0	6	psz_fname
+op	142:33	0:0	6	||
+op	142:36	0:0	6	!
+water	142:37	0:0	6	result
+op	142:43	0:0	6	[
+water	142:44	0:0	6	j
+op	142:45	0:0	6	]
+op	142:46	0:0	6	.
+water	142:47	0:0	6	psz_ext
+stmts	143:12	143:17	5	
+break	143:12	143:17	6	
+if	144:8	157:8	4	(!strcasecmp (result [ j ] . psz_ext ,"sub" ))
+cond	144:12	144:50	5	!strcasecmp (result [ j ] . psz_ext ,"sub" )
+op	144:12	0:0	6	!
+call	144:13	144:50	6	strcasecmp
+arg	144:25	144:42	7	result[j].psz_ext
+water	144:25	0:0	8	result
+op	144:31	0:0	8	[
+water	144:32	0:0	8	j
+op	144:33	0:0	8	]
+op	144:34	0:0	8	.
+water	144:35	0:0	8	psz_ext
+arg	144:44	144:50	7	"sub"
+water	144:44	0:0	8	"sub"
+stmts	145:8	157:8	5	
+water	145:8	0:0	6	{
+decl	146:12	146:17	6	int	i
+for	147:12	154:12	6	(i = 0 ;i < i_sub_count;i ++)
+forinit	147:17	147:22	7	i = 0 ;
+water	147:17	0:0	8	i
+op	147:19	0:0	8	=
+water	147:21	0:0	8	0
+water	147:22	0:0	8	;
+cond	147:24	147:28	7	i < i_sub_count
+water	147:24	0:0	8	i
+op	147:26	0:0	8	<
+water	147:28	0:0	8	i_sub_count
+forexpr	147:41	147:42	7	i ++
+water	147:41	0:0	8	i
+op	147:42	0:0	8	++
+stmts	148:12	154:12	7	
+water	148:12	0:0	8	{
+if	149:16	153:25	8	(result [ i ] . psz_fname && result [ i ] . psz_ext && !strncasecmp (result [ j ] . psz_fname ,result [ i ] . psz_fname ,strlen (result [ j ] . psz_fname ) - 3 ) && !strcasecmp (result [ i ] . psz_ext ,"idx" ))
+cond	149:20	152:58	9	result [ i ] . psz_fname && result [ i ] . psz_ext && !strncasecmp (result [ j ] . psz_fname ,result [ i ] . psz_fname ,strlen (result [ j ] . psz_fname ) - 3 ) && !strcasecmp (result [ i ] . psz_ext ,"idx" )
+water	149:20	0:0	10	result
+op	149:26	0:0	10	[
+water	149:27	0:0	10	i
+op	149:28	0:0	10	]
+op	149:29	0:0	10	.
+water	149:30	0:0	10	psz_fname
+op	149:40	0:0	10	&&
+water	149:43	0:0	10	result
+op	149:49	0:0	10	[
+water	149:50	0:0	10	i
+op	149:51	0:0	10	]
+op	149:52	0:0	10	.
+water	149:53	0:0	10	psz_ext
+op	149:61	0:0	10	&&
+op	150:20	0:0	10	!
+call	150:21	151:67	10	strncasecmp
+arg	150:34	150:53	11	result[j].psz_fname
+water	150:34	0:0	12	result
+op	150:40	0:0	12	[
+water	150:41	0:0	12	j
+op	150:42	0:0	12	]
+op	150:43	0:0	12	.
+water	150:44	0:0	12	psz_fname
+arg	150:55	150:74	11	result[i].psz_fname
+water	150:55	0:0	12	result
+op	150:61	0:0	12	[
+water	150:62	0:0	12	i
+op	150:63	0:0	12	]
+op	150:64	0:0	12	.
+water	150:65	0:0	12	psz_fname
+arg	151:34	151:67	11	strlen(result[j].psz_fname)-3
+call	151:34	151:61	12	strlen
+arg	151:42	151:61	13	result[j].psz_fname
+water	151:42	0:0	14	result
+op	151:48	0:0	14	[
+water	151:49	0:0	14	j
+op	151:50	0:0	14	]
+op	151:51	0:0	14	.
+water	151:52	0:0	14	psz_fname
+op	151:63	0:0	12	-
+water	151:65	0:0	12	3
+op	151:69	0:0	10	&&
+op	152:20	0:0	10	!
+call	152:21	152:58	10	strcasecmp
+arg	152:33	152:50	11	result[i].psz_ext
+water	152:33	0:0	12	result
+op	152:39	0:0	12	[
+water	152:40	0:0	12	i
+op	152:41	0:0	12	]
+op	152:42	0:0	12	.
+water	152:43	0:0	12	psz_ext
+arg	152:52	152:58	11	"idx"
+water	152:52	0:0	12	"idx"
+stmts	153:20	153:25	9	
+break	153:20	153:25	10	
+water	154:12	0:0	8	}
+if	155:12	156:31	6	(i < i_sub_count)
+cond	155:16	155:20	7	i < i_sub_count
+water	155:16	0:0	8	i
+op	155:18	0:0	8	<
+water	155:20	0:0	8	i_sub_count
+stmts	156:16	156:31	7	
+water	156:16	0:0	8	b_reject
+op	156:25	0:0	8	=
+water	156:27	0:0	8	true
+water	156:31	0:0	8	;
+water	157:8	0:0	6	}
+else	158:8	162:8	4
+stmts	158:13	162:8	5	
+if	158:13	162:8	6	(!strcasecmp (result [ j ] . psz_ext ,"cdg" ))
+cond	158:17	158:55	7	!strcasecmp (result [ j ] . psz_ext ,"cdg" )
+op	158:17	0:0	8	!
+call	158:18	158:55	8	strcasecmp
+arg	158:30	158:47	9	result[j].psz_ext
+water	158:30	0:0	10	result
+op	158:36	0:0	10	[
+water	158:37	0:0	10	j
+op	158:38	0:0	10	]
+op	158:39	0:0	10	.
+water	158:40	0:0	10	psz_ext
+arg	158:49	158:55	9	"cdg"
+water	158:49	0:0	10	"cdg"
+stmts	159:8	162:8	7	
+water	159:8	0:0	8	{
+if	160:12	161:31	8	(result [ j ] . priority < SUB_PRIORITY_MATCH_ALL)
+cond	160:16	160:37	9	result [ j ] . priority < SUB_PRIORITY_MATCH_ALL
+water	160:16	0:0	10	result
+op	160:22	0:0	10	[
+water	160:23	0:0	10	j
+op	160:24	0:0	10	]
+op	160:25	0:0	10	.
+water	160:26	0:0	10	priority
+op	160:35	0:0	10	<
+water	160:37	0:0	10	SUB_PRIORITY_MATCH_ALL
+stmts	161:16	161:31	9	
+water	161:16	0:0	10	b_reject
+op	161:25	0:0	10	=
+water	161:27	0:0	10	true
+water	161:31	0:0	10	;
+water	162:8	0:0	8	}
+if	164:8	165:64	4	(! b_reject)
+cond	164:12	164:13	5	! b_reject
+op	164:12	0:0	6	!
+water	164:13	0:0	6	b_reject
+stmts	165:12	165:64	5	
+water	165:12	0:0	6	result2
+op	165:19	0:0	6	[
+water	165:20	0:0	6	i_result2
+op	165:29	0:0	6	++
+op	165:31	0:0	6	]
+op	165:33	0:0	6	=
+call	165:35	165:63	6	strdup
+arg	165:43	165:63	7	result[j].psz_fname
+water	165:43	0:0	8	result
+op	165:49	0:0	8	[
+water	165:50	0:0	8	j
+op	165:51	0:0	8	]
+op	165:52	0:0	8	.
+water	165:53	0:0	8	psz_fname
+water	165:64	0:0	6	;
+water	166:4	0:0	4	}
+for	167:4	171:4	2	(j = 0 ;j < i_sub_count;j ++)
+forinit	167:9	167:14	3	j = 0 ;
+water	167:9	0:0	4	j
+op	167:11	0:0	4	=
+water	167:13	0:0	4	0
+water	167:14	0:0	4	;
+cond	167:16	167:20	3	j < i_sub_count
+water	167:16	0:0	4	j
+op	167:18	0:0	4	<
+water	167:20	0:0	4	i_sub_count
+forexpr	167:33	167:34	3	j ++
+water	167:33	0:0	4	j
+op	167:34	0:0	4	++
+stmts	168:4	171:4	3	
+water	168:4	0:0	4	{
+call	169:8	169:34	4	free
+arg	169:14	169:34	5	result[j].psz_fname
+water	169:14	0:0	6	result
+op	169:20	0:0	6	[
+water	169:21	0:0	6	j
+op	169:22	0:0	6	]
+op	169:23	0:0	6	.
+water	169:24	0:0	6	psz_fname
+water	169:35	0:0	4	;
+call	170:8	170:32	4	free
+arg	170:14	170:32	5	result[j].psz_ext
+water	170:14	0:0	6	result
+op	170:20	0:0	6	[
+water	170:21	0:0	6	j
+op	170:22	0:0	6	]
+op	170:23	0:0	6	.
+water	170:24	0:0	6	psz_ext
+water	170:33	0:0	4	;
+water	171:4	0:0	4	}
+call	172:4	172:17	2	free
+arg	172:10	172:17	3	result
+water	172:10	0:0	4	result
+water	172:18	0:0	2	;
+return	173:4	173:18	2	result2
+water	173:11	0:0	3	result2

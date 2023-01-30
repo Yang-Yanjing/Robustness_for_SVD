@@ -1,0 +1,287 @@
+func	2:0	56:0	0	static int	DecodeAudio
+params	2:22	0:0	1	
+param	2:24	2:40	2	demux_t *	p_demux
+param	2:42	2:63	2	sdi_audio_t *	p_audio
+stmnts	0:0	55:22	1	
+decl	4:4	4:39	2	demux_sys_t	*p_sys
+op	4:23	0:0	2	=
+water	4:25	0:0	2	p_demux
+op	4:32	0:0	2	->
+water	4:34	0:0	2	p_sys
+decl	5:4	5:20	2	block_t	*p_block
+decl	6:4	6:21	2	int16_t	*p_output
+if	7:4	8:27	2	(p_audio -> p_buffer == NULL)
+cond	7:9	7:30	3	p_audio -> p_buffer == NULL
+water	7:9	0:0	4	p_audio
+op	7:16	0:0	4	->
+water	7:18	0:0	4	p_buffer
+op	7:27	0:0	4	==
+water	7:30	0:0	4	NULL
+stmts	8:8	8:27	3	
+return	8:8	8:27	4	VLC_EGENERIC
+water	8:15	0:0	5	VLC_EGENERIC
+if	9:4	14:4	2	(! p_audio -> i_left_samples && ! p_audio -> i_right_samples)
+cond	9:9	9:47	3	! p_audio -> i_left_samples && ! p_audio -> i_right_samples
+op	9:9	0:0	4	!
+water	9:10	0:0	4	p_audio
+op	9:17	0:0	4	->
+water	9:19	0:0	4	i_left_samples
+op	9:34	0:0	4	&&
+op	9:37	0:0	4	!
+water	9:38	0:0	4	p_audio
+op	9:45	0:0	4	->
+water	9:47	0:0	4	i_right_samples
+stmts	10:4	14:4	3	
+water	10:4	0:0	4	{
+call	11:8	12:34	4	msg_Warn
+arg	11:18	11:25	5	p_demux
+water	11:18	0:0	6	p_demux
+arg	11:27	11:43	5	"no audio %u/%u"
+water	11:27	0:0	6	"no audio %u/%u"
+arg	11:45	11:61	5	p_audio->i_group
+water	11:45	0:0	6	p_audio
+op	11:52	0:0	6	->
+water	11:54	0:0	6	i_group
+arg	12:18	12:34	5	p_audio->i_pair
+water	12:18	0:0	6	p_audio
+op	12:25	0:0	6	->
+water	12:27	0:0	6	i_pair
+water	12:35	0:0	4	;
+return	13:8	13:27	4	VLC_EGENERIC
+water	13:15	0:0	5	VLC_EGENERIC
+water	14:4	0:0	4	}
+if	15:4	25:4	2	(p_audio -> i_left_samples< ( float ) p_audio -> i_nb_samples * ( 1 . - SAMPLERATE_TOLERANCE ) || p_audio -> i_left_samples >(float ) p_audio -> i_nb_samples * ( 1 . + SAMPLERATE_TOLERANCE ))
+cond	15:9	18:69	3	p_audio -> i_left_samples< ( float ) p_audio -> i_nb_samples * ( 1 . - SAMPLERATE_TOLERANCE ) || p_audio -> i_left_samples >(float ) p_audio -> i_nb_samples * ( 1 . + SAMPLERATE_TOLERANCE )
+call	15:9	18:18	4	p_audio->i_left_samples
+arg	18:13	18:18	5	float
+water	18:13	0:0	6	float
+water	18:19	0:0	4	p_audio
+op	18:26	0:0	4	->
+water	18:28	0:0	4	i_nb_samples
+op	18:41	0:0	4	*
+water	18:43	0:0	4	(
+water	18:44	0:0	4	1
+op	18:45	0:0	4	.
+op	18:47	0:0	4	+
+water	18:49	0:0	4	SAMPLERATE_TOLERANCE
+water	18:69	0:0	4	)
+stmts	19:4	25:4	3	
+water	19:4	0:0	4	{
+call	20:8	23:59	4	msg_Warn
+arg	20:18	20:25	5	p_demux
+water	20:18	0:0	6	p_demux
+arg	21:12	21:74	5	"left samplerate out of tolerance for audio %u/%u (%u vs. %u)"
+water	21:12	0:0	6	"left samplerate out of tolerance for audio %u/%u (%u vs. %u)"
+arg	22:12	22:28	5	p_audio->i_group
+water	22:12	0:0	6	p_audio
+op	22:19	0:0	6	->
+water	22:21	0:0	6	i_group
+arg	22:30	22:45	5	p_audio->i_pair
+water	22:30	0:0	6	p_audio
+op	22:37	0:0	6	->
+water	22:39	0:0	6	i_pair
+arg	23:12	23:35	5	p_audio->i_left_samples
+water	23:12	0:0	6	p_audio
+op	23:19	0:0	6	->
+water	23:21	0:0	6	i_left_samples
+arg	23:37	23:59	5	p_audio->i_nb_samples
+water	23:37	0:0	6	p_audio
+op	23:44	0:0	6	->
+water	23:46	0:0	6	i_nb_samples
+water	23:60	0:0	4	;
+return	24:8	24:27	4	VLC_EGENERIC
+water	24:15	0:0	5	VLC_EGENERIC
+water	25:4	0:0	4	}
+if	26:4	36:4	2	(p_audio -> i_right_samples< ( float ) p_audio -> i_nb_samples * ( 1 . - SAMPLERATE_TOLERANCE ) || p_audio -> i_right_samples >(float ) p_audio -> i_nb_samples * ( 1 . + SAMPLERATE_TOLERANCE ))
+cond	26:9	29:69	3	p_audio -> i_right_samples< ( float ) p_audio -> i_nb_samples * ( 1 . - SAMPLERATE_TOLERANCE ) || p_audio -> i_right_samples >(float ) p_audio -> i_nb_samples * ( 1 . + SAMPLERATE_TOLERANCE )
+call	26:9	29:18	4	p_audio->i_right_samples
+arg	29:13	29:18	5	float
+water	29:13	0:0	6	float
+water	29:19	0:0	4	p_audio
+op	29:26	0:0	4	->
+water	29:28	0:0	4	i_nb_samples
+op	29:41	0:0	4	*
+water	29:43	0:0	4	(
+water	29:44	0:0	4	1
+op	29:45	0:0	4	.
+op	29:47	0:0	4	+
+water	29:49	0:0	4	SAMPLERATE_TOLERANCE
+water	29:69	0:0	4	)
+stmts	30:4	36:4	3	
+water	30:4	0:0	4	{
+call	31:8	34:60	4	msg_Warn
+arg	31:18	31:25	5	p_demux
+water	31:18	0:0	6	p_demux
+arg	32:12	32:75	5	"right samplerate out of tolerance for audio %u/%u (%u vs. %u)"
+water	32:12	0:0	6	"right samplerate out of tolerance for audio %u/%u (%u vs. %u)"
+arg	33:12	33:28	5	p_audio->i_group
+water	33:12	0:0	6	p_audio
+op	33:19	0:0	6	->
+water	33:21	0:0	6	i_group
+arg	33:30	33:45	5	p_audio->i_pair
+water	33:30	0:0	6	p_audio
+op	33:37	0:0	6	->
+water	33:39	0:0	6	i_pair
+arg	34:12	34:36	5	p_audio->i_right_samples
+water	34:12	0:0	6	p_audio
+op	34:19	0:0	6	->
+water	34:21	0:0	6	i_right_samples
+arg	34:38	34:60	5	p_audio->i_nb_samples
+water	34:38	0:0	6	p_audio
+op	34:45	0:0	6	->
+water	34:47	0:0	6	i_nb_samples
+water	34:61	0:0	4	;
+return	35:8	35:27	4	VLC_EGENERIC
+water	35:15	0:0	5	VLC_EGENERIC
+water	36:4	0:0	4	}
+water	37:4	0:0	2	p_block
+op	37:12	0:0	2	=
+call	37:14	37:71	2	block_Alloc
+arg	37:27	37:71	3	p_audio->i_nb_samples*sizeof(int16_t)*2
+water	37:27	0:0	4	p_audio
+op	37:34	0:0	4	->
+water	37:36	0:0	4	i_nb_samples
+op	37:49	0:0	4	*
+op	37:51	0:0	4	sizeof
+water	37:57	0:0	4	(
+water	37:58	0:0	4	int16_t
+water	37:65	0:0	4	)
+op	37:67	0:0	4	*
+water	37:69	0:0	4	2
+water	37:72	0:0	2	;
+if	38:4	39:25	2	(unlikely (! p_block ))
+cond	38:8	38:27	3	unlikely (! p_block )
+call	38:8	38:27	4	unlikely
+arg	38:18	38:27	5	!p_block
+op	38:18	0:0	6	!
+water	38:19	0:0	6	p_block
+stmts	39:8	39:25	3	
+return	39:8	39:25	4	VLC_ENOMEM
+water	39:15	0:0	5	VLC_ENOMEM
+water	40:4	0:0	2	p_block
+op	40:11	0:0	2	->
+water	40:13	0:0	2	i_dts
+op	40:19	0:0	2	=
+water	40:21	0:0	2	p_block
+op	40:28	0:0	2	->
+water	40:30	0:0	2	i_pts
+op	40:36	0:0	2	=
+water	40:38	0:0	2	p_sys
+op	40:43	0:0	2	->
+water	40:45	0:0	2	i_next_date
+op	41:8	0:0	2	+
+water	41:10	0:0	2	(
+water	41:11	0:0	2	mtime_t
+water	41:18	0:0	2	)
+water	41:19	0:0	2	p_audio
+op	41:26	0:0	2	->
+water	41:28	0:0	2	i_delay
+call	41:36	41:53	2	*INT64_C
+arg	41:46	41:53	3	1000000
+water	41:46	0:0	4	1000000
+op	41:55	0:0	2	/
+water	41:57	0:0	2	p_audio
+op	41:64	0:0	2	->
+water	41:66	0:0	2	i_rate
+water	41:72	0:0	2	;
+water	42:4	0:0	2	p_output
+op	42:13	0:0	2	=
+water	42:15	0:0	2	(
+water	42:16	0:0	2	int16_t
+op	42:24	0:0	2	*
+water	42:25	0:0	2	)
+water	42:26	0:0	2	p_block
+op	42:33	0:0	2	->
+water	42:35	0:0	2	p_buffer
+water	42:43	0:0	2	;
+if	43:4	46:65	2	(p_audio -> i_left_samples == p_audio -> i_nb_samples && p_audio -> i_right_samples == p_audio -> i_nb_samples)
+cond	43:9	44:46	3	p_audio -> i_left_samples == p_audio -> i_nb_samples && p_audio -> i_right_samples == p_audio -> i_nb_samples
+water	43:9	0:0	4	p_audio
+op	43:16	0:0	4	->
+water	43:18	0:0	4	i_left_samples
+op	43:33	0:0	4	==
+water	43:36	0:0	4	p_audio
+op	43:43	0:0	4	->
+water	43:45	0:0	4	i_nb_samples
+op	43:58	0:0	4	&&
+water	44:9	0:0	4	p_audio
+op	44:16	0:0	4	->
+water	44:18	0:0	4	i_right_samples
+op	44:34	0:0	4	==
+water	44:37	0:0	4	p_audio
+op	44:44	0:0	4	->
+water	44:46	0:0	4	i_nb_samples
+stmts	45:8	46:65	3	
+call	45:8	46:64	4	memcpy
+arg	45:16	45:24	5	p_output
+water	45:16	0:0	6	p_output
+arg	45:26	45:43	5	p_audio->p_buffer
+water	45:26	0:0	6	p_audio
+op	45:33	0:0	6	->
+water	45:35	0:0	6	p_buffer
+arg	46:20	46:64	5	p_audio->i_nb_samples*sizeof(int16_t)*2
+water	46:20	0:0	6	p_audio
+op	46:27	0:0	6	->
+water	46:29	0:0	6	i_nb_samples
+op	46:42	0:0	6	*
+op	46:44	0:0	6	sizeof
+water	46:50	0:0	6	(
+water	46:51	0:0	6	int16_t
+water	46:58	0:0	6	)
+op	46:60	0:0	6	*
+water	46:62	0:0	6	2
+water	46:65	0:0	4	;
+else	47:4	53:4	2
+stmts	48:4	53:4	3	
+water	48:4	0:0	4	{
+call	49:8	50:70	4	ResampleAudio
+arg	49:23	49:31	5	p_output
+water	49:23	0:0	6	p_output
+arg	49:33	49:50	5	p_audio->p_buffer
+water	49:33	0:0	6	p_audio
+op	49:40	0:0	6	->
+water	49:42	0:0	6	p_buffer
+arg	50:23	50:44	5	p_audio->i_nb_samples
+water	50:23	0:0	6	p_audio
+op	50:30	0:0	6	->
+water	50:32	0:0	6	i_nb_samples
+arg	50:46	50:70	5	p_audio->i_left_samples
+water	50:46	0:0	6	p_audio
+op	50:53	0:0	6	->
+water	50:55	0:0	6	i_left_samples
+water	50:71	0:0	4	;
+call	51:8	52:71	4	ResampleAudio
+arg	51:23	51:35	5	p_output+1
+water	51:23	0:0	6	p_output
+op	51:32	0:0	6	+
+water	51:34	0:0	6	1
+arg	51:37	51:58	5	p_audio->p_buffer+1
+water	51:37	0:0	6	p_audio
+op	51:44	0:0	6	->
+water	51:46	0:0	6	p_buffer
+op	51:55	0:0	6	+
+water	51:57	0:0	6	1
+arg	52:23	52:44	5	p_audio->i_nb_samples
+water	52:23	0:0	6	p_audio
+op	52:30	0:0	6	->
+water	52:32	0:0	6	i_nb_samples
+arg	52:46	52:71	5	p_audio->i_right_samples
+water	52:46	0:0	6	p_audio
+op	52:53	0:0	6	->
+water	52:55	0:0	6	i_right_samples
+water	52:72	0:0	4	;
+water	53:4	0:0	4	}
+call	54:4	54:54	2	es_out_Send
+arg	54:17	54:29	3	p_demux->out
+water	54:17	0:0	4	p_demux
+op	54:24	0:0	4	->
+water	54:26	0:0	4	out
+arg	54:31	54:44	3	p_audio->p_es
+water	54:31	0:0	4	p_audio
+op	54:38	0:0	4	->
+water	54:40	0:0	4	p_es
+arg	54:46	54:54	3	p_block
+water	54:46	0:0	4	p_block
+water	54:55	0:0	2	;
+return	55:4	55:22	2	VLC_SUCCESS
+water	55:11	0:0	3	VLC_SUCCESS

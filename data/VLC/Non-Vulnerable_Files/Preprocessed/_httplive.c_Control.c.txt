@@ -1,0 +1,199 @@
+func	2:0	51:0	0	static int	Control
+params	2:18	0:0	1	
+param	2:19	2:30	2	stream_t *	s
+param	2:32	2:43	2	int	i_query
+param	2:45	2:57	2	va_list	args
+stmnts	0:0	50:22	1	
+decl	4:4	4:34	2	stream_sys_t	*p_sys
+op	4:24	0:0	2	=
+water	4:26	0:0	2	s
+op	4:27	0:0	2	->
+water	4:29	0:0	2	p_sys
+switch	5:4	49:4	2	(i_query)
+cond	5:12	5:12	3	i_query
+water	5:12	0:0	4	i_query
+stmts	6:4	49:4	3	
+water	6:4	0:0	4	{
+label	7:8	7:28	4	case STREAM_CAN_SEEK :
+op	8:12	0:0	4	*
+water	8:13	0:0	4	(
+call	8:14	8:34	4	va_arg
+arg	8:22	8:26	5	args
+water	8:22	0:0	6	args
+arg	8:28	8:34	5	bool*
+water	8:28	0:0	6	bool
+op	8:33	0:0	6	*
+water	8:35	0:0	4	)
+op	8:37	0:0	4	=
+call	8:39	8:52	4	hls_MaySeek
+arg	8:51	8:52	5	s
+water	8:51	0:0	6	s
+water	8:53	0:0	4	;
+break	9:12	9:17	4	
+label	10:8	10:36	4	case STREAM_CAN_CONTROL_PACE :
+label	11:8	11:29	4	case STREAM_CAN_PAUSE :
+op	12:12	0:0	4	*
+water	12:13	0:0	4	(
+call	12:14	12:34	4	va_arg
+arg	12:22	12:26	5	args
+water	12:22	0:0	6	args
+arg	12:28	12:34	5	bool*
+water	12:28	0:0	6	bool
+op	12:33	0:0	6	*
+water	12:35	0:0	4	)
+op	12:37	0:0	4	=
+water	12:39	0:0	4	true
+water	12:43	0:0	4	;
+break	13:12	13:17	4	
+label	14:8	14:32	4	case STREAM_CAN_FASTSEEK :
+op	15:12	0:0	4	*
+water	15:13	0:0	4	(
+call	15:14	15:34	4	va_arg
+arg	15:22	15:26	5	args
+water	15:22	0:0	6	args
+arg	15:28	15:34	5	bool*
+water	15:28	0:0	6	bool
+op	15:33	0:0	6	*
+water	15:35	0:0	4	)
+op	15:37	0:0	4	=
+water	15:39	0:0	4	false
+water	15:44	0:0	4	;
+break	16:12	16:17	4	
+label	17:8	17:32	4	case STREAM_GET_POSITION :
+op	18:12	0:0	4	*
+water	18:13	0:0	4	(
+call	18:14	18:38	4	va_arg
+arg	18:22	18:26	5	args
+water	18:22	0:0	6	args
+arg	18:28	18:38	5	uint64_t*
+water	18:28	0:0	6	uint64_t
+op	18:37	0:0	6	*
+water	18:39	0:0	4	)
+op	18:41	0:0	4	=
+water	18:43	0:0	4	p_sys
+op	18:48	0:0	4	->
+water	18:50	0:0	4	playback
+op	18:58	0:0	4	.
+water	18:59	0:0	4	offset
+water	18:65	0:0	4	;
+break	19:12	19:17	4	
+label	20:8	20:35	4	case STREAM_SET_PAUSE_STATE :
+water	21:8	0:0	4	{
+decl	22:12	22:49	4	bool	paused
+op	22:24	0:0	4	=
+call	22:26	22:48	5	va_arg
+arg	22:34	22:38	6	args
+water	22:34	0:0	7	args
+arg	22:40	22:48	6	unsigned
+water	22:40	0:0	7	unsigned
+call	23:12	23:39	4	vlc_mutex_lock
+arg	23:27	23:39	5	&p_sys->lock
+op	23:27	0:0	6	&
+water	23:28	0:0	6	p_sys
+op	23:33	0:0	6	->
+water	23:35	0:0	6	lock
+water	23:40	0:0	4	;
+water	24:12	0:0	4	p_sys
+op	24:17	0:0	4	->
+water	24:19	0:0	4	paused
+op	24:26	0:0	4	=
+water	24:28	0:0	4	paused
+water	24:34	0:0	4	;
+call	25:12	25:40	4	vlc_cond_signal
+arg	25:28	25:40	5	&p_sys->wait
+op	25:28	0:0	6	&
+water	25:29	0:0	6	p_sys
+op	25:34	0:0	6	->
+water	25:36	0:0	6	wait
+water	25:41	0:0	4	;
+call	26:12	26:41	4	vlc_mutex_unlock
+arg	26:29	26:41	5	&p_sys->lock
+op	26:29	0:0	6	&
+water	26:30	0:0	6	p_sys
+op	26:35	0:0	6	->
+water	26:37	0:0	6	lock
+water	26:42	0:0	4	;
+break	27:12	27:17	4	
+water	28:8	0:0	4	}
+label	29:8	29:32	4	case STREAM_SET_POSITION :
+if	30:12	38:12	4	(hls_MaySeek (s ))
+cond	30:16	30:29	5	hls_MaySeek (s )
+call	30:16	30:29	6	hls_MaySeek
+arg	30:28	30:29	7	s
+water	30:28	0:0	8	s
+stmts	31:12	38:12	5	
+water	31:12	0:0	6	{
+decl	32:16	32:63	6	uint64_t	pos
+op	32:29	0:0	6	=
+water	32:31	0:0	6	(
+water	32:32	0:0	6	uint64_t
+water	32:40	0:0	6	)
+call	32:41	32:62	7	va_arg
+arg	32:48	32:52	8	args
+water	32:48	0:0	9	args
+arg	32:54	32:62	8	uint64_t
+water	32:54	0:0	9	uint64_t
+if	33:16	37:16	6	(segment_Seek (s ,pos ) == VLC_SUCCESS)
+cond	33:20	33:44	7	segment_Seek (s ,pos ) == VLC_SUCCESS
+call	33:20	33:39	8	segment_Seek
+arg	33:33	33:34	9	s
+water	33:33	0:0	10	s
+arg	33:36	33:39	9	pos
+water	33:36	0:0	10	pos
+op	33:41	0:0	8	==
+water	33:44	0:0	8	VLC_SUCCESS
+stmts	34:16	37:16	7	
+water	34:16	0:0	8	{
+water	35:20	0:0	8	p_sys
+op	35:25	0:0	8	->
+water	35:27	0:0	8	playback
+op	35:35	0:0	8	.
+water	35:36	0:0	8	offset
+op	35:43	0:0	8	=
+water	35:45	0:0	8	pos
+water	35:48	0:0	8	;
+break	36:20	36:25	8	
+water	37:16	0:0	8	}
+water	38:12	0:0	6	}
+return	39:12	39:31	4	VLC_EGENERIC
+water	39:19	0:0	5	VLC_EGENERIC
+label	40:8	40:28	4	case STREAM_GET_SIZE :
+op	41:12	0:0	4	*
+water	41:13	0:0	4	(
+call	41:14	41:38	4	va_arg
+arg	41:22	41:26	5	args
+water	41:22	0:0	6	args
+arg	41:28	41:38	5	uint64_t*
+water	41:28	0:0	6	uint64_t
+op	41:37	0:0	6	*
+water	41:39	0:0	4	)
+op	41:41	0:0	4	=
+call	41:43	41:58	4	GetStreamSize
+arg	41:57	41:58	5	s
+water	41:57	0:0	6	s
+water	41:59	0:0	4	;
+break	42:12	42:17	4	
+label	43:8	43:33	4	case STREAM_GET_PTS_DELAY :
+call	44:12	44:36	4	*va_arg
+arg	44:21	44:25	5	args
+water	44:21	0:0	6	args
+arg	44:27	44:36	5	int64_t*
+water	44:27	0:0	6	int64_t
+op	44:35	0:0	6	*
+op	44:38	0:0	4	=
+call	44:40	44:52	4	INT64_C
+arg	44:48	44:52	5	1000
+water	44:48	0:0	6	1000
+call	44:54	45:55	4	*var_InheritInteger
+arg	45:35	45:36	5	s
+water	45:35	0:0	6	s
+arg	45:38	45:55	5	"network-caching"
+water	45:38	0:0	6	"network-caching"
+water	45:56	0:0	4	;
+break	46:13	46:18	4	
+label	47:8	47:15	4	default :
+return	48:12	48:31	4	VLC_EGENERIC
+water	48:19	0:0	5	VLC_EGENERIC
+water	49:4	0:0	4	}
+return	50:4	50:22	2	VLC_SUCCESS
+water	50:11	0:0	3	VLC_SUCCESS

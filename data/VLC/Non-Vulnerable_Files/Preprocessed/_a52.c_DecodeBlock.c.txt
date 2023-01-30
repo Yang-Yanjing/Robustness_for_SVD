@@ -1,0 +1,535 @@
+func	2:0	131:0	0	static block_t *	DecodeBlock
+params	2:27	0:0	1	
+param	2:29	2:45	2	decoder_t *	p_dec
+param	2:47	2:66	2	block_t * *	pp_block
+stmnts	0:0	130:4	1	
+decl	4:4	4:39	2	decoder_sys_t	*p_sys
+op	4:25	0:0	2	=
+water	4:27	0:0	2	p_dec
+op	4:32	0:0	2	->
+water	4:34	0:0	2	p_sys
+decl	5:4	5:41	2	uint8_t	p_header[VLC_A52_HEADER_SIZE]
+decl	6:4	6:18	2	uint8_t	*p_buf
+decl	7:4	7:25	2	block_t	*p_out_buffer
+if	8:4	8:45	2	(! pp_block || ! * pp_block)
+cond	8:8	8:23	3	! pp_block || ! * pp_block
+op	8:8	0:0	4	!
+water	8:9	0:0	4	pp_block
+op	8:18	0:0	4	||
+op	8:21	0:0	4	!
+op	8:22	0:0	4	*
+water	8:23	0:0	4	pp_block
+stmts	8:34	8:45	3	
+return	8:34	8:45	4	NULL
+water	8:41	0:0	5	NULL
+if	9:4	19:4	2	(( * pp_block ) -> i_flags & ( BLOCK_FLAG_DISCONTINUITY | BLOCK_FLAG_CORRUPTED ))
+cond	9:8	9:75	3	( * pp_block ) -> i_flags & ( BLOCK_FLAG_DISCONTINUITY | BLOCK_FLAG_CORRUPTED )
+water	9:8	0:0	4	(
+op	9:9	0:0	4	*
+water	9:10	0:0	4	pp_block
+water	9:18	0:0	4	)
+op	9:19	0:0	4	->
+water	9:21	0:0	4	i_flags
+op	9:28	0:0	4	&
+water	9:29	0:0	4	(
+water	9:30	0:0	4	BLOCK_FLAG_DISCONTINUITY
+op	9:54	0:0	4	|
+water	9:55	0:0	4	BLOCK_FLAG_CORRUPTED
+water	9:75	0:0	4	)
+stmts	10:4	19:4	3	
+water	10:4	0:0	4	{
+if	11:8	15:8	4	(( * pp_block ) -> i_flags & BLOCK_FLAG_CORRUPTED)
+cond	11:12	11:33	5	( * pp_block ) -> i_flags & BLOCK_FLAG_CORRUPTED
+water	11:12	0:0	6	(
+op	11:13	0:0	6	*
+water	11:14	0:0	6	pp_block
+water	11:22	0:0	6	)
+op	11:23	0:0	6	->
+water	11:25	0:0	6	i_flags
+op	11:32	0:0	6	&
+water	11:33	0:0	6	BLOCK_FLAG_CORRUPTED
+stmts	12:8	15:8	5	
+water	12:8	0:0	6	{
+water	13:12	0:0	6	p_sys
+op	13:17	0:0	6	->
+water	13:19	0:0	6	i_state
+op	13:27	0:0	6	=
+water	13:29	0:0	6	STATE_NOSYNC
+water	13:41	0:0	6	;
+call	14:12	14:54	6	block_BytestreamEmpty
+arg	14:35	14:54	7	&p_sys->bytestream
+op	14:35	0:0	8	&
+water	14:36	0:0	8	p_sys
+op	14:41	0:0	8	->
+water	14:43	0:0	8	bytestream
+water	14:55	0:0	6	;
+water	15:8	0:0	6	}
+call	16:8	16:38	4	date_Set
+arg	16:18	16:34	5	&p_sys->end_date
+op	16:18	0:0	6	&
+water	16:19	0:0	6	p_sys
+op	16:24	0:0	6	->
+water	16:26	0:0	6	end_date
+arg	16:36	16:38	5	0
+water	16:36	0:0	6	0
+water	16:39	0:0	4	;
+call	17:8	17:33	4	block_Release
+arg	17:23	17:33	5	*pp_block
+op	17:23	0:0	6	*
+water	17:24	0:0	6	pp_block
+water	17:34	0:0	4	;
+return	18:8	18:19	4	NULL
+water	18:15	0:0	5	NULL
+water	19:4	0:0	4	}
+if	20:4	25:4	2	(!date_Get (& p_sys -> end_date ) && ( * pp_block ) -> i_pts <= VLC_TS_INVALID)
+cond	20:8	20:63	3	!date_Get (& p_sys -> end_date ) && ( * pp_block ) -> i_pts <= VLC_TS_INVALID
+op	20:8	0:0	4	!
+call	20:9	20:36	4	date_Get
+arg	20:19	20:36	5	&p_sys->end_date
+op	20:19	0:0	6	&
+water	20:20	0:0	6	p_sys
+op	20:25	0:0	6	->
+water	20:27	0:0	6	end_date
+op	20:38	0:0	4	&&
+water	20:41	0:0	4	(
+op	20:42	0:0	4	*
+water	20:43	0:0	4	pp_block
+water	20:51	0:0	4	)
+op	20:52	0:0	4	->
+water	20:54	0:0	4	i_pts
+op	20:60	0:0	4	<=
+water	20:63	0:0	4	VLC_TS_INVALID
+stmts	21:4	25:4	3	
+water	21:4	0:0	4	{
+call	23:8	23:33	4	block_Release
+arg	23:23	23:33	5	*pp_block
+op	23:23	0:0	6	*
+water	23:24	0:0	6	pp_block
+water	23:34	0:0	4	;
+return	24:8	24:19	4	NULL
+water	24:15	0:0	5	NULL
+water	25:4	0:0	4	}
+call	26:4	26:56	2	block_BytestreamPush
+arg	26:26	26:44	3	&p_sys->bytestream
+op	26:26	0:0	4	&
+water	26:27	0:0	4	p_sys
+op	26:32	0:0	4	->
+water	26:34	0:0	4	bytestream
+arg	26:46	26:56	3	*pp_block
+op	26:46	0:0	4	*
+water	26:47	0:0	4	pp_block
+water	26:57	0:0	2	;
+while	27:4	130:4	2	(1)
+cond	27:11	27:11	3	1
+water	27:11	0:0	4	1
+stmts	28:4	130:4	3	
+water	28:4	0:0	4	{
+switch	29:8	129:8	4	(p_sys -> i_state)
+cond	29:16	29:23	5	p_sys -> i_state
+water	29:16	0:0	6	p_sys
+op	29:21	0:0	6	->
+water	29:23	0:0	6	i_state
+stmts	30:8	129:8	5	
+water	30:8	0:0	6	{
+label	31:8	31:25	6	case STATE_NOSYNC :
+while	32:12	41:12	6	(block_PeekBytes (& p_sys -> bytestream ,p_header ,2 ) == VLC_SUCCESS)
+cond	32:19	33:22	7	block_PeekBytes (& p_sys -> bytestream ,p_header ,2 ) == VLC_SUCCESS
+call	32:19	32:68	8	block_PeekBytes
+arg	32:36	32:54	9	&p_sys->bytestream
+op	32:36	0:0	10	&
+water	32:37	0:0	10	p_sys
+op	32:42	0:0	10	->
+water	32:44	0:0	10	bytestream
+arg	32:56	32:64	9	p_header
+water	32:56	0:0	10	p_header
+arg	32:66	32:68	9	2
+water	32:66	0:0	10	2
+op	33:19	0:0	8	==
+water	33:22	0:0	8	VLC_SUCCESS
+stmts	34:12	41:12	7	
+water	34:12	0:0	8	{
+if	35:16	39:16	8	(p_header [ 0 ] == 0 x0b && p_header [ 1 ] == 0 x77)
+cond	35:20	35:59	9	p_header [ 0 ] == 0 x0b && p_header [ 1 ] == 0 x77
+water	35:20	0:0	10	p_header
+op	35:28	0:0	10	[
+water	35:29	0:0	10	0
+op	35:30	0:0	10	]
+op	35:32	0:0	10	==
+water	35:35	0:0	10	0
+water	35:36	0:0	10	x0b
+op	35:40	0:0	10	&&
+water	35:43	0:0	10	p_header
+op	35:51	0:0	10	[
+water	35:52	0:0	10	1
+op	35:53	0:0	10	]
+op	35:55	0:0	10	==
+water	35:58	0:0	10	0
+water	35:59	0:0	10	x77
+stmts	36:16	39:16	9	
+water	36:16	0:0	10	{
+water	37:20	0:0	10	p_sys
+op	37:25	0:0	10	->
+water	37:27	0:0	10	i_state
+op	37:35	0:0	10	=
+water	37:37	0:0	10	STATE_SYNC
+water	37:47	0:0	10	;
+break	38:20	38:25	10	
+water	39:16	0:0	10	}
+call	40:16	40:51	8	block_SkipByte
+arg	40:32	40:51	9	&p_sys->bytestream
+op	40:32	0:0	10	&
+water	40:33	0:0	10	p_sys
+op	40:38	0:0	10	->
+water	40:40	0:0	10	bytestream
+water	40:52	0:0	8	;
+water	41:12	0:0	8	}
+if	42:12	47:12	6	(p_sys -> i_state != STATE_SYNC)
+cond	42:16	42:34	7	p_sys -> i_state != STATE_SYNC
+water	42:16	0:0	8	p_sys
+op	42:21	0:0	8	->
+water	42:23	0:0	8	i_state
+op	42:31	0:0	8	!=
+water	42:34	0:0	8	STATE_SYNC
+stmts	43:12	47:12	7	
+water	43:12	0:0	8	{
+call	44:16	44:58	8	block_BytestreamFlush
+arg	44:39	44:58	9	&p_sys->bytestream
+op	44:39	0:0	10	&
+water	44:40	0:0	10	p_sys
+op	44:45	0:0	10	->
+water	44:47	0:0	10	bytestream
+water	44:59	0:0	8	;
+return	46:16	46:27	8	NULL
+water	46:23	0:0	9	NULL
+water	47:12	0:0	8	}
+label	48:8	48:23	6	case STATE_SYNC :
+water	50:12	0:0	6	p_sys
+op	50:17	0:0	6	->
+water	50:19	0:0	6	i_pts
+op	50:25	0:0	6	=
+water	50:27	0:0	6	p_sys
+op	50:32	0:0	6	->
+water	50:34	0:0	6	bytestream
+op	50:44	0:0	6	.
+water	50:45	0:0	6	p_block
+op	50:52	0:0	6	->
+water	50:54	0:0	6	i_pts
+water	50:59	0:0	6	;
+if	51:12	55:12	6	(p_sys -> i_pts > VLC_TS_INVALID && p_sys -> i_pts !=date_Get (& p_sys -> end_date ))
+cond	51:16	52:59	7	p_sys -> i_pts > VLC_TS_INVALID && p_sys -> i_pts !=date_Get (& p_sys -> end_date )
+water	51:16	0:0	8	p_sys
+op	51:21	0:0	8	->
+water	51:23	0:0	8	i_pts
+op	51:29	0:0	8	>
+water	51:31	0:0	8	VLC_TS_INVALID
+op	51:46	0:0	8	&&
+water	52:16	0:0	8	p_sys
+op	52:21	0:0	8	->
+water	52:23	0:0	8	i_pts
+op	52:29	0:0	8	!=
+call	52:32	52:59	8	date_Get
+arg	52:42	52:59	9	&p_sys->end_date
+op	52:42	0:0	10	&
+water	52:43	0:0	10	p_sys
+op	52:48	0:0	10	->
+water	52:50	0:0	10	end_date
+stmts	53:12	55:12	7	
+water	53:12	0:0	8	{
+call	54:16	54:57	8	date_Set
+arg	54:26	54:42	9	&p_sys->end_date
+op	54:26	0:0	10	&
+water	54:27	0:0	10	p_sys
+op	54:32	0:0	10	->
+water	54:34	0:0	10	end_date
+arg	54:44	54:57	9	p_sys->i_pts
+water	54:44	0:0	10	p_sys
+op	54:49	0:0	10	->
+water	54:51	0:0	10	i_pts
+water	54:58	0:0	8	;
+water	55:12	0:0	8	}
+water	56:12	0:0	6	p_sys
+op	56:17	0:0	6	->
+water	56:19	0:0	6	i_state
+op	56:27	0:0	6	=
+water	56:29	0:0	6	STATE_HEADER
+water	56:41	0:0	6	;
+label	57:8	57:25	6	case STATE_HEADER :
+if	59:12	64:12	6	(block_PeekBytes (& p_sys -> bytestream ,p_header ,VLC_A52_HEADER_SIZE ) != VLC_SUCCESS)
+cond	59:16	60:58	7	block_PeekBytes (& p_sys -> bytestream ,p_header ,VLC_A52_HEADER_SIZE ) != VLC_SUCCESS
+call	59:16	60:53	8	block_PeekBytes
+arg	59:33	59:51	9	&p_sys->bytestream
+op	59:33	0:0	10	&
+water	59:34	0:0	10	p_sys
+op	59:39	0:0	10	->
+water	59:41	0:0	10	bytestream
+arg	59:53	59:61	9	p_header
+water	59:53	0:0	10	p_header
+arg	60:33	60:53	9	VLC_A52_HEADER_SIZE
+water	60:33	0:0	10	VLC_A52_HEADER_SIZE
+op	60:55	0:0	8	!=
+water	60:58	0:0	8	VLC_SUCCESS
+stmts	61:12	64:12	7	
+water	61:12	0:0	8	{
+return	63:16	63:27	8	NULL
+water	63:23	0:0	9	NULL
+water	64:12	0:0	8	}
+if	66:12	72:12	6	(vlc_a52_header_Parse (& p_sys -> frame ,p_header ,VLC_A52_HEADER_SIZE ))
+cond	66:16	66:83	7	vlc_a52_header_Parse (& p_sys -> frame ,p_header ,VLC_A52_HEADER_SIZE )
+call	66:16	66:83	8	vlc_a52_header_Parse
+arg	66:38	66:51	9	&p_sys->frame
+op	66:38	0:0	10	&
+water	66:39	0:0	10	p_sys
+op	66:44	0:0	10	->
+water	66:46	0:0	10	frame
+arg	66:53	66:61	9	p_header
+water	66:53	0:0	10	p_header
+arg	66:63	66:83	9	VLC_A52_HEADER_SIZE
+water	66:63	0:0	10	VLC_A52_HEADER_SIZE
+stmts	67:12	72:12	7	
+water	67:12	0:0	8	{
+call	68:16	68:53	8	msg_Dbg
+arg	68:25	68:30	9	p_dec
+water	68:25	0:0	10	p_dec
+arg	68:32	68:53	9	"emulated sync word"
+water	68:32	0:0	10	"emulated sync word"
+water	68:54	0:0	8	;
+call	69:16	69:51	8	block_SkipByte
+arg	69:32	69:51	9	&p_sys->bytestream
+op	69:32	0:0	10	&
+water	69:33	0:0	10	p_sys
+op	69:38	0:0	10	->
+water	69:40	0:0	10	bytestream
+water	69:52	0:0	8	;
+water	70:16	0:0	8	p_sys
+op	70:21	0:0	8	->
+water	70:23	0:0	8	i_state
+op	70:31	0:0	8	=
+water	70:33	0:0	8	STATE_NOSYNC
+water	70:45	0:0	8	;
+break	71:16	71:21	8	
+water	72:12	0:0	8	}
+water	73:12	0:0	6	p_sys
+op	73:17	0:0	6	->
+water	73:19	0:0	6	i_state
+op	73:27	0:0	6	=
+water	73:29	0:0	6	STATE_NEXT_SYNC
+water	73:44	0:0	6	;
+label	74:8	74:28	6	case STATE_NEXT_SYNC :
+if	78:12	84:12	6	(block_PeekOffsetBytes (& p_sys -> bytestream ,p_sys -> frame . i_size ,p_header ,2 ) != VLC_SUCCESS)
+cond	78:16	80:19	7	block_PeekOffsetBytes (& p_sys -> bytestream ,p_sys -> frame . i_size ,p_header ,2 ) != VLC_SUCCESS
+call	78:16	79:72	8	block_PeekOffsetBytes
+arg	78:39	78:57	9	&p_sys->bytestream
+op	78:39	0:0	10	&
+water	78:40	0:0	10	p_sys
+op	78:45	0:0	10	->
+water	78:47	0:0	10	bytestream
+arg	79:39	79:58	9	p_sys->frame.i_size
+water	79:39	0:0	10	p_sys
+op	79:44	0:0	10	->
+water	79:46	0:0	10	frame
+op	79:51	0:0	10	.
+water	79:52	0:0	10	i_size
+arg	79:60	79:68	9	p_header
+water	79:60	0:0	10	p_header
+arg	79:70	79:72	9	2
+water	79:70	0:0	10	2
+op	80:16	0:0	8	!=
+water	80:19	0:0	8	VLC_SUCCESS
+stmts	81:12	84:12	7	
+water	81:12	0:0	8	{
+return	83:16	83:27	8	NULL
+water	83:23	0:0	9	NULL
+water	84:12	0:0	8	}
+if	85:12	91:12	6	(p_sys -> b_packetizer && p_header [ 0 ] == 0 && p_header [ 1 ] == 0)
+cond	85:16	86:51	7	p_sys -> b_packetizer && p_header [ 0 ] == 0 && p_header [ 1 ] == 0
+water	85:16	0:0	8	p_sys
+op	85:21	0:0	8	->
+water	85:23	0:0	8	b_packetizer
+op	85:36	0:0	8	&&
+water	86:16	0:0	8	p_header
+op	86:24	0:0	8	[
+water	86:25	0:0	8	0
+op	86:26	0:0	8	]
+op	86:28	0:0	8	==
+water	86:31	0:0	8	0
+op	86:33	0:0	8	&&
+water	86:36	0:0	8	p_header
+op	86:44	0:0	8	[
+water	86:45	0:0	8	1
+op	86:46	0:0	8	]
+op	86:48	0:0	8	==
+water	86:51	0:0	8	0
+stmts	87:12	91:12	7	
+water	87:12	0:0	8	{
+water	89:16	0:0	8	p_sys
+op	89:21	0:0	8	->
+water	89:23	0:0	8	i_state
+op	89:31	0:0	8	=
+water	89:33	0:0	8	STATE_GET_DATA
+water	89:47	0:0	8	;
+break	90:16	90:21	8	
+water	91:12	0:0	8	}
+if	92:12	99:12	6	(p_header [ 0 ] != 0 x0b || p_header [ 1 ] != 0 x77)
+cond	92:16	92:55	7	p_header [ 0 ] != 0 x0b || p_header [ 1 ] != 0 x77
+water	92:16	0:0	8	p_header
+op	92:24	0:0	8	[
+water	92:25	0:0	8	0
+op	92:26	0:0	8	]
+op	92:28	0:0	8	!=
+water	92:31	0:0	8	0
+water	92:32	0:0	8	x0b
+op	92:36	0:0	8	||
+water	92:39	0:0	8	p_header
+op	92:47	0:0	8	[
+water	92:48	0:0	8	1
+op	92:49	0:0	8	]
+op	92:51	0:0	8	!=
+water	92:54	0:0	8	0
+water	92:55	0:0	8	x77
+stmts	93:12	99:12	7	
+water	93:12	0:0	8	{
+call	94:16	95:56	8	msg_Dbg
+arg	94:25	94:30	9	p_dec
+water	94:25	0:0	10	p_dec
+arg	94:32	95:56	9	"emulated sync word ""(no sync on following frame)"
+water	94:32	0:0	10	"emulated sync word "
+water	95:25	0:0	10	"(no sync on following frame)"
+water	95:57	0:0	8	;
+water	96:16	0:0	8	p_sys
+op	96:21	0:0	8	->
+water	96:23	0:0	8	i_state
+op	96:31	0:0	8	=
+water	96:33	0:0	8	STATE_NOSYNC
+water	96:45	0:0	8	;
+call	97:16	97:51	8	block_SkipByte
+arg	97:32	97:51	9	&p_sys->bytestream
+op	97:32	0:0	10	&
+water	97:33	0:0	10	p_sys
+op	97:38	0:0	10	->
+water	97:40	0:0	10	bytestream
+water	97:52	0:0	8	;
+break	98:16	98:21	8	
+water	99:12	0:0	8	}
+water	100:12	0:0	6	p_sys
+op	100:17	0:0	6	->
+water	100:19	0:0	6	i_state
+op	100:27	0:0	6	=
+water	100:29	0:0	6	STATE_SEND_DATA
+water	100:44	0:0	6	;
+break	101:12	101:17	6	
+label	102:8	102:27	6	case STATE_GET_DATA :
+if	105:12	110:12	6	(block_WaitBytes (& p_sys -> bytestream ,p_sys -> frame . i_size ) != VLC_SUCCESS)
+cond	105:16	106:58	7	block_WaitBytes (& p_sys -> bytestream ,p_sys -> frame . i_size ) != VLC_SUCCESS
+call	105:16	106:53	8	block_WaitBytes
+arg	105:33	105:51	9	&p_sys->bytestream
+op	105:33	0:0	10	&
+water	105:34	0:0	10	p_sys
+op	105:39	0:0	10	->
+water	105:41	0:0	10	bytestream
+arg	106:33	106:53	9	p_sys->frame.i_size
+water	106:33	0:0	10	p_sys
+op	106:38	0:0	10	->
+water	106:40	0:0	10	frame
+op	106:45	0:0	10	.
+water	106:46	0:0	10	i_size
+op	106:55	0:0	8	!=
+water	106:58	0:0	8	VLC_SUCCESS
+stmts	107:12	110:12	7	
+water	107:12	0:0	8	{
+return	109:16	109:27	8	NULL
+water	109:23	0:0	9	NULL
+water	110:12	0:0	8	}
+water	111:12	0:0	6	p_sys
+op	111:17	0:0	6	->
+water	111:19	0:0	6	i_state
+op	111:27	0:0	6	=
+water	111:29	0:0	6	STATE_SEND_DATA
+water	111:44	0:0	6	;
+label	112:8	112:28	6	case STATE_SEND_DATA :
+if	113:12	117:12	6	(! ( p_buf =GetOutBuffer (p_dec ,& p_out_buffer ) ))
+cond	113:16	113:62	7	! ( p_buf =GetOutBuffer (p_dec ,& p_out_buffer ) )
+op	113:16	0:0	8	!
+water	113:17	0:0	8	(
+water	113:18	0:0	8	p_buf
+op	113:24	0:0	8	=
+call	113:26	113:61	8	GetOutBuffer
+arg	113:40	113:45	9	p_dec
+water	113:40	0:0	10	p_dec
+arg	113:47	113:61	9	&p_out_buffer
+op	113:47	0:0	10	&
+water	113:48	0:0	10	p_out_buffer
+water	113:62	0:0	8	)
+stmts	114:12	117:12	7	
+water	114:12	0:0	8	{
+return	116:16	116:27	8	NULL
+water	116:23	0:0	9	NULL
+water	117:12	0:0	8	}
+call	120:12	121:88	6	block_GetBytes
+arg	120:28	120:46	7	&p_sys->bytestream
+op	120:28	0:0	8	&
+water	120:29	0:0	8	p_sys
+op	120:34	0:0	8	->
+water	120:36	0:0	8	bytestream
+arg	121:28	121:33	7	p_buf
+water	121:28	0:0	8	p_buf
+arg	121:35	121:88	7	__MIN(p_sys->frame.i_size,p_out_buffer->i_buffer)
+call	121:35	121:86	8	__MIN
+arg	121:42	121:61	9	p_sys->frame.i_size
+water	121:42	0:0	10	p_sys
+op	121:47	0:0	10	->
+water	121:49	0:0	10	frame
+op	121:54	0:0	10	.
+water	121:55	0:0	10	i_size
+arg	121:63	121:86	9	p_out_buffer->i_buffer
+water	121:63	0:0	10	p_out_buffer
+op	121:75	0:0	10	->
+water	121:77	0:0	10	i_buffer
+water	121:89	0:0	6	;
+if	123:12	124:80	6	(p_sys -> i_pts == p_sys -> bytestream . p_block -> i_pts)
+cond	123:16	123:59	7	p_sys -> i_pts == p_sys -> bytestream . p_block -> i_pts
+water	123:16	0:0	8	p_sys
+op	123:21	0:0	8	->
+water	123:23	0:0	8	i_pts
+op	123:29	0:0	8	==
+water	123:32	0:0	8	p_sys
+op	123:37	0:0	8	->
+water	123:39	0:0	8	bytestream
+op	123:49	0:0	8	.
+water	123:50	0:0	8	p_block
+op	123:57	0:0	8	->
+water	123:59	0:0	8	i_pts
+stmts	124:16	124:80	7	
+water	124:16	0:0	8	p_sys
+op	124:21	0:0	8	->
+water	124:23	0:0	8	i_pts
+op	124:29	0:0	8	=
+water	124:31	0:0	8	p_sys
+op	124:36	0:0	8	->
+water	124:38	0:0	8	bytestream
+op	124:48	0:0	8	.
+water	124:49	0:0	8	p_block
+op	124:56	0:0	8	->
+water	124:58	0:0	8	i_pts
+op	124:64	0:0	8	=
+water	124:66	0:0	8	VLC_TS_INVALID
+water	124:80	0:0	8	;
+op	126:12	0:0	6	*
+water	126:13	0:0	6	pp_block
+op	126:22	0:0	6	=
+call	126:24	126:64	6	block_BytestreamPop
+arg	126:45	126:64	7	&p_sys->bytestream
+op	126:45	0:0	8	&
+water	126:46	0:0	8	p_sys
+op	126:51	0:0	8	->
+water	126:53	0:0	8	bytestream
+water	126:65	0:0	6	;
+water	127:12	0:0	6	p_sys
+op	127:17	0:0	6	->
+water	127:19	0:0	6	i_state
+op	127:27	0:0	6	=
+water	127:29	0:0	6	STATE_NOSYNC
+water	127:41	0:0	6	;
+return	128:12	128:31	6	p_out_buffer
+water	128:19	0:0	7	p_out_buffer
+water	129:8	0:0	6	}
+water	130:4	0:0	4	}

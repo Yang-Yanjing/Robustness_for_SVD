@@ -1,0 +1,224 @@
+func	2:0	59:0	0	static void *	DecodeAsync
+params	2:24	0:0	1	
+param	2:25	2:41	2	decoder_t *	p_dec
+param	2:43	2:61	2	block_t * *	pp_block
+stmnts	0:0	58:15	1	
+decl	4:4	4:39	2	decoder_sys_t	*p_sys
+op	4:25	0:0	2	=
+water	4:27	0:0	2	p_dec
+op	4:32	0:0	2	->
+water	4:34	0:0	2	p_sys
+decl	5:4	5:14	2	HRESULT	hr
+if	6:4	7:19	2	(! pp_block || ! * pp_block)
+cond	6:8	6:23	3	! pp_block || ! * pp_block
+op	6:8	0:0	4	!
+water	6:9	0:0	4	pp_block
+op	6:18	0:0	4	||
+op	6:21	0:0	4	!
+op	6:22	0:0	4	*
+water	6:23	0:0	4	pp_block
+stmts	7:8	7:19	3	
+return	7:8	7:19	4	NULL
+water	7:15	0:0	5	NULL
+decl	8:4	8:32	2	block_t	*p_block
+op	8:21	0:0	2	=
+op	8:23	0:0	2	*
+water	8:24	0:0	2	pp_block
+if	9:4	13:4	2	(p_block -> i_flags & ( BLOCK_FLAG_DISCONTINUITY | BLOCK_FLAG_CORRUPTED ))
+cond	9:8	9:75	3	p_block -> i_flags & ( BLOCK_FLAG_DISCONTINUITY | BLOCK_FLAG_CORRUPTED )
+water	9:8	0:0	4	p_block
+op	9:15	0:0	4	->
+water	9:17	0:0	4	i_flags
+op	9:25	0:0	4	&
+water	9:27	0:0	4	(
+water	9:28	0:0	4	BLOCK_FLAG_DISCONTINUITY
+op	9:53	0:0	4	|
+water	9:55	0:0	4	BLOCK_FLAG_CORRUPTED
+water	9:75	0:0	4	)
+stmts	10:4	13:4	3	
+water	10:4	0:0	4	{
+call	11:8	11:29	4	block_Release
+arg	11:22	11:29	5	p_block
+water	11:22	0:0	6	p_block
+water	11:30	0:0	4	;
+return	12:8	12:19	4	NULL
+water	12:15	0:0	5	NULL
+water	13:4	0:0	4	}
+while	15:4	16:16	2	(( hr =DequeueMediaEvent (p_dec ) ) == S_OK)
+cond	15:11	15:46	3	( hr =DequeueMediaEvent (p_dec ) ) == S_OK
+water	15:11	0:0	4	(
+water	15:12	0:0	4	hr
+op	15:15	0:0	4	=
+call	15:17	15:40	4	DequeueMediaEvent
+arg	15:35	15:40	5	p_dec
+water	15:35	0:0	6	p_dec
+water	15:41	0:0	4	)
+op	15:43	0:0	4	==
+water	15:46	0:0	4	S_OK
+stmts	16:8	16:16	3	
+continue	16:8	16:16	4	
+if	17:4	18:18	2	(hr != MF_E_NO_EVENTS_AVAILABLE &&FAILED (hr ))
+cond	17:8	17:51	3	hr != MF_E_NO_EVENTS_AVAILABLE &&FAILED (hr )
+water	17:8	0:0	4	hr
+op	17:11	0:0	4	!=
+water	17:14	0:0	4	MF_E_NO_EVENTS_AVAILABLE
+op	17:39	0:0	4	&&
+call	17:42	17:51	4	FAILED
+arg	17:49	17:51	5	hr
+water	17:49	0:0	6	hr
+stmts	18:8	18:18	3	
+goto	18:8	18:18	4	error
+water	18:13	0:0	5	error
+if	20:4	27:4	2	(p_sys -> pending_output_events > 0)
+cond	20:8	20:39	3	p_sys -> pending_output_events > 0
+water	20:8	0:0	4	p_sys
+op	20:13	0:0	4	->
+water	20:15	0:0	4	pending_output_events
+op	20:37	0:0	4	>
+water	20:39	0:0	4	0
+stmts	21:4	27:4	3	
+water	21:4	0:0	4	{
+water	22:8	0:0	4	p_sys
+op	22:13	0:0	4	->
+water	22:15	0:0	4	pending_output_events
+op	22:37	0:0	4	-=
+water	22:40	0:0	4	1
+water	22:41	0:0	4	;
+decl	23:8	23:27	4	void	*result
+op	23:21	0:0	4	=
+water	23:23	0:0	4	NULL
+if	24:8	25:22	4	(ProcessOutputStream (p_dec ,p_sys -> output_stream_id ,& result ))
+cond	24:12	24:71	5	ProcessOutputStream (p_dec ,p_sys -> output_stream_id ,& result )
+call	24:12	24:71	6	ProcessOutputStream
+arg	24:32	24:37	7	p_dec
+water	24:32	0:0	8	p_dec
+arg	24:39	24:62	7	p_sys->output_stream_id
+water	24:39	0:0	8	p_sys
+op	24:44	0:0	8	->
+water	24:46	0:0	8	output_stream_id
+arg	24:64	24:71	7	&result
+op	24:64	0:0	8	&
+water	24:65	0:0	8	result
+stmts	25:12	25:22	5	
+goto	25:12	25:22	6	error
+water	25:17	0:0	7	error
+return	26:8	26:21	4	result
+water	26:15	0:0	5	result
+water	27:4	0:0	4	}
+while	29:4	48:4	2	(p_sys -> pending_input_events == 0)
+cond	29:11	29:42	3	p_sys -> pending_input_events == 0
+water	29:11	0:0	4	p_sys
+op	29:16	0:0	4	->
+water	29:18	0:0	4	pending_input_events
+op	29:39	0:0	4	==
+water	29:42	0:0	4	0
+stmts	30:4	48:4	3	
+water	30:4	0:0	4	{
+water	31:8	0:0	4	hr
+op	31:11	0:0	4	=
+call	31:13	31:36	4	DequeueMediaEvent
+arg	31:31	31:36	5	p_dec
+water	31:31	0:0	6	p_dec
+water	31:37	0:0	4	;
+if	32:8	37:8	4	(hr == MF_E_NO_EVENTS_AVAILABLE)
+cond	32:12	32:18	5	hr == MF_E_NO_EVENTS_AVAILABLE
+water	32:12	0:0	6	hr
+op	32:15	0:0	6	==
+water	32:18	0:0	6	MF_E_NO_EVENTS_AVAILABLE
+stmts	33:8	37:8	5	
+water	33:8	0:0	6	{
+call	35:12	35:19	6	Sleep
+arg	35:18	35:19	7	1
+water	35:18	0:0	8	1
+water	35:20	0:0	6	;
+continue	36:12	36:20	6	
+water	37:8	0:0	6	}
+if	38:8	39:22	4	(FAILED (hr ))
+cond	38:12	38:21	5	FAILED (hr )
+call	38:12	38:21	6	FAILED
+arg	38:19	38:21	7	hr
+water	38:19	0:0	8	hr
+stmts	39:12	39:22	5	
+goto	39:12	39:22	6	error
+water	39:17	0:0	7	error
+if	40:8	47:8	4	(p_sys -> pending_output_events > 0)
+cond	40:12	40:43	5	p_sys -> pending_output_events > 0
+water	40:12	0:0	6	p_sys
+op	40:17	0:0	6	->
+water	40:19	0:0	6	pending_output_events
+op	40:41	0:0	6	>
+water	40:43	0:0	6	0
+stmts	41:8	47:8	5	
+water	41:8	0:0	6	{
+water	42:12	0:0	6	p_sys
+op	42:17	0:0	6	->
+water	42:19	0:0	6	pending_output_events
+op	42:41	0:0	6	-=
+water	42:44	0:0	6	1
+water	42:45	0:0	6	;
+decl	43:12	43:31	6	void	*result
+op	43:25	0:0	6	=
+water	43:27	0:0	6	NULL
+if	44:12	45:26	6	(ProcessOutputStream (p_dec ,p_sys -> output_stream_id ,& result ))
+cond	44:16	44:75	7	ProcessOutputStream (p_dec ,p_sys -> output_stream_id ,& result )
+call	44:16	44:75	8	ProcessOutputStream
+arg	44:36	44:41	9	p_dec
+water	44:36	0:0	10	p_dec
+arg	44:43	44:66	9	p_sys->output_stream_id
+water	44:43	0:0	10	p_sys
+op	44:48	0:0	10	->
+water	44:50	0:0	10	output_stream_id
+arg	44:68	44:75	9	&result
+op	44:68	0:0	10	&
+water	44:69	0:0	10	result
+stmts	45:16	45:26	7	
+goto	45:16	45:26	8	error
+water	45:21	0:0	9	error
+return	46:12	46:25	6	result
+water	46:19	0:0	7	result
+water	47:8	0:0	6	}
+water	48:4	0:0	4	}
+water	49:4	0:0	2	p_sys
+op	49:9	0:0	2	->
+water	49:11	0:0	2	pending_input_events
+op	49:32	0:0	2	-=
+water	49:35	0:0	2	1
+water	49:36	0:0	2	;
+if	50:4	51:18	2	(ProcessInputStream (p_dec ,p_sys -> input_stream_id ,p_block ))
+cond	50:8	50:65	3	ProcessInputStream (p_dec ,p_sys -> input_stream_id ,p_block )
+call	50:8	50:65	4	ProcessInputStream
+arg	50:27	50:32	5	p_dec
+water	50:27	0:0	6	p_dec
+arg	50:34	50:56	5	p_sys->input_stream_id
+water	50:34	0:0	6	p_sys
+op	50:39	0:0	6	->
+water	50:41	0:0	6	input_stream_id
+arg	50:58	50:65	5	p_block
+water	50:58	0:0	6	p_block
+stmts	51:8	51:18	3	
+goto	51:8	51:18	4	error
+water	51:13	0:0	5	error
+call	52:4	52:25	2	block_Release
+arg	52:18	52:25	3	p_block
+water	52:18	0:0	4	p_block
+water	52:26	0:0	2	;
+op	53:4	0:0	2	*
+water	53:5	0:0	2	pp_block
+op	53:14	0:0	2	=
+water	53:16	0:0	2	NULL
+water	53:20	0:0	2	;
+return	54:4	54:15	2	NULL
+water	54:11	0:0	3	NULL
+label	55:0	55:5	2	error :
+call	56:4	56:43	2	msg_Err
+arg	56:12	56:17	3	p_dec
+water	56:12	0:0	4	p_dec
+arg	56:19	56:43	3	"Error in DecodeAsync()"
+water	56:19	0:0	4	"Error in DecodeAsync()"
+water	56:44	0:0	2	;
+call	57:4	57:25	2	block_Release
+arg	57:18	57:25	3	p_block
+water	57:18	0:0	4	p_block
+water	57:26	0:0	2	;
+return	58:4	58:15	2	NULL
+water	58:11	0:0	3	NULL

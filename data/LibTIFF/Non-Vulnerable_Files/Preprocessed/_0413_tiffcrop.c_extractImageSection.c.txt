@@ -1,0 +1,1270 @@
+func	1:0	215:2	0	static int	extractImageSection
+params	2:19	0:0	1	
+param	2:20	2:44	2	struct image_data *	image
+param	2:46	2:69	2	struct pageseg *	section
+param	3:20	3:43	2	unsigned char *	src_buff
+param	3:45	3:69	2	unsigned char *	sect_buff
+stmnts	0:0	214:12	1	
+decl	5:2	5:38	2	unsigned char	bytebuff1
+water	5:27	0:0	2	,
+decl	5:2	5:38	2	unsigned char	bytebuff2
+decl	9:2	9:34	2	uint32	img_width
+water	9:21	0:0	2	,
+decl	9:2	9:34	2	uint32	img_rowsize
+decl	11:2	11:22	2	uint32	img_length
+decl	13:2	13:44	2	uint32	j
+water	13:13	0:0	2	,
+decl	13:2	13:44	2	uint32	shift1
+water	13:21	0:0	2	,
+decl	13:2	13:44	2	uint32	shift2
+water	13:29	0:0	2	,
+decl	13:2	13:44	2	uint32	trailing_bits
+decl	14:2	14:57	2	uint32	row
+water	14:15	0:0	2	,
+decl	14:2	14:57	2	uint32	first_row
+water	14:26	0:0	2	,
+decl	14:2	14:57	2	uint32	last_row
+water	14:36	0:0	2	,
+decl	14:2	14:57	2	uint32	first_col
+water	14:47	0:0	2	,
+decl	14:2	14:57	2	uint32	last_col
+decl	15:2	15:58	2	uint32	src_offset
+water	15:22	0:0	2	,
+decl	15:2	15:58	2	uint32	dst_offset
+water	15:34	0:0	2	,
+decl	15:2	15:58	2	uint32	row_offset
+water	15:46	0:0	2	,
+decl	15:2	15:58	2	uint32	col_offset
+decl	16:2	16:40	2	uint32	offset1
+water	16:19	0:0	2	,
+decl	16:2	16:40	2	uint32	offset2
+water	16:28	0:0	2	,
+decl	16:2	16:40	2	uint32	full_bytes
+decl	17:2	17:22	2	uint32	sect_width
+decl	19:2	19:23	2	uint32	sect_length
+decl	21:2	21:20	2	uint16	bps
+water	21:15	0:0	2	,
+decl	21:2	21:20	2	uint16	spp
+decl	23:2	23:12	2	int	k
+decl	24:2	24:22	2	unsigned char	bitset
+water	25:2	0:0	2	static
+water	25:9	0:0	2	char
+op	25:14	0:0	2	*
+water	25:15	0:0	2	bitarray
+op	25:24	0:0	2	=
+water	25:26	0:0	2	NULL
+water	25:30	0:0	2	;
+water	27:2	0:0	2	img_width
+op	27:12	0:0	2	=
+water	27:14	0:0	2	image
+op	27:19	0:0	2	->
+water	27:21	0:0	2	width
+water	27:26	0:0	2	;
+water	29:2	0:0	2	img_length
+op	29:13	0:0	2	=
+water	29:15	0:0	2	image
+op	29:20	0:0	2	->
+water	29:22	0:0	2	length
+water	29:28	0:0	2	;
+water	31:2	0:0	2	bps
+op	31:6	0:0	2	=
+water	31:8	0:0	2	image
+op	31:13	0:0	2	->
+water	31:15	0:0	2	bps
+water	31:18	0:0	2	;
+water	32:2	0:0	2	spp
+op	32:6	0:0	2	=
+water	32:8	0:0	2	image
+op	32:13	0:0	2	->
+water	32:15	0:0	2	spp
+water	32:18	0:0	2	;
+water	37:2	0:0	2	src_offset
+op	37:13	0:0	2	=
+water	37:15	0:0	2	0
+water	37:16	0:0	2	;
+water	38:2	0:0	2	dst_offset
+op	38:13	0:0	2	=
+water	38:15	0:0	2	0
+water	38:16	0:0	2	;
+if	40:2	47:4	2	(bitarray == NULL)
+cond	40:6	40:18	3	bitarray == NULL
+water	40:6	0:0	4	bitarray
+op	40:15	0:0	4	==
+water	40:18	0:0	4	NULL
+stmts	41:4	47:4	3	
+water	41:4	0:0	4	{
+if	42:4	46:6	4	(( bitarray = ( char * )malloc (img_width ) ) == NULL)
+cond	42:8	42:50	5	( bitarray = ( char * )malloc (img_width ) ) == NULL
+water	42:8	0:0	6	(
+water	42:9	0:0	6	bitarray
+op	42:18	0:0	6	=
+water	42:20	0:0	6	(
+water	42:21	0:0	6	char
+op	42:26	0:0	6	*
+water	42:27	0:0	6	)
+call	42:28	42:44	6	malloc
+arg	42:35	42:44	7	img_width
+water	42:35	0:0	8	img_width
+water	42:45	0:0	6	)
+op	42:47	0:0	6	==
+water	42:50	0:0	6	NULL
+stmts	43:6	46:6	5	
+water	43:6	0:0	6	{
+call	44:6	44:67	6	TIFFError
+arg	44:17	44:19	7	""
+water	44:17	0:0	8	""
+arg	44:21	44:67	7	"DEBUG: Unable to allocate debugging bitarray"
+water	44:21	0:0	8	"DEBUG: Unable to allocate debugging bitarray"
+water	44:68	0:0	6	;
+return	45:6	45:17	6	(-1)
+water	45:13	0:0	7	(
+op	45:14	0:0	7	-
+water	45:15	0:0	7	1
+water	45:16	0:0	7	)
+water	46:6	0:0	6	}
+water	47:4	0:0	4	}
+water	50:2	0:0	2	first_row
+op	50:12	0:0	2	=
+water	50:14	0:0	2	section
+op	50:21	0:0	2	->
+water	50:23	0:0	2	y1
+water	50:25	0:0	2	;
+water	51:2	0:0	2	last_row
+op	51:12	0:0	2	=
+water	51:14	0:0	2	section
+op	51:21	0:0	2	->
+water	51:23	0:0	2	y2
+water	51:25	0:0	2	;
+water	52:2	0:0	2	first_col
+op	52:12	0:0	2	=
+water	52:14	0:0	2	section
+op	52:21	0:0	2	->
+water	52:23	0:0	2	x1
+water	52:25	0:0	2	;
+water	53:2	0:0	2	last_col
+op	53:12	0:0	2	=
+water	53:14	0:0	2	section
+op	53:21	0:0	2	->
+water	53:23	0:0	2	x2
+water	53:25	0:0	2	;
+water	54:2	0:0	2	sect_width
+op	54:13	0:0	2	=
+water	54:15	0:0	2	last_col
+op	54:24	0:0	2	-
+water	54:26	0:0	2	first_col
+op	54:36	0:0	2	+
+water	54:38	0:0	2	1
+water	54:39	0:0	2	;
+water	56:2	0:0	2	sect_length
+op	56:14	0:0	2	=
+water	56:16	0:0	2	last_row
+op	56:25	0:0	2	-
+water	56:27	0:0	2	first_row
+op	56:37	0:0	2	+
+water	56:39	0:0	2	1
+water	56:40	0:0	2	;
+water	58:2	0:0	2	img_rowsize
+op	58:14	0:0	2	=
+water	58:16	0:0	2	(
+water	58:17	0:0	2	(
+water	58:18	0:0	2	img_width
+op	58:28	0:0	2	*
+water	58:30	0:0	2	bps
+op	58:34	0:0	2	+
+water	58:36	0:0	2	7
+water	58:37	0:0	2	)
+op	58:39	0:0	2	/
+water	58:41	0:0	2	8
+water	58:42	0:0	2	)
+op	58:44	0:0	2	*
+water	58:46	0:0	2	spp
+water	58:49	0:0	2	;
+water	59:2	0:0	2	full_bytes
+op	59:13	0:0	2	=
+water	59:15	0:0	2	(
+water	59:16	0:0	2	sect_width
+op	59:27	0:0	2	*
+water	59:29	0:0	2	spp
+op	59:33	0:0	2	*
+water	59:35	0:0	2	bps
+water	59:38	0:0	2	)
+op	59:40	0:0	2	/
+water	59:42	0:0	2	8
+water	59:43	0:0	2	;
+water	60:2	0:0	2	trailing_bits
+op	60:16	0:0	2	=
+water	60:18	0:0	2	(
+water	60:19	0:0	2	sect_width
+op	60:30	0:0	2	*
+water	60:32	0:0	2	bps
+water	60:35	0:0	2	)
+op	60:37	0:0	2	%
+water	60:39	0:0	2	8
+water	60:40	0:0	2	;
+call	62:4	63:51	2	TIFFError
+arg	62:15	62:17	3	""
+water	62:15	0:0	4	""
+arg	62:19	62:79	3	"First row: %d, last row: %d, First col: %d, last col: %d\n"
+water	62:19	0:0	4	"First row: %d, last row: %d, First col: %d, last col: %d\n"
+arg	63:11	63:20	3	first_row
+water	63:11	0:0	4	first_row
+arg	63:22	63:30	3	last_row
+water	63:22	0:0	4	last_row
+arg	63:32	63:41	3	first_col
+water	63:32	0:0	4	first_col
+arg	63:43	63:51	3	last_col
+water	63:43	0:0	4	last_col
+water	63:52	0:0	2	;
+call	64:4	65:35	2	TIFFError
+arg	64:15	64:17	3	""
+water	64:15	0:0	4	""
+arg	64:19	64:74	3	"Image width: %d, Image length: %d, bps: %d, spp: %d\n"
+water	64:19	0:0	4	"Image width: %d, Image length: %d, bps: %d, spp: %d\n"
+arg	65:4	65:13	3	img_width
+water	65:4	0:0	4	img_width
+arg	65:15	65:25	3	img_length
+water	65:15	0:0	4	img_length
+arg	65:27	65:30	3	bps
+water	65:27	0:0	4	bps
+arg	65:32	65:35	3	spp
+water	65:32	0:0	4	spp
+water	65:36	0:0	2	;
+call	66:4	67:61	2	TIFFError
+arg	66:15	66:17	3	""
+water	66:15	0:0	4	""
+arg	66:19	66:89	3	"Sect  width: %d,  Sect length: %d, full bytes: %d trailing bits %d\n"
+water	66:19	0:0	4	"Sect  width: %d,  Sect length: %d, full bytes: %d trailing bits %d\n"
+arg	67:11	67:21	3	sect_width
+water	67:11	0:0	4	sect_width
+arg	67:23	67:34	3	sect_length
+water	67:23	0:0	4	sect_length
+arg	67:36	67:46	3	full_bytes
+water	67:36	0:0	4	full_bytes
+arg	67:48	67:61	3	trailing_bits
+water	67:48	0:0	4	trailing_bits
+water	67:62	0:0	2	;
+if	69:2	83:4	2	(( bps % 8 ) == 0)
+cond	69:6	69:19	3	( bps % 8 ) == 0
+water	69:6	0:0	4	(
+water	69:7	0:0	4	bps
+op	69:11	0:0	4	%
+water	69:13	0:0	4	8
+water	69:14	0:0	4	)
+op	69:16	0:0	4	==
+water	69:19	0:0	4	0
+stmts	70:4	83:4	3	
+water	70:4	0:0	4	{
+water	71:4	0:0	4	col_offset
+op	71:15	0:0	4	=
+water	71:17	0:0	4	first_col
+op	71:27	0:0	4	*
+water	71:29	0:0	4	spp
+op	71:33	0:0	4	*
+water	71:35	0:0	4	bps
+op	71:39	0:0	4	/
+water	71:41	0:0	4	8
+water	71:42	0:0	4	;
+for	72:4	82:6	4	(row = first_row ;row <= last_row;row ++)
+forinit	72:9	72:24	5	row = first_row ;
+water	72:9	0:0	6	row
+op	72:13	0:0	6	=
+water	72:15	0:0	6	first_row
+water	72:24	0:0	6	;
+cond	72:26	72:33	5	row <= last_row
+water	72:26	0:0	6	row
+op	72:30	0:0	6	<=
+water	72:33	0:0	6	last_row
+forexpr	72:43	72:46	5	row ++
+water	72:43	0:0	6	row
+op	72:46	0:0	6	++
+stmts	73:6	82:6	5	
+water	73:6	0:0	6	{
+water	75:6	0:0	6	row_offset
+op	75:17	0:0	6	=
+water	75:19	0:0	6	row
+op	75:23	0:0	6	*
+water	75:25	0:0	6	img_rowsize
+water	75:36	0:0	6	;
+water	76:6	0:0	6	src_offset
+op	76:17	0:0	6	=
+water	76:19	0:0	6	row_offset
+op	76:30	0:0	6	+
+water	76:32	0:0	6	col_offset
+water	76:42	0:0	6	;
+call	78:8	78:81	6	TIFFError
+arg	78:19	78:21	7	""
+water	78:19	0:0	8	""
+arg	78:23	78:57	7	"Src offset: %8d, Dst offset: %8d"
+water	78:23	0:0	8	"Src offset: %8d, Dst offset: %8d"
+arg	78:59	78:69	7	src_offset
+water	78:59	0:0	8	src_offset
+arg	78:71	78:81	7	dst_offset
+water	78:71	0:0	8	dst_offset
+water	78:82	0:0	6	;
+call	80:6	80:76	6	_TIFFmemcpy
+arg	80:19	80:41	7	sect_buff+dst_offset
+water	80:19	0:0	8	sect_buff
+op	80:29	0:0	8	+
+water	80:31	0:0	8	dst_offset
+arg	80:43	80:64	7	src_buff+src_offset
+water	80:43	0:0	8	src_buff
+op	80:52	0:0	8	+
+water	80:54	0:0	8	src_offset
+arg	80:66	80:76	7	full_bytes
+water	80:66	0:0	8	full_bytes
+water	80:77	0:0	6	;
+water	81:6	0:0	6	dst_offset
+op	81:17	0:0	6	+=
+water	81:20	0:0	6	full_bytes
+water	81:30	0:0	6	;
+water	82:6	0:0	6	}
+water	83:4	0:0	4	}
+else	84:2	213:4	2
+stmts	85:4	213:4	3	
+water	85:4	0:0	4	{
+water	86:4	0:0	4	shift1
+op	86:12	0:0	4	=
+water	86:14	0:0	4	spp
+op	86:18	0:0	4	*
+water	86:20	0:0	4	(
+water	86:21	0:0	4	(
+water	86:22	0:0	4	first_col
+op	86:32	0:0	4	*
+water	86:34	0:0	4	bps
+water	86:37	0:0	4	)
+op	86:39	0:0	4	%
+water	86:41	0:0	4	8
+water	86:42	0:0	4	)
+water	86:43	0:0	4	;
+water	87:4	0:0	4	shift2
+op	87:12	0:0	4	=
+water	87:14	0:0	4	spp
+op	87:18	0:0	4	*
+water	87:20	0:0	4	(
+water	87:21	0:0	4	(
+water	87:22	0:0	4	last_col
+op	87:31	0:0	4	*
+water	87:33	0:0	4	bps
+water	87:36	0:0	4	)
+op	87:38	0:0	4	%
+water	87:40	0:0	4	8
+water	87:41	0:0	4	)
+water	87:42	0:0	4	;
+for	88:4	212:6	4	(row = first_row ;row <= last_row;row ++)
+forinit	88:9	88:24	5	row = first_row ;
+water	88:9	0:0	6	row
+op	88:13	0:0	6	=
+water	88:15	0:0	6	first_row
+water	88:24	0:0	6	;
+cond	88:26	88:33	5	row <= last_row
+water	88:26	0:0	6	row
+op	88:30	0:0	6	<=
+water	88:33	0:0	6	last_row
+forexpr	88:43	88:46	5	row ++
+water	88:43	0:0	6	row
+op	88:46	0:0	6	++
+stmts	89:6	212:6	5	
+water	89:6	0:0	6	{
+water	91:6	0:0	6	row_offset
+op	91:17	0:0	6	=
+water	91:19	0:0	6	row
+op	91:23	0:0	6	*
+water	91:25	0:0	6	img_rowsize
+water	91:36	0:0	6	;
+water	92:6	0:0	6	offset1
+op	92:14	0:0	6	=
+water	92:16	0:0	6	row_offset
+op	92:27	0:0	6	+
+water	92:29	0:0	6	(
+water	92:30	0:0	6	first_col
+op	92:40	0:0	6	*
+water	92:42	0:0	6	bps
+op	92:46	0:0	6	/
+water	92:48	0:0	6	8
+water	92:49	0:0	6	)
+water	92:50	0:0	6	;
+water	93:6	0:0	6	offset2
+op	93:14	0:0	6	=
+water	93:16	0:0	6	row_offset
+op	93:27	0:0	6	+
+water	93:29	0:0	6	(
+water	93:30	0:0	6	last_col
+op	93:39	0:0	6	*
+water	93:41	0:0	6	bps
+op	93:45	0:0	6	/
+water	93:47	0:0	6	8
+water	93:48	0:0	6	)
+water	93:49	0:0	6	;
+for	95:6	99:8	6	(j = 0 , k = 7 ;j < 8;j ++ , k --)
+forinit	95:11	95:23	7	j = 0 , k = 7 ;
+water	95:11	0:0	8	j
+op	95:13	0:0	8	=
+water	95:15	0:0	8	0
+water	95:16	0:0	8	,
+water	95:18	0:0	8	k
+op	95:20	0:0	8	=
+water	95:22	0:0	8	7
+water	95:23	0:0	8	;
+cond	95:25	95:29	7	j < 8
+water	95:25	0:0	8	j
+op	95:27	0:0	8	<
+water	95:29	0:0	8	8
+forexpr	95:32	95:38	7	j ++ , k --
+water	95:32	0:0	8	j
+op	95:33	0:0	8	++
+water	95:35	0:0	8	,
+water	95:37	0:0	8	k
+op	95:38	0:0	8	--
+stmts	96:8	99:8	7	
+water	96:8	0:0	8	{
+water	97:8	0:0	8	bitset
+op	97:15	0:0	8	=
+op	97:17	0:0	8	*
+water	97:18	0:0	8	(
+water	97:19	0:0	8	src_buff
+op	97:28	0:0	8	+
+water	97:30	0:0	8	offset1
+water	97:37	0:0	8	)
+op	97:39	0:0	8	&
+water	97:41	0:0	8	(
+water	97:42	0:0	8	(
+water	97:43	0:0	8	(
+water	97:44	0:0	8	unsigned
+water	97:53	0:0	8	char
+water	97:57	0:0	8	)
+water	97:58	0:0	8	1
+op	97:60	0:0	8	<<
+water	97:63	0:0	8	k
+water	97:64	0:0	8	)
+water	97:65	0:0	8	)
+water	97:67	0:0	8	?
+water	97:69	0:0	8	1
+water	97:71	0:0	8	:
+water	97:73	0:0	8	0
+water	97:74	0:0	8	;
+call	98:8	98:50	8	sprintf
+arg	98:16	98:28	9	&bitarray[j]
+op	98:16	0:0	10	&
+water	98:17	0:0	10	bitarray
+op	98:25	0:0	10	[
+water	98:26	0:0	10	j
+op	98:27	0:0	10	]
+arg	98:30	98:50	9	(bitset)?"1":"0"
+water	98:30	0:0	10	(
+water	98:31	0:0	10	bitset
+water	98:37	0:0	10	)
+water	98:39	0:0	10	?
+water	98:41	0:0	10	"1"
+water	98:45	0:0	10	:
+water	98:47	0:0	10	"0"
+water	98:51	0:0	8	;
+water	99:8	0:0	8	}
+call	100:6	100:31	6	sprintf
+arg	100:14	100:26	7	&bitarray[8]
+op	100:14	0:0	8	&
+water	100:15	0:0	8	bitarray
+op	100:23	0:0	8	[
+water	100:24	0:0	8	8
+op	100:25	0:0	8	]
+arg	100:28	100:31	7	" "
+water	100:28	0:0	8	" "
+water	100:32	0:0	6	;
+call	101:6	101:31	6	sprintf
+arg	101:14	101:26	7	&bitarray[9]
+op	101:14	0:0	8	&
+water	101:15	0:0	8	bitarray
+op	101:23	0:0	8	[
+water	101:24	0:0	8	9
+op	101:25	0:0	8	]
+arg	101:28	101:31	7	" "
+water	101:28	0:0	8	" "
+water	101:32	0:0	6	;
+for	102:6	106:8	6	(j = 10 , k = 7 ;j < 18;j ++ , k --)
+forinit	102:11	102:24	7	j = 10 , k = 7 ;
+water	102:11	0:0	8	j
+op	102:13	0:0	8	=
+water	102:15	0:0	8	10
+water	102:17	0:0	8	,
+water	102:19	0:0	8	k
+op	102:21	0:0	8	=
+water	102:23	0:0	8	7
+water	102:24	0:0	8	;
+cond	102:26	102:30	7	j < 18
+water	102:26	0:0	8	j
+op	102:28	0:0	8	<
+water	102:30	0:0	8	18
+forexpr	102:34	102:40	7	j ++ , k --
+water	102:34	0:0	8	j
+op	102:35	0:0	8	++
+water	102:37	0:0	8	,
+water	102:39	0:0	8	k
+op	102:40	0:0	8	--
+stmts	103:8	106:8	7	
+water	103:8	0:0	8	{
+water	104:8	0:0	8	bitset
+op	104:15	0:0	8	=
+op	104:17	0:0	8	*
+water	104:18	0:0	8	(
+water	104:19	0:0	8	src_buff
+op	104:28	0:0	8	+
+water	104:30	0:0	8	offset2
+water	104:37	0:0	8	)
+op	104:39	0:0	8	&
+water	104:41	0:0	8	(
+water	104:42	0:0	8	(
+water	104:43	0:0	8	(
+water	104:44	0:0	8	unsigned
+water	104:53	0:0	8	char
+water	104:57	0:0	8	)
+water	104:58	0:0	8	1
+op	104:60	0:0	8	<<
+water	104:63	0:0	8	k
+water	104:64	0:0	8	)
+water	104:65	0:0	8	)
+water	104:67	0:0	8	?
+water	104:69	0:0	8	1
+water	104:71	0:0	8	:
+water	104:73	0:0	8	0
+water	104:74	0:0	8	;
+call	105:8	105:50	8	sprintf
+arg	105:16	105:28	9	&bitarray[j]
+op	105:16	0:0	10	&
+water	105:17	0:0	10	bitarray
+op	105:25	0:0	10	[
+water	105:26	0:0	10	j
+op	105:27	0:0	10	]
+arg	105:30	105:50	9	(bitset)?"1":"0"
+water	105:30	0:0	10	(
+water	105:31	0:0	10	bitset
+water	105:37	0:0	10	)
+water	105:39	0:0	10	?
+water	105:41	0:0	10	"1"
+water	105:45	0:0	10	:
+water	105:47	0:0	10	"0"
+water	105:51	0:0	8	;
+water	106:8	0:0	8	}
+water	107:6	0:0	6	bitarray
+op	107:14	0:0	6	[
+water	107:15	0:0	6	18
+op	107:17	0:0	6	]
+op	107:19	0:0	6	=
+water	107:21	0:0	6	'\0'
+water	107:25	0:0	6	;
+call	108:6	109:54	6	TIFFError
+arg	108:17	108:19	7	""
+water	108:17	0:0	8	""
+arg	108:21	108:88	7	"Row: %3d Offset1: %d,  Shift1: %d,    Offset2: %d,  Shift2:  %d\n"
+water	108:21	0:0	8	"Row: %3d Offset1: %d,  Shift1: %d,    Offset2: %d,  Shift2:  %d\n"
+arg	109:17	109:20	7	row
+water	109:17	0:0	8	row
+arg	109:22	109:29	7	offset1
+water	109:22	0:0	8	offset1
+arg	109:31	109:37	7	shift1
+water	109:31	0:0	8	shift1
+arg	109:39	109:46	7	offset2
+water	109:39	0:0	8	offset2
+arg	109:48	109:54	7	shift2
+water	109:48	0:0	8	shift2
+water	109:55	0:0	6	;
+water	111:6	0:0	6	bytebuff1
+op	111:16	0:0	6	=
+water	111:18	0:0	6	bytebuff2
+op	111:28	0:0	6	=
+water	111:30	0:0	6	0
+water	111:31	0:0	6	;
+if	112:6	145:8	6	(shift1 == 0)
+cond	112:10	112:20	7	shift1 == 0
+water	112:10	0:0	8	shift1
+op	112:17	0:0	8	==
+water	112:20	0:0	8	0
+stmts	113:8	145:8	7	
+water	113:8	0:0	8	{
+call	114:1	114:68	8	_TIFFmemcpy
+arg	114:14	114:36	9	sect_buff+dst_offset
+water	114:14	0:0	10	sect_buff
+op	114:24	0:0	10	+
+water	114:26	0:0	10	dst_offset
+arg	114:38	114:56	9	src_buff+offset1
+water	114:38	0:0	10	src_buff
+op	114:47	0:0	10	+
+water	114:49	0:0	10	offset1
+arg	114:58	114:68	9	full_bytes
+water	114:58	0:0	10	full_bytes
+water	114:69	0:0	8	;
+call	116:1	116:96	8	TIFFError
+arg	116:12	116:14	9	""
+water	116:12	0:0	10	""
+arg	116:16	116:75	9	"        Alligned data src offset1: %8d, Dst offset: %8d\n"
+water	116:16	0:0	10	"        Alligned data src offset1: %8d, Dst offset: %8d\n"
+arg	116:77	116:84	9	offset1
+water	116:77	0:0	10	offset1
+arg	116:86	116:96	9	dst_offset
+water	116:86	0:0	10	dst_offset
+water	116:97	0:0	8	;
+call	117:1	117:28	8	sprintf
+arg	117:9	117:22	9	&bitarray[18]
+op	117:9	0:0	10	&
+water	117:10	0:0	10	bitarray
+op	117:18	0:0	10	[
+water	117:19	0:0	10	18
+op	117:21	0:0	10	]
+arg	117:24	117:28	9	"\n"
+water	117:24	0:0	10	"\n"
+water	117:29	0:0	8	;
+call	118:1	118:28	8	sprintf
+arg	118:9	118:22	9	&bitarray[19]
+op	118:9	0:0	10	&
+water	118:10	0:0	10	bitarray
+op	118:18	0:0	10	[
+water	118:19	0:0	10	19
+op	118:21	0:0	10	]
+arg	118:24	118:28	9	"\t"
+water	118:24	0:0	10	"\t"
+water	118:29	0:0	8	;
+for	119:8	123:10	8	(j = 20 , k = 7 ;j < 28;j ++ , k --)
+forinit	119:13	119:26	9	j = 20 , k = 7 ;
+water	119:13	0:0	10	j
+op	119:15	0:0	10	=
+water	119:17	0:0	10	20
+water	119:19	0:0	10	,
+water	119:21	0:0	10	k
+op	119:23	0:0	10	=
+water	119:25	0:0	10	7
+water	119:26	0:0	10	;
+cond	119:28	119:32	9	j < 28
+water	119:28	0:0	10	j
+op	119:30	0:0	10	<
+water	119:32	0:0	10	28
+forexpr	119:36	119:42	9	j ++ , k --
+water	119:36	0:0	10	j
+op	119:37	0:0	10	++
+water	119:39	0:0	10	,
+water	119:41	0:0	10	k
+op	119:42	0:0	10	--
+stmts	120:10	123:10	9	
+water	120:10	0:0	10	{
+water	121:10	0:0	10	bitset
+op	121:17	0:0	10	=
+op	121:19	0:0	10	*
+water	121:20	0:0	10	(
+water	121:21	0:0	10	sect_buff
+op	121:31	0:0	10	+
+water	121:33	0:0	10	dst_offset
+water	121:43	0:0	10	)
+op	121:45	0:0	10	&
+water	121:47	0:0	10	(
+water	121:48	0:0	10	(
+water	121:49	0:0	10	(
+water	121:50	0:0	10	unsigned
+water	121:59	0:0	10	char
+water	121:63	0:0	10	)
+water	121:64	0:0	10	1
+op	121:66	0:0	10	<<
+water	121:69	0:0	10	k
+water	121:70	0:0	10	)
+water	121:71	0:0	10	)
+water	121:73	0:0	10	?
+water	121:75	0:0	10	1
+water	121:77	0:0	10	:
+water	121:79	0:0	10	0
+water	121:80	0:0	10	;
+call	122:10	122:52	10	sprintf
+arg	122:18	122:30	11	&bitarray[j]
+op	122:18	0:0	12	&
+water	122:19	0:0	12	bitarray
+op	122:27	0:0	12	[
+water	122:28	0:0	12	j
+op	122:29	0:0	12	]
+arg	122:32	122:52	11	(bitset)?"1":"0"
+water	122:32	0:0	12	(
+water	122:33	0:0	12	bitset
+water	122:39	0:0	12	)
+water	122:41	0:0	12	?
+water	122:43	0:0	12	"1"
+water	122:47	0:0	12	:
+water	122:49	0:0	12	"0"
+water	122:53	0:0	10	;
+water	123:10	0:0	10	}
+water	124:8	0:0	8	bitarray
+op	124:16	0:0	8	[
+water	124:17	0:0	8	28
+op	124:19	0:0	8	]
+op	124:21	0:0	8	=
+water	124:23	0:0	8	' '
+water	124:26	0:0	8	;
+water	125:8	0:0	8	bitarray
+op	125:16	0:0	8	[
+water	125:17	0:0	8	29
+op	125:19	0:0	8	]
+op	125:21	0:0	8	=
+water	125:23	0:0	8	' '
+water	125:26	0:0	8	;
+water	127:8	0:0	8	dst_offset
+op	127:19	0:0	8	+=
+water	127:22	0:0	8	full_bytes
+water	127:32	0:0	8	;
+if	128:8	144:10	8	(trailing_bits != 0)
+cond	128:12	128:29	9	trailing_bits != 0
+water	128:12	0:0	10	trailing_bits
+op	128:26	0:0	10	!=
+water	128:29	0:0	10	0
+stmts	129:10	144:10	9	
+water	129:10	0:0	10	{
+water	130:3	0:0	10	bytebuff2
+op	130:13	0:0	10	=
+water	130:15	0:0	10	src_buff
+op	130:23	0:0	10	[
+water	130:24	0:0	10	offset2
+op	130:31	0:0	10	]
+op	130:33	0:0	10	&
+water	130:35	0:0	10	(
+water	130:36	0:0	10	(
+water	130:37	0:0	10	unsigned
+water	130:46	0:0	10	char
+water	130:50	0:0	10	)
+water	130:51	0:0	10	255
+op	130:55	0:0	10	<<
+water	130:58	0:0	10	(
+water	130:59	0:0	10	7
+op	130:61	0:0	10	-
+water	130:63	0:0	10	shift2
+water	130:69	0:0	10	)
+water	130:70	0:0	10	)
+water	130:71	0:0	10	;
+water	131:10	0:0	10	sect_buff
+op	131:19	0:0	10	[
+water	131:20	0:0	10	dst_offset
+op	131:30	0:0	10	]
+op	131:32	0:0	10	=
+water	131:34	0:0	10	bytebuff2
+water	131:43	0:0	10	;
+call	133:3	134:49	10	TIFFError
+arg	133:14	133:16	11	""
+water	133:14	0:0	12	""
+arg	133:18	133:77	11	"        Trailing bits src offset:  %8d, Dst offset: %8d\n"
+water	133:18	0:0	12	"        Trailing bits src offset:  %8d, Dst offset: %8d\n"
+arg	134:30	134:37	11	offset2
+water	134:30	0:0	12	offset2
+arg	134:39	134:49	11	dst_offset
+water	134:39	0:0	12	dst_offset
+water	134:50	0:0	10	;
+for	135:10	139:12	10	(j = 30 , k = 7 ;j < 38;j ++ , k --)
+forinit	135:15	135:28	11	j = 30 , k = 7 ;
+water	135:15	0:0	12	j
+op	135:17	0:0	12	=
+water	135:19	0:0	12	30
+water	135:21	0:0	12	,
+water	135:23	0:0	12	k
+op	135:25	0:0	12	=
+water	135:27	0:0	12	7
+water	135:28	0:0	12	;
+cond	135:30	135:34	11	j < 38
+water	135:30	0:0	12	j
+op	135:32	0:0	12	<
+water	135:34	0:0	12	38
+forexpr	135:38	135:44	11	j ++ , k --
+water	135:38	0:0	12	j
+op	135:39	0:0	12	++
+water	135:41	0:0	12	,
+water	135:43	0:0	12	k
+op	135:44	0:0	12	--
+stmts	136:12	139:12	11	
+water	136:12	0:0	12	{
+water	137:12	0:0	12	bitset
+op	137:19	0:0	12	=
+op	137:21	0:0	12	*
+water	137:22	0:0	12	(
+water	137:23	0:0	12	sect_buff
+op	137:33	0:0	12	+
+water	137:35	0:0	12	dst_offset
+water	137:45	0:0	12	)
+op	137:47	0:0	12	&
+water	137:49	0:0	12	(
+water	137:50	0:0	12	(
+water	137:51	0:0	12	(
+water	137:52	0:0	12	unsigned
+water	137:61	0:0	12	char
+water	137:65	0:0	12	)
+water	137:66	0:0	12	1
+op	137:68	0:0	12	<<
+water	137:71	0:0	12	k
+water	137:72	0:0	12	)
+water	137:73	0:0	12	)
+water	137:75	0:0	12	?
+water	137:77	0:0	12	1
+water	137:79	0:0	12	:
+water	137:81	0:0	12	0
+water	137:82	0:0	12	;
+call	138:12	138:54	12	sprintf
+arg	138:20	138:32	13	&bitarray[j]
+op	138:20	0:0	14	&
+water	138:21	0:0	14	bitarray
+op	138:29	0:0	14	[
+water	138:30	0:0	14	j
+op	138:31	0:0	14	]
+arg	138:34	138:54	13	(bitset)?"1":"0"
+water	138:34	0:0	14	(
+water	138:35	0:0	14	bitset
+water	138:41	0:0	14	)
+water	138:43	0:0	14	?
+water	138:45	0:0	14	"1"
+water	138:49	0:0	14	:
+water	138:51	0:0	14	"0"
+water	138:55	0:0	12	;
+water	139:12	0:0	12	}
+water	140:10	0:0	10	bitarray
+op	140:18	0:0	10	[
+water	140:19	0:0	10	38
+op	140:21	0:0	10	]
+op	140:23	0:0	10	=
+water	140:25	0:0	10	'\0'
+water	140:29	0:0	10	;
+call	141:10	141:95	10	TIFFError
+arg	141:21	141:23	11	""
+water	141:21	0:0	12	""
+arg	141:25	141:85	11	"\tFirst and last bytes before and after masking:\n\t%s\n\n"
+water	141:25	0:0	12	"\tFirst and last bytes before and after masking:\n\t%s\n\n"
+arg	141:87	141:95	11	bitarray
+water	141:87	0:0	12	bitarray
+water	141:96	0:0	10	;
+water	143:10	0:0	10	dst_offset
+op	143:20	0:0	10	++
+water	143:22	0:0	10	;
+water	144:10	0:0	10	}
+water	145:8	0:0	8	}
+else	146:6	211:8	6
+stmts	147:8	211:8	7	
+water	147:8	0:0	8	{
+call	149:3	149:100	8	TIFFError
+arg	149:14	149:16	9	""
+water	149:14	0:0	10	""
+arg	149:18	149:78	9	"        Unalligned data src offset: %8d, Dst offset: %8d\n"
+water	149:18	0:0	10	"        Unalligned data src offset: %8d, Dst offset: %8d\n"
+arg	149:80	149:88	9	offset1
+water	149:80	0:0	10	offset1
+arg	149:90	149:100	9	dst_offset
+water	149:90	0:0	10	dst_offset
+water	149:101	0:0	8	;
+for	151:8	156:10	8	(j = 0 ;j <= full_bytes;j ++)
+forinit	151:13	151:18	9	j = 0 ;
+water	151:13	0:0	10	j
+op	151:15	0:0	10	=
+water	151:17	0:0	10	0
+water	151:18	0:0	10	;
+cond	151:20	151:25	9	j <= full_bytes
+water	151:20	0:0	10	j
+op	151:22	0:0	10	<=
+water	151:25	0:0	10	full_bytes
+forexpr	151:37	151:38	9	j ++
+water	151:37	0:0	10	j
+op	151:38	0:0	10	++
+stmts	152:10	156:10	9	
+water	152:10	0:0	10	{
+water	153:3	0:0	10	bytebuff1
+op	153:13	0:0	10	=
+water	153:15	0:0	10	src_buff
+op	153:23	0:0	10	[
+water	153:24	0:0	10	offset1
+op	153:32	0:0	10	+
+water	153:34	0:0	10	j
+op	153:35	0:0	10	]
+op	153:37	0:0	10	&
+water	153:39	0:0	10	(
+water	153:40	0:0	10	(
+water	153:41	0:0	10	unsigned
+water	153:50	0:0	10	char
+water	153:54	0:0	10	)
+water	153:55	0:0	10	255
+op	153:59	0:0	10	>>
+water	153:62	0:0	10	shift1
+water	153:68	0:0	10	)
+water	153:69	0:0	10	;
+water	154:3	0:0	10	bytebuff2
+op	154:13	0:0	10	=
+water	154:15	0:0	10	src_buff
+op	154:23	0:0	10	[
+water	154:24	0:0	10	offset1
+op	154:32	0:0	10	+
+water	154:34	0:0	10	j
+op	154:36	0:0	10	+
+water	154:38	0:0	10	1
+op	154:39	0:0	10	]
+op	154:41	0:0	10	&
+water	154:43	0:0	10	(
+water	154:44	0:0	10	(
+water	154:45	0:0	10	unsigned
+water	154:54	0:0	10	char
+water	154:58	0:0	10	)
+water	154:59	0:0	10	255
+op	154:63	0:0	10	<<
+water	154:66	0:0	10	(
+water	154:67	0:0	10	7
+op	154:69	0:0	10	-
+water	154:71	0:0	10	shift1
+water	154:77	0:0	10	)
+water	154:78	0:0	10	)
+water	154:79	0:0	10	;
+water	155:10	0:0	10	sect_buff
+op	155:19	0:0	10	[
+water	155:20	0:0	10	dst_offset
+op	155:31	0:0	10	+
+water	155:33	0:0	10	j
+op	155:34	0:0	10	]
+op	155:36	0:0	10	=
+water	155:38	0:0	10	(
+water	155:39	0:0	10	bytebuff1
+op	155:49	0:0	10	<<
+water	155:52	0:0	10	shift1
+water	155:58	0:0	10	)
+op	155:60	0:0	10	|
+water	155:62	0:0	10	(
+water	155:63	0:0	10	bytebuff2
+op	155:73	0:0	10	>>
+water	155:76	0:0	10	(
+water	155:77	0:0	10	8
+op	155:79	0:0	10	-
+water	155:81	0:0	10	shift1
+water	155:87	0:0	10	)
+water	155:88	0:0	10	)
+water	155:89	0:0	10	;
+water	156:10	0:0	10	}
+call	158:1	158:28	8	sprintf
+arg	158:9	158:22	9	&bitarray[18]
+op	158:9	0:0	10	&
+water	158:10	0:0	10	bitarray
+op	158:18	0:0	10	[
+water	158:19	0:0	10	18
+op	158:21	0:0	10	]
+arg	158:24	158:28	9	"\n"
+water	158:24	0:0	10	"\n"
+water	158:29	0:0	8	;
+call	159:1	159:28	8	sprintf
+arg	159:9	159:22	9	&bitarray[19]
+op	159:9	0:0	10	&
+water	159:10	0:0	10	bitarray
+op	159:18	0:0	10	[
+water	159:19	0:0	10	19
+op	159:21	0:0	10	]
+arg	159:24	159:28	9	"\t"
+water	159:24	0:0	10	"\t"
+water	159:29	0:0	8	;
+for	160:8	164:10	8	(j = 20 , k = 7 ;j < 28;j ++ , k --)
+forinit	160:13	160:26	9	j = 20 , k = 7 ;
+water	160:13	0:0	10	j
+op	160:15	0:0	10	=
+water	160:17	0:0	10	20
+water	160:19	0:0	10	,
+water	160:21	0:0	10	k
+op	160:23	0:0	10	=
+water	160:25	0:0	10	7
+water	160:26	0:0	10	;
+cond	160:28	160:32	9	j < 28
+water	160:28	0:0	10	j
+op	160:30	0:0	10	<
+water	160:32	0:0	10	28
+forexpr	160:36	160:42	9	j ++ , k --
+water	160:36	0:0	10	j
+op	160:37	0:0	10	++
+water	160:39	0:0	10	,
+water	160:41	0:0	10	k
+op	160:42	0:0	10	--
+stmts	161:10	164:10	9	
+water	161:10	0:0	10	{
+water	162:10	0:0	10	bitset
+op	162:17	0:0	10	=
+op	162:19	0:0	10	*
+water	162:20	0:0	10	(
+water	162:21	0:0	10	sect_buff
+op	162:31	0:0	10	+
+water	162:33	0:0	10	dst_offset
+water	162:43	0:0	10	)
+op	162:45	0:0	10	&
+water	162:47	0:0	10	(
+water	162:48	0:0	10	(
+water	162:49	0:0	10	(
+water	162:50	0:0	10	unsigned
+water	162:59	0:0	10	char
+water	162:63	0:0	10	)
+water	162:64	0:0	10	1
+op	162:66	0:0	10	<<
+water	162:69	0:0	10	k
+water	162:70	0:0	10	)
+water	162:71	0:0	10	)
+water	162:73	0:0	10	?
+water	162:75	0:0	10	1
+water	162:77	0:0	10	:
+water	162:79	0:0	10	0
+water	162:80	0:0	10	;
+call	163:10	163:52	10	sprintf
+arg	163:18	163:30	11	&bitarray[j]
+op	163:18	0:0	12	&
+water	163:19	0:0	12	bitarray
+op	163:27	0:0	12	[
+water	163:28	0:0	12	j
+op	163:29	0:0	12	]
+arg	163:32	163:52	11	(bitset)?"1":"0"
+water	163:32	0:0	12	(
+water	163:33	0:0	12	bitset
+water	163:39	0:0	12	)
+water	163:41	0:0	12	?
+water	163:43	0:0	12	"1"
+water	163:47	0:0	12	:
+water	163:49	0:0	12	"0"
+water	163:53	0:0	10	;
+water	164:10	0:0	10	}
+water	165:8	0:0	8	bitarray
+op	165:16	0:0	8	[
+water	165:17	0:0	8	28
+op	165:19	0:0	8	]
+op	165:21	0:0	8	=
+water	165:23	0:0	8	' '
+water	165:26	0:0	8	;
+water	166:8	0:0	8	bitarray
+op	166:16	0:0	8	[
+water	166:17	0:0	8	29
+op	166:19	0:0	8	]
+op	166:21	0:0	8	=
+water	166:23	0:0	8	' '
+water	166:26	0:0	8	;
+water	168:8	0:0	8	dst_offset
+op	168:19	0:0	8	+=
+water	168:22	0:0	8	full_bytes
+water	168:32	0:0	8	;
+if	169:8	198:3	8	(trailing_bits != 0)
+cond	169:12	169:29	9	trailing_bits != 0
+water	169:12	0:0	10	trailing_bits
+op	169:26	0:0	10	!=
+water	169:29	0:0	10	0
+stmts	170:10	198:3	9	
+water	170:10	0:0	10	{
+call	172:5	172:114	10	TIFFError
+arg	172:16	172:18	11	""
+water	172:16	0:0	12	""
+arg	172:20	172:80	11	"        Trailing bits   src offset: %8d, Dst offset: %8d\n"
+water	172:20	0:0	12	"        Trailing bits   src offset: %8d, Dst offset: %8d\n"
+arg	172:82	172:102	11	offset1+full_bytes
+water	172:82	0:0	12	offset1
+op	172:90	0:0	12	+
+water	172:92	0:0	12	full_bytes
+arg	172:104	172:114	11	dst_offset
+water	172:104	0:0	12	dst_offset
+water	172:115	0:0	10	;
+if	174:3	182:12	10	(shift2 > shift1)
+cond	174:7	174:16	11	shift2 > shift1
+water	174:7	0:0	12	shift2
+op	174:14	0:0	12	>
+water	174:16	0:0	12	shift1
+stmts	175:12	182:12	11	
+water	175:12	0:0	12	{
+water	176:5	0:0	12	bytebuff1
+op	176:15	0:0	12	=
+water	176:17	0:0	12	src_buff
+op	176:25	0:0	12	[
+water	176:26	0:0	12	offset1
+op	176:34	0:0	12	+
+water	176:36	0:0	12	full_bytes
+op	176:46	0:0	12	]
+op	176:48	0:0	12	&
+water	176:50	0:0	12	(
+water	176:51	0:0	12	(
+water	176:52	0:0	12	unsigned
+water	176:61	0:0	12	char
+water	176:65	0:0	12	)
+water	176:66	0:0	12	255
+op	176:70	0:0	12	<<
+water	176:73	0:0	12	(
+water	176:74	0:0	12	7
+op	176:76	0:0	12	-
+water	176:78	0:0	12	shift2
+water	176:84	0:0	12	)
+water	176:85	0:0	12	)
+water	176:86	0:0	12	;
+water	177:12	0:0	12	bytebuff2
+op	177:22	0:0	12	=
+water	177:24	0:0	12	bytebuff1
+op	177:34	0:0	12	&
+water	177:36	0:0	12	(
+water	177:37	0:0	12	(
+water	177:38	0:0	12	unsigned
+water	177:47	0:0	12	char
+water	177:51	0:0	12	)
+water	177:52	0:0	12	255
+op	177:56	0:0	12	<<
+water	177:59	0:0	12	shift1
+water	177:65	0:0	12	)
+water	177:66	0:0	12	;
+water	178:12	0:0	12	sect_buff
+op	178:21	0:0	12	[
+water	178:22	0:0	12	dst_offset
+op	178:32	0:0	12	]
+op	178:34	0:0	12	=
+water	178:36	0:0	12	bytebuff2
+water	178:45	0:0	12	;
+call	180:5	180:47	12	TIFFError
+arg	180:16	180:18	13	""
+water	180:16	0:0	14	""
+arg	180:20	180:47	13	"        Shift2 > Shift1\n"
+water	180:20	0:0	14	"        Shift2 > Shift1\n"
+water	180:48	0:0	12	;
+water	182:12	0:0	12	}
+else	183:10	197:12	10
+stmts	184:12	197:12	11	
+water	184:12	0:0	12	{
+if	185:5	192:14	12	(shift2 < shift1)
+cond	185:9	185:18	13	shift2 < shift1
+water	185:9	0:0	14	shift2
+op	185:16	0:0	14	<
+water	185:18	0:0	14	shift1
+stmts	186:14	192:14	13	
+water	186:14	0:0	14	{
+water	187:14	0:0	14	bytebuff2
+op	187:24	0:0	14	=
+water	187:26	0:0	14	(
+water	187:27	0:0	14	(
+water	187:28	0:0	14	unsigned
+water	187:37	0:0	14	char
+water	187:41	0:0	14	)
+water	187:42	0:0	14	255
+op	187:46	0:0	14	<<
+water	187:49	0:0	14	(
+water	187:50	0:0	14	shift1
+op	187:57	0:0	14	-
+water	187:59	0:0	14	shift2
+op	187:66	0:0	14	-
+water	187:68	0:0	14	1
+water	187:69	0:0	14	)
+water	187:70	0:0	14	)
+water	187:71	0:0	14	;
+water	188:7	0:0	14	sect_buff
+op	188:16	0:0	14	[
+water	188:17	0:0	14	dst_offset
+op	188:27	0:0	14	]
+op	188:29	0:0	14	&=
+water	188:32	0:0	14	bytebuff2
+water	188:41	0:0	14	;
+call	190:7	190:49	14	TIFFError
+arg	190:18	190:20	15	""
+water	190:18	0:0	16	""
+arg	190:22	190:49	15	"        Shift2 < Shift1\n"
+water	190:22	0:0	16	"        Shift2 < Shift1\n"
+water	190:50	0:0	14	;
+water	192:14	0:0	14	}
+else	194:12	195:51	12
+stmts	195:7	195:51	13	
+call	195:7	195:50	14	TIFFError
+arg	195:18	195:20	15	""
+water	195:18	0:0	16	""
+arg	195:22	195:50	15	"        Shift2 == Shift1\n"
+water	195:22	0:0	16	"        Shift2 == Shift1\n"
+water	195:51	0:0	14	;
+water	197:12	0:0	12	}
+water	198:3	0:0	10	}
+call	200:3	200:29	8	sprintf
+arg	200:11	200:24	9	&bitarray[28]
+op	200:11	0:0	10	&
+water	200:12	0:0	10	bitarray
+op	200:20	0:0	10	[
+water	200:21	0:0	10	28
+op	200:23	0:0	10	]
+arg	200:26	200:29	9	" "
+water	200:26	0:0	10	" "
+water	200:30	0:0	8	;
+call	201:3	201:29	8	sprintf
+arg	201:11	201:24	9	&bitarray[29]
+op	201:11	0:0	10	&
+water	201:12	0:0	10	bitarray
+op	201:20	0:0	10	[
+water	201:21	0:0	10	29
+op	201:23	0:0	10	]
+arg	201:26	201:29	9	" "
+water	201:26	0:0	10	" "
+water	201:30	0:0	8	;
+for	202:10	206:12	8	(j = 30 , k = 7 ;j < 38;j ++ , k --)
+forinit	202:15	202:28	9	j = 30 , k = 7 ;
+water	202:15	0:0	10	j
+op	202:17	0:0	10	=
+water	202:19	0:0	10	30
+water	202:21	0:0	10	,
+water	202:23	0:0	10	k
+op	202:25	0:0	10	=
+water	202:27	0:0	10	7
+water	202:28	0:0	10	;
+cond	202:30	202:34	9	j < 38
+water	202:30	0:0	10	j
+op	202:32	0:0	10	<
+water	202:34	0:0	10	38
+forexpr	202:38	202:44	9	j ++ , k --
+water	202:38	0:0	10	j
+op	202:39	0:0	10	++
+water	202:41	0:0	10	,
+water	202:43	0:0	10	k
+op	202:44	0:0	10	--
+stmts	203:12	206:12	9	
+water	203:12	0:0	10	{
+water	204:12	0:0	10	bitset
+op	204:19	0:0	10	=
+op	204:21	0:0	10	*
+water	204:22	0:0	10	(
+water	204:23	0:0	10	sect_buff
+op	204:33	0:0	10	+
+water	204:35	0:0	10	dst_offset
+water	204:45	0:0	10	)
+op	204:47	0:0	10	&
+water	204:49	0:0	10	(
+water	204:50	0:0	10	(
+water	204:51	0:0	10	(
+water	204:52	0:0	10	unsigned
+water	204:61	0:0	10	char
+water	204:65	0:0	10	)
+water	204:66	0:0	10	1
+op	204:68	0:0	10	<<
+water	204:71	0:0	10	k
+water	204:72	0:0	10	)
+water	204:73	0:0	10	)
+water	204:75	0:0	10	?
+water	204:77	0:0	10	1
+water	204:79	0:0	10	:
+water	204:81	0:0	10	0
+water	204:82	0:0	10	;
+call	205:12	205:54	10	sprintf
+arg	205:20	205:32	11	&bitarray[j]
+op	205:20	0:0	12	&
+water	205:21	0:0	12	bitarray
+op	205:29	0:0	12	[
+water	205:30	0:0	12	j
+op	205:31	0:0	12	]
+arg	205:34	205:54	11	(bitset)?"1":"0"
+water	205:34	0:0	12	(
+water	205:35	0:0	12	bitset
+water	205:41	0:0	12	)
+water	205:43	0:0	12	?
+water	205:45	0:0	12	"1"
+water	205:49	0:0	12	:
+water	205:51	0:0	12	"0"
+water	205:55	0:0	10	;
+water	206:12	0:0	10	}
+water	207:10	0:0	8	bitarray
+op	207:18	0:0	8	[
+water	207:19	0:0	8	38
+op	207:21	0:0	8	]
+op	207:23	0:0	8	=
+water	207:25	0:0	8	'\0'
+water	207:29	0:0	8	;
+call	208:10	208:95	8	TIFFError
+arg	208:21	208:23	9	""
+water	208:21	0:0	10	""
+arg	208:25	208:85	9	"\tFirst and last bytes before and after masking:\n\t%s\n\n"
+water	208:25	0:0	10	"\tFirst and last bytes before and after masking:\n\t%s\n\n"
+arg	208:87	208:95	9	bitarray
+water	208:87	0:0	10	bitarray
+water	208:96	0:0	8	;
+water	210:8	0:0	8	dst_offset
+op	210:18	0:0	8	++
+water	210:20	0:0	8	;
+water	211:8	0:0	8	}
+water	212:6	0:0	6	}
+water	213:4	0:0	4	}
+return	214:2	214:12	2	(0)
+water	214:9	0:0	3	(
+water	214:10	0:0	3	0
+water	214:11	0:0	3	)

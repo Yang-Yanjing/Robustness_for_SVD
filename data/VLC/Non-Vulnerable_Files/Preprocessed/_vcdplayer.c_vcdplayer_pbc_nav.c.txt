@@ -1,0 +1,435 @@
+func	1:0	104:0	0	static vcdplayer_read_status_t	vcdplayer_pbc_nav
+params	2:18	0:0	1	
+param	2:20	2:39	2	access_t *	p_access
+param	2:41	2:60	2	uint8_t *	wait_time
+stmnts	0:0	103:19	1	
+decl	4:2	4:58	2	vcdplayer_t	*p_vcdplayer
+op	4:26	0:0	2	=
+water	4:28	0:0	2	(
+water	4:29	0:0	2	vcdplayer_t
+op	4:41	0:0	2	*
+water	4:42	0:0	2	)
+water	4:43	0:0	2	p_access
+op	4:51	0:0	2	->
+water	4:53	0:0	2	p_sys
+decl	6:2	6:25	2	vcdinfo_itemid_t	itemid
+if	9:2	18:2	2	(( VCDINFO_ITEM_TYPE_ENTRY == p_vcdplayer -> play_item . type ) && ( p_vcdplayer -> i_lsn < p_vcdplayer -> end_lsn ))
+cond	9:7	10:49	3	( VCDINFO_ITEM_TYPE_ENTRY == p_vcdplayer -> play_item . type ) && ( p_vcdplayer -> i_lsn < p_vcdplayer -> end_lsn )
+water	9:7	0:0	4	(
+water	9:8	0:0	4	VCDINFO_ITEM_TYPE_ENTRY
+op	9:32	0:0	4	==
+water	9:35	0:0	4	p_vcdplayer
+op	9:46	0:0	4	->
+water	9:48	0:0	4	play_item
+op	9:57	0:0	4	.
+water	9:58	0:0	4	type
+water	9:62	0:0	4	)
+op	9:64	0:0	4	&&
+water	10:7	0:0	4	(
+water	10:8	0:0	4	p_vcdplayer
+op	10:19	0:0	4	->
+water	10:21	0:0	4	i_lsn
+op	10:27	0:0	4	<
+water	10:29	0:0	4	p_vcdplayer
+op	10:40	0:0	4	->
+water	10:42	0:0	4	end_lsn
+water	10:49	0:0	4	)
+stmts	10:53	18:2	3	
+water	10:53	0:0	4	{
+water	12:4	0:0	4	p_vcdplayer
+op	12:15	0:0	4	->
+water	12:17	0:0	4	play_item
+op	12:26	0:0	4	.
+water	12:27	0:0	4	num
+op	12:30	0:0	4	++
+water	12:32	0:0	4	;
+call	13:4	14:75	4	dbg_print
+arg	13:15	13:44	5	(INPUT_DBG_LSN|INPUT_DBG_PBC)
+water	13:15	0:0	6	(
+water	13:16	0:0	6	INPUT_DBG_LSN
+op	13:29	0:0	6	|
+water	13:30	0:0	6	INPUT_DBG_PBC
+water	13:43	0:0	6	)
+arg	14:15	14:47	5	"continuing into next entry: %u"
+water	14:15	0:0	6	"continuing into next entry: %u"
+arg	14:49	14:75	5	p_vcdplayer->play_item.num
+water	14:49	0:0	6	p_vcdplayer
+op	14:60	0:0	6	->
+water	14:62	0:0	6	play_item
+op	14:71	0:0	6	.
+water	14:72	0:0	6	num
+water	14:76	0:0	4	;
+call	15:4	15:65	4	vcdplayer_play_single_item
+arg	15:32	15:40	5	p_access
+water	15:32	0:0	6	p_access
+arg	15:42	15:65	5	p_vcdplayer->play_item
+water	15:42	0:0	6	p_vcdplayer
+op	15:53	0:0	6	->
+water	15:55	0:0	6	play_item
+water	15:66	0:0	4	;
+return	17:4	17:21	4	READ_BLOCK
+water	17:11	0:0	5	READ_BLOCK
+water	18:2	0:0	4	}
+switch	19:2	101:2	2	(p_vcdplayer -> pxd . descriptor_type)
+cond	19:10	19:27	3	p_vcdplayer -> pxd . descriptor_type
+water	19:10	0:0	4	p_vcdplayer
+op	19:21	0:0	4	->
+water	19:23	0:0	4	pxd
+op	19:26	0:0	4	.
+water	19:27	0:0	4	descriptor_type
+stmts	19:44	101:2	3	
+water	19:44	0:0	4	{
+label	20:2	20:24	4	case PSD_TYPE_END_LIST :
+return	21:4	21:19	4	READ_END
+water	21:11	0:0	5	READ_END
+break	22:4	22:9	4	
+label	23:2	23:25	4	case PSD_TYPE_PLAY_LIST :
+water	23:27	0:0	4	{
+if	24:4	25:23	4	(vcdplayer_inc_play_item (p_access ))
+cond	24:8	24:40	5	vcdplayer_inc_play_item (p_access )
+call	24:8	24:40	6	vcdplayer_inc_play_item
+arg	24:32	24:40	7	p_access
+water	24:32	0:0	8	p_access
+stmts	25:6	25:23	5	
+return	25:6	25:23	6	READ_BLOCK
+water	25:13	0:0	7	READ_BLOCK
+if	27:4	32:4	4	(p_vcdplayer -> i_still)
+cond	27:8	27:21	5	p_vcdplayer -> i_still
+water	27:8	0:0	6	p_vcdplayer
+op	27:19	0:0	6	->
+water	27:21	0:0	6	i_still
+stmts	27:30	32:4	5	
+water	27:30	0:0	6	{
+op	28:6	0:0	6	*
+water	28:7	0:0	6	wait_time
+op	28:17	0:0	6	=
+call	28:19	28:60	6	vcdinf_get_wait_time
+arg	28:40	28:60	7	p_vcdplayer->pxd.pld
+water	28:40	0:0	8	p_vcdplayer
+op	28:51	0:0	8	->
+water	28:53	0:0	8	pxd
+op	28:56	0:0	8	.
+water	28:57	0:0	8	pld
+water	28:61	0:0	6	;
+call	29:6	30:44	6	dbg_print
+arg	29:16	29:47	7	(INPUT_DBG_PBC|INPUT_DBG_STILL)
+water	29:16	0:0	8	(
+water	29:17	0:0	8	INPUT_DBG_PBC
+op	29:30	0:0	8	|
+water	29:31	0:0	8	INPUT_DBG_STILL
+water	29:46	0:0	8	)
+arg	30:8	30:32	7	"playlist wait time: %d"
+water	30:8	0:0	8	"playlist wait time: %d"
+arg	30:34	30:44	7	*wait_time
+op	30:34	0:0	8	*
+water	30:35	0:0	8	wait_time
+water	30:45	0:0	6	;
+return	31:6	31:29	6	READ_STILL_FRAME
+water	31:13	0:0	7	READ_STILL_FRAME
+water	32:4	0:0	6	}
+call	34:4	36:48	4	vcdplayer_update_entry
+arg	34:28	34:36	5	p_access
+water	34:28	0:0	6	p_access
+arg	35:28	35:76	5	vcdinf_pld_get_next_offset(p_vcdplayer->pxd.pld)
+call	35:28	35:75	6	vcdinf_pld_get_next_offset
+arg	35:55	35:75	7	p_vcdplayer->pxd.pld
+water	35:55	0:0	8	p_vcdplayer
+op	35:66	0:0	8	->
+water	35:68	0:0	8	pxd
+op	35:71	0:0	8	.
+water	35:72	0:0	8	pld
+arg	36:28	36:39	5	&itemid.num
+op	36:28	0:0	6	&
+water	36:29	0:0	6	itemid
+op	36:35	0:0	6	.
+water	36:36	0:0	6	num
+arg	36:41	36:48	5	"next"
+water	36:41	0:0	6	"next"
+water	36:49	0:0	4	;
+water	37:4	0:0	4	itemid
+op	37:10	0:0	4	.
+water	37:11	0:0	4	type
+op	37:16	0:0	4	=
+water	37:18	0:0	4	VCDINFO_ITEM_TYPE_LID
+water	37:39	0:0	4	;
+call	38:4	38:37	4	vcdplayer_play
+arg	38:20	38:28	5	p_access
+water	38:20	0:0	6	p_access
+arg	38:30	38:37	5	itemid
+water	38:30	0:0	6	itemid
+water	38:38	0:0	4	;
+break	39:4	39:9	4	
+water	40:2	0:0	4	}
+label	41:2	41:30	4	case PSD_TYPE_SELECTION_LIST :
+label	42:2	42:34	4	case PSD_TYPE_EXT_SELECTION_LIST :
+water	43:4	0:0	4	{
+decl	44:6	44:77	4	uint16_t	timeout_offs
+op	44:28	0:0	4	=
+call	44:30	44:76	5	vcdinf_get_timeout_offset
+arg	44:56	44:76	6	p_vcdplayer->pxd.psd
+water	44:56	0:0	7	p_vcdplayer
+op	44:67	0:0	7	->
+water	44:69	0:0	7	pxd
+op	44:72	0:0	7	.
+water	44:73	0:0	7	psd
+decl	45:6	45:73	4	uint16_t	max_loop
+op	45:28	0:0	4	=
+call	45:30	45:72	5	vcdinf_get_loop_count
+arg	45:52	45:72	6	p_vcdplayer->pxd.psd
+water	45:52	0:0	7	p_vcdplayer
+op	45:63	0:0	7	->
+water	45:65	0:0	7	pxd
+op	45:68	0:0	7	.
+water	45:69	0:0	7	psd
+decl	46:6	47:60	4	vcdinfo_offset_t	*offset_timeout_LID
+op	46:43	0:0	4	=
+call	47:8	47:59	5	vcdinfo_get_offset_t
+arg	47:29	47:45	6	p_vcdplayer->vcd
+water	47:29	0:0	7	p_vcdplayer
+op	47:40	0:0	7	->
+water	47:42	0:0	7	vcd
+arg	47:47	47:59	6	timeout_offs
+water	47:47	0:0	7	timeout_offs
+call	48:6	49:45	4	dbg_print
+arg	48:16	48:29	5	INPUT_DBG_PBC
+water	48:16	0:0	6	INPUT_DBG_PBC
+arg	48:31	48:56	5	"looped: %d, max_loop %d"
+water	48:31	0:0	6	"looped: %d, max_loop %d"
+arg	49:16	49:35	5	p_vcdplayer->i_loop
+water	49:16	0:0	6	p_vcdplayer
+op	49:27	0:0	6	->
+water	49:29	0:0	6	i_loop
+arg	49:37	49:45	5	max_loop
+water	49:37	0:0	6	max_loop
+water	49:46	0:0	4	;
+if	51:6	56:6	4	(p_vcdplayer -> i_still)
+cond	51:10	51:23	5	p_vcdplayer -> i_still
+water	51:10	0:0	6	p_vcdplayer
+op	51:21	0:0	6	->
+water	51:23	0:0	6	i_still
+stmts	51:32	56:6	5	
+water	51:32	0:0	6	{
+op	52:8	0:0	6	*
+water	52:9	0:0	6	wait_time
+op	52:19	0:0	6	=
+call	52:21	52:65	6	vcdinf_get_timeout_time
+arg	52:45	52:65	7	p_vcdplayer->pxd.psd
+water	52:45	0:0	8	p_vcdplayer
+op	52:56	0:0	8	->
+water	52:58	0:0	8	pxd
+op	52:61	0:0	8	.
+water	52:62	0:0	8	psd
+water	52:66	0:0	6	;
+call	53:8	54:54	6	dbg_print
+arg	53:18	53:49	7	(INPUT_DBG_PBC|INPUT_DBG_STILL)
+water	53:18	0:0	8	(
+water	53:19	0:0	8	INPUT_DBG_PBC
+op	53:32	0:0	8	|
+water	53:33	0:0	8	INPUT_DBG_STILL
+water	53:48	0:0	8	)
+arg	54:18	54:42	7	"playlist wait_time: %d"
+water	54:18	0:0	8	"playlist wait_time: %d"
+arg	54:44	54:54	7	*wait_time
+op	54:44	0:0	8	*
+water	54:45	0:0	8	wait_time
+water	54:55	0:0	6	;
+return	55:8	55:31	6	READ_STILL_FRAME
+water	55:15	0:0	7	READ_STILL_FRAME
+water	56:6	0:0	6	}
+if	59:6	65:6	4	(max_loop == 0 || p_vcdplayer -> i_loop < max_loop)
+cond	59:11	59:50	5	max_loop == 0 || p_vcdplayer -> i_loop < max_loop
+water	59:11	0:0	6	max_loop
+op	59:20	0:0	6	==
+water	59:23	0:0	6	0
+op	59:25	0:0	6	||
+water	59:28	0:0	6	p_vcdplayer
+op	59:39	0:0	6	->
+water	59:41	0:0	6	i_loop
+op	59:48	0:0	6	<
+water	59:50	0:0	6	max_loop
+stmts	59:61	65:6	5	
+water	59:61	0:0	6	{
+water	60:8	0:0	6	p_vcdplayer
+op	60:19	0:0	6	->
+water	60:21	0:0	6	i_loop
+op	60:27	0:0	6	++
+water	60:29	0:0	6	;
+if	61:8	61:64	6	(p_vcdplayer -> i_loop == 0 x7f)
+cond	61:12	61:36	7	p_vcdplayer -> i_loop == 0 x7f
+water	61:12	0:0	8	p_vcdplayer
+op	61:23	0:0	8	->
+water	61:25	0:0	8	i_loop
+op	61:32	0:0	8	==
+water	61:35	0:0	8	0
+water	61:36	0:0	8	x7f
+stmts	61:41	61:64	7	
+water	61:41	0:0	8	p_vcdplayer
+op	61:52	0:0	8	->
+water	61:54	0:0	8	i_loop
+op	61:61	0:0	8	=
+water	61:63	0:0	8	0
+water	61:64	0:0	8	;
+call	62:8	62:67	6	vcdplayer_play_single_item
+arg	62:35	62:43	7	p_access
+water	62:35	0:0	8	p_access
+arg	62:45	62:67	7	p_vcdplayer->loop_item
+water	62:45	0:0	8	p_vcdplayer
+op	62:56	0:0	8	->
+water	62:58	0:0	8	loop_item
+water	62:68	0:0	6	;
+return	64:8	64:25	6	READ_BLOCK
+water	64:15	0:0	7	READ_BLOCK
+water	65:6	0:0	6	}
+if	68:6	75:6	4	(NULL != offset_timeout_LID)
+cond	68:10	68:18	5	NULL != offset_timeout_LID
+water	68:10	0:0	6	NULL
+op	68:15	0:0	6	!=
+water	68:18	0:0	6	offset_timeout_LID
+stmts	68:38	75:6	5	
+water	68:38	0:0	6	{
+water	70:8	0:0	6	itemid
+op	70:14	0:0	6	.
+water	70:15	0:0	6	num
+op	70:20	0:0	6	=
+water	70:22	0:0	6	offset_timeout_LID
+op	70:40	0:0	6	->
+water	70:42	0:0	6	lid
+water	70:45	0:0	6	;
+water	71:8	0:0	6	itemid
+op	71:14	0:0	6	.
+water	71:15	0:0	6	type
+op	71:20	0:0	6	=
+water	71:22	0:0	6	VCDINFO_ITEM_TYPE_LID
+water	71:43	0:0	6	;
+call	72:8	72:61	6	dbg_print
+arg	72:18	72:31	7	INPUT_DBG_PBC
+water	72:18	0:0	8	INPUT_DBG_PBC
+arg	72:33	72:49	7	"timeout to: %d"
+water	72:33	0:0	8	"timeout to: %d"
+arg	72:51	72:61	7	itemid.num
+water	72:51	0:0	8	itemid
+op	72:57	0:0	8	.
+water	72:58	0:0	8	num
+water	72:62	0:0	6	;
+call	73:8	73:41	6	vcdplayer_play
+arg	73:24	73:32	7	p_access
+water	73:24	0:0	8	p_access
+arg	73:34	73:41	7	itemid
+water	73:34	0:0	8	itemid
+water	73:42	0:0	6	;
+return	74:8	74:25	6	READ_BLOCK
+water	74:15	0:0	7	READ_BLOCK
+water	75:6	0:0	6	}
+else	75:8	96:6	4
+stmts	75:13	96:6	5	
+water	75:13	0:0	6	{
+decl	76:8	76:74	6	int	i_selections
+op	76:25	0:0	6	=
+call	76:27	76:73	7	vcdinf_get_num_selections
+arg	76:53	76:73	8	p_vcdplayer->pxd.psd
+water	76:53	0:0	9	p_vcdplayer
+op	76:64	0:0	9	->
+water	76:66	0:0	9	pxd
+op	76:69	0:0	9	.
+water	76:70	0:0	9	psd
+if	77:8	91:8	6	(i_selections > 0)
+cond	77:12	77:27	7	i_selections > 0
+water	77:12	0:0	8	i_selections
+op	77:25	0:0	8	>
+water	77:27	0:0	8	0
+stmts	77:30	91:8	7	
+water	77:30	0:0	8	{
+decl	79:10	79:63	8	unsigned int	bsn
+op	79:26	0:0	8	=
+call	79:27	79:62	9	vcdinf_get_bsn
+arg	79:42	79:62	10	p_vcdplayer->pxd.psd
+water	79:42	0:0	11	p_vcdplayer
+op	79:53	0:0	11	->
+water	79:55	0:0	11	pxd
+op	79:58	0:0	11	.
+water	79:59	0:0	11	psd
+decl	80:10	81:62	8	int	rand_selection
+op	80:28	0:0	8	=
+water	80:29	0:0	8	bsn
+op	80:33	0:0	8	+
+water	81:12	0:0	8	(
+water	81:13	0:0	8	(
+water	81:14	0:0	8	unsigned
+water	81:22	0:0	8	)
+call	81:23	81:35	9	vlc_lrand48
+op	81:37	0:0	8	%
+water	81:39	0:0	8	(
+water	81:40	0:0	8	unsigned
+water	81:48	0:0	8	)
+water	81:49	0:0	8	i_selections
+water	81:61	0:0	8	)
+decl	82:10	84:43	8	lid_t	rand_lid
+op	82:24	0:0	8	=
+call	82:25	84:42	9	vcdinfo_selection_get_lid
+arg	82:52	82:68	10	p_vcdplayer->vcd
+water	82:52	0:0	11	p_vcdplayer
+op	82:63	0:0	11	->
+water	82:65	0:0	11	vcd
+arg	83:28	83:46	10	p_vcdplayer->i_lid
+water	83:28	0:0	11	p_vcdplayer
+op	83:39	0:0	11	->
+water	83:41	0:0	11	i_lid
+arg	84:28	84:42	10	rand_selection
+water	84:28	0:0	11	rand_selection
+water	85:10	0:0	8	itemid
+op	85:16	0:0	8	.
+water	85:17	0:0	8	num
+op	85:21	0:0	8	=
+water	85:23	0:0	8	rand_lid
+water	85:31	0:0	8	;
+water	86:10	0:0	8	itemid
+op	86:16	0:0	8	.
+water	86:17	0:0	8	type
+op	86:22	0:0	8	=
+water	86:24	0:0	8	VCDINFO_ITEM_TYPE_LID
+water	86:45	0:0	8	;
+call	87:10	88:50	8	dbg_print
+arg	87:20	87:33	9	INPUT_DBG_PBC
+water	87:20	0:0	10	INPUT_DBG_PBC
+arg	87:35	87:65	9	"random selection %d, lid: %d"
+water	87:35	0:0	10	"random selection %d, lid: %d"
+arg	88:20	88:40	9	rand_selection-bsn
+water	88:20	0:0	10	rand_selection
+op	88:35	0:0	10	-
+water	88:37	0:0	10	bsn
+arg	88:42	88:50	9	rand_lid
+water	88:42	0:0	10	rand_lid
+water	88:51	0:0	8	;
+call	89:10	89:43	8	vcdplayer_play
+arg	89:26	89:34	9	p_access
+water	89:26	0:0	10	p_access
+arg	89:36	89:43	9	itemid
+water	89:36	0:0	10	itemid
+water	89:44	0:0	8	;
+return	90:10	90:27	8	READ_BLOCK
+water	90:17	0:0	9	READ_BLOCK
+water	91:8	0:0	8	}
+else	91:10	95:8	6
+stmts	91:15	95:8	7	
+if	91:15	95:8	8	(p_vcdplayer -> i_still)
+cond	91:19	91:32	9	p_vcdplayer -> i_still
+water	91:19	0:0	10	p_vcdplayer
+op	91:30	0:0	10	->
+water	91:32	0:0	10	i_still
+stmts	91:41	95:8	9	
+water	91:41	0:0	10	{
+call	93:10	93:22	10	msleep
+arg	93:17	93:22	11	10000
+water	93:17	0:0	12	10000
+water	93:23	0:0	10	;
+return	94:10	94:33	10	READ_STILL_FRAME
+water	94:17	0:0	11	READ_STILL_FRAME
+water	95:8	0:0	10	}
+water	96:6	0:0	6	}
+break	97:6	97:11	4	
+water	98:4	0:0	4	}
+label	99:2	99:9	4	default :
+water	100:4	0:0	4	;
+water	101:2	0:0	4	}
+return	103:2	103:19	2	READ_ERROR
+water	103:9	0:0	3	READ_ERROR

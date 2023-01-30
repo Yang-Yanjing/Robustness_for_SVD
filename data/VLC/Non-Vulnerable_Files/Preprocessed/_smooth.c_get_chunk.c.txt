@@ -1,0 +1,185 @@
+func	2:0	37:0	0	static chunk_t *	get_chunk
+params	2:25	0:0	1	
+param	2:27	2:38	2	stream_t *	s
+param	2:40	2:56	2	const bool	wait
+stmnts	0:0	36:16	1	
+decl	4:4	4:34	2	stream_sys_t	*p_sys
+op	4:24	0:0	2	=
+water	4:26	0:0	2	s
+op	4:27	0:0	2	->
+water	4:29	0:0	2	p_sys
+water	5:4	0:0	2	unsigned
+water	5:13	0:0	2	count
+water	5:18	0:0	2	;
+decl	6:4	6:25	2	chunk_t	*chunk
+op	6:19	0:0	2	=
+water	6:21	0:0	2	NULL
+call	7:4	7:47	2	vlc_mutex_lock
+arg	7:20	7:47	3	&p_sys->download.lock_wait
+op	7:20	0:0	4	&
+water	7:21	0:0	4	p_sys
+op	7:26	0:0	4	->
+water	7:28	0:0	4	download
+op	7:36	0:0	4	.
+water	7:37	0:0	4	lock_wait
+water	7:48	0:0	2	;
+water	8:4	0:0	2	count
+op	8:10	0:0	2	=
+call	8:12	8:52	2	vlc_array_count
+arg	8:29	8:52	3	p_sys->download.chunks
+water	8:29	0:0	4	p_sys
+op	8:34	0:0	4	->
+water	8:36	0:0	4	download
+op	8:44	0:0	4	.
+water	8:45	0:0	4	chunks
+water	8:53	0:0	2	;
+while	9:4	33:4	2	(p_sys -> playback . index >= count || p_sys -> b_tseek)
+cond	9:11	9:52	3	p_sys -> playback . index >= count || p_sys -> b_tseek
+water	9:11	0:0	4	p_sys
+op	9:16	0:0	4	->
+water	9:18	0:0	4	playback
+op	9:26	0:0	4	.
+water	9:27	0:0	4	index
+op	9:33	0:0	4	>=
+water	9:36	0:0	4	count
+op	9:42	0:0	4	||
+water	9:45	0:0	4	p_sys
+op	9:50	0:0	4	->
+water	9:52	0:0	4	b_tseek
+stmts	10:4	33:4	3	
+water	10:4	0:0	4	{
+if	15:8	21:8	4	(! wait || p_sys -> b_error)
+cond	15:12	15:28	5	! wait || p_sys -> b_error
+op	15:12	0:0	6	!
+water	15:13	0:0	6	wait
+op	15:18	0:0	6	||
+water	15:21	0:0	6	p_sys
+op	15:26	0:0	6	->
+water	15:28	0:0	6	b_error
+stmts	16:8	21:8	5	
+water	16:8	0:0	6	{
+call	17:12	17:57	6	vlc_mutex_unlock
+arg	17:30	17:57	7	&p_sys->download.lock_wait
+op	17:30	0:0	8	&
+water	17:31	0:0	8	p_sys
+op	17:36	0:0	8	->
+water	17:38	0:0	8	download
+op	17:46	0:0	8	.
+water	17:47	0:0	8	lock_wait
+water	17:58	0:0	6	;
+call	18:12	19:42	6	msg_Warn
+arg	18:22	18:23	7	s
+water	18:22	0:0	8	s
+arg	18:25	18:64	7	"get_chunk failed! (playback index %u)"
+water	18:25	0:0	8	"get_chunk failed! (playback index %u)"
+arg	19:20	19:42	7	p_sys->playback.index
+water	19:20	0:0	8	p_sys
+op	19:25	0:0	8	->
+water	19:27	0:0	8	playback
+op	19:35	0:0	8	.
+water	19:36	0:0	8	index
+water	19:43	0:0	6	;
+return	20:12	20:23	6	NULL
+water	20:19	0:0	7	NULL
+water	21:8	0:0	6	}
+if	22:8	27:8	4	(NO_MORE_CHUNKS)
+cond	22:12	22:12	5	NO_MORE_CHUNKS
+water	22:12	0:0	6	NO_MORE_CHUNKS
+stmts	23:8	27:8	5	
+water	23:8	0:0	6	{
+call	24:12	24:57	6	vlc_mutex_unlock
+arg	24:30	24:57	7	&p_sys->download.lock_wait
+op	24:30	0:0	8	&
+water	24:31	0:0	8	p_sys
+op	24:36	0:0	8	->
+water	24:38	0:0	8	download
+op	24:46	0:0	8	.
+water	24:47	0:0	8	lock_wait
+water	24:58	0:0	6	;
+call	25:12	25:58	6	msg_Info
+arg	25:22	25:23	7	s
+water	25:22	0:0	8	s
+arg	25:25	25:58	7	"No more chunks, end of the VOD"
+water	25:25	0:0	8	"No more chunks, end of the VOD"
+water	25:59	0:0	6	;
+return	26:12	26:23	6	NULL
+water	26:19	0:0	7	NULL
+water	27:8	0:0	6	}
+call	28:8	28:47	4	msg_Dbg
+arg	28:17	28:18	5	s
+water	28:17	0:0	6	s
+arg	28:20	28:47	5	"get_chunk is waiting !!!"
+water	28:20	0:0	6	"get_chunk is waiting !!!"
+water	28:48	0:0	4	;
+call	29:8	30:61	4	vlc_cond_timedwait
+arg	29:28	29:49	5	&p_sys->download.wait
+op	29:28	0:0	6	&
+water	29:29	0:0	6	p_sys
+op	29:34	0:0	6	->
+water	29:36	0:0	6	download
+op	29:44	0:0	6	.
+water	29:45	0:0	6	wait
+arg	30:16	30:42	5	&p_sys->download.lock_wait
+op	30:16	0:0	6	&
+water	30:17	0:0	6	p_sys
+op	30:22	0:0	6	->
+water	30:24	0:0	6	download
+op	30:32	0:0	6	.
+water	30:33	0:0	6	lock_wait
+arg	30:44	30:61	5	mdate()+500000
+call	30:44	30:50	6	mdate
+op	30:52	0:0	6	+
+water	30:54	0:0	6	500000
+water	30:62	0:0	4	;
+water	31:8	0:0	4	count
+op	31:14	0:0	4	=
+call	31:16	31:56	4	vlc_array_count
+arg	31:33	31:56	5	p_sys->download.chunks
+water	31:33	0:0	6	p_sys
+op	31:38	0:0	6	->
+water	31:40	0:0	6	download
+op	31:48	0:0	6	.
+water	31:49	0:0	6	chunks
+water	31:57	0:0	4	;
+call	32:8	32:81	4	msg_Dbg
+arg	32:17	32:18	5	s
+water	32:17	0:0	6	s
+arg	32:20	32:50	5	"count is %u, and index is %u"
+water	32:20	0:0	6	"count is %u, and index is %u"
+arg	32:52	32:57	5	count
+water	32:52	0:0	6	count
+arg	32:59	32:81	5	p_sys->playback.index
+water	32:59	0:0	6	p_sys
+op	32:64	0:0	6	->
+water	32:66	0:0	6	playback
+op	32:74	0:0	6	.
+water	32:75	0:0	6	index
+water	32:82	0:0	4	;
+water	33:4	0:0	4	}
+water	34:4	0:0	2	chunk
+op	34:10	0:0	2	=
+call	34:12	34:83	2	vlc_array_item_at_index
+arg	34:37	34:59	3	p_sys->download.chunks
+water	34:37	0:0	4	p_sys
+op	34:42	0:0	4	->
+water	34:44	0:0	4	download
+op	34:52	0:0	4	.
+water	34:53	0:0	4	chunks
+arg	34:61	34:83	3	p_sys->playback.index
+water	34:61	0:0	4	p_sys
+op	34:66	0:0	4	->
+water	34:68	0:0	4	playback
+op	34:76	0:0	4	.
+water	34:77	0:0	4	index
+water	34:84	0:0	2	;
+call	35:4	35:49	2	vlc_mutex_unlock
+arg	35:22	35:49	3	&p_sys->download.lock_wait
+op	35:22	0:0	4	&
+water	35:23	0:0	4	p_sys
+op	35:28	0:0	4	->
+water	35:30	0:0	4	download
+op	35:38	0:0	4	.
+water	35:39	0:0	4	lock_wait
+water	35:50	0:0	2	;
+return	36:4	36:16	2	chunk
+water	36:11	0:0	3	chunk

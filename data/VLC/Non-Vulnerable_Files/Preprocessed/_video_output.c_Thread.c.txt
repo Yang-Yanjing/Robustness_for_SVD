@@ -1,0 +1,114 @@
+func	2:0	26:0	0	static void *	Thread
+params	2:19	0:0	1	
+param	2:20	2:32	2	void *	object
+stmnts	0:0	25:4	1	
+decl	4:4	4:32	2	vout_thread_t	*vout
+op	4:24	0:0	2	=
+water	4:26	0:0	2	object
+decl	5:4	5:36	2	vout_thread_sys_t	*sys
+op	5:27	0:0	2	=
+water	5:29	0:0	2	vout
+op	5:33	0:0	2	->
+water	5:35	0:0	2	p
+decl	6:4	9:5	2	vout_interlacing_support_t	interlacing
+op	6:43	0:0	2	=
+water	6:45	0:0	2	{
+op	7:8	0:0	2	.
+water	7:9	0:0	2	is_interlaced
+op	7:23	0:0	2	=
+water	7:25	0:0	2	false
+water	7:30	0:0	2	,
+op	8:8	0:0	2	.
+water	8:9	0:0	2	date
+op	8:14	0:0	2	=
+call	8:16	8:22	3	mdate
+water	8:23	0:0	2	,
+water	9:4	0:0	2	}
+decl	10:4	10:37	2	mtime_t	deadline
+op	10:21	0:0	2	=
+water	10:23	0:0	2	VLC_TS_INVALID
+for	11:4	25:4	2	(;;)
+forinit	11:9	11:9	3	;
+water	11:9	0:0	4	;
+cond	0:0	0:0	3	
+forexpr	0:0	0:0	3	
+stmts	11:13	25:4	3	
+water	11:13	0:0	4	{
+decl	12:8	12:30	4	vout_control_cmd_t	cmd
+while	14:8	16:27	4	(!vout_control_Pop (& sys -> control ,& cmd ,deadline ,100000 ))
+cond	14:15	14:70	5	!vout_control_Pop (& sys -> control ,& cmd ,deadline ,100000 )
+op	14:15	0:0	6	!
+call	14:16	14:70	6	vout_control_Pop
+arg	14:33	14:46	7	&sys->control
+op	14:33	0:0	8	&
+water	14:34	0:0	8	sys
+op	14:37	0:0	8	->
+water	14:39	0:0	8	control
+arg	14:48	14:52	7	&cmd
+op	14:48	0:0	8	&
+water	14:49	0:0	8	cmd
+arg	14:54	14:62	7	deadline
+water	14:54	0:0	8	deadline
+arg	14:64	14:70	7	100000
+water	14:64	0:0	8	100000
+stmts	15:12	16:27	5	
+if	15:12	16:27	6	(ThreadControl (vout ,cmd ))
+cond	15:16	15:39	7	ThreadControl (vout ,cmd )
+call	15:16	15:39	8	ThreadControl
+arg	15:30	15:34	9	vout
+water	15:30	0:0	10	vout
+arg	15:36	15:39	9	cmd
+water	15:36	0:0	10	cmd
+stmts	16:16	16:27	7	
+return	16:16	16:27	8	NULL
+water	16:23	0:0	9	NULL
+call	17:8	17:41	4	vlc_mutex_lock
+arg	17:23	17:41	5	&sys->picture_lock
+op	17:23	0:0	6	&
+water	17:24	0:0	6	sys
+op	17:27	0:0	6	->
+water	17:29	0:0	6	picture_lock
+water	17:42	0:0	4	;
+water	18:8	0:0	4	deadline
+op	18:17	0:0	4	=
+water	18:19	0:0	4	VLC_TS_INVALID
+water	18:33	0:0	4	;
+while	19:8	20:12	4	(!ThreadDisplayPicture (vout ,& deadline ))
+cond	19:15	19:52	5	!ThreadDisplayPicture (vout ,& deadline )
+op	19:15	0:0	6	!
+call	19:16	19:52	6	ThreadDisplayPicture
+arg	19:37	19:41	7	vout
+water	19:37	0:0	8	vout
+arg	19:43	19:52	7	&deadline
+op	19:43	0:0	8	&
+water	19:44	0:0	8	deadline
+stmts	20:12	20:12	5	
+water	20:12	0:0	6	;
+decl	21:8	21:68	4	const bool	picture_interlaced
+op	21:38	0:0	4	=
+water	21:40	0:0	4	sys
+op	21:43	0:0	4	->
+water	21:45	0:0	4	displayed
+op	21:54	0:0	4	.
+water	21:55	0:0	4	is_interlaced
+call	22:8	22:43	4	vlc_mutex_unlock
+arg	22:25	22:43	5	&sys->picture_lock
+op	22:25	0:0	6	&
+water	22:26	0:0	6	sys
+op	22:29	0:0	6	->
+water	22:31	0:0	6	picture_lock
+water	22:44	0:0	4	;
+call	23:8	23:71	4	vout_SetInterlacingState
+arg	23:33	23:37	5	vout
+water	23:33	0:0	6	vout
+arg	23:39	23:51	5	&interlacing
+op	23:39	0:0	6	&
+water	23:40	0:0	6	interlacing
+arg	23:53	23:71	5	picture_interlaced
+water	23:53	0:0	6	picture_interlaced
+water	23:72	0:0	4	;
+call	24:8	24:31	4	vout_ManageWrapper
+arg	24:27	24:31	5	vout
+water	24:27	0:0	6	vout
+water	24:32	0:0	4	;
+water	25:4	0:0	4	}

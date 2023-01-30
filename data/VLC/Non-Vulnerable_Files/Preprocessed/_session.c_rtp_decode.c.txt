@@ -1,0 +1,267 @@
+func	1:0	59:0	0	static void	rtp_decode
+params	2:11	0:0	1	
+param	2:12	2:26	2	demux_t *	demux
+param	2:28	2:56	2	const rtp_session_t *	session
+param	2:58	2:75	2	rtp_source_t *	src
+stmnts	0:0	58:25	1	
+decl	4:4	4:32	2	block_t	*block
+op	4:19	0:0	2	=
+water	4:21	0:0	2	src
+op	4:24	0:0	2	->
+water	4:26	0:0	2	blocks
+call	5:4	5:17	2	assert
+arg	5:12	5:17	3	block
+water	5:12	0:0	4	block
+water	5:18	0:0	2	;
+water	6:4	0:0	2	src
+op	6:7	0:0	2	->
+water	6:9	0:0	2	blocks
+op	6:16	0:0	2	=
+water	6:18	0:0	2	block
+op	6:23	0:0	2	->
+water	6:25	0:0	2	p_next
+water	6:31	0:0	2	;
+water	7:4	0:0	2	block
+op	7:9	0:0	2	->
+water	7:11	0:0	2	p_next
+op	7:18	0:0	2	=
+water	7:20	0:0	2	NULL
+water	7:24	0:0	2	;
+decl	9:4	9:62	2	uint16_t	delta_seq
+op	9:23	0:0	2	=
+call	9:25	9:39	3	rtp_seq
+arg	9:34	9:39	4	block
+water	9:34	0:0	5	block
+op	9:41	0:0	2	-
+water	9:43	0:0	2	(
+water	9:44	0:0	2	src
+op	9:47	0:0	2	->
+water	9:49	0:0	2	last_seq
+op	9:58	0:0	2	+
+water	9:60	0:0	2	1
+water	9:61	0:0	2	)
+if	10:4	20:4	2	(delta_seq != 0)
+cond	10:8	10:21	3	delta_seq != 0
+water	10:8	0:0	4	delta_seq
+op	10:18	0:0	4	!=
+water	10:21	0:0	4	0
+stmts	11:4	20:4	3	
+water	11:4	0:0	4	{
+if	12:8	17:8	4	(delta_seq >= 0 x8000)
+cond	12:12	12:26	5	delta_seq >= 0 x8000
+water	12:12	0:0	6	delta_seq
+op	12:22	0:0	6	>=
+water	12:25	0:0	6	0
+water	12:26	0:0	6	x8000
+stmts	13:8	17:8	5	
+water	13:8	0:0	6	{
+call	14:12	15:37	6	msg_Dbg
+arg	14:21	14:26	7	demux
+water	14:21	0:0	8	demux
+arg	14:28	14:72	7	"ignoring late packet (sequence: %"PRIu16")"
+water	14:28	0:0	8	"ignoring late packet (sequence: %"
+water	14:63	0:0	8	PRIu16
+water	14:69	0:0	8	")"
+arg	15:22	15:37	7	rtp_seq(block)
+call	15:22	15:36	8	rtp_seq
+arg	15:31	15:36	9	block
+water	15:31	0:0	10	block
+water	15:38	0:0	6	;
+goto	16:12	16:21	6	drop
+water	16:17	0:0	7	drop
+water	17:8	0:0	6	}
+call	18:8	18:62	4	msg_Warn
+arg	18:18	18:23	5	demux
+water	18:18	0:0	6	demux
+arg	18:25	18:51	5	"%"PRIu16" packet(s) lost"
+water	18:25	0:0	6	"%"
+water	18:28	0:0	6	PRIu16
+water	18:34	0:0	6	" packet(s) lost"
+arg	18:53	18:62	5	delta_seq
+water	18:53	0:0	6	delta_seq
+water	18:63	0:0	4	;
+water	19:8	0:0	4	block
+op	19:13	0:0	4	->
+water	19:15	0:0	4	i_flags
+op	19:23	0:0	4	|=
+water	19:26	0:0	4	BLOCK_FLAG_DISCONTINUITY
+water	19:50	0:0	4	;
+water	20:4	0:0	4	}
+water	21:4	0:0	2	src
+op	21:7	0:0	2	->
+water	21:9	0:0	2	last_seq
+op	21:18	0:0	2	=
+call	21:20	21:34	2	rtp_seq
+arg	21:29	21:34	3	block
+water	21:29	0:0	4	block
+water	21:35	0:0	2	;
+decl	23:4	23:17	2	void	*pt_data
+decl	24:4	24:71	2	const rtp_pt_t	*pt
+op	24:23	0:0	2	=
+call	24:25	24:70	3	rtp_find_ptype
+arg	24:41	24:48	4	session
+water	24:41	0:0	5	session
+arg	24:50	24:53	4	src
+water	24:50	0:0	5	src
+arg	24:55	24:60	4	block
+water	24:55	0:0	5	block
+arg	24:62	24:70	4	&pt_data
+op	24:62	0:0	5	&
+water	24:63	0:0	5	pt_data
+if	25:4	30:4	2	(pt == NULL)
+cond	25:8	25:14	3	pt == NULL
+water	25:8	0:0	4	pt
+op	25:11	0:0	4	==
+water	25:14	0:0	4	NULL
+stmts	26:4	30:4	3	
+water	26:4	0:0	4	{
+call	27:8	28:34	4	msg_Dbg
+arg	27:17	27:22	5	demux
+water	27:17	0:0	6	demux
+arg	27:24	27:52	5	"unknown payload (%"PRIu8")"
+water	27:24	0:0	6	"unknown payload (%"
+water	27:44	0:0	6	PRIu8
+water	27:49	0:0	6	")"
+arg	28:17	28:34	5	rtp_ptype(block)
+call	28:17	28:33	6	rtp_ptype
+arg	28:28	28:33	7	block
+water	28:28	0:0	8	block
+water	28:35	0:0	4	;
+goto	29:8	29:17	4	drop
+water	29:13	0:0	5	drop
+water	30:4	0:0	4	}
+decl	35:4	35:52	2	const uint32_t	timestamp
+op	35:29	0:0	2	=
+call	35:31	35:51	3	rtp_timestamp
+arg	35:46	35:51	4	block
+water	35:46	0:0	5	block
+water	36:4	0:0	2	block
+op	36:9	0:0	2	->
+water	36:11	0:0	2	i_pts
+op	36:17	0:0	2	=
+water	36:19	0:0	2	src
+op	36:22	0:0	2	->
+water	36:24	0:0	2	ref_ntp
+op	37:7	0:0	2	+
+water	37:9	0:0	2	CLOCK_FREQ
+call	37:20	37:56	2	*(int32_t)
+arg	37:32	37:56	3	timestamp-src->ref_rtp
+water	37:32	0:0	4	timestamp
+op	37:42	0:0	4	-
+water	37:44	0:0	4	src
+op	37:47	0:0	4	->
+water	37:49	0:0	4	ref_rtp
+op	37:58	0:0	2	/
+water	37:60	0:0	2	pt
+op	37:62	0:0	2	->
+water	37:64	0:0	2	frequency
+water	37:73	0:0	2	;
+water	39:4	0:0	2	src
+op	39:7	0:0	2	->
+water	39:9	0:0	2	ref_ntp
+op	39:17	0:0	2	=
+water	39:19	0:0	2	block
+op	39:24	0:0	2	->
+water	39:26	0:0	2	i_pts
+water	39:31	0:0	2	;
+water	40:4	0:0	2	src
+op	40:7	0:0	2	->
+water	40:9	0:0	2	ref_rtp
+op	40:17	0:0	2	=
+water	40:19	0:0	2	timestamp
+water	40:28	0:0	2	;
+decl	42:4	42:55	2	size_t	skip
+op	42:16	0:0	2	=
+water	42:18	0:0	2	12
+water	42:20	0:0	2	u
+op	42:22	0:0	2	+
+water	42:24	0:0	2	(
+water	42:25	0:0	2	block
+op	42:30	0:0	2	->
+water	42:32	0:0	2	p_buffer
+op	42:40	0:0	2	[
+water	42:41	0:0	2	0
+op	42:42	0:0	2	]
+op	42:44	0:0	2	&
+water	42:46	0:0	2	0
+water	42:47	0:0	2	x0F
+water	42:50	0:0	2	)
+op	42:52	0:0	2	*
+water	42:54	0:0	2	4
+if	44:4	50:4	2	(block -> p_buffer [ 0 ] & 0 x10)
+cond	44:8	44:30	3	block -> p_buffer [ 0 ] & 0 x10
+water	44:8	0:0	4	block
+op	44:13	0:0	4	->
+water	44:15	0:0	4	p_buffer
+op	44:23	0:0	4	[
+water	44:24	0:0	4	0
+op	44:25	0:0	4	]
+op	44:27	0:0	4	&
+water	44:29	0:0	4	0
+water	44:30	0:0	4	x10
+stmts	45:4	50:4	3	
+water	45:4	0:0	4	{
+water	46:8	0:0	4	skip
+op	46:13	0:0	4	+=
+water	46:16	0:0	4	4
+water	46:17	0:0	4	;
+if	47:8	48:21	4	(block -> i_buffer < skip)
+cond	47:12	47:30	5	block -> i_buffer < skip
+water	47:12	0:0	6	block
+op	47:17	0:0	6	->
+water	47:19	0:0	6	i_buffer
+op	47:28	0:0	6	<
+water	47:30	0:0	6	skip
+stmts	48:12	48:21	5	
+goto	48:12	48:21	6	drop
+water	48:17	0:0	7	drop
+water	49:8	0:0	4	skip
+op	49:13	0:0	4	+=
+water	49:16	0:0	4	4
+call	49:18	49:54	4	*GetWBE
+arg	49:28	49:54	5	block->p_buffer+skip-2
+water	49:28	0:0	6	block
+op	49:33	0:0	6	->
+water	49:35	0:0	6	p_buffer
+op	49:44	0:0	6	+
+water	49:46	0:0	6	skip
+op	49:51	0:0	6	-
+water	49:53	0:0	6	2
+water	49:55	0:0	4	;
+water	50:4	0:0	4	}
+if	51:4	52:17	2	(block -> i_buffer < skip)
+cond	51:8	51:26	3	block -> i_buffer < skip
+water	51:8	0:0	4	block
+op	51:13	0:0	4	->
+water	51:15	0:0	4	i_buffer
+op	51:24	0:0	4	<
+water	51:26	0:0	4	skip
+stmts	52:8	52:17	3	
+goto	52:8	52:17	4	drop
+water	52:13	0:0	5	drop
+water	53:4	0:0	2	block
+op	53:9	0:0	2	->
+water	53:11	0:0	2	p_buffer
+op	53:20	0:0	2	+=
+water	53:23	0:0	2	skip
+water	53:27	0:0	2	;
+water	54:4	0:0	2	block
+op	54:9	0:0	2	->
+water	54:11	0:0	2	i_buffer
+op	54:20	0:0	2	-=
+water	54:23	0:0	2	skip
+water	54:27	0:0	2	;
+call	55:4	55:37	2	pt->decode
+arg	55:16	55:21	3	demux
+water	55:16	0:0	4	demux
+arg	55:23	55:30	3	pt_data
+water	55:23	0:0	4	pt_data
+arg	55:32	55:37	3	block
+water	55:32	0:0	4	block
+water	55:38	0:0	2	;
+return	56:4	56:10	2	
+label	57:0	57:4	2	drop :
+call	58:4	58:24	2	block_Release
+arg	58:19	58:24	3	block
+water	58:19	0:0	4	block
+water	58:25	0:0	2	;

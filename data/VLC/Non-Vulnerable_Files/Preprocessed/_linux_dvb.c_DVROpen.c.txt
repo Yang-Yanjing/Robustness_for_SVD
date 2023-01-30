@@ -1,0 +1,141 @@
+func	2:0	28:0	0	int	DVROpen
+params	2:11	0:0	1	
+param	2:13	2:33	2	access_t *	p_access
+stmnts	0:0	27:22	1	
+decl	4:4	4:41	2	access_sys_t	*p_sys
+op	4:24	0:0	2	=
+water	4:26	0:0	2	p_access
+op	4:34	0:0	2	->
+water	4:36	0:0	2	p_sys
+decl	5:4	5:36	2	unsigned int	i_adapter
+water	5:26	0:0	2	,
+decl	5:4	5:36	2	unsigned int	i_device
+decl	6:4	6:17	2	char	dvr[128]
+water	7:4	0:0	2	i_adapter
+op	7:14	0:0	2	=
+call	7:16	7:56	2	var_GetInteger
+arg	7:32	7:40	3	p_access
+water	7:32	0:0	4	p_access
+arg	7:42	7:56	3	"dvb-adapter"
+water	7:42	0:0	4	"dvb-adapter"
+water	7:57	0:0	2	;
+water	8:4	0:0	2	i_device
+op	8:13	0:0	2	=
+call	8:15	8:54	2	var_GetInteger
+arg	8:31	8:39	3	p_access
+water	8:31	0:0	4	p_access
+arg	8:41	8:54	3	"dvb-device"
+water	8:41	0:0	4	"dvb-device"
+water	8:55	0:0	2	;
+if	9:4	14:4	2	(snprintf (dvr ,sizeof ( dvr ) ,DVR ,i_adapter ,i_device ) >= ( int ) sizeof ( dvr ))
+cond	9:8	10:30	3	snprintf (dvr ,sizeof ( dvr ) ,DVR ,i_adapter ,i_device ) >= ( int ) sizeof ( dvr )
+call	9:8	9:61	4	snprintf
+arg	9:18	9:21	5	dvr
+water	9:18	0:0	6	dvr
+arg	9:23	9:34	5	sizeof(dvr)
+op	9:23	0:0	6	sizeof
+water	9:29	0:0	6	(
+water	9:30	0:0	6	dvr
+water	9:33	0:0	6	)
+arg	9:36	9:39	5	DVR
+water	9:36	0:0	6	DVR
+arg	9:41	9:50	5	i_adapter
+water	9:41	0:0	6	i_adapter
+arg	9:52	9:61	5	i_device
+water	9:52	0:0	6	i_device
+op	10:12	0:0	4	>=
+water	10:15	0:0	4	(
+water	10:16	0:0	4	int
+water	10:19	0:0	4	)
+op	10:20	0:0	4	sizeof
+water	10:26	0:0	4	(
+water	10:27	0:0	4	dvr
+water	10:30	0:0	4	)
+stmts	11:4	14:4	3	
+water	11:4	0:0	4	{
+call	12:8	12:65	4	msg_Err
+arg	12:17	12:25	5	p_access
+water	12:17	0:0	6	p_access
+arg	12:27	12:65	5	"snprintf() truncated string for DVR"
+water	12:27	0:0	6	"snprintf() truncated string for DVR"
+water	12:66	0:0	4	;
+water	13:8	0:0	4	dvr
+op	13:11	0:0	4	[
+op	13:12	0:0	4	sizeof
+water	13:18	0:0	4	(
+water	13:19	0:0	4	dvr
+water	13:22	0:0	4	)
+op	13:24	0:0	4	-
+water	13:26	0:0	4	1
+op	13:27	0:0	4	]
+op	13:29	0:0	4	=
+water	13:31	0:0	4	'\0'
+water	13:35	0:0	4	;
+water	14:4	0:0	4	}
+call	15:4	15:48	2	msg_Dbg
+arg	15:13	15:21	3	p_access
+water	15:13	0:0	4	p_access
+arg	15:23	15:42	3	"Opening device %s"
+water	15:23	0:0	4	"Opening device %s"
+arg	15:44	15:48	3	dvr
+water	15:44	0:0	4	dvr
+water	15:49	0:0	2	;
+if	16:4	21:4	2	(( p_sys -> i_handle =vlc_open (dvr ,O_RDONLY ) ) < 0)
+cond	16:8	16:54	3	( p_sys -> i_handle =vlc_open (dvr ,O_RDONLY ) ) < 0
+water	16:8	0:0	4	(
+water	16:9	0:0	4	p_sys
+op	16:14	0:0	4	->
+water	16:16	0:0	4	i_handle
+op	16:25	0:0	4	=
+call	16:27	16:49	4	vlc_open
+arg	16:36	16:39	5	dvr
+water	16:36	0:0	6	dvr
+arg	16:41	16:49	5	O_RDONLY
+water	16:41	0:0	6	O_RDONLY
+water	16:50	0:0	4	)
+op	16:52	0:0	4	<
+water	16:54	0:0	4	0
+stmts	17:4	21:4	3	
+water	17:4	0:0	4	{
+call	18:8	19:39	4	msg_Err
+arg	18:17	18:25	5	p_access
+water	18:17	0:0	6	p_access
+arg	18:27	18:63	5	"DVROpen: opening device failed: %s"
+water	18:27	0:0	6	"DVROpen: opening device failed: %s"
+arg	19:17	19:39	5	vlc_strerror_c(errno)
+call	19:17	19:37	6	vlc_strerror_c
+arg	19:32	19:37	7	errno
+water	19:32	0:0	8	errno
+water	19:40	0:0	4	;
+return	20:8	20:27	4	VLC_EGENERIC
+water	20:15	0:0	5	VLC_EGENERIC
+water	21:4	0:0	4	}
+if	22:4	26:4	2	(fcntl (p_sys -> i_handle ,F_SETFL ,O_NONBLOCK ) == - 1)
+cond	22:8	22:58	3	fcntl (p_sys -> i_handle ,F_SETFL ,O_NONBLOCK ) == - 1
+call	22:8	22:52	4	fcntl
+arg	22:15	22:30	5	p_sys->i_handle
+water	22:15	0:0	6	p_sys
+op	22:20	0:0	6	->
+water	22:22	0:0	6	i_handle
+arg	22:32	22:39	5	F_SETFL
+water	22:32	0:0	6	F_SETFL
+arg	22:41	22:52	5	O_NONBLOCK
+water	22:41	0:0	6	O_NONBLOCK
+op	22:54	0:0	4	==
+op	22:57	0:0	4	-
+water	22:58	0:0	4	1
+stmts	23:4	26:4	3	
+water	23:4	0:0	4	{
+call	24:8	25:40	4	msg_Warn
+arg	24:18	24:26	5	p_access
+water	24:18	0:0	6	p_access
+arg	24:28	24:73	5	"DVROpen: couldn't set non-blocking mode: %s"
+water	24:28	0:0	6	"DVROpen: couldn't set non-blocking mode: %s"
+arg	25:18	25:40	5	vlc_strerror_c(errno)
+call	25:18	25:38	6	vlc_strerror_c
+arg	25:33	25:38	7	errno
+water	25:33	0:0	8	errno
+water	25:41	0:0	4	;
+water	26:4	0:0	4	}
+return	27:4	27:22	2	VLC_SUCCESS
+water	27:11	0:0	3	VLC_SUCCESS

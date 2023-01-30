@@ -1,0 +1,223 @@
+func	2:0	54:0	0	static int	SPDUSend
+params	2:19	0:0	1	
+param	2:21	2:34	2	cam_t *	p_cam
+param	2:36	2:52	2	int	i_session_id
+param	3:21	3:36	2	uint8_t *	p_data
+param	3:38	3:49	2	int	i_size
+stmnts	0:0	53:22	1	
+decl	5:4	5:43	2	uint8_t	*p_spdu
+op	5:20	0:0	2	=
+call	5:22	5:42	3	xmalloc
+arg	5:31	5:42	4	i_size+4
+water	5:31	0:0	5	i_size
+op	5:38	0:0	5	+
+water	5:40	0:0	5	4
+decl	6:4	6:23	2	uint8_t	*p
+op	6:15	0:0	2	=
+water	6:17	0:0	2	p_spdu
+decl	7:4	7:17	2	uint8_t	i_tag
+decl	8:4	8:63	2	uint8_t	i_slot
+op	8:19	0:0	2	=
+water	8:21	0:0	2	p_cam
+op	8:26	0:0	2	->
+water	8:28	0:0	2	p_sessions
+op	8:38	0:0	2	[
+water	8:39	0:0	2	i_session_id
+op	8:52	0:0	2	-
+water	8:54	0:0	2	1
+op	8:55	0:0	2	]
+op	8:56	0:0	2	.
+water	8:57	0:0	2	i_slot
+op	9:4	0:0	2	*
+water	9:5	0:0	2	p
+op	9:6	0:0	2	++
+op	9:9	0:0	2	=
+water	9:11	0:0	2	ST_SESSION_NUMBER
+water	9:28	0:0	2	;
+op	10:4	0:0	2	*
+water	10:5	0:0	2	p
+op	10:6	0:0	2	++
+op	10:9	0:0	2	=
+water	10:11	0:0	2	0
+water	10:12	0:0	2	x02
+water	10:15	0:0	2	;
+op	11:4	0:0	2	*
+water	11:5	0:0	2	p
+op	11:6	0:0	2	++
+op	11:9	0:0	2	=
+water	11:11	0:0	2	(
+water	11:12	0:0	2	i_session_id
+op	11:25	0:0	2	>>
+water	11:28	0:0	2	8
+water	11:29	0:0	2	)
+water	11:30	0:0	2	;
+op	12:4	0:0	2	*
+water	12:5	0:0	2	p
+op	12:6	0:0	2	++
+op	12:9	0:0	2	=
+water	12:11	0:0	2	i_session_id
+op	12:24	0:0	2	&
+water	12:26	0:0	2	0
+water	12:27	0:0	2	xff
+water	12:30	0:0	2	;
+call	13:4	13:30	2	memcpy
+arg	13:12	13:13	3	p
+water	13:12	0:0	4	p
+arg	13:15	13:21	3	p_data
+water	13:15	0:0	4	p_data
+arg	13:23	13:30	3	i_size
+water	13:23	0:0	4	i_size
+water	13:31	0:0	2	;
+water	14:4	0:0	2	i_size
+op	14:11	0:0	2	+=
+water	14:14	0:0	2	4
+water	14:15	0:0	2	;
+water	15:4	0:0	2	p
+op	15:6	0:0	2	=
+water	15:8	0:0	2	p_spdu
+water	15:14	0:0	2	;
+while	16:4	51:4	2	(i_size > 0)
+cond	16:12	16:21	3	i_size > 0
+water	16:12	0:0	4	i_size
+op	16:19	0:0	4	>
+water	16:21	0:0	4	0
+stmts	17:4	51:4	3	
+water	17:4	0:0	4	{
+if	18:8	30:8	4	(i_size > MAX_TPDU_DATA)
+cond	18:13	18:22	5	i_size > MAX_TPDU_DATA
+water	18:13	0:0	6	i_size
+op	18:20	0:0	6	>
+water	18:22	0:0	6	MAX_TPDU_DATA
+stmts	19:8	30:8	5	
+water	19:8	0:0	6	{
+if	20:12	27:12	6	(TPDUSend (p_cam ,i_slot ,T_DATA_MORE ,p ,MAX_TPDU_DATA ) != VLC_SUCCESS)
+cond	20:17	21:46	7	TPDUSend (p_cam ,i_slot ,T_DATA_MORE ,p ,MAX_TPDU_DATA ) != VLC_SUCCESS
+call	20:17	21:41	8	TPDUSend
+arg	20:27	20:32	9	p_cam
+water	20:27	0:0	10	p_cam
+arg	20:34	20:40	9	i_slot
+water	20:34	0:0	10	i_slot
+arg	20:42	20:53	9	T_DATA_MORE
+water	20:42	0:0	10	T_DATA_MORE
+arg	20:55	20:56	9	p
+water	20:55	0:0	10	p
+arg	21:27	21:41	9	MAX_TPDU_DATA
+water	21:27	0:0	10	MAX_TPDU_DATA
+op	21:43	0:0	8	!=
+water	21:46	0:0	8	VLC_SUCCESS
+stmts	22:12	27:12	7	
+water	22:12	0:0	8	{
+call	23:16	24:38	8	msg_Err
+arg	23:25	23:35	9	p_cam->obj
+water	23:25	0:0	10	p_cam
+op	23:30	0:0	10	->
+water	23:32	0:0	10	obj
+arg	23:37	23:71	9	"couldn't send TPDU on session %d"
+water	23:37	0:0	10	"couldn't send TPDU on session %d"
+arg	24:25	24:38	9	i_session_id
+water	24:25	0:0	10	i_session_id
+water	24:39	0:0	8	;
+call	25:16	25:29	8	free
+arg	25:22	25:29	9	p_spdu
+water	25:22	0:0	10	p_spdu
+water	25:30	0:0	8	;
+return	26:16	26:35	8	VLC_EGENERIC
+water	26:23	0:0	9	VLC_EGENERIC
+water	27:12	0:0	8	}
+water	28:12	0:0	6	p
+op	28:14	0:0	6	+=
+water	28:17	0:0	6	MAX_TPDU_DATA
+water	28:30	0:0	6	;
+water	29:12	0:0	6	i_size
+op	29:19	0:0	6	-=
+water	29:22	0:0	6	MAX_TPDU_DATA
+water	29:35	0:0	6	;
+water	30:8	0:0	6	}
+else	31:8	42:8	4
+stmts	32:8	42:8	5	
+water	32:8	0:0	6	{
+if	33:12	40:12	6	(TPDUSend (p_cam ,i_slot ,T_DATA_LAST ,p ,i_size ) != VLC_SUCCESS)
+cond	33:17	34:23	7	TPDUSend (p_cam ,i_slot ,T_DATA_LAST ,p ,i_size ) != VLC_SUCCESS
+call	33:17	33:65	8	TPDUSend
+arg	33:27	33:32	9	p_cam
+water	33:27	0:0	10	p_cam
+arg	33:34	33:40	9	i_slot
+water	33:34	0:0	10	i_slot
+arg	33:42	33:53	9	T_DATA_LAST
+water	33:42	0:0	10	T_DATA_LAST
+arg	33:55	33:56	9	p
+water	33:55	0:0	10	p
+arg	33:58	33:65	9	i_size
+water	33:58	0:0	10	i_size
+op	34:20	0:0	8	!=
+water	34:23	0:0	8	VLC_SUCCESS
+stmts	35:12	40:12	7	
+water	35:12	0:0	8	{
+call	36:16	37:38	8	msg_Err
+arg	36:25	36:35	9	p_cam->obj
+water	36:25	0:0	10	p_cam
+op	36:30	0:0	10	->
+water	36:32	0:0	10	obj
+arg	36:37	36:71	9	"couldn't send TPDU on session %d"
+water	36:37	0:0	10	"couldn't send TPDU on session %d"
+arg	37:25	37:38	9	i_session_id
+water	37:25	0:0	10	i_session_id
+water	37:39	0:0	8	;
+call	38:16	38:29	8	free
+arg	38:22	38:29	9	p_spdu
+water	38:22	0:0	10	p_spdu
+water	38:30	0:0	8	;
+return	39:16	39:35	8	VLC_EGENERIC
+water	39:23	0:0	9	VLC_EGENERIC
+water	40:12	0:0	8	}
+water	41:12	0:0	6	i_size
+op	41:19	0:0	6	=
+water	41:21	0:0	6	0
+water	41:22	0:0	6	;
+water	42:8	0:0	6	}
+if	43:8	50:8	4	(TPDURecv (p_cam ,i_slot ,& i_tag ,NULL ,NULL ) != VLC_SUCCESS || i_tag != T_SB)
+cond	43:13	44:27	5	TPDURecv (p_cam ,i_slot ,& i_tag ,NULL ,NULL ) != VLC_SUCCESS || i_tag != T_SB
+call	43:13	43:57	6	TPDURecv
+arg	43:23	43:28	7	p_cam
+water	43:23	0:0	8	p_cam
+arg	43:30	43:36	7	i_slot
+water	43:30	0:0	8	i_slot
+arg	43:38	43:44	7	&i_tag
+op	43:38	0:0	8	&
+water	43:39	0:0	8	i_tag
+arg	43:46	43:50	7	NULL
+water	43:46	0:0	8	NULL
+arg	43:52	43:57	7	NULL
+water	43:52	0:0	8	NULL
+op	43:59	0:0	6	!=
+water	43:62	0:0	6	VLC_SUCCESS
+op	44:15	0:0	6	||
+water	44:18	0:0	6	i_tag
+op	44:24	0:0	6	!=
+water	44:27	0:0	6	T_SB
+stmts	45:8	50:8	5	
+water	45:8	0:0	6	{
+call	46:12	47:34	6	msg_Err
+arg	46:21	46:31	7	p_cam->obj
+water	46:21	0:0	8	p_cam
+op	46:26	0:0	8	->
+water	46:28	0:0	8	obj
+arg	46:33	46:67	7	"couldn't recv TPDU on session %d"
+water	46:33	0:0	8	"couldn't recv TPDU on session %d"
+arg	47:21	47:34	7	i_session_id
+water	47:21	0:0	8	i_session_id
+water	47:35	0:0	6	;
+call	48:12	48:25	6	free
+arg	48:18	48:25	7	p_spdu
+water	48:18	0:0	8	p_spdu
+water	48:26	0:0	6	;
+return	49:12	49:31	6	VLC_EGENERIC
+water	49:19	0:0	7	VLC_EGENERIC
+water	50:8	0:0	6	}
+water	51:4	0:0	4	}
+call	52:4	52:17	2	free
+arg	52:10	52:17	3	p_spdu
+water	52:10	0:0	4	p_spdu
+water	52:18	0:0	2	;
+return	53:4	53:22	2	VLC_SUCCESS
+water	53:11	0:0	3	VLC_SUCCESS

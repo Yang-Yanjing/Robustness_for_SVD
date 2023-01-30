@@ -1,0 +1,121 @@
+func	2:0	29:0	0	static void *	event_async_loop
+params	2:30	0:0	1	
+param	2:31	2:41	2	void *	arg
+stmnts	0:0	28:15	1	
+decl	4:4	4:39	2	libvlc_event_manager_t	*p_em
+op	4:34	0:0	2	=
+water	4:36	0:0	2	arg
+decl	5:4	5:36	2	libvlc_event_listener_t	listener
+decl	6:4	6:24	2	libvlc_event_t	event
+call	7:4	7:70	2	vlc_threadvar_set
+arg	7:22	7:64	3	queue(p_em)->is_asynch_dispatch_thread_var
+call	7:22	7:32	4	queue
+arg	7:28	7:32	5	p_em
+water	7:28	0:0	6	p_em
+op	7:33	0:0	4	->
+water	7:35	0:0	4	is_asynch_dispatch_thread_var
+arg	7:66	7:70	3	p_em
+water	7:66	0:0	4	p_em
+water	7:71	0:0	2	;
+call	8:4	8:19	2	queue_lock
+arg	8:15	8:19	3	p_em
+water	8:15	0:0	4	p_em
+water	8:20	0:0	2	;
+while	9:4	26:4	2	(true)
+cond	9:11	9:11	3	true
+water	9:11	0:0	4	true
+stmts	9:17	26:4	3	
+water	9:17	0:0	4	{
+decl	10:8	10:55	4	int	has_listener
+op	10:25	0:0	4	=
+call	10:27	10:54	5	pop
+arg	10:31	10:35	6	p_em
+water	10:31	0:0	7	p_em
+arg	10:37	10:46	6	&listener
+op	10:37	0:0	7	&
+water	10:38	0:0	7	listener
+arg	10:48	10:54	6	&event
+op	10:48	0:0	7	&
+water	10:49	0:0	7	event
+if	11:8	16:8	4	(has_listener)
+cond	11:12	11:12	5	has_listener
+water	11:12	0:0	6	has_listener
+stmts	12:8	16:8	5	
+water	12:8	0:0	6	{
+call	13:12	13:29	6	queue_unlock
+arg	13:25	13:29	7	p_em
+water	13:25	0:0	8	p_em
+water	13:30	0:0	6	;
+call	14:12	14:61	6	listener.pf_callback
+arg	14:33	14:39	7	&event
+op	14:33	0:0	8	&
+water	14:34	0:0	8	event
+arg	14:41	14:61	7	listener.p_user_data
+water	14:41	0:0	8	listener
+op	14:49	0:0	8	.
+water	14:50	0:0	8	p_user_data
+water	14:62	0:0	6	;
+call	15:12	15:27	6	queue_lock
+arg	15:23	15:27	7	p_em
+water	15:23	0:0	8	p_em
+water	15:28	0:0	6	;
+water	16:8	0:0	6	}
+else	17:8	25:8	4
+stmts	18:8	25:8	5	
+water	18:8	0:0	6	{
+call	19:12	19:22	6	queue
+arg	19:18	19:22	7	p_em
+water	19:18	0:0	8	p_em
+op	19:23	0:0	6	->
+water	19:25	0:0	6	is_idle
+op	19:33	0:0	6	=
+water	19:35	0:0	6	true
+water	19:39	0:0	6	;
+call	20:12	20:49	6	mutex_cleanup_push
+arg	20:31	20:49	7	&queue(p_em)->lock
+call	20:31	20:42	8	&queue
+arg	20:38	20:42	9	p_em
+water	20:38	0:0	10	p_em
+op	20:43	0:0	8	->
+water	20:45	0:0	8	lock
+water	20:50	0:0	6	;
+call	21:12	21:56	6	vlc_cond_broadcast
+arg	21:31	21:56	7	&queue(p_em)->signal_idle
+call	21:31	21:42	8	&queue
+arg	21:38	21:42	9	p_em
+water	21:38	0:0	10	p_em
+op	21:43	0:0	8	->
+water	21:45	0:0	8	signal_idle
+water	21:57	0:0	6	;
+call	22:12	22:66	6	vlc_cond_wait
+arg	22:26	22:46	7	&queue(p_em)->signal
+call	22:26	22:37	8	&queue
+arg	22:33	22:37	9	p_em
+water	22:33	0:0	10	p_em
+op	22:38	0:0	8	->
+water	22:40	0:0	8	signal
+arg	22:48	22:66	7	&queue(p_em)->lock
+call	22:48	22:59	8	&queue
+arg	22:55	22:59	9	p_em
+water	22:55	0:0	10	p_em
+op	22:60	0:0	8	->
+water	22:62	0:0	8	lock
+water	22:67	0:0	6	;
+call	23:12	23:28	6	vlc_cleanup_pop
+water	23:29	0:0	6	;
+call	24:12	24:22	6	queue
+arg	24:18	24:22	7	p_em
+water	24:18	0:0	8	p_em
+op	24:23	0:0	6	->
+water	24:25	0:0	6	is_idle
+op	24:33	0:0	6	=
+water	24:35	0:0	6	false
+water	24:40	0:0	6	;
+water	25:8	0:0	6	}
+water	26:4	0:0	4	}
+call	27:4	27:21	2	queue_unlock
+arg	27:17	27:21	3	p_em
+water	27:17	0:0	4	p_em
+water	27:22	0:0	2	;
+return	28:4	28:15	2	NULL
+water	28:11	0:0	3	NULL

@@ -1,0 +1,153 @@
+func	2:0	36:0	0	static block_t *	DecodePacket
+params	2:28	0:0	1	
+param	2:30	2:46	2	decoder_t *	p_dec
+param	2:48	2:72	2	ogg_packet *	p_oggpacket
+stmnts	0:0	35:4	1	
+decl	4:4	4:39	2	decoder_sys_t	*p_sys
+op	4:25	0:0	2	=
+water	4:27	0:0	2	p_dec
+op	4:32	0:0	2	->
+water	4:34	0:0	2	p_sys
+decl	5:4	5:27	2	int	i_samples
+decl	6:4	6:28	2	INTERLEAVE_TYPE	**pp_pcm
+if	7:4	9:58	2	(p_oggpacket -> bytes &&vorbis_synthesis (& p_sys -> vb ,p_oggpacket ) == 0)
+cond	7:8	8:55	3	p_oggpacket -> bytes &&vorbis_synthesis (& p_sys -> vb ,p_oggpacket ) == 0
+water	7:8	0:0	4	p_oggpacket
+op	7:19	0:0	4	->
+water	7:21	0:0	4	bytes
+op	7:27	0:0	4	&&
+call	8:8	8:50	4	vorbis_synthesis
+arg	8:26	8:36	5	&p_sys->vb
+op	8:26	0:0	6	&
+water	8:27	0:0	6	p_sys
+op	8:32	0:0	6	->
+water	8:34	0:0	6	vb
+arg	8:38	8:50	5	p_oggpacket
+water	8:38	0:0	6	p_oggpacket
+op	8:52	0:0	4	==
+water	8:55	0:0	4	0
+stmts	9:8	9:58	3	
+call	9:8	9:57	4	vorbis_synthesis_blockin
+arg	9:34	9:44	5	&p_sys->vd
+op	9:34	0:0	6	&
+water	9:35	0:0	6	p_sys
+op	9:40	0:0	6	->
+water	9:42	0:0	6	vd
+arg	9:46	9:57	5	&p_sys->vb
+op	9:46	0:0	6	&
+water	9:47	0:0	6	p_sys
+op	9:52	0:0	6	->
+water	9:54	0:0	6	vb
+water	9:58	0:0	4	;
+if	14:4	31:4	2	(( i_samples =vorbis_synthesis_pcmout (& p_sys -> vd ,& pp_pcm ) ) > 0)
+cond	14:8	14:73	3	( i_samples =vorbis_synthesis_pcmout (& p_sys -> vd ,& pp_pcm ) ) > 0
+water	14:8	0:0	4	(
+water	14:10	0:0	4	i_samples
+op	14:20	0:0	4	=
+call	14:22	14:67	4	vorbis_synthesis_pcmout
+arg	14:47	14:57	5	&p_sys->vd
+op	14:47	0:0	6	&
+water	14:48	0:0	6	p_sys
+op	14:53	0:0	6	->
+water	14:55	0:0	6	vd
+arg	14:59	14:67	5	&pp_pcm
+op	14:59	0:0	6	&
+water	14:60	0:0	6	pp_pcm
+water	14:69	0:0	4	)
+op	14:71	0:0	4	>
+water	14:73	0:0	4	0
+stmts	15:4	31:4	3	
+water	15:4	0:0	4	{
+decl	16:8	16:30	4	block_t	*p_aout_buffer
+water	17:8	0:0	4	p_aout_buffer
+op	17:22	0:0	4	=
+call	18:12	18:53	4	decoder_NewAudioBuffer
+arg	18:36	18:41	5	p_dec
+water	18:36	0:0	6	p_dec
+arg	18:43	18:53	5	i_samples
+water	18:43	0:0	6	i_samples
+water	18:54	0:0	4	;
+if	19:8	19:47	4	(p_aout_buffer == NULL)
+cond	19:12	19:29	5	p_aout_buffer == NULL
+water	19:12	0:0	6	p_aout_buffer
+op	19:26	0:0	6	==
+water	19:29	0:0	6	NULL
+stmts	19:36	19:47	5	
+return	19:36	19:47	6	NULL
+water	19:43	0:0	7	NULL
+call	21:8	23:40	4	Interleave
+arg	21:20	21:61	5	(INTERLEAVE_TYPE*)p_aout_buffer->p_buffer
+water	21:20	0:0	6	(
+water	21:21	0:0	6	INTERLEAVE_TYPE
+op	21:36	0:0	6	*
+water	21:37	0:0	6	)
+water	21:38	0:0	6	p_aout_buffer
+op	21:51	0:0	6	->
+water	21:53	0:0	6	p_buffer
+arg	22:20	22:51	5	(constINTERLEAVE_TYPE**)pp_pcm
+water	22:20	0:0	6	(
+water	22:21	0:0	6	const
+water	22:27	0:0	6	INTERLEAVE_TYPE
+op	22:42	0:0	6	*
+op	22:43	0:0	6	*
+water	22:44	0:0	6	)
+water	22:45	0:0	6	pp_pcm
+arg	22:53	22:71	5	p_sys->vi.channels
+water	22:53	0:0	6	p_sys
+op	22:58	0:0	6	->
+water	22:60	0:0	6	vi
+op	22:62	0:0	6	.
+water	22:63	0:0	6	channels
+arg	22:73	22:82	5	i_samples
+water	22:73	0:0	6	i_samples
+arg	23:20	23:40	5	p_sys->pi_chan_table
+water	23:20	0:0	6	p_sys
+op	23:25	0:0	6	->
+water	23:27	0:0	6	pi_chan_table
+water	23:41	0:0	4	;
+call	25:8	25:53	4	vorbis_synthesis_read
+arg	25:31	25:41	5	&p_sys->vd
+op	25:31	0:0	6	&
+water	25:32	0:0	6	p_sys
+op	25:37	0:0	6	->
+water	25:39	0:0	6	vd
+arg	25:43	25:53	5	i_samples
+water	25:43	0:0	6	i_samples
+water	25:54	0:0	4	;
+water	27:8	0:0	4	p_aout_buffer
+op	27:21	0:0	4	->
+water	27:23	0:0	4	i_pts
+op	27:29	0:0	4	=
+call	27:31	27:58	4	date_Get
+arg	27:41	27:58	5	&p_sys->end_date
+op	27:41	0:0	6	&
+water	27:42	0:0	6	p_sys
+op	27:47	0:0	6	->
+water	27:49	0:0	6	end_date
+water	27:59	0:0	4	;
+water	28:8	0:0	4	p_aout_buffer
+op	28:21	0:0	4	->
+water	28:23	0:0	4	i_length
+op	28:32	0:0	4	=
+call	28:34	29:53	4	date_Increment
+arg	28:50	28:66	5	&p_sys->end_date
+op	28:50	0:0	6	&
+water	28:51	0:0	6	p_sys
+op	28:56	0:0	6	->
+water	28:58	0:0	6	end_date
+arg	29:43	29:53	5	i_samples
+water	29:43	0:0	6	i_samples
+op	29:55	0:0	4	-
+water	29:57	0:0	4	p_aout_buffer
+op	29:70	0:0	4	->
+water	29:72	0:0	4	i_pts
+water	29:77	0:0	4	;
+return	30:8	30:28	4	p_aout_buffer
+water	30:15	0:0	5	p_aout_buffer
+water	31:4	0:0	4	}
+else	32:4	35:4	2
+stmts	33:4	35:4	3	
+water	33:4	0:0	4	{
+return	34:8	34:19	4	NULL
+water	34:15	0:0	5	NULL
+water	35:4	0:0	4	}

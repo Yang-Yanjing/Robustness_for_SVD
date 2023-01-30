@@ -1,0 +1,249 @@
+func	2:0	55:0	0	int	OutOpenAvio
+params	2:15	0:0	1	
+param	2:16	2:36	2	vlc_object_t *	object
+stmnts	0:0	54:23	1	
+decl	4:4	4:58	2	sout_access_out_t	*access
+op	4:30	0:0	2	=
+water	4:32	0:0	2	(
+water	4:33	0:0	2	sout_access_out_t
+op	4:50	0:0	2	*
+water	4:51	0:0	2	)
+water	4:52	0:0	2	object
+call	5:4	5:78	2	config_ChainParse
+arg	5:23	5:29	3	access
+water	5:23	0:0	4	access
+arg	5:31	5:43	3	"sout-avio-"
+water	5:31	0:0	4	"sout-avio-"
+arg	5:45	5:62	3	ppsz_sout_options
+water	5:45	0:0	4	ppsz_sout_options
+arg	5:64	5:78	3	access->p_cfg
+water	5:64	0:0	4	access
+op	5:70	0:0	4	->
+water	5:72	0:0	4	p_cfg
+water	5:79	0:0	2	;
+decl	6:4	6:53	2	sout_access_out_sys_t	*sys
+op	6:31	0:0	2	=
+call	6:33	6:52	3	malloc
+arg	6:40	6:52	4	sizeof(*sys)
+op	6:40	0:0	5	sizeof
+water	6:46	0:0	5	(
+op	6:47	0:0	5	*
+water	6:48	0:0	5	sys
+water	6:51	0:0	5	)
+if	7:4	8:25	2	(! sys)
+cond	7:8	7:9	3	! sys
+op	7:8	0:0	4	!
+water	7:9	0:0	4	sys
+stmts	8:8	8:25	3	
+return	8:8	8:25	4	VLC_ENOMEM
+water	8:15	0:0	5	VLC_ENOMEM
+water	9:4	0:0	2	sys
+op	9:7	0:0	2	->
+water	9:9	0:0	2	context
+op	9:17	0:0	2	=
+water	9:19	0:0	2	NULL
+water	9:23	0:0	2	;
+call	11:4	11:28	2	vlc_init_avformat
+arg	11:22	11:28	3	object
+water	11:22	0:0	4	object
+water	11:29	0:0	2	;
+if	12:4	13:18	2	(! access -> psz_path)
+cond	12:8	12:17	3	! access -> psz_path
+op	12:8	0:0	4	!
+water	12:9	0:0	4	access
+op	12:15	0:0	4	->
+water	12:17	0:0	4	psz_path
+stmts	13:8	13:18	3	
+goto	13:8	13:18	4	error
+water	13:13	0:0	5	error
+decl	14:4	14:11	2	int	ret
+water	16:4	0:0	2	ret
+op	16:8	0:0	2	=
+call	16:10	16:68	2	avio_open
+arg	16:20	16:33	3	&sys->context
+op	16:20	0:0	4	&
+water	16:21	0:0	4	sys
+op	16:24	0:0	4	->
+water	16:26	0:0	4	context
+arg	16:35	16:51	3	access->psz_path
+water	16:35	0:0	4	access
+op	16:41	0:0	4	->
+water	16:43	0:0	4	psz_path
+arg	16:53	16:68	3	AVIO_FLAG_WRITE
+water	16:53	0:0	4	AVIO_FLAG_WRITE
+water	16:69	0:0	2	;
+decl	18:4	21:5	2	AVIOInterruptCB	cb
+op	18:23	0:0	2	=
+water	18:25	0:0	2	{
+op	19:8	0:0	2	.
+water	19:9	0:0	2	callback
+op	19:18	0:0	2	=
+water	19:20	0:0	2	UrlInterruptCallback
+water	19:40	0:0	2	,
+op	20:8	0:0	2	.
+water	20:9	0:0	2	opaque
+op	20:16	0:0	2	=
+water	20:18	0:0	2	access
+water	20:24	0:0	2	,
+water	21:4	0:0	2	}
+decl	22:4	22:32	2	AVDictionary	*options
+op	22:26	0:0	2	=
+water	22:28	0:0	2	NULL
+decl	23:4	23:67	2	char	*psz_opts
+op	23:19	0:0	2	=
+call	23:21	23:66	3	var_InheritString
+arg	23:39	23:45	4	access
+water	23:39	0:0	5	access
+arg	23:47	23:66	4	"sout-avio-options"
+water	23:47	0:0	5	"sout-avio-options"
+if	24:4	27:4	2	(psz_opts && * psz_opts)
+cond	24:8	24:21	3	psz_opts && * psz_opts
+water	24:8	0:0	4	psz_opts
+op	24:17	0:0	4	&&
+op	24:20	0:0	4	*
+water	24:21	0:0	4	psz_opts
+stmts	24:31	27:4	3	
+water	24:31	0:0	4	{
+water	25:8	0:0	4	options
+op	25:16	0:0	4	=
+call	25:18	25:45	4	vlc_av_get_options
+arg	25:37	25:45	5	psz_opts
+water	25:37	0:0	6	psz_opts
+water	25:46	0:0	4	;
+call	26:8	26:21	4	free
+arg	26:13	26:21	5	psz_opts
+water	26:13	0:0	6	psz_opts
+water	26:22	0:0	4	;
+water	27:4	0:0	4	}
+water	28:4	0:0	2	ret
+op	28:8	0:0	2	=
+call	28:10	29:34	2	avio_open2
+arg	28:21	28:34	3	&sys->context
+op	28:21	0:0	4	&
+water	28:22	0:0	4	sys
+op	28:25	0:0	4	->
+water	28:27	0:0	4	context
+arg	28:36	28:52	3	access->psz_path
+water	28:36	0:0	4	access
+op	28:42	0:0	4	->
+water	28:44	0:0	4	psz_path
+arg	28:54	28:69	3	AVIO_FLAG_WRITE
+water	28:54	0:0	4	AVIO_FLAG_WRITE
+arg	29:21	29:24	3	&cb
+op	29:21	0:0	4	&
+water	29:22	0:0	4	cb
+arg	29:26	29:34	3	&options
+op	29:26	0:0	4	&
+water	29:27	0:0	4	options
+water	29:35	0:0	2	;
+decl	30:4	30:31	2	AVDictionaryEntry	*t
+op	30:25	0:0	2	=
+water	30:27	0:0	2	NULL
+while	31:4	32:58	2	(( t =av_dict_get (options ,"" ,t ,AV_DICT_IGNORE_SUFFIX ) ))
+cond	31:11	31:66	3	( t =av_dict_get (options ,"" ,t ,AV_DICT_IGNORE_SUFFIX ) )
+water	31:11	0:0	4	(
+water	31:12	0:0	4	t
+op	31:14	0:0	4	=
+call	31:16	31:65	4	av_dict_get
+arg	31:28	31:35	5	options
+water	31:28	0:0	6	options
+arg	31:37	31:39	5	""
+water	31:37	0:0	6	""
+arg	31:41	31:42	5	t
+water	31:41	0:0	6	t
+arg	31:44	31:65	5	AV_DICT_IGNORE_SUFFIX
+water	31:44	0:0	6	AV_DICT_IGNORE_SUFFIX
+water	31:66	0:0	4	)
+stmts	32:8	32:58	3	
+call	32:8	32:57	4	msg_Err
+arg	32:17	32:23	5	access
+water	32:17	0:0	6	access
+arg	32:25	32:48	5	"unknown option \"%s\""
+water	32:25	0:0	6	"unknown option \"%s\""
+arg	32:50	32:57	5	t->key
+water	32:50	0:0	6	t
+op	32:51	0:0	6	->
+water	32:53	0:0	6	key
+water	32:58	0:0	4	;
+call	33:4	33:25	2	av_dict_free
+arg	33:17	33:25	3	&options
+op	33:17	0:0	4	&
+water	33:18	0:0	4	options
+water	33:26	0:0	2	;
+if	35:4	39:4	2	(ret < 0)
+cond	35:8	35:14	3	ret < 0
+water	35:8	0:0	4	ret
+op	35:12	0:0	4	<
+water	35:14	0:0	4	0
+stmts	35:17	39:4	3	
+water	35:17	0:0	4	{
+water	36:8	0:0	4	errno
+op	36:14	0:0	4	=
+call	36:16	36:29	4	AVUNERROR
+arg	36:26	36:29	5	ret
+water	36:26	0:0	6	ret
+water	36:30	0:0	4	;
+call	37:8	37:61	4	msg_Err
+arg	37:16	37:22	5	access
+water	37:16	0:0	6	access
+arg	37:24	37:43	5	"Failed to open %s"
+water	37:24	0:0	6	"Failed to open %s"
+arg	37:45	37:61	5	access->psz_path
+water	37:45	0:0	6	access
+op	37:51	0:0	6	->
+water	37:53	0:0	6	psz_path
+water	37:62	0:0	4	;
+goto	38:8	38:18	4	error
+water	38:13	0:0	5	error
+water	39:4	0:0	4	}
+if	42:4	45:4	2	(SetupAvioCb (VLC_OBJECT (access ) ))
+cond	42:8	42:38	3	SetupAvioCb (VLC_OBJECT (access ) )
+call	42:8	42:38	4	SetupAvioCb
+arg	42:20	42:38	5	VLC_OBJECT(access)
+call	42:20	42:37	6	VLC_OBJECT
+arg	42:31	42:37	7	access
+water	42:31	0:0	8	access
+stmts	42:41	45:4	3	
+water	42:41	0:0	4	{
+call	43:8	43:46	4	msg_Err
+arg	43:16	43:22	5	access
+water	43:16	0:0	6	access
+arg	43:24	43:46	5	"Module aready in use"
+water	43:24	0:0	6	"Module aready in use"
+water	43:47	0:0	4	;
+goto	44:8	44:18	4	error
+water	44:13	0:0	5	error
+water	45:4	0:0	4	}
+water	47:4	0:0	2	access
+op	47:10	0:0	2	->
+water	47:12	0:0	2	pf_write
+op	47:21	0:0	2	=
+water	47:23	0:0	2	Write
+water	47:28	0:0	2	;
+water	48:4	0:0	2	access
+op	48:10	0:0	2	->
+water	48:12	0:0	2	pf_control
+op	48:23	0:0	2	=
+water	48:25	0:0	2	OutControl
+water	48:35	0:0	2	;
+water	49:4	0:0	2	access
+op	49:10	0:0	2	->
+water	49:12	0:0	2	pf_seek
+op	49:20	0:0	2	=
+water	49:22	0:0	2	OutSeek
+water	49:29	0:0	2	;
+water	50:4	0:0	2	access
+op	50:10	0:0	2	->
+water	50:12	0:0	2	p_sys
+op	50:18	0:0	2	=
+water	50:20	0:0	2	sys
+water	50:23	0:0	2	;
+return	51:4	51:22	2	VLC_SUCCESS
+water	51:11	0:0	3	VLC_SUCCESS
+label	52:0	52:5	2	error :
+call	53:4	53:12	2	free
+arg	53:9	53:12	3	sys
+water	53:9	0:0	4	sys
+water	53:13	0:0	2	;
+return	54:4	54:23	2	VLC_EGENERIC
+water	54:11	0:0	3	VLC_EGENERIC

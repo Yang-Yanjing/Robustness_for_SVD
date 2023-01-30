@@ -1,0 +1,208 @@
+func	2:0	34:0	0	static picture_t *	Filter
+params	2:24	0:0	1	
+param	2:25	2:41	2	filter_t *	filter
+param	2:43	2:57	2	picture_t *	src
+stmnts	0:0	33:14	1	
+decl	4:4	4:37	2	filter_sys_t	*sys
+op	4:22	0:0	2	=
+water	4:24	0:0	2	filter
+op	4:30	0:0	2	->
+water	4:32	0:0	2	p_sys
+decl	5:4	5:46	2	picture_t	*dst
+op	5:19	0:0	2	=
+call	5:21	5:45	3	filter_NewPicture
+arg	5:39	5:45	4	filter
+water	5:39	0:0	5	filter
+if	6:4	9:4	2	(! dst)
+cond	6:8	6:9	3	! dst
+op	6:8	0:0	4	!
+water	6:9	0:0	4	dst
+stmts	6:14	9:4	3	
+water	6:14	0:0	4	{
+call	7:8	7:27	4	picture_Release
+arg	7:24	7:27	5	src
+water	7:24	0:0	6	src
+water	7:28	0:0	4	;
+return	8:8	8:19	4	NULL
+water	8:15	0:0	5	NULL
+water	9:4	0:0	4	}
+call	10:4	10:33	2	vlc_mutex_lock
+arg	10:19	10:33	3	&sys->cfg.lock
+op	10:19	0:0	4	&
+water	10:20	0:0	4	sys
+op	10:23	0:0	4	->
+water	10:25	0:0	4	cfg
+op	10:28	0:0	4	.
+water	10:29	0:0	4	lock
+water	10:34	0:0	2	;
+decl	11:4	11:83	2	const double	variance
+op	11:26	0:0	2	=
+call	11:28	11:82	3	VLC_CLIP
+arg	11:37	11:54	4	sys->cfg.variance
+water	11:37	0:0	5	sys
+op	11:40	0:0	5	->
+water	11:42	0:0	5	cfg
+op	11:45	0:0	5	.
+water	11:46	0:0	5	variance
+arg	11:56	11:68	4	VARIANCE_MIN
+water	11:56	0:0	5	VARIANCE_MIN
+arg	11:70	11:82	4	VARIANCE_MAX
+water	11:70	0:0	5	VARIANCE_MAX
+call	12:4	12:35	2	vlc_mutex_unlock
+arg	12:21	12:35	3	&sys->cfg.lock
+op	12:21	0:0	4	&
+water	12:22	0:0	4	sys
+op	12:25	0:0	4	->
+water	12:27	0:0	4	cfg
+op	12:30	0:0	4	.
+water	12:31	0:0	4	lock
+water	12:36	0:0	2	;
+decl	13:4	13:42	2	const int	scale
+op	13:20	0:0	2	=
+water	13:22	0:0	2	256
+call	13:26	13:41	3	*sqrt
+arg	13:33	13:41	4	variance
+water	13:33	0:0	5	variance
+if	14:4	18:4	2	(scale != sys -> scale)
+cond	14:8	14:22	3	scale != sys -> scale
+water	14:8	0:0	4	scale
+op	14:14	0:0	4	!=
+water	14:17	0:0	4	sys
+op	14:20	0:0	4	->
+water	14:22	0:0	4	scale
+stmts	14:29	18:4	3	
+water	14:29	0:0	4	{
+water	15:8	0:0	4	sys
+op	15:11	0:0	4	->
+water	15:13	0:0	4	scale
+op	15:19	0:0	4	=
+water	15:21	0:0	4	scale
+water	15:26	0:0	4	;
+call	16:8	16:49	4	Scale
+arg	16:14	16:25	5	sys->bank_y
+water	16:14	0:0	6	sys
+op	16:17	0:0	6	->
+water	16:19	0:0	6	bank_y
+arg	16:28	16:37	5	sys->bank
+water	16:28	0:0	6	sys
+op	16:31	0:0	6	->
+water	16:33	0:0	6	bank
+arg	16:39	16:49	5	sys->scale
+water	16:39	0:0	6	sys
+op	16:42	0:0	6	->
+water	16:44	0:0	6	scale
+water	16:50	0:0	4	;
+call	17:8	17:53	4	Scale
+arg	17:14	17:26	5	sys->bank_uv
+water	17:14	0:0	6	sys
+op	17:17	0:0	6	->
+water	17:19	0:0	6	bank_uv
+arg	17:28	17:37	5	sys->bank
+water	17:28	0:0	6	sys
+op	17:31	0:0	6	->
+water	17:33	0:0	6	bank
+arg	17:39	17:53	5	sys->scale/2
+water	17:39	0:0	6	sys
+op	17:42	0:0	6	->
+water	17:44	0:0	6	scale
+op	17:50	0:0	6	/
+water	17:52	0:0	6	2
+water	17:54	0:0	4	;
+water	18:4	0:0	4	}
+for	19:4	30:4	2	( int i = 0 ;i < dst -> i_planes;i ++)
+forinit	0:0	19:18	3	 int i = 0 ;
+decl	19:9	19:18	4	int	i
+op	19:15	0:0	4	=
+water	19:17	0:0	4	0
+cond	19:20	19:29	3	i < dst -> i_planes
+water	19:20	0:0	4	i
+op	19:22	0:0	4	<
+water	19:24	0:0	4	dst
+op	19:27	0:0	4	->
+water	19:29	0:0	4	i_planes
+forexpr	19:39	19:40	3	i ++
+water	19:39	0:0	4	i
+op	19:40	0:0	4	++
+stmts	19:44	30:4	3	
+water	19:44	0:0	4	{
+decl	20:8	20:40	4	const plane_t	*srcp
+op	20:28	0:0	4	=
+op	20:30	0:0	4	&
+water	20:31	0:0	4	src
+op	20:34	0:0	4	->
+water	20:36	0:0	4	p
+op	20:37	0:0	4	[
+water	20:38	0:0	4	i
+op	20:39	0:0	4	]
+decl	21:8	21:40	4	plane_t	*dstp
+op	21:28	0:0	4	=
+op	21:30	0:0	4	&
+water	21:31	0:0	4	dst
+op	21:34	0:0	4	->
+water	21:36	0:0	4	p
+op	21:37	0:0	4	[
+water	21:38	0:0	4	i
+op	21:39	0:0	4	]
+if	22:8	26:8	4	(i == 0 || sys -> is_uv_filtered)
+cond	22:12	22:27	5	i == 0 || sys -> is_uv_filtered
+water	22:12	0:0	6	i
+op	22:14	0:0	6	==
+water	22:17	0:0	6	0
+op	22:19	0:0	6	||
+water	22:22	0:0	6	sys
+op	22:25	0:0	6	->
+water	22:27	0:0	6	is_uv_filtered
+stmts	22:43	26:8	5	
+water	22:43	0:0	6	{
+decl	23:12	24:49	6	int16_t	*bank
+op	23:26	0:0	6	=
+water	23:28	0:0	6	i
+op	23:30	0:0	6	==
+water	23:33	0:0	6	0
+water	23:35	0:0	6	?
+water	23:37	0:0	6	sys
+op	23:40	0:0	6	->
+water	23:42	0:0	6	bank_y
+water	23:49	0:0	6	:
+water	24:37	0:0	6	sys
+op	24:40	0:0	6	->
+water	24:42	0:0	6	bank_uv
+call	25:12	25:60	6	PlaneFilter
+arg	25:24	25:30	7	filter
+water	25:24	0:0	8	filter
+arg	25:32	25:36	7	dstp
+water	25:32	0:0	8	dstp
+arg	25:38	25:42	7	srcp
+water	25:38	0:0	8	srcp
+arg	25:44	25:48	7	bank
+water	25:44	0:0	8	bank
+arg	25:50	25:60	7	&sys->seed
+op	25:50	0:0	8	&
+water	25:51	0:0	8	sys
+op	25:54	0:0	8	->
+water	25:56	0:0	8	seed
+water	25:61	0:0	6	;
+water	26:8	0:0	6	}
+else	27:8	29:8	4
+stmts	27:13	29:8	5	
+water	27:13	0:0	6	{
+call	28:12	28:39	6	plane_CopyPixels
+arg	28:29	28:33	7	dstp
+water	28:29	0:0	8	dstp
+arg	28:35	28:39	7	srcp
+water	28:35	0:0	8	srcp
+water	28:40	0:0	6	;
+water	29:8	0:0	6	}
+water	30:4	0:0	4	}
+call	31:4	31:35	2	picture_CopyProperties
+arg	31:27	31:30	3	dst
+water	31:27	0:0	4	dst
+arg	31:32	31:35	3	src
+water	31:32	0:0	4	src
+water	31:36	0:0	2	;
+call	32:4	32:23	2	picture_Release
+arg	32:20	32:23	3	src
+water	32:20	0:0	4	src
+water	32:24	0:0	2	;
+return	33:4	33:14	2	dst
+water	33:11	0:0	3	dst

@@ -1,0 +1,255 @@
+func	2:0	53:0	0	static void *	EncoderThread
+params	2:26	0:0	1	
+param	2:28	2:38	2	void *	obj
+stmnts	0:0	52:15	1	
+decl	4:4	4:54	2	sout_stream_sys_t	*p_sys
+op	4:29	0:0	2	=
+water	4:31	0:0	2	(
+water	4:32	0:0	2	sout_stream_sys_t
+op	4:49	0:0	2	*
+water	4:50	0:0	2	)
+water	4:51	0:0	2	obj
+decl	5:4	5:46	2	sout_stream_id_sys_t	*id
+op	5:29	0:0	2	=
+water	5:31	0:0	2	p_sys
+op	5:36	0:0	2	->
+water	5:38	0:0	2	id_video
+decl	6:4	6:27	2	picture_t	*p_pic
+op	6:21	0:0	2	=
+water	6:23	0:0	2	NULL
+decl	7:4	7:32	2	int	canc
+op	7:13	0:0	2	=
+call	7:15	7:31	3	vlc_savecancel
+decl	8:4	8:27	2	block_t	*p_block
+op	8:21	0:0	2	=
+water	8:23	0:0	2	NULL
+for	9:4	36:4	2	(;;)
+forinit	9:9	9:9	3	;
+water	9:9	0:0	4	;
+cond	0:0	0:0	3	
+forexpr	0:0	0:0	3	
+stmts	10:4	36:4	3	
+water	10:4	0:0	4	{
+call	11:8	11:41	4	vlc_mutex_lock
+arg	11:24	11:41	5	&p_sys->lock_out
+op	11:24	0:0	6	&
+water	11:25	0:0	6	p_sys
+op	11:30	0:0	6	->
+water	11:32	0:0	6	lock_out
+water	11:42	0:0	4	;
+while	12:8	14:59	4	(! p_sys -> b_abort && ( p_pic =picture_fifo_Pop (p_sys -> pp_pics ) ) == NULL)
+cond	12:15	13:63	5	! p_sys -> b_abort && ( p_pic =picture_fifo_Pop (p_sys -> pp_pics ) ) == NULL
+op	12:15	0:0	6	!
+water	12:16	0:0	6	p_sys
+op	12:21	0:0	6	->
+water	12:23	0:0	6	b_abort
+op	12:31	0:0	6	&&
+water	13:15	0:0	6	(
+water	13:16	0:0	6	p_pic
+op	13:22	0:0	6	=
+call	13:24	13:57	6	picture_fifo_Pop
+arg	13:42	13:57	7	p_sys->pp_pics
+water	13:42	0:0	8	p_sys
+op	13:47	0:0	8	->
+water	13:49	0:0	8	pp_pics
+water	13:58	0:0	6	)
+op	13:60	0:0	6	==
+water	13:63	0:0	6	NULL
+stmts	14:12	14:59	5	
+call	14:12	14:58	6	vlc_cond_wait
+arg	14:27	14:39	7	&p_sys->cond
+op	14:27	0:0	8	&
+water	14:28	0:0	8	p_sys
+op	14:33	0:0	8	->
+water	14:35	0:0	8	cond
+arg	14:41	14:58	7	&p_sys->lock_out
+op	14:41	0:0	8	&
+water	14:42	0:0	8	p_sys
+op	14:47	0:0	8	->
+water	14:49	0:0	8	lock_out
+water	14:59	0:0	6	;
+if	15:8	19:8	4	(p_sys -> b_abort && ! p_pic)
+cond	15:12	15:31	5	p_sys -> b_abort && ! p_pic
+water	15:12	0:0	6	p_sys
+op	15:17	0:0	6	->
+water	15:19	0:0	6	b_abort
+op	15:27	0:0	6	&&
+op	15:30	0:0	6	!
+water	15:31	0:0	6	p_pic
+stmts	16:8	19:8	5	
+water	16:8	0:0	6	{
+call	17:12	17:47	6	vlc_mutex_unlock
+arg	17:30	17:47	7	&p_sys->lock_out
+op	17:30	0:0	8	&
+water	17:31	0:0	8	p_sys
+op	17:36	0:0	8	->
+water	17:38	0:0	8	lock_out
+water	17:48	0:0	6	;
+break	18:12	18:17	6	
+water	19:8	0:0	6	}
+call	20:8	20:43	4	vlc_mutex_unlock
+arg	20:26	20:43	5	&p_sys->lock_out
+op	20:26	0:0	6	&
+water	20:27	0:0	6	p_sys
+op	20:32	0:0	6	->
+water	20:34	0:0	6	lock_out
+water	20:44	0:0	4	;
+if	21:8	28:8	4	(p_pic)
+cond	21:12	21:12	5	p_pic
+water	21:12	0:0	6	p_pic
+stmts	22:8	28:8	5	
+water	22:8	0:0	6	{
+water	23:12	0:0	6	p_block
+op	23:20	0:0	6	=
+call	23:22	23:75	6	id->p_encoder->pf_encode_video
+arg	23:54	23:67	7	id->p_encoder
+water	23:54	0:0	8	id
+op	23:56	0:0	8	->
+water	23:58	0:0	8	p_encoder
+arg	23:69	23:75	7	p_pic
+water	23:69	0:0	8	p_pic
+water	23:76	0:0	6	;
+call	24:12	24:45	6	vlc_mutex_lock
+arg	24:28	24:45	7	&p_sys->lock_out
+op	24:28	0:0	8	&
+water	24:29	0:0	8	p_sys
+op	24:34	0:0	8	->
+water	24:36	0:0	8	lock_out
+water	24:46	0:0	6	;
+call	25:12	25:58	6	block_ChainAppend
+arg	25:31	25:48	7	&p_sys->p_buffers
+op	25:31	0:0	8	&
+water	25:32	0:0	8	p_sys
+op	25:37	0:0	8	->
+water	25:39	0:0	8	p_buffers
+arg	25:50	25:58	7	p_block
+water	25:50	0:0	8	p_block
+water	25:59	0:0	6	;
+call	26:12	26:47	6	vlc_mutex_unlock
+arg	26:30	26:47	7	&p_sys->lock_out
+op	26:30	0:0	8	&
+water	26:31	0:0	8	p_sys
+op	26:36	0:0	8	->
+water	26:38	0:0	8	lock_out
+water	26:48	0:0	6	;
+call	27:12	27:35	6	picture_Release
+arg	27:29	27:35	7	p_pic
+water	27:29	0:0	8	p_pic
+water	27:36	0:0	6	;
+water	28:8	0:0	6	}
+call	29:8	29:41	4	vlc_mutex_lock
+arg	29:24	29:41	5	&p_sys->lock_out
+op	29:24	0:0	6	&
+water	29:25	0:0	6	p_sys
+op	29:30	0:0	6	->
+water	29:32	0:0	6	lock_out
+water	29:42	0:0	4	;
+if	30:8	34:8	4	(p_sys -> b_abort)
+cond	30:12	30:19	5	p_sys -> b_abort
+water	30:12	0:0	6	p_sys
+op	30:17	0:0	6	->
+water	30:19	0:0	6	b_abort
+stmts	31:8	34:8	5	
+water	31:8	0:0	6	{
+call	32:12	32:47	6	vlc_mutex_unlock
+arg	32:30	32:47	7	&p_sys->lock_out
+op	32:30	0:0	8	&
+water	32:31	0:0	8	p_sys
+op	32:36	0:0	8	->
+water	32:38	0:0	8	lock_out
+water	32:48	0:0	6	;
+break	33:12	33:17	6	
+water	34:8	0:0	6	}
+call	35:8	35:43	4	vlc_mutex_unlock
+arg	35:26	35:43	5	&p_sys->lock_out
+op	35:26	0:0	6	&
+water	35:27	0:0	6	p_sys
+op	35:32	0:0	6	->
+water	35:34	0:0	6	lock_out
+water	35:44	0:0	4	;
+water	36:4	0:0	4	}
+call	38:4	38:37	2	vlc_mutex_lock
+arg	38:20	38:37	3	&p_sys->lock_out
+op	38:20	0:0	4	&
+water	38:21	0:0	4	p_sys
+op	38:26	0:0	4	->
+water	38:28	0:0	4	lock_out
+water	38:38	0:0	2	;
+while	39:4	44:4	2	(( p_pic =picture_fifo_Pop (p_sys -> pp_pics ) ) != NULL)
+cond	39:11	39:59	3	( p_pic =picture_fifo_Pop (p_sys -> pp_pics ) ) != NULL
+water	39:11	0:0	4	(
+water	39:12	0:0	4	p_pic
+op	39:18	0:0	4	=
+call	39:20	39:53	4	picture_fifo_Pop
+arg	39:38	39:53	5	p_sys->pp_pics
+water	39:38	0:0	6	p_sys
+op	39:43	0:0	6	->
+water	39:45	0:0	6	pp_pics
+water	39:54	0:0	4	)
+op	39:56	0:0	4	!=
+water	39:59	0:0	4	NULL
+stmts	40:4	44:4	3	
+water	40:4	0:0	4	{
+water	41:8	0:0	4	p_block
+op	41:16	0:0	4	=
+call	41:18	41:71	4	id->p_encoder->pf_encode_video
+arg	41:50	41:63	5	id->p_encoder
+water	41:50	0:0	6	id
+op	41:52	0:0	6	->
+water	41:54	0:0	6	p_encoder
+arg	41:65	41:71	5	p_pic
+water	41:65	0:0	6	p_pic
+water	41:72	0:0	4	;
+call	42:8	42:54	4	block_ChainAppend
+arg	42:27	42:44	5	&p_sys->p_buffers
+op	42:27	0:0	6	&
+water	42:28	0:0	6	p_sys
+op	42:33	0:0	6	->
+water	42:35	0:0	6	p_buffers
+arg	42:46	42:54	5	p_block
+water	42:46	0:0	6	p_block
+water	42:55	0:0	4	;
+call	43:8	43:31	4	picture_Release
+arg	43:25	43:31	5	p_pic
+water	43:25	0:0	6	p_pic
+water	43:32	0:0	4	;
+water	44:4	0:0	4	}
+do	46:4	49:4	2	(p_block)
+cond	49:13	49:13	3	p_block
+water	49:13	0:0	4	p_block
+stmts	46:7	49:4	3	
+water	46:7	0:0	4	{
+water	47:7	0:0	4	p_block
+op	47:15	0:0	4	=
+call	47:17	47:68	4	id->p_encoder->pf_encode_video
+arg	47:48	47:61	5	id->p_encoder
+water	47:48	0:0	6	id
+op	47:50	0:0	6	->
+water	47:52	0:0	6	p_encoder
+arg	47:63	47:68	5	NULL
+water	47:63	0:0	6	NULL
+water	47:69	0:0	4	;
+call	48:7	48:53	4	block_ChainAppend
+arg	48:26	48:43	5	&p_sys->p_buffers
+op	48:26	0:0	6	&
+water	48:27	0:0	6	p_sys
+op	48:32	0:0	6	->
+water	48:34	0:0	6	p_buffers
+arg	48:45	48:53	5	p_block
+water	48:45	0:0	6	p_block
+water	48:54	0:0	4	;
+water	49:4	0:0	4	}
+water	49:22	0:0	2	;
+call	50:4	50:39	2	vlc_mutex_unlock
+arg	50:22	50:39	3	&p_sys->lock_out
+op	50:22	0:0	4	&
+water	50:23	0:0	4	p_sys
+op	50:28	0:0	4	->
+water	50:30	0:0	4	lock_out
+water	50:40	0:0	2	;
+call	51:4	51:27	2	vlc_restorecancel
+arg	51:23	51:27	3	canc
+water	51:23	0:0	4	canc
+water	51:28	0:0	2	;
+return	52:4	52:15	2	NULL
+water	52:11	0:0	3	NULL

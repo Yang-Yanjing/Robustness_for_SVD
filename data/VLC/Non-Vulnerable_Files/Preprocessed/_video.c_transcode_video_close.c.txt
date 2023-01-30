@@ -1,0 +1,192 @@
+func	2:0	32:0	0	void	transcode_video_close
+params	2:26	0:0	1	
+param	2:28	2:51	2	sout_stream_t *	p_stream
+param	3:35	3:60	2	sout_stream_id_sys_t *	id
+stmnts	5:4	31:45	1	
+if	5:4	17:4	2	(p_stream -> p_sys -> i_threads >= 1)
+cond	5:8	5:38	3	p_stream -> p_sys -> i_threads >= 1
+water	5:8	0:0	4	p_stream
+op	5:16	0:0	4	->
+water	5:18	0:0	4	p_sys
+op	5:23	0:0	4	->
+water	5:25	0:0	4	i_threads
+op	5:35	0:0	4	>=
+water	5:38	0:0	4	1
+stmts	6:4	17:4	3	
+water	6:4	0:0	4	{
+call	7:8	7:51	4	vlc_mutex_lock
+arg	7:24	7:51	5	&p_stream->p_sys->lock_out
+op	7:24	0:0	6	&
+water	7:25	0:0	6	p_stream
+op	7:33	0:0	6	->
+water	7:35	0:0	6	p_sys
+op	7:40	0:0	6	->
+water	7:42	0:0	6	lock_out
+water	7:52	0:0	4	;
+water	8:8	0:0	4	p_stream
+op	8:16	0:0	4	->
+water	8:18	0:0	4	p_sys
+op	8:23	0:0	4	->
+water	8:25	0:0	4	b_abort
+op	8:33	0:0	4	=
+water	8:35	0:0	4	true
+water	8:39	0:0	4	;
+call	9:8	9:48	4	vlc_cond_signal
+arg	9:25	9:48	5	&p_stream->p_sys->cond
+op	9:25	0:0	6	&
+water	9:26	0:0	6	p_stream
+op	9:34	0:0	6	->
+water	9:36	0:0	6	p_sys
+op	9:41	0:0	6	->
+water	9:43	0:0	6	cond
+water	9:49	0:0	4	;
+call	10:8	10:53	4	vlc_mutex_unlock
+arg	10:26	10:53	5	&p_stream->p_sys->lock_out
+op	10:26	0:0	6	&
+water	10:27	0:0	6	p_stream
+op	10:35	0:0	6	->
+water	10:37	0:0	6	p_sys
+op	10:42	0:0	6	->
+water	10:44	0:0	6	lock_out
+water	10:54	0:0	4	;
+call	11:8	11:48	4	vlc_join
+arg	11:18	11:41	5	p_stream->p_sys->thread
+water	11:18	0:0	6	p_stream
+op	11:26	0:0	6	->
+water	11:28	0:0	6	p_sys
+op	11:33	0:0	6	->
+water	11:35	0:0	6	thread
+arg	11:43	11:48	5	NULL
+water	11:43	0:0	6	NULL
+water	11:49	0:0	4	;
+call	12:8	12:54	4	vlc_mutex_destroy
+arg	12:27	12:54	5	&p_stream->p_sys->lock_out
+op	12:27	0:0	6	&
+water	12:28	0:0	6	p_stream
+op	12:36	0:0	6	->
+water	12:38	0:0	6	p_sys
+op	12:43	0:0	6	->
+water	12:45	0:0	6	lock_out
+water	12:55	0:0	4	;
+call	13:8	13:49	4	vlc_cond_destroy
+arg	13:26	13:49	5	&p_stream->p_sys->cond
+op	13:26	0:0	6	&
+water	13:27	0:0	6	p_stream
+op	13:35	0:0	6	->
+water	13:37	0:0	6	p_sys
+op	13:42	0:0	6	->
+water	13:44	0:0	6	cond
+water	13:50	0:0	4	;
+call	14:8	14:54	4	picture_fifo_Delete
+arg	14:29	14:54	5	p_stream->p_sys->pp_pics
+water	14:29	0:0	6	p_stream
+op	14:37	0:0	6	->
+water	14:39	0:0	6	p_sys
+op	14:44	0:0	6	->
+water	14:46	0:0	6	pp_pics
+water	14:55	0:0	4	;
+call	15:8	15:55	4	block_ChainRelease
+arg	15:28	15:55	5	p_stream->p_sys->p_buffers
+water	15:28	0:0	6	p_stream
+op	15:36	0:0	6	->
+water	15:38	0:0	6	p_sys
+op	15:43	0:0	6	->
+water	15:45	0:0	6	p_buffers
+water	15:56	0:0	4	;
+water	16:8	0:0	4	p_stream
+op	16:16	0:0	4	->
+water	16:18	0:0	4	p_sys
+op	16:23	0:0	4	->
+water	16:25	0:0	4	pp_pics
+op	16:33	0:0	4	=
+water	16:35	0:0	4	NULL
+water	16:39	0:0	4	;
+water	17:4	0:0	4	}
+if	19:4	20:63	2	(id -> p_decoder -> p_module)
+cond	19:8	19:23	3	id -> p_decoder -> p_module
+water	19:8	0:0	4	id
+op	19:10	0:0	4	->
+water	19:12	0:0	4	p_decoder
+op	19:21	0:0	4	->
+water	19:23	0:0	4	p_module
+stmts	20:8	20:63	3	
+call	20:8	20:62	4	module_unneed
+arg	20:23	20:36	5	id->p_decoder
+water	20:23	0:0	6	id
+op	20:25	0:0	6	->
+water	20:27	0:0	6	p_decoder
+arg	20:38	20:62	5	id->p_decoder->p_module
+water	20:38	0:0	6	id
+op	20:40	0:0	6	->
+water	20:42	0:0	6	p_decoder
+op	20:51	0:0	6	->
+water	20:53	0:0	6	p_module
+water	20:63	0:0	4	;
+if	21:4	22:55	2	(id -> p_decoder -> p_description)
+cond	21:8	21:23	3	id -> p_decoder -> p_description
+water	21:8	0:0	4	id
+op	21:10	0:0	4	->
+water	21:12	0:0	4	p_decoder
+op	21:21	0:0	4	->
+water	21:23	0:0	4	p_description
+stmts	22:8	22:55	3	
+call	22:8	22:54	4	vlc_meta_Delete
+arg	22:25	22:54	5	id->p_decoder->p_description
+water	22:25	0:0	6	id
+op	22:27	0:0	6	->
+water	22:29	0:0	6	p_decoder
+op	22:38	0:0	6	->
+water	22:40	0:0	6	p_description
+water	22:55	0:0	4	;
+call	23:4	23:33	2	free
+arg	23:10	23:33	3	id->p_decoder->p_owner
+water	23:10	0:0	4	id
+op	23:12	0:0	4	->
+water	23:14	0:0	4	p_decoder
+op	23:23	0:0	4	->
+water	23:25	0:0	4	p_owner
+water	23:34	0:0	2	;
+if	25:4	26:63	2	(id -> p_encoder -> p_module)
+cond	25:8	25:23	3	id -> p_encoder -> p_module
+water	25:8	0:0	4	id
+op	25:10	0:0	4	->
+water	25:12	0:0	4	p_encoder
+op	25:21	0:0	4	->
+water	25:23	0:0	4	p_module
+stmts	26:8	26:63	3	
+call	26:8	26:62	4	module_unneed
+arg	26:23	26:36	5	id->p_encoder
+water	26:23	0:0	6	id
+op	26:25	0:0	6	->
+water	26:27	0:0	6	p_encoder
+arg	26:38	26:62	5	id->p_encoder->p_module
+water	26:38	0:0	6	id
+op	26:40	0:0	6	->
+water	26:42	0:0	6	p_encoder
+op	26:51	0:0	6	->
+water	26:53	0:0	6	p_module
+water	26:63	0:0	4	;
+if	28:4	29:44	2	(id -> p_f_chain)
+cond	28:8	28:12	3	id -> p_f_chain
+water	28:8	0:0	4	id
+op	28:10	0:0	4	->
+water	28:12	0:0	4	p_f_chain
+stmts	29:8	29:44	3	
+call	29:8	29:43	4	filter_chain_Delete
+arg	29:29	29:43	5	id->p_f_chain
+water	29:29	0:0	6	id
+op	29:31	0:0	6	->
+water	29:33	0:0	6	p_f_chain
+water	29:44	0:0	4	;
+if	30:4	31:45	2	(id -> p_uf_chain)
+cond	30:8	30:12	3	id -> p_uf_chain
+water	30:8	0:0	4	id
+op	30:10	0:0	4	->
+water	30:12	0:0	4	p_uf_chain
+stmts	31:8	31:45	3	
+call	31:8	31:44	4	filter_chain_Delete
+arg	31:29	31:44	5	id->p_uf_chain
+water	31:29	0:0	6	id
+op	31:31	0:0	6	->
+water	31:33	0:0	6	p_uf_chain
+water	31:45	0:0	4	;

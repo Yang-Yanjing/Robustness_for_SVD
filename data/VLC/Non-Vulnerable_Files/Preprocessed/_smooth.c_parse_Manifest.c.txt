@@ -1,0 +1,1424 @@
+func	2:0	259:0	0	static int	parse_Manifest
+params	2:25	0:0	1	
+param	2:27	2:39	2	stream_t *	s
+stmnts	0:0	258:22	1	
+decl	4:4	4:34	2	stream_sys_t	*p_sys
+op	4:24	0:0	2	=
+water	4:26	0:0	2	s
+op	4:27	0:0	2	->
+water	4:29	0:0	2	p_sys
+decl	5:4	5:25	2	xml_t	*vlc_xml
+op	5:19	0:0	2	=
+water	5:21	0:0	2	NULL
+decl	6:4	6:35	2	xml_reader_t	*vlc_reader
+op	6:29	0:0	2	=
+water	6:31	0:0	2	NULL
+decl	7:4	7:25	2	int	type
+op	7:13	0:0	2	=
+water	7:15	0:0	2	UNKNOWN_ES
+decl	8:4	8:28	2	const char	*name
+water	8:20	0:0	2	,
+decl	8:4	8:28	2	const char	*value
+decl	9:4	9:30	2	stream_t	*st
+op	9:17	0:0	2	=
+water	9:19	0:0	2	s
+op	9:20	0:0	2	->
+water	9:22	0:0	2	p_source
+call	10:4	10:37	2	msg_Dbg
+arg	10:13	10:14	3	s
+water	10:13	0:0	4	s
+arg	10:16	10:37	3	"Manifest parsing\n"
+water	10:16	0:0	4	"Manifest parsing\n"
+water	10:38	0:0	2	;
+water	11:4	0:0	2	vlc_xml
+op	11:12	0:0	2	=
+call	11:14	11:29	2	xml_Create
+arg	11:26	11:29	3	st
+water	11:26	0:0	4	st
+water	11:30	0:0	2	;
+if	12:4	16:4	2	(! vlc_xml)
+cond	12:8	12:9	3	! vlc_xml
+op	12:8	0:0	4	!
+water	12:9	0:0	4	vlc_xml
+stmts	13:4	16:4	3	
+water	13:4	0:0	4	{
+call	14:8	14:48	4	msg_Err
+arg	14:17	14:18	5	s
+water	14:17	0:0	6	s
+arg	14:20	14:48	5	"Failed to open XML parser"
+water	14:20	0:0	6	"Failed to open XML parser"
+water	14:49	0:0	4	;
+return	15:8	15:27	4	VLC_EGENERIC
+water	15:15	0:0	5	VLC_EGENERIC
+water	16:4	0:0	4	}
+water	17:4	0:0	2	vlc_reader
+op	17:15	0:0	2	=
+call	17:17	17:47	2	xml_ReaderCreate
+arg	17:35	17:42	3	vlc_xml
+water	17:35	0:0	4	vlc_xml
+arg	17:44	17:47	3	st
+water	17:44	0:0	4	st
+water	17:48	0:0	2	;
+if	18:4	23:4	2	(! vlc_reader)
+cond	18:8	18:9	3	! vlc_reader
+op	18:8	0:0	4	!
+water	18:9	0:0	4	vlc_reader
+stmts	19:4	23:4	3	
+water	19:4	0:0	4	{
+call	20:8	20:56	4	msg_Err
+arg	20:17	20:18	5	s
+water	20:17	0:0	6	s
+arg	20:20	20:56	5	"Failed to open source for parsing"
+water	20:20	0:0	6	"Failed to open source for parsing"
+water	20:57	0:0	4	;
+call	21:8	21:28	4	xml_Delete
+arg	21:20	21:28	5	vlc_xml
+water	21:20	0:0	6	vlc_xml
+water	21:29	0:0	4	;
+return	22:8	22:27	4	VLC_EGENERIC
+water	22:15	0:0	5	VLC_EGENERIC
+water	23:4	0:0	4	}
+decl	24:4	24:20	2	const char	*node
+decl	25:4	25:25	2	uint8_t	*WaveFormatEx
+decl	26:4	26:28	2	sms_stream_t	*sms
+op	26:22	0:0	2	=
+water	26:24	0:0	2	NULL
+decl	27:4	27:30	2	quality_level_t	*ql
+op	27:24	0:0	2	=
+water	27:26	0:0	2	NULL
+decl	28:4	28:40	2	int64_t	start_time
+op	28:23	0:0	2	=
+water	28:25	0:0	2	0
+water	28:26	0:0	2	,
+decl	28:4	28:40	2	int64_t	duration
+op	28:37	0:0	2	=
+water	28:39	0:0	2	0
+decl	29:4	29:58	2	int64_t	computed_start_time
+op	29:32	0:0	2	=
+water	29:34	0:0	2	0
+water	29:35	0:0	2	,
+decl	29:4	29:58	2	int64_t	computed_duration
+op	29:55	0:0	2	=
+water	29:57	0:0	2	0
+water	30:4	0:0	2	unsigned
+water	30:13	0:0	2	next_track_id
+op	30:27	0:0	2	=
+water	30:29	0:0	2	1
+water	30:30	0:0	2	;
+water	31:4	0:0	2	unsigned
+water	31:13	0:0	2	next_qid
+op	31:22	0:0	2	=
+water	31:24	0:0	2	1
+water	31:25	0:0	2	;
+decl	32:4	32:22	2	int	loop_count
+op	32:19	0:0	2	=
+water	32:21	0:0	2	0
+decl	33:4	33:24	2	bool	b_weird
+op	33:17	0:0	2	=
+water	33:19	0:0	2	false
+while	35:4	253:4	2	(( type =xml_ReaderNextNode (vlc_reader ,& node ) ) > 0)
+cond	35:11	35:62	3	( type =xml_ReaderNextNode (vlc_reader ,& node ) ) > 0
+water	35:11	0:0	4	(
+water	35:12	0:0	4	type
+op	35:17	0:0	4	=
+call	35:19	35:57	4	xml_ReaderNextNode
+arg	35:39	35:49	5	vlc_reader
+water	35:39	0:0	6	vlc_reader
+arg	35:51	35:57	5	&node
+op	35:51	0:0	6	&
+water	35:52	0:0	6	node
+water	35:58	0:0	4	)
+op	35:60	0:0	4	>
+water	35:62	0:0	4	0
+stmts	36:4	253:4	3	
+water	36:4	0:0	4	{
+switch	37:8	252:8	4	(type)
+cond	37:16	37:16	5	type
+water	37:16	0:0	6	type
+stmts	38:8	252:8	5	
+water	38:8	0:0	6	{
+label	39:12	39:37	6	case XML_READER_STARTELEM :
+if	40:16	51:16	6	(!strcmp (node ,"SmoothStreamingMedia" ))
+cond	40:20	40:58	7	!strcmp (node ,"SmoothStreamingMedia" )
+op	40:20	0:0	8	!
+call	40:21	40:58	8	strcmp
+arg	40:29	40:33	9	node
+water	40:29	0:0	10	node
+arg	40:35	40:58	9	"SmoothStreamingMedia"
+water	40:35	0:0	10	"SmoothStreamingMedia"
+stmts	41:16	51:16	7	
+water	41:16	0:0	8	{
+while	42:20	48:20	8	(( name =xml_ReaderNextAttr (vlc_reader ,& value ) ))
+cond	42:27	42:75	9	( name =xml_ReaderNextAttr (vlc_reader ,& value ) )
+water	42:27	0:0	10	(
+water	42:28	0:0	10	name
+op	42:33	0:0	10	=
+call	42:35	42:74	10	xml_ReaderNextAttr
+arg	42:55	42:65	11	vlc_reader
+water	42:55	0:0	12	vlc_reader
+arg	42:67	42:74	11	&value
+op	42:67	0:0	12	&
+water	42:68	0:0	12	value
+water	42:75	0:0	10	)
+stmts	43:20	48:20	9	
+water	43:20	0:0	10	{
+if	44:24	45:77	10	(!strcmp (name ,"Duration" ))
+cond	44:28	44:54	11	!strcmp (name ,"Duration" )
+op	44:28	0:0	12	!
+call	44:29	44:54	12	strcmp
+arg	44:37	44:41	13	name
+water	44:37	0:0	14	name
+arg	44:43	44:54	13	"Duration"
+water	44:43	0:0	14	"Duration"
+stmts	45:28	45:77	11	
+water	45:28	0:0	12	p_sys
+op	45:33	0:0	12	->
+water	45:35	0:0	12	vod_duration
+op	45:48	0:0	12	=
+call	45:50	45:76	12	strtoull
+arg	45:60	45:65	13	value
+water	45:60	0:0	14	value
+arg	45:67	45:71	13	NULL
+water	45:67	0:0	14	NULL
+arg	45:73	45:76	13	10
+water	45:73	0:0	14	10
+water	45:77	0:0	12	;
+else	46:24	47:74	10
+stmts	46:29	47:74	11	
+if	46:29	47:74	12	(!strcmp (name ,"TimeScale" ))
+cond	46:33	46:60	13	!strcmp (name ,"TimeScale" )
+op	46:33	0:0	14	!
+call	46:34	46:60	14	strcmp
+arg	46:42	46:46	15	name
+water	46:42	0:0	16	name
+arg	46:48	46:60	15	"TimeScale"
+water	46:48	0:0	16	"TimeScale"
+stmts	47:28	47:74	13	
+water	47:28	0:0	14	p_sys
+op	47:33	0:0	14	->
+water	47:35	0:0	14	timescale
+op	47:45	0:0	14	=
+call	47:47	47:73	14	strtoull
+arg	47:57	47:62	15	value
+water	47:57	0:0	16	value
+arg	47:64	47:68	15	NULL
+water	47:64	0:0	16	NULL
+arg	47:70	47:73	15	10
+water	47:70	0:0	16	10
+water	47:74	0:0	14	;
+water	48:20	0:0	10	}
+if	49:20	50:52	8	(! p_sys -> timescale)
+cond	49:24	49:32	9	! p_sys -> timescale
+op	49:24	0:0	10	!
+water	49:25	0:0	10	p_sys
+op	49:30	0:0	10	->
+water	49:32	0:0	10	timescale
+stmts	50:24	50:52	9	
+water	50:24	0:0	10	p_sys
+op	50:29	0:0	10	->
+water	50:31	0:0	10	timescale
+op	50:41	0:0	10	=
+water	50:43	0:0	10	TIMESCALE
+water	50:52	0:0	10	;
+water	51:16	0:0	8	}
+else	52:16	104:16	6
+stmts	52:21	104:16	7	
+if	52:21	104:16	8	(!strcmp (node ,"StreamIndex" ))
+cond	52:25	52:54	9	!strcmp (node ,"StreamIndex" )
+op	52:25	0:0	10	!
+call	52:26	52:54	10	strcmp
+arg	52:34	52:38	11	node
+water	52:34	0:0	12	node
+arg	52:40	52:54	11	"StreamIndex"
+water	52:40	0:0	12	"StreamIndex"
+stmts	53:16	104:16	9	
+water	53:16	0:0	10	{
+call	54:20	54:34	10	sms_Free
+arg	54:30	54:34	11	sms
+water	54:30	0:0	12	sms
+water	54:35	0:0	10	;
+water	55:20	0:0	10	sms
+op	55:24	0:0	10	=
+call	55:26	55:34	10	sms_New
+water	55:35	0:0	10	;
+if	56:20	61:20	10	(unlikely (! sms ))
+cond	56:24	56:39	11	unlikely (! sms )
+call	56:24	56:39	12	unlikely
+arg	56:34	56:39	13	!sms
+op	56:34	0:0	14	!
+water	56:35	0:0	14	sms
+stmts	57:20	61:20	11	
+water	57:20	0:0	12	{
+call	58:24	58:53	12	xml_ReaderDelete
+arg	58:42	58:53	13	vlc_reader
+water	58:42	0:0	14	vlc_reader
+water	58:54	0:0	12	;
+call	59:24	59:44	12	xml_Delete
+arg	59:36	59:44	13	vlc_xml
+water	59:36	0:0	14	vlc_xml
+water	59:45	0:0	12	;
+return	60:24	60:41	12	VLC_ENOMEM
+water	60:31	0:0	13	VLC_ENOMEM
+water	61:20	0:0	12	}
+water	62:20	0:0	10	sms
+op	62:23	0:0	10	->
+water	62:25	0:0	10	id
+op	62:28	0:0	10	=
+water	62:30	0:0	10	next_track_id
+water	62:43	0:0	10	;
+water	63:20	0:0	10	next_track_id
+op	63:33	0:0	10	++
+water	63:35	0:0	10	;
+while	64:20	92:20	10	(( name =xml_ReaderNextAttr (vlc_reader ,& value ) ))
+cond	64:27	64:75	11	( name =xml_ReaderNextAttr (vlc_reader ,& value ) )
+water	64:27	0:0	12	(
+water	64:28	0:0	12	name
+op	64:33	0:0	12	=
+call	64:35	64:74	12	xml_ReaderNextAttr
+arg	64:55	64:65	13	vlc_reader
+water	64:55	0:0	14	vlc_reader
+arg	64:67	64:74	13	&value
+op	64:67	0:0	14	&
+water	64:68	0:0	14	value
+water	64:75	0:0	12	)
+stmts	65:20	92:20	11	
+water	65:20	0:0	12	{
+if	66:24	74:24	12	(!strcmp (name ,"Type" ))
+cond	66:28	66:50	13	!strcmp (name ,"Type" )
+op	66:28	0:0	14	!
+call	66:29	66:50	14	strcmp
+arg	66:37	66:41	15	name
+water	66:37	0:0	16	name
+arg	66:43	66:50	15	"Type"
+water	66:43	0:0	16	"Type"
+stmts	67:24	74:24	13	
+water	67:24	0:0	14	{
+if	68:28	69:52	14	(!strcmp (value ,"video" ))
+cond	68:32	68:56	15	!strcmp (value ,"video" )
+op	68:32	0:0	16	!
+call	68:33	68:56	16	strcmp
+arg	68:41	68:46	17	value
+water	68:41	0:0	18	value
+arg	68:48	68:56	17	"video"
+water	68:48	0:0	18	"video"
+stmts	69:32	69:52	15	
+water	69:32	0:0	16	sms
+op	69:35	0:0	16	->
+water	69:37	0:0	16	type
+op	69:42	0:0	16	=
+water	69:44	0:0	16	VIDEO_ES
+water	69:52	0:0	16	;
+else	70:28	71:52	14
+stmts	70:33	71:52	15	
+if	70:33	71:52	16	(!strcmp (value ,"audio" ))
+cond	70:37	70:61	17	!strcmp (value ,"audio" )
+op	70:37	0:0	18	!
+call	70:38	70:61	18	strcmp
+arg	70:46	70:51	19	value
+water	70:46	0:0	20	value
+arg	70:53	70:61	19	"audio"
+water	70:53	0:0	20	"audio"
+stmts	71:32	71:52	17	
+water	71:32	0:0	18	sms
+op	71:35	0:0	18	->
+water	71:37	0:0	18	type
+op	71:42	0:0	18	=
+water	71:44	0:0	18	AUDIO_ES
+water	71:52	0:0	18	;
+else	72:28	73:50	14
+stmts	72:33	73:50	15	
+if	72:33	73:50	16	(!strcmp (value ,"text" ))
+cond	72:37	72:60	17	!strcmp (value ,"text" )
+op	72:37	0:0	18	!
+call	72:38	72:60	18	strcmp
+arg	72:46	72:51	19	value
+water	72:46	0:0	20	value
+arg	72:53	72:60	19	"text"
+water	72:53	0:0	20	"text"
+stmts	73:32	73:50	17	
+water	73:32	0:0	18	sms
+op	73:35	0:0	18	->
+water	73:37	0:0	18	type
+op	73:42	0:0	18	=
+water	73:44	0:0	18	SPU_ES
+water	73:50	0:0	18	;
+water	74:24	0:0	14	}
+else	75:24	76:55	12
+stmts	75:29	76:55	13	
+if	75:29	76:55	14	(!strcmp (name ,"Name" ))
+cond	75:33	75:55	15	!strcmp (name ,"Name" )
+op	75:33	0:0	16	!
+call	75:34	75:55	16	strcmp
+arg	75:42	75:46	17	name
+water	75:42	0:0	18	name
+arg	75:48	75:55	17	"Name"
+water	75:48	0:0	18	"Name"
+stmts	76:28	76:55	15	
+water	76:28	0:0	16	sms
+op	76:31	0:0	16	->
+water	76:33	0:0	16	name
+op	76:38	0:0	16	=
+call	76:40	76:54	16	strdup
+arg	76:48	76:54	17	value
+water	76:48	0:0	18	value
+water	76:55	0:0	16	;
+else	77:24	78:72	12
+stmts	77:29	78:72	13	
+if	77:29	78:72	14	(!strcmp (name ,"TimeScale" ))
+cond	77:33	77:60	15	!strcmp (name ,"TimeScale" )
+op	77:33	0:0	16	!
+call	77:34	77:60	16	strcmp
+arg	77:42	77:46	17	name
+water	77:42	0:0	18	name
+arg	77:48	77:60	17	"TimeScale"
+water	77:48	0:0	18	"TimeScale"
+stmts	78:28	78:72	15	
+water	78:28	0:0	16	sms
+op	78:31	0:0	16	->
+water	78:33	0:0	16	timescale
+op	78:43	0:0	16	=
+call	78:45	78:71	16	strtoull
+arg	78:55	78:60	17	value
+water	78:55	0:0	18	value
+arg	78:62	78:66	17	NULL
+water	78:62	0:0	18	NULL
+arg	78:68	78:71	17	10
+water	78:68	0:0	18	10
+water	78:72	0:0	16	;
+else	79:24	81:84	12
+stmts	79:29	81:84	13	
+if	79:29	81:84	14	(!strcmp (name ,"FourCC" ))
+cond	79:33	79:57	15	!strcmp (name ,"FourCC" )
+op	79:33	0:0	16	!
+call	79:34	79:57	16	strcmp
+arg	79:42	79:46	17	name
+water	79:42	0:0	18	name
+arg	79:48	79:57	17	"FourCC"
+water	79:48	0:0	18	"FourCC"
+stmts	80:28	81:84	15	
+water	80:28	0:0	16	sms
+op	80:31	0:0	16	->
+water	80:33	0:0	16	default_FourCC
+op	80:48	0:0	16	=
+call	81:32	81:83	16	VLC_FOURCC
+arg	81:44	81:52	17	value[0]
+water	81:44	0:0	18	value
+op	81:49	0:0	18	[
+water	81:50	0:0	18	0
+op	81:51	0:0	18	]
+arg	81:54	81:62	17	value[1]
+water	81:54	0:0	18	value
+op	81:59	0:0	18	[
+water	81:60	0:0	18	1
+op	81:61	0:0	18	]
+arg	81:64	81:72	17	value[2]
+water	81:64	0:0	18	value
+op	81:69	0:0	18	[
+water	81:70	0:0	18	2
+op	81:71	0:0	18	]
+arg	81:74	81:83	17	value[3]
+water	81:74	0:0	18	value
+op	81:79	0:0	18	[
+water	81:80	0:0	18	3
+op	81:81	0:0	18	]
+water	81:84	0:0	16	;
+else	82:24	87:24	12
+stmts	82:29	87:24	13	
+if	82:29	87:24	14	(!strcmp (name ,"Chunks" ))
+cond	82:33	82:57	15	!strcmp (name ,"Chunks" )
+op	82:33	0:0	16	!
+call	82:34	82:57	16	strcmp
+arg	82:42	82:46	17	name
+water	82:42	0:0	18	name
+arg	82:48	82:57	17	"Chunks"
+water	82:48	0:0	18	"Chunks"
+stmts	83:24	87:24	15	
+water	83:24	0:0	16	{
+water	84:28	0:0	16	sms
+op	84:31	0:0	16	->
+water	84:33	0:0	16	vod_chunks_nb
+op	84:47	0:0	16	=
+call	84:49	84:73	16	strtol
+arg	84:57	84:62	17	value
+water	84:57	0:0	18	value
+arg	84:64	84:68	17	NULL
+water	84:64	0:0	18	NULL
+arg	84:70	84:73	17	10
+water	84:70	0:0	18	10
+water	84:74	0:0	16	;
+if	85:28	86:63	16	(sms -> vod_chunks_nb == 0)
+cond	85:32	85:54	17	sms -> vod_chunks_nb == 0
+water	85:32	0:0	18	sms
+op	85:35	0:0	18	->
+water	85:37	0:0	18	vod_chunks_nb
+op	85:51	0:0	18	==
+water	85:54	0:0	18	0
+stmts	86:32	86:63	17	
+water	86:32	0:0	18	sms
+op	86:35	0:0	18	->
+water	86:37	0:0	18	vod_chunks_nb
+op	86:51	0:0	18	=
+water	86:53	0:0	18	UINT32_MAX
+water	86:63	0:0	18	;
+water	87:24	0:0	16	}
+else	88:24	89:71	12
+stmts	88:29	89:71	13	
+if	88:29	89:71	14	(!strcmp (name ,"QualityLevels" ))
+cond	88:33	88:64	15	!strcmp (name ,"QualityLevels" )
+op	88:33	0:0	16	!
+call	88:34	88:64	16	strcmp
+arg	88:42	88:46	17	name
+water	88:42	0:0	18	name
+arg	88:48	88:64	17	"QualityLevels"
+water	88:48	0:0	18	"QualityLevels"
+stmts	89:28	89:71	15	
+water	89:28	0:0	16	sms
+op	89:31	0:0	16	->
+water	89:33	0:0	16	qlevel_nb
+op	89:43	0:0	16	=
+call	89:45	89:70	16	strtoul
+arg	89:54	89:59	17	value
+water	89:54	0:0	18	value
+arg	89:61	89:65	17	NULL
+water	89:61	0:0	18	NULL
+arg	89:67	89:70	17	10
+water	89:67	0:0	18	10
+water	89:71	0:0	16	;
+else	90:24	91:61	12
+stmts	90:29	91:61	13	
+if	90:29	91:61	14	(!strcmp (name ,"Url" ))
+cond	90:33	90:54	15	!strcmp (name ,"Url" )
+op	90:33	0:0	16	!
+call	90:34	90:54	16	strcmp
+arg	90:42	90:46	17	name
+water	90:42	0:0	18	name
+arg	90:48	90:54	17	"Url"
+water	90:48	0:0	18	"Url"
+stmts	91:28	91:61	15	
+water	91:28	0:0	16	sms
+op	91:31	0:0	16	->
+water	91:33	0:0	16	url_template
+op	91:46	0:0	16	=
+call	91:48	91:60	16	strdup
+arg	91:55	91:60	17	value
+water	91:55	0:0	18	value
+water	91:61	0:0	16	;
+water	92:20	0:0	12	}
+if	93:20	94:50	10	(! sms -> timescale)
+cond	93:24	93:30	11	! sms -> timescale
+op	93:24	0:0	12	!
+water	93:25	0:0	12	sms
+op	93:28	0:0	12	->
+water	93:30	0:0	12	timescale
+stmts	94:24	94:50	11	
+water	94:24	0:0	12	sms
+op	94:27	0:0	12	->
+water	94:29	0:0	12	timescale
+op	94:39	0:0	12	=
+water	94:41	0:0	12	TIMESCALE
+water	94:50	0:0	12	;
+if	95:20	103:20	10	(! sms -> name)
+cond	95:24	95:30	11	! sms -> name
+op	95:24	0:0	12	!
+water	95:25	0:0	12	sms
+op	95:28	0:0	12	->
+water	95:30	0:0	12	name
+stmts	96:20	103:20	11	
+water	96:20	0:0	12	{
+if	97:24	98:57	12	(sms -> type == VIDEO_ES)
+cond	97:28	97:41	13	sms -> type == VIDEO_ES
+water	97:28	0:0	14	sms
+op	97:31	0:0	14	->
+water	97:33	0:0	14	type
+op	97:38	0:0	14	==
+water	97:41	0:0	14	VIDEO_ES
+stmts	98:28	98:57	13	
+water	98:28	0:0	14	sms
+op	98:31	0:0	14	->
+water	98:33	0:0	14	name
+op	98:38	0:0	14	=
+call	98:40	98:56	14	strdup
+arg	98:48	98:56	15	"video"
+water	98:48	0:0	16	"video"
+water	98:57	0:0	14	;
+else	99:24	100:57	12
+stmts	99:29	100:57	13	
+if	99:29	100:57	14	(sms -> type == AUDIO_ES)
+cond	99:33	99:46	15	sms -> type == AUDIO_ES
+water	99:33	0:0	16	sms
+op	99:36	0:0	16	->
+water	99:38	0:0	16	type
+op	99:43	0:0	16	==
+water	99:46	0:0	16	AUDIO_ES
+stmts	100:28	100:57	15	
+water	100:28	0:0	16	sms
+op	100:31	0:0	16	->
+water	100:33	0:0	16	name
+op	100:38	0:0	16	=
+call	100:40	100:56	16	strdup
+arg	100:48	100:56	17	"audio"
+water	100:48	0:0	18	"audio"
+water	100:57	0:0	16	;
+else	101:24	102:56	12
+stmts	101:29	102:56	13	
+if	101:29	102:56	14	(sms -> type == SPU_ES)
+cond	101:33	101:46	15	sms -> type == SPU_ES
+water	101:33	0:0	16	sms
+op	101:36	0:0	16	->
+water	101:38	0:0	16	type
+op	101:43	0:0	16	==
+water	101:46	0:0	16	SPU_ES
+stmts	102:28	102:56	15	
+water	102:28	0:0	16	sms
+op	102:31	0:0	16	->
+water	102:33	0:0	16	name
+op	102:38	0:0	16	=
+call	102:40	102:55	16	strdup
+arg	102:48	102:55	17	"text"
+water	102:48	0:0	18	"text"
+water	102:56	0:0	16	;
+water	103:20	0:0	12	}
+water	104:16	0:0	10	}
+else	105:16	157:16	6
+stmts	105:21	157:16	7	
+if	105:21	157:16	8	(!strcmp (node ,"QualityLevel" ))
+cond	105:25	105:55	9	!strcmp (node ,"QualityLevel" )
+op	105:25	0:0	10	!
+call	105:26	105:55	10	strcmp
+arg	105:34	105:38	11	node
+water	105:34	0:0	12	node
+arg	105:40	105:55	11	"QualityLevel"
+water	105:40	0:0	12	"QualityLevel"
+stmts	106:16	157:16	9	
+water	106:16	0:0	10	{
+if	107:20	108:29	10	(! sms)
+cond	107:25	107:26	11	! sms
+op	107:25	0:0	12	!
+water	107:26	0:0	12	sms
+stmts	108:24	108:29	11	
+break	108:24	108:29	12	
+water	109:20	0:0	10	ql
+op	109:23	0:0	10	=
+call	109:25	109:32	10	ql_New
+water	109:33	0:0	10	;
+if	110:20	116:20	10	(! ql)
+cond	110:24	110:25	11	! ql
+op	110:24	0:0	12	!
+water	110:25	0:0	12	ql
+stmts	111:20	116:20	11	
+water	111:20	0:0	12	{
+call	112:24	112:38	12	sms_Free
+arg	112:34	112:38	13	sms
+water	112:34	0:0	14	sms
+water	112:39	0:0	12	;
+call	113:24	113:53	12	xml_ReaderDelete
+arg	113:42	113:53	13	vlc_reader
+water	113:42	0:0	14	vlc_reader
+water	113:54	0:0	12	;
+call	114:24	114:44	12	xml_Delete
+arg	114:36	114:44	13	vlc_xml
+water	114:36	0:0	14	vlc_xml
+water	114:45	0:0	12	;
+return	115:24	115:41	12	VLC_ENOMEM
+water	115:31	0:0	13	VLC_ENOMEM
+water	116:20	0:0	12	}
+water	117:20	0:0	10	ql
+op	117:22	0:0	10	->
+water	117:24	0:0	10	id
+op	117:27	0:0	10	=
+water	117:29	0:0	10	next_qid
+water	117:37	0:0	10	;
+water	118:20	0:0	10	next_qid
+op	118:28	0:0	10	++
+water	118:30	0:0	10	;
+while	119:20	155:20	10	(( name =xml_ReaderNextAttr (vlc_reader ,& value ) ))
+cond	119:27	119:75	11	( name =xml_ReaderNextAttr (vlc_reader ,& value ) )
+water	119:27	0:0	12	(
+water	119:28	0:0	12	name
+op	119:33	0:0	12	=
+call	119:35	119:74	12	xml_ReaderNextAttr
+arg	119:55	119:65	13	vlc_reader
+water	119:55	0:0	14	vlc_reader
+arg	119:67	119:74	13	&value
+op	119:67	0:0	14	&
+water	119:68	0:0	14	value
+water	119:75	0:0	12	)
+stmts	120:20	155:20	11	
+water	120:20	0:0	12	{
+if	121:24	122:65	12	(!strcmp (name ,"Index" ))
+cond	121:28	121:51	13	!strcmp (name ,"Index" )
+op	121:28	0:0	14	!
+call	121:29	121:51	14	strcmp
+arg	121:37	121:41	15	name
+water	121:37	0:0	16	name
+arg	121:43	121:51	15	"Index"
+water	121:43	0:0	16	"Index"
+stmts	122:28	122:65	13	
+water	122:28	0:0	14	ql
+op	122:30	0:0	14	->
+water	122:32	0:0	14	Index
+op	122:38	0:0	14	=
+call	122:40	122:64	14	strtol
+arg	122:48	122:53	15	value
+water	122:48	0:0	16	value
+arg	122:55	122:59	15	NULL
+water	122:55	0:0	16	NULL
+arg	122:61	122:64	15	10
+water	122:61	0:0	16	10
+water	122:65	0:0	14	;
+else	123:24	124:69	12
+stmts	123:29	124:69	13	
+if	123:29	124:69	14	(!strcmp (name ,"Bitrate" ))
+cond	123:33	123:58	15	!strcmp (name ,"Bitrate" )
+op	123:33	0:0	16	!
+call	123:34	123:58	16	strcmp
+arg	123:42	123:46	17	name
+water	123:42	0:0	18	name
+arg	123:48	123:58	17	"Bitrate"
+water	123:48	0:0	18	"Bitrate"
+stmts	124:28	124:69	15	
+water	124:28	0:0	16	ql
+op	124:30	0:0	16	->
+water	124:32	0:0	16	Bitrate
+op	124:40	0:0	16	=
+call	124:42	124:68	16	strtoull
+arg	124:52	124:57	17	value
+water	124:52	0:0	18	value
+arg	124:59	124:63	17	NULL
+water	124:59	0:0	18	NULL
+arg	124:65	124:68	17	10
+water	124:65	0:0	18	10
+water	124:69	0:0	16	;
+else	125:24	126:73	12
+stmts	125:29	126:73	13	
+if	125:29	126:73	14	(!strcmp (name ,"PacketSize" ))
+cond	125:33	125:61	15	!strcmp (name ,"PacketSize" )
+op	125:33	0:0	16	!
+call	125:34	125:61	16	strcmp
+arg	125:42	125:46	17	name
+water	125:42	0:0	18	name
+arg	125:48	125:61	17	"PacketSize"
+water	125:48	0:0	18	"PacketSize"
+stmts	126:28	126:73	15	
+water	126:28	0:0	16	ql
+op	126:30	0:0	16	->
+water	126:32	0:0	16	nBlockAlign
+op	126:44	0:0	16	=
+call	126:46	126:72	16	strtoull
+arg	126:56	126:61	17	value
+water	126:56	0:0	18	value
+arg	126:63	126:67	17	NULL
+water	126:63	0:0	18	NULL
+arg	126:69	126:72	17	10
+water	126:69	0:0	18	10
+water	126:73	0:0	16	;
+else	127:24	129:73	12
+stmts	127:29	129:73	13	
+if	127:29	129:73	14	(!strcmp (name ,"FourCC" ))
+cond	127:33	127:57	15	!strcmp (name ,"FourCC" )
+op	127:33	0:0	16	!
+call	127:34	127:57	16	strcmp
+arg	127:42	127:46	17	name
+water	127:42	0:0	18	name
+arg	127:48	127:57	17	"FourCC"
+water	127:48	0:0	18	"FourCC"
+stmts	128:28	129:73	15	
+water	128:28	0:0	16	ql
+op	128:30	0:0	16	->
+water	128:32	0:0	16	FourCC
+op	128:39	0:0	16	=
+call	128:41	129:72	16	VLC_FOURCC
+arg	128:53	128:61	17	value[0]
+water	128:53	0:0	18	value
+op	128:58	0:0	18	[
+water	128:59	0:0	18	0
+op	128:60	0:0	18	]
+arg	128:63	128:71	17	value[1]
+water	128:63	0:0	18	value
+op	128:68	0:0	18	[
+water	128:69	0:0	18	1
+op	128:70	0:0	18	]
+arg	129:53	129:61	17	value[2]
+water	129:53	0:0	18	value
+op	129:58	0:0	18	[
+water	129:59	0:0	18	2
+op	129:60	0:0	18	]
+arg	129:63	129:72	17	value[3]
+water	129:63	0:0	18	value
+op	129:68	0:0	18	[
+water	129:69	0:0	18	3
+op	129:70	0:0	18	]
+water	129:73	0:0	16	;
+else	130:24	131:66	12
+stmts	130:29	131:66	13	
+if	130:29	131:66	14	(!strcmp (name ,"CodecPrivateData" ))
+cond	130:33	130:67	15	!strcmp (name ,"CodecPrivateData" )
+op	130:33	0:0	16	!
+call	130:34	130:67	16	strcmp
+arg	130:42	130:46	17	name
+water	130:42	0:0	18	name
+arg	130:48	130:67	17	"CodecPrivateData"
+water	130:48	0:0	18	"CodecPrivateData"
+stmts	131:28	131:66	15	
+water	131:28	0:0	16	ql
+op	131:30	0:0	16	->
+water	131:32	0:0	16	CodecPrivateData
+op	131:49	0:0	16	=
+call	131:51	131:65	16	strdup
+arg	131:59	131:65	17	value
+water	131:59	0:0	18	value
+water	131:66	0:0	16	;
+else	132:24	144:24	12
+stmts	132:29	144:24	13	
+if	132:29	144:24	14	(!strcmp (name ,"WaveFormatEx" ))
+cond	132:33	132:63	15	!strcmp (name ,"WaveFormatEx" )
+op	132:33	0:0	16	!
+call	132:34	132:63	16	strcmp
+arg	132:42	132:46	17	name
+water	132:42	0:0	18	name
+arg	132:48	132:63	17	"WaveFormatEx"
+water	132:48	0:0	18	"WaveFormatEx"
+stmts	133:24	144:24	15	
+water	133:24	0:0	16	{
+water	134:28	0:0	16	WaveFormatEx
+op	134:41	0:0	16	=
+call	134:43	134:78	16	decode_string_hex_to_binary
+arg	134:72	134:78	17	value
+water	134:72	0:0	18	value
+water	134:79	0:0	16	;
+decl	135:28	135:77	16	uint16_t	data_len
+op	135:46	0:0	16	=
+water	135:48	0:0	16	(
+water	135:49	0:0	16	(
+water	135:50	0:0	16	uint16_t
+op	135:59	0:0	16	*
+water	135:60	0:0	16	)
+water	135:61	0:0	16	WaveFormatEx
+water	135:73	0:0	16	)
+op	135:74	0:0	16	[
+water	135:75	0:0	16	8
+op	135:76	0:0	16	]
+water	136:28	0:0	16	ql
+op	136:30	0:0	16	->
+water	136:32	0:0	16	CodecPrivateData
+op	136:49	0:0	16	=
+call	136:51	136:85	16	strndup
+arg	136:60	136:70	17	value+36
+water	136:60	0:0	18	value
+op	136:66	0:0	18	+
+water	136:68	0:0	18	36
+arg	136:72	136:85	17	data_len*2
+water	136:72	0:0	18	data_len
+op	136:81	0:0	18	*
+water	136:83	0:0	18	2
+water	136:86	0:0	16	;
+decl	137:28	137:75	16	uint16_t	wf_tag
+op	137:44	0:0	16	=
+water	137:46	0:0	16	(
+water	137:47	0:0	16	(
+water	137:48	0:0	16	uint16_t
+op	137:57	0:0	16	*
+water	137:58	0:0	16	)
+water	137:59	0:0	16	WaveFormatEx
+water	137:71	0:0	16	)
+op	137:72	0:0	16	[
+water	137:73	0:0	16	0
+op	137:74	0:0	16	]
+call	138:28	138:72	16	wf_tag_to_fourcc
+arg	138:46	138:52	17	wf_tag
+water	138:46	0:0	18	wf_tag
+arg	138:54	138:65	17	&ql->FourCC
+op	138:54	0:0	18	&
+water	138:55	0:0	18	ql
+op	138:57	0:0	18	->
+water	138:59	0:0	18	FourCC
+arg	138:67	138:72	17	NULL
+water	138:67	0:0	18	NULL
+water	138:73	0:0	16	;
+water	139:28	0:0	16	ql
+op	139:30	0:0	16	->
+water	139:32	0:0	16	Channels
+op	139:41	0:0	16	=
+water	139:43	0:0	16	(
+water	139:44	0:0	16	(
+water	139:45	0:0	16	uint16_t
+op	139:54	0:0	16	*
+water	139:55	0:0	16	)
+water	139:56	0:0	16	WaveFormatEx
+water	139:68	0:0	16	)
+op	139:69	0:0	16	[
+water	139:70	0:0	16	1
+op	139:71	0:0	16	]
+water	139:72	0:0	16	;
+water	140:28	0:0	16	ql
+op	140:30	0:0	16	->
+water	140:32	0:0	16	SamplingRate
+op	140:45	0:0	16	=
+water	140:47	0:0	16	(
+water	140:48	0:0	16	(
+water	140:49	0:0	16	uint32_t
+op	140:58	0:0	16	*
+water	140:59	0:0	16	)
+water	140:60	0:0	16	WaveFormatEx
+water	140:72	0:0	16	)
+op	140:73	0:0	16	[
+water	140:74	0:0	16	1
+op	140:75	0:0	16	]
+water	140:76	0:0	16	;
+water	141:28	0:0	16	ql
+op	141:30	0:0	16	->
+water	141:32	0:0	16	nBlockAlign
+op	141:44	0:0	16	=
+water	141:46	0:0	16	(
+water	141:47	0:0	16	(
+water	141:48	0:0	16	uint16_t
+op	141:57	0:0	16	*
+water	141:58	0:0	16	)
+water	141:59	0:0	16	WaveFormatEx
+water	141:71	0:0	16	)
+op	141:72	0:0	16	[
+water	141:73	0:0	16	6
+op	141:74	0:0	16	]
+water	141:75	0:0	16	;
+water	142:28	0:0	16	ql
+op	142:30	0:0	16	->
+water	142:32	0:0	16	BitsPerSample
+op	142:46	0:0	16	=
+water	142:48	0:0	16	(
+water	142:49	0:0	16	(
+water	142:50	0:0	16	uint16_t
+op	142:59	0:0	16	*
+water	142:60	0:0	16	)
+water	142:61	0:0	16	WaveFormatEx
+water	142:73	0:0	16	)
+op	142:74	0:0	16	[
+water	142:75	0:0	16	7
+op	142:76	0:0	16	]
+water	142:77	0:0	16	;
+call	143:28	143:47	16	free
+arg	143:34	143:47	17	WaveFormatEx
+water	143:34	0:0	18	WaveFormatEx
+water	143:48	0:0	16	;
+water	144:24	0:0	16	}
+else	145:24	146:69	12
+stmts	145:29	146:69	13	
+if	145:29	146:69	14	(!strcmp (name ,"MaxWidth" ) || !strcmp (name ,"Width" ))
+cond	145:33	145:87	15	!strcmp (name ,"MaxWidth" ) || !strcmp (name ,"Width" )
+op	145:33	0:0	16	!
+call	145:34	145:59	16	strcmp
+arg	145:42	145:46	17	name
+water	145:42	0:0	18	name
+arg	145:48	145:59	17	"MaxWidth"
+water	145:48	0:0	18	"MaxWidth"
+op	145:61	0:0	16	||
+op	145:64	0:0	16	!
+call	145:65	145:87	16	strcmp
+arg	145:73	145:77	17	name
+water	145:73	0:0	18	name
+arg	145:79	145:87	17	"Width"
+water	145:79	0:0	18	"Width"
+stmts	146:28	146:69	15	
+water	146:28	0:0	16	ql
+op	146:30	0:0	16	->
+water	146:32	0:0	16	MaxWidth
+op	146:41	0:0	16	=
+call	146:43	146:68	16	strtoul
+arg	146:52	146:57	17	value
+water	146:52	0:0	18	value
+arg	146:59	146:63	17	NULL
+water	146:59	0:0	18	NULL
+arg	146:65	146:68	17	10
+water	146:65	0:0	18	10
+water	146:69	0:0	16	;
+else	147:24	148:70	12
+stmts	147:29	148:70	13	
+if	147:29	148:70	14	(!strcmp (name ,"MaxHeight" ) || !strcmp (name ,"Height" ))
+cond	147:33	147:89	15	!strcmp (name ,"MaxHeight" ) || !strcmp (name ,"Height" )
+op	147:33	0:0	16	!
+call	147:34	147:60	16	strcmp
+arg	147:42	147:46	17	name
+water	147:42	0:0	18	name
+arg	147:48	147:60	17	"MaxHeight"
+water	147:48	0:0	18	"MaxHeight"
+op	147:62	0:0	16	||
+op	147:65	0:0	16	!
+call	147:66	147:89	16	strcmp
+arg	147:74	147:78	17	name
+water	147:74	0:0	18	name
+arg	147:80	147:89	17	"Height"
+water	147:80	0:0	18	"Height"
+stmts	148:28	148:70	15	
+water	148:28	0:0	16	ql
+op	148:30	0:0	16	->
+water	148:32	0:0	16	MaxHeight
+op	148:42	0:0	16	=
+call	148:44	148:69	16	strtoul
+arg	148:53	148:58	17	value
+water	148:53	0:0	18	value
+arg	148:60	148:64	17	NULL
+water	148:60	0:0	18	NULL
+arg	148:66	148:69	17	10
+water	148:66	0:0	18	10
+water	148:70	0:0	16	;
+else	149:24	150:69	12
+stmts	149:29	150:69	13	
+if	149:29	150:69	14	(!strcmp (name ,"Channels" ))
+cond	149:33	149:59	15	!strcmp (name ,"Channels" )
+op	149:33	0:0	16	!
+call	149:34	149:59	16	strcmp
+arg	149:42	149:46	17	name
+water	149:42	0:0	18	name
+arg	149:48	149:59	17	"Channels"
+water	149:48	0:0	18	"Channels"
+stmts	150:28	150:69	15	
+water	150:28	0:0	16	ql
+op	150:30	0:0	16	->
+water	150:32	0:0	16	Channels
+op	150:41	0:0	16	=
+call	150:43	150:68	16	strtoul
+arg	150:52	150:57	17	value
+water	150:52	0:0	18	value
+arg	150:59	150:63	17	NULL
+water	150:59	0:0	18	NULL
+arg	150:65	150:68	17	10
+water	150:65	0:0	18	10
+water	150:69	0:0	16	;
+else	151:24	152:73	12
+stmts	151:29	152:73	13	
+if	151:29	152:73	14	(!strcmp (name ,"SamplingRate" ))
+cond	151:33	151:63	15	!strcmp (name ,"SamplingRate" )
+op	151:33	0:0	16	!
+call	151:34	151:63	16	strcmp
+arg	151:42	151:46	17	name
+water	151:42	0:0	18	name
+arg	151:48	151:63	17	"SamplingRate"
+water	151:48	0:0	18	"SamplingRate"
+stmts	152:28	152:73	15	
+water	152:28	0:0	16	ql
+op	152:30	0:0	16	->
+water	152:32	0:0	16	SamplingRate
+op	152:45	0:0	16	=
+call	152:47	152:72	16	strtoul
+arg	152:56	152:61	17	value
+water	152:56	0:0	18	value
+arg	152:63	152:67	17	NULL
+water	152:63	0:0	18	NULL
+arg	152:69	152:72	17	10
+water	152:69	0:0	18	10
+water	152:73	0:0	16	;
+else	153:24	154:74	12
+stmts	153:29	154:74	13	
+if	153:29	154:74	14	(!strcmp (name ,"BitsPerSample" ))
+cond	153:33	153:64	15	!strcmp (name ,"BitsPerSample" )
+op	153:33	0:0	16	!
+call	153:34	153:64	16	strcmp
+arg	153:42	153:46	17	name
+water	153:42	0:0	18	name
+arg	153:48	153:64	17	"BitsPerSample"
+water	153:48	0:0	18	"BitsPerSample"
+stmts	154:28	154:74	15	
+water	154:28	0:0	16	ql
+op	154:30	0:0	16	->
+water	154:32	0:0	16	BitsPerSample
+op	154:46	0:0	16	=
+call	154:48	154:73	16	strtoul
+arg	154:57	154:62	17	value
+water	154:57	0:0	18	value
+arg	154:64	154:68	17	NULL
+water	154:64	0:0	18	NULL
+arg	154:70	154:73	17	10
+water	154:70	0:0	18	10
+water	154:74	0:0	16	;
+water	155:20	0:0	12	}
+call	156:20	156:55	10	vlc_array_append
+arg	156:38	156:50	11	sms->qlevels
+water	156:38	0:0	12	sms
+op	156:41	0:0	12	->
+water	156:43	0:0	12	qlevels
+arg	156:52	156:55	11	ql
+water	156:52	0:0	12	ql
+water	156:56	0:0	10	;
+water	157:16	0:0	10	}
+else	158:16	163:16	6
+stmts	158:21	163:16	7	
+if	158:21	163:16	8	(!strcmp (node ,"Content" ) && sms && ! sms -> url_template)
+cond	158:26	158:69	9	!strcmp (node ,"Content" ) && sms && ! sms -> url_template
+op	158:26	0:0	10	!
+call	158:27	158:51	10	strcmp
+arg	158:35	158:39	11	node
+water	158:35	0:0	12	node
+arg	158:41	158:51	11	"Content"
+water	158:41	0:0	12	"Content"
+op	158:53	0:0	10	&&
+water	158:56	0:0	10	sms
+op	158:60	0:0	10	&&
+op	158:63	0:0	10	!
+water	158:64	0:0	10	sms
+op	158:67	0:0	10	->
+water	158:69	0:0	10	url_template
+stmts	159:16	163:16	9	
+water	159:16	0:0	10	{
+call	161:20	161:34	10	sms_Free
+arg	161:30	161:34	11	sms
+water	161:30	0:0	12	sms
+water	161:35	0:0	10	;
+water	162:20	0:0	10	sms
+op	162:24	0:0	10	=
+water	162:26	0:0	10	NULL
+water	162:30	0:0	10	;
+water	163:16	0:0	10	}
+else	164:16	220:16	6
+stmts	164:21	220:16	7	
+if	164:21	220:16	8	(!strcmp (node ,"c" ))
+cond	164:25	164:44	9	!strcmp (node ,"c" )
+op	164:25	0:0	10	!
+call	164:26	164:44	10	strcmp
+arg	164:34	164:38	11	node
+water	164:34	0:0	12	node
+arg	164:40	164:44	11	"c"
+water	164:40	0:0	12	"c"
+stmts	165:16	220:16	9	
+water	165:16	0:0	10	{
+if	166:20	167:29	10	(! sms)
+cond	166:25	166:26	11	! sms
+op	166:25	0:0	12	!
+water	166:26	0:0	12	sms
+stmts	167:24	167:29	11	
+break	167:24	167:29	12	
+water	168:20	0:0	10	loop_count
+op	168:30	0:0	10	++
+water	168:32	0:0	10	;
+water	169:20	0:0	10	start_time
+op	169:31	0:0	10	=
+water	169:33	0:0	10	duration
+op	169:42	0:0	10	=
+op	169:44	0:0	10	-
+water	169:45	0:0	10	1
+water	169:46	0:0	10	;
+while	170:20	176:20	10	(( name =xml_ReaderNextAttr (vlc_reader ,& value ) ))
+cond	170:27	170:75	11	( name =xml_ReaderNextAttr (vlc_reader ,& value ) )
+water	170:27	0:0	12	(
+water	170:28	0:0	12	name
+op	170:33	0:0	12	=
+call	170:35	170:74	12	xml_ReaderNextAttr
+arg	170:55	170:65	13	vlc_reader
+water	170:55	0:0	14	vlc_reader
+arg	170:67	170:74	13	&value
+op	170:67	0:0	14	&
+water	170:68	0:0	14	value
+water	170:75	0:0	12	)
+stmts	171:20	176:20	11	
+water	171:20	0:0	12	{
+if	172:24	173:68	12	(!strcmp (name ,"t" ))
+cond	172:28	172:47	13	!strcmp (name ,"t" )
+op	172:28	0:0	14	!
+call	172:29	172:47	14	strcmp
+arg	172:37	172:41	15	name
+water	172:37	0:0	16	name
+arg	172:43	172:47	15	"t"
+water	172:43	0:0	16	"t"
+stmts	173:28	173:68	13	
+water	173:28	0:0	14	start_time
+op	173:39	0:0	14	=
+call	173:41	173:67	14	strtoull
+arg	173:51	173:56	15	value
+water	173:51	0:0	16	value
+arg	173:58	173:62	15	NULL
+water	173:58	0:0	16	NULL
+arg	173:64	173:67	15	10
+water	173:64	0:0	16	10
+water	173:68	0:0	14	;
+if	174:24	175:66	12	(!strcmp (name ,"d" ))
+cond	174:28	174:47	13	!strcmp (name ,"d" )
+op	174:28	0:0	14	!
+call	174:29	174:47	14	strcmp
+arg	174:37	174:41	15	name
+water	174:37	0:0	16	name
+arg	174:43	174:47	15	"d"
+water	174:43	0:0	16	"d"
+stmts	175:28	175:66	13	
+water	175:28	0:0	14	duration
+op	175:37	0:0	14	=
+call	175:39	175:65	14	strtoull
+arg	175:49	175:54	15	value
+water	175:49	0:0	16	value
+arg	175:56	175:60	15	NULL
+water	175:56	0:0	16	NULL
+arg	175:62	175:65	15	10
+water	175:62	0:0	16	10
+water	175:66	0:0	14	;
+water	176:20	0:0	12	}
+if	177:20	182:20	10	(start_time == - 1)
+cond	177:24	177:39	11	start_time == - 1
+water	177:24	0:0	12	start_time
+op	177:35	0:0	12	==
+op	177:38	0:0	12	-
+water	177:39	0:0	12	1
+stmts	178:20	182:20	11	
+water	178:20	0:0	12	{
+call	179:24	179:47	12	assert
+arg	179:32	179:47	13	duration!=-1
+water	179:32	0:0	14	duration
+op	179:41	0:0	14	!=
+op	179:44	0:0	14	-
+water	179:45	0:0	14	1
+water	179:48	0:0	12	;
+water	180:24	0:0	12	computed_start_time
+op	180:44	0:0	12	+=
+water	180:47	0:0	12	computed_duration
+water	180:64	0:0	12	;
+water	181:24	0:0	12	computed_duration
+op	181:42	0:0	12	=
+water	181:44	0:0	12	duration
+water	181:52	0:0	12	;
+water	182:20	0:0	12	}
+else	183:20	199:20	10
+stmts	183:25	199:20	11	
+if	183:25	199:20	12	(duration == - 1)
+cond	183:29	183:42	13	duration == - 1
+water	183:29	0:0	14	duration
+op	183:38	0:0	14	==
+op	183:41	0:0	14	-
+water	183:42	0:0	14	1
+stmts	184:20	199:20	13	
+water	184:20	0:0	14	{
+call	185:24	185:49	14	assert
+arg	185:32	185:49	15	start_time!=-1
+water	185:32	0:0	16	start_time
+op	185:43	0:0	16	!=
+op	185:46	0:0	16	-
+water	185:47	0:0	16	1
+water	185:50	0:0	14	;
+if	190:24	195:24	14	(loop_count == 1)
+cond	190:28	190:42	15	loop_count == 1
+water	190:28	0:0	16	loop_count
+op	190:39	0:0	16	==
+water	190:42	0:0	16	1
+stmts	191:24	195:24	15	
+water	191:24	0:0	16	{
+water	192:28	0:0	16	b_weird
+op	192:36	0:0	16	=
+water	192:38	0:0	16	true
+water	192:42	0:0	16	;
+water	193:28	0:0	16	computed_start_time
+op	193:48	0:0	16	=
+water	193:50	0:0	16	start_time
+water	193:60	0:0	16	;
+continue	194:28	194:36	16	
+water	195:24	0:0	16	}
+water	196:24	0:0	14	computed_duration
+op	196:42	0:0	14	=
+water	196:44	0:0	14	start_time
+op	196:55	0:0	14	-
+water	196:57	0:0	14	computed_start_time
+water	196:76	0:0	14	;
+if	197:24	198:60	14	(! b_weird)
+cond	197:28	197:29	15	! b_weird
+op	197:28	0:0	16	!
+water	197:29	0:0	16	b_weird
+stmts	198:28	198:60	15	
+water	198:28	0:0	16	computed_start_time
+op	198:48	0:0	16	=
+water	198:50	0:0	16	start_time
+water	198:60	0:0	16	;
+water	199:20	0:0	14	}
+else	200:20	209:20	10
+stmts	201:20	209:20	11	
+water	201:20	0:0	12	{
+if	202:24	203:80	12	(b_weird)
+cond	202:28	202:28	13	b_weird
+water	202:28	0:0	14	b_weird
+stmts	203:28	203:80	13	
+water	203:28	0:0	14	computed_duration
+op	203:46	0:0	14	=
+water	203:48	0:0	14	start_time
+op	203:59	0:0	14	-
+water	203:61	0:0	14	computed_start_time
+water	203:80	0:0	14	;
+else	204:24	208:24	12
+stmts	205:24	208:24	13	
+water	205:24	0:0	14	{
+water	206:28	0:0	14	computed_start_time
+op	206:48	0:0	14	=
+water	206:50	0:0	14	start_time
+water	206:60	0:0	14	;
+water	207:28	0:0	14	computed_duration
+op	207:46	0:0	14	=
+water	207:48	0:0	14	duration
+water	207:56	0:0	14	;
+water	208:24	0:0	14	}
+water	209:20	0:0	12	}
+if	210:20	217:20	10	(unlikely (chunk_New (sms ,computed_duration ,computed_start_time ) == NULL ))
+cond	210:24	211:70	11	unlikely (chunk_New (sms ,computed_duration ,computed_start_time ) == NULL )
+call	210:24	211:70	12	unlikely
+arg	210:34	211:70	13	chunk_New(sms,computed_duration,computed_start_time)==NULL
+call	210:34	211:60	14	chunk_New
+arg	210:45	210:48	15	sms
+water	210:45	0:0	16	sms
+arg	210:50	210:67	15	computed_duration
+water	210:50	0:0	16	computed_duration
+arg	211:40	211:60	15	computed_start_time
+water	211:40	0:0	16	computed_start_time
+op	211:62	0:0	14	==
+water	211:65	0:0	14	NULL
+stmts	212:20	217:20	11	
+water	212:20	0:0	12	{
+call	213:24	213:38	12	sms_Free
+arg	213:34	213:38	13	sms
+water	213:34	0:0	14	sms
+water	213:39	0:0	12	;
+call	214:24	214:53	12	xml_ReaderDelete
+arg	214:42	214:53	13	vlc_reader
+water	214:42	0:0	14	vlc_reader
+water	214:54	0:0	12	;
+call	215:24	215:44	12	xml_Delete
+arg	215:36	215:44	13	vlc_xml
+water	215:36	0:0	14	vlc_xml
+water	215:45	0:0	12	;
+return	216:24	216:41	12	VLC_ENOMEM
+water	216:31	0:0	13	VLC_ENOMEM
+water	217:20	0:0	12	}
+if	218:20	219:56	10	(b_weird && start_time != - 1)
+cond	218:24	218:50	11	b_weird && start_time != - 1
+water	218:24	0:0	12	b_weird
+op	218:32	0:0	12	&&
+water	218:35	0:0	12	start_time
+op	218:46	0:0	12	!=
+op	218:49	0:0	12	-
+water	218:50	0:0	12	1
+stmts	219:24	219:56	11	
+water	219:24	0:0	12	computed_start_time
+op	219:44	0:0	12	=
+water	219:46	0:0	12	start_time
+water	219:56	0:0	12	;
+water	220:16	0:0	10	}
+break	221:16	221:21	6	
+label	222:12	222:35	6	case XML_READER_ENDELEM :
+if	223:16	224:25	6	(strcmp (node ,"StreamIndex" ))
+cond	223:20	223:48	7	strcmp (node ,"StreamIndex" )
+call	223:20	223:48	8	strcmp
+arg	223:28	223:32	9	node
+water	223:28	0:0	10	node
+arg	223:34	223:48	9	"StreamIndex"
+water	223:34	0:0	10	"StreamIndex"
+stmts	224:20	224:25	7	
+break	224:20	224:25	8	
+if	225:16	243:16	6	(sms)
+cond	225:21	225:21	7	sms
+water	225:21	0:0	8	sms
+stmts	226:16	243:16	7	
+water	226:16	0:0	8	{
+call	227:20	227:62	8	vlc_array_append
+arg	227:38	227:56	9	p_sys->sms_streams
+water	227:38	0:0	10	p_sys
+op	227:43	0:0	10	->
+water	227:45	0:0	10	sms_streams
+arg	227:58	227:62	9	sms
+water	227:58	0:0	10	sms
+water	227:63	0:0	8	;
+water	228:20	0:0	8	computed_start_time
+op	228:40	0:0	8	=
+water	228:42	0:0	8	0
+water	228:43	0:0	8	;
+water	229:20	0:0	8	computed_duration
+op	229:38	0:0	8	=
+water	229:40	0:0	8	0
+water	229:41	0:0	8	;
+water	230:20	0:0	8	loop_count
+op	230:31	0:0	8	=
+water	230:33	0:0	8	0
+water	230:34	0:0	8	;
+if	231:20	237:20	8	(b_weird && !chunk_New (sms ,computed_duration ,computed_start_time ))
+cond	231:24	231:91	9	b_weird && !chunk_New (sms ,computed_duration ,computed_start_time )
+water	231:24	0:0	10	b_weird
+op	231:32	0:0	10	&&
+op	231:35	0:0	10	!
+call	231:36	231:91	10	chunk_New
+arg	231:47	231:50	11	sms
+water	231:47	0:0	12	sms
+arg	231:52	231:69	11	computed_duration
+water	231:52	0:0	12	computed_duration
+arg	231:71	231:91	11	computed_start_time
+water	231:71	0:0	12	computed_start_time
+stmts	232:20	237:20	9	
+water	232:20	0:0	10	{
+call	233:24	233:38	10	sms_Free
+arg	233:34	233:38	11	sms
+water	233:34	0:0	12	sms
+water	233:39	0:0	10	;
+call	234:24	234:53	10	xml_ReaderDelete
+arg	234:42	234:53	11	vlc_reader
+water	234:42	0:0	12	vlc_reader
+water	234:54	0:0	10	;
+call	235:24	235:44	10	xml_Delete
+arg	235:36	235:44	11	vlc_xml
+water	235:36	0:0	12	vlc_xml
+water	235:45	0:0	10	;
+return	236:24	236:41	10	VLC_ENOMEM
+water	236:31	0:0	11	VLC_ENOMEM
+water	237:20	0:0	10	}
+water	238:20	0:0	8	b_weird
+op	238:28	0:0	8	=
+water	238:30	0:0	8	false
+water	238:35	0:0	8	;
+water	239:20	0:0	8	next_qid
+op	239:29	0:0	8	=
+water	239:31	0:0	8	1
+water	239:32	0:0	8	;
+if	240:20	241:72	8	(sms -> qlevel_nb == 0)
+cond	240:24	240:42	9	sms -> qlevel_nb == 0
+water	240:24	0:0	10	sms
+op	240:27	0:0	10	->
+water	240:29	0:0	10	qlevel_nb
+op	240:39	0:0	10	==
+water	240:42	0:0	10	0
+stmts	241:24	241:72	9	
+water	241:24	0:0	10	sms
+op	241:27	0:0	10	->
+water	241:29	0:0	10	qlevel_nb
+op	241:39	0:0	10	=
+call	241:41	241:71	10	vlc_array_count
+arg	241:58	241:71	11	sms->qlevels
+water	241:58	0:0	12	sms
+op	241:61	0:0	12	->
+water	241:63	0:0	12	qlevels
+water	241:72	0:0	10	;
+water	242:20	0:0	8	sms
+op	242:24	0:0	8	=
+water	242:26	0:0	8	NULL
+water	242:30	0:0	8	;
+water	243:16	0:0	8	}
+break	244:16	244:21	6	
+label	245:12	245:32	6	case XML_READER_TEXT :
+break	246:16	246:21	6	
+label	247:12	247:19	6	default :
+call	248:16	248:30	6	sms_Free
+arg	248:26	248:30	7	sms
+water	248:26	0:0	8	sms
+water	248:31	0:0	6	;
+call	249:16	249:45	6	xml_ReaderDelete
+arg	249:34	249:45	7	vlc_reader
+water	249:34	0:0	8	vlc_reader
+water	249:46	0:0	6	;
+call	250:16	250:36	6	xml_Delete
+arg	250:28	250:36	7	vlc_xml
+water	250:28	0:0	8	vlc_xml
+water	250:37	0:0	6	;
+return	251:16	251:35	6	VLC_EGENERIC
+water	251:23	0:0	7	VLC_EGENERIC
+water	252:8	0:0	6	}
+water	253:4	0:0	4	}
+call	255:4	255:18	2	sms_Free
+arg	255:14	255:18	3	sms
+water	255:14	0:0	4	sms
+water	255:19	0:0	2	;
+call	256:4	256:33	2	xml_ReaderDelete
+arg	256:22	256:33	3	vlc_reader
+water	256:22	0:0	4	vlc_reader
+water	256:34	0:0	2	;
+call	257:4	257:24	2	xml_Delete
+arg	257:16	257:24	3	vlc_xml
+water	257:16	0:0	4	vlc_xml
+water	257:25	0:0	2	;
+return	258:4	258:22	2	VLC_SUCCESS
+water	258:11	0:0	3	VLC_SUCCESS

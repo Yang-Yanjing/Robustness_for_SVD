@@ -1,0 +1,76 @@
+func	2:0	20:0	0	static void	DecoderFlush
+params	2:24	0:0	1	
+param	2:26	2:43	2	decoder_t *	p_dec
+stmnts	0:0	19:67	1	
+decl	4:4	4:49	2	decoder_owner_sys_t	*p_owner
+op	4:33	0:0	2	=
+water	4:35	0:0	2	p_dec
+op	4:40	0:0	2	->
+water	4:42	0:0	2	p_owner
+call	5:4	5:38	2	vlc_assert_locked
+arg	5:23	5:38	3	&p_owner->lock
+op	5:23	0:0	4	&
+water	5:24	0:0	4	p_owner
+op	5:31	0:0	4	->
+water	5:33	0:0	4	lock
+water	5:39	0:0	2	;
+call	7:4	7:37	2	block_FifoEmpty
+arg	7:21	7:37	3	p_owner->p_fifo
+water	7:21	0:0	4	p_owner
+op	7:28	0:0	4	->
+water	7:30	0:0	4	p_fifo
+water	7:38	0:0	2	;
+water	8:4	0:0	2	p_owner
+op	8:11	0:0	2	->
+water	8:13	0:0	2	b_waiting
+op	8:23	0:0	2	=
+water	8:25	0:0	2	false
+water	8:30	0:0	2	;
+water	10:4	0:0	2	p_owner
+op	10:11	0:0	2	->
+water	10:13	0:0	2	b_flushing
+op	10:24	0:0	2	=
+water	10:26	0:0	2	true
+water	10:30	0:0	2	;
+call	11:4	11:44	2	vlc_cond_signal
+arg	11:21	11:44	3	&p_owner->wait_request
+op	11:21	0:0	4	&
+water	11:22	0:0	4	p_owner
+op	11:29	0:0	4	->
+water	11:31	0:0	4	wait_request
+water	11:45	0:0	2	;
+decl	13:4	13:44	2	block_t	*p_null
+op	13:20	0:0	2	=
+call	13:22	13:43	3	DecoderBlockFlushNew
+if	14:4	15:14	2	(! p_null)
+cond	14:8	14:9	3	! p_null
+op	14:8	0:0	4	!
+water	14:9	0:0	4	p_null
+stmts	15:8	15:14	3	
+return	15:8	15:14	4	
+call	16:4	16:46	2	input_DecoderDecode
+arg	16:25	16:30	3	p_dec
+water	16:25	0:0	4	p_dec
+arg	16:32	16:38	3	p_null
+water	16:32	0:0	4	p_null
+arg	16:40	16:46	3	false
+water	16:40	0:0	4	false
+water	16:47	0:0	2	;
+while	18:4	19:67	2	(p_owner -> b_flushing)
+cond	18:11	18:20	3	p_owner -> b_flushing
+water	18:11	0:0	4	p_owner
+op	18:18	0:0	4	->
+water	18:20	0:0	4	b_flushing
+stmts	19:8	19:67	3	
+call	19:8	19:66	4	vlc_cond_wait
+arg	19:23	19:49	5	&p_owner->wait_acknowledge
+op	19:23	0:0	6	&
+water	19:24	0:0	6	p_owner
+op	19:31	0:0	6	->
+water	19:33	0:0	6	wait_acknowledge
+arg	19:51	19:66	5	&p_owner->lock
+op	19:51	0:0	6	&
+water	19:52	0:0	6	p_owner
+op	19:59	0:0	6	->
+water	19:61	0:0	6	lock
+water	19:67	0:0	4	;

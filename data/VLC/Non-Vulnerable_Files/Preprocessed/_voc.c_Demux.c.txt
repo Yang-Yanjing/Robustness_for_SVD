@@ -1,0 +1,222 @@
+func	2:0	44:0	0	static int	Demux
+params	2:16	0:0	1	
+param	2:18	2:35	2	demux_t *	p_demux
+stmnts	0:0	43:12	1	
+decl	4:4	4:39	2	demux_sys_t	*p_sys
+op	4:23	0:0	2	=
+water	4:25	0:0	2	p_demux
+op	4:32	0:0	2	->
+water	4:34	0:0	2	p_sys
+decl	5:4	5:24	2	block_t	*p_block
+decl	6:4	6:17	2	int64_t	i
+if	7:4	27:4	2	(p_sys -> i_silence_countdown == 0)
+cond	7:8	7:38	3	p_sys -> i_silence_countdown == 0
+water	7:8	0:0	4	p_sys
+op	7:13	0:0	4	->
+water	7:15	0:0	4	i_silence_countdown
+op	7:35	0:0	4	==
+water	7:38	0:0	4	0
+stmts	8:4	27:4	3	
+water	8:4	0:0	4	{
+decl	9:8	9:52	4	int64_t	i_offset
+op	9:25	0:0	4	=
+call	9:27	9:51	5	stream_Tell
+arg	9:40	9:51	6	p_demux->s
+water	9:40	0:0	7	p_demux
+op	9:47	0:0	7	->
+water	9:49	0:0	7	s
+if	10:8	15:8	4	(i_offset >= p_sys -> i_block_end)
+cond	10:12	10:31	5	i_offset >= p_sys -> i_block_end
+water	10:12	0:0	6	i_offset
+op	10:21	0:0	6	>=
+water	10:24	0:0	6	p_sys
+op	10:29	0:0	6	->
+water	10:31	0:0	6	i_block_end
+stmts	11:8	15:8	5	
+water	11:8	0:0	6	{
+if	12:12	13:24	6	(ReadBlockHeader (p_demux ) != VLC_SUCCESS)
+cond	12:16	12:46	7	ReadBlockHeader (p_demux ) != VLC_SUCCESS
+call	12:16	12:41	8	ReadBlockHeader
+arg	12:33	12:41	9	p_demux
+water	12:33	0:0	10	p_demux
+op	12:43	0:0	8	!=
+water	12:46	0:0	8	VLC_SUCCESS
+stmts	13:16	13:24	7	
+return	13:16	13:24	8	0
+water	13:23	0:0	9	0
+return	14:12	14:20	6	1
+water	14:19	0:0	7	1
+water	15:8	0:0	6	}
+water	16:8	0:0	4	i
+op	16:10	0:0	4	=
+water	16:12	0:0	4	(
+water	16:14	0:0	4	p_sys
+op	16:19	0:0	4	->
+water	16:21	0:0	4	i_block_end
+op	16:33	0:0	4	-
+water	16:35	0:0	4	i_offset
+water	16:44	0:0	4	)
+op	17:12	0:0	4	/
+water	17:14	0:0	4	p_sys
+op	17:19	0:0	4	->
+water	17:21	0:0	4	fmt
+op	17:24	0:0	4	.
+water	17:25	0:0	4	audio
+op	17:30	0:0	4	.
+water	17:31	0:0	4	i_bytes_per_frame
+water	17:48	0:0	4	;
+if	18:8	19:30	4	(i > SAMPLES_BUFFER)
+cond	18:12	18:16	5	i > SAMPLES_BUFFER
+water	18:12	0:0	6	i
+op	18:14	0:0	6	>
+water	18:16	0:0	6	SAMPLES_BUFFER
+stmts	19:12	19:30	5	
+water	19:12	0:0	6	i
+op	19:14	0:0	6	=
+water	19:16	0:0	6	SAMPLES_BUFFER
+water	19:30	0:0	6	;
+water	20:8	0:0	4	p_block
+op	20:16	0:0	4	=
+call	20:18	21:71	4	stream_Block
+arg	20:32	20:42	5	p_demux->s
+water	20:32	0:0	6	p_demux
+op	20:39	0:0	6	->
+water	20:41	0:0	6	s
+arg	21:32	21:71	5	p_sys->fmt.audio.i_bytes_per_frame*i
+water	21:32	0:0	6	p_sys
+op	21:37	0:0	6	->
+water	21:39	0:0	6	fmt
+op	21:42	0:0	6	.
+water	21:43	0:0	6	audio
+op	21:48	0:0	6	.
+water	21:49	0:0	6	i_bytes_per_frame
+op	21:67	0:0	6	*
+water	21:69	0:0	6	i
+water	21:72	0:0	4	;
+if	22:8	26:8	4	(p_block == NULL)
+cond	22:12	22:23	5	p_block == NULL
+water	22:12	0:0	6	p_block
+op	22:20	0:0	6	==
+water	22:23	0:0	6	NULL
+stmts	23:8	26:8	5	
+water	23:8	0:0	6	{
+call	24:12	24:50	6	msg_Warn
+arg	24:22	24:29	7	p_demux
+water	24:22	0:0	8	p_demux
+arg	24:31	24:50	7	"cannot read data"
+water	24:31	0:0	8	"cannot read data"
+water	24:51	0:0	6	;
+return	25:12	25:20	6	0
+water	25:19	0:0	7	0
+water	26:8	0:0	6	}
+water	27:4	0:0	4	}
+else	28:4	38:4	2
+stmts	29:4	38:4	3	
+water	29:4	0:0	4	{
+water	30:8	0:0	4	i
+op	30:10	0:0	4	=
+water	30:12	0:0	4	p_sys
+op	30:17	0:0	4	->
+water	30:19	0:0	4	i_silence_countdown
+water	30:38	0:0	4	;
+if	31:8	32:30	4	(i > SAMPLES_BUFFER)
+cond	31:12	31:16	5	i > SAMPLES_BUFFER
+water	31:12	0:0	6	i
+op	31:14	0:0	6	>
+water	31:16	0:0	6	SAMPLES_BUFFER
+stmts	32:12	32:30	5	
+water	32:12	0:0	6	i
+op	32:14	0:0	6	=
+water	32:16	0:0	6	SAMPLES_BUFFER
+water	32:30	0:0	6	;
+water	33:8	0:0	4	p_block
+op	33:16	0:0	4	=
+call	33:18	33:33	4	block_Alloc
+arg	33:31	33:33	5	i
+water	33:31	0:0	6	i
+water	33:34	0:0	4	;
+if	34:8	35:29	4	(p_block == NULL)
+cond	34:12	34:23	5	p_block == NULL
+water	34:12	0:0	6	p_block
+op	34:20	0:0	6	==
+water	34:23	0:0	6	NULL
+stmts	35:12	35:29	5	
+return	35:12	35:29	6	VLC_ENOMEM
+water	35:19	0:0	7	VLC_ENOMEM
+call	36:8	36:40	4	memset
+arg	36:16	36:33	5	p_block->p_buffer
+water	36:16	0:0	6	p_block
+op	36:23	0:0	6	->
+water	36:25	0:0	6	p_buffer
+arg	36:35	36:36	5	0
+water	36:35	0:0	6	0
+arg	36:38	36:40	5	i
+water	36:38	0:0	6	i
+water	36:41	0:0	4	;
+water	37:8	0:0	4	p_sys
+op	37:13	0:0	4	->
+water	37:15	0:0	4	i_silence_countdown
+op	37:35	0:0	4	-=
+water	37:38	0:0	4	i
+water	37:39	0:0	4	;
+water	38:4	0:0	4	}
+water	39:4	0:0	2	p_block
+op	39:11	0:0	2	->
+water	39:13	0:0	2	i_dts
+op	39:19	0:0	2	=
+water	39:21	0:0	2	p_block
+op	39:28	0:0	2	->
+water	39:30	0:0	2	i_pts
+op	39:36	0:0	2	=
+water	39:38	0:0	2	VLC_TS_0
+op	39:47	0:0	2	+
+call	39:49	39:71	2	date_Get
+arg	39:59	39:71	3	&p_sys->pts
+op	39:59	0:0	4	&
+water	39:60	0:0	4	p_sys
+op	39:65	0:0	4	->
+water	39:67	0:0	4	pts
+water	39:72	0:0	2	;
+call	40:4	40:65	2	es_out_Control
+arg	40:20	40:32	3	p_demux->out
+water	40:20	0:0	4	p_demux
+op	40:27	0:0	4	->
+water	40:29	0:0	4	out
+arg	40:34	40:48	3	ES_OUT_SET_PCR
+water	40:34	0:0	4	ES_OUT_SET_PCR
+arg	40:50	40:65	3	p_block->i_pts
+water	40:50	0:0	4	p_block
+op	40:57	0:0	4	->
+water	40:59	0:0	4	i_pts
+water	40:66	0:0	2	;
+call	41:4	41:52	2	es_out_Send
+arg	41:17	41:29	3	p_demux->out
+water	41:17	0:0	4	p_demux
+op	41:24	0:0	4	->
+water	41:26	0:0	4	out
+arg	41:31	41:42	3	p_sys->p_es
+water	41:31	0:0	4	p_sys
+op	41:36	0:0	4	->
+water	41:38	0:0	4	p_es
+arg	41:44	41:52	3	p_block
+water	41:44	0:0	4	p_block
+water	41:53	0:0	2	;
+call	42:4	42:69	2	date_Increment
+arg	42:20	42:31	3	&p_sys->pts
+op	42:20	0:0	4	&
+water	42:21	0:0	4	p_sys
+op	42:26	0:0	4	->
+water	42:28	0:0	4	pts
+arg	42:33	42:69	3	p_sys->fmt.audio.i_frame_length*i
+water	42:33	0:0	4	p_sys
+op	42:38	0:0	4	->
+water	42:40	0:0	4	fmt
+op	42:43	0:0	4	.
+water	42:44	0:0	4	audio
+op	42:49	0:0	4	.
+water	42:50	0:0	4	i_frame_length
+op	42:65	0:0	4	*
+water	42:67	0:0	4	i
+water	42:70	0:0	2	;
+return	43:4	43:12	2	1
+water	43:11	0:0	3	1

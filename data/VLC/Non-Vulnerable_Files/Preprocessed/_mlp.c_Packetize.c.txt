@@ -1,0 +1,761 @@
+func	2:0	161:0	0	static block_t *	Packetize
+params	2:25	0:0	1	
+param	2:27	2:43	2	decoder_t *	p_dec
+param	2:45	2:64	2	block_t * *	pp_block
+stmnts	0:0	160:15	1	
+decl	4:4	4:39	2	decoder_sys_t	*p_sys
+op	4:25	0:0	2	=
+water	4:27	0:0	2	p_dec
+op	4:32	0:0	2	->
+water	4:34	0:0	2	p_sys
+decl	5:4	5:37	2	uint8_t	p_header[MLP_HEADER_SIZE]
+decl	6:4	6:25	2	block_t	*p_out_buffer
+if	8:4	9:19	2	(! pp_block || ! * pp_block)
+cond	8:8	8:23	3	! pp_block || ! * pp_block
+op	8:8	0:0	4	!
+water	8:9	0:0	4	pp_block
+op	8:18	0:0	4	||
+op	8:21	0:0	4	!
+op	8:22	0:0	4	*
+water	8:23	0:0	4	pp_block
+stmts	9:8	9:19	3	
+return	9:8	9:19	4	NULL
+water	9:15	0:0	5	NULL
+if	11:4	22:4	2	(( * pp_block ) -> i_flags & ( BLOCK_FLAG_DISCONTINUITY | BLOCK_FLAG_CORRUPTED ))
+cond	11:8	11:75	3	( * pp_block ) -> i_flags & ( BLOCK_FLAG_DISCONTINUITY | BLOCK_FLAG_CORRUPTED )
+water	11:8	0:0	4	(
+op	11:9	0:0	4	*
+water	11:10	0:0	4	pp_block
+water	11:18	0:0	4	)
+op	11:19	0:0	4	->
+water	11:21	0:0	4	i_flags
+op	11:28	0:0	4	&
+water	11:29	0:0	4	(
+water	11:30	0:0	4	BLOCK_FLAG_DISCONTINUITY
+op	11:54	0:0	4	|
+water	11:55	0:0	4	BLOCK_FLAG_CORRUPTED
+water	11:75	0:0	4	)
+stmts	12:4	22:4	3	
+water	12:4	0:0	4	{
+if	13:8	18:8	4	(( * pp_block ) -> i_flags & BLOCK_FLAG_CORRUPTED)
+cond	13:12	13:33	5	( * pp_block ) -> i_flags & BLOCK_FLAG_CORRUPTED
+water	13:12	0:0	6	(
+op	13:13	0:0	6	*
+water	13:14	0:0	6	pp_block
+water	13:22	0:0	6	)
+op	13:23	0:0	6	->
+water	13:25	0:0	6	i_flags
+op	13:32	0:0	6	&
+water	13:33	0:0	6	BLOCK_FLAG_CORRUPTED
+stmts	14:8	18:8	5	
+water	14:8	0:0	6	{
+water	15:12	0:0	6	p_sys
+op	15:17	0:0	6	->
+water	15:19	0:0	6	b_mlp
+op	15:25	0:0	6	=
+water	15:27	0:0	6	false
+water	15:32	0:0	6	;
+water	16:12	0:0	6	p_sys
+op	16:17	0:0	6	->
+water	16:19	0:0	6	i_state
+op	16:27	0:0	6	=
+water	16:29	0:0	6	STATE_NOSYNC
+water	16:41	0:0	6	;
+call	17:12	17:54	6	block_BytestreamEmpty
+arg	17:35	17:54	7	&p_sys->bytestream
+op	17:35	0:0	8	&
+water	17:36	0:0	8	p_sys
+op	17:41	0:0	8	->
+water	17:43	0:0	8	bytestream
+water	17:55	0:0	6	;
+water	18:8	0:0	6	}
+call	19:8	19:38	4	date_Set
+arg	19:18	19:34	5	&p_sys->end_date
+op	19:18	0:0	6	&
+water	19:19	0:0	6	p_sys
+op	19:24	0:0	6	->
+water	19:26	0:0	6	end_date
+arg	19:36	19:38	5	0
+water	19:36	0:0	6	0
+water	19:39	0:0	4	;
+call	20:8	20:33	4	block_Release
+arg	20:23	20:33	5	*pp_block
+op	20:23	0:0	6	*
+water	20:24	0:0	6	pp_block
+water	20:34	0:0	4	;
+return	21:8	21:19	4	NULL
+water	21:15	0:0	5	NULL
+water	22:4	0:0	4	}
+if	23:4	28:4	2	(!date_Get (& p_sys -> end_date ) && ! ( * pp_block ) -> i_pts)
+cond	23:8	23:55	3	!date_Get (& p_sys -> end_date ) && ! ( * pp_block ) -> i_pts
+op	23:8	0:0	4	!
+call	23:9	23:36	4	date_Get
+arg	23:19	23:36	5	&p_sys->end_date
+op	23:19	0:0	6	&
+water	23:20	0:0	6	p_sys
+op	23:25	0:0	6	->
+water	23:27	0:0	6	end_date
+op	23:38	0:0	4	&&
+op	23:41	0:0	4	!
+water	23:42	0:0	4	(
+op	23:43	0:0	4	*
+water	23:44	0:0	4	pp_block
+water	23:52	0:0	4	)
+op	23:53	0:0	4	->
+water	23:55	0:0	4	i_pts
+stmts	24:4	28:4	3	
+water	24:4	0:0	4	{
+call	26:8	26:33	4	block_Release
+arg	26:23	26:33	5	*pp_block
+op	26:23	0:0	6	*
+water	26:24	0:0	6	pp_block
+water	26:34	0:0	4	;
+return	27:8	27:19	4	NULL
+water	27:15	0:0	5	NULL
+water	28:4	0:0	4	}
+call	29:4	29:56	2	block_BytestreamPush
+arg	29:26	29:44	3	&p_sys->bytestream
+op	29:26	0:0	4	&
+water	29:27	0:0	4	p_sys
+op	29:32	0:0	4	->
+water	29:34	0:0	4	bytestream
+arg	29:46	29:56	3	*pp_block
+op	29:46	0:0	4	*
+water	29:47	0:0	4	pp_block
+water	29:57	0:0	2	;
+for	30:4	159:4	2	(;;)
+forinit	30:9	30:9	3	;
+water	30:9	0:0	4	;
+cond	0:0	0:0	3	
+forexpr	0:0	0:0	3	
+stmts	31:4	159:4	3	
+water	31:4	0:0	4	{
+switch	32:8	158:8	4	(p_sys -> i_state)
+cond	32:16	32:23	5	p_sys -> i_state
+water	32:16	0:0	6	p_sys
+op	32:21	0:0	6	->
+water	32:23	0:0	6	i_state
+stmts	33:8	158:8	5	
+water	33:8	0:0	6	{
+label	34:8	34:25	6	case STATE_NOSYNC :
+while	35:12	48:12	6	(!block_PeekBytes (& p_sys -> bytestream ,p_header ,MLP_HEADER_SIZE ))
+cond	35:19	35:83	7	!block_PeekBytes (& p_sys -> bytestream ,p_header ,MLP_HEADER_SIZE )
+op	35:19	0:0	8	!
+call	35:20	35:83	8	block_PeekBytes
+arg	35:37	35:55	9	&p_sys->bytestream
+op	35:37	0:0	10	&
+water	35:38	0:0	10	p_sys
+op	35:43	0:0	10	->
+water	35:45	0:0	10	bytestream
+arg	35:57	35:65	9	p_header
+water	35:57	0:0	10	p_header
+arg	35:67	35:83	9	MLP_HEADER_SIZE
+water	35:67	0:0	10	MLP_HEADER_SIZE
+stmts	36:12	48:12	7	
+water	36:12	0:0	8	{
+if	37:16	41:16	8	(SyncInfo (p_header ,& p_sys -> b_mlp ,& p_sys -> mlp ) > 0)
+cond	37:20	37:71	9	SyncInfo (p_header ,& p_sys -> b_mlp ,& p_sys -> mlp ) > 0
+call	37:20	37:67	10	SyncInfo
+arg	37:30	37:38	11	p_header
+water	37:30	0:0	12	p_header
+arg	37:40	37:53	11	&p_sys->b_mlp
+op	37:40	0:0	12	&
+water	37:41	0:0	12	p_sys
+op	37:46	0:0	12	->
+water	37:48	0:0	12	b_mlp
+arg	37:55	37:67	11	&p_sys->mlp
+op	37:55	0:0	12	&
+water	37:56	0:0	12	p_sys
+op	37:61	0:0	12	->
+water	37:63	0:0	12	mlp
+op	37:69	0:0	10	>
+water	37:71	0:0	10	0
+stmts	38:16	41:16	9	
+water	38:16	0:0	10	{
+water	39:20	0:0	10	p_sys
+op	39:25	0:0	10	->
+water	39:27	0:0	10	i_state
+op	39:35	0:0	10	=
+water	39:37	0:0	10	STATE_SYNC
+water	39:47	0:0	10	;
+break	40:20	40:25	10	
+water	41:16	0:0	10	}
+else	42:16	46:16	8
+stmts	42:21	46:16	9	
+if	42:21	46:16	10	(SyncInfoDolby (p_header ) > 0)
+cond	42:25	42:53	11	SyncInfoDolby (p_header ) > 0
+call	42:25	42:49	12	SyncInfoDolby
+arg	42:40	42:49	13	p_header
+water	42:40	0:0	14	p_header
+op	42:51	0:0	12	>
+water	42:53	0:0	12	0
+stmts	43:16	46:16	11	
+water	43:16	0:0	12	{
+water	44:20	0:0	12	p_sys
+op	44:25	0:0	12	->
+water	44:27	0:0	12	i_state
+op	44:35	0:0	12	=
+water	44:37	0:0	12	STATE_SYNC
+water	44:47	0:0	12	;
+break	45:20	45:25	12	
+water	46:16	0:0	12	}
+call	47:16	47:51	8	block_SkipByte
+arg	47:32	47:51	9	&p_sys->bytestream
+op	47:32	0:0	10	&
+water	47:33	0:0	10	p_sys
+op	47:38	0:0	10	->
+water	47:40	0:0	10	bytestream
+water	47:52	0:0	8	;
+water	48:12	0:0	8	}
+if	49:12	54:12	6	(p_sys -> i_state != STATE_SYNC)
+cond	49:16	49:34	7	p_sys -> i_state != STATE_SYNC
+water	49:16	0:0	8	p_sys
+op	49:21	0:0	8	->
+water	49:23	0:0	8	i_state
+op	49:31	0:0	8	!=
+water	49:34	0:0	8	STATE_SYNC
+stmts	50:12	54:12	7	
+water	50:12	0:0	8	{
+call	51:16	51:58	8	block_BytestreamFlush
+arg	51:39	51:58	9	&p_sys->bytestream
+op	51:39	0:0	10	&
+water	51:40	0:0	10	p_sys
+op	51:45	0:0	10	->
+water	51:47	0:0	10	bytestream
+water	51:59	0:0	8	;
+return	53:16	53:27	8	NULL
+water	53:23	0:0	9	NULL
+water	54:12	0:0	8	}
+label	55:8	55:23	6	case STATE_SYNC :
+water	57:12	0:0	6	p_sys
+op	57:17	0:0	6	->
+water	57:19	0:0	6	i_pts
+op	57:25	0:0	6	=
+water	57:27	0:0	6	p_sys
+op	57:32	0:0	6	->
+water	57:34	0:0	6	bytestream
+op	57:44	0:0	6	.
+water	57:45	0:0	6	p_block
+op	57:52	0:0	6	->
+water	57:54	0:0	6	i_pts
+water	57:59	0:0	6	;
+if	58:12	62:12	6	(p_sys -> i_pts > VLC_TS_INVALID && p_sys -> i_pts !=date_Get (& p_sys -> end_date ))
+cond	58:16	59:59	7	p_sys -> i_pts > VLC_TS_INVALID && p_sys -> i_pts !=date_Get (& p_sys -> end_date )
+water	58:16	0:0	8	p_sys
+op	58:21	0:0	8	->
+water	58:23	0:0	8	i_pts
+op	58:29	0:0	8	>
+water	58:31	0:0	8	VLC_TS_INVALID
+op	58:46	0:0	8	&&
+water	59:16	0:0	8	p_sys
+op	59:21	0:0	8	->
+water	59:23	0:0	8	i_pts
+op	59:29	0:0	8	!=
+call	59:32	59:59	8	date_Get
+arg	59:42	59:59	9	&p_sys->end_date
+op	59:42	0:0	10	&
+water	59:43	0:0	10	p_sys
+op	59:48	0:0	10	->
+water	59:50	0:0	10	end_date
+stmts	60:12	62:12	7	
+water	60:12	0:0	8	{
+call	61:16	61:57	8	date_Set
+arg	61:26	61:42	9	&p_sys->end_date
+op	61:26	0:0	10	&
+water	61:27	0:0	10	p_sys
+op	61:32	0:0	10	->
+water	61:34	0:0	10	end_date
+arg	61:44	61:57	9	p_sys->i_pts
+water	61:44	0:0	10	p_sys
+op	61:49	0:0	10	->
+water	61:51	0:0	10	i_pts
+water	61:58	0:0	8	;
+water	62:12	0:0	8	}
+water	63:12	0:0	6	p_sys
+op	63:17	0:0	6	->
+water	63:19	0:0	6	i_state
+op	63:27	0:0	6	=
+water	63:29	0:0	6	STATE_HEADER
+water	63:41	0:0	6	;
+label	64:8	64:25	6	case STATE_HEADER :
+if	66:12	70:12	6	(block_PeekBytes (& p_sys -> bytestream ,p_header ,MLP_HEADER_SIZE ))
+cond	66:16	66:79	7	block_PeekBytes (& p_sys -> bytestream ,p_header ,MLP_HEADER_SIZE )
+call	66:16	66:79	8	block_PeekBytes
+arg	66:33	66:51	9	&p_sys->bytestream
+op	66:33	0:0	10	&
+water	66:34	0:0	10	p_sys
+op	66:39	0:0	10	->
+water	66:41	0:0	10	bytestream
+arg	66:53	66:61	9	p_header
+water	66:53	0:0	10	p_header
+arg	66:63	66:79	9	MLP_HEADER_SIZE
+water	66:63	0:0	10	MLP_HEADER_SIZE
+stmts	67:12	70:12	7	
+water	67:12	0:0	8	{
+return	69:16	69:27	8	NULL
+water	69:23	0:0	9	NULL
+water	70:12	0:0	8	}
+water	72:12	0:0	6	p_sys
+op	72:17	0:0	6	->
+water	72:19	0:0	6	i_frame_size
+op	72:32	0:0	6	=
+call	72:34	72:58	6	SyncInfoDolby
+arg	72:49	72:58	7	p_header
+water	72:49	0:0	8	p_header
+water	72:59	0:0	6	;
+if	73:12	74:86	6	(p_sys -> i_frame_size <= 0)
+cond	73:16	73:39	7	p_sys -> i_frame_size <= 0
+water	73:16	0:0	8	p_sys
+op	73:21	0:0	8	->
+water	73:23	0:0	8	i_frame_size
+op	73:36	0:0	8	<=
+water	73:39	0:0	8	0
+stmts	74:16	74:86	7	
+water	74:16	0:0	8	p_sys
+op	74:21	0:0	8	->
+water	74:23	0:0	8	i_frame_size
+op	74:36	0:0	8	=
+call	74:38	74:85	8	SyncInfo
+arg	74:48	74:56	9	p_header
+water	74:48	0:0	10	p_header
+arg	74:58	74:71	9	&p_sys->b_mlp
+op	74:58	0:0	10	&
+water	74:59	0:0	10	p_sys
+op	74:64	0:0	10	->
+water	74:66	0:0	10	b_mlp
+arg	74:73	74:85	9	&p_sys->mlp
+op	74:73	0:0	10	&
+water	74:74	0:0	10	p_sys
+op	74:79	0:0	10	->
+water	74:81	0:0	10	mlp
+water	74:86	0:0	8	;
+if	75:12	82:12	6	(p_sys -> i_frame_size <= 0)
+cond	75:16	75:39	7	p_sys -> i_frame_size <= 0
+water	75:16	0:0	8	p_sys
+op	75:21	0:0	8	->
+water	75:23	0:0	8	i_frame_size
+op	75:36	0:0	8	<=
+water	75:39	0:0	8	0
+stmts	76:12	82:12	7	
+water	76:12	0:0	8	{
+call	77:16	77:53	8	msg_Dbg
+arg	77:25	77:30	9	p_dec
+water	77:25	0:0	10	p_dec
+arg	77:32	77:53	9	"emulated sync word"
+water	77:32	0:0	10	"emulated sync word"
+water	77:54	0:0	8	;
+call	78:16	78:51	8	block_SkipByte
+arg	78:32	78:51	9	&p_sys->bytestream
+op	78:32	0:0	10	&
+water	78:33	0:0	10	p_sys
+op	78:38	0:0	10	->
+water	78:40	0:0	10	bytestream
+water	78:52	0:0	8	;
+water	79:16	0:0	8	p_sys
+op	79:21	0:0	8	->
+water	79:23	0:0	8	b_mlp
+op	79:29	0:0	8	=
+water	79:31	0:0	8	false
+water	79:36	0:0	8	;
+water	80:16	0:0	8	p_sys
+op	80:21	0:0	8	->
+water	80:23	0:0	8	i_state
+op	80:31	0:0	8	=
+water	80:33	0:0	8	STATE_NOSYNC
+water	80:45	0:0	8	;
+break	81:16	81:21	8	
+water	82:12	0:0	8	}
+water	83:12	0:0	6	p_sys
+op	83:17	0:0	6	->
+water	83:19	0:0	6	i_state
+op	83:27	0:0	6	=
+water	83:29	0:0	6	STATE_NEXT_SYNC
+water	83:44	0:0	6	;
+label	84:8	84:28	6	case STATE_NEXT_SYNC :
+if	88:12	93:12	6	(block_PeekOffsetBytes (& p_sys -> bytestream ,p_sys -> i_frame_size ,p_header ,MLP_HEADER_SIZE ))
+cond	88:16	89:86	7	block_PeekOffsetBytes (& p_sys -> bytestream ,p_sys -> i_frame_size ,p_header ,MLP_HEADER_SIZE )
+call	88:16	89:86	8	block_PeekOffsetBytes
+arg	88:39	88:57	9	&p_sys->bytestream
+op	88:39	0:0	10	&
+water	88:40	0:0	10	p_sys
+op	88:45	0:0	10	->
+water	88:47	0:0	10	bytestream
+arg	89:39	89:58	9	p_sys->i_frame_size
+water	89:39	0:0	10	p_sys
+op	89:44	0:0	10	->
+water	89:46	0:0	10	i_frame_size
+arg	89:60	89:68	9	p_header
+water	89:60	0:0	10	p_header
+arg	89:70	89:86	9	MLP_HEADER_SIZE
+water	89:70	0:0	10	MLP_HEADER_SIZE
+stmts	90:12	93:12	7	
+water	90:12	0:0	8	{
+return	92:16	92:27	8	NULL
+water	92:23	0:0	9	NULL
+water	93:12	0:0	8	}
+decl	94:12	94:37	6	bool	b_mlp
+op	94:23	0:0	6	=
+water	94:25	0:0	6	p_sys
+op	94:30	0:0	6	->
+water	94:32	0:0	6	b_mlp
+decl	95:12	95:41	6	mlp_header_t	mlp
+op	95:29	0:0	6	=
+water	95:31	0:0	6	p_sys
+op	95:36	0:0	6	->
+water	95:38	0:0	6	mlp
+if	96:12	104:12	6	(SyncInfo (p_header ,& b_mlp ,& mlp ) <= 0 &&SyncInfoDolby (p_header ) <= 0)
+cond	96:16	96:88	7	SyncInfo (p_header ,& b_mlp ,& mlp ) <= 0 &&SyncInfoDolby (p_header ) <= 0
+call	96:16	96:49	8	SyncInfo
+arg	96:26	96:34	9	p_header
+water	96:26	0:0	10	p_header
+arg	96:36	96:42	9	&b_mlp
+op	96:36	0:0	10	&
+water	96:37	0:0	10	b_mlp
+arg	96:44	96:49	9	&mlp
+op	96:44	0:0	10	&
+water	96:45	0:0	10	mlp
+op	96:51	0:0	8	<=
+water	96:54	0:0	8	0
+op	96:56	0:0	8	&&
+call	96:59	96:83	8	SyncInfoDolby
+arg	96:74	96:83	9	p_header
+water	96:74	0:0	10	p_header
+op	96:85	0:0	8	<=
+water	96:88	0:0	8	0
+stmts	97:12	104:12	7	
+water	97:12	0:0	8	{
+call	98:16	99:56	8	msg_Dbg
+arg	98:25	98:30	9	p_dec
+water	98:25	0:0	10	p_dec
+arg	98:32	99:56	9	"emulated sync word ""(no sync on following frame)"
+water	98:32	0:0	10	"emulated sync word "
+water	99:25	0:0	10	"(no sync on following frame)"
+water	99:57	0:0	8	;
+water	100:16	0:0	8	p_sys
+op	100:21	0:0	8	->
+water	100:23	0:0	8	b_mlp
+op	100:29	0:0	8	=
+water	100:31	0:0	8	false
+water	100:36	0:0	8	;
+water	101:16	0:0	8	p_sys
+op	101:21	0:0	8	->
+water	101:23	0:0	8	i_state
+op	101:31	0:0	8	=
+water	101:33	0:0	8	STATE_NOSYNC
+water	101:45	0:0	8	;
+call	102:16	102:51	8	block_SkipByte
+arg	102:32	102:51	9	&p_sys->bytestream
+op	102:32	0:0	10	&
+water	102:33	0:0	10	p_sys
+op	102:38	0:0	10	->
+water	102:40	0:0	10	bytestream
+water	102:52	0:0	8	;
+break	103:16	103:21	8	
+water	104:12	0:0	8	}
+water	105:12	0:0	6	p_sys
+op	105:17	0:0	6	->
+water	105:19	0:0	6	i_state
+op	105:27	0:0	6	=
+water	105:29	0:0	6	STATE_SEND_DATA
+water	105:44	0:0	6	;
+break	106:12	106:17	6	
+label	107:8	107:27	6	case STATE_GET_DATA :
+if	110:12	114:12	6	(block_WaitBytes (& p_sys -> bytestream ,p_sys -> i_frame_size ))
+cond	110:16	110:73	7	block_WaitBytes (& p_sys -> bytestream ,p_sys -> i_frame_size )
+call	110:16	110:73	8	block_WaitBytes
+arg	110:33	110:51	9	&p_sys->bytestream
+op	110:33	0:0	10	&
+water	110:34	0:0	10	p_sys
+op	110:39	0:0	10	->
+water	110:41	0:0	10	bytestream
+arg	110:53	110:73	9	p_sys->i_frame_size
+water	110:53	0:0	10	p_sys
+op	110:58	0:0	10	->
+water	110:60	0:0	10	i_frame_size
+stmts	111:12	114:12	7	
+water	111:12	0:0	8	{
+return	113:16	113:27	8	NULL
+water	113:23	0:0	9	NULL
+water	114:12	0:0	8	}
+water	115:12	0:0	6	p_sys
+op	115:17	0:0	6	->
+water	115:19	0:0	6	i_state
+op	115:27	0:0	6	=
+water	115:29	0:0	6	STATE_SEND_DATA
+water	115:44	0:0	6	;
+label	116:8	116:28	6	case STATE_SEND_DATA :
+water	119:12	0:0	6	p_out_buffer
+op	119:25	0:0	6	=
+call	119:27	119:60	6	block_Alloc
+arg	119:40	119:60	7	p_sys->i_frame_size
+water	119:40	0:0	8	p_sys
+op	119:45	0:0	8	->
+water	119:47	0:0	8	i_frame_size
+water	119:61	0:0	6	;
+if	120:12	121:27	6	(! p_out_buffer)
+cond	120:16	120:17	7	! p_out_buffer
+op	120:16	0:0	8	!
+water	120:17	0:0	8	p_out_buffer
+stmts	121:16	121:27	7	
+return	121:16	121:27	8	NULL
+water	121:23	0:0	9	NULL
+call	123:12	124:75	6	block_GetBytes
+arg	123:28	123:46	7	&p_sys->bytestream
+op	123:28	0:0	8	&
+water	123:29	0:0	8	p_sys
+op	123:34	0:0	8	->
+water	123:36	0:0	8	bytestream
+arg	124:28	124:50	7	p_out_buffer->p_buffer
+water	124:28	0:0	8	p_out_buffer
+op	124:40	0:0	8	->
+water	124:42	0:0	8	p_buffer
+arg	124:52	124:75	7	p_out_buffer->i_buffer
+water	124:52	0:0	8	p_out_buffer
+op	124:64	0:0	8	->
+water	124:66	0:0	8	i_buffer
+water	124:76	0:0	6	;
+if	126:12	131:12	6	(SyncInfoDolby (p_out_buffer -> p_buffer ) > 0)
+cond	126:16	126:58	7	SyncInfoDolby (p_out_buffer -> p_buffer ) > 0
+call	126:16	126:54	8	SyncInfoDolby
+arg	126:31	126:54	9	p_out_buffer->p_buffer
+water	126:31	0:0	10	p_out_buffer
+op	126:43	0:0	10	->
+water	126:45	0:0	10	p_buffer
+op	126:56	0:0	8	>
+water	126:58	0:0	8	0
+stmts	127:12	131:12	7	
+water	127:12	0:0	8	{
+call	128:16	128:44	8	block_Release
+arg	128:31	128:44	9	p_out_buffer
+water	128:31	0:0	10	p_out_buffer
+water	128:45	0:0	8	;
+water	129:16	0:0	8	p_sys
+op	129:21	0:0	8	->
+water	129:23	0:0	8	i_state
+op	129:31	0:0	8	=
+water	129:33	0:0	8	STATE_NOSYNC
+water	129:45	0:0	8	;
+break	130:16	130:21	8	
+water	131:12	0:0	8	}
+if	133:12	143:12	6	(p_dec -> fmt_out . audio . i_rate != p_sys -> mlp . i_rate)
+cond	133:16	133:58	7	p_dec -> fmt_out . audio . i_rate != p_sys -> mlp . i_rate
+water	133:16	0:0	8	p_dec
+op	133:21	0:0	8	->
+water	133:23	0:0	8	fmt_out
+op	133:30	0:0	8	.
+water	133:31	0:0	8	audio
+op	133:36	0:0	8	.
+water	133:37	0:0	8	i_rate
+op	133:44	0:0	8	!=
+water	133:47	0:0	8	p_sys
+op	133:52	0:0	8	->
+water	133:54	0:0	8	mlp
+op	133:57	0:0	8	.
+water	133:58	0:0	8	i_rate
+stmts	134:12	143:12	7	
+water	134:12	0:0	8	{
+call	135:16	136:67	8	msg_Info
+arg	135:26	135:31	9	p_dec
+water	135:26	0:0	10	p_dec
+arg	135:33	135:66	9	"MLP channels: %d samplerate: %d"
+water	135:33	0:0	10	"MLP channels: %d samplerate: %d"
+arg	136:26	136:47	9	p_sys->mlp.i_channels
+water	136:26	0:0	10	p_sys
+op	136:31	0:0	10	->
+water	136:33	0:0	10	mlp
+op	136:36	0:0	10	.
+water	136:37	0:0	10	i_channels
+arg	136:49	136:67	9	p_sys->mlp.i_rate
+water	136:49	0:0	10	p_sys
+op	136:54	0:0	10	->
+water	136:56	0:0	10	mlp
+op	136:59	0:0	10	.
+water	136:60	0:0	10	i_rate
+water	136:68	0:0	8	;
+if	137:16	142:16	8	(p_sys -> mlp . i_rate > 0)
+cond	137:20	137:40	9	p_sys -> mlp . i_rate > 0
+water	137:20	0:0	10	p_sys
+op	137:25	0:0	10	->
+water	137:27	0:0	10	mlp
+op	137:30	0:0	10	.
+water	137:31	0:0	10	i_rate
+op	137:38	0:0	10	>
+water	137:40	0:0	10	0
+stmts	138:16	142:16	9	
+water	138:16	0:0	10	{
+decl	139:20	139:75	10	const mtime_t	i_end_date
+op	139:45	0:0	10	=
+call	139:47	139:74	11	date_Get
+arg	139:57	139:74	12	&p_sys->end_date
+op	139:57	0:0	13	&
+water	139:58	0:0	13	p_sys
+op	139:63	0:0	13	->
+water	139:65	0:0	13	end_date
+call	140:20	140:70	10	date_Init
+arg	140:31	140:47	11	&p_sys->end_date
+op	140:31	0:0	12	&
+water	140:32	0:0	12	p_sys
+op	140:37	0:0	12	->
+water	140:39	0:0	12	end_date
+arg	140:49	140:66	11	p_sys->mlp.i_rate
+water	140:49	0:0	12	p_sys
+op	140:54	0:0	12	->
+water	140:56	0:0	12	mlp
+op	140:59	0:0	12	.
+water	140:60	0:0	12	i_rate
+arg	140:68	140:70	11	1
+water	140:68	0:0	12	1
+water	140:71	0:0	10	;
+call	141:20	141:59	10	date_Set
+arg	141:30	141:46	11	&p_sys->end_date
+op	141:30	0:0	12	&
+water	141:31	0:0	12	p_sys
+op	141:36	0:0	12	->
+water	141:38	0:0	12	end_date
+arg	141:48	141:59	11	i_end_date
+water	141:48	0:0	12	i_end_date
+water	141:60	0:0	10	;
+water	142:16	0:0	10	}
+water	143:12	0:0	8	}
+water	144:12	0:0	6	p_dec
+op	144:17	0:0	6	->
+water	144:19	0:0	6	fmt_out
+op	144:26	0:0	6	.
+water	144:27	0:0	6	audio
+op	144:32	0:0	6	.
+water	144:33	0:0	6	i_rate
+op	144:44	0:0	6	=
+water	144:46	0:0	6	p_sys
+op	144:51	0:0	6	->
+water	144:53	0:0	6	mlp
+op	144:56	0:0	6	.
+water	144:57	0:0	6	i_rate
+water	144:63	0:0	6	;
+water	145:12	0:0	6	p_dec
+op	145:17	0:0	6	->
+water	145:19	0:0	6	fmt_out
+op	145:26	0:0	6	.
+water	145:27	0:0	6	audio
+op	145:32	0:0	6	.
+water	145:33	0:0	6	i_channels
+op	145:44	0:0	6	=
+water	145:46	0:0	6	p_sys
+op	145:51	0:0	6	->
+water	145:53	0:0	6	mlp
+op	145:56	0:0	6	.
+water	145:57	0:0	6	i_channels
+water	145:67	0:0	6	;
+water	146:12	0:0	6	p_dec
+op	146:17	0:0	6	->
+water	146:19	0:0	6	fmt_out
+op	146:26	0:0	6	.
+water	146:27	0:0	6	audio
+op	146:32	0:0	6	.
+water	146:33	0:0	6	i_original_channels
+op	146:53	0:0	6	=
+water	146:55	0:0	6	p_sys
+op	146:60	0:0	6	->
+water	146:62	0:0	6	mlp
+op	146:65	0:0	6	.
+water	146:66	0:0	6	i_channels_conf
+water	146:81	0:0	6	;
+water	147:12	0:0	6	p_dec
+op	147:17	0:0	6	->
+water	147:19	0:0	6	fmt_out
+op	147:26	0:0	6	.
+water	147:27	0:0	6	audio
+op	147:32	0:0	6	.
+water	147:33	0:0	6	i_physical_channels
+op	147:53	0:0	6	=
+water	147:55	0:0	6	p_sys
+op	147:60	0:0	6	->
+water	147:62	0:0	6	mlp
+op	147:65	0:0	6	.
+water	147:66	0:0	6	i_channels_conf
+water	147:81	0:0	6	;
+water	148:12	0:0	6	p_out_buffer
+op	148:24	0:0	6	->
+water	148:26	0:0	6	i_pts
+op	148:32	0:0	6	=
+water	148:34	0:0	6	p_out_buffer
+op	148:46	0:0	6	->
+water	148:48	0:0	6	i_dts
+op	148:54	0:0	6	=
+call	148:56	148:83	6	date_Get
+arg	148:66	148:83	7	&p_sys->end_date
+op	148:66	0:0	8	&
+water	148:67	0:0	8	p_sys
+op	148:72	0:0	8	->
+water	148:74	0:0	8	end_date
+water	148:84	0:0	6	;
+water	149:12	0:0	6	p_out_buffer
+op	149:24	0:0	6	->
+water	149:26	0:0	6	i_length
+op	149:35	0:0	6	=
+call	150:16	150:71	6	date_Increment
+arg	150:32	150:48	7	&p_sys->end_date
+op	150:32	0:0	8	&
+water	150:33	0:0	8	p_sys
+op	150:38	0:0	8	->
+water	150:40	0:0	8	end_date
+arg	150:50	150:71	7	p_sys->mlp.i_samples
+water	150:50	0:0	8	p_sys
+op	150:55	0:0	8	->
+water	150:57	0:0	8	mlp
+op	150:60	0:0	8	.
+water	150:61	0:0	8	i_samples
+op	150:73	0:0	6	-
+water	150:75	0:0	6	p_out_buffer
+op	150:87	0:0	6	->
+water	150:89	0:0	6	i_pts
+water	150:94	0:0	6	;
+if	152:12	153:80	6	(p_sys -> i_pts == p_sys -> bytestream . p_block -> i_pts)
+cond	152:16	152:59	7	p_sys -> i_pts == p_sys -> bytestream . p_block -> i_pts
+water	152:16	0:0	8	p_sys
+op	152:21	0:0	8	->
+water	152:23	0:0	8	i_pts
+op	152:29	0:0	8	==
+water	152:32	0:0	8	p_sys
+op	152:37	0:0	8	->
+water	152:39	0:0	8	bytestream
+op	152:49	0:0	8	.
+water	152:50	0:0	8	p_block
+op	152:57	0:0	8	->
+water	152:59	0:0	8	i_pts
+stmts	153:16	153:80	7	
+water	153:16	0:0	8	p_sys
+op	153:21	0:0	8	->
+water	153:23	0:0	8	i_pts
+op	153:29	0:0	8	=
+water	153:31	0:0	8	p_sys
+op	153:36	0:0	8	->
+water	153:38	0:0	8	bytestream
+op	153:48	0:0	8	.
+water	153:49	0:0	8	p_block
+op	153:56	0:0	8	->
+water	153:58	0:0	8	i_pts
+op	153:64	0:0	8	=
+water	153:66	0:0	8	VLC_TS_INVALID
+water	153:80	0:0	8	;
+op	155:12	0:0	6	*
+water	155:13	0:0	6	pp_block
+op	155:22	0:0	6	=
+call	155:24	155:64	6	block_BytestreamPop
+arg	155:45	155:64	7	&p_sys->bytestream
+op	155:45	0:0	8	&
+water	155:46	0:0	8	p_sys
+op	155:51	0:0	8	->
+water	155:53	0:0	8	bytestream
+water	155:65	0:0	6	;
+water	156:12	0:0	6	p_sys
+op	156:17	0:0	6	->
+water	156:19	0:0	6	i_state
+op	156:27	0:0	6	=
+water	156:29	0:0	6	STATE_NOSYNC
+water	156:41	0:0	6	;
+return	157:12	157:31	6	p_out_buffer
+water	157:19	0:0	7	p_out_buffer
+water	158:8	0:0	6	}
+water	159:4	0:0	4	}
+return	160:4	160:15	2	NULL
+water	160:11	0:0	3	NULL

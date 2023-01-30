@@ -1,0 +1,114 @@
+func	2:0	28:0	0	static HRESULT	Play
+params	2:19	0:0	1	
+param	2:21	2:38	2	vlc_object_t *	obj
+param	2:40	2:62	2	aout_stream_sys_t *	sys
+param	3:21	3:39	2	block_t *	p_buffer
+stmnts	0:0	27:19	1	
+decl	5:4	5:20	2	HRESULT	dsresult
+water	6:4	0:0	2	dsresult
+op	6:13	0:0	2	=
+call	6:15	6:46	2	FillBuffer
+arg	6:27	6:30	3	obj
+water	6:27	0:0	4	obj
+arg	6:32	6:35	3	sys
+water	6:32	0:0	4	sys
+arg	6:37	6:46	3	p_buffer
+water	6:37	0:0	4	p_buffer
+water	6:47	0:0	2	;
+if	7:4	8:23	2	(dsresult != DS_OK)
+cond	7:8	7:20	3	dsresult != DS_OK
+water	7:8	0:0	4	dsresult
+op	7:17	0:0	4	!=
+water	7:20	0:0	4	DS_OK
+stmts	8:8	8:23	3	
+return	8:8	8:23	4	dsresult
+water	8:15	0:0	5	dsresult
+water	10:4	0:0	2	dsresult
+op	10:13	0:0	2	=
+call	10:15	11:56	2	IDirectSoundBuffer_Play
+arg	10:40	10:55	3	sys->p_dsbuffer
+water	10:40	0:0	4	sys
+op	10:43	0:0	4	->
+water	10:45	0:0	4	p_dsbuffer
+arg	10:57	10:58	3	0
+water	10:57	0:0	4	0
+arg	10:60	10:61	3	0
+water	10:60	0:0	4	0
+arg	11:40	11:56	3	DSBPLAY_LOOPING
+water	11:40	0:0	4	DSBPLAY_LOOPING
+water	11:57	0:0	2	;
+if	12:4	17:4	2	(dsresult == DSERR_BUFFERLOST)
+cond	12:8	12:20	3	dsresult == DSERR_BUFFERLOST
+water	12:8	0:0	4	dsresult
+op	12:17	0:0	4	==
+water	12:20	0:0	4	DSERR_BUFFERLOST
+stmts	13:4	17:4	3	
+water	13:4	0:0	4	{
+call	14:8	14:52	4	IDirectSoundBuffer_Restore
+arg	14:36	14:52	5	sys->p_dsbuffer
+water	14:36	0:0	6	sys
+op	14:39	0:0	6	->
+water	14:41	0:0	6	p_dsbuffer
+water	14:53	0:0	4	;
+water	15:8	0:0	4	dsresult
+op	15:17	0:0	4	=
+call	15:19	16:66	4	IDirectSoundBuffer_Play
+arg	15:44	15:59	5	sys->p_dsbuffer
+water	15:44	0:0	6	sys
+op	15:47	0:0	6	->
+water	15:49	0:0	6	p_dsbuffer
+arg	16:44	16:45	5	0
+water	16:44	0:0	6	0
+arg	16:47	16:48	5	0
+water	16:47	0:0	6	0
+arg	16:50	16:66	5	DSBPLAY_LOOPING
+water	16:50	0:0	6	DSBPLAY_LOOPING
+water	16:67	0:0	4	;
+water	17:4	0:0	4	}
+if	18:4	19:76	2	(dsresult != DS_OK)
+cond	18:8	18:20	3	dsresult != DS_OK
+water	18:8	0:0	4	dsresult
+op	18:17	0:0	4	!=
+water	18:20	0:0	4	DS_OK
+stmts	19:8	19:76	3	
+call	19:8	19:75	4	msg_Err
+arg	19:17	19:20	5	obj
+water	19:17	0:0	6	obj
+arg	19:22	19:64	5	"cannot start playing buffer: (hr=0x%0lx)"
+water	19:22	0:0	6	"cannot start playing buffer: (hr=0x%0lx)"
+arg	19:66	19:75	5	dsresult
+water	19:66	0:0	6	dsresult
+water	19:76	0:0	4	;
+else	20:4	26:4	2
+stmts	21:4	26:4	3	
+water	21:4	0:0	4	{
+call	22:8	22:35	4	vlc_mutex_lock
+arg	22:24	22:35	5	&sys->lock
+op	22:24	0:0	6	&
+water	22:25	0:0	6	sys
+op	22:28	0:0	6	->
+water	22:30	0:0	6	lock
+water	22:36	0:0	4	;
+water	23:8	0:0	4	sys
+op	23:11	0:0	4	->
+water	23:13	0:0	4	b_playing
+op	23:23	0:0	4	=
+water	23:25	0:0	4	true
+water	23:29	0:0	4	;
+call	24:8	24:34	4	vlc_cond_signal
+arg	24:24	24:34	5	&sys->cond
+op	24:24	0:0	6	&
+water	24:25	0:0	6	sys
+op	24:28	0:0	6	->
+water	24:30	0:0	6	cond
+water	24:35	0:0	4	;
+call	25:8	25:37	4	vlc_mutex_unlock
+arg	25:26	25:37	5	&sys->lock
+op	25:26	0:0	6	&
+water	25:27	0:0	6	sys
+op	25:30	0:0	6	->
+water	25:32	0:0	6	lock
+water	25:38	0:0	4	;
+water	26:4	0:0	4	}
+return	27:4	27:19	2	dsresult
+water	27:11	0:0	3	dsresult

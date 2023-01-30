@@ -1,0 +1,271 @@
+func	2:0	80:0	0	static int	AnnounceSDP
+params	2:22	0:0	1	
+param	2:24	2:44	2	vlc_object_t *	p_this
+param	2:46	2:61	2	char *	psz_local
+param	3:24	3:46	2	uint32_t	i_session_id
+stmnts	0:0	79:16	1	
+decl	5:4	5:52	2	sout_stream_t	*p_stream
+op	5:28	0:0	2	=
+water	5:30	0:0	2	(
+water	5:31	0:0	2	sout_stream_t
+op	5:44	0:0	2	*
+water	5:45	0:0	2	)
+water	5:46	0:0	2	p_this
+decl	6:4	6:46	2	sout_stream_sys_t	*p_sys
+op	6:29	0:0	2	=
+water	6:31	0:0	2	p_stream
+op	6:39	0:0	2	->
+water	6:41	0:0	2	p_sys
+decl	7:4	7:32	2	vlc_dictionary_t	req_headers
+decl	8:4	8:33	2	vlc_dictionary_t	resp_headers
+decl	9:4	9:28	2	unsigned char	ps_sac[16]
+decl	10:4	10:24	2	char	*psz_sdp
+op	10:18	0:0	2	=
+water	10:20	0:0	2	NULL
+decl	11:4	11:31	2	char	*psz_sac_base64
+op	11:25	0:0	2	=
+water	11:27	0:0	2	NULL
+decl	12:4	12:35	2	char	*psz_aes_key_base64
+op	12:29	0:0	2	=
+water	12:31	0:0	2	NULL
+decl	13:4	13:34	2	char	*psz_aes_iv_base64
+op	13:28	0:0	2	=
+water	13:30	0:0	2	NULL
+decl	14:4	14:27	2	int	i_err
+op	14:14	0:0	2	=
+water	14:16	0:0	2	VLC_SUCCESS
+decl	15:4	15:12	2	int	i_rc
+call	16:4	16:41	2	vlc_dictionary_init
+arg	16:25	16:37	3	&req_headers
+op	16:25	0:0	4	&
+water	16:26	0:0	4	req_headers
+arg	16:39	16:41	3	0
+water	16:39	0:0	4	0
+water	16:42	0:0	2	;
+call	17:4	17:42	2	vlc_dictionary_init
+arg	17:25	17:38	3	&resp_headers
+op	17:25	0:0	4	&
+water	17:26	0:0	4	resp_headers
+arg	17:40	17:42	3	0
+water	17:40	0:0	4	0
+water	17:43	0:0	2	;
+water	19:4	0:0	2	i_rc
+op	19:9	0:0	2	=
+call	19:11	19:60	2	EncryptAesKeyBase64
+arg	19:32	19:38	3	p_this
+water	19:32	0:0	4	p_this
+arg	19:40	19:60	3	&psz_aes_key_base64
+op	19:40	0:0	4	&
+water	19:41	0:0	4	psz_aes_key_base64
+water	19:61	0:0	2	;
+if	20:4	24:4	2	(i_rc != VLC_SUCCESS || psz_aes_key_base64 == NULL)
+cond	20:9	20:54	3	i_rc != VLC_SUCCESS || psz_aes_key_base64 == NULL
+water	20:9	0:0	4	i_rc
+op	20:14	0:0	4	!=
+water	20:17	0:0	4	VLC_SUCCESS
+op	20:29	0:0	4	||
+water	20:32	0:0	4	psz_aes_key_base64
+op	20:51	0:0	4	==
+water	20:54	0:0	4	NULL
+stmts	21:4	24:4	3	
+water	21:4	0:0	4	{
+water	22:8	0:0	4	i_err
+op	22:14	0:0	4	=
+water	22:16	0:0	4	VLC_EGENERIC
+water	22:28	0:0	4	;
+goto	23:8	23:18	4	error
+water	23:13	0:0	5	error
+water	24:4	0:0	4	}
+call	25:4	25:44	2	RemoveBase64Padding
+arg	25:25	25:44	3	psz_aes_key_base64
+water	25:25	0:0	4	psz_aes_key_base64
+water	25:45	0:0	2	;
+water	27:4	0:0	2	psz_aes_iv_base64
+op	27:22	0:0	2	=
+call	27:24	28:74	2	vlc_b64_encode_binary
+arg	27:47	27:63	3	p_sys->ps_aes_iv
+water	27:47	0:0	4	p_sys
+op	27:52	0:0	4	->
+water	27:54	0:0	4	ps_aes_iv
+arg	28:47	28:74	3	sizeof(p_sys->ps_aes_iv)
+op	28:47	0:0	4	sizeof
+water	28:53	0:0	4	(
+water	28:55	0:0	4	p_sys
+op	28:60	0:0	4	->
+water	28:62	0:0	4	ps_aes_iv
+water	28:72	0:0	4	)
+water	28:75	0:0	2	;
+if	29:4	33:4	2	(psz_aes_iv_base64 == NULL)
+cond	29:9	29:30	3	psz_aes_iv_base64 == NULL
+water	29:9	0:0	4	psz_aes_iv_base64
+op	29:27	0:0	4	==
+water	29:30	0:0	4	NULL
+stmts	30:4	33:4	3	
+water	30:4	0:0	4	{
+water	31:8	0:0	4	i_err
+op	31:14	0:0	4	=
+water	31:16	0:0	4	VLC_EGENERIC
+water	31:28	0:0	4	;
+goto	32:8	32:18	4	error
+water	32:13	0:0	5	error
+water	33:4	0:0	4	}
+call	34:4	34:43	2	RemoveBase64Padding
+arg	34:25	34:43	3	psz_aes_iv_base64
+water	34:25	0:0	4	psz_aes_iv_base64
+water	34:44	0:0	2	;
+call	36:4	36:65	2	gcry_randomize
+arg	36:20	36:26	3	ps_sac
+water	36:20	0:0	4	ps_sac
+arg	36:28	36:44	3	sizeof(ps_sac)
+op	36:28	0:0	4	sizeof
+water	36:34	0:0	4	(
+water	36:36	0:0	4	ps_sac
+water	36:43	0:0	4	)
+arg	36:46	36:65	3	GCRY_STRONG_RANDOM
+water	36:46	0:0	4	GCRY_STRONG_RANDOM
+water	36:66	0:0	2	;
+water	37:4	0:0	2	psz_sac_base64
+op	37:19	0:0	2	=
+call	37:21	37:69	2	vlc_b64_encode_binary
+arg	37:44	37:50	3	ps_sac
+water	37:44	0:0	4	ps_sac
+arg	37:52	37:69	3	sizeof(ps_sac)
+op	37:52	0:0	4	sizeof
+water	37:58	0:0	4	(
+water	37:60	0:0	4	ps_sac
+water	37:67	0:0	4	)
+water	37:70	0:0	2	;
+if	38:4	42:4	2	(psz_sac_base64 == NULL)
+cond	38:9	38:27	3	psz_sac_base64 == NULL
+water	38:9	0:0	4	psz_sac_base64
+op	38:24	0:0	4	==
+water	38:27	0:0	4	NULL
+stmts	39:4	42:4	3	
+water	39:4	0:0	4	{
+water	40:8	0:0	4	i_err
+op	40:14	0:0	4	=
+water	40:16	0:0	4	VLC_EGENERIC
+water	40:28	0:0	4	;
+goto	41:8	41:18	4	error
+water	41:13	0:0	5	error
+water	42:4	0:0	4	}
+call	43:4	43:40	2	RemoveBase64Padding
+arg	43:25	43:40	3	psz_sac_base64
+water	43:25	0:0	4	psz_sac_base64
+water	43:41	0:0	2	;
+water	48:4	0:0	2	i_rc
+op	48:9	0:0	2	=
+call	48:11	60:59	2	asprintf
+arg	48:21	48:29	3	&psz_sdp
+op	48:21	0:0	4	&
+water	48:22	0:0	4	psz_sdp
+arg	49:21	58:37	3	"v=0\r\n""o=iTunes %u 0 IN IP4 %s\r\n""s=iTunes\r\n""c=IN IP4 %s\r\n""t=0 0\r\n""m=audio 0 RTP/AVP 96\r\n""a=rtpmap:96 AppleLossless\r\n""a=fmtp:96 4096 0 16 40 10 14 2 255 0 0 44100\r\n""a=rsaaeskey:%s\r\n""a=aesiv:%s\r\n"
+water	49:21	0:0	4	"v=0\r\n"
+water	50:21	0:0	4	"o=iTunes %u 0 IN IP4 %s\r\n"
+water	51:21	0:0	4	"s=iTunes\r\n"
+water	52:21	0:0	4	"c=IN IP4 %s\r\n"
+water	53:21	0:0	4	"t=0 0\r\n"
+water	54:21	0:0	4	"m=audio 0 RTP/AVP 96\r\n"
+water	55:21	0:0	4	"a=rtpmap:96 AppleLossless\r\n"
+water	56:21	0:0	4	"a=fmtp:96 4096 0 16 40 10 14 2 255 0 0 44100\r\n"
+water	57:21	0:0	4	"a=rsaaeskey:%s\r\n"
+water	58:21	0:0	4	"a=aesiv:%s\r\n"
+arg	59:21	59:33	3	i_session_id
+water	59:21	0:0	4	i_session_id
+arg	59:35	59:44	3	psz_local
+water	59:35	0:0	4	psz_local
+arg	59:46	59:61	3	p_sys->psz_host
+water	59:46	0:0	4	p_sys
+op	59:51	0:0	4	->
+water	59:53	0:0	4	psz_host
+arg	60:21	60:39	3	psz_aes_key_base64
+water	60:21	0:0	4	psz_aes_key_base64
+arg	60:41	60:59	3	psz_aes_iv_base64
+water	60:41	0:0	4	psz_aes_iv_base64
+water	60:60	0:0	2	;
+if	61:4	65:4	2	(i_rc < 0)
+cond	61:9	61:16	3	i_rc < 0
+water	61:9	0:0	4	i_rc
+op	61:14	0:0	4	<
+water	61:16	0:0	4	0
+stmts	62:4	65:4	3	
+water	62:4	0:0	4	{
+water	63:8	0:0	4	i_err
+op	63:14	0:0	4	=
+water	63:16	0:0	4	VLC_ENOMEM
+water	63:26	0:0	4	;
+goto	64:8	64:18	4	error
+water	64:13	0:0	5	error
+water	65:4	0:0	4	}
+call	67:4	67:75	2	vlc_dictionary_insert
+arg	67:27	67:39	3	&req_headers
+op	67:27	0:0	4	&
+water	67:28	0:0	4	req_headers
+arg	67:41	67:58	3	"Apple-Challenge"
+water	67:41	0:0	4	"Apple-Challenge"
+arg	67:60	67:75	3	psz_sac_base64
+water	67:60	0:0	4	psz_sac_base64
+water	67:76	0:0	2	;
+water	68:4	0:0	2	i_err
+op	68:10	0:0	2	=
+call	68:12	69:52	2	ExecRequest
+arg	68:25	68:31	3	p_this
+water	68:25	0:0	4	p_this
+arg	68:33	68:43	3	"ANNOUNCE"
+water	68:33	0:0	4	"ANNOUNCE"
+arg	68:45	68:62	3	"application/sdp"
+water	68:45	0:0	4	"application/sdp"
+arg	68:64	68:71	3	psz_sdp
+water	68:64	0:0	4	psz_sdp
+arg	69:25	69:37	3	&req_headers
+op	69:25	0:0	4	&
+water	69:26	0:0	4	req_headers
+arg	69:39	69:52	3	&resp_headers
+op	69:39	0:0	4	&
+water	69:40	0:0	4	resp_headers
+water	69:53	0:0	2	;
+if	70:4	71:18	2	(i_err != VLC_SUCCESS)
+cond	70:9	70:18	3	i_err != VLC_SUCCESS
+water	70:9	0:0	4	i_err
+op	70:15	0:0	4	!=
+water	70:18	0:0	4	VLC_SUCCESS
+stmts	71:8	71:18	3	
+goto	71:8	71:18	4	error
+water	71:13	0:0	5	error
+label	72:0	72:5	2	error :
+call	73:4	73:51	2	vlc_dictionary_clear
+arg	73:26	73:38	3	&req_headers
+op	73:26	0:0	4	&
+water	73:27	0:0	4	req_headers
+arg	73:40	73:44	3	NULL
+water	73:40	0:0	4	NULL
+arg	73:46	73:51	3	NULL
+water	73:46	0:0	4	NULL
+water	73:52	0:0	2	;
+call	74:4	74:58	2	vlc_dictionary_clear
+arg	74:26	74:39	3	&resp_headers
+op	74:26	0:0	4	&
+water	74:27	0:0	4	resp_headers
+arg	74:41	74:51	3	FreeHeader
+water	74:41	0:0	4	FreeHeader
+arg	74:53	74:58	3	NULL
+water	74:53	0:0	4	NULL
+water	74:59	0:0	2	;
+call	75:4	75:18	2	free
+arg	75:10	75:18	3	psz_sdp
+water	75:10	0:0	4	psz_sdp
+water	75:19	0:0	2	;
+call	76:4	76:25	2	free
+arg	76:10	76:25	3	psz_sac_base64
+water	76:10	0:0	4	psz_sac_base64
+water	76:26	0:0	2	;
+call	77:4	77:29	2	free
+arg	77:10	77:29	3	psz_aes_key_base64
+water	77:10	0:0	4	psz_aes_key_base64
+water	77:30	0:0	2	;
+call	78:4	78:28	2	free
+arg	78:10	78:28	3	psz_aes_iv_base64
+water	78:10	0:0	4	psz_aes_iv_base64
+water	78:29	0:0	2	;
+return	79:4	79:16	2	i_err
+water	79:11	0:0	3	i_err

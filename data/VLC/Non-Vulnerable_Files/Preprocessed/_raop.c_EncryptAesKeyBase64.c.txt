@@ -1,0 +1,367 @@
+func	2:0	97:0	0	static int	EncryptAesKeyBase64
+params	2:30	0:0	1	
+param	2:32	2:52	2	vlc_object_t *	p_this
+param	2:54	2:68	2	char * *	result
+stmnts	0:0	96:16	1	
+decl	4:4	4:52	2	sout_stream_t	*p_stream
+op	4:28	0:0	2	=
+water	4:30	0:0	2	(
+water	4:31	0:0	2	sout_stream_t
+op	4:44	0:0	2	*
+water	4:45	0:0	2	)
+water	4:46	0:0	2	p_this
+decl	5:4	5:46	2	sout_stream_sys_t	*p_sys
+op	5:29	0:0	2	=
+water	5:31	0:0	2	p_stream
+op	5:39	0:0	2	->
+water	5:41	0:0	2	p_sys
+decl	6:4	6:29	2	gcry_error_t	i_gcrypt_err
+decl	7:4	7:38	2	gcry_sexp_t	sexp_rsa_params
+op	7:32	0:0	2	=
+water	7:34	0:0	2	NULL
+decl	8:4	8:33	2	gcry_sexp_t	sexp_input
+op	8:27	0:0	2	=
+water	8:29	0:0	2	NULL
+decl	9:4	9:37	2	gcry_sexp_t	sexp_encrypted
+op	9:31	0:0	2	=
+water	9:33	0:0	2	NULL
+decl	10:4	10:35	2	gcry_sexp_t	sexp_token_a
+op	10:29	0:0	2	=
+water	10:31	0:0	2	NULL
+decl	11:4	11:32	2	gcry_mpi_t	mpi_pubkey
+op	11:26	0:0	2	=
+water	11:28	0:0	2	NULL
+decl	12:4	12:29	2	gcry_mpi_t	mpi_exp
+op	12:23	0:0	2	=
+water	12:25	0:0	2	NULL
+decl	13:4	13:31	2	gcry_mpi_t	mpi_input
+op	13:25	0:0	2	=
+water	13:27	0:0	2	NULL
+decl	14:4	14:32	2	gcry_mpi_t	mpi_output
+op	14:26	0:0	2	=
+water	14:28	0:0	2	NULL
+decl	15:4	15:36	2	unsigned char	ps_padded_key[256]
+decl	16:4	16:27	2	unsigned char	*ps_value
+decl	17:4	17:23	2	size_t	i_value_size
+decl	18:4	18:13	2	int	i_err
+water	20:4	0:0	2	i_err
+op	20:10	0:0	2	=
+call	20:12	23:36	2	AddOaepPadding
+arg	20:28	20:34	3	p_this
+water	20:28	0:0	4	p_this
+arg	21:28	21:41	3	ps_padded_key
+water	21:28	0:0	4	ps_padded_key
+arg	21:43	21:66	3	sizeof(ps_padded_key)
+op	21:43	0:0	4	sizeof
+water	21:49	0:0	4	(
+water	21:51	0:0	4	ps_padded_key
+water	21:65	0:0	4	)
+arg	22:28	22:45	3	p_sys->ps_aes_key
+water	22:28	0:0	4	p_sys
+op	22:33	0:0	4	->
+water	22:35	0:0	4	ps_aes_key
+arg	22:47	22:74	3	sizeof(p_sys->ps_aes_key)
+op	22:47	0:0	4	sizeof
+water	22:53	0:0	4	(
+water	22:55	0:0	4	p_sys
+op	22:60	0:0	4	->
+water	22:62	0:0	4	ps_aes_key
+water	22:73	0:0	4	)
+arg	23:28	23:32	3	NULL
+water	23:28	0:0	4	NULL
+arg	23:34	23:36	3	0
+water	23:34	0:0	4	0
+water	23:37	0:0	2	;
+if	24:4	25:18	2	(i_err != VLC_SUCCESS)
+cond	24:9	24:18	3	i_err != VLC_SUCCESS
+water	24:9	0:0	4	i_err
+op	24:15	0:0	4	!=
+water	24:18	0:0	4	VLC_SUCCESS
+stmts	25:8	25:18	3	
+goto	25:8	25:18	4	error
+water	25:13	0:0	5	error
+water	26:4	0:0	2	i_err
+op	26:10	0:0	2	=
+water	26:12	0:0	2	VLC_EGENERIC
+water	26:24	0:0	2	;
+water	28:4	0:0	2	i_gcrypt_err
+op	28:17	0:0	2	=
+call	28:19	30:73	2	gcry_mpi_scan
+arg	28:34	28:45	3	&mpi_pubkey
+op	28:34	0:0	4	&
+water	28:35	0:0	4	mpi_pubkey
+arg	28:47	28:62	3	GCRYMPI_FMT_USG
+water	28:47	0:0	4	GCRYMPI_FMT_USG
+arg	29:34	29:52	3	ps_raop_rsa_pubkey
+water	29:34	0:0	4	ps_raop_rsa_pubkey
+arg	30:34	30:66	3	sizeof(ps_raop_rsa_pubkey)-1
+op	30:34	0:0	4	sizeof
+water	30:40	0:0	4	(
+water	30:42	0:0	4	ps_raop_rsa_pubkey
+water	30:61	0:0	4	)
+op	30:63	0:0	4	-
+water	30:65	0:0	4	1
+arg	30:68	30:73	3	NULL
+water	30:68	0:0	4	NULL
+water	30:74	0:0	2	;
+if	31:4	32:18	2	(CheckForGcryptError (p_stream ,i_gcrypt_err ))
+cond	31:9	31:53	3	CheckForGcryptError (p_stream ,i_gcrypt_err )
+call	31:9	31:53	4	CheckForGcryptError
+arg	31:30	31:38	5	p_stream
+water	31:30	0:0	6	p_stream
+arg	31:40	31:53	5	i_gcrypt_err
+water	31:40	0:0	6	i_gcrypt_err
+stmts	32:8	32:18	3	
+goto	32:8	32:18	4	error
+water	32:13	0:0	5	error
+water	34:4	0:0	2	i_gcrypt_err
+op	34:17	0:0	2	=
+call	34:19	35:70	2	gcry_mpi_scan
+arg	34:34	34:42	3	&mpi_exp
+op	34:34	0:0	4	&
+water	34:35	0:0	4	mpi_exp
+arg	34:44	34:59	3	GCRYMPI_FMT_USG
+water	34:44	0:0	4	GCRYMPI_FMT_USG
+arg	34:61	34:76	3	ps_raop_rsa_exp
+water	34:61	0:0	4	ps_raop_rsa_exp
+arg	35:34	35:63	3	sizeof(ps_raop_rsa_exp)-1
+op	35:34	0:0	4	sizeof
+water	35:40	0:0	4	(
+water	35:42	0:0	4	ps_raop_rsa_exp
+water	35:58	0:0	4	)
+op	35:60	0:0	4	-
+water	35:62	0:0	4	1
+arg	35:65	35:70	3	NULL
+water	35:65	0:0	4	NULL
+water	35:71	0:0	2	;
+if	36:4	37:18	2	(CheckForGcryptError (p_stream ,i_gcrypt_err ))
+cond	36:9	36:53	3	CheckForGcryptError (p_stream ,i_gcrypt_err )
+call	36:9	36:53	4	CheckForGcryptError
+arg	36:30	36:38	5	p_stream
+water	36:30	0:0	6	p_stream
+arg	36:40	36:53	5	i_gcrypt_err
+water	36:40	0:0	6	i_gcrypt_err
+stmts	37:8	37:18	3	
+goto	37:8	37:18	4	error
+water	37:13	0:0	5	error
+water	43:4	0:0	2	i_gcrypt_err
+op	43:17	0:0	2	=
+call	43:19	45:38	2	gcry_mpi_scan
+arg	43:34	43:44	3	&mpi_input
+op	43:34	0:0	4	&
+water	43:35	0:0	4	mpi_input
+arg	43:46	43:61	3	GCRYMPI_FMT_USG
+water	43:46	0:0	4	GCRYMPI_FMT_USG
+arg	44:34	44:47	3	ps_padded_key
+water	44:34	0:0	4	ps_padded_key
+arg	44:49	44:72	3	sizeof(ps_padded_key)
+op	44:49	0:0	4	sizeof
+water	44:55	0:0	4	(
+water	44:57	0:0	4	ps_padded_key
+water	44:71	0:0	4	)
+arg	45:34	45:38	3	NULL
+water	45:34	0:0	4	NULL
+water	45:39	0:0	2	;
+if	46:4	47:18	2	(CheckForGcryptError (p_stream ,i_gcrypt_err ))
+cond	46:9	46:53	3	CheckForGcryptError (p_stream ,i_gcrypt_err )
+call	46:9	46:53	4	CheckForGcryptError
+arg	46:30	46:38	5	p_stream
+water	46:30	0:0	6	p_stream
+arg	46:40	46:53	5	i_gcrypt_err
+water	46:40	0:0	6	i_gcrypt_err
+stmts	47:8	47:18	3	
+goto	47:8	47:18	4	error
+water	47:13	0:0	5	error
+water	49:4	0:0	2	i_gcrypt_err
+op	49:17	0:0	2	=
+call	49:19	51:56	2	gcry_sexp_build
+arg	49:36	49:52	3	&sexp_rsa_params
+op	49:36	0:0	4	&
+water	49:37	0:0	4	sexp_rsa_params
+arg	49:54	49:58	3	NULL
+water	49:54	0:0	4	NULL
+arg	50:36	50:67	3	"(public-key(rsa(n %m)(e %m)))"
+water	50:36	0:0	4	"(public-key(rsa(n %m)(e %m)))"
+arg	51:36	51:46	3	mpi_pubkey
+water	51:36	0:0	4	mpi_pubkey
+arg	51:48	51:56	3	mpi_exp
+water	51:48	0:0	4	mpi_exp
+water	51:57	0:0	2	;
+if	52:4	53:18	2	(CheckForGcryptError (p_stream ,i_gcrypt_err ))
+cond	52:9	52:53	3	CheckForGcryptError (p_stream ,i_gcrypt_err )
+call	52:9	52:53	4	CheckForGcryptError
+arg	52:30	52:38	5	p_stream
+water	52:30	0:0	6	p_stream
+arg	52:40	52:53	5	i_gcrypt_err
+water	52:40	0:0	6	i_gcrypt_err
+stmts	53:8	53:18	3	
+goto	53:8	53:18	4	error
+water	53:13	0:0	5	error
+water	55:4	0:0	2	i_gcrypt_err
+op	55:17	0:0	2	=
+call	55:19	56:46	2	gcry_sexp_build
+arg	55:36	55:47	3	&sexp_input
+op	55:36	0:0	4	&
+water	55:37	0:0	4	sexp_input
+arg	55:49	55:53	3	NULL
+water	55:49	0:0	4	NULL
+arg	55:55	55:73	3	"(data(value %m))"
+water	55:55	0:0	4	"(data(value %m))"
+arg	56:36	56:46	3	mpi_input
+water	56:36	0:0	4	mpi_input
+water	56:47	0:0	2	;
+if	57:4	58:18	2	(CheckForGcryptError (p_stream ,i_gcrypt_err ))
+cond	57:9	57:53	3	CheckForGcryptError (p_stream ,i_gcrypt_err )
+call	57:9	57:53	4	CheckForGcryptError
+arg	57:30	57:38	5	p_stream
+water	57:30	0:0	6	p_stream
+arg	57:40	57:53	5	i_gcrypt_err
+water	57:40	0:0	6	i_gcrypt_err
+stmts	58:8	58:18	3	
+goto	58:8	58:18	4	error
+water	58:13	0:0	5	error
+water	60:4	0:0	2	i_gcrypt_err
+op	60:17	0:0	2	=
+call	60:19	61:52	2	gcry_pk_encrypt
+arg	60:36	60:51	3	&sexp_encrypted
+op	60:36	0:0	4	&
+water	60:37	0:0	4	sexp_encrypted
+arg	60:53	60:63	3	sexp_input
+water	60:53	0:0	4	sexp_input
+arg	61:36	61:52	3	sexp_rsa_params
+water	61:36	0:0	4	sexp_rsa_params
+water	61:53	0:0	2	;
+if	62:4	63:18	2	(CheckForGcryptError (p_stream ,i_gcrypt_err ))
+cond	62:9	62:53	3	CheckForGcryptError (p_stream ,i_gcrypt_err )
+call	62:9	62:53	4	CheckForGcryptError
+arg	62:30	62:38	5	p_stream
+water	62:30	0:0	6	p_stream
+arg	62:40	62:53	5	i_gcrypt_err
+water	62:40	0:0	6	i_gcrypt_err
+stmts	63:8	63:18	3	
+goto	63:8	63:18	4	error
+water	63:13	0:0	5	error
+water	65:4	0:0	2	sexp_token_a
+op	65:17	0:0	2	=
+call	65:19	65:64	2	gcry_sexp_find_token
+arg	65:41	65:55	3	sexp_encrypted
+water	65:41	0:0	4	sexp_encrypted
+arg	65:57	65:60	3	"a"
+water	65:57	0:0	4	"a"
+arg	65:62	65:64	3	0
+water	65:62	0:0	4	0
+water	65:65	0:0	2	;
+if	66:4	70:4	2	(! sexp_token_a)
+cond	66:9	66:10	3	! sexp_token_a
+op	66:9	0:0	4	!
+water	66:10	0:0	4	sexp_token_a
+stmts	67:4	70:4	3	
+water	67:4	0:0	4	{
+call	68:8	68:71	4	msg_Err
+arg	68:17	68:24	5	p_this
+water	68:17	0:0	6	p_this
+arg	68:26	68:71	5	"Token 'a' not found in result S-expression"
+water	68:26	0:0	6	"Token 'a' not found in result S-expression"
+water	68:72	0:0	4	;
+goto	69:8	69:18	4	error
+water	69:13	0:0	5	error
+water	70:4	0:0	4	}
+water	71:4	0:0	2	mpi_output
+op	71:15	0:0	2	=
+call	71:17	71:69	2	gcry_sexp_nth_mpi
+arg	71:36	71:48	3	sexp_token_a
+water	71:36	0:0	4	sexp_token_a
+arg	71:50	71:51	3	1
+water	71:50	0:0	4	1
+arg	71:53	71:69	3	GCRYMPI_FMT_USG
+water	71:53	0:0	4	GCRYMPI_FMT_USG
+water	71:70	0:0	2	;
+if	72:4	76:4	2	(! mpi_output)
+cond	72:9	72:10	3	! mpi_output
+op	72:9	0:0	4	!
+water	72:10	0:0	4	mpi_output
+stmts	73:4	76:4	3	
+water	73:4	0:0	4	{
+call	74:8	74:61	4	msg_Err
+arg	74:17	74:23	5	p_this
+water	74:17	0:0	6	p_this
+arg	74:25	74:61	5	"Unable to extract MPI from result"
+water	74:25	0:0	6	"Unable to extract MPI from result"
+water	74:62	0:0	4	;
+goto	75:8	75:18	4	error
+water	75:13	0:0	5	error
+water	76:4	0:0	4	}
+water	78:4	0:0	2	i_gcrypt_err
+op	78:17	0:0	2	=
+call	78:19	79:47	2	gcry_mpi_aprint
+arg	78:36	78:51	3	GCRYMPI_FMT_USG
+water	78:36	0:0	4	GCRYMPI_FMT_USG
+arg	78:53	78:62	3	&ps_value
+op	78:53	0:0	4	&
+water	78:54	0:0	4	ps_value
+arg	78:64	78:77	3	&i_value_size
+op	78:64	0:0	4	&
+water	78:65	0:0	4	i_value_size
+arg	79:36	79:47	3	mpi_output
+water	79:36	0:0	4	mpi_output
+water	79:48	0:0	2	;
+if	80:4	83:4	2	(CheckForGcryptError (p_stream ,i_gcrypt_err ))
+cond	80:9	80:53	3	CheckForGcryptError (p_stream ,i_gcrypt_err )
+call	80:9	80:53	4	CheckForGcryptError
+arg	80:30	80:38	5	p_stream
+water	80:30	0:0	6	p_stream
+arg	80:40	80:53	5	i_gcrypt_err
+water	80:40	0:0	6	i_gcrypt_err
+stmts	81:4	83:4	3	
+water	81:4	0:0	4	{
+goto	82:8	82:18	4	error
+water	82:13	0:0	5	error
+water	83:4	0:0	4	}
+op	85:4	0:0	2	*
+water	85:5	0:0	2	result
+op	85:12	0:0	2	=
+call	85:14	85:60	2	vlc_b64_encode_binary
+arg	85:37	85:45	3	ps_value
+water	85:37	0:0	4	ps_value
+arg	85:47	85:60	3	i_value_size
+water	85:47	0:0	4	i_value_size
+water	85:61	0:0	2	;
+water	86:4	0:0	2	i_err
+op	86:10	0:0	2	=
+water	86:12	0:0	2	VLC_SUCCESS
+water	86:23	0:0	2	;
+label	87:0	87:5	2	error :
+call	88:4	88:39	2	gcry_sexp_release
+arg	88:23	88:39	3	sexp_rsa_params
+water	88:23	0:0	4	sexp_rsa_params
+water	88:40	0:0	2	;
+call	89:4	89:34	2	gcry_sexp_release
+arg	89:23	89:34	3	sexp_input
+water	89:23	0:0	4	sexp_input
+water	89:35	0:0	2	;
+call	90:4	90:38	2	gcry_sexp_release
+arg	90:23	90:38	3	sexp_encrypted
+water	90:23	0:0	4	sexp_encrypted
+water	90:39	0:0	2	;
+call	91:4	91:36	2	gcry_sexp_release
+arg	91:23	91:36	3	sexp_token_a
+water	91:23	0:0	4	sexp_token_a
+water	91:37	0:0	2	;
+call	92:4	92:33	2	gcry_mpi_release
+arg	92:22	92:33	3	mpi_pubkey
+water	92:22	0:0	4	mpi_pubkey
+water	92:34	0:0	2	;
+call	93:4	93:30	2	gcry_mpi_release
+arg	93:22	93:30	3	mpi_exp
+water	93:22	0:0	4	mpi_exp
+water	93:31	0:0	2	;
+call	94:4	94:32	2	gcry_mpi_release
+arg	94:22	94:32	3	mpi_input
+water	94:22	0:0	4	mpi_input
+water	94:33	0:0	2	;
+call	95:4	95:33	2	gcry_mpi_release
+arg	95:22	95:33	3	mpi_output
+water	95:22	0:0	4	mpi_output
+water	95:34	0:0	2	;
+return	96:4	96:16	2	i_err
+water	96:11	0:0	3	i_err

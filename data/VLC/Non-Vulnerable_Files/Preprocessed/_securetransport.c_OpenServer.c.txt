@@ -1,0 +1,421 @@
+func	2:0	99:0	0	static int	OpenServer
+params	2:22	0:0	1	
+param	2:23	2:43	2	vlc_tls_creds_t *	crd
+param	2:45	2:61	2	const char *	cert
+param	2:63	2:78	2	const char *	key
+stmnts	7:4	98:17	1	
+call	7:4	7:18	2	VLC_UNUSED
+arg	7:15	7:18	3	key
+water	7:15	0:0	4	key
+water	7:19	0:0	2	;
+decl	8:4	8:16	2	OSStatus	ret
+call	9:4	9:33	2	msg_Dbg
+arg	9:12	9:15	3	crd
+water	9:12	0:0	4	crd
+arg	9:17	9:33	3	"open st server"
+water	9:17	0:0	4	"open st server"
+water	9:34	0:0	2	;
+decl	16:4	16:83	2	SecKeychainAttribute	attrib
+op	16:32	0:0	2	=
+water	16:34	0:0	2	{
+water	16:36	0:0	2	kSecLabelItemAttr
+water	16:53	0:0	2	,
+call	16:55	16:66	3	strlen
+arg	16:62	16:66	4	cert
+water	16:62	0:0	5	cert
+water	16:67	0:0	2	,
+water	16:69	0:0	2	(
+water	16:70	0:0	2	void
+op	16:75	0:0	2	*
+water	16:76	0:0	2	)
+water	16:77	0:0	2	cert
+water	16:82	0:0	2	}
+decl	17:4	17:54	2	SecKeychainAttributeList	attrList
+op	17:38	0:0	2	=
+water	17:40	0:0	2	{
+water	17:42	0:0	2	1
+water	17:43	0:0	2	,
+op	17:45	0:0	2	&
+water	17:46	0:0	2	attrib
+water	17:53	0:0	2	}
+decl	18:4	18:47	2	SecKeychainSearchRef	searchReference
+op	18:41	0:0	2	=
+water	18:43	0:0	2	NULL
+water	19:4	0:0	2	ret
+op	19:8	0:0	2	=
+call	19:10	20:76	2	SecKeychainSearchCreateFromAttributes
+arg	19:48	19:52	3	NULL
+water	19:48	0:0	4	NULL
+arg	19:54	19:78	3	kSecCertificateItemClass
+water	19:54	0:0	4	kSecCertificateItemClass
+arg	20:49	20:58	3	&attrList
+op	20:49	0:0	4	&
+water	20:50	0:0	4	attrList
+arg	20:60	20:76	3	&searchReference
+op	20:60	0:0	4	&
+water	20:61	0:0	4	searchReference
+water	20:77	0:0	2	;
+if	21:4	24:4	2	(ret != noErr || searchReference == NULL)
+cond	21:8	21:43	3	ret != noErr || searchReference == NULL
+water	21:8	0:0	4	ret
+op	21:12	0:0	4	!=
+water	21:15	0:0	4	noErr
+op	21:21	0:0	4	||
+water	21:24	0:0	4	searchReference
+op	21:40	0:0	4	==
+water	21:43	0:0	4	NULL
+stmts	21:49	24:4	3	
+water	21:49	0:0	4	{
+call	22:8	22:66	4	msg_Err
+arg	22:16	22:19	5	crd
+water	22:16	0:0	6	crd
+arg	22:21	22:60	5	"Cannot find certificate with alias %s"
+water	22:21	0:0	6	"Cannot find certificate with alias %s"
+arg	22:62	22:66	5	cert
+water	22:62	0:0	6	cert
+water	22:67	0:0	4	;
+return	23:8	23:27	4	VLC_EGENERIC
+water	23:15	0:0	5	VLC_EGENERIC
+water	24:4	0:0	4	}
+decl	25:4	25:37	2	SecKeychainItemRef	itemRef
+op	25:31	0:0	2	=
+water	25:33	0:0	2	NULL
+water	26:4	0:0	2	ret
+op	26:8	0:0	2	=
+call	26:10	26:61	2	SecKeychainSearchCopyNext
+arg	26:36	26:51	3	searchReference
+water	26:36	0:0	4	searchReference
+arg	26:53	26:61	3	&itemRef
+op	26:53	0:0	4	&
+water	26:54	0:0	4	itemRef
+water	26:62	0:0	2	;
+if	27:4	30:4	2	(ret != noErr)
+cond	27:8	27:15	3	ret != noErr
+water	27:8	0:0	4	ret
+op	27:12	0:0	4	!=
+water	27:15	0:0	4	noErr
+stmts	27:22	30:4	3	
+water	27:22	0:0	4	{
+call	28:8	28:81	4	msg_Err
+arg	28:16	28:19	5	crd
+water	28:16	0:0	6	crd
+arg	28:21	28:70	5	"Cannot get certificate with alias %s, error: %d"
+water	28:21	0:0	6	"Cannot get certificate with alias %s, error: %d"
+arg	28:72	28:76	5	cert
+water	28:72	0:0	6	cert
+arg	28:78	28:81	5	ret
+water	28:78	0:0	6	ret
+water	28:82	0:0	4	;
+return	29:8	29:27	4	VLC_EGENERIC
+water	29:15	0:0	5	VLC_EGENERIC
+water	30:4	0:0	4	}
+call	31:4	31:29	2	CFRelease
+arg	31:14	31:29	3	searchReference
+water	31:14	0:0	4	searchReference
+water	31:30	0:0	2	;
+decl	33:4	33:62	2	SecCertificateRef	certificate
+op	33:34	0:0	2	=
+water	33:36	0:0	2	(
+water	33:37	0:0	2	SecCertificateRef
+water	33:54	0:0	2	)
+water	33:55	0:0	2	itemRef
+decl	34:4	34:39	2	SecIdentityRef	cert_identity
+op	34:33	0:0	2	=
+water	34:35	0:0	2	NULL
+water	35:4	0:0	2	ret
+op	35:8	0:0	2	=
+call	35:10	35:76	2	SecIdentityCreateWithCertificate
+arg	35:43	35:47	3	NULL
+water	35:43	0:0	4	NULL
+arg	35:49	35:60	3	certificate
+water	35:49	0:0	4	certificate
+arg	35:62	35:76	3	&cert_identity
+op	35:62	0:0	4	&
+water	35:63	0:0	4	cert_identity
+water	35:77	0:0	2	;
+if	36:4	40:4	2	(ret != noErr)
+cond	36:8	36:15	3	ret != noErr
+water	36:8	0:0	4	ret
+op	36:12	0:0	4	!=
+water	36:15	0:0	4	noErr
+stmts	36:22	40:4	3	
+water	36:22	0:0	4	{
+call	37:8	37:61	4	msg_Err
+arg	37:16	37:19	5	crd
+water	37:16	0:0	6	crd
+arg	37:21	37:61	5	"Cannot get private key for certificate"
+water	37:21	0:0	6	"Cannot get private key for certificate"
+water	37:62	0:0	4	;
+call	38:8	38:29	4	CFRelease
+arg	38:18	38:29	5	certificate
+water	38:18	0:0	6	certificate
+water	38:30	0:0	4	;
+return	39:8	39:27	4	VLC_EGENERIC
+water	39:15	0:0	5	VLC_EGENERIC
+water	40:4	0:0	4	}
+decl	45:4	45:56	2	SecPolicyRef	policy
+op	45:24	0:0	2	=
+call	45:26	45:55	3	SecPolicyCreateSSL
+arg	45:45	45:49	4	true
+water	45:45	0:0	5	true
+arg	45:51	45:55	4	NULL
+water	45:51	0:0	5	NULL
+decl	46:4	46:32	2	SecTrustRef	trust_ref
+op	46:26	0:0	2	=
+water	46:28	0:0	2	NULL
+decl	47:4	47:28	2	int	result
+op	47:15	0:0	2	=
+water	47:17	0:0	2	VLC_SUCCESS
+water	49:4	0:0	2	ret
+op	49:8	0:0	2	=
+call	49:10	49:84	2	SecTrustCreateWithCertificates
+arg	49:41	49:64	3	(CFArrayRef)certificate
+water	49:41	0:0	4	(
+water	49:42	0:0	4	CFArrayRef
+water	49:52	0:0	4	)
+water	49:53	0:0	4	certificate
+arg	49:66	49:72	3	policy
+water	49:66	0:0	4	policy
+arg	49:74	49:84	3	&trust_ref
+op	49:74	0:0	4	&
+water	49:75	0:0	4	trust_ref
+water	49:85	0:0	2	;
+if	50:4	54:4	2	(ret != noErr)
+cond	50:8	50:15	3	ret != noErr
+water	50:8	0:0	4	ret
+op	50:12	0:0	4	!=
+water	50:15	0:0	4	noErr
+stmts	50:22	54:4	3	
+water	50:22	0:0	4	{
+call	51:8	51:42	4	msg_Err
+arg	51:16	51:19	5	crd
+water	51:16	0:0	6	crd
+arg	51:21	51:42	5	"Cannot create trust"
+water	51:21	0:0	6	"Cannot create trust"
+water	51:43	0:0	4	;
+water	52:8	0:0	4	result
+op	52:15	0:0	4	=
+water	52:17	0:0	4	VLC_EGENERIC
+water	52:29	0:0	4	;
+goto	53:8	53:16	4	out
+water	53:13	0:0	5	out
+water	54:4	0:0	4	}
+decl	55:4	55:29	2	SecTrustResultType	status
+water	56:4	0:0	2	ret
+op	56:8	0:0	2	=
+call	56:10	56:45	2	SecTrustEvaluate
+arg	56:27	56:36	3	trust_ref
+water	56:27	0:0	4	trust_ref
+arg	56:38	56:45	3	&status
+op	56:38	0:0	4	&
+water	56:39	0:0	4	status
+water	56:46	0:0	2	;
+if	57:4	61:4	2	(ret != noErr)
+cond	57:8	57:15	3	ret != noErr
+water	57:8	0:0	4	ret
+op	57:12	0:0	4	!=
+water	57:15	0:0	4	noErr
+stmts	57:22	61:4	3	
+water	57:22	0:0	4	{
+call	58:8	58:45	4	msg_Err
+arg	58:16	58:19	5	crd
+water	58:16	0:0	6	crd
+arg	58:21	58:45	5	"Error evaluating trust"
+water	58:21	0:0	6	"Error evaluating trust"
+water	58:46	0:0	4	;
+water	59:8	0:0	4	result
+op	59:15	0:0	4	=
+water	59:17	0:0	4	VLC_EGENERIC
+water	59:29	0:0	4	;
+goto	60:8	60:16	4	out
+water	60:13	0:0	5	out
+water	61:4	0:0	4	}
+decl	62:4	62:32	2	CFArrayRef	cert_chain
+op	62:26	0:0	2	=
+water	62:28	0:0	2	NULL
+decl	63:4	63:45	2	CSSM_TP_APPLE_EVIDENCE_INFO	*status_chain
+water	64:4	0:0	2	ret
+op	64:8	0:0	2	=
+call	64:10	64:74	2	SecTrustGetResult
+arg	64:28	64:37	3	trust_ref
+water	64:28	0:0	4	trust_ref
+arg	64:39	64:46	3	&status
+op	64:39	0:0	4	&
+water	64:40	0:0	4	status
+arg	64:48	64:59	3	&cert_chain
+op	64:48	0:0	4	&
+water	64:49	0:0	4	cert_chain
+arg	64:61	64:74	3	&status_chain
+op	64:61	0:0	4	&
+water	64:62	0:0	4	status_chain
+water	64:75	0:0	2	;
+if	65:4	69:4	2	(ret != noErr || ! cert_chain)
+cond	65:8	65:25	3	ret != noErr || ! cert_chain
+water	65:8	0:0	4	ret
+op	65:12	0:0	4	!=
+water	65:15	0:0	4	noErr
+op	65:21	0:0	4	||
+op	65:24	0:0	4	!
+water	65:25	0:0	4	cert_chain
+stmts	65:37	69:4	3	
+water	65:37	0:0	4	{
+call	66:8	66:60	4	msg_Err
+arg	66:16	66:19	5	crd
+water	66:16	0:0	6	crd
+arg	66:21	66:60	5	"error while getting certificate chain"
+water	66:21	0:0	6	"error while getting certificate chain"
+water	66:61	0:0	4	;
+water	67:8	0:0	4	result
+op	67:15	0:0	4	=
+water	67:17	0:0	4	VLC_EGENERIC
+water	67:29	0:0	4	;
+goto	68:8	68:16	4	out
+water	68:13	0:0	5	out
+water	69:4	0:0	4	}
+decl	70:4	70:56	2	CFIndex	num_cert_chain
+op	70:27	0:0	2	=
+call	70:29	70:55	3	CFArrayGetCount
+arg	70:45	70:55	4	cert_chain
+water	70:45	0:0	5	cert_chain
+decl	72:4	72:123	2	CFMutableArrayRef	server_cert_chain
+op	72:40	0:0	2	=
+call	72:42	72:122	3	CFArrayCreateMutable
+arg	72:63	72:82	4	kCFAllocatorDefault
+water	72:63	0:0	5	kCFAllocatorDefault
+arg	72:84	72:98	4	num_cert_chain
+water	72:84	0:0	5	num_cert_chain
+arg	72:100	72:122	4	&kCFTypeArrayCallBacks
+op	72:100	0:0	5	&
+water	72:101	0:0	5	kCFTypeArrayCallBacks
+call	73:4	73:55	2	CFArrayAppendValue
+arg	73:23	73:40	3	server_cert_chain
+water	73:23	0:0	4	server_cert_chain
+arg	73:42	73:55	3	cert_identity
+water	73:42	0:0	4	cert_identity
+water	73:56	0:0	2	;
+call	74:4	74:98	2	msg_Dbg
+arg	74:12	74:15	3	crd
+water	74:12	0:0	4	crd
+arg	74:17	74:82	3	"Found certificate chain with %ld entries for server certificate"
+water	74:17	0:0	4	"Found certificate chain with %ld entries for server certificate"
+arg	74:84	74:98	3	num_cert_chain
+water	74:84	0:0	4	num_cert_chain
+water	74:99	0:0	2	;
+if	75:4	76:93	2	(num_cert_chain > 1)
+cond	75:8	75:25	3	num_cert_chain > 1
+water	75:8	0:0	4	num_cert_chain
+op	75:23	0:0	4	>
+water	75:25	0:0	4	1
+stmts	76:8	76:93	3	
+call	76:8	76:92	4	CFArrayAppendArray
+arg	76:27	76:44	5	server_cert_chain
+water	76:27	0:0	6	server_cert_chain
+arg	76:46	76:56	5	cert_chain
+water	76:46	0:0	6	cert_chain
+arg	76:58	76:92	5	CFRangeMake(1,num_cert_chain-1)
+call	76:58	76:91	6	CFRangeMake
+arg	76:70	76:71	7	1
+water	76:70	0:0	8	1
+arg	76:73	76:91	7	num_cert_chain-1
+water	76:73	0:0	8	num_cert_chain
+op	76:88	0:0	8	-
+water	76:90	0:0	8	1
+water	76:93	0:0	4	;
+call	77:4	77:24	2	CFRelease
+arg	77:14	77:24	3	cert_chain
+water	77:14	0:0	4	cert_chain
+water	77:25	0:0	2	;
+decl	78:4	78:51	2	vlc_tls_creds_sys_t	*sys
+op	78:29	0:0	2	=
+call	78:31	78:50	3	malloc
+arg	78:38	78:50	4	sizeof(*sys)
+op	78:38	0:0	5	sizeof
+water	78:44	0:0	5	(
+op	78:45	0:0	5	*
+water	78:46	0:0	5	sys
+water	78:49	0:0	5	)
+if	79:4	83:4	2	(unlikely (sys == NULL ))
+cond	79:8	79:28	3	unlikely (sys == NULL )
+call	79:8	79:28	4	unlikely
+arg	79:17	79:28	5	sys==NULL
+water	79:17	0:0	6	sys
+op	79:21	0:0	6	==
+water	79:24	0:0	6	NULL
+stmts	79:31	83:4	3	
+water	79:31	0:0	4	{
+call	80:8	80:35	4	CFRelease
+arg	80:18	80:35	5	server_cert_chain
+water	80:18	0:0	6	server_cert_chain
+water	80:36	0:0	4	;
+water	81:8	0:0	4	result
+op	81:15	0:0	4	=
+water	81:17	0:0	4	VLC_ENOMEM
+water	81:27	0:0	4	;
+goto	82:8	82:16	4	out
+water	82:13	0:0	5	out
+water	83:4	0:0	4	}
+water	84:4	0:0	2	sys
+op	84:7	0:0	2	->
+water	84:9	0:0	2	server_cert_chain
+op	84:27	0:0	2	=
+water	84:29	0:0	2	server_cert_chain
+water	84:46	0:0	2	;
+water	85:4	0:0	2	sys
+op	85:7	0:0	2	->
+water	85:9	0:0	2	whitelist
+op	85:19	0:0	2	=
+water	85:21	0:0	2	NULL
+water	85:25	0:0	2	;
+water	86:4	0:0	2	crd
+op	86:7	0:0	2	->
+water	86:9	0:0	2	sys
+op	86:13	0:0	2	=
+water	86:15	0:0	2	sys
+water	86:18	0:0	2	;
+water	87:4	0:0	2	crd
+op	87:7	0:0	2	->
+water	87:9	0:0	2	open
+op	87:14	0:0	2	=
+water	87:16	0:0	2	st_ServerSessionOpen
+water	87:36	0:0	2	;
+water	88:4	0:0	2	crd
+op	88:7	0:0	2	->
+water	88:9	0:0	2	close
+op	88:15	0:0	2	=
+water	88:17	0:0	2	st_SessionClose
+water	88:32	0:0	2	;
+label	89:0	89:3	2	out :
+if	90:4	91:25	2	(policy)
+cond	90:8	90:8	3	policy
+water	90:8	0:0	4	policy
+stmts	91:8	91:25	3	
+call	91:8	91:24	4	CFRelease
+arg	91:18	91:24	5	policy
+water	91:18	0:0	6	policy
+water	91:25	0:0	4	;
+if	92:4	93:28	2	(trust_ref)
+cond	92:8	92:8	3	trust_ref
+water	92:8	0:0	4	trust_ref
+stmts	93:8	93:28	3	
+call	93:8	93:27	4	CFRelease
+arg	93:18	93:27	5	trust_ref
+water	93:18	0:0	6	trust_ref
+water	93:28	0:0	4	;
+if	94:4	95:30	2	(certificate)
+cond	94:8	94:8	3	certificate
+water	94:8	0:0	4	certificate
+stmts	95:8	95:30	3	
+call	95:8	95:29	4	CFRelease
+arg	95:18	95:29	5	certificate
+water	95:18	0:0	6	certificate
+water	95:30	0:0	4	;
+if	96:4	97:32	2	(cert_identity)
+cond	96:8	96:8	3	cert_identity
+water	96:8	0:0	4	cert_identity
+stmts	97:8	97:32	3	
+call	97:8	97:31	4	CFRelease
+arg	97:18	97:31	5	cert_identity
+water	97:18	0:0	6	cert_identity
+water	97:32	0:0	4	;
+return	98:4	98:17	2	result
+water	98:11	0:0	3	result

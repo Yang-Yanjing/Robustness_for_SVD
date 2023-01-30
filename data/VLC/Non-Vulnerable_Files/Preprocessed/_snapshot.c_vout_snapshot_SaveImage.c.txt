@@ -1,0 +1,385 @@
+func	2:0	85:0	0	int	vout_snapshot_SaveImage
+params	2:27	0:0	1	
+param	2:28	2:39	2	char * *	name
+param	2:41	2:56	2	int *	sequential
+param	3:29	3:49	2	const block_t *	image
+param	4:29	4:50	2	vout_thread_t *	p_vout
+param	5:29	5:64	2	const vout_snapshot_save_cfg_t *	cfg
+stmnts	0:0	84:23	1	
+decl	8:4	8:18	2	char	*filename
+decl	9:4	9:41	2	DIR	*pathdir
+op	9:17	0:0	2	=
+call	9:19	9:40	3	vlc_opendir
+arg	9:31	9:40	4	cfg->path
+water	9:31	0:0	5	cfg
+op	9:34	0:0	5	->
+water	9:36	0:0	5	path
+decl	10:4	10:61	2	input_thread_t	*input
+op	10:26	0:0	2	=
+water	10:28	0:0	2	(
+water	10:29	0:0	2	input_thread_t
+op	10:43	0:0	2	*
+water	10:44	0:0	2	)
+water	10:45	0:0	2	p_vout
+op	10:51	0:0	2	->
+water	10:53	0:0	2	p
+op	10:54	0:0	2	->
+water	10:56	0:0	2	input
+if	11:4	55:4	2	(pathdir != NULL)
+cond	11:8	11:19	3	pathdir != NULL
+water	11:8	0:0	4	pathdir
+op	11:16	0:0	4	!=
+water	11:19	0:0	4	NULL
+stmts	11:25	55:4	3	
+water	11:25	0:0	4	{
+call	13:8	13:24	4	closedir
+arg	13:17	13:24	5	pathdir
+water	13:17	0:0	6	pathdir
+water	13:25	0:0	4	;
+decl	15:8	15:27	4	char	*prefix
+op	15:21	0:0	4	=
+water	15:23	0:0	4	NULL
+if	16:8	17:55	4	(cfg -> prefix_fmt)
+cond	16:12	16:17	5	cfg -> prefix_fmt
+water	16:12	0:0	6	cfg
+op	16:15	0:0	6	->
+water	16:17	0:0	6	prefix_fmt
+stmts	17:12	17:55	5	
+water	17:12	0:0	6	prefix
+op	17:19	0:0	6	=
+call	17:21	17:54	6	str_format
+arg	17:32	17:37	7	input
+water	17:32	0:0	8	input
+arg	17:39	17:54	7	cfg->prefix_fmt
+water	17:39	0:0	8	cfg
+op	17:42	0:0	8	->
+water	17:44	0:0	8	prefix_fmt
+water	17:55	0:0	6	;
+if	18:8	19:37	4	(prefix)
+cond	18:12	18:12	5	prefix
+water	18:12	0:0	6	prefix
+stmts	19:12	19:37	5	
+call	19:12	19:36	6	filename_sanitize
+arg	19:30	19:36	7	prefix
+water	19:30	0:0	8	prefix
+water	19:37	0:0	6	;
+else	20:8	24:8	4
+stmts	20:13	24:8	5	
+water	20:13	0:0	6	{
+water	21:12	0:0	6	prefix
+op	21:19	0:0	6	=
+call	21:21	21:38	6	strdup
+arg	21:28	21:38	7	"vlcsnap-"
+water	21:28	0:0	8	"vlcsnap-"
+water	21:39	0:0	6	;
+if	22:12	23:26	6	(! prefix)
+cond	22:16	22:17	7	! prefix
+op	22:16	0:0	8	!
+water	22:17	0:0	8	prefix
+stmts	23:16	23:26	7	
+goto	23:16	23:26	8	error
+water	23:21	0:0	9	error
+water	24:8	0:0	6	}
+if	25:8	39:8	4	(cfg -> is_sequential)
+cond	25:12	25:17	5	cfg -> is_sequential
+water	25:12	0:0	6	cfg
+op	25:15	0:0	6	->
+water	25:17	0:0	6	is_sequential
+stmts	25:32	39:8	5	
+water	25:32	0:0	6	{
+for	26:12	38:12	6	( int num = cfg -> sequence ;;num ++)
+forinit	0:0	26:40	7	 int num = cfg -> sequence ;
+decl	26:17	26:40	8	int	num
+op	26:25	0:0	8	=
+water	26:27	0:0	8	cfg
+op	26:30	0:0	8	->
+water	26:32	0:0	8	sequence
+cond	0:0	0:0	7	
+forexpr	26:44	26:47	7	num ++
+water	26:44	0:0	8	num
+op	26:47	0:0	8	++
+stmts	26:51	38:12	7	
+water	26:51	0:0	8	{
+decl	27:16	27:30	8	struct stat	st
+if	28:16	32:16	8	(asprintf (& filename ,"%s" DIR_SEP "%s%05d.%s" ,cfg -> path ,prefix ,num ,cfg -> format ) < 0)
+cond	28:20	29:68	9	asprintf (& filename ,"%s" DIR_SEP "%s%05d.%s" ,cfg -> path ,prefix ,num ,cfg -> format ) < 0
+call	28:20	29:64	10	asprintf
+arg	28:29	28:38	11	&filename
+op	28:29	0:0	12	&
+water	28:30	0:0	12	filename
+arg	28:40	28:64	11	"%s"DIR_SEP"%s%05d.%s"
+water	28:40	0:0	12	"%s"
+water	28:45	0:0	12	DIR_SEP
+water	28:53	0:0	12	"%s%05d.%s"
+arg	29:29	29:38	11	cfg->path
+water	29:29	0:0	12	cfg
+op	29:32	0:0	12	->
+water	29:34	0:0	12	path
+arg	29:40	29:46	11	prefix
+water	29:40	0:0	12	prefix
+arg	29:48	29:51	11	num
+water	29:48	0:0	12	num
+arg	29:53	29:64	11	cfg->format
+water	29:53	0:0	12	cfg
+op	29:56	0:0	12	->
+water	29:58	0:0	12	format
+op	29:66	0:0	10	<
+water	29:68	0:0	10	0
+stmts	29:71	32:16	9	
+water	29:71	0:0	10	{
+call	30:20	30:31	10	free
+arg	30:25	30:31	11	prefix
+water	30:25	0:0	12	prefix
+water	30:32	0:0	10	;
+goto	31:20	31:30	10	error
+water	31:25	0:0	11	error
+water	32:16	0:0	10	}
+if	33:16	36:16	8	(vlc_stat (filename ,& st ))
+cond	33:20	33:42	9	vlc_stat (filename ,& st )
+call	33:20	33:42	10	vlc_stat
+arg	33:29	33:37	11	filename
+water	33:29	0:0	12	filename
+arg	33:39	33:42	11	&st
+op	33:39	0:0	12	&
+water	33:40	0:0	12	st
+stmts	33:45	36:16	9	
+water	33:45	0:0	10	{
+op	34:20	0:0	10	*
+water	34:21	0:0	10	sequential
+op	34:32	0:0	10	=
+water	34:34	0:0	10	num
+water	34:37	0:0	10	;
+break	35:20	35:25	10	
+water	36:16	0:0	10	}
+call	37:16	37:29	8	free
+arg	37:21	37:29	9	filename
+water	37:21	0:0	10	filename
+water	37:30	0:0	8	;
+water	38:12	0:0	8	}
+water	39:8	0:0	6	}
+else	39:10	53:8	4
+stmts	39:15	53:8	5	
+water	39:15	0:0	6	{
+decl	40:12	40:29	6	struct timeval	tv
+decl	41:12	41:29	6	struct tm	curtime
+decl	42:12	42:28	6	char	buffer[128]
+call	43:12	43:34	6	gettimeofday
+arg	43:25	43:28	7	&tv
+op	43:25	0:0	8	&
+water	43:26	0:0	8	tv
+arg	43:30	43:34	7	NULL
+water	43:30	0:0	8	NULL
+water	43:35	0:0	6	;
+if	44:12	45:46	6	(localtime_r (& tv . tv_sec ,& curtime ) == NULL)
+cond	44:16	44:53	7	localtime_r (& tv . tv_sec ,& curtime ) == NULL
+call	44:16	44:48	8	localtime_r
+arg	44:28	44:38	9	&tv.tv_sec
+op	44:28	0:0	10	&
+water	44:29	0:0	10	tv
+op	44:31	0:0	10	.
+water	44:32	0:0	10	tv_sec
+arg	44:40	44:48	9	&curtime
+op	44:40	0:0	10	&
+water	44:41	0:0	10	curtime
+op	44:50	0:0	8	==
+water	44:53	0:0	8	NULL
+stmts	45:16	45:46	7	
+call	45:16	45:45	8	gmtime_r
+arg	45:25	45:35	9	&tv.tv_sec
+op	45:25	0:0	10	&
+water	45:26	0:0	10	tv
+op	45:28	0:0	10	.
+water	45:29	0:0	10	tv_sec
+arg	45:37	45:45	9	&curtime
+op	45:37	0:0	10	&
+water	45:38	0:0	10	curtime
+water	45:46	0:0	8	;
+if	46:12	48:39	6	(strftime (buffer ,sizeof ( buffer ) ,"%Y-%m-%d-%Hh%Mm%Ss" ,& curtime ) == 0)
+cond	46:16	47:38	7	strftime (buffer ,sizeof ( buffer ) ,"%Y-%m-%d-%Hh%Mm%Ss" ,& curtime ) == 0
+call	46:16	47:33	8	strftime
+arg	46:25	46:31	9	buffer
+water	46:25	0:0	10	buffer
+arg	46:33	46:47	9	sizeof(buffer)
+op	46:33	0:0	10	sizeof
+water	46:39	0:0	10	(
+water	46:40	0:0	10	buffer
+water	46:46	0:0	10	)
+arg	46:49	46:69	9	"%Y-%m-%d-%Hh%Mm%Ss"
+water	46:49	0:0	10	"%Y-%m-%d-%Hh%Mm%Ss"
+arg	47:25	47:33	9	&curtime
+op	47:25	0:0	10	&
+water	47:26	0:0	10	curtime
+op	47:35	0:0	8	==
+water	47:38	0:0	8	0
+stmts	48:16	48:39	7	
+call	48:16	48:38	8	strcpy
+arg	48:23	48:29	9	buffer
+water	48:23	0:0	10	buffer
+arg	48:31	48:38	9	"error"
+water	48:31	0:0	10	"error"
+water	48:39	0:0	8	;
+if	49:12	52:31	6	(asprintf (& filename ,"%s" DIR_SEP "%s%s%03u.%s" ,cfg -> path ,prefix ,buffer ,( unsigned ) tv . tv_usec / 1000 ,cfg -> format ) < 0)
+cond	49:16	51:69	7	asprintf (& filename ,"%s" DIR_SEP "%s%s%03u.%s" ,cfg -> path ,prefix ,buffer ,( unsigned ) tv . tv_usec / 1000 ,cfg -> format ) < 0
+call	49:16	51:65	8	asprintf
+arg	49:25	49:34	9	&filename
+op	49:25	0:0	10	&
+water	49:26	0:0	10	filename
+arg	49:36	49:62	9	"%s"DIR_SEP"%s%s%03u.%s"
+water	49:36	0:0	10	"%s"
+water	49:41	0:0	10	DIR_SEP
+water	49:49	0:0	10	"%s%s%03u.%s"
+arg	50:25	50:34	9	cfg->path
+water	50:25	0:0	10	cfg
+op	50:28	0:0	10	->
+water	50:30	0:0	10	path
+arg	50:36	50:42	9	prefix
+water	50:36	0:0	10	prefix
+arg	50:44	50:50	9	buffer
+water	50:44	0:0	10	buffer
+arg	51:25	51:52	9	(unsigned)tv.tv_usec/1000
+water	51:25	0:0	10	(
+water	51:26	0:0	10	unsigned
+water	51:34	0:0	10	)
+water	51:35	0:0	10	tv
+op	51:37	0:0	10	.
+water	51:38	0:0	10	tv_usec
+op	51:46	0:0	10	/
+water	51:48	0:0	10	1000
+arg	51:54	51:65	9	cfg->format
+water	51:54	0:0	10	cfg
+op	51:57	0:0	10	->
+water	51:59	0:0	10	format
+op	51:67	0:0	8	<
+water	51:69	0:0	8	0
+stmts	52:16	52:31	7	
+water	52:16	0:0	8	filename
+op	52:25	0:0	8	=
+water	52:27	0:0	8	NULL
+water	52:31	0:0	8	;
+water	53:8	0:0	6	}
+call	54:8	54:19	4	free
+arg	54:13	54:19	5	prefix
+water	54:13	0:0	6	prefix
+water	54:20	0:0	4	;
+water	55:4	0:0	4	}
+else	55:6	59:4	2
+stmts	55:11	59:4	3	
+water	55:11	0:0	4	{
+water	57:8	0:0	4	filename
+op	57:17	0:0	4	=
+call	57:19	57:46	4	str_format
+arg	57:30	57:35	5	input
+water	57:30	0:0	6	input
+arg	57:37	57:46	5	cfg->path
+water	57:37	0:0	6	cfg
+op	57:40	0:0	6	->
+water	57:42	0:0	6	path
+water	57:47	0:0	4	;
+call	58:8	58:30	4	path_sanitize
+arg	58:22	58:30	5	filename
+water	58:22	0:0	6	filename
+water	58:31	0:0	4	;
+water	59:4	0:0	4	}
+if	60:4	61:18	2	(! filename)
+cond	60:8	60:9	3	! filename
+op	60:8	0:0	4	!
+water	60:9	0:0	4	filename
+stmts	61:8	61:18	3	
+goto	61:8	61:18	4	error
+water	61:13	0:0	5	error
+decl	63:4	63:42	2	FILE	*file
+op	63:15	0:0	2	=
+call	63:17	63:41	3	vlc_fopen
+arg	63:27	63:35	4	filename
+water	63:27	0:0	5	filename
+arg	63:37	63:41	4	"wb"
+water	63:37	0:0	5	"wb"
+if	64:4	68:4	2	(! file)
+cond	64:8	64:9	3	! file
+op	64:8	0:0	4	!
+water	64:9	0:0	4	file
+stmts	64:15	68:4	3	
+water	64:15	0:0	4	{
+call	65:8	65:55	4	msg_Err
+arg	65:16	65:22	5	p_vout
+water	65:16	0:0	6	p_vout
+arg	65:24	65:45	5	"Failed to open '%s'"
+water	65:24	0:0	6	"Failed to open '%s'"
+arg	65:47	65:55	5	filename
+water	65:47	0:0	6	filename
+water	65:56	0:0	4	;
+call	66:8	66:21	4	free
+arg	66:13	66:21	5	filename
+water	66:13	0:0	6	filename
+water	66:22	0:0	4	;
+goto	67:8	67:18	4	error
+water	67:13	0:0	5	error
+water	68:4	0:0	4	}
+if	69:4	74:4	2	(fwrite (image -> p_buffer ,image -> i_buffer ,1 ,file ) != 1)
+cond	69:8	69:61	3	fwrite (image -> p_buffer ,image -> i_buffer ,1 ,file ) != 1
+call	69:8	69:56	4	fwrite
+arg	69:15	69:30	5	image->p_buffer
+water	69:15	0:0	6	image
+op	69:20	0:0	6	->
+water	69:22	0:0	6	p_buffer
+arg	69:32	69:47	5	image->i_buffer
+water	69:32	0:0	6	image
+op	69:37	0:0	6	->
+water	69:39	0:0	6	i_buffer
+arg	69:49	69:50	5	1
+water	69:49	0:0	6	1
+arg	69:52	69:56	5	file
+water	69:52	0:0	6	file
+op	69:58	0:0	4	!=
+water	69:61	0:0	4	1
+stmts	69:64	74:4	3	
+water	69:64	0:0	4	{
+call	70:8	70:59	4	msg_Err
+arg	70:16	70:22	5	p_vout
+water	70:16	0:0	6	p_vout
+arg	70:24	70:49	5	"Failed to write to '%s'"
+water	70:24	0:0	6	"Failed to write to '%s'"
+arg	70:51	70:59	5	filename
+water	70:51	0:0	6	filename
+water	70:60	0:0	4	;
+call	71:8	71:19	4	fclose
+arg	71:15	71:19	5	file
+water	71:15	0:0	6	file
+water	71:20	0:0	4	;
+call	72:8	72:21	4	free
+arg	72:13	72:21	5	filename
+water	72:13	0:0	6	filename
+water	72:22	0:0	4	;
+goto	73:8	73:18	4	error
+water	73:13	0:0	5	error
+water	74:4	0:0	4	}
+call	75:4	75:15	2	fclose
+arg	75:11	75:15	3	file
+water	75:11	0:0	4	file
+water	75:16	0:0	2	;
+if	77:4	78:24	2	(name)
+cond	77:8	77:8	3	name
+water	77:8	0:0	4	name
+stmts	78:8	78:24	3	
+op	78:8	0:0	4	*
+water	78:9	0:0	4	name
+op	78:14	0:0	4	=
+water	78:16	0:0	4	filename
+water	78:24	0:0	4	;
+else	79:4	80:22	2
+stmts	80:8	80:22	3	
+call	80:8	80:21	4	free
+arg	80:13	80:21	5	filename
+water	80:13	0:0	6	filename
+water	80:22	0:0	4	;
+return	81:4	81:22	2	VLC_SUCCESS
+water	81:11	0:0	3	VLC_SUCCESS
+label	82:0	82:5	2	error :
+call	83:4	83:45	2	msg_Err
+arg	83:12	83:18	3	p_vout
+water	83:12	0:0	4	p_vout
+arg	83:20	83:45	3	"could not save snapshot"
+water	83:20	0:0	4	"could not save snapshot"
+water	83:46	0:0	2	;
+return	84:4	84:23	2	VLC_EGENERIC
+water	84:11	0:0	3	VLC_EGENERIC

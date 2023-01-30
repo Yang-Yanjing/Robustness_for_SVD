@@ -1,0 +1,245 @@
+func	1:0	45:0	0	void	TIFFReadRawData
+params	2:15	0:0	1	
+param	2:16	2:25	2	TIFF *	tif
+param	2:27	2:37	2	int	bitrev
+stmnts	0:0	44:1	1	
+decl	4:1	4:43	2	tstrip_t	nstrips
+op	4:18	0:0	2	=
+call	4:20	4:42	3	TIFFNumberOfStrips
+arg	4:39	4:42	4	tif
+water	4:39	0:0	5	tif
+decl	5:1	5:55	2	const char	*what
+op	5:18	0:0	2	=
+call	5:20	5:35	3	TIFFIsTiled
+arg	5:32	5:35	4	tif
+water	5:32	0:0	5	tif
+water	5:37	0:0	2	?
+water	5:39	0:0	2	"Tile"
+water	5:46	0:0	2	:
+water	5:48	0:0	2	"Strip"
+decl	6:1	6:16	2	uint64	*stripbc
+call	7:1	7:52	2	TIFFGetField
+arg	7:14	7:17	3	tif
+water	7:14	0:0	4	tif
+arg	7:19	7:42	3	TIFFTAG_STRIPBYTECOUNTS
+water	7:19	0:0	4	TIFFTAG_STRIPBYTECOUNTS
+arg	7:44	7:52	3	&stripbc
+op	7:44	0:0	4	&
+water	7:45	0:0	4	stripbc
+water	7:53	0:0	2	;
+if	8:1	44:1	2	(nstrips > 0)
+cond	8:5	8:15	3	nstrips > 0
+water	8:5	0:0	4	nstrips
+op	8:13	0:0	4	>
+water	8:15	0:0	4	0
+stmts	8:18	44:1	3	
+water	8:18	0:0	4	{
+decl	9:2	9:29	4	uint32	bufsize
+op	9:17	0:0	4	=
+water	9:19	0:0	4	stripbc
+op	9:26	0:0	4	[
+water	9:27	0:0	4	0
+op	9:28	0:0	4	]
+decl	10:2	10:36	4	tdata_t	buf
+op	10:14	0:0	4	=
+call	10:16	10:35	5	_TIFFmalloc
+arg	10:28	10:35	6	bufsize
+water	10:28	0:0	7	bufsize
+decl	11:2	11:12	4	tstrip_t	s
+for	12:2	41:2	4	(s = 0 ;s < nstrips;s ++)
+forinit	12:7	12:12	5	s = 0 ;
+water	12:7	0:0	6	s
+op	12:9	0:0	6	=
+water	12:11	0:0	6	0
+water	12:12	0:0	6	;
+cond	12:14	12:18	5	s < nstrips
+water	12:14	0:0	6	s
+op	12:16	0:0	6	<
+water	12:18	0:0	6	nstrips
+forexpr	12:27	12:28	5	s ++
+water	12:27	0:0	6	s
+op	12:28	0:0	6	++
+stmts	12:32	41:2	5	
+water	12:32	0:0	6	{
+if	13:3	16:3	6	(stripbc [ s ] > bufsize)
+cond	13:7	13:20	7	stripbc [ s ] > bufsize
+water	13:7	0:0	8	stripbc
+op	13:14	0:0	8	[
+water	13:15	0:0	8	s
+op	13:16	0:0	8	]
+op	13:18	0:0	8	>
+water	13:20	0:0	8	bufsize
+stmts	13:29	16:3	7	
+water	13:29	0:0	8	{
+water	14:4	0:0	8	buf
+op	14:8	0:0	8	=
+call	14:10	14:38	8	_TIFFrealloc
+arg	14:23	14:26	9	buf
+water	14:23	0:0	10	buf
+arg	14:28	14:38	9	stripbc[s]
+water	14:28	0:0	10	stripbc
+op	14:35	0:0	10	[
+water	14:36	0:0	10	s
+op	14:37	0:0	10	]
+water	14:39	0:0	8	;
+water	15:4	0:0	8	bufsize
+op	15:12	0:0	8	=
+water	15:14	0:0	8	stripbc
+op	15:21	0:0	8	[
+water	15:22	0:0	8	s
+op	15:23	0:0	8	]
+water	15:24	0:0	8	;
+water	16:3	0:0	8	}
+if	17:3	22:3	6	(buf == NULL)
+cond	17:7	17:14	7	buf == NULL
+water	17:7	0:0	8	buf
+op	17:11	0:0	8	==
+water	17:14	0:0	8	NULL
+stmts	17:20	22:3	7	
+water	17:20	0:0	8	{
+call	18:4	20:25	8	fprintf
+arg	18:12	18:18	9	stderr
+water	18:12	0:0	10	stderr
+arg	19:7	19:51	9	"Cannot allocate buffer to read strip %lu\n"
+water	19:7	0:0	10	"Cannot allocate buffer to read strip %lu\n"
+arg	20:8	20:25	9	(unsignedlong)s
+water	20:8	0:0	10	(
+water	20:9	0:0	10	unsigned
+water	20:18	0:0	10	long
+water	20:22	0:0	10	)
+water	20:24	0:0	10	s
+water	20:26	0:0	8	;
+break	21:4	21:9	8	
+water	22:3	0:0	8	}
+if	23:3	28:3	6	(TIFFReadRawStrip (tif ,s ,buf ,stripbc [ s ] ) < 0)
+cond	23:7	23:51	7	TIFFReadRawStrip (tif ,s ,buf ,stripbc [ s ] ) < 0
+call	23:7	23:47	8	TIFFReadRawStrip
+arg	23:24	23:27	9	tif
+water	23:24	0:0	10	tif
+arg	23:29	23:30	9	s
+water	23:29	0:0	10	s
+arg	23:32	23:35	9	buf
+water	23:32	0:0	10	buf
+arg	23:37	23:47	9	stripbc[s]
+water	23:37	0:0	10	stripbc
+op	23:44	0:0	10	[
+water	23:45	0:0	10	s
+op	23:46	0:0	10	]
+op	23:49	0:0	8	<
+water	23:51	0:0	8	0
+stmts	23:54	28:3	7	
+water	23:54	0:0	8	{
+call	24:4	25:25	8	fprintf
+arg	24:12	24:18	9	stderr
+water	24:12	0:0	10	stderr
+arg	24:20	24:47	9	"Error reading strip %lu\n"
+water	24:20	0:0	10	"Error reading strip %lu\n"
+arg	25:8	25:25	9	(unsignedlong)s
+water	25:8	0:0	10	(
+water	25:9	0:0	10	unsigned
+water	25:18	0:0	10	long
+water	25:22	0:0	10	)
+water	25:24	0:0	10	s
+water	25:26	0:0	8	;
+if	26:4	27:10	8	(stoponerr)
+cond	26:8	26:8	9	stoponerr
+water	26:8	0:0	10	stoponerr
+stmts	27:5	27:10	9	
+break	27:5	27:10	10	
+water	28:3	0:0	8	}
+else	28:5	40:3	6
+stmts	28:10	40:3	7	
+if	28:10	40:3	8	(showdata)
+cond	28:14	28:14	9	showdata
+water	28:14	0:0	10	showdata
+stmts	28:24	40:3	9	
+water	28:24	0:0	10	{
+if	29:4	33:4	10	(bitrev)
+cond	29:8	29:8	11	bitrev
+water	29:8	0:0	12	bitrev
+stmts	29:16	33:4	11	
+water	29:16	0:0	12	{
+call	30:5	30:36	12	TIFFReverseBits
+arg	30:21	30:24	13	buf
+water	30:21	0:0	14	buf
+arg	30:26	30:36	13	stripbc[s]
+water	30:26	0:0	14	stripbc
+op	30:33	0:0	14	[
+water	30:34	0:0	14	s
+op	30:35	0:0	14	]
+water	30:37	0:0	12	;
+call	31:5	32:32	12	printf
+arg	31:12	31:39	13	"%s %lu: (bit reversed)\n "
+water	31:12	0:0	14	"%s %lu: (bit reversed)\n "
+arg	32:9	32:13	13	what
+water	32:9	0:0	14	what
+arg	32:15	32:32	13	(unsignedlong)s
+water	32:15	0:0	14	(
+water	32:16	0:0	14	unsigned
+water	32:25	0:0	14	long
+water	32:29	0:0	14	)
+water	32:31	0:0	14	s
+water	32:33	0:0	12	;
+water	33:4	0:0	12	}
+else	33:6	35:27	10
+stmts	34:5	35:27	11	
+call	34:5	35:26	12	printf
+arg	34:12	34:24	13	"%s %lu:\n "
+water	34:12	0:0	14	"%s %lu:\n "
+arg	34:26	34:30	13	what
+water	34:26	0:0	14	what
+arg	35:9	35:26	13	(unsignedlong)s
+water	35:9	0:0	14	(
+water	35:10	0:0	14	unsigned
+water	35:19	0:0	14	long
+water	35:23	0:0	14	)
+water	35:25	0:0	14	s
+water	35:27	0:0	12	;
+if	36:4	37:47	10	(showwords)
+cond	36:8	36:8	11	showwords
+water	36:8	0:0	12	showwords
+stmts	37:5	37:47	11	
+call	37:5	37:46	12	ShowRawWords
+arg	37:18	37:31	13	(uint16*)buf
+water	37:18	0:0	14	(
+water	37:19	0:0	14	uint16
+op	37:25	0:0	14	*
+water	37:26	0:0	14	)
+water	37:28	0:0	14	buf
+arg	37:33	37:46	13	stripbc[s]>>1
+water	37:33	0:0	14	stripbc
+op	37:40	0:0	14	[
+water	37:41	0:0	14	s
+op	37:42	0:0	14	]
+op	37:43	0:0	14	>>
+water	37:45	0:0	14	1
+water	37:47	0:0	12	;
+else	38:4	39:51	10
+stmts	39:5	39:51	11	
+call	39:5	39:50	12	ShowRawBytes
+arg	39:18	39:38	13	(unsignedchar*)buf
+water	39:18	0:0	14	(
+water	39:19	0:0	14	unsigned
+water	39:28	0:0	14	char
+op	39:32	0:0	14	*
+water	39:33	0:0	14	)
+water	39:35	0:0	14	buf
+arg	39:40	39:50	13	stripbc[s]
+water	39:40	0:0	14	stripbc
+op	39:47	0:0	14	[
+water	39:48	0:0	14	s
+op	39:49	0:0	14	]
+water	39:51	0:0	12	;
+water	40:3	0:0	10	}
+water	41:2	0:0	6	}
+if	42:2	43:17	4	(buf != NULL)
+cond	42:6	42:13	5	buf != NULL
+water	42:6	0:0	6	buf
+op	42:10	0:0	6	!=
+water	42:13	0:0	6	NULL
+stmts	43:3	43:17	5	
+call	43:3	43:16	6	_TIFFfree
+arg	43:13	43:16	7	buf
+water	43:13	0:0	8	buf
+water	43:17	0:0	6	;
+water	44:1	0:0	4	}

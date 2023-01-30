@@ -1,0 +1,356 @@
+func	2:0	82:0	0	static cddb_disc_t *	GetCDDBInfo
+params	2:31	0:0	1	
+param	2:33	2:51	2	access_t *	p_access
+param	2:53	2:65	2	int	i_titles
+param	2:67	2:82	2	int *	p_sectors
+stmnts	4:4	81:15	1	
+if	4:4	9:4	2	(var_InheritInteger (p_access ,"album-art" ) != ALBUM_ART_ALL && !var_InheritBool (p_access ,"metadata-network-access" ))
+cond	4:8	5:64	3	var_InheritInteger (p_access ,"album-art" ) != ALBUM_ART_ALL && !var_InheritBool (p_access ,"metadata-network-access" )
+call	4:8	4:50	4	var_InheritInteger
+arg	4:28	4:36	5	p_access
+water	4:28	0:0	6	p_access
+arg	4:38	4:50	5	"album-art"
+water	4:38	0:0	6	"album-art"
+op	4:52	0:0	4	!=
+water	4:55	0:0	4	ALBUM_ART_ALL
+op	4:69	0:0	4	&&
+op	5:8	0:0	4	!
+call	5:11	5:64	4	var_InheritBool
+arg	5:28	5:36	5	p_access
+water	5:28	0:0	6	p_access
+arg	5:38	5:64	5	"metadata-network-access"
+water	5:38	0:0	6	"metadata-network-access"
+stmts	6:4	9:4	3	
+water	6:4	0:0	4	{
+call	7:8	7:83	4	msg_Dbg
+arg	7:17	7:25	5	p_access
+water	7:17	0:0	6	p_access
+arg	7:27	7:83	5	"Album art policy set to manual; no automatic fetching"
+water	7:27	0:0	6	"Album art policy set to manual; no automatic fetching"
+water	7:84	0:0	4	;
+return	8:8	8:19	4	NULL
+water	8:15	0:0	5	NULL
+water	9:4	0:0	4	}
+decl	11:4	11:36	2	cddb_conn_t	*p_cddb
+op	11:24	0:0	2	=
+call	11:26	11:35	3	cddb_new
+if	12:4	16:4	2	(! p_cddb)
+cond	12:8	12:9	3	! p_cddb
+op	12:8	0:0	4	!
+water	12:9	0:0	4	p_cddb
+stmts	13:4	16:4	3	
+water	13:4	0:0	4	{
+call	14:8	14:49	4	msg_Warn
+arg	14:18	14:26	5	p_access
+water	14:18	0:0	6	p_access
+arg	14:28	14:49	5	"unable to use CDDB"
+water	14:28	0:0	6	"unable to use CDDB"
+water	14:50	0:0	4	;
+return	15:8	15:19	4	NULL
+water	15:15	0:0	5	NULL
+water	16:4	0:0	4	}
+call	18:4	18:29	2	cddb_http_enable
+arg	18:22	18:29	3	p_cddb
+water	18:22	0:0	4	p_cddb
+water	18:30	0:0	2	;
+decl	19:4	19:64	2	char	*psz_tmp
+op	19:18	0:0	2	=
+call	19:20	19:63	3	var_InheritString
+arg	19:39	19:47	4	p_access
+water	19:39	0:0	5	p_access
+arg	19:49	19:63	4	"cddb-server"
+water	19:49	0:0	5	"cddb-server"
+if	20:4	24:4	2	(psz_tmp)
+cond	20:8	20:8	3	psz_tmp
+water	20:8	0:0	4	psz_tmp
+stmts	21:4	24:4	3	
+water	21:4	0:0	4	{
+call	22:8	22:46	4	cddb_set_server_name
+arg	22:30	22:36	5	p_cddb
+water	22:30	0:0	6	p_cddb
+arg	22:38	22:46	5	psz_tmp
+water	22:38	0:0	6	psz_tmp
+water	22:47	0:0	4	;
+call	23:8	23:22	4	free
+arg	23:14	23:22	5	psz_tmp
+water	23:14	0:0	6	psz_tmp
+water	23:23	0:0	4	;
+water	24:4	0:0	4	}
+call	25:4	25:78	2	cddb_set_server_port
+arg	25:26	25:32	3	p_cddb
+water	25:26	0:0	4	p_cddb
+arg	25:34	25:78	3	var_InheritInteger(p_access,"cddb-port")
+call	25:34	25:76	4	var_InheritInteger
+arg	25:54	25:62	5	p_access
+water	25:54	0:0	6	p_access
+arg	25:64	25:76	5	"cddb-port"
+water	25:64	0:0	6	"cddb-port"
+water	25:79	0:0	2	;
+call	26:4	26:55	2	cddb_set_email_address
+arg	26:28	26:34	3	p_cddb
+water	26:28	0:0	4	p_cddb
+arg	26:36	26:55	3	"vlc@videolan.org"
+water	26:36	0:0	4	"vlc@videolan.org"
+water	26:56	0:0	2	;
+call	27:4	27:56	2	cddb_set_http_path_query
+arg	27:30	27:36	3	p_cddb
+water	27:30	0:0	4	p_cddb
+arg	27:38	27:56	3	"/~cddb/cddb.cgi"
+water	27:38	0:0	4	"/~cddb/cddb.cgi"
+water	27:57	0:0	2	;
+call	28:4	28:59	2	cddb_set_http_path_submit
+arg	28:31	28:37	3	p_cddb
+water	28:31	0:0	4	p_cddb
+arg	28:39	28:59	3	"/~cddb/submit.cgi"
+water	28:39	0:0	4	"/~cddb/submit.cgi"
+water	28:60	0:0	2	;
+decl	29:4	29:22	2	char	*psz_cachedir
+decl	30:4	30:55	2	char	*psz_temp
+op	30:19	0:0	2	=
+call	30:21	30:54	3	config_GetUserDir
+arg	30:40	30:54	4	VLC_CACHE_DIR
+water	30:40	0:0	5	VLC_CACHE_DIR
+if	31:4	35:4	2	(asprintf (& psz_cachedir ,"%s" DIR_SEP "cddb" ,psz_temp ) > 0)
+cond	31:8	31:67	3	asprintf (& psz_cachedir ,"%s" DIR_SEP "cddb" ,psz_temp ) > 0
+call	31:8	31:63	4	asprintf
+arg	31:18	31:31	5	&psz_cachedir
+op	31:18	0:0	6	&
+water	31:19	0:0	6	psz_cachedir
+arg	31:33	31:52	5	"%s"DIR_SEP"cddb"
+water	31:33	0:0	6	"%s"
+water	31:38	0:0	6	DIR_SEP
+water	31:46	0:0	6	"cddb"
+arg	31:54	31:63	5	psz_temp
+water	31:54	0:0	6	psz_temp
+op	31:65	0:0	4	>
+water	31:67	0:0	4	0
+stmts	31:71	35:4	3	
+water	31:71	0:0	4	{
+call	32:8	32:34	4	cddb_cache_enable
+arg	32:27	32:34	5	p_cddb
+water	32:27	0:0	6	p_cddb
+water	32:35	0:0	4	;
+call	33:8	33:49	4	cddb_cache_set_dir
+arg	33:28	33:34	5	p_cddb
+water	33:28	0:0	6	p_cddb
+arg	33:36	33:49	5	psz_cachedir
+water	33:36	0:0	6	psz_cachedir
+water	33:50	0:0	4	;
+call	34:8	34:27	4	free
+arg	34:14	34:27	5	psz_cachedir
+water	34:14	0:0	6	psz_cachedir
+water	34:28	0:0	4	;
+water	35:4	0:0	4	}
+call	36:4	36:19	2	free
+arg	36:10	36:19	3	psz_temp
+water	36:10	0:0	4	psz_temp
+water	36:20	0:0	2	;
+call	37:4	37:33	2	cddb_set_timeout
+arg	37:22	37:28	3	p_cddb
+water	37:22	0:0	4	p_cddb
+arg	37:30	37:33	3	10
+water	37:30	0:0	4	10
+water	37:34	0:0	2	;
+decl	39:4	39:41	2	cddb_disc_t	*p_disc
+op	39:24	0:0	2	=
+call	39:26	39:40	3	cddb_disc_new
+if	40:4	44:4	2	(! p_disc)
+cond	40:8	40:9	3	! p_disc
+op	40:8	0:0	4	!
+water	40:9	0:0	4	p_disc
+stmts	41:4	44:4	3	
+water	41:4	0:0	4	{
+call	42:8	42:67	4	msg_Err
+arg	42:17	42:25	5	p_access
+water	42:17	0:0	6	p_access
+arg	42:27	42:67	5	"unable to create CDDB disc structure."
+water	42:27	0:0	6	"unable to create CDDB disc structure."
+water	42:68	0:0	4	;
+goto	43:8	43:18	4	error
+water	43:13	0:0	5	error
+water	44:4	0:0	4	}
+decl	45:4	45:30	2	int64_t	i_length
+op	45:21	0:0	2	=
+water	45:23	0:0	2	2000000
+for	46:4	54:4	2	( int i = 0 ;i < i_titles;i ++)
+forinit	0:0	46:18	3	 int i = 0 ;
+decl	46:9	46:18	4	int	i
+op	46:15	0:0	4	=
+water	46:17	0:0	4	0
+cond	46:20	46:24	3	i < i_titles
+water	46:20	0:0	4	i
+op	46:22	0:0	4	<
+water	46:24	0:0	4	i_titles
+forexpr	46:34	46:35	3	i ++
+water	46:34	0:0	4	i
+op	46:35	0:0	4	++
+stmts	47:4	54:4	3	
+water	47:4	0:0	4	{
+decl	48:8	48:42	4	cddb_track_t	*t
+op	48:24	0:0	4	=
+call	48:26	48:41	5	cddb_track_new
+call	49:8	49:59	4	cddb_track_set_frame_offset
+arg	49:37	49:38	5	t
+water	49:37	0:0	6	t
+arg	49:40	49:59	5	p_sectors[i]+150
+water	49:40	0:0	6	p_sectors
+op	49:49	0:0	6	[
+water	49:50	0:0	6	i
+op	49:51	0:0	6	]
+op	49:53	0:0	6	+
+water	49:55	0:0	6	150
+water	49:60	0:0	4	;
+call	50:8	50:39	4	cddb_disc_add_track
+arg	50:29	50:35	5	p_disc
+water	50:29	0:0	6	p_disc
+arg	50:37	50:39	5	t
+water	50:37	0:0	6	t
+water	50:40	0:0	4	;
+decl	51:8	52:54	4	const int64_t	i_size
+op	51:29	0:0	4	=
+water	51:31	0:0	4	(
+water	51:33	0:0	4	p_sectors
+op	51:42	0:0	4	[
+water	51:43	0:0	4	i
+op	51:44	0:0	4	+
+water	51:45	0:0	4	1
+op	51:46	0:0	4	]
+op	51:48	0:0	4	-
+water	51:50	0:0	4	p_sectors
+op	51:59	0:0	4	[
+water	51:60	0:0	4	i
+op	51:61	0:0	4	]
+water	51:63	0:0	4	)
+op	51:65	0:0	4	*
+water	52:31	0:0	4	(
+water	52:32	0:0	4	int64_t
+water	52:39	0:0	4	)
+water	52:40	0:0	4	CDDA_DATA_SIZE
+water	53:8	0:0	4	i_length
+op	53:17	0:0	4	+=
+call	53:20	53:35	4	INT64_C
+arg	53:28	53:35	5	1000000
+water	53:28	0:0	6	1000000
+op	53:37	0:0	4	*
+water	53:39	0:0	4	i_size
+op	53:46	0:0	4	/
+water	53:48	0:0	4	44100
+op	53:54	0:0	4	/
+water	53:56	0:0	4	4
+water	53:59	0:0	4	;
+water	54:4	0:0	4	}
+call	55:4	55:58	2	cddb_disc_set_length
+arg	55:26	55:32	3	p_disc
+water	55:26	0:0	4	p_disc
+arg	55:34	55:58	3	(int)(i_length/1000000)
+call	55:34	55:56	4	(int)
+arg	55:40	55:56	5	i_length/1000000
+water	55:40	0:0	6	i_length
+op	55:48	0:0	6	/
+water	55:49	0:0	6	1000000
+water	55:59	0:0	2	;
+if	56:4	60:4	2	(!cddb_disc_calc_discid (p_disc ))
+cond	56:8	56:39	3	!cddb_disc_calc_discid (p_disc )
+op	56:8	0:0	4	!
+call	56:9	56:39	4	cddb_disc_calc_discid
+arg	56:32	56:39	5	p_disc
+water	56:32	0:0	6	p_disc
+stmts	57:4	60:4	3	
+water	57:4	0:0	4	{
+call	58:8	58:61	4	msg_Err
+arg	58:17	58:25	5	p_access
+water	58:17	0:0	6	p_access
+arg	58:27	58:61	5	"CDDB disc ID calculation failed"
+water	58:27	0:0	6	"CDDB disc ID calculation failed"
+water	58:62	0:0	4	;
+goto	59:8	59:18	4	error
+water	59:13	0:0	5	error
+water	60:4	0:0	4	}
+decl	61:4	61:54	2	const int	i_matches
+op	61:24	0:0	2	=
+call	61:26	61:53	3	cddb_query
+arg	61:38	61:44	4	p_cddb
+water	61:38	0:0	5	p_cddb
+arg	61:46	61:53	4	p_disc
+water	61:46	0:0	5	p_disc
+if	62:4	66:4	2	(i_matches < 0)
+cond	62:8	62:20	3	i_matches < 0
+water	62:8	0:0	4	i_matches
+op	62:18	0:0	4	<
+water	62:20	0:0	4	0
+stmts	63:4	66:4	3	
+water	63:4	0:0	4	{
+call	64:8	64:68	4	msg_Warn
+arg	64:18	64:26	5	p_access
+water	64:18	0:0	6	p_access
+arg	64:28	64:44	5	"CDDB error: %s"
+water	64:28	0:0	6	"CDDB error: %s"
+arg	64:46	64:68	5	cddb_error_str(errno)
+call	64:46	64:66	6	cddb_error_str
+arg	64:61	64:66	7	errno
+water	64:61	0:0	8	errno
+water	64:69	0:0	4	;
+goto	65:8	65:18	4	error
+water	65:13	0:0	5	error
+water	66:4	0:0	4	}
+else	67:4	71:4	2
+stmts	67:9	71:4	3	
+if	67:9	71:4	4	(i_matches == 0)
+cond	67:13	67:26	5	i_matches == 0
+water	67:13	0:0	6	i_matches
+op	67:23	0:0	6	==
+water	67:26	0:0	6	0
+stmts	68:4	71:4	5	
+water	68:4	0:0	6	{
+call	69:8	69:64	6	msg_Dbg
+arg	69:17	69:25	7	p_access
+water	69:17	0:0	8	p_access
+arg	69:27	69:64	7	"Couldn't find any matches in CDDB."
+water	69:27	0:0	8	"Couldn't find any matches in CDDB."
+water	69:65	0:0	6	;
+goto	70:8	70:18	6	error
+water	70:13	0:0	7	error
+water	71:4	0:0	6	}
+else	72:4	73:85	2
+stmts	72:9	73:85	3	
+if	72:9	73:85	4	(i_matches > 1)
+cond	72:13	72:25	5	i_matches > 1
+water	72:13	0:0	6	i_matches
+op	72:23	0:0	6	>
+water	72:25	0:0	6	1
+stmts	73:8	73:85	5	
+call	73:8	73:84	6	msg_Warn
+arg	73:18	73:26	7	p_access
+water	73:18	0:0	8	p_access
+arg	73:28	73:72	7	"found %d matches in CDDB. Using first one."
+water	73:28	0:0	8	"found %d matches in CDDB. Using first one."
+arg	73:74	73:84	7	i_matches
+water	73:74	0:0	8	i_matches
+water	73:85	0:0	6	;
+call	74:4	74:30	2	cddb_read
+arg	74:15	74:21	3	p_cddb
+water	74:15	0:0	4	p_cddb
+arg	74:23	74:30	3	p_disc
+water	74:23	0:0	4	p_disc
+water	74:31	0:0	2	;
+call	75:4	75:24	2	cddb_destroy
+arg	75:18	75:24	3	p_cddb
+water	75:18	0:0	4	p_cddb
+water	75:25	0:0	2	;
+return	76:4	76:17	2	p_disc
+water	76:11	0:0	3	p_disc
+label	77:0	77:5	2	error :
+if	78:4	79:35	2	(p_disc)
+cond	78:8	78:8	3	p_disc
+water	78:8	0:0	4	p_disc
+stmts	79:8	79:35	3	
+call	79:8	79:34	4	cddb_disc_destroy
+arg	79:27	79:34	5	p_disc
+water	79:27	0:0	6	p_disc
+water	79:35	0:0	4	;
+call	80:4	80:25	2	cddb_destroy
+arg	80:18	80:25	3	p_cddb
+water	80:18	0:0	4	p_cddb
+water	80:26	0:0	2	;
+return	81:4	81:15	2	NULL
+water	81:11	0:0	3	NULL

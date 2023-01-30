@@ -1,0 +1,151 @@
+func	2:0	34:0	0	int	Oggseek_BlindSeektoPosition
+params	2:31	0:0	1	
+param	2:33	2:49	2	demux_t *	p_demux
+param	2:51	2:77	2	logical_stream_t *	p_stream
+param	3:33	3:41	2	double	f
+param	3:43	3:62	2	bool	b_canfastseek
+stmnts	5:4	33:20	1	
+call	5:4	5:77	2	OggDebug
+arg	5:14	5:77	3	msg_Dbg(p_demux,"=================== Seeking To Blind Pos")
+call	5:14	5:75	4	msg_Dbg
+arg	5:23	5:30	5	p_demux
+water	5:23	0:0	6	p_demux
+arg	5:32	5:75	5	"=================== Seeking To Blind Pos"
+water	5:32	0:0	6	"=================== Seeking To Blind Pos"
+water	5:78	0:0	2	;
+decl	6:4	6:46	2	int64_t	i_size
+op	6:19	0:0	2	=
+call	6:21	6:45	3	stream_Size
+arg	6:34	6:45	4	p_demux->s
+water	6:34	0:0	5	p_demux
+op	6:41	0:0	5	->
+water	6:43	0:0	5	s
+decl	7:4	7:21	2	int64_t	i_granule
+decl	8:4	8:21	2	int64_t	i_pagepos
+water	9:4	0:0	2	i_size
+op	9:11	0:0	2	=
+call	9:13	12:56	2	find_first_page_granule
+arg	9:38	9:45	3	p_demux
+water	9:38	0:0	4	p_demux
+arg	10:45	10:55	3	i_size*f
+water	10:45	0:0	4	i_size
+op	10:52	0:0	4	*
+water	10:54	0:0	4	f
+arg	10:57	10:63	3	i_size
+water	10:57	0:0	4	i_size
+arg	11:45	11:53	3	p_stream
+water	11:45	0:0	4	p_stream
+arg	12:45	12:56	3	&i_granule
+op	12:45	0:0	4	&
+water	12:46	0:0	4	i_granule
+water	12:57	0:0	2	;
+call	13:4	13:99	2	OggDebug
+arg	13:14	13:99	3	msg_Dbg(p_demux,"Seek start pos is %"PRId64" granule %"PRId64,i_size,i_granule)
+call	13:14	13:97	4	msg_Dbg
+arg	13:23	13:30	5	p_demux
+water	13:23	0:0	6	p_demux
+arg	13:32	13:77	5	"Seek start pos is %"PRId64" granule %"PRId64
+water	13:32	0:0	6	"Seek start pos is %"
+water	13:53	0:0	6	PRId64
+water	13:59	0:0	6	" granule %"
+water	13:71	0:0	6	PRId64
+arg	13:79	13:85	5	i_size
+water	13:79	0:0	6	i_size
+arg	13:87	13:97	5	i_granule
+water	13:87	0:0	6	i_granule
+water	13:100	0:0	2	;
+water	14:4	0:0	2	i_granule
+op	14:14	0:0	2	=
+call	14:16	14:60	2	Ogg_GetKeyframeGranule
+arg	14:40	14:48	3	p_stream
+water	14:40	0:0	4	p_stream
+arg	14:50	14:60	3	i_granule
+water	14:50	0:0	4	i_granule
+water	14:61	0:0	2	;
+if	15:4	23:4	2	(b_canfastseek)
+cond	15:9	15:9	3	b_canfastseek
+water	15:9	0:0	4	b_canfastseek
+stmts	16:4	23:4	3	
+water	16:4	0:0	4	{
+water	19:8	0:0	4	i_pagepos
+op	19:18	0:0	4	=
+call	19:20	22:36	4	OggBackwardSeekToFrame
+arg	19:44	19:51	5	p_demux
+water	19:44	0:0	6	p_demux
+arg	20:16	20:72	5	__MAX(i_size-MAX_PAGE_SIZE,p_stream->i_data_start)
+call	20:16	20:71	6	__MAX
+arg	20:24	20:46	7	i_size-MAX_PAGE_SIZE
+water	20:24	0:0	8	i_size
+op	20:31	0:0	8	-
+water	20:33	0:0	8	MAX_PAGE_SIZE
+arg	20:48	20:71	7	p_stream->i_data_start
+water	20:48	0:0	8	p_stream
+op	20:56	0:0	8	->
+water	20:58	0:0	8	i_data_start
+arg	21:16	21:80	5	__MIN(i_size+MAX_PAGE_SIZE,p_demux->p_sys->i_total_length)
+call	21:16	21:79	6	__MIN
+arg	21:24	21:46	7	i_size+MAX_PAGE_SIZE
+water	21:24	0:0	8	i_size
+op	21:31	0:0	8	+
+water	21:33	0:0	8	MAX_PAGE_SIZE
+arg	21:48	21:79	7	p_demux->p_sys->i_total_length
+water	21:48	0:0	8	p_demux
+op	21:55	0:0	8	->
+water	21:57	0:0	8	p_sys
+op	21:62	0:0	8	->
+water	21:64	0:0	8	i_total_length
+arg	22:16	22:24	5	p_stream
+water	22:16	0:0	6	p_stream
+arg	22:26	22:36	5	i_granule
+water	22:26	0:0	6	i_granule
+water	22:37	0:0	4	;
+water	23:4	0:0	4	}
+else	24:4	31:4	2
+stmts	25:4	31:4	3	
+water	25:4	0:0	4	{
+water	27:8	0:0	4	i_pagepos
+op	27:18	0:0	4	=
+call	27:20	30:43	4	OggForwardSeekToFrame
+arg	27:43	27:50	5	p_demux
+water	27:43	0:0	6	p_demux
+arg	28:16	28:72	5	__MAX(i_size-MAX_PAGE_SIZE,p_stream->i_data_start)
+call	28:16	28:71	6	__MAX
+arg	28:24	28:46	7	i_size-MAX_PAGE_SIZE
+water	28:24	0:0	8	i_size
+op	28:31	0:0	8	-
+water	28:33	0:0	8	MAX_PAGE_SIZE
+arg	28:48	28:71	7	p_stream->i_data_start
+water	28:48	0:0	8	p_stream
+op	28:56	0:0	8	->
+water	28:58	0:0	8	i_data_start
+arg	29:16	29:41	5	stream_Size(p_demux->s)
+call	29:16	29:40	6	stream_Size
+arg	29:29	29:40	7	p_demux->s
+water	29:29	0:0	8	p_demux
+op	29:36	0:0	8	->
+water	29:38	0:0	8	s
+arg	30:16	30:24	5	p_stream
+water	30:16	0:0	6	p_stream
+arg	30:26	30:35	5	i_granule
+water	30:26	0:0	6	i_granule
+arg	30:37	30:43	5	false
+water	30:37	0:0	6	false
+water	30:44	0:0	4	;
+water	31:4	0:0	4	}
+call	32:4	32:114	2	OggDebug
+arg	32:14	32:114	3	msg_Dbg(p_demux,"=================== Seeked To %"PRId64" granule %"PRId64,i_pagepos,i_granule)
+call	32:14	32:112	4	msg_Dbg
+arg	32:23	32:30	5	p_demux
+water	32:23	0:0	6	p_demux
+arg	32:32	32:89	5	"=================== Seeked To %"PRId64" granule %"PRId64
+water	32:32	0:0	6	"=================== Seeked To %"
+water	32:65	0:0	6	PRId64
+water	32:71	0:0	6	" granule %"
+water	32:83	0:0	6	PRId64
+arg	32:91	32:100	5	i_pagepos
+water	32:91	0:0	6	i_pagepos
+arg	32:102	32:112	5	i_granule
+water	32:102	0:0	6	i_granule
+water	32:115	0:0	2	;
+return	33:4	33:20	2	i_pagepos
+water	33:11	0:0	3	i_pagepos

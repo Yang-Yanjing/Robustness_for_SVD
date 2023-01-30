@@ -1,0 +1,214 @@
+func	2:0	44:0	0	static void	FindMountPoint
+params	2:26	0:0	1	
+param	2:27	2:38	2	char * *	file
+stmnts	0:0	40:4	1	
+decl	4:4	4:24	2	char	*device
+op	4:17	0:0	2	=
+op	4:19	0:0	2	*
+water	4:20	0:0	2	file
+decl	6:4	6:18	2	struct stat	st
+if	7:4	25:4	2	(!stat (device ,& st ) &&S_ISBLK (st . st_mode ))
+cond	7:8	7:50	3	!stat (device ,& st ) &&S_ISBLK (st . st_mode )
+op	7:8	0:0	4	!
+call	7:9	7:26	4	stat
+arg	7:15	7:21	5	device
+water	7:15	0:0	6	device
+arg	7:23	7:26	5	&st
+op	7:23	0:0	6	&
+water	7:24	0:0	6	st
+op	7:28	0:0	4	&&
+call	7:31	7:50	4	S_ISBLK
+arg	7:40	7:50	5	st.st_mode
+water	7:40	0:0	6	st
+op	7:42	0:0	6	.
+water	7:43	0:0	6	st_mode
+stmts	7:53	25:4	3	
+water	7:53	0:0	4	{
+decl	8:8	8:57	4	FILE	*mtab
+op	8:19	0:0	4	=
+call	8:21	8:56	5	setmntent
+arg	8:32	8:51	6	"/proc/self/mounts"
+water	8:32	0:0	7	"/proc/self/mounts"
+arg	8:53	8:56	6	"r"
+water	8:53	0:0	7	"r"
+decl	9:8	9:30	4	struct mntent	*m
+water	9:24	0:0	4	,
+decl	9:8	9:30	4	struct mntent	mbuf
+decl	10:8	10:23	4	char	buf[8192]
+decl	13:8	13:48	4	char	*bd_device
+op	13:24	0:0	4	=
+call	13:26	13:47	5	realpath
+arg	13:35	13:41	6	device
+water	13:35	0:0	7	device
+arg	13:43	13:47	6	NULL
+water	13:43	0:0	7	NULL
+if	14:8	15:38	4	(! bd_device)
+cond	14:12	14:13	5	! bd_device
+op	14:12	0:0	6	!
+water	14:13	0:0	6	bd_device
+stmts	15:12	15:38	5	
+water	15:12	0:0	6	bd_device
+op	15:22	0:0	6	=
+call	15:24	15:37	6	strdup
+arg	15:31	15:37	7	device
+water	15:31	0:0	8	device
+water	15:38	0:0	6	;
+while	16:8	22:8	4	(( m =getmntent_r (mtab ,& mbuf ,buf ,sizeof ( buf ) ) ) != NULL)
+cond	16:15	16:68	5	( m =getmntent_r (mtab ,& mbuf ,buf ,sizeof ( buf ) ) ) != NULL
+water	16:15	0:0	6	(
+water	16:16	0:0	6	m
+op	16:18	0:0	6	=
+call	16:20	16:62	6	getmntent_r
+arg	16:33	16:37	7	mtab
+water	16:33	0:0	8	mtab
+arg	16:39	16:44	7	&mbuf
+op	16:39	0:0	8	&
+water	16:40	0:0	8	mbuf
+arg	16:46	16:49	7	buf
+water	16:46	0:0	8	buf
+arg	16:51	16:62	7	sizeof(buf)
+op	16:51	0:0	8	sizeof
+water	16:57	0:0	8	(
+water	16:58	0:0	8	buf
+water	16:61	0:0	8	)
+water	16:63	0:0	6	)
+op	16:65	0:0	6	!=
+water	16:68	0:0	6	NULL
+stmts	16:74	22:8	5	
+water	16:74	0:0	6	{
+if	17:12	21:12	6	(!strcmp (m -> mnt_fsname ,bd_device ))
+cond	17:16	17:49	7	!strcmp (m -> mnt_fsname ,bd_device )
+op	17:16	0:0	8	!
+call	17:17	17:49	8	strcmp
+arg	17:25	17:38	9	m->mnt_fsname
+water	17:25	0:0	10	m
+op	17:26	0:0	10	->
+water	17:28	0:0	10	mnt_fsname
+arg	17:40	17:49	9	bd_device
+water	17:40	0:0	10	bd_device
+stmts	17:52	21:12	7	
+water	17:52	0:0	8	{
+call	18:16	18:27	8	free
+arg	18:21	18:27	9	device
+water	18:21	0:0	10	device
+water	18:28	0:0	8	;
+op	19:16	0:0	8	*
+water	19:17	0:0	8	file
+op	19:22	0:0	8	=
+call	19:24	19:41	8	strdup
+arg	19:31	19:41	9	m->mnt_dir
+water	19:31	0:0	10	m
+op	19:32	0:0	10	->
+water	19:34	0:0	10	mnt_dir
+water	19:42	0:0	8	;
+break	20:16	20:21	8	
+water	21:12	0:0	8	}
+water	22:8	0:0	6	}
+call	23:8	23:22	4	free
+arg	23:13	23:22	5	bd_device
+water	23:13	0:0	6	bd_device
+water	23:23	0:0	4	;
+call	24:8	24:23	4	endmntent
+arg	24:19	24:23	5	mtab
+water	24:19	0:0	6	mtab
+water	24:24	0:0	4	;
+water	25:4	0:0	4	}
+decl	27:4	27:18	2	struct stat	st
+if	28:4	40:4	2	(!stat (device ,& st ) &&S_ISBLK (st . st_mode ))
+cond	28:8	28:50	3	!stat (device ,& st ) &&S_ISBLK (st . st_mode )
+op	28:8	0:0	4	!
+call	28:9	28:26	4	stat
+arg	28:15	28:21	5	device
+water	28:15	0:0	6	device
+arg	28:23	28:26	5	&st
+op	28:23	0:0	6	&
+water	28:24	0:0	6	st
+op	28:28	0:0	4	&&
+call	28:31	28:50	4	S_ISBLK
+arg	28:40	28:50	5	st.st_mode
+water	28:40	0:0	6	st
+op	28:42	0:0	6	.
+water	28:43	0:0	6	st_mode
+stmts	28:53	40:4	3	
+water	28:53	0:0	4	{
+decl	29:8	29:54	4	int	fs_count
+op	29:21	0:0	4	=
+call	29:23	29:53	5	getfsstat
+arg	29:34	29:38	6	NULL
+water	29:34	0:0	7	NULL
+arg	29:40	29:41	6	0
+water	29:40	0:0	7	0
+arg	29:43	29:53	6	MNT_NOWAIT
+water	29:43	0:0	7	MNT_NOWAIT
+if	30:8	39:8	4	(fs_count > 0)
+cond	30:12	30:23	5	fs_count > 0
+water	30:12	0:0	6	fs_count
+op	30:21	0:0	6	>
+water	30:23	0:0	6	0
+stmts	30:26	39:8	5	
+water	30:26	0:0	6	{
+decl	31:12	31:35	6	struct statfs	mbuf[128]
+call	32:12	32:67	6	getfsstat
+arg	32:23	32:27	7	mbuf
+water	32:23	0:0	8	mbuf
+arg	32:29	32:55	7	fs_count*sizeof(mbuf[0])
+water	32:29	0:0	8	fs_count
+op	32:38	0:0	8	*
+op	32:40	0:0	8	sizeof
+water	32:46	0:0	8	(
+water	32:47	0:0	8	mbuf
+op	32:51	0:0	8	[
+water	32:52	0:0	8	0
+op	32:53	0:0	8	]
+water	32:54	0:0	8	)
+arg	32:57	32:67	7	MNT_NOWAIT
+water	32:57	0:0	8	MNT_NOWAIT
+water	32:68	0:0	6	;
+for	33:12	38:16	6	( int i = 0 ;i < fs_count;++ i)
+forinit	0:0	33:26	7	 int i = 0 ;
+decl	33:17	33:26	8	int	i
+op	33:23	0:0	8	=
+water	33:25	0:0	8	0
+cond	33:28	33:32	7	i < fs_count
+water	33:28	0:0	8	i
+op	33:30	0:0	8	<
+water	33:32	0:0	8	fs_count
+forexpr	33:42	33:44	7	++ i
+op	33:42	0:0	8	++
+water	33:44	0:0	8	i
+stmts	34:16	38:16	7	
+if	34:16	38:16	8	(!strcmp (mbuf [ i ] . f_mntfromname ,device ))
+cond	34:20	34:58	9	!strcmp (mbuf [ i ] . f_mntfromname ,device )
+op	34:20	0:0	10	!
+call	34:21	34:58	10	strcmp
+arg	34:29	34:50	11	mbuf[i].f_mntfromname
+water	34:29	0:0	12	mbuf
+op	34:33	0:0	12	[
+water	34:34	0:0	12	i
+op	34:35	0:0	12	]
+op	34:36	0:0	12	.
+water	34:37	0:0	12	f_mntfromname
+arg	34:52	34:58	11	device
+water	34:52	0:0	12	device
+stmts	34:61	38:16	9	
+water	34:61	0:0	10	{
+call	35:20	35:31	10	free
+arg	35:25	35:31	11	device
+water	35:25	0:0	12	device
+water	35:32	0:0	10	;
+op	36:20	0:0	10	*
+water	36:21	0:0	10	file
+op	36:26	0:0	10	=
+call	36:28	36:54	10	strdup
+arg	36:35	36:54	11	mbuf[i].f_mntonname
+water	36:35	0:0	12	mbuf
+op	36:39	0:0	12	[
+water	36:40	0:0	12	i
+op	36:41	0:0	12	]
+op	36:42	0:0	12	.
+water	36:43	0:0	12	f_mntonname
+water	36:55	0:0	10	;
+return	37:20	37:26	10	
+water	38:16	0:0	10	}
+water	39:8	0:0	6	}
+water	40:4	0:0	4	}

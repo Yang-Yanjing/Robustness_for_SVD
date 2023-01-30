@@ -1,0 +1,126 @@
+func	2:0	29:0	0	static int	Mux
+params	2:14	0:0	1	
+param	2:16	2:34	2	sout_mux_t *	p_mux
+stmnts	0:0	28:22	1	
+decl	4:4	4:24	2	block_fifo_t	*p_fifo
+if	5:4	5:48	2	(! p_mux -> i_nb_inputs)
+cond	5:8	5:16	3	! p_mux -> i_nb_inputs
+op	5:8	0:0	4	!
+water	5:9	0:0	4	p_mux
+op	5:14	0:0	4	->
+water	5:16	0:0	4	i_nb_inputs
+stmts	5:30	5:48	3	
+return	5:30	5:48	4	VLC_SUCCESS
+water	5:37	0:0	5	VLC_SUCCESS
+water	6:4	0:0	2	p_fifo
+op	6:11	0:0	2	=
+water	6:13	0:0	2	p_mux
+op	6:18	0:0	2	->
+water	6:20	0:0	2	pp_inputs
+op	6:29	0:0	2	[
+water	6:30	0:0	2	0
+op	6:31	0:0	2	]
+op	6:32	0:0	2	->
+water	6:34	0:0	2	p_fifo
+water	6:40	0:0	2	;
+while	7:4	27:4	2	(block_FifoCount (p_fifo ) > 0)
+cond	7:11	7:39	3	block_FifoCount (p_fifo ) > 0
+call	7:11	7:35	4	block_FifoCount
+arg	7:28	7:35	5	p_fifo
+water	7:28	0:0	6	p_fifo
+op	7:37	0:0	4	>
+water	7:39	0:0	4	0
+stmts	8:4	27:4	3	
+water	8:4	0:0	4	{
+water	9:8	0:0	4	static
+water	9:15	0:0	4	const
+water	9:21	0:0	4	char
+water	9:26	0:0	4	psz_hfmt
+op	9:34	0:0	4	[
+op	9:35	0:0	4	]
+op	9:37	0:0	4	=
+water	9:39	0:0	4	"\r\n"
+water	10:12	0:0	4	"--"
+water	10:16	0:0	4	BOUNDARY
+water	10:24	0:0	4	"\r\n"
+water	11:12	0:0	4	"Content-Type: image/jpeg\r\n"
+water	12:12	0:0	4	"Content-Length: %zu\r\n"
+water	13:12	0:0	4	"\r\n"
+water	13:18	0:0	4	;
+decl	14:8	14:49	4	block_t	*p_data
+op	14:24	0:0	4	=
+call	14:26	14:48	5	block_FifoGet
+arg	14:41	14:48	6	p_fifo
+water	14:41	0:0	7	p_fifo
+decl	15:8	15:66	4	block_t	*p_header
+op	15:26	0:0	4	=
+call	15:28	15:65	5	block_Alloc
+arg	15:41	15:65	6	sizeof(psz_hfmt)+20
+op	15:41	0:0	7	sizeof
+water	15:47	0:0	7	(
+water	15:49	0:0	7	psz_hfmt
+water	15:58	0:0	7	)
+op	15:60	0:0	7	+
+water	15:62	0:0	7	20
+if	16:8	20:8	4	(p_header == NULL)
+cond	16:12	16:24	5	p_header == NULL
+water	16:12	0:0	6	p_header
+op	16:21	0:0	6	==
+water	16:24	0:0	6	NULL
+stmts	17:8	20:8	5	
+water	17:8	0:0	6	{
+call	18:12	18:34	6	block_Release
+arg	18:27	18:34	7	p_data
+water	18:27	0:0	8	p_data
+water	18:35	0:0	6	;
+continue	19:12	19:20	6	
+water	20:8	0:0	6	}
+water	21:8	0:0	4	p_header
+op	21:16	0:0	4	->
+water	21:18	0:0	4	i_buffer
+op	21:27	0:0	4	=
+call	22:12	23:49	4	snprintf
+arg	22:22	22:48	5	(char*)p_header->p_buffer
+water	22:22	0:0	6	(
+water	22:23	0:0	6	char
+op	22:28	0:0	6	*
+water	22:29	0:0	6	)
+water	22:30	0:0	6	p_header
+op	22:38	0:0	6	->
+water	22:40	0:0	6	p_buffer
+arg	22:50	22:68	5	p_header->i_buffer
+water	22:50	0:0	6	p_header
+op	22:58	0:0	6	->
+water	22:60	0:0	6	i_buffer
+arg	23:22	23:30	5	psz_hfmt
+water	23:22	0:0	6	psz_hfmt
+arg	23:32	23:49	5	p_data->i_buffer
+water	23:32	0:0	6	p_data
+op	23:38	0:0	6	->
+water	23:40	0:0	6	i_buffer
+water	23:50	0:0	4	;
+water	24:8	0:0	4	p_header
+op	24:16	0:0	4	->
+water	24:18	0:0	4	i_flags
+op	24:26	0:0	4	|=
+water	24:29	0:0	4	BLOCK_FLAG_HEADER
+water	24:46	0:0	4	;
+call	25:8	25:55	4	sout_AccessOutWrite
+arg	25:29	25:44	5	p_mux->p_access
+water	25:29	0:0	6	p_mux
+op	25:34	0:0	6	->
+water	25:36	0:0	6	p_access
+arg	25:46	25:55	5	p_header
+water	25:46	0:0	6	p_header
+water	25:56	0:0	4	;
+call	26:8	26:53	4	sout_AccessOutWrite
+arg	26:29	26:44	5	p_mux->p_access
+water	26:29	0:0	6	p_mux
+op	26:34	0:0	6	->
+water	26:36	0:0	6	p_access
+arg	26:46	26:53	5	p_data
+water	26:46	0:0	6	p_data
+water	26:54	0:0	4	;
+water	27:4	0:0	4	}
+return	28:4	28:22	2	VLC_SUCCESS
+water	28:11	0:0	3	VLC_SUCCESS

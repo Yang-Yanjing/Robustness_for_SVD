@@ -1,0 +1,132 @@
+func	2:0	39:0	0	int	playlist_FindArtInCache
+params	2:27	0:0	1	
+param	2:29	2:50	2	input_item_t *	p_item
+stmnts	0:0	38:47	1	
+decl	4:4	4:43	2	char	*psz_path
+op	4:19	0:0	2	=
+call	4:21	4:42	3	ArtCachePath
+arg	4:35	4:42	4	p_item
+water	4:35	0:0	5	p_item
+if	5:4	6:27	2	(! psz_path)
+cond	5:8	5:9	3	! psz_path
+op	5:8	0:0	4	!
+water	5:9	0:0	4	psz_path
+stmts	6:8	6:27	3	
+return	6:8	6:27	4	VLC_EGENERIC
+water	6:15	0:0	5	VLC_EGENERIC
+decl	8:4	8:40	2	DIR	*p_dir
+op	8:15	0:0	2	=
+call	8:17	8:39	3	vlc_opendir
+arg	8:30	8:39	4	psz_path
+water	8:30	0:0	5	psz_path
+if	9:4	13:4	2	(! p_dir)
+cond	9:8	9:9	3	! p_dir
+op	9:8	0:0	4	!
+water	9:9	0:0	4	p_dir
+stmts	10:4	13:4	3	
+water	10:4	0:0	4	{
+call	11:8	11:23	4	free
+arg	11:14	11:23	5	psz_path
+water	11:14	0:0	6	psz_path
+water	11:24	0:0	4	;
+return	12:8	12:27	4	VLC_EGENERIC
+water	12:15	0:0	5	VLC_EGENERIC
+water	13:4	0:0	4	}
+decl	14:4	14:24	2	bool	b_found
+op	14:17	0:0	2	=
+water	14:19	0:0	2	false
+decl	15:4	15:28	2	const char	*psz_filename
+while	16:4	34:4	2	(! b_found && ( psz_filename =vlc_readdir (p_dir ) ))
+cond	16:11	16:59	3	! b_found && ( psz_filename =vlc_readdir (p_dir ) )
+op	16:11	0:0	4	!
+water	16:12	0:0	4	b_found
+op	16:20	0:0	4	&&
+water	16:23	0:0	4	(
+water	16:24	0:0	4	psz_filename
+op	16:37	0:0	4	=
+call	16:39	16:58	4	vlc_readdir
+arg	16:52	16:58	5	p_dir
+water	16:52	0:0	6	p_dir
+water	16:59	0:0	4	)
+stmts	17:4	34:4	3	
+water	17:4	0:0	4	{
+if	18:8	33:8	4	(!strncmp (psz_filename ,"art" ,3 ))
+cond	18:12	18:45	5	!strncmp (psz_filename ,"art" ,3 )
+op	18:12	0:0	6	!
+call	18:13	18:45	6	strncmp
+arg	18:22	18:34	7	psz_filename
+water	18:22	0:0	8	psz_filename
+arg	18:36	18:41	7	"art"
+water	18:36	0:0	8	"art"
+arg	18:43	18:45	7	3
+water	18:43	0:0	8	3
+stmts	19:8	33:8	5	
+water	19:8	0:0	6	{
+decl	20:12	20:26	6	char	*psz_file
+if	21:12	31:12	6	(asprintf (& psz_file ,"%s" DIR_SEP "%s" ,psz_path ,psz_filename ) != - 1)
+cond	21:16	22:55	7	asprintf (& psz_file ,"%s" DIR_SEP "%s" ,psz_path ,psz_filename ) != - 1
+call	21:16	22:49	8	asprintf
+arg	21:26	21:35	9	&psz_file
+op	21:26	0:0	10	&
+water	21:27	0:0	10	psz_file
+arg	21:37	21:54	9	"%s"DIR_SEP"%s"
+water	21:37	0:0	10	"%s"
+water	21:42	0:0	10	DIR_SEP
+water	21:50	0:0	10	"%s"
+arg	22:26	22:34	9	psz_path
+water	22:26	0:0	10	psz_path
+arg	22:36	22:49	9	psz_filename
+water	22:36	0:0	10	psz_filename
+op	22:51	0:0	8	!=
+op	22:54	0:0	8	-
+water	22:55	0:0	8	1
+stmts	23:12	31:12	7	
+water	23:12	0:0	8	{
+decl	24:16	24:64	8	char	*psz_uri
+op	24:30	0:0	8	=
+call	24:32	24:63	9	vlc_path2uri
+arg	24:46	24:54	10	psz_file
+water	24:46	0:0	11	psz_file
+arg	24:56	24:63	10	"file"
+water	24:56	0:0	11	"file"
+if	25:16	29:16	8	(psz_uri)
+cond	25:20	25:20	9	psz_uri
+water	25:20	0:0	10	psz_uri
+stmts	26:16	29:16	9	
+water	26:16	0:0	10	{
+call	27:20	27:58	10	input_item_SetArtURL
+arg	27:42	27:48	11	p_item
+water	27:42	0:0	12	p_item
+arg	27:50	27:58	11	psz_uri
+water	27:50	0:0	12	psz_uri
+water	27:59	0:0	10	;
+call	28:20	28:34	10	free
+arg	28:26	28:34	11	psz_uri
+water	28:26	0:0	12	psz_uri
+water	28:35	0:0	10	;
+water	29:16	0:0	10	}
+call	30:16	30:31	8	free
+arg	30:22	30:31	9	psz_file
+water	30:22	0:0	10	psz_file
+water	30:32	0:0	8	;
+water	31:12	0:0	8	}
+water	32:12	0:0	6	b_found
+op	32:20	0:0	6	=
+water	32:22	0:0	6	true
+water	32:26	0:0	6	;
+water	33:8	0:0	6	}
+water	34:4	0:0	4	}
+call	36:4	36:20	2	closedir
+arg	36:14	36:20	3	p_dir
+water	36:14	0:0	4	p_dir
+water	36:21	0:0	2	;
+call	37:4	37:19	2	free
+arg	37:10	37:19	3	psz_path
+water	37:10	0:0	4	psz_path
+water	37:20	0:0	2	;
+return	38:4	38:47	2	b_found?VLC_SUCCESS:VLC_EGENERIC
+water	38:11	0:0	3	b_found
+water	38:19	0:0	3	?
+water	38:21	0:0	3	VLC_SUCCESS
+water	38:33	0:0	3	:
+water	38:35	0:0	3	VLC_EGENERIC

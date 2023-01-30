@@ -1,0 +1,2243 @@
+func	1:0	447:0	0	json_value *	json_parse_ex
+params	1:27	0:0	1	
+param	1:28	1:52	2	json_settings *	settings
+param	1:54	1:76	2	const json_char *	json
+param	1:78	1:94	2	char *	error_buf
+stmnts	0:0	446:11	1	
+decl	3:3	3:24	2	json_char	error[128]
+decl	4:3	4:24	2	unsigned int	cur_line
+decl	5:3	5:40	2	const json_char	*cur_line_begin
+water	5:35	0:0	2	,
+decl	5:3	5:40	2	const json_char	*i
+decl	6:3	6:40	2	json_value	*top
+water	6:19	0:0	2	,
+decl	6:3	6:40	2	json_value	*root
+water	6:27	0:0	2	,
+decl	6:3	6:40	2	json_value	*alloc
+op	6:37	0:0	2	=
+water	6:39	0:0	2	0
+decl	7:3	7:19	2	json_state	state
+decl	8:3	8:13	2	long	flags
+decl	9:3	9:51	2	long	num_digits
+op	9:19	0:0	2	=
+water	9:21	0:0	2	0
+water	9:22	0:0	2	,
+decl	9:3	9:51	2	long	num_fraction
+op	9:37	0:0	2	=
+water	9:39	0:0	2	0
+water	9:40	0:0	2	,
+decl	9:3	9:51	2	long	num_e
+op	9:48	0:0	2	=
+water	9:50	0:0	2	0
+water	10:3	0:0	2	error
+op	10:8	0:0	2	[
+water	10:9	0:0	2	0
+op	10:10	0:0	2	]
+op	10:12	0:0	2	=
+water	10:14	0:0	2	'\0'
+water	10:18	0:0	2	;
+call	11:3	11:41	2	memset
+arg	11:11	11:17	3	&state
+op	11:11	0:0	4	&
+water	11:12	0:0	4	state
+arg	11:19	11:20	3	0
+water	11:19	0:0	4	0
+arg	11:22	11:41	3	sizeof(json_state)
+op	11:22	0:0	4	sizeof
+water	11:29	0:0	4	(
+water	11:30	0:0	4	json_state
+water	11:40	0:0	4	)
+water	11:42	0:0	2	;
+call	12:3	12:60	2	memcpy
+arg	12:11	12:26	3	&state.settings
+op	12:11	0:0	4	&
+water	12:12	0:0	4	state
+op	12:17	0:0	4	.
+water	12:18	0:0	4	settings
+arg	12:28	12:36	3	settings
+water	12:28	0:0	4	settings
+arg	12:38	12:60	3	sizeof(json_settings)
+op	12:38	0:0	4	sizeof
+water	12:45	0:0	4	(
+water	12:46	0:0	4	json_settings
+water	12:59	0:0	4	)
+water	12:61	0:0	2	;
+call	13:3	13:57	2	memset
+arg	13:11	13:26	3	&state.uint_max
+op	13:11	0:0	4	&
+water	13:12	0:0	4	state
+op	13:17	0:0	4	.
+water	13:18	0:0	4	uint_max
+arg	13:28	13:32	3	0xFF
+water	13:28	0:0	4	0
+water	13:29	0:0	4	xFF
+arg	13:34	13:57	3	sizeof(state.uint_max)
+op	13:34	0:0	4	sizeof
+water	13:41	0:0	4	(
+water	13:42	0:0	4	state
+op	13:47	0:0	4	.
+water	13:48	0:0	4	uint_max
+water	13:56	0:0	4	)
+water	13:58	0:0	2	;
+call	14:3	14:59	2	memset
+arg	14:11	14:27	3	&state.ulong_max
+op	14:11	0:0	4	&
+water	14:12	0:0	4	state
+op	14:17	0:0	4	.
+water	14:18	0:0	4	ulong_max
+arg	14:29	14:33	3	0xFF
+water	14:29	0:0	4	0
+water	14:30	0:0	4	xFF
+arg	14:35	14:59	3	sizeof(state.ulong_max)
+op	14:35	0:0	4	sizeof
+water	14:42	0:0	4	(
+water	14:43	0:0	4	state
+op	14:48	0:0	4	.
+water	14:49	0:0	4	ulong_max
+water	14:58	0:0	4	)
+water	14:60	0:0	2	;
+water	15:3	0:0	2	state
+op	15:8	0:0	2	.
+water	15:9	0:0	2	uint_max
+op	15:18	0:0	2	-=
+water	15:21	0:0	2	8
+water	15:22	0:0	2	;
+water	16:3	0:0	2	state
+op	16:8	0:0	2	.
+water	16:9	0:0	2	ulong_max
+op	16:19	0:0	2	-=
+water	16:22	0:0	2	8
+water	16:23	0:0	2	;
+for	17:3	417:3	2	(state . first_pass = 1 ;state . first_pass >= 0;-- state . first_pass)
+forinit	17:8	17:28	3	state . first_pass = 1 ;
+water	17:8	0:0	4	state
+op	17:13	0:0	4	.
+water	17:14	0:0	4	first_pass
+op	17:25	0:0	4	=
+water	17:27	0:0	4	1
+water	17:28	0:0	4	;
+cond	17:30	17:50	3	state . first_pass >= 0
+water	17:30	0:0	4	state
+op	17:35	0:0	4	.
+water	17:36	0:0	4	first_pass
+op	17:47	0:0	4	>=
+water	17:50	0:0	4	0
+forexpr	17:53	17:62	3	-- state . first_pass
+op	17:53	0:0	4	--
+water	17:56	0:0	4	state
+op	17:61	0:0	4	.
+water	17:62	0:0	4	first_pass
+stmts	18:3	417:3	3	
+water	18:3	0:0	4	{
+decl	19:6	19:22	4	json_uchar	uchar
+decl	20:6	20:46	4	unsigned char	uc_b1
+water	20:25	0:0	4	,
+decl	20:6	20:46	4	unsigned char	uc_b2
+water	20:32	0:0	4	,
+decl	20:6	20:46	4	unsigned char	uc_b3
+water	20:39	0:0	4	,
+decl	20:6	20:46	4	unsigned char	uc_b4
+decl	21:6	21:31	4	json_char	*string
+op	21:25	0:0	4	=
+water	21:27	0:0	4	NULL
+decl	22:6	22:36	4	unsigned int	string_length
+op	22:33	0:0	4	=
+water	22:35	0:0	4	0
+water	23:6	0:0	4	top
+op	23:10	0:0	4	=
+water	23:12	0:0	4	root
+op	23:17	0:0	4	=
+water	23:19	0:0	4	0
+water	23:20	0:0	4	;
+water	24:6	0:0	4	flags
+op	24:12	0:0	4	=
+water	24:14	0:0	4	flag_seek_value
+water	24:29	0:0	4	;
+water	25:6	0:0	4	cur_line
+op	25:15	0:0	4	=
+water	25:17	0:0	4	1
+water	25:18	0:0	4	;
+water	26:6	0:0	4	cur_line_begin
+op	26:21	0:0	4	=
+water	26:23	0:0	4	json
+water	26:27	0:0	4	;
+for	27:6	415:6	4	(i = json ;;++ i)
+forinit	27:11	27:20	5	i = json ;
+water	27:11	0:0	6	i
+op	27:13	0:0	6	=
+water	27:15	0:0	6	json
+water	27:20	0:0	6	;
+cond	0:0	0:0	5	
+forexpr	27:23	27:26	5	++ i
+op	27:23	0:0	6	++
+water	27:26	0:0	6	i
+stmts	28:6	415:6	5	
+water	28:6	0:0	6	{
+decl	29:9	29:25	6	json_char	b
+op	29:21	0:0	6	=
+op	29:23	0:0	6	*
+water	29:24	0:0	6	i
+if	30:9	42:9	6	(flags & flag_done)
+cond	30:13	30:21	7	flags & flag_done
+water	30:13	0:0	8	flags
+op	30:19	0:0	8	&
+water	30:21	0:0	8	flag_done
+stmts	31:9	42:9	7	
+water	31:9	0:0	8	{
+if	32:12	33:20	8	(! b)
+cond	32:16	32:17	9	! b
+op	32:16	0:0	10	!
+water	32:17	0:0	10	b
+stmts	33:15	33:20	9	
+break	33:15	33:20	10	
+switch	34:12	41:12	8	(b)
+cond	34:20	34:20	9	b
+water	34:20	0:0	10	b
+stmts	35:12	41:12	9	
+water	35:12	0:0	10	{
+label	36:15	36:25	10	whitespace :
+continue	37:18	37:26	10	
+label	38:15	38:22	10	default :
+call	39:18	39:85	10	sprintf
+arg	39:27	39:32	11	error
+water	39:27	0:0	12	error
+arg	39:34	39:65	11	"%d:%d: Trailing garbage: `%c`"
+water	39:34	0:0	12	"%d:%d: Trailing garbage: `%c`"
+arg	39:67	39:75	11	cur_line
+water	39:67	0:0	12	cur_line
+arg	39:77	39:82	11	e_off
+water	39:77	0:0	12	e_off
+arg	39:84	39:85	11	b
+water	39:84	0:0	12	b
+water	39:86	0:0	10	;
+goto	40:18	40:31	10	e_failed
+water	40:23	0:0	11	e_failed
+water	41:12	0:0	10	}
+water	41:13	0:0	8	;
+water	42:9	0:0	8	}
+if	43:9	136:9	6	(flags & flag_string)
+cond	43:13	43:21	7	flags & flag_string
+water	43:13	0:0	8	flags
+op	43:19	0:0	8	&
+water	43:21	0:0	8	flag_string
+stmts	44:9	136:9	7	
+water	44:9	0:0	8	{
+if	45:12	48:12	8	(! b)
+cond	45:16	45:17	9	! b
+op	45:16	0:0	10	!
+water	45:17	0:0	10	b
+stmts	46:12	48:12	9	
+water	46:12	0:0	10	{
+call	46:15	46:85	10	sprintf
+arg	46:24	46:29	11	error
+water	46:24	0:0	12	error
+arg	46:31	46:68	11	"Unexpected EOF in string (at %d:%d)"
+water	46:31	0:0	12	"Unexpected EOF in string (at %d:%d)"
+arg	46:70	46:78	11	cur_line
+water	46:70	0:0	12	cur_line
+arg	46:80	46:85	11	e_off
+water	46:80	0:0	12	e_off
+water	46:86	0:0	10	;
+goto	47:15	47:28	10	e_failed
+water	47:20	0:0	11	e_failed
+water	48:12	0:0	10	}
+if	49:12	50:30	8	(string_length > state . uint_max)
+cond	49:16	49:38	9	string_length > state . uint_max
+water	49:16	0:0	10	string_length
+op	49:30	0:0	10	>
+water	49:32	0:0	10	state
+op	49:37	0:0	10	.
+water	49:38	0:0	10	uint_max
+stmts	50:15	50:30	9	
+goto	50:15	50:30	10	e_overflow
+water	50:20	0:0	11	e_overflow
+if	51:12	98:12	8	(flags & flag_escaped)
+cond	51:16	51:24	9	flags & flag_escaped
+water	51:16	0:0	10	flags
+op	51:22	0:0	10	&
+water	51:24	0:0	10	flag_escaped
+stmts	52:12	98:12	9	
+water	52:12	0:0	10	{
+water	53:15	0:0	10	flags
+op	53:21	0:0	10	&=
+op	53:24	0:0	10	~
+water	53:26	0:0	10	flag_escaped
+water	53:38	0:0	10	;
+switch	54:15	96:15	10	(b)
+cond	54:23	54:23	11	b
+water	54:23	0:0	12	b
+stmts	55:15	96:15	11	
+water	55:15	0:0	12	{
+water	56:18	0:0	12	case
+water	56:23	0:0	12	'b'
+water	56:26	0:0	12	:
+call	56:29	56:45	12	string_add
+arg	56:41	56:45	13	'\b'
+water	56:41	0:0	14	'\b'
+water	56:46	0:0	12	;
+break	56:49	56:54	12	
+water	57:18	0:0	12	case
+water	57:23	0:0	12	'f'
+water	57:26	0:0	12	:
+call	57:29	57:45	12	string_add
+arg	57:41	57:45	13	'\f'
+water	57:41	0:0	14	'\f'
+water	57:46	0:0	12	;
+break	57:49	57:54	12	
+water	58:18	0:0	12	case
+water	58:23	0:0	12	'n'
+water	58:26	0:0	12	:
+call	58:29	58:45	12	string_add
+arg	58:41	58:45	13	'\n'
+water	58:41	0:0	14	'\n'
+water	58:46	0:0	12	;
+break	58:49	58:54	12	
+water	59:18	0:0	12	case
+water	59:23	0:0	12	'r'
+water	59:26	0:0	12	:
+call	59:29	59:45	12	string_add
+arg	59:41	59:45	13	'\r'
+water	59:41	0:0	14	'\r'
+water	59:46	0:0	12	;
+break	59:49	59:54	12	
+water	60:18	0:0	12	case
+water	60:23	0:0	12	't'
+water	60:26	0:0	12	:
+call	60:29	60:45	12	string_add
+arg	60:41	60:45	13	'\t'
+water	60:41	0:0	14	'\t'
+water	60:46	0:0	12	;
+break	60:49	60:54	12	
+water	61:18	0:0	12	case
+water	61:23	0:0	12	'u'
+water	61:26	0:0	12	:
+water	62:20	0:0	12	if
+water	62:23	0:0	12	(
+water	62:24	0:0	12	(
+water	62:25	0:0	12	uc_b1
+op	62:31	0:0	12	=
+call	62:33	62:49	12	hex_value
+arg	62:44	62:49	13	*++i
+op	62:44	0:0	14	*
+op	62:45	0:0	14	++
+water	62:48	0:0	14	i
+water	62:50	0:0	12	)
+op	62:52	0:0	12	==
+water	62:55	0:0	12	0
+water	62:56	0:0	12	xFF
+op	62:60	0:0	12	||
+water	62:63	0:0	12	(
+water	62:64	0:0	12	uc_b2
+op	62:70	0:0	12	=
+call	62:72	62:88	12	hex_value
+arg	62:83	62:88	13	*++i
+op	62:83	0:0	14	*
+op	62:84	0:0	14	++
+water	62:87	0:0	14	i
+water	62:89	0:0	12	)
+op	62:91	0:0	12	==
+water	62:94	0:0	12	0
+water	62:95	0:0	12	xFF
+op	63:26	0:0	12	||
+water	63:29	0:0	12	(
+water	63:30	0:0	12	uc_b3
+op	63:36	0:0	12	=
+call	63:38	63:54	12	hex_value
+arg	63:49	63:54	13	*++i
+op	63:49	0:0	14	*
+op	63:50	0:0	14	++
+water	63:53	0:0	14	i
+water	63:55	0:0	12	)
+op	63:57	0:0	12	==
+water	63:60	0:0	12	0
+water	63:61	0:0	12	xFF
+op	63:65	0:0	12	||
+water	63:68	0:0	12	(
+water	63:69	0:0	12	uc_b4
+op	63:75	0:0	12	=
+call	63:77	63:93	12	hex_value
+arg	63:88	63:93	13	*++i
+op	63:88	0:0	14	*
+op	63:89	0:0	14	++
+water	63:92	0:0	14	i
+water	63:94	0:0	12	)
+op	63:96	0:0	12	==
+water	63:99	0:0	12	0
+water	63:100	0:0	12	xFF
+water	63:103	0:0	12	)
+water	64:20	0:0	12	{
+call	65:24	65:101	12	sprintf
+arg	65:33	65:38	13	error
+water	65:33	0:0	14	error
+arg	65:40	65:81	13	"Invalid character value `%c` (at %d:%d)"
+water	65:40	0:0	14	"Invalid character value `%c` (at %d:%d)"
+arg	65:83	65:84	13	b
+water	65:83	0:0	14	b
+arg	65:86	65:94	13	cur_line
+water	65:86	0:0	14	cur_line
+arg	65:96	65:101	13	e_off
+water	65:96	0:0	14	e_off
+water	65:102	0:0	12	;
+water	66:24	0:0	12	goto
+water	66:29	0:0	12	e_failed
+water	66:37	0:0	12	;
+water	67:20	0:0	12	}
+water	68:20	0:0	12	uc_b1
+op	68:26	0:0	12	=
+water	68:28	0:0	12	uc_b1
+op	68:34	0:0	12	*
+water	68:36	0:0	12	16
+op	68:39	0:0	12	+
+water	68:41	0:0	12	uc_b2
+water	68:46	0:0	12	;
+water	69:20	0:0	12	uc_b2
+op	69:26	0:0	12	=
+water	69:28	0:0	12	uc_b3
+op	69:34	0:0	12	*
+water	69:36	0:0	12	16
+op	69:39	0:0	12	+
+water	69:41	0:0	12	uc_b4
+water	69:46	0:0	12	;
+water	70:20	0:0	12	uchar
+op	70:26	0:0	12	=
+water	70:28	0:0	12	(
+water	70:29	0:0	12	(
+water	70:30	0:0	12	json_char
+water	70:39	0:0	12	)
+water	70:41	0:0	12	uc_b1
+water	70:46	0:0	12	)
+op	70:48	0:0	12	*
+water	70:50	0:0	12	256
+op	70:54	0:0	12	+
+water	70:56	0:0	12	uc_b2
+water	70:61	0:0	12	;
+if	71:20	75:20	12	(sizeof ( json_char ) >= sizeof ( json_uchar ) || ( uc_b1 == 0 && uc_b2 <= 0 x7F ))
+cond	71:24	71:97	13	sizeof ( json_char ) >= sizeof ( json_uchar ) || ( uc_b1 == 0 && uc_b2 <= 0 x7F )
+op	71:24	0:0	14	sizeof
+water	71:31	0:0	14	(
+water	71:32	0:0	14	json_char
+water	71:41	0:0	14	)
+op	71:43	0:0	14	>=
+op	71:46	0:0	14	sizeof
+water	71:53	0:0	14	(
+water	71:54	0:0	14	json_uchar
+water	71:64	0:0	14	)
+op	71:66	0:0	14	||
+water	71:69	0:0	14	(
+water	71:70	0:0	14	uc_b1
+op	71:76	0:0	14	==
+water	71:79	0:0	14	0
+op	71:81	0:0	14	&&
+water	71:84	0:0	14	uc_b2
+op	71:90	0:0	14	<=
+water	71:93	0:0	14	0
+water	71:94	0:0	14	x7F
+water	71:97	0:0	14	)
+stmts	72:20	75:20	13	
+water	72:20	0:0	14	{
+call	73:23	73:52	14	string_add
+arg	73:35	73:52	15	(json_char)uchar
+water	73:35	0:0	16	(
+water	73:36	0:0	16	json_char
+water	73:45	0:0	16	)
+water	73:47	0:0	16	uchar
+water	73:53	0:0	14	;
+break	74:23	74:28	14	
+water	75:20	0:0	14	}
+if	76:20	85:20	12	(uchar <= 0 x7FF)
+cond	76:24	76:34	13	uchar <= 0 x7FF
+water	76:24	0:0	14	uchar
+op	76:30	0:0	14	<=
+water	76:33	0:0	14	0
+water	76:34	0:0	14	x7FF
+stmts	77:20	85:20	13	
+water	77:20	0:0	14	{
+if	78:24	79:45	14	(state . first_pass)
+cond	78:28	78:34	15	state . first_pass
+water	78:28	0:0	16	state
+op	78:33	0:0	16	.
+water	78:34	0:0	16	first_pass
+stmts	79:27	79:45	15	
+water	79:27	0:0	16	string_length
+op	79:41	0:0	16	+=
+water	79:44	0:0	16	2
+water	79:45	0:0	16	;
+else	80:24	83:24	14
+stmts	81:24	83:24	15	
+water	81:24	0:0	16	{
+water	81:27	0:0	16	string
+op	81:34	0:0	16	[
+water	81:35	0:0	16	string_length
+op	81:49	0:0	16	++
+op	81:51	0:0	16	]
+op	81:53	0:0	16	=
+water	81:55	0:0	16	0
+water	81:56	0:0	16	xC0
+op	81:60	0:0	16	|
+water	81:62	0:0	16	(
+water	81:63	0:0	16	(
+water	81:64	0:0	16	uc_b2
+op	81:70	0:0	16	&
+water	81:72	0:0	16	0
+water	81:73	0:0	16	xC0
+water	81:76	0:0	16	)
+op	81:78	0:0	16	>>
+water	81:81	0:0	16	6
+water	81:82	0:0	16	)
+op	81:84	0:0	16	|
+water	81:86	0:0	16	(
+water	81:87	0:0	16	(
+water	81:88	0:0	16	uc_b1
+op	81:94	0:0	16	&
+water	81:96	0:0	16	0
+water	81:97	0:0	16	x7
+water	81:99	0:0	16	)
+op	81:101	0:0	16	<<
+water	81:104	0:0	16	2
+water	81:105	0:0	16	)
+water	81:106	0:0	16	;
+water	82:27	0:0	16	string
+op	82:34	0:0	16	[
+water	82:35	0:0	16	string_length
+op	82:49	0:0	16	++
+op	82:51	0:0	16	]
+op	82:53	0:0	16	=
+water	82:55	0:0	16	0
+water	82:56	0:0	16	x80
+op	82:60	0:0	16	|
+water	82:62	0:0	16	(
+water	82:63	0:0	16	uc_b2
+op	82:69	0:0	16	&
+water	82:71	0:0	16	0
+water	82:72	0:0	16	x3F
+water	82:75	0:0	16	)
+water	82:76	0:0	16	;
+water	83:24	0:0	16	}
+break	84:24	84:29	14	
+water	85:20	0:0	14	}
+if	86:20	87:41	12	(state . first_pass)
+cond	86:24	86:30	13	state . first_pass
+water	86:24	0:0	14	state
+op	86:29	0:0	14	.
+water	86:30	0:0	14	first_pass
+stmts	87:23	87:41	13	
+water	87:23	0:0	14	string_length
+op	87:37	0:0	14	+=
+water	87:40	0:0	14	3
+water	87:41	0:0	14	;
+else	88:20	92:20	12
+stmts	89:20	92:20	13	
+water	89:20	0:0	14	{
+water	89:23	0:0	14	string
+op	89:30	0:0	14	[
+water	89:31	0:0	14	string_length
+op	89:45	0:0	14	++
+op	89:47	0:0	14	]
+op	89:49	0:0	14	=
+water	89:51	0:0	14	0
+water	89:52	0:0	14	xE0
+op	89:56	0:0	14	|
+water	89:58	0:0	14	(
+water	89:59	0:0	14	(
+water	89:60	0:0	14	uc_b1
+op	89:66	0:0	14	&
+water	89:68	0:0	14	0
+water	89:69	0:0	14	xF0
+water	89:72	0:0	14	)
+op	89:74	0:0	14	>>
+water	89:77	0:0	14	4
+water	89:78	0:0	14	)
+water	89:79	0:0	14	;
+water	90:23	0:0	14	string
+op	90:30	0:0	14	[
+water	90:31	0:0	14	string_length
+op	90:45	0:0	14	++
+op	90:47	0:0	14	]
+op	90:49	0:0	14	=
+water	90:51	0:0	14	0
+water	90:52	0:0	14	x80
+op	90:56	0:0	14	|
+water	90:58	0:0	14	(
+water	90:59	0:0	14	(
+water	90:60	0:0	14	uc_b1
+op	90:66	0:0	14	&
+water	90:68	0:0	14	0
+water	90:69	0:0	14	xF
+water	90:71	0:0	14	)
+op	90:73	0:0	14	<<
+water	90:76	0:0	14	2
+water	90:77	0:0	14	)
+op	90:79	0:0	14	|
+water	90:81	0:0	14	(
+water	90:82	0:0	14	(
+water	90:83	0:0	14	uc_b2
+op	90:89	0:0	14	&
+water	90:91	0:0	14	0
+water	90:92	0:0	14	xC0
+water	90:95	0:0	14	)
+op	90:97	0:0	14	>>
+water	90:100	0:0	14	6
+water	90:101	0:0	14	)
+water	90:102	0:0	14	;
+water	91:23	0:0	14	string
+op	91:30	0:0	14	[
+water	91:31	0:0	14	string_length
+op	91:45	0:0	14	++
+op	91:47	0:0	14	]
+op	91:49	0:0	14	=
+water	91:51	0:0	14	0
+water	91:52	0:0	14	x80
+op	91:56	0:0	14	|
+water	91:58	0:0	14	(
+water	91:59	0:0	14	uc_b2
+op	91:65	0:0	14	&
+water	91:67	0:0	14	0
+water	91:68	0:0	14	x3F
+water	91:71	0:0	14	)
+water	91:72	0:0	14	;
+water	92:20	0:0	14	}
+break	93:20	93:25	12	
+label	94:18	94:25	12	default :
+call	95:21	95:34	12	string_add
+arg	95:33	95:34	13	b
+water	95:33	0:0	14	b
+water	95:35	0:0	12	;
+water	96:15	0:0	12	}
+water	96:16	0:0	10	;
+continue	97:15	97:23	10	
+water	98:12	0:0	10	}
+if	99:12	103:12	8	(b == '\\')
+cond	99:16	99:21	9	b == '\\'
+water	99:16	0:0	10	b
+op	99:18	0:0	10	==
+water	99:21	0:0	10	'\\'
+stmts	100:12	103:12	9	
+water	100:12	0:0	10	{
+water	101:15	0:0	10	flags
+op	101:21	0:0	10	|=
+water	101:24	0:0	10	flag_escaped
+water	101:36	0:0	10	;
+continue	102:15	102:23	10	
+water	103:12	0:0	10	}
+if	104:12	130:12	8	(b == '"')
+cond	104:16	104:21	9	b == '"'
+water	104:16	0:0	10	b
+op	104:18	0:0	10	==
+water	104:21	0:0	10	'"'
+stmts	105:12	130:12	9	
+water	105:12	0:0	10	{
+if	106:15	107:44	10	(! state . first_pass)
+cond	106:19	106:26	11	! state . first_pass
+op	106:19	0:0	12	!
+water	106:20	0:0	12	state
+op	106:25	0:0	12	.
+water	106:26	0:0	12	first_pass
+stmts	107:18	107:44	11	
+water	107:18	0:0	12	string
+op	107:25	0:0	12	[
+water	107:26	0:0	12	string_length
+op	107:39	0:0	12	]
+op	107:41	0:0	12	=
+water	107:43	0:0	12	0
+water	107:44	0:0	12	;
+water	108:15	0:0	10	flags
+op	108:21	0:0	10	&=
+op	108:24	0:0	10	~
+water	108:26	0:0	10	flag_string
+water	108:37	0:0	10	;
+water	109:15	0:0	10	string
+op	109:22	0:0	10	=
+water	109:24	0:0	10	0
+water	109:25	0:0	10	;
+switch	110:15	129:15	10	(top -> type)
+cond	110:23	110:28	11	top -> type
+water	110:23	0:0	12	top
+op	110:26	0:0	12	->
+water	110:28	0:0	12	type
+stmts	111:15	129:15	11	
+water	111:15	0:0	12	{
+label	112:18	112:34	12	case json_string :
+water	113:21	0:0	12	top
+op	113:24	0:0	12	->
+water	113:26	0:0	12	u
+op	113:27	0:0	12	.
+water	113:28	0:0	12	string
+op	113:34	0:0	12	.
+water	113:35	0:0	12	length
+op	113:42	0:0	12	=
+water	113:44	0:0	12	string_length
+water	113:57	0:0	12	;
+water	114:21	0:0	12	flags
+op	114:27	0:0	12	|=
+water	114:30	0:0	12	flag_next
+water	114:39	0:0	12	;
+break	115:21	115:26	12	
+label	116:18	116:34	12	case json_object :
+if	117:21	118:84	12	(state . first_pass)
+cond	117:25	117:31	13	state . first_pass
+water	117:25	0:0	14	state
+op	117:30	0:0	14	.
+water	117:31	0:0	14	first_pass
+stmts	118:24	118:84	13	
+water	118:24	0:0	14	(
+op	118:25	0:0	14	*
+water	118:26	0:0	14	(
+water	118:27	0:0	14	json_char
+op	118:37	0:0	14	*
+op	118:38	0:0	14	*
+water	118:39	0:0	14	)
+op	118:41	0:0	14	&
+water	118:42	0:0	14	top
+op	118:45	0:0	14	->
+water	118:47	0:0	14	u
+op	118:48	0:0	14	.
+water	118:49	0:0	14	object
+op	118:55	0:0	14	.
+water	118:56	0:0	14	values
+water	118:62	0:0	14	)
+op	118:64	0:0	14	+=
+water	118:67	0:0	14	string_length
+op	118:81	0:0	14	+
+water	118:83	0:0	14	1
+water	118:84	0:0	14	;
+else	119:21	124:21	12
+stmts	120:21	124:21	13	
+water	120:21	0:0	14	{
+water	121:24	0:0	14	top
+op	121:27	0:0	14	->
+water	121:29	0:0	14	u
+op	121:30	0:0	14	.
+water	121:31	0:0	14	object
+op	121:37	0:0	14	.
+water	121:38	0:0	14	values
+op	121:45	0:0	14	[
+water	121:46	0:0	14	top
+op	121:49	0:0	14	->
+water	121:51	0:0	14	u
+op	121:52	0:0	14	.
+water	121:53	0:0	14	object
+op	121:59	0:0	14	.
+water	121:60	0:0	14	length
+op	121:66	0:0	14	]
+op	121:67	0:0	14	.
+water	121:68	0:0	14	name
+op	122:27	0:0	14	=
+water	122:29	0:0	14	(
+water	122:30	0:0	14	json_char
+op	122:40	0:0	14	*
+water	122:41	0:0	14	)
+water	122:43	0:0	14	top
+op	122:46	0:0	14	->
+water	122:48	0:0	14	_reserved
+op	122:57	0:0	14	.
+water	122:58	0:0	14	object_mem
+water	122:68	0:0	14	;
+water	123:24	0:0	14	(
+op	123:25	0:0	14	*
+water	123:26	0:0	14	(
+water	123:27	0:0	14	json_char
+op	123:37	0:0	14	*
+op	123:38	0:0	14	*
+water	123:39	0:0	14	)
+op	123:41	0:0	14	&
+water	123:42	0:0	14	top
+op	123:45	0:0	14	->
+water	123:47	0:0	14	_reserved
+op	123:56	0:0	14	.
+water	123:57	0:0	14	object_mem
+water	123:67	0:0	14	)
+op	123:69	0:0	14	+=
+water	123:72	0:0	14	string_length
+op	123:86	0:0	14	+
+water	123:88	0:0	14	1
+water	123:89	0:0	14	;
+water	124:21	0:0	14	}
+water	125:21	0:0	12	flags
+op	125:27	0:0	12	|=
+water	125:30	0:0	12	flag_seek_value
+op	125:46	0:0	12	|
+water	125:48	0:0	12	flag_need_colon
+water	125:63	0:0	12	;
+continue	126:21	126:29	12	
+label	127:18	127:25	12	default :
+break	128:21	128:26	12	
+water	129:15	0:0	12	}
+water	129:16	0:0	10	;
+water	130:12	0:0	10	}
+else	131:12	135:12	8
+stmts	132:12	135:12	9	
+water	132:12	0:0	10	{
+call	133:15	133:28	10	string_add
+arg	133:27	133:28	11	b
+water	133:27	0:0	12	b
+water	133:29	0:0	10	;
+continue	134:15	134:23	10	
+water	135:12	0:0	10	}
+water	136:9	0:0	8	}
+if	137:9	250:9	6	(flags & flag_seek_value)
+cond	137:13	137:21	7	flags & flag_seek_value
+water	137:13	0:0	8	flags
+op	137:19	0:0	8	&
+water	137:21	0:0	8	flag_seek_value
+stmts	138:9	250:9	7	
+water	138:9	0:0	8	{
+switch	139:12	249:12	8	(b)
+cond	139:20	139:20	9	b
+water	139:20	0:0	10	b
+stmts	140:12	249:12	9	
+water	140:12	0:0	10	{
+label	141:15	141:25	10	whitespace :
+continue	142:18	142:26	10	
+water	143:15	0:0	10	case
+water	143:20	0:0	10	']'
+water	143:23	0:0	10	:
+water	144:18	0:0	10	if
+water	144:21	0:0	10	(
+water	144:22	0:0	10	top
+op	144:25	0:0	10	->
+water	144:27	0:0	10	type
+op	144:32	0:0	10	==
+water	144:35	0:0	10	json_array
+water	144:45	0:0	10	)
+water	145:21	0:0	10	flags
+op	145:27	0:0	10	=
+water	145:29	0:0	10	(
+water	145:30	0:0	10	flags
+op	145:36	0:0	10	&
+op	145:38	0:0	10	~
+water	145:40	0:0	10	(
+water	145:41	0:0	10	flag_need_comma
+op	145:57	0:0	10	|
+water	145:59	0:0	10	flag_seek_value
+water	145:74	0:0	10	)
+water	145:75	0:0	10	)
+op	145:77	0:0	10	|
+water	145:79	0:0	10	flag_next
+water	145:88	0:0	10	;
+else	146:18	149:18	10
+stmts	146:23	149:18	11	
+if	146:23	149:18	12	(! state . settings . settings & json_relaxed_commas)
+cond	146:27	146:54	13	! state . settings . settings & json_relaxed_commas
+op	146:27	0:0	14	!
+water	146:28	0:0	14	state
+op	146:33	0:0	14	.
+water	146:34	0:0	14	settings
+op	146:42	0:0	14	.
+water	146:43	0:0	14	settings
+op	146:52	0:0	14	&
+water	146:54	0:0	14	json_relaxed_commas
+stmts	147:18	149:18	13	
+water	147:18	0:0	14	{
+call	147:21	147:75	14	sprintf
+arg	147:30	147:35	15	error
+water	147:30	0:0	16	error
+arg	147:37	147:58	15	"%d:%d: Unexpected ]"
+water	147:37	0:0	16	"%d:%d: Unexpected ]"
+arg	147:60	147:68	15	cur_line
+water	147:60	0:0	16	cur_line
+arg	147:70	147:75	15	e_off
+water	147:70	0:0	16	e_off
+water	147:76	0:0	14	;
+goto	148:21	148:34	14	e_failed
+water	148:26	0:0	15	e_failed
+water	149:18	0:0	14	}
+break	150:18	150:23	10	
+label	151:15	151:22	10	default :
+if	152:18	162:18	10	(flags & flag_need_comma)
+cond	152:22	152:30	11	flags & flag_need_comma
+water	152:22	0:0	12	flags
+op	152:28	0:0	12	&
+water	152:30	0:0	12	flag_need_comma
+stmts	153:18	162:18	11	
+water	153:18	0:0	12	{
+if	154:21	157:21	12	(b == ',')
+cond	154:25	154:30	13	b == ','
+water	154:25	0:0	14	b
+op	154:27	0:0	14	==
+water	154:30	0:0	14	','
+stmts	155:21	157:21	13	
+water	155:21	0:0	14	{
+water	155:24	0:0	14	flags
+op	155:30	0:0	14	&=
+op	155:33	0:0	14	~
+water	155:35	0:0	14	flag_need_comma
+water	155:50	0:0	14	;
+continue	156:24	156:32	14	
+water	157:21	0:0	14	}
+else	158:21	161:21	12
+stmts	159:21	161:21	13	
+water	159:21	0:0	14	{
+call	159:24	159:89	14	sprintf
+arg	159:33	159:38	15	error
+water	159:33	0:0	16	error
+arg	159:40	159:69	15	"%d:%d: Expected , before %c"
+water	159:40	0:0	16	"%d:%d: Expected , before %c"
+arg	159:71	159:79	15	cur_line
+water	159:71	0:0	16	cur_line
+arg	159:81	159:86	15	e_off
+water	159:81	0:0	16	e_off
+arg	159:88	159:89	15	b
+water	159:88	0:0	16	b
+water	159:90	0:0	14	;
+goto	160:24	160:37	14	e_failed
+water	160:29	0:0	15	e_failed
+water	161:21	0:0	14	}
+water	162:18	0:0	12	}
+if	163:18	173:18	10	(flags & flag_need_colon)
+cond	163:22	163:30	11	flags & flag_need_colon
+water	163:22	0:0	12	flags
+op	163:28	0:0	12	&
+water	163:30	0:0	12	flag_need_colon
+stmts	164:18	173:18	11	
+water	164:18	0:0	12	{
+if	165:21	168:21	12	(b == ':')
+cond	165:25	165:30	13	b == ':'
+water	165:25	0:0	14	b
+op	165:27	0:0	14	==
+water	165:30	0:0	14	':'
+stmts	166:21	168:21	13	
+water	166:21	0:0	14	{
+water	166:24	0:0	14	flags
+op	166:30	0:0	14	&=
+op	166:33	0:0	14	~
+water	166:35	0:0	14	flag_need_colon
+water	166:50	0:0	14	;
+continue	167:24	167:32	14	
+water	168:21	0:0	14	}
+else	169:21	172:21	12
+stmts	170:21	172:21	13	
+water	170:21	0:0	14	{
+call	170:24	170:89	14	sprintf
+arg	170:33	170:38	15	error
+water	170:33	0:0	16	error
+arg	170:40	170:69	15	"%d:%d: Expected : before %c"
+water	170:40	0:0	16	"%d:%d: Expected : before %c"
+arg	170:71	170:79	15	cur_line
+water	170:71	0:0	16	cur_line
+arg	170:81	170:86	15	e_off
+water	170:81	0:0	16	e_off
+arg	170:88	170:89	15	b
+water	170:88	0:0	16	b
+water	170:90	0:0	14	;
+goto	171:24	171:37	14	e_failed
+water	171:29	0:0	15	e_failed
+water	172:21	0:0	14	}
+water	173:18	0:0	12	}
+water	174:18	0:0	10	flags
+op	174:24	0:0	10	&=
+op	174:27	0:0	10	~
+water	174:29	0:0	10	flag_seek_value
+water	174:44	0:0	10	;
+switch	175:18	248:18	10	(b)
+cond	175:26	175:26	11	b
+water	175:26	0:0	12	b
+stmts	176:18	248:18	11	
+water	176:18	0:0	12	{
+water	177:21	0:0	12	case
+water	177:26	0:0	12	'{'
+water	177:29	0:0	12	:
+water	178:24	0:0	12	if
+water	178:27	0:0	12	(
+op	178:28	0:0	12	!
+call	178:29	178:80	12	new_value
+arg	178:40	178:46	13	&state
+op	178:40	0:0	14	&
+water	178:41	0:0	14	state
+arg	178:48	178:52	13	&top
+op	178:48	0:0	14	&
+water	178:49	0:0	14	top
+arg	178:54	178:59	13	&root
+op	178:54	0:0	14	&
+water	178:55	0:0	14	root
+arg	178:61	178:67	13	&alloc
+op	178:61	0:0	14	&
+water	178:62	0:0	14	alloc
+arg	178:69	178:80	13	json_object
+water	178:69	0:0	14	json_object
+water	178:81	0:0	12	)
+water	179:27	0:0	12	goto
+water	179:32	0:0	12	e_alloc_failure
+water	179:47	0:0	12	;
+continue	180:24	180:32	12	
+water	181:21	0:0	12	case
+water	181:26	0:0	12	'['
+water	181:29	0:0	12	:
+water	182:24	0:0	12	if
+water	182:27	0:0	12	(
+op	182:28	0:0	12	!
+call	182:29	182:79	12	new_value
+arg	182:40	182:46	13	&state
+op	182:40	0:0	14	&
+water	182:41	0:0	14	state
+arg	182:48	182:52	13	&top
+op	182:48	0:0	14	&
+water	182:49	0:0	14	top
+arg	182:54	182:59	13	&root
+op	182:54	0:0	14	&
+water	182:55	0:0	14	root
+arg	182:61	182:67	13	&alloc
+op	182:61	0:0	14	&
+water	182:62	0:0	14	alloc
+arg	182:69	182:79	13	json_array
+water	182:69	0:0	14	json_array
+water	182:80	0:0	12	)
+water	183:27	0:0	12	goto
+water	183:32	0:0	12	e_alloc_failure
+water	183:47	0:0	12	;
+water	184:24	0:0	12	flags
+op	184:30	0:0	12	|=
+water	184:33	0:0	12	flag_seek_value
+water	184:48	0:0	12	;
+continue	185:24	185:32	12	
+water	186:21	0:0	12	case
+water	186:26	0:0	12	'"'
+water	186:29	0:0	12	:
+water	187:24	0:0	12	if
+water	187:27	0:0	12	(
+op	187:28	0:0	12	!
+call	187:29	187:80	12	new_value
+arg	187:40	187:46	13	&state
+op	187:40	0:0	14	&
+water	187:41	0:0	14	state
+arg	187:48	187:52	13	&top
+op	187:48	0:0	14	&
+water	187:49	0:0	14	top
+arg	187:54	187:59	13	&root
+op	187:54	0:0	14	&
+water	187:55	0:0	14	root
+arg	187:61	187:67	13	&alloc
+op	187:61	0:0	14	&
+water	187:62	0:0	14	alloc
+arg	187:69	187:80	13	json_string
+water	187:69	0:0	14	json_string
+water	187:81	0:0	12	)
+water	188:27	0:0	12	goto
+water	188:32	0:0	12	e_alloc_failure
+water	188:47	0:0	12	;
+water	189:24	0:0	12	flags
+op	189:30	0:0	12	|=
+water	189:33	0:0	12	flag_string
+water	189:44	0:0	12	;
+water	190:24	0:0	12	string
+op	190:31	0:0	12	=
+water	190:33	0:0	12	top
+op	190:36	0:0	12	->
+water	190:38	0:0	12	u
+op	190:39	0:0	12	.
+water	190:40	0:0	12	string
+op	190:46	0:0	12	.
+water	190:47	0:0	12	ptr
+water	190:50	0:0	12	;
+water	191:24	0:0	12	string_length
+op	191:38	0:0	12	=
+water	191:40	0:0	12	0
+water	191:41	0:0	12	;
+continue	192:24	192:32	12	
+water	193:21	0:0	12	case
+water	193:26	0:0	12	't'
+water	193:29	0:0	12	:
+water	194:24	0:0	12	if
+water	194:27	0:0	12	(
+op	194:28	0:0	12	*
+water	194:29	0:0	12	(
+op	194:30	0:0	12	++
+water	194:33	0:0	12	i
+water	194:34	0:0	12	)
+op	194:36	0:0	12	!=
+water	194:39	0:0	12	'r'
+op	194:43	0:0	12	||
+op	194:46	0:0	12	*
+water	194:47	0:0	12	(
+op	194:48	0:0	12	++
+water	194:51	0:0	12	i
+water	194:52	0:0	12	)
+op	194:54	0:0	12	!=
+water	194:57	0:0	12	'u'
+op	194:61	0:0	12	||
+op	194:64	0:0	12	*
+water	194:65	0:0	12	(
+op	194:66	0:0	12	++
+water	194:69	0:0	12	i
+water	194:70	0:0	12	)
+op	194:72	0:0	12	!=
+water	194:75	0:0	12	'e'
+water	194:78	0:0	12	)
+water	195:27	0:0	12	goto
+water	195:32	0:0	12	e_unknown_value
+water	195:47	0:0	12	;
+if	196:24	197:47	12	(!new_value (& state ,& top ,& root ,& alloc ,json_boolean ))
+cond	196:28	196:81	13	!new_value (& state ,& top ,& root ,& alloc ,json_boolean )
+op	196:28	0:0	14	!
+call	196:29	196:81	14	new_value
+arg	196:40	196:46	15	&state
+op	196:40	0:0	16	&
+water	196:41	0:0	16	state
+arg	196:48	196:52	15	&top
+op	196:48	0:0	16	&
+water	196:49	0:0	16	top
+arg	196:54	196:59	15	&root
+op	196:54	0:0	16	&
+water	196:55	0:0	16	root
+arg	196:61	196:67	15	&alloc
+op	196:61	0:0	16	&
+water	196:62	0:0	16	alloc
+arg	196:69	196:81	15	json_boolean
+water	196:69	0:0	16	json_boolean
+stmts	197:27	197:47	13	
+goto	197:27	197:47	14	e_alloc_failure
+water	197:32	0:0	15	e_alloc_failure
+water	198:24	0:0	12	top
+op	198:27	0:0	12	->
+water	198:29	0:0	12	u
+op	198:30	0:0	12	.
+water	198:31	0:0	12	boolean
+op	198:39	0:0	12	=
+water	198:41	0:0	12	1
+water	198:42	0:0	12	;
+water	199:24	0:0	12	flags
+op	199:30	0:0	12	|=
+water	199:33	0:0	12	flag_next
+water	199:42	0:0	12	;
+break	200:24	200:29	12	
+water	201:21	0:0	12	case
+water	201:26	0:0	12	'f'
+water	201:29	0:0	12	:
+water	202:24	0:0	12	if
+water	202:27	0:0	12	(
+op	202:28	0:0	12	*
+water	202:29	0:0	12	(
+op	202:30	0:0	12	++
+water	202:33	0:0	12	i
+water	202:34	0:0	12	)
+op	202:36	0:0	12	!=
+water	202:39	0:0	12	'a'
+op	202:43	0:0	12	||
+op	202:46	0:0	12	*
+water	202:47	0:0	12	(
+op	202:48	0:0	12	++
+water	202:51	0:0	12	i
+water	202:52	0:0	12	)
+op	202:54	0:0	12	!=
+water	202:57	0:0	12	'l'
+op	202:61	0:0	12	||
+op	202:64	0:0	12	*
+water	202:65	0:0	12	(
+op	202:66	0:0	12	++
+water	202:69	0:0	12	i
+water	202:70	0:0	12	)
+op	202:72	0:0	12	!=
+water	202:75	0:0	12	's'
+op	202:79	0:0	12	||
+op	202:82	0:0	12	*
+water	202:83	0:0	12	(
+op	202:84	0:0	12	++
+water	202:87	0:0	12	i
+water	202:88	0:0	12	)
+op	202:90	0:0	12	!=
+water	202:93	0:0	12	'e'
+water	202:96	0:0	12	)
+water	203:27	0:0	12	goto
+water	203:32	0:0	12	e_unknown_value
+water	203:47	0:0	12	;
+if	204:24	205:47	12	(!new_value (& state ,& top ,& root ,& alloc ,json_boolean ))
+cond	204:28	204:81	13	!new_value (& state ,& top ,& root ,& alloc ,json_boolean )
+op	204:28	0:0	14	!
+call	204:29	204:81	14	new_value
+arg	204:40	204:46	15	&state
+op	204:40	0:0	16	&
+water	204:41	0:0	16	state
+arg	204:48	204:52	15	&top
+op	204:48	0:0	16	&
+water	204:49	0:0	16	top
+arg	204:54	204:59	15	&root
+op	204:54	0:0	16	&
+water	204:55	0:0	16	root
+arg	204:61	204:67	15	&alloc
+op	204:61	0:0	16	&
+water	204:62	0:0	16	alloc
+arg	204:69	204:81	15	json_boolean
+water	204:69	0:0	16	json_boolean
+stmts	205:27	205:47	13	
+goto	205:27	205:47	14	e_alloc_failure
+water	205:32	0:0	15	e_alloc_failure
+water	206:24	0:0	12	flags
+op	206:30	0:0	12	|=
+water	206:33	0:0	12	flag_next
+water	206:42	0:0	12	;
+break	207:24	207:29	12	
+water	208:21	0:0	12	case
+water	208:26	0:0	12	'n'
+water	208:29	0:0	12	:
+water	209:24	0:0	12	if
+water	209:27	0:0	12	(
+op	209:28	0:0	12	*
+water	209:29	0:0	12	(
+op	209:30	0:0	12	++
+water	209:33	0:0	12	i
+water	209:34	0:0	12	)
+op	209:36	0:0	12	!=
+water	209:39	0:0	12	'u'
+op	209:43	0:0	12	||
+op	209:46	0:0	12	*
+water	209:47	0:0	12	(
+op	209:48	0:0	12	++
+water	209:51	0:0	12	i
+water	209:52	0:0	12	)
+op	209:54	0:0	12	!=
+water	209:57	0:0	12	'l'
+op	209:61	0:0	12	||
+op	209:64	0:0	12	*
+water	209:65	0:0	12	(
+op	209:66	0:0	12	++
+water	209:69	0:0	12	i
+water	209:70	0:0	12	)
+op	209:72	0:0	12	!=
+water	209:75	0:0	12	'l'
+water	209:78	0:0	12	)
+water	210:27	0:0	12	goto
+water	210:32	0:0	12	e_unknown_value
+water	210:47	0:0	12	;
+if	211:24	212:47	12	(!new_value (& state ,& top ,& root ,& alloc ,json_null ))
+cond	211:28	211:78	13	!new_value (& state ,& top ,& root ,& alloc ,json_null )
+op	211:28	0:0	14	!
+call	211:29	211:78	14	new_value
+arg	211:40	211:46	15	&state
+op	211:40	0:0	16	&
+water	211:41	0:0	16	state
+arg	211:48	211:52	15	&top
+op	211:48	0:0	16	&
+water	211:49	0:0	16	top
+arg	211:54	211:59	15	&root
+op	211:54	0:0	16	&
+water	211:55	0:0	16	root
+arg	211:61	211:67	15	&alloc
+op	211:61	0:0	16	&
+water	211:62	0:0	16	alloc
+arg	211:69	211:78	15	json_null
+water	211:69	0:0	16	json_null
+stmts	212:27	212:47	13	
+goto	212:27	212:47	14	e_alloc_failure
+water	212:32	0:0	15	e_alloc_failure
+water	213:24	0:0	12	flags
+op	213:30	0:0	12	|=
+water	213:33	0:0	12	flag_next
+water	213:42	0:0	12	;
+break	214:24	214:29	12	
+label	215:21	215:28	12	default :
+if	216:24	243:24	12	(isdigit (b ) || b == '-')
+cond	216:28	216:48	13	isdigit (b ) || b == '-'
+call	216:28	216:38	14	isdigit
+arg	216:37	216:38	15	b
+water	216:37	0:0	16	b
+op	216:40	0:0	14	||
+water	216:43	0:0	14	b
+op	216:45	0:0	14	==
+water	216:48	0:0	14	'-'
+stmts	217:24	243:24	13	
+water	217:24	0:0	14	{
+if	218:27	219:50	14	(!new_value (& state ,& top ,& root ,& alloc ,json_integer ))
+cond	218:31	218:84	15	!new_value (& state ,& top ,& root ,& alloc ,json_integer )
+op	218:31	0:0	16	!
+call	218:32	218:84	16	new_value
+arg	218:43	218:49	17	&state
+op	218:43	0:0	18	&
+water	218:44	0:0	18	state
+arg	218:51	218:55	17	&top
+op	218:51	0:0	18	&
+water	218:52	0:0	18	top
+arg	218:57	218:62	17	&root
+op	218:57	0:0	18	&
+water	218:58	0:0	18	root
+arg	218:64	218:70	17	&alloc
+op	218:64	0:0	18	&
+water	218:65	0:0	18	alloc
+arg	218:72	218:84	17	json_integer
+water	218:72	0:0	18	json_integer
+stmts	219:30	219:50	15	
+goto	219:30	219:50	16	e_alloc_failure
+water	219:35	0:0	17	e_alloc_failure
+if	220:27	229:27	14	(! state . first_pass)
+cond	220:31	220:38	15	! state . first_pass
+op	220:31	0:0	16	!
+water	220:32	0:0	16	state
+op	220:37	0:0	16	.
+water	220:38	0:0	16	first_pass
+stmts	221:27	229:27	15	
+water	221:27	0:0	16	{
+while	222:30	226:30	16	(isdigit (b ) || b == '+' || b == '-' || b == 'e' || b == 'E' || b == '.')
+cond	222:37	223:72	17	isdigit (b ) || b == '+' || b == '-' || b == 'e' || b == 'E' || b == '.'
+call	222:37	222:47	18	isdigit
+arg	222:46	222:47	19	b
+water	222:46	0:0	20	b
+op	222:49	0:0	18	||
+water	222:52	0:0	18	b
+op	222:54	0:0	18	==
+water	222:57	0:0	18	'+'
+op	222:61	0:0	18	||
+water	222:64	0:0	18	b
+op	222:66	0:0	18	==
+water	222:69	0:0	18	'-'
+op	223:40	0:0	18	||
+water	223:43	0:0	18	b
+op	223:45	0:0	18	==
+water	223:48	0:0	18	'e'
+op	223:52	0:0	18	||
+water	223:55	0:0	18	b
+op	223:57	0:0	18	==
+water	223:60	0:0	18	'E'
+op	223:64	0:0	18	||
+water	223:67	0:0	18	b
+op	223:69	0:0	18	==
+water	223:72	0:0	18	'.'
+stmts	224:30	226:30	17	
+water	224:30	0:0	18	{
+water	225:33	0:0	18	b
+op	225:35	0:0	18	=
+op	225:37	0:0	18	*
+op	225:38	0:0	18	++
+water	225:41	0:0	18	i
+water	225:42	0:0	18	;
+water	226:30	0:0	18	}
+water	227:30	0:0	16	flags
+op	227:36	0:0	16	|=
+water	227:39	0:0	16	flag_next
+op	227:49	0:0	16	|
+water	227:51	0:0	16	flag_reproc
+water	227:62	0:0	16	;
+break	228:30	228:35	16	
+water	229:27	0:0	16	}
+water	230:27	0:0	14	flags
+op	230:33	0:0	14	&=
+op	230:36	0:0	14	~
+water	230:38	0:0	14	(
+water	230:39	0:0	14	flag_num_negative
+op	230:57	0:0	14	|
+water	230:59	0:0	14	flag_num_e
+op	230:70	0:0	14	|
+water	231:40	0:0	14	flag_num_e_got_sign
+op	231:60	0:0	14	|
+water	231:62	0:0	14	flag_num_e_negative
+op	231:82	0:0	14	|
+water	232:43	0:0	14	flag_num_zero
+water	232:56	0:0	14	)
+water	232:57	0:0	14	;
+water	233:27	0:0	14	num_digits
+op	233:38	0:0	14	=
+water	233:40	0:0	14	0
+water	233:41	0:0	14	;
+water	234:27	0:0	14	num_fraction
+op	234:40	0:0	14	=
+water	234:42	0:0	14	0
+water	234:43	0:0	14	;
+water	235:27	0:0	14	num_e
+op	235:33	0:0	14	=
+water	235:35	0:0	14	0
+water	235:36	0:0	14	;
+if	236:27	240:27	14	(b != '-')
+cond	236:31	236:36	15	b != '-'
+water	236:31	0:0	16	b
+op	236:33	0:0	16	!=
+water	236:36	0:0	16	'-'
+stmts	237:27	240:27	15	
+water	237:27	0:0	16	{
+water	238:30	0:0	16	flags
+op	238:36	0:0	16	|=
+water	238:39	0:0	16	flag_reproc
+water	238:50	0:0	16	;
+break	239:30	239:35	16	
+water	240:27	0:0	16	}
+water	241:27	0:0	14	flags
+op	241:33	0:0	14	|=
+water	241:36	0:0	14	flag_num_negative
+water	241:53	0:0	14	;
+continue	242:27	242:35	14	
+water	243:24	0:0	14	}
+else	244:24	247:24	12
+stmts	245:24	247:24	13	
+water	245:24	0:0	14	{
+call	245:27	245:104	14	sprintf
+arg	245:36	245:41	15	error
+water	245:36	0:0	16	error
+arg	245:43	245:84	15	"%d:%d: Unexpected %c when seeking value"
+water	245:43	0:0	16	"%d:%d: Unexpected %c when seeking value"
+arg	245:86	245:94	15	cur_line
+water	245:86	0:0	16	cur_line
+arg	245:96	245:101	15	e_off
+water	245:96	0:0	16	e_off
+arg	245:103	245:104	15	b
+water	245:103	0:0	16	b
+water	245:105	0:0	14	;
+goto	246:27	246:40	14	e_failed
+water	246:32	0:0	15	e_failed
+water	247:24	0:0	14	}
+water	248:18	0:0	12	}
+water	248:19	0:0	10	;
+water	249:12	0:0	10	}
+water	249:13	0:0	8	;
+water	250:9	0:0	8	}
+else	251:9	376:9	6
+stmts	252:9	376:9	7	
+water	252:9	0:0	8	{
+switch	253:12	375:12	8	(top -> type)
+cond	253:20	253:25	9	top -> type
+water	253:20	0:0	10	top
+op	253:23	0:0	10	->
+water	253:25	0:0	10	type
+stmts	254:12	375:12	9	
+water	254:12	0:0	10	{
+label	255:12	255:28	10	case json_object :
+switch	256:15	282:15	10	(b)
+cond	256:23	256:23	11	b
+water	256:23	0:0	12	b
+stmts	257:15	282:15	11	
+water	257:15	0:0	12	{
+label	258:18	258:28	12	whitespace :
+continue	259:21	259:29	12	
+water	260:18	0:0	12	case
+water	260:23	0:0	12	'"'
+water	260:26	0:0	12	:
+water	261:21	0:0	12	if
+water	261:24	0:0	12	(
+water	261:25	0:0	12	flags
+op	261:31	0:0	12	&
+water	261:33	0:0	12	flag_need_comma
+op	261:49	0:0	12	&&
+water	261:52	0:0	12	(
+op	261:53	0:0	12	!
+water	261:54	0:0	12	state
+op	261:59	0:0	12	.
+water	261:60	0:0	12	settings
+op	261:68	0:0	12	.
+water	261:69	0:0	12	settings
+op	261:78	0:0	12	&
+water	261:80	0:0	12	json_relaxed_commas
+water	261:99	0:0	12	)
+water	261:100	0:0	12	)
+water	262:21	0:0	12	{
+call	263:24	263:86	12	sprintf
+arg	263:33	263:38	13	error
+water	263:33	0:0	14	error
+arg	263:40	263:69	13	"%d:%d: Expected , before \""
+water	263:40	0:0	14	"%d:%d: Expected , before \""
+arg	263:71	263:79	13	cur_line
+water	263:71	0:0	14	cur_line
+arg	263:81	263:86	13	e_off
+water	263:81	0:0	14	e_off
+water	263:87	0:0	12	;
+water	264:24	0:0	12	goto
+water	264:29	0:0	12	e_failed
+water	264:37	0:0	12	;
+water	265:21	0:0	12	}
+water	266:21	0:0	12	flags
+op	266:27	0:0	12	|=
+water	266:30	0:0	12	flag_string
+water	266:41	0:0	12	;
+water	267:21	0:0	12	string
+op	267:28	0:0	12	=
+water	267:30	0:0	12	(
+water	267:31	0:0	12	json_char
+op	267:41	0:0	12	*
+water	267:42	0:0	12	)
+water	267:44	0:0	12	top
+op	267:47	0:0	12	->
+water	267:49	0:0	12	_reserved
+op	267:58	0:0	12	.
+water	267:59	0:0	12	object_mem
+water	267:69	0:0	12	;
+water	268:21	0:0	12	string_length
+op	268:35	0:0	12	=
+water	268:37	0:0	12	0
+water	268:38	0:0	12	;
+break	269:21	269:26	12	
+water	270:18	0:0	12	case
+water	270:23	0:0	12	'}'
+water	270:26	0:0	12	:
+water	271:21	0:0	12	flags
+op	271:27	0:0	12	=
+water	271:29	0:0	12	(
+water	271:30	0:0	12	flags
+op	271:36	0:0	12	&
+op	271:38	0:0	12	~
+water	271:40	0:0	12	flag_need_comma
+water	271:55	0:0	12	)
+op	271:57	0:0	12	|
+water	271:59	0:0	12	flag_next
+water	271:68	0:0	12	;
+break	272:21	272:26	12	
+water	273:18	0:0	12	case
+water	273:23	0:0	12	','
+water	273:26	0:0	12	:
+water	274:21	0:0	12	if
+water	274:24	0:0	12	(
+water	274:25	0:0	12	flags
+op	274:31	0:0	12	&
+water	274:33	0:0	12	flag_need_comma
+water	274:48	0:0	12	)
+water	275:21	0:0	12	{
+water	276:24	0:0	12	flags
+op	276:30	0:0	12	&=
+op	276:33	0:0	12	~
+water	276:35	0:0	12	flag_need_comma
+water	276:50	0:0	12	;
+water	277:24	0:0	12	break
+water	277:29	0:0	12	;
+water	278:21	0:0	12	}
+water	279:18	0:0	12	default
+water	279:25	0:0	12	:
+call	280:21	280:91	12	sprintf
+arg	280:30	280:35	13	error
+water	280:30	0:0	14	error
+arg	280:37	280:71	13	"%d:%d: Unexpected `%c` in object"
+water	280:37	0:0	14	"%d:%d: Unexpected `%c` in object"
+arg	280:73	280:81	13	cur_line
+water	280:73	0:0	14	cur_line
+arg	280:83	280:88	13	e_off
+water	280:83	0:0	14	e_off
+arg	280:90	280:91	13	b
+water	280:90	0:0	14	b
+water	280:92	0:0	12	;
+goto	281:21	281:34	12	e_failed
+water	281:26	0:0	13	e_failed
+water	282:15	0:0	12	}
+water	282:16	0:0	10	;
+break	283:15	283:20	10	
+label	284:12	284:29	10	case json_integer :
+label	285:12	285:28	10	case json_double :
+if	286:15	311:15	10	(isdigit (b ))
+cond	286:19	286:29	11	isdigit (b )
+call	286:19	286:29	12	isdigit
+arg	286:28	286:29	13	b
+water	286:28	0:0	14	b
+stmts	287:15	311:15	11	
+water	287:15	0:0	12	{
+op	288:18	0:0	12	++
+water	288:21	0:0	12	num_digits
+water	288:31	0:0	12	;
+if	289:18	308:18	12	(top -> type == json_integer || flags & flag_num_e)
+cond	289:22	289:59	13	top -> type == json_integer || flags & flag_num_e
+water	289:22	0:0	14	top
+op	289:25	0:0	14	->
+water	289:27	0:0	14	type
+op	289:32	0:0	14	==
+water	289:35	0:0	14	json_integer
+op	289:48	0:0	14	||
+water	289:51	0:0	14	flags
+op	289:57	0:0	14	&
+water	289:59	0:0	14	flag_num_e
+stmts	290:18	308:18	13	
+water	290:18	0:0	14	{
+if	291:21	299:21	14	(! ( flags & flag_num_e ))
+cond	291:25	291:46	15	! ( flags & flag_num_e )
+op	291:25	0:0	16	!
+water	291:27	0:0	16	(
+water	291:28	0:0	16	flags
+op	291:34	0:0	16	&
+water	291:36	0:0	16	flag_num_e
+water	291:46	0:0	16	)
+stmts	292:21	299:21	15	
+water	292:21	0:0	16	{
+if	293:24	296:24	16	(flags & flag_num_zero)
+cond	293:28	293:36	17	flags & flag_num_zero
+water	293:28	0:0	18	flags
+op	293:34	0:0	18	&
+water	293:36	0:0	18	flag_num_zero
+stmts	294:24	296:24	17	
+water	294:24	0:0	18	{
+call	294:27	294:98	18	sprintf
+arg	294:36	294:41	19	error
+water	294:36	0:0	20	error
+arg	294:43	294:78	19	"%d:%d: Unexpected `0` before `%c`"
+water	294:43	0:0	20	"%d:%d: Unexpected `0` before `%c`"
+arg	294:80	294:88	19	cur_line
+water	294:80	0:0	20	cur_line
+arg	294:90	294:95	19	e_off
+water	294:90	0:0	20	e_off
+arg	294:97	294:98	19	b
+water	294:97	0:0	20	b
+water	294:99	0:0	18	;
+goto	295:27	295:40	18	e_failed
+water	295:32	0:0	19	e_failed
+water	296:24	0:0	18	}
+if	297:24	298:49	16	(num_digits == 1 && b == '0')
+cond	297:28	297:52	17	num_digits == 1 && b == '0'
+water	297:28	0:0	18	num_digits
+op	297:39	0:0	18	==
+water	297:42	0:0	18	1
+op	297:44	0:0	18	&&
+water	297:47	0:0	18	b
+op	297:49	0:0	18	==
+water	297:52	0:0	18	'0'
+stmts	298:27	298:49	17	
+water	298:27	0:0	18	flags
+op	298:33	0:0	18	|=
+water	298:36	0:0	18	flag_num_zero
+water	298:49	0:0	18	;
+water	299:21	0:0	16	}
+else	300:21	305:21	14
+stmts	301:21	305:21	15	
+water	301:21	0:0	16	{
+water	302:24	0:0	16	flags
+op	302:30	0:0	16	|=
+water	302:33	0:0	16	flag_num_e_got_sign
+water	302:52	0:0	16	;
+water	303:24	0:0	16	num_e
+op	303:30	0:0	16	=
+water	303:32	0:0	16	(
+water	303:33	0:0	16	num_e
+op	303:39	0:0	16	*
+water	303:41	0:0	16	10
+water	303:43	0:0	16	)
+op	303:45	0:0	16	+
+water	303:47	0:0	16	(
+water	303:48	0:0	16	b
+op	303:50	0:0	16	-
+water	303:52	0:0	16	'0'
+water	303:55	0:0	16	)
+water	303:56	0:0	16	;
+continue	304:24	304:32	16	
+water	305:21	0:0	16	}
+water	306:21	0:0	14	top
+op	306:24	0:0	14	->
+water	306:26	0:0	14	u
+op	306:27	0:0	14	.
+water	306:28	0:0	14	integer
+op	306:36	0:0	14	=
+water	306:38	0:0	14	(
+water	306:39	0:0	14	top
+op	306:42	0:0	14	->
+water	306:44	0:0	14	u
+op	306:45	0:0	14	.
+water	306:46	0:0	14	integer
+op	306:54	0:0	14	*
+water	306:56	0:0	14	10
+water	306:58	0:0	14	)
+op	306:60	0:0	14	+
+water	306:62	0:0	14	(
+water	306:63	0:0	14	b
+op	306:65	0:0	14	-
+water	306:67	0:0	14	'0'
+water	306:70	0:0	14	)
+water	306:71	0:0	14	;
+continue	307:21	307:29	14	
+water	308:18	0:0	14	}
+water	309:18	0:0	12	num_fraction
+op	309:31	0:0	12	=
+water	309:33	0:0	12	(
+water	309:34	0:0	12	num_fraction
+op	309:47	0:0	12	*
+water	309:49	0:0	12	10
+water	309:51	0:0	12	)
+op	309:53	0:0	12	+
+water	309:55	0:0	12	(
+water	309:56	0:0	12	b
+op	309:58	0:0	12	-
+water	309:60	0:0	12	'0'
+water	309:63	0:0	12	)
+water	309:64	0:0	12	;
+continue	310:18	310:26	12	
+water	311:15	0:0	12	}
+if	312:15	321:15	10	(b == '+' || b == '-')
+cond	312:19	312:36	11	b == '+' || b == '-'
+water	312:19	0:0	12	b
+op	312:21	0:0	12	==
+water	312:24	0:0	12	'+'
+op	312:28	0:0	12	||
+water	312:31	0:0	12	b
+op	312:33	0:0	12	==
+water	312:36	0:0	12	'-'
+stmts	313:15	321:15	11	
+water	313:15	0:0	12	{
+if	314:18	320:18	12	(( flags & flag_num_e ) && ! ( flags & flag_num_e_got_sign ))
+cond	314:23	314:76	13	( flags & flag_num_e ) && ! ( flags & flag_num_e_got_sign )
+water	314:23	0:0	14	(
+water	314:24	0:0	14	flags
+op	314:30	0:0	14	&
+water	314:32	0:0	14	flag_num_e
+water	314:42	0:0	14	)
+op	314:44	0:0	14	&&
+op	314:47	0:0	14	!
+water	314:48	0:0	14	(
+water	314:49	0:0	14	flags
+op	314:55	0:0	14	&
+water	314:57	0:0	14	flag_num_e_got_sign
+water	314:76	0:0	14	)
+stmts	315:18	320:18	13	
+water	315:18	0:0	14	{
+water	316:21	0:0	14	flags
+op	316:27	0:0	14	|=
+water	316:30	0:0	14	flag_num_e_got_sign
+water	316:49	0:0	14	;
+if	317:21	318:52	14	(b == '-')
+cond	317:25	317:30	15	b == '-'
+water	317:25	0:0	16	b
+op	317:27	0:0	16	==
+water	317:30	0:0	16	'-'
+stmts	318:24	318:52	15	
+water	318:24	0:0	16	flags
+op	318:30	0:0	16	|=
+water	318:33	0:0	16	flag_num_e_negative
+water	318:52	0:0	16	;
+continue	319:21	319:29	14	
+water	320:18	0:0	14	}
+water	321:15	0:0	12	}
+else	322:15	332:15	10
+stmts	322:20	332:15	11	
+if	322:20	332:15	12	(b == '.' && top -> type == json_integer)
+cond	322:24	322:49	13	b == '.' && top -> type == json_integer
+water	322:24	0:0	14	b
+op	322:26	0:0	14	==
+water	322:29	0:0	14	'.'
+op	322:33	0:0	14	&&
+water	322:36	0:0	14	top
+op	322:39	0:0	14	->
+water	322:41	0:0	14	type
+op	322:46	0:0	14	==
+water	322:49	0:0	14	json_integer
+stmts	323:15	332:15	13	
+water	323:15	0:0	14	{
+if	324:18	327:18	14	(! num_digits)
+cond	324:22	324:23	15	! num_digits
+op	324:22	0:0	16	!
+water	324:23	0:0	16	num_digits
+stmts	325:18	327:18	15	
+water	325:18	0:0	16	{
+call	325:21	325:88	16	sprintf
+arg	325:30	325:35	17	error
+water	325:30	0:0	18	error
+arg	325:37	325:71	17	"%d:%d: Expected digit before `.`"
+water	325:37	0:0	18	"%d:%d: Expected digit before `.`"
+arg	325:73	325:81	17	cur_line
+water	325:73	0:0	18	cur_line
+arg	325:83	325:88	17	e_off
+water	325:83	0:0	18	e_off
+water	325:89	0:0	16	;
+goto	326:21	326:34	16	e_failed
+water	326:26	0:0	17	e_failed
+water	327:18	0:0	16	}
+water	328:18	0:0	14	top
+op	328:21	0:0	14	->
+water	328:23	0:0	14	type
+op	328:28	0:0	14	=
+water	328:30	0:0	14	json_double
+water	328:41	0:0	14	;
+water	329:18	0:0	14	top
+op	329:21	0:0	14	->
+water	329:23	0:0	14	u
+op	329:24	0:0	14	.
+water	329:25	0:0	14	dbl
+op	329:29	0:0	14	=
+water	329:31	0:0	14	(
+water	329:32	0:0	14	double
+water	329:38	0:0	14	)
+water	329:40	0:0	14	top
+op	329:43	0:0	14	->
+water	329:45	0:0	14	u
+op	329:46	0:0	14	.
+water	329:47	0:0	14	integer
+water	329:54	0:0	14	;
+water	330:18	0:0	14	num_digits
+op	330:29	0:0	14	=
+water	330:31	0:0	14	0
+water	330:32	0:0	14	;
+continue	331:18	331:26	14	
+water	332:15	0:0	14	}
+if	333:15	355:15	10	(! ( flags & flag_num_e ))
+cond	333:19	333:40	11	! ( flags & flag_num_e )
+op	333:19	0:0	12	!
+water	333:21	0:0	12	(
+water	333:22	0:0	12	flags
+op	333:28	0:0	12	&
+water	333:30	0:0	12	flag_num_e
+water	333:40	0:0	12	)
+stmts	334:15	355:15	11	
+water	334:15	0:0	12	{
+if	335:18	342:18	12	(top -> type == json_double)
+cond	335:22	335:35	13	top -> type == json_double
+water	335:22	0:0	14	top
+op	335:25	0:0	14	->
+water	335:27	0:0	14	type
+op	335:32	0:0	14	==
+water	335:35	0:0	14	json_double
+stmts	336:18	342:18	13	
+water	336:18	0:0	14	{
+if	337:21	340:21	14	(! num_digits)
+cond	337:25	337:26	15	! num_digits
+op	337:25	0:0	16	!
+water	337:26	0:0	16	num_digits
+stmts	338:21	340:21	15	
+water	338:21	0:0	16	{
+call	338:24	338:90	16	sprintf
+arg	338:33	338:38	17	error
+water	338:33	0:0	18	error
+arg	338:40	338:73	17	"%d:%d: Expected digit after `.`"
+water	338:40	0:0	18	"%d:%d: Expected digit after `.`"
+arg	338:75	338:83	17	cur_line
+water	338:75	0:0	18	cur_line
+arg	338:85	338:90	17	e_off
+water	338:85	0:0	18	e_off
+water	338:91	0:0	16	;
+goto	339:24	339:37	16	e_failed
+water	339:29	0:0	17	e_failed
+water	340:21	0:0	16	}
+water	341:21	0:0	14	top
+op	341:24	0:0	14	->
+water	341:26	0:0	14	u
+op	341:27	0:0	14	.
+water	341:28	0:0	14	dbl
+op	341:32	0:0	14	+=
+water	341:35	0:0	14	(
+water	341:36	0:0	14	(
+water	341:37	0:0	14	double
+water	341:43	0:0	14	)
+water	341:45	0:0	14	num_fraction
+water	341:57	0:0	14	)
+op	341:59	0:0	14	/
+water	341:61	0:0	14	(
+call	341:62	341:102	14	pow
+arg	341:68	341:81	15	(double)10.0
+water	341:68	0:0	16	(
+water	341:69	0:0	16	double
+water	341:75	0:0	16	)
+water	341:77	0:0	16	10
+op	341:79	0:0	16	.
+water	341:80	0:0	16	0
+arg	341:83	341:102	15	(double)num_digits
+water	341:83	0:0	16	(
+water	341:84	0:0	16	double
+water	341:90	0:0	16	)
+water	341:92	0:0	16	num_digits
+water	341:103	0:0	14	)
+water	341:104	0:0	14	;
+water	342:18	0:0	14	}
+if	343:18	354:18	12	(b == 'e' || b == 'E')
+cond	343:22	343:39	13	b == 'e' || b == 'E'
+water	343:22	0:0	14	b
+op	343:24	0:0	14	==
+water	343:27	0:0	14	'e'
+op	343:31	0:0	14	||
+water	343:34	0:0	14	b
+op	343:36	0:0	14	==
+water	343:39	0:0	14	'E'
+stmts	344:18	354:18	13	
+water	344:18	0:0	14	{
+water	345:21	0:0	14	flags
+op	345:27	0:0	14	|=
+water	345:30	0:0	14	flag_num_e
+water	345:40	0:0	14	;
+if	346:21	350:21	14	(top -> type == json_integer)
+cond	346:25	346:38	15	top -> type == json_integer
+water	346:25	0:0	16	top
+op	346:28	0:0	16	->
+water	346:30	0:0	16	type
+op	346:35	0:0	16	==
+water	346:38	0:0	16	json_integer
+stmts	347:21	350:21	15	
+water	347:21	0:0	16	{
+water	348:24	0:0	16	top
+op	348:27	0:0	16	->
+water	348:29	0:0	16	type
+op	348:34	0:0	16	=
+water	348:36	0:0	16	json_double
+water	348:47	0:0	16	;
+water	349:24	0:0	16	top
+op	349:27	0:0	16	->
+water	349:29	0:0	16	u
+op	349:30	0:0	16	.
+water	349:31	0:0	16	dbl
+op	349:35	0:0	16	=
+water	349:37	0:0	16	(
+water	349:38	0:0	16	double
+water	349:44	0:0	16	)
+water	349:46	0:0	16	top
+op	349:49	0:0	16	->
+water	349:51	0:0	16	u
+op	349:52	0:0	16	.
+water	349:53	0:0	16	integer
+water	349:60	0:0	16	;
+water	350:21	0:0	16	}
+water	351:21	0:0	14	num_digits
+op	351:32	0:0	14	=
+water	351:34	0:0	14	0
+water	351:35	0:0	14	;
+water	352:21	0:0	14	flags
+op	352:27	0:0	14	&=
+op	352:30	0:0	14	~
+water	352:32	0:0	14	flag_num_zero
+water	352:45	0:0	14	;
+continue	353:21	353:29	14	
+water	354:18	0:0	14	}
+water	355:15	0:0	12	}
+else	356:15	363:15	10
+stmts	357:15	363:15	11	
+water	357:15	0:0	12	{
+if	358:18	361:18	12	(! num_digits)
+cond	358:22	358:23	13	! num_digits
+op	358:22	0:0	14	!
+water	358:23	0:0	14	num_digits
+stmts	359:18	361:18	13	
+water	359:18	0:0	14	{
+call	359:21	359:87	14	sprintf
+arg	359:30	359:35	15	error
+water	359:30	0:0	16	error
+arg	359:37	359:70	15	"%d:%d: Expected digit after `e`"
+water	359:37	0:0	16	"%d:%d: Expected digit after `e`"
+arg	359:72	359:80	15	cur_line
+water	359:72	0:0	16	cur_line
+arg	359:82	359:87	15	e_off
+water	359:82	0:0	16	e_off
+water	359:88	0:0	14	;
+goto	360:21	360:34	14	e_failed
+water	360:26	0:0	15	e_failed
+water	361:18	0:0	14	}
+water	362:18	0:0	12	top
+op	362:21	0:0	12	->
+water	362:23	0:0	12	u
+op	362:24	0:0	12	.
+water	362:25	0:0	12	dbl
+op	362:29	0:0	12	*=
+call	362:32	362:97	12	pow
+arg	362:37	362:39	13	10
+water	362:37	0:0	14	10
+arg	362:41	362:97	13	(double)(flags&flag_num_e_negative?-num_e:num_e)
+call	362:41	362:96	14	(double)
+arg	362:51	362:96	15	flags&flag_num_e_negative?-num_e:num_e
+water	362:51	0:0	16	flags
+op	362:57	0:0	16	&
+water	362:59	0:0	16	flag_num_e_negative
+water	362:79	0:0	16	?
+op	362:81	0:0	16	-
+water	362:83	0:0	16	num_e
+water	362:89	0:0	16	:
+water	362:91	0:0	16	num_e
+water	362:98	0:0	12	;
+water	363:15	0:0	12	}
+if	364:15	370:15	10	(flags & flag_num_negative)
+cond	364:19	364:27	11	flags & flag_num_negative
+water	364:19	0:0	12	flags
+op	364:25	0:0	12	&
+water	364:27	0:0	12	flag_num_negative
+stmts	365:15	370:15	11	
+water	365:15	0:0	12	{
+if	366:18	367:54	12	(top -> type == json_integer)
+cond	366:22	366:35	13	top -> type == json_integer
+water	366:22	0:0	14	top
+op	366:25	0:0	14	->
+water	366:27	0:0	14	type
+op	366:32	0:0	14	==
+water	366:35	0:0	14	json_integer
+stmts	367:21	367:54	13	
+water	367:21	0:0	14	top
+op	367:24	0:0	14	->
+water	367:26	0:0	14	u
+op	367:27	0:0	14	.
+water	367:28	0:0	14	integer
+op	367:36	0:0	14	=
+op	367:38	0:0	14	-
+water	367:40	0:0	14	top
+op	367:43	0:0	14	->
+water	367:45	0:0	14	u
+op	367:46	0:0	14	.
+water	367:47	0:0	14	integer
+water	367:54	0:0	14	;
+else	368:18	369:46	12
+stmts	369:21	369:46	13	
+water	369:21	0:0	14	top
+op	369:24	0:0	14	->
+water	369:26	0:0	14	u
+op	369:27	0:0	14	.
+water	369:28	0:0	14	dbl
+op	369:32	0:0	14	=
+op	369:34	0:0	14	-
+water	369:36	0:0	14	top
+op	369:39	0:0	14	->
+water	369:41	0:0	14	u
+op	369:42	0:0	14	.
+water	369:43	0:0	14	dbl
+water	369:46	0:0	14	;
+water	370:15	0:0	12	}
+water	371:15	0:0	10	flags
+op	371:21	0:0	10	|=
+water	371:24	0:0	10	flag_next
+op	371:34	0:0	10	|
+water	371:36	0:0	10	flag_reproc
+water	371:47	0:0	10	;
+break	372:15	372:20	10	
+label	373:12	373:19	10	default :
+break	374:15	374:20	10	
+water	375:12	0:0	10	}
+water	375:13	0:0	8	;
+water	376:9	0:0	8	}
+if	377:9	381:9	6	(flags & flag_reproc)
+cond	377:13	377:21	7	flags & flag_reproc
+water	377:13	0:0	8	flags
+op	377:19	0:0	8	&
+water	377:21	0:0	8	flag_reproc
+stmts	378:9	381:9	7	
+water	378:9	0:0	8	{
+water	379:12	0:0	8	flags
+op	379:18	0:0	8	&=
+op	379:21	0:0	8	~
+water	379:23	0:0	8	flag_reproc
+water	379:34	0:0	8	;
+op	380:12	0:0	8	--
+water	380:15	0:0	8	i
+water	380:16	0:0	8	;
+water	381:9	0:0	8	}
+if	382:9	414:9	6	(flags & flag_next)
+cond	382:13	382:21	7	flags & flag_next
+water	382:13	0:0	8	flags
+op	382:19	0:0	8	&
+water	382:21	0:0	8	flag_next
+stmts	383:9	414:9	7	
+water	383:9	0:0	8	{
+water	384:12	0:0	8	flags
+op	384:18	0:0	8	=
+water	384:20	0:0	8	(
+water	384:21	0:0	8	flags
+op	384:27	0:0	8	&
+op	384:29	0:0	8	~
+water	384:31	0:0	8	flag_next
+water	384:40	0:0	8	)
+op	384:42	0:0	8	|
+water	384:44	0:0	8	flag_need_comma
+water	384:59	0:0	8	;
+if	385:12	390:12	8	(! top -> parent)
+cond	385:16	385:22	9	! top -> parent
+op	385:16	0:0	10	!
+water	385:17	0:0	10	top
+op	385:20	0:0	10	->
+water	385:22	0:0	10	parent
+stmts	386:12	390:12	9	
+water	386:12	0:0	10	{
+water	388:15	0:0	10	flags
+op	388:21	0:0	10	|=
+water	388:24	0:0	10	flag_done
+water	388:33	0:0	10	;
+continue	389:15	389:23	10	
+water	390:12	0:0	10	}
+if	391:12	392:39	8	(top -> parent -> type == json_array)
+cond	391:16	391:37	9	top -> parent -> type == json_array
+water	391:16	0:0	10	top
+op	391:19	0:0	10	->
+water	391:21	0:0	10	parent
+op	391:27	0:0	10	->
+water	391:29	0:0	10	type
+op	391:34	0:0	10	==
+water	391:37	0:0	10	json_array
+stmts	392:15	392:39	9	
+water	392:15	0:0	10	flags
+op	392:21	0:0	10	|=
+water	392:24	0:0	10	flag_seek_value
+water	392:39	0:0	10	;
+if	393:12	409:12	8	(! state . first_pass)
+cond	393:16	393:23	9	! state . first_pass
+op	393:16	0:0	10	!
+water	393:17	0:0	10	state
+op	393:22	0:0	10	.
+water	393:23	0:0	10	first_pass
+stmts	394:12	409:12	9	
+water	394:12	0:0	10	{
+decl	395:15	395:48	10	json_value	*parent
+op	395:35	0:0	10	=
+water	395:37	0:0	10	top
+op	395:40	0:0	10	->
+water	395:42	0:0	10	parent
+switch	396:15	408:15	10	(parent -> type)
+cond	396:23	396:31	11	parent -> type
+water	396:23	0:0	12	parent
+op	396:29	0:0	12	->
+water	396:31	0:0	12	type
+stmts	397:15	408:15	11	
+water	397:15	0:0	12	{
+label	398:18	398:34	12	case json_object :
+water	399:21	0:0	12	parent
+op	399:27	0:0	12	->
+water	399:29	0:0	12	u
+op	399:30	0:0	12	.
+water	399:31	0:0	12	object
+op	399:37	0:0	12	.
+water	399:38	0:0	12	values
+op	400:24	0:0	12	[
+water	400:25	0:0	12	parent
+op	400:31	0:0	12	->
+water	400:33	0:0	12	u
+op	400:34	0:0	12	.
+water	400:35	0:0	12	object
+op	400:41	0:0	12	.
+water	400:42	0:0	12	length
+op	400:48	0:0	12	]
+op	400:49	0:0	12	.
+water	400:50	0:0	12	value
+op	400:56	0:0	12	=
+water	400:58	0:0	12	top
+water	400:61	0:0	12	;
+break	401:21	401:26	12	
+label	402:18	402:33	12	case json_array :
+water	403:21	0:0	12	parent
+op	403:27	0:0	12	->
+water	403:29	0:0	12	u
+op	403:30	0:0	12	.
+water	403:31	0:0	12	array
+op	403:36	0:0	12	.
+water	403:37	0:0	12	values
+op	404:27	0:0	12	[
+water	404:28	0:0	12	parent
+op	404:34	0:0	12	->
+water	404:36	0:0	12	u
+op	404:37	0:0	12	.
+water	404:38	0:0	12	array
+op	404:43	0:0	12	.
+water	404:44	0:0	12	length
+op	404:50	0:0	12	]
+op	404:52	0:0	12	=
+water	404:54	0:0	12	top
+water	404:57	0:0	12	;
+break	405:21	405:26	12	
+label	406:18	406:25	12	default :
+break	407:21	407:26	12	
+water	408:15	0:0	12	}
+water	408:16	0:0	10	;
+water	409:12	0:0	10	}
+if	410:12	411:30	8	(( ++ top -> parent -> u . array . length ) > state . uint_max)
+cond	410:17	410:58	9	( ++ top -> parent -> u . array . length ) > state . uint_max
+water	410:17	0:0	10	(
+op	410:18	0:0	10	++
+water	410:21	0:0	10	top
+op	410:24	0:0	10	->
+water	410:26	0:0	10	parent
+op	410:32	0:0	10	->
+water	410:34	0:0	10	u
+op	410:35	0:0	10	.
+water	410:36	0:0	10	array
+op	410:41	0:0	10	.
+water	410:42	0:0	10	length
+water	410:48	0:0	10	)
+op	410:50	0:0	10	>
+water	410:52	0:0	10	state
+op	410:57	0:0	10	.
+water	410:58	0:0	10	uint_max
+stmts	411:15	411:30	9	
+goto	411:15	411:30	10	e_overflow
+water	411:20	0:0	11	e_overflow
+water	412:12	0:0	8	top
+op	412:16	0:0	8	=
+water	412:18	0:0	8	top
+op	412:21	0:0	8	->
+water	412:23	0:0	8	parent
+water	412:29	0:0	8	;
+continue	413:12	413:20	8	
+water	414:9	0:0	8	}
+water	415:6	0:0	6	}
+water	416:6	0:0	4	alloc
+op	416:12	0:0	4	=
+water	416:14	0:0	4	root
+water	416:18	0:0	4	;
+water	417:3	0:0	4	}
+return	418:3	418:14	2	root
+water	418:10	0:0	3	root
+label	419:0	419:15	2	e_unknown_value :
+call	420:3	420:58	2	sprintf
+arg	420:12	420:17	3	error
+water	420:12	0:0	4	error
+arg	420:19	420:41	3	"%d:%d: Unknown value"
+water	420:19	0:0	4	"%d:%d: Unknown value"
+arg	420:43	420:51	3	cur_line
+water	420:43	0:0	4	cur_line
+arg	420:53	420:58	3	e_off
+water	420:53	0:0	4	e_off
+water	420:59	0:0	2	;
+goto	421:3	421:16	2	e_failed
+water	421:8	0:0	3	e_failed
+label	422:0	422:15	2	e_alloc_failure :
+call	423:3	423:45	2	strcpy
+arg	423:11	423:16	3	error
+water	423:11	0:0	4	error
+arg	423:18	423:45	3	"Memory allocation failure"
+water	423:18	0:0	4	"Memory allocation failure"
+water	423:46	0:0	2	;
+goto	424:3	424:16	2	e_failed
+water	424:8	0:0	3	e_failed
+label	425:0	425:10	2	e_overflow :
+call	426:3	426:71	2	sprintf
+arg	426:12	426:17	3	error
+water	426:12	0:0	4	error
+arg	426:19	426:54	3	"%d:%d: Too long (caught overflow)"
+water	426:19	0:0	4	"%d:%d: Too long (caught overflow)"
+arg	426:56	426:64	3	cur_line
+water	426:56	0:0	4	cur_line
+arg	426:66	426:71	3	e_off
+water	426:66	0:0	4	e_off
+water	426:72	0:0	2	;
+goto	427:3	427:16	2	e_failed
+water	427:8	0:0	3	e_failed
+label	428:0	428:8	2	e_failed :
+if	429:3	435:3	2	(error_buf)
+cond	429:7	429:7	3	error_buf
+water	429:7	0:0	4	error_buf
+stmts	430:3	435:3	3	
+water	430:3	0:0	4	{
+if	431:6	432:34	4	(* error)
+cond	431:10	431:11	5	* error
+op	431:10	0:0	6	*
+water	431:11	0:0	6	error
+stmts	432:9	432:34	5	
+call	432:9	432:33	6	strcpy
+arg	432:17	432:26	7	error_buf
+water	432:17	0:0	8	error_buf
+arg	432:28	432:33	7	error
+water	432:28	0:0	8	error
+water	432:34	0:0	6	;
+else	433:6	434:44	4
+stmts	434:9	434:44	5	
+call	434:9	434:43	6	strcpy
+arg	434:17	434:26	7	error_buf
+water	434:17	0:0	8	error_buf
+arg	434:28	434:43	7	"Unknown error"
+water	434:28	0:0	8	"Unknown error"
+water	434:44	0:0	6	;
+water	435:3	0:0	4	}
+if	436:3	437:18	2	(state . first_pass)
+cond	436:7	436:13	3	state . first_pass
+water	436:7	0:0	4	state
+op	436:12	0:0	4	.
+water	436:13	0:0	4	first_pass
+stmts	437:6	437:18	3	
+water	437:6	0:0	4	alloc
+op	437:12	0:0	4	=
+water	437:14	0:0	4	root
+water	437:18	0:0	4	;
+while	438:3	443:3	2	(alloc)
+cond	438:10	438:10	3	alloc
+water	438:10	0:0	4	alloc
+stmts	439:3	443:3	3	
+water	439:3	0:0	4	{
+water	440:6	0:0	4	top
+op	440:10	0:0	4	=
+water	440:12	0:0	4	alloc
+op	440:17	0:0	4	->
+water	440:19	0:0	4	_reserved
+op	440:28	0:0	4	.
+water	440:29	0:0	4	next_alloc
+water	440:39	0:0	4	;
+call	441:6	441:17	4	free
+arg	441:12	441:17	5	alloc
+water	441:12	0:0	6	alloc
+water	441:18	0:0	4	;
+water	442:6	0:0	4	alloc
+op	442:12	0:0	4	=
+water	442:14	0:0	4	top
+water	442:17	0:0	4	;
+water	443:3	0:0	4	}
+if	444:3	445:28	2	(! state . first_pass)
+cond	444:7	444:14	3	! state . first_pass
+op	444:7	0:0	4	!
+water	444:8	0:0	4	state
+op	444:13	0:0	4	.
+water	444:14	0:0	4	first_pass
+stmts	445:6	445:28	3	
+call	445:6	445:27	4	json_value_free
+arg	445:23	445:27	5	root
+water	445:23	0:0	6	root
+water	445:28	0:0	4	;
+return	446:3	446:11	2	0
+water	446:10	0:0	3	0

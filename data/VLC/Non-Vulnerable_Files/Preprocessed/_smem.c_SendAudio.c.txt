@@ -1,0 +1,162 @@
+func	2:0	33:0	0	static int	SendAudio
+params	2:20	0:0	1	
+param	2:22	2:45	2	sout_stream_t *	p_stream
+param	2:47	2:71	2	sout_stream_id_sys_t *	id
+param	3:22	3:40	2	block_t *	p_buffer
+stmnts	0:0	32:22	1	
+decl	5:4	5:46	2	sout_stream_sys_t	*p_sys
+op	5:29	0:0	2	=
+water	5:31	0:0	2	p_stream
+op	5:39	0:0	2	->
+water	5:41	0:0	2	p_sys
+decl	6:4	6:14	2	int	i_size
+decl	7:4	7:32	2	uint8_t	*p_pcm_buffer
+op	7:26	0:0	2	=
+water	7:28	0:0	2	NULL
+decl	8:4	8:21	2	int	i_samples
+op	8:18	0:0	2	=
+water	8:20	0:0	2	0
+water	9:4	0:0	2	i_size
+op	9:11	0:0	2	=
+water	9:13	0:0	2	p_buffer
+op	9:21	0:0	2	->
+water	9:23	0:0	2	i_buffer
+water	9:31	0:0	2	;
+if	10:4	15:4	2	(id -> format -> audio . i_channels <= 0)
+cond	10:8	10:40	3	id -> format -> audio . i_channels <= 0
+water	10:8	0:0	4	id
+op	10:10	0:0	4	->
+water	10:12	0:0	4	format
+op	10:18	0:0	4	->
+water	10:20	0:0	4	audio
+op	10:25	0:0	4	.
+water	10:26	0:0	4	i_channels
+op	10:37	0:0	4	<=
+water	10:40	0:0	4	0
+stmts	11:4	15:4	3	
+water	11:4	0:0	4	{
+call	12:8	12:47	4	msg_Warn
+arg	12:18	12:26	5	p_stream
+water	12:18	0:0	6	p_stream
+arg	12:28	12:47	5	"No buffer given!"
+water	12:28	0:0	6	"No buffer given!"
+water	12:48	0:0	4	;
+call	13:8	13:37	4	block_ChainRelease
+arg	13:28	13:37	5	p_buffer
+water	13:28	0:0	6	p_buffer
+water	13:38	0:0	4	;
+return	14:8	14:27	4	VLC_EGENERIC
+water	14:15	0:0	5	VLC_EGENERIC
+water	15:4	0:0	4	}
+water	16:4	0:0	2	i_samples
+op	16:14	0:0	2	=
+water	16:16	0:0	2	i_size
+op	16:23	0:0	2	/
+water	16:25	0:0	2	(
+water	16:27	0:0	2	(
+water	16:29	0:0	2	id
+op	16:31	0:0	2	->
+water	16:33	0:0	2	format
+op	16:39	0:0	2	->
+water	16:41	0:0	2	audio
+op	16:46	0:0	2	.
+water	16:47	0:0	2	i_bitspersample
+op	16:63	0:0	2	/
+water	16:65	0:0	2	8
+water	16:67	0:0	2	)
+op	16:69	0:0	2	*
+water	16:71	0:0	2	id
+op	16:73	0:0	2	->
+water	16:75	0:0	2	format
+op	16:81	0:0	2	->
+water	16:83	0:0	2	audio
+op	16:88	0:0	2	.
+water	16:89	0:0	2	i_channels
+water	16:100	0:0	2	)
+water	16:101	0:0	2	;
+call	18:4	18:74	2	p_sys->pf_audio_prerender_callback
+arg	18:40	18:50	3	id->p_data
+water	18:40	0:0	4	id
+op	18:42	0:0	4	->
+water	18:44	0:0	4	p_data
+arg	18:52	18:65	3	&p_pcm_buffer
+op	18:52	0:0	4	&
+water	18:53	0:0	4	p_pcm_buffer
+arg	18:67	18:74	3	i_size
+water	18:67	0:0	4	i_size
+water	18:75	0:0	2	;
+if	19:4	24:4	2	(! p_pcm_buffer)
+cond	19:8	19:9	3	! p_pcm_buffer
+op	19:8	0:0	4	!
+water	19:9	0:0	4	p_pcm_buffer
+stmts	20:4	24:4	3	
+water	20:4	0:0	4	{
+call	21:8	21:46	4	msg_Err
+arg	21:17	21:25	5	p_stream
+water	21:17	0:0	6	p_stream
+arg	21:27	21:46	5	"No buffer given!"
+water	21:27	0:0	6	"No buffer given!"
+water	21:47	0:0	4	;
+call	22:8	22:37	4	block_ChainRelease
+arg	22:28	22:37	5	p_buffer
+water	22:28	0:0	6	p_buffer
+water	22:38	0:0	4	;
+return	23:8	23:27	4	VLC_EGENERIC
+water	23:15	0:0	5	VLC_EGENERIC
+water	24:4	0:0	4	}
+call	26:4	26:53	2	memcpy
+arg	26:12	26:24	3	p_pcm_buffer
+water	26:12	0:0	4	p_pcm_buffer
+arg	26:26	26:44	3	p_buffer->p_buffer
+water	26:26	0:0	4	p_buffer
+op	26:34	0:0	4	->
+water	26:36	0:0	4	p_buffer
+arg	26:46	26:53	3	i_size
+water	26:46	0:0	4	i_size
+water	26:54	0:0	2	;
+call	28:4	30:100	2	p_sys->pf_audio_postrender_callback
+arg	28:41	28:51	3	id->p_data
+water	28:41	0:0	4	id
+op	28:43	0:0	4	->
+water	28:45	0:0	4	p_data
+arg	28:53	28:65	3	p_pcm_buffer
+water	28:53	0:0	4	p_pcm_buffer
+arg	29:41	29:69	3	id->format->audio.i_channels
+water	29:41	0:0	4	id
+op	29:43	0:0	4	->
+water	29:45	0:0	4	format
+op	29:51	0:0	4	->
+water	29:53	0:0	4	audio
+op	29:58	0:0	4	.
+water	29:59	0:0	4	i_channels
+arg	29:71	29:95	3	id->format->audio.i_rate
+water	29:71	0:0	4	id
+op	29:73	0:0	4	->
+water	29:75	0:0	4	format
+op	29:81	0:0	4	->
+water	29:83	0:0	4	audio
+op	29:88	0:0	4	.
+water	29:89	0:0	4	i_rate
+arg	29:97	29:106	3	i_samples
+water	29:97	0:0	4	i_samples
+arg	30:41	30:74	3	id->format->audio.i_bitspersample
+water	30:41	0:0	4	id
+op	30:43	0:0	4	->
+water	30:45	0:0	4	format
+op	30:51	0:0	4	->
+water	30:53	0:0	4	audio
+op	30:58	0:0	4	.
+water	30:59	0:0	4	i_bitspersample
+arg	30:76	30:82	3	i_size
+water	30:76	0:0	4	i_size
+arg	30:84	30:100	3	p_buffer->i_pts
+water	30:84	0:0	4	p_buffer
+op	30:92	0:0	4	->
+water	30:94	0:0	4	i_pts
+water	30:101	0:0	2	;
+call	31:4	31:33	2	block_ChainRelease
+arg	31:24	31:33	3	p_buffer
+water	31:24	0:0	4	p_buffer
+water	31:34	0:0	2	;
+return	32:4	32:22	2	VLC_SUCCESS
+water	32:11	0:0	3	VLC_SUCCESS

@@ -1,0 +1,145 @@
+func	2:0	34:0	0	static int	AllocateInputSample
+params	2:30	0:0	1	
+param	2:31	2:47	2	decoder_t *	p_dec
+param	2:49	2:64	2	DWORD	stream_id
+param	2:66	2:84	2	IMFSample * *	result
+param	2:86	2:96	2	DWORD	size
+stmnts	0:0	33:23	1	
+decl	4:4	4:39	2	decoder_sys_t	*p_sys
+op	4:25	0:0	2	=
+water	4:27	0:0	2	p_dec
+op	4:32	0:0	2	->
+water	4:34	0:0	2	p_sys
+decl	5:4	5:36	2	MFHandle	*mf
+op	5:17	0:0	2	=
+op	5:19	0:0	2	&
+water	5:20	0:0	2	p_sys
+op	5:25	0:0	2	->
+water	5:27	0:0	2	mf_handle
+decl	6:4	6:14	2	HRESULT	hr
+op	7:4	0:0	2	*
+water	7:5	0:0	2	result
+op	7:12	0:0	2	=
+water	7:14	0:0	2	NULL
+water	7:18	0:0	2	;
+decl	8:4	8:34	2	IMFSample	*input_sample
+op	8:28	0:0	2	=
+water	8:30	0:0	2	NULL
+decl	9:4	9:36	2	MFT_INPUT_STREAM_INFO	input_info
+water	10:4	0:0	2	hr
+op	10:7	0:0	2	=
+call	10:9	10:75	2	IMFTransform_GetInputStreamInfo
+arg	10:41	10:51	3	p_sys->mft
+water	10:41	0:0	4	p_sys
+op	10:46	0:0	4	->
+water	10:48	0:0	4	mft
+arg	10:53	10:62	3	stream_id
+water	10:53	0:0	4	stream_id
+arg	10:64	10:75	3	&input_info
+op	10:64	0:0	4	&
+water	10:65	0:0	4	input_info
+water	10:76	0:0	2	;
+if	11:4	12:18	2	(FAILED (hr ))
+cond	11:8	11:17	3	FAILED (hr )
+call	11:8	11:17	4	FAILED
+arg	11:15	11:17	5	hr
+water	11:15	0:0	6	hr
+stmts	12:8	12:18	3	
+goto	12:8	12:18	4	error
+water	12:13	0:0	5	error
+water	13:4	0:0	2	hr
+op	13:7	0:0	2	=
+call	13:9	13:41	2	mf->MFCreateSample
+arg	13:28	13:41	3	&input_sample
+op	13:28	0:0	4	&
+water	13:29	0:0	4	input_sample
+water	13:42	0:0	2	;
+if	14:4	15:18	2	(FAILED (hr ))
+cond	14:8	14:17	3	FAILED (hr )
+call	14:8	14:17	4	FAILED
+arg	14:15	14:17	5	hr
+water	14:15	0:0	6	hr
+stmts	15:8	15:18	3	
+goto	15:8	15:18	4	error
+water	15:13	0:0	5	error
+decl	16:4	16:45	2	IMFMediaBuffer	*input_media_buffer
+op	16:39	0:0	2	=
+water	16:41	0:0	2	NULL
+decl	17:4	17:58	2	DWORD	allocation_size
+op	17:26	0:0	2	=
+call	17:28	17:57	3	__MAX
+arg	17:34	17:51	4	input_info.cbSize
+water	17:34	0:0	5	input_info
+op	17:44	0:0	5	.
+water	17:45	0:0	5	cbSize
+arg	17:53	17:57	4	size
+water	17:53	0:0	5	size
+water	18:4	0:0	2	hr
+op	18:7	0:0	2	=
+call	18:9	18:70	2	mf->MFCreateMemoryBuffer
+arg	18:34	18:49	3	allocation_size
+water	18:34	0:0	4	allocation_size
+arg	18:51	18:70	3	&input_media_buffer
+op	18:51	0:0	4	&
+water	18:52	0:0	4	input_media_buffer
+water	18:71	0:0	2	;
+if	19:4	20:18	2	(FAILED (hr ))
+cond	19:8	19:17	3	FAILED (hr )
+call	19:8	19:17	4	FAILED
+arg	19:15	19:17	5	hr
+water	19:15	0:0	6	hr
+stmts	20:8	20:18	3	
+goto	20:8	20:18	4	error
+water	20:13	0:0	5	error
+water	21:4	0:0	2	hr
+op	21:7	0:0	2	=
+call	21:9	21:61	2	IMFSample_AddBuffer
+arg	21:29	21:41	3	input_sample
+water	21:29	0:0	4	input_sample
+arg	21:43	21:61	3	input_media_buffer
+water	21:43	0:0	4	input_media_buffer
+water	21:62	0:0	2	;
+call	22:4	22:45	2	IMFMediaBuffer_Release
+arg	22:27	22:45	3	input_media_buffer
+water	22:27	0:0	4	input_media_buffer
+water	22:46	0:0	2	;
+if	23:4	24:18	2	(FAILED (hr ))
+cond	23:8	23:17	3	FAILED (hr )
+call	23:8	23:17	4	FAILED
+arg	23:15	23:17	5	hr
+water	23:15	0:0	6	hr
+stmts	24:8	24:18	3	
+goto	24:8	24:18	4	error
+water	24:13	0:0	5	error
+op	25:4	0:0	2	*
+water	25:5	0:0	2	result
+op	25:12	0:0	2	=
+water	25:14	0:0	2	input_sample
+water	25:26	0:0	2	;
+return	26:4	26:22	2	VLC_SUCCESS
+water	26:11	0:0	3	VLC_SUCCESS
+label	27:0	27:5	2	error :
+call	28:4	28:51	2	msg_Err
+arg	28:12	28:17	3	p_dec
+water	28:12	0:0	4	p_dec
+arg	28:19	28:51	3	"Error in AllocateInputSample()"
+water	28:19	0:0	4	"Error in AllocateInputSample()"
+water	28:52	0:0	2	;
+if	29:4	30:39	2	(input_sample)
+cond	29:8	29:8	3	input_sample
+water	29:8	0:0	4	input_sample
+stmts	30:8	30:39	3	
+call	30:8	30:38	4	IMFSample_Release
+arg	30:26	30:38	5	input_sample
+water	30:26	0:0	6	input_sample
+water	30:39	0:0	4	;
+if	31:4	32:50	2	(input_media_buffer)
+cond	31:8	31:8	3	input_media_buffer
+water	31:8	0:0	4	input_media_buffer
+stmts	32:8	32:50	3	
+call	32:8	32:49	4	IMFMediaBuffer_Release
+arg	32:31	32:49	5	input_media_buffer
+water	32:31	0:0	6	input_media_buffer
+water	32:50	0:0	4	;
+return	33:4	33:23	2	VLC_EGENERIC
+water	33:11	0:0	3	VLC_EGENERIC

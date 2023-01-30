@@ -1,0 +1,583 @@
+func	2:0	129:0	0	void	en50221_Poll
+params	2:17	0:0	1	
+param	2:19	2:33	2	cam_t *	p_cam
+stmnts	4:4	128:52	1	
+switch	4:4	13:4	2	(p_cam -> i_ca_type)
+cond	4:12	4:19	3	p_cam -> i_ca_type
+water	4:12	0:0	4	p_cam
+op	4:17	0:0	4	->
+water	4:19	0:0	4	i_ca_type
+stmts	5:4	13:4	3	
+water	5:4	0:0	4	{
+label	6:4	6:19	4	case CA_CI_LINK :
+if	7:8	8:17	4	(mdate ( ) > p_cam -> i_next_event)
+cond	7:12	7:29	5	mdate ( ) > p_cam -> i_next_event
+call	7:12	7:18	6	mdate
+op	7:20	0:0	6	>
+water	7:22	0:0	6	p_cam
+op	7:27	0:0	6	->
+water	7:29	0:0	6	i_next_event
+stmts	8:12	8:17	5	
+break	8:12	8:17	6	
+label	9:4	9:14	4	case CA_CI :
+return	10:8	10:14	4	
+label	11:4	11:11	4	default :
+call	12:8	12:18	4	assert
+arg	12:16	12:18	5	0
+water	12:16	0:0	6	0
+water	12:19	0:0	4	;
+water	13:4	0:0	4	}
+for	14:4	118:4	2	(unsigned i_slot = 0 ;i_slot < p_cam -> i_nb_slots;i_slot ++)
+forinit	14:10	14:29	3	unsigned i_slot = 0 ;
+water	14:10	0:0	4	unsigned
+water	14:19	0:0	4	i_slot
+op	14:26	0:0	4	=
+water	14:28	0:0	4	0
+water	14:29	0:0	4	;
+cond	14:31	14:47	3	i_slot < p_cam -> i_nb_slots
+water	14:31	0:0	4	i_slot
+op	14:38	0:0	4	<
+water	14:40	0:0	4	p_cam
+op	14:45	0:0	4	->
+water	14:47	0:0	4	i_nb_slots
+forexpr	14:59	14:65	3	i_slot ++
+water	14:59	0:0	4	i_slot
+op	14:65	0:0	4	++
+stmts	15:4	118:4	3	
+water	15:4	0:0	4	{
+decl	16:8	16:21	4	uint8_t	i_tag
+decl	17:8	17:28	4	ca_slot_info_t	sinfo
+water	18:8	0:0	4	sinfo
+op	18:13	0:0	4	.
+water	18:14	0:0	4	num
+op	18:18	0:0	4	=
+water	18:20	0:0	4	i_slot
+water	18:26	0:0	4	;
+if	19:8	24:8	4	(ioctl (p_cam -> fd ,CA_GET_SLOT_INFO ,& sinfo ) != 0)
+cond	19:13	19:61	5	ioctl (p_cam -> fd ,CA_GET_SLOT_INFO ,& sinfo ) != 0
+call	19:13	19:56	6	ioctl
+arg	19:20	19:29	7	p_cam->fd
+water	19:20	0:0	8	p_cam
+op	19:25	0:0	8	->
+water	19:27	0:0	8	fd
+arg	19:31	19:47	7	CA_GET_SLOT_INFO
+water	19:31	0:0	8	CA_GET_SLOT_INFO
+arg	19:49	19:56	7	&sinfo
+op	19:49	0:0	8	&
+water	19:50	0:0	8	sinfo
+op	19:58	0:0	6	!=
+water	19:61	0:0	6	0
+stmts	20:8	24:8	5	
+water	20:8	0:0	6	{
+call	21:12	22:28	6	msg_Err
+arg	21:21	21:31	7	p_cam->obj
+water	21:21	0:0	8	p_cam
+op	21:26	0:0	8	->
+water	21:28	0:0	8	obj
+arg	21:33	21:77	7	"en50221_Poll: couldn't get info on slot %d"
+water	21:33	0:0	8	"en50221_Poll: couldn't get info on slot %d"
+arg	22:21	22:28	7	i_slot
+water	22:21	0:0	8	i_slot
+water	22:29	0:0	6	;
+continue	23:12	23:20	6	
+water	24:8	0:0	6	}
+if	25:8	49:8	4	(! ( sinfo . flags & CA_CI_MODULE_READY ))
+cond	25:13	25:47	5	! ( sinfo . flags & CA_CI_MODULE_READY )
+op	25:13	0:0	6	!
+water	25:14	0:0	6	(
+water	25:15	0:0	6	sinfo
+op	25:20	0:0	6	.
+water	25:21	0:0	6	flags
+op	25:27	0:0	6	&
+water	25:29	0:0	6	CA_CI_MODULE_READY
+water	25:47	0:0	6	)
+stmts	26:8	49:8	5	
+water	26:8	0:0	6	{
+if	27:12	47:12	6	(p_cam -> pb_active_slot [ i_slot ])
+cond	27:17	27:45	7	p_cam -> pb_active_slot [ i_slot ]
+water	27:17	0:0	8	p_cam
+op	27:22	0:0	8	->
+water	27:24	0:0	8	pb_active_slot
+op	27:38	0:0	8	[
+water	27:39	0:0	8	i_slot
+op	27:45	0:0	8	]
+stmts	28:12	47:12	7	
+water	28:12	0:0	8	{
+call	29:16	30:32	8	msg_Dbg
+arg	29:25	29:35	9	p_cam->obj
+water	29:25	0:0	10	p_cam
+op	29:30	0:0	10	->
+water	29:32	0:0	10	obj
+arg	29:37	29:77	9	"en50221_Poll: slot %d has been removed"
+water	29:37	0:0	10	"en50221_Poll: slot %d has been removed"
+arg	30:25	30:32	9	i_slot
+water	30:25	0:0	10	i_slot
+water	30:33	0:0	8	;
+water	31:16	0:0	8	p_cam
+op	31:21	0:0	8	->
+water	31:23	0:0	8	pb_active_slot
+op	31:37	0:0	8	[
+water	31:38	0:0	8	i_slot
+op	31:44	0:0	8	]
+op	31:46	0:0	8	=
+water	31:48	0:0	8	false
+water	31:53	0:0	8	;
+water	32:16	0:0	8	p_cam
+op	32:21	0:0	8	->
+water	32:23	0:0	8	pb_slot_mmi_expected
+op	32:43	0:0	8	[
+water	32:44	0:0	8	i_slot
+op	32:50	0:0	8	]
+op	32:52	0:0	8	=
+water	32:54	0:0	8	false
+water	32:59	0:0	8	;
+water	33:16	0:0	8	p_cam
+op	33:21	0:0	8	->
+water	33:23	0:0	8	pb_slot_mmi_undisplayed
+op	33:46	0:0	8	[
+water	33:47	0:0	8	i_slot
+op	33:53	0:0	8	]
+op	33:55	0:0	8	=
+water	33:57	0:0	8	false
+water	33:62	0:0	8	;
+for	35:16	46:16	8	(unsigned i = 1 ;i <= MAX_SESSIONS;i ++)
+forinit	35:22	35:36	9	unsigned i = 1 ;
+water	35:22	0:0	10	unsigned
+water	35:31	0:0	10	i
+op	35:33	0:0	10	=
+water	35:35	0:0	10	1
+water	35:36	0:0	10	;
+cond	35:38	35:43	9	i <= MAX_SESSIONS
+water	35:38	0:0	10	i
+op	35:40	0:0	10	<=
+water	35:43	0:0	10	MAX_SESSIONS
+forexpr	35:57	35:58	9	i ++
+water	35:57	0:0	10	i
+op	35:58	0:0	10	++
+stmts	36:16	46:16	9	
+water	36:16	0:0	10	{
+if	37:20	45:20	10	(p_cam -> p_sessions [ i - 1 ] . i_resource_id && p_cam -> p_sessions [ i - 1 ] . i_slot == i_slot)
+cond	37:25	38:64	11	p_cam -> p_sessions [ i - 1 ] . i_resource_id && p_cam -> p_sessions [ i - 1 ] . i_slot == i_slot
+water	37:25	0:0	12	p_cam
+op	37:30	0:0	12	->
+water	37:32	0:0	12	p_sessions
+op	37:42	0:0	12	[
+water	37:43	0:0	12	i
+op	37:45	0:0	12	-
+water	37:47	0:0	12	1
+op	37:48	0:0	12	]
+op	37:49	0:0	12	.
+water	37:50	0:0	12	i_resource_id
+op	38:26	0:0	12	&&
+water	38:29	0:0	12	p_cam
+op	38:34	0:0	12	->
+water	38:36	0:0	12	p_sessions
+op	38:46	0:0	12	[
+water	38:47	0:0	12	i
+op	38:49	0:0	12	-
+water	38:51	0:0	12	1
+op	38:52	0:0	12	]
+op	38:53	0:0	12	.
+water	38:54	0:0	12	i_slot
+op	38:61	0:0	12	==
+water	38:64	0:0	12	i_slot
+stmts	39:20	45:20	11	
+water	39:20	0:0	12	{
+if	40:24	43:24	12	(p_cam -> p_sessions [ i - 1 ] . pf_close != NULL)
+cond	40:29	40:66	13	p_cam -> p_sessions [ i - 1 ] . pf_close != NULL
+water	40:29	0:0	14	p_cam
+op	40:34	0:0	14	->
+water	40:36	0:0	14	p_sessions
+op	40:46	0:0	14	[
+water	40:47	0:0	14	i
+op	40:49	0:0	14	-
+water	40:51	0:0	14	1
+op	40:52	0:0	14	]
+op	40:53	0:0	14	.
+water	40:54	0:0	14	pf_close
+op	40:63	0:0	14	!=
+water	40:66	0:0	14	NULL
+stmts	41:24	43:24	13	
+water	41:24	0:0	14	{
+water	42:28	0:0	14	p_cam
+op	42:33	0:0	14	->
+water	42:35	0:0	14	p_sessions
+op	42:45	0:0	14	[
+water	42:46	0:0	14	i
+op	42:48	0:0	14	-
+water	42:50	0:0	14	1
+op	42:51	0:0	14	]
+op	42:52	0:0	14	.
+call	42:53	42:72	14	pf_close
+arg	42:63	42:68	15	p_cam
+water	42:63	0:0	16	p_cam
+arg	42:70	42:72	15	i
+water	42:70	0:0	16	i
+water	42:73	0:0	14	;
+water	43:24	0:0	14	}
+water	44:24	0:0	12	p_cam
+op	44:29	0:0	12	->
+water	44:31	0:0	12	p_sessions
+op	44:41	0:0	12	[
+water	44:42	0:0	12	i
+op	44:44	0:0	12	-
+water	44:46	0:0	12	1
+op	44:47	0:0	12	]
+op	44:48	0:0	12	.
+water	44:49	0:0	12	i_resource_id
+op	44:63	0:0	12	=
+water	44:65	0:0	12	0
+water	44:66	0:0	12	;
+water	45:20	0:0	12	}
+water	46:16	0:0	10	}
+water	47:12	0:0	8	}
+continue	48:12	48:20	6	
+water	49:8	0:0	6	}
+else	50:8	65:8	4
+stmts	50:13	65:8	5	
+if	50:13	65:8	6	(! p_cam -> pb_active_slot [ i_slot ])
+cond	50:18	50:47	7	! p_cam -> pb_active_slot [ i_slot ]
+op	50:18	0:0	8	!
+water	50:19	0:0	8	p_cam
+op	50:24	0:0	8	->
+water	50:26	0:0	8	pb_active_slot
+op	50:40	0:0	8	[
+water	50:41	0:0	8	i_slot
+op	50:47	0:0	8	]
+stmts	51:8	65:8	7	
+water	51:8	0:0	8	{
+call	52:12	52:36	8	InitSlot
+arg	52:22	52:27	9	p_cam
+water	52:22	0:0	10	p_cam
+arg	52:29	52:36	9	i_slot
+water	52:29	0:0	10	i_slot
+water	52:37	0:0	8	;
+if	53:12	62:12	8	(! p_cam -> pb_active_slot [ i_slot ])
+cond	53:17	53:46	9	! p_cam -> pb_active_slot [ i_slot ]
+op	53:17	0:0	10	!
+water	53:18	0:0	10	p_cam
+op	53:23	0:0	10	->
+water	53:25	0:0	10	pb_active_slot
+op	53:39	0:0	10	[
+water	53:40	0:0	10	i_slot
+op	53:46	0:0	10	]
+stmts	54:12	62:12	9	
+water	54:12	0:0	10	{
+call	55:16	55:79	10	msg_Dbg
+arg	55:25	55:35	11	p_cam->obj
+water	55:25	0:0	12	p_cam
+op	55:30	0:0	12	->
+water	55:32	0:0	12	obj
+arg	55:37	55:70	11	"en50221_Poll: resetting slot %d"
+water	55:37	0:0	12	"en50221_Poll: resetting slot %d"
+arg	55:72	55:79	11	i_slot
+water	55:72	0:0	12	i_slot
+water	55:80	0:0	10	;
+if	56:16	60:16	10	(ioctl (p_cam -> fd ,CA_RESET ,1 << i_slot ) != 0)
+cond	56:21	56:65	11	ioctl (p_cam -> fd ,CA_RESET ,1 << i_slot ) != 0
+call	56:21	56:60	12	ioctl
+arg	56:28	56:37	13	p_cam->fd
+water	56:28	0:0	14	p_cam
+op	56:33	0:0	14	->
+water	56:35	0:0	14	fd
+arg	56:39	56:47	13	CA_RESET
+water	56:39	0:0	14	CA_RESET
+arg	56:49	56:60	13	1<<i_slot
+water	56:49	0:0	14	1
+op	56:51	0:0	14	<<
+water	56:54	0:0	14	i_slot
+op	56:62	0:0	12	!=
+water	56:65	0:0	12	0
+stmts	57:16	60:16	11	
+water	57:16	0:0	12	{
+call	58:20	59:36	12	msg_Err
+arg	58:29	58:39	13	p_cam->obj
+water	58:29	0:0	14	p_cam
+op	58:34	0:0	14	->
+water	58:36	0:0	14	obj
+arg	58:41	58:79	13	"en50221_Poll: couldn't reset slot %d"
+water	58:41	0:0	14	"en50221_Poll: couldn't reset slot %d"
+arg	59:29	59:36	13	i_slot
+water	59:29	0:0	14	i_slot
+water	59:37	0:0	12	;
+water	60:16	0:0	12	}
+continue	61:16	61:24	10	
+water	62:12	0:0	10	}
+call	63:12	64:28	8	msg_Dbg
+arg	63:21	63:31	9	p_cam->obj
+water	63:21	0:0	10	p_cam
+op	63:26	0:0	10	->
+water	63:28	0:0	10	obj
+arg	63:33	63:66	9	"en50221_Poll: slot %d is active"
+water	63:33	0:0	10	"en50221_Poll: slot %d is active"
+arg	64:21	64:28	9	i_slot
+water	64:21	0:0	10	i_slot
+water	64:29	0:0	8	;
+water	65:8	0:0	8	}
+if	66:8	84:8	4	(! p_cam -> pb_tc_has_data [ i_slot ])
+cond	66:13	66:42	5	! p_cam -> pb_tc_has_data [ i_slot ]
+op	66:13	0:0	6	!
+water	66:14	0:0	6	p_cam
+op	66:19	0:0	6	->
+water	66:21	0:0	6	pb_tc_has_data
+op	66:35	0:0	6	[
+water	66:36	0:0	6	i_slot
+op	66:42	0:0	6	]
+stmts	67:8	84:8	5	
+water	67:8	0:0	6	{
+if	68:12	75:12	6	(TPDUSend (p_cam ,i_slot ,T_DATA_LAST ,NULL ,0 ) != VLC_SUCCESS)
+cond	68:17	69:20	7	TPDUSend (p_cam ,i_slot ,T_DATA_LAST ,NULL ,0 ) != VLC_SUCCESS
+call	68:17	68:63	8	TPDUSend
+arg	68:27	68:32	9	p_cam
+water	68:27	0:0	10	p_cam
+arg	68:34	68:40	9	i_slot
+water	68:34	0:0	10	i_slot
+arg	68:42	68:53	9	T_DATA_LAST
+water	68:42	0:0	10	T_DATA_LAST
+arg	68:55	68:59	9	NULL
+water	68:55	0:0	10	NULL
+arg	68:61	68:63	9	0
+water	68:61	0:0	10	0
+op	68:65	0:0	8	!=
+water	69:20	0:0	8	VLC_SUCCESS
+stmts	70:12	75:12	7	
+water	70:12	0:0	8	{
+call	71:16	73:32	8	msg_Err
+arg	71:25	71:35	9	p_cam->obj
+water	71:25	0:0	10	p_cam
+op	71:30	0:0	10	->
+water	71:32	0:0	10	obj
+arg	72:25	72:70	9	"en50221_Poll: couldn't send TPDU on slot %d"
+water	72:25	0:0	10	"en50221_Poll: couldn't send TPDU on slot %d"
+arg	73:25	73:32	9	i_slot
+water	73:25	0:0	10	i_slot
+water	73:33	0:0	8	;
+continue	74:16	74:24	8	
+water	75:12	0:0	8	}
+if	76:12	83:12	6	(TPDURecv (p_cam ,i_slot ,& i_tag ,NULL ,NULL ) != VLC_SUCCESS)
+cond	76:17	77:20	7	TPDURecv (p_cam ,i_slot ,& i_tag ,NULL ,NULL ) != VLC_SUCCESS
+call	76:17	76:61	8	TPDURecv
+arg	76:27	76:32	9	p_cam
+water	76:27	0:0	10	p_cam
+arg	76:34	76:40	9	i_slot
+water	76:34	0:0	10	i_slot
+arg	76:42	76:48	9	&i_tag
+op	76:42	0:0	10	&
+water	76:43	0:0	10	i_tag
+arg	76:50	76:54	9	NULL
+water	76:50	0:0	10	NULL
+arg	76:56	76:61	9	NULL
+water	76:56	0:0	10	NULL
+op	76:63	0:0	8	!=
+water	77:20	0:0	8	VLC_SUCCESS
+stmts	78:12	83:12	7	
+water	78:12	0:0	8	{
+call	79:16	81:32	8	msg_Err
+arg	79:25	79:35	9	p_cam->obj
+water	79:25	0:0	10	p_cam
+op	79:30	0:0	10	->
+water	79:32	0:0	10	obj
+arg	80:25	80:70	9	"en50221_Poll: couldn't recv TPDU on slot %d"
+water	80:25	0:0	10	"en50221_Poll: couldn't recv TPDU on slot %d"
+arg	81:25	81:32	9	i_slot
+water	81:25	0:0	10	i_slot
+water	81:33	0:0	8	;
+continue	82:16	82:24	8	
+water	83:12	0:0	8	}
+water	84:8	0:0	6	}
+while	85:8	117:8	4	(p_cam -> pb_tc_has_data [ i_slot ])
+cond	85:16	85:44	5	p_cam -> pb_tc_has_data [ i_slot ]
+water	85:16	0:0	6	p_cam
+op	85:21	0:0	6	->
+water	85:23	0:0	6	pb_tc_has_data
+op	85:37	0:0	6	[
+water	85:38	0:0	6	i_slot
+op	85:44	0:0	6	]
+stmts	86:8	117:8	5	
+water	86:8	0:0	6	{
+decl	87:12	87:41	6	uint8_t	p_tpdu[MAX_TPDU_SIZE]
+decl	88:12	88:38	6	int	i_size
+water	88:22	0:0	6	,
+decl	88:12	88:38	6	int	i_session_size
+decl	89:12	89:30	6	uint8_t	*p_session
+if	90:12	96:12	6	(TPDUSend (p_cam ,i_slot ,T_RCV ,NULL ,0 ) != VLC_SUCCESS)
+cond	90:17	90:62	7	TPDUSend (p_cam ,i_slot ,T_RCV ,NULL ,0 ) != VLC_SUCCESS
+call	90:17	90:57	8	TPDUSend
+arg	90:27	90:32	9	p_cam
+water	90:27	0:0	10	p_cam
+arg	90:34	90:40	9	i_slot
+water	90:34	0:0	10	i_slot
+arg	90:42	90:47	9	T_RCV
+water	90:42	0:0	10	T_RCV
+arg	90:49	90:53	9	NULL
+water	90:49	0:0	10	NULL
+arg	90:55	90:57	9	0
+water	90:55	0:0	10	0
+op	90:59	0:0	8	!=
+water	90:62	0:0	8	VLC_SUCCESS
+stmts	91:12	96:12	7	
+water	91:12	0:0	8	{
+call	92:16	94:32	8	msg_Err
+arg	92:25	92:35	9	p_cam->obj
+water	92:25	0:0	10	p_cam
+op	92:30	0:0	10	->
+water	92:32	0:0	10	obj
+arg	93:25	93:70	9	"en50221_Poll: couldn't send TPDU on slot %d"
+water	93:25	0:0	10	"en50221_Poll: couldn't send TPDU on slot %d"
+arg	94:25	94:32	9	i_slot
+water	94:25	0:0	10	i_slot
+water	94:33	0:0	8	;
+continue	95:16	95:24	8	
+water	96:12	0:0	8	}
+if	97:12	104:12	6	(TPDURecv (p_cam ,i_slot ,& i_tag ,p_tpdu ,& i_size ) != VLC_SUCCESS)
+cond	97:17	98:20	7	TPDURecv (p_cam ,i_slot ,& i_tag ,p_tpdu ,& i_size ) != VLC_SUCCESS
+call	97:17	97:66	8	TPDURecv
+arg	97:27	97:32	9	p_cam
+water	97:27	0:0	10	p_cam
+arg	97:34	97:40	9	i_slot
+water	97:34	0:0	10	i_slot
+arg	97:42	97:48	9	&i_tag
+op	97:42	0:0	10	&
+water	97:43	0:0	10	i_tag
+arg	97:50	97:56	9	p_tpdu
+water	97:50	0:0	10	p_tpdu
+arg	97:58	97:66	9	&i_size
+op	97:58	0:0	10	&
+water	97:59	0:0	10	i_size
+op	97:68	0:0	8	!=
+water	98:20	0:0	8	VLC_SUCCESS
+stmts	99:12	104:12	7	
+water	99:12	0:0	8	{
+call	100:16	102:32	8	msg_Err
+arg	100:25	100:35	9	p_cam->obj
+water	100:25	0:0	10	p_cam
+op	100:30	0:0	10	->
+water	100:32	0:0	10	obj
+arg	101:25	101:70	9	"en50221_Poll: couldn't recv TPDU on slot %d"
+water	101:25	0:0	10	"en50221_Poll: couldn't recv TPDU on slot %d"
+arg	102:25	102:32	9	i_slot
+water	102:25	0:0	10	i_slot
+water	102:33	0:0	8	;
+continue	103:16	103:24	8	
+water	104:12	0:0	8	}
+water	105:12	0:0	6	p_session
+op	105:22	0:0	6	=
+call	105:24	105:63	6	GetLength
+arg	105:35	105:45	7	&p_tpdu[3]
+op	105:35	0:0	8	&
+water	105:36	0:0	8	p_tpdu
+op	105:42	0:0	8	[
+water	105:43	0:0	8	3
+op	105:44	0:0	8	]
+arg	105:47	105:63	7	&i_session_size
+op	105:47	0:0	8	&
+water	105:48	0:0	8	i_session_size
+water	105:64	0:0	6	;
+if	106:12	107:24	6	(i_session_size <= 1)
+cond	106:17	106:35	7	i_session_size <= 1
+water	106:17	0:0	8	i_session_size
+op	106:32	0:0	8	<=
+water	106:35	0:0	8	1
+stmts	107:16	107:24	7	
+continue	107:16	107:24	8	
+water	108:12	0:0	6	p_session
+op	108:21	0:0	6	++
+water	108:23	0:0	6	;
+water	109:12	0:0	6	i_session_size
+op	109:26	0:0	6	--
+water	109:28	0:0	6	;
+if	110:12	115:12	6	(i_tag != T_DATA_LAST)
+cond	110:17	110:26	7	i_tag != T_DATA_LAST
+water	110:17	0:0	8	i_tag
+op	110:23	0:0	8	!=
+water	110:26	0:0	8	T_DATA_LAST
+stmts	111:12	115:12	7	
+water	111:12	0:0	8	{
+call	112:16	113:71	8	msg_Err
+arg	112:25	112:35	9	p_cam->obj
+water	112:25	0:0	10	p_cam
+op	112:30	0:0	10	->
+water	112:32	0:0	10	obj
+arg	113:25	113:71	9	"en50221_Poll: fragmented TPDU not supported"
+water	113:25	0:0	10	"en50221_Poll: fragmented TPDU not supported"
+water	113:72	0:0	8	;
+break	114:16	114:21	8	
+water	115:12	0:0	8	}
+call	116:12	116:65	6	SPDUHandle
+arg	116:24	116:29	7	p_cam
+water	116:24	0:0	8	p_cam
+arg	116:31	116:37	7	i_slot
+water	116:31	0:0	8	i_slot
+arg	116:39	116:48	7	p_session
+water	116:39	0:0	8	p_session
+arg	116:50	116:65	7	i_session_size
+water	116:50	0:0	8	i_session_size
+water	116:66	0:0	6	;
+water	117:8	0:0	6	}
+water	118:4	0:0	4	}
+for	119:4	127:4	2	( int i_session_id = 1 ;i_session_id <= MAX_SESSIONS;i_session_id ++)
+forinit	0:0	119:30	3	 int i_session_id = 1 ;
+decl	119:10	119:30	4	int	i_session_id
+op	119:27	0:0	4	=
+water	119:29	0:0	4	1
+cond	119:32	119:48	3	i_session_id <= MAX_SESSIONS
+water	119:32	0:0	4	i_session_id
+op	119:45	0:0	4	<=
+water	119:48	0:0	4	MAX_SESSIONS
+forexpr	119:62	119:74	3	i_session_id ++
+water	119:62	0:0	4	i_session_id
+op	119:74	0:0	4	++
+stmts	120:4	127:4	3	
+water	120:4	0:0	4	{
+if	121:8	126:8	4	(p_cam -> p_sessions [ i_session_id - 1 ] . i_resource_id && p_cam -> p_sessions [ i_session_id - 1 ] . pf_manage)
+cond	121:13	122:53	5	p_cam -> p_sessions [ i_session_id - 1 ] . i_resource_id && p_cam -> p_sessions [ i_session_id - 1 ] . pf_manage
+water	121:13	0:0	6	p_cam
+op	121:18	0:0	6	->
+water	121:20	0:0	6	p_sessions
+op	121:30	0:0	6	[
+water	121:31	0:0	6	i_session_id
+op	121:44	0:0	6	-
+water	121:46	0:0	6	1
+op	121:47	0:0	6	]
+op	121:48	0:0	6	.
+water	121:49	0:0	6	i_resource_id
+op	122:14	0:0	6	&&
+water	122:17	0:0	6	p_cam
+op	122:22	0:0	6	->
+water	122:24	0:0	6	p_sessions
+op	122:34	0:0	6	[
+water	122:35	0:0	6	i_session_id
+op	122:48	0:0	6	-
+water	122:50	0:0	6	1
+op	122:51	0:0	6	]
+op	122:52	0:0	6	.
+water	122:53	0:0	6	pf_manage
+stmts	123:8	126:8	5	
+water	123:8	0:0	6	{
+water	124:12	0:0	6	p_cam
+op	124:17	0:0	6	->
+water	124:19	0:0	6	p_sessions
+op	124:29	0:0	6	[
+water	124:30	0:0	6	i_session_id
+op	124:43	0:0	6	-
+water	124:45	0:0	6	1
+op	124:46	0:0	6	]
+op	124:47	0:0	6	.
+call	124:48	125:72	6	pf_manage
+arg	124:59	124:64	7	p_cam
+water	124:59	0:0	8	p_cam
+arg	125:59	125:72	7	i_session_id
+water	125:59	0:0	8	i_session_id
+water	125:73	0:0	6	;
+water	126:8	0:0	6	}
+water	127:4	0:0	4	}
+water	128:4	0:0	2	p_cam
+op	128:9	0:0	2	->
+water	128:11	0:0	2	i_next_event
+op	128:24	0:0	2	=
+call	128:26	128:32	2	mdate
+op	128:34	0:0	2	+
+water	128:36	0:0	2	p_cam
+op	128:41	0:0	2	->
+water	128:43	0:0	2	i_timeout
+water	128:52	0:0	2	;

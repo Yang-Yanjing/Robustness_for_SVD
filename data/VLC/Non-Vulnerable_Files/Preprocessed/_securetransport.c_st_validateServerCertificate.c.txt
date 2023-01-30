@@ -1,0 +1,503 @@
+func	2:0	127:0	0	static int	st_validateServerCertificate
+params	2:40	0:0	1	
+param	2:41	2:59	2	vlc_tls_t *	session
+param	2:61	2:81	2	const char *	hostname
+stmnts	0:0	126:17	1	
+decl	3:4	3:19	2	int	result
+op	3:15	0:0	2	=
+op	3:17	0:0	2	-
+water	3:18	0:0	2	1
+decl	4:4	4:37	2	vlc_tls_sys_t	*sys
+op	4:23	0:0	2	=
+water	4:25	0:0	2	session
+op	4:32	0:0	2	->
+water	4:34	0:0	2	sys
+decl	5:4	5:38	2	SecCertificateRef	leaf_cert
+op	5:32	0:0	2	=
+water	5:34	0:0	2	NULL
+decl	6:4	6:28	2	SecTrustRef	trust
+op	6:22	0:0	2	=
+water	6:24	0:0	2	NULL
+decl	7:4	7:59	2	OSStatus	ret
+op	7:17	0:0	2	=
+call	7:19	7:58	3	SSLCopyPeerTrust
+arg	7:36	7:50	4	sys->p_context
+water	7:36	0:0	5	sys
+op	7:39	0:0	5	->
+water	7:41	0:0	5	p_context
+arg	7:52	7:58	4	&trust
+op	7:52	0:0	5	&
+water	7:53	0:0	5	trust
+if	8:4	11:4	2	(ret != noErr || trust == NULL)
+cond	8:8	8:33	3	ret != noErr || trust == NULL
+water	8:8	0:0	4	ret
+op	8:12	0:0	4	!=
+water	8:15	0:0	4	noErr
+op	8:21	0:0	4	||
+water	8:24	0:0	4	trust
+op	8:30	0:0	4	==
+water	8:33	0:0	4	NULL
+stmts	8:39	11:4	3	
+water	8:39	0:0	4	{
+call	9:8	9:59	4	msg_Err
+arg	9:16	9:23	5	session
+water	9:16	0:0	6	session
+arg	9:25	9:59	5	"error getting certifictate chain"
+water	9:25	0:0	6	"error getting certifictate chain"
+water	9:60	0:0	4	;
+return	10:8	10:17	4	-1
+op	10:15	0:0	5	-
+water	10:16	0:0	5	1
+water	11:4	0:0	4	}
+decl	12:4	14:77	2	CFStringRef	cfHostname
+op	12:27	0:0	2	=
+call	12:29	14:76	3	CFStringCreateWithCString
+arg	12:55	12:74	4	kCFAllocatorDefault
+water	12:55	0:0	5	kCFAllocatorDefault
+arg	13:55	13:63	4	hostname
+water	13:55	0:0	5	hostname
+arg	14:55	14:76	4	kCFStringEncodingUTF8
+water	14:55	0:0	5	kCFStringEncodingUTF8
+water	16:4	0:0	2	ret
+op	16:8	0:0	2	=
+call	16:10	16:51	2	SecTrustSetAnchorCertificates
+arg	16:40	16:45	3	trust
+water	16:40	0:0	4	trust
+arg	16:47	16:51	3	NULL
+water	16:47	0:0	4	NULL
+water	16:52	0:0	2	;
+if	17:4	21:4	2	(ret != noErr)
+cond	17:8	17:15	3	ret != noErr
+water	17:8	0:0	4	ret
+op	17:12	0:0	4	!=
+water	17:15	0:0	4	noErr
+stmts	17:22	21:4	3	
+water	17:22	0:0	4	{
+call	18:8	18:60	4	msg_Err
+arg	18:16	18:23	5	session
+water	18:16	0:0	6	session
+arg	18:25	18:60	5	"error setting anchor certificates"
+water	18:25	0:0	6	"error setting anchor certificates"
+water	18:61	0:0	4	;
+water	19:8	0:0	4	result
+op	19:15	0:0	4	=
+op	19:17	0:0	4	-
+water	19:18	0:0	4	1
+water	19:19	0:0	4	;
+goto	20:8	20:16	4	out
+water	20:13	0:0	5	out
+water	21:4	0:0	4	}
+decl	22:4	22:44	2	SecTrustResultType	trust_eval_result
+op	22:41	0:0	2	=
+water	22:43	0:0	2	0
+water	23:4	0:0	2	ret
+op	23:8	0:0	2	=
+call	23:10	23:52	2	SecTrustEvaluate
+arg	23:27	23:32	3	trust
+water	23:27	0:0	4	trust
+arg	23:34	23:52	3	&trust_eval_result
+op	23:34	0:0	4	&
+water	23:35	0:0	4	trust_eval_result
+water	23:53	0:0	2	;
+if	24:4	28:4	2	(ret != noErr)
+cond	24:8	24:15	3	ret != noErr
+water	24:8	0:0	4	ret
+op	24:12	0:0	4	!=
+water	24:15	0:0	4	noErr
+stmts	24:22	28:4	3	
+water	24:22	0:0	4	{
+call	25:8	25:57	4	msg_Err
+arg	25:16	25:23	5	session
+water	25:16	0:0	6	session
+arg	25:25	25:57	5	"error calling SecTrustEvaluate"
+water	25:25	0:0	6	"error calling SecTrustEvaluate"
+water	25:58	0:0	4	;
+water	26:8	0:0	4	result
+op	26:15	0:0	4	=
+op	26:17	0:0	4	-
+water	26:18	0:0	4	1
+water	26:19	0:0	4	;
+goto	27:8	27:16	4	out
+water	27:13	0:0	5	out
+water	28:4	0:0	4	}
+switch	29:4	39:4	2	(trust_eval_result)
+cond	29:12	29:12	3	trust_eval_result
+water	29:12	0:0	4	trust_eval_result
+stmts	29:31	39:4	3	
+water	29:31	0:0	4	{
+label	30:8	30:39	4	case kSecTrustResultUnspecified :
+label	31:8	31:35	4	case kSecTrustResultProceed :
+call	32:12	32:99	4	msg_Dbg
+arg	32:20	32:27	5	session
+water	32:20	0:0	6	session
+arg	32:29	32:80	5	"cerfificate verification successful, result is %d"
+water	32:29	0:0	6	"cerfificate verification successful, result is %d"
+arg	32:82	32:99	5	trust_eval_result
+water	32:82	0:0	6	trust_eval_result
+water	32:100	0:0	4	;
+water	33:12	0:0	4	result
+op	33:19	0:0	4	=
+water	33:21	0:0	4	0
+water	33:22	0:0	4	;
+goto	34:12	34:20	4	out
+water	34:17	0:0	5	out
+label	35:8	35:51	4	case kSecTrustResultRecoverableTrustFailure :
+label	36:8	36:32	4	case kSecTrustResultDeny :
+label	37:8	37:15	4	default :
+call	38:12	38:96	4	msg_Warn
+arg	38:21	38:28	5	session
+water	38:21	0:0	6	session
+arg	38:30	38:77	5	"cerfificate verification failed, result is %d"
+water	38:30	0:0	6	"cerfificate verification failed, result is %d"
+arg	38:79	38:96	5	trust_eval_result
+water	38:79	0:0	6	trust_eval_result
+water	38:97	0:0	4	;
+water	39:4	0:0	4	}
+decl	43:4	43:32	2	CFArrayRef	cert_chain
+op	43:26	0:0	2	=
+water	43:28	0:0	2	NULL
+water	44:4	0:0	2	ret
+op	44:8	0:0	2	=
+call	44:10	44:61	2	SSLCopyPeerCertificates
+arg	44:34	44:48	3	sys->p_context
+water	44:34	0:0	4	sys
+op	44:37	0:0	4	->
+water	44:39	0:0	4	p_context
+arg	44:50	44:61	3	&cert_chain
+op	44:50	0:0	4	&
+water	44:51	0:0	4	cert_chain
+water	44:62	0:0	2	;
+if	45:4	48:4	2	(ret != noErr || ! cert_chain)
+cond	45:8	45:25	3	ret != noErr || ! cert_chain
+water	45:8	0:0	4	ret
+op	45:12	0:0	4	!=
+water	45:15	0:0	4	noErr
+op	45:21	0:0	4	||
+op	45:24	0:0	4	!
+water	45:25	0:0	4	cert_chain
+stmts	45:37	48:4	3	
+water	45:37	0:0	4	{
+water	46:8	0:0	4	result
+op	46:15	0:0	4	=
+op	46:17	0:0	4	-
+water	46:18	0:0	4	1
+water	46:19	0:0	4	;
+goto	47:8	47:16	4	out
+water	47:13	0:0	5	out
+water	48:4	0:0	4	}
+if	49:4	53:4	2	(CFArrayGetCount (cert_chain ) == 0)
+cond	49:8	49:39	3	CFArrayGetCount (cert_chain ) == 0
+call	49:8	49:34	4	CFArrayGetCount
+arg	49:24	49:34	5	cert_chain
+water	49:24	0:0	6	cert_chain
+op	49:36	0:0	4	==
+water	49:39	0:0	4	0
+stmts	49:42	53:4	3	
+water	49:42	0:0	4	{
+call	50:8	50:28	4	CFRelease
+arg	50:18	50:28	5	cert_chain
+water	50:18	0:0	6	cert_chain
+water	50:29	0:0	4	;
+water	51:8	0:0	4	result
+op	51:15	0:0	4	=
+op	51:17	0:0	4	-
+water	51:18	0:0	4	1
+water	51:19	0:0	4	;
+goto	52:8	52:16	4	out
+water	52:13	0:0	5	out
+water	53:4	0:0	4	}
+water	54:4	0:0	2	leaf_cert
+op	54:14	0:0	2	=
+water	54:16	0:0	2	(
+water	54:17	0:0	2	SecCertificateRef
+water	54:34	0:0	2	)
+call	54:35	54:71	2	CFArrayGetValueAtIndex
+arg	54:58	54:68	3	cert_chain
+water	54:58	0:0	4	cert_chain
+arg	54:70	54:71	3	0
+water	54:70	0:0	4	0
+water	54:72	0:0	2	;
+call	55:4	55:22	2	CFRetain
+arg	55:13	55:22	3	leaf_cert
+water	55:13	0:0	4	leaf_cert
+water	55:23	0:0	2	;
+call	56:4	56:24	2	CFRelease
+arg	56:14	56:24	3	cert_chain
+water	56:14	0:0	4	cert_chain
+water	56:25	0:0	2	;
+if	59:4	62:4	2	(SecTrustGetCertificateCount (trust ) == 0)
+cond	59:8	59:46	3	SecTrustGetCertificateCount (trust ) == 0
+call	59:8	59:41	4	SecTrustGetCertificateCount
+arg	59:36	59:41	5	trust
+water	59:36	0:0	6	trust
+op	59:43	0:0	4	==
+water	59:46	0:0	4	0
+stmts	59:49	62:4	3	
+water	59:49	0:0	4	{
+water	60:8	0:0	4	result
+op	60:15	0:0	4	=
+op	60:17	0:0	4	-
+water	60:18	0:0	4	1
+water	60:19	0:0	4	;
+goto	61:8	61:16	4	out
+water	61:13	0:0	5	out
+water	62:4	0:0	4	}
+water	63:4	0:0	2	leaf_cert
+op	63:14	0:0	2	=
+call	63:16	63:54	2	SecTrustGetCertificateAtIndex
+arg	63:46	63:51	3	trust
+water	63:46	0:0	4	trust
+arg	63:53	63:54	3	0
+water	63:53	0:0	4	0
+water	63:55	0:0	2	;
+call	64:4	64:22	2	CFRetain
+arg	64:13	64:22	3	leaf_cert
+water	64:13	0:0	4	leaf_cert
+water	64:23	0:0	2	;
+decl	67:4	67:57	2	CFIndex	max
+op	67:16	0:0	2	=
+call	67:18	67:56	3	CFArrayGetCount
+arg	67:34	67:56	4	sys->p_cred->whitelist
+water	67:34	0:0	5	sys
+op	67:37	0:0	5	->
+water	67:39	0:0	5	p_cred
+op	67:45	0:0	5	->
+water	67:47	0:0	5	whitelist
+for	68:4	79:4	2	( CFIndex i = 0 ;i < max;++ i)
+forinit	0:0	68:22	3	 CFIndex i = 0 ;
+decl	68:9	68:22	4	CFIndex	i
+op	68:19	0:0	4	=
+water	68:21	0:0	4	0
+cond	68:24	68:28	3	i < max
+water	68:24	0:0	4	i
+op	68:26	0:0	4	<
+water	68:28	0:0	4	max
+forexpr	68:33	68:35	3	++ i
+op	68:33	0:0	4	++
+water	68:35	0:0	4	i
+stmts	68:38	79:4	3	
+water	68:38	0:0	4	{
+decl	69:8	69:80	4	CFDictionaryRef	dict
+op	69:29	0:0	4	=
+call	69:31	69:79	5	CFArrayGetValueAtIndex
+arg	69:54	69:76	6	sys->p_cred->whitelist
+water	69:54	0:0	7	sys
+op	69:57	0:0	7	->
+water	69:59	0:0	7	p_cred
+op	69:65	0:0	7	->
+water	69:67	0:0	7	whitelist
+arg	69:78	69:79	6	i
+water	69:78	0:0	7	i
+decl	70:8	70:82	4	CFStringRef	knownHost
+op	70:30	0:0	4	=
+water	70:32	0:0	4	(
+water	70:33	0:0	4	CFStringRef
+water	70:44	0:0	4	)
+call	70:45	70:81	5	CFDictionaryGetValue
+arg	70:66	70:70	6	dict
+water	70:66	0:0	7	dict
+arg	70:72	70:81	6	cfKeyHost
+water	70:72	0:0	7	cfKeyHost
+decl	71:8	71:101	4	SecCertificateRef	knownCert
+op	71:36	0:0	4	=
+water	71:38	0:0	4	(
+water	71:39	0:0	4	SecCertificateRef
+water	71:56	0:0	4	)
+call	71:57	71:100	5	CFDictionaryGetValue
+arg	71:78	71:82	6	dict
+water	71:78	0:0	7	dict
+arg	71:84	71:100	6	cfKeyCertificate
+water	71:84	0:0	7	cfKeyCertificate
+if	72:8	73:20	4	(! knownHost || ! knownCert)
+cond	72:12	72:27	5	! knownHost || ! knownCert
+op	72:12	0:0	6	!
+water	72:13	0:0	6	knownHost
+op	72:23	0:0	6	||
+op	72:26	0:0	6	!
+water	72:27	0:0	6	knownCert
+stmts	73:12	73:20	5	
+continue	73:12	73:20	6	
+if	74:8	78:8	4	(CFEqual (knownHost ,cfHostname ) &&CFEqual (knownCert ,leaf_cert ))
+cond	74:12	74:74	5	CFEqual (knownHost ,cfHostname ) &&CFEqual (knownCert ,leaf_cert )
+call	74:12	74:41	6	CFEqual
+arg	74:20	74:29	7	knownHost
+water	74:20	0:0	8	knownHost
+arg	74:31	74:41	7	cfHostname
+water	74:31	0:0	8	cfHostname
+op	74:43	0:0	6	&&
+call	74:46	74:74	6	CFEqual
+arg	74:54	74:63	7	knownCert
+water	74:54	0:0	8	knownCert
+arg	74:65	74:74	7	leaf_cert
+water	74:65	0:0	8	leaf_cert
+stmts	74:77	78:8	5	
+water	74:77	0:0	6	{
+call	75:12	75:72	6	msg_Warn
+arg	75:21	75:28	7	session
+water	75:21	0:0	8	session
+arg	75:30	75:72	7	"certificate already accepted, continuing"
+water	75:30	0:0	8	"certificate already accepted, continuing"
+water	75:73	0:0	6	;
+water	76:12	0:0	6	result
+op	76:19	0:0	6	=
+water	76:21	0:0	6	0
+water	76:22	0:0	6	;
+goto	77:12	77:20	6	out
+water	77:17	0:0	7	out
+water	78:8	0:0	6	}
+water	79:4	0:0	4	}
+decl	89:4	95:41	2	const char	*msg
+op	89:20	0:0	2	=
+call	89:22	95:40	3	N_
+arg	89:25	95:40	4	"You attempted to reach %s. ""However the security certificate presented by the server ""is unknown and could not be authenticated by any trusted ""Certification Authority. ""This problem may be caused by a configuration error ""or an attempt to breach your security or your privacy.\n\n""If in doubt, abort now.\n"
+water	89:25	0:0	5	"You attempted to reach %s. "
+water	90:13	0:0	5	"However the security certificate presented by the server "
+water	91:13	0:0	5	"is unknown and could not be authenticated by any trusted "
+water	92:13	0:0	5	"Certification Authority. "
+water	93:13	0:0	5	"This problem may be caused by a configuration error "
+water	94:13	0:0	5	"or an attempt to breach your security or your privacy.\n\n"
+water	95:13	0:0	5	"If in doubt, abort now.\n"
+decl	96:4	97:98	2	int	answer
+op	96:15	0:0	2	=
+call	96:17	97:97	3	dialog_Question
+arg	96:33	96:40	4	session
+water	96:33	0:0	5	session
+arg	96:42	96:60	4	_("Insecure site")
+call	96:42	96:59	5	_
+arg	96:44	96:59	6	"Insecure site"
+water	96:44	0:0	7	"Insecure site"
+arg	96:62	96:79	4	vlc_gettext(msg)
+call	96:62	96:78	5	vlc_gettext
+arg	96:75	96:78	6	msg
+water	96:75	0:0	7	msg
+arg	97:34	97:44	4	_("Abort")
+call	97:34	97:43	5	_
+arg	97:36	97:43	6	"Abort"
+water	97:36	0:0	7	"Abort"
+arg	97:46	97:81	4	_("Accept certificate temporarily")
+call	97:46	97:80	5	_
+arg	97:48	97:80	6	"Accept certificate temporarily"
+water	97:48	0:0	7	"Accept certificate temporarily"
+arg	97:83	97:87	4	NULL
+water	97:83	0:0	5	NULL
+arg	97:89	97:97	4	hostname
+water	97:89	0:0	5	hostname
+if	98:4	116:4	2	(answer == 2)
+cond	98:8	98:18	3	answer == 2
+water	98:8	0:0	4	answer
+op	98:15	0:0	4	==
+water	98:18	0:0	4	2
+stmts	98:21	116:4	3	
+water	98:21	0:0	4	{
+call	99:8	99:79	4	msg_Warn
+arg	99:17	99:24	5	session
+water	99:17	0:0	6	session
+arg	99:26	99:79	5	"Proceeding despite of failed certificate validation"
+water	99:26	0:0	6	"Proceeding despite of failed certificate validation"
+water	99:80	0:0	4	;
+decl	101:8	101:58	4	const void	*keys[]
+op	101:27	0:0	4	=
+water	101:29	0:0	4	{
+water	101:30	0:0	4	cfKeyHost
+water	101:39	0:0	4	,
+water	101:41	0:0	4	cfKeyCertificate
+water	101:57	0:0	4	}
+decl	102:8	102:54	4	const void	*values[]
+op	102:29	0:0	4	=
+water	102:31	0:0	4	{
+water	102:32	0:0	4	cfHostname
+water	102:42	0:0	4	,
+water	102:44	0:0	4	leaf_cert
+water	102:53	0:0	4	}
+decl	103:8	106:84	4	CFDictionaryRef	dict
+op	103:29	0:0	4	=
+call	103:31	106:83	5	CFDictionaryCreate
+arg	103:50	103:69	6	kCFAllocatorDefault
+water	103:50	0:0	7	kCFAllocatorDefault
+arg	104:51	104:55	6	keys
+water	104:51	0:0	7	keys
+arg	104:57	104:63	6	values
+water	104:57	0:0	7	values
+arg	104:65	104:66	6	2
+water	104:65	0:0	7	2
+arg	105:51	105:81	6	&kCFTypeDictionaryKeyCallBacks
+op	105:51	0:0	7	&
+water	105:52	0:0	7	kCFTypeDictionaryKeyCallBacks
+arg	106:51	106:83	6	&kCFTypeDictionaryValueCallBacks
+op	106:51	0:0	7	&
+water	106:52	0:0	7	kCFTypeDictionaryValueCallBacks
+if	107:8	111:8	4	(! dict)
+cond	107:12	107:13	5	! dict
+op	107:12	0:0	6	!
+water	107:13	0:0	6	dict
+stmts	107:19	111:8	5	
+water	107:19	0:0	6	{
+call	108:12	108:50	6	msg_Err
+arg	108:20	108:27	7	session
+water	108:20	0:0	8	session
+arg	108:29	108:50	7	"error creating dict"
+water	108:29	0:0	8	"error creating dict"
+water	108:51	0:0	6	;
+water	109:12	0:0	6	result
+op	109:19	0:0	6	=
+op	109:21	0:0	6	-
+water	109:22	0:0	6	1
+water	109:23	0:0	6	;
+goto	110:12	110:20	6	out
+water	110:17	0:0	7	out
+water	111:8	0:0	6	}
+call	112:8	112:55	4	CFArrayAppendValue
+arg	112:27	112:49	5	sys->p_cred->whitelist
+water	112:27	0:0	6	sys
+op	112:30	0:0	6	->
+water	112:32	0:0	6	p_cred
+op	112:38	0:0	6	->
+water	112:40	0:0	6	whitelist
+arg	112:51	112:55	5	dict
+water	112:51	0:0	6	dict
+water	112:56	0:0	4	;
+call	113:8	113:22	4	CFRelease
+arg	113:18	113:22	5	dict
+water	113:18	0:0	6	dict
+water	113:23	0:0	4	;
+water	114:8	0:0	4	result
+op	114:15	0:0	4	=
+water	114:17	0:0	4	0
+water	114:18	0:0	4	;
+goto	115:8	115:16	4	out
+water	115:13	0:0	5	out
+water	116:4	0:0	4	}
+else	116:6	119:4	2
+stmts	116:11	119:4	3	
+water	116:11	0:0	4	{
+water	117:8	0:0	4	result
+op	117:15	0:0	4	=
+op	117:17	0:0	4	-
+water	117:18	0:0	4	1
+water	117:19	0:0	4	;
+goto	118:8	118:16	4	out
+water	118:13	0:0	5	out
+water	119:4	0:0	4	}
+label	120:0	120:3	2	out :
+call	121:4	121:19	2	CFRelease
+arg	121:14	121:19	3	trust
+water	121:14	0:0	4	trust
+water	121:20	0:0	2	;
+if	122:4	123:29	2	(cfHostname)
+cond	122:8	122:8	3	cfHostname
+water	122:8	0:0	4	cfHostname
+stmts	123:8	123:29	3	
+call	123:8	123:28	4	CFRelease
+arg	123:18	123:28	5	cfHostname
+water	123:18	0:0	6	cfHostname
+water	123:29	0:0	4	;
+if	124:4	125:28	2	(leaf_cert)
+cond	124:8	124:8	3	leaf_cert
+water	124:8	0:0	4	leaf_cert
+stmts	125:8	125:28	3	
+call	125:8	125:27	4	CFRelease
+arg	125:18	125:27	5	leaf_cert
+water	125:18	0:0	6	leaf_cert
+water	125:28	0:0	4	;
+return	126:4	126:17	2	result
+water	126:11	0:0	3	result

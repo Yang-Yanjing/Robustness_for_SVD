@@ -1,0 +1,247 @@
+func	2:0	59:0	0	static void	DecoderPlayAudio
+params	2:28	0:0	1	
+param	2:30	2:46	2	decoder_t *	p_dec
+param	2:48	2:64	2	block_t *	p_audio
+param	3:30	3:48	2	int *	pi_played_sum
+param	3:50	3:67	2	int *	pi_lost_sum
+stmnts	0:0	58:38	1	
+decl	5:4	5:49	2	decoder_owner_sys_t	*p_owner
+op	5:33	0:0	2	=
+water	5:35	0:0	2	p_dec
+op	5:40	0:0	2	->
+water	5:42	0:0	2	p_owner
+decl	6:4	6:44	2	audio_output_t	*p_aout
+op	6:27	0:0	2	=
+water	6:29	0:0	2	p_owner
+op	6:36	0:0	2	->
+water	6:38	0:0	2	p_aout
+if	8:4	14:4	2	(p_audio && p_audio -> i_pts <= VLC_TS_INVALID)
+cond	8:8	8:37	3	p_audio && p_audio -> i_pts <= VLC_TS_INVALID
+water	8:8	0:0	4	p_audio
+op	8:16	0:0	4	&&
+water	8:19	0:0	4	p_audio
+op	8:26	0:0	4	->
+water	8:28	0:0	4	i_pts
+op	8:34	0:0	4	<=
+water	8:37	0:0	4	VLC_TS_INVALID
+stmts	9:4	14:4	3	
+water	9:4	0:0	4	{
+call	10:8	10:59	4	msg_Warn
+arg	10:18	10:23	5	p_dec
+water	10:18	0:0	6	p_dec
+arg	10:25	10:59	5	"non-dated audio buffer received"
+water	10:25	0:0	6	"non-dated audio buffer received"
+water	10:60	0:0	4	;
+op	11:8	0:0	4	*
+water	11:9	0:0	4	pi_lost_sum
+op	11:21	0:0	4	+=
+water	11:24	0:0	4	1
+water	11:25	0:0	4	;
+call	12:8	12:31	4	block_Release
+arg	12:23	12:31	5	p_audio
+water	12:23	0:0	6	p_audio
+water	12:32	0:0	4	;
+return	13:8	13:14	4	
+water	14:4	0:0	4	}
+call	16:4	16:35	2	vlc_mutex_lock
+arg	16:20	16:35	3	&p_owner->lock
+op	16:20	0:0	4	&
+water	16:21	0:0	4	p_owner
+op	16:28	0:0	4	->
+water	16:30	0:0	4	lock
+water	16:36	0:0	2	;
+if	17:4	21:4	2	(p_audio && p_owner -> b_waiting)
+cond	17:8	17:28	3	p_audio && p_owner -> b_waiting
+water	17:8	0:0	4	p_audio
+op	17:16	0:0	4	&&
+water	17:19	0:0	4	p_owner
+op	17:26	0:0	4	->
+water	17:28	0:0	4	b_waiting
+stmts	18:4	21:4	3	
+water	18:4	0:0	4	{
+water	19:8	0:0	4	p_owner
+op	19:15	0:0	4	->
+water	19:17	0:0	4	b_has_data
+op	19:28	0:0	4	=
+water	19:30	0:0	4	true
+water	19:34	0:0	4	;
+call	20:8	20:52	4	vlc_cond_signal
+arg	20:25	20:52	5	&p_owner->wait_acknowledge
+op	20:25	0:0	6	&
+water	20:26	0:0	6	p_owner
+op	20:33	0:0	6	->
+water	20:35	0:0	6	wait_acknowledge
+water	20:53	0:0	4	;
+water	21:4	0:0	4	}
+for	22:4	57:4	2	(;;)
+forinit	22:9	22:9	3	;
+water	22:9	0:0	4	;
+cond	0:0	0:0	3	
+forexpr	0:0	0:0	3	
+stmts	23:4	57:4	3	
+water	23:4	0:0	4	{
+decl	24:8	24:21	4	bool	b_paused
+decl	25:8	25:51	4	bool	b_reject
+op	25:22	0:0	4	=
+call	25:24	25:50	5	DecoderWaitUnblock
+arg	25:44	25:50	6	p_dec
+water	25:44	0:0	7	p_dec
+water	26:8	0:0	4	b_paused
+op	26:17	0:0	4	=
+water	26:19	0:0	4	p_owner
+op	26:26	0:0	4	->
+water	26:28	0:0	4	b_paused
+water	26:36	0:0	4	;
+if	27:8	28:17	4	(! p_audio)
+cond	27:12	27:13	5	! p_audio
+op	27:12	0:0	6	!
+water	27:13	0:0	6	p_audio
+stmts	28:12	28:17	5	
+break	28:12	28:17	6	
+decl	30:8	30:39	4	int	i_rate
+op	30:19	0:0	4	=
+water	30:21	0:0	4	INPUT_RATE_DEFAULT
+call	31:8	32:53	4	DecoderFixTs
+arg	31:22	31:27	5	p_dec
+water	31:22	0:0	6	p_dec
+arg	31:29	31:44	5	&p_audio->i_pts
+op	31:29	0:0	6	&
+water	31:30	0:0	6	p_audio
+op	31:37	0:0	6	->
+water	31:39	0:0	6	i_pts
+arg	31:46	31:50	5	NULL
+water	31:46	0:0	6	NULL
+arg	31:52	31:70	5	&p_audio->i_length
+op	31:52	0:0	6	&
+water	31:53	0:0	6	p_audio
+op	31:60	0:0	6	->
+water	31:62	0:0	6	i_length
+arg	32:22	32:29	5	&i_rate
+op	32:22	0:0	6	&
+water	32:23	0:0	6	i_rate
+arg	32:31	32:53	5	AOUT_MAX_ADVANCE_TIME
+water	32:31	0:0	6	AOUT_MAX_ADVANCE_TIME
+water	32:54	0:0	4	;
+if	33:8	36:27	4	(p_audio -> i_pts <= VLC_TS_INVALID || i_rate < INPUT_RATE_DEFAULT / AOUT_MAX_INPUT_RATE || i_rate > INPUT_RATE_DEFAULT * AOUT_MAX_INPUT_RATE)
+cond	33:12	35:40	5	p_audio -> i_pts <= VLC_TS_INVALID || i_rate < INPUT_RATE_DEFAULT / AOUT_MAX_INPUT_RATE || i_rate > INPUT_RATE_DEFAULT * AOUT_MAX_INPUT_RATE
+water	33:12	0:0	6	p_audio
+op	33:19	0:0	6	->
+water	33:21	0:0	6	i_pts
+op	33:27	0:0	6	<=
+water	33:30	0:0	6	VLC_TS_INVALID
+op	34:9	0:0	6	||
+water	34:12	0:0	6	i_rate
+op	34:19	0:0	6	<
+water	34:21	0:0	6	INPUT_RATE_DEFAULT
+op	34:39	0:0	6	/
+water	34:40	0:0	6	AOUT_MAX_INPUT_RATE
+op	35:9	0:0	6	||
+water	35:12	0:0	6	i_rate
+op	35:19	0:0	6	>
+water	35:21	0:0	6	INPUT_RATE_DEFAULT
+op	35:39	0:0	6	*
+water	35:40	0:0	6	AOUT_MAX_INPUT_RATE
+stmts	36:12	36:27	5	
+water	36:12	0:0	6	b_reject
+op	36:21	0:0	6	=
+water	36:23	0:0	6	true
+water	36:27	0:0	6	;
+call	37:8	38:64	4	DecoderWaitDate
+arg	37:25	37:30	5	p_dec
+water	37:25	0:0	6	p_dec
+arg	37:32	37:41	5	&b_reject
+op	37:32	0:0	6	&
+water	37:33	0:0	6	b_reject
+arg	38:25	38:64	5	p_audio->i_pts-AOUT_MAX_PREPARE_TIME
+water	38:25	0:0	6	p_audio
+op	38:32	0:0	6	->
+water	38:34	0:0	6	i_pts
+op	38:40	0:0	6	-
+water	38:42	0:0	6	AOUT_MAX_PREPARE_TIME
+water	38:65	0:0	4	;
+if	39:8	40:20	4	(unlikely (p_owner -> b_paused != b_paused ))
+cond	39:12	39:50	5	unlikely (p_owner -> b_paused != b_paused )
+call	39:12	39:50	6	unlikely
+arg	39:21	39:50	7	p_owner->b_paused!=b_paused
+water	39:21	0:0	8	p_owner
+op	39:28	0:0	8	->
+water	39:30	0:0	8	b_paused
+op	39:39	0:0	8	!=
+water	39:42	0:0	8	b_paused
+stmts	40:12	40:20	5	
+continue	40:12	40:20	6	
+if	41:8	42:27	4	(p_aout == NULL)
+cond	41:12	41:22	5	p_aout == NULL
+water	41:12	0:0	6	p_aout
+op	41:19	0:0	6	==
+water	41:22	0:0	6	NULL
+stmts	42:12	42:27	5	
+water	42:12	0:0	6	b_reject
+op	42:21	0:0	6	=
+water	42:23	0:0	6	true
+water	42:27	0:0	6	;
+if	43:8	49:8	4	(! b_reject)
+cond	43:12	43:13	5	! b_reject
+op	43:12	0:0	6	!
+water	43:13	0:0	6	b_reject
+stmts	44:8	49:8	5	
+water	44:8	0:0	6	{
+call	45:12	45:39	6	assert
+arg	45:20	45:39	7	!p_owner->b_paused
+op	45:20	0:0	8	!
+water	45:21	0:0	8	p_owner
+op	45:28	0:0	8	->
+water	45:30	0:0	8	b_paused
+water	45:40	0:0	6	;
+if	46:12	47:35	6	(!aout_DecPlay (p_aout ,p_audio ,i_rate ))
+cond	46:16	46:55	7	!aout_DecPlay (p_aout ,p_audio ,i_rate )
+op	46:16	0:0	8	!
+call	46:17	46:55	8	aout_DecPlay
+arg	46:31	46:37	9	p_aout
+water	46:31	0:0	10	p_aout
+arg	46:39	46:46	9	p_audio
+water	46:39	0:0	10	p_audio
+arg	46:48	46:55	9	i_rate
+water	46:48	0:0	10	i_rate
+stmts	47:16	47:35	7	
+op	47:16	0:0	8	*
+water	47:17	0:0	8	pi_played_sum
+op	47:31	0:0	8	+=
+water	47:34	0:0	8	1
+water	47:35	0:0	8	;
+op	48:12	0:0	6	*
+water	48:13	0:0	6	pi_lost_sum
+op	48:25	0:0	6	+=
+call	48:28	48:57	6	aout_DecGetResetLost
+arg	48:50	48:57	7	p_aout
+water	48:50	0:0	8	p_aout
+water	48:58	0:0	6	;
+water	49:8	0:0	6	}
+else	50:8	55:8	4
+stmts	51:8	55:8	5	
+water	51:8	0:0	6	{
+call	52:12	52:53	6	msg_Dbg
+arg	52:21	52:26	7	p_dec
+water	52:21	0:0	8	p_dec
+arg	52:28	52:53	7	"discarded audio buffer"
+water	52:28	0:0	8	"discarded audio buffer"
+water	52:54	0:0	6	;
+op	53:12	0:0	6	*
+water	53:13	0:0	6	pi_lost_sum
+op	53:25	0:0	6	+=
+water	53:28	0:0	6	1
+water	53:29	0:0	6	;
+call	54:12	54:35	6	block_Release
+arg	54:27	54:35	7	p_audio
+water	54:27	0:0	8	p_audio
+water	54:36	0:0	6	;
+water	55:8	0:0	6	}
+break	56:8	56:13	4	
+water	57:4	0:0	4	}
+call	58:4	58:37	2	vlc_mutex_unlock
+arg	58:22	58:37	3	&p_owner->lock
+op	58:22	0:0	4	&
+water	58:23	0:0	4	p_owner
+op	58:30	0:0	4	->
+water	58:32	0:0	4	lock
+water	58:38	0:0	2	;

@@ -1,0 +1,302 @@
+func	2:0	75:0	0	int	net_Subscribe
+params	2:18	0:0	1	
+param	2:19	2:36	2	vlc_object_t *	obj
+param	2:38	2:44	2	int	fd
+param	3:19	3:45	2	const struct sockaddr *	grp
+param	3:47	3:63	2	socklen_t	grplen
+stmnts	0:0	74:13	1	
+decl	9:4	9:13	2	int	level
+decl	10:4	10:23	2	struct group_req	gr
+call	11:4	11:31	2	memset
+arg	11:12	11:15	3	&gr
+op	11:12	0:0	4	&
+water	11:13	0:0	4	gr
+arg	11:17	11:18	3	0
+water	11:17	0:0	4	0
+arg	11:20	11:31	3	sizeof(gr)
+op	11:20	0:0	4	sizeof
+water	11:27	0:0	4	(
+water	11:28	0:0	4	gr
+water	11:30	0:0	4	)
+water	11:32	0:0	2	;
+water	12:4	0:0	2	gr
+op	12:6	0:0	2	.
+water	12:7	0:0	2	gr_interface
+op	12:20	0:0	2	=
+call	12:22	12:41	2	var_GetIfIndex
+arg	12:38	12:41	3	obj
+water	12:38	0:0	4	obj
+water	12:42	0:0	2	;
+switch	13:4	32:4	2	(grp -> sa_family)
+cond	13:12	13:17	3	grp -> sa_family
+water	13:12	0:0	4	grp
+op	13:15	0:0	4	->
+water	13:17	0:0	4	sa_family
+stmts	14:4	32:4	3	
+water	14:4	0:0	4	{
+label	16:8	16:21	4	case AF_INET6 :
+water	17:8	0:0	4	{
+decl	18:12	18:76	4	const struct sockaddr_in6	*g6
+op	18:42	0:0	4	=
+water	18:44	0:0	4	(
+water	18:45	0:0	4	const
+water	18:51	0:0	4	struct
+water	18:58	0:0	4	sockaddr_in6
+op	18:71	0:0	4	*
+water	18:72	0:0	4	)
+water	18:73	0:0	4	grp
+water	19:12	0:0	4	level
+op	19:18	0:0	4	=
+water	19:20	0:0	4	SOL_IPV6
+water	19:28	0:0	4	;
+call	20:12	20:58	4	assert
+arg	20:20	20:58	5	grplen>=sizeof(structsockaddr_in6)
+water	20:20	0:0	6	grplen
+op	20:27	0:0	6	>=
+op	20:30	0:0	6	sizeof
+water	20:37	0:0	6	(
+water	20:38	0:0	6	struct
+water	20:45	0:0	6	sockaddr_in6
+water	20:57	0:0	6	)
+water	20:59	0:0	4	;
+if	21:12	22:51	4	(g6 -> sin6_scope_id != 0)
+cond	21:16	21:37	5	g6 -> sin6_scope_id != 0
+water	21:16	0:0	6	g6
+op	21:18	0:0	6	->
+water	21:20	0:0	6	sin6_scope_id
+op	21:34	0:0	6	!=
+water	21:37	0:0	6	0
+stmts	22:16	22:51	5	
+water	22:16	0:0	6	gr
+op	22:18	0:0	6	.
+water	22:19	0:0	6	gr_interface
+op	22:32	0:0	6	=
+water	22:34	0:0	6	g6
+op	22:36	0:0	6	->
+water	22:38	0:0	6	sin6_scope_id
+water	22:51	0:0	6	;
+break	23:12	23:17	4	
+water	24:8	0:0	4	}
+label	26:8	26:20	4	case AF_INET :
+water	27:12	0:0	4	level
+op	27:18	0:0	4	=
+water	27:20	0:0	4	SOL_IP
+water	27:26	0:0	4	;
+break	28:12	28:17	4	
+label	29:8	29:15	4	default :
+water	30:12	0:0	4	errno
+op	30:18	0:0	4	=
+water	30:20	0:0	4	EAFNOSUPPORT
+water	30:32	0:0	4	;
+return	31:12	31:21	4	-1
+op	31:19	0:0	5	-
+water	31:20	0:0	5	1
+water	32:4	0:0	4	}
+call	33:4	33:42	2	assert
+arg	33:12	33:42	3	grplen<=sizeof(gr.gr_group)
+water	33:12	0:0	4	grplen
+op	33:19	0:0	4	<=
+op	33:22	0:0	4	sizeof
+water	33:29	0:0	4	(
+water	33:30	0:0	4	gr
+op	33:32	0:0	4	.
+water	33:33	0:0	4	gr_group
+water	33:41	0:0	4	)
+water	33:43	0:0	2	;
+call	34:4	34:37	2	memcpy
+arg	34:12	34:24	3	&gr.gr_group
+op	34:12	0:0	4	&
+water	34:13	0:0	4	gr
+op	34:15	0:0	4	.
+water	34:16	0:0	4	gr_group
+arg	34:26	34:29	3	grp
+water	34:26	0:0	4	grp
+arg	34:31	34:37	3	grplen
+water	34:31	0:0	4	grplen
+water	34:38	0:0	2	;
+if	35:4	36:16	2	(setsockopt (fd ,level ,MCAST_JOIN_GROUP ,& gr ,sizeof ( gr ) ) == 0)
+cond	35:8	35:70	3	setsockopt (fd ,level ,MCAST_JOIN_GROUP ,& gr ,sizeof ( gr ) ) == 0
+call	35:8	35:65	4	setsockopt
+arg	35:20	35:22	5	fd
+water	35:20	0:0	6	fd
+arg	35:24	35:29	5	level
+water	35:24	0:0	6	level
+arg	35:31	35:47	5	MCAST_JOIN_GROUP
+water	35:31	0:0	6	MCAST_JOIN_GROUP
+arg	35:49	35:52	5	&gr
+op	35:49	0:0	6	&
+water	35:50	0:0	6	gr
+arg	35:54	35:65	5	sizeof(gr)
+op	35:54	0:0	6	sizeof
+water	35:61	0:0	6	(
+water	35:62	0:0	6	gr
+water	35:64	0:0	6	)
+op	35:67	0:0	4	==
+water	35:70	0:0	4	0
+stmts	36:8	36:16	3	
+return	36:8	36:16	4	0
+water	36:15	0:0	5	0
+switch	38:4	70:4	2	(grp -> sa_family)
+cond	38:12	38:17	3	grp -> sa_family
+water	38:12	0:0	4	grp
+op	38:15	0:0	4	->
+water	38:17	0:0	4	sa_family
+stmts	39:4	70:4	3	
+water	39:4	0:0	4	{
+label	41:8	41:21	4	case AF_INET6 :
+water	42:8	0:0	4	{
+decl	43:12	43:35	4	struct ipv6_mreq	ipv6mr
+decl	44:12	44:76	4	const struct sockaddr_in6	*g6
+op	44:42	0:0	4	=
+water	44:44	0:0	4	(
+water	44:45	0:0	4	const
+water	44:51	0:0	4	struct
+water	44:58	0:0	4	sockaddr_in6
+op	44:71	0:0	4	*
+water	44:72	0:0	4	)
+water	44:73	0:0	4	grp
+call	45:12	45:47	4	memset
+arg	45:20	45:27	5	&ipv6mr
+op	45:20	0:0	6	&
+water	45:21	0:0	6	ipv6mr
+arg	45:29	45:30	5	0
+water	45:29	0:0	6	0
+arg	45:32	45:47	5	sizeof(ipv6mr)
+op	45:32	0:0	6	sizeof
+water	45:39	0:0	6	(
+water	45:40	0:0	6	ipv6mr
+water	45:46	0:0	6	)
+water	45:48	0:0	4	;
+call	46:12	46:58	4	assert
+arg	46:20	46:58	5	grplen>=sizeof(structsockaddr_in6)
+water	46:20	0:0	6	grplen
+op	46:27	0:0	6	>=
+op	46:30	0:0	6	sizeof
+water	46:37	0:0	6	(
+water	46:38	0:0	6	struct
+water	46:45	0:0	6	sockaddr_in6
+water	46:57	0:0	6	)
+water	46:59	0:0	4	;
+water	47:12	0:0	4	ipv6mr
+op	47:18	0:0	4	.
+water	47:19	0:0	4	ipv6mr_multiaddr
+op	47:36	0:0	4	=
+water	47:38	0:0	4	g6
+op	47:40	0:0	4	->
+water	47:42	0:0	4	sin6_addr
+water	47:51	0:0	4	;
+water	48:12	0:0	4	ipv6mr
+op	48:18	0:0	4	.
+water	48:19	0:0	4	ipv6mr_interface
+op	48:36	0:0	4	=
+water	48:38	0:0	4	g6
+op	48:40	0:0	4	->
+water	48:42	0:0	4	sin6_scope_id
+water	48:55	0:0	4	;
+if	49:12	51:24	4	(!setsockopt (fd ,SOL_IPV6 ,IPV6_JOIN_GROUP ,& ipv6mr ,sizeof ( ipv6mr ) ))
+cond	49:16	50:53	5	!setsockopt (fd ,SOL_IPV6 ,IPV6_JOIN_GROUP ,& ipv6mr ,sizeof ( ipv6mr ) )
+op	49:16	0:0	6	!
+call	49:17	50:53	6	setsockopt
+arg	49:29	49:31	7	fd
+water	49:29	0:0	8	fd
+arg	49:33	49:41	7	SOL_IPV6
+water	49:33	0:0	8	SOL_IPV6
+arg	49:43	49:58	7	IPV6_JOIN_GROUP
+water	49:43	0:0	8	IPV6_JOIN_GROUP
+arg	50:29	50:36	7	&ipv6mr
+op	50:29	0:0	8	&
+water	50:30	0:0	8	ipv6mr
+arg	50:38	50:53	7	sizeof(ipv6mr)
+op	50:38	0:0	8	sizeof
+water	50:45	0:0	8	(
+water	50:46	0:0	8	ipv6mr
+water	50:52	0:0	8	)
+stmts	51:16	51:24	5	
+return	51:16	51:24	6	0
+water	51:23	0:0	7	0
+break	52:12	52:17	4	
+water	53:8	0:0	4	}
+label	56:8	56:20	4	case AF_INET :
+water	57:8	0:0	4	{
+decl	58:12	58:30	4	struct ip_mreq	imr
+call	59:12	59:41	4	memset
+arg	59:20	59:24	5	&imr
+op	59:20	0:0	6	&
+water	59:21	0:0	6	imr
+arg	59:26	59:27	5	0
+water	59:26	0:0	6	0
+arg	59:29	59:41	5	sizeof(imr)
+op	59:29	0:0	6	sizeof
+water	59:36	0:0	6	(
+water	59:37	0:0	6	imr
+water	59:40	0:0	6	)
+water	59:42	0:0	4	;
+call	60:12	60:57	4	assert
+arg	60:20	60:57	5	grplen>=sizeof(structsockaddr_in)
+water	60:20	0:0	6	grplen
+op	60:27	0:0	6	>=
+op	60:30	0:0	6	sizeof
+water	60:37	0:0	6	(
+water	60:38	0:0	6	struct
+water	60:45	0:0	6	sockaddr_in
+water	60:56	0:0	6	)
+water	60:58	0:0	4	;
+water	61:12	0:0	4	imr
+op	61:15	0:0	4	.
+water	61:16	0:0	4	imr_multiaddr
+op	61:30	0:0	4	=
+water	61:32	0:0	4	(
+water	61:33	0:0	4	(
+water	61:34	0:0	4	const
+water	61:40	0:0	4	struct
+water	61:47	0:0	4	sockaddr_in
+op	61:59	0:0	4	*
+water	61:60	0:0	4	)
+water	61:61	0:0	4	grp
+water	61:64	0:0	4	)
+op	61:65	0:0	4	->
+water	61:67	0:0	4	sin_addr
+water	61:75	0:0	4	;
+if	62:12	64:24	4	(setsockopt (fd ,SOL_IP ,IP_ADD_MEMBERSHIP ,& imr ,sizeof ( imr ) ) == 0)
+cond	62:16	63:51	5	setsockopt (fd ,SOL_IP ,IP_ADD_MEMBERSHIP ,& imr ,sizeof ( imr ) ) == 0
+call	62:16	63:46	6	setsockopt
+arg	62:28	62:30	7	fd
+water	62:28	0:0	8	fd
+arg	62:32	62:38	7	SOL_IP
+water	62:32	0:0	8	SOL_IP
+arg	62:40	62:57	7	IP_ADD_MEMBERSHIP
+water	62:40	0:0	8	IP_ADD_MEMBERSHIP
+arg	63:28	63:32	7	&imr
+op	63:28	0:0	8	&
+water	63:29	0:0	8	imr
+arg	63:34	63:46	7	sizeof(imr)
+op	63:34	0:0	8	sizeof
+water	63:41	0:0	8	(
+water	63:42	0:0	8	imr
+water	63:45	0:0	8	)
+op	63:48	0:0	6	==
+water	63:51	0:0	6	0
+stmts	64:16	64:24	5	
+return	64:16	64:24	6	0
+water	64:23	0:0	7	0
+break	65:12	65:17	4	
+water	66:8	0:0	4	}
+label	68:8	68:15	4	default :
+water	69:12	0:0	4	errno
+op	69:18	0:0	4	=
+water	69:20	0:0	4	EAFNOSUPPORT
+water	69:32	0:0	4	;
+water	70:4	0:0	4	}
+call	72:4	73:38	2	msg_Err
+arg	72:13	72:16	3	obj
+water	72:13	0:0	4	obj
+arg	72:18	72:51	3	"cannot join multicast group: %s"
+water	72:18	0:0	4	"cannot join multicast group: %s"
+arg	73:13	73:38	3	vlc_strerror_c(net_errno)
+call	73:13	73:37	4	vlc_strerror_c
+arg	73:28	73:37	5	net_errno
+water	73:28	0:0	6	net_errno
+water	73:39	0:0	2	;
+return	74:4	74:13	2	-1
+op	74:11	0:0	3	-
+water	74:12	0:0	3	1

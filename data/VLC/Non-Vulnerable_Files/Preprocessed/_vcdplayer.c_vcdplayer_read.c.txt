@@ -1,0 +1,218 @@
+func	1:0	64:0	0	vcdplayer_read_status_t	vcdplayer_read
+params	2:15	0:0	1	
+param	2:16	2:35	2	access_t *	p_access
+param	2:37	2:51	2	uint8_t *	p_buf
+stmnts	0:0	63:2	1	
+decl	5:2	5:21	2	uint8_t	wait_time
+op	5:19	0:0	2	=
+water	5:20	0:0	2	0
+decl	6:2	6:58	2	vcdplayer_t	*p_vcdplayer
+op	6:26	0:0	2	=
+water	6:28	0:0	2	(
+water	6:29	0:0	2	vcdplayer_t
+op	6:41	0:0	2	*
+water	6:42	0:0	2	)
+water	6:43	0:0	2	p_access
+op	6:51	0:0	2	->
+water	6:53	0:0	2	p_sys
+if	7:2	22:2	2	(p_vcdplayer -> i_lsn > p_vcdplayer -> end_lsn)
+cond	7:7	7:41	3	p_vcdplayer -> i_lsn > p_vcdplayer -> end_lsn
+water	7:7	0:0	4	p_vcdplayer
+op	7:18	0:0	4	->
+water	7:20	0:0	4	i_lsn
+op	7:26	0:0	4	>
+water	7:28	0:0	4	p_vcdplayer
+op	7:39	0:0	4	->
+water	7:41	0:0	4	end_lsn
+stmts	7:51	22:2	3	
+water	7:51	0:0	4	{
+decl	8:4	8:39	4	vcdplayer_read_status_t	read_status
+call	10:4	12:54	4	dbg_print
+arg	10:15	10:44	5	(INPUT_DBG_LSN|INPUT_DBG_PBC)
+water	10:15	0:0	6	(
+water	10:16	0:0	6	INPUT_DBG_LSN
+op	10:29	0:0	6	|
+water	10:30	0:0	6	INPUT_DBG_PBC
+water	10:43	0:0	6	)
+arg	11:14	11:47	5	"end reached, cur: %u, end: %u\n"
+water	11:14	0:0	6	"end reached, cur: %u, end: %u\n"
+arg	12:14	12:32	5	p_vcdplayer->i_lsn
+water	12:14	0:0	6	p_vcdplayer
+op	12:25	0:0	6	->
+water	12:27	0:0	6	i_lsn
+arg	12:34	12:54	5	p_vcdplayer->end_lsn
+water	12:34	0:0	6	p_vcdplayer
+op	12:45	0:0	6	->
+water	12:47	0:0	6	end_lsn
+water	12:55	0:0	4	;
+label	13:2	13:26	4	handle_item_continuation :
+water	14:4	0:0	4	read_status
+op	14:16	0:0	4	=
+call	14:18	14:51	4	vcdplayer_pbc_is_on
+arg	14:39	14:51	5	p_vcdplayer
+water	14:39	0:0	6	p_vcdplayer
+water	15:6	0:0	4	?
+call	15:8	15:48	4	vcdplayer_pbc_nav
+arg	15:27	15:35	5	p_access
+water	15:27	0:0	6	p_access
+arg	15:37	15:48	5	&wait_time
+op	15:37	0:0	6	&
+water	15:38	0:0	6	wait_time
+water	16:6	0:0	4	:
+call	16:8	16:52	4	vcdplayer_non_pbc_nav
+arg	16:31	16:39	5	p_access
+water	16:31	0:0	6	p_access
+arg	16:41	16:52	5	&wait_time
+op	16:41	0:0	6	&
+water	16:42	0:0	6	wait_time
+water	16:53	0:0	4	;
+if	17:4	20:4	4	(READ_STILL_FRAME == read_status)
+cond	17:8	17:28	5	READ_STILL_FRAME == read_status
+water	17:8	0:0	6	READ_STILL_FRAME
+op	17:25	0:0	6	==
+water	17:28	0:0	6	read_status
+stmts	17:41	20:4	5	
+water	17:41	0:0	6	{
+op	18:6	0:0	6	*
+water	18:7	0:0	6	p_buf
+op	18:13	0:0	6	=
+water	18:15	0:0	6	wait_time
+water	18:24	0:0	6	;
+return	19:6	19:29	6	READ_STILL_FRAME
+water	19:13	0:0	7	READ_STILL_FRAME
+water	20:4	0:0	6	}
+if	21:4	21:53	4	(READ_BLOCK != read_status)
+cond	21:8	21:22	5	READ_BLOCK != read_status
+water	21:8	0:0	6	READ_BLOCK
+op	21:19	0:0	6	!=
+water	21:22	0:0	6	read_status
+stmts	21:35	21:53	5	
+return	21:35	21:53	6	read_status
+water	21:42	0:0	7	read_status
+water	22:2	0:0	4	}
+water	30:2	0:0	2	{
+decl	31:4	31:56	2	CdIo	*p_img
+op	31:16	0:0	2	=
+call	31:18	31:55	3	vcdinfo_get_cd_image
+arg	31:39	31:55	4	p_vcdplayer->vcd
+water	31:39	0:0	5	p_vcdplayer
+op	31:50	0:0	5	->
+water	31:52	0:0	5	vcd
+struct	32:12	36:4	2	<anonymous_32:12>
+decl	33:6	33:48	3	uint8_t	subheader[CDIO_CD_SUBHEADER_SIZE]
+decl	34:6	34:40	3	uint8_t	data[M2F2_SECTOR_SIZE]
+decl	35:6	35:27	3	uint8_t	spare[4]
+typedef	32:4	36:17	2	<anonymous_32:12>	vcdsector_t
+decl	37:4	37:26	2	vcdsector_t	vcd_sector
+do	38:4	57:4	2	(( vcd_sector . subheader [ 2 ] & ~0x01 ) == 0 x60)
+cond	57:12	57:46	3	( vcd_sector . subheader [ 2 ] & ~0x01 ) == 0 x60
+water	57:12	0:0	4	(
+water	57:13	0:0	4	vcd_sector
+op	57:23	0:0	4	.
+water	57:24	0:0	4	subheader
+op	57:33	0:0	4	[
+water	57:34	0:0	4	2
+op	57:35	0:0	4	]
+op	57:36	0:0	4	&
+water	57:37	0:0	4	~0x01
+water	57:42	0:0	4	)
+op	57:43	0:0	4	==
+water	57:45	0:0	4	0
+water	57:46	0:0	4	x60
+stmts	38:7	57:4	3	
+water	38:7	0:0	4	{
+if	39:6	44:6	4	(cdio_read_mode2_sector (p_img ,& vcd_sector ,p_vcdplayer -> i_lsn ,true ) != 0)
+cond	39:10	40:60	5	cdio_read_mode2_sector (p_img ,& vcd_sector ,p_vcdplayer -> i_lsn ,true ) != 0
+call	39:10	40:57	6	cdio_read_mode2_sector
+arg	39:33	39:38	7	p_img
+water	39:33	0:0	8	p_img
+arg	39:40	39:51	7	&vcd_sector
+op	39:40	0:0	8	&
+water	39:41	0:0	8	vcd_sector
+arg	40:33	40:51	7	p_vcdplayer->i_lsn
+water	40:33	0:0	8	p_vcdplayer
+op	40:44	0:0	8	->
+water	40:46	0:0	8	i_lsn
+arg	40:53	40:57	7	true
+water	40:53	0:0	8	true
+op	40:58	0:0	6	!=
+water	40:60	0:0	6	0
+stmts	40:63	44:6	5	
+water	40:63	0:0	6	{
+call	41:8	41:47	6	dbg_print
+arg	41:18	41:31	7	INPUT_DBG_LSN
+water	41:18	0:0	8	INPUT_DBG_LSN
+arg	41:33	41:47	7	"read error\n"
+water	41:33	0:0	8	"read error\n"
+water	41:48	0:0	6	;
+water	42:8	0:0	6	p_vcdplayer
+op	42:19	0:0	6	->
+water	42:21	0:0	6	i_lsn
+op	42:26	0:0	6	++
+water	42:28	0:0	6	;
+return	43:8	43:25	6	READ_ERROR
+water	43:15	0:0	7	READ_ERROR
+water	44:6	0:0	6	}
+water	45:6	0:0	4	p_vcdplayer
+op	45:17	0:0	4	->
+water	45:19	0:0	4	i_lsn
+op	45:24	0:0	4	++
+water	45:26	0:0	4	;
+if	46:6	52:6	4	(p_vcdplayer -> i_lsn >= p_vcdplayer -> end_lsn)
+cond	46:11	46:46	5	p_vcdplayer -> i_lsn >= p_vcdplayer -> end_lsn
+water	46:11	0:0	6	p_vcdplayer
+op	46:22	0:0	6	->
+water	46:24	0:0	6	i_lsn
+op	46:30	0:0	6	>=
+water	46:33	0:0	6	p_vcdplayer
+op	46:44	0:0	6	->
+water	46:46	0:0	6	end_lsn
+stmts	46:56	52:6	5	
+water	46:56	0:0	6	{
+call	48:8	50:59	6	dbg_print
+arg	48:19	48:48	7	(INPUT_DBG_LSN|INPUT_DBG_PBC)
+water	48:19	0:0	8	(
+water	48:20	0:0	8	INPUT_DBG_LSN
+op	48:33	0:0	8	|
+water	48:34	0:0	8	INPUT_DBG_PBC
+water	48:47	0:0	8	)
+arg	49:19	49:63	7	"end reached in reading, cur: %u, end: %u\n"
+water	49:19	0:0	8	"end reached in reading, cur: %u, end: %u\n"
+arg	50:19	50:37	7	p_vcdplayer->i_lsn
+water	50:19	0:0	8	p_vcdplayer
+op	50:30	0:0	8	->
+water	50:32	0:0	8	i_lsn
+arg	50:39	50:59	7	p_vcdplayer->end_lsn
+water	50:39	0:0	8	p_vcdplayer
+op	50:50	0:0	8	->
+water	50:52	0:0	8	end_lsn
+water	50:60	0:0	6	;
+break	51:8	51:13	6	
+water	52:6	0:0	6	}
+water	57:4	0:0	4	}
+water	57:50	0:0	2	;
+if	58:4	60:35	2	(p_vcdplayer -> i_lsn >= p_vcdplayer -> end_lsn)
+cond	58:9	58:44	3	p_vcdplayer -> i_lsn >= p_vcdplayer -> end_lsn
+water	58:9	0:0	4	p_vcdplayer
+op	58:20	0:0	4	->
+water	58:22	0:0	4	i_lsn
+op	58:28	0:0	4	>=
+water	58:31	0:0	4	p_vcdplayer
+op	58:42	0:0	4	->
+water	58:44	0:0	4	end_lsn
+stmts	60:6	60:35	3	
+goto	60:6	60:35	4	handle_item_continuation
+water	60:11	0:0	5	handle_item_continuation
+call	61:4	61:52	2	memcpy
+arg	61:12	61:17	3	p_buf
+water	61:12	0:0	4	p_buf
+arg	61:19	61:34	3	vcd_sector.data
+water	61:19	0:0	4	vcd_sector
+op	61:29	0:0	4	.
+water	61:30	0:0	4	data
+arg	61:36	61:52	3	M2F2_SECTOR_SIZE
+water	61:36	0:0	4	M2F2_SECTOR_SIZE
+water	61:53	0:0	2	;
+return	62:4	62:21	2	READ_BLOCK
+water	62:11	0:0	3	READ_BLOCK
+water	63:2	0:0	2	}

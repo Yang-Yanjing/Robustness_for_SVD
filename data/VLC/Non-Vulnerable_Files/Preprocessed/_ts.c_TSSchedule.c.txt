@@ -1,0 +1,267 @@
+func	2:0	47:0	0	static void	TSSchedule
+params	2:22	0:0	1	
+param	2:24	2:41	2	sout_mux_t *	p_mux
+param	2:43	2:74	2	sout_buffer_chain_t *	p_chain_ts
+param	3:24	3:44	2	mtime_t	i_pcr_length
+param	3:46	3:64	2	mtime_t	i_pcr_dts
+stmnts	0:0	46:60	1	
+decl	5:4	5:41	2	sout_mux_sys_t	*p_sys
+op	5:27	0:0	2	=
+water	5:29	0:0	2	p_mux
+op	5:34	0:0	2	->
+water	5:36	0:0	2	p_sys
+decl	6:4	6:33	2	sout_buffer_chain_t	new_chain
+decl	7:4	7:44	2	int	i_packet_count
+op	7:23	0:0	2	=
+water	7:25	0:0	2	p_chain_ts
+op	7:35	0:0	2	->
+water	7:37	0:0	2	i_depth
+call	8:4	8:32	2	BufferChainInit
+arg	8:21	8:32	3	&new_chain
+op	8:21	0:0	4	&
+water	8:22	0:0	4	new_chain
+water	8:33	0:0	2	;
+if	9:4	12:4	2	(i_pcr_length <= 0)
+cond	9:9	9:25	3	i_pcr_length <= 0
+water	9:9	0:0	4	i_pcr_length
+op	9:22	0:0	4	<=
+water	9:25	0:0	4	0
+stmts	10:4	12:4	3	
+water	10:4	0:0	4	{
+water	11:8	0:0	4	i_pcr_length
+op	11:21	0:0	4	=
+water	11:23	0:0	4	i_packet_count
+water	11:37	0:0	4	;
+water	12:4	0:0	4	}
+for	13:4	44:4	2	( int i = 0 ;i < i_packet_count;i ++)
+forinit	0:0	13:18	3	 int i = 0 ;
+decl	13:9	13:18	4	int	i
+op	13:15	0:0	4	=
+water	13:17	0:0	4	0
+cond	13:20	13:24	3	i < i_packet_count
+water	13:20	0:0	4	i
+op	13:22	0:0	4	<
+water	13:24	0:0	4	i_packet_count
+forexpr	13:40	13:41	3	i ++
+water	13:40	0:0	4	i
+op	13:41	0:0	4	++
+stmts	14:4	44:4	3	
+water	14:4	0:0	4	{
+decl	15:8	15:52	4	block_t	*p_ts
+op	15:22	0:0	4	=
+call	15:24	15:51	5	BufferChainGet
+arg	15:40	15:51	6	p_chain_ts
+water	15:40	0:0	7	p_chain_ts
+decl	16:8	16:73	4	mtime_t	i_new_dts
+op	16:26	0:0	4	=
+water	16:28	0:0	4	i_pcr_dts
+op	16:38	0:0	4	+
+water	16:40	0:0	4	i_pcr_length
+op	16:53	0:0	4	*
+water	16:55	0:0	4	i
+op	16:57	0:0	4	/
+water	16:59	0:0	4	i_packet_count
+call	17:8	17:44	4	BufferChainAppend
+arg	17:27	17:37	5	&new_chain
+op	17:27	0:0	6	&
+water	17:28	0:0	6	new_chain
+arg	17:39	17:44	5	p_ts
+water	17:39	0:0	6	p_ts
+water	17:45	0:0	4	;
+if	18:8	19:20	4	(! p_ts -> i_dts || p_ts -> i_dts + p_sys -> i_dts_delay * 2 / 3 >= i_new_dts)
+cond	18:12	18:70	5	! p_ts -> i_dts || p_ts -> i_dts + p_sys -> i_dts_delay * 2 / 3 >= i_new_dts
+op	18:12	0:0	6	!
+water	18:13	0:0	6	p_ts
+op	18:17	0:0	6	->
+water	18:19	0:0	6	i_dts
+op	18:25	0:0	6	||
+water	18:28	0:0	6	p_ts
+op	18:32	0:0	6	->
+water	18:34	0:0	6	i_dts
+op	18:40	0:0	6	+
+water	18:42	0:0	6	p_sys
+op	18:47	0:0	6	->
+water	18:49	0:0	6	i_dts_delay
+op	18:61	0:0	6	*
+water	18:63	0:0	6	2
+op	18:64	0:0	6	/
+water	18:65	0:0	6	3
+op	18:67	0:0	6	>=
+water	18:70	0:0	6	i_new_dts
+stmts	19:12	19:20	5	
+continue	19:12	19:20	6	
+decl	20:8	20:52	4	mtime_t	i_max_diff
+op	20:27	0:0	4	=
+water	20:29	0:0	4	i_new_dts
+op	20:39	0:0	4	-
+water	20:41	0:0	4	p_ts
+op	20:45	0:0	4	->
+water	20:47	0:0	4	i_dts
+decl	21:8	21:39	4	mtime_t	i_cut_dts
+op	21:26	0:0	4	=
+water	21:28	0:0	4	p_ts
+op	21:32	0:0	4	->
+water	21:34	0:0	4	i_dts
+water	22:8	0:0	4	p_ts
+op	22:13	0:0	4	=
+call	22:15	22:43	4	BufferChainPeek
+arg	22:32	22:43	5	p_chain_ts
+water	22:32	0:0	6	p_chain_ts
+water	22:44	0:0	4	;
+water	23:8	0:0	4	i
+op	23:9	0:0	4	++
+water	23:11	0:0	4	;
+water	24:8	0:0	4	i_new_dts
+op	24:18	0:0	4	=
+water	24:20	0:0	4	i_pcr_dts
+op	24:30	0:0	4	+
+water	24:32	0:0	4	i_pcr_length
+op	24:45	0:0	4	*
+water	24:47	0:0	4	i
+op	24:49	0:0	4	/
+water	24:51	0:0	4	i_packet_count
+water	24:65	0:0	4	;
+while	25:8	34:8	4	(p_ts != NULL && i_new_dts - p_ts -> i_dts >= i_max_diff)
+cond	25:16	25:59	5	p_ts != NULL && i_new_dts - p_ts -> i_dts >= i_max_diff
+water	25:16	0:0	6	p_ts
+op	25:21	0:0	6	!=
+water	25:24	0:0	6	NULL
+op	25:29	0:0	6	&&
+water	25:32	0:0	6	i_new_dts
+op	25:42	0:0	6	-
+water	25:44	0:0	6	p_ts
+op	25:48	0:0	6	->
+water	25:50	0:0	6	i_dts
+op	25:56	0:0	6	>=
+water	25:59	0:0	6	i_max_diff
+stmts	26:8	34:8	5	
+water	26:8	0:0	6	{
+water	27:12	0:0	6	p_ts
+op	27:17	0:0	6	=
+call	27:19	27:46	6	BufferChainGet
+arg	27:35	27:46	7	p_chain_ts
+water	27:35	0:0	8	p_chain_ts
+water	27:47	0:0	6	;
+water	28:12	0:0	6	i_max_diff
+op	28:23	0:0	6	=
+water	28:25	0:0	6	i_new_dts
+op	28:35	0:0	6	-
+water	28:37	0:0	6	p_ts
+op	28:41	0:0	6	->
+water	28:43	0:0	6	i_dts
+water	28:48	0:0	6	;
+water	29:12	0:0	6	i_cut_dts
+op	29:22	0:0	6	=
+water	29:24	0:0	6	p_ts
+op	29:28	0:0	6	->
+water	29:30	0:0	6	i_dts
+water	29:35	0:0	6	;
+call	30:12	30:48	6	BufferChainAppend
+arg	30:31	30:41	7	&new_chain
+op	30:31	0:0	8	&
+water	30:32	0:0	8	new_chain
+arg	30:43	30:48	7	p_ts
+water	30:43	0:0	8	p_ts
+water	30:49	0:0	6	;
+water	31:12	0:0	6	p_ts
+op	31:17	0:0	6	=
+call	31:19	31:47	6	BufferChainPeek
+arg	31:36	31:47	7	p_chain_ts
+water	31:36	0:0	8	p_chain_ts
+water	31:48	0:0	6	;
+water	32:12	0:0	6	i
+op	32:13	0:0	6	++
+water	32:15	0:0	6	;
+water	33:12	0:0	6	i_new_dts
+op	33:22	0:0	6	=
+water	33:24	0:0	6	i_pcr_dts
+op	33:34	0:0	6	+
+water	33:36	0:0	6	i_pcr_length
+op	33:49	0:0	6	*
+water	33:51	0:0	6	i
+op	33:53	0:0	6	/
+water	33:55	0:0	6	i_packet_count
+water	33:69	0:0	6	;
+water	34:8	0:0	6	}
+call	35:8	37:37	4	msg_Dbg
+arg	35:17	35:22	5	p_mux
+water	35:17	0:0	6	p_mux
+arg	35:24	35:71	5	"adjusting rate at %"PRId64"/%"PRId64" (%d/%d)"
+water	35:24	0:0	6	"adjusting rate at %"
+water	35:45	0:0	6	PRId64
+water	35:51	0:0	6	"/%"
+water	35:55	0:0	6	PRId64
+water	35:61	0:0	6	" (%d/%d)"
+arg	36:17	36:38	5	i_cut_dts-i_pcr_dts
+water	36:17	0:0	6	i_cut_dts
+op	36:27	0:0	6	-
+water	36:29	0:0	6	i_pcr_dts
+arg	36:40	36:52	5	i_pcr_length
+water	36:40	0:0	6	i_pcr_length
+arg	36:54	36:71	5	new_chain.i_depth
+water	36:54	0:0	6	new_chain
+op	36:63	0:0	6	.
+water	36:64	0:0	6	i_depth
+arg	37:17	37:37	5	p_chain_ts->i_depth
+water	37:17	0:0	6	p_chain_ts
+op	37:27	0:0	6	->
+water	37:29	0:0	6	i_depth
+water	37:38	0:0	4	;
+if	38:8	39:73	4	(new_chain . i_depth)
+cond	38:13	38:23	5	new_chain . i_depth
+water	38:13	0:0	6	new_chain
+op	38:22	0:0	6	.
+water	38:23	0:0	6	i_depth
+stmts	39:12	39:73	5	
+call	39:12	39:72	6	TSDate
+arg	39:20	39:25	7	p_mux
+water	39:20	0:0	8	p_mux
+arg	39:27	39:37	7	&new_chain
+op	39:27	0:0	8	&
+water	39:28	0:0	8	new_chain
+arg	39:39	39:60	7	i_cut_dts-i_pcr_dts
+water	39:39	0:0	8	i_cut_dts
+op	39:49	0:0	8	-
+water	39:51	0:0	8	i_pcr_dts
+arg	39:62	39:72	7	i_pcr_dts
+water	39:62	0:0	8	i_pcr_dts
+water	39:73	0:0	6	;
+if	40:8	42:35	4	(p_chain_ts -> i_depth)
+cond	40:13	40:25	5	p_chain_ts -> i_depth
+water	40:13	0:0	6	p_chain_ts
+op	40:23	0:0	6	->
+water	40:25	0:0	6	i_depth
+stmts	41:12	42:35	5	
+call	41:12	42:34	6	TSSchedule
+arg	41:24	41:29	7	p_mux
+water	41:24	0:0	8	p_mux
+arg	41:31	41:41	7	p_chain_ts
+water	41:31	0:0	8	p_chain_ts
+arg	41:43	41:79	7	i_pcr_dts+i_pcr_length-i_cut_dts
+water	41:43	0:0	8	i_pcr_dts
+op	41:53	0:0	8	+
+water	41:55	0:0	8	i_pcr_length
+op	41:68	0:0	8	-
+water	41:70	0:0	8	i_cut_dts
+arg	42:24	42:34	7	i_cut_dts
+water	42:24	0:0	8	i_cut_dts
+water	42:35	0:0	6	;
+return	43:8	43:14	4	
+water	44:4	0:0	4	}
+if	45:4	46:60	2	(new_chain . i_depth)
+cond	45:9	45:19	3	new_chain . i_depth
+water	45:9	0:0	4	new_chain
+op	45:18	0:0	4	.
+water	45:19	0:0	4	i_depth
+stmts	46:8	46:60	3	
+call	46:8	46:59	4	TSDate
+arg	46:16	46:21	5	p_mux
+water	46:16	0:0	6	p_mux
+arg	46:23	46:33	5	&new_chain
+op	46:23	0:0	6	&
+water	46:24	0:0	6	new_chain
+arg	46:35	46:47	5	i_pcr_length
+water	46:35	0:0	6	i_pcr_length
+arg	46:49	46:59	5	i_pcr_dts
+water	46:49	0:0	6	i_pcr_dts
+water	46:60	0:0	4	;

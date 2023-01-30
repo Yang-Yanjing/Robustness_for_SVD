@@ -1,0 +1,229 @@
+func	2:0	69:0	0	static int	rtp_packetize_spx
+params	2:28	0:0	1	
+param	2:30	2:54	2	sout_stream_id_sys_t *	id
+param	2:56	2:68	2	block_t *	in
+stmnts	0:0	68:22	1	
+decl	4:4	4:36	2	uint8_t	*p_buffer
+op	4:22	0:0	2	=
+water	4:24	0:0	2	in
+op	4:26	0:0	2	->
+water	4:28	0:0	2	p_buffer
+decl	5:4	5:54	2	int	i_data_size
+water	5:19	0:0	2	,
+decl	5:4	5:54	2	int	i_payload_size
+water	5:35	0:0	2	,
+decl	5:4	5:54	2	int	i_payload_padding
+water	6:4	0:0	2	i_data_size
+op	6:16	0:0	2	=
+water	6:18	0:0	2	i_payload_size
+op	6:33	0:0	2	=
+water	6:35	0:0	2	in
+op	6:37	0:0	2	->
+water	6:39	0:0	2	i_buffer
+water	6:47	0:0	2	;
+water	7:4	0:0	2	i_payload_padding
+op	7:22	0:0	2	=
+water	7:24	0:0	2	0
+water	7:25	0:0	2	;
+decl	8:4	8:18	2	block_t	*p_out
+if	9:4	13:4	2	(in -> i_buffer >rtp_mtu (id ))
+cond	9:9	9:35	3	in -> i_buffer >rtp_mtu (id )
+water	9:9	0:0	4	in
+op	9:11	0:0	4	->
+water	9:13	0:0	4	i_buffer
+op	9:22	0:0	4	>
+call	9:24	9:35	4	rtp_mtu
+arg	9:33	9:35	5	id
+water	9:33	0:0	6	id
+stmts	10:4	13:4	3	
+water	10:4	0:0	4	{
+call	11:8	11:24	4	block_Release
+arg	11:22	11:24	5	in
+water	11:22	0:0	6	in
+water	11:25	0:0	4	;
+return	12:8	12:26	4	VLC_SUCCESS
+water	12:15	0:0	5	VLC_SUCCESS
+water	13:4	0:0	4	}
+if	22:4	26:4	2	(i_payload_size % 4)
+cond	22:9	22:26	3	i_payload_size % 4
+water	22:9	0:0	4	i_payload_size
+op	22:24	0:0	4	%
+water	22:26	0:0	4	4
+stmts	23:4	26:4	3	
+water	23:4	0:0	4	{
+water	24:8	0:0	4	i_payload_padding
+op	24:26	0:0	4	=
+water	24:28	0:0	4	4
+op	24:30	0:0	4	-
+water	24:32	0:0	4	(
+water	24:34	0:0	4	i_payload_size
+op	24:49	0:0	4	%
+water	24:51	0:0	4	4
+water	24:53	0:0	4	)
+water	24:54	0:0	4	;
+water	25:8	0:0	4	i_payload_size
+op	25:23	0:0	4	+=
+water	25:26	0:0	4	i_payload_padding
+water	25:43	0:0	4	;
+water	26:4	0:0	4	}
+water	31:4	0:0	2	p_out
+op	31:10	0:0	2	=
+call	31:12	31:45	2	block_Alloc
+arg	31:25	31:45	3	12+i_payload_size
+water	31:25	0:0	4	12
+op	31:28	0:0	4	+
+water	31:30	0:0	4	i_payload_size
+water	31:46	0:0	2	;
+if	32:4	56:4	2	(i_payload_padding)
+cond	32:9	32:9	3	i_payload_padding
+water	32:9	0:0	4	i_payload_padding
+stmts	33:4	56:4	3	
+water	33:4	0:0	4	{
+decl	37:8	37:41	4	char	c_first_pad
+water	37:24	0:0	4	,
+decl	37:8	37:41	4	char	c_remaining_pad
+water	38:8	0:0	4	c_first_pad
+op	38:20	0:0	4	=
+water	38:22	0:0	4	0
+water	38:23	0:0	4	x7F
+water	38:26	0:0	4	;
+water	39:8	0:0	4	c_remaining_pad
+op	39:24	0:0	4	=
+water	39:26	0:0	4	0
+water	39:27	0:0	4	xFF
+water	39:30	0:0	4	;
+water	45:8	0:0	4	p_out
+op	45:13	0:0	4	->
+water	45:15	0:0	4	p_buffer
+op	45:23	0:0	4	[
+water	45:24	0:0	4	12
+op	45:27	0:0	4	+
+water	45:29	0:0	4	i_data_size
+op	45:40	0:0	4	]
+op	45:42	0:0	4	=
+water	45:44	0:0	4	c_first_pad
+water	45:55	0:0	4	;
+switch	46:8	55:8	4	(i_payload_padding)
+cond	46:16	46:16	5	i_payload_padding
+water	46:16	0:0	6	i_payload_padding
+stmts	47:8	55:8	5	
+water	47:8	0:0	6	{
+label	48:10	48:16	6	case 2 :
+water	49:12	0:0	6	p_out
+op	49:17	0:0	6	->
+water	49:19	0:0	6	p_buffer
+op	49:27	0:0	6	[
+water	49:28	0:0	6	12
+op	49:31	0:0	6	+
+water	49:33	0:0	6	i_data_size
+op	49:45	0:0	6	+
+water	49:47	0:0	6	1
+op	49:48	0:0	6	]
+op	49:50	0:0	6	=
+water	49:52	0:0	6	c_remaining_pad
+water	49:67	0:0	6	;
+break	50:12	50:17	6	
+label	51:10	51:16	6	case 3 :
+water	52:12	0:0	6	p_out
+op	52:17	0:0	6	->
+water	52:19	0:0	6	p_buffer
+op	52:27	0:0	6	[
+water	52:28	0:0	6	12
+op	52:31	0:0	6	+
+water	52:33	0:0	6	i_data_size
+op	52:45	0:0	6	+
+water	52:47	0:0	6	1
+op	52:48	0:0	6	]
+op	52:50	0:0	6	=
+water	52:52	0:0	6	c_remaining_pad
+water	52:67	0:0	6	;
+water	53:12	0:0	6	p_out
+op	53:17	0:0	6	->
+water	53:19	0:0	6	p_buffer
+op	53:27	0:0	6	[
+water	53:28	0:0	6	12
+op	53:31	0:0	6	+
+water	53:33	0:0	6	i_data_size
+op	53:45	0:0	6	+
+water	53:47	0:0	6	2
+op	53:48	0:0	6	]
+op	53:50	0:0	6	=
+water	53:52	0:0	6	c_remaining_pad
+water	53:67	0:0	6	;
+break	54:12	54:17	6	
+water	55:8	0:0	6	}
+water	56:4	0:0	4	}
+call	58:4	59:77	2	rtp_packetize_common
+arg	58:26	58:28	3	id
+water	58:26	0:0	4	id
+arg	58:30	58:35	3	p_out
+water	58:30	0:0	4	p_out
+arg	58:37	58:38	3	0
+water	58:37	0:0	4	0
+arg	59:24	59:77	3	(in->i_pts>VLC_TS_INVALID?in->i_pts:in->i_dts)
+water	59:24	0:0	4	(
+water	59:25	0:0	4	in
+op	59:27	0:0	4	->
+water	59:29	0:0	4	i_pts
+op	59:35	0:0	4	>
+water	59:37	0:0	4	VLC_TS_INVALID
+water	59:52	0:0	4	?
+water	59:54	0:0	4	in
+op	59:56	0:0	4	->
+water	59:58	0:0	4	i_pts
+water	59:64	0:0	4	:
+water	59:66	0:0	4	in
+op	59:68	0:0	4	->
+water	59:70	0:0	4	i_dts
+water	59:75	0:0	4	)
+water	59:78	0:0	2	;
+call	61:4	61:56	2	memcpy
+arg	61:12	61:32	3	&p_out->p_buffer[12]
+op	61:12	0:0	4	&
+water	61:13	0:0	4	p_out
+op	61:18	0:0	4	->
+water	61:20	0:0	4	p_buffer
+op	61:28	0:0	4	[
+water	61:29	0:0	4	12
+op	61:31	0:0	4	]
+arg	61:34	61:42	3	p_buffer
+water	61:34	0:0	4	p_buffer
+arg	61:44	61:56	3	i_data_size
+water	61:44	0:0	4	i_data_size
+water	61:57	0:0	2	;
+water	62:4	0:0	2	p_out
+op	62:9	0:0	2	->
+water	62:11	0:0	2	i_buffer
+op	62:20	0:0	2	=
+water	62:22	0:0	2	12
+op	62:25	0:0	2	+
+water	62:27	0:0	2	i_payload_size
+water	62:41	0:0	2	;
+water	63:4	0:0	2	p_out
+op	63:9	0:0	2	->
+water	63:11	0:0	2	i_dts
+op	63:17	0:0	2	=
+water	63:19	0:0	2	in
+op	63:21	0:0	2	->
+water	63:23	0:0	2	i_dts
+water	63:28	0:0	2	;
+water	64:4	0:0	2	p_out
+op	64:9	0:0	2	->
+water	64:11	0:0	2	i_length
+op	64:20	0:0	2	=
+water	64:22	0:0	2	in
+op	64:24	0:0	2	->
+water	64:26	0:0	2	i_length
+water	64:34	0:0	2	;
+call	65:4	65:20	2	block_Release
+arg	65:18	65:20	3	in
+water	65:18	0:0	4	in
+water	65:21	0:0	2	;
+call	67:4	67:34	2	rtp_packetize_send
+arg	67:24	67:26	3	id
+water	67:24	0:0	4	id
+arg	67:28	67:34	3	p_out
+water	67:28	0:0	4	p_out
+water	67:35	0:0	2	;
+return	68:4	68:22	2	VLC_SUCCESS
+water	68:11	0:0	3	VLC_SUCCESS

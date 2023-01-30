@@ -1,0 +1,760 @@
+func	2:0	142:0	0	static picture_t *	FilterPacked
+params	2:30	0:0	1	
+param	2:32	2:50	2	filter_t *	p_filter
+param	2:52	2:69	2	picture_t *	p_pic
+stmnts	0:0	141:48	1	
+decl	4:4	4:20	2	int	pi_luma[256]
+decl	5:4	5:21	2	int	pi_gamma[256]
+decl	6:4	6:23	2	picture_t	*p_outpic
+decl	7:4	7:41	2	uint8_t	*p_in
+water	7:17	0:0	2	,
+decl	7:4	7:41	2	uint8_t	*p_in_end
+water	7:28	0:0	2	,
+decl	7:4	7:41	2	uint8_t	*p_line_end
+decl	8:4	8:18	2	uint8_t	*p_out
+decl	9:4	9:42	2	int	i_y_offset
+water	9:18	0:0	2	,
+decl	9:4	9:42	2	int	i_u_offset
+water	9:30	0:0	2	,
+decl	9:4	9:42	2	int	i_v_offset
+decl	10:4	10:32	2	int	i_pitch
+water	10:15	0:0	2	,
+decl	10:4	10:32	2	int	i_visible_pitch
+decl	11:4	11:16	2	bool	b_thres
+decl	12:4	12:17	2	double	f_hue
+decl	13:4	13:19	2	double	f_gamma
+decl	14:4	14:25	2	int32_t	i_cont
+water	14:18	0:0	2	,
+decl	14:4	14:25	2	int32_t	i_lum
+decl	15:4	15:37	2	int	i_sat
+water	15:13	0:0	2	,
+decl	15:4	15:37	2	int	i_sin
+water	15:20	0:0	2	,
+decl	15:4	15:37	2	int	i_cos
+water	15:27	0:0	2	,
+decl	15:4	15:37	2	int	i_x
+water	15:32	0:0	2	,
+decl	15:4	15:37	2	int	i_y
+decl	16:4	16:9	2	int	i
+decl	17:4	17:41	2	filter_sys_t	*p_sys
+op	17:24	0:0	2	=
+water	17:26	0:0	2	p_filter
+op	17:34	0:0	2	->
+water	17:36	0:0	2	p_sys
+if	18:4	18:28	2	(! p_pic)
+cond	18:8	18:9	3	! p_pic
+op	18:8	0:0	4	!
+water	18:9	0:0	4	p_pic
+stmts	18:17	18:28	3	
+return	18:17	18:28	4	NULL
+water	18:24	0:0	5	NULL
+water	19:4	0:0	2	i_pitch
+op	19:12	0:0	2	=
+water	19:14	0:0	2	p_pic
+op	19:19	0:0	2	->
+water	19:21	0:0	2	p
+op	19:22	0:0	2	->
+water	19:24	0:0	2	i_pitch
+water	19:31	0:0	2	;
+water	20:4	0:0	2	i_visible_pitch
+op	20:20	0:0	2	=
+water	20:22	0:0	2	p_pic
+op	20:27	0:0	2	->
+water	20:29	0:0	2	p
+op	20:30	0:0	2	->
+water	20:32	0:0	2	i_visible_pitch
+water	20:47	0:0	2	;
+if	21:4	28:4	2	(GetPackedYuvOffsets (p_pic -> format . i_chroma ,& i_y_offset ,& i_u_offset ,& i_v_offset ) != VLC_SUCCESS)
+cond	21:8	22:59	3	GetPackedYuvOffsets (p_pic -> format . i_chroma ,& i_y_offset ,& i_u_offset ,& i_v_offset ) != VLC_SUCCESS
+call	21:8	22:54	4	GetPackedYuvOffsets
+arg	21:29	21:51	5	p_pic->format.i_chroma
+water	21:29	0:0	6	p_pic
+op	21:34	0:0	6	->
+water	21:36	0:0	6	format
+op	21:42	0:0	6	.
+water	21:43	0:0	6	i_chroma
+arg	21:53	21:64	5	&i_y_offset
+op	21:53	0:0	6	&
+water	21:54	0:0	6	i_y_offset
+arg	22:29	22:40	5	&i_u_offset
+op	22:29	0:0	6	&
+water	22:30	0:0	6	i_u_offset
+arg	22:42	22:54	5	&i_v_offset
+op	22:42	0:0	6	&
+water	22:43	0:0	6	i_v_offset
+op	22:56	0:0	4	!=
+water	22:59	0:0	4	VLC_SUCCESS
+stmts	23:4	28:4	3	
+water	23:4	0:0	4	{
+call	24:8	25:51	4	msg_Warn
+arg	24:18	24:26	5	p_filter
+water	24:18	0:0	6	p_filter
+arg	24:28	24:62	5	"Unsupported input chroma (%4.4s)"
+water	24:28	0:0	6	"Unsupported input chroma (%4.4s)"
+arg	25:18	25:51	5	(char*)&(p_pic->format.i_chroma)
+water	25:18	0:0	6	(
+water	25:19	0:0	6	char
+op	25:23	0:0	6	*
+water	25:24	0:0	6	)
+op	25:25	0:0	6	&
+water	25:26	0:0	6	(
+water	25:27	0:0	6	p_pic
+op	25:32	0:0	6	->
+water	25:34	0:0	6	format
+op	25:40	0:0	6	.
+water	25:41	0:0	6	i_chroma
+water	25:49	0:0	6	)
+water	25:52	0:0	4	;
+call	26:8	26:31	4	picture_Release
+arg	26:25	26:31	5	p_pic
+water	26:25	0:0	6	p_pic
+water	26:32	0:0	4	;
+return	27:8	27:19	4	NULL
+water	27:15	0:0	5	NULL
+water	28:4	0:0	4	}
+water	29:4	0:0	2	p_outpic
+op	29:13	0:0	2	=
+call	29:15	29:43	2	filter_NewPicture
+arg	29:34	29:43	3	p_filter
+water	29:34	0:0	4	p_filter
+water	29:44	0:0	2	;
+if	30:4	35:4	2	(! p_outpic)
+cond	30:8	30:9	3	! p_outpic
+op	30:8	0:0	4	!
+water	30:9	0:0	4	p_outpic
+stmts	31:4	35:4	3	
+water	31:4	0:0	4	{
+call	32:8	32:55	4	msg_Warn
+arg	32:18	32:26	5	p_filter
+water	32:18	0:0	6	p_filter
+arg	32:28	32:55	5	"can't get output picture"
+water	32:28	0:0	6	"can't get output picture"
+water	32:56	0:0	4	;
+call	33:8	33:31	4	picture_Release
+arg	33:25	33:31	5	p_pic
+water	33:25	0:0	6	p_pic
+water	33:32	0:0	4	;
+return	34:8	34:19	4	NULL
+water	34:15	0:0	5	NULL
+water	35:4	0:0	4	}
+call	37:4	37:33	2	vlc_mutex_lock
+arg	37:20	37:33	3	&p_sys->lock
+op	37:20	0:0	4	&
+water	37:21	0:0	4	p_sys
+op	37:26	0:0	4	->
+water	37:28	0:0	4	lock
+water	37:34	0:0	2	;
+water	38:4	0:0	2	i_cont
+op	38:11	0:0	2	=
+call	38:13	38:44	2	(int)
+arg	38:20	38:44	3	p_sys->f_contrast*255
+water	38:20	0:0	4	p_sys
+op	38:25	0:0	4	->
+water	38:27	0:0	4	f_contrast
+op	38:38	0:0	4	*
+water	38:40	0:0	4	255
+water	38:45	0:0	2	;
+water	39:4	0:0	2	i_lum
+op	39:10	0:0	2	=
+call	39:12	39:51	2	(int)
+arg	39:19	39:51	3	(p_sys->f_brightness-1.0)*255
+water	39:19	0:0	4	(
+water	39:20	0:0	4	p_sys
+op	39:25	0:0	4	->
+water	39:27	0:0	4	f_brightness
+op	39:40	0:0	4	-
+water	39:42	0:0	4	1
+op	39:43	0:0	4	.
+water	39:44	0:0	4	0
+water	39:45	0:0	4	)
+op	39:46	0:0	4	*
+water	39:47	0:0	4	255
+water	39:52	0:0	2	;
+water	40:4	0:0	2	f_hue
+op	40:10	0:0	2	=
+call	40:12	40:47	2	(float)
+arg	40:21	40:47	3	p_sys->i_hue*M_PI/180
+water	40:21	0:0	4	p_sys
+op	40:26	0:0	4	->
+water	40:28	0:0	4	i_hue
+op	40:34	0:0	4	*
+water	40:36	0:0	4	M_PI
+op	40:41	0:0	4	/
+water	40:43	0:0	4	180
+water	40:48	0:0	2	;
+water	41:4	0:0	2	i_sat
+op	41:10	0:0	2	=
+call	41:12	41:45	2	(int)
+arg	41:19	41:45	3	p_sys->f_saturation*256
+water	41:19	0:0	4	p_sys
+op	41:24	0:0	4	->
+water	41:26	0:0	4	f_saturation
+op	41:39	0:0	4	*
+water	41:41	0:0	4	256
+water	41:46	0:0	2	;
+water	42:4	0:0	2	f_gamma
+op	42:12	0:0	2	=
+water	42:14	0:0	2	1
+op	42:15	0:0	2	.
+water	42:16	0:0	2	0
+op	42:18	0:0	2	/
+water	42:20	0:0	2	p_sys
+op	42:25	0:0	2	->
+water	42:27	0:0	2	f_gamma
+water	42:34	0:0	2	;
+water	43:4	0:0	2	b_thres
+op	43:12	0:0	2	=
+water	43:14	0:0	2	p_sys
+op	43:19	0:0	2	->
+water	43:21	0:0	2	b_brightness_threshold
+water	43:43	0:0	2	;
+call	44:4	44:35	2	vlc_mutex_unlock
+arg	44:22	44:35	3	&p_sys->lock
+op	44:22	0:0	4	&
+water	44:23	0:0	4	p_sys
+op	44:28	0:0	4	->
+water	44:30	0:0	4	lock
+water	44:36	0:0	2	;
+if	48:4	63:4	2	(! b_thres)
+cond	48:8	48:9	3	! b_thres
+op	48:8	0:0	4	!
+water	48:9	0:0	4	b_thres
+stmts	49:4	63:4	3	
+water	49:4	0:0	4	{
+water	52:8	0:0	4	i_lum
+op	52:14	0:0	4	+=
+water	52:17	0:0	4	128
+op	52:21	0:0	4	-
+water	52:23	0:0	4	i_cont
+op	52:30	0:0	4	/
+water	52:32	0:0	4	2
+water	52:33	0:0	4	;
+for	54:8	57:8	4	(i = 0 ;i < 256;i ++)
+forinit	54:13	54:19	5	i = 0 ;
+water	54:13	0:0	6	i
+op	54:15	0:0	6	=
+water	54:17	0:0	6	0
+water	54:19	0:0	6	;
+cond	54:21	54:25	5	i < 256
+water	54:21	0:0	6	i
+op	54:23	0:0	6	<
+water	54:25	0:0	6	256
+forexpr	54:31	54:32	5	i ++
+water	54:31	0:0	6	i
+op	54:32	0:0	6	++
+stmts	55:8	57:8	5	
+water	55:8	0:0	6	{
+water	56:10	0:0	6	pi_gamma
+op	56:18	0:0	6	[
+water	56:20	0:0	6	i
+op	56:22	0:0	6	]
+op	56:24	0:0	6	=
+call	56:26	56:73	6	clip_uint8_vlc
+arg	56:42	56:73	7	pow(i/255.0,f_gamma)*255.0
+call	56:42	56:64	8	pow
+arg	56:46	56:55	9	i/255.0
+water	56:46	0:0	10	i
+op	56:48	0:0	10	/
+water	56:50	0:0	10	255
+op	56:53	0:0	10	.
+water	56:54	0:0	10	0
+arg	56:57	56:64	9	f_gamma
+water	56:57	0:0	10	f_gamma
+op	56:66	0:0	8	*
+water	56:68	0:0	8	255
+op	56:71	0:0	8	.
+water	56:72	0:0	8	0
+water	56:74	0:0	6	;
+water	57:8	0:0	6	}
+for	59:8	62:8	4	(i = 0 ;i < 256;i ++)
+forinit	59:13	59:19	5	i = 0 ;
+water	59:13	0:0	6	i
+op	59:15	0:0	6	=
+water	59:17	0:0	6	0
+water	59:19	0:0	6	;
+cond	59:21	59:25	5	i < 256
+water	59:21	0:0	6	i
+op	59:23	0:0	6	<
+water	59:25	0:0	6	256
+forexpr	59:31	59:32	5	i ++
+water	59:31	0:0	6	i
+op	59:32	0:0	6	++
+stmts	60:8	62:8	5	
+water	60:8	0:0	6	{
+water	61:12	0:0	6	pi_luma
+op	61:19	0:0	6	[
+water	61:21	0:0	6	i
+op	61:23	0:0	6	]
+op	61:25	0:0	6	=
+water	61:27	0:0	6	pi_gamma
+op	61:35	0:0	6	[
+call	61:36	61:76	6	clip_uint8_vlc
+arg	61:52	61:76	7	i_lum+i_cont*i/256
+water	61:52	0:0	8	i_lum
+op	61:58	0:0	8	+
+water	61:60	0:0	8	i_cont
+op	61:67	0:0	8	*
+water	61:69	0:0	8	i
+op	61:71	0:0	8	/
+water	61:73	0:0	8	256
+op	61:77	0:0	6	]
+water	61:78	0:0	6	;
+water	62:8	0:0	6	}
+water	63:4	0:0	4	}
+else	64:4	78:4	2
+stmts	65:4	78:4	3	
+water	65:4	0:0	4	{
+for	70:8	73:8	4	(i = 0 ;i < 256;i ++)
+forinit	70:13	70:19	5	i = 0 ;
+water	70:13	0:0	6	i
+op	70:15	0:0	6	=
+water	70:17	0:0	6	0
+water	70:19	0:0	6	;
+cond	70:21	70:25	5	i < 256
+water	70:21	0:0	6	i
+op	70:23	0:0	6	<
+water	70:25	0:0	6	256
+forexpr	70:31	70:32	5	i ++
+water	70:31	0:0	6	i
+op	70:32	0:0	6	++
+stmts	71:8	73:8	5	
+water	71:8	0:0	6	{
+water	72:12	0:0	6	pi_luma
+op	72:19	0:0	6	[
+water	72:21	0:0	6	i
+op	72:23	0:0	6	]
+op	72:25	0:0	6	=
+water	72:27	0:0	6	(
+water	72:28	0:0	6	i
+op	72:30	0:0	6	<
+water	72:32	0:0	6	i_lum
+water	72:37	0:0	6	)
+water	72:39	0:0	6	?
+water	72:41	0:0	6	0
+water	72:43	0:0	6	:
+water	72:45	0:0	6	255
+water	72:48	0:0	6	;
+water	73:8	0:0	6	}
+water	77:8	0:0	4	i_sat
+op	77:14	0:0	4	=
+water	77:16	0:0	4	0
+water	77:17	0:0	4	;
+water	78:4	0:0	4	}
+water	82:4	0:0	2	p_in
+op	82:9	0:0	2	=
+water	82:11	0:0	2	p_pic
+op	82:16	0:0	2	->
+water	82:18	0:0	2	p
+op	82:19	0:0	2	->
+water	82:21	0:0	2	p_pixels
+op	82:30	0:0	2	+
+water	82:32	0:0	2	i_y_offset
+water	82:42	0:0	2	;
+water	83:4	0:0	2	p_in_end
+op	83:13	0:0	2	=
+water	83:15	0:0	2	p_in
+op	83:20	0:0	2	+
+water	83:22	0:0	2	p_pic
+op	83:27	0:0	2	->
+water	83:29	0:0	2	p
+op	83:30	0:0	2	->
+water	83:32	0:0	2	i_visible_lines
+op	83:48	0:0	2	*
+water	83:50	0:0	2	p_pic
+op	83:55	0:0	2	->
+water	83:57	0:0	2	p
+op	83:58	0:0	2	->
+water	83:60	0:0	2	i_pitch
+op	83:68	0:0	2	-
+water	83:70	0:0	2	8
+op	83:72	0:0	2	*
+water	83:74	0:0	2	4
+water	83:75	0:0	2	;
+water	84:4	0:0	2	p_out
+op	84:10	0:0	2	=
+water	84:12	0:0	2	p_outpic
+op	84:20	0:0	2	->
+water	84:22	0:0	2	p
+op	84:23	0:0	2	->
+water	84:25	0:0	2	p_pixels
+op	84:34	0:0	2	+
+water	84:36	0:0	2	i_y_offset
+water	84:46	0:0	2	;
+for	85:4	107:4	2	(;p_in < p_in_end;)
+forinit	85:9	85:9	3	;
+water	85:9	0:0	4	;
+cond	85:11	85:18	3	p_in < p_in_end
+water	85:11	0:0	4	p_in
+op	85:16	0:0	4	<
+water	85:18	0:0	4	p_in_end
+forexpr	0:0	0:0	3	
+stmts	86:4	107:4	3	
+water	86:4	0:0	4	{
+water	87:8	0:0	4	p_line_end
+op	87:19	0:0	4	=
+water	87:21	0:0	4	p_in
+op	87:26	0:0	4	+
+water	87:28	0:0	4	i_visible_pitch
+op	87:44	0:0	4	-
+water	87:46	0:0	4	8
+op	87:48	0:0	4	*
+water	87:50	0:0	4	4
+water	87:51	0:0	4	;
+for	88:8	99:8	4	(;p_in < p_line_end;)
+forinit	88:13	88:13	5	;
+water	88:13	0:0	6	;
+cond	88:15	88:22	5	p_in < p_line_end
+water	88:15	0:0	6	p_in
+op	88:20	0:0	6	<
+water	88:22	0:0	6	p_line_end
+forexpr	0:0	0:0	5	
+stmts	89:8	99:8	5	
+water	89:8	0:0	6	{
+op	91:12	0:0	6	*
+water	91:13	0:0	6	p_out
+op	91:19	0:0	6	=
+water	91:21	0:0	6	pi_luma
+op	91:28	0:0	6	[
+op	91:30	0:0	6	*
+water	91:31	0:0	6	p_in
+op	91:36	0:0	6	]
+water	91:37	0:0	6	;
+water	91:39	0:0	6	p_in
+op	91:44	0:0	6	+=
+water	91:47	0:0	6	2
+water	91:48	0:0	6	;
+water	91:50	0:0	6	p_out
+op	91:56	0:0	6	+=
+water	91:59	0:0	6	2
+water	91:60	0:0	6	;
+op	92:12	0:0	6	*
+water	92:13	0:0	6	p_out
+op	92:19	0:0	6	=
+water	92:21	0:0	6	pi_luma
+op	92:28	0:0	6	[
+op	92:30	0:0	6	*
+water	92:31	0:0	6	p_in
+op	92:36	0:0	6	]
+water	92:37	0:0	6	;
+water	92:39	0:0	6	p_in
+op	92:44	0:0	6	+=
+water	92:47	0:0	6	2
+water	92:48	0:0	6	;
+water	92:50	0:0	6	p_out
+op	92:56	0:0	6	+=
+water	92:59	0:0	6	2
+water	92:60	0:0	6	;
+op	93:12	0:0	6	*
+water	93:13	0:0	6	p_out
+op	93:19	0:0	6	=
+water	93:21	0:0	6	pi_luma
+op	93:28	0:0	6	[
+op	93:30	0:0	6	*
+water	93:31	0:0	6	p_in
+op	93:36	0:0	6	]
+water	93:37	0:0	6	;
+water	93:39	0:0	6	p_in
+op	93:44	0:0	6	+=
+water	93:47	0:0	6	2
+water	93:48	0:0	6	;
+water	93:50	0:0	6	p_out
+op	93:56	0:0	6	+=
+water	93:59	0:0	6	2
+water	93:60	0:0	6	;
+op	94:12	0:0	6	*
+water	94:13	0:0	6	p_out
+op	94:19	0:0	6	=
+water	94:21	0:0	6	pi_luma
+op	94:28	0:0	6	[
+op	94:30	0:0	6	*
+water	94:31	0:0	6	p_in
+op	94:36	0:0	6	]
+water	94:37	0:0	6	;
+water	94:39	0:0	6	p_in
+op	94:44	0:0	6	+=
+water	94:47	0:0	6	2
+water	94:48	0:0	6	;
+water	94:50	0:0	6	p_out
+op	94:56	0:0	6	+=
+water	94:59	0:0	6	2
+water	94:60	0:0	6	;
+op	95:12	0:0	6	*
+water	95:13	0:0	6	p_out
+op	95:19	0:0	6	=
+water	95:21	0:0	6	pi_luma
+op	95:28	0:0	6	[
+op	95:30	0:0	6	*
+water	95:31	0:0	6	p_in
+op	95:36	0:0	6	]
+water	95:37	0:0	6	;
+water	95:39	0:0	6	p_in
+op	95:44	0:0	6	+=
+water	95:47	0:0	6	2
+water	95:48	0:0	6	;
+water	95:50	0:0	6	p_out
+op	95:56	0:0	6	+=
+water	95:59	0:0	6	2
+water	95:60	0:0	6	;
+op	96:12	0:0	6	*
+water	96:13	0:0	6	p_out
+op	96:19	0:0	6	=
+water	96:21	0:0	6	pi_luma
+op	96:28	0:0	6	[
+op	96:30	0:0	6	*
+water	96:31	0:0	6	p_in
+op	96:36	0:0	6	]
+water	96:37	0:0	6	;
+water	96:39	0:0	6	p_in
+op	96:44	0:0	6	+=
+water	96:47	0:0	6	2
+water	96:48	0:0	6	;
+water	96:50	0:0	6	p_out
+op	96:56	0:0	6	+=
+water	96:59	0:0	6	2
+water	96:60	0:0	6	;
+op	97:12	0:0	6	*
+water	97:13	0:0	6	p_out
+op	97:19	0:0	6	=
+water	97:21	0:0	6	pi_luma
+op	97:28	0:0	6	[
+op	97:30	0:0	6	*
+water	97:31	0:0	6	p_in
+op	97:36	0:0	6	]
+water	97:37	0:0	6	;
+water	97:39	0:0	6	p_in
+op	97:44	0:0	6	+=
+water	97:47	0:0	6	2
+water	97:48	0:0	6	;
+water	97:50	0:0	6	p_out
+op	97:56	0:0	6	+=
+water	97:59	0:0	6	2
+water	97:60	0:0	6	;
+op	98:12	0:0	6	*
+water	98:13	0:0	6	p_out
+op	98:19	0:0	6	=
+water	98:21	0:0	6	pi_luma
+op	98:28	0:0	6	[
+op	98:30	0:0	6	*
+water	98:31	0:0	6	p_in
+op	98:36	0:0	6	]
+water	98:37	0:0	6	;
+water	98:39	0:0	6	p_in
+op	98:44	0:0	6	+=
+water	98:47	0:0	6	2
+water	98:48	0:0	6	;
+water	98:50	0:0	6	p_out
+op	98:56	0:0	6	+=
+water	98:59	0:0	6	2
+water	98:60	0:0	6	;
+water	99:8	0:0	6	}
+water	100:8	0:0	4	p_line_end
+op	100:19	0:0	4	+=
+water	100:22	0:0	4	8
+op	100:24	0:0	4	*
+water	100:26	0:0	4	4
+water	100:27	0:0	4	;
+for	101:8	104:8	4	(;p_in < p_line_end;)
+forinit	101:13	101:13	5	;
+water	101:13	0:0	6	;
+cond	101:15	101:22	5	p_in < p_line_end
+water	101:15	0:0	6	p_in
+op	101:20	0:0	6	<
+water	101:22	0:0	6	p_line_end
+forexpr	0:0	0:0	5	
+stmts	102:8	104:8	5	
+water	102:8	0:0	6	{
+op	103:12	0:0	6	*
+water	103:13	0:0	6	p_out
+op	103:19	0:0	6	=
+water	103:21	0:0	6	pi_luma
+op	103:28	0:0	6	[
+op	103:30	0:0	6	*
+water	103:31	0:0	6	p_in
+op	103:36	0:0	6	]
+water	103:37	0:0	6	;
+water	103:39	0:0	6	p_in
+op	103:44	0:0	6	+=
+water	103:47	0:0	6	2
+water	103:48	0:0	6	;
+water	103:50	0:0	6	p_out
+op	103:56	0:0	6	+=
+water	103:59	0:0	6	2
+water	103:60	0:0	6	;
+water	104:8	0:0	6	}
+water	105:8	0:0	4	p_in
+op	105:13	0:0	4	+=
+water	105:16	0:0	4	i_pitch
+op	105:24	0:0	4	-
+water	105:26	0:0	4	p_pic
+op	105:31	0:0	4	->
+water	105:33	0:0	4	p
+op	105:34	0:0	4	->
+water	105:36	0:0	4	i_visible_pitch
+water	105:51	0:0	4	;
+water	106:8	0:0	4	p_out
+op	106:14	0:0	4	+=
+water	106:17	0:0	4	i_pitch
+op	106:25	0:0	4	-
+water	106:27	0:0	4	p_outpic
+op	106:35	0:0	4	->
+water	106:37	0:0	4	p
+op	106:38	0:0	4	->
+water	106:40	0:0	4	i_visible_pitch
+water	106:55	0:0	4	;
+water	107:4	0:0	4	}
+water	111:4	0:0	2	i_sin
+op	111:10	0:0	2	=
+call	111:12	111:21	2	sin
+arg	111:16	111:21	3	f_hue
+water	111:16	0:0	4	f_hue
+op	111:23	0:0	2	*
+water	111:25	0:0	2	256
+water	111:28	0:0	2	;
+water	112:4	0:0	2	i_cos
+op	112:10	0:0	2	=
+call	112:12	112:21	2	cos
+arg	112:16	112:21	3	f_hue
+water	112:16	0:0	4	f_hue
+op	112:23	0:0	2	*
+water	112:25	0:0	2	256
+water	112:28	0:0	2	;
+water	113:4	0:0	2	i_x
+op	113:8	0:0	2	=
+water	113:10	0:0	2	(
+call	113:12	113:21	2	cos
+arg	113:16	113:21	3	f_hue
+water	113:16	0:0	4	f_hue
+op	113:23	0:0	2	+
+call	113:25	113:34	2	sin
+arg	113:29	113:34	3	f_hue
+water	113:29	0:0	4	f_hue
+water	113:36	0:0	2	)
+op	113:38	0:0	2	*
+water	113:40	0:0	2	32768
+water	113:45	0:0	2	;
+water	114:4	0:0	2	i_y
+op	114:8	0:0	2	=
+water	114:10	0:0	2	(
+call	114:12	114:21	2	cos
+arg	114:16	114:21	3	f_hue
+water	114:16	0:0	4	f_hue
+op	114:23	0:0	2	-
+call	114:25	114:34	2	sin
+arg	114:29	114:34	3	f_hue
+water	114:29	0:0	4	f_hue
+water	114:36	0:0	2	)
+op	114:38	0:0	2	*
+water	114:40	0:0	2	32768
+water	114:45	0:0	2	;
+if	115:4	127:4	2	(i_sat > 256)
+cond	115:9	115:17	3	i_sat > 256
+water	115:9	0:0	4	i_sat
+op	115:15	0:0	4	>
+water	115:17	0:0	4	256
+stmts	116:4	127:4	3	
+water	116:4	0:0	4	{
+if	117:8	126:8	4	(p_sys -> pf_process_sat_hue_clip (p_pic ,p_outpic ,i_sin ,i_cos ,i_sat ,i_x ,i_y ) != VLC_SUCCESS)
+cond	117:13	118:59	5	p_sys -> pf_process_sat_hue_clip (p_pic ,p_outpic ,i_sin ,i_cos ,i_sat ,i_x ,i_y ) != VLC_SUCCESS
+call	117:13	118:54	6	p_sys->pf_process_sat_hue_clip
+arg	117:45	117:50	7	p_pic
+water	117:45	0:0	8	p_pic
+arg	117:52	117:60	7	p_outpic
+water	117:52	0:0	8	p_outpic
+arg	117:62	117:67	7	i_sin
+water	117:62	0:0	8	i_sin
+arg	117:69	117:74	7	i_cos
+water	117:69	0:0	8	i_cos
+arg	117:76	117:81	7	i_sat
+water	117:76	0:0	8	i_sat
+arg	118:45	118:48	7	i_x
+water	118:45	0:0	8	i_x
+arg	118:50	118:54	7	i_y
+water	118:50	0:0	8	i_y
+op	118:56	0:0	6	!=
+water	118:59	0:0	6	VLC_SUCCESS
+stmts	119:8	126:8	5	
+water	119:8	0:0	6	{
+call	122:12	123:55	6	msg_Warn
+arg	122:22	122:30	7	p_filter
+water	122:22	0:0	8	p_filter
+arg	122:32	122:66	7	"Unsupported input chroma (%4.4s)"
+water	122:32	0:0	8	"Unsupported input chroma (%4.4s)"
+arg	123:22	123:55	7	(char*)&(p_pic->format.i_chroma)
+water	123:22	0:0	8	(
+water	123:23	0:0	8	char
+op	123:27	0:0	8	*
+water	123:28	0:0	8	)
+op	123:29	0:0	8	&
+water	123:30	0:0	8	(
+water	123:31	0:0	8	p_pic
+op	123:36	0:0	8	->
+water	123:38	0:0	8	format
+op	123:44	0:0	8	.
+water	123:45	0:0	8	i_chroma
+water	123:53	0:0	8	)
+water	123:56	0:0	6	;
+call	124:12	124:35	6	picture_Release
+arg	124:29	124:35	7	p_pic
+water	124:29	0:0	8	p_pic
+water	124:36	0:0	6	;
+return	125:12	125:23	6	NULL
+water	125:19	0:0	7	NULL
+water	126:8	0:0	6	}
+water	127:4	0:0	4	}
+else	128:4	140:4	2
+stmts	129:4	140:4	3	
+water	129:4	0:0	4	{
+if	130:8	139:8	4	(p_sys -> pf_process_sat_hue (p_pic ,p_outpic ,i_sin ,i_cos ,i_sat ,i_x ,i_y ) != VLC_SUCCESS)
+cond	130:13	131:54	5	p_sys -> pf_process_sat_hue (p_pic ,p_outpic ,i_sin ,i_cos ,i_sat ,i_x ,i_y ) != VLC_SUCCESS
+call	130:13	131:49	6	p_sys->pf_process_sat_hue
+arg	130:40	130:45	7	p_pic
+water	130:40	0:0	8	p_pic
+arg	130:47	130:55	7	p_outpic
+water	130:47	0:0	8	p_outpic
+arg	130:57	130:62	7	i_sin
+water	130:57	0:0	8	i_sin
+arg	130:64	130:69	7	i_cos
+water	130:64	0:0	8	i_cos
+arg	130:71	130:76	7	i_sat
+water	130:71	0:0	8	i_sat
+arg	131:40	131:43	7	i_x
+water	131:40	0:0	8	i_x
+arg	131:45	131:49	7	i_y
+water	131:45	0:0	8	i_y
+op	131:51	0:0	6	!=
+water	131:54	0:0	6	VLC_SUCCESS
+stmts	132:8	139:8	5	
+water	132:8	0:0	6	{
+call	135:12	136:55	6	msg_Warn
+arg	135:22	135:30	7	p_filter
+water	135:22	0:0	8	p_filter
+arg	135:32	135:66	7	"Unsupported input chroma (%4.4s)"
+water	135:32	0:0	8	"Unsupported input chroma (%4.4s)"
+arg	136:22	136:55	7	(char*)&(p_pic->format.i_chroma)
+water	136:22	0:0	8	(
+water	136:23	0:0	8	char
+op	136:27	0:0	8	*
+water	136:28	0:0	8	)
+op	136:29	0:0	8	&
+water	136:30	0:0	8	(
+water	136:31	0:0	8	p_pic
+op	136:36	0:0	8	->
+water	136:38	0:0	8	format
+op	136:44	0:0	8	.
+water	136:45	0:0	8	i_chroma
+water	136:53	0:0	8	)
+water	136:56	0:0	6	;
+call	137:12	137:35	6	picture_Release
+arg	137:29	137:35	7	p_pic
+water	137:29	0:0	8	p_pic
+water	137:36	0:0	6	;
+return	138:12	138:23	6	NULL
+water	138:19	0:0	7	NULL
+water	139:8	0:0	6	}
+water	140:4	0:0	4	}
+return	141:4	141:48	2	CopyInfoAndRelease(p_outpic,p_pic)
+call	141:11	141:47	3	CopyInfoAndRelease
+arg	141:31	141:39	4	p_outpic
+water	141:31	0:0	5	p_outpic
+arg	141:41	141:47	4	p_pic
+water	141:41	0:0	5	p_pic

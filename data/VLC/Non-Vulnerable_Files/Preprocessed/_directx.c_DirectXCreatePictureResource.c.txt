@@ -1,0 +1,188 @@
+func	2:0	42:0	0	static int	DirectXCreatePictureResource
+params	2:39	0:0	1	
+param	2:40	2:58	2	vout_display_t *	vd
+param	3:40	3:57	2	bool *	use_overlay
+param	4:40	4:59	2	video_format_t *	fmt
+stmnts	0:0	41:51	1	
+decl	6:4	6:37	2	vout_display_sys_t	*sys
+op	6:28	0:0	2	=
+water	6:30	0:0	2	vd
+op	6:32	0:0	2	->
+water	6:34	0:0	2	sys
+decl	8:4	8:54	2	picture_sys_t	*picsys
+op	8:26	0:0	2	=
+call	8:28	8:53	3	calloc
+arg	8:35	8:36	4	1
+water	8:35	0:0	5	1
+arg	8:38	8:53	4	sizeof(*picsys)
+op	8:38	0:0	5	sizeof
+water	8:44	0:0	5	(
+op	8:45	0:0	5	*
+water	8:46	0:0	5	picsys
+water	8:52	0:0	5	)
+if	9:4	10:25	2	(unlikely (picsys == NULL ))
+cond	9:8	9:31	3	unlikely (picsys == NULL )
+call	9:8	9:31	4	unlikely
+arg	9:17	9:31	5	picsys==NULL
+water	9:17	0:0	6	picsys
+op	9:24	0:0	6	==
+water	9:27	0:0	6	NULL
+stmts	10:8	10:25	3	
+return	10:8	10:25	4	VLC_ENOMEM
+water	10:15	0:0	5	VLC_ENOMEM
+water	11:4	0:0	2	sys
+op	11:7	0:0	2	->
+water	11:9	0:0	2	picsys
+op	11:16	0:0	2	=
+water	11:18	0:0	2	picsys
+water	11:24	0:0	2	;
+decl	13:4	15:62	2	bool	allow_hw_yuv
+op	13:23	0:0	2	=
+water	13:25	0:0	2	sys
+op	13:28	0:0	2	->
+water	13:30	0:0	2	can_blit_fourcc
+op	13:46	0:0	2	&&
+call	14:25	14:55	3	vlc_fourcc_IsYUV
+arg	14:42	14:55	4	fmt->i_chroma
+water	14:42	0:0	5	fmt
+op	14:45	0:0	5	->
+water	14:47	0:0	5	i_chroma
+op	14:57	0:0	2	&&
+call	15:25	15:61	3	var_InheritBool
+arg	15:41	15:43	4	vd
+water	15:41	0:0	5	vd
+arg	15:45	15:61	4	"directx-hw-yuv"
+water	15:45	0:0	5	"directx-hw-yuv"
+decl	16:4	16:55	2	bool	allow_overlay
+op	16:23	0:0	2	=
+call	16:25	16:54	3	var_InheritBool
+arg	16:41	16:43	4	vd
+water	16:41	0:0	5	vd
+arg	16:45	16:54	4	"overlay"
+water	16:45	0:0	5	"overlay"
+if	18:4	39:4	2	(allow_hw_yuv)
+cond	18:8	18:8	3	allow_hw_yuv
+water	18:8	0:0	4	allow_hw_yuv
+stmts	18:22	39:4	3	
+water	18:22	0:0	4	{
+decl	19:8	19:75	4	const vlc_fourcc_t	*list
+op	19:33	0:0	4	=
+call	19:35	19:74	5	vlc_fourcc_GetYUVFallback
+arg	19:61	19:74	6	fmt->i_chroma
+water	19:61	0:0	7	fmt
+op	19:64	0:0	7	->
+water	19:66	0:0	7	i_chroma
+for	21:8	38:8	4	(unsigned pass = allow_overlay ? 0 : 1 ;pass < 2;pass ++)
+forinit	21:13	21:50	5	unsigned pass = allow_overlay ? 0 : 1 ;
+water	21:13	0:0	6	unsigned
+water	21:22	0:0	6	pass
+op	21:27	0:0	6	=
+water	21:29	0:0	6	allow_overlay
+water	21:43	0:0	6	?
+water	21:45	0:0	6	0
+water	21:47	0:0	6	:
+water	21:49	0:0	6	1
+water	21:50	0:0	6	;
+cond	21:52	21:59	5	pass < 2
+water	21:52	0:0	6	pass
+op	21:57	0:0	6	<
+water	21:59	0:0	6	2
+forexpr	21:62	21:66	5	pass ++
+water	21:62	0:0	6	pass
+op	21:66	0:0	6	++
+stmts	21:70	38:8	5	
+water	21:70	0:0	6	{
+for	22:12	37:12	6	(unsigned i = 0 ;list [ i ] != 0;i ++)
+forinit	22:17	22:31	7	unsigned i = 0 ;
+water	22:17	0:0	8	unsigned
+water	22:26	0:0	8	i
+op	22:28	0:0	8	=
+water	22:30	0:0	8	0
+water	22:31	0:0	8	;
+cond	22:33	22:44	7	list [ i ] != 0
+water	22:33	0:0	8	list
+op	22:37	0:0	8	[
+water	22:38	0:0	8	i
+op	22:39	0:0	8	]
+op	22:41	0:0	8	!=
+water	22:44	0:0	8	0
+forexpr	22:47	22:48	7	i ++
+water	22:47	0:0	8	i
+op	22:48	0:0	8	++
+stmts	22:52	37:12	7	
+water	22:52	0:0	8	{
+decl	23:16	23:62	8	const DWORD	fourcc
+op	23:35	0:0	8	=
+call	23:37	23:61	9	DirectXGetFourcc
+arg	23:54	23:61	10	list[i]
+water	23:54	0:0	11	list
+op	23:58	0:0	11	[
+water	23:59	0:0	11	i
+op	23:60	0:0	11	]
+if	24:16	25:28	8	(! fourcc)
+cond	24:20	24:21	9	! fourcc
+op	24:20	0:0	10	!
+water	24:21	0:0	10	fourcc
+stmts	25:20	25:28	9	
+continue	25:20	25:28	10	
+if	26:16	29:16	8	(pass == 0)
+cond	26:20	26:28	9	pass == 0
+water	26:20	0:0	10	pass
+op	26:25	0:0	10	==
+water	26:28	0:0	10	0
+stmts	26:31	29:16	9	
+water	26:31	0:0	10	{
+if	27:20	28:32	10	(DirectXCreatePictureResourceYuvOverlay (vd ,fmt ,fourcc ))
+cond	27:24	27:78	11	DirectXCreatePictureResourceYuvOverlay (vd ,fmt ,fourcc )
+call	27:24	27:78	12	DirectXCreatePictureResourceYuvOverlay
+arg	27:63	27:65	13	vd
+water	27:63	0:0	14	vd
+arg	27:67	27:70	13	fmt
+water	27:67	0:0	14	fmt
+arg	27:72	27:78	13	fourcc
+water	27:72	0:0	14	fourcc
+stmts	28:24	28:32	11	
+continue	28:24	28:32	12	
+water	29:16	0:0	10	}
+else	29:18	32:16	8
+stmts	29:23	32:16	9	
+water	29:23	0:0	10	{
+if	30:20	31:32	10	(DirectXCreatePictureResourceYuv (vd ,fmt ,fourcc ))
+cond	30:24	30:71	11	DirectXCreatePictureResourceYuv (vd ,fmt ,fourcc )
+call	30:24	30:71	12	DirectXCreatePictureResourceYuv
+arg	30:56	30:58	13	vd
+water	30:56	0:0	14	vd
+arg	30:60	30:63	13	fmt
+water	30:60	0:0	14	fmt
+arg	30:65	30:71	13	fourcc
+water	30:65	0:0	14	fourcc
+stmts	31:24	31:32	11	
+continue	31:24	31:32	12	
+water	32:16	0:0	10	}
+op	34:16	0:0	8	*
+water	34:17	0:0	8	use_overlay
+op	34:29	0:0	8	=
+water	34:31	0:0	8	pass
+op	34:36	0:0	8	==
+water	34:39	0:0	8	0
+water	34:40	0:0	8	;
+water	35:16	0:0	8	fmt
+op	35:19	0:0	8	->
+water	35:21	0:0	8	i_chroma
+op	35:30	0:0	8	=
+water	35:32	0:0	8	list
+op	35:36	0:0	8	[
+water	35:37	0:0	8	i
+op	35:38	0:0	8	]
+water	35:39	0:0	8	;
+return	36:16	36:34	8	VLC_SUCCESS
+water	36:23	0:0	9	VLC_SUCCESS
+water	37:12	0:0	8	}
+water	38:8	0:0	6	}
+water	39:4	0:0	4	}
+return	41:4	41:51	2	DirectXCreatePictureResourceRgb(vd,fmt)
+call	41:11	41:50	3	DirectXCreatePictureResourceRgb
+arg	41:43	41:45	4	vd
+water	41:43	0:0	5	vd
+arg	41:47	41:50	4	fmt
+water	41:47	0:0	5	fmt

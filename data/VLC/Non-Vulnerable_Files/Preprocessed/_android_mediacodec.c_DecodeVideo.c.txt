@@ -1,0 +1,680 @@
+func	2:0	134:0	0	static picture_t *	DecodeVideo
+params	2:29	0:0	1	
+param	2:30	2:46	2	decoder_t *	p_dec
+param	2:48	2:66	2	block_t * *	pp_block
+stmnts	0:0	133:16	1	
+decl	4:4	4:39	2	decoder_sys_t	*p_sys
+op	4:25	0:0	2	=
+water	4:27	0:0	2	p_dec
+op	4:32	0:0	2	->
+water	4:34	0:0	2	p_sys
+decl	5:4	5:27	2	picture_t	*p_pic
+op	5:21	0:0	2	=
+water	5:23	0:0	2	NULL
+decl	6:4	6:22	2	JNIEnv	*env
+op	6:16	0:0	2	=
+water	6:18	0:0	2	NULL
+decl	7:4	7:52	2	struct H264ConvertState	convert_state
+op	7:42	0:0	2	=
+water	7:44	0:0	2	{
+water	7:46	0:0	2	0
+water	7:47	0:0	2	,
+water	7:49	0:0	2	0
+water	7:51	0:0	2	}
+if	8:4	9:19	2	(! pp_block || ! * pp_block)
+cond	8:8	8:23	3	! pp_block || ! * pp_block
+op	8:8	0:0	4	!
+water	8:9	0:0	4	pp_block
+op	8:18	0:0	4	||
+op	8:21	0:0	4	!
+op	8:22	0:0	4	*
+water	8:23	0:0	4	pp_block
+stmts	9:8	9:19	3	
+return	9:8	9:19	4	NULL
+water	9:15	0:0	5	NULL
+decl	10:4	10:32	2	block_t	*p_block
+op	10:21	0:0	2	=
+op	10:23	0:0	2	*
+water	10:24	0:0	2	pp_block
+if	11:4	19:4	2	(p_sys -> error_state)
+cond	11:8	11:15	3	p_sys -> error_state
+water	11:8	0:0	4	p_sys
+op	11:13	0:0	4	->
+water	11:15	0:0	4	error_state
+stmts	11:28	19:4	3	
+water	11:28	0:0	4	{
+call	12:8	12:29	4	block_Release
+arg	12:22	12:29	5	p_block
+water	12:22	0:0	6	p_block
+water	12:30	0:0	4	;
+if	13:8	17:8	4	(! p_sys -> error_event_sent)
+cond	13:12	13:20	5	! p_sys -> error_event_sent
+op	13:12	0:0	6	!
+water	13:13	0:0	6	p_sys
+op	13:18	0:0	6	->
+water	13:20	0:0	6	error_event_sent
+stmts	13:38	17:8	5	
+water	13:38	0:0	6	{
+call	15:12	15:47	6	jni_EventHardwareAccelerationError
+water	15:48	0:0	6	;
+water	16:12	0:0	6	p_sys
+op	16:17	0:0	6	->
+water	16:19	0:0	6	error_event_sent
+op	16:36	0:0	6	=
+water	16:38	0:0	6	true
+water	16:42	0:0	6	;
+water	17:8	0:0	6	}
+return	18:8	18:19	4	NULL
+water	18:15	0:0	5	NULL
+water	19:4	0:0	4	}
+call	20:4	20:39	2	jni_attach_thread
+arg	20:22	20:26	3	&env
+op	20:22	0:0	4	&
+water	20:23	0:0	4	env
+arg	20:28	20:39	3	THREAD_NAME
+water	20:28	0:0	4	THREAD_NAME
+water	20:40	0:0	2	;
+if	21:4	40:4	2	(p_block -> i_flags & ( BLOCK_FLAG_DISCONTINUITY | BLOCK_FLAG_CORRUPTED ))
+cond	21:8	21:73	3	p_block -> i_flags & ( BLOCK_FLAG_DISCONTINUITY | BLOCK_FLAG_CORRUPTED )
+water	21:8	0:0	4	p_block
+op	21:15	0:0	4	->
+water	21:17	0:0	4	i_flags
+op	21:25	0:0	4	&
+water	21:27	0:0	4	(
+water	21:28	0:0	4	BLOCK_FLAG_DISCONTINUITY
+op	21:52	0:0	4	|
+water	21:53	0:0	4	BLOCK_FLAG_CORRUPTED
+water	21:73	0:0	4	)
+stmts	21:76	40:4	3	
+water	21:76	0:0	4	{
+call	22:8	22:29	4	block_Release
+arg	22:22	22:29	5	p_block
+water	22:22	0:0	6	p_block
+water	22:30	0:0	4	;
+call	23:8	23:49	4	timestamp_FifoEmpty
+arg	23:28	23:49	5	p_sys->timestamp_fifo
+water	23:28	0:0	6	p_sys
+op	23:33	0:0	6	->
+water	23:35	0:0	6	timestamp_fifo
+water	23:50	0:0	4	;
+if	24:8	36:8	4	(p_sys -> decoded)
+cond	24:12	24:19	5	p_sys -> decoded
+water	24:12	0:0	6	p_sys
+op	24:17	0:0	6	->
+water	24:19	0:0	6	decoded
+stmts	24:28	36:8	5	
+water	24:28	0:0	6	{
+if	28:12	29:44	6	(p_sys -> direct_rendering)
+cond	28:16	28:23	7	p_sys -> direct_rendering
+water	28:16	0:0	8	p_sys
+op	28:21	0:0	8	->
+water	28:23	0:0	8	direct_rendering
+stmts	29:16	29:44	7	
+call	29:16	29:43	8	InvalidateAllPictures
+arg	29:38	29:43	9	p_dec
+water	29:38	0:0	10	p_dec
+water	29:44	0:0	8	;
+water	30:12	0:0	6	(
+op	30:13	0:0	6	*
+water	30:14	0:0	6	env
+water	30:17	0:0	6	)
+op	30:18	0:0	6	->
+call	30:20	30:66	6	CallVoidMethod
+arg	30:35	30:38	7	env
+water	30:35	0:0	8	env
+arg	30:40	30:52	7	p_sys->codec
+water	30:40	0:0	8	p_sys
+op	30:45	0:0	8	->
+water	30:47	0:0	8	codec
+arg	30:54	30:66	7	p_sys->flush
+water	30:54	0:0	8	p_sys
+op	30:59	0:0	8	->
+water	30:61	0:0	8	flush
+water	30:67	0:0	6	;
+if	31:12	35:12	6	(( * env ) ->ExceptionOccurred (env ))
+cond	31:16	31:45	7	( * env ) ->ExceptionOccurred (env )
+water	31:16	0:0	8	(
+op	31:17	0:0	8	*
+water	31:18	0:0	8	env
+water	31:21	0:0	8	)
+op	31:22	0:0	8	->
+call	31:24	31:45	8	ExceptionOccurred
+arg	31:42	31:45	9	env
+water	31:42	0:0	10	env
+stmts	31:48	35:12	7	
+water	31:48	0:0	8	{
+call	32:16	32:72	8	msg_Warn
+arg	32:25	32:30	9	p_dec
+water	32:25	0:0	10	p_dec
+arg	32:32	32:72	9	"Exception occurred in MediaCodec.flush"
+water	32:32	0:0	10	"Exception occurred in MediaCodec.flush"
+water	32:73	0:0	8	;
+water	33:16	0:0	8	(
+op	33:17	0:0	8	*
+water	33:18	0:0	8	env
+water	33:21	0:0	8	)
+op	33:22	0:0	8	->
+call	33:24	33:42	8	ExceptionClear
+arg	33:39	33:42	9	env
+water	33:39	0:0	10	env
+water	33:43	0:0	8	;
+water	34:16	0:0	8	p_sys
+op	34:21	0:0	8	->
+water	34:23	0:0	8	error_state
+op	34:35	0:0	8	=
+water	34:37	0:0	8	true
+water	34:41	0:0	8	;
+water	35:12	0:0	8	}
+water	36:8	0:0	6	}
+water	37:8	0:0	4	p_sys
+op	37:13	0:0	4	->
+water	37:15	0:0	4	decoded
+op	37:23	0:0	4	=
+water	37:25	0:0	4	false
+water	37:30	0:0	4	;
+call	38:8	38:26	4	jni_detach_thread
+water	38:27	0:0	4	;
+return	39:8	39:19	4	NULL
+water	39:15	0:0	5	NULL
+water	40:4	0:0	4	}
+if	44:4	47:4	2	(p_dec -> fmt_in . video . i_sar_num != 0 && p_dec -> fmt_in . video . i_sar_den != 0)
+cond	44:8	44:79	3	p_dec -> fmt_in . video . i_sar_num != 0 && p_dec -> fmt_in . video . i_sar_den != 0
+water	44:8	0:0	4	p_dec
+op	44:13	0:0	4	->
+water	44:15	0:0	4	fmt_in
+op	44:21	0:0	4	.
+water	44:22	0:0	4	video
+op	44:27	0:0	4	.
+water	44:28	0:0	4	i_sar_num
+op	44:38	0:0	4	!=
+water	44:41	0:0	4	0
+op	44:43	0:0	4	&&
+water	44:46	0:0	4	p_dec
+op	44:51	0:0	4	->
+water	44:53	0:0	4	fmt_in
+op	44:59	0:0	4	.
+water	44:60	0:0	4	video
+op	44:65	0:0	4	.
+water	44:66	0:0	4	i_sar_den
+op	44:76	0:0	4	!=
+water	44:79	0:0	4	0
+stmts	44:82	47:4	3	
+water	44:82	0:0	4	{
+water	45:8	0:0	4	p_dec
+op	45:13	0:0	4	->
+water	45:15	0:0	4	fmt_out
+op	45:22	0:0	4	.
+water	45:23	0:0	4	video
+op	45:28	0:0	4	.
+water	45:29	0:0	4	i_sar_num
+op	45:39	0:0	4	=
+water	45:41	0:0	4	p_dec
+op	45:46	0:0	4	->
+water	45:48	0:0	4	fmt_in
+op	45:54	0:0	4	.
+water	45:55	0:0	4	video
+op	45:60	0:0	4	.
+water	45:61	0:0	4	i_sar_num
+water	45:70	0:0	4	;
+water	46:8	0:0	4	p_dec
+op	46:13	0:0	4	->
+water	46:15	0:0	4	fmt_out
+op	46:22	0:0	4	.
+water	46:23	0:0	4	video
+op	46:28	0:0	4	.
+water	46:29	0:0	4	i_sar_den
+op	46:39	0:0	4	=
+water	46:41	0:0	4	p_dec
+op	46:46	0:0	4	->
+water	46:48	0:0	4	fmt_in
+op	46:54	0:0	4	.
+water	46:55	0:0	4	video
+op	46:60	0:0	4	.
+water	46:61	0:0	4	i_sar_den
+water	46:70	0:0	4	;
+water	47:4	0:0	4	}
+decl	48:4	48:21	2	jlong	timeout
+op	48:18	0:0	2	=
+water	48:20	0:0	2	0
+decl	49:4	49:39	2	const int	max_polling_attempts
+op	49:35	0:0	2	=
+water	49:37	0:0	2	50
+decl	50:4	50:20	2	int	attempts
+op	50:17	0:0	2	=
+water	50:19	0:0	2	0
+while	51:4	121:4	2	(true)
+cond	51:11	51:11	3	true
+water	51:11	0:0	4	true
+stmts	51:17	121:4	3	
+water	51:17	0:0	4	{
+decl	52:8	52:100	4	int	index
+op	52:18	0:0	4	=
+water	52:20	0:0	4	(
+op	52:21	0:0	4	*
+water	52:22	0:0	4	env
+water	52:25	0:0	4	)
+op	52:26	0:0	4	->
+call	52:28	52:99	5	CallIntMethod
+arg	52:42	52:45	6	env
+water	52:42	0:0	7	env
+arg	52:47	52:59	6	p_sys->codec
+water	52:47	0:0	7	p_sys
+op	52:52	0:0	7	->
+water	52:54	0:0	7	codec
+arg	52:61	52:88	6	p_sys->dequeue_input_buffer
+water	52:61	0:0	7	p_sys
+op	52:66	0:0	7	->
+water	52:68	0:0	7	dequeue_input_buffer
+arg	52:90	52:99	6	(jlong)0
+water	52:90	0:0	7	(
+water	52:91	0:0	7	jlong
+water	52:96	0:0	7	)
+water	52:98	0:0	7	0
+if	53:8	58:8	4	(( * env ) ->ExceptionOccurred (env ))
+cond	53:12	53:41	5	( * env ) ->ExceptionOccurred (env )
+water	53:12	0:0	6	(
+op	53:13	0:0	6	*
+water	53:14	0:0	6	env
+water	53:17	0:0	6	)
+op	53:18	0:0	6	->
+call	53:20	53:41	6	ExceptionOccurred
+arg	53:38	53:41	7	env
+water	53:38	0:0	8	env
+stmts	53:44	58:8	5	
+water	53:44	0:0	6	{
+call	54:12	54:80	6	msg_Err
+arg	54:20	54:25	7	p_dec
+water	54:20	0:0	8	p_dec
+arg	54:27	54:80	7	"Exception occurred in MediaCodec.dequeueInputBuffer"
+water	54:27	0:0	8	"Exception occurred in MediaCodec.dequeueInputBuffer"
+water	54:81	0:0	6	;
+water	55:12	0:0	6	(
+op	55:13	0:0	6	*
+water	55:14	0:0	6	env
+water	55:17	0:0	6	)
+op	55:18	0:0	6	->
+call	55:20	55:38	6	ExceptionClear
+arg	55:35	55:38	7	env
+water	55:35	0:0	8	env
+water	55:39	0:0	6	;
+water	56:12	0:0	6	p_sys
+op	56:17	0:0	6	->
+water	56:19	0:0	6	error_state
+op	56:31	0:0	6	=
+water	56:33	0:0	6	true
+water	56:37	0:0	6	;
+break	57:12	57:17	6	
+water	58:8	0:0	6	}
+if	59:8	99:8	4	(index < 0)
+cond	59:12	59:20	5	index < 0
+water	59:12	0:0	6	index
+op	59:18	0:0	6	<
+water	59:20	0:0	6	0
+stmts	59:23	99:8	5	
+water	59:23	0:0	6	{
+call	60:12	60:49	6	GetOutput
+arg	60:22	60:27	7	p_dec
+water	60:22	0:0	8	p_dec
+arg	60:29	60:32	7	env
+water	60:29	0:0	8	env
+arg	60:34	60:40	7	&p_pic
+op	60:34	0:0	8	&
+water	60:35	0:0	8	p_pic
+arg	60:42	60:49	7	timeout
+water	60:42	0:0	8	timeout
+water	60:50	0:0	6	;
+if	61:12	62:21	6	(p_sys -> error_state)
+cond	61:16	61:23	7	p_sys -> error_state
+water	61:16	0:0	8	p_sys
+op	61:21	0:0	8	->
+water	61:23	0:0	8	error_state
+stmts	62:16	62:21	7	
+break	62:16	62:21	8	
+if	63:12	71:12	6	(p_pic)
+cond	63:16	63:16	7	p_pic
+water	63:16	0:0	8	p_pic
+stmts	63:23	71:12	7	
+water	63:23	0:0	8	{
+call	69:16	69:34	8	jni_detach_thread
+water	69:35	0:0	8	;
+return	70:16	70:28	8	p_pic
+water	70:23	0:0	9	p_pic
+water	71:12	0:0	8	}
+water	72:12	0:0	6	timeout
+op	72:20	0:0	6	=
+water	72:22	0:0	6	30
+op	72:25	0:0	6	*
+water	72:27	0:0	6	1000
+water	72:31	0:0	6	;
+op	73:12	0:0	6	++
+water	73:14	0:0	6	attempts
+water	73:22	0:0	6	;
+if	77:12	97:12	6	(p_sys -> direct_rendering && attempts == max_polling_attempts)
+cond	77:16	77:55	7	p_sys -> direct_rendering && attempts == max_polling_attempts
+water	77:16	0:0	8	p_sys
+op	77:21	0:0	8	->
+water	77:23	0:0	8	direct_rendering
+op	77:40	0:0	8	&&
+water	77:43	0:0	8	attempts
+op	77:52	0:0	8	==
+water	77:55	0:0	8	max_polling_attempts
+stmts	77:77	97:12	7	
+water	77:77	0:0	8	{
+decl	78:16	78:70	8	picture_t	*invalid_picture
+op	78:43	0:0	8	=
+call	78:45	78:69	9	decoder_NewPicture
+arg	78:64	78:69	10	p_dec
+water	78:64	0:0	11	p_dec
+if	79:16	87:16	8	(invalid_picture)
+cond	79:20	79:20	9	invalid_picture
+water	79:20	0:0	10	invalid_picture
+stmts	79:37	87:16	9	
+water	79:37	0:0	10	{
+water	80:20	0:0	10	invalid_picture
+op	80:35	0:0	10	->
+water	80:37	0:0	10	date
+op	80:42	0:0	10	=
+water	80:44	0:0	10	VLC_TS_INVALID
+water	80:58	0:0	10	;
+decl	81:20	81:68	10	picture_sys_t	*p_picsys
+op	81:44	0:0	10	=
+water	81:46	0:0	10	invalid_picture
+op	81:61	0:0	10	->
+water	81:63	0:0	10	p_sys
+water	82:20	0:0	10	p_picsys
+op	82:28	0:0	10	->
+water	82:30	0:0	10	pf_display_callback
+op	82:50	0:0	10	=
+water	82:52	0:0	10	NULL
+water	82:56	0:0	10	;
+water	83:20	0:0	10	p_picsys
+op	83:28	0:0	10	->
+water	83:30	0:0	10	pf_unlock_callback
+op	83:49	0:0	10	=
+water	83:51	0:0	10	NULL
+water	83:55	0:0	10	;
+water	84:20	0:0	10	p_picsys
+op	84:28	0:0	10	->
+water	84:30	0:0	10	p_dec
+op	84:36	0:0	10	=
+water	84:38	0:0	10	NULL
+water	84:42	0:0	10	;
+water	85:20	0:0	10	p_picsys
+op	85:28	0:0	10	->
+water	85:30	0:0	10	i_index
+op	85:38	0:0	10	=
+op	85:40	0:0	10	-
+water	85:41	0:0	10	1
+water	85:42	0:0	10	;
+water	86:20	0:0	10	p_picsys
+op	86:28	0:0	10	->
+water	86:30	0:0	10	b_valid
+op	86:38	0:0	10	=
+water	86:40	0:0	10	false
+water	86:45	0:0	10	;
+water	87:16	0:0	10	}
+else	88:16	94:16	8
+stmts	88:21	94:16	9	
+water	88:21	0:0	10	{
+call	92:20	92:41	10	block_Release
+arg	92:34	92:41	11	p_block
+water	92:34	0:0	12	p_block
+water	92:42	0:0	10	;
+op	93:20	0:0	10	*
+water	93:21	0:0	10	pp_block
+op	93:30	0:0	10	=
+water	93:32	0:0	10	NULL
+water	93:36	0:0	10	;
+water	94:16	0:0	10	}
+call	95:16	95:34	8	jni_detach_thread
+water	95:35	0:0	8	;
+return	96:16	96:38	8	invalid_picture
+water	96:23	0:0	9	invalid_picture
+water	97:12	0:0	8	}
+continue	98:12	98:20	6	
+water	99:8	0:0	6	}
+decl	100:8	100:85	4	jobject	buf
+op	100:20	0:0	4	=
+water	100:22	0:0	4	(
+op	100:23	0:0	4	*
+water	100:24	0:0	4	env
+water	100:27	0:0	4	)
+op	100:28	0:0	4	->
+call	100:30	100:84	5	GetObjectArrayElement
+arg	100:52	100:55	6	env
+water	100:52	0:0	7	env
+arg	100:57	100:77	6	p_sys->input_buffers
+water	100:57	0:0	7	p_sys
+op	100:62	0:0	7	->
+water	100:64	0:0	7	input_buffers
+arg	100:79	100:84	6	index
+water	100:79	0:0	7	index
+decl	101:8	101:62	4	jsize	size
+op	101:19	0:0	4	=
+water	101:21	0:0	4	(
+op	101:22	0:0	4	*
+water	101:23	0:0	4	env
+water	101:26	0:0	4	)
+op	101:27	0:0	4	->
+call	101:29	101:61	5	GetDirectBufferCapacity
+arg	101:53	101:56	6	env
+water	101:53	0:0	7	env
+arg	101:58	101:61	6	buf
+water	101:58	0:0	7	buf
+decl	102:8	102:66	4	uint8_t	*bufptr
+op	102:24	0:0	4	=
+water	102:26	0:0	4	(
+op	102:27	0:0	4	*
+water	102:28	0:0	4	env
+water	102:31	0:0	4	)
+op	102:32	0:0	4	->
+call	102:34	102:65	5	GetDirectBufferAddress
+arg	102:57	102:60	6	env
+water	102:57	0:0	7	env
+arg	102:62	102:65	6	buf
+water	102:62	0:0	7	buf
+if	103:8	104:36	4	(size > p_block -> i_buffer)
+cond	103:12	103:28	5	size > p_block -> i_buffer
+water	103:12	0:0	6	size
+op	103:17	0:0	6	>
+water	103:19	0:0	6	p_block
+op	103:26	0:0	6	->
+water	103:28	0:0	6	i_buffer
+stmts	104:12	104:36	5	
+water	104:12	0:0	6	size
+op	104:17	0:0	6	=
+water	104:19	0:0	6	p_block
+op	104:26	0:0	6	->
+water	104:28	0:0	6	i_buffer
+water	104:36	0:0	6	;
+call	105:8	105:46	4	memcpy
+arg	105:15	105:21	5	bufptr
+water	105:15	0:0	6	bufptr
+arg	105:23	105:40	5	p_block->p_buffer
+water	105:23	0:0	6	p_block
+op	105:30	0:0	6	->
+water	105:32	0:0	6	p_buffer
+arg	105:42	105:46	5	size
+water	105:42	0:0	6	size
+water	105:47	0:0	4	;
+call	106:8	106:76	4	convert_h264_to_annexb
+arg	106:31	106:37	5	bufptr
+water	106:31	0:0	6	bufptr
+arg	106:39	106:43	5	size
+water	106:39	0:0	6	size
+arg	106:45	106:60	5	p_sys->nal_size
+water	106:45	0:0	6	p_sys
+op	106:50	0:0	6	->
+water	106:52	0:0	6	nal_size
+arg	106:62	106:76	5	&convert_state
+op	106:62	0:0	6	&
+water	106:63	0:0	6	convert_state
+water	106:77	0:0	4	;
+decl	107:8	107:35	4	int64_t	ts
+op	107:19	0:0	4	=
+water	107:21	0:0	4	p_block
+op	107:28	0:0	4	->
+water	107:30	0:0	4	i_pts
+if	108:8	109:31	4	(! ts && p_block -> i_dts)
+cond	108:12	108:28	5	! ts && p_block -> i_dts
+op	108:12	0:0	6	!
+water	108:13	0:0	6	ts
+op	108:16	0:0	6	&&
+water	108:19	0:0	6	p_block
+op	108:26	0:0	6	->
+water	108:28	0:0	6	i_dts
+stmts	109:12	109:31	5	
+water	109:12	0:0	6	ts
+op	109:15	0:0	6	=
+water	109:17	0:0	6	p_block
+op	109:24	0:0	6	->
+water	109:26	0:0	6	i_dts
+water	109:31	0:0	6	;
+call	110:8	110:97	4	timestamp_FifoPut
+arg	110:26	110:47	5	p_sys->timestamp_fifo
+water	110:26	0:0	6	p_sys
+op	110:31	0:0	6	->
+water	110:33	0:0	6	timestamp_fifo
+arg	110:49	110:97	5	p_block->i_pts?VLC_TS_INVALID:p_block->i_dts
+water	110:49	0:0	6	p_block
+op	110:56	0:0	6	->
+water	110:58	0:0	6	i_pts
+water	110:64	0:0	6	?
+water	110:66	0:0	6	VLC_TS_INVALID
+water	110:81	0:0	6	:
+water	110:83	0:0	6	p_block
+op	110:90	0:0	6	->
+water	110:92	0:0	6	i_dts
+water	110:98	0:0	4	;
+water	111:8	0:0	4	(
+op	111:9	0:0	4	*
+water	111:10	0:0	4	env
+water	111:13	0:0	4	)
+op	111:14	0:0	4	->
+call	111:16	111:98	4	CallVoidMethod
+arg	111:31	111:34	5	env
+water	111:31	0:0	6	env
+arg	111:36	111:48	5	p_sys->codec
+water	111:36	0:0	6	p_sys
+op	111:41	0:0	6	->
+water	111:43	0:0	6	codec
+arg	111:50	111:75	5	p_sys->queue_input_buffer
+water	111:50	0:0	6	p_sys
+op	111:55	0:0	6	->
+water	111:57	0:0	6	queue_input_buffer
+arg	111:77	111:82	5	index
+water	111:77	0:0	6	index
+arg	111:84	111:85	5	0
+water	111:84	0:0	6	0
+arg	111:87	111:91	5	size
+water	111:87	0:0	6	size
+arg	111:93	111:95	5	ts
+water	111:93	0:0	6	ts
+arg	111:97	111:98	5	0
+water	111:97	0:0	6	0
+water	111:99	0:0	4	;
+water	112:8	0:0	4	(
+op	112:9	0:0	4	*
+water	112:10	0:0	4	env
+water	112:13	0:0	4	)
+op	112:14	0:0	4	->
+call	112:16	112:39	4	DeleteLocalRef
+arg	112:31	112:34	5	env
+water	112:31	0:0	6	env
+arg	112:36	112:39	5	buf
+water	112:36	0:0	6	buf
+water	112:40	0:0	4	;
+if	113:8	118:8	4	(( * env ) ->ExceptionOccurred (env ))
+cond	113:12	113:41	5	( * env ) ->ExceptionOccurred (env )
+water	113:12	0:0	6	(
+op	113:13	0:0	6	*
+water	113:14	0:0	6	env
+water	113:17	0:0	6	)
+op	113:18	0:0	6	->
+call	113:20	113:41	6	ExceptionOccurred
+arg	113:38	113:41	7	env
+water	113:38	0:0	8	env
+stmts	113:44	118:8	5	
+water	113:44	0:0	6	{
+call	114:12	114:69	6	msg_Err
+arg	114:20	114:25	7	p_dec
+water	114:20	0:0	8	p_dec
+arg	114:27	114:69	7	"Exception in MediaCodec.queueInputBuffer"
+water	114:27	0:0	8	"Exception in MediaCodec.queueInputBuffer"
+water	114:70	0:0	6	;
+water	115:12	0:0	6	(
+op	115:13	0:0	6	*
+water	115:14	0:0	6	env
+water	115:17	0:0	6	)
+op	115:18	0:0	6	->
+call	115:20	115:38	6	ExceptionClear
+arg	115:35	115:38	7	env
+water	115:35	0:0	8	env
+water	115:39	0:0	6	;
+water	116:12	0:0	6	p_sys
+op	116:17	0:0	6	->
+water	116:19	0:0	6	error_state
+op	116:31	0:0	6	=
+water	116:33	0:0	6	true
+water	116:37	0:0	6	;
+break	117:12	117:17	6	
+water	118:8	0:0	6	}
+water	119:8	0:0	4	p_sys
+op	119:13	0:0	4	->
+water	119:15	0:0	4	decoded
+op	119:23	0:0	4	=
+water	119:25	0:0	4	true
+water	119:29	0:0	4	;
+break	120:8	120:13	4	
+water	121:4	0:0	4	}
+if	122:4	127:4	2	(p_sys -> error_state)
+cond	122:8	122:15	3	p_sys -> error_state
+water	122:8	0:0	4	p_sys
+op	122:13	0:0	4	->
+water	122:15	0:0	4	error_state
+stmts	122:28	127:4	3	
+water	122:28	0:0	4	{
+if	123:8	124:47	4	(p_pic)
+cond	123:12	123:12	5	p_pic
+water	123:12	0:0	6	p_pic
+stmts	124:12	124:47	5	
+call	124:12	124:46	6	decoder_DeletePicture
+arg	124:34	124:39	7	p_dec
+water	124:34	0:0	8	p_dec
+arg	124:41	124:46	7	p_pic
+water	124:41	0:0	8	p_pic
+water	124:47	0:0	6	;
+call	125:8	125:26	4	jni_detach_thread
+water	125:27	0:0	4	;
+return	126:8	126:19	4	NULL
+water	126:15	0:0	5	NULL
+water	127:4	0:0	4	}
+if	128:4	129:40	2	(! p_pic)
+cond	128:8	128:9	3	! p_pic
+op	128:8	0:0	4	!
+water	128:9	0:0	4	p_pic
+stmts	129:8	129:40	3	
+call	129:8	129:39	4	GetOutput
+arg	129:18	129:23	5	p_dec
+water	129:18	0:0	6	p_dec
+arg	129:25	129:28	5	env
+water	129:25	0:0	6	env
+arg	129:30	129:36	5	&p_pic
+op	129:30	0:0	6	&
+water	129:31	0:0	6	p_pic
+arg	129:38	129:39	5	0
+water	129:38	0:0	6	0
+water	129:40	0:0	4	;
+call	130:4	130:22	2	jni_detach_thread
+water	130:23	0:0	2	;
+call	131:4	131:25	2	block_Release
+arg	131:18	131:25	3	p_block
+water	131:18	0:0	4	p_block
+water	131:26	0:0	2	;
+op	132:4	0:0	2	*
+water	132:5	0:0	2	pp_block
+op	132:14	0:0	2	=
+water	132:16	0:0	2	NULL
+water	132:20	0:0	2	;
+return	133:4	133:16	2	p_pic
+water	133:11	0:0	3	p_pic

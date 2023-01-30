@@ -1,0 +1,618 @@
+func	2:0	123:0	0	block_t *	DecodeAudio
+params	2:21	0:0	1	
+param	2:23	2:39	2	decoder_t *	p_dec
+param	2:41	2:60	2	block_t * *	pp_block
+stmnts	0:0	122:15	1	
+decl	4:4	4:39	2	decoder_sys_t	*p_sys
+op	4:25	0:0	2	=
+water	4:27	0:0	2	p_dec
+op	4:32	0:0	2	->
+water	4:34	0:0	2	p_sys
+decl	5:4	5:28	2	block_t	*p_buffer
+op	5:22	0:0	2	=
+water	5:24	0:0	2	NULL
+decl	6:4	6:34	2	OMX_BUFFERHEADERTYPE	*p_header
+decl	7:4	7:27	2	OMX_ERRORTYPE	omx_error
+decl	8:4	8:20	2	block_t	*p_block
+decl	9:4	9:18	2	unsigned int	i
+if	10:4	10:45	2	(! pp_block || ! * pp_block)
+cond	10:8	10:23	3	! pp_block || ! * pp_block
+op	10:8	0:0	4	!
+water	10:9	0:0	4	pp_block
+op	10:18	0:0	4	||
+op	10:21	0:0	4	!
+op	10:22	0:0	4	*
+water	10:23	0:0	4	pp_block
+stmts	10:34	10:45	3	
+return	10:34	10:45	4	NULL
+water	10:41	0:0	5	NULL
+water	11:4	0:0	2	p_block
+op	11:12	0:0	2	=
+op	11:14	0:0	2	*
+water	11:15	0:0	2	pp_block
+water	11:23	0:0	2	;
+if	13:4	18:4	2	(p_sys -> b_error)
+cond	13:7	13:14	3	p_sys -> b_error
+water	13:7	0:0	4	p_sys
+op	13:12	0:0	4	->
+water	13:14	0:0	4	b_error
+stmts	14:4	18:4	3	
+water	14:4	0:0	4	{
+call	15:8	15:46	4	msg_Dbg
+arg	15:16	15:21	5	p_dec
+water	15:16	0:0	6	p_dec
+arg	15:23	15:46	5	"error during decoding"
+water	15:23	0:0	6	"error during decoding"
+water	15:47	0:0	4	;
+call	16:8	16:31	4	block_Release
+arg	16:23	16:31	5	p_block
+water	16:23	0:0	6	p_block
+water	16:32	0:0	4	;
+return	17:8	17:16	4	0
+water	17:15	0:0	5	0
+water	18:4	0:0	4	}
+if	19:4	31:4	2	(p_block -> i_flags & ( BLOCK_FLAG_DISCONTINUITY | BLOCK_FLAG_CORRUPTED ))
+cond	19:8	19:73	3	p_block -> i_flags & ( BLOCK_FLAG_DISCONTINUITY | BLOCK_FLAG_CORRUPTED )
+water	19:8	0:0	4	p_block
+op	19:15	0:0	4	->
+water	19:17	0:0	4	i_flags
+op	19:25	0:0	4	&
+water	19:27	0:0	4	(
+water	19:28	0:0	4	BLOCK_FLAG_DISCONTINUITY
+op	19:52	0:0	4	|
+water	19:53	0:0	4	BLOCK_FLAG_CORRUPTED
+water	19:73	0:0	4	)
+stmts	20:4	31:4	3	
+water	20:4	0:0	4	{
+call	21:8	21:31	4	block_Release
+arg	21:23	21:31	5	p_block
+water	21:23	0:0	6	p_block
+water	21:32	0:0	4	;
+call	22:8	22:38	4	date_Set
+arg	22:18	22:34	5	&p_sys->end_date
+op	22:18	0:0	6	&
+water	22:19	0:0	6	p_sys
+op	22:24	0:0	6	->
+water	22:26	0:0	6	end_date
+arg	22:36	22:38	5	0
+water	22:36	0:0	6	0
+water	22:39	0:0	4	;
+if	23:8	28:8	4	(! p_sys -> in . b_flushed)
+cond	23:11	23:22	5	! p_sys -> in . b_flushed
+op	23:11	0:0	6	!
+water	23:12	0:0	6	p_sys
+op	23:17	0:0	6	->
+water	23:19	0:0	6	in
+op	23:21	0:0	6	.
+water	23:22	0:0	6	b_flushed
+stmts	24:8	28:8	5	
+water	24:8	0:0	6	{
+call	25:12	25:37	6	msg_Dbg
+arg	25:20	25:25	7	p_dec
+water	25:20	0:0	8	p_dec
+arg	25:27	25:37	7	"flushing"
+water	25:27	0:0	8	"flushing"
+water	25:38	0:0	6	;
+call	26:12	27:64	6	OMX_SendCommand
+arg	26:29	26:46	7	p_sys->omx_handle
+water	26:29	0:0	8	p_sys
+op	26:34	0:0	8	->
+water	26:36	0:0	8	omx_handle
+arg	26:48	26:64	7	OMX_CommandFlush
+water	26:48	0:0	8	OMX_CommandFlush
+arg	27:29	27:60	7	p_sys->in.definition.nPortIndex
+water	27:29	0:0	8	p_sys
+op	27:34	0:0	8	->
+water	27:36	0:0	8	in
+op	27:38	0:0	8	.
+water	27:39	0:0	8	definition
+op	27:49	0:0	8	.
+water	27:50	0:0	8	nPortIndex
+arg	27:62	27:64	7	0
+water	27:62	0:0	8	0
+water	27:65	0:0	6	;
+water	28:8	0:0	6	}
+water	29:8	0:0	4	p_sys
+op	29:13	0:0	4	->
+water	29:15	0:0	4	in
+op	29:17	0:0	4	.
+water	29:18	0:0	4	b_flushed
+op	29:28	0:0	4	=
+water	29:30	0:0	4	true
+water	29:34	0:0	4	;
+return	30:8	30:19	4	NULL
+water	30:15	0:0	5	NULL
+water	31:4	0:0	4	}
+if	32:4	41:4	2	(!date_Get (& p_sys -> end_date ))
+cond	32:8	32:36	3	!date_Get (& p_sys -> end_date )
+op	32:8	0:0	4	!
+call	32:9	32:36	4	date_Get
+arg	32:19	32:36	5	&p_sys->end_date
+op	32:19	0:0	6	&
+water	32:20	0:0	6	p_sys
+op	32:25	0:0	6	->
+water	32:27	0:0	6	end_date
+stmts	33:4	41:4	3	
+water	33:4	0:0	4	{
+if	34:8	39:8	4	(! p_block -> i_pts)
+cond	34:12	34:22	5	! p_block -> i_pts
+op	34:12	0:0	6	!
+water	34:13	0:0	6	p_block
+op	34:20	0:0	6	->
+water	34:22	0:0	6	i_pts
+stmts	35:8	39:8	5	
+water	35:8	0:0	6	{
+call	37:12	37:35	6	block_Release
+arg	37:27	37:35	7	p_block
+water	37:27	0:0	8	p_block
+water	37:36	0:0	6	;
+return	38:12	38:23	6	NULL
+water	38:19	0:0	7	NULL
+water	39:8	0:0	6	}
+call	40:8	40:51	4	date_Set
+arg	40:18	40:34	5	&p_sys->end_date
+op	40:18	0:0	6	&
+water	40:19	0:0	6	p_sys
+op	40:24	0:0	6	->
+water	40:26	0:0	6	end_date
+arg	40:36	40:51	5	p_block->i_pts
+water	40:36	0:0	6	p_block
+op	40:43	0:0	6	->
+water	40:45	0:0	6	i_pts
+water	40:52	0:0	4	;
+water	41:4	0:0	4	}
+while	43:4	69:4	2	(! p_buffer)
+cond	43:10	43:11	3	! p_buffer
+op	43:10	0:0	4	!
+water	43:11	0:0	4	p_buffer
+stmts	44:4	69:4	3	
+water	44:4	0:0	4	{
+decl	45:8	45:34	4	unsigned int	i_samples
+op	45:31	0:0	4	=
+water	45:33	0:0	4	0
+call	46:8	46:48	4	OMX_FIFO_PEEK
+arg	46:22	46:38	5	&p_sys->out.fifo
+op	46:22	0:0	6	&
+water	46:23	0:0	6	p_sys
+op	46:28	0:0	6	->
+water	46:30	0:0	6	out
+op	46:33	0:0	6	.
+water	46:34	0:0	6	fifo
+arg	46:40	46:48	5	p_header
+water	46:40	0:0	6	p_header
+water	46:49	0:0	4	;
+if	47:8	47:27	4	(! p_header)
+cond	47:11	47:12	5	! p_header
+op	47:11	0:0	6	!
+water	47:12	0:0	6	p_header
+stmts	47:22	47:27	5	
+break	47:22	47:27	6	
+if	48:8	49:85	4	(p_sys -> out . p_fmt -> audio . i_channels)
+cond	48:12	48:36	5	p_sys -> out . p_fmt -> audio . i_channels
+water	48:12	0:0	6	p_sys
+op	48:17	0:0	6	->
+water	48:19	0:0	6	out
+op	48:22	0:0	6	.
+water	48:23	0:0	6	p_fmt
+op	48:28	0:0	6	->
+water	48:30	0:0	6	audio
+op	48:35	0:0	6	.
+water	48:36	0:0	6	i_channels
+stmts	49:12	49:85	5	
+water	49:12	0:0	6	i_samples
+op	49:22	0:0	6	=
+water	49:24	0:0	6	p_header
+op	49:32	0:0	6	->
+water	49:34	0:0	6	nFilledLen
+op	49:45	0:0	6	/
+water	49:47	0:0	6	p_sys
+op	49:52	0:0	6	->
+water	49:54	0:0	6	out
+op	49:57	0:0	6	.
+water	49:58	0:0	6	p_fmt
+op	49:63	0:0	6	->
+water	49:65	0:0	6	audio
+op	49:70	0:0	6	.
+water	49:71	0:0	6	i_channels
+op	49:82	0:0	6	/
+water	49:84	0:0	6	2
+water	49:85	0:0	6	;
+if	50:8	63:8	4	(i_samples)
+cond	50:11	50:11	5	i_samples
+water	50:11	0:0	6	i_samples
+stmts	51:8	63:8	5	
+water	51:8	0:0	6	{
+water	52:12	0:0	6	p_buffer
+op	52:21	0:0	6	=
+call	52:23	52:64	6	decoder_NewAudioBuffer
+arg	52:47	52:52	7	p_dec
+water	52:47	0:0	8	p_dec
+arg	52:54	52:64	7	i_samples
+water	52:54	0:0	8	i_samples
+water	52:65	0:0	6	;
+if	53:12	53:33	6	(! p_buffer)
+cond	53:16	53:17	7	! p_buffer
+op	53:16	0:0	8	!
+water	53:17	0:0	8	p_buffer
+stmts	53:28	53:33	7	
+break	53:28	53:33	8	
+call	54:12	54:78	6	memcpy
+arg	54:20	54:38	7	p_buffer->p_buffer
+water	54:20	0:0	8	p_buffer
+op	54:28	0:0	8	->
+water	54:30	0:0	8	p_buffer
+arg	54:40	54:57	7	p_header->pBuffer
+water	54:40	0:0	8	p_header
+op	54:48	0:0	8	->
+water	54:50	0:0	8	pBuffer
+arg	54:59	54:78	7	p_buffer->i_buffer
+water	54:59	0:0	8	p_buffer
+op	54:67	0:0	8	->
+water	54:69	0:0	8	i_buffer
+water	54:79	0:0	6	;
+water	55:12	0:0	6	p_header
+op	55:20	0:0	6	->
+water	55:22	0:0	6	nFilledLen
+op	55:33	0:0	6	=
+water	55:35	0:0	6	0
+water	55:36	0:0	6	;
+decl	56:12	56:66	6	int64_t	timestamp
+op	56:30	0:0	6	=
+call	56:32	56:65	7	FromOmxTicks
+arg	56:45	56:65	8	p_header->nTimeStamp
+water	56:45	0:0	9	p_header
+op	56:53	0:0	9	->
+water	56:55	0:0	9	nTimeStamp
+if	57:12	59:55	6	(timestamp != 0 && timestamp !=date_Get (& p_sys -> end_date ))
+cond	57:16	58:56	7	timestamp != 0 && timestamp !=date_Get (& p_sys -> end_date )
+water	57:16	0:0	8	timestamp
+op	57:26	0:0	8	!=
+water	57:29	0:0	8	0
+op	57:31	0:0	8	&&
+water	58:16	0:0	8	timestamp
+op	58:26	0:0	8	!=
+call	58:29	58:56	8	date_Get
+arg	58:39	58:56	9	&p_sys->end_date
+op	58:39	0:0	10	&
+water	58:40	0:0	10	p_sys
+op	58:45	0:0	10	->
+water	58:47	0:0	10	end_date
+stmts	59:16	59:55	7	
+call	59:16	59:54	8	date_Set
+arg	59:26	59:42	9	&p_sys->end_date
+op	59:26	0:0	10	&
+water	59:27	0:0	10	p_sys
+op	59:32	0:0	10	->
+water	59:34	0:0	10	end_date
+arg	59:44	59:54	9	timestamp
+water	59:44	0:0	10	timestamp
+water	59:55	0:0	8	;
+water	60:12	0:0	6	p_buffer
+op	60:20	0:0	6	->
+water	60:22	0:0	6	i_pts
+op	60:28	0:0	6	=
+call	60:30	60:57	6	date_Get
+arg	60:40	60:57	7	&p_sys->end_date
+op	60:40	0:0	8	&
+water	60:41	0:0	8	p_sys
+op	60:46	0:0	8	->
+water	60:48	0:0	8	end_date
+water	60:58	0:0	6	;
+water	61:12	0:0	6	p_buffer
+op	61:20	0:0	6	->
+water	61:22	0:0	6	i_length
+op	61:31	0:0	6	=
+call	61:33	61:77	6	date_Increment
+arg	61:49	61:65	7	&p_sys->end_date
+op	61:49	0:0	8	&
+water	61:50	0:0	8	p_sys
+op	61:55	0:0	8	->
+water	61:57	0:0	8	end_date
+arg	61:67	61:77	7	i_samples
+water	61:67	0:0	8	i_samples
+op	61:79	0:0	6	-
+water	62:16	0:0	6	p_buffer
+op	62:24	0:0	6	->
+water	62:26	0:0	6	i_pts
+water	62:31	0:0	6	;
+water	63:8	0:0	6	}
+call	65:8	65:77	4	msg_Dbg
+arg	65:17	65:22	5	p_dec
+water	65:17	0:0	6	p_dec
+arg	65:24	65:47	5	"FillThisBuffer %p, %p"
+water	65:24	0:0	6	"FillThisBuffer %p, %p"
+arg	65:49	65:57	5	p_header
+water	65:49	0:0	6	p_header
+arg	65:59	65:77	5	p_header->pBuffer
+water	65:59	0:0	6	p_header
+op	65:67	0:0	6	->
+water	65:69	0:0	6	pBuffer
+water	65:78	0:0	4	;
+call	67:8	67:47	4	OMX_FIFO_GET
+arg	67:21	67:37	5	&p_sys->out.fifo
+op	67:21	0:0	6	&
+water	67:22	0:0	6	p_sys
+op	67:27	0:0	6	->
+water	67:29	0:0	6	out
+op	67:32	0:0	6	.
+water	67:33	0:0	6	fifo
+arg	67:39	67:47	5	p_header
+water	67:39	0:0	6	p_header
+water	67:48	0:0	4	;
+call	68:8	68:54	4	OMX_FillThisBuffer
+arg	68:27	68:44	5	p_sys->omx_handle
+water	68:27	0:0	6	p_sys
+op	68:32	0:0	6	->
+water	68:34	0:0	6	omx_handle
+arg	68:46	68:54	5	p_header
+water	68:46	0:0	6	p_header
+water	68:55	0:0	4	;
+water	69:4	0:0	4	}
+call	71:4	71:58	2	OMX_FIFO_GET_TIMEOUT
+arg	71:25	71:40	3	&p_sys->in.fifo
+op	71:25	0:0	4	&
+water	71:26	0:0	4	p_sys
+op	71:31	0:0	4	->
+water	71:33	0:0	4	in
+op	71:35	0:0	4	.
+water	71:36	0:0	4	fifo
+arg	71:42	71:50	3	p_header
+water	71:42	0:0	4	p_header
+arg	71:52	71:58	3	200000
+water	71:52	0:0	4	200000
+water	71:59	0:0	2	;
+if	72:4	75:4	2	(p_header && p_header -> nFlags & SENTINEL_FLAG)
+cond	72:8	72:39	3	p_header && p_header -> nFlags & SENTINEL_FLAG
+water	72:8	0:0	4	p_header
+op	72:17	0:0	4	&&
+water	72:20	0:0	4	p_header
+op	72:28	0:0	4	->
+water	72:30	0:0	4	nFlags
+op	72:37	0:0	4	&
+water	72:39	0:0	4	SENTINEL_FLAG
+stmts	72:54	75:4	3	
+water	72:54	0:0	4	{
+call	73:8	73:21	4	free
+arg	73:13	73:21	5	p_header
+water	73:13	0:0	6	p_header
+water	73:22	0:0	4	;
+goto	74:8	74:21	4	reconfig
+water	74:13	0:0	5	reconfig
+water	75:4	0:0	4	}
+if	76:4	108:4	2	(p_header)
+cond	76:7	76:7	3	p_header
+water	76:7	0:0	4	p_header
+stmts	77:4	108:4	3	
+water	77:4	0:0	4	{
+water	78:8	0:0	4	p_header
+op	78:16	0:0	4	->
+water	78:18	0:0	4	nFilledLen
+op	78:29	0:0	4	=
+water	78:31	0:0	4	p_block
+op	78:38	0:0	4	->
+water	78:40	0:0	4	i_buffer
+water	78:48	0:0	4	;
+water	79:8	0:0	4	p_header
+op	79:16	0:0	4	->
+water	79:18	0:0	4	nOffset
+op	79:26	0:0	4	=
+water	79:28	0:0	4	0
+water	79:29	0:0	4	;
+water	80:8	0:0	4	p_header
+op	80:16	0:0	4	->
+water	80:18	0:0	4	nFlags
+op	80:25	0:0	4	=
+water	80:27	0:0	4	OMX_BUFFERFLAG_ENDOFFRAME
+water	80:52	0:0	4	;
+water	81:8	0:0	4	p_header
+op	81:16	0:0	4	->
+water	81:18	0:0	4	nTimeStamp
+op	81:29	0:0	4	=
+call	81:31	81:56	4	ToOmxTicks
+arg	81:42	81:56	5	p_block->i_dts
+water	81:42	0:0	6	p_block
+op	81:49	0:0	6	->
+water	81:51	0:0	6	i_dts
+water	81:57	0:0	4	;
+if	84:8	89:8	4	(p_sys -> in . b_direct)
+cond	84:11	84:21	5	p_sys -> in . b_direct
+water	84:11	0:0	6	p_sys
+op	84:16	0:0	6	->
+water	84:18	0:0	6	in
+op	84:20	0:0	6	.
+water	84:21	0:0	6	b_direct
+stmts	85:8	89:8	5	
+water	85:8	0:0	6	{
+water	86:12	0:0	6	p_header
+op	86:20	0:0	6	->
+water	86:22	0:0	6	pOutputPortPrivate
+op	86:41	0:0	6	=
+water	86:43	0:0	6	p_header
+op	86:51	0:0	6	->
+water	86:53	0:0	6	pBuffer
+water	86:60	0:0	6	;
+water	87:12	0:0	6	p_header
+op	87:20	0:0	6	->
+water	87:22	0:0	6	pBuffer
+op	87:30	0:0	6	=
+water	87:32	0:0	6	p_block
+op	87:39	0:0	6	->
+water	87:41	0:0	6	p_buffer
+water	87:49	0:0	6	;
+water	88:12	0:0	6	p_header
+op	88:20	0:0	6	->
+water	88:22	0:0	6	pAppPrivate
+op	88:34	0:0	6	=
+water	88:36	0:0	6	p_block
+water	88:43	0:0	6	;
+water	89:8	0:0	6	}
+else	90:8	100:8	4
+stmts	91:8	100:8	5	
+water	91:8	0:0	6	{
+if	92:12	97:12	6	(p_header -> nFilledLen > p_header -> nAllocLen)
+cond	92:15	92:48	7	p_header -> nFilledLen > p_header -> nAllocLen
+water	92:15	0:0	8	p_header
+op	92:23	0:0	8	->
+water	92:25	0:0	8	nFilledLen
+op	92:36	0:0	8	>
+water	92:38	0:0	8	p_header
+op	92:46	0:0	8	->
+water	92:48	0:0	8	nAllocLen
+stmts	93:12	97:12	7	
+water	93:12	0:0	8	{
+call	94:16	95:75	8	msg_Dbg
+arg	94:24	94:29	9	p_dec
+water	94:24	0:0	10	p_dec
+arg	94:31	94:57	9	"buffer too small (%i,%i)"
+water	94:31	0:0	10	"buffer too small (%i,%i)"
+arg	95:24	95:49	9	(int)p_header->nFilledLen
+water	95:24	0:0	10	(
+water	95:25	0:0	10	int
+water	95:28	0:0	10	)
+water	95:29	0:0	10	p_header
+op	95:37	0:0	10	->
+water	95:39	0:0	10	nFilledLen
+arg	95:51	95:75	9	(int)p_header->nAllocLen
+water	95:51	0:0	10	(
+water	95:52	0:0	10	int
+water	95:55	0:0	10	)
+water	95:56	0:0	10	p_header
+op	95:64	0:0	10	->
+water	95:66	0:0	10	nAllocLen
+water	95:76	0:0	8	;
+water	96:16	0:0	8	p_header
+op	96:24	0:0	8	->
+water	96:26	0:0	8	nFilledLen
+op	96:37	0:0	8	=
+water	96:39	0:0	8	p_header
+op	96:47	0:0	8	->
+water	96:49	0:0	8	nAllocLen
+water	96:58	0:0	8	;
+water	97:12	0:0	8	}
+call	98:12	98:78	6	memcpy
+arg	98:19	98:36	7	p_header->pBuffer
+water	98:19	0:0	8	p_header
+op	98:27	0:0	8	->
+water	98:29	0:0	8	pBuffer
+arg	98:38	98:55	7	p_block->p_buffer
+water	98:38	0:0	8	p_block
+op	98:45	0:0	8	->
+water	98:47	0:0	8	p_buffer
+arg	98:57	98:78	7	p_header->nFilledLen
+water	98:57	0:0	8	p_header
+op	98:65	0:0	8	->
+water	98:67	0:0	8	nFilledLen
+water	98:79	0:0	6	;
+call	99:12	99:33	6	block_Release
+arg	99:26	99:33	7	p_block
+water	99:26	0:0	8	p_block
+water	99:34	0:0	6	;
+water	100:8	0:0	6	}
+call	102:8	103:43	4	msg_Dbg
+arg	102:17	102:22	5	p_dec
+water	102:17	0:0	6	p_dec
+arg	102:24	102:52	5	"EmptyThisBuffer %p, %p, %i"
+water	102:24	0:0	6	"EmptyThisBuffer %p, %p, %i"
+arg	102:54	102:62	5	p_header
+water	102:54	0:0	6	p_header
+arg	102:64	102:81	5	p_header->pBuffer
+water	102:64	0:0	6	p_header
+op	102:72	0:0	6	->
+water	102:74	0:0	6	pBuffer
+arg	103:17	103:43	5	(int)p_header->nFilledLen
+water	103:17	0:0	6	(
+water	103:18	0:0	6	int
+water	103:21	0:0	6	)
+water	103:22	0:0	6	p_header
+op	103:30	0:0	6	->
+water	103:32	0:0	6	nFilledLen
+water	103:44	0:0	4	;
+call	105:8	105:55	4	OMX_EmptyThisBuffer
+arg	105:28	105:45	5	p_sys->omx_handle
+water	105:28	0:0	6	p_sys
+op	105:33	0:0	6	->
+water	105:35	0:0	6	omx_handle
+arg	105:47	105:55	5	p_header
+water	105:47	0:0	6	p_header
+water	105:56	0:0	4	;
+water	106:8	0:0	4	p_sys
+op	106:13	0:0	4	->
+water	106:15	0:0	4	in
+op	106:17	0:0	4	.
+water	106:18	0:0	4	b_flushed
+op	106:28	0:0	4	=
+water	106:30	0:0	4	false
+water	106:35	0:0	4	;
+op	107:8	0:0	4	*
+water	107:9	0:0	4	pp_block
+op	107:18	0:0	4	=
+water	107:20	0:0	4	NULL
+water	107:24	0:0	4	;
+water	108:4	0:0	4	}
+label	109:0	109:8	2	reconfig :
+for	111:4	118:4	2	(i = 0 ;i < p_sys -> ports;i ++)
+forinit	111:8	111:13	3	i = 0 ;
+water	111:8	0:0	4	i
+op	111:10	0:0	4	=
+water	111:12	0:0	4	0
+water	111:13	0:0	4	;
+cond	111:15	111:26	3	i < p_sys -> ports
+water	111:15	0:0	4	i
+op	111:17	0:0	4	<
+water	111:19	0:0	4	p_sys
+op	111:24	0:0	4	->
+water	111:26	0:0	4	ports
+forexpr	111:33	111:34	3	i ++
+water	111:33	0:0	4	i
+op	111:34	0:0	4	++
+stmts	112:4	118:4	3	
+water	112:4	0:0	4	{
+decl	113:8	113:44	4	OmxPort	*p_port
+op	113:24	0:0	4	=
+op	113:26	0:0	4	&
+water	113:27	0:0	4	p_sys
+op	113:32	0:0	4	->
+water	113:34	0:0	4	p_ports
+op	113:41	0:0	4	[
+water	113:42	0:0	4	i
+op	113:43	0:0	4	]
+if	114:8	114:43	4	(! p_port -> b_reconfigure)
+cond	114:11	114:20	5	! p_port -> b_reconfigure
+op	114:11	0:0	6	!
+water	114:12	0:0	6	p_port
+op	114:18	0:0	6	->
+water	114:20	0:0	6	b_reconfigure
+stmts	114:35	114:43	5	
+continue	114:35	114:43	6	
+water	115:8	0:0	4	p_port
+op	115:14	0:0	4	->
+water	115:16	0:0	4	b_reconfigure
+op	115:30	0:0	4	=
+water	115:32	0:0	4	0
+water	115:33	0:0	4	;
+water	116:8	0:0	4	omx_error
+op	116:18	0:0	4	=
+call	116:20	116:49	4	PortReconfigure
+arg	116:36	116:41	5	p_dec
+water	116:36	0:0	6	p_dec
+arg	116:43	116:49	5	p_port
+water	116:43	0:0	6	p_port
+water	116:50	0:0	4	;
+call	117:8	117:55	4	CHECK_ERROR
+arg	117:20	117:29	5	omx_error
+water	117:20	0:0	6	omx_error
+arg	117:31	117:55	5	"PortReconfigure failed"
+water	117:31	0:0	6	"PortReconfigure failed"
+water	117:56	0:0	4	;
+water	118:4	0:0	4	}
+return	119:4	119:19	2	p_buffer
+water	119:11	0:0	3	p_buffer
+label	120:0	120:5	2	error :
+water	121:4	0:0	2	p_sys
+op	121:9	0:0	2	->
+water	121:11	0:0	2	b_error
+op	121:19	0:0	2	=
+water	121:21	0:0	2	true
+water	121:25	0:0	2	;
+return	122:4	122:15	2	NULL
+water	122:11	0:0	3	NULL

@@ -1,0 +1,399 @@
+func	2:0	103:0	0	static void	aout_DecSynchronize
+params	2:32	0:0	1	
+param	2:33	2:53	2	audio_output_t *	aout
+param	2:55	2:70	2	mtime_t	dec_pts
+param	3:33	3:47	2	int	input_rate
+stmnts	0:0	102:4	1	
+decl	5:4	5:43	2	aout_owner_t	*owner
+op	5:24	0:0	2	=
+call	5:26	5:42	3	aout_owner
+arg	5:38	5:42	4	aout
+water	5:38	0:0	5	aout
+decl	6:4	6:17	2	mtime_t	drift
+if	23:4	24:14	2	(aout_OutputTimeGet (aout ,& drift ) != 0)
+cond	23:8	23:45	3	aout_OutputTimeGet (aout ,& drift ) != 0
+call	23:8	23:40	4	aout_OutputTimeGet
+arg	23:28	23:32	5	aout
+water	23:28	0:0	6	aout
+arg	23:34	23:40	5	&drift
+op	23:34	0:0	6	&
+water	23:35	0:0	6	drift
+op	23:42	0:0	4	!=
+water	23:45	0:0	4	0
+stmts	24:8	24:14	3	
+return	24:8	24:14	4	
+water	25:4	0:0	2	drift
+op	25:10	0:0	2	+=
+call	25:13	25:20	2	mdate
+op	25:22	0:0	2	-
+water	25:24	0:0	2	dec_pts
+water	25:31	0:0	2	;
+if	32:4	49:4	2	(drift > ( owner -> sync . discontinuity ? 0 : + 3 * input_rate * AOUT_MAX_PTS_DELAY / INPUT_RATE_DEFAULT ))
+cond	32:8	33:77	3	drift > ( owner -> sync . discontinuity ? 0 : + 3 * input_rate * AOUT_MAX_PTS_DELAY / INPUT_RATE_DEFAULT )
+water	32:8	0:0	4	drift
+op	32:14	0:0	4	>
+water	32:16	0:0	4	(
+water	32:17	0:0	4	owner
+op	32:22	0:0	4	->
+water	32:24	0:0	4	sync
+op	32:28	0:0	4	.
+water	32:29	0:0	4	discontinuity
+water	32:43	0:0	4	?
+water	32:45	0:0	4	0
+water	33:18	0:0	4	:
+op	33:20	0:0	4	+
+water	33:21	0:0	4	3
+op	33:23	0:0	4	*
+water	33:25	0:0	4	input_rate
+op	33:36	0:0	4	*
+water	33:38	0:0	4	AOUT_MAX_PTS_DELAY
+op	33:57	0:0	4	/
+water	33:59	0:0	4	INPUT_RATE_DEFAULT
+water	33:77	0:0	4	)
+stmts	34:4	49:4	3	
+water	34:4	0:0	4	{
+if	35:8	37:48	4	(! owner -> sync . discontinuity)
+cond	35:12	35:25	5	! owner -> sync . discontinuity
+op	35:12	0:0	6	!
+water	35:13	0:0	6	owner
+op	35:18	0:0	6	->
+water	35:20	0:0	6	sync
+op	35:24	0:0	6	.
+water	35:25	0:0	6	discontinuity
+stmts	36:12	37:48	5	
+call	36:12	37:47	6	msg_Warn
+arg	36:22	36:26	7	aout
+water	36:22	0:0	8	aout
+arg	36:28	37:40	7	"playback way too late (%"PRId64"): ""flushing buffers"
+water	36:28	0:0	8	"playback way too late (%"
+water	36:54	0:0	8	PRId64
+water	36:60	0:0	8	"): "
+water	37:22	0:0	8	"flushing buffers"
+arg	37:42	37:47	7	drift
+water	37:42	0:0	8	drift
+water	37:48	0:0	6	;
+else	38:8	40:47	4
+stmts	39:12	40:47	5	
+call	39:12	40:46	6	msg_Dbg
+arg	39:21	39:25	7	aout
+water	39:21	0:0	8	aout
+arg	39:27	40:39	7	"playback too late (%"PRId64"): ""flushing buffers"
+water	39:27	0:0	8	"playback too late (%"
+water	39:49	0:0	8	PRId64
+water	39:55	0:0	8	"): "
+water	40:21	0:0	8	"flushing buffers"
+arg	40:41	40:46	7	drift
+water	40:41	0:0	8	drift
+water	40:47	0:0	6	;
+call	41:8	41:37	4	aout_OutputFlush
+arg	41:26	41:30	5	aout
+water	41:26	0:0	6	aout
+arg	41:32	41:37	5	false
+water	41:32	0:0	6	false
+water	41:38	0:0	4	;
+call	42:8	42:33	4	aout_StopResampling
+arg	42:29	42:33	5	aout
+water	42:29	0:0	6	aout
+water	42:34	0:0	4	;
+water	43:8	0:0	4	owner
+op	43:13	0:0	4	->
+water	43:15	0:0	4	sync
+op	43:19	0:0	4	.
+water	43:20	0:0	4	end
+op	43:24	0:0	4	=
+water	43:26	0:0	4	VLC_TS_INVALID
+water	43:40	0:0	4	;
+water	44:8	0:0	4	owner
+op	44:13	0:0	4	->
+water	44:15	0:0	4	sync
+op	44:19	0:0	4	.
+water	44:20	0:0	4	discontinuity
+op	44:34	0:0	4	=
+water	44:36	0:0	4	true
+water	44:40	0:0	4	;
+if	46:8	47:18	4	(aout_OutputTimeGet (aout ,& drift ) != 0)
+cond	46:12	46:49	5	aout_OutputTimeGet (aout ,& drift ) != 0
+call	46:12	46:44	6	aout_OutputTimeGet
+arg	46:32	46:36	7	aout
+water	46:32	0:0	8	aout
+arg	46:38	46:44	7	&drift
+op	46:38	0:0	8	&
+water	46:39	0:0	8	drift
+op	46:46	0:0	6	!=
+water	46:49	0:0	6	0
+stmts	47:12	47:18	5	
+return	47:12	47:18	6	
+water	48:8	0:0	4	drift
+op	48:14	0:0	4	+=
+call	48:17	48:24	4	mdate
+op	48:26	0:0	4	-
+water	48:28	0:0	4	dec_pts
+water	48:35	0:0	4	;
+water	49:4	0:0	4	}
+if	52:4	62:4	2	(drift < ( owner -> sync . discontinuity ? 0 : - 3 * input_rate * AOUT_MAX_PTS_ADVANCE / INPUT_RATE_DEFAULT ))
+cond	52:8	53:77	3	drift < ( owner -> sync . discontinuity ? 0 : - 3 * input_rate * AOUT_MAX_PTS_ADVANCE / INPUT_RATE_DEFAULT )
+water	52:8	0:0	4	drift
+op	52:14	0:0	4	<
+water	52:16	0:0	4	(
+water	52:17	0:0	4	owner
+op	52:22	0:0	4	->
+water	52:24	0:0	4	sync
+op	52:28	0:0	4	.
+water	52:29	0:0	4	discontinuity
+water	52:43	0:0	4	?
+water	52:45	0:0	4	0
+water	53:16	0:0	4	:
+op	53:18	0:0	4	-
+water	53:19	0:0	4	3
+op	53:21	0:0	4	*
+water	53:23	0:0	4	input_rate
+op	53:34	0:0	4	*
+water	53:36	0:0	4	AOUT_MAX_PTS_ADVANCE
+op	53:57	0:0	4	/
+water	53:59	0:0	4	INPUT_RATE_DEFAULT
+water	53:77	0:0	4	)
+stmts	54:4	62:4	3	
+water	54:4	0:0	4	{
+if	55:8	57:47	4	(! owner -> sync . discontinuity)
+cond	55:12	55:25	5	! owner -> sync . discontinuity
+op	55:12	0:0	6	!
+water	55:13	0:0	6	owner
+op	55:18	0:0	6	->
+water	55:20	0:0	6	sync
+op	55:24	0:0	6	.
+water	55:25	0:0	6	discontinuity
+stmts	56:12	57:47	5	
+call	56:12	57:46	6	msg_Warn
+arg	56:22	56:26	7	aout
+water	56:22	0:0	8	aout
+arg	56:28	57:39	7	"playback way too early (%"PRId64"): ""playing silence"
+water	56:28	0:0	8	"playback way too early (%"
+water	56:55	0:0	8	PRId64
+water	56:61	0:0	8	"): "
+water	57:22	0:0	8	"playing silence"
+arg	57:41	57:46	7	drift
+water	57:41	0:0	8	drift
+water	57:47	0:0	6	;
+call	58:8	58:46	4	aout_DecSilence
+arg	58:25	58:29	5	aout
+water	58:25	0:0	6	aout
+arg	58:31	58:37	5	-drift
+op	58:31	0:0	6	-
+water	58:32	0:0	6	drift
+arg	58:39	58:46	5	dec_pts
+water	58:39	0:0	6	dec_pts
+water	58:47	0:0	4	;
+call	59:8	59:33	4	aout_StopResampling
+arg	59:29	59:33	5	aout
+water	59:29	0:0	6	aout
+water	59:34	0:0	4	;
+water	60:8	0:0	4	owner
+op	60:13	0:0	4	->
+water	60:15	0:0	4	sync
+op	60:19	0:0	4	.
+water	60:20	0:0	4	discontinuity
+op	60:34	0:0	4	=
+water	60:36	0:0	4	true
+water	60:40	0:0	4	;
+water	61:8	0:0	4	drift
+op	61:14	0:0	4	=
+water	61:16	0:0	4	0
+water	61:17	0:0	4	;
+water	62:4	0:0	4	}
+if	64:4	71:4	2	(drift > + AOUT_MAX_PTS_DELAY && owner -> sync . resamp_type != AOUT_RESAMPLING_UP)
+cond	64:8	65:35	3	drift > + AOUT_MAX_PTS_DELAY && owner -> sync . resamp_type != AOUT_RESAMPLING_UP
+water	64:8	0:0	4	drift
+op	64:14	0:0	4	>
+op	64:16	0:0	4	+
+water	64:17	0:0	4	AOUT_MAX_PTS_DELAY
+op	65:5	0:0	4	&&
+water	65:8	0:0	4	owner
+op	65:13	0:0	4	->
+water	65:15	0:0	4	sync
+op	65:19	0:0	4	.
+water	65:20	0:0	4	resamp_type
+op	65:32	0:0	4	!=
+water	65:35	0:0	4	AOUT_RESAMPLING_UP
+stmts	66:4	71:4	3	
+water	66:4	0:0	4	{
+call	67:8	68:23	4	msg_Warn
+arg	67:18	67:22	5	aout
+water	67:18	0:0	6	aout
+arg	67:24	67:68	5	"playback too late (%"PRId64"): up-sampling"
+water	67:24	0:0	6	"playback too late (%"
+water	67:46	0:0	6	PRId64
+water	67:52	0:0	6	"): up-sampling"
+arg	68:18	68:23	5	drift
+water	68:18	0:0	6	drift
+water	68:24	0:0	4	;
+water	69:8	0:0	4	owner
+op	69:13	0:0	4	->
+water	69:15	0:0	4	sync
+op	69:19	0:0	4	.
+water	69:20	0:0	4	resamp_type
+op	69:32	0:0	4	=
+water	69:34	0:0	4	AOUT_RESAMPLING_UP
+water	69:52	0:0	4	;
+water	70:8	0:0	4	owner
+op	70:13	0:0	4	->
+water	70:15	0:0	4	sync
+op	70:19	0:0	4	.
+water	70:20	0:0	4	resamp_start_drift
+op	70:39	0:0	4	=
+op	70:41	0:0	4	+
+water	70:42	0:0	4	drift
+water	70:47	0:0	4	;
+water	71:4	0:0	4	}
+if	72:4	79:4	2	(drift < - AOUT_MAX_PTS_ADVANCE && owner -> sync . resamp_type != AOUT_RESAMPLING_DOWN)
+cond	72:8	73:35	3	drift < - AOUT_MAX_PTS_ADVANCE && owner -> sync . resamp_type != AOUT_RESAMPLING_DOWN
+water	72:8	0:0	4	drift
+op	72:14	0:0	4	<
+op	72:16	0:0	4	-
+water	72:17	0:0	4	AOUT_MAX_PTS_ADVANCE
+op	73:5	0:0	4	&&
+water	73:8	0:0	4	owner
+op	73:13	0:0	4	->
+water	73:15	0:0	4	sync
+op	73:19	0:0	4	.
+water	73:20	0:0	4	resamp_type
+op	73:32	0:0	4	!=
+water	73:35	0:0	4	AOUT_RESAMPLING_DOWN
+stmts	74:4	79:4	3	
+water	74:4	0:0	4	{
+call	75:8	76:23	4	msg_Warn
+arg	75:18	75:22	5	aout
+water	75:18	0:0	6	aout
+arg	75:24	75:71	5	"playback too early (%"PRId64"): down-sampling"
+water	75:24	0:0	6	"playback too early (%"
+water	75:47	0:0	6	PRId64
+water	75:53	0:0	6	"): down-sampling"
+arg	76:18	76:23	5	drift
+water	76:18	0:0	6	drift
+water	76:24	0:0	4	;
+water	77:8	0:0	4	owner
+op	77:13	0:0	4	->
+water	77:15	0:0	4	sync
+op	77:19	0:0	4	.
+water	77:20	0:0	4	resamp_type
+op	77:32	0:0	4	=
+water	77:34	0:0	4	AOUT_RESAMPLING_DOWN
+water	77:54	0:0	4	;
+water	78:8	0:0	4	owner
+op	78:13	0:0	4	->
+water	78:15	0:0	4	sync
+op	78:19	0:0	4	.
+water	78:20	0:0	4	resamp_start_drift
+op	78:39	0:0	4	=
+op	78:41	0:0	4	-
+water	78:42	0:0	4	drift
+water	78:47	0:0	4	;
+water	79:4	0:0	4	}
+if	80:4	81:14	2	(owner -> sync . resamp_type == AOUT_RESAMPLING_NONE)
+cond	80:8	80:35	3	owner -> sync . resamp_type == AOUT_RESAMPLING_NONE
+water	80:8	0:0	4	owner
+op	80:13	0:0	4	->
+water	80:15	0:0	4	sync
+op	80:19	0:0	4	.
+water	80:20	0:0	4	resamp_type
+op	80:32	0:0	4	==
+water	80:35	0:0	4	AOUT_RESAMPLING_NONE
+stmts	81:8	81:14	3	
+return	81:8	81:14	4	
+if	82:4	89:4	2	(llabs (drift ) > 2 * owner -> sync . resamp_start_drift)
+cond	82:8	82:40	3	llabs (drift ) > 2 * owner -> sync . resamp_start_drift
+call	82:8	82:20	4	llabs
+arg	82:15	82:20	5	drift
+water	82:15	0:0	6	drift
+op	82:22	0:0	4	>
+water	82:24	0:0	4	2
+op	82:26	0:0	4	*
+water	82:28	0:0	4	owner
+op	82:33	0:0	4	->
+water	82:35	0:0	4	sync
+op	82:39	0:0	4	.
+water	82:40	0:0	4	resamp_start_drift
+stmts	83:4	89:4	3	
+water	83:4	0:0	4	{
+call	85:8	86:46	4	msg_Warn
+arg	85:18	85:22	5	aout
+water	85:18	0:0	6	aout
+arg	85:24	86:39	5	"timing screwed (drift: %"PRId64" us): ""stopping resampling"
+water	85:24	0:0	6	"timing screwed (drift: %"
+water	85:50	0:0	6	PRId64
+water	85:56	0:0	6	" us): "
+water	86:18	0:0	6	"stopping resampling"
+arg	86:41	86:46	5	drift
+water	86:41	0:0	6	drift
+water	86:47	0:0	4	;
+call	87:8	87:33	4	aout_StopResampling
+arg	87:29	87:33	5	aout
+water	87:29	0:0	6	aout
+water	87:34	0:0	4	;
+return	88:8	88:14	4	
+water	89:4	0:0	4	}
+decl	93:4	93:71	2	int	adj
+op	93:12	0:0	2	=
+water	93:14	0:0	2	(
+water	93:15	0:0	2	owner
+op	93:20	0:0	2	->
+water	93:22	0:0	2	sync
+op	93:26	0:0	2	.
+water	93:27	0:0	2	resamp_type
+op	93:39	0:0	2	==
+water	93:42	0:0	2	AOUT_RESAMPLING_UP
+water	93:60	0:0	2	)
+water	93:62	0:0	2	?
+op	93:64	0:0	2	+
+water	93:65	0:0	2	2
+water	93:67	0:0	2	:
+op	93:69	0:0	2	-
+water	93:70	0:0	2	2
+if	94:4	97:17	2	(2* llabs (drift ) <= owner -> sync . resamp_start_drift)
+cond	94:8	94:41	3	2* llabs (drift ) <= owner -> sync . resamp_start_drift
+water	94:8	0:0	4	2
+call	94:10	94:24	4	*llabs
+arg	94:19	94:24	5	drift
+water	94:19	0:0	6	drift
+op	94:26	0:0	4	<=
+water	94:29	0:0	4	owner
+op	94:34	0:0	4	->
+water	94:36	0:0	4	sync
+op	94:40	0:0	4	.
+water	94:41	0:0	4	resamp_start_drift
+stmts	97:8	97:17	3	
+water	97:8	0:0	4	adj
+op	97:12	0:0	4	*=
+op	97:15	0:0	4	-
+water	97:16	0:0	4	1
+water	97:17	0:0	4	;
+if	98:4	102:4	2	(!aout_FiltersAdjustResampling (owner -> filters ,adj ))
+cond	98:8	98:58	3	!aout_FiltersAdjustResampling (owner -> filters ,adj )
+op	98:8	0:0	4	!
+call	98:9	98:58	4	aout_FiltersAdjustResampling
+arg	98:39	98:53	5	owner->filters
+water	98:39	0:0	6	owner
+op	98:44	0:0	6	->
+water	98:46	0:0	6	filters
+arg	98:55	98:58	5	adj
+water	98:55	0:0	6	adj
+stmts	99:4	102:4	3	
+water	99:4	0:0	4	{
+water	100:8	0:0	4	owner
+op	100:13	0:0	4	->
+water	100:15	0:0	4	sync
+op	100:19	0:0	4	.
+water	100:20	0:0	4	resamp_type
+op	100:32	0:0	4	=
+water	100:34	0:0	4	AOUT_RESAMPLING_NONE
+water	100:54	0:0	4	;
+call	101:8	101:72	4	msg_Dbg
+arg	101:17	101:21	5	aout
+water	101:17	0:0	6	aout
+arg	101:23	101:65	5	"resampling stopped (drift: %"PRId64" us)"
+water	101:23	0:0	6	"resampling stopped (drift: %"
+water	101:53	0:0	6	PRId64
+water	101:59	0:0	6	" us)"
+arg	101:67	101:72	5	drift
+water	101:67	0:0	6	drift
+water	101:73	0:0	4	;
+water	102:4	0:0	4	}

@@ -1,0 +1,613 @@
+func	2:0	108:0	0	static char *	AuthDigest
+params	2:23	0:0	1	
+param	2:25	2:45	2	vlc_object_t *	p_this
+param	2:47	2:66	2	http_auth_t *	p_auth
+param	3:25	3:47	2	const char *	psz_method
+param	3:49	3:69	2	const char *	psz_path
+param	4:25	4:49	2	const char *	psz_username
+param	4:51	4:76	2	const char *	psz_password
+stmnts	0:0	107:21	1	
+decl	6:4	6:24	2	char	*psz_HA1
+op	6:18	0:0	2	=
+water	6:20	0:0	2	NULL
+decl	7:4	7:24	2	char	*psz_HA2
+op	7:18	0:0	2	=
+water	7:20	0:0	2	NULL
+decl	8:4	8:24	2	char	*psz_ent
+op	8:18	0:0	2	=
+water	8:20	0:0	2	NULL
+decl	9:4	9:27	2	char	*psz_result
+op	9:21	0:0	2	=
+water	9:23	0:0	2	NULL
+decl	10:4	10:22	2	char	psz_inonce[9]
+decl	11:4	11:20	2	struct md5_s	md5
+decl	12:4	12:20	2	struct md5_s	ent
+if	13:4	18:4	2	(p_auth -> psz_realm == NULL)
+cond	13:9	13:30	3	p_auth -> psz_realm == NULL
+water	13:9	0:0	4	p_auth
+op	13:15	0:0	4	->
+water	13:17	0:0	4	psz_realm
+op	13:27	0:0	4	==
+water	13:30	0:0	4	NULL
+stmts	14:4	18:4	3	
+water	14:4	0:0	4	{
+call	15:8	16:58	4	msg_Warn
+arg	15:18	15:24	5	p_this
+water	15:18	0:0	6	p_this
+arg	15:26	16:58	5	"Digest Authentication: ""Mandatory 'realm' value not available"
+water	15:26	0:0	6	"Digest Authentication: "
+water	16:18	0:0	6	"Mandatory 'realm' value not available"
+water	16:59	0:0	4	;
+goto	17:8	17:18	4	error
+water	17:13	0:0	5	error
+water	18:4	0:0	4	}
+if	20:4	25:4	2	(p_auth -> psz_HA1)
+cond	20:9	20:17	3	p_auth -> psz_HA1
+water	20:9	0:0	4	p_auth
+op	20:15	0:0	4	->
+water	20:17	0:0	4	psz_HA1
+stmts	21:4	25:4	3	
+water	21:4	0:0	4	{
+water	22:8	0:0	4	psz_HA1
+op	22:16	0:0	4	=
+call	22:18	22:42	4	strdup
+arg	22:26	22:42	5	p_auth->psz_HA1
+water	22:26	0:0	6	p_auth
+op	22:32	0:0	6	->
+water	22:34	0:0	6	psz_HA1
+water	22:43	0:0	4	;
+if	23:8	24:22	4	(psz_HA1 == NULL)
+cond	23:13	23:24	5	psz_HA1 == NULL
+water	23:13	0:0	6	psz_HA1
+op	23:21	0:0	6	==
+water	23:24	0:0	6	NULL
+stmts	24:12	24:22	5	
+goto	24:12	24:22	6	error
+water	24:17	0:0	7	error
+water	25:4	0:0	4	}
+else	26:4	56:4	2
+stmts	27:4	56:4	3	
+water	27:4	0:0	4	{
+call	28:8	28:22	4	InitMD5
+arg	28:17	28:22	5	&md5
+op	28:17	0:0	6	&
+water	28:18	0:0	6	md5
+water	28:23	0:0	4	;
+call	29:8	29:59	4	AddMD5
+arg	29:16	29:20	5	&md5
+op	29:16	0:0	6	&
+water	29:17	0:0	6	md5
+arg	29:22	29:34	5	psz_username
+water	29:22	0:0	6	psz_username
+arg	29:36	29:59	5	strlen(psz_username)
+call	29:36	29:57	6	strlen
+arg	29:44	29:57	7	psz_username
+water	29:44	0:0	8	psz_username
+water	29:60	0:0	4	;
+call	30:8	30:29	4	AddMD5
+arg	30:16	30:20	5	&md5
+op	30:16	0:0	6	&
+water	30:17	0:0	6	md5
+arg	30:22	30:25	5	":"
+water	30:22	0:0	6	":"
+arg	30:27	30:29	5	1
+water	30:27	0:0	6	1
+water	30:30	0:0	4	;
+call	31:8	31:69	4	AddMD5
+arg	31:16	31:20	5	&md5
+op	31:16	0:0	6	&
+water	31:17	0:0	6	md5
+arg	31:22	31:39	5	p_auth->psz_realm
+water	31:22	0:0	6	p_auth
+op	31:28	0:0	6	->
+water	31:30	0:0	6	psz_realm
+arg	31:41	31:69	5	strlen(p_auth->psz_realm)
+call	31:41	31:67	6	strlen
+arg	31:49	31:67	7	p_auth->psz_realm
+water	31:49	0:0	8	p_auth
+op	31:55	0:0	8	->
+water	31:57	0:0	8	psz_realm
+water	31:70	0:0	4	;
+call	32:8	32:29	4	AddMD5
+arg	32:16	32:20	5	&md5
+op	32:16	0:0	6	&
+water	32:17	0:0	6	md5
+arg	32:22	32:25	5	":"
+water	32:22	0:0	6	":"
+arg	32:27	32:29	5	1
+water	32:27	0:0	6	1
+water	32:30	0:0	4	;
+call	33:8	33:59	4	AddMD5
+arg	33:16	33:20	5	&md5
+op	33:16	0:0	6	&
+water	33:17	0:0	6	md5
+arg	33:22	33:34	5	psz_password
+water	33:22	0:0	6	psz_password
+arg	33:36	33:59	5	strlen(psz_password)
+call	33:36	33:57	6	strlen
+arg	33:44	33:57	7	psz_password
+water	33:44	0:0	8	psz_password
+water	33:60	0:0	4	;
+call	34:8	34:21	4	EndMD5
+arg	34:16	34:21	5	&md5
+op	34:16	0:0	6	&
+water	34:17	0:0	6	md5
+water	34:22	0:0	4	;
+water	35:8	0:0	4	psz_HA1
+op	35:16	0:0	4	=
+call	35:18	35:37	4	psz_md5_hash
+arg	35:32	35:37	5	&md5
+op	35:32	0:0	6	&
+water	35:33	0:0	6	md5
+water	35:38	0:0	4	;
+if	36:8	37:22	4	(psz_HA1 == NULL)
+cond	36:13	36:24	5	psz_HA1 == NULL
+water	36:13	0:0	6	psz_HA1
+op	36:21	0:0	6	==
+water	36:24	0:0	6	NULL
+stmts	37:12	37:22	5	
+goto	37:12	37:22	6	error
+water	37:17	0:0	7	error
+if	38:8	55:8	4	(p_auth -> psz_algorithm &&strcmp (p_auth -> psz_algorithm ,"MD5-sess" ) == 0)
+cond	38:13	39:60	5	p_auth -> psz_algorithm &&strcmp (p_auth -> psz_algorithm ,"MD5-sess" ) == 0
+water	38:13	0:0	6	p_auth
+op	38:19	0:0	6	->
+water	38:21	0:0	6	psz_algorithm
+op	38:35	0:0	6	&&
+call	39:13	39:55	6	strcmp
+arg	39:21	39:42	7	p_auth->psz_algorithm
+water	39:21	0:0	8	p_auth
+op	39:27	0:0	8	->
+water	39:29	0:0	8	psz_algorithm
+arg	39:44	39:55	7	"MD5-sess"
+water	39:44	0:0	8	"MD5-sess"
+op	39:57	0:0	6	==
+water	39:60	0:0	6	0
+stmts	40:8	55:8	5	
+water	40:8	0:0	6	{
+call	41:12	41:26	6	InitMD5
+arg	41:21	41:26	7	&md5
+op	41:21	0:0	8	&
+water	41:22	0:0	8	md5
+water	41:27	0:0	6	;
+call	42:12	42:38	6	AddMD5
+arg	42:20	42:24	7	&md5
+op	42:20	0:0	8	&
+water	42:21	0:0	8	md5
+arg	42:26	42:33	7	psz_HA1
+water	42:26	0:0	8	psz_HA1
+arg	42:35	42:38	7	32
+water	42:35	0:0	8	32
+water	42:39	0:0	6	;
+call	43:12	43:33	6	AddMD5
+arg	43:20	43:24	7	&md5
+op	43:20	0:0	8	&
+water	43:21	0:0	8	md5
+arg	43:26	43:29	7	":"
+water	43:26	0:0	8	":"
+arg	43:31	43:33	7	1
+water	43:31	0:0	8	1
+water	43:34	0:0	6	;
+call	44:12	44:73	6	AddMD5
+arg	44:20	44:24	7	&md5
+op	44:20	0:0	8	&
+water	44:21	0:0	8	md5
+arg	44:26	44:43	7	p_auth->psz_nonce
+water	44:26	0:0	8	p_auth
+op	44:32	0:0	8	->
+water	44:34	0:0	8	psz_nonce
+arg	44:45	44:73	7	strlen(p_auth->psz_nonce)
+call	44:45	44:71	8	strlen
+arg	44:53	44:71	9	p_auth->psz_nonce
+water	44:53	0:0	10	p_auth
+op	44:59	0:0	10	->
+water	44:61	0:0	10	psz_nonce
+water	44:74	0:0	6	;
+call	45:12	45:33	6	AddMD5
+arg	45:20	45:24	7	&md5
+op	45:20	0:0	8	&
+water	45:21	0:0	8	md5
+arg	45:26	45:29	7	":"
+water	45:26	0:0	8	":"
+arg	45:31	45:33	7	1
+water	45:31	0:0	8	1
+water	45:34	0:0	6	;
+call	46:12	46:75	6	AddMD5
+arg	46:20	46:24	7	&md5
+op	46:20	0:0	8	&
+water	46:21	0:0	8	md5
+arg	46:26	46:44	7	p_auth->psz_cnonce
+water	46:26	0:0	8	p_auth
+op	46:32	0:0	8	->
+water	46:34	0:0	8	psz_cnonce
+arg	46:46	46:75	7	strlen(p_auth->psz_cnonce)
+call	46:46	46:73	8	strlen
+arg	46:54	46:73	9	p_auth->psz_cnonce
+water	46:54	0:0	10	p_auth
+op	46:60	0:0	10	->
+water	46:62	0:0	10	psz_cnonce
+water	46:76	0:0	6	;
+call	47:12	47:25	6	EndMD5
+arg	47:20	47:25	7	&md5
+op	47:20	0:0	8	&
+water	47:21	0:0	8	md5
+water	47:26	0:0	6	;
+call	48:12	48:26	6	free
+arg	48:18	48:26	7	psz_HA1
+water	48:18	0:0	8	psz_HA1
+water	48:27	0:0	6	;
+water	49:12	0:0	6	psz_HA1
+op	49:20	0:0	6	=
+call	49:22	49:41	6	psz_md5_hash
+arg	49:36	49:41	7	&md5
+op	49:36	0:0	8	&
+water	49:37	0:0	8	md5
+water	49:42	0:0	6	;
+if	50:12	51:26	6	(psz_HA1 == NULL)
+cond	50:17	50:28	7	psz_HA1 == NULL
+water	50:17	0:0	8	psz_HA1
+op	50:25	0:0	8	==
+water	50:28	0:0	8	NULL
+stmts	51:16	51:26	7	
+goto	51:16	51:26	8	error
+water	51:21	0:0	9	error
+water	52:12	0:0	6	p_auth
+op	52:18	0:0	6	->
+water	52:20	0:0	6	psz_HA1
+op	52:28	0:0	6	=
+call	52:30	52:46	6	strdup
+arg	52:38	52:46	7	psz_HA1
+water	52:38	0:0	8	psz_HA1
+water	52:47	0:0	6	;
+if	53:12	54:26	6	(p_auth -> psz_HA1 == NULL)
+cond	53:17	53:36	7	p_auth -> psz_HA1 == NULL
+water	53:17	0:0	8	p_auth
+op	53:23	0:0	8	->
+water	53:25	0:0	8	psz_HA1
+op	53:33	0:0	8	==
+water	53:36	0:0	8	NULL
+stmts	54:16	54:26	7	
+goto	54:16	54:26	8	error
+water	54:21	0:0	9	error
+water	55:8	0:0	6	}
+water	56:4	0:0	4	}
+call	58:4	58:18	2	InitMD5
+arg	58:13	58:18	3	&md5
+op	58:13	0:0	4	&
+water	58:14	0:0	4	md5
+water	58:19	0:0	2	;
+if	59:4	60:56	2	(* psz_method)
+cond	59:9	59:10	3	* psz_method
+op	59:9	0:0	4	*
+water	59:10	0:0	4	psz_method
+stmts	60:8	60:56	3	
+call	60:8	60:55	4	AddMD5
+arg	60:16	60:20	5	&md5
+op	60:16	0:0	6	&
+water	60:17	0:0	6	md5
+arg	60:22	60:32	5	psz_method
+water	60:22	0:0	6	psz_method
+arg	60:34	60:55	5	strlen(psz_method)
+call	60:34	60:53	6	strlen
+arg	60:42	60:53	7	psz_method
+water	60:42	0:0	8	psz_method
+water	60:56	0:0	4	;
+call	61:4	61:25	2	AddMD5
+arg	61:12	61:16	3	&md5
+op	61:12	0:0	4	&
+water	61:13	0:0	4	md5
+arg	61:18	61:21	3	":"
+water	61:18	0:0	4	":"
+arg	61:23	61:25	3	1
+water	61:23	0:0	4	1
+water	61:26	0:0	2	;
+if	62:4	63:52	2	(psz_path)
+cond	62:9	62:9	3	psz_path
+water	62:9	0:0	4	psz_path
+stmts	63:8	63:52	3	
+call	63:8	63:51	4	AddMD5
+arg	63:16	63:20	5	&md5
+op	63:16	0:0	6	&
+water	63:17	0:0	6	md5
+arg	63:22	63:30	5	psz_path
+water	63:22	0:0	6	psz_path
+arg	63:32	63:51	5	strlen(psz_path)
+call	63:32	63:49	6	strlen
+arg	63:40	63:49	7	psz_path
+water	63:40	0:0	8	psz_path
+water	63:52	0:0	4	;
+else	64:4	65:30	2
+stmts	65:8	65:30	3	
+call	65:8	65:29	4	AddMD5
+arg	65:16	65:20	5	&md5
+op	65:16	0:0	6	&
+water	65:17	0:0	6	md5
+arg	65:22	65:25	5	"/"
+water	65:22	0:0	6	"/"
+arg	65:27	65:29	5	1
+water	65:27	0:0	6	1
+water	65:30	0:0	4	;
+if	66:4	77:4	2	(p_auth -> psz_qop &&strcmp (p_auth -> psz_qop ,"auth-int" ) == 0)
+cond	66:9	66:69	3	p_auth -> psz_qop &&strcmp (p_auth -> psz_qop ,"auth-int" ) == 0
+water	66:9	0:0	4	p_auth
+op	66:15	0:0	4	->
+water	66:17	0:0	4	psz_qop
+op	66:25	0:0	4	&&
+call	66:28	66:64	4	strcmp
+arg	66:36	66:51	5	p_auth->psz_qop
+water	66:36	0:0	6	p_auth
+op	66:42	0:0	6	->
+water	66:44	0:0	6	psz_qop
+arg	66:53	66:64	5	"auth-int"
+water	66:53	0:0	6	"auth-int"
+op	66:66	0:0	4	==
+water	66:69	0:0	4	0
+stmts	67:4	77:4	3	
+water	67:4	0:0	4	{
+call	68:8	68:22	4	InitMD5
+arg	68:17	68:22	5	&ent
+op	68:17	0:0	6	&
+water	68:18	0:0	6	ent
+water	68:23	0:0	4	;
+call	70:8	70:28	4	AddMD5
+arg	70:16	70:20	5	&ent
+op	70:16	0:0	6	&
+water	70:17	0:0	6	ent
+arg	70:22	70:24	5	""
+water	70:22	0:0	6	""
+arg	70:26	70:28	5	0
+water	70:26	0:0	6	0
+water	70:29	0:0	4	;
+call	71:8	71:21	4	EndMD5
+arg	71:16	71:21	5	&ent
+op	71:16	0:0	6	&
+water	71:17	0:0	6	ent
+water	71:22	0:0	4	;
+water	72:8	0:0	4	psz_ent
+op	72:16	0:0	4	=
+call	72:18	72:37	4	psz_md5_hash
+arg	72:32	72:37	5	&ent
+op	72:32	0:0	6	&
+water	72:33	0:0	6	ent
+water	72:38	0:0	4	;
+if	73:8	74:22	4	(psz_ent == NULL)
+cond	73:13	73:24	5	psz_ent == NULL
+water	73:13	0:0	6	psz_ent
+op	73:21	0:0	6	==
+water	73:24	0:0	6	NULL
+stmts	74:12	74:22	5	
+goto	74:12	74:22	6	error
+water	74:17	0:0	7	error
+call	75:8	75:29	4	AddMD5
+arg	75:16	75:20	5	&md5
+op	75:16	0:0	6	&
+water	75:17	0:0	6	md5
+arg	75:22	75:25	5	":"
+water	75:22	0:0	6	":"
+arg	75:27	75:29	5	1
+water	75:27	0:0	6	1
+water	75:30	0:0	4	;
+call	76:8	76:34	4	AddMD5
+arg	76:16	76:20	5	&md5
+op	76:16	0:0	6	&
+water	76:17	0:0	6	md5
+arg	76:22	76:29	5	psz_ent
+water	76:22	0:0	6	psz_ent
+arg	76:31	76:34	5	32
+water	76:31	0:0	6	32
+water	76:35	0:0	4	;
+water	77:4	0:0	4	}
+call	78:4	78:17	2	EndMD5
+arg	78:12	78:17	3	&md5
+op	78:12	0:0	4	&
+water	78:13	0:0	4	md5
+water	78:18	0:0	2	;
+water	79:4	0:0	2	psz_HA2
+op	79:12	0:0	2	=
+call	79:14	79:33	2	psz_md5_hash
+arg	79:28	79:33	3	&md5
+op	79:28	0:0	4	&
+water	79:29	0:0	4	md5
+water	79:34	0:0	2	;
+if	80:4	81:18	2	(psz_HA2 == NULL)
+cond	80:9	80:20	3	psz_HA2 == NULL
+water	80:9	0:0	4	psz_HA2
+op	80:17	0:0	4	==
+water	80:20	0:0	4	NULL
+stmts	81:8	81:18	3	
+goto	81:8	81:18	4	error
+water	81:13	0:0	5	error
+call	83:4	83:18	2	InitMD5
+arg	83:13	83:18	3	&md5
+op	83:13	0:0	4	&
+water	83:14	0:0	4	md5
+water	83:19	0:0	2	;
+call	84:4	84:30	2	AddMD5
+arg	84:12	84:16	3	&md5
+op	84:12	0:0	4	&
+water	84:13	0:0	4	md5
+arg	84:18	84:25	3	psz_HA1
+water	84:18	0:0	4	psz_HA1
+arg	84:27	84:30	3	32
+water	84:27	0:0	4	32
+water	84:31	0:0	2	;
+call	85:4	85:25	2	AddMD5
+arg	85:12	85:16	3	&md5
+op	85:12	0:0	4	&
+water	85:13	0:0	4	md5
+arg	85:18	85:21	3	":"
+water	85:18	0:0	4	":"
+arg	85:23	85:25	3	1
+water	85:23	0:0	4	1
+water	85:26	0:0	2	;
+call	86:4	86:65	2	AddMD5
+arg	86:12	86:16	3	&md5
+op	86:12	0:0	4	&
+water	86:13	0:0	4	md5
+arg	86:18	86:35	3	p_auth->psz_nonce
+water	86:18	0:0	4	p_auth
+op	86:24	0:0	4	->
+water	86:26	0:0	4	psz_nonce
+arg	86:37	86:65	3	strlen(p_auth->psz_nonce)
+call	86:37	86:63	4	strlen
+arg	86:45	86:63	5	p_auth->psz_nonce
+water	86:45	0:0	6	p_auth
+op	86:51	0:0	6	->
+water	86:53	0:0	6	psz_nonce
+water	86:66	0:0	2	;
+call	87:4	87:25	2	AddMD5
+arg	87:12	87:16	3	&md5
+op	87:12	0:0	4	&
+water	87:13	0:0	4	md5
+arg	87:18	87:21	3	":"
+water	87:18	0:0	4	":"
+arg	87:23	87:25	3	1
+water	87:23	0:0	4	1
+water	87:26	0:0	2	;
+if	88:4	99:4	2	(p_auth -> psz_qop && (strcmp (p_auth -> psz_qop ,"auth" ) == 0 ||strcmp (p_auth -> psz_qop ,"auth-int" ) == 0 ))
+cond	88:9	90:54	3	p_auth -> psz_qop && (strcmp (p_auth -> psz_qop ,"auth" ) == 0 ||strcmp (p_auth -> psz_qop ,"auth-int" ) == 0 )
+water	88:9	0:0	4	p_auth
+op	88:15	0:0	4	->
+water	88:17	0:0	4	psz_qop
+op	88:25	0:0	4	&&
+water	89:9	0:0	4	(
+call	89:11	89:43	4	strcmp
+arg	89:19	89:34	5	p_auth->psz_qop
+water	89:19	0:0	6	p_auth
+op	89:25	0:0	6	->
+water	89:27	0:0	6	psz_qop
+arg	89:36	89:43	5	"auth"
+water	89:36	0:0	6	"auth"
+op	89:45	0:0	4	==
+water	89:48	0:0	4	0
+op	89:50	0:0	4	||
+call	90:11	90:47	4	strcmp
+arg	90:19	90:34	5	p_auth->psz_qop
+water	90:19	0:0	6	p_auth
+op	90:25	0:0	6	->
+water	90:27	0:0	6	psz_qop
+arg	90:36	90:47	5	"auth-int"
+water	90:36	0:0	6	"auth-int"
+op	90:49	0:0	4	==
+water	90:52	0:0	4	0
+water	90:54	0:0	4	)
+stmts	91:4	99:4	3	
+water	91:4	0:0	4	{
+call	92:8	92:76	4	snprintf
+arg	92:18	92:28	5	psz_inonce
+water	92:18	0:0	6	psz_inonce
+arg	92:30	92:50	5	sizeof(psz_inonce)
+op	92:30	0:0	6	sizeof
+water	92:36	0:0	6	(
+water	92:38	0:0	6	psz_inonce
+water	92:49	0:0	6	)
+arg	92:52	92:58	5	"%08x"
+water	92:52	0:0	6	"%08x"
+arg	92:60	92:76	5	p_auth->i_nonce
+water	92:60	0:0	6	p_auth
+op	92:66	0:0	6	->
+water	92:68	0:0	6	i_nonce
+water	92:77	0:0	4	;
+call	93:8	93:36	4	AddMD5
+arg	93:16	93:20	5	&md5
+op	93:16	0:0	6	&
+water	93:17	0:0	6	md5
+arg	93:22	93:32	5	psz_inonce
+water	93:22	0:0	6	psz_inonce
+arg	93:34	93:36	5	8
+water	93:34	0:0	6	8
+water	93:37	0:0	4	;
+call	94:8	94:29	4	AddMD5
+arg	94:16	94:20	5	&md5
+op	94:16	0:0	6	&
+water	94:17	0:0	6	md5
+arg	94:22	94:25	5	":"
+water	94:22	0:0	6	":"
+arg	94:27	94:29	5	1
+water	94:27	0:0	6	1
+water	94:30	0:0	4	;
+call	95:8	95:71	4	AddMD5
+arg	95:16	95:20	5	&md5
+op	95:16	0:0	6	&
+water	95:17	0:0	6	md5
+arg	95:22	95:40	5	p_auth->psz_cnonce
+water	95:22	0:0	6	p_auth
+op	95:28	0:0	6	->
+water	95:30	0:0	6	psz_cnonce
+arg	95:42	95:71	5	strlen(p_auth->psz_cnonce)
+call	95:42	95:69	6	strlen
+arg	95:50	95:69	7	p_auth->psz_cnonce
+water	95:50	0:0	8	p_auth
+op	95:56	0:0	8	->
+water	95:58	0:0	8	psz_cnonce
+water	95:72	0:0	4	;
+call	96:8	96:29	4	AddMD5
+arg	96:16	96:20	5	&md5
+op	96:16	0:0	6	&
+water	96:17	0:0	6	md5
+arg	96:22	96:25	5	":"
+water	96:22	0:0	6	":"
+arg	96:27	96:29	5	1
+water	96:27	0:0	6	1
+water	96:30	0:0	4	;
+call	97:8	97:65	4	AddMD5
+arg	97:16	97:20	5	&md5
+op	97:16	0:0	6	&
+water	97:17	0:0	6	md5
+arg	97:22	97:37	5	p_auth->psz_qop
+water	97:22	0:0	6	p_auth
+op	97:28	0:0	6	->
+water	97:30	0:0	6	psz_qop
+arg	97:39	97:65	5	strlen(p_auth->psz_qop)
+call	97:39	97:63	6	strlen
+arg	97:47	97:63	7	p_auth->psz_qop
+water	97:47	0:0	8	p_auth
+op	97:53	0:0	8	->
+water	97:55	0:0	8	psz_qop
+water	97:66	0:0	4	;
+call	98:8	98:29	4	AddMD5
+arg	98:16	98:20	5	&md5
+op	98:16	0:0	6	&
+water	98:17	0:0	6	md5
+arg	98:22	98:25	5	":"
+water	98:22	0:0	6	":"
+arg	98:27	98:29	5	1
+water	98:27	0:0	6	1
+water	98:30	0:0	4	;
+water	99:4	0:0	4	}
+call	100:4	100:30	2	AddMD5
+arg	100:12	100:16	3	&md5
+op	100:12	0:0	4	&
+water	100:13	0:0	4	md5
+arg	100:18	100:25	3	psz_HA2
+water	100:18	0:0	4	psz_HA2
+arg	100:27	100:30	3	32
+water	100:27	0:0	4	32
+water	100:31	0:0	2	;
+call	101:4	101:17	2	EndMD5
+arg	101:12	101:17	3	&md5
+op	101:12	0:0	4	&
+water	101:13	0:0	4	md5
+water	101:18	0:0	2	;
+water	102:4	0:0	2	psz_result
+op	102:15	0:0	2	=
+call	102:17	102:36	2	psz_md5_hash
+arg	102:31	102:36	3	&md5
+op	102:31	0:0	4	&
+water	102:32	0:0	4	md5
+water	102:37	0:0	2	;
+label	103:0	103:5	2	error :
+call	104:4	104:18	2	free
+arg	104:10	104:18	3	psz_HA1
+water	104:10	0:0	4	psz_HA1
+water	104:19	0:0	2	;
+call	105:4	105:18	2	free
+arg	105:10	105:18	3	psz_HA2
+water	105:10	0:0	4	psz_HA2
+water	105:19	0:0	2	;
+call	106:4	106:18	2	free
+arg	106:10	106:18	3	psz_ent
+water	106:10	0:0	4	psz_ent
+water	106:19	0:0	2	;
+return	107:4	107:21	2	psz_result
+water	107:11	0:0	3	psz_result

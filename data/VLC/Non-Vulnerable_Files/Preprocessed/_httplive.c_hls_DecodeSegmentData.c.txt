@@ -1,0 +1,381 @@
+func	2:0	82:0	0	static int	hls_DecodeSegmentData
+params	2:32	0:0	1	
+param	2:33	2:44	2	stream_t *	s
+param	2:46	2:63	2	hls_stream_t *	hls
+param	2:65	2:83	2	segment_t *	segment
+stmnts	5:4	81:22	1	
+if	5:4	6:26	2	(segment -> psz_key_path == NULL)
+cond	5:8	5:33	3	segment -> psz_key_path == NULL
+water	5:8	0:0	4	segment
+op	5:15	0:0	4	->
+water	5:17	0:0	4	psz_key_path
+op	5:30	0:0	4	==
+water	5:33	0:0	4	NULL
+stmts	6:8	6:26	3	
+return	6:8	6:26	4	VLC_SUCCESS
+water	6:15	0:0	5	VLC_SUCCESS
+if	8:4	13:4	2	(! segment -> b_key_loaded)
+cond	8:8	8:18	3	! segment -> b_key_loaded
+op	8:8	0:0	4	!
+water	8:9	0:0	4	segment
+op	8:16	0:0	4	->
+water	8:18	0:0	4	b_key_loaded
+stmts	9:4	13:4	3	
+water	9:4	0:0	4	{
+if	11:8	12:31	4	(hls_ManageSegmentKeys (s ,hls ) != VLC_SUCCESS)
+cond	11:12	11:45	5	hls_ManageSegmentKeys (s ,hls ) != VLC_SUCCESS
+call	11:12	11:40	6	hls_ManageSegmentKeys
+arg	11:34	11:35	7	s
+water	11:34	0:0	8	s
+arg	11:37	11:40	7	hls
+water	11:37	0:0	8	hls
+op	11:42	0:0	6	!=
+water	11:45	0:0	6	VLC_SUCCESS
+stmts	12:12	12:31	5	
+return	12:12	12:31	6	VLC_EGENERIC
+water	12:19	0:0	7	VLC_EGENERIC
+water	13:4	0:0	4	}
+decl	15:4	15:29	2	gcry_error_t	i_gcrypt_err
+decl	16:4	16:28	2	gcry_cipher_hd_t	aes_ctx
+water	18:4	0:0	2	i_gcrypt_err
+op	18:17	0:0	2	=
+call	18:19	19:60	2	gcry_cipher_open
+arg	18:36	18:44	3	&aes_ctx
+op	18:36	0:0	4	&
+water	18:37	0:0	4	aes_ctx
+arg	18:46	18:61	3	GCRY_CIPHER_AES
+water	18:46	0:0	4	GCRY_CIPHER_AES
+arg	19:37	19:57	3	GCRY_CIPHER_MODE_CBC
+water	19:37	0:0	4	GCRY_CIPHER_MODE_CBC
+arg	19:59	19:60	3	0
+water	19:59	0:0	4	0
+water	19:61	0:0	2	;
+if	20:4	25:4	2	(i_gcrypt_err)
+cond	20:8	20:8	3	i_gcrypt_err
+water	20:8	0:0	4	i_gcrypt_err
+stmts	21:4	25:4	3	
+water	21:4	0:0	4	{
+call	22:8	22:76	4	msg_Err
+arg	22:16	22:17	5	s
+water	22:16	0:0	6	s
+arg	22:19	22:48	5	"gcry_cipher_open failed: %s"
+water	22:19	0:0	6	"gcry_cipher_open failed: %s"
+arg	22:50	22:76	5	gpg_strerror(i_gcrypt_err)
+call	22:50	22:75	6	gpg_strerror
+arg	22:63	22:75	7	i_gcrypt_err
+water	22:63	0:0	8	i_gcrypt_err
+water	22:77	0:0	4	;
+call	23:8	23:33	4	gcry_cipher_close
+arg	23:26	23:33	5	aes_ctx
+water	23:26	0:0	6	aes_ctx
+water	23:34	0:0	4	;
+return	24:8	24:27	4	VLC_EGENERIC
+water	24:15	0:0	5	VLC_EGENERIC
+water	25:4	0:0	4	}
+water	27:4	0:0	2	i_gcrypt_err
+op	27:17	0:0	2	=
+call	27:19	28:63	2	gcry_cipher_setkey
+arg	27:38	27:45	3	aes_ctx
+water	27:38	0:0	4	aes_ctx
+arg	27:47	27:63	3	segment->aes_key
+water	27:47	0:0	4	segment
+op	27:54	0:0	4	->
+water	27:56	0:0	4	aes_key
+arg	28:39	28:63	3	sizeof(segment->aes_key)
+op	28:39	0:0	4	sizeof
+water	28:45	0:0	4	(
+water	28:46	0:0	4	segment
+op	28:53	0:0	4	->
+water	28:55	0:0	4	aes_key
+water	28:62	0:0	4	)
+water	28:64	0:0	2	;
+if	29:4	34:4	2	(i_gcrypt_err)
+cond	29:8	29:8	3	i_gcrypt_err
+water	29:8	0:0	4	i_gcrypt_err
+stmts	30:4	34:4	3	
+water	30:4	0:0	4	{
+call	31:8	31:78	4	msg_Err
+arg	31:16	31:17	5	s
+water	31:16	0:0	6	s
+arg	31:19	31:50	5	"gcry_cipher_setkey failed: %s"
+water	31:19	0:0	6	"gcry_cipher_setkey failed: %s"
+arg	31:52	31:78	5	gpg_strerror(i_gcrypt_err)
+call	31:52	31:77	6	gpg_strerror
+arg	31:65	31:77	7	i_gcrypt_err
+water	31:65	0:0	8	i_gcrypt_err
+water	31:79	0:0	4	;
+call	32:8	32:33	4	gcry_cipher_close
+arg	32:26	32:33	5	aes_ctx
+water	32:26	0:0	6	aes_ctx
+water	32:34	0:0	4	;
+return	33:8	33:27	4	VLC_EGENERIC
+water	33:15	0:0	5	VLC_EGENERIC
+water	34:4	0:0	4	}
+if	35:4	42:4	2	(hls -> b_iv_loaded == false)
+cond	35:8	35:28	3	hls -> b_iv_loaded == false
+water	35:8	0:0	4	hls
+op	35:11	0:0	4	->
+water	35:13	0:0	4	b_iv_loaded
+op	35:25	0:0	4	==
+water	35:28	0:0	4	false
+stmts	36:4	42:4	3	
+water	36:4	0:0	4	{
+call	37:8	37:49	4	memset
+arg	37:15	37:30	5	hls->psz_AES_IV
+water	37:15	0:0	6	hls
+op	37:18	0:0	6	->
+water	37:20	0:0	6	psz_AES_IV
+arg	37:32	37:33	5	0
+water	37:32	0:0	6	0
+arg	37:35	37:49	5	AES_BLOCK_SIZE
+water	37:35	0:0	6	AES_BLOCK_SIZE
+water	37:50	0:0	4	;
+water	38:8	0:0	4	hls
+op	38:11	0:0	4	->
+water	38:13	0:0	4	psz_AES_IV
+op	38:23	0:0	4	[
+water	38:24	0:0	4	15
+op	38:26	0:0	4	]
+op	38:28	0:0	4	=
+water	38:30	0:0	4	segment
+op	38:37	0:0	4	->
+water	38:39	0:0	4	sequence
+op	38:48	0:0	4	&
+water	38:50	0:0	4	0
+water	38:51	0:0	4	xff
+water	38:54	0:0	4	;
+water	39:8	0:0	4	hls
+op	39:11	0:0	4	->
+water	39:13	0:0	4	psz_AES_IV
+op	39:23	0:0	4	[
+water	39:24	0:0	4	14
+op	39:26	0:0	4	]
+op	39:28	0:0	4	=
+water	39:30	0:0	4	(
+water	39:31	0:0	4	segment
+op	39:38	0:0	4	->
+water	39:40	0:0	4	sequence
+op	39:49	0:0	4	>>
+water	39:52	0:0	4	8
+water	39:53	0:0	4	)
+op	39:54	0:0	4	&
+water	39:56	0:0	4	0
+water	39:57	0:0	4	xff
+water	39:60	0:0	4	;
+water	40:8	0:0	4	hls
+op	40:11	0:0	4	->
+water	40:13	0:0	4	psz_AES_IV
+op	40:23	0:0	4	[
+water	40:24	0:0	4	13
+op	40:26	0:0	4	]
+op	40:28	0:0	4	=
+water	40:30	0:0	4	(
+water	40:31	0:0	4	segment
+op	40:38	0:0	4	->
+water	40:40	0:0	4	sequence
+op	40:49	0:0	4	>>
+water	40:52	0:0	4	16
+water	40:54	0:0	4	)
+op	40:55	0:0	4	&
+water	40:57	0:0	4	0
+water	40:58	0:0	4	xff
+water	40:61	0:0	4	;
+water	41:8	0:0	4	hls
+op	41:11	0:0	4	->
+water	41:13	0:0	4	psz_AES_IV
+op	41:23	0:0	4	[
+water	41:24	0:0	4	12
+op	41:26	0:0	4	]
+op	41:28	0:0	4	=
+water	41:30	0:0	4	(
+water	41:31	0:0	4	segment
+op	41:38	0:0	4	->
+water	41:40	0:0	4	sequence
+op	41:49	0:0	4	>>
+water	41:52	0:0	4	24
+water	41:54	0:0	4	)
+op	41:55	0:0	4	&
+water	41:57	0:0	4	0
+water	41:58	0:0	4	xff
+water	41:61	0:0	4	;
+water	42:4	0:0	4	}
+water	43:4	0:0	2	i_gcrypt_err
+op	43:17	0:0	2	=
+call	43:19	44:61	2	gcry_cipher_setiv
+arg	43:37	43:44	3	aes_ctx
+water	43:37	0:0	4	aes_ctx
+arg	43:46	43:61	3	hls->psz_AES_IV
+water	43:46	0:0	4	hls
+op	43:49	0:0	4	->
+water	43:51	0:0	4	psz_AES_IV
+arg	44:38	44:61	3	sizeof(hls->psz_AES_IV)
+op	44:38	0:0	4	sizeof
+water	44:44	0:0	4	(
+water	44:45	0:0	4	hls
+op	44:48	0:0	4	->
+water	44:50	0:0	4	psz_AES_IV
+water	44:60	0:0	4	)
+water	44:62	0:0	2	;
+if	45:4	50:4	2	(i_gcrypt_err)
+cond	45:8	45:8	3	i_gcrypt_err
+water	45:8	0:0	4	i_gcrypt_err
+stmts	46:4	50:4	3	
+water	46:4	0:0	4	{
+call	47:8	47:77	4	msg_Err
+arg	47:16	47:17	5	s
+water	47:16	0:0	6	s
+arg	47:19	47:49	5	"gcry_cipher_setiv failed: %s"
+water	47:19	0:0	6	"gcry_cipher_setiv failed: %s"
+arg	47:51	47:77	5	gpg_strerror(i_gcrypt_err)
+call	47:51	47:76	6	gpg_strerror
+arg	47:64	47:76	7	i_gcrypt_err
+water	47:64	0:0	8	i_gcrypt_err
+water	47:78	0:0	4	;
+call	48:8	48:33	4	gcry_cipher_close
+arg	48:26	48:33	5	aes_ctx
+water	48:26	0:0	6	aes_ctx
+water	48:34	0:0	4	;
+return	49:8	49:27	4	VLC_EGENERIC
+water	49:15	0:0	5	VLC_EGENERIC
+water	50:4	0:0	4	}
+water	51:4	0:0	2	i_gcrypt_err
+op	51:17	0:0	2	=
+call	51:19	55:40	2	gcry_cipher_decrypt
+arg	51:39	51:46	3	aes_ctx
+water	51:39	0:0	4	aes_ctx
+arg	52:39	52:62	3	segment->data->p_buffer
+water	52:39	0:0	4	segment
+op	52:46	0:0	4	->
+water	52:48	0:0	4	data
+op	52:52	0:0	4	->
+water	52:54	0:0	4	p_buffer
+arg	53:39	53:62	3	segment->data->i_buffer
+water	53:39	0:0	4	segment
+op	53:46	0:0	4	->
+water	53:48	0:0	4	data
+op	53:52	0:0	4	->
+water	53:54	0:0	4	i_buffer
+arg	54:39	54:43	3	NULL
+water	54:39	0:0	4	NULL
+arg	55:39	55:40	3	0
+water	55:39	0:0	4	0
+water	55:41	0:0	2	;
+if	56:4	61:4	2	(i_gcrypt_err)
+cond	56:8	56:8	3	i_gcrypt_err
+water	56:8	0:0	4	i_gcrypt_err
+stmts	57:4	61:4	3	
+water	57:4	0:0	4	{
+call	58:8	58:116	4	msg_Err
+arg	58:16	58:17	5	s
+water	58:16	0:0	6	s
+arg	58:19	58:57	5	"gcry_cipher_decrypt failed:  %s/%s\n"
+water	58:19	0:0	6	"gcry_cipher_decrypt failed:  %s/%s\n"
+arg	58:59	58:87	5	gcry_strsource(i_gcrypt_err)
+call	58:59	58:86	6	gcry_strsource
+arg	58:74	58:86	7	i_gcrypt_err
+water	58:74	0:0	8	i_gcrypt_err
+arg	58:89	58:116	5	gcry_strerror(i_gcrypt_err)
+call	58:89	58:115	6	gcry_strerror
+arg	58:103	58:115	7	i_gcrypt_err
+water	58:103	0:0	8	i_gcrypt_err
+water	58:117	0:0	4	;
+call	59:8	59:33	4	gcry_cipher_close
+arg	59:26	59:33	5	aes_ctx
+water	59:26	0:0	6	aes_ctx
+water	59:34	0:0	4	;
+return	60:8	60:27	4	VLC_EGENERIC
+water	60:15	0:0	5	VLC_EGENERIC
+water	61:4	0:0	4	}
+call	62:4	62:29	2	gcry_cipher_close
+arg	62:22	62:29	3	aes_ctx
+water	62:22	0:0	4	aes_ctx
+water	62:30	0:0	2	;
+decl	64:4	64:64	2	int	pad
+op	64:12	0:0	2	=
+water	64:14	0:0	2	segment
+op	64:21	0:0	2	->
+water	64:23	0:0	2	data
+op	64:27	0:0	2	->
+water	64:29	0:0	2	p_buffer
+op	64:37	0:0	2	[
+water	64:38	0:0	2	segment
+op	64:45	0:0	2	->
+water	64:47	0:0	2	data
+op	64:51	0:0	2	->
+water	64:53	0:0	2	i_buffer
+op	64:61	0:0	2	-
+water	64:62	0:0	2	1
+op	64:63	0:0	2	]
+if	65:4	69:4	2	(pad <= 0 || pad > AES_BLOCK_SIZE)
+cond	65:8	65:26	3	pad <= 0 || pad > AES_BLOCK_SIZE
+water	65:8	0:0	4	pad
+op	65:12	0:0	4	<=
+water	65:15	0:0	4	0
+op	65:17	0:0	4	||
+water	65:20	0:0	4	pad
+op	65:24	0:0	4	>
+water	65:26	0:0	4	AES_BLOCK_SIZE
+stmts	66:4	69:4	3	
+water	66:4	0:0	4	{
+call	67:8	67:117	4	msg_Err
+arg	67:16	67:17	5	s
+water	67:16	0:0	6	s
+arg	67:19	67:112	5	"Bad padding character (0x%x), perhaps we failed to decrypt the segment with the correct key"
+water	67:19	0:0	6	"Bad padding character (0x%x), perhaps we failed to decrypt the segment with the correct key"
+arg	67:114	67:117	5	pad
+water	67:114	0:0	6	pad
+water	67:118	0:0	4	;
+return	68:8	68:27	4	VLC_EGENERIC
+water	68:15	0:0	5	VLC_EGENERIC
+water	69:4	0:0	4	}
+decl	70:4	70:19	2	int	count
+op	70:14	0:0	2	=
+water	70:16	0:0	2	pad
+while	71:4	78:4	2	(count --)
+cond	71:11	71:16	3	count --
+water	71:11	0:0	4	count
+op	71:16	0:0	4	--
+stmts	72:4	78:4	3	
+water	72:4	0:0	4	{
+if	73:8	77:8	4	(segment -> data -> p_buffer [ segment -> data -> i_buffer - 1 - count ] != pad)
+cond	73:12	73:72	5	segment -> data -> p_buffer [ segment -> data -> i_buffer - 1 - count ] != pad
+water	73:12	0:0	6	segment
+op	73:19	0:0	6	->
+water	73:21	0:0	6	data
+op	73:25	0:0	6	->
+water	73:27	0:0	6	p_buffer
+op	73:35	0:0	6	[
+water	73:36	0:0	6	segment
+op	73:43	0:0	6	->
+water	73:45	0:0	6	data
+op	73:49	0:0	6	->
+water	73:51	0:0	6	i_buffer
+op	73:59	0:0	6	-
+water	73:60	0:0	6	1
+op	73:61	0:0	6	-
+water	73:62	0:0	6	count
+op	73:67	0:0	6	]
+op	73:69	0:0	6	!=
+water	73:72	0:0	6	pad
+stmts	74:8	77:8	5	
+water	74:8	0:0	6	{
+call	75:16	75:109	6	msg_Err
+arg	75:24	75:25	7	s
+water	75:24	0:0	8	s
+arg	75:27	75:109	7	"Bad ending buffer, perhaps we failed to decrypt the segment with the correct key"
+water	75:27	0:0	8	"Bad ending buffer, perhaps we failed to decrypt the segment with the correct key"
+water	75:110	0:0	6	;
+return	76:16	76:35	6	VLC_EGENERIC
+water	76:23	0:0	7	VLC_EGENERIC
+water	77:8	0:0	6	}
+water	78:4	0:0	4	}
+water	80:4	0:0	2	segment
+op	80:11	0:0	2	->
+water	80:13	0:0	2	data
+op	80:17	0:0	2	->
+water	80:19	0:0	2	i_buffer
+op	80:28	0:0	2	-=
+water	80:31	0:0	2	pad
+water	80:34	0:0	2	;
+return	81:4	81:22	2	VLC_SUCCESS
+water	81:11	0:0	3	VLC_SUCCESS

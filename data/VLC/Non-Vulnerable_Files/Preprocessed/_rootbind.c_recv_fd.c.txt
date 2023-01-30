@@ -1,0 +1,167 @@
+func	2:0	32:0	0	static int	recv_fd
+params	2:19	0:0	1	
+param	2:20	2:25	2	int	p
+stmnts	0:0	31:13	1	
+decl	4:4	4:21	2	struct msghdr	hdr
+decl	5:4	5:20	2	struct iovec	iov
+decl	6:4	6:24	2	struct cmsghdr	*cmsg
+decl	7:4	7:15	2	int	val
+water	7:11	0:0	2	,
+decl	7:4	7:15	2	int	fd
+decl	8:4	8:38	2	char	buf[CMSG_SPACE(sizeof(fd))]
+water	9:4	0:0	2	hdr
+op	9:7	0:0	2	.
+water	9:8	0:0	2	msg_name
+op	9:17	0:0	2	=
+water	9:19	0:0	2	NULL
+water	9:23	0:0	2	;
+water	10:4	0:0	2	hdr
+op	10:7	0:0	2	.
+water	10:8	0:0	2	msg_namelen
+op	10:20	0:0	2	=
+water	10:22	0:0	2	0
+water	10:23	0:0	2	;
+water	11:4	0:0	2	hdr
+op	11:7	0:0	2	.
+water	11:8	0:0	2	msg_iov
+op	11:16	0:0	2	=
+op	11:18	0:0	2	&
+water	11:19	0:0	2	iov
+water	11:22	0:0	2	;
+water	12:4	0:0	2	hdr
+op	12:7	0:0	2	.
+water	12:8	0:0	2	msg_iovlen
+op	12:19	0:0	2	=
+water	12:21	0:0	2	1
+water	12:22	0:0	2	;
+water	13:4	0:0	2	hdr
+op	13:7	0:0	2	.
+water	13:8	0:0	2	msg_control
+op	13:20	0:0	2	=
+water	13:22	0:0	2	buf
+water	13:25	0:0	2	;
+water	14:4	0:0	2	hdr
+op	14:7	0:0	2	.
+water	14:8	0:0	2	msg_controllen
+op	14:23	0:0	2	=
+op	14:25	0:0	2	sizeof
+water	14:32	0:0	2	(
+water	14:33	0:0	2	buf
+water	14:36	0:0	2	)
+water	14:37	0:0	2	;
+water	15:4	0:0	2	iov
+op	15:7	0:0	2	.
+water	15:8	0:0	2	iov_base
+op	15:17	0:0	2	=
+op	15:19	0:0	2	&
+water	15:20	0:0	2	val
+water	15:23	0:0	2	;
+water	16:4	0:0	2	iov
+op	16:7	0:0	2	.
+water	16:8	0:0	2	iov_len
+op	16:16	0:0	2	=
+op	16:18	0:0	2	sizeof
+water	16:25	0:0	2	(
+water	16:26	0:0	2	val
+water	16:29	0:0	2	)
+water	16:30	0:0	2	;
+if	17:4	18:17	2	(recvmsg (p ,& hdr ,0 ) != sizeof ( val ))
+cond	17:8	17:43	3	recvmsg (p ,& hdr ,0 ) != sizeof ( val )
+call	17:8	17:27	4	recvmsg
+arg	17:17	17:18	5	p
+water	17:17	0:0	6	p
+arg	17:20	17:24	5	&hdr
+op	17:20	0:0	6	&
+water	17:21	0:0	6	hdr
+arg	17:26	17:27	5	0
+water	17:26	0:0	6	0
+op	17:29	0:0	4	!=
+op	17:32	0:0	4	sizeof
+water	17:39	0:0	4	(
+water	17:40	0:0	4	val
+water	17:43	0:0	4	)
+stmts	18:8	18:17	3	
+return	18:8	18:17	4	-1
+op	18:15	0:0	5	-
+water	18:16	0:0	5	1
+for	19:4	29:4	2	(cmsg =CMSG_FIRSTHDR (& hdr ) ;cmsg != NULL;cmsg =CMSG_NXTHDR (& hdr ,cmsg ))
+forinit	19:9	19:36	3	cmsg =CMSG_FIRSTHDR (& hdr ) ;
+water	19:9	0:0	4	cmsg
+op	19:14	0:0	4	=
+call	19:16	19:35	4	CMSG_FIRSTHDR
+arg	19:31	19:35	5	&hdr
+op	19:31	0:0	6	&
+water	19:32	0:0	6	hdr
+water	19:36	0:0	4	;
+cond	19:38	19:46	3	cmsg != NULL
+water	19:38	0:0	4	cmsg
+op	19:43	0:0	4	!=
+water	19:46	0:0	4	NULL
+forexpr	20:9	20:39	3	cmsg =CMSG_NXTHDR (& hdr ,cmsg )
+water	20:9	0:0	4	cmsg
+op	20:14	0:0	4	=
+call	20:16	20:39	4	CMSG_NXTHDR
+arg	20:29	20:33	5	&hdr
+op	20:29	0:0	6	&
+water	20:30	0:0	6	hdr
+arg	20:35	20:39	5	cmsg
+water	20:35	0:0	6	cmsg
+stmts	21:4	29:4	3	
+water	21:4	0:0	4	{
+if	22:8	28:8	4	(( cmsg -> cmsg_level == SOL_SOCKET ) && ( cmsg -> cmsg_type == SCM_RIGHTS ) && ( cmsg -> cmsg_len >=CMSG_LEN (sizeof ( fd ) ) ))
+cond	22:12	24:53	5	( cmsg -> cmsg_level == SOL_SOCKET ) && ( cmsg -> cmsg_type == SCM_RIGHTS ) && ( cmsg -> cmsg_len >=CMSG_LEN (sizeof ( fd ) ) )
+water	22:12	0:0	6	(
+water	22:13	0:0	6	cmsg
+op	22:17	0:0	6	->
+water	22:19	0:0	6	cmsg_level
+op	22:30	0:0	6	==
+water	22:33	0:0	6	SOL_SOCKET
+water	22:43	0:0	6	)
+op	23:9	0:0	6	&&
+water	23:12	0:0	6	(
+water	23:13	0:0	6	cmsg
+op	23:17	0:0	6	->
+water	23:19	0:0	6	cmsg_type
+op	23:29	0:0	6	==
+water	23:32	0:0	6	SCM_RIGHTS
+water	23:42	0:0	6	)
+op	24:9	0:0	6	&&
+water	24:12	0:0	6	(
+water	24:13	0:0	6	cmsg
+op	24:17	0:0	6	->
+water	24:19	0:0	6	cmsg_len
+op	24:28	0:0	6	>=
+call	24:31	24:52	6	CMSG_LEN
+arg	24:41	24:52	7	sizeof(fd)
+op	24:41	0:0	8	sizeof
+water	24:48	0:0	8	(
+water	24:49	0:0	8	fd
+water	24:51	0:0	8	)
+water	24:53	0:0	6	)
+stmts	25:8	28:8	5	
+water	25:8	0:0	6	{
+call	26:12	26:54	6	memcpy
+arg	26:20	26:23	7	&fd
+op	26:20	0:0	8	&
+water	26:21	0:0	8	fd
+arg	26:25	26:41	7	CMSG_DATA(cmsg)
+call	26:25	26:40	8	CMSG_DATA
+arg	26:36	26:40	9	cmsg
+water	26:36	0:0	10	cmsg
+arg	26:43	26:54	7	sizeof(fd)
+op	26:43	0:0	8	sizeof
+water	26:50	0:0	8	(
+water	26:51	0:0	8	fd
+water	26:53	0:0	8	)
+water	26:55	0:0	6	;
+return	27:12	27:21	6	fd
+water	27:19	0:0	7	fd
+water	28:8	0:0	6	}
+water	29:4	0:0	4	}
+water	30:4	0:0	2	errno
+op	30:10	0:0	2	=
+water	30:12	0:0	2	val
+water	30:15	0:0	2	;
+return	31:4	31:13	2	-1
+op	31:11	0:0	3	-
+water	31:12	0:0	3	1

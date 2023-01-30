@@ -1,0 +1,432 @@
+func	2:0	90:0	0	int	download_signature
+params	2:22	0:0	1	
+param	2:24	2:44	2	vlc_object_t *	p_this
+param	2:46	2:71	2	signature_packet_t *	p_sig
+param	3:24	3:44	2	const char *	psz_url
+stmnts	0:0	89:22	1	
+decl	5:4	5:63	2	char	*psz_sig
+op	5:18	0:0	2	=
+water	5:20	0:0	2	(
+water	5:21	0:0	2	char
+op	5:25	0:0	2	*
+water	5:26	0:0	2	)
+call	5:28	5:62	3	malloc
+arg	5:36	5:62	4	strlen(psz_url)+4+1
+call	5:36	5:52	5	strlen
+arg	5:44	5:52	6	psz_url
+water	5:44	0:0	7	psz_url
+op	5:54	0:0	5	+
+water	5:56	0:0	5	4
+op	5:58	0:0	5	+
+water	5:60	0:0	5	1
+if	6:4	7:25	2	(! psz_sig)
+cond	6:8	6:9	3	! psz_sig
+op	6:8	0:0	4	!
+water	6:9	0:0	4	psz_sig
+stmts	7:8	7:25	3	
+return	7:8	7:25	4	VLC_ENOMEM
+water	7:15	0:0	5	VLC_ENOMEM
+call	8:4	8:29	2	strcpy
+arg	8:12	8:19	3	psz_sig
+water	8:12	0:0	4	psz_sig
+arg	8:21	8:29	3	psz_url
+water	8:21	0:0	4	psz_url
+water	8:30	0:0	2	;
+call	9:4	9:28	2	strcat
+arg	9:12	9:19	3	psz_sig
+water	9:12	0:0	4	psz_sig
+arg	9:21	9:28	3	".asc"
+water	9:21	0:0	4	".asc"
+water	9:29	0:0	2	;
+decl	10:4	10:57	2	stream_t	*p_stream
+op	10:23	0:0	2	=
+call	10:25	10:56	3	stream_UrlNew
+arg	10:40	10:46	4	p_this
+water	10:40	0:0	5	p_this
+arg	10:48	10:56	4	psz_sig
+water	10:48	0:0	5	psz_sig
+call	11:4	11:18	2	free
+arg	11:10	11:18	3	psz_sig
+water	11:10	0:0	4	psz_sig
+water	11:19	0:0	2	;
+if	12:4	13:25	2	(! p_stream)
+cond	12:8	12:9	3	! p_stream
+op	12:8	0:0	4	!
+water	12:9	0:0	4	p_stream
+stmts	13:8	13:25	3	
+return	13:8	13:25	4	VLC_ENOMEM
+water	13:15	0:0	5	VLC_ENOMEM
+decl	14:4	14:44	2	int64_t	i_size
+op	14:19	0:0	2	=
+call	14:21	14:43	3	stream_Size
+arg	14:34	14:43	4	p_stream
+water	14:34	0:0	5	p_stream
+call	15:4	15:71	2	msg_Dbg
+arg	15:13	15:19	3	p_this
+water	15:13	0:0	4	p_this
+arg	15:21	15:62	3	"Downloading signature (%"PRId64" bytes)"
+water	15:21	0:0	4	"Downloading signature (%"
+water	15:47	0:0	4	PRId64
+water	15:53	0:0	4	" bytes)"
+arg	15:64	15:71	3	i_size
+water	15:64	0:0	4	i_size
+water	15:72	0:0	2	;
+decl	16:4	16:47	2	uint8_t	*p_buf
+op	16:19	0:0	2	=
+water	16:21	0:0	2	(
+water	16:22	0:0	2	uint8_t
+op	16:29	0:0	2	*
+water	16:30	0:0	2	)
+call	16:31	16:46	3	malloc
+arg	16:39	16:46	4	i_size
+water	16:39	0:0	5	i_size
+if	17:4	21:4	2	(! p_buf)
+cond	17:8	17:9	3	! p_buf
+op	17:8	0:0	4	!
+water	17:9	0:0	4	p_buf
+stmts	18:4	21:4	3	
+water	18:4	0:0	4	{
+call	19:8	19:32	4	stream_Delete
+arg	19:23	19:32	5	p_stream
+water	19:23	0:0	6	p_stream
+water	19:33	0:0	4	;
+return	20:8	20:25	4	VLC_ENOMEM
+water	20:15	0:0	5	VLC_ENOMEM
+water	21:4	0:0	4	}
+decl	22:4	22:60	2	int	i_read
+op	22:15	0:0	2	=
+call	22:17	22:59	3	stream_Read
+arg	22:30	22:38	4	p_stream
+water	22:30	0:0	5	p_stream
+arg	22:40	22:45	4	p_buf
+water	22:40	0:0	5	p_buf
+arg	22:47	22:59	4	(int)i_size
+water	22:47	0:0	5	(
+water	22:48	0:0	5	int
+water	22:51	0:0	5	)
+water	22:52	0:0	5	i_size
+call	23:4	23:28	2	stream_Delete
+arg	23:19	23:28	3	p_stream
+water	23:19	0:0	4	p_stream
+water	23:29	0:0	2	;
+if	24:4	30:4	2	(i_read != ( int ) i_size)
+cond	24:8	24:23	3	i_read != ( int ) i_size
+water	24:8	0:0	4	i_read
+op	24:15	0:0	4	!=
+water	24:18	0:0	4	(
+water	24:19	0:0	4	int
+water	24:22	0:0	4	)
+water	24:23	0:0	4	i_size
+stmts	25:4	30:4	3	
+water	25:4	0:0	4	{
+call	26:8	27:71	4	msg_Dbg
+arg	26:17	26:23	5	p_this
+water	26:17	0:0	6	p_this
+arg	27:12	27:62	5	"Couldn't download full signature (only %d bytes)"
+water	27:12	0:0	6	"Couldn't download full signature (only %d bytes)"
+arg	27:64	27:71	5	i_read
+water	27:64	0:0	6	i_read
+water	27:72	0:0	4	;
+call	28:8	28:20	4	free
+arg	28:14	28:20	5	p_buf
+water	28:14	0:0	6	p_buf
+water	28:21	0:0	4	;
+return	29:8	29:27	4	VLC_EGENERIC
+water	29:15	0:0	5	VLC_EGENERIC
+water	30:4	0:0	4	}
+if	31:4	50:4	2	(( uint8_t ) * p_buf < 0 x80)
+cond	31:8	31:27	3	( uint8_t ) * p_buf < 0 x80
+water	31:8	0:0	4	(
+water	31:9	0:0	4	uint8_t
+water	31:16	0:0	4	)
+op	31:17	0:0	4	*
+water	31:18	0:0	4	p_buf
+op	31:24	0:0	4	<
+water	31:26	0:0	4	0
+water	31:27	0:0	4	x80
+stmts	32:4	50:4	3	
+water	32:4	0:0	4	{
+call	33:8	33:48	4	msg_Dbg
+arg	33:17	33:23	5	p_this
+water	33:17	0:0	6	p_this
+arg	33:25	33:48	5	"Unarmoring signature"
+water	33:25	0:0	6	"Unarmoring signature"
+water	33:49	0:0	4	;
+decl	34:8	34:74	4	uint8_t	*p_unarmored
+op	34:29	0:0	4	=
+water	34:31	0:0	4	(
+water	34:32	0:0	4	uint8_t
+op	34:39	0:0	4	*
+water	34:40	0:0	4	)
+call	34:42	34:73	5	malloc
+arg	34:50	34:73	6	(i_size*3)/4+1
+water	34:50	0:0	7	(
+water	34:52	0:0	7	i_size
+op	34:59	0:0	7	*
+water	34:61	0:0	7	3
+water	34:63	0:0	7	)
+op	34:65	0:0	7	/
+water	34:67	0:0	7	4
+op	34:69	0:0	7	+
+water	34:71	0:0	7	1
+if	35:8	39:8	4	(! p_unarmored)
+cond	35:12	35:13	5	! p_unarmored
+op	35:12	0:0	6	!
+water	35:13	0:0	6	p_unarmored
+stmts	36:8	39:8	5	
+water	36:8	0:0	6	{
+call	37:12	37:24	6	free
+arg	37:18	37:24	7	p_buf
+water	37:18	0:0	8	p_buf
+water	37:25	0:0	6	;
+return	38:12	38:31	6	VLC_EGENERIC
+water	38:19	0:0	7	VLC_EGENERIC
+water	39:8	0:0	6	}
+decl	40:8	40:78	4	int	i_bytes
+op	40:20	0:0	4	=
+call	40:22	40:77	5	pgp_unarmor
+arg	40:35	40:47	6	(char*)p_buf
+water	40:35	0:0	7	(
+water	40:36	0:0	7	char
+op	40:40	0:0	7	*
+water	40:41	0:0	7	)
+water	40:42	0:0	7	p_buf
+arg	40:49	40:55	6	i_size
+water	40:49	0:0	7	i_size
+arg	40:57	40:68	6	p_unarmored
+water	40:57	0:0	7	p_unarmored
+arg	40:70	40:77	6	i_size
+water	40:70	0:0	7	i_size
+call	41:8	41:20	4	free
+arg	41:14	41:20	5	p_buf
+water	41:14	0:0	6	p_buf
+water	41:21	0:0	4	;
+water	42:8	0:0	4	p_buf
+op	42:14	0:0	4	=
+water	42:16	0:0	4	p_unarmored
+water	42:27	0:0	4	;
+water	43:8	0:0	4	i_size
+op	43:15	0:0	4	=
+water	43:17	0:0	4	i_bytes
+water	43:24	0:0	4	;
+if	44:8	49:8	4	(i_bytes < 2)
+cond	44:12	44:22	5	i_bytes < 2
+water	44:12	0:0	6	i_bytes
+op	44:20	0:0	6	<
+water	44:22	0:0	6	2
+stmts	45:8	49:8	5	
+water	45:8	0:0	6	{
+call	46:12	46:24	6	free
+arg	46:18	46:24	7	p_buf
+water	46:18	0:0	8	p_buf
+water	46:25	0:0	6	;
+call	47:12	47:73	6	msg_Dbg
+arg	47:21	47:27	7	p_this
+water	47:21	0:0	8	p_this
+arg	47:29	47:73	7	"Unarmoring failed : corrupted signature ?"
+water	47:29	0:0	8	"Unarmoring failed : corrupted signature ?"
+water	47:74	0:0	6	;
+return	48:12	48:31	6	VLC_EGENERIC
+water	48:19	0:0	7	VLC_EGENERIC
+water	49:8	0:0	6	}
+water	50:4	0:0	4	}
+if	51:4	56:4	2	(packet_type (* p_buf ) != SIGNATURE_PACKET)
+cond	51:8	51:33	3	packet_type (* p_buf ) != SIGNATURE_PACKET
+call	51:8	51:28	4	packet_type
+arg	51:21	51:28	5	*p_buf
+op	51:21	0:0	6	*
+water	51:22	0:0	6	p_buf
+op	51:30	0:0	4	!=
+water	51:33	0:0	4	SIGNATURE_PACKET
+stmts	52:4	56:4	3	
+water	52:4	0:0	4	{
+call	53:8	53:55	4	msg_Dbg
+arg	53:17	53:23	5	p_this
+water	53:17	0:0	6	p_this
+arg	53:25	53:46	5	"Not a signature: %d"
+water	53:25	0:0	6	"Not a signature: %d"
+arg	53:48	53:55	5	*p_buf
+op	53:48	0:0	6	*
+water	53:49	0:0	6	p_buf
+water	53:56	0:0	4	;
+call	54:8	54:20	4	free
+arg	54:14	54:20	5	p_buf
+water	54:14	0:0	6	p_buf
+water	54:21	0:0	4	;
+return	55:8	55:27	4	VLC_EGENERIC
+water	55:15	0:0	5	VLC_EGENERIC
+water	56:4	0:0	4	}
+decl	57:4	57:53	2	size_t	i_header_len
+op	57:24	0:0	2	=
+call	57:26	57:52	3	packet_header_len
+arg	57:45	57:52	4	*p_buf
+op	57:45	0:0	5	*
+water	57:46	0:0	5	p_buf
+if	58:4	64:4	2	(( i_header_len != 1 && i_header_len != 2 && i_header_len != 4 ) || i_header_len + 1 > ( size_t ) i_size)
+cond	58:8	59:35	3	( i_header_len != 1 && i_header_len != 2 && i_header_len != 4 ) || i_header_len + 1 > ( size_t ) i_size
+water	58:8	0:0	4	(
+water	58:10	0:0	4	i_header_len
+op	58:23	0:0	4	!=
+water	58:26	0:0	4	1
+op	58:28	0:0	4	&&
+water	58:31	0:0	4	i_header_len
+op	58:44	0:0	4	!=
+water	58:47	0:0	4	2
+op	58:49	0:0	4	&&
+water	58:52	0:0	4	i_header_len
+op	58:65	0:0	4	!=
+water	58:68	0:0	4	4
+water	58:70	0:0	4	)
+op	58:72	0:0	4	||
+water	59:8	0:0	4	i_header_len
+op	59:21	0:0	4	+
+water	59:23	0:0	4	1
+op	59:25	0:0	4	>
+water	59:27	0:0	4	(
+water	59:28	0:0	4	size_t
+water	59:34	0:0	4	)
+water	59:35	0:0	4	i_size
+stmts	60:4	64:4	3	
+water	60:4	0:0	4	{
+call	61:8	61:20	4	free
+arg	61:14	61:20	5	p_buf
+water	61:14	0:0	6	p_buf
+water	61:21	0:0	4	;
+call	62:8	62:59	4	msg_Dbg
+arg	62:17	62:23	5	p_this
+water	62:17	0:0	6	p_this
+arg	62:25	62:59	5	"Invalid signature packet header"
+water	62:25	0:0	6	"Invalid signature packet header"
+water	62:60	0:0	4	;
+return	63:8	63:27	4	VLC_EGENERIC
+water	63:15	0:0	5	VLC_EGENERIC
+water	64:4	0:0	4	}
+decl	65:4	65:57	2	size_t	i_len
+op	65:17	0:0	2	=
+call	65:19	65:56	3	scalar_number
+arg	65:34	65:41	4	p_buf+1
+water	65:34	0:0	5	p_buf
+op	65:39	0:0	5	+
+water	65:40	0:0	5	1
+arg	65:43	65:56	4	i_header_len
+water	65:43	0:0	5	i_header_len
+if	66:4	71:4	2	(i_len + i_header_len + 1 != ( size_t ) i_size)
+cond	66:8	66:44	3	i_len + i_header_len + 1 != ( size_t ) i_size
+water	66:8	0:0	4	i_len
+op	66:14	0:0	4	+
+water	66:16	0:0	4	i_header_len
+op	66:29	0:0	4	+
+water	66:31	0:0	4	1
+op	66:33	0:0	4	!=
+water	66:36	0:0	4	(
+water	66:37	0:0	4	size_t
+water	66:43	0:0	4	)
+water	66:44	0:0	4	i_size
+stmts	67:4	71:4	3	
+water	67:4	0:0	4	{
+call	68:8	68:20	4	free
+arg	68:14	68:20	5	p_buf
+water	68:14	0:0	6	p_buf
+water	68:21	0:0	4	;
+call	69:8	69:52	4	msg_Dbg
+arg	69:17	69:23	5	p_this
+water	69:17	0:0	6	p_this
+arg	69:25	69:52	5	"Invalid signature packet"
+water	69:25	0:0	6	"Invalid signature packet"
+water	69:53	0:0	4	;
+return	70:8	70:27	4	VLC_EGENERIC
+water	70:15	0:0	5	VLC_EGENERIC
+water	71:4	0:0	4	}
+decl	72:4	72:76	2	int	i_ret
+op	72:14	0:0	2	=
+call	72:16	72:75	3	parse_signature_packet
+arg	72:40	72:45	4	p_sig
+water	72:40	0:0	5	p_sig
+arg	72:47	72:67	4	p_buf+1+i_header_len
+water	72:47	0:0	5	p_buf
+op	72:52	0:0	5	+
+water	72:53	0:0	5	1
+op	72:54	0:0	5	+
+water	72:55	0:0	5	i_header_len
+arg	72:69	72:75	4	i_len
+water	72:69	0:0	5	i_len
+call	73:4	73:16	2	free
+arg	73:10	73:16	3	p_buf
+water	73:10	0:0	4	p_buf
+water	73:17	0:0	2	;
+if	74:4	78:4	2	(i_ret != VLC_SUCCESS)
+cond	74:8	74:17	3	i_ret != VLC_SUCCESS
+water	74:8	0:0	4	i_ret
+op	74:14	0:0	4	!=
+water	74:17	0:0	4	VLC_SUCCESS
+stmts	75:4	78:4	3	
+water	75:4	0:0	4	{
+call	76:8	76:52	4	msg_Dbg
+arg	76:17	76:23	5	p_this
+water	76:17	0:0	6	p_this
+arg	76:25	76:52	5	"Couldn't parse signature"
+water	76:25	0:0	6	"Couldn't parse signature"
+water	76:53	0:0	4	;
+return	77:8	77:20	4	i_ret
+water	77:15	0:0	5	i_ret
+water	78:4	0:0	4	}
+if	79:4	88:4	2	(p_sig -> type != BINARY_SIGNATURE && p_sig -> type != TEXT_SIGNATURE)
+cond	79:8	79:58	3	p_sig -> type != BINARY_SIGNATURE && p_sig -> type != TEXT_SIGNATURE
+water	79:8	0:0	4	p_sig
+op	79:13	0:0	4	->
+water	79:15	0:0	4	type
+op	79:20	0:0	4	!=
+water	79:23	0:0	4	BINARY_SIGNATURE
+op	79:40	0:0	4	&&
+water	79:43	0:0	4	p_sig
+op	79:48	0:0	4	->
+water	79:50	0:0	4	type
+op	79:55	0:0	4	!=
+water	79:58	0:0	4	TEXT_SIGNATURE
+stmts	80:4	88:4	3	
+water	80:4	0:0	4	{
+call	81:8	81:67	4	msg_Dbg
+arg	81:17	81:23	5	p_this
+water	81:17	0:0	6	p_this
+arg	81:25	81:53	5	"Invalid signature type: %d"
+water	81:25	0:0	6	"Invalid signature type: %d"
+arg	81:55	81:67	5	p_sig->type
+water	81:55	0:0	6	p_sig
+op	81:60	0:0	6	->
+water	81:62	0:0	6	type
+water	81:68	0:0	4	;
+if	82:8	86:8	4	(p_sig -> version == 4)
+cond	82:12	82:30	5	p_sig -> version == 4
+water	82:12	0:0	6	p_sig
+op	82:17	0:0	6	->
+water	82:19	0:0	6	version
+op	82:27	0:0	6	==
+water	82:30	0:0	6	4
+stmts	83:8	86:8	5	
+water	83:8	0:0	6	{
+call	84:12	84:49	6	free
+arg	84:18	84:49	7	p_sig->specific.v4.hashed_data
+water	84:18	0:0	8	p_sig
+op	84:23	0:0	8	->
+water	84:25	0:0	8	specific
+op	84:33	0:0	8	.
+water	84:34	0:0	8	v4
+op	84:36	0:0	8	.
+water	84:37	0:0	8	hashed_data
+water	84:50	0:0	6	;
+call	85:12	85:51	6	free
+arg	85:18	85:51	7	p_sig->specific.v4.unhashed_data
+water	85:18	0:0	8	p_sig
+op	85:23	0:0	8	->
+water	85:25	0:0	8	specific
+op	85:33	0:0	8	.
+water	85:34	0:0	8	v4
+op	85:36	0:0	8	.
+water	85:37	0:0	8	unhashed_data
+water	85:52	0:0	6	;
+water	86:8	0:0	6	}
+return	87:8	87:27	4	VLC_EGENERIC
+water	87:15	0:0	5	VLC_EGENERIC
+water	88:4	0:0	4	}
+return	89:4	89:22	2	VLC_SUCCESS
+water	89:11	0:0	3	VLC_SUCCESS

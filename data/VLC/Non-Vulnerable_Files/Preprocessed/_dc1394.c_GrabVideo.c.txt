@@ -1,0 +1,150 @@
+func	2:0	30:0	0	static block_t *	GrabVideo
+params	2:25	0:0	1	
+param	2:27	2:44	2	demux_t *	p_demux
+stmnts	0:0	29:18	1	
+decl	4:4	4:39	2	demux_sys_t	*p_sys
+op	4:23	0:0	2	=
+water	4:25	0:0	2	p_demux
+op	4:32	0:0	2	->
+water	4:34	0:0	2	p_sys
+decl	5:4	5:31	2	block_t	*p_block
+op	5:25	0:0	2	=
+water	5:27	0:0	2	NULL
+if	6:4	12:4	2	(dc1394_capture_dequeue (p_sys -> camera ,DC1394_CAPTURE_POLICY_WAIT ,& p_sys -> frame ) != DC1394_SUCCESS)
+cond	6:8	8:35	3	dc1394_capture_dequeue (p_sys -> camera ,DC1394_CAPTURE_POLICY_WAIT ,& p_sys -> frame ) != DC1394_SUCCESS
+call	6:8	8:30	4	dc1394_capture_dequeue
+arg	6:32	6:45	5	p_sys->camera
+water	6:32	0:0	6	p_sys
+op	6:37	0:0	6	->
+water	6:39	0:0	6	camera
+arg	7:16	7:42	5	DC1394_CAPTURE_POLICY_WAIT
+water	7:16	0:0	6	DC1394_CAPTURE_POLICY_WAIT
+arg	8:16	8:30	5	&p_sys->frame
+op	8:16	0:0	6	&
+water	8:17	0:0	6	p_sys
+op	8:22	0:0	6	->
+water	8:24	0:0	6	frame
+op	8:32	0:0	4	!=
+water	8:35	0:0	4	DC1394_SUCCESS
+stmts	9:4	12:4	3	
+water	9:4	0:0	4	{
+call	10:8	10:54	4	msg_Err
+arg	10:17	10:24	5	p_demux
+water	10:17	0:0	6	p_demux
+arg	10:26	10:54	5	"Unable to capture a frame"
+water	10:26	0:0	6	"Unable to capture a frame"
+water	10:55	0:0	4	;
+return	11:8	11:19	4	NULL
+water	11:15	0:0	5	NULL
+water	12:4	0:0	4	}
+water	13:4	0:0	2	p_block
+op	13:12	0:0	2	=
+call	13:14	13:77	2	block_Alloc
+arg	13:27	13:77	3	p_sys->frame->size[0]*p_sys->frame->size[1]*2
+water	13:27	0:0	4	p_sys
+op	13:32	0:0	4	->
+water	13:34	0:0	4	frame
+op	13:39	0:0	4	->
+water	13:41	0:0	4	size
+op	13:45	0:0	4	[
+water	13:46	0:0	4	0
+op	13:47	0:0	4	]
+op	13:49	0:0	4	*
+water	13:51	0:0	4	p_sys
+op	13:56	0:0	4	->
+water	13:58	0:0	4	frame
+op	13:63	0:0	4	->
+water	13:65	0:0	4	size
+op	13:69	0:0	4	[
+water	13:70	0:0	4	1
+op	13:71	0:0	4	]
+op	13:73	0:0	4	*
+water	13:75	0:0	4	2
+water	13:78	0:0	2	;
+if	14:4	18:4	2	(! p_block)
+cond	14:8	14:9	3	! p_block
+op	14:8	0:0	4	!
+water	14:9	0:0	4	p_block
+stmts	15:4	18:4	3	
+water	15:4	0:0	4	{
+call	16:8	16:46	4	msg_Err
+arg	16:17	16:24	5	p_demux
+water	16:17	0:0	6	p_demux
+arg	16:26	16:46	5	"Can not get block"
+water	16:26	0:0	6	"Can not get block"
+water	16:47	0:0	4	;
+return	17:8	17:19	4	NULL
+water	17:15	0:0	5	NULL
+water	18:4	0:0	4	}
+if	19:4	24:4	2	(! p_sys -> frame -> image)
+cond	19:8	19:23	3	! p_sys -> frame -> image
+op	19:8	0:0	4	!
+water	19:9	0:0	4	p_sys
+op	19:14	0:0	4	->
+water	19:16	0:0	4	frame
+op	19:21	0:0	4	->
+water	19:23	0:0	4	image
+stmts	20:4	24:4	3	
+water	20:4	0:0	4	{
+call	21:8	21:48	4	msg_Err
+arg	21:17	21:24	5	p_demux
+water	21:17	0:0	6	p_demux
+arg	21:26	21:48	5	"Capture buffer empty"
+water	21:26	0:0	6	"Capture buffer empty"
+water	21:49	0:0	4	;
+call	22:8	22:31	4	block_Release
+arg	22:23	22:31	5	p_block
+water	22:23	0:0	6	p_block
+water	22:32	0:0	4	;
+return	23:8	23:19	4	NULL
+water	23:15	0:0	5	NULL
+water	24:4	0:0	4	}
+call	25:4	26:45	2	memcpy
+arg	25:12	25:29	3	p_block->p_buffer
+water	25:12	0:0	4	p_block
+op	25:19	0:0	4	->
+water	25:21	0:0	4	p_buffer
+arg	25:31	25:64	3	(constchar*)p_sys->frame->image
+water	25:31	0:0	4	(
+water	25:32	0:0	4	const
+water	25:38	0:0	4	char
+op	25:43	0:0	4	*
+water	25:44	0:0	4	)
+water	25:45	0:0	4	p_sys
+op	25:50	0:0	4	->
+water	25:52	0:0	4	frame
+op	25:57	0:0	4	->
+water	25:59	0:0	4	image
+arg	26:12	26:45	3	p_sys->width*p_sys->height*2
+water	26:12	0:0	4	p_sys
+op	26:17	0:0	4	->
+water	26:19	0:0	4	width
+op	26:25	0:0	4	*
+water	26:27	0:0	4	p_sys
+op	26:32	0:0	4	->
+water	26:34	0:0	4	height
+op	26:41	0:0	4	*
+water	26:43	0:0	4	2
+water	26:46	0:0	2	;
+water	27:4	0:0	2	p_block
+op	27:11	0:0	2	->
+water	27:13	0:0	2	i_pts
+op	27:19	0:0	2	=
+water	27:21	0:0	2	p_block
+op	27:28	0:0	2	->
+water	27:30	0:0	2	i_dts
+op	27:36	0:0	2	=
+call	27:38	27:44	2	mdate
+water	27:45	0:0	2	;
+call	28:4	28:56	2	dc1394_capture_enqueue
+arg	28:28	28:41	3	p_sys->camera
+water	28:28	0:0	4	p_sys
+op	28:33	0:0	4	->
+water	28:35	0:0	4	camera
+arg	28:43	28:56	3	p_sys->frame
+water	28:43	0:0	4	p_sys
+op	28:48	0:0	4	->
+water	28:50	0:0	4	frame
+water	28:57	0:0	2	;
+return	29:4	29:18	2	p_block
+water	29:11	0:0	3	p_block

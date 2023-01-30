@@ -1,0 +1,503 @@
+func	2:0	92:0	0	static int	Demux
+params	2:16	0:0	1	
+param	2:18	2:35	2	demux_t *	p_demux
+stmnts	0:0	91:12	1	
+decl	4:4	4:39	2	demux_sys_t	*p_sys
+op	4:23	0:0	2	=
+water	4:25	0:0	2	p_demux
+op	4:32	0:0	2	->
+water	4:34	0:0	2	p_sys
+if	5:4	6:17	2	(! p_sys -> p_m2ts)
+cond	5:8	5:16	3	! p_sys -> p_m2ts
+op	5:8	0:0	4	!
+water	5:9	0:0	4	p_sys
+op	5:14	0:0	4	->
+water	5:16	0:0	4	p_m2ts
+stmts	6:8	6:17	3	
+return	6:8	6:17	4	-1
+op	6:15	0:0	5	-
+water	6:16	0:0	5	1
+if	8:4	20:4	2	(p_sys -> i_packet == p_sys -> i_packet_start)
+cond	8:8	8:34	3	p_sys -> i_packet == p_sys -> i_packet_start
+water	8:8	0:0	4	p_sys
+op	8:13	0:0	4	->
+water	8:15	0:0	4	i_packet
+op	8:24	0:0	4	==
+water	8:27	0:0	4	p_sys
+op	8:32	0:0	4	->
+water	8:34	0:0	4	i_packet_start
+stmts	9:4	20:4	3	
+water	9:4	0:0	4	{
+call	10:8	10:38	4	stream_Seek
+arg	10:21	10:34	5	p_sys->p_m2ts
+water	10:21	0:0	6	p_sys
+op	10:26	0:0	6	->
+water	10:28	0:0	6	p_m2ts
+arg	10:36	10:38	5	0
+water	10:36	0:0	6	0
+water	10:39	0:0	4	;
+decl	11:8	12:117	4	block_t	*p_block
+op	11:25	0:0	4	=
+call	11:27	12:116	5	stream_Block
+arg	11:41	11:54	6	p_sys->p_m2ts
+water	11:41	0:0	7	p_sys
+op	11:46	0:0	7	->
+water	11:48	0:0	7	p_m2ts
+arg	12:41	12:116	6	p_sys->i_packet_headers*(int64_t)BD_TS_PACKET_SIZE+BD_TS_PACKET_HEADER
+water	12:41	0:0	7	p_sys
+op	12:46	0:0	7	->
+water	12:48	0:0	7	i_packet_headers
+op	12:65	0:0	7	*
+water	12:67	0:0	7	(
+water	12:68	0:0	7	int64_t
+water	12:75	0:0	7	)
+water	12:76	0:0	7	BD_TS_PACKET_SIZE
+op	12:94	0:0	7	+
+water	12:96	0:0	7	BD_TS_PACKET_HEADER
+if	13:8	18:8	4	(p_block)
+cond	13:12	13:12	5	p_block
+water	13:12	0:0	6	p_block
+stmts	14:8	18:8	5	
+water	14:8	0:0	6	{
+water	15:12	0:0	6	p_block
+op	15:19	0:0	6	->
+water	15:21	0:0	6	i_buffer
+op	15:30	0:0	6	-=
+water	15:33	0:0	6	BD_TS_PACKET_HEADER
+water	15:52	0:0	6	;
+water	16:12	0:0	6	p_block
+op	16:19	0:0	6	->
+water	16:21	0:0	6	p_buffer
+op	16:30	0:0	6	+=
+water	16:33	0:0	6	BD_TS_PACKET_HEADER
+water	16:52	0:0	6	;
+call	17:12	17:55	6	stream_DemuxSend
+arg	17:30	17:45	7	p_sys->p_parser
+water	17:30	0:0	8	p_sys
+op	17:35	0:0	8	->
+water	17:37	0:0	8	p_parser
+arg	17:47	17:55	7	p_block
+water	17:47	0:0	8	p_block
+water	17:56	0:0	6	;
+water	18:8	0:0	6	}
+call	19:8	19:87	4	stream_Seek
+arg	19:21	19:34	5	p_sys->p_m2ts
+water	19:21	0:0	6	p_sys
+op	19:26	0:0	6	->
+water	19:28	0:0	6	p_m2ts
+arg	19:36	19:87	5	p_sys->i_packet_start*(int64_t)BD_TS_PACKET_SIZE
+water	19:36	0:0	6	p_sys
+op	19:41	0:0	6	->
+water	19:43	0:0	6	i_packet_start
+op	19:58	0:0	6	*
+water	19:60	0:0	6	(
+water	19:61	0:0	6	int64_t
+water	19:68	0:0	6	)
+water	19:69	0:0	6	BD_TS_PACKET_SIZE
+water	19:88	0:0	4	;
+water	20:4	0:0	4	}
+decl	22:4	22:76	2	const int	i_packets
+op	22:24	0:0	2	=
+call	22:26	22:75	3	__MIN
+arg	22:33	22:34	4	5
+water	22:33	0:0	5	5
+arg	22:36	22:75	4	p_sys->i_packet_stop-p_sys->i_packet
+water	22:36	0:0	5	p_sys
+op	22:41	0:0	5	->
+water	22:43	0:0	5	i_packet_stop
+op	22:57	0:0	5	-
+water	22:59	0:0	5	p_sys
+op	22:64	0:0	5	->
+water	22:66	0:0	5	i_packet
+if	23:4	37:4	2	(i_packets <= 0)
+cond	23:8	23:21	3	i_packets <= 0
+water	23:8	0:0	4	i_packets
+op	23:18	0:0	4	<=
+water	23:21	0:0	4	0
+stmts	24:4	37:4	3	
+water	24:4	0:0	4	{
+decl	25:8	25:49	4	const int	i_title
+op	25:26	0:0	4	=
+water	25:28	0:0	4	p_demux
+op	25:35	0:0	4	->
+water	25:37	0:0	4	info
+op	25:41	0:0	4	.
+water	25:42	0:0	4	i_title
+decl	26:8	26:57	4	const bd_mpls_t	*p_mpls
+op	26:32	0:0	4	=
+water	26:34	0:0	4	p_sys
+op	26:39	0:0	4	->
+water	26:41	0:0	4	pp_mpls
+op	26:48	0:0	4	[
+water	26:49	0:0	4	i_title
+op	26:56	0:0	4	]
+if	27:8	32:8	4	(p_sys -> i_play_item < p_mpls -> i_play_item)
+cond	27:12	27:41	5	p_sys -> i_play_item < p_mpls -> i_play_item
+water	27:12	0:0	6	p_sys
+op	27:17	0:0	6	->
+water	27:19	0:0	6	i_play_item
+op	27:31	0:0	6	<
+water	27:33	0:0	6	p_mpls
+op	27:39	0:0	6	->
+water	27:41	0:0	6	i_play_item
+stmts	28:8	32:8	5	
+water	28:8	0:0	6	{
+if	29:12	30:24	6	(!SetPlayItem (p_demux ,i_title ,p_sys -> i_play_item + 1 ))
+cond	29:16	29:71	7	!SetPlayItem (p_demux ,i_title ,p_sys -> i_play_item + 1 )
+op	29:16	0:0	8	!
+call	29:17	29:71	8	SetPlayItem
+arg	29:30	29:37	9	p_demux
+water	29:30	0:0	10	p_demux
+arg	29:39	29:46	9	i_title
+water	29:39	0:0	10	i_title
+arg	29:48	29:71	9	p_sys->i_play_item+1
+water	29:48	0:0	10	p_sys
+op	29:53	0:0	10	->
+water	29:55	0:0	10	i_play_item
+op	29:67	0:0	10	+
+water	29:69	0:0	10	1
+stmts	30:16	30:24	7	
+return	30:16	30:24	8	1
+water	30:23	0:0	9	1
+call	31:12	31:72	6	msg_Warn
+arg	31:22	31:29	7	p_demux
+water	31:22	0:0	8	p_demux
+arg	31:31	31:72	7	"Failed to switch to the next play item"
+water	31:31	0:0	8	"Failed to switch to the next play item"
+water	31:73	0:0	6	;
+water	32:8	0:0	6	}
+if	34:8	35:20	4	(SetTitle (p_demux ,i_title + 1 ))
+cond	34:12	34:43	5	SetTitle (p_demux ,i_title + 1 )
+call	34:12	34:43	6	SetTitle
+arg	34:22	34:29	7	p_demux
+water	34:22	0:0	8	p_demux
+arg	34:31	34:43	7	i_title+1
+water	34:31	0:0	8	i_title
+op	34:39	0:0	8	+
+water	34:41	0:0	8	1
+stmts	35:12	35:20	5	
+return	35:12	35:20	6	0
+water	35:19	0:0	7	0
+return	36:8	36:16	4	1
+water	36:15	0:0	5	1
+water	37:4	0:0	4	}
+decl	41:4	41:89	2	block_t	*p_block
+op	41:21	0:0	2	=
+call	41:23	41:88	3	block_Alloc
+arg	41:36	41:88	4	i_packets*BD_TS_PACKET_SIZE+BD_TS_PACKET_HEADER
+water	41:36	0:0	5	i_packets
+op	41:46	0:0	5	*
+water	41:48	0:0	5	BD_TS_PACKET_SIZE
+op	41:66	0:0	5	+
+water	41:68	0:0	5	BD_TS_PACKET_HEADER
+if	42:4	43:17	2	(! p_block)
+cond	42:8	42:9	3	! p_block
+op	42:8	0:0	4	!
+water	42:9	0:0	4	p_block
+stmts	43:8	43:17	3	
+return	43:8	43:17	4	-1
+op	43:15	0:0	5	-
+water	43:16	0:0	5	1
+decl	44:4	44:111	2	const int	i_read
+op	44:21	0:0	2	=
+call	44:23	44:110	3	stream_Read
+arg	44:36	44:49	4	p_sys->p_m2ts
+water	44:36	0:0	5	p_sys
+op	44:41	0:0	5	->
+water	44:43	0:0	5	p_m2ts
+arg	44:51	44:68	4	p_block->p_buffer
+water	44:51	0:0	5	p_block
+op	44:58	0:0	5	->
+water	44:60	0:0	5	p_buffer
+arg	44:70	44:110	4	p_block->i_buffer-BD_TS_PACKET_HEADER
+water	44:70	0:0	5	p_block
+op	44:77	0:0	5	->
+water	44:79	0:0	5	i_buffer
+op	44:88	0:0	5	-
+water	44:90	0:0	5	BD_TS_PACKET_HEADER
+if	45:4	49:4	2	(i_read <= 0)
+cond	45:8	45:18	3	i_read <= 0
+water	45:8	0:0	4	i_read
+op	45:15	0:0	4	<=
+water	45:18	0:0	4	0
+stmts	46:4	49:4	3	
+water	46:4	0:0	4	{
+call	47:8	47:56	4	msg_Err
+arg	47:17	47:24	5	p_demux
+water	47:17	0:0	6	p_demux
+arg	47:26	47:56	5	"Error reading current title"
+water	47:26	0:0	6	"Error reading current title"
+water	47:57	0:0	4	;
+return	48:8	48:17	4	-1
+op	48:15	0:0	5	-
+water	48:16	0:0	5	1
+water	49:4	0:0	4	}
+if	50:4	59:4	2	(i_read > 4)
+cond	50:8	50:17	3	i_read > 4
+water	50:8	0:0	4	i_read
+op	50:15	0:0	4	>
+water	50:17	0:0	4	4
+stmts	51:4	59:4	3	
+water	51:4	0:0	4	{
+decl	52:8	52:78	4	const int64_t	i_atc
+op	52:28	0:0	4	=
+call	52:30	52:57	5	GetDWBE
+arg	52:39	52:57	6	p_block->p_buffer
+water	52:39	0:0	7	p_block
+op	52:46	0:0	7	->
+water	52:48	0:0	7	p_buffer
+op	52:59	0:0	4	&
+water	52:61	0:0	4	(
+water	52:63	0:0	4	(
+water	52:64	0:0	4	1
+op	52:66	0:0	4	<<
+water	52:69	0:0	4	30
+water	52:71	0:0	4	)
+op	52:73	0:0	4	-
+water	52:75	0:0	4	1
+water	52:77	0:0	4	)
+if	53:8	54:40	4	(i_atc < p_sys -> i_atc_last)
+cond	53:12	53:27	5	i_atc < p_sys -> i_atc_last
+water	53:12	0:0	6	i_atc
+op	53:18	0:0	6	<
+water	53:20	0:0	6	p_sys
+op	53:25	0:0	6	->
+water	53:27	0:0	6	i_atc_last
+stmts	54:12	54:40	5	
+water	54:12	0:0	6	p_sys
+op	54:17	0:0	6	->
+water	54:19	0:0	6	i_atc_wrap
+op	54:30	0:0	6	+=
+water	54:33	0:0	6	1
+op	54:35	0:0	6	<<
+water	54:38	0:0	6	30
+water	54:40	0:0	6	;
+water	55:8	0:0	4	p_sys
+op	55:13	0:0	4	->
+water	55:15	0:0	4	i_atc_last
+op	55:26	0:0	4	=
+water	55:28	0:0	4	i_atc
+water	55:33	0:0	4	;
+if	56:8	57:60	4	(p_sys -> i_atc_initial < 0)
+cond	56:12	56:35	5	p_sys -> i_atc_initial < 0
+water	56:12	0:0	6	p_sys
+op	56:17	0:0	6	->
+water	56:19	0:0	6	i_atc_initial
+op	56:33	0:0	6	<
+water	56:35	0:0	6	0
+stmts	57:12	57:60	5	
+water	57:12	0:0	6	p_sys
+op	57:17	0:0	6	->
+water	57:19	0:0	6	i_atc_initial
+op	57:33	0:0	6	=
+water	57:35	0:0	6	i_atc
+op	57:41	0:0	6	+
+water	57:43	0:0	6	p_sys
+op	57:48	0:0	6	->
+water	57:50	0:0	6	i_atc_wrap
+water	57:60	0:0	6	;
+water	58:8	0:0	4	p_sys
+op	58:13	0:0	4	->
+water	58:15	0:0	4	i_atc_current
+op	58:29	0:0	4	=
+water	58:31	0:0	4	i_atc
+op	58:37	0:0	4	+
+water	58:39	0:0	4	p_sys
+op	58:44	0:0	4	->
+water	58:46	0:0	4	i_atc_wrap
+water	58:56	0:0	4	;
+water	59:4	0:0	4	}
+water	60:4	0:0	2	p_block
+op	60:11	0:0	2	->
+water	60:13	0:0	2	i_buffer
+op	60:22	0:0	2	=
+water	60:24	0:0	2	i_read
+water	60:30	0:0	2	;
+water	61:4	0:0	2	p_block
+op	61:11	0:0	2	->
+water	61:13	0:0	2	p_buffer
+op	61:22	0:0	2	+=
+water	61:25	0:0	2	BD_TS_PACKET_HEADER
+water	61:44	0:0	2	;
+call	62:4	62:47	2	stream_DemuxSend
+arg	62:22	62:37	3	p_sys->p_parser
+water	62:22	0:0	4	p_sys
+op	62:27	0:0	4	->
+water	62:29	0:0	4	p_parser
+arg	62:39	62:47	3	p_block
+water	62:39	0:0	4	p_block
+water	62:48	0:0	2	;
+water	63:4	0:0	2	p_sys
+op	63:9	0:0	2	->
+water	63:11	0:0	2	i_packet
+op	63:20	0:0	2	+=
+water	63:23	0:0	2	i_read
+op	63:30	0:0	2	/
+water	63:32	0:0	2	BD_TS_PACKET_SIZE
+water	63:49	0:0	2	;
+if	65:4	90:4	2	(p_sys -> p_clpi -> i_ep_map > 0)
+cond	65:8	65:34	3	p_sys -> p_clpi -> i_ep_map > 0
+water	65:8	0:0	4	p_sys
+op	65:13	0:0	4	->
+water	65:15	0:0	4	p_clpi
+op	65:21	0:0	4	->
+water	65:23	0:0	4	i_ep_map
+op	65:32	0:0	4	>
+water	65:34	0:0	4	0
+stmts	66:4	90:4	3	
+water	66:4	0:0	4	{
+decl	67:8	67:50	4	const int	i_old_clpi_ep
+op	67:32	0:0	4	=
+water	67:34	0:0	4	p_sys
+op	67:39	0:0	4	->
+water	67:41	0:0	4	i_clpi_ep
+decl	68:8	68:70	4	const bd_clpi_ep_map_t	*p_ep_map
+op	68:41	0:0	4	=
+op	68:43	0:0	4	&
+water	68:44	0:0	4	p_sys
+op	68:49	0:0	4	->
+water	68:51	0:0	4	p_clpi
+op	68:57	0:0	4	->
+water	68:59	0:0	4	p_ep_map
+op	68:67	0:0	4	[
+water	68:68	0:0	4	0
+op	68:69	0:0	4	]
+for	69:8	74:8	4	(;p_sys -> i_clpi_ep + 1 < p_ep_map -> i_ep;p_sys -> i_clpi_ep ++)
+forinit	69:13	69:13	5	;
+water	69:13	0:0	6	;
+cond	69:15	69:46	5	p_sys -> i_clpi_ep + 1 < p_ep_map -> i_ep
+water	69:15	0:0	6	p_sys
+op	69:20	0:0	6	->
+water	69:22	0:0	6	i_clpi_ep
+op	69:31	0:0	6	+
+water	69:32	0:0	6	1
+op	69:34	0:0	6	<
+water	69:36	0:0	6	p_ep_map
+op	69:44	0:0	6	->
+water	69:46	0:0	6	i_ep
+forexpr	69:52	69:68	5	p_sys -> i_clpi_ep ++
+water	69:52	0:0	6	p_sys
+op	69:57	0:0	6	->
+water	69:59	0:0	6	i_clpi_ep
+op	69:68	0:0	6	++
+stmts	70:8	74:8	5	
+water	70:8	0:0	6	{
+decl	71:12	71:74	6	const bd_clpi_ep_t	*p_ep
+op	71:37	0:0	6	=
+op	71:39	0:0	6	&
+water	71:40	0:0	6	p_ep_map
+op	71:48	0:0	6	->
+water	71:50	0:0	6	p_ep
+op	71:54	0:0	6	[
+water	71:55	0:0	6	p_sys
+op	71:60	0:0	6	->
+water	71:62	0:0	6	i_clpi_ep
+op	71:71	0:0	6	+
+water	71:72	0:0	6	1
+op	71:73	0:0	6	]
+if	72:12	73:21	6	(p_ep -> i_packet > p_sys -> i_packet)
+cond	72:16	72:40	7	p_ep -> i_packet > p_sys -> i_packet
+water	72:16	0:0	8	p_ep
+op	72:20	0:0	8	->
+water	72:22	0:0	8	i_packet
+op	72:31	0:0	8	>
+water	72:33	0:0	8	p_sys
+op	72:38	0:0	8	->
+water	72:40	0:0	8	i_packet
+stmts	73:16	73:21	7	
+break	73:16	73:21	8	
+water	74:8	0:0	6	}
+if	75:8	89:8	4	(i_old_clpi_ep != p_sys -> i_clpi_ep)
+cond	75:12	75:36	5	i_old_clpi_ep != p_sys -> i_clpi_ep
+water	75:12	0:0	6	i_old_clpi_ep
+op	75:26	0:0	6	!=
+water	75:29	0:0	6	p_sys
+op	75:34	0:0	6	->
+water	75:36	0:0	6	i_clpi_ep
+stmts	76:8	89:8	5	
+water	76:8	0:0	6	{
+water	78:12	0:0	6	p_sys
+op	78:17	0:0	6	->
+water	78:19	0:0	6	i_atc_initial
+op	78:33	0:0	6	=
+water	78:35	0:0	6	p_sys
+op	78:40	0:0	6	->
+water	78:42	0:0	6	i_atc_current
+water	78:55	0:0	6	;
+decl	80:12	80:81	6	const input_title_t	*p_title
+op	80:41	0:0	6	=
+water	80:43	0:0	6	p_sys
+op	80:48	0:0	6	->
+water	80:50	0:0	6	pp_title
+op	80:58	0:0	6	[
+water	80:59	0:0	6	p_demux
+op	80:66	0:0	6	->
+water	80:68	0:0	6	info
+op	80:72	0:0	6	.
+water	80:73	0:0	6	i_title
+op	80:80	0:0	6	]
+decl	81:12	81:53	6	const int64_t	i_time
+op	81:33	0:0	6	=
+call	81:35	81:52	7	GetTime
+arg	81:44	81:52	8	p_demux
+water	81:44	0:0	9	p_demux
+for	82:12	88:12	6	(;p_demux -> info . i_seekpoint + 1 < p_title -> i_seekpoint;p_demux -> info . i_seekpoint ++)
+forinit	82:17	82:17	7	;
+water	82:17	0:0	8	;
+cond	82:19	82:58	7	p_demux -> info . i_seekpoint + 1 < p_title -> i_seekpoint
+water	82:19	0:0	8	p_demux
+op	82:26	0:0	8	->
+water	82:28	0:0	8	info
+op	82:32	0:0	8	.
+water	82:33	0:0	8	i_seekpoint
+op	82:44	0:0	8	+
+water	82:45	0:0	8	1
+op	82:47	0:0	8	<
+water	82:49	0:0	8	p_title
+op	82:56	0:0	8	->
+water	82:58	0:0	8	i_seekpoint
+forexpr	82:71	82:96	7	p_demux -> info . i_seekpoint ++
+water	82:71	0:0	8	p_demux
+op	82:78	0:0	8	->
+water	82:80	0:0	8	info
+op	82:84	0:0	8	.
+water	82:85	0:0	8	i_seekpoint
+op	82:96	0:0	8	++
+stmts	83:12	88:12	7	
+water	83:12	0:0	8	{
+decl	84:16	84:96	8	const seekpoint_t	*p_seekpoint
+op	84:47	0:0	8	=
+water	84:49	0:0	8	p_title
+op	84:56	0:0	8	->
+water	84:58	0:0	8	seekpoint
+op	84:67	0:0	8	[
+water	84:68	0:0	8	p_demux
+op	84:75	0:0	8	->
+water	84:77	0:0	8	info
+op	84:81	0:0	8	.
+water	84:82	0:0	8	i_seekpoint
+op	84:93	0:0	8	+
+water	84:94	0:0	8	1
+op	84:95	0:0	8	]
+if	85:16	86:25	8	(p_seekpoint -> i_time_offset > i_time)
+cond	85:20	85:50	9	p_seekpoint -> i_time_offset > i_time
+water	85:20	0:0	10	p_seekpoint
+op	85:31	0:0	10	->
+water	85:33	0:0	10	i_time_offset
+op	85:47	0:0	10	>
+water	85:50	0:0	10	i_time
+stmts	86:20	86:25	9	
+break	86:20	86:25	10	
+water	87:16	0:0	8	p_demux
+op	87:23	0:0	8	->
+water	87:25	0:0	8	info
+op	87:29	0:0	8	.
+water	87:30	0:0	8	i_update
+op	87:39	0:0	8	|=
+water	87:42	0:0	8	INPUT_UPDATE_SEEKPOINT
+water	87:64	0:0	8	;
+water	88:12	0:0	8	}
+water	89:8	0:0	6	}
+water	90:4	0:0	4	}
+return	91:4	91:12	2	1
+water	91:11	0:0	3	1

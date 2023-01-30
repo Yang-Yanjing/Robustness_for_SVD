@@ -1,0 +1,250 @@
+func	2:0	59:0	0	static int	CryptSetup
+params	2:21	0:0	1	
+param	2:23	2:50	2	sout_access_out_t *	p_access
+param	2:52	2:67	2	char *	key_file
+stmnts	0:0	58:22	1	
+decl	4:4	4:50	2	sout_access_out_sys_t	*p_sys
+op	4:33	0:0	2	=
+water	4:35	0:0	2	p_access
+op	4:43	0:0	2	->
+water	4:45	0:0	2	p_sys
+decl	5:4	5:19	2	uint8_t	key[16]
+decl	6:4	6:24	2	char	*keyfile
+op	6:18	0:0	2	=
+water	6:20	0:0	2	NULL
+if	7:4	11:4	2	(! p_sys -> key_uri)
+cond	7:8	7:16	3	! p_sys -> key_uri
+op	7:8	0:0	4	!
+water	7:9	0:0	4	p_sys
+op	7:14	0:0	4	->
+water	7:16	0:0	4	key_uri
+stmts	8:4	11:4	3	
+water	8:4	0:0	4	{
+call	9:8	9:54	4	msg_Dbg
+arg	9:17	9:25	5	p_access
+water	9:17	0:0	6	p_access
+arg	9:27	9:54	5	"No key uri, no encryption"
+water	9:27	0:0	6	"No key uri, no encryption"
+water	9:55	0:0	4	;
+return	10:8	10:26	4	VLC_SUCCESS
+water	10:15	0:0	5	VLC_SUCCESS
+water	11:4	0:0	4	}
+if	12:4	13:36	2	(key_file)
+cond	12:8	12:8	3	key_file
+water	12:8	0:0	4	key_file
+stmts	13:8	13:36	3	
+water	13:8	0:0	4	keyfile
+op	13:16	0:0	4	=
+call	13:18	13:35	4	strdup
+arg	13:26	13:35	5	key_file
+water	13:26	0:0	6	key_file
+water	13:36	0:0	4	;
+else	14:4	15:75	2
+stmts	15:8	15:75	3	
+water	15:8	0:0	4	keyfile
+op	15:16	0:0	4	=
+call	15:18	15:74	4	var_InheritString
+arg	15:37	15:45	5	p_access
+water	15:37	0:0	6	p_access
+arg	15:47	15:74	5	SOUT_CFG_PREFIX"key-file"
+water	15:47	0:0	6	SOUT_CFG_PREFIX
+water	15:63	0:0	6	"key-file"
+water	15:75	0:0	4	;
+if	16:4	20:4	2	(unlikely (keyfile == NULL ))
+cond	16:8	16:32	3	unlikely (keyfile == NULL )
+call	16:8	16:32	4	unlikely
+arg	16:17	16:32	5	keyfile==NULL
+water	16:17	0:0	6	keyfile
+op	16:25	0:0	6	==
+water	16:28	0:0	6	NULL
+stmts	17:4	20:4	3	
+water	17:4	0:0	4	{
+call	18:8	18:56	4	msg_Err
+arg	18:17	18:25	5	p_access
+water	18:17	0:0	6	p_access
+arg	18:27	18:56	5	"No key-file, no encryption"
+water	18:27	0:0	6	"No key-file, no encryption"
+water	18:57	0:0	4	;
+return	19:8	19:27	4	VLC_EGENERIC
+water	19:15	0:0	5	VLC_EGENERIC
+water	20:4	0:0	4	}
+call	21:4	21:20	2	vlc_gcrypt_init
+water	21:21	0:0	2	;
+decl	23:4	24:66	2	gcry_error_t	err
+op	23:21	0:0	2	=
+call	23:23	24:65	3	gcry_cipher_open
+arg	23:41	23:56	4	&p_sys->aes_ctx
+op	23:41	0:0	5	&
+water	23:42	0:0	5	p_sys
+op	23:47	0:0	5	->
+water	23:49	0:0	5	aes_ctx
+arg	23:58	23:73	4	GCRY_CIPHER_AES
+water	23:58	0:0	5	GCRY_CIPHER_AES
+arg	24:41	24:61	4	GCRY_CIPHER_MODE_CBC
+water	24:41	0:0	5	GCRY_CIPHER_MODE_CBC
+arg	24:63	24:65	4	0
+water	24:63	0:0	5	0
+if	25:4	30:4	2	(err)
+cond	25:8	25:8	3	err
+water	25:8	0:0	4	err
+stmts	26:4	30:4	3	
+water	26:4	0:0	4	{
+call	27:8	27:76	4	msg_Err
+arg	27:17	27:25	5	p_access
+water	27:17	0:0	6	p_access
+arg	27:27	27:57	5	"Openin AES Cipher failed: %s"
+water	27:27	0:0	6	"Openin AES Cipher failed: %s"
+arg	27:59	27:76	5	gpg_strerror(err)
+call	27:59	27:75	6	gpg_strerror
+arg	27:72	27:75	7	err
+water	27:72	0:0	8	err
+water	27:77	0:0	4	;
+call	28:8	28:22	4	free
+arg	28:14	28:22	5	keyfile
+water	28:14	0:0	6	keyfile
+water	28:23	0:0	4	;
+return	29:8	29:27	4	VLC_EGENERIC
+water	29:15	0:0	5	VLC_EGENERIC
+water	30:4	0:0	4	}
+decl	31:4	31:58	2	int	keyfd
+op	31:14	0:0	2	=
+call	31:16	31:57	3	vlc_open
+arg	31:26	31:33	4	keyfile
+water	31:26	0:0	5	keyfile
+arg	31:35	31:57	4	O_RDONLY|O_NONBLOCK
+water	31:35	0:0	5	O_RDONLY
+op	31:44	0:0	5	|
+water	31:46	0:0	5	O_NONBLOCK
+if	32:4	39:4	2	(unlikely (keyfd == - 1 ))
+cond	32:8	32:30	3	unlikely (keyfd == - 1 )
+call	32:8	32:30	4	unlikely
+arg	32:18	32:30	5	keyfd==-1
+water	32:18	0:0	6	keyfd
+op	32:24	0:0	6	==
+op	32:27	0:0	6	-
+water	32:28	0:0	6	1
+stmts	33:4	39:4	3	
+water	33:4	0:0	4	{
+call	34:8	35:39	4	msg_Err
+arg	34:17	34:25	5	p_access
+water	34:17	0:0	6	p_access
+arg	34:27	34:58	5	"Unable to open keyfile %s: %s"
+water	34:27	0:0	6	"Unable to open keyfile %s: %s"
+arg	34:60	34:67	5	keyfile
+water	34:60	0:0	6	keyfile
+arg	35:17	35:39	5	vlc_strerror_c(errno)
+call	35:17	35:37	6	vlc_strerror_c
+arg	35:32	35:37	7	errno
+water	35:32	0:0	8	errno
+water	35:40	0:0	4	;
+call	36:8	36:22	4	free
+arg	36:14	36:22	5	keyfile
+water	36:14	0:0	6	keyfile
+water	36:23	0:0	4	;
+call	37:8	37:42	4	gcry_cipher_close
+arg	37:27	37:42	5	p_sys->aes_ctx
+water	37:27	0:0	6	p_sys
+op	37:32	0:0	6	->
+water	37:34	0:0	6	aes_ctx
+water	37:43	0:0	4	;
+return	38:8	38:27	4	VLC_EGENERIC
+water	38:15	0:0	5	VLC_EGENERIC
+water	39:4	0:0	4	}
+call	40:4	40:18	2	free
+arg	40:10	40:18	3	keyfile
+water	40:10	0:0	4	keyfile
+water	40:19	0:0	2	;
+decl	41:4	41:43	2	ssize_t	keylen
+op	41:19	0:0	2	=
+call	41:21	41:42	3	read
+arg	41:27	41:32	4	keyfd
+water	41:27	0:0	5	keyfd
+arg	41:34	41:37	4	key
+water	41:34	0:0	5	key
+arg	41:39	41:42	4	16
+water	41:39	0:0	5	16
+call	42:4	42:17	2	close
+arg	42:11	42:17	3	keyfd
+water	42:11	0:0	4	keyfd
+water	42:18	0:0	2	;
+if	43:4	48:4	2	(keylen < 16)
+cond	43:8	43:17	3	keylen < 16
+water	43:8	0:0	4	keylen
+op	43:15	0:0	4	<
+water	43:17	0:0	4	16
+stmts	44:4	48:4	3	
+water	44:4	0:0	4	{
+call	45:8	45:98	4	msg_Err
+arg	45:17	45:25	5	p_access
+water	45:17	0:0	6	p_access
+arg	45:27	45:89	5	"No key at least 16 octects (you provided %zd), no encryption"
+water	45:27	0:0	6	"No key at least 16 octects (you provided %zd), no encryption"
+arg	45:91	45:98	5	keylen
+water	45:91	0:0	6	keylen
+water	45:99	0:0	4	;
+call	46:8	46:42	4	gcry_cipher_close
+arg	46:27	46:42	5	p_sys->aes_ctx
+water	46:27	0:0	6	p_sys
+op	46:32	0:0	6	->
+water	46:34	0:0	6	aes_ctx
+water	46:43	0:0	4	;
+return	47:8	47:27	4	VLC_EGENERIC
+water	47:15	0:0	5	VLC_EGENERIC
+water	48:4	0:0	4	}
+water	49:4	0:0	2	err
+op	49:8	0:0	2	=
+call	49:10	49:54	2	gcry_cipher_setkey
+arg	49:30	49:44	3	p_sys->aes_ctx
+water	49:30	0:0	4	p_sys
+op	49:35	0:0	4	->
+water	49:37	0:0	4	aes_ctx
+arg	49:46	49:49	3	key
+water	49:46	0:0	4	key
+arg	49:51	49:54	3	16
+water	49:51	0:0	4	16
+water	49:55	0:0	2	;
+if	50:4	55:4	2	(err)
+cond	50:7	50:7	3	err
+water	50:7	0:0	4	err
+stmts	51:4	55:4	3	
+water	51:4	0:0	4	{
+call	52:8	52:73	4	msg_Err
+arg	52:16	52:24	5	p_access
+water	52:16	0:0	6	p_access
+arg	52:26	52:54	5	"Setting AES key failed: %s"
+water	52:26	0:0	6	"Setting AES key failed: %s"
+arg	52:56	52:73	5	gpg_strerror(err)
+call	52:56	52:72	6	gpg_strerror
+arg	52:69	52:72	7	err
+water	52:69	0:0	8	err
+water	52:74	0:0	4	;
+call	53:8	53:42	4	gcry_cipher_close
+arg	53:27	53:42	5	p_sys->aes_ctx
+water	53:27	0:0	6	p_sys
+op	53:32	0:0	6	->
+water	53:34	0:0	6	aes_ctx
+water	53:43	0:0	4	;
+return	54:8	54:27	4	VLC_EGENERIC
+water	54:15	0:0	5	VLC_EGENERIC
+water	55:4	0:0	4	}
+if	56:4	57:59	2	(p_sys -> b_generate_iv)
+cond	56:8	56:15	3	p_sys -> b_generate_iv
+water	56:8	0:0	4	p_sys
+op	56:13	0:0	4	->
+water	56:15	0:0	4	b_generate_iv
+stmts	57:8	57:59	3	
+call	57:8	57:58	4	vlc_rand_bytes
+arg	57:24	57:38	5	p_sys->aes_ivs
+water	57:24	0:0	6	p_sys
+op	57:29	0:0	6	->
+water	57:31	0:0	6	aes_ivs
+arg	57:40	57:58	5	sizeof(uint8_t)*16
+op	57:40	0:0	6	sizeof
+water	57:46	0:0	6	(
+water	57:47	0:0	6	uint8_t
+water	57:54	0:0	6	)
+op	57:55	0:0	6	*
+water	57:56	0:0	6	16
+water	57:59	0:0	4	;
+return	58:4	58:22	2	VLC_SUCCESS
+water	58:11	0:0	3	VLC_SUCCESS

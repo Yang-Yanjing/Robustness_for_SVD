@@ -1,0 +1,206 @@
+func	2:0	86:0	0	int	RenderIVTC
+params	2:14	0:0	1	
+param	2:16	2:34	2	filter_t *	p_filter
+param	2:36	2:53	2	picture_t *	p_dst
+stmnts	4:4	85:4	1	
+call	4:4	4:29	2	assert
+arg	4:12	4:29	3	p_filter!=NULL
+water	4:12	0:0	4	p_filter
+op	4:21	0:0	4	!=
+water	4:24	0:0	4	NULL
+water	4:30	0:0	2	;
+call	5:4	5:26	2	assert
+arg	5:12	5:26	3	p_dst!=NULL
+water	5:12	0:0	4	p_dst
+op	5:18	0:0	4	!=
+water	5:21	0:0	4	NULL
+water	5:27	0:0	2	;
+decl	6:4	6:41	2	filter_sys_t	*p_sys
+op	6:24	0:0	2	=
+water	6:26	0:0	2	p_filter
+op	6:34	0:0	2	->
+water	6:36	0:0	2	p_sys
+decl	7:4	7:38	2	ivtc_sys_t	*p_ivtc
+op	7:24	0:0	2	=
+op	7:26	0:0	2	&
+water	7:27	0:0	2	p_sys
+op	7:32	0:0	2	->
+water	7:34	0:0	2	ivtc
+decl	8:4	8:44	2	picture_t	*p_prev
+op	8:22	0:0	2	=
+water	8:24	0:0	2	p_sys
+op	8:29	0:0	2	->
+water	8:31	0:0	2	pp_history
+op	8:41	0:0	2	[
+water	8:42	0:0	2	0
+op	8:43	0:0	2	]
+decl	9:4	9:44	2	picture_t	*p_curr
+op	9:22	0:0	2	=
+water	9:24	0:0	2	p_sys
+op	9:29	0:0	2	->
+water	9:31	0:0	2	pp_history
+op	9:41	0:0	2	[
+water	9:42	0:0	2	1
+op	9:43	0:0	2	]
+decl	10:4	10:44	2	picture_t	*p_next
+op	10:22	0:0	2	=
+water	10:24	0:0	2	p_sys
+op	10:29	0:0	2	->
+water	10:31	0:0	2	pp_history
+op	10:41	0:0	2	[
+water	10:42	0:0	2	2
+op	10:43	0:0	2	]
+if	12:4	13:27	2	(! p_next)
+cond	12:8	12:9	3	! p_next
+op	12:8	0:0	4	!
+water	12:9	0:0	4	p_next
+stmts	13:8	13:27	3	
+return	13:8	13:27	4	VLC_EGENERIC
+water	13:15	0:0	5	VLC_EGENERIC
+call	15:4	15:28	2	IVTCFrameInit
+arg	15:19	15:28	3	p_filter
+water	15:19	0:0	4	p_filter
+water	15:29	0:0	2	;
+if	18:4	46:4	2	(p_prev && p_curr)
+cond	18:8	18:18	3	p_prev && p_curr
+water	18:8	0:0	4	p_prev
+op	18:15	0:0	4	&&
+water	18:18	0:0	4	p_curr
+stmts	19:4	46:4	3	
+water	19:4	0:0	4	{
+call	21:8	21:37	4	IVTCLowLevelDetect
+arg	21:28	21:37	5	p_filter
+water	21:28	0:0	6	p_filter
+water	21:38	0:0	4	;
+call	25:8	25:41	4	IVTCSoftTelecineDetect
+arg	25:32	25:41	5	p_filter
+water	25:32	0:0	6	p_filter
+water	25:42	0:0	4	;
+call	34:8	34:46	4	IVTCCadenceDetectAlgoScores
+arg	34:37	34:46	5	p_filter
+water	34:37	0:0	6	p_filter
+water	34:47	0:0	4	;
+call	35:8	35:46	4	IVTCCadenceDetectAlgoVektor
+arg	35:37	35:46	5	p_filter
+water	35:37	0:0	6	p_filter
+water	35:47	0:0	4	;
+call	36:8	36:44	4	IVTCCadenceDetectFinalize
+arg	36:35	36:44	5	p_filter
+water	36:35	0:0	6	p_filter
+water	36:45	0:0	4	;
+call	37:8	37:37	4	IVTCCadenceAnalyze
+arg	37:28	37:37	5	p_filter
+water	37:28	0:0	6	p_filter
+water	37:38	0:0	4	;
+decl	39:8	39:75	4	bool	b_have_output_frame
+op	39:33	0:0	4	=
+call	39:35	39:74	5	IVTCOutputOrDropFrame
+arg	39:58	39:66	6	p_filter
+water	39:58	0:0	7	p_filter
+arg	39:68	39:74	6	p_dst
+water	39:68	0:0	7	p_dst
+water	41:8	0:0	4	p_sys
+op	41:13	0:0	4	->
+water	41:15	0:0	4	i_frame_offset
+op	41:30	0:0	4	=
+water	41:32	0:0	4	CUSTOM_PTS
+water	41:42	0:0	4	;
+if	42:8	43:30	4	(b_have_output_frame)
+cond	42:12	42:12	5	b_have_output_frame
+water	42:12	0:0	6	b_have_output_frame
+stmts	43:12	43:30	5	
+return	43:12	43:30	6	VLC_SUCCESS
+water	43:19	0:0	7	VLC_SUCCESS
+else	44:8	45:31	4
+stmts	45:12	45:31	5	
+return	45:12	45:31	6	VLC_EGENERIC
+water	45:19	0:0	7	VLC_EGENERIC
+water	46:4	0:0	4	}
+else	47:4	59:4	2
+stmts	47:9	59:4	3	
+if	47:9	59:4	4	(! p_prev && ! p_curr)
+cond	47:13	47:25	5	! p_prev && ! p_curr
+op	47:13	0:0	6	!
+water	47:14	0:0	6	p_prev
+op	47:21	0:0	6	&&
+op	47:24	0:0	6	!
+water	47:25	0:0	6	p_curr
+stmts	48:4	59:4	5	
+water	48:4	0:0	6	{
+decl	54:8	54:63	6	int	i_score
+op	54:20	0:0	6	=
+call	54:22	54:62	7	CalculateInterlaceScore
+arg	54:47	54:53	8	p_next
+water	54:47	0:0	9	p_next
+arg	54:55	54:62	8	p_next
+water	54:55	0:0	9	p_next
+water	55:8	0:0	6	p_ivtc
+op	55:14	0:0	6	->
+water	55:16	0:0	6	pi_scores
+op	55:25	0:0	6	[
+water	55:26	0:0	6	FIELD_PAIR_TNBN
+op	55:41	0:0	6	]
+op	55:43	0:0	6	=
+water	55:45	0:0	6	i_score
+water	55:52	0:0	6	;
+water	56:8	0:0	6	p_ivtc
+op	56:14	0:0	6	->
+water	56:16	0:0	6	pi_final_scores
+op	56:31	0:0	6	[
+water	56:32	0:0	6	0
+op	56:33	0:0	6	]
+op	56:43	0:0	6	=
+water	56:45	0:0	6	i_score
+water	56:52	0:0	6	;
+call	57:8	57:36	6	picture_Copy
+arg	57:22	57:27	7	p_dst
+water	57:22	0:0	8	p_dst
+arg	57:29	57:36	7	p_next
+water	57:29	0:0	8	p_next
+water	57:37	0:0	6	;
+return	58:8	58:26	6	VLC_SUCCESS
+water	58:15	0:0	7	VLC_SUCCESS
+water	59:4	0:0	6	}
+else	60:4	85:4	2
+stmts	61:4	85:4	3	
+water	61:4	0:0	4	{
+call	64:8	64:34	4	assert
+arg	64:16	64:34	5	p_curr&&!p_prev
+water	64:16	0:0	6	p_curr
+op	64:23	0:0	6	&&
+op	64:26	0:0	6	!
+water	64:27	0:0	6	p_prev
+water	64:35	0:0	4	;
+call	75:8	75:37	4	IVTCLowLevelDetect
+arg	75:28	75:37	5	p_filter
+water	75:28	0:0	6	p_filter
+water	75:38	0:0	4	;
+water	79:8	0:0	4	p_ivtc
+op	79:14	0:0	4	->
+water	79:16	0:0	4	pi_final_scores
+op	79:31	0:0	4	[
+water	79:32	0:0	4	1
+op	79:33	0:0	4	]
+op	79:35	0:0	4	=
+water	79:37	0:0	4	p_ivtc
+op	79:43	0:0	4	->
+water	79:45	0:0	4	pi_scores
+op	79:54	0:0	4	[
+water	79:55	0:0	4	FIELD_PAIR_TNBN
+op	79:70	0:0	4	]
+water	79:71	0:0	4	;
+water	82:8	0:0	4	p_sys
+op	82:13	0:0	4	->
+water	82:15	0:0	4	i_frame_offset
+op	82:30	0:0	4	=
+water	82:32	0:0	4	CUSTOM_PTS
+water	82:42	0:0	4	;
+call	83:8	83:36	4	picture_Copy
+arg	83:22	83:27	5	p_dst
+water	83:22	0:0	6	p_dst
+arg	83:29	83:36	5	p_next
+water	83:29	0:0	6	p_next
+water	83:37	0:0	4	;
+return	84:8	84:26	4	VLC_SUCCESS
+water	84:15	0:0	5	VLC_SUCCESS
+water	85:4	0:0	4	}

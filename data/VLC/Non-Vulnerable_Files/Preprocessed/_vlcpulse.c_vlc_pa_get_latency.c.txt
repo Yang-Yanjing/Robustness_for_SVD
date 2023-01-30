@@ -1,0 +1,106 @@
+func	2:0	33:0	0	mtime_t	vlc_pa_get_latency
+params	2:26	0:0	1	
+param	2:27	2:44	2	vlc_object_t *	obj
+param	2:46	2:61	2	pa_context *	ctx
+param	2:63	2:75	2	pa_stream *	s
+stmnts	0:0	32:14	1	
+decl	13:4	13:59	2	const pa_sample_spec	*ss
+op	13:29	0:0	2	=
+call	13:31	13:58	3	pa_stream_get_sample_spec
+arg	13:57	13:58	4	s
+water	13:57	0:0	5	s
+decl	14:4	14:59	2	const pa_timing_info	*ti
+op	14:29	0:0	2	=
+call	14:31	14:58	3	pa_stream_get_timing_info
+arg	14:57	14:58	4	s
+water	14:57	0:0	5	s
+if	15:4	18:4	2	(ti == NULL)
+cond	15:8	15:14	3	ti == NULL
+water	15:8	0:0	4	ti
+op	15:11	0:0	4	==
+water	15:14	0:0	4	NULL
+stmts	15:20	18:4	3	
+water	15:20	0:0	4	{
+call	16:8	16:38	4	msg_Dbg
+arg	16:16	16:19	5	obj
+water	16:16	0:0	6	obj
+arg	16:21	16:38	5	"no timing infos"
+water	16:21	0:0	6	"no timing infos"
+water	16:39	0:0	4	;
+return	17:8	17:29	4	VLC_TS_INVALID
+water	17:15	0:0	5	VLC_TS_INVALID
+water	18:4	0:0	4	}
+if	19:4	22:4	2	(ti -> write_index_corrupt)
+cond	19:8	19:12	3	ti -> write_index_corrupt
+water	19:8	0:0	4	ti
+op	19:10	0:0	4	->
+water	19:12	0:0	4	write_index_corrupt
+stmts	19:33	22:4	3	
+water	19:33	0:0	4	{
+call	20:8	20:42	4	msg_Dbg
+arg	20:16	20:19	5	obj
+water	20:16	0:0	6	obj
+arg	20:21	20:42	5	"write index corrupt"
+water	20:21	0:0	6	"write index corrupt"
+water	20:43	0:0	4	;
+return	21:8	21:29	4	VLC_TS_INVALID
+water	21:15	0:0	5	VLC_TS_INVALID
+water	22:4	0:0	4	}
+decl	23:4	23:66	2	pa_usec_t	wt
+op	23:17	0:0	2	=
+call	23:19	23:65	3	pa_bytes_to_usec
+arg	23:36	23:61	4	(uint64_t)ti->write_index
+water	23:36	0:0	5	(
+water	23:37	0:0	5	uint64_t
+water	23:45	0:0	5	)
+water	23:46	0:0	5	ti
+op	23:48	0:0	5	->
+water	23:50	0:0	5	write_index
+arg	23:63	23:65	4	ss
+water	23:63	0:0	5	ss
+decl	24:4	24:16	2	pa_usec_t	rt
+if	25:4	29:4	2	(pa_stream_get_time (s ,& rt ))
+cond	25:8	25:33	3	pa_stream_get_time (s ,& rt )
+call	25:8	25:33	4	pa_stream_get_time
+arg	25:27	25:28	5	s
+water	25:27	0:0	6	s
+arg	25:30	25:33	5	&rt
+op	25:30	0:0	6	&
+water	25:31	0:0	6	rt
+stmts	25:36	29:4	3	
+water	25:36	0:0	4	{
+if	26:8	27:50	4	(pa_context_errno (ctx ) != PA_ERR_NODATA)
+cond	26:12	26:37	5	pa_context_errno (ctx ) != PA_ERR_NODATA
+call	26:12	26:32	6	pa_context_errno
+arg	26:29	26:32	7	ctx
+water	26:29	0:0	8	ctx
+op	26:34	0:0	6	!=
+water	26:37	0:0	6	PA_ERR_NODATA
+stmts	27:12	27:50	5	
+call	27:12	27:49	6	vlc_pa_error
+arg	27:25	27:28	7	obj
+water	27:25	0:0	8	obj
+arg	27:30	27:44	7	"unknown time"
+water	27:30	0:0	8	"unknown time"
+arg	27:46	27:49	7	ctx
+water	27:46	0:0	8	ctx
+water	27:50	0:0	6	;
+return	28:8	28:29	4	VLC_TS_INVALID
+water	28:15	0:0	5	VLC_TS_INVALID
+water	29:4	0:0	4	}
+union	30:4	30:35	2	<anonymous_30:4>
+decl	30:12	30:22	3	uint64_t	u
+decl	30:24	30:33	3	int64_t	s
+decl	30:4	30:38	2	<anonymous_30:4>	d
+water	31:4	0:0	2	d
+op	31:5	0:0	2	.
+water	31:6	0:0	2	u
+op	31:8	0:0	2	=
+water	31:10	0:0	2	wt
+op	31:13	0:0	2	-
+water	31:15	0:0	2	rt
+water	31:17	0:0	2	;
+return	32:4	32:14	2	d.s
+water	32:11	0:0	3	d
+op	32:12	0:0	3	.
+water	32:13	0:0	3	s

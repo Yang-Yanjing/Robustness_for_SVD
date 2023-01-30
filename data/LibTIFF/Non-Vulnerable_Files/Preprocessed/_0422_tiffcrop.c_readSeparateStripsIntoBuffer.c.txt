@@ -1,0 +1,809 @@
+func	2:0	169:2	0	static int	readSeparateStripsIntoBuffer
+params	2:40	0:0	1	
+param	2:41	2:49	2	TIFF *	in
+param	2:51	2:62	2	uint8 *	obuf
+param	2:64	2:77	2	uint32	length
+param	3:41	3:53	2	uint32	width
+param	3:55	3:65	2	uint16	spp
+param	4:41	4:63	2	struct dump_opts *	dump
+stmnts	0:0	168:17	1	
+decl	6:2	6:67	2	int	i
+water	6:7	0:0	2	,
+decl	6:2	6:67	2	int	bytes_per_sample
+water	6:25	0:0	2	,
+decl	6:2	6:67	2	int	bytes_per_pixel
+water	6:42	0:0	2	,
+decl	6:2	6:67	2	int	shift_width
+water	6:55	0:0	2	,
+decl	6:2	6:67	2	int	result
+op	6:64	0:0	2	=
+water	6:66	0:0	2	1
+decl	7:2	7:10	2	uint32	j
+decl	8:2	8:23	2	int32	bytes_read
+op	8:20	0:0	2	=
+water	8:22	0:0	2	0
+decl	9:2	9:20	2	uint16	bps
+water	9:12	0:0	2	,
+decl	9:2	9:20	2	uint16	planar
+decl	10:2	10:16	2	uint32	nstrips
+decl	11:2	11:26	2	uint32	strips_per_sample
+decl	12:2	12:54	2	uint32	src_rowsize
+water	12:20	0:0	2	,
+decl	12:2	12:54	2	uint32	dst_rowsize
+water	12:33	0:0	2	,
+decl	12:2	12:54	2	uint32	rows_processed
+water	12:49	0:0	2	,
+decl	12:2	12:54	2	uint32	rps
+decl	13:2	13:28	2	uint32	rows_this_strip
+op	13:25	0:0	2	=
+water	13:27	0:0	2	0
+decl	14:2	14:13	2	tsample_t	s
+decl	15:2	15:17	2	tstrip_t	strip
+decl	16:2	16:45	2	tsize_t	scanlinesize
+op	16:23	0:0	2	=
+call	16:25	16:44	3	TIFFScanlineSize
+arg	16:42	16:44	4	in
+water	16:42	0:0	5	in
+decl	17:2	17:42	2	tsize_t	stripsize
+op	17:23	0:0	2	=
+call	17:25	17:41	3	TIFFStripSize
+arg	17:39	17:41	4	in
+water	17:39	0:0	5	in
+decl	18:2	18:38	2	unsigned char	*srcbuffs[MAX_SAMPLES]
+decl	19:2	19:28	2	unsigned char	*buff
+op	19:22	0:0	2	=
+water	19:24	0:0	2	NULL
+decl	20:2	20:27	2	unsigned char	*dst
+op	20:21	0:0	2	=
+water	20:23	0:0	2	NULL
+if	21:2	25:4	2	(obuf == NULL)
+cond	21:6	21:14	3	obuf == NULL
+water	21:6	0:0	4	obuf
+op	21:11	0:0	4	==
+water	21:14	0:0	4	NULL
+stmts	22:4	25:4	3	
+water	22:4	0:0	4	{
+call	23:4	23:70	4	TIFFError
+arg	23:14	23:44	5	"readSeparateStripsIntoBuffer"
+water	23:14	0:0	6	"readSeparateStripsIntoBuffer"
+arg	23:45	23:70	5	"Invalid buffer argument"
+water	23:45	0:0	6	"Invalid buffer argument"
+water	23:71	0:0	4	;
+return	24:4	24:14	4	(0)
+water	24:11	0:0	5	(
+water	24:12	0:0	5	0
+water	24:13	0:0	5	)
+water	25:4	0:0	4	}
+call	26:2	26:42	2	memset
+arg	26:10	26:18	3	srcbuffs
+water	26:10	0:0	4	srcbuffs
+arg	26:20	26:24	3	'\0'
+water	26:20	0:0	4	'\0'
+arg	26:26	26:42	3	sizeof(srcbuffs)
+op	26:26	0:0	4	sizeof
+water	26:32	0:0	4	(
+water	26:33	0:0	4	srcbuffs
+water	26:41	0:0	4	)
+water	26:43	0:0	2	;
+call	27:2	27:46	2	TIFFGetField
+arg	27:15	27:17	3	in
+water	27:15	0:0	4	in
+arg	27:19	27:40	3	TIFFTAG_BITSPERSAMPLE
+water	27:19	0:0	4	TIFFTAG_BITSPERSAMPLE
+arg	27:42	27:46	3	&bps
+op	27:42	0:0	4	&
+water	27:43	0:0	4	bps
+water	27:47	0:0	2	;
+call	28:2	28:57	2	TIFFGetFieldDefaulted
+arg	28:24	28:26	3	in
+water	28:24	0:0	4	in
+arg	28:28	28:48	3	TIFFTAG_PLANARCONFIG
+water	28:28	0:0	4	TIFFTAG_PLANARCONFIG
+arg	28:50	28:57	3	&planar
+op	28:50	0:0	4	&
+water	28:51	0:0	4	planar
+water	28:58	0:0	2	;
+call	29:2	29:54	2	TIFFGetFieldDefaulted
+arg	29:24	29:26	3	in
+water	29:24	0:0	4	in
+arg	29:28	29:48	3	TIFFTAG_ROWSPERSTRIP
+water	29:28	0:0	4	TIFFTAG_ROWSPERSTRIP
+arg	29:50	29:54	3	&rps
+op	29:50	0:0	4	&
+water	29:51	0:0	4	rps
+water	29:55	0:0	2	;
+if	30:2	31:16	2	(rps > length)
+cond	30:6	30:12	3	rps > length
+water	30:6	0:0	4	rps
+op	30:10	0:0	4	>
+water	30:12	0:0	4	length
+stmts	31:4	31:16	3	
+water	31:4	0:0	4	rps
+op	31:8	0:0	4	=
+water	31:10	0:0	4	length
+water	31:16	0:0	4	;
+water	32:2	0:0	2	bytes_per_sample
+op	32:19	0:0	2	=
+water	32:21	0:0	2	(
+water	32:22	0:0	2	bps
+op	32:26	0:0	2	+
+water	32:28	0:0	2	7
+water	32:29	0:0	2	)
+op	32:31	0:0	2	/
+water	32:33	0:0	2	8
+water	32:34	0:0	2	;
+water	33:2	0:0	2	bytes_per_pixel
+op	33:19	0:0	2	=
+water	33:21	0:0	2	(
+water	33:22	0:0	2	(
+water	33:23	0:0	2	bps
+op	33:27	0:0	2	*
+water	33:29	0:0	2	spp
+water	33:32	0:0	2	)
+op	33:34	0:0	2	+
+water	33:36	0:0	2	7
+water	33:37	0:0	2	)
+op	33:39	0:0	2	/
+water	33:41	0:0	2	8
+water	33:42	0:0	2	;
+if	34:2	35:33	2	(bytes_per_pixel < ( bytes_per_sample + 1 ))
+cond	34:6	34:45	3	bytes_per_pixel < ( bytes_per_sample + 1 )
+water	34:6	0:0	4	bytes_per_pixel
+op	34:22	0:0	4	<
+water	34:24	0:0	4	(
+water	34:25	0:0	4	bytes_per_sample
+op	34:42	0:0	4	+
+water	34:44	0:0	4	1
+water	34:45	0:0	4	)
+stmts	35:4	35:33	3	
+water	35:4	0:0	4	shift_width
+op	35:16	0:0	4	=
+water	35:18	0:0	4	bytes_per_pixel
+water	35:33	0:0	4	;
+else	36:2	37:38	2
+stmts	37:4	37:38	3	
+water	37:4	0:0	4	shift_width
+op	37:16	0:0	4	=
+water	37:18	0:0	4	bytes_per_sample
+op	37:35	0:0	4	+
+water	37:37	0:0	4	1
+water	37:38	0:0	4	;
+water	38:2	0:0	2	src_rowsize
+op	38:14	0:0	2	=
+water	38:16	0:0	2	(
+water	38:17	0:0	2	(
+water	38:18	0:0	2	bps
+op	38:22	0:0	2	*
+water	38:24	0:0	2	width
+water	38:29	0:0	2	)
+op	38:31	0:0	2	+
+water	38:33	0:0	2	7
+water	38:34	0:0	2	)
+op	38:36	0:0	2	/
+water	38:38	0:0	2	8
+water	38:39	0:0	2	;
+water	39:2	0:0	2	dst_rowsize
+op	39:14	0:0	2	=
+water	39:16	0:0	2	(
+water	39:17	0:0	2	(
+water	39:18	0:0	2	bps
+op	39:22	0:0	2	*
+water	39:24	0:0	2	width
+op	39:30	0:0	2	*
+water	39:32	0:0	2	spp
+water	39:35	0:0	2	)
+op	39:37	0:0	2	+
+water	39:39	0:0	2	7
+water	39:40	0:0	2	)
+op	39:42	0:0	2	/
+water	39:44	0:0	2	8
+water	39:45	0:0	2	;
+water	40:2	0:0	2	dst
+op	40:6	0:0	2	=
+water	40:8	0:0	2	obuf
+water	40:12	0:0	2	;
+if	41:2	49:4	2	(( dump -> infile != NULL ) && ( dump -> level == 3 ))
+cond	41:6	41:49	3	( dump -> infile != NULL ) && ( dump -> level == 3 )
+water	41:6	0:0	4	(
+water	41:7	0:0	4	dump
+op	41:11	0:0	4	->
+water	41:13	0:0	4	infile
+op	41:20	0:0	4	!=
+water	41:23	0:0	4	NULL
+water	41:27	0:0	4	)
+op	41:29	0:0	4	&&
+water	41:32	0:0	4	(
+water	41:33	0:0	4	dump
+op	41:37	0:0	4	->
+water	41:39	0:0	4	level
+op	41:45	0:0	4	==
+water	41:48	0:0	4	3
+water	41:49	0:0	4	)
+stmts	42:4	49:4	3	
+water	42:4	0:0	4	{
+call	43:4	45:44	4	dump_info
+arg	43:16	43:28	5	dump->infile
+water	43:16	0:0	6	dump
+op	43:20	0:0	6	->
+water	43:22	0:0	6	infile
+arg	43:30	43:42	5	dump->format
+water	43:30	0:0	6	dump
+op	43:34	0:0	6	->
+water	43:36	0:0	6	format
+arg	43:44	43:46	5	""
+water	43:44	0:0	6	""
+arg	44:16	44:69	5	"Image width %d, length %d, Scanline size, %4d bytes"
+water	44:16	0:0	6	"Image width %d, length %d, Scanline size, %4d bytes"
+arg	45:16	45:21	5	width
+water	45:16	0:0	6	width
+arg	45:23	45:29	5	length
+water	45:23	0:0	6	length
+arg	45:32	45:44	5	scanlinesize
+water	45:32	0:0	6	scanlinesize
+water	45:45	0:0	4	;
+call	46:4	48:23	4	dump_info
+arg	46:16	46:28	5	dump->infile
+water	46:16	0:0	6	dump
+op	46:20	0:0	6	->
+water	46:22	0:0	6	infile
+arg	46:30	46:42	5	dump->format
+water	46:30	0:0	6	dump
+op	46:34	0:0	6	->
+water	46:36	0:0	6	format
+arg	46:44	46:46	5	""
+water	46:44	0:0	6	""
+arg	47:16	47:74	5	"Bits per sample %d, Samples per pixel %d, Shift width %d"
+water	47:16	0:0	6	"Bits per sample %d, Samples per pixel %d, Shift width %d"
+arg	48:2	48:5	5	bps
+water	48:2	0:0	6	bps
+arg	48:7	48:10	5	spp
+water	48:7	0:0	6	spp
+arg	48:12	48:23	5	shift_width
+water	48:12	0:0	6	shift_width
+water	48:24	0:0	4	;
+water	49:4	0:0	4	}
+water	55:2	0:0	2	nstrips
+op	55:10	0:0	2	=
+call	55:12	55:33	2	TIFFNumberOfStrips
+arg	55:31	55:33	3	in
+water	55:31	0:0	4	in
+water	55:34	0:0	2	;
+water	56:2	0:0	2	strips_per_sample
+op	56:20	0:0	2	=
+water	56:22	0:0	2	nstrips
+op	56:30	0:0	2	/
+water	56:31	0:0	2	spp
+water	56:34	0:0	2	;
+for	57:2	70:4	2	(s = 0 ;( s < spp ) && ( s < MAX_SAMPLES );s ++)
+forinit	57:7	57:12	3	s = 0 ;
+water	57:7	0:0	4	s
+op	57:9	0:0	4	=
+water	57:11	0:0	4	0
+water	57:12	0:0	4	;
+cond	57:14	57:43	3	( s < spp ) && ( s < MAX_SAMPLES )
+water	57:14	0:0	4	(
+water	57:15	0:0	4	s
+op	57:17	0:0	4	<
+water	57:19	0:0	4	spp
+water	57:22	0:0	4	)
+op	57:24	0:0	4	&&
+water	57:27	0:0	4	(
+water	57:28	0:0	4	s
+op	57:30	0:0	4	<
+water	57:32	0:0	4	MAX_SAMPLES
+water	57:43	0:0	4	)
+forexpr	57:46	57:47	3	s ++
+water	57:46	0:0	4	s
+op	57:47	0:0	4	++
+stmts	58:4	70:4	3	
+water	58:4	0:0	4	{
+water	59:4	0:0	4	srcbuffs
+op	59:12	0:0	4	[
+water	59:13	0:0	4	s
+op	59:14	0:0	4	]
+op	59:16	0:0	4	=
+water	59:18	0:0	4	NULL
+water	59:22	0:0	4	;
+water	60:4	0:0	4	buff
+op	60:9	0:0	4	=
+call	60:11	60:32	4	_TIFFmalloc
+arg	60:23	60:32	5	stripsize
+water	60:23	0:0	6	stripsize
+water	60:33	0:0	4	;
+if	61:4	68:6	4	(! buff)
+cond	61:8	61:9	5	! buff
+op	61:8	0:0	6	!
+water	61:9	0:0	6	buff
+stmts	62:6	68:6	5	
+water	62:6	0:0	6	{
+call	63:6	64:72	6	TIFFError
+arg	63:17	63:47	7	"readSeparateStripsIntoBuffer"
+water	63:17	0:0	8	"readSeparateStripsIntoBuffer"
+arg	64:17	64:69	7	"Unable to allocate strip read buffer for sample %d"
+water	64:17	0:0	8	"Unable to allocate strip read buffer for sample %d"
+arg	64:71	64:72	7	s
+water	64:71	0:0	8	s
+water	64:73	0:0	6	;
+for	65:6	66:31	6	(i = 0 ;i < s;i ++)
+forinit	65:11	65:16	7	i = 0 ;
+water	65:11	0:0	8	i
+op	65:13	0:0	8	=
+water	65:15	0:0	8	0
+water	65:16	0:0	8	;
+cond	65:18	65:22	7	i < s
+water	65:18	0:0	8	i
+op	65:20	0:0	8	<
+water	65:22	0:0	8	s
+forexpr	65:25	65:26	7	i ++
+water	65:25	0:0	8	i
+op	65:26	0:0	8	++
+stmts	66:8	66:31	7	
+call	66:8	66:30	8	_TIFFfree
+arg	66:19	66:30	9	srcbuffs[i]
+water	66:19	0:0	10	srcbuffs
+op	66:27	0:0	10	[
+water	66:28	0:0	10	i
+op	66:29	0:0	10	]
+water	66:31	0:0	8	;
+return	67:6	67:14	6	0
+water	67:13	0:0	7	0
+water	68:6	0:0	6	}
+water	69:4	0:0	4	srcbuffs
+op	69:12	0:0	4	[
+water	69:13	0:0	4	s
+op	69:14	0:0	4	]
+op	69:16	0:0	4	=
+water	69:18	0:0	4	buff
+water	69:22	0:0	4	;
+water	70:4	0:0	4	}
+water	71:2	0:0	2	rows_processed
+op	71:17	0:0	2	=
+water	71:19	0:0	2	0
+water	71:20	0:0	2	;
+for	72:2	158:4	2	(j = 0 ;( j < strips_per_sample ) && ( result == 1 );j ++)
+forinit	72:7	72:12	3	j = 0 ;
+water	72:7	0:0	4	j
+op	72:9	0:0	4	=
+water	72:11	0:0	4	0
+water	72:12	0:0	4	;
+cond	72:14	72:53	3	( j < strips_per_sample ) && ( result == 1 )
+water	72:14	0:0	4	(
+water	72:15	0:0	4	j
+op	72:17	0:0	4	<
+water	72:19	0:0	4	strips_per_sample
+water	72:36	0:0	4	)
+op	72:38	0:0	4	&&
+water	72:41	0:0	4	(
+water	72:42	0:0	4	result
+op	72:49	0:0	4	==
+water	72:52	0:0	4	1
+water	72:53	0:0	4	)
+forexpr	72:56	72:57	3	j ++
+water	72:56	0:0	4	j
+op	72:57	0:0	4	++
+stmts	73:4	158:4	3	
+water	73:4	0:0	4	{
+for	74:4	92:6	4	(s = 0 ;( s < spp ) && ( s < MAX_SAMPLES );s ++)
+forinit	74:9	74:14	5	s = 0 ;
+water	74:9	0:0	6	s
+op	74:11	0:0	6	=
+water	74:13	0:0	6	0
+water	74:14	0:0	6	;
+cond	74:16	74:45	5	( s < spp ) && ( s < MAX_SAMPLES )
+water	74:16	0:0	6	(
+water	74:17	0:0	6	s
+op	74:19	0:0	6	<
+water	74:21	0:0	6	spp
+water	74:24	0:0	6	)
+op	74:26	0:0	6	&&
+water	74:29	0:0	6	(
+water	74:30	0:0	6	s
+op	74:32	0:0	6	<
+water	74:34	0:0	6	MAX_SAMPLES
+water	74:45	0:0	6	)
+forexpr	74:48	74:49	5	s ++
+water	74:48	0:0	6	s
+op	74:49	0:0	6	++
+stmts	75:6	92:6	5	
+water	75:6	0:0	6	{
+water	76:6	0:0	6	buff
+op	76:11	0:0	6	=
+water	76:13	0:0	6	srcbuffs
+op	76:21	0:0	6	[
+water	76:22	0:0	6	s
+op	76:23	0:0	6	]
+water	76:24	0:0	6	;
+water	77:6	0:0	6	strip
+op	77:12	0:0	6	=
+water	77:14	0:0	6	(
+water	77:15	0:0	6	s
+op	77:17	0:0	6	*
+water	77:19	0:0	6	strips_per_sample
+water	77:36	0:0	6	)
+op	77:38	0:0	6	+
+water	77:40	0:0	6	j
+water	77:41	0:0	6	;
+water	78:6	0:0	6	bytes_read
+op	78:17	0:0	6	=
+call	78:19	78:67	6	TIFFReadEncodedStrip
+arg	78:41	78:43	7	in
+water	78:41	0:0	8	in
+arg	78:45	78:50	7	strip
+water	78:45	0:0	8	strip
+arg	78:52	78:56	7	buff
+water	78:52	0:0	8	buff
+arg	78:58	78:67	7	stripsize
+water	78:58	0:0	8	stripsize
+water	78:68	0:0	6	;
+water	79:6	0:0	6	rows_this_strip
+op	79:22	0:0	6	=
+water	79:24	0:0	6	bytes_read
+op	79:35	0:0	6	/
+water	79:37	0:0	6	src_rowsize
+water	79:48	0:0	6	;
+if	80:6	87:8	6	(bytes_read < 0 && ! ignore)
+cond	80:10	80:29	7	bytes_read < 0 && ! ignore
+water	80:10	0:0	8	bytes_read
+op	80:21	0:0	8	<
+water	80:23	0:0	8	0
+op	80:25	0:0	8	&&
+op	80:28	0:0	8	!
+water	80:29	0:0	8	ignore
+stmts	81:8	87:8	7	
+water	81:8	0:0	8	{
+call	82:8	84:41	8	TIFFError
+arg	82:18	82:34	9	TIFFFileName(in)
+call	82:18	82:33	10	TIFFFileName
+arg	82:31	82:33	11	in
+water	82:31	0:0	12	in
+arg	83:11	83:54	9	"Error, can't read strip %lu for sample %d"
+water	83:11	0:0	10	"Error, can't read strip %lu for sample %d"
+arg	84:13	84:34	9	(unsignedlong)strip
+water	84:13	0:0	10	(
+water	84:14	0:0	10	unsigned
+water	84:23	0:0	10	long
+water	84:27	0:0	10	)
+water	84:29	0:0	10	strip
+arg	84:36	84:41	9	s+1
+water	84:36	0:0	10	s
+op	84:38	0:0	10	+
+water	84:40	0:0	10	1
+water	84:42	0:0	8	;
+water	85:8	0:0	8	result
+op	85:15	0:0	8	=
+water	85:17	0:0	8	0
+water	85:18	0:0	8	;
+break	86:8	86:13	8	
+water	87:8	0:0	8	}
+call	89:6	90:49	6	TIFFError
+arg	89:16	89:18	7	""
+water	89:16	0:0	8	""
+arg	89:20	89:81	7	"Strip %2d, read %5d bytes for %4d scanlines, shift width %d"
+water	89:20	0:0	8	"Strip %2d, read %5d bytes for %4d scanlines, shift width %d"
+arg	90:2	90:7	7	strip
+water	90:2	0:0	8	strip
+arg	90:9	90:19	7	bytes_read
+water	90:9	0:0	8	bytes_read
+arg	90:21	90:36	7	rows_this_strip
+water	90:21	0:0	8	rows_this_strip
+arg	90:38	90:49	7	shift_width
+water	90:38	0:0	8	shift_width
+water	90:50	0:0	6	;
+water	92:6	0:0	6	}
+if	93:4	94:27	4	(rps > rows_this_strip)
+cond	93:8	93:14	5	rps > rows_this_strip
+water	93:8	0:0	6	rps
+op	93:12	0:0	6	>
+water	93:14	0:0	6	rows_this_strip
+stmts	94:6	94:27	5	
+water	94:6	0:0	6	rps
+op	94:10	0:0	6	=
+water	94:12	0:0	6	rows_this_strip
+water	94:27	0:0	6	;
+water	95:4	0:0	4	dst
+op	95:8	0:0	4	=
+water	95:10	0:0	4	obuf
+op	95:15	0:0	4	+
+water	95:17	0:0	4	(
+water	95:18	0:0	4	dst_rowsize
+op	95:30	0:0	4	*
+water	95:32	0:0	4	rows_processed
+water	95:46	0:0	4	)
+water	95:47	0:0	4	;
+if	96:4	105:6	4	(( bps % 8 ) == 0)
+cond	96:8	96:21	5	( bps % 8 ) == 0
+water	96:8	0:0	6	(
+water	96:9	0:0	6	bps
+op	96:13	0:0	6	%
+water	96:15	0:0	6	8
+water	96:16	0:0	6	)
+op	96:18	0:0	6	==
+water	96:21	0:0	6	0
+stmts	97:6	105:6	5	
+water	97:6	0:0	6	{
+if	98:6	104:1	6	(combineSeparateSamplesBytes (srcbuffs ,dst ,width ,rps ,spp ,bps ,dump -> infile ,dump -> format ,dump -> level ))
+cond	98:10	100:64	7	combineSeparateSamplesBytes (srcbuffs ,dst ,width ,rps ,spp ,bps ,dump -> infile ,dump -> format ,dump -> level )
+call	98:10	100:64	8	combineSeparateSamplesBytes
+arg	98:39	98:47	9	srcbuffs
+water	98:39	0:0	10	srcbuffs
+arg	98:49	98:52	9	dst
+water	98:49	0:0	10	dst
+arg	98:54	98:59	9	width
+water	98:54	0:0	10	width
+arg	98:61	98:64	9	rps
+water	98:61	0:0	10	rps
+arg	99:39	99:42	9	spp
+water	99:39	0:0	10	spp
+arg	99:44	99:47	9	bps
+water	99:44	0:0	10	bps
+arg	99:49	99:61	9	dump->infile
+water	99:49	0:0	10	dump
+op	99:53	0:0	10	->
+water	99:55	0:0	10	infile
+arg	100:39	100:51	9	dump->format
+water	100:39	0:0	10	dump
+op	100:43	0:0	10	->
+water	100:45	0:0	10	format
+arg	100:53	100:64	9	dump->level
+water	100:53	0:0	10	dump
+op	100:57	0:0	10	->
+water	100:59	0:0	10	level
+stmts	101:8	104:1	7	
+water	101:8	0:0	8	{
+water	102:8	0:0	8	result
+op	102:15	0:0	8	=
+water	102:17	0:0	8	0
+water	102:18	0:0	8	;
+break	103:8	103:13	8	
+water	104:1	0:0	8	}
+water	105:6	0:0	6	}
+else	106:4	150:6	4
+stmts	107:6	150:6	5	
+water	107:6	0:0	6	{
+switch	108:6	149:8	6	(shift_width)
+cond	108:14	108:14	7	shift_width
+water	108:14	0:0	8	shift_width
+stmts	109:8	149:8	7	
+water	109:8	0:0	8	{
+label	110:8	110:14	8	case 1 :
+if	110:16	116:17	8	(combineSeparateSamples8bits (srcbuffs ,dst ,width ,rps ,spp ,bps ,dump -> infile ,dump -> format ,dump -> level ))
+cond	110:20	112:74	9	combineSeparateSamples8bits (srcbuffs ,dst ,width ,rps ,spp ,bps ,dump -> infile ,dump -> format ,dump -> level )
+call	110:20	112:74	10	combineSeparateSamples8bits
+arg	110:49	110:57	11	srcbuffs
+water	110:49	0:0	12	srcbuffs
+arg	110:59	110:62	11	dst
+water	110:59	0:0	12	dst
+arg	110:64	110:69	11	width
+water	110:64	0:0	12	width
+arg	110:71	110:74	11	rps
+water	110:71	0:0	12	rps
+arg	111:49	111:52	11	spp
+water	111:49	0:0	12	spp
+arg	111:54	111:57	11	bps
+water	111:54	0:0	12	bps
+arg	111:59	111:71	11	dump->infile
+water	111:59	0:0	12	dump
+op	111:63	0:0	12	->
+water	111:65	0:0	12	infile
+arg	112:49	112:61	11	dump->format
+water	112:49	0:0	12	dump
+op	112:53	0:0	12	->
+water	112:55	0:0	12	format
+arg	112:63	112:74	11	dump->level
+water	112:63	0:0	12	dump
+op	112:67	0:0	12	->
+water	112:69	0:0	12	level
+stmts	113:11	116:17	9	
+water	113:11	0:0	10	{
+water	114:18	0:0	10	result
+op	114:25	0:0	10	=
+water	114:27	0:0	10	0
+water	114:28	0:0	10	;
+break	115:18	115:23	10	
+water	116:17	0:0	10	}
+break	117:9	117:14	8	
+label	118:8	118:14	8	case 2 :
+if	118:16	124:4	8	(combineSeparateSamples16bits (srcbuffs ,dst ,width ,rps ,spp ,bps ,dump -> infile ,dump -> format ,dump -> level ))
+cond	118:20	120:75	9	combineSeparateSamples16bits (srcbuffs ,dst ,width ,rps ,spp ,bps ,dump -> infile ,dump -> format ,dump -> level )
+call	118:20	120:75	10	combineSeparateSamples16bits
+arg	118:50	118:58	11	srcbuffs
+water	118:50	0:0	12	srcbuffs
+arg	118:60	118:63	11	dst
+water	118:60	0:0	12	dst
+arg	118:65	118:70	11	width
+water	118:65	0:0	12	width
+arg	118:72	118:75	11	rps
+water	118:72	0:0	12	rps
+arg	119:50	119:53	11	spp
+water	119:50	0:0	12	spp
+arg	119:55	119:58	11	bps
+water	119:55	0:0	12	bps
+arg	119:60	119:72	11	dump->infile
+water	119:60	0:0	12	dump
+op	119:64	0:0	12	->
+water	119:66	0:0	12	infile
+arg	120:50	120:62	11	dump->format
+water	120:50	0:0	12	dump
+op	120:54	0:0	12	->
+water	120:56	0:0	12	format
+arg	120:64	120:75	11	dump->level
+water	120:64	0:0	12	dump
+op	120:68	0:0	12	->
+water	120:70	0:0	12	level
+stmts	121:11	124:4	9	
+water	121:11	0:0	10	{
+water	122:18	0:0	10	result
+op	122:25	0:0	10	=
+water	122:27	0:0	10	0
+water	122:28	0:0	10	;
+break	123:18	123:23	10	
+water	124:4	0:0	10	}
+break	125:9	125:14	8	
+label	126:8	126:14	8	case 3 :
+if	126:16	132:18	8	(combineSeparateSamples24bits (srcbuffs ,dst ,width ,rps ,spp ,bps ,dump -> infile ,dump -> format ,dump -> level ))
+cond	126:20	128:75	9	combineSeparateSamples24bits (srcbuffs ,dst ,width ,rps ,spp ,bps ,dump -> infile ,dump -> format ,dump -> level )
+call	126:20	128:75	10	combineSeparateSamples24bits
+arg	126:50	126:58	11	srcbuffs
+water	126:50	0:0	12	srcbuffs
+arg	126:60	126:63	11	dst
+water	126:60	0:0	12	dst
+arg	126:65	126:70	11	width
+water	126:65	0:0	12	width
+arg	126:72	126:75	11	rps
+water	126:72	0:0	12	rps
+arg	127:50	127:53	11	spp
+water	127:50	0:0	12	spp
+arg	127:55	127:58	11	bps
+water	127:55	0:0	12	bps
+arg	127:60	127:72	11	dump->infile
+water	127:60	0:0	12	dump
+op	127:64	0:0	12	->
+water	127:66	0:0	12	infile
+arg	128:50	128:62	11	dump->format
+water	128:50	0:0	12	dump
+op	128:54	0:0	12	->
+water	128:56	0:0	12	format
+arg	128:64	128:75	11	dump->level
+water	128:64	0:0	12	dump
+op	128:68	0:0	12	->
+water	128:70	0:0	12	level
+stmts	129:11	132:18	9	
+water	129:11	0:0	10	{
+water	130:18	0:0	10	result
+op	130:25	0:0	10	=
+water	130:27	0:0	10	0
+water	130:28	0:0	10	;
+break	131:18	131:23	10	
+water	132:18	0:0	10	}
+break	133:16	133:21	8	
+label	134:8	134:14	8	case 4 :
+label	135:8	135:14	8	case 5 :
+label	136:8	136:14	8	case 6 :
+label	137:8	137:14	8	case 7 :
+label	138:8	138:14	8	case 8 :
+if	138:16	144:4	8	(combineSeparateSamples32bits (srcbuffs ,dst ,width ,rps ,spp ,bps ,dump -> infile ,dump -> format ,dump -> level ))
+cond	138:20	140:75	9	combineSeparateSamples32bits (srcbuffs ,dst ,width ,rps ,spp ,bps ,dump -> infile ,dump -> format ,dump -> level )
+call	138:20	140:75	10	combineSeparateSamples32bits
+arg	138:50	138:58	11	srcbuffs
+water	138:50	0:0	12	srcbuffs
+arg	138:60	138:63	11	dst
+water	138:60	0:0	12	dst
+arg	138:65	138:70	11	width
+water	138:65	0:0	12	width
+arg	138:72	138:75	11	rps
+water	138:72	0:0	12	rps
+arg	139:50	139:53	11	spp
+water	139:50	0:0	12	spp
+arg	139:55	139:58	11	bps
+water	139:55	0:0	12	bps
+arg	139:60	139:72	11	dump->infile
+water	139:60	0:0	12	dump
+op	139:64	0:0	12	->
+water	139:66	0:0	12	infile
+arg	140:50	140:62	11	dump->format
+water	140:50	0:0	12	dump
+op	140:54	0:0	12	->
+water	140:56	0:0	12	format
+arg	140:64	140:75	11	dump->level
+water	140:64	0:0	12	dump
+op	140:68	0:0	12	->
+water	140:70	0:0	12	level
+stmts	141:11	144:4	9	
+water	141:11	0:0	10	{
+water	142:18	0:0	10	result
+op	142:25	0:0	10	=
+water	142:27	0:0	10	0
+water	142:28	0:0	10	;
+break	143:18	143:23	10	
+water	144:4	0:0	10	}
+break	145:9	145:14	8	
+label	146:8	146:15	8	default :
+call	146:17	146:92	8	TIFFError
+arg	146:28	146:58	9	"readSeparateStripsIntoBuffer"
+water	146:28	0:0	10	"readSeparateStripsIntoBuffer"
+arg	146:60	146:87	9	"Unsupported bit depth: %d"
+water	146:60	0:0	10	"Unsupported bit depth: %d"
+arg	146:89	146:92	9	bps
+water	146:89	0:0	10	bps
+water	146:93	0:0	8	;
+water	147:18	0:0	8	result
+op	147:25	0:0	8	=
+water	147:27	0:0	8	0
+water	147:28	0:0	8	;
+break	148:18	148:23	8	
+water	149:8	0:0	8	}
+water	150:6	0:0	6	}
+if	151:4	155:6	4	(( rows_processed + rps ) > length)
+cond	151:8	151:33	5	( rows_processed + rps ) > length
+water	151:8	0:0	6	(
+water	151:9	0:0	6	rows_processed
+op	151:24	0:0	6	+
+water	151:26	0:0	6	rps
+water	151:29	0:0	6	)
+op	151:31	0:0	6	>
+water	151:33	0:0	6	length
+stmts	152:6	155:6	5	
+water	152:6	0:0	6	{
+water	153:6	0:0	6	rows_processed
+op	153:21	0:0	6	=
+water	153:23	0:0	6	length
+water	153:29	0:0	6	;
+water	154:6	0:0	6	rps
+op	154:10	0:0	6	=
+water	154:12	0:0	6	length
+op	154:19	0:0	6	-
+water	154:21	0:0	6	rows_processed
+water	154:35	0:0	6	;
+water	155:6	0:0	6	}
+else	156:4	157:27	4
+stmts	157:6	157:27	5	
+water	157:6	0:0	6	rows_processed
+op	157:21	0:0	6	+=
+water	157:24	0:0	6	rps
+water	157:27	0:0	6	;
+water	158:4	0:0	4	}
+for	162:2	167:4	2	(s = 0 ;( s < spp ) && ( s < MAX_SAMPLES );s ++)
+forinit	162:7	162:12	3	s = 0 ;
+water	162:7	0:0	4	s
+op	162:9	0:0	4	=
+water	162:11	0:0	4	0
+water	162:12	0:0	4	;
+cond	162:14	162:43	3	( s < spp ) && ( s < MAX_SAMPLES )
+water	162:14	0:0	4	(
+water	162:15	0:0	4	s
+op	162:17	0:0	4	<
+water	162:19	0:0	4	spp
+water	162:22	0:0	4	)
+op	162:24	0:0	4	&&
+water	162:27	0:0	4	(
+water	162:28	0:0	4	s
+op	162:30	0:0	4	<
+water	162:32	0:0	4	MAX_SAMPLES
+water	162:43	0:0	4	)
+forexpr	162:46	162:47	3	s ++
+water	162:46	0:0	4	s
+op	162:47	0:0	4	++
+stmts	163:4	167:4	3	
+water	163:4	0:0	4	{
+water	164:4	0:0	4	buff
+op	164:9	0:0	4	=
+water	164:11	0:0	4	srcbuffs
+op	164:19	0:0	4	[
+water	164:20	0:0	4	s
+op	164:21	0:0	4	]
+water	164:22	0:0	4	;
+if	165:4	166:21	4	(buff != NULL)
+cond	165:8	165:16	5	buff != NULL
+water	165:8	0:0	6	buff
+op	165:13	0:0	6	!=
+water	165:16	0:0	6	NULL
+stmts	166:6	166:21	5	
+call	166:6	166:20	6	_TIFFfree
+arg	166:16	166:20	7	buff
+water	166:16	0:0	8	buff
+water	166:21	0:0	6	;
+water	167:4	0:0	4	}
+return	168:2	168:17	2	(result)
+water	168:9	0:0	3	(
+water	168:10	0:0	3	result
+water	168:16	0:0	3	)

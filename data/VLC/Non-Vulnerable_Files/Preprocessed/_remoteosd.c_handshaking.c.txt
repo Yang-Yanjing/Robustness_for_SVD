@@ -1,0 +1,967 @@
+func	2:0	184:0	0	static bool	handshaking
+params	2:24	0:0	1	
+param	2:26	2:45	2	filter_t *	p_filter
+stmnts	0:0	183:15	1	
+decl	4:4	4:41	2	filter_sys_t	*p_sys
+op	4:24	0:0	2	=
+water	4:26	0:0	2	p_filter
+op	4:34	0:0	2	->
+water	4:36	0:0	2	p_sys
+call	5:4	5:50	2	msg_Dbg
+arg	5:13	5:21	3	p_filter
+water	5:13	0:0	4	p_filter
+arg	5:23	5:50	3	"Reading protocol version"
+water	5:23	0:0	4	"Reading protocol version"
+water	5:51	0:0	2	;
+decl	6:4	6:28	2	rfbProtocolVersionMsg	pv
+if	7:4	12:4	2	(!read_exact (p_filter ,p_sys -> i_socket ,pv ,sz_rfbProtocolVersionMsg ))
+cond	7:9	8:47	3	!read_exact (p_filter ,p_sys -> i_socket ,pv ,sz_rfbProtocolVersionMsg )
+op	7:9	0:0	4	!
+call	7:10	8:47	4	read_exact
+arg	7:22	7:30	5	p_filter
+water	7:22	0:0	6	p_filter
+arg	7:32	7:47	5	p_sys->i_socket
+water	7:32	0:0	6	p_sys
+op	7:37	0:0	6	->
+water	7:39	0:0	6	i_socket
+arg	7:49	7:51	5	pv
+water	7:49	0:0	6	pv
+arg	8:22	8:47	5	sz_rfbProtocolVersionMsg
+water	8:22	0:0	6	sz_rfbProtocolVersionMsg
+stmts	9:4	12:4	3	
+water	9:4	0:0	4	{
+call	10:8	10:60	4	msg_Err
+arg	10:17	10:25	5	p_filter
+water	10:17	0:0	6	p_filter
+arg	10:27	10:60	5	"Could not read version message"
+water	10:27	0:0	6	"Could not read version message"
+water	10:61	0:0	4	;
+return	11:8	11:20	4	false
+water	11:15	0:0	5	false
+water	12:4	0:0	4	}
+water	13:4	0:0	2	pv
+op	13:6	0:0	2	[
+water	13:7	0:0	2	sz_rfbProtocolVersionMsg
+op	13:31	0:0	2	]
+op	13:33	0:0	2	=
+water	13:35	0:0	2	'\0'
+water	13:39	0:0	2	;
+call	14:4	14:50	2	msg_Dbg
+arg	14:13	14:21	3	p_filter
+water	14:13	0:0	4	p_filter
+arg	14:23	14:45	3	"Server version is %s"
+water	14:23	0:0	4	"Server version is %s"
+arg	14:47	14:50	3	pv
+water	14:47	0:0	4	pv
+water	14:51	0:0	2	;
+call	15:4	15:57	2	strncpy
+arg	15:12	15:14	3	pv
+water	15:12	0:0	4	pv
+arg	15:16	15:31	3	"RFB 003.003\n"
+water	15:16	0:0	4	"RFB 003.003\n"
+arg	15:33	15:57	3	sz_rfbProtocolVersionMsg
+water	15:33	0:0	4	sz_rfbProtocolVersionMsg
+water	15:58	0:0	2	;
+if	16:4	21:4	2	(!write_exact (p_filter ,p_sys -> i_socket ,pv ,sz_rfbProtocolVersionMsg ))
+cond	16:8	17:45	3	!write_exact (p_filter ,p_sys -> i_socket ,pv ,sz_rfbProtocolVersionMsg )
+op	16:8	0:0	4	!
+call	16:9	17:45	4	write_exact
+arg	16:21	16:29	5	p_filter
+water	16:21	0:0	6	p_filter
+arg	16:31	16:46	5	p_sys->i_socket
+water	16:31	0:0	6	p_sys
+op	16:36	0:0	6	->
+water	16:38	0:0	6	i_socket
+arg	16:48	16:50	5	pv
+water	16:48	0:0	6	pv
+arg	17:21	17:45	5	sz_rfbProtocolVersionMsg
+water	17:21	0:0	6	sz_rfbProtocolVersionMsg
+stmts	18:4	21:4	3	
+water	18:4	0:0	4	{
+call	19:8	19:61	4	msg_Err
+arg	19:17	19:25	5	p_filter
+water	19:17	0:0	6	p_filter
+arg	19:27	19:61	5	"Could not write version message"
+water	19:27	0:0	6	"Could not write version message"
+water	19:62	0:0	4	;
+return	20:8	20:20	4	false
+water	20:15	0:0	5	false
+water	21:4	0:0	4	}
+call	22:4	22:55	2	msg_Dbg
+arg	22:13	22:21	3	p_filter
+water	22:13	0:0	4	p_filter
+arg	22:23	22:55	3	"Reading authentication scheme"
+water	22:23	0:0	4	"Reading authentication scheme"
+water	22:56	0:0	2	;
+decl	23:4	23:25	2	uint32_t	i_authScheme
+if	24:4	28:4	2	(!read_exact (p_filter ,p_sys -> i_socket ,( char * ) & i_authScheme ,4 ))
+cond	24:8	24:72	3	!read_exact (p_filter ,p_sys -> i_socket ,( char * ) & i_authScheme ,4 )
+op	24:8	0:0	4	!
+call	24:9	24:72	4	read_exact
+arg	24:21	24:29	5	p_filter
+water	24:21	0:0	6	p_filter
+arg	24:31	24:46	5	p_sys->i_socket
+water	24:31	0:0	6	p_sys
+op	24:36	0:0	6	->
+water	24:38	0:0	6	i_socket
+arg	24:48	24:68	5	(char*)&i_authScheme
+water	24:48	0:0	6	(
+water	24:49	0:0	6	char
+op	24:53	0:0	6	*
+water	24:54	0:0	6	)
+op	24:55	0:0	6	&
+water	24:56	0:0	6	i_authScheme
+arg	24:70	24:72	5	4
+water	24:70	0:0	6	4
+stmts	25:4	28:4	3	
+water	25:4	0:0	4	{
+call	26:8	26:66	4	msg_Err
+arg	26:17	26:25	5	p_filter
+water	26:17	0:0	6	p_filter
+arg	26:27	26:66	5	"Could not read authentication scheme"
+water	26:27	0:0	6	"Could not read authentication scheme"
+water	26:67	0:0	4	;
+return	27:8	27:20	4	false
+water	27:15	0:0	5	false
+water	28:4	0:0	4	}
+water	29:4	0:0	2	i_authScheme
+op	29:17	0:0	2	=
+call	29:19	29:37	2	htonl
+arg	29:25	29:37	3	i_authScheme
+water	29:25	0:0	4	i_authScheme
+water	29:38	0:0	2	;
+call	30:4	30:66	2	msg_Dbg
+arg	30:13	30:21	3	p_filter
+water	30:13	0:0	4	p_filter
+arg	30:23	30:51	3	"Authentication scheme = %x"
+water	30:23	0:0	4	"Authentication scheme = %x"
+arg	30:53	30:66	3	i_authScheme
+water	30:53	0:0	4	i_authScheme
+water	30:67	0:0	2	;
+if	31:4	35:4	2	(i_authScheme == rfbConnFailed)
+cond	31:9	31:25	3	i_authScheme == rfbConnFailed
+water	31:9	0:0	4	i_authScheme
+op	31:22	0:0	4	==
+water	31:25	0:0	4	rfbConnFailed
+stmts	32:4	35:4	3	
+water	32:4	0:0	4	{
+call	33:8	33:59	4	msg_Err
+arg	33:17	33:25	5	p_filter
+water	33:17	0:0	6	p_filter
+arg	33:27	33:59	5	"Connection rejected by server"
+water	33:27	0:0	6	"Connection rejected by server"
+water	33:60	0:0	4	;
+return	34:8	34:20	4	false
+water	34:15	0:0	5	false
+water	35:4	0:0	4	}
+if	36:4	64:4	2	(i_authScheme == rfbVncAuth)
+cond	36:8	36:24	3	i_authScheme == rfbVncAuth
+water	36:8	0:0	4	i_authScheme
+op	36:21	0:0	4	==
+water	36:24	0:0	4	rfbVncAuth
+stmts	37:4	64:4	3	
+water	37:4	0:0	4	{
+decl	38:8	38:46	4	unsigned char	challenge[CHALLENGESIZE]
+if	39:8	44:8	4	(!read_exact (p_filter ,p_sys -> i_socket ,( char * ) challenge ,CHALLENGESIZE ))
+cond	39:13	40:58	5	!read_exact (p_filter ,p_sys -> i_socket ,( char * ) challenge ,CHALLENGESIZE )
+op	39:13	0:0	6	!
+call	39:14	40:58	6	read_exact
+arg	39:26	39:34	7	p_filter
+water	39:26	0:0	8	p_filter
+arg	39:36	39:51	7	p_sys->i_socket
+water	39:36	0:0	8	p_sys
+op	39:41	0:0	8	->
+water	39:43	0:0	8	i_socket
+arg	40:26	40:42	7	(char*)challenge
+water	40:26	0:0	8	(
+water	40:27	0:0	8	char
+op	40:31	0:0	8	*
+water	40:32	0:0	8	)
+water	40:33	0:0	8	challenge
+arg	40:44	40:58	7	CHALLENGESIZE
+water	40:44	0:0	8	CHALLENGESIZE
+stmts	41:8	44:8	5	
+water	41:8	0:0	6	{
+call	42:12	42:67	6	msg_Err
+arg	42:21	42:29	7	p_filter
+water	42:21	0:0	8	p_filter
+arg	42:31	42:67	7	"Could not read password challenge"
+water	42:31	0:0	8	"Could not read password challenge"
+water	42:68	0:0	6	;
+return	43:12	43:24	6	false
+water	43:19	0:0	7	false
+water	44:8	0:0	6	}
+call	45:8	45:56	4	vnc_encrypt_bytes
+arg	45:27	45:36	5	challenge
+water	45:27	0:0	6	challenge
+arg	45:38	45:56	5	p_sys->psz_passwd
+water	45:38	0:0	6	p_sys
+op	45:43	0:0	6	->
+water	45:45	0:0	6	psz_passwd
+water	45:57	0:0	4	;
+if	46:8	51:8	4	(!write_exact (p_filter ,p_sys -> i_socket ,( char * ) challenge ,CHALLENGESIZE ))
+cond	46:12	47:57	5	!write_exact (p_filter ,p_sys -> i_socket ,( char * ) challenge ,CHALLENGESIZE )
+op	46:12	0:0	6	!
+call	46:13	47:57	6	write_exact
+arg	46:25	46:33	7	p_filter
+water	46:25	0:0	8	p_filter
+arg	46:35	46:50	7	p_sys->i_socket
+water	46:35	0:0	8	p_sys
+op	46:40	0:0	8	->
+water	46:42	0:0	8	i_socket
+arg	47:25	47:41	7	(char*)challenge
+water	47:25	0:0	8	(
+water	47:26	0:0	8	char
+op	47:30	0:0	8	*
+water	47:31	0:0	8	)
+water	47:32	0:0	8	challenge
+arg	47:43	47:57	7	CHALLENGESIZE
+water	47:43	0:0	8	CHALLENGESIZE
+stmts	48:8	51:8	5	
+water	48:8	0:0	6	{
+call	49:12	49:58	6	msg_Err
+arg	49:21	49:29	7	p_filter
+water	49:21	0:0	8	p_filter
+arg	49:31	49:58	7	"Could not write password"
+water	49:31	0:0	8	"Could not write password"
+water	49:59	0:0	6	;
+return	50:12	50:24	6	false
+water	50:19	0:0	7	false
+water	51:8	0:0	6	}
+decl	52:8	52:29	4	uint32_t	i_authResult
+if	53:8	57:8	4	(!read_exact (p_filter ,p_sys -> i_socket ,( char * ) & i_authResult ,4 ))
+cond	53:12	53:76	5	!read_exact (p_filter ,p_sys -> i_socket ,( char * ) & i_authResult ,4 )
+op	53:12	0:0	6	!
+call	53:13	53:76	6	read_exact
+arg	53:25	53:33	7	p_filter
+water	53:25	0:0	8	p_filter
+arg	53:35	53:50	7	p_sys->i_socket
+water	53:35	0:0	8	p_sys
+op	53:40	0:0	8	->
+water	53:42	0:0	8	i_socket
+arg	53:52	53:72	7	(char*)&i_authResult
+water	53:52	0:0	8	(
+water	53:53	0:0	8	char
+op	53:57	0:0	8	*
+water	53:58	0:0	8	)
+op	53:59	0:0	8	&
+water	53:60	0:0	8	i_authResult
+arg	53:74	53:76	7	4
+water	53:74	0:0	8	4
+stmts	54:8	57:8	5	
+water	54:8	0:0	6	{
+call	55:12	55:70	6	msg_Err
+arg	55:21	55:29	7	p_filter
+water	55:21	0:0	8	p_filter
+arg	55:31	55:70	7	"Could not read authentication result"
+water	55:31	0:0	8	"Could not read authentication result"
+water	55:71	0:0	6	;
+return	56:12	56:24	6	false
+water	56:19	0:0	7	false
+water	57:8	0:0	6	}
+water	58:8	0:0	4	i_authResult
+op	58:21	0:0	4	=
+call	58:23	58:41	4	htonl
+arg	58:29	58:41	5	i_authResult
+water	58:29	0:0	6	i_authResult
+water	58:42	0:0	4	;
+if	59:8	63:8	4	(i_authResult != rfbVncAuthOK)
+cond	59:12	59:28	5	i_authResult != rfbVncAuthOK
+water	59:12	0:0	6	i_authResult
+op	59:25	0:0	6	!=
+water	59:28	0:0	6	rfbVncAuthOK
+stmts	60:8	63:8	5	
+water	60:8	0:0	6	{
+call	61:12	61:59	6	msg_Err
+arg	61:21	61:29	7	p_filter
+water	61:21	0:0	8	p_filter
+arg	61:31	61:59	7	"VNC authentication failed"
+water	61:31	0:0	8	"VNC authentication failed"
+water	61:60	0:0	6	;
+return	62:12	62:24	6	false
+water	62:19	0:0	7	false
+water	63:8	0:0	6	}
+water	64:4	0:0	4	}
+call	65:4	65:53	2	msg_Dbg
+arg	65:13	65:21	3	p_filter
+water	65:13	0:0	4	p_filter
+arg	65:23	65:53	3	"Writing client init message"
+water	65:23	0:0	4	"Writing client init message"
+water	65:54	0:0	2	;
+decl	66:4	66:23	2	rfbClientInitMsg	ci
+water	67:4	0:0	2	ci
+op	67:6	0:0	2	.
+water	67:7	0:0	2	shared
+op	67:14	0:0	2	=
+water	67:16	0:0	2	1
+water	67:17	0:0	2	;
+if	68:4	73:4	2	(!write_exact (p_filter ,p_sys -> i_socket ,( char * ) & ci ,sz_rfbClientInitMsg ))
+cond	68:8	69:54	3	!write_exact (p_filter ,p_sys -> i_socket ,( char * ) & ci ,sz_rfbClientInitMsg )
+op	68:8	0:0	4	!
+call	68:9	69:54	4	write_exact
+arg	68:22	68:30	5	p_filter
+water	68:22	0:0	6	p_filter
+arg	68:32	68:47	5	p_sys->i_socket
+water	68:32	0:0	6	p_sys
+op	68:37	0:0	6	->
+water	68:39	0:0	6	i_socket
+arg	69:22	69:32	5	(char*)&ci
+water	69:22	0:0	6	(
+water	69:23	0:0	6	char
+op	69:27	0:0	6	*
+water	69:28	0:0	6	)
+op	69:29	0:0	6	&
+water	69:30	0:0	6	ci
+arg	69:34	69:54	5	sz_rfbClientInitMsg
+water	69:34	0:0	6	sz_rfbClientInitMsg
+stmts	70:4	73:4	3	
+water	70:4	0:0	4	{
+call	71:8	71:65	4	msg_Err
+arg	71:17	71:25	5	p_filter
+water	71:17	0:0	6	p_filter
+arg	71:27	71:65	5	"Could not write client init message"
+water	71:27	0:0	6	"Could not write client init message"
+water	71:66	0:0	4	;
+return	72:8	72:20	4	false
+water	72:15	0:0	5	false
+water	73:4	0:0	4	}
+call	74:4	74:53	2	msg_Dbg
+arg	74:13	74:21	3	p_filter
+water	74:13	0:0	4	p_filter
+arg	74:23	74:53	3	"Reading server init message"
+water	74:23	0:0	4	"Reading server init message"
+water	74:54	0:0	2	;
+decl	75:4	75:23	2	rfbServerInitMsg	si
+if	76:4	81:4	2	(!read_exact (p_filter ,p_sys -> i_socket ,( char * ) & si ,sz_rfbServerInitMsg ))
+cond	76:8	77:53	3	!read_exact (p_filter ,p_sys -> i_socket ,( char * ) & si ,sz_rfbServerInitMsg )
+op	76:8	0:0	4	!
+call	76:9	77:53	4	read_exact
+arg	76:21	76:29	5	p_filter
+water	76:21	0:0	6	p_filter
+arg	76:31	76:46	5	p_sys->i_socket
+water	76:31	0:0	6	p_sys
+op	76:36	0:0	6	->
+water	76:38	0:0	6	i_socket
+arg	77:21	77:31	5	(char*)&si
+water	77:21	0:0	6	(
+water	77:22	0:0	6	char
+op	77:26	0:0	6	*
+water	77:27	0:0	6	)
+op	77:28	0:0	6	&
+water	77:29	0:0	6	si
+arg	77:33	77:53	5	sz_rfbServerInitMsg
+water	77:33	0:0	6	sz_rfbServerInitMsg
+stmts	78:4	81:4	3	
+water	78:4	0:0	4	{
+call	79:8	79:64	4	msg_Err
+arg	79:17	79:25	5	p_filter
+water	79:17	0:0	6	p_filter
+arg	79:27	79:64	5	"Could not read server init message"
+water	79:27	0:0	6	"Could not read server init message"
+water	79:65	0:0	4	;
+return	80:8	80:20	4	false
+water	80:15	0:0	5	false
+water	81:4	0:0	4	}
+water	82:4	0:0	2	si
+op	82:6	0:0	2	.
+water	82:7	0:0	2	framebufferWidth
+op	82:24	0:0	2	=
+call	82:26	82:51	2	htons
+arg	82:32	82:51	3	si.framebufferWidth
+water	82:32	0:0	4	si
+op	82:34	0:0	4	.
+water	82:35	0:0	4	framebufferWidth
+water	82:52	0:0	2	;
+water	83:4	0:0	2	si
+op	83:6	0:0	2	.
+water	83:7	0:0	2	framebufferHeight
+op	83:25	0:0	2	=
+call	83:27	83:53	2	htons
+arg	83:33	83:53	3	si.framebufferHeight
+water	83:33	0:0	4	si
+op	83:35	0:0	4	.
+water	83:36	0:0	4	framebufferHeight
+water	83:54	0:0	2	;
+water	84:4	0:0	2	si
+op	84:6	0:0	2	.
+water	84:7	0:0	2	format
+op	84:13	0:0	2	.
+water	84:14	0:0	2	redMax
+op	84:21	0:0	2	=
+call	84:23	84:45	2	htons
+arg	84:29	84:45	3	si.format.redMax
+water	84:29	0:0	4	si
+op	84:31	0:0	4	.
+water	84:32	0:0	4	format
+op	84:38	0:0	4	.
+water	84:39	0:0	4	redMax
+water	84:46	0:0	2	;
+water	85:4	0:0	2	si
+op	85:6	0:0	2	.
+water	85:7	0:0	2	format
+op	85:13	0:0	2	.
+water	85:14	0:0	2	greenMax
+op	85:23	0:0	2	=
+call	85:25	85:49	2	htons
+arg	85:31	85:49	3	si.format.greenMax
+water	85:31	0:0	4	si
+op	85:33	0:0	4	.
+water	85:34	0:0	4	format
+op	85:40	0:0	4	.
+water	85:41	0:0	4	greenMax
+water	85:50	0:0	2	;
+water	86:4	0:0	2	si
+op	86:6	0:0	2	.
+water	86:7	0:0	2	format
+op	86:13	0:0	2	.
+water	86:14	0:0	2	blueMax
+op	86:22	0:0	2	=
+call	86:24	86:47	2	htons
+arg	86:30	86:47	3	si.format.blueMax
+water	86:30	0:0	4	si
+op	86:32	0:0	4	.
+water	86:33	0:0	4	format
+op	86:39	0:0	4	.
+water	86:40	0:0	4	blueMax
+water	86:48	0:0	2	;
+water	87:4	0:0	2	p_sys
+op	87:9	0:0	2	->
+water	87:11	0:0	2	i_vnc_width
+op	87:23	0:0	2	=
+water	87:25	0:0	2	si
+op	87:27	0:0	2	.
+water	87:28	0:0	2	framebufferWidth
+water	87:44	0:0	2	;
+water	88:4	0:0	2	p_sys
+op	88:9	0:0	2	->
+water	88:11	0:0	2	i_vnc_height
+op	88:24	0:0	2	=
+water	88:26	0:0	2	si
+op	88:28	0:0	2	.
+water	88:29	0:0	2	framebufferHeight
+water	88:46	0:0	2	;
+call	89:4	98:76	2	msg_Dbg
+arg	89:13	89:21	3	p_filter
+water	89:13	0:0	4	p_filter
+arg	89:23	90:72	3	"Servers preferred pixelformat: ""%ux%u, R(%u),G(%u),B(%u), %u bit, depht=%u, %s"
+water	89:23	0:0	4	"Servers preferred pixelformat: "
+water	90:24	0:0	4	"%ux%u, R(%u),G(%u),B(%u), %u bit, depht=%u, %s"
+arg	91:24	91:43	3	si.framebufferWidth
+water	91:24	0:0	4	si
+op	91:26	0:0	4	.
+water	91:27	0:0	4	framebufferWidth
+arg	92:24	92:44	3	si.framebufferHeight
+water	92:24	0:0	4	si
+op	92:26	0:0	4	.
+water	92:27	0:0	4	framebufferHeight
+arg	93:24	93:40	3	si.format.redMax
+water	93:24	0:0	4	si
+op	93:26	0:0	4	.
+water	93:27	0:0	4	format
+op	93:33	0:0	4	.
+water	93:34	0:0	4	redMax
+arg	94:24	94:42	3	si.format.greenMax
+water	94:24	0:0	4	si
+op	94:26	0:0	4	.
+water	94:27	0:0	4	format
+op	94:33	0:0	4	.
+water	94:34	0:0	4	greenMax
+arg	95:24	95:41	3	si.format.blueMax
+water	95:24	0:0	4	si
+op	95:26	0:0	4	.
+water	95:27	0:0	4	format
+op	95:33	0:0	4	.
+water	95:34	0:0	4	blueMax
+arg	96:24	96:46	3	si.format.bitsPerPixel
+water	96:24	0:0	4	si
+op	96:26	0:0	4	.
+water	96:27	0:0	4	format
+op	96:33	0:0	4	.
+water	96:34	0:0	4	bitsPerPixel
+arg	97:24	97:39	3	si.format.depth
+water	97:24	0:0	4	si
+op	97:26	0:0	4	.
+water	97:27	0:0	4	format
+op	97:33	0:0	4	.
+water	97:34	0:0	4	depth
+arg	98:24	98:76	3	si.format.trueColour?"TrueColor":"Not-TrueColor"
+water	98:24	0:0	4	si
+op	98:26	0:0	4	.
+water	98:27	0:0	4	format
+op	98:33	0:0	4	.
+water	98:34	0:0	4	trueColour
+water	98:45	0:0	4	?
+water	98:47	0:0	4	"TrueColor"
+water	98:59	0:0	4	:
+water	98:61	0:0	4	"Not-TrueColor"
+water	98:77	0:0	2	;
+decl	99:4	99:48	2	uint32_t	i_nameLength
+op	99:26	0:0	2	=
+call	99:28	99:47	3	htonl
+arg	99:34	99:47	4	si.nameLength
+water	99:34	0:0	5	si
+op	99:36	0:0	5	.
+water	99:37	0:0	5	nameLength
+if	100:4	104:4	2	(i_nameLength > MAX_VNC_SERVER_NAME_LENGTH)
+cond	100:8	100:23	3	i_nameLength > MAX_VNC_SERVER_NAME_LENGTH
+water	100:8	0:0	4	i_nameLength
+op	100:21	0:0	4	>
+water	100:23	0:0	4	MAX_VNC_SERVER_NAME_LENGTH
+stmts	101:4	104:4	3	
+water	101:4	0:0	4	{
+call	102:8	102:50	4	msg_Err
+arg	102:17	102:25	5	p_filter
+water	102:17	0:0	6	p_filter
+arg	102:27	102:50	5	"Server name too long"
+water	102:27	0:0	6	"Server name too long"
+water	102:51	0:0	4	;
+return	103:8	103:20	4	false
+water	103:15	0:0	5	false
+water	104:4	0:0	4	}
+decl	105:4	105:51	2	char	s_ServerName[MAX_VNC_SERVER_NAME_LENGTH+1]
+call	106:4	106:74	2	msg_Dbg
+arg	106:13	106:21	3	p_filter
+water	106:13	0:0	4	p_filter
+arg	106:23	106:59	3	"Reading server name with size = %u"
+water	106:23	0:0	4	"Reading server name with size = %u"
+arg	106:61	106:74	3	i_nameLength
+water	106:61	0:0	4	i_nameLength
+water	106:75	0:0	2	;
+if	107:4	111:4	2	(!read_exact (p_filter ,p_sys -> i_socket ,s_ServerName ,i_nameLength ))
+cond	107:8	107:75	3	!read_exact (p_filter ,p_sys -> i_socket ,s_ServerName ,i_nameLength )
+op	107:8	0:0	4	!
+call	107:9	107:75	4	read_exact
+arg	107:21	107:29	5	p_filter
+water	107:21	0:0	6	p_filter
+arg	107:31	107:46	5	p_sys->i_socket
+water	107:31	0:0	6	p_sys
+op	107:36	0:0	6	->
+water	107:38	0:0	6	i_socket
+arg	107:48	107:60	5	s_ServerName
+water	107:48	0:0	6	s_ServerName
+arg	107:62	107:75	5	i_nameLength
+water	107:62	0:0	6	i_nameLength
+stmts	108:4	111:4	3	
+water	108:4	0:0	4	{
+call	109:8	109:56	4	msg_Err
+arg	109:17	109:25	5	p_filter
+water	109:17	0:0	6	p_filter
+arg	109:27	109:56	5	"Could not read server name"
+water	109:27	0:0	6	"Could not read server name"
+water	109:57	0:0	4	;
+return	110:8	110:20	4	false
+water	110:15	0:0	5	false
+water	111:4	0:0	4	}
+water	112:4	0:0	2	s_ServerName
+op	112:16	0:0	2	[
+water	112:17	0:0	2	i_nameLength
+op	112:29	0:0	2	]
+op	112:31	0:0	2	=
+water	112:33	0:0	2	'\0'
+water	112:37	0:0	2	;
+if	113:4	117:4	2	(strcmp (s_ServerName ,"VDR-OSD" ) == 0)
+cond	113:8	113:44	3	strcmp (s_ServerName ,"VDR-OSD" ) == 0
+call	113:8	113:39	4	strcmp
+arg	113:16	113:28	5	s_ServerName
+water	113:16	0:0	6	s_ServerName
+arg	113:30	113:39	5	"VDR-OSD"
+water	113:30	0:0	6	"VDR-OSD"
+op	113:41	0:0	4	==
+water	113:44	0:0	4	0
+stmts	114:4	117:4	3	
+water	114:4	0:0	4	{
+call	115:8	115:45	4	msg_Dbg
+arg	115:17	115:25	5	p_filter
+water	115:17	0:0	6	p_filter
+arg	115:27	115:45	5	"Server is a VDR"
+water	115:27	0:0	6	"Server is a VDR"
+water	115:46	0:0	4	;
+water	116:8	0:0	4	p_sys
+op	116:13	0:0	4	->
+water	116:15	0:0	4	b_alpha_from_vnc
+op	116:32	0:0	4	=
+water	116:34	0:0	4	true
+water	116:38	0:0	4	;
+water	117:4	0:0	4	}
+else	118:4	122:4	2
+stmts	119:4	122:4	3	
+water	119:4	0:0	4	{
+call	120:8	120:52	4	msg_Dbg
+arg	120:17	120:25	5	p_filter
+water	120:17	0:0	6	p_filter
+arg	120:27	120:52	5	"Server is a normal VNC"
+water	120:27	0:0	6	"Server is a normal VNC"
+water	120:53	0:0	4	;
+water	121:8	0:0	4	p_sys
+op	121:13	0:0	4	->
+water	121:15	0:0	4	b_alpha_from_vnc
+op	121:32	0:0	4	=
+water	121:34	0:0	4	false
+water	121:39	0:0	4	;
+water	122:4	0:0	4	}
+call	123:4	123:59	2	msg_Dbg
+arg	123:13	123:21	3	p_filter
+water	123:13	0:0	4	p_filter
+arg	123:23	123:59	3	"Server init message read properly"
+water	123:23	0:0	4	"Server init message read properly"
+water	123:60	0:0	2	;
+call	124:4	124:57	2	msg_Dbg
+arg	124:13	124:21	3	p_filter
+water	124:13	0:0	4	p_filter
+arg	124:23	124:42	3	"Server name is %s"
+water	124:23	0:0	4	"Server name is %s"
+arg	124:44	124:57	3	s_ServerName
+water	124:44	0:0	4	s_ServerName
+water	124:58	0:0	2	;
+call	125:4	125:56	2	msg_Dbg
+arg	125:13	125:21	3	p_filter
+water	125:13	0:0	4	p_filter
+arg	125:23	125:56	3	"Writing SetPixelFormat message"
+water	125:23	0:0	4	"Writing SetPixelFormat message"
+water	125:57	0:0	2	;
+decl	126:4	126:27	2	rfbSetPixelFormatMsg	sp
+water	127:4	0:0	2	sp
+op	127:6	0:0	2	.
+water	127:7	0:0	2	type
+op	127:12	0:0	2	=
+water	127:14	0:0	2	rfbSetPixelFormat
+water	127:31	0:0	2	;
+water	128:4	0:0	2	sp
+op	128:6	0:0	2	.
+water	128:7	0:0	2	pad1
+op	128:12	0:0	2	=
+water	128:14	0:0	2	sp
+op	128:16	0:0	2	.
+water	128:17	0:0	2	pad2
+op	128:22	0:0	2	=
+water	128:24	0:0	2	0
+water	128:25	0:0	2	;
+water	129:4	0:0	2	sp
+op	129:6	0:0	2	.
+water	129:7	0:0	2	format
+op	129:13	0:0	2	.
+water	129:14	0:0	2	bitsPerPixel
+op	129:27	0:0	2	=
+water	129:29	0:0	2	8
+water	129:30	0:0	2	;
+water	130:4	0:0	2	sp
+op	130:6	0:0	2	.
+water	130:7	0:0	2	format
+op	130:13	0:0	2	.
+water	130:14	0:0	2	depth
+op	130:20	0:0	2	=
+water	130:22	0:0	2	8
+water	130:24	0:0	2	;
+water	131:4	0:0	2	sp
+op	131:6	0:0	2	.
+water	131:7	0:0	2	format
+op	131:13	0:0	2	.
+water	131:14	0:0	2	bigEndian
+op	131:24	0:0	2	=
+water	131:26	0:0	2	1
+water	131:27	0:0	2	;
+water	132:4	0:0	2	sp
+op	132:6	0:0	2	.
+water	132:7	0:0	2	format
+op	132:13	0:0	2	.
+water	132:14	0:0	2	trueColour
+op	132:25	0:0	2	=
+water	132:27	0:0	2	0
+water	132:28	0:0	2	;
+water	133:4	0:0	2	sp
+op	133:6	0:0	2	.
+water	133:7	0:0	2	format
+op	133:13	0:0	2	.
+water	133:14	0:0	2	redMax
+op	133:21	0:0	2	=
+call	133:23	133:31	2	htons
+arg	133:29	133:31	3	31
+water	133:29	0:0	4	31
+water	133:32	0:0	2	;
+water	134:4	0:0	2	sp
+op	134:6	0:0	2	.
+water	134:7	0:0	2	format
+op	134:13	0:0	2	.
+water	134:14	0:0	2	greenMax
+op	134:23	0:0	2	=
+call	134:25	134:33	2	htons
+arg	134:31	134:33	3	31
+water	134:31	0:0	4	31
+water	134:34	0:0	2	;
+water	135:4	0:0	2	sp
+op	135:6	0:0	2	.
+water	135:7	0:0	2	format
+op	135:13	0:0	2	.
+water	135:14	0:0	2	blueMax
+op	135:22	0:0	2	=
+call	135:24	135:32	2	htons
+arg	135:30	135:32	3	31
+water	135:30	0:0	4	31
+water	135:33	0:0	2	;
+water	136:4	0:0	2	sp
+op	136:6	0:0	2	.
+water	136:7	0:0	2	format
+op	136:13	0:0	2	.
+water	136:14	0:0	2	redShift
+op	136:23	0:0	2	=
+water	136:25	0:0	2	10
+water	136:27	0:0	2	;
+water	137:4	0:0	2	sp
+op	137:6	0:0	2	.
+water	137:7	0:0	2	format
+op	137:13	0:0	2	.
+water	137:14	0:0	2	greenShift
+op	137:25	0:0	2	=
+water	137:27	0:0	2	5
+water	137:28	0:0	2	;
+water	138:4	0:0	2	sp
+op	138:6	0:0	2	.
+water	138:7	0:0	2	format
+op	138:13	0:0	2	.
+water	138:14	0:0	2	blueShift
+op	138:24	0:0	2	=
+water	138:26	0:0	2	0
+water	138:27	0:0	2	;
+water	139:4	0:0	2	sp
+op	139:6	0:0	2	.
+water	139:7	0:0	2	format
+op	139:13	0:0	2	.
+water	139:14	0:0	2	pad1
+op	139:19	0:0	2	=
+water	139:21	0:0	2	sp
+op	139:23	0:0	2	.
+water	139:24	0:0	2	format
+op	139:30	0:0	2	.
+water	139:31	0:0	2	pad2
+op	139:36	0:0	2	=
+water	139:38	0:0	2	0
+water	139:39	0:0	2	;
+if	140:4	145:4	2	(!write_exact (p_filter ,p_sys -> i_socket ,( char * ) & sp ,sz_rfbSetPixelFormatMsg ))
+cond	140:8	141:57	3	!write_exact (p_filter ,p_sys -> i_socket ,( char * ) & sp ,sz_rfbSetPixelFormatMsg )
+op	140:8	0:0	4	!
+call	140:9	141:57	4	write_exact
+arg	140:22	140:30	5	p_filter
+water	140:22	0:0	6	p_filter
+arg	140:32	140:47	5	p_sys->i_socket
+water	140:32	0:0	6	p_sys
+op	140:37	0:0	6	->
+water	140:39	0:0	6	i_socket
+arg	141:22	141:32	5	(char*)&sp
+water	141:22	0:0	6	(
+water	141:23	0:0	6	char
+op	141:27	0:0	6	*
+water	141:28	0:0	6	)
+op	141:29	0:0	6	&
+water	141:30	0:0	6	sp
+arg	141:34	141:57	5	sz_rfbSetPixelFormatMsg
+water	141:34	0:0	6	sz_rfbSetPixelFormatMsg
+stmts	142:4	145:4	3	
+water	142:4	0:0	4	{
+call	143:8	143:68	4	msg_Err
+arg	143:17	143:25	5	p_filter
+water	143:17	0:0	6	p_filter
+arg	143:27	143:68	5	"Could not write SetPixelFormat message"
+water	143:27	0:0	6	"Could not write SetPixelFormat message"
+water	143:69	0:0	4	;
+return	144:8	144:20	4	false
+water	144:15	0:0	5	false
+water	145:4	0:0	4	}
+call	146:4	146:54	2	msg_Dbg
+arg	146:13	146:21	3	p_filter
+water	146:13	0:0	4	p_filter
+arg	146:23	146:54	3	"Writing SetEncodings message"
+water	146:23	0:0	4	"Writing SetEncodings message"
+water	146:55	0:0	2	;
+decl	147:4	147:25	2	rfbSetEncodingsMsg	se
+water	148:4	0:0	2	se
+op	148:6	0:0	2	.
+water	148:7	0:0	2	type
+op	148:12	0:0	2	=
+water	148:14	0:0	2	rfbSetEncodings
+water	148:29	0:0	2	;
+water	149:4	0:0	2	se
+op	149:6	0:0	2	.
+water	149:7	0:0	2	pad
+op	149:11	0:0	2	=
+water	149:13	0:0	2	0
+water	149:14	0:0	2	;
+water	150:4	0:0	2	se
+op	150:6	0:0	2	.
+water	150:7	0:0	2	nEncodings
+op	150:18	0:0	2	=
+call	150:20	150:59	2	htons
+arg	150:27	150:59	3	p_sys->b_alpha_from_vnc?3:2
+water	150:27	0:0	4	p_sys
+op	150:32	0:0	4	->
+water	150:34	0:0	4	b_alpha_from_vnc
+water	150:51	0:0	4	?
+water	150:53	0:0	4	3
+water	150:55	0:0	4	:
+water	150:57	0:0	4	2
+water	150:60	0:0	2	;
+if	151:4	156:4	2	(!write_exact (p_filter ,p_sys -> i_socket ,( char * ) & se ,sz_rfbSetEncodingsMsg ))
+cond	151:8	152:55	3	!write_exact (p_filter ,p_sys -> i_socket ,( char * ) & se ,sz_rfbSetEncodingsMsg )
+op	151:8	0:0	4	!
+call	151:9	152:55	4	write_exact
+arg	151:22	151:30	5	p_filter
+water	151:22	0:0	6	p_filter
+arg	151:32	151:47	5	p_sys->i_socket
+water	151:32	0:0	6	p_sys
+op	151:37	0:0	6	->
+water	151:39	0:0	6	i_socket
+arg	152:22	152:32	5	(char*)&se
+water	152:22	0:0	6	(
+water	152:23	0:0	6	char
+op	152:27	0:0	6	*
+water	152:28	0:0	6	)
+op	152:29	0:0	6	&
+water	152:30	0:0	6	se
+arg	152:34	152:55	5	sz_rfbSetEncodingsMsg
+water	152:34	0:0	6	sz_rfbSetEncodingsMsg
+stmts	153:4	156:4	3	
+water	153:4	0:0	4	{
+call	154:8	154:72	4	msg_Err
+arg	154:17	154:25	5	p_filter
+water	154:17	0:0	6	p_filter
+arg	154:27	154:72	5	"Could not write SetEncodings message begin"
+water	154:27	0:0	6	"Could not write SetEncodings message begin"
+water	154:73	0:0	4	;
+return	155:8	155:20	4	false
+water	155:15	0:0	5	false
+water	156:4	0:0	4	}
+decl	157:4	157:23	2	uint32_t	i_encoding
+call	158:4	158:66	2	msg_Dbg
+arg	158:13	158:21	3	p_filter
+water	158:13	0:0	4	p_filter
+arg	158:23	158:66	3	"Writing SetEncodings rfbEncodingCopyRect"
+water	158:23	0:0	4	"Writing SetEncodings rfbEncodingCopyRect"
+water	158:67	0:0	2	;
+water	159:4	0:0	2	i_encoding
+op	159:15	0:0	2	=
+call	159:17	159:42	2	htonl
+arg	159:23	159:42	3	rfbEncodingCopyRect
+water	159:23	0:0	4	rfbEncodingCopyRect
+water	159:43	0:0	2	;
+if	160:4	164:4	2	(!write_exact (p_filter ,p_sys -> i_socket ,( char * ) & i_encoding ,4 ))
+cond	160:8	160:70	3	!write_exact (p_filter ,p_sys -> i_socket ,( char * ) & i_encoding ,4 )
+op	160:8	0:0	4	!
+call	160:9	160:70	4	write_exact
+arg	160:22	160:30	5	p_filter
+water	160:22	0:0	6	p_filter
+arg	160:32	160:47	5	p_sys->i_socket
+water	160:32	0:0	6	p_sys
+op	160:37	0:0	6	->
+water	160:39	0:0	6	i_socket
+arg	160:49	160:67	5	(char*)&i_encoding
+water	160:49	0:0	6	(
+water	160:50	0:0	6	char
+op	160:54	0:0	6	*
+water	160:55	0:0	6	)
+op	160:56	0:0	6	&
+water	160:57	0:0	6	i_encoding
+arg	160:69	160:70	5	4
+water	160:69	0:0	6	4
+stmts	161:4	164:4	3	
+water	161:4	0:0	4	{
+call	162:8	162:80	4	msg_Err
+arg	162:17	162:25	5	p_filter
+water	162:17	0:0	6	p_filter
+arg	162:27	162:80	5	"Could not write encoding type rfbEncodingCopyRect."
+water	162:27	0:0	6	"Could not write encoding type rfbEncodingCopyRect."
+water	162:81	0:0	4	;
+return	163:8	163:20	4	false
+water	163:15	0:0	5	false
+water	164:4	0:0	4	}
+call	165:4	165:61	2	msg_Dbg
+arg	165:13	165:21	3	p_filter
+water	165:13	0:0	4	p_filter
+arg	165:23	165:61	3	"Writing SetEncodings rfbEncodingRRE"
+water	165:23	0:0	4	"Writing SetEncodings rfbEncodingRRE"
+water	165:62	0:0	2	;
+water	166:4	0:0	2	i_encoding
+op	166:15	0:0	2	=
+call	166:17	166:37	2	htonl
+arg	166:23	166:37	3	rfbEncodingRRE
+water	166:23	0:0	4	rfbEncodingRRE
+water	166:38	0:0	2	;
+if	167:4	171:4	2	(!write_exact (p_filter ,p_sys -> i_socket ,( char * ) & i_encoding ,4 ))
+cond	167:8	167:69	3	!write_exact (p_filter ,p_sys -> i_socket ,( char * ) & i_encoding ,4 )
+op	167:8	0:0	4	!
+call	167:9	167:69	4	write_exact
+arg	167:21	167:29	5	p_filter
+water	167:21	0:0	6	p_filter
+arg	167:31	167:46	5	p_sys->i_socket
+water	167:31	0:0	6	p_sys
+op	167:36	0:0	6	->
+water	167:38	0:0	6	i_socket
+arg	167:48	167:66	5	(char*)&i_encoding
+water	167:48	0:0	6	(
+water	167:49	0:0	6	char
+op	167:53	0:0	6	*
+water	167:54	0:0	6	)
+op	167:55	0:0	6	&
+water	167:56	0:0	6	i_encoding
+arg	167:68	167:69	5	4
+water	167:68	0:0	6	4
+stmts	168:4	171:4	3	
+water	168:4	0:0	4	{
+call	169:8	169:75	4	msg_Err
+arg	169:17	169:25	5	p_filter
+water	169:17	0:0	6	p_filter
+arg	169:27	169:75	5	"Could not write encoding type rfbEncodingRRE."
+water	169:27	0:0	6	"Could not write encoding type rfbEncodingRRE."
+water	169:76	0:0	4	;
+return	170:8	170:20	4	false
+water	170:15	0:0	5	false
+water	171:4	0:0	4	}
+if	172:4	182:4	2	(p_sys -> b_alpha_from_vnc)
+cond	172:8	172:15	3	p_sys -> b_alpha_from_vnc
+water	172:8	0:0	4	p_sys
+op	172:13	0:0	4	->
+water	172:15	0:0	4	b_alpha_from_vnc
+stmts	173:4	182:4	3	
+water	173:4	0:0	4	{
+call	174:8	174:72	4	msg_Dbg
+arg	174:17	174:25	5	p_filter
+water	174:17	0:0	6	p_filter
+arg	174:27	174:72	5	"Writing SetEncodings rfbEncSpecialUseAlpha"
+water	174:27	0:0	6	"Writing SetEncodings rfbEncSpecialUseAlpha"
+water	174:73	0:0	4	;
+water	175:8	0:0	4	i_encoding
+op	175:19	0:0	4	=
+water	175:21	0:0	4	0
+water	175:22	0:0	4	x00F0FFFF
+water	175:31	0:0	4	;
+if	177:8	181:8	4	(!write_exact (p_filter ,p_sys -> i_socket ,( char * ) & i_encoding ,4 ))
+cond	177:12	177:73	5	!write_exact (p_filter ,p_sys -> i_socket ,( char * ) & i_encoding ,4 )
+op	177:12	0:0	6	!
+call	177:13	177:73	6	write_exact
+arg	177:25	177:33	7	p_filter
+water	177:25	0:0	8	p_filter
+arg	177:35	177:50	7	p_sys->i_socket
+water	177:35	0:0	8	p_sys
+op	177:40	0:0	8	->
+water	177:42	0:0	8	i_socket
+arg	177:52	177:70	7	(char*)&i_encoding
+water	177:52	0:0	8	(
+water	177:53	0:0	8	char
+op	177:57	0:0	8	*
+water	177:58	0:0	8	)
+op	177:59	0:0	8	&
+water	177:60	0:0	8	i_encoding
+arg	177:72	177:73	7	4
+water	177:72	0:0	8	4
+stmts	178:8	181:8	5	
+water	178:8	0:0	6	{
+call	179:12	179:86	6	msg_Err
+arg	179:21	179:29	7	p_filter
+water	179:21	0:0	8	p_filter
+arg	179:31	179:86	7	"Could not write encoding type rfbEncSpecialUseAlpha."
+water	179:31	0:0	8	"Could not write encoding type rfbEncSpecialUseAlpha."
+water	179:87	0:0	6	;
+return	180:12	180:24	6	false
+water	180:19	0:0	7	false
+water	181:8	0:0	6	}
+water	182:4	0:0	4	}
+return	183:4	183:15	2	true
+water	183:11	0:0	3	true

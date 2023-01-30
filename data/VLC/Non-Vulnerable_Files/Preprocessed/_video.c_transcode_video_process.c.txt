@@ -1,0 +1,809 @@
+func	2:0	156:0	0	int	transcode_video_process
+params	2:27	0:0	1	
+param	2:29	2:52	2	sout_stream_t *	p_stream
+param	2:54	2:78	2	sout_stream_id_sys_t *	id
+param	3:36	3:47	2	block_t *	in
+param	3:49	3:63	2	block_t * *	out
+stmnts	0:0	155:22	1	
+decl	5:4	5:46	2	sout_stream_sys_t	*p_sys
+op	5:29	0:0	2	=
+water	5:31	0:0	2	p_stream
+op	5:39	0:0	2	->
+water	5:41	0:0	2	p_sys
+decl	6:4	6:27	2	picture_t	*p_pic
+op	6:21	0:0	2	=
+water	6:23	0:0	2	NULL
+op	7:4	0:0	2	*
+water	7:5	0:0	2	out
+op	7:9	0:0	2	=
+water	7:11	0:0	2	NULL
+water	7:15	0:0	2	;
+if	8:4	33:4	2	(unlikely (in == NULL ))
+cond	8:8	8:29	3	unlikely (in == NULL )
+call	8:8	8:29	4	unlikely
+arg	8:18	8:29	5	in==NULL
+water	8:18	0:0	6	in
+op	8:21	0:0	6	==
+water	8:24	0:0	6	NULL
+stmts	9:4	33:4	3	
+water	9:4	0:0	4	{
+if	10:8	17:8	4	(p_sys -> i_threads == 0)
+cond	10:12	10:32	5	p_sys -> i_threads == 0
+water	10:12	0:0	6	p_sys
+op	10:17	0:0	6	->
+water	10:19	0:0	6	i_threads
+op	10:29	0:0	6	==
+water	10:32	0:0	6	0
+stmts	11:8	17:8	5	
+water	11:8	0:0	6	{
+decl	12:12	12:28	6	block_t	*p_block
+do	13:12	16:12	6	(p_block)
+cond	16:21	16:21	7	p_block
+water	16:21	0:0	8	p_block
+stmts	13:15	16:12	7	
+water	13:15	0:0	8	{
+water	14:16	0:0	8	p_block
+op	14:24	0:0	8	=
+call	14:26	14:77	8	id->p_encoder->pf_encode_video
+arg	14:57	14:70	9	id->p_encoder
+water	14:57	0:0	10	id
+op	14:59	0:0	10	->
+water	14:61	0:0	10	p_encoder
+arg	14:72	14:77	9	NULL
+water	14:72	0:0	10	NULL
+water	14:78	0:0	8	;
+call	15:16	15:48	8	block_ChainAppend
+arg	15:35	15:38	9	out
+water	15:35	0:0	10	out
+arg	15:40	15:48	9	p_block
+water	15:40	0:0	10	p_block
+water	15:49	0:0	8	;
+water	16:12	0:0	8	}
+water	16:30	0:0	6	;
+water	17:8	0:0	6	}
+else	18:8	31:8	4
+stmts	19:8	31:8	5	
+water	19:8	0:0	6	{
+call	20:12	20:65	6	msg_Dbg
+arg	20:21	20:29	7	p_stream
+water	20:21	0:0	8	p_stream
+arg	20:31	20:65	7	"Flushing thread and waiting that"
+water	20:31	0:0	8	"Flushing thread and waiting that"
+water	20:66	0:0	6	;
+call	21:12	21:55	6	vlc_mutex_lock
+arg	21:28	21:55	7	&p_stream->p_sys->lock_out
+op	21:28	0:0	8	&
+water	21:29	0:0	8	p_stream
+op	21:37	0:0	8	->
+water	21:39	0:0	8	p_sys
+op	21:44	0:0	8	->
+water	21:46	0:0	8	lock_out
+water	21:56	0:0	6	;
+water	22:12	0:0	6	p_stream
+op	22:20	0:0	6	->
+water	22:22	0:0	6	p_sys
+op	22:27	0:0	6	->
+water	22:29	0:0	6	b_abort
+op	22:37	0:0	6	=
+water	22:39	0:0	6	true
+water	22:43	0:0	6	;
+call	23:12	23:52	6	vlc_cond_signal
+arg	23:29	23:52	7	&p_stream->p_sys->cond
+op	23:29	0:0	8	&
+water	23:30	0:0	8	p_stream
+op	23:38	0:0	8	->
+water	23:40	0:0	8	p_sys
+op	23:45	0:0	8	->
+water	23:47	0:0	8	cond
+water	23:53	0:0	6	;
+call	24:12	24:57	6	vlc_mutex_unlock
+arg	24:30	24:57	7	&p_stream->p_sys->lock_out
+op	24:30	0:0	8	&
+water	24:31	0:0	8	p_stream
+op	24:39	0:0	8	->
+water	24:41	0:0	8	p_sys
+op	24:46	0:0	8	->
+water	24:48	0:0	8	lock_out
+water	24:58	0:0	6	;
+call	25:12	25:52	6	vlc_join
+arg	25:22	25:45	7	p_stream->p_sys->thread
+water	25:22	0:0	8	p_stream
+op	25:30	0:0	8	->
+water	25:32	0:0	8	p_sys
+op	25:37	0:0	8	->
+water	25:39	0:0	8	thread
+arg	25:47	25:52	7	NULL
+water	25:47	0:0	8	NULL
+water	25:53	0:0	6	;
+call	26:12	26:45	6	vlc_mutex_lock
+arg	26:28	26:45	7	&p_sys->lock_out
+op	26:28	0:0	8	&
+water	26:29	0:0	8	p_sys
+op	26:34	0:0	8	->
+water	26:36	0:0	8	lock_out
+water	26:46	0:0	6	;
+op	27:12	0:0	6	*
+water	27:13	0:0	6	out
+op	27:17	0:0	6	=
+water	27:19	0:0	6	p_sys
+op	27:24	0:0	6	->
+water	27:26	0:0	6	p_buffers
+water	27:35	0:0	6	;
+water	28:12	0:0	6	p_sys
+op	28:17	0:0	6	->
+water	28:19	0:0	6	p_buffers
+op	28:29	0:0	6	=
+water	28:31	0:0	6	NULL
+water	28:35	0:0	6	;
+call	29:12	29:47	6	vlc_mutex_unlock
+arg	29:30	29:47	7	&p_sys->lock_out
+op	29:30	0:0	8	&
+water	29:31	0:0	8	p_sys
+op	29:36	0:0	8	->
+water	29:38	0:0	8	lock_out
+water	29:48	0:0	6	;
+call	30:12	30:46	6	msg_Dbg
+arg	30:21	30:29	7	p_stream
+water	30:21	0:0	8	p_stream
+arg	30:31	30:46	7	"Flushing done"
+water	30:31	0:0	8	"Flushing done"
+water	30:47	0:0	6	;
+water	31:8	0:0	6	}
+return	32:8	32:26	4	VLC_SUCCESS
+water	32:15	0:0	5	VLC_SUCCESS
+water	33:4	0:0	4	}
+while	34:4	146:4	2	(( p_pic =id -> p_decoder -> pf_decode_video (id -> p_decoder ,& in ) ))
+cond	34:11	34:72	3	( p_pic =id -> p_decoder -> pf_decode_video (id -> p_decoder ,& in ) )
+water	34:11	0:0	4	(
+water	34:12	0:0	4	p_pic
+op	34:18	0:0	4	=
+call	34:20	34:71	4	id->p_decoder->pf_decode_video
+arg	34:52	34:65	5	id->p_decoder
+water	34:52	0:0	6	id
+op	34:54	0:0	6	->
+water	34:56	0:0	6	p_decoder
+arg	34:67	34:71	5	&in
+op	34:67	0:0	6	&
+water	34:68	0:0	6	in
+water	34:72	0:0	4	)
+stmts	35:4	146:4	3	
+water	35:4	0:0	4	{
+if	36:8	61:8	4	(unlikely (id -> p_encoder -> p_module && !video_format_IsSimilar (& id -> fmt_input_video ,& id -> p_decoder -> fmt_out . video ) ))
+cond	36:12	39:12	5	unlikely (id -> p_encoder -> p_module && !video_format_IsSimilar (& id -> fmt_input_video ,& id -> p_decoder -> fmt_out . video ) )
+call	36:12	39:12	6	unlikely
+arg	37:13	39:12	7	id->p_encoder->p_module&&!video_format_IsSimilar(&id->fmt_input_video,&id->p_decoder->fmt_out.video)
+water	37:13	0:0	8	id
+op	37:15	0:0	8	->
+water	37:17	0:0	8	p_encoder
+op	37:26	0:0	8	->
+water	37:28	0:0	8	p_module
+op	37:37	0:0	8	&&
+op	38:13	0:0	8	!
+call	38:14	38:90	8	video_format_IsSimilar
+arg	38:38	38:58	9	&id->fmt_input_video
+op	38:38	0:0	10	&
+water	38:39	0:0	10	id
+op	38:41	0:0	10	->
+water	38:43	0:0	10	fmt_input_video
+arg	38:60	38:90	9	&id->p_decoder->fmt_out.video
+op	38:60	0:0	10	&
+water	38:61	0:0	10	id
+op	38:63	0:0	10	->
+water	38:65	0:0	10	p_decoder
+op	38:74	0:0	10	->
+water	38:76	0:0	10	fmt_out
+op	38:83	0:0	10	.
+water	38:84	0:0	10	video
+stmts	41:8	61:8	5	
+water	41:8	0:0	6	{
+call	42:12	45:20	6	msg_Info
+arg	42:22	42:30	7	p_stream
+water	42:22	0:0	8	p_stream
+arg	42:32	42:87	7	"aspect-ratio changed, reiniting. %i -> %i : %i -> %i."
+water	42:32	0:0	8	"aspect-ratio changed, reiniting. %i -> %i : %i -> %i."
+arg	43:24	43:53	7	id->fmt_input_video.i_sar_num
+water	43:24	0:0	8	id
+op	43:26	0:0	8	->
+water	43:28	0:0	8	fmt_input_video
+op	43:43	0:0	8	.
+water	43:44	0:0	8	i_sar_num
+arg	43:55	43:93	7	id->p_decoder->fmt_out.video.i_sar_num
+water	43:55	0:0	8	id
+op	43:57	0:0	8	->
+water	43:59	0:0	8	p_decoder
+op	43:68	0:0	8	->
+water	43:70	0:0	8	fmt_out
+op	43:77	0:0	8	.
+water	43:78	0:0	8	video
+op	43:83	0:0	8	.
+water	43:84	0:0	8	i_sar_num
+arg	44:24	44:53	7	id->fmt_input_video.i_sar_den
+water	44:24	0:0	8	id
+op	44:26	0:0	8	->
+water	44:28	0:0	8	fmt_input_video
+op	44:43	0:0	8	.
+water	44:44	0:0	8	i_sar_den
+arg	44:55	45:20	7	id->p_decoder->fmt_out.video.i_sar_den
+water	44:55	0:0	8	id
+op	44:57	0:0	8	->
+water	44:59	0:0	8	p_decoder
+op	44:68	0:0	8	->
+water	44:70	0:0	8	fmt_out
+op	44:77	0:0	8	.
+water	44:78	0:0	8	video
+op	44:83	0:0	8	.
+water	44:84	0:0	8	i_sar_den
+water	45:21	0:0	6	;
+if	47:12	48:52	6	(id -> p_f_chain)
+cond	47:16	47:20	7	id -> p_f_chain
+water	47:16	0:0	8	id
+op	47:18	0:0	8	->
+water	47:20	0:0	8	p_f_chain
+stmts	48:16	48:52	7	
+call	48:16	48:51	8	filter_chain_Delete
+arg	48:37	48:51	9	id->p_f_chain
+water	48:37	0:0	10	id
+op	48:39	0:0	10	->
+water	48:41	0:0	10	p_f_chain
+water	48:52	0:0	8	;
+water	49:12	0:0	6	id
+op	49:14	0:0	6	->
+water	49:16	0:0	6	p_f_chain
+op	49:26	0:0	6	=
+water	49:28	0:0	6	NULL
+water	49:32	0:0	6	;
+if	50:12	51:53	6	(id -> p_uf_chain)
+cond	50:16	50:20	7	id -> p_uf_chain
+water	50:16	0:0	8	id
+op	50:18	0:0	8	->
+water	50:20	0:0	8	p_uf_chain
+stmts	51:16	51:53	7	
+call	51:16	51:52	8	filter_chain_Delete
+arg	51:37	51:52	9	id->p_uf_chain
+water	51:37	0:0	10	id
+op	51:39	0:0	10	->
+water	51:41	0:0	10	p_uf_chain
+water	51:53	0:0	8	;
+water	52:12	0:0	6	id
+op	52:14	0:0	6	->
+water	52:16	0:0	6	p_uf_chain
+op	52:27	0:0	6	=
+water	52:29	0:0	6	NULL
+water	52:33	0:0	6	;
+water	54:12	0:0	6	id
+op	54:14	0:0	6	->
+water	54:16	0:0	6	p_encoder
+op	54:25	0:0	6	->
+water	54:27	0:0	6	fmt_out
+op	54:34	0:0	6	.
+water	54:35	0:0	6	video
+op	54:40	0:0	6	.
+water	54:41	0:0	6	i_visible_width
+op	54:58	0:0	6	=
+water	54:60	0:0	6	p_sys
+op	54:65	0:0	6	->
+water	54:67	0:0	6	i_width
+op	54:75	0:0	6	&
+water	54:77	0:0	6	~1
+water	54:79	0:0	6	;
+water	55:12	0:0	6	id
+op	55:14	0:0	6	->
+water	55:16	0:0	6	p_encoder
+op	55:25	0:0	6	->
+water	55:27	0:0	6	fmt_out
+op	55:34	0:0	6	.
+water	55:35	0:0	6	video
+op	55:40	0:0	6	.
+water	55:41	0:0	6	i_visible_height
+op	55:58	0:0	6	=
+water	55:60	0:0	6	p_sys
+op	55:65	0:0	6	->
+water	55:67	0:0	6	i_height
+op	55:76	0:0	6	&
+water	55:78	0:0	6	~1
+water	55:80	0:0	6	;
+water	56:12	0:0	6	id
+op	56:14	0:0	6	->
+water	56:16	0:0	6	p_encoder
+op	56:25	0:0	6	->
+water	56:27	0:0	6	fmt_out
+op	56:34	0:0	6	.
+water	56:35	0:0	6	video
+op	56:40	0:0	6	.
+water	56:41	0:0	6	i_sar_num
+op	56:51	0:0	6	=
+water	56:53	0:0	6	id
+op	56:55	0:0	6	->
+water	56:57	0:0	6	p_encoder
+op	56:66	0:0	6	->
+water	56:68	0:0	6	fmt_out
+op	56:75	0:0	6	.
+water	56:76	0:0	6	video
+op	56:81	0:0	6	.
+water	56:82	0:0	6	i_sar_den
+op	56:92	0:0	6	=
+water	56:94	0:0	6	0
+water	56:95	0:0	6	;
+call	57:12	57:54	6	transcode_video_filter_init
+arg	57:41	57:49	7	p_stream
+water	57:41	0:0	8	p_stream
+arg	57:51	57:54	7	id
+water	57:51	0:0	8	id
+water	57:55	0:0	6	;
+call	58:12	58:55	6	transcode_video_encoder_init
+arg	58:42	58:50	7	p_stream
+water	58:42	0:0	8	p_stream
+arg	58:52	58:55	7	id
+water	58:52	0:0	8	id
+water	58:56	0:0	6	;
+call	59:12	59:47	6	conversion_video_filter_append
+arg	59:44	59:47	7	id
+water	59:44	0:0	8	id
+water	59:48	0:0	6	;
+call	60:12	60:95	6	memcpy
+arg	60:20	60:40	7	&id->fmt_input_video
+op	60:20	0:0	8	&
+water	60:21	0:0	8	id
+op	60:23	0:0	8	->
+water	60:25	0:0	8	fmt_input_video
+arg	60:42	60:71	7	&id->p_decoder->fmt_out.video
+op	60:42	0:0	8	&
+water	60:43	0:0	8	id
+op	60:45	0:0	8	->
+water	60:47	0:0	8	p_decoder
+op	60:56	0:0	8	->
+water	60:58	0:0	8	fmt_out
+op	60:65	0:0	8	.
+water	60:66	0:0	8	video
+arg	60:73	60:95	7	sizeof(video_format_t)
+op	60:73	0:0	8	sizeof
+water	60:79	0:0	8	(
+water	60:80	0:0	8	video_format_t
+water	60:94	0:0	8	)
+water	60:96	0:0	6	;
+water	61:8	0:0	6	}
+if	62:8	82:8	4	(unlikely (! id -> p_encoder -> p_module ))
+cond	62:12	62:47	5	unlikely (! id -> p_encoder -> p_module )
+call	62:12	62:47	6	unlikely
+arg	62:22	62:47	7	!id->p_encoder->p_module
+op	62:22	0:0	8	!
+water	62:23	0:0	8	id
+op	62:25	0:0	8	->
+water	62:27	0:0	8	p_encoder
+op	62:36	0:0	8	->
+water	62:38	0:0	8	p_module
+stmts	63:8	82:8	5	
+water	63:8	0:0	6	{
+if	64:12	65:52	6	(id -> p_f_chain)
+cond	64:16	64:20	7	id -> p_f_chain
+water	64:16	0:0	8	id
+op	64:18	0:0	8	->
+water	64:20	0:0	8	p_f_chain
+stmts	65:16	65:52	7	
+call	65:16	65:51	8	filter_chain_Delete
+arg	65:37	65:51	9	id->p_f_chain
+water	65:37	0:0	10	id
+op	65:39	0:0	10	->
+water	65:41	0:0	10	p_f_chain
+water	65:52	0:0	8	;
+if	66:12	67:53	6	(id -> p_uf_chain)
+cond	66:16	66:20	7	id -> p_uf_chain
+water	66:16	0:0	8	id
+op	66:18	0:0	8	->
+water	66:20	0:0	8	p_uf_chain
+stmts	67:16	67:53	7	
+call	67:16	67:52	8	filter_chain_Delete
+arg	67:37	67:52	9	id->p_uf_chain
+water	67:37	0:0	10	id
+op	67:39	0:0	10	->
+water	67:41	0:0	10	p_uf_chain
+water	67:53	0:0	8	;
+water	68:12	0:0	6	id
+op	68:14	0:0	6	->
+water	68:16	0:0	6	p_f_chain
+op	68:26	0:0	6	=
+water	68:28	0:0	6	id
+op	68:30	0:0	6	->
+water	68:32	0:0	6	p_uf_chain
+op	68:43	0:0	6	=
+water	68:45	0:0	6	NULL
+water	68:49	0:0	6	;
+call	69:12	69:54	6	transcode_video_filter_init
+arg	69:41	69:49	7	p_stream
+water	69:41	0:0	8	p_stream
+arg	69:51	69:54	7	id
+water	69:51	0:0	8	id
+water	69:55	0:0	6	;
+call	70:12	70:55	6	transcode_video_encoder_init
+arg	70:42	70:50	7	p_stream
+water	70:42	0:0	8	p_stream
+arg	70:52	70:55	7	id
+water	70:52	0:0	8	id
+water	70:56	0:0	6	;
+call	71:12	71:47	6	conversion_video_filter_append
+arg	71:44	71:47	7	id
+water	71:44	0:0	8	id
+water	71:48	0:0	6	;
+call	72:12	72:95	6	memcpy
+arg	72:20	72:40	7	&id->fmt_input_video
+op	72:20	0:0	8	&
+water	72:21	0:0	8	id
+op	72:23	0:0	8	->
+water	72:25	0:0	8	fmt_input_video
+arg	72:42	72:71	7	&id->p_decoder->fmt_out.video
+op	72:42	0:0	8	&
+water	72:43	0:0	8	id
+op	72:45	0:0	8	->
+water	72:47	0:0	8	p_decoder
+op	72:56	0:0	8	->
+water	72:58	0:0	8	fmt_out
+op	72:65	0:0	8	.
+water	72:66	0:0	8	video
+arg	72:73	72:95	7	sizeof(video_format_t)
+op	72:73	0:0	8	sizeof
+water	72:79	0:0	8	(
+water	72:80	0:0	8	video_format_t
+water	72:94	0:0	8	)
+water	72:96	0:0	6	;
+if	73:12	79:12	6	(transcode_video_encoder_open (p_stream ,id ) != VLC_SUCCESS)
+cond	73:16	73:64	7	transcode_video_encoder_open (p_stream ,id ) != VLC_SUCCESS
+call	73:16	73:59	8	transcode_video_encoder_open
+arg	73:46	73:54	9	p_stream
+water	73:46	0:0	10	p_stream
+arg	73:56	73:59	9	id
+water	73:56	0:0	10	id
+op	73:61	0:0	8	!=
+water	73:64	0:0	8	VLC_SUCCESS
+stmts	74:12	79:12	7	
+water	74:12	0:0	8	{
+call	75:16	75:39	8	picture_Release
+arg	75:33	75:39	9	p_pic
+water	75:33	0:0	10	p_pic
+water	75:40	0:0	8	;
+call	76:16	76:52	8	transcode_video_close
+arg	76:39	76:47	9	p_stream
+water	76:39	0:0	10	p_stream
+arg	76:49	76:52	9	id
+water	76:49	0:0	10	id
+water	76:53	0:0	8	;
+water	77:16	0:0	8	id
+op	77:18	0:0	8	->
+water	77:20	0:0	8	b_transcode
+op	77:32	0:0	8	=
+water	77:34	0:0	8	false
+water	77:39	0:0	8	;
+return	78:16	78:35	8	VLC_EGENERIC
+water	78:23	0:0	9	VLC_EGENERIC
+water	79:12	0:0	8	}
+call	80:12	80:56	6	date_Set
+arg	80:22	80:42	7	&id->next_output_pts
+op	80:22	0:0	8	&
+water	80:23	0:0	8	id
+op	80:25	0:0	8	->
+water	80:27	0:0	8	next_output_pts
+arg	80:44	80:56	7	p_pic->date
+water	80:44	0:0	8	p_pic
+op	80:49	0:0	8	->
+water	80:51	0:0	8	date
+water	80:57	0:0	6	;
+call	81:12	81:55	6	date_Set
+arg	81:22	81:41	7	&id->next_input_pts
+op	81:22	0:0	8	&
+water	81:23	0:0	8	id
+op	81:25	0:0	8	->
+water	81:27	0:0	8	next_input_pts
+arg	81:43	81:55	7	p_pic->date
+water	81:43	0:0	8	p_pic
+op	81:48	0:0	8	->
+water	81:50	0:0	8	date
+water	81:56	0:0	6	;
+water	82:8	0:0	6	}
+if	84:8	107:8	4	(p_sys -> b_master_sync)
+cond	84:12	84:19	5	p_sys -> b_master_sync
+water	84:12	0:0	6	p_sys
+op	84:17	0:0	6	->
+water	84:19	0:0	6	b_master_sync
+stmts	85:8	107:8	5	
+water	85:8	0:0	6	{
+if	93:12	103:12	6	(( p_pic -> date ) < (date_Get (& id -> next_output_pts ) - ( mtime_t ) id -> i_output_frame_interval ))
+cond	93:16	94:90	7	( p_pic -> date ) < (date_Get (& id -> next_output_pts ) - ( mtime_t ) id -> i_output_frame_interval )
+water	93:16	0:0	8	(
+water	93:18	0:0	8	p_pic
+op	93:23	0:0	8	->
+water	93:25	0:0	8	date
+water	93:30	0:0	8	)
+op	93:32	0:0	8	<
+water	94:16	0:0	8	(
+call	94:18	94:49	8	date_Get
+arg	94:28	94:49	9	&id->next_output_pts
+op	94:28	0:0	10	&
+water	94:29	0:0	10	id
+op	94:31	0:0	10	->
+water	94:33	0:0	10	next_output_pts
+op	94:51	0:0	8	-
+water	94:53	0:0	8	(
+water	94:54	0:0	8	mtime_t
+water	94:61	0:0	8	)
+water	94:62	0:0	8	id
+op	94:64	0:0	8	->
+water	94:66	0:0	8	i_output_frame_interval
+water	94:90	0:0	8	)
+stmts	95:12	103:12	7	
+water	95:12	0:0	8	{
+call	97:16	98:97	8	msg_Dbg
+arg	97:25	97:33	9	p_stream
+water	97:25	0:0	10	p_stream
+arg	97:35	97:88	9	"dropping frame (%"PRId64" + %"PRId64" vs %"PRId64")"
+water	97:35	0:0	10	"dropping frame (%"
+water	97:54	0:0	10	PRId64
+water	97:60	0:0	10	" + %"
+water	97:66	0:0	10	PRId64
+water	97:72	0:0	10	" vs %"
+water	97:79	0:0	10	PRId64
+water	97:85	0:0	10	")"
+arg	98:25	98:36	9	p_pic->date
+water	98:25	0:0	10	p_pic
+op	98:30	0:0	10	->
+water	98:32	0:0	10	date
+arg	98:38	98:64	9	id->i_input_frame_interval
+water	98:38	0:0	10	id
+op	98:40	0:0	10	->
+water	98:42	0:0	10	i_input_frame_interval
+arg	98:66	98:97	9	date_Get(&id->next_output_pts)
+call	98:66	98:95	10	date_Get
+arg	98:75	98:95	11	&id->next_output_pts
+op	98:75	0:0	12	&
+water	98:76	0:0	12	id
+op	98:78	0:0	12	->
+water	98:80	0:0	12	next_output_pts
+water	98:98	0:0	8	;
+call	100:16	100:39	8	picture_Release
+arg	100:33	100:39	9	p_pic
+water	100:33	0:0	10	p_pic
+water	100:40	0:0	8	;
+call	101:16	101:100	8	date_Increment
+arg	101:32	101:51	9	&id->next_input_pts
+op	101:32	0:0	10	&
+water	101:33	0:0	10	id
+op	101:35	0:0	10	->
+water	101:37	0:0	10	next_input_pts
+arg	101:53	101:100	9	id->p_decoder->fmt_out.video.i_frame_rate_base
+water	101:53	0:0	10	id
+op	101:55	0:0	10	->
+water	101:57	0:0	10	p_decoder
+op	101:66	0:0	10	->
+water	101:68	0:0	10	fmt_out
+op	101:75	0:0	10	.
+water	101:76	0:0	10	video
+op	101:81	0:0	10	.
+water	101:82	0:0	10	i_frame_rate_base
+water	101:101	0:0	8	;
+continue	102:16	102:24	8	
+water	103:12	0:0	8	}
+call	105:12	105:51	6	msg_Dbg
+arg	105:21	105:29	7	p_stream
+water	105:21	0:0	8	p_stream
+arg	105:31	105:51	7	"not dropping frame"
+water	105:31	0:0	8	"not dropping frame"
+water	105:52	0:0	6	;
+water	107:8	0:0	6	}
+if	110:8	121:8	4	(likely (p_pic -> date != VLC_TS_INVALID ))
+cond	110:12	110:50	5	likely (p_pic -> date != VLC_TS_INVALID )
+call	110:12	110:50	6	likely
+arg	110:20	110:50	7	p_pic->date!=VLC_TS_INVALID
+water	110:20	0:0	8	p_pic
+op	110:25	0:0	8	->
+water	110:27	0:0	8	date
+op	110:32	0:0	8	!=
+water	110:35	0:0	8	VLC_TS_INVALID
+stmts	111:8	121:8	5	
+water	111:8	0:0	6	{
+decl	112:12	112:79	6	mtime_t	input_drift
+op	112:32	0:0	6	=
+water	112:34	0:0	6	p_pic
+op	112:39	0:0	6	->
+water	112:41	0:0	6	date
+op	112:46	0:0	6	-
+call	112:48	112:78	7	date_Get
+arg	112:58	112:78	8	&id->next_input_pts
+op	112:58	0:0	9	&
+water	112:59	0:0	9	id
+op	112:61	0:0	9	->
+water	112:63	0:0	9	next_input_pts
+if	113:12	120:12	6	(unlikely (( input_drift > ( CLOCK_FREQ / 10 ) ) || ( input_drift < - ( CLOCK_FREQ / 10 ) ) ))
+cond	113:16	115:15	7	unlikely (( input_drift > ( CLOCK_FREQ / 10 ) ) || ( input_drift < - ( CLOCK_FREQ / 10 ) ) )
+call	113:16	115:15	8	unlikely
+arg	113:26	115:15	9	(input_drift>(CLOCK_FREQ/10))||(input_drift<-(CLOCK_FREQ/10))
+water	113:26	0:0	10	(
+water	113:27	0:0	10	input_drift
+op	113:39	0:0	10	>
+water	113:41	0:0	10	(
+water	113:42	0:0	10	CLOCK_FREQ
+op	113:52	0:0	10	/
+water	113:53	0:0	10	10
+water	113:55	0:0	10	)
+water	113:56	0:0	10	)
+op	113:58	0:0	10	||
+water	114:26	0:0	10	(
+water	114:27	0:0	10	input_drift
+op	114:39	0:0	10	<
+op	114:41	0:0	10	-
+water	114:42	0:0	10	(
+water	114:43	0:0	10	CLOCK_FREQ
+op	114:53	0:0	10	/
+water	114:54	0:0	10	10
+water	114:56	0:0	10	)
+water	114:57	0:0	10	)
+stmts	116:12	120:12	7	
+water	116:12	0:0	8	{
+call	117:16	117:58	8	msg_Warn
+arg	117:26	117:34	9	p_stream
+water	117:26	0:0	10	p_stream
+arg	117:36	117:58	9	"Reseting video sync"
+water	117:36	0:0	10	"Reseting video sync"
+water	117:59	0:0	8	;
+call	118:16	118:60	8	date_Set
+arg	118:26	118:46	9	&id->next_output_pts
+op	118:26	0:0	10	&
+water	118:27	0:0	10	id
+op	118:29	0:0	10	->
+water	118:31	0:0	10	next_output_pts
+arg	118:48	118:60	9	p_pic->date
+water	118:48	0:0	10	p_pic
+op	118:53	0:0	10	->
+water	118:55	0:0	10	date
+water	118:61	0:0	8	;
+call	119:16	119:59	8	date_Set
+arg	119:26	119:45	9	&id->next_input_pts
+op	119:26	0:0	10	&
+water	119:27	0:0	10	id
+op	119:29	0:0	10	->
+water	119:31	0:0	10	next_input_pts
+arg	119:47	119:59	9	p_pic->date
+water	119:47	0:0	10	p_pic
+op	119:52	0:0	10	->
+water	119:54	0:0	10	date
+water	119:60	0:0	8	;
+water	120:12	0:0	8	}
+water	121:8	0:0	6	}
+call	122:8	122:92	4	date_Increment
+arg	122:24	122:43	5	&id->next_input_pts
+op	122:24	0:0	6	&
+water	122:25	0:0	6	id
+op	122:27	0:0	6	->
+water	122:29	0:0	6	next_input_pts
+arg	122:45	122:92	5	id->p_decoder->fmt_out.video.i_frame_rate_base
+water	122:45	0:0	6	id
+op	122:47	0:0	6	->
+water	122:49	0:0	6	p_decoder
+op	122:58	0:0	6	->
+water	122:60	0:0	6	fmt_out
+op	122:67	0:0	6	.
+water	122:68	0:0	6	video
+op	122:73	0:0	6	.
+water	122:74	0:0	6	i_frame_rate_base
+water	122:93	0:0	4	;
+for	127:8	145:8	4	(;;)
+forinit	127:14	127:14	5	;
+water	127:14	0:0	6	;
+cond	0:0	0:0	5	
+forexpr	0:0	0:0	5	
+stmts	127:19	145:8	5	
+water	127:19	0:0	6	{
+decl	128:12	128:45	6	picture_t	*p_filtered_pic
+op	128:38	0:0	6	=
+water	128:40	0:0	6	p_pic
+if	130:12	131:90	6	(id -> p_f_chain)
+cond	130:16	130:20	7	id -> p_f_chain
+water	130:16	0:0	8	id
+op	130:18	0:0	8	->
+water	130:20	0:0	8	p_f_chain
+stmts	131:16	131:90	7	
+water	131:16	0:0	8	p_filtered_pic
+op	131:31	0:0	8	=
+call	131:33	131:89	8	filter_chain_VideoFilter
+arg	131:59	131:72	9	id->p_f_chain
+water	131:59	0:0	10	id
+op	131:61	0:0	10	->
+water	131:63	0:0	10	p_f_chain
+arg	131:74	131:89	9	p_filtered_pic
+water	131:74	0:0	10	p_filtered_pic
+water	131:90	0:0	8	;
+if	132:12	133:21	6	(! p_filtered_pic)
+cond	132:16	132:17	7	! p_filtered_pic
+op	132:16	0:0	8	!
+water	132:17	0:0	8	p_filtered_pic
+stmts	133:16	133:21	7	
+break	133:16	133:21	8	
+for	134:12	143:12	6	(;;)
+forinit	134:18	134:18	7	;
+water	134:18	0:0	8	;
+cond	0:0	0:0	7	
+forexpr	0:0	0:0	7	
+stmts	134:23	143:12	7	
+water	134:23	0:0	8	{
+decl	135:16	135:63	8	picture_t	*p_user_filtered_pic
+op	135:47	0:0	8	=
+water	135:49	0:0	8	p_filtered_pic
+if	137:16	138:105	8	(id -> p_uf_chain)
+cond	137:20	137:24	9	id -> p_uf_chain
+water	137:20	0:0	10	id
+op	137:22	0:0	10	->
+water	137:24	0:0	10	p_uf_chain
+stmts	138:20	138:105	9	
+water	138:20	0:0	10	p_user_filtered_pic
+op	138:40	0:0	10	=
+call	138:42	138:104	10	filter_chain_VideoFilter
+arg	138:68	138:82	11	id->p_uf_chain
+water	138:68	0:0	12	id
+op	138:70	0:0	12	->
+water	138:72	0:0	12	p_uf_chain
+arg	138:84	138:104	11	p_user_filtered_pic
+water	138:84	0:0	12	p_user_filtered_pic
+water	138:105	0:0	10	;
+if	139:16	140:25	8	(! p_user_filtered_pic)
+cond	139:20	139:21	9	! p_user_filtered_pic
+op	139:20	0:0	10	!
+water	139:21	0:0	10	p_user_filtered_pic
+stmts	140:20	140:25	9	
+break	140:20	140:25	10	
+call	141:16	141:68	8	OutputFrame
+arg	141:29	141:37	9	p_stream
+water	141:29	0:0	10	p_stream
+arg	141:39	141:58	9	p_user_filtered_pic
+water	141:39	0:0	10	p_user_filtered_pic
+arg	141:60	141:62	9	id
+water	141:60	0:0	10	id
+arg	141:64	141:68	9	out
+water	141:64	0:0	10	out
+water	141:69	0:0	8	;
+water	142:16	0:0	8	p_filtered_pic
+op	142:31	0:0	8	=
+water	142:33	0:0	8	NULL
+water	142:37	0:0	8	;
+water	143:12	0:0	8	}
+water	144:12	0:0	6	p_pic
+op	144:18	0:0	6	=
+water	144:20	0:0	6	NULL
+water	144:24	0:0	6	;
+water	145:8	0:0	6	}
+water	146:4	0:0	4	}
+if	147:4	154:4	2	(p_sys -> i_threads >= 1)
+cond	147:8	147:28	3	p_sys -> i_threads >= 1
+water	147:8	0:0	4	p_sys
+op	147:13	0:0	4	->
+water	147:15	0:0	4	i_threads
+op	147:25	0:0	4	>=
+water	147:28	0:0	4	1
+stmts	148:4	154:4	3	
+water	148:4	0:0	4	{
+call	150:8	150:41	4	vlc_mutex_lock
+arg	150:24	150:41	5	&p_sys->lock_out
+op	150:24	0:0	6	&
+water	150:25	0:0	6	p_sys
+op	150:30	0:0	6	->
+water	150:32	0:0	6	lock_out
+water	150:42	0:0	4	;
+op	151:8	0:0	4	*
+water	151:9	0:0	4	out
+op	151:13	0:0	4	=
+water	151:15	0:0	4	p_sys
+op	151:20	0:0	4	->
+water	151:22	0:0	4	p_buffers
+water	151:31	0:0	4	;
+water	152:8	0:0	4	p_sys
+op	152:13	0:0	4	->
+water	152:15	0:0	4	p_buffers
+op	152:25	0:0	4	=
+water	152:27	0:0	4	NULL
+water	152:31	0:0	4	;
+call	153:8	153:43	4	vlc_mutex_unlock
+arg	153:26	153:43	5	&p_sys->lock_out
+op	153:26	0:0	6	&
+water	153:27	0:0	6	p_sys
+op	153:32	0:0	6	->
+water	153:34	0:0	6	lock_out
+water	153:44	0:0	4	;
+water	154:4	0:0	4	}
+return	155:4	155:22	2	VLC_SUCCESS
+water	155:11	0:0	3	VLC_SUCCESS

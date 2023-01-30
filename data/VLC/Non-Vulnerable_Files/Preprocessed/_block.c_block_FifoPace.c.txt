@@ -1,0 +1,63 @@
+func	2:0	13:0	0	void	block_FifoPace
+params	2:20	0:0	1	
+param	2:21	2:39	2	block_fifo_t *	fifo
+param	2:41	2:57	2	size_t	max_depth
+param	2:59	2:74	2	size_t	max_size
+stmnts	4:4	12:34	1	
+call	4:4	4:20	2	vlc_testcancel
+water	4:21	0:0	2	;
+call	5:4	5:31	2	vlc_mutex_lock
+arg	5:20	5:31	3	&fifo->lock
+op	5:20	0:0	4	&
+water	5:21	0:0	4	fifo
+op	5:25	0:0	4	->
+water	5:27	0:0	4	lock
+water	5:32	0:0	2	;
+while	6:4	11:4	2	(( fifo -> i_depth > max_depth ) || ( fifo -> i_size > max_size ))
+cond	6:11	6:66	3	( fifo -> i_depth > max_depth ) || ( fifo -> i_size > max_size )
+water	6:11	0:0	4	(
+water	6:12	0:0	4	fifo
+op	6:16	0:0	4	->
+water	6:18	0:0	4	i_depth
+op	6:26	0:0	4	>
+water	6:28	0:0	4	max_depth
+water	6:37	0:0	4	)
+op	6:39	0:0	4	||
+water	6:42	0:0	4	(
+water	6:43	0:0	4	fifo
+op	6:47	0:0	4	->
+water	6:49	0:0	4	i_size
+op	6:56	0:0	4	>
+water	6:58	0:0	4	max_size
+water	6:66	0:0	4	)
+stmts	7:4	11:4	3	
+water	7:4	0:0	4	{
+call	8:9	8:40	4	mutex_cleanup_push
+arg	8:29	8:40	5	&fifo->lock
+op	8:29	0:0	6	&
+water	8:30	0:0	6	fifo
+op	8:34	0:0	6	->
+water	8:36	0:0	6	lock
+water	8:41	0:0	4	;
+call	9:9	9:53	4	vlc_cond_wait
+arg	9:24	9:40	5	&fifo->wait_room
+op	9:24	0:0	6	&
+water	9:25	0:0	6	fifo
+op	9:29	0:0	6	->
+water	9:31	0:0	6	wait_room
+arg	9:42	9:53	5	&fifo->lock
+op	9:42	0:0	6	&
+water	9:43	0:0	6	fifo
+op	9:47	0:0	6	->
+water	9:49	0:0	6	lock
+water	9:54	0:0	4	;
+call	10:9	10:26	4	vlc_cleanup_pop
+water	10:27	0:0	4	;
+water	11:4	0:0	4	}
+call	12:4	12:33	2	vlc_mutex_unlock
+arg	12:22	12:33	3	&fifo->lock
+op	12:22	0:0	4	&
+water	12:23	0:0	4	fifo
+op	12:27	0:0	4	->
+water	12:29	0:0	4	lock
+water	12:34	0:0	2	;

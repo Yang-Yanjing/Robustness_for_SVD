@@ -1,0 +1,93 @@
+func	2:0	15:0	0	int	rtp_add_sink
+params	2:16	0:0	1	
+param	2:18	2:42	2	sout_stream_id_sys_t *	id
+param	2:44	2:50	2	int	fd
+param	2:52	2:65	2	bool	rtcp_mux
+param	2:67	2:81	2	uint16_t *	seq
+stmnts	0:0	14:22	1	
+decl	4:4	4:34	2	rtp_sink_t	sink
+op	4:20	0:0	2	=
+water	4:22	0:0	2	{
+water	4:24	0:0	2	fd
+water	4:26	0:0	2	,
+water	4:28	0:0	2	NULL
+water	4:33	0:0	2	}
+water	5:4	0:0	2	sink
+op	5:8	0:0	2	.
+water	5:9	0:0	2	rtcp
+op	5:14	0:0	2	=
+call	5:16	6:35	2	OpenRTCP
+arg	5:26	5:52	3	VLC_OBJECT(id->p_stream)
+call	5:26	5:51	4	VLC_OBJECT
+arg	5:38	5:51	5	id->p_stream
+water	5:38	0:0	6	id
+op	5:40	0:0	6	->
+water	5:42	0:0	6	p_stream
+arg	5:54	5:56	3	fd
+water	5:54	0:0	4	fd
+arg	5:58	5:69	3	IPPROTO_UDP
+water	5:58	0:0	4	IPPROTO_UDP
+arg	6:26	6:35	3	rtcp_mux
+water	6:26	0:0	4	rtcp_mux
+water	6:36	0:0	2	;
+if	7:4	8:47	2	(sink . rtcp == NULL)
+cond	7:8	7:21	3	sink . rtcp == NULL
+water	7:8	0:0	4	sink
+op	7:12	0:0	4	.
+water	7:13	0:0	4	rtcp
+op	7:18	0:0	4	==
+water	7:21	0:0	4	NULL
+stmts	8:8	8:47	3	
+call	8:8	8:46	4	msg_Err
+arg	8:17	8:29	5	id->p_stream
+water	8:17	0:0	6	id
+op	8:19	0:0	6	->
+water	8:21	0:0	6	p_stream
+arg	8:31	8:46	5	"RTCP failed!"
+water	8:31	0:0	6	"RTCP failed!"
+water	8:47	0:0	4	;
+call	9:4	9:35	2	vlc_mutex_lock
+arg	9:20	9:35	3	&id->lock_sink
+op	9:20	0:0	4	&
+water	9:21	0:0	4	id
+op	9:23	0:0	4	->
+water	9:25	0:0	4	lock_sink
+water	9:36	0:0	2	;
+call	10:4	10:55	2	INSERT_ELEM
+arg	10:17	10:26	3	id->sinkv
+water	10:17	0:0	4	id
+op	10:19	0:0	4	->
+water	10:21	0:0	4	sinkv
+arg	10:28	10:37	3	id->sinkc
+water	10:28	0:0	4	id
+op	10:30	0:0	4	->
+water	10:32	0:0	4	sinkc
+arg	10:39	10:48	3	id->sinkc
+water	10:39	0:0	4	id
+op	10:41	0:0	4	->
+water	10:43	0:0	4	sinkc
+arg	10:50	10:55	3	sink
+water	10:50	0:0	4	sink
+water	10:56	0:0	2	;
+if	11:4	12:34	2	(seq != NULL)
+cond	11:8	11:15	3	seq != NULL
+water	11:8	0:0	4	seq
+op	11:12	0:0	4	!=
+water	11:15	0:0	4	NULL
+stmts	12:8	12:34	3	
+op	12:8	0:0	4	*
+water	12:9	0:0	4	seq
+op	12:13	0:0	4	=
+water	12:15	0:0	4	id
+op	12:17	0:0	4	->
+water	12:19	0:0	4	i_seq_sent_next
+water	12:34	0:0	4	;
+call	13:4	13:37	2	vlc_mutex_unlock
+arg	13:22	13:37	3	&id->lock_sink
+op	13:22	0:0	4	&
+water	13:23	0:0	4	id
+op	13:25	0:0	4	->
+water	13:27	0:0	4	lock_sink
+water	13:38	0:0	2	;
+return	14:4	14:22	2	VLC_SUCCESS
+water	14:11	0:0	3	VLC_SUCCESS

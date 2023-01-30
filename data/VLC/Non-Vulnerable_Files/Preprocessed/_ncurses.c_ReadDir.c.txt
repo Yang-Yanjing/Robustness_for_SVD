@@ -1,0 +1,181 @@
+func	2:0	33:0	0	static void	ReadDir
+params	2:19	0:0	1	
+param	2:20	2:39	2	intf_thread_t *	intf
+stmnts	0:0	32:59	1	
+decl	4:4	4:33	2	intf_sys_t	*sys
+op	4:20	0:0	2	=
+water	4:22	0:0	2	intf
+op	4:26	0:0	2	->
+water	4:28	0:0	2	p_sys
+if	5:4	8:4	2	(! sys -> current_dir || ! * sys -> current_dir)
+cond	5:8	5:36	3	! sys -> current_dir || ! * sys -> current_dir
+op	5:8	0:0	4	!
+water	5:9	0:0	4	sys
+op	5:12	0:0	4	->
+water	5:14	0:0	4	current_dir
+op	5:26	0:0	4	||
+op	5:29	0:0	4	!
+op	5:30	0:0	4	*
+water	5:31	0:0	4	sys
+op	5:34	0:0	4	->
+water	5:36	0:0	4	current_dir
+stmts	5:49	8:4	3	
+water	5:49	0:0	4	{
+call	6:8	6:42	4	msg_Dbg
+arg	6:16	6:20	5	intf
+water	6:16	0:0	6	intf
+arg	6:22	6:42	5	"no current dir set"
+water	6:22	0:0	6	"no current dir set"
+water	6:43	0:0	4	;
+return	7:8	7:14	4	
+water	8:4	0:0	4	}
+decl	9:4	9:52	2	DIR	*current_dir
+op	9:21	0:0	2	=
+call	9:23	9:51	3	vlc_opendir
+arg	9:35	9:51	4	sys->current_dir
+water	9:35	0:0	5	sys
+op	9:38	0:0	5	->
+water	9:40	0:0	5	current_dir
+if	10:4	14:4	2	(! current_dir)
+cond	10:8	10:9	3	! current_dir
+op	10:8	0:0	4	!
+water	10:9	0:0	4	current_dir
+stmts	10:22	14:4	3	
+water	10:22	0:0	4	{
+call	11:8	12:38	4	msg_Warn
+arg	11:17	11:21	5	intf
+water	11:17	0:0	6	intf
+arg	11:23	11:56	5	"cannot open directory `%s' (%s)"
+water	11:23	0:0	6	"cannot open directory `%s' (%s)"
+arg	11:58	11:74	5	sys->current_dir
+water	11:58	0:0	6	sys
+op	11:61	0:0	6	->
+water	11:63	0:0	6	current_dir
+arg	12:17	12:38	5	vlc_strerror_c(errno)
+call	12:17	12:37	6	vlc_strerror_c
+arg	12:32	12:37	7	errno
+water	12:32	0:0	8	errno
+water	12:39	0:0	4	;
+return	13:8	13:14	4	
+water	14:4	0:0	4	}
+call	15:4	15:19	2	DirsDestroy
+arg	15:16	15:19	3	sys
+water	15:16	0:0	4	sys
+water	15:20	0:0	2	;
+decl	16:4	16:21	2	const char	*entry
+while	17:4	28:4	2	(( entry =vlc_readdir (current_dir ) ))
+cond	17:11	17:44	3	( entry =vlc_readdir (current_dir ) )
+water	17:11	0:0	4	(
+water	17:12	0:0	4	entry
+op	17:18	0:0	4	=
+call	17:20	17:43	4	vlc_readdir
+arg	17:32	17:43	5	current_dir
+water	17:32	0:0	6	current_dir
+water	17:44	0:0	4	)
+stmts	17:47	28:4	3	
+water	17:47	0:0	4	{
+if	18:8	19:20	4	(! sys -> show_hidden_files && * entry == '.' &&strcmp (entry ,".." ))
+cond	18:12	18:74	5	! sys -> show_hidden_files && * entry == '.' &&strcmp (entry ,".." )
+op	18:12	0:0	6	!
+water	18:13	0:0	6	sys
+op	18:16	0:0	6	->
+water	18:18	0:0	6	show_hidden_files
+op	18:36	0:0	6	&&
+op	18:39	0:0	6	*
+water	18:40	0:0	6	entry
+op	18:46	0:0	6	==
+water	18:49	0:0	6	'.'
+op	18:53	0:0	6	&&
+call	18:56	18:74	6	strcmp
+arg	18:63	18:68	7	entry
+water	18:63	0:0	8	entry
+arg	18:70	18:74	7	".."
+water	18:70	0:0	8	".."
+stmts	19:12	19:20	5	
+continue	19:12	19:20	6	
+decl	20:8	20:65	4	struct dir_entry_t	*dir_entry
+op	20:38	0:0	4	=
+call	20:40	20:64	5	malloc
+arg	20:47	20:64	6	sizeof*dir_entry
+op	20:47	0:0	7	sizeof
+op	20:54	0:0	7	*
+water	20:55	0:0	7	dir_entry
+if	21:8	22:20	4	(unlikely (dir_entry == NULL ))
+cond	21:12	21:38	5	unlikely (dir_entry == NULL )
+call	21:12	21:38	6	unlikely
+arg	21:21	21:38	7	dir_entry==NULL
+water	21:21	0:0	8	dir_entry
+op	21:31	0:0	8	==
+water	21:34	0:0	8	NULL
+stmts	22:12	22:20	5	
+continue	22:12	22:20	6	
+water	23:8	0:0	4	dir_entry
+op	23:17	0:0	4	->
+water	23:19	0:0	4	file
+op	23:24	0:0	4	=
+call	23:26	23:56	4	IsFile
+arg	23:33	23:49	5	sys->current_dir
+water	23:33	0:0	6	sys
+op	23:36	0:0	6	->
+water	23:38	0:0	6	current_dir
+arg	23:51	23:56	5	entry
+water	23:51	0:0	6	entry
+water	23:57	0:0	4	;
+water	24:8	0:0	4	dir_entry
+op	24:17	0:0	4	->
+water	24:19	0:0	4	path
+op	24:24	0:0	4	=
+call	24:26	24:39	4	xstrdup
+arg	24:34	24:39	5	entry
+water	24:34	0:0	6	entry
+water	24:40	0:0	4	;
+call	25:8	26:42	4	INSERT_ELEM
+arg	25:20	25:36	5	sys->dir_entries
+water	25:20	0:0	6	sys
+op	25:23	0:0	6	->
+water	25:25	0:0	6	dir_entries
+arg	25:38	25:56	5	sys->n_dir_entries
+water	25:38	0:0	6	sys
+op	25:41	0:0	6	->
+water	25:43	0:0	6	n_dir_entries
+arg	26:13	26:31	5	sys->n_dir_entries
+water	26:13	0:0	6	sys
+op	26:16	0:0	6	->
+water	26:18	0:0	6	n_dir_entries
+arg	26:33	26:42	5	dir_entry
+water	26:33	0:0	6	dir_entry
+water	26:43	0:0	4	;
+continue	27:8	27:16	4	
+water	28:4	0:0	4	}
+call	29:4	29:24	2	closedir
+arg	29:13	29:24	3	current_dir
+water	29:13	0:0	4	current_dir
+water	29:25	0:0	2	;
+if	30:4	32:59	2	(sys -> n_dir_entries > 0)
+cond	30:8	30:29	3	sys -> n_dir_entries > 0
+water	30:8	0:0	4	sys
+op	30:11	0:0	4	->
+water	30:13	0:0	4	n_dir_entries
+op	30:27	0:0	4	>
+water	30:29	0:0	4	0
+stmts	31:8	32:59	3	
+call	31:8	32:58	4	qsort
+arg	31:14	31:30	5	sys->dir_entries
+water	31:14	0:0	6	sys
+op	31:17	0:0	6	->
+water	31:19	0:0	6	dir_entries
+arg	31:32	31:50	5	sys->n_dir_entries
+water	31:32	0:0	6	sys
+op	31:35	0:0	6	->
+water	31:37	0:0	6	n_dir_entries
+arg	32:14	32:41	5	sizeof(structdir_entry_t*)
+op	32:14	0:0	6	sizeof
+water	32:20	0:0	6	(
+water	32:21	0:0	6	struct
+water	32:28	0:0	6	dir_entry_t
+op	32:39	0:0	6	*
+water	32:40	0:0	6	)
+arg	32:43	32:58	5	&comdir_entries
+op	32:43	0:0	6	&
+water	32:44	0:0	6	comdir_entries
+water	32:59	0:0	4	;

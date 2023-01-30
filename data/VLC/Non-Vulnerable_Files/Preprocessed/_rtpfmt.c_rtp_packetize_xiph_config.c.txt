@@ -1,0 +1,334 @@
+func	2:0	68:0	0	int	rtp_packetize_xiph_config
+params	2:29	0:0	1	
+param	2:31	2:55	2	sout_stream_id_sys_t *	id
+param	2:57	2:73	2	const char *	fmtp
+param	3:31	3:45	2	int64_t	i_pts
+stmnts	5:4	67:22	1	
+if	5:4	6:27	2	(fmtp == NULL)
+cond	5:8	5:16	3	fmtp == NULL
+water	5:8	0:0	4	fmtp
+op	5:13	0:0	4	==
+water	5:16	0:0	4	NULL
+stmts	6:8	6:27	3	
+return	6:8	6:27	4	VLC_EGENERIC
+water	6:15	0:0	5	VLC_EGENERIC
+decl	8:4	8:48	2	char	*start
+op	8:16	0:0	2	=
+call	8:18	8:47	3	strstr
+arg	8:25	8:29	4	fmtp
+water	8:25	0:0	5	fmtp
+arg	8:31	8:47	4	"configuration="
+water	8:31	0:0	5	"configuration="
+call	9:4	9:24	2	assert
+arg	9:11	9:24	3	start!=NULL
+water	9:11	0:0	4	start
+op	9:17	0:0	4	!=
+water	9:20	0:0	4	NULL
+water	9:25	0:0	2	;
+water	10:4	0:0	2	start
+op	10:10	0:0	2	+=
+op	10:13	0:0	2	sizeof
+water	10:19	0:0	2	(
+water	10:20	0:0	2	"configuration="
+water	10:36	0:0	2	)
+op	10:38	0:0	2	-
+water	10:40	0:0	2	1
+water	10:41	0:0	2	;
+decl	11:4	11:34	2	char	*end
+op	11:14	0:0	2	=
+call	11:16	11:33	3	strchr
+arg	11:23	11:28	4	start
+water	11:23	0:0	5	start
+arg	11:30	11:33	4	';'
+water	11:30	0:0	5	';'
+call	12:4	12:22	2	assert
+arg	12:11	12:22	3	end!=NULL
+water	12:11	0:0	4	end
+op	12:15	0:0	4	!=
+water	12:18	0:0	4	NULL
+water	12:23	0:0	2	;
+decl	13:4	13:28	2	size_t	len
+op	13:15	0:0	2	=
+water	13:17	0:0	2	end
+op	13:21	0:0	2	-
+water	13:23	0:0	2	start
+decl	14:4	14:31	2	char	*b64
+op	14:14	0:0	2	=
+call	14:16	14:30	3	malloc
+arg	14:23	14:30	4	len+1
+water	14:23	0:0	5	len
+op	14:27	0:0	5	+
+water	14:29	0:0	5	1
+if	15:4	16:27	2	(! b64)
+cond	15:7	15:8	3	! b64
+op	15:7	0:0	4	!
+water	15:8	0:0	4	b64
+stmts	16:8	16:27	3	
+return	16:8	16:27	4	VLC_EGENERIC
+water	16:15	0:0	5	VLC_EGENERIC
+call	17:4	17:26	2	memcpy
+arg	17:11	17:14	3	b64
+water	17:11	0:0	4	b64
+arg	17:16	17:21	3	start
+water	17:16	0:0	4	start
+arg	17:23	17:26	3	len
+water	17:23	0:0	4	len
+water	17:27	0:0	2	;
+water	18:4	0:0	2	b64
+op	18:7	0:0	2	[
+water	18:8	0:0	2	len
+op	18:11	0:0	2	]
+op	18:13	0:0	2	=
+water	18:15	0:0	2	'\0'
+water	18:19	0:0	2	;
+decl	19:4	19:38	2	int	i_max
+op	19:20	0:0	2	=
+call	19:22	19:33	3	rtp_mtu
+arg	19:31	19:33	4	id
+water	19:31	0:0	5	id
+op	19:35	0:0	2	-
+water	19:37	0:0	2	6
+decl	20:4	20:28	2	uint8_t	*p_orig
+water	20:19	0:0	2	,
+decl	20:4	20:28	2	uint8_t	*p_data
+decl	21:4	21:14	2	int	i_data
+water	22:4	0:0	2	i_data
+op	22:11	0:0	2	=
+call	22:13	22:47	2	vlc_b64_decode_binary
+arg	22:35	22:42	3	&p_orig
+op	22:35	0:0	4	&
+water	22:36	0:0	4	p_orig
+arg	22:44	22:47	3	b64
+water	22:44	0:0	4	b64
+water	22:48	0:0	2	;
+call	23:4	23:12	2	free
+arg	23:9	23:12	3	b64
+water	23:9	0:0	4	b64
+water	23:13	0:0	2	;
+if	24:4	28:4	2	(i_data <= 9)
+cond	24:8	24:18	3	i_data <= 9
+water	24:8	0:0	4	i_data
+op	24:15	0:0	4	<=
+water	24:18	0:0	4	9
+stmts	25:4	28:4	3	
+water	25:4	0:0	4	{
+call	26:8	26:19	4	free
+arg	26:13	26:19	5	p_orig
+water	26:13	0:0	6	p_orig
+water	26:20	0:0	4	;
+return	27:8	27:27	4	VLC_EGENERIC
+water	27:15	0:0	5	VLC_EGENERIC
+water	28:4	0:0	4	}
+water	29:4	0:0	2	p_data
+op	29:11	0:0	2	=
+water	29:13	0:0	2	p_orig
+op	29:20	0:0	2	+
+water	29:22	0:0	2	9
+water	29:23	0:0	2	;
+water	30:4	0:0	2	i_data
+op	30:11	0:0	2	-=
+water	30:14	0:0	2	9
+water	30:15	0:0	2	;
+decl	31:4	31:48	2	int	i_count
+op	31:16	0:0	2	=
+water	31:18	0:0	2	(
+water	31:20	0:0	2	i_data
+op	31:27	0:0	2	+
+water	31:29	0:0	2	i_max
+op	31:35	0:0	2	-
+water	31:37	0:0	2	1
+water	31:39	0:0	2	)
+op	31:41	0:0	2	/
+water	31:43	0:0	2	i_max
+for	32:4	65:4	2	( int i = 0 ;i < i_count;i ++)
+forinit	0:0	32:18	3	 int i = 0 ;
+decl	32:9	32:18	4	int	i
+op	32:15	0:0	4	=
+water	32:17	0:0	4	0
+cond	32:20	32:24	3	i < i_count
+water	32:20	0:0	4	i
+op	32:22	0:0	4	<
+water	32:24	0:0	4	i_count
+forexpr	32:33	32:34	3	i ++
+water	32:33	0:0	4	i
+op	32:34	0:0	4	++
+stmts	33:4	65:4	3	
+water	33:4	0:0	4	{
+decl	34:8	34:56	4	int	i_payload
+op	34:32	0:0	4	=
+call	34:34	34:55	5	__MIN
+arg	34:41	34:46	6	i_max
+water	34:41	0:0	7	i_max
+arg	34:48	34:55	6	i_data
+water	34:48	0:0	7	i_data
+decl	35:8	35:52	4	block_t	*out
+op	35:21	0:0	4	=
+call	35:23	35:51	5	block_Alloc
+arg	35:36	35:51	6	18+i_payload
+water	35:36	0:0	7	18
+op	35:39	0:0	7	+
+water	35:41	0:0	7	i_payload
+water	36:8	0:0	4	unsigned
+water	36:17	0:0	4	fragtype
+water	36:25	0:0	4	,
+water	36:27	0:0	4	numpkts
+water	36:34	0:0	4	;
+if	37:8	41:8	4	(i_count == 1)
+cond	37:12	37:23	5	i_count == 1
+water	37:12	0:0	6	i_count
+op	37:20	0:0	6	==
+water	37:23	0:0	6	1
+stmts	38:8	41:8	5	
+water	38:8	0:0	6	{
+water	39:12	0:0	6	fragtype
+op	39:21	0:0	6	=
+water	39:23	0:0	6	0
+water	39:24	0:0	6	;
+water	40:12	0:0	6	numpkts
+op	40:20	0:0	6	=
+water	40:22	0:0	6	1
+water	40:23	0:0	6	;
+water	41:8	0:0	6	}
+else	42:8	51:8	4
+stmts	43:8	51:8	5	
+water	43:8	0:0	6	{
+water	44:12	0:0	6	numpkts
+op	44:20	0:0	6	=
+water	44:22	0:0	6	0
+water	44:23	0:0	6	;
+if	45:12	46:28	6	(i == 0)
+cond	45:16	45:21	7	i == 0
+water	45:16	0:0	8	i
+op	45:18	0:0	8	==
+water	45:21	0:0	8	0
+stmts	46:16	46:28	7	
+water	46:16	0:0	8	fragtype
+op	46:25	0:0	8	=
+water	46:27	0:0	8	1
+water	46:28	0:0	8	;
+else	47:12	48:28	6
+stmts	47:17	48:28	7	
+if	47:17	48:28	8	(i == i_count - 1)
+cond	47:21	47:36	9	i == i_count - 1
+water	47:21	0:0	10	i
+op	47:23	0:0	10	==
+water	47:26	0:0	10	i_count
+op	47:34	0:0	10	-
+water	47:36	0:0	10	1
+stmts	48:16	48:28	9	
+water	48:16	0:0	10	fragtype
+op	48:25	0:0	10	=
+water	48:27	0:0	10	3
+water	48:28	0:0	10	;
+else	49:12	50:28	6
+stmts	50:16	50:28	7	
+water	50:16	0:0	8	fragtype
+op	50:25	0:0	8	=
+water	50:27	0:0	8	2
+water	50:28	0:0	8	;
+water	51:8	0:0	6	}
+decl	53:8	54:62	4	uint32_t	header
+op	53:24	0:0	4	=
+water	53:26	0:0	4	(
+water	53:27	0:0	4	(
+water	53:28	0:0	4	XIPH_IDENT
+op	53:39	0:0	4	&
+water	53:41	0:0	4	0
+water	53:42	0:0	4	xffffff
+water	53:49	0:0	4	)
+op	53:51	0:0	4	<<
+water	53:54	0:0	4	8
+water	53:55	0:0	4	)
+op	53:57	0:0	4	|
+water	54:26	0:0	4	(
+water	54:27	0:0	4	fragtype
+op	54:36	0:0	4	<<
+water	54:39	0:0	4	6
+water	54:40	0:0	4	)
+op	54:42	0:0	4	|
+water	54:44	0:0	4	(
+water	54:45	0:0	4	1
+op	54:47	0:0	4	<<
+water	54:50	0:0	4	4
+water	54:51	0:0	4	)
+op	54:53	0:0	4	|
+water	54:55	0:0	4	numpkts
+call	56:8	56:48	4	rtp_packetize_common
+arg	56:30	56:32	5	id
+water	56:30	0:0	6	id
+arg	56:34	56:37	5	out
+water	56:34	0:0	6	out
+arg	56:39	56:40	5	0
+water	56:39	0:0	6	0
+arg	56:42	56:48	5	i_pts
+water	56:42	0:0	6	i_pts
+water	56:49	0:0	4	;
+call	57:8	57:43	4	SetDWBE
+arg	57:17	57:35	5	out->p_buffer+12
+water	57:17	0:0	6	out
+op	57:20	0:0	6	->
+water	57:22	0:0	6	p_buffer
+op	57:31	0:0	6	+
+water	57:33	0:0	6	12
+arg	57:37	57:43	5	header
+water	57:37	0:0	6	header
+water	57:44	0:0	4	;
+call	58:8	58:45	4	SetWBE
+arg	58:16	58:34	5	out->p_buffer+16
+water	58:16	0:0	6	out
+op	58:19	0:0	6	->
+water	58:21	0:0	6	p_buffer
+op	58:30	0:0	6	+
+water	58:32	0:0	6	16
+arg	58:36	58:45	5	i_payload
+water	58:36	0:0	6	i_payload
+water	58:46	0:0	4	;
+call	59:8	59:54	4	memcpy
+arg	59:16	59:34	5	&out->p_buffer[18]
+op	59:16	0:0	6	&
+water	59:17	0:0	6	out
+op	59:20	0:0	6	->
+water	59:22	0:0	6	p_buffer
+op	59:30	0:0	6	[
+water	59:31	0:0	6	18
+op	59:33	0:0	6	]
+arg	59:36	59:42	5	p_data
+water	59:36	0:0	6	p_data
+arg	59:44	59:54	5	i_payload
+water	59:44	0:0	6	i_payload
+water	59:55	0:0	4	;
+water	60:8	0:0	4	out
+op	60:11	0:0	4	->
+water	60:13	0:0	4	i_buffer
+op	60:24	0:0	4	=
+water	60:26	0:0	4	18
+op	60:29	0:0	4	+
+water	60:31	0:0	4	i_payload
+water	60:40	0:0	4	;
+water	61:8	0:0	4	out
+op	61:11	0:0	4	->
+water	61:13	0:0	4	i_dts
+op	61:22	0:0	4	=
+water	61:24	0:0	4	i_pts
+water	61:29	0:0	4	;
+call	62:8	62:36	4	rtp_packetize_send
+arg	62:28	62:30	5	id
+water	62:28	0:0	6	id
+arg	62:32	62:36	5	out
+water	62:32	0:0	6	out
+water	62:37	0:0	4	;
+water	63:8	0:0	4	p_data
+op	63:15	0:0	4	+=
+water	63:18	0:0	4	i_payload
+water	63:27	0:0	4	;
+water	64:8	0:0	4	i_data
+op	64:15	0:0	4	-=
+water	64:18	0:0	4	i_payload
+water	64:27	0:0	4	;
+water	65:4	0:0	4	}
+call	66:4	66:15	2	free
+arg	66:9	66:15	3	p_orig
+water	66:9	0:0	4	p_orig
+water	66:16	0:0	2	;
+return	67:4	67:22	2	VLC_SUCCESS
+water	67:11	0:0	3	VLC_SUCCESS

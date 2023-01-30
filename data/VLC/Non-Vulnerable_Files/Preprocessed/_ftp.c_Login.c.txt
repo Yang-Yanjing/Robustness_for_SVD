@@ -1,0 +1,730 @@
+func	2:0	157:0	0	static int	Login
+params	2:16	0:0	1	
+param	2:18	2:40	2	vlc_object_t *	p_access
+param	2:42	2:62	2	access_sys_t *	p_sys
+stmnts	0:0	156:13	1	
+decl	4:4	4:16	2	int	i_answer
+decl	6:4	7:64	2	int	fd
+op	6:11	0:0	2	=
+water	6:13	0:0	2	p_sys
+op	6:18	0:0	2	->
+water	6:20	0:0	2	cmd
+op	6:23	0:0	2	.
+water	6:24	0:0	2	fd
+op	6:27	0:0	2	=
+call	6:29	7:63	3	net_ConnectTCP
+arg	6:45	6:53	4	p_access
+water	6:45	0:0	5	p_access
+arg	6:55	6:74	4	p_sys->url.psz_host
+water	6:55	0:0	5	p_sys
+op	6:60	0:0	5	->
+water	6:62	0:0	5	url
+op	6:65	0:0	5	.
+water	6:66	0:0	5	psz_host
+arg	7:45	7:63	4	p_sys->url.i_port
+water	7:45	0:0	5	p_sys
+op	7:50	0:0	5	->
+water	7:52	0:0	5	url
+op	7:55	0:0	5	.
+water	7:56	0:0	5	i_port
+if	8:4	14:4	2	(fd == - 1)
+cond	8:8	8:15	3	fd == - 1
+water	8:8	0:0	4	fd
+op	8:11	0:0	4	==
+op	8:14	0:0	4	-
+water	8:15	0:0	4	1
+stmts	9:4	14:4	3	
+water	9:4	0:0	4	{
+call	10:8	10:47	4	msg_Err
+arg	10:17	10:25	5	p_access
+water	10:17	0:0	6	p_access
+arg	10:27	10:47	5	"connection failed"
+water	10:27	0:0	6	"connection failed"
+water	10:48	0:0	4	;
+call	11:8	12:74	4	dialog_Fatal
+arg	11:22	11:30	5	p_access
+water	11:22	0:0	6	p_access
+arg	11:32	11:63	5	_("Network interaction failed")
+call	11:32	11:62	6	_
+arg	11:34	11:62	7	"Network interaction failed"
+water	11:34	0:0	8	"Network interaction failed"
+arg	11:65	11:69	5	"%s"
+water	11:65	0:0	6	"%s"
+arg	12:24	12:74	5	_("VLC could not connect with the given server.")
+call	12:24	12:72	6	_
+arg	12:26	12:72	7	"VLC could not connect with the given server."
+water	12:26	0:0	8	"VLC could not connect with the given server."
+water	12:75	0:0	4	;
+return	13:8	13:17	4	-1
+op	13:15	0:0	5	-
+water	13:16	0:0	5	1
+water	14:4	0:0	4	}
+if	15:4	19:4	2	(p_sys -> tlsmode == IMPLICIT)
+cond	15:9	15:27	3	p_sys -> tlsmode == IMPLICIT
+water	15:9	0:0	4	p_sys
+op	15:14	0:0	4	->
+water	15:16	0:0	4	tlsmode
+op	15:24	0:0	4	==
+water	15:27	0:0	4	IMPLICIT
+stmts	16:4	19:4	3	
+water	16:4	0:0	4	{
+if	17:8	18:22	4	(createCmdTLS (p_access ,p_sys ,fd ,"ftps" ) < 0)
+cond	17:13	17:58	5	createCmdTLS (p_access ,p_sys ,fd ,"ftps" ) < 0
+call	17:13	17:54	6	createCmdTLS
+arg	17:27	17:35	7	p_access
+water	17:27	0:0	8	p_access
+arg	17:37	17:42	7	p_sys
+water	17:37	0:0	8	p_sys
+arg	17:44	17:46	7	fd
+water	17:44	0:0	8	fd
+arg	17:48	17:54	7	"ftps"
+water	17:48	0:0	8	"ftps"
+op	17:56	0:0	6	<
+water	17:58	0:0	6	0
+stmts	18:12	18:22	5	
+goto	18:12	18:22	6	error
+water	18:17	0:0	7	error
+water	19:4	0:0	4	}
+while	20:4	20:69	2	(ftp_RecvCommand (p_access ,p_sys ,& i_answer ,NULL ) == 1)
+cond	20:11	20:66	3	ftp_RecvCommand (p_access ,p_sys ,& i_answer ,NULL ) == 1
+call	20:11	20:61	4	ftp_RecvCommand
+arg	20:28	20:36	5	p_access
+water	20:28	0:0	6	p_access
+arg	20:38	20:43	5	p_sys
+water	20:38	0:0	6	p_sys
+arg	20:45	20:54	5	&i_answer
+op	20:45	0:0	6	&
+water	20:46	0:0	6	i_answer
+arg	20:56	20:61	5	NULL
+water	20:56	0:0	6	NULL
+op	20:63	0:0	4	==
+water	20:66	0:0	4	1
+stmts	20:69	20:69	3	
+water	20:69	0:0	4	;
+if	21:4	27:4	2	(i_answer / 100 != 2)
+cond	21:8	21:26	3	i_answer / 100 != 2
+water	21:8	0:0	4	i_answer
+op	21:17	0:0	4	/
+water	21:19	0:0	4	100
+op	21:23	0:0	4	!=
+water	21:26	0:0	4	2
+stmts	22:4	27:4	3	
+water	22:4	0:0	4	{
+call	23:8	23:49	4	msg_Err
+arg	23:17	23:25	5	p_access
+water	23:17	0:0	6	p_access
+arg	23:27	23:49	5	"connection rejected"
+water	23:27	0:0	6	"connection rejected"
+water	23:50	0:0	4	;
+call	24:8	25:80	4	dialog_Fatal
+arg	24:22	24:30	5	p_access
+water	24:22	0:0	6	p_access
+arg	24:32	24:63	5	_("Network interaction failed")
+call	24:32	24:62	6	_
+arg	24:34	24:62	7	"Network interaction failed"
+water	24:34	0:0	8	"Network interaction failed"
+arg	24:65	24:69	5	"%s"
+water	24:65	0:0	6	"%s"
+arg	25:24	25:80	5	_("VLC's connection to the given server was rejected.")
+call	25:24	25:78	6	_
+arg	25:26	25:78	7	"VLC's connection to the given server was rejected."
+water	25:26	0:0	8	"VLC's connection to the given server was rejected."
+water	25:81	0:0	4	;
+return	26:8	26:17	4	-1
+op	26:15	0:0	5	-
+water	26:16	0:0	5	1
+water	27:4	0:0	4	}
+call	28:4	28:60	2	msg_Dbg
+arg	28:13	28:21	3	p_access
+water	28:13	0:0	4	p_access
+arg	28:23	28:49	3	"connection accepted (%d)"
+water	28:23	0:0	4	"connection accepted (%d)"
+arg	28:51	28:60	3	i_answer
+water	28:51	0:0	4	i_answer
+water	28:61	0:0	2	;
+if	30:4	36:4	2	(ftp_SendCommand (p_access ,p_sys ,"FEAT" ) < 0 ||ftp_RecvAnswer (p_access ,p_sys ,NULL ,NULL ,FeaturesCheck ,& p_sys -> features ) < 0)
+cond	30:8	32:60	3	ftp_SendCommand (p_access ,p_sys ,"FEAT" ) < 0 ||ftp_RecvAnswer (p_access ,p_sys ,NULL ,NULL ,FeaturesCheck ,& p_sys -> features ) < 0
+call	30:8	30:49	4	ftp_SendCommand
+arg	30:25	30:33	5	p_access
+water	30:25	0:0	6	p_access
+arg	30:35	30:40	5	p_sys
+water	30:35	0:0	6	p_sys
+arg	30:42	30:49	5	"FEAT"
+water	30:42	0:0	6	"FEAT"
+op	30:51	0:0	4	<
+water	30:53	0:0	4	0
+op	31:5	0:0	4	||
+call	31:8	32:56	4	ftp_RecvAnswer
+arg	31:24	31:32	5	p_access
+water	31:24	0:0	6	p_access
+arg	31:34	31:39	5	p_sys
+water	31:34	0:0	6	p_sys
+arg	31:41	31:45	5	NULL
+water	31:41	0:0	6	NULL
+arg	31:47	31:51	5	NULL
+water	31:47	0:0	6	NULL
+arg	32:24	32:37	5	FeaturesCheck
+water	32:24	0:0	6	FeaturesCheck
+arg	32:39	32:56	5	&p_sys->features
+op	32:39	0:0	6	&
+water	32:40	0:0	6	p_sys
+op	32:45	0:0	6	->
+water	32:47	0:0	6	features
+op	32:58	0:0	4	<
+water	32:60	0:0	4	0
+stmts	33:4	36:4	3	
+water	33:4	0:0	4	{
+call	34:9	34:57	4	msg_Err
+arg	34:18	34:26	5	p_access
+water	34:18	0:0	6	p_access
+arg	34:28	34:57	5	"cannot get server features"
+water	34:28	0:0	6	"cannot get server features"
+water	34:58	0:0	4	;
+return	35:9	35:18	4	-1
+op	35:16	0:0	5	-
+water	35:17	0:0	5	1
+water	36:4	0:0	4	}
+if	38:4	57:4	2	(p_sys -> tlsmode == EXPLICIT)
+cond	38:8	38:26	3	p_sys -> tlsmode == EXPLICIT
+water	38:8	0:0	4	p_sys
+op	38:13	0:0	4	->
+water	38:15	0:0	4	tlsmode
+op	38:23	0:0	4	==
+water	38:26	0:0	4	EXPLICIT
+stmts	39:4	57:4	3	
+water	39:4	0:0	4	{
+if	40:8	44:8	4	(! p_sys -> features . b_authtls)
+cond	40:13	40:31	5	! p_sys -> features . b_authtls
+op	40:13	0:0	6	!
+water	40:15	0:0	6	p_sys
+op	40:20	0:0	6	->
+water	40:22	0:0	6	features
+op	40:30	0:0	6	.
+water	40:31	0:0	6	b_authtls
+stmts	41:8	44:8	5	
+water	41:8	0:0	6	{
+call	42:12	42:61	6	msg_Err
+arg	42:21	42:29	7	p_access
+water	42:21	0:0	8	p_access
+arg	42:31	42:61	7	"Server does not support TLS"
+water	42:31	0:0	8	"Server does not support TLS"
+water	42:62	0:0	6	;
+return	43:12	43:21	6	-1
+op	43:19	0:0	7	-
+water	43:20	0:0	7	1
+water	44:8	0:0	6	}
+if	45:8	52:8	4	(ftp_SendCommand (p_access ,p_sys ,"AUTH TLS" ) < 0 ||ftp_RecvCommand (p_access ,p_sys ,& i_answer ,NULL ) < 0 || i_answer != 234)
+cond	45:12	47:24	5	ftp_SendCommand (p_access ,p_sys ,"AUTH TLS" ) < 0 ||ftp_RecvCommand (p_access ,p_sys ,& i_answer ,NULL ) < 0 || i_answer != 234
+call	45:12	45:57	6	ftp_SendCommand
+arg	45:29	45:37	7	p_access
+water	45:29	0:0	8	p_access
+arg	45:39	45:44	7	p_sys
+water	45:39	0:0	8	p_sys
+arg	45:46	45:57	7	"AUTH TLS"
+water	45:46	0:0	8	"AUTH TLS"
+op	45:59	0:0	6	<
+water	45:61	0:0	6	0
+op	46:9	0:0	6	||
+call	46:12	46:62	6	ftp_RecvCommand
+arg	46:29	46:37	7	p_access
+water	46:29	0:0	8	p_access
+arg	46:39	46:44	7	p_sys
+water	46:39	0:0	8	p_sys
+arg	46:46	46:55	7	&i_answer
+op	46:46	0:0	8	&
+water	46:47	0:0	8	i_answer
+arg	46:57	46:62	7	NULL
+water	46:57	0:0	8	NULL
+op	46:64	0:0	6	<
+water	46:66	0:0	6	0
+op	47:9	0:0	6	||
+water	47:12	0:0	6	i_answer
+op	47:21	0:0	6	!=
+water	47:24	0:0	6	234
+stmts	48:8	52:8	5	
+water	48:8	0:0	6	{
+call	49:13	50:31	6	msg_Err
+arg	49:22	49:30	7	p_access
+water	49:22	0:0	8	p_access
+arg	49:32	49:83	7	"cannot switch to TLS: server replied with code %d"
+water	49:32	0:0	8	"cannot switch to TLS: server replied with code %d"
+arg	50:22	50:31	7	i_answer
+water	50:22	0:0	8	i_answer
+water	50:32	0:0	6	;
+return	51:13	51:22	6	-1
+op	51:20	0:0	7	-
+water	51:21	0:0	7	1
+water	52:8	0:0	6	}
+if	53:8	56:8	4	(createCmdTLS (p_access ,p_sys ,fd ,"ftpes" ) < 0)
+cond	53:13	53:59	5	createCmdTLS (p_access ,p_sys ,fd ,"ftpes" ) < 0
+call	53:13	53:55	6	createCmdTLS
+arg	53:27	53:35	7	p_access
+water	53:27	0:0	8	p_access
+arg	53:37	53:42	7	p_sys
+water	53:37	0:0	8	p_sys
+arg	53:44	53:46	7	fd
+water	53:44	0:0	8	fd
+arg	53:48	53:55	7	"ftpes"
+water	53:48	0:0	8	"ftpes"
+op	53:57	0:0	6	<
+water	53:59	0:0	6	0
+stmts	54:8	56:8	5	
+water	54:8	0:0	6	{
+goto	55:12	55:22	6	error
+water	55:17	0:0	7	error
+water	56:8	0:0	6	}
+water	57:4	0:0	4	}
+if	58:4	74:4	2	(p_sys -> tlsmode != NONE)
+cond	58:8	58:26	3	p_sys -> tlsmode != NONE
+water	58:8	0:0	4	p_sys
+op	58:13	0:0	4	->
+water	58:15	0:0	4	tlsmode
+op	58:23	0:0	4	!=
+water	58:26	0:0	4	NONE
+stmts	59:4	74:4	3	
+water	59:4	0:0	4	{
+if	60:8	66:8	4	(ftp_SendCommand (p_access ,p_sys ,"PBSZ 0" ) < 0 ||ftp_RecvCommand (p_access ,p_sys ,& i_answer ,NULL ) < 0 || i_answer != 200)
+cond	60:12	62:24	5	ftp_SendCommand (p_access ,p_sys ,"PBSZ 0" ) < 0 ||ftp_RecvCommand (p_access ,p_sys ,& i_answer ,NULL ) < 0 || i_answer != 200
+call	60:12	60:55	6	ftp_SendCommand
+arg	60:29	60:37	7	p_access
+water	60:29	0:0	8	p_access
+arg	60:39	60:44	7	p_sys
+water	60:39	0:0	8	p_sys
+arg	60:46	60:55	7	"PBSZ 0"
+water	60:46	0:0	8	"PBSZ 0"
+op	60:57	0:0	6	<
+water	60:59	0:0	6	0
+op	60:61	0:0	6	||
+call	61:12	61:62	6	ftp_RecvCommand
+arg	61:29	61:37	7	p_access
+water	61:29	0:0	8	p_access
+arg	61:39	61:44	7	p_sys
+water	61:39	0:0	8	p_sys
+arg	61:46	61:55	7	&i_answer
+op	61:46	0:0	8	&
+water	61:47	0:0	8	i_answer
+arg	61:57	61:62	7	NULL
+water	61:57	0:0	8	NULL
+op	61:64	0:0	6	<
+water	61:66	0:0	6	0
+op	61:68	0:0	6	||
+water	62:12	0:0	6	i_answer
+op	62:21	0:0	6	!=
+water	62:24	0:0	6	200
+stmts	63:8	66:8	5	
+water	63:8	0:0	6	{
+call	64:12	64:79	6	msg_Err
+arg	64:21	64:29	7	p_access
+water	64:21	0:0	8	p_access
+arg	64:31	64:79	7	"Can't truncate Protection buffer size for TLS"
+water	64:31	0:0	8	"Can't truncate Protection buffer size for TLS"
+water	64:80	0:0	6	;
+goto	65:12	65:22	6	error
+water	65:17	0:0	7	error
+water	66:8	0:0	6	}
+if	67:8	73:8	4	(ftp_SendCommand (p_access ,p_sys ,"PROT P" ) < 0 ||ftp_RecvCommand (p_access ,p_sys ,& i_answer ,NULL ) < 0 || i_answer != 200)
+cond	67:12	69:24	5	ftp_SendCommand (p_access ,p_sys ,"PROT P" ) < 0 ||ftp_RecvCommand (p_access ,p_sys ,& i_answer ,NULL ) < 0 || i_answer != 200
+call	67:12	67:55	6	ftp_SendCommand
+arg	67:29	67:37	7	p_access
+water	67:29	0:0	8	p_access
+arg	67:39	67:44	7	p_sys
+water	67:39	0:0	8	p_sys
+arg	67:46	67:55	7	"PROT P"
+water	67:46	0:0	8	"PROT P"
+op	67:57	0:0	6	<
+water	67:59	0:0	6	0
+op	67:61	0:0	6	||
+call	68:12	68:62	6	ftp_RecvCommand
+arg	68:29	68:37	7	p_access
+water	68:29	0:0	8	p_access
+arg	68:39	68:44	7	p_sys
+water	68:39	0:0	8	p_sys
+arg	68:46	68:55	7	&i_answer
+op	68:46	0:0	8	&
+water	68:47	0:0	8	i_answer
+arg	68:57	68:62	7	NULL
+water	68:57	0:0	8	NULL
+op	68:64	0:0	6	<
+water	68:66	0:0	6	0
+op	68:68	0:0	6	||
+water	69:12	0:0	6	i_answer
+op	69:21	0:0	6	!=
+water	69:24	0:0	6	200
+stmts	70:8	73:8	5	
+water	70:8	0:0	6	{
+call	71:12	71:67	6	msg_Err
+arg	71:21	71:29	7	p_access
+water	71:21	0:0	8	p_access
+arg	71:31	71:67	7	"Can't set Data channel protection"
+water	71:31	0:0	8	"Can't set Data channel protection"
+water	71:68	0:0	6	;
+goto	72:12	72:22	6	error
+water	72:17	0:0	7	error
+water	73:8	0:0	6	}
+water	74:4	0:0	4	}
+decl	76:4	76:13	2	char	*psz
+if	77:4	78:47	2	(p_sys -> url . psz_username && * p_sys -> url . psz_username)
+cond	77:8	77:47	3	p_sys -> url . psz_username && * p_sys -> url . psz_username
+water	77:8	0:0	4	p_sys
+op	77:13	0:0	4	->
+water	77:15	0:0	4	url
+op	77:18	0:0	4	.
+water	77:19	0:0	4	psz_username
+op	77:32	0:0	4	&&
+op	77:35	0:0	4	*
+water	77:36	0:0	4	p_sys
+op	77:41	0:0	4	->
+water	77:43	0:0	4	url
+op	77:46	0:0	4	.
+water	77:47	0:0	4	psz_username
+stmts	78:8	78:47	3	
+water	78:8	0:0	4	psz
+op	78:12	0:0	4	=
+call	78:14	78:46	4	strdup
+arg	78:22	78:46	5	p_sys->url.psz_username
+water	78:22	0:0	6	p_sys
+op	78:27	0:0	6	->
+water	78:29	0:0	6	url
+op	78:32	0:0	6	.
+water	78:33	0:0	6	psz_username
+water	78:47	0:0	4	;
+else	79:4	80:55	2
+stmts	80:8	80:55	3	
+water	80:8	0:0	4	psz
+op	80:12	0:0	4	=
+call	80:14	80:54	4	var_InheritString
+arg	80:33	80:41	5	p_access
+water	80:33	0:0	6	p_access
+arg	80:43	80:54	5	"ftp-user"
+water	80:43	0:0	6	"ftp-user"
+water	80:55	0:0	4	;
+if	81:4	82:18	2	(! psz)
+cond	81:8	81:9	3	! psz
+op	81:8	0:0	4	!
+water	81:9	0:0	4	psz
+stmts	82:8	82:18	3	
+goto	82:8	82:18	4	error
+water	82:13	0:0	5	error
+if	83:4	88:4	2	(ftp_SendCommand (p_access ,p_sys ,"USER %s" ,psz ) < 0 ||ftp_RecvCommand (p_access ,p_sys ,& i_answer ,NULL ) < 0)
+cond	83:8	84:62	3	ftp_SendCommand (p_access ,p_sys ,"USER %s" ,psz ) < 0 ||ftp_RecvCommand (p_access ,p_sys ,& i_answer ,NULL ) < 0
+call	83:8	83:57	4	ftp_SendCommand
+arg	83:25	83:33	5	p_access
+water	83:25	0:0	6	p_access
+arg	83:35	83:40	5	p_sys
+water	83:35	0:0	6	p_sys
+arg	83:42	83:51	5	"USER %s"
+water	83:42	0:0	6	"USER %s"
+arg	83:53	83:57	5	psz
+water	83:53	0:0	6	psz
+op	83:59	0:0	4	<
+water	83:61	0:0	4	0
+op	83:63	0:0	4	||
+call	84:8	84:58	4	ftp_RecvCommand
+arg	84:25	84:33	5	p_access
+water	84:25	0:0	6	p_access
+arg	84:35	84:40	5	p_sys
+water	84:35	0:0	6	p_sys
+arg	84:42	84:51	5	&i_answer
+op	84:42	0:0	6	&
+water	84:43	0:0	6	i_answer
+arg	84:53	84:58	5	NULL
+water	84:53	0:0	6	NULL
+op	84:60	0:0	4	<
+water	84:62	0:0	4	0
+stmts	85:4	88:4	3	
+water	85:4	0:0	4	{
+call	86:8	86:18	4	free
+arg	86:14	86:18	5	psz
+water	86:14	0:0	6	psz
+water	86:19	0:0	4	;
+goto	87:8	87:18	4	error
+water	87:13	0:0	5	error
+water	88:4	0:0	4	}
+call	89:4	89:14	2	free
+arg	89:10	89:14	3	psz
+water	89:10	0:0	4	psz
+water	89:15	0:0	2	;
+switch	90:4	152:4	2	(i_answer / 100)
+cond	90:12	90:23	3	i_answer / 100
+water	90:12	0:0	4	i_answer
+op	90:21	0:0	4	/
+water	90:23	0:0	4	100
+stmts	91:4	152:4	3	
+water	91:4	0:0	4	{
+label	92:8	92:14	4	case 2 :
+if	94:12	95:70	4	(i_answer == 232)
+cond	94:17	94:29	5	i_answer == 232
+water	94:17	0:0	6	i_answer
+op	94:26	0:0	6	==
+water	94:29	0:0	6	232
+stmts	95:16	95:70	5	
+call	95:16	95:69	6	msg_Dbg
+arg	95:25	95:33	7	p_access
+water	95:25	0:0	8	p_access
+arg	95:35	95:69	7	"user accepted and authenticated"
+water	95:35	0:0	8	"user accepted and authenticated"
+water	95:70	0:0	6	;
+else	96:12	97:52	4
+stmts	97:16	97:52	5	
+call	97:16	97:51	6	msg_Dbg
+arg	97:25	97:33	7	p_access
+water	97:25	0:0	8	p_access
+arg	97:35	97:51	7	"user accepted"
+water	97:35	0:0	8	"user accepted"
+water	97:52	0:0	6	;
+break	98:12	98:17	4	
+label	99:8	99:14	4	case 3 :
+call	100:12	100:49	4	msg_Dbg
+arg	100:21	100:29	5	p_access
+water	100:21	0:0	6	p_access
+arg	100:31	100:49	5	"password needed"
+water	100:31	0:0	6	"password needed"
+water	100:50	0:0	4	;
+if	101:12	102:55	4	(p_sys -> url . psz_password && * p_sys -> url . psz_password)
+cond	101:16	101:55	5	p_sys -> url . psz_password && * p_sys -> url . psz_password
+water	101:16	0:0	6	p_sys
+op	101:21	0:0	6	->
+water	101:23	0:0	6	url
+op	101:26	0:0	6	.
+water	101:27	0:0	6	psz_password
+op	101:40	0:0	6	&&
+op	101:43	0:0	6	*
+water	101:44	0:0	6	p_sys
+op	101:49	0:0	6	->
+water	101:51	0:0	6	url
+op	101:54	0:0	6	.
+water	101:55	0:0	6	psz_password
+stmts	102:16	102:55	5	
+water	102:16	0:0	6	psz
+op	102:20	0:0	6	=
+call	102:22	102:54	6	strdup
+arg	102:30	102:54	7	p_sys->url.psz_password
+water	102:30	0:0	8	p_sys
+op	102:35	0:0	8	->
+water	102:37	0:0	8	url
+op	102:40	0:0	8	.
+water	102:41	0:0	8	psz_password
+water	102:55	0:0	6	;
+else	103:12	104:62	4
+stmts	104:16	104:62	5	
+water	104:16	0:0	6	psz
+op	104:20	0:0	6	=
+call	104:22	104:61	6	var_InheritString
+arg	104:41	104:49	7	p_access
+water	104:41	0:0	8	p_access
+arg	104:51	104:61	7	"ftp-pwd"
+water	104:51	0:0	8	"ftp-pwd"
+water	104:62	0:0	6	;
+if	105:12	106:26	4	(! psz)
+cond	105:16	105:17	5	! psz
+op	105:16	0:0	6	!
+water	105:17	0:0	6	psz
+stmts	106:16	106:26	5	
+goto	106:16	106:26	6	error
+water	106:21	0:0	7	error
+if	107:12	112:12	4	(ftp_SendCommand (p_access ,p_sys ,"PASS %s" ,psz ) < 0 ||ftp_RecvCommand (p_access ,p_sys ,& i_answer ,NULL ) < 0)
+cond	107:16	108:70	5	ftp_SendCommand (p_access ,p_sys ,"PASS %s" ,psz ) < 0 ||ftp_RecvCommand (p_access ,p_sys ,& i_answer ,NULL ) < 0
+call	107:16	107:65	6	ftp_SendCommand
+arg	107:33	107:41	7	p_access
+water	107:33	0:0	8	p_access
+arg	107:43	107:48	7	p_sys
+water	107:43	0:0	8	p_sys
+arg	107:50	107:59	7	"PASS %s"
+water	107:50	0:0	8	"PASS %s"
+arg	107:61	107:65	7	psz
+water	107:61	0:0	8	psz
+op	107:67	0:0	6	<
+water	107:69	0:0	6	0
+op	107:71	0:0	6	||
+call	108:16	108:66	6	ftp_RecvCommand
+arg	108:33	108:41	7	p_access
+water	108:33	0:0	8	p_access
+arg	108:43	108:48	7	p_sys
+water	108:43	0:0	8	p_sys
+arg	108:50	108:59	7	&i_answer
+op	108:50	0:0	8	&
+water	108:51	0:0	8	i_answer
+arg	108:61	108:66	7	NULL
+water	108:61	0:0	8	NULL
+op	108:68	0:0	6	<
+water	108:70	0:0	6	0
+stmts	109:12	112:12	5	
+water	109:12	0:0	6	{
+call	110:16	110:26	6	free
+arg	110:22	110:26	7	psz
+water	110:22	0:0	8	psz
+water	110:27	0:0	6	;
+goto	111:16	111:26	6	error
+water	111:21	0:0	7	error
+water	112:12	0:0	6	}
+call	113:12	113:22	4	free
+arg	113:18	113:22	5	psz
+water	113:18	0:0	6	psz
+water	113:23	0:0	4	;
+switch	114:12	145:12	4	(i_answer / 100)
+cond	114:20	114:31	5	i_answer / 100
+water	114:20	0:0	6	i_answer
+op	114:29	0:0	6	/
+water	114:31	0:0	6	100
+stmts	115:12	145:12	5	
+water	115:12	0:0	6	{
+label	116:16	116:22	6	case 2 :
+call	117:20	117:59	6	msg_Dbg
+arg	117:29	117:37	7	p_access
+water	117:29	0:0	8	p_access
+arg	117:39	117:59	7	"password accepted"
+water	117:39	0:0	8	"password accepted"
+water	117:60	0:0	6	;
+break	118:20	118:25	6	
+label	119:16	119:22	6	case 3 :
+call	120:20	120:56	6	msg_Dbg
+arg	120:29	120:37	7	p_access
+water	120:29	0:0	8	p_access
+arg	120:39	120:56	7	"account needed"
+water	120:39	0:0	8	"account needed"
+water	120:57	0:0	6	;
+water	121:20	0:0	6	psz
+op	121:24	0:0	6	=
+call	121:26	121:69	6	var_InheritString
+arg	121:45	121:53	7	p_access
+water	121:45	0:0	8	p_access
+arg	121:55	121:69	7	"ftp-account"
+water	121:55	0:0	8	"ftp-account"
+water	121:70	0:0	6	;
+if	122:20	128:20	6	(ftp_SendCommand (p_access ,p_sys ,"ACCT %s" ,psz ) < 0 ||ftp_RecvCommand (p_access ,p_sys ,& i_answer ,NULL ) < 0)
+cond	122:24	124:78	7	ftp_SendCommand (p_access ,p_sys ,"ACCT %s" ,psz ) < 0 ||ftp_RecvCommand (p_access ,p_sys ,& i_answer ,NULL ) < 0
+call	122:24	123:45	8	ftp_SendCommand
+arg	122:41	122:49	9	p_access
+water	122:41	0:0	10	p_access
+arg	122:51	122:56	9	p_sys
+water	122:51	0:0	10	p_sys
+arg	122:58	122:67	9	"ACCT %s"
+water	122:58	0:0	10	"ACCT %s"
+arg	123:41	123:45	9	psz
+water	123:41	0:0	10	psz
+op	123:47	0:0	8	<
+water	123:49	0:0	8	0
+op	123:51	0:0	8	||
+call	124:24	124:74	8	ftp_RecvCommand
+arg	124:41	124:49	9	p_access
+water	124:41	0:0	10	p_access
+arg	124:51	124:56	9	p_sys
+water	124:51	0:0	10	p_sys
+arg	124:58	124:67	9	&i_answer
+op	124:58	0:0	10	&
+water	124:59	0:0	10	i_answer
+arg	124:69	124:74	9	NULL
+water	124:69	0:0	10	NULL
+op	124:76	0:0	8	<
+water	124:78	0:0	8	0
+stmts	125:20	128:20	7	
+water	125:20	0:0	8	{
+call	126:24	126:34	8	free
+arg	126:30	126:34	9	psz
+water	126:30	0:0	10	psz
+water	126:35	0:0	8	;
+goto	127:24	127:34	8	error
+water	127:29	0:0	9	error
+water	128:20	0:0	8	}
+call	129:20	129:30	6	free
+arg	129:26	129:30	7	psz
+water	129:26	0:0	8	psz
+water	129:31	0:0	6	;
+if	130:20	137:20	6	(i_answer / 100 != 2)
+cond	130:24	130:42	7	i_answer / 100 != 2
+water	130:24	0:0	8	i_answer
+op	130:33	0:0	8	/
+water	130:35	0:0	8	100
+op	130:39	0:0	8	!=
+water	130:42	0:0	8	2
+stmts	131:20	137:20	7	
+water	131:20	0:0	8	{
+call	132:24	132:62	8	msg_Err
+arg	132:33	132:41	9	p_access
+water	132:33	0:0	10	p_access
+arg	132:43	132:62	9	"account rejected"
+water	132:43	0:0	10	"account rejected"
+water	132:63	0:0	8	;
+call	133:24	135:76	8	dialog_Fatal
+arg	133:38	133:46	9	p_access
+water	133:38	0:0	10	p_access
+arg	134:38	134:69	9	_("Network interaction failed")
+call	134:38	134:68	10	_
+arg	134:40	134:68	11	"Network interaction failed"
+water	134:40	0:0	12	"Network interaction failed"
+arg	135:38	135:42	9	"%s"
+water	135:38	0:0	10	"%s"
+arg	135:44	135:76	9	_("Your account was rejected.")
+call	135:44	135:74	10	_
+arg	135:46	135:74	11	"Your account was rejected."
+water	135:46	0:0	12	"Your account was rejected."
+water	135:77	0:0	8	;
+goto	136:24	136:34	8	error
+water	136:29	0:0	9	error
+water	137:20	0:0	8	}
+call	138:20	138:58	6	msg_Dbg
+arg	138:29	138:37	7	p_access
+water	138:29	0:0	8	p_access
+arg	138:39	138:58	7	"account accepted"
+water	138:39	0:0	8	"account accepted"
+water	138:59	0:0	6	;
+break	139:20	139:25	6	
+label	140:16	140:23	6	default :
+call	141:20	141:59	6	msg_Err
+arg	141:29	141:37	7	p_access
+water	141:29	0:0	8	p_access
+arg	141:39	141:59	7	"password rejected"
+water	141:39	0:0	8	"password rejected"
+water	141:60	0:0	6	;
+call	142:20	143:74	6	dialog_Fatal
+arg	142:34	142:42	7	p_access
+water	142:34	0:0	8	p_access
+arg	142:44	142:75	7	_("Network interaction failed")
+call	142:44	142:74	8	_
+arg	142:46	142:74	9	"Network interaction failed"
+water	142:46	0:0	10	"Network interaction failed"
+arg	143:34	143:38	7	"%s"
+water	143:34	0:0	8	"%s"
+arg	143:41	143:74	7	_("Your password was rejected.")
+call	143:41	143:72	8	_
+arg	143:43	143:72	9	"Your password was rejected."
+water	143:43	0:0	10	"Your password was rejected."
+water	143:75	0:0	6	;
+goto	144:20	144:30	6	error
+water	144:25	0:0	7	error
+water	145:12	0:0	6	}
+break	146:12	146:17	4	
+label	147:8	147:15	4	default :
+call	148:12	148:47	4	msg_Err
+arg	148:21	148:29	5	p_access
+water	148:21	0:0	6	p_access
+arg	148:31	148:47	5	"user rejected"
+water	148:31	0:0	6	"user rejected"
+water	148:48	0:0	4	;
+call	149:12	150:81	4	dialog_Fatal
+arg	149:26	149:34	5	p_access
+water	149:26	0:0	6	p_access
+arg	149:36	149:67	5	_("Network interaction failed")
+call	149:36	149:66	6	_
+arg	149:38	149:66	7	"Network interaction failed"
+water	149:38	0:0	8	"Network interaction failed"
+arg	149:69	149:73	5	"%s"
+water	149:69	0:0	6	"%s"
+arg	150:24	150:81	5	_("Your connection attempt to the server was rejected.")
+call	150:24	150:79	6	_
+arg	150:26	150:79	7	"Your connection attempt to the server was rejected."
+water	150:26	0:0	8	"Your connection attempt to the server was rejected."
+water	150:82	0:0	4	;
+goto	151:12	151:22	4	error
+water	151:17	0:0	5	error
+water	152:4	0:0	4	}
+return	153:4	153:12	2	0
+water	153:11	0:0	3	0
+label	154:0	154:5	2	error :
+call	155:4	155:23	2	clearCmdTLS
+arg	155:17	155:23	3	p_sys
+water	155:17	0:0	4	p_sys
+water	155:24	0:0	2	;
+return	156:4	156:13	2	-1
+op	156:11	0:0	3	-
+water	156:12	0:0	3	1

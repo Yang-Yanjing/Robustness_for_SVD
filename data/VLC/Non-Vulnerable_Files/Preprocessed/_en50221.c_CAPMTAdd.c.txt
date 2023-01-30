@@ -1,0 +1,116 @@
+func	2:0	32:0	0	static void	CAPMTAdd
+params	2:20	0:0	1	
+param	2:22	2:35	2	cam_t *	p_cam
+param	2:37	2:53	2	int	i_session_id
+param	3:22	3:42	2	dvbpsi_pmt_t *	p_pmt
+stmnts	0:0	31:4	1	
+decl	5:4	5:20	2	uint8_t	*p_capmt
+decl	6:4	6:20	2	int	i_capmt_size
+if	7:4	12:4	2	(p_cam -> i_selected_programs >= CAM_PROG_MAX)
+cond	7:8	7:38	3	p_cam -> i_selected_programs >= CAM_PROG_MAX
+water	7:8	0:0	4	p_cam
+op	7:13	0:0	4	->
+water	7:15	0:0	4	i_selected_programs
+op	7:35	0:0	4	>=
+water	7:38	0:0	4	CAM_PROG_MAX
+stmts	8:4	12:4	3	
+water	8:4	0:0	4	{
+call	9:8	10:42	4	msg_Warn
+arg	9:18	9:28	5	p_cam->obj
+water	9:18	0:0	6	p_cam
+op	9:23	0:0	6	->
+water	9:25	0:0	6	obj
+arg	9:30	9:78	5	"Not adding CAPMT for SID %d, too many programs"
+water	9:30	0:0	6	"Not adding CAPMT for SID %d, too many programs"
+arg	10:18	10:42	5	p_pmt->i_program_number
+water	10:18	0:0	6	p_pmt
+op	10:23	0:0	6	->
+water	10:25	0:0	6	i_program_number
+water	10:43	0:0	4	;
+return	11:8	11:14	4	
+water	12:4	0:0	4	}
+water	13:4	0:0	2	p_cam
+op	13:9	0:0	2	->
+water	13:11	0:0	2	i_selected_programs
+op	13:30	0:0	2	++
+water	13:32	0:0	2	;
+if	14:4	18:4	2	(p_cam -> i_selected_programs == 1)
+cond	14:8	14:38	3	p_cam -> i_selected_programs == 1
+water	14:8	0:0	4	p_cam
+op	14:13	0:0	4	->
+water	14:15	0:0	4	i_selected_programs
+op	14:35	0:0	4	==
+water	14:38	0:0	4	1
+stmts	15:4	18:4	3	
+water	15:4	0:0	4	{
+call	16:8	16:47	4	CAPMTFirst
+arg	16:20	16:25	5	p_cam
+water	16:20	0:0	6	p_cam
+arg	16:27	16:39	5	i_session_id
+water	16:27	0:0	6	i_session_id
+arg	16:41	16:47	5	p_pmt
+water	16:41	0:0	6	p_pmt
+water	16:48	0:0	4	;
+return	17:8	17:14	4	
+water	18:4	0:0	4	}
+call	20:4	20:30	2	msleep
+arg	20:12	20:30	3	CAPMT_WAIT*1000
+water	20:12	0:0	4	CAPMT_WAIT
+op	20:23	0:0	4	*
+water	20:25	0:0	4	1000
+water	20:31	0:0	2	;
+call	22:4	23:51	2	msg_Dbg
+arg	22:13	22:23	3	p_cam->obj
+water	22:13	0:0	4	p_cam
+op	22:18	0:0	4	->
+water	22:20	0:0	4	obj
+arg	22:25	22:64	3	"adding CAPMT for SID %d on session %d"
+water	22:25	0:0	4	"adding CAPMT for SID %d on session %d"
+arg	23:13	23:36	3	p_pmt->i_program_number
+water	23:13	0:0	4	p_pmt
+op	23:18	0:0	4	->
+water	23:20	0:0	4	i_program_number
+arg	23:38	23:51	3	i_session_id
+water	23:38	0:0	4	i_session_id
+water	23:52	0:0	2	;
+water	24:4	0:0	2	p_capmt
+op	24:12	0:0	2	=
+call	24:14	26:40	2	CAPMTBuild
+arg	24:26	24:31	3	p_cam
+water	24:26	0:0	4	p_cam
+arg	24:33	24:45	3	i_session_id
+water	24:33	0:0	4	i_session_id
+arg	24:47	24:52	3	p_pmt
+water	24:47	0:0	4	p_pmt
+arg	25:26	25:39	3	0x4
+water	25:26	0:0	4	0
+water	25:27	0:0	4	x4
+arg	25:41	25:66	3	0x1
+water	25:41	0:0	4	0
+water	25:42	0:0	4	x1
+arg	26:26	26:40	3	&i_capmt_size
+op	26:26	0:0	4	&
+water	26:27	0:0	4	i_capmt_size
+water	26:41	0:0	2	;
+if	27:4	31:4	2	(i_capmt_size)
+cond	27:8	27:8	3	i_capmt_size
+water	27:8	0:0	4	i_capmt_size
+stmts	28:4	31:4	3	
+water	28:4	0:0	4	{
+call	29:8	29:73	4	APDUSend
+arg	29:18	29:23	5	p_cam
+water	29:18	0:0	6	p_cam
+arg	29:25	29:37	5	i_session_id
+water	29:25	0:0	6	i_session_id
+arg	29:39	29:49	5	AOT_CA_PMT
+water	29:39	0:0	6	AOT_CA_PMT
+arg	29:51	29:58	5	p_capmt
+water	29:51	0:0	6	p_capmt
+arg	29:60	29:73	5	i_capmt_size
+water	29:60	0:0	6	i_capmt_size
+water	29:74	0:0	4	;
+call	30:8	30:22	4	free
+arg	30:14	30:22	5	p_capmt
+water	30:14	0:0	6	p_capmt
+water	30:23	0:0	4	;
+water	31:4	0:0	4	}

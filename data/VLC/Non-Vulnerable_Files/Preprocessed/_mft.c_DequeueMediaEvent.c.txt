@@ -1,0 +1,92 @@
+func	2:0	22:0	0	static HRESULT	DequeueMediaEvent
+params	2:32	0:0	1	
+param	2:33	2:49	2	decoder_t *	p_dec
+stmnts	0:0	21:15	1	
+decl	4:4	4:39	2	decoder_sys_t	*p_sys
+op	4:25	0:0	2	=
+water	4:27	0:0	2	p_dec
+op	4:32	0:0	2	->
+water	4:34	0:0	2	p_sys
+decl	5:4	5:14	2	HRESULT	hr
+decl	6:4	6:31	2	IMFMediaEvent	*event
+op	6:25	0:0	2	=
+water	6:27	0:0	2	NULL
+water	7:4	0:0	2	hr
+op	7:7	0:0	2	=
+call	7:9	7:94	2	IMFMediaEventGenerator_GetEvent
+arg	7:41	7:63	3	p_sys->event_generator
+water	7:41	0:0	4	p_sys
+op	7:46	0:0	4	->
+water	7:48	0:0	4	event_generator
+arg	7:65	7:86	3	MF_EVENT_FLAG_NO_WAIT
+water	7:65	0:0	4	MF_EVENT_FLAG_NO_WAIT
+arg	7:88	7:94	3	&event
+op	7:88	0:0	4	&
+water	7:89	0:0	4	event
+water	7:95	0:0	2	;
+if	8:4	9:17	2	(FAILED (hr ))
+cond	8:8	8:17	3	FAILED (hr )
+call	8:8	8:17	4	FAILED
+arg	8:15	8:17	5	hr
+water	8:15	0:0	6	hr
+stmts	9:8	9:17	3	
+return	9:8	9:17	4	hr
+water	9:15	0:0	5	hr
+decl	10:4	10:29	2	MediaEventType	event_type
+water	11:4	0:0	2	hr
+op	11:7	0:0	2	=
+call	11:9	11:49	2	IMFMediaEvent_GetType
+arg	11:31	11:36	3	event
+water	11:31	0:0	4	event
+arg	11:38	11:49	3	&event_type
+op	11:38	0:0	4	&
+water	11:39	0:0	4	event_type
+water	11:50	0:0	2	;
+call	12:4	12:31	2	IMFMediaEvent_Release
+arg	12:26	12:31	3	event
+water	12:26	0:0	4	event
+water	12:32	0:0	2	;
+if	13:4	14:17	2	(FAILED (hr ))
+cond	13:8	13:17	3	FAILED (hr )
+call	13:8	13:17	4	FAILED
+arg	13:15	13:17	5	hr
+water	13:15	0:0	6	hr
+stmts	14:8	14:17	3	
+return	14:8	14:17	4	hr
+water	14:15	0:0	5	hr
+if	15:4	16:40	2	(event_type == VLC_METransformNeedInput)
+cond	15:8	15:22	3	event_type == VLC_METransformNeedInput
+water	15:8	0:0	4	event_type
+op	15:19	0:0	4	==
+water	15:22	0:0	4	VLC_METransformNeedInput
+stmts	16:8	16:40	3	
+water	16:8	0:0	4	p_sys
+op	16:13	0:0	4	->
+water	16:15	0:0	4	pending_input_events
+op	16:36	0:0	4	+=
+water	16:39	0:0	4	1
+water	16:40	0:0	4	;
+else	17:4	18:41	2
+stmts	17:9	18:41	3	
+if	17:9	18:41	4	(event_type == VLC_METransformHaveOutput)
+cond	17:13	17:27	5	event_type == VLC_METransformHaveOutput
+water	17:13	0:0	6	event_type
+op	17:24	0:0	6	==
+water	17:27	0:0	6	VLC_METransformHaveOutput
+stmts	18:8	18:41	5	
+water	18:8	0:0	6	p_sys
+op	18:13	0:0	6	->
+water	18:15	0:0	6	pending_output_events
+op	18:37	0:0	6	+=
+water	18:40	0:0	6	1
+water	18:41	0:0	6	;
+else	19:4	20:57	2
+stmts	20:8	20:57	3	
+call	20:8	20:56	4	msg_Err
+arg	20:16	20:21	5	p_dec
+water	20:16	0:0	6	p_dec
+arg	20:23	20:56	5	"Unsupported asynchronous event."
+water	20:23	0:0	6	"Unsupported asynchronous event."
+water	20:57	0:0	4	;
+return	21:4	21:15	2	S_OK
+water	21:11	0:0	3	S_OK

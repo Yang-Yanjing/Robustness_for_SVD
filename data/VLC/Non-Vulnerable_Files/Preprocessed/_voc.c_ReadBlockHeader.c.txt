@@ -1,0 +1,1164 @@
+func	2:0	217:0	0	static int	ReadBlockHeader
+params	2:26	0:0	1	
+param	2:28	2:45	2	demux_t *	p_demux
+stmnts	0:0	216:23	1	
+decl	4:4	4:27	2	es_format_t	new_fmt
+decl	5:4	5:18	2	uint8_t	buf[8]
+decl	6:4	6:24	2	int32_t	i_block_size
+decl	7:4	7:39	2	demux_sys_t	*p_sys
+op	7:23	0:0	2	=
+water	7:25	0:0	2	p_demux
+op	7:32	0:0	2	->
+water	7:34	0:0	2	p_sys
+if	8:4	9:27	2	(stream_Read (p_demux -> s ,buf ,4 ) < 4)
+cond	8:8	8:44	3	stream_Read (p_demux -> s ,buf ,4 ) < 4
+call	8:8	8:40	4	stream_Read
+arg	8:21	8:31	5	p_demux->s
+water	8:21	0:0	6	p_demux
+op	8:28	0:0	6	->
+water	8:30	0:0	6	s
+arg	8:33	8:36	5	buf
+water	8:33	0:0	6	buf
+arg	8:38	8:40	5	4
+water	8:38	0:0	6	4
+op	8:42	0:0	4	<
+water	8:44	0:0	4	4
+stmts	9:8	9:27	3	
+return	9:8	9:27	4	VLC_EGENERIC
+water	9:15	0:0	5	VLC_EGENERIC
+water	10:4	0:0	2	i_block_size
+op	10:17	0:0	2	=
+call	10:19	10:32	2	GetDWLE
+arg	10:28	10:32	3	buf
+water	10:28	0:0	4	buf
+op	10:34	0:0	2	>>
+water	10:37	0:0	2	8
+water	10:38	0:0	2	;
+call	11:4	12:42	2	msg_Dbg
+arg	11:13	11:20	3	p_demux
+water	11:13	0:0	4	p_demux
+arg	11:22	11:53	3	"new block: type: %u, size: %u"
+water	11:22	0:0	4	"new block: type: %u, size: %u"
+arg	12:13	12:27	3	(unsigned)*buf
+water	12:13	0:0	4	(
+water	12:14	0:0	4	unsigned
+water	12:22	0:0	4	)
+op	12:23	0:0	4	*
+water	12:24	0:0	4	buf
+arg	12:29	12:42	3	i_block_size
+water	12:29	0:0	4	i_block_size
+water	12:43	0:0	2	;
+call	13:4	13:42	2	es_format_Init
+arg	13:20	13:28	3	&new_fmt
+op	13:20	0:0	4	&
+water	13:21	0:0	4	new_fmt
+arg	13:30	13:38	3	AUDIO_ES
+water	13:30	0:0	4	AUDIO_ES
+arg	13:40	13:42	3	0
+water	13:40	0:0	4	0
+water	13:43	0:0	2	;
+switch	14:4	188:4	2	(* buf)
+cond	14:12	14:13	3	* buf
+op	14:12	0:0	4	*
+water	14:13	0:0	4	buf
+stmts	15:4	188:4	3	
+water	15:4	0:0	4	{
+label	16:8	16:14	4	case 0 :
+goto	17:12	17:24	4	corrupt
+water	17:17	0:0	5	corrupt
+label	18:8	18:14	4	case 1 :
+if	19:12	20:28	4	(i_block_size < 2)
+cond	19:16	19:31	5	i_block_size < 2
+water	19:16	0:0	6	i_block_size
+op	19:29	0:0	6	<
+water	19:31	0:0	6	2
+stmts	20:16	20:28	5	
+goto	20:16	20:28	6	corrupt
+water	20:21	0:0	7	corrupt
+water	21:12	0:0	4	i_block_size
+op	21:25	0:0	4	-=
+water	21:28	0:0	4	2
+water	21:29	0:0	4	;
+if	22:12	23:28	4	(stream_Read (p_demux -> s ,buf ,2 ) < 2)
+cond	22:16	22:52	5	stream_Read (p_demux -> s ,buf ,2 ) < 2
+call	22:16	22:48	6	stream_Read
+arg	22:29	22:39	7	p_demux->s
+water	22:29	0:0	8	p_demux
+op	22:36	0:0	8	->
+water	22:38	0:0	8	s
+arg	22:41	22:44	7	buf
+water	22:41	0:0	8	buf
+arg	22:46	22:48	7	2
+water	22:46	0:0	8	2
+op	22:50	0:0	6	<
+water	22:52	0:0	6	2
+stmts	23:16	23:28	5	
+goto	23:16	23:28	6	corrupt
+water	23:21	0:0	7	corrupt
+if	24:12	28:12	4	(buf [ 1 ])
+cond	24:16	24:21	5	buf [ 1 ]
+water	24:16	0:0	6	buf
+op	24:19	0:0	6	[
+water	24:20	0:0	6	1
+op	24:21	0:0	6	]
+stmts	25:12	28:12	5	
+water	25:12	0:0	6	{
+call	26:16	26:60	6	msg_Err
+arg	26:25	26:32	7	p_demux
+water	26:25	0:0	8	p_demux
+arg	26:34	26:60	7	"unsupported compression"
+water	26:34	0:0	8	"unsupported compression"
+water	26:61	0:0	6	;
+return	27:16	27:35	6	VLC_EGENERIC
+water	27:23	0:0	7	VLC_EGENERIC
+water	28:12	0:0	6	}
+water	29:12	0:0	4	new_fmt
+op	29:19	0:0	4	.
+water	29:20	0:0	4	i_codec
+op	29:28	0:0	4	=
+water	29:30	0:0	4	VLC_CODEC_U8
+water	29:42	0:0	4	;
+water	30:12	0:0	4	new_fmt
+op	30:19	0:0	4	.
+water	30:20	0:0	4	audio
+op	30:25	0:0	4	.
+water	30:26	0:0	4	i_rate
+op	30:33	0:0	4	=
+call	30:35	30:74	4	fix_voc_sr
+arg	30:47	30:74	5	1000000L/(256L-buf[0])
+water	30:47	0:0	6	1000000
+water	30:54	0:0	6	L
+op	30:56	0:0	6	/
+water	30:58	0:0	6	(
+water	30:59	0:0	6	256
+water	30:62	0:0	6	L
+op	30:64	0:0	6	-
+water	30:66	0:0	6	buf
+op	30:69	0:0	6	[
+water	30:70	0:0	6	0
+op	30:71	0:0	6	]
+water	30:72	0:0	6	)
+water	30:75	0:0	4	;
+water	31:12	0:0	4	new_fmt
+op	31:19	0:0	4	.
+water	31:20	0:0	4	audio
+op	31:25	0:0	4	.
+water	31:26	0:0	4	i_bytes_per_frame
+op	31:44	0:0	4	=
+water	31:46	0:0	4	1
+water	31:47	0:0	4	;
+water	32:12	0:0	4	new_fmt
+op	32:19	0:0	4	.
+water	32:20	0:0	4	audio
+op	32:25	0:0	4	.
+water	32:26	0:0	4	i_frame_length
+op	32:41	0:0	4	=
+water	32:43	0:0	4	1
+water	32:44	0:0	4	;
+water	33:12	0:0	4	new_fmt
+op	33:19	0:0	4	.
+water	33:20	0:0	4	audio
+op	33:25	0:0	4	.
+water	33:26	0:0	4	i_channels
+op	33:37	0:0	4	=
+water	33:39	0:0	4	1
+water	33:40	0:0	4	;
+water	34:12	0:0	4	new_fmt
+op	34:19	0:0	4	.
+water	34:20	0:0	4	audio
+op	34:25	0:0	4	.
+water	34:26	0:0	4	i_blockalign
+op	34:39	0:0	4	=
+water	34:41	0:0	4	1
+water	34:42	0:0	4	;
+water	35:12	0:0	4	new_fmt
+op	35:19	0:0	4	.
+water	35:20	0:0	4	audio
+op	35:25	0:0	4	.
+water	35:26	0:0	4	i_bitspersample
+op	35:42	0:0	4	=
+water	35:44	0:0	4	8
+water	35:45	0:0	4	;
+water	36:12	0:0	4	new_fmt
+op	36:19	0:0	4	.
+water	36:20	0:0	4	i_bitrate
+op	36:30	0:0	4	=
+water	36:32	0:0	4	new_fmt
+op	36:39	0:0	4	.
+water	36:40	0:0	4	audio
+op	36:45	0:0	4	.
+water	36:46	0:0	4	i_rate
+op	36:53	0:0	4	*
+water	36:55	0:0	4	8
+water	36:56	0:0	4	;
+break	37:12	37:17	4	
+label	38:8	38:14	4	case 2 :
+if	39:12	40:28	4	(p_sys -> p_es == NULL)
+cond	39:16	39:31	5	p_sys -> p_es == NULL
+water	39:16	0:0	6	p_sys
+op	39:21	0:0	6	->
+water	39:23	0:0	6	p_es
+op	39:28	0:0	6	==
+water	39:31	0:0	6	NULL
+stmts	40:16	40:28	5	
+goto	40:16	40:28	6	corrupt
+water	40:21	0:0	7	corrupt
+call	41:12	41:61	4	memcpy
+arg	41:20	41:28	5	&new_fmt
+op	41:20	0:0	6	&
+water	41:21	0:0	6	new_fmt
+arg	41:30	41:41	5	&p_sys->fmt
+op	41:30	0:0	6	&
+water	41:31	0:0	6	p_sys
+op	41:36	0:0	6	->
+water	41:38	0:0	6	fmt
+arg	41:43	41:61	5	sizeof(new_fmt)
+op	41:43	0:0	6	sizeof
+water	41:49	0:0	6	(
+water	41:51	0:0	6	new_fmt
+water	41:59	0:0	6	)
+water	41:62	0:0	4	;
+break	42:12	42:17	4	
+label	43:8	43:14	4	case 3 :
+if	44:12	46:28	4	(( i_block_size != 3 ) || (stream_Read (p_demux -> s ,buf ,3 ) < 3 ))
+cond	44:16	45:56	5	( i_block_size != 3 ) || (stream_Read (p_demux -> s ,buf ,3 ) < 3 )
+water	44:16	0:0	6	(
+water	44:18	0:0	6	i_block_size
+op	44:31	0:0	6	!=
+water	44:34	0:0	6	3
+water	44:36	0:0	6	)
+op	45:13	0:0	6	||
+water	45:16	0:0	6	(
+call	45:18	45:50	6	stream_Read
+arg	45:31	45:41	7	p_demux->s
+water	45:31	0:0	8	p_demux
+op	45:38	0:0	8	->
+water	45:40	0:0	8	s
+arg	45:43	45:46	7	buf
+water	45:43	0:0	8	buf
+arg	45:48	45:50	7	3
+water	45:48	0:0	8	3
+op	45:52	0:0	6	<
+water	45:54	0:0	6	3
+water	45:56	0:0	6	)
+stmts	46:16	46:28	5	
+goto	46:16	46:28	6	corrupt
+water	46:21	0:0	7	corrupt
+water	47:12	0:0	4	i_block_size
+op	47:25	0:0	4	=
+water	47:27	0:0	4	0
+water	47:28	0:0	4	;
+water	48:12	0:0	4	p_sys
+op	48:17	0:0	4	->
+water	48:19	0:0	4	i_silence_countdown
+op	48:39	0:0	4	=
+call	48:41	48:53	4	GetWLE
+arg	48:49	48:53	5	buf
+water	48:49	0:0	6	buf
+water	48:54	0:0	4	;
+water	49:12	0:0	4	new_fmt
+op	49:19	0:0	4	.
+water	49:20	0:0	4	i_codec
+op	49:28	0:0	4	=
+water	49:30	0:0	4	VLC_CODEC_U8
+water	49:42	0:0	4	;
+water	50:12	0:0	4	new_fmt
+op	50:19	0:0	4	.
+water	50:20	0:0	4	audio
+op	50:25	0:0	4	.
+water	50:26	0:0	4	i_rate
+op	50:33	0:0	4	=
+call	50:35	50:74	4	fix_voc_sr
+arg	50:47	50:74	5	1000000L/(256L-buf[0])
+water	50:47	0:0	6	1000000
+water	50:54	0:0	6	L
+op	50:56	0:0	6	/
+water	50:58	0:0	6	(
+water	50:59	0:0	6	256
+water	50:62	0:0	6	L
+op	50:64	0:0	6	-
+water	50:66	0:0	6	buf
+op	50:69	0:0	6	[
+water	50:70	0:0	6	0
+op	50:71	0:0	6	]
+water	50:72	0:0	6	)
+water	50:75	0:0	4	;
+water	51:12	0:0	4	new_fmt
+op	51:19	0:0	4	.
+water	51:20	0:0	4	audio
+op	51:25	0:0	4	.
+water	51:26	0:0	4	i_bytes_per_frame
+op	51:44	0:0	4	=
+water	51:46	0:0	4	1
+water	51:47	0:0	4	;
+water	52:12	0:0	4	new_fmt
+op	52:19	0:0	4	.
+water	52:20	0:0	4	audio
+op	52:25	0:0	4	.
+water	52:26	0:0	4	i_frame_length
+op	52:41	0:0	4	=
+water	52:43	0:0	4	1
+water	52:44	0:0	4	;
+water	53:12	0:0	4	new_fmt
+op	53:19	0:0	4	.
+water	53:20	0:0	4	audio
+op	53:25	0:0	4	.
+water	53:26	0:0	4	i_channels
+op	53:37	0:0	4	=
+water	53:39	0:0	4	1
+water	53:40	0:0	4	;
+water	54:12	0:0	4	new_fmt
+op	54:19	0:0	4	.
+water	54:20	0:0	4	audio
+op	54:25	0:0	4	.
+water	54:26	0:0	4	i_blockalign
+op	54:39	0:0	4	=
+water	54:41	0:0	4	1
+water	54:42	0:0	4	;
+water	55:12	0:0	4	new_fmt
+op	55:19	0:0	4	.
+water	55:20	0:0	4	audio
+op	55:25	0:0	4	.
+water	55:26	0:0	4	i_bitspersample
+op	55:42	0:0	4	=
+water	55:44	0:0	4	8
+water	55:45	0:0	4	;
+water	56:12	0:0	4	new_fmt
+op	56:19	0:0	4	.
+water	56:20	0:0	4	i_bitrate
+op	56:30	0:0	4	=
+water	56:32	0:0	4	new_fmt
+op	56:39	0:0	4	.
+water	56:40	0:0	4	audio
+op	56:45	0:0	4	.
+water	56:46	0:0	4	i_rate
+op	56:53	0:0	4	*
+water	56:55	0:0	4	8
+water	56:56	0:0	4	;
+break	57:12	57:17	4	
+label	58:8	58:14	4	case 6 :
+if	59:12	61:28	4	(( i_block_size != 2 ) || (stream_Read (p_demux -> s ,buf ,2 ) < 2 ))
+cond	59:16	60:56	5	( i_block_size != 2 ) || (stream_Read (p_demux -> s ,buf ,2 ) < 2 )
+water	59:16	0:0	6	(
+water	59:18	0:0	6	i_block_size
+op	59:31	0:0	6	!=
+water	59:34	0:0	6	2
+water	59:36	0:0	6	)
+op	60:13	0:0	6	||
+water	60:16	0:0	6	(
+call	60:18	60:50	6	stream_Read
+arg	60:31	60:41	7	p_demux->s
+water	60:31	0:0	8	p_demux
+op	60:38	0:0	8	->
+water	60:40	0:0	8	s
+arg	60:43	60:46	7	buf
+water	60:43	0:0	8	buf
+arg	60:48	60:50	7	2
+water	60:48	0:0	8	2
+op	60:52	0:0	6	<
+water	60:54	0:0	6	2
+water	60:56	0:0	6	)
+stmts	61:16	61:28	5	
+goto	61:16	61:28	6	corrupt
+water	61:21	0:0	7	corrupt
+water	62:12	0:0	4	i_block_size
+op	62:25	0:0	4	=
+water	62:27	0:0	4	0
+water	62:28	0:0	4	;
+water	63:12	0:0	4	p_sys
+op	63:17	0:0	4	->
+water	63:19	0:0	4	i_loop_count
+op	63:32	0:0	4	=
+call	63:34	63:46	4	GetWLE
+arg	63:42	63:46	5	buf
+water	63:42	0:0	6	buf
+water	63:47	0:0	4	;
+water	64:12	0:0	4	p_sys
+op	64:17	0:0	4	->
+water	64:19	0:0	4	i_loop_offset
+op	64:33	0:0	4	=
+call	64:35	64:59	4	stream_Tell
+arg	64:48	64:59	5	p_demux->s
+water	64:48	0:0	6	p_demux
+op	64:55	0:0	6	->
+water	64:57	0:0	6	s
+water	64:60	0:0	4	;
+break	65:12	65:17	4	
+label	66:8	66:14	4	case 7 :
+if	67:12	68:28	4	(i_block_size != 0)
+cond	67:16	67:32	5	i_block_size != 0
+water	67:16	0:0	6	i_block_size
+op	67:29	0:0	6	!=
+water	67:32	0:0	6	0
+stmts	68:16	68:28	5	
+goto	68:16	68:28	6	corrupt
+water	68:21	0:0	7	corrupt
+if	69:12	75:12	4	(p_sys -> i_loop_count > 0)
+cond	69:16	69:38	5	p_sys -> i_loop_count > 0
+water	69:16	0:0	6	p_sys
+op	69:21	0:0	6	->
+water	69:23	0:0	6	i_loop_count
+op	69:36	0:0	6	>
+water	69:38	0:0	6	0
+stmts	70:12	75:12	5	
+water	70:12	0:0	6	{
+if	71:16	72:67	6	(stream_Seek (p_demux -> s ,p_sys -> i_loop_offset ))
+cond	71:20	71:66	7	stream_Seek (p_demux -> s ,p_sys -> i_loop_offset )
+call	71:20	71:66	8	stream_Seek
+arg	71:33	71:43	9	p_demux->s
+water	71:33	0:0	10	p_demux
+op	71:40	0:0	10	->
+water	71:42	0:0	10	s
+arg	71:45	71:66	9	p_sys->i_loop_offset
+water	71:45	0:0	10	p_sys
+op	71:50	0:0	10	->
+water	71:52	0:0	10	i_loop_offset
+stmts	72:20	72:67	7	
+call	72:20	72:66	8	msg_Warn
+arg	72:30	72:37	9	p_demux
+water	72:30	0:0	10	p_demux
+arg	72:39	72:66	9	"cannot loop: seek failed"
+water	72:39	0:0	10	"cannot loop: seek failed"
+water	72:67	0:0	8	;
+else	73:16	74:41	6
+stmts	74:20	74:41	7	
+water	74:20	0:0	8	p_sys
+op	74:25	0:0	8	->
+water	74:27	0:0	8	i_loop_count
+op	74:39	0:0	8	--
+water	74:41	0:0	8	;
+water	75:12	0:0	6	}
+break	76:12	76:17	4	
+label	77:8	77:14	4	case 8 :
+if	85:12	87:28	4	(( i_block_size != 4 ) || (stream_Read (p_demux -> s ,buf ,4 ) < 4 ))
+cond	85:16	86:56	5	( i_block_size != 4 ) || (stream_Read (p_demux -> s ,buf ,4 ) < 4 )
+water	85:16	0:0	6	(
+water	85:18	0:0	6	i_block_size
+op	85:31	0:0	6	!=
+water	85:34	0:0	6	4
+water	85:36	0:0	6	)
+op	86:13	0:0	6	||
+water	86:16	0:0	6	(
+call	86:18	86:50	6	stream_Read
+arg	86:31	86:41	7	p_demux->s
+water	86:31	0:0	8	p_demux
+op	86:38	0:0	8	->
+water	86:40	0:0	8	s
+arg	86:43	86:46	7	buf
+water	86:43	0:0	8	buf
+arg	86:48	86:50	7	4
+water	86:48	0:0	8	4
+op	86:52	0:0	6	<
+water	86:54	0:0	6	4
+water	86:56	0:0	6	)
+stmts	87:16	87:28	5	
+goto	87:16	87:28	6	corrupt
+water	87:21	0:0	7	corrupt
+if	88:12	92:12	4	(buf [ 2 ])
+cond	88:16	88:21	5	buf [ 2 ]
+water	88:16	0:0	6	buf
+op	88:19	0:0	6	[
+water	88:20	0:0	6	2
+op	88:21	0:0	6	]
+stmts	89:12	92:12	5	
+water	89:12	0:0	6	{
+call	90:16	90:60	6	msg_Err
+arg	90:25	90:32	7	p_demux
+water	90:25	0:0	8	p_demux
+arg	90:34	90:60	7	"unsupported compression"
+water	90:34	0:0	8	"unsupported compression"
+water	90:61	0:0	6	;
+return	91:16	91:35	6	VLC_EGENERIC
+water	91:23	0:0	7	VLC_EGENERIC
+water	92:12	0:0	6	}
+water	93:12	0:0	4	new_fmt
+op	93:19	0:0	4	.
+water	93:20	0:0	4	i_codec
+op	93:28	0:0	4	=
+water	93:30	0:0	4	VLC_CODEC_U8
+water	93:42	0:0	4	;
+if	94:12	95:28	4	(buf [ 3 ] >= 32)
+cond	94:16	94:26	5	buf [ 3 ] >= 32
+water	94:16	0:0	6	buf
+op	94:19	0:0	6	[
+water	94:20	0:0	6	3
+op	94:21	0:0	6	]
+op	94:23	0:0	6	>=
+water	94:26	0:0	6	32
+stmts	95:16	95:28	5	
+goto	95:16	95:28	6	corrupt
+water	95:21	0:0	7	corrupt
+water	96:12	0:0	4	new_fmt
+op	96:19	0:0	4	.
+water	96:20	0:0	4	audio
+op	96:25	0:0	4	.
+water	96:26	0:0	4	i_channels
+op	96:37	0:0	4	=
+water	96:39	0:0	4	buf
+op	96:42	0:0	4	[
+water	96:43	0:0	4	3
+op	96:44	0:0	4	]
+op	96:46	0:0	4	+
+water	96:48	0:0	4	1
+water	96:49	0:0	4	;
+water	97:12	0:0	4	new_fmt
+op	97:19	0:0	4	.
+water	97:20	0:0	4	audio
+op	97:25	0:0	4	.
+water	97:26	0:0	4	i_rate
+op	97:33	0:0	4	=
+water	97:35	0:0	4	256000000
+water	97:44	0:0	4	L
+op	97:46	0:0	4	/
+water	98:26	0:0	4	(
+water	98:27	0:0	4	(
+water	98:28	0:0	4	65536
+water	98:33	0:0	4	L
+op	98:35	0:0	4	-
+call	98:37	98:47	4	GetWLE
+arg	98:44	98:47	5	buf
+water	98:44	0:0	6	buf
+water	98:48	0:0	4	)
+op	98:50	0:0	4	*
+water	98:52	0:0	4	new_fmt
+op	98:59	0:0	4	.
+water	98:60	0:0	4	audio
+op	98:65	0:0	4	.
+water	98:66	0:0	4	i_channels
+water	98:76	0:0	4	)
+water	98:77	0:0	4	;
+water	99:12	0:0	4	new_fmt
+op	99:19	0:0	4	.
+water	99:20	0:0	4	audio
+op	99:25	0:0	4	.
+water	99:26	0:0	4	i_bytes_per_frame
+op	99:44	0:0	4	=
+water	99:46	0:0	4	new_fmt
+op	99:53	0:0	4	.
+water	99:54	0:0	4	audio
+op	99:59	0:0	4	.
+water	99:60	0:0	4	i_channels
+water	99:70	0:0	4	;
+water	100:12	0:0	4	new_fmt
+op	100:19	0:0	4	.
+water	100:20	0:0	4	audio
+op	100:25	0:0	4	.
+water	100:26	0:0	4	i_frame_length
+op	100:41	0:0	4	=
+water	100:43	0:0	4	1
+water	100:44	0:0	4	;
+water	101:12	0:0	4	new_fmt
+op	101:19	0:0	4	.
+water	101:20	0:0	4	audio
+op	101:25	0:0	4	.
+water	101:26	0:0	4	i_blockalign
+op	101:39	0:0	4	=
+water	101:41	0:0	4	new_fmt
+op	101:48	0:0	4	.
+water	101:49	0:0	4	audio
+op	101:54	0:0	4	.
+water	101:55	0:0	4	i_bytes_per_frame
+water	101:72	0:0	4	;
+water	102:12	0:0	4	new_fmt
+op	102:19	0:0	4	.
+water	102:20	0:0	4	audio
+op	102:25	0:0	4	.
+water	102:26	0:0	4	i_bitspersample
+op	102:42	0:0	4	=
+water	102:44	0:0	4	8
+op	102:46	0:0	4	*
+water	102:48	0:0	4	new_fmt
+op	102:55	0:0	4	.
+water	102:56	0:0	4	audio
+op	102:61	0:0	4	.
+water	102:62	0:0	4	i_bytes_per_frame
+water	102:79	0:0	4	;
+water	103:12	0:0	4	new_fmt
+op	103:19	0:0	4	.
+water	103:20	0:0	4	i_bitrate
+op	103:30	0:0	4	=
+water	103:32	0:0	4	new_fmt
+op	103:39	0:0	4	.
+water	103:40	0:0	4	audio
+op	103:45	0:0	4	.
+water	103:46	0:0	4	i_rate
+op	103:53	0:0	4	*
+water	103:55	0:0	4	8
+water	103:56	0:0	4	;
+if	105:12	106:35	4	(stream_Read (p_demux -> s ,buf ,4 ) < 4)
+cond	105:16	105:52	5	stream_Read (p_demux -> s ,buf ,4 ) < 4
+call	105:16	105:48	6	stream_Read
+arg	105:29	105:39	7	p_demux->s
+water	105:29	0:0	8	p_demux
+op	105:36	0:0	8	->
+water	105:38	0:0	8	s
+arg	105:41	105:44	7	buf
+water	105:41	0:0	8	buf
+arg	105:46	105:48	7	4
+water	105:46	0:0	8	4
+op	105:50	0:0	6	<
+water	105:52	0:0	6	4
+stmts	106:16	106:35	5	
+return	106:16	106:35	6	VLC_EGENERIC
+water	106:23	0:0	7	VLC_EGENERIC
+water	107:12	0:0	4	i_block_size
+op	107:25	0:0	4	=
+call	107:27	107:40	4	GetDWLE
+arg	107:36	107:40	5	buf
+water	107:36	0:0	6	buf
+op	107:42	0:0	4	>>
+water	107:45	0:0	4	8
+water	107:46	0:0	4	;
+call	108:12	109:49	4	msg_Dbg
+arg	108:21	108:28	5	p_demux
+water	108:21	0:0	6	p_demux
+arg	108:30	108:61	5	"new block: type: %u, size: %u"
+water	108:30	0:0	6	"new block: type: %u, size: %u"
+arg	109:20	109:34	5	(unsigned)*buf
+water	109:20	0:0	6	(
+water	109:21	0:0	6	unsigned
+water	109:29	0:0	6	)
+op	109:30	0:0	6	*
+water	109:31	0:0	6	buf
+arg	109:36	109:49	5	i_block_size
+water	109:36	0:0	6	i_block_size
+water	109:50	0:0	4	;
+if	110:12	111:28	4	(i_block_size < 2)
+cond	110:16	110:31	5	i_block_size < 2
+water	110:16	0:0	6	i_block_size
+op	110:29	0:0	6	<
+water	110:31	0:0	6	2
+stmts	111:16	111:28	5	
+goto	111:16	111:28	6	corrupt
+water	111:21	0:0	7	corrupt
+water	112:12	0:0	4	i_block_size
+op	112:25	0:0	4	-=
+water	112:28	0:0	4	2
+water	112:29	0:0	4	;
+if	113:12	114:28	4	(stream_Read (p_demux -> s ,buf ,2 ) < 2)
+cond	113:16	113:52	5	stream_Read (p_demux -> s ,buf ,2 ) < 2
+call	113:16	113:48	6	stream_Read
+arg	113:29	113:39	7	p_demux->s
+water	113:29	0:0	8	p_demux
+op	113:36	0:0	8	->
+water	113:38	0:0	8	s
+arg	113:41	113:44	7	buf
+water	113:41	0:0	8	buf
+arg	113:46	113:48	7	2
+water	113:46	0:0	8	2
+op	113:50	0:0	6	<
+water	113:52	0:0	6	2
+stmts	114:16	114:28	5	
+goto	114:16	114:28	6	corrupt
+water	114:21	0:0	7	corrupt
+if	115:12	119:12	4	(buf [ 1 ])
+cond	115:16	115:21	5	buf [ 1 ]
+water	115:16	0:0	6	buf
+op	115:19	0:0	6	[
+water	115:20	0:0	6	1
+op	115:21	0:0	6	]
+stmts	116:12	119:12	5	
+water	116:12	0:0	6	{
+call	117:16	117:60	6	msg_Err
+arg	117:25	117:32	7	p_demux
+water	117:25	0:0	8	p_demux
+arg	117:34	117:60	7	"unsupported compression"
+water	117:34	0:0	8	"unsupported compression"
+water	117:61	0:0	6	;
+return	118:16	118:35	6	VLC_EGENERIC
+water	118:23	0:0	7	VLC_EGENERIC
+water	119:12	0:0	6	}
+break	120:12	120:17	4	
+label	121:8	121:14	4	case 9 :
+if	122:12	123:28	4	(i_block_size < 12)
+cond	122:16	122:31	5	i_block_size < 12
+water	122:16	0:0	6	i_block_size
+op	122:29	0:0	6	<
+water	122:31	0:0	6	12
+stmts	123:16	123:28	5	
+goto	123:16	123:28	6	corrupt
+water	123:21	0:0	7	corrupt
+water	124:12	0:0	4	i_block_size
+op	124:25	0:0	4	-=
+water	124:28	0:0	4	12
+water	124:30	0:0	4	;
+if	125:12	127:28	4	((stream_Read (p_demux -> s ,buf ,8 ) < 8 ) || (stream_Read (p_demux -> s ,NULL ,4 ) < 4 ))
+cond	125:16	126:57	5	(stream_Read (p_demux -> s ,buf ,8 ) < 8 ) || (stream_Read (p_demux -> s ,NULL ,4 ) < 4 )
+water	125:16	0:0	6	(
+call	125:18	125:50	6	stream_Read
+arg	125:31	125:41	7	p_demux->s
+water	125:31	0:0	8	p_demux
+op	125:38	0:0	8	->
+water	125:40	0:0	8	s
+arg	125:43	125:46	7	buf
+water	125:43	0:0	8	buf
+arg	125:48	125:50	7	8
+water	125:48	0:0	8	8
+op	125:52	0:0	6	<
+water	125:54	0:0	6	8
+water	125:56	0:0	6	)
+op	126:13	0:0	6	||
+water	126:16	0:0	6	(
+call	126:18	126:51	6	stream_Read
+arg	126:31	126:41	7	p_demux->s
+water	126:31	0:0	8	p_demux
+op	126:38	0:0	8	->
+water	126:40	0:0	8	s
+arg	126:43	126:47	7	NULL
+water	126:43	0:0	8	NULL
+arg	126:49	126:51	7	4
+water	126:49	0:0	8	4
+op	126:53	0:0	6	<
+water	126:55	0:0	6	4
+water	126:57	0:0	6	)
+stmts	127:16	127:28	5	
+goto	127:16	127:28	6	corrupt
+water	127:21	0:0	7	corrupt
+water	128:12	0:0	4	new_fmt
+op	128:19	0:0	4	.
+water	128:20	0:0	4	audio
+op	128:25	0:0	4	.
+water	128:26	0:0	4	i_rate
+op	128:33	0:0	4	=
+call	128:35	128:48	4	GetDWLE
+arg	128:44	128:48	5	buf
+water	128:44	0:0	6	buf
+water	128:49	0:0	4	;
+water	129:12	0:0	4	new_fmt
+op	129:19	0:0	4	.
+water	129:20	0:0	4	audio
+op	129:25	0:0	4	.
+water	129:26	0:0	4	i_bitspersample
+op	129:42	0:0	4	=
+water	129:44	0:0	4	buf
+op	129:47	0:0	4	[
+water	129:48	0:0	4	4
+op	129:49	0:0	4	]
+water	129:50	0:0	4	;
+water	130:12	0:0	4	new_fmt
+op	130:19	0:0	4	.
+water	130:20	0:0	4	audio
+op	130:25	0:0	4	.
+water	130:26	0:0	4	i_channels
+op	130:37	0:0	4	=
+water	130:39	0:0	4	buf
+op	130:42	0:0	4	[
+water	130:43	0:0	4	5
+op	130:44	0:0	4	]
+water	130:45	0:0	4	;
+switch	131:12	166:12	4	(GetWLE (& buf [ 6 ] ))
+cond	131:20	131:36	5	GetWLE (& buf [ 6 ] )
+call	131:20	131:36	6	GetWLE
+arg	131:28	131:36	7	&buf[6]
+op	131:28	0:0	8	&
+water	131:29	0:0	8	buf
+op	131:32	0:0	8	[
+water	131:33	0:0	8	6
+op	131:34	0:0	8	]
+stmts	132:12	166:12	5	
+water	132:12	0:0	6	{
+label	133:16	133:27	6	case 0 x0000 :
+switch	134:20	146:20	6	(new_fmt . audio . i_bitspersample)
+cond	134:28	134:42	7	new_fmt . audio . i_bitspersample
+water	134:28	0:0	8	new_fmt
+op	134:35	0:0	8	.
+water	134:36	0:0	8	audio
+op	134:41	0:0	8	.
+water	134:42	0:0	8	i_bitspersample
+stmts	135:20	146:20	7	
+water	135:20	0:0	8	{
+label	136:24	136:30	8	case 8 :
+water	137:28	0:0	8	new_fmt
+op	137:35	0:0	8	.
+water	137:36	0:0	8	i_codec
+op	137:44	0:0	8	=
+water	137:46	0:0	8	VLC_CODEC_U8
+water	137:58	0:0	8	;
+break	138:28	138:33	8	
+label	139:24	139:31	8	case 16 :
+water	140:28	0:0	8	new_fmt
+op	140:35	0:0	8	.
+water	140:36	0:0	8	i_codec
+op	140:44	0:0	8	=
+water	140:46	0:0	8	VLC_CODEC_U16L
+water	140:60	0:0	8	;
+break	141:28	141:33	8	
+label	142:24	142:31	8	default :
+call	143:28	144:67	8	msg_Err
+arg	143:37	143:44	9	p_demux
+water	143:37	0:0	10	p_demux
+arg	143:46	143:77	9	"unsupported bit res.: %u bits"
+water	143:46	0:0	10	"unsupported bit res.: %u bits"
+arg	144:37	144:67	9	new_fmt.audio.i_bitspersample
+water	144:37	0:0	10	new_fmt
+op	144:44	0:0	10	.
+water	144:45	0:0	10	audio
+op	144:50	0:0	10	.
+water	144:51	0:0	10	i_bitspersample
+water	144:68	0:0	8	;
+return	145:28	145:47	8	VLC_EGENERIC
+water	145:35	0:0	9	VLC_EGENERIC
+water	146:20	0:0	8	}
+break	147:20	147:25	6	
+label	148:16	148:27	6	case 0 x0004 :
+switch	149:20	161:20	6	(new_fmt . audio . i_bitspersample)
+cond	149:28	149:42	7	new_fmt . audio . i_bitspersample
+water	149:28	0:0	8	new_fmt
+op	149:35	0:0	8	.
+water	149:36	0:0	8	audio
+op	149:41	0:0	8	.
+water	149:42	0:0	8	i_bitspersample
+stmts	150:20	161:20	7	
+water	150:20	0:0	8	{
+label	151:24	151:30	8	case 8 :
+water	152:28	0:0	8	new_fmt
+op	152:35	0:0	8	.
+water	152:36	0:0	8	i_codec
+op	152:44	0:0	8	=
+water	152:46	0:0	8	VLC_CODEC_S8
+water	152:58	0:0	8	;
+break	153:28	153:33	8	
+label	154:24	154:31	8	case 16 :
+water	155:28	0:0	8	new_fmt
+op	155:35	0:0	8	.
+water	155:36	0:0	8	i_codec
+op	155:44	0:0	8	=
+water	155:46	0:0	8	VLC_CODEC_S16L
+water	155:60	0:0	8	;
+break	156:28	156:33	8	
+label	157:24	157:31	8	default :
+call	158:28	159:67	8	msg_Err
+arg	158:37	158:44	9	p_demux
+water	158:37	0:0	10	p_demux
+arg	158:46	158:77	9	"unsupported bit res.: %u bits"
+water	158:46	0:0	10	"unsupported bit res.: %u bits"
+arg	159:37	159:67	9	new_fmt.audio.i_bitspersample
+water	159:37	0:0	10	new_fmt
+op	159:44	0:0	10	.
+water	159:45	0:0	10	audio
+op	159:50	0:0	10	.
+water	159:51	0:0	10	i_bitspersample
+water	159:68	0:0	8	;
+return	160:28	160:47	8	VLC_EGENERIC
+water	160:35	0:0	9	VLC_EGENERIC
+water	161:20	0:0	8	}
+break	162:20	162:25	6	
+label	163:16	163:23	6	default :
+call	164:20	164:64	6	msg_Err
+arg	164:29	164:36	7	p_demux
+water	164:29	0:0	8	p_demux
+arg	164:38	164:64	7	"unsupported compression"
+water	164:38	0:0	8	"unsupported compression"
+water	164:65	0:0	6	;
+return	165:20	165:39	6	VLC_EGENERIC
+water	165:27	0:0	7	VLC_EGENERIC
+water	166:12	0:0	6	}
+if	167:12	171:12	4	(new_fmt . audio . i_channels == 0)
+cond	167:16	167:44	5	new_fmt . audio . i_channels == 0
+water	167:16	0:0	6	new_fmt
+op	167:23	0:0	6	.
+water	167:24	0:0	6	audio
+op	167:29	0:0	6	.
+water	167:30	0:0	6	i_channels
+op	167:41	0:0	6	==
+water	167:44	0:0	6	0
+stmts	168:12	171:12	5	
+water	168:12	0:0	6	{
+call	169:16	169:56	6	msg_Err
+arg	169:25	169:32	7	p_demux
+water	169:25	0:0	8	p_demux
+arg	169:34	169:56	7	"0 channels detected"
+water	169:34	0:0	8	"0 channels detected"
+water	169:57	0:0	6	;
+return	170:16	170:35	6	VLC_EGENERIC
+water	170:23	0:0	7	VLC_EGENERIC
+water	171:12	0:0	6	}
+water	172:12	0:0	4	new_fmt
+op	172:19	0:0	4	.
+water	172:20	0:0	4	audio
+op	172:25	0:0	4	.
+water	172:26	0:0	4	i_bytes_per_frame
+op	172:44	0:0	4	=
+water	172:46	0:0	4	new_fmt
+op	172:53	0:0	4	.
+water	172:54	0:0	4	audio
+op	172:59	0:0	4	.
+water	172:60	0:0	4	i_channels
+op	173:16	0:0	4	*
+water	173:18	0:0	4	(
+water	173:19	0:0	4	new_fmt
+op	173:26	0:0	4	.
+water	173:27	0:0	4	audio
+op	173:32	0:0	4	.
+water	173:33	0:0	4	i_bitspersample
+op	173:49	0:0	4	/
+water	173:51	0:0	4	8
+water	173:52	0:0	4	)
+water	173:53	0:0	4	;
+water	174:12	0:0	4	new_fmt
+op	174:19	0:0	4	.
+water	174:20	0:0	4	audio
+op	174:25	0:0	4	.
+water	174:26	0:0	4	i_frame_length
+op	174:41	0:0	4	=
+water	174:43	0:0	4	1
+water	174:44	0:0	4	;
+water	175:12	0:0	4	new_fmt
+op	175:19	0:0	4	.
+water	175:20	0:0	4	audio
+op	175:25	0:0	4	.
+water	175:26	0:0	4	i_blockalign
+op	175:39	0:0	4	=
+water	175:41	0:0	4	new_fmt
+op	175:48	0:0	4	.
+water	175:49	0:0	4	audio
+op	175:54	0:0	4	.
+water	175:55	0:0	4	i_bytes_per_frame
+water	175:72	0:0	4	;
+water	176:12	0:0	4	new_fmt
+op	176:19	0:0	4	.
+water	176:20	0:0	4	i_bitrate
+op	176:30	0:0	4	=
+water	176:32	0:0	4	8
+op	176:34	0:0	4	*
+water	176:36	0:0	4	new_fmt
+op	176:43	0:0	4	.
+water	176:44	0:0	4	audio
+op	176:49	0:0	4	.
+water	176:50	0:0	4	i_rate
+op	177:37	0:0	4	*
+water	177:39	0:0	4	new_fmt
+op	177:46	0:0	4	.
+water	177:47	0:0	4	audio
+op	177:52	0:0	4	.
+water	177:53	0:0	4	i_bytes_per_frame
+water	177:70	0:0	4	;
+break	178:12	178:17	4	
+label	179:8	179:15	4	default :
+call	180:12	181:35	4	msg_Dbg
+arg	180:21	180:28	5	p_demux
+water	180:21	0:0	6	p_demux
+arg	180:30	180:70	5	"unknown block type %u - skipping block"
+water	180:30	0:0	6	"unknown block type %u - skipping block"
+arg	181:21	181:35	5	(unsigned)*buf
+water	181:21	0:0	6	(
+water	181:22	0:0	6	unsigned
+water	181:30	0:0	6	)
+op	181:31	0:0	6	*
+water	181:32	0:0	6	buf
+water	181:36	0:0	4	;
+label	182:8	182:14	4	case 4 :
+label	183:8	183:14	4	case 5 :
+if	184:12	185:28	4	(stream_Read (p_demux -> s ,NULL ,i_block_size ) < i_block_size)
+cond	184:16	184:64	5	stream_Read (p_demux -> s ,NULL ,i_block_size ) < i_block_size
+call	184:16	184:60	6	stream_Read
+arg	184:29	184:39	7	p_demux->s
+water	184:29	0:0	8	p_demux
+op	184:36	0:0	8	->
+water	184:38	0:0	8	s
+arg	184:41	184:45	7	NULL
+water	184:41	0:0	8	NULL
+arg	184:47	184:60	7	i_block_size
+water	184:47	0:0	8	i_block_size
+op	184:62	0:0	6	<
+water	184:64	0:0	6	i_block_size
+stmts	185:16	185:28	5	
+goto	185:16	185:28	6	corrupt
+water	185:21	0:0	7	corrupt
+water	186:12	0:0	4	i_block_size
+op	186:25	0:0	4	=
+water	186:27	0:0	4	0
+water	186:28	0:0	4	;
+break	187:12	187:17	4	
+water	188:4	0:0	4	}
+water	189:4	0:0	2	p_sys
+op	189:9	0:0	2	->
+water	189:11	0:0	2	i_block_start
+op	189:25	0:0	2	=
+call	189:27	189:51	2	stream_Tell
+arg	189:40	189:51	3	p_demux->s
+water	189:40	0:0	4	p_demux
+op	189:47	0:0	4	->
+water	189:49	0:0	4	s
+water	189:52	0:0	2	;
+water	190:4	0:0	2	p_sys
+op	190:9	0:0	2	->
+water	190:11	0:0	2	i_block_end
+op	190:23	0:0	2	=
+water	190:25	0:0	2	p_sys
+op	190:30	0:0	2	->
+water	190:32	0:0	2	i_block_start
+op	190:46	0:0	2	+
+water	190:48	0:0	2	i_block_size
+water	190:60	0:0	2	;
+if	191:4	212:4	2	(i_block_size || p_sys -> i_silence_countdown)
+cond	191:8	191:31	3	i_block_size || p_sys -> i_silence_countdown
+water	191:8	0:0	4	i_block_size
+op	191:21	0:0	4	||
+water	191:24	0:0	4	p_sys
+op	191:29	0:0	4	->
+water	191:31	0:0	4	i_silence_countdown
+stmts	192:4	212:4	3	
+water	192:4	0:0	4	{
+call	194:8	199:47	4	msg_Dbg
+arg	194:17	194:24	5	p_demux
+water	194:17	0:0	6	p_demux
+arg	194:26	196:35	5	"fourcc: %4.4s, channels: %d, ""freq: %d Hz, bitrate: %dKo/s, blockalign: %d, ""bits/samples: %d"
+water	194:26	0:0	6	"fourcc: %4.4s, channels: %d, "
+water	195:17	0:0	6	"freq: %d Hz, bitrate: %dKo/s, blockalign: %d, "
+water	196:17	0:0	6	"bits/samples: %d"
+arg	196:37	196:61	5	(char*)&new_fmt.i_codec
+water	196:37	0:0	6	(
+water	196:38	0:0	6	char
+op	196:43	0:0	6	*
+water	196:44	0:0	6	)
+op	196:45	0:0	6	&
+water	196:46	0:0	6	new_fmt
+op	196:53	0:0	6	.
+water	196:54	0:0	6	i_codec
+arg	197:17	197:41	5	new_fmt.audio.i_channels
+water	197:17	0:0	6	new_fmt
+op	197:24	0:0	6	.
+water	197:25	0:0	6	audio
+op	197:30	0:0	6	.
+water	197:31	0:0	6	i_channels
+arg	197:43	197:63	5	new_fmt.audio.i_rate
+water	197:43	0:0	6	new_fmt
+op	197:50	0:0	6	.
+water	197:51	0:0	6	audio
+op	197:56	0:0	6	.
+water	197:57	0:0	6	i_rate
+arg	198:17	198:41	5	new_fmt.i_bitrate/8192
+water	198:17	0:0	6	new_fmt
+op	198:24	0:0	6	.
+water	198:25	0:0	6	i_bitrate
+op	198:35	0:0	6	/
+water	198:37	0:0	6	8192
+arg	198:43	198:69	5	new_fmt.audio.i_blockalign
+water	198:43	0:0	6	new_fmt
+op	198:50	0:0	6	.
+water	198:51	0:0	6	audio
+op	198:56	0:0	6	.
+water	198:57	0:0	6	i_blockalign
+arg	199:17	199:47	5	new_fmt.audio.i_bitspersample
+water	199:17	0:0	6	new_fmt
+op	199:24	0:0	6	.
+water	199:25	0:0	6	audio
+op	199:30	0:0	6	.
+water	199:31	0:0	6	i_bitspersample
+water	199:48	0:0	4	;
+if	200:8	205:8	4	(( p_sys -> p_es != NULL ) &&fmtcmp (& p_sys -> fmt ,& new_fmt ))
+cond	200:12	200:69	5	( p_sys -> p_es != NULL ) &&fmtcmp (& p_sys -> fmt ,& new_fmt )
+water	200:12	0:0	6	(
+water	200:14	0:0	6	p_sys
+op	200:19	0:0	6	->
+water	200:21	0:0	6	p_es
+op	200:26	0:0	6	!=
+water	200:29	0:0	6	NULL
+water	200:34	0:0	6	)
+op	200:36	0:0	6	&&
+call	200:39	200:69	6	fmtcmp
+arg	200:47	200:58	7	&p_sys->fmt
+op	200:47	0:0	8	&
+water	200:48	0:0	8	p_sys
+op	200:53	0:0	8	->
+water	200:55	0:0	8	fmt
+arg	200:60	200:69	7	&new_fmt
+op	200:60	0:0	8	&
+water	200:61	0:0	8	new_fmt
+stmts	201:8	205:8	5	
+water	201:8	0:0	6	{
+call	202:12	202:52	6	msg_Dbg
+arg	202:21	202:28	7	p_demux
+water	202:21	0:0	8	p_demux
+arg	202:30	202:52	7	"codec change needed"
+water	202:30	0:0	8	"codec change needed"
+water	202:53	0:0	6	;
+call	203:12	203:50	6	es_out_Del
+arg	203:24	203:36	7	p_demux->out
+water	203:24	0:0	8	p_demux
+op	203:31	0:0	8	->
+water	203:33	0:0	8	out
+arg	203:38	203:50	7	p_sys->p_es
+water	203:38	0:0	8	p_sys
+op	203:43	0:0	8	->
+water	203:45	0:0	8	p_es
+water	203:51	0:0	6	;
+water	204:12	0:0	6	p_sys
+op	204:17	0:0	6	->
+water	204:19	0:0	6	p_es
+op	204:24	0:0	6	=
+water	204:26	0:0	6	NULL
+water	204:30	0:0	6	;
+water	205:8	0:0	6	}
+if	206:8	211:8	4	(p_sys -> p_es == NULL)
+cond	206:12	206:27	5	p_sys -> p_es == NULL
+water	206:12	0:0	6	p_sys
+op	206:17	0:0	6	->
+water	206:19	0:0	6	p_es
+op	206:24	0:0	6	==
+water	206:27	0:0	6	NULL
+stmts	207:8	211:8	5	
+water	207:8	0:0	6	{
+call	208:12	208:64	6	memcpy
+arg	208:20	208:31	7	&p_sys->fmt
+op	208:20	0:0	8	&
+water	208:21	0:0	8	p_sys
+op	208:26	0:0	8	->
+water	208:28	0:0	8	fmt
+arg	208:33	208:41	7	&new_fmt
+op	208:33	0:0	8	&
+water	208:34	0:0	8	new_fmt
+arg	208:43	208:64	7	sizeof(p_sys->fmt)
+op	208:43	0:0	8	sizeof
+water	208:49	0:0	8	(
+water	208:51	0:0	8	p_sys
+op	208:56	0:0	8	->
+water	208:58	0:0	8	fmt
+water	208:62	0:0	8	)
+water	208:65	0:0	6	;
+call	209:12	209:65	6	date_Change
+arg	209:25	209:36	7	&p_sys->pts
+op	209:25	0:0	8	&
+water	209:26	0:0	8	p_sys
+op	209:31	0:0	8	->
+water	209:33	0:0	8	pts
+arg	209:38	209:61	7	p_sys->fmt.audio.i_rate
+water	209:38	0:0	8	p_sys
+op	209:43	0:0	8	->
+water	209:45	0:0	8	fmt
+op	209:48	0:0	8	.
+water	209:49	0:0	8	audio
+op	209:54	0:0	8	.
+water	209:55	0:0	8	i_rate
+arg	209:63	209:65	7	1
+water	209:63	0:0	8	1
+water	209:66	0:0	6	;
+water	210:12	0:0	6	p_sys
+op	210:17	0:0	6	->
+water	210:19	0:0	6	p_es
+op	210:24	0:0	6	=
+call	210:26	210:64	6	es_out_Add
+arg	210:38	210:50	7	p_demux->out
+water	210:38	0:0	8	p_demux
+op	210:45	0:0	8	->
+water	210:47	0:0	8	out
+arg	210:52	210:64	7	&p_sys->fmt
+op	210:52	0:0	8	&
+water	210:53	0:0	8	p_sys
+op	210:58	0:0	8	->
+water	210:60	0:0	8	fmt
+water	210:65	0:0	6	;
+water	211:8	0:0	6	}
+water	212:4	0:0	4	}
+return	213:4	213:22	2	VLC_SUCCESS
+water	213:11	0:0	3	VLC_SUCCESS
+label	214:0	214:7	2	corrupt :
+call	215:4	215:55	2	msg_Err
+arg	215:13	215:20	3	p_demux
+water	215:13	0:0	4	p_demux
+arg	215:22	215:55	3	"corrupted file - halting demux"
+water	215:22	0:0	4	"corrupted file - halting demux"
+water	215:56	0:0	2	;
+return	216:4	216:23	2	VLC_EGENERIC
+water	216:11	0:0	3	VLC_EGENERIC

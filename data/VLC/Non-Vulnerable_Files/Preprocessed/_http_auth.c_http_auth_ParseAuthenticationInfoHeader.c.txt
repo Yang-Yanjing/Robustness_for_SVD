@@ -1,0 +1,244 @@
+func	2:0	71:0	0	int	http_auth_ParseAuthenticationInfoHeader
+params	2:43	0:0	1	
+param	3:8	3:28	2	vlc_object_t *	p_this
+param	3:30	3:49	2	http_auth_t *	p_auth
+param	4:8	4:30	2	const char *	psz_header
+param	4:32	4:54	2	const char *	psz_method
+param	4:56	4:76	2	const char *	psz_path
+param	5:8	5:32	2	const char *	psz_username
+param	5:34	5:59	2	const char *	psz_password
+stmnts	0:0	70:16	1	
+decl	7:4	7:65	2	char	*psz_nextnonce
+op	7:24	0:0	2	=
+call	7:26	7:64	3	AuthGetParam
+arg	7:40	7:50	4	psz_header
+water	7:40	0:0	5	psz_header
+arg	7:52	7:64	4	"nextnonce"
+water	7:52	0:0	5	"nextnonce"
+decl	8:4	8:61	2	char	*psz_qop
+op	8:18	0:0	2	=
+call	8:20	8:60	3	AuthGetParamNoQuotes
+arg	8:42	8:52	4	psz_header
+water	8:42	0:0	5	psz_header
+arg	8:54	8:60	4	"qop"
+water	8:54	0:0	5	"qop"
+decl	9:4	9:61	2	char	*psz_rspauth
+op	9:22	0:0	2	=
+call	9:24	9:60	3	AuthGetParam
+arg	9:38	9:48	4	psz_header
+water	9:38	0:0	5	psz_header
+arg	9:50	9:60	4	"rspauth"
+water	9:50	0:0	5	"rspauth"
+decl	10:4	10:59	2	char	*psz_cnonce
+op	10:21	0:0	2	=
+call	10:23	10:58	3	AuthGetParam
+arg	10:37	10:47	4	psz_header
+water	10:37	0:0	5	psz_header
+arg	10:49	10:58	4	"cnonce"
+water	10:49	0:0	5	"cnonce"
+decl	11:4	11:59	2	char	*psz_nc
+op	11:17	0:0	2	=
+call	11:19	11:58	3	AuthGetParamNoQuotes
+arg	11:41	11:51	4	psz_header
+water	11:41	0:0	5	psz_header
+arg	11:53	11:58	4	"nc"
+water	11:53	0:0	5	"nc"
+decl	12:4	12:27	2	char	*psz_digest
+op	12:21	0:0	2	=
+water	12:23	0:0	2	NULL
+decl	13:4	13:27	2	int	i_err
+op	13:14	0:0	2	=
+water	13:16	0:0	2	VLC_SUCCESS
+decl	14:4	14:15	2	int	i_nonce
+if	15:4	56:4	2	(psz_cnonce)
+cond	15:9	15:9	3	psz_cnonce
+water	15:9	0:0	4	psz_cnonce
+stmts	16:4	56:4	3	
+water	16:4	0:0	4	{
+if	17:8	23:8	4	(strcmp (psz_cnonce ,p_auth -> psz_cnonce ) != 0)
+cond	17:13	17:57	5	strcmp (psz_cnonce ,p_auth -> psz_cnonce ) != 0
+call	17:13	17:52	6	strcmp
+arg	17:21	17:31	7	psz_cnonce
+water	17:21	0:0	8	psz_cnonce
+arg	17:33	17:52	7	p_auth->psz_cnonce
+water	17:33	0:0	8	p_auth
+op	17:39	0:0	8	->
+water	17:41	0:0	8	psz_cnonce
+op	17:54	0:0	6	!=
+water	17:57	0:0	6	0
+stmts	18:8	23:8	5	
+water	18:8	0:0	6	{
+call	19:12	20:76	6	msg_Err
+arg	19:21	19:27	7	p_this
+water	19:21	0:0	8	p_this
+arg	19:29	20:76	7	"HTTP Digest Access Authentication: server ""replied with a different client nonce value."
+water	19:29	0:0	8	"HTTP Digest Access Authentication: server "
+water	20:29	0:0	8	"replied with a different client nonce value."
+water	20:77	0:0	6	;
+water	21:12	0:0	6	i_err
+op	21:18	0:0	6	=
+water	21:20	0:0	6	VLC_EGENERIC
+water	21:32	0:0	6	;
+goto	22:12	22:22	6	error
+water	22:17	0:0	7	error
+water	23:8	0:0	6	}
+if	24:8	35:8	4	(psz_nc)
+cond	24:13	24:13	5	psz_nc
+water	24:13	0:0	6	psz_nc
+stmts	25:8	35:8	5	
+water	25:8	0:0	6	{
+water	26:12	0:0	6	i_nonce
+op	26:20	0:0	6	=
+call	26:22	26:47	6	strtol
+arg	26:30	26:36	7	psz_nc
+water	26:30	0:0	8	psz_nc
+arg	26:38	26:42	7	NULL
+water	26:38	0:0	8	NULL
+arg	26:44	26:47	7	16
+water	26:44	0:0	8	16
+water	26:48	0:0	6	;
+if	27:12	34:12	6	(i_nonce != p_auth -> i_nonce)
+cond	27:17	27:36	7	i_nonce != p_auth -> i_nonce
+water	27:17	0:0	8	i_nonce
+op	27:25	0:0	8	!=
+water	27:28	0:0	8	p_auth
+op	27:34	0:0	8	->
+water	27:36	0:0	8	i_nonce
+stmts	28:12	34:12	7	
+water	28:12	0:0	8	{
+call	29:16	31:42	8	msg_Err
+arg	29:25	29:31	9	p_this
+water	29:25	0:0	10	p_this
+arg	29:33	31:42	9	"HTTP Digest Access Authentication: server ""replied with a different nonce count ""value."
+water	29:33	0:0	10	"HTTP Digest Access Authentication: server "
+water	30:33	0:0	10	"replied with a different nonce count "
+water	31:33	0:0	10	"value."
+water	31:43	0:0	8	;
+water	32:16	0:0	8	i_err
+op	32:22	0:0	8	=
+water	32:24	0:0	8	VLC_EGENERIC
+water	32:36	0:0	8	;
+goto	33:16	33:26	8	error
+water	33:21	0:0	9	error
+water	34:12	0:0	8	}
+water	35:8	0:0	6	}
+if	36:8	40:52	4	(psz_qop && p_auth -> psz_qop &&strcmp (psz_qop ,p_auth -> psz_qop ) != 0)
+cond	36:13	37:51	5	psz_qop && p_auth -> psz_qop &&strcmp (psz_qop ,p_auth -> psz_qop ) != 0
+water	36:13	0:0	6	psz_qop
+op	36:21	0:0	6	&&
+water	36:24	0:0	6	p_auth
+op	36:30	0:0	6	->
+water	36:32	0:0	6	psz_qop
+op	36:40	0:0	6	&&
+call	37:13	37:46	6	strcmp
+arg	37:21	37:28	7	psz_qop
+water	37:21	0:0	8	psz_qop
+arg	37:30	37:46	7	p_auth->psz_qop
+water	37:30	0:0	8	p_auth
+op	37:36	0:0	8	->
+water	37:38	0:0	8	psz_qop
+op	37:48	0:0	6	!=
+water	37:51	0:0	6	0
+stmts	38:12	40:52	5	
+call	38:12	40:51	6	msg_Warn
+arg	38:22	38:28	7	p_this
+water	38:22	0:0	8	p_this
+arg	38:30	40:51	7	"HTTP Digest Access Authentication: server ""replied using a different 'quality of ""protection' option"
+water	38:30	0:0	8	"HTTP Digest Access Authentication: server "
+water	39:30	0:0	8	"replied using a different 'quality of "
+water	40:30	0:0	8	"protection' option"
+water	40:52	0:0	6	;
+water	46:8	0:0	4	psz_digest
+op	46:19	0:0	4	=
+call	46:21	47:60	4	AuthDigest
+arg	46:33	46:39	5	p_this
+water	46:33	0:0	6	p_this
+arg	46:41	46:47	5	p_auth
+water	46:41	0:0	6	p_auth
+arg	46:49	46:59	5	psz_method
+water	46:49	0:0	6	psz_method
+arg	46:61	46:69	5	psz_path
+water	46:61	0:0	6	psz_path
+arg	47:33	47:45	5	psz_username
+water	47:33	0:0	6	psz_username
+arg	47:47	47:60	5	psz_password
+water	47:47	0:0	6	psz_password
+water	47:61	0:0	4	;
+if	48:8	55:8	4	(strcmp (psz_digest ,psz_rspauth ) != 0)
+cond	48:13	48:50	5	strcmp (psz_digest ,psz_rspauth ) != 0
+call	48:13	48:45	6	strcmp
+arg	48:21	48:31	7	psz_digest
+water	48:21	0:0	8	psz_digest
+arg	48:33	48:45	7	psz_rspauth
+water	48:33	0:0	8	psz_rspauth
+op	48:47	0:0	6	!=
+water	48:50	0:0	6	0
+stmts	49:8	55:8	5	
+water	49:8	0:0	6	{
+call	50:12	52:65	6	msg_Err
+arg	50:21	50:27	7	p_this
+water	50:21	0:0	8	p_this
+arg	50:29	52:52	7	"HTTP Digest Access Authentication: server ""replied with an invalid response digest ""(expected value: %s)."
+water	50:29	0:0	8	"HTTP Digest Access Authentication: server "
+water	51:29	0:0	8	"replied with an invalid response digest "
+water	52:29	0:0	8	"(expected value: %s)."
+arg	52:54	52:65	7	psz_digest
+water	52:54	0:0	8	psz_digest
+water	52:66	0:0	6	;
+water	53:12	0:0	6	i_err
+op	53:18	0:0	6	=
+water	53:20	0:0	6	VLC_EGENERIC
+water	53:32	0:0	6	;
+goto	54:12	54:22	6	error
+water	54:17	0:0	7	error
+water	55:8	0:0	6	}
+water	56:4	0:0	4	}
+if	57:4	62:4	2	(psz_nextnonce)
+cond	57:9	57:9	3	psz_nextnonce
+water	57:9	0:0	4	psz_nextnonce
+stmts	58:4	62:4	3	
+water	58:4	0:0	4	{
+call	59:8	59:32	4	free
+arg	59:14	59:32	5	p_auth->psz_nonce
+water	59:14	0:0	6	p_auth
+op	59:20	0:0	6	->
+water	59:22	0:0	6	psz_nonce
+water	59:33	0:0	4	;
+water	60:8	0:0	4	p_auth
+op	60:14	0:0	4	->
+water	60:16	0:0	4	psz_nonce
+op	60:26	0:0	4	=
+water	60:28	0:0	4	psz_nextnonce
+water	60:41	0:0	4	;
+water	61:8	0:0	4	psz_nextnonce
+op	61:22	0:0	4	=
+water	61:24	0:0	4	NULL
+water	61:28	0:0	4	;
+water	62:4	0:0	4	}
+label	63:0	63:5	2	error :
+call	64:4	64:24	2	free
+arg	64:10	64:24	3	psz_nextnonce
+water	64:10	0:0	4	psz_nextnonce
+water	64:25	0:0	2	;
+call	65:4	65:18	2	free
+arg	65:10	65:18	3	psz_qop
+water	65:10	0:0	4	psz_qop
+water	65:19	0:0	2	;
+call	66:4	66:22	2	free
+arg	66:10	66:22	3	psz_rspauth
+water	66:10	0:0	4	psz_rspauth
+water	66:23	0:0	2	;
+call	67:4	67:21	2	free
+arg	67:10	67:21	3	psz_cnonce
+water	67:10	0:0	4	psz_cnonce
+water	67:22	0:0	2	;
+call	68:4	68:17	2	free
+arg	68:10	68:17	3	psz_nc
+water	68:10	0:0	4	psz_nc
+water	68:18	0:0	2	;
+call	69:4	69:21	2	free
+arg	69:10	69:21	3	psz_digest
+water	69:10	0:0	4	psz_digest
+water	69:22	0:0	2	;
+return	70:4	70:16	2	i_err
+water	70:11	0:0	3	i_err

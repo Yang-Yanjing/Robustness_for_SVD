@@ -1,0 +1,153 @@
+func	2:0	39:0	0	static int	Del
+params	2:14	0:0	1	
+param	2:16	2:39	2	sout_stream_t *	p_stream
+param	2:41	2:66	2	sout_stream_id_sys_t *	id
+stmnts	0:0	38:22	1	
+decl	4:4	4:46	2	sout_stream_sys_t	*p_sys
+op	4:29	0:0	2	=
+water	4:31	0:0	2	p_stream
+op	4:39	0:0	2	->
+water	4:41	0:0	2	p_sys
+if	5:4	24:4	2	(id -> b_transcode)
+cond	5:8	5:12	3	id -> b_transcode
+water	5:8	0:0	4	id
+op	5:10	0:0	4	->
+water	5:12	0:0	4	b_transcode
+stmts	6:4	24:4	3	
+water	6:4	0:0	4	{
+switch	7:8	23:8	4	(id -> p_decoder -> fmt_in . i_cat)
+cond	7:16	7:38	5	id -> p_decoder -> fmt_in . i_cat
+water	7:16	0:0	6	id
+op	7:18	0:0	6	->
+water	7:20	0:0	6	p_decoder
+op	7:29	0:0	6	->
+water	7:31	0:0	6	fmt_in
+op	7:37	0:0	6	.
+water	7:38	0:0	6	i_cat
+stmts	8:8	23:8	5	
+water	8:8	0:0	6	{
+label	9:8	9:21	6	case AUDIO_ES :
+call	10:12	10:37	6	Send
+arg	10:18	10:26	7	p_stream
+water	10:18	0:0	8	p_stream
+arg	10:28	10:30	7	id
+water	10:28	0:0	8	id
+arg	10:32	10:37	7	NULL
+water	10:32	0:0	8	NULL
+water	10:38	0:0	6	;
+call	11:12	11:38	6	transcode_audio_close
+arg	11:35	11:38	7	id
+water	11:35	0:0	8	id
+water	11:39	0:0	6	;
+break	12:12	12:17	6	
+label	13:8	13:21	6	case VIDEO_ES :
+call	14:12	14:37	6	Send
+arg	14:18	14:26	7	p_stream
+water	14:18	0:0	8	p_stream
+arg	14:28	14:30	7	id
+water	14:28	0:0	8	id
+arg	14:32	14:37	7	NULL
+water	14:32	0:0	8	NULL
+water	14:38	0:0	6	;
+call	15:12	15:48	6	transcode_video_close
+arg	15:35	15:43	7	p_stream
+water	15:35	0:0	8	p_stream
+arg	15:45	15:48	7	id
+water	15:45	0:0	8	id
+water	15:49	0:0	6	;
+break	16:12	16:17	6	
+label	17:8	17:19	6	case SPU_ES :
+if	18:12	19:51	6	(p_sys -> b_osd)
+cond	18:16	18:23	7	p_sys -> b_osd
+water	18:16	0:0	8	p_sys
+op	18:21	0:0	8	->
+water	18:23	0:0	8	b_osd
+stmts	19:16	19:51	7	
+call	19:16	19:50	8	transcode_osd_close
+arg	19:37	19:45	9	p_stream
+water	19:37	0:0	10	p_stream
+arg	19:47	19:50	9	id
+water	19:47	0:0	10	id
+water	19:51	0:0	8	;
+else	20:12	21:51	6
+stmts	21:16	21:51	7	
+call	21:16	21:50	8	transcode_spu_close
+arg	21:37	21:45	9	p_stream
+water	21:37	0:0	10	p_stream
+arg	21:47	21:50	9	id
+water	21:47	0:0	10	id
+water	21:51	0:0	8	;
+break	22:12	22:17	6	
+water	23:8	0:0	6	}
+water	24:4	0:0	4	}
+if	25:4	25:61	2	(id -> id)
+cond	25:8	25:12	3	id -> id
+water	25:8	0:0	4	id
+op	25:10	0:0	4	->
+water	25:12	0:0	4	id
+stmts	25:17	25:61	3	
+call	25:17	25:60	4	sout_StreamIdDel
+arg	25:35	25:51	5	p_stream->p_next
+water	25:35	0:0	6	p_stream
+op	25:43	0:0	6	->
+water	25:45	0:0	6	p_next
+arg	25:53	25:60	5	id->id
+water	25:53	0:0	6	id
+op	25:55	0:0	6	->
+water	25:57	0:0	6	id
+water	25:61	0:0	4	;
+if	26:4	30:4	2	(id -> p_decoder)
+cond	26:8	26:12	3	id -> p_decoder
+water	26:8	0:0	4	id
+op	26:10	0:0	4	->
+water	26:12	0:0	4	p_decoder
+stmts	27:4	30:4	3	
+water	27:4	0:0	4	{
+call	28:8	28:42	4	vlc_object_release
+arg	28:28	28:42	5	id->p_decoder
+water	28:28	0:0	6	id
+op	28:30	0:0	6	->
+water	28:32	0:0	6	p_decoder
+water	28:43	0:0	4	;
+water	29:8	0:0	4	id
+op	29:10	0:0	4	->
+water	29:12	0:0	4	p_decoder
+op	29:22	0:0	4	=
+water	29:24	0:0	4	NULL
+water	29:28	0:0	4	;
+water	30:4	0:0	4	}
+if	31:4	36:4	2	(id -> p_encoder)
+cond	31:8	31:12	3	id -> p_encoder
+water	31:8	0:0	4	id
+op	31:10	0:0	4	->
+water	31:12	0:0	4	p_encoder
+stmts	32:4	36:4	3	
+water	32:4	0:0	4	{
+call	33:8	33:49	4	es_format_Clean
+arg	33:25	33:49	5	&id->p_encoder->fmt_out
+op	33:25	0:0	6	&
+water	33:26	0:0	6	id
+op	33:28	0:0	6	->
+water	33:30	0:0	6	p_encoder
+op	33:39	0:0	6	->
+water	33:41	0:0	6	fmt_out
+water	33:50	0:0	4	;
+call	34:8	34:42	4	vlc_object_release
+arg	34:28	34:42	5	id->p_encoder
+water	34:28	0:0	6	id
+op	34:30	0:0	6	->
+water	34:32	0:0	6	p_encoder
+water	34:43	0:0	4	;
+water	35:8	0:0	4	id
+op	35:10	0:0	4	->
+water	35:12	0:0	4	p_encoder
+op	35:22	0:0	4	=
+water	35:24	0:0	4	NULL
+water	35:28	0:0	4	;
+water	36:4	0:0	4	}
+call	37:4	37:13	2	free
+arg	37:10	37:13	3	id
+water	37:10	0:0	4	id
+water	37:14	0:0	2	;
+return	38:4	38:22	2	VLC_SUCCESS
+water	38:11	0:0	3	VLC_SUCCESS

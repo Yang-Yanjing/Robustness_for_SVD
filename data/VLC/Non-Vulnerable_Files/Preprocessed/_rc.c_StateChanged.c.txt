@@ -1,0 +1,91 @@
+func	2:0	31:0	0	static void	StateChanged
+params	2:24	0:0	1	
+param	2:26	2:47	2	intf_thread_t *	p_intf
+param	2:49	2:73	2	input_thread_t *	p_input
+stmnts	0:0	30:51	1	
+decl	4:4	4:54	2	playlist_t	*p_playlist
+op	4:27	0:0	2	=
+water	4:29	0:0	2	p_intf
+op	4:35	0:0	2	->
+water	4:37	0:0	2	p_sys
+op	4:42	0:0	2	->
+water	4:44	0:0	2	p_playlist
+water	5:4	0:0	2	PL_LOCK
+water	5:11	0:0	2	;
+decl	6:4	6:54	2	const int	i_status
+op	6:23	0:0	2	=
+call	6:25	6:53	3	playlist_Status
+arg	6:42	6:53	4	p_playlist
+water	6:42	0:0	5	p_playlist
+water	7:4	0:0	2	PL_UNLOCK
+water	7:13	0:0	2	;
+decl	9:4	9:23	2	const char	*psz_cmd
+switch	10:4	24:4	2	(i_status)
+cond	10:12	10:12	3	i_status
+water	10:12	0:0	4	i_status
+stmts	11:4	24:4	3	
+water	11:4	0:0	4	{
+label	12:4	12:25	4	case PLAYLIST_STOPPED :
+water	13:8	0:0	4	psz_cmd
+op	13:16	0:0	4	=
+water	13:18	0:0	4	"stop"
+water	13:24	0:0	4	;
+break	14:8	14:13	4	
+label	15:4	15:25	4	case PLAYLIST_RUNNING :
+water	16:8	0:0	4	psz_cmd
+op	16:16	0:0	4	=
+water	16:18	0:0	4	"play"
+water	16:24	0:0	4	;
+break	17:8	17:13	4	
+label	18:4	18:24	4	case PLAYLIST_PAUSED :
+water	19:8	0:0	4	psz_cmd
+op	19:16	0:0	4	=
+water	19:18	0:0	4	"pause"
+water	19:25	0:0	4	;
+break	20:8	20:13	4	
+label	21:4	21:11	4	default :
+water	22:8	0:0	4	psz_cmd
+op	22:16	0:0	4	=
+water	22:18	0:0	4	""
+water	22:20	0:0	4	;
+break	23:8	23:13	4	
+water	24:4	0:0	4	}
+decl	26:4	26:58	2	const int	i_state
+op	26:22	0:0	2	=
+call	26:24	26:57	3	var_GetInteger
+arg	26:40	26:47	4	p_input
+water	26:40	0:0	5	p_input
+arg	26:49	26:57	4	"state"
+water	26:49	0:0	5	"state"
+call	27:4	27:48	2	vlc_mutex_lock
+arg	27:20	27:48	3	&p_intf->p_sys->status_lock
+op	27:20	0:0	4	&
+water	27:21	0:0	4	p_intf
+op	27:27	0:0	4	->
+water	27:29	0:0	4	p_sys
+op	27:34	0:0	4	->
+water	27:36	0:0	4	status_lock
+water	27:49	0:0	2	;
+call	28:4	29:47	2	msg_rc
+arg	28:12	28:48	3	STATUS_CHANGE"( %s state: %d ): %s"
+water	28:12	0:0	4	STATUS_CHANGE
+water	28:26	0:0	4	"( %s state: %d ): %s"
+arg	28:50	28:57	3	psz_cmd
+water	28:50	0:0	4	psz_cmd
+arg	29:12	29:19	3	i_state
+water	29:12	0:0	4	i_state
+arg	29:21	29:47	3	ppsz_input_state[i_state]
+water	29:21	0:0	4	ppsz_input_state
+op	29:37	0:0	4	[
+water	29:38	0:0	4	i_state
+op	29:45	0:0	4	]
+water	29:48	0:0	2	;
+call	30:4	30:50	2	vlc_mutex_unlock
+arg	30:22	30:50	3	&p_intf->p_sys->status_lock
+op	30:22	0:0	4	&
+water	30:23	0:0	4	p_intf
+op	30:29	0:0	4	->
+water	30:31	0:0	4	p_sys
+op	30:36	0:0	4	->
+water	30:38	0:0	4	status_lock
+water	30:51	0:0	2	;

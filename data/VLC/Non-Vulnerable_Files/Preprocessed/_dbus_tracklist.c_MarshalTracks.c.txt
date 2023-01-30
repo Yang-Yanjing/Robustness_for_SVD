@@ -1,0 +1,124 @@
+func	1:0	31:0	0	static int	MarshalTracks
+params	2:13	0:0	1	
+param	2:15	2:36	2	intf_thread_t *	p_intf
+param	2:38	2:65	2	DBusMessageIter *	container
+stmnts	0:0	30:22	1	
+decl	4:4	4:26	2	DBusMessageIter	tracks
+decl	5:4	5:37	2	char	*psz_track_id
+op	5:31	0:0	2	=
+water	5:33	0:0	2	NULL
+decl	6:4	6:58	2	playlist_t	*p_playlist
+op	6:31	0:0	2	=
+water	6:33	0:0	2	p_intf
+op	6:39	0:0	2	->
+water	6:41	0:0	2	p_sys
+op	6:46	0:0	2	->
+water	6:48	0:0	2	p_playlist
+decl	7:4	7:37	2	input_item_t	*p_input
+op	7:31	0:0	2	=
+water	7:33	0:0	2	NULL
+call	8:4	9:46	2	dbus_message_iter_open_container
+arg	8:38	8:47	3	container
+water	8:38	0:0	4	container
+arg	8:49	8:64	3	DBUS_TYPE_ARRAY
+water	8:49	0:0	4	DBUS_TYPE_ARRAY
+arg	8:66	8:69	3	"o"
+water	8:66	0:0	4	"o"
+arg	9:38	9:46	3	&tracks
+op	9:38	0:0	4	&
+water	9:39	0:0	4	tracks
+water	9:47	0:0	2	;
+water	10:4	0:0	2	PL_LOCK
+water	10:11	0:0	2	;
+for	11:4	26:4	2	( int i = 0 ;i <playlist_CurrentSize (p_playlist );i ++)
+forinit	0:0	11:18	3	 int i = 0 ;
+decl	11:9	11:18	4	int	i
+op	11:15	0:0	4	=
+water	11:17	0:0	4	0
+cond	11:20	11:57	3	i <playlist_CurrentSize (p_playlist )
+water	11:20	0:0	4	i
+op	11:22	0:0	4	<
+call	11:24	11:57	4	playlist_CurrentSize
+arg	11:46	11:57	5	p_playlist
+water	11:46	0:0	6	p_playlist
+forexpr	11:60	11:61	3	i ++
+water	11:60	0:0	4	i
+op	11:61	0:0	4	++
+stmts	12:4	26:4	3	
+water	12:4	0:0	4	{
+water	13:8	0:0	4	p_input
+op	13:16	0:0	4	=
+water	13:18	0:0	4	p_playlist
+op	13:28	0:0	4	->
+water	13:30	0:0	4	current
+op	13:37	0:0	4	.
+water	13:38	0:0	4	p_elems
+op	13:45	0:0	4	[
+water	13:46	0:0	4	i
+op	13:47	0:0	4	]
+op	13:48	0:0	4	->
+water	13:50	0:0	4	p_input
+water	13:57	0:0	4	;
+if	14:8	24:8	4	(( - 1 ==asprintf (& psz_track_id ,MPRIS_TRACKID_FORMAT ,p_input -> i_id ) ) || !dbus_message_iter_append_basic (& tracks ,DBUS_TYPE_OBJECT_PATH ,& psz_track_id ))
+cond	14:12	19:59	5	( - 1 ==asprintf (& psz_track_id ,MPRIS_TRACKID_FORMAT ,p_input -> i_id ) ) || !dbus_message_iter_append_basic (& tracks ,DBUS_TYPE_OBJECT_PATH ,& psz_track_id )
+water	14:12	0:0	6	(
+op	14:14	0:0	6	-
+water	14:15	0:0	6	1
+op	14:17	0:0	6	==
+call	14:20	16:44	6	asprintf
+arg	14:30	14:43	7	&psz_track_id
+op	14:30	0:0	8	&
+water	14:31	0:0	8	psz_track_id
+arg	15:30	15:50	7	MPRIS_TRACKID_FORMAT
+water	15:30	0:0	8	MPRIS_TRACKID_FORMAT
+arg	16:30	16:44	7	p_input->i_id
+water	16:30	0:0	8	p_input
+op	16:37	0:0	8	->
+water	16:39	0:0	8	i_id
+water	16:46	0:0	6	)
+op	16:48	0:0	6	||
+op	17:12	0:0	6	!
+call	17:13	19:59	6	dbus_message_iter_append_basic
+arg	17:45	17:52	7	&tracks
+op	17:45	0:0	8	&
+water	17:46	0:0	8	tracks
+arg	18:45	18:66	7	DBUS_TYPE_OBJECT_PATH
+water	18:45	0:0	8	DBUS_TYPE_OBJECT_PATH
+arg	19:45	19:59	7	&psz_track_id
+op	19:45	0:0	8	&
+water	19:46	0:0	8	psz_track_id
+stmts	20:8	24:8	5	
+water	20:8	0:0	6	{
+water	21:12	0:0	6	PL_UNLOCK
+water	21:21	0:0	6	;
+call	22:12	22:68	6	dbus_message_iter_abandon_container
+arg	22:49	22:58	7	container
+water	22:49	0:0	8	container
+arg	22:60	22:68	7	&tracks
+op	22:60	0:0	8	&
+water	22:61	0:0	8	tracks
+water	22:69	0:0	6	;
+return	23:12	23:29	6	VLC_ENOMEM
+water	23:19	0:0	7	VLC_ENOMEM
+water	24:8	0:0	6	}
+call	25:8	25:27	4	free
+arg	25:14	25:27	5	psz_track_id
+water	25:14	0:0	6	psz_track_id
+water	25:28	0:0	4	;
+water	26:4	0:0	4	}
+water	27:4	0:0	2	PL_UNLOCK
+water	27:13	0:0	2	;
+if	28:4	29:25	2	(!dbus_message_iter_close_container (container ,& tracks ))
+cond	28:8	28:63	3	!dbus_message_iter_close_container (container ,& tracks )
+op	28:8	0:0	4	!
+call	28:9	28:63	4	dbus_message_iter_close_container
+arg	28:44	28:53	5	container
+water	28:44	0:0	6	container
+arg	28:55	28:63	5	&tracks
+op	28:55	0:0	6	&
+water	28:56	0:0	6	tracks
+stmts	29:8	29:25	3	
+return	29:8	29:25	4	VLC_ENOMEM
+water	29:15	0:0	5	VLC_ENOMEM
+return	30:4	30:22	2	VLC_SUCCESS
+water	30:11	0:0	3	VLC_SUCCESS

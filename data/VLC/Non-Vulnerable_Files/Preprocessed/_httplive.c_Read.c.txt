@@ -1,0 +1,200 @@
+func	2:0	52:0	0	static int	Read
+params	2:15	0:0	1	
+param	2:16	2:27	2	stream_t *	s
+param	2:29	2:41	2	void *	buffer
+param	2:43	2:62	2	unsigned int	i_read
+stmnts	0:0	51:17	1	
+decl	4:4	4:34	2	stream_sys_t	*p_sys
+op	4:24	0:0	2	=
+water	4:26	0:0	2	s
+op	4:27	0:0	2	->
+water	4:29	0:0	2	p_sys
+decl	5:4	5:22	2	ssize_t	length
+op	5:19	0:0	2	=
+water	5:21	0:0	2	0
+call	6:4	6:28	2	assert
+arg	6:11	6:28	3	p_sys->hls_stream
+water	6:11	0:0	4	p_sys
+op	6:16	0:0	4	->
+water	6:18	0:0	4	hls_stream
+water	6:29	0:0	2	;
+while	7:4	49:4	2	(length == 0)
+cond	7:11	7:21	3	length == 0
+water	7:11	0:0	4	length
+op	7:18	0:0	4	==
+water	7:21	0:0	4	0
+stmts	8:4	49:4	3	
+water	8:4	0:0	4	{
+if	10:8	11:20	4	(p_sys -> b_error ||atomic_load (& p_sys -> closing ))
+cond	10:12	10:57	5	p_sys -> b_error ||atomic_load (& p_sys -> closing )
+water	10:12	0:0	6	p_sys
+op	10:17	0:0	6	->
+water	10:19	0:0	6	b_error
+op	10:27	0:0	6	||
+call	10:30	10:57	6	atomic_load
+arg	10:42	10:57	7	&p_sys->closing
+op	10:42	0:0	8	&
+water	10:43	0:0	8	p_sys
+op	10:48	0:0	8	->
+water	10:50	0:0	8	closing
+stmts	11:12	11:20	5	
+return	11:12	11:20	6	0
+water	11:19	0:0	7	0
+call	13:8	13:45	4	vlc_mutex_lock
+arg	13:23	13:45	5	&p_sys->read.lock_wait
+op	13:23	0:0	6	&
+water	13:24	0:0	6	p_sys
+op	13:29	0:0	6	->
+water	13:31	0:0	6	read
+op	13:35	0:0	6	.
+water	13:36	0:0	6	lock_wait
+water	13:46	0:0	4	;
+water	15:8	0:0	4	length
+op	15:15	0:0	4	=
+call	15:17	15:54	4	hls_Read
+arg	15:26	15:27	5	s
+water	15:26	0:0	6	s
+arg	15:29	15:46	5	(uint8_t*)buffer
+water	15:29	0:0	6	(
+water	15:30	0:0	6	uint8_t
+op	15:37	0:0	6	*
+water	15:38	0:0	6	)
+water	15:40	0:0	6	buffer
+arg	15:48	15:54	5	i_read
+water	15:48	0:0	6	i_read
+water	15:55	0:0	4	;
+if	17:8	21:8	4	(length < 0)
+cond	17:12	17:21	5	length < 0
+water	17:12	0:0	6	length
+op	17:19	0:0	6	<
+water	17:21	0:0	6	0
+stmts	18:8	21:8	5	
+water	18:8	0:0	6	{
+call	19:12	19:51	6	vlc_mutex_unlock
+arg	19:29	19:51	7	&p_sys->read.lock_wait
+op	19:29	0:0	8	&
+water	19:30	0:0	8	p_sys
+op	19:35	0:0	8	->
+water	19:37	0:0	8	read
+op	19:41	0:0	8	.
+water	19:42	0:0	8	lock_wait
+water	19:52	0:0	6	;
+return	20:12	20:20	6	0
+water	20:19	0:0	7	0
+water	21:8	0:0	6	}
+if	27:8	47:8	4	(length == 0)
+cond	27:12	27:22	5	length == 0
+water	27:12	0:0	6	length
+op	27:19	0:0	6	==
+water	27:22	0:0	6	0
+stmts	28:8	47:8	5	
+water	28:8	0:0	6	{
+if	29:12	33:12	6	(atomic_load (& p_sys -> eof ))
+cond	29:15	29:38	7	atomic_load (& p_sys -> eof )
+call	29:15	29:38	8	atomic_load
+arg	29:27	29:38	9	&p_sys->eof
+op	29:27	0:0	10	&
+water	29:28	0:0	10	p_sys
+op	29:33	0:0	10	->
+water	29:35	0:0	10	eof
+stmts	30:12	33:12	7	
+water	30:12	0:0	8	{
+call	31:16	31:55	8	vlc_mutex_unlock
+arg	31:33	31:55	9	&p_sys->read.lock_wait
+op	31:33	0:0	10	&
+water	31:34	0:0	10	p_sys
+op	31:39	0:0	10	->
+water	31:41	0:0	10	read
+op	31:45	0:0	10	.
+water	31:46	0:0	10	lock_wait
+water	31:56	0:0	8	;
+return	32:16	32:24	8	0
+water	32:23	0:0	9	0
+water	33:12	0:0	8	}
+decl	34:12	34:35	6	mtime_t	start
+op	34:26	0:0	6	=
+call	34:28	34:34	7	mdate
+decl	36:12	36:61	6	mtime_t	timeout_limit
+op	36:34	0:0	6	=
+water	36:36	0:0	6	start
+op	36:42	0:0	6	+
+water	36:44	0:0	6	(
+water	36:45	0:0	6	10
+op	36:48	0:0	6	*
+water	36:50	0:0	6	CLOCK_FREQ
+water	36:60	0:0	6	)
+decl	37:12	37:98	6	int	res
+op	37:20	0:0	6	=
+call	37:22	37:97	7	vlc_cond_timedwait
+arg	37:41	37:58	8	&p_sys->read.wait
+op	37:41	0:0	9	&
+water	37:42	0:0	9	p_sys
+op	37:47	0:0	9	->
+water	37:49	0:0	9	read
+op	37:53	0:0	9	.
+water	37:54	0:0	9	wait
+arg	37:60	37:82	8	&p_sys->read.lock_wait
+op	37:60	0:0	9	&
+water	37:61	0:0	9	p_sys
+op	37:66	0:0	9	->
+water	37:68	0:0	9	read
+op	37:72	0:0	9	.
+water	37:73	0:0	9	lock_wait
+arg	37:84	37:97	8	timeout_limit
+water	37:84	0:0	9	timeout_limit
+if	39:12	44:12	6	(res == ETIMEDOUT)
+cond	39:16	39:23	7	res == ETIMEDOUT
+water	39:16	0:0	8	res
+op	39:20	0:0	8	==
+water	39:23	0:0	8	ETIMEDOUT
+stmts	40:12	44:12	7	
+water	40:12	0:0	8	{
+call	41:16	41:52	8	msg_Warn
+arg	41:25	41:26	9	s
+water	41:25	0:0	10	s
+arg	41:28	41:52	9	"timeout limit reached!"
+water	41:28	0:0	10	"timeout limit reached!"
+water	41:53	0:0	8	;
+call	42:16	42:55	8	vlc_mutex_unlock
+arg	42:33	42:55	9	&p_sys->read.lock_wait
+op	42:33	0:0	10	&
+water	42:34	0:0	10	p_sys
+op	42:39	0:0	10	->
+water	42:41	0:0	10	read
+op	42:45	0:0	10	.
+water	42:46	0:0	10	lock_wait
+water	42:56	0:0	8	;
+return	43:16	43:24	8	0
+water	43:23	0:0	9	0
+water	44:12	0:0	8	}
+else	45:12	46:24	6
+stmts	45:17	46:24	7	
+if	45:17	46:24	8	(res == EINVAL)
+cond	45:21	45:28	9	res == EINVAL
+water	45:21	0:0	10	res
+op	45:25	0:0	10	==
+water	45:28	0:0	10	EINVAL
+stmts	46:16	46:24	9	
+return	46:16	46:24	10	0
+water	46:23	0:0	11	0
+water	47:8	0:0	6	}
+call	48:8	48:47	4	vlc_mutex_unlock
+arg	48:25	48:47	5	&p_sys->read.lock_wait
+op	48:25	0:0	6	&
+water	48:26	0:0	6	p_sys
+op	48:31	0:0	6	->
+water	48:33	0:0	6	read
+op	48:37	0:0	6	.
+water	48:38	0:0	6	lock_wait
+water	48:48	0:0	4	;
+water	49:4	0:0	4	}
+water	50:4	0:0	2	p_sys
+op	50:9	0:0	2	->
+water	50:11	0:0	2	playback
+op	50:19	0:0	2	.
+water	50:20	0:0	2	offset
+op	50:27	0:0	2	+=
+water	50:30	0:0	2	length
+water	50:36	0:0	2	;
+return	51:4	51:17	2	length
+water	51:11	0:0	3	length

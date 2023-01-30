@@ -1,0 +1,192 @@
+func	2:0	39:0	0	static void	DecoderFixTs
+params	2:24	0:0	1	
+param	2:26	2:42	2	decoder_t *	p_dec
+param	2:44	2:59	2	mtime_t *	pi_ts0
+param	2:61	2:76	2	mtime_t *	pi_ts1
+param	3:26	3:46	2	mtime_t *	pi_duration
+param	3:48	3:60	2	int *	pi_rate
+param	3:62	3:81	2	mtime_t	i_ts_bound
+stmnts	0:0	38:25	1	
+decl	5:4	5:49	2	decoder_owner_sys_t	*p_owner
+op	5:33	0:0	2	=
+water	5:35	0:0	2	p_dec
+op	5:40	0:0	2	->
+water	5:42	0:0	2	p_owner
+decl	6:4	6:47	2	input_clock_t	*p_clock
+op	6:29	0:0	2	=
+water	6:31	0:0	2	p_owner
+op	6:38	0:0	2	->
+water	6:40	0:0	2	p_clock
+call	7:4	7:38	2	vlc_assert_locked
+arg	7:23	7:38	3	&p_owner->lock
+op	7:23	0:0	4	&
+water	7:24	0:0	4	p_owner
+op	7:31	0:0	4	->
+water	7:33	0:0	4	lock
+water	7:39	0:0	2	;
+decl	8:4	8:50	2	const mtime_t	i_es_delay
+op	8:29	0:0	2	=
+water	8:31	0:0	2	p_owner
+op	8:38	0:0	2	->
+water	8:40	0:0	2	i_ts_delay
+if	9:4	10:14	2	(! p_clock)
+cond	9:8	9:9	3	! p_clock
+op	9:8	0:0	4	!
+water	9:9	0:0	4	p_clock
+stmts	10:8	10:14	3	
+return	10:8	10:14	4	
+decl	11:4	11:56	2	const bool	b_ephemere
+op	11:26	0:0	2	=
+water	11:28	0:0	2	pi_ts1
+op	11:35	0:0	2	&&
+op	11:38	0:0	2	*
+water	11:39	0:0	2	pi_ts0
+op	11:46	0:0	2	==
+op	11:49	0:0	2	*
+water	11:50	0:0	2	pi_ts1
+decl	12:4	12:14	2	int	i_rate
+if	13:4	26:4	2	(* pi_ts0 > VLC_TS_INVALID)
+cond	13:8	13:18	3	* pi_ts0 > VLC_TS_INVALID
+op	13:8	0:0	4	*
+water	13:9	0:0	4	pi_ts0
+op	13:16	0:0	4	>
+water	13:18	0:0	4	VLC_TS_INVALID
+stmts	14:4	26:4	3	
+water	14:4	0:0	4	{
+op	15:8	0:0	4	*
+water	15:9	0:0	4	pi_ts0
+op	15:16	0:0	4	+=
+water	15:19	0:0	4	i_es_delay
+water	15:29	0:0	4	;
+if	16:8	17:33	4	(pi_ts1 && * pi_ts1 > VLC_TS_INVALID)
+cond	16:12	16:32	5	pi_ts1 && * pi_ts1 > VLC_TS_INVALID
+water	16:12	0:0	6	pi_ts1
+op	16:19	0:0	6	&&
+op	16:22	0:0	6	*
+water	16:23	0:0	6	pi_ts1
+op	16:30	0:0	6	>
+water	16:32	0:0	6	VLC_TS_INVALID
+stmts	17:12	17:33	5	
+op	17:12	0:0	6	*
+water	17:13	0:0	6	pi_ts1
+op	17:20	0:0	6	+=
+water	17:23	0:0	6	i_es_delay
+water	17:33	0:0	6	;
+if	18:8	25:8	4	(input_clock_ConvertTS (VLC_OBJECT (p_dec ) ,p_clock ,& i_rate ,pi_ts0 ,pi_ts1 ,i_ts_bound ))
+cond	18:12	18:99	5	input_clock_ConvertTS (VLC_OBJECT (p_dec ) ,p_clock ,& i_rate ,pi_ts0 ,pi_ts1 ,i_ts_bound )
+call	18:12	18:99	6	input_clock_ConvertTS
+arg	18:35	18:52	7	VLC_OBJECT(p_dec)
+call	18:35	18:51	8	VLC_OBJECT
+arg	18:46	18:51	9	p_dec
+water	18:46	0:0	10	p_dec
+arg	18:54	18:61	7	p_clock
+water	18:54	0:0	8	p_clock
+arg	18:63	18:70	7	&i_rate
+op	18:63	0:0	8	&
+water	18:64	0:0	8	i_rate
+arg	18:72	18:78	7	pi_ts0
+water	18:72	0:0	8	pi_ts0
+arg	18:80	18:86	7	pi_ts1
+water	18:80	0:0	8	pi_ts1
+arg	18:88	18:99	7	i_ts_bound
+water	18:88	0:0	8	i_ts_bound
+stmts	18:103	25:8	5	
+water	18:103	0:0	6	{
+if	19:12	21:56	6	(pi_ts1 != NULL)
+cond	19:16	19:26	7	pi_ts1 != NULL
+water	19:16	0:0	8	pi_ts1
+op	19:23	0:0	8	!=
+water	19:26	0:0	8	NULL
+stmts	20:16	21:56	7	
+call	20:16	21:55	8	msg_Err
+arg	20:24	20:29	9	p_dec
+water	20:24	0:0	10	p_dec
+arg	20:31	21:37	9	"Could not convert timestamps %"PRId64", %"PRId64""
+water	20:31	0:0	10	"Could not convert timestamps %"
+water	20:63	0:0	10	PRId64
+water	21:24	0:0	10	", %"
+water	21:29	0:0	10	PRId64
+water	21:35	0:0	10	""
+arg	21:39	21:46	9	*pi_ts0
+op	21:39	0:0	10	*
+water	21:40	0:0	10	pi_ts0
+arg	21:48	21:55	9	*pi_ts1
+op	21:48	0:0	10	*
+water	21:49	0:0	10	pi_ts1
+water	21:56	0:0	8	;
+else	22:12	23:78	6
+stmts	23:16	23:78	7	
+call	23:16	23:77	8	msg_Err
+arg	23:24	23:29	9	p_dec
+water	23:24	0:0	10	p_dec
+arg	23:31	23:68	9	"Could not convert timestamp %"PRId64
+water	23:31	0:0	10	"Could not convert timestamp %"
+water	23:62	0:0	10	PRId64
+arg	23:70	23:77	9	*pi_ts0
+op	23:70	0:0	10	*
+water	23:71	0:0	10	pi_ts0
+water	23:78	0:0	8	;
+op	24:12	0:0	6	*
+water	24:13	0:0	6	pi_ts0
+op	24:20	0:0	6	=
+water	24:22	0:0	6	VLC_TS_INVALID
+water	24:36	0:0	6	;
+water	25:8	0:0	6	}
+water	26:4	0:0	4	}
+else	27:4	30:4	2
+stmts	28:4	30:4	3	
+water	28:4	0:0	4	{
+water	29:8	0:0	4	i_rate
+op	29:15	0:0	4	=
+call	29:17	29:46	4	input_clock_GetRate
+arg	29:38	29:46	5	p_clock
+water	29:38	0:0	6	p_clock
+water	29:47	0:0	4	;
+water	30:4	0:0	4	}
+if	32:4	33:20	2	(! b_ephemere && pi_ts1 && * pi_ts0 == * pi_ts1)
+cond	32:8	32:45	3	! b_ephemere && pi_ts1 && * pi_ts0 == * pi_ts1
+op	32:8	0:0	4	!
+water	32:9	0:0	4	b_ephemere
+op	32:20	0:0	4	&&
+water	32:23	0:0	4	pi_ts1
+op	32:30	0:0	4	&&
+op	32:33	0:0	4	*
+water	32:34	0:0	4	pi_ts0
+op	32:41	0:0	4	==
+op	32:44	0:0	4	*
+water	32:45	0:0	4	pi_ts1
+stmts	33:8	33:20	3	
+op	33:8	0:0	4	*
+water	33:9	0:0	4	pi_ts1
+op	33:16	0:0	4	+=
+water	33:19	0:0	4	1
+water	33:20	0:0	4	;
+if	34:4	36:32	2	(pi_duration)
+cond	34:8	34:8	3	pi_duration
+water	34:8	0:0	4	pi_duration
+stmts	35:8	36:32	3	
+op	35:8	0:0	4	*
+water	35:9	0:0	4	pi_duration
+op	35:21	0:0	4	=
+water	35:23	0:0	4	(
+op	35:25	0:0	4	*
+water	35:26	0:0	4	pi_duration
+op	35:38	0:0	4	*
+water	35:40	0:0	4	i_rate
+op	35:47	0:0	4	+
+water	35:49	0:0	4	INPUT_RATE_DEFAULT
+op	35:67	0:0	4	-
+water	35:68	0:0	4	1
+water	35:70	0:0	4	)
+op	36:12	0:0	4	/
+water	36:14	0:0	4	INPUT_RATE_DEFAULT
+water	36:32	0:0	4	;
+if	37:4	38:25	2	(pi_rate)
+cond	37:8	37:8	3	pi_rate
+water	37:8	0:0	4	pi_rate
+stmts	38:8	38:25	3	
+op	38:8	0:0	4	*
+water	38:9	0:0	4	pi_rate
+op	38:17	0:0	4	=
+water	38:19	0:0	4	i_rate
+water	38:25	0:0	4	;

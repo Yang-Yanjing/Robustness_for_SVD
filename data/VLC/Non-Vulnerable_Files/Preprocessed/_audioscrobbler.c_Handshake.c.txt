@@ -1,0 +1,642 @@
+func	2:0	162:0	0	static int	Handshake
+params	2:20	0:0	1	
+param	2:21	2:42	2	intf_thread_t *	p_this
+stmnts	0:0	161:23	1	
+decl	4:4	4:52	2	char	*psz_username
+water	4:37	0:0	2	,
+decl	4:4	4:52	2	char	*psz_password
+decl	5:4	5:42	2	char	*psz_scrobbler_url
+decl	6:4	6:33	2	time_t	timestamp
+decl	7:4	7:41	2	char	psz_timestamp[21]
+decl	8:4	8:36	2	struct md5_s	p_struct_md5
+decl	9:4	9:33	2	stream_t	*p_stream
+decl	10:4	10:42	2	char	*psz_handshake_url
+decl	11:4	11:38	2	uint8_t	p_buffer[1024]
+decl	12:4	12:37	2	char	*p_buffer_pos
+decl	13:4	13:29	2	int	i_ret
+decl	14:4	14:32	2	char	*psz_url
+decl	15:4	15:73	2	intf_thread_t	*p_intf
+op	15:48	0:0	2	=
+water	15:50	0:0	2	(
+water	15:51	0:0	2	intf_thread_t
+op	15:64	0:0	2	*
+water	15:65	0:0	2	)
+water	15:67	0:0	2	p_this
+decl	16:4	16:63	2	intf_sys_t	*p_sys
+op	16:48	0:0	2	=
+water	16:50	0:0	2	p_this
+op	16:56	0:0	2	->
+water	16:58	0:0	2	p_sys
+water	17:4	0:0	2	psz_username
+op	17:17	0:0	2	=
+call	17:19	17:62	2	var_InheritString
+arg	17:37	17:43	3	p_this
+water	17:37	0:0	4	p_this
+arg	17:45	17:62	3	"lastfm-username"
+water	17:45	0:0	4	"lastfm-username"
+water	17:63	0:0	2	;
+water	18:4	0:0	2	psz_password
+op	18:17	0:0	2	=
+call	18:19	18:62	2	var_InheritString
+arg	18:37	18:43	3	p_this
+water	18:37	0:0	4	p_this
+arg	18:45	18:62	3	"lastfm-password"
+water	18:45	0:0	4	"lastfm-password"
+water	18:63	0:0	2	;
+if	20:4	25:4	2	(EMPTY_STR (psz_username ) ||EMPTY_STR (psz_password ))
+cond	20:8	20:57	3	EMPTY_STR (psz_username ) ||EMPTY_STR (psz_password )
+call	20:8	20:30	4	EMPTY_STR
+arg	20:18	20:30	5	psz_username
+water	20:18	0:0	6	psz_username
+op	20:32	0:0	4	||
+call	20:35	20:57	4	EMPTY_STR
+arg	20:45	20:57	5	psz_password
+water	20:45	0:0	6	psz_password
+stmts	21:4	25:4	3	
+water	21:4	0:0	4	{
+call	22:8	22:25	4	free
+arg	22:13	22:25	5	psz_username
+water	22:13	0:0	6	psz_username
+water	22:26	0:0	4	;
+call	23:8	23:25	4	free
+arg	23:13	23:25	5	psz_password
+water	23:13	0:0	6	psz_password
+water	23:26	0:0	4	;
+return	24:8	24:25	4	VLC_ENOVAR
+water	24:15	0:0	5	VLC_ENOVAR
+water	25:4	0:0	4	}
+call	26:4	26:19	2	time
+arg	26:9	26:19	3	&timestamp
+op	26:9	0:0	4	&
+water	26:10	0:0	4	timestamp
+water	26:20	0:0	2	;
+call	28:4	28:25	2	InitMD5
+arg	28:12	28:25	3	&p_struct_md5
+op	28:12	0:0	4	&
+water	28:13	0:0	4	p_struct_md5
+water	28:26	0:0	2	;
+call	29:4	29:71	2	AddMD5
+arg	29:11	29:24	3	&p_struct_md5
+op	29:11	0:0	4	&
+water	29:12	0:0	4	p_struct_md5
+arg	29:26	29:49	3	(uint8_t*)psz_password
+water	29:26	0:0	4	(
+water	29:27	0:0	4	uint8_t
+op	29:34	0:0	4	*
+water	29:35	0:0	4	)
+water	29:37	0:0	4	psz_password
+arg	29:51	29:71	3	strlen(psz_password)
+call	29:51	29:70	4	strlen
+arg	29:58	29:70	5	psz_password
+water	29:58	0:0	6	psz_password
+water	29:72	0:0	2	;
+call	30:4	30:24	2	EndMD5
+arg	30:11	30:24	3	&p_struct_md5
+op	30:11	0:0	4	&
+water	30:12	0:0	4	p_struct_md5
+water	30:25	0:0	2	;
+call	31:4	31:21	2	free
+arg	31:9	31:21	3	psz_password
+water	31:9	0:0	4	psz_password
+water	31:22	0:0	2	;
+decl	32:4	32:56	2	char	*psz_password_md5
+op	32:27	0:0	2	=
+call	32:29	32:55	3	psz_md5_hash
+arg	32:42	32:55	4	&p_struct_md5
+op	32:42	0:0	5	&
+water	32:43	0:0	5	p_struct_md5
+if	33:4	37:4	2	(! psz_password_md5)
+cond	33:8	33:9	3	! psz_password_md5
+op	33:8	0:0	4	!
+water	33:9	0:0	4	psz_password_md5
+stmts	34:4	37:4	3	
+water	34:4	0:0	4	{
+call	35:8	35:25	4	free
+arg	35:13	35:25	5	psz_username
+water	35:13	0:0	6	psz_username
+water	35:26	0:0	4	;
+return	36:8	36:25	4	VLC_ENOMEM
+water	36:15	0:0	5	VLC_ENOMEM
+water	37:4	0:0	4	}
+call	38:4	39:33	2	snprintf
+arg	38:13	38:26	3	psz_timestamp
+water	38:13	0:0	4	psz_timestamp
+arg	38:28	38:49	3	sizeof(psz_timestamp)
+op	38:28	0:0	4	sizeof
+water	38:34	0:0	4	(
+water	38:35	0:0	4	psz_timestamp
+water	38:48	0:0	4	)
+arg	38:51	38:60	3	"%"PRIu64
+water	38:51	0:0	4	"%"
+water	38:54	0:0	4	PRIu64
+arg	39:14	39:33	3	(uint64_t)timestamp
+water	39:14	0:0	4	(
+water	39:15	0:0	4	uint64_t
+water	39:23	0:0	4	)
+water	39:24	0:0	4	timestamp
+water	39:34	0:0	2	;
+call	44:4	44:25	2	InitMD5
+arg	44:12	44:25	3	&p_struct_md5
+op	44:12	0:0	4	&
+water	44:13	0:0	4	p_struct_md5
+water	44:26	0:0	2	;
+call	45:4	45:57	2	AddMD5
+arg	45:11	45:24	3	&p_struct_md5
+op	45:11	0:0	4	&
+water	45:12	0:0	4	p_struct_md5
+arg	45:26	45:53	3	(uint8_t*)psz_password_md5
+water	45:26	0:0	4	(
+water	45:27	0:0	4	uint8_t
+op	45:34	0:0	4	*
+water	45:35	0:0	4	)
+water	45:37	0:0	4	psz_password_md5
+arg	45:55	45:57	3	32
+water	45:55	0:0	4	32
+water	45:58	0:0	2	;
+call	46:4	46:73	2	AddMD5
+arg	46:11	46:24	3	&p_struct_md5
+op	46:11	0:0	4	&
+water	46:12	0:0	4	p_struct_md5
+arg	46:26	46:50	3	(uint8_t*)psz_timestamp
+water	46:26	0:0	4	(
+water	46:27	0:0	4	uint8_t
+op	46:34	0:0	4	*
+water	46:35	0:0	4	)
+water	46:37	0:0	4	psz_timestamp
+arg	46:52	46:73	3	strlen(psz_timestamp)
+call	46:52	46:72	4	strlen
+arg	46:59	46:72	5	psz_timestamp
+water	46:59	0:0	6	psz_timestamp
+water	46:74	0:0	2	;
+call	47:4	47:24	2	EndMD5
+arg	47:11	47:24	3	&p_struct_md5
+op	47:11	0:0	4	&
+water	47:12	0:0	4	p_struct_md5
+water	47:25	0:0	2	;
+call	48:4	48:25	2	free
+arg	48:9	48:25	3	psz_password_md5
+water	48:9	0:0	4	psz_password_md5
+water	48:26	0:0	2	;
+decl	49:4	49:54	2	char	*psz_auth_token
+op	49:25	0:0	2	=
+call	49:27	49:53	3	psz_md5_hash
+arg	49:40	49:53	4	&p_struct_md5
+op	49:40	0:0	5	&
+water	49:41	0:0	5	p_struct_md5
+if	50:4	54:4	2	(! psz_auth_token)
+cond	50:8	50:9	3	! psz_auth_token
+op	50:8	0:0	4	!
+water	50:9	0:0	4	psz_auth_token
+stmts	51:4	54:4	3	
+water	51:4	0:0	4	{
+call	52:8	52:25	4	free
+arg	52:13	52:25	5	psz_username
+water	52:13	0:0	6	psz_username
+water	52:26	0:0	4	;
+return	53:8	53:25	4	VLC_ENOMEM
+water	53:15	0:0	5	VLC_ENOMEM
+water	54:4	0:0	4	}
+water	55:4	0:0	2	psz_scrobbler_url
+op	55:22	0:0	2	=
+call	55:24	55:65	2	var_InheritString
+arg	55:42	55:48	3	p_this
+water	55:42	0:0	4	p_this
+arg	55:50	55:65	3	"scrobbler-url"
+water	55:50	0:0	4	"scrobbler-url"
+water	55:66	0:0	2	;
+if	56:4	61:4	2	(! psz_scrobbler_url)
+cond	56:8	56:9	3	! psz_scrobbler_url
+op	56:8	0:0	4	!
+water	56:9	0:0	4	psz_scrobbler_url
+stmts	57:4	61:4	3	
+water	57:4	0:0	4	{
+call	58:8	58:27	4	free
+arg	58:13	58:27	5	psz_auth_token
+water	58:13	0:0	6	psz_auth_token
+water	58:28	0:0	4	;
+call	59:8	59:25	4	free
+arg	59:13	59:25	5	psz_username
+water	59:13	0:0	6	psz_username
+water	59:26	0:0	4	;
+return	60:8	60:25	4	VLC_ENOMEM
+water	60:15	0:0	5	VLC_ENOMEM
+water	61:4	0:0	4	}
+water	62:4	0:0	2	i_ret
+op	62:10	0:0	2	=
+call	62:12	64:68	2	asprintf
+arg	62:21	62:39	3	&psz_handshake_url
+op	62:21	0:0	4	&
+water	62:22	0:0	4	psz_handshake_url
+arg	63:4	64:4	3	"http://%s/?hs=true&p=1.2&c="CLIENT_NAME"&v="CLIENT_VERSION"&u=%s&t=%s&a=%s"
+water	63:4	0:0	4	"http://%s/?hs=true&p=1.2&c="
+water	63:33	0:0	4	CLIENT_NAME
+water	63:44	0:0	4	"&v="
+water	63:49	0:0	4	CLIENT_VERSION
+water	63:63	0:0	4	"&u=%s&t=%s&a=%s"
+arg	64:6	64:23	3	psz_scrobbler_url
+water	64:6	0:0	4	psz_scrobbler_url
+arg	64:25	64:37	3	psz_username
+water	64:25	0:0	4	psz_username
+arg	64:39	64:52	3	psz_timestamp
+water	64:39	0:0	4	psz_timestamp
+arg	64:54	64:68	3	psz_auth_token
+water	64:54	0:0	4	psz_auth_token
+water	64:69	0:0	2	;
+call	65:4	65:23	2	free
+arg	65:9	65:23	3	psz_auth_token
+water	65:9	0:0	4	psz_auth_token
+water	65:24	0:0	2	;
+call	66:4	66:26	2	free
+arg	66:9	66:26	3	psz_scrobbler_url
+water	66:9	0:0	4	psz_scrobbler_url
+water	66:27	0:0	2	;
+call	67:4	67:21	2	free
+arg	67:9	67:21	3	psz_username
+water	67:9	0:0	4	psz_username
+water	67:22	0:0	2	;
+if	68:4	69:25	2	(i_ret == - 1)
+cond	68:8	68:18	3	i_ret == - 1
+water	68:8	0:0	4	i_ret
+op	68:14	0:0	4	==
+op	68:17	0:0	4	-
+water	68:18	0:0	4	1
+stmts	69:8	69:25	3	
+return	69:8	69:25	4	VLC_ENOMEM
+water	69:15	0:0	5	VLC_ENOMEM
+water	71:4	0:0	2	p_stream
+op	71:13	0:0	2	=
+call	71:15	71:54	2	stream_UrlNew
+arg	71:29	71:35	3	p_intf
+water	71:29	0:0	4	p_intf
+arg	71:37	71:54	3	psz_handshake_url
+water	71:37	0:0	4	psz_handshake_url
+water	71:55	0:0	2	;
+call	72:4	72:26	2	free
+arg	72:9	72:26	3	psz_handshake_url
+water	72:9	0:0	4	psz_handshake_url
+water	72:27	0:0	2	;
+if	73:4	74:27	2	(! p_stream)
+cond	73:8	73:9	3	! p_stream
+op	73:8	0:0	4	!
+water	73:9	0:0	4	p_stream
+stmts	74:8	74:27	3	
+return	74:8	74:27	4	VLC_EGENERIC
+water	74:15	0:0	5	VLC_EGENERIC
+water	76:4	0:0	2	i_ret
+op	76:10	0:0	2	=
+call	76:12	76:64	2	stream_Read
+arg	76:24	76:32	3	p_stream
+water	76:24	0:0	4	p_stream
+arg	76:34	76:42	3	p_buffer
+water	76:34	0:0	4	p_buffer
+arg	76:44	76:64	3	sizeof(p_buffer)-1
+op	76:44	0:0	4	sizeof
+water	76:50	0:0	4	(
+water	76:51	0:0	4	p_buffer
+water	76:59	0:0	4	)
+op	76:61	0:0	4	-
+water	76:63	0:0	4	1
+water	76:65	0:0	2	;
+if	77:4	81:4	2	(i_ret == 0)
+cond	77:8	77:17	3	i_ret == 0
+water	77:8	0:0	4	i_ret
+op	77:14	0:0	4	==
+water	77:17	0:0	4	0
+stmts	78:4	81:4	3	
+water	78:4	0:0	4	{
+call	79:8	79:30	4	stream_Delete
+arg	79:22	79:30	5	p_stream
+water	79:22	0:0	6	p_stream
+water	79:31	0:0	4	;
+return	80:8	80:27	4	VLC_EGENERIC
+water	80:15	0:0	5	VLC_EGENERIC
+water	81:4	0:0	4	}
+water	82:4	0:0	2	p_buffer
+op	82:12	0:0	2	[
+water	82:13	0:0	2	i_ret
+op	82:18	0:0	2	]
+op	82:20	0:0	2	=
+water	82:22	0:0	2	'\0'
+water	82:26	0:0	2	;
+call	83:4	83:26	2	stream_Delete
+arg	83:18	83:26	3	p_stream
+water	83:18	0:0	4	p_stream
+water	83:27	0:0	2	;
+water	84:4	0:0	2	p_buffer_pos
+op	84:17	0:0	2	=
+call	84:19	84:53	2	strstr
+arg	84:26	84:42	3	(char*)p_buffer
+water	84:26	0:0	4	(
+water	84:27	0:0	4	char
+op	84:31	0:0	4	*
+water	84:32	0:0	4	)
+water	84:34	0:0	4	p_buffer
+arg	84:44	84:53	3	"FAILED "
+water	84:44	0:0	4	"FAILED "
+water	84:54	0:0	2	;
+if	85:4	90:4	2	(p_buffer_pos)
+cond	85:8	85:8	3	p_buffer_pos
+water	85:8	0:0	4	p_buffer_pos
+stmts	86:4	90:4	3	
+water	86:4	0:0	4	{
+call	88:8	88:72	4	msg_Err
+arg	88:16	88:22	5	p_this
+water	88:16	0:0	6	p_this
+arg	88:24	88:54	5	"last.fm handshake failed: %s"
+water	88:24	0:0	6	"last.fm handshake failed: %s"
+arg	88:56	88:72	5	p_buffer_pos+7
+water	88:56	0:0	6	p_buffer_pos
+op	88:69	0:0	6	+
+water	88:71	0:0	6	7
+water	88:73	0:0	4	;
+return	89:8	89:27	4	VLC_EGENERIC
+water	89:15	0:0	5	VLC_EGENERIC
+water	90:4	0:0	4	}
+if	91:4	99:4	2	(strstr (( char * ) p_buffer ,"BADAUTH" ))
+cond	91:8	91:42	3	strstr (( char * ) p_buffer ,"BADAUTH" )
+call	91:8	91:42	4	strstr
+arg	91:15	91:31	5	(char*)p_buffer
+water	91:15	0:0	6	(
+water	91:16	0:0	6	char
+op	91:20	0:0	6	*
+water	91:21	0:0	6	)
+water	91:23	0:0	6	p_buffer
+arg	91:33	91:42	5	"BADAUTH"
+water	91:33	0:0	6	"BADAUTH"
+stmts	92:4	99:4	3	
+water	92:4	0:0	4	{
+call	94:8	97:62	4	dialog_Fatal
+arg	94:21	94:27	5	p_this
+water	94:21	0:0	6	p_this
+arg	95:12	95:47	5	_("last.fm: Authentication failed")
+call	95:12	95:46	6	_
+arg	95:14	95:46	7	"last.fm: Authentication failed"
+water	95:14	0:0	8	"last.fm: Authentication failed"
+arg	96:12	96:16	5	"%s"
+water	96:12	0:0	6	"%s"
+arg	96:18	97:62	5	_("last.fm username or password is incorrect. ""Please verify your settings and relaunch VLC.")
+call	96:18	97:61	6	_
+arg	96:20	97:61	7	"last.fm username or password is incorrect. ""Please verify your settings and relaunch VLC."
+water	96:20	0:0	8	"last.fm username or password is incorrect. "
+water	97:14	0:0	8	"Please verify your settings and relaunch VLC."
+water	97:63	0:0	4	;
+return	98:8	98:40	4	VLC_AUDIOSCROBBLER_EFATAL
+water	98:15	0:0	5	VLC_AUDIOSCROBBLER_EFATAL
+water	99:4	0:0	4	}
+if	100:4	106:4	2	(strstr (( char * ) p_buffer ,"BANNED" ))
+cond	100:8	100:41	3	strstr (( char * ) p_buffer ,"BANNED" )
+call	100:8	100:41	4	strstr
+arg	100:15	100:31	5	(char*)p_buffer
+water	100:15	0:0	6	(
+water	100:16	0:0	6	char
+op	100:20	0:0	6	*
+water	100:21	0:0	6	)
+water	100:23	0:0	6	p_buffer
+arg	100:33	100:41	5	"BANNED"
+water	100:33	0:0	6	"BANNED"
+stmts	101:4	106:4	3	
+water	101:4	0:0	4	{
+call	103:8	104:81	4	msg_Err
+arg	103:16	103:22	5	p_intf
+water	103:16	0:0	6	p_intf
+arg	103:24	104:81	5	"This version of VLC has been banned by last.fm. ""You should upgrade VLC, or disable the last.fm plugin."
+water	103:24	0:0	6	"This version of VLC has been banned by last.fm. "
+water	104:25	0:0	6	"You should upgrade VLC, or disable the last.fm plugin."
+water	104:82	0:0	4	;
+return	105:8	105:40	4	VLC_AUDIOSCROBBLER_EFATAL
+water	105:15	0:0	5	VLC_AUDIOSCROBBLER_EFATAL
+water	106:4	0:0	4	}
+if	107:4	113:4	2	(strstr (( char * ) p_buffer ,"BADTIME" ))
+cond	107:8	107:42	3	strstr (( char * ) p_buffer ,"BADTIME" )
+call	107:8	107:42	4	strstr
+arg	107:15	107:31	5	(char*)p_buffer
+water	107:15	0:0	6	(
+water	107:16	0:0	6	char
+op	107:20	0:0	6	*
+water	107:21	0:0	6	)
+water	107:23	0:0	6	p_buffer
+arg	107:33	107:42	5	"BADTIME"
+water	107:33	0:0	6	"BADTIME"
+stmts	108:4	113:4	3	
+water	108:4	0:0	4	{
+call	110:8	111:77	4	msg_Err
+arg	110:16	110:22	5	p_intf
+water	110:16	0:0	6	p_intf
+arg	110:24	111:77	5	"last.fm handshake failed because your clock is too ""much shifted. Please correct it, and relaunch VLC."
+water	110:24	0:0	6	"last.fm handshake failed because your clock is too "
+water	111:25	0:0	6	"much shifted. Please correct it, and relaunch VLC."
+water	111:78	0:0	4	;
+return	112:8	112:40	4	VLC_AUDIOSCROBBLER_EFATAL
+water	112:15	0:0	5	VLC_AUDIOSCROBBLER_EFATAL
+water	113:4	0:0	4	}
+water	114:4	0:0	2	p_buffer_pos
+op	114:17	0:0	2	=
+call	114:19	114:48	2	strstr
+arg	114:26	114:42	3	(char*)p_buffer
+water	114:26	0:0	4	(
+water	114:27	0:0	4	char
+op	114:31	0:0	4	*
+water	114:32	0:0	4	)
+water	114:34	0:0	4	p_buffer
+arg	114:44	114:48	3	"OK"
+water	114:44	0:0	4	"OK"
+water	114:49	0:0	2	;
+if	115:4	116:18	2	(! p_buffer_pos)
+cond	115:8	115:9	3	! p_buffer_pos
+op	115:8	0:0	4	!
+water	115:9	0:0	4	p_buffer_pos
+stmts	116:8	116:18	3	
+goto	116:8	116:18	4	proto
+water	116:13	0:0	5	proto
+water	117:4	0:0	2	p_buffer_pos
+op	117:17	0:0	2	=
+call	117:19	117:44	2	strstr
+arg	117:26	117:38	3	p_buffer_pos
+water	117:26	0:0	4	p_buffer_pos
+arg	117:40	117:44	3	"\n"
+water	117:40	0:0	4	"\n"
+water	117:45	0:0	2	;
+if	118:4	119:18	2	(! p_buffer_pos ||strlen (p_buffer_pos ) < 33)
+cond	118:8	118:48	3	! p_buffer_pos ||strlen (p_buffer_pos ) < 33
+op	118:8	0:0	4	!
+water	118:9	0:0	4	p_buffer_pos
+op	118:22	0:0	4	||
+call	118:25	118:44	4	strlen
+arg	118:32	118:44	5	p_buffer_pos
+water	118:32	0:0	6	p_buffer_pos
+op	118:46	0:0	4	<
+water	118:48	0:0	4	33
+stmts	119:8	119:18	3	
+goto	119:8	119:18	4	proto
+water	119:13	0:0	5	proto
+water	120:4	0:0	2	p_buffer_pos
+op	120:16	0:0	2	++
+water	120:18	0:0	2	;
+call	122:4	122:50	2	memcpy
+arg	122:11	122:32	3	p_sys->psz_auth_token
+water	122:11	0:0	4	p_sys
+op	122:16	0:0	4	->
+water	122:18	0:0	4	psz_auth_token
+arg	122:34	122:46	3	p_buffer_pos
+water	122:34	0:0	4	p_buffer_pos
+arg	122:48	122:50	3	32
+water	122:48	0:0	4	32
+water	122:51	0:0	2	;
+water	123:4	0:0	2	p_sys
+op	123:9	0:0	2	->
+water	123:11	0:0	2	psz_auth_token
+op	123:25	0:0	2	[
+water	123:26	0:0	2	32
+op	123:28	0:0	2	]
+op	123:30	0:0	2	=
+water	123:32	0:0	2	'\0'
+water	123:36	0:0	2	;
+water	124:4	0:0	2	p_buffer_pos
+op	124:17	0:0	2	=
+call	124:19	124:49	2	strstr
+arg	124:26	124:38	3	p_buffer_pos
+water	124:26	0:0	4	p_buffer_pos
+arg	124:40	124:49	3	"http://"
+water	124:40	0:0	4	"http://"
+water	124:50	0:0	2	;
+if	125:4	126:18	2	(! p_buffer_pos ||strlen (p_buffer_pos ) == 7)
+cond	125:8	125:49	3	! p_buffer_pos ||strlen (p_buffer_pos ) == 7
+op	125:8	0:0	4	!
+water	125:9	0:0	4	p_buffer_pos
+op	125:22	0:0	4	||
+call	125:25	125:44	4	strlen
+arg	125:32	125:44	5	p_buffer_pos
+water	125:32	0:0	6	p_buffer_pos
+op	125:46	0:0	4	==
+water	125:49	0:0	4	7
+stmts	126:8	126:18	3	
+goto	126:8	126:18	4	proto
+water	126:13	0:0	5	proto
+water	128:4	0:0	2	p_buffer_pos
+op	128:17	0:0	2	+=
+water	128:20	0:0	2	7
+water	128:21	0:0	2	;
+water	130:4	0:0	2	psz_url
+op	130:12	0:0	2	=
+call	130:14	130:63	2	strndup
+arg	130:22	130:34	3	p_buffer_pos
+water	130:22	0:0	4	p_buffer_pos
+arg	130:36	130:63	3	strcspn(p_buffer_pos,"\n")
+call	130:36	130:62	4	strcspn
+arg	130:44	130:56	5	p_buffer_pos
+water	130:44	0:0	6	p_buffer_pos
+arg	130:58	130:62	5	"\n"
+water	130:58	0:0	6	"\n"
+water	130:64	0:0	2	;
+if	131:4	132:16	2	(! psz_url)
+cond	131:8	131:9	3	! psz_url
+op	131:8	0:0	4	!
+water	131:9	0:0	4	psz_url
+stmts	132:8	132:16	3	
+goto	132:8	132:16	4	oom
+water	132:13	0:0	5	oom
+switch	133:4	143:4	2	(ParseURL (psz_url ,& p_sys -> psz_nowp_host ,& p_sys -> psz_nowp_file ,& p_sys -> i_nowp_port ))
+cond	133:11	134:58	3	ParseURL (psz_url ,& p_sys -> psz_nowp_host ,& p_sys -> psz_nowp_file ,& p_sys -> i_nowp_port )
+call	133:11	134:58	4	ParseURL
+arg	133:20	133:27	5	psz_url
+water	133:20	0:0	6	psz_url
+arg	133:29	133:50	5	&p_sys->psz_nowp_host
+op	133:29	0:0	6	&
+water	133:30	0:0	6	p_sys
+op	133:35	0:0	6	->
+water	133:37	0:0	6	psz_nowp_host
+arg	134:16	134:37	5	&p_sys->psz_nowp_file
+op	134:16	0:0	6	&
+water	134:17	0:0	6	p_sys
+op	134:22	0:0	6	->
+water	134:24	0:0	6	psz_nowp_file
+arg	134:39	134:58	5	&p_sys->i_nowp_port
+op	134:39	0:0	6	&
+water	134:40	0:0	6	p_sys
+op	134:45	0:0	6	->
+water	134:47	0:0	6	i_nowp_port
+stmts	135:4	143:4	3	
+water	135:4	0:0	4	{
+label	136:8	136:23	4	case VLC_ENOMEM :
+goto	137:12	137:20	4	oom
+water	137:17	0:0	5	oom
+label	138:8	138:25	4	case VLC_EGENERIC :
+goto	139:12	139:22	4	proto
+water	139:17	0:0	5	proto
+label	140:8	140:24	4	case VLC_SUCCESS :
+label	141:8	141:15	4	default :
+break	142:12	142:17	4	
+water	143:4	0:0	4	}
+water	145:4	0:0	2	p_buffer_pos
+op	145:17	0:0	2	=
+call	145:19	145:49	2	strstr
+arg	145:26	145:38	3	p_buffer_pos
+water	145:26	0:0	4	p_buffer_pos
+arg	145:40	145:49	3	"http://"
+water	145:40	0:0	4	"http://"
+water	145:50	0:0	2	;
+if	146:4	147:18	2	(! p_buffer_pos ||strlen (p_buffer_pos ) == 7)
+cond	146:8	146:49	3	! p_buffer_pos ||strlen (p_buffer_pos ) == 7
+op	146:8	0:0	4	!
+water	146:9	0:0	4	p_buffer_pos
+op	146:22	0:0	4	||
+call	146:25	146:44	4	strlen
+arg	146:32	146:44	5	p_buffer_pos
+water	146:32	0:0	6	p_buffer_pos
+op	146:46	0:0	4	==
+water	146:49	0:0	4	7
+stmts	147:8	147:18	3	
+goto	147:8	147:18	4	proto
+water	147:13	0:0	5	proto
+water	149:4	0:0	2	p_buffer_pos
+op	149:17	0:0	2	+=
+water	149:20	0:0	2	7
+water	149:21	0:0	2	;
+water	150:4	0:0	2	psz_url
+op	150:12	0:0	2	=
+call	150:14	150:63	2	strndup
+arg	150:22	150:34	3	p_buffer_pos
+water	150:22	0:0	4	p_buffer_pos
+arg	150:36	150:63	3	strcspn(p_buffer_pos,"\n")
+call	150:36	150:62	4	strcspn
+arg	150:44	150:56	5	p_buffer_pos
+water	150:44	0:0	6	p_buffer_pos
+arg	150:58	150:62	5	"\n"
+water	150:58	0:0	6	"\n"
+water	150:64	0:0	2	;
+if	151:4	152:16	2	(! psz_url)
+cond	151:8	151:9	3	! psz_url
+op	151:8	0:0	4	!
+water	151:9	0:0	4	psz_url
+stmts	152:8	152:16	3	
+goto	152:8	152:16	4	oom
+water	152:13	0:0	5	oom
+call	154:4	154:49	2	vlc_UrlParse
+arg	154:17	154:37	3	&p_sys->p_submit_url
+op	154:17	0:0	4	&
+water	154:18	0:0	4	p_sys
+op	154:23	0:0	4	->
+water	154:25	0:0	4	p_submit_url
+arg	154:39	154:46	3	psz_url
+water	154:39	0:0	4	psz_url
+arg	154:48	154:49	3	0
+water	154:48	0:0	4	0
+water	154:50	0:0	2	;
+call	155:4	155:16	2	free
+arg	155:9	155:16	3	psz_url
+water	155:9	0:0	4	psz_url
+water	155:17	0:0	2	;
+return	156:4	156:22	2	VLC_SUCCESS
+water	156:11	0:0	3	VLC_SUCCESS
+label	157:0	157:3	2	oom :
+return	158:4	158:21	2	VLC_ENOMEM
+water	158:11	0:0	3	VLC_ENOMEM
+label	159:0	159:5	2	proto :
+call	160:4	160:64	2	msg_Err
+arg	160:12	160:18	3	p_intf
+water	160:12	0:0	4	p_intf
+arg	160:20	160:64	3	"Handshake: can't recognize server protocol"
+water	160:20	0:0	4	"Handshake: can't recognize server protocol"
+water	160:65	0:0	2	;
+return	161:4	161:23	2	VLC_EGENERIC
+water	161:11	0:0	3	VLC_EGENERIC

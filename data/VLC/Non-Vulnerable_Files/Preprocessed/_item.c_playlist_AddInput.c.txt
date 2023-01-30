@@ -1,0 +1,94 @@
+func	2:0	23:0	0	int	playlist_AddInput
+params	2:21	0:0	1	
+param	2:23	2:45	2	playlist_t *	p_playlist
+param	2:47	2:68	2	input_item_t *	p_input
+param	3:23	3:33	2	int	i_mode
+param	3:35	3:44	2	int	i_pos
+param	3:46	3:61	2	bool	b_playlist
+param	4:23	4:37	2	bool	b_locked
+stmnts	0:0	22:22	1	
+decl	6:4	6:27	2	playlist_item_t	*p_item
+if	7:4	9:63	2	(!pl_priv (p_playlist ) -> b_doing_ml)
+cond	7:8	7:30	3	!pl_priv (p_playlist ) -> b_doing_ml
+op	7:8	0:0	4	!
+call	7:9	7:27	4	pl_priv
+arg	7:17	7:27	5	p_playlist
+water	7:17	0:0	6	p_playlist
+op	7:28	0:0	4	->
+water	7:30	0:0	4	b_doing_ml
+stmts	8:8	9:63	3	
+call	8:8	9:62	4	PL_DEBUG
+arg	8:18	8:43	5	"adding item `%s' ( %s )"
+water	8:18	0:0	6	"adding item `%s' ( %s )"
+arg	8:45	8:62	5	p_input->psz_name
+water	8:45	0:0	6	p_input
+op	8:52	0:0	6	->
+water	8:54	0:0	6	psz_name
+arg	9:45	9:62	5	p_input->psz_uri
+water	9:45	0:0	6	p_input
+op	9:52	0:0	6	->
+water	9:54	0:0	6	psz_uri
+water	9:63	0:0	4	;
+call	10:4	10:26	2	PL_LOCK_IF
+arg	10:16	10:26	3	!b_locked
+op	10:16	0:0	4	!
+water	10:17	0:0	4	b_locked
+water	10:27	0:0	2	;
+water	11:4	0:0	2	p_item
+op	11:11	0:0	2	=
+call	11:13	11:60	2	playlist_ItemNewFromInput
+arg	11:40	11:50	3	p_playlist
+water	11:40	0:0	4	p_playlist
+arg	11:52	11:60	3	p_input
+water	11:52	0:0	4	p_input
+water	11:61	0:0	2	;
+if	12:4	16:4	2	(p_item == NULL)
+cond	12:8	12:18	3	p_item == NULL
+water	12:8	0:0	4	p_item
+op	12:15	0:0	4	==
+water	12:18	0:0	4	NULL
+stmts	13:4	16:4	3	
+water	13:4	0:0	4	{
+call	14:8	14:32	4	PL_UNLOCK_IF
+arg	14:22	14:32	5	!b_locked
+op	14:22	0:0	6	!
+water	14:23	0:0	6	b_locked
+water	14:33	0:0	4	;
+return	15:8	15:25	4	VLC_ENOMEM
+water	15:15	0:0	5	VLC_ENOMEM
+water	16:4	0:0	4	}
+call	17:4	19:70	2	AddItem
+arg	17:13	17:23	3	p_playlist
+water	17:13	0:0	4	p_playlist
+arg	17:25	17:31	3	p_item
+water	17:25	0:0	4	p_item
+arg	18:13	19:54	3	b_playlist?p_playlist->p_playing:p_playlist->p_media_library
+water	18:13	0:0	4	b_playlist
+water	18:24	0:0	4	?
+water	18:26	0:0	4	p_playlist
+op	18:36	0:0	4	->
+water	18:38	0:0	4	p_playing
+water	18:48	0:0	4	:
+water	19:26	0:0	4	p_playlist
+op	19:36	0:0	4	->
+water	19:38	0:0	4	p_media_library
+arg	19:56	19:62	3	i_mode
+water	19:56	0:0	4	i_mode
+arg	19:64	19:70	3	i_pos
+water	19:64	0:0	4	i_pos
+water	19:71	0:0	2	;
+call	20:4	20:46	2	GoAndPreparse
+arg	20:19	20:29	3	p_playlist
+water	20:19	0:0	4	p_playlist
+arg	20:31	20:37	3	i_mode
+water	20:31	0:0	4	i_mode
+arg	20:39	20:46	3	p_item
+water	20:39	0:0	4	p_item
+water	20:47	0:0	2	;
+call	21:4	21:28	2	PL_UNLOCK_IF
+arg	21:18	21:28	3	!b_locked
+op	21:18	0:0	4	!
+water	21:19	0:0	4	b_locked
+water	21:29	0:0	2	;
+return	22:4	22:22	2	VLC_SUCCESS
+water	22:11	0:0	3	VLC_SUCCESS

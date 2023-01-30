@@ -1,0 +1,215 @@
+func	2:0	45:0	0	static int	Open
+params	2:15	0:0	1	
+param	2:17	2:38	2	vlc_object_t *	p_this
+stmnts	0:0	44:23	1	
+decl	4:4	4:64	2	services_discovery_t	*p_sd
+op	4:31	0:0	2	=
+water	4:33	0:0	2	(
+water	4:35	0:0	2	services_discovery_t
+op	4:55	0:0	2	*
+water	4:57	0:0	2	)
+water	4:58	0:0	2	p_this
+decl	5:4	5:35	2	services_discovery_sys_t	*p_sys
+decl	6:4	6:11	2	int	err
+water	7:4	0:0	2	p_sd
+op	7:8	0:0	2	->
+water	7:10	0:0	2	p_sys
+op	7:16	0:0	2	=
+water	7:18	0:0	2	p_sys
+op	7:24	0:0	2	=
+call	7:26	7:72	2	calloc
+arg	7:34	7:35	3	1
+water	7:34	0:0	4	1
+arg	7:37	7:72	3	sizeof(services_discovery_sys_t)
+op	7:37	0:0	4	sizeof
+water	7:43	0:0	4	(
+water	7:45	0:0	4	services_discovery_sys_t
+water	7:70	0:0	4	)
+water	7:73	0:0	2	;
+if	8:4	9:25	2	(! p_sys)
+cond	8:8	8:9	3	! p_sys
+op	8:8	0:0	4	!
+water	8:9	0:0	4	p_sys
+stmts	9:8	9:25	3	
+return	9:8	9:25	4	VLC_ENOMEM
+water	9:15	0:0	5	VLC_ENOMEM
+call	10:4	10:64	2	vlc_dictionary_init
+arg	10:25	10:60	3	&p_sys->services_name_to_input_item
+op	10:25	0:0	4	&
+water	10:26	0:0	4	p_sys
+op	10:31	0:0	4	->
+water	10:33	0:0	4	services_name_to_input_item
+arg	10:62	10:64	3	1
+water	10:62	0:0	4	1
+water	10:65	0:0	2	;
+water	11:4	0:0	2	p_sys
+op	11:9	0:0	2	->
+water	11:11	0:0	2	poll
+op	11:16	0:0	2	=
+call	11:18	11:42	2	avahi_threaded_poll_new
+water	11:43	0:0	2	;
+if	12:4	16:4	2	(p_sys -> poll == NULL)
+cond	12:8	12:23	3	p_sys -> poll == NULL
+water	12:8	0:0	4	p_sys
+op	12:13	0:0	4	->
+water	12:15	0:0	4	poll
+op	12:20	0:0	4	==
+water	12:23	0:0	4	NULL
+stmts	13:4	16:4	3	
+water	13:4	0:0	4	{
+call	14:8	14:62	4	msg_Err
+arg	14:17	14:21	5	p_sd
+water	14:17	0:0	6	p_sd
+arg	14:23	14:62	5	"failed to create Avahi threaded poll"
+water	14:23	0:0	6	"failed to create Avahi threaded poll"
+water	14:63	0:0	4	;
+goto	15:8	15:18	4	error
+water	15:13	0:0	5	error
+water	16:4	0:0	4	}
+water	17:4	0:0	2	p_sys
+op	17:9	0:0	2	->
+water	17:11	0:0	2	client
+op	17:18	0:0	2	=
+call	17:20	18:69	2	avahi_client_new
+arg	17:38	17:74	3	avahi_threaded_poll_get(p_sys->poll)
+call	17:38	17:73	4	avahi_threaded_poll_get
+arg	17:62	17:73	5	p_sys->poll
+water	17:62	0:0	6	p_sys
+op	17:67	0:0	6	->
+water	17:69	0:0	6	poll
+arg	18:38	18:39	3	0
+water	18:38	0:0	4	0
+arg	18:41	18:56	3	client_callback
+water	18:41	0:0	4	client_callback
+arg	18:58	18:62	3	p_sd
+water	18:58	0:0	4	p_sd
+arg	18:64	18:69	3	&err
+op	18:64	0:0	4	&
+water	18:65	0:0	4	err
+water	18:70	0:0	2	;
+if	19:4	24:4	2	(p_sys -> client == NULL)
+cond	19:8	19:25	3	p_sys -> client == NULL
+water	19:8	0:0	4	p_sys
+op	19:13	0:0	4	->
+water	19:15	0:0	4	client
+op	19:22	0:0	4	==
+water	19:25	0:0	4	NULL
+stmts	20:4	24:4	3	
+water	20:4	0:0	4	{
+call	21:8	22:39	4	msg_Err
+arg	21:17	21:21	5	p_sd
+water	21:17	0:0	6	p_sd
+arg	21:23	21:58	5	"failed to create avahi client: %s"
+water	21:23	0:0	6	"failed to create avahi client: %s"
+arg	22:17	22:39	5	avahi_strerror(err)
+call	22:17	22:37	6	avahi_strerror
+arg	22:33	22:37	7	err
+water	22:33	0:0	8	err
+water	22:40	0:0	4	;
+goto	23:8	23:18	4	error
+water	23:13	0:0	5	error
+water	24:4	0:0	4	}
+water	25:4	0:0	2	p_sys
+op	25:9	0:0	2	->
+water	25:11	0:0	2	sb
+op	25:14	0:0	2	=
+call	25:16	28:68	2	avahi_service_browser_new
+arg	25:43	25:56	3	p_sys->client
+water	25:43	0:0	4	p_sys
+op	25:48	0:0	4	->
+water	25:50	0:0	4	client
+arg	25:58	25:73	3	AVAHI_IF_UNSPEC
+water	25:58	0:0	4	AVAHI_IF_UNSPEC
+arg	26:43	26:61	3	AVAHI_PROTO_UNSPEC
+water	26:43	0:0	4	AVAHI_PROTO_UNSPEC
+arg	27:43	27:59	3	"_vlc-http._tcp"
+water	27:43	0:0	4	"_vlc-http._tcp"
+arg	27:61	27:65	3	NULL
+water	27:61	0:0	4	NULL
+arg	28:43	28:44	3	0
+water	28:43	0:0	4	0
+arg	28:46	28:61	3	browse_callback
+water	28:46	0:0	4	browse_callback
+arg	28:63	28:68	3	p_sd
+water	28:63	0:0	4	p_sd
+water	28:69	0:0	2	;
+if	29:4	33:4	2	(p_sys -> sb == NULL)
+cond	29:8	29:21	3	p_sys -> sb == NULL
+water	29:8	0:0	4	p_sys
+op	29:13	0:0	4	->
+water	29:15	0:0	4	sb
+op	29:18	0:0	4	==
+water	29:21	0:0	4	NULL
+stmts	30:4	33:4	3	
+water	30:4	0:0	4	{
+call	31:8	31:64	4	msg_Err
+arg	31:17	31:21	5	p_sd
+water	31:17	0:0	6	p_sd
+arg	31:23	31:64	5	"failed to create avahi service browser"
+water	31:23	0:0	6	"failed to create avahi service browser"
+water	31:65	0:0	4	;
+goto	32:8	32:18	4	error
+water	32:13	0:0	5	error
+water	33:4	0:0	4	}
+return	34:4	34:22	2	VLC_SUCCESS
+water	34:11	0:0	3	VLC_SUCCESS
+label	35:0	35:5	2	error :
+if	36:4	37:47	2	(p_sys -> sb != NULL)
+cond	36:8	36:21	3	p_sys -> sb != NULL
+water	36:8	0:0	4	p_sys
+op	36:13	0:0	4	->
+water	36:15	0:0	4	sb
+op	36:18	0:0	4	!=
+water	36:21	0:0	4	NULL
+stmts	37:8	37:47	3	
+call	37:8	37:46	4	avahi_service_browser_free
+arg	37:36	37:46	5	p_sys->sb
+water	37:36	0:0	6	p_sys
+op	37:41	0:0	6	->
+water	37:43	0:0	6	sb
+water	37:47	0:0	4	;
+if	38:4	39:42	2	(p_sys -> client != NULL)
+cond	38:8	38:25	3	p_sys -> client != NULL
+water	38:8	0:0	4	p_sys
+op	38:13	0:0	4	->
+water	38:15	0:0	4	client
+op	38:22	0:0	4	!=
+water	38:25	0:0	4	NULL
+stmts	39:8	39:42	3	
+call	39:8	39:41	4	avahi_client_free
+arg	39:27	39:41	5	p_sys->client
+water	39:27	0:0	6	p_sys
+op	39:32	0:0	6	->
+water	39:34	0:0	6	client
+water	39:42	0:0	4	;
+if	40:4	41:47	2	(p_sys -> poll != NULL)
+cond	40:8	40:23	3	p_sys -> poll != NULL
+water	40:8	0:0	4	p_sys
+op	40:13	0:0	4	->
+water	40:15	0:0	4	poll
+op	40:20	0:0	4	!=
+water	40:23	0:0	4	NULL
+stmts	41:8	41:47	3	
+call	41:8	41:46	4	avahi_threaded_poll_free
+arg	41:34	41:46	5	p_sys->poll
+water	41:34	0:0	6	p_sys
+op	41:39	0:0	6	->
+water	41:41	0:0	6	poll
+water	41:47	0:0	4	;
+call	42:4	42:74	2	vlc_dictionary_clear
+arg	42:26	42:61	3	&p_sys->services_name_to_input_item
+op	42:26	0:0	4	&
+water	42:27	0:0	4	p_sys
+op	42:32	0:0	4	->
+water	42:34	0:0	4	services_name_to_input_item
+arg	42:63	42:67	3	NULL
+water	42:63	0:0	4	NULL
+arg	42:69	42:74	3	NULL
+water	42:69	0:0	4	NULL
+water	42:75	0:0	2	;
+call	43:4	43:16	2	free
+arg	43:10	43:16	3	p_sys
+water	43:10	0:0	4	p_sys
+water	43:17	0:0	2	;
+return	44:4	44:23	2	VLC_EGENERIC
+water	44:11	0:0	3	VLC_EGENERIC
