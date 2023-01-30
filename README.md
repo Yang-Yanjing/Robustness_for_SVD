@@ -12,6 +12,7 @@ To solve the problem of instability of AI systems based on source code processin
 The address of the research is ./RobTest
 
 ```
+The rest of the project is to train the vulnerability prediction model
 
 ## The Project Structure
 ```
