@@ -112,6 +112,7 @@ class Attacker(object):
         # 对应写完整的攻击过程返回对应test_x,以及test_y
         # 这里理论上来说应该是要给text_raw是最合适的、但是这里tokenizer和tokenize的关系不明确这里无法直接换算
         # 这也是这个研究最大的问题
+        # 鲁棒性问题
         pass
 
 
