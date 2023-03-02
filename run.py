@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import pickle
 
 
+
 def testbatch():
     dataname="LibPNG"
     # Asterisk, LibPNG, FFmpeg
@@ -18,7 +19,7 @@ def testbatch():
 # 测试一次
 def testonce():
     # 模型存放处
-    modelname="model_"
+    modelname="FFmpeg_model"
     rootpath = os.getcwd()+os.sep+"result"+os.sep+"models"+os.sep+modelname
     os.system("python main.py --config config/config.yaml --test --trained_model"+" "
                   +rootpath+".h5")
