@@ -7,6 +7,6 @@ git merge origin/master
 git add .
 
 @REM 评论修改
-git commit -m "Git_script update"
+git commit -m "IBP_Use"
 
 git push origin master
