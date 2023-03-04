@@ -14,6 +14,7 @@ import IBP.data_util
 import IBP.entailment
 import IBP.text_classification
 import IBP.vocabulary
+import IBP.Vulunerble_data
 from IBP.YYJ import ceshi
 
 
@@ -22,3 +23,4 @@ np.random.seed(OPTS.rng_seed)
 torch.manual_seed(OPTS.torch_seed)
 torch.backends.cudnn.deterministic = True
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+task_class = text_classification()
